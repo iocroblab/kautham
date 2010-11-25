@@ -1,0 +1,6 @@
+Respuestas a los reviewers:
+
+==============
+1- In the case the path couldn't be found by the planner, it saves some relevant data in ordet to quantify the effectiveness of this approach.
+2- The planner has been tunned  with the initial values of its parameters and tested 100 times each problem. These parameters are adaptive and don't evolve
+in the exactly same way between different executions.

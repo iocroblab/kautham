@@ -1,0 +1,29 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Configuration topology="SE3" source="physical" >
+  <Robot robot="BRONCO/broncoscopio3.rob" Scale="3.0" > 
+   Robot Path
+	 <Limits min="0.0" max="1000.0" name="X" />
+    <Limits min="0.0" max="1000.0" name="Y" />
+    <Limits min="0.0" max="1000.0" name="Z" />
+    <Limits min="0.0" max="1.0" name="WX" />
+    <Limits min="0.0" max="1.0" name="WY" />
+    <Limits min="0.0" max="1.0" name="WZ" />
+    <Limits min="-180.0" max="180.0" name="THETA" />
+	
+    <Start X="0.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" > 
+    Initial position and orientation of the robot 
+	</Start>
+    <Goal WX="0.0" WY="0.0" X="0.0" WZ="1.0" Y="0.0" Z="0.0" TH="0.0" > 
+    Final position and orientation of the robot 
+	</Goal>
+	<ConstrainedKinematic name="BRONCOSCOPY" />
+  </Robot>
+  <Scene Scale="10.0" scene="BRONCO/detalltraquea_transparent.wrl" > 
+    Scene Path
+
+    <Location X="0.0" Y="-380.0" Z="2400.0" WX="1.0" WY="0.0" WZ="0.0"  TH="1.57" > 
+     Configuration of the scene
+    </Location>
+  </Scene>
+  <Planner name="PRM Planner" />
+</Configuration>

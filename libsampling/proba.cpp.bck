@@ -1,0 +1,48 @@
+#include <iostream>
+#include <sstream>
+#include <stdio.h>
+#include "sampling.h"
+
+using namespace std;
+using namespace SDK;
+
+void main(int argc, char ** argv){
+  Sampler *samp;
+  SampleSet freesamples;
+  if( atoi(argv[2]) == 0 ){
+    cout << "SDK sampling sequence" << endl;
+    samp = new SDKSampler(3,2);
+  }else 
+    if( atoi(argv[2]) == 1 ){
+      cout << "Random sampling sequence" << endl;
+      samp = new RandomSampler(3);
+    }else 
+      if( atoi(argv[2]) == 2 ){
+        cout << "Halton sampling sequence" << endl;
+        cout << "Not still implemented" << endl;
+        //samp = new HaltonSampler();
+      }else
+        std::cout << "No se eligió bien la secuencia" << std::endl;
+
+  Sample *tmp;
+  for (int i=0; i< atoi(argv[1]); i++){
+      tmp=samp->nextSample();
+      freesamples.add(tmp);
+  }
+  
+  vector<Sample*>::iterator itera = freesamples.getBeginIterator();
+  vector<Sample*>* tmpneighs;
+  Sample::TYPE = Rn;
+  int count=0;
+  while(itera != freesamples.getEndIterator()){
+    tmpneighs = freesamples.findBFNeighs((*itera),0.2,5);
+    cout << "Muestra:" << count++ << (*itera)->print() << endl;
+    for(int i=0; i<tmpneighs->size(); i++){
+      cout << "Vecino " << i << ": " << (*tmpneighs)[i]->print() << endl;
+    }
+    itera++;
+  }
+
+  exit(0);
+
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Problem name="" topology="SE3">
+
+  
+   <Robot robot="robots/TX90_pawn.rob" scale="1.0">
+    <Home  X="1484.0" Y="50.0" Z="0.0"  WX="0.0" WY="0.0" WZ="1.0" TH="360.0" />
+
+    <Start   X="0.0" Y="0.0" Z="0.0"  WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+
+    <Goal  X="0.0" Y="0.0" Z="0.0"  WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+	
+	<InvKinematic name="TX90" />
+   </Robot>
+	
+   <Scene scene="scenes/IOC_box.iv" scale="1.0"> 
+     <Location X="0.0" Y="0.0" Z="0.0"  WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+  </Scene>
+
+</Problem>

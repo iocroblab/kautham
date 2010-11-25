@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="SA Hand Right" DHType="Modified" robType="Tree">
+
+<Joint name="Base" ivFile="3DOFCylindric/base.iv">
+    <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="false" movable="false"   ></Description>
+    <Limits Hi="0" Low="0"></Limits>
+		<Parent name=""></Parent>
+  </Joint>
+	
+	<Joint name="Shoulder" ivFile="3DOFCylindric/shoulder.iv">
+    <DHPars alpha="0.0" a="0.0" theta="0.0" d="100.0"></DHPars>
+    <Description rotational="true" movable="true"   ></Description>
+    <Limits Hi="22.5" Low="-22.5"></Limits>
+		<Parent name="Base"></Parent>
+  </Joint>
+	
+	<Joint name="ForeArm" ivFile="3DOFCylindric/forearm.iv">
+    <DHPars alpha="90.0" a="0.0" theta="90.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"   ></Description>
+    <Limits Hi="60" Low="0"></Limits>
+		<Parent name="Shoulder"></Parent>
+  </Joint>
+	
+	<Joint name="Palm" ivFile="3DOFCylindric/arm.iv">
+    <DHPars alpha="0.0" a="250.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"   ></Description>
+    <Limits Hi="0" Low="-90"></Limits>
+		<Parent name="ForeArm"></Parent>
+  </Joint>
+	
+	<Joint name="Thumb" ivFile="SAHand/SAH-thumb-base-right.iv">
+    <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+		<PreTrans X="250.0000" Y="3.0000" Z="-27.1000" WX="-0.5774" WY="0.5774" WZ="-0.5774" TH="120.0" ></PreTrans>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="0.0" Low="-90.0"></Limits>
+		<Parent name="Palm"></Parent>
+  </Joint>
+
+	<Joint name="Thumb-Base" ivFile="SAHand/SAH-finger-base.iv">
+    <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+		<PreTrans X="-6.0" Y="86.9" Z="97.0" WX="0.419" WY="-0.419" WZ="0.805" TH="102.31" ></PreTrans>
+
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="15.0" Low="-15.0"></Limits>
+		<Parent name="Thumb"></Parent>
+  </Joint>
+	
+	<Joint name="Thumb-Prox" ivFile="SAHand/SAH-finger-phaprox.iv">
+    <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="4.0" Low="-75.0"></Limits>
+		<Parent name="Thumb-Base"></Parent>
+  </Joint>
+
+	<Joint name="Thumb-Med" ivFile="SAHand/SAH-finger-phamed.iv">
+    <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="-4.0" Low="-75.0"></Limits>
+		<Parent name="Thumb-Prox"></Parent>
+  </Joint>
+	
+	<Joint name="Thumb-Dist" ivFile="SAHand/SAH-finger-phadist.iv">
+    <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="-4.0" Low="-75.0"></Limits>
+		<Parent name="Thumb-Med"></Parent>
+  </Joint>
+	
+	<Joint name="Index-Base" ivFile="SAHand/SAH-finger-base.iv">
+    <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+		<PreTrans X="395.4300" Y="4.3000" Z="-40.1650" WX="0.9997" WY="0.0177" WZ="-0.0177" TH="90.0180" ></PreTrans>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="15.0" Low="-15.0"></Limits>
+		<Parent name="Palm"></Parent>
+  </Joint>
+	
+	<Joint name="Index-Prox" ivFile="SAHand/SAH-finger-phaprox.iv">
+    <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="4.0" Low="-75.0"></Limits>
+		<Parent name="Index-Base"></Parent>
+  </Joint>
+
+	<Joint name="Index-Med" ivFile="SAHand/SAH-finger-phamed.iv">
+    <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="-4.0" Low="-75.0"></Limits>
+		<Parent name="Index-Prox"></Parent>
+  </Joint>
+	
+	<Joint name="Index-Dist" ivFile="SAHand/SAH-finger-phadist.iv">
+    <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="-4.0" Low="-75.0"></Limits>
+		<Parent name="Index-Med"></Parent>
+  </Joint>
+	
+	<Joint name="Mid-Base" ivFile="SAHand/SAH-finger-base.iv">
+    <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+		<PreTrans X="400.1500    " Y="4.3000" Z="0.0" WX="1.0" WY="0.0" WZ="0.0" TH="90.0" ></PreTrans>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="15.0" Low="-15.0"></Limits>
+		<Parent name="Palm"></Parent>
+  </Joint>
+	
+	<Joint name="Mid-Prox" ivFile="SAHand/SAH-finger-phaprox.iv">
+    <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="4.0" Low="-75.0"></Limits>
+		<Parent name="Mid-Base"></Parent>
+  </Joint>
+
+	<Joint name="Mid-Med" ivFile="SAHand/SAH-finger-phamed.iv">
+    <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="-4.0" Low="-75.0"></Limits>
+		<Parent name="Mid-Prox"></Parent>
+  </Joint>
+	
+	<Joint name="Mid-Dist" ivFile="SAHand/SAH-finger-phadist.iv">
+    <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="-4.0" Low="-75.0"></Limits>
+		<Parent name="Mid-Med"></Parent>
+  </Joint>
+	     
+	<Joint name="Ring-Base" ivFile="SAHand/SAH-finger-base.iv">
+    <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+		<PreTrans X="395.4300" Y="4.3000" Z="40.1650" WX="0.9997" WY="-0.0172" WZ="0.0172" TH="90.0169" ></PreTrans>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="15.0" Low="-15.0"></Limits>
+		<Parent name="Palm"></Parent>
+  </Joint>
+	
+	<Joint name="Ring-Prox" ivFile="SAHand/SAH-finger-phaprox.iv">
+    <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="4.0" Low="-75.0"></Limits>
+		<Parent name="Ring-Base"></Parent>
+  </Joint>
+
+	<Joint name="Ring-Med" ivFile="SAHand/SAH-finger-phamed.iv">
+    <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="-4.0" Low="-75.0"></Limits>
+		<Parent name="Ring-Prox"></Parent>
+  </Joint>
+	
+	<Joint name="Ring-Dist" ivFile="SAHand/SAH-finger-phadist.iv">
+    <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true" ></Description>
+    <Limits Hi="-4.0" Low="-75.0"></Limits>
+		<Parent name="Ring-Med"></Parent>
+  </Joint>
+
+	<ControlSet>
+	This control set is thinkig to be as EigenVector collection with their own 
+	EigenValue used to obtain the respective DOF vector of the robot. All the 
+	robots need to be positioned in any location in SE3 WorkSpace as well it need 
+	6 values (X, Y, Z, X1, X2, X3) to reach it. The X1, X2, X3 values will be mapped to 
+	axis-angle notation (Wx, Wy, Wz, angle) and the other DOF are respectively the 
+	articular values in Chain or Tree robot types.
+	
+	<Offset>
+		This vector can be added in order to provide a offset or centre values to adjust
+		the control values and the DOF values.
+<DOF value="0.353005" name="Thumb">
+      </DOF>
+    
+    
+      <DOF value="0.353005" name="Thumb-Base">
+      </DOF>
+    
+    
+      <DOF value="0.648358" name="Thumb-Prox">
+      </DOF>
+    
+    
+      <DOF value="0.81414" name="Thumb-Med">
+      </DOF>
+    
+    
+      <DOF value="0.81414" name="Thumb-Dist">
+      </DOF>
+    
+    
+      <DOF value="0.44822" name="Index-Base">
+      </DOF>
+    
+    
+      <DOF value="0.963637" name="Index-Prox">
+      </DOF>
+    
+    
+      <DOF value="0.87493" name="Index-Med">
+      </DOF>
+    
+    
+      <DOF value="0.87493" name="Index-Dist">
+      </DOF>
+    
+    
+      <DOF value="0.5" name="Mid-Base">
+      </DOF>
+    
+    
+      <DOF value="0.550109" name="Mid-Prox">
+      </DOF>
+    
+    
+      <DOF value="0.512228" name="Mid-Med">
+      </DOF>
+    
+    
+      <DOF value="0.512228" name="Mid-Dist">
+      </DOF>
+    
+    
+      <DOF value="0.546786" name="Ring-Base">
+      </DOF>
+    
+    
+      <DOF value="0.538289" name="Ring-Prox">
+      </DOF>
+    
+    
+      <DOF value="0.542598" name="Ring-Med">
+      </DOF>
+    
+    
+      <DOF value="0.542598" name="Ring-Dist">
+      </DOF>
+		<DOF name="Shoulder" value="0.5"></DOF> 
+		<DOF name="ForeArm" value="0.5"></DOF> 
+		<DOF name="Palm" value="0.5"></DOF> 
+
+
+	</Offset>
+
+
+	
+	At less, the robot needs to be controled through a 6 values corresponding to a 
+	SE3 configuration. 
+
+	<Control name="C0" eigValue="1.9315">
+    
+    
+      <DOF value="-0.139942" name="Thumb">
+      </DOF>
+    
+    
+      <DOF value="-0.139942" name="Thumb-Base">
+      </DOF>
+    
+    
+      <DOF value="0.113731" name="Thumb-Prox">
+      </DOF>
+    
+    
+      <DOF value="-0.249773" name="Thumb-Med">
+      </DOF>
+    
+    
+      <DOF value="-0.249773" name="Thumb-Dist">
+      </DOF>
+    
+    
+      <DOF value="-0.0968597" name="Index-Base">
+      </DOF>
+    
+    
+      <DOF value="0.0385571" name="Index-Prox">
+      </DOF>
+    
+    
+      <DOF value="-0.167644" name="Index-Med">
+      </DOF>
+    
+    
+      <DOF value="-0.167644" name="Index-Dist">
+      </DOF>
+    
+    
+      <DOF value="0" name="Mid-Base">
+      </DOF>
+    
+    
+      <DOF value="-0.378191" name="Mid-Prox">
+      </DOF>
+    
+    
+      <DOF value="-0.548123" name="Mid-Med">
+      </DOF>
+    
+    
+      <DOF value="-0.548123" name="Mid-Dist">
+      </DOF>
+    
+    
+      <DOF value="0.0796876" name="Ring-Base">
+      </DOF>
+    
+    
+      <DOF value="-0.398206" name="Ring-Prox">
+      </DOF>
+    
+    
+      <DOF value="-0.507678" name="Ring-Med">
+      </DOF>
+    
+    
+      <DOF value="-0.507678" name="Ring-Dist">
+      </DOF>
+
+	</Control>
+
+	<Control name="C1" eigValue="1.6550">
+		<DOF name="Thumb" value="-0.0683"></DOF> 
+		<DOF name="Thumb-Base" value="-0.0683"></DOF> 
+		<DOF name="Thumb-Prox" value="0.2222"></DOF> 
+		<DOF name="Thumb-Med" value="0.3194"></DOF> 
+		<DOF name="Thumb-Dist" value="0.3194"></DOF> 
+		<DOF name="Index-Base" value="0.2409"></DOF> 
+		<DOF name="Index-Prox" value="-0.4246"></DOF> 
+		<DOF name="Index-Med" value="0.2125"></DOF> 
+		<DOF name="Index-Dist" value="0.2125"></DOF> 
+		<DOF name="Mid-Base" value="0.0"></DOF> 
+		<DOF name="Mid-Prox" value="-0.4884"></DOF> 
+		<DOF name="Mid-Med" value="0.2399"></DOF> 
+		<DOF name="Mid-Dist" value="0.2399"></DOF> 
+		<DOF name="Ring-Base" value="-0.1741"></DOF> 
+		<DOF name="Ring-Prox" value="-0.4451"></DOF> 
+		<DOF name="Ring-Med" value="0.1897"></DOF> 
+		<DOF name="Ring-Dist" value="0.1897"></DOF> 
+
+	</Control>
+
+	
+
+
+	<Control name="C4" eigValue="1.0">
+		<DOF name="Shoulder" value="1.0"></DOF> 
+	</Control>
+	<Control name="C5" eigValue="1.0">
+		<DOF name="ForeArm" value="1.0"></DOF> 
+	</Control>
+
+	<Control name="C6" eigValue="1.0">
+		<DOF name="Palm" value="1.0"></DOF> 
+	</Control>
+
+
+
+	
+	
+	</ControlSet>
+	
+ </Robot>
