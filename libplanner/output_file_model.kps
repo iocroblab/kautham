@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Planner ProblemName="IOC_Cell.xml" date="28/11/2009" >
+  <Parameters>
+    <Name>PRM</Name>
+    <LocalPlanner stepSize="0.2" >Linear</LocalPlanner>
+    <Parameter Name="Max. Samples">3000</Parameter>
+    <Parameter Name="Step Size">0.36</Parameter>
+    <Parameter Name="Speed Factor">1</Parameter>
+  </Parameters>
+  
+  <Queries>
+    <Query Init="1" Goal="4" Solved="true">
+      <Result Name="Path">1 2 3 4</Result>
+      <Result Name="Time">23.56</Result>
+      <Result Name="Generated Samples">256</Result>
+      <Result Name="Generated Edges">7</Result>
+    </Query>
+  </Queries>
+  
+	<SampleSet Dim="11" Size="5" > 
+		<Sample conComp="0">0.5 0.44 0.99 0.34 0.01 0.23 0.99 0.45 0.33 0.23 0.11</Sample>
+		<Sample conComp="0">0.44 0.99 0.34 0.01 0.23 0.99 0.45 0.33 0.23 0.11 0.5</Sample>
+		<Sample conComp="0">0.99 0.34 0.01 0.23 0.99 0.45 0.33 0.23 0.11 0.5 0.44</Sample>
+		<Sample conComp="1">0.34 0.01 0.23 0.99 0.45 0.33 0.23 0.11 0.5 0.44 0.99</Sample>
+		<Sample conComp="2">0.01 0.23 0.99 0.45 0.33 0.23 0.11 0.5 0.44 0.99 0.34</Sample>
+	</SampleSet>
+  
+	<!--> The Next sections are dependant  of the planner and maybe they 
+      don't be saved or loaded for all planners. The next sections 
+      should be treated in the planner's methods named saveData and 
+      loadData.      
+  </!-->
+  
+  <Conectivity>
+    <Pair Weight="0.944124">1 2</Pair>
+    <Pair Weight="0.441247">2 3</Pair>
+    <Pair Weight="0.412499">3 4</Pair>
+    <Pair Weight="0.241248">4 0</Pair>
+    <Pair Weight="0.444124">4 1</Pair>
+    <Pair Weight="0.144124">2 3</Pair>
+    <Pair Weight="0.344124">3 1</Pair>
+	</Conectivity>
+  
+  <ConnComponents Size="3">
+    <Component Name="0" Size="3">0 1 2</Component>
+    <Component Name="1" Size="1">3</Component>
+    <Component Name="2" Size="1">4</Component>
+	</ConnComponents>
+  
+  <Distance>
+    <!-- This information is for debuging purpouse -->
+    <From index="0">1.0 2.1 3.5 4.2 </From>
+    <From index="1">1.0 2.1 3.5 </From>
+    <From index="2">1.0 2.1 </From>
+    <From index="3">1.0 </From>
+  </Distance>
+  
+</Planner>
+ 
+ 

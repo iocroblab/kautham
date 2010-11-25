@@ -1,0 +1,85 @@
+#Inventor V2.1 ascii
+
+Separator {
+	Separator{
+		Material {
+            diffuseColor        1.0 0.0 0.0
+		}
+		Translation {
+			translation	300 200 100
+		}
+		Sphere {
+			radius 100
+		}
+	}
+	Separator{
+		Material {
+            diffuseColor        0.0 1.0 0.0
+		}
+		Translation {
+			translation	200 300 500
+		}
+		Sphere {
+			radius 80
+		}
+	}
+	Separator{
+		Material {
+            diffuseColor        0.0 0.0 1.0
+		}
+		Translation {
+			translation	700 300 300
+		}
+		Sphere {
+			radius 120
+		}
+	}
+    
+    
+	Separator{
+		Material {
+            diffuseColor        1.0 1.0 1.0
+		}
+		Translation {
+			translation	500 500 500
+		}
+		Sphere {
+			radius 80
+		}
+	}
+    
+	Separator{
+		Material {
+            diffuseColor        1.0 1.0 1.0
+		}
+		Translation {
+			translation	900 500 700
+		}
+		Sphere {
+			radius 50
+		}
+	}
+	
+	Separator{
+		Material {
+            diffuseColor        1.0 1.0 1.0
+		}
+		Translation {
+			translation	300 300 700
+		}
+		Sphere {
+			radius 50
+		}
+	}
+	Separator{
+		Material {
+            diffuseColor        0.0 1.0 0.0
+		}
+		Translation {
+			translation	700 300 700
+		}
+		Sphere {
+			radius 80
+		}
+	}
+}

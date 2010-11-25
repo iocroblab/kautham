@@ -1,0 +1,23 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  Material {
+    diffuseColor 1 0 1
+
+  }
+  RotationXYZ {
+    angle 1.570796
+
+  }
+  Translation {
+    translation 0 25 0
+
+  }
+  Cylinder {
+    radius 100
+    height 50
+
+  }
+}

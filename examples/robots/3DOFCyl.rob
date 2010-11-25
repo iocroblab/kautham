@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="SA Hand Right" DHType="Modified" robType="Tree">
+  <Joints size="4">
+    <Joint name="Base" ivFile="3DOFCylindric/base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="false" movable="false" ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Parent name=""></Parent>
+    </Joint>
+    
+    <Joint name="Shoulder" ivFile="3DOFCylindric/shoulder.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="100.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="22.5" Low="-22.5"></Limits>
+      <Parent name="Base"></Parent>
+    </Joint>
+    
+    <Joint name="ForeArm" ivFile="3DOFCylindric/forearm.iv">
+      <DHPars alpha="90.0" a="0.0" theta="90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="60" Low="0"></Limits>
+      <Parent name="Shoulder"></Parent>
+    </Joint>
+    
+    <Joint name="Palm" ivFile="3DOFCylindric/arm.iv">
+      <DHPars alpha="0.0" a="250.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0" Low="-90"></Limits>
+      <Parent name="ForeArm"></Parent>
+    </Joint>
+	</Joints>
+
+	<ControlSet size="3">
+    <Control name="C1" eigValue="1.0">
+      <DOF name="Shoulder" value="1.0"></DOF> 
+    </Control>
+    <Control name="C2" eigValue="1.0">
+      <DOF name="ForeArm" value="1.0"></DOF> 
+    </Control>
+    <Control name="C3" eigValue="1.0">
+      <DOF name="Palm" value="1.0"></DOF> 
+    </Control>
+	</ControlSet>
+	
+ </Robot>

@@ -1,0 +1,22 @@
+# libSampling 
+
+INCLUDE_DIRECTORIES( ${mt_DIR} ${Boost_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} )
+
+FILE( GLOB SRC_FILES  *.cpp )
+FILE( GLOB HDR_FILES  *.h )
+
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/libmt 
+                     ${COIN_INCLUDE_DIR} )
+                     
+ADD_DEFINITIONS( -DCOIN_DLL )
+
+ADD_LIBRARY( libsampling STATIC ${SRC_FILES} ${HDR_FILES} ) 
+TARGET_LINK_LIBRARIES( libsampling libDNN libproblem )
+
+IF(UNIX)
+ SET_TARGET_PROPERTIES( libsampling PROPERTIES OUTPUT_NAME sampling )
+ENDIF(UNIX)
+
+
+
+ 
