@@ -50,7 +50,7 @@ using namespace libSampling;
 
 namespace libPlanner {
   namespace gridplanner{
-	//! Constructor
+
     gridPlanner::gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
 	{
@@ -67,13 +67,12 @@ namespace libPlanner {
 		addParameter("Step Size", ssize);
 		addParameter("Speed Factor", _speedFactor);
         addParameter("Max. Samples", _maxNumSamples);
-		addParameter("Number Discretization Steps", _stepsDiscretization);
+		addParameter("Discr. Steps", _stepsDiscretization);
 
 		_samples->clear();
 		discretizeCspace();
     }
 
-	//! void destructor
 	gridPlanner::~gridPlanner(){
 			
 	}
@@ -154,13 +153,24 @@ namespace libPlanner {
 							edges.push_back(e);
 							if(_samples->getSampleAt(smplabel)->isFree()==false || 
 							   _samples->getSampleAt(smplabelneighplus)->isFree()==false) 
-								weights.push_back(1000000000.0);
+								weights.push_back(-1.0);
 							else 
 								weights.push_back(1.0);
 						}
 					}
 				}
 			}
+
+
+		}
+
+
+		
+		void  gridPlanner::prunegrid()
+		{
+			negative_edge_weight<WeightMap> filter(get(edge_weight, *g));
+
+			fg = new filteredGridGraph(*g, filter);
 		}
 
 		void  gridPlanner::discretizeCspace()
@@ -180,14 +190,19 @@ namespace libPlanner {
 				cout<<getPotential(i)<<", ";
 			cout<<endl;
 			cout<<endl;
+
+			
+			prunegrid();
+			graph_traits<filteredGridGraph>::edge_iterator i, end;
+			for(tie(i,end)=boost::edges(*fg); i!=end; ++i)
+			{
+				gridVertex s=source(*i,*fg);
+				gridVertex t=target(*i,*fg);
+				cout<<"edge "<<*i<< " from "<< s<< " to "<<t<<endl;
+			}
 		}
 
 
-
-
-
-
-		//!Delete the graph g
     void gridPlanner::clearGraph(){
   		weights.clear();
 	    edges.clear();
@@ -195,12 +210,12 @@ namespace libPlanner {
 	    if(_isGraphSet){
 		    locations.clear();
 		    delete g;
+		    delete fg;
 	    }
 	    _isGraphSet = false;
 		 _solved = false;
     }
   
-    //!Load boost graph data
     void gridPlanner::loadGraph()
 	{
 	    int maxNodes = this->_samples->getSize();

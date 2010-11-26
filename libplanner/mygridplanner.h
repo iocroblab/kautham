@@ -44,6 +44,11 @@
 #if !defined(_MYGRIDPLANNER_H)
 #define _MYGRIDPLANNER_H
 
+
+#include <boost/graph/visitors.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include "localplanner.h"
@@ -56,6 +61,28 @@ using namespace libSampling;
 namespace libPlanner {
   namespace gridplanner{
    namespace mygridplanner{
+
+    //CLASS bfs_distance_visitor
+    // visitor that terminates when we find the goal
+    template <class DistanceMap>
+    class bfs_distance_visitor : public boost::default_bfs_visitor 
+	{
+		public:
+			bfs_distance_visitor(DistanceMap dist) : d(dist) {};
+
+			template <typename Edge, typename Graph> 
+			void tree_edge(Edge e, Graph& g)
+			{
+				typename graph_traits<Graph>::vertex_descriptor s=source(e,g);
+				typename graph_traits<Graph>::vertex_descriptor t=target(e,g);
+				d[t] = d[s] + 1;
+				//potmap[t] = d[t];
+			}
+
+		private:
+			DistanceMap d;
+    };
+
     class MyGridPlanner:public gridPlanner {
 	    public:
         MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
@@ -75,7 +102,8 @@ namespace libPlanner {
 
 		
 	    private:
-		//Add private data and functions
+		//Add private data and functions	
+		void computeNF1(gridVertex  vgoal);
 
 	  };
    }
