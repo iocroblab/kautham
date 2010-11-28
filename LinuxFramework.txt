@@ -42,4 +42,4 @@ aptitude install libboost1.40-dev
 If your distribution does not have this package or you have installed an older boost version using libboost-dev please remove this package and do the follows. Goto http://sodium.resophonic.com/boost-cmake/1.40.0.cmake2/boost-1.40.0.cmake2.tar.gz and save the retrieved file. Once the file is uncompressed, please follow the instructions in http://sodium.resophonic.com/boost-cmake/current-docs/quickstart.html
 
 
-Sunday, november 28th 2010
+Sunday, November 28th 2010
