@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<Problem name="" topology="SE3">
+	<Robot robot="robots/table.rob" scale="0.899">
+		 
+   Robot Path
+	 
+		<Limits name="X" min="-125.0" max="125.0" />
+		<Limits name="Y" min="0.0" max="0.0" />
+		<Limits name="Z" min="-115.0" max="115.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-360.0" max="360.0" />
+		<Home X="-40.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="180.0" />
+	</Robot>
+	<Scene scene="scenes/rooms.iv" scale="1.0">
+		 
+    Scene Path
+
+    
+		<Location TH="90.0" WZ="0.0" WY="1.0" WX="0.0" Z="0.0" Y="25.0" X="0.0"> 
+     Problem of the scene
+    </Location>
+	</Scene>
+	<Planner>
+		<Parameters>
+			<Name>PRM</Name>
+			<LocalPlanner stepSize="0.01">Linear</LocalPlanner>
+			<Parameter name="Drawn Path Link">-1</Parameter>
+			<Parameter name="Max. Neighs">10</Parameter>
+			<Parameter name="Max. Samples">2000</Parameter>
+			<Parameter name="Neigh Thresshold">0.1400000006</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Step Size">0.009999999776</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="2">0.959707 0.0254439</Init>
+				<Goal dim="2">0.570562 0.952205</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
