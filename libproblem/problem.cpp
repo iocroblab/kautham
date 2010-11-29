@@ -54,6 +54,7 @@
 #include <libplanner/prmhandplannerIROS.h>
 #include <libplanner/myprmplanner.h>
 #include <libplanner/mygridplanner.h>
+#include <libplanner/NF1planner.h>
 #include <libutil/pugixml/pugixml.hpp> 
 #include <string>
 #include <fstream>
@@ -72,6 +73,7 @@ using namespace RRT;
 using namespace myplanner;
 using namespace myprmplanner;
 using namespace gridplanner;
+using namespace NF1_planner;
 using namespace mygridplanner;
 using namespace libPlanner;
 using namespace pugi;
@@ -417,7 +419,7 @@ namespace libProblem {
   }
 
   string Problem::plannersNames(){
-    return   "PRM|RRT|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRM RobotHand ICRA J|MyPlanner|MyPRMPlanner|MyGridPlanner";
+    return   "PRM|RRT|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRM RobotHand ICRA J|MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner";
   }
 
   bool Problem::createPlanner( string name, KthReal step ){
@@ -459,7 +461,12 @@ namespace libProblem {
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
 	   else if(name == "MyGridPlanner")
       _planner = new MyGridPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);	   
+	   else if(name == "NF1Planner")
+      _planner = new NF1Planner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
+   
+
    
 
    

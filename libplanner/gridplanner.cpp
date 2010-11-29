@@ -76,34 +76,47 @@ namespace libPlanner {
 	gridPlanner::~gridPlanner(){
 			
 	}
-	
+
+	void gridPlanner::setStepsDiscretization(int numsteps)
+	{
+		if(_stepsDiscretization!=numsteps)
+		{
+			_stepsDiscretization = numsteps;
+			_maxNumSamples = (int)pow((float)_stepsDiscretization, _wkSpace->getDimension());
+			if(_isGraphSet) clearGraph();
+			_samples->clear();
+			discretizeCspace();
+		}
+   }
 		void  gridPlanner::loadgrid(vector<KthReal> &coords, int coord_i)
 		{
 			KthReal delta = 1.0/_stepsDiscretization;
 			KthReal offset = delta/2;
+			//for coordinate coord_i, loop for all discretization steps 
 			for(int j=0; j<_stepsDiscretization; j++) 
 			{
+				//set the value of the coordinate corresponding to step j
 				coords[coord_i] = offset + j*delta;
 				//if not last coordinate, continue  
+				//i.e. by means of a recursive call, all the coordinates are swept
+				//until the last coordinate is reached
 				if(coord_i != _wkSpace->getDimension()-1) 
 				{
 					loadgrid(coords, coord_i + 1);	
 				}
-				//loadgrid called with last coordinate, i.e. the coords of a cell are completed
+				//if coord_i is the last coordinate, then the coords of the cell are completed
+				//and the sample created and collision-checked
 				else
 				{
 					Sample *smp = new Sample(_wkSpace->getDimension());
 					smp->setCoords(coords);
-					/* collisioncheck and print info  
-					cout<<"sample "<<_samples->getSize()<<": ";
-					for(int i=0;i<_wkSpace->getDimension();i++) cout<<coords[i]<<", ";
-					if(_wkSpace->collisionCheck(smp) == true)
-						cout<<"COLLISION - color = "<<smp->getcolor()<<endl;
-					else 
-						cout<< "FREE - color = "<<smp->getcolor()<<endl;
-					*/
 					_wkSpace->collisionCheck(smp);
 					_samples->add(smp);
+					/* Print INFO: collision-cehck nature of samples  
+					cout<<"sample "<<_samples->getSize()<<": ";
+					for(int i=0;i<_wkSpace->getDimension();i++) cout<<coords[i]<<", ";
+					cout<<"SAMPLE COLOR = "<<smp->getcolor()<<endl;
+					*/
 				}
 			}
 		}
@@ -111,26 +124,35 @@ namespace libPlanner {
 
 		void  gridPlanner::connectgrid(vector<int> &index, int coord_i)
 		{
+			//for coordinate coord_i, loop for all discretization steps 
 			for(int j=0; j<_stepsDiscretization; j++) 
 			{
 				index[coord_i] = j;
 				//if not last coordinate, continue  
+				//i.e. by means of a recursive call, all the coordinates are swept
+				//until the last coordinate is reached
 				if(coord_i != _wkSpace->getDimension()-1) 
 				{
 					connectgrid(index, coord_i + 1);	
 				}
-				//connectgrid called with last coordinate, i.e. the indices of a cell are completed
+				//if coord_i is the last coordinate, then the indeices of the cell are completed
+				//and the edges connecting it t its neighbors are computed
 				else
 				{
-					//find sample number from indices
+					//find sample label from indices
 					int smplabel = 0;
 					for(int k=0;k<_wkSpace->getDimension();k++) 
 						smplabel += (int)pow((float)_stepsDiscretization,k)*index[k];
 					
-					//sweep for all directions
+					//sweep for all directions to find (Manhattan) neighbors
+					//neighbors are looked for in the positive drection of the axis
+					//i.e. incrementing the index of the current sample
 					for(int n=0;n<_wkSpace->getDimension();n++)
 					{
-						//find eighbor samples number from indices
+						//find the label of the neighbor samples from indices
+						//a Manhattan neighbor (in the positive direction of an axis)
+						//has all the indices equal, minus one that has 
+						//the value of the index incremented by one
 						int smplabelneighplus = 0;
 						bool plusneighexists = true;
 						for(int k=0;k<_wkSpace->getDimension();k++) 
@@ -145,12 +167,16 @@ namespace libPlanner {
 								smplabelneighplus  += (int)pow((float)_stepsDiscretization,k)*index[k];
 							}
 						}
-						//connect samples
+						//connect samples (if neighbor sample did exist)
 						if(plusneighexists==true)
 						{
+							//edges are defined as pairs of ints indicating the label of the vertices
 							gridEdge *e;
 							e = new gridEdge(smplabel, smplabelneighplus);
 							edges.push_back(e);
+							//put a weight to the edge, depending on the collison nature of the samples
+							//edges linking  at least one collison sample are weighted -1
+							//edges linking free samples are weighted +1
 							if(_samples->getSampleAt(smplabel)->isFree()==false || 
 							   _samples->getSampleAt(smplabelneighplus)->isFree()==false) 
 								weights.push_back(-1.0);
@@ -168,6 +194,8 @@ namespace libPlanner {
 		
 		void  gridPlanner::prunegrid()
 		{
+			//the filtered graph is obtained using the negative_edge_weight function
+			//that filters out edges with a negative weight
 			negative_edge_weight<WeightMap> filter(get(edge_weight, *g));
 
 			fg = new filteredGridGraph(*g, filter);
@@ -175,24 +203,29 @@ namespace libPlanner {
 
 		void  gridPlanner::discretizeCspace()
 		{
+			//create graph vertices, i.e. sample and collision-check at grid cell centers
 			vector<KthReal> coords(_wkSpace->getDimension());
-			//collision-check cells
 			loadgrid(coords, 0);
-			//connedt neighbor cells
+			//connect neighbor grid cells
 			vector<int> index(_wkSpace->getDimension());
 			connectgrid(index, 0);
-			//create grid as graph
+			//create grid as graph (alse sets initial potential values)
 			loadGraph();
 
-			/*verification intial values of potential */
+			/*Print INFO: verification intial values of potential 
 			cout<<"POTENTIAL:";
 			for(unsigned int i=0;i<num_vertices(*g); i++) 
 				cout<<getPotential(i)<<", ";
 			cout<<endl;
 			cout<<endl;
+			*/
 
-			
+			//compute the filtered graph that do not consider edges with
+			//negative weight (those connecting to a collision vertex)
 			prunegrid();
+
+			//Print INFO: edges of filtered graph
+			/*
 			graph_traits<filteredGridGraph>::edge_iterator i, end;
 			for(tie(i,end)=boost::edges(*fg); i!=end; ++i)
 			{
@@ -200,10 +233,12 @@ namespace libPlanner {
 				gridVertex t=target(*i,*fg);
 				cout<<"edge "<<*i<< " from "<< s<< " to "<<t<<endl;
 			}
+			*/
 		}
 
 
-    void gridPlanner::clearGraph(){
+    void gridPlanner::clearGraph()
+	{
   		weights.clear();
 	    edges.clear();
 		_samples->clearNeighs();
@@ -213,7 +248,7 @@ namespace libPlanner {
 		    delete fg;
 	    }
 	    _isGraphSet = false;
-		 _solved = false;
+		_solved = false;
     }
   
     void gridPlanner::loadGraph()
@@ -221,10 +256,12 @@ namespace libPlanner {
 	    int maxNodes = this->_samples->getSize();
 		unsigned int num_edges = edges.size(); 
       
-		// create graph
+		// create graph with maxNodes nodes
 		g = new gridGraph(maxNodes);
 		WeightMap weightmap = get(edge_weight, *g);
 
+		//load edges stored in edges array, and put the
+		//corresponding weight, stored in the weights array
 		for(std::size_t j = 0; j < num_edges; ++j) 
 		{
 			edge_descriptor e; 
@@ -235,12 +272,12 @@ namespace libPlanner {
 		}
 
 		//locations are the pointer to the samples of cspace that 
-		//are at each node of the graph and is used to compute the
-		//distance when using the heuristic (function distance_heuristic)
+		//are at each node of the graph 
 		for(unsigned int i=0;i<num_vertices(*g); i++)
 		    locations.push_back( _samples->getSampleAt(i) );
 
-		//set potential variable
+		//set initial potential vañues with random numbers in the range [0,1]
+		//if the cell is free, or to value 10 if it is in collsion
 		potmap = get(potential_value_t(), *g);
 		
         LCPRNG* rgen = new LCPRNG(15485341);//15485341 is a big prime number
@@ -252,8 +289,6 @@ namespace libPlanner {
 			}
 			else setPotential(i, 10);
 		}
-
-
 		_isGraphSet = true;
 	}
 

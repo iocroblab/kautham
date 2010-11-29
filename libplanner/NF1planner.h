@@ -41,8 +41,13 @@
  
  
 
-#if !defined(_MYGRIDPLANNER_H)
-#define _MYGRIDPLANNER_H
+#if !defined(_NF1PLANNER_H)
+#define _NF1PLANNER_H
+
+
+#include <boost/graph/visitors.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/breadth_first_search.hpp>
 
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
@@ -55,12 +60,34 @@ using namespace libSampling;
 
 namespace libPlanner {
   namespace gridplanner{
-   namespace mygridplanner{
-    class MyGridPlanner:public gridPlanner {
+   namespace NF1_planner{
+
+    //CLASS bfs_distance_visitor
+    // visitor that terminates when we find the goal
+    template <class DistanceMap>
+    class bfs_distance_visitor : public boost::default_bfs_visitor 
+	{
+		public:
+			bfs_distance_visitor(DistanceMap dist) : d(dist) {};
+
+			template <typename Edge, typename Graph> 
+			void tree_edge(Edge e, Graph& g)
+			{
+				typename graph_traits<Graph>::vertex_descriptor s=source(e,g);
+				typename graph_traits<Graph>::vertex_descriptor t=target(e,g);
+				d[t] = d[s] + 1;
+				//potmap[t] = d[t];
+			}
+
+		private:
+			DistanceMap d;
+    };
+
+    class NF1Planner:public gridPlanner {
 	    public:
-        MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
+        NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
           WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
-        ~MyGridPlanner();
+        ~NF1Planner();
         
 		bool trySolve();
 		bool setParameters();
@@ -69,13 +96,13 @@ namespace libPlanner {
 
 		protected:
 		//Add protected data and functions
-		int _firstParameter;
-		double _secondParameter;
-		double _thirdParameter;	
 
 		
 	    private:
-		//Add private data and functions
+		//Add private data and functions	
+		void computeNF1(gridVertex  vgoal);
+
+		
 
 	  };
    }

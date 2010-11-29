@@ -168,6 +168,9 @@ namespace libPlanner {
 
 		//!Function that retruns the vector of potential values
 		inline PotentialMap getpotmat(){return potmap;};
+
+		//Function to setup the value of _stepsDiscretization and recompute the grid
+		void setStepsDiscretization(int numsteps);
 	  };
    }
 }
