@@ -74,7 +74,7 @@ namespace libPlanner {
 	//!a potential value associated to the vertices and a cost associated
 	//!to the edges (both defined as KthReals)
     typedef boost::adjacency_list<boost::listS, boost::vecS, 
-		boost::undirectedS, boost::property<potential_value_t, int>, 
+		boost::undirectedS, boost::property<potential_value_t, KthReal>, 
 		boost::property<boost::edge_weight_t, cost> > gridGraph;
 
     typedef gridGraph::vertex_descriptor gridVertex;
@@ -132,6 +132,12 @@ namespace libPlanner {
 
 		//!Deiscretization step of the grid
 		int _stepsDiscretization;
+
+		//!Potential value of the obstacles
+		KthReal _obstaclePotential;
+
+		//!Potential value of the goal cell
+		KthReal _goalPotential;
 
 		//!Vector of edges used in the construction of the grid
 		vector<gridEdge*> edges;

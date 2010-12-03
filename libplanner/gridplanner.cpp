@@ -57,6 +57,8 @@ namespace libPlanner {
 		//set intial values
 		_stepsDiscretization = 4;
 	    _maxNumSamples = (int)pow((float)_stepsDiscretization, _wkSpace->getDimension());
+		_obstaclePotential = 10.0;
+		_goalPotential = 0.0;
 
 		//set intial values from parent class data
 		_speedFactor = 1;
@@ -287,7 +289,7 @@ namespace libPlanner {
 			{
 				setPotential(i, rgen->d_rand()); //random initialization of potential
 			}
-			else setPotential(i, 10);
+			else setPotential(i, _obstaclePotential);
 		}
 		_isGraphSet = true;
 	}

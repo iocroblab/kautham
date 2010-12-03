@@ -45,31 +45,31 @@
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include "localplanner.h"
-#include "NF1planner.h"
+#include "HFplanner.h"
 
 using namespace libSampling;
 
 namespace libPlanner {
   namespace gridplanner{
-   namespace NF1_planner{
+   namespace HF_planner{
 	//! Constructor
-    NF1Planner::NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
+    HFPlanner::HFPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               gridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
 	{
 		//set intial values
 	  
-		_guiName = "My Grid Planner";
+		_guiName = "HF Planner";
 		removeParameter("Max. Samples");
 		removeParameter("Step Size");
     }
 
 	//! void destructor
-	NF1Planner::~NF1Planner(){
+	HFPlanner::~HFPlanner(){
 			
 	}
 	
 	//! setParameters sets the parameters of the planner
-    bool NF1Planner::setParameters(){
+    bool HFPlanner::setParameters(){
       try{
         HASH_S_K::iterator it = _parameters.find("Speed Factor");
         if(it != _parameters.end())
@@ -94,61 +94,49 @@ namespace libPlanner {
 
 	
 
-	void NF1Planner::computeNF1(gridVertex  vgoal)
+	void HFPlanner::computeHF(gridVertex  vgoal)
 	{
-
-		graph_traits<gridGraph>::vertex_iterator vi, vi_end;
-
-		/* Prints adjacencies 
-
-		graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
-		for(tie(vi,vi_end)=vertices(*g); vi!=vi_end; ++vi)
-		{
-			cout<<*vi<< " adjacent to: ";
-			for(tie(avi,avi_end)=adjacent_vertices(*vi, *g); avi!=avi_end; ++avi)
-			{
-				cout<<*avi<<" ,";
-			}
-			cout<<endl;
-		}
-		*/
-
 		//initialize potential to -1 and goal to 0
-		for(tie(vi,vi_end)=vertices(*g); vi!=vi_end; ++vi)	setPotential(*vi, -1);
-		setPotential(vgoal, 0);
-		//propagate potential
-		breadth_first_search(*fg, vgoal, visitor(bfs_distance_visitor<PotentialMap>(getpotmat())));
-
-		graph_traits<filteredGridGraph>::vertex_iterator i, end;
-		for(tie(i,end)=vertices(*fg); i!=end; ++i)
+		setPotential(vgoal, _goalPotential);
+		//relax potential
+		graph_traits<gridGraph>::vertex_iterator vi, vend;
+		graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
+		for(int i=0; i<10; i++)
 		{
-			cout<<"vertex "<< *i<<" dist "<<getPotential(*i)<<endl;
+			for(tie(vi,vend)=vertices(*g); vi!=vend; ++vi)
+			{
+				if(getPotential(*vi) == _goalPotential ||
+				   getPotential(*vi) == _obstaclePotential) continue;
+				
+
+				KthReal p=0;
+				int count=0;
+				for(tie(avi,avi_end)=adjacent_vertices(*vi, *g); avi!=avi_end; ++avi)
+				{
+					count++;
+					p+=getPotential(*avi);
+				}
+				setPotential(*vi, p/count);
+			}
 		}
 	}
 
 	  
 	//! function to find a solution path
-		bool NF1Planner::trySolve()
+		bool HFPlanner::trySolve()
 		{
-			//cout << "MyGridPlanner::trySolve - now a simple rectilinear connection without collision checking..."<<endl<<flush;
-
+			//verify init and goal samples
 			if(goalSamp()->isFree()==false || initSamp()->isFree()==false) 
 			{
 				cout<<"init or goal configuration are in COLLISION!"<<endl;
 				return false;
 			}
 
+			//set init and goal vertices
 			gridVertex  vg = _samples->indexOf(goalSamp());
 			gridVertex  vi = _samples->indexOf(initSamp());
+			
 
-			static int svg = -1;
-			
-			if(svg == -1 || svg!=vg){
-				//recompute navigation function because goal has changed
-				svg = vg;
-				computeNF1(vg);
-			}
-			
 			Sample* curr;
 			gridVertex vc;
 			gridVertex vmin;
@@ -156,75 +144,59 @@ namespace libPlanner {
 			curr = _init;
 			vc = vi;
 
-			
-			PotentialMap pm = getpotmat();
-
-			//if navigation function did'nt arrive at initial cell, return false
-			if(pm[vi] == -1) 
-			{
-				cout<<"CONNECTION NOT POSSIBLE: Init and goal configurations not on the same connected component..."<<endl;
-				return false;
-			}
-
-			//otherwise follow the negated values
 			_path.clear();
 			clearSimulationPath();
-			graph_traits<filteredGridGraph>::adjacency_iterator avi, avi_end;
+			graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
 
-			while(vc != vg)
+			//relax HF
+			computeHF(vg);
+			int count = 0;
+			int countmax = 100;
+			std::vector<int> vpath;
+			vpath.push_back(vi);
+			_path.push_back(locations[vi]);
+
+			while(vc != vg && count < countmax)
 			{
-				_path.push_back(locations[vc]);
 				vmin = vc;
-				for(tie(avi,avi_end)=adjacent_vertices(vc, *fg); avi!=avi_end; ++avi)
+				for(tie(avi,avi_end)=adjacent_vertices(vc, *g); avi!=avi_end; ++avi)
 				{
-					KthReal pneigh = pm[*avi];
-					KthReal pcurr = pm[vmin];
-					if(pneigh < pcurr) vmin = *avi; 
-					//if(pm[*avi] < pm[vmin]) vmin = *avi; 
+					KthReal pneigh = getPotential(*avi);
+					KthReal pcurr = getPotential(vmin);
+					if(pneigh < pcurr) {
+						vmin = *avi; 
+						vpath.push_back(vmin);
+						_path.push_back(locations[vmin]);
+					}
 				}
-				vc = vmin;
+				if(vc == vmin) {
+					//relax HF again and resume
+					computeHF(vg);
+					_path.clear();
+					vpath.clear();
+					vc = vi;
+					count++;
+				}
+				else vc = vmin;
 			}
-			_path.push_back(locations[vg]);
-			_solved = true;
+			if(count < countmax) _solved = true;
+			else
+			{
+				_path.clear();
+				vpath.clear();
+				_solved = false;
+			}
+			if(_solved)
+			{
+				cout<<"PATH:";
+				for(int i=0;i<vpath.size();i++)
+				{
+					cout<<" "<<vpath[i]<<"("<<getPotential(vpath[i])<<"), ";
+				}
+				cout<<endl;
+			}
+
 			return _solved;
-			/*
-			_path.clear();
-			clearSimulationPath();
-			_path.push_back(_init);
-			_path.push_back(_goal);
-			_solved = true;
-			return _solved;
-			*/
-
-			/*
-			The available resorces to implement your planner are:
-			1) Grid represented as a graph, already created in parent class gridplanner. It contains
-				both free and collision samples.
-
-			2) setPotential(int i, KthReal value) and getPotential(int i): functions to set and get the values of 
-				the potential function.
-
-			3) As a derived class from planner, also the following is available:
-				3a) A sampler to obtain more samples:
-					Sample *smp;
-					smp = _sampler->nextSample();
-			      or a way to determine new sample at a given configuration, e.g.:
-					Sample *smp = new Sample();
-					KthReal* coords = new KthReal[_wkSpace->getDimension()];
-					for(int k = 0; k < _wkSpace->getDimension(); k++) coords[k] = 0.0;
-					smp->setCoords(coords);
-
-			   3b) A collision-checker to check for collision at a given sample smp:
-					_wkSpace->collisionCheck(smp)
-
-			   3c) A local planner to connect two samples
-					_locPlanner->canConect();
-
-			The solution must be specified as a sequence of samples (vector _path)
-		  	*/
-
-			
-			
 		}
 	  }
     }

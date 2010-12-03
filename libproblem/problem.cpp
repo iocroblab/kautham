@@ -55,6 +55,7 @@
 #include <libplanner/myprmplanner.h>
 #include <libplanner/mygridplanner.h>
 #include <libplanner/NF1planner.h>
+#include <libplanner/HFplanner.h>
 #include <libutil/pugixml/pugixml.hpp> 
 #include <string>
 #include <fstream>
@@ -74,6 +75,7 @@ using namespace myplanner;
 using namespace myprmplanner;
 using namespace gridplanner;
 using namespace NF1_planner;
+using namespace HF_planner;
 using namespace mygridplanner;
 using namespace libPlanner;
 using namespace pugi;
@@ -419,7 +421,7 @@ namespace libProblem {
   }
 
   string Problem::plannersNames(){
-    return   "PRM|RRT|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRM RobotHand ICRA J|MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner";
+    return   "PRM|RRT|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRM RobotHand ICRA J|MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
   }
 
   bool Problem::createPlanner( string name, KthReal step ){
@@ -456,15 +458,23 @@ namespace libProblem {
    	 else if(name == "MyPlanner")
       _planner = new MyPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01); 
-	  else if(name == "MyPRMPlanner")
+	  
+	 else if(name == "MyPRMPlanner")
       _planner = new MyPRMPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
-	   else if(name == "MyGridPlanner")
+	   
+	  else if(name == "MyGridPlanner")
       _planner = new MyGridPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);	   
+	   
 	   else if(name == "NF1Planner")
       _planner = new NF1Planner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);  
+	   
+	   else if(name == "HFPlanner")
+      _planner = new HFPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
+   
    
 
    
