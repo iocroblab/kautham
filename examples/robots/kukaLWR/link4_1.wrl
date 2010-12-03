@@ -4816,4 +4816,102 @@ DEF root Separator {
         1754, -1, 1754, 1755, 1741, 1756, 1757, -1 ]
 
   }
+  DEF axis Separator {
+
+    DEF X Separator {
+
+      Material {
+        ambientColor 1 0 0
+        diffuseColor 1 0 0
+
+      }
+      Rotation {
+        rotation -0 -0 -1  1.5707999
+
+      }
+      Translation {
+        translation 0 100 0
+
+      }
+      Cylinder {
+        height 200
+
+      }
+      Translation {
+        translation 0 100 0
+
+      }
+      Cone {
+        bottomRadius 5
+        height 5
+
+      }
+      Text2 {
+        string "X"
+
+      }
+    }
+    DEF Y Separator {
+
+      Material {
+        ambientColor 0 1 0
+        diffuseColor 0 1 0
+
+      }
+      Translation {
+        translation 0 100 0
+
+      }
+      Cylinder {
+        height 200
+
+      }
+      Translation {
+        translation 0 100 0
+
+      }
+      Cone {
+        bottomRadius 5
+        height 5
+
+      }
+      Text2 {
+        string "Y"
+
+      }
+    }
+    DEF Z Separator {
+
+      Material {
+        ambientColor 0 0 1
+        diffuseColor 0 0 1
+
+      }
+      Rotation {
+        rotation 1 0 0  1.5707999
+
+      }
+      Translation {
+        translation 0 100 0
+
+      }
+      Cylinder {
+        height 200
+
+      }
+      Translation {
+        translation 0 100 0
+
+      }
+      Cone {
+        bottomRadius 5
+        height 5
+
+      }
+      Text2 {
+        string "Z"
+
+      }
+    }
+  }
 }
