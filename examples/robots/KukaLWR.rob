@@ -14,15 +14,15 @@
     <Joint name="Link1" ivFile="kukaLWR/link1.wrl">
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="310.0"  ></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
       <Weight weight="1.0"></Weight>
     <Parent name="Base"></Parent>
     </Joint>
     
     <Joint name="Link2" ivFile="kukaLWR/link2.wrl">
-      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <DHPars  alpha="90.0" a="0.0" theta="-90.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="210.0" Low="-30.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Link1"></Parent>
     </Joint>
@@ -30,23 +30,23 @@
     <Joint name="Link3" ivFile="kukaLWR/link3.wrl">
       <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="400.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Link2"></Parent>
     </Joint>
     
     <Joint name="Link4" ivFile="kukaLWR/link4.wrl">
-      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <DHPars  alpha="-90.0" a="0.0" theta="180.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="120.0" Low="-120.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Link3"></Parent>
     </Joint>
     
     <Joint name="Link5" ivFile="kukaLWR/link5.wrl">
-      <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="390.0"></DHPars>
+      <DHPars  alpha="-90.0" a="0.0" theta="180.0" d="390.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Link4"></Parent>
     </Joint>
@@ -54,7 +54,7 @@
     <Joint name="Link6" ivFile="kukaLWR/link6.wrl">
       <DHPars  alpha="90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="120.0" Low="-120.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Link5"></Parent>
     </Joint>
@@ -62,7 +62,7 @@
     <Joint name="Link7" ivFile="kukaLWR/link7.wrl">
       <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="78.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Link6"></Parent>
     </Joint>
