@@ -45,6 +45,7 @@
 #include <libplanner/ML_locplan.h>
 
 #include <libplanner/myplanner.h>
+#include <libplanner/drmplanner.h>
 #include <libplanner/prmplanner.h>
 #include <libplanner/rrtplanner.h>
 #include <libplanner/prmhandplannerICRA.h>
@@ -69,6 +70,7 @@
 
 
 using namespace std;
+using namespace DRM;
 using namespace PRM;
 using namespace RRT;
 using namespace myplanner;
@@ -421,7 +423,7 @@ namespace libProblem {
   }
 
   string Problem::plannersNames(){
-    return   "PRM|RRT|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRM RobotHand ICRA J|MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
+    return   "DRM|PRM|RRT|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRM RobotHand ICRA J|MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
   }
 
   bool Problem::createPlanner( string name, KthReal step ){
@@ -429,7 +431,10 @@ namespace libProblem {
       delete _planner;
 
     if(_locPlanner == NULL ) return false;
-    if(name == "PRM")
+    if(name == "DRM")
+      _planner = new DRMPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
+    else if(name == "PRM")
       _planner = new PRMPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 	else if(name == "RRT")
