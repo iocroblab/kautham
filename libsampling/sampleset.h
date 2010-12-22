@@ -158,6 +158,9 @@ namespace libSampling{
 	inline NEIGHSEARCHTYPE getTypeSearch(){return typesearch;};
 	inline void setWorkspacePtr(WorkSpace* wsptr){ws = wsptr;};
 	inline bool isAnnSet(){return setANN;};
+  inline void setMaxNeighs(unsigned int mn){maxNeighs = mn;}
+  inline unsigned int getMaxNeighs(){return maxNeighs;}
+
   private:
     //! Vector of pointers to the samples.
     vector<Sample*>         samples;
@@ -172,7 +175,7 @@ namespace libSampling{
 	//!maximum number of samples of the cspace (to reserve memory for data_pts)
 	unsigned int maxSamples;
 	//!maximum number neighs per sample
-	int maxNeighs;
+	unsigned int maxNeighs;
 	//!ANN search structure
 	MultiANN *MAG; 
 	//!array of points for the ANN search for neighs
