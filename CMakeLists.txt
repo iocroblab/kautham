@@ -14,12 +14,12 @@ FIND_PACKAGE( mt REQUIRED )
 # Required common packages
 ##############################################################################
 
-FIND_PACKAGE( Boost)
+FIND_PACKAGE( Boost COMPONENTS  system serialization thread REQUIRED )
 IF(Boost_FOUND)
   MESSAGE(STATUS "Boost library found at first attempt.")
 ELSE(Boost_FOUND)
   SET( BOOST_ROOT $ENV{BOOSTDIR})
-	FIND_PACKAGE( Boost REQUIRED  system serialization thread)
+	FIND_PACKAGE( Boost COMPONENTS  system serialization thread REQUIRED )
 	IF(Boost_FOUND)
 		MESSAGE(STATUS "Boost library found in " ${BOOST_ROOT})
         #INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})

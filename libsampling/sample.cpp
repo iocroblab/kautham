@@ -190,17 +190,17 @@ namespace libSampling{
 	else{
 		if( spc == Kautham::CONFIGSPACE && _config.size() > 0   ){
 		  for(unsigned int i = 0; i < _config.size(); i++){
-			SE3Conf& a = _config.at(i).getSE3();
-			dist += a.getDistance2(smp->getMappedConf().at(i).getSE3());
+			  SE3Conf& a = _config.at(i).getSE3();
+			  dist += a.getDistance2(smp->getMappedConf().at(i).getSE3());
 
-			RnConf& b = _config.at(i).getRn();
-			if( b.getDim() != 0 )
-			  dist += b.getDistance2(smp->getMappedConf().at(i).getRn());
+			  RnConf& b = _config.at(i).getRn();
+			  if( b.getDim() != 0 )
+			    dist += b.getDistance2(smp->getMappedConf().at(i).getRn());
 		  }
 		}else{
 		  vector<KthReal>& other = smp->getCoords();
 		  for(unsigned int i = 0; i < _coords.size(); i++)
-			dist += (_coords.at(i) - other.at(i))*(_coords.at(i) - other.at(i));
+			  dist += (_coords.at(i) - other.at(i))*(_coords.at(i) - other.at(i));
 		}
 	}
 
