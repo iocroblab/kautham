@@ -132,8 +132,7 @@ namespace Kautham{
   enum SPACETYPE{
     SAMPLEDSPACE,
     CONTROLSPACE,
-    CONFIGSPACE,
-	BRONCOSPACE
+    CONFIGSPACE
   };
 
   enum PROBLEMSTATE{

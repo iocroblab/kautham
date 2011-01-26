@@ -77,7 +77,7 @@ namespace libPlanner{
 
         void RRTPlanner::saveData(){
             //cout << "RRTPlanner::saveData not implemented"<<endl<<flush;
-			float Distinitgoal = _init->getDistance(_goal,BRONCOSPACE);
+			float Distinitgoal = _init->getDistance(_goal,CONFIGSPACE);
 			cout<<" Distinitgoal: "<<Distinitgoal<<endl<<flush;
         }
 
@@ -218,7 +218,8 @@ namespace libPlanner{
 				values[0] = rand0;//rand0/100;
 				values[1] = rand1;//coordA[6]+rand1/100;
 				values[2] = -rand2/100;//(rand2-0.5)/50;
-				coordnew = _robot->constrainedinterpolate(coordA,values);
+  //ALEX comments it.
+   //     coordnew = _robot->constrainedinterpolate(coordA,values);
 					
 				Samplenew->setCoords(coordnew);	
 				dist_i = Samplenew->getDistance(sampleB,CONFIGSPACE);

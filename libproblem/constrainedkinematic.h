@@ -54,15 +54,14 @@ namespace libProblem{
   class Robot;
   class ConstrainedKinematic:public KauthamObject{
   public:
+    friend class Robot;
     ConstrainedKinematic(Robot* rob);
 
     virtual ~ConstrainedKinematic(void);
 
-    virtual RobConf		solve(vector<KthReal> &values)=0;
+    virtual bool		  solve()=0;
 
-    virtual bool		setParameters()=0;
-
-	virtual void		setvalues(KthReal currentvalues, int i)=0;
+    virtual bool		  setParameters()=0;
 
 	  //!	This method allow to setup the target.
     void              setTarget(vector<KthReal> &target);

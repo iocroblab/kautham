@@ -66,7 +66,7 @@ namespace libGUI {
 	    
 		_ptProblem->setCurrentControls(values,_globalOffset);
 		if(_robot != NULL){
-			_robot->SolveConstrainedKinematics(values);
+			_robot->ConstrainedKinematics(values);
 		}
 	}
 

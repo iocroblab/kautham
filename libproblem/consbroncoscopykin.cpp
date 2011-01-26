@@ -7,15 +7,20 @@ namespace libProblem {
 	ConsBroncoscopyKin::ConsBroncoscopyKin(Robot* const rob):ConstrainedKinematic(rob){
 		
 		_robot = rob;
-		_robConf.setRn(rob->getNumJoints());	
-		_currentvalues[0] = 0; 
-		_currentvalues[1] = 0; 
-		_currentvalues[2] = 0;
+		_robConf.setRn(_robot->getNumJoints());	
+		_currentvalues[0] = 0.; 
+		_currentvalues[1] = 0.; 
+		_currentvalues[2] = 0.;
 
 	}
 	
 	ConsBroncoscopyKin::~ConsBroncoscopyKin(){
 	}
+
+  bool ConsBroncoscopyKin::solve(){
+    _robConf = solve(_target);
+    return true;
+  }
 
 	RobConf ConsBroncoscopyKin::solve(vector<KthReal> &values){
 
@@ -85,8 +90,86 @@ namespace libProblem {
 
 	}
 
-	bool      ConsBroncoscopyKin::setParameters(){
+	bool ConsBroncoscopyKin::setParameters(){
 		return true;
 	}
 
+  vector<float> ConsBroncoscopyKin::constrainedinterpolate(vector<float> coords, vector<KthReal> &values){
+	  vector<KthReal> vecTmp;
+	  _robot->control2Parameters(coords,vecTmp);
+	  vector<KthReal> vecTmpSE3;
+	  vecTmpSE3.resize(7);
+
+	  for (int i=0; i<7; i++){
+		  vecTmpSE3[i] = vecTmp[i];
+	  }
+
+    //vector<KthReal> currentcoords = _robot->deNormalizeSE3(vecTmpSE3);
+	  //_currentConf.setSE3(currentcoords);
+  			
+	  RobConf _RobConf = solve(values);
+	  _currentvalues[0] = 0.;
+	  _currentvalues[1] = 0.;
+	  _currentvalues[2] = 0.;
+	  SE3Conf & _SE3Conf = _RobConf.getSE3();
+	  RnConf & _RnConf = _RobConf.getRn();
+	  vector<float>& coordSE3 = _SE3Conf.getCoordinates();
+	  vector<float> Params = _SE3Conf.getParams();
+	  vector<float>& coordRn = _RnConf.getCoordinates();
+	  vector<float> coord;
+	  coord.resize(7);
+
+	  coord [0] = (coordSE3[0] / 1000) + 0.5;
+	  coord [1] = (coordSE3[1] / 1000) + 0.5;
+	  coord [2] = (coordSE3[2] / 1000) + 0.5;
+	  coord [3] = Params[0];
+	  coord [4] = Params[1];
+	  coord [5] = Params[2] - 0.5;
+	  coord [6] = values[1];
+	  return coord;
+  }
+
+  vector<KthReal> ConsBroncoscopyKin::constrainedparameter2Pose(vector<KthReal> &values){
+    std::vector<KthReal> coords(6);
+    SE3Conf tmp;
+
+    RobConf* _CurrentPos = _robot->getCurrentPos();
+	  RnConf& _RnConf = _CurrentPos->getRn();
+	  SE3Conf& _SE3Conf = _CurrentPos->getSE3();
+
+	  vector<KthReal>& PosSE3 = _SE3Conf.getPos();
+	  vector<KthReal>& OriSE3 = _SE3Conf.getOrient();
+
+    mt::Point3 tempTran(PosSE3[0],PosSE3[1],PosSE3[2]);
+    mt::Rotation tempRot(OriSE3[0],OriSE3[1],OriSE3[2],OriSE3[3]);
+
+    //mt::Transform in_home, in_world;
+    //in_home.setRotation(tempRot);
+    //in_home.setTranslation(tempTran);
+
+    //in_world = _homeTrans * in_home;      // Obtaining it in the world frame.
+    //tempTran = in_world.getTranslation();
+    //tempRot  = in_world.getRotation();
+
+    coords.resize(7); // Resizing is needed to use quaternions
+    coords[0] = tempTran[0];
+    coords[1] = tempTran[1];
+    coords[2] = tempTran[2];
+    coords[3] = tempRot[0];
+    coords[4] = tempRot[1];
+    coords[5] = tempRot[2];
+    coords[6] = tempRot[3];
+
+    return coords;
+  }
+
+  void ConsBroncoscopyKin::SolveConstrainedKinematics(vector<KthReal> &values){
+    vector<KthReal> vecTmp;
+    //_robot->_hasChanged = true;
+    _robot->control2Parameters(values,vecTmp);
+    vector<KthReal> coords = constrainedparameter2Pose(vecTmp);
+      _robot->getCurrentPos()->setSE3(coords);    
+    RobConf _robconf = solve(values);
+    _robot->Kinematics(_robconf);
+  }
 }

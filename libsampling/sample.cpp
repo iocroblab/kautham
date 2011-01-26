@@ -171,23 +171,7 @@ namespace libSampling{
     // Each sample has a vector<RobConf> who has a SE3 and a Rn configuration
     // inside.
     KthReal dist=0.0;
-	if (spc == Kautham::BRONCOSPACE && _config.size() > 0){
-		vector<float> coordsA = this->getCoords();
-		//vector<KthReal> vecTmpA; control2Parameters(coordsA,vecTmpA);
-		//vector<KthReal> vecTmpSE3A; vecTmpSE3A.resize(7);
-		//for (int i=0; i<7; i++){vecTmpSE3A[i] = vecTmpA[i];}
-		//vector<KthReal> currentcoordsA = deNormalizeSE3(vecTmpSE3A);
-		
-		vector<float> coordsB = smp->getCoords();
-		//vector<KthReal> vecTmpB; control2Parameters(coordsB,vecTmpB);
-		//vector<KthReal> vecTmpSE3B; vecTmpSE3B.resize(7);
-		//for (int i=0; i<7; i++){vecTmpSE3B[i] = vecTmpB[i];}
-		//vector<KthReal> currentcoordsB = deNormalizeSE3(vecTmpSE3B);
 
-		dist = pow(coordsA[1]-coordsB[1],2)+pow(coordsA[2]-coordsB[2],2)+pow(coordsA[3]-coordsB[3],2);
-		dist = dist * 1000000;
-	}
-	else{
 		if( spc == Kautham::CONFIGSPACE && _config.size() > 0   ){
 		  for(unsigned int i = 0; i < _config.size(); i++){
 			  SE3Conf& a = _config.at(i).getSE3();
@@ -202,7 +186,6 @@ namespace libSampling{
 		  for(unsigned int i = 0; i < _coords.size(); i++)
 			  dist += (_coords.at(i) - other.at(i))*(_coords.at(i) - other.at(i));
 		}
-	}
 
     return sqrt(dist);
   }
@@ -213,10 +196,7 @@ namespace libSampling{
     // Each sample has a vector<RobConf> who has a SE3 and a Rn configuration
     // inside.
     KthReal dist=0.0;
-	if (spc == Kautham::BRONCOSPACE && _config.size() > 0){
-		dist = 0.0;
-	}
-	else{
+	
 		if( spc == Kautham::CONFIGSPACE && _config.size() > 0   ){
 
 		  for(unsigned int i = 0; i < _config.size(); i++){
@@ -236,7 +216,6 @@ namespace libSampling{
 		  for(unsigned int i = 0; i < _coords.size(); i++)
 			dist += (_coords.at(i) - other.at(i))*(_coords.at(i) - other.at(i));
 		}
-	}
     
     return sqrt(dist);
   }

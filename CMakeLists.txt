@@ -40,7 +40,7 @@ IF( WIN32 )
 ENDIF( WIN32 )
 
 OPTION( KAUTHAM_GUI "Build the gui version" ON )
-OPTION( USE_HAPTIC "Build with OpenHaptics" ON )
+OPTION( USE_HAPTIC "Build with OpenHaptics" OFF )
 OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
 
 INCLUDE_DIRECTORIES( libutil )

@@ -514,9 +514,9 @@ namespace libGUI {
   }
 
 	bool GUI::restart(){
-    for(int i=0;i<viewsTab->count()-1;i++)
+    for(int i=viewsTab->count();i>1;i--)
       viewsTab->removeTab(1);
-    for(int i=0;i<propertiesTab->count();i++)
+    for(int i=propertiesTab->count();i>0;i--)
       propertiesTab->removeTab(1);
 
     problemTree->clear();

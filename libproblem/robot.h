@@ -249,11 +249,9 @@ namespace libProblem {
     inline void           setLinkPathDrawn(int n){_linkPathDrawn = n;}
     bool                  setConstrainedKinematic(CONSTRAINEDKINEMATICS type);  
     bool                  setConstrainedKinematicParameter(string name, KthReal value);
-	ConstrainedKinematic* getCkine(){return _constrainKin;}
+	  ConstrainedKinematic* getCkine(){return _constrainKin;}
     RobConf&              ConstrainedKinematics(vector<KthReal> &target);
-	void				  SolveConstrainedKinematics(vector<KthReal> &values);
-	vector<KthReal>		  constrainedparameter2Pose(vector<KthReal> &values);
-	vector<float>		  constrainedinterpolate(vector<float> coords, vector<KthReal> &values);
+
 
   private:
     //! This method updates the absolute position and orientation of each link in the robot.
