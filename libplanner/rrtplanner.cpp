@@ -5,46 +5,55 @@
 #include "localplanner.h"
 #include "rrtplanner.h"
 #include <stdio.h>
+//#include <libGUI/sampleswidget.h>
 
 #include <libsampling/lcprng.h>
 
 namespace libPlanner{
     namespace RRT{
-
-        RRTPlanner::RRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
+      RRTPlanner::RRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
                                WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize)
                                    :Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize){
 			
-			_wkSpace = ws;			
-			_neighThress = 50.0;
-            _kNeighs = 10;
-            _isGraphSet = false;
-            _maxNumSamples = 200;
-            _speedFactor = 10;
-            _solved = false;
-			      ssize = 5;
-            setStepSize(ssize);//also changes stpssize of localplanner
+			  _wkSpace = ws;			
+			  _neighThress = 50.0;
+        _kNeighs = 1;
+        _isGraphSet = false;
+        _maxNumSamples = 1000;
+        _speedFactor = 1;
+			  _extDist = 5;
+        _ssize=ssize;
+        //ssize=0.01;
 
-            _idName = "RRT Planner";
-            addParameter("DELTA", ssize);
-            addParameter("SAMPLES", _maxNumSamples);
-            addParameter("SPEED", _speedFactor);
+        _solved = false;
+			  setStepSize(0.01);//also changes stepsize of localplanner
 
-            _labelCC=0;
+        _idName = _guiName = "RRT";
+        addParameter("DELTA", ssize);
+			  //removeParameter("Max. Neighs");
+        addParameter("SAMPLES", _maxNumSamples);
+        addParameter("SPEED", _speedFactor);
+			  addParameter("EXTEND_DISTANCE", _extDist); // how far the smp_new is taken
 
-            _samples->setTypeSearch(ANNMETHOD);//(BRUTEFORCE);//
-            _samples->setWorkspacePtr(_wkSpace);
-            _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+        _labelCC=0;
+
+        _samples->setTypeSearch(ANNMETHOD);//(BRUTEFORCE);//
+        _samples->setWorkspacePtr(_wkSpace);
+        _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+
         }
 
         RRTPlanner::~RRTPlanner(){
         }
 
+		// Set the GUI parameters 
         bool RRTPlanner::setParameters(){
             try{
                 HASH_S_K::iterator it = _parameters.find("DELTA");
-                if(it != _parameters.end())
+                if(it != _parameters.end()){
                     setStepSize(it->second);//also changes stpssize of localplanner
+                    _ssize=it->second;
+                }
                 else
                     return false;
                 it = _parameters.find("SPEED");
@@ -58,16 +67,21 @@ namespace libPlanner{
                     _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
                 }else
                     return false;
-                it = _parameters.find("Neigh Thresshold");
-                if(it != _parameters.end())
-                    _neighThress = it->second;
-                else
-                    return false;
+                //it = _parameters.find("Neigh Thresshold");
+                //if(it != _parameters.end())
+                //    _neighThress = it->second;
+                //else
+                //    return false;
                 it = _parameters.find("Max. Neighs");
                 if(it != _parameters.end()){
                     _kNeighs = (int)it->second;
                     _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
                 }else
+                    return false;
+				it = _parameters.find("EXTEND_DISTANCE");
+                if(it != _parameters.end())
+                    _extDist = it->second;
+                else
                     return false;
             }catch(...){
                 return false;
@@ -75,339 +89,212 @@ namespace libPlanner{
             return true;
         }
 
+		
+		// TODO: how to save the data
         void RRTPlanner::saveData(){
-            //cout << "RRTPlanner::saveData not implemented"<<endl<<flush;
-			float Distinitgoal = _init->getDistance(_goal,CONFIGSPACE);
-			cout<<" Distinitgoal: "<<Distinitgoal<<endl<<flush;
+   //         //cout << "RRTPlanner::saveData not implemented"<<endl<<flush;
+			//float Distinitgoal = _init->getDistance(_goal,BRONCOSPACE);
+			//cout<<" Distinitgoal: "<<Distinitgoal<<endl<<flush;
         }
 
-        void RRTPlanner::setIniGoal(){
-            //cout << "RRTPlanner::setIniGoal not implemented"<<endl<<flush;
-			vector<float> coordnew;
-			coordnew.resize(7);
-			_init = _sampler->nextSample();
-			_goal = _sampler->nextSample();
-			coordnew[0] = 0.52;
-			coordnew[1] = 0.5;
-			coordnew[2] = 0.64;
-			coordnew[3] = 1;
-			coordnew[4] = 0.5;
-			coordnew[5] = 0.5;
-			coordnew[6] = 1;
-			_init->setCoords (coordnew);
-			coordnew[0] = 0.32;
-			coordnew[1] = 0.5;
-			coordnew[2] = 0.37;
-			coordnew[3] = 0.75;
-			coordnew[4] = 0.75;
-			coordnew[5] = 0.5;
-			coordnew[6] = 0.5;
-			_goal->setCoords (coordnew);
-			_samples->add(_goal);
-			_samples->add(_init);
-        }
 
-        bool RRTPlanner::trySolve(){
+		//! The actual planner 
+		bool RRTPlanner::trySolve(){
 
-            Sample* samplerand = _sampler->nextSample();
-            Sample* samplenear = _init;
-            Sample* samplenew = NULL;
-			Sample* currentsample = NULL;
-			float Distrandcurrent_i = 0;
-			float Distrandcurrent_i0 = 0;
-			float Distgoalnew;
-			int max = _maxNumSamples;
+      // Sample a new sample
+      Sample* smp_rand = NULL;//_sampler->nextSample();
+			Sample* smp_near = NULL;
+			unsigned int idx_near;
+      Sample* smp_new = NULL;
+			//int idx_new;
+			Sample* smp_inter = NULL;
+
+			KthReal dist2goal=_extDist+1;
+			//float dist2goal_0; it's not necessary a comparatory dist. Distance to goal will be always done with the last sample (smp_new) taken: 
+			//if the algorithm has not stopped so far, it means that the distance has not been small enough to connect with the goal.
+
+      unsigned int hms=0;
+      bool nearGoalConnect=false;
+
+			
+      if ((_init==NULL)||(_goal==NULL)){
+        cout << "A problem occured, maybe init and goal configuration you set does not exist anymore. \n"; 
+        return false;
+      }
+
+			// delete all the elements from the sampleList and insert just the _init
+			if( _samples->getSize() > 0){
+				char sampleDIM = _wkSpace->getDimension();
+				SmpInit = new Sample(sampleDIM);
+				SmpInit->setCoords(_init->getCoords());
+				//_wkSpace->collisionCheck(SmpInit);
+        SmpInit->setMappedConf(_wkSpace->getConfigMapping(_init));
+				SmpGoal = new Sample(sampleDIM);
+				SmpGoal->setCoords(_goal->getCoords());
+				//_wkSpace->collisionCheck(SmpGoal);
+        SmpGoal->setMappedConf(_wkSpace->getConfigMapping(_goal));
+				_samples->clear();
+				_init=SmpInit;
+				_goal=SmpGoal;
+				if(typeid(*_sampler) == typeid(SDK::GaussianLikeSampler))
+        {
+          int i=9;
+          ((SDK::GaussianLikeSampler*)_sampler)->clear();
+				}
+				_samples->add(SmpInit);
+				if(_samples->isAnnSet()) _samples->loadAnnData();
+			}
+			else
+			{
+				return false;
+			}
+			//libGUI::SamplesWidget::updateSampleList();
+			
 			clearGraph();
 
-			int index_init = _samples->indexOf(_init);
-			int index_goal = _samples->indexOf(_goal);
-			int index_rand;
-			int index_near;
-			int index_new;
-			int index_total[1000];
-			index_total[1] = index_init;
-			index_total[0] = index_goal;
+			//// Assuming that the goal sample is always free of collisions
+   //   _locPlanner->setInitSamp(SmpInit);
+   //   _locPlanner->setGoalSamp(SmpGoal);
+   //   
+   //   if ((SmpInit->getDistance(SmpGoal,CONFIGSPACE))<_extDist && _locPlanner->canConect()){ //If goal is already inside the accepted radius 
+   //     _solved=true;
+   //     _samples->add(SmpGoal);
+   //     SmpGoal->addNeigh(_samples->indexOf(_init));
+   //    	connect2samples(_init,SmpGoal,SmpGoal->getDistance(SmpInit,CONFIGSPACE));
+   //      if (findPath()) {
+   //         cout << "The path size is " << _path.size() << "\n" ;
+   //         cout << "The number of samples used is " << _samples->getSize() << "\n" ;
+   //         return true;
+   //       }
+			//	  else 
+			//		  return false;
+   //   }
+   //   else{
+        do{
+          if (hms%3==0) // every 3 sample the Goal is used to grow the tree.
+            smp_rand=SmpGoal;
+          else
+            smp_rand = _sampler->nextSample();
 
-			int imax = 2;
-			do{
-				//do{
-				samplerand = NULL;
-				samplerand = _sampler->nextSample();
-				
-				for(int i=1;i<imax;i++){
-					currentsample = NULL;
-					currentsample = _samples->getSampleAt(index_total[i]);
-					Distrandcurrent_i = samplerand->getDistance(currentsample,CONFIGSPACE);
-					if(Distrandcurrent_i<Distrandcurrent_i0){
-						samplenear = NULL;
-						samplenear = currentsample;
-					}
-					index_near = _samples->indexOf(samplenear);
-					//cout<<" index_near: "<<index_near<<endl<<flush;
-					//cout<<" imax: "<<imax<<endl<<flush;
-					Distrandcurrent_i0 = Distrandcurrent_i;
-				}
+          cout << "Total number of samples " << ++hms <<"\n"; 
+          
+          // Search the nearest sample in the existing RRT graph
+				  vector<unsigned int> * ann_neigh=_samples->findAnnNeighs(smp_rand, 1000000);
+				  idx_near=ann_neigh->at(0);
+				  smp_near=_samples->getSampleAt(idx_near);
 
-				do{
-					samplenew = NULL;
-					samplenew = predictor(samplenear,samplerand);
-				}while(_wkSpace->collisionCheck(samplenew)==true);
+				  // Control if the distance between smp_rand and smp_near is < _extDist 
+				  KthReal dist=smp_rand->getDistance(smp_near,CONFIGSPACE);
 
-				//	_locPlanner->setInitSamp(samplenear);
-				//	_locPlanner->setGoalSamp(samplenew);
-
-				//}while(_locPlanner->canConect()==false);
-
-				//samplenew = NULL;
-				//samplenew = samplerand;
-				_samples->add(samplenew);
-				index_new = _samples->indexOf(samplenew);
-				samplenear->addNeigh(index_new);
-				index_total[imax] = index_new;
-				imax = imax + 1;				
-				//_locPlanner->setInitSamp(_goal);
-				//_locPlanner->setGoalSamp(samplenew);
-				Distgoalnew = _goal->getDistance(samplenew,CONFIGSPACE);
-				//float dist = samplenew->getDistance(samplenear,CONFIGSPACE);
-				//cout<<" dist: "<<dist<<endl<<flush;
-			}while(_samples->getSize() < _maxNumSamples);// && Distgoalnew>=10);//&& _locPlanner->canConect()==false);
-			
-			_samples->findNeighs(100, 10);
-			connectSamples();
-
-            loadGraph();
-
-            if( findPath() )
-            {
-                //smoothPath();
-                return true;
-            }
+				  if (dist<=_extDist){
+            _locPlanner->setInitSamp(smp_near);
+            _locPlanner->setGoalSamp(smp_rand);
+            if(!_wkSpace->collisionCheck(smp_rand) && _locPlanner->canConect()){
+						  smp_new=smp_rand;
+						  _samples->add(smp_new);
+						  //idx_new=_samples->indexOf(smp_new);
+              smp_new->clearNeighs();
+						  smp_new->addNeigh(idx_near); // considering the father as the neighbour so as to do backtracking when building the path.
+						  connect2samples(smp_near,smp_new,dist);	// building the edge
+              dist2goal=(_samples->getSampleAt((_samples->getSize())-1))->getDistance(SmpGoal,CONFIGSPACE);
+              if (dist2goal==0) nearGoalConnect=true;
+					  }
+					  else if (smp_rand!=SmpGoal)
+						  delete smp_rand; 
             else
-            {
-                return false;
+               smp_rand=NULL;
+
+				  }
+				  else { // if it is outside the radius, an interpolation must be done (from smp_near till smp_near+_extDist)
+					  _wkSpace->collisionCheck(smp_rand);
+            smp_inter=smp_near->interpolate(smp_rand,_extDist/dist);
+            _locPlanner->setInitSamp(smp_near);
+            _locPlanner->setGoalSamp(smp_inter);
+            if(!_wkSpace->collisionCheck(smp_inter) && _locPlanner->canConect()){
+						  smp_new=smp_inter;
+						  _samples->add(smp_new);
+						  //idx_new=_samples->indexOf(smp_new);
+              smp_new->clearNeighs();
+              smp_new->addNeigh(idx_near); // considering the father as the neighbour so as to do backtracking when building the path.
+              connect2samples(smp_near,smp_new,_extDist); // building the edge 
+              dist2goal=(_samples->getSampleAt((_samples->getSize())-1))->getDistance(SmpGoal,CONFIGSPACE);
+              if (dist2goal==0) nearGoalConnect=true;
             }
-        }
-
-        Sample* RRTPlanner::predictor(Sample* sampleA, Sample* sampleB){
-
-            //cout << "RRTPlanner::predictor not implemented"<<endl<<flush;
-
-            Sample *Samplenew = _sampler->nextSample();
-			Sample *Samplecurr = NULL;
-			Robot *_robot = _wkSpace->getRobot(0);
-						
-			vector<float> coordA = sampleA->getCoords(); 
-			
-			vector<KthReal> values;
-			values.resize(3);
-			vector<KthReal> bestvalues;
-			values.resize(3);
-			vector<float> coordnew;
-			static LCPRNG* gen = new LCPRNG(15485341);
-			float rand0;
-			float rand1;
-			float rand2;
-			float dist_i = 0;
-			float dist_i0 = 100000;
-			
-			for (int i=0; i<10; i++){				
-				
-				rand0 = (KthReal)gen->d_rand();
-				rand1 = (KthReal)gen->d_rand();
-				rand2 = (KthReal)gen->d_rand();
-				values[0] = rand0;//rand0/100;
-				values[1] = rand1;//coordA[6]+rand1/100;
-				values[2] = -rand2/100;//(rand2-0.5)/50;
-  //ALEX comments it.
-   //     coordnew = _robot->constrainedinterpolate(coordA,values);
-					
-				Samplenew->setCoords(coordnew);	
-				dist_i = Samplenew->getDistance(sampleB,CONFIGSPACE);
-				if (dist_i<dist_i0){
-					Samplecurr = NULL;
-					Samplecurr = Samplenew;
-					dist_i0 = dist_i;
-				}				
-			}
-			
-			return Samplecurr;
-
-        }
-
-        //!Finds a solution path in the graph using A*
-        bool RRTPlanner::findPath(){
-            _solved = false;
-
-            if(_init->getConnectedComponent() != _goal->getConnectedComponent()) return false;
-            clearSimulationPath();
-            shortest_path.clear(); //path as a vector of rrtvertex
-            _path.clear();//path as a vector of samples
-
-            rrtVertex start = _samples->indexOf(_init);
-            rrtVertex  goal = _samples->indexOf(_goal);
-
-            //vector to store the parent information of each vertex
-            vector<rrtGraph::vertex_descriptor> p(num_vertices(*g));
-            //vector with cost of reaching each vertex
-            vector<cost> d(num_vertices(*g));
-
-            try {
-                // call astar named parameter interface
-                astar_search(*g, start,
-                             distance_heuristic<rrtGraph, cost, vector<location> >(locations, goal, _locPlanner),
-                             predecessor_map(&p[0]).distance_map(&d[0]).
-                             visitor(astar_goal_visitor<rrtVertex>(goal)));
-            }catch(RRT::found_goal fg){ // found a path to the goal
-                _solved = true;
-                //Load the vector shortest_path that represents the solution as a sequence of rrtvertex
-                for( rrtVertex v = goal; ; v = p[v] ){
-                    shortest_path.push_front(v);
-                    if( p[v] == v ) break;
-                }
-                //Print solution path
-                cout << "Shortest path from " << start << " to " << goal << ": ";
-                cout << start;
-                list<rrtVertex>::iterator spi = shortest_path.begin();
-                for(++spi; spi != shortest_path.end(); ++spi)
-                    cout << " -> " << *spi;
-                cout << endl;
-                //Load the vector _path that represents the solution as a sequence of samples
-                list<rrtVertex>::iterator spi2 = shortest_path.begin();
-                _path.push_back(_samples->getSampleAt(start));
-                for(++spi2; spi2 != shortest_path.end(); ++spi2){
-                    _path.push_back(_samples->getSampleAt(*spi2));
-                }
-                return true;
-            }
-            cout << "Didn't find a path from " << start << " to " << goal << "!" << endl;
-            return false;
-        }
-
-        //!Load boost graph data
-        void RRTPlanner::loadGraph(){
-            int maxNodes = this->_samples->getSize();
-            unsigned int num_edges = edges.size();
-
-            // create graph
-            g = new rrtGraph(maxNodes);
-            WeightMap weightmap = get(edge_weight, *g);
-
-            for(std::size_t j = 0; j < num_edges; ++j){
-                edge_descriptor e;
-                bool inserted;//when the efge already exisits or is a self-loop
-                //then this flag is set to false and the edge is not inserted
-                tie(e, inserted) = add_edge(edges[j]->first,edges[j]->second, *g);
-                if(inserted) weightmap[e] = weights[j];
-            }
-
-            //locations are the pointer to the samples of cspace that
-            //are at each node of the graph and is used to compute the
-            //distance when using the heuristic (function distance_heuristic)
-            for(unsigned int i=0;i<num_vertices(*g); i++)
-                locations.push_back( _samples->getSampleAt(i) );
-            _isGraphSet = true;
-        }
-
-        //!connect samples - put weights
-        bool RRTPlanner::connectSamples(bool assumeAllwaysFree){
-            int n;
-            Sample *smpFrom;
-            Sample *smpTo;
-            rrtEdge *e; //rrtEdge is a type defined in RRT.h as std::pair<int, int>
-
-            cout << "CONNECTING  " << _samples->getSize() << " FREE SAMPLES" << endl;
-
-            typedef std::pair<int, SampleSet*> ccPair;
-            int ccFrom; //label co connected component of intial sample
-            int ccTo;   //label co connected component of goal sample
-            unsigned int max;
-
-            if(_samples->getSize() < _maxNumSamples)
-                max = _samples->getSize();
             else {
-                max = _maxNumSamples;
-                cout<<"connectSamples::Using a maximum of "<<max<<" samples"<<endl;
-            }
+						  if (smp_rand!=SmpGoal) 
+                delete smp_rand; 
+              else
+                smp_rand=NULL;
+						  delete smp_inter; // smp_inter=NULL;
+					  } 
+				  }
+				
+          if (_samples->changed() && dist2goal<_extDist && !nearGoalConnect) {
+            _locPlanner->setInitSamp((_samples->getSampleAt((_samples->getSize())-1)));
+            _locPlanner->setGoalSamp(SmpGoal);
+            if (_locPlanner->canConect()) 
+              nearGoalConnect=true;
+          }
 
-            for(unsigned int i=0; i<max; i++){
-                smpFrom = _samples->getSampleAt(i);
-                //set initial sample of local planner
-                _locPlanner->setInitSamp(smpFrom);
-                //if not yet labeled, labelwith a new connected component
-                if(smpFrom->getConnectedComponent() == -1)
-                {
-                    smpFrom->setConnectedComponent(_labelCC);	//label sample with connected component
-                    SampleSet *tmpSS = new SampleSet();			//create new sample set
-                    tmpSS->add( smpFrom );						//add sample to sample set
-                    _ccMap.insert(ccPair(_labelCC,tmpSS));		//create connected component as a labeled sample set
-                    _labelCC++;
-                }
-                else continue;//already in a connected component
+			  }while(((_samples->getSize())<_maxNumSamples)&&(!nearGoalConnect));
 
-                //srtart connecting with neighs
-                for(unsigned int j=0; j<smpFrom->getNeighs()->size(); j++){
-                    n = smpFrom->getNeighs()->at(j);
-                    smpTo = _samples->getSampleAt(n);
-                    //if same connected component do no try to connect them
-                    if(smpFrom->getConnectedComponent() == smpTo->getConnectedComponent()) continue;
-                    //set goal sample of local planner
-                    _locPlanner->setGoalSamp(smpTo);
-                    //local planner collision checks the edge (if required)
-                    if(assumeAllwaysFree || _locPlanner->canConect())
-                    {
-                        e = new rrtEdge(i,n);
-                        edges.push_back(e);
-                        weights.push_back(_locPlanner->distance(smpFrom,smpTo));
-                        //set neigh sample with same label as current sample
-                        ccTo = smpTo->getConnectedComponent();
-                        ccFrom = smpFrom->getConnectedComponent();
-                        if(ccTo == -1)
-                        {
-                            smpTo->setConnectedComponent( ccFrom );
-                            _ccMap[ccFrom]->add( smpTo );
-                        }
-                        //set all samples of the connected component of the neigh sample to
-                        //the same label as the current sample
-                        else
-                        {
-                            //unify lists under the lowest label
-                            if( ccFrom < ccTo)
-                            {
-                                vector<Sample*>::iterator itera = _ccMap[ccTo]->getBeginIterator();
-                                while((itera != _ccMap[ccTo]->getEndIterator()))
-                                {
-                                    (*itera)->setConnectedComponent( ccFrom );
-                                    _ccMap[ccFrom]->add( (*itera) );
-                                    itera++;
-                                }
-                                _ccMap.erase(ccTo);
-                            }
-                            else
-                            {
-                                vector<Sample*>::iterator itera = _ccMap[ccFrom]->getBeginIterator();
-                                while((itera != _ccMap[ccFrom]->getEndIterator()))
-                                {
-                                    (*itera)->setConnectedComponent( ccTo );
-                                    _ccMap[ccTo]->add( (*itera) );
-                                    itera++;
-                                }
-                                _ccMap.erase(ccFrom);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //cout<<": FAILED"<<endl;
-                        //cout << "edge from " << i << " to " << n << " is NOT free" << endl;
-                    }
-                }
-            }
-            cout << "END CONNECTING  " << max << " FREE SAMPLES" << endl;
+        if (nearGoalConnect){ 
+          _solved=true;
+          if (dist2goal!=0){
+            SmpGoal->clearNeighs();
+            SmpGoal->addNeigh(_samples->indexOf(smp_new));
+       		  connect2samples(smp_new,SmpGoal,dist2goal);
+            _samples->add(SmpGoal);
+          }
+          if (findPath()) {
+            cout << "The path size is " << _path.size() << "\n" ;
+            cout << "The number of samples used is " << _samples->getSize() << "\n" ;
             return true;
+          }
+				  else 
+					  return false;
+        } //  if (near Goal Connect) 
+        else {
+				  cout << "The RRT reaches the maximum number of samples and did not reach the goal";
+				  return false;
         }
+      //} // closing if - else of "smp_goal inside the accepted radius"
+      }//trySolve
 
-        //!Delete the graph g
-        void RRTPlanner::clearGraph(){
+		
+		//! add an edge to the graph between two samples in _samples
+		void RRTPlanner::connect2samples(Sample* sampleA, Sample* sampleB, KthReal dist)
+		{
+			rrtEdge *e;
+			e= new rrtEdge(_samples->indexOf(sampleA),_samples->indexOf(sampleB));
+			edges.push_back(e);
+			weights.push_back(dist);
+		}
+
+		bool RRTPlanner::findPath(){
+//      clearSimulationPath();
+			Sample* nextPathSmp;
+			//_solved = false;
+ 			_path.clear();
+			_path.push_back(SmpGoal);
+      //_simulationPath.push_back(SmpGoal);
+			Sample * currentSmp=_goal;
+			do {
+				nextPathSmp=_samples->getSampleAt((currentSmp->getNeighs())->at(0));
+				_path.push_back(nextPathSmp);
+        //_simulationPath.push_back(nextPathSmp);
+				currentSmp=nextPathSmp;
+			//}while((currentSample!=_init) && ((currentSmp->getNeighs())->at(0)!=_samples->indexOf(_init))); 
+    /*_path.push_back(_init);
+      _simulationPath.push_back(_init);*/
+      }while(currentSmp!=_init); // when the _init sample has already been inserted.
+      
+      return true;
+		}
+
+     
+    //!Delete the graph g
+    void RRTPlanner::clearGraph(){
             weights.clear();
             edges.clear();
             _samples->clearNeighs();
@@ -523,3 +410,5 @@ namespace libPlanner{
         }
     } //namespace RRTPlanner
 } //namespace libPlanner
+
+

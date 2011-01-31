@@ -74,23 +74,25 @@ namespace libPlanner{
             bool    setParameters();
             void    saveData();
             void    setIniGoal();
+			      void    connect2samples(Sample* sampleA, Sample* sampleB, float dist);
             bool    trySolve();
+
 
             //!find path
             bool findPath();
             //!load boost graph data
             void loadGraph();
             //!connect samples
-            bool connectSamples(bool assumeAllwaysFree = false);
+            //bool connectSamples(bool assumeAllwaysFree = false);
             //! connects last sampled configuration & adds to graph
-            void connectLastSample(Sample* connectToSmp = NULL);
+            //void connectLastSample(Sample* connectToSmp = NULL);
             //!delete g
             void clearGraph();
             void updateGraph();
             void smoothPath(bool maintainfirst=false, bool maintainlast=false);
             bool isGraphSet(){return _isGraphSet;}
             void printConnectedComponents();
-            Sample* predictor(Sample* sampleA, Sample* sampleB);
+            //Sample* predictor(Sample* sampleA, Sample* sampleB);
 
             protected:
             vector<rrtEdge*> edges;
@@ -102,9 +104,13 @@ namespace libPlanner{
             int     _kNeighs;
             std::map<int, SampleSet*> _ccMap;
             int _labelCC;
+      			float _extDist;
 
             private:
+			      Sample *SmpInit;
+			      Sample *SmpGoal;
             RRTPlanner();
+            KthReal _ssize;
             //!boost graph
             rrtGraph *g;
             //!solution to query
