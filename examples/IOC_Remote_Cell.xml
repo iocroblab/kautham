@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Problem name="" topology="SE3">
 	<Robot robot="robots/mobile_TX90.rob" scale="1.0">
-		<Limits name="Y" min="0.0" max="2500.0" />
+		<Limits name="Y" min="-300.0" max="2200.0" />
 		<Home X="0.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
 	</Robot>
 	<Robot robot="robots/TX90.rob" scale="1.0">

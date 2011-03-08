@@ -263,7 +263,7 @@ namespace libPlanner{
       setParametersFromString(par.substr(0,par.length()-1)); // Trying to set the read parameter
     }catch(...){
       std::cout << "Current planner doesn't have at least one of the parameters" 
-        << " you found in the file." << std::endl; 
+        << " you found in the file (" << par << ")." << std::endl; 
       return false; //if it is wrong maybe the file has been generated with another planner.
     }
 

@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/tryconnect.xpm</file>
+    <file>icons/connect.xpm</file>
+    <file>icons/noconnect.xpm</file>
     <file>icons/animate.xpm</file>
     <file>icons/blackbox.xpm</file>
     <file>icons/logo_ioc.png</file>

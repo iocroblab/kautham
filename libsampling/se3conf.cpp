@@ -191,7 +191,7 @@ namespace libSampling {
         coord.at(i) = local_coord.at(i);
 
       double Theta1 = 2.0 * M_PI * local_coord.at(4);
-      double Theta2 = M_PI * local_coord.at(5) - 0.5*M_PI;
+      double Theta2 = M_PI * local_coord.at(5); //- 0.5*M_PI;
       double r2 = sqrt(1 - local_coord.at(3));
       double r1 = sqrt(local_coord.at(3));
       coord.at(3) = (KthReal)(sin(Theta1)*r1); //qx

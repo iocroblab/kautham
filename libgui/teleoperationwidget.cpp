@@ -42,6 +42,14 @@
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoTransparencyType.h>
 
+// Included to use the shared memory between the Kautham and the publisher
+#include <boost/interprocess/shared_memory_object.hpp>
+#include <boost/interprocess/mapped_region.hpp>
+#include <boost/interprocess/sync/scoped_lock.hpp>
+#include <libutil/data_ioc_cell.hpp>
+
+using namespace boost::interprocess;
+
 namespace libGUI{
   TeleoperationWidget::TeleoperationWidget(Problem* prob, Device* hap, GUI* gui){
 
@@ -102,8 +110,49 @@ namespace libGUI{
     connect(_radBttRobot1, SIGNAL(clicked()), this, SLOT(changeRobot()));
     connect(_radCamera, SIGNAL(clicked()), this, SLOT(changeRobot()));
     connect(_radWorld, SIGNAL(clicked()), this, SLOT(changeRobot()));
-    
+    connect(_cmdConnectCell, SIGNAL(clicked()), this, SLOT(connectCell()));
+    connect(_cmdConnectCell, SIGNAL(clicked()), this, SLOT(disconnectCell()));
+
     _stopOperation->setEnabled(false);
+
+    //Adding the shared memory section to interchange informstion with the remote system
+    //Remove shared memory on construction and destruction
+    struct shm_remove 
+    {
+        shm_remove() { shared_memory_object::remove("KauthamSharedMemory"); }
+        ~shm_remove(){ shared_memory_object::remove("KauthamSharedMemory"); }
+    } remover;
+
+    //Create a shared memory object.
+    shared_memory_object shm
+         (create_only               //only create
+         ,"KauthamSharedMemory"     //name
+         ,read_write   //read-write mode
+         );
+
+    //Set size
+    shm.truncate(sizeof(kautham_ioc_cell));
+
+    //Map the whole shared memory in this process
+    mapped_region region
+           (shm          //What to map
+           ,read_write   //Map it as read-write
+           );
+
+    //Get the address of the mapped region
+    void * addr       = region.get_address();
+
+    //Construct the shared structure in memory
+    _dataCell = new (addr) kautham_ioc_cell;
+
+  }
+
+  void TeleoperationWidget::connectCell(){
+
+  }
+
+  void TeleoperationWidget::disconnectCell(){
+
   }
 
   void TeleoperationWidget::updateGuidingPath(){
@@ -771,6 +820,17 @@ namespace libGUI{
                       ->InverseKinematics(target);
 
           _problem->wSpace()->getRobot(activeRob)->Kinematics(tmp);
+
+          // Here I copy the configuration response to the shared memory block.
+          if( activeRob == 0 ){ // Fixed robot
+            //Lock the mutex
+            //scoped_lock<interprocess_mutex> lock(_data->mutex_out);
+            //std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _data->out.r1Pos );
+          }else{                //  Mobile robot
+            //Lock the mutex
+            //scoped_lock<interprocess_mutex> lock(_data->mutex_out);
+            //std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _data->out.r2Pos );
+          }
         }else{
           RobConf& tmp =_problem->wSpace()->getRobot(activeRob)
                       ->InverseKinematics(se3conf.getCoordinates());
@@ -787,28 +847,37 @@ namespace libGUI{
   }
 
   void TeleoperationWidget::setupUI(){
-    if (this->objectName().isEmpty())
+    if(this->objectName().isEmpty())
         this->setObjectName(QString::fromUtf8("Form"));
-    this->resize(200, 640);
+
+    this->resize(270, 787);
     QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
     sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
     this->setSizePolicy(sizePolicy);
-    this->setMinimumSize(QSize(200, 350));
-    gridLayout_5 = new QGridLayout(this);
-    gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
-    verticalLayout_5 = new QVBoxLayout();
-    verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
+    this->setMinimumSize(QSize(270, 350));
+    gridLayout_10 = new QGridLayout(this);
+    gridLayout_10->setObjectName(QString::fromUtf8("gridLayout_10"));
+    verticalLayout_13 = new QVBoxLayout();
+    verticalLayout_13->setObjectName(QString::fromUtf8("verticalLayout_13"));
     groupBox = new QGroupBox(this);
     groupBox->setObjectName(QString::fromUtf8("groupBox"));
+    QSizePolicy sizePolicy1(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    sizePolicy1.setHorizontalStretch(0);
+    sizePolicy1.setVerticalStretch(0);
+    sizePolicy1.setHeightForWidth(groupBox->sizePolicy().hasHeightForWidth());
+    groupBox->setSizePolicy(sizePolicy1);
     gridLayout_7 = new QGridLayout(groupBox);
     gridLayout_7->setObjectName(QString::fromUtf8("gridLayout_7"));
     verticalLayout_11 = new QVBoxLayout();
+    verticalLayout_11->setSpacing(1);
     verticalLayout_11->setObjectName(QString::fromUtf8("verticalLayout_11"));
     gridLayout_4 = new QGridLayout();
     gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
+    gridLayout_4->setHorizontalSpacing(1);
     verticalLayout = new QVBoxLayout();
+    verticalLayout->setSpacing(1);
     verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
     _cameraTop = new QPushButton(groupBox);
     _cameraTop->setObjectName(QString::fromUtf8("_cameraTop"));
@@ -828,6 +897,7 @@ namespace libGUI{
     gridLayout_4->addLayout(verticalLayout, 0, 0, 1, 1);
 
     verticalLayout_4 = new QVBoxLayout();
+    verticalLayout_4->setSpacing(1);
     verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
     _cameraLeft = new QPushButton(groupBox);
     _cameraLeft->setObjectName(QString::fromUtf8("_cameraLeft"));
@@ -847,6 +917,7 @@ namespace libGUI{
     gridLayout_4->addLayout(verticalLayout_4, 0, 1, 1, 1);
 
     verticalLayout_10 = new QVBoxLayout();
+    verticalLayout_10->setSpacing(1);
     verticalLayout_10->setObjectName(QString::fromUtf8("verticalLayout_10"));
     _cameraFront = new QPushButton(groupBox);
     _cameraFront->setObjectName(QString::fromUtf8("_cameraFront"));
@@ -873,6 +944,7 @@ namespace libGUI{
     gridLayout_3 = new QGridLayout(groupBox_3);
     gridLayout_3->setObjectName(QString::fromUtf8("gridLayout_3"));
     verticalLayout_2 = new QVBoxLayout();
+    verticalLayout_2->setSpacing(1);
     verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
     horizontalLayout_5 = new QHBoxLayout();
     horizontalLayout_5->setObjectName(QString::fromUtf8("horizontalLayout_5"));
@@ -885,11 +957,11 @@ namespace libGUI{
 
     settingX = new QLineEdit(groupBox_3);
     settingX->setObjectName(QString::fromUtf8("settingX"));
-    QSizePolicy sizePolicy1(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    sizePolicy1.setHorizontalStretch(0);
-    sizePolicy1.setVerticalStretch(0);
-    sizePolicy1.setHeightForWidth(settingX->sizePolicy().hasHeightForWidth());
-    settingX->setSizePolicy(sizePolicy1);
+    QSizePolicy sizePolicy2(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    sizePolicy2.setHorizontalStretch(0);
+    sizePolicy2.setVerticalStretch(0);
+    sizePolicy2.setHeightForWidth(settingX->sizePolicy().hasHeightForWidth());
+    settingX->setSizePolicy(sizePolicy2);
     settingX->setMinimumSize(QSize(50, 20));
     settingX->setMaximumSize(QSize(50, 20));
 
@@ -904,8 +976,8 @@ namespace libGUI{
 
     settingRX = new QLineEdit(groupBox_3);
     settingRX->setObjectName(QString::fromUtf8("settingRX"));
-    sizePolicy1.setHeightForWidth(settingRX->sizePolicy().hasHeightForWidth());
-    settingRX->setSizePolicy(sizePolicy1);
+    sizePolicy2.setHeightForWidth(settingRX->sizePolicy().hasHeightForWidth());
+    settingRX->setSizePolicy(sizePolicy2);
     settingRX->setMinimumSize(QSize(50, 20));
     settingRX->setMaximumSize(QSize(50, 20));
 
@@ -925,8 +997,8 @@ namespace libGUI{
 
     settingY = new QLineEdit(groupBox_3);
     settingY->setObjectName(QString::fromUtf8("settingY"));
-    sizePolicy1.setHeightForWidth(settingY->sizePolicy().hasHeightForWidth());
-    settingY->setSizePolicy(sizePolicy1);
+    sizePolicy2.setHeightForWidth(settingY->sizePolicy().hasHeightForWidth());
+    settingY->setSizePolicy(sizePolicy2);
     settingY->setMinimumSize(QSize(50, 20));
     settingY->setMaximumSize(QSize(50, 20));
 
@@ -941,8 +1013,8 @@ namespace libGUI{
 
     settingRY = new QLineEdit(groupBox_3);
     settingRY->setObjectName(QString::fromUtf8("settingRY"));
-    sizePolicy1.setHeightForWidth(settingRY->sizePolicy().hasHeightForWidth());
-    settingRY->setSizePolicy(sizePolicy1);
+    sizePolicy2.setHeightForWidth(settingRY->sizePolicy().hasHeightForWidth());
+    settingRY->setSizePolicy(sizePolicy2);
     settingRY->setMinimumSize(QSize(50, 20));
     settingRY->setMaximumSize(QSize(50, 20));
 
@@ -962,8 +1034,8 @@ namespace libGUI{
 
     settingZ = new QLineEdit(groupBox_3);
     settingZ->setObjectName(QString::fromUtf8("settingZ"));
-    sizePolicy1.setHeightForWidth(settingZ->sizePolicy().hasHeightForWidth());
-    settingZ->setSizePolicy(sizePolicy1);
+    sizePolicy2.setHeightForWidth(settingZ->sizePolicy().hasHeightForWidth());
+    settingZ->setSizePolicy(sizePolicy2);
     settingZ->setMinimumSize(QSize(50, 20));
     settingZ->setMaximumSize(QSize(50, 20));
 
@@ -978,8 +1050,8 @@ namespace libGUI{
 
     settingRZ = new QLineEdit(groupBox_3);
     settingRZ->setObjectName(QString::fromUtf8("settingRZ"));
-    sizePolicy1.setHeightForWidth(settingRZ->sizePolicy().hasHeightForWidth());
-    settingRZ->setSizePolicy(sizePolicy1);
+    sizePolicy2.setHeightForWidth(settingRZ->sizePolicy().hasHeightForWidth());
+    settingRZ->setSizePolicy(sizePolicy2);
     settingRZ->setMinimumSize(QSize(50, 20));
     settingRZ->setMaximumSize(QSize(50, 20));
 
@@ -1004,6 +1076,7 @@ namespace libGUI{
     gridLayout = new QGridLayout(groupBox_4);
     gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
     verticalLayout_3 = new QVBoxLayout();
+    verticalLayout_3->setSpacing(1);
     verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
     horizontalLayout_8 = new QHBoxLayout();
     horizontalLayout_8->setObjectName(QString::fromUtf8("horizontalLayout_8"));
@@ -1113,35 +1186,41 @@ namespace libGUI{
     gridLayout_7->addLayout(verticalLayout_11, 0, 0, 1, 1);
 
 
-    verticalLayout_5->addWidget(groupBox);
+    verticalLayout_13->addWidget(groupBox);
 
     groupBox_2 = new QGroupBox(this);
     groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
-    gridLayout_8 = new QGridLayout(groupBox_2);
-    gridLayout_8->setObjectName(QString::fromUtf8("gridLayout_8"));
-    verticalLayout_8 = new QVBoxLayout();
-    verticalLayout_8->setObjectName(QString::fromUtf8("verticalLayout_8"));
+    sizePolicy1.setHeightForWidth(groupBox_2->sizePolicy().hasHeightForWidth());
+    groupBox_2->setSizePolicy(sizePolicy1);
+    groupBox_2->setMinimumSize(QSize(250, 398));
+    groupBox_2->setMaximumSize(QSize(16000, 16000));
+    gridLayout_11 = new QGridLayout(groupBox_2);
+    gridLayout_11->setObjectName(QString::fromUtf8("gridLayout_11"));
+    verticalLayout_12 = new QVBoxLayout();
+    verticalLayout_12->setObjectName(QString::fromUtf8("verticalLayout_12"));
     horizontalLayout = new QHBoxLayout();
+    horizontalLayout->setSpacing(1);
     horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
     _groupRobots = new QGroupBox(groupBox_2);
     _groupRobots->setObjectName(QString::fromUtf8("_groupRobots"));
     gridLayout_2 = new QGridLayout(_groupRobots);
     gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
-    verticalLayout_12 = new QVBoxLayout();
-    verticalLayout_12->setObjectName(QString::fromUtf8("verticalLayout_12"));
+    horizontalLayout_3 = new QHBoxLayout();
+    horizontalLayout_3->setSpacing(1);
+    horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
     _radBttRobot0 = new QRadioButton(_groupRobots);
     _radBttRobot0->setObjectName(QString::fromUtf8("_radBttRobot0"));
     _radBttRobot0->setChecked(true);
 
-    verticalLayout_12->addWidget(_radBttRobot0);
+    horizontalLayout_3->addWidget(_radBttRobot0);
 
     _radBttRobot1 = new QRadioButton(_groupRobots);
     _radBttRobot1->setObjectName(QString::fromUtf8("_radBttRobot1"));
 
-    verticalLayout_12->addWidget(_radBttRobot1);
+    horizontalLayout_3->addWidget(_radBttRobot1);
 
 
-    gridLayout_2->addLayout(verticalLayout_12, 0, 0, 1, 1);
+    gridLayout_2->addLayout(horizontalLayout_3, 0, 0, 1, 1);
 
 
     horizontalLayout->addWidget(_groupRobots);
@@ -1150,29 +1229,38 @@ namespace libGUI{
     groupBox_5->setObjectName(QString::fromUtf8("groupBox_5"));
     gridLayout_6 = new QGridLayout(groupBox_5);
     gridLayout_6->setObjectName(QString::fromUtf8("gridLayout_6"));
-    verticalLayout_9 = new QVBoxLayout();
-    verticalLayout_9->setObjectName(QString::fromUtf8("verticalLayout_9"));
-    _radWorld = new QRadioButton(groupBox_5);
-    _radWorld->setObjectName(QString::fromUtf8("_radWorld"));
-
-    verticalLayout_9->addWidget(_radWorld);
-
+    horizontalLayout_2 = new QHBoxLayout();
+    horizontalLayout_2->setSpacing(1);
+    horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
     _radCamera = new QRadioButton(groupBox_5);
     _radCamera->setObjectName(QString::fromUtf8("_radCamera"));
+    sizePolicy2.setHeightForWidth(_radCamera->sizePolicy().hasHeightForWidth());
+    _radCamera->setSizePolicy(sizePolicy2);
     _radCamera->setChecked(true);
 
-    verticalLayout_9->addWidget(_radCamera);
+    horizontalLayout_2->addWidget(_radCamera);
+
+    _radWorld = new QRadioButton(groupBox_5);
+    _radWorld->setObjectName(QString::fromUtf8("_radWorld"));
+    sizePolicy2.setHeightForWidth(_radWorld->sizePolicy().hasHeightForWidth());
+    _radWorld->setSizePolicy(sizePolicy2);
+
+    horizontalLayout_2->addWidget(_radWorld);
 
 
-    gridLayout_6->addLayout(verticalLayout_9, 0, 0, 1, 1);
+    gridLayout_6->addLayout(horizontalLayout_2, 0, 0, 1, 1);
 
 
     horizontalLayout->addWidget(groupBox_5);
 
 
-    verticalLayout_8->addLayout(horizontalLayout);
+    verticalLayout_12->addLayout(horizontalLayout);
 
+    horizontalLayout_11 = new QHBoxLayout();
+    horizontalLayout_11->setSpacing(6);
+    horizontalLayout_11->setObjectName(QString::fromUtf8("horizontalLayout_11"));
     verticalLayout_6 = new QVBoxLayout();
+    verticalLayout_6->setSpacing(1);
     verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
     _lblTransScale = new QLabel(groupBox_2);
     _lblTransScale->setObjectName(QString::fromUtf8("_lblTransScale"));
@@ -1190,9 +1278,10 @@ namespace libGUI{
     verticalLayout_6->addWidget(_sliderTransScale);
 
 
-    verticalLayout_8->addLayout(verticalLayout_6);
+    horizontalLayout_11->addLayout(verticalLayout_6);
 
     verticalLayout_7 = new QVBoxLayout();
+    verticalLayout_7->setSpacing(1);
     verticalLayout_7->setObjectName(QString::fromUtf8("verticalLayout_7"));
     _lblRotScale = new QLabel(groupBox_2);
     _lblRotScale->setObjectName(QString::fromUtf8("_lblRotScale"));
@@ -1201,6 +1290,7 @@ namespace libGUI{
 
     _sliderRotScale = new QSlider(groupBox_2);
     _sliderRotScale->setObjectName(QString::fromUtf8("_sliderRotScale"));
+    _sliderRotScale->setMinimumSize(QSize(100, 20));
     _sliderRotScale->setMinimum(1);
     _sliderRotScale->setMaximum(20);
     _sliderRotScale->setPageStep(5);
@@ -1210,9 +1300,198 @@ namespace libGUI{
     verticalLayout_7->addWidget(_sliderRotScale);
 
 
-    verticalLayout_8->addLayout(verticalLayout_7);
+    horizontalLayout_11->addLayout(verticalLayout_7);
+
+
+    verticalLayout_12->addLayout(horizontalLayout_11);
+
+    groupBox_6 = new QGroupBox(groupBox_2);
+    groupBox_6->setObjectName(QString::fromUtf8("groupBox_6"));
+    QSizePolicy sizePolicy3(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+    sizePolicy3.setHorizontalStretch(0);
+    sizePolicy3.setVerticalStretch(0);
+    sizePolicy3.setHeightForWidth(groupBox_6->sizePolicy().hasHeightForWidth());
+    groupBox_6->setSizePolicy(sizePolicy3);
+    groupBox_6->setMinimumSize(QSize(2, 0));
+    gridLayout_9 = new QGridLayout(groupBox_6);
+    gridLayout_9->setObjectName(QString::fromUtf8("gridLayout_9"));
+    verticalLayout_9 = new QVBoxLayout();
+    verticalLayout_9->setObjectName(QString::fromUtf8("verticalLayout_9"));
+    horizontalLayout_12 = new QHBoxLayout();
+    horizontalLayout_12->setObjectName(QString::fromUtf8("horizontalLayout_12"));
+    groupBox_7 = new QGroupBox(groupBox_6);
+    groupBox_7->setObjectName(QString::fromUtf8("groupBox_7"));
+    sizePolicy1.setHeightForWidth(groupBox_7->sizePolicy().hasHeightForWidth());
+    groupBox_7->setSizePolicy(sizePolicy1);
+    gridLayout_8 = new QGridLayout(groupBox_7);
+    gridLayout_8->setObjectName(QString::fromUtf8("gridLayout_8"));
+    verticalLayout_5 = new QVBoxLayout();
+    verticalLayout_5->setSpacing(0);
+    verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
+    _txtR1Q1 = new QLineEdit(groupBox_7);
+    _txtR1Q1->setObjectName(QString::fromUtf8("_txtR1Q1"));
+    sizePolicy2.setHeightForWidth(_txtR1Q1->sizePolicy().hasHeightForWidth());
+    _txtR1Q1->setSizePolicy(sizePolicy2);
+    _txtR1Q1->setMinimumSize(QSize(50, 20));
+    _txtR1Q1->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_5->addWidget(_txtR1Q1);
+
+    _txtR1Q2 = new QLineEdit(groupBox_7);
+    _txtR1Q2->setObjectName(QString::fromUtf8("_txtR1Q2"));
+    sizePolicy2.setHeightForWidth(_txtR1Q2->sizePolicy().hasHeightForWidth());
+    _txtR1Q2->setSizePolicy(sizePolicy2);
+    _txtR1Q2->setMinimumSize(QSize(50, 20));
+    _txtR1Q2->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_5->addWidget(_txtR1Q2);
+
+    _txtR1Q3 = new QLineEdit(groupBox_7);
+    _txtR1Q3->setObjectName(QString::fromUtf8("_txtR1Q3"));
+    sizePolicy2.setHeightForWidth(_txtR1Q3->sizePolicy().hasHeightForWidth());
+    _txtR1Q3->setSizePolicy(sizePolicy2);
+    _txtR1Q3->setMinimumSize(QSize(50, 20));
+    _txtR1Q3->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_5->addWidget(_txtR1Q3);
+
+    _txtR1Q4 = new QLineEdit(groupBox_7);
+    _txtR1Q4->setObjectName(QString::fromUtf8("_txtR1Q4"));
+    sizePolicy2.setHeightForWidth(_txtR1Q4->sizePolicy().hasHeightForWidth());
+    _txtR1Q4->setSizePolicy(sizePolicy2);
+    _txtR1Q4->setMinimumSize(QSize(50, 20));
+    _txtR1Q4->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_5->addWidget(_txtR1Q4);
+
+    _txtR1Q5 = new QLineEdit(groupBox_7);
+    _txtR1Q5->setObjectName(QString::fromUtf8("_txtR1Q5"));
+    sizePolicy2.setHeightForWidth(_txtR1Q5->sizePolicy().hasHeightForWidth());
+    _txtR1Q5->setSizePolicy(sizePolicy2);
+    _txtR1Q5->setMinimumSize(QSize(50, 20));
+    _txtR1Q5->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_5->addWidget(_txtR1Q5);
+
+    _txtR1Q6 = new QLineEdit(groupBox_7);
+    _txtR1Q6->setObjectName(QString::fromUtf8("_txtR1Q6"));
+    sizePolicy2.setHeightForWidth(_txtR1Q6->sizePolicy().hasHeightForWidth());
+    _txtR1Q6->setSizePolicy(sizePolicy2);
+    _txtR1Q6->setMinimumSize(QSize(50, 20));
+    _txtR1Q6->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_5->addWidget(_txtR1Q6);
+
+
+    gridLayout_8->addLayout(verticalLayout_5, 0, 0, 1, 1);
+
+
+    horizontalLayout_12->addWidget(groupBox_7);
+
+    groupBox_8 = new QGroupBox(groupBox_6);
+    groupBox_8->setObjectName(QString::fromUtf8("groupBox_8"));
+    sizePolicy1.setHeightForWidth(groupBox_8->sizePolicy().hasHeightForWidth());
+    groupBox_8->setSizePolicy(sizePolicy1);
+    gridLayout_5 = new QGridLayout(groupBox_8);
+    gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
+    verticalLayout_8 = new QVBoxLayout();
+    verticalLayout_8->setSpacing(1);
+    verticalLayout_8->setObjectName(QString::fromUtf8("verticalLayout_8"));
+    _txtCarril = new QLineEdit(groupBox_8);
+    _txtCarril->setObjectName(QString::fromUtf8("_txtCarril"));
+    sizePolicy2.setHeightForWidth(_txtCarril->sizePolicy().hasHeightForWidth());
+    _txtCarril->setSizePolicy(sizePolicy2);
+    _txtCarril->setMinimumSize(QSize(50, 20));
+    _txtCarril->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_8->addWidget(_txtCarril);
+
+    _txtR2Q1 = new QLineEdit(groupBox_8);
+    _txtR2Q1->setObjectName(QString::fromUtf8("_txtR2Q1"));
+    sizePolicy2.setHeightForWidth(_txtR2Q1->sizePolicy().hasHeightForWidth());
+    _txtR2Q1->setSizePolicy(sizePolicy2);
+    _txtR2Q1->setMinimumSize(QSize(50, 20));
+    _txtR2Q1->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_8->addWidget(_txtR2Q1);
+
+    _txtR2Q2 = new QLineEdit(groupBox_8);
+    _txtR2Q2->setObjectName(QString::fromUtf8("_txtR2Q2"));
+    sizePolicy2.setHeightForWidth(_txtR2Q2->sizePolicy().hasHeightForWidth());
+    _txtR2Q2->setSizePolicy(sizePolicy2);
+    _txtR2Q2->setMinimumSize(QSize(50, 20));
+    _txtR2Q2->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_8->addWidget(_txtR2Q2);
+
+    _txtR2Q3 = new QLineEdit(groupBox_8);
+    _txtR2Q3->setObjectName(QString::fromUtf8("_txtR2Q3"));
+    sizePolicy2.setHeightForWidth(_txtR2Q3->sizePolicy().hasHeightForWidth());
+    _txtR2Q3->setSizePolicy(sizePolicy2);
+    _txtR2Q3->setMinimumSize(QSize(50, 20));
+    _txtR2Q3->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_8->addWidget(_txtR2Q3);
+
+    _txtR2Q4 = new QLineEdit(groupBox_8);
+    _txtR2Q4->setObjectName(QString::fromUtf8("_txtR2Q4"));
+    sizePolicy2.setHeightForWidth(_txtR2Q4->sizePolicy().hasHeightForWidth());
+    _txtR2Q4->setSizePolicy(sizePolicy2);
+    _txtR2Q4->setMinimumSize(QSize(50, 20));
+    _txtR2Q4->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_8->addWidget(_txtR2Q4);
+
+    _txtR2Q5 = new QLineEdit(groupBox_8);
+    _txtR2Q5->setObjectName(QString::fromUtf8("_txtR2Q5"));
+    sizePolicy2.setHeightForWidth(_txtR2Q5->sizePolicy().hasHeightForWidth());
+    _txtR2Q5->setSizePolicy(sizePolicy2);
+    _txtR2Q5->setMinimumSize(QSize(50, 20));
+    _txtR2Q5->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_8->addWidget(_txtR2Q5);
+
+    _txtR2Q6 = new QLineEdit(groupBox_8);
+    _txtR2Q6->setObjectName(QString::fromUtf8("_txtR2Q6"));
+    sizePolicy2.setHeightForWidth(_txtR2Q6->sizePolicy().hasHeightForWidth());
+    _txtR2Q6->setSizePolicy(sizePolicy2);
+    _txtR2Q6->setMinimumSize(QSize(50, 20));
+    _txtR2Q6->setMaximumSize(QSize(50, 20));
+
+    verticalLayout_8->addWidget(_txtR2Q6);
+
+
+    gridLayout_5->addLayout(verticalLayout_8, 0, 0, 1, 1);
+
+
+    horizontalLayout_12->addWidget(groupBox_8);
+
+
+    verticalLayout_9->addLayout(horizontalLayout_12);
+
+    horizontalLayout_13 = new QHBoxLayout();
+    horizontalLayout_13->setObjectName(QString::fromUtf8("horizontalLayout_13"));
+    _cmdConnectCell = new QPushButton(groupBox_6);
+    _cmdConnectCell->setObjectName(QString::fromUtf8("_cmdConnectCell"));
+
+    horizontalLayout_13->addWidget(_cmdConnectCell);
+
+    _cmdDisconnectCell = new QPushButton(groupBox_6);
+    _cmdDisconnectCell->setObjectName(QString::fromUtf8("_cmdDisconnectCell"));
+
+    horizontalLayout_13->addWidget(_cmdDisconnectCell);
+
+
+    verticalLayout_9->addLayout(horizontalLayout_13);
+
+
+    gridLayout_9->addLayout(verticalLayout_9, 0, 0, 1, 1);
+
+
+    verticalLayout_12->addWidget(groupBox_6);
 
     horizontalLayout_4 = new QHBoxLayout();
+    horizontalLayout_4->setSpacing(1);
     horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
     _startOperation = new QPushButton(groupBox_2);
     _startOperation->setObjectName(QString::fromUtf8("_startOperation"));
@@ -1225,18 +1504,22 @@ namespace libGUI{
     horizontalLayout_4->addWidget(_stopOperation);
 
 
-    verticalLayout_8->addLayout(horizontalLayout_4);
+    verticalLayout_12->addLayout(horizontalLayout_4);
 
 
-    gridLayout_8->addLayout(verticalLayout_8, 0, 0, 1, 1);
+    gridLayout_11->addLayout(verticalLayout_12, 0, 0, 1, 1);
+
+    groupBox_6->raise();
+    _lblRotScale->raise();
+
+    verticalLayout_13->addWidget(groupBox_2);
 
 
-    verticalLayout_5->addWidget(groupBox_2);
+    gridLayout_10->addLayout(verticalLayout_13, 0, 0, 1, 1);
 
+    QMetaObject::connectSlotsByName(this);
 
-    gridLayout_5->addLayout(verticalLayout_5, 0, 0, 1, 1);
-
-    this->setWindowTitle(QApplication::translate("Form", "Teleoperation", 0, QApplication::UnicodeUTF8));
+    this->setWindowTitle(QApplication::translate("Form", "Form", 0, QApplication::UnicodeUTF8));
     groupBox->setTitle(QApplication::translate("Form", "Cameras", 0, QApplication::UnicodeUTF8));
     _cameraTop->setText(QApplication::translate("Form", "Top", 0, QApplication::UnicodeUTF8));
     _cameraBottom->setText(QApplication::translate("Form", "Bottom", 0, QApplication::UnicodeUTF8));
@@ -1265,11 +1548,17 @@ namespace libGUI{
     _radBttRobot0->setText(QApplication::translate("Form", "0", 0, QApplication::UnicodeUTF8));
     _radBttRobot1->setText(QApplication::translate("Form", "1", 0, QApplication::UnicodeUTF8));
     groupBox_5->setTitle(QApplication::translate("Form", "Method", 0, QApplication::UnicodeUTF8));
+    _radCamera->setText(QApplication::translate("Form", "Cam.", 0, QApplication::UnicodeUTF8));
     _radWorld->setText(QApplication::translate("Form", "World", 0, QApplication::UnicodeUTF8));
-    _radCamera->setText(QApplication::translate("Form", "Camera", 0, QApplication::UnicodeUTF8));
     _lblTransScale->setText(QApplication::translate("Form", "Translational Scale: 1.0", 0, QApplication::UnicodeUTF8));
     _lblRotScale->setText(QApplication::translate("Form", "Rotational Scale: 1.0", 0, QApplication::UnicodeUTF8));
+    groupBox_6->setTitle(QApplication::translate("Form", "Real Cell", 0, QApplication::UnicodeUTF8));
+    groupBox_7->setTitle(QApplication::translate("Form", "Robot 1", 0, QApplication::UnicodeUTF8));
+    groupBox_8->setTitle(QApplication::translate("Form", "Robot 2", 0, QApplication::UnicodeUTF8));
+    _cmdConnectCell->setText(QApplication::translate("Form", "Connect", 0, QApplication::UnicodeUTF8));
+    _cmdDisconnectCell->setText(QApplication::translate("Form", "Disconnect", 0, QApplication::UnicodeUTF8));
     _startOperation->setText(QApplication::translate("Form", "Start", 0, QApplication::UnicodeUTF8));
     _stopOperation->setText(QApplication::translate("Form", "Stop", 0, QApplication::UnicodeUTF8));
+   
   }
 }

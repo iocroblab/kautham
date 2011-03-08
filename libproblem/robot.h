@@ -131,6 +131,8 @@ namespace libProblem {
 
 	  bool collisionCheck(Obstacle *obs);
 
+    bool collisionCheck(Robot *rob);
+
 	  KthReal distanceCheck(Obstacle *obs, bool min = true);
 
 	  bool setLimits(int member, KthReal min, KthReal max);

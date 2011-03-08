@@ -41,8 +41,10 @@
 
 #include <QWidget>
 #include <QtGui>
+#include <QProcess>
 #include <libdevice/device.h>
 #include <libproblem/problem.h>
+#include <libutil/data_ioc_cell.hpp>
 #include "gui.h"
 
 using namespace libDevice;
@@ -67,6 +69,8 @@ namespace libGUI{
       void                  changeTranScale(int value);
       void                  changeRotScale(int value);
       void                  changeRobot();
+      void                  connectCell();
+      void                  disconnectCell();
     public:
       TeleoperationWidget(Problem* prob, Device* hap, GUI* gui);
     private:
@@ -101,6 +105,12 @@ namespace libGUI{
       KthReal               _threshold; //!> Guiding threshold to change direction near a node.
       KthReal               _maxForces[6];
 
+      //! The _dataCell, the _publisher and the suscriber conform the core of interchange strategy 
+      //! to use with ROS message system.
+      kautham_ioc_cell*     _dataCell;
+      QProcess              _publisher;
+      QProcess              _suscriber;
+
       void                  setupUI();
       void                  updateGuidingPath();
       unsigned int          findNearNode(vector<GuiNode*>& path, pathPoint& tcploc, KthReal& dist );
@@ -113,8 +123,8 @@ namespace libGUI{
       void                  setGuideForce(mt::Transform& tcp);
 
       //XXXXXXXXXXXXXXXXXXXXXXXX
-      QGridLayout *gridLayout_5;
-      QVBoxLayout *verticalLayout_5;
+      QGridLayout *gridLayout_10;
+      QVBoxLayout *verticalLayout_13;
       QGroupBox *groupBox;
       QGridLayout *gridLayout_7;
       QVBoxLayout *verticalLayout_11;
@@ -167,25 +177,52 @@ namespace libGUI{
       QLineEdit *currentRZ;
       QPushButton *_getCamera;
       QGroupBox *groupBox_2;
-      QGridLayout *gridLayout_8;
-      QVBoxLayout *verticalLayout_8;
+      QGridLayout *gridLayout_11;
+      QVBoxLayout *verticalLayout_12;
       QHBoxLayout *horizontalLayout;
       QGroupBox *_groupRobots;
       QGridLayout *gridLayout_2;
-      QVBoxLayout *verticalLayout_12;
+      QHBoxLayout *horizontalLayout_3;
       QRadioButton *_radBttRobot0;
       QRadioButton *_radBttRobot1;
       QGroupBox *groupBox_5;
       QGridLayout *gridLayout_6;
-      QVBoxLayout *verticalLayout_9;
-      QRadioButton *_radWorld;
+      QHBoxLayout *horizontalLayout_2;
       QRadioButton *_radCamera;
+      QRadioButton *_radWorld;
+      QHBoxLayout *horizontalLayout_11;
       QVBoxLayout *verticalLayout_6;
       QLabel *_lblTransScale;
       QSlider *_sliderTransScale;
       QVBoxLayout *verticalLayout_7;
       QLabel *_lblRotScale;
       QSlider *_sliderRotScale;
+      QGroupBox *groupBox_6;
+      QGridLayout *gridLayout_9;
+      QVBoxLayout *verticalLayout_9;
+      QHBoxLayout *horizontalLayout_12;
+      QGroupBox *groupBox_7;
+      QGridLayout *gridLayout_8;
+      QVBoxLayout *verticalLayout_5;
+      QLineEdit *_txtR1Q1;
+      QLineEdit *_txtR1Q2;
+      QLineEdit *_txtR1Q3;
+      QLineEdit *_txtR1Q4;
+      QLineEdit *_txtR1Q5;
+      QLineEdit *_txtR1Q6;
+      QGroupBox *groupBox_8;
+      QGridLayout *gridLayout_5;
+      QVBoxLayout *verticalLayout_8;
+      QLineEdit *_txtCarril;
+      QLineEdit *_txtR2Q1;
+      QLineEdit *_txtR2Q2;
+      QLineEdit *_txtR2Q3;
+      QLineEdit *_txtR2Q4;
+      QLineEdit *_txtR2Q5;
+      QLineEdit *_txtR2Q6;
+      QHBoxLayout *horizontalLayout_13;
+      QPushButton *_cmdConnectCell;
+      QPushButton *_cmdDisconnectCell;
       QHBoxLayout *horizontalLayout_4;
       QPushButton *_startOperation;
       QPushButton *_stopOperation;

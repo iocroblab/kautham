@@ -105,6 +105,8 @@ namespace libProblem {
 
         from = j;
         robots[i]->control2Pose(tmpVec);
+
+        //first is testing if the robots collide with the environment (obstacles)
         for( unsigned int m = 0; m < obstacles.size(); m++){
           if( robots[i]->collisionCheck(obstacles[m]) ){
             collision = true;
@@ -112,14 +114,36 @@ namespace libProblem {
           }
           if(collision) break;
         }
+        // second test if a robot collides with another one present in the workspace.
+        if( i > 0 ){
+          for( int k = i-1; k = 0; --k){
+            if( robots[i]->collisionCheck( robots[k] ) ){
+              collision = true;
+              break;
+            }
+          }
+          if(collision) break;
+        }
       }
     }else{
       for(unsigned int i=0; i< robots.size(); i++){
         robots[i]->Kinematics(sample->getMappedConf().at(i));
+        //first is testing if the robot collides with the environment (obstacles)
         for( unsigned int m = 0; m < obstacles.size(); m++){
           if( robots[i]->collisionCheck(obstacles[m]) ){
             collision = true;
             break;
+          }
+          if(collision) break;
+        }
+        // second test if the robot collides with another one present in the workspace.
+        // This validation is done with the robots validated previously.
+        if( i > 0 ){
+          for( int k = i-1; k = 0; --k){
+            if( robots[i]->collisionCheck( robots[k] ) ){
+              collision = true;
+              break;
+            }
           }
           if(collision) break;
         }

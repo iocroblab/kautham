@@ -237,6 +237,9 @@ namespace libProblem {
             SE3Conf::fromAxisToQuaternion(cords);
 
             tmpC.setCoordinates(cords);
+
+            //cout << tmpC.print();
+
             rob->setHomePos(&tmpC);
           }
         }
@@ -253,8 +256,6 @@ namespace libProblem {
       _currentControls[i] = (KthReal)0.0;
     return true;
   }
-
-
 
 	WorkSpace* Problem::wSpace(){
 		return _wspace;
@@ -505,9 +506,15 @@ namespace libProblem {
           xml_node::iterator it;
           for(it = planNode.begin(); it != planNode.end(); ++it){
             name = it->name();
-            if( name == "Parameter" ){
-              name = it->attribute("name").value();
-              _planner->setParametersFromString( name.append("|").append(it->child_value()));
+            try{
+              if( name == "Parameter" ){
+                name = it->attribute("name").value();
+                _planner->setParametersFromString( name.append("|").append(it->child_value()));
+              }
+            }catch(...){
+              std::cout << "Current planner doesn't have at least one of the parameters" 
+                << " you found in the file (" << name << ")." << std::endl; 
+              return false; //if it is wrong maybe the file has been generated with another planner.
             }
           }
           return true;

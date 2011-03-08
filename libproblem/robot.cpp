@@ -677,6 +677,22 @@ namespace libProblem {
     return false;
   }
 
+  //! This method verifies if this robot collides with the robot rob passed as a parameter.
+  //! The method returns true when the two robots collide, otherwise returns false.
+  bool Robot::collisionCheck(Robot *rob){
+    if( _autocoll || rob->autocollision() ) return true;
+
+    for(int i=0; i < links.size(); i++){
+      for( int j = 0; j < rob->getNumLinks(); j++ ){
+        if( links[i]->getElement()->collideTo(rob->getLink(j)->getElement()) )//{
+            //cout <<"...collision between links "<<i<<" and "<<j<<endl;      
+            return true;
+          //}
+      }
+    }
+    return false;
+  }
+
 
   //! This methods returns the distance between the robot and the obstacle passed as parameter. 
   //! The distance returned is between the endEfector or the most distal link, but 
@@ -908,7 +924,7 @@ namespace libProblem {
   }
 
   vector<KthReal> Robot::deNormalizeSE3(vector<KthReal> &values){
-    std::vector<KthReal> coords(6);
+         std::vector<KthReal> coords(6);
     SE3Conf tmp;
 
     coords[0] = values[0]*(_homeLimits[0][1]-_homeLimits[0][0]) + _homeLimits[0][0];

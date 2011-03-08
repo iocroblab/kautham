@@ -66,6 +66,7 @@ namespace libGUI{
     void simulatePath();
     void moveAlongPath();
     void showSample(int index);
+    void tryConnect();
 	public:
     PlannerWidget(Planner* plan, SampleSet* samp, bool camera = false, GUI* gui = NULL );
 		
@@ -85,6 +86,15 @@ namespace libGUI{
     SampleSet*    _samples;
     QTimer*       _plannerTimer;
     unsigned int  _stepSim;
+
+    // Added to provide access to the local Planner
+    QLabel      *label;
+    QSpinBox    *_spFrom;
+    QLabel      *label_2;
+    QSpinBox    *_spTo;
+    QHBoxLayout *horizontalLayout_2;
+    QPushButton *_cmbTry;
+    QLabel      *_lblRes;
 	
 	};
  }

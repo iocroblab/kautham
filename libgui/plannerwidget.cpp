@@ -51,6 +51,67 @@ namespace libGUI{
     _planner = plan;
     _gui = gui;
     _stepSim = 0;
+
+    //XXXXXXXXXXXXXXXXXXXXXXXXX
+        QGroupBox *groupBox = new QGroupBox(this);
+        groupBox->setObjectName(QString::fromUtf8("groupBox"));
+        QGridLayout *gridLayoutGB = new QGridLayout(groupBox);
+        gridLayoutGB->setObjectName(QString::fromUtf8("gridLayout"));
+        QVBoxLayout *verticalLayoutGB = new QVBoxLayout();
+        verticalLayoutGB->setObjectName(QString::fromUtf8("verticalLayout"));
+        QHBoxLayout *horizontalLayoutGB = new QHBoxLayout();
+        horizontalLayoutGB->setObjectName(QString::fromUtf8("horizontalLayout"));
+        QLabel *labelGB = new QLabel(groupBox);
+        labelGB->setObjectName(QString::fromUtf8("label"));
+
+        horizontalLayoutGB->addWidget(labelGB);
+
+        _spFrom = new QSpinBox(groupBox);
+        _spFrom->setObjectName(QString::fromUtf8("_spFrom"));
+
+        horizontalLayoutGB->addWidget(_spFrom);
+
+        QLabel *label_2GB = new QLabel(groupBox);
+        label_2GB->setObjectName(QString::fromUtf8("label_2"));
+
+        horizontalLayoutGB->addWidget(label_2GB);
+
+        _spTo = new QSpinBox(groupBox);
+        _spTo->setObjectName(QString::fromUtf8("_spTo"));
+
+        horizontalLayoutGB->addWidget(_spTo);
+
+
+        verticalLayoutGB->addLayout(horizontalLayoutGB);
+
+        QHBoxLayout *horizontalLayout_2GB = new QHBoxLayout();
+        horizontalLayout_2GB->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        _cmbTry = new QPushButton(groupBox);
+        _cmbTry->setObjectName(QString::fromUtf8("_cmbTry"));
+
+        horizontalLayout_2GB->addWidget(_cmbTry);
+
+        _lblRes = new QLabel(groupBox);
+        _lblRes->setObjectName(QString::fromUtf8("label_3"));
+        QSizePolicy sizePolicy1(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(_lblRes->sizePolicy().hasHeightForWidth());
+        _lblRes->setSizePolicy(sizePolicy1);
+        _lblRes->setMinimumSize(QSize(20, 20));
+        _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/tryconnect.xpm")));
+
+        horizontalLayout_2GB->addWidget(_lblRes);
+
+
+        verticalLayoutGB->addLayout(horizontalLayout_2GB);
+
+
+        gridLayoutGB->addLayout(verticalLayoutGB, 0, 0, 1, 1);
+
+
+        vboxLayout->addWidget(groupBox);
+    //XXXXXXXXXXXXXXXXXXXXXXXXX
     
     tmpLabel = new QLabel(this);
     tmpLabel->setText("Init configuration is the sample:");
@@ -109,10 +170,16 @@ namespace libGUI{
 
     vboxLayout->addLayout(hboxLayout2);
 
-    btnGetPath->setText(QApplication::translate("Form", "get Path", 0, QApplication::UnicodeUTF8));
+    btnGetPath->setText(QApplication::translate("Form", "Get Path", 0, QApplication::UnicodeUTF8));
     btnSaveData->setText(QApplication::translate("Form", "save Data", 0, QApplication::UnicodeUTF8));
-    btnLoadData->setText(QApplication::translate("Form", "load Data", 0, QApplication::UnicodeUTF8));
-    btnMove->setText(QApplication::translate("Form", "start Move ", 0, QApplication::UnicodeUTF8));
+    btnLoadData->setText(QApplication::translate("Form", "Load Data", 0, QApplication::UnicodeUTF8));
+    btnMove->setText(QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8));
+    
+    groupBox->setTitle(QApplication::translate("Form", "Local Planner", 0, QApplication::UnicodeUTF8));
+    labelGB->setText(QApplication::translate("Form", "From:", 0, QApplication::UnicodeUTF8));
+    label_2GB->setText(QApplication::translate("Form", "To:", 0, QApplication::UnicodeUTF8));
+    _cmbTry->setText(QApplication::translate("Form", "Try Connect", 0, QApplication::UnicodeUTF8));
+    _lblRes->setText(QString());
     
     _plannerTimer = new QTimer( this ); 
 
@@ -124,8 +191,26 @@ namespace libGUI{
       connect(_plannerTimer, SIGNAL(timeout()), this, SLOT(moveAlongPath()) );
       connect(spnInit, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
       connect(spnGoal, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
+      connect(_spFrom, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
+      connect(_spTo, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
+      connect(_cmbTry, SIGNAL( clicked() ), this, SLOT( tryConnect( )));
     }
 	}
+
+  void PlannerWidget::tryConnect(){
+    if(_planner != NULL ){
+      _planner->lcPlanner()->setInitSamp(_samples->getSampleAt(_spFrom->text().toInt()));
+      _planner->lcPlanner()->setGoalSamp(_samples->getSampleAt(_spTo->text().toInt()));
+      if( _planner->lcPlanner()->canConect() ){
+        _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
+        writeGUI("The samples can be connected.");
+      }else{
+        _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/noconnect.xpm")));
+        writeGUI("The samples can NOT be connected.");
+      }
+    }else
+      writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+  }
 
   void PlannerWidget::getPathCall(){
     _gui->setCursor(QCursor(Qt::WaitCursor));
@@ -199,40 +284,46 @@ namespace libGUI{
     // transformation information of the camera
     if( chkCamera->isChecked() && _gui != NULL
        && _planner->getCameraMovement(_stepSim) != NULL ){
-      _gui->setActiveCameraTransform(*_planner->getCameraMovement(_stepSim));
+      _gui->setActiveCameraTransform(*_planner->getCameraMovement( _stepSim ));
     }
 
     _stepSim += _planner->getSpeedFactor();
   }
 
-  void PlannerWidget::showSample(int index)
-  {
-	int max;
+  void PlannerWidget::showSample(int index){
+	  int max;
 
-  if(_samples->getSize() < _planner->getMaxNumSamples()) max = _samples->getSize();
-	else 
-	{
-		max = _planner->getMaxNumSamples();
-		if(index>max) cout<<"Using a maximum of "<<max<<" samples"<<endl;
-	}
-	
+    _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/tryconnect.xpm")));
+    if(_samples->getSize() < _planner->getMaxNumSamples()) 
+      max = _samples->getSize();
+	  else{
+		  max = _planner->getMaxNumSamples();
+		  if(index>max) cout<<"Using a maximum of "<<max<<" samples"<<endl;
+	  }
+  	
     if( _samples->getSize() > 1 ){
       spnInit->setMaximum(max- 1 );
       spnGoal->setMaximum(max- 1 );
+      _spFrom->setMaximum(max- 1 );
+      _spTo->setMaximum(max- 1 );
     }
-	if( index >= 0 && index < max ){
-		Sample *smp =  _samples->getSampleAt(index);
+
+	  if( index >= 0 && index < max ){
+		  Sample *smp =  _samples->getSampleAt(index);
       _planner->wkSpace()->moveTo(smp );
-	
-	  vector<KthReal> c = smp->getCoords();
-	  cout << "sample: ";
-		  for(int i=0; i<c.size(); i++) cout << c[i] << ", ";
-	  cout << endl;
-	}
-	else
-	{
-      spnInit->setValue( 0 );
-      spnGoal->setValue( 0 );
-	}
+  	
+	    vector<KthReal> c = smp->getCoords();
+	    cout << "sample: ";
+
+		  for(int i=0; i<c.size(); i++) 
+        cout << c[i] << ", ";
+
+	    cout << endl;
+    }else{
+        spnInit->setValue( 0 );
+        spnGoal->setValue( 0 );
+        _spFrom->setValue( 0 );
+        _spTo->setValue( 0 );
+	  }
   }
 }
