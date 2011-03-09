@@ -15,13 +15,13 @@
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="180.0" Low="-180.0"></Limits>
       <Weight weight="1.0"></Weight>
-    <Parent name="Base"></Parent>
+      <Parent name="Base"></Parent>
     </Joint>
     
     <Joint name="ForeArm" ivFile="rtx90/forearm.wrl">
       <DHPars  alpha="-90.0" a="50.0" theta="-90.0" d="50.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="147.5" Low="-130.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Shoulder"></Parent>
     </Joint>
@@ -29,7 +29,7 @@
     <Joint name="Elbow" ivFile="rtx90/elbow.wrl">
       <DHPars  alpha="0.0" a="425.0" theta="90.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="145.0" Low="-145.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="ForeArm"></Parent>
     </Joint>
@@ -37,7 +37,7 @@
     <Joint name="Arm" ivFile="rtx90/arm.wrl">
       <DHPars  alpha="90.0" a="0.0" theta="0.0" d="425.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="270.0" Low="-270.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Elbow"></Parent>
     </Joint>
@@ -45,7 +45,7 @@
     <Joint name="Wrist" ivFile="rtx90/wrist.wrl">
       <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="140.0" Low="-115.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Arm"></Parent>
     </Joint>
@@ -53,7 +53,7 @@
     <Joint name="Tcp" ivFile="rtx90/tcp.wrl">
       <DHPars  alpha="90.0" a="0.0" theta="0.0" d="100.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="270.0" Low="-270.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Wrist"></Parent>
     </Joint>

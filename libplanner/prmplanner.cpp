@@ -469,7 +469,9 @@ namespace libPlanner {
 		{
 			//smpFrom->addNeigh( _samples->indexOf( connectToSmp ) );
 			//add sample connectToSmp as the first neighbor of sample smpFrom (set distance = 0)
-			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), 0.0, _kNeighs);
+      // Modified to avoid the false order.
+      KthReal dis = smpFrom->getDistance(connectToSmp, Kautham::CONFIGSPACE );
+			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), dis, _kNeighs);
 		}
 
 		//srtart connecting with neighs

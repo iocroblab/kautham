@@ -171,7 +171,7 @@ namespace libGUI{
     vboxLayout->addLayout(hboxLayout2);
 
     btnGetPath->setText(QApplication::translate("Form", "Get Path", 0, QApplication::UnicodeUTF8));
-    btnSaveData->setText(QApplication::translate("Form", "save Data", 0, QApplication::UnicodeUTF8));
+    btnSaveData->setText(QApplication::translate("Form", "Save Data", 0, QApplication::UnicodeUTF8));
     btnLoadData->setText(QApplication::translate("Form", "Load Data", 0, QApplication::UnicodeUTF8));
     btnMove->setText(QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8));
     
@@ -266,13 +266,13 @@ namespace libGUI{
   
 
   void PlannerWidget::simulatePath(){
-    if(btnMove->text() == QApplication::translate("Form", "start Move ", 0, QApplication::UnicodeUTF8)){
+    if(btnMove->text() == QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8)){
       _plannerTimer->start(200);
       //_stepSim = 0;
-      btnMove->setText(QApplication::translate("Form", "stop Move ", 0, QApplication::UnicodeUTF8));
+      btnMove->setText(QApplication::translate("Form", "Stop Move ", 0, QApplication::UnicodeUTF8));
     }else{
       _plannerTimer->stop();
-      btnMove->setText(QApplication::translate("Form", "start Move ", 0, QApplication::UnicodeUTF8));
+      btnMove->setText(QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8));
     }
 
   }
@@ -319,6 +319,13 @@ namespace libGUI{
         cout << c[i] << ", ";
 
 	    cout << endl;
+
+      // print neighbours
+      cout << "Neights: " ;
+      for(int i =0; i< smp->getNeighs()->size(); i++)
+        cout << smp->getNeighs()->at(i) << ", ";
+
+      cout << endl;
     }else{
         spnInit->setValue( 0 );
         spnGoal->setValue( 0 );

@@ -377,10 +377,10 @@ namespace libSampling {
 	  //Parameters X1, X2 and X3 are in the range [0,1]
       temp.at(0) = qx*qx+qy*qy; //X1 = x^2+y^2 
       KthReal a = atan2(qz,qw); //returns between -pi and pi
-      temp.at(2) = (KthReal) (0.5 * M_PI + a )/(M_PI); // X2 = (pi/2 + atan2(z/w))/pi
+      temp.at(2) = (KthReal) ( a )/(M_PI); // X3 =  atan2(z/w)/pi
 	    a = atan2(qx,qy);         //returns between -pi and pi
 	    if(a < 0) a += 2. * M_PI;
-      temp.at(1) = (KthReal) (a / (2. * M_PI)); // X3 = atan2(x/y)/(2*pi) 
+      temp.at(1) = (KthReal) (a / (2. * M_PI)); // X2 = atan2(x/y)/(2*pi) 
     }catch(...){}
 
     return temp;
