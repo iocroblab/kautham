@@ -48,6 +48,7 @@
 #include "plannerwidget.h"
 #include "devicewidget.h"
 #include "controlwidget.h"
+#include "bronchowidget.h"
 #include "constrainedcontrolwidget.h"
 #include "invkinwidget.h"
 #include <QtGui>
@@ -138,6 +139,19 @@ namespace libGUI {
     }else{
       ControlWidget* tmpControl = new ControlWidget( NULL, NULL, 0 );
       propertiesTab->addTab(tmpControl, "ControlTest");
+      return true;
+    }
+    return false;
+  }
+
+  bool GUI::addBronchoWidget( Robot* rob, Problem* prob, int offset ){
+    if( rob != NULL){
+      bronchoWidget* tmpControl = new bronchoWidget( rob, prob, offset );
+      propertiesTab->addTab(tmpControl, "bronchoCtrl-" + QString((rob->getName()).c_str()));
+      return true;
+    }else{
+      bronchoWidget* tmpControl = new bronchoWidget( NULL, NULL, 0 );
+      propertiesTab->addTab(tmpControl, "bronchoControlTest");
       return true;
     }
     return false;
