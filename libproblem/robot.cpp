@@ -50,7 +50,7 @@
 #include "ivkintxhand.h"
 #include "ivkinhand.h"
 #include "constrainedkinematic.h"
-#include "consbroncoscopykin.h"
+#include "ConsBronchoscopyKin.h"
 #include <mt/point3.h>
 #include <mt/rotation.h>
 #include <cstdlib>
@@ -434,12 +434,12 @@ namespace libProblem {
 
   bool Robot::setConstrainedKinematic(CONSTRAINEDKINEMATICS type){
     switch(type){
-      case Kautham::BRONCOSCOPY:
-        _constrainKin = new ConsBroncoscopyKin(this);		  
+      case Kautham::BRONCHOSCOPY:
+        _constrainKin = new ConsBronchoscopyKin(this);		  
         break;
       default:
         cout << "The Constrained Kinematic model has not be configured properly.\n" <<
-          "See the ConsBroncoscopyKin of the Robot class to call the constructor. " << endl;
+          "See the ConsBronchoscopyKin of the Robot class to call the constructor. " << endl;
         _constrainKin = NULL;
         return false;
     }
@@ -454,7 +454,7 @@ namespace libProblem {
 
   RobConf& Robot::ConstrainedKinematics(vector<KthReal> &target){
     if(_constrainKin != NULL){
-      //First i try to conect to the remote object
+      //First i try to connect to the remote object
       //if this pointer is not null, the object has been instantiate correctly.
       _constrainKin->setTarget(target);
       if(_constrainKin->solve()){

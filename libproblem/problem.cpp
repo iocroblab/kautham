@@ -185,8 +185,8 @@ namespace libProblem {
         // Setup the Constrained Kinematic if it has one.
         if((*it).child("ConstrainedKinematic")){
           name = (*it).child("ConstrainedKinematic").attribute("name").value();
-          if( name == "BRONCOSCOPY" )
-            rob->setConstrainedKinematic( Kautham::BRONCOSCOPY );
+          if( name == "BRONCHOSCOPY" )
+            rob->setConstrainedKinematic( Kautham::BRONCHOSCOPY );
           else
             rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
         }else{

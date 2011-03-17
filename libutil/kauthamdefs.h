@@ -144,7 +144,7 @@ namespace Kautham{
 
   enum CONSTRAINEDKINEMATICS{
     UNCONSTRAINED,
-    BRONCOSCOPY
+    BRONCHOSCOPY
   };
 
   //! This enumeration has the relationship of all Inverse Kinematic models

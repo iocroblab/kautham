@@ -1,5 +1,5 @@
-#if !defined(_CONSBRONCOSCOPYKIN_H)
-#define _CONSBRONCOSCOPYKIN_H
+#if !defined(_ConsBronchoscopyKin_H)
+#define _ConsBronchoscopyKin_H
 
 #include "constrainedkinematic.h"
 #include <hardlab/robot/txrobot.h>
@@ -8,10 +8,10 @@ using namespace Kautham;
 using namespace robot;
 
 namespace libProblem {
-	class ConsBroncoscopyKin :	public ConstrainedKinematic{
+	class ConsBronchoscopyKin :	public ConstrainedKinematic{
 	public:
-		ConsBroncoscopyKin(Robot* const rob);
-		~ConsBroncoscopyKin();
+		ConsBronchoscopyKin(Robot* const rob);
+		~ConsBronchoscopyKin();
     bool            solve();
 		
 		bool		        setParameters();
@@ -30,4 +30,4 @@ namespace libProblem {
 	};
 }
 
-#endif  //_CONSBRONCOSCOPYKIN_H
+#endif  //_ConsBronchoscopyKin_H
