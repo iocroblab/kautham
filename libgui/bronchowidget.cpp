@@ -12,13 +12,13 @@ bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset) : //QWidget 
 
     values.resize(3);
 
-    QTimer *timer = new QTimer(this);
+    /*QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(zetaSliderChanged()));
-    timer->start(100);
+    timer->start();*/
     
     QObject::connect(ui->alphaSlider,SIGNAL(valueChanged(int)),SLOT(alphaSliderChanged(int)));
     QObject::connect(ui->XiSlider,SIGNAL(valueChanged(int)),SLOT(xiSliderChanged(int)));
-    //QObject::connect(ui->DzSlider,SIGNAL(valueChanged(int)),SLOT(zetaSliderChanged(int)));
+    QObject::connect(ui->DzSlider,SIGNAL(valueChanged(int)),SLOT(zetaSliderChanged(int)));
     QObject::connect(ui->DzSlider,SIGNAL(sliderReleased()),SLOT(zetaSliderReleased()));
 }
 
@@ -60,11 +60,18 @@ void bronchoWidget::xiSliderChanged(int val){
   _robot->ConstrainedKinematics(values);
   }
 void bronchoWidget::zetaSliderChanged(int val){
-  if (val!=0){
     values[2]=(KthReal) val/10;  // slider goes from -100 to 100
     _ptProblem->setCurrentControls(values,_globalOffset);
     _robot->ConstrainedKinematics(values);
-  }
+
+}
+void bronchoWidget::zetaSliderChanged1(){
+  values[2]=(KthReal) ui->DzSlider->value();  // slider goes from -100 to 100
+    if (values[2]!=0){
+    _ptProblem->setCurrentControls(values,_globalOffset);
+    _robot->ConstrainedKinematics(values);
+    }
+
 }
 
 void bronchoWidget::zetaSliderReleased(){
