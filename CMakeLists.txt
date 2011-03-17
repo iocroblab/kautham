@@ -5,7 +5,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 CMAKE_POLICY(SET CMP0003 OLD)
 
 # Setup mt library
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules )
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules
+                      ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo/build_aux/cmake/Modules )
 SET(mt_DIR ${CMAKE_SOURCE_DIR}/libmt)
 
 FIND_PACKAGE( mt REQUIRED )
@@ -33,6 +34,15 @@ FIND_PACKAGE( Coin REQUIRED )
 
 FIND_PACKAGE( GSL )
 
+FIND_PACKAGE( Armadillo )
+IF( Armadillo_FOUND )
+ELSE( Armadillo_FOUND )
+  SET(armadillo_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo )
+  SET(Armadillo_INCLUDE_DIR ${armadillo_DIR}/include/armadillo_bits )
+  SET(Armadillo_LIBRARY ${armadillo_DIR}/examples/lib_win32/blas_win32_MT.lib 
+                        ${armadillo_DIR}/examples/lib_win32/lapack_win32_MT.lib )
+  MESSAGE( STATUS "aQUI ESTA: " ${Armadillo_INCLUDE_DIR} )
+ENDIF( Armadillo_FOUND )
 
 IF( WIN32 )
   ADD_DEFINITIONS( -D_CRT_SECURE_NO_DEPRECATE )
@@ -67,7 +77,11 @@ IF( KAUTHAM_GUI )
   ENDIF( SOQT_LIBRARY_FOUND )
 
   INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} 
-                       ${CMAKE_SOURCE_DIR}/libmt  )
+                       ${CMAKE_SOURCE_DIR}/libmt  
+                       ${Armadillo_INCLUDE_DIR})
+                       
+  SET(KC_EXTRA_LIBS ${Armadillo_LIBRARY} )
+  
   ADD_SUBDIRECTORY ( libcomm )
   ADD_SUBDIRECTORY ( libdevice )
   ADD_SUBDIRECTORY ( libgui )
@@ -83,7 +97,7 @@ IF( KAUTHAM_GUI )
     SET_TARGET_PROPERTIES( Kautham2 PROPERTIES WIN32_EXECUTABLE "True" )
   ENDIF(WIN32)
 
-  TARGET_LINK_LIBRARIES( Kautham2 libDNN libPQP libdevice libgui libsampling libproblem libioccomm libkthutil )
+  TARGET_LINK_LIBRARIES( Kautham2 libDNN libPQP libdevice libgui libsampling libproblem libioccomm libkthutil ${KC_EXTRA_LIBS} )
 ENDIF( KAUTHAM_GUI )
 
 
@@ -95,7 +109,7 @@ IF( KAUTHAM_CONSOLE )
     INCLUDE_DIRECTORIES( ${MPI_INCLUDE_PATH} )
     ADD_DEFINITIONS( -DKAUTHAM_USE_MPI )
     MESSAGE( STATUS "MPI library found at" ${MPI_INCLUDE_PATH} )
-    SET(KC_EXTRA_LIBS ${MPI_LIBRARIES} )
+    SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS} ${MPI_LIBRARIES} )
   ELSE( MPI_FOUND )
     MESSAGE( STATUS "MPI library didn't found" )
   ENDIF( MPI_FOUND )
