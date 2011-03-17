@@ -33,12 +33,12 @@ namespace libProblem {
     // Current values
 		KthReal curr_alpha = getvalues(0);
 		KthReal curr_psi = getvalues(1);
-		//KthReal currentvalues2 = getvalues(2); // it will not be used cause the slider already gives a Delta
+		KthReal curr_z = getvalues(2); // it will not be used cause the slider already gives a Delta
 		
     // Read values
-		KthReal Dalpha = M_PI *(values[0]-curr_alpha); // slider goes from -1000 to 1000
-    KthReal psi = M_PI/2*(values[1]/(n-1)); // values[1]=total bending angle read from the slider
-    KthReal Dzeta = -values[2];//directly the value read from the slider //-1000*(values[2]-currentvalues2);
+		KthReal Dalpha = (KthReal) M_PI *(values[0]-curr_alpha); // slider goes from -1000 to 1000
+    KthReal psi = (KthReal) M_PI/2*(values[1]/(n-1)); // values[1]=total bending angle read from the slider
+    KthReal Dzeta = (KthReal)-values[2];//directly the value read from the slider //-1000*(values[2]-currentvalues2);
    
 
     // sin and cos of rotation angles
@@ -65,8 +65,8 @@ namespace libProblem {
 	  currTran.setTranslation(mt::Point3(PosSE3[0], PosSE3[1], PosSE3[2]));
     //mt::Transform Tbase;
 
-    psi = psi ==0?  psi+0.001 : psi; // ¡¡¡¡¡¡¡ TO CHANGE!!!!!!!!
-    //if (psi!=0){
+    //psi = psi ==0?  psi+0.001 : psi; // ¡¡¡¡¡¡¡ TO CHANGE!!!!!!!!
+    if (abs(psi)>0.0001){
       KthReal d=l/2*cos(psi/2)/sin(psi/2);	 //dradio = -length/(2*tan(theta/2));	
       KthReal Dbeta = Dzeta/d; //(2*zeta*tan(theta/2))/length;
 		  //mt::Matrix3x3 BroncoRotMatrix;
@@ -90,16 +90,18 @@ namespace libProblem {
       T_RxDbeta.setTranslation(mt::Vector3(0,0,0));
 
       // updating the base transform
-      mt::Transform Tbase=currTran*T_RzDalpha*T_Y_d_Z_l2*T_RxDbeta*T_Y_d_Z_l2.inverse(); // beta around x axis
-    //}
-    //else {
+      //mt::Transform 
+        Tbase=currTran*T_RzDalpha*T_Y_d_Z_l2*T_RxDbeta*T_Y_d_Z_l2.inverse(); // beta around x axis
+    }
+    else {
 
-    //  mt::Transform T_X0_Y0_Zvel;
-    //  T_X0_Y0_Zvel.setRotation(mt::Rotation(1,0,0,0));
-    //  T_X0_Y0_Zvel.setTranslation(mt::Vector3(0,0,Dzeta));
-    //  
-    //  mt::Transform Tbase=currTran*T_RzDalpha*T_X0_Y0_Zvel; // beta around x axis
-    //}
+      mt::Transform T_X0_Y0_Zvel;
+      T_X0_Y0_Zvel.setRotation(mt::Rotation(0.0,0.0,0.0,1));
+      T_X0_Y0_Zvel.setTranslation(mt::Vector3(0,0,Dzeta));
+      
+      //mt::Transform 
+        Tbase=currTran*T_RzDalpha*T_X0_Y0_Zvel; // beta around x axis
+    }
 
 		/*BroncoPos[0] = (-dradio*cos(alpha)*cos(beta))+((length/2)*cos(alpha)*sin(beta))+(cos(alpha)*dradio);
 		BroncoPos[1] = (-dradio*sin(alpha)*cos(beta))+((length/2)*sin(alpha)*sin(beta))+(sin(alpha)*dradio);

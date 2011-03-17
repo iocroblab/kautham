@@ -27,6 +27,7 @@ namespace libProblem {
     RobConf		      solve(vector<KthReal> &values);
 		vector<KthReal>	_indexi;
 		KthReal			    _currentvalues[3];
+    mt::Transform   Tbase;
 	};
 }
 

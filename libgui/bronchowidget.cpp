@@ -12,14 +12,15 @@ bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset) : //QWidget 
 
     values.resize(3);
 
-    /*QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(zetaSliderChanged()));
-    timer->start();*/
+    timer = new QTimer(this);
+    //connect(timer, SIGNAL(timeout()), this, SLOT(zetaSliderChanged1()));
+    //timer->start();
     
     QObject::connect(ui->alphaSlider,SIGNAL(valueChanged(int)),SLOT(alphaSliderChanged(int)));
     QObject::connect(ui->XiSlider,SIGNAL(valueChanged(int)),SLOT(xiSliderChanged(int)));
     QObject::connect(ui->DzSlider,SIGNAL(valueChanged(int)),SLOT(zetaSliderChanged(int)));
     QObject::connect(ui->DzSlider,SIGNAL(sliderReleased()),SLOT(zetaSliderReleased()));
+    QObject::connect(ui->RateCheckBox,SIGNAL(stateChanged(int)),SLOT(setNavMode(int)));
 }
 
 bronchoWidget::~bronchoWidget()
@@ -59,25 +60,40 @@ void bronchoWidget::xiSliderChanged(int val){
   _ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
   }
-void bronchoWidget::zetaSliderChanged(int val){
-    values[2]=(KthReal) val/10;  // slider goes from -100 to 100
-    _ptProblem->setCurrentControls(values,_globalOffset);
-    _robot->ConstrainedKinematics(values);
 
+void bronchoWidget::zetaSliderChanged(int val){
+  values[2]=(KthReal)val/10;  // slider goes from -100 to 100, every step is 0.1
+  _ptProblem->setCurrentControls(values,_globalOffset);
+  _robot->ConstrainedKinematics(values);
 }
+
 void bronchoWidget::zetaSliderChanged1(){
-  values[2]=(KthReal) ui->DzSlider->value();  // slider goes from -100 to 100
+  values[2]=(KthReal) ui->DzSlider->value()/20;  // slider goes from -100 to 100, every step is of 0.05
     if (values[2]!=0){
-    _ptProblem->setCurrentControls(values,_globalOffset);
-    _robot->ConstrainedKinematics(values);
+      _ptProblem->setCurrentControls(values,_globalOffset);
+      _robot->ConstrainedKinematics(values);
     }
 
 }
 
 void bronchoWidget::zetaSliderReleased(){
-  
   ui->DzSlider->setValue(0);
   _ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
+
+}
+
+void bronchoWidget::setNavMode(int state){
+  if (state==Qt::Unchecked){
+    disconnect(timer, SIGNAL(timeout()), 0, 0);
+    timer->stop();
+    QObject::connect(ui->DzSlider,SIGNAL(valueChanged(int)),SLOT(zetaSliderChanged(int)));
+     }
+  else if (state==Qt::Checked)
+  {
+    QObject::disconnect(ui->DzSlider,SIGNAL(valueChanged(int)),0,0);
+    connect(timer, SIGNAL(timeout()), this, SLOT(zetaSliderChanged1()));
+    timer->start();
+  }
 
 }
