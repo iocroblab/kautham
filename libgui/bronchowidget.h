@@ -42,6 +42,7 @@ private:
     int               _globalOffset;
     Problem*          _ptProblem;
     QTimer*           timer;
+    KthReal           lastZsliderPos;
 };
 
 #endif // BRONCHOWIDGET_H

@@ -33,7 +33,7 @@ namespace libProblem {
     // Current values
 		KthReal curr_alpha = getvalues(0);
 		KthReal curr_psi = getvalues(1);
-		KthReal curr_z = getvalues(2); // it will not be used cause the slider already gives a Delta
+		//KthReal curr_z = getvalues(2); // it will not be used cause the slider already gives a Delta
 		
     // Read values
 		KthReal Dalpha = (KthReal) M_PI *(values[0]-curr_alpha); // slider goes from -1000 to 1000
@@ -135,7 +135,7 @@ namespace libProblem {
     // updating the _currentvalues variable with the new read values
 		setvalues(values[0],0);
 		setvalues(values[1],1);
-		//setvalues(values[2],2);		
+		setvalues(values[2],2);		
 
 		const mt::Point3& basePos = Tbase.getTranslationRef(); //resTra=result.getTranslationRef();
 

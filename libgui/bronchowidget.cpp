@@ -11,6 +11,7 @@ bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset) : //QWidget 
     _ptProblem = prob;
 
     values.resize(3);
+    lastZsliderPos=0;
 
     timer = new QTimer(this);
     //connect(timer, SIGNAL(timeout()), this, SLOT(zetaSliderChanged1()));
@@ -50,36 +51,45 @@ void bronchoWidget::alphaSliderChanged(int val){
     
   _ptProblem->setCurrentControls(values,_globalOffset);
   if(_robot != NULL) _robot->control2Pose(values);*/
-  values[0]=(KthReal) val/1000; // /1000 because the slider only accept int values, in this case from -3141 to 3141
+  KthReal readVal=(KthReal) val;
+  values[0]=(KthReal) readVal/1000; // /1000 because the slider only accept int values, in this case from -3141 to 3141
   _robot->ConstrainedKinematics(values);
 }
 
 
 void bronchoWidget::xiSliderChanged(int val){
-  values[1]=(KthReal) val/1000;
+  KthReal readVal=(KthReal) val;
+  values[1]=(KthReal) readVal/1000;
   _ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
   }
 
 void bronchoWidget::zetaSliderChanged(int val){
-  values[2]=(KthReal)val/10;  // slider goes from -100 to 100, every step is 0.1
+  KthReal readVal=(KthReal) val;
+  values[2]=(KthReal)(readVal-lastZsliderPos)*10;  // slider goes from -100 to 100, every delta is 10
   _ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
+  lastZsliderPos=readVal;
 }
 
 void bronchoWidget::zetaSliderChanged1(){
-  values[2]=(KthReal) ui->DzSlider->value()/20;  // slider goes from -100 to 100, every step is of 0.05
+  KthReal readVal=(KthReal) ui->DzSlider->value();
+  values[2]=(KthReal) (readVal/20);  // slider goes from -100 to 100, every step is of 0.05
     if (values[2]!=0){
       _ptProblem->setCurrentControls(values,_globalOffset);
       _robot->ConstrainedKinematics(values);
     }
-
 }
 
 void bronchoWidget::zetaSliderReleased(){
+  QObject::disconnect(ui->DzSlider,SIGNAL(valueChanged(int)),0,0);
   ui->DzSlider->setValue(0);
-  _ptProblem->setCurrentControls(values,_globalOffset);
-  _robot->ConstrainedKinematics(values);
+  lastZsliderPos=0;
+  values[2]=0;
+  QObject::connect(ui->DzSlider,SIGNAL(valueChanged(int)),SLOT(zetaSliderChanged(int)));
+
+  /*_ptProblem->setCurrentControls(values,_globalOffset);
+  _robot->ConstrainedKinematics(values);*/
 
 }
 
