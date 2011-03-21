@@ -47,10 +47,12 @@
 #include <libplanner/myplanner.h>
 #include <libplanner/drmplanner.h>
 #include <libplanner/prmplanner.h>
+#include <libplanner/prmplanner_pca.h>
 #include <libplanner/rrtplanner.h>
 #include <libplanner/prmhandplannerICRA.h>
 #include <libplanner/prmhandplannerICRAthumb.h>
 #include <libplanner/prmhandplannerICRAjournal.h>
+#include <libplanner/prmhandplannerarmhandpca.h>
 #include <libplanner/prmrobothandconstplannerICRA.h>
 #include <libplanner/prmhandplannerIROS.h>
 #include <libplanner/myprmplanner.h>
@@ -424,7 +426,7 @@ namespace libProblem {
   }
 
   string Problem::plannersNames(){
-    return   "DRM|PRM|RRT|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRM RobotHand ICRA J|MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
+    return   "DRM|PRM|PRM PCA|RRT|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRM RobotHand ICRA J|PRM RobotArmHand PCA|MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
   }
 
   bool Problem::createPlanner( string name, KthReal step ){
@@ -438,6 +440,9 @@ namespace libProblem {
     else if(name == "PRM")
       _planner = new PRMPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
+	else if(name == "PRM PCA")
+      _planner = new PRMPlannerPCA(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, step,1,1);
 	else if(name == "RRT")
       _planner = new RRTPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
@@ -457,6 +462,12 @@ namespace libProblem {
       _planner = new PRMHandPlannerICRAjournal(CONTROLSPACE, NULL, NULL, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 10, (KthReal)0.0010, 10);
+	//////////////////////////////////////////////////////////////////////////
+	else if(name == "PRM RobotArmHand PCA")
+      _planner = new PRMHandPlannerArmHandPCA(CONTROLSPACE, NULL, NULL, _cspace,
+                                             _sampler, _wspace, _locPlanner,
+                                             step, 10,0, (KthReal)0.0010, 10,0.0,0.0);
+	//////////////////////////////////////////////////////////////////////////
    else if(name == "PRM RobotHand-Const ICRA")
       _planner = new PRMRobotHandConstPlannerICRA(CONTROLSPACE, NULL, NULL, _cspace,
                                              _sampler, _wspace, _locPlanner,

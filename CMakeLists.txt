@@ -20,6 +20,7 @@ IF(Boost_FOUND)
   MESSAGE(STATUS "Boost library found at first attempt.")
 ELSE(Boost_FOUND)
   SET( BOOST_ROOT $ENV{BOOSTDIR})
+	MESSAGE(STATUS "Boost library NOT found at first attempt. Setting BOOST_ROOT to" $ENV{BOOSTDIR})
 	FIND_PACKAGE( Boost COMPONENTS  system serialization thread REQUIRED )
 	IF(Boost_FOUND)
 		MESSAGE(STATUS "Boost library found in " ${BOOST_ROOT})
@@ -34,14 +35,19 @@ FIND_PACKAGE( Coin REQUIRED )
 
 FIND_PACKAGE( GSL )
 
+
 FIND_PACKAGE( Armadillo )
 IF( Armadillo_FOUND )
+  MESSAGE( STATUS "armadillo Package FOUND")
 ELSE( Armadillo_FOUND )
-  SET(armadillo_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo )
-  SET(Armadillo_INCLUDE_DIR ${armadillo_DIR}/include/armadillo_bits )
-  SET(Armadillo_LIBRARY ${armadillo_DIR}/examples/lib_win32/blas_win32_MT.lib 
-                        ${armadillo_DIR}/examples/lib_win32/lapack_win32_MT.lib )
-  MESSAGE( STATUS "aQUI ESTA: " ${Armadillo_INCLUDE_DIR} )
+  SET(Armadillo_FOUND TRUE )
+  SET(Armadillo_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo )
+  SET(Armadillo_INCLUDE_DIR ${Armadillo_DIR}/include )
+  #SET(Armadillo_LIBRARY ${Armadillo_DIR}/examples/lib_win32/blas_win32_MT.lib 
+  #                      ${Armadillo_DIR}/examples/lib_win32/lapack_win32_MT.lib )
+  SET(Armadillo_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo/examples/lib_win32/blas_win32_MT.lib 
+                        ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo/examples/lib_win32/lapack_win32_MT.lib )
+  MESSAGE( STATUS "Armadillo_INCLUDE_DIR: " ${Armadillo_INCLUDE_DIR} )
 ENDIF( Armadillo_FOUND )
 
 IF( WIN32 )
