@@ -45,6 +45,7 @@ ELSE( Armadillo_FOUND )
   SET(Armadillo_INCLUDE_DIR ${Armadillo_DIR}/include )
   #SET(Armadillo_LIBRARY ${Armadillo_DIR}/examples/lib_win32/blas_win32_MT.lib 
   #                      ${Armadillo_DIR}/examples/lib_win32/lapack_win32_MT.lib )
+  
   SET(Armadillo_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo/examples/lib_win32/blas_win32_MT.lib 
                         ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo/examples/lib_win32/lapack_win32_MT.lib )
   MESSAGE( STATUS "Armadillo_INCLUDE_DIR: " ${Armadillo_INCLUDE_DIR} )
