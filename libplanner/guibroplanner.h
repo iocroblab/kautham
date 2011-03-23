@@ -83,6 +83,8 @@ namespace libPlanner {
 
 		bool trySolve();
 		bool setParameters();
+
+		bool applyRandControl(Sample *currSmp, Sample *newSmp);
 		//Add public data and functions
 
 		protected:

@@ -43,6 +43,7 @@
 
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
+#include <libsampling/robconf.h>
 #include "localplanner.h"
 #include "guibroplanner.h"
 
@@ -132,24 +133,43 @@ namespace libPlanner {
     }
 
 	
-  	
+	//! function to find a solution path
+		bool GUIBROPlanner::applyRandControl(Sample *currSmp, Sample *newSmp)
+		{
+			//move to sample i
+			RobConf *currentconf;
+			currentconf = _wkSpace->getConfigMapping(currSmp).at(0);
+			//compute a control u
+			vector<KthReal> u;
+			u.push_back(0.0);
+			u.push_back(0.0);
+			u.push_back(50.0);
+			//apply control u
+			vector<RobConf*> newconf;
+			newconf.push_back( &_wkSpace->getRobot(0)->ConstrainedKinematics(u) );
+			newSmp->setMappedConf(newconf);
+			if( ! _wkSpace->collisionCheck(newSmp)) return true; //no collision: add to sample set
+			else return false; //collision - discard sample
+	  	}
+
+
 	//! function to find a solution path
 		bool GUIBROPlanner::trySolve()
 		{
 			_solved = false;
+			char sampleDIM = _wkSpace->getDimension();
 
 			//Set _samples only with the initial sample
 			if( _samples->getSize() > 0){
 			    Sample *SmpInit;
 			    Sample *SmpGoal;
-				char sampleDIM = _wkSpace->getDimension();
 				SmpInit = new Sample(sampleDIM);
 				SmpInit->setCoords(_init->getCoords());
-				//_wkSpace->collisionCheck(SmpInit);
+				_wkSpace->collisionCheck(SmpInit);
 				SmpInit->setMappedConf(_wkSpace->getConfigMapping(_init));
 				SmpGoal = new Sample(sampleDIM);
 				SmpGoal->setCoords(_goal->getCoords());
-				//_wkSpace->collisionCheck(SmpGoal);
+				_wkSpace->collisionCheck(SmpGoal);
 				SmpGoal->setMappedConf(_wkSpace->getConfigMapping(_goal));
 				_samples->clear();
 				_init=SmpInit;
@@ -165,23 +185,17 @@ namespace libPlanner {
 			}
 
 
-			int count = 1;
-			while( count < _maxNumSamples)
+			//Loop by growing the tree
+			int currentNumSamples = _samples->getSize();
+			for(int i=0; i<currentNumSamples; i++)
 			{
-				count++;
-				//grow the tree
-				for(int i=0; i<_samples->getSize(); i++)
-				{
-					/*
-					KthReal values[3];
-					values[0] = 0.0;
-					values[1] = 0.0;
-					values[2] = 0.0;
-					RobConf newconf;
-					newconf _robot->ConstrainedKinematics(values);
-					*/
-				}
-			};
+					Sample *currSmp = _samples->getSampleAt(i);
+					Sample *newSmp = new Sample(sampleDIM);
+					if(applyRandControl(currSmp, newSmp))
+						_samples->add(newSmp);
+					else delete newSmp;
+			}
+
 			return _solved;
 
 			/*
