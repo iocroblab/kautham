@@ -78,7 +78,6 @@ using namespace std;
 			bool getSampleInGoalRegion(double tradius, double rradius);  
 			///////////////////////////////////////////////////////////
 			////////////////Process PCA///////////////////////////////
-			bool getHandConfigPCA(vector<KthReal>& coord,  bool randhand, int numPMDs);
 			bool getSampleRandPCA(float R);
 			bool SamplerPCASpace(bool spca,float R,float tradius);
 			////////////////////////////////////////////////////////

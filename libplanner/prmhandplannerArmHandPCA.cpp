@@ -23,14 +23,8 @@ using namespace std;
            WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize,int cloudSize, int samplingV, KthReal cloudRad, int samplingR,float distgoal,float distsamplingpcagoal)
       :PRMHandPlanner(stype, init, goal, samples, sampler, ws, lcPlan,  ssize, cloudSize,  cloudRad)
 	{
-    _idName = "PRM RobotArmHand PCA";
+		_idName = "PRM RobotArmHand PCA";
 		
-		//_numberHandConf = numHC;
-		
-		//addParameter("Ratio Hand/Arm Conf", _numberHandConf);
-
-		//_incrementalPMDs = 1;
-		/////////////////////////////////////////////////
 		_distancegoal=distgoal;
 		addParameter("Distance Goal", _distancegoal);
 		_distsamplingpcagoal=distsamplingpcagoal;
@@ -42,15 +36,12 @@ using namespace std;
 
 
 		//////////////////////////////////////////////////
-		   _cloudRadiusMax = cloudRad;
-           addParameter("Lambda", _cloudRadiusMax);
+		_cloudRadiusMax = cloudRad;
+        addParameter("Lambda", _cloudRadiusMax);
 
-    removeParameter("Neigh Thresshold");
-	removeParameter("Cloud Radius");
-	removeParameter("Cloud Size");
-
-	
-
+		removeParameter("Neigh Thresshold");
+		removeParameter("Cloud Radius");
+		removeParameter("Cloud Size");
 	}
 
 
@@ -580,12 +571,12 @@ using namespace std;
 						catch (...){ cout<<"Data not recognize"<<endl;}
 						
 						if(_triedSamples > _maxNumSamples) break;
-						for(int t=0;t<_samplingR;t++)
+						for(int t=0;t<_samplingR;)//t++)
 						{		 
 							//cout<<"radius = "<<radius<<" n = "<<n<<endl;
 							if(getSampleInGoalRegionRealworld(radius , 0.05, true)) 
 							{	
-								//t++;
+								t++;
 								countwr++;
 								n++;
 							 }
@@ -668,15 +659,6 @@ bool PRMHandPlannerArmHandPCA::getSampleRandPCA(float R)
 			//y=PCA_11PMDs.n_rows;
 		
 			int freesamples=PCA11PMDs.n_rows;//numero de muestras libres de 11 elementos
-for(int i=0;i<PCA11PMDs.n_rows;i++)
-{
-for(int j=0;j<11;j++)
-{
-	double k=PCA11PMDs(i,j);
-	int s=0;
-}
-}
-
 			try{
 			if(freesamples>=11)//Condición para el calculo de PCA(minimo 11 elementos)
 			{
@@ -937,174 +919,6 @@ for(int j=0;j<11;j++)
 	
 		return false;
 	}
-
-
-
-
-
-	 bool PRMHandPlannerArmHandPCA::getHandConfigPCA(vector<KthReal>& coord,  bool randhand, int numPMDs)
-	{
-		vector<KthReal> coordvector;
-
-		mat::fixed<10,5> PCA_5PMDs;
-
-		//If random - first find a autocollisionfree sample up to a max of maxtrials
-		if(randhand)
-		{
-			bool autocol;
-			int trials=0;
-			int maxtrials=10;
-
-			//do{
-				coordvector.clear();
-				//sample the hand coordinates
-				if(numPMDs==-1 || numPMDs>(_wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk())) 
-						numPMDs = _wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk();
-				int k;
-				int kini = _wkSpace->getRobot(0)->getTrunk();
-
-				//////////////////APPLY PCA/////////////////////////
-				float temp_Cs=0;
-				for(int row = 0; row <10; ++row)
-					{  	for(k = kini; k < kini+numPMDs; k++)
-						{
-							//hand coords not set - sample the whole range
-							if(coord[k]==-1)
-							{coord[k] = (KthReal)_gen->d_rand();
-							temp_Cs=coord[k];
-							}
-							//hand coords already set - saple around the known values
-							else{
-								//coord[k] = coord[k]+ 0.3*(2*(KthReal)_gen->d_rand()-1);
-
-								//temp_Cs=coord[k]+ 0.3*(2*(KthReal)_gen->d_rand()-1);
-								coord[k] = (KthReal)_gen->d_rand();
-								temp_Cs=coord[k];
-
-								if(temp_Cs<0)
-								{	
-									
-									temp_Cs=0;
-								}
-								else if(temp_Cs>1) 
-								{	
-									
-									temp_Cs=1;
-								}
-							}
-							//coordvector.push_back(coord[k]);
-							PCA_5PMDs(row,k-6)=temp_Cs;
-						}
-					}
-				///////////////PCA Armadillo//////////////////////////////
-				mat coeff;
-				vec latent;
-				vec explained; 
-				princomp_cov(coeff, latent, explained,PCA_5PMDs);
-
-				////////Baricentro-Media///////////////////////////
-				rowvec bar  = mean(PCA_5PMDs);
-
-				//////////Lambdas/////////////////////////////////////
-				 rowvec lambdapca = trans(2*sqrt(latent));
-		
-				///////////////////////////////////////////////////
-				mat matrand(10,5);
-
-				//float c=0,f=0;
-				float lambdaC1,lambdaC2,lambdaC3,lambdaC4,lambdaC5;
-				//int i,j;
-				//f=matrand.n_rows;
-				//c=matrand.n_cols;
-
-			///////////////////////////////
-					  
-				lambdaC1=lambdapca(0,0);			  
-				lambdaC2=lambdapca(0,1);
-				lambdaC3=lambdapca(0,2);
-				lambdaC4=lambdapca(0,3);
-				lambdaC5=lambdapca(0,4);
-		
-			////////////////////////////////
-			for(int i=0; i < 10; i++)
-			{
-				//int tempj=0;
-			  for(int j=0; j<5; j++)
-		       { //Para la componente C1
-				  if(j==0) matrand(i,j)=-lambdaC1+(2*lambdaC1*(_gen->d_rand()));
-				  //Para la componente C2
-				  if(j==1) matrand(i,j)=-lambdaC2+(2*lambdaC2*(_gen->d_rand()));
-				  //Para la componente C3		
-				  if(j==2)  matrand(i,j)=-lambdaC3+(2*lambdaC3*(_gen->d_rand()));
-				  //Para la componente C4	   
-				   if(j==3) matrand(i,j)=-lambdaC4+(2*lambdaC4*(_gen->d_rand()));
-				 //Para la componente C5				 
-				   if(j==4) matrand(i,j)=-lambdaC5+(2*lambdaC5*(_gen->d_rand()));
-				 		   
-				  }
-			}
-		
-			for(int i=0; i<matrand.n_rows ; i++)
-				 { 
-					////pointpca en espacio 5
-					 rowvec pointpca=matrand.row(i);
-						
-					rowvec zeta=trans((coeff*trans(pointpca))+trans(bar));
-
-					matrand(i,0)=zeta(0,0);//C1
-					matrand(i,1)=zeta(0,1);//C2
-					matrand(i,2)=zeta(0,2);//C3
-					matrand(i,3)=zeta(0,3);//C4
-					matrand(i,4)=zeta(0,4);//c5
-			}
-
-				//Ahora los 5 primeros valores mano y los 6 restantes brazo?
-				//load the arm coordinates passed as a parameter
-			int z=0;
-			do{
-				//coordvector.clear();
-				//for(z=0; z<matrand.n_rows ; z++) rowvec varscore=matpca.row(i);
-				//	 { 
-						 coordvector.clear();
-						//recuperamos la nueva columna de Cs 
-						rowvec filCs=matrand.row(z);
-							
-						for(k = kini; k < kini+numPMDs; k++)
-							{
-								coord[k] = filCs(0,k-6);
-								if(coord[k]<0) coord[k]=0;
-								else if(coord[k]>1) coord[k]=1;
-								coordvector.push_back(coord[k]);
-							}
-						for(int k =0; k < _wkSpace->getRobot(0)->getTrunk(); k++)
-							{
-								coordvector.push_back(coord[k]);
-							}
-
-
-						//Set the new sample with the hand-arm coorinates and check for autocollision.				
-						_wkSpace->getRobot(0)->control2Pose(coordvector); 
-						autocol = _wkSpace->getRobot(0)->autocollision();
-						z++;
-						//trials++;
-					//}
-			}while(autocol==true && z< matrand.n_rows);
-					if(autocol==true) return false;
-					
-			}	
-		else
-		{
-			//load the hand-arm coordinates passed as a parameter
-			for(int k = 0; k < _wkSpace->getDimension(); k++)
-			{
-				coordvector.push_back(coord[k]);
-			}
-		}
-		return true;
-	}
-
-
-
 
 
     void PRMHandPlannerArmHandPCA::writeFiles(FILE *fpr, FILE *fph, RobConf* joints)
