@@ -59,6 +59,7 @@
 #include <libplanner/mygridplanner.h>
 #include <libplanner/NF1planner.h>
 #include <libplanner/HFplanner.h>
+#include <libplanner/guibroplanner.h>
 #include <libutil/pugixml/pugixml.hpp> 
 #include <string>
 #include <fstream>
@@ -75,6 +76,7 @@ using namespace std;
 using namespace DRM;
 using namespace PRM;
 using namespace RRT;
+using namespace GUIBRO;
 using namespace myplanner;
 using namespace myprmplanner;
 using namespace gridplanner;
@@ -426,7 +428,7 @@ namespace libProblem {
   }
 
   string Problem::plannersNames(){
-    return   "DRM|PRM|PRM PCA|RRT|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRM RobotHand ICRA J|PRM RobotArmHand PCA|MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
+    return   "DRM|PRM|PRM PCA|RRT|GUIBRO|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRM RobotHand ICRA J|PRM RobotArmHand PCA|MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
   }
 
   bool Problem::createPlanner( string name, KthReal step ){
@@ -445,6 +447,9 @@ namespace libProblem {
                                _cspace, _sampler, _wspace, _locPlanner, step,1,1);
 	else if(name == "RRT")
       _planner = new RRTPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
+	else if(name == "GUIBRO")
+      _planner = new GUIBROPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
     else if(name == "PRM Hand IROS")
       _planner = new PRMHandPlannerIROS(CONTROLSPACE, NULL, NULL,
