@@ -54,28 +54,21 @@ using namespace std;
 using namespace libSampling;
 
 namespace libPlanner {
-  namespace PRM{
    namespace GUIBRO{
 
-	   /*
-	//!Function that filters out edges with negative weigh
-	template <typename EdgeWeightMap>
-		struct negative_edge_weight {
-			negative_edge_weight() { }
-			negative_edge_weight(EdgeWeightMap weight) : m_weight(weight) { }
-			template <typename Edge>
-				bool operator()(const Edge& e) const {
-					return get(m_weight, e) > 0.0;
-				}
-			EdgeWeightMap m_weight;
+	struct guibroSample
+	{
+		Sample *smpPtr;
+		guibroSample *parent;
+		KthReal u[3];
+		KthReal length;
+		KthReal curvature;
+		KthReal steps;
 	};
 
-	//!Graph representing the subgraph of the grid without the edges that have the source or target
-	//!vertex associated to a collision sample
-	typedef filtered_graph<PRMGraph, negative_edge_weight<WeightMap> > guibroGraph;
-	*/
 
-    class GUIBROPlanner:public PRMPlanner {
+
+    class GUIBROPlanner:public Planner {
 	    public:
         GUIBROPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
           WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
@@ -84,21 +77,23 @@ namespace libPlanner {
 		bool trySolve();
 		bool setParameters();
 
-		bool applyRandControl(Sample *currSmp, Sample *newSmp);
+		bool applyRandControl(guibroSample *currGsmp);
 		//Add public data and functions
 
 		protected:
 		//Add protected data and functions	
-		int _firstParameter;
-		double _secondParameter;
-		double _thirdParameter;	
+		KthReal _alpha;
+		KthReal _xi;
+		KthReal _deltaZ;
+	    LCPRNG*	_gen;
+
+		vector<guibroSample*> _guibroSet;
 
 	    private:
 		//Add private data and functions
 
 	  };
    }
-  }
 }
 
 

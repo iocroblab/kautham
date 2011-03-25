@@ -24,10 +24,10 @@
 			<Name>GUIBRO</Name>
 			<LocalPlanner stepSize="0.01">Linear</LocalPlanner>
       <Parameter name="Speed Factor">3</Parameter>
-			<Parameter name="1- First parameter">0.009999999776</Parameter>
-			<Parameter name="2- Second parameter">5</Parameter>
-			<Parameter name="3- Third parameter">1</Parameter>
-      <Parameter name="Max. Samples">4000</Parameter>
+			<Parameter name="1- Rotation (alpha)">0.1</Parameter>
+			<Parameter name="2- Bending (xi)">0.1</Parameter>
+			<Parameter name="3- Advance (delta_z)">-1</Parameter>
+      <Parameter name="Max. Samples">100</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>

@@ -50,16 +50,16 @@
 using namespace libSampling;
 
 namespace libPlanner {
-  namespace PRM{
    namespace GUIBRO{
 	//! Constructor
     GUIBROPlanner::GUIBROPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              PRMPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+              Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
 	{
 		//set intial values
-		_firstParameter = 10;
-		_secondParameter = 0.5;
-		_thirdParameter = 0.1;
+		_alpha = 0.1;
+		_xi = 0.1;
+		_deltaZ = 50;
+	    _gen = new LCPRNG();
 
 		//set intial values from parent class data
 		_speedFactor = 1;
@@ -69,9 +69,9 @@ namespace libPlanner {
 		_guiName = "GUIBRO Planner";
 		addParameter("Step Size", ssize);
 		addParameter("Speed Factor", _speedFactor);
-		addParameter("1- First parameter", _firstParameter);
-		addParameter("2- Second parameter", _secondParameter);
-		addParameter("3- Third parameter", _thirdParameter);
+		addParameter("1- Rotation (alpha)", _alpha);
+		addParameter("2- Bending (xi)", _xi);
+		addParameter("3- Advance (delta_z)", _deltaZ);
 
 		removeParameter("Neigh Thresshold");
 		removeParameter("Drawn Path Link");
@@ -102,26 +102,25 @@ namespace libPlanner {
         it = _parameters.find("Max. Samples");
         if(it != _parameters.end()){
           _maxNumSamples = it->second;
-		      _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
 		    }else
           return false;
 
-		it = _parameters.find("1- First parameter");
+		it = _parameters.find("1- Rotation (alpha)");
         if(it != _parameters.end())
-			_firstParameter = it->second;
+			_alpha = it->second;
         else
           return false;
 
-        it = _parameters.find("2- Second parameter");
+        it = _parameters.find("2- Bending (xi)");
         if(it != _parameters.end())
-          _secondParameter = it->second;
+          _xi = it->second;
         else
           return false;
 
 
-        it = _parameters.find("3- Third parameter");
+        it = _parameters.find("3- Advance (delta_z)");
         if(it != _parameters.end())
-          _thirdParameter = it->second;
+          _deltaZ = it->second;
         else
           return false;
 
@@ -134,23 +133,104 @@ namespace libPlanner {
 
 	
 	//! function to find a solution path
+	/*
 		bool GUIBROPlanner::applyRandControl(Sample *currSmp, Sample *newSmp)
 		{
-			//move to sample i
 			RobConf *currentconf;
+			//move to currSmp and return configMap
 			currentconf = _wkSpace->getConfigMapping(currSmp).at(0);
 			//compute a control u
 			vector<KthReal> u;
-			u.push_back(0.0);
-			u.push_back(0.0);
-			u.push_back(50.0);
-			//apply control u
+			u.push_back( (_gen->d_rand()-0.5)*_alpha );
+			u.push_back( (_gen->d_rand()-0.5)*_xi );
+			u.push_back( - _deltaZ );//backwards
+
+			//apply control u until collision:
+			Sample *tmpSmp;
+			tmpSmp = new Sample(_wkSpace->getDimension());
+			//a) advance a deltaZ step
 			vector<RobConf*> newconf;
 			newconf.push_back( &_wkSpace->getRobot(0)->ConstrainedKinematics(u) );
-			newSmp->setMappedConf(newconf);
-			if( ! _wkSpace->collisionCheck(newSmp)) return true; //no collision: add to sample set
+			tmpSmp->setMappedConf(newconf);
+			
+			//b) keed advancing until collision
+			bool advanced = false;
+			while( ! _wkSpace->collisionCheck(tmpSmp))
+			{
+				advanced = true;
+				currentconf = _wkSpace->getConfigMapping(tmpSmp).at(0);//move and update
+				newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
+				tmpSmp->setMappedConf(newconf);
+			}
+			//c) return the sample previous to the collision
+			if(advanced)
+			{
+				//go forward one step
+				u[2] = -u[2];
+				currentconf = _wkSpace->getConfigMapping(tmpSmp).at(0);//move and update
+				newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
+				newSmp->setMappedConf(newconf);
+				return true; //no collision: newSmp now contains the sample to be added to sample set
+			}
 			else return false; //collision - discard sample
+			
 	  	}
+		*/
+
+	//! function to find a solution path
+		bool GUIBROPlanner::applyRandControl(guibroSample *currGsmp)
+		{
+			RobConf *currentconf;
+			//move to currSmp and return configMap
+			currentconf = _wkSpace->getConfigMapping(currGsmp->smpPtr).at(0);
+			//compute a control u
+			vector<KthReal> u;
+			u.push_back( (_gen->d_rand()-0.5)*_alpha );
+			u.push_back( (_gen->d_rand()-0.5)*_xi );
+			u.push_back( - _deltaZ );//backwards
+
+			//apply control u until collision:
+			Sample *nextSmp;
+			nextSmp = new Sample(_wkSpace->getDimension());
+			//a) advance a deltaZ step
+			vector<RobConf*> newconf;
+			newconf.push_back( &_wkSpace->getRobot(0)->ConstrainedKinematics(u) );
+			nextSmp->setMappedConf(newconf);
+			
+			//b) keed advancing until collision
+			bool advanced = false;
+			while( ! _wkSpace->collisionCheck(nextSmp))
+			{
+				advanced = true;
+				currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
+				newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
+				nextSmp->setMappedConf(newconf);
+			}
+			//c) return the sample previous to the collision
+			if(advanced)
+			{
+				_samples->add(nextSmp);
+				//Define the first guibroSample and add to guibroSet
+				guibroSample *gSmp = new guibroSample;
+				gSmp->smpPtr = nextSmp;
+				gSmp->parent = currGsmp;
+				gSmp->length = 0; 
+				gSmp->curvature = 0;
+				gSmp->steps = 0;
+				gSmp->u[0] = 0;
+				gSmp->u[1] = 0;
+				gSmp->u[2] = 0;
+				_guibroSet.push_back(gSmp);
+				return true; //no collision - sample added to samnpleset
+			}
+			else 
+			{
+				delete nextSmp;
+				return false; //collision - sample discarded 
+			}
+			
+	  	}
+		
 
 
 	//! function to find a solution path
@@ -176,6 +256,18 @@ namespace libPlanner {
 				_goal=SmpGoal;
 				
 				_samples->add(_init);
+
+				//Define the first guibroSample and add to guibroSet
+				guibroSample *gSmp = new guibroSample;
+				gSmp->smpPtr = _init;
+				gSmp->parent = NULL;
+				gSmp->length = 0; 
+				gSmp->curvature = 0;
+				gSmp->steps = 0;
+				gSmp->u[0] = 0;
+				gSmp->u[1] = 0;
+				gSmp->u[2] = 0;
+				_guibroSet.push_back(gSmp);
 			}
 			else
 			{
@@ -186,39 +278,17 @@ namespace libPlanner {
 
 
 			//Loop by growing the tree
-			int currentNumSamples = _samples->getSize();
+			int count=1;
+			int currentNumSamples = 1; //_guibroSet->getSize();
 			for(int i=0; i<currentNumSamples; i++)
 			{
-					Sample *currSmp = _samples->getSampleAt(i);
-					Sample *newSmp = new Sample(sampleDIM);
-					if(applyRandControl(currSmp, newSmp))
-						_samples->add(newSmp);
-					else delete newSmp;
+					guibroSample *curr = _guibroSet.at(i);
+					if(applyRandControl(curr))
+					{
+						count++;
+					}
 			}
-
 			return _solved;
-
-			/*
-			The available resorces to implement your planner are:
-			1) A sampler to obtain samples:
-					Sample *smp;
-					smp = _sampler->nextSample();
-			   or a way to determine new sample at a given configuration, e.g.:
-					Sample *smp = new Sample();
-					KthReal* coords = new KthReal[_wkSpace->getDimension()];
-					for(int k = 0; k < _wkSpace->getDimension(); k++) coords[k] = 0.0;
-					smp->setCoords(coords);
-
-			2) A collision-checker to check for collision at a given sample smp:
-					_wkSpace->collisionCheck(smp)
-
-			3) A local planner to connect two samples
-					_locPlanner->canConect();
-
-			The solution must be specified as a sequence of samples (vector _path)
-		  	*/
-
 		}
 	  }
-    }
 }
