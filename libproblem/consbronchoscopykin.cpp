@@ -97,7 +97,8 @@ namespace libProblem {
 
       mt::Transform T_X0_Y0_Zvel;
       T_X0_Y0_Zvel.setRotation(mt::Rotation(0.0,0.0,0.0,1));
-      T_X0_Y0_Zvel.setTranslation(mt::Vector3(0,0,Dzeta));
+		//JAN : changed Dzeta to -Dzeta in next line 2011-03-26
+      T_X0_Y0_Zvel.setTranslation(mt::Vector3(0,0,-Dzeta));
       
       //mt::Transform 
         Tbase=currTran*T_RzDalpha*T_X0_Y0_Zvel; // beta around x axis

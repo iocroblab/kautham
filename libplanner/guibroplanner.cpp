@@ -68,14 +68,15 @@ namespace libPlanner {
 	  
 		_guiName = "GUIBRO Planner";
 		addParameter("Step Size", ssize);
+      addParameter("Max. Samples", _maxNumSamples);
 		addParameter("Speed Factor", _speedFactor);
 		addParameter("1- Rotation (alpha)", _alpha);
 		addParameter("2- Bending (xi)", _xi);
 		addParameter("3- Advance (delta_z)", _deltaZ);
 
-		removeParameter("Neigh Thresshold");
-		removeParameter("Drawn Path Link");
-		removeParameter("Max. Neighs");
+		//removeParameter("Neigh Thresshold");
+		//removeParameter("Drawn Path Link");
+		//removeParameter("Max. Neighs");
 
     }
 
@@ -177,49 +178,204 @@ namespace libPlanner {
 	  	}
 		*/
 
-	//! function to find a solution path
+	//! From a collision sample (currGsmp), it goes backward a random step using the alpha and xi
+	//! angles of the parent, stores the new sample, computes new alpha and xi angles and 
+	//! advances until collision, and stores the sample
 		bool GUIBROPlanner::applyRandControl(guibroSample *currGsmp)
 		{
+			int advanceStep=50;
 			RobConf *currentconf;
+			Sample *nextSmp;
+			vector<RobConf*> newconf; newconf.resize(1);
+			vector<KthReal> u; u.resize(3);
+			vector<KthReal> uold; uold.resize(3);
+			vector<KthReal> uapp; uapp.resize(3);
+
 			//move to currSmp and return configMap
 			currentconf = _wkSpace->getConfigMapping(currGsmp->smpPtr).at(0);
-			//compute a control u
-			vector<KthReal> u;
-			u.push_back( (_gen->d_rand()-0.5)*_alpha );
-			u.push_back( (_gen->d_rand()-0.5)*_xi );
-			u.push_back( - _deltaZ );//backwards
-
-			//apply control u until collision:
-			Sample *nextSmp;
-			nextSmp = new Sample(_wkSpace->getDimension());
-			//a) advance a deltaZ step
-			vector<RobConf*> newconf;
-			newconf.push_back( &_wkSpace->getRobot(0)->ConstrainedKinematics(u) );
-			nextSmp->setMappedConf(newconf);
 			
-			//b) keed advancing until collision
-			bool advanced = false;
-			while( ! _wkSpace->collisionCheck(nextSmp))
+			//1-go backwards u[2] units mantianing alpha and xi of currGsmp
+			u[0] = currGsmp->u[0];
+			u[1] = currGsmp->u[1];
+			KthReal u2 = (_gen->d_rand()*0.6+0.4)*advanceStep*3;
+			if(u2<currGsmp->u[2]) u[2] = -u2 ;//backwards
+			else u[2] = -currGsmp->u[2]*0.9;
+			
+
+			//1a: apply control
+			nextSmp = new Sample(_wkSpace->getDimension());
+			newconf[0] =  &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
+			nextSmp->setMappedConf(newconf);
+
+			//1b: store the sample
+			if( _wkSpace->collisionCheck(nextSmp))
 			{
-				advanced = true;
-				currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
-				newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
-				nextSmp->setMappedConf(newconf);
+				cout<<"Error: no collision should have been detected!"<<endl;
+				delete nextSmp;
+				return false; //collision - sample discarded 
 			}
-			//c) return the sample previous to the collision
-			if(advanced)
+			else
 			{
 				_samples->add(nextSmp);
-				//Define the first guibroSample and add to guibroSet
 				guibroSample *gSmp = new guibroSample;
 				gSmp->smpPtr = nextSmp;
-				gSmp->parent = currGsmp;
+				gSmp->parent = currGsmp->parent;//the parent is same as the current (collision) sample
 				gSmp->length = 0; 
 				gSmp->curvature = 0;
 				gSmp->steps = 0;
-				gSmp->u[0] = 0;
-				gSmp->u[1] = 0;
-				gSmp->u[2] = 0;
+				//same control as currGsmp but discounting the deltaZ used to go backwards
+				gSmp->u[0] = currGsmp->u[0];
+				gSmp->u[1] = currGsmp->u[1];
+				gSmp->u[2] = currGsmp->u[2]-u[2];
+				_guibroSet.push_back(gSmp);
+			}
+			currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
+
+			//2-go forward step by step using a new alpha and xi, until colision
+			uold[0] = u[0];
+			uold[1] = u[1];
+			uold[2] = u[2];
+			uapp[0] = u[0];
+			uapp[1] = u[1];
+			uapp[2] = u[2];
+
+			u[0] = currGsmp->u[0] + (_gen->d_rand()-0.5)*_alpha;
+			u[1] = currGsmp->u[1] + (_gen->d_rand()-0.5)*_xi;
+			u[2] = _deltaZ;//forward
+			
+			KthReal deltau[3];
+			int stepsu = 10;
+			deltau[0] = (u[0]-uold[0])/stepsu;
+			deltau[1] = (u[1]-uold[1])/stepsu;
+
+			int advanced = 0;
+			uapp[0] = uold[0]+advanced*deltau[0];
+			uapp[1] = uold[1]+advanced*deltau[1];
+			uapp[2] = u[2];
+
+			//2a) advance a deltaZ step
+			nextSmp = new Sample(_wkSpace->getDimension());
+			newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(uapp);
+			nextSmp->setMappedConf(newconf);
+			
+			//2b) keed advancing until collision
+
+			while( ! _wkSpace->collisionCheck(nextSmp))
+			{
+				advanced++;
+				if(advanced==10*advanceStep) break;
+
+				if(advanced<=stepsu)
+				{
+					uapp[0] = uold[0]+advanced*deltau[0];
+					uapp[1] = uold[1]+advanced*deltau[1];
+					uapp[2] = u[2];
+				}
+				currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
+				_samples->add(nextSmp);
+				nextSmp = new Sample(_wkSpace->getDimension());
+				newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(uapp);
+				nextSmp->setMappedConf(newconf);
+			};
+			//2c) store the sample if advanced at least 50 steps
+			if(advanced>advanceStep)
+			{
+				_samples->add(nextSmp);
+				guibroSample *gSmp = new guibroSample;
+				gSmp->smpPtr = nextSmp;
+				gSmp->parent = _guibroSet[_guibroSet.size()-1];
+				gSmp->length = 0; 
+				gSmp->curvature = 0;
+				gSmp->steps = 0;
+				gSmp->u[0] = u[0];
+				gSmp->u[1] = u[1];
+				gSmp->u[2] = advanced;
+				gSmp->leave = true;
+				gSmp->parent->leave = false;
+				_guibroSet.push_back(gSmp);
+				return true; //no collision - sample added to samnpleset
+			}
+			else 
+			{
+				delete nextSmp;
+				return false; //collision - sample discarded 
+			}
+			
+	  	}
+		
+		bool GUIBROPlanner::applyRandControlFirsTime(guibroSample *currGsmp)
+		{
+			int advanceStep=50;
+			RobConf *currentconf;
+			Sample *nextSmp;
+			vector<RobConf*> newconf; newconf.resize(1);
+			vector<KthReal> u; u.resize(3);
+			vector<KthReal> uold; uold.resize(3);
+			vector<KthReal> uapp; uapp.resize(3);
+
+			//move to currSmp and return configMap
+			currentconf = _wkSpace->getConfigMapping(currGsmp->smpPtr).at(0);
+			
+			//2-go forward step by step using a new alpha and xi, until colision
+
+			u[0] = currGsmp->u[0] + (_gen->d_rand()-0.5)*_alpha;
+			u[1] = currGsmp->u[1] + (_gen->d_rand()-0.5)*_xi;
+			u[2] = _deltaZ;//forward
+
+			uold[0] = 0.0;//Now assuming goal has xi=0 and apha=0
+			uold[1] = 0.0;
+			uold[2] = u[2];
+
+			KthReal deltau[3];
+			int stepsu = 10;
+			deltau[0] = (u[0]-uold[0])/stepsu;
+			deltau[1] = (u[1]-uold[1])/stepsu;
+
+			int advanced = 0;
+			uapp[0] = uold[0]+advanced*deltau[0];
+			uapp[1] = uold[1]+advanced*deltau[1];
+			uapp[2] = u[2];
+
+			//2a) advance a deltaZ step
+			
+			nextSmp = new Sample(_wkSpace->getDimension());
+			newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(uapp);
+			nextSmp->setMappedConf(newconf);
+			
+			//2b) keed advancing until collision
+						
+
+			while( ! _wkSpace->collisionCheck(nextSmp))
+			{
+				advanced++;
+				if(advanced==10*advanceStep) break;		
+				
+				if(advanced<=stepsu)
+				{
+					uapp[0] = uold[0]+advanced*deltau[0];
+					uapp[1] = uold[1]+advanced*deltau[1];
+					uapp[2] = u[2];
+				}
+				currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
+				_samples->add(nextSmp);
+				nextSmp = new Sample(_wkSpace->getDimension());
+				newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(uapp);
+				nextSmp->setMappedConf(newconf);
+			};
+			//2c) store the sample if advanced at least 50 steps
+			if(advanced>advanceStep)
+			{
+				//_samples->add(nextSmp);
+				guibroSample *gSmp = new guibroSample;
+				gSmp->smpPtr = nextSmp;
+				gSmp->parent = _guibroSet[_guibroSet.size()-1];
+				gSmp->length = 0; 
+				gSmp->curvature = 0;
+				gSmp->steps = 0;
+				gSmp->u[0] = u[0];
+				gSmp->u[1] = u[1];
+				gSmp->u[2] = advanced;
+				gSmp->leave = true;
 				_guibroSet.push_back(gSmp);
 				return true; //no collision - sample added to samnpleset
 			}
@@ -258,6 +414,7 @@ namespace libPlanner {
 				_samples->add(_init);
 
 				//Define the first guibroSample and add to guibroSet
+				_guibroSet.clear();
 				guibroSample *gSmp = new guibroSample;
 				gSmp->smpPtr = _init;
 				gSmp->parent = NULL;
@@ -278,15 +435,28 @@ namespace libPlanner {
 
 
 			//Loop by growing the tree
+			guibroSample *curr = _guibroSet.at(0);
 			int count=1;
-			int currentNumSamples = 1; //_guibroSet->getSize();
-			for(int i=0; i<currentNumSamples; i++)
+			applyRandControlFirsTime(curr);
+			if(_guibroSet.size()==1) 
 			{
-					guibroSample *curr = _guibroSet.at(i);
-					if(applyRandControl(curr))
-					{
-						count++;
-					}
+				_solved = false;
+				return _solved;
+			}
+
+			int currentNumSamples = 10;//_guibroSet->getSize();
+			for(int i=1; i<currentNumSamples; i++)
+			{
+				if(_guibroSet.size()==i) {
+					i=0;
+					continue;
+				}
+				curr = _guibroSet.at(i);
+				if(curr->leave==false) continue;
+				if(applyRandControl(curr))
+				{
+					count++;
+				}
 			}
 			return _solved;
 		}

@@ -60,10 +60,12 @@ namespace libPlanner {
 	{
 		Sample *smpPtr;
 		guibroSample *parent;
+		vector<guibroSample*> descendant;
 		KthReal u[3];
 		KthReal length;
 		KthReal curvature;
 		KthReal steps;
+		bool leave;
 	};
 
 
@@ -78,6 +80,7 @@ namespace libPlanner {
 		bool setParameters();
 
 		bool applyRandControl(guibroSample *currGsmp);
+		bool applyRandControlFirsTime(guibroSample *currGsmp);
 		//Add public data and functions
 
 		protected:

@@ -24,14 +24,14 @@
 			<Name>GUIBRO</Name>
 			<LocalPlanner stepSize="0.01">Linear</LocalPlanner>
       <Parameter name="Speed Factor">3</Parameter>
-			<Parameter name="1- Rotation (alpha)">0.1</Parameter>
-			<Parameter name="2- Bending (xi)">0.1</Parameter>
-			<Parameter name="3- Advance (delta_z)">-1</Parameter>
-      <Parameter name="Max. Samples">100</Parameter>
+			<Parameter name="1- Rotation (alpha)">1</Parameter>
+			<Parameter name="2- Bending (xi)">1</Parameter>
+			<Parameter name="3- Advance (delta_z)">1</Parameter>
+      <Parameter name="Max. Samples">1000</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="7">0.221 0.477 0.374 0.605 0.4 0.318 0.467</Init>
+				<Init dim="7">0.221 0.477 0.374 0.605 0.4 0.318 0.5</Init>
 				<Goal dim="7">0.559 0.482 0.79 0 0.313 0.21 0.487</Goal>
 			</Query>
 		</Queries>
