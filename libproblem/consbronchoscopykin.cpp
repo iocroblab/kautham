@@ -60,7 +60,13 @@ namespace libProblem {
 	  vector<KthReal>& PosSE3 = _SE3Conf.getPos();
 	  vector<KthReal>& OriSE3 = _SE3Conf.getOrient();
 
-    mt::Transform currTran;
+//cout<<"Call to ConsBronchoscopyKin::solve"<<endl;
+cout<<"alpha: "<<curr_alpha<<" psi: "<<curr_psi;
+cout<<" values: "<<values[0]<<"  "<<values[1]<<"  "<<values[2];
+cout<<" ori: "<<OriSE3[0]<<", "<<OriSE3[1]<<", "<<OriSE3[2]<<", "<<OriSE3[3]<<endl;
+
+
+mt::Transform currTran;
 	  currTran.setRotation(mt::Rotation(OriSE3[0], OriSE3[1], OriSE3[2], OriSE3[3]));
 	  currTran.setTranslation(mt::Point3(PosSE3[0], PosSE3[1], PosSE3[2]));
     //mt::Transform Tbase;

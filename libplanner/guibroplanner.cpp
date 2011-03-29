@@ -46,6 +46,7 @@
 #include <libsampling/robconf.h>
 #include "localplanner.h"
 #include "guibroplanner.h"
+#include <libproblem/ConsBronchoscopyKin.h>
 
 using namespace libSampling;
 
@@ -178,12 +179,79 @@ namespace libPlanner {
 	  	}
 		*/
 
+	void GUIBROPlanner::printInfo(guibroSample *gs)
+	{
+		//Sample *smpPtr;
+		//guibroSample *parent;
+		//vector<guibroSample*> descendant;
+		//KthReal u[3];
+		//KthReal back_u2;
+		//KthReal length;
+		//KthReal curvature;
+		//KthReal steps;
+		//bool leave;
+		//int id;
+		cout<<"id="<<gs->id<<endl;
+		cout<<"u = ("<<gs->u[0]<<", "<<gs->u[1]<<", "<<gs->u[2]<<")"<<endl;
+		Sample *s = gs->smpPtr;
+		cout<<"sample "<<_samples->indexOf(s)<<endl;
+		//cout<<"coords: "<<s->print(true)<<endl;
+		//vector<KthReal>& c=s->getCoords();
+		//cout<<"coords: ";
+		//for(int k=0;k<c.size();k++) cout<<", "<<c[k];
+		//cout<<")"<<endl;
+		
+		vector<KthReal>&  p = (s->getMappedConf())[0].getSE3().getPos();
+		vector<KthReal>&  o = (s->getMappedConf())[0].getSE3().getOrient();
+			
+		cout<<"pos: "<<p[0]<<", "<<p[1]<<", "<<p[2]<<endl;
+		cout<<"ori: "<<o[0]<<", "<<o[1]<<", "<<o[2]<<", "<<o[3]<<endl;
+	}
+
 	//! From a collision sample (currGsmp), it goes backward a random step using the alpha and xi
 	//! angles of the parent, stores the new sample, computes new alpha and xi angles and 
 	//! advances until collision, and stores the sample
 		bool GUIBROPlanner::applyRandControl(guibroSample *currGsmp)
 		{
+			/////KKKKK/////////////////////////
+			/*
+			vector<KthReal> u; u.resize(3);
 			int advanceStep=50;
+			int stepsinterpolate = 20;
+			vector<RobConf*> newconf; newconf.resize(1);
+			Sample *nextSmp;
+			Sample *last;
+			RobConf *currentconf;
+				u[0] = currGsmp->u[0];
+				u[1] = currGsmp->u[1];
+				KthReal r = (_gen->d_rand()*0.6+0.4);
+				KthReal backwards_u2 = r*advanceStep*2;
+				if(backwards_u2 > (currGsmp->u[2]-stepsinterpolate)) backwards_u2 = (currGsmp->u[2]-stepsinterpolate);//*r;
+				u[2] = -backwards_u2 ;//backwards
+			
+				//1a: apply control
+			nextSmp = new Sample(_wkSpace->getDimension());
+				u[2] = -backwards_u2/(int)backwards_u2;
+				for(int j=0; j<backwards_u2; j++)
+				{
+					newconf[0] =  &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
+					nextSmp->setMappedConf(newconf);
+					_samples->add(nextSmp);
+					last = nextSmp;
+					currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);
+					nextSmp = new Sample(_wkSpace->getDimension());
+				}
+				return false;
+				*/
+/////KKKKK/////////////////////////
+			
+			cout<<"Call to applyRandControl"<<endl;
+			printInfo(currGsmp);
+				
+			int advanceStep=50;
+			int maxAdvanceStep = 4*advanceStep;
+			int stepsinterpolate = 20;
+
 			RobConf *currentconf;
 			Sample *nextSmp;
 			vector<RobConf*> newconf; newconf.resize(1);
@@ -193,43 +261,91 @@ namespace libPlanner {
 
 			//move to currSmp and return configMap
 			currentconf = _wkSpace->getConfigMapping(currGsmp->smpPtr).at(0);
+
+			cout<<"currentconf"<<endl;
+			vector<KthReal>&  pppp = currentconf->getSE3().getPos();
+			vector<KthReal>&  oooo = currentconf->getSE3().getOrient();
+			cout<<"pos: "<<pppp[0]<<", "<<pppp[1]<<", "<<pppp[2]<<endl;
+			cout<<"ori: "<<oooo[0]<<", "<<oooo[1]<<", "<<oooo[2]<<", "<<oooo[3]<<endl;
+
+			//update alpha and psi
+			ConstrainedKinematic* ck = _wkSpace->getRobot(0)->getCkine();
+			((ConsBronchoscopyKin*)ck)->setvalues(currGsmp->u[0],0);
+			((ConsBronchoscopyKin*)ck)->setvalues(currGsmp->u[1],1);
+			((ConsBronchoscopyKin*)ck)->setvalues(currGsmp->u[2],2);		
 			
+
 			//1-go backwards u[2] units mantianing alpha and xi of currGsmp
 			u[0] = currGsmp->u[0];
 			u[1] = currGsmp->u[1];
-			KthReal u2 = (_gen->d_rand()*0.6+0.4)*advanceStep*3;
-			if(u2<currGsmp->u[2]) u[2] = -u2 ;//backwards
-			else u[2] = -currGsmp->u[2]*0.9;
+			KthReal r = (_gen->d_rand()*0.6+0.4);
+			KthReal backwards_u2 = r*advanceStep*2;
+			if(backwards_u2 > (currGsmp->u[2]-stepsinterpolate)) backwards_u2 = (currGsmp->u[2]-stepsinterpolate);//*r;
+			u[2] = -backwards_u2 ;//backwards
 			
 
 			//1a: apply control
-			nextSmp = new Sample(_wkSpace->getDimension());
-			newconf[0] =  &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
-			nextSmp->setMappedConf(newconf);
+			u[2] = -backwards_u2/(int)backwards_u2;
 
-			//1b: store the sample
-			if( _wkSpace->collisionCheck(nextSmp))
+			nextSmp = new Sample(_wkSpace->getDimension());
+			//newconf[0] =  &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
+			//nextSmp->setMappedConf(newconf);
+			
+			SampleSet*  tmpsamples = new SampleSet();
+			Sample *last;
+			int j;
+			for(j=0; j<backwards_u2; j++)
 			{
-				cout<<"Error: no collision should have been detected!"<<endl;
-				delete nextSmp;
+				
+				newconf[0] =  &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
+				nextSmp->setMappedConf(newconf);
+
+				
+				tmpsamples->add(nextSmp);
+
+			//_samples->add(nextSmp);
+				last = nextSmp;
+				currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);
+				if(j==0){
+					cout<<"applied: "<<endl;
+					cout<<"u = ("<<u[0]<<", "<<u[1]<<", "<<u[2]<<")"<<endl;
+					cout<<"from: "<<endl;
+					vector<KthReal>&  p = (currGsmp->smpPtr->getMappedConf())[0].getSE3().getPos();
+					vector<KthReal>&  o = (currGsmp->smpPtr->getMappedConf())[0].getSE3().getOrient();
+					cout<<"pos: "<<p[0]<<", "<<p[1]<<", "<<p[2]<<endl;
+					cout<<"ori: "<<o[0]<<", "<<o[1]<<", "<<o[2]<<", "<<o[3]<<endl;
+					cout<<"reached: "<<endl;
+					vector<KthReal>&  pp = (nextSmp->getMappedConf())[0].getSE3().getPos();
+					vector<KthReal>&  oo = (nextSmp->getMappedConf())[0].getSE3().getOrient();
+					cout<<"pos: "<<pp[0]<<", "<<pp[1]<<", "<<pp[2]<<endl;
+					cout<<"ori: "<<oo[0]<<", "<<oo[1]<<", "<<oo[2]<<", "<<oo[3]<<endl;
+					cout<<"newconf[0]"<<endl;
+					vector<KthReal>&  ppp = newconf[0]->getSE3().getPos();
+					vector<KthReal>&  ooo = newconf[0]->getSE3().getOrient();
+					cout<<"pos: "<<ppp[0]<<", "<<ppp[1]<<", "<<ppp[2]<<endl;
+					cout<<"ori: "<<ooo[0]<<", "<<ooo[1]<<", "<<ooo[2]<<", "<<ooo[3]<<endl;
+				}
+				nextSmp = new Sample(_wkSpace->getDimension());
+			}
+
+
+			//newconf[0] =  &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
+			//nextSmp->setMappedConf(newconf);
+
+			//1b: store the sample			
+			if( _wkSpace->collisionCheck(last))
+			{
+				cout<<"currGsmp->id="<<currGsmp->id<<" Error: no collision should have been detected!"<<endl;
+				//for(int j=0; j<tmpsamples->getSize();j++)
+				//{
+				//	_samples->add(tmpsamples->getSampleAt(j));
+				//}
+				//_samples->add(nextSmp);
+				//delete nextSmp;
 				return false; //collision - sample discarded 
 			}
-			else
-			{
-				_samples->add(nextSmp);
-				guibroSample *gSmp = new guibroSample;
-				gSmp->smpPtr = nextSmp;
-				gSmp->parent = currGsmp->parent;//the parent is same as the current (collision) sample
-				gSmp->length = 0; 
-				gSmp->curvature = 0;
-				gSmp->steps = 0;
-				//same control as currGsmp but discounting the deltaZ used to go backwards
-				gSmp->u[0] = currGsmp->u[0];
-				gSmp->u[1] = currGsmp->u[1];
-				gSmp->u[2] = currGsmp->u[2]-u[2];
-				_guibroSet.push_back(gSmp);
-			}
-			currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
+			//currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
+			
 
 			//2-go forward step by step using a new alpha and xi, until colision
 			uold[0] = u[0];
@@ -244,9 +360,8 @@ namespace libPlanner {
 			u[2] = _deltaZ;//forward
 			
 			KthReal deltau[3];
-			int stepsu = 10;
-			deltau[0] = (u[0]-uold[0])/stepsu;
-			deltau[1] = (u[1]-uold[1])/stepsu;
+			deltau[0] = (u[0]-uold[0])/stepsinterpolate;
+			deltau[1] = (u[1]-uold[1])/stepsinterpolate;
 
 			int advanced = 0;
 			uapp[0] = uold[0]+advanced*deltau[0];
@@ -263,16 +378,17 @@ namespace libPlanner {
 			while( ! _wkSpace->collisionCheck(nextSmp))
 			{
 				advanced++;
-				if(advanced==10*advanceStep) break;
+				if(advanced==maxAdvanceStep) break;
 
-				if(advanced<=stepsu)
+				if(advanced<=stepsinterpolate)
 				{
 					uapp[0] = uold[0]+advanced*deltau[0];
 					uapp[1] = uold[1]+advanced*deltau[1];
 					uapp[2] = u[2];
 				}
 				currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
-				_samples->add(nextSmp);
+				tmpsamples->add(nextSmp);
+				last = nextSmp;
 				nextSmp = new Sample(_wkSpace->getDimension());
 				newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(uapp);
 				nextSmp->setMappedConf(newconf);
@@ -280,24 +396,35 @@ namespace libPlanner {
 			//2c) store the sample if advanced at least 50 steps
 			if(advanced>advanceStep)
 			{
-				_samples->add(nextSmp);
+				for(int j=0; j<tmpsamples->getSize();j++)
+				{
+					_samples->add(tmpsamples->getSampleAt(j));
+				}
+				//tmpsamples->clear();DO NOT CLEAR - SAMPLES SHOULD NOT BE REMOVED
+				//_samples->add(nextSmp);
+
 				guibroSample *gSmp = new guibroSample;
-				gSmp->smpPtr = nextSmp;
-				gSmp->parent = _guibroSet[_guibroSet.size()-1];
+				gSmp->smpPtr = last;
+				gSmp->parent = currGsmp;
 				gSmp->length = 0; 
 				gSmp->curvature = 0;
 				gSmp->steps = 0;
 				gSmp->u[0] = u[0];
 				gSmp->u[1] = u[1];
 				gSmp->u[2] = advanced;
+				gSmp->back_u2 = backwards_u2;
 				gSmp->leave = true;
 				gSmp->parent->leave = false;
+				gSmp->id = _guibroSet.size();
 				_guibroSet.push_back(gSmp);
+
+
 				return true; //no collision - sample added to samnpleset
 			}
 			else 
 			{
-				delete nextSmp;
+				//delete nextSmp;
+				cout<<"currGsmp->id="<<currGsmp->id<<" Advance discarded ("<<advanced<<" steps)"<<endl;
 				return false; //collision - sample discarded 
 			}
 			
@@ -306,6 +433,9 @@ namespace libPlanner {
 		bool GUIBROPlanner::applyRandControlFirsTime(guibroSample *currGsmp)
 		{
 			int advanceStep=50;
+			int maxAdvanceStep = 4*advanceStep;
+			int stepsinterpolate = 20;
+
 			RobConf *currentconf;
 			Sample *nextSmp;
 			vector<RobConf*> newconf; newconf.resize(1);
@@ -327,9 +457,8 @@ namespace libPlanner {
 			uold[2] = u[2];
 
 			KthReal deltau[3];
-			int stepsu = 10;
-			deltau[0] = (u[0]-uold[0])/stepsu;
-			deltau[1] = (u[1]-uold[1])/stepsu;
+			deltau[0] = (u[0]-uold[0])/stepsinterpolate;
+			deltau[1] = (u[1]-uold[1])/stepsinterpolate;
 
 			int advanced = 0;
 			uapp[0] = uold[0]+advanced*deltau[0];
@@ -345,12 +474,13 @@ namespace libPlanner {
 			//2b) keed advancing until collision
 						
 
+			Sample *last;
 			while( ! _wkSpace->collisionCheck(nextSmp))
 			{
 				advanced++;
-				if(advanced==10*advanceStep) break;		
+				if(advanced==maxAdvanceStep) break;		
 				
-				if(advanced<=stepsu)
+				if(advanced<=stepsinterpolate)
 				{
 					uapp[0] = uold[0]+advanced*deltau[0];
 					uapp[1] = uold[1]+advanced*deltau[1];
@@ -358,6 +488,7 @@ namespace libPlanner {
 				}
 				currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
 				_samples->add(nextSmp);
+				last = nextSmp;
 				nextSmp = new Sample(_wkSpace->getDimension());
 				newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(uapp);
 				nextSmp->setMappedConf(newconf);
@@ -367,21 +498,23 @@ namespace libPlanner {
 			{
 				//_samples->add(nextSmp);
 				guibroSample *gSmp = new guibroSample;
-				gSmp->smpPtr = nextSmp;
-				gSmp->parent = _guibroSet[_guibroSet.size()-1];
+				gSmp->smpPtr = last;
+				gSmp->parent = currGsmp;
 				gSmp->length = 0; 
 				gSmp->curvature = 0;
 				gSmp->steps = 0;
 				gSmp->u[0] = u[0];
 				gSmp->u[1] = u[1];
 				gSmp->u[2] = advanced;
+				gSmp->back_u2 = 0;
 				gSmp->leave = true;
+				gSmp->id = 1;
 				_guibroSet.push_back(gSmp);
 				return true; //no collision - sample added to samnpleset
 			}
 			else 
 			{
-				delete nextSmp;
+				//delete nextSmp;
 				return false; //collision - sample discarded 
 			}
 			
@@ -424,6 +557,7 @@ namespace libPlanner {
 				gSmp->u[0] = 0;
 				gSmp->u[1] = 0;
 				gSmp->u[2] = 0;
+				gSmp->id = 0;
 				_guibroSet.push_back(gSmp);
 			}
 			else
@@ -444,6 +578,18 @@ namespace libPlanner {
 				return _solved;
 			}
 
+
+			count=0;
+			int i=1;
+			int currentNumSamples = 5;
+			do{
+				curr = _guibroSet.at(i);
+				if(applyRandControl(curr)) i++;
+				count++;
+
+			}while(count<currentNumSamples); 
+
+			/*
 			int currentNumSamples = 10;//_guibroSet->getSize();
 			for(int i=1; i<currentNumSamples; i++)
 			{
@@ -457,7 +603,19 @@ namespace libPlanner {
 				{
 					count++;
 				}
+				else break;
 			}
+			*/
+			cout<<"GuibroSET:";
+			for(int i=1; i<_guibroSet.size(); i++)
+			{
+				cout<<"guibrosample "<<_guibroSet[i]->id<<
+					  " sample "<<_samples->indexOf(_guibroSet[i]->smpPtr)<<endl;
+			}
+			cout<<endl;
+
+
+
 			return _solved;
 		}
 	  }
