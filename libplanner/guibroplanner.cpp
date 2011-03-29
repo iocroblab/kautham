@@ -177,6 +177,8 @@ namespace libPlanner {
 			//cout<<"Call to applyRandControl"<<endl;
 			//printInfo(currGsmp);
 				
+			//random generate the maximum allowd advance between the user specified minimum (_advanceStep) and maximum (_maxAdvanceStep)
+			int maxAdvance = _advanceStep + (_maxAdvanceStep-_advanceStep)*_gen->d_rand();
 			RobConf *currentconf;
 			Sample *nextSmp;
 			vector<RobConf*> newconf; newconf.resize(1);
@@ -271,7 +273,7 @@ namespace libPlanner {
 			while( ! _wkSpace->collisionCheck(nextSmp))
 			{
 				advanced++;
-				if(advanced==_maxAdvanceStep) break;
+				if(advanced==maxAdvance) break;
 
 				if(advanced<=_stepsinterpolate)
 				{
@@ -309,7 +311,7 @@ namespace libPlanner {
 				gSmp->leave = true;
 				gSmp->parent->leave = false;
 				gSmp->id = _guibroSet.size();
-				if(advanced==_maxAdvanceStep) gSmp->collision = false;
+				if(advanced==maxAdvance) gSmp->collision = false;
 				else gSmp->collision = true; //previous loop exited by collision
 				_guibroSet.push_back(gSmp);
 
@@ -376,6 +378,7 @@ namespace libPlanner {
 
 
 			//Loop by growing the tree
+			/*
 			guibroSample *curr = _guibroSet.at(0);
 			int count=1;
 			//applyRandControlFirsTime(curr);
@@ -385,12 +388,14 @@ namespace libPlanner {
 				_solved = false;
 				return _solved;
 			}
+			*/
 
-
-			count=0;
-			int i=1;
-			int currentNumSamples = 1000;
+			guibroSample *curr;
+			int count=0;
+			int i=0;
+			int currentNumSamples = 10000;
 			do{
+				cout<<"count: "<<count<<" ";
 				curr = _guibroSet.at(i);
 				if(applyRandControl(curr)) i++;
 				count++;
