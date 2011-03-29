@@ -68,6 +68,7 @@ namespace libPlanner {
 		KthReal steps;
 		bool leave;
 		int id;
+		bool collision;
 	};
 
 
@@ -82,7 +83,6 @@ namespace libPlanner {
 		bool setParameters();
 
 		bool applyRandControl(guibroSample *currGsmp);
-		bool applyRandControlFirsTime(guibroSample *currGsmp);
 		void printInfo(guibroSample *gs);
 		//Add public data and functions
 
@@ -91,6 +91,9 @@ namespace libPlanner {
 		KthReal _alpha;
 		KthReal _xi;
 		KthReal _deltaZ;
+		int _advanceStep;
+		int _maxAdvanceStep;
+		int _stepsinterpolate;
 	    LCPRNG*	_gen;
 
 		vector<guibroSample*> _guibroSet;

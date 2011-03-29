@@ -11,7 +11,7 @@
 		<Home X="0.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
 		<ConstrainedKinematic name="BRONCHOSCOPY" />
 	</Robot>
-	<Scene scene="BRONCO/detalltraquea_transparent.wrl" scale="10.0">
+	<Scene scene="BRONCO/model1trans.wrl" scale="10.0">
 		 
     Scene Path
     
@@ -27,11 +27,14 @@
 			<Parameter name="1- Rotation (alpha)">1</Parameter>
 			<Parameter name="2- Bending (xi)">1</Parameter>
 			<Parameter name="3- Advance (delta_z)">1</Parameter>
+      <Parameter name="4- Min Advance">50</Parameter>
+      <Parameter name="5- Max Advance">200</Parameter>
+      <Parameter name="6- Interpolation">20</Parameter>
       <Parameter name="Max. Samples">1000</Parameter>
-		</Parameters>
+    </Parameters>
 		<Queries>
 			<Query>
-				<Init dim="7">0.221 0.477 0.374 0.605 0.4 0.318 0.5</Init>
+				<Init dim="7">0.297 0.492 0.39 0.462 0.369 0.338 0.5</Init>
 				<Goal dim="7">0.559 0.482 0.79 0 0.313 0.21 0.487</Goal>
 			</Query>
 		</Queries>

@@ -35,6 +35,8 @@ namespace libProblem {
 		KthReal curr_psi = getvalues(1);
 		//KthReal curr_z = getvalues(2); // it will not be used cause the slider already gives a Delta
 		
+//cout<<"alpha = "<<curr_alpha<<" psi = "<<curr_psi<<endl;
+
     // Read values
 		KthReal Dalpha = (KthReal) M_PI *(values[0]-curr_alpha); // slider goes from -1000 to 1000
     KthReal psi = (KthReal) M_PI/2*(values[1]/(n-1)); // values[1]=total bending angle read from the slider
@@ -60,13 +62,7 @@ namespace libProblem {
 	  vector<KthReal>& PosSE3 = _SE3Conf.getPos();
 	  vector<KthReal>& OriSE3 = _SE3Conf.getOrient();
 
-//cout<<"Call to ConsBronchoscopyKin::solve"<<endl;
-cout<<"alpha: "<<curr_alpha<<" psi: "<<curr_psi;
-cout<<" values: "<<values[0]<<"  "<<values[1]<<"  "<<values[2];
-cout<<" ori: "<<OriSE3[0]<<", "<<OriSE3[1]<<", "<<OriSE3[2]<<", "<<OriSE3[3]<<endl;
-
-
-mt::Transform currTran;
+	mt::Transform currTran;
 	  currTran.setRotation(mt::Rotation(OriSE3[0], OriSE3[1], OriSE3[2], OriSE3[3]));
 	  currTran.setTranslation(mt::Point3(PosSE3[0], PosSE3[1], PosSE3[2]));
     //mt::Transform Tbase;
