@@ -1,15 +1,15 @@
 
 //FIXME: this planner is done for a single TREE robot (associtated to wkSpace->robots[0])
 
+#if defined(KAUTHAM_USE_ARMADILLO)
+
 #include <stdio.h>
 #include <time.h>
-
 #include "prmhandplannerArmHandPCA.h"
 #include "ML_locplan.h"
 
 ///////////////Armadillo////////
 #include <iostream>
-
 
 using namespace arma;
 using namespace std;
@@ -949,3 +949,5 @@ bool PRMHandPlannerArmHandPCA::getSampleRandPCA(float R)
 
   }
 };
+
+#endif // KAUTHAM_USE_ARMADILLO

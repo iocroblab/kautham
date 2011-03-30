@@ -794,6 +794,9 @@ namespace libGUI{
       _problem->wSpace()->getRobot(activeRob)->Kinematics(se3conf);
     else{
       try{
+        if(_problem->wSpace()->getRobot(activeRob)->getName() == "RR2D"){
+
+        }else 
         if(_problem->wSpace()->getRobot(activeRob)->getName() == "TX90"){
           vector<KthReal> target(se3conf.getCoordinates());
           RnConf& currConf = _problem->wSpace()->getRobot(activeRob)->getCurrentPos()->getRn();
@@ -832,6 +835,7 @@ namespace libGUI{
             //std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _data->out.r2Pos );
           }
         }else{
+          // Assumes the Inverse Kinematic receives the position and orientation as target
           RobConf& tmp =_problem->wSpace()->getRobot(activeRob)
                       ->InverseKinematics(se3conf.getCoordinates());
 

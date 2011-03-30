@@ -39,25 +39,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
-#include "prmhandplanner.h"
-/////////////////////////
-
-/////////////////////////
-///////////////Armadillo////////
-#include <iostream>
-
-#include <armadillo/include/armadillo>
-
-
-using namespace arma;
-using namespace std;
-
-//////////////////////
-
-
 
 #if !defined(_PRMHANDPLANNERARMHAND_H)
 #define _PRMHANDPLANNERARMHAND_H
+
+#include "prmhandplanner.h"
+
+
+#if defined(KAUTHAM_USE_ARMADILLO)
+#include <iostream>
+#include <armadillo/include/armadillo>
+
+using namespace arma;
+using namespace std;
 
 
  namespace libPlanner {
@@ -121,6 +115,7 @@ using namespace std;
 	};	
   }
 }
+#endif // KAUTHAM_USE_ARMADILLO
  
 #endif  //_PRMHANDPLANNERARMHAND_H
 

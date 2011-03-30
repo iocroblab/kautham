@@ -88,9 +88,9 @@ namespace libProblem {
 	  //! and setup the internal variables.
     virtual bool      setParameters()=0;
 
-	  //!	This method allow to setup the target.
-    void              setTarget(vector<KthReal> &target);
-    virtual void	  setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);
+	  //!	This method allow to setup the target. Commonly, the target is se3.coordintes.
+    void              setTarget(vector<KthReal> &target, const string& param=string(""));
+    virtual void	    setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);
     inline void       setTarget(mt::Transform& tcp){_targetTrans = tcp;}
     inline SE3Conf&   getSE3(){return _robConf.getSE3();}
     inline RnConf&    getRn(){return _robConf.getRn();}

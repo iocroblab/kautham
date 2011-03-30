@@ -175,7 +175,9 @@ namespace libProblem {
         // Setup the Inverse Kinematic if it has one.
         if((*it).child("InvKinematic")){
           name = (*it).child("InvKinematic").attribute("name").value();
-          if( name == "TX90")
+          if( name == "RR2D" )
+            rob->setInverseKinematic( Kautham::RR2D );
+          else if( name == "TX90")
             rob->setInverseKinematic( Kautham::TX90 );
           else if( name == "HAND")
             rob->setInverseKinematic( Kautham::HAND );
@@ -442,10 +444,15 @@ namespace libProblem {
     else if(name == "PRM")
       _planner = new PRMPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
-	else if(name == "PRM PCA")
+
+#if defined(KAUTHAM_USE_ARMADILLO)
+	  else if(name == "PRM PCA")
+
       _planner = new PRMPlannerPCA(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step,1,1);
-	else if(name == "RRT")
+#endif	
+
+    else if(name == "RRT")
       _planner = new RRTPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
 	else if(name == "GUIBRO")
@@ -467,11 +474,14 @@ namespace libProblem {
       _planner = new PRMHandPlannerICRAjournal(CONTROLSPACE, NULL, NULL, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 10, (KthReal)0.0010, 10);
-	//////////////////////////////////////////////////////////////////////////
+	
+#if defined(KAUTHAM_USE_ARMADILLO)
+//////////////////////////////////////////////////////////////////////////
 	else if(name == "PRM RobotArmHand PCA")
       _planner = new PRMHandPlannerArmHandPCA(CONTROLSPACE, NULL, NULL, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 10,0, (KthReal)0.0010, 10,0.0,0.0);
+#endif
 	//////////////////////////////////////////////////////////////////////////
    else if(name == "PRM RobotHand-Const ICRA")
       _planner = new PRMRobotHandConstPlannerICRA(CONTROLSPACE, NULL, NULL, _cspace,

@@ -40,7 +40,7 @@
  ***************************************************************************/
  
  
-
+#if defined(KAUTHAM_USE_ARMADILLO)
 
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
@@ -1130,4 +1130,5 @@ namespace libPlanner {
 } //namespace PRMPlanner
 } //namespace libPlanner
 
+#endif
 

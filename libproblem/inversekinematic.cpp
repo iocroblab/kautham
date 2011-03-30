@@ -101,7 +101,11 @@ namespace libProblem {
     return setParameters();
   }*/
 
-  void InverseKinematic::setTarget(vector<KthReal> &target){
+  //! This method receives the target as a parameter and the most used way is
+  //! configured the target as a se3.coordinates vector that includes the 
+  //! position and the orientation as a quaternion.
+  void InverseKinematic::setTarget(vector<KthReal> &target, const string& param){
+    if(param != "" ) setParametersFromString( param );
     _target.clear();
     for(int i =0; i< target.size(); i++)
       _target.push_back(target.at(i));
@@ -115,7 +119,7 @@ namespace libProblem {
       _target.push_back(target.at(i));  
 	  
 	  //masterconf not used -  maintainSameWrist not used
-	  //the derived classes can use it to complete the target with configuration parameters
+	  //the derived classes may use it to complete the target with configuration parameters
    }
 
 }

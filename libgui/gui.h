@@ -82,6 +82,18 @@ namespace libGUI {
 		SoSeparator *root;
 		string title;
 		QWidget *tab;
+    Viewer(){
+      window = NULL;
+      root = NULL;
+      title = "";
+      tab = NULL;
+    }
+    //~Viewer(){
+    //  root = NULL;
+    //  title = "";
+    //  tab = NULL;
+    //  if(window != NULL) delete window;
+    //}
 	};
 
 	class GUI:public QMainWindow, private Ui::kauthamMain {

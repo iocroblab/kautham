@@ -1,6 +1,5 @@
 # This CMakeFile is used con create libproblem(.lib / .a)
 
-
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/hardlab  
                      ${CMAKE_SOURCE_DIR}/libutil
                      ${CMAKE_SOURCE_DIR} 

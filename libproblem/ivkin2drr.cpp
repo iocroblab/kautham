@@ -9,7 +9,7 @@
 *                                                                          *
 *                Project Name:       Kautham Planner                       *
 *                                                                          *
-*     Copyright (C) 2007 - 2009 by Alexander Pérez and Jan Rosell          *
+*     Copyright (C) 2007 - 2011 by Alexander Pérez and Jan Rosell          *
 *            alexander.perez@upc.edu and jan.rosell@upc.edu                *
 *                                                                          *
 *             This is a motion planning tool to be used into               *
@@ -40,41 +40,94 @@
  ***************************************************************************/
  
  
-#if !defined(_KAUTHAMOBJECT_H)
-#define _KAUTHAMOBJECT_H
+ 
+#include "ivkin2drr.h"
+#include "robot.h"
 
-#include "kauthamdefs.h"
 
-using namespace std;
-using namespace Kautham;
-
-namespace Kautham{
-  class KauthamObject{
-    public:
-      virtual bool    setParameters()=0;
-      inline          KauthamObject(string name){_guiName = name;}
-      inline string   getGuiName() const {return _guiName;}
-      inline void     addParameter(string key, KthReal value){_parameters[key] = value;}
-      inline bool     removeParameter(string key){
-			HASH_S_K::iterator it = _parameters.find(key);
-			if(it != _parameters.end())	{
-				_parameters.erase(it);
-				return true;
-			}
-			else return false;}
-      KthReal         getParameter(string key);
-
-      string          getParametersAsString();
-
-      bool            setParameter(string key, KthReal value);
-
-      bool            setParametersFromString(const string& par);
+namespace libProblem {
   
-      inline KauthamObject(){}
-    protected:
-      HASH_S_K      _parameters;
-      string        _guiName;
-  };
-}
+  IvKin2DRR::IvKin2DRR(Robot* const rob):InverseKinematic(rob){
 
-#endif	//_KAUTHAMOBJECT_H
+    _target.resize(3);  // This contains the X, Y and Lefty parameters.
+    _tcp[0] = 0.;
+    _tcp[1] = 0.;
+    _llong[0] = rob->getLink(2)->getA();
+    _llong[1] = rob->getLink(3)->getA();
+    addParameter("Px", _tcp[0]);
+    addParameter("Py", _tcp[1]);
+    addParameter("Shoulder Lefty?", 0. );
+  }
+
+  IvKin2DRR::~IvKin2DRR(){
+
+  }
+
+
+  bool IvKin2DRR::solve(){
+    try{
+      _tcp[0] = _target.at(0);
+      _tcp[1] = _target.at(1);
+      
+      _targetTrans.setTranslation(mt::Point3(_tcp[0],_tcp[1], 0.));
+      _targetTrans.setRotation(mt::Rotation(0., 0., 0., 1. ));
+      
+      KthReal b2 = _tcp[0]*_tcp[0] + _tcp[1]*_tcp[1]; //  by the Pythagorean theorem
+      KthReal q1 = atan2(_tcp[1], _tcp[0]);
+      KthReal l12 = _llong[0]*_llong[0];
+      KthReal l22 =  _llong[1]*_llong[1];
+      KthReal	q2 = acos((l12 - l22 + b2)/(2.*_llong[0]*sqrt(b2))); //(by the law of cosines)
+      KthReal phi11 = q1 + q2;                                  //(I know you can handle addition)
+      KthReal phi12 = q1 - q2;
+      phi11 > M_PI ? phi11 -= M_PI : phi11;
+      phi12 > M_PI ? phi12 -= M_PI : phi12;
+      phi11 < -M_PI ? phi11 += M_PI : phi11;
+      phi12 < -M_PI ? phi12 += M_PI : phi12;
+	    KthReal phi2 = acos((l12 + l22 - b2)/(2.*_llong[0]*_llong[1])); //(by the law of cosines)
+      KthReal phi22 = M_PI - phi2;
+      KthReal phi21 = -M_PI + phi2;
+      vector<KthReal> q;
+      if( _robLefty ){
+        q.push_back( phi11 );
+        q.push_back( phi21 );
+      }else{  // robot in righty configuration
+        q.push_back( phi12 );
+        q.push_back( phi22 );
+      }
+      _robConf.setRn(q); 
+      return true;
+    }catch(...){}
+    return false;
+  }
+
+  bool IvKin2DRR::setParameters(){
+    try{
+        HASH_S_K::iterator it = _parameters.find("Px");
+        if(it != _parameters.end())
+          _target.at(0) = it->second;
+        else
+          return false;
+
+        it = _parameters.find("Py");
+        if(it != _parameters.end())
+          _target.at(1) = it->second;
+        else
+          return false;
+
+        it = _parameters.find("Shoulder Lefty?" );
+        if(it != _parameters.end()){
+          if(it->second == 1)
+            _robLefty = true;
+          else
+            _robLefty = false;
+        }else
+          return false;
+
+      }catch(...){
+        std::cout << "Some throuble with the name or amount of parameters.\n" ;
+        return false;
+      }
+      return true;
+  }
+
+}

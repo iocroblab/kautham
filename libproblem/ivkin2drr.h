@@ -9,7 +9,7 @@
 *                                                                          *
 *                Project Name:       Kautham Planner                       *
 *                                                                          *
-*     Copyright (C) 2007 - 2009 by Alexander Pérez and Jan Rosell          *
+*     Copyright (C) 2007 - 2011 by Alexander Pérez and Jan Rosell          *
 *            alexander.perez@upc.edu and jan.rosell@upc.edu                *
 *                                                                          *
 *             This is a motion planning tool to be used into               *
@@ -40,41 +40,29 @@
  ***************************************************************************/
  
  
-#if !defined(_KAUTHAMOBJECT_H)
-#define _KAUTHAMOBJECT_H
+ 
 
-#include "kauthamdefs.h"
+#if !defined(_IVKIN2DRR_H)
+#define _IVKIN2DRR_H
 
-using namespace std;
+#include "inversekinematic.h"
+
 using namespace Kautham;
 
-namespace Kautham{
-  class KauthamObject{
-    public:
-      virtual bool    setParameters()=0;
-      inline          KauthamObject(string name){_guiName = name;}
-      inline string   getGuiName() const {return _guiName;}
-      inline void     addParameter(string key, KthReal value){_parameters[key] = value;}
-      inline bool     removeParameter(string key){
-			HASH_S_K::iterator it = _parameters.find(key);
-			if(it != _parameters.end())	{
-				_parameters.erase(it);
-				return true;
-			}
-			else return false;}
-      KthReal         getParameter(string key);
-
-      string          getParametersAsString();
-
-      bool            setParameter(string key, KthReal value);
-
-      bool            setParametersFromString(const string& par);
-  
-      inline KauthamObject(){}
-    protected:
-      HASH_S_K      _parameters;
-      string        _guiName;
+namespace libProblem {
+  class IvKin2DRR:public InverseKinematic{
+  public:
+    IvKin2DRR(Robot* const rob);
+    ~IvKin2DRR();
+    bool            solve();
+    bool            setParameters();
+    inline void     setConfiguration(const bool lefty){_robLefty = lefty;}
+  private:
+    IvKin2DRR();
+    bool            _robLefty;
+    KthReal         _tcp[2];
+    KthReal         _llong[2];
   };
-}
 
-#endif	//_KAUTHAMOBJECT_H
+}
+#endif  //_IVKIN2DRR_H

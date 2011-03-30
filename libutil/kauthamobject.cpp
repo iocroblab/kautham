@@ -79,7 +79,7 @@ namespace Kautham{
     return false;
   }
 
-  bool KauthamObject::setParametersFromString(string par){
+  bool KauthamObject::setParametersFromString(const string& par){
     if(par == "") return false;
     string prop="", sval="";
     KthReal val = 0.0;

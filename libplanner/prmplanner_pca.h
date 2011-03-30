@@ -44,6 +44,8 @@
 #if !defined(_PRMPLANNERPCA_H)
 #define _PRMPLANNERPCA_H
 
+#if defined(KAUTHAM_USE_ARMADILLO)
+
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include <boost/property_map/property_map.hpp>
@@ -51,7 +53,6 @@
 #include <boost/graph/astar_search.hpp>
 #include "localplanner.h"
 #include "planner.h"
-
 
 ///////////////Armadillo////////
 #include <iostream>
@@ -198,6 +199,7 @@ namespace libPlanner {
 	  };
   }
 }
+#endif // KAUTHAM_USE_ARMADILLO
 
 #endif  //_PRMPLANNER_H
 

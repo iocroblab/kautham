@@ -151,6 +151,7 @@ namespace Kautham{
   //! available to be used as solver of the robot inverser kinematics.
   enum INVKINECLASSES{
     UNIMPLEMENTED,
+    RR2D,
     TX90,
     HAND,
     TX90HAND

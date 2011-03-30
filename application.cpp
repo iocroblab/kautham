@@ -96,6 +96,8 @@ void Application::setActions(){
   mainWindow->setAction(ACTIONTOOL,"Stop Haptic connection","CTRL+D",":/icons/phantom_off.xpm",this,SLOT(unloadHaptic()));
 	mainWindow->addSeparator(TOOLBAR);
   mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close.xpm",this,SLOT(closeProblem()));
+  mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G",
+                              ":/icons/determ.xpm", mainWindow, SLOT(changeActiveBackground()));
 }
 
 void Application::openFile(){
@@ -125,8 +127,6 @@ void Application::openFile(){
         mainWindow->setWindowTitle( tmp.str().c_str() );
         mainWindow->setText(QString("File: ").append(path).toUtf8().constData() );
 				mainWindow->setText("opened successfully.");
-        mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G",
-                              ":/icons/determ.xpm", mainWindow, SLOT(changeActiveBackground()));
 			}
 			break;
 		case PROBLEMLOADED:
@@ -209,6 +209,7 @@ void Application::changePlanner(string loc, string glob){
 }
 
 void Application::loadHaptic(){
+  if( appState == INITIAL )return;
   mainWindow->setCursor(QCursor(Qt::WaitCursor));
   if(_hapticLoaded == false){
     Device* tmpDev = new HapticDevice("Haptic",10);
@@ -218,6 +219,7 @@ void Application::loadHaptic(){
     _hapticLoaded = true;
   }else
     mainWindow->setText("Use the tab provided to drive the Haptic");
+
   mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
 
@@ -231,9 +233,11 @@ void Application::unloadHaptic(){
     for(int i=0; i < _devices.size(); i++)
       if(((Device*)_devices.at(i))->getGuiName() == "Haptic"){
         delete _devices.at(i);
-        vector<Device*>::iterator it = _devices.erase(_devices.begin()+i);
-        delete (*it);
+        _devices.erase(_devices.begin()+i);
+        //vector<Device*>::iterator it = _devices.erase(_devices.begin()+i);
+        //delete (*it);
       }
+    mainWindow->removePropTab("Teleoperation");
     mainWindow->removePropTab("Haptic");
   }
   mainWindow->setCursor(QCursor(Qt::ArrowCursor));

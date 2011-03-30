@@ -39,16 +39,21 @@ FIND_PACKAGE( GSL )
 FIND_PACKAGE( Armadillo )
 IF( Armadillo_FOUND )
   MESSAGE( STATUS "armadillo Package FOUND")
+  ADD_DEFINITIONS( -DKAUTHAM_USE_ARMADILLO )
 ELSE( Armadillo_FOUND )
-  SET(Armadillo_FOUND TRUE )
-  SET(Armadillo_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo )
-  SET(Armadillo_INCLUDE_DIR ${Armadillo_DIR}/include )
-  #SET(Armadillo_LIBRARY ${Armadillo_DIR}/examples/lib_win32/blas_win32_MT.lib 
-  #                      ${Armadillo_DIR}/examples/lib_win32/lapack_win32_MT.lib )
-  
-  SET(Armadillo_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo/examples/lib_win32/blas_win32_MT.lib 
-                        ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo/examples/lib_win32/lapack_win32_MT.lib )
-  MESSAGE( STATUS "Armadillo_INCLUDE_DIR: " ${Armadillo_INCLUDE_DIR} )
+  IF( WIN32 )
+    IF( "$ENV{ARMADILLO_DIR}" STREQUAL "" )
+      MESSAGE( STATUS "armadillo Package NOT FOUND")
+    ELSE()
+      SET(Armadillo_DIR $ENV{ARMADILLO_DIR} )
+      SET(Armadillo_INCLUDE_DIR ${Armadillo_DIR}/include )
+      SET(Armadillo_LIBRARY ${Armadillo_DIR}/lib_win32/blas_win32_MT.lib 
+                            ${Armadillo_DIR}/lib_win32/lapack_win32_MT.lib )
+    
+      MESSAGE( STATUS "Armadillo_INCLUDE_DIR: " ${Armadillo_INCLUDE_DIR} )
+      ADD_DEFINITIONS( -DKAUTHAM_USE_ARMADILLO )
+    ENDIF(  )
+  ENDIF( WIN32 )
 ENDIF( Armadillo_FOUND )
 
 IF( WIN32 )

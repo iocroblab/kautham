@@ -305,8 +305,8 @@ namespace libGUI {
       for(int i =0; i < propertiesTab->count(); i++)
         if(propertiesTab->tabText(i).compare(QString(title.c_str())) == 0){
           QWidget* tmp = propertiesTab->widget( i );
-          propertiesTab->removeTab( i );
           delete tmp;
+          propertiesTab->removeTab( i );
           break;
         }
   }
@@ -528,11 +528,12 @@ namespace libGUI {
   }
 
 	bool GUI::restart(){
-    for(int i=viewsTab->count();i>1;i--)
+    for(int i=viewsTab->count(); i>1 ;i--)
       viewsTab->removeTab(1);
     for(int i=propertiesTab->count();i>0;i--)
       propertiesTab->removeTab(1);
 
+    viewers.clear();
     problemTree->clear();
 		textEdit->clear();
     stringstream tmp;

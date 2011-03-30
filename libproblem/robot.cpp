@@ -49,6 +49,7 @@
 #include "ivkintx90.h"
 #include "ivkintxhand.h"
 #include "ivkinhand.h"
+#include "ivkin2drr.h"
 #include "constrainedkinematic.h"
 #include "ConsBronchoscopyKin.h"
 #include <mt/point3.h>
@@ -466,6 +467,9 @@ namespace libProblem {
 
   bool Robot::setInverseKinematic(INVKINECLASSES type){
     switch(type){
+      case Kautham::RR2D:
+        _ikine = new IvKin2DRR(this);
+        break;
       case Kautham::TX90:
         _ikine = new IvKinTx90(this);
         break;
