@@ -106,6 +106,7 @@ namespace libGUI {
     void                help();
     void                showPlannerToolBar();
     void                changeActiveBackground();
+    void                changeDockAreaForOutput(Qt::DockWidgetArea area);
 	public:
 		GUI(QWidget *p=0);
     void                clearText();

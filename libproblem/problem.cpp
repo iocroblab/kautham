@@ -580,6 +580,8 @@ namespace libProblem {
               coordsVec[i] = (KthReal)atof(tokens[i].c_str());
 
             tmpSampPointer->setCoords(coordsVec);
+            // Adding the mapping to configuration space with the collision test.
+            _wspace->collisionCheck(tmpSampPointer);
             _cspace->add(tmpSampPointer);
 
           }else{

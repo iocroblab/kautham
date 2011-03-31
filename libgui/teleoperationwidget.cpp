@@ -795,7 +795,10 @@ namespace libGUI{
     else{
       try{
         if(_problem->wSpace()->getRobot(activeRob)->getName() == "RR2D"){
-
+          vector<KthReal> target(se3conf.getCoordinates());
+          RobConf& tmp =_problem->wSpace()->getRobot(0)
+                      ->InverseKinematics(target);
+          _problem->wSpace()->getRobot(0)->Kinematics(tmp);
         }else 
         if(_problem->wSpace()->getRobot(activeRob)->getName() == "TX90"){
           vector<KthReal> target(se3conf.getCoordinates());

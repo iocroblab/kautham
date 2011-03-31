@@ -80,6 +80,7 @@ namespace libGUI {
     qout = new StreamLog(std::cout, textEdit);
     connect(actionHelp, SIGNAL(triggered()), this, SLOT(help()));
     connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
+    connect(outputWindow, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(changeDockAreaForOutput(Qt::DockWidgetArea)));
     boolPlanVis = false;
     restart();
 	}
@@ -89,6 +90,17 @@ namespace libGUI {
     tmp.setModal(true);
     tmp.setVisible(true);
     tmp.exec();
+  }
+
+  void GUI::changeDockAreaForOutput(Qt::DockWidgetArea area){
+    if(area == Qt::LeftDockWidgetArea || area == Qt::RightDockWidgetArea)
+      outputWindow->setFeatures(QDockWidget::DockWidgetMovable |    
+                                QDockWidget::DockWidgetFloatable);
+    else
+      outputWindow->setFeatures(QDockWidget::DockWidgetMovable |    
+                                QDockWidget::DockWidgetFloatable |
+                                QDockWidget::DockWidgetVerticalTitleBar);
+
   }
 
   void GUI::help(){

@@ -833,6 +833,7 @@ namespace libProblem {
           SoVRMLExtrusion* tmpEx = new SoVRMLExtrusion();
           tmpEx->solid.setValue(true);
           float diag = diagLimits()/100.;
+          diag = diag < 1.4 ? 1.4 : diag;
           tmpEx->scale.setValue( diag,diag );
           float vertex[13][2];
           vertex[0][0] = 0.1000;    vertex[0][1] = 0.;

@@ -95,9 +95,9 @@ void Application::setActions(){
                         this,SLOT(loadHaptic()));
   mainWindow->setAction(ACTIONTOOL,"Stop Haptic connection","CTRL+D",":/icons/phantom_off.xpm",this,SLOT(unloadHaptic()));
 	mainWindow->addSeparator(TOOLBAR);
-  mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close.xpm",this,SLOT(closeProblem()));
   mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G",
                               ":/icons/determ.xpm", mainWindow, SLOT(changeActiveBackground()));
+  mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close.xpm",this,SLOT(closeProblem()));
 }
 
 void Application::openFile(){
