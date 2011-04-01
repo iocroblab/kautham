@@ -35,7 +35,6 @@ FIND_PACKAGE( Coin REQUIRED )
 
 FIND_PACKAGE( GSL )
 
-
 FIND_PACKAGE( Armadillo )
 IF( Armadillo_FOUND )
   MESSAGE( STATUS "armadillo Package FOUND")
