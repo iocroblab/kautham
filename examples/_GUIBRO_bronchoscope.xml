@@ -27,16 +27,20 @@
 			<Parameter name="1- Rotation (alpha)">1</Parameter>
 			<Parameter name="2- Bending (xi)">1</Parameter>
 			<Parameter name="3- Advance (delta_z)">1</Parameter>
-      <Parameter name="4- Min Advance">50</Parameter>
-      <Parameter name="5- Max Advance">200</Parameter>
-      <Parameter name="6- Interpolation">20</Parameter>
+      <Parameter name="4- Min Advance">20</Parameter>
+      <Parameter name="5- Max Advance">100</Parameter>
+      <Parameter name="6- Interpolation">10</Parameter>
+      <Parameter name="7- Weight Length">1</Parameter>
+      <Parameter name="8- Weight Curvature">1</Parameter>
+      <Parameter name="9- Weight Steps">1</Parameter>
+      <Parameter name="10- Debug Mode">0</Parameter>
       <Parameter name="Max. Samples">1000</Parameter>
     </Parameters>
 		<Queries>
 			<Query>
-				<Init dim="7">0.297 0.492 0.39 0.462 0.369 0.338 0.5</Init>
-				<Goal dim="7">0.559 0.482 0.79 0 0.313 0.21 0.487</Goal>
-			</Query>
+        <Init dim="7">0.559 0.482 0.79 0 0.313 0.21 0.487</Init>
+        <Goal dim="7">0.297 0.492 0.39 0.462 0.369 0.338 0.5</Goal>
+    </Query>
 		</Queries>
 	</Planner>
 </Problem>

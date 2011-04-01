@@ -66,6 +66,7 @@ namespace libPlanner {
 		KthReal length;
 		KthReal curvature;
 		KthReal steps;
+		KthReal cost;
 		bool leave;
 		int id;
 		bool collision;
@@ -84,6 +85,7 @@ namespace libPlanner {
 
 		bool applyRandControl(guibroSample *currGsmp);
 		void printInfo(guibroSample *gs);
+		void moveAlongPath(unsigned int step); //reimplemented
 		//Add public data and functions
 
 		protected:
@@ -91,10 +93,14 @@ namespace libPlanner {
 		KthReal _alpha;
 		KthReal _xi;
 		KthReal _deltaZ;
-		int _advanceStep;
-		int _maxAdvanceStep;
+		KthReal _minAdvanceStep;
+		KthReal _maxAdvanceStep;
 		int _stepsinterpolate;
+		KthReal _wL;
+		KthReal _wS;
+		KthReal _wC;
 	    LCPRNG*	_gen;
+		bool _debug;
 
 		vector<guibroSample*> _guibroSet;
 
