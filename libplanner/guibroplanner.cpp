@@ -285,9 +285,13 @@ namespace libPlanner {
 			uapp[2] = u[2];
 
 			u[0] = currGsmp->u[0] + (_gen->d_rand()-0.5)*_alpha;
-			if(u[0]<-1) u[0]=-1; else if(u[0]>1) u[0]=1;
+			//2*pi continuity
+			if(u[0]<-1) u[0]+=2; else if(u[0]>1) u[0]-=2;
+			
 			u[1] = currGsmp->u[1] + (_gen->d_rand()-0.5)*_xi;
-			if(u[0]<-1) u[1]=-1; else if(u[1]>1) u[1]=1;
+			//saturation
+			if(u[1]<-1) u[1]=-1; else if(u[1]>1) u[1]=1;
+			
 			u[2] = _deltaZ;//forward
 			
 			KthReal deltau[3];

@@ -22,11 +22,14 @@ namespace libProblem {
     vector<KthReal> constrainedparameter2Pose(vector<KthReal> &values);
     vector<float>   constrainedinterpolate(vector<float> coords, vector<KthReal> &values);
     void            SolveConstrainedKinematics(vector<KthReal> &values);
+	void			setInverseAdvanceMode(bool flag){_inverse=flag;};
 
 	private:
     RobConf		      solve(vector<KthReal> &values);
+    RobConf		      solveInverse(vector<KthReal> &values);
 		vector<KthReal>	_indexi;
 		KthReal			    _currentvalues[3];
+		bool _inverse;
     mt::Transform   Tbase;
 	};
 }

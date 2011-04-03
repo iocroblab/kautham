@@ -1,5 +1,6 @@
 #include "bronchowidget.h"
 #include "build/libgui/ui_bronchowidget.h"
+#include <libproblem/ConsBronchoscopyKin.h>
 
 bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset) : //QWidget *parent
     ui(new Ui::bronchoWidget)
@@ -22,6 +23,7 @@ bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset) : //QWidget 
     QObject::connect(ui->DzSlider,SIGNAL(valueChanged(int)),SLOT(zetaSliderChanged(int)));
     QObject::connect(ui->DzSlider,SIGNAL(sliderReleased()),SLOT(zetaSliderReleased()));
     QObject::connect(ui->RateCheckBox,SIGNAL(stateChanged(int)),SLOT(setNavMode(int)));
+    QObject::connect(ui->InverseCheckBox,SIGNAL(stateChanged(int)),SLOT(setAdvanceMode(int)));
 }
 
 bronchoWidget::~bronchoWidget()
@@ -106,4 +108,11 @@ void bronchoWidget::setNavMode(int state){
     timer->start();
   }
 
+}
+
+void bronchoWidget::setAdvanceMode(int state){
+
+	ConstrainedKinematic* ck = _robot->getCkine();
+	if (state==Qt::Unchecked) ((ConsBronchoscopyKin*)ck)->setInverseAdvanceMode(false);
+	else ((ConsBronchoscopyKin*)ck)->setInverseAdvanceMode(true);
 }

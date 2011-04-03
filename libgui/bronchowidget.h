@@ -24,6 +24,7 @@ private slots:
     void              zetaSliderChanged1();
     void              zetaSliderReleased();
     void              setNavMode(int state);
+	void              setAdvanceMode(int state);
 public:
     bronchoWidget(Robot* rob, Problem* prob, int offset); //QWidget *parent = 0
     ~bronchoWidget();

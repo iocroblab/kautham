@@ -5,7 +5,8 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/hardlab
                      ${CMAKE_SOURCE_DIR} 
                      ${mt_DIR} 
                      ${Boost_INCLUDE_DIRS}
-                     ${COIN_INCLUDE_DIR} )
+                     ${COIN_INCLUDE_DIR}
+                     ${Armadillo_INCLUDE_DIR} )
 
 ADD_DEFINITIONS( -DCOIN_DLL )
 ADD_DEFINITIONS( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
