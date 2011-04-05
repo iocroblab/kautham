@@ -247,6 +247,9 @@ namespace libProblem {
     bool                  setProposedSolution(vector<mt::Point3>& pathSE3);
     bool                  setProposedSolution(vector<RobConf*>& path);
     bool                  cleanProposedSolution();
+
+    //! This method returns the Proposed Solution as a vector of RobConf that may be used to guide 
+    //! the user.
     inline vector<RobConf>& getProposedSolution(){return _proposedSolution;}
     inline void           setLinkPathDrawn(int n){_linkPathDrawn = n;}
     bool                  setConstrainedKinematic(CONSTRAINEDKINEMATICS type);  

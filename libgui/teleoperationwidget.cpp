@@ -47,8 +47,10 @@
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <libutil/data_ioc_cell.hpp>
+#include <libguiding/pathtoguide.h>
 
 using namespace boost::interprocess;
+using namespace libGuiding;
 
 namespace libGUI{
   TeleoperationWidget::TeleoperationWidget(Problem* prob, Device* hap, GUI* gui){
@@ -86,11 +88,17 @@ namespace libGUI{
     _rotVec = NULL;
     _scaVec = NULL;
 
+    
+    // initializing the PathToGuide object with the Robot as the parameter.
+    _pathsObj[0] = new PathToGuide( prob->wSpace()->getRobot(0) );
+
+    if( _problem->wSpace()->robotsCount() > 1 )
+      _pathsObj[1] = new PathToGuide( prob->wSpace()->getRobot(1) );
+
+    updateGuidingPath();
 
     if(_problem->wSpace()->robotsCount() < 2)
       _radBttRobot1->setEnabled(false);
-
-    updateGuidingPath();
 
     connect(_cameraTop, SIGNAL(clicked()), this, SLOT(changeCamera()));
     connect(_cameraBottom, SIGNAL(clicked()), this, SLOT(changeCamera()));
@@ -161,6 +169,7 @@ namespace libGUI{
     vector<RobConf>::iterator it;
     float ya,pi,roll;
     ya=pi=roll = (float)0.0;
+
     for(unsigned int i = 0; i < 2; i++ ){
       for(unsigned int j = 0; j < _guidingPath[i].size(); j++ )
         delete[] _guidingPath[i].at(j);
@@ -830,12 +839,12 @@ namespace libGUI{
           // Here I copy the configuration response to the shared memory block.
           if( activeRob == 0 ){ // Fixed robot
             //Lock the mutex
-            //scoped_lock<interprocess_mutex> lock(_data->mutex_out);
-            //std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _data->out.r1Pos );
+            scoped_lock<interprocess_mutex> lock(_dataCell->mutex_out);
+            std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _dataCell->out.r1Pos );
           }else{                //  Mobile robot
             //Lock the mutex
-            //scoped_lock<interprocess_mutex> lock(_data->mutex_out);
-            //std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _data->out.r2Pos );
+            scoped_lock<interprocess_mutex> lock(_dataCell->mutex_out);
+            std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _dataCell->out.r2Pos );
           }
         }else{
           // Assumes the Inverse Kinematic receives the position and orientation as target

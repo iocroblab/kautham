@@ -45,10 +45,12 @@
 #include <libdevice/device.h>
 #include <libproblem/problem.h>
 #include <libutil/data_ioc_cell.hpp>
+#include <libguiding/pathtoguide.h>
 #include "gui.h"
 
 using namespace libDevice;
 using namespace libProblem;
+using namespace libGuiding;
 
 namespace libGUI{
   typedef KthReal pathPoint[6]; // used to store the path in x, y, z, Yaw, Pitch, Roll format
@@ -104,6 +106,9 @@ namespace libGUI{
       vector<GuiNode*>      _guidingPath[2];
       KthReal               _threshold; //!> Guiding threshold to change direction near a node.
       KthReal               _maxForces[6];
+
+      //! Added to increase the guiding capabilities.
+      PathToGuide*          _pathsObj[2];
 
       //! The _dataCell, the _publisher and the suscriber conform the core of interchange strategy 
       //! to use with ROS message system.

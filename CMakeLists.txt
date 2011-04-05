@@ -1,4 +1,3 @@
-
 PROJECT(Kautham2)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
@@ -96,7 +95,8 @@ IF( KAUTHAM_GUI )
   ADD_SUBDIRECTORY ( libcomm )
   ADD_SUBDIRECTORY ( libdevice )
   ADD_SUBDIRECTORY ( libgui )
-  
+  ADD_SUBDIRECTORY ( libguiding )
+    
   FILE( GLOB RES_FILES *.rc )
   QT4_WRAP_CPP( QT_MOC_SRC application.h )
   
