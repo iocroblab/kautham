@@ -1,15 +1,20 @@
 #include "bronchowidget.h"
 #include "build/libgui/ui_bronchowidget.h"
 #include <libproblem/ConsBronchoscopyKin.h>
+#include "gui.h"
 
-bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset) : //QWidget *parent
+using namespace  libGUI;
+bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui) : //QWidget *parent
     ui(new Ui::bronchoWidget)
 {
     ui->setupUi(this);
 
+    _gui = gui;
     _robot = rob;
     _globalOffset = offset;
     _ptProblem = prob;
+	_cameraView = false;
+	_homeView = _gui->getActiveCameraTransfom();
 
     values.resize(3);
     lastZsliderPos=0;
@@ -24,6 +29,7 @@ bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset) : //QWidget 
     QObject::connect(ui->DzSlider,SIGNAL(sliderReleased()),SLOT(zetaSliderReleased()));
     QObject::connect(ui->RateCheckBox,SIGNAL(stateChanged(int)),SLOT(setNavMode(int)));
     QObject::connect(ui->InverseCheckBox,SIGNAL(stateChanged(int)),SLOT(setAdvanceMode(int)));
+    QObject::connect(ui->CameraCheckBox,SIGNAL(stateChanged(int)),SLOT(setCameraMode(int)));
 }
 
 bronchoWidget::~bronchoWidget()
@@ -56,6 +62,7 @@ void bronchoWidget::alphaSliderChanged(int val){
   KthReal readVal=(KthReal) val;
   values[0]=(KthReal) readVal/1000; // /1000 because the slider only accept int values, in this case from -3141 to 3141
   _robot->ConstrainedKinematics(values);
+  updateView();
 }
 
 
@@ -64,6 +71,7 @@ void bronchoWidget::xiSliderChanged(int val){
   values[1]=(KthReal) readVal/1000;
   _ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
+  updateView();
   }
 
 void bronchoWidget::zetaSliderChanged(int val){
@@ -72,6 +80,7 @@ void bronchoWidget::zetaSliderChanged(int val){
   _ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
   lastZsliderPos=readVal;
+  updateView();
 }
 
 void bronchoWidget::zetaSliderChanged1(){
@@ -80,6 +89,7 @@ void bronchoWidget::zetaSliderChanged1(){
     if (values[2]!=0){
       _ptProblem->setCurrentControls(values,_globalOffset);
       _robot->ConstrainedKinematics(values);
+	  updateView();
     }
 }
 
@@ -96,6 +106,7 @@ void bronchoWidget::zetaSliderReleased(){
 }
 
 void bronchoWidget::setNavMode(int state){
+	
   if (state==Qt::Unchecked){
     disconnect(timer, SIGNAL(timeout()), 0, 0);
     timer->stop();
@@ -110,9 +121,37 @@ void bronchoWidget::setNavMode(int state){
 
 }
 
+
 void bronchoWidget::setAdvanceMode(int state){
 
+	
 	ConstrainedKinematic* ck = _robot->getCkine();
 	if (state==Qt::Unchecked) ((ConsBronchoscopyKin*)ck)->setInverseAdvanceMode(false);
 	else ((ConsBronchoscopyKin*)ck)->setInverseAdvanceMode(true);
+	
 }
+
+
+void bronchoWidget::setCameraMode(int state){
+	if (state==Qt::Unchecked) {
+		_cameraView = false;
+		_gui->setActiveCameraTransform(_homeView);
+	}
+	else{
+		_cameraView = true;
+	}
+}
+
+void bronchoWidget::updateView()
+{
+	if(_cameraView)
+	{
+		mt::Transform T_Ry;
+		mt::Transform T_tz;
+		T_Ry.setRotation( mt::Rotation(mt::Vector3(0,1,0),-M_PI/2) );
+		T_tz.setTranslation( mt::Vector3(0,0,-7.1) );
+		mt::Transform camTrsf = _robot->getLastLinkTransform()*T_Ry*T_tz;
+		_gui->setActiveCameraTransform(camTrsf);
+	}
+}
+

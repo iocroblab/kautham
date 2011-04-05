@@ -124,7 +124,7 @@ namespace libGUI {
     bool                restart();
     bool                addToProblemTree(string problemPath);
     bool                addControlWidget( Robot* rob, Problem* prob, int offset = 0);
-    bool                addBronchoWidget( Robot* rob, Problem* prob, int offset = 0);
+    bool                addBronchoWidget( Robot* rob, Problem* prob, int offset = 0, GUI* gui = NULL);
 	  bool                addConstrainedControlWidget( Robot* rob, Problem* prob, int offset = 0);
     bool                addDOFWidget( Robot* rob );
     bool                setSampleWidget(SampleSet* samples, Sampler* sampler, Problem* prob);

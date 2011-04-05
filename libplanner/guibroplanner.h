@@ -70,6 +70,7 @@ namespace libPlanner {
 		bool leave;
 		int id;
 		bool collision;
+		bool inversekin;
 	};
 
 
@@ -101,6 +102,8 @@ namespace libPlanner {
 		KthReal _wC;
 	    LCPRNG*	_gen;
 		bool _debug;
+		KthReal _thresholdInvKin;
+		int _drawnLink; //!>flag to show which link path is to be drawn
 
 		vector<guibroSample*> _guibroSet;
 

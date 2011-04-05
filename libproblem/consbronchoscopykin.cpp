@@ -74,7 +74,9 @@ namespace libProblem {
 	KthReal x,y,z;
 
 	_robot->Kinematics(_CurrentPos);
-	mt::Transform ToolTransf = _robot->getLastLinkTransform();
+	//mt::Transform ToolTransf = _robot->getLastLinkTransform();
+	int numlink = 3;//_robot->links.size()-1;
+	mt::Transform ToolTransf = _robot->getLinkTransform(numlink);
 
 	/* esto no funciona
 	mt::Point3 PosTool = ToolTransf.getTranslation();
@@ -109,7 +111,10 @@ namespace libProblem {
 			rncoor[i] = psi;
 		
 	_robot->Kinematics(_CurrentPos);
-	mt::Transform ToolTransf2  = _robot->getLastLinkTransform();
+	//mt::Transform ToolTransf2  = _robot->getLastLinkTransform();
+	
+	mt::Transform ToolTransf2 = _robot->getLinkTransform(numlink);
+
 	DiffTransf = currTran.inverse()*ToolTransf2;
 	currTran = ToolTransf * DiffTransf.inverse();
 

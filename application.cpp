@@ -261,7 +261,8 @@ bool Application::problemSetup(string path){
 		//mainWindow->addConstrainedControlWidget(_problem->wSpace()->getRobot(i), _problem, globOffset);
     // Use the following widget if the user can modified all the dof instead of the controls.
     //mainWindow->addDOFWidget(_problem->wSpace()->getRobot(i) );
-    mainWindow->addBronchoWidget(_problem->wSpace()->getRobot(i), _problem, globOffset);
+
+    mainWindow->addBronchoWidget(_problem->wSpace()->getRobot(i), _problem, globOffset, mainWindow);
 
     if(_problem->wSpace()->getRobot(i)->getIkine() != NULL)
       mainWindow->addInverseKinematic(_problem->wSpace()->getRobot(i)->getIkine());

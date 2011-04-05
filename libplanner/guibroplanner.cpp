@@ -68,6 +68,8 @@ namespace libPlanner {
 		_wS = 1;
 		_wS = 1;
 		_debug=false;
+      _drawnLink = 0; //the path of base is defaulted
+	  _thresholdInvKin = 0.5;
 
 		//set intial values from parent class data
 		_speedFactor = 1;
@@ -88,11 +90,15 @@ namespace libPlanner {
 		addParameter("8- Weight Curvature", _wC);
 		addParameter("9- Weight Steps", _wS);
 		addParameter("10- Debug Mode", _debug);
+		addParameter("11- Threshold InvKin", _thresholdInvKin);
+
+        addParameter("Drawn Path Link",_drawnLink);
 
 		//removeParameter("Neigh Thresshold");
 		//removeParameter("Drawn Path Link");
 		//removeParameter("Max. Neighs");
 
+		_wkSpace->getRobot(0)->setLinkPathDrawn(_drawnLink);
     }
 
 	//! void destructor
@@ -183,6 +189,20 @@ namespace libPlanner {
         else
           return false;
 
+		it = _parameters.find("11- Threshold InvKin");
+        if(it != _parameters.end())
+		{
+          _thresholdInvKin = it->second;;
+		}
+        else
+          return false;
+
+		it = _parameters.find("Drawn Path Link");
+		if(it != _parameters.end()){
+          _drawnLink = it->second;
+          _wkSpace->getRobot(0)->setLinkPathDrawn(_drawnLink);
+		}else
+          return false;
 
       }catch(...){
         return false;
@@ -277,6 +297,24 @@ namespace libPlanner {
 			}
 
 			//2-go forward step by step using a new alpha and xi, until colision
+
+			bool inversekinused;
+			KthReal alphaRange;
+			KthReal xiRange;
+			if(_gen->d_rand() > _thresholdInvKin) 
+			{
+				inversekinused = true;
+				alphaRange = _alpha/2;
+				xiRange = _xi/2;
+			}
+			else
+			{
+				inversekinused = false;
+				alphaRange = _alpha;
+				xiRange = _xi;
+			}
+			((ConsBronchoscopyKin*)ck)->setInverseAdvanceMode(inversekinused);
+
 			uold[0] = u[0];
 			uold[1] = u[1];
 			uold[2] = u[2];
@@ -339,6 +377,8 @@ namespace libPlanner {
 						_samples->add(tmpsamples->getSampleAt(j));
 					}
 				}
+				else _samples->add(last);
+
 				//tmpsamples->clear();DO NOT CLEAR - SAMPLES SHOULD NOT BE REMOVED
 				//_samples->add(nextSmp);
 
@@ -356,6 +396,7 @@ namespace libPlanner {
 				gSmp->leave = true;
 				gSmp->parent->leave = false;
 				gSmp->id = _guibroSet.size();
+				gSmp->inversekin = inversekinused; 
 				if(advanced==maxAdvance) gSmp->collision = false;
 				else gSmp->collision = true; //previous loop exited by collision
 				_guibroSet.push_back(gSmp);
@@ -416,6 +457,13 @@ namespace libPlanner {
 				((ConsBronchoscopyKin*)ck)->setvalues(u[0],0);
 				((ConsBronchoscopyKin*)ck)->setvalues(u[1],1);
 
+				
+			    ((ConsBronchoscopyKin*)ck)->setInverseAdvanceMode( currGsmp->inversekin );
+
+				mt::Transform T_Ry;
+				mt::Transform T_tz;
+				T_Ry.setRotation( mt::Rotation(mt::Vector3(0,1,0),-M_PI/2) );
+				T_tz.setTranslation( mt::Vector3(0,0,-7.1) );
 
 				//1-advance -back_u2; do not store
 				KthReal advanced = 0;
@@ -430,6 +478,7 @@ namespace libPlanner {
 					nextSmp->setMappedConf(newconf);
 					//here starts the motion
 					_simulationPath.push_back(nextSmp);
+					addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
 				}
 
 				//2-advance until interpolate
@@ -441,6 +490,8 @@ namespace libPlanner {
 					nextSmp = new Sample(_wkSpace->getDimension());
 					nextSmp->setMappedConf(newconf);
 					_simulationPath.push_back(nextSmp);
+				
+					addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
 					advanced += abs(_deltaZ);
 				}
 
@@ -459,6 +510,9 @@ namespace libPlanner {
 					nextSmp = new Sample(_wkSpace->getDimension());
 					nextSmp->setMappedConf(newconf);
 					_simulationPath.push_back(nextSmp);
+					
+					addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
+					
 					advanced += abs(_deltaZ);
 					j++;
 				}
@@ -469,6 +523,7 @@ namespace libPlanner {
 	  else if( _simulationPath.size() >= 2 ){
         step = step % _simulationPath.size();
         _wkSpace->moveTo(_simulationPath[step]);
+
       }else
         std::cout << "The problem is wrong solved. The solution path has less than two elements." << std::endl;
 	}
@@ -479,6 +534,7 @@ namespace libPlanner {
 		{
 			_solved = false;
 			_simulationPath.clear();
+			_cameraPath.clear();
 			char sampleDIM = _wkSpace->getDimension();
 
 			//Set _samples only with the goal sample
@@ -500,6 +556,7 @@ namespace libPlanner {
 				_init=SmpInit;
 				_goal=SmpGoal;
 				
+				_samples->add(SmpInit);
 				_samples->add(SmpGoal);
 
 				//Define the first guibroSample and add to guibroSet
@@ -518,6 +575,7 @@ namespace libPlanner {
 				gSmp->back_u2 = 0.0;
 				gSmp->collision = false;
 				gSmp->leave = true;
+				gSmp->inversekin = false; 
 				_guibroSet.push_back(gSmp);
 			}
 			else
@@ -545,7 +603,7 @@ namespace libPlanner {
 			guibroSample *curr;
 			int count=0;
 			int i=0;
-			int currentNumSamples = 500;
+			int currentNumSamples = 50;
 			do{
 				cout<<"count: "<<count<<" ";
 				curr = _guibroSet.at(i);
@@ -576,7 +634,8 @@ namespace libPlanner {
 			for(int i=1; i<_guibroSet.size(); i++)
 			{
 				cout<<"guibrosample "<<_guibroSet[i]->id<<
-					  " sample "<<_samples->indexOf(_guibroSet[i]->smpPtr)<<endl;
+					  " sample "<<_samples->indexOf(_guibroSet[i]->smpPtr)<<
+					  " invkinused: "<<_guibroSet[i]->inversekin<<endl;
 			}
 			cout<<endl;
 

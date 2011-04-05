@@ -145,6 +145,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QCheckBox" name="CameraCheckBox">
+        <property name="text">
+         <string>Camera View</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="InverseCheckBox">
         <property name="text">
          <string>Inverse</string>

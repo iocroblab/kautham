@@ -156,13 +156,13 @@ namespace libGUI {
     return false;
   }
 
-  bool GUI::addBronchoWidget( Robot* rob, Problem* prob, int offset ){
+  bool GUI::addBronchoWidget( Robot* rob, Problem* prob, int offset, GUI* gui ){
     if( rob != NULL){
-      bronchoWidget* tmpControl = new bronchoWidget( rob, prob, offset );
+      bronchoWidget* tmpControl = new bronchoWidget( rob, prob, offset, gui  );
       propertiesTab->addTab(tmpControl, "bronchoCtrl-" + QString((rob->getName()).c_str()));
       return true;
     }else{
-      bronchoWidget* tmpControl = new bronchoWidget( NULL, NULL, 0 );
+      bronchoWidget* tmpControl = new bronchoWidget( NULL, NULL, 0 , NULL);
       propertiesTab->addTab(tmpControl, "bronchoControlTest");
       return true;
     }
