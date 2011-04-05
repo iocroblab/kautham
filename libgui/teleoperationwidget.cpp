@@ -422,10 +422,35 @@ namespace libGUI{
 
   void TeleoperationWidget::setGuideForce(mt::Transform& tcp){
     KthReal forces[6];
+    PathToGuide* path = NULL;
+
+    if( _radBttRobot0->isChecked() )
+      path = _pathsObj[0];
+    else if( _radBttRobot1->isChecked() )
+      path = _pathsObj[1];
 
     for(unsigned int i = 0; i < 6; i++)
         forces[i] = 0.;
 
+    //XXXXXXXXXXX here i want to use the PathToGuide object XXXXXXXX
+    Xnode anXNode, resXNode;
+    mt::Point3& pos = tcp.getTranslationRef();
+    mt::Rotation& rot =tcp.getRotationRef();
+    for(int i = 0; i < 3; i++)
+      anXNode.push_back( pos.at(i) ); 
+    for(int i = 0; i < 4; i++)
+      anXNode.push_back( rot.at(i) );
+
+    if( anXNode.size() != 7 )
+      cout << "Error, the anXNode is bad configured.\n";
+
+    path->nearX( anXNode, resXNode );
+
+
+
+
+
+    //XXXXXXXXXX Aplying the force to haptic XXXXXXXXXXXXXXXX
     _haptic->setSE3Force(forces);
   }
 

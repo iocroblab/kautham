@@ -58,6 +58,8 @@ namespace libGuiding{
 typedef vector<KthReal> Xnode;
 typedef vector<KthReal> Qnode;
 
+
+
   class PathToGuide{
   public:
     //! This construntor is used to create the PathToGuide object based on the path
@@ -92,6 +94,27 @@ typedef vector<KthReal> Qnode;
         }
       }catch(...){}
       return false;
+    }
+
+    static mt::Transform xnode2tran(Xnode &xnode){
+      mt::Transform tra( Rotation(xnode.at(3), xnode.at(4), xnode.at(5), xnode.at(6)),
+                         Point3(xnode.at(0), xnode.at(1), xnode.at(2) ));
+      return tra;
+
+    }
+
+    static Xnode tran2xnode(mt::Transform  &tran){
+      Xnode anXnode( 7 );
+      mt::Point3 &pos = tran.getTranslationRef();
+      mt::Rotation &rot = tran.getRotationRef();
+
+      for(int i = 0; i < 3; i++){
+        anXnode.at(i) = pos.at(i);
+        anXnode.at(i+3) = rot.at(i);
+      }
+      anXnode.at(6) = rot.at(3);
+
+      return anXnode;
     }
     
   private:

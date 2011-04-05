@@ -52,8 +52,6 @@ namespace libGuiding{
     _nearestX = NULL;
 
     vector<RobConf>::iterator it;
-    mt::Point3 pos;
-    mt::Rotation rot;
     mt::Transform trans;
     Xnode anXnode( 7 );
     Qnode anQnode( _rob.getNumJoints() );
@@ -68,14 +66,7 @@ namespace libGuiding{
 
       _rob.Kinematics(*it);
       trans = _rob.getLastLinkTransform();
-      pos = trans.getTranslation();
-      rot = trans.getRotation();
-
-      for( i = 0; i < 3; i++){
-        anXnode.at(i) = pos.at(i);
-        anXnode.at(i+3) = rot.at(i);
-      }
-      anXnode.at(6) = rot.at(3);
+      anXnode = tran2xnode(trans);
 
       _pathQ.push_back( anQnode );
       _pathX.push_back( anXnode );
@@ -94,8 +85,6 @@ namespace libGuiding{
     _nearestX = NULL;
 
     vector<RobConf>::iterator it;
-    mt::Point3 pos;
-    mt::Rotation rot;
     mt::Transform trans;
     Xnode anXnode( 7 );
     Qnode anQnode( _rob.getNumJoints() );
@@ -110,14 +99,7 @@ namespace libGuiding{
 
       _rob.Kinematics(*it);
       trans = _rob.getLastLinkTransform();
-      pos = trans.getTranslation();
-      rot = trans.getRotation();
-
-      for( i = 0; i < 3; i++){
-        anXnode.at(i) = pos.at(i);
-        anXnode.at(i+3) = rot.at(i);
-      }
-      anXnode.at(6) = rot.at(3);
+      anXnode = tran2xnode(trans);
 
       _pathQ.push_back( anQnode );
       _pathX.push_back( anXnode );
