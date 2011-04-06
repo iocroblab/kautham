@@ -57,31 +57,57 @@ using namespace libSampling;
 namespace libGuiding{
 typedef vector<KthReal> Xnode;
 typedef vector<KthReal> Qnode;
+typedef vector<KthReal> Uvec;
 
 
 
   class PathToGuide{
   public:
     //! This construntor is used to create the PathToGuide object based on the path
-    //! found by any planner and stores as a vector of RobConf.
+    //! found by any planner and stored as a vector of RobConf.
     PathToGuide( Robot &rob );
 
+    //! This is an overloaded constructor based on the pointer of the robot retrieved from the 
+    //! workspace.
     PathToGuide( Robot* rob );
 
-    //! This method recalculates the structures of the ANN in order to search the nearest one.
-    void recalculateANN();
+    //! Returns the distance to the desired configuration qd. This method computes the qd and the
+    //! unit magnetic vector used to generated the force to attract the user to the path in Q.
+    KthReal     magVector(Qnode &qi, Uvec &um, Qnode &qd );
+
+    //! This method computes the unitary vector in the direction to apply the pushing force.
+    void        pushVectorQ( Qnode &qd, Uvec &up );
+
+    //! Returns the distance to the desired cartesian pose xd. This method computes the xd and the
+    //! unit magnetic vector used to generated the force to attract the user to the path in SE3.
+    KthReal     magVector(Xnode &xi, Uvec &um, Xnode &xd, int k, KthReal ratio );
+
+    //! This method computes the unitary vector in the direction to apply the pushing force.
+    void        pushVectorX( Xnode &qd, Uvec &up );
 
     //! This method returns the index of the nearest point in the Q vector for the point used as a parameter.
-    int nearQ(const Qnode &qn );
+    int         nearQ(const Qnode &qn );
+
+    //! This method returns the indexs of the two nearest points in the Q vector for the point used as a parameter.
+    bool        nearQ(const Qnode &qn, int* indexs );
 
     //! This method returns the nearest point in the Q vector for the point used as a parameter.
-    void nearQ(const Qnode &qn, Qnode& res );
+    void        nearQ(const Qnode &qn, Qnode& res );
+
+    //* This method returns the two nearest points in the Q vector for the point used as a parameter.
+    bool        nearQ(const Qnode &qn, Qnode res[] );
 
     //! This method returns the index of the nearest point in the X vector for the point used as a parameter.
-    int nearX(const Xnode &xn );
+    int         nearX(const Xnode &xn );
+
+    //! This method returns the indexs of the two nearest points in the X vector for the point used as a parameter.
+    bool        nearX(const Xnode &xn, int* indexs );
 
     //! This method returns the nearest point in the X vector for the point used as a parameter.
-    void nearX(const Xnode &xn, Xnode& res );
+    void        nearX(const Xnode &xn, Xnode& res );
+
+    //! This method returns the nearest point in the X vector for the point used as a parameter.
+    bool        nearX(const Xnode &xn, Xnode res[] );
 
     
     //! This method removes the node pointed by the index from the respectives vectors. 
@@ -90,6 +116,7 @@ typedef vector<KthReal> Qnode;
         if(index >= 0 && index < _pathQ.size() ){ 
           _pathQ.erase(_pathQ.begin() + index);
           _pathX.erase(_pathX.begin() + index);/**/
+          recalculateANN();
           return true;
         }
       }catch(...){}
@@ -121,26 +148,29 @@ typedef vector<KthReal> Qnode;
     //! Default constructor is not available. 
     PathToGuide();
 
+    //! This method recalculates the structures of the ANN in order to search the nearest one.
+    void            recalculateANN();
+
     //! Vector who stores the path formed by the sequence of points in the cspace.
-    vector<Qnode> _pathQ;
+    vector<Qnode>   _pathQ;
     
     //! Vector who stores the path formed by the sequence of points in the cartesian space.
-    vector<Xnode> _pathX;
+    vector<Xnode>   _pathX;
     
     //! ANN structure to search the nearest in cspace
-  	MultiANN *_nearestQ;
+  	MultiANN*       _nearestQ;
 
     //! ANN structure to search the nearest in cartesian space.
-  	MultiANN *_nearestX;
+  	MultiANN*       _nearestX;
 
   	//!array of points for the ANN search for neighs
-	  ANNpointArray	_ptsQ;
+	  ANNpointArray	  _ptsQ;
 
     //!array of points for the ANN search for neighs
-	  ANNpointArray	_ptsX;
+	  ANNpointArray	  _ptsX;
 
     //! Reference to the robot that will be guided.
-    Robot &_rob;
+    Robot&          _rob;
     
   };
 }

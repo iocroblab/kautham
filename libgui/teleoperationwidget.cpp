@@ -444,7 +444,7 @@ namespace libGUI{
     if( anXNode.size() != 7 )
       cout << "Error, the anXNode is bad configured.\n";
 
-    path->nearX( anXNode, resXNode );
+    
 
 
 

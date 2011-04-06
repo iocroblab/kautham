@@ -110,7 +110,130 @@ namespace libGuiding{
     }
   }
 
+  KthReal PathToGuide::magVector(Qnode &qi, Uvec &um, Qnode &qd ){
+    return 0.;
+  }
 
+  void PathToGuide::pushVectorQ( Qnode &qd, Uvec &up ){
+
+  }
+
+  KthReal PathToGuide::magVector(Xnode &xi, Uvec &um, Xnode &xd, int k, KthReal ratio ){
+    return 0.;
+  }
+
+  void PathToGuide::pushVectorX( Xnode &qd, Uvec &up ){
+
+  }
+
+ int PathToGuide::nearQ(const Qnode &qn ){
+		double d_ann = 0.;
+		int idx_ann = 0;
+		//ANNpoint *result_pt = new ANNpoint;
+    ANNpoint pts = annAllocPt( qn.size() );
+
+    std::copy(qn.begin(), qn.end(), pts );
+    
+    // compute nearest neighbor using library
+		_nearestQ->NearestNeighbor(pts, idx_ann, d_ann );// (void**&)result_pt);	
+
+    return idx_ann;
+  }
+
+  bool PathToGuide::nearQ(const Qnode &qn, int* indexs ){
+    try{
+      indexs[0] = indexs[1] = -1;
+
+      double *d_ann = new double[2];
+		  ANNpoint *result_pt = new ANNpoint[2];
+
+      ANNpoint pts = annAllocPt( qn.size() );
+      std::copy(qn.begin(), qn.end(), pts );
+  		
+		  d_ann[0] = d_ann[1] = INFINITY;
+
+      // compute nearest neighbor using library
+      _nearestQ->NearestNeighbor(pts, d_ann, indexs, (void**&)result_pt);	
+      return true;
+    }catch(...){
+      return false;
+    }
+  }
+
+  void PathToGuide::nearQ(const Qnode &qn, Qnode& res ){
+    int idx = nearQ( qn );
+    res = _pathQ.at( idx );
+  }
+
+  bool PathToGuide::nearQ(const Qnode &qn, Qnode res[] ){
+    try{
+      int idx[]={-1, -1};
+      res[0].clear();
+      res[1].clear();
+
+      nearQ(qn, idx);
+      res[0] = _pathQ.at(idx[0]);
+      res[1] = _pathQ.at(idx[1]);
+      return true;
+    }catch(...){
+      return false;
+    }
+  }
+
+  int PathToGuide::nearX(const Xnode &xn ){
+    double d_ann = 0.;
+		int idx_ann = 0;
+		//ANNpoint *result_pt = new ANNpoint;
+    ANNpoint pts = annAllocPt( xn.size() );
+
+    std::copy(xn.begin(), xn.end(), pts );
+    
+    // compute nearest neighbor using library
+		_nearestX->NearestNeighbor(pts, idx_ann, d_ann );// (void**&)result_pt);	
+
+    return idx_ann;
+  }
+
+  bool PathToGuide::nearX(const Xnode &xn, int* indexs ){
+    try{
+      indexs[0] = indexs[1] = -1;
+
+      double *d_ann = new double[2];
+		  ANNpoint *result_pt = new ANNpoint[2];
+
+      ANNpoint pts = annAllocPt( xn.size() );
+      std::copy(xn.begin(), xn.end(), pts );
+  		
+		  d_ann[0] = d_ann[1] = INFINITY;
+
+      // compute nearest neighbor using library
+      _nearestX->NearestNeighbor(pts, d_ann, indexs, (void**&)result_pt);	
+      return true;
+    }catch(...){
+      return false;
+    }
+  }
+
+  void PathToGuide::nearX(const Xnode &xn, Xnode& res ){
+    int idx = nearX( xn );
+    res = _pathX.at( idx );
+  }
+
+  bool PathToGuide::nearX(const Xnode &xn, Xnode res[] ){
+    try{
+      int idx[]={-1, -1};
+      res[0].clear();
+      res[1].clear();
+
+      nearX(xn, idx);
+      res[0] = _pathX.at(idx[0]);
+      res[1] = _pathX.at(idx[1]);
+      return true;
+    }catch(...){
+      return false;
+    }
+  }
+  
   void PathToGuide::recalculateANN(){
     if( _nearestQ != NULL ){
       delete _nearestQ;
@@ -177,44 +300,7 @@ namespace libGuiding{
 		    _ptsX[i][k] = _pathX.at(i).at(k);
 
     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
   }
 
-  int PathToGuide::nearQ(const Qnode &qn ){
-		double d_ann = 0.;
-		int idx_ann = 0;
-		//ANNpoint *result_pt = new ANNpoint;
-    ANNpoint pts = annAllocPt( qn.size() );
-
-    std::copy(qn.begin(), qn.end(), pts );
-    
-    // compute nearest neighbor using library
-		_nearestQ->NearestNeighbor(pts, idx_ann, d_ann );// (void**&)result_pt);	
-
-    return idx_ann;
-  }
-
-  void PathToGuide::nearQ(const Qnode &qn, Qnode& res ){
-    int idx = nearQ( qn );
-    res = _pathQ.at( idx );
-  }
-
-  int PathToGuide::nearX(const Xnode &xn ){
-    double d_ann = 0.;
-		int idx_ann = 0;
-		//ANNpoint *result_pt = new ANNpoint;
-    ANNpoint pts = annAllocPt( xn.size() );
-
-    std::copy(xn.begin(), xn.end(), pts );
-    
-    // compute nearest neighbor using library
-		_nearestX->NearestNeighbor(pts, idx_ann, d_ann );// (void**&)result_pt);	
-
-    return idx_ann;
-  }
-
-  void PathToGuide::nearX(const Xnode &xn, Xnode& res ){
-    int idx = nearX( xn );
-    res = _pathX.at( idx );
-  }
+ 
 }
