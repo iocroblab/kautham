@@ -82,6 +82,7 @@ namespace libGUI {
     connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(outputWindow, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(changeDockAreaForOutput(Qt::DockWidgetArea)));
     boolPlanVis = false;
+	planToolBar = NULL;
     restart();
 	}
   

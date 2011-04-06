@@ -120,8 +120,9 @@ namespace libDevice{
         if(init){
           _hapticDevice->calibrate();
           _hapticDevice->start();
-        }else
-          return false;
+		  _updateDeviceTimer.start();
+		  return true;
+        }
 #endif
       }else{
         if(_client == NULL){
@@ -130,12 +131,13 @@ namespace libDevice{
         }
         _client->start();
         _client->setSendingData(_sendingData);
+		_updateDeviceTimer.start();
+		return true;
       }
-      _updateDeviceTimer.start();
-      return true;
-    }catch(...){
-      return false;
-    }
+      
+    }catch(...){ }
+	 
+	return false;
   }
 
   bool HapticDevice::disconnect(){

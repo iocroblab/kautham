@@ -143,7 +143,13 @@ namespace libGUI{
       connect(_udpOption, SIGNAL(clicked()), this, SLOT(connectionMethod()));
       connect(_tcpOption, SIGNAL(clicked()), this, SLOT(connectionMethod()));
       btnConnect->setEnabled(true);
-      _directOption->setChecked(_device->isReadDirectly());
+	  if( _device->isReadDirectly() )
+		_directOption->setChecked(true);
+	  else{
+		_tcpOption->setChecked(true);
+	    _directOption->setChecked(false);
+		_directOption->setEnabled(false);
+	  }
       connectionMethod();
     }
   }
