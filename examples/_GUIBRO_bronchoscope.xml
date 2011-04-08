@@ -34,7 +34,9 @@
       <Parameter name="8- Weight Curvature">1</Parameter>
       <Parameter name="9- Weight Steps">1</Parameter>
       <Parameter name="10- Debug Mode">0</Parameter>
+      <Parameter name="11- Threshold InvKin">0.5</Parameter>
       <Parameter name="Max. Samples">1000</Parameter>
+      <Parameter name="Drawn Path Link">0</Parameter>
     </Parameters>
 		<Queries>
 			<Query>

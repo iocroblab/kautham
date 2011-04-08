@@ -332,6 +332,9 @@
 
  	bool PRMHandPlannerICRAjournal::trySolve()
 	{
+		_wkSpace->collisionCheck(_init);
+		_wkSpace->collisionCheck(_goal);
+
 		_neighThress = goalSamp()->getDistance(initSamp(), CONFIGSPACE) *4;//  / 4;
 //			cout<<"...._neighThress = "<<_neighThress<<endl<<flush;
 
