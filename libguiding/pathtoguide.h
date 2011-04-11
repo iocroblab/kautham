@@ -73,17 +73,17 @@ typedef vector<KthReal> Uvec;
 
     //! Returns the distance to the desired configuration qd. This method computes the qd and the
     //! unit magnetic vector used to generated the force to attract the user to the path in Q.
-    KthReal     magVector(Qnode &qi, Uvec &um, Qnode &qd );
+    KthReal     unitVectors(Qnode &qi, Qnode &qd, Uvec &um, Uvec &up  );
 
-    //! This method computes the unitary vector in the direction to apply the pushing force.
-    void        pushVectorQ( Qnode &qd, Uvec &up );
+    ////! This method computes the unitary vector in the direction to apply the pushing force.
+    //void        pushVectorQ( Qnode &qd, Uvec &up );
 
     //! Returns the distance to the desired cartesian pose xd. This method computes the xd and the
     //! unit magnetic vector used to generated the force to attract the user to the path in SE3.
-    KthReal     magVector(Xnode &xi, Uvec &um, Xnode &xd, int k, KthReal ratio );
+    KthReal     unitVectors(Xnode &xi, Xnode &xd, int k, KthReal ratio, Uvec &um, Uvec &up );
 
-    //! This method computes the unitary vector in the direction to apply the pushing force.
-    void        pushVectorX( Xnode &qd, Uvec &up );
+    ////! This method computes the unitary vector in the direction to apply the pushing force.
+    //void        pushVectorX( Xnode &qd, Uvec &up );
 
     //! This method returns the index of the nearest point in the Q vector for the point used as a parameter.
     int         nearQ(const Qnode &qn );
@@ -153,9 +153,15 @@ typedef vector<KthReal> Uvec;
 
     //! Vector who stores the path formed by the sequence of points in the cspace.
     vector<Qnode>   _pathQ;
+
+    //! This vector is used to store the unit vector from the current point to next one.
+    vector<Uvec>    _uvecQ;
     
     //! Vector who stores the path formed by the sequence of points in the cartesian space.
     vector<Xnode>   _pathX;
+
+    //! This vector is used to store the unit vector from the current point to next one.
+    vector<Uvec>    _uvecX;
     
     //! ANN structure to search the nearest in cspace
   	MultiANN*       _nearestQ;

@@ -199,9 +199,9 @@ int main(int argc, char* argv[]){
           outputFile << "BadSolved: \t"         << badSol                 << endl;
           outputFile << "Total time: \t"        << times[0]/tryTimes      << endl;
           outputFile << "Smooth time: \t"       << times[1]/tryTimes      << endl;
-          outputFile << "Tried samples: \t"     << sampCount[0]/tryTimes  << endl;
-          outputFile << "Connected samples: \t" << sampCount[1]/tryTimes  << endl;
-          outputFile << "Nodes in solution path: \t"   << sampCount[2]/tryTimes  << endl;
+          outputFile << "Tried samples: \t"     << sampCount[0]/(float) tryTimes  << endl;
+          outputFile << "Connected samples: \t" << sampCount[1]/(float) tryTimes  << endl;
+          outputFile << "Nodes in solution path: \t"   << sampCount[2]/(float) tryTimes  << endl;
 	      }else           //there were any problems with the copying process
           throw(1);
 

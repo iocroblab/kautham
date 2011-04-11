@@ -72,6 +72,49 @@ namespace libGuiding{
       _pathX.push_back( anXnode );
     }  
 
+    _uvecQ.clear();
+    _uvecX.clear();
+
+    // Create a vector of unit vectors from one node to the next one in Q.
+    Uvec avec(anQnode.size());
+    float norm = 0.;
+    vector<Qnode>::iterator ite,itb;
+    itb = _pathQ.begin();
+    for(ite = _pathQ.begin() + 1; ite != _pathQ.end(); ++ite,++itb){
+      norm = 0.;
+      for(int i = 0; i < avec.size(); i++){
+        avec.at(i) = (*ite).at(i) - (*itb).at(i);
+        norm += avec.at(i) * avec.at(i);
+      }
+      norm = sqrt(norm);
+      for(int i =0; i < avec.size(); i++)
+        avec.at(i) /= norm;
+
+      _uvecQ.push_back(avec);
+    }
+    avec.clear();
+    avec.resize( anQnode.size(), 0. );
+    _uvecQ.push_back(avec);
+
+    // Now for the SE3 nodes.
+    avec.resize(7, 0.);
+    itb = _pathX.begin();
+    for(ite = _pathX.begin() + 1; ite != _pathX.end(); ++ite,++itb){
+      norm = 0.;
+      for(int i = 0; i < avec.size(); i++){
+        avec.at(i) = (*ite).at(i) - (*itb).at(i);
+        norm += avec.at(i) * avec.at(i);
+      }
+      norm = sqrt(norm);
+      for(int i =0; i < avec.size(); i++)
+        avec.at(i) /= norm;
+
+      _uvecX.push_back(avec);
+    }
+    avec.clear();
+    avec.resize( 7, 0. );
+    _uvecQ.push_back(avec);
+
     if( _pathQ.size() == _pathX.size() && _pathQ.size() != 0 ){
       recalculateANN();
     }
@@ -110,21 +153,97 @@ namespace libGuiding{
     }
   }
 
-  KthReal PathToGuide::magVector(Qnode &qi, Uvec &um, Qnode &qd ){
-    return 0.;
+  KthReal PathToGuide::unitVectors(Qnode &qi, Qnode &qd, Uvec &um, Uvec &up ){
+    if( _pathQ.empty() || _uvecQ.empty() ) return -1.;
+    try{
+      int idx = nearQ(qi);
+      const Uvec& nea = _uvecQ.at(idx);
+      Uvec avec(qi.size());
+      for(int i = 0; i < nea.size(); i++)
+        avec.at(i) = qi.at(i) - nea.at(i);
+      
+      KthReal proj = 0.;
+      for(int i = 0; i < nea.size(); i++)
+        proj += avec.at(i) * _uvecQ.at(idx).at(i);
+
+      if( proj > 0 ){
+        //qd.clear();
+        //qd.resize( _pathQ.at(0).resize() );
+        for(int i = 0; i < nea.size(); i++){
+          qd.at(i) = nea.at(i) + proj * _uvecQ.at(idx).at(i);
+          up.at(i) = _uvecQ.at(idx).at(i);
+        }
+      }else{// calculates the projection over the segment before.
+        proj = 0.;
+        for(int i = 0; i < nea.size(); i++)
+          proj += avec.at(i) * _uvecQ.at(idx-1).at(i);
+        
+        //qd.clear();
+        //qd.resize( _pathQ.at(0).resize() );
+        for(int i = 0; i < nea.size(); i++){
+          qd.at(i) = nea.at(i) - proj * _uvecQ.at(idx-1).at(i);
+          up.at(i) = _uvecQ.at(idx-1).at(i);
+        }
+      }
+
+      for(int i = 0; i < nea.size(); i++)
+        um.at(i) = qd.at(i) - qi.at(i);
+
+      proj = 0.;
+      for(int i = 0; i < nea.size(); i++)
+        proj += um.at(i) + um.at(i);
+
+      return sqrt(proj);
+    }catch(...){}
+
+    return -1.;
   }
 
-  void PathToGuide::pushVectorQ( Qnode &qd, Uvec &up ){
+  KthReal PathToGuide::unitVectors(Xnode &xi, Xnode &xd, int k, KthReal ratio, Uvec &um, Uvec &up ) {
+    if( _pathX.empty() || _uvecX.empty() ) return -1.;
+    try{
+      int idx = nearX(xi);
+      const Uvec& nea = _uvecX.at(idx);
+      Uvec avec(xi.size());
+      for(int i = 0; i < nea.size(); i++)
+        avec.at(i) = xi.at(i) - nea.at(i);
+      
+      KthReal proj = 0.;
+      for(int i = 0; i < nea.size(); i++)
+        proj += avec.at(i) * _uvecX.at(idx).at(i);
 
-  }
+      if( proj > 0 ){
+        //xd.clear();
+        //xd.resize( _pathX.at(0).resize() );
+        for(int i = 0; i < nea.size(); i++){
+          xd.at(i) = nea.at(i) + proj * _uvecX.at(idx).at(i);
+          up.at(i) = _uvecX.at(idx).at(i);
+        }
+      }else{// calculates the projection over the segment before.
+        proj = 0.;
+        for(int i = 0; i < nea.size(); i++)
+          proj += avec.at(i) * _uvecX.at(idx-1).at(i);
+        
+        //xd.clear();
+        //xd.resize( _pathX.at(0).resize() );
+        for(int i = 0; i < nea.size(); i++){
+          xd.at(i) = nea.at(i) - proj * _uvecX.at(idx-1).at(i);
+          up.at(i) = _uvecX.at(idx-1).at(i);
+        }
+      }
 
-  KthReal PathToGuide::magVector(Xnode &xi, Uvec &um, Xnode &xd, int k, KthReal ratio ){
-    return 0.;
-  }
+      for(int i = 0; i < nea.size(); i++)
+        um.at(i) = xd.at(i) - xi.at(i);
 
-  void PathToGuide::pushVectorX( Xnode &qd, Uvec &up ){
+      proj = 0.;
+      for(int i = 0; i < nea.size(); i++)
+        proj += um.at(i) + um.at(i);
 
-  }
+      return sqrt(proj);
+    }catch(...){}
+
+    return -1.;  }
+
 
  int PathToGuide::nearQ(const Qnode &qn ){
 		double d_ann = 0.;
