@@ -79,10 +79,10 @@ namespace libProblem {
       KthReal	q2 = acos((l12 - l22 + b2)/(2.*_llong[0]*sqrt(b2))); //(by the law of cosines)
       KthReal phi11 = q1 + q2;                                  //(I know you can handle addition)
       KthReal phi12 = q1 - q2;
-      phi11 > M_PI ? phi11 -= M_PI : phi11;
-      phi12 > M_PI ? phi12 -= M_PI : phi12;
-      phi11 < -M_PI ? phi11 += M_PI : phi11;
-      phi12 < -M_PI ? phi12 += M_PI : phi12;
+      phi11 -= phi11 > M_PI ? 2. * M_PI : 0;
+      phi12 -= phi12 > M_PI ? 2. *M_PI : 0;
+      phi11 += phi11 < -M_PI ? 2. *M_PI : 0;
+      phi12 += phi12 < -M_PI ? 2. *M_PI : 0;
 	    KthReal phi2 = acos((l12 + l22 - b2)/(2.*_llong[0]*_llong[1])); //(by the law of cosines)
       KthReal phi22 = M_PI - phi2;
       KthReal phi21 = -M_PI + phi2;

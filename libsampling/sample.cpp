@@ -172,52 +172,58 @@ namespace libSampling{
     // inside.
     KthReal dist=0.0;
 
-		if( spc == Kautham::CONFIGSPACE && _config.size() > 0   ){
-		  for(unsigned int i = 0; i < _config.size(); i++){
-			  SE3Conf& a = _config.at(i).getSE3();
-			  dist += a.getDistance2(smp->getMappedConf().at(i).getSE3());
+    try{
+		  if( spc == Kautham::CONFIGSPACE && _config.size() > 0   ){
+		    for(unsigned int i = 0; i < _config.size(); i++){
+			    SE3Conf& a = _config.at(i).getSE3();
+			    dist += a.getDistance2(smp->getMappedConf().at(i).getSE3());
 
-			  RnConf& b = _config.at(i).getRn();
-			  if( b.getDim() != 0 )
-			    dist += b.getDistance2(smp->getMappedConf().at(i).getRn());
+			    RnConf& b = _config.at(i).getRn();
+			    if( b.getDim() != 0 )
+			      dist += b.getDistance2(smp->getMappedConf().at(i).getRn());
+		    }
+		  }else{
+		    vector<KthReal>& other = smp->getCoords();
+		    for(unsigned int i = 0; i < _coords.size(); i++)
+			    dist += (_coords.at(i) - other.at(i))*(_coords.at(i) - other.at(i));
 		  }
-		}else{
-		  vector<KthReal>& other = smp->getCoords();
-		  for(unsigned int i = 0; i < _coords.size(); i++)
-			  dist += (_coords.at(i) - other.at(i))*(_coords.at(i) - other.at(i));
-		}
 
-    return sqrt(dist);
+      return sqrt(dist);
+    }catch(...){}
+    return -1.;
   }
 
   KthReal Sample::getDistance(Sample* smp, std::vector<RobWeight*> &weights,
                               Kautham::SPACETYPE spc){
-    if( smp == NULL ) return -1.0;
-    // Each sample has a vector<RobConf> who has a SE3 and a Rn configuration
-    // inside.
-    KthReal dist=0.0;
-	
-		if( spc == Kautham::CONFIGSPACE && _config.size() > 0   ){
+    try{
+      if( smp == NULL ) return -1.0;
+      // Each sample has a vector<RobConf> who has a SE3 and a Rn configuration
+      // inside.
+      KthReal dist=0.0;
+  	
+		  if( spc == Kautham::CONFIGSPACE && _config.size() > 0   ){
 
-		  for(unsigned int i = 0; i < _config.size(); i++){
-			  SE3Conf& a = ((RobConf&)_config.at(i)).getSE3();
-			  dist += a.getDistance2(smp->getMappedConf().at(i).getSE3(),
-									  weights.at(i)->getSE3Weight()[0],
-                    weights.at(i)->getSE3Weight()[1]);
+		    for(unsigned int i = 0; i < _config.size(); i++){
+			    SE3Conf& a = ((RobConf&)_config.at(i)).getSE3();
+			    dist += a.getDistance2(smp->getMappedConf().at(i).getSE3(),
+									    weights.at(i)->getSE3Weight()[0],
+                      weights.at(i)->getSE3Weight()[1]);
 
-			  RnConf& b = ((RobConf&)_config.at(i)).getRn();
+			    RnConf& b = ((RobConf&)_config.at(i)).getRn();
 
-			  if( b.getDim() != 0 )
-			    dist += b.getDistance2(smp->getMappedConf().at(i).getRn(),
-									     weights.at(i)->getRnWeights());
+			    if( b.getDim() != 0 )
+			      dist += b.getDistance2(smp->getMappedConf().at(i).getRn(),
+									       weights.at(i)->getRnWeights());
+		    }
+		  }else{
+		    vector<KthReal>& other = smp->getCoords();
+		    for(unsigned int i = 0; i < _coords.size(); i++)
+			  dist += (_coords.at(i) - other.at(i))*(_coords.at(i) - other.at(i));
 		  }
-		}else{
-		  vector<KthReal>& other = smp->getCoords();
-		  for(unsigned int i = 0; i < _coords.size(); i++)
-			dist += (_coords.at(i) - other.at(i))*(_coords.at(i) - other.at(i));
-		}
-    
-    return sqrt(dist);
+      
+      return sqrt(dist);
+    }catch(...){}
+    return -1.;
   }
 
   void Sample::setMappedConf(vector<RobConf>& _localConf){

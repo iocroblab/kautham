@@ -66,7 +66,7 @@ public:
             kauthamMain->setObjectName(QString::fromUtf8("kauthamMain"));
         kauthamMain->setWindowModality(Qt::ApplicationModal);
         kauthamMain->resize(850, 759);
-        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        QSizePolicy sizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(kauthamMain->sizePolicy().hasHeightForWidth());
@@ -93,7 +93,7 @@ public:
         splitter->setOrientation(Qt::Horizontal);
         propertiesTab = new QTabWidget(splitter);
         propertiesTab->setObjectName(QString::fromUtf8("propertiesTab"));
-        propertiesTab->setMaximumSize(QSize(250, 16777215));
+        propertiesTab->setMaximumSize(QSize(350, 16777215));
         propertiesTab->setTabPosition(QTabWidget::West);
         propertiesTab->setTabShape(QTabWidget::Rounded);
         probTab = new QWidget();

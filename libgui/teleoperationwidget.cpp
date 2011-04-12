@@ -94,6 +94,8 @@ namespace libGUI{
 
     if( _problem->wSpace()->robotsCount() > 1 )
       _pathsObj[1] = new PathToGuide( prob->wSpace()->getRobot(1) );
+    else
+      _pathsObj[1] = NULL;
 
     updateGuidingPath();
 
@@ -433,24 +435,22 @@ namespace libGUI{
         forces[i] = 0.;
 
     //XXXXXXXXXXX here i want to use the PathToGuide object XXXXXXXX
-    Xnode anXNode, resXNode;
-    mt::Point3& pos = tcp.getTranslationRef();
-    mt::Rotation& rot =tcp.getRotationRef();
-    for(int i = 0; i < 3; i++)
-      anXNode.push_back( pos.at(i) ); 
-    for(int i = 0; i < 4; i++)
-      anXNode.push_back( rot.at(i) );
+    Uvec umag, upush;
+    int idx =0;
+    KthReal ratio = 0.;
+    umag.resize(7);
+    upush.resize(7);
+    Xnode xd;
+    xd.resize(7);
+    Xnode xi = libGuiding::PathToGuide::tran2xnode(tcp);
+    KthReal dist = path->unitVectors(xi,xd,idx,ratio,umag,upush);
 
-    if( anXNode.size() != 7 )
-      cout << "Error, the anXNode is bad configured.\n";
-
-    
-
-
-
+    // Only testing the translational forces.
+    for(int i = 0; i < 3; ++i)
+      forces[i] = (umag.at(i) + upush.at(i))*_maxForces[i];
 
 
-    //XXXXXXXXXX Aplying the force to haptic XXXXXXXXXXXXXXXX
+    //XXXXXXXXXX Applying the force to haptic XXXXXXXXXXXXXXXX
     _haptic->setSE3Force(forces);
   }
 
@@ -566,6 +566,8 @@ namespace libGUI{
     _radBttRobot1->setEnabled(false);
     //_radWorld->setEnabled(false);
     //_radCamera->setEnabled(false);
+    if( _pathsObj[0] != NULL && _pathsObj[0]->empty()) _pathsObj[0]->reset();
+    if( _pathsObj[1] != NULL && _pathsObj[1]->empty()) _pathsObj[1]->reset();
 
     _stopOperation->setEnabled(true);
     _startOperation->setEnabled(false);

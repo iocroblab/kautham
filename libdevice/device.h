@@ -72,7 +72,11 @@ namespace libDevice{
     string                  getIncomingParametersAsString();
     bool                    setIncomingParameter(string key, KthReal value);
     inline const KthReal*   maxForces() const {return _maxForces;}
-    inline const KthReal*   deviceLimits(unsigned int dof) const{if(dof >= 0 && dof < 6)return _deviceLimits[dof];}
+    inline const KthReal*   deviceLimits(unsigned int dof) const{
+                                  if(dof >= 0 && dof < 6)
+                                    return _deviceLimits[dof];
+                                  return NULL;
+    }
     inline bool             isReadDirectly(){return _directReading;}
     virtual inline void     setReadDirectly(bool rd){ _directReading = rd;}
   private:

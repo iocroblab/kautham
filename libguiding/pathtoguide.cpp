@@ -45,119 +45,107 @@
 namespace libGuiding{
 
   PathToGuide::PathToGuide( Robot &rob ):_rob(rob){
-    unsigned int i = 0;
-    _pathQ.clear();
-    _pathX.clear();
     _nearestQ = NULL;
     _nearestX = NULL;
-
-    vector<RobConf>::iterator it;
-    mt::Transform trans;
-    Xnode anXnode( 7 );
-    Qnode anQnode( _rob.getNumJoints() );
-
-    i = 0;
-    for(it = _rob.getProposedSolution().begin(); it != _rob.getProposedSolution().end(); ++it){
-      // For each item, the algorithm extracts the Q configuration and stores it in the 
-      // _pathQ and then it will be converted to the TCP cartesian position with the 
-      // inverse kinematic and it will be stored in the _pathX.
-
-      std::copy(it->second.getCoordinates().begin(), it->second.getCoordinates().end(), anQnode.begin() );
-
-      _rob.Kinematics(*it);
-      trans = _rob.getLastLinkTransform();
-      anXnode = tran2xnode(trans);
-
-      _pathQ.push_back( anQnode );
-      _pathX.push_back( anXnode );
-    }  
-
-    _uvecQ.clear();
-    _uvecX.clear();
-
-    // Create a vector of unit vectors from one node to the next one in Q.
-    Uvec avec(anQnode.size());
-    float norm = 0.;
-    vector<Qnode>::iterator ite,itb;
-    itb = _pathQ.begin();
-    for(ite = _pathQ.begin() + 1; ite != _pathQ.end(); ++ite,++itb){
-      norm = 0.;
-      for(int i = 0; i < avec.size(); i++){
-        avec.at(i) = (*ite).at(i) - (*itb).at(i);
-        norm += avec.at(i) * avec.at(i);
-      }
-      norm = sqrt(norm);
-      for(int i =0; i < avec.size(); i++)
-        avec.at(i) /= norm;
-
-      _uvecQ.push_back(avec);
-    }
-    avec.clear();
-    avec.resize( anQnode.size(), 0. );
-    _uvecQ.push_back(avec);
-
-    // Now for the SE3 nodes.
-    avec.resize(7, 0.);
-    itb = _pathX.begin();
-    for(ite = _pathX.begin() + 1; ite != _pathX.end(); ++ite,++itb){
-      norm = 0.;
-      for(int i = 0; i < avec.size(); i++){
-        avec.at(i) = (*ite).at(i) - (*itb).at(i);
-        norm += avec.at(i) * avec.at(i);
-      }
-      norm = sqrt(norm);
-      for(int i =0; i < avec.size(); i++)
-        avec.at(i) /= norm;
-
-      _uvecX.push_back(avec);
-    }
-    avec.clear();
-    avec.resize( 7, 0. );
-    _uvecQ.push_back(avec);
-
-    if( _pathQ.size() == _pathX.size() && _pathQ.size() != 0 ){
-      recalculateANN();
-    }
+    reset();
   }  
 
   PathToGuide::PathToGuide( Robot* rob ):_rob(*rob){
-    unsigned int i = 0;
-    _pathQ.clear();
-    _pathX.clear();
     _nearestQ = NULL;
     _nearestX = NULL;
+    reset();
+  }
 
-    vector<RobConf>::iterator it;
-    mt::Transform trans;
-    Xnode anXnode( 7 );
-    Qnode anQnode( _rob.getNumJoints() );
+  bool PathToGuide::reset(){
+    try{
+      unsigned int i = 0;
+      _pathQ.clear();
+      _pathX.clear();
+      if( _nearestQ != NULL) delete _nearestQ;
+      if( _nearestX != NULL) delete _nearestX;
 
-    i = 0;
-    for(it = _rob.getProposedSolution().begin(); it != _rob.getProposedSolution().end(); ++it){
-      // For each item, the algorithm extracts the Q configuration and stores it in the 
-      // _pathQ and then it will be converted to the TCP cartesian position with the 
-      // inverse kinematic and it will be stored in the _pathX.
+      vector<RobConf>::iterator it;
+      mt::Transform trans;
+      Xnode anXnode( 7 );
+      Qnode anQnode( _rob.getNumJoints() );
 
-      std::copy(it->second.getCoordinates().begin(), it->second.getCoordinates().end(), anQnode.begin() );
+      i = 0;
+      for(it = _rob.getProposedSolution().begin(); it != _rob.getProposedSolution().end(); ++it){
+        // For each item, the algorithm extracts the Q configuration and stores it in the 
+        // _pathQ and then it will be converted to the TCP cartesian position with the 
+        // inverse kinematic and it will be stored in the _pathX.
 
-      _rob.Kinematics(*it);
-      trans = _rob.getLastLinkTransform();
-      anXnode = tran2xnode(trans);
+        std::copy(it->second.getCoordinates().begin(), it->second.getCoordinates().end(), anQnode.begin() );
 
-      _pathQ.push_back( anQnode );
-      _pathX.push_back( anXnode );
-    }  
+        _rob.Kinematics(*it);
+        trans = _rob.getLastLinkTransform();
+        anXnode = tran2xnode(trans);
 
-    if( _pathQ.size() == _pathX.size() && _pathQ.size() != 0 ){
-      recalculateANN();
-    }
+        _pathQ.push_back( anQnode );
+        _pathX.push_back( anXnode );
+      }  
+
+      if( _pathQ.empty() ) return false; // If the robot does not have a path to be guided.
+
+      _uvecQ.clear();
+      _uvecX.clear();
+
+      // Create a vector of unit vectors from one node to the next one in Q.
+      Uvec avec(anQnode.size());
+      float norm = 0.;
+      vector<Qnode>::iterator ite,itb;
+      itb = _pathQ.begin();
+      for(ite = _pathQ.begin() + 1; ite != _pathQ.end(); ++ite,++itb){
+        norm = 0.;
+        for(int i = 0; i < avec.size(); i++){
+          avec.at(i) = (*ite).at(i) - (*itb).at(i);
+          norm += avec.at(i) * avec.at(i);
+        }
+        norm = sqrt(norm);
+        avec.dist(norm);
+        for(int i =0; i < avec.size(); i++)
+          avec.at(i) /= norm;
+
+        _uvecQ.push_back(avec);
+      }
+      avec.clear();
+      avec.resize( anQnode.size(), 0. );
+      _uvecQ.push_back(avec);
+
+      // Now for the SE3 nodes.
+      avec.resize(7, 0.);
+      itb = _pathX.begin();
+      for(ite = _pathX.begin() + 1; ite != _pathX.end(); ++ite,++itb){
+        norm = 0.;
+        for(int i = 0; i < avec.size(); i++){
+          avec.at(i) = (*ite).at(i) - (*itb).at(i);
+          norm += avec.at(i) * avec.at(i);
+        }
+        norm = sqrt(norm);
+        avec.dist(norm);
+        for(int i =0; i < avec.size(); i++)
+          avec.at(i) /= norm;
+
+        _uvecX.push_back(avec);
+      }
+      avec.clear();
+      avec.resize( 7, 0. );
+      _uvecQ.push_back(avec);
+
+      if( _pathQ.size() == _pathX.size() && _pathQ.size() != 0 ){
+        recalculateANN();
+        return true;
+      }
+
+    }catch(...){}
+    return false;
   }
 
   KthReal PathToGuide::unitVectors(Qnode &qi, Qnode &qd, Uvec &um, Uvec &up ){
     if( _pathQ.empty() || _uvecQ.empty() ) return -1.;
     try{
       int idx = nearQ(qi);
-      const Uvec& nea = _uvecQ.at(idx);
+      const Qnode& nea = _pathQ.at(idx);
       Uvec avec(qi.size());
       for(int i = 0; i < nea.size(); i++)
         avec.at(i) = qi.at(i) - nea.at(i);
@@ -186,60 +174,69 @@ namespace libGuiding{
         }
       }
 
-      for(int i = 0; i < nea.size(); i++)
-        um.at(i) = qd.at(i) - qi.at(i);
-
       proj = 0.;
-      for(int i = 0; i < nea.size(); i++)
-        proj += um.at(i) + um.at(i);
+      for(int i = 0; i < nea.size(); i++){
+        um.at(i) = qd.at(i) - qi.at(i);
+        proj += um.at(i) * um.at(i);
+      }
 
-      return sqrt(proj);
+      proj = sqrt(proj);
+      for(int i = 0; i < nea.size(); i++)
+        um.at(i) /= proj;
+
+      return proj;
     }catch(...){}
 
     return -1.;
   }
 
-  KthReal PathToGuide::unitVectors(Xnode &xi, Xnode &xd, int k, KthReal ratio, Uvec &um, Uvec &up ) {
+  KthReal PathToGuide::unitVectors(Xnode &xi, Xnode &xd, int &k, KthReal &ratio, Uvec &um, Uvec &up ) {
     if( _pathX.empty() || _uvecX.empty() ) return -1.;
     try{
-      int idx = nearX(xi);
-      const Uvec& nea = _uvecX.at(idx);
-      Uvec avec(xi.size());
-      for(int i = 0; i < nea.size(); i++)
+      k = nearX(xi);
+      const Xnode& nea = _pathX.at(k);
+      Uvec avec(7);
+      for(int i = 0; i < 7; i++)
         avec.at(i) = xi.at(i) - nea.at(i);
       
       KthReal proj = 0.;
-      for(int i = 0; i < nea.size(); i++)
-        proj += avec.at(i) * _uvecX.at(idx).at(i);
+      for(int i = 0; i < 7; i++)
+        proj += avec.at(i) * _uvecX.at(k).at(i);
 
       if( proj > 0 ){
         //xd.clear();
         //xd.resize( _pathX.at(0).resize() );
-        for(int i = 0; i < nea.size(); i++){
-          xd.at(i) = nea.at(i) + proj * _uvecX.at(idx).at(i);
-          up.at(i) = _uvecX.at(idx).at(i);
+        for(int i = 0; i < 7; i++){
+          xd.at(i) = nea.at(i) + proj * _uvecX.at(k).at(i);
+          up.at(i) = _uvecX.at(k).at(i);
         }
+        ratio = proj/_uvecX.at(k).dist();
       }else{// calculates the projection over the segment before.
         proj = 0.;
-        for(int i = 0; i < nea.size(); i++)
-          proj += avec.at(i) * _uvecX.at(idx-1).at(i);
+        for(int i = 0; i < 7; i++)
+          proj += avec.at(i) * _uvecX.at(k-1).at(i);
         
         //xd.clear();
         //xd.resize( _pathX.at(0).resize() );
-        for(int i = 0; i < nea.size(); i++){
-          xd.at(i) = nea.at(i) - proj * _uvecX.at(idx-1).at(i);
-          up.at(i) = _uvecX.at(idx-1).at(i);
+        for(int i = 0; i < 7; i++){
+          xd.at(i) = nea.at(i) - proj * _uvecX.at(k-1).at(i);
+          up.at(i) = _uvecX.at(k-1).at(i);
         }
+        ratio = 1. - (proj / _uvecX.at(k).dist() );
       }
 
-      for(int i = 0; i < nea.size(); i++)
-        um.at(i) = xd.at(i) - xi.at(i);
-
       proj = 0.;
-      for(int i = 0; i < nea.size(); i++)
-        proj += um.at(i) + um.at(i);
+      for(int i = 0; i < 7; i++){
+        um.at(i) = xd.at(i) - xi.at(i);   
+        proj += um.at(i) * um.at(i);
+      }
 
-      return sqrt(proj);
+      proj = sqrt(proj);
+
+      for(int i = 0; i < 7; i++)
+        um.at(i) /= proj;
+
+      return proj;
     }catch(...){}
 
     return -1.;  }

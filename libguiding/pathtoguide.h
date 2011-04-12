@@ -57,7 +57,16 @@ using namespace libSampling;
 namespace libGuiding{
 typedef vector<KthReal> Xnode;
 typedef vector<KthReal> Qnode;
-typedef vector<KthReal> Uvec;
+//typedef vector<KthReal> Uvec;
+
+class Uvec:public vector<KthReal>{
+  KthReal _dist;
+public:
+  Uvec():_dist(0.){}
+  Uvec(int k){resize(k, 0.);}
+  KthReal dist() const {return _dist;}
+  void dist(KthReal d){_dist = d >= 0? d: 0;}
+};
 
 
 
@@ -71,6 +80,12 @@ typedef vector<KthReal> Uvec;
     //! workspace.
     PathToGuide( Robot* rob );
 
+    //! This method resets all the attributes of the class based on the information of robot's path.
+    bool reset();
+
+    //! this method is only to know if the path has at least one node.
+    bool empty(){ return _pathQ.size() == 0; }
+
     //! Returns the distance to the desired configuration qd. This method computes the qd and the
     //! unit magnetic vector used to generated the force to attract the user to the path in Q.
     KthReal     unitVectors(Qnode &qi, Qnode &qd, Uvec &um, Uvec &up  );
@@ -80,7 +95,7 @@ typedef vector<KthReal> Uvec;
 
     //! Returns the distance to the desired cartesian pose xd. This method computes the xd and the
     //! unit magnetic vector used to generated the force to attract the user to the path in SE3.
-    KthReal     unitVectors(Xnode &xi, Xnode &xd, int k, KthReal ratio, Uvec &um, Uvec &up );
+    KthReal     unitVectors(Xnode &xi, Xnode &xd, int &k, KthReal &ratio, Uvec &um, Uvec &up );
 
     ////! This method computes the unitary vector in the direction to apply the pushing force.
     //void        pushVectorX( Xnode &qd, Uvec &up );
