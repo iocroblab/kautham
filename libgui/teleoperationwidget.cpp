@@ -38,6 +38,7 @@
 
 
 #include "teleoperationwidget.h"
+#include "properties_gui.hpp"
 #include "gui.h"
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoTransparencyType.h>
@@ -48,6 +49,7 @@
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <libutil/data_ioc_cell.hpp>
 #include <libguiding/pathtoguide.h>
+#include <QProcess>
 
 using namespace boost::interprocess;
 using namespace libGuiding;
@@ -121,48 +123,83 @@ namespace libGUI{
     connect(_radCamera, SIGNAL(clicked()), this, SLOT(changeRobot()));
     connect(_radWorld, SIGNAL(clicked()), this, SLOT(changeRobot()));
     connect(_cmdConnectCell, SIGNAL(clicked()), this, SLOT(connectCell()));
-    connect(_cmdConnectCell, SIGNAL(clicked()), this, SLOT(disconnectCell()));
+    connect(_cmdConfConnection, SIGNAL(clicked()), this, SLOT(confConnection()));
 
     _stopOperation->setEnabled(false);
 
-    //Adding the shared memory section to interchange informstion with the remote system
+    //Adding the shared memory section to interchange information with the remote system
     //Remove shared memory on construction and destruction
-    struct shm_remove 
-    {
-        shm_remove() { shared_memory_object::remove("KauthamSharedMemory"); }
-        ~shm_remove(){ shared_memory_object::remove("KauthamSharedMemory"); }
-    } remover;
+    //struct shm_remove 
+    //{
+    //    shm_remove() { shared_memory_object::remove("KauthamSharedMemory"); }
+    //    ~shm_remove(){ shared_memory_object::remove("KauthamSharedMemory"); }
+    //} remover;
 
-    //Create a shared memory object.
-    shared_memory_object shm
-         (create_only               //only create
-         ,"KauthamSharedMemory"     //name
-         ,read_write   //read-write mode
-         );
+    _nodeName = "Kautham";
+    _ipMaster = "http://147.83.37.26:11311"; // IP of quasar machine.
+    _ipNode = "147.83.37.56";
 
-    //Set size
-    shm.truncate(sizeof(kautham_ioc_cell));
+    _ipNode = CHostLookup::getHostAddress().toString().toUtf8().constData();
+    _rosClient = NULL;
+    _freqPubli = 250;
 
-    //Map the whole shared memory in this process
-    mapped_region region
-           (shm          //What to map
-           ,read_write   //Map it as read-write
-           );
+    try{
+      //Create a shared memory object.
+      shared_memory_object shm( open_only,               //only open
+							                         "KauthamSharedMemory",     //name
+							                         read_write );				      //read-write mode
 
-    //Get the address of the mapped region
-    void * addr       = region.get_address();
+      //Set size
+	    shm.truncate(sizeof(kautham::data_ioc_cell));
 
-    //Construct the shared structure in memory
-    _dataCell = new (addr) kautham_ioc_cell;
+      //Map the whole shared memory in this process
+      mapped_region region( shm,					        //What to map
+						                read_write);          //Map it as read-write
+
+      //Get the address of the mapped region
+      void * addr       = region.get_address();
+
+      //Construct the shared structure in memory
+      _dataCell = new (addr) kautham::data_ioc_cell;
+    }catch(interprocess_exception &ex){
+      QMessageBox::critical(this, "Teleoperation error", ex.what());
+      _cmdConnectCell->setEnabled(false);
+   }catch(...){
+      QMessageBox::critical(this, "Teleoperation error", "Unexpected error in the widget creation.");
+      _cmdConnectCell->setEnabled(false);
+   }
 
   }
+
 
   void TeleoperationWidget::connectCell(){
+    _rosClient = new QProcess();
+    QStringList param;
+    //http://147.83.37.26:11311/ 147.83.37.217 Phantom1 200
 
+    param << QString(_ipMaster.c_str()) << QString(_ipNode.c_str()) 
+          << QString(_nodeName.c_str()) << QString().setNum(_freqPubli) ;
+
+    _rosClient->start( "localClient.exe", param );
+    if(!_rosClient->waitForStarted()){
+         QMessageBox::critical(this, "Kautham ROS Node",
+                                "The JointState publisher has not been started.\n" ,
+                                QMessageBox::Ok,
+                                QMessageBox::Ok);
+         _cmdConnectCell->setChecked(false);
+         _rosClient->close();
+         delete _rosClient;
+         _rosClient = NULL;
+         return;
+    }
+
+    _cmdConnectCell->setText("Desconnect cell");
   }
 
-  void TeleoperationWidget::disconnectCell(){
-
+  void TeleoperationWidget::confConnection(){
+    Properties_GUI propWin(this );
+    propWin.setModal(true);
+    propWin.exec();
   }
 
   void TeleoperationWidget::updateGuidingPath(){
@@ -867,11 +904,11 @@ namespace libGUI{
           if( activeRob == 0 ){ // Fixed robot
             //Lock the mutex
             scoped_lock<interprocess_mutex> lock(_dataCell->mutex_out);
-            std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _dataCell->out.r1Pos );
+            std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _dataCell->r1_desired.joint );
           }else{                //  Mobile robot
             //Lock the mutex
             scoped_lock<interprocess_mutex> lock(_dataCell->mutex_out);
-            std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _dataCell->out.r2Pos );
+            std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _dataCell->r2_desired.joint );
           }
         }else{
           // Assumes the Inverse Kinematic receives the position and orientation as target
@@ -1519,10 +1556,10 @@ namespace libGUI{
 
     horizontalLayout_13->addWidget(_cmdConnectCell);
 
-    _cmdDisconnectCell = new QPushButton(groupBox_6);
-    _cmdDisconnectCell->setObjectName(QString::fromUtf8("_cmdDisconnectCell"));
+    _cmdConfConnection = new QPushButton(groupBox_6);
+    _cmdConfConnection->setObjectName(QString::fromUtf8("_cmdDisconnectCell"));
 
-    horizontalLayout_13->addWidget(_cmdDisconnectCell);
+    horizontalLayout_13->addWidget(_cmdConfConnection);
 
 
     verticalLayout_9->addLayout(horizontalLayout_13);
@@ -1599,7 +1636,7 @@ namespace libGUI{
     groupBox_7->setTitle(QApplication::translate("Form", "Robot 1", 0, QApplication::UnicodeUTF8));
     groupBox_8->setTitle(QApplication::translate("Form", "Robot 2", 0, QApplication::UnicodeUTF8));
     _cmdConnectCell->setText(QApplication::translate("Form", "Connect", 0, QApplication::UnicodeUTF8));
-    _cmdDisconnectCell->setText(QApplication::translate("Form", "Disconnect", 0, QApplication::UnicodeUTF8));
+    _cmdConfConnection->setText(QApplication::translate("Form", "Conf. Comm.", 0, QApplication::UnicodeUTF8));
     _startOperation->setText(QApplication::translate("Form", "Start", 0, QApplication::UnicodeUTF8));
     _stopOperation->setText(QApplication::translate("Form", "Stop", 0, QApplication::UnicodeUTF8));
    

@@ -70,7 +70,7 @@ Application::Application() {
 Application::~Application() {
   if(_devices.size() > 0){
     for(int i = 0; i < _devices.size();i++)
-      delete _devices.at(i);
+      if(_devices.at(i) != NULL ) delete _devices.at(i);
     _devices.clear();
   }
 }

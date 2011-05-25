@@ -45,12 +45,16 @@
 #include <libdevice/device.h>
 #include <libproblem/problem.h>
 #include <libutil/data_ioc_cell.hpp>
+#include <libutil/CHostLookup.h>
 #include <libguiding/pathtoguide.h>
 #include "gui.h"
+#include <string.h>
 
 using namespace libDevice;
 using namespace libProblem;
 using namespace libGuiding;
+using namespace kautham;
+using namespace boost::interprocess;
 
 namespace libGUI{
   typedef KthReal pathPoint[6]; // used to store the path in x, y, z, Yaw, Pitch, Roll format
@@ -72,9 +76,22 @@ namespace libGUI{
       void                  changeRotScale(int value);
       void                  changeRobot();
       void                  connectCell();
-      void                  disconnectCell();
+      void                  confConnection();
     public:
       TeleoperationWidget(Problem* prob, Device* hap, GUI* gui);
+      	
+      inline int getFreqPubli(){return _freqPubli;}
+      inline void setFreqPubli(int freq){_freqPubli = freq;}
+      	
+      inline string getNodeName(){return _nodeName;}
+      inline void setNodeName(string nom){_nodeName = nom;}
+      
+      inline string getIPMaster(){return _ipMaster;}
+      inline void setIPMaster(string ipM){_ipMaster = ipM;}
+
+      inline string getIPLocal(){return _ipNode;}
+      inline void setIPLocal(string ipL){_ipNode = ipL;}
+
     private:
       void                  synchronization(bool applyForces = true);
       void                  teleoperation();
@@ -112,9 +129,12 @@ namespace libGUI{
 
       //! The _dataCell, the _publisher and the suscriber conform the core of interchange strategy 
       //! to use with ROS message system.
-      kautham_ioc_cell*     _dataCell;
-      QProcess              _publisher;
-      QProcess              _suscriber;
+      data_ioc_cell*		    _dataCell;
+      QProcess*             _rosClient;
+      string                _nodeName;
+      string                _ipMaster; 
+      string                _ipNode;
+      int                   _freqPubli;
 
       void                  setupUI();
       void                  updateGuidingPath();
@@ -227,7 +247,7 @@ namespace libGUI{
       QLineEdit *_txtR2Q6;
       QHBoxLayout *horizontalLayout_13;
       QPushButton *_cmdConnectCell;
-      QPushButton *_cmdDisconnectCell;
+      QPushButton *_cmdConfConnection;
       QHBoxLayout *horizontalLayout_4;
       QPushButton *_startOperation;
       QPushButton *_stopOperation;

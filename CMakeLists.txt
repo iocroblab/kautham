@@ -88,7 +88,10 @@ IF( KAUTHAM_GUI )
 
   INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} 
                        ${CMAKE_SOURCE_DIR}/libmt  
-                       ${Armadillo_INCLUDE_DIR})
+                       ${Armadillo_INCLUDE_DIR}
+                       ${Boost_INCLUDE_DIRS})
+                       
+  LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
                        
   SET(KC_EXTRA_LIBS ${Armadillo_LIBRARY} )
   
@@ -108,7 +111,8 @@ IF( KAUTHAM_GUI )
     SET_TARGET_PROPERTIES( Kautham2 PROPERTIES WIN32_EXECUTABLE "True" )
   ENDIF(WIN32)
 
-  TARGET_LINK_LIBRARIES( Kautham2 libDNN libPQP libdevice libgui libsampling libproblem libioccomm libkthutil ${KC_EXTRA_LIBS} )
+  TARGET_LINK_LIBRARIES( Kautham2 libDNN libPQP libdevice libgui libsampling 
+						libproblem libioccomm libkthutil ${KC_EXTRA_LIBS} )
 ENDIF( KAUTHAM_GUI )
 
 
