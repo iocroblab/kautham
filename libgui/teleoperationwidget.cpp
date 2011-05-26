@@ -136,7 +136,7 @@ namespace libGUI{
     //    ~shm_remove(){ shared_memory_object::remove("KauthamSharedMemory"); }
     //} remover;
 
-    _nodeName = "Kautham";
+    _nodeName = "R1";
     _ipMaster = "http://147.83.37.26:11311"; // IP of quasar machine.
     _ipNode = "147.83.37.56";
 
@@ -182,6 +182,15 @@ namespace libGUI{
   void TeleoperationWidget::connectCell(){
     if( _cmdConnectCell->isChecked() ){
       _rosClient = new QProcess();
+      std::stringstream ss;
+      ss << _ipMaster << " " << _ipNode << " " <<  _nodeName <<  " " << _freqPubli;
+      int btn = QMessageBox::warning(this, "ROS Node", 
+        "Are you sure these parameters are correct? \n" + QString(ss.str().c_str()),
+        QMessageBox::Ok | QMessageBox::Cancel);
+      if( btn == QMessageBox::Cancel ){
+        confConnection();
+      }
+
       QStringList param;
       //http://147.83.37.26:11311/ 147.83.37.217 Phantom1 200
 
@@ -189,13 +198,13 @@ namespace libGUI{
             << QString(_nodeName.c_str()) << QString().setNum(_freqPubli) ;
 
       _rosClient->start( "localClient.exe", param );
-      if(!_rosClient->waitForStarted(100)){
+      if(!_rosClient->waitForStarted()){
            QMessageBox::critical(this, "Kautham ROS Node",
                                   "The JointState publisher has not been started.\n" ,
                                   QMessageBox::Ok,
                                   QMessageBox::Ok);
            _cmdConnectCell->setChecked(false);
-           _rosClient->close();
+           _rosClient->kill();
            delete _rosClient;
            _rosClient = NULL;
            return;
@@ -208,7 +217,9 @@ namespace libGUI{
       if( _rosClient != NULL ){
         QObject::disconnect(_rosClient, SIGNAL(finished ( int, QProcess::ExitStatus )), 
                         this, SLOT(rosClientEnd(int , QProcess::ExitStatus )));
-        _rosClient->close();
+        _rosClient->write("\x3");
+        if( !_rosClient->waitForFinished() )
+          _rosClient->kill();
         delete _rosClient;
         _rosClient = NULL;
       }
@@ -223,9 +234,12 @@ namespace libGUI{
     if( _rosClient != NULL ){
       QObject::disconnect(_rosClient, SIGNAL(finished ( int, QProcess::ExitStatus )), 
                       this, SLOT(rosClientEnd(int , QProcess::ExitStatus )));
-      _rosClient->close();
-      delete _rosClient;
-      _rosClient = NULL;
+
+        _rosClient->write("\x3");
+        if( !_rosClient->waitForFinished() )
+          _rosClient->kill();
+        delete _rosClient;
+        _rosClient = NULL;
     }
     _cmdConnectCell->setChecked(false);
     _cmdConnectCell->setText("Connect");
@@ -604,9 +618,12 @@ namespace libGUI{
         if(_callNewH)
           _h2newHip = getNewH2Hip();
         //else
+        _dataCell->synchronized = _synchronized = false;
           synchronization();
-      }else
+      }else{
+        _dataCell->synchronized = _synchronized = true;
         teleoperation();
+      }
     }
     _lastAction = _inAction;
   }
@@ -628,6 +645,10 @@ namespace libGUI{
   void TeleoperationWidget::changeRobot(){
     _sliderRotScale->setValue(10);
     _sliderTransScale->setValue(10);
+    if(_radBttRobot0->isChecked() )
+      _nodeName = "R1";
+    else
+      _nodeName = "R2";
     synchronization(false);
   }
 
@@ -716,6 +737,7 @@ namespace libGUI{
 
   void TeleoperationWidget::stopTeleoperation(){
     _inAction = false;
+    _dataCell->synchronized = _synchronized = false;
     // Allow to change the teleoperated robot
     _radBttRobot0->setEnabled(true);
     _radBttRobot1->setEnabled(true);
