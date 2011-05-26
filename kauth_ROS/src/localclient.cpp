@@ -98,7 +98,7 @@ int main(int argc, char **argv){
   string _subOther = "";
   string _nodeName = "";
 
-  if( _vargv.size() > 1 && _vargv.size() < 5){
+  if( _vargv.size() > 1 && _vargv.size() <= 5){
     string rob = _vargv[3] ;
     _pubName.append( rob );
     _pubName.append("_command");
@@ -110,6 +110,7 @@ int main(int argc, char **argv){
   }else{
     // Error because this program will run in windows and the user should provide the master url, the
     // local ip address, the node name and the freq to publish the data.
+	std::cout << "localClient.exe URL_Master IP_Local R1/R2 freq.\nYou should provide these 4 parameters.\n";
     return -1;
   }
 
@@ -199,10 +200,8 @@ int main(int argc, char **argv){
  
  }catch(interprocess_exception &ex){
       std::cout << ex.what() << std::endl;
-      return 1;
- }catch(...){
-
- }
-
+      return -1;
+ }catch(...){ }
+ return -2;
 }
 

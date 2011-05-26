@@ -58,38 +58,34 @@ int main(int argc, char* argv[]){
   //Q_INIT_RESOURCE(kauthamRes);
   try{
     //  Remove shared memory on construction and destruction
-    struct shm_remove 
-    {
-        shm_remove() { shared_memory_object::remove("KauthamSharedMemory"); }
-        ~shm_remove(){ shared_memory_object::remove("KauthamSharedMemory"); }
-    } remover;
-      //Create a shared memory object.
-      shared_memory_object shm( create_only,               //only create
-							                         "KauthamSharedMemory",     //name
-							                         read_write );				      //read-write mode
+    shared_memory_object::remove("KauthamSharedMemory"); 
+    // //Create a shared memory object.
+    shared_memory_object shm( create_only,               //only create
+					                           "kauthamsharedmemory",     //name
+					                           read_write );				      //read-write mode
 
-      //Set size
-	    shm.truncate(sizeof(kautham::data_ioc_cell));
+    //set size
+    shm.truncate(sizeof(kautham::data_ioc_cell));
 
-      //Map the whole shared memory in this process
-      mapped_region region( shm,					        //What to map
-						                read_write);          //Map it as read-write
+    //map the whole shared memory in this process
+    mapped_region region( shm,					        //what to map
+				                  read_write);          //map it as read-write
 
-      //Get the address of the mapped region
-      void * addr       = region.get_address();
+    //get the address of the mapped region
+    void * addr       = region.get_address();
 
-      //Construct the shared structure in memory
-      kautham::data_ioc_cell* dataCell = new (addr) kautham::data_ioc_cell;
-      QWidget *app = SoQt::init(argv[0]);//argc, argv,argv[0]);
-	    app->setVisible(false);
-	    Application kauthApp;
-      SoQt::mainLoop();
-      return 0;
-    }catch(interprocess_exception &ex){
-      std::cout << "Kautham error: " << ex.what() << std::endl;
-   }catch(...){
-     std::cout << "Unexpected error in the Kautham initialization.\n";
-   }
-	
+    // construct the shared structure in memory
+
+    kautham::data_ioc_cell* datacell = new (addr) kautham::data_ioc_cell;
+    QWidget *app = SoQt::init(argv[0]);//argc, argv,argv[0]);
+    app->setVisible(false);
+    Application kauthApp( datacell );
+    SoQt::mainLoop();
+    return 0;
+  }catch(interprocess_exception &ex){
+    std::cout << "Kautham error: " << ex.what() << std::endl;
+  }catch(...){
+   std::cout << "Unexpected error in the Kautham initialization.\n";
+  }
 }
 

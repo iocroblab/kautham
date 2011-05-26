@@ -54,8 +54,18 @@
 using namespace libProblem;
 using namespace libPlanner;
 
+Application::Application(kautham::data_ioc_cell* dataCell) { 
+  Q_INIT_RESOURCE(kauthamRes);
+  initApp();
+  _dataCell = dataCell;
+}
+
 Application::Application() { 
   Q_INIT_RESOURCE(kauthamRes);
+  initApp();
+}
+
+void Application::initApp(){
 	mainWindow = new GUI();
   SoQt::show(mainWindow);
 	setActions();
@@ -65,14 +75,17 @@ Application::Application() {
   _hapticLoaded = false;
   _planner = NULL;
   _localPlanner = NULL;
+  _dataCell = NULL;
 }
 
 Application::~Application() {
-  if(_devices.size() > 0){
-    for(int i = 0; i < _devices.size();i++)
-      if(_devices.at(i) != NULL ) delete _devices.at(i);
-    _devices.clear();
-  }
+  //try{
+  //  if(_devices.size() > 0){
+  //    for(int i = 0; i < _devices.size();i++)
+  //      if(_devices.at(i) != NULL ) delete _devices.at(i);
+  //    _devices.clear();
+  //  }
+  //}catch(...){}
 }
 
 void Application::setActions(){
@@ -215,7 +228,7 @@ void Application::loadHaptic(){
     Device* tmpDev = new HapticDevice("Haptic",10);
     _devices.push_back(tmpDev);
     mainWindow->addDevice(tmpDev, 50);
-    mainWindow->addTeleoperationWidget(_problem, ((HapticDevice*)tmpDev));
+    mainWindow->addTeleoperationWidget(_problem, ((HapticDevice*)tmpDev), _dataCell);
     _hapticLoaded = true;
   }else
     mainWindow->setText("Use the tab provided to drive the Haptic");

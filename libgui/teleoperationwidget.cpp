@@ -55,7 +55,8 @@ using namespace boost::interprocess;
 using namespace libGuiding;
 
 namespace libGUI{
-  TeleoperationWidget::TeleoperationWidget(Problem* prob, Device* hap, GUI* gui){
+  TeleoperationWidget::TeleoperationWidget(Problem* prob, Device* hap, GUI* gui, 
+                                           kautham::data_ioc_cell* dataCell){
 
     setupUI();
 
@@ -143,57 +144,91 @@ namespace libGUI{
     _rosClient = NULL;
     _freqPubli = 250;
 
-    try{
-      //Create a shared memory object.
-      shared_memory_object shm( open_only,               //only open
-							                         "KauthamSharedMemory",     //name
-							                         read_write );				      //read-write mode
+    _dataCell = dataCell;
 
-      //Set size
-	    shm.truncate(sizeof(kautham::data_ioc_cell));
+   // try{
+   //   //Create a shared memory object.
 
-      //Map the whole shared memory in this process
-      mapped_region region( shm,					        //What to map
-						                read_write);          //Map it as read-write
+   //   shared_memory_object shm( create_only,               //only open
+			//				                         "KauthamSharedMemory",     //name
+			//				                         read_write );				      //read-write mode
 
-      //Get the address of the mapped region
-      void * addr       = region.get_address();
+   //   //Set size
+	  //  shm.truncate(sizeof(kautham::data_ioc_cell));
 
-      //Construct the shared structure in memory
-      _dataCell = new (addr) kautham::data_ioc_cell;
-    }catch(interprocess_exception &ex){
-      QMessageBox::critical(this, "Teleoperation error", ex.what());
-      _cmdConnectCell->setEnabled(false);
-   }catch(...){
-      QMessageBox::critical(this, "Teleoperation error", "Unexpected error in the widget creation.");
-      _cmdConnectCell->setEnabled(false);
-   }
+   //   //Map the whole shared memory in this process
+   //   mapped_region region( shm,					        //What to map
+			//			                read_write);          //Map it as read-write
+
+   //   //Get the address of the mapped region
+   //   void * addr       = region.get_address();
+
+   //   //Construct the shared structure in memory
+   //   _dataCell = new (addr) kautham::data_ioc_cell;
+   // }catch(interprocess_exception &ex){
+   //   QMessageBox::critical(this, "Teleoperation error", ex.what());
+   //   _cmdConnectCell->setEnabled(false);
+   //}catch(...){
+   //   QMessageBox::critical(this, "Teleoperation error", "Unexpected error in the widget creation.");
+   //   _cmdConnectCell->setEnabled(false);
+   //}
 
   }
 
+  TeleoperationWidget::~TeleoperationWidget(){
+    shared_memory_object::remove("KauthamSharedMemory"); 
+  }
 
   void TeleoperationWidget::connectCell(){
-    _rosClient = new QProcess();
-    QStringList param;
-    //http://147.83.37.26:11311/ 147.83.37.217 Phantom1 200
+    if( _cmdConnectCell->isChecked() ){
+      _rosClient = new QProcess();
+      QStringList param;
+      //http://147.83.37.26:11311/ 147.83.37.217 Phantom1 200
 
-    param << QString(_ipMaster.c_str()) << QString(_ipNode.c_str()) 
-          << QString(_nodeName.c_str()) << QString().setNum(_freqPubli) ;
+      param << QString(_ipMaster.c_str()) << QString(_ipNode.c_str()) 
+            << QString(_nodeName.c_str()) << QString().setNum(_freqPubli) ;
 
-    _rosClient->start( "localClient.exe", param );
-    if(!_rosClient->waitForStarted()){
-         QMessageBox::critical(this, "Kautham ROS Node",
-                                "The JointState publisher has not been started.\n" ,
-                                QMessageBox::Ok,
-                                QMessageBox::Ok);
-         _cmdConnectCell->setChecked(false);
-         _rosClient->close();
-         delete _rosClient;
-         _rosClient = NULL;
-         return;
+      _rosClient->start( "localClient.exe", param );
+      if(!_rosClient->waitForStarted(100)){
+           QMessageBox::critical(this, "Kautham ROS Node",
+                                  "The JointState publisher has not been started.\n" ,
+                                  QMessageBox::Ok,
+                                  QMessageBox::Ok);
+           _cmdConnectCell->setChecked(false);
+           _rosClient->close();
+           delete _rosClient;
+           _rosClient = NULL;
+           return;
+      }
+      QObject::connect(_rosClient, SIGNAL(finished ( int, QProcess::ExitStatus )), 
+                        this, SLOT(rosClientEnd(int , QProcess::ExitStatus )));
+      _cmdConnectCell->setText("Desconnect cell");
+    }else{
+      
+      if( _rosClient != NULL ){
+        QObject::disconnect(_rosClient, SIGNAL(finished ( int, QProcess::ExitStatus )), 
+                        this, SLOT(rosClientEnd(int , QProcess::ExitStatus )));
+        _rosClient->close();
+        delete _rosClient;
+        _rosClient = NULL;
+      }
+      _cmdConnectCell->setText("Connect");
     }
+  }
 
-    _cmdConnectCell->setText("Desconnect cell");
+  void TeleoperationWidget::rosClientEnd(int exitCode, QProcess::ExitStatus exitStatus){
+    QMessageBox::critical(  this, "ROS Client", "The ROS client connection has finished unexpectedly.\n",
+                            QMessageBox::Ok );
+
+    if( _rosClient != NULL ){
+      QObject::disconnect(_rosClient, SIGNAL(finished ( int, QProcess::ExitStatus )), 
+                      this, SLOT(rosClientEnd(int , QProcess::ExitStatus )));
+      _rosClient->close();
+      delete _rosClient;
+      _rosClient = NULL;
+    }
+    _cmdConnectCell->setChecked(false);
+    _cmdConnectCell->setText("Connect");
   }
 
   void TeleoperationWidget::confConnection(){
@@ -904,11 +939,15 @@ namespace libGUI{
           if( activeRob == 0 ){ // Fixed robot
             //Lock the mutex
             scoped_lock<interprocess_mutex> lock(_dataCell->mutex_out);
-            std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _dataCell->r1_desired.joint );
+            std::copy( tmp.getRn().getCoordinates().begin(), 
+                       tmp.getRn().getCoordinates().end(), 
+                       _dataCell->r1_desired.joint );
           }else{                //  Mobile robot
             //Lock the mutex
             scoped_lock<interprocess_mutex> lock(_dataCell->mutex_out);
-            std::copy( tmp.getRn().getCoordinates().begin(), tmp.getRn().getCoordinates().end(), _dataCell->r2_desired.joint );
+            std::copy( tmp.getRn().getCoordinates().begin(), 
+                       tmp.getRn().getCoordinates().end(), 
+                       _dataCell->r2_desired.joint );
           }
         }else{
           // Assumes the Inverse Kinematic receives the position and orientation as target
@@ -1553,6 +1592,7 @@ namespace libGUI{
     horizontalLayout_13->setObjectName(QString::fromUtf8("horizontalLayout_13"));
     _cmdConnectCell = new QPushButton(groupBox_6);
     _cmdConnectCell->setObjectName(QString::fromUtf8("_cmdConnectCell"));
+    _cmdConnectCell->setCheckable(true);
 
     horizontalLayout_13->addWidget(_cmdConnectCell);
 

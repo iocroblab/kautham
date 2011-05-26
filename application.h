@@ -53,6 +53,7 @@
 #include <QObject>
 #include <libutil/kauthamdefs.h>
 #include <string>
+#include <libutil/data_ioc_cell.hpp>
 
 using namespace std;
 using namespace libProblem;
@@ -62,7 +63,8 @@ using namespace Kautham;
 class Application:public QObject {
 	Q_OBJECT
 public:
-	Application();
+  Application();
+  Application(kautham::data_ioc_cell* dataCell);
   ~Application();
   //!  This method setups the problem and create the WorkSpace, the Planner and
   //!  its corresponding LocalPlanner.
@@ -78,6 +80,7 @@ public slots:
   void              loadHaptic();
   void              unloadHaptic();
 private:
+  void              initApp();
   void              setActions();
   QFile*            xmlFile;
   Problem*          _problem;
@@ -88,6 +91,7 @@ private:
   Planner*          _planner;
   LocalPlanner*     _localPlanner;
   //MouseJump*        _mJumpApp;
+  kautham::data_ioc_cell*     _dataCell;
 };
 
 #endif  //_APPLICATION_H

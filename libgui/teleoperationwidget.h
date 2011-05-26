@@ -77,8 +77,10 @@ namespace libGUI{
       void                  changeRobot();
       void                  connectCell();
       void                  confConnection();
+      void                  rosClientEnd(int exitCode, QProcess::ExitStatus exitStatus);
     public:
-      TeleoperationWidget(Problem* prob, Device* hap, GUI* gui);
+      TeleoperationWidget(Problem* prob, Device* hap, GUI* gui, kautham::data_ioc_cell* dataCell);
+      ~TeleoperationWidget();
       	
       inline int getFreqPubli(){return _freqPubli;}
       inline void setFreqPubli(int freq){_freqPubli = freq;}

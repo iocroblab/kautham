@@ -57,6 +57,7 @@
 #include "teleoperationwidget.h"
 #include <Inventor/nodes/SoCamera.h>
 #include <libutil/pugixml/pugixml.hpp>
+#include <libutil/data_ioc_cell.hpp>
 
 using namespace libProblem;
 using namespace libDevice;
@@ -247,10 +248,10 @@ namespace libGUI {
     boolPlanVis = !boolPlanVis;
   }
 
-  bool GUI::addTeleoperationWidget(Problem* _problem, Device* hap){
+  bool GUI::addTeleoperationWidget(Problem* _problem, Device* hap, kautham::data_ioc_cell* dataCell){
     try{
       // Creating the Mouse Jump Widget interface
-      TeleoperationWidget* tmp = new TeleoperationWidget(_problem, hap, this);
+      TeleoperationWidget* tmp = new TeleoperationWidget(_problem, hap, this, dataCell);
       propertiesTab->addTab(tmp, "Teleoperation");
       return true;
     }catch(...){

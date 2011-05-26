@@ -60,6 +60,7 @@
 #include <libdevice/device.h>
 #include <libproblem/inversekinematic.h>
 #include <libdevice/device.h>
+#include <libutil/data_ioc_cell.hpp>
 
 
 using namespace std;
@@ -133,7 +134,7 @@ namespace libGUI {
     bool                addDevice(Device* dev, unsigned int period);
     bool                addInverseKinematic(InverseKinematic* ikine);
     bool                addWidgetToTab(QWidget* widget, QString name);
-    bool                addTeleoperationWidget(Problem* _problem, Device* hap);
+    bool                addTeleoperationWidget(Problem* _problem, Device* hap, kautham::data_ioc_cell* dataCell);
 
     const mt::Transform getActiveCameraTransfom();
     bool                setActiveCameraPosition(float x, float y, float z );
