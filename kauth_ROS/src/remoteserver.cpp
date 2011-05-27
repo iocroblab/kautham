@@ -28,6 +28,9 @@ Connection    valClientR2;
 TX90          _robotSoap;
 std::string   STAUBLI_IP_R1;
 std::string   STAUBLI_IP_R2;
+std::string   SOAP_IP_R1;
+std::string   SOAP_IP_R2;
+
 std::string   PORT="";
 
 void robot1Callback(const sensor_msgs::JointState::ConstPtr& r1des)
@@ -124,9 +127,16 @@ int main(int argc, char **argv){
   _vargv.clear();
   ros::removeROSArgs(argc, argv, _vargv);
 
-  if(_vargv.size() > 1 && _vargv.size()< 4){
+  if( _vargv.size() == 4 ){
     STAUBLI_IP_R1 = _vargv[1];
     STAUBLI_IP_R2 = _vargv[2];
+    SOAP_IP_R1="http://";
+    SOAP_IP_R1.append(STAUBLI_IP_R1);
+    SOAP_IP_R1.append(":5653");
+    SOAP_IP_R2="http://";
+    SOAP_IP_R2.append(STAUBLI_IP_R2);
+    SOAP_IP_R2.append(":5653");
+
 
   }else{
     std::cout << "remoteServer ip_R1 ip_R2 freq.\nRemember it.\n";
@@ -156,7 +166,7 @@ int main(int argc, char **argv){
     _r1_state_message.header.stamp = ros::Time::now();
     _r1_state_message.position.resize(6);
 
-    _robotSoap.Login(STAUBLI_IP_R1, "default", "");
+    _robotSoap.Login(SOAP_IP_R1, "default", "");
     _robotSoap.GetRobotJoints(target_pos);
     _robotSoap.Logoff();
 
@@ -176,7 +186,7 @@ int main(int argc, char **argv){
     _r2_state_message.header.stamp = ros::Time::now();
     _r2_state_message.position.resize(6);
 
-    _robotSoap.Login(STAUBLI_IP_R2, "default", "");
+    _robotSoap.Login(SOAP_IP_R2, "default", "");
     _robotSoap.GetRobotJoints(target_pos);
     _robotSoap.Logoff();
 
