@@ -217,9 +217,10 @@ namespace libGUI{
       if( _rosClient != NULL ){
         QObject::disconnect(_rosClient, SIGNAL(finished ( int, QProcess::ExitStatus )), 
                         this, SLOT(rosClientEnd(int , QProcess::ExitStatus )));
-        _rosClient->write("\x3");
-        if( !_rosClient->waitForFinished() )
+        _rosClient->write("\03");
+        if( !_rosClient->waitForFinished(3000) )
           _rosClient->kill();
+        
         delete _rosClient;
         _rosClient = NULL;
       }
