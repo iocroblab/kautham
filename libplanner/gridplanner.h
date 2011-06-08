@@ -130,8 +130,8 @@ namespace libPlanner {
 		//!Potential values at the cells of the grid
 		PotentialMap potmap;
 
-		//!Deiscretization step of the grid
-		int _stepsDiscretization;
+		//!Deiscretization step of the grid, per axis
+		vector<int> _stepsDiscretization;
 
 		//!Potential value of the obstacles
 		KthReal _obstaclePotential;
@@ -175,8 +175,8 @@ namespace libPlanner {
 		//!Function that retruns the vector of potential values
 		inline PotentialMap getpotmat(){return potmap;};
 
-		//Function to setup the value of _stepsDiscretization and recompute the grid
-		void setStepsDiscretization(int numsteps);
+		//Function to setup the value of _stepsDiscretization in the given axis, and recompute the grid
+		void setStepsDiscretization(int numsteps, int axis);
 	  };
    }
 }

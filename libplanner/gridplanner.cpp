@@ -55,8 +55,6 @@ namespace libPlanner {
               Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
 	{
 		//set intial values
-		_stepsDiscretization = 4;
-	    _maxNumSamples = (int)pow((float)_stepsDiscretization, _wkSpace->getDimension());
 		_obstaclePotential = 10.0;
 		_goalPotential = 0.0;
 
@@ -69,7 +67,20 @@ namespace libPlanner {
 		addParameter("Step Size", ssize);
 		addParameter("Speed Factor", _speedFactor);
         addParameter("Max. Samples", _maxNumSamples);
-		addParameter("Discr. Steps", _stepsDiscretization);
+
+		//set step discrtization
+		_stepsDiscretization.resize(_wkSpace->getDimension());
+		char *str = new char[20];
+		for(int i=0;i<_wkSpace->getDimension();i++){
+			_stepsDiscretization[i] = 4;
+			sprintf(str,"Discr. Steps %d",i);
+			addParameter(str, _stepsDiscretization[i]);
+		}
+		//set max samples
+		_maxNumSamples = 1;
+		for(int i=0; i<_wkSpace->getDimension();i++){
+			_maxNumSamples = _maxNumSamples * _stepsDiscretization[i];
+		}
 
 		_samples->clear();
 		discretizeCspace();
@@ -79,32 +90,38 @@ namespace libPlanner {
 			
 	}
 
-	void gridPlanner::setStepsDiscretization(int numsteps)
+	void gridPlanner::setStepsDiscretization(int numsteps, int axis)
 	{
-		if(_stepsDiscretization!=numsteps)
+		//changes the discretization in a given axis
+		if(_stepsDiscretization[axis]!=numsteps)
 		{
-			_stepsDiscretization = numsteps;
-			_maxNumSamples = (int)pow((float)_stepsDiscretization, _wkSpace->getDimension());
+			_stepsDiscretization[axis] = numsteps;
+
+			_maxNumSamples = 1;
+			for(int i=0; i<_wkSpace->getDimension();i++){
+				_maxNumSamples = _maxNumSamples * _stepsDiscretization[i];
+			}
 			if(_isGraphSet) clearGraph();
 			_samples->clear();
 			discretizeCspace();
 		}
    }
-		void  gridPlanner::loadgrid(vector<KthReal> &coords, int coord_i)
-		{
-			KthReal delta = 1.0/_stepsDiscretization;
+		
+	void  gridPlanner::loadgrid(vector<KthReal> &coords, int coord_i)
+	{
+			KthReal delta = 1.0/_stepsDiscretization[coord_i];
 			KthReal offset = delta/2;
 			//for coordinate coord_i, loop for all discretization steps 
-			for(int j=0; j<_stepsDiscretization; j++) 
+			for(int j=0; j<_stepsDiscretization[coord_i]; j++) 
 			{
 				//set the value of the coordinate corresponding to step j
 				coords[coord_i] = offset + j*delta;
 				//if not last coordinate, continue  
 				//i.e. by means of a recursive call, all the coordinates are swept
 				//until the last coordinate is reached
-				if(coord_i != _wkSpace->getDimension()-1) 
+				if(coord_i != 0)   
 				{
-					loadgrid(coords, coord_i + 1);	
+					loadgrid(coords, coord_i - 1);	 
 				}
 				//if coord_i is the last coordinate, then the coords of the cell are completed
 				//and the sample created and collision-checked
@@ -127,7 +144,7 @@ namespace libPlanner {
 		void  gridPlanner::connectgrid(vector<int> &index, int coord_i)
 		{
 			//for coordinate coord_i, loop for all discretization steps 
-			for(int j=0; j<_stepsDiscretization; j++) 
+			for(int j=0; j<_stepsDiscretization[coord_i]; j++) 
 			{
 				index[coord_i] = j;
 				//if not last coordinate, continue  
@@ -143,8 +160,12 @@ namespace libPlanner {
 				{
 					//find sample label from indices
 					int smplabel = 0;
-					for(int k=0;k<_wkSpace->getDimension();k++) 
-						smplabel += (int)pow((float)_stepsDiscretization,k)*index[k];
+					int coef;
+					for(int k=0;k<_wkSpace->getDimension();k++){ 
+						if(k==0) coef=1;
+						else coef = coef * _stepsDiscretization[k-1];
+						smplabel += coef*index[k];
+					}
 					
 					//sweep for all directions to find (Manhattan) neighbors
 					//neighbors are looked for in the positive drection of the axis
@@ -157,16 +178,20 @@ namespace libPlanner {
 						//the value of the index incremented by one
 						int smplabelneighplus = 0;
 						bool plusneighexists = true;
+						
 						for(int k=0;k<_wkSpace->getDimension();k++) 
 						{
+							if(k==0) coef=1;
+							else coef = coef*_stepsDiscretization[k-1];
+							
 							if(k==n) 
 							{
-								if(index[k]+1 >= _stepsDiscretization) plusneighexists = false;
-								smplabelneighplus  += (int)pow((float)_stepsDiscretization,k)*(index[k]+1);
+								if(index[k]+1 >= _stepsDiscretization[k]) plusneighexists = false;
+								smplabelneighplus  += coef*(index[k]+1);
 							}
 							else
 							{
-								smplabelneighplus  += (int)pow((float)_stepsDiscretization,k)*index[k];
+								smplabelneighplus  += coef*index[k];
 							}
 						}
 						//connect samples (if neighbor sample did exist)
@@ -207,12 +232,23 @@ namespace libPlanner {
 		{
 			//create graph vertices, i.e. sample and collision-check at grid cell centers
 			vector<KthReal> coords(_wkSpace->getDimension());
-			loadgrid(coords, 0);
+			loadgrid(coords, _wkSpace->getDimension()-1);
 			//connect neighbor grid cells
 			vector<int> index(_wkSpace->getDimension());
 			connectgrid(index, 0);
 			//create grid as graph (alse sets initial potential values)
 			loadGraph();
+
+			//Print INFO: edges of graph
+			/*graph_traits<gridGraph>::edge_iterator i, end;
+			for(tie(i,end)=boost::edges(*g); i!=end; ++i)
+			{
+				gridVertex s=source(*i,*g);
+				gridVertex t=target(*i,*g);
+				cout<<"edge "<<*i<< " from "<< s<< " to "<<t<<endl;
+			}
+			*/
+			
 
 			/*Print INFO: verification intial values of potential 
 			cout<<"POTENTIAL:";

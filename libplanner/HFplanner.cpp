@@ -77,13 +77,18 @@ namespace libPlanner {
         else
           return false;
 
-        it = _parameters.find("Discr. Steps");
-        if(it != _parameters.end())
+		char *str = new char[20];
+		for(int i=0; i<_wkSpace->getDimension();i++)
 		{
-			setStepsDiscretization(it->second);
-	    }
-        else
-          return false;
+			sprintf(str,"Discr. Steps %d",i);
+			it = _parameters.find(str);
+			if(it != _parameters.end())
+			{
+				setStepsDiscretization(it->second,i);
+			}
+			else
+				return false;
+		}
 
 
       }catch(...){
