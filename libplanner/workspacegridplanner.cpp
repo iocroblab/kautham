@@ -95,14 +95,6 @@ namespace libPlanner {
 		cells.resize(nx*ny*nz);
 		locations.reserve((int)(0.1*nx*ny*nz));
 
-
-
-  int s1,s2,s3;
-
-
-			s1= (int) locations.size();
-			s2=  (int) locations.capacity();
-			s3=  (int) locations.max_size();
 		unsigned long int i=0;
 		unsigned long int id;
 		int dist;
@@ -114,11 +106,6 @@ namespace libPlanner {
 
 			locations.push_back(dist); //free cell - locations stores the distance value
 			cells[i++] = locations.size();//cells stores the identifier in the locations vector
-
-			
-			s1= (int) locations.size();
-			s2=  (int) locations.capacity();
-			s3=  (int) locations.max_size();
 		}
 		fclose(fp);
 
