@@ -19,9 +19,11 @@
      Configuration of the scene
     </Location>
 	</Scene>
+	<DistanceMap distanceMap="BRONCO/broncoDistanceMap.txt">
+	</DistanceMap>
 	<Planner>
 		<Parameters>
-			<Name>GUIBRO</Name>
+			<Name>GUIBROgrid</Name>
 			<LocalPlanner stepSize="0.01">Linear</LocalPlanner>
       <Parameter name="Speed Factor">3</Parameter>
 			<Parameter name="1- Rotation (alpha)">1</Parameter>

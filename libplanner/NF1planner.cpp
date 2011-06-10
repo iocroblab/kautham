@@ -58,7 +58,7 @@ namespace libPlanner {
 	{
 		//set intial values
 	  
-		_guiName = "My Grid Planner";
+		_guiName = "NF1 Planner";
 		removeParameter("Max. Samples");
 		removeParameter("Step Size");
     }

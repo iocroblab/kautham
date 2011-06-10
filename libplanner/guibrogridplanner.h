@@ -9,15 +9,15 @@
 *                                                                          *
 *                Project Name:       Kautham Planner                       *
 *                                                                          *
-*     Copyright (C) 2007 - 2009 by Alexander P√©rez and Jan Rosell          *
+*     Copyright (C) 2007 - 2009 by Alexander PÈrez and Jan Rosell          *
 *            alexander.perez@upc.edu and jan.rosell@upc.edu                *
 *                                                                          *
 *             This is a motion planning tool to be used into               *
 *             academic environment and it's provided without               *
 *                     any warranty by the authors.                         *
 *                                                                          *
-*          Alexander P√©rez is also with the Escuela Colombiana             *
-*          de Ingenier√≠a "Julio Garavito" placed in Bogot√° D.C.            *
+*          Alexander PÈrez is also with the Escuela Colombiana             *
+*          de IngenierÌa "Julio Garavito" placed in Bogot· D.C.            *
 *             Colombia.  alexander.perez@escuelaing.edu.co                 *
 *                                                                          *
 ***************************************************************************/
@@ -40,70 +40,84 @@
  ***************************************************************************/
  
  
- 
- 
-#if !defined(_WORKSPACE_H)
-#define _WORKSPACE_H
 
-#include <vector>
-#include <libsampling/robconf.h>
-#include <libutil/kauthamdefs.h>
-#include <libsampling/sample.h>
-#include "obstacle.h"
-#include "robot.h"
+#if !defined(_GUIBROGRIDPLANNER_H)
+#define _GUIBROGRIDPLANNER_H
+
+#include <libproblem/workspace.h>
+#include <libsampling/sampling.h>
+#include "localplanner.h"
+#include "NF1planner.h"
+#include "prmplanner.h"
+#include "workspacegridPlanner.h"
 
 using namespace std;
-using namespace Kautham;
 using namespace libSampling;
 
-namespace libProblem{
-  class WorkSpace {
-	  public:
-      WorkSpace();
-		  KthReal               distanceCheck( Conf* conf, unsigned int robot ) ;
-		  bool                  collisionCheck( Conf* conf, unsigned int robot ) ;
-      KthReal               distanceBetweenSamples(Sample& smp1, Sample& smp2,
-                                                Kautham::SPACETYPE spc);
+namespace libPlanner {
+using namespace workspacegridplanner;
+   namespace GUIBROGRID{
 
-      vector<KthReal>*      distanceCheck(Sample* sample) ;
-      bool                  collisionCheck(Sample* sample ) ;
-      void                  moveTo(Sample* sample);
-		  void                  addRobot(Robot* robot);
-      inline Robot*         getRobot(unsigned int i){return robots[i];}
-		  void                  addObstacle(Obstacle* obs);
-      inline Obstacle*      getObstacle(unsigned int i){return obstacles[i];}
-      inline unsigned int   robotsCount(){return robots.size();}
-      inline unsigned int   obstaclesCount(){return obstacles.size();}
-      inline int            getDimension() const {return workDim;}
+	struct guibroSample
+	{
+		Sample *smpPtr;
+		guibroSample *parent;
+		vector<guibroSample*> descendant;
+		KthReal u[3];
+		KthReal back_u2;
+		KthReal length;
+		KthReal curvature;
+		KthReal steps;
+		KthReal cost;
+		bool leave;
+		int id;
+		bool collision;
+		bool inversekin;
+	};
 
-	  void addDistanceMapFile(string distanceFile);
-	  inline string getDistanceMapFile(){return distanceMapFile;};
 
-//      //! This method returns true if the all robots in the scene only accepts SE3 data;
-//      //! This method is deprecated. Maybe it never has been used.
-//      bool                  isSE3();
 
-      //! This vector contains a pointers to the RobConf of each robot in the
-      //! WorkSpace
-      inline vector<RobConf*>&     getConfigMapping(){return _configMap;}
-      inline vector<RobConf*>&     getConfigMapping(Sample* sample){moveTo(sample); return _configMap;}
-      bool                         inheritSolution(vector<Sample*>& path);
-      void                         eraseSolution();
-	  protected:
-		  virtual void          updateScene() = 0;
-		  vector<Obstacle*>     obstacles;
-		  vector<Robot*>        robots;
-      vector<KthReal>       distVec;
-      int                   workDim;
+    class GUIBROgridPlanner:public Planner {
+	    public:
+        GUIBROgridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
+          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+        ~GUIBROgridPlanner();
 
-      //! This attribute groups the configurations of the robots
-      vector<RobConf*>      _configMap;
-      vector<RobWeight*>    _robWeight;
+		bool trySolve();
+		bool setParameters();
 
-	  string distanceMapFile;
+		bool applyRandControl(guibroSample *currGsmp);
+		void printInfo(guibroSample *gs);
+		void moveAlongPath(unsigned int step); //reimplemented
+		//Add public data and functions
 
-  };
+		protected:
+		//Add protected data and functions	
+		KthReal _alpha;
+		KthReal _xi;
+		KthReal _deltaZ;
+		KthReal _minAdvanceStep;
+		KthReal _maxAdvanceStep;
+		int _stepsinterpolate;
+		KthReal _wL;
+		KthReal _wS;
+		KthReal _wC;
+	    LCPRNG*	_gen;
+		bool _debug;
+		KthReal _thresholdInvKin;
+		int _drawnLink; //!>flag to show which link path is to be drawn
+
+		vector<guibroSample*> _guibroSet;
+
+
+		workspacegridPlanner* grid;
+
+	    private:
+		//Add private data and functions
+
+	  };
+   }
 }
 
-#endif  //_WORKSPACE_H
 
+#endif // _GUIBROGRIDPLANNER_H

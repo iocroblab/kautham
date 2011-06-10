@@ -57,6 +57,11 @@ namespace libProblem {
     _robWeight.clear();
   }
 
+	void WorkSpace::addDistanceMapFile(string distanceFile)
+	{
+		distanceMapFile = distanceFile;
+	}
+
   vector<KthReal>* WorkSpace::distanceCheck(Sample* sample) {
     vector<KthReal> tmpVec;
     int j, from = 0;

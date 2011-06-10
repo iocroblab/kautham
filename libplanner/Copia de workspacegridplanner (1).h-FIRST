@@ -41,14 +41,15 @@
  
  
 
-#if !defined(_GRIDPLANNER_H)
-#define _GRIDPLANNER_H
+#if !defined(_WORKSPACEGRIDPLANNER_H)
+#define _WORKSPACEGRIDPLANNER_H
 
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/breadth_first_search.hpp>
 #include "localplanner.h"
 #include "planner.h"
 
@@ -57,14 +58,14 @@ using namespace libSampling;
 using namespace boost;
 
 namespace libPlanner {
-   namespace gridplanner{
+   namespace workspacegridplanner{
 	//Typedefs
-	//!The location associated to a vertex of the graph will be a sample pointer
-    typedef Sample* location;
+	//!The location associated to a vertex of the graph will be the distance value to the obstacles
+    typedef unsigned long int location;
 	//!The cost of an edge of the graph will be a KthReal
     typedef KthReal cost;
 	//!Edge of a graph represented as a pair of ints (the vertices)
-    typedef std::pair<int, int> gridEdge;
+    typedef std::pair<unsigned long int, unsigned long int> gridEdge;
 	 
 	//!Definition of the property of vertices to store the value of a potential function
 	struct potential_value_t {
@@ -96,25 +97,48 @@ namespace libPlanner {
 			EdgeWeightMap m_weight;
 	};
 
+
+	//CLASS bfs_distance_visitor
+    // visitor that terminates when we find the goal
+    template <class DistanceMap>
+    class bfs_distance_visitor : public boost::default_bfs_visitor 
+	{
+		public:
+			bfs_distance_visitor(DistanceMap dist) : d(dist) {};
+
+			template <typename Edge, typename Graph> 
+			void tree_edge(Edge e, Graph& g)
+			{
+				typename graph_traits<Graph>::vertex_descriptor s=source(e,g);
+				typename graph_traits<Graph>::vertex_descriptor t=target(e,g);
+				d[t] = d[s] + 1;
+				//potmap[t] = d[t];
+			}
+
+		private:
+			DistanceMap d;
+    };
+
+
 	//!Graph representing the subgraph of the grid without the edges that have the source or target
-	//!vertex associated to a collision sample
+	//!vertex associated to a collision cell
 	typedef filtered_graph<gridGraph, negative_edge_weight<WeightMap> > filteredGridGraph;
 
 
-  //! This class is an abstract class that represents a discretization of the configuration space.
-	//!It contains a graph representing the whole regular grid with both collision and free samples
+  //! This class is an class that represents a discretization of the workspace.
+	//!It contains a graph representing the whole regular grid with both collision and free cells
 	//!associated to the vertices, and a subgraph that contains only those free.
-	//!Its derived classes must implement the trysolce function to implement any grid-based 
-	//!planning method .
-    class gridPlanner:public Planner {
+	
+    class workspacegridPlanner:public Planner {
 	    public:
 		//!Constructor
-        gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
+        workspacegridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
           WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
-        ~gridPlanner();
+        ~workspacegridPlanner();
         
-		//!Abstract class to be implemented by the derived classes with planning methods based on grids
-		bool trySolve() = 0;
+		//!implemented as NF1 navigation function
+		inline bool trySolve(){return true;}; 
+		inline bool setParameters(){return true;};
 
 		protected:
 
@@ -124,7 +148,7 @@ namespace libPlanner {
 		//!Boost graph representing the filtered grid
 		filteredGridGraph *fg;	
 		
-		//!Vector of C-space sample pointers associated to the vertices
+		//!Vector of workspacespace cells associated to the vertices
 		vector<location> locations;
 
 		//!Potential values at the cells of the grid
@@ -157,13 +181,13 @@ namespace libPlanner {
 		//!Function to construct the grid graphs
 		void discretizeCspace();
 
-		//!Function to compute and collision-check the samples of the grid vertices
-		void loadgrid(vector<KthReal> &coords, int coord_i);
+		//!Function that reads the distanceMap file
+		void readDistances(string file);
 
 		//!Function to create the edges connecting the vertices of the grid
 		void connectgrid(vector<int> &index, int coord_i);
 		
-		//!Function to filter those edges of the grid connecting collision samples
+		//!Function to filter those edges of the grid connecting collision cells
 		void  prunegrid();
 
 		//!Function to set the potential value at a given vertex
@@ -174,12 +198,12 @@ namespace libPlanner {
 
 		//!Function that retruns the vector of potential values
 		inline PotentialMap getpotmat(){return potmap;};
-
-		//Function to setup the value of _stepsDiscretization in the given axis, and recompute the grid
-		void setStepsDiscretization(int numsteps, int axis);
+		
+		//!Function to compute the navigation function NF1 along the filtered graf
+		void computeNF1(gridVertex  vgoal);
 	  };
    }
 }
 
-#endif  //_GRIDPLANNER_H
+#endif  //_WORKSPACEGRIDPLANNER_H
 
