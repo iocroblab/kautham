@@ -6,7 +6,7 @@ INCLUDE_DIRECTORIES( ${mt_DIR}
                      ${CMAKE_SOURCE_DIR}/libutil
                      ${COIN_INCLUDE_DIR}
                      ${Armadillo_INCLUDE_DIR} )
-
+                     
 FILE( GLOB SRC_FILES *.cpp )
 FILE( GLOB HDR_FILES *.h )
 

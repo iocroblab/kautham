@@ -86,7 +86,7 @@ namespace libPlanner {
 
 	    _samples->setTypeSearch(ANNMETHOD);//(BRUTEFORCE);//
 	    _samples->setWorkspacePtr(_wkSpace);
-	    _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+	    //_samples->setANNdatastructures(_kNeighs, _maxNumSamples);
 
       for(int i=0; i<_wkSpace->robotsCount();i++)
         _wkSpace->getRobot(i)->setLinkPathDrawn(_drawnLink);
@@ -124,7 +124,7 @@ namespace libPlanner {
         it = _parameters.find("Max. Samples");
         if(it != _parameters.end()){
           _maxNumSamples = it->second;
-		      _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+		      //_samples->setANNdatastructures(_kNeighs, _maxNumSamples);
 		    }else
           return false;
 
@@ -137,7 +137,7 @@ namespace libPlanner {
         it = _parameters.find("Max. Neighs");
         if(it != _parameters.end()){
           _kNeighs = (int)it->second;
-		      _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+		      //_samples->setANNdatastructures(_kNeighs, _maxNumSamples);
 		    }else
           return false;
       }catch(...){

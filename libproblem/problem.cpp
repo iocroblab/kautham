@@ -622,8 +622,11 @@ namespace libProblem {
             break;
           }
         }
-        if( _cspace->getSize() >= 2 )
+        if( _cspace->getSize() >= 2 ){
+          _cspace->getSampleAt(0)->addNeigh(1);
+          _cspace->getSampleAt(1)->addNeigh(0);
           return true;
+        }
       }
     }
     return false;

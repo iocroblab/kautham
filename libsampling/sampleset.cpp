@@ -58,12 +58,14 @@ namespace libSampling{
 	  setANN = false;
 	  ws = NULL;
     maxNeighs = 1;
+    MAG = NULL;
+    data_pts = NULL;	
   }
 
    void SampleSet::resetANNdatastructures(){
 		//delete existing data
-		delete MAG;
-		annDeallocPts(data_pts);
+    if( MAG != NULL ) delete MAG;
+		if(data_pts != NULL) annDeallocPts(data_pts);
    }
 
   void SampleSet::setANNdatastructures(int maxn, int maxs)
@@ -129,7 +131,6 @@ namespace libSampling{
 		MAG = new MultiANN(dim, maxNeighs, topology, scale);	// create a data structure	
 		data_pts = annAllocPts(maxSamples, dim);		// allocate data points
 
-		
 		setANN = true;
   }
 
