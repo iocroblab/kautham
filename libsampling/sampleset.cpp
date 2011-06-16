@@ -47,6 +47,7 @@
 #include "sdksample.h"
 #include <libann/DNN/multiann.h>
 #include <cmath>
+//#include <crtdbg.h>
 
 
 using namespace SDK;
@@ -478,10 +479,14 @@ namespace libSampling{
 		//data_pts array also created in cspace constructor		
 		loadAnnData();
 
+    //assert(_CrtCheckMemory());
+
 		//BEGIN QUERY
     double *d_ann = new double[maxNeighs];
     int *idx_ann = new int[maxNeighs]; // This number must be lesser than samples.size() because if not the libANN crashes
     ANNpoint *result_pt = new ANNpoint[std::min(maxNeighs,(unsigned int)samples.size())];
+    
+    //assert(_CrtCheckMemory());
 
 		int	numIt = 1; // maximum number of nearest neighbor calls ¿?
 
@@ -498,9 +503,15 @@ namespace libSampling{
 			//query tree
       for (int k = 0; k < maxNeighs; k++)
           d_ann[k] = INFINITY;
+      
+      //assert(_CrtCheckMemory());
+
       for (int i = 0; i < numIt; i++)	{
 				MAG->NearestNeighbor(data_pts[h], d_ann, idx_ann, (void**&)result_pt);	// compute nearest neighbor using library
 			}	
+
+      //assert(_CrtCheckMemory());
+
 			//add neighs
 			//d_ann contains the distances in increasing order, starting at 0 (autodistance) which is discarded (i.e. loop startsat i=1)
 			for (int i = 1; i < maxNeighs; i++) 
@@ -514,6 +525,12 @@ namespace libSampling{
 			}
 		}
 		hasChanged = false;
+
+    //assert(_CrtCheckMemory());
+
+    delete[] d_ann;
+    delete[] idx_ann;
+    delete[] result_pt ; 
   }
 
 

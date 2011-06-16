@@ -50,6 +50,7 @@
 #include <libutil/data_ioc_cell.hpp>
 #include <libguiding/pathtoguide.h>
 #include <QProcess>
+//#include <crtdbg.h>
 
 using namespace boost::interprocess;
 using namespace libGuiding;
@@ -58,7 +59,8 @@ namespace libGUI{
   TeleoperationWidget::TeleoperationWidget(Problem* prob, Device* hap, GUI* gui, 
                                            kautham::data_ioc_cell* dataCell){
 
-    setupUI();
+     //assert(_CrtCheckMemory());
+     setupUI();
 
     // Core Initialization
     _synchronized = false;
@@ -530,11 +532,18 @@ namespace libGUI{
     Xnode xd;
     xd.resize(7);
     Xnode xi = libGuiding::PathToGuide::tran2xnode(tcp);
+
+    // Normally the measures are in millimeters.
     KthReal dist = path->unitVectors(xi,xd,idx,ratio,umag,upush);
 
-    // Only testing the translational forces.
-    for(int i = 0; i < 3; ++i)
-      forces[i] = (umag.at(i) + upush.at(i))*_maxForces[i];
+    if(dist > 5 ){
+      // Only testing the translational forces.
+      for(int i = 0; i < 3; ++i){
+        forces[i] = (umag.at(i) + upush.at(i))*_maxForces[i];
+        forces[i] = forces[i] < _maxForces[i] ? forces[i] : _maxForces[i];
+        forces[i] = forces[i] > -_maxForces[i] ? forces[i] : -_maxForces[i];
+      }
+    }
 
 
     //XXXXXXXXXX Applying the force to haptic XXXXXXXXXXXXXXXX
@@ -999,11 +1008,14 @@ namespace libGUI{
     sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
     this->setSizePolicy(sizePolicy);
     this->setMinimumSize(QSize(270, 350));
-    gridLayout_10 = new QGridLayout(this);
+
+    QWidget* tmpWid = new QWidget();
+
+    gridLayout_10 = new QGridLayout(tmpWid);
     gridLayout_10->setObjectName(QString::fromUtf8("gridLayout_10"));
     verticalLayout_13 = new QVBoxLayout();
     verticalLayout_13->setObjectName(QString::fromUtf8("verticalLayout_13"));
-    groupBox = new QGroupBox(this);
+    groupBox = new QGroupBox(tmpWid);
     groupBox->setObjectName(QString::fromUtf8("groupBox"));
     QSizePolicy sizePolicy1(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     sizePolicy1.setHorizontalStretch(0);
@@ -1330,7 +1342,7 @@ namespace libGUI{
 
     verticalLayout_13->addWidget(groupBox);
 
-    groupBox_2 = new QGroupBox(this);
+    groupBox_2 = new QGroupBox(tmpWid);
     groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
     sizePolicy1.setHeightForWidth(groupBox_2->sizePolicy().hasHeightForWidth());
     groupBox_2->setSizePolicy(sizePolicy1);
@@ -1703,5 +1715,12 @@ namespace libGUI{
     _startOperation->setText(QApplication::translate("Form", "Start", 0, QApplication::UnicodeUTF8));
     _stopOperation->setText(QApplication::translate("Form", "Stop", 0, QApplication::UnicodeUTF8));
    
+
+    gridLayout_10 = new QGridLayout(this);
+		QScrollArea* scrollArea = new QScrollArea();
+    scrollArea->setBackgroundRole(QPalette::Light);
+    scrollArea->setWidget(tmpWid);
+
+    gridLayout_10->addWidget(scrollArea);
   }
 }

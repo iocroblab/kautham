@@ -239,6 +239,9 @@ namespace libPlanner {
     bool PRMPlanner::trySolve(){
       _solved = false;
       int count = 0;
+
+      //assert(_CrtCheckMemory());
+
       if( _isGraphSet ){  //If graph already available
         //If new configurations have been sampled the graph is rebuild
         if( _samples->changed())
@@ -274,6 +277,9 @@ namespace libPlanner {
         count = _samples->getSize();
         Sample* smp = NULL;
         count = _samples->getSize();
+
+        //assert(_CrtCheckMemory());
+
         while( count < _maxNumSamples)
         {
           smp = NULL;
@@ -282,6 +288,9 @@ namespace libPlanner {
             smp = _sampler->nextSample();
             count++;
           }while(_wkSpace->collisionCheck(smp) == true);
+          
+          //assert(_CrtCheckMemory());
+          
           _samples->add(smp);
           double r=rgen->d_rand();
           if(r < 0.1) connectLastSample(_init);

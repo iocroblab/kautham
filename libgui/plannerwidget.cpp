@@ -214,6 +214,9 @@ namespace libGUI{
 
   void PlannerWidget::getPathCall(){
     _gui->setCursor(QCursor(Qt::WaitCursor));
+    
+    //assert(_CrtCheckMemory());
+
     if(_planner != NULL ){
       _planner->setInitSamp(_samples->getSampleAt(spnInit->text().toInt()));
       _planner->setGoalSamp(_samples->getSampleAt(spnGoal->text().toInt()));
@@ -223,6 +226,7 @@ namespace libGUI{
     else 
       btnMove->setEnabled(false);
     }
+    //assert(_CrtCheckMemory());
     _gui->setCursor(QCursor(Qt::ArrowCursor));
   }
 
