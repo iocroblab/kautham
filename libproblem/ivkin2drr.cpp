@@ -72,20 +72,30 @@ namespace libProblem {
       _targetTrans.setTranslation(mt::Point3(_tcp[0],_tcp[1], 0.));
       _targetTrans.setRotation(mt::Rotation(0., 0., 0., 1. ));
       
-      KthReal b2 = _tcp[0]*_tcp[0] + _tcp[1]*_tcp[1]; //  by the Pythagorean theorem
-      KthReal q1 = atan2(_tcp[1], _tcp[0]);
-      KthReal l12 = _llong[0]*_llong[0];
-      KthReal l22 =  _llong[1]*_llong[1];
-      KthReal	q2 = acos((l12 - l22 + b2)/(2.*_llong[0]*sqrt(b2))); //(by the law of cosines)
-      KthReal phi11 = q1 + q2;                                  //(I know you can handle addition)
-      KthReal phi12 = q1 - q2;
-      phi11 -= phi11 > M_PI ? 2. * M_PI : 0;
-      phi12 -= phi12 > M_PI ? 2. *M_PI : 0;
-      phi11 += phi11 < -M_PI ? 2. *M_PI : 0;
-      phi12 += phi12 < -M_PI ? 2. *M_PI : 0;
-	    KthReal phi2 = acos((l12 + l22 - b2)/(2.*_llong[0]*_llong[1])); //(by the law of cosines)
-      KthReal phi22 = M_PI - phi2;
-      KthReal phi21 = -M_PI + phi2;
+      KthReal b2, q1, l12, l22, q2, phi11, phi12, phi2, phi22, phi21;
+      b2= q1= l12= l22= q2= phi11= phi12= phi2= phi22= phi21= 0.;
+
+      b2= _tcp[0]*_tcp[0] + _tcp[1]*_tcp[1]; //  by the Pythagorean theorem
+      if(b2 < (_llong[0]+_llong[1])*(_llong[0]+_llong[1])){
+        q1 = atan2(_tcp[1], _tcp[0]);
+        l12 = _llong[0]*_llong[0];
+        l22 =  _llong[1]*_llong[1];
+        q2 = acos((l12 - l22 + b2)/(2.*_llong[0]*sqrt(b2))); //(by the law of cosines)
+        phi11 = q1 + q2;                                  //(I know you can handle addition)
+        phi12 = q1 - q2;
+        phi11 -= phi11 > M_PI ? 2. * M_PI : 0;
+        phi12 -= phi12 > M_PI ? 2. *M_PI : 0;
+        phi11 += phi11 < -M_PI ? 2. *M_PI : 0;
+        phi12 += phi12 < -M_PI ? 2. *M_PI : 0;
+	      phi2 = acos((l12 + l22 - b2)/(2.*_llong[0]*_llong[1])); //(by the law of cosines)
+        phi22 = M_PI - phi2;
+        phi21 = -M_PI + phi2;
+      }else{
+        phi11 = phi12 = atan2(_tcp[1], _tcp[0]);
+        phi21 = phi22 = 0.;
+        _robLefty = !_robLefty;
+      }
+
       vector<KthReal> q;
       if( _robLefty ){
         q.push_back( phi11 );

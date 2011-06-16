@@ -238,6 +238,8 @@ namespace libPlanner {
 	//!function that constructs the PRM and finds a solution path
     bool PRMPlanner::trySolve(){
       _solved = false;
+      _init->addNeigh(_samples->indexOf(_goal));
+      _goal->addNeigh(_samples->indexOf(_init));
       int count = 0;
 
       //assert(_CrtCheckMemory());

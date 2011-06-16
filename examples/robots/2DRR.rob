@@ -31,7 +31,7 @@
     <Joint name="tcp" ivFile="2DRR/tcp.iv">
       <DHPars alpha="0.0" a="100.0" theta="0.0" d="0.0"  ></DHPars>
       <Description rotational="true" movable="true"  trunk="true"></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="0.0" Low="0.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="link2"></Parent>
     </Joint>

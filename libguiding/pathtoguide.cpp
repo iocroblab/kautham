@@ -253,6 +253,8 @@ namespace libGuiding{
     // compute nearest neighbor using library
 		_nearestQ->NearestNeighbor(pts, idx_ann, d_ann );// (void**&)result_pt);	
 
+    annDeallocPt( pts );
+
     return idx_ann;
   }
 
@@ -261,7 +263,7 @@ namespace libGuiding{
       indexs[0] = indexs[1] = -1;
 
       double *d_ann = new double[2];
-		  ANNpoint *result_pt = new ANNpoint[2];
+      ANNpoint *result_pt = annAllocPts(2, qn.size());
 
       ANNpoint pts = annAllocPt( qn.size() );
       std::copy(qn.begin(), qn.end(), pts );
@@ -270,6 +272,10 @@ namespace libGuiding{
 
       // compute nearest neighbor using library
       _nearestQ->NearestNeighbor(pts, d_ann, indexs, (void**&)result_pt);	
+
+      annDeallocPt( pts );
+      annDeallocPts( result_pt );
+
       return true;
     }catch(...){
       return false;
@@ -299,7 +305,7 @@ namespace libGuiding{
   int PathToGuide::nearX(const Xnode &xn ){
     double d_ann = 0.;
 		int idx_ann = 0;
-		//ANNpoint *result_pt = new ANNpoint;
+		
     ANNpoint pts = annAllocPt( xn.size() );
 
     std::copy(xn.begin(), xn.end(), pts );
@@ -307,6 +313,7 @@ namespace libGuiding{
     // compute nearest neighbor using library
 		_nearestX->NearestNeighbor(pts, idx_ann, d_ann );// (void**&)result_pt);	
 
+    annDeallocPt( pts );
     return idx_ann;
   }
 
@@ -315,7 +322,7 @@ namespace libGuiding{
       indexs[0] = indexs[1] = -1;
 
       double *d_ann = new double[2];
-		  ANNpoint *result_pt = new ANNpoint[2];
+      ANNpoint *result_pt = annAllocPts( 2, 7 );
 
       ANNpoint pts = annAllocPt( xn.size() );
       std::copy(xn.begin(), xn.end(), pts );
@@ -323,7 +330,10 @@ namespace libGuiding{
 		  d_ann[0] = d_ann[1] = INFINITY;
 
       // compute nearest neighbor using library
-      _nearestX->NearestNeighbor(pts, d_ann, indexs, (void**&)result_pt);	
+      _nearestX->NearestNeighbor(pts, d_ann, indexs, (void**&)result_pt);
+
+      annDeallocPt( pts );
+      annDeallocPts( result_pt );
       return true;
     }catch(...){
       return false;
@@ -412,7 +422,7 @@ namespace libGuiding{
 
     //XXXXXXXXXXX  Copying data  XXXXXXX
     for(unsigned int i = 0; i < _pathX.size();++i)
-      for(unsigned int k = 0; k < _rob.getNumJoints(); k++)
+      for(unsigned int k = 0; k < 7; k++)
 		    _ptsX[i][k] = _pathX.at(i).at(k);
 
     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

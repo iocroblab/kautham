@@ -748,6 +748,11 @@ namespace libGUI{
   void TeleoperationWidget::stopTeleoperation(){
     _inAction = false;
     _dataCell->synchronized = _synchronized = false;
+
+    // set forces to zero
+    KthReal forces[6]={0.};
+    _haptic->setSE3Force(forces);
+
     // Allow to change the teleoperated robot
     _radBttRobot0->setEnabled(true);
     _radBttRobot1->setEnabled(true);
