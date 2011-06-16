@@ -178,7 +178,7 @@ namespace libGUI{
   }
 
   TeleoperationWidget::~TeleoperationWidget(){
-    shared_memory_object::remove("KauthamSharedMemory"); 
+    //shared_memory_object::remove("KauthamSharedMemory"); 
   }
 
   void TeleoperationWidget::connectCell(){

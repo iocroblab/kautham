@@ -386,11 +386,16 @@ namespace libGuiding{
 		_ptsQ = annAllocPts(_pathQ.size(), dim);		// allocate data points
 
     // Copying data
-    for(unsigned int i = 0; i < _pathQ.size();++i)
+    for(unsigned int i = 0; i < _pathQ.size();++i){
       for(unsigned int k = 0; k < _rob.getNumJoints(); k++)
 		    _ptsQ[i][k] = _pathQ.at(i).at(k);
 
+      _nearestQ->AddPoint( _ptsQ[i], _ptsQ[i] );
+    }
+
     //XXXXXXXXXXXXXXXXX
+
+    
 
     delete topology;
     delete scale;
@@ -421,9 +426,12 @@ namespace libGuiding{
 		_ptsX = annAllocPts(_pathX.size(), 7);		// allocate data points
 
     //XXXXXXXXXXX  Copying data  XXXXXXX
-    for(unsigned int i = 0; i < _pathX.size();++i)
+    for(unsigned int i = 0; i < _pathX.size();++i){
       for(unsigned int k = 0; k < 7; k++)
 		    _ptsX[i][k] = _pathX.at(i).at(k);
+
+      _nearestX->AddPoint( _ptsX[i], _ptsX[i] );
+    }
 
     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   }
