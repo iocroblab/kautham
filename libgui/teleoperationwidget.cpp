@@ -512,6 +512,7 @@ namespace libGUI{
   }
 
   void TeleoperationWidget::setGuideForce(mt::Transform& tcp){
+    const KthReal THRESHOLD = 5.;
     KthReal forces[6];
     PathToGuide* path = NULL;
 
@@ -536,10 +537,10 @@ namespace libGUI{
     // Normally the measures are in millimeters.
     KthReal dist = path->unitVectors(xi,xd,idx,ratio,umag,upush);
 
-    if(dist > 5 ){
+    if(dist > THRESHOLD ){
       // Only testing the translational forces.
       for(int i = 0; i < 3; ++i){
-        forces[i] = (umag.at(i) + upush.at(i))*_maxForces[i];
+        forces[i] = ( umag.at(i) + upush.at(i) )*( _maxForces[i]* ( dist - THRESHOLD ) / 5. );
         forces[i] = forces[i] < _maxForces[i] ? forces[i] : _maxForces[i];
         forces[i] = forces[i] > -_maxForces[i] ? forces[i] : -_maxForces[i];
       }
