@@ -61,6 +61,11 @@ namespace libProblem {
 	{
 		distanceMapFile = distanceFile;
 	}
+	/*void WorkSpace::addNeighborhoodMapFile(string neighFile)
+	{
+		neighborhoodMapFile = neighFile;
+	}*/
+
 
   vector<KthReal>* WorkSpace::distanceCheck(Sample* sample) {
     vector<KthReal> tmpVec;

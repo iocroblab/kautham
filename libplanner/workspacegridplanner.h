@@ -61,7 +61,12 @@ namespace libPlanner {
    namespace workspacegridplanner{
 	//Typedefs
 	//!The location associated to a vertex of the graph will be the distance value to the obstacles
-    typedef unsigned long int location;
+	   struct location{
+		   int x; //coordinates x,y,z start at value 1
+		   int y;
+		   int z;
+		   int d;
+	   };
 	//!The cost of an edge of the graph will be a KthReal
     typedef KthReal cost;
 	//!Edge of a graph represented as a pair of ints (the vertices)
@@ -140,7 +145,21 @@ namespace libPlanner {
 		inline bool trySolve(){return true;}; 
 		inline bool setParameters(){return true;};
 
+		//!Function to compute the navigation function NF1 along the filtered graf
+		void computeNF1(gridVertex  vgoal);
+
+		//retunrs the origin
+		inline KthReal* getOrigin(){return &originGrid[0];};
+
+		//retunrs the voxelSize
+		inline KthReal* getVoxelSize(){return &voxelSize[0];};
+
 		protected:
+		//!position of the grid in the world
+		KthReal originGrid[3];
+
+		//!sizes of the voxels
+		KthReal voxelSize[3];
 
 		//!Number of cells of the grid
 		vector<int> cells;
@@ -199,8 +218,9 @@ namespace libPlanner {
 		//!Function that retruns the vector of potential values
 		inline PotentialMap getpotmat(){return potmap;};
 		
-		//!Function to compute the navigation function NF1 along the filtered graf
-		void computeNF1(gridVertex  vgoal);
+
+		
+		//void  connectGridFromFile(string file);
 	  };
    }
 }

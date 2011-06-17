@@ -15,7 +15,7 @@
   
   <Joint name="link1" ivFile="bronchoscope_module.iv">
     <PreTrans X="0.0000" Y="0.0000" Z="0.0000" WX="0.0000" WY="1.0000" WZ="0.0000" TH="90.0" ></PreTrans>
-    <DHPars alpha="0.0" a="30.0" theta="0.0" d="0.0"  ></DHPars>
+    <DHPars alpha="0.0" a="10.0" theta="0.0" d="0.0"  ></DHPars>
     <Description rotational="true" movable="true"  trunk="true"></Description>
     <Limits Hi="45.0" Low="-45.0"></Limits>
     <Weight weight="1.0"></Weight>
@@ -23,7 +23,7 @@
   </Joint>
   
   <Joint name="link2" ivFile="bronchoscope_module.iv">
-    <DHPars  alpha="0.0" a="15.0" theta="0.0" d="0.0"></DHPars>
+    <DHPars  alpha="0.0" a="2.0" theta="0.0" d="0.0"></DHPars>
     <Description rotational="true" movable="true"  trunk="true"></Description>
     <Limits Hi="45.0" Low="-45.0"></Limits>
     <Weight weight="1.0"></Weight>
@@ -31,7 +31,7 @@
   </Joint>
   
   <Joint name="link3" ivFile="bronchoscope_module.iv">
-    <DHPars  alpha="0.0" a="15.0" theta="0.0" d="0.0"></DHPars>
+    <DHPars  alpha="0.0" a="2.0" theta="0.0" d="0.0"></DHPars>
     <Description rotational="true" movable="true"  trunk="true"></Description>
     <Limits Hi="45.0" Low="-45.0"></Limits>
     <Weight weight="1.0"></Weight>
@@ -39,7 +39,7 @@
   </Joint>
   
     <Joint name="link4" ivFile="bronchoscope_module.iv">
-    <DHPars  alpha="0.0" a="15.0" theta="0.0" d="0.0"></DHPars>
+    <DHPars  alpha="0.0" a="2.0" theta="0.0" d="0.0"></DHPars>
     <Description rotational="true" movable="true"  trunk="true"></Description>
     <Limits Hi="45.0" Low="-45.0"></Limits>
     <Weight weight="1.0"></Weight>
@@ -47,7 +47,7 @@
   </Joint>
   
     <Joint name="link5" ivFile="bronchoscope_module.iv">
-    <DHPars  alpha="0.0" a="15.0" theta="0.0" d="0.0"></DHPars>
+    <DHPars  alpha="0.0" a="2.0" theta="0.0" d="0.0"></DHPars>
     <Description rotational="true" movable="true"  trunk="true"></Description>
     <Limits Hi="45.0" Low="-45.0"></Limits>
     <Weight weight="1.0"></Weight>
@@ -55,7 +55,7 @@
   </Joint>
   
     <Joint name="link6" ivFile="bronchoscope_module.iv">
-    <DHPars  alpha="0.0" a="15.0" theta="0.0" d="0.0"></DHPars>
+    <DHPars  alpha="0.0" a="2.0" theta="0.0" d="0.0"></DHPars>
     <Description rotational="true" movable="true"  trunk="true"></Description>
     <Limits Hi="45.0" Low="-45.0"></Limits>
     <Weight weight="1.0"></Weight>
@@ -63,7 +63,7 @@
   </Joint>
   
     <Joint name="link7" ivFile="bronchoscope_module.iv">
-    <DHPars  alpha="0.0" a="15.0" theta="0.0" d="0.0"></DHPars>
+    <DHPars  alpha="0.0" a="2.0" theta="0.0" d="0.0"></DHPars>
     <Description rotational="true" movable="true"  trunk="true"></Description>
     <Limits Hi="45.0" Low="-45.0"></Limits>
     <Weight weight="1.0"></Weight>
@@ -71,7 +71,7 @@
   </Joint>
   
     <Joint name="link8" ivFile="bronchoscope_module.iv">
-    <DHPars  alpha="0.0" a="15.0" theta="0.0" d="0.0"></DHPars>
+    <DHPars  alpha="0.0" a="2.0" theta="0.0" d="0.0"></DHPars>
     <Description rotational="true" movable="true"  trunk="true"></Description>
     <Limits Hi="45.0" Low="-45.0"></Limits>
     <Weight weight="1.0"></Weight>
@@ -79,7 +79,7 @@
   </Joint>
   
     <Joint name="link9" ivFile="bronchoscope_module.iv">
-    <DHPars  alpha="0.0" a="15.0" theta="0.0" d="0.0"></DHPars>
+    <DHPars  alpha="0.0" a="2.0" theta="0.0" d="0.0"></DHPars>
     <Description rotational="true" movable="true"  trunk="true"></Description>
     <Limits Hi="45.0" Low="-45.0"></Limits>
     <Weight weight="1.0"></Weight>
@@ -87,7 +87,7 @@
   </Joint>
   
     <Joint name="link10" ivFile="bronchoscope_module.iv">
-    <DHPars  alpha="0.0" a="15.0" theta="0.0" d="0.0"></DHPars>
+    <DHPars  alpha="0.0" a="2.0" theta="0.0" d="0.0"></DHPars>
     <Description rotational="true" movable="true"  trunk="true"></Description>
     <Limits Hi="45.0" Low="-45.0"></Limits>
     <Weight weight="1.0"></Weight>
@@ -95,7 +95,7 @@
   </Joint>
   
   <Joint name="Tcp" ivFile="bronchoscope_tcp.iv">
-    <DHPars  alpha="0.0" a="15.0" theta="0.0" d="0.0"></DHPars>
+    <DHPars  alpha="0.0" a="2.0" theta="0.0" d="0.0"></DHPars>
     <Description rotational="true" movable="true"  trunk="true"></Description>
     <Limits Hi="45.0" Low="-45.0"></Limits>
     <Weight weight="1.0"></Weight>
@@ -115,9 +115,9 @@
 		This vector can be added in order to provide a offset or centre values to adjust
 		the control values and the DOF values.
 	
-		<DOF name="X" value="0.0"></DOF> 
-		<DOF name="Y" value="0.0"></DOF> 
-		<DOF name="Z" value="0.0"></DOF> 
+		<DOF name="X" value="0.5"></DOF> 
+		<DOF name="Y" value="0.5"></DOF> 
+		<DOF name="Z" value="0.5"></DOF> 
 		<DOF name="X1" value="0.5"></DOF> 
 		<DOF name="X2" value="0.0"></DOF> 
 		<DOF name="X3" value="0.0"></DOF> 

@@ -103,6 +103,7 @@ namespace libPlanner {
 
 		grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize);
 
+		grid->computeNF1(0);
     }
 
 	//! void destructor
@@ -536,6 +537,30 @@ namespace libPlanner {
 	//! function to find a solution path
 		bool GUIBROgridPlanner::trySolve()
 		{
+
+			_solved = false;
+			_simulationPath.clear();
+			_cameraPath.clear();
+
+			Sample *gridsmp;
+			gridsmp = new Sample(_wkSpace->getDimension());
+			vector<KthReal>& coords = _init->getCoords();
+			
+			coords[0] = grid->getOrigin()[0];
+			coords[1] = grid->getOrigin()[1];
+			coords[2] = grid->getOrigin()[2];
+
+			gridsmp->setCoords(coords);
+
+			_wkSpace->collisionCheck(gridsmp);
+			gridsmp->setMappedConf(_wkSpace->getConfigMapping(_init));
+
+			_samples->add(gridsmp);
+
+
+			return _solved;
+
+/**************************************************/
 			_solved = false;
 			_simulationPath.clear();
 			_cameraPath.clear();
@@ -646,6 +671,8 @@ namespace libPlanner {
 
 
 			return _solved;
+
+
 		}
 	  }
 }

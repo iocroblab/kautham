@@ -20,6 +20,8 @@ DEF root Separator {
           }
 
         }
+        
+        
         geometry 
         VRMLIndexedFaceSet {
           coord 
@@ -65577,4 +65579,11 @@ DEF root Separator {
       }
 
   }
+  
+  DrawStyle { pointSize 3 }
+
+     PointSet { }
+
+ 
+ 
 }

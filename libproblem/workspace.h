@@ -78,6 +78,8 @@ namespace libProblem{
 
 	  void addDistanceMapFile(string distanceFile);
 	  inline string getDistanceMapFile(){return distanceMapFile;};
+	  //void addNeighborhoodMapFile(string neighFile);
+	  //inline string getNeighborhoodMapFile(){return neighborhoodMapFile;};
 
 //      //! This method returns true if the all robots in the scene only accepts SE3 data;
 //      //! This method is deprecated. Maybe it never has been used.
@@ -101,6 +103,7 @@ namespace libProblem{
       vector<RobWeight*>    _robWeight;
 
 	  string distanceMapFile;
+	  //string neighborhoodMapFile;
 
   };
 }

@@ -9,7 +9,7 @@ DEF root Separator {
 
   }
   Sphere {
-    radius 2.05
+    radius 1.05
 
   }
 }
