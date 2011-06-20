@@ -111,6 +111,19 @@ namespace libProblem {
 	
  }
 
+  RobLayout& IvKinTx90::getRobLayout(vector<KthReal> &target){
+    //completes the target with configuration parameters information
+	  KthReal ifRig = 425*sin(target[1])
+                          + 425*sin(target[1] + target[2])
+                          + 50;
+    _robLay[0] = ifRig >= 0. ? false : true ;
+ 
+    _robLay[1] = target[2] >= 0. ? true : false ;
+
+    _robLay[2] = target[4] >= 0. ? true : false ;
+
+    return _robLay;
+  }
 
 
   bool IvKinTx90::solve(mt::Transform& tcp, const Vect6 &current){
@@ -280,9 +293,9 @@ namespace libProblem {
           _target.at(i) = _targetTrans.getRotation().at(i-3);
 
 		if(_target.size() > 7){
-			_target.at(7) = _txConf.sh;
-			_target.at(8) = _txConf.el;
-			_target.at(9) = _txConf.wr;
+      _target.at(7) = _txConf.sh == srighty ? 1. : 0. ;
+      _target.at(8) = _txConf.el == epositive ? 1. : 0. ;
+      _target.at(9) = _txConf.wr == wpositive ? 1. : 0. ;
 		}
 
       }catch(...){

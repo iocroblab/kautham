@@ -56,6 +56,9 @@ using namespace libSampling;
 
 namespace libProblem {
   class Robot;
+  //! This vector contains the layout of the robot adopted by the solution. The layout is a descriptive
+  //! configuration of the pose of the robot. It is normally used as shoulder left/right, or elbow up/down.
+  typedef vector<bool> RobLayout;
 
   class InvKinEx: public exception {
     public:
@@ -82,11 +85,15 @@ namespace libProblem {
 
 	  //!	This method must be implemented in order to obtain a solution
 	  //! of the inverse kinematic model for a specific target.
-    virtual bool      solve()=0;
+    virtual bool      solve() = 0;
 
 	  //!	This method allows extract the information from the Hash_Map
 	  //! and setup the internal variables.
-    virtual bool      setParameters()=0;
+    virtual bool      setParameters() = 0;
+
+    //! This method returns the high level configuration description of the robot i.e. shoulder left/right or 
+    //! elbow up/down for the target parameter. This function should be virtual pure.
+    virtual RobLayout& getRobLayout(vector<KthReal> &target); // = 0;
 
 	  //!	This method allow to setup the target. Commonly, the target is se3.coordintes.
     void              setTarget(vector<KthReal> &target, const string& param=string(""));
@@ -96,6 +103,8 @@ namespace libProblem {
     inline RnConf&    getRn(){return _robConf.getRn();}
     inline RobConf&   getRobConf(){return _robConf;}
     inline Robot&     getRobot(){return *_robot;}
+    inline RobLayout& getRobLayout(){return _robLay;}
+    inline void       setRobLayout(RobLayout& robLay){copy(robLay.begin(), robLay.end(), _robLay.begin());}
 
   private:
     InverseKinematic();
@@ -104,10 +113,12 @@ namespace libProblem {
 	  //!	This is a robot pointer. It will be free, chain or tree robot.
     Robot*          _robot;
     RobConf         _robConf;
+    RobLayout       _robLay;
 
 	  //! This vector contains the target to be solved.
     vector<KthReal> _target;      //!< This is a generic way to set up the target.
     mt::Transform   _targetTrans; //!< This is the Scene target
+
   };
 
 }

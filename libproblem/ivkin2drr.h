@@ -56,6 +56,7 @@ namespace libProblem {
     ~IvKin2DRR();
     bool            solve();
     bool            setParameters();
+    RobLayout&      getRobLayout(vector<KthReal> &target);
     inline void     setConfiguration(const bool lefty){_robLefty = lefty;}
   private:
     IvKin2DRR();

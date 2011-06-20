@@ -57,6 +57,8 @@ namespace libProblem {
     addParameter("Px", _tcp[0]);
     addParameter("Py", _tcp[1]);
     addParameter("Shoulder Lefty?", 0. );
+    _robLay.resize(1);
+    _robLay[0] = false;
   }
 
   IvKin2DRR::~IvKin2DRR(){
@@ -93,7 +95,7 @@ namespace libProblem {
       }else{
         phi11 = phi12 = atan2(_tcp[1], _tcp[0]);
         phi21 = phi22 = 0.;
-        _robLefty = !_robLefty;
+        //_robLefty = !_robLefty;
       }
 
       vector<KthReal> q;
@@ -138,6 +140,15 @@ namespace libProblem {
         return false;
       }
       return true;
+  }
+
+  RobLayout& IvKin2DRR::getRobLayout(vector<KthReal> &target){
+    if( target.size() > 0 && target[1] <= 0. )
+      _robLay[0] = true;
+    else
+      _robLay[0] = false;
+
+    return _robLay;
   }
 
 }

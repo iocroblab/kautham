@@ -58,6 +58,7 @@ namespace libProblem {
     ~IvKinTx90();
     bool            solve();
     bool            setParameters();
+    RobLayout&      getRobLayout(vector<KthReal> &target);
     void            setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);
     bool            solve(mt::Transform& tcp, const config& conf = robot::config(), config* solution = NULL, Vect6* qNear = NULL );
     bool            solve(mt::Transform& tcp, const Vect6 &current);

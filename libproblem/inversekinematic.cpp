@@ -112,7 +112,7 @@ namespace libProblem {
   }
 
   
-   void InverseKinematic::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
+  void InverseKinematic::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
 	   //loads the target: the tcp transform
     _target.clear();
     for(int i =0; i< target.size(); i++)
@@ -120,7 +120,11 @@ namespace libProblem {
 	  
 	  //masterconf not used -  maintainSameWrist not used
 	  //the derived classes may use it to complete the target with configuration parameters
-   }
+  }
+
+  RobLayout& InverseKinematic::getRobLayout(vector<KthReal> &target){
+    return _robLay;
+  }
 
 }
 

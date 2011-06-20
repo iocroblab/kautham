@@ -147,7 +147,7 @@ namespace libGUI{
       mt::Transform         getNewH2HipBB(vector<GuiNode*>& path, mt::Transform& tcp);
       void                  calculateForce(pathPoint delta, KthReal dist, KthReal forces[]);
       void                  setJumpForce(mt::Transform& tcp);
-      void                  setGuideForce(mt::Transform& tcp);
+      int                   setGuideForce(mt::Transform& tcp);
 
       //XXXXXXXXXXXXXXXXXXXXXXXX
       QGridLayout *gridLayout_10;

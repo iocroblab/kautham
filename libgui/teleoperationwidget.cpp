@@ -511,7 +511,7 @@ namespace libGUI{
     }
   }
 
-  void TeleoperationWidget::setGuideForce(mt::Transform& tcp){
+  int TeleoperationWidget::setGuideForce(mt::Transform& tcp){
     const KthReal THRESHOLD = 5.;
     KthReal forces[6];
     PathToGuide* path = NULL;
@@ -549,6 +549,9 @@ namespace libGUI{
 
     //XXXXXXXXXX Applying the force to haptic XXXXXXXXXXXXXXXX
     _haptic->setSE3Force(forces);
+
+    //XXXXXXXXXXXXX Return the index of the nearest node of the path
+    return idx;
   }
 
   void TeleoperationWidget::setJumpForce(mt::Transform& tcp){
@@ -934,7 +937,10 @@ namespace libGUI{
     else if(_radBttRobot1->isChecked())
       activeRob = 1;
 
-    setGuideForce(tcp2w);
+    int nea = setGuideForce(tcp2w);
+
+    PathToGuide* path = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
+    RobLayout&   robLay = path->getLayout( nea ); // This line gets the respective layout of the robot
 
     if(_problem->wSpace()->getRobot(activeRob)->getIkine() == NULL)
       _problem->wSpace()->getRobot(activeRob)->Kinematics(se3conf);
@@ -942,12 +948,22 @@ namespace libGUI{
       try{
         if(_problem->wSpace()->getRobot(activeRob)->getName() == "RR2D"){
           vector<KthReal> target(se3conf.getCoordinates());
+
+          target.push_back(robLay[0] == true ? 1. : 0. );
+          
           RobConf& tmp =_problem->wSpace()->getRobot(0)
                       ->InverseKinematics(target);
           _problem->wSpace()->getRobot(0)->Kinematics(tmp);
         }else 
         if(_problem->wSpace()->getRobot(activeRob)->getName() == "TX90"){
-          vector<KthReal> target(se3conf.getCoordinates());
+          vector<KthReal> target( se3conf.getCoordinates() );
+
+          target.push_back(robLay[0] == true ? 1. : 0. );
+          target.push_back(robLay[1] == true ? 0. : 1. );
+          target.push_back(robLay[2] == true ? 0. : 1. );
+
+          /* // This block assumes that the new pose of the robot is equally to the current. 
+             // It mantains shoulder/elbow/wrist configuration.
           RnConf& currConf = _problem->wSpace()->getRobot(activeRob)->getCurrentPos()->getRn();
 
           KthReal ifRig = 425*sin(currConf.getCoordinate(1))
@@ -967,6 +983,7 @@ namespace libGUI{
             target.push_back(0);
           else
             target.push_back(1);
+            */
 
           RobConf& tmp =_problem->wSpace()->getRobot(activeRob)
                       ->InverseKinematics(target);

@@ -49,6 +49,7 @@
 #include <libproblem/robot.h>
 #include <libann/DNN/multiann.h>
 #include <libutil/kauthamdefs.h>
+#include <libproblem/inversekinematic.h>
 
 using namespace Kautham;
 using namespace libProblem;
@@ -138,6 +139,9 @@ public:
       return false;
     }
 
+    //! Returns the layout of the robot at node index.
+    inline libProblem::RobLayout& getLayout(int index){ return _layouts.at(index);}
+
     static mt::Transform xnode2tran(Xnode &xnode){
       mt::Transform tra( Rotation(xnode.at(3), xnode.at(4), xnode.at(5), xnode.at(6)),
                          Point3(xnode.at(0), xnode.at(1), xnode.at(2) ));
@@ -177,6 +181,9 @@ public:
 
     //! This vector is used to store the unit vector from the current point to next one.
     vector<Uvec>    _uvecX;
+
+    //! This vector stores the layout of the robot for each node in the pathQ;
+    vector<libProblem::RobLayout> _layouts;
     
     //! ANN structure to search the nearest in cspace
   	MultiANN*       _nearestQ;
