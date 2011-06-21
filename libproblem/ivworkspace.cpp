@@ -58,18 +58,39 @@ namespace libProblem {
 			  for(unsigned int i=0; i<robots.size(); i++)
 				  scene->addChild((SoSeparator*)robots[i]->getModel());
   			
-			  for(unsigned int i=0; i<obstacles.size(); i++)
-				  scene->addChild((SoSeparator*)obstacles[i]->getModel());
+			  for(unsigned int i=0; i<obstacles.size(); i++){
+				  SoSeparator* sep = (SoSeparator*)obstacles[i]->getModel();
+				  char str[20];
+				  sprintf(str,"obstacle%d",i);
+				  sep->setName(str);
+				  scene->addChild(sep);
+				  //scene->addChild((SoSeparator*)obstacles[i]->getModel());
+			  }
   			
 			  scene->ref();
       }
     }
+
+		/* The following does not work properly when cildren should be accesseb by labels.
+		   The scene pointer should be returned instead.*/
+		/*
 			SoSeparator* temp = new SoSeparator();
 			temp->addChild(scene);
-      temp->ref();
+			temp->ref();
 			if(bounding)
 				temp->addChild(calculateBoundingBox(scene));
 			return temp;
+		*/
+
+		//comporvacio
+		//SoNode *sepgrid = scene->getByName("obstacle1");
+		//int c = scene->findChild(sepgrid);
+		//scene->removeChild(sepgrid);
+
+
+		if(bounding)
+			scene->addChild(calculateBoundingBox(scene));
+		return scene;
 	}
 	
 	void IVWorkSpace::updateScene(){

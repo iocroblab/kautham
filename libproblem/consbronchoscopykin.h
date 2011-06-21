@@ -24,6 +24,9 @@ namespace libProblem {
     void            SolveConstrainedKinematics(vector<KthReal> &values);
 	void			setInverseAdvanceMode(bool flag){_inverse=flag;};
 
+	inline void  	setMaxBending(KthReal max){_maxbending=max;};
+	inline KthReal 	getMaxBending(){return _maxbending;};
+
 	private:
     RobConf		      solve(vector<KthReal> &values);
     RobConf		      solveInverse(vector<KthReal> &values);
@@ -31,6 +34,7 @@ namespace libProblem {
 		KthReal			    _currentvalues[3];
 		bool _inverse;
     mt::Transform   Tbase;
+	KthReal		_maxbending;
 	};
 }
 

@@ -65580,10 +65580,6 @@ DEF root Separator {
 
   }
   
-  DrawStyle { pointSize 3 }
-
-     PointSet { }
-
- 
+   
  
 }

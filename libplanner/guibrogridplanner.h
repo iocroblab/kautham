@@ -114,6 +114,7 @@ using namespace workspacegridplanner;
 
 	    private:
 		//Add private data and functions
+			int* _showObstacle;
 
 	  };
    }

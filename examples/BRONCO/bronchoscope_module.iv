@@ -10,17 +10,17 @@ DEF root Separator {
     radius 1
   }
   Translation {
-    translation 1 0 0
+    translation 0.5 0 0
   }
   Rotation {
     rotation 0 0 1  1.5707999
   }
   Cylinder {
     radius 1
-    height 2
+    height 1
   }
   Translation {
-    translation 0 -1 0
+    translation 0 -0.5 0
   }
   Sphere {
     radius 1

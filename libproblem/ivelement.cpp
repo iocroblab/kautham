@@ -84,6 +84,7 @@ namespace libProblem {
 			ivmodel->addChild(new SoSphere());
 
 		ivmodel->ref();
+
 	}
 
 	void IVElement::setPosition(KthReal pos[3]){

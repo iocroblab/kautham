@@ -41,6 +41,7 @@
  
  
 
+#include <libproblem/ivworkspace.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include <libsampling/robconf.h>
@@ -70,6 +71,16 @@ namespace libPlanner {
 		_debug=false;
       _drawnLink = 0; //the path of base is defaulted
 	  _thresholdInvKin = 0.5;
+	  
+	  _showObstacle = new int[_wkSpace->obstaclesCount()];
+	  char str[50];
+	  for(int i=0; i<_wkSpace->obstaclesCount();i++) 
+	  {
+		  _showObstacle[i]=-1;
+		  sprintf(str,"Show Obstacle %d (0/1)",i);
+		  addParameter(str, 1);//shown
+	  }
+	  
 
 		//set intial values from parent class data
 		_speedFactor = 1;
@@ -201,6 +212,50 @@ namespace libPlanner {
 		}
         else
           return false;
+
+		
+		//Show/Unshow obstacles
+		char str[50];
+		SoSeparator *seproot = ((IVWorkSpace*)_wkSpace)->getIvScene();
+		for(int i=0; i<_wkSpace->obstaclesCount();i++)
+		{
+			sprintf(str,"Show Obstacle %d (0/1)",i);
+			it = _parameters.find(str);
+			if(it != _parameters.end())
+			{
+				//if the obstacle should be removed
+				if(it->second ==0)
+				{
+					_showObstacle[i] = it->second;
+					sprintf(str,"obstacle%d",i);
+					SoNode *sepgrid = seproot->getByName(str);
+					//comprovacio
+					//int c = seproot->findChild(sepgrid);
+					seproot->removeChild(sepgrid);
+
+     			}
+				//if the obstacle should be added (because it has been previously removed)
+				//(note that _showObstacle is initalized to -1 in order not to add again the
+				//obstacle if it is already there.)
+				else if(_showObstacle[i]==0)
+				{
+					_showObstacle[i] = it->second;
+					SoSeparator* gridSep = (SoSeparator*)_wkSpace->getObstacle(i)->getModel();
+					sprintf(str,"obstacle%d",i);
+					gridSep->setName(str);
+					seproot->addChild(gridSep);
+					
+					//comprovacio
+					//SoNode *sepgrid = seproot->getByName(str);
+					//int c = seproot->findChild(sepgrid);
+					//int kk=0;
+				}
+			}
+			else
+				return false;
+		}
+		//end show obstacles
+		
 
 		it = _parameters.find("Drawn Path Link");
 		if(it != _parameters.end()){

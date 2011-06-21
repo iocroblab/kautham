@@ -135,21 +135,21 @@ function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilen
               end
               
               
-              if k-1>=1 
-                  if d(i,j,k-1)==1000000
-                    d(i,j,k-1) = d(i,j,k)+1;
-                    lindex_i = lindex_i + 1;
-                    L(lindex+1,lindex_i) = s(2)*s(1)*(k-2) + s(1)*(j-1) + i;
-                  end
-              end
-              
-              if k+1<=s(3) 
-                  if d(i,j,k+1)==1000000
-                    d(i,j,k+1) = d(i,j,k)+1;
-                    lindex_i = lindex_i + 1;
-                    L(lindex+1,lindex_i) = s(2)*s(1)*(k) + s(1)*(j-1) + i;
-                  end
-              end
+%               if k-1>=1 
+%                   if d(i,j,k-1)==1000000
+%                     d(i,j,k-1) = d(i,j,k)+1;
+%                     lindex_i = lindex_i + 1;
+%                     L(lindex+1,lindex_i) = s(2)*s(1)*(k-2) + s(1)*(j-1) + i;
+%                   end
+%               end
+%               
+%               if k+1<=s(3) 
+%                   if d(i,j,k+1)==1000000
+%                     d(i,j,k+1) = d(i,j,k)+1;
+%                     lindex_i = lindex_i + 1;
+%                     L(lindex+1,lindex_i) = s(2)*s(1)*(k) + s(1)*(j-1) + i;
+%                   end
+%               end
               
         end
         
@@ -176,7 +176,7 @@ function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilen
     
        %Process all lists, until no more lists available.
        while lindex >= 1
-         lindex
+         %lindex
          lindex_i=0;
          %l %print current list being processed
         
@@ -235,21 +235,21 @@ function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilen
               end
               
               
-              if k-1>=1 
-                  if d(i,j,k-1)==-1000000
-                    d(i,j,k-1) = d(i,j,k)-1;
-                    lindex_i = lindex_i + 1;
-                    L2(lindex+1,lindex_i) = s(2)*s(1)*(k-2) + s(1)*(j-1) + i;
-                  end
-              end
-              
-              if k+1<=s(3) 
-                  if d(i,j,k+1)==-1000000
-                    d(i,j,k+1) = d(i,j,k)-1;
-                    lindex_i = lindex_i + 1;
-                    L2(lindex+1,lindex_i) = s(2)*s(1)*(k) + s(1)*(j-1) + i;
-                  end
-              end
+%               if k-1>=1 
+%                   if d(i,j,k-1)==-1000000
+%                     d(i,j,k-1) = d(i,j,k)-1;
+%                     lindex_i = lindex_i + 1;
+%                     L2(lindex+1,lindex_i) = s(2)*s(1)*(k-2) + s(1)*(j-1) + i;
+%                   end
+%               end
+%               
+%               if k+1<=s(3) 
+%                   if d(i,j,k+1)==-1000000
+%                     d(i,j,k+1) = d(i,j,k)-1;
+%                     lindex_i = lindex_i + 1;
+%                     L2(lindex+1,lindex_i) = s(2)*s(1)*(k) + s(1)*(j-1) + i;
+%                   end
+%               end
               
           end
         
@@ -276,37 +276,37 @@ function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilen
     
 
     
-%     %Print the distance-map
-%     fid = fopen(distancefilename, 'wt');
-%     fprintf(fid, '%d %d %d\n', [s(1) s(2) s(3)]);
+    %Print the distance-map
+    fid = fopen(distancefilename, 'wt');
+    fprintf(fid, '%d %d %d\n', [s(1) s(2) s(3)]);
     %origin of the grid
     ox=-146.953;%-10.258%
     oy=-142.031;%-2.536%
     oz=-315.75;%-237.565%
-%     fprintf(fid, '%d %d %d\n', ox, oy, oz);
-%     %size of the voxels
+    fprintf(fid, '%d %d %d\n', ox, oy, oz);
+    %size of the voxels
     sx=0.702807;
     sy=0.70277;
     sz=0.625492;
-%     fprintf(fid, '%d %d %d\n',sx, sy, sz);
-%     for k=1:1:s(3)%pisos
-%       for j=1:1:s(2)%columnes
-%         for i=1:1:s(1)%files
-%           if d(i,j,k)>-1000000 && d(i,j,k)<1000000 
-%             q = s(2)*s(1)*(k-1) + s(1)*(j-1) + i;
-%             fprintf(fid, '%d %d\n', [q d(i,j,k)]);
-%           end
-%         end
-%       end
-%     end
-%     fclose(fid)
+    fprintf(fid, '%d %d %d\n',sx, sy, sz);
+    for k=1:1:s(3)%pisos
+      for j=1:1:s(2)%columnes
+        for i=1:1:s(1)%files
+          if d(i,j,k)>-1000000 && d(i,j,k)<1000000 
+            q = s(2)*s(1)*(k-1) + s(1)*(j-1) + i;
+            fprintf(fid, '%d %d\n', [q d(i,j,k)]);
+          end
+        end
+      end
+    end
+    fclose(fid)
     
     
     %Print the Grid in a VRML file
-    gridStep = 5
+    gridStep = 1
     fidgrid = fopen(gridfilename, 'wt');
     fprintf(fidgrid, '#VRML V1.0 ascii\n');
-    fprintf(fidgrid, 'DEF root Separator {\n');
+    fprintf(fidgrid, 'DEF grid Separator {\n');
     fprintf(fidgrid, 'Separator {\n');
     fprintf(fidgrid, 'Material {\n');
     fprintf(fidgrid, 'diffuseColor [\n');
@@ -322,7 +322,7 @@ function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilen
           elseif d(i,j,k)>0 & d(i,j,k)<1000000 
              c = 0.4+(d(i,j,k)/maxdistance);
              if(c>1) 
-                 c=1
+                 c=1;
              end
              if k==s(3) & j==s(2) & i==s(1) 
                  fprintf(fidgrid, '%f %f %f\n', c,c,c);
@@ -335,7 +335,7 @@ function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilen
     end
     fprintf(fidgrid, ']\n');
     fprintf(fidgrid, '}\n');
-    fprintf(fidgrid, 'MaterialBinding { value OVERALL }\n'); %PER_PART
+    fprintf(fidgrid, 'MaterialBinding { value PER_PART  }\n'); %OVERALL
     fprintf(fidgrid, 'Coordinate3 {\n');
     fprintf(fidgrid, 'point [\n');
     for k=1:gridStep:s(3)%pisos
