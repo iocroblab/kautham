@@ -140,7 +140,13 @@ public:
     }
 
     //! Returns the layout of the robot at node index.
-    inline libProblem::RobLayout& getLayout(int index){ return _layouts.at(index);}
+    inline libProblem::RobLayout getLayout(int index){ 
+      if(index > 0 && index < _layouts.size() )
+        return _layouts.at(index);
+      
+      libProblem::RobLayout tmp;
+      return tmp;
+    }
 
     static mt::Transform xnode2tran(Xnode &xnode){
       mt::Transform tra( Rotation(xnode.at(3), xnode.at(4), xnode.at(5), xnode.at(6)),

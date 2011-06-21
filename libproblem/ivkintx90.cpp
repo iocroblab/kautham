@@ -55,6 +55,7 @@ namespace libProblem {
     _result = new Vect6(6);
     _eulPos.resize(6);
     _robConf.setRn(6);
+    _robLay.resize(3);
 
     // Offset from the modeled home to the real home.
     mt::Point3 Offset(0., 0., 478.);

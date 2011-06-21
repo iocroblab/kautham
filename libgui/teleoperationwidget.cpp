@@ -51,6 +51,8 @@
 #include <libguiding/pathtoguide.h>
 #include <QProcess>
 //#include <crtdbg.h>
+#include <libproblem/ivkintx90.h>
+#include <libproblem/ivkin2drr.h>
 
 using namespace boost::interprocess;
 using namespace libGuiding;
@@ -940,27 +942,29 @@ namespace libGUI{
     int nea = setGuideForce(tcp2w);
 
     PathToGuide* path = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
-    RobLayout&   robLay = path->getLayout( nea ); // This line gets the respective layout of the robot
+    RobLayout  robLay = path->getLayout( nea ); // This line gets the respective layout of the robot if it has a IK model.
 
     if(_problem->wSpace()->getRobot(activeRob)->getIkine() == NULL)
       _problem->wSpace()->getRobot(activeRob)->Kinematics(se3conf);
     else{
       try{
-        if(_problem->wSpace()->getRobot(activeRob)->getName() == "RR2D"){
+        if(typeid(*_problem->wSpace()->getRobot(activeRob)->getIkine()) == typeid(IvKin2DRR) ){
           vector<KthReal> target(se3conf.getCoordinates());
 
-          target.push_back(robLay[0] == true ? 1. : 0. );
+          if(robLay.size() > 0 ) target.push_back(robLay[0] == true ? 1. : 0. );
           
           RobConf& tmp =_problem->wSpace()->getRobot(0)
                       ->InverseKinematics(target);
           _problem->wSpace()->getRobot(0)->Kinematics(tmp);
         }else 
-        if(_problem->wSpace()->getRobot(activeRob)->getName() == "TX90"){
+        if(typeid(*_problem->wSpace()->getRobot(activeRob)->getIkine()) == typeid(IvKinTx90) ){
           vector<KthReal> target( se3conf.getCoordinates() );
 
-          target.push_back(robLay[0] == true ? 1. : 0. );
-          target.push_back(robLay[1] == true ? 0. : 1. );
-          target.push_back(robLay[2] == true ? 0. : 1. );
+          if(robLay.size() > 0 ){
+            target.push_back(robLay[0] == true ? 1. : 0. );
+            target.push_back(robLay[1] == true ? 0. : 1. );
+            target.push_back(robLay[2] == true ? 0. : 1. );
+          }
 
           /* // This block assumes that the new pose of the robot is equally to the current. 
              // It mantains shoulder/elbow/wrist configuration.

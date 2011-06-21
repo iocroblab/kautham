@@ -70,6 +70,8 @@ namespace libProblem {
     try{
       _tcp[0] = _target.at(0);
       _tcp[1] = _target.at(1);
+
+      if( _target.size() > 7 ) _robLefty = _target[7] == 1. ? true : false ;
       
       _targetTrans.setTranslation(mt::Point3(_tcp[0],_tcp[1], 0.));
       _targetTrans.setRotation(mt::Rotation(0., 0., 0., 1. ));
