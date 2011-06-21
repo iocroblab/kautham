@@ -81,8 +81,12 @@ namespace libGuiding{
         trans = _rob.getLastLinkTransform();
         anXnode = tran2xnode(trans);
 
+        // Now, the vector of layouts is filled using the Inverse Kinematic Model.
+        RobLayout& rbLy = _rob.getIkine()->getRobLayout( it->second.getCoordinates() );
+
         _pathQ.push_back( anQnode );
         _pathX.push_back( anXnode );
+        _layouts.push_back( rbLy );
       }  
 
       if( _pathQ.empty() ) return false; // If the robot does not have a path to be guided.
