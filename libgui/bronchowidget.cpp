@@ -1,9 +1,13 @@
 #include "bronchowidget.h"
 #include "build/libgui/ui_bronchowidget.h"
 #include <libproblem/ConsBronchoscopyKin.h>
+#include <libplanner/guibrogridplanner.h>
 #include "gui.h"
 
 using namespace  libGUI;
+ 
+
+
 bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui) : //QWidget *parent
     ui(new Ui::bronchoWidget)
 {
@@ -30,6 +34,7 @@ bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui) : 
     QObject::connect(ui->RateCheckBox,SIGNAL(stateChanged(int)),SLOT(setNavMode(int)));
     QObject::connect(ui->InverseCheckBox,SIGNAL(stateChanged(int)),SLOT(setAdvanceMode(int)));
     QObject::connect(ui->CameraCheckBox,SIGNAL(stateChanged(int)),SLOT(setCameraMode(int)));
+    QObject::connect(ui->collisionCheckButton, SIGNAL( clicked() ), this, SLOT( collisionCheck() ) ); 
 }
 
 bronchoWidget::~bronchoWidget()
@@ -48,6 +53,30 @@ void bronchoWidget::changeEvent(QEvent *e)
         break;
     }
 }
+
+
+void bronchoWidget::collisionCheck()
+{
+	//collisionCheckButton
+	if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
+	{
+		int cost;
+		bool c =((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->collisionCheck(&cost);
+		if(c==true)
+		{
+			cout<<"The bronchoscope is in collision or out of bounds"<<endl;
+			cout<<"The cost of current configuration is "<<cost<<endl;
+		}
+		else
+		{
+			cout<<"The bronchoscope is in a free configuration"<<endl;
+			cout<<"The cost of current configuration is "<<cost<<endl;
+		}
+	}	
+	else
+		cout<<"Sorry: This option only works for the planner named 'GUIBRO Grid Planner'"<<endl;
+}
+
 
 void bronchoWidget::alphaSliderChanged(int val){
   /*QString tmp;c

@@ -29,6 +29,12 @@
       Configuration of the scene
     </Location>
   </Scene>
+  <Scene scene="BRONCO/point.wrl" scale="1.0">
+    Scene Path
+    <Location X="0.0" Y="0.0" Z="0.0" WX="1.0" WY="0.0" WZ="0.0" TH="0">
+      Configuration of the scene
+    </Location>
+  </Scene>
 	<DistanceMap distanceMap="BRONCO/broncoDistanceMap.txt">
 	</DistanceMap>
 	<Planner>
@@ -52,8 +58,8 @@
     </Parameters>
 		<Queries>
 			<Query>
-        <Init dim="7">0.559 0.482 0.79 0 0.313 0.21 0.487</Init>
-        <Goal dim="7">0.297 0.492 0.39 0.462 0.369 0.338 0.5</Goal>
+        <Init dim="7">0.546 0.614 0.759 0 0.559 0.231 0.5</Init>
+        <Goal dim="7">0.508 0.62 0.397 0.281 0.336 0.193 0.458</Goal>
     </Query>
 		</Queries>
 	</Planner>

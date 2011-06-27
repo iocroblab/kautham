@@ -29,6 +29,7 @@ namespace Ui {
 		void              setNavMode(int state);
 		void              setAdvanceMode(int state);
 		void              setCameraMode(int state);
+		void			  collisionCheck();
 	public:
 		bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui ); //QWidget *parent = 0
 		~bronchoWidget();

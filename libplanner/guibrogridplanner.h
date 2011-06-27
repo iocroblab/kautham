@@ -89,6 +89,8 @@ using namespace workspacegridplanner;
 		bool applyRandControl(guibroSample *currGsmp);
 		void printInfo(guibroSample *gs);
 		void moveAlongPath(unsigned int step); //reimplemented
+
+		bool collisionCheck(int *cost, KthReal radius=1.0);
 		//Add public data and functions
 
 		protected:
@@ -112,9 +114,13 @@ using namespace workspacegridplanner;
 
 		workspacegridPlanner* grid;
 
+
 	    private:
 		//Add private data and functions
 			int* _showObstacle;
+		
+			unsigned int findGridCell(Sample * s);
+			bool findGraphVertex(Sample * s, gridVertex *v);
 
 	  };
    }

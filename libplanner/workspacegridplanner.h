@@ -90,15 +90,16 @@ namespace libPlanner {
     typedef gridGraph::vertex_iterator vertex_iterator;
 
 	
-	//!Function that filters out edges with negative weigh
+	//!Function that filters out edges with weigh below a given threshold
 	template <typename EdgeWeightMap>
-		struct negative_edge_weight {
-			negative_edge_weight() { }
-			negative_edge_weight(EdgeWeightMap weight) : m_weight(weight) { }
+		struct threshold_edge_weight {
+			threshold_edge_weight() { }
+			threshold_edge_weight(EdgeWeightMap weight, cost threshold) : m_weight(weight), edgeweightthreshold(threshold) { }
 			template <typename Edge>
 				bool operator()(const Edge& e) const {
-					return get(m_weight, e) > 0.0;
+					return get(m_weight, e) > edgeweightthreshold;
 				}
+			cost edgeweightthreshold;
 			EdgeWeightMap m_weight;
 	};
 
@@ -127,7 +128,7 @@ namespace libPlanner {
 
 	//!Graph representing the subgraph of the grid without the edges that have the source or target
 	//!vertex associated to a collision cell
-	typedef filtered_graph<gridGraph, negative_edge_weight<WeightMap> > filteredGridGraph;
+	typedef filtered_graph<gridGraph, threshold_edge_weight<WeightMap> > filteredGridGraph;
 
 
   //! This class is an class that represents a discretization of the workspace.
@@ -146,23 +147,49 @@ namespace libPlanner {
 		inline bool setParameters(){return true;};
 
 		//!Function to compute the navigation function NF1 along the filtered graf
-		void computeNF1(gridVertex  vgoal);
+		bool computeNF1(gridVertex vgoal);
 
-		//retunrs the origin
+		//!Function to compute an harmonic function  along the filtered graf
+		//bool computeHF(gridVertex vgoal);
+
+		//!retunrs the origin
 		inline KthReal* getOrigin(){return &originGrid[0];};
 
-		//retunrs the voxelSize
+		//!retunrs the voxelSize
 		inline KthReal* getVoxelSize(){return &voxelSize[0];};
+		
+		//!returns the size of the grid in each axis
+		inline int* getDiscretization(){return _stepsDiscretization;};
 
-		protected:
+		//!returns the size of the grid in each axis
+		bool getDistance(unsigned int label, int *dist);
+
+		
+		//!returns pointer to Locations
+		inline vector<location>* getLocations(){return &locations;};
+
+		//!retunrs the pointer to the filtered graph
+		inline filteredGridGraph* getFilteredGraph(){return fg;};
+
+		//!function to compute the index of the graph vertex from the label on the regular grid
+		bool getGraphVertex(unsigned int label, gridVertex *v);
+
+		//!Function to obtain the potential value at a given vertex
+		inline KthReal getPotential(int i){return potmap[i];};
+
+		//!Function that retruns the vector of potential values
+		inline PotentialMap getpotmat(){return potmap;};
+
+
+	protected:
 		//!position of the grid in the world
 		KthReal originGrid[3];
 
 		//!sizes of the voxels
 		KthReal voxelSize[3];
 
-		//!Number of cells of the grid
-		vector<int> cells;
+		//!map relating the label of a regular grid to the index in the list of graph nodes
+		std::map<unsigned int, unsigned int> _cellsMap;
 
 		//!Boost graph representing the whole grid
 		gridGraph *g;
@@ -177,7 +204,7 @@ namespace libPlanner {
 		PotentialMap potmap;
 
 		//!Deiscretization step of the grid, per axis
-		vector<int> _stepsDiscretization;
+		int _stepsDiscretization[3];
 
 		//!Potential value of the obstacles
 		KthReal _obstaclePotential;
@@ -194,6 +221,9 @@ namespace libPlanner {
 		//!Bool to determine if the graph has been loaded
         bool _isGraphSet;
 
+
+		
+
 		//!Function to delete the graphs
 	    void clearGraph();
 
@@ -206,17 +236,13 @@ namespace libPlanner {
 		//!Function to create the edges connecting the vertices of the grid
 		void connectgrid(vector<int> &index, int coord_i);
 		
-		//!Function to filter those edges of the grid connecting collision cells
-		void  prunegrid();
+		//!Function to filter those edges of the grid  with costs below th threshold 
+		void  prunegrid(cost threshold);
 
 		//!Function to set the potential value at a given vertex
 		inline void setPotential(int i, KthReal value){potmap[i]=value;};
 
-		//!Function to obtain the potential value at a given vertex
-		inline KthReal getPotential(int i){return potmap[i];};
-
-		//!Function that retruns the vector of potential values
-		inline PotentialMap getpotmat(){return potmap;};
+		
 		
 
 		

@@ -57,7 +57,7 @@ namespace libPlanner {
 	{
 		//set intial values
 		_obstaclePotential = 10.0;
-		_goalPotential = 0.0;
+		_goalPotential = -1000.0;
 
 		//set intial values from parent class data
 		//_speedFactor = 1;
@@ -86,7 +86,7 @@ namespace libPlanner {
 
 		//read first line and set discrtization steps
 		fscanf(fp,"%d %d %d\n",&nx,&ny,&nz);
-		_stepsDiscretization.resize(3);
+		
 		_stepsDiscretization[0] = nx;
 		_stepsDiscretization[1] = ny;
 		_stepsDiscretization[2] = nz;
@@ -96,11 +96,11 @@ namespace libPlanner {
 		fscanf(fp,"%f %f %f\n",&voxelSize[0],&voxelSize[1],&voxelSize[2]);
 
 		//read the other lines and load the distance values into the locations vector
-		cells.resize(nx*ny*nz);
-		locations.reserve((int)(0.2*nx*ny*nz));
+		locations.reserve((int)(0.1*nx*ny*nz));
 
-		unsigned long int i=0;
-		unsigned long int id;
+		unsigned int i=0;
+		unsigned int id;
+		std::pair<unsigned int, unsigned int> labelPair;
 		int dist;
 		//int x,y,z;
 		int id2;
@@ -110,9 +110,7 @@ namespace libPlanner {
 		while(!feof(fp))
 		{
 			fscanf(fp,"%ld %d\n",&id,&dist);
-			while(i!=id)
-				cells[i++]=-1;//obstacle cell
-
+			
 			if(dist<thresholdDist) continue;
 
 			location loc;
@@ -130,10 +128,23 @@ namespace libPlanner {
 			//}
 
 			locations.push_back(loc); //free cell - locations stores the distance value
-			cells[i++] = locations.size()-1;//cells stores the identifier in the locations vector
+			labelPair.first=id;
+			labelPair.second=locations.size()-1;
+			_cellsMap.insert(labelPair);
 		}
 		fclose(fp);
+		
 	}
+
+   bool workspacegridPlanner::getDistance(unsigned int label, int *dist)
+   {
+		if(_cellsMap.find(label)!=_cellsMap.end()) 
+		{
+			*dist = locations[_cellsMap[label]].d;
+			return true;
+		}
+		else return false;
+   }
 
 
 
@@ -162,7 +173,7 @@ namespace libPlanner {
 						smplabel += coef*index[k];
 					}
 					
-					if(cells[smplabel] != -1)
+					if(_cellsMap.find(smplabel)!=_cellsMap.end())
 					{
 						//sweep for all directions to find (Manhattan) neighbors
 						//neighbors are looked for in the positive drection of the axis
@@ -192,7 +203,7 @@ namespace libPlanner {
 								}
 							}
 							//if neighor cell is a cell of the grid but it is non-free, then ignore it
-							if(plusneighexists==true && cells[smplabelneighplus] == -1) plusneighexists=false;
+							if(plusneighexists==true && _cellsMap.find(smplabelneighplus)==_cellsMap.end()) plusneighexists=false;
 							
 							//connect samples (if neighbor sample did exist)
 							if(plusneighexists==true)
@@ -201,17 +212,16 @@ namespace libPlanner {
 								edge_descriptor e; 
 								bool inserted;//when the efge already exisits or is a self-loop
 											  //then this flag is set to false and the edge is not inserted 
-								tie(e, inserted) = add_edge(cells[smplabel], cells[smplabelneighplus], *g);
+								tie(e, inserted) = add_edge(_cellsMap[smplabel], _cellsMap[smplabelneighplus], *g);
 								
 								if(inserted){
 									//put a weight to the edge, depending on the collison nature of the cells
-									//edges linking  at least one collison sample are weighted -1
-									//edges linking free samples are weighted +1
+									//the value of the weight coincides wiht the maximum distance of the vertices it connects
 									WeightMap weightmap = get(edge_weight, *g);
-									if(locations[cells[smplabel]].d<=0 || locations[cells[smplabelneighplus]].d<=0)
-										weightmap[e] = (cost)-1.0;
+									if(locations[_cellsMap[smplabel]].d  < locations[_cellsMap[smplabelneighplus]].d)
+										weightmap[e] = locations[_cellsMap[smplabelneighplus]].d;
 									else 
-										weightmap[e] = (cost)1.0;
+										weightmap[e] = locations[_cellsMap[smplabel]].d;
 								}
 							}
 						}
@@ -222,7 +232,7 @@ namespace libPlanner {
 
 
 		
-		void  workspacegridPlanner::prunegrid()
+		void  workspacegridPlanner::prunegrid(cost threshold)
 		{
 			//WeightMap weightmap = get(edge_weight, *g);
 			//		
@@ -237,9 +247,9 @@ namespace libPlanner {
 			//	c=weightmap[*i];
 			//}
 			
-			//the filtered graph is obtained using the negative_edge_weight function
-			//that filters out edges with a negative weight
-			negative_edge_weight<WeightMap> filter(get(edge_weight, *g));
+			//the filtered graph is obtained using the threshold_edge_weight function
+			//that filters out edges with  weight below the given threshold passed as a parameter
+			threshold_edge_weight<WeightMap> filter(get(edge_weight, *g), threshold);
 
 			fg = new filteredGridGraph(*g, filter);
 
@@ -298,12 +308,9 @@ namespace libPlanner {
 
 			//compute the filtered graph that do not consider edges with
 			//negative weight (those connecting to a collision vertex)
-			prunegrid();
+			cost threshold = 2.0;
+			prunegrid(threshold);
 
-			//int eng = num_edges(*g);
-			//int enfg = num_edges(*fg);
-			//int vng = num_vertices(*g);
-			//int vnfg = num_vertices(*fg);
 		}
 
 
@@ -318,9 +325,24 @@ namespace libPlanner {
 		_solved = false;
     }
   
- 
+	bool workspacegridPlanner::getGraphVertex(unsigned int label, gridVertex *v)
+	{
+		if(_cellsMap.find(label)==_cellsMap.end())
+		{
+			//this cell is not in the graph!
+			cout<<"Error. The label does not correspond to any vertex of the graph"<<endl;
+			return false;
+		}
+		*v = _cellsMap[label];
+		return true;
+	}
 
-	void workspacegridPlanner::computeNF1(gridVertex  vgoal)
+
+	
+
+
+
+	bool workspacegridPlanner::computeNF1(gridVertex vgoal)
 	{
 
 		graph_traits<filteredGridGraph>::vertex_iterator vi, vi_end;
@@ -350,66 +372,58 @@ namespace libPlanner {
 		//{
 		//	cout<<"vertex "<< *i<<" dist "<<getPotential(*i)<<endl;
 		//}
+		return true;
 	}
+
+
+	/* NO VA BE, NECESSITA MASSES ITERACIONS
+bool workspacegridPlanner::computeHF(gridVertex vgoal)
+	{
+
+//initialize potential to -1 and goal to 0
+		setPotential(vgoal, _goalPotential);
+		//relax potential
+		graph_traits<filteredGridGraph>::vertex_iterator vi, vend;
+		graph_traits<filteredGridGraph>::adjacency_iterator avi, avi_end;
+
+
+		int nvfg = num_vertices(*fg);
+		int nvg = num_vertices(*g); 
+		int nefg = num_edges(*fg);
+		int neg = num_edges(*g);
+		int k=-1;
+		KthReal p_avi;
+		for(int i=0; i<10; i++)
+		{
+			k=0;
+			for(tie(vi,vend)=vertices(*fg); vi!=vend; ++vi)
+			{
+				k=*vi;
+				KthReal pi = getPotential(*vi);
+
+				if(getPotential(*vi) == _goalPotential ||
+				   getPotential(*vi) == _obstaclePotential) continue;
+				
+
+				KthReal p=0;
+				int count=0;
+				for(tie(avi,avi_end)=adjacent_vertices(*vi, *fg); avi!=avi_end; ++avi)
+				{
+					count++;
+					//use Neuman
+					p_avi = getPotential(*avi);
+					if(p_avi!=_obstaclePotential) p+=p_avi;
+				}
+				setPotential(*vi, p/count);
+			}
+		}
+		return true;
+	}
+*/
+
+
+
   }
-
-  
-	//void  workspacegridPlanner::connectGridFromFile(string file)
-	//{
-	//	//open file
-	//	FILE *fp;
-	//	fp = fopen(file.c_str(),"rt");
-	//	int nx,ny,nz;
-
-	//	long int id=0; //identifier of the node
-	//	long int neigh_id; //identifier of the neighbor node
-	//	edge_descriptor e; //edge descriptor
-	//	bool inserted;//when the edge already exisits or is a self-loop
-	//				 //then this flag is set to false and the edge is not inserted 
-	//	WeightMap weightmap = get(edge_weight, *g);
-
-	//	//read teh file wiht the neighborhgood info
-	//	int numedges=0;
-	//	while(!feof(fp))
-	//	{
-	//		fscanf(fp,"%ld %ld",&id, &neigh_id);
-	//		while(neigh_id != -1)
-	//		{
-	//			//INSERT EDGE	
-	//			//edges are defined as pairs of ints indicating the label of the vertices
-	//			if(id>=cells.size() || neigh_id>=cells.size())
-	//			{
-	//				int j=0;
-	//				j=j+1;
-	//			}
-	//			try{
-	//				int kk1 = cells[neigh_id];
-	//				int kk = cells[id];
-	//			  tie(e, inserted) = add_edge(cells[id], cells[neigh_id], *g);
-	//			}
-	//			catch(...){
-	//				cout<<"PROBLEM in label analysis"<<endl;
-	//				return;
-	//			}
-	//			if(inserted) {
-	//				weightmap[e] = (cost)1.0;
-	//				numedges++;
-	//			}
-	//			if(numedges>20496)
-	//			{
-	//				int j=0;
-	//				j=j+1;
-
-	//			}
-
-	//			//read next neighbor
-	//			fscanf(fp," %ld",&neigh_id);
-	//		}
-	//		fscanf(fp,"\n");
-	//	}
-	//	fclose(fp);
-	//}
-
 }
 
 

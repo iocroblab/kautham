@@ -87,7 +87,7 @@ namespace libPlanner {
 		_solved = false;
 		setStepSize(ssize);//also changes stpssize of localplanner
 	  
-		_guiName = "GUIBRO Grid Planner";
+		_guiName = _idName = "GUIBRO Grid Planner";
 		addParameter("Step Size", ssize);
 		addParameter("Max. Samples", _maxNumSamples);
 		addParameter("Speed Factor", _speedFactor);
@@ -114,13 +114,109 @@ namespace libPlanner {
 
 		grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize);
 
-		grid->computeNF1(0);
     }
 
 	//! void destructor
 	GUIBROgridPlanner::~GUIBROgridPlanner(){
 			
 	}
+
+
+//! Collision-check based on the spheres centered at each link origin.
+	//!Bronchoscope links are defined as a cylinder of heigth 1mm and two spheres of radius 1mm centered
+	//!at the bottom and top of the cylinder. The bottom sphere of one link coincides with the
+	//!top sphere of the previous link.
+	//!For collision-check purposes the bottom sphere of each link is considered.
+	bool GUIBROgridPlanner::collisionCheck(int *cost, KthReal radius)
+	{
+		//origin of the regular grid in world coordinates
+		KthReal *O = grid->getOrigin();
+		//size of the voxels in the grid
+		KthReal *voxelSize = grid->getVoxelSize();
+		KthReal maxSize = voxelSize[0];
+		if(voxelSize[1]>maxSize) maxSize = voxelSize[1];
+		if(voxelSize[2]>maxSize) maxSize = voxelSize[2];
+		//number of cells per axis
+		int *steps = grid->getDiscretization();
+		//number of links of the bronchoscope
+		int nlinks = _wkSpace->getRobot(0)->getNumLinks();
+		//transform of the origin of each link
+		mt::Transform linkTransf;
+		//position of the origin of each link
+		mt::Point3 pos;
+		//indices and label of the cell closest to the origin of the link
+		unsigned int i,j,k,label;
+		//distance of the occupied cell to the walls of the bronchi 
+		int dist;
+		//flag indicating if the bronchoscope is in collision or not
+		bool collision=false;
+		//flag indicating if the shere centered at the occupied cell is free or not
+		bool freesphere;
+		//threshold distance, measured in cells,
+		int threshold = (int)(radius/maxSize);
+		//reset the cost
+		*cost=0;
+		for(int n=0;n<nlinks;n++)
+		{
+			linkTransf = _wkSpace->getRobot(0)->getLinkTransform(n);
+			pos = linkTransf.getTranslation();
+			i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
+			j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1];
+			k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2];
+			label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
+			dist = -10*threshold; //value that will take thos spheres out of bounds
+			freesphere=grid->getDistance(label, &dist);
+			if(freesphere && dist<threshold) freesphere = false;
+			*cost += dist;
+			if(freesphere==false) collision = true;
+		}
+		return collision;
+	}
+
+
+	
+	bool GUIBROgridPlanner::findGraphVertex(Sample * s, gridVertex *v)
+	{
+		unsigned int label = findGridCell(s);
+		if(grid->getGraphVertex(label, v)==false)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	unsigned int GUIBROgridPlanner::findGridCell(Sample * s)
+	{
+		//origin of the regular grid in world coordinates
+		KthReal *O = grid->getOrigin();
+		
+		//size of the voxels in the grid
+		KthReal *voxelSize = grid->getVoxelSize();
+		KthReal maxSize = voxelSize[0];
+		if(voxelSize[1]>maxSize) maxSize = voxelSize[1];
+		if(voxelSize[2]>maxSize) maxSize = voxelSize[2];
+		//number of cells per axis
+		int *steps = grid->getDiscretization();
+		
+		//transform of the origin of each link
+		mt::Transform linkTransf;
+		//position of the origin of each link
+		mt::Point3 pos;
+		//indices and label of the cell closest to the origin of the link
+		unsigned int i,j,k,label;
+
+		//move to s
+		_wkSpace->moveTo(s);
+		linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+		pos = linkTransf.getTranslation();
+		i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
+		j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1];
+		k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2];
+		label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
+
+		return label;
+	}
+
 	
 	//! setParameters sets the parameters of the planner
     bool GUIBROgridPlanner::setParameters(){
@@ -590,33 +686,11 @@ namespace libPlanner {
   }
 
 	//! function to find a solution path
+  /*
 		bool GUIBROgridPlanner::trySolve()
 		{
-
 			_solved = false;
-			_simulationPath.clear();
-			_cameraPath.clear();
 
-			Sample *gridsmp;
-			gridsmp = new Sample(_wkSpace->getDimension());
-			vector<KthReal>& coords = _init->getCoords();
-			
-			coords[0] = grid->getOrigin()[0];
-			coords[1] = grid->getOrigin()[1];
-			coords[2] = grid->getOrigin()[2];
-
-			gridsmp->setCoords(coords);
-
-			_wkSpace->collisionCheck(gridsmp);
-			gridsmp->setMappedConf(_wkSpace->getConfigMapping(_init));
-
-			_samples->add(gridsmp);
-
-
-			return _solved;
-
-/**************************************************/
-			_solved = false;
 			_simulationPath.clear();
 			_cameraPath.clear();
 			char sampleDIM = _wkSpace->getDimension();
@@ -671,17 +745,16 @@ namespace libPlanner {
 
 
 			//Loop by growing the tree
-			/*
-			guibroSample *curr = _guibroSet.at(0);
-			int count=1;
-			//applyRandControlFirsTime(curr);
-			applyRandControl(curr);
-			if(_guibroSet.size()==1) 
-			{
-				_solved = false;
-				return _solved;
-			}
-			*/
+			//guibroSample *curr = _guibroSet.at(0);
+			//int count=1;
+			////applyRandControlFirsTime(curr);
+			//applyRandControl(curr);
+			//if(_guibroSet.size()==1) 
+			//{
+			//	_solved = false;
+			//	return _solved;
+			//}
+			
 
 
 			guibroSample *curr;
@@ -697,23 +770,23 @@ namespace libPlanner {
 			}while(count<currentNumSamples); 
 			_solved = true;
 
-			/*
-			int currentNumSamples = 10;//_guibroSet->getSize();
-			for(int i=1; i<currentNumSamples; i++)
-			{
-				if(_guibroSet.size()==i) {
-					i=0;
-					continue;
-				}
-				curr = _guibroSet.at(i);
-				if(curr->leave==false) continue;
-				if(applyRandControl(curr))
-				{
-					count++;
-				}
-				else break;
-			}
-			*/
+			
+			//int currentNumSamples = 10;//_guibroSet->getSize();
+			//for(int i=1; i<currentNumSamples; i++)
+			//{
+			//	if(_guibroSet.size()==i) {
+			//		i=0;
+			//		continue;
+			//	}
+			//	curr = _guibroSet.at(i);
+			//	if(curr->leave==false) continue;
+			//	if(applyRandControl(curr))
+			//	{
+			//		count++;
+			//	}
+			//	else break;
+			//}
+			
 			cout<<"GuibroSET:";
 			for(int i=1; i<_guibroSet.size(); i++)
 			{
@@ -729,5 +802,107 @@ namespace libPlanner {
 
 
 		}
+*/
+
+/*******************
+**** What follows is a version of the trySolve function that adds samples along the
+***** cells of the grid that connect the init and the goal cells using the NF1 navigation function
+***** It is implementes just to test the correct expansion of the NF1 function *****
+********************/
+		bool GUIBROgridPlanner::trySolve()
+		{
+
+			_solved = false;
+
+			gridVertex vi,vg,vc,vmin;
+			if(findGraphVertex(_goal,&vg)==false || findGraphVertex(_init,&vi)==false)
+			{
+				cout<<"ERROR: No graph vertex found for init and goal samples"<<endl;
+				return _solved;
+			}
+
+			if(grid->computeNF1(vg))
+			{
+				
+				filteredGridGraph *fg = grid->getFilteredGraph();	
+				PotentialMap pm = grid->getpotmat();
+
+				vc = vi;
+				//if navigation function did'nt arrive at initial cell, return false
+				if(pm[vi] == -1) 
+				{
+					cout<<"CONNECTION NOT POSSIBLE: Navigation function could not reach the goal..."<<endl;
+					return false;
+				}
+
+				//otherwise follow the negated values
+				_path.clear();
+				clearSimulationPath();
+				graph_traits<filteredGridGraph>::adjacency_iterator avi, avi_end;
+
+
+				Sample *smp;
+				unsigned int i,j,k;
+				int *maxSteps = grid->getDiscretization();
+				vector<KthReal> coords(7);
+				while(vc != vg)
+				{			
+					i = grid->getLocations()->at(vc).x;
+					j = grid->getLocations()->at(vc).y;
+					k = grid->getLocations()->at(vc).z;
+					coords[0] = (((KthReal)i-0.5)/maxSteps[0]);
+					coords[1] = (((KthReal)j-0.5)/maxSteps[1]);
+					coords[2] = (((KthReal)k-0.5)/maxSteps[2]);
+					coords[3] = _init->getCoords()[3];
+					coords[4] = _init->getCoords()[4];
+					coords[5] = _init->getCoords()[5];
+					coords[6] = _init->getCoords()[6];
+					smp = new Sample(7);
+					smp->setCoords(coords);
+					_path.push_back(smp);
+				    _samples->add(smp);
+					vmin = vc;
+					for(tie(avi,avi_end)=adjacent_vertices(vc, *fg); avi!=avi_end; ++avi)
+					{
+						KthReal pneigh = pm[*avi];
+						KthReal pcurr = pm[vmin];
+						if(pneigh < pcurr) vmin = *avi; 
+						//if(pm[*avi] < pm[vmin]) vmin = *avi; 
+					}
+					vc = vmin;
+				}
+				i = grid->getLocations()->at(vg).x;
+				j = grid->getLocations()->at(vg).y;
+				k = grid->getLocations()->at(vg).z;
+				coords[0] = (((KthReal)i-0.5)/maxSteps[0]);
+				coords[1] = (((KthReal)j-0.5)/maxSteps[1]);
+				coords[2] = (((KthReal)k-0.5)/maxSteps[2]);
+				coords[3] = _init->getCoords()[3];
+				coords[4] = _init->getCoords()[4];
+				coords[5] = _init->getCoords()[5];
+				coords[6] = _init->getCoords()[6];
+				smp = new Sample(7);
+				smp->setCoords(coords);
+				_path.push_back(smp);
+				_samples->add(smp);
+				_solved = true;
+				return _solved;
+			}
+			else
+			{
+				_solved = false;
+			}
+
+			return _solved;
+
+		}
+/**************************************************
+*** END trySolve to test NF1 
+**************************************************/
+
+
+
+
+
 	  }
 }
