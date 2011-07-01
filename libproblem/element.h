@@ -56,6 +56,7 @@ namespace libProblem {
     virtual void          setPosition(KthReal pos[3]) = 0;
 
     //! Sets the orientation. Remember that orientation is a quaternion
+    virtual void          setColor(KthReal c[3]) = 0;
     virtual void          setOrientation(KthReal ori[4]) = 0;
     virtual bool          collideTo(Element* other) = 0;
     virtual KthReal       getDistanceTo(Element* other) = 0;

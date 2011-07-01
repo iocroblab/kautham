@@ -37,6 +37,7 @@ namespace Ui {
 	protected:
 		void changeEvent(QEvent *e);
 		void updateView();
+		void updateLookAt();
 
 	private:
 		Ui::bronchoWidget *ui;

@@ -90,8 +90,10 @@ using namespace workspacegridplanner;
 		void printInfo(guibroSample *gs);
 		void moveAlongPath(unsigned int step); //reimplemented
 
-		bool collisionCheck(int *cost, KthReal radius=1.0);
+		bool collisionCheck(int *distcost, int *NF1cost, KthReal radius=1.0);
 		//Add public data and functions
+		int look(int stepsahead);
+		bool testLookAtPoint(int numPoint, KthReal alpha, KthReal xi, KthReal stepsahead, int *dcost, int *NF1cost );
 
 		protected:
 		//Add protected data and functions	
@@ -108,6 +110,9 @@ using namespace workspacegridplanner;
 		bool _debug;
 		KthReal _thresholdInvKin;
 		int _drawnLink; //!>flag to show which link path is to be drawn
+
+		int _counterFirstPoint; 
+		int _maxLookAtPoints;
 
 		vector<guibroSample*> _guibroSet;
 

@@ -144,6 +144,16 @@ namespace libPlanner {
 			return true;
 		}
 		else return false;
+   } 
+   
+   bool workspacegridPlanner::getNF1value(unsigned int label, int *NF1value)
+   {
+		if(_cellsMap.find(label)!=_cellsMap.end()) 
+		{
+			*NF1value = potmap[_cellsMap[label]];
+			return true;
+		}
+		else return false;
    }
 
 

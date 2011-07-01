@@ -13,6 +13,7 @@ namespace libProblem {
 		_currentvalues[2] = 0.;
 		_inverse = false;
 		_maxbending = (KthReal) (2*M_PI/3);
+		_maxalpha = (KthReal) (M_PI/2);
 
 	}
 	
@@ -43,7 +44,7 @@ namespace libProblem {
 //cout<<"alpha = "<<curr_alpha<<" psi = "<<curr_psi<<endl;
 
     // Read values
-		KthReal Dalpha = (KthReal) M_PI *(values[0]-curr_alpha); // slider goes from -1000 to 1000
+		KthReal Dalpha = _maxalpha *(values[0]-curr_alpha); // slider goes from -1000 to 1000
     KthReal psi = _maxbending*(values[1]/(n-1)); // values[1]=total bending angle read from the slider
     KthReal Dzeta = (KthReal)-values[2];//directly the value read from the slider //-1000*(values[2]-currentvalues2);
    
@@ -233,7 +234,7 @@ namespace libProblem {
 //cout<<"alpha = "<<curr_alpha<<" psi = "<<curr_psi<<endl;
 
     // Read values
-	KthReal Dalpha = (KthReal) M_PI *(values[0]-curr_alpha); // slider goes from -1000 to 1000
+	KthReal Dalpha = _maxalpha *(values[0]-curr_alpha); // slider goes from -1000 to 1000
     KthReal psi = _maxbending*(values[1]/(n-1)); // values[1]=total bending angle read from the slider
     KthReal Dzeta = (KthReal)-values[2];//directly the value read from the slider //-1000*(values[2]-currentvalues2);
    

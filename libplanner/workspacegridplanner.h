@@ -177,6 +177,9 @@ namespace libPlanner {
 		//!Function to obtain the potential value at a given vertex
 		inline KthReal getPotential(int i){return potmap[i];};
 
+		//!Function to obtain the potential value at a given grid cell
+		bool getNF1value(unsigned int label, int *NF1value);
+
 		//!Function that retruns the vector of potential values
 		inline PotentialMap getpotmat(){return potmap;};
 

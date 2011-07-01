@@ -72,14 +72,35 @@ namespace libPlanner {
       _drawnLink = 0; //the path of base is defaulted
 	  _thresholdInvKin = 0.5;
 	  
+	  //define look-ahead points
+		_counterFirstPoint = _wkSpace->obstaclesCount();
+		KthReal pos[3] = {0.0,0.0,0.0};
+		KthReal ori[4] = {1.0,0.0,0.0,0.0};
+		KthReal scale = 1;
+		bool obscollisions = false;
+		Obstacle *obs; 
+		//add points to look-ahead points as obstacles
+		_maxLookAtPoints = 121;
+		for(int i=0;i<_maxLookAtPoints;i++)
+		{
+			obs = new Obstacle("",pos,ori,scale,IVPQP,obscollisions);
+			_wkSpace->addObstacle(obs);
+		}
+
+
 	  _showObstacle = new int[_wkSpace->obstaclesCount()];
-	  char str[50];
 	  for(int i=0; i<_wkSpace->obstaclesCount();i++) 
-	  {
 		  _showObstacle[i]=-1;
+
+	  //interface to show obstacles (not considering look-ahead points
+	  char str[50];
+	  for(int i=0; i<_counterFirstPoint;i++) 
+	  {
 		  sprintf(str,"Show Obstacle %d (0/1)",i);
 		  addParameter(str, 1);//shown
 	  }
+	  //interface to show look-ahead points
+	  addParameter("Show Points (0/1)",0);
 	  
 
 		//set intial values from parent class data
@@ -114,6 +135,7 @@ namespace libPlanner {
 
 		grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize);
 
+		
     }
 
 	//! void destructor
@@ -127,7 +149,7 @@ namespace libPlanner {
 	//!at the bottom and top of the cylinder. The bottom sphere of one link coincides with the
 	//!top sphere of the previous link.
 	//!For collision-check purposes the bottom sphere of each link is considered.
-	bool GUIBROgridPlanner::collisionCheck(int *cost, KthReal radius)
+	bool GUIBROgridPlanner::collisionCheck(int *distcost, int *NF1cost, KthReal radius)
 	{
 		//origin of the regular grid in world coordinates
 		KthReal *O = grid->getOrigin();
@@ -155,7 +177,7 @@ namespace libPlanner {
 		//threshold distance, measured in cells,
 		int threshold = (int)(radius/maxSize);
 		//reset the cost
-		*cost=0;
+		*distcost=0;
 		for(int n=0;n<nlinks;n++)
 		{
 			linkTransf = _wkSpace->getRobot(0)->getLinkTransform(n);
@@ -167,8 +189,14 @@ namespace libPlanner {
 			dist = -10*threshold; //value that will take thos spheres out of bounds
 			freesphere=grid->getDistance(label, &dist);
 			if(freesphere && dist<threshold) freesphere = false;
-			*cost += dist;
+			*distcost += dist;
 			if(freesphere==false) collision = true;
+
+			//for the tip of the bronchoscope, evaluate the NF1 function
+			if(n==nlinks-1)
+			{
+				grid->getNF1value(label, NF1cost);
+			}
 		}
 		return collision;
 	}
@@ -313,7 +341,7 @@ namespace libPlanner {
 		//Show/Unshow obstacles
 		char str[50];
 		SoSeparator *seproot = ((IVWorkSpace*)_wkSpace)->getIvScene();
-		for(int i=0; i<_wkSpace->obstaclesCount();i++)
+		for(int i=0; i<_counterFirstPoint;i++)
 		{
 			sprintf(str,"Show Obstacle %d (0/1)",i);
 			it = _parameters.find(str);
@@ -351,6 +379,47 @@ namespace libPlanner {
 				return false;
 		}
 		//end show obstacles
+
+		
+		//Show/Unshow lookat points
+		sprintf(str,"Show Points (0/1)");
+		it = _parameters.find(str);
+		if(it != _parameters.end())
+		{
+			for(int i=_counterFirstPoint; i<_wkSpace->obstaclesCount();i++)
+			{
+				//if the points should be removed
+				if(it->second ==0)
+				{
+					_showObstacle[i] = it->second;
+					sprintf(str,"obstacle%d",i);
+					SoNode *sepgrid = seproot->getByName(str);
+					//comprovacio
+					//int c = seproot->findChild(sepgrid);
+					seproot->removeChild(sepgrid);
+
+     			}
+				//if the obstacle should be added (because it has been previously removed)
+				//(note that _showObstacle is initalized to -1 in order not to add again the
+				//obstacle if it is already there.)
+				else if(_showObstacle[i]==0)
+				{
+					_showObstacle[i] = it->second;
+					SoSeparator* gridSep = (SoSeparator*)_wkSpace->getObstacle(i)->getModel();
+					sprintf(str,"obstacle%d",i);
+					gridSep->setName(str);
+					seproot->addChild(gridSep);
+					
+					//comprovacio
+					//SoNode *sepgrid = seproot->getByName(str);
+					//int c = seproot->findChild(sepgrid);
+					//int kk=0;
+				}
+			}
+		}
+		else
+			return false;		
+		//end show lookat points
 		
 
 		it = _parameters.find("Drawn Path Link");
@@ -685,10 +754,171 @@ namespace libPlanner {
 	}
   }
 
-	//! function to find a solution path
-  /*
-		bool GUIBROgridPlanner::trySolve()
+		//looks a step ahead
+		int GUIBROgridPlanner::look(int stepsahead)
 		{
+			KthReal alpha0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
+			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
+			vector<KthReal> alpha(_maxLookAtPoints);
+			vector<KthReal> beta(_maxLookAtPoints);	
+
+			//working in degrees
+			KthReal DeltaAlpha;//to be determined as a function of beta
+			KthReal maxAlpha = (180/M_PI)*((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getMaxAlpha();
+			KthReal a;
+			KthReal a0 = maxAlpha*alpha0; //alpha goes from -1 to +1 that corresponds to the range [-maxAlpha,maxAlpha]
+			KthReal alphaRange;
+
+			KthReal DeltaBeta = 2;//fixed step
+			KthReal maxBeta = (180/M_PI)*((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getMaxBending();
+			KthReal b;
+			KthReal b0 = maxBeta*beta0; //beta goes from -1 to +1 that corresponds to the range [-maxBeta,maxBeta]
+
+			//sweep 20 degrees in beta, centered around beta0
+			int k=0;
+			for(int i=-5;i<=5;i++)
+			{
+				b = b0 + i*DeltaBeta;
+				if(b>maxBeta || b<-maxBeta) continue;
+				//find the range of alpha for the current value of beta (b)
+				//alphaRange = 20+fabs(2.0*b+180); 
+				if(fabs(b)<10) alphaRange = 180;
+				else if(fabs(b)<20) alphaRange = 90;
+				else if(fabs(b)<30) alphaRange = 50;
+				else if(fabs(b)<40) alphaRange = 30;
+				else if(fabs(b)<50) alphaRange = 20;
+				else if(fabs(b)<60) alphaRange = 10;
+				else if(fabs(b)<maxBeta) alphaRange = 15;
+				DeltaAlpha = alphaRange/10;
+				//sweep alphaRange degrees around alpha0
+				for(int j=-5;j<=5;j++)
+				{
+					a = a0 + j*DeltaAlpha;
+					if(a>maxAlpha || a<-maxAlpha) continue;
+					//store a look-at point (a,b), in the normalized form between -1 and 1
+					alpha[k] = a/maxAlpha;
+					beta[k] = b/maxBeta;
+					k++;
+				}
+			}
+			for(int i=k;i<_maxLookAtPoints;i++)
+			{
+					alpha[i] = alpha0;
+					beta[i] = beta0;
+			}
+
+
+			int dcost, NF1cost;
+			bool col;
+			int freepoints = 0;
+			int minNF1cost = 1000000;
+			int pointminNF1cost = -1;
+			for(int i=0; i<_maxLookAtPoints;i++)
+			{
+				//alpha = alpha0 + (KthReal)_gen->d_rand()*0.2-0.1;
+				//xi = xi0 + (KthReal)_gen->d_rand()*0.2-0.1;
+				col = testLookAtPoint(_counterFirstPoint+i, alpha[i], beta[i], stepsahead, &dcost, &NF1cost);
+				if(NF1cost>0 && NF1cost<minNF1cost){
+					minNF1cost = NF1cost;
+					pointminNF1cost = _counterFirstPoint+i;
+				}
+				//cout<<"Point "<<i<<"("<<alpha[i]<<","<<xi[i]<<") collision "<<col<<" cost = "<<cost<<endl; 
+				if(col==false) freepoints++;
+			}
+			if(pointminNF1cost!=-1)
+			{
+				//draw green the point with lower value of the NF1 function
+				KthReal green[3];
+				green[0]=0.0;
+				green[1]=1.0;
+				green[2]=0.0;
+				_wkSpace->getObstacle(pointminNF1cost)->getElement()->setColor(green);
+			}
+
+			vector<KthReal>  values;
+			values.push_back(alpha0);
+			values.push_back(beta0);
+			values.push_back(0);
+			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
+			return freepoints;
+		}
+
+		//draws a point at the configuration stepsahead from the current one
+		bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha, 
+										KthReal xi, KthReal stepsahead, int *dcost, int *NF1cost)
+		{
+			mt::Transform linkTransf;
+			mt::Point3 pos;
+			mt::Rotation rot;
+			KthReal p[3];
+			Vector3 zaxis;
+
+			//p conté la posició que está a 5mm en la direcció z del tool, respecte el toolnull
+			//linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+			//pos = linkTransf.getTranslation();
+			//rot = linkTransf.getRotation();
+			//zaxis = rot.getMatrix().transpose().at(0);
+			//p[0]=pos[0]+5*zaxis[0];
+			//p[1]=pos[1]+5*zaxis[1];
+			//p[2]=pos[2]+5*zaxis[2];
+			//_wkSpace->getObstacle(0)->getElement()->setPosition(p);
+
+			//Advance a deltaz step
+			vector<KthReal>  values;
+			values.push_back(alpha);
+			values.push_back(xi);
+			values.push_back(-stepsahead);
+			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
+			
+			//move the broncoscope at the new position
+			linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+			pos = linkTransf.getTranslation();
+
+			//compute the cost at the current position
+			bool colltest = collisionCheck(dcost,NF1cost);
+
+			//draw the obstacle at the extrem of the broncoscope at the new position
+			p[0]=pos[0];
+			p[1]=pos[1];
+			p[2]=pos[2];
+			_wkSpace->getObstacle(numPoint)->getElement()->setPosition(p);
+			KthReal color[3];
+			if(colltest){
+				color[0]=0.8;
+				color[1]=0.2;
+				color[2]=0.2;
+			}
+			else{
+				KthReal c=0.2+ *dcost/150.0;
+				if(c>1.0) c=1.0;
+				color[0]=c;
+				color[1]=c;
+				color[2]=c;
+			}
+			_wkSpace->getObstacle(numPoint)->getElement()->setColor(color);
+
+			//return to current position
+			values[2] = stepsahead;
+			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
+
+			return colltest;
+		}
+	//! function to find a solution path
+  /**/
+		bool GUIBROgridPlanner::trySolve()
+		{			
+			_solved = false;
+
+			gridVertex vi,vg,vc,vmin;
+			if(findGraphVertex(_goal,&vg)==false || findGraphVertex(_init,&vi)==false)
+			{
+				cout<<"ERROR: No graph vertex found for init and goal samples"<<endl;
+				return _solved;
+			}
+			grid->computeNF1(vg);
+			look(10);
+			return _solved;
+
 			_solved = false;
 
 			_simulationPath.clear();
@@ -802,13 +1032,14 @@ namespace libPlanner {
 
 
 		}
-*/
+/**/
 
 /*******************
 **** What follows is a version of the trySolve function that adds samples along the
 ***** cells of the grid that connect the init and the goal cells using the NF1 navigation function
 ***** It is implementes just to test the correct expansion of the NF1 function *****
 ********************/
+/*
 		bool GUIBROgridPlanner::trySolve()
 		{
 
@@ -896,6 +1127,7 @@ namespace libPlanner {
 			return _solved;
 
 		}
+		*/
 /**************************************************
 *** END trySolve to test NF1 
 **************************************************/

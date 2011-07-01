@@ -59,6 +59,7 @@ namespace libProblem {
 		trans= new SoTranslation;
 		rot = new SoRotation;
 		sca = new SoScale();
+		color = new SoMaterial;
 
 		posVec = new SoSFVec3f;
 		trans->translation.connectFrom(posVec);
@@ -81,16 +82,49 @@ namespace libProblem {
 		if(input.openFile(ivfile.c_str()))
 			ivmodel->addChild(SoDB::readAll(&input));
 		else
-			ivmodel->addChild(new SoSphere());
+		{
+			//ivmodel->addChild(new SoSphere());
+			static const char *str[] = { 
+				"#VRML V1.0 ascii\n",
+				"DEF pointgoal Separator {\n",
+				"  Separator {\n",
+				"    MaterialBinding { value PER_PART }\n",
+				"    Coordinate3 {\n",
+				"      point [\n",
+				"        0.0 0.0 0.0\n",
+				"      ]\n",
+				"    }\n",
+				"    DrawStyle { pointSize 5 }\n",
+				"    PointSet { }\n",
+				"   }\n",
+				"}\n",
+				NULL
+			};
+			input.setStringArray(str);
+			SoSeparator *sep = SoDB::readAll(&input);
+			sep->ref();
+			while (sep->getNumChildren() > 0)
+			{
+				ivmodel->addChild(sep->getChild(0));
+				sep->removeChild(0);
+			}
+			sep->unref();
+			
+		}
 
 		ivmodel->ref();
 
+	}
+	
+	void IVElement::setColor(KthReal c[3]){
+	  color->diffuseColor.setValue((float)c[0],(float)c[1],(float)c[2]);
 	}
 
 	void IVElement::setPosition(KthReal pos[3]){
 		for(int i=0;i<3;i++)
 			position[i]=pos[i];
       posVec->setValue((float)position[0],(float)position[1],(float)position[2]);
+	  
     
     //for(int i=0; i<3; i++)
     //  cout << posVec->getValue()[i] << "\t" ;
@@ -120,6 +154,7 @@ namespace libProblem {
 	  if(tran){
 		  SoSeparator* temp = new SoSeparator;
 		  temp->ref();
+		  temp->addChild(color);
 		  temp->addChild(trans);
 		  temp->addChild(rot);
 		  temp->addChild(ivmodel);

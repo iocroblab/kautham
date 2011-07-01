@@ -280,9 +280,9 @@ function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilen
     fid = fopen(distancefilename, 'wt');
     fprintf(fid, '%d %d %d\n', [s(1) s(2) s(3)]);
     %origin of the grid
-    ox=-146.953;%-10.258%
-    oy=-142.031;%-2.536%
-    oz=-315.75;%-237.565%
+    ox=0%-146.953;%-10.258%
+    oy=0%-142.031;%-2.536%
+    oz=0%-315.75;%-237.565%
     fprintf(fid, '%d %d %d\n', ox, oy, oz);
     %size of the voxels
     sx=0.702807;
@@ -342,7 +342,7 @@ function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilen
       for j=1:gridStep:s(2)%columnes
         for i=1:gridStep:s(1)%files
           if d(i,j,k)>-1000000 && d(i,j,k)<1000000 
-            fprintf(fidgrid, '%f %f %f,\n', [ox+i*sx oy+j*sy oz+k*sz]);
+            fprintf(fidgrid, '%f %f %f,\n', [ox+i*sx-sx/2 oy+j*sy-sy/2 oz+k*sz-sz/2]);
           end
         end
       end

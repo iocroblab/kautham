@@ -6,7 +6,7 @@
             transparency 0.5
 		}
 		Translation {
-			translation -10.258 -2.536 -237.565
+			translation 136.695 139.495 78.185
 		}
 
 		Cube {

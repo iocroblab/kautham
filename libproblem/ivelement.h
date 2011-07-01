@@ -65,6 +65,7 @@ namespace libProblem {
 class IVElement : public Element {
   public:
 	  IVElement(string ivfile, KthReal sc);
+	  void setColor(KthReal c[3]);
     void setPosition(KthReal pos[3]);
 	  void setOrientation(KthReal ori[4]);
 	  SbMatrix orientationMatrix();

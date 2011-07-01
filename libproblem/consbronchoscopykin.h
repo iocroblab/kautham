@@ -26,6 +26,8 @@ namespace libProblem {
 
 	inline void  	setMaxBending(KthReal max){_maxbending=max;};
 	inline KthReal 	getMaxBending(){return _maxbending;};
+	inline void  	setMaxAlpha(KthReal max){_maxalpha=max;};
+	inline KthReal 	getMaxAlpha(){return _maxalpha;};
 
 	private:
     RobConf		      solve(vector<KthReal> &values);
@@ -35,6 +37,7 @@ namespace libProblem {
 		bool _inverse;
     mt::Transform   Tbase;
 	KthReal		_maxbending;
+	KthReal		_maxalpha;
 	};
 }
 

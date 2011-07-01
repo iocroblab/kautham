@@ -5,6 +5,7 @@
 #include "gui.h"
 
 using namespace  libGUI;
+
  
 
 
@@ -60,17 +61,19 @@ void bronchoWidget::collisionCheck()
 	//collisionCheckButton
 	if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
 	{
-		int cost;
-		bool c =((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->collisionCheck(&cost);
+		int dcost,NF1cost;
+		bool c =((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->collisionCheck(&dcost,&NF1cost);
 		if(c==true)
 		{
 			cout<<"The bronchoscope is in collision or out of bounds"<<endl;
-			cout<<"The cost of current configuration is "<<cost<<endl;
+			cout<<"The distance cost of current configuration is "<<dcost<<endl;
+			cout<<"The NF1 value of the tip is "<<NF1cost<<endl;
 		}
 		else
 		{
 			cout<<"The bronchoscope is in a free configuration"<<endl;
-			cout<<"The cost of current configuration is "<<cost<<endl;
+			cout<<"The distance cost of current configuration is "<<dcost<<endl;
+			cout<<"The NF1 value of the tip is "<<NF1cost<<endl;
 		}
 	}	
 	else
@@ -92,6 +95,7 @@ void bronchoWidget::alphaSliderChanged(int val){
   values[0]=(KthReal) readVal/1000; // /1000 because the slider only accept int values, in this case from -3141 to 3141
   _robot->ConstrainedKinematics(values);
   updateView();
+  updateLookAt();
 }
 
 
@@ -101,6 +105,7 @@ void bronchoWidget::xiSliderChanged(int val){
   _ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
   updateView();
+  updateLookAt();
   }
 
 void bronchoWidget::zetaSliderChanged(int val){
@@ -110,6 +115,7 @@ void bronchoWidget::zetaSliderChanged(int val){
   _robot->ConstrainedKinematics(values);
   lastZsliderPos=readVal;
   updateView();
+  updateLookAt();
 }
 
 void bronchoWidget::zetaSliderChanged1(){
@@ -120,6 +126,16 @@ void bronchoWidget::zetaSliderChanged1(){
       _robot->ConstrainedKinematics(values);
 	  updateView();
     }
+  updateLookAt();
+}
+
+
+void bronchoWidget::updateLookAt()
+{
+  if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
+  {
+	  ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->look(10);
+  }	
 }
 
 void bronchoWidget::zetaSliderReleased(){
@@ -131,7 +147,8 @@ void bronchoWidget::zetaSliderReleased(){
 
   /*_ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);*/
-
+  
+  updateLookAt();
 }
 
 void bronchoWidget::setNavMode(int state){
