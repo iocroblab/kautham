@@ -515,13 +515,19 @@ namespace libGUI{
 
   int TeleoperationWidget::setGuideForce(mt::Transform& tcp){
     const KthReal THRESHOLD = 5.;
+    KthReal EPSILON = 5.;
     KthReal forces[6];
     PathToGuide* path = NULL;
 
-    if( _radBttRobot0->isChecked() )
+    if( _radBttRobot0->isChecked() ){
       path = _pathsObj[0];
-    else if( _radBttRobot1->isChecked() )
+      EPSILON = _problem->wSpace()->getRobot(0)->getLink(1)->getD() / 5.;
+    }else if( _radBttRobot1->isChecked() ){
       path = _pathsObj[1];
+      EPSILON = _problem->wSpace()->getRobot(1)->getLink(1)->getD() / 5.;
+    }
+
+    EPSILON = EPSILON < THRESHOLD ? THRESHOLD : EPSILON ;
 
     for(unsigned int i = 0; i < 6; i++)
         forces[i] = 0.;
@@ -542,7 +548,7 @@ namespace libGUI{
     if(dist > THRESHOLD ){
       // Only testing the translational forces.
       for(int i = 0; i < 3; ++i){
-        forces[i] = ( umag.at(i) + upush.at(i) )*( _maxForces[i]* ( dist - THRESHOLD ) / 5. );
+        forces[i] = ( umag.at(i) + upush.at(i) )*( _maxForces[i]* ( dist - THRESHOLD ) / EPSILON );
         forces[i] = forces[i] < _maxForces[i] ? forces[i] : _maxForces[i];
         forces[i] = forces[i] > -_maxForces[i] ? forces[i] : -_maxForces[i];
       }
