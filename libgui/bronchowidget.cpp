@@ -20,6 +20,7 @@ bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui) : 
     _ptProblem = prob;
 	_cameraView = false;
 	_homeView = _gui->getActiveCameraTransfom();
+	//_stepAdvance  =10;
 
     values.resize(3);
     lastZsliderPos=0;
@@ -36,6 +37,10 @@ bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui) : 
     QObject::connect(ui->InverseCheckBox,SIGNAL(stateChanged(int)),SLOT(setAdvanceMode(int)));
     QObject::connect(ui->CameraCheckBox,SIGNAL(stateChanged(int)),SLOT(setCameraMode(int)));
     QObject::connect(ui->collisionCheckButton, SIGNAL( clicked() ), this, SLOT( collisionCheck() ) ); 
+    QObject::connect(ui->advanceButton, SIGNAL( clicked() ), this, SLOT( advanceBronchoscope() ) ); 
+    //QObject::connect(ui->stepAdvance, SIGNAL( valueChanged( int ) ), this, SLOT( stepAdvanceBronchoscope(int) ) ); 
+
+	
 }
 
 bronchoWidget::~bronchoWidget()
@@ -53,6 +58,33 @@ void bronchoWidget::changeEvent(QEvent *e)
     default:
         break;
     }
+}
+
+
+
+/*
+void bronchoWidget::stepAdvanceBronchoscope(int val)
+{
+	_stepAdvance = val;
+	if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
+	{
+		((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->setAdvanceStep(_stepAdvance);
+	}
+  updateLookAt();
+}
+*/
+
+void bronchoWidget::advanceBronchoscope()
+{
+	//advanceButton
+	if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
+	{
+		KthReal s = ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->getAdvanceStep();
+		((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->advanceToBest(s);
+		updateView();
+	}	
+	else
+		cout<<"Sorry: This option only works for the planner named 'GUIBRO Grid Planner'"<<endl;
 }
 
 
@@ -134,7 +166,10 @@ void bronchoWidget::updateLookAt()
 {
   if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
   {
-	  ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->look(10);
+	  KthReal bestalpha, bestbeta;
+		KthReal s = ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->getAdvanceStep();
+	  ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->look(s, &bestalpha, &bestbeta);
+	  //cout<<"Best Alpha = "<<bestalpha<<" Best Beta = "<<bestbeta<<endl;
   }	
 }
 
@@ -148,7 +183,6 @@ void bronchoWidget::zetaSliderReleased(){
   /*_ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);*/
   
-  updateLookAt();
 }
 
 void bronchoWidget::setNavMode(int state){
@@ -195,7 +229,8 @@ void bronchoWidget::updateView()
 		mt::Transform T_Ry;
 		mt::Transform T_tz;
 		T_Ry.setRotation( mt::Rotation(mt::Vector3(0,1,0),-M_PI/2) );
-		T_tz.setTranslation( mt::Vector3(0,0,-7.1) );
+		
+		T_tz.setTranslation( mt::Vector3(0,0,-(_robot->getLink(_robot->getNumLinks()-1)->getA()+1.1)) );
 		mt::Transform camTrsf = _robot->getLastLinkTransform()*T_Ry*T_tz;
 		_gui->setActiveCameraTransform(camTrsf);
 	}

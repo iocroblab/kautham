@@ -30,6 +30,8 @@ namespace Ui {
 		void              setAdvanceMode(int state);
 		void              setCameraMode(int state);
 		void			  collisionCheck();
+		void			  advanceBronchoscope();
+		//void			  stepAdvanceBronchoscope(int val);
 	public:
 		bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui ); //QWidget *parent = 0
 		~bronchoWidget();
@@ -54,6 +56,7 @@ namespace Ui {
 		GUI*          _gui;
 		bool		  _cameraView;
 		mt::Transform _homeView;
+		//int		  _stepAdvance;
 	};
 
 #endif // BRONCHOWIDGET_H

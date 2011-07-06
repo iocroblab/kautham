@@ -1064,6 +1064,10 @@ namespace libProblem {
       if( _graphicalPath != NULL ) 
         _graphicalPath->deleteValues(0);
 
+	  //if no need to draw path then return
+	  if(_linkPathDrawn<0) return true;
+
+	  //else fill graphicalPath
       SbVec3f* temp = new SbVec3f[path.size()];
 
       vector<RobConf>::iterator it;

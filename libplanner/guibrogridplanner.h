@@ -86,29 +86,22 @@ using namespace workspacegridplanner;
 		bool trySolve();
 		bool setParameters();
 
-		bool applyRandControl(guibroSample *currGsmp);
 		void printInfo(guibroSample *gs);
 		void moveAlongPath(unsigned int step); //reimplemented
 
 		bool collisionCheck(int *distcost, int *NF1cost, KthReal radius=1.0);
 		//Add public data and functions
-		int look(int stepsahead);
+		int look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta);
 		bool testLookAtPoint(int numPoint, KthReal alpha, KthReal xi, KthReal stepsahead, int *dcost, int *NF1cost );
+		int advanceToBest(KthReal steps, Sample *smp=NULL, FILE *fp=NULL);
+		void setAdvanceStep(int a){_stepsAdvance = a;};
+		int getAdvanceStep(){return _stepsAdvance;};
 
 		protected:
 		//Add protected data and functions	
-		KthReal _alpha;
-		KthReal _xi;
-		KthReal _deltaZ;
-		KthReal _minAdvanceStep;
-		KthReal _maxAdvanceStep;
-		int _stepsinterpolate;
-		KthReal _wL;
-		KthReal _wS;
-		KthReal _wC;
+		KthReal _stepsAdvance;
+
 	    LCPRNG*	_gen;
-		bool _debug;
-		KthReal _thresholdInvKin;
 		int _drawnLink; //!>flag to show which link path is to be drawn
 
 		int _counterFirstPoint; 

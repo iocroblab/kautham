@@ -58,19 +58,8 @@ namespace libPlanner {
               Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
 	{
 		//set intial values
-		_alpha = 0.1;
-		_xi = 0.1;
-		_deltaZ = 50;
 	    _gen = new LCPRNG();
-		_minAdvanceStep=50.0;
-		_maxAdvanceStep=200.0;
-		_stepsinterpolate=20;
-		_wL = 1;
-		_wS = 1;
-		_wS = 1;
-		_debug=false;
       _drawnLink = 0; //the path of base is defaulted
-	  _thresholdInvKin = 0.5;
 	  
 	  //define look-ahead points
 		_counterFirstPoint = _wkSpace->obstaclesCount();
@@ -101,6 +90,9 @@ namespace libPlanner {
 	  }
 	  //interface to show look-ahead points
 	  addParameter("Show Points (0/1)",0);
+
+	  _stepsAdvance = 10.0;
+	  addParameter("Steps Advance",_stepsAdvance);
 	  
 
 		//set intial values from parent class data
@@ -110,22 +102,12 @@ namespace libPlanner {
 	  
 		_guiName = _idName = "GUIBRO Grid Planner";
 		addParameter("Step Size", ssize);
-		addParameter("Max. Samples", _maxNumSamples);
 		addParameter("Speed Factor", _speedFactor);
-		addParameter("1- Rotation (alpha)", _alpha);
-		addParameter("2- Bending (xi)", _xi);
-		addParameter("3- Advance (delta_z)", _deltaZ);
-		addParameter("4- Min Advance", _minAdvanceStep);
-		addParameter("5- Max Advance", _maxAdvanceStep);
-		addParameter("6- Interpolation", _stepsinterpolate);
-		addParameter("7- Weight Length", _wL);
-		addParameter("8- Weight Curvature", _wC);
-		addParameter("9- Weight Steps", _wS);
-		addParameter("10- Debug Mode", _debug);
-		addParameter("11- Threshold InvKin", _thresholdInvKin);
 
         addParameter("Drawn Path Link",_drawnLink);
 
+		_maxNumSamples=10000;
+		//removeParameter("Max. Samples");
 		//removeParameter("Neigh Thresshold");
 		//removeParameter("Drawn Path Link");
 		//removeParameter("Max. Neighs");
@@ -175,7 +157,7 @@ namespace libPlanner {
 		//flag indicating if the shere centered at the occupied cell is free or not
 		bool freesphere;
 		//threshold distance, measured in cells,
-		int threshold = (int)(radius/maxSize);
+		int threshold = (int)(sqrt(3.0)*radius/maxSize);//sqrt(3) is added to consider the distance to the vertex of the voxel
 		//reset the cost
 		*distcost=0;
 		for(int n=0;n<nlinks;n++)
@@ -188,13 +170,30 @@ namespace libPlanner {
 			label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
 			dist = -10*threshold; //value that will take thos spheres out of bounds
 			freesphere=grid->getDistance(label, &dist);
-			if(freesphere && dist<threshold) freesphere = false;
+			if(freesphere && dist<=threshold) freesphere = false;
 			*distcost += dist;
 			if(freesphere==false) collision = true;
 
-			//for the tip of the bronchoscope, evaluate the NF1 function
+			//for the tip of the bronchoscope: 
 			if(n==nlinks-1)
 			{
+				//Evaluate the sphere of the tip
+				mt::Transform totip;	
+				totip.setRotation(mt::Rotation(0.0,0.0,0.0,1));
+				totip.setTranslation(mt::Vector3(_wkSpace->getRobot(0)->getLink(n)->getA(),0,0) );
+				mt::Transform tipTransf = linkTransf*totip;
+				pos = tipTransf.getTranslation();
+				i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
+				j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1];
+				k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2];
+				label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
+				dist = -10*threshold; //value that will take thos spheres out of bounds
+				freesphere=grid->getDistance(label, &dist);
+				if(freesphere && dist<=threshold) freesphere = false;
+				*distcost += dist;
+				if(freesphere==false) collision = true;
+
+				//Evaluate the NF1 function
 				grid->getNF1value(label, NF1cost);
 			}
 		}
@@ -245,7 +244,8 @@ namespace libPlanner {
 		return label;
 	}
 
-	
+
+
 	//! setParameters sets the parameters of the planner
     bool GUIBROgridPlanner::setParameters(){
       try{
@@ -261,79 +261,10 @@ namespace libPlanner {
         else
           return false;
 
-        it = _parameters.find("Max. Samples");
-        if(it != _parameters.end()){
-          _maxNumSamples = it->second;
-		    }else
-          return false;
 
-		it = _parameters.find("1- Rotation (alpha)");
+		it = _parameters.find("Steps Advance");
         if(it != _parameters.end())
-			_alpha = it->second;
-        else
-          return false;
-
-        it = _parameters.find("2- Bending (xi)");
-        if(it != _parameters.end())
-          _xi = it->second;
-        else
-          return false;
-
-        it = _parameters.find("3- Advance (delta_z)");
-        if(it != _parameters.end())
-          _deltaZ = it->second;
-        else
-          return false;
-		it = _parameters.find("4- Min Advance");
-        if(it != _parameters.end())
-			_minAdvanceStep = it->second;
-        else
-          return false;
-
-        it = _parameters.find("5- Max Advance");
-        if(it != _parameters.end())
-          _maxAdvanceStep = it->second;
-        else
-          return false;
-
-        it = _parameters.find("6- Interpolation");
-        if(it != _parameters.end())
-          _stepsinterpolate = it->second;
-        else
-          return false;
-		
-        it = _parameters.find("7- Weight Length");
-        if(it != _parameters.end())
-          _wL = it->second;
-        else
-          return false;
-		
-        it = _parameters.find("8- Weight Curvature");
-        if(it != _parameters.end())
-          _wC = it->second;
-        else
-          return false;
-
-        it = _parameters.find("9- Weight Steps");
-        if(it != _parameters.end())
-          _wS = it->second;
-        else
-          return false;
-		
-		 it = _parameters.find("10- Debug Mode");
-        if(it != _parameters.end())
-		{
-          if(it->second) _debug = true;
-		  else _debug = false;
-		}
-        else
-          return false;
-
-		it = _parameters.find("11- Threshold InvKin");
-        if(it != _parameters.end())
-		{
-          _thresholdInvKin = it->second;;
-		}
+          _stepsAdvance = it->second;
         else
           return false;
 
@@ -449,303 +380,10 @@ namespace libPlanner {
 		cout<<"ori: "<<o[0]<<", "<<o[1]<<", "<<o[2]<<", "<<o[3]<<endl;
 	}
 
-	//! From a collision sample (currGsmp), it goes backward a random step using the alpha and xi
-	//! angles of the parent, stores the new sample, computes new alpha and xi angles and 
-	//! advances until collision, and stores the sample
-		bool GUIBROgridPlanner::applyRandControl(guibroSample *currGsmp)
-		{		
-			//cout<<"Call to applyRandControl"<<endl;
-			//printInfo(currGsmp);
-				
-			//random generate the maximum allowd advance between the user specified minimum (_minAdvanceStep) and maximum (_maxAdvanceStep)
-			KthReal maxAdvance = _minAdvanceStep + (_maxAdvanceStep-_minAdvanceStep)*_gen->d_rand();
-			RobConf *currentconf;
-			Sample *nextSmp;
-			vector<RobConf*> newconf; newconf.resize(1);
-			vector<KthReal> u; u.resize(3);
-			vector<KthReal> uold; uold.resize(3);
-			vector<KthReal> uapp; uapp.resize(3);
-			SampleSet*  tmpsamples = new SampleSet();
-			Sample *last;
-
-			//move to currSmp and return configMap
-			currentconf = _wkSpace->getConfigMapping(currGsmp->smpPtr).at(0);
-			//update alpha and psi
-			ConstrainedKinematic* ck = _wkSpace->getRobot(0)->getCkine();
-			((ConsBronchoscopyKin*)ck)->setvalues(currGsmp->u[0],0);
-			((ConsBronchoscopyKin*)ck)->setvalues(currGsmp->u[1],1);
-			((ConsBronchoscopyKin*)ck)->setvalues(currGsmp->u[2],2);		
-			
-			KthReal backwards_u2 = 0;
-			KthReal r = -1;
-			u[0] = currGsmp->u[0];
-			u[1] = currGsmp->u[1];
-			
-			if(currGsmp->collision)
-			{
-				//1-go backwards u[2] units mantianing alpha and xi of currGsmp
-				r = (_gen->d_rand()*0.6+0.4);
-				backwards_u2 = r*_minAdvanceStep*2;
-				if(backwards_u2 > (currGsmp->u[2]-_stepsinterpolate)) backwards_u2 = (currGsmp->u[2]-_stepsinterpolate);//*r;
-				u[2] = -backwards_u2 ;//backwards
-			
-				//1a: apply control
-				u[2] = -backwards_u2/(int)backwards_u2;
-
-				nextSmp = new Sample(_wkSpace->getDimension());
-				//newconf[0] =  &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
-				//nextSmp->setMappedConf(newconf);
-				KthReal backdone = 0;
-				while(backdone<backwards_u2)
-				{
-					newconf[0] =  &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
-					backdone += abs(u[2]);
-					nextSmp->setMappedConf(newconf);
-					if(_debug) tmpsamples->add(nextSmp);
-					last = nextSmp;
-					currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);
-					nextSmp = new Sample(_wkSpace->getDimension());
-				}
-
-
-				//newconf[0] =  &_wkSpace->getRobot(0)->ConstrainedKinematics(u);
-				//nextSmp->setMappedConf(newconf);
-
-				//1b: store the sample			
-				if( _wkSpace->collisionCheck(last))
-				{
-					cout<<"currGsmp->id="<<currGsmp->id<<" Error: no collision should have been detected!"<<endl;
-					//delete nextSmp;
-					return false; //collision - sample discarded 
-				}
-				//currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
-			}
-
-			//2-go forward step by step using a new alpha and xi, until colision
-
-			bool inversekinused;
-			KthReal alphaRange;
-			KthReal xiRange;
-			if(_gen->d_rand() > _thresholdInvKin) 
-			{
-				inversekinused = true;
-				alphaRange = _alpha/2;
-				xiRange = _xi/2;
-			}
-			else
-			{
-				inversekinused = false;
-				alphaRange = _alpha;
-				xiRange = _xi;
-			}
-			((ConsBronchoscopyKin*)ck)->setInverseAdvanceMode(inversekinused);
-
-			uold[0] = u[0];
-			uold[1] = u[1];
-			uold[2] = u[2];
-			uapp[0] = u[0];
-			uapp[1] = u[1];
-			uapp[2] = u[2];
-
-			u[0] = currGsmp->u[0] + (_gen->d_rand()-0.5)*_alpha;
-			//2*pi continuity
-			if(u[0]<-1) u[0]+=2; else if(u[0]>1) u[0]-=2;
-			
-			u[1] = currGsmp->u[1] + (_gen->d_rand()-0.5)*_xi;
-			//saturation
-			if(u[1]<-1) u[1]=-1; else if(u[1]>1) u[1]=1;
-			
-			u[2] = _deltaZ;//forward
-			
-			KthReal deltau[3];
-			deltau[0] = (u[0]-uold[0])/_stepsinterpolate;
-			deltau[1] = (u[1]-uold[1])/_stepsinterpolate;
-
-			KthReal advanced = 0;
-			uapp[0] = uold[0]+advanced*deltau[0];
-			uapp[1] = uold[1]+advanced*deltau[1];
-			uapp[2] = u[2];
-
-			//2a) advance a deltaZ step
-			nextSmp = new Sample(_wkSpace->getDimension());
-			newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(uapp);
-			nextSmp->setMappedConf(newconf);
-			
-			//2b) keed advancing until collision
-
-			int advancedsteps = 0;
-			while( ! _wkSpace->collisionCheck(nextSmp))
-			{
-				advanced += uapp[2];
-				advancedsteps++;
-				if(advanced>=maxAdvance) break;
-
-				if(advancedsteps<=_stepsinterpolate)
-				{
-					uapp[0] = uold[0]+advanced*deltau[0];
-					uapp[1] = uold[1]+advanced*deltau[1];
-					uapp[2] = u[2];
-				}
-				currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
-				if(_debug) tmpsamples->add(nextSmp);
-				last = nextSmp;
-				nextSmp = new Sample(_wkSpace->getDimension());
-				newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(uapp);
-				nextSmp->setMappedConf(newconf);
-			};
-			//2c) store the sample if advanced at least 50 steps
-			if(advanced>_minAdvanceStep)
-			{
-				if(_debug){
-					for(int j=0; j<tmpsamples->getSize();j++)
-					{
-						_samples->add(tmpsamples->getSampleAt(j));
-					}
-				}
-				else _samples->add(last);
-
-				//tmpsamples->clear();DO NOT CLEAR - SAMPLES SHOULD NOT BE REMOVED
-				//_samples->add(nextSmp);
-
-				guibroSample *gSmp = new guibroSample;
-				gSmp->smpPtr = last;
-				gSmp->parent = currGsmp;
-				gSmp->length = currGsmp->length + advanced; 
-				gSmp->curvature = currGsmp->curvature + abs(u[0]) + abs(u[1]);
-				gSmp->steps = currGsmp->steps + 1;
-				gSmp->cost = _wL*gSmp->length + _wC*gSmp->curvature + _wS*gSmp->steps;
-				gSmp->u[0] = u[0];
-				gSmp->u[1] = u[1];
-				gSmp->u[2] = advanced;
-				gSmp->back_u2 = backwards_u2;
-				gSmp->leave = true;
-				gSmp->parent->leave = false;
-				gSmp->id = _guibroSet.size();
-				gSmp->inversekin = inversekinused; 
-				if(advanced==maxAdvance) gSmp->collision = false;
-				else gSmp->collision = true; //previous loop exited by collision
-				_guibroSet.push_back(gSmp);
-
-
-				return true; //no collision - sample added to samnpleset
-			}
-			else 
-			{
-				//delete nextSmp;
-				cout<<"currGsmp->id="<<currGsmp->id<<" Advance discarded ("<<advanced<<" steps)";
-				cout<<" r = "<<r<<" currGsmp->u[2] = "<<currGsmp->u[2]<<" back = "<<backwards_u2<<" u = ("<<u[0]<<" , "<<u[1]<<")"<<endl;
-				return false; //collision - sample discarded 
-			}
-			
-	  	}
-		
-
+	
   void GUIBROgridPlanner::moveAlongPath(unsigned int step){
     if(_solved){
-      if(_simulationPath.size() == 0 ){ // Then calculate the simulation path based on stepsize
-
-			RobConf *currentconf;
-			Sample *nextSmp;
-			vector<RobConf*> newconf; newconf.resize(1);
-			vector<KthReal> u; u.resize(3);
-			vector<KthReal> unext; unext.resize(3);
-			vector<KthReal> uapp; uapp.resize(3);
-			guibroSample *currGsmp;
-			guibroSample *prevGsmp = NULL;
-
-			for(int i = _guibroSet.size()-1; i >=0 ; i--)
-			{
-				if(i< _guibroSet.size()-1)
-					prevGsmp = _guibroSet.at(i+1);
-				
-				currGsmp = _guibroSet.at(i);
-				nextSmp = currGsmp->smpPtr;
-				 
-				//Go ahead in the own direction, storing the samples
-				u[0] = currGsmp->u[0];
-				u[1] = currGsmp->u[1];
-				if(currGsmp->parent != NULL)
-				{
-					unext[0] = currGsmp->parent->u[0];
-					unext[1] = currGsmp->parent->u[1];
-				}
-				else
-				{
-					unext[0] = 0;
-					unext[1] = 0;
-				}
-					
-
-				
-				currentconf = _wkSpace->getConfigMapping(nextSmp).at(0);//move and update
-				ConstrainedKinematic* ck = _wkSpace->getRobot(0)->getCkine();
-				((ConsBronchoscopyKin*)ck)->setvalues(u[0],0);
-				((ConsBronchoscopyKin*)ck)->setvalues(u[1],1);
-
-				
-			    ((ConsBronchoscopyKin*)ck)->setInverseAdvanceMode( currGsmp->inversekin );
-
-				mt::Transform T_Ry;
-				mt::Transform T_tz;
-				T_Ry.setRotation( mt::Rotation(mt::Vector3(0,1,0),-M_PI/2) );
-				T_tz.setTranslation( mt::Vector3(0,0,-7.1) );
-
-				//1-advance -back_u2; do not store
-				KthReal advanced = 0;
-				uapp[0] = u[0];
-				uapp[1] = u[1];
-				if(prevGsmp!=NULL && prevGsmp->back_u2!=0)
-				{
-					advanced = prevGsmp->back_u2;
-					uapp[2] = -advanced;
-					newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(uapp);
-					nextSmp = new Sample(_wkSpace->getDimension());
-					nextSmp->setMappedConf(newconf);
-					//here starts the motion
-					_simulationPath.push_back(nextSmp);
-					addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
-				}
-
-				//2-advance until interpolate
-				KthReal maxu = currGsmp->u[2] - _stepsinterpolate*_deltaZ;
-				uapp[2] = - _deltaZ;
-				while(advanced< maxu)
-				{
-					newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(uapp);
-					nextSmp = new Sample(_wkSpace->getDimension());
-					nextSmp->setMappedConf(newconf);
-					_simulationPath.push_back(nextSmp);
-				
-					addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
-					advanced += abs(_deltaZ);
-				}
-
-				//3-interpolate
-				maxu = currGsmp->u[2];
-				KthReal deltau[2];
-				deltau[0] = (unext[0]-u[0])/_stepsinterpolate;
-				deltau[1] = (unext[1]-u[1])/_stepsinterpolate;
-				uapp[2] = - _deltaZ;
-				int j=0;
-				while(advanced<= maxu)
-				{
-					uapp[0] = u[0]+j*deltau[0];
-					uapp[1] = u[1]+j*deltau[1];
-					newconf[0] = &_wkSpace->getRobot(0)->ConstrainedKinematics(uapp);
-					nextSmp = new Sample(_wkSpace->getDimension());
-					nextSmp->setMappedConf(newconf);
-					_simulationPath.push_back(nextSmp);
-					
-					addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
-					
-					advanced += abs(_deltaZ);
-					j++;
-				}
-
-		
-			}
-	  }
-	  else if( _simulationPath.size() >= 2 ){
+      if( _simulationPath.size() >= 2 ){
         step = step % _simulationPath.size();
         _wkSpace->moveTo(_simulationPath[step]);
 
@@ -754,9 +392,100 @@ namespace libPlanner {
 	}
   }
 
-		//looks a step ahead
-		int GUIBROgridPlanner::look(int stepsahead)
+
+
+
+	int GUIBROgridPlanner::advanceToBest(KthReal stepsahead, Sample *smp, FILE *fp)
+	{
+		vector<KthReal>  values;
+		KthReal alpha, beta;
+		
+
+		//look 10 steps ahead
+		int r = look(stepsahead, &alpha, &beta);
+		if(r>0)
 		{
+			mt::Transform linkTransf;
+			mt::Point3 pos,pos0;
+			linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+			pos0 = linkTransf.getTranslation();
+
+			//move one step ahead interpolating. The values alpha, beta shopuld be reached after stepahead steps	
+			KthReal alpha0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
+			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
+
+			KthReal a = alpha0+(alpha-alpha0)/stepsahead;
+			KthReal b = beta0+(beta-beta0)/stepsahead;
+			values.push_back(a);
+			values.push_back(b);
+			values.push_back(-1);
+			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
+			
+			//verify if the interpolation step towards the best configuration is collision-free
+			int currentNF1cost;
+			int currentdcost;
+			bool colltest = collisionCheck(&currentdcost,&currentNF1cost);
+
+			linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+			pos = linkTransf.getTranslation();
+			if(fp!=NULL)
+			{
+				if(colltest) fprintf(fp,"Apply steps= %.2f a= %.2f b= %.2f to go from (%.2f %.2f %.2f) to (%.2f %.2f %.2f) Reached: NF1= %d Dist = %d col = TRUE\n",
+					stepsahead,a,b, pos0[0],pos0[1],pos0[2],pos[0],pos[1],pos[2],currentNF1cost,currentdcost);
+				else fprintf(fp,"Apply steps= %.2f a= %.2f b= %.2f to go from (%.2f %.2f %.2f) to (%.2f %.2f %.2f) Reached: NF1= %d Dist = %d col = FALSE\n",
+					stepsahead,a,b, pos0[0],pos0[1],pos0[2],pos[0],pos[1],pos[2],currentNF1cost,currentdcost);
+			}
+			else{
+				if(colltest){ 
+					cout<<"Apply steps= "<<stepsahead<<" a= "<<a<<" b= "<<b;
+					cout<<" to go from ("<<pos0[0]<<pos0[1]<<pos0[2]<<") to ("<<pos[0]<<pos[1]<<pos[2];
+					cout<<") Reached: NF1= "<<currentNF1cost<<" Dist = "<<currentdcost<<" col = TRUE"<<endl;
+				}
+				else{ 
+					cout<<"Apply steps= "<<stepsahead<<" a= "<<a<<" b= "<<b;
+					cout<<" to go from ("<<pos0[0]<<pos0[1]<<pos0[2]<<") to ("<<pos[0]<<pos[1]<<pos[2];
+					cout<<") Reached: NF1= "<<currentNF1cost<<" Dist = "<<currentdcost<<" col = FALSE"<<endl;
+				}
+			}
+
+			if(colltest)
+			{
+				//interpolation step is in collision. Return to previous position
+				values[2]=1;
+				_wkSpace->getRobot(0)->ConstrainedKinematics(values);
+				linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+				pos = linkTransf.getTranslation();
+				if(fp!=NULL)
+					fprintf(fp,"move back to (%.2f %.2f %.2f)\n",pos[0],pos[1],pos[2]);
+				else cout<<"move back to ("<<pos[0]<<pos[1]<<pos[2]<<")"<<endl;
+				
+				r = -3;
+				cout<<"Sorry, interpolation motion is not free. Cannot move..."<<endl;
+			}
+
+			if(smp!=NULL)
+			{
+				smp->setMappedConf(_wkSpace->getConfigMapping());
+			}
+		}
+		else if(r==-1)
+		{
+			cout<<"Goal already reached!!, no best configuration to move..."<<endl;
+		}
+		else if(r==-2)
+		{
+			cout<<"Sorry, local minima. Cannot move to a better configuration..."<<endl;
+		}
+		else{
+			cout<<"Sorry, no free configuration available. Cannot move to a better configuration..."<<endl;
+		}
+		return r;
+	}
+
+//looks a step ahead
+int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta)
+		{
+			//store current position
 			KthReal alpha0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
 			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
 			vector<KthReal> alpha(_maxLookAtPoints);
@@ -769,7 +498,14 @@ namespace libPlanner {
 			KthReal a0 = maxAlpha*alpha0; //alpha goes from -1 to +1 that corresponds to the range [-maxAlpha,maxAlpha]
 			KthReal alphaRange;
 
-			KthReal DeltaBeta = 2;//fixed step
+			KthReal DeltaBeta;// = 2;//fixed step
+			//if(stepsahead<2.5) DeltaBeta = 5.0; 
+			//else if(stepsahead<5.0) DeltaBeta = 4.0; 
+			//else if(stepsahead<7.5) DeltaBeta = 3.0; 
+			//else DeltaBeta = 2.0; 
+			DeltaBeta = 5.0-(stepsahead-2.5)/2.5;
+			if(DeltaBeta<2.0) DeltaBeta=2.0;
+			
 			KthReal maxBeta = (180/M_PI)*((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getMaxBending();
 			KthReal b;
 			KthReal b0 = maxBeta*beta0; //beta goes from -1 to +1 that corresponds to the range [-maxBeta,maxBeta]
@@ -782,13 +518,18 @@ namespace libPlanner {
 				if(b>maxBeta || b<-maxBeta) continue;
 				//find the range of alpha for the current value of beta (b)
 				//alphaRange = 20+fabs(2.0*b+180); 
-				if(fabs(b)<10) alphaRange = 180;
-				else if(fabs(b)<20) alphaRange = 90;
-				else if(fabs(b)<30) alphaRange = 50;
-				else if(fabs(b)<40) alphaRange = 30;
-				else if(fabs(b)<50) alphaRange = 20;
-				else if(fabs(b)<60) alphaRange = 10;
-				else if(fabs(b)<maxBeta) alphaRange = 15;
+				//alphaRange = (maxAlpha/180.0)*238.500000000000398-6.55535714285715976*fabs(b)+0.473214285714287364e-1*b*b;
+				//if(alphaRange>maxAlpha)alphaRange=maxAlpha;
+				//else if(alphaRange<15.0) alphaRange=15.0;
+
+				if(fabs(b)<10) alphaRange = maxAlpha;
+				else if(fabs(b)<20) alphaRange = 0.9*maxAlpha;//90;
+				else if(fabs(b)<30) alphaRange = 0.8*maxAlpha;//50;
+				else if(fabs(b)<40) alphaRange = 0.5*maxAlpha;//30;
+				else if(fabs(b)<50) alphaRange = 0.3*maxAlpha;//20;
+				else if(fabs(b)<60) alphaRange = 0.2*maxAlpha;//10;
+				else if(fabs(b)<=maxBeta) alphaRange = 0.3*maxAlpha;//15;
+				else alphaRange = 15;//should not reach this else
 				DeltaAlpha = alphaRange/10;
 				//sweep alphaRange degrees around alpha0
 				for(int j=-5;j<=5;j++)
@@ -808,45 +549,150 @@ namespace libPlanner {
 			}
 
 
-			int dcost, NF1cost;
-			bool col;
+			vector<int> dcost(_maxLookAtPoints);
+			vector<int> NF1cost(_maxLookAtPoints);
+			vector<bool> col(_maxLookAtPoints);
+
 			int freepoints = 0;
 			int minNF1cost = 1000000;
+			int maxNF1cost = -1000000;
+			int mindcost = 1000000;
+			int maxdcost = -1000000;
+			int currentNF1cost;
+			int currentdcost;
 			int pointminNF1cost = -1;
+			//current cost 
+			bool colltest = collisionCheck(&currentdcost,&currentNF1cost);
+			if(currentNF1cost==0)
+			{
+				//reached
+				return -1;
+			}
 			for(int i=0; i<_maxLookAtPoints;i++)
 			{
 				//alpha = alpha0 + (KthReal)_gen->d_rand()*0.2-0.1;
 				//xi = xi0 + (KthReal)_gen->d_rand()*0.2-0.1;
-				col = testLookAtPoint(_counterFirstPoint+i, alpha[i], beta[i], stepsahead, &dcost, &NF1cost);
-				if(NF1cost>0 && NF1cost<minNF1cost){
-					minNF1cost = NF1cost;
-					pointminNF1cost = _counterFirstPoint+i;
+				col[i] = testLookAtPoint(_counterFirstPoint+i, alpha[i], beta[i], stepsahead, &dcost[i], &NF1cost[i]);
+				if(col[i]==false)
+				{
+					//find extreme values for NF1 cost
+					if(NF1cost[i]>0){
+						if(NF1cost[i]<minNF1cost){
+							minNF1cost = NF1cost[i];
+							pointminNF1cost = _counterFirstPoint+i;
+						}
+						else if(NF1cost[i]>maxNF1cost){
+							maxNF1cost = NF1cost[i];
+						}
+					}
+					//find extreme values for distance cost
+					if(dcost[i]>0){
+						if(dcost[i]<mindcost){
+							mindcost = dcost[i];
+						}
+						else if(dcost[i]>maxdcost){
+							maxdcost = dcost[i];
+						}
+					}
+					//cout<<"Point "<<i<<"("<<alpha[i]<<","<<xi[i]<<") collision "<<col<<" cost = "<<cost<<endl; 
+					freepoints++;
 				}
-				//cout<<"Point "<<i<<"("<<alpha[i]<<","<<xi[i]<<") collision "<<col<<" cost = "<<cost<<endl; 
-				if(col==false) freepoints++;
-			}
-			if(pointminNF1cost!=-1)
-			{
-				//draw green the point with lower value of the NF1 function
-				KthReal green[3];
-				green[0]=0.0;
-				green[1]=1.0;
-				green[2]=0.0;
-				_wkSpace->getObstacle(pointminNF1cost)->getElement()->setColor(green);
 			}
 
-			vector<KthReal>  values;
+			//if no lookat point has a NF1 value, retunr 0
+			KthReal color[3];
+			if(pointminNF1cost==-1) {
+				for(int i=0; i<_maxLookAtPoints;i++)
+				{
+					color[0]=0.8;
+					color[1]=0.2;
+					color[2]=0.2;
+					_wkSpace->getObstacle(_counterFirstPoint+i)->getElement()->setColor(color);
+				}
+				//return to current position
+				/*vector<KthReal>  values;
+				values.push_back(alpha0);
+				values.push_back(beta0);
+				values.push_back(0);
+				_wkSpace->getRobot(0)->ConstrainedKinematics(values)*/;
+				return 0;
+			}
+			
+			//else color the candidate points
+			KthReal rNF1;
+			KthReal rDist;
+			KthReal r;
+			KthReal minr=100000;
+			KthReal weightNF1 = 0.75;
+			int localminima=1;
+			int bestdcost;
+			int bestNF1cost;
+			for(int i=0; i<_maxLookAtPoints;i++)
+			{
+				if(col[i]==false)
+				{
+					//color between green and blue for cells with NF1 value
+					//more green those cells with lowest NF1 value (that is zero for the goal cell)
+					//cells with a cost greater than the current are not considered
+					if(NF1cost[i]>0){
+						if(NF1cost[i]>currentNF1cost) r=1;
+						else 
+						{
+							//rNF1 varies between 0 and 1. Lower values indicate that we are closer to the goal
+							rNF1 = (KthReal)(NF1cost[i]-minNF1cost)/(maxNF1cost-minNF1cost);
+							//rDist varies between 0 and 1. The distance cost equals the positive distance
+							//to the walls. As defined, rDist is lower for regions far away from the walls.
+							rDist = 1-((KthReal)(dcost[i]-mindcost)/(maxdcost-mindcost));
+							//r combines rNF1 and rDist. Lower values indicate a good candidate.
+							//good candidates will be green, bad candidates blue.
+							r = weightNF1*rNF1+(1-weightNF1)*rDist;
+							if(r<minr)
+							{
+								minr=r;
+								*bestAlpha = alpha[i];
+								*bestBeta = beta[i];
+								bestdcost=dcost[i];
+								bestNF1cost=NF1cost[i];
+								localminima=0;
+							}
+						}
+						//r=rNF1;
+						//draw green the point with lower value of the NF1 function
+						color[0]=0.0;
+						color[1]=(0.2+(1-r)*0.8);
+						color[2]=0.8*r;
+					}
+				}
+				//collision point
+				else
+				{
+					color[0]=0.8;
+					color[1]=0.5;
+					color[2]=0.5;
+				}
+				_wkSpace->getObstacle(_counterFirstPoint+i)->getElement()->setColor(color);
+			}
+			
+			//return to current position
+			/*vector<KthReal>  values;
 			values.push_back(alpha0);
 			values.push_back(beta0);
 			values.push_back(0);
-			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
-			return freepoints;
+			_wkSpace->getRobot(0)->ConstrainedKinematics(values);*/
+
+
+			if(localminima) return -2;
+			else{
+				//cout<<"currrent= "<<NF1cost[60]<<", "<<dcost[60]<<", "<<alpha[60]<<", "<<beta[60]<<endl;
+				//cout<<"best    = "<<bestNF1cost<<", "<<bestdcost<<", "<<*bestAlpha<<", "<<*bestBeta<<endl;
+				return freepoints;
+			}
 		}
 
-		//draws a point at the configuration stepsahead from the current one
-		bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha, 
+//draws a point at the configuration stepsahead from the current one
+bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha, 
 										KthReal xi, KthReal stepsahead, int *dcost, int *NF1cost)
-		{
+{
 			mt::Transform linkTransf;
 			mt::Point3 pos;
 			mt::Rotation rot;
@@ -872,7 +718,12 @@ namespace libPlanner {
 			
 			//move the broncoscope at the new position
 			linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
-			pos = linkTransf.getTranslation();
+			int nlinks = _wkSpace->getRobot(0)->getNumLinks();
+			mt::Transform totip;	
+			totip.setRotation(mt::Rotation(0.0,0.0,0.0,1));
+			totip.setTranslation(mt::Vector3( _wkSpace->getRobot(0)->getLink(nlinks-1)->getA(),0,0) );
+			mt::Transform tipTransf = linkTransf*totip;
+			pos = tipTransf.getTranslation();
 
 			//compute the cost at the current position
 			bool colltest = collisionCheck(dcost,NF1cost);
@@ -882,20 +733,7 @@ namespace libPlanner {
 			p[1]=pos[1];
 			p[2]=pos[2];
 			_wkSpace->getObstacle(numPoint)->getElement()->setPosition(p);
-			KthReal color[3];
-			if(colltest){
-				color[0]=0.8;
-				color[1]=0.2;
-				color[2]=0.2;
-			}
-			else{
-				KthReal c=0.2+ *dcost/150.0;
-				if(c>1.0) c=1.0;
-				color[0]=c;
-				color[1]=c;
-				color[2]=c;
-			}
-			_wkSpace->getObstacle(numPoint)->getElement()->setColor(color);
+
 
 			//return to current position
 			values[2] = stepsahead;
@@ -903,12 +741,27 @@ namespace libPlanner {
 
 			return colltest;
 		}
-	//! function to find a solution path
-  /**/
-		bool GUIBROgridPlanner::trySolve()
-		{			
+	
+//! function to find a solution path
+ /**/
+bool GUIBROgridPlanner::trySolve()
+		{		
+			_simulationPath.clear();
+			_cameraPath.clear();	
 			_solved = false;
-
+				  
+			/*
+			char sampleDIM = _wkSpace->getDimension();
+			Sample *tmpSamInit = new Sample(sampleDIM); 
+			Sample *tmpSamGoal = new Sample(sampleDIM);
+			tmpSamInit->setCoords(_init);
+			tmpSamGoal->setCoords(_goal);
+			_samples->clear();
+	        _samples->add(tmpSamInit);
+			_samples->add(tmpSamGoal);
+			*/
+			
+			cout<<"START computing NF1 function"<<endl;
 			gridVertex vi,vg,vc,vmin;
 			if(findGraphVertex(_goal,&vg)==false || findGraphVertex(_init,&vi)==false)
 			{
@@ -916,121 +769,67 @@ namespace libPlanner {
 				return _solved;
 			}
 			grid->computeNF1(vg);
-			look(10);
-			return _solved;
-
-			_solved = false;
-
-			_simulationPath.clear();
-			_cameraPath.clear();
-			char sampleDIM = _wkSpace->getDimension();
-
-			//Set _samples only with the goal sample
-			if( _samples->getSize() > 0){
-
-			    Sample *SmpInit;
-				SmpInit = new Sample(sampleDIM);
-				SmpInit->setCoords(_init->getCoords());
-				_wkSpace->collisionCheck(SmpInit);
-				SmpInit->setMappedConf(_wkSpace->getConfigMapping(_init));
-				
-			    Sample *SmpGoal;
-				SmpGoal = new Sample(sampleDIM);
-				SmpGoal->setCoords(_goal->getCoords());
-				_wkSpace->collisionCheck(SmpGoal);
-				SmpGoal->setMappedConf(_wkSpace->getConfigMapping(_goal));
-				_samples->clear();
-				
-				_init=SmpInit;
-				_goal=SmpGoal;
-				
-				_samples->add(SmpInit);
-				_samples->add(SmpGoal);
-
-				//Define the first guibroSample and add to guibroSet
-				_guibroSet.clear();
-				guibroSample *gSmp = new guibroSample;
-				gSmp->smpPtr = _goal;
-				gSmp->parent = NULL;
-				gSmp->length = 0; 
-				gSmp->curvature = 0;
-				gSmp->steps = 0;
-				gSmp->cost = 0;
-				gSmp->u[0] = 0;
-				gSmp->u[1] = 0;
-				gSmp->u[2] = 0;
-				gSmp->id = 0;
-				gSmp->back_u2 = 0.0;
-				gSmp->collision = false;
-				gSmp->leave = true;
-				gSmp->inversekin = false; 
-				_guibroSet.push_back(gSmp);
-			}
-			else
-			{
-				//no query have been set
-				cout<<"Trysolve did nothing - no query have been set"<<endl;
-				return false;
-			}
-
-
-			//Loop by growing the tree
-			//guibroSample *curr = _guibroSet.at(0);
-			//int count=1;
-			////applyRandControlFirsTime(curr);
-			//applyRandControl(curr);
-			//if(_guibroSet.size()==1) 
-			//{
-			//	_solved = false;
-			//	return _solved;
-			//}
+			cout<<"END computing NF1 function"<<endl;
 			
 
 
-			guibroSample *curr;
-			int count=0;
-			int i=0;
-			int currentNumSamples = 50;
-			do{
-				cout<<"count: "<<count<<" ";
-				curr = _guibroSet.at(i);
-				if(applyRandControl(curr)) i++;
-				count++;
 
-			}while(count<currentNumSamples); 
+			Sample *smp = new Sample(7);
+			
+			mt::Transform T_Ry;
+			mt::Transform T_tz;
+			T_Ry.setRotation( mt::Rotation(mt::Vector3(0,1,0),-M_PI/2) );
+			T_tz.setTranslation( mt::Vector3(0,0,-(_wkSpace->getRobot(0)->getLink(_wkSpace->getRobot(0)->getNumLinks()-1)->getA()+1.1)) );
+			
+			_wkSpace->moveTo(_init);
+			_simulationPath.push_back(_init);	
+			addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
+
+			FILE *fp;
+			fp = fopen ("advanceToBest.txt","wt");
+			if(fp==NULL) cout<<"Cannot open advanceToBest.txt for writting..."<<endl;
+			
+			int r;
+			do{
+				r=advanceToBest(_stepsAdvance,smp,fp);
+				if(r>0)
+				{				
+					_path.push_back(smp);
+					_samples->add(smp);
+					_simulationPath.push_back(smp);
+					addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
+					smp = new Sample(7);
+				}
+				else _stepsAdvance /=2.0;
+			}while(r!=-1 && _stepsAdvance>0.1);
+			fclose(fp);
+
+			int currentNF1cost;
+			int currentdcost;
+			bool colltest = collisionCheck(&currentdcost,&currentNF1cost);
+			cout<<"Reached NF1 value is: "<<currentNF1cost<<endl;
+
+
+/*
+
+
+			while(advanceToBest(_stepsAdvance,smp))
+			{
+				_path.push_back(smp);
+				_samples->add(smp);
+				_simulationPath.push_back(smp);
+				addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
+
+				smp = new Sample(7);
+			}
+			*/
+			//_wkSpace->moveTo(_goal);
+			//_simulationPath.push_back(_goal);
+			//addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
+
 			_solved = true;
 
-			
-			//int currentNumSamples = 10;//_guibroSet->getSize();
-			//for(int i=1; i<currentNumSamples; i++)
-			//{
-			//	if(_guibroSet.size()==i) {
-			//		i=0;
-			//		continue;
-			//	}
-			//	curr = _guibroSet.at(i);
-			//	if(curr->leave==false) continue;
-			//	if(applyRandControl(curr))
-			//	{
-			//		count++;
-			//	}
-			//	else break;
-			//}
-			
-			cout<<"GuibroSET:";
-			for(int i=1; i<_guibroSet.size(); i++)
-			{
-				cout<<"guibrosample "<<_guibroSet[i]->id<<
-					  " sample "<<_samples->indexOf(_guibroSet[i]->smpPtr)<<
-					  " invkinused: "<<_guibroSet[i]->inversekin<<endl;
-			}
-			cout<<endl;
-
-
-
 			return _solved;
-
-
 		}
 /**/
 
