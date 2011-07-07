@@ -93,7 +93,9 @@ namespace libPlanner {
 
 	  _stepsAdvance = 10.0;
 	  addParameter("Steps Advance",_stepsAdvance);
-	  
+
+	  _onlyNF1=1;
+	  addParameter("Only NF1(0/1)",_onlyNF1);
 
 		//set intial values from parent class data
 		_speedFactor = 1;
@@ -352,7 +354,13 @@ namespace libPlanner {
 			return false;		
 		//end show lookat points
 		
-
+		it = _parameters.find("Only NF1(0/1)");
+		if(it != _parameters.end()){
+          _onlyNF1 = it->second;
+		}else
+          return false;
+		
+		
 		it = _parameters.find("Drawn Path Link");
 		if(it != _parameters.end()){
           _drawnLink = it->second;
@@ -486,6 +494,8 @@ namespace libPlanner {
 int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta)
 		{
 			//store current position
+			
+
 			KthReal alpha0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
 			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
 			vector<KthReal> alpha(_maxLookAtPoints);
@@ -573,6 +583,10 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				//alpha = alpha0 + (KthReal)_gen->d_rand()*0.2-0.1;
 				//xi = xi0 + (KthReal)_gen->d_rand()*0.2-0.1;
 				col[i] = testLookAtPoint(_counterFirstPoint+i, alpha[i], beta[i], stepsahead, &dcost[i], &NF1cost[i]);
+				//restore alpha0, beta0
+				//((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->setvalues(alpha0,0);
+				//((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->setvalues(beta0,1);
+
 				if(col[i]==false)
 				{
 					//find extreme values for NF1 cost
@@ -699,15 +713,11 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			KthReal p[3];
 			Vector3 zaxis;
 
-			//p conté la posició que está a 5mm en la direcció z del tool, respecte el toolnull
-			//linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
-			//pos = linkTransf.getTranslation();
-			//rot = linkTransf.getRotation();
-			//zaxis = rot.getMatrix().transpose().at(0);
-			//p[0]=pos[0]+5*zaxis[0];
-			//p[1]=pos[1]+5*zaxis[1];
-			//p[2]=pos[2]+5*zaxis[2];
-			//_wkSpace->getObstacle(0)->getElement()->setPosition(p);
+			//store current configuration
+			RobConf* rConf = _wkSpace->getRobot(0)->getCurrentPos(); 
+			RobConf currentRobConf;
+			currentRobConf.setSE3(rConf->getSE3());
+			currentRobConf.setRn(rConf->getRn());
 
 			//Advance a deltaz step
 			vector<KthReal>  values;
@@ -736,8 +746,11 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 
 
 			//return to current position
-			values[2] = stepsahead;
-			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
+			_wkSpace->getRobot(0)->Kinematics(currentRobConf);
+			//restore alpha0, beta0
+			((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->registerValues();
+			//values[2] = stepsahead;
+			//_wkSpace->getRobot(0)->ConstrainedKinematics(values);
 
 			return colltest;
 		}
@@ -745,36 +758,49 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 //! function to find a solution path
  /**/
 bool GUIBROgridPlanner::trySolve()
-		{		
-			_simulationPath.clear();
-			_cameraPath.clear();	
-			_solved = false;
-				  
-			/*
-			char sampleDIM = _wkSpace->getDimension();
-			Sample *tmpSamInit = new Sample(sampleDIM); 
-			Sample *tmpSamGoal = new Sample(sampleDIM);
-			tmpSamInit->setCoords(_init);
-			tmpSamGoal->setCoords(_goal);
-			_samples->clear();
-	        _samples->add(tmpSamInit);
-			_samples->add(tmpSamGoal);
-			*/
-			
-			cout<<"START computing NF1 function"<<endl;
-			gridVertex vi,vg,vc,vmin;
+		{	
+			static gridVertex vinit=-1;
+			static gridVertex vgoal=-1;
+			gridVertex vi, vg;
+
 			if(findGraphVertex(_goal,&vg)==false || findGraphVertex(_init,&vi)==false)
 			{
 				cout<<"ERROR: No graph vertex found for init and goal samples"<<endl;
+				vi=-1;
+				vg=-1;
+				_solved=false;
 				return _solved;
 			}
-			grid->computeNF1(vg);
-			cout<<"END computing NF1 function"<<endl;
 			
 
+			//if init or goal changed then recompute NF1
+			if(vi != vinit || vg != vgoal)
+			{
+				vinit = vi;
+				vgoal = vg;
+
+				_simulationPath.clear();
+				_cameraPath.clear();
+				_path.clear();
+				_solved = false;
+				  
+				//Comnpute NF1
+				cout<<"START computing NF1 function"<<endl;
+				
+				grid->computeNF1(vg);
+				cout<<"END computing NF1 function"<<endl;
+			}
+
+			if(_onlyNF1) 
+			{
+				_solved=false;
+				return _solved;
+			}
+			//End Comnpute NF1/////////////////////////////////
 
 
-			Sample *smp = new Sample(7);
+			//Start finding a path
+			Sample *smp = new Sample(_wkSpace->getDimension());
 			
 			mt::Transform T_Ry;
 			mt::Transform T_tz;
@@ -782,6 +808,9 @@ bool GUIBROgridPlanner::trySolve()
 			T_tz.setTranslation( mt::Vector3(0,0,-(_wkSpace->getRobot(0)->getLink(_wkSpace->getRobot(0)->getNumLinks()-1)->getA()+1.1)) );
 			
 			_wkSpace->moveTo(_init);
+			//restore alpha,beta
+			((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->registerValues();
+
 			_simulationPath.push_back(_init);	
 			addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
 
@@ -789,19 +818,20 @@ bool GUIBROgridPlanner::trySolve()
 			fp = fopen ("advanceToBest.txt","wt");
 			if(fp==NULL) cout<<"Cannot open advanceToBest.txt for writting..."<<endl;
 			
+			KthReal steps = _stepsAdvance;
 			int r;
 			do{
-				r=advanceToBest(_stepsAdvance,smp,fp);
+				r=advanceToBest(steps,smp,fp);
 				if(r>0)
 				{				
 					_path.push_back(smp);
 					_samples->add(smp);
 					_simulationPath.push_back(smp);
 					addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
-					smp = new Sample(7);
+					smp = new Sample(_wkSpace->getDimension());
 				}
-				else _stepsAdvance /=2.0;
-			}while(r!=-1 && _stepsAdvance>0.1);
+				else steps /=2.0;
+			}while(r!=-1 && steps>0.1);
 			fclose(fp);
 
 			int currentNF1cost;
@@ -809,27 +839,53 @@ bool GUIBROgridPlanner::trySolve()
 			bool colltest = collisionCheck(&currentdcost,&currentNF1cost);
 			cout<<"Reached NF1 value is: "<<currentNF1cost<<endl;
 
-
-/*
-
-
-			while(advanceToBest(_stepsAdvance,smp))
-			{
-				_path.push_back(smp);
-				_samples->add(smp);
-				_simulationPath.push_back(smp);
-				addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
-
-				smp = new Sample(7);
-			}
-			*/
-			//_wkSpace->moveTo(_goal);
-			//_simulationPath.push_back(_goal);
-			//addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
-
-			_solved = true;
+			if(_simulationPath.size()>1) _solved = true;
+			else _solved = false;
 
 			return _solved;
+
+
+
+/* THe following code tests the restoration of a configuration
+			mt::Transform linkTransf;
+			mt::Point3 pos;
+
+			_wkSpace->moveTo(_goal);
+			
+			//get a copy of current conf
+			RobConf* rConf = _wkSpace->getRobot(0)->getCurrentPos(); 
+			RobConf currentRobConf;
+			currentRobConf.setSE3(rConf->getSE3());
+			currentRobConf.setRn(rConf->getRn());
+
+			linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+			pos = linkTransf.getTranslation();
+			cout<<"current tip position = ("<<pos[0]<<", "<<pos[1]<<", "<<pos[2]<<")"<<endl;
+			
+			cout<<"apply constrained kinematic"<<endl;
+			vector<KthReal>  values;
+			values.push_back(0.0);
+			values.push_back(0.0);
+			values.push_back(10);
+			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
+
+			linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+			pos = linkTransf.getTranslation();
+			cout<<"New tip position = ("<<pos[0]<<", "<<pos[1]<<", "<<pos[2]<<")"<<endl;
+ 
+			cout<<"Restore initial position"<<endl;
+			if(_wkSpace->getRobot(0)->Kinematics(currentRobConf))
+			{
+				linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+				pos = linkTransf.getTranslation();
+				cout<<"Old tip position = ("<<pos[0]<<", "<<pos[1]<<", "<<pos[2]<<")"<<endl;
+			} 
+			else cout<<"Kinematics returned FALSE!"<<endl;
+		return false;
+*/
+
+
+
 		}
 /**/
 

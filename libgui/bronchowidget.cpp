@@ -34,7 +34,6 @@ bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui) : 
     QObject::connect(ui->DzSlider,SIGNAL(valueChanged(int)),SLOT(zetaSliderChanged(int)));
     QObject::connect(ui->DzSlider,SIGNAL(sliderReleased()),SLOT(zetaSliderReleased()));
     QObject::connect(ui->RateCheckBox,SIGNAL(stateChanged(int)),SLOT(setNavMode(int)));
-    QObject::connect(ui->InverseCheckBox,SIGNAL(stateChanged(int)),SLOT(setAdvanceMode(int)));
     QObject::connect(ui->CameraCheckBox,SIGNAL(stateChanged(int)),SLOT(setCameraMode(int)));
     QObject::connect(ui->collisionCheckButton, SIGNAL( clicked() ), this, SLOT( collisionCheck() ) ); 
     QObject::connect(ui->advanceButton, SIGNAL( clicked() ), this, SLOT( advanceBronchoscope() ) ); 
@@ -61,18 +60,6 @@ void bronchoWidget::changeEvent(QEvent *e)
 }
 
 
-
-/*
-void bronchoWidget::stepAdvanceBronchoscope(int val)
-{
-	_stepAdvance = val;
-	if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
-	{
-		((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->setAdvanceStep(_stepAdvance);
-	}
-  updateLookAt();
-}
-*/
 
 void bronchoWidget::advanceBronchoscope()
 {
@@ -200,17 +187,6 @@ void bronchoWidget::setNavMode(int state){
   }
 
 }
-
-
-void bronchoWidget::setAdvanceMode(int state){
-
-	
-	ConstrainedKinematic* ck = _robot->getCkine();
-	if (state==Qt::Unchecked) ((ConsBronchoscopyKin*)ck)->setInverseAdvanceMode(false);
-	else ((ConsBronchoscopyKin*)ck)->setInverseAdvanceMode(true);
-	
-}
-
 
 void bronchoWidget::setCameraMode(int state){
 	if (state==Qt::Unchecked) {

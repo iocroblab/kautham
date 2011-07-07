@@ -27,11 +27,9 @@ namespace Ui {
 		void              zetaSliderChanged1();
 		void              zetaSliderReleased();
 		void              setNavMode(int state);
-		void              setAdvanceMode(int state);
 		void              setCameraMode(int state);
 		void			  collisionCheck();
 		void			  advanceBronchoscope();
-		//void			  stepAdvanceBronchoscope(int val);
 	public:
 		bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui ); //QWidget *parent = 0
 		~bronchoWidget();

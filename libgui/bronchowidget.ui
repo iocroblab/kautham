@@ -113,13 +113,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="InverseCheckBox">
-        <property name="text">
-         <string>Inverse</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="advanceButton">
         <property name="maximumSize">
          <size>

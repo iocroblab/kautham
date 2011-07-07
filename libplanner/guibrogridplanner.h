@@ -106,6 +106,7 @@ using namespace workspacegridplanner;
 
 		int _counterFirstPoint; 
 		int _maxLookAtPoints;
+		int _onlyNF1;
 
 		vector<guibroSample*> _guibroSet;
 
