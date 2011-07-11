@@ -37,7 +37,6 @@ bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui) : 
     QObject::connect(ui->CameraCheckBox,SIGNAL(stateChanged(int)),SLOT(setCameraMode(int)));
     QObject::connect(ui->collisionCheckButton, SIGNAL( clicked() ), this, SLOT( collisionCheck() ) ); 
     QObject::connect(ui->advanceButton, SIGNAL( clicked() ), this, SLOT( advanceBronchoscope() ) ); 
-    //QObject::connect(ui->stepAdvance, SIGNAL( valueChanged( int ) ), this, SLOT( stepAdvanceBronchoscope(int) ) ); 
 
 	
 }
@@ -57,6 +56,7 @@ void bronchoWidget::changeEvent(QEvent *e)
     default:
         break;
     }
+
 }
 
 
@@ -66,9 +66,20 @@ void bronchoWidget::advanceBronchoscope()
 	//advanceButton
 	if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
 	{
+		//restore alpha0, beta0
+		((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->registerValues();
+		//get advance step
 		KthReal s = ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->getAdvanceStep();
+		//advance
 		((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->advanceToBest(s);
 		updateView();
+		//update alpha0, beta0
+		((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->registerValues();
+		KthReal alpha = ((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->getvalues(0);
+		KthReal beta = ((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->getvalues(1);
+		ui->alphaSlider->setValue(alpha*ui->alphaSlider->maximum());
+		ui->XiSlider->setValue(beta*ui->alphaSlider->maximum());
+
 	}	
 	else
 		cout<<"Sorry: This option only works for the planner named 'GUIBRO Grid Planner'"<<endl;

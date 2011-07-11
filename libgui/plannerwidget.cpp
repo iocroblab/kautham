@@ -325,11 +325,11 @@ namespace libGUI{
 	    cout << endl;
 
       // print neighbours
-      cout << "Neights: " ;
-      for(int i =0; i< smp->getNeighs()->size(); i++)
-        cout << smp->getNeighs()->at(i) << ", ";
+      //cout << "Neights: " ;
+      //for(int i =0; i< smp->getNeighs()->size(); i++)
+      //  cout << smp->getNeighs()->at(i) << ", ";
+      //cout << endl;
 
-      cout << endl;
     }else{
         spnInit->setValue( 0 );
         spnGoal->setValue( 0 );

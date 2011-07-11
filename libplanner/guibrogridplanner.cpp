@@ -159,7 +159,8 @@ namespace libPlanner {
 		//flag indicating if the shere centered at the occupied cell is free or not
 		bool freesphere;
 		//threshold distance, measured in cells,
-		int threshold = (int)(sqrt(3.0)*radius/maxSize);//sqrt(3) is added to consider the distance to the vertex of the voxel
+		//int threshold = (int)(sqrt(3.0)*radius/maxSize);//sqrt(3) is added to consider the distance to the vertex of the voxel
+		int threshold = 1;
 		//reset the cost
 		*distcost=0;
 		for(int n=0;n<nlinks;n++)
@@ -191,6 +192,10 @@ namespace libPlanner {
 				label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
 				dist = -10*threshold; //value that will take thos spheres out of bounds
 				freesphere=grid->getDistance(label, &dist);
+
+				//more constrained for the tip
+				threshold = 2;
+
 				if(freesphere && dist<=threshold) freesphere = false;
 				*distcost += dist;
 				if(freesphere==false) collision = true;
@@ -401,8 +406,6 @@ namespace libPlanner {
   }
 
 
-
-
 	int GUIBROgridPlanner::advanceToBest(KthReal stepsahead, Sample *smp, FILE *fp)
 	{
 		vector<KthReal>  values;
@@ -513,7 +516,8 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			//else if(stepsahead<5.0) DeltaBeta = 4.0; 
 			//else if(stepsahead<7.5) DeltaBeta = 3.0; 
 			//else DeltaBeta = 2.0; 
-			DeltaBeta = 5.0-(stepsahead-2.5)/2.5;
+			//DeltaBeta = 5.0-(stepsahead-2.5)/2.5;
+			DeltaBeta = 10.0-stepsahead/2.5;
 			if(DeltaBeta<2.0) DeltaBeta=2.0;
 			
 			KthReal maxBeta = (180/M_PI)*((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getMaxBending();
@@ -532,14 +536,17 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				//if(alphaRange>maxAlpha)alphaRange=maxAlpha;
 				//else if(alphaRange<15.0) alphaRange=15.0;
 
-				if(fabs(b)<10) alphaRange = maxAlpha;
-				else if(fabs(b)<20) alphaRange = 0.9*maxAlpha;//90;
-				else if(fabs(b)<30) alphaRange = 0.8*maxAlpha;//50;
-				else if(fabs(b)<40) alphaRange = 0.5*maxAlpha;//30;
-				else if(fabs(b)<50) alphaRange = 0.3*maxAlpha;//20;
-				else if(fabs(b)<60) alphaRange = 0.2*maxAlpha;//10;
-				else if(fabs(b)<=maxBeta) alphaRange = 0.3*maxAlpha;//15;
+
+				alphaRange = maxAlpha*2;
+				/*if(fabs(b)<10) alphaRange = maxAlpha;
+				else if(fabs(b)<20) alphaRange = 0.95*maxAlpha;//0.9*maxAlpha;
+				else if(fabs(b)<30) alphaRange = 0.9*maxAlpha;//0.8*maxAlpha;
+				else if(fabs(b)<40) alphaRange = 0.8*maxAlpha;//0.5*maxAlpha;
+				else if(fabs(b)<50) alphaRange = 0.6*maxAlpha;//0.3*maxAlpha;
+				else if(fabs(b)<60) alphaRange = 0.4*maxAlpha;//0.2*maxAlpha;
+				else if(fabs(b)<=maxBeta) alphaRange = 0.4*maxAlpha;//0.3*maxAlpha;
 				else alphaRange = 15;//should not reach this else
+				*/
 				DeltaAlpha = alphaRange/10;
 				//sweep alphaRange degrees around alpha0
 				for(int j=-5;j<=5;j++)
@@ -633,14 +640,79 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			}
 			
 			//else color the candidate points
-			KthReal rNF1;
-			KthReal rDist;
-			KthReal r;
 			KthReal minr=100000;
-			KthReal weightNF1 = 0.75;
+			KthReal weightNF1 = 0.5;//0.75
 			int localminima=1;
 			int bestdcost;
 			int bestNF1cost;
+			int besti=-1;
+
+			vector<int> indexi;
+			vector<KthReal> rNF1(_maxLookAtPoints);
+			vector<KthReal> rDist(_maxLookAtPoints);
+			KthReal r;
+			//store all those lookat points that improve the NF1 value
+			for(int i=0; i<_maxLookAtPoints;i++)
+			{
+				if(col[i]==false)
+				{
+					if(NF1cost[i]>0 && NF1cost[i]<currentNF1cost)
+					{
+						rNF1[i] = (KthReal)(NF1cost[i]-minNF1cost)/(maxNF1cost-minNF1cost);
+						indexi.push_back(i);
+						//if(NF1cost[i]<currentNF1cost) indexi.push_back(i);
+					}
+					else rNF1[i] = -1;
+				}
+				else rNF1[i] = -1;
+			}
+			//among those that imnprove the NF1 value chose the one that has a better 
+			for(int i=0; i<_maxLookAtPoints;i++) rDist[i] = 1.0;
+			for(int j=0; j<indexi.size();j++)
+			{
+				int i = indexi[j];
+				rDist[i] = 1-((KthReal)(dcost[i]-mindcost)/(maxdcost-mindcost));
+			}
+			for(int i=0; i<_maxLookAtPoints;i++)
+			{
+				if(rNF1[i]==-1) //collision or non-NF1 value
+				{
+					color[0]=0.8;
+					color[1]=0.5;
+					color[2]=0.5;
+				}
+				else
+				{
+					r = weightNF1*rNF1[i]+(1-weightNF1)*rDist[i];
+					if(r<minr)
+					{
+						minr=r;
+						*bestAlpha = alpha[i];
+						*bestBeta = beta[i];
+						bestdcost=dcost[i];
+						bestNF1cost=NF1cost[i];
+						localminima=0;
+						besti = i;
+					}
+					color[0]=0.0;
+					color[1]=(0.2+(1-r)*0.8);
+					color[2]=0.8*r;
+				}
+				_wkSpace->getObstacle(_counterFirstPoint+i)->getElement()->setColor(color);
+			}
+			if(besti!=-1)
+			{
+				//Goal is white
+				color[0]=1.0;
+				color[1]=1.0;
+				color[2]=1.0;
+				_wkSpace->getObstacle(_counterFirstPoint+besti)->getElement()->setColor(color);
+			}
+
+			/*
+			KthReal rNF1;
+			KthReal rDist;
+			KthReal r;
 			for(int i=0; i<_maxLookAtPoints;i++)
 			{
 				if(col[i]==false)
@@ -686,6 +758,7 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				}
 				_wkSpace->getObstacle(_counterFirstPoint+i)->getElement()->setColor(color);
 			}
+			*/
 			
 			//return to current position
 			/*vector<KthReal>  values;
@@ -749,8 +822,6 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			_wkSpace->getRobot(0)->Kinematics(currentRobConf);
 			//restore alpha0, beta0
 			((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->registerValues();
-			//values[2] = stepsahead;
-			//_wkSpace->getRobot(0)->ConstrainedKinematics(values);
 
 			return colltest;
 		}

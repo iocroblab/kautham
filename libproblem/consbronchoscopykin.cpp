@@ -12,7 +12,7 @@ namespace libProblem {
 		_currentvalues[1] = 0.; 
 		_currentvalues[2] = 0.;
 		_maxbending = (KthReal) (2*M_PI/3);
-		_maxalpha = (KthReal) (M_PI/4);//(KthReal) (M_PI/2);
+		_maxalpha = (KthReal) (M_PI/3);//(KthReal) (M_PI/2);//(KthReal) (M_PI/4);
 
 	}
 	
