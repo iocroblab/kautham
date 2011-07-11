@@ -280,6 +280,11 @@ namespace libProblem {
     }
   }
 
+  void WorkSpace::setPathVisibility(bool vis){
+    for(size_t i = 0; i < robots.size(); i++ )
+      robots.at(i)->setPathVisibility( vis );
+  }
+
 }
 
 

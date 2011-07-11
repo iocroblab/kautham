@@ -203,9 +203,11 @@ void bronchoWidget::setCameraMode(int state){
 	if (state==Qt::Unchecked) {
 		_cameraView = false;
 		_gui->setActiveCameraTransform(_homeView);
+    _robot->setPathVisibility( false );
 	}
 	else{
 		_cameraView = true;
+    _robot->setPathVisibility( true );
 	}
 }
 

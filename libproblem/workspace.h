@@ -91,6 +91,7 @@ namespace libProblem{
       inline vector<RobConf*>&     getConfigMapping(Sample* sample){moveTo(sample); return _configMap;}
       bool                         inheritSolution(vector<Sample*>& path);
       void                         eraseSolution();
+      void                         setPathVisibility(bool vis);
 	  protected:
 		  virtual void          updateScene() = 0;
 		  vector<Obstacle*>     obstacles;

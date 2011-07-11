@@ -830,11 +830,12 @@ namespace libProblem {
           SoMaterial*  tmpMat = new SoMaterial();
           tmpMat->diffuseColor.setValue( 0., 0., 1.);
           path->addChild( tmpMat );
-          SoVRMLExtrusion* tmpEx = new SoVRMLExtrusion();
-          tmpEx->solid.setValue(true);
+          _pathSeparator = new SoVRMLExtrusion();
+          _pathSeparator->setName("Path");
+          _pathSeparator->solid.setValue(true);
           float diag = diagLimits()/100.;
           diag = diag < 1.4 ? 1.4 : diag;
-          tmpEx->scale.setValue( diag,diag );
+          _pathSeparator->scale.setValue( diag,diag );
           float vertex[13][2];
           vertex[0][0] = 0.1000;    vertex[0][1] = 0.;
           vertex[1][0] = 0.0866;    vertex[1][1] = 0.0500;
@@ -849,10 +850,10 @@ namespace libProblem {
           vertex[10][0] = 0.0500;   vertex[10][1] = -0.0866;
           vertex[11][0] = 0.0866;   vertex[11][1] = -0.0500;
           vertex[12][0] = 0.1000;   vertex[12][1] = 0.;
-          tmpEx->crossSection.setValues(0,13,vertex);
+          _pathSeparator->crossSection.setValues(0,13,vertex);
           _graphicalPath = new SoMFVec3f();
-          tmpEx->spine.connectFrom(_graphicalPath);
-          path->addChild(tmpEx);
+          _pathSeparator->spine.connectFrom(_graphicalPath);
+          path->addChild(_pathSeparator);
 
           robot->addChild(path);
           visModel = (void*)robot;
@@ -1100,6 +1101,28 @@ namespace libProblem {
     }catch(...){
       return false;
     }
+  }
+
+  bool Robot::setPathVisibility(bool visible){
+    bool response=false;
+    SoNode *sepgrid = NULL;
+    try{
+      if( visible ){
+       sepgrid = ((SoSeparator*)visModel)->getByName("Path");
+       if( sepgrid == NULL ) // It is OK, they is not attached to the root.
+					((SoSeparator*)visModel)->addChild(_pathSeparator);
+       
+       response = true;
+      }else{
+        sepgrid = ((SoSeparator*)visModel)->getByName("Path");
+        if( sepgrid != NULL )
+					((SoSeparator*)visModel)->removeChild(sepgrid);
+
+        response = false;
+      }
+    }catch(...){ }
+
+    return response;
   }
 }  	
 

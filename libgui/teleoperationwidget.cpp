@@ -513,7 +513,7 @@ namespace libGUI{
     }
   }
 
-  int TeleoperationWidget::setGuideForce(mt::Transform& tcp){
+  int TeleoperationWidget::setGuideForce(mt::Transform& tcp, mt::Transform& w2h){
     const KthReal THRESHOLD = 5.;
     KthReal EPSILON = 5.;
     KthReal forces[6];
@@ -534,6 +534,8 @@ namespace libGUI{
 
     //XXXXXXXXXXX here i want to use the PathToGuide object XXXXXXXX
     Uvec umag, upush;
+    mt::Point3 magP, pushP;
+    mt::Transform h2w = w2h.inverse();
     int idx =0;
     KthReal ratio = 0.;
     umag.resize(7);
@@ -545,10 +547,19 @@ namespace libGUI{
     // Normally the measures are in millimeters.
     KthReal dist = path->unitVectors(xi,xd,idx,ratio,umag,upush);
 
+    
+    for(int i = 0; i < 3; ++i){
+      magP.at(i) = umag.at(i);
+      pushP.at(i) = upush.at(i);
+    }
+
+    magP = h2w * magP;
+    pushP = h2w * pushP;
+
     if(dist > THRESHOLD ){
       // Only testing the translational forces.
       for(int i = 0; i < 3; ++i){
-        forces[i] = ( umag.at(i) + upush.at(i) )*( _maxForces[i]* ( dist - THRESHOLD ) / EPSILON );
+        forces[i] = ( magP.at(i) + pushP.at(i) )*( _maxForces[i]* ( dist - THRESHOLD ) / EPSILON );
         forces[i] = forces[i] < _maxForces[i] ? forces[i] : _maxForces[i];
         forces[i] = forces[i] > -_maxForces[i] ? forces[i] : -_maxForces[i];
       }
@@ -945,7 +956,7 @@ namespace libGUI{
     else if(_radBttRobot1->isChecked())
       activeRob = 1;
 
-    int nea = setGuideForce(tcp2w);
+    int nea = setGuideForce(tcp2w, _w2h);
 
     PathToGuide* path = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
     RobLayout  robLay = path->getLayout( nea ); // This line gets the respective layout of the robot if it has a IK model.

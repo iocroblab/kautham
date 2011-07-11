@@ -288,8 +288,11 @@ namespace libGUI{
     // transformation information of the camera
     if( chkCamera->isChecked() && _gui != NULL
        && _planner->getCameraMovement(_stepSim) != NULL ){
+      _planner->wkSpace()->setPathVisibility( false );
       _gui->setActiveCameraTransform(*_planner->getCameraMovement( _stepSim ));
     }
+    else
+      _planner->wkSpace()->setPathVisibility( true );
 
     _stepSim += _planner->getSpeedFactor();
   }
