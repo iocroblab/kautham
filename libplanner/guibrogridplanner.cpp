@@ -406,14 +406,14 @@ namespace libPlanner {
   }
 
 
-	int GUIBROgridPlanner::advanceToBest(KthReal stepsahead, Sample *smp, FILE *fp)
+	int GUIBROgridPlanner::advanceToBest(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta,Sample *smp, FILE *fp)
 	{
 		vector<KthReal>  values;
-		KthReal alpha, beta;
 		
 
+		KthReal a,b;
 		//look 10 steps ahead
-		int r = look(stepsahead, &alpha, &beta);
+		int r = look(stepsahead, &a, &b);
 		if(r>0)
 		{
 			mt::Transform linkTransf;
@@ -425,23 +425,21 @@ namespace libPlanner {
 			KthReal alpha0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
 			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
 
-			KthReal a;
-			KthReal b;
-			KthReal s = stepsahead/cos(beta-beta0);
+			KthReal s = stepsahead/cos(*bestBeta-beta0);
 			if(s>1)
 			{
-				a = alpha0+(alpha-alpha0)/s;
-				b = beta0+(beta-beta0)/s;
-				values.push_back(a);
-				values.push_back(b);
+				*bestAlpha = alpha0+(a-alpha0)/s;
+				*bestBeta = beta0+(b-beta0)/s;
+				values.push_back(*bestAlpha);
+				values.push_back(*bestBeta);
 				values.push_back(-1);
 			}
 			else
 			{
-				a = alpha;
-				b = beta;
-				values.push_back(a);
-				values.push_back(b);
+				*bestAlpha = a;
+				*bestBeta = b;
+				values.push_back(*bestAlpha);
+				values.push_back(*bestBeta);
 				values.push_back(-s);
 			}
 			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
@@ -456,18 +454,18 @@ namespace libPlanner {
 			if(fp!=NULL)
 			{
 				if(colltest) fprintf(fp,"Apply steps= %.2f a= %.2f b= %.2f to go from (%.2f %.2f %.2f) to (%.2f %.2f %.2f) Reached: NF1= %d Dist = %d col = TRUE\n",
-					s,a,b, pos0[0],pos0[1],pos0[2],pos[0],pos[1],pos[2],currentNF1cost,currentdcost);
+					s,*bestAlpha,*bestBeta, pos0[0],pos0[1],pos0[2],pos[0],pos[1],pos[2],currentNF1cost,currentdcost);
 				else fprintf(fp,"Apply steps= %.2f a= %.2f b= %.2f to go from (%.2f %.2f %.2f) to (%.2f %.2f %.2f) Reached: NF1= %d Dist = %d col = FALSE\n",
-					s,a,b, pos0[0],pos0[1],pos0[2],pos[0],pos[1],pos[2],currentNF1cost,currentdcost);
+					s,*bestAlpha,*bestBeta, pos0[0],pos0[1],pos0[2],pos[0],pos[1],pos[2],currentNF1cost,currentdcost);
 			}
 			else{
 				if(colltest){ 
-					cout<<"r= "<<r<< "Apply steps= "<<s<<" a= "<<a<<" b= "<<b;
+					cout<<"r= "<<r<< "Apply steps= "<<s<<" a= "<<*bestAlpha<<" b= "<<*bestBeta;
 					cout<<" to go from ("<<pos0[0]<<pos0[1]<<pos0[2]<<") to ("<<pos[0]<<pos[1]<<pos[2];
 					cout<<") Reached: NF1= "<<currentNF1cost<<" Dist = "<<currentdcost<<" col = TRUE"<<endl;
 				}
 				else{ 
-					cout<<"r= "<<r<< "Apply steps= "<<s<<" a= "<<a<<" b= "<<b;
+					cout<<"r= "<<r<< "Apply steps= "<<s<<" a= "<<*bestAlpha<<" b= "<<*bestBeta;
 					cout<<" to go from ("<<pos0[0]<<pos0[1]<<pos0[2]<<") to ("<<pos[0]<<pos[1]<<pos[2];
 					cout<<") Reached: NF1= "<<currentNF1cost<<" Dist = "<<currentdcost<<" col = FALSE"<<endl;
 				}
@@ -976,14 +974,36 @@ bool GUIBROgridPlanner::trySolve()
 			
 			KthReal steps = _stepsAdvance;
 			int r;
+			vector<KthReal> beta;
+			vector<KthReal> alpha;
+			KthReal bestAlpha, bestBeta;
+			double *ppoint;
+			vector<double*> path2guide;
 			do{
-				r=advanceToBest(steps,smp,fp);
+				r=advanceToBest(steps,&bestAlpha,&bestBeta,smp,fp);
 				if(r>0)
-				{				
+				{		
+					alpha.push_back(bestAlpha);
+					beta.push_back(bestBeta);		
 					_path.push_back(smp);
+
 					_samples->add(smp);
 					_simulationPath.push_back(smp);
-					addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
+					mt::Transform Tcamera = _wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz;
+					addCameraMovement(Tcamera);
+					
+					ppoint = new double[9];
+					ppoint[0] = Tcamera.getTranslation().at(0);
+					ppoint[1] = Tcamera.getTranslation().at(1);
+					ppoint[2] = Tcamera.getTranslation().at(2);
+					ppoint[3] = Tcamera.getRotation().at(0);
+					ppoint[4] = Tcamera.getRotation().at(1);
+					ppoint[5] = Tcamera.getRotation().at(2);
+					ppoint[6] = Tcamera.getRotation().at(3);
+					ppoint[7] = bestAlpha;
+					ppoint[8] = bestBeta;
+					path2guide.push_back(ppoint);
+
 					smp = new Sample(_wkSpace->getDimension());
 					if(steps<_stepsAdvance) steps *=2.0;//restore
 				}
@@ -999,27 +1019,9 @@ bool GUIBROgridPlanner::trySolve()
 			if(_simulationPath.size()>1) _solved = true;
 			else _solved = false;
 
-			if(_solved) {
-				vector<double*> path2guide;
-				double *ppoint;
-				for(int i=0; i<_path.size();i++)
-				{
-					ppoint = new double[9];
-					vector<KthReal>&  p = (_path[i]->getMappedConf())[0].getSE3().getPos();
-					vector<KthReal>&  o = (_path[i]->getMappedConf())[0].getSE3().getOrient();
-					ppoint[0] = p[0];
-					ppoint[1] = p[1];
-					ppoint[2] = p[2];
-					ppoint[3] = o[0];
-					ppoint[4] = o[1];
-					ppoint[5] = o[2];
-					ppoint[6] = o[3];
-					ppoint[7] = 0.0;
-					ppoint[8] = 0.0;
-					path2guide.push_back(ppoint);
-				}
+			if(_solved) 
 				pparse->savePath2File("path2guide.xml", path2guide);
-			}
+			
 			return _solved;
 
 

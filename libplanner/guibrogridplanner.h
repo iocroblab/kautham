@@ -96,7 +96,7 @@ using namespace workspacegridplanner;
 		//Add public data and functions
 		int look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta);
 		bool testLookAtPoint(int numPoint, KthReal alpha, KthReal xi, KthReal stepsahead, int *dcost, int *NF1cost );
-		int advanceToBest(KthReal steps, Sample *smp=NULL, FILE *fp=NULL);
+		int advanceToBest(KthReal steps,KthReal *bestAlpha, KthReal *bestBeta,Sample *smp=NULL, FILE *fp=NULL);
 		void setAdvanceStep(int a){_stepsAdvance = a;};
 		int getAdvanceStep(){return _stepsAdvance;};
 

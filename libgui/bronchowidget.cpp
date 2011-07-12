@@ -71,7 +71,8 @@ void bronchoWidget::advanceBronchoscope()
 		//get advance step
 		KthReal s = ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->getAdvanceStep();
 		//advance
-		((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->advanceToBest(s);
+		KthReal a,b;//dummy. not used
+		((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->advanceToBest(s, &a, &b);
 		updateView();
 		//update alpha0, beta0
 		((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->registerValues();
