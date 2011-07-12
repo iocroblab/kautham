@@ -67,6 +67,8 @@ namespace libGUI{
     void moveAlongPath();
     void showSample(int index);
     void tryConnect();
+    void chkCameraClick();
+
 	public:
     PlannerWidget(Planner* plan, SampleSet* samp, bool camera = false, GUI* gui = NULL );
 		

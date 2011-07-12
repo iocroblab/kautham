@@ -194,6 +194,7 @@ namespace libGUI{
       connect(_spFrom, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
       connect(_spTo, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
       connect(_cmbTry, SIGNAL( clicked() ), this, SLOT( tryConnect( )));
+      connect(chkCamera, SIGNAL( clicked() ), this, SLOT( chkCameraClick( )));
     }
 	}
 
@@ -287,13 +288,9 @@ namespace libGUI{
     // It moves the camera if the associated planner provides the
     // transformation information of the camera
     if( chkCamera->isChecked() && _gui != NULL
-       && _planner->getCameraMovement(_stepSim) != NULL ){
-      _planner->wkSpace()->setPathVisibility( false );
-      _gui->setActiveCameraTransform(*_planner->getCameraMovement( _stepSim ));
-    }
-    else
-      _planner->wkSpace()->setPathVisibility( true );
-
+       && _planner->getCameraMovement(_stepSim) != NULL )
+        _gui->setActiveCameraTransform(*_planner->getCameraMovement( _stepSim ));
+    
     _stepSim += _planner->getSpeedFactor();
   }
 
@@ -339,5 +336,12 @@ namespace libGUI{
         _spFrom->setValue( 0 );
         _spTo->setValue( 0 );
 	  }
+  }
+
+  void PlannerWidget::chkCameraClick(){
+    if( chkCamera->isChecked() )
+      _planner->wkSpace()->setPathVisibility( false );
+    else
+      _planner->wkSpace()->setPathVisibility( true );
   }
 }

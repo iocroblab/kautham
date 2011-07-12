@@ -825,17 +825,18 @@ namespace libProblem {
             robot->addChild(((IVElement*)links[i]->getElement())->ivModel(true));
           
           // Now is adding the three dimensional proposed path for the last link
-          SoSeparator* path = new SoSeparator();
-          path->ref();
+          _pathSeparator = new SoSeparator();
+          _pathSeparator->ref();
+          _pathSeparator->setName("Path");
           SoMaterial*  tmpMat = new SoMaterial();
           tmpMat->diffuseColor.setValue( 0., 0., 1.);
-          path->addChild( tmpMat );
-          _pathSeparator = new SoVRMLExtrusion();
-          _pathSeparator->setName("Path");
-          _pathSeparator->solid.setValue(true);
+          _pathSeparator->addChild( tmpMat );
+          SoVRMLExtrusion* tmpVRML = new SoVRMLExtrusion();
+          //_pathSeparator->setName("Path");
+          tmpVRML->solid.setValue(true);
           float diag = diagLimits()/100.;
           diag = diag < 1.4 ? 1.4 : diag;
-          _pathSeparator->scale.setValue( diag,diag );
+          tmpVRML->scale.setValue( diag,diag );
           float vertex[13][2];
           vertex[0][0] = 0.1000;    vertex[0][1] = 0.;
           vertex[1][0] = 0.0866;    vertex[1][1] = 0.0500;
@@ -850,12 +851,12 @@ namespace libProblem {
           vertex[10][0] = 0.0500;   vertex[10][1] = -0.0866;
           vertex[11][0] = 0.0866;   vertex[11][1] = -0.0500;
           vertex[12][0] = 0.1000;   vertex[12][1] = 0.;
-          _pathSeparator->crossSection.setValues(0,13,vertex);
+          tmpVRML->crossSection.setValues(0,13,vertex);
           _graphicalPath = new SoMFVec3f();
-          _pathSeparator->spine.connectFrom(_graphicalPath);
-          path->addChild(_pathSeparator);
+          tmpVRML->spine.connectFrom(_graphicalPath);
+          _pathSeparator->addChild(tmpVRML);
 
-          robot->addChild(path);
+          robot->addChild(_pathSeparator);
           visModel = (void*)robot;
           break; 
       }    
@@ -1108,15 +1109,17 @@ namespace libProblem {
     SoNode *sepgrid = NULL;
     try{
       if( visible ){
-       sepgrid = ((SoSeparator*)visModel)->getByName("Path");
-       if( sepgrid == NULL ) // It is OK, they is not attached to the root.
+       //sepgrid = ((SoSeparator*)visModel)->getByName("Path");
+       //if( sepgrid == NULL ) // It is OK, they is not attached to the root.
 					((SoSeparator*)visModel)->addChild(_pathSeparator);
        
        response = true;
       }else{
         sepgrid = ((SoSeparator*)visModel)->getByName("Path");
-        if( sepgrid != NULL )
+        if( sepgrid != NULL ){
 					((SoSeparator*)visModel)->removeChild(sepgrid);
+          //sepgrid->unref();
+        }
 
         response = false;
       }

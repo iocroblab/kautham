@@ -50,7 +50,7 @@
 #include "link.h"
 #include <mt/transform.h>
 #include <libsampling/robconf.h>
-#include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
+//#include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include "inversekinematic.h"
 #include "constrainedkinematic.h"
 
@@ -329,7 +329,7 @@ namespace libProblem {
     ConstrainedKinematic* _constrainKin;
     vector<RobConf>   _proposedSolution;
     SoMFVec3f*        _graphicalPath; //!> This corresponds to translational part of the last link absolute path.
-    SoVRMLExtrusion*  _pathSeparator;
+    SoSeparator*      _pathSeparator;
     int               _linkPathDrawn; //!> This is the number of the link whose path will be drawn
 
   };
