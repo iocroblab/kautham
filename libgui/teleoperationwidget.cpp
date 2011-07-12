@@ -536,6 +536,7 @@ namespace libGUI{
     Uvec umag, upush;
     mt::Point3 magP, pushP;
     mt::Transform h2w = w2h.inverse();
+    h2w.setTranslation(mt::Point3(0., 0., 0.));
     int idx =0;
     KthReal ratio = 0.;
     umag.resize(7);
@@ -978,7 +979,7 @@ namespace libGUI{
           vector<KthReal> target( se3conf.getCoordinates() );
 
           if(robLay.size() > 0 ){
-            target.push_back(robLay[0] == true ? 1. : 0. );
+            target.push_back(robLay[0] == true ? 0. : 1. );
             target.push_back(robLay[1] == true ? 0. : 1. );
             target.push_back(robLay[2] == true ? 0. : 1. );
           }

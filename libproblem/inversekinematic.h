@@ -67,9 +67,9 @@ namespace libProblem {
      inline const char* what() const throw() {
         switch(causes) {
         case 0:
-          return "Inverse Kinematics has not a solution. Take care with the robot workspace and singularities."  ;
+          return "IK has not solution. Take care with the robot workspace and its singularities."  ;
         case 1:
-          return "Join out of range";
+          return "Joint out of range";
         }
         return "Unspected error in the Inverse Kinematic resolution";
      }
