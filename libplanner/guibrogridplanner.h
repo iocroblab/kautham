@@ -44,12 +44,15 @@
 #if !defined(_GUIBROGRIDPLANNER_H)
 #define _GUIBROGRIDPLANNER_H
 
+#include <libutil/pathparse.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include "localplanner.h"
 #include "NF1planner.h"
 #include "prmplanner.h"
 #include "workspacegridPlanner.h"
+
+class PathParse;
 
 using namespace std;
 using namespace libSampling;
@@ -99,6 +102,9 @@ using namespace workspacegridplanner;
 
 		protected:
 		//Add protected data and functions	
+		
+		PathParse *pparse;
+		
 		KthReal _stepsAdvance;
 
 	    LCPRNG*	_gen;

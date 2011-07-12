@@ -59,7 +59,7 @@ namespace libPlanner {
 	{
 		//set intial values
 	    _gen = new LCPRNG();
-      _drawnLink = 0; //the path of base is defaulted
+        _drawnLink = _wkSpace->getRobot(0)->getNumLinks()-1; //the path of tip is defaulted
 	  
 	  //define look-ahead points
 		_counterFirstPoint = _wkSpace->obstaclesCount();
@@ -118,8 +118,8 @@ namespace libPlanner {
 
 
 		grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize);
-
-		
+		pparse = new PathParse(9);
+		//pparse->setDimPoint(9);
     }
 
 	//! void destructor
@@ -425,11 +425,25 @@ namespace libPlanner {
 			KthReal alpha0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
 			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
 
-			KthReal a = alpha0+(alpha-alpha0)/stepsahead;
-			KthReal b = beta0+(beta-beta0)/stepsahead;
-			values.push_back(a);
-			values.push_back(b);
-			values.push_back(-1);
+			KthReal a;
+			KthReal b;
+			KthReal s = stepsahead/cos(beta-beta0);
+			if(s>1)
+			{
+				a = alpha0+(alpha-alpha0)/s;
+				b = beta0+(beta-beta0)/s;
+				values.push_back(a);
+				values.push_back(b);
+				values.push_back(-1);
+			}
+			else
+			{
+				a = alpha;
+				b = beta;
+				values.push_back(a);
+				values.push_back(b);
+				values.push_back(-s);
+			}
 			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
 			
 			//verify if the interpolation step towards the best configuration is collision-free
@@ -442,18 +456,18 @@ namespace libPlanner {
 			if(fp!=NULL)
 			{
 				if(colltest) fprintf(fp,"Apply steps= %.2f a= %.2f b= %.2f to go from (%.2f %.2f %.2f) to (%.2f %.2f %.2f) Reached: NF1= %d Dist = %d col = TRUE\n",
-					stepsahead,a,b, pos0[0],pos0[1],pos0[2],pos[0],pos[1],pos[2],currentNF1cost,currentdcost);
+					s,a,b, pos0[0],pos0[1],pos0[2],pos[0],pos[1],pos[2],currentNF1cost,currentdcost);
 				else fprintf(fp,"Apply steps= %.2f a= %.2f b= %.2f to go from (%.2f %.2f %.2f) to (%.2f %.2f %.2f) Reached: NF1= %d Dist = %d col = FALSE\n",
-					stepsahead,a,b, pos0[0],pos0[1],pos0[2],pos[0],pos[1],pos[2],currentNF1cost,currentdcost);
+					s,a,b, pos0[0],pos0[1],pos0[2],pos[0],pos[1],pos[2],currentNF1cost,currentdcost);
 			}
 			else{
 				if(colltest){ 
-					cout<<"Apply steps= "<<stepsahead<<" a= "<<a<<" b= "<<b;
+					cout<<"r= "<<r<< "Apply steps= "<<s<<" a= "<<a<<" b= "<<b;
 					cout<<" to go from ("<<pos0[0]<<pos0[1]<<pos0[2]<<") to ("<<pos[0]<<pos[1]<<pos[2];
 					cout<<") Reached: NF1= "<<currentNF1cost<<" Dist = "<<currentdcost<<" col = TRUE"<<endl;
 				}
 				else{ 
-					cout<<"Apply steps= "<<stepsahead<<" a= "<<a<<" b= "<<b;
+					cout<<"r= "<<r<< "Apply steps= "<<s<<" a= "<<a<<" b= "<<b;
 					cout<<" to go from ("<<pos0[0]<<pos0[1]<<pos0[2]<<") to ("<<pos[0]<<pos[1]<<pos[2];
 					cout<<") Reached: NF1= "<<currentNF1cost<<" Dist = "<<currentdcost<<" col = FALSE"<<endl;
 				}
@@ -461,6 +475,7 @@ namespace libPlanner {
 
 			if(colltest)
 			{
+				cout<<"ERROR - this code should not be reached..."<<endl;
 				//interpolation step is in collision. Return to previous position
 				values[2]=1;
 				_wkSpace->getRobot(0)->ConstrainedKinematics(values);
@@ -589,7 +604,8 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			{
 				//alpha = alpha0 + (KthReal)_gen->d_rand()*0.2-0.1;
 				//xi = xi0 + (KthReal)_gen->d_rand()*0.2-0.1;
-				col[i] = testLookAtPoint(_counterFirstPoint+i, alpha[i], beta[i], stepsahead, &dcost[i], &NF1cost[i]);
+				KthReal s = stepsahead/cos(beta[i]-beta0);
+				col[i] = testLookAtPoint(_counterFirstPoint+i, alpha[i], beta[i], s, &dcost[i], &NF1cost[i]);
 				//restore alpha0, beta0
 				//((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->setvalues(alpha0,0);
 				//((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->setvalues(beta0,1);
@@ -597,7 +613,28 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				if(col[i]==false)
 				{
 					//find extreme values for NF1 cost
-					if(NF1cost[i]>0){
+					/**/
+					if(NF1cost[i]>0 && NF1cost[i]<=currentNF1cost){
+						if(NF1cost[i]<minNF1cost){
+							minNF1cost = NF1cost[i];
+							pointminNF1cost = _counterFirstPoint+i;
+						}
+						else if(NF1cost[i]>maxNF1cost){
+							maxNF1cost = NF1cost[i];
+						}
+						//find extreme values for distance cost
+						if(dcost[i]>0){
+							if(dcost[i]<mindcost){
+								mindcost = dcost[i];
+							}
+							else if(dcost[i]>maxdcost){
+								maxdcost = dcost[i];
+							}
+						}
+					}
+					/**/
+					
+					/*if(NF1cost[i]>0){
 						if(NF1cost[i]<minNF1cost){
 							minNF1cost = NF1cost[i];
 							pointminNF1cost = _counterFirstPoint+i;
@@ -615,6 +652,7 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 							maxdcost = dcost[i];
 						}
 					}
+					*/
 					//cout<<"Point "<<i<<"("<<alpha[i]<<","<<xi[i]<<") collision "<<col<<" cost = "<<cost<<endl; 
 					freepoints++;
 				}
@@ -641,7 +679,9 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			
 			//else color the candidate points
 			KthReal minr=100000;
-			KthReal weightNF1 = 0.5;//0.75
+			KthReal weightNF1 = 0.5;//0.5
+			KthReal weightDist = 0.3;//0.5
+			KthReal weightAlpha = 0.2;//0.5
 			int localminima=1;
 			int bestdcost;
 			int bestNF1cost;
@@ -650,6 +690,7 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			vector<int> indexi;
 			vector<KthReal> rNF1(_maxLookAtPoints);
 			vector<KthReal> rDist(_maxLookAtPoints);
+			vector<KthReal> rAlpha(_maxLookAtPoints);
 			KthReal r;
 			//store all those lookat points that improve the NF1 value
 			for(int i=0; i<_maxLookAtPoints;i++)
@@ -667,12 +708,21 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				else rNF1[i] = -1;
 			}
 			//among those that imnprove the NF1 value chose the one that has a better 
+			//clearance and a smaller alpha value (wehn beta is small)
 			for(int i=0; i<_maxLookAtPoints;i++) rDist[i] = 1.0;
 			for(int j=0; j<indexi.size();j++)
 			{
 				int i = indexi[j];
 				rDist[i] = 1-((KthReal)(dcost[i]-mindcost)/(maxdcost-mindcost));
+			}			
+
+			for(int i=0; i<_maxLookAtPoints;i++) rAlpha[i] = 1.0;
+			for(int j=0; j<indexi.size();j++)
+			{
+				int i = indexi[j];
+				rAlpha[i] = (1-abs(beta[i]))*abs(alpha[i]);
 			}
+
 			for(int i=0; i<_maxLookAtPoints;i++)
 			{
 				if(rNF1[i]==-1) //collision or non-NF1 value
@@ -683,7 +733,7 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				}
 				else
 				{
-					r = weightNF1*rNF1[i]+(1-weightNF1)*rDist[i];
+					r = weightNF1*rNF1[i]+weightDist*rDist[i]+weightAlpha*rAlpha[i];
 					if(r<minr)
 					{
 						minr=r;
@@ -778,7 +828,7 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 
 //draws a point at the configuration stepsahead from the current one
 bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha, 
-										KthReal xi, KthReal stepsahead, int *dcost, int *NF1cost)
+										KthReal beta, KthReal stepsahead, int *dcost, int *NF1cost)
 {
 			mt::Transform linkTransf;
 			mt::Point3 pos;
@@ -792,24 +842,59 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			currentRobConf.setSE3(rConf->getSE3());
 			currentRobConf.setRn(rConf->getRn());
 
-			//Advance a deltaz step
+
+
+			//Advance stepsahead steps, one by one
 			vector<KthReal>  values;
-			values.push_back(alpha);
-			values.push_back(xi);
-			values.push_back(-stepsahead);
+			KthReal alpha0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
+			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
+
+			bool colltest=false;
+			int nlinks = _wkSpace->getRobot(0)->getNumLinks();
+			mt::Transform totip;	
+
+			KthReal a = alpha0+(alpha-alpha0)/stepsahead;
+			KthReal b = beta0+(beta-beta0)/stepsahead;
+			values.push_back(a);
+			values.push_back(b);
+			values.push_back(-1);
+			for(int i=0; i<stepsahead; i++)
+			{
+				_wkSpace->getRobot(0)->ConstrainedKinematics(values);
+				//move the broncoscope at the new position
+				linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+				totip.setRotation(mt::Rotation(0.0,0.0,0.0,1));
+				totip.setTranslation(mt::Vector3( _wkSpace->getRobot(0)->getLink(nlinks-1)->getA(),0,0) );
+				mt::Transform tipTransf = linkTransf*totip;
+				pos = tipTransf.getTranslation();
+
+				//compute the cost at the current position
+				colltest = collisionCheck(dcost,NF1cost);
+				if(colltest==true) break;
+			}
+
+			//return to current position
+			_wkSpace->getRobot(0)->Kinematics(currentRobConf);
+			//restore alpha0, beta0
+			((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->registerValues();
+			//Advance to final value
+			values[0]=alpha;
+			values[1]=beta;
+			values[2] = -stepsahead;
 			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
 			
 			//move the broncoscope at the new position
 			linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
-			int nlinks = _wkSpace->getRobot(0)->getNumLinks();
-			mt::Transform totip;	
 			totip.setRotation(mt::Rotation(0.0,0.0,0.0,1));
 			totip.setTranslation(mt::Vector3( _wkSpace->getRobot(0)->getLink(nlinks-1)->getA(),0,0) );
 			mt::Transform tipTransf = linkTransf*totip;
 			pos = tipTransf.getTranslation();
 
-			//compute the cost at the current position
-			bool colltest = collisionCheck(dcost,NF1cost);
+			if(colltest==false){
+				//compute the cost at the last position
+				colltest = collisionCheck(dcost,NF1cost);
+			}
+
 
 			//draw the obstacle at the extrem of the broncoscope at the new position
 			p[0]=pos[0];
@@ -900,9 +985,10 @@ bool GUIBROgridPlanner::trySolve()
 					_simulationPath.push_back(smp);
 					addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
 					smp = new Sample(_wkSpace->getDimension());
+					if(steps<_stepsAdvance) steps *=2.0;//restore
 				}
 				else steps /=2.0;
-			}while(r!=-1 && steps>0.1);
+			}while(r!=-1 && steps>0.99);
 			fclose(fp);
 
 			int currentNF1cost;
@@ -913,6 +999,27 @@ bool GUIBROgridPlanner::trySolve()
 			if(_simulationPath.size()>1) _solved = true;
 			else _solved = false;
 
+			if(_solved) {
+				vector<double*> path2guide;
+				double *ppoint;
+				for(int i=0; i<_path.size();i++)
+				{
+					ppoint = new double[9];
+					vector<KthReal>&  p = (_path[i]->getMappedConf())[0].getSE3().getPos();
+					vector<KthReal>&  o = (_path[i]->getMappedConf())[0].getSE3().getOrient();
+					ppoint[0] = p[0];
+					ppoint[1] = p[1];
+					ppoint[2] = p[2];
+					ppoint[3] = o[0];
+					ppoint[4] = o[1];
+					ppoint[5] = o[2];
+					ppoint[6] = o[3];
+					ppoint[7] = 0.0;
+					ppoint[8] = 0.0;
+					path2guide.push_back(ppoint);
+				}
+				pparse->savePath2File("path2guide.xml", path2guide);
+			}
 			return _solved;
 
 
