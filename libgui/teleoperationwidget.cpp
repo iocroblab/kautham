@@ -40,8 +40,12 @@
 #include "teleoperationwidget.h"
 #include "properties_gui.hpp"
 #include "gui.h"
+#include <Inventor/nodes/SoCylinder.h>
+#include <Inventor/nodes/SoCone.h>
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoTransparencyType.h>
+#include <Inventor/nodes/SoTransform.h>
+
 
 // Included to use the shared memory between the Kautham and the publisher
 #include <boost/interprocess/shared_memory_object.hpp>
@@ -91,6 +95,7 @@ namespace libGUI{
     _maxForces[3]= 2.; _maxForces[4]= 2.; _maxForces[5]= 2.;
 
     _hapticBox = NULL;
+    _ForceVector = NULL;
     _posVec = NULL;
     _rotVec = NULL;
     _scaVec = NULL;
@@ -132,14 +137,6 @@ namespace libGUI{
 
     _stopOperation->setEnabled(false);
 
-    //Adding the shared memory section to interchange information with the remote system
-    //Remove shared memory on construction and destruction
-    //struct shm_remove 
-    //{
-    //    shm_remove() { shared_memory_object::remove("KauthamSharedMemory"); }
-    //    ~shm_remove(){ shared_memory_object::remove("KauthamSharedMemory"); }
-    //} remover;
-
     _nodeName = "R1";
     _ipMaster = "http://147.83.37.26:11311"; // IP of quasar machine.
     _ipNode = "147.83.37.56";
@@ -149,33 +146,6 @@ namespace libGUI{
     _freqPubli = 250;
 
     _dataCell = dataCell;
-
-   // try{
-   //   //Create a shared memory object.
-
-   //   shared_memory_object shm( create_only,               //only open
-			//				                         "KauthamSharedMemory",     //name
-			//				                         read_write );				      //read-write mode
-
-   //   //Set size
-	  //  shm.truncate(sizeof(kautham::data_ioc_cell));
-
-   //   //Map the whole shared memory in this process
-   //   mapped_region region( shm,					        //What to map
-			//			                read_write);          //Map it as read-write
-
-   //   //Get the address of the mapped region
-   //   void * addr       = region.get_address();
-
-   //   //Construct the shared structure in memory
-   //   _dataCell = new (addr) kautham::data_ioc_cell;
-   // }catch(interprocess_exception &ex){
-   //   QMessageBox::critical(this, "Teleoperation error", ex.what());
-   //   _cmdConnectCell->setEnabled(false);
-   //}catch(...){
-   //   QMessageBox::critical(this, "Teleoperation error", "Unexpected error in the widget creation.");
-   //   _cmdConnectCell->setEnabled(false);
-   //}
 
   }
 
@@ -566,6 +536,18 @@ namespace libGUI{
       }
     }
 
+    // Draw the vector.
+    if(_posForce != NULL && _rotForce != NULL){
+      // Setting the base of the vector
+      mt::Rotation tmpRot(mt::Unit3(umag.at(0) + upush.at(0), umag.at(1) + upush.at(1), umag.at(2) + upush.at(2) ), 0.);
+      mt::Point3 tmpPos = tcp.getTranslation();
+      _posForce->setValue(tmpPos.at(0), tmpPos.at(1), tmpPos.at(2));
+      _rotForce->setValue(tmpRot.at(0), tmpRot.at(1), tmpRot.at(2), tmpRot.at(3));
+
+      // TODO: Setting the orientation of the vector.
+
+    }
+
 
     //XXXXXXXXXX Applying the force to haptic XXXXXXXXXXXXXXXX
     _haptic->setSE3Force(forces);
@@ -764,8 +746,81 @@ namespace libGUI{
       _hapticBox->addChild(tmp2);
 		  _hapticBox->ref();
     }
+    
+    if(_ForceVector == NULL){
+      // Adding the force vector
+
+      mt::Rotation tmpRot = _w2h.getRotation();
+      mt::Point3 tmpPos = _w2h.getTranslation();
+
+      SoTranslation *trans;
+      SoRotation    *rot;
+      // SoMaterial    *color;
+      SoScale       *sca;
+
+      //====================
+      trans= new SoTranslation;
+		  rot = new SoRotation;
+		  sca = new SoScale();
+
+      _posForce = new SoSFVec3f();
+      trans->translation.connectFrom(_posForce);
+      _posForce->setValue(tmpPos.at(0), tmpPos.at(1), tmpPos.at(2));
+
+      _rotForce = new SoSFRotation();
+      _rotForce->setValue(tmpRot.at(0), tmpRot.at(1), tmpRot.at(2), tmpRot.at(3));
+      rot->rotation.connectFrom(_rotForce);
+
+		  _ForceVector = new SoSeparator();
+		  _ForceVector->ref();
+      _ForceVector->setName("ForceVector");
+		  //_hapticBox->addChild(sca);
+	    _ForceVector->addChild(trans);
+	    _ForceVector->addChild(rot);
+
+      // The material =======
+      //SoTransparencyType
+      SoTransparencyType *ttype = new SoTransparencyType;
+			ttype->value = SoGLRenderAction::SORTED_OBJECT_BLEND ;
+			_ForceVector->addChild(ttype);
+
+      SoMaterial* tmpMat = new SoMaterial;
+      tmpMat->ambientColor.setValue( 0.2, 0.2, 0.2);
+      tmpMat->diffuseColor.setValue( 1.0, 0.3, 0.1);
+      tmpMat->shininess.setValue( 0.2);
+      tmpMat->transparency.setValue( 0.);
+      _ForceVector->addChild(tmpMat);
+
+      _scaForce= new SoSFVec3f;
+      _scaForce->setValue(2 * _tranScale, 2 * _tranScale, 2 * _tranScale);
+      sca->scaleFactor.connectFrom(_scaForce);
+      _ForceVector->addChild(sca);
+
+      SoTransform* tmpTT = new SoTransform();
+      tmpTT->rotation.setValue(SbVec3f(1., 0., 0. ), 1.5752 );
+      tmpTT->translation.setValue(0., 0., 5. );
+      _ForceVector->addChild(tmpTT);
+      
+      SoCylinder* tmp = new SoCylinder();
+      tmp->radius.setValue(1.);
+      tmp->height.setValue(10);
+      _ForceVector->addChild(tmp);
+
+      tmpTT = new SoTransform();
+      tmpTT->translation.setValue(0., 8., 0. );
+      _ForceVector->addChild(tmpTT);
+
+      SoCone* tmp2 = new SoCone();
+      tmp2->bottomRadius.setValue( 3. );
+      tmp2->height.setValue(6. );
+      _ForceVector->addChild(tmp2);
+   
+		  _ForceVector->ref();
+    }
+
     SoSeparator* tmpSep = _gui->getRootTab(_gui->getActiveViewTitle());
     tmpSep->addChild(_hapticBox);
+    tmpSep->addChild(_ForceVector);
     
   }
 
@@ -790,6 +845,7 @@ namespace libGUI{
 
     SoSeparator* tmpSep = _gui->getRootTab(_gui->getActiveViewTitle());
     tmpSep->removeChild(_hapticBox);
+    tmpSep->removeChild(_ForceVector);
   }
 
   void TeleoperationWidget::getCamera(){

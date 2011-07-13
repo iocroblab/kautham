@@ -116,9 +116,10 @@ namespace libGUI{
       bool                  _lastAction;
       bool                  _callNewH;
       SoSeparator*          _hapticBox;
-      SoSFVec3f*            _scaVec;
-      SoSFVec3f*            _posVec;
-      SoSFRotation*         _rotVec;
+      SoSeparator*          _ForceVector;
+      SoSFVec3f*            _scaVec, *_scaForce;
+      SoSFVec3f*            _posVec, *_posForce;
+      SoSFRotation*         _rotVec, *_rotForce;
       float                 _rotScale;
       float                 _tranScale;
       KthReal               _hapticBoxSize[6];
@@ -137,6 +138,7 @@ namespace libGUI{
       string                _ipMaster; 
       string                _ipNode;
       int                   _freqPubli;
+
 
       void                  setupUI();
       void                  updateGuidingPath();
