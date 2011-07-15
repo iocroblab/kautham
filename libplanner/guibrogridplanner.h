@@ -92,10 +92,10 @@ using namespace workspacegridplanner;
 		void printInfo(guibroSample *gs);
 		void moveAlongPath(unsigned int step); //reimplemented
 
-		bool collisionCheck(int *distcost, int *NF1cost, KthReal radius=1.0);
+		bool collisionCheck(int *distcost, KthReal *NF1cost, bool onlytip=false, KthReal radius=1.0);
 		//Add public data and functions
 		int look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta);
-		bool testLookAtPoint(int numPoint, KthReal alpha, KthReal xi, KthReal stepsahead, int *dcost, int *NF1cost );
+		bool testLookAtPoint(int numPoint, KthReal alpha, KthReal xi, KthReal stepsahead, int *dcost, KthReal *NF1cost );
 		int advanceToBest(KthReal steps,KthReal *bestAlpha, KthReal *bestBeta,Sample *smp=NULL, FILE *fp=NULL);
 		void setAdvanceStep(int a){_stepsAdvance = a;};
 		int getAdvanceStep(){return _stepsAdvance;};

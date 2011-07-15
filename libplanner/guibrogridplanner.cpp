@@ -133,7 +133,7 @@ namespace libPlanner {
 	//!at the bottom and top of the cylinder. The bottom sphere of one link coincides with the
 	//!top sphere of the previous link.
 	//!For collision-check purposes the bottom sphere of each link is considered.
-	bool GUIBROgridPlanner::collisionCheck(int *distcost, int *NF1cost, KthReal radius)
+	bool GUIBROgridPlanner::collisionCheck(int *distcost, KthReal *NF1cost, bool onlytip, KthReal radius)
 	{
 		//origin of the regular grid in world coordinates
 		KthReal *O = grid->getOrigin();
@@ -163,47 +163,50 @@ namespace libPlanner {
 		int threshold = 1;
 		//reset the cost
 		*distcost=0;
-		for(int n=0;n<nlinks;n++)
+		if(onlytip==false)
 		{
-			linkTransf = _wkSpace->getRobot(0)->getLinkTransform(n);
-			pos = linkTransf.getTranslation();
-			i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
-			j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1];
-			k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2];
-			label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
-			dist = -10*threshold; //value that will take thos spheres out of bounds
-			freesphere=grid->getDistance(label, &dist);
-			if(freesphere && dist<=threshold) freesphere = false;
-			*distcost += dist;
-			if(freesphere==false) collision = true;
-
-			//for the tip of the bronchoscope: 
-			if(n==nlinks-1)
+			for(int n=0;n<nlinks;n++)
 			{
-				//Evaluate the sphere of the tip
-				mt::Transform totip;	
-				totip.setRotation(mt::Rotation(0.0,0.0,0.0,1));
-				totip.setTranslation(mt::Vector3(_wkSpace->getRobot(0)->getLink(n)->getA(),0,0) );
-				mt::Transform tipTransf = linkTransf*totip;
-				pos = tipTransf.getTranslation();
+				linkTransf = _wkSpace->getRobot(0)->getLinkTransform(n);
+				pos = linkTransf.getTranslation();
 				i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
 				j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1];
 				k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2];
 				label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
 				dist = -10*threshold; //value that will take thos spheres out of bounds
 				freesphere=grid->getDistance(label, &dist);
-
-				//more constrained for the tip
-				threshold = 2;
-
 				if(freesphere && dist<=threshold) freesphere = false;
 				*distcost += dist;
 				if(freesphere==false) collision = true;
-
-				//Evaluate the NF1 function
-				grid->getNF1value(label, NF1cost);
 			}
 		}
+		
+		//for the tip of the bronchoscope: 
+		int n=nlinks-1;
+		linkTransf = _wkSpace->getRobot(0)->getLinkTransform(n);
+		//Evaluate the sphere of the tip
+		mt::Transform totip;	
+		totip.setRotation(mt::Rotation(0.0,0.0,0.0,1));
+		totip.setTranslation(mt::Vector3(_wkSpace->getRobot(0)->getLink(n)->getA(),0,0) );
+		mt::Transform tipTransf = linkTransf*totip;
+		pos = tipTransf.getTranslation();
+		i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
+		j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1];
+		k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2];
+		label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
+		dist = -10*threshold; //value that will take thos spheres out of bounds
+		freesphere=grid->getDistance(label, &dist);
+
+		//more constrained for the tip
+		threshold = 2;
+
+		if(freesphere && dist<=threshold) freesphere = false;
+		*distcost += dist;
+		if(freesphere==false) collision = true;
+
+		//Evaluate the NF1 function
+		grid->getNF1value(label, NF1cost);
+		
 		return collision;
 	}
 
@@ -426,6 +429,7 @@ namespace libPlanner {
 			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
 
 			KthReal s = stepsahead/cos(*bestBeta-beta0);
+			
 			if(s>1)
 			{
 				*bestAlpha = alpha0+(a-alpha0)/s;
@@ -444,6 +448,7 @@ namespace libPlanner {
 			}
 			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
 			
+			/*
 			//verify if the interpolation step towards the best configuration is collision-free
 			int currentNF1cost;
 			int currentdcost;
@@ -486,6 +491,7 @@ namespace libPlanner {
 				r = -3;
 				cout<<"Sorry, interpolation motion is not free. Cannot move..."<<endl;
 			}
+			*/
 
 			if(smp!=NULL)
 			{
@@ -580,20 +586,20 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 
 
 			vector<int> dcost(_maxLookAtPoints);
-			vector<int> NF1cost(_maxLookAtPoints);
+			vector<KthReal> NF1cost(_maxLookAtPoints);
 			vector<bool> col(_maxLookAtPoints);
 
 			int freepoints = 0;
-			int minNF1cost = 1000000;
-			int maxNF1cost = -1000000;
+			KthReal minNF1cost = 1000000.0;
+			KthReal maxNF1cost = -1000000.0;
 			int mindcost = 1000000;
 			int maxdcost = -1000000;
-			int currentNF1cost;
+			KthReal currentNF1cost;
 			int currentdcost;
 			int pointminNF1cost = -1;
 			//current cost 
 			bool colltest = collisionCheck(&currentdcost,&currentNF1cost);
-			if(currentNF1cost==0)
+			if(currentNF1cost==0.0)
 			{
 				//reached
 				return -1;
@@ -612,7 +618,7 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				{
 					//find extreme values for NF1 cost
 					/**/
-					if(NF1cost[i]>0 && NF1cost[i]<=currentNF1cost){
+					if(NF1cost[i]>0.0 && NF1cost[i]<=currentNF1cost){
 						if(NF1cost[i]<minNF1cost){
 							minNF1cost = NF1cost[i];
 							pointminNF1cost = _counterFirstPoint+i;
@@ -677,12 +683,12 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			
 			//else color the candidate points
 			KthReal minr=100000;
-			KthReal weightNF1 = 0.5;//0.5
-			KthReal weightDist = 0.3;//0.5
+			KthReal weightNF1 = 0.8;//0.5;//0.5
+			KthReal weightDist = 0.0;//0.3;//0.5
 			KthReal weightAlpha = 0.2;//0.5
 			int localminima=1;
 			int bestdcost;
-			int bestNF1cost;
+			KthReal bestNF1cost;
 			int besti=-1;
 
 			vector<int> indexi;
@@ -695,9 +701,9 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			{
 				if(col[i]==false)
 				{
-					if(NF1cost[i]>0 && NF1cost[i]<currentNF1cost)
+					if(NF1cost[i]>0.0 && NF1cost[i]<currentNF1cost)
 					{
-						rNF1[i] = (KthReal)(NF1cost[i]-minNF1cost)/(maxNF1cost-minNF1cost);
+						rNF1[i] = (NF1cost[i]-minNF1cost)/(maxNF1cost-minNF1cost);
 						indexi.push_back(i);
 						//if(NF1cost[i]<currentNF1cost) indexi.push_back(i);
 					}
@@ -826,7 +832,7 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 
 //draws a point at the configuration stepsahead from the current one
 bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha, 
-										KthReal beta, KthReal stepsahead, int *dcost, int *NF1cost)
+										KthReal beta, KthReal stepsahead, int *dcost, KthReal *NF1cost)
 {
 			mt::Transform linkTransf;
 			mt::Point3 pos;
@@ -848,9 +854,7 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
 
 			bool colltest=false;
-			int nlinks = _wkSpace->getRobot(0)->getNumLinks();
-			mt::Transform totip;	
-
+			
 			KthReal a = alpha0+(alpha-alpha0)/stepsahead;
 			KthReal b = beta0+(beta-beta0)/stepsahead;
 			values.push_back(a);
@@ -858,16 +862,14 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			values.push_back(-1);
 			for(int i=0; i<stepsahead; i++)
 			{
-				_wkSpace->getRobot(0)->ConstrainedKinematics(values);
 				//move the broncoscope at the new position
-				linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
-				totip.setRotation(mt::Rotation(0.0,0.0,0.0,1));
-				totip.setTranslation(mt::Vector3( _wkSpace->getRobot(0)->getLink(nlinks-1)->getA(),0,0) );
-				mt::Transform tipTransf = linkTransf*totip;
-				pos = tipTransf.getTranslation();
+				_wkSpace->getRobot(0)->ConstrainedKinematics(values);
+				//linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+				//mt::Transform tipTransf = linkTransf*totip;
+				//pos = tipTransf.getTranslation();
 
 				//compute the cost at the current position
-				colltest = collisionCheck(dcost,NF1cost);
+				colltest = collisionCheck(dcost,NF1cost, true);//test only the tip
 				if(colltest==true) break;
 			}
 
@@ -883,6 +885,10 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			
 			//move the broncoscope at the new position
 			linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+			int nlinks = _wkSpace->getRobot(0)->getNumLinks();
+			mt::Transform totip;	
+			totip.setRotation(mt::Rotation(0.0,0.0,0.0,1));
+			totip.setTranslation(mt::Vector3( _wkSpace->getRobot(0)->getLink(nlinks-1)->getA(),0,0) );
 			totip.setRotation(mt::Rotation(0.0,0.0,0.0,1));
 			totip.setTranslation(mt::Vector3( _wkSpace->getRobot(0)->getLink(nlinks-1)->getA(),0,0) );
 			mt::Transform tipTransf = linkTransf*totip;
@@ -979,6 +985,9 @@ bool GUIBROgridPlanner::trySolve()
 			KthReal bestAlpha, bestBeta;
 			double *ppoint;
 			vector<double*> path2guide;
+			KthReal currentNF1cost;
+			int currentdcost;
+			int j=0;
 			do{
 				r=advanceToBest(steps,&bestAlpha,&bestBeta,smp,fp);
 				if(r>0)
@@ -1005,14 +1014,19 @@ bool GUIBROgridPlanner::trySolve()
 					path2guide.push_back(ppoint);
 
 					smp = new Sample(_wkSpace->getDimension());
+
+					//for info:
+					collisionCheck(&currentdcost,&currentNF1cost);
+					cout<<"sample "<<j<<" steps = "<<steps<<" alpha = "<<bestAlpha<<
+						" beta = "<< bestBeta<<" dist = "<<currentdcost<< " NF1value= "<<currentNF1cost<<endl;
+					j++;
+
 					if(steps<_stepsAdvance) steps *=2.0;//restore
 				}
 				else steps /=2.0;
-			}while(r!=-1 && steps>0.99);
+			}while(r!=-1 && steps>0.5);
 			fclose(fp);
 
-			int currentNF1cost;
-			int currentdcost;
 			bool colltest = collisionCheck(&currentdcost,&currentNF1cost);
 			cout<<"Reached NF1 value is: "<<currentNF1cost<<endl;
 

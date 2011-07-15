@@ -92,7 +92,8 @@ void bronchoWidget::collisionCheck()
 	//collisionCheckButton
 	if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
 	{
-		int dcost,NF1cost;
+		int dcost;
+		KthReal NF1cost;
 		bool c =((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->collisionCheck(&dcost,&NF1cost);
 		if(c==true)
 		{

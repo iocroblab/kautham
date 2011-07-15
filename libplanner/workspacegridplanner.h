@@ -110,19 +110,38 @@ namespace libPlanner {
     class bfs_distance_visitor : public boost::default_bfs_visitor 
 	{
 		public:
-			bfs_distance_visitor(DistanceMap dist) : d(dist) {};
+			bfs_distance_visitor(DistanceMap dist, vector<location> locat, KthReal m) : d(dist),loc(locat),maxdwall(m) {};
 
 			template <typename Edge, typename Graph> 
 			void tree_edge(Edge e, Graph& g)
 			{
 				typename graph_traits<Graph>::vertex_descriptor s=source(e,g);
 				typename graph_traits<Graph>::vertex_descriptor t=target(e,g);
+				//expand the wave
 				d[t] = d[s] + 1;
+				//control the expansion value by the distance to the obstacles
+				KthReal v = (KthReal)loc[t].d/maxdwall;
+				if(v>0.9) v=0.9;
+				d[t] -= v;
 				//potmap[t] = d[t];
+			}
+			template <typename Edge, typename Graph> 
+			void gray_target(Edge e, Graph& g)
+			{
+				//for the vertices already visited, update their value if necessary
+				typename graph_traits<Graph>::vertex_descriptor s=source(e,g);
+				typename graph_traits<Graph>::vertex_descriptor t=target(e,g);
+				KthReal v = (KthReal)loc[t].d/maxdwall;
+				if(v>0.9) v=0.9;
+				KthReal newvalue = d[s] + 1 - v; 
+				if(d[t] >  newvalue) 
+					d[t] = newvalue;
 			}
 
 		private:
 			DistanceMap d;
+			vector<location> loc;
+			KthReal maxdwall;
     };
 
 
@@ -178,7 +197,7 @@ namespace libPlanner {
 		inline KthReal getPotential(int i){return potmap[i];};
 
 		//!Function to obtain the potential value at a given grid cell
-		bool getNF1value(unsigned int label, int *NF1value);
+		bool getNF1value(unsigned int label, KthReal *NF1value);
 
 		//!Function that retruns the vector of potential values
 		inline PotentialMap getpotmat(){return potmap;};
@@ -225,6 +244,8 @@ namespace libPlanner {
         bool _isGraphSet;
 
 
+		//!maximum distance on the grid (used to tune the NF1 value)
+		int maxdist;
 		
 
 		//!Function to delete the graphs

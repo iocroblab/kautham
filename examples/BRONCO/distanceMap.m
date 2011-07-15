@@ -342,7 +342,8 @@ function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilen
       for j=1:gridStep:s(2)%columnes
         for i=1:gridStep:s(1)%files
           if d(i,j,k)>-1000000 && d(i,j,k)<1000000 
-            fprintf(fidgrid, '%f %f %f,\n', [ox+i*sx-sx/2 oy+j*sy-sy/2 oz+k*sz-sz/2]);
+            %fprintf(fidgrid, '%f %f %f,\n', [ox+i*sx-sx/2 oy+j*sy-sy/2 oz+k*sz-sz/2]);
+            fprintf(fidgrid, '%f %f %f,\n', [ox+(i-1)*sx oy+(j-1)*sy oz+(k-1)*sz]);
           end
         end
       end

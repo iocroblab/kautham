@@ -106,6 +106,7 @@ namespace libPlanner {
 		int id2;
 		//int idproof;
 		//identifier of cells (id) starts at value 1, as read form file.
+		maxdist = -100000000;
 		int thresholdDist = -5;
 		while(!feof(fp))
 		{
@@ -113,12 +114,14 @@ namespace libPlanner {
 			
 			if(dist<thresholdDist) continue;
 
-			location loc;
+			location loc;//coordinates x,y,z of a location start at value 1
 			loc.z = (int)floor((double)( (id-1.0)/(nx*ny) )) + 1;
 			id2 = (id-1)%(nx*ny) + 1;
 			loc.y = (int) floor((double)( (id2-1.0)/nx )) + 1;
 			loc.x = (id2-1)%nx + 1;
 			loc.d=dist;
+
+			if(dist>maxdist) maxdist = dist;
 
 			//idproof = nx*ny*(z-1)+nx*(y-1)+x;//s(2)*s(1)*(k-1) + s(1)*(j-1) + i;
 			//if(id!=idproof)
@@ -146,7 +149,7 @@ namespace libPlanner {
 		else return false;
    } 
    
-   bool workspacegridPlanner::getNF1value(unsigned int label, int *NF1value)
+   bool workspacegridPlanner::getNF1value(unsigned int label, KthReal *NF1value)
    {
 		if(_cellsMap.find(label)!=_cellsMap.end()) 
 		{
@@ -375,13 +378,26 @@ namespace libPlanner {
 		for(tie(vi,vi_end)=vertices(*fg); vi!=vi_end; ++vi)	setPotential(*vi, -1);
 		setPotential(vgoal, 0);
 		//propagate potential
-		breadth_first_search(*fg, vgoal, visitor(bfs_distance_visitor<PotentialMap>(getpotmat())));
+		breadth_first_search(*fg, vgoal, visitor(bfs_distance_visitor<PotentialMap>(getpotmat(),locations,(KthReal)maxdist/2.0)));
 
 		//graph_traits<filteredGridGraph>::vertex_iterator i, end;
 		//for(tie(i,end)=vertices(*fg); i!=end; ++i)
 		//{
 		//	cout<<"vertex "<< *i<<" dist "<<getPotential(*i)<<endl;
 		//}
+		/*
+		KthReal NF1value;
+		for(tie(vi,vi_end)=vertices(*fg); vi!=vi_end; ++vi)
+		{
+			//cout<<"vertex "<< *i<<" dist "<<getPotential(*i)<<endl;
+			NF1value = getPotential(*vi);
+			//update the  NF1 value by decreeasing a factor pproportional to the distance to the walls
+			if(NF1value>0){
+				NF1value=NF1value-(KthReal)locations[*vi].d/maxdist;
+				setPotential(*vi,NF1value );
+			}
+		}
+		*/
 		return true;
 	}
 
