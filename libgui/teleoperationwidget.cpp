@@ -504,7 +504,7 @@ namespace libGUI{
 
     //XXXXXXXXXXX here i want to use the PathToGuide object XXXXXXXX
     Uvec umag, upush;
-    mt::Point3 magP, pushP;
+    mt::Vector3 magP, pushP, sum;
     mt::Transform h2w = w2h.inverse();
     h2w.setTranslation(mt::Point3(0., 0., 0.));
     int idx =0;
@@ -518,7 +518,6 @@ namespace libGUI{
     // Normally the measures are in millimeters.
     KthReal dist = path->unitVectors(xi,xd,idx,ratio,umag,upush);
 
-    
     for(int i = 0; i < 3; ++i){
       magP.at(i) = umag.at(i);
       pushP.at(i) = upush.at(i);
@@ -526,20 +525,35 @@ namespace libGUI{
 
     magP = h2w * magP;
     pushP = h2w * pushP;
+    sum = magP; //+ pushP;
+    sum.normalize();
 
     if(dist > THRESHOLD ){
       // Only testing the translational forces.
-      for(int i = 0; i < 3; ++i){
-        forces[i] = ( magP.at(i) + pushP.at(i) )*( _maxForces[i]* ( dist - THRESHOLD ) / EPSILON );
-        forces[i] = forces[i] < _maxForces[i] ? forces[i] : _maxForces[i];
-        forces[i] = forces[i] > -_maxForces[i] ? forces[i] : -_maxForces[i];
+      if( dist < EPSILON ){
+        sum+= pushP;
+        sum.normalize();
+        for(int i = 0; i < 3; ++i){
+          forces[i] = sum.at(i) *( _maxForces[i] * ( dist - THRESHOLD ) / EPSILON );
+          forces[i] = forces[i] < _maxForces[i] ? forces[i] : _maxForces[i];
+          forces[i] = forces[i] > -_maxForces[i] ? forces[i] : -_maxForces[i];
+        }
+      }else{
+        for(int i = 0; i < 3; ++i){
+          forces[i] = sum.at(i) * _maxForces[i];
+          forces[i] = forces[i] < _maxForces[i] ? forces[i] : _maxForces[i];
+          forces[i] = forces[i] > -_maxForces[i] ? forces[i] : -_maxForces[i];
+        }
       }
     }
+
+    sum = magP.cross(mt::Vector3(0., 0., 1. ));
+    mt::Scalar angle = magP.angle(mt::Vector3(0., 0., 1. ));
 
     // Draw the vector.
     if(_posForce != NULL && _rotForce != NULL){
       // Setting the base of the vector
-      mt::Rotation tmpRot(mt::Unit3(umag.at(0) + upush.at(0), umag.at(1) + upush.at(1), umag.at(2) + upush.at(2) ), 0.);
+      mt::Rotation tmpRot(sum, angle);
       mt::Point3 tmpPos = tcp.getTranslation();
       _posForce->setValue(tmpPos.at(0), tmpPos.at(1), tmpPos.at(2));
       _rotForce->setValue(tmpRot.at(0), tmpRot.at(1), tmpRot.at(2), tmpRot.at(3));
@@ -557,6 +571,7 @@ namespace libGUI{
   }
 
   void TeleoperationWidget::setJumpForce(mt::Transform& tcp){
+    /*
     KthReal dis = 0.;
     KthReal ya, pi, roll;
     KthReal forces[6];
@@ -583,6 +598,7 @@ namespace libGUI{
     calculateForce(delta,dis, forces);
 
     _haptic->setSE3Force(forces);
+    */
   }
 
   mt::Transform TeleoperationWidget::getNewH2Hip(){
