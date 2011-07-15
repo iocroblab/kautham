@@ -484,8 +484,8 @@ namespace libGUI{
   }
 
   int TeleoperationWidget::setGuideForce(mt::Transform& tcp, mt::Transform& w2h){
-    const KthReal THRESHOLD = 5.;
-    KthReal EPSILON = 5.;
+    const KthReal THRESHOLD = 2.;
+    KthReal EPSILON = 2.;
     KthReal forces[6];
     PathToGuide* path = NULL;
 
@@ -497,7 +497,7 @@ namespace libGUI{
       EPSILON = _problem->wSpace()->getRobot(1)->getLink(1)->getD() / 5.;
     }
 
-    EPSILON = EPSILON < THRESHOLD ? THRESHOLD : EPSILON ;
+    EPSILON = EPSILON < THRESHOLD ? 4* THRESHOLD : EPSILON ;
 
     for(unsigned int i = 0; i < 6; i++)
         forces[i] = 0.;
@@ -553,7 +553,7 @@ namespace libGUI{
     // Draw the vector.
     if(_posForce != NULL && _rotForce != NULL){
       // Setting the base of the vector
-      mt::Rotation tmpRot(sum, angle);
+      mt::Rotation tmpRot(sum, -angle);
       mt::Point3 tmpPos = tcp.getTranslation();
       _posForce->setValue(tmpPos.at(0), tmpPos.at(1), tmpPos.at(2));
       _rotForce->setValue(tmpRot.at(0), tmpRot.at(1), tmpRot.at(2), tmpRot.at(3));
@@ -1030,6 +1030,9 @@ namespace libGUI{
       activeRob = 1;
 
     int nea = setGuideForce(tcp2w, _w2h);
+
+    // For debug.
+    //cout << nea << endl;
 
     PathToGuide* path = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
     RobLayout  robLay = path->getLayout( nea ); // This line gets the respective layout of the robot if it has a IK model.
