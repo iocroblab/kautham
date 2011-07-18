@@ -197,7 +197,8 @@ namespace libGuiding{
     return -1.;
   }
 
-  KthReal PathToGuide::unitVectors(Xnode &xi, Xnode &xd, int &k, KthReal &ratio, Uvec &um, Uvec &up ) {
+  KthReal PathToGuide::unitVectors(Xnode &xi, Xnode &xd, int &k, KthReal &ratio, Uvec &um, Uvec &up, 
+                  const KthReal EPSILON ) {
     if( _pathX.empty() || _uvecX.empty() ) return -1.;
     try{
       k = nearX(xi);
@@ -218,18 +219,27 @@ namespace libGuiding{
           up.at(i) = _uvecX.at(k).at(i);
         }
         ratio = proj/_uvecX.at(k).dist();
-      }else{// calculates the projection over the segment before.
-        proj = 0.;
-        for(int i = 0; i < 7; i++)
-          proj += avec.at(i) * _uvecX.at(k-1).at(i);
-        
-        //xd.clear();
-        //xd.resize( _pathX.at(0).resize() );
-        for(int i = 0; i < 7; i++){
-          xd.at(i) = nea.at(i) - proj * _uvecX.at(k-1).at(i);
-          up.at(i) = _uvecX.at(k-1).at(i);
+      }else{
+        if( proj > -EPSILON ){
+          //Uses the weighted sum
+          for(int i = 0; i < 7; i++){
+            xd.at(i) = nea.at(i) ;
+            up.at(i) = 0.5*_uvecX.at(k-1).at(i) + 0.5*_uvecX.at(k).at(i) ;
+          }
+          ratio = proj/_uvecX.at(k).dist();          
+        }else{// calculates the projection over the segment before.
+          proj = 0.;
+          for(int i = 0; i < 7; i++)
+            proj += avec.at(i) * _uvecX.at(k-1).at(i);
+          
+          //xd.clear();
+          //xd.resize( _pathX.at(0).resize() );
+          for(int i = 0; i < 7; i++){
+            xd.at(i) = nea.at(i) - proj * _uvecX.at(k-1).at(i);
+            up.at(i) = _uvecX.at(k-1).at(i);
+          }
+          ratio = 1. - (proj / _uvecX.at(k).dist() );
         }
-        ratio = 1. - (proj / _uvecX.at(k).dist() );
       }
 
       proj = 0.;

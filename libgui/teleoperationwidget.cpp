@@ -497,7 +497,7 @@ namespace libGUI{
       EPSILON = _problem->wSpace()->getRobot(1)->getLink(1)->getD() / 5.;
     }
 
-    EPSILON = EPSILON < THRESHOLD ? 4* THRESHOLD : EPSILON ;
+    EPSILON = EPSILON < THRESHOLD ? 5* THRESHOLD : EPSILON ;
 
     for(unsigned int i = 0; i < 6; i++)
         forces[i] = 0.;
@@ -516,7 +516,7 @@ namespace libGUI{
     Xnode xi = libGuiding::PathToGuide::tran2xnode(tcp);
 
     // Normally the measures are in millimeters.
-    KthReal dist = path->unitVectors(xi,xd,idx,ratio,umag,upush);
+    KthReal dist = path->unitVectors(xi, xd, idx, ratio, umag, upush, EPSILON );
 
     for(int i = 0; i < 3; ++i){
       magP.at(i) = umag.at(i);
@@ -534,7 +534,7 @@ namespace libGUI{
         sum+= pushP;
         sum.normalize();
         for(int i = 0; i < 3; ++i){
-          forces[i] = sum.at(i) *( _maxForces[i] * ( dist - THRESHOLD ) / EPSILON );
+          forces[i] = sum.at(i) *( _maxForces[i] * ( dist - THRESHOLD ) / ( EPSILON - THRESHOLD ) );
           forces[i] = forces[i] < _maxForces[i] ? forces[i] : _maxForces[i];
           forces[i] = forces[i] > -_maxForces[i] ? forces[i] : -_maxForces[i];
         }

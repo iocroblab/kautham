@@ -96,7 +96,8 @@ public:
 
     //! Returns the distance to the desired cartesian pose xd. This method computes the xd and the
     //! unit magnetic vector used to generated the force to attract the user to the path in SE3.
-    KthReal     unitVectors(Xnode &xi, Xnode &xd, int &k, KthReal &ratio, Uvec &um, Uvec &up );
+    KthReal     unitVectors(Xnode &xi, Xnode &xd, int &k, KthReal &ratio, Uvec &um, Uvec &up, 
+                  const KthReal EPSILON = 0. );
 
     ////! This method computes the unitary vector in the direction to apply the pushing force.
     //void        pushVectorX( Xnode &qd, Uvec &up );
