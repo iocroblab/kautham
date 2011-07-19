@@ -551,14 +551,11 @@ namespace libGUI{
 
     // Draw the vector.
     if(_posForce != NULL && _rotForce != NULL){
-      // Setting the base of the vector
-      mt::Rotation tmpRot(sum, -angle);
+      // Setting the base and the orientation of the vector
+      //mt::Rotation tmpRot(sum, -angle);
       mt::Point3 tmpPos = tcp.getTranslation();
       _posForce->setValue(tmpPos.at(0), tmpPos.at(1), tmpPos.at(2));
-      _rotForce->setValue(tmpRot.at(0), tmpRot.at(1), tmpRot.at(2), tmpRot.at(3));
-
-      // TODO: Setting the orientation of the vector.
-
+      //_rotForce->setValue(tmpRot.at(0), tmpRot.at(1), tmpRot.at(2), tmpRot.at(3));
     }
 
 
@@ -570,11 +567,11 @@ namespace libGUI{
   }
 
   void TeleoperationWidget::setJumpForce(mt::Transform& tcp){
-    /*
+    
     KthReal dis = 0.;
     KthReal ya, pi, roll;
-    KthReal forces[6];
-
+    KthReal forces[6]={0.};
+/*
     KthReal delta[6];
     for(unsigned int i = 0; i < 3; i++)
       delta[i] = _h2newHip.getTranslation().at(i);
@@ -595,9 +592,9 @@ namespace libGUI{
     dis = sqrt(dis);
 
     calculateForce(delta,dis, forces);
-
+ */
     _haptic->setSE3Force(forces);
-    */
+   
   }
 
   mt::Transform TeleoperationWidget::getNewH2Hip(){

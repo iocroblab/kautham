@@ -117,6 +117,7 @@ namespace libGuiding{
       }
       avec.clear();
       avec.resize( anQnode.size(), 0. );
+      avec.dist(0.);
       _uvecQ.push_back(avec);
 
       // Now for the SE3 nodes.
@@ -137,7 +138,8 @@ namespace libGuiding{
       }
       avec.clear();
       avec.resize( 7, 0. );
-      _uvecQ.push_back(avec);
+      avec.dist(0.);
+      _uvecX.push_back(avec);
 
       if( _pathQ.size() == _pathX.size() && _pathQ.size() != 0 ){
         recalculateANN();
@@ -211,43 +213,60 @@ namespace libGuiding{
       for(int i = 0; i < 7; i++)
         proj += avec.at(i) * _uvecX.at(k).at(i);
 
-      if( proj > 0 ){
+      if( k == _pathX.size() -1 ){// The Goal
         projD = true;
-        //xd.clear();
-        //xd.resize( _pathX.at(0).resize() );
         for(int i = 0; i < 7; i++){
-          xd.at(i) = nea.at(i) + proj * _uvecX.at(k).at(i);
-          up.at(i) = _uvecX.at(k).at(i);
+          xd.at(i) = nea.at(i);
+          up.at(i) = 0.;
         }
-        ratio = proj/_uvecX.at(k).dist();
+        ratio = 1.;
       }else{
-        projD = false;
-        if( proj > -EPSILON ){
-          //Uses the weighted sum
-          for(int i = 0; i < 7; i++){
-            xd.at(i) = nea.at(i) ;
-            up.at(i) = 0.5*_uvecX.at(k-1).at(i) + 0.5*_uvecX.at(k).at(i) ;
-          }
-          ratio = proj/_uvecX.at(k).dist();          
-        }else{// calculates the projection over the segment before.
-          proj = 0.;
-          for(int i = 0; i < 7; i++)
-            proj += avec.at(i) * _uvecX.at(k-1).at(i);
-          
+        if( proj > 0 || k == 0){
+          projD = true;
           //xd.clear();
           //xd.resize( _pathX.at(0).resize() );
           for(int i = 0; i < 7; i++){
-            xd.at(i) = nea.at(i) - proj * _uvecX.at(k-1).at(i);
-            up.at(i) = _uvecX.at(k-1).at(i);
+            xd.at(i) = nea.at(i) + proj * _uvecX.at(k).at(i);
+            up.at(i) = _uvecX.at(k).at(i);
           }
-          ratio = 1. - (proj / _uvecX.at(k).dist() );
+          ratio = proj/_uvecX.at(k).dist();
+        }else{
+          projD = false;
+          if( proj > -EPSILON ){
+            //Uses the weighted sum
+            for(int i = 0; i < 7; i++){
+              xd.at(i) = nea.at(i) ;
+              up.at(i) = 0.5*_uvecX.at(k-1).at(i) + 0.5*_uvecX.at(k).at(i) ;
+            }
+            ratio = proj/_uvecX.at(k).dist();          
+          }else{// calculates the projection over the segment before.
+            proj = 0.;
+            for(int i = 0; i < 7; i++)
+              proj += avec.at(i) * _uvecX.at(k-1).at(i);
+            
+            //xd.clear();
+            //xd.resize( _pathX.at(0).resize() );
+            for(int i = 0; i < 7; i++){
+              xd.at(i) = nea.at(i) - proj * _uvecX.at(k-1).at(i);
+              up.at(i) = _uvecX.at(k-1).at(i);
+            }
+            ratio = 1. - (proj / _uvecX.at(k).dist() );
+          }
         }
       }
 
-      proj = 0.;
-      for(int i = 0; i < 7; i++){
-        um.at(i) = xd.at(i) - xi.at(i);   
-        proj += um.at(i) * um.at(i);
+      if( proj > -EPSILON && proj < EPSILON ){
+        proj = 0.;
+        for(int i = 0; i < 7; i++){
+          um.at(i) = nea.at(i) - xi.at(i);   
+          proj += um.at(i) * um.at(i);
+        }
+      }else{
+        proj = 0.;
+        for(int i = 0; i < 7; i++){
+          um.at(i) = xd.at(i) - xi.at(i);   
+          proj += um.at(i) * um.at(i);
+        }
       }
 
       proj = sqrt(proj);
