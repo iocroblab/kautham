@@ -197,7 +197,7 @@ namespace libGuiding{
     return -1.;
   }
 
-  KthReal PathToGuide::unitVectors(Xnode &xi, Xnode &xd, int &k, KthReal &ratio, Uvec &um, Uvec &up, 
+  KthReal PathToGuide::unitVectors(Xnode &xi, Xnode &xd, int &k, KthReal &ratio, Uvec &um, Uvec &up, bool& projD, 
                   const KthReal EPSILON ) {
     if( _pathX.empty() || _uvecX.empty() ) return -1.;
     try{
@@ -212,6 +212,7 @@ namespace libGuiding{
         proj += avec.at(i) * _uvecX.at(k).at(i);
 
       if( proj > 0 ){
+        projD = true;
         //xd.clear();
         //xd.resize( _pathX.at(0).resize() );
         for(int i = 0; i < 7; i++){
@@ -220,6 +221,7 @@ namespace libGuiding{
         }
         ratio = proj/_uvecX.at(k).dist();
       }else{
+        projD = false;
         if( proj > -EPSILON ){
           //Uses the weighted sum
           for(int i = 0; i < 7; i++){

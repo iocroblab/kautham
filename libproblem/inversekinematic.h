@@ -58,7 +58,31 @@ namespace libProblem {
   class Robot;
   //! This vector contains the layout of the robot adopted by the solution. The layout is a descriptive
   //! configuration of the pose of the robot. It is normally used as shoulder left/right, or elbow up/down.
-  typedef vector<bool> RobLayout;
+  //typedef vector<bool> RobLayout;
+  class RobLayout: public vector<bool>{
+  public:
+    bool operator!=(const RobLayout & b)const {
+      if( this->size() == b.size() ){
+        for(size_t i = 0; i < size(); ++i)
+          if( this->at(i) != b.at(i) )
+            return false;
+        
+        return true;
+      }
+      return false;
+    }
+/*
+    RobLayout& operator =(const RobLayout& b){
+      if(size() != b.size() )
+        resize( b.size() );
+
+      for(size_t i = 0; i < b.size(); ++i)
+        at(i) = b.at(i);
+      
+      return *this;
+    }
+*/
+  };
 
   class InvKinEx: public exception {
     public:

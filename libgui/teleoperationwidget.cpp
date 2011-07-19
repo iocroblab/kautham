@@ -99,7 +99,6 @@ namespace libGUI{
     _posVec = NULL;
     _rotVec = NULL;
     _scaVec = NULL;
-
     
     // initializing the PathToGuide object with the Robot as the parameter.
     _pathsObj[0] = new PathToGuide( prob->wSpace()->getRobot(0) );
@@ -483,7 +482,7 @@ namespace libGUI{
     }
   }
 
-  int TeleoperationWidget::setGuideForce(mt::Transform& tcp, mt::Transform& w2h){
+  int TeleoperationWidget::setGuideForce(mt::Transform& tcp, mt::Transform& w2h, bool& projDirecPos){
     const KthReal THRESHOLD = 2.;
     KthReal EPSILON = 2.;
     KthReal forces[6];
@@ -516,7 +515,7 @@ namespace libGUI{
     Xnode xi = libGuiding::PathToGuide::tran2xnode(tcp);
 
     // Normally the measures are in millimeters.
-    KthReal dist = path->unitVectors(xi, xd, idx, ratio, umag, upush, EPSILON );
+    KthReal dist = path->unitVectors(xi, xd, idx, ratio, umag, upush, projDirecPos, EPSILON );
 
     for(int i = 0; i < 3; ++i){
       magP.at(i) = umag.at(i);
@@ -836,8 +835,9 @@ namespace libGUI{
 
     SoSeparator* tmpSep = _gui->getRootTab(_gui->getActiveViewTitle());
     tmpSep->addChild(_hapticBox);
-    tmpSep->addChild(_ForceVector);
-    
+    tmpSep->addChild(_ForceVector);    
+
+    _currentLayout = _radBttRobot0->isChecked() ? _pathsObj[0]->getLayout(0) : _pathsObj[1]->getLayout(0);
   }
 
   void TeleoperationWidget::stopTeleoperation(){
@@ -1029,13 +1029,22 @@ namespace libGUI{
     else if(_radBttRobot1->isChecked())
       activeRob = 1;
 
-    int nea = setGuideForce(tcp2w, _w2h);
+    bool dirProj= false;
+    int nea = setGuideForce(tcp2w, _w2h, dirProj);
 
     // For debug.
     //cout << nea << endl;
 
     PathToGuide* path = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
     RobLayout  robLay = path->getLayout( nea ); // This line gets the respective layout of the robot if it has a IK model.
+
+    // This part implements the hysteresis
+    if( robLay != _currentLayout ){
+      if( !dirProj )
+        robLay = path->getLayout( nea - 1 );
+
+      _currentLayout = robLay;
+    }
 
     if(_problem->wSpace()->getRobot(activeRob)->getIkine() == NULL)
       _problem->wSpace()->getRobot(activeRob)->Kinematics(se3conf);

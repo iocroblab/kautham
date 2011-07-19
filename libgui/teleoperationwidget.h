@@ -49,6 +49,7 @@
 #include <libguiding/pathtoguide.h>
 #include "gui.h"
 #include <string.h>
+#include <libproblem/inversekinematic.h>
 
 using namespace libDevice;
 using namespace libProblem;
@@ -129,6 +130,7 @@ namespace libGUI{
 
       //! Added to increase the guiding capabilities.
       PathToGuide*          _pathsObj[2];
+      RobLayout             _currentLayout;
 
       //! The _dataCell, the _publisher and the suscriber conform the core of interchange strategy 
       //! to use with ROS message system.
@@ -149,7 +151,7 @@ namespace libGUI{
       mt::Transform         getNewH2HipBB(vector<GuiNode*>& path, mt::Transform& tcp);
       void                  calculateForce(pathPoint delta, KthReal dist, KthReal forces[]);
       void                  setJumpForce(mt::Transform& tcp);
-      int                   setGuideForce(mt::Transform& tcp, mt::Transform& w2h);
+      int                   setGuideForce(mt::Transform& tcp, mt::Transform& w2h, bool& projDirecPos);
 
       //XXXXXXXXXXXXXXXXXXXXXXXX
       QGridLayout *gridLayout_10;

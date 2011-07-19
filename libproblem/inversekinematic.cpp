@@ -107,7 +107,7 @@ namespace libProblem {
   void InverseKinematic::setTarget(vector<KthReal> &target, const string& param){
     if(param != "" ) setParametersFromString( param );
     _target.clear();
-    for(int i =0; i< target.size(); i++)
+    for(size_t i =0; i< target.size(); i++)
       _target.push_back(target.at(i));
   }
 
@@ -115,7 +115,7 @@ namespace libProblem {
   void InverseKinematic::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
 	   //loads the target: the tcp transform
     _target.clear();
-    for(int i =0; i< target.size(); i++)
+    for(size_t i =0; i< target.size(); i++)
       _target.push_back(target.at(i));  
 	  
 	  //masterconf not used -  maintainSameWrist not used
