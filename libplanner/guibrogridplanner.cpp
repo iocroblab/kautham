@@ -160,22 +160,33 @@ namespace libPlanner {
 		bool freesphere;
 		//threshold distance, measured in cells,
 		//int threshold = (int)(sqrt(3.0)*radius/maxSize);//sqrt(3) is added to consider the distance to the vertex of the voxel
-		int threshold = 1;
+		int threshold = 2;
 		//reset the cost
 		*distcost=0;
 		if(onlytip==false)
 		{
+			int countTouching = 0;//counter of spheres that are exactly at distance=threshold
 			for(int n=0;n<nlinks;n++)
 			{
 				linkTransf = _wkSpace->getRobot(0)->getLinkTransform(n);
 				pos = linkTransf.getTranslation();
-				i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
-				j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1];
-				k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2];
+				//i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
+				//j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1];
+				//k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2];
+				i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0]+1;
+				j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1]+1;
+				k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2]+1;
 				label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
 				dist = -10*threshold; //value that will take thos spheres out of bounds
 				freesphere=grid->getDistance(label, &dist);
-				if(freesphere && dist<=threshold) freesphere = false;
+				if(freesphere){
+					if(dist<threshold) freesphere = false;
+					else if(dist==threshold){//if more than two spheres are touching then consider it is a collision
+						countTouching++;
+						if(countTouching>2) freesphere = false;
+					}
+				}
+				
 				*distcost += dist;
 				if(freesphere==false) collision = true;
 			}
@@ -190,9 +201,12 @@ namespace libPlanner {
 		totip.setTranslation(mt::Vector3(_wkSpace->getRobot(0)->getLink(n)->getA(),0,0) );
 		mt::Transform tipTransf = linkTransf*totip;
 		pos = tipTransf.getTranslation();
-		i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
-		j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1];
-		k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2];
+		//i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
+		//j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1];
+		//k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2];
+		i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0] + 1;
+		j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1] + 1;
+		k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2] + 1;
 		label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
 		dist = -10*threshold; //value that will take thos spheres out of bounds
 		freesphere=grid->getDistance(label, &dist);
@@ -683,9 +697,6 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			
 			//else color the candidate points
 			KthReal minr=100000;
-			KthReal weightNF1 = 0.8;//0.5;//0.5
-			KthReal weightDist = 0.0;//0.3;//0.5
-			KthReal weightAlpha = 0.2;//0.5
 			int localminima=1;
 			int bestdcost;
 			KthReal bestNF1cost;
@@ -737,7 +748,7 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				}
 				else
 				{
-					r = weightNF1*rNF1[i]+weightDist*rDist[i]+weightAlpha*rAlpha[i];
+					r = getWeightNF1()*rNF1[i]+getWeightDist()*rDist[i]+getWeightAlpha()*rAlpha[i];
 					if(r<minr)
 					{
 						minr=r;
@@ -855,13 +866,15 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 
 			bool colltest=false;
 			
-			KthReal a = alpha0+(alpha-alpha0)/stepsahead;
-			KthReal b = beta0+(beta-beta0)/stepsahead;
-			values.push_back(a);
-			values.push_back(b);
+			KthReal Delta_a = (alpha-alpha0)/stepsahead;
+			KthReal Delta_b = (beta-beta0)/stepsahead;
+			values.push_back(alpha0);
+			values.push_back(beta0);
 			values.push_back(-1);
-			for(int i=0; i<stepsahead; i++)
+			for(int i=1; i<=stepsahead; i++)
 			{
+				values[0] += Delta_a;
+				values[1] += Delta_b;
 				//move the broncoscope at the new position
 				_wkSpace->getRobot(0)->ConstrainedKinematics(values);
 				//linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
@@ -988,6 +1001,11 @@ bool GUIBROgridPlanner::trySolve()
 			KthReal currentNF1cost;
 			int currentdcost;
 			int j=0;
+			//weights
+			KthReal wNF1=0.6;
+			KthReal wDist=0.2;
+			KthReal wAlpha=0.2;
+			setWeights(wNF1,wDist,wAlpha);
 			do{
 				r=advanceToBest(steps,&bestAlpha,&bestBeta,smp,fp);
 				if(r>0)
@@ -1021,9 +1039,31 @@ bool GUIBROgridPlanner::trySolve()
 						" beta = "<< bestBeta<<" dist = "<<currentdcost<< " NF1value= "<<currentNF1cost<<endl;
 					j++;
 
-					if(steps<_stepsAdvance) steps *=2.0;//restore
+					if(steps<_stepsAdvance) 
+					{
+						steps *=2.0;//restore
+						wNF1 += 0.2;
+						wDist -= 0.2;
+						if(wNF1>0.6) 
+						{
+							wNF1 = 0.6;
+							wDist = 0.2;
+						}
+						setWeights(wNF1,wDist,wAlpha);
+					}
 				}
-				else steps /=2.0;
+				else
+				{
+					steps /=2.0;
+					wNF1 -= 0.2;
+					wDist += 0.2;
+					if(wNF1<0.2) 
+					{
+						wNF1 = 0.2;
+						wDist = 0.6;
+					}
+					setWeights(wNF1,wDist,wAlpha);
+				}
 			}while(r!=-1 && steps>0.5);
 			fclose(fp);
 

@@ -99,6 +99,10 @@ using namespace workspacegridplanner;
 		int advanceToBest(KthReal steps,KthReal *bestAlpha, KthReal *bestBeta,Sample *smp=NULL, FILE *fp=NULL);
 		void setAdvanceStep(int a){_stepsAdvance = a;};
 		int getAdvanceStep(){return _stepsAdvance;};
+		inline void setWeights(KthReal n, KthReal d, KthReal a){_weightNF1=n;_weightDist=d;_weightAlpha=a;};
+		inline KthReal getWeightNF1(){return _weightNF1;};
+		inline KthReal getWeightDist(){return _weightDist;};
+		inline KthReal getWeightAlpha(){return _weightAlpha;};
 
 		protected:
 		//Add protected data and functions	
@@ -113,6 +117,7 @@ using namespace workspacegridplanner;
 		int _counterFirstPoint; 
 		int _maxLookAtPoints;
 		int _onlyNF1;
+		
 
 		vector<guibroSample*> _guibroSet;
 
@@ -122,7 +127,11 @@ using namespace workspacegridplanner;
 
 	    private:
 		//Add private data and functions
-			int* _showObstacle;
+		int* _showObstacle;
+		KthReal _weightNF1;
+		KthReal _weightDist; 
+		KthReal _weightAlpha;
+
 		
 			unsigned int findGridCell(Sample * s);
 			bool findGraphVertex(Sample * s, gridVertex *v);
