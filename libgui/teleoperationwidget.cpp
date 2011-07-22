@@ -95,7 +95,7 @@ namespace libGUI{
     _maxForces[3]= 2.; _maxForces[4]= 2.; _maxForces[5]= 2.;
 
     _hapticBox = NULL;
-    _ForceVector = NULL;
+    _EFrame = _KFrame = _KAFrame = _KBFrame = NULL;
     _posVec = NULL;
     _rotVec = NULL;
     _scaVec = NULL;
@@ -549,15 +549,6 @@ namespace libGUI{
     sum = magP.cross(mt::Vector3(0., 0., 1. ));
     mt::Scalar angle = magP.angle(mt::Vector3(0., 0., 1. ));
 
-    // Draw the vector.
-    if(_posForce != NULL && _rotForce != NULL){
-      // Setting the base and the orientation of the vector
-      //mt::Rotation tmpRot(sum, -angle);
-      mt::Point3 tmpPos = tcp.getTranslation();
-      _posForce->setValue(tmpPos.at(0), tmpPos.at(1), tmpPos.at(2));
-      //_rotForce->setValue(tmpRot.at(0), tmpRot.at(1), tmpRot.at(2), tmpRot.at(3));
-    }
-
 
     //XXXXXXXXXX Applying the force to haptic XXXXXXXXXXXXXXXX
     _haptic->setSE3Force(forces);
@@ -694,16 +685,20 @@ namespace libGUI{
     _startOperation->setEnabled(false);
     acts();
 
+    SoTranslation *trans;
+    SoRotation    *rot;
+    SoScale       *sca;
+
     if(_hapticBox == NULL){
       // Adding the haptic workspace box
 
       mt::Rotation tmpRot = _gui->getActiveCameraTransfom().getRotation();
       mt::Point3 tmpPos = _w2h.getTranslation();
 
-      SoTranslation *trans;
-      SoRotation    *rot;
-      // SoMaterial    *color;
-      SoScale       *sca;
+      //SoTranslation *trans;
+      //SoRotation    *rot;
+      //// SoMaterial    *color;
+      //SoScale       *sca;
 
       //====================
       trans= new SoTranslation;
@@ -758,83 +753,94 @@ namespace libGUI{
       _hapticBox->addChild(tmp2);
 		  _hapticBox->ref();
     }
-    
-    if(_ForceVector == NULL){
-      // Adding the force vector
 
-      mt::Rotation tmpRot = _w2h.getRotation();
-      mt::Point3 tmpPos = _w2h.getTranslation();
+    SoSeparator* tmpRoot = _gui->getRootTab(_gui->getActiveViewTitle());
+    tmpRoot->addChild(_hapticBox);
 
-      SoTranslation *trans;
-      SoRotation    *rot;
-      // SoMaterial    *color;
-      SoScale       *sca;
-
-      //====================
-      trans= new SoTranslation;
-		  rot = new SoRotation;
-		  sca = new SoScale();
-
-      _posForce = new SoSFVec3f();
-      trans->translation.connectFrom(_posForce);
-      _posForce->setValue(tmpPos.at(0), tmpPos.at(1), tmpPos.at(2));
-
-      _rotForce = new SoSFRotation();
-      _rotForce->setValue(tmpRot.at(0), tmpRot.at(1), tmpRot.at(2), tmpRot.at(3));
-      rot->rotation.connectFrom(_rotForce);
-
-		  _ForceVector = new SoSeparator();
-		  _ForceVector->ref();
-      _ForceVector->setName("ForceVector");
-		  //_hapticBox->addChild(sca);
-	    _ForceVector->addChild(trans);
-	    _ForceVector->addChild(rot);
-
-      // The material =======
+    if( _EFrame == NULL ){
+      // Adding the EF TCP Frame
+      _EFrame = new SoSeparator;
+		  _EFrame->ref();
+      _EFrame->setName("TCP Frame");
       //SoTransparencyType
       SoTransparencyType *ttype = new SoTransparencyType;
 			ttype->value = SoGLRenderAction::SORTED_OBJECT_BLEND ;
-			_ForceVector->addChild(ttype);
-
-      SoMaterial* tmpMat = new SoMaterial;
-      tmpMat->ambientColor.setValue( 0.2, 0.2, 0.2);
-      tmpMat->diffuseColor.setValue( 1.0, 0.3, 0.1);
-      tmpMat->shininess.setValue( 0.2);
-      tmpMat->transparency.setValue( 0.);
-      _ForceVector->addChild(tmpMat);
-
-      _scaForce= new SoSFVec3f;
-      _scaForce->setValue(2 * _tranScale, 2 * _tranScale, 2 * _tranScale);
-      sca->scaleFactor.connectFrom(_scaForce);
-      _ForceVector->addChild(sca);
-
-      SoTransform* tmpTT = new SoTransform();
-      tmpTT->rotation.setValue(SbVec3f(1., 0., 0. ), 1.5752 );
-      tmpTT->translation.setValue(0., 0., 5. );
-      _ForceVector->addChild(tmpTT);
-      
-      SoCylinder* tmp = new SoCylinder();
-      tmp->radius.setValue(1.);
-      tmp->height.setValue(10);
-      _ForceVector->addChild(tmp);
-
-      tmpTT = new SoTransform();
-      tmpTT->translation.setValue(0., 8., 0. );
-      _ForceVector->addChild(tmpTT);
-
-      SoCone* tmp2 = new SoCone();
-      tmp2->bottomRadius.setValue( 3. );
-      tmp2->height.setValue(6. );
-      _ForceVector->addChild(tmp2);
-   
-		  _ForceVector->ref();
+			_EFrame->addChild(ttype);
+      _EFrame->addChild(sca);
+	    _EFrame->addChild(new Axis()); 
     }
 
-    SoSeparator* tmpSep = _gui->getRootTab(_gui->getActiveViewTitle());
-    tmpSep->addChild(_hapticBox);
-    tmpSep->addChild(_ForceVector);    
+    int activeRob = _radBttRobot0->isChecked() ? 0 : 1;
+    Robot* tmpRob = _problem->wSpace()->getRobot(activeRob);
+    Link* tmpLink = tmpRob->getLink(tmpRob->getNumLinks() - 1); //Get the last link
+    SoSeparator* tmpModel = ((IVPQPElement*)tmpLink->getElement())->ivModel(false);
+    tmpModel->addChild(_EFrame); 
 
-    _currentLayout = _radBttRobot0->isChecked() ? _pathsObj[0]->getLayout(0) : _pathsObj[1]->getLayout(0);
+    PathToGuide* tmpPath = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
+
+    _currentLayout = tmpPath->getLayout(0);
+
+    // Now I create the KFrames.
+    if(_KFrame == NULL ){
+      trans = new SoTranslation();
+      rot = new SoRotation();
+      _posKFrame = new SoSFVec3f();
+      _rotKFrame = new SoSFRotation();
+      _posKFrame->setValue(tmpPath->PathX().at(0).at(0), tmpPath->PathX().at(0).at(1), 
+        tmpPath->PathX().at(0).at(2) );
+      _rotKFrame->setValue( tmpPath->PathX().at(0).at(3), tmpPath->PathX().at(0).at(4), 
+        tmpPath->PathX().at(0).at(5), tmpPath->PathX().at(0).at(6) );
+
+      trans->translation.connectFrom( _posKFrame );
+      rot->rotation.connectFrom( _rotKFrame );
+      _KFrame = new SoSeparator();
+      _KFrame->addChild(trans);
+      _KFrame->addChild(rot);
+      _KFrame->addChild(sca);
+      _KFrame->addChild( new Axis() );
+    }
+
+    if(_KAFrame == NULL ){
+      trans = new SoTranslation();
+      rot = new SoRotation();
+      _posKAFrame = new SoSFVec3f();
+      _rotKAFrame = new SoSFRotation();
+      _posKAFrame->setValue(tmpPath->PathX().at(1).at(0), tmpPath->PathX().at(1).at(1), 
+        tmpPath->PathX().at(1).at(2) );
+      _rotKAFrame->setValue( tmpPath->PathX().at(1).at(3), tmpPath->PathX().at(1).at(4), 
+        tmpPath->PathX().at(1).at(5), tmpPath->PathX().at(0).at(6) );
+      
+      trans->translation.connectFrom( _posKAFrame );
+      rot->rotation.connectFrom( _rotKAFrame );
+      _KAFrame = new SoSeparator();
+      _KAFrame->addChild(trans);
+      _KAFrame->addChild(rot);
+      _KAFrame->addChild(sca);
+      _KAFrame->addChild( new Axis() );
+    }
+    
+    if(_KBFrame == NULL ){
+      trans = new SoTranslation();
+      rot = new SoRotation();
+      _posKBFrame = new SoSFVec3f();
+      _rotKBFrame = new SoSFRotation();
+      _posKBFrame->setValue(tmpPath->PathX().at(0).at(0), tmpPath->PathX().at(0).at(1), 
+        tmpPath->PathX().at(0).at(2) );
+      _rotKBFrame->setValue( tmpPath->PathX().at(0).at(3), tmpPath->PathX().at(0).at(4), 
+        tmpPath->PathX().at(0).at(5), tmpPath->PathX().at(0).at(6) );
+      
+      trans->translation.connectFrom( _posKBFrame );
+      rot->rotation.connectFrom( _rotKBFrame );
+      _KBFrame = new SoSeparator();
+      _KBFrame->addChild(trans);
+      _KBFrame->addChild(rot);
+      _KBFrame->addChild(sca);
+      _KBFrame->addChild( new Axis() );
+    }
+    
+    tmpRoot->addChild( _KFrame );
+    tmpRoot->addChild( _KAFrame );
+    tmpRoot->addChild( _KBFrame );
   }
 
   void TeleoperationWidget::stopTeleoperation(){
@@ -858,7 +864,10 @@ namespace libGUI{
 
     SoSeparator* tmpSep = _gui->getRootTab(_gui->getActiveViewTitle());
     tmpSep->removeChild(_hapticBox);
-    tmpSep->removeChild(_ForceVector);
+    tmpSep->removeChild(_EFrame);
+    tmpSep->removeChild(_KFrame);
+    tmpSep->removeChild(_KAFrame);
+    tmpSep->removeChild(_KBFrame);
   }
 
   void TeleoperationWidget::getCamera(){
@@ -1031,6 +1040,27 @@ namespace libGUI{
 
     // For debug.
     //cout << nea << endl;
+
+    // Now I will draw the frames corresponding to the k-1, k and 
+    // k-1 points of the guiding path.
+    _posKFrame->setValue(_pathsObj[activeRob]->PathX().at(nea).at(0), _pathsObj[activeRob]->PathX().at(nea).at(1),
+                         _pathsObj[activeRob]->PathX().at(nea).at(2) );
+    _rotKFrame->setValue(_pathsObj[activeRob]->PathX().at(nea).at(3), _pathsObj[activeRob]->PathX().at(nea).at(4),
+                         _pathsObj[activeRob]->PathX().at(nea).at(5), _pathsObj[activeRob]->PathX().at(nea).at(6) );
+    if(nea > 1 ){//MOve the before frame
+      _posKBFrame->setValue(_pathsObj[activeRob]->PathX().at(nea-1).at(0), _pathsObj[activeRob]->PathX().at(nea-1).at(1),
+                         _pathsObj[activeRob]->PathX().at(nea-1).at(2) );
+      _rotKBFrame->setValue(_pathsObj[activeRob]->PathX().at(nea-1).at(3), _pathsObj[activeRob]->PathX().at(nea-1).at(4),
+                         _pathsObj[activeRob]->PathX().at(nea-1).at(5), _pathsObj[activeRob]->PathX().at(nea-1).at(6) );
+    }
+
+    if( nea < _pathsObj[activeRob]->PathX().size() - 2 ){
+      _posKAFrame->setValue(_pathsObj[activeRob]->PathX().at(nea+1).at(0), _pathsObj[activeRob]->PathX().at(nea+1).at(1),
+                         _pathsObj[activeRob]->PathX().at(nea+1).at(2) );
+      _rotKAFrame->setValue(_pathsObj[activeRob]->PathX().at(nea+1).at(3), _pathsObj[activeRob]->PathX().at(nea+1).at(4),
+                         _pathsObj[activeRob]->PathX().at(nea+1).at(5), _pathsObj[activeRob]->PathX().at(nea+1).at(6) );
+    }
+
 
     PathToGuide* path = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
     RobLayout  robLay = path->getLayout( nea ); // This line gets the respective layout of the robot if it has a IK model.

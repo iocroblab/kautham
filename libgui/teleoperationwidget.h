@@ -48,6 +48,7 @@
 #include <libutil/CHostLookup.h>
 #include <libguiding/pathtoguide.h>
 #include "gui.h"
+#include "axis.h"
 #include <string.h>
 #include <libproblem/inversekinematic.h>
 
@@ -117,10 +118,10 @@ namespace libGUI{
       bool                  _lastAction;
       bool                  _callNewH;
       SoSeparator*          _hapticBox;
-      SoSeparator*          _ForceVector;
-      SoSFVec3f*            _scaVec, *_scaForce;
-      SoSFVec3f*            _posVec, *_posForce;
-      SoSFRotation*         _rotVec, *_rotForce;
+      SoSeparator*          _EFrame, *_KFrame, *_KAFrame, *_KBFrame;
+      SoSFVec3f*            _scaVec ;
+      SoSFVec3f*            _posVec, *_posKFrame, *_posKAFrame, *_posKBFrame;
+      SoSFRotation*         _rotVec, *_rotKFrame, *_rotKAFrame, *_rotKBFrame;
       float                 _rotScale;
       float                 _tranScale;
       KthReal               _hapticBoxSize[6];

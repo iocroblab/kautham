@@ -3,10 +3,6 @@
 
 DEF root Separator {
 
-  Units {
-    units MILLIMETERS
-
-  }
   DEF X Separator {
 
     Material {
@@ -19,20 +15,20 @@ DEF root Separator {
 
     }
     Translation {
-      translation 0 100 0
+      translation 0 50 0
 
     }
     Cylinder {
-      height 200
+      height 100
 
     }
     Translation {
-      translation 0 100 0
+      translation 0 50 0
 
     }
     Cone {
       bottomRadius 5
-      height 5
+      height 15
 
     }
     Text2 {
@@ -48,20 +44,20 @@ DEF root Separator {
 
     }
     Translation {
-      translation 0 100 0
+      translation 0 50 0
 
     }
     Cylinder {
-      height 200
+      height 100
 
     }
     Translation {
-      translation 0 100 0
+      translation 0 50 0
 
     }
     Cone {
       bottomRadius 5
-      height 5
+      height 15
 
     }
     Text2 {
@@ -81,20 +77,20 @@ DEF root Separator {
 
     }
     Translation {
-      translation 0 100 0
+      translation 0 50 0
 
     }
     Cylinder {
-      height 200
+      height 100
 
     }
     Translation {
-      translation 0 100 0
+      translation 0 50 0
 
     }
     Cone {
       bottomRadius 5
-      height 5
+      height 15
 
     }
     Text2 {

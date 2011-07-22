@@ -171,6 +171,9 @@ public:
 
       return anXnode;
     }
+
+    inline vector<Xnode>& PathX(){ return _pathX;}
+    inline vector<Qnode>& PathQ(){ return _pathQ;}
     
   private:
     //! Default constructor is not available. 
