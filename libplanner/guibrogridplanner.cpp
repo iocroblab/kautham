@@ -89,7 +89,8 @@ namespace libPlanner {
 		  addParameter(str, 1);//shown
 	  }
 	  //interface to show look-ahead points
-	  addParameter("Show Points (0/1)",0);
+	  _showPoints = 0;
+	  addParameter("Show Points (0/1)",_showPoints);
 
 	  _stepsAdvance = 10.0;
 	  addParameter("Steps Advance",_stepsAdvance);
@@ -341,10 +342,11 @@ namespace libPlanner {
 		it = _parameters.find(str);
 		if(it != _parameters.end())
 		{
+            _showPoints = it->second;
 			for(int i=_counterFirstPoint; i<_wkSpace->obstaclesCount();i++)
 			{
 				//if the points should be removed
-				if(it->second ==0)
+				if(_showPoints ==0)
 				{
 					_showObstacle[i] = it->second;
 					sprintf(str,"obstacle%d",i);

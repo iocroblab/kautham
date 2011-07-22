@@ -120,11 +120,13 @@ void bronchoWidget::alphaSliderChanged(int val){
     tmp = labels[i]->text().left(labels[i]->text().indexOf("=") + 2);
     labels[i]->setText( tmp.append( QString().setNum(values[i],'g',5)));
   }
-    
   _ptProblem->setCurrentControls(values,_globalOffset);
   if(_robot != NULL) _robot->control2Pose(values);*/
+
   KthReal readVal=(KthReal) val;
-  values[0]=(KthReal) readVal/1000; // /1000 because the slider only accept int values, in this case from -3141 to 3141
+  KthReal maxAlpha = ((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->getMaxAlpha();
+  values[0]=(KthReal)readVal/1000; // /1000 because the slider only accept int values, in this case from -1000 and 1000
+  values[0] *= maxAlpha;
   _robot->ConstrainedKinematics(values);
   updateView();
   updateLookAt();
@@ -133,7 +135,9 @@ void bronchoWidget::alphaSliderChanged(int val){
 
 void bronchoWidget::xiSliderChanged(int val){
   KthReal readVal=(KthReal) val;
+  KthReal maxBending = ((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->getMaxBending();
   values[1]=(KthReal) readVal/1000;
+  values[1] *= maxBending;
   _ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
   updateView();
@@ -166,10 +170,13 @@ void bronchoWidget::updateLookAt()
 {
   if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
   {
-	  KthReal bestalpha, bestbeta;
+	  if( ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->getShowPoints() != 0)
+	  {
+		KthReal bestalpha, bestbeta;
 		KthReal s = ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->getAdvanceStep();
-	  ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->look(s, &bestalpha, &bestbeta);
-	  //cout<<"Best Alpha = "<<bestalpha<<" Best Beta = "<<bestbeta<<endl;
+		((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->look(s, &bestalpha, &bestbeta);
+		//cout<<"Best Alpha = "<<bestalpha<<" Best Beta = "<<bestbeta<<endl;
+	  }
   }	
 }
 

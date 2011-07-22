@@ -103,6 +103,7 @@ using namespace workspacegridplanner;
 		inline KthReal getWeightNF1(){return _weightNF1;};
 		inline KthReal getWeightDist(){return _weightDist;};
 		inline KthReal getWeightAlpha(){return _weightAlpha;};
+		inline int getShowPoints(){return _showPoints;};
 
 		protected:
 		//Add protected data and functions	
@@ -128,6 +129,7 @@ using namespace workspacegridplanner;
 	    private:
 		//Add private data and functions
 		int* _showObstacle;
+		int _showPoints;
 		KthReal _weightNF1;
 		KthReal _weightDist; 
 		KthReal _weightAlpha;
