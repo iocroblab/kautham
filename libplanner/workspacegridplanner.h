@@ -180,8 +180,11 @@ namespace libPlanner {
 		//!returns the size of the grid in each axis
 		inline int* getDiscretization(){return _stepsDiscretization;};
 
-		//!returns the size of the grid in each axis
+		//!returns the distance of the cell with label "label"
 		bool getDistance(unsigned int label, int *dist);
+
+		//!returns the coordinates x,y,z inthe grid of the cell with label "label"
+		bool getCoordinates(unsigned int label, int *x, int *y, int *z);
 
 		
 		//!returns pointer to Locations

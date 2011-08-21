@@ -767,7 +767,7 @@ namespace libGUI{
 			ttype->value = SoGLRenderAction::SORTED_OBJECT_BLEND ;
 			_EFrame->addChild(ttype);
       _EFrame->addChild(sca);
-	    _EFrame->addChild(new Axis()); 
+//	    _EFrame->addChild(new Axis()); 
     }
 
     int activeRob = _radBttRobot0->isChecked() ? 0 : 1;
@@ -797,7 +797,7 @@ namespace libGUI{
       _KFrame->addChild(trans);
       _KFrame->addChild(rot);
       _KFrame->addChild(sca);
-      _KFrame->addChild( new Axis() );
+    //  _KFrame->addChild( new Axis() );
     }
 
     if(_KAFrame == NULL ){
@@ -816,7 +816,7 @@ namespace libGUI{
       _KAFrame->addChild(trans);
       _KAFrame->addChild(rot);
       _KAFrame->addChild(sca);
-      _KAFrame->addChild( new Axis() );
+     // _KAFrame->addChild( new Axis() );
     }
     
     if(_KBFrame == NULL ){
@@ -835,7 +835,7 @@ namespace libGUI{
       _KBFrame->addChild(trans);
       _KBFrame->addChild(rot);
       _KBFrame->addChild(sca);
-      _KBFrame->addChild( new Axis() );
+//      _KBFrame->addChild( new Axis() );
     }
     
     tmpRoot->addChild( _KFrame );

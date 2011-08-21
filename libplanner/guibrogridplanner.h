@@ -133,10 +133,14 @@ using namespace workspacegridplanner;
 		KthReal _weightNF1;
 		KthReal _weightDist; 
 		KthReal _weightAlpha;
+		
+		int _nodule;//index of the obstacle that represents the nodule to be reached
+		Obstacle *_obstaclenodule; //pointer to the obstacle that represents the nodule
 
 		
-			unsigned int findGridCell(Sample * s);
-			bool findGraphVertex(Sample * s, gridVertex *v);
+		unsigned int findGridCell(Sample * s);
+		bool findGraphVertex(Sample * s, gridVertex *v);
+		bool findGraphVertex(KthReal x, KthReal y, KthReal z, KthReal R, gridVertex *v);
 
 	  };
    }

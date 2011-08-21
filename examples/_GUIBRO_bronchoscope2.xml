@@ -35,13 +35,37 @@
     <Collision Enable =" false">
     </Collision>
   </Scene>
+  <Scene scene="BRONCO/nodule.iv" scale="4.0">
+    Scene Path
+    <Location X="200.0" Y="150.0" Z="65.0" WX="1.0" WY="0.0" WZ="0.0" TH="0">
+      Configuration of the scene
+    </Location>
+    <Collision Enable =" false">
+    </Collision>
+  </Scene>
+  <Scene scene="BRONCO/nodule.iv" scale="6.0">
+    Scene Path
+    <Location X="200.0" Y="190.0" Z="0.0" WX="1.0" WY="0.0" WZ="0.0" TH="0">
+      Configuration of the scene
+    </Location>
+    <Collision Enable =" false">
+    </Collision>
+  </Scene> 
+  <Scene scene="BRONCO/nodule.iv" scale="8.0">
+    Scene Path
+    <Location X="100.0" Y="190.0" Z="10.0" WX="1.0" WY="0.0" WZ="0.0" TH="0">
+      Configuration of the scene
+    </Location>
+    <Collision Enable =" false">
+    </Collision>
+  </Scene>
 	<DistanceMap distanceMap="BRONCO/broncoDistanceMap.txt">
 	</DistanceMap>
 	<Planner>
 		<Parameters>
 			<Name>GUIBROgrid</Name>
 			<LocalPlanner stepSize="0.01">Linear</LocalPlanner>
-      <Parameter name="Speed Factor">3</Parameter>
+      <Parameter name="Speed Factor">1</Parameter>
       <Parameter name="Steps Advance">5.0</Parameter>
       <Parameter name="Drawn Path Link">12</Parameter>
     </Parameters>

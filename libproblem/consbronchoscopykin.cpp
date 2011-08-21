@@ -11,8 +11,13 @@ namespace libProblem {
 		_currentvalues[0] = 0.; 
 		_currentvalues[1] = 0.; 
 		_currentvalues[2] = 0.;
-		_maxbending = (KthReal) (2*M_PI/3);
-		_maxalpha = (KthReal) (M_PI/3);//(KthReal) (M_PI/2);//(KthReal) (M_PI/4);
+		_maxbending = (KthReal) (2*M_PI/3);//120 degrees
+		_minbending = (KthReal) (-M_PI/2);//-90degrees
+		_maxalpha = (KthReal) (M_PI/2);//90degrees
+		_minalpha = (KthReal) (-M_PI/3);//-60degrees;
+
+		_rangealpha = _maxalpha - _minalpha;
+		_rangebending = _maxbending - _minbending;
 
 	}
 	
@@ -29,6 +34,9 @@ namespace libProblem {
 
 	RobConf ConsBronchoscopyKin::solve(vector<KthReal> &values)
 	{
+		//values contain the alpha,beta and zeta parameters
+		//values[0] and values[1] in the range -1..1
+
 		//Links characteristic
 		Link* _linkn = _robot->getLink(_robot->getNumJoints()-1);
 		KthReal l = abs(_linkn->getA()); //one link length
@@ -42,14 +50,49 @@ namespace libProblem {
 		//cout<<"alpha = "<<curr_alpha<<" psi = "<<curr_beta<<endl;
 
 		// Read values
-		KthReal Dalpha = _maxalpha *(values[0]-curr_alpha); // slider goes from -1000 to 1000
-		KthReal psi = _maxbending*(values[1]/n); // values[1]=total bending angle read from the slider
+		//KthReal Dalpha = _maxalpha *(values[0]-curr_alpha);
+
+
+		KthReal Dalpha;
+		KthReal Alpha;
+		if(values[0]>=0) 
+		{
+			//both values[0] and curr_alpha positive
+			if(curr_alpha>=0) 
+			{
+				Dalpha = _maxalpha *(values[0]-curr_alpha); 
+			}
+			else
+			{
+			    //values[0] positive and curr_alpha negative (Delta is positive)
+				Dalpha = -curr_alpha*_minalpha + values[0]*_maxalpha;
+			}
+			Alpha = _maxalpha *values[0]; 
+		}
+		else 
+		{
+			//both values[0] and curr_alpha negative
+			if(curr_alpha<0) Dalpha = -_minalpha *(values[0]-curr_alpha);//the signs of delta depends on the diference,
+																			//recall that _minalpha is a negative value
+			else
+			{
+			    //curr_alpha  positive and values[0] negative (Delta is negative)
+				Dalpha = -curr_alpha*_maxalpha - values[0]*_minalpha;
+			}
+			Alpha = -_minalpha *values[0]; 
+		}
+
+		KthReal psi;
+		if(values[1]>0) psi = _maxbending*(values[1]/n); // values[1]=total bending angle read from the slider
+		else psi = _minbending*(-values[1]/n);
 		KthReal Dzeta = (KthReal)-values[2];//directly the value read from the slider //-1000*(values[2]-currentvalues2);
    
 
 		// sin and cos of rotation angles
-		KthReal calpha=cos(Dalpha); 
-		KthReal salpha=sin(Dalpha);
+		//KthReal calpha=cos(Dalpha); 
+		//KthReal salpha=sin(Dalpha);
+		KthReal calpha=cos(Alpha); 
+		KthReal salpha=sin(Alpha);
     
 		// alpha rotation around z-axis
 		 mt::Matrix3x3 RzDalpha=Matrix3x3( calpha,   -salpha,  0,
@@ -96,7 +139,11 @@ namespace libProblem {
 
 			// updating the base transform
 			//mt::Transform 
-			Tbase=currTran*T_RzDalpha*T_Y_d_Z_l2*T_RxDbeta*T_Y_d_Z_l2.inverse(); // beta around x axis
+			//Tbase=currTran*T_RzDalpha*T_Y_d_Z_l2*T_RxDbeta*T_Y_d_Z_l2.inverse(); // beta around x axis
+			
+			//the last inverse is becaus finally the alpha rotation is assigend to the first link, not to
+			//the roatation of the base
+			Tbase=currTran*T_RzDalpha*T_Y_d_Z_l2*T_RxDbeta*T_Y_d_Z_l2.inverse()*T_RzDalpha.inverse(); // beta around x axis
 		}
 		//else rectilinear advance
 		else {
@@ -112,9 +159,24 @@ namespace libProblem {
 		//update joint values
 		RnConf& _RnConf = _CurrentPos->getRn();
 		vector<KthReal>& rncoor= _RnConf.getCoordinates();
-		rncoor[0] = values[0]; //alpha
+
+
+		//COMPTE rncoord hauria d'estar entre 0 i 1 i values sembla que va de -1 a 1.
+		//o rncoord hauria d'estar en el seu rang en radiants i values va de -1 a 1...
+
+		//if(values[0]>0) rncoor[0] = values[0]*_maxalpha; //alpha
+		//else rncoor[0] = -values[0]*_minalpha;
+		 rncoor[0] += Dalpha;
+		//OK//rncoor[0] = values[0]; //alpha
+		//rncoor[0] = (values[0]+1)/2; //alpha
 		for(int i =1; i< rncoor.size(); i++)
-			rncoor[i] = values[1]/n;//i.e. psi/_maxbending;
+		{
+			rncoor[i] = psi;
+			//if(values[1]>0) rncoor[i] = _maxbending*values[1]/n;
+			//else rncoor[i] = -(_minbending*values[1]/n);
+			//OK//rncoor[i] = values[1]/n;//i.e. psi/_maxbending;
+			//rncoor[i] = ((values[1]+1)/2) /n;//i.e. psi/_maxbending;
+		}
 
 
     // updating the _currentvalues variable with the new read values
@@ -141,14 +203,24 @@ namespace libProblem {
 	}
 
 
-	//computes the values alpha and beta corresponding to the current robot configuration
+	//computes the normalized values alpha and beta corresponding to the current robot configuration
 	void ConsBronchoscopyKin::registerValues()
 	{
+		//read configuration
 		RobConf* _CurrentPos = _robot->getCurrentPos();
 		RnConf& _RnConf = _CurrentPos->getRn();
 		vector<KthReal>& rncoor= _RnConf.getCoordinates();
-		setvalues(rncoor[0],0);//alpha
-		setvalues(rncoor[1]*(rncoor.size()-1),1);//beta
+		//store noramalized anpha and beta values (in range -1..1) in  variable values
+		
+		KthReal a;
+		if(rncoor[0]>0) a=rncoor[0]/_maxalpha;
+		else a=-rncoor[0]/_minalpha;
+		setvalues(a,0);//alpha
+
+		KthReal b;
+		if(rncoor[1]>0) b=rncoor[1]*(rncoor.size()-1)/_maxbending;
+		else b=-rncoor[1]*(rncoor.size()-1)/_minbending;
+		setvalues(b,1);//beta
 	}
 
 	bool ConsBronchoscopyKin::setParameters(){

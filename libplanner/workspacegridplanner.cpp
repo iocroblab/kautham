@@ -139,6 +139,18 @@ namespace libPlanner {
 		
 	}
 
+   bool workspacegridPlanner::getCoordinates(unsigned int label, int *x, int *y, int *z)
+   {
+		if(_cellsMap.find(label)!=_cellsMap.end()) 
+		{
+			*x = locations[_cellsMap[label]].x;
+			*y = locations[_cellsMap[label]].y;
+			*z = locations[_cellsMap[label]].z;
+			return true;
+		}
+		else return false;
+   } 
+
    bool workspacegridPlanner::getDistance(unsigned int label, int *dist)
    {
 		if(_cellsMap.find(label)!=_cellsMap.end()) 
@@ -321,7 +333,7 @@ namespace libPlanner {
 
 			//compute the filtered graph that do not consider edges with
 			//negative weight (those connecting to a collision vertex)
-			cost threshold = 2.0;
+			cost threshold = -5;//2.0;
 			prunegrid(threshold);
 
 		}
@@ -338,6 +350,8 @@ namespace libPlanner {
 		_solved = false;
     }
   
+	//! getGraphVertex returns true if a vertex with label "label" exisits in the graph
+	//! and retunrs it in the parameter v
 	bool workspacegridPlanner::getGraphVertex(unsigned int label, gridVertex *v)
 	{
 		if(_cellsMap.find(label)==_cellsMap.end())
@@ -378,6 +392,7 @@ namespace libPlanner {
 		for(tie(vi,vi_end)=vertices(*fg); vi!=vi_end; ++vi)	setPotential(*vi, -1);
 		setPotential(vgoal, 0);
 		//propagate potential
+		
 		breadth_first_search(*fg, vgoal, visitor(bfs_distance_visitor<PotentialMap>(getpotmat(),locations,(KthReal)maxdist/2.0)));
 
 		//graph_traits<filteredGridGraph>::vertex_iterator i, end;
@@ -385,19 +400,29 @@ namespace libPlanner {
 		//{
 		//	cout<<"vertex "<< *i<<" dist "<<getPotential(*i)<<endl;
 		//}
-		/*
-		KthReal NF1value;
+		
+
+		/* to improve the valleys
+		KthReal maxNF1value=0.0;
 		for(tie(vi,vi_end)=vertices(*fg); vi!=vi_end; ++vi)
 		{
 			//cout<<"vertex "<< *i<<" dist "<<getPotential(*i)<<endl;
-			NF1value = getPotential(*vi);
-			//update the  NF1 value by decreeasing a factor pproportional to the distance to the walls
-			if(NF1value>0){
-				NF1value=NF1value-(KthReal)locations[*vi].d/maxdist;
-				setPotential(*vi,NF1value );
-			}
+			if(maxNF1value<getPotential(*vi))
+				maxNF1value = getPotential(*vi);
+		}
+		
+		cout<<"maxNF1 value = "<<maxNF1value<<endl;
+		for(tie(vi,vi_end)=vertices(*fg); vi!=vi_end; ++vi)
+		{
+			//cout<<"vertex "<< *i<<" dist "<<getPotential(*i)<<endl;
+			//normalize values between 0 and 1
+			KthReal val=getPotential(*vi)/maxNF1value;
+			//square the values to make the valeys more sharp¿?
+			val=val*val*val*val;
+			setPotential(*vi,val);
 		}
 		*/
+		
 		return true;
 	}
 

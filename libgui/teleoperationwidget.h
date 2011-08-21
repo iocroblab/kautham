@@ -48,7 +48,7 @@
 #include <libutil/CHostLookup.h>
 #include <libguiding/pathtoguide.h>
 #include "gui.h"
-#include "axis.h"
+//#include "axis.h"
 #include <string.h>
 #include <libproblem/inversekinematic.h>
 

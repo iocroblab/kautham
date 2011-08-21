@@ -20,6 +20,7 @@ bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui) : 
     _ptProblem = prob;
 	_cameraView = false;
 	_homeView = _gui->getActiveCameraTransfom();
+	_updateValues = true;
 	//_stepAdvance  =10;
 
     values.resize(3);
@@ -78,9 +79,20 @@ void bronchoWidget::advanceBronchoscope()
 		((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->registerValues();
 		KthReal alpha = ((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->getvalues(0);
 		KthReal beta = ((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->getvalues(1);
-		ui->alphaSlider->setValue(alpha*ui->alphaSlider->maximum());
-		ui->XiSlider->setValue(beta*ui->alphaSlider->maximum());
-
+		
+		//the flag _updateValues is set to false in order that the setSliderPosition function changes the porition of the slider but
+		//does not execute the code of the alphaSliderChanged function, if not the bronchoscpoe moves when it should not move
+		//(surely it can be done in another better way....)
+		_updateValues = false;
+		int aa,bb;
+		if(alpha>0) aa=(int)(alpha*ui->alphaSlider->maximum());
+		else aa=(int)(-alpha*ui->alphaSlider->minimum());
+		ui->alphaSlider->setSliderPosition(aa);
+		
+		if(beta>0) bb=(int)(beta*ui->XiSlider->maximum());
+		else bb=(int)(-beta*ui->XiSlider->minimum());
+		ui->XiSlider->setSliderPosition(bb);
+		_updateValues = true;
 	}	
 	else
 		cout<<"Sorry: This option only works for the planner named 'GUIBRO Grid Planner'"<<endl;
@@ -123,46 +135,81 @@ void bronchoWidget::alphaSliderChanged(int val){
   _ptProblem->setCurrentControls(values,_globalOffset);
   if(_robot != NULL) _robot->control2Pose(values);*/
 
+	if(_updateValues==false) return;
+
   KthReal readVal=(KthReal) val;
   KthReal maxAlpha = ((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->getMaxAlpha();
-  values[0]=(KthReal)readVal/1000; // /1000 because the slider only accept int values, in this case from -1000 and 1000
-  values[0] *= maxAlpha;
+  KthReal minAlpha = ((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->getMinAlpha();
+  
+  if(readVal>0){
+	  //values goes in the range -1..1
+	values[0]=(KthReal)readVal/ui->alphaSlider->maximum(); // readVal/1000
+  }
+  else
+  {
+	  //values goes in the range -1..1
+	values[0]=(KthReal)-readVal/ui->alphaSlider->minimum(); // readVal/1000
+  }
+
   _robot->ConstrainedKinematics(values);
   updateView();
   updateLookAt();
+//print inf0
+  KthReal a;
+  if(values[0]>0) a=values[0]*maxAlpha*180/M_PI;
+  else a=-values[0]*minAlpha*180/M_PI;
+  cout<<"Alpha = "<<a<<endl;
 }
 
 
 void bronchoWidget::xiSliderChanged(int val){
+	
+	if(_updateValues==false) return;
+
   KthReal readVal=(KthReal) val;
   KthReal maxBending = ((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->getMaxBending();
-  values[1]=(KthReal) readVal/1000;
-  values[1] *= maxBending;
+  KthReal minBending = ((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->getMinBending();
+
+  if(readVal>0)
+  {
+	  //values goes in the range -1..1
+	values[1]=(KthReal) readVal/ui->XiSlider->maximum();
+  }
+  else
+  {
+	  //values goes in the range -1..1
+	values[1]=(KthReal) -readVal/ui->XiSlider->minimum();
+  }
   _ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
   updateView();
   updateLookAt();
+//print inf0
+  KthReal b;
+  if(values[1]>0) b=values[1]*maxBending*180/M_PI;
+  else b=-values[1]*minBending*180/M_PI;
+  cout<<"Beta = "<<b<<endl;
   }
 
 void bronchoWidget::zetaSliderChanged(int val){
   KthReal readVal=(KthReal) val;
-  values[2]=(KthReal)(readVal-lastZsliderPos)/5;  // slider goes from -100 to 100, every delta is 10
+  values[2]=(KthReal)(readVal-lastZsliderPos)/5;  // slider goes from -100 to 100, every delta is 10 ¿?
   _ptProblem->setCurrentControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
   lastZsliderPos=readVal;
   updateView();
-  updateLookAt();
+  //updateLookAt();
 }
 
 void bronchoWidget::zetaSliderChanged1(){
   KthReal readVal=(KthReal) ui->DzSlider->value();
-  values[2]=(KthReal) (readVal/1000);  // slider goes from -100 to 100, every step is of 0.05
+  values[2]=(KthReal) (readVal/1000);  // slider goes from -100 to 100, every step is of 0.05 ¿?
     if (values[2]!=0){
       _ptProblem->setCurrentControls(values,_globalOffset);
       _robot->ConstrainedKinematics(values);
 	  updateView();
     }
-  updateLookAt();
+  //updateLookAt();
 }
 
 

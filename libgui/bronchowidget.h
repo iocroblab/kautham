@@ -54,6 +54,7 @@ namespace Ui {
 		GUI*          _gui;
 		bool		  _cameraView;
 		mt::Transform _homeView;
+		bool _updateValues;
 		//int		  _stepAdvance;
 	};
 

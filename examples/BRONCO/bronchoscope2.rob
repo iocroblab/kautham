@@ -18,7 +18,7 @@
     <PreTrans X="0.0000" Y="0.0000" Z="0.0000" WX="0.0000" WY="1.0000" WZ="0.0000" TH="90.0" ></PreTrans>
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true" trunk="true"></Description>
-      <Limits Hi="45.0" Low="-45.0"></Limits>
+      <Limits Hi="180.0" Low="-180.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Base"></Parent>
     </Joint>
