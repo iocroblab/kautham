@@ -41,6 +41,7 @@
  
 
 
+#include <time.h>
 #include <libproblem/ivworkspace.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
@@ -649,6 +650,7 @@ namespace libPlanner {
 //looks stepsahead for different values of alpha and beta and select the pair that has a better cost.
 int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta)
 		{
+			clock_t computelookatpointsentertime = clock();
 			//store current position of alpha and beta
 			KthReal alpha0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
 			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
@@ -804,6 +806,13 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				//reached
 				return -1;
 			}
+
+			
+			clock_t computelookatpointsfinaltime = clock();
+			_computelookatpointstime += (double)(computelookatpointsfinaltime-computelookatpointsentertime)/CLOCKS_PER_SEC;
+
+
+			clock_t evallookatpointsentertime = clock();
 			//sweep al the lookat points and compute their cost
 			for(int i=0; i<_maxLookAtPoints;i++)
 			{
@@ -1001,6 +1010,11 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				_wkSpace->getObstacle(_counterFirstPoint+besti)->getElement()->setColor(color);
 			}
 
+			clock_t evallookatpointsfinaltime = clock();
+			_evallookatpointstime += (double)(evallookatpointsfinaltime-evallookatpointsentertime)/CLOCKS_PER_SEC;
+
+
+
 			/*
 			KthReal rNF1;
 			KthReal rDist;
@@ -1157,6 +1171,11 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
  /**/
 bool GUIBROgridPlanner::trySolve()
 		{	
+
+		cout<<"ENTERING TRYSOLVE!!!"<<endl;
+	    clock_t entertime = clock();
+
+
 			static gridVertex vinit=-1;
 			static gridVertex vgoal=-1;
 			gridVertex vi, vg;
@@ -1293,11 +1312,20 @@ bool GUIBROgridPlanner::trySolve()
 			int j=0;
 
 
-			//Start moving towards goal
+			//Start moving towards goal	
+			_computelookatpointstime=0;
+			_evallookatpointstime=0;
+			clock_t advancetobestentertime;
+			clock_t advancetobestfinaltime;
+			KthReal advancetobesttime=0;
 			do{
 				//advance from the current configuration towards the best, following NF1 
 				//and taking into account the bronchoscope kinematics
+				
+				advancetobestentertime = clock();
 				r=advanceToBest(steps,&bestAlpha,&bestBeta,smp,fp);
+				advancetobestfinaltime = clock();
+				advancetobesttime += (double)(advancetobestfinaltime-advancetobestentertime)/CLOCKS_PER_SEC;
 				//if advanced possible
 				if(r>0)
 				{		
@@ -1395,6 +1423,13 @@ bool GUIBROgridPlanner::trySolve()
 			if(_solved) 
 				pparse->savePath2File("path2guide.xml", path2guide);
 			
+			clock_t finaltime = clock();
+			cout<<"TIME TO COMPUTE THE PATH = "<<(double)(finaltime-entertime)/CLOCKS_PER_SEC<<endl;
+			cout<<"CALLS TO ADVANCE_TO_BEST = "<<_simulationPath.size()<<endl;
+			cout<<"TIME TO ADVANCE_TO_BEST = "<<advancetobesttime/_simulationPath.size()<<endl;
+			cout<<"TIME TO COMPUTE LOOKATPOINTS = "<<_computelookatpointstime/_simulationPath.size()<<endl;
+			cout<<"TIME TO EVAL LOOKATPOINTS = "<<_evallookatpointstime/_simulationPath.size()<<endl;
+
 			return _solved;
 
 

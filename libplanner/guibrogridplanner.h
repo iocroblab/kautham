@@ -133,6 +133,8 @@ using namespace workspacegridplanner;
 		KthReal _weightNF1;
 		KthReal _weightDist; 
 		KthReal _weightAlpha;
+		KthReal _computelookatpointstime;
+		KthReal _evallookatpointstime;
 		
 		int _nodule;//index of the obstacle that represents the nodule to be reached
 		Obstacle *_obstaclenodule; //pointer to the obstacle that represents the nodule
