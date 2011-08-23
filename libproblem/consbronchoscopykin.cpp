@@ -65,7 +65,7 @@ namespace libProblem {
 			else
 			{
 			    //values[0] positive and curr_alpha negative (Delta is positive)
-				Dalpha = -curr_alpha*_minalpha + values[0]*_maxalpha;
+				Dalpha = curr_alpha*_minalpha + values[0]*_maxalpha;
 			}
 			Alpha = _maxalpha *values[0]; 
 		}
@@ -153,7 +153,7 @@ namespace libProblem {
 			T_X0_Y0_Zvel.setTranslation(mt::Vector3(0,0,-Dzeta));
       
 			//mt::Transform 
-			Tbase=currTran*T_RzDalpha*T_X0_Y0_Zvel; // beta around x axis
+			Tbase=currTran*T_RzDalpha*T_X0_Y0_Zvel*T_RzDalpha.inverse(); // beta around x axis
 		}
 
 		//update joint values
