@@ -166,8 +166,8 @@ namespace libPlanner {
 		//flag indicating if the shere centered at the occupied cell is free or not
 		bool freesphere;
 		//threshold distance, measured in cells,
-		//int threshold = (int)(sqrt(3.0)*radius/maxSize);//sqrt(3) is added to consider the distance to the vertex of the voxel
-		int threshold = 2;
+		int threshold = (int)(sqrt(3.0)*maxSize/radius);//sqrt(3) is added to consider the distance to the vertex of the voxel
+		//int threshold = 2;
 		//reset the cost
 		*distcost=0;
 		if(onlytip==false)
@@ -190,7 +190,7 @@ namespace libPlanner {
 					if(dist<threshold) freesphere = false;
 					else if(dist==threshold){//if more than two spheres are touching then consider it is a collision
 						countTouching++;
-						if(countTouching>2) freesphere = false;
+						if(countTouching>5) freesphere = false;
 					}
 				}
 				
@@ -219,7 +219,7 @@ namespace libPlanner {
 		freesphere=grid->getDistance(label, &dist);
 
 		//more constrained for the tip
-		threshold = 2;
+		//threshold = 2;
 
 		if(freesphere && dist<=threshold) freesphere = false;
 		*distcost += dist;
@@ -245,9 +245,9 @@ namespace libPlanner {
 		//number of cells per axis
 		int *steps = grid->getDiscretization();
 
-		int i = (x-O[0]+voxelSize[0]/2)/voxelSize[0];
-		int j = (y-O[1]+voxelSize[1]/2)/voxelSize[1];
-		int k = (z-O[2]+voxelSize[2]/2)/voxelSize[2];
+		int i = (x-O[0]+voxelSize[0]/2)/voxelSize[0]+1;
+		int j = (y-O[1]+voxelSize[1]/2)/voxelSize[1]+1;
+		int k = (z-O[2]+voxelSize[2]/2)/voxelSize[2]+1;
 		unsigned int label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
 
 		//The center of the nodule lies in the grid
@@ -256,14 +256,14 @@ namespace libPlanner {
 		
 		//else, verify if any cell of the grid belong to the sphere-nodule
 		//find label of the bottom-left corner of a cube centered at x,y,z
-		i = (x-R-O[0]+voxelSize[0]/2)/voxelSize[0]; if(i<1) i=1;
-		j = (y-R-O[1]+voxelSize[1]/2)/voxelSize[1]; if(j<1) j=1;
-		k = (z-R-O[2]+voxelSize[2]/2)/voxelSize[2]; if(k<1) k=1;
+		i = (x-R-O[0]+voxelSize[0]/2)/voxelSize[0]+1; if(i<1) i=1;
+		j = (y-R-O[1]+voxelSize[1]/2)/voxelSize[1]+1; if(j<1) j=1;
+		k = (z-R-O[2]+voxelSize[2]/2)/voxelSize[2]+1; if(k<1) k=1;
 		unsigned long int labelMin =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
 		//find label of the top-right corner of a cube centered at x,y,z
-		i = (x+R-O[0]+voxelSize[0]/2)/voxelSize[0]; if(i>steps[0]) i=steps[0];
-		j = (y+R-O[1]+voxelSize[1]/2)/voxelSize[1]; if(j>steps[1]) j=steps[1];
-		k = (z+R-O[2]+voxelSize[2]/2)/voxelSize[2]; if(k>steps[2]) k=steps[2];
+		i = (x+R-O[0]+voxelSize[0]/2)/voxelSize[0]+1; if(i>steps[0]) i=steps[0];
+		j = (y+R-O[1]+voxelSize[1]/2)/voxelSize[1]+1; if(j>steps[1]) j=steps[1];
+		k = (z+R-O[2]+voxelSize[2]/2)/voxelSize[2]+1; if(k>steps[2]) k=steps[2];
 		unsigned long int labelMax =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
 		
 		KthReal ix,iy,iz,dist,distmin;
@@ -811,8 +811,8 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			clock_t computelookatpointsfinaltime = clock();
 			_computelookatpointstime += (double)(computelookatpointsfinaltime-computelookatpointsentertime)/CLOCKS_PER_SEC;
 
-
 			clock_t evallookatpointsentertime = clock();
+
 			//sweep al the lookat points and compute their cost
 			for(int i=0; i<_maxLookAtPoints;i++)
 			{
@@ -824,7 +824,12 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 
 				//evaluate the i lookatpoint, i.e. verifies if it is collision-free and if so locates the point
 				//at the tip poisition. retuns the distance cost and the NF1 cost
+
+				
+				clock_t testlookatpointentertime = clock();
 				col[i] = testLookAtPoint(_counterFirstPoint+i, alpha[i], beta[i], s, &dcost[i], &NF1cost[i]);
+				clock_t testlookatpointfinaltime = clock();
+				_testlookatpointtime += (double)(testlookatpointfinaltime-testlookatpointentertime)/CLOCKS_PER_SEC;
 
 				//restore alpha0, beta0
 				//((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->setvalues(alpha0,0);
@@ -1093,6 +1098,8 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			mt::Rotation rot;
 			KthReal p[3];
 			Vector3 zaxis;
+			vector<KthReal>  values;
+			bool colltest=false;
 
 		//store current configuration
 			RobConf* rConf = _wkSpace->getRobot(0)->getCurrentPos(); 
@@ -1100,18 +1107,18 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			currentRobConf.setSE3(rConf->getSE3());
 			currentRobConf.setRn(rConf->getRn());
 
-		//Advance stepsahead steps, one by one
-			vector<KthReal>  values;
+		//Advance stepsahead steps, one by one	
 			KthReal alpha0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
 			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
 
-			bool colltest=false;
 			
 			KthReal Delta_a = (alpha-alpha0)/stepsahead;
 			KthReal Delta_b = (beta-beta0)/stepsahead;
 			values.push_back(alpha0);
 			values.push_back(beta0);
 			values.push_back(-1);
+			
+			clock_t advancecollcheckentertime = clock();
 			for(int i=1; i<=stepsahead; i++)
 			{
 				values[0] += Delta_a;
@@ -1127,16 +1134,22 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 				colltest = collisionCheck(dcost,NF1cost, true);//test only the tip
 				if(colltest==true) break;
 			}
+			clock_t advancecollcheckfinaltime = clock();
+			_advancecollchecktime += (double)(advancecollcheckfinaltime-advancecollcheckentertime)/CLOCKS_PER_SEC;
 
 			//return to current position
 			_wkSpace->getRobot(0)->Kinematics(currentRobConf);
 			//restore alpha0, beta0
 			((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->registerValues();
 
+			
 			//Advance to final value
 			values[0]=alpha;
 			values[1]=beta;
 			values[2] = -stepsahead;
+			
+
+			//Advance to final value
 			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
 			
 			//move the broncoscope at the new position
@@ -1315,6 +1328,8 @@ bool GUIBROgridPlanner::trySolve()
 			//Start moving towards goal	
 			_computelookatpointstime=0;
 			_evallookatpointstime=0;
+			_testlookatpointtime=0;
+			_advancecollchecktime=0;
 			clock_t advancetobestentertime;
 			clock_t advancetobestfinaltime;
 			KthReal advancetobesttime=0;
@@ -1428,7 +1443,10 @@ bool GUIBROgridPlanner::trySolve()
 			cout<<"CALLS TO ADVANCE_TO_BEST = "<<_simulationPath.size()<<endl;
 			cout<<"TIME TO ADVANCE_TO_BEST = "<<advancetobesttime/_simulationPath.size()<<endl;
 			cout<<"TIME TO COMPUTE LOOKATPOINTS = "<<_computelookatpointstime/_simulationPath.size()<<endl;
-			cout<<"TIME TO EVAL LOOKATPOINTS = "<<_evallookatpointstime/_simulationPath.size()<<endl;
+			cout<<"TIME TO EVAL LOOKATPOINTS (TEST AND ORDER) = "<<_evallookatpointstime/_simulationPath.size()<<endl;
+			cout<<"TIME TO TEST LOOKATPOINTS = "<<_testlookatpointtime/_simulationPath.size()<<endl;
+			cout<<"TIME TO ADVANCE-COLLCHECK = "<<_advancecollchecktime/_simulationPath.size()<<endl;
+			
 
 			return _solved;
 

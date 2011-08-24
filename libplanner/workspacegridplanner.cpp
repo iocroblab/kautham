@@ -333,7 +333,7 @@ namespace libPlanner {
 
 			//compute the filtered graph that do not consider edges with
 			//negative weight (those connecting to a collision vertex)
-			cost threshold = -5;//2.0;
+			cost threshold = 0.0;//-5;//2.0;
 			prunegrid(threshold);
 
 		}

@@ -158,7 +158,8 @@ void bronchoWidget::alphaSliderChanged(int val){
   KthReal a;
   if(values[0]>0) a=values[0]*maxAlpha*180/M_PI;
   else a=-values[0]*minAlpha*180/M_PI;
-  cout<<"Alpha = "<<a<<endl;
+  //cout<<"Alpha = "<<a<<endl;
+  cout<<"val = "<<val<<" alpha = "<<values[0]<<" beta = "<<values[1]<<endl;
 }
 
 
@@ -188,7 +189,8 @@ void bronchoWidget::xiSliderChanged(int val){
   KthReal b;
   if(values[1]>0) b=values[1]*maxBending*180/M_PI;
   else b=-values[1]*minBending*180/M_PI;
-  cout<<"Beta = "<<b<<endl;
+  //cout<<"Beta = "<<b<<endl;
+  cout<<"val = "<<val<<" alpha = "<<values[0]<<" beta = "<<values[1]<<endl;
   }
 
 void bronchoWidget::zetaSliderChanged(int val){
