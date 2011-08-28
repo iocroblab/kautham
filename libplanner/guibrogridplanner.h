@@ -97,8 +97,8 @@ using namespace workspacegridplanner;
 		int look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta);
 		bool testLookAtPoint(int numPoint, KthReal alpha, KthReal xi, KthReal stepsahead, int *dcost, KthReal *NF1cost );
 		int advanceToBest(KthReal steps,KthReal *bestAlpha, KthReal *bestBeta,Sample *smp=NULL, FILE *fp=NULL);
-		void setAdvanceStep(int a){_stepsAdvance = a;};
-		int getAdvanceStep(){return _stepsAdvance;};
+		void setAdvanceStep(KthReal a){_stepsAdvance = a;};
+		KthReal getAdvanceStep(){return _stepsAdvance;};
 		inline void setWeights(KthReal n, KthReal d, KthReal a){_weightNF1=n;_weightDist=d;_weightAlpha=a;};
 		inline KthReal getWeightNF1(){return _weightNF1;};
 		inline KthReal getWeightDist(){return _weightDist;};
@@ -145,6 +145,11 @@ using namespace workspacegridplanner;
 		unsigned int findGridCell(Sample * s);
 		bool findGraphVertex(Sample * s, gridVertex *v);
 		bool findGraphVertex(KthReal x, KthReal y, KthReal z, KthReal R, gridVertex *v);
+
+		
+
+		void verifyInvJacobian(int linktested, KthReal vx,KthReal vy, KthReal vz,
+										   KthReal curralpha, KthReal currbeta, KthReal Dalpha, KthReal Dbeta);
 
 	  };
    }

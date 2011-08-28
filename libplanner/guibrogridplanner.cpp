@@ -1180,6 +1180,64 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			return colltest;
 		}
 	
+
+void GUIBROgridPlanner::verifyInvJacobian(int linktested, KthReal vx,KthReal vy, KthReal vz,
+										   KthReal curralpha, KthReal currbeta, KthReal Dalpha, KthReal Dbeta)
+{	
+//Primer canvio de base vx,vy,vz per posar-la en la base del link linktested
+		mt::Transform linkTransf;
+		linkTransf = _wkSpace->getRobot(0)->getLinkTransform(linktested);
+		mt::Rotation linkRot;
+
+		linkRot = linkTransf.getRotation();
+		Point3 v0(vx, vy, vz);
+		Point3 v;
+		v = linkRot(v0);           
+
+
+//ini prova de invJacobian	
+		KthReal Da,Dx,Dz;
+
+		KthReal DalphaRAD, curralphaRAD;
+		KthReal maxAlpha = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getMaxAlpha();
+		KthReal minAlpha = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getMinAlpha();
+		if(curralpha>0) {
+			DalphaRAD= maxAlpha*Dalpha;  
+			curralphaRAD= maxAlpha*curralpha; 
+		}
+		else {
+			DalphaRAD=-minAlpha*Dalpha; 
+			curralphaRAD=-minAlpha*curralpha; 
+		}
+			
+		KthReal  currxiRAD,DxiRAD;
+		KthReal maxBeta = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getMaxBending();
+		KthReal minBeta = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getMinBending();
+		if(currbeta>0) {
+			DxiRAD= maxBeta*Dbeta/(_wkSpace->getRobot(0)->getNumJoints()-1); 
+			currxiRAD= maxBeta*currbeta/(_wkSpace->getRobot(0)->getNumJoints()-1);  
+		}
+		else {
+			DxiRAD=-minBeta*Dbeta/(_wkSpace->getRobot(0)->getNumJoints()-1);  
+			currxiRAD=-minBeta*currbeta/(_wkSpace->getRobot(0)->getNumJoints()-1);
+		}
+
+
+		//(Da,Dx,Dz) should be proportional to (DalphaRAD, DxiRAD, -1)
+
+		if(((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->ApplyInverseJ(linktested,curralphaRAD,currxiRAD,v[0],v[1],v[2],&Da,&Dx,&Dz))
+		{
+			KthReal k1,k2,k3;
+			k1=Da/DalphaRAD;
+			k2=Dx/DxiRAD;
+			k3=Dz/(-1);
+			cout<<"InvJ: Apply ("<<vx<<", "<<vy<<", "<<vz<<") to link "<<linktested<<" results "<<Da<<", "<<Dx<<", "<<Dz<<")"<<endl;
+		}
+		else cout<<"InvJ Error"<<endl;
+		//end  prova de invJacobian
+}
+
+
 //! function to find a solution path
  /**/
 bool GUIBROgridPlanner::trySolve()
@@ -1225,7 +1283,7 @@ bool GUIBROgridPlanner::trySolve()
 					//verify correctness of goal sample
 					if(findGraphVertex(_goal,&vg)==false)
 					{
-						cout<<"ERROR: No graph vertex found for init sample"<<endl;
+						cout<<"ERROR: No graph vertex found for goal sample"<<endl;
 						vi=-1;
 						vg=-1;
 						_solved=false;
@@ -1241,7 +1299,7 @@ bool GUIBROgridPlanner::trySolve()
 					KthReal R=_obstaclenodule->getElement()->getScale();
 					if(findGraphVertex(x,y,z,R,&vg)==false)
 					{
-						cout<<"ERROR: No graph vertex found for init sample"<<endl;
+						cout<<"ERROR: No graph vertex found for goal sample"<<endl;
 						vi=-1;
 						vg=-1;
 						_solved=false;
@@ -1250,7 +1308,6 @@ bool GUIBROgridPlanner::trySolve()
 				}
 			}
 			
-
 			//if init or goal changed then recompute NF1
 			if(vi != vinit || vg != vgoal)
 			{
@@ -1338,15 +1395,35 @@ bool GUIBROgridPlanner::trySolve()
 				//and taking into account the bronchoscope kinematics
 				
 				advancetobestentertime = clock();
+
+				mt::Transform linkTransf;
+				mt::Point3 pos,pos0;
+				int linktested = 3;
+				linkTransf = _wkSpace->getRobot(0)->getLinkTransform(linktested);
+				pos0 = linkTransf.getTranslation();
+
 				r=advanceToBest(steps,&bestAlpha,&bestBeta,smp,fp);
+
 				advancetobestfinaltime = clock();
 				advancetobesttime += (double)(advancetobestfinaltime-advancetobestentertime)/CLOCKS_PER_SEC;
 				//if advanced possible
 				if(r>0)
 				{		
+
 					//store chosen alpha and beta values
 					alpha.push_back(bestAlpha);
-					beta.push_back(bestBeta);		
+					beta.push_back(bestBeta);	
+
+
+					linkTransf = _wkSpace->getRobot(0)->getLinkTransform(linktested);
+					pos = linkTransf.getTranslation();
+					if(j!=0)
+					{
+						verifyInvJacobian(linktested,pos[0]-pos0[0],pos[1]-pos0[1],pos[2]-pos0[2],
+							bestAlpha, bestBeta, bestAlpha-alpha.at(alpha.size()-2),bestBeta-beta.at(beta.size()-2));
+					}
+
+
 
 					//store the chosen sample into the solution path
 					_path.push_back(smp);

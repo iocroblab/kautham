@@ -28,6 +28,9 @@ namespace libProblem {
 	inline void  	setMinAlpha(KthReal min){_minalpha=min;};
 	inline KthReal 	getMaxAlpha(){return _maxalpha;};
 	inline KthReal 	getMinAlpha(){return _minalpha;};
+	bool iJ(int k, int row, int column, KthReal alpha, KthReal xi, KthReal *coef);
+	bool ApplyInverseJ(int k, KthReal alpha, KthReal xi, KthReal vx, KthReal vy, 
+		KthReal vz, KthReal *Dalpha, KthReal *Dxi, KthReal *Dz);
 
 	private:
 		RobConf		solve(vector<KthReal> &values);
