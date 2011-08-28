@@ -267,6 +267,106 @@ namespace libProblem {
 	//this data od the Jacobian is valid from k=2 upwards
 		if(k<2 || k>=_robot->getNumJoints()-1) return false;
 
+	KthReal num,den;
+		if(row==0 && column==0)
+		{
+			den = 15+30*cos(xi)+50*cos(xi*k-xi)-48*cos(xi*k)-12*cos(4*xi)-34*cos(-4*xi+xi*k)+78*cos(xi*k-5*xi)+12*cos(2*xi*k-xi)-51*cos(2*xi*k-6*xi)+40*cos(2*xi*k-5*xi)+12*cos(2*xi*k-9*xi)+19*cos(2*xi*k-8*xi)+75*cos(2*xi*k-4*xi)-30*cos(2*xi*k-3*xi)-65*cos(2*xi*k-2*xi)-30*cos(2*xi*k-7*xi)+30*cos(5*xi)+33*cos(2*xi*k)-3*cos(2*xi*k-10*xi)+30*cos(-6*xi+xi*k)-15*cos(xi*k-8*xi)-34*cos(-7*xi+xi*k)+6*cos(xi*k-9*xi)-30*cos(xi*k+4*xi)-cos(8*xi+xi*k)+3*cos(-10*xi+xi*k)+12*cos(6*xi)-9*cos(2*xi+2*xi*k)+9*cos(6*xi+xi*k)-2*cos(xi+2*xi*k)-2*cos(-11*xi+2*xi*k)+cos(4*xi+2*xi*k)+2*cos(5*xi+xi*k)-6*cos(7*xi)-3*cos(8*xi)-12*cos(2*xi)+36*cos(xi*k-2*xi)+50*cos(xi*k+2*xi)-6*cos(xi*k+xi)-54*cos(3*xi)-90*cos(xi*k-3*xi)-6*cos(xi*k+3*xi);
+
+			if(den==0) return false;
+
+			num = -42*sin(3*xi+alpha)+42*sin(-3*xi+alpha)+14*sin(alpha-4*xi)-14*sin(alpha+4*xi)-77*sin(alpha-xi-xi*k)-15*sin(alpha+7*xi-xi*k)+35*sin(alpha-xi*k-3*xi)-7*sin(alpha+6*xi-xi*k)-6*sin(-6*xi+alpha)+21*sin(alpha+2*xi+xi*k)-7*sin(alpha+4*xi+xi*k)+sin(alpha+6*xi+xi*k)-35*sin(alpha+3*xi+xi*k)+77*sin(alpha+xi+xi*k)+9*sin(alpha+5*xi+xi*k)-sin(alpha+7*xi+xi*k)+7*sin(alpha-4*xi-xi*k)-sin(alpha-6*xi-xi*k)+sin(alpha-xi*k+8*xi)-21*sin(alpha-2*xi-xi*k)-9*sin(alpha-5*xi-xi*k)+sin(alpha-7*xi-xi*k)+6*sin(6*xi+alpha)+15*sin(alpha-7*xi+xi*k)+14*sin(alpha+5*xi)-14*sin(alpha-5*xi)+2*sin(alpha-7*xi)+sin(-8*xi+alpha)-sin(8*xi+alpha)-2*sin(alpha+7*xi)+7*sin(alpha-6*xi+xi*k)-sin(alpha+xi*k-8*xi)-2*sin(-9*xi+alpha+xi*k)+2*sin(9*xi+alpha-xi*k)+70*sin(xi+alpha)-70*sin(-xi+alpha)+35*sin(alpha+xi*k-2*xi)-35*sin(alpha-xi*k+2*xi)+14*sin(alpha+2*xi)-14*sin(alpha-2*xi)+91*sin(alpha+xi*k-3*xi)-91*sin(alpha-xi*k+3*xi)+21*sin(4*xi+alpha-xi*k)+35*sin(alpha-xi*k)-35*sin(alpha+xi*k)-21*sin(-4*xi+alpha+xi*k)+49*sin(alpha-xi*k+5*xi)+105*sin(xi+alpha-xi*k)-105*sin(-xi+alpha+xi*k)-49*sin(alpha+xi*k-5*xi);
+
+			*coef = num/den;
+			return true;
+		}
+
+		else if(row==0 && column==1)
+		{
+			den = 15+30*cos(xi)+50*cos(xi*k-xi)-48*cos(xi*k)-12*cos(4*xi)-34*cos(-4*xi+xi*k)+78*cos(xi*k-5*xi)+12*cos(2*xi*k-xi)-51*cos(2*xi*k-6*xi)+40*cos(2*xi*k-5*xi)+12*cos(2*xi*k-9*xi)+19*cos(2*xi*k-8*xi)+75*cos(2*xi*k-4*xi)-30*cos(2*xi*k-3*xi)-65*cos(2*xi*k-2*xi)-30*cos(2*xi*k-7*xi)+30*cos(5*xi)+33*cos(2*xi*k)-3*cos(2*xi*k-10*xi)+30*cos(-6*xi+xi*k)-15*cos(xi*k-8*xi)-34*cos(-7*xi+xi*k)+6*cos(xi*k-9*xi)-30*cos(xi*k+4*xi)-cos(8*xi+xi*k)+3*cos(-10*xi+xi*k)+12*cos(6*xi)-9*cos(2*xi+2*xi*k)+9*cos(6*xi+xi*k)-2*cos(xi+2*xi*k)-2*cos(-11*xi+2*xi*k)+cos(4*xi+2*xi*k)+2*cos(5*xi+xi*k)-6*cos(7*xi)-3*cos(8*xi)-12*cos(2*xi)+36*cos(xi*k-2*xi)+50*cos(xi*k+2*xi)-6*cos(xi*k+xi)-54*cos(3*xi)-90*cos(xi*k-3*xi)-6*cos(xi*k+3*xi);
+
+			if(den==0) return false;
+
+			num = -49*cos(alpha-xi*k+5*xi)+35*cos(alpha+xi*k)+49*cos(alpha+xi*k-5*xi)-35*cos(alpha-xi*k)+77*cos(alpha-xi-xi*k)-15*cos(alpha-7*xi+xi*k)+21*cos(alpha-2*xi-xi*k)-7*cos(alpha-6*xi+xi*k)+15*cos(alpha+7*xi-xi*k)-77*cos(alpha+xi+xi*k)+7*cos(alpha+6*xi-xi*k)-21*cos(alpha+2*xi+xi*k)+14*cos(alpha+4*xi)-14*cos(alpha-4*xi)+cos(alpha+xi*k-8*xi)+35*cos(alpha+3*xi+xi*k)-9*cos(alpha+5*xi+xi*k)+cos(alpha+7*xi+xi*k)-7*cos(alpha-4*xi-xi*k)+cos(alpha-6*xi-xi*k)-35*cos(alpha-xi*k-3*xi)+9*cos(alpha-5*xi-xi*k)-cos(alpha-7*xi-xi*k)+7*cos(alpha+4*xi+xi*k)-cos(alpha+6*xi+xi*k)+14*cos(alpha-5*xi)-14*cos(alpha+5*xi)-6*cos(6*xi+alpha)+6*cos(-6*xi+alpha)+2*cos(alpha+7*xi)-2*cos(alpha-7*xi)-cos(alpha-xi*k+8*xi)+cos(8*xi+alpha)-cos(-8*xi+alpha)-2*cos(9*xi+alpha-xi*k)+2*cos(-9*xi+alpha+xi*k)+70*cos(-xi+alpha)-70*cos(xi+alpha)+35*cos(alpha-xi*k+2*xi)-35*cos(alpha+xi*k-2*xi)-91*cos(alpha+xi*k-3*xi)+14*cos(alpha-2*xi)-14*cos(alpha+2*xi)+91*cos(alpha-xi*k+3*xi)-42*cos(-3*xi+alpha)+42*cos(3*xi+alpha)-105*cos(xi+alpha-xi*k)+105*cos(-xi+alpha+xi*k)-21*cos(4*xi+alpha-xi*k)+21*cos(-4*xi+alpha+xi*k);
+
+			*coef = num/den;
+			return true;
+		}
+		else if(row==0 && column==2)
+		{
+			*coef = 0.0;
+			return true;
+		}
+		else if(row==1 && column==0)
+		{
+			den = 12+24*cos(xi)+24*cos(xi*k-xi)-26*cos(xi*k)-12*cos(4*xi)-18*cos(-4*xi+xi*k)+44*cos(xi*k-5*xi)+4*cos(2*xi*k-xi)-26*cos(2*xi*k-6*xi)+24*cos(2*xi*k-5*xi)+4*cos(2*xi*k-9*xi)+6*cos(2*xi*k-8*xi)+44*cos(2*xi*k-4*xi)-16*cos(2*xi*k-3*xi)-36*cos(2*xi*k-2*xi)-16*cos(2*xi*k-7*xi)+12*cos(5*xi)+14*cos(2*xi*k)+18*cos(-6*xi+xi*k)-6*cos(xi*k-8*xi)-12*cos(-7*xi+xi*k)-14*cos(xi*k+4*xi)+6*cos(6*xi)-2*cos(2*xi+2*xi*k)+2*cos(6*xi+xi*k)-6*cos(2*xi)+14*cos(xi*k-2*xi)+30*cos(xi*k+2*xi)+4*cos(xi*k+xi)-36*cos(3*xi)-56*cos(xi*k-3*xi)-4*cos(xi*k+3*xi);
+
+			if(den==0) return false;
+
+			num = -40*sin(alpha)-12*sin(alpha-4*xi)-12*sin(alpha+4*xi)-6*sin(9*xi+alpha-2*xi*k)+sin(-xi+alpha-2*xi*k)-sin(-10*xi+alpha+xi*k)-15*sin(alpha-xi-xi*k)-sin(alpha+7*xi-xi*k)+6*sin(alpha-xi*k-3*xi)-15*sin(alpha+6*xi-xi*k)+2*sin(-6*xi+alpha)-sin(alpha+2*xi+xi*k)+6*sin(alpha+3*xi+xi*k)-15*sin(alpha+xi+xi*k)-sin(alpha+5*xi+xi*k)+6*sin(alpha-xi*k+8*xi)-sin(alpha-2*xi-xi*k)-sin(alpha-5*xi-xi*k)+2*sin(6*xi+alpha)-sin(alpha-7*xi+xi*k)-15*sin(alpha-6*xi+xi*k)+6*sin(alpha+xi*k-8*xi)-sin(10*xi+alpha-xi*k)+sin(xi+alpha+2*xi*k)-6*sin(-9*xi+alpha+2*xi*k)-6*sin(xi+alpha-2*xi*k)+15*sin(alpha-2*xi*k+3*xi)+15*sin(7*xi+alpha-2*xi*k)+15*sin(-7*xi+alpha+2*xi*k)+15*sin(alpha+2*xi*k-3*xi)-20*sin(alpha+2*xi*k-5*xi)-20*sin(alpha-2*xi*k+5*xi)-6*sin(-xi+alpha+2*xi*k)-15*sin(alpha+xi*k-2*xi)-15*sin(alpha-xi*k+2*xi)+30*sin(alpha+2*xi)+30*sin(alpha-2*xi)-15*sin(alpha+xi*k-3*xi)-15*sin(alpha-xi*k+3*xi)+sin(-11*xi+alpha+2*xi*k)+sin(11*xi+alpha-2*xi*k)+20*sin(4*xi+alpha-xi*k)+6*sin(alpha-xi*k)+6*sin(alpha+xi*k)+20*sin(-4*xi+alpha+xi*k)+6*sin(alpha-xi*k+5*xi)+20*sin(xi+alpha-xi*k)+20*sin(-xi+alpha+xi*k)+6*sin(alpha+xi*k-5*xi);
+
+			*coef = num/den;
+			return true;
+		}
+		else if(row==1 && column==1)
+		{
+			den = 12+24*cos(xi)+24*cos(xi*k-xi)-26*cos(xi*k)-12*cos(4*xi)-18*cos(-4*xi+xi*k)+44*cos(xi*k-5*xi)+4*cos(2*xi*k-xi)-26*cos(2*xi*k-6*xi)+24*cos(2*xi*k-5*xi)+4*cos(2*xi*k-9*xi)+6*cos(2*xi*k-8*xi)+44*cos(2*xi*k-4*xi)-16*cos(2*xi*k-3*xi)-36*cos(2*xi*k-2*xi)-16*cos(2*xi*k-7*xi)+12*cos(5*xi)+14*cos(2*xi*k)+18*cos(-6*xi+xi*k)-6*cos(xi*k-8*xi)-12*cos(-7*xi+xi*k)-14*cos(xi*k+4*xi)+6*cos(6*xi)-2*cos(2*xi+2*xi*k)+2*cos(6*xi+xi*k)-6*cos(2*xi)+14*cos(xi*k-2*xi)+30*cos(xi*k+2*xi)+4*cos(xi*k+xi)-36*cos(3*xi)-56*cos(xi*k-3*xi)-4*cos(xi*k+3*xi);
+
+			if(den==0) return false;
+
+			num = 40*cos(alpha)+20*cos(alpha-2*xi*k+5*xi)+20*cos(alpha+2*xi*k-5*xi)-15*cos(7*xi+alpha-2*xi*k)-15*cos(alpha-2*xi*k+3*xi)-15*cos(alpha+2*xi*k-3*xi)-15*cos(-7*xi+alpha+2*xi*k)-6*cos(alpha-xi*k+5*xi)-6*cos(alpha+xi*k)-6*cos(alpha+xi*k-5*xi)-6*cos(alpha-xi*k)+15*cos(alpha-xi-xi*k)+cos(alpha-7*xi+xi*k)+cos(alpha-2*xi-xi*k)+15*cos(alpha-6*xi+xi*k)+cos(alpha+7*xi-xi*k)+15*cos(alpha+xi+xi*k)+15*cos(alpha+6*xi-xi*k)+cos(alpha+2*xi+xi*k)+6*cos(xi+alpha-2*xi*k)-cos(-xi+alpha-2*xi*k)+6*cos(9*xi+alpha-2*xi*k)-cos(-11*xi+alpha+2*xi*k)-cos(11*xi+alpha-2*xi*k)+12*cos(alpha+4*xi)+12*cos(alpha-4*xi)+cos(10*xi+alpha-xi*k)+cos(-10*xi+alpha+xi*k)+6*cos(-xi+alpha+2*xi*k)+6*cos(-9*xi+alpha+2*xi*k)-cos(xi+alpha+2*xi*k)-6*cos(alpha+xi*k-8*xi)-6*cos(alpha+3*xi+xi*k)+cos(alpha+5*xi+xi*k)-6*cos(alpha-xi*k-3*xi)+cos(alpha-5*xi-xi*k)-2*cos(6*xi+alpha)-2*cos(-6*xi+alpha)-6*cos(alpha-xi*k+8*xi)+15*cos(alpha-xi*k+2*xi)+15*cos(alpha+xi*k-2*xi)+15*cos(alpha+xi*k-3*xi)-30*cos(alpha-2*xi)-30*cos(alpha+2*xi)+15*cos(alpha-xi*k+3*xi)-20*cos(xi+alpha-xi*k)-20*cos(-xi+alpha+xi*k)-20*cos(4*xi+alpha-xi*k)-20*cos(-4*xi+alpha+xi*k);
+
+			*coef = num/den;
+			return true;
+		}
+		else if(row==1 && column==2)
+		{
+			den = 6+12*cos(xi)+12*cos(xi*k-xi)-13*cos(xi*k)-6*cos(4*xi)-9*cos(-4*xi+xi*k)+22*cos(xi*k-5*xi)+2*cos(2*xi*k-xi)-13*cos(2*xi*k-6*xi)+12*cos(2*xi*k-5*xi)+2*cos(2*xi*k-9*xi)+3*cos(2*xi*k-8*xi)+22*cos(2*xi*k-4*xi)-8*cos(2*xi*k-3*xi)-18*cos(2*xi*k-2*xi)-8*cos(2*xi*k-7*xi)+6*cos(5*xi)+7*cos(2*xi*k)+9*cos(-6*xi+xi*k)-3*cos(xi*k-8*xi)-6*cos(-7*xi+xi*k)-7*cos(xi*k+4*xi)+3*cos(6*xi)-cos(2*xi+2*xi*k)+cos(6*xi+xi*k)-3*cos(2*xi)+7*cos(xi*k-2*xi)+15*cos(xi*k+2*xi)+2*cos(xi*k+xi)-18*cos(3*xi)-28*cos(xi*k-3*xi)-2*cos(xi*k+3*xi);
+
+			if(den==0) return false;
+
+			num = 20*sin(xi*k-xi)+6*sin(xi*k)+20*sin(-4*xi+xi*k)-15*sin(-6*xi+xi*k)+6*sin(xi*k-5*xi)-sin(-7*xi+xi*k)+15*sin(2*xi*k-3*xi)+15*sin(2*xi*k-7*xi)-20*sin(2*xi*k-5*xi)+6*sin(xi*k-8*xi)-sin(-10*xi+xi*k)-6*sin(2*xi*k-9*xi)-6*sin(2*xi*k-xi)+sin(-11*xi+2*xi*k)+sin(xi+2*xi*k)-sin(5*xi+xi*k)-sin(xi*k+2*xi)-15*sin(xi*k-2*xi)-15*sin(xi*k+xi)+6*sin(xi*k+3*xi)-15*sin(xi*k-3*xi);
+
+			*coef = num/den;
+			return true;
+		}
+		else if(row==2 && column==0)
+		{
+			den = 60+120*cos(xi)+200*cos(xi*k-xi)-192*cos(xi*k)-48*cos(4*xi)-136*cos(-4*xi+xi*k)+312*cos(xi*k-5*xi)+48*cos(2*xi*k-xi)-204*cos(2*xi*k-6*xi)+160*cos(2*xi*k-5*xi)+48*cos(2*xi*k-9*xi)+76*cos(2*xi*k-8*xi)+300*cos(2*xi*k-4*xi)-120*cos(2*xi*k-3*xi)-260*cos(2*xi*k-2*xi)-120*cos(2*xi*k-7*xi)+120*cos(5*xi)+132*cos(2*xi*k)-12*cos(2*xi*k-10*xi)+120*cos(-6*xi+xi*k)-60*cos(xi*k-8*xi)-136*cos(-7*xi+xi*k)+24*cos(xi*k-9*xi)-120*cos(xi*k+4*xi)-4*cos(8*xi+xi*k)+12*cos(-10*xi+xi*k)+48*cos(6*xi)-36*cos(2*xi+2*xi*k)+36*cos(6*xi+xi*k)-8*cos(xi+2*xi*k)-8*cos(-11*xi+2*xi*k)+4*cos(4*xi+2*xi*k)+8*cos(5*xi+xi*k)-24*cos(7*xi)-12*cos(8*xi)-48*cos(2*xi)+144*cos(xi*k-2*xi)+200*cos(xi*k+2*xi)-24*cos(xi*k+xi)-216*cos(3*xi)-360*cos(xi*k-3*xi)-24*cos(xi*k+3*xi);
+
+			if(den==0) return false;
+
+			num = 14*k*cos(-9*xi+alpha+2*xi*k)+6*k*cos(xi+alpha+2*xi*k)-28*k*cos(alpha-5*xi)+28*k*cos(alpha+5*xi)+14*k*cos(alpha+2*xi*k)+28*k*cos(alpha-4*xi)-2*k*cos(2*xi+alpha+2*xi*k)-12*k*cos(-6*xi+alpha)-k*cos(3*xi+alpha+2*xi*k)+4*k*cos(alpha-7*xi)-6*k*cos(-11*xi+alpha+2*xi*k)-4*k*cos(alpha+7*xi)+70*k*cos(alpha-2*xi*k+6*xi)-42*k*cos(alpha-2*xi*k+8*xi)-70*k*cos(alpha-2*xi*k+4*xi)+14*k*cos(10*xi+alpha-2*xi*k)+2*k*cos(-8*xi+alpha)+42*k*cos(alpha-2*xi*k+2*xi)-2*k*cos(12*xi+alpha-2*xi*k)-14*k*cos(alpha-2*xi*k+3*xi)+14*k*cos(xi+alpha-2*xi*k)+14*k*cos(7*xi+alpha-2*xi*k)-6*k*cos(-xi+alpha-2*xi*k)-14*k*cos(9*xi+alpha-2*xi*k)-14*k*cos(alpha-2*xi*k)+2*k*cos(-2*xi+alpha-2*xi*k)+k*cos(-3*xi+alpha-2*xi*k)+6*k*cos(11*xi+alpha-2*xi*k)+2*k*cos(-12*xi+alpha+2*xi*k)-42*k*cos(alpha+2*xi*k-2*xi)-28*k*cos(alpha-2*xi)-2*k*cos(8*xi+alpha)+45*cos(alpha-2*xi*k+5*xi)+185*cos(alpha-2*xi*k+4*xi)-45*cos(alpha+2*xi*k-5*xi)-185*cos(alpha+2*xi*k-4*xi)-165*cos(alpha-2*xi*k+6*xi)+165*cos(alpha+2*xi*k-6*xi)-67*cos(7*xi+alpha-2*xi*k)+3*cos(alpha-2*xi*k+3*xi)-123*cos(alpha-2*xi*k+2*xi)-3*cos(alpha+2*xi*k-3*xi)+123*cos(alpha+2*xi*k-2*xi)+67*cos(-7*xi+alpha+2*xi*k)+87*cos(alpha-2*xi*k+8*xi)-87*cos(alpha+2*xi*k-8*xi)+204*cos(alpha-xi*k+5*xi)+244*cos(alpha+xi*k)-204*cos(alpha+xi*k-5*xi)-244*cos(alpha-xi*k)-132*cos(alpha-xi-xi*k)+108*cos(alpha-7*xi+xi*k)+144*cos(alpha-2*xi-xi*k)-176*cos(alpha-6*xi+xi*k)-108*cos(alpha+7*xi-xi*k)+132*cos(alpha+xi+xi*k)+176*cos(alpha+6*xi-xi*k)-144*cos(alpha+2*xi+xi*k)-25*cos(xi+alpha-2*xi*k)+15*cos(-xi+alpha-2*xi*k)+45*cos(9*xi+alpha-2*xi*k)+15*cos(-11*xi+alpha+2*xi*k)-15*cos(11*xi+alpha-2*xi*k)+4*cos(-11*xi+alpha+xi*k)+22*cos(alpha+4*xi)-56*cos(alpha+xi*k-3*xi)*k-22*cos(alpha-4*xi)+24*cos(10*xi+alpha-xi*k)+56*k*cos(alpha+xi*k-5*xi)+42*k*cos(-xi+alpha+xi*k)-42*k*cos(xi+alpha-xi*k)-56*k*cos(alpha-xi*k+5*xi)-k*cos(alpha-7*xi-xi*k)-k*cos(-12*xi+alpha+xi*k)-3*cos(-3*xi+alpha-2*xi*k)+cos(11*xi+alpha)+k*cos(alpha+7*xi+xi*k)-9*cos(9*xi+alpha)-24*cos(-10*xi+alpha+xi*k)+25*cos(-10*xi+alpha+2*xi*k)-45*cos(alpha+2*xi*k)-14*k*cos(-7*xi+alpha+2*xi*k)-14*k*cos(-xi+alpha+2*xi*k)+84*k*cos(-3*xi+alpha)-84*k*cos(3*xi+alpha)+25*cos(-xi+alpha+2*xi*k)-45*cos(-9*xi+alpha+2*xi*k)-15*cos(xi+alpha+2*xi*k)+45*cos(alpha-2*xi*k)-25*cos(10*xi+alpha-2*xi*k)-14*k*cos(-10*xi+alpha+2*xi*k)+70*k*cos(alpha+2*xi*k-4*xi)+12*k*cos(6*xi+alpha)-16*k*cos(alpha+xi*k-8*xi)+36*k*cos(alpha+2*xi+xi*k)+13*k*cos(alpha-4*xi-xi*k)-28*k*cos(alpha+6*xi-xi*k)-36*k*cos(alpha-7*xi+xi*k)+13*k*cos(-9*xi+alpha+xi*k)+36*k*cos(alpha+7*xi-xi*k)-56*cos(alpha-xi*k+2*xi)*k+7*cos(2*xi+alpha+2*xi*k)+3*cos(-12*xi+alpha+xi*k)-3*cos(-12*xi+alpha+2*xi*k)+k*cos(-13*xi+alpha+2*xi*k)-k*cos(13*xi+alpha-2*xi*k)+56*cos(alpha-xi*k+3*xi)*k+9*cos(-9*xi+alpha)-cos(-11*xi+alpha)+84*cos(alpha+xi*k-8*xi)-68*cos(alpha+3*xi+xi*k)+24*cos(alpha+5*xi+xi*k)-4*cos(alpha+7*xi+xi*k)-51*cos(alpha-4*xi-xi*k)+8*cos(alpha-6*xi-xi*k)+68*cos(alpha-xi*k-3*xi)-24*cos(alpha-5*xi-xi*k)+4*cos(alpha-7*xi-xi*k)+51*cos(alpha+4*xi+xi*k)-8*cos(alpha+6*xi+xi*k)+163*cos(alpha-5*xi)-163*cos(alpha+5*xi)-3*cos(6*xi+alpha)+3*cos(-6*xi+alpha)+47*cos(alpha+7*xi)-47*cos(alpha-7*xi)-84*cos(alpha-xi*k+8*xi)-3*cos(8*xi+alpha)+3*cos(-8*xi+alpha)+32*cos(9*xi+alpha-xi*k)-32*cos(-9*xi+alpha+xi*k)+cos(10*xi+alpha)+14*k*cos(alpha+2*xi*k-3*xi)-140*k*cos(-xi+alpha)+140*k*cos(xi+alpha)-2*k*cos(-11*xi+alpha+xi*k)+28*k*cos(alpha-xi-xi*k)-13*k*cos(9*xi+alpha-xi*k)+28*k*cos(alpha-6*xi+xi*k)-36*k*cos(alpha-2*xi-xi*k)-28*k*cos(alpha+xi+xi*k)+16*k*cos(alpha+3*xi+xi*k)-6*k*cos(alpha+5*xi+xi*k)-16*k*cos(alpha-xi*k-3*xi)-13*k*cos(alpha+4*xi+xi*k)+2*k*cos(alpha+6*xi+xi*k)+16*k*cos(alpha-xi*k+8*xi)-6*k*cos(10*xi+alpha-xi*k)-7*cos(-2*xi+alpha-2*xi*k)+2*cos(13*xi+alpha-2*xi*k)-4*cos(11*xi+alpha-xi*k)+56*k*cos(alpha-xi*k)+42*k*cos(4*xi+alpha-xi*k)+560*cos(-xi+alpha)-560*cos(xi+alpha)+288*cos(alpha-xi*k+2*xi)-288*cos(alpha+xi*k-2*xi)+56*cos(alpha+xi*k-2*xi)*k-42*k*cos(-4*xi+alpha+xi*k)-56*k*cos(alpha+xi*k)+2*k*cos(11*xi+alpha-xi*k)+6*k*cos(alpha-5*xi-xi*k)-2*k*cos(alpha-6*xi-xi*k)+6*k*cos(-10*xi+alpha+xi*k)+k*cos(12*xi+alpha-xi*k)-2*cos(-13*xi+alpha+2*xi*k)-3*cos(12*xi+alpha-xi*k)+3*cos(12*xi+alpha-2*xi*k)+42*k*cos(alpha+2*xi*k-8*xi)-70*k*cos(alpha+2*xi*k-6*xi)+28*k*cos(alpha+2*xi)-28*k*cos(alpha+4*xi)-cos(-10*xi+alpha)+244*cos(alpha+xi*k-3*xi)+28*cos(alpha-2*xi)-28*cos(alpha+2*xi)-244*cos(alpha-xi*k+3*xi)+3*cos(3*xi+alpha+2*xi*k)-372*cos(-3*xi+alpha)+372*cos(3*xi+alpha)+204*cos(xi+alpha-xi*k)-204*cos(-xi+alpha+xi*k)-258*cos(4*xi+alpha-xi*k)+258*cos(-4*xi+alpha+xi*k);
+
+			*coef = num/den;
+			return true;
+		}
+		else if(row==2 && column==1)
+		{
+			den = 60+120*cos(xi)+200*cos(xi*k-xi)-192*cos(xi*k)-48*cos(4*xi)-136*cos(-4*xi+xi*k)+312*cos(xi*k-5*xi)+48*cos(2*xi*k-xi)-204*cos(2*xi*k-6*xi)+160*cos(2*xi*k-5*xi)+48*cos(2*xi*k-9*xi)+76*cos(2*xi*k-8*xi)+300*cos(2*xi*k-4*xi)-120*cos(2*xi*k-3*xi)-260*cos(2*xi*k-2*xi)-120*cos(2*xi*k-7*xi)+120*cos(5*xi)+132*cos(2*xi*k)-12*cos(2*xi*k-10*xi)+120*cos(-6*xi+xi*k)-60*cos(xi*k-8*xi)-136*cos(-7*xi+xi*k)+24*cos(xi*k-9*xi)-120*cos(xi*k+4*xi)-4*cos(8*xi+xi*k)+12*cos(-10*xi+xi*k)+48*cos(6*xi)-36*cos(2*xi+2*xi*k)+36*cos(6*xi+xi*k)-8*cos(xi+2*xi*k)-8*cos(-11*xi+2*xi*k)+4*cos(4*xi+2*xi*k)+8*cos(5*xi+xi*k)-24*cos(7*xi)-12*cos(8*xi)-48*cos(2*xi)+144*cos(xi*k-2*xi)+200*cos(xi*k+2*xi)-24*cos(xi*k+xi)-216*cos(3*xi)-360*cos(xi*k-3*xi)-24*cos(xi*k+3*xi);
+
+			if(den==0) return false;
+
+			num = 36*k*sin(alpha+7*xi-xi*k)+16*k*sin(alpha+3*xi+xi*k)-13*k*sin(9*xi+alpha-xi*k)+28*k*sin(alpha-xi-xi*k)-6*k*sin(alpha+5*xi+xi*k)+16*k*sin(alpha-xi*k+8*xi)-36*k*sin(alpha-2*xi-xi*k)+6*k*sin(-10*xi+alpha+xi*k)-28*k*sin(alpha+6*xi-xi*k)-6*k*sin(10*xi+alpha-xi*k)+28*k*sin(alpha-6*xi+xi*k)+k*sin(12*xi+alpha-xi*k)+36*k*sin(alpha+2*xi+xi*k)-16*k*sin(alpha+xi*k-8*xi)-28*k*sin(alpha+xi+xi*k)-36*k*sin(alpha-7*xi+xi*k)-16*k*sin(alpha-xi*k-3*xi)-3*sin(12*xi+alpha-xi*k)-13*k*sin(alpha+4*xi+xi*k)+13*k*sin(alpha-4*xi-xi*k)+2*k*sin(alpha+6*xi+xi*k)+13*k*sin(-9*xi+alpha+xi*k)-2*k*sin(-11*xi+alpha+xi*k)+6*k*sin(alpha-5*xi-xi*k)-2*k*sin(alpha-6*xi-xi*k)+4*sin(-11*xi+alpha+xi*k)-4*sin(11*xi+alpha-xi*k)-sin(-10*xi+alpha)-9*sin(9*xi+alpha)+sin(10*xi+alpha)+9*sin(-9*xi+alpha)+k*sin(alpha+7*xi+xi*k)+2*k*sin(11*xi+alpha-xi*k)-k*sin(-12*xi+alpha+xi*k)+3*sin(-12*xi+alpha+xi*k)-3*sin(-12*xi+alpha+2*xi*k)-k*sin(alpha-7*xi-xi*k)-28*k*sin(alpha+4*xi)+28*k*sin(alpha+2*xi)-70*k*sin(alpha+2*xi*k-6*xi)+42*k*sin(alpha+2*xi*k-8*xi)+12*k*sin(6*xi+alpha)+70*k*sin(alpha+2*xi*k-4*xi)-14*k*sin(-10*xi+alpha+2*xi*k)-2*k*sin(8*xi+alpha)-28*k*sin(alpha-2*xi)-42*k*sin(alpha+2*xi*k-2*xi)+2*k*sin(-12*xi+alpha+2*xi*k)+140*k*sin(xi+alpha)-140*k*sin(-xi+alpha)+14*k*sin(alpha+2*xi*k-3*xi)-84*k*sin(3*xi+alpha)+84*k*sin(-3*xi+alpha)-14*k*sin(-xi+alpha+2*xi*k)-14*k*sin(-7*xi+alpha+2*xi*k)+28*k*sin(alpha+5*xi)-28*k*sin(alpha-5*xi)+6*k*sin(xi+alpha+2*xi*k)+14*k*sin(-9*xi+alpha+2*xi*k)+28*k*sin(alpha-4*xi)+14*k*sin(alpha+2*xi*k)+7*sin(2*xi+alpha+2*xi*k)-12*k*sin(-6*xi+alpha)-2*k*sin(2*xi+alpha+2*xi*k)+4*k*sin(alpha-7*xi)-k*sin(3*xi+alpha+2*xi*k)-4*k*sin(alpha+7*xi)-6*k*sin(-11*xi+alpha+2*xi*k)-42*k*sin(alpha-2*xi*k+8*xi)+70*k*sin(alpha-2*xi*k+6*xi)+14*k*sin(10*xi+alpha-2*xi*k)-70*k*sin(alpha-2*xi*k+4*xi)-2*k*sin(12*xi+alpha-2*xi*k)+42*k*sin(alpha-2*xi*k+2*xi)+2*k*sin(-8*xi+alpha)-14*k*sin(alpha-2*xi*k+3*xi)+14*k*sin(7*xi+alpha-2*xi*k)+14*k*sin(xi+alpha-2*xi*k)-14*k*sin(9*xi+alpha-2*xi*k)-6*k*sin(-xi+alpha-2*xi*k)-14*k*sin(alpha-2*xi*k)+3*sin(3*xi+alpha+2*xi*k)+3*sin(12*xi+alpha-2*xi*k)-7*sin(-2*xi+alpha-2*xi*k)-3*sin(-3*xi+alpha-2*xi*k)+2*k*sin(-2*xi+alpha-2*xi*k)+k*sin(-3*xi+alpha-2*xi*k)+6*k*sin(11*xi+alpha-2*xi*k)+k*sin(-13*xi+alpha+2*xi*k)-2*sin(-13*xi+alpha+2*xi*k)-k*sin(13*xi+alpha-2*xi*k)+2*sin(13*xi+alpha-2*xi*k)+sin(11*xi+alpha)+372*sin(3*xi+alpha)-372*sin(-3*xi+alpha)-22*sin(alpha-4*xi)+22*sin(alpha+4*xi)+42*k*sin(4*xi+alpha-xi*k)+56*k*sin(alpha-xi*k)-56*k*sin(alpha+xi*k)-42*k*sin(-4*xi+alpha+xi*k)-56*k*sin(alpha-xi*k+5*xi)-42*k*sin(xi+alpha-xi*k)+45*sin(9*xi+alpha-2*xi*k)+15*sin(-xi+alpha-2*xi*k)-24*sin(-10*xi+alpha+xi*k)-132*sin(alpha-xi-xi*k)-108*sin(alpha+7*xi-xi*k)+68*sin(alpha-xi*k-3*xi)+176*sin(alpha+6*xi-xi*k)+3*sin(-6*xi+alpha)-144*sin(alpha+2*xi+xi*k)+51*sin(alpha+4*xi+xi*k)-8*sin(alpha+6*xi+xi*k)-68*sin(alpha+3*xi+xi*k)+132*sin(alpha+xi+xi*k)+24*sin(alpha+5*xi+xi*k)-4*sin(alpha+7*xi+xi*k)-51*sin(alpha-4*xi-xi*k)+8*sin(alpha-6*xi-xi*k)-84*sin(alpha-xi*k+8*xi)+144*sin(alpha-2*xi-xi*k)-24*sin(alpha-5*xi-xi*k)+4*sin(alpha-7*xi-xi*k)-3*sin(6*xi+alpha)+108*sin(alpha-7*xi+xi*k)-163*sin(alpha+5*xi)+163*sin(alpha-5*xi)-47*sin(alpha-7*xi)+3*sin(-8*xi+alpha)-3*sin(8*xi+alpha)+47*sin(alpha+7*xi)-176*sin(alpha-6*xi+xi*k)+84*sin(alpha+xi*k-8*xi)-32*sin(-9*xi+alpha+xi*k)+32*sin(9*xi+alpha-xi*k)+24*sin(10*xi+alpha-xi*k)+56*sin(alpha+xi*k-2*xi)*k-15*sin(xi+alpha+2*xi*k)-45*sin(-9*xi+alpha+2*xi*k)-25*sin(10*xi+alpha-2*xi*k)+45*sin(alpha-2*xi*k)-25*sin(xi+alpha-2*xi*k)-56*sin(alpha-xi*k+2*xi)*k-sin(-11*xi+alpha)+3*sin(alpha-2*xi*k+3*xi)-123*sin(alpha-2*xi*k+2*xi)-67*sin(7*xi+alpha-2*xi*k)-165*sin(alpha-2*xi*k+6*xi)-87*sin(alpha+2*xi*k-8*xi)+67*sin(-7*xi+alpha+2*xi*k)-185*sin(alpha+2*xi*k-4*xi)-3*sin(alpha+2*xi*k-3*xi)+185*sin(alpha-2*xi*k+4*xi)+87*sin(alpha-2*xi*k+8*xi)+165*sin(alpha+2*xi*k-6*xi)+123*sin(alpha+2*xi*k-2*xi)-45*sin(alpha+2*xi*k-5*xi)+45*sin(alpha-2*xi*k+5*xi)+25*sin(-xi+alpha+2*xi*k)+42*k*sin(-xi+alpha+xi*k)+56*k*sin(alpha+xi*k-5*xi)-45*sin(alpha+2*xi*k)+25*sin(-10*xi+alpha+2*xi*k)-560*sin(xi+alpha)+560*sin(-xi+alpha)-288*sin(alpha+xi*k-2*xi)+288*sin(alpha-xi*k+2*xi)-28*sin(alpha+2*xi)+28*sin(alpha-2*xi)+244*sin(alpha+xi*k-3*xi)-244*sin(alpha-xi*k+3*xi)+56*sin(alpha-xi*k+3*xi)*k-56*sin(alpha+xi*k-3*xi)*k+15*sin(-11*xi+alpha+2*xi*k)-15*sin(11*xi+alpha-2*xi*k)-258*sin(4*xi+alpha-xi*k)-244*sin(alpha-xi*k)+244*sin(alpha+xi*k)+258*sin(-4*xi+alpha+xi*k)+204*sin(alpha-xi*k+5*xi)+204*sin(xi+alpha-xi*k)-204*sin(-xi+alpha+xi*k)-204*sin(alpha+xi*k-5*xi);
+
+			*coef = num/den;
+			return true;
+		}
+		else if(row==2 && column==2)
+		{
+			den = 30+60*cos(xi)+100*cos(xi*k-xi)-96*cos(xi*k)-24*cos(4*xi)-68*cos(-4*xi+xi*k)+156*cos(xi*k-5*xi)+24*cos(2*xi*k-xi)-102*cos(2*xi*k-6*xi)+80*cos(2*xi*k-5*xi)+24*cos(2*xi*k-9*xi)+38*cos(2*xi*k-8*xi)+150*cos(2*xi*k-4*xi)-60*cos(2*xi*k-3*xi)-130*cos(2*xi*k-2*xi)-60*cos(2*xi*k-7*xi)+60*cos(5*xi)+66*cos(2*xi*k)-6*cos(2*xi*k-10*xi)+60*cos(-6*xi+xi*k)-30*cos(xi*k-8*xi)-68*cos(-7*xi+xi*k)+12*cos(xi*k-9*xi)-60*cos(xi*k+4*xi)-2*cos(8*xi+xi*k)+6*cos(-10*xi+xi*k)+24*cos(6*xi)-18*cos(2*xi+2*xi*k)+18*cos(6*xi+xi*k)-4*cos(xi+2*xi*k)-4*cos(-11*xi+2*xi*k)+2*cos(4*xi+2*xi*k)+4*cos(5*xi+xi*k)-12*cos(7*xi)-6*cos(8*xi)-24*cos(2*xi)+72*cos(xi*k-2*xi)+100*cos(xi*k+2*xi)-12*cos(xi*k+xi)-108*cos(3*xi)-180*cos(xi*k-3*xi)-12*cos(xi*k+3*xi);
+
+			if(den==0) return false;
+
+			num = -9-28*k*cos(xi*k+xi)-14*k*cos(2*xi*k-7*xi)+56*k*cos(xi*k-5*xi)+28*k*cos(-6*xi+xi*k)-2*cos(xi*k+7*xi)-3*cos(2*xi*k-12*xi)+9*cos(9*xi)-cos(11*xi)+56*cos(xi*k-2*xi)*k-18*cos(xi)-36*k*cos(-7*xi+xi*k)+13*k*cos(xi*k-9*xi)-2*k*cos(-11*xi+xi*k)-16*k*cos(xi*k-8*xi)+6*k*cos(-10*xi+xi*k)-k*cos(-12*xi+xi*k)+2*k*cos(2*xi*k-12*xi)+6*k*cos(xi+2*xi*k)-k*cos(2*xi*k+3*xi)-114*cos(xi*k-xi)+54*cos(xi*k)-14*k*cos(2*xi*k-xi)-14*k*cos(2*xi*k-10*xi)+60*cos(4*xi)+14*k*cos(2*xi*k)+96*cos(-4*xi+xi*k)-226*cos(xi*k-5*xi)+25*cos(2*xi*k-xi)+165*cos(2*xi*k-6*xi)-45*cos(2*xi*k-5*xi)-45*cos(2*xi*k-9*xi)-87*cos(2*xi*k-8*xi)-185*cos(2*xi*k-4*xi)-3*cos(2*xi*k-3*xi)+123*cos(2*xi*k-2*xi)+67*cos(2*xi*k-7*xi)+15*cos(5*xi)-45*cos(2*xi*k)+25*cos(2*xi*k-10*xi)-6*k*cos(-11*xi+2*xi*k)-6*k*cos(5*xi+xi*k)+k*cos(xi*k+7*xi)-114*cos(-6*xi+xi*k)-56*cos(xi*k-3*xi)*k+74*cos(xi*k-8*xi)+126*cos(-7*xi+xi*k)-42*k*cos(2*xi*k-2*xi)-36*cos(xi*k-9*xi)+29*cos(xi*k+4*xi)-24*cos(-10*xi+xi*k)-45*cos(6*xi)+7*cos(2*xi+2*xi*k)-6*cos(6*xi+xi*k)-15*cos(xi+2*xi*k)+15*cos(-11*xi+2*xi*k)+6*cos(5*xi+xi*k)-23*cos(7*xi)+13*cos(8*xi)+42*k*cos(2*xi*k-8*xi)+42*k*cos(xi*k-xi)+14*k*cos(2*xi*k-9*xi)-56*k*cos(xi*k)-42*k*cos(-4*xi+xi*k)-18*cos(2*xi)-58*cos(xi*k-2*xi)-54*cos(xi*k+2*xi)+26*cos(xi*k+xi)+18*cos(3*xi)+222*cos(xi*k-3*xi)-6*cos(xi*k+3*xi)+70*k*cos(2*xi*k-4*xi)+14*k*cos(2*xi*k-3*xi)-70*k*cos(2*xi*k-6*xi)+k*cos(2*xi*k-13*xi)+2*k*cos(6*xi+xi*k)-2*cos(2*xi*k-13*xi)+4*cos(-11*xi+xi*k)+3*cos(2*xi*k+3*xi)+3*cos(-12*xi+xi*k)-cos(10*xi)-2*k*cos(2*xi+2*xi*k)+16*k*cos(xi*k+3*xi)+36*k*cos(xi*k+2*xi)-13*k*cos(xi*k+4*xi);
+
+			*coef = num/den;
+			return true;
+		}
+	}
+
+
+
+/*withDz=1 file Jinverse7.mw
 		KthReal num,den;
 		if(row==0 && column==0)
 		{
@@ -659,5 +759,5 @@ namespace libProblem {
 			return true;
 		}
 	}
-
+*/
 }
