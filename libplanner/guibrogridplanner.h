@@ -105,6 +105,11 @@ using namespace workspacegridplanner;
 		inline KthReal getWeightAlpha(){return _weightAlpha;};
 		inline int getShowPoints(){return _showPoints;};
 
+		inline int getTouchingLinks(){return  _touchinglabels.size();};
+		
+		//moves the bronchoscope if there are linbks touching the walls
+		bool comply(int *distcost, KthReal *NF1cost, bool onlytip=false, KthReal radius=1.0);
+
 		protected:
 		//Add protected data and functions	
 		
@@ -140,6 +145,11 @@ using namespace workspacegridplanner;
 		
 		int _nodule;//index of the obstacle that represents the nodule to be reached
 		Obstacle *_obstaclenodule; //pointer to the obstacle that represents the nodule
+
+		vector<unsigned int> _touchinglabels;//vector of labels corresponding to links of the bronchoscope that are touching the walls
+		vector<unsigned int> _collisionlabels;//vector of labels corresponding to links of the bronchoscope that are in collision
+		vector<unsigned int> _freelabels;//vector of labels corresponding to links of the bronchoscope that are in free space
+		vector<unsigned int> _outofboundslabels;//vector of labels corresponding to links of the bronchoscope that are out of bounds
 
 		
 		unsigned int findGridCell(Sample * s);

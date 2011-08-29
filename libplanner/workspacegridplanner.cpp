@@ -76,6 +76,59 @@ namespace libPlanner {
 	}
 
 	
+	bool  workspacegridPlanner::computeDistanceGradient(unsigned int label, mt::Point3 *f)
+	{
+		//find cell vc correspondiong to label
+		gridVertex vc;
+		if(getGraphVertex(label, &vc)==false) {
+			cout<<"computeDistanceGradient failed"<<endl;		
+			return false;
+		}
+		//cout << «node » << vc <<«: » <<endl;
+
+		int x0,y0,z0,d0;
+		int x,y,z,d;
+		KthReal m;
+		KthReal vx, vy, vz;
+
+		//coordinates and distance value of cell vc
+		x0 = locations[vc].x;
+		y0 = locations[vc].y;
+		z0 = locations[vc].z;
+		d0 = locations[vc].d;
+
+		//initialize returned values
+		vx = 0;
+		vy = 0;
+		vz = 0;
+
+		graph_traits<filteredGridGraph>::adjacency_iterator avi, avi_end;
+		for(tie(avi,avi_end)=adjacent_vertices(vc, *fg); avi!=avi_end; ++avi)
+		{
+			//cout << « neighbor» << *avi << « potential value » << pm[*avi]<<endl;
+
+			//coordinates and distance value of the neighbor cell *avi
+			x = locations[*avi].x;
+			y = locations[*avi].y;
+			z = locations[*avi].z;
+			d = locations[*avi].d;
+
+			//add vector from cell vc to neighbor cell *avi, weighted by the difference in distance values
+			m = d-d0;
+			vx += (x - x0)*m;
+			vy += (y - y0)*m;
+			vz += (z - z0)*m;
+		}
+		//compute module
+		m = sqrt((vx)*(vx)+ (vy)*(vy)+ (vz)*(vz));
+
+		//make unitary
+		(*f)[0] = vx / m;
+		(*f)[1] = vy / m;
+		(*f)[2] = vz / m;
+
+		return true;
+	}
 		
 	void  workspacegridPlanner::readDistances(string file)
 	{

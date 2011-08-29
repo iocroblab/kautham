@@ -142,6 +142,9 @@ namespace libPlanner {
 	//!For collision-check purposes the bottom sphere of each link is considered.
 	bool GUIBROgridPlanner::collisionCheck(int *distcost, KthReal *NF1cost, bool onlytip, KthReal radius)
 	{
+		//number maximum of touching links
+		int maxTouching = 5;
+
 		//origin of the regular grid in world coordinates
 		KthReal *O = grid->getOrigin();
 		//size of the voxels in the grid
@@ -155,15 +158,19 @@ namespace libPlanner {
 		int nlinks = _wkSpace->getRobot(0)->getNumLinks();
 		//transform of the origin of each link
 		mt::Transform linkTransf;
+		//transform of the origin of the base
+		mt::Transform baseTransf;
 		//position of the origin of each link
 		mt::Point3 pos;
+		//position of the origin of the base
+		mt::Point3 basePos;
 		//indices and label of the cell closest to the origin of the link
 		unsigned int i,j,k,label;
 		//distance of the occupied cell to the walls of the bronchi 
 		int dist;
 		//flag indicating if the bronchoscope is in collision or not
 		bool collision=false;
-		//flag indicating if the shere centered at the occupied cell is free or not
+		//flag indicating if the sphere centered at the occupied cell is free or not
 		bool freesphere;
 		//threshold distance, measured in cells,
 		int threshold = (int)(sqrt(3.0)*maxSize/radius);//sqrt(3) is added to consider the distance to the vertex of the voxel
@@ -172,7 +179,11 @@ namespace libPlanner {
 		*distcost=0;
 		if(onlytip==false)
 		{
-			int countTouching = 0;//counter of spheres that are exactly at distance=threshold
+			_touchinglabels.clear();
+			_collisionlabels.clear();
+			_freelabels.clear();
+			_outofboundslabels.clear();
+
 			for(int n=0;n<nlinks;n++)
 			{
 				linkTransf = _wkSpace->getRobot(0)->getLinkTransform(n);
@@ -185,17 +196,30 @@ namespace libPlanner {
 				k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2]+1;
 				label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
 				dist = -10*threshold; //value that will take thos spheres out of bounds
+				
 				freesphere=grid->getDistance(label, &dist);
-				if(freesphere){
-					if(dist<threshold) freesphere = false;
-					else if(dist==threshold){//if more than two spheres are touching then consider it is a collision
-						countTouching++;
-						if(countTouching>5) freesphere = false;
+				if(freesphere){//within bounds
+					if(dist<threshold) 
+					{
+						_collisionlabels.push_back(label);
+						collision = true;
 					}
+					else if(dist==threshold){//if more than maxTouching spheres are touching then consider it is a collision
+						_touchinglabels.push_back(label);
+					}
+					else
+					{
+						_freelabels.push_back(label);
+					}
+				}
+				else 
+				{
+					//out of bounds considered as collision
+					_outofboundslabels.push_back(label);
+					collision = true;
 				}
 				
 				*distcost += dist;
-				if(freesphere==false) collision = true;
 			}
 		}
 		
@@ -208,9 +232,6 @@ namespace libPlanner {
 		totip.setTranslation(mt::Vector3(_wkSpace->getRobot(0)->getLink(n)->getA(),0,0) );
 		mt::Transform tipTransf = linkTransf*totip;
 		pos = tipTransf.getTranslation();
-		//i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
-		//j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1];
-		//k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2];
 		i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0] + 1;
 		j = (pos[1]-O[1]+voxelSize[1]/2)/voxelSize[1] + 1;
 		k = (pos[2]-O[2]+voxelSize[2]/2)/voxelSize[2] + 1;
@@ -221,14 +242,149 @@ namespace libPlanner {
 		//more constrained for the tip
 		//threshold = 2;
 
-		if(freesphere && dist<=threshold) freesphere = false;
+		//proves
+			/*
+			mt::Point3 f,fb;
+			if(dist==threshold) 
+			{
+				if(grid->computeDistanceGradient(label,&f))
+				{
+					baseTransf = _wkSpace->getRobot(0)->getLinkTransform(0);
+					basePos = baseTransf.getTranslation();
+					mt::Rotation baseRot = baseTransf.getRotation();
+					//transform reaction force into base coordinates
+					//fb = baseRot(f);
+					//use fb to rotate the base in order to free the bronchoscope from the collision
+					//fb = cross(tipTransf.getTranslation()-basePos,fb);
+					//mt::Rotation rotFb(fb[2],fb[1],fb[0]);
+					//translate the base in the direction f in order to free the bronchoscope from the collision
+
+					RobConf* currentPos = _wkSpace->getRobot(0)->getCurrentPos();
+					RnConf& rnConf = currentPos->getRn();
+					RobConf robotConf;
+					vector<KthReal> coords(7);
+					//baseRot = baseRot*rotFb;
+					for(int i =0; i < 3; i++)
+						coords[i] = basePos[i] + maxSize*f[i];
+					for(int i =0; i < 4; i++)
+						coords[i+3] = baseRot[i];
+					robotConf.setSE3(coords);
+					robotConf.setRn(rnConf);
+					_wkSpace->getRobot(0)->Kinematics(robotConf);
+				}
+			}
+			*/
+		//end proves
+
+		if(freesphere==true) //within bounds 
+		{
+			if(dist<threshold)//below  threshold
+			{
+				_collisionlabels.push_back(label);
+				collision = true;
+			}
+			else if(dist==threshold)//equal to threshold
+			{
+				_touchinglabels.push_back(label);
+				if(_touchinglabels.size()>maxTouching) 
+				{
+					//many links touching considered as collision
+					collision = true;
+				}
+			}
+			else//above threshold
+			{
+				_freelabels.push_back(label);
+			}
+		}
+		else //outof bounds
+		{
+			_outofboundslabels.push_back(label);
+			collision = true;
+		}
 		*distcost += dist;
-		if(freesphere==false) collision = true;
+		
 
 		//Evaluate the NF1 function
 		grid->getNF1value(label, NF1cost);
 		
+		//_touchinglabels only stores the touching labels when the bronchoscope is
+		//in a touching situation, i.e. all links are either free or touching
+//		if(_touchinglabels.size()<maxTouching)
+//			_touchinglabels.clear();
+
 		return collision;
+	}
+
+
+	//! comply moves the bronchoscope to comply to a multicontact situation
+	bool GUIBROgridPlanner::comply(int *distcost, KthReal *NF1cost, bool onlytip, KthReal radius)
+	{
+		bool c=collisionCheck(distcost, NF1cost, onlytip, radius);
+
+		//If there are not collision or outofbounds labels, and at least there is a touching label
+		//then comply at the touch label, otherwise return c (either true or false)
+		
+		if( _freelabels.size()>0 && _touchinglabels.size()>0 &&
+			_collisionlabels.size()==0 && _outofboundslabels.size()>0) 
+		{
+			//Comply to the labels that are touching, if possible
+			KthReal *voxelSize = grid->getVoxelSize();
+			KthReal maxSize = voxelSize[0];
+			if(voxelSize[1]>maxSize) maxSize = voxelSize[1];
+			if(voxelSize[2]>maxSize) maxSize = voxelSize[2];
+
+			RobConf* currentPos = _wkSpace->getRobot(0)->getCurrentPos();
+			RnConf& rnConf = currentPos->getRn();
+			RobConf robotConf;
+			vector<KthReal> coords(7);
+			mt::Point3 f,fk;
+			f[0] = 0.0;
+			f[1] = 0.0;
+			f[2] = 0.0;
+
+			for(int k=0; k<_touchinglabels.size();k++)
+			{
+				if(grid->computeDistanceGradient(_touchinglabels[k],&fk))
+				{
+					f[0] += fk[0];
+					f[1] += fk[1];
+					f[2] += fk[2];
+				}
+			}
+			KthReal length = maxSize * abs(f.dot(fk));
+			f=f.normalize();
+
+			mt::Transform baseTransf = _wkSpace->getRobot(0)->getLinkTransform(0);
+			mt::Rotation baseRot = baseTransf.getRotation();
+			mt::Point3 basePos = baseTransf.getTranslation();
+			for(int i =0; i < 3; i++)
+				coords[i] = basePos[i] + length*f[i];
+			for(int i =0; i < 4; i++)
+				coords[i+3] = baseRot[i];
+				
+			robotConf.setSE3(coords);
+			robotConf.setRn(rnConf);
+			_wkSpace->getRobot(0)->Kinematics(robotConf);
+
+			bool newc = collisionCheck(distcost, NF1cost, onlytip, radius);
+			if(newc)
+			{
+				//complying motion resulted in collision, then restore the last position
+				for(int i =0; i < 3; i++)
+					coords[i] = basePos[i];
+				for(int i =0; i < 4; i++)
+					coords[i+3] = baseRot[i];
+				
+				robotConf.setSE3(coords);
+				robotConf.setRn(rnConf);
+				_wkSpace->getRobot(0)->Kinematics(robotConf);
+				//once restored the value of c is that computed at the beginning
+			}
+			else c=newc;
+		}
+
+		return c;
 	}
 
 
@@ -522,6 +678,8 @@ namespace libPlanner {
 	int GUIBROgridPlanner::advanceToBest(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta,Sample *smp, FILE *fp)
 	{
 		vector<KthReal>  values;
+		KthReal currentNF1cost;
+		int currentdcost;
 		
 
 		KthReal a,b;
@@ -566,12 +724,11 @@ namespace libPlanner {
 			}
 			//advance
 			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
+			comply(&currentdcost,&currentNF1cost);
 			
 
 			if(fp!=NULL)
 			{	
-				KthReal currentNF1cost;
-				int currentdcost;
 				bool colltest = collisionCheck(&currentdcost,&currentNF1cost);
 				fprintf(fp,"[%.2f %.2f %.2f %.2f %.2f %.2f %f %d],\n",
 					s,*bestAlpha*180/M_PI,*bestBeta*180/M_PI, pos0[0],pos0[1],pos0[2],currentNF1cost,currentdcost);
@@ -1131,7 +1288,8 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 				//pos = tipTransf.getTranslation();
 
 				//compute the cost at the current position
-				colltest = collisionCheck(dcost,NF1cost, true);//test only the tip
+				//colltest = collisionCheck(dcost,NF1cost, true);//test only the tip
+				colltest = comply(dcost,NF1cost, true);//test only the tip
 				if(colltest==true) break;
 			}
 			clock_t advancecollcheckfinaltime = clock();
@@ -1163,7 +1321,8 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 
 			if(colltest==false){
 				//compute the cost at the last position
-				colltest = collisionCheck(dcost,NF1cost);
+				//colltest = collisionCheck(dcost,NF1cost);
+				colltest = comply(dcost,NF1cost);
 			}
 
 			//computes the position of the point at the extrem of the broncoscope at the new position
@@ -1190,9 +1349,13 @@ void GUIBROgridPlanner::verifyInvJacobian(int linktested, KthReal vx,KthReal vy,
 		mt::Rotation linkRot;
 
 		linkRot = linkTransf.getRotation();
-		Point3 v0(vx, vy, vz);
-		Point3 v;
-		v = linkRot(v0);           
+		mt::Point3 v0(vx, vy, vz);
+		mt::Point3 v;
+		v = linkRot(v0);   
+
+		v[0]=0;
+		v[1]=1;
+		v[2]=0;
 
 
 //ini prova de invJacobian	
@@ -1398,7 +1561,7 @@ bool GUIBROgridPlanner::trySolve()
 
 				mt::Transform linkTransf;
 				mt::Point3 pos,pos0;
-				int linktested = 3;
+				int linktested = 10;
 				linkTransf = _wkSpace->getRobot(0)->getLinkTransform(linktested);
 				pos0 = linkTransf.getTranslation();
 

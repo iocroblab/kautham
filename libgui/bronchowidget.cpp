@@ -106,7 +106,8 @@ void bronchoWidget::collisionCheck()
 	{
 		int dcost;
 		KthReal NF1cost;
-		bool c =((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->collisionCheck(&dcost,&NF1cost);
+		//bool c =((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->collisionCheck(&dcost,&NF1cost);
+		bool c =((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->comply(&dcost,&NF1cost);
 		if(c==true)
 		{
 			cout<<"The bronchoscope is in collision or out of bounds"<<endl;

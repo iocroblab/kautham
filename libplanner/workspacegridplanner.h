@@ -205,6 +205,9 @@ namespace libPlanner {
 		//!Function that retruns the vector of potential values
 		inline PotentialMap getpotmat(){return potmap;};
 
+		//!Function to compute the distance gradient for cell with label "label"
+		bool  computeDistanceGradient(unsigned int label,  mt::Point3 *f);
+		
 
 	protected:
 		//!position of the grid in the world
@@ -269,8 +272,6 @@ namespace libPlanner {
 		//!Function to set the potential value at a given vertex
 		inline void setPotential(int i, KthReal value){potmap[i]=value;};
 
-		
-		
 
 		
 		//void  connectGridFromFile(string file);
