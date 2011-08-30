@@ -105,6 +105,10 @@ namespace libPlanner {
 	  addParameter("Only NF1(0/1)",_onlyNF1);
 
 	  
+	  _randomness=1;
+	  addParameter("Add Randomness (0/1)",_randomness);
+
+	  
 		_weightNF1 = 0.6;
 	    addParameter("weight NF1",_weightNF1);
 		_weightDist = 0.2; 
@@ -124,6 +128,7 @@ namespace libPlanner {
         addParameter("Drawn Path Link",_drawnLink);
 
 		_maxNumSamples=10000;
+		removeParameter("Step Size");
 		//removeParameter("Max. Samples");
 		//removeParameter("Neigh Thresshold");
 		//removeParameter("Drawn Path Link");
@@ -249,42 +254,18 @@ namespace libPlanner {
 		dist = -10*threshold; //value that will take thos spheres out of bounds
 		freesphere=grid->getDistance(label, &dist);
 
-		//more constrained for the tip
-		//threshold = 2;
+		//more constrained for the tip, if it is more near to the walls as detected by the gradient of the distance
+		mt::Point3 f, pgrid;
+		pgrid[0] = voxelSize[0]*(i-1);
+		pgrid[1] = voxelSize[1]*(j-1);
+		pgrid[2] = voxelSize[2]*(k-1);
+		if(grid->computeDistanceGradient(label,&f)==true)
+		{		
+			//dot product f.v
+			if(f.dot(pos-pgrid) < 0) threshold += 1;
+		}
+		
 
-		//proves
-			/*
-			mt::Point3 f,fb;
-			if(dist==threshold) 
-			{
-				if(grid->computeDistanceGradient(label,&f))
-				{
-					baseTransf = _wkSpace->getRobot(0)->getLinkTransform(0);
-					basePos = baseTransf.getTranslation();
-					mt::Rotation baseRot = baseTransf.getRotation();
-					//transform reaction force into base coordinates
-					//fb = baseRot(f);
-					//use fb to rotate the base in order to free the bronchoscope from the collision
-					//fb = cross(tipTransf.getTranslation()-basePos,fb);
-					//mt::Rotation rotFb(fb[2],fb[1],fb[0]);
-					//translate the base in the direction f in order to free the bronchoscope from the collision
-
-					RobConf* currentPos = _wkSpace->getRobot(0)->getCurrentPos();
-					RnConf& rnConf = currentPos->getRn();
-					RobConf robotConf;
-					vector<KthReal> coords(7);
-					//baseRot = baseRot*rotFb;
-					for(int i =0; i < 3; i++)
-						coords[i] = basePos[i] + maxSize*f[i];
-					for(int i =0; i < 4; i++)
-						coords[i+3] = baseRot[i];
-					robotConf.setSE3(coords);
-					robotConf.setRn(rnConf);
-					_wkSpace->getRobot(0)->Kinematics(robotConf);
-				}
-			}
-			*/
-		//end proves
 
 		if(freesphere==true) //within bounds 
 		{
@@ -556,11 +537,14 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
 	//! setParameters sets the parameters of the planner
     bool GUIBROgridPlanner::setParameters(){
       try{
-        HASH_S_K::iterator it = _parameters.find("Step Size");
+        HASH_S_K::iterator it;
+		
+		/*it = _parameters.find("Step Size");
 		if(it != _parameters.end())
 			setStepSize(it->second);//also changes stpssize of localplanner
         else
           return false;
+	    */
 
         it = _parameters.find("Speed Factor");
         if(it != _parameters.end())
@@ -698,6 +682,12 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
 		}else
           return false;
 	
+		
+		it = _parameters.find("Add Randomness (0/1)");
+		if(it != _parameters.end()){
+          _randomness = it->second;
+		}else
+          return false;
 		
 		it = _parameters.find("Drawn Path Link");
 		if(it != _parameters.end()){
@@ -872,7 +862,7 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
 //looks stepsahead for different values of alpha and beta and select the pair that has a better cost.
 int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta)
 		{
-			clock_t computelookatpointsentertime = clock();
+			//clock_t computelookatpointsentertime = clock();
 			//store current position of alpha and beta
 			KthReal alpha0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
 			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
@@ -943,62 +933,29 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			KthReal randoffset;
 			for(int i=imin;i<=imax;i++)
 			{
-				/*
-				if(i==imin) randoffset=0.5*(KthReal)_gen->d_rand();
-				else if(i==imax) randoffset=-0.5*(KthReal)_gen->d_rand();
-				else randoffset=-0.5+(KthReal)_gen->d_rand();
-				b = b0 + (i+randoffset)*DeltaBeta;
-				*/
-				//b = b0 + i*DeltaBeta;
-				
-				/*
-				if(b>maxBeta || b<minBeta) 
-				{
-					//should not reach this point
-					continue;
-				}
-				*/
-				//find the range of alpha for the current value of beta (b)
-				//alphaRange = 20+fabs(2.0*b+180); 
-				//alphaRange = (maxAlpha/180.0)*238.500000000000398-6.55535714285715976*fabs(b)+0.473214285714287364e-1*b*b;
-				//if(alphaRange>maxAlpha)alphaRange=maxAlpha;
-				//else if(alphaRange<15.0) alphaRange=15.0;
-
 				alphaRange = maxAlpha-minAlpha;
-				/*if(fabs(b)<10) alphaRange = maxAlpha;
-				else if(fabs(b)<20) alphaRange = 0.95*maxAlpha;//0.9*maxAlpha;
-				else if(fabs(b)<30) alphaRange = 0.9*maxAlpha;//0.8*maxAlpha;
-				else if(fabs(b)<40) alphaRange = 0.8*maxAlpha;//0.5*maxAlpha;
-				else if(fabs(b)<50) alphaRange = 0.6*maxAlpha;//0.3*maxAlpha;
-				else if(fabs(b)<60) alphaRange = 0.4*maxAlpha;//0.2*maxAlpha;
-				else if(fabs(b)<=maxBeta) alphaRange = 0.4*maxAlpha;//0.3*maxAlpha;
-				else alphaRange = 15;//should not reach this else
-				*/
-
 				DeltaAlpha = alphaRange/10;
+
 				//sweep alphaRange degrees around alpha0
 				for(int j=-5;j<=5;j++)
 				{
+					if(_randomness)
+					{
+						if(j==-5) randoffset=0.5*(KthReal)_gen->d_rand();
+						else if(j==5) randoffset=-0.5*(KthReal)_gen->d_rand();
+						else randoffset=-0.5+(KthReal)_gen->d_rand();
+						a = (j+randoffset)*DeltaAlpha;
 
-				if(i==imin) randoffset=0.5*(KthReal)_gen->d_rand();
-				else if(i==imax) randoffset=-0.5*(KthReal)_gen->d_rand();
-				else randoffset=-0.5+(KthReal)_gen->d_rand();
-				b = b0 + (i+randoffset)*DeltaBeta;
-
-					//a = a0 + j*DeltaAlpha;
-					
-					//sweep the whole alpha range, always
-					//a = j*DeltaAlpha;
-					
-					if(j==-5) randoffset=0.5*(KthReal)_gen->d_rand();
-					else if(j==5) randoffset=-0.5*(KthReal)_gen->d_rand();
-					else randoffset=-0.5+(KthReal)_gen->d_rand();
-					a = (j+randoffset)*DeltaAlpha;
-					
-					//if(a>maxAlpha || a<-maxAlpha) 
-					//{
-					//	continue;
-					//}
+						if(i==imin) randoffset=0.5*(KthReal)_gen->d_rand();
+						else if(i==imax) randoffset=-0.5*(KthReal)_gen->d_rand();
+						else randoffset=-0.5+(KthReal)_gen->d_rand();
+						b = b0 + (i+randoffset)*DeltaBeta;
+					}
+					else 
+					{
+						a = j*DeltaAlpha;
+						b = b0 + i*DeltaBeta;
+					}
 					
 					//store a look-at point (a,b), in the normalized form between -1 and 1
 					if(a>0) alpha[k] = a/maxAlpha;
@@ -1037,10 +994,9 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			}
 
 			
-			clock_t computelookatpointsfinaltime = clock();
-			_computelookatpointstime += (double)(computelookatpointsfinaltime-computelookatpointsentertime)/CLOCKS_PER_SEC;
-
-			clock_t evallookatpointsentertime = clock();
+			//clock_t computelookatpointsfinaltime = clock();
+			//_computelookatpointstime += (double)(computelookatpointsfinaltime-computelookatpointsentertime)/CLOCKS_PER_SEC;
+			//clock_t evallookatpointsentertime = clock();
 
 			//sweep al the lookat points and compute their cost
 			for(int i=0; i<_maxLookAtPoints;i++)
@@ -1055,10 +1011,10 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				//at the tip poisition. retuns the distance cost and the NF1 cost
 
 				
-				clock_t testlookatpointentertime = clock();
+				//clock_t testlookatpointentertime = clock();
 				col[i] = testLookAtPoint(_counterFirstPoint+i, alpha[i], beta[i], s, &dcost[i], &NF1cost[i]);
-				clock_t testlookatpointfinaltime = clock();
-				_testlookatpointtime += (double)(testlookatpointfinaltime-testlookatpointentertime)/CLOCKS_PER_SEC;
+				//clock_t testlookatpointfinaltime = clock();
+				//_testlookatpointtime += (double)(testlookatpointfinaltime-testlookatpointentertime)/CLOCKS_PER_SEC;
 
 				//restore alpha0, beta0
 				//((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->setvalues(alpha0,0);
@@ -1245,8 +1201,8 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				_wkSpace->getObstacle(_counterFirstPoint+besti)->getElement()->setColor(color);
 			}
 
-			clock_t evallookatpointsfinaltime = clock();
-			_evallookatpointstime += (double)(evallookatpointsfinaltime-evallookatpointsentertime)/CLOCKS_PER_SEC;
+			//clock_t evallookatpointsfinaltime = clock();
+			//_evallookatpointstime += (double)(evallookatpointsfinaltime-evallookatpointsentertime)/CLOCKS_PER_SEC;
 
 
 
@@ -1351,6 +1307,7 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			values.push_back(beta0);
 			values.push_back(-1);
 			
+		    /*
 			clock_t advancecollcheckentertime = clock();
 			for(int i=1; i<=stepsahead; i++)
 			{
@@ -1370,6 +1327,7 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			}
 			clock_t advancecollcheckfinaltime = clock();
 			_advancecollchecktime += (double)(advancecollcheckfinaltime-advancecollcheckentertime)/CLOCKS_PER_SEC;
+		    */
 
 			//return to current position
 			_wkSpace->getRobot(0)->Kinematics(currentRobConf);
@@ -1767,10 +1725,10 @@ bool GUIBROgridPlanner::trySolve()
 			cout<<"TIME TO COMPUTE THE PATH = "<<(double)(finaltime-entertime)/CLOCKS_PER_SEC<<endl;
 			cout<<"CALLS TO ADVANCE_TO_BEST = "<<_simulationPath.size()<<endl;
 			cout<<"TIME TO ADVANCE_TO_BEST = "<<advancetobesttime/_simulationPath.size()<<endl;
-			cout<<"TIME TO COMPUTE LOOKATPOINTS = "<<_computelookatpointstime/_simulationPath.size()<<endl;
-			cout<<"TIME TO EVAL LOOKATPOINTS (TEST AND ORDER) = "<<_evallookatpointstime/_simulationPath.size()<<endl;
-			cout<<"TIME TO TEST LOOKATPOINTS = "<<_testlookatpointtime/_simulationPath.size()<<endl;
-			cout<<"TIME TO ADVANCE-COLLCHECK = "<<_advancecollchecktime/_simulationPath.size()<<endl;
+			//cout<<"TIME TO COMPUTE LOOKATPOINTS = "<<_computelookatpointstime/_simulationPath.size()<<endl;
+			//cout<<"TIME TO EVAL LOOKATPOINTS (TEST AND ORDER) = "<<_evallookatpointstime/_simulationPath.size()<<endl;
+			//cout<<"TIME TO TEST LOOKATPOINTS = "<<_testlookatpointtime/_simulationPath.size()<<endl;
+			//cout<<"TIME TO ADVANCE-COLLCHECK = "<<_advancecollchecktime/_simulationPath.size()<<endl;
 			
 
 			return _solved;

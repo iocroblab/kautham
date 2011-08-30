@@ -71,6 +71,7 @@
       <Parameter name="weight NF1">0.6</Parameter>
       <Parameter name="weight Dist">0.2</Parameter>
       <Parameter name="weight Alpha">0.2</Parameter>
+      <Parameter name="Add Randomness (0/1)">1</Parameter>
     </Parameters>
 		<Queries>
 			<Query>
