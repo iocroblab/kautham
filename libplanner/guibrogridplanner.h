@@ -92,10 +92,10 @@ using namespace workspacegridplanner;
 		void printInfo(guibroSample *gs);
 		void moveAlongPath(unsigned int step); //reimplemented
 
-		bool collisionCheck(int *distcost, KthReal *NF1cost, bool onlytip=false, KthReal radius=1.0);
+		bool collisionCheck(KthReal *distcost, KthReal *NF1cost, bool onlytip=false, KthReal radius=1.0);
 		//Add public data and functions
 		int look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta);
-		bool testLookAtPoint(int numPoint, KthReal alpha, KthReal xi, KthReal stepsahead, int *dcost, KthReal *NF1cost );
+		bool testLookAtPoint(int numPoint, KthReal alpha, KthReal xi, KthReal stepsahead, KthReal *dcost, KthReal *NF1cost );
 		int advanceToBest(KthReal steps,KthReal *bestAlpha, KthReal *bestBeta,Sample *smp=NULL, FILE *fp=NULL);
 		void setAdvanceStep(KthReal a){_stepsAdvance = a;};
 		KthReal getAdvanceStep(){return _stepsAdvance;};
@@ -108,7 +108,10 @@ using namespace workspacegridplanner;
 		inline int getTouchingLinks(){return  _touchinglabels.size();};
 		
 		//moves the bronchoscope if there are linbks touching the walls
-		bool comply(int *distcost, KthReal *NF1cost, bool onlytip=false, KthReal radius=1.0);
+		bool comply(KthReal *distcost, KthReal *NF1cost, bool onlytip=false, KthReal radius=1.0);
+
+		//computes the distance cost as the dot product of the advance motion with the distance gradient at the tip
+		void computedcost(mt::Point3 posini,mt::Point3 posend, KthReal *dcost);
 
 		protected:
 		//Add protected data and functions	

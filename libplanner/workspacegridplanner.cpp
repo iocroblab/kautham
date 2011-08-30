@@ -52,7 +52,7 @@ using namespace libSampling;
 namespace libPlanner {
   namespace workspacegridplanner{
 
-    workspacegridPlanner::workspacegridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
+    workspacegridPlanner::workspacegridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, KthReal thDist):
               Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
 	{
 		//set intial values
@@ -64,7 +64,8 @@ namespace libPlanner {
 		//_solved = false;
 		//setStepSize(ssize);//also changes stpssize of localplanner
 	  
-		
+		_thresholdDist = thDist;
+
 		discretizeCspace();
 		
 	
@@ -81,7 +82,7 @@ namespace libPlanner {
 		//find cell vc correspondiong to label
 		gridVertex vc;
 		if(getGraphVertex(label, &vc)==false) {
-			cout<<"computeDistanceGradient failed"<<endl;		
+			//cout<<"computeDistanceGradient failed"<<endl;		
 			return false;
 		}
 		//cout << «node » << vc <<«: » <<endl;
@@ -160,12 +161,11 @@ namespace libPlanner {
 		//int idproof;
 		//identifier of cells (id) starts at value 1, as read form file.
 		maxdist = -100000000;
-		int thresholdDist = -5;
 		while(!feof(fp))
 		{
 			fscanf(fp,"%ld %d\n",&id,&dist);
 			
-			if(dist<thresholdDist) continue;
+			if(dist<_thresholdDist) continue;
 
 			location loc;//coordinates x,y,z of a location start at value 1
 			loc.z = (int)floor((double)( (id-1.0)/(nx*ny) )) + 1;
@@ -410,7 +410,7 @@ namespace libPlanner {
 		if(_cellsMap.find(label)==_cellsMap.end())
 		{
 			//this cell is not in the graph!
-			cout<<"Error. The label does not correspond to any vertex of the graph"<<endl;
+			//cout<<"Error. The label does not correspond to any vertex of the graph"<<endl;
 			return false;
 		}
 		*v = _cellsMap[label];

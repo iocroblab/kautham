@@ -158,7 +158,7 @@ namespace libPlanner {
 	    public:
 		//!Constructor
         workspacegridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, KthReal thDist);
         ~workspacegridPlanner();
         
 		//!implemented as NF1 navigation function
@@ -249,6 +249,9 @@ namespace libPlanner {
 		//!Bool to determine if the graph has been loaded
         bool _isGraphSet;
 
+		//depth of the grid in negative distances, i.e. the graph will consdier all cells with 
+		//distance above this threshold
+		int _thresholdDist;
 
 		//!maximum distance on the grid (used to tune the NF1 value)
 		int maxdist;

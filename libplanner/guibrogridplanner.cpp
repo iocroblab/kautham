@@ -104,6 +104,14 @@ namespace libPlanner {
 	  _onlyNF1=1;
 	  addParameter("Only NF1(0/1)",_onlyNF1);
 
+	  
+		_weightNF1 = 0.6;
+	    addParameter("weight NF1",_weightNF1);
+		_weightDist = 0.2; 
+	    addParameter("weight Dist",_weightDist);
+	   _weightAlpha = 0.2;
+	    addParameter("weight Alpha",_weightAlpha);
+
 		//set intial values from parent class data
 		_speedFactor = 1;
 		_solved = false;
@@ -124,7 +132,8 @@ namespace libPlanner {
 		_wkSpace->getRobot(0)->setLinkPathDrawn(_drawnLink);
 
 
-		grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize);
+		KthReal thresholdDist = -5; //to consider a grpah including cells from distance -5 upwards.
+		grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize, thresholdDist);
 		pparse = new PathParse(9);
 		//pparse->setDimPoint(9);
     }
@@ -140,7 +149,7 @@ namespace libPlanner {
 	//!at the bottom and top of the cylinder. The bottom sphere of one link coincides with the
 	//!top sphere of the previous link.
 	//!For collision-check purposes the bottom sphere of each link is considered.
-	bool GUIBROgridPlanner::collisionCheck(int *distcost, KthReal *NF1cost, bool onlytip, KthReal radius)
+	bool GUIBROgridPlanner::collisionCheck(KthReal *distcost, KthReal *NF1cost, bool onlytip, KthReal radius)
 	{
 		//number maximum of touching links
 		int maxTouching = 5;
@@ -174,9 +183,10 @@ namespace libPlanner {
 		bool freesphere;
 		//threshold distance, measured in cells,
 		int threshold = (int)(sqrt(3.0)*maxSize/radius);//sqrt(3) is added to consider the distance to the vertex of the voxel
+
 		//int threshold = 2;
 		//reset the cost
-		*distcost=0;
+		*distcost=0.0;
 		if(onlytip==false)
 		{
 			_touchinglabels.clear();
@@ -219,7 +229,7 @@ namespace libPlanner {
 					collision = true;
 				}
 				
-				*distcost += dist;
+				*distcost += (KthReal)dist;
 			}
 		}
 		
@@ -302,7 +312,7 @@ namespace libPlanner {
 			_outofboundslabels.push_back(label);
 			collision = true;
 		}
-		*distcost += dist;
+		*distcost += (KthReal)dist;
 		
 
 		//Evaluate the NF1 function
@@ -316,12 +326,47 @@ namespace libPlanner {
 		return collision;
 	}
 
+//compute distance cost as the dot product between the motion direction 
+//and the gradient of the ditance at the tip
+//The best points have results in a greater value since the motion tends to move the tip towards 
+	//a place with more clearance
+void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthReal *dcost)
+	{
+		//compute motion vector
+		mt::Vector3 v;
+		v = posend-posini;
+
+		//compute label of tip at the end position
+		KthReal *O = grid->getOrigin();
+		KthReal *voxelSize = grid->getVoxelSize();
+		int *steps = grid->getDiscretization();
+		int i = (posend[0]-O[0]+voxelSize[0]/2)/voxelSize[0] + 1;
+		int j = (posend[1]-O[1]+voxelSize[1]/2)/voxelSize[1] + 1;
+		int k = (posend[2]-O[2]+voxelSize[2]/2)/voxelSize[2] + 1;
+		unsigned long int label =steps[0]*steps[1]*(k-1)+steps[0]*(j-1)+i;
+
+		//compute ditance gradient at that label
+		mt::Point3 f;
+		if(grid->computeDistanceGradient(label,&f)==true)
+		{		
+			//dot product f.v
+			*dcost = f.dot(v);
+			if(*dcost<0) *dcost=0.0;
+		}
+		else *dcost=0.0;
+	}
+
+
 
 	//! comply moves the bronchoscope to comply to a multicontact situation
-	bool GUIBROgridPlanner::comply(int *distcost, KthReal *NF1cost, bool onlytip, KthReal radius)
+	bool GUIBROgridPlanner::comply(KthReal *distcost, KthReal *NF1cost, bool onlytip, KthReal radius)
 	{
 		bool c=collisionCheck(distcost, NF1cost, onlytip, radius);
 
+
+		return c;
+
+/* NOT CLEAR
 		//If there are not collision or outofbounds labels, and at least there is a touching label
 		//then comply at the touch label, otherwise return c (either true or false)
 		
@@ -385,6 +430,7 @@ namespace libPlanner {
 		}
 
 		return c;
+*/
 	}
 
 
@@ -632,7 +678,26 @@ namespace libPlanner {
           _onlyNF1 = it->second;
 		}else
           return false;
+
 		
+		it = _parameters.find("weight NF1");
+		if(it != _parameters.end()){
+          _weightNF1 = it->second;
+		}else
+          return false;
+
+		it = _parameters.find("weight Dist");
+		if(it != _parameters.end()){
+          _weightDist = it->second;
+		}else
+          return false;
+
+		it = _parameters.find("weight Alpha");
+		if(it != _parameters.end()){
+          _weightAlpha = it->second;
+		}else
+          return false;
+	
 		
 		it = _parameters.find("Drawn Path Link");
 		if(it != _parameters.end()){
@@ -679,7 +744,7 @@ namespace libPlanner {
 	{
 		vector<KthReal>  values;
 		KthReal currentNF1cost;
-		int currentdcost;
+		KthReal currentdcost;
 		
 
 		KthReal a,b;
@@ -730,7 +795,7 @@ namespace libPlanner {
 			if(fp!=NULL)
 			{	
 				bool colltest = collisionCheck(&currentdcost,&currentNF1cost);
-				fprintf(fp,"[%.2f %.2f %.2f %.2f %.2f %.2f %f %d],\n",
+				fprintf(fp,"[%.2f %.2f %.2f %.2f %.2f %.2f %f %f],\n",
 					s,*bestAlpha*180/M_PI,*bestBeta*180/M_PI, pos0[0],pos0[1],pos0[2],currentNF1cost,currentdcost);
 				//fprintf(fp,"Apply steps= %.2f a= %.2f b= %.2f from (%.2f %.2f %.2f) Reached: NF1= %f Dist = %d col = FALSE\n",
 				//	s,*bestAlpha*180/M_PI,*bestBeta*180/M_PI, pos0[0],pos0[1],pos0[2],currentNF1cost,currentdcost);
@@ -884,14 +949,15 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				else randoffset=-0.5+(KthReal)_gen->d_rand();
 				b = b0 + (i+randoffset)*DeltaBeta;
 				*/
-				b = b0 + i*DeltaBeta;
+				//b = b0 + i*DeltaBeta;
 				
-
+				/*
 				if(b>maxBeta || b<minBeta) 
 				{
 					//should not reach this point
 					continue;
 				}
+				*/
 				//find the range of alpha for the current value of beta (b)
 				//alphaRange = 20+fabs(2.0*b+180); 
 				//alphaRange = (maxAlpha/180.0)*238.500000000000398-6.55535714285715976*fabs(b)+0.473214285714287364e-1*b*b;
@@ -913,16 +979,22 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				//sweep alphaRange degrees around alpha0
 				for(int j=-5;j<=5;j++)
 				{
+
+				if(i==imin) randoffset=0.5*(KthReal)_gen->d_rand();
+				else if(i==imax) randoffset=-0.5*(KthReal)_gen->d_rand();
+				else randoffset=-0.5+(KthReal)_gen->d_rand();
+				b = b0 + (i+randoffset)*DeltaBeta;
+
 					//a = a0 + j*DeltaAlpha;
 					
 					//sweep the whole alpha range, always
-					a = j*DeltaAlpha;
-					/*
+					//a = j*DeltaAlpha;
+					
 					if(j==-5) randoffset=0.5*(KthReal)_gen->d_rand();
 					else if(j==5) randoffset=-0.5*(KthReal)_gen->d_rand();
 					else randoffset=-0.5+(KthReal)_gen->d_rand();
 					a = (j+randoffset)*DeltaAlpha;
-					*/
+					
 					//if(a>maxAlpha || a<-maxAlpha) 
 					//{
 					//	continue;
@@ -943,17 +1015,17 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			}
 
 			//Now, compute the cost of each of the lookat points
-			vector<int> dcost(_maxLookAtPoints); //distance cost vector
+			vector<KthReal> dcost(_maxLookAtPoints); //distance cost vector
 			vector<KthReal> NF1cost(_maxLookAtPoints); //NF1 value cost vector
 			vector<bool> col(_maxLookAtPoints); //color of he points: it will depend on the cost
 
 			int freepoints = 0;
 			KthReal minNF1cost = 1000000.0;
 			KthReal maxNF1cost = -1000000.0;
-			int mindcost = 1000000;
-			int maxdcost = -1000000;
+			KthReal mindcost = 1000000.0;
+			KthReal maxdcost = -1000000.0;
 			KthReal currentNF1cost;
-			int currentdcost;
+			KthReal currentdcost;
 			int pointminNF1cost = -1;
 
 			//current cost 
@@ -1063,7 +1135,7 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			//else color the candidate points
 			KthReal minr=100000;
 			int localminima=1;
-			int bestdcost;
+			KthReal bestdcost;
 			KthReal bestNF1cost;
 			int besti=-1;
 
@@ -1097,7 +1169,8 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			for(int j=0; j<indexi.size();j++)
 			{
 				int i = indexi[j];
-				rDist[i] = 1-((KthReal)(dcost[i]-mindcost)/(maxdcost-mindcost));
+				//lower values of rdist are better, then it has to be defined as:
+				rDist[i] = 1-((dcost[i]-mindcost)/(maxdcost-mindcost));
 			}			
 
 			//Then compute rAlpha, the value that weights the amount of alpha angle
@@ -1244,14 +1317,17 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 			}
 		}
 
+
+
+
 //Evaluates  the configuration stepsahead from the current one and draws a point at it.
 //retunrs the distance cost and the NF1 cost
 bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha, 
-										KthReal beta, KthReal stepsahead, int *dcost, KthReal *NF1cost)
+										KthReal beta, KthReal stepsahead, KthReal *dcost, KthReal *NF1cost)
 {
 
 			mt::Transform linkTransf;
-			mt::Point3 pos;
+			mt::Point3 pos, posini;
 			mt::Rotation rot;
 			KthReal p[3];
 			Vector3 zaxis;
@@ -1299,6 +1375,13 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			_wkSpace->getRobot(0)->Kinematics(currentRobConf);
 			//restore alpha0, beta0
 			((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->registerValues();
+			
+			linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
+			int nlinks = _wkSpace->getRobot(0)->getNumLinks();
+			mt::Transform totip;	
+			totip.setRotation(mt::Rotation(0.0,0.0,0.0,1));
+			totip.setTranslation(mt::Vector3( _wkSpace->getRobot(0)->getLink(nlinks-1)->getA(),0,0) );	
+			posini = (linkTransf*totip).getTranslation();
 
 			
 			//Advance to final value
@@ -1312,18 +1395,16 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			
 			//move the broncoscope at the new position
 			linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
-			int nlinks = _wkSpace->getRobot(0)->getNumLinks();
-			mt::Transform totip;	
-			totip.setRotation(mt::Rotation(0.0,0.0,0.0,1));
-			totip.setTranslation(mt::Vector3( _wkSpace->getRobot(0)->getLink(nlinks-1)->getA(),0,0) );			
-			mt::Transform tipTransf = linkTransf*totip;
-			pos = tipTransf.getTranslation();
+			pos = (linkTransf*totip).getTranslation();
 
 			if(colltest==false){
 				//compute the cost at the last position
 				//colltest = collisionCheck(dcost,NF1cost);
 				colltest = comply(dcost,NF1cost);
 			}
+
+			//recompute the dcost in a different manner
+			computedcost(posini,pos,dcost);
 
 			//computes the position of the point at the extrem of the broncoscope at the new position
 			p[0]=pos[0];
@@ -1471,16 +1552,17 @@ bool GUIBROgridPlanner::trySolve()
 				}
 			}
 			
+			
+			_simulationPath.clear();
+			_cameraPath.clear();
+			_path.clear();
+			_solved = false;
+
 			//if init or goal changed then recompute NF1
 			if(vi != vinit || vg != vgoal)
 			{
 				vinit = vi;
 				vgoal = vg;
-
-				_simulationPath.clear();
-				_cameraPath.clear();
-				_path.clear();
-				_solved = false;
 				  
 				//Comnpute NF1
 				cout<<"START computing NF1 function"<<endl;
@@ -1494,9 +1576,12 @@ bool GUIBROgridPlanner::trySolve()
 			((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->registerValues();
 
 			//weights for the selection of the best motion
-			KthReal wNF1=0.6;//0.6;
-			KthReal wDist=0.0;//0.2;
-			KthReal wAlpha=0.4;
+			//const KthReal wNF1value=0.6;
+			//const KthReal wDistvalue=0.4;
+			//const KthReal wAlphavalue = 0.0;//0.2;
+			KthReal wNF1=_weightNF1; 
+			KthReal wDist=_weightDist;//these values are now set as parameteres of the planner.
+			KthReal wAlpha=_weightAlpha;
 			setWeights(wNF1,wDist,wAlpha);
 
 			//we are done if only queried for the NF1 function values
@@ -1541,9 +1626,10 @@ bool GUIBROgridPlanner::trySolve()
 			double *ppoint;
 			vector<double*> path2guide; //
 			KthReal currentNF1cost;
-			int currentdcost;
+			KthReal currentdcost;
 			int j=0;
-
+			const int repeattimes=4;
+			int repeat=repeattimes;
 
 			//Start moving towards goal	
 			_computelookatpointstime=0;
@@ -1632,34 +1718,33 @@ bool GUIBROgridPlanner::trySolve()
 					if(steps<_stepsAdvance) 
 					{
 						steps *=2.0;//restore step value
-						/*
-						wNF1 += 0.2;
-						wDist -= 0.2;
-						if(wNF1>0.6) 
-						{
-							wNF1 = 0.6;
-							wDist = 0.2;
-						}
-						setWeights(wNF1,wDist,wAlpha);
-						*/
+						//restore weights	
+						//wNF1=_weightNF1; 
+						//wDist=_weightDist;
+						//wAlpha=_weightAlpha;
+						//setWeights(wNF1,wDist,wAlpha);
+						
 					}
+					//initialize again repeat counter
+					repeat=repeattimes;
 				}
 				//If advance was not possible then repeat with a smaller step advance and lower the weight of the NF1 function
 				//and increment the weight of the Distance.
 				
 				else
 				{
-					steps /=2.0;
-					/*
-					wNF1 -= 0.2;
-					wDist += 0.2;
-					if(wNF1<0.2) 
-					{
-						wNF1 = 0.2;
-						wDist = 0.6;
+					//if no repeat resulted in success, then reduce steps
+					if(repeat==0){
+						steps /=2.0;
+						repeat=repeattimes;
+						
+						//use obnly NF1 weight		
+						//wNF1=1.0; 
+						//wDist=0.0;
+						//wAlpha=0.0;
+						//setWeights(wNF1,wDist,wAlpha);
 					}
-					setWeights(wNF1,wDist,wAlpha);
-				    */
+					else repeat--;
 				}
 
 			//Keep advancing until local minima
