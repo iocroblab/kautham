@@ -1,5 +1,52 @@
 %evalresults
 clear v
+%compare different executions using random
+i=1;
+v(:,:,i)=r442;
+i=i+1;
+v(:,:,i)=r442rotat;
+evalpaths(v)
+return 
+
+%compare different executions using random
+i=1;
+v(:,:,i)=r1000;
+i=i+1;
+v(:,:,i)=r622;
+i=i+1;
+v(:,:,i)=r442;
+evalpaths(v)
+return 
+
+
+%compare different executions using random
+i=1;
+v(:,:,i)=r1000;
+i=i+1;
+v(:,:,i)=r1000_n2;
+i=i+1;
+v(:,:,i)=r1000_n3;
+i=i+1;
+v(:,:,i)=r1000_n4;
+i=i+1;
+v(:,:,i)=r1000_n5;
+evalpaths(v)
+return 
+
+%compare different executions using random
+i=1;
+v(:,:,i)=r442;
+i=i+1;
+v(:,:,i)=r442_n2;
+i=i+1;
+v(:,:,i)=r442_n3;
+i=i+1;
+v(:,:,i)=r442_n4;
+i=i+1;
+v(:,:,i)=r442_n5;
+evalpaths(v)
+return 
+
 %compare the use of random
 i=1;
 v(:,:,i)=r604;

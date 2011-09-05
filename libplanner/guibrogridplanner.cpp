@@ -1559,6 +1559,7 @@ bool GUIBROgridPlanner::trySolve()
 
 			//store first config of the path
 			_simulationPath.push_back(_init);	
+			_path.push_back(_init);
 						
 			//store corresponding camara position 
 			mt::Transform T_Ry;
@@ -1621,7 +1622,7 @@ bool GUIBROgridPlanner::trySolve()
 					alpha.push_back(bestAlpha);
 					beta.push_back(bestBeta);	
 
-
+					/*
 					linkTransf = _wkSpace->getRobot(0)->getLinkTransform(linktested);
 					pos = linkTransf.getTranslation();
 					if(j!=0)
@@ -1629,6 +1630,7 @@ bool GUIBROgridPlanner::trySolve()
 						verifyInvJacobian(linktested,pos[0]-pos0[0],pos[1]-pos0[1],pos[2]-pos0[2],
 							bestAlpha, bestBeta, bestAlpha-alpha.at(alpha.size()-2),bestBeta-beta.at(beta.size()-2));
 					}
+					*/
 
 
 
