@@ -137,7 +137,7 @@ namespace libPlanner {
 		_wkSpace->getRobot(0)->setLinkPathDrawn(_drawnLink);
 
 
-		KthReal thresholdDist = -5; //to consider a grpah including cells from distance -5 upwards.
+		KthReal thresholdDist = 0;//-5; //to consider a grpah including cells from distance -5 upwards.
 		grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize, thresholdDist);
 		pparse = new PathParse(9);
 		//pparse->setDimPoint(9);
