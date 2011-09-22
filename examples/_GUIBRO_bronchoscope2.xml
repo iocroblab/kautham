@@ -19,7 +19,7 @@
     <Collision Enable =" false">
     </Collision>
   </Scene>
-  <Scene scene="BRONCO/broncoGrid_0.wrl" scale="1.0">
+  <Scene scene="BRONCO/broncoGrid.wrl" scale="1.0">
     Scene Path
     <Location X="0.0" Y="0.0" Z="0.0" WX="1.0" WY="0.0" WZ="0.0" TH="0">
       Configuration of the scene
@@ -59,7 +59,7 @@
     <Collision Enable =" false">
     </Collision>
   </Scene>
-	<DistanceMap distanceMap="BRONCO/broncoDistanceMap_0.txt">
+	<DistanceMap distanceMap="BRONCO/broncoDistanceMap.txt">
 	</DistanceMap>
 	<Planner>
 		<Parameters>

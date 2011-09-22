@@ -838,7 +838,11 @@ bool PRMHandPlannerArmHandPCA::getSampleRandPCA(float R)
 			}
 
 			//compute inverse kinematics. solution is reloaded in same vector coord
-			bool maintainSameWrist=true;
+			//bool maintainSameWrist=true;
+			bool maintainSameWrist;
+			//if(_gen->d_rand()<0.5) maintainSameWrist=true;
+			//else maintainSameWrist=false;
+			maintainSameWrist=true;
 			bool invKinSolved=ArmInverseKinematics(coordrobot, goalSamp(), maintainSameWrist);
 						
 					

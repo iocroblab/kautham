@@ -255,6 +255,7 @@ namespace libPlanner {
 		freesphere=grid->getDistance(label, &dist);
 
 		//more constrained for the tip, if it is more near to the walls as detected by the gradient of the distance
+		/*
 		mt::Point3 f, pgrid;
 		pgrid[0] = voxelSize[0]*(i-1);
 		pgrid[1] = voxelSize[1]*(j-1);
@@ -264,6 +265,8 @@ namespace libPlanner {
 			//dot product f.v
 			if(f.dot(pos-pgrid) < 0) threshold += 1;
 		}
+		*/
+		
 		
 
 
@@ -1300,14 +1303,14 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			KthReal alpha0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
 			KthReal beta0 = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
 
-			
+			 
 			KthReal Delta_a = (alpha-alpha0)/stepsahead;
 			KthReal Delta_b = (beta-beta0)/stepsahead;
 			values.push_back(alpha0);
 			values.push_back(beta0);
 			values.push_back(-1);
 			
-		    /*
+		    /**/
 			clock_t advancecollcheckentertime = clock();
 			for(int i=1; i<=stepsahead; i++)
 			{
@@ -1327,7 +1330,7 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha,
 			}
 			clock_t advancecollcheckfinaltime = clock();
 			_advancecollchecktime += (double)(advancecollcheckfinaltime-advancecollcheckentertime)/CLOCKS_PER_SEC;
-		    */
+		    /**/
 
 			//return to current position
 			_wkSpace->getRobot(0)->Kinematics(currentRobConf);
