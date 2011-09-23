@@ -760,7 +760,7 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
 			//Correction of the stepsahead value as a function of the beta value: when the bending required for the 
 			//bronchoscope (i.e. the diference between the current and the optimum beta) is big then the steps to
 			//go ahead is increased. This correction is also taken into account in function look.
-			KthReal s = stepsahead/cos(*bestBeta-beta0);
+			KthReal s = stepsahead/cos(b-beta0);
 			
 			//Interpolation when s>1
 			if(s>1)
@@ -780,6 +780,7 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
 				values.push_back(*bestBeta);
 				values.push_back(-s);
 			}
+			
 			//advance
 			_wkSpace->getRobot(0)->ConstrainedKinematics(values);
 			comply(&currentdcost,&currentNF1cost);
