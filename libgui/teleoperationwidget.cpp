@@ -40,6 +40,7 @@
 #include "teleoperationwidget.h"
 #include "properties_gui.hpp"
 #include "gui.h"
+#include "axis.h"
 #include <Inventor/nodes/SoCylinder.h>
 #include <Inventor/nodes/SoCone.h>
 #include <Inventor/nodes/SoCube.h>
@@ -767,7 +768,7 @@ namespace libGUI{
 			ttype->value = SoGLRenderAction::SORTED_OBJECT_BLEND ;
 			_EFrame->addChild(ttype);
       _EFrame->addChild(sca);
-//	    _EFrame->addChild(new Axis()); 
+	    _EFrame->addChild(new Axis()); 
     }
 
     int activeRob = _radBttRobot0->isChecked() ? 0 : 1;
@@ -797,7 +798,8 @@ namespace libGUI{
       _KFrame->addChild(trans);
       _KFrame->addChild(rot);
       _KFrame->addChild(sca);
-    //  _KFrame->addChild( new Axis() );
+      _KFrame->addChild( new Axis(0.5) );
+      _KFrame->ref();
     }
 
     if(_KAFrame == NULL ){
@@ -816,7 +818,8 @@ namespace libGUI{
       _KAFrame->addChild(trans);
       _KAFrame->addChild(rot);
       _KAFrame->addChild(sca);
-     // _KAFrame->addChild( new Axis() );
+      _KAFrame->addChild( new Axis(0.7) );
+      _KAFrame->ref();
     }
     
     if(_KBFrame == NULL ){
@@ -835,7 +838,8 @@ namespace libGUI{
       _KBFrame->addChild(trans);
       _KBFrame->addChild(rot);
       _KBFrame->addChild(sca);
-//      _KBFrame->addChild( new Axis() );
+      _KBFrame->addChild( new Axis(0.85) );
+      _KBFrame->ref();
     }
     
     tmpRoot->addChild( _KFrame );
@@ -864,10 +868,15 @@ namespace libGUI{
 
     SoSeparator* tmpSep = _gui->getRootTab(_gui->getActiveViewTitle());
     tmpSep->removeChild(_hapticBox);
-    tmpSep->removeChild(_EFrame);
     tmpSep->removeChild(_KFrame);
     tmpSep->removeChild(_KAFrame);
     tmpSep->removeChild(_KBFrame);
+
+    int activeRob = _radBttRobot0->isChecked() ? 0 : 1;
+    Robot* tmpRob = _problem->wSpace()->getRobot(activeRob);
+    Link* tmpLink = tmpRob->getLink(tmpRob->getNumLinks() - 1); //Get the last link
+    SoSeparator* tmpModel = ((IVPQPElement*)tmpLink->getElement())->ivModel(false);
+    tmpModel->removeChild(_EFrame);
   }
 
   void TeleoperationWidget::getCamera(){
