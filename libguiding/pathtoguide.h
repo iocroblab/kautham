@@ -196,6 +196,9 @@ public:
 
     //! This vector stores the layout of the robot for each node in the pathQ;
     vector<libProblem::RobLayout> _layouts;
+
+    //! 
+    vector<size_t>  _singularities;
     
     //! ANN structure to search the nearest in cspace
   	MultiANN*       _nearestQ;

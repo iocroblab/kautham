@@ -65,11 +65,11 @@ namespace libProblem {
       if( this->size() == b.size() ){
         for(size_t i = 0; i < size(); ++i)
           if( this->at(i) != b.at(i) )
-            return false;
+            return true;
         
-        return true;
+        return false;
       }
-      return false;
+      return true;
     }
 /*
     RobLayout& operator =(const RobLayout& b){

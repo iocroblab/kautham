@@ -87,6 +87,10 @@ namespace libGuiding{
         if( _rob.getIkine() != NULL ){
           // Now, the vector of layouts is filled using the Inverse Kinematic Model.
           RobLayout& rbLy = _rob.getIkine()->getRobLayout( it->second.getCoordinates() );
+          
+          if( !_layouts.empty() )
+            if( rbLy != _layouts.at(_layouts.size() -1 ) )
+              _singularities.push_back( _layouts.size() );
 
           _layouts.push_back( rbLy );
         }
