@@ -53,11 +53,12 @@ namespace libProblem {
 		//KthReal Dalpha = _maxalpha *(values[0]-curr_alpha);
 
 
-		KthReal Dalpha;
+		//KthReal Dalpha;
 		KthReal Alpha;
 		if(values[0]>=0) 
 		{
 			//both values[0] and curr_alpha positive
+			/*
 			if(curr_alpha>=0) 
 			{
 				Dalpha = _maxalpha *(values[0]-curr_alpha); 
@@ -67,11 +68,13 @@ namespace libProblem {
 			    //values[0] positive and curr_alpha negative (Delta is positive)
 				Dalpha = curr_alpha*_minalpha + values[0]*_maxalpha;
 			}
+			*/
 			Alpha = _maxalpha *values[0]; 
 		}
 		else 
 		{
 			//both values[0] and curr_alpha negative
+			/*
 			if(curr_alpha<0) Dalpha = -_minalpha *(values[0]-curr_alpha);//the signs of delta depends on the diference,
 																			//recall that _minalpha is a negative value
 			else
@@ -79,6 +82,7 @@ namespace libProblem {
 			    //curr_alpha  positive and values[0] negative (Delta is negative)
 				Dalpha = -curr_alpha*_maxalpha - values[0]*_minalpha;
 			}
+			*/
 			Alpha = -_minalpha *values[0]; 
 		}
 
@@ -176,16 +180,8 @@ namespace libProblem {
 		//if(values[0]>0) rncoor[0] = values[0]*_maxalpha; //alpha
 		//else rncoor[0] = -values[0]*_minalpha;
 		 
-		
-
-//rncoor[0] += Dalpha;
-rncoor[0] = Alpha;
-if(rncoor[0]<_minalpha)
-{
-	cout<<"kk"<<endl;
-}
-
-
+		//rncoor[0] += Dalpha;
+		rncoor[0] = Alpha;
 
 		//OK//rncoor[0] = values[0]; //alpha
 		//rncoor[0] = (values[0]+1)/2; //alpha
