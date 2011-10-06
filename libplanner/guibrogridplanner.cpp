@@ -726,6 +726,11 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
         step = step % _simulationPath.size();
         _wkSpace->moveTo(_simulationPath[step]);
 
+		((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->registerValues();
+		KthReal a = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
+		KthReal b = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(1);
+        std::cout << "alpha = " << a<<" beta = "<<b<<std::endl;
+
       }else
         std::cout << "The problem is wrong solved. The solution path has less than two elements." << std::endl;
 	}
@@ -941,14 +946,17 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 				DeltaAlpha = alphaRange/10;
 
 				//sweep alphaRange degrees around alpha0
-				for(int j=-5;j<=5;j++)
+				//for(int j=-5;j<=5;j++)
+				for(int j=0;j<=10;j++)
 				{
 					if(_randomness)
 					{
-						if(j==-5) randoffset=0.5*(KthReal)_gen->d_rand();
-						else if(j==5) randoffset=-0.5*(KthReal)_gen->d_rand();
+						//if(j==-5) randoffset=0.5*(KthReal)_gen->d_rand();
+						//else if(j==5) randoffset=-0.5*(KthReal)_gen->d_rand();
+						if(j==0) randoffset=0.5*(KthReal)_gen->d_rand();
+						else if(j==10) randoffset=-0.5*(KthReal)_gen->d_rand();
 						else randoffset=-0.5+(KthReal)_gen->d_rand();
-						a = (j+randoffset)*DeltaAlpha;
+						a = minAlpha + (j+randoffset)*DeltaAlpha;
 
 						if(i==imin) randoffset=0.5*(KthReal)_gen->d_rand();
 						else if(i==imax) randoffset=-0.5*(KthReal)_gen->d_rand();
@@ -957,7 +965,8 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bes
 					}
 					else 
 					{
-						a = j*DeltaAlpha;
+						//a = j*DeltaAlpha;
+						a = minAlpha + j*DeltaAlpha;
 						b = b0 + i*DeltaBeta;
 					}
 					
@@ -1469,6 +1478,12 @@ bool GUIBROgridPlanner::trySolve()
 				return _solved;
 			}
 			*/
+
+			std::vector<KthReal>& initcoords = _init->getCoords();
+			initcoords.at(6) = 0.5; //alpha forced to zero
+			initcoords.at(7) = 0.5; //beta forced to zero
+			_init->setCoords(initcoords);
+
 
 			//verify correctness of init sample
 			if(findGraphVertex(_init,&vi)==false)

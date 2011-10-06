@@ -175,7 +175,18 @@ namespace libProblem {
 
 		//if(values[0]>0) rncoor[0] = values[0]*_maxalpha; //alpha
 		//else rncoor[0] = -values[0]*_minalpha;
-		 rncoor[0] += Dalpha;
+		 
+		
+
+//rncoor[0] += Dalpha;
+rncoor[0] = Alpha;
+if(rncoor[0]<_minalpha)
+{
+	cout<<"kk"<<endl;
+}
+
+
+
 		//OK//rncoor[0] = values[0]; //alpha
 		//rncoor[0] = (values[0]+1)/2; //alpha
 		for(int i =1; i< rncoor.size(); i++)
