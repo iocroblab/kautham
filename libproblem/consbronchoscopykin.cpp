@@ -11,13 +11,13 @@ namespace libProblem {
 		_currentvalues[0] = 0.; 
 		_currentvalues[1] = 0.; 
 		_currentvalues[2] = 0.;
-		_maxbending = (KthReal) (2*M_PI/3);//120 degrees
-		_minbending = (KthReal) (-M_PI/2);//-90degrees
-		_maxalpha = (KthReal) (M_PI/2);//90degrees
-		_minalpha = (KthReal) (-M_PI/3);//-60degrees;
+		_maxbending_RAD = (KthReal) (2*M_PI/3);//120 degrees
+		_minbending_RAD = (KthReal) (-M_PI/2);//-90degrees
+		_maxalpha_RAD = (KthReal) (M_PI/2);//90degrees
+		_minalpha_RAD = (KthReal) (-M_PI/3);//-60degrees;
 
-		_rangealpha = _maxalpha - _minalpha;
-		_rangebending = _maxbending - _minbending;
+		_rangealpha_RAD = _maxalpha_RAD - _minalpha_RAD;
+		_rangebending_RAD = _maxbending_RAD - _minbending_RAD;
 
 	}
 	
@@ -43,8 +43,8 @@ namespace libProblem {
 		int n=_robot->getNumJoints()-1; //number of bending joints (do not consider base(fixed) and link0(alpha rotation))
 
 		// Current values
-		KthReal curr_alpha = getvalues(0);
-		KthReal curr_beta = getvalues(1);
+		//KthReal curr_alpha = getvalues(0);
+		//KthReal curr_beta = getvalues(1);
 		//KthReal curr_z = getvalues(2); // it will not be used cause the slider already gives a Delta
 		
 		//cout<<"alpha = "<<curr_alpha<<" psi = "<<curr_beta<<endl;
@@ -54,7 +54,7 @@ namespace libProblem {
 
 
 		//KthReal Dalpha;
-		KthReal Alpha;
+		KthReal Alpha_RAD;
 		if(values[0]>=0) 
 		{
 			//both values[0] and curr_alpha positive
@@ -69,7 +69,7 @@ namespace libProblem {
 				Dalpha = curr_alpha*_minalpha + values[0]*_maxalpha;
 			}
 			*/
-			Alpha = _maxalpha *values[0]; 
+			Alpha_RAD = _maxalpha_RAD *values[0]; 
 		}
 		else 
 		{
@@ -83,20 +83,20 @@ namespace libProblem {
 				Dalpha = -curr_alpha*_maxalpha - values[0]*_minalpha;
 			}
 			*/
-			Alpha = -_minalpha *values[0]; 
+			Alpha_RAD = -_minalpha_RAD *values[0]; 
 		}
 
-		KthReal psi;
-		if(values[1]>0) psi = _maxbending*(values[1]/n); // values[1]=total bending angle read from the slider
-		else psi = _minbending*(-values[1]/n);
+		KthReal psi_RAD;
+		if(values[1]>0) psi_RAD = _maxbending_RAD*(values[1]/n); // values[1]=total bending angle read from the slider
+		else psi_RAD = _minbending_RAD*(-values[1]/n);
 		KthReal Dzeta = (KthReal)-values[2];//directly the value read from the slider //-1000*(values[2]-currentvalues2);
    
 
 		// sin and cos of rotation angles
 		//KthReal calpha=cos(Dalpha); 
 		//KthReal salpha=sin(Dalpha);
-		KthReal calpha=cos(Alpha); 
-		KthReal salpha=sin(Alpha);
+		KthReal calpha=cos(Alpha_RAD); 
+		KthReal salpha=sin(Alpha_RAD);
     
 		// alpha rotation around z-axis
 		 mt::Matrix3x3 RzDalpha=Matrix3x3( calpha,   -salpha,  0,
@@ -119,14 +119,14 @@ namespace libProblem {
 		//mt::Transform Tbase;
 
 		//advance rotating
-		if (abs(psi)>0.0001){
-			KthReal d=l/2*cos(psi/2)/sin(psi/2);	 //dradio = -length/(2*tan(theta/2));	
-			KthReal Dbeta = Dzeta/d; //(2*zeta*tan(theta/2))/length;
+		if (abs(psi_RAD)>0.0001){
+			KthReal d=l/2*cos(psi_RAD/2)/sin(psi_RAD/2);	 //dradio = -length/(2*tan(theta/2));	
+			KthReal Dbeta_RAD = Dzeta/d; //(2*zeta*tan(theta/2))/length;
   		
-			KthReal cpsi=cos(psi); 
-			KthReal spsi=sin(psi);
-			KthReal cbeta=cos(Dbeta);  
-			KthReal sbeta=sin(Dbeta);
+			KthReal cpsi=cos(psi_RAD); 
+			KthReal spsi=sin(psi_RAD);
+			KthReal cbeta=cos(Dbeta_RAD);  
+			KthReal sbeta=sin(Dbeta_RAD);
 
 			mt::Transform T_Y_d_Z_l2;
 			T_Y_d_Z_l2.setRotation(mt::Rotation(0.0,0.0,0.0,1));
@@ -181,13 +181,13 @@ namespace libProblem {
 		//else rncoor[0] = -values[0]*_minalpha;
 		 
 		//rncoor[0] += Dalpha;
-		rncoor[0] = Alpha;
+		rncoor[0] = Alpha_RAD;
 
 		//OK//rncoor[0] = values[0]; //alpha
 		//rncoor[0] = (values[0]+1)/2; //alpha
 		for(int i =1; i< rncoor.size(); i++)
 		{
-			rncoor[i] = psi;
+			rncoor[i] = psi_RAD;
 			//if(values[1]>0) rncoor[i] = _maxbending*values[1]/n;
 			//else rncoor[i] = -(_minbending*values[1]/n);
 			//OK//rncoor[i] = values[1]/n;//i.e. psi/_maxbending;
@@ -228,15 +228,15 @@ namespace libProblem {
 		vector<KthReal>& rncoor= _RnConf.getCoordinates();
 		//store noramalized anpha and beta values (in range -1..1) in  variable values
 		
-		KthReal a;
-		if(rncoor[0]>0) a=rncoor[0]/_maxalpha;
-		else a=-rncoor[0]/_minalpha;
-		setvalues(a,0);//alpha
+		KthReal a_11;
+		if(rncoor[0]>0) a_11=rncoor[0]/_maxalpha_RAD;
+		else a_11=-rncoor[0]/_minalpha_RAD;
+		setvalues(a_11,0);//alpha
 
-		KthReal b;
-		if(rncoor[1]>0) b=rncoor[1]*(rncoor.size()-1)/_maxbending;
-		else b=-rncoor[1]*(rncoor.size()-1)/_minbending;
-		setvalues(b,1);//beta
+		KthReal b_11;
+		if(rncoor[1]>0) b_11=rncoor[1]*(rncoor.size()-1)/_maxbending_RAD;
+		else b_11=-rncoor[1]*(rncoor.size()-1)/_minbending_RAD;
+		setvalues(b_11,1);//beta
 	}
 
 	bool ConsBronchoscopyKin::setParameters(){

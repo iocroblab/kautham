@@ -20,14 +20,14 @@ namespace libProblem {
 		void		    registerValues();
 
     ///XXXXXXXXXXXXXXXXXXXXXX
-	inline void  	setMaxBending(KthReal max){_maxbending=max;};
-	inline void  	setMinBending(KthReal min){_minbending=min;};
-	inline KthReal 	getMaxBending(){return _maxbending;};
-	inline KthReal 	getMinBending(){return _minbending;};
-	inline void  	setMaxAlpha(KthReal max){_maxalpha=max;};
-	inline void  	setMinAlpha(KthReal min){_minalpha=min;};
-	inline KthReal 	getMaxAlpha(){return _maxalpha;};
-	inline KthReal 	getMinAlpha(){return _minalpha;};
+	inline void  	setMaxBending(KthReal max){_maxbending_RAD=max;};
+	inline void  	setMinBending(KthReal min){_minbending_RAD=min;};
+	inline KthReal 	getMaxBending(){return _maxbending_RAD;};
+	inline KthReal 	getMinBending(){return _minbending_RAD;};
+	inline void  	setMaxAlpha(KthReal max){_maxalpha_RAD=max;};
+	inline void  	setMinAlpha(KthReal min){_minalpha_RAD=min;};
+	inline KthReal 	getMaxAlpha(){return _maxalpha_RAD;};
+	inline KthReal 	getMinAlpha(){return _minalpha_RAD;};
 	bool iJ(int k, int row, int column, KthReal alpha, KthReal xi, KthReal *coef);
 	bool ApplyInverseJ(int k, KthReal alpha, KthReal xi, KthReal vx, KthReal vy, 
 		KthReal vz, KthReal *Dalpha, KthReal *Dxi, KthReal *Dz);
@@ -36,12 +36,12 @@ namespace libProblem {
 		RobConf		solve(vector<KthReal> &values);
 		KthReal		_currentvalues[3];
 		mt::Transform   Tbase;
-		KthReal		_maxbending;
-		KthReal		_minbending;
-		KthReal		_maxalpha;
-		KthReal		_minalpha;
-		KthReal		_rangealpha;
-		KthReal		_rangebending;
+		KthReal		_maxbending_RAD;
+		KthReal		_minbending_RAD;
+		KthReal		_maxalpha_RAD;
+		KthReal		_minalpha_RAD;
+		KthReal		_rangealpha_RAD;
+		KthReal		_rangebending_RAD;
 	};
 }
 
