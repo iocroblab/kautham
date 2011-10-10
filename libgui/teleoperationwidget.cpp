@@ -1075,6 +1075,8 @@ namespace libGUI{
     RobLayout  robLay = path->getLayout( nea ); // This line gets the respective layout of the robot if it has a IK model.
 
     // This part implements the hysteresis
+    // Aqui se busca que si no se ha llegado al punto i del path a guiar se mantenga 
+    // la configuración del punto anterior i-1 
     if( robLay != _currentLayout ){
       if( !dirProj )
         robLay = path->getLayout( nea - 1 );
@@ -1093,6 +1095,36 @@ namespace libGUI{
           
           RobConf& tmp =_problem->wSpace()->getRobot(0)
                       ->InverseKinematics(target);
+
+          /* Aqui vamos a intentar limitar la respuesta de la cinemática inversa para que 
+            cuando haya un cambio de configuración se vea obligado a pasar por la singularidad
+            según se haya planeado.
+          */
+          // First, I verify if the tmp configuration corresponde a una configuracion cercana en el espacio 
+          // de configuraciones.
+          if( _pathsObj[activeRob]->Singularities().size() > 0){
+            int item =0;
+            while( nea <= _pathsObj[activeRob]->Singularities().at(item++) 
+              && item < _pathsObj[activeRob]->Singularities().size() - 1 )
+            {;
+            }
+            if( item < _pathsObj[activeRob]->Singularities().size() - 1 ){
+              // ahora hay que modificar el tmp para que sea no supere la configuración singular.
+              // Primero calculo el delta entre la posición item -1 y la item y coordenada a coordenada
+              // si es positivo marco el valor de la configuración singular como límite superior y si
+              // el delta es negativo lo pongo como límite inferior.
+              for(int axis = 0; axis < _pathsObj[activeRob]->PathQ().size(); axis++){
+                float deltai = _pathsObj[activeRob]->PathQ().at(item - 1).at(axis) - 
+                  _pathsObj[activeRob]->PathQ().at(item).at(axis);
+                if( deltai > 0 )
+                  if(tmp.getRn().getCoordinate(axis) > _pathsObj[activeRob]->PathQ().at(item).at(axis) )
+                    tmp.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
+                else
+                  if(tmp.getRn().getCoordinate(axis) < _pathsObj[activeRob]->PathQ().at(item).at(axis) )
+                    tmp.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
+              }
+            }
+          }
           _problem->wSpace()->getRobot(0)->Kinematics(tmp);
         }else 
         if(typeid(*_problem->wSpace()->getRobot(activeRob)->getIkine()) == typeid(IvKinTx90) ){
