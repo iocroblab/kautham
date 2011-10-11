@@ -18,6 +18,7 @@ namespace libProblem {
 		void		    setvalues(KthReal currentvalues, int i){ _currentvalues[i]=currentvalues;}
 		KthReal			getvalues(int i){return _currentvalues[i];}
 		void		    registerValues();
+		void setAngleLimits(KthReal mb, KthReal Mb, KthReal ma, KthReal Ma);
 
     ///XXXXXXXXXXXXXXXXXXXXXX
 	inline void  	setMaxBending(KthReal max){_maxbending_RAD=max;};
@@ -36,6 +37,10 @@ namespace libProblem {
 		RobConf		solve(vector<KthReal> &values);
 		KthReal		_currentvalues[3];
 		mt::Transform   Tbase;
+		KthReal		_initialmaxbending_RAD;
+		KthReal		_initialminbending_RAD;
+		KthReal		_initialmaxalpha_RAD;
+		KthReal		_initialminalpha_RAD;
 		KthReal		_maxbending_RAD;
 		KthReal		_minbending_RAD;
 		KthReal		_maxalpha_RAD;

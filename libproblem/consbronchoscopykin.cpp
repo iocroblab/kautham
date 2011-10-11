@@ -11,10 +11,13 @@ namespace libProblem {
 		_currentvalues[0] = 0.; 
 		_currentvalues[1] = 0.; 
 		_currentvalues[2] = 0.;
-		_maxbending_RAD = (KthReal) (2*M_PI/3);//120 degrees
-		_minbending_RAD = (KthReal) (-M_PI/2);//-90degrees
-		_maxalpha_RAD = (KthReal) (M_PI/2);//90degrees
-		_minalpha_RAD = (KthReal) (-M_PI/3);//-60degrees;
+		_initialminbending_RAD = (KthReal) (-M_PI/2);//-90degrees
+		_initialmaxbending_RAD = (KthReal) (2*M_PI/3);//120 degrees
+		_initialminalpha_RAD = (KthReal) (-M_PI/3);//-60degrees;
+		_initialmaxalpha_RAD = (KthReal) (M_PI/2);//90degrees
+
+		//set _minbending_RAD, _maxbending_RAD, _minalpha_RAD, _maxalpha_RAD
+		setAngleLimits(_initialminbending_RAD, _initialmaxbending_RAD, _initialminalpha_RAD, _initialmaxalpha_RAD);
 
 		_rangealpha_RAD = _maxalpha_RAD - _minalpha_RAD;
 		_rangebending_RAD = _maxbending_RAD - _minbending_RAD;
@@ -91,6 +94,13 @@ namespace libProblem {
 		else psi_RAD = _minbending_RAD*(-values[1]/n);
 		KthReal Dzeta = (KthReal)-values[2];//directly the value read from the slider //-1000*(values[2]-currentvalues2);
    
+		//computation of beta values to update the limits at the end of the function
+		KthReal currbeta_RAD;
+		if(getvalues(1)>0) currbeta_RAD = _maxbending_RAD*getvalues(1);
+		else currbeta_RAD = -_minbending_RAD*getvalues(1); //recall minbending is negative
+		KthReal newbeta_RAD;
+		if(values[1]>0) newbeta_RAD = _maxbending_RAD*values[1];
+		else newbeta_RAD = -_minbending_RAD*values[1]; //recall minbending is negative
 
 		// sin and cos of rotation angles
 		//KthReal calpha=cos(Dalpha); 
@@ -214,10 +224,52 @@ namespace libProblem {
 		_robConf.setSE3(coords);
 		_robConf.setRn(_RnConf);
 		_robot->Kinematics(_robConf);
-		
+
+		//update the limits of beta as a function of the accumulated motions 
+		KthReal Delta_beta_RAD=0;
+		if(newbeta_RAD>0)
+		{
+			if(currbeta_RAD<newbeta_RAD)
+			{
+				if(currbeta_RAD>0) Delta_beta_RAD = newbeta_RAD - currbeta_RAD;
+				else Delta_beta_RAD = newbeta_RAD;
+			}
+		}
+		else
+		{
+			if(currbeta_RAD>newbeta_RAD)
+			{
+				if(currbeta_RAD<0) Delta_beta_RAD = newbeta_RAD - currbeta_RAD;
+				else Delta_beta_RAD = newbeta_RAD;
+			}
+		}
+		setAngleLimits(_minbending_RAD-Delta_beta_RAD,_maxbending_RAD-Delta_beta_RAD,
+			 			   _minalpha_RAD, _maxalpha_RAD);
+
 		return _robConf;
 	}
 
+
+	//computes the normalized values alpha and beta corresponding to the current robot configuration
+	void ConsBronchoscopyKin::setAngleLimits(KthReal mb, KthReal Mb, KthReal ma, KthReal Ma)
+	{
+		if(mb>0) mb=0;//min value is negative allways
+		else if(mb<_initialminbending_RAD) mb = _initialminbending_RAD;
+		if(Mb<0) Mb=0;//max value is positive allways
+		else if(Mb>_maxbending_RAD) Mb = _initialmaxbending_RAD;
+		
+		if(ma>0) ma=0;//min value is negative allways
+		else if(ma<_initialminalpha_RAD) ma = _initialminalpha_RAD;
+		if(Ma<0) Ma=0;//max value is positive allways
+		else if(Ma>_initialmaxalpha_RAD) Ma = _initialmaxalpha_RAD;
+
+		_minbending_RAD = mb;
+		_maxbending_RAD = Mb;
+		_minalpha_RAD = ma;
+		_maxalpha_RAD = Ma;
+
+		cout<<"mb = "<<_minbending_RAD<<" Mb = "<<_maxbending_RAD<<" ma = "<<_minalpha_RAD<<" Ma = "<<_maxalpha_RAD<<endl;
+	}
 
 	//computes the normalized values alpha and beta corresponding to the current robot configuration
 	void ConsBronchoscopyKin::registerValues()
