@@ -16,7 +16,7 @@
   </Robot>
 	
 	<Scene scene="scenes/teleoperation_test.iv" scale="1.0">
-    <Location TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="-1.0" Y="0.0" X="0.0"/> 
+    <Location TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="-2.0" Y="0.0" X="0.0"/> 
    </Scene>
 
 </Problem>
