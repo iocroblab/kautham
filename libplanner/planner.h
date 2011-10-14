@@ -122,6 +122,8 @@ namespace libPlanner {
     bool                           addQuery(int init, int goal );
     int                            findQuery(int init, int goal, int from = 0);
 
+	virtual inline SoSeparator *getIvCspaceScene(){return NULL;};
+
 
 	protected:
     Planner();

@@ -42,6 +42,7 @@
  
 
 
+#include <libproblem/ivworkspace.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include <boost/graph/astar_search.hpp>
@@ -97,6 +98,14 @@ namespace libPlanner {
 	PRMPlanner::~PRMPlanner(){
 			
 	}
+
+
+	
+	SoSeparator *PRMPlanner::getIvCspaceScene()
+	{
+		return ((IVWorkSpace*)_wkSpace)->getIvScene();
+	}
+
 
 	//!Function to set the parameters of the PRM planner 
     bool PRMPlanner::setParameters(){

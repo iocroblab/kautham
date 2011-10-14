@@ -263,6 +263,10 @@ bool Application::problemSetup(string path){
 
   mainWindow->addToProblemTree( path );
   mainWindow->addViewerTab("WSpace", libGUI::SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvScene());
+  if((_problem->getPlanner())->getIvCspaceScene() != NULL)
+  {
+		mainWindow->addViewerTab("CSpace", libGUI::SPACE, (_problem->getPlanner())->getIvCspaceScene());
+  }
 
   //  Using to show the IV models reconstructed from the PQP triangular meshes.
   //mainWindow->addViewerTab("PQP", libGUI::SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvFromPQPScene());
