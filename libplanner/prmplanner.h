@@ -147,6 +147,7 @@ namespace libPlanner {
 			void printConnectedComponents();
 
 	 SoSeparator *getIvCspaceScene();//reimplemented
+	 void drawCspace();
 
 		protected:
 			vector<prmEdge*> edges;

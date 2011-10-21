@@ -52,8 +52,12 @@
 #include "prmplanner.h"
 #include <stdio.h>
 #include <libutil/pugixml/pugixml.hpp>
-
 #include <libsampling/lcprng.h>
+
+
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoPointSet.h>
+#include <Inventor/nodes/SoLineSet.h>
 
 
 
@@ -99,11 +103,100 @@ namespace libPlanner {
 			
 	}
 
-
+ 
 	
 	SoSeparator *PRMPlanner::getIvCspaceScene()
 	{
-		return ((IVWorkSpace*)_wkSpace)->getIvScene();
+		if(_wkSpace->getDimension()==2)
+		{
+			//_sceneCspace = ((IVWorkSpace*)_wkSpace)->getIvScene();
+			_sceneCspace = new SoSeparator();
+		}
+		else _sceneCspace=NULL;
+		return Planner::getIvCspaceScene();
+		
+	}
+
+
+	void PRMPlanner::drawCspace()
+	{
+		if(_wkSpace->getDimension()==2)
+		{
+			SoSeparator *psep = new SoSeparator();
+			SoCoordinate3 *points  = new SoCoordinate3();
+			SoPointSet *pset  = new SoPointSet();
+			vector<Sample*>::iterator itera = _samples->getBeginIterator();
+			int i=0;
+			KthReal xmin=100000000.0;
+			KthReal xmax=-100000000.0;
+			KthReal ymin=100000000.0;
+			KthReal ymax=-100000000.0;
+			while((itera != _samples->getEndIterator()))
+			{
+				KthReal x=(*itera)->getCoords()[0];
+				KthReal y=(*itera)->getCoords()[1];
+
+				points->point.set1Value(i,x,y,0);
+
+				if(x<xmin) xmin=x;
+				else if(x>xmax) xmax=x;
+				if(y<ymin) ymin=y;
+				else if(y>ymax) ymax=y;
+
+				itera++;
+				i++;
+			}
+			SoDrawStyle *pstyle = new SoDrawStyle;
+			pstyle->pointSize = 2;
+			SoMaterial *color = new SoMaterial;
+			color->diffuseColor.setValue(0.2,0.8,0.2);
+
+			//draw samples
+			psep->addChild(color);
+			psep->addChild(points);
+			psep->addChild(pstyle);
+			psep->addChild(pset);
+
+			_sceneCspace->addChild(psep);
+			
+
+			//draw edges
+			SoSeparator *lsep = new SoSeparator();
+			lsep->addChild(points);
+			//while((itera != _samples->getEndIterator()))
+			//{
+				SoLineSet *ls = new SoLineSet;
+				ls->numVertices.set1Value(0,1);
+				ls->numVertices.set1Value(1,2);
+				lsep->addChild(ls);
+			//	itera++;
+			//	i++;
+			//}
+			_sceneCspace->addChild(lsep);
+
+			//draw floor
+			SoSeparator *floorsep = new SoSeparator();
+			SoCube *cs = new SoCube();
+			cs->width = xmax-xmin;
+			cs->depth = (xmax-xmin)/50.0;
+			cs->height = ymax-ymin;
+			
+			SoTransform *cub_transf = new SoTransform;
+			SbVec3f centre;
+			centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,-cs->depth.getValue());
+			cub_transf->translation.setValue(centre);
+			cub_transf->recenter(centre);	
+			
+			SoMaterial *cub_color = new SoMaterial;
+			cub_color->diffuseColor.setValue(0.2,0.2,0.2);
+
+			floorsep->addChild(cub_color);
+			floorsep->addChild(cub_transf);
+			floorsep->addChild(cs);
+			_sceneCspace->addChild(floorsep);
+
+
+		}
 	}
 
 
@@ -312,6 +405,7 @@ namespace libPlanner {
             printConnectedComponents();
             smoothPath();
             cout << "Calls to collision-check = " << count <<endl;
+			drawCspace();
             _solved = true;
             break;
           }
@@ -320,8 +414,12 @@ namespace libPlanner {
 
       printConnectedComponents();
       _triedSamples = count;
+
+	  drawCspace();
+
       return _solved;
     }
+
 
 
 

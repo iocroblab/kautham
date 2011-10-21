@@ -68,6 +68,7 @@ namespace libPlanner{
     _hasCameraInformation = false;
     _triedSamples = _maxNumSamples = _generatedEdges = 0;
     _totalTime = _smoothTime = 0. ;
+	_sceneCspace=NULL;
 	}
 
   Planner::~Planner(){
