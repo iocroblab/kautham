@@ -61,6 +61,7 @@
 
 
 
+
 using namespace libSampling;
 using namespace SDK;
 using namespace pugi;
@@ -139,9 +140,9 @@ namespace libPlanner {
 				points->point.set1Value(i,x,y,0);
 
 				if(x<xmin) xmin=x;
-				else if(x>xmax) xmax=x;
+				if(x>xmax) xmax=x;
 				if(y<ymin) ymin=y;
-				else if(y>ymax) ymax=y;
+				if(y>ymax) ymax=y;
 
 				itera++;
 				i++;
@@ -160,18 +161,22 @@ namespace libPlanner {
 			_sceneCspace->addChild(psep);
 			
 
-			//draw edges
+			//draw edges: 
 			SoSeparator *lsep = new SoSeparator();
-			lsep->addChild(points);
-			//while((itera != _samples->getEndIterator()))
-			//{
+			
+			vector<prmEdge*>::iterator itC;
+			for(itC = edges.begin(); itC != edges.end(); ++itC)
+			{	
+				SoCoordinate3 *edgepoints  = new SoCoordinate3();
+				edgepoints->point.set1Value(0,points->point[(*itC)->first]);
+				edgepoints->point.set1Value(1,points->point[(*itC)->second]);
+				lsep->addChild(edgepoints);
+
 				SoLineSet *ls = new SoLineSet;
-				ls->numVertices.set1Value(0,1);
-				ls->numVertices.set1Value(1,2);
+				ls->numVertices.set1Value(0,2);//two values
+				cout<<"EDGE "<<(*itC)->first<<" "<<(*itC)->second<<endl;
 				lsep->addChild(ls);
-			//	itera++;
-			//	i++;
-			//}
+			}
 			_sceneCspace->addChild(lsep);
 
 			//draw floor
@@ -397,9 +402,10 @@ namespace libPlanner {
           
           _samples->add(smp);
           double r=rgen->d_rand();
-          if(r < 0.1) connectLastSample(_init);
-          else if(r < 0.2) connectLastSample(_goal);
-          else connectLastSample();
+          //if(r < 0.1) connectLastSample(_init);
+          //else if(r < 0.2) connectLastSample(_goal);
+          //else connectLastSample();
+          connectLastSample();
           if( findPath() )
           {
             printConnectedComponents();
