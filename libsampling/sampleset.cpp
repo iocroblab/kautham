@@ -73,17 +73,17 @@ namespace libSampling{
   {
 		if(maxn!=0) maxNeighs = maxn;
 		if(maxs!=0) maxSamples = maxs;
-    if(maxNeighs>=maxSamples)
-        maxNeighs=maxSamples-1;  //otherwise ANN search crashes
+		if(maxNeighs>=maxSamples)
+			maxNeighs=maxSamples-1;  //otherwise ANN search crashes
 
-    if(setANN==true)
+		if(setANN==true)
 			resetANNdatastructures();
 
 		if(ws==NULL){
 			cout<<"error: setWorkspace() should be called first"<<endl;
-//			exit(0);
-      setANN = false;
-      return;
+			//exit(0);
+			setANN = false;
+			return;
 		}
 
 		int dim=0;
@@ -97,8 +97,8 @@ namespace libSampling{
 		double *scale = new double[dim];
 
 		int c=0;
-    double rho_t = 1.0;
-    double rho_r = 1.0;
+		double rho_t = 1.0;
+		double rho_r = 1.0;
 		for(unsigned int i=0; i< ws->robotsCount(); i++)
 		{
 			rho_t = ws->getRobot(i)->getWeightSE3()[0]; 
@@ -159,8 +159,8 @@ namespace libSampling{
     // Updating the ANN structure
     //data_pts array also created in cspace constructor		
     if( setANN ){
-      vector<KthReal> tmpVec;
-      RobConf* confSmp;
+		  vector<KthReal> tmpVec;
+		  RobConf* confSmp;
 		  vector<KthReal> *p;
 
 		  unsigned int h = indexOf(samp);
@@ -178,7 +178,7 @@ namespace libSampling{
 			  from = j;
 			  ws->getRobot(i)->control2Pose(tmpVec);
 			  confSmp = ws->getRobot(i)->getCurrentPos();
-        p = &(confSmp->getSE3().getCoordinates());
+			  p = &(confSmp->getSE3().getCoordinates());
   				
 			  data_pts[h][c++] = p->at(0);
 			  data_pts[h][c++] = p->at(1);
@@ -188,9 +188,9 @@ namespace libSampling{
 			  data_pts[h][c++] = p->at(5); //qz
 			  data_pts[h][c++] = p->at(6); //qw
   			
-        for(int m=0; m < confSmp->getRn().getDim(); m++)
+			  for(int m=0; m < confSmp->getRn().getDim(); m++)
 			  {
-          data_pts[h][c++] = confSmp->getRn().getCoordinates()[m];
+				data_pts[h][c++] = confSmp->getRn().getCoordinates()[m];
 			  }
 		  }
     }
@@ -246,6 +246,9 @@ namespace libSampling{
 
   vector<unsigned int>* SampleSet::findBFNeighs(Sample* samp, KthReal thresshold, unsigned int maxneighs){
 	  
+		unsigned int h = indexOf(samp);
+		if( h != samples.size() ) clearNeighs(h);
+
     vector<unsigned int> neighset;
     KthReal dist=0.0;
     unsigned int indx = 0;
@@ -291,6 +294,12 @@ namespace libSampling{
     }
     samp->setNeighs(neighset);
     hasChanged = false;
+
+
+	//cout<<"BF sample="<< h <<" neighs = ";
+	//for(int i=0;i<neighset.size();i++) 	cout<<neighset[i]<<"("<<distVec[i]<<"), ";
+	//cout<<endl;
+
     return samp->getNeighs();
 	
   }
@@ -301,7 +310,10 @@ namespace libSampling{
                 if(typesearch==BRUTEFORCE)
                     return findBFNeighs(samp, threshold, maxneighs);
                 else //ANN search
+				{
+					//findBFNeighs(samp, threshold, maxneighs);//for debug: comparison
                     return findAnnNeighs(samp, threshold);
+				}
   } 
   
   void SampleSet::findNeighs(KthReal threshold, unsigned int maxneighs)
@@ -472,45 +484,47 @@ namespace libSampling{
 
   void SampleSet::findAnnNeighs(KthReal threshold)
   {	  
-		if(!setANN) return;
-
+		if(!setANN) return;	
 		
 		//search structure MAG is created in cspace constructor
 		//data_pts array also created in cspace constructor		
 		loadAnnData();
 
-    //assert(_CrtCheckMemory());
+		//if not enough data then return
+		if(samples.size()<maxNeighs) return;
+
+		//assert(_CrtCheckMemory());
 
 		//BEGIN QUERY
-    double *d_ann = new double[maxNeighs];
-    int *idx_ann = new int[maxNeighs]; // This number must be lesser than samples.size() because if not the libANN crashes
-    ANNpoint *result_pt = new ANNpoint[std::min(maxNeighs,(unsigned int)samples.size())];
+		double *d_ann = new double[maxNeighs];
+		int *idx_ann = new int[maxNeighs]; // This number must be lesser than samples.size() because if not the libANN crashes
+		ANNpoint *result_pt = new ANNpoint[std::min(maxNeighs,(unsigned int)samples.size())];
     
-    //assert(_CrtCheckMemory());
+		//assert(_CrtCheckMemory());
 
 		int	numIt = 1; // maximum number of nearest neighbor calls ¿?
 
 		unsigned int max;
-    if(samples.size() < maxSamples)
-      max = samples.size();
-    else{
+		if(samples.size() < maxSamples)
+			max = samples.size();
+		else{
 			max = maxSamples;
 			cout<<"findAnnNeighs::Using a maximum of "<<max<<" samples"<<endl;
 		}
 		
 		clearNeighs();
-    for(int h=0;h<max;h++){
+		for(int h=0;h<max;h++){
 			//query tree
-      for (int k = 0; k < maxNeighs; k++)
-          d_ann[k] = INFINITY;
+			for (int k = 0; k < maxNeighs; k++)
+				d_ann[k] = INFINITY;
       
-      //assert(_CrtCheckMemory());
+			//assert(_CrtCheckMemory());
 
-      for (int i = 0; i < numIt; i++)	{
+			for (int i = 0; i < numIt; i++)	{
 				MAG->NearestNeighbor(data_pts[h], d_ann, idx_ann, (void**&)result_pt);	// compute nearest neighbor using library
 			}	
 
-      //assert(_CrtCheckMemory());
+			//assert(_CrtCheckMemory());
 
 			//add neighs
 			//d_ann contains the distances in increasing order, starting at 0 (autodistance) which is discarded (i.e. loop startsat i=1)
@@ -540,7 +554,8 @@ namespace libSampling{
   //! tree.
   vector<unsigned int>* SampleSet::findAnnNeighs(Sample* samp, KthReal threshold)
   {
-	  if(!setANN) return samp->getNeighs();
+		if(!setANN) return samp->getNeighs();
+
 
 		vector<KthReal> tmpVec;	
 		RobConf* confSmp;
@@ -553,14 +568,14 @@ namespace libSampling{
 		unsigned int j, from = 0;
 
 
-    int dim=0;
+		int dim=0;
 		for(unsigned int i=0; i< ws->robotsCount(); i++)
 		{
 			dim += 7;
 			dim += ws->getRobot(i)->getNumJoints();
 		}
 
-    ANNpoint pts = annAllocPt(dim);
+		ANNpoint pts = annAllocPt(dim);
 
 		for(unsigned int i=0; i< ws->robotsCount(); i++)
 		{
@@ -573,7 +588,7 @@ namespace libSampling{
 			from = j;
 			ws->getRobot(i)->control2Pose(tmpVec);
 			confSmp = ws->getRobot(i)->getCurrentPos();
-      p = &(confSmp->getSE3().getCoordinates());
+			p = &(confSmp->getSE3().getCoordinates());
 				
 			pts[c++] = p->at(0);
 			pts[c++] = p->at(1);
@@ -583,11 +598,20 @@ namespace libSampling{
 			pts[c++] = p->at(5); //qz
 			pts[c++] = p->at(6); //qw
 			
-      for(int m=0; m < confSmp->getRn().getDim(); m++)
+			for(int m=0; m < confSmp->getRn().getDim(); m++)
 			{
-        pts[c++] = confSmp->getRn().getCoordinates()[m];
+				pts[c++] = confSmp->getRn().getCoordinates()[m];
 			}
 		}
+
+		//if not enough data then return
+		if(samples.size()<maxNeighs)
+		{
+			//add sample to tree
+			MAG->AddPoint(pts, pts);		// add new data point
+			return samp->getNeighs();
+		}
+
 		//BEGIN QUERY
 		double *d_ann = new double[maxNeighs];
 		int *idx_ann = new int[maxNeighs];
@@ -602,12 +626,15 @@ namespace libSampling{
 		}	
 		//add neighs
 		
-    unsigned int h = indexOf(samp);
+		unsigned int h = indexOf(samp);
 		if( h != samples.size() ) clearNeighs(h);
+		//cout<<"ANN sample="<< h <<" neighs = ";
 		for (int i = 0; i < maxNeighs; i++) 
 		{
 			if(d_ann[i]<threshold)
 			{
+				//cout<<idx_ann[i]<<"("<<d_ann[i]<<"), ";
+
 				//add idx_ann[i] as neighbor of sample h
 				//the list of neighbors of h results in an increasing order as this is how ANN returns this info
 				samp->addNeigh(idx_ann[i]);
@@ -619,10 +646,19 @@ namespace libSampling{
 			}
 			else break;
 		}
+		//cout<<endl;
 		//add sample to tree
 		MAG->AddPoint(pts, pts);		// add new data point
 
 		hasChanged = false;
+
+
+		delete[] d_ann;
+		delete[] idx_ann;
+		delete[] result_pt ;
+
+
+
 		return samp->getNeighs();
   }
 	

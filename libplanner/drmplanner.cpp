@@ -42,6 +42,7 @@
  
 
 
+#include <libproblem/ivworkspace.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include <boost/graph/astar_search.hpp>
@@ -55,6 +56,9 @@
 #include <libsampling/lcprng.h>
 
 
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoPointSet.h>
+#include <Inventor/nodes/SoLineSet.h>
 
 using namespace libSampling;
 using namespace SDK;
@@ -139,6 +143,7 @@ namespace libPlanner {
         if(it != _parameters.end()){
           _maxNumSamples = it->second;
 		      _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+			 _samples->loadAnnData();
 		    }else
           return false;
 
@@ -152,6 +157,7 @@ namespace libPlanner {
         if(it != _parameters.end()){
           _kNeighs = (int)it->second;
 		      _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+			 _samples->loadAnnData();
 		    }else
           return false;
       }catch(...){
@@ -159,6 +165,129 @@ namespace libPlanner {
       }
       return true;
     }
+
+	SoSeparator *DRMPlanner::getIvCspaceScene()
+	{
+		if(_wkSpace->getDimension()==2)
+		{
+			//_sceneCspace = ((IVWorkSpace*)_wkSpace)->getIvScene();
+			_sceneCspace = new SoSeparator();
+		}
+		else _sceneCspace=NULL;
+		return Planner::getIvCspaceScene();
+		
+	}
+
+	void DRMPlanner::drawCspace()
+	{
+		if(_wkSpace->getDimension()==2)
+		{
+			SoSeparator *psep = new SoSeparator();
+			SoCoordinate3 *points  = new SoCoordinate3();
+			SoPointSet *pset  = new SoPointSet();
+			vector<Sample*>::iterator itera = _samples->getBeginIterator();
+			int i=0;
+			KthReal xmin=100000000.0;
+			KthReal xmax=-100000000.0;
+			KthReal ymin=100000000.0;
+			KthReal ymax=-100000000.0;
+			while((itera != _samples->getEndIterator()))
+			{
+				KthReal x=(*itera)->getCoords()[0];
+				KthReal y=(*itera)->getCoords()[1];
+
+				points->point.set1Value(i,x,y,0);
+
+				if(x<xmin) xmin=x;
+				if(x>xmax) xmax=x;
+				if(y<ymin) ymin=y;
+				if(y>ymax) ymax=y;
+
+				itera++;
+				i++;
+			}
+			SoDrawStyle *pstyle = new SoDrawStyle;
+			pstyle->pointSize = 2;
+			SoMaterial *color = new SoMaterial;
+			color->diffuseColor.setValue(0.2,0.8,0.2);
+
+			//draw samples
+			psep->addChild(color);
+			psep->addChild(points);
+			psep->addChild(pstyle);
+			psep->addChild(pset);
+
+			_sceneCspace->addChild(psep);
+			
+
+			//draw edges: 
+			SoSeparator *lsep = new SoSeparator();
+			vector<prmEdge*>::iterator itC;
+			for(itC = edges.begin(); itC != edges.end(); ++itC)
+			{	
+				SoCoordinate3 *edgepoints  = new SoCoordinate3();
+				edgepoints->point.set1Value(0,points->point[(*itC)->first]);
+				edgepoints->point.set1Value(1,points->point[(*itC)->second]);
+				lsep->addChild(edgepoints);
+
+				SoLineSet *ls = new SoLineSet;
+				ls->numVertices.set1Value(0,2);//two values
+				//cout<<"EDGE "<<(*itC)->first<<" "<<(*itC)->second<<endl;
+				lsep->addChild(ls);
+			}
+			_sceneCspace->addChild(lsep);
+
+			//draw path: 
+			if(_solved)
+			{
+				SoSeparator *pathsep = new SoSeparator();
+				list<prmVertex>::iterator spi = shortest_path.begin();
+				list<prmVertex>::iterator spi_init = shortest_path.begin();
+
+				for(++spi; spi != shortest_path.end(); ++spi)
+				{	
+					SoCoordinate3 *edgepoints  = new SoCoordinate3();
+					edgepoints->point.set1Value(0,points->point[*spi_init]);
+					edgepoints->point.set1Value(1,points->point[*spi]);
+					pathsep->addChild(edgepoints);
+
+					SoLineSet *ls = new SoLineSet;
+					ls->numVertices.set1Value(0,2);//two values
+					SoDrawStyle *lstyle = new SoDrawStyle;
+					lstyle->lineWidth=2;
+					SoMaterial *path_color = new SoMaterial;
+					path_color->diffuseColor.setValue(0.8,0.2,0.2);
+					pathsep->addChild(path_color);
+					pathsep->addChild(lstyle);
+					pathsep->addChild(ls);
+					spi_init = spi;
+				}
+				_sceneCspace->addChild(pathsep);
+			}
+
+
+			//draw floor
+			SoSeparator *floorsep = new SoSeparator();
+			SoCube *cs = new SoCube();
+			cs->width = xmax-xmin;
+			cs->depth = (xmax-xmin)/50.0;
+			cs->height = ymax-ymin;
+			
+			SoTransform *cub_transf = new SoTransform;
+			SbVec3f centre;
+			centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,-cs->depth.getValue());
+			cub_transf->translation.setValue(centre);
+			cub_transf->recenter(centre);	
+			
+			SoMaterial *cub_color = new SoMaterial;
+			cub_color->diffuseColor.setValue(0.2,0.2,0.2);
+
+			floorsep->addChild(cub_color);
+			floorsep->addChild(cub_transf);
+			floorsep->addChild(cs);
+			_sceneCspace->addChild(floorsep);
+		}
+	}
 
 	void DRMPlanner::setsampler(int i)
 	{
@@ -284,6 +413,7 @@ namespace libPlanner {
       {
         printConnectedComponents();
         smoothPath();
+		drawCspace();
         _solved = true;
         count = _samples->getSize();
       }
@@ -315,6 +445,8 @@ namespace libPlanner {
             smoothPath();
             cout << "Calls to collision-check = " << count <<endl;
             _solved = true;
+			
+			drawCspace();
             break;
           }
         }
@@ -322,6 +454,8 @@ namespace libPlanner {
 
       printConnectedComponents();
       _triedSamples = count;
+	  
+	  drawCspace();
       return _solved;
     }
 
@@ -490,8 +624,12 @@ namespace libPlanner {
 		if(connectToSmp != NULL)
 		{
 			//smpFrom->addNeigh( _samples->indexOf( connectToSmp ) );
-			//add sample connectToSmp as the first neighbor of sample smpFrom (set distance = 0)
-			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), 0.0, _kNeighs);
+			//add sample connectToSmp as the first neighbor of sample smpFrom (set distance = 0) 
+			//smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), 0.0, _kNeighs);
+		
+			// Modified to avoid the false order.
+			KthReal dis = smpFrom->getDistance(connectToSmp, Kautham::CONFIGSPACE );
+			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), dis, _kNeighs);
 		}
 
 		//srtart connecting with neighs

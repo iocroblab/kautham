@@ -75,10 +75,10 @@ namespace libPlanner {
       _neighThress = 1.5;//0.5//50000.0;
       _kNeighs = 10;
       _isGraphSet = false;
-	    _maxNumSamples = 300;//1000;
-	    _speedFactor = 1;
-	    _solved = false;
-	    setStepSize(ssize);//also changes stpssize of localplanner
+	  _maxNumSamples = 200;//1000;
+	  _speedFactor = 1;
+	  _solved = false;
+	  setStepSize(ssize);//also changes stpssize of localplanner
       _drawnLink = -1; //the path of last link is defaulted
   	  
       addParameter("Step Size", ssize);
@@ -90,9 +90,9 @@ namespace libPlanner {
 
 	    _labelCC=0;
 
-	    _samples->setTypeSearch(ANNMETHOD);//(BRUTEFORCE);//
+	    _samples->setTypeSearch(ANNMETHOD);//(BRUTEFORCE);//ANNMETHOD
 	    _samples->setWorkspacePtr(_wkSpace);
-	    //_samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+	    _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
 
       for(int i=0; i<_wkSpace->robotsCount();i++)
         _wkSpace->getRobot(i)->setLinkPathDrawn(_drawnLink);
@@ -163,7 +163,6 @@ namespace libPlanner {
 
 			//draw edges: 
 			SoSeparator *lsep = new SoSeparator();
-			
 			vector<prmEdge*>::iterator itC;
 			for(itC = edges.begin(); itC != edges.end(); ++itC)
 			{	
@@ -174,10 +173,39 @@ namespace libPlanner {
 
 				SoLineSet *ls = new SoLineSet;
 				ls->numVertices.set1Value(0,2);//two values
-				cout<<"EDGE "<<(*itC)->first<<" "<<(*itC)->second<<endl;
+				//cout<<"EDGE "<<(*itC)->first<<" "<<(*itC)->second<<endl;
 				lsep->addChild(ls);
 			}
 			_sceneCspace->addChild(lsep);
+
+			//draw path: 
+			if(_solved)
+			{
+				SoSeparator *pathsep = new SoSeparator();
+				list<prmVertex>::iterator spi = shortest_path.begin();
+				list<prmVertex>::iterator spi_init = shortest_path.begin();
+
+				for(++spi; spi != shortest_path.end(); ++spi)
+				{	
+					SoCoordinate3 *edgepoints  = new SoCoordinate3();
+					edgepoints->point.set1Value(0,points->point[*spi_init]);
+					edgepoints->point.set1Value(1,points->point[*spi]);
+					pathsep->addChild(edgepoints);
+
+					SoLineSet *ls = new SoLineSet;
+					ls->numVertices.set1Value(0,2);//two values
+					SoDrawStyle *lstyle = new SoDrawStyle;
+					lstyle->lineWidth=2;
+					SoMaterial *path_color = new SoMaterial;
+					path_color->diffuseColor.setValue(0.8,0.2,0.2);
+					pathsep->addChild(path_color);
+					pathsep->addChild(lstyle);
+					pathsep->addChild(ls);
+					spi_init = spi;
+				}
+				_sceneCspace->addChild(pathsep);
+			}
+
 
 			//draw floor
 			SoSeparator *floorsep = new SoSeparator();
@@ -199,8 +227,6 @@ namespace libPlanner {
 			floorsep->addChild(cub_transf);
 			floorsep->addChild(cs);
 			_sceneCspace->addChild(floorsep);
-
-
 		}
 	}
 
@@ -231,7 +257,8 @@ namespace libPlanner {
         it = _parameters.find("Max. Samples");
         if(it != _parameters.end()){
           _maxNumSamples = it->second;
-		      //_samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+		      _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+			  _samples->loadAnnData();
 		    }else
           return false;
 
@@ -244,7 +271,8 @@ namespace libPlanner {
         it = _parameters.find("Max. Neighs");
         if(it != _parameters.end()){
           _kNeighs = (int)it->second;
-		      //_samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+		     _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+			 _samples->loadAnnData();
 		    }else
           return false;
       }catch(...){
@@ -344,6 +372,10 @@ namespace libPlanner {
 
 	//!function that constructs the PRM and finds a solution path
     bool PRMPlanner::trySolve(){
+
+		
+	  //_samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+
       _solved = false;
       _init->addNeigh(_samples->indexOf(_goal));
       _goal->addNeigh(_samples->indexOf(_init));
@@ -402,10 +434,9 @@ namespace libPlanner {
           
           _samples->add(smp);
           double r=rgen->d_rand();
-          //if(r < 0.1) connectLastSample(_init);
-          //else if(r < 0.2) connectLastSample(_goal);
-          //else connectLastSample();
-          connectLastSample();
+          if(r < 0.1) connectLastSample(_init);
+          else if(r < 0.2) connectLastSample(_goal);
+          else connectLastSample();
           if( findPath() )
           {
             printConnectedComponents();

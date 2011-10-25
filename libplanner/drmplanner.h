@@ -149,6 +149,10 @@ namespace libPlanner {
 			bool isGraphSet(){return _isGraphSet;}
 			void printConnectedComponents();
 
+
+	 SoSeparator *getIvCspaceScene();//reimplemented
+	 void drawCspace();
+
 		protected:
 			vector<prmEdge*> edges;
       //!edge weights

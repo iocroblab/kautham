@@ -24,11 +24,12 @@
 	</Scene>
 	<Planner>
 		<Parameters>
-			<Name>PRM</Name>
+			<Name>DRM</Name>
 			<LocalPlanner stepSize="0.01">Linear</LocalPlanner>
 			<Parameter name="Drawn Path Link">-1</Parameter>
 			<Parameter name="Max. Neighs">10</Parameter>
-			<Parameter name="Max. Samples">2000</Parameter>
+      <Parameter name="Sampler 1(sdk),2(h),3(r)">1</Parameter>
+      <Parameter name="Max. Samples">2000</Parameter>
 			<Parameter name="Neigh Thresshold">25.0</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Step Size">1.0</Parameter>

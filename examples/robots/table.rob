@@ -2,7 +2,7 @@
 <Robot  name="ele" DHType="Modified" robType="Chain">
   Robot description name, Type and Denavit-Hartemberg approach used.
 
-  <WeightSE3 rho_t="0.004" rho_r="1.0"/>
+  <WeightSE3 rho_t="1.0" rho_r="1.0"/>
   <Joints size="1">
     <Joint name="Base" ivFile="freeflying/table.iv">
       <Description movable="true" ></Description>
