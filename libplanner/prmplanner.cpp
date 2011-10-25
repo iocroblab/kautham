@@ -106,6 +106,7 @@ namespace libPlanner {
 
  
 	
+
 	SoSeparator *PRMPlanner::getIvCspaceScene()
 	{
 		if(_wkSpace->getDimension()==2)
@@ -123,6 +124,13 @@ namespace libPlanner {
 	{
 		if(_wkSpace->getDimension()==2)
 		{
+			//first delete whatever is already drawn
+			while (_sceneCspace->getNumChildren() > 0)
+			{
+				_sceneCspace->removeChild(0);
+			}
+
+			//draw points
 			SoSeparator *psep = new SoSeparator();
 			SoCoordinate3 *points  = new SoCoordinate3();
 			SoPointSet *pset  = new SoPointSet();
