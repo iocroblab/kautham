@@ -50,7 +50,7 @@
 #include "localplanner.h"
 #include "NF1planner.h"
 #include "prmplanner.h"
-#include "workspacegridPlanner.h"
+#include "workspacegridplanner.h"
 
 class PathParse;
 

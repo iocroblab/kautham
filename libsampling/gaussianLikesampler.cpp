@@ -95,7 +95,7 @@ namespace SDK{
 			smp = ss->getSampleAt(j);
 			c = &(smp->getCoords());
       for(unsigned int i=0; i<smp->getDim(); i++){
-				fprintf(fp,"%.2f ",c[i]);
+				fprintf(fp,"%.2f ", c[i]);
 			}
 
 			vector<unsigned int>* ne=smp->getNeighs();

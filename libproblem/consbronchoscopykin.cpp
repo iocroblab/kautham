@@ -1,4 +1,4 @@
-#include "ConsBronchoscopyKin.h"
+#include "consbronchoscopykin.h"
 #include "robot.h"
 #include <mt/mt.h> 
 

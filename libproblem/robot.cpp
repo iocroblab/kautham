@@ -51,7 +51,7 @@
 #include "ivkinhand.h"
 #include "ivkin2drr.h"
 #include "constrainedkinematic.h"
-#include "ConsBronchoscopyKin.h"
+#include "consbronchoscopykin.h"
 #include <mt/point3.h>
 #include <mt/rotation.h>
 #include <cstdlib>

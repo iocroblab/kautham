@@ -141,7 +141,11 @@ namespace libGUI{
     _ipMaster = "http://147.83.37.26:11311"; // IP of quasar machine.
     _ipNode = "147.83.37.56";
 
+#if WIN32
     _ipNode = CHostLookup::getHostAddress().toString().toUtf8().constData();
+#else
+    _ipNode = "192.168.0.1";
+#endif
     _rosClient = NULL;
     _freqPubli = 250;
 

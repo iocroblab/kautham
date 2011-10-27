@@ -19,7 +19,7 @@
 #include <winsock2.h>
 #define GETHOSTXXXX_DEFINED
 
-#endif
+
 
 // check we have gethostname
 #ifndef GETHOSTXXXX_DEFINED
@@ -82,9 +82,6 @@ const QString& CHostLookup::getName() {
   * performs the lookup
   */
 void CHostLookup::resolve() {
-
-#ifdef WIN32
-
 	// we 've got the startup the windows sockets prior to any socket call
 	WSAData cData;
 	WSAStartup(MAKEWORD(2, 2), &cData);
@@ -129,13 +126,8 @@ void CHostLookup::resolve() {
 	}
 
 
-#else
-
-	#error Sorry, special treatment for your OS is needed here!
-
-#endif
 
 	m_bResolved = true;
 }
 
-
+#endif
