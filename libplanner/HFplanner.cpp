@@ -61,6 +61,17 @@ namespace libPlanner {
 		_guiName = "HF Planner";
 		removeParameter("Max. Samples");
 		removeParameter("Step Size");
+      
+		_hfiter=10;
+		_mainiter=10;
+		addParameter("HF relax iter", _hfiter);
+		addParameter("main iter", _mainiter);
+		_dirichlet=0;
+		addParameter("(1)dirichlet (0)neumann", _dirichlet);
+		_goalPotential=-1000;
+        addParameter("Goal potential", _goalPotential);
+		_stepSize=1.0;
+
     }
 
 	//! void destructor
@@ -77,6 +88,32 @@ namespace libPlanner {
         else
           return false;
 
+
+
+		it = _parameters.find("Goal potential");
+		if(it != _parameters.end())
+          _goalPotential = it->second;
+		else
+          return false;
+		
+		it = _parameters.find("(1)dirichlet (0)neumann");
+		if(it != _parameters.end())
+          _dirichlet = it->second;
+		else
+          return false;
+
+		it = _parameters.find("main iter");
+		if(it != _parameters.end())
+          _mainiter = it->second;
+		else
+          return false;
+
+		it = _parameters.find("HF relax iter");
+		if(it != _parameters.end())
+          _hfiter = it->second;
+		else
+          return false;
+
 		char *str = new char[20];
 		for(int i=0; i<_wkSpace->getDimension();i++)
 		{
@@ -85,6 +122,7 @@ namespace libPlanner {
 			if(it != _parameters.end())
 			{
 				setStepsDiscretization(it->second,i);
+				//drawCspace();
 			}
 			else
 				return false;
@@ -104,24 +142,48 @@ namespace libPlanner {
 		//initialize potential to -1 and goal to 0
 		setPotential(vgoal, _goalPotential);
 		//relax potential
+		int numneighs = _wkSpace->getDimension()*2;
 		graph_traits<gridGraph>::vertex_iterator vi, vend;
 		graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
-		for(int i=0; i<10; i++)
+		for(int i=0; i<_hfiter; i++)
 		{
 			for(tie(vi,vend)=vertices(*g); vi!=vend; ++vi)
 			{
 				if(getPotential(*vi) == _goalPotential ||
 				   getPotential(*vi) == _obstaclePotential) continue;
 				
-
+				//cout << "cell "<<*vi<< " neighs = ";
 				KthReal p=0;
 				int count=0;
+				int totalcount=0;
 				for(tie(avi,avi_end)=adjacent_vertices(*vi, *g); avi!=avi_end; ++avi)
 				{
-					count++;
-					p+=getPotential(*avi);
+					totalcount++;
+					//cout<<*avi<<" ";
+					if(_dirichlet != 0)
+					{
+						//dirichlet 
+						count++;
+						p+=getPotential(*avi);
+					}
+					else {
+						//neumann
+						//cout<<"("<<getPotential(*avi)<<") ";
+						if(getPotential(*avi) != _obstaclePotential)
+						{
+							count++;
+							p+=getPotential(*avi);
+						}
+					}
 				}
-				setPotential(*vi, p/count);
+				//the borders of the cspace fixed to high
+				for(;totalcount<numneighs;totalcount++)
+				{
+					count++;
+					p+=_obstaclePotential;
+				}
+				//cout<<" POT= "<<p<<"/"<<count<<"= "<<p/count<<endl;
+				if(count) setPotential(*vi, p/count);
 			}
 		}
 	}
@@ -134,6 +196,7 @@ namespace libPlanner {
 			if(goalSamp()->isFree()==false || initSamp()->isFree()==false) 
 			{
 				cout<<"init or goal configuration are in COLLISION!"<<endl;
+				drawCspace();
 				return false;
 			}
 
@@ -156,9 +219,10 @@ namespace libPlanner {
 			//relax HF
 			computeHF(vg);
 			int count = 0;
-			int countmax = 100;
-			std::vector<int> vpath;
-			vpath.push_back(vi);
+			int countmax = _mainiter;
+
+			std::vector<int> cellpath;
+			cellpath.push_back(vi);
 			_path.push_back(locations[vi]);
 
 			while(vc != vg && count < countmax)
@@ -170,7 +234,7 @@ namespace libPlanner {
 					KthReal pcurr = getPotential(vmin);
 					if(pneigh < pcurr) {
 						vmin = *avi; 
-						vpath.push_back(vmin);
+						cellpath.push_back(vmin);
 						_path.push_back(locations[vmin]);
 					}
 				}
@@ -178,7 +242,7 @@ namespace libPlanner {
 					//relax HF again and resume
 					computeHF(vg);
 					_path.clear();
-					vpath.clear();
+					cellpath.clear();
 					vc = vi;
 					count++;
 				}
@@ -188,19 +252,20 @@ namespace libPlanner {
 			else
 			{
 				_path.clear();
-				vpath.clear();
+				cellpath.clear();
 				_solved = false;
 			}
 			if(_solved)
 			{
 				cout<<"PATH:";
-				for(int i=0;i<vpath.size();i++)
+				for(int i=0;i<cellpath.size();i++)
 				{
-					cout<<" "<<vpath[i]<<"("<<getPotential(vpath[i])<<"), ";
+					cout<<" "<<cellpath[i]<<"("<<getPotential(cellpath[i])<<"), ";
 				}
 				cout<<endl;
 			}
 
+			drawCspace();
 			return _solved;
 		}
 	  }

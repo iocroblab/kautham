@@ -75,6 +75,9 @@ namespace libPlanner {
 
 		protected:
 		//Add protected data and functions
+			int _mainiter;
+			int _hfiter;
+			int _dirichlet;
 
 		
 	    private:

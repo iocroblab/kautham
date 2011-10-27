@@ -168,6 +168,7 @@ namespace libPlanner {
 			if(pm[vi] == -1) 
 			{
 				cout<<"CONNECTION NOT POSSIBLE: Init and goal configurations not on the same connected component..."<<endl;
+				drawCspace();
 				return false;
 			}
 
@@ -191,6 +192,7 @@ namespace libPlanner {
 			}
 			_path.push_back(locations[vg]);
 			_solved = true;
+			drawCspace();
 			return _solved;
 			/*
 			_path.clear();

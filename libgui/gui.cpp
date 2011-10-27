@@ -264,6 +264,10 @@ namespace libGUI {
       PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, plan->hasCameraMovements(), gui );
       propertiesTab->addTab(tmpPlan, QString((plan->getGuiName()).c_str()));
       connect(tmpPlan, SIGNAL(sendText(string)), this, SLOT(setText(string)) );
+	  if(plan->getIvCspaceScene() != NULL)
+	  {
+		addViewerTab("CSpace", libGUI::SPACE, plan->getIvCspaceScene());
+	  }
       return true;
     }else{
       PlannerWidget* tmpPlan = new PlannerWidget( NULL, NULL, gui );

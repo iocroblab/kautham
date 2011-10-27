@@ -175,8 +175,13 @@ namespace libPlanner {
 		//!Function that retruns the vector of potential values
 		inline PotentialMap getpotmat(){return potmap;};
 
-		//Function to setup the value of _stepsDiscretization in the given axis, and recompute the grid
+		//!Function to setup the value of _stepsDiscretization in the given axis, and recompute the grid
 		void setStepsDiscretization(int numsteps, int axis);
+
+		//!function that returns the pointer to the cspace separator in the case of 2D
+		SoSeparator *getIvCspaceScene();//reimplemented
+		//!Function that draws the cspace (loads the cspace separator)
+		void drawCspace();
 	  };
    }
 }

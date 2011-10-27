@@ -41,11 +41,13 @@
  
  
 
+#include <libproblem/ivworkspace.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include "localplanner.h"
 #include "gridplanner.h"
 
+#include <Inventor/nodes/SoCube.h>
 using namespace libSampling;
 
 namespace libPlanner {
@@ -61,7 +63,6 @@ namespace libPlanner {
 		//set intial values from parent class data
 		_speedFactor = 1;
 		_solved = false;
-		setStepSize(ssize);//also changes stpssize of localplanner
 	  
 		_guiName = "Grid Planner";
 		addParameter("Step Size", ssize);
@@ -71,11 +72,17 @@ namespace libPlanner {
 		//set step discrtization
 		_stepsDiscretization.resize(_wkSpace->getDimension());
 		char *str = new char[20];
+		KthReal step=0;
 		for(int i=0;i<_wkSpace->getDimension();i++){
 			_stepsDiscretization[i] = 4;
 			sprintf(str,"Discr. Steps %d",i);
 			addParameter(str, _stepsDiscretization[i]);
+			step+=_stepsDiscretization[i];
 		}
+
+		//setStepSize(ssize);//also changes stpssize of localplanner
+		setStepSize(1/step);//also changes stpssize of localplanner
+
 		//set max samples
 		_maxNumSamples = 1;
 		for(int i=0; i<_wkSpace->getDimension();i++){
@@ -89,6 +96,152 @@ namespace libPlanner {
 	gridPlanner::~gridPlanner(){
 			
 	}
+
+
+	SoSeparator *gridPlanner::getIvCspaceScene()
+	{
+		if(_wkSpace->getDimension()==2)
+		{
+			//_sceneCspace = ((IVWorkSpace*)_wkSpace)->getIvScene();
+			_sceneCspace = new SoSeparator();
+		}
+		else _sceneCspace=NULL;
+		return Planner::getIvCspaceScene();
+		
+	}
+
+
+	void gridPlanner::drawCspace()
+	{
+		if(_wkSpace->getDimension()==2)
+		{
+			//first delete whatever is already drawn
+			while (_sceneCspace->getNumChildren() > 0)
+			{
+				_sceneCspace->removeChild(0);
+			}
+
+			KthReal cellside = 10.0;
+
+			//draw cells
+			SoSeparator *gsep = new SoSeparator();
+			graph_traits<gridGraph>::vertex_iterator vi, vi_end;
+			KthReal minPot=100000000.0;
+			KthReal maxPot=-100000000.0;
+			for(tie(vi,vi_end)=vertices(*g); vi!=vi_end; ++vi)
+			{
+				if(getPotential(*vi)<minPot) minPot=getPotential(*vi);
+				if(getPotential(*vi)>maxPot) maxPot=getPotential(*vi);
+			}
+			KthReal rangePot = maxPot-minPot;
+			for(tie(vi,vi_end)=vertices(*g); vi!=vi_end; ++vi)
+			{
+				SoSeparator *cellsep = new SoSeparator();
+				SoCube *cellcube = new SoCube();
+				cellcube->width = 0.99*cellside;
+				cellcube->depth =  1 + 2*cellside*(getPotential(*vi) - minPot)/rangePot;
+				cellcube->height = 0.99*cellside;
+
+				KthReal x=cellside*_stepsDiscretization[0]*locations[*vi]->getCoords()[0];
+				KthReal y=cellside*_stepsDiscretization[1]*locations[*vi]->getCoords()[1];
+				KthReal z=(cellcube->depth.getValue())/2;
+
+				SoTransform *cell_transf = new SoTransform;
+				SbVec3f centre;
+				centre.setValue(x,y,z);
+				cell_transf->translation.setValue(centre);
+				cell_transf->recenter(centre);	
+			
+				SoMaterial *cell_color = new SoMaterial;
+				cell_color->diffuseColor.setValue(0.7,0.7,0.7);
+				if(getPotential(*vi)!=minPot)
+				{
+					KthReal red = (getPotential(*vi) - minPot)/rangePot;
+					KthReal green = 0.5;
+					KthReal blue = 1-red;
+					cell_color->diffuseColor.setValue(red,green,blue);
+				}
+				if(_solved)
+				{
+					for(int i=0;i<_path.size();i++)
+					{
+						if(_path[i]==locations[*vi])
+							cell_color->diffuseColor.setValue(0.2,0.7,0.2);
+					}
+				}
+
+				cellsep->addChild(cell_color);
+				cellsep->addChild(cell_transf);
+				cellsep->addChild(cellcube);
+				gsep->addChild(cellsep);
+			}
+			_sceneCspace->addChild(gsep);
+			//draw path
+			/*
+			if(_solved)
+			{
+				SoSeparator *pathsep = new SoSeparator();
+				for(int i=0;i<_path.size();i++)
+				{
+					//cout<<" "<<vpath[i]<<"("<<getPotential(vpath[i])<<"), ";
+					SoSeparator *cellpathsep = new SoSeparator();
+					SoCube *cellpathcube = new SoCube();
+					cellpathcube->width = 0.99*cellside;
+					cellpathcube->depth =  1 + 2*cellside*(getPotential(*vi) - minPot)/rangePot;
+					cellpathcube->height = 0.99*cellside;
+
+					KthReal x=cellside*_stepsDiscretization[0]*_path[i]->getCoords()[0];
+					KthReal y=cellside*_stepsDiscretization[1]*_path[i]->getCoords()[1];
+					KthReal z=(cellpathcube->depth.getValue())/2;
+
+					SoTransform *cellpath_transf = new SoTransform;
+					SbVec3f centre;
+					centre.setValue(x,y,z);
+					cellpath_transf->translation.setValue(centre);
+					cellpath_transf->recenter(centre);	
+			
+					SoMaterial *cellpath_color = new SoMaterial;
+					cellpath_color->diffuseColor.setValue(0.2,0.7,0.2);
+					
+
+					cellpathsep->addChild(cellpath_color);
+					cellpathsep->addChild(cellpath_transf);
+					cellpathsep->addChild(cellpathcube);
+					pathsep->addChild(cellpathsep);
+				}
+				_sceneCspace->addChild(pathsep);
+			}
+			*/
+
+			//draw floor
+			KthReal xmin=0.0;
+			KthReal xmax=cellside*_stepsDiscretization[0];
+			KthReal ymin=0.0;
+			KthReal ymax=cellside*_stepsDiscretization[1];
+
+			SoSeparator *floorsep = new SoSeparator();
+			SoCube *cs = new SoCube();
+			cs->width = xmax-xmin;
+			cs->depth = (xmax-xmin)/50.0;
+			cs->height = ymax-ymin;
+			
+			SoTransform *cub_transf = new SoTransform;
+			SbVec3f centre;
+			centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,-cs->depth.getValue());
+			cub_transf->translation.setValue(centre);
+			cub_transf->recenter(centre);	
+			
+			SoMaterial *cub_color = new SoMaterial;
+			cub_color->diffuseColor.setValue(0.2,0.2,0.2);
+
+			floorsep->addChild(cub_color);
+			floorsep->addChild(cub_transf);
+			floorsep->addChild(cs);
+			_sceneCspace->addChild(floorsep);
+		}
+	}
+
+
 
 	void gridPlanner::setStepsDiscretization(int numsteps, int axis)
 	{

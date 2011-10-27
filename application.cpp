@@ -263,10 +263,7 @@ bool Application::problemSetup(string path){
 
   mainWindow->addToProblemTree( path );
   mainWindow->addViewerTab("WSpace", libGUI::SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvScene());
-  if((_problem->getPlanner())->getIvCspaceScene() != NULL)
-  {
-		mainWindow->addViewerTab("CSpace", libGUI::SPACE, (_problem->getPlanner())->getIvCspaceScene());
-  }
+  
 
   //  Using to show the IV models reconstructed from the PQP triangular meshes.
   //mainWindow->addViewerTab("PQP", libGUI::SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvFromPQPScene());
@@ -288,8 +285,9 @@ bool Application::problemSetup(string path){
 
   mainWindow->setSampleWidget(_problem->getSampleSet(), _problem->getSampler(), _problem);
 
-  if( _problem->getPlanner() != NULL )
+  if( _problem->getPlanner() != NULL ){
     mainWindow->addPlanner(_problem->getPlanner(), _problem->getSampleSet(), mainWindow);
+  }
 
   appState = PROBLEMLOADED;
   mainWindow->setCursor(QCursor(Qt::ArrowCursor));
