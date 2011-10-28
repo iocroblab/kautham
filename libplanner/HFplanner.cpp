@@ -58,7 +58,7 @@ namespace libPlanner {
 	{
 		//set intial values
 	  
-		_guiName = "HF Planner";
+		_guiName = _idName =  "HF Planner";
 		removeParameter("Max. Samples");
 		removeParameter("Step Size");
       

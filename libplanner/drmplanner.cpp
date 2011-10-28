@@ -82,11 +82,13 @@ namespace libPlanner {
       _samplerHalton = new HaltonSampler(_wkSpace->getDimension());
 	  _levelSDK = 5;
       _samplerSDK = new SDKSampler(_wkSpace->getDimension(), _levelSDK);
+      _samplerGaussian = new GaussianSampler(_wkSpace->getDimension());
+      _samplerGaussianLike = new GaussianLikeSampler(_wkSpace->getDimension(), _levelSDK,_wkSpace);
   	  
 	  _samplertype = 1;
 	  setsampler(_samplertype);
       addParameter("Step Size", ssize);
-      addParameter("Sampler 1(sdk),2(h),3(r)", _samplertype);
+      addParameter("Sampler 1(sdk),2(h),3(g),4(gl),5(r)", _samplertype);
       addParameter("Neigh Thresshold", _neighThress);
       addParameter("Max. Neighs", _kNeighs);
       addParameter("Max. Samples", _maxNumSamples);
@@ -118,7 +120,7 @@ namespace libPlanner {
         else
           return false;
 
-		it = _parameters.find("Sampler 1(sdk),2(h),3(r)");
+		it = _parameters.find("Sampler 1(sdk),2(h),3(g),4(gl),5(r)");
 		if(it != _parameters.end()){
           if(it->second != _samplertype) setsampler(it->second);
 		}
@@ -302,6 +304,8 @@ namespace libPlanner {
 		_samplertype = i;
 		if(i==1) _samplerUsed = _samplerSDK;
 		else if(i==2) _samplerUsed = _samplerHalton;
+		else if(i==3) _samplerUsed = _samplerGaussian;
+		else if(i==4) _samplerUsed = _samplerGaussianLike;
 		else _samplerUsed = _sampler;
 	}
     bool DRMPlanner::saveData(string path){

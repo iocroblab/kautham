@@ -173,6 +173,10 @@ namespace libPlanner {
 	  SDKSampler* _samplerSDK;
 	  //!pointer to a Halton sampler
 	  HaltonSampler* _samplerHalton;
+	  //!pointer to a Gaussian sampler
+	  GaussianSampler* _samplerGaussian;
+	  //!pointer to a Gaussian sampler
+	  GaussianLikeSampler* _samplerGaussianLike;
 	  //!pointer to the sampler to be used to build the roadmap
 	  Sampler* _samplerUsed;
 
