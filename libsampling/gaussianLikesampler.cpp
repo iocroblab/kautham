@@ -42,7 +42,9 @@
  
 
 #include "gaussianLikesampler.h"
-#include <stdio.h>
+#include <iostream>
+#include <fstream>
+//#include <stdio.h>
 
 namespace SDK{
   
@@ -70,55 +72,49 @@ namespace SDK{
 	
 	void GaussianLikeSampler::print() 
 	{
-		FILE *fp;
-		Sample *smp;
-		vector<KthReal> *c;
-			
-		fp = fopen("ssGSDK.txt","wt");
-		for(unsigned int j =0; j < ss->getSize(); j++)
-		{
-			smp = ss->getSampleAt(j);
-			c = &(smp->getCoords());
-			for(unsigned int i=0; i<smp->getDim(); i++)
-			{
-        fprintf(fp,"%.2f ",c[i]);
-			}
-			fprintf(fp,"%d\n",smp->getcolor());
-		}
-		fclose(fp);
+	  Sample *smp;
 
+	  ofstream fp;
+	  fp.open( "ssGSDK.txt" );
+	  fp.precision(2);
+	  for(unsigned int j =0; j < ss->getSize(); j++){
+	    smp = ss->getSampleAt(j);
+	    vector<KthReal> &c = smp->getCoords();
+	    for(unsigned int i=0; i<smp->getDim(); i++)
+		fp << c.at(i) << " ";
+
+	    fp << smp->getcolor() << std::endl ;
+	  }
+
+	  fp.close();
 		
-		Sample *smpN;
-		vector<KthReal> *cN;
-		fp = fopen("ssGSDK_N.txt","wt");
-		for(unsigned int j =0; j < ss->getSize(); j++){
-			smp = ss->getSampleAt(j);
-			c = &(smp->getCoords());
-      for(unsigned int i=0; i<smp->getDim(); i++){
-				fprintf(fp,"%.2f ", c[i]);
-			}
+	  Sample *smpN;
+	  
+	  fp.open( "ssGSDK_N.txt" );
+	  fp.precision( 2 );
+	    for(unsigned int j =0; j < ss->getSize(); j++){
+	      smp = ss->getSampleAt(j);
+	      vector<KthReal> &c = smp->getCoords();
+	      for(unsigned int i=0; i<smp->getDim(); i++)
+		fp << c.at(i) << " ";
 
-			vector<unsigned int>* ne=smp->getNeighs();
-			fprintf(fp,"%d ",_maxNeighs);
-			unsigned int k;
-			for(k=0; k<ne->size(); k++){
-				smpN = ss->getSampleAt((*ne)[k]);
-				cN = &(smpN->getCoords());
-				for(unsigned int i=0; i<smpN->getDim(); i++){
-					fprintf(fp,"%.2f ",cN->at(i));
-				}
-			}
+	      vector<unsigned int>* ne=smp->getNeighs();
+	      fp << _maxNeighs << " ";
+	      unsigned int k;
+	      for(k=0; k<ne->size(); k++){
+		smpN = ss->getSampleAt((*ne)[k]);
+		vector<KthReal> &cN = smpN->getCoords();
+		for(unsigned int i=0; i<smpN->getDim(); i++)
+			fp << cN.at(i) << " ";
+	      }
 			//rellenar con la misma muestra hasta kneigh vecinos
-			for(; k<_maxNeighs; k++)
-			{
-        for(unsigned int i=0; i<smp->getDim(); i++)
-				{
-					fprintf(fp,"%.2f ",c[i]);
-				}
-			}
-			fprintf(fp,"\n");
-		}
-		fclose(fp);
+	      for(; k<_maxNeighs; k++){
+		for(unsigned int i=0; i<smp->getDim(); i++)
+		  fp << c.at(i) << " ";
+	      }
+	      fp << std::endl ;
+	     }
+	     fp.close();
 	}
 	
 	Sample *GaussianLikeSampler::setcolor(Sample *smp, vector<unsigned int> *N) 

@@ -56,7 +56,7 @@ using namespace libDevice;
 using namespace libProblem;
 using namespace libGuiding;
 using namespace kautham;
-using namespace boost::interprocess;
+namespace interboost = boost::interprocess;
 
 namespace libGUI{
   typedef KthReal pathPoint[6]; // used to store the path in x, y, z, Yaw, Pitch, Roll format

@@ -59,8 +59,8 @@
 #include <libproblem/ivkintx90.h>
 #include <libproblem/ivkin2drr.h>
 
-using namespace boost::interprocess;
-using namespace libGuiding;
+//namespace interboost = boost::interprocess;
+//using namespace libGuiding;
 
 namespace libGUI{
   TeleoperationWidget::TeleoperationWidget(Problem* prob, Device* hap, GUI* gui, 
@@ -1171,13 +1171,13 @@ namespace libGUI{
           // Here I copy the configuration response to the shared memory block.
           if( activeRob == 0 ){ // Fixed robot
             //Lock the mutex
-            scoped_lock<interprocess_mutex> lock(_dataCell->mutex_out);
+            interboost::scoped_lock<interboost::interprocess_mutex> lock(_dataCell->mutex_out);
             std::copy( tmp.getRn().getCoordinates().begin(), 
                        tmp.getRn().getCoordinates().end(), 
                        _dataCell->r1_desired.joint );
           }else{                //  Mobile robot
             //Lock the mutex
-            scoped_lock<interprocess_mutex> lock(_dataCell->mutex_out);
+            interboost::scoped_lock<interboost::interprocess_mutex> lock(_dataCell->mutex_out);
             std::copy( tmp.getRn().getCoordinates().begin(), 
                        tmp.getRn().getCoordinates().end(), 
                        _dataCell->r2_desired.joint );

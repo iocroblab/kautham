@@ -1,6 +1,6 @@
 #include "bronchowidget.h"
 #include "build/libgui/ui_bronchowidget.h"
-#include <libproblem/ConsBronchoscopyKin.h>
+#include <libproblem/consbronchoscopykin.h>
 #include <libplanner/guibrogridplanner.h>
 #include "gui.h"
 

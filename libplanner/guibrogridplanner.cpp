@@ -48,7 +48,7 @@
 #include <libsampling/robconf.h>
 #include "localplanner.h"
 #include "guibrogridplanner.h"
-#include <libproblem/ConsBronchoscopyKin.h>
+#include <libproblem/consbronchoscopykin.h>
 
 using namespace libSampling;
 
@@ -1585,9 +1585,11 @@ bool GUIBROgridPlanner::trySolve()
 			//store corresponding camara position 
 			mt::Transform T_Ry;
 			mt::Transform T_tz;
+			mt::Transform T_cam;
 			T_Ry.setRotation( mt::Rotation(mt::Vector3(0,1,0),-M_PI/2) );
 			T_tz.setTranslation( mt::Vector3(0,0,-(_wkSpace->getRobot(0)->getLink(_wkSpace->getRobot(0)->getNumLinks()-1)->getA()+1.1)) );
-			addCameraMovement(_wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz);
+			T_cam = _wkSpace->getRobot(0)->getLinkTransform(_wkSpace->getRobot(0)->getNumLinks()-1)*T_Ry*T_tz;
+			Planner::addCameraMovement(T_cam);
 
 			//Recording info
 			FILE *fp;

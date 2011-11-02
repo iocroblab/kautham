@@ -52,7 +52,7 @@
 #include <libplanner/prmhandplannerICRA.h>
 #include <libplanner/prmhandplannerICRAthumb.h>
 #include <libplanner/prmhandplannerICRAjournal.h>
-#include <libplanner/prmhandplannerarmhandpca.h>
+#include <libplanner/prmhandplannerArmHandPCA.h>
 #include <libplanner/prmrobothandconstplannerICRA.h>
 #include <libplanner/prmhandplannerIROS.h>
 #include <libplanner/myprmplanner.h>

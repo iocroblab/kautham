@@ -130,4 +130,6 @@ void CHostLookup::resolve() {
 	m_bResolved = true;
 }
 
-#endif
+
+#endif  //WIN32
+
