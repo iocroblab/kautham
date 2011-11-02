@@ -196,7 +196,10 @@ namespace SDK{
 
 			//setcolor of sample depending on neighs
 			Sample *ptrsmp=setcolor(smp, N);
-			if(ptrsmp!=NULL) vectfree.push_back(ptrsmp);
+			if(ptrsmp!=NULL) {
+				ptrsmp->clearNeighs();
+				vectfree.push_back(ptrsmp);
+			}
 
 			//update neighs
 			for(int i=0; i<N->size();i++) 

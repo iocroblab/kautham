@@ -255,6 +255,7 @@ namespace libGUI{
 			//if( _sampler != NULL )
 				delete _sampler;
 			_sampler = new GaussianSampler(_ptProblem->wSpace()->getDimension());
+			//_sampler = new GaussianSampler(_ptProblem->wSpace()->getDimension(),0.1,_ptProblem->wSpace());
 			_ptProblem->setSampler(_sampler);
 			_ptProblem->getPlanner()->setSampler(_sampler);
 		}
