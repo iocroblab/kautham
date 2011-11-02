@@ -122,7 +122,7 @@ namespace libPlanner {
     bool                           addQuery(int init, int goal );
     int                            findQuery(int init, int goal, int from = 0);
 
-	virtual inline SoSeparator *getIvCspaceScene(){return _sceneCspace;};//_sceneCspace is initiallized to NULL
+	  virtual inline SoSeparator*    getIvCspaceScene(){return _sceneCspace;};//_sceneCspace is initiallized to NULL
 
 
 	protected:
@@ -144,7 +144,7 @@ namespace libPlanner {
     int                           _speedFactor;
     bool                          _hasCameraInformation;
 	
-	SoSeparator *_sceneCspace;
+	  SoSeparator*                  _sceneCspace;
 
     // Stats
     unsigned int                  _maxNumSamples;
