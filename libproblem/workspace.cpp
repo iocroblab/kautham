@@ -216,6 +216,16 @@ namespace libProblem {
 	    temp = robots[robot]->distanceCheck(obstacles[i]);
 	    if(resp > temp)resp = temp;
     }
+    if(!resp){      // Now I test the robots collision
+      if(robots.size() > 1 )
+        for( size_t i=0; i < robots.size(); i++){
+          if( i == robot ) continue;
+          if( robots[robot]->distanceCheck( robots[i] ) ){
+            resp = true;
+            break;
+          }
+        }
+    }
     return resp;
   }
 
@@ -225,6 +235,16 @@ namespace libProblem {
     for(unsigned int i = 0; i < obstacles.size(); i++){
 	    resp = robots[robot]->collisionCheck(obstacles[i]);
 	    if(resp)break;
+    }
+    if(!resp){      // Now I test the robots collision
+      if(robots.size() > 1 )
+        for( size_t i=0; i < robots.size(); i++){
+          if( i == robot ) continue;
+          if( robots[robot]->collisionCheck( robots[i] ) ){
+            resp = true;
+            break;
+          }
+        }
     }
     return resp;
   }

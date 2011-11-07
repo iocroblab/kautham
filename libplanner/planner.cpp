@@ -144,7 +144,7 @@ namespace libPlanner{
           }
         }
         delete []steps;
-		tmpSam = new Sample(*_path.at(_path.size()-1));
+		    tmpSam = new Sample(*_path.at(_path.size()-1));
         _simulationPath.push_back(tmpSam);
       }
       if( _simulationPath.size() >= 2 ){

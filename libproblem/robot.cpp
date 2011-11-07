@@ -719,6 +719,25 @@ namespace libProblem {
       return minDist;
   }
 
+  KthReal Robot::distanceCheck(Robot *rob, bool min ){
+    KthReal minDist = -1.0;
+    KthReal tempDist = 0.0;
+
+    if( !autocollision() )
+      // First the most distal link
+      minDist = links[links.size()-1]->getElement()->getDistanceTo(rob->getLink(0)->getElement());
+      if( min ){
+        for(int i = links.size() - 1; i >= 0 ; i--)
+          for(size_t j = rob->getNumLinks() - 1; j >= 0; j--){
+            tempDist = links[i]->getElement()->getDistanceTo(rob->getLink(j)->getElement());
+            if(minDist > tempDist)
+              minDist = tempDist;
+        }
+      }
+
+    return minDist;
+  }
+
   void Robot::setHomePos(Conf* qh){
     if( qh != NULL ){
       switch(qh->getType()){

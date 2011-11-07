@@ -136,6 +136,8 @@ namespace libProblem {
 
 	  KthReal distanceCheck(Obstacle *obs, bool min = true);
 
+    KthReal distanceCheck(Robot *rob, bool min = true);
+
 	  bool setLimits(int member, KthReal min, KthReal max);
 
     void* getModel();

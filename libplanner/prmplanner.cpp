@@ -450,7 +450,7 @@ namespace libPlanner {
             printConnectedComponents();
             smoothPath();
             cout << "Calls to collision-check = " << count <<endl;
-			drawCspace();
+			      drawCspace();
             _solved = true;
             break;
           }
@@ -460,7 +460,7 @@ namespace libPlanner {
       printConnectedComponents();
       _triedSamples = count;
 
-	  drawCspace();
+	    drawCspace();
 
       return _solved;
     }
