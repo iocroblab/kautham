@@ -78,6 +78,7 @@ namespace libPlanner {
 	    _solved = false;
 	    setStepSize(ssize);//also changes stpssize of localplanner
       _drawnLink = -1; //the path of last link is defaulted
+	  _probabilityConnectionIniGoal = 0.1;
 	  
       _samplerHalton = new HaltonSampler(_wkSpace->getDimension());
 	  _levelSDK = 5;
@@ -96,6 +97,7 @@ namespace libPlanner {
       addParameter("Max. Samples", _maxNumSamples);
       addParameter("Speed Factor", _speedFactor);
       addParameter("Drawn Path Link",_drawnLink);
+	  addParameter("P(connect to Ini-Goal)",_probabilityConnectionIniGoal);
 
 	    _labelCC=0;
 
@@ -119,6 +121,12 @@ namespace libPlanner {
         HASH_S_K::iterator it = _parameters.find("Step Size");
         if(it != _parameters.end())
 			    setStepSize(it->second);//also changes stpssize of localplanner
+        else
+          return false;
+
+		it = _parameters.find("P(connect to Ini-Goal)");
+        if(it != _parameters.end())
+          _probabilityConnectionIniGoal = it->second;
         else
           return false;
 
@@ -450,8 +458,8 @@ namespace libPlanner {
           }while(_wkSpace->collisionCheck(smp) == true);
           _samples->add(smp);
           double r=rgen->d_rand();
-          if(r < 0.1) connectLastSample(_init);
-          else if(r < 0.2) connectLastSample(_goal);
+          if(r < _probabilityConnectionIniGoal) connectLastSample(_init);
+          else if(r < 2*_probabilityConnectionIniGoal) connectLastSample(_goal);
           else connectLastSample();
           if( findPath() )
           {

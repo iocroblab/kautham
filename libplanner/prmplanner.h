@@ -160,6 +160,7 @@ namespace libPlanner {
 			std::map<int, SampleSet*> _ccMap;
       int _labelCC;
       int _drawnLink; //!>flag to show which link path is to be drawn
+	  KthReal _probabilityConnectionIniGoal; //probability to connect last samp`le to init and goal samp`les
 
 		private:
       PRMPlanner();
