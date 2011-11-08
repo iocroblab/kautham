@@ -1,0 +1,6 @@
+Mt Library Installation
+=======================
+
+- Since this is a headers-only library, you only need to include in your
+  code the necessary headers. For example, you can use the convenience header
+  #include <mt/mt.h>.

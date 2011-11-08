@@ -1,0 +1,46 @@
+Linux installation guide:
+
+Following instructions are defined to be used with Ubuntu/Debian distributions with KDE Desktop, another one may be simmilar but it uses another commnads to obtain the same results.  This process will be explained to be done using the console.  First update your source (aptitude update). Open a console window and do the follows as a root:
+
+1) Compiler and Debugger tools: It installs the compiler, headers and the minimun tool set to compile something into the system and the debuger tools.
+
+     	aptitude install build-essential gdb
+
+2)   Development tools:
+
+A)   CMake: CMake is a cross-platform build system: It is a family of tools designed to build, test and package software. CMake generates native makefiles and workspaces that can be used in the compiler environment of your choice.
+
+	aptitude install cmake
+
+B)   Subversion client: KDEsvn is an easy to use version control software for KDE desktop. KDiff3 is used to compare files and to resolve conflicted files.
+
+	aptitude install kdesvn kdiff3
+
+C)   Doxygen: Documentation system.
+
+	aptitude install doxygen doxygen-doc doxygen-gui graphviz 
+
+D)   Qt Creator SDK: Qt Creator is a new cross-platform integrated development environment (IDE) tailored to the needs of Qt developers. 
+Goto http://qt.nokia.com/downloads and download the 
+Qt SDK for Linux/X11 32-bit** (356 MB) or the 
+Qt SDK for Linux/X11 64-bit** (446 MB) 
+
+It is a bin file. You can call it directly from the commnad line to install the Qt SDK (Qt libraries, Qt creator and some development tools).
+
+3)   Libraries:
+
+A)   Coin3D: Coin3D is a high-level cross-platform toolkit for effective 3D graphics development. It installs runtime library, develope library documentation and  auxiliary libraries.
+aptitude install libcoin40*
+
+B)   SoQt 1.41.: SoQt is a library which provides the glue between Systems in Motion's Coin high-level 3D visualization library and Troll Tech's Qt 2D user interface library
+
+	aptitude install libsoqt-dev
+
+C)   Boost: Download Boost library version 1.40.0
+
+	aptitude install libboost1.40-dev
+
+If your distribution does not have this package or you have installed an older boost version using libboost-dev please remove this package and do the follows. Goto http://sodium.resophonic.com/boost-cmake/1.40.0.cmake2/boost-1.40.0.cmake2.tar.gz and save the retrieved file. Once the file is uncompressed, please follow the instructions in http://sodium.resophonic.com/boost-cmake/current-docs/quickstart.html
+
+
+Sunday, November 28th 2010

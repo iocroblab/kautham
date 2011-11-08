@@ -1,0 +1,13 @@
+PROJECT(TX90_Test)
+
+cmake_minimum_required(VERSION 2.6)
+cmake_policy(SET CMP0003 OLD)
+set(mt_DIR ${CMAKE_SOURCE_DIR}/../../libmt)
+FIND_PACKAGE( mt REQUIRED )
+INCLUDE_DIRECTORIES( ${mt_DIR} )
+FILE(GLOB SRC_FILES *.cpp)
+IF(WIN32)
+    ADD_EXECUTABLE(test ${SRC_FILES})
+ELSE(WIN32)
+    ADD_EXECUTABLE(test ${SRC_FILES} )
+ENDIF(WIN32)	
