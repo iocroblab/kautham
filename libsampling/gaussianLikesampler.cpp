@@ -208,7 +208,10 @@ namespace SDK{
 				if(tmpsmp->getcolor()==0)
 				{
 					Sample *ptrsmp=setcolor(tmpsmp,tmpsmp->getNeighs());
-					if(ptrsmp!=NULL) vectfree.push_back(ptrsmp);
+					if(ptrsmp!=NULL) {
+						ptrsmp->clearNeighs();
+						vectfree.push_back(ptrsmp);
+					}
 				}	
 			}
 
