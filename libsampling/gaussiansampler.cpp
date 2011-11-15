@@ -48,18 +48,75 @@
 
 namespace libSampling{
 
-  GaussianSampler::GaussianSampler(char dim){
+  GaussianSampler::GaussianSampler(char dim, KthReal s, WorkSpace *w){
+	ws = w;
     genRand = new LCPRNG(15485341);//15485341 is a big prime number
     setDim(dim);
+	randgen = new RandomSampler(dim);
+	sigma = s;
   }
 
   Sample* GaussianSampler::nextSample(){
-	  cout<<"Sorry: GAUSSIAN SAMPLER not truly implemented!!"<<endl;
-    return _current= new RandomSample(dimension);
+	//cout<<"Sorry: GAUSSIAN SAMPLER not truly implemented!!"<<endl;
+    //return _current= new RandomSample(dimension);
+	/**/
+	  Sample *s;
+	  do{
+		  s = getSample();
+	  }while(s==NULL);
+	  return s;
   }
 
-  //Sample* RandomSampler::getSample(){
-  //  return _current;
-  //}
+  Sample* GaussianSampler::getSample(){
+    	    int dim = (int)getDim();
+		Sample *firstSample = randgen->nextSample();
+		Sample *secondSample = new Sample(dim);
+		std::vector<KthReal> *firstcoords;
+		
+		
+		firstcoords = &(firstSample->getCoords());
+		
+		std::vector<KthReal> secondcoords(dim);
+
+
+		KthReal v=-1.0;
+		for(int j = 0; j < dim ; j++)
+		{
+			v=-1.0;
+			while(v<0.0 || v>1.0)
+				v = firstcoords->at(j) + 2*sigma*(genRand->d_rand()-0.5);
+			secondcoords[j]=v;
+		}
+		secondSample->setCoords(secondcoords);
+  
+		//if first in collision...
+		if(ws->collisionCheck(firstSample))
+		{
+			//and second free sample...
+			if(!ws->collisionCheck(secondSample))
+			{
+				//return free sample
+				delete firstSample;
+				return secondSample;
+				//_current = secondSample;
+			}
+		}
+		//else first free sample..
+		else
+		{
+			//and second in collision...
+			if(ws->collisionCheck(secondSample))
+			{
+				//return free sample
+				delete secondSample;
+				return firstSample;
+				//_current = firstSample;
+			}
+		}
+
+	delete firstSample;
+	delete secondSample;
+	return NULL;
+  }
 }
 

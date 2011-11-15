@@ -83,9 +83,9 @@ namespace libPlanner {
       _samplerHalton = new HaltonSampler(_wkSpace->getDimension());
 	  _levelSDK = 5;
       _samplerSDK = new SDKSampler(_wkSpace->getDimension(), _levelSDK);
-      _samplerGaussian = new GaussianSampler(_wkSpace->getDimension());
-	  //KthReal sigma = 0.1;
-      //_samplerGaussian = new GaussianSampler(_wkSpace->getDimension(),sigma,_wkSpace);
+      //_samplerGaussian = new GaussianSampler(_wkSpace->getDimension());
+	  KthReal sigma = 0.1;
+      _samplerGaussian = new GaussianSampler(_wkSpace->getDimension(),sigma,_wkSpace);
       _samplerGaussianLike = new GaussianLikeSampler(_wkSpace->getDimension(), _levelSDK,_wkSpace);
   	  
 	  _samplertype = 1;

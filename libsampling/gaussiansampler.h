@@ -47,6 +47,12 @@
 
 #include "sampler.h"
 #include "lcprng.h"
+#include "randomsampler.h"
+
+
+
+#include <libproblem/workspace.h>
+using namespace libProblem;
 
 namespace libSampling{
 
@@ -54,16 +60,19 @@ namespace libSampling{
   class GaussianSampler : public Sampler {
   public:
     //! Unique constructor.
-    GaussianSampler(char dim);
+    GaussianSampler(char dim, KthReal s, WorkSpace *w);
 
-    ////! Implements the virtual Sample method.
-    //Sample* getSample();
+    //! getSample tries to obtain a gaussian sample, returns NULL otherwise
+    Sample* getSample();
 
     //! Implements the virtual Sample method.   
     Sample* nextSample();
 
   private:
 	  LCPRNG* genRand;
+	  RandomSampler *randgen;
+	  WorkSpace *ws;
+	  KthReal sigma;
   };
 }
 
