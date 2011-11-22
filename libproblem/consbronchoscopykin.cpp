@@ -55,6 +55,37 @@ namespace libProblem {
 		// Read values
 		//KthReal Dalpha = _maxalpha *(values[0]-curr_alpha);
 
+/*
+		//computation of beta values to update the limits 
+		KthReal currbeta_RAD;
+		if(getvalues(1)>0) currbeta_RAD = _maxbending_RAD*getvalues(1);
+		else currbeta_RAD = -_minbending_RAD*getvalues(1); //recall minbending is negative
+		KthReal newbeta_RAD;
+		if(values[1]>0) newbeta_RAD = _maxbending_RAD*values[1];
+		else newbeta_RAD = -_minbending_RAD*values[1]; //recall minbending is negative
+		//update the limits of beta as a function of the accumulated motions 
+		KthReal Delta_beta_RAD=0;
+		if(newbeta_RAD>0)
+		{
+			if(currbeta_RAD<newbeta_RAD)
+			{
+				if(currbeta_RAD>0) Delta_beta_RAD = newbeta_RAD - currbeta_RAD;
+				else Delta_beta_RAD = newbeta_RAD;
+			}
+		}
+		else
+		{
+			if(currbeta_RAD>newbeta_RAD)
+			{
+				if(currbeta_RAD<0) Delta_beta_RAD = newbeta_RAD - currbeta_RAD;
+				else Delta_beta_RAD = newbeta_RAD;
+			}
+		}
+		setAngleLimits(_minbending_RAD-Delta_beta_RAD,_maxbending_RAD-Delta_beta_RAD,
+			 			   _minalpha_RAD, _maxalpha_RAD);
+
+*/
+
 
 		//KthReal Dalpha;
 		KthReal Alpha_RAD;
@@ -94,13 +125,7 @@ namespace libProblem {
 		else psi_RAD = _minbending_RAD*(-values[1]/n);
 		KthReal Dzeta = (KthReal)-values[2];//directly the value read from the slider //-1000*(values[2]-currentvalues2);
    
-		//computation of beta values to update the limits at the end of the function
-		KthReal currbeta_RAD;
-		if(getvalues(1)>0) currbeta_RAD = _maxbending_RAD*getvalues(1);
-		else currbeta_RAD = -_minbending_RAD*getvalues(1); //recall minbending is negative
-		KthReal newbeta_RAD;
-		if(values[1]>0) newbeta_RAD = _maxbending_RAD*values[1];
-		else newbeta_RAD = -_minbending_RAD*values[1]; //recall minbending is negative
+
 
 		// sin and cos of rotation angles
 		//KthReal calpha=cos(Dalpha); 
@@ -225,26 +250,6 @@ namespace libProblem {
 		_robConf.setRn(_RnConf);
 		_robot->Kinematics(_robConf);
 
-		//update the limits of beta as a function of the accumulated motions 
-		KthReal Delta_beta_RAD=0;
-		if(newbeta_RAD>0)
-		{
-			if(currbeta_RAD<newbeta_RAD)
-			{
-				if(currbeta_RAD>0) Delta_beta_RAD = newbeta_RAD - currbeta_RAD;
-				else Delta_beta_RAD = newbeta_RAD;
-			}
-		}
-		else
-		{
-			if(currbeta_RAD>newbeta_RAD)
-			{
-				if(currbeta_RAD<0) Delta_beta_RAD = newbeta_RAD - currbeta_RAD;
-				else Delta_beta_RAD = newbeta_RAD;
-			}
-		}
-		setAngleLimits(_minbending_RAD-Delta_beta_RAD,_maxbending_RAD-Delta_beta_RAD,
-			 			   _minalpha_RAD, _maxalpha_RAD);
 
 		return _robConf;
 	}
@@ -267,6 +272,9 @@ namespace libProblem {
 		_maxbending_RAD = Mb;
 		_minalpha_RAD = ma;
 		_maxalpha_RAD = Ma;
+
+		_rangealpha_RAD = _maxalpha_RAD - _minalpha_RAD;
+		_rangebending_RAD = _maxbending_RAD - _minbending_RAD;
 
 		cout<<"mb = "<<_minbending_RAD<<" Mb = "<<_maxbending_RAD<<" ma = "<<_minalpha_RAD<<" Ma = "<<_maxalpha_RAD<<endl;
 	}
