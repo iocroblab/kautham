@@ -124,6 +124,10 @@ namespace libPlanner {
 
 	  virtual inline SoSeparator*    getIvCspaceScene(){return _sceneCspace;};//_sceneCspace is initiallized to NULL
 
+    //!  This method must be used to add samples that corresponds with the 
+    //! zero crossing point in case the planner will provide a path to be 
+    //! teleoperated and it must have the possibility to crossing singular points.
+    void                           addZeroCrossingToPath();
 
 	protected:
     Planner();
