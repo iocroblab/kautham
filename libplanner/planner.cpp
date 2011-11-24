@@ -345,15 +345,16 @@ namespace libPlanner{
           tmpsigns = _path[i]->getMappedConf().at(j).getRn().getCoordinate( k ) >= 0 ? true : false;
 
           if( tmpsigns != signs[cummul] ){ // then needs additional interpolation to include the zero crossing point.
-            needInter ++;
             advance[cummul] = - _path[i-1]->getMappedConf().at(j).getRn().getCoordinate( k );
             advance[cummul] /= _path[i]->getMappedConf().at(j).getRn().getCoordinate( k ) - 
                                _path[i-1]->getMappedConf().at(j).getRn().getCoordinate( k );
-          
+
+            if( advance[cummul] > 0. && advance[cummul] < 1.0 ) needInter ++;
+            if( advance[cummul] == 1. ) advance[cummul] = 0. ;
+            signs[cummul] = tmpsigns;
           }else
             advance[cummul] = 0.;
 
-          signs[cummul] = tmpsigns;
           ++cummul;
         } 
       }

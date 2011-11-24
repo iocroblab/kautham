@@ -82,14 +82,15 @@ int main(int argc, char* argv[]){
     Application kauthApp( datacell );
     SoQt::mainLoop();
 
-    //  Remove shared memory on construction and destruction
-    shared_memory_object::remove("KauthamSharedMemory");
-
-    return 0;
   }catch(interprocess_exception &ex){
     std::cout << "Kautham error: " << ex.what() << std::endl;
   }catch(...){
-   std::cout << "Unexpected error in the Kautham initialization.\n";
+    std::cout << "Unexpected error in the Kautham initialization.\n";
   }
+  
+  //  Remove shared memory on construction and destruction
+  shared_memory_object::remove("KauthamSharedMemory");
+
+  return 0;
 }
 

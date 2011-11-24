@@ -51,6 +51,8 @@
 #include "axis.h"
 #include <string.h>
 #include <libproblem/inversekinematic.h>
+#include <iostream>
+#include <fstream>
 
 using namespace libDevice;
 using namespace libProblem;
@@ -132,6 +134,7 @@ namespace libGUI{
       //! Added to increase the guiding capabilities.
       PathToGuide*          _pathsObj[2];
       RobLayout             _currentLayout;
+      ofstream              _theFile;
 
       //! The _dataCell, the _publisher and the suscriber conform the core of interchange strategy 
       //! to use with ROS message system.

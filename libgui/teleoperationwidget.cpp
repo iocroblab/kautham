@@ -558,6 +558,9 @@ namespace libGUI{
     //XXXXXXXXXX Applying the force to haptic XXXXXXXXXXXXXXXX
     _haptic->setSE3Force(forces);
 
+    // Now I will send the force applied to the file Fx Fy Fz
+    _theFile << forces[0] << " " << forces[1] << " " << forces[2] << " " ;
+
     //XXXXXXXXXXXXX Return the index of the nearest node of the path
     return idx;
   }
@@ -849,9 +852,16 @@ namespace libGUI{
     tmpRoot->addChild( _KFrame );
     tmpRoot->addChild( _KAFrame );
     tmpRoot->addChild( _KBFrame );
+
+    // Now I will open the file to save the data to be ploted
+    _theFile.open ("Data_of_teleoperation.txt", ios::trunc | ios::out );
+    _theFile << "Fx Fy Fz Xd Yd Zd Xr Yr Zr" << std::endl << std::endl;
   }
 
   void TeleoperationWidget::stopTeleoperation(){
+    // First, I will close the file where the data is saved.
+    _theFile.close();
+
     _inAction = false;
     _dataCell->synchronized = _synchronized = false;
 
@@ -1051,27 +1061,35 @@ namespace libGUI{
     bool dirProj= false;
     int nea = setGuideForce(tcp2w, _w2h, dirProj);
 
+    // Save the data in the file Xd Yd Zd Xr Yr Zr
+    _theFile << _pathsObj[activeRob]->PathX().at(nea).at(0) << " " << _pathsObj[activeRob]->PathX().at(nea).at(1) ;
+    _theFile << " " << _pathsObj[activeRob]->PathX().at(nea).at(2) << " " ;
+    _theFile << tcp2w.getTranslation().at(0) << " " << tcp2w.getTranslation().at(1) << " " ;
+    _theFile << tcp2w.getTranslation().at(2) << std::endl ;
+
     // For debug.
     //cout << nea << endl;
 
-    // Now I will draw the frames corresponding to the k-1, k and 
-    // k-1 points of the guiding path.
+    // Now I will draw the frames corresponding to the k-draw, k and 
+    // k-draw points of the guiding path.
+    const int draw = 2;
     _posKFrame->setValue(_pathsObj[activeRob]->PathX().at(nea).at(0), _pathsObj[activeRob]->PathX().at(nea).at(1),
                          _pathsObj[activeRob]->PathX().at(nea).at(2) );
     _rotKFrame->setValue(_pathsObj[activeRob]->PathX().at(nea).at(3), _pathsObj[activeRob]->PathX().at(nea).at(4),
                          _pathsObj[activeRob]->PathX().at(nea).at(5), _pathsObj[activeRob]->PathX().at(nea).at(6) );
-    if(nea > 1 ){//MOve the before frame
-      _posKBFrame->setValue(_pathsObj[activeRob]->PathX().at(nea-1).at(0), _pathsObj[activeRob]->PathX().at(nea-1).at(1),
-                         _pathsObj[activeRob]->PathX().at(nea-1).at(2) );
-      _rotKBFrame->setValue(_pathsObj[activeRob]->PathX().at(nea-1).at(3), _pathsObj[activeRob]->PathX().at(nea-1).at(4),
-                         _pathsObj[activeRob]->PathX().at(nea-1).at(5), _pathsObj[activeRob]->PathX().at(nea-1).at(6) );
+
+    if(nea > draw ){//MOve the before frame
+      _posKBFrame->setValue(_pathsObj[activeRob]->PathX().at(nea-draw).at(0), _pathsObj[activeRob]->PathX().at(nea-draw).at(1),
+                         _pathsObj[activeRob]->PathX().at(nea-draw).at(2) );
+      _rotKBFrame->setValue(_pathsObj[activeRob]->PathX().at(nea-draw).at(3), _pathsObj[activeRob]->PathX().at(nea-draw).at(4),
+                         _pathsObj[activeRob]->PathX().at(nea-draw).at(5), _pathsObj[activeRob]->PathX().at(nea-draw).at(6) );
     }
 
-    if( nea < _pathsObj[activeRob]->PathX().size() - 2 ){
-      _posKAFrame->setValue(_pathsObj[activeRob]->PathX().at(nea+1).at(0), _pathsObj[activeRob]->PathX().at(nea+1).at(1),
-                         _pathsObj[activeRob]->PathX().at(nea+1).at(2) );
-      _rotKAFrame->setValue(_pathsObj[activeRob]->PathX().at(nea+1).at(3), _pathsObj[activeRob]->PathX().at(nea+1).at(4),
-                         _pathsObj[activeRob]->PathX().at(nea+1).at(5), _pathsObj[activeRob]->PathX().at(nea+1).at(6) );
+    if( nea < _pathsObj[activeRob]->PathX().size() - draw ){
+      _posKAFrame->setValue(_pathsObj[activeRob]->PathX().at(nea+draw).at(0), _pathsObj[activeRob]->PathX().at(nea+draw).at(1),
+                         _pathsObj[activeRob]->PathX().at(nea+draw).at(2) );
+      _rotKAFrame->setValue(_pathsObj[activeRob]->PathX().at(nea+draw).at(3), _pathsObj[activeRob]->PathX().at(nea+draw).at(4),
+                         _pathsObj[activeRob]->PathX().at(nea+draw).at(5), _pathsObj[activeRob]->PathX().at(nea+draw).at(6) );
     }
 
 

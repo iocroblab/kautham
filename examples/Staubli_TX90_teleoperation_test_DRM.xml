@@ -3,9 +3,11 @@
 	<Robot robot="robots/TX90.rob" scale="1.0">
 		
 		
+		
 		 
    Robot Path
 	 
+		
 		
 		
 		<Limits name="X" min="0.0" max="1000.0" />
@@ -25,19 +27,19 @@
 		<Parameters>
 			<Name>DRM</Name>
 			<LocalPlanner stepSize="0.05">Linear</LocalPlanner>
-			<Parameter name="Drawn Path Link">-1</Parameter>
+			<Parameter name="Drawn Path Link">6</Parameter>
 			<Parameter name="Max. Neighs">10</Parameter>
 			<Parameter name="Max. Samples">500</Parameter>
 			<Parameter name="Neigh Thresshold">5</Parameter>
 			<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
-			<Parameter name="Sampler 1(sdk),2(h),3(g),4(gl),5(r)">4</Parameter>
+			<Parameter name="Sampler 1(sdk),2(h),3(g),4(gl),5(r)">3</Parameter>
 			<Parameter name="Speed Factor">3</Parameter>
 			<Parameter name="Step Size">0.05000000075</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="6">0.346 0.651 0.753 0.5 0.5 0.5</Init>
-				<Goal dim="6">0.054 0.786 0.2 0.5 0.5 0.5</Goal>
+				<Init dim="6">0.054 0.786 0.2 0.5 0.5 0.5</Init>
+				<Goal dim="6">0.346 0.651 0.753 0.5 0.5 0.5</Goal>
 			</Query>
 		</Queries>
 	</Planner>
