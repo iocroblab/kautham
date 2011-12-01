@@ -855,7 +855,7 @@ namespace libGUI{
 
     // Now I will open the file to save the data to be ploted
     _theFile.open ("Data_of_teleoperation.txt", ios::trunc | ios::out );
-    _theFile << "Fx Fy Fz Xd Yd Zd Xr Yr Zr" << std::endl << std::endl;
+    _theFile << "%Fx Fy Fz Xd Yd Zd Xr Yr Zr" << std::endl << "%" << std::endl;
   }
 
   void TeleoperationWidget::stopTeleoperation(){
