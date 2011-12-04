@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Robot  name="SA Hand Right" DHType="Modified" robType="Tree">
 
+  <Joints size="21">
 <Joint name="Base" ivFile="3DOFCylindric/base.iv">
     <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
     <Description rotational="false" movable="false"   ></Description>
@@ -154,6 +155,8 @@
 		<Parent name="Ring-Med"></Parent>
   </Joint>
 
+  </Joints>
+  
 	<ControlSet>
 	This control set is thinkig to be as EigenVector collection with their own 
 	EigenValue used to obtain the respective DOF vector of the robot. All the 

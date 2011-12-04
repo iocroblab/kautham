@@ -59,12 +59,12 @@ using namespace std;
       typedef std::pair<KthReal, KthReal> thumbLimits;
 	  
 
-	class PRMHandPlannerArmHandPCA:public PRMHandPlanner{
+	class PRMPCAHandArmPlanner:public PRMHandPlanner{
 		public:
-			PRMHandPlannerArmHandPCA(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
+			PRMPCAHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
 				WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloundSize,int samplingV, KthReal cloudRad, int samplingR,float distgoal,float distsamplingpcagoal);
 	  
-			~PRMHandPlannerArmHandPCA();
+			~PRMPCAHandArmPlanner();
       
 			bool  setParameters();
 			bool  trySolve();

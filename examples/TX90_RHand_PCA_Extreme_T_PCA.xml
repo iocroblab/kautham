@@ -25,7 +25,7 @@
   </Scene>
 	<Planner>
 		<Parameters>
-			<Name>PRM RobotArmHand PCA</Name>
+			<Name>PRMPCA HandArm</Name>
 			<LocalPlanner stepSize="0.05">Linear</LocalPlanner>
 			<Parameter name="Lambda">3.0</Parameter>
 			<Parameter name="Distance Goal">150</Parameter>
@@ -40,8 +40,8 @@
 		</Parameters>
 		<Queries>
 			<Query>
-        <Init dim="11">0.256 0.431 0.897 0.595 0.427 0.618 1 0.5 0 0.5 0.5</Init>
-        <Goal dim="11">0.277 0.589 0.735 0.5 0.407 0.733 0.4 0.851 0.79 1 0.5</Goal>
+				<Init dim="11">0.256 0.333 0.969 0.462 0.467 0.703 0.708 0.5 0 0.5 0.5</Init>
+				<Goal dim="11">0.274 0.585 0.81 0.487 0.333 0.668 0.4 0.851 0.79 1 0.5</Goal>
 			</Query>
 		</Queries>
 	</Planner>

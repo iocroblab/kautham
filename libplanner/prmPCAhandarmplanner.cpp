@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 #include <time.h>
-#include "prmhandplannerArmHandPCA.h"
+#include "prmPCAhandarmplanner.h"
 #include "ML_locplan.h"
 
 ///////////////Armadillo////////
@@ -19,11 +19,11 @@ using namespace std;
  namespace libPlanner {
   namespace PRM{
 		
-	PRMHandPlannerArmHandPCA::PRMHandPlannerArmHandPCA(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
+	PRMPCAHandArmPlanner::PRMPCAHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
            WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize,int cloudSize, int samplingV, KthReal cloudRad, int samplingR,float distgoal,float distsamplingpcagoal)
       :PRMHandPlanner(stype, init, goal, samples, sampler, ws, lcPlan,  ssize, cloudSize,  cloudRad)
 	{
-		_idName = "PRM RobotArmHand PCA";
+		_idName = "PRMPCA HandArm PCA";
 		
 		_distancegoal=distgoal;
 		addParameter("Distance Goal", _distancegoal);
@@ -42,14 +42,15 @@ using namespace std;
 		removeParameter("Neigh Thresshold");
 		removeParameter("Cloud Radius");
 		removeParameter("Cloud Size");
+	    removeParameter("P(connect to Ini-Goal)");
 	}
 
 
-	PRMHandPlannerArmHandPCA::~PRMHandPlannerArmHandPCA(){
+	PRMPCAHandArmPlanner::~PRMPCAHandArmPlanner(){
 			
 	}
 
-    bool PRMHandPlannerArmHandPCA::setParameters()
+    bool PRMPCAHandArmPlanner::setParameters()
 	{
       //PRMHandPlanner::setParameters(); //why it is not called?
       try{
@@ -135,7 +136,7 @@ using namespace std;
 	//! only the thumb limits are computed; then the numPMDs parameter is not used.
 	//! if randhand is true, it computes the random conf using a number numPMDs of
 	//! PMDs. The value numPMDs = -1 means all of them.
-  bool PRMHandPlannerArmHandPCA::getHandConfig(vector<KthReal>& coord,  bool randhand, int numPMDs)
+  bool PRMPCAHandArmPlanner::getHandConfig(vector<KthReal>& coord,  bool randhand, int numPMDs)
 	{
 		vector<KthReal> coordvector;
 
@@ -223,7 +224,7 @@ using namespace std;
 //!Given the position of the tcp of the arm, returns the six joint angles of the arm
 	//! computed using the same configuration solution as the sample smp.
 	//! the six first values of the vector carm are used for the input/output
-	bool PRMHandPlannerArmHandPCA::ArmInverseKinematics(vector<KthReal> &carm, Sample *smp, bool maintainSameWrist)
+	bool PRMPCAHandArmPlanner::ArmInverseKinematics(vector<KthReal> &carm, Sample *smp, bool maintainSameWrist)
 	{
 		//CALL TO INVERSE KINEMATICS
 		RobConf rc;
@@ -252,7 +253,7 @@ using namespace std;
 	}
 
 
- 	void PRMHandPlannerArmHandPCA::setIniGoalSe3()
+ 	void PRMPCAHandArmPlanner::setIniGoalSe3()
 	{
 		std::vector<RobConf> r = initSamp()->getMappedConf();
 		RnConf q = initSamp()->getMappedConf().at(0).getRn();
@@ -281,7 +282,7 @@ using namespace std;
 
 
 
- 	bool PRMHandPlannerArmHandPCA::trySolve()
+ 	bool PRMPCAHandArmPlanner::trySolve()
 	{
 		_neighThress = goalSamp()->getDistance(initSamp(), CONFIGSPACE) *1000;//  * 4;
 //			cout<<"...._neighThress = "<<_neighThress<<endl<<flush;
@@ -610,7 +611,7 @@ using namespace std;
 	  /////////////////////////////////////////////////////////////////
 	  }
 	
-bool PRMHandPlannerArmHandPCA::getSampleRandPCA(float R)
+bool PRMPCAHandArmPlanner::getSampleRandPCA(float R)
 {
 	///////////////////////////////////////////////////////////////////////
 	int sizevd=0; //inicialización de la variable
@@ -778,7 +779,7 @@ bool PRMHandPlannerArmHandPCA::getSampleRandPCA(float R)
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//!Print PCA components 
-    void PRMHandPlannerArmHandPCA::printPCAComponents()
+    void PRMPCAHandArmPlanner::printPCAComponents()
 	{
 		//std::map<int, SampleSet*>::iterator it;
 		cout<<"Num Sampling Goal Region PCA  = "<<_indexpca.size()<<endl;
@@ -796,7 +797,7 @@ bool PRMHandPlannerArmHandPCA::getSampleRandPCA(float R)
 
 	 //!resample around the goal configuration
 	//!reimplemented
-    bool PRMHandPlannerArmHandPCA::getSampleInGoalRegion(double tradius, double rradius)
+    bool PRMPCAHandArmPlanner::getSampleInGoalRegion(double tradius, double rradius)
 	{
 	    bool handWholeRange = false;
 		return getSampleInGoalRegionRealworld( tradius, rradius, handWholeRange);
@@ -806,7 +807,7 @@ bool PRMHandPlannerArmHandPCA::getSampleRandPCA(float R)
 
 
 	
-	bool PRMHandPlannerArmHandPCA::getSampleInGoalRegionRealworld(double tradius, double rradius, bool handWholeRange)
+	bool PRMPCAHandArmPlanner::getSampleInGoalRegionRealworld(double tradius, double rradius, bool handWholeRange)
 	{
 	    int trials, maxtrials;
 		vector<KthReal> coord(_wkSpace->getDimension());
@@ -925,7 +926,7 @@ bool PRMHandPlannerArmHandPCA::getSampleRandPCA(float R)
 	}
 
 
-    void PRMHandPlannerArmHandPCA::writeFiles(FILE *fpr, FILE *fph, RobConf* joints)
+    void PRMPCAHandArmPlanner::writeFiles(FILE *fpr, FILE *fph, RobConf* joints)
 	{
 		//write arm coordinates
 		int j;
@@ -944,7 +945,7 @@ bool PRMHandPlannerArmHandPCA::getSampleRandPCA(float R)
 
 
 
-    void PRMHandPlannerArmHandPCA::saveData()
+    void PRMPCAHandArmPlanner::saveData()
 	{
 
 	
