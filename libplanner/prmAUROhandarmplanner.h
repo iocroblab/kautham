@@ -41,19 +41,19 @@
  
 #include "prmhandplanner.h"
 
-#if !defined(_PRMHANDPLANNERICRAJOURNAL_H)
-#define _PRMHANDPLANNERICRAJOURNAL_H
+#if !defined(_PRMAUROHANDPLANNER_H)
+#define _PRMAUROHANDPLANNER_H
  namespace libPlanner {
   namespace PRM{
       typedef std::pair<KthReal, KthReal> thumbLimits;
 	  
 
-	class PRMHandPlannerICRAjournal:public PRMHandPlanner{
+	class PRMAUROHandArmPlanner:public PRMHandPlanner{
 		public:
-			PRMHandPlannerICRAjournal(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
+			PRMAUROHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
 				WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloundSize, KthReal cloudRad, int numHC);
 	  
-			~PRMHandPlannerICRAjournal();
+			~PRMAUROHandArmPlanner();
       
 			bool  setParameters();
 			bool  trySolve();
@@ -80,5 +80,5 @@
   }
 }
  
-#endif  //_PRMHANDPLANNERICRAJOURNAL_H
+#endif  //_PRMAUROHANDPLANNER_H
 

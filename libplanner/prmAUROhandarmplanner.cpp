@@ -45,17 +45,18 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "prmhandplannerICRAjournal.h"
+#include "prmAUROhandarmplanner.h"
 #include "ML_locplan.h"
  
  namespace libPlanner {
   namespace PRM{
-		
-	PRMHandPlannerICRAjournal::PRMHandPlannerICRAjournal(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
+	
+	PRMAUROHandArmPlanner::PRMAUROHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
            WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloudSize, KthReal cloudRad, int numHC)
       :PRMHandPlanner(stype, init, goal, samples, sampler, ws, lcPlan,  ssize, cloudSize,  cloudRad)
 	{
-    _idName = "PRM RobotHand ICRA J";
+		_idName = "PRMAURO HandArm";
+        _guiName = "PRMAURO HandArm";
 		_numberHandConf = numHC;
 		addParameter("Ratio Hand/Arm Conf", _numberHandConf);
 
@@ -72,11 +73,11 @@
 	}
 
 
-	PRMHandPlannerICRAjournal::~PRMHandPlannerICRAjournal(){
+	PRMAUROHandArmPlanner::~PRMAUROHandArmPlanner(){
 			
 	}
 
-    bool PRMHandPlannerICRAjournal::setParameters()
+    bool PRMAUROHandArmPlanner::setParameters()
 	{
       //PRMHandPlanner::setParameters(); //why it is not called?
       try{
@@ -169,7 +170,7 @@
 	//! only the thumb limits are computed; then the numPMDs parameter is not used.
 	//! if randhand is true, it computes the random conf using a number numPMDs of
 	//! PMDs. The value numPMDs = -1 means all of them.
-  bool PRMHandPlannerICRAjournal::getHandConfig(vector<KthReal>& coord,  bool randhand, int numPMDs)
+  bool PRMAUROHandArmPlanner::getHandConfig(vector<KthReal>& coord,  bool randhand, int numPMDs)
 	{
 		vector<KthReal> coordvector;
 
@@ -231,7 +232,7 @@
 
 
 	
- 	void PRMHandPlannerICRAjournal::computeMaxSteps(KthReal radius, int *bits, int *steps)
+ 	void PRMAUROHandArmPlanner::computeMaxSteps(KthReal radius, int *bits, int *steps)
 	{
 		//compute the number of steps to interpolate the straight segment of the arm connecting cini and cgoal
 	  //we assume each arm configuration will be associated with "_numberHandConf" hand configurations
@@ -272,7 +273,7 @@
 //!Given the position of the tcp of the arm, returns the six joint angles of the arm
 	//! computed using the same configuration solution as the sample smp.
 	//! the six first values of the vector carm are used for the input/output
-	bool PRMHandPlannerICRAjournal::ArmInverseKinematics(vector<KthReal> &carm, Sample *smp, bool maintainSameWrist)
+	bool PRMAUROHandArmPlanner::ArmInverseKinematics(vector<KthReal> &carm, Sample *smp, bool maintainSameWrist)
 	{
 		//CALL TO INVERSE KINEMATICS
 		RobConf rc;
@@ -301,7 +302,7 @@
 	}
 
 
- 	void PRMHandPlannerICRAjournal::setIniGoalSe3()
+ 	void PRMAUROHandArmPlanner::setIniGoalSe3()
 	{
 		std::vector<RobConf> r = initSamp()->getMappedConf();
 		RnConf q = initSamp()->getMappedConf().at(0).getRn();
@@ -330,7 +331,7 @@
 
 
 
- 	bool PRMHandPlannerICRAjournal::trySolve()
+ 	bool PRMAUROHandArmPlanner::trySolve()
 	{
 		_wkSpace->collisionCheck(_init);
 		_wkSpace->collisionCheck(_goal);
@@ -790,7 +791,7 @@
 
 
    //!resample around the goal configuration
-    bool PRMHandPlannerICRAjournal::getSampleInRegion(SE3Conf  *smpse3, double tradius, double rradius){
+    bool PRMAUROHandArmPlanner::getSampleInRegion(SE3Conf  *smpse3, double tradius, double rradius){
 	    int trials, maxtrials;
 		vector<KthReal> coord(_wkSpace->getDimension());
 		bool autocol;//flag to test autocollisions
@@ -870,7 +871,7 @@
 
 	 //!resample around the goal configuration
 	//!reimplemented
-    bool PRMHandPlannerICRAjournal::getSampleInGoalRegion(double tradius, double rradius){
+    bool PRMAUROHandArmPlanner::getSampleInGoalRegion(double tradius, double rradius){
 	    int trials, maxtrials;
 		vector<KthReal> coord(_wkSpace->getDimension());
 		bool autocol;//flag to test autocollisions
@@ -953,7 +954,7 @@
 
 
 
-    void PRMHandPlannerICRAjournal::writeFiles(FILE *fpr, FILE *fph, RobConf* joints)
+    void PRMAUROHandArmPlanner::writeFiles(FILE *fpr, FILE *fph, RobConf* joints)
 	{
 		//write arm coordinates
 		int j;
@@ -970,7 +971,7 @@
 		fprintf(fph,"\n");
 	}
 
-////	void PRMHandPlannerICRAjournal::setIniGoal()
+////	void PRMAUROHandArmPlanner::setIniGoal()
 ////	{
 ////		  if(_wkSpace->getDimension()==11)
 ////		  {
@@ -1334,7 +1335,7 @@
 //
 ////	  }
 
-    void PRMHandPlannerICRAjournal::saveData()
+    void PRMAUROHandArmPlanner::saveData()
 	{
 
 		/*

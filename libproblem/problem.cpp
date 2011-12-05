@@ -51,7 +51,7 @@
 #include <libplanner/rrtplanner.h>
 #include <libplanner/prmhandplannerICRA.h>
 #include <libplanner/prmhandplannerICRAthumb.h>
-#include <libplanner/prmhandplannerICRAjournal.h>
+#include <libplanner/prmAUROhandarmplanner.h>
 #include <libplanner/prmPCAhandarmplanner.h>
 #include <libplanner/prmrobothandconstplannerICRA.h>
 #include <libplanner/prmhandplannerIROS.h>
@@ -434,7 +434,7 @@ namespace libProblem {
   }
 
   string Problem::plannersNames(){
-    return   "DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRM RobotHand ICRA J|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
+    return   "DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
   }
 
   bool Problem::createPlanner( string name, KthReal step ){
@@ -476,8 +476,8 @@ namespace libProblem {
       _planner = new PRMHandPlannerICRAthumb(CONTROLSPACE, NULL, NULL, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 10, (KthReal)0.0010, 10);
-	else if(name == "PRM RobotHand ICRA J")
-      _planner = new PRMHandPlannerICRAjournal(CONTROLSPACE, NULL, NULL, _cspace,
+	else if(name == "PRMAURO HandArm")
+      _planner = new PRMAUROHandArmPlanner(CONTROLSPACE, NULL, NULL, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 10, (KthReal)0.0010, 10);
 	

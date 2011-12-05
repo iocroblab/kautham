@@ -23,7 +23,8 @@ using namespace std;
            WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize,int cloudSize, int samplingV, KthReal cloudRad, int samplingR,float distgoal,float distsamplingpcagoal)
       :PRMHandPlanner(stype, init, goal, samples, sampler, ws, lcPlan,  ssize, cloudSize,  cloudRad)
 	{
-		_idName = "PRMPCA HandArm PCA";
+		_idName = "PRMPCA HandArm";
+        _guiName = "PRMPCA HandArm";
 		
 		_distancegoal=distgoal;
 		addParameter("Distance Goal", _distancegoal);
