@@ -1486,6 +1486,8 @@ bool GUIBROgridPlanner::trySolve()
 			initcoords.at(7) = 0.5; //beta forced to zero
 			_init->setCoords(initcoords);
 
+			
+			_init->setMappedConf(_wkSpace->getConfigMapping());
 
 			//verify correctness of init sample
 			if(findGraphVertex(_init,&vi)==false)

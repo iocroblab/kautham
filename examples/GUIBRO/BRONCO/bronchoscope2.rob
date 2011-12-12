@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="Bronchoscope" DHType="Modified" robType="Chain">
+
+  <WeightSE3 rho_t="1.0" rho_r="1.0" />
+
+  <Joints size="13">
+  <Joint name="Base" ivFile="bronchoscope_base.iv">
+    <!-- PreTrans-->
+    <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="false" movable="false" trunk="true"></Description>
+    <Limits Hi="0" Low="0"></Limits>
+    <Weight weight="1.0"></Weight>
+    <Parent name=""></Parent>
+  </Joint>
+    
+  <Joint name="link0" ivFile="bronchoscope_base2.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" trunk="true"></Description>
+      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Base"></Parent>
+    </Joint>
+  
+  <Joint name="link1" ivFile="bronchoscope_module.iv">
+    <PreTrans X="0.0000" Y="0.0000" Z="0.0000" WX="0.0000" WY="1.0000" WZ="0.0000" TH="90.0" ></PreTrans>
+    <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"  ></DHPars>
+    <Description rotational="true" movable="true"  trunk="true"></Description>
+    <Limits Hi="45.0" Low="-45.0"></Limits>
+    <Weight weight="1.0"></Weight>
+	<Parent name="link0"></Parent>
+  </Joint>
+  
+  <Joint name="link2" ivFile="bronchoscope_module.iv">
+    <DHPars  alpha="0.0" a="1.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"  trunk="true"></Description>
+    <Limits Hi="45.0" Low="-45.0"></Limits>
+    <Weight weight="1.0"></Weight>
+		<Parent name="link1"></Parent>
+  </Joint>
+  
+  <Joint name="link3" ivFile="bronchoscope_module.iv">
+    <DHPars  alpha="0.0" a="1.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"  trunk="true"></Description>
+    <Limits Hi="45.0" Low="-45.0"></Limits>
+    <Weight weight="1.0"></Weight>
+		<Parent name="link2"></Parent>
+  </Joint>
+  
+    <Joint name="link4" ivFile="bronchoscope_module.iv">
+    <DHPars  alpha="0.0" a="1.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"  trunk="true"></Description>
+    <Limits Hi="45.0" Low="-45.0"></Limits>
+    <Weight weight="1.0"></Weight>
+		<Parent name="link3"></Parent>
+  </Joint>
+  
+    <Joint name="link5" ivFile="bronchoscope_module.iv">
+    <DHPars  alpha="0.0" a="1.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"  trunk="true"></Description>
+    <Limits Hi="45.0" Low="-45.0"></Limits>
+    <Weight weight="1.0"></Weight>
+		<Parent name="link4"></Parent>
+  </Joint>
+  
+    <Joint name="link6" ivFile="bronchoscope_module.iv">
+    <DHPars  alpha="0.0" a="1.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"  trunk="true"></Description>
+    <Limits Hi="45.0" Low="-45.0"></Limits>
+    <Weight weight="1.0"></Weight>
+		<Parent name="link5"></Parent>
+  </Joint>
+  
+    <Joint name="link7" ivFile="bronchoscope_module.iv">
+    <DHPars  alpha="0.0" a="1.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"  trunk="true"></Description>
+    <Limits Hi="45.0" Low="-45.0"></Limits>
+    <Weight weight="1.0"></Weight>
+		<Parent name="link6"></Parent>
+  </Joint>
+  
+    <Joint name="link8" ivFile="bronchoscope_module.iv">
+    <DHPars  alpha="0.0" a="1.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"  trunk="true"></Description>
+    <Limits Hi="45.0" Low="-45.0"></Limits>
+    <Weight weight="1.0"></Weight>
+		<Parent name="link7"></Parent>
+  </Joint>
+  
+    <Joint name="link9" ivFile="bronchoscope_module.iv">
+    <DHPars  alpha="0.0" a="1.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"  trunk="true"></Description>
+    <Limits Hi="45.0" Low="-45.0"></Limits>
+    <Weight weight="1.0"></Weight>
+		<Parent name="link8"></Parent>
+  </Joint>
+  
+    <Joint name="link10" ivFile="bronchoscope_module.iv">
+    <DHPars  alpha="0.0" a="1.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"  trunk="true"></Description>
+    <Limits Hi="45.0" Low="-45.0"></Limits>
+    <Weight weight="1.0"></Weight>
+		<Parent name="link9"></Parent>
+  </Joint>
+  
+  <Joint name="Tcp" ivFile="bronchoscope_tcp.iv">
+    <DHPars  alpha="0.0" a="1.0" theta="0.0" d="0.0"></DHPars>
+    <Description rotational="true" movable="true"  trunk="true"></Description>
+    <Limits Hi="45.0" Low="-45.0"></Limits>
+    <Weight weight="1.0"></Weight>
+	<Parent name="link10"></Parent>
+  </Joint>
+  </Joints>
+  
+  <ControlSet size="8">
+	This control set is thinkig to be as EigenVector collection with their own 
+	EigenValue used to obtain the respective DOF vector of the robot. All the 
+	robots need to be positioned in any location in SE3 WorkSpace as well it need 
+	6 values (X, Y, Z, X1, X2, X3) to reach it. The X1, X2, X3 values will be mapped to 
+	axis-angle notation (Wx, Wy, Wz, angle) and the other DOF are respectively the 
+	articular values in Chain or Tree robot types.
+	
+	<Offset>
+		This vector can be added in order to provide a offset or centre values to adjust
+		the control values and the DOF values.
+	
+		<DOF name="X" value="0.5"></DOF> 
+		<DOF name="Y" value="0.5"></DOF> 
+		<DOF name="Z" value="0.5"></DOF> 
+		<DOF name="X1" value="0.5"></DOF> 
+		<DOF name="X2" value="0.0"></DOF> 
+		<DOF name="X3" value="0.0"></DOF> 
+		<DOF name="Base" value="0.5"></DOF>
+    <DOF name="link0" value="0.5"></DOF>
+		<DOF name="link1" value="0.5"></DOF>
+		<DOF name="link2" value="0.5"></DOF>
+		<DOF name="link3" value="0.5"></DOF>
+		<DOF name="link4" value="0.5"></DOF>
+		<DOF name="link5" value="0.5"></DOF>
+		<DOF name="link6" value="0.5"></DOF>
+		<DOF name="link7" value="0.5"></DOF>
+		<DOF name="link8" value="0.5"></DOF>
+		<DOF name="link9" value="0.5"></DOF>
+		<DOF name="link10" value="0.5"></DOF>
+		<DOF name="Tcp" value="0.5"></DOF>
+				
+	</Offset>
+	
+	At less, the robot needs to be controled through a 6 values corresponding to a 
+	SE3 configuration. 
+	
+		
+	<Control name="x" eigValue="1.0">
+		<DOF name="X" value="1.0"></DOF> 
+	</Control>
+	
+	<Control name="y" eigValue="1.0">
+		<DOF name="Y" value="1.0"></DOF> 
+	</Control>
+	
+	<Control name="z" eigValue="1.0">
+		<DOF name="Z" value="1.0"></DOF> 
+	</Control>
+	
+	<Control name="x1" eigValue="1.0">
+		<DOF name="X1" value="1.0"></DOF> 
+	</Control>
+	
+	<Control name="x2" eigValue="1.0">
+		<DOF name="X2" value="1.0"></DOF> 
+	</Control>
+	
+	<Control name="x3" eigValue="1.0">
+		<DOF name="X3" value="1.0"></DOF> 
+	</Control>
+
+
+ <Control name="Alpha" eigValue="1.0">
+   <DOF name="link0" value="1.0"></DOF>
+    </Control>
+
+    
+	<Control name="Beta" eigValue="1.0">
+		<DOF name="link1" value="1.0"></DOF>
+		<DOF name="link2" value="1.0"></DOF>
+		<DOF name="link3" value="1.0"></DOF>
+		<DOF name="link4" value="1.0"></DOF>
+		<DOF name="link5" value="1.0"></DOF>
+		<DOF name="link6" value="1.0"></DOF>
+		<DOF name="link7" value="1.0"></DOF>
+		<DOF name="link8" value="1.0"></DOF>
+		<DOF name="link9" value="1.0"></DOF>	
+		<DOF name="link10" value="1.0"></DOF>	
+	</Control>
+	
+			
+  </ControlSet>
+</Robot>
