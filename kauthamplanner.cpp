@@ -84,8 +84,12 @@ int main(int argc, char* argv[]){
 
   }catch(interprocess_exception &ex){
     std::cout << "Kautham error: " << ex.what() << std::endl;
+    //  Remove shared memory on construction and destruction
+    shared_memory_object::remove("KauthamSharedMemory");
   }catch(...){
     std::cout << "Unexpected error in the Kautham initialization.\n";
+    //  Remove shared memory on construction and destruction
+    shared_memory_object::remove("KauthamSharedMemory");
   }
   
   //  Remove shared memory on construction and destruction
