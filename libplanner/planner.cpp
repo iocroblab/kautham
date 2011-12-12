@@ -91,7 +91,16 @@ namespace libPlanner{
 
   bool Planner::solveAndInherit(){
     libProblem::Element::resetCollCheckCounter();
+    _totalTime = 0.;
+	_smoothTime = 0.;
+	clock_t entertime = clock();
+
     if(trySolve()){
+      clock_t finaltime = clock();
+      if( _totalTime == 0. )
+	    _totalTime = (KthReal)(finaltime - entertime)/CLOCKS_PER_SEC ;
+	
+
       moveAlongPath(0);
       _wkSpace->inheritSolution(_simulationPath);
 

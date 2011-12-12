@@ -193,6 +193,8 @@ namespace libPlanner {
 
 	void DRMPlanner::drawCspace()
 	{
+		if(_sceneCspace==NULL) return;
+
 		if(_wkSpace->getDimension()==2)
 		{			
 			//first delete whatever is already drawn
@@ -307,6 +309,8 @@ namespace libPlanner {
 			floorsep->addChild(cs);
 			_sceneCspace->addChild(floorsep);
 		}
+
+		
 	}
 
 	void DRMPlanner::setsampler(int i)

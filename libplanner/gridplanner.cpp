@@ -113,6 +113,7 @@ namespace libPlanner {
 
 	void gridPlanner::drawCspace()
 	{
+		if(_sceneCspace==NULL) return;
 		if(_wkSpace->getDimension()==2)
 		{
 			//first delete whatever is already drawn

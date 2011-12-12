@@ -46,20 +46,10 @@
 #include "libproblem/problem.h"
 #include "libplanner/kthquery.h"
 #include <Inventor/SoDB.h>
-#include <mpi.h>
 
 using namespace std;
 
 int main(int argc, char* argv[]){   
-
-#ifdef KAUTHAM_USE_MPI
-  // Initializing MPI
-	int numProcs, myId;
-	MPI_Status stat; 
-	MPI_Init(&argc,&argv); // all MPI programs start with MPI_Init; all 'N' processes exist thereafter //
-	MPI_Comm_size(MPI_COMM_WORLD,&numProcs); // find out how big the SPMD world is //
-	MPI_Comm_rank(MPI_COMM_WORLD,&myId); // and this processes' rank is //
-#endif
 
 
   if( argv[1] == "-h" || argc != 3 ){
@@ -107,9 +97,7 @@ int main(int argc, char* argv[]){
 
   try{
     int tryTimes = atoi( argv[2] );
-#ifdef KAUTHAM_USE_MPI 
-    tryTimes /= numProcs;
-#endif
+
     cout << "The problem will be trying to solve " << tryTimes << " times.\n" ;
     int badSol = 0;
     Problem* _problem = new Problem();
@@ -126,6 +114,11 @@ int main(int argc, char* argv[]){
       vector<KthReal> goal( _samples->getSampleAt(1)->getCoords());
       KthReal times[2]={0., 0.};
       int sampCount[3]={0, 0, 0};
+
+
+      //ofstream outputFile("stats.kth", ios::out|ios::trunc);
+      ofstream outputFile("stats.kth", ios::out|ios::app);
+
       for(int i = 0; i < tryTimes; i++){
         _samples->clear();
         Sample* smp = new Sample(d);
@@ -137,79 +130,47 @@ int main(int argc, char* argv[]){
         _planner->setInitSamp( _samples->getSampleAt(0) );
         _planner->setGoalSamp( _samples->getSampleAt(1) );
 
+
+
         if(_planner->solveAndInherit()){
           KthQuery& tmp = _planner->getQueries().at( _planner->getQueries().size() - 1 );
-          times[0] += tmp.getTotalTime();
-          times[1] += tmp.getSmoothTime();
-          sampCount[0] += tmp.getGeneratedSamples();
-          sampCount[1] += tmp.getConnectedSamples();
-          sampCount[2] += tmp.getPath().size();
+          times[0] = tmp.getTotalTime();
+          times[1] = tmp.getSmoothTime();
+          sampCount[0] = tmp.getGeneratedSamples();
+          sampCount[1] = tmp.getConnectedSamples();
+          sampCount[2] = tmp.getPath().size();
           //ss << i << ".kps";
           //_planner->saveData( soluFile.c_str() );
+
+		  if( outputFile.is_open() ){
+			outputFile << "\nTotal time: \t"        << times[0]     << endl;
+			outputFile << "Smooth time: \t"       << times[1]      << endl;
+			outputFile << "Tried samples: \t"     << sampCount[0]  << endl;
+			outputFile << "Connected samples: \t" << sampCount[1]  << endl;
+			outputFile << "Nodes in solution path: \t"   << sampCount[2] << endl;
+	      }else           //there were any problems with the copying process
+		  {
+				throw(1);
+		  }
+
         }else{
           cout << "The problem has not been solve successfully.\n";
           badSol++;
-          KthQuery& tmp = _planner->getQueries().at( _planner->getQueries().size() - 1 );
-          times[0] += tmp.getTotalTime();
-          times[1] += tmp.getSmoothTime();
-          sampCount[0] += tmp.getGeneratedSamples();
-          sampCount[1] += tmp.getConnectedSamples();
-          sampCount[2] += tmp.getPath().size();
 
-#ifndef KAUTHAM_USE_MPI
-          //if( badSol >= tryTimes / 5 )
-          //  throw(1);
-#endif
         }
       }
 
-#ifdef KAUTHAM_USE_MPI
-      // Now use the REDUCE MPI function to collect the data from the other active process.
-      // Reducing: buff2 will contain the sum of all buff
-      KthReal allTimes[2]={0., 0.};
-      int allSampCount[3]={0, 0, 0};
-      int allBadSol = 0;
-	    if( typeid( KthReal ) == typeid( float ) )
-        MPI_Reduce(times, allTimes, 2, MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
-      else
-        MPI_Reduce(times, allTimes, 2, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-
-      MPI_Reduce(sampCount, allSampCount, 3, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-      MPI_Reduce(&badSol, &allBadSol, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-
-      //  Now it saves the data to a file in the root process or the unique one 
-      //  if it doesn't use the MPI parallelization
-      //
-      if( myId == 0 ){ // it means the root process
-        // unifying the data between some parallel process and unique one.
-        tryTimes *= numProcs;
-        badSol = allBadSol;
-        for( int i = 0; i < 2; i++ ){
-          times[i] = allTimes[i];
-          sampCount[i] = allSampCount[i];
-        }
-        sampCount[2] = allSampCount[2];
-#endif
-        //ofstream outputFile("stats.kth", ios::out|ios::trunc);
-        ofstream outputFile("stats.kth", ios::out|ios::app);
 
 	      if( outputFile.is_open() ){
-          outputFile << "Problem solved:\t"     << absPath                << endl;
-          outputFile << "TryTimes: \t"          << tryTimes               << endl;
-          outputFile << "BadSolved: \t"         << badSol                 << endl;
-          outputFile << "Total time: \t"        << times[0]/tryTimes      << endl;
-          outputFile << "Smooth time: \t"       << times[1]/tryTimes      << endl;
-          outputFile << "Tried samples: \t"     << sampCount[0]/(float) tryTimes  << endl;
-          outputFile << "Connected samples: \t" << sampCount[1]/(float) tryTimes  << endl;
-          outputFile << "Nodes in solution path: \t"   << sampCount[2]/(float) tryTimes  << endl;
+			outputFile << "\nProblem solved:\t"     << absPath                << endl;
+			outputFile << "TryTimes: \t"          << tryTimes               << endl;
+			outputFile << "BadSolved: \t"         << badSol                 << endl;
 	      }else           //there were any problems with the copying process
           throw(1);
 
 	      outputFile.close();
 
-#ifdef KAUTHAM_USE_MPI
-      }
-#endif
+
 
     }else{
       cout << "The problem file has not been loaded successfully. "
@@ -221,16 +182,11 @@ int main(int argc, char* argv[]){
     cout << "Something is wrong with the problem. Please run the "
       << "problem with the Kautham2 application al less once in order "
       << "to verify the correctness of the problem formulation.\n";
-#ifdef KAUTHAM_USE_MPI
-	  MPI_Finalize(); 
-#endif
+
     return 1;
   }
 
-#ifdef KAUTHAM_USE_MPI
-  // Ending MPI
-	MPI_Finalize(); 
-#endif
+
 
 
   return 0;
