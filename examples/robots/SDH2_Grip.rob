@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="SDH2_Grip" DHType="Modified" robType="Chain">
+  <WeightSE3 rho_t="0.001" rho_r="1.0"/>
+  <Joints size="10">
+    <Joint name="Palm" ivFile="SDH2/sdh_base_mod.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Parent name=""></Parent>
+    </Joint>
+
+    <Joint name="Finger_1-Base" ivFile="SDH2/sdh_finger_base_mod.iv">
+      <PreTrans X="0.0" Y="-33.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" ></PreTrans>
+      <DHPars alpha="0.0" a="19.053" theta="0.0" d="98.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0.0" Low="-90.0"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+    
+    <Joint name="Finger_1-Proximal" ivFile="SDH2/sdh_finger_proximal_mod_2.iv">
+      <DHPars alpha="90.0" a="0.0" theta="90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="90.0" Low="-90.0"></Limits>
+      <Parent name="Finger_1-Base"></Parent>
+    </Joint>
+    
+    <Joint name="Finger_1-Distal" ivFile="SDH2/sdh_finger_distal_mod.iv">
+      <DHPars alpha="0.0" a="86.5" theta="-90.0" d="0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="90.0" Low="-90.0"></Limits>
+      <Parent name="Finger_1-Proximal"></Parent>
+    </Joint>
+    
+    <Joint name="Finger_2-Base" ivFile="SDH2/sdh_finger_base_mod.iv">
+      <PreTrans X="0.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" ></PreTrans>
+      <DHPars alpha="0.0" a="-38.105" theta="180.0" d="98.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0.0" Low="0.0"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+    
+    <Joint name="Finger_2-Proximal" ivFile="SDH2/sdh_finger_proximal_mod_2.iv">
+      <DHPars alpha="90.0" a="0.0" theta="90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="90.0" Low="-90.0"></Limits>
+      <Parent name="Finger_2-Base"></Parent>
+    </Joint>
+    
+    <Joint name="Finger_2-Distal" ivFile="SDH2/sdh_finger_distal_mod.iv">
+      <DHPars alpha="0.0" a="86.5" theta="-90.0" d="0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="90.0" Low="-90.0"></Limits>
+      <Parent name="Finger_2-Proximal"></Parent>
+    </Joint>
+
+    <Joint name="Finger_3-Base" ivFile="SDH2/sdh_finger_base_mod.iv">
+      <PreTrans X="0.0" Y="33.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" ></PreTrans>
+      <DHPars alpha="0.0" a="19.053" theta="0.0" d="98.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="90.0" Low="0.0"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+    
+    <Joint name="Finger_3-Proximal" ivFile="SDH2/sdh_finger_proximal_mod_2.iv">
+      <DHPars alpha="90.0" a="0.0" theta="90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="90.0" Low="-90.0"></Limits>
+      <Parent name="Finger_3-Base"></Parent>
+    </Joint>
+    
+    <Joint name="Finger_3-Distal" ivFile="SDH2/sdh_finger_distal_mod.iv">
+      <DHPars alpha="0.0" a="86.5" theta="-90.0" d="0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="90.0" Low="-90.0"></Limits>
+      <Parent name="Finger_3-Proximal"></Parent>
+    </Joint>
+  </Joints>	
+  
+  <ControlSet size="7">
+    <Offset>
+      <DOF name="Finger_1-Base" value="0.5"></DOF>
+      <DOF name="Finger_3-Base" value="0.5"></DOF>
+      
+      <DOF name="Finger_1-Proximal" value="0.5"></DOF>
+      <DOF name="Finger_2-Proximal" value="0.5"></DOF>
+      <DOF name="Finger_3-Proximal" value="0.5"></DOF>
+    
+      <DOF name="Finger_1-Distal" value="0.5"></DOF>
+      <DOF name="Finger_2-Distal" value="0.5"></DOF>
+      <DOF name="Finger_3-Distal" value="0.5"></DOF>
+    </Offset>
+    
+    <Control name="Finger_1_3-Base" eigValue="1.0">
+      <DOF name="Finger_1-Base" value="1.0"></DOF>
+      <DOF name="Finger_3-Base" value="-1.0"></DOF>
+    </Control>
+    
+    <Control name="Finger_1-Proximal" eigValue="1.0">
+      <DOF name="Finger_1-Proximal" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Finger_2-Proximal" eigValue="1.0">
+      <DOF name="Finger_2-Proximal" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Finger_3-Proximal" eigValue="1.0">
+      <DOF name="Finger_3-Proximal" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Finger_1-Distal" eigValue="1.0">
+      <DOF name="Finger_1-Distal" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Finger_2-Distal" eigValue="1.0">
+      <DOF name="Finger_2-Distal" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Finger_3-Distal" eigValue="1.0">
+      <DOF name="Finger_3-Distal" value="1.0"></DOF>
+    </Control>
+
+  </ControlSet>
+ </Robot>
+ 
+ 
