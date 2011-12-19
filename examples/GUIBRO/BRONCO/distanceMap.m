@@ -1,4 +1,4 @@
-function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilename)
+function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilename, VxDim)
 %This function computes the distance map of a 3D grid (cspace) with voxels 
 %with values 1 or 0 (1 means free space and 0 obstacle space), and stores 
 %the result in a file named distancefilename. 
@@ -284,10 +284,18 @@ function distanceMap(cspace, maxPenetrationDistance, distancefilename, gridfilen
     oy=0%-142.031;%-2.536%
     oz=0%-315.75;%-237.565%
     fprintf(fid, '%d %d %d\n', ox, oy, oz);
+    
     %size of the voxels
-    sx=0.702807;
-    sy=0.70277;
-    sz=0.625492;
+    if nargin==4
+        sx=0.702807;
+        sy=0.70277;
+        sz=0.625492;
+    else
+        sx=VxDim(1);
+        sy=VxDim(2);
+        sz=VxDim(3);
+    end
+            
     fprintf(fid, '%d %d %d\n',sx, sy, sz);
     for k=1:1:s(3)%pisos
       for j=1:1:s(2)%columnes
