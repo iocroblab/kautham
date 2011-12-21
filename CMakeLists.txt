@@ -91,7 +91,7 @@ IF( KAUTHAM_GUI )
   INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} 
                        ${CMAKE_SOURCE_DIR}/libmt  
                        ${Armadillo_INCLUDE_DIR}
-                       ${Boost_INCLUDE_DIRS})
+                       ${Boost_INCLUDE_DIRS} )
                        
   LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
                        
