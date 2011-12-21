@@ -60,9 +60,9 @@ int main(int argc, char* argv[]){
     //  Remove shared memory on construction and destruction
     shared_memory_object::remove("KauthamSharedMemory"); 
     // //Create a shared memory object.
-    shared_memory_object shm( create_only,               //only create
-					                           "kauthamsharedmemory",     //name
-					                           read_write );				      //read-write mode
+    shared_memory_object shm( create_only,            //only create
+                           "KauthamSharedMemory",     //name
+                           read_write );	      //read-write mode
 
     //set size
     shm.truncate(sizeof(kautham::data_ioc_cell));
