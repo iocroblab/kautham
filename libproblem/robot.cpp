@@ -9,7 +9,7 @@
 *                                                                          *
 *                Project Name:       Kautham Planner                       *
 *                                                                          *
-*     Copyright (C) 2007 - 2009 by Alexander Pérez and Jan Rosell          *
+*     Copyright (C) 2007 - 2011 by Alexander Pérez and Jan Rosell          *
 *            alexander.perez@upc.edu and jan.rosell@upc.edu                *
 *                                                                          *
 *             This is a motion planning tool to be used into               *
@@ -354,6 +354,65 @@ namespace libProblem {
     }
 
     armed = true;
+  }
+
+  
+  bool Robot::attachObject(Obstacle* obs, string linkName ){
+    try{
+      attObj newObj;
+      newObj.obs = obs;
+      newObj.link = getLinkByName( linkName );
+      mt::Transform tmpO;
+      KthReal* pos = obs->getElement()->getPosition();
+      tmpO.setTranslation( mt::Point3(pos[0], pos[1], pos[2] ) );
+      pos = obs->getElement()->getOrientation();
+      tmpO.setRotation( mt::Rotation( pos[0], pos[1], pos[2], pos[3] ) );
+      newObj.trans = newObj.link->getTransformation()->inverse() * tmpO;
+      _attachedObject.push_back( newObj );
+      return true;
+    }catch(...){
+      return false;
+    }
+  }
+
+  void Robot::moveAttachedObj(){
+    KthReal pos[3]={0.};
+    KthReal ori[4]={0.};
+    list<attObj>::iterator it = _attachedObject.begin();
+    for( it = _attachedObject.begin(); it != _attachedObject.end(); ++it){
+      mt::Transform tmp = *((*it).link->getTransformation());
+      tmp *= (*it).trans;
+      pos[0] = tmp.getTranslation().at(0);
+      pos[1] = tmp.getTranslation().at(1);
+      pos[2] = tmp.getTranslation().at(2);
+      (*it).obs->getElement()->setPosition( pos );
+
+      ori[0] = tmp.getRotation().at(0);
+      ori[1] = tmp.getRotation().at(1);
+      ori[2] = tmp.getRotation().at(2);
+      ori[3] = tmp.getRotation().at(3);      
+      (*it).obs->getElement()->setOrientation( ori );
+    }
+  }
+
+  bool Robot::detachObject( string linkName ){
+    bool found = false;
+    list<attObj>::iterator it = _attachedObject.begin();
+    for( it = _attachedObject.begin(); it != _attachedObject.end(); ++it){
+      if((*it).toLink( linkName )){
+        _attachedObject.erase(it);
+        found = true;
+      }
+    }
+    return found;
+  }
+  
+  Link* Robot::getLinkByName( string linkName ){
+    for(size_t i=0; i < links.size(); ++i){
+      if(links[i]->getName() == linkName )
+        return links[i];
+    }
+    return NULL;
   }
 
   string Robot::getDOFNames(){
@@ -1050,6 +1109,9 @@ namespace libProblem {
        _hasChanged = true;
       }
     }
+
+    if(_attachedObject.size() != 0 ) 
+      moveAttachedObj();
   }
 
   bool Robot::setProposedSolution(vector<mt::Point3>& pathSE3){

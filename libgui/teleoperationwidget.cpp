@@ -527,11 +527,14 @@ namespace libGUI{
       pushP.at(i) = upush.at(i);
     }
 
+    // Now I will send the force (Fx Fy Fz) applied on the frame W to the file 
+    // Only the magnetic part in order to plot a figure.
+    _theFile << magP[0] << " " << magP[1] << " " << magP[2] << " " ;
+
     magP = h2w * magP;
     pushP = h2w * pushP;
     sum = magP; //+ pushP;
-    sum.normalize();
-
+    
     if(dist > THRESHOLD ){
       // Only testing the translational forces.
       if( dist < EPSILON ){
@@ -543,6 +546,7 @@ namespace libGUI{
           forces[i] = forces[i] > -_maxForces[i] ? forces[i] : -_maxForces[i];
         }
       }else{
+        sum.normalize();
         for(int i = 0; i < 3; ++i){
           forces[i] = sum.at(i) * _maxForces[i];
           forces[i] = forces[i] < _maxForces[i] ? forces[i] : _maxForces[i];
@@ -558,8 +562,8 @@ namespace libGUI{
     //XXXXXXXXXX Applying the force to haptic XXXXXXXXXXXXXXXX
     _haptic->setSE3Force(forces);
 
-    // Now I will send the force applied to the file Fx Fy Fz
-    _theFile << forces[0] << " " << forces[1] << " " << forces[2] << " " ;
+    // Now I will send the force (Fx Fy Fz) applied on the frame H to the file
+    //_theFile << forces[0] << " " << forces[1] << " " << forces[2] << " " ;
 
     //XXXXXXXXXXXXX Return the index of the nearest node of the path
     return idx;

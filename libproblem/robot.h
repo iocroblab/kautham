@@ -9,7 +9,7 @@
 *                                                                          *
 *                Project Name:       Kautham Planner                       *
 *                                                                          *
-*     Copyright (C) 2007 - 2009 by Alexander Pérez and Jan Rosell          *
+*     Copyright (C) 2007 - 2011 by Alexander Pérez and Jan Rosell          *
 *            alexander.perez@upc.edu and jan.rosell@upc.edu                *
 *                                                                          *
 *             This is a motion planning tool to be used into               *
@@ -53,6 +53,7 @@
 //#include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include "inversekinematic.h"
 #include "constrainedkinematic.h"
+#include <list>
 
 
 using namespace std;
@@ -60,11 +61,21 @@ using namespace std;
 //class InverseKinematic;
 
 namespace libProblem {
+  struct attObj{
+    Obstacle*     obs;
+    Link*         link;
+    mt::Transform trans;
+    bool toLink( string linkName ){
+      return link->getName() == linkName;
+    }
+  };
+
   class Robot {
   public:
     Robot(string robFile, KthReal scale, LIBUSED lib = IVPQP);
 
 	  Link* getLink(unsigned int i);
+    Link* getLinkByName( string linkName );
 
 	  bool autocollision(int t=0);
 
@@ -261,6 +272,18 @@ namespace libProblem {
     RobConf&              ConstrainedKinematics(vector<KthReal> &target);
     bool                  setPathVisibility(bool visible);
 
+    //! This method attaches an existing obstacle to the link specified by the linkName parameter.
+    //! This method
+    bool                  attachObject(Obstacle* obs, string linkName );
+
+    //! This method moves the attached object to the robot. The object can be attached to any link
+    //! of the robot. This method processes the _attachedObj list to calculated the new position and 
+    //! orientation based on the position and orientation of the robot link where the object is attached 
+    //! and the mt::Transform calculated on the attached instant.
+    void                  moveAttachedObj();
+
+    //! This method detaches the prviously attached objects to the link named linkName.
+    bool                  detachObject( string linkName );
 
   private:
     //! This method updates the absolute position and orientation of each link in the robot.
@@ -287,7 +310,7 @@ namespace libProblem {
     RobConf           _goalConf;     //!< This attribute is the goal configuration of the robot planning problem.
     RobConf           _currentConf;  //!< This attribute is the current configuration of the robot.
 
-	KthReal           _spatialLimits[7][2];
+	  KthReal           _spatialLimits[7][2];
     KthReal           _homeLimits[7][2];
   	
 	  //!	This Vector contains pointers to each Link
@@ -313,7 +336,7 @@ namespace libProblem {
 
     //! weight between translational and rotational components in distance computations
     //KthReal           _weightSE3;
-    RobWeight*           _weights;
+    RobWeight*        _weights;
   	
     //! This is the transformation used to calculate the spatial limits into the home
     //! frame in order to preserve the home ubication at time zero.
@@ -333,7 +356,7 @@ namespace libProblem {
     SoMFVec3f*        _graphicalPath; //!> This corresponds to translational part of the last link absolute path.
     SoSeparator*      _pathSeparator;
     int               _linkPathDrawn; //!> This is the number of the link whose path will be drawn
-
+    list<attObj>      _attachedObject;
   };
 }
 
