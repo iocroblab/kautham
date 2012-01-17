@@ -4,8 +4,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 CMAKE_POLICY(SET CMP0003 OLD)
 
 # Setup mt library
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules
-                      ${CMAKE_CURRENT_SOURCE_DIR}/libutil/armadillo/build_aux/cmake/Modules )
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 SET(mt_DIR ${CMAKE_SOURCE_DIR}/libmt)
 
 FIND_PACKAGE( mt REQUIRED )
@@ -38,6 +37,7 @@ FIND_PACKAGE( Armadillo )
 IF( Armadillo_FOUND )
   MESSAGE( STATUS "armadillo Package FOUND")
   ADD_DEFINITIONS( -DKAUTHAM_USE_ARMADILLO )
+  SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS} ${Armadillo_LIBRARY} )
 ELSE( Armadillo_FOUND )
   IF( WIN32 )
     IF( "$ENV{ARMADILLO_DIR}" STREQUAL "" )
@@ -50,6 +50,7 @@ ELSE( Armadillo_FOUND )
     
       MESSAGE( STATUS "Armadillo_INCLUDE_DIR: " ${Armadillo_INCLUDE_DIR} )
       ADD_DEFINITIONS( -DKAUTHAM_USE_ARMADILLO )
+	  SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS} ${Armadillo_LIBRARY} )
     ENDIF(  )
   ELSE()
     MESSAGE( STATUS "armadillo Package NOT FOUND 2")
@@ -95,7 +96,7 @@ IF( KAUTHAM_GUI )
                        
   LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
                        
-  SET(KC_EXTRA_LIBS ${Armadillo_LIBRARY} )
+  
   
   ADD_SUBDIRECTORY ( libcomm )
   ADD_SUBDIRECTORY ( libdevice )
