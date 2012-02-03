@@ -9,7 +9,7 @@
 *                                                                          *
 *                Project Name:       Kautham Planner                       *
 *                                                                          *
-*     Copyright (C) 2007 - 2009 by Alexander Pérez and Jan Rosell          *
+*     Copyright (C) 2007 - 2012 by Alexander Pérez and Jan Rosell          *
 *            alexander.perez@upc.edu and jan.rosell@upc.edu                *
 *                                                                          *
 *             This is a motion planning tool to be used into               *
@@ -67,17 +67,22 @@ namespace libProblem{
 
       vector<KthReal>*      distanceCheck(Sample* sample) ;
       bool                  collisionCheck(Sample* sample ) ;
-      void                  moveTo(Sample* sample);
+      void                  moveRobotsTo(Sample* sample);
+      void                  moveObstacleTo( size_t mobObst, vector<KthReal>& pose );
+      void                  moveObstacleTo( size_t mobObst, RobConf& robConf );
 		  void                  addRobot(Robot* robot);
-      inline Robot*         getRobot(unsigned int i){return robots[i];}
+      inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;}
 		  void                  addObstacle(Obstacle* obs);
-      inline Obstacle*      getObstacle(unsigned int i){return obstacles[i];}
+		  void                  addMobileObstacle(Robot* obs);
+      inline Obstacle*      getObstacle(unsigned int i){if(i < obstacles.size()) return obstacles[i]; return NULL;}
+      inline Robot*         getMobileObstacle(unsigned int i){if( i<_mobileObstacle.size() ) return _mobileObstacle[i];return NULL;}
       inline unsigned int   robotsCount(){return robots.size();}
       inline unsigned int   obstaclesCount(){return obstacles.size();}
+      inline unsigned int   mobileObstaclesCount(){return _mobileObstacle.size();}
       inline int            getDimension() const {return workDim;}
 
-	  void addDistanceMapFile(string distanceFile);
-	  inline string getDistanceMapFile(){return distanceMapFile;};
+	    void addDistanceMapFile(string distanceFile);
+	    inline string getDistanceMapFile(){return distanceMapFile;};
 	  //void addNeighborhoodMapFile(string neighFile);
 	  //inline string getNeighborhoodMapFile(){return neighborhoodMapFile;};
 
@@ -88,13 +93,20 @@ namespace libProblem{
       //! This vector contains a pointers to the RobConf of each robot in the
       //! WorkSpace
       inline vector<RobConf*>&     getConfigMapping(){return _configMap;}
-      inline vector<RobConf*>&     getConfigMapping(Sample* sample){moveTo(sample); return _configMap;}
+      inline vector<RobConf*>&     getConfigMapping(Sample* sample){moveRobotsTo(sample); return _configMap;}
       bool                         inheritSolution(vector<Sample*>& path);
       void                         eraseSolution();
       void                         setPathVisibility(bool vis);
+
+      //! This method attaches an object object to a robot link. The obstacle is designated by its index.
+      bool                  attachObstacle2RobotLink(string robot, string link, unsigned int obs );
+
+      //! This method detaches an object previously attached to a Robot link.
+      bool                  detachObstacleFromRobotLink(string robot, string link );
 	  protected:
 		  virtual void          updateScene() = 0;
 		  vector<Obstacle*>     obstacles;
+		  vector<Robot*>        _mobileObstacle;
 		  vector<Robot*>        robots;
       vector<KthReal>       distVec;
       int                   workDim;

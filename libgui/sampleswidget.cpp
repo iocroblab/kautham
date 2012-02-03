@@ -410,7 +410,7 @@ namespace libGUI{
 
   void SamplesWidget::showSample(int index){
     if(index >= 0 && index < _samples->getSize() )
-      _ptProblem->wSpace()->moveTo(_samples->getSampleAt(index));
+      _ptProblem->wSpace()->moveRobotsTo(_samples->getSampleAt(index));
   }
 
 }

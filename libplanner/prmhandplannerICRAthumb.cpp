@@ -825,7 +825,7 @@
         }
 
         step = step % _simulationPath.size();
-		_wkSpace->moveTo(_simulationPath[step]);
+		_wkSpace->moveRobotsTo(_simulationPath[step]);
       }
     }
 

@@ -494,6 +494,9 @@ namespace libProblem {
 
   bool Robot::setConstrainedKinematic(CONSTRAINEDKINEMATICS type){
     switch(type){
+      case Kautham::UNCONSTRAINED:
+        _constrainKin = NULL;
+        break;
       case Kautham::BRONCHOSCOPY:
         _constrainKin = new ConsBronchoscopyKin(this);		  
         break;

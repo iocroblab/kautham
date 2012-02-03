@@ -57,8 +57,8 @@ namespace libProblem {
         //scene->addChild(SoUnits::MILLIMETERS);
 			  for(unsigned int i=0; i<robots.size(); i++)
 				  scene->addChild((SoSeparator*)robots[i]->getModel());
-  			
-			  for(unsigned int i=0; i<obstacles.size(); i++){
+  			  			
+        for(unsigned int i=0; i<obstacles.size(); i++){
 				  SoSeparator* sep = (SoSeparator*)obstacles[i]->getModel();
 				  char str[20];
 				  sprintf(str,"obstacle%d",i);
@@ -67,6 +67,9 @@ namespace libProblem {
 				  //scene->addChild((SoSeparator*)obstacles[i]->getModel());
 			  }
   			
+			  for(unsigned int i=0; i<_mobileObstacle.size(); i++)
+				  scene->addChild((SoSeparator*)_mobileObstacle[i]->getModel());
+
 			  scene->ref();
       }
     }

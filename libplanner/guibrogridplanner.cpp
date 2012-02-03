@@ -524,7 +524,7 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
 		unsigned int i,j,k,label;
 
 		//move to s
-		_wkSpace->moveTo(s);
+		_wkSpace->moveRobotsTo(s);
 		linkTransf = _wkSpace->getRobot(0)->getLastLinkTransform();
 		pos = linkTransf.getTranslation();
 		i = (pos[0]-O[0]+voxelSize[0]/2)/voxelSize[0];
@@ -724,7 +724,7 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
     if(_solved){
       if( _simulationPath.size() >= 2 ){
         step = step % _simulationPath.size();
-        _wkSpace->moveTo(_simulationPath[step]);
+        _wkSpace->moveRobotsTo(_simulationPath[step]);
 
 		((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->registerValues();
 		KthReal a = ((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->getvalues(0);
@@ -1552,7 +1552,7 @@ bool GUIBROgridPlanner::trySolve()
 			}
 
 			//move to init
-			_wkSpace->moveTo(_init);
+			_wkSpace->moveRobotsTo(_init);
 			//restore alpha,beta corresponding to init
 			((ConsBronchoscopyKin*)_wkSpace->getRobot(0)->getCkine())->registerValues();
 
@@ -1766,7 +1766,7 @@ bool GUIBROgridPlanner::trySolve()
 			mt::Transform linkTransf;
 			mt::Point3 pos;
 
-			_wkSpace->moveTo(_goal);
+			_wkSpace->moveRobotsTo(_goal);
 			
 			//get a copy of current conf
 			RobConf* rConf = _wkSpace->getRobot(0)->getCurrentPos(); 

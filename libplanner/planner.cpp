@@ -152,11 +152,11 @@ namespace libPlanner{
         }
 		    tmpSam = new Sample(*_path.at(_path.size()-1));
         _simulationPath.push_back(tmpSam);
-        _wkSpace->moveTo(_simulationPath[0]);
+        _wkSpace->moveRobotsTo(_simulationPath[0]);
       }
       if( _simulationPath.size() >= 2 ){
         step = step % _simulationPath.size();
-        _wkSpace->moveTo(_simulationPath[step]);
+        _wkSpace->moveRobotsTo(_simulationPath[step]);
       }else
         std::cout << "The problem is wrong solved. The solution path has less than two elements." << std::endl;
     }

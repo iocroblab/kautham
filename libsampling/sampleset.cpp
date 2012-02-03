@@ -513,9 +513,9 @@ namespace libSampling{
 		}
 		
 		clearNeighs();
-		for(int h=0;h<max;h++){
+		for(unsigned int h=0;h<max;h++){
 			//query tree
-			for (int k = 0; k < maxNeighs; k++)
+			for (unsigned int k = 0; k < maxNeighs; k++)
 				d_ann[k] = INFINITY;
       
 			//assert(_CrtCheckMemory());

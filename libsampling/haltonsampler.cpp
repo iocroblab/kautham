@@ -41,7 +41,7 @@
  
  
 #include "haltonsampler.h"
-#include "haltonsample.h"
+#include "sample.h"
 # include <ctime>
 # include <cmath>
 # include <cstring>
@@ -77,7 +77,7 @@ HaltonSampler::~HaltonSampler(void)
 
 Sample* HaltonSampler::nextSample()
 {
-    _current= new HaltonSample(dimension);
+    _current= new Sample(dimension);
 	halton_DIM_NUM = (int)dimension;
 	double *c = new double[dimension];
 	halton(c);

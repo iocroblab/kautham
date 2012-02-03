@@ -518,7 +518,7 @@
 		
 			//write to file
 			for(int i=0; i<_path.size(); i++){
-				_wkSpace->moveTo(_path[i]); //to load the config because it may be lost in computeorientation applied after interpolate in moveAlongPath
+				_wkSpace->moveRobotsTo(_path[i]); //to load the config because it may be lost in computeorientation applied after interpolate in moveAlongPath
 				joints = &(_path[i]->getMappedConf().at(0));
 				writeFiles(fpr,fph,joints);
 			}
@@ -974,7 +974,7 @@
                 else _simulationPath.push_back(tmpSam);
 
 				//store camera transform
-				_wkSpace->moveTo(tmpSam);
+				_wkSpace->moveRobotsTo(tmpSam);
 				mt::Transform ctransf = _wkSpace->getRobot(0)->getLinkTransform(6);
         mt::Point3 ctrans = ctransf.getTranslation();
         mt::Rotation crot = ctransf.getRotation();
@@ -989,7 +989,7 @@
        else{//simulation_path already calculated
 			  if( _simulationPath.size() >= 2 ){
 		        step = step % _simulationPath.size();
-				_wkSpace->moveTo(_simulationPath[step]);
+				_wkSpace->moveRobotsTo(_simulationPath[step]);
 			  }else
 				std::cout << "The problem is wrong solved. The solution path has less than two elements." << std::endl;
        }//closes else

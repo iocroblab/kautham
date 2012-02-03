@@ -62,7 +62,10 @@ namespace libPlanner {
     typedef Sample* location;
     typedef KthReal cost;
     typedef std::pair<int, int> prmEdge;
-    typedef boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS, boost::no_property, boost::property<boost::edge_weight_t, cost> > prmGraph;
+    typedef boost::adjacency_list< boost::listS, boost::vecS, 
+                                   boost::undirectedS, 
+                                   boost::no_property, 
+                                   boost::property<boost::edge_weight_t, cost> > prmGraph;
     typedef prmGraph::vertex_descriptor prmVertex;
     typedef property_map<prmGraph, boost::edge_weight_t>::type WeightMap;
     typedef prmGraph::edge_descriptor edge_descriptor;
@@ -71,7 +74,7 @@ namespace libPlanner {
 	//CLASS distance heuristic
     template <class Graph, class CostType, class LocMap>
     class distance_heuristic : public astar_heuristic<Graph, CostType>  
-	{
+	  {
 		public:
 		typedef typename graph_traits<Graph>::vertex_descriptor prmVertex;
 

@@ -9,7 +9,7 @@
 *                                                                          *
 *                Project Name:       Kautham Planner                       *
 *                                                                          *
-*     Copyright (C) 2007 - 2009 by Alexander Pérez and Jan Rosell          *
+*     Copyright (C) 2007 - 2012 by Alexander Pérez and Jan Rosell          *
 *            alexander.perez@upc.edu and jan.rosell@upc.edu                *
 *                                                                          *
 *             This is a motion planning tool to be used into               *
@@ -85,22 +85,41 @@ namespace libProblem {
     return &distVec;
   }
 
-  void WorkSpace::moveTo(Sample* sample){
+  void WorkSpace::moveRobotsTo(Sample* sample){
     vector<KthReal> tmpVec;
     int j, from = 0;
     for(unsigned int i=0; i< robots.size(); i++){
-		if(sample->getMappedConf().size()==0){
-          tmpVec.clear();
-          for( j=0; j < robots[i]->getNumControls(); j++ )
-             tmpVec.push_back(sample->getCoords()[from + j]);
-		
-          from = j;
-          robots[i]->control2Pose(tmpVec);
-	    }
-		else{
-			robots[i]->Kinematics(sample->getMappedConf().at(i));
-		}
+		  if(sample->getMappedConf().size()==0){
+        tmpVec.clear();
+        for( j=0; j < robots[i]->getNumControls(); j++ )
+           tmpVec.push_back(sample->getCoords()[from + j]);
+
+        from = j;
+        robots[i]->control2Pose(tmpVec);
+	    }else{
+			  robots[i]->Kinematics(sample->getMappedConf().at(i));
+		  }
     }
+  }
+
+  void WorkSpace::moveObstacleTo( size_t mobObst, vector<KthReal>& pmd ){
+    // The parameter pmd is the same type of data the user will be send to
+    // move a robot. It is the value of parameter of a normal sample.
+    if( mobObst < _mobileObstacle.size() ){
+      _mobileObstacle[mobObst]->control2Pose( pmd );
+    }else
+      cout << "The mobObst index is greater than the counter of mobile obstacles.\n"; 
+
+  }
+
+  void WorkSpace::moveObstacleTo( size_t mobObst, RobConf& robConf ){
+    // The parameter pmd is the same type of data the user will be send to
+    // move a robot. It is the value of parameter of a normal sample.
+    if( mobObst < _mobileObstacle.size() ){
+      _mobileObstacle[mobObst]->Kinematics( robConf );
+    }else
+      cout << "The mobObst index is greater than the counter of mobile obstacles.\n"; 
+
   }
 
   bool WorkSpace::collisionCheck(Sample* sample ) {
@@ -185,11 +204,11 @@ namespace libProblem {
 
     case CONFIGSPACE:
       if( smp1.getMappedConf().size() == 0){
-        this->moveTo(&smp1);
+        this->moveRobotsTo(&smp1);
         smp1.setMappedConf(getConfigMapping());
       }
       if( smp2.getMappedConf().size() == 0){
-        this->moveTo(&smp2);
+        this->moveRobotsTo(&smp2);
         smp2.setMappedConf(getConfigMapping());
       }
       return smp1.getDistance(&smp2, _robWeight, spc);
@@ -261,6 +280,10 @@ namespace libProblem {
     }
   }
 
+  void WorkSpace::addMobileObstacle(Robot* obs){
+    _mobileObstacle.push_back( obs );
+  }
+      
   void WorkSpace::addObstacle(Obstacle* obs){
     obstacles.push_back(obs);
   }
@@ -303,6 +326,14 @@ namespace libProblem {
   void WorkSpace::setPathVisibility(bool vis){
     for(size_t i = 0; i < robots.size(); i++ )
       robots.at(i)->setPathVisibility( vis );
+  }
+
+  bool WorkSpace::attachObstacle2RobotLink(string robot, string link, unsigned int obs ){
+    return false;
+  }
+
+  bool WorkSpace::detachObstacleFromRobotLink(string robot, string link ){
+    return false;
   }
 
 }

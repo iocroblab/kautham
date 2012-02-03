@@ -104,7 +104,7 @@ namespace libPlanner {
   //! This class is an abstract class that represents a discretization of the configuration space.
 	//!It contains a graph representing the whole regular grid with both collision and free samples
 	//!associated to the vertices, and a subgraph that contains only those free.
-	//!Its derived classes must implement the trysolce function to implement any grid-based 
+	//!Its derived classes must implement the trysolve function to implement any grid-based 
 	//!planning method .
     class gridPlanner:public Planner {
 	    public:

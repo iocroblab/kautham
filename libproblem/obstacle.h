@@ -63,6 +63,8 @@ namespace libProblem {
 		inline Element* getElement(){return element;}
 		inline void setEnableCollisions(bool c){enablecollisions = c;};
 		inline bool getEnableCollisions() const {return enablecollisions;};
+    inline string   getName(){return _name;}
+    inline void     setName(string name){_name = name;}
 		//~Obstacle();
 	private:
 		KthReal linVel[3];
@@ -70,6 +72,7 @@ namespace libProblem {
 		Element* element;
 		bool enablecollisions;
 		LIBUSED libs;
+    string    _name;
 	};
 }
 

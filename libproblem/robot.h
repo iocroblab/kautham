@@ -282,7 +282,7 @@ namespace libProblem {
     //! and the mt::Transform calculated on the attached instant.
     void                  moveAttachedObj();
 
-    //! This method detaches the prviously attached objects to the link named linkName.
+    //! This method detaches the previously attached objects to the link named linkName.
     bool                  detachObject( string linkName );
 
   private:

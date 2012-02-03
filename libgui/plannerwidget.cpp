@@ -314,7 +314,7 @@ namespace libGUI{
 
 	  if( index >= 0 && index < max ){
 		  Sample *smp =  _samples->getSampleAt(index);
-      _planner->wkSpace()->moveTo(smp );
+      _planner->wkSpace()->moveRobotsTo(smp );
   	
 	    vector<KthReal> c = smp->getCoords();
 	    cout << "sample: ";

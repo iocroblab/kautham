@@ -133,38 +133,104 @@ namespace libProblem {
     string name = "";
     for(xml_node_iterator it = tmpNode.begin(); it != tmpNode.end(); ++it){ // Processing each child
       name = it->name();
-      // it can be an Scene or a fixed obstacle.
+      // it can be an Scene or an obstacle.
       if(name == "Scene" ){
-        if((*it).child("Collision"))
-          flagCol = (*it).child("Collision").attribute("Enable").as_bool();
-        else
-          flagCol = true;
+        // It can be either a mobile obstacle (Robot) or a fixed obstacle.
+        fstream fin;
+        string obsFile = dir + (*it).attribute("scene").value();
+        fin.open(obsFile.c_str(),ios::in);
+        if( fin.is_open() ){ // The file already exists.
+          fin.close();
+          string::size_type loc = obsFile.find( ".rob", 0 );
+          if( loc != string::npos ) { // It means that the obstacle is a robot.
+#ifndef KAUTHAM_COLLISION_PQP
+            rob = new Robot( dir + (*it).attribute("scene").value(),
+                        (KthReal)(*it).attribute("scale").as_double(),INVENTOR);
+#else
+            rob = new Robot( dir + (*it).attribute("scene").value(),
+                        (KthReal)(*it).attribute("scale").as_double(),IVPQP);
+#endif
+            // Setup the limits of the moveable base
+            for(xml_node_iterator itL = (*it).begin(); itL != (*it).end(); ++itL){
+              name = (*itL).name();
+              if( name == "Limits" ){
+                name = (*itL).attribute("name").value();
+                if( name == "X")
+                  rob->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+                else if( name == "Y")
+                  rob->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+                else if( name == "Z")
+                  rob->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+                else if( name == "WX")
+                  rob->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+                else if( name == "WY")
+                  rob->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+                else if( name == "WZ")
+                  rob->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+                else if( name == "TH")
+                  rob->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
+                                 (KthReal)(*itL).attribute("max").as_double() * _toRad);
+              }
+              if( name == "Home" ){
+              // If robot hasn't a home, it will be assumed in the origin.
+                SE3Conf tmpC;
+                vector<KthReal> cords(7);
+                cords[0] = (KthReal)(*itL).attribute("X").as_double();
+                cords[1] = (KthReal)(*itL).attribute("Y").as_double();
+                cords[2] = (KthReal)(*itL).attribute("Z").as_double();
+                cords[3] = (KthReal)(*itL).attribute("WX").as_double();
+                cords[4] = (KthReal)(*itL).attribute("WY").as_double();
+                cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
+                cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
 
-        xml_node locObs = (*it).child("Location");
-        pob[0] = (KthReal)locObs.attribute("X").as_double();
-        pob[1] = (KthReal)locObs.attribute("Y").as_double();
-        pob[2] = (KthReal)locObs.attribute("Z").as_double();
-        oob[0] = (KthReal)locObs.attribute("WX").as_double();
-        oob[1] = (KthReal)locObs.attribute("WY").as_double();
-        oob[2] = (KthReal)locObs.attribute("WZ").as_double();
-        oob[3] = (KthReal)locObs.attribute("TH").as_double() * _toRad;
+                // Here is needed to convert from axis-angle to
+                // quaternion internal represtantation.
+                SE3Conf::fromAxisToQuaternion(cords);
 
-        // Changing between axis angle to quaternion.
-        SE3Conf::fromAxisToQuaternion(oob);
+                tmpC.setCoordinates(cords);
+
+                rob->setHomePos(&tmpC);
+              }
+            }
+
+            _wspace->addMobileObstacle(rob);
+          }else{
+            //  It is a fixed object
+            if((*it).child("Collision"))
+              flagCol = (*it).child("Collision").attribute("Enable").as_bool();
+            else
+              flagCol = true;
+
+            xml_node locObs = (*it).child("Location");
+            pob[0] = (KthReal)locObs.attribute("X").as_double();
+            pob[1] = (KthReal)locObs.attribute("Y").as_double();
+            pob[2] = (KthReal)locObs.attribute("Z").as_double();
+            oob[0] = (KthReal)locObs.attribute("WX").as_double();
+            oob[1] = (KthReal)locObs.attribute("WY").as_double();
+            oob[2] = (KthReal)locObs.attribute("WZ").as_double();
+            oob[3] = (KthReal)locObs.attribute("TH").as_double() * _toRad;
+
+            // Changing between axis angle to quaternion.
+            SE3Conf::fromAxisToQuaternion(oob);
 
 #ifndef KAUTHAM_COLLISION_PQP
-        obs = new Obstacle(dir + (*it).attribute("scene").value(), pob, oob,
-                                    (KthReal)(*it).attribute("scale").as_double(), INVENTOR, flagCol);
+            obs = new Obstacle(dir + (*it).attribute("scene").value(), pob, oob,
+                                        (KthReal)(*it).attribute("scale").as_double(), INVENTOR, flagCol);
 #else
-        obs = new Obstacle( dir + (*it).attribute("scene").value(), pob, oob,
-                          (KthReal)(*it).attribute("scale").as_double(), IVPQP, flagCol);
+            obs = new Obstacle( dir + (*it).attribute("scene").value(), pob, oob,
+                              (KthReal)(*it).attribute("scale").as_double(), IVPQP, flagCol);
 #endif
-        _wspace->addObstacle(obs);
+            _wspace->addObstacle(obs);
+          }
+        }else
+          cout << "The obstacle " << (*it).attribute("scene").value() <<" is improperly configured.";
       }
-
-      if(name == "DistanceMap" ){
-			_wspace->addDistanceMapFile(dir + (*it).attribute("distanceMap").value());
-	  }
 
       // it can be a Robot.
       if(name == "Robot" ){
@@ -256,6 +322,11 @@ namespace libProblem {
 
         _wspace->addRobot(rob);
       }
+            
+      //  it can be a distance map file
+      if(name == "DistanceMap" ){
+			  _wspace->addDistanceMapFile(dir + (*it).attribute("distanceMap").value());
+	    }
 
     }// closing for(xml_node_iterator it = tmpNode.begin(); it != tmpNode.end(); ++it){ // Processing each child
 
