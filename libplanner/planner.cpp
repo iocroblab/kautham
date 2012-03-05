@@ -66,7 +66,7 @@ namespace libPlanner{
     _parameters.clear();
     _solved = false;
     _hasCameraInformation = false;
-    _triedSamples = _maxNumSamples = _generatedEdges = 0;
+    _triedSamples = _maxNumSamples = _generatedEdges = _collChecks = 0;
     _totalTime = _smoothTime = 0. ;
 	_sceneCspace=NULL;
 	}
@@ -91,6 +91,7 @@ namespace libPlanner{
 
   bool Planner::solveAndInherit(){
     libProblem::Element::resetCollCheckCounter();
+    libProblem::WorkSpace::resetCollCheckCounter();
 
 	clock_t entertime = clock();
 
@@ -105,13 +106,14 @@ namespace libPlanner{
       addZeroCrossingToPath();
       moveAlongPath(0);
       _wkSpace->inheritSolution(_simulationPath);
+	  _collChecks = libProblem::WorkSpace::getCollCheckCounter();
 
       // Add the results to the Query vector.
       KthQuery* currQue = NULL;
       addQuery( _samples->indexOf( _init ), _samples->indexOf( _goal ));
       currQue = &(_queries.at( _queries.size() - 1 ));
       currQue->solved(_solved);
-      currQue->setSampleStats(_triedSamples, _samples->getSize(), _generatedEdges);
+      currQue->setSampleStats(_triedSamples, _samples->getSize(), _generatedEdges, _collChecks);
       currQue->setTotalTime( _totalTime );
       currQue->setSmoothTime( _smoothTime );
       vector<int> solu;
@@ -228,6 +230,12 @@ namespace libPlanner{
       queryItemResultE.set_name("Result");
       queryItemResultE.append_attribute("name") = "Generated Edges";
       queryItemResultE.append_child(node_pcdata).set_value( (*it).printGeneratedEdges().c_str() );
+
+	  
+      xml_node queryItemResultC = queryItem.append_child();
+      queryItemResultC.set_name("Result");
+      queryItemResultC.append_attribute("name") = "Collision-check calls";
+      queryItemResultC.append_child(node_pcdata).set_value( (*it).printCollCheckCalls().c_str() );
     }
 
     //  Now it is adding the samples set.

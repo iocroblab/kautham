@@ -57,6 +57,12 @@ namespace libProblem {
     _robWeight.clear();
   }
 
+
+  unsigned int    libProblem::WorkSpace::_countWorldCollCheck = 0;
+  void            libProblem::WorkSpace::resetCollCheckCounter(){_countWorldCollCheck = 0;}
+  unsigned int    libProblem::WorkSpace::getCollCheckCounter(){ return _countWorldCollCheck;}
+  void            libProblem::WorkSpace::increaseCollCheckCounter(){_countWorldCollCheck++;}
+
 	void WorkSpace::addDistanceMapFile(string distanceFile)
 	{
 		distanceMapFile = distanceFile;
@@ -123,6 +129,9 @@ namespace libProblem {
   }
 
   bool WorkSpace::collisionCheck(Sample* sample ) {
+
+	  increaseCollCheckCounter();
+
     vector<KthReal> tmpVec;
     bool collision = false;
     int j, from = 0;

@@ -56,6 +56,7 @@ namespace libPlanner{
     _connectedSamples = 0;
     _generatedEdges = 0;
     _solved = false;
+	_collCheckCalls = 0;
   }
 
   string KthQuery::printInit(){
@@ -75,6 +76,13 @@ namespace libPlanner{
       return "True";
     else
       return "False";
+  }
+
+
+  string KthQuery::printCollCheckCalls(){
+    stringstream ss;
+    ss << _collCheckCalls ;
+    return ss.str();
   }
 
   string KthQuery::printGeneratedEdges(){

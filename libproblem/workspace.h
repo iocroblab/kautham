@@ -103,6 +103,12 @@ namespace libProblem{
 
       //! This method detaches an object previously attached to a Robot link.
       bool                  detachObstacleFromRobotLink(string robot, string link );
+
+	  
+		static void           resetCollCheckCounter();
+		static unsigned int   getCollCheckCounter();
+		static void           increaseCollCheckCounter();
+
 	  protected:
 		  virtual void          updateScene() = 0;
 		  vector<Obstacle*>     obstacles;
@@ -118,6 +124,8 @@ namespace libProblem{
 	  string distanceMapFile;
 	  //string neighborhoodMapFile;
 
+	private:
+		static unsigned int   _countWorldCollCheck;
   };
 }
 

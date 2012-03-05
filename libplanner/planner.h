@@ -151,6 +151,7 @@ namespace libPlanner {
 	  SoSeparator*                  _sceneCspace;
 
     // Stats
+    unsigned int                  _collChecks;
     unsigned int                  _maxNumSamples;
     unsigned int                  _triedSamples;
     unsigned int                  _generatedEdges;
