@@ -126,6 +126,7 @@ int main(int argc, char* argv[]){
       vector<KthReal> goal( _samples->getSampleAt(1)->getCoords());
       KthReal times[2]={0., 0.};
       int sampCount[3]={0, 0, 0};
+      unsigned int checks=0;
       for(int i = 0; i < tryTimes; i++){
         _samples->clear();
         Sample* smp = new Sample(d);
@@ -144,6 +145,7 @@ int main(int argc, char* argv[]){
           sampCount[0] += tmp.getGeneratedSamples();
           sampCount[1] += tmp.getConnectedSamples();
           sampCount[2] += tmp.getPath().size();
+		  checks += tmp.getCollCheckCalls();
           //ss << i << ".kps";
           //_planner->saveData( soluFile.c_str() );
         }else{
@@ -155,6 +157,7 @@ int main(int argc, char* argv[]){
           sampCount[0] += tmp.getGeneratedSamples();
           sampCount[1] += tmp.getConnectedSamples();
           sampCount[2] += tmp.getPath().size();
+		  checks += tmp.getCollCheckCalls();
 
 #ifndef KAUTHAM_USE_MPI
           //if( badSol >= tryTimes / 5 )
@@ -202,6 +205,7 @@ int main(int argc, char* argv[]){
           outputFile << "Tried samples: \t"     << sampCount[0]/(float) tryTimes  << endl;
           outputFile << "Connected samples: \t" << sampCount[1]/(float) tryTimes  << endl;
           outputFile << "Nodes in solution path: \t"   << sampCount[2]/(float) tryTimes  << endl;
+          outputFile << "Collision-check calls: \t"   << checks/tryTimes << endl;
 	      }else           //there were any problems with the copying process
           throw(1);
 

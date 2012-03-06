@@ -22,7 +22,7 @@
 			<Parameter name="Max. Samples">1000</Parameter>
 			<Parameter name="Neigh Thresshold">0.150000006</Parameter>
 			<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
-			<Parameter name="Sampler 1(sdk),2(h),3(g),4(gl),5(r)">3</Parameter>
+			<Parameter name="Sampler 1(sdk),2(h),3(g),4(gl),5(r)">1</Parameter>
 			<Parameter name="Speed Factor">10</Parameter>
 			<Parameter name="Step Size">0.04999999702</Parameter>
 		</Parameters>

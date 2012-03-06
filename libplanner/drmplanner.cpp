@@ -193,6 +193,7 @@ namespace libPlanner {
 
 	void DRMPlanner::drawCspace()
 	{
+		if(_sceneCspace==NULL) return;
 		if(_wkSpace->getDimension()==2)
 		{			
 			//first delete whatever is already drawn
@@ -465,7 +466,7 @@ namespace libPlanner {
           {
             printConnectedComponents();
             smoothPath();
-            cout << "Calls to collision-check = " << count <<endl;
+            //cout << "Calls to collision-check = " << count <<endl;
             _solved = true;
 			
 			drawCspace();
@@ -736,7 +737,7 @@ namespace libPlanner {
 	    Sample *smpTo;
 	    prmEdge *e; //prmEdge is a type defined in PRM.h as std::pair<int, int>
       
-      cout << "CONNECTING  " << _samples->getSize() << " FREE SAMPLES" << endl;
+      //cout << "CONNECTING  " << _samples->getSize() << " FREE SAMPLES" << endl;
 
       typedef std::pair<int, SampleSet*> ccPair;
 
@@ -748,7 +749,7 @@ namespace libPlanner {
           max = _samples->getSize();
       else {
         max = _maxNumSamples;
-        cout<<"connectSamples::Using a maximum of "<<max<<" samples"<<endl;
+        //cout<<"connectSamples::Using a maximum of "<<max<<" samples"<<endl;
       }
 
 	    for(unsigned int i=0; i<max; i++){
@@ -831,7 +832,7 @@ namespace libPlanner {
           }
         }
 	    }
-	    cout << "END CONNECTING  " << max << " FREE SAMPLES" << endl;
+	    //cout << "END CONNECTING  " << max << " FREE SAMPLES" << endl;
 
 	    return true;
     }
@@ -863,11 +864,11 @@ namespace libPlanner {
 		cout<<"NUM CONNECTED COMPONENTS = "<<_ccMap.size()<<endl;
 		for ( it=_ccMap.begin(); it != _ccMap.end(); it++ )
 		{
-			cout << "CC " << (*it).first << " => " << (*it).second->getSize()<<" samples: " ;
+			//cout << "CC " << (*it).first << " => " << (*it).second->getSize()<<" samples: " ;
 			vector<Sample*>::iterator itera = (*it).second->getBeginIterator();
 			while((itera != (*it).second->getEndIterator()))
 			{
-				cout <<_samples->indexOf( (*itera) )<<", ";
+				//cout <<_samples->indexOf( (*itera) )<<", ";
 				itera++;
 			}
 			cout << endl;

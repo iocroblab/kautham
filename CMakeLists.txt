@@ -129,10 +129,10 @@ IF( KAUTHAM_CONSOLE )
     MESSAGE( STATUS "MPI library found at" ${MPI_INCLUDE_PATH} )
     SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS} ${MPI_LIBRARIES} )
   ELSE( MPI_FOUND )
-    MESSAGE( STATUS "MPI library didn't found" )
+    MESSAGE( STATUS "MPI library not found" )
   ENDIF( MPI_FOUND )
 
-  SET( SRC_FILES kauthamplanner_console.cpp libgui/kauthamobject.cpp )
+  SET( SRC_FILES kauthamplanner_console.cpp libutil/kauthamobject.cpp )
   
     # Adding console bath mode executable
   ADD_EXECUTABLE( KauthamConsole ${SRC_FILES} ${HDR_FILES} ${RES_FILES} )

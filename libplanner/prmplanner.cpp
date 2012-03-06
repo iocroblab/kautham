@@ -124,6 +124,7 @@ namespace libPlanner {
 
 	void PRMPlanner::drawCspace()
 	{
+		if(_sceneCspace==NULL) return;
 		if(_wkSpace->getDimension()==2)
 		{
 			//first delete whatever is already drawn
