@@ -529,7 +529,7 @@ namespace libGUI{
 
     // Now I will send the force (Fx Fy Fz) applied on the frame W to the file 
     // Only the magnetic part in order to plot a figure.
-    //_theFile << magP[0] << " " << magP[1] << " " << magP[2] << " " ;
+    _theFile << magP[0] << " " << magP[1] << " " << magP[2] << " " ;
 
     magP = h2w * magP;
     pushP = h2w * pushP;
