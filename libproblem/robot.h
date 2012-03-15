@@ -62,6 +62,8 @@ using namespace std;
 
 namespace libProblem {
   struct attObj{
+    attObj(){obs=NULL; link=NULL;}
+    ~attObj(){obs=NULL; link=NULL;}
     Obstacle*     obs;
     Link*         link;
     mt::Transform trans;

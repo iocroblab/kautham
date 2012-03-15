@@ -605,22 +605,23 @@ namespace libProblem {
         string name = planNode.child("Name").child_value();
 
         if( name != ""){
-          createPlanner( name );
-          xml_node::iterator it;
-          for(it = planNode.begin(); it != planNode.end(); ++it){
-            name = it->name();
-            try{
-              if( name == "Parameter" ){
-                name = it->attribute("name").value();
-                _planner->setParametersFromString( name.append("|").append(it->child_value()));
+          if( createPlanner( name )){
+            xml_node::iterator it;
+            for(it = planNode.begin(); it != planNode.end(); ++it){
+              name = it->name();
+              try{
+                if( name == "Parameter" ){
+                  name = it->attribute("name").value();
+                  _planner->setParametersFromString( name.append("|").append(it->child_value()));
+                }
+              }catch(...){
+                std::cout << "Current planner doesn't have at least one of the parameters" 
+                  << " you found in the file (" << name << ")." << std::endl; 
+                return false; //if it is wrong maybe the file has been generated with another planner.
               }
-            }catch(...){
-              std::cout << "Current planner doesn't have at least one of the parameters" 
-                << " you found in the file (" << name << ")." << std::endl; 
-              return false; //if it is wrong maybe the file has been generated with another planner.
             }
+            return true;
           }
-          return true;
         }
       }
     }

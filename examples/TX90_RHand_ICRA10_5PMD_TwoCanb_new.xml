@@ -25,7 +25,7 @@
 	</Scene>
 	<Planner>
 		<Parameters>
-			<Name>PRM RobotHand ICRA J</Name>
+			<Name>PRMAURO HandArm</Name>
 			<LocalPlanner stepSize="0.2">Linear</LocalPlanner>
 			<Parameter name="Cloud Exhaustive">0</Parameter>
 			<Parameter name="Cloud Radius">30</Parameter>

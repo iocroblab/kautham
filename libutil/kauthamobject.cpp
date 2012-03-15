@@ -86,16 +86,23 @@ namespace Kautham{
     HASH_S_K::iterator it;
     vector<string> tokens;
     boost::split(tokens, par, boost::is_any_of("|"));
+    
     for(int i=0; i<tokens.size(); i=i+2){
-      it = _parameters.find(tokens[i]);
-      val = (KthReal)atof(tokens[i+1].c_str());
-      if(it != _parameters.end()) 
-        it->second = val;
-      else{
+      try{
+        it = _parameters.find(tokens[i]);
+        val = (KthReal)atof(tokens[i+1].c_str());
+        if(it != _parameters.end()) 
+          it->second = val;
+        else{
+          cout << "Error:" << tokens[i] << "\t";
+          throw -1;
+        }
+      }catch(...){
         cout << "Error:" << tokens[i] << "\t";
-        throw -1;
+            throw -2;
       }
     }
+    
     return setParameters();
   }
       

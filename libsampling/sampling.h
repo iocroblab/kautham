@@ -45,7 +45,6 @@
 #include "sampleset.h"
 #include "sdksample.h"
 #include "randomsample.h"
-
 #include "sdksampler.h"
 #include "gaussianLikesampler.h"
 #include "gaussiansampler.h"
