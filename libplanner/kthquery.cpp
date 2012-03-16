@@ -41,6 +41,7 @@
 #include "kthquery.h"
 #include <string>
 #include <sstream>
+#include <boost/algorithm/string.hpp>
 
 namespace libPlanner{
   KthQuery::KthQuery(){
@@ -121,6 +122,13 @@ namespace libPlanner{
     stringstream ss;
     ss << _smoothTime ;
     return ss.str();
+  }
+  
+  void KthQuery::setPath(string path){
+    vector<string> tokens;
+    boost::split(tokens, path, boost::is_any_of("| "));
+    for(size_t i = 0; i < tokens.size(); ++i)
+      _path.push_back( atoi(tokens[i].c_str() ) );
   }
 
   bool KthQuery::sameInitGoal(int init, int goal) const{

@@ -210,69 +210,63 @@ namespace libGuiding{
       k = nearX(xi);
       const Xnode& nea = _pathX.at(k);
       Uvec avec(7);
-      for(int i = 0; i < 7; i++)
-        avec.at(i) = xi.at(i) - nea.at(i);
+      KthReal normV = 0.;
+      for(int i = 0; i < 7; i++){
+        avec.at(i) = nea.at(i) - xi.at(i);//xi.at(i) - nea.at(i);
+        normV+=avec.at(i) * avec.at(i);
+      }
+      normV=sqrt(normV);
       
+      // Computes the projection over the segment x(nea) -> x(nea+1)
       KthReal proj = 0.;
       for(int i = 0; i < 7; i++)
         proj += avec.at(i) * _uvecX.at(k).at(i);
 
-      if( k == _pathX.size() -1 ){// The Goal
+      // First the goal and init points were chosen because their behaviour is fixed
+      if( (k == _pathX.size() -1) || (k == 0 && proj <= 0) ){// The Goal and init points
         projD = true;
         for(int i = 0; i < 7; i++){
           xd.at(i) = nea.at(i);
           up.at(i) = 0.;
         }
         ratio = 1.;
-      }else{
-        if( proj > 0 || k == 0){
-          projD = true;
-          //xd.clear();
-          //xd.resize( _pathX.at(0).resize() );
+      }else{ // This part processes the rest of the path
+        // For each other point, the force is generated to the point inside a segment if 
+        // its disctance to the vertex is greater than Epsilon
+        if( normV <= EPSILON && proj <= 0){   // In this case the force is generated using the unit vector of the 
+          projD = true;                       // segment nea to nea+1 and attracting to nearest point.
           for(int i = 0; i < 7; i++){
-            xd.at(i) = nea.at(i) + proj * _uvecX.at(k).at(i);
+            xd.at(i) = nea.at(i);
             up.at(i) = _uvecX.at(k).at(i);
           }
-          ratio = proj/_uvecX.at(k).dist();
-        }else{
-          projD = false;
-          if( proj > -EPSILON ){
-            //Uses the weighted sum
-            for(int i = 0; i < 7; i++){
-              xd.at(i) = nea.at(i) ;
-              up.at(i) = 0.5*_uvecX.at(k-1).at(i) + 0.5*_uvecX.at(k).at(i) ;
-            }
-            ratio = proj/_uvecX.at(k).dist();          
-          }else{// calculates the projection over the segment before.
+          ratio = 1.;                   
+        }else{ // normV > EPSILON || (normV <= EPSILON && proj > 0)
+          if( proj < 0 ){ // calculates the projection over the segment before.
             proj = 0.;
             for(int i = 0; i < 7; i++)
               proj += avec.at(i) * _uvecX.at(k-1).at(i);
             
-            //xd.clear();
-            //xd.resize( _pathX.at(0).resize() );
             for(int i = 0; i < 7; i++){
               xd.at(i) = nea.at(i) - proj * _uvecX.at(k-1).at(i);
               up.at(i) = _uvecX.at(k-1).at(i);
             }
-            ratio = 1. - (proj / _uvecX.at(k).dist() );
-          }
-        }
-      }
+            ratio = 1. - proj / _uvecX.at(k-1).dist() ;
+          }else{ //proj >= 0 % // The rest of the path then it calculates the projection over the segment
+            projD = true;
+            for(int i = 0; i < 7; i++){
+              xd.at(i) = nea.at(i) + proj * _uvecX.at(k).at(i);
+              up.at(i) = _uvecX.at(k).at(i);
+            }
+            ratio = proj/_uvecX.at(k).dist();
+          }//end if( proj < 0 )
+        }// end if( normV <= EPSILON && proj <= 0)
+      }// end if( (k == _pathX.size() -1) || (k == 0 && proj <= 0) )
 
-      if( proj > -EPSILON && proj < EPSILON ){
-        proj = 0.;
-        for(int i = 0; i < 7; i++){
-          um.at(i) = nea.at(i) - xi.at(i);   
-          proj += um.at(i) * um.at(i);
-        }
-      }else{
-        proj = 0.;
-        for(int i = 0; i < 7; i++){
-          um.at(i) = xd.at(i) - xi.at(i);   
-          proj += um.at(i) * um.at(i);
-        }
+      proj = 0.;
+      for(int i = 0; i < 7; i++){
+        um.at(i) = xd.at(i) - xi.at(i);   
+        proj += um.at(i) * um.at(i);
       }
-
       proj = sqrt(proj);
 
       for(int i = 0; i < 7; i++)
@@ -281,7 +275,8 @@ namespace libGuiding{
       return proj;
     }catch(...){}
 
-    return -1.;  }
+    return -1.;  
+}
 
 
  int PathToGuide::nearQ(const Qnode &qn ){

@@ -263,6 +263,7 @@ namespace libGUI{
         dir = path;
         dir.truncate(dir.lastIndexOf("/"));
         _planner->loadData(path.toUtf8().constData());
+        if( _planner->isSolved() ) btnMove->setEnabled(true);
       }
       _gui->setCursor(QCursor(Qt::ArrowCursor));
       setTable(_planner->getParametersAsString());      

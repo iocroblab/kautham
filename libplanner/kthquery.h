@@ -74,6 +74,10 @@ namespace libPlanner{
       inline bool             setInitGoal(int init, int goal){_init = init; _goal = goal;}
       inline void             setSampleStats(int generated, int connected, int edges, int checks){_generatedSamples = generated;
                                             _connectedSamples = connected; _generatedEdges = edges;_collCheckCalls = checks;}
+      inline void             setGeneratedSamples(int generated){ _generatedSamples = generated;}
+      inline void             setConnectedSamples(int connected){ _connectedSamples = connected; }
+      inline void             setGeneratedEdges(int edges){_generatedEdges = edges;}
+      inline void             setCollCheckCalls(int checks){_collCheckCalls = checks;}
 
       string printInit();
       string printGoal();
@@ -86,6 +90,7 @@ namespace libPlanner{
       string printSmoothTime();
       string printCollCheckCalls();
 
+      void setPath(string path);
       bool sameInitGoal(const KthQuery &other) const;
       bool sameInitGoal(int init, int goal) const;
       bool operator==(const KthQuery &other) const;
@@ -100,7 +105,7 @@ namespace libPlanner{
       int         _generatedSamples;
       int         _connectedSamples;
       int         _generatedEdges;
-	  int		  _collCheckCalls;
+	    int		      _collCheckCalls;
   };
 }
 

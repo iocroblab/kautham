@@ -1,7 +1,7 @@
 % This function plots the data collected form the teleoperation procedure.
 % The data were stored in the following order: Fx Fy Fz Xd Yd Zd Xr Yr Zr
-S=load('Data_of_teleoperation.txt');
-D=0;
+S=load('Data_of_teleoperationT3_assisted.txt');
+D=1;
 k=3;
 scale = 10;
 fx=scale*S(1:k:end,1);
@@ -22,5 +22,6 @@ else
   plot3(xd,yd,zd,'r');
   hold on;
   plot3(xr,yr,zr);
- %quiver3(xr,yr,zr,fx,fy,fz)
+  quiver3(xr,yr,zr,fx,fy,fz)
 end
+hold off;

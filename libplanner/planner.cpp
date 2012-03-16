@@ -93,20 +93,20 @@ namespace libPlanner{
     libProblem::Element::resetCollCheckCounter();
     libProblem::WorkSpace::resetCollCheckCounter();
 
-	clock_t entertime = clock();
+	  clock_t entertime = clock();
 
     if(trySolve()){
 
-		if(_totalTime==0.0)
-		{
-			clock_t finaltime = clock();
-			_totalTime = (KthReal)(finaltime - entertime)/CLOCKS_PER_SEC ;
-		}
+	    if(_totalTime==0.0)
+	    {
+		    clock_t finaltime = clock();
+		    _totalTime = (KthReal)(finaltime - entertime)/CLOCKS_PER_SEC ;
+	    }
 
       addZeroCrossingToPath();
       moveAlongPath(0);
       _wkSpace->inheritSolution(_simulationPath);
-	  _collChecks = libProblem::WorkSpace::getCollCheckCounter();
+	    _collChecks = libProblem::WorkSpace::getCollCheckCounter();
 
       // Add the results to the Query vector.
       KthQuery* currQue = NULL;
@@ -257,6 +257,8 @@ namespace libPlanner{
   bool Planner::loadData(string path){
     // First, I will clean SampleSet
     _samples->clear();
+    _queries.clear();
+    _path.clear();
 
     xml_document doc;
     xml_parse_result result = doc.load_file(path.c_str());
@@ -317,6 +319,26 @@ namespace libPlanner{
       std::cout << "Something wrong with the samples. Not all samples has been loaded."
           << std::endl;
       return false;
+    }
+    // Now, the queries are loaded if exists.
+    tempNode = doc.child("Planner").child("Queries");
+    for (pugi::xml_node_iterator it = tempNode.begin(); it != tempNode.end(); ++it){
+      // Add the results to the Query vector.
+      KthQuery* currQue = NULL;
+      addQuery( it->attribute("Init").as_int(),  it->attribute("Goal").as_int());
+      currQue = &(_queries.at( _queries.size() - 1 ));
+      currQue->solved(it->attribute("Solved").as_bool()); 
+      //pugi::xml_node tmpStat=it->child("Query");
+      std::string par="";
+      for (pugi::xml_node_iterator it2 = it->begin(); it2 != it->end(); ++it2){
+        par = it2->attribute("name").value();
+        if( par=="Path" )                   currQue->setPath( it2->child_value() );
+        if( par=="TotalTime" )              currQue->setTotalTime( atof( it2->child_value() )  );
+        if( par=="SmoothTime" )             currQue->setSmoothTime( atof( it2->child_value() )   );
+        if( par=="Generated Samples" )      currQue->setGeneratedSamples( atoi( it2->child_value() )  );
+        if( par=="Generated Edges" )        currQue->setGeneratedEdges( atoi( it2->child_value() )  );
+        if( par=="Collision-check calls" )  currQue->setCollCheckCalls( atoi( it2->child_value() )  );
+      }
     }
     return true;
   }
@@ -389,7 +411,7 @@ namespace libPlanner{
         }
         advance[min] = 0.;
         tmpSamp = _path.at(i-1)->interpolate( _path.at(i), tmpVal );
-        
+        _samples->add( tmpSamp );
         newPath.push_back( tmpSamp );
         --needInter;
       }
