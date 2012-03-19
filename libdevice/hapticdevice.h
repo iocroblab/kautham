@@ -41,7 +41,6 @@
 
 #include "device.h"
 #include <QTimer>
-#include <libcomm/client.h>
 #include <mt/mt.h>
 
 //haptic library
@@ -50,7 +49,6 @@
 #endif
 
 using namespace Kautham;
-using namespace ioc_comm;
 using namespace std;
 using namespace mt;
 
@@ -79,19 +77,19 @@ namespace libDevice{
     private:
       HapticDevice();
 
-      // components for the client
-      ioc_comm::Client*             _client;
+      //// components for the client
+      //ioc_comm::Client*             _client;
 
       unsigned int                  _updatingPeriod;
       QTimer                        _updateDeviceTimer;
 
-      //Generic Exchanged data structures
-      ioc_comm::vecData             _serverData;
-      ioc_comm::vecData             _sendingData;
+      ////Generic Exchanged data structures
+      //ioc_comm::vecData             _serverData;
+      //ioc_comm::vecData             _sendingData;
 
-      // Haptic information
-      ioc_comm::cartesian::position _position;
-      ioc_comm::cartesian::force    _force;
+      //// Haptic information
+      //ioc_comm::cartesian::position _position;
+      //ioc_comm::cartesian::force    _force;
       bool                          _buttonPressed;
 
       mt::Transform                 _hipTransform;
