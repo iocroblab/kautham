@@ -97,8 +97,6 @@ IF( KAUTHAM_GUI )
   LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
                        
   
-  
-  ADD_SUBDIRECTORY ( libcomm )
   ADD_SUBDIRECTORY ( libdevice )
   ADD_SUBDIRECTORY ( libgui )
   ADD_SUBDIRECTORY ( libguiding )
@@ -115,7 +113,7 @@ IF( KAUTHAM_GUI )
   ENDIF(WIN32)
 
   TARGET_LINK_LIBRARIES( Kautham2 libDNN libPQP libdevice libgui libsampling 
-						libproblem libioccomm libkthutil ${KC_EXTRA_LIBS} )
+						libproblem libkthutil ${KC_EXTRA_LIBS} )
 ENDIF( KAUTHAM_GUI )
 
 
