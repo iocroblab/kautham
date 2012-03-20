@@ -43,13 +43,7 @@
 namespace libDevice{
 
   HapticDevice::HapticDevice(string name, unsigned int upPeriod):Device(name){
-
-    //// Set initial values to the force to be send
-    //_force.time_stamp.assign(ioc_comm::cal_time_stamp());
-    //_force._data.at(0) = 0.0;  _force._data.at(1) = 0.0;
-    //_force._data.at(2) = 0.0;  _force._data.at(3) = 0.0;
-    //_force._data.at(4) = 0.0;  _force._data.at(5) = 0.0;
-
+    _force.resize(6);
     addIncomingParameter("X", (KthReal)0.0);
     addIncomingParameter("Y", (KthReal)0.0);
     addIncomingParameter("Z", (KthReal)0.0);
@@ -66,7 +60,6 @@ namespace libDevice{
     addParameter("Tz", (KthReal)0.0);
 
     _updatingPeriod = upPeriod;
-    //_client = NULL;
     _updateDeviceTimer.setInterval(_updatingPeriod);
     _url = "";
     _port = "";
@@ -120,19 +113,12 @@ namespace libDevice{
         if(init){
           _hapticDevice->calibrate();
           _hapticDevice->start();
-		  _updateDeviceTimer.start();
-		  return true;
+		      _updateDeviceTimer.start();
+		      return true;
         }
 #endif
       }else{
-      //  if(_client == NULL){
-      //    _client = new ioc_comm::Client(_url, _port, ioc_comm::HAPTIC, 1.0, 6);
-      //    _sendingData.push_back(_force);
-      //  }
-      //  _client->start();
-      //  _client->setSendingData(_sendingData);
-		    //_updateDeviceTimer.start();
-		    //return true;
+        return false;
       }
       
     }catch(...){ }
@@ -147,7 +133,7 @@ namespace libDevice{
         _hapticDevice->stop();
       else
 #endif
-        //_client->close();
+        ;
 
       _updateDeviceTimer.stop();
       return true;
@@ -182,7 +168,7 @@ namespace libDevice{
 
         Vect6 _forcemt(6,0.);
         for(unsigned int i = 0; i < 6; i++)
-          _forcemt[i] = _force._data.at(i);
+          _forcemt[i] = _force.at(i);
 
         for(unsigned int i = 0; i < 3; i++){
           if(_forcemt[i] > _fMax ) _forcemt[i] = _fMax ;
@@ -226,7 +212,7 @@ namespace libDevice{
         //// Copyng the _force variable to the sendingData vector.
         //ioc_comm::baseData& force = _sendingData.at(0);
         //for(unsigned int i = 0; i< 6; i++)
-        //  force._data.at(i)= _force._data.at(i);
+        //  force._data.at(i)= _force.at(i);
         //force.time_stamp.assign(_force.time_stamp);
 
         //_sendingData.at(0) = force;
@@ -241,51 +227,50 @@ namespace libDevice{
   }
 
   void HapticDevice::setSE3Force(KthReal forces[]){
-    //try{
-    //  for(unsigned int i = 0; i< 6; i++)
-    //    _force._data.at(i)= forces[i];
+    try{
+      for(unsigned int i = 0; i< 6; i++)
+        _force.at(i)= forces[i];
 
-    //  _force.time_stamp.assign(ioc_comm::cal_time_stamp());
-    //}catch(...){ }
+    }catch(...){ }
   }
 
   bool HapticDevice::setParameters(){
     try{
-      //HASH_S_K::iterator it = _parameters.find("Fx");
-      //if(it != _parameters.end())
-      //  _force._data.at(0) = (int)it->second;
-      //else
-      //  return false;
+      HASH_S_K::iterator it = _parameters.find("Fx");
+      if(it != _parameters.end())
+        _force.at(0) = (int)it->second;
+      else
+        return false;
 
-      //it = _parameters.find("Fy");
-      //if(it != _parameters.end())
-      //  _force._data.at(1) = (int)it->second;
-      //else
-      //  return false;
+      it = _parameters.find("Fy");
+      if(it != _parameters.end())
+        _force.at(1) = (int)it->second;
+      else
+        return false;
 
-      //it = _parameters.find("Fz");
-      //if(it != _parameters.end())
-      //  _force._data.at(2) = (int)it->second;
-      //else
-      //  return false;
+      it = _parameters.find("Fz");
+      if(it != _parameters.end())
+        _force.at(2) = (int)it->second;
+      else 
+        return false;
 
-      //it = _parameters.find("Tx");
-      //if(it != _parameters.end())
-      //  _force._data.at(3) = (int)it->second;
-      //else
-      //  return false;
+      it = _parameters.find("Tx");
+      if(it != _parameters.end())
+        _force.at(3) = (int)it->second;
+      else
+        return false;
 
-      //it = _parameters.find("Ty");
-      //if(it != _parameters.end())
-      //  _force._data.at(4) = (int)it->second;
-      //else
-      //  return false;
+      it = _parameters.find("Ty");
+      if(it != _parameters.end())
+        _force.at(4) = (int)it->second;
+      else
+        return false;
 
-      //it = _parameters.find("Tz");
-      //if(it != _parameters.end())
-      //  _force._data.at(5) = (int)it->second;
-      //else
-      //  return false;
+      it = _parameters.find("Tz");
+      if(it != _parameters.end())
+        _force.at(5) = (int)it->second;
+      else
+        return false;
     }catch(...){}
     return true;
   }

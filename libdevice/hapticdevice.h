@@ -89,7 +89,7 @@ namespace libDevice{
 
       //// Haptic information
       //ioc_comm::cartesian::position _position;
-      //ioc_comm::cartesian::force    _force;
+      std::vector<KthReal>          _force;
       bool                          _buttonPressed;
 
       mt::Transform                 _hipTransform;
