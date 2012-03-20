@@ -340,6 +340,26 @@ namespace libPlanner{
         if( par=="Collision-check calls" )  currQue->setCollCheckCalls( atoi( it2->child_value() )  );
       }
     }
+    // If load data of the planner includes the Queries information then the first solved
+    // one is loaded if exists.
+    for(size_t i=0; i< getQueries().size(); ++i){
+      if(getQueries()[i].solved()){ //Load it
+        _solved = true;
+        this->setInitSamp( _samples->getSampleAt(getQueries()[i].getInit() ));
+        this->setGoalSamp( _samples->getSampleAt(getQueries()[i].getGoal() ));
+
+        for(size_t j=0; j< getQueries()[i].getPath().size(); ++j)
+          _path.push_back( _samples->getSampleAt(getQueries()[i].getPath()[j]) );
+
+        addZeroCrossingToPath();
+        moveAlongPath(0);
+        _wkSpace->inheritSolution(_simulationPath);
+
+        std::cout << "The path loaded solves the query: " << this->getQueries()[i].getInit(); 
+        std::cout << " to " << this->getQueries()[i].getGoal()  <<  std::endl;
+        break;
+      }
+    }
     return true;
   }
 

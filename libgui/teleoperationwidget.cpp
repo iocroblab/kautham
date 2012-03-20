@@ -495,13 +495,13 @@ namespace libGUI{
 
     if( _radBttRobot0->isChecked() ){
       path = _pathsObj[0];
-      EPSILON = _problem->wSpace()->getRobot(0)->getLink(1)->getD() / 5.;
+      EPSILON = _problem->wSpace()->getRobot(0)->getLink(1)->getD() / 20.;
     }else if( _radBttRobot1->isChecked() ){
       path = _pathsObj[1];
-      EPSILON = _problem->wSpace()->getRobot(1)->getLink(1)->getD() / 5.;
+      EPSILON = _problem->wSpace()->getRobot(1)->getLink(1)->getD() / 20.;
     }
 
-    EPSILON = EPSILON < THRESHOLD ? 5* THRESHOLD : EPSILON ;
+    EPSILON = EPSILON < THRESHOLD ? 2* THRESHOLD : EPSILON ;
 
     for(unsigned int i = 0; i < 6; i++)
         forces[i] = 0.;
@@ -560,7 +560,7 @@ namespace libGUI{
 
 
     //XXXXXXXXXX Applying the force to haptic XXXXXXXXXXXXXXXX
-    _haptic->setSE3Force(forces);
+    //_haptic->setSE3Force(forces);
 
     // Now I will send the force (Fx Fy Fz) applied on the frame H to the file
     //_theFile << forces[0] << " " << forces[1] << " " << forces[2] << " " ;
@@ -1187,6 +1187,8 @@ namespace libGUI{
 
           RobConf& tmp =_problem->wSpace()->getRobot(activeRob)
                       ->InverseKinematics(target);
+
+          // Now the configuration change algorithm should be implemented.
 
           _problem->wSpace()->getRobot(activeRob)->Kinematics(tmp);
 
