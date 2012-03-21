@@ -103,6 +103,7 @@ namespace libGUI{
       void                  teleoperation();
       Problem*              _problem;
       Device*               _haptic;
+      Link*                 _tcpLink;
       GUI*                  _gui;
       bool                  _synchronized;
 
@@ -121,6 +122,7 @@ namespace libGUI{
       bool                  _callNewH;
       SoSeparator*          _hapticBox;
       SoSeparator*          _EFrame, *_KFrame, *_KAFrame, *_KBFrame;
+      SbLine*               _forceVector;
       SoSFVec3f*            _scaVec ;
       SoSFVec3f*            _posVec, *_posKFrame, *_posKAFrame, *_posKBFrame;
       SoSFRotation*         _rotVec, *_rotKFrame, *_rotKAFrame, *_rotKBFrame;

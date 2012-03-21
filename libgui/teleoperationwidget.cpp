@@ -531,6 +531,10 @@ namespace libGUI{
     // Only the magnetic part in order to plot a figure.
     _theFile << magP[0] << " " << magP[1] << " " << magP[2] << " " ;
 
+    // Redraw the force vector.
+     SbVec3f origin(_tcpLink->getElement()->getPosition());
+    _forceVector->setValue( origin,origin+SbVec3f(magP[0], magP[1], magP[2]));
+
     magP = h2w * magP;
     pushP = h2w * pushP;
     sum = magP; //+ pushP;
@@ -769,6 +773,7 @@ namespace libGUI{
     SoSeparator* tmpRoot = _gui->getRootTab(_gui->getActiveViewTitle());
     tmpRoot->addChild(_hapticBox);
 
+
     if( _EFrame == NULL ){
       // Adding the EF TCP Frame
       _EFrame = new SoSeparator;
@@ -784,16 +789,20 @@ namespace libGUI{
 
     int activeRob = _radBttRobot0->isChecked() ? 0 : 1;
     Robot* tmpRob = _problem->wSpace()->getRobot(activeRob);
-    Link* tmpLink = tmpRob->getLink(tmpRob->getNumLinks() - 1); //Get the last link
-    SoSeparator* tmpModel = ((IVPQPElement*)tmpLink->getElement())->ivModel(false);
+    _tcpLink = tmpRob->getLink(tmpRob->getNumLinks() - 1); //Get the last link
+    SoSeparator* tmpModel = ((IVPQPElement*)_tcpLink->getElement())->ivModel(false);
     tmpModel->addChild(_EFrame); 
 
-    PathToGuide* tmpPath = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
+    // Now add a vector force in the TCP
+    _forceVector = new SbLine(SbVec3f(_tcpLink->getElement()->getPosition()),
+                              SbVec3f(_tcpLink->getElement()->getPosition()) );
 
+
+    PathToGuide* tmpPath = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
     _currentLayout = tmpPath->getLayout(0);
 
     // Now I create the KFrames.
-    if(_KFrame == NULL ){
+    if( _KFrame == NULL ){
       trans = new SoTranslation();
       rot = new SoRotation();
       _posKFrame = new SoSFVec3f();
@@ -1099,7 +1108,6 @@ namespace libGUI{
       _rotKAFrame->setValue(_pathsObj[activeRob]->PathX().at(nea+draw).at(3), _pathsObj[activeRob]->PathX().at(nea+draw).at(4),
                          _pathsObj[activeRob]->PathX().at(nea+draw).at(5), _pathsObj[activeRob]->PathX().at(nea+draw).at(6) );
     }
-
 
     PathToGuide* path = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
     RobLayout  robLay = path->getLayout( nea ); // This line gets the respective layout of the robot if it has a IK model.
