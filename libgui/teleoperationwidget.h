@@ -144,6 +144,7 @@ namespace libGUI{
       string                _ipMaster; 
       string                _ipNode;
       int                   _freqPubli;
+      clock_t               _entertime, _endtime;
 
 
       void                  setupUI();

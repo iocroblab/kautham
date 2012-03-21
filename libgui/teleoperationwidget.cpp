@@ -860,10 +860,14 @@ namespace libGUI{
     // Now I will open the file to save the data to be ploted
     _theFile.open ("Data_of_teleoperation.txt", ios::trunc | ios::out );
     _theFile << "%Fx Fy Fz Xd Yd Zd Xr Yr Zr" << std::endl << "%" << std::endl;
+    _entertime = clock();
   }
 
   void TeleoperationWidget::stopTeleoperation(){
     // First, I will close the file where the data is saved.
+    _endtime = clock();
+    KthReal totalTime = (KthReal)(_endtime - _entertime)/CLOCKS_PER_SEC ;
+    _theFile << "% Time used: " << totalTime << " seconds." << std::endl;
     _theFile.close();
 
     _inAction = false;
