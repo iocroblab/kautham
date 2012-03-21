@@ -532,8 +532,12 @@ namespace libGUI{
     _theFile << magP[0] << " " << magP[1] << " " << magP[2] << " " ;
 
     // Redraw the force vector.
-     SbVec3f origin(_tcpLink->getElement()->getPosition());
-    _forceVector->setValue( origin,origin+SbVec3f(magP[0], magP[1], magP[2]));
+    float coordinatesVec[2][3];
+    for(int i=0; i<3;i++)
+      coordinatesVec[0][i]=_tcpLink->getElement()->getPosition()[i]; 
+    for(int i=0; i<3;i++)
+      coordinatesVec[1][i]=_tcpLink->getElement()->getPosition()[i] + 5.*magP[i]; 
+    _forceVectorComp->point.setValues(0, 2, coordinatesVec);
 
     magP = h2w * magP;
     pushP = h2w * pushP;
@@ -541,7 +545,7 @@ namespace libGUI{
     
     if(dist > THRESHOLD ){
       // Only testing the translational forces.
-      if( dist < EPSILON ){
+      if( dist < EPSILON/4. ){
         sum+= pushP;
         sum.normalize();
         for(int i = 0; i < 3; ++i){
@@ -564,7 +568,7 @@ namespace libGUI{
 
 
     //XXXXXXXXXX Applying the force to haptic XXXXXXXXXXXXXXXX
-    //_haptic->setSE3Force(forces);
+    _haptic->setSE3Force(forces);
 
     // Now I will send the force (Fx Fy Fz) applied on the frame H to the file
     //_theFile << forces[0] << " " << forces[1] << " " << forces[2] << " " ;
@@ -794,9 +798,21 @@ namespace libGUI{
     tmpModel->addChild(_EFrame); 
 
     // Now add a vector force in the TCP
-    _forceVector = new SbLine(SbVec3f(_tcpLink->getElement()->getPosition()),
-                              SbVec3f(_tcpLink->getElement()->getPosition()) );
+    SoSeparator* tmpForce = new SoSeparator();
+    _forceVectorComp = new SoCoordinate3();
+    float coordinatesVec[2][3];
+    for(int i=0; i<3;i++)
+      coordinatesVec[0][i]=_tcpLink->getElement()->getPosition()[i]; 
+    for(int i=0; i<3;i++)
+      coordinatesVec[1][i]=_tcpLink->getElement()->getPosition()[i]+10.; 
+    _forceVectorComp->point.setValues(0, 2,coordinatesVec);
+    tmpForce->addChild(_forceVectorComp);
 
+
+    SoLineSet* forceVector = new SoLineSet();
+    forceVector->numVertices.setValue(2);
+    tmpForce->addChild(forceVector);
+    tmpRoot->addChild(tmpForce);
 
     PathToGuide* tmpPath = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
     _currentLayout = tmpPath->getLayout(0);

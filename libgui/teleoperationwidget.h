@@ -53,6 +53,8 @@
 #include <libproblem/inversekinematic.h>
 #include <iostream>
 #include <fstream>
+#include <Inventor/nodes/SoLineSet.h>
+#include <Inventor/fields/SoMFVec3f.h>
 
 using namespace libDevice;
 using namespace libProblem;
@@ -122,7 +124,8 @@ namespace libGUI{
       bool                  _callNewH;
       SoSeparator*          _hapticBox;
       SoSeparator*          _EFrame, *_KFrame, *_KAFrame, *_KBFrame;
-      SbLine*               _forceVector;
+      //SoLineSet*            _forceVector;
+      SoCoordinate3*        _forceVectorComp;
       SoSFVec3f*            _scaVec ;
       SoSFVec3f*            _posVec, *_posKFrame, *_posKAFrame, *_posKBFrame;
       SoSFRotation*         _rotVec, *_rotKFrame, *_rotKAFrame, *_rotKBFrame;
