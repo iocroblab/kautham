@@ -545,7 +545,7 @@ namespace libGUI{
     
     if(dist > THRESHOLD ){
       // Only testing the translational forces.
-      if( dist < EPSILON/4. ){
+      if( dist < EPSILON ){
         sum+= pushP;
         sum.normalize();
         for(int i = 0; i < 3; ++i){

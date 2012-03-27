@@ -89,6 +89,7 @@ namespace libDevice{
     bool                  _emmitUpdated;
     //!> This object can connet to device in two ways: Directly or using socket to HapticServer
     bool                  _directReading;
+    bool                  _emulated;
     KthReal               _maxForces[6];
     KthReal               _deviceLimits[6][2];
   };

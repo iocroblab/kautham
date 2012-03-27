@@ -352,7 +352,7 @@
 	  	  
 
 		cout << "PRM Free Nodes = " << _samples->getSize() << endl;
-		cout<<"PATH NOT POUND"<<endl;
+		cout<<"PATH NOT FOUND"<<endl;
 		printConnectedComponents();
 	  
 		clock_t finaltime = clock();

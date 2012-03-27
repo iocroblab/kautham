@@ -233,14 +233,14 @@ namespace libGuiding{
       }else{ // This part processes the rest of the path
         // For each other point, the force is generated to the point inside a segment if 
         // its disctance to the vertex is greater than Epsilon
-        if( normV <= EPSILON && proj <= 0){   // In this case the force is generated using the unit vector of the 
-          projD = true;                       // segment nea to nea+1 and attracting to nearest point.
-          for(int i = 0; i < 7; i++){
-            xd.at(i) = nea.at(i);
-            up.at(i) = _uvecX.at(k).at(i);
-          }
-          ratio = 1.;                   
-        }else{ // normV > EPSILON || (normV <= EPSILON && proj > 0)
+        //if( normV <= EPSILON && proj <= 0){   // In this case the force is generated using the unit vector of the 
+        //  projD = true;                       // segment nea to nea+1 and attracting to nearest point.
+        //  for(int i = 0; i < 7; i++){
+        //    xd.at(i) = nea.at(i);
+        //    up.at(i) = _uvecX.at(k).at(i);
+        //  }
+        //  ratio = 1.;                   
+        //}else{ // normV > EPSILON || (normV <= EPSILON && proj > 0)
           if( proj < 0 ){ // calculates the projection over the segment before.
             proj = 0.;
             for(int i = 0; i < 7; i++)
@@ -259,7 +259,7 @@ namespace libGuiding{
             }
             ratio = proj/_uvecX.at(k).dist();
           }//end if( proj < 0 )
-        }// end if( normV <= EPSILON && proj <= 0)
+        //}// end if( normV <= EPSILON && proj <= 0)
       }// end if( (k == _pathX.size() -1) || (k == 0 && proj <= 0) )
 
       proj = 0.;
