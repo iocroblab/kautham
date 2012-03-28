@@ -213,7 +213,7 @@ namespace libGuiding{
       Uvec avec(7);
       KthReal normV = 0.;
       for(int i = 0; i < DIMMETRIC; i++){
-        avec.at(i) = nea.at(i) - xi.at(i);//xi.at(i) - nea.at(i);
+        avec.at(i) = xi.at(i) - nea.at(i);
         normV+=avec.at(i) * avec.at(i);
       }
       normV=sqrt(normV);
@@ -233,22 +233,27 @@ namespace libGuiding{
         ratio = 1.;
       }else{ // This part processes the rest of the path
         // For each other point, the force is generated to the point inside a segment if 
-        // its disctance to the vertex is greater than Epsilon
-        //if( normV <= EPSILON && proj <= 0){   // In this case the force is generated using the unit vector of the 
-        //  projD = true;                       // segment nea to nea+1 and attracting to nearest point.
-        //  for(int i = 0; i < DIMMETRIC; i++){
-        //    xd.at(i) = nea.at(i);
-        //    up.at(i) = _uvecX.at(k).at(i);
-        //  }
-        //  ratio = 1.;                   
-        //}else{ // normV > EPSILON || (normV <= EPSILON && proj > 0)
+        // its distance to the vertex is greater than Epsilon
+        if( normV <= EPSILON && proj <= 0){   // In this case the force is generated using the unit vector of the 
+          projD = true;                       // segment nea to nea+1 and attracting to nearest point.
+          for(int i = 0; i < DIMMETRIC; i++){
+            xd.at(i) = nea.at(i);
+            up.at(i) = _uvecX.at(k).at(i);
+          }
+          ratio = 1.;                   
+        }else{ // normV > EPSILON || (normV <= EPSILON && proj > 0)
           if( proj < 0 ){ // calculates the projection over the segment before.
             proj = 0.;
+            for(int i = 0; i < DIMMETRIC; i++){
+              avec.at(i) = xi.at(i) - _pathX.at(k-1).at(i);
+              normV+=avec.at(i) * avec.at(i);
+            }
+            normV=sqrt(normV);
             for(int i = 0; i < DIMMETRIC; i++)
               proj += avec.at(i) * _uvecX.at(k-1).at(i);
             
             for(int i = 0; i < DIMMETRIC; i++){
-              xd.at(i) = nea.at(i) - proj * _uvecX.at(k-1).at(i);
+              xd.at(i) = _pathX.at(k-1).at(i) + proj * _uvecX.at(k-1).at(i);
               up.at(i) = _uvecX.at(k-1).at(i);
             }
             ratio = 1. - proj / _uvecX.at(k-1).dist() ;
@@ -260,7 +265,7 @@ namespace libGuiding{
             }
             ratio = proj/_uvecX.at(k).dist();
           }//end if( proj < 0 )
-        //}// end if( normV <= EPSILON && proj <= 0)
+        }// end if( normV <= EPSILON && proj <= 0)
       }// end if( (k == _pathX.size() -1) || (k == 0 && proj <= 0) )
 
       proj = 0.;
@@ -346,7 +351,8 @@ namespace libGuiding{
 		
     ANNpoint pts = annAllocPt( DIMMETRIC );
 
-    std::copy(xn.begin(), xn.end(), pts );
+    for(size_t i= 0; i < DIMMETRIC; i++)
+      pts[i] = xn.at(i);
     
     // compute nearest neighbor using library
 		_nearestX->NearestNeighbor(pts, idx_ann, d_ann );// (void**&)result_pt);	
@@ -363,7 +369,9 @@ namespace libGuiding{
       ANNpoint *result_pt = annAllocPts( 2, DIMMETRIC );
 
       ANNpoint pts = annAllocPt( DIMMETRIC );
-      std::copy(xn.begin(), xn.end(), pts );
+
+      for(size_t i= 0; i < DIMMETRIC; i++)
+      pts[i] = xn.at(i);
   		
 		  d_ann[0] = d_ann[1] = INFINITY;
 

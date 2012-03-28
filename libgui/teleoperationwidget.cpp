@@ -495,10 +495,10 @@ namespace libGUI{
 
     if( _radBttRobot0->isChecked() ){
       path = _pathsObj[0];
-      EPSILON = _problem->wSpace()->getRobot(0)->getLink(1)->getD() / 20.;
+      EPSILON = _problem->wSpace()->getRobot(0)->getLink(_problem->wSpace()->getRobot(0)->getNumLinks()-1)->getD() / 20.;
     }else if( _radBttRobot1->isChecked() ){
       path = _pathsObj[1];
-      EPSILON = _problem->wSpace()->getRobot(1)->getLink(1)->getD() / 20.;
+      EPSILON = _problem->wSpace()->getRobot(0)->getLink(_problem->wSpace()->getRobot(0)->getNumLinks()-1)->getD() / 20.;
     }
 
     EPSILON = EPSILON < THRESHOLD ? 2* THRESHOLD : EPSILON ;

@@ -66,6 +66,7 @@ namespace libDevice{
     _tcp = true;
     _fMax = 4.; _tMax = 2.;
     _emmitUpdated = true;
+    _emulated = false;
 #ifdef KAUTHAM_USE_OPENHAPTICS
     _hapticDevice = NULL;
     _directReading = true;
