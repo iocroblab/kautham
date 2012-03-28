@@ -73,9 +73,13 @@ namespace libDevice{
         _directReading = false;
 #endif
       }
+      inline void                   setEmulated(bool val){_emulated = val;}
+      inline bool                   getEmulated(){return _emulated;}
 
     private:
       HapticDevice();
+      //! This variable is true if the haptic is emulated.
+      bool                          _emulated;
 
       //// components for the client
       //ioc_comm::Client*             _client;

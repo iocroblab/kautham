@@ -144,6 +144,10 @@ namespace libDevice{
 
   void HapticDevice::update(){
     try{
+     if( _emulated ){
+
+      ;
+     }else{
       if( _directReading ){
 #ifdef KAUTHAM_USE_OPENHAPTICS
         mt::Vector3 pos;
@@ -218,6 +222,7 @@ namespace libDevice{
         //_sendingData.at(0) = force;
         //_client->setSendingData(_sendingData);
       }
+     }
       _updateDeviceTimer.start();
       
     }catch(...){}

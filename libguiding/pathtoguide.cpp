@@ -41,6 +41,7 @@
  
  
 #include "pathtoguide.h"
+#define DIMMETRIC 3
 
 namespace libGuiding{
 
@@ -211,7 +212,7 @@ namespace libGuiding{
       const Xnode& nea = _pathX.at(k);
       Uvec avec(7);
       KthReal normV = 0.;
-      for(int i = 0; i < 7; i++){
+      for(int i = 0; i < DIMMETRIC; i++){
         avec.at(i) = nea.at(i) - xi.at(i);//xi.at(i) - nea.at(i);
         normV+=avec.at(i) * avec.at(i);
       }
@@ -219,13 +220,13 @@ namespace libGuiding{
       
       // Computes the projection over the segment x(nea) -> x(nea+1)
       KthReal proj = 0.;
-      for(int i = 0; i < 7; i++)
+      for(int i = 0; i < DIMMETRIC; i++)
         proj += avec.at(i) * _uvecX.at(k).at(i);
 
       // First the goal and init points were chosen because their behaviour is fixed
       if( (k == _pathX.size() -1) || (k == 0 && proj <= 0) ){// The Goal and init points
         projD = true;
-        for(int i = 0; i < 7; i++){
+        for(int i = 0; i < DIMMETRIC; i++){
           xd.at(i) = nea.at(i);
           up.at(i) = 0.;
         }
@@ -235,7 +236,7 @@ namespace libGuiding{
         // its disctance to the vertex is greater than Epsilon
         //if( normV <= EPSILON && proj <= 0){   // In this case the force is generated using the unit vector of the 
         //  projD = true;                       // segment nea to nea+1 and attracting to nearest point.
-        //  for(int i = 0; i < 7; i++){
+        //  for(int i = 0; i < DIMMETRIC; i++){
         //    xd.at(i) = nea.at(i);
         //    up.at(i) = _uvecX.at(k).at(i);
         //  }
@@ -243,17 +244,17 @@ namespace libGuiding{
         //}else{ // normV > EPSILON || (normV <= EPSILON && proj > 0)
           if( proj < 0 ){ // calculates the projection over the segment before.
             proj = 0.;
-            for(int i = 0; i < 7; i++)
+            for(int i = 0; i < DIMMETRIC; i++)
               proj += avec.at(i) * _uvecX.at(k-1).at(i);
             
-            for(int i = 0; i < 7; i++){
+            for(int i = 0; i < DIMMETRIC; i++){
               xd.at(i) = nea.at(i) - proj * _uvecX.at(k-1).at(i);
               up.at(i) = _uvecX.at(k-1).at(i);
             }
             ratio = 1. - proj / _uvecX.at(k-1).dist() ;
           }else{ //proj >= 0 % // The rest of the path then it calculates the projection over the segment
             projD = true;
-            for(int i = 0; i < 7; i++){
+            for(int i = 0; i < DIMMETRIC; i++){
               xd.at(i) = nea.at(i) + proj * _uvecX.at(k).at(i);
               up.at(i) = _uvecX.at(k).at(i);
             }
@@ -263,13 +264,13 @@ namespace libGuiding{
       }// end if( (k == _pathX.size() -1) || (k == 0 && proj <= 0) )
 
       proj = 0.;
-      for(int i = 0; i < 7; i++){
+      for(int i = 0; i < DIMMETRIC; i++){
         um.at(i) = xd.at(i) - xi.at(i);   
         proj += um.at(i) * um.at(i);
       }
       proj = sqrt(proj);
 
-      for(int i = 0; i < 7; i++)
+      for(int i = 0; i < DIMMETRIC; i++)
         um.at(i) /= proj;
 
       return proj;
@@ -343,7 +344,7 @@ namespace libGuiding{
     double d_ann = 0.;
 		int idx_ann = 0;
 		
-    ANNpoint pts = annAllocPt( xn.size() );
+    ANNpoint pts = annAllocPt( DIMMETRIC );
 
     std::copy(xn.begin(), xn.end(), pts );
     
@@ -359,9 +360,9 @@ namespace libGuiding{
       indexs[0] = indexs[1] = -1;
 
       double *d_ann = new double[2];
-      ANNpoint *result_pt = annAllocPts( 2, 7 );
+      ANNpoint *result_pt = annAllocPts( 2, DIMMETRIC );
 
-      ANNpoint pts = annAllocPt( xn.size() );
+      ANNpoint pts = annAllocPt( DIMMETRIC );
       std::copy(xn.begin(), xn.end(), pts );
   		
 		  d_ann[0] = d_ann[1] = INFINITY;
@@ -437,8 +438,8 @@ namespace libGuiding{
     delete topology;
     delete scale;
 
-    topology = new int[7];
-		scale = new double[7];
+    topology = new int[DIMMETRIC];
+		scale = new double[DIMMETRIC];
 		int c=0;
     double rho_t = 1.0;
     double rho_r = 1.0;  
@@ -449,22 +450,24 @@ namespace libGuiding{
 		scale[c++] =  rho_t;  
 		topology[c] = 1; //z
 		scale[c++] =  rho_t;  
+    
+    if(DIMMETRIC==7){
+		  topology[c] = 3; //quaternion
+		  scale[c++] = rho_r;  
+		  topology[c] = 3; //quaternion
+		  scale[c++] = rho_r;  
+		  topology[c] = 3; //quaternion
+		  scale[c++] = rho_r;  
+		  topology[c] = 3; //quaternion
+		  scale[c++] = rho_r;  
+    }
 
-		topology[c] = 3; //quaternion
-		scale[c++] = rho_r;  
-		topology[c] = 3; //quaternion
-		scale[c++] = rho_r;  
-		topology[c] = 3; //quaternion
-		scale[c++] = rho_r;  
-		topology[c] = 3; //quaternion
-		scale[c++] = rho_r;  
-
-    _nearestX = new MultiANN(7, _pathX.size(), topology, scale);	// create a data structure	
-		_ptsX = annAllocPts(_pathX.size(), 7);		// allocate data points
+    _nearestX = new MultiANN(DIMMETRIC, _pathX.size(), topology, scale);	// create a data structure	
+		_ptsX = annAllocPts(_pathX.size(), DIMMETRIC);		// allocate data points
 
     //XXXXXXXXXXX  Copying data  XXXXXXX
     for(unsigned int i = 0; i < _pathX.size();++i){
-      for(unsigned int k = 0; k < 7; k++)
+      for(unsigned int k = 0; k < DIMMETRIC; k++)
 		    _ptsX[i][k] = _pathX.at(i).at(k);
 
       _nearestX->AddPoint( _ptsX[i], _ptsX[i] );
