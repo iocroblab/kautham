@@ -147,6 +147,12 @@ using namespace std;
 			bool autocol;
 			int trials=0;
 			int maxtrials=10;
+			int kini = _wkSpace->getRobot(0)->getTrunk();
+			//hand coords not set - sample the whole range
+			bool samplewholerange;
+			if(coord[kini]==-1) samplewholerange=true;
+			else samplewholerange=false;
+
 			do{
 				coordvector.clear();
 				//sample the hand coordinates
@@ -156,18 +162,16 @@ using namespace std;
 				if(numPMDs==-1 || numPMDs>(_wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk())) 
 						numPMDs = _wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk();
 				int k;
-				int kini = _wkSpace->getRobot(0)->getTrunk();
-
 				//Aqui randon Hand/////////////////////////
 				for(k = kini; k < kini+numPMDs; k++)
 				{
 					//hand coords not set - sample the whole range
-					if(coord[k]==-1){
+					if(samplewholerange){
 						//nonlinear behaviour- sample uniformly within a bigger range and then saturate
-							KthReal size=1.4;//1.2;
+							KthReal size=1.0;//1.4;//1.2;
 							coord[k]=-((size-1.0)/2) + _gen->d_rand()*size; 
-							//if(coord[k]<0) coord[k]=0;
-						    //else if(coord[k]>1) coord[k]=1;
+							if(coord[k]<0) coord[k]=0;
+						    else if(coord[k]>1) coord[k]=1;
 						/*
 						if(_gen->d_rand()<0.5) coord[k] = (KthReal)_gen->d_rand();
 						else{
@@ -404,7 +408,7 @@ using namespace std;
 					//	p = 0;
 					//	radius = _distsamplingpcagoal; //_cloudRadius;
 					//}
-					radius = radius+25;
+					radius = radius + _distsamplingpcagoal;//25;
 					//if(radius>(distanceig)) radius = _distsamplingpcagoal;// p = 1;
 					if(radius> _distancegoal*1.5) radius = _distsamplingpcagoal;
 							
@@ -807,7 +811,7 @@ bool PRMPCAHandArmPlanner::getSampleRandPCA(float R)
 
 
 
-	
+	//!samples aroun the goal sample or around a sample that belongs to the same connected component than the goal
 	bool PRMPCAHandArmPlanner::getSampleInGoalRegionRealworld(double tradius, double rradius, bool handWholeRange)
 	{
 	    int trials, maxtrials;
@@ -820,12 +824,38 @@ bool PRMPCAHandArmPlanner::getSampleRandPCA(float R)
 		//Randomly set the coordinates of the robot joints at a autocollision-free conf
 		trials=0;
 		maxtrials=100;
+		Sample *s;
 		do{
 			vector<KthReal> tmpSpos; tmpSpos.resize(3); 
 			vector<KthReal> tmpSrot; tmpSrot.resize(3); 
 			vector<KthReal> coordrobot; coordrobot.resize(6); 
+	
+			//randomly compute the coords of a smaple of the conecected component of the goal
+			//or the coordinates of the goal
+			if((KthReal)_gen->d_rand()<0.8)
+			{
+				int cc = goalSamp()->getConnectedComponent();
+				int kcc = _ccMap[cc]->getSize(); 
+				int indexsam = _gen->d_rand()*kcc;
+				//cout<<"sampling around "<<indexsam<<endl;
+				 s = _ccMap[cc]->getSampleAt(indexsam);
+			}
+			else s = goalSamp();
+
+			std::vector<KthReal> tmpcoordTCPpos; tmpcoordTCPpos.resize(3);  
+			std::vector<KthReal> tmpcoordTCPori; tmpcoordTCPori.resize(4);
+			_wkSpace->getRobot(0)->Kinematics(s->getMappedConf().at(0).getRn()); 
+			mt::Transform ctransfgoal = _wkSpace->getRobot(0)->getLinkTransform(6);
+			mt::Point3 ctransgoal = ctransfgoal.getTranslation();
+			mt::Rotation crotgoal = ctransfgoal.getRotation();
+			for(int k=0;k<3;k++) tmpcoordTCPpos[k] =  ctransgoal[k];
+			for(int k=0;k<4;k++) tmpcoordTCPori[k] =  crotgoal[k];
+			_goalse3.setPos(tmpcoordTCPpos);
+			_goalse3.setOrient(tmpcoordTCPori);
+			
 			tmpSpos	= _goalse3.getPos();
 			tmpSrot	= _goalse3.getParams();
+			
 						
 			//Add random noise to tmpS (only translational part)
 			for(int k =0; k < 3; k++)
@@ -888,6 +918,10 @@ bool PRMPCAHandArmPlanner::getSampleRandPCA(float R)
 			//Set the coord values to -1 in order to sample within the whole hand workspace, not only around the goal
 			//when calling to getHandConfig
 			for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]=-1;
+		}
+		else{
+			vector<KthReal>& coordgoal = s->getCoords();
+			for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]= coordgoal[k];
 		}
 		if(getHandConfig(coord, flag, -1))	
 		{
