@@ -84,6 +84,7 @@ namespace libGUI{
       void                  connectCell();
       void                  confConnection();
       void                  rosClientEnd(int exitCode, QProcess::ExitStatus exitStatus);
+      void                  enableAxial();
     public:
       TeleoperationWidget(Problem* prob, Device* hap, GUI* gui, kautham::data_ioc_cell* dataCell);
       ~TeleoperationWidget();
@@ -134,6 +135,7 @@ namespace libGUI{
       KthReal               _hapticBoxSize[6];
       vector<GuiNode*>      _guidingPath[2];
       KthReal               _threshold; //!> Guiding threshold to change direction near a node.
+      KthReal               EPSILON_1, EPSILON_2, EPSILON_3;
       KthReal               _maxForces[6];
 
       //! Added to increase the guiding capabilities.
@@ -164,8 +166,8 @@ namespace libGUI{
       int                   setGuideForce(mt::Transform& tcp, mt::Transform& w2h, bool& projDirecPos);
 
       //XXXXXXXXXXXXXXXXXXXXXXXX
-      QGridLayout *gridLayout_10;
-      QVBoxLayout *verticalLayout_13;
+      QWidget *widget;
+      QVBoxLayout *verticalLayout_5;
       QGroupBox *groupBox;
       QGridLayout *gridLayout_7;
       QVBoxLayout *verticalLayout_11;
@@ -218,8 +220,13 @@ namespace libGUI{
       QLineEdit *currentRZ;
       QPushButton *_getCamera;
       QGroupBox *groupBox_2;
-      QGridLayout *gridLayout_11;
-      QVBoxLayout *verticalLayout_12;
+      QGridLayout *gridLayout_9;
+      QGridLayout *gridLayout_8;
+      QGroupBox *groupBox_6;
+      QGridLayout *gridLayout_5;
+      QHBoxLayout *horizontalLayout_12;
+      QPushButton *_cmdConfConnection;
+      QPushButton *_cmdConnectCell;
       QHBoxLayout *horizontalLayout;
       QGroupBox *_groupRobots;
       QGridLayout *gridLayout_2;
@@ -238,32 +245,9 @@ namespace libGUI{
       QVBoxLayout *verticalLayout_7;
       QLabel *_lblRotScale;
       QSlider *_sliderRotScale;
-      QGroupBox *groupBox_6;
-      QGridLayout *gridLayout_9;
-      QVBoxLayout *verticalLayout_9;
-      QHBoxLayout *horizontalLayout_12;
-      QGroupBox *groupBox_7;
-      QGridLayout *gridLayout_8;
-      QVBoxLayout *verticalLayout_5;
-      QLineEdit *_txtR1Q1;
-      QLineEdit *_txtR1Q2;
-      QLineEdit *_txtR1Q3;
-      QLineEdit *_txtR1Q4;
-      QLineEdit *_txtR1Q5;
-      QLineEdit *_txtR1Q6;
-      QGroupBox *groupBox_8;
-      QGridLayout *gridLayout_5;
-      QVBoxLayout *verticalLayout_8;
-      QLineEdit *_txtCarril;
-      QLineEdit *_txtR2Q1;
-      QLineEdit *_txtR2Q2;
-      QLineEdit *_txtR2Q3;
-      QLineEdit *_txtR2Q4;
-      QLineEdit *_txtR2Q5;
-      QLineEdit *_txtR2Q6;
       QHBoxLayout *horizontalLayout_13;
-      QPushButton *_cmdConnectCell;
-      QPushButton *_cmdConfConnection;
+      QCheckBox *_chkMagnetic;
+      QCheckBox *_chkAxial;
       QHBoxLayout *horizontalLayout_4;
       QPushButton *_startOperation;
       QPushButton *_stopOperation;

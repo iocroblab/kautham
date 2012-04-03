@@ -863,17 +863,17 @@ namespace libPlanner {
 	{
 		std::map<int, SampleSet*>::iterator it;
 		cout<<"NUM CONNECTED COMPONENTS = "<<_ccMap.size()<<endl;
-		for ( it=_ccMap.begin(); it != _ccMap.end(); it++ )
-		{
-			//cout << "CC " << (*it).first << " => " << (*it).second->getSize()<<" samples: " ;
-			vector<Sample*>::iterator itera = (*it).second->getBeginIterator();
-			while((itera != (*it).second->getEndIterator()))
-			{
-				//cout <<_samples->indexOf( (*itera) )<<", ";
-				itera++;
-			}
-			cout << endl;
-		}	
+		//for ( it=_ccMap.begin(); it != _ccMap.end(); it++ )
+		//{
+		//	cout << "CC " << (*it).first << " => " << (*it).second->getSize()<<" samples: " ;
+		//	vector<Sample*>::iterator itera = (*it).second->getBeginIterator();
+		//	while((itera != (*it).second->getEndIterator()))
+		//	{
+		//		cout <<_samples->indexOf( (*itera) )<<", ";
+		//		itera++;
+		//	}
+		//	cout << endl;
+		//}	
 		cout<<"TOTAL NUMBER OF NODES = "<< _samples->getSize() <<endl;
 		//cout << "Weights.size = "<< weights.size() <<" Edges size = " << edges.size()<<endl;
 		

@@ -134,6 +134,7 @@ namespace libGUI{
     connect(_radWorld, SIGNAL(clicked()), this, SLOT(changeRobot()));
     connect(_cmdConnectCell, SIGNAL(clicked()), this, SLOT(connectCell()));
     connect(_cmdConfConnection, SIGNAL(clicked()), this, SLOT(confConnection()));
+    connect(_chkMagnetic, SIGNAL(clicked()), this, SLOT(enableAxial()));
 
     _stopOperation->setEnabled(false);
 
@@ -151,6 +152,7 @@ namespace libGUI{
 
     _dataCell = dataCell;
 
+    EPSILON_1 = 2.; EPSILON_2 = 2.; EPSILON_3=2.;
   }
 
   TeleoperationWidget::~TeleoperationWidget(){
@@ -203,6 +205,15 @@ namespace libGUI{
         _rosClient = NULL;
       }
       _cmdConnectCell->setText("Connect");
+    }
+  }
+
+  void TeleoperationWidget::enableAxial(){
+    if( _chkMagnetic->isChecked() )
+      _chkAxial->setEnabled(true);
+    else{
+      _chkAxial->setEnabled(false);
+      _chkAxial->setChecked(false);
     }
   }
 
@@ -488,23 +499,13 @@ namespace libGUI{
   }
 
   int TeleoperationWidget::setGuideForce(mt::Transform& tcp, mt::Transform& w2h, bool& projDirecPos){
-    const KthReal THRESHOLD = 2.;
-    KthReal EPSILON = 2.;
+    
     KthReal forces[6];
     PathToGuide* path = NULL;
-
-    if( _radBttRobot0->isChecked() ){
-      path = _pathsObj[0];
-      EPSILON = _problem->wSpace()->getRobot(0)->getLink(_problem->wSpace()->getRobot(0)->getNumLinks()-1)->getD() / 20.;
-    }else if( _radBttRobot1->isChecked() ){
-      path = _pathsObj[1];
-      EPSILON = _problem->wSpace()->getRobot(0)->getLink(_problem->wSpace()->getRobot(0)->getNumLinks()-1)->getD() / 20.;
-    }
-
-    EPSILON = EPSILON < THRESHOLD ? THRESHOLD : EPSILON ;
-
+    path =  _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
+ 
     for(unsigned int i = 0; i < 6; i++)
-        forces[i] = 0.;
+      forces[i] = 0.;
 
     //XXXXXXXXXXX here i want to use the PathToGuide object XXXXXXXX
     Uvec umag, upush;
@@ -520,7 +521,7 @@ namespace libGUI{
     Xnode xi = libGuiding::PathToGuide::tran2xnode(tcp);
 
     // Normally the measures are in millimeters.
-    KthReal dist = path->unitVectors(xi, xd, idx, ratio, umag, upush, projDirecPos, THRESHOLD );
+    KthReal dist = path->unitVectors(xi, xd, idx, ratio, umag, upush, projDirecPos, EPSILON_1 );
 
     for(int i = 0; i < 3; ++i){
       magP.at(i) = umag.at(i);
@@ -536,35 +537,44 @@ namespace libGUI{
     for(int i=0; i<3;i++)
       coordinatesVec[0][i]=_tcpLink->getElement()->getPosition()[i]; 
     for(int i=0; i<3;i++)
-      coordinatesVec[1][i]=_tcpLink->getElement()->getPosition()[i] + 5.*magP[i]; 
+      coordinatesVec[1][i]=_tcpLink->getElement()->getPosition()[i] + 5. * magP[i]; 
     _forceVectorComp->point.setValues(0, 2, coordinatesVec);
 
     magP = h2w * magP;
     pushP = h2w * pushP;
-    sum = magP; //+ pushP;
-    
-    if(dist > THRESHOLD ){
-      // Only testing the translational forces.
-      if( dist < EPSILON ){
+     
+
+    // Only testing the translational forces.
+    if(dist < EPSILON_1 && _chkAxial->isChecked() ){
+      // Only pushing forces
+      sum = pushP;
+      sum.normalize();
+      for(int i = 0; i < 3; ++i)
+        forces[i] = 0.2 * sum.at(i) * _maxForces[i] ;
+
+    }else{
+      if( dist < EPSILON_2 && _chkAxial->isChecked() ){
+        sum = magP;
         sum+= pushP;
         sum.normalize();
         for(int i = 0; i < 3; ++i){
-          forces[i] = sum.at(i) *( _maxForces[i] * ( dist - THRESHOLD ) / ( 4*EPSILON - THRESHOLD ) );
+          forces[i] = sum.at(i) *( _maxForces[i] * ( dist - EPSILON_1 ) / ( EPSILON_3 - EPSILON_1 ) );
           forces[i] = forces[i] < _maxForces[i] ? forces[i] : _maxForces[i];
           forces[i] = forces[i] > -_maxForces[i] ? forces[i] : -_maxForces[i];
         }
       }else{
+        sum = magP;
         sum.normalize();
         for(int i = 0; i < 3; ++i){
-          forces[i] = sum.at(i) * ( _maxForces[i] * ( dist - THRESHOLD ) / ( 4*EPSILON - THRESHOLD ) );
+          forces[i] = sum.at(i) * ( _maxForces[i] * ( dist - EPSILON_1 ) / ( EPSILON_3 - EPSILON_1 ) );
           forces[i] = forces[i] < _maxForces[i] ? forces[i] : _maxForces[i];
           forces[i] = forces[i] > -_maxForces[i] ? forces[i] : -_maxForces[i];
         }
       }
     }
 
-    sum = magP.cross(mt::Vector3(0., 0., 1. ));
-    mt::Scalar angle = magP.angle(mt::Vector3(0., 0., 1. ));
+    //sum = magP.cross(mt::Vector3(0., 0., 1. ));
+    //mt::Scalar angle = magP.angle(mt::Vector3(0., 0., 1. ));
 
 
     //XXXXXXXXXX Applying the force to haptic XXXXXXXXXXXXXXXX
@@ -882,8 +892,22 @@ namespace libGUI{
     tmpRoot->addChild( _KAFrame );
     tmpRoot->addChild( _KBFrame );
 
+    // Configure the Epsilons
+    PathToGuide* path = NULL;
+    if( _radBttRobot0->isChecked() ){
+      path = _pathsObj[0];
+      EPSILON_3 = _problem->wSpace()->getRobot(0)->getLink(_problem->wSpace()->getRobot(0)->getNumLinks()-2)->getD() / 20.;
+    }else if( _radBttRobot1->isChecked() ){
+      path = _pathsObj[1];
+      EPSILON_3 = _problem->wSpace()->getRobot(0)->getLink(_problem->wSpace()->getRobot(0)->getNumLinks()-2)->getD() / 20.;
+    }
+
+    EPSILON_3 = EPSILON_3 < EPSILON_1 ? 4 * EPSILON_1 : EPSILON_3 ;
+    EPSILON_2 = (EPSILON_1 + EPSILON_3) / 2.;
+
     // Now I will open the file to save the data to be ploted
     _theFile.open ("Data_of_teleoperation.txt", ios::trunc | ios::out );
+    _theFile << "%Epsilons: 1) " << EPSILON_1 << ", 2) " << EPSILON_2 << ", 3) " << EPSILON_3 << std::endl;
     _theFile << "%Fx Fy Fz Xd Yd Zd Xr Yr Zr" << std::endl << "%" << std::endl;
     _entertime = clock();
   }
@@ -1169,7 +1193,7 @@ namespace libGUI{
               // el delta es negativo lo pongo como límite inferior.
               for(int axis = 0; axis < _pathsObj[activeRob]->PathQ().size(); axis++){
                 float deltai = _pathsObj[activeRob]->PathQ().at(item - 1).at(axis) - 
-                  _pathsObj[activeRob]->PathQ().at(item).at(axis);
+                  tmp.getRn().getCoordinate(axis);
                 if( deltai > 0 )
                   if(tmp.getRn().getCoordinate(axis) > _pathsObj[activeRob]->PathQ().at(item).at(axis) )
                     tmp.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
@@ -1180,7 +1204,7 @@ namespace libGUI{
             }
           }
           _problem->wSpace()->getRobot(0)->Kinematics(tmp);
-        }else 
+        }else // This following section only works for the TX90 robot
         if(typeid(*_problem->wSpace()->getRobot(activeRob)->getIkine()) == typeid(IvKinTx90) ){
           vector<KthReal> target( se3conf.getCoordinates() );
 
@@ -1217,7 +1241,34 @@ namespace libGUI{
                       ->InverseKinematics(target);
 
           // Now the configuration change algorithm should be implemented.
-
+          /* Aqui vamos a intentar limitar la respuesta de la cinemática inversa para que 
+            cuando haya un cambio de configuración se vea obligado a pasar por la singularidad
+            según se haya planeado.
+          */
+          // First, I verify if the tmp configuration corresponde a una configuracion cercana en el espacio 
+          // de configuraciones.
+          if( _pathsObj[activeRob]->Singularities().size() > 0){
+            int item =0;
+            while( nea <= _pathsObj[activeRob]->Singularities().at(item++) 
+              && item < _pathsObj[activeRob]->Singularities().size() - 1 )
+            {;
+            }
+            if( item < _pathsObj[activeRob]->Singularities().size() - 1 ){
+              // ahora hay que modificar el tmp para que sea no supere la configuración singular.
+              // Primero calculo el delta entre la posición actual y la item y coordenada a coordenada
+              // si es positivo marco el valor de la configuración singular como límite superior y si
+              // el delta es negativo lo pongo como límite inferior.
+              for(int axis = 0; axis < _pathsObj[activeRob]->PathQ().size(); axis++){
+                float deltai = _pathsObj[activeRob]->PathQ().at(item - 1).at(axis) - tmp.getRn().getCoordinate(axis);
+                if( deltai > 0 )
+                  if(tmp.getRn().getCoordinate(axis) > _pathsObj[activeRob]->PathQ().at(item).at(axis) )
+                    tmp.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
+                else
+                  if(tmp.getRn().getCoordinate(axis) < _pathsObj[activeRob]->PathQ().at(item).at(axis) )
+                    tmp.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
+              }
+            }
+          }
           _problem->wSpace()->getRobot(activeRob)->Kinematics(tmp);
 
           // Here I copy the configuration response to the shared memory block.
@@ -1254,678 +1305,531 @@ namespace libGUI{
     if(this->objectName().isEmpty())
         this->setObjectName(QString::fromUtf8("Form"));
 
-    this->resize(270, 787);
-    QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
-    sizePolicy.setHorizontalStretch(0);
-    sizePolicy.setVerticalStretch(0);
-    sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
-    this->setSizePolicy(sizePolicy);
-    this->setMinimumSize(QSize(270, 350));
-
-    QWidget* tmpWid = new QWidget();
-
-    gridLayout_10 = new QGridLayout(tmpWid);
-    gridLayout_10->setObjectName(QString::fromUtf8("gridLayout_10"));
-    verticalLayout_13 = new QVBoxLayout();
-    verticalLayout_13->setObjectName(QString::fromUtf8("verticalLayout_13"));
-    groupBox = new QGroupBox(tmpWid);
-    groupBox->setObjectName(QString::fromUtf8("groupBox"));
-    QSizePolicy sizePolicy1(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    sizePolicy1.setHorizontalStretch(0);
-    sizePolicy1.setVerticalStretch(0);
-    sizePolicy1.setHeightForWidth(groupBox->sizePolicy().hasHeightForWidth());
-    groupBox->setSizePolicy(sizePolicy1);
-    gridLayout_7 = new QGridLayout(groupBox);
-    gridLayout_7->setObjectName(QString::fromUtf8("gridLayout_7"));
-    verticalLayout_11 = new QVBoxLayout();
-    verticalLayout_11->setSpacing(1);
-    verticalLayout_11->setObjectName(QString::fromUtf8("verticalLayout_11"));
-    gridLayout_4 = new QGridLayout();
-    gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
-    gridLayout_4->setHorizontalSpacing(1);
-    verticalLayout = new QVBoxLayout();
-    verticalLayout->setSpacing(1);
-    verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-    _cameraTop = new QPushButton(groupBox);
-    _cameraTop->setObjectName(QString::fromUtf8("_cameraTop"));
-    _cameraTop->setMinimumSize(QSize(25, 0));
-    _cameraTop->setMaximumSize(QSize(50, 16777215));
-
-    verticalLayout->addWidget(_cameraTop);
-
-    _cameraBottom = new QPushButton(groupBox);
-    _cameraBottom->setObjectName(QString::fromUtf8("_cameraBottom"));
-    _cameraBottom->setMinimumSize(QSize(25, 0));
-    _cameraBottom->setMaximumSize(QSize(50, 16777215));
-
-    verticalLayout->addWidget(_cameraBottom);
-
-
-    gridLayout_4->addLayout(verticalLayout, 0, 0, 1, 1);
-
-    verticalLayout_4 = new QVBoxLayout();
-    verticalLayout_4->setSpacing(1);
-    verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
-    _cameraLeft = new QPushButton(groupBox);
-    _cameraLeft->setObjectName(QString::fromUtf8("_cameraLeft"));
-    _cameraLeft->setMinimumSize(QSize(25, 0));
-    _cameraLeft->setMaximumSize(QSize(50, 16777215));
-
-    verticalLayout_4->addWidget(_cameraLeft);
-
-    _cameraRight = new QPushButton(groupBox);
-    _cameraRight->setObjectName(QString::fromUtf8("_cameraRight"));
-    _cameraRight->setMinimumSize(QSize(25, 0));
-    _cameraRight->setMaximumSize(QSize(50, 16777215));
-
-    verticalLayout_4->addWidget(_cameraRight);
-
-
-    gridLayout_4->addLayout(verticalLayout_4, 0, 1, 1, 1);
-
-    verticalLayout_10 = new QVBoxLayout();
-    verticalLayout_10->setSpacing(1);
-    verticalLayout_10->setObjectName(QString::fromUtf8("verticalLayout_10"));
-    _cameraFront = new QPushButton(groupBox);
-    _cameraFront->setObjectName(QString::fromUtf8("_cameraFront"));
-    _cameraFront->setMinimumSize(QSize(25, 0));
-    _cameraFront->setMaximumSize(QSize(50, 16777215));
-
-    verticalLayout_10->addWidget(_cameraFront);
-
-    _cameraRear = new QPushButton(groupBox);
-    _cameraRear->setObjectName(QString::fromUtf8("_cameraRear"));
-    _cameraRear->setMinimumSize(QSize(25, 0));
-    _cameraRear->setMaximumSize(QSize(50, 16777215));
-
-    verticalLayout_10->addWidget(_cameraRear);
-
-
-    gridLayout_4->addLayout(verticalLayout_10, 0, 2, 1, 1);
-
-
-    verticalLayout_11->addLayout(gridLayout_4);
-
-    groupBox_3 = new QGroupBox(groupBox);
-    groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
-    gridLayout_3 = new QGridLayout(groupBox_3);
-    gridLayout_3->setObjectName(QString::fromUtf8("gridLayout_3"));
-    verticalLayout_2 = new QVBoxLayout();
-    verticalLayout_2->setSpacing(1);
-    verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
-    horizontalLayout_5 = new QHBoxLayout();
-    horizontalLayout_5->setObjectName(QString::fromUtf8("horizontalLayout_5"));
-    label = new QLabel(groupBox_3);
-    label->setObjectName(QString::fromUtf8("label"));
-    label->setMinimumSize(QSize(10, 0));
-    label->setMaximumSize(QSize(10, 20));
-
-    horizontalLayout_5->addWidget(label);
-
-    settingX = new QLineEdit(groupBox_3);
-    settingX->setObjectName(QString::fromUtf8("settingX"));
-    QSizePolicy sizePolicy2(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    sizePolicy2.setHorizontalStretch(0);
-    sizePolicy2.setVerticalStretch(0);
-    sizePolicy2.setHeightForWidth(settingX->sizePolicy().hasHeightForWidth());
-    settingX->setSizePolicy(sizePolicy2);
-    settingX->setMinimumSize(QSize(50, 20));
-    settingX->setMaximumSize(QSize(50, 20));
+        this->resize(270, 600);
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
+        this->setSizePolicy(sizePolicy);
+        this->setMinimumSize(QSize(270, 636));
+        widget = new QWidget(this);
+        widget->setObjectName(QString::fromUtf8("widget"));
+        widget->setGeometry(QRect(10, 10, 252, 616));
+        verticalLayout_5 = new QVBoxLayout(widget);
+        verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
+        verticalLayout_5->setContentsMargins(0, 0, 0, 0);
+        groupBox = new QGroupBox(widget);
+        groupBox->setObjectName(QString::fromUtf8("groupBox"));
+        QSizePolicy sizePolicy1(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(groupBox->sizePolicy().hasHeightForWidth());
+        groupBox->setSizePolicy(sizePolicy1);
+        gridLayout_7 = new QGridLayout(groupBox);
+        gridLayout_7->setObjectName(QString::fromUtf8("gridLayout_7"));
+        verticalLayout_11 = new QVBoxLayout();
+        verticalLayout_11->setSpacing(1);
+        verticalLayout_11->setObjectName(QString::fromUtf8("verticalLayout_11"));
+        gridLayout_4 = new QGridLayout();
+        gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
+        gridLayout_4->setHorizontalSpacing(1);
+        verticalLayout = new QVBoxLayout();
+        verticalLayout->setSpacing(1);
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        _cameraTop = new QPushButton(groupBox);
+        _cameraTop->setObjectName(QString::fromUtf8("_cameraTop"));
+        _cameraTop->setMinimumSize(QSize(25, 0));
+        _cameraTop->setMaximumSize(QSize(50, 16777215));
+
+        verticalLayout->addWidget(_cameraTop);
+
+        _cameraBottom = new QPushButton(groupBox);
+        _cameraBottom->setObjectName(QString::fromUtf8("_cameraBottom"));
+        _cameraBottom->setMinimumSize(QSize(25, 0));
+        _cameraBottom->setMaximumSize(QSize(50, 16777215));
+
+        verticalLayout->addWidget(_cameraBottom);
+
+
+        gridLayout_4->addLayout(verticalLayout, 0, 0, 1, 1);
+
+        verticalLayout_4 = new QVBoxLayout();
+        verticalLayout_4->setSpacing(1);
+        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        _cameraLeft = new QPushButton(groupBox);
+        _cameraLeft->setObjectName(QString::fromUtf8("_cameraLeft"));
+        _cameraLeft->setMinimumSize(QSize(25, 0));
+        _cameraLeft->setMaximumSize(QSize(50, 16777215));
+
+        verticalLayout_4->addWidget(_cameraLeft);
+
+        _cameraRight = new QPushButton(groupBox);
+        _cameraRight->setObjectName(QString::fromUtf8("_cameraRight"));
+        _cameraRight->setMinimumSize(QSize(25, 0));
+        _cameraRight->setMaximumSize(QSize(50, 16777215));
+
+        verticalLayout_4->addWidget(_cameraRight);
+
+
+        gridLayout_4->addLayout(verticalLayout_4, 0, 1, 1, 1);
+
+        verticalLayout_10 = new QVBoxLayout();
+        verticalLayout_10->setSpacing(1);
+        verticalLayout_10->setObjectName(QString::fromUtf8("verticalLayout_10"));
+        _cameraFront = new QPushButton(groupBox);
+        _cameraFront->setObjectName(QString::fromUtf8("_cameraFront"));
+        _cameraFront->setMinimumSize(QSize(25, 0));
+        _cameraFront->setMaximumSize(QSize(50, 16777215));
+
+        verticalLayout_10->addWidget(_cameraFront);
+
+        _cameraRear = new QPushButton(groupBox);
+        _cameraRear->setObjectName(QString::fromUtf8("_cameraRear"));
+        _cameraRear->setMinimumSize(QSize(25, 0));
+        _cameraRear->setMaximumSize(QSize(50, 16777215));
+
+        verticalLayout_10->addWidget(_cameraRear);
+
+
+        gridLayout_4->addLayout(verticalLayout_10, 0, 2, 1, 1);
+
+
+        verticalLayout_11->addLayout(gridLayout_4);
+
+        groupBox_3 = new QGroupBox(groupBox);
+        groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
+        gridLayout_3 = new QGridLayout(groupBox_3);
+        gridLayout_3->setObjectName(QString::fromUtf8("gridLayout_3"));
+        verticalLayout_2 = new QVBoxLayout();
+        verticalLayout_2->setSpacing(1);
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        horizontalLayout_5 = new QHBoxLayout();
+        horizontalLayout_5->setObjectName(QString::fromUtf8("horizontalLayout_5"));
+        label = new QLabel(groupBox_3);
+        label->setObjectName(QString::fromUtf8("label"));
+        label->setMinimumSize(QSize(10, 0));
+        label->setMaximumSize(QSize(10, 20));
 
-    horizontalLayout_5->addWidget(settingX);
+        horizontalLayout_5->addWidget(label);
+
+        settingX = new QLineEdit(groupBox_3);
+        settingX->setObjectName(QString::fromUtf8("settingX"));
+        QSizePolicy sizePolicy2(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy2.setHorizontalStretch(0);
+        sizePolicy2.setVerticalStretch(0);
+        sizePolicy2.setHeightForWidth(settingX->sizePolicy().hasHeightForWidth());
+        settingX->setSizePolicy(sizePolicy2);
+        settingX->setMinimumSize(QSize(50, 20));
+        settingX->setMaximumSize(QSize(50, 20));
 
-    label_7 = new QLabel(groupBox_3);
-    label_7->setObjectName(QString::fromUtf8("label_7"));
-    label_7->setMinimumSize(QSize(13, 0));
-    label_7->setMaximumSize(QSize(13, 20));
+        horizontalLayout_5->addWidget(settingX);
 
-    horizontalLayout_5->addWidget(label_7);
+        label_7 = new QLabel(groupBox_3);
+        label_7->setObjectName(QString::fromUtf8("label_7"));
+        label_7->setMinimumSize(QSize(13, 0));
+        label_7->setMaximumSize(QSize(13, 20));
 
-    settingRX = new QLineEdit(groupBox_3);
-    settingRX->setObjectName(QString::fromUtf8("settingRX"));
-    sizePolicy2.setHeightForWidth(settingRX->sizePolicy().hasHeightForWidth());
-    settingRX->setSizePolicy(sizePolicy2);
-    settingRX->setMinimumSize(QSize(50, 20));
-    settingRX->setMaximumSize(QSize(50, 20));
+        horizontalLayout_5->addWidget(label_7);
 
-    horizontalLayout_5->addWidget(settingRX);
+        settingRX = new QLineEdit(groupBox_3);
+        settingRX->setObjectName(QString::fromUtf8("settingRX"));
+        sizePolicy2.setHeightForWidth(settingRX->sizePolicy().hasHeightForWidth());
+        settingRX->setSizePolicy(sizePolicy2);
+        settingRX->setMinimumSize(QSize(50, 20));
+        settingRX->setMaximumSize(QSize(50, 20));
 
+        horizontalLayout_5->addWidget(settingRX);
 
-    verticalLayout_2->addLayout(horizontalLayout_5);
 
-    horizontalLayout_6 = new QHBoxLayout();
-    horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
-    label_2 = new QLabel(groupBox_3);
-    label_2->setObjectName(QString::fromUtf8("label_2"));
-    label_2->setMinimumSize(QSize(10, 0));
-    label_2->setMaximumSize(QSize(10, 20));
+        verticalLayout_2->addLayout(horizontalLayout_5);
 
-    horizontalLayout_6->addWidget(label_2);
+        horizontalLayout_6 = new QHBoxLayout();
+        horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
+        label_2 = new QLabel(groupBox_3);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setMinimumSize(QSize(10, 0));
+        label_2->setMaximumSize(QSize(10, 20));
 
-    settingY = new QLineEdit(groupBox_3);
-    settingY->setObjectName(QString::fromUtf8("settingY"));
-    sizePolicy2.setHeightForWidth(settingY->sizePolicy().hasHeightForWidth());
-    settingY->setSizePolicy(sizePolicy2);
-    settingY->setMinimumSize(QSize(50, 20));
-    settingY->setMaximumSize(QSize(50, 20));
+        horizontalLayout_6->addWidget(label_2);
 
-    horizontalLayout_6->addWidget(settingY);
+        settingY = new QLineEdit(groupBox_3);
+        settingY->setObjectName(QString::fromUtf8("settingY"));
+        sizePolicy2.setHeightForWidth(settingY->sizePolicy().hasHeightForWidth());
+        settingY->setSizePolicy(sizePolicy2);
+        settingY->setMinimumSize(QSize(50, 20));
+        settingY->setMaximumSize(QSize(50, 20));
 
-    label_8 = new QLabel(groupBox_3);
-    label_8->setObjectName(QString::fromUtf8("label_8"));
-    label_8->setMinimumSize(QSize(13, 0));
-    label_8->setMaximumSize(QSize(13, 20));
+        horizontalLayout_6->addWidget(settingY);
 
-    horizontalLayout_6->addWidget(label_8);
+        label_8 = new QLabel(groupBox_3);
+        label_8->setObjectName(QString::fromUtf8("label_8"));
+        label_8->setMinimumSize(QSize(13, 0));
+        label_8->setMaximumSize(QSize(13, 20));
 
-    settingRY = new QLineEdit(groupBox_3);
-    settingRY->setObjectName(QString::fromUtf8("settingRY"));
-    sizePolicy2.setHeightForWidth(settingRY->sizePolicy().hasHeightForWidth());
-    settingRY->setSizePolicy(sizePolicy2);
-    settingRY->setMinimumSize(QSize(50, 20));
-    settingRY->setMaximumSize(QSize(50, 20));
+        horizontalLayout_6->addWidget(label_8);
 
-    horizontalLayout_6->addWidget(settingRY);
+        settingRY = new QLineEdit(groupBox_3);
+        settingRY->setObjectName(QString::fromUtf8("settingRY"));
+        sizePolicy2.setHeightForWidth(settingRY->sizePolicy().hasHeightForWidth());
+        settingRY->setSizePolicy(sizePolicy2);
+        settingRY->setMinimumSize(QSize(50, 20));
+        settingRY->setMaximumSize(QSize(50, 20));
 
+        horizontalLayout_6->addWidget(settingRY);
 
-    verticalLayout_2->addLayout(horizontalLayout_6);
 
-    horizontalLayout_7 = new QHBoxLayout();
-    horizontalLayout_7->setObjectName(QString::fromUtf8("horizontalLayout_7"));
-    label_3 = new QLabel(groupBox_3);
-    label_3->setObjectName(QString::fromUtf8("label_3"));
-    label_3->setMinimumSize(QSize(10, 0));
-    label_3->setMaximumSize(QSize(10, 20));
+        verticalLayout_2->addLayout(horizontalLayout_6);
 
-    horizontalLayout_7->addWidget(label_3);
+        horizontalLayout_7 = new QHBoxLayout();
+        horizontalLayout_7->setObjectName(QString::fromUtf8("horizontalLayout_7"));
+        label_3 = new QLabel(groupBox_3);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+        label_3->setMinimumSize(QSize(10, 0));
+        label_3->setMaximumSize(QSize(10, 20));
 
-    settingZ = new QLineEdit(groupBox_3);
-    settingZ->setObjectName(QString::fromUtf8("settingZ"));
-    sizePolicy2.setHeightForWidth(settingZ->sizePolicy().hasHeightForWidth());
-    settingZ->setSizePolicy(sizePolicy2);
-    settingZ->setMinimumSize(QSize(50, 20));
-    settingZ->setMaximumSize(QSize(50, 20));
+        horizontalLayout_7->addWidget(label_3);
 
-    horizontalLayout_7->addWidget(settingZ);
+        settingZ = new QLineEdit(groupBox_3);
+        settingZ->setObjectName(QString::fromUtf8("settingZ"));
+        sizePolicy2.setHeightForWidth(settingZ->sizePolicy().hasHeightForWidth());
+        settingZ->setSizePolicy(sizePolicy2);
+        settingZ->setMinimumSize(QSize(50, 20));
+        settingZ->setMaximumSize(QSize(50, 20));
 
-    label_9 = new QLabel(groupBox_3);
-    label_9->setObjectName(QString::fromUtf8("label_9"));
-    label_9->setMinimumSize(QSize(13, 0));
-    label_9->setMaximumSize(QSize(13, 20));
+        horizontalLayout_7->addWidget(settingZ);
 
-    horizontalLayout_7->addWidget(label_9);
+        label_9 = new QLabel(groupBox_3);
+        label_9->setObjectName(QString::fromUtf8("label_9"));
+        label_9->setMinimumSize(QSize(13, 0));
+        label_9->setMaximumSize(QSize(13, 20));
 
-    settingRZ = new QLineEdit(groupBox_3);
-    settingRZ->setObjectName(QString::fromUtf8("settingRZ"));
-    sizePolicy2.setHeightForWidth(settingRZ->sizePolicy().hasHeightForWidth());
-    settingRZ->setSizePolicy(sizePolicy2);
-    settingRZ->setMinimumSize(QSize(50, 20));
-    settingRZ->setMaximumSize(QSize(50, 20));
+        horizontalLayout_7->addWidget(label_9);
 
-    horizontalLayout_7->addWidget(settingRZ);
+        settingRZ = new QLineEdit(groupBox_3);
+        settingRZ->setObjectName(QString::fromUtf8("settingRZ"));
+        sizePolicy2.setHeightForWidth(settingRZ->sizePolicy().hasHeightForWidth());
+        settingRZ->setSizePolicy(sizePolicy2);
+        settingRZ->setMinimumSize(QSize(50, 20));
+        settingRZ->setMaximumSize(QSize(50, 20));
 
+        horizontalLayout_7->addWidget(settingRZ);
 
-    verticalLayout_2->addLayout(horizontalLayout_7);
 
-    _setCamera = new QPushButton(groupBox_3);
-    _setCamera->setObjectName(QString::fromUtf8("_setCamera"));
+        verticalLayout_2->addLayout(horizontalLayout_7);
 
-    verticalLayout_2->addWidget(_setCamera);
+        _setCamera = new QPushButton(groupBox_3);
+        _setCamera->setObjectName(QString::fromUtf8("_setCamera"));
 
+        verticalLayout_2->addWidget(_setCamera);
 
-    gridLayout_3->addLayout(verticalLayout_2, 0, 0, 1, 1);
 
+        gridLayout_3->addLayout(verticalLayout_2, 0, 0, 1, 1);
 
-    verticalLayout_11->addWidget(groupBox_3);
 
-    groupBox_4 = new QGroupBox(groupBox);
-    groupBox_4->setObjectName(QString::fromUtf8("groupBox_4"));
-    gridLayout = new QGridLayout(groupBox_4);
-    gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-    verticalLayout_3 = new QVBoxLayout();
-    verticalLayout_3->setSpacing(1);
-    verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
-    horizontalLayout_8 = new QHBoxLayout();
-    horizontalLayout_8->setObjectName(QString::fromUtf8("horizontalLayout_8"));
-    label_4 = new QLabel(groupBox_4);
-    label_4->setObjectName(QString::fromUtf8("label_4"));
+        verticalLayout_11->addWidget(groupBox_3);
 
-    horizontalLayout_8->addWidget(label_4);
+        groupBox_4 = new QGroupBox(groupBox);
+        groupBox_4->setObjectName(QString::fromUtf8("groupBox_4"));
+        gridLayout = new QGridLayout(groupBox_4);
+        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        verticalLayout_3 = new QVBoxLayout();
+        verticalLayout_3->setSpacing(1);
+        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
+        horizontalLayout_8 = new QHBoxLayout();
+        horizontalLayout_8->setObjectName(QString::fromUtf8("horizontalLayout_8"));
+        label_4 = new QLabel(groupBox_4);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
 
-    currentX = new QLineEdit(groupBox_4);
-    currentX->setObjectName(QString::fromUtf8("currentX"));
-    currentX->setMinimumSize(QSize(50, 20));
-    currentX->setMaximumSize(QSize(50, 20));
+        horizontalLayout_8->addWidget(label_4);
 
-    horizontalLayout_8->addWidget(currentX);
+        currentX = new QLineEdit(groupBox_4);
+        currentX->setObjectName(QString::fromUtf8("currentX"));
+        currentX->setMinimumSize(QSize(50, 20));
+        currentX->setMaximumSize(QSize(50, 20));
 
-    label_10 = new QLabel(groupBox_4);
-    label_10->setObjectName(QString::fromUtf8("label_10"));
-    label_10->setMinimumSize(QSize(16, 20));
-    label_10->setMaximumSize(QSize(16, 20));
+        horizontalLayout_8->addWidget(currentX);
 
-    horizontalLayout_8->addWidget(label_10);
+        label_10 = new QLabel(groupBox_4);
+        label_10->setObjectName(QString::fromUtf8("label_10"));
+        label_10->setMinimumSize(QSize(16, 20));
+        label_10->setMaximumSize(QSize(16, 20));
 
-    currentRX = new QLineEdit(groupBox_4);
-    currentRX->setObjectName(QString::fromUtf8("currentRX"));
-    currentRX->setMinimumSize(QSize(50, 20));
-    currentRX->setMaximumSize(QSize(50, 20));
+        horizontalLayout_8->addWidget(label_10);
 
-    horizontalLayout_8->addWidget(currentRX);
+        currentRX = new QLineEdit(groupBox_4);
+        currentRX->setObjectName(QString::fromUtf8("currentRX"));
+        currentRX->setMinimumSize(QSize(50, 20));
+        currentRX->setMaximumSize(QSize(50, 20));
 
+        horizontalLayout_8->addWidget(currentRX);
 
-    verticalLayout_3->addLayout(horizontalLayout_8);
 
-    horizontalLayout_9 = new QHBoxLayout();
-    horizontalLayout_9->setObjectName(QString::fromUtf8("horizontalLayout_9"));
-    label_5 = new QLabel(groupBox_4);
-    label_5->setObjectName(QString::fromUtf8("label_5"));
+        verticalLayout_3->addLayout(horizontalLayout_8);
 
-    horizontalLayout_9->addWidget(label_5);
+        horizontalLayout_9 = new QHBoxLayout();
+        horizontalLayout_9->setObjectName(QString::fromUtf8("horizontalLayout_9"));
+        label_5 = new QLabel(groupBox_4);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
 
-    currentY = new QLineEdit(groupBox_4);
-    currentY->setObjectName(QString::fromUtf8("currentY"));
-    currentY->setMinimumSize(QSize(50, 20));
-    currentY->setMaximumSize(QSize(50, 20));
+        horizontalLayout_9->addWidget(label_5);
 
-    horizontalLayout_9->addWidget(currentY);
+        currentY = new QLineEdit(groupBox_4);
+        currentY->setObjectName(QString::fromUtf8("currentY"));
+        currentY->setMinimumSize(QSize(50, 20));
+        currentY->setMaximumSize(QSize(50, 20));
 
-    label_12 = new QLabel(groupBox_4);
-    label_12->setObjectName(QString::fromUtf8("label_12"));
-    label_12->setMinimumSize(QSize(16, 20));
-    label_12->setMaximumSize(QSize(16, 20));
+        horizontalLayout_9->addWidget(currentY);
 
-    horizontalLayout_9->addWidget(label_12);
+        label_12 = new QLabel(groupBox_4);
+        label_12->setObjectName(QString::fromUtf8("label_12"));
+        label_12->setMinimumSize(QSize(16, 20));
+        label_12->setMaximumSize(QSize(16, 20));
 
-    currentRY = new QLineEdit(groupBox_4);
-    currentRY->setObjectName(QString::fromUtf8("currentRY"));
-    currentRY->setMinimumSize(QSize(50, 20));
-    currentRY->setMaximumSize(QSize(50, 20));
+        horizontalLayout_9->addWidget(label_12);
 
-    horizontalLayout_9->addWidget(currentRY);
+        currentRY = new QLineEdit(groupBox_4);
+        currentRY->setObjectName(QString::fromUtf8("currentRY"));
+        currentRY->setMinimumSize(QSize(50, 20));
+        currentRY->setMaximumSize(QSize(50, 20));
 
+        horizontalLayout_9->addWidget(currentRY);
 
-    verticalLayout_3->addLayout(horizontalLayout_9);
 
-    horizontalLayout_10 = new QHBoxLayout();
-    horizontalLayout_10->setObjectName(QString::fromUtf8("horizontalLayout_10"));
-    label_6 = new QLabel(groupBox_4);
-    label_6->setObjectName(QString::fromUtf8("label_6"));
+        verticalLayout_3->addLayout(horizontalLayout_9);
 
-    horizontalLayout_10->addWidget(label_6);
+        horizontalLayout_10 = new QHBoxLayout();
+        horizontalLayout_10->setObjectName(QString::fromUtf8("horizontalLayout_10"));
+        label_6 = new QLabel(groupBox_4);
+        label_6->setObjectName(QString::fromUtf8("label_6"));
 
-    currentZ = new QLineEdit(groupBox_4);
-    currentZ->setObjectName(QString::fromUtf8("currentZ"));
-    currentZ->setMinimumSize(QSize(50, 20));
-    currentZ->setMaximumSize(QSize(50, 20));
+        horizontalLayout_10->addWidget(label_6);
 
-    horizontalLayout_10->addWidget(currentZ);
+        currentZ = new QLineEdit(groupBox_4);
+        currentZ->setObjectName(QString::fromUtf8("currentZ"));
+        currentZ->setMinimumSize(QSize(50, 20));
+        currentZ->setMaximumSize(QSize(50, 20));
 
-    label_11 = new QLabel(groupBox_4);
-    label_11->setObjectName(QString::fromUtf8("label_11"));
-    label_11->setMinimumSize(QSize(16, 20));
-    label_11->setMaximumSize(QSize(16, 20));
+        horizontalLayout_10->addWidget(currentZ);
 
-    horizontalLayout_10->addWidget(label_11);
+        label_11 = new QLabel(groupBox_4);
+        label_11->setObjectName(QString::fromUtf8("label_11"));
+        label_11->setMinimumSize(QSize(16, 20));
+        label_11->setMaximumSize(QSize(16, 20));
 
-    currentRZ = new QLineEdit(groupBox_4);
-    currentRZ->setObjectName(QString::fromUtf8("currentRZ"));
-    currentRZ->setMinimumSize(QSize(50, 20));
-    currentRZ->setMaximumSize(QSize(50, 20));
+        horizontalLayout_10->addWidget(label_11);
 
-    horizontalLayout_10->addWidget(currentRZ);
+        currentRZ = new QLineEdit(groupBox_4);
+        currentRZ->setObjectName(QString::fromUtf8("currentRZ"));
+        currentRZ->setMinimumSize(QSize(50, 20));
+        currentRZ->setMaximumSize(QSize(50, 20));
 
+        horizontalLayout_10->addWidget(currentRZ);
 
-    verticalLayout_3->addLayout(horizontalLayout_10);
 
-    _getCamera = new QPushButton(groupBox_4);
-    _getCamera->setObjectName(QString::fromUtf8("_getCamera"));
+        verticalLayout_3->addLayout(horizontalLayout_10);
 
-    verticalLayout_3->addWidget(_getCamera);
+        _getCamera = new QPushButton(groupBox_4);
+        _getCamera->setObjectName(QString::fromUtf8("_getCamera"));
 
+        verticalLayout_3->addWidget(_getCamera);
 
-    gridLayout->addLayout(verticalLayout_3, 0, 0, 1, 1);
 
+        gridLayout->addLayout(verticalLayout_3, 0, 0, 1, 1);
 
-    verticalLayout_11->addWidget(groupBox_4);
 
+        verticalLayout_11->addWidget(groupBox_4);
 
-    gridLayout_7->addLayout(verticalLayout_11, 0, 0, 1, 1);
 
+        gridLayout_7->addLayout(verticalLayout_11, 0, 0, 1, 1);
 
-    verticalLayout_13->addWidget(groupBox);
 
-    groupBox_2 = new QGroupBox(tmpWid);
-    groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
-    sizePolicy1.setHeightForWidth(groupBox_2->sizePolicy().hasHeightForWidth());
-    groupBox_2->setSizePolicy(sizePolicy1);
-    groupBox_2->setMinimumSize(QSize(250, 398));
-    groupBox_2->setMaximumSize(QSize(16000, 16000));
-    gridLayout_11 = new QGridLayout(groupBox_2);
-    gridLayout_11->setObjectName(QString::fromUtf8("gridLayout_11"));
-    verticalLayout_12 = new QVBoxLayout();
-    verticalLayout_12->setObjectName(QString::fromUtf8("verticalLayout_12"));
-    horizontalLayout = new QHBoxLayout();
-    horizontalLayout->setSpacing(1);
-    horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-    _groupRobots = new QGroupBox(groupBox_2);
-    _groupRobots->setObjectName(QString::fromUtf8("_groupRobots"));
-    gridLayout_2 = new QGridLayout(_groupRobots);
-    gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
-    horizontalLayout_3 = new QHBoxLayout();
-    horizontalLayout_3->setSpacing(1);
-    horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
-    _radBttRobot0 = new QRadioButton(_groupRobots);
-    _radBttRobot0->setObjectName(QString::fromUtf8("_radBttRobot0"));
-    _radBttRobot0->setChecked(true);
+        verticalLayout_5->addWidget(groupBox);
 
-    horizontalLayout_3->addWidget(_radBttRobot0);
+        groupBox_2 = new QGroupBox(widget);
+        groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
+        sizePolicy1.setHeightForWidth(groupBox_2->sizePolicy().hasHeightForWidth());
+        groupBox_2->setSizePolicy(sizePolicy1);
+        groupBox_2->setMinimumSize(QSize(250, 266));
+        groupBox_2->setMaximumSize(QSize(16000, 16000));
+        gridLayout_9 = new QGridLayout(groupBox_2);
+        gridLayout_9->setObjectName(QString::fromUtf8("gridLayout_9"));
+        gridLayout_8 = new QGridLayout();
+        gridLayout_8->setObjectName(QString::fromUtf8("gridLayout_8"));
+        groupBox_6 = new QGroupBox(groupBox_2);
+        groupBox_6->setObjectName(QString::fromUtf8("groupBox_6"));
+        QSizePolicy sizePolicy3(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+        sizePolicy3.setHorizontalStretch(0);
+        sizePolicy3.setVerticalStretch(0);
+        sizePolicy3.setHeightForWidth(groupBox_6->sizePolicy().hasHeightForWidth());
+        groupBox_6->setSizePolicy(sizePolicy3);
+        groupBox_6->setMinimumSize(QSize(2, 0));
+        gridLayout_5 = new QGridLayout(groupBox_6);
+        gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
+        horizontalLayout_12 = new QHBoxLayout();
+        horizontalLayout_12->setObjectName(QString::fromUtf8("horizontalLayout_12"));
+        _cmdConfConnection = new QPushButton(groupBox_6);
+        _cmdConfConnection->setObjectName(QString::fromUtf8("_cmdConfConnection"));
 
-    _radBttRobot1 = new QRadioButton(_groupRobots);
-    _radBttRobot1->setObjectName(QString::fromUtf8("_radBttRobot1"));
+        horizontalLayout_12->addWidget(_cmdConfConnection);
 
-    horizontalLayout_3->addWidget(_radBttRobot1);
+        _cmdConnectCell = new QPushButton(groupBox_6);
+        _cmdConnectCell->setObjectName(QString::fromUtf8("_cmdConnectCell"));
+        _cmdConnectCell->setCheckable(true);
+        horizontalLayout_12->addWidget(_cmdConnectCell);
 
 
-    gridLayout_2->addLayout(horizontalLayout_3, 0, 0, 1, 1);
+        gridLayout_5->addLayout(horizontalLayout_12, 0, 0, 1, 1);
 
 
-    horizontalLayout->addWidget(_groupRobots);
+        gridLayout_8->addWidget(groupBox_6, 0, 0, 1, 1);
 
-    groupBox_5 = new QGroupBox(groupBox_2);
-    groupBox_5->setObjectName(QString::fromUtf8("groupBox_5"));
-    gridLayout_6 = new QGridLayout(groupBox_5);
-    gridLayout_6->setObjectName(QString::fromUtf8("gridLayout_6"));
-    horizontalLayout_2 = new QHBoxLayout();
-    horizontalLayout_2->setSpacing(1);
-    horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-    _radCamera = new QRadioButton(groupBox_5);
-    _radCamera->setObjectName(QString::fromUtf8("_radCamera"));
-    sizePolicy2.setHeightForWidth(_radCamera->sizePolicy().hasHeightForWidth());
-    _radCamera->setSizePolicy(sizePolicy2);
-    _radCamera->setChecked(true);
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setSpacing(1);
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        _groupRobots = new QGroupBox(groupBox_2);
+        _groupRobots->setObjectName(QString::fromUtf8("_groupRobots"));
+        gridLayout_2 = new QGridLayout(_groupRobots);
+        gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
+        horizontalLayout_3 = new QHBoxLayout();
+        horizontalLayout_3->setSpacing(1);
+        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+        _radBttRobot0 = new QRadioButton(_groupRobots);
+        _radBttRobot0->setObjectName(QString::fromUtf8("_radBttRobot0"));
+        _radBttRobot0->setChecked(true);
 
-    horizontalLayout_2->addWidget(_radCamera);
+        horizontalLayout_3->addWidget(_radBttRobot0);
 
-    _radWorld = new QRadioButton(groupBox_5);
-    _radWorld->setObjectName(QString::fromUtf8("_radWorld"));
-    sizePolicy2.setHeightForWidth(_radWorld->sizePolicy().hasHeightForWidth());
-    _radWorld->setSizePolicy(sizePolicy2);
+        _radBttRobot1 = new QRadioButton(_groupRobots);
+        _radBttRobot1->setObjectName(QString::fromUtf8("_radBttRobot1"));
 
-    horizontalLayout_2->addWidget(_radWorld);
+        horizontalLayout_3->addWidget(_radBttRobot1);
 
 
-    gridLayout_6->addLayout(horizontalLayout_2, 0, 0, 1, 1);
+        gridLayout_2->addLayout(horizontalLayout_3, 0, 0, 1, 1);
 
 
-    horizontalLayout->addWidget(groupBox_5);
+        horizontalLayout->addWidget(_groupRobots);
 
+        groupBox_5 = new QGroupBox(groupBox_2);
+        groupBox_5->setObjectName(QString::fromUtf8("groupBox_5"));
+        gridLayout_6 = new QGridLayout(groupBox_5);
+        gridLayout_6->setObjectName(QString::fromUtf8("gridLayout_6"));
+        horizontalLayout_2 = new QHBoxLayout();
+        horizontalLayout_2->setSpacing(1);
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        _radCamera = new QRadioButton(groupBox_5);
+        _radCamera->setObjectName(QString::fromUtf8("_radCamera"));
+        sizePolicy2.setHeightForWidth(_radCamera->sizePolicy().hasHeightForWidth());
+        _radCamera->setSizePolicy(sizePolicy2);
+        _radCamera->setChecked(true);
 
-    verticalLayout_12->addLayout(horizontalLayout);
+        horizontalLayout_2->addWidget(_radCamera);
 
-    horizontalLayout_11 = new QHBoxLayout();
-    horizontalLayout_11->setSpacing(6);
-    horizontalLayout_11->setObjectName(QString::fromUtf8("horizontalLayout_11"));
-    verticalLayout_6 = new QVBoxLayout();
-    verticalLayout_6->setSpacing(1);
-    verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
-    _lblTransScale = new QLabel(groupBox_2);
-    _lblTransScale->setObjectName(QString::fromUtf8("_lblTransScale"));
+        _radWorld = new QRadioButton(groupBox_5);
+        _radWorld->setObjectName(QString::fromUtf8("_radWorld"));
+        sizePolicy2.setHeightForWidth(_radWorld->sizePolicy().hasHeightForWidth());
+        _radWorld->setSizePolicy(sizePolicy2);
 
-    verticalLayout_6->addWidget(_lblTransScale);
+        horizontalLayout_2->addWidget(_radWorld);
 
-    _sliderTransScale = new QSlider(groupBox_2);
-    _sliderTransScale->setObjectName(QString::fromUtf8("_sliderTransScale"));
-    _sliderTransScale->setMinimumSize(QSize(100, 20));
-    _sliderTransScale->setMinimum(1);
-    _sliderTransScale->setMaximum(100);
-    _sliderTransScale->setValue(10);
-    _sliderTransScale->setOrientation(Qt::Horizontal);
 
-    verticalLayout_6->addWidget(_sliderTransScale);
+        gridLayout_6->addLayout(horizontalLayout_2, 0, 0, 1, 1);
 
 
-    horizontalLayout_11->addLayout(verticalLayout_6);
+        horizontalLayout->addWidget(groupBox_5);
 
-    verticalLayout_7 = new QVBoxLayout();
-    verticalLayout_7->setSpacing(1);
-    verticalLayout_7->setObjectName(QString::fromUtf8("verticalLayout_7"));
-    _lblRotScale = new QLabel(groupBox_2);
-    _lblRotScale->setObjectName(QString::fromUtf8("_lblRotScale"));
 
-    verticalLayout_7->addWidget(_lblRotScale);
+        gridLayout_8->addLayout(horizontalLayout, 1, 0, 1, 1);
 
-    _sliderRotScale = new QSlider(groupBox_2);
-    _sliderRotScale->setObjectName(QString::fromUtf8("_sliderRotScale"));
-    _sliderRotScale->setMinimumSize(QSize(100, 20));
-    _sliderRotScale->setMinimum(1);
-    _sliderRotScale->setMaximum(20);
-    _sliderRotScale->setPageStep(5);
-    _sliderRotScale->setValue(10);
-    _sliderRotScale->setOrientation(Qt::Horizontal);
+        horizontalLayout_11 = new QHBoxLayout();
+        horizontalLayout_11->setSpacing(6);
+        horizontalLayout_11->setObjectName(QString::fromUtf8("horizontalLayout_11"));
+        verticalLayout_6 = new QVBoxLayout();
+        verticalLayout_6->setSpacing(1);
+        verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
+        _lblTransScale = new QLabel(groupBox_2);
+        _lblTransScale->setObjectName(QString::fromUtf8("_lblTransScale"));
 
-    verticalLayout_7->addWidget(_sliderRotScale);
+        verticalLayout_6->addWidget(_lblTransScale);
 
+        _sliderTransScale = new QSlider(groupBox_2);
+        _sliderTransScale->setObjectName(QString::fromUtf8("_sliderTransScale"));
+        _sliderTransScale->setMinimumSize(QSize(100, 20));
+        _sliderTransScale->setMinimum(1);
+        _sliderTransScale->setMaximum(100);
+        _sliderTransScale->setValue(10);
+        _sliderTransScale->setOrientation(Qt::Horizontal);
 
-    horizontalLayout_11->addLayout(verticalLayout_7);
+        verticalLayout_6->addWidget(_sliderTransScale);
 
 
-    verticalLayout_12->addLayout(horizontalLayout_11);
+        horizontalLayout_11->addLayout(verticalLayout_6);
 
-    groupBox_6 = new QGroupBox(groupBox_2);
-    groupBox_6->setObjectName(QString::fromUtf8("groupBox_6"));
-    QSizePolicy sizePolicy3(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
-    sizePolicy3.setHorizontalStretch(0);
-    sizePolicy3.setVerticalStretch(0);
-    sizePolicy3.setHeightForWidth(groupBox_6->sizePolicy().hasHeightForWidth());
-    groupBox_6->setSizePolicy(sizePolicy3);
-    groupBox_6->setMinimumSize(QSize(2, 0));
-    gridLayout_9 = new QGridLayout(groupBox_6);
-    gridLayout_9->setObjectName(QString::fromUtf8("gridLayout_9"));
-    verticalLayout_9 = new QVBoxLayout();
-    verticalLayout_9->setObjectName(QString::fromUtf8("verticalLayout_9"));
-    horizontalLayout_12 = new QHBoxLayout();
-    horizontalLayout_12->setObjectName(QString::fromUtf8("horizontalLayout_12"));
-    groupBox_7 = new QGroupBox(groupBox_6);
-    groupBox_7->setObjectName(QString::fromUtf8("groupBox_7"));
-    sizePolicy1.setHeightForWidth(groupBox_7->sizePolicy().hasHeightForWidth());
-    groupBox_7->setSizePolicy(sizePolicy1);
-    gridLayout_8 = new QGridLayout(groupBox_7);
-    gridLayout_8->setObjectName(QString::fromUtf8("gridLayout_8"));
-    verticalLayout_5 = new QVBoxLayout();
-    verticalLayout_5->setSpacing(0);
-    verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
-    _txtR1Q1 = new QLineEdit(groupBox_7);
-    _txtR1Q1->setObjectName(QString::fromUtf8("_txtR1Q1"));
-    sizePolicy2.setHeightForWidth(_txtR1Q1->sizePolicy().hasHeightForWidth());
-    _txtR1Q1->setSizePolicy(sizePolicy2);
-    _txtR1Q1->setMinimumSize(QSize(50, 20));
-    _txtR1Q1->setMaximumSize(QSize(50, 20));
+        verticalLayout_7 = new QVBoxLayout();
+        verticalLayout_7->setSpacing(1);
+        verticalLayout_7->setObjectName(QString::fromUtf8("verticalLayout_7"));
+        _lblRotScale = new QLabel(groupBox_2);
+        _lblRotScale->setObjectName(QString::fromUtf8("_lblRotScale"));
 
-    verticalLayout_5->addWidget(_txtR1Q1);
+        verticalLayout_7->addWidget(_lblRotScale);
 
-    _txtR1Q2 = new QLineEdit(groupBox_7);
-    _txtR1Q2->setObjectName(QString::fromUtf8("_txtR1Q2"));
-    sizePolicy2.setHeightForWidth(_txtR1Q2->sizePolicy().hasHeightForWidth());
-    _txtR1Q2->setSizePolicy(sizePolicy2);
-    _txtR1Q2->setMinimumSize(QSize(50, 20));
-    _txtR1Q2->setMaximumSize(QSize(50, 20));
+        _sliderRotScale = new QSlider(groupBox_2);
+        _sliderRotScale->setObjectName(QString::fromUtf8("_sliderRotScale"));
+        _sliderRotScale->setMinimumSize(QSize(100, 20));
+        _sliderRotScale->setMinimum(1);
+        _sliderRotScale->setMaximum(20);
+        _sliderRotScale->setPageStep(5);
+        _sliderRotScale->setValue(10);
+        _sliderRotScale->setOrientation(Qt::Horizontal);
 
-    verticalLayout_5->addWidget(_txtR1Q2);
+        verticalLayout_7->addWidget(_sliderRotScale);
 
-    _txtR1Q3 = new QLineEdit(groupBox_7);
-    _txtR1Q3->setObjectName(QString::fromUtf8("_txtR1Q3"));
-    sizePolicy2.setHeightForWidth(_txtR1Q3->sizePolicy().hasHeightForWidth());
-    _txtR1Q3->setSizePolicy(sizePolicy2);
-    _txtR1Q3->setMinimumSize(QSize(50, 20));
-    _txtR1Q3->setMaximumSize(QSize(50, 20));
 
-    verticalLayout_5->addWidget(_txtR1Q3);
+        horizontalLayout_11->addLayout(verticalLayout_7);
 
-    _txtR1Q4 = new QLineEdit(groupBox_7);
-    _txtR1Q4->setObjectName(QString::fromUtf8("_txtR1Q4"));
-    sizePolicy2.setHeightForWidth(_txtR1Q4->sizePolicy().hasHeightForWidth());
-    _txtR1Q4->setSizePolicy(sizePolicy2);
-    _txtR1Q4->setMinimumSize(QSize(50, 20));
-    _txtR1Q4->setMaximumSize(QSize(50, 20));
 
-    verticalLayout_5->addWidget(_txtR1Q4);
+        gridLayout_8->addLayout(horizontalLayout_11, 2, 0, 1, 1);
 
-    _txtR1Q5 = new QLineEdit(groupBox_7);
-    _txtR1Q5->setObjectName(QString::fromUtf8("_txtR1Q5"));
-    sizePolicy2.setHeightForWidth(_txtR1Q5->sizePolicy().hasHeightForWidth());
-    _txtR1Q5->setSizePolicy(sizePolicy2);
-    _txtR1Q5->setMinimumSize(QSize(50, 20));
-    _txtR1Q5->setMaximumSize(QSize(50, 20));
+        horizontalLayout_13 = new QHBoxLayout();
+        horizontalLayout_13->setObjectName(QString::fromUtf8("horizontalLayout_13"));
+        _chkMagnetic = new QCheckBox(groupBox_2);
+        _chkMagnetic->setObjectName(QString::fromUtf8("_chkMagnetic"));
+        _chkMagnetic->setEnabled(true);
+        _chkMagnetic->setChecked(true);
 
-    verticalLayout_5->addWidget(_txtR1Q5);
+        horizontalLayout_13->addWidget(_chkMagnetic);
 
-    _txtR1Q6 = new QLineEdit(groupBox_7);
-    _txtR1Q6->setObjectName(QString::fromUtf8("_txtR1Q6"));
-    sizePolicy2.setHeightForWidth(_txtR1Q6->sizePolicy().hasHeightForWidth());
-    _txtR1Q6->setSizePolicy(sizePolicy2);
-    _txtR1Q6->setMinimumSize(QSize(50, 20));
-    _txtR1Q6->setMaximumSize(QSize(50, 20));
+        _chkAxial = new QCheckBox(groupBox_2);
+        _chkAxial->setObjectName(QString::fromUtf8("_chkAxial"));
 
-    verticalLayout_5->addWidget(_txtR1Q6);
+        horizontalLayout_13->addWidget(_chkAxial);
 
 
-    gridLayout_8->addLayout(verticalLayout_5, 0, 0, 1, 1);
+        gridLayout_8->addLayout(horizontalLayout_13, 3, 0, 1, 1);
 
+        horizontalLayout_4 = new QHBoxLayout();
+        horizontalLayout_4->setSpacing(1);
+        horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
+        _startOperation = new QPushButton(groupBox_2);
+        _startOperation->setObjectName(QString::fromUtf8("_startOperation"));
 
-    horizontalLayout_12->addWidget(groupBox_7);
+        horizontalLayout_4->addWidget(_startOperation);
 
-    groupBox_8 = new QGroupBox(groupBox_6);
-    groupBox_8->setObjectName(QString::fromUtf8("groupBox_8"));
-    sizePolicy1.setHeightForWidth(groupBox_8->sizePolicy().hasHeightForWidth());
-    groupBox_8->setSizePolicy(sizePolicy1);
-    gridLayout_5 = new QGridLayout(groupBox_8);
-    gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
-    verticalLayout_8 = new QVBoxLayout();
-    verticalLayout_8->setSpacing(1);
-    verticalLayout_8->setObjectName(QString::fromUtf8("verticalLayout_8"));
-    _txtCarril = new QLineEdit(groupBox_8);
-    _txtCarril->setObjectName(QString::fromUtf8("_txtCarril"));
-    sizePolicy2.setHeightForWidth(_txtCarril->sizePolicy().hasHeightForWidth());
-    _txtCarril->setSizePolicy(sizePolicy2);
-    _txtCarril->setMinimumSize(QSize(50, 20));
-    _txtCarril->setMaximumSize(QSize(50, 20));
+        _stopOperation = new QPushButton(groupBox_2);
+        _stopOperation->setObjectName(QString::fromUtf8("_stopOperation"));
 
-    verticalLayout_8->addWidget(_txtCarril);
+        horizontalLayout_4->addWidget(_stopOperation);
 
-    _txtR2Q1 = new QLineEdit(groupBox_8);
-    _txtR2Q1->setObjectName(QString::fromUtf8("_txtR2Q1"));
-    sizePolicy2.setHeightForWidth(_txtR2Q1->sizePolicy().hasHeightForWidth());
-    _txtR2Q1->setSizePolicy(sizePolicy2);
-    _txtR2Q1->setMinimumSize(QSize(50, 20));
-    _txtR2Q1->setMaximumSize(QSize(50, 20));
 
-    verticalLayout_8->addWidget(_txtR2Q1);
+        gridLayout_8->addLayout(horizontalLayout_4, 4, 0, 1, 1);
 
-    _txtR2Q2 = new QLineEdit(groupBox_8);
-    _txtR2Q2->setObjectName(QString::fromUtf8("_txtR2Q2"));
-    sizePolicy2.setHeightForWidth(_txtR2Q2->sizePolicy().hasHeightForWidth());
-    _txtR2Q2->setSizePolicy(sizePolicy2);
-    _txtR2Q2->setMinimumSize(QSize(50, 20));
-    _txtR2Q2->setMaximumSize(QSize(50, 20));
 
-    verticalLayout_8->addWidget(_txtR2Q2);
+        gridLayout_9->addLayout(gridLayout_8, 0, 0, 1, 1);
 
-    _txtR2Q3 = new QLineEdit(groupBox_8);
-    _txtR2Q3->setObjectName(QString::fromUtf8("_txtR2Q3"));
-    sizePolicy2.setHeightForWidth(_txtR2Q3->sizePolicy().hasHeightForWidth());
-    _txtR2Q3->setSizePolicy(sizePolicy2);
-    _txtR2Q3->setMinimumSize(QSize(50, 20));
-    _txtR2Q3->setMaximumSize(QSize(50, 20));
 
-    verticalLayout_8->addWidget(_txtR2Q3);
+        verticalLayout_5->addWidget(groupBox_2);
 
-    _txtR2Q4 = new QLineEdit(groupBox_8);
-    _txtR2Q4->setObjectName(QString::fromUtf8("_txtR2Q4"));
-    sizePolicy2.setHeightForWidth(_txtR2Q4->sizePolicy().hasHeightForWidth());
-    _txtR2Q4->setSizePolicy(sizePolicy2);
-    _txtR2Q4->setMinimumSize(QSize(50, 20));
-    _txtR2Q4->setMaximumSize(QSize(50, 20));
-
-    verticalLayout_8->addWidget(_txtR2Q4);
-
-    _txtR2Q5 = new QLineEdit(groupBox_8);
-    _txtR2Q5->setObjectName(QString::fromUtf8("_txtR2Q5"));
-    sizePolicy2.setHeightForWidth(_txtR2Q5->sizePolicy().hasHeightForWidth());
-    _txtR2Q5->setSizePolicy(sizePolicy2);
-    _txtR2Q5->setMinimumSize(QSize(50, 20));
-    _txtR2Q5->setMaximumSize(QSize(50, 20));
-
-    verticalLayout_8->addWidget(_txtR2Q5);
-
-    _txtR2Q6 = new QLineEdit(groupBox_8);
-    _txtR2Q6->setObjectName(QString::fromUtf8("_txtR2Q6"));
-    sizePolicy2.setHeightForWidth(_txtR2Q6->sizePolicy().hasHeightForWidth());
-    _txtR2Q6->setSizePolicy(sizePolicy2);
-    _txtR2Q6->setMinimumSize(QSize(50, 20));
-    _txtR2Q6->setMaximumSize(QSize(50, 20));
-
-    verticalLayout_8->addWidget(_txtR2Q6);
-
-
-    gridLayout_5->addLayout(verticalLayout_8, 0, 0, 1, 1);
-
-
-    horizontalLayout_12->addWidget(groupBox_8);
-
-
-    verticalLayout_9->addLayout(horizontalLayout_12);
-
-    horizontalLayout_13 = new QHBoxLayout();
-    horizontalLayout_13->setObjectName(QString::fromUtf8("horizontalLayout_13"));
-    _cmdConnectCell = new QPushButton(groupBox_6);
-    _cmdConnectCell->setObjectName(QString::fromUtf8("_cmdConnectCell"));
-    _cmdConnectCell->setCheckable(true);
-
-    horizontalLayout_13->addWidget(_cmdConnectCell);
-
-    _cmdConfConnection = new QPushButton(groupBox_6);
-    _cmdConfConnection->setObjectName(QString::fromUtf8("_cmdDisconnectCell"));
-
-    horizontalLayout_13->addWidget(_cmdConfConnection);
-
-
-    verticalLayout_9->addLayout(horizontalLayout_13);
-
-
-    gridLayout_9->addLayout(verticalLayout_9, 0, 0, 1, 1);
-
-
-    verticalLayout_12->addWidget(groupBox_6);
-
-    horizontalLayout_4 = new QHBoxLayout();
-    horizontalLayout_4->setSpacing(1);
-    horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
-    _startOperation = new QPushButton(groupBox_2);
-    _startOperation->setObjectName(QString::fromUtf8("_startOperation"));
-
-    horizontalLayout_4->addWidget(_startOperation);
-
-    _stopOperation = new QPushButton(groupBox_2);
-    _stopOperation->setObjectName(QString::fromUtf8("_stopOperation"));
-
-    horizontalLayout_4->addWidget(_stopOperation);
-
-
-    verticalLayout_12->addLayout(horizontalLayout_4);
-
-
-    gridLayout_11->addLayout(verticalLayout_12, 0, 0, 1, 1);
-
-    groupBox_6->raise();
-    _lblRotScale->raise();
-
-    verticalLayout_13->addWidget(groupBox_2);
-
-
-    gridLayout_10->addLayout(verticalLayout_13, 0, 0, 1, 1);
-
-    QMetaObject::connectSlotsByName(this);
+        QMetaObject::connectSlotsByName(this);
 
     this->setWindowTitle(QApplication::translate("Form", "Form", 0, QApplication::UnicodeUTF8));
     groupBox->setTitle(QApplication::translate("Form", "Cameras", 0, QApplication::UnicodeUTF8));
@@ -1952,6 +1856,9 @@ namespace libGUI{
     label_11->setText(QApplication::translate("Form", "Rz", 0, QApplication::UnicodeUTF8));
     _getCamera->setText(QApplication::translate("Form", "Get Camera", 0, QApplication::UnicodeUTF8));
     groupBox_2->setTitle(QApplication::translate("Form", "Teleoperation", 0, QApplication::UnicodeUTF8));
+    groupBox_6->setTitle(QApplication::translate("Form", "Real Cell", 0, QApplication::UnicodeUTF8));
+    _cmdConfConnection->setText(QApplication::translate("Form", "Conf. Connection", 0, QApplication::UnicodeUTF8));
+    _cmdConnectCell->setText(QApplication::translate("Form", "Connect", 0, QApplication::UnicodeUTF8));
     _groupRobots->setTitle(QApplication::translate("Form", "Robots", 0, QApplication::UnicodeUTF8));
     _radBttRobot0->setText(QApplication::translate("Form", "0", 0, QApplication::UnicodeUTF8));
     _radBttRobot1->setText(QApplication::translate("Form", "1", 0, QApplication::UnicodeUTF8));
@@ -1960,19 +1867,16 @@ namespace libGUI{
     _radWorld->setText(QApplication::translate("Form", "World", 0, QApplication::UnicodeUTF8));
     _lblTransScale->setText(QApplication::translate("Form", "Translational Scale: 1.0", 0, QApplication::UnicodeUTF8));
     _lblRotScale->setText(QApplication::translate("Form", "Rotational Scale: 1.0", 0, QApplication::UnicodeUTF8));
-    groupBox_6->setTitle(QApplication::translate("Form", "Real Cell", 0, QApplication::UnicodeUTF8));
-    groupBox_7->setTitle(QApplication::translate("Form", "Robot 1", 0, QApplication::UnicodeUTF8));
-    groupBox_8->setTitle(QApplication::translate("Form", "Robot 2", 0, QApplication::UnicodeUTF8));
-    _cmdConnectCell->setText(QApplication::translate("Form", "Connect", 0, QApplication::UnicodeUTF8));
-    _cmdConfConnection->setText(QApplication::translate("Form", "Conf. Comm.", 0, QApplication::UnicodeUTF8));
+    _chkMagnetic->setText(QApplication::translate("Form", "Magnetic Forces", 0, QApplication::UnicodeUTF8));
+    _chkAxial->setText(QApplication::translate("Form", "Axial Forces", 0, QApplication::UnicodeUTF8));
     _startOperation->setText(QApplication::translate("Form", "Start", 0, QApplication::UnicodeUTF8));
     _stopOperation->setText(QApplication::translate("Form", "Stop", 0, QApplication::UnicodeUTF8));
    
 
-    gridLayout_10 = new QGridLayout(this);
+    QGridLayout* gridLayout_10 = new QGridLayout(this);
 		QScrollArea* scrollArea = new QScrollArea();
     scrollArea->setBackgroundRole(QPalette::Light);
-    scrollArea->setWidget(tmpWid);
+    scrollArea->setWidget(widget);
 
     gridLayout_10->addWidget(scrollArea);
   }

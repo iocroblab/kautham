@@ -257,6 +257,7 @@ namespace libGuiding{
               up.at(i) = _uvecX.at(k-1).at(i);
             }
             ratio = 1. - proj / _uvecX.at(k-1).dist() ;
+            k=k-1; //this parameter is a reference and the value is used to define which is the configuration used.
           }else{ //proj >= 0 % // The rest of the path then it calculates the projection over the segment
             projD = true;
             for(int i = 0; i < DIMMETRIC; i++){
