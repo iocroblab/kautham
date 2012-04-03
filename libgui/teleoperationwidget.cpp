@@ -1178,31 +1178,7 @@ namespace libGUI{
             cuando haya un cambio de configuración se vea obligado a pasar por la singularidad
             según se haya planeado.
           */
-          // First, I verify if the tmp configuration corresponde a una configuracion cercana en el espacio 
-          // de configuraciones.
-          if( _pathsObj[activeRob]->Singularities().size() > 0){
-            int item =0;
-            while( nea <= _pathsObj[activeRob]->Singularities().at(item++) 
-              && item < _pathsObj[activeRob]->Singularities().size() - 1 )
-            {;
-            }
-            if( item < _pathsObj[activeRob]->Singularities().size() - 1 ){
-              // ahora hay que modificar el tmp para que sea no supere la configuración singular.
-              // Primero calculo el delta entre la posición item -1 y la item y coordenada a coordenada
-              // si es positivo marco el valor de la configuración singular como límite superior y si
-              // el delta es negativo lo pongo como límite inferior.
-              for(int axis = 0; axis < _pathsObj[activeRob]->PathQ().size(); axis++){
-                float deltai = _pathsObj[activeRob]->PathQ().at(item - 1).at(axis) - 
-                  tmp.getRn().getCoordinate(axis);
-                if( deltai > 0 )
-                  if(tmp.getRn().getCoordinate(axis) > _pathsObj[activeRob]->PathQ().at(item).at(axis) )
-                    tmp.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
-                else
-                  if(tmp.getRn().getCoordinate(axis) < _pathsObj[activeRob]->PathQ().at(item).at(axis) )
-                    tmp.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
-              }
-            }
-          }
+          singularCrossAid(tmp, nea);
           _problem->wSpace()->getRobot(0)->Kinematics(tmp);
         }else // This following section only works for the TX90 robot
         if(typeid(*_problem->wSpace()->getRobot(activeRob)->getIkine()) == typeid(IvKinTx90) ){
@@ -1214,61 +1190,10 @@ namespace libGUI{
             target.push_back(robLay[2] == true ? 0. : 1. );
           }
 
-          /* // This block assumes that the new pose of the robot is equally to the current. 
-             // It mantains shoulder/elbow/wrist configuration.
-          RnConf& currConf = _problem->wSpace()->getRobot(activeRob)->getCurrentPos()->getRn();
-
-          KthReal ifRig = 425*sin(currConf.getCoordinate(1))
-                          + 425*sin(currConf.getCoordinate(1) + currConf.getCoordinate(2))
-                          + 50;
-          if(ifRig >= 0.) //Shoulder Lefty
-            target.push_back(1);
-          else
-            target.push_back(0);
-
-          if(currConf.getCoordinate(2) >= 0.) //Elbow Positive
-            target.push_back(0);
-          else
-            target.push_back(1);
-
-          if(currConf.getCoordinate(4) >= 0.) //Wrist Positive
-            target.push_back(0);
-          else
-            target.push_back(1);
-            */
-
           RobConf& tmp =_problem->wSpace()->getRobot(activeRob)
                       ->InverseKinematics(target);
-
-          // Now the configuration change algorithm should be implemented.
-          /* Aqui vamos a intentar limitar la respuesta de la cinemática inversa para que 
-            cuando haya un cambio de configuración se vea obligado a pasar por la singularidad
-            según se haya planeado.
-          */
-          // First, I verify if the tmp configuration corresponde a una configuracion cercana en el espacio 
-          // de configuraciones.
-          if( _pathsObj[activeRob]->Singularities().size() > 0){
-            int item =0;
-            while( nea <= _pathsObj[activeRob]->Singularities().at(item++) 
-              && item < _pathsObj[activeRob]->Singularities().size() - 1 )
-            {;
-            }
-            if( item < _pathsObj[activeRob]->Singularities().size() - 1 ){
-              // ahora hay que modificar el tmp para que sea no supere la configuración singular.
-              // Primero calculo el delta entre la posición actual y la item y coordenada a coordenada
-              // si es positivo marco el valor de la configuración singular como límite superior y si
-              // el delta es negativo lo pongo como límite inferior.
-              for(int axis = 0; axis < _pathsObj[activeRob]->PathQ().size(); axis++){
-                float deltai = _pathsObj[activeRob]->PathQ().at(item - 1).at(axis) - tmp.getRn().getCoordinate(axis);
-                if( deltai > 0 )
-                  if(tmp.getRn().getCoordinate(axis) > _pathsObj[activeRob]->PathQ().at(item).at(axis) )
-                    tmp.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
-                else
-                  if(tmp.getRn().getCoordinate(axis) < _pathsObj[activeRob]->PathQ().at(item).at(axis) )
-                    tmp.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
-              }
-            }
-          }
+          
+          singularCrossAid(tmp, nea);
           _problem->wSpace()->getRobot(activeRob)->Kinematics(tmp);
 
           // Here I copy the configuration response to the shared memory block.
@@ -1297,6 +1222,70 @@ namespace libGUI{
         
       }catch(...){
         std::cout << "Unexpected error" << std::endl;
+      }
+    }
+  }
+
+  void TeleoperationWidget::singularCrossAid(RobConf& conf, size_t nea){
+    //XXXXXXX The singularity cross aid
+    // Now the configuration change algorithm should be implemented.
+    /* Aqui vamos a intentar limitar la respuesta de la cinemática inversa para que 
+      cuando haya un cambio de configuración se vea obligado a pasar por la singularidad
+      según se haya planeado.
+    */
+    // First, I verify if the tmp configuration corresponde a una configuracion cercana en el espacio 
+    // de configuraciones.
+    size_t activeRob= _radBttRobot0->isChecked() ? 0 : 1;
+    
+    if( _pathsObj[activeRob]->Singularities().size() > 0){
+      int item =0;
+      
+      while( item < _pathsObj[activeRob]->Singularities().size()  
+        && nea <= _pathsObj[activeRob]->Singularities().at(item++) ){}
+      
+      if( item < _pathsObj[activeRob]->Singularities().size() ){
+        // First I need to know in which zone is the user, previous or next.
+        vector<KthReal> v( _pathsObj[activeRob]->PathQ().at(item).size() );
+
+        for(size_t axis = 0; axis < _pathsObj[activeRob]->PathQ().size(); axis++)
+          v.at(axis) =  conf.getRn().getCoordinate(axis) - _pathsObj[activeRob]->PathQ().at(item).at(axis);
+
+        // The user is in the zone with positive projection over the unary vector from singular
+        // to previous or next point.
+        // The previous unary vector is the negative of the next vector of the sample before.
+
+        vector<KthReal> up(_pathsObj[activeRob]->UvecQ().at(item-1));
+        for(size_t i = 0; i < up.size(); ++i)
+          up.at(i) = -up.at(i);
+
+        // Now I calculate the projections
+        KthReal projP = 0.;
+        KthReal projN = 0.;
+        for(size_t i = 0; i < up.size(); ++i){
+          projP += up.at(i) * v.at(i);
+          projN += _pathsObj[activeRob]->UvecQ().at(item).at(i) * v.at(i);
+        }
+
+        if( projP > 0. || ( projP < 0. && projN < 0.) ){ // The user is in previous region
+        // ahora hay que modificar el tmp para que sea no supere la configuración singular.
+        // Primero calculo el delta entre la posición actual y la item y coordenada a coordenada
+        // si es positivo marco el valor de la configuración singular como límite superior y si
+        // el delta es negativo lo pongo como límite inferior.
+          for(int axis = 0; axis < _pathsObj[activeRob]->PathQ().size(); axis++){
+            conf.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
+            KthReal tmpComp = up.at(axis)*v.at(axis);
+            if( tmpComp > 0 ) // They have the same direction
+                conf.getRn().getCoordinates()[axis] += v.at(axis);
+          }
+        }else{
+          for(int axis = 0; axis < _pathsObj[activeRob]->PathQ().size(); axis++){
+            conf.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
+            KthReal tmpComp = _pathsObj[activeRob]->UvecQ().at(item).at(axis) * v.at(axis);
+            if( tmpComp > 0 ) // They have the same direction
+                conf.getRn().getCoordinates()[axis] += v.at(axis);
+          }
+        }
+
       }
     }
   }

@@ -164,6 +164,7 @@ namespace libGUI{
       void                  calculateForce(pathPoint delta, KthReal dist, KthReal forces[]);
       void                  setJumpForce(mt::Transform& tcp);
       int                   setGuideForce(mt::Transform& tcp, mt::Transform& w2h, bool& projDirecPos);
+      void                  singularCrossAid(RobConf& conf, size_t nea);
 
       //XXXXXXXXXXXXXXXXXXXXXXXX
       QWidget *widget;

@@ -174,6 +174,8 @@ public:
 
     inline vector<Xnode>& PathX(){ return _pathX;}
     inline vector<Qnode>& PathQ(){ return _pathQ;}
+    inline vector<Uvec>&  UvecQ(){ return _uvecQ;}
+    inline vector<Uvec>&  UvecX(){ return _uvecX;}
     inline vector<size_t>& Singularities(){return _singularities;}
     
   private:
