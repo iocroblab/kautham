@@ -896,14 +896,14 @@ namespace libGUI{
     PathToGuide* path = NULL;
     if( _radBttRobot0->isChecked() ){
       path = _pathsObj[0];
-      EPSILON_3 = _problem->wSpace()->getRobot(0)->getLink(_problem->wSpace()->getRobot(0)->getNumLinks()-2)->getD() / 20.;
+      EPSILON_1 = _problem->wSpace()->getRobot(0)->maxDHParameter() / 100.;
     }else if( _radBttRobot1->isChecked() ){
       path = _pathsObj[1];
-      EPSILON_3 = _problem->wSpace()->getRobot(0)->getLink(_problem->wSpace()->getRobot(0)->getNumLinks()-2)->getD() / 20.;
+      EPSILON_1 = _problem->wSpace()->getRobot(0)->maxDHParameter() / 100.;
     }
 
-    EPSILON_3 = EPSILON_3 < EPSILON_1 ? 4 * EPSILON_1 : EPSILON_3 ;
-    EPSILON_2 = (EPSILON_1 + EPSILON_3) / 2.;
+    EPSILON_3 = 10 * EPSILON_1 ;
+    EPSILON_2 = ( EPSILON_1 + EPSILON_3) / 2.;
 
     // Now I will open the file to save the data to be ploted
     _theFile.open ("Data_of_teleoperation.txt", ios::trunc | ios::out );
@@ -1116,7 +1116,9 @@ namespace libGUI{
       activeRob = 1;
 
     bool dirProj= false;
-    int nea = setGuideForce(tcp2w, _w2h, dirProj);
+    int nea = 0;
+    if( _chkMagnetic->isChecked() )
+      nea = setGuideForce(tcp2w, _w2h, dirProj);
 
     // Save the data in the file Xd Yd Zd Xr Yr Zr
     _theFile << _pathsObj[activeRob]->PathX().at(nea).at(0) << " " << _pathsObj[activeRob]->PathX().at(nea).at(1) ;

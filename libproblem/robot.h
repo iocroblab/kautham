@@ -287,6 +287,10 @@ namespace libProblem {
     //! This method detaches the previously attached objects to the link named linkName.
     bool                  detachObject( string linkName );
 
+    //! This method returns the maximum value of the D_H parameters. It is used to have an idea about the 
+    //! dimension of the links.
+    KthReal               maxDHParameter();
+
   private:
     //! This method updates the absolute position and orientation of each link in the robot.
     void              updateRobot();

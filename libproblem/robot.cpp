@@ -375,6 +375,15 @@ namespace libProblem {
     }
   }
 
+  KthReal Robot::maxDHParameter(){
+    KthReal maxim=0.;
+    for(size_t i = 0; i < links.size(); ++i){
+      maxim = getLink(i)->getA() > maxim ? getLink(i)->getA(): maxim;
+      maxim = getLink(i)->getD() > maxim ? getLink(i)->getD(): maxim;   
+    }
+    return maxim;
+  }
+
   void Robot::moveAttachedObj(){
     KthReal pos[3]={0.};
     KthReal ori[4]={0.};
