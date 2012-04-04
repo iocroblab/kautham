@@ -1165,7 +1165,7 @@ namespace libGUI{
     //}
 
     // TODO: Define this parameter correctly and related to the problem.
-    KthReal RHO = EPSILON_2;
+    KthReal RHO = EPSILON_1/3.;
 
     if(_problem->wSpace()->getRobot(activeRob)->getIkine() == NULL)
       _problem->wSpace()->getRobot(activeRob)->Kinematics(se3conf);
@@ -1183,7 +1183,9 @@ namespace libGUI{
             cuando haya un cambio de configuración se vea obligado a pasar por la singularidad
             según se haya planeado.
           */
-          singularCrossAid(tmp, nea, RHO);
+          if( _chkMagnetic->isChecked() )
+            singularCrossAid(tmp, nea, RHO);
+
           _problem->wSpace()->getRobot(0)->Kinematics(tmp);
         }else // This following section only works for the TX90 robot
         if(typeid(*_problem->wSpace()->getRobot(activeRob)->getIkine()) == typeid(IvKinTx90) ){
@@ -1198,7 +1200,9 @@ namespace libGUI{
           RobConf& tmp =_problem->wSpace()->getRobot(activeRob)
                       ->InverseKinematics(target);
           
-          singularCrossAid(tmp, nea, RHO);
+          if( _chkMagnetic->isChecked() )
+            singularCrossAid(tmp, nea, RHO);
+
           _problem->wSpace()->getRobot(activeRob)->Kinematics(tmp);
 
           // Here I copy the configuration response to the shared memory block.
@@ -1248,12 +1252,12 @@ namespace libGUI{
       size_t item =0, itemant =0;
       
       while( item < _pathsObj[activeRob]->Singularities().size()  
-        && nea > _pathsObj[activeRob]->Singularities().at(item++) ){}
+        && nea > _pathsObj[activeRob]->Singularities().at(item) ){item++;}
 
       if( item == _pathsObj[activeRob]->Singularities().size() ) 
         item = itemant = item -1;
       else
-        itemant = item -1;
+        itemant = item == 0 ? item : item - 1;
       
       // At this point, the item points to the next singular point nearest to the 
       // nea sample. Now I calculate the distance to the item sample and to the 
@@ -1266,10 +1270,15 @@ namespace libGUI{
       
       item = disitem < disitemant ? item : itemant;
 
+      // NOw i change item as a index in singularities vector to index in PathQ vector.
+
+      item = _pathsObj[activeRob]->Singularities().at(item);
+      itemant = _pathsObj[activeRob]->Singularities().at(itemant);
+
       // Now i need the real distance in the CSpace to determine the real influence 
       // of the singular point to the user commands.
       disitem = 0;
-      for( size_t i = 0; i < _pathsObj[activeRob]->PathQ().at(item).size(); ++i ){
+      for( size_t i = 0; i < conf.getRn().getDim(); ++i ){
         disitemant = _pathsObj[activeRob]->PathQ().at(item).at(i) - conf.getRn().getCoordinate(i);
         disitem += disitemant * disitemant ;
       }
@@ -1280,7 +1289,7 @@ namespace libGUI{
         // First I need to know in which zone is the user, previous or next.
         vector<KthReal> v( _pathsObj[activeRob]->PathQ().at(item).size() );
 
-        for(size_t axis = 0; axis < _pathsObj[activeRob]->PathQ().size(); axis++)
+        for(size_t axis = 0; axis < conf.getRn().getDim(); axis++)
           v.at(axis) =  conf.getRn().getCoordinate(axis) - _pathsObj[activeRob]->PathQ().at(item).at(axis);
 
         // The user is in the zone with positive projection over the unary vector from singular
@@ -1290,6 +1299,8 @@ namespace libGUI{
         vector<KthReal> up(_pathsObj[activeRob]->UvecQ().at(item-1));
         for(size_t i = 0; i < up.size(); ++i)
           up.at(i) = -up.at(i);
+
+        up.resize( conf.getRn().getDim() );
 
         // Now I calculate the projections
         KthReal projP = 0.;
@@ -1304,14 +1315,14 @@ namespace libGUI{
         // Primero calculo el delta entre la posición actual y la item y coordenada a coordenada
         // si es positivo marco el valor de la configuración singular como límite superior y si
         // el delta es negativo lo pongo como límite inferior.
-          for(int axis = 0; axis < _pathsObj[activeRob]->PathQ().size(); axis++){
+          for(int axis = 0; axis < conf.getRn().getDim(); axis++){
             conf.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
             KthReal tmpComp = up.at(axis)*v.at(axis);
             if( tmpComp > 0 ) // They have the same direction
                 conf.getRn().getCoordinates()[axis] += v.at(axis);
           }
         }else{
-          for(int axis = 0; axis < _pathsObj[activeRob]->PathQ().size(); axis++){
+          for(int axis = 0; axis < conf.getRn().getDim(); axis++){
             conf.getRn().getCoordinates()[axis] = _pathsObj[activeRob]->PathQ().at(item).at(axis);
             KthReal tmpComp = _pathsObj[activeRob]->UvecQ().at(item).at(axis) * v.at(axis);
             if( tmpComp > 0 ) // They have the same direction
