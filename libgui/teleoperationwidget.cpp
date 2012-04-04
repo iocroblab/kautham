@@ -1154,15 +1154,18 @@ namespace libGUI{
     PathToGuide* path = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
     RobLayout  robLay = path->getLayout( nea ); // This line gets the respective layout of the robot if it has a IK model.
 
-    // This part implements the hysteresis
-    // Aqui se busca que si no se ha llegado al punto i del path a guiar se mantenga 
-    // la configuración del punto anterior i-1 
-    if( robLay != _currentLayout ){
-      if( !dirProj )
-        robLay = path->getLayout( nea - 1 );
+    //// This part implements the hysteresis
+    //// Aqui se busca que si no se ha llegado al punto i del path a guiar se mantenga 
+    //// la configuración del punto anterior i-1 
+    //if( robLay != _currentLayout ){
+    //  if( !dirProj )
+    //    robLay = path->getLayout( nea - 1 );
 
-      _currentLayout = robLay;
-    }
+    //  _currentLayout = robLay;
+    //}
+
+    // TODO: Define this parameter correctly and related to the problem.
+    KthReal RHO = EPSILON_2;
 
     if(_problem->wSpace()->getRobot(activeRob)->getIkine() == NULL)
       _problem->wSpace()->getRobot(activeRob)->Kinematics(se3conf);
@@ -1180,7 +1183,7 @@ namespace libGUI{
             cuando haya un cambio de configuración se vea obligado a pasar por la singularidad
             según se haya planeado.
           */
-          singularCrossAid(tmp, nea);
+          singularCrossAid(tmp, nea, RHO);
           _problem->wSpace()->getRobot(0)->Kinematics(tmp);
         }else // This following section only works for the TX90 robot
         if(typeid(*_problem->wSpace()->getRobot(activeRob)->getIkine()) == typeid(IvKinTx90) ){
@@ -1195,7 +1198,7 @@ namespace libGUI{
           RobConf& tmp =_problem->wSpace()->getRobot(activeRob)
                       ->InverseKinematics(target);
           
-          singularCrossAid(tmp, nea);
+          singularCrossAid(tmp, nea, RHO);
           _problem->wSpace()->getRobot(activeRob)->Kinematics(tmp);
 
           // Here I copy the configuration response to the shared memory block.
@@ -1228,24 +1231,52 @@ namespace libGUI{
     }
   }
 
-  void TeleoperationWidget::singularCrossAid(RobConf& conf, size_t nea){
+  void TeleoperationWidget::singularCrossAid(RobConf& conf, size_t nea, KthReal rho ){
     //XXXXXXX The singularity cross aid
     // Now the configuration change algorithm should be implemented.
     /* Aqui vamos a intentar limitar la respuesta de la cinemática inversa para que 
       cuando haya un cambio de configuración se vea obligado a pasar por la singularidad
       según se haya planeado.
     */
-    // First, I verify if the tmp configuration corresponde a una configuracion cercana en el espacio 
-    // de configuraciones.
+    // First, I verify what is the nearest singular point of the path to the conf 
+    // configuration. The nea parameter is the index of the nearest sample in the 
+    // path. Now with this index, i am looking for the nearest singular point and 
+    // measure the distance to it.
     size_t activeRob= _radBttRobot0->isChecked() ? 0 : 1;
     
     if( _pathsObj[activeRob]->Singularities().size() > 0){
-      int item =0;
+      size_t item =0, itemant =0;
       
       while( item < _pathsObj[activeRob]->Singularities().size()  
-        && nea <= _pathsObj[activeRob]->Singularities().at(item++) ){}
+        && nea > _pathsObj[activeRob]->Singularities().at(item++) ){}
+
+      if( item == _pathsObj[activeRob]->Singularities().size() ) 
+        item = itemant = item -1;
+      else
+        itemant = item -1;
       
-      if( item < _pathsObj[activeRob]->Singularities().size() ){
+      // At this point, the item points to the next singular point nearest to the 
+      // nea sample. Now I calculate the distance to the item sample and to the 
+      // item -1 in order to determine what is the real nearest singular point.
+      // This method is approximated because the indexes are ordered, then the 
+      // nearest is the closer index to the nea one.
+
+      KthReal disitem = _pathsObj[activeRob]->Singularities().at(item)-nea;
+      KthReal disitemant = nea - _pathsObj[activeRob]->Singularities().at(itemant);
+      
+      item = disitem < disitemant ? item : itemant;
+
+      // Now i need the real distance in the CSpace to determine the real influence 
+      // of the singular point to the user commands.
+      disitem = 0;
+      for( size_t i = 0; i < _pathsObj[activeRob]->PathQ().at(item).size(); ++i ){
+        disitemant = _pathsObj[activeRob]->PathQ().at(item).at(i) - conf.getRn().getCoordinate(i);
+        disitem += disitemant * disitemant ;
+      }
+      disitem = sqrt( disitem );
+
+      if( disitem < rho ){
+    
         // First I need to know in which zone is the user, previous or next.
         vector<KthReal> v( _pathsObj[activeRob]->PathQ().at(item).size() );
 
@@ -1287,8 +1318,7 @@ namespace libGUI{
                 conf.getRn().getCoordinates()[axis] += v.at(axis);
           }
         }
-
-      }
+      }    
     }
   }
 
