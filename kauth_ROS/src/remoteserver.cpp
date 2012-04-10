@@ -1,16 +1,14 @@
 // Included to use the ROS messaging system
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
-// Included to use the shared memory between the Kautham and the publisher
-//#include <boost/interprocess/shared_memory_object.hpp>
-//#include <boost/interprocess/mapped_region.hpp>
-//#include <boost/interprocess/sync/scoped_lock.hpp>
 
 // Include the memory share object definition
 //#include "data_ioc_cell.hpp"
 
-// Include de Soap Client for the CS8 controler.
-#include <TX90.h>
+// Include the Soap Client for the CS8 controler.
+#include <CS8Robot.h>
+
+// Include the VAL client.
 #include "connection.hpp"
 
 #include <sstream>
@@ -18,23 +16,26 @@
 #include <algorithm>
 #include <iterator>
 
-//using namespace kautham;
-//using namespace boost::interprocess;
 
-//data_ioc_cell* _data = NULL;
+// Creatin the two VAL clients;
 Connection    valClientR1;
 Connection    valClientR2;
 
-TX90          _robotSoap;
+// Creating the two SOAP Cleints.
+CS8Robot      _robotSoap1;
+CS8Robot      _robotSoap2;
+
 std::string   STAUBLI_IP_R1;
 std::string   STAUBLI_IP_R2;
 std::string   SOAP_IP_R1;
 std::string   SOAP_IP_R2;
+enum connType{VAL, SOAP} _activeConn;
 
 std::string   PORT="";
 
 void robot1Callback(const sensor_msgs::JointState::ConstPtr& r1des)
 {
+  if( _activeConn == VAL ){
   // Now I send this data to the CS8 using val program and simple udp socket.
   std::string smsg;
   for (unsigned int i=0; i<r1des->position.size(); i++){
@@ -44,16 +45,21 @@ void robot1Callback(const sensor_msgs::JointState::ConstPtr& r1des)
   smsg.append("@");
 
   valClientR1.send(smsg);
-
-   // Limiting the scope of the mutex lock
-   //Lock the mutex
-//  if(_data != NULL){
-//    scoped_lock<interprocess_mutex> lock(_data->mutex_in);
-
-//    for(size_t i = 0; i < r1des->position.size(); ++i)
-//      _data->r1_desired.joint[i] = r1des->position[i];
-
-//  }
+  }else{
+	try{
+	  RobotJointPos joints;
+	  joints.resize(6);
+		for (size_t i=0; i<r1des->position.size(); ++i)
+		  joints.at(i) = r1des->position.at(i);
+			
+		_robotSoap1.moveJoints(joints);
+	}
+    catch (const CS8Error& err) {
+      std::cout << err.what() << std::endl;
+      _robotSoap1.setPower(false);
+      
+    }
+  }
 
 #ifdef _DEBUG
 //  std::stringstream ss;
@@ -65,6 +71,7 @@ void robot1Callback(const sensor_msgs::JointState::ConstPtr& r1des)
 }
 
 void robot2Callback(const sensor_msgs::JointState::ConstPtr& r2des){
+if( _activeConn == VAL ){
   // Now I send this data to the CS8 using val program and simple udp socket.
   std::string smsg;
   for (unsigned int i=0; i<r2des->position.size(); i++){
@@ -74,16 +81,23 @@ void robot2Callback(const sensor_msgs::JointState::ConstPtr& r2des){
   smsg.append("@");
 
   valClientR2.send(smsg);
+  }else{
+	try{
+	  RobotJointPos joints;
+	  joints.resize(6);
+		for (size_t i=0; i<r2des->position.size(); ++i)
+		  joints.at(i) = r2des->position.at(i);
+			
+		_robotSoap1.moveJoints(joints);
+	}
+    catch (const CS8Error& err) {
+      std::cout << err.what() << std::endl;
+      _robotSoap1.setPower(false);
+      
+    }
+  }
+  
 
-//  Limiting the scope of the mutex lock
-//  Lock the mutex
-//  if(_data != NULL){
-//    scoped_lock<interprocess_mutex> lock(_data->mutex_in);
-
-//    for(size_t i = 0; i < r2des->position.size(); ++i)
-//      _data->r2_desired.joint[i] = r2des->position[i];
-
-//  }
 
 #ifdef _DEBUG
 //  std::stringstream ss;
@@ -95,41 +109,22 @@ void robot2Callback(const sensor_msgs::JointState::ConstPtr& r2des){
 
 int main(int argc, char **argv){
 
-  //Remove shared memory on construction and destruction
-//  struct shm_remove{
-//      shm_remove() { shared_memory_object::remove("KauthamSharedMemory"); }
-//      ~shm_remove(){ shared_memory_object::remove("KauthamSharedMemory"); }
-//  } remover;
-
-//  //Create a shared memory object.
-//   shared_memory_object shm
-//         (create_only               //only create
-//         ,"KauthamSharedMemory"          //name
-//         ,read_write   //read-write mode
-//         );
-
-//  //Set size
-//  shm.truncate(sizeof(data_ioc_cell));
-
-//  //Map the whole shared memory in this process
-//  mapped_region region
-//         (shm          //What to map
-//         ,read_write   //Map it as read-write
-//         );
-
-//  //Get the address of the mapped region
-//  void * _addr       = region.get_address();
-
-//  //Construct the shared structure in memory
-//  _data = new (_addr) data_ioc_cell;
-
   ros::V_string _vargv;
   _vargv.clear();
   ros::removeROSArgs(argc, argv, _vargv);
 
-  if( _vargv.size() == 4 ){
-    STAUBLI_IP_R1 = _vargv[1];
-    STAUBLI_IP_R2 = _vargv[2];
+  if( _vargv.size() == 5 ){
+	if( _vargv[2] == VAL )
+		_activeConn = VAL;
+	else if ( _vargv[2] == SOAP )
+		_activeConn = SOAP;
+	else{
+		std::cout << "remoteServer VAL/SOAP ip_R1 ip_R2 freq.\nRemember it.\n";
+		return -1;
+	}
+		
+    STAUBLI_IP_R1 = _vargv[3];
+    STAUBLI_IP_R2 = _vargv[4];
     SOAP_IP_R1="http://";
     SOAP_IP_R1.append(STAUBLI_IP_R1);
     SOAP_IP_R1.append(":5653");
@@ -137,16 +132,46 @@ int main(int argc, char **argv){
     SOAP_IP_R2.append(STAUBLI_IP_R2);
     SOAP_IP_R2.append(":5653");
 
-
   }else{
-    std::cout << "remoteServer ip_R1 ip_R2 freq.\nRemember it.\n";
+    std::cout << "remoteServer VAL/SOAP ip_R1 ip_R2 freq.\nRemember it.\n";
     return -1;
   }
 
-  valClientR1.connect_to(STAUBLI_IP_R1,"5558");
-  valClientR2.connect_to(STAUBLI_IP_R2,"5558");
+  // The connection only modifies the send data to the CS8 controller.
+  // The data always are readed using SOAP.
+  if( _activeConn == VAL ){
+	valClientR1.connect_to(STAUBLI_IP_R1,"5558");
+	valClientR2.connect_to(STAUBLI_IP_R2,"5558");
+	try{
+	  _robotSoap1.setURL(SOAP_IP_R1);
+	  _robotSoap1.login("default","");
+	  _robotSoap2.setURL(SOAP_IP_R2);
+	  _robotSoap2.login("default","");
+	}catch(const CS8Error& err) {
+	  std::cerr << err.what() << std::endl;
+	  _robotSoap1.setPower(false) ;
+	  _robotSoap2.setPower(false) ;
+	}
+  }else{ // Here use only the SOAP
+	try{
+	  _robotSoap1.setURL(SOAP_IP_R1);
+	  _robotSoap1.login("default","");
+	  _robotSoap1.setPower(true) ;
+	  _robotSoap1.resetMotion();
+	  _robotSoap2.setURL(SOAP_IP_R2);
+	  _robotSoap2.login("default","");
+	  _robotSoap2.setPower(true) ;
+	  _robotSoap2.resetMotion();
+	}catch(const CS8Error& err) {
+	  std::cerr << err.what() << std::endl;
+	  _robotSoap1.setPower(false) ;
+	  _robotSoap2.setPower(false) ;
+	}
+  }
+	
+	
 
-  std::cout << "We have connected and the two Stäubli TX" << std::endl;
+  std::cout << "We have connected to the two Stäubli TX" << std::endl;
 
   ros::init(argc, argv, "remoteServer");
 
@@ -166,10 +191,7 @@ int main(int argc, char **argv){
     _r1_state_message.header.stamp = ros::Time::now();
     _r1_state_message.position.resize(6);
 
-    _robotSoap.Login(SOAP_IP_R1, "default", "");
-    _robotSoap.GetRobotJoints(target_pos);
-    _robotSoap.Logoff();
-
+    _robotSoap1.GetRobotJoints(target_pos);
     std::copy( target_pos.begin(),target_pos.end(), _r1_state_message.position.begin() );
 
 #ifdef _DEBUG
@@ -186,9 +208,7 @@ int main(int argc, char **argv){
     _r2_state_message.header.stamp = ros::Time::now();
     _r2_state_message.position.resize(6);
 
-    _robotSoap.Login(SOAP_IP_R2, "default", "");
-    _robotSoap.GetRobotJoints(target_pos);
-    _robotSoap.Logoff();
+    _robotSoap2.GetRobotJoints(target_pos);
 
     std::copy( target_pos.begin(),target_pos.end(), _r2_state_message.position.begin() );
 
@@ -201,17 +221,6 @@ int main(int argc, char **argv){
     _r2_state_message.name[4] ="wrist";
     _r2_state_message.name[5] ="tcp";
 #endif
-
-//    {  // Limiting the scope of the mutex lock
-//      //Lock the mutex
-//      scoped_lock<interprocess_mutex> lock(_data->mutex_out);
-
-//      std::copy( _data->r1_state.joint,_data->r1_state.joint+sizeof(_data->r1_state.joint)/sizeof(_data->r1_state.joint[0]),
-//                 _r1_state_message.position.begin() );
-
-//      std::copy( _data->r2_state.joint,_data->r2_state.joint+sizeof(_data->r2_state.joint)/sizeof(_data->r2_state.joint[0]),
-//                 _r2_state_message.position.begin() );
-//    }
 
     _robot1_pub.publish(_r1_state_message);
     _robot2_pub.publish(_r2_state_message);

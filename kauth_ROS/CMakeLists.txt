@@ -39,13 +39,13 @@ rosbuild_add_executable(remoteServer src/remoteserver.cpp src/connection.hpp src
 #rosbuild_add_executable(frc_haptic src/frc_haptic.cpp)
 #rosbuild_add_executable(stt_haptic src/stt_haptic.cpp)
 
-ADD_SUBDIRECTORY( soapStaubli )
+ADD_SUBDIRECTORY( CS8Soap )
 SET(mt_DIR ${CMAKE_SOURCE_DIR}/mt)
 FIND_PACKAGE( mt REQUIRED )
-INCLUDE_DIRECTORIES( soapStaubli ${mt_DIR} )
+INCLUDE_DIRECTORIES( CS8Soap CS8Soap/src ${mt_DIR} )
 #rosbuild_link_boost( publiR1 interprocess )
 #rosbuild_link_boost( suscriR1 interprocess )
 
 #TARGET_LINK_LIBRARIES( tf_Staubli_Server libsoapstaubli  )
-TARGET_LINK_LIBRARIES( remoteServer libsoapstaubli  )
+TARGET_LINK_LIBRARIES( remoteServer cs8soap  )
 
