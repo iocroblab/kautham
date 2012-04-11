@@ -7,6 +7,7 @@
 
 // Include the Soap Client for the CS8 controler.
 #include <CS8Robot.h>
+//#include <CS8Types.h>
 
 // Include the VAL client.
 #include "connection.hpp"
@@ -15,6 +16,7 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
+#include <vector>
 
 
 // Creatin the two VAL clients;
@@ -26,8 +28,8 @@ CS8Robot      _robotSoap1;
 CS8Robot      _robotSoap2;
 
 // The emulation variables.
-vector<double> _emuRobot1;
-vector<double> _emuRobot2;
+std::vector<double> _emuRobot1;
+std::vector<double> _emuRobot2;
 
 std::string   STAUBLI_IP_R1;
 std::string   STAUBLI_IP_R2;
@@ -39,37 +41,37 @@ std::string   PORT="";
 
 void robot1Callback(const sensor_msgs::JointState::ConstPtr& r1des)
 {
+  std::string smsg;
   switch( _activeConn ){
   case VAL:
-	  // Now I send this data to the CS8 using val program and simple udp socket.
-	  std::string smsg;
-	  for (unsigned int i=0; i<r1des->position.size(); i++){
-		  smsg.append(boost::lexical_cast<std::string>(r1des->position[i]));
-		  smsg.append(" ");
-	  }
-	  smsg.append("@");
+    // Now I send this data to the CS8 using val program and simple udp socket.
+    for (unsigned int i=0; i<r1des->position.size(); i++){
+      smsg.append(boost::lexical_cast<std::string>(r1des->position[i]));
+      smsg.append(" ");
+    }
+    smsg.append("@");
 
-	  valClientR1.send(smsg);
-	  break;
-	  
+    valClientR1.send(smsg);
+    break;
+    
   case SOAP:
-	try{
-	  RobotJointPos joints;
-	  joints.resize(6);
-		for (size_t i=0; i<r1des->position.size(); ++i)
-		  joints.at(i) = r1des->position.at(i);
-			
-		_robotSoap1.moveJoints(joints);
-	}
-    catch (const CS8Error& err) {
+    try{
+      RobotJointPos joints;
+      joints.resize(6);
+      for (size_t i=0; i<r1des->position.size(); ++i)
+	joints.at(i) = r1des->position.at(i);
+      
+      _robotSoap1.moveJoints(joints);
+    }catch (const CS8Error& err) {
       std::cout << err.what() << std::endl;
       _robotSoap1.setPower(false);
       
     }
-	break;
+    break;
+    
   case EMU:
     for (size_t i=0; i<r1des->position.size(); ++i)
-	  _emuRobot2.at(i) = r1des->position.at(i);
+	  _emuRobot1.at(i) = r1des->position.at(i);
   }
 
 #ifdef _DEBUG
@@ -82,38 +84,38 @@ void robot1Callback(const sensor_msgs::JointState::ConstPtr& r1des)
 }
 
 void robot2Callback(const sensor_msgs::JointState::ConstPtr& r2des){
-switch( _activeConn ){
-  case VAL:
-	  // Now I send this data to the CS8 using val program and simple udp socket.
-	  std::string smsg;
-	  for (unsigned int i=0; i<r2des->position.size(); i++){
-		  smsg.append(boost::lexical_cast<std::string>(r2des->position[i]));
-		  smsg.append(" ");
-	  }
-	  smsg.append("@");
+  
+    std::string smsg;
+  switch( _activeConn ){
+    case VAL:
+      // Now I send this data to the CS8 using val program and simple udp socket.
+      for (unsigned int i=0; i<r2des->position.size(); i++){
+	smsg.append(boost::lexical_cast<std::string>(r2des->position[i]));
+	smsg.append(" ");
+      }
+      smsg.append("@");
 
-	  valClientR2.send(smsg);
-	  break;
-	  
-  case SOAP:
-	try{
-	  RobotJointPos joints;
-	  joints.resize(6);
-		for (size_t i=0; i<r2des->position.size(); ++i)
-		  joints.at(i) = r2des->position.at(i);
-			
-		_robotSoap1.moveJoints(joints);
-	}
-    catch (const CS8Error& err) {
-      std::cout << err.what() << std::endl;
-      _robotSoap1.setPower(false);
-      
-    }
-	break;
+      valClientR2.send(smsg);
+      break;
+	    
+    case SOAP:
+      try{
+	RobotJointPos joints;
+	joints.resize(6);
+	for (size_t i=0; i<r2des->position.size(); ++i)
+	  joints.at(i) = r2des->position.at(i);
+		      
+	_robotSoap2.moveJoints(joints);
+      }catch (const CS8Error& err) {
+	std::cout << err.what() << std::endl;
+	_robotSoap2.setPower(false);
 	
-  case EMU:
-    for (size_t i=0; i<r2des->position.size(); ++i)
-	  _emuRobot2.at(i) = r2des->position.at(i);
+      }
+      break;
+	  
+    case EMU:
+      for(size_t i=0; i<r2des->position.size(); ++i)
+	    _emuRobot2.at(i) = r2des->position.at(i);
   }
 
 #ifdef _DEBUG
@@ -141,17 +143,17 @@ int main(int argc, char **argv){
   ros::removeROSArgs(argc, argv, _vargv);
 
   if( _vargv.size() == 5 ){
-	if( _vargv[2] == VAL )
-		_activeConn = VAL;
-	else if ( _vargv[2] == SOAP )
-		_activeConn = SOAP;
-	else{
-		std::cout << "remoteServer VAL/SOAP/EMU ip_R1 ip_R2 freq.\nRemember it.\n";
-		return -1;
-	}
+    if( _vargv[1] == "VAL" )
+      _activeConn = VAL;
+    else if ( _vargv[1] == "SOAP" )
+      _activeConn = SOAP;
+    else{
+      std::cout << "remoteServer VAL/SOAP/EMU ip_R1 ip_R2 freq.\nRemember it.\n";
+      return -1;
+    }
 		
-    STAUBLI_IP_R1 = _vargv[3];
-    STAUBLI_IP_R2 = _vargv[4];
+    STAUBLI_IP_R1 = _vargv[2];
+    STAUBLI_IP_R2 = _vargv[2];
     SOAP_IP_R1="http://";
     SOAP_IP_R1.append(STAUBLI_IP_R1);
     SOAP_IP_R1.append(":5653");
@@ -160,13 +162,14 @@ int main(int argc, char **argv){
     SOAP_IP_R2.append(":5653");
 
   }else{
-    if ( _vargv[2] == EMU ){
-	    _activeConn = EMU;
-		
-	}else{
-		std::cout << "remoteServer VAL/SOAP/EMU ip_R1 ip_R2 freq.\nRemember it.\n";
-		return -1;
-	}
+    if ( _vargv.size() > 1 && _vargv[1] == "EMU" )
+      _activeConn = EMU;
+    else{
+      for(size_t i =0; i< _vargv.size(); ++i )
+	std::cout << _vargv.at(i) << "\t" ;
+      std::cout << "\nremoteServer VAL/SOAP/EMU ip_R1 ip_R2 freq.\nRemember it.\n";
+      return -1;
+    }
   }
 
   // The connection only modifies the send data to the CS8 controller.
@@ -210,7 +213,9 @@ int main(int argc, char **argv){
 		
   }
 	
-  std::cout << "We have connected to the two Stäubli TX" << std::endl;
+  std::cout << "We have connected to the two Stäubli TX ";
+  if( _activeConn == EMU ) std::cout << "in Emulation mode." ;
+  std::cout  << std::endl;
   ros::init(argc, argv, "remoteServer");
 
   ros::NodeHandle n;
@@ -219,8 +224,12 @@ int main(int argc, char **argv){
   ros::Subscriber _robot1_subs = n.subscribe("R1_command", 1000, robot1Callback);
   ros::Subscriber _robot2_subs = n.subscribe("R2_command", 1000, robot2Callback);
 
-  ros::Rate loop_rate(atoi(argv[5]));
+  int rate=250;
+  if( _activeConn != EMU )
+    rate = atoi( _vargv[4].c_str() );
+  
 
+  ros::Rate loop_rate( rate );
   std::vector<double> target_pos(6, 0.);
 
   while (ros::ok())
@@ -232,7 +241,7 @@ int main(int argc, char **argv){
 	if( _activeConn == EMU ){
 	  std::copy( _emuRobot1.begin(),_emuRobot1.end(), _r1_state_message.position.begin() );
 	}else{
-		_robotSoap1.GetRobotJoints(target_pos);
+		_robotSoap1.getRobotJointPos(target_pos);
 		std::copy( target_pos.begin(),target_pos.end(), _r1_state_message.position.begin() );
 	}
 
@@ -253,7 +262,7 @@ int main(int argc, char **argv){
 	if( _activeConn == EMU ){
 	  std::copy( _emuRobot2.begin(),_emuRobot2.end(), _r2_state_message.position.begin() );
 	}else{
-      _robotSoap2.GetRobotJoints(target_pos);
+      _robotSoap2.getRobotJointPos(target_pos);
       std::copy( target_pos.begin(),target_pos.end(), _r2_state_message.position.begin() );
 	}
 
@@ -278,6 +287,14 @@ int main(int argc, char **argv){
 
     loop_rate.sleep();
   }
+  
+  try{
+    _robotSoap1.setPower(false) ;
+    _robotSoap2.setPower(false) ;
+  }catch(...){}
+  
+  std::cout << "The connection with robots is leaving.\n";
   return 0;
+  
 }
 
