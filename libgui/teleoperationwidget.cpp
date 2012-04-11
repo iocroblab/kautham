@@ -706,6 +706,27 @@ namespace libGUI{
   }
 
   void TeleoperationWidget::startTeleoperation(){
+    // First I need to read the last configuration received from the remote Cell
+    // in order to synchronize the simulated robot with the real one.
+    int activeRob = _radBttRobot0->isChecked() ? 0 : 1;
+    if( !_virtualTele ){
+      RobConf tmpAux( *_problem->wSpace()->getRobot(activeRob)->getCurrentPos() );
+      if( activeRob == 0 ){ // Fixed robot
+        //Lock the mutex
+        interboost::scoped_lock<interboost::interprocess_mutex> lock(_dataCell->mutex_in);
+        for(size_t i =0; i< 6 ; ++i)
+          tmpAux.getRn().getCoordinates()[i] = _dataCell->r1_state.joint[i]; 
+                  
+      }else{                //  Mobile robot
+        //Lock the mutex
+        interboost::scoped_lock<interboost::interprocess_mutex> lock(_dataCell->mutex_in);
+        for(size_t i =0; i< 6 ; ++i)
+          tmpAux.getRn().getCoordinates()[i] = _dataCell->r2_state.joint[i];
+
+      }
+      _problem->wSpace()->getRobot(activeRob)->Kinematics(tmpAux);
+    }
+
     _inAction = true;
     // Prevent to change the teleoperated robot and method
     _radBttRobot0->setEnabled(false);
@@ -805,7 +826,6 @@ namespace libGUI{
 	    _EFrame->addChild(new Axis()); 
     }
 
-    int activeRob = _radBttRobot0->isChecked() ? 0 : 1;
     Robot* tmpRob = _problem->wSpace()->getRobot(activeRob);
     _tcpLink = tmpRob->getLink(tmpRob->getNumLinks() - 1); //Get the last link
     SoSeparator* tmpModel = ((IVPQPElement*)_tcpLink->getElement())->ivModel(false);
@@ -1217,18 +1237,22 @@ namespace libGUI{
           if( _virtualTele )
             _problem->wSpace()->getRobot(activeRob)->Kinematics(tmp);
           else{ // Here the memory block must be readed.
-            RobConf tmpAux;
+            RobConf tmpAux(tmp);
             if( activeRob == 0 ){ // Fixed robot
               //Lock the mutex
               interboost::scoped_lock<interboost::interprocess_mutex> lock(_dataCell->mutex_in);
-              std::copy( _dataCell->r1_state.joint,  _dataCell->r1_state.joint+6, 
-                        tmpAux.getRn().getCoordinates().begin()); 
+              for(size_t i =0; i< 6 ; ++i)
+                tmpAux.getRn().getCoordinates()[i] = _dataCell->r1_state.joint[i];
+              //std::copy( _dataCell->r1_state.joint,  _dataCell->r1_state.joint+6, 
+              //          tmpAux.getRn().getCoordinates().begin()); 
                         
             }else{                //  Mobile robot
               //Lock the mutex
               interboost::scoped_lock<interboost::interprocess_mutex> lock(_dataCell->mutex_in);
-              std::copy( _dataCell->r2_state.joint,  _dataCell->r2_state.joint+6, 
-                        tmpAux.getRn().getCoordinates().begin()); 
+              for(size_t i =0; i< 6 ; ++i)
+                tmpAux.getRn().getCoordinates()[i] = _dataCell->r2_state.joint[i];
+              /*std::copy( _dataCell->r2_state.joint,  _dataCell->r2_state.joint+6, 
+                        tmpAux.getRn().getCoordinates().begin()); */
             }
             _problem->wSpace()->getRobot(activeRob)->Kinematics(tmpAux);
           }
