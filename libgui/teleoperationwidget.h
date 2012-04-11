@@ -152,6 +152,7 @@ namespace libGUI{
       string                _ipNode;
       int                   _freqPubli;
       clock_t               _entertime, _endtime;
+      bool                  _virtualTele;
 
 
       void                  setupUI();

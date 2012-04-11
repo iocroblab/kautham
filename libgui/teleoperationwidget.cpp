@@ -151,6 +151,7 @@ namespace libGUI{
     _freqPubli = 250;
 
     _dataCell = dataCell;
+    _virtualTele = true;
 
     EPSILON_1 = 2.; EPSILON_2 = 2.; EPSILON_3=2.;
   }
@@ -192,6 +193,8 @@ namespace libGUI{
       QObject::connect(_rosClient, SIGNAL(finished ( int, QProcess::ExitStatus )), 
                         this, SLOT(rosClientEnd(int , QProcess::ExitStatus )));
       _cmdConnectCell->setText("Desconnect cell");
+
+      _virtualTele = false;
     }else{
       
       if( _rosClient != NULL ){
@@ -205,6 +208,7 @@ namespace libGUI{
         _rosClient = NULL;
       }
       _cmdConnectCell->setText("Connect");
+      _virtualTele = true;
     }
   }
 
@@ -1203,7 +1207,31 @@ namespace libGUI{
           if( _chkMagnetic->isChecked() )
             singularCrossAid(tmp, nea, RHO);
 
-          _problem->wSpace()->getRobot(activeRob)->Kinematics(tmp);
+
+          // If the teleoperation is virtual, the computed configuration is 
+          // set to the current configuration of the active robot. Otherwise
+          // the configuration is sended to the remote cell and the last
+          // configuration received from the cell is used to move the 
+          // robot in the simulation environment.
+
+          if( _virtualTele )
+            _problem->wSpace()->getRobot(activeRob)->Kinematics(tmp);
+          else{ // Here the memory block must be readed.
+            RobConf tmpAux;
+            if( activeRob == 0 ){ // Fixed robot
+              //Lock the mutex
+              interboost::scoped_lock<interboost::interprocess_mutex> lock(_dataCell->mutex_in);
+              std::copy( _dataCell->r1_state.joint,  _dataCell->r1_state.joint+6, 
+                        tmpAux.getRn().getCoordinates().begin()); 
+                        
+            }else{                //  Mobile robot
+              //Lock the mutex
+              interboost::scoped_lock<interboost::interprocess_mutex> lock(_dataCell->mutex_in);
+              std::copy( _dataCell->r2_state.joint,  _dataCell->r2_state.joint+6, 
+                        tmpAux.getRn().getCoordinates().begin()); 
+            }
+            _problem->wSpace()->getRobot(activeRob)->Kinematics(tmpAux);
+          }
 
           // Here I copy the configuration response to the shared memory block.
           if( activeRob == 0 ){ // Fixed robot
