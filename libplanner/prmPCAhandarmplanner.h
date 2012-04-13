@@ -68,7 +68,7 @@ using namespace std;
       
 			bool  setParameters();
 			bool  trySolve();
-      bool getHandConfig(vector<KthReal>& coord, bool randhand, int numPMDs);
+			bool getHandConfig(vector<KthReal>& coord, bool randhand, int numPMDs);
 			bool getSampleInGoalRegion(double tradius, double rradius);  
 			///////////////////////////////////////////////////////////
 			////////////////Process PCA///////////////////////////////
@@ -79,39 +79,29 @@ using namespace std;
 			//////////////////////////////////////////////////////////
 			void printPCAComponents();
 			//////////////////////////////////////////////////////////
-    bool  getSampleInRegion(SE3Conf  *smpse3, double tradius, double rradius);
+			bool  getSampleInRegion(SE3Conf  *smpse3, double tradius, double rradius);
 			void saveData();//reimplemented
-      void writeFiles(FILE *fpr, FILE *fph, RobConf* joints);
+			void writeFiles(FILE *fpr, FILE *fph, RobConf* joints);
 
-	bool ArmInverseKinematics(vector<KthReal> &carm, Sample *smp, bool maintainSameWrist=true);
- 	void setIniGoalSe3();
+			bool ArmInverseKinematics(vector<KthReal> &carm, Sample *smp, bool maintainSameWrist=true);
+ 			void setIniGoalSe3();
 	 
 		private:
-			int	_numberHandConf;
 			int _incrementalPMDs;
-			KthReal _cloudRadiusMax;
-			int _exhaustiveCloud;
+			KthReal _lambda;
 			int _samplingV;
 			int _samplingR;
 			SE3Conf _inise3;
 			SE3Conf _goalse3;
 			///For Process PCA
-			vector<float>	_distance;
+			vector<float> _distance;
 			vector<int>	_indexpca;
 			
-			mt::Point3 goaltrans;
+			mt::Point3 _goaltrans;
 			int callpca;
-			//int countwr;
-			//int n;
-			float _distancegoal;
-			float _distsamplingpcagoal;
-			float distanceig;//distance : ini to goal
-			//mat PCA11PMDs;
+			float _deltaR;
+			float _deltaI;
 			mat matPCA;
-			bool samplefree;
-			//mat matrand;
-		
-
 	};	
   }
 }

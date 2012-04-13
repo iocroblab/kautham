@@ -607,7 +607,7 @@ namespace libPlanner {
 	//! If parameter connectToSmp is not NULL then the sample pointed is set as a neighbor
 	//! of the sample to be connected.
 	//! Finally adds the sample to the graph
-    void PRMPlanner::connectLastSample(Sample* connectToSmp)
+    void PRMPlanner::connectLastSample(Sample* connectToSmp, Sample* connectToSmp2)
 	{
 	    int n;
 	    Sample *smpFrom;
@@ -641,9 +641,14 @@ namespace libPlanner {
 		{
 			//smpFrom->addNeigh( _samples->indexOf( connectToSmp ) );
 			//add sample connectToSmp as the first neighbor of sample smpFrom (set distance = 0)
-      // Modified to avoid the false order.
-      KthReal dis = smpFrom->getDistance(connectToSmp, Kautham::CONFIGSPACE );
+			// Modified to avoid the false order.
+			KthReal dis = smpFrom->getDistance(connectToSmp, Kautham::CONFIGSPACE );
 			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), dis, _kNeighs);
+		}
+		if(connectToSmp2 != NULL)
+		{
+			KthReal dis = smpFrom->getDistance(connectToSmp2, Kautham::CONFIGSPACE );
+			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp2 ), dis, _kNeighs);
 		}
 
 		//srtart connecting with neighs

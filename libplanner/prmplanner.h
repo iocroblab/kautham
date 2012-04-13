@@ -122,17 +122,17 @@ namespace libPlanner {
         ~PRMPlanner();
 			bool        setParameters();
 
-      //! This method overwrites the original method in Planner class in order to improve the capabilities
-      //! to store the data used in this kind of planner. This method invokes  the parent method to save 
-      //! the SampleSet and the planner's parameters and then It stores the connectivity of the samples 
-      //!to compound the PRM.
-			bool        saveData(string path); // Overwriting the Planner::saveData(string) method.
+		//! This method overwrites the original method in Planner class in order to improve the capabilities
+		//! to store the data used in this kind of planner. This method invokes  the parent method to save 
+		//! the SampleSet and the planner's parameters and then It stores the connectivity of the samples 
+		//!to compound the PRM.
+		bool saveData(string path); // Overwriting the Planner::saveData(string) method.
 
-      void        saveData(); // This is a convenient way to store solution path. Jan.
+		void saveData(); // This is a convenient way to store solution path. Jan.
 
-      bool        loadData(string path); // Overwriting the Planner::loadData(string) method.
-			//void        setIniGoal();
-			bool        trySolve();
+		bool loadData(string path); // Overwriting the Planner::loadData(string) method.
+		//void setIniGoal();
+		bool trySolve();
 
   		//!find path
 	    bool findPath();
@@ -140,39 +140,39 @@ namespace libPlanner {
 	    void loadGraph();
 	    //!connect samples 
 	    bool connectSamples(bool assumeAllwaysFree = false);
-		  //! connects last sampled configuration & adds to graph
-			void connectLastSample(Sample* connectToSmp = NULL);
+		//! connects last sampled configuration & adds to graph
+		void connectLastSample(Sample* connectToSmp = NULL, Sample* connectToSmp2 = NULL);
 	    //!delete g
 	    void clearGraph();
-			void updateGraph();
-			void smoothPath(bool maintainfirst=false, bool maintainlast=false);
-			bool isGraphSet(){return _isGraphSet;}
-			void printConnectedComponents();
+		void updateGraph();
+		void smoothPath(bool maintainfirst=false, bool maintainlast=false);
+		bool isGraphSet(){return _isGraphSet;}
+		void printConnectedComponents();
 
-	 SoSeparator *getIvCspaceScene();//reimplemented
-	 void drawCspace();
+		SoSeparator *getIvCspaceScene();//reimplemented
+		void drawCspace();
 
-		protected:
-			vector<prmEdge*> edges;
-      //!edge weights
-      vector<cost> weights;
-      //!bool to determine if the graph has been loaded
-      bool _isGraphSet;
-			KthReal _neighThress;
-			int     _kNeighs;
-			std::map<int, SampleSet*> _ccMap;
-      int _labelCC;
-      int _drawnLink; //!>flag to show which link path is to be drawn
-	  KthReal _probabilityConnectionIniGoal; //probability to connect last samp`le to init and goal samp`les
+	protected:
+		vector<prmEdge*> edges;
+		//!edge weights
+		vector<cost> weights;
+		//!bool to determine if the graph has been loaded
+		bool _isGraphSet;
+		KthReal _neighThress;
+		int _kNeighs;
+		std::map<int, SampleSet*> _ccMap;
+		int _labelCC;
+		int _drawnLink; //!>flag to show which link path is to be drawn
+		KthReal _probabilityConnectionIniGoal; //probability to connect last samp`le to init and goal samp`les
 
-		private:
-      PRMPlanner();
-      //!boost graph
-      prmGraph *g;
-      //!solution to query
-      list<prmVertex> shortest_path;
-      //!pointer to the samples of cspace to be used by the distance_heuristic function used in A*
-      vector<location> locations;
+	private:
+		PRMPlanner();
+		//!boost graph
+		prmGraph *g;
+		//!solution to query
+		list<prmVertex> shortest_path;
+		//!pointer to the samples of cspace to be used by the distance_heuristic function used in A*
+		vector<location> locations;
 	  };
   }
 }
