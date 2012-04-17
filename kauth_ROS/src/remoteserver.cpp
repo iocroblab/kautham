@@ -148,18 +148,26 @@ int main(int argc, char **argv){
     else if ( _vargv[1] == "SOAP" )
       _activeConn = SOAP;
     else{
-      std::cout << "remoteServer VAL/SOAP/EMU ip_R1 ip_R2 freq.\nRemember it.\n";
+      std::cout << "remoteServer VAL/SOAP/EMU ip_R1 ip_R2 freq.\n";
+      std::cout << "ip_R1 and ip_R2 should be the ip address where the\n" \
+       << "respective robot is of NC if that robot is not used.\n" \
+       << "Remember it.\n";
       return -1;
     }
-		
+    
     STAUBLI_IP_R1 = _vargv[2];
-    STAUBLI_IP_R2 = _vargv[2];
-    SOAP_IP_R1="http://";
-    SOAP_IP_R1.append(STAUBLI_IP_R1);
-    SOAP_IP_R1.append(":5653");
-    SOAP_IP_R2="http://";
-    SOAP_IP_R2.append(STAUBLI_IP_R2);
-    SOAP_IP_R2.append(":5653");
+    if( _vargv[2] != "NC" ){ 
+      SOAP_IP_R1="http://";
+      SOAP_IP_R1.append(STAUBLI_IP_R1);
+      SOAP_IP_R1.append(":5653");
+    }
+    
+    STAUBLI_IP_R2 = _vargv[3];
+    if( _vargv[3] != "NC" ){
+      SOAP_IP_R2="http://";
+      SOAP_IP_R2.append(STAUBLI_IP_R2);
+      SOAP_IP_R2.append(":5653");
+    }
 
   }else{
     if ( _vargv.size() > 1 && _vargv[1] == "EMU" )
@@ -167,8 +175,10 @@ int main(int argc, char **argv){
     else{
       for(size_t i =0; i< _vargv.size(); ++i )
 	std::cout << _vargv.at(i) << "\t" ;
-      std::cout << "\nremoteServer VAL/SOAP/EMU ip_R1 ip_R2 freq.\nRemember it.\n";
-      return -1;
+	std::cout << "remoteServer VAL/SOAP/EMU ip_R1 ip_R2 freq.\n";
+	std::cout << "ip_R1 and ip_R2 should be the ip address where the\n" \
+	<< "respective robot is of NC if that robot is not used.\n" \
+	<< "Remember it.\n";
     }
   }
 
@@ -179,10 +189,14 @@ int main(int argc, char **argv){
 	valClientR1.connect_to(STAUBLI_IP_R1,"5558");
 	valClientR2.connect_to(STAUBLI_IP_R2,"5558");
 	try{
-	  _robotSoap1.setURL(SOAP_IP_R1);
-	  _robotSoap1.login("default","");
-	  _robotSoap2.setURL(SOAP_IP_R2);
-	  _robotSoap2.login("default","");
+	  if( STAUBLI_IP_R1 != "NC" ){
+	    _robotSoap1.setURL(SOAP_IP_R1);
+	    _robotSoap1.login("default","");
+	  }
+	  if( STAUBLI_IP_R2 != "NC" ){
+	    _robotSoap2.setURL(SOAP_IP_R2);
+	    _robotSoap2.login("default","");
+	  }
 	}catch(const CS8Error& err) {
 	  std::cerr << err.what() << std::endl;
 	  _robotSoap1.setPower(false) ;
@@ -192,14 +206,18 @@ int main(int argc, char **argv){
 	
   case SOAP: // Here use only the SOAP
 	try{
-	  _robotSoap1.setURL(SOAP_IP_R1);
-	  _robotSoap1.login("default","");
-	  _robotSoap1.setPower(true) ;
-	  _robotSoap1.resetMotion();
-	  _robotSoap2.setURL(SOAP_IP_R2);
-	  _robotSoap2.login("default","");
-	  _robotSoap2.setPower(true) ;
-	  _robotSoap2.resetMotion();
+	  if( STAUBLI_IP_R1 != "NC" ){
+	    _robotSoap1.setURL(SOAP_IP_R1);
+	    _robotSoap1.login("default","");
+	    _robotSoap1.setPower(true) ;
+	    _robotSoap1.resetMotion();
+	  }
+	  if( STAUBLI_IP_R2 != "NC" ){
+	    _robotSoap2.setURL(SOAP_IP_R2);
+	    _robotSoap2.login("default","");
+	    _robotSoap2.setPower(true) ;
+	    _robotSoap2.resetMotion();
+	  }
 	}catch(const CS8Error& err) {
 	  std::cerr << err.what() << std::endl;
 	  _robotSoap1.setPower(false) ;
@@ -214,8 +232,15 @@ int main(int argc, char **argv){
   }
 	
   std::cout << "We have connected to the two Stäubli TX ";
-  if( _activeConn == EMU ) std::cout << "in Emulation mode." ;
+  if( _activeConn == EMU ) 
+    std::cout << "in Emulation mode." ;
+  else{
+    int i = STAUBLI_IP_R1 != "NC" ? 1 :0;
+    i += STAUBLI_IP_R2 != "NC" ? 1 :0;
+    std::cout <<"with i connected Robots.";
+  }
   std::cout  << std::endl;
+  
   ros::init(argc, argv, "remoteServer");
 
   ros::NodeHandle n;
@@ -238,46 +263,47 @@ int main(int argc, char **argv){
     _r1_state_message.header.stamp = ros::Time::now();
     _r1_state_message.position.resize(6);
 
-	if( _activeConn == EMU ){
-	  std::copy( _emuRobot1.begin(),_emuRobot1.end(), _r1_state_message.position.begin() );
-	}else{
-		_robotSoap1.getRobotJointPos(target_pos);
-		std::copy( target_pos.begin(),target_pos.end(), _r1_state_message.position.begin() );
-	}
-
+    if( _activeConn == EMU ){
+      std::copy( _emuRobot1.begin(),_emuRobot1.end(), _r1_state_message.position.begin() );
+    }else{
+      if( STAUBLI_IP_R1 != "NC" ){
+	_robotSoap1.getRobotJointPos(target_pos);
+	std::copy( target_pos.begin(),target_pos.end(), _r1_state_message.position.begin() );
 #ifdef _DEBUG
-    _r1_state_message.name.resize(6);
-    _r1_state_message.name[0] ="shoulder";
-    _r1_state_message.name[1] ="forearm";
-    _r1_state_message.name[2] ="elbow";
-    _r1_state_message.name[3] ="arm";
-    _r1_state_message.name[4] ="wrist";
-    _r1_state_message.name[5] ="tcp";
+	_r1_state_message.name.resize(6);
+	_r1_state_message.name[0] ="shoulder";
+	_r1_state_message.name[1] ="forearm";
+	_r1_state_message.name[2] ="elbow";
+	_r1_state_message.name[3] ="arm";
+	_r1_state_message.name[4] ="wrist";
+	_r1_state_message.name[5] ="tcp";
 #endif
+	_robot1_pub.publish(_r1_state_message);
+      }
+    }
 
     sensor_msgs::JointState _r2_state_message;
     _r2_state_message.header.stamp = ros::Time::now();
     _r2_state_message.position.resize(6);
 
-	if( _activeConn == EMU ){
-	  std::copy( _emuRobot2.begin(),_emuRobot2.end(), _r2_state_message.position.begin() );
-	}else{
-      _robotSoap2.getRobotJointPos(target_pos);
-      std::copy( target_pos.begin(),target_pos.end(), _r2_state_message.position.begin() );
-	}
-
+    if( _activeConn == EMU ){
+      std::copy( _emuRobot2.begin(),_emuRobot2.end(), _r2_state_message.position.begin() );
+    }else{
+      if( STAUBLI_IP_R2 != "NC" ){
+	_robotSoap2.getRobotJointPos(target_pos);
+	std::copy( target_pos.begin(),target_pos.end(), _r2_state_message.position.begin() );
 #ifdef _DEBUG
-    _r2_state_message.name.resize(6);
-    _r2_state_message.name[0] ="shoulder";
-    _r2_state_message.name[1] ="forearm";
-    _r2_state_message.name[2] ="elbow";
-    _r2_state_message.name[3] ="arm";
-    _r2_state_message.name[4] ="wrist";
-    _r2_state_message.name[5] ="tcp";
+	_r2_state_message.name.resize(6);
+	_r2_state_message.name[0] ="shoulder";
+	_r2_state_message.name[1] ="forearm";
+	_r2_state_message.name[2] ="elbow";
+	_r2_state_message.name[3] ="arm";
+	_r2_state_message.name[4] ="wrist";
+	_r2_state_message.name[5] ="tcp";
 #endif
-
-    _robot1_pub.publish(_r1_state_message);
-    _robot2_pub.publish(_r2_state_message);
+	_robot2_pub.publish(_r2_state_message);
+      }
+    }    
 
 #ifdef _DEBUG
     ROS_INFO( "Published R1_state and R2_state" );
@@ -291,7 +317,9 @@ int main(int argc, char **argv){
   try{
     _robotSoap1.setPower(false) ;
     _robotSoap2.setPower(false) ;
-  }catch(...){}
+  }catch(...){
+    ROS_INFO( "Please verify the power of the robots. At least one robot may have the power activated." );
+  }
   
   std::cout << "The connection with robots is leaving.\n";
   return 0;
