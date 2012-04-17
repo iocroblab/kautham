@@ -148,7 +148,7 @@ namespace libGUI{
     _ipNode = "192.168.0.1";
 #endif
     _rosClient = NULL;
-    _freqPubli = 250;
+    _freqPubli = 50;
 
     _dataCell = dataCell;
     _virtualTele = true;
@@ -173,12 +173,15 @@ namespace libGUI{
       }
 
       QStringList param;
-      //http://147.83.37.26:11311/ 147.83.37.217 Phantom1 200
+      //http://147.83.37.26:11311/ 147.83.37.217 R1 50
 
       param << QString(_ipMaster.c_str()) << QString(_ipNode.c_str()) 
             << QString(_nodeName.c_str()) << QString().setNum(_freqPubli) ;
-
+#ifdef WIN32
       _rosClient->start( "localClient.exe", param );
+#else
+      _rosClient->start( "./localClient", param );
+#endif
       if(!_rosClient->waitForStarted()){
            QMessageBox::critical(this, "Kautham ROS Node",
                                   "The JointState publisher has not been started.\n" ,
