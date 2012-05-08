@@ -187,7 +187,8 @@ namespace libPlanner {
 		//flag indicating if the sphere centered at the occupied cell is free or not
 		bool freesphere;
 		//threshold distance, measured in cells,
-		int threshold = (int)(sqrt(3.0)*maxSize/radius);//sqrt(3) is added to consider the distance to the vertex of the voxel
+		//int threshold = (int)(sqrt(3.0)*maxSize/radius);//sqrt(3) is added to consider the distance to the vertex of the voxel
+		int threshold = (int)(radius/maxSize); //+1;
 
 		//int threshold = 2;
 		//reset the cost
@@ -1154,7 +1155,7 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha_11, KthReal *
 				//rAlpha[i] = (1-abs(beta[i]))*abs(alpha[i]-alpha0);//NO!!
 
 				//we want small alphas when beta is small AND we do not want grat increments of alpha
-				rAlpha[i] = 0.5*(1-abs(beta_11[i])*abs(alpha_11[i])+0.5*abs(alpha_11[i]-alpha0_11));
+				rAlpha[i] = 0.5*(1-abs(beta_11[i])*abs(alpha_11[i])+0.5*abs(alpha_11[i]-alpha0_11))/2;
 				//Adding a cost when either alpha or beta are negative
 				//if(beta[i]<0 || alpha[i]<0) rAlpha[i]+=0.1;
 
