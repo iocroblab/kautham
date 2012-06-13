@@ -854,71 +854,72 @@ namespace libGUI{
     PathToGuide* tmpPath = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
     _currentLayout = tmpPath->getLayout(0);
 
-    // Now I create the KFrames.
-    if( _KFrame == NULL ){
-      trans = new SoTranslation();
-      rot = new SoRotation();
-      _posKFrame = new SoSFVec3f();
-      _rotKFrame = new SoSFRotation();
-      _posKFrame->setValue(tmpPath->PathX().at(0).at(0), tmpPath->PathX().at(0).at(1), 
-        tmpPath->PathX().at(0).at(2) );
-      _rotKFrame->setValue( tmpPath->PathX().at(0).at(3), tmpPath->PathX().at(0).at(4), 
-        tmpPath->PathX().at(0).at(5), tmpPath->PathX().at(0).at(6) );
+    if(tmpPath->PathX().size() > 0){
+      // Now I create the KFrames.
+      if( _KFrame == NULL ){
+        trans = new SoTranslation();
+        rot = new SoRotation();
+        _posKFrame = new SoSFVec3f();
+        _rotKFrame = new SoSFRotation();
+        _posKFrame->setValue(tmpPath->PathX().at(0).at(0), tmpPath->PathX().at(0).at(1), 
+          tmpPath->PathX().at(0).at(2) );
+        _rotKFrame->setValue( tmpPath->PathX().at(0).at(3), tmpPath->PathX().at(0).at(4), 
+          tmpPath->PathX().at(0).at(5), tmpPath->PathX().at(0).at(6) );
 
-      trans->translation.connectFrom( _posKFrame );
-      rot->rotation.connectFrom( _rotKFrame );
-      _KFrame = new SoSeparator();
-      _KFrame->addChild(trans);
-      _KFrame->addChild(rot);
-      _KFrame->addChild(sca);
-      _KFrame->addChild( new Axis(0.5) );
-      _KFrame->ref();
-    }
+        trans->translation.connectFrom( _posKFrame );
+        rot->rotation.connectFrom( _rotKFrame );
+        _KFrame = new SoSeparator();
+        _KFrame->addChild(trans);
+        _KFrame->addChild(rot);
+        _KFrame->addChild(sca);
+        _KFrame->addChild( new Axis(0.5) );
+        _KFrame->ref();
+      }
 
-    if(_KAFrame == NULL ){
-      trans = new SoTranslation();
-      rot = new SoRotation();
-      _posKAFrame = new SoSFVec3f();
-      _rotKAFrame = new SoSFRotation();
-      _posKAFrame->setValue(tmpPath->PathX().at(1).at(0), tmpPath->PathX().at(1).at(1), 
-        tmpPath->PathX().at(1).at(2) );
-      _rotKAFrame->setValue( tmpPath->PathX().at(1).at(3), tmpPath->PathX().at(1).at(4), 
-        tmpPath->PathX().at(1).at(5), tmpPath->PathX().at(0).at(6) );
+      if(_KAFrame == NULL ){
+        trans = new SoTranslation();
+        rot = new SoRotation();
+        _posKAFrame = new SoSFVec3f();
+        _rotKAFrame = new SoSFRotation();
+        _posKAFrame->setValue(tmpPath->PathX().at(1).at(0), tmpPath->PathX().at(1).at(1), 
+          tmpPath->PathX().at(1).at(2) );
+        _rotKAFrame->setValue( tmpPath->PathX().at(1).at(3), tmpPath->PathX().at(1).at(4), 
+          tmpPath->PathX().at(1).at(5), tmpPath->PathX().at(0).at(6) );
+        
+        trans->translation.connectFrom( _posKAFrame );
+        rot->rotation.connectFrom( _rotKAFrame );
+        _KAFrame = new SoSeparator();
+        _KAFrame->addChild(trans);
+        _KAFrame->addChild(rot);
+        _KAFrame->addChild(sca);
+        _KAFrame->addChild( new Axis(0.7) );
+        _KAFrame->ref();
+      }
       
-      trans->translation.connectFrom( _posKAFrame );
-      rot->rotation.connectFrom( _rotKAFrame );
-      _KAFrame = new SoSeparator();
-      _KAFrame->addChild(trans);
-      _KAFrame->addChild(rot);
-      _KAFrame->addChild(sca);
-      _KAFrame->addChild( new Axis(0.7) );
-      _KAFrame->ref();
-    }
-    
-    if(_KBFrame == NULL ){
-      trans = new SoTranslation();
-      rot = new SoRotation();
-      _posKBFrame = new SoSFVec3f();
-      _rotKBFrame = new SoSFRotation();
-      _posKBFrame->setValue(tmpPath->PathX().at(0).at(0), tmpPath->PathX().at(0).at(1), 
-        tmpPath->PathX().at(0).at(2) );
-      _rotKBFrame->setValue( tmpPath->PathX().at(0).at(3), tmpPath->PathX().at(0).at(4), 
-        tmpPath->PathX().at(0).at(5), tmpPath->PathX().at(0).at(6) );
+      if(_KBFrame == NULL ){
+        trans = new SoTranslation();
+        rot = new SoRotation();
+        _posKBFrame = new SoSFVec3f();
+        _rotKBFrame = new SoSFRotation();
+        _posKBFrame->setValue(tmpPath->PathX().at(0).at(0), tmpPath->PathX().at(0).at(1), 
+          tmpPath->PathX().at(0).at(2) );
+        _rotKBFrame->setValue( tmpPath->PathX().at(0).at(3), tmpPath->PathX().at(0).at(4), 
+          tmpPath->PathX().at(0).at(5), tmpPath->PathX().at(0).at(6) );
+        
+        trans->translation.connectFrom( _posKBFrame );
+        rot->rotation.connectFrom( _rotKBFrame );
+        _KBFrame = new SoSeparator();
+        _KBFrame->addChild(trans);
+        _KBFrame->addChild(rot);
+        _KBFrame->addChild(sca);
+        _KBFrame->addChild( new Axis(0.85) );
+        _KBFrame->ref();
+      }
       
-      trans->translation.connectFrom( _posKBFrame );
-      rot->rotation.connectFrom( _rotKBFrame );
-      _KBFrame = new SoSeparator();
-      _KBFrame->addChild(trans);
-      _KBFrame->addChild(rot);
-      _KBFrame->addChild(sca);
-      _KBFrame->addChild( new Axis(0.85) );
-      _KBFrame->ref();
-    }
-    
-    tmpRoot->addChild( _KFrame );
-    tmpRoot->addChild( _KAFrame );
-    tmpRoot->addChild( _KBFrame );
-
+      tmpRoot->addChild( _KFrame );
+      tmpRoot->addChild( _KAFrame );
+      tmpRoot->addChild( _KBFrame );
+    } // close the if when the problem does not have an associated path.
     // Configure the Epsilons
     PathToGuide* path = NULL;
     if( _radBttRobot0->isChecked() ){
@@ -1144,43 +1145,50 @@ namespace libGUI{
 
     bool dirProj= false;
     int nea = 0;
-    if( _chkMagnetic->isChecked() )
+    if( _chkMagnetic->isChecked() && _pathsObj[activeRob]->PathX().size() > 0 ){
       nea = setGuideForce(tcp2w, _w2h, dirProj);
 
-    // Save the data in the file Xd Yd Zd Xr Yr Zr
-    _theFile << _pathsObj[activeRob]->PathX().at(nea).at(0) << " " << _pathsObj[activeRob]->PathX().at(nea).at(1) ;
-    _theFile << " " << _pathsObj[activeRob]->PathX().at(nea).at(2) << " " ;
-    _theFile << tcp2w.getTranslation().at(0) << " " << tcp2w.getTranslation().at(1) << " " ;
-    _theFile << tcp2w.getTranslation().at(2) << std::endl ;
+      // Save the data in the file Xd Yd Zd Xr Yr Zr
+      _theFile << _pathsObj[activeRob]->PathX().at(nea).at(0) << " " << _pathsObj[activeRob]->PathX().at(nea).at(1) ;
+      _theFile << " " << _pathsObj[activeRob]->PathX().at(nea).at(2) << " " ;
+      _theFile << tcp2w.getTranslation().at(0) << " " << tcp2w.getTranslation().at(1) << " " ;
+      _theFile << tcp2w.getTranslation().at(2) << std::endl ;
 
-    // For debug.
-    //cout << nea << endl;
+      // For debug.
+      //cout << nea << endl;
 
-    // Now I will draw the frames corresponding to the k-draw, k and 
-    // k-draw points of the guiding path.
-    const int draw = 2;
-    _posKFrame->setValue(_pathsObj[activeRob]->PathX().at(nea).at(0), _pathsObj[activeRob]->PathX().at(nea).at(1),
-                         _pathsObj[activeRob]->PathX().at(nea).at(2) );
-    _rotKFrame->setValue(_pathsObj[activeRob]->PathX().at(nea).at(3), _pathsObj[activeRob]->PathX().at(nea).at(4),
-                         _pathsObj[activeRob]->PathX().at(nea).at(5), _pathsObj[activeRob]->PathX().at(nea).at(6) );
+      // Now I will draw the frames corresponding to the k-draw, k and 
+      // k-draw points of the guiding path.
+      const int draw = 2;
+      _posKFrame->setValue(_pathsObj[activeRob]->PathX().at(nea).at(0), _pathsObj[activeRob]->PathX().at(nea).at(1),
+                           _pathsObj[activeRob]->PathX().at(nea).at(2) );
+      _rotKFrame->setValue(_pathsObj[activeRob]->PathX().at(nea).at(3), _pathsObj[activeRob]->PathX().at(nea).at(4),
+                           _pathsObj[activeRob]->PathX().at(nea).at(5), _pathsObj[activeRob]->PathX().at(nea).at(6) );
 
-    if(nea > draw ){//MOve the before frame
-      _posKBFrame->setValue(_pathsObj[activeRob]->PathX().at(nea-draw).at(0), _pathsObj[activeRob]->PathX().at(nea-draw).at(1),
-                         _pathsObj[activeRob]->PathX().at(nea-draw).at(2) );
-      _rotKBFrame->setValue(_pathsObj[activeRob]->PathX().at(nea-draw).at(3), _pathsObj[activeRob]->PathX().at(nea-draw).at(4),
-                         _pathsObj[activeRob]->PathX().at(nea-draw).at(5), _pathsObj[activeRob]->PathX().at(nea-draw).at(6) );
-    }
+      if(nea > draw ){//MOve the before frame
+        _posKBFrame->setValue(_pathsObj[activeRob]->PathX().at(nea-draw).at(0), _pathsObj[activeRob]->PathX().at(nea-draw).at(1),
+                           _pathsObj[activeRob]->PathX().at(nea-draw).at(2) );
+        _rotKBFrame->setValue(_pathsObj[activeRob]->PathX().at(nea-draw).at(3), _pathsObj[activeRob]->PathX().at(nea-draw).at(4),
+                           _pathsObj[activeRob]->PathX().at(nea-draw).at(5), _pathsObj[activeRob]->PathX().at(nea-draw).at(6) );
+      }
 
-    if( nea < _pathsObj[activeRob]->PathX().size() - draw ){
-      _posKAFrame->setValue(_pathsObj[activeRob]->PathX().at(nea+draw).at(0), _pathsObj[activeRob]->PathX().at(nea+draw).at(1),
-                         _pathsObj[activeRob]->PathX().at(nea+draw).at(2) );
-      _rotKAFrame->setValue(_pathsObj[activeRob]->PathX().at(nea+draw).at(3), _pathsObj[activeRob]->PathX().at(nea+draw).at(4),
-                         _pathsObj[activeRob]->PathX().at(nea+draw).at(5), _pathsObj[activeRob]->PathX().at(nea+draw).at(6) );
+      if( nea < _pathsObj[activeRob]->PathX().size() - draw ){
+        _posKAFrame->setValue(_pathsObj[activeRob]->PathX().at(nea+draw).at(0), _pathsObj[activeRob]->PathX().at(nea+draw).at(1),
+                           _pathsObj[activeRob]->PathX().at(nea+draw).at(2) );
+        _rotKAFrame->setValue(_pathsObj[activeRob]->PathX().at(nea+draw).at(3), _pathsObj[activeRob]->PathX().at(nea+draw).at(4),
+                           _pathsObj[activeRob]->PathX().at(nea+draw).at(5), _pathsObj[activeRob]->PathX().at(nea+draw).at(6) );
+      }
     }
 
     PathToGuide* path = _radBttRobot0->isChecked() ? _pathsObj[0] : _pathsObj[1];
-    RobLayout  robLay = path->getLayout( nea ); // This line gets the respective layout of the robot if it has a IK model.
+    RobLayout*  robLay = NULL;
+    if(  _pathsObj[activeRob]->PathX().size() > 0  )
+      robLay = &(path->getLayout( nea )); // This line gets the respective layout of the robot if it has a IK model.
+    else
+      robLay = &(_problem->wSpace()->getRobot(activeRob)->getIkine()->getRobLayout(
+                _problem->wSpace()->getRobot(activeRob)->getCurrentPos()->getRn().getCoordinates()));
 
+  
     //// This part implements the hysteresis
     //// Aqui se busca que si no se ha llegado al punto i del path a guiar se mantenga 
     //// la configuración del punto anterior i-1 
@@ -1201,7 +1209,7 @@ namespace libGUI{
         if(typeid(*_problem->wSpace()->getRobot(activeRob)->getIkine()) == typeid(IvKin2DRR) ){
           vector<KthReal> target(se3conf.getCoordinates());
 
-          if(robLay.size() > 0 ) target.push_back(robLay[0] == true ? 1. : 0. );
+          if(robLay->size() > 0 ) target.push_back(robLay->at(0) == true ? 1. : 0. );
           
           RobConf& tmp =_problem->wSpace()->getRobot(0)
                       ->InverseKinematics(target);
@@ -1218,16 +1226,16 @@ namespace libGUI{
         if(typeid(*_problem->wSpace()->getRobot(activeRob)->getIkine()) == typeid(IvKinTx90) ){
           vector<KthReal> target( se3conf.getCoordinates() );
 
-          if(robLay.size() > 0 ){
-            target.push_back(robLay[0] == true ? 0. : 1. );
-            target.push_back(robLay[1] == true ? 0. : 1. );
-            target.push_back(robLay[2] == true ? 0. : 1. );
+          if(robLay->size() > 0 ){
+            target.push_back(robLay->at(0) == true ? 0. : 1. );
+            target.push_back(robLay->at(1) == true ? 0. : 1. );
+            target.push_back(robLay->at(2) == true ? 0. : 1. );
           }
 
           RobConf& tmp =_problem->wSpace()->getRobot(activeRob)
                       ->InverseKinematics(target);
           
-          if( _chkMagnetic->isChecked() )
+          if( _chkMagnetic->isChecked()  && _pathsObj[activeRob]->PathX().size() > 0 )
             singularCrossAid(tmp, nea, RHO);
 
 
