@@ -168,7 +168,10 @@ namespace libGUI{
       void                  singularCrossAid(RobConf& conf, size_t nea, KthReal rho );
 
       //XXXXXXXXXXXXXXXXXXXXXXXX
-      QWidget *widget;
+      QGridLayout *gridLayout_11;
+      QScrollArea *scrollArea;
+      QWidget *scrollAreaWidgetContents;
+      QGridLayout *gridLayout_10;
       QVBoxLayout *verticalLayout_5;
       QGroupBox *groupBox;
       QGridLayout *gridLayout_7;

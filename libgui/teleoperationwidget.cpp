@@ -240,6 +240,7 @@ namespace libGUI{
     }
     _cmdConnectCell->setChecked(false);
     _cmdConnectCell->setText("Connect");
+    _virtualTele = true;
   }
 
   void TeleoperationWidget::confConnection(){
@@ -1397,23 +1398,28 @@ namespace libGUI{
   }
 
   void TeleoperationWidget::setupUI(){
-    if(this->objectName().isEmpty())
-        this->setObjectName(QString::fromUtf8("Form"));
-
-        this->resize(270, 600);
+    if (this->objectName().isEmpty())
+            this->setObjectName(QString::fromUtf8("Form"));
+        this->resize(294, 673);
         QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
         this->setSizePolicy(sizePolicy);
         this->setMinimumSize(QSize(270, 636));
-        widget = new QWidget(this);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(10, 10, 252, 616));
-        verticalLayout_5 = new QVBoxLayout(widget);
+        gridLayout_11 = new QGridLayout(this);
+        gridLayout_11->setObjectName(QString::fromUtf8("gridLayout_11"));
+        scrollArea = new QScrollArea(this);
+        scrollArea->setObjectName(QString::fromUtf8("scrollArea"));
+        scrollArea->setWidgetResizable(true);
+        scrollAreaWidgetContents = new QWidget();
+        scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 274, 653));
+        gridLayout_10 = new QGridLayout(scrollAreaWidgetContents);
+        gridLayout_10->setObjectName(QString::fromUtf8("gridLayout_10"));
+        verticalLayout_5 = new QVBoxLayout();
         verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
-        verticalLayout_5->setContentsMargins(0, 0, 0, 0);
-        groupBox = new QGroupBox(widget);
+        groupBox = new QGroupBox(scrollAreaWidgetContents);
         groupBox->setObjectName(QString::fromUtf8("groupBox"));
         QSizePolicy sizePolicy1(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
         sizePolicy1.setHorizontalStretch(0);
@@ -1740,7 +1746,7 @@ namespace libGUI{
 
         verticalLayout_5->addWidget(groupBox);
 
-        groupBox_2 = new QGroupBox(widget);
+        groupBox_2 = new QGroupBox(scrollAreaWidgetContents);
         groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
         sizePolicy1.setHeightForWidth(groupBox_2->sizePolicy().hasHeightForWidth());
         groupBox_2->setSizePolicy(sizePolicy1);
@@ -1770,6 +1776,7 @@ namespace libGUI{
         _cmdConnectCell = new QPushButton(groupBox_6);
         _cmdConnectCell->setObjectName(QString::fromUtf8("_cmdConnectCell"));
         _cmdConnectCell->setCheckable(true);
+
         horizontalLayout_12->addWidget(_cmdConnectCell);
 
 
@@ -1924,55 +1931,56 @@ namespace libGUI{
 
         verticalLayout_5->addWidget(groupBox_2);
 
+
+        gridLayout_10->addLayout(verticalLayout_5, 0, 0, 1, 1);
+
+        scrollArea->setWidget(scrollAreaWidgetContents);
+
+        gridLayout_11->addWidget(scrollArea, 0, 0, 1, 1);
+
+
         QMetaObject::connectSlotsByName(this);
 
     this->setWindowTitle(QApplication::translate("Form", "Form", 0, QApplication::UnicodeUTF8));
-    groupBox->setTitle(QApplication::translate("Form", "Cameras", 0, QApplication::UnicodeUTF8));
-    _cameraTop->setText(QApplication::translate("Form", "Top", 0, QApplication::UnicodeUTF8));
-    _cameraBottom->setText(QApplication::translate("Form", "Bottom", 0, QApplication::UnicodeUTF8));
-    _cameraLeft->setText(QApplication::translate("Form", "Left", 0, QApplication::UnicodeUTF8));
-    _cameraRight->setText(QApplication::translate("Form", "Right", 0, QApplication::UnicodeUTF8));
-    _cameraFront->setText(QApplication::translate("Form", "Front", 0, QApplication::UnicodeUTF8));
-    _cameraRear->setText(QApplication::translate("Form", "Rear", 0, QApplication::UnicodeUTF8));
-    groupBox_3->setTitle(QApplication::translate("Form", "Free", 0, QApplication::UnicodeUTF8));
-    label->setText(QApplication::translate("Form", "X", 0, QApplication::UnicodeUTF8));
-    label_7->setText(QApplication::translate("Form", "Rx", 0, QApplication::UnicodeUTF8));
-    label_2->setText(QApplication::translate("Form", "Y", 0, QApplication::UnicodeUTF8));
-    label_8->setText(QApplication::translate("Form", "Ry", 0, QApplication::UnicodeUTF8));
-    label_3->setText(QApplication::translate("Form", "Z", 0, QApplication::UnicodeUTF8));
-    label_9->setText(QApplication::translate("Form", "Rz", 0, QApplication::UnicodeUTF8));
-    _setCamera->setText(QApplication::translate("Form", "Set Camera", 0, QApplication::UnicodeUTF8));
-    groupBox_4->setTitle(QApplication::translate("Form", "Current", 0, QApplication::UnicodeUTF8));
-    label_4->setText(QApplication::translate("Form", "X", 0, QApplication::UnicodeUTF8));
-    label_10->setText(QApplication::translate("Form", "Rx", 0, QApplication::UnicodeUTF8));
-    label_5->setText(QApplication::translate("Form", "Y", 0, QApplication::UnicodeUTF8));
-    label_12->setText(QApplication::translate("Form", "Ry", 0, QApplication::UnicodeUTF8));
-    label_6->setText(QApplication::translate("Form", "Z", 0, QApplication::UnicodeUTF8));
-    label_11->setText(QApplication::translate("Form", "Rz", 0, QApplication::UnicodeUTF8));
-    _getCamera->setText(QApplication::translate("Form", "Get Camera", 0, QApplication::UnicodeUTF8));
-    groupBox_2->setTitle(QApplication::translate("Form", "Teleoperation", 0, QApplication::UnicodeUTF8));
-    groupBox_6->setTitle(QApplication::translate("Form", "Real Cell", 0, QApplication::UnicodeUTF8));
-    _cmdConfConnection->setText(QApplication::translate("Form", "Conf. Connection", 0, QApplication::UnicodeUTF8));
-    _cmdConnectCell->setText(QApplication::translate("Form", "Connect", 0, QApplication::UnicodeUTF8));
-    _groupRobots->setTitle(QApplication::translate("Form", "Robots", 0, QApplication::UnicodeUTF8));
-    _radBttRobot0->setText(QApplication::translate("Form", "0", 0, QApplication::UnicodeUTF8));
-    _radBttRobot1->setText(QApplication::translate("Form", "1", 0, QApplication::UnicodeUTF8));
-    groupBox_5->setTitle(QApplication::translate("Form", "Method", 0, QApplication::UnicodeUTF8));
-    _radCamera->setText(QApplication::translate("Form", "Cam.", 0, QApplication::UnicodeUTF8));
-    _radWorld->setText(QApplication::translate("Form", "World", 0, QApplication::UnicodeUTF8));
-    _lblTransScale->setText(QApplication::translate("Form", "Translational Scale: 1.0", 0, QApplication::UnicodeUTF8));
-    _lblRotScale->setText(QApplication::translate("Form", "Rotational Scale: 1.0", 0, QApplication::UnicodeUTF8));
-    _chkMagnetic->setText(QApplication::translate("Form", "Magnetic Forces", 0, QApplication::UnicodeUTF8));
-    _chkAxial->setText(QApplication::translate("Form", "Axial Forces", 0, QApplication::UnicodeUTF8));
-    _startOperation->setText(QApplication::translate("Form", "Start", 0, QApplication::UnicodeUTF8));
-    _stopOperation->setText(QApplication::translate("Form", "Stop", 0, QApplication::UnicodeUTF8));
+        groupBox->setTitle(QApplication::translate("Form", "Cameras", 0, QApplication::UnicodeUTF8));
+        _cameraTop->setText(QApplication::translate("Form", "Top", 0, QApplication::UnicodeUTF8));
+        _cameraBottom->setText(QApplication::translate("Form", "Bottom", 0, QApplication::UnicodeUTF8));
+        _cameraLeft->setText(QApplication::translate("Form", "Left", 0, QApplication::UnicodeUTF8));
+        _cameraRight->setText(QApplication::translate("Form", "Right", 0, QApplication::UnicodeUTF8));
+        _cameraFront->setText(QApplication::translate("Form", "Front", 0, QApplication::UnicodeUTF8));
+        _cameraRear->setText(QApplication::translate("Form", "Rear", 0, QApplication::UnicodeUTF8));
+        groupBox_3->setTitle(QApplication::translate("Form", "Free", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("Form", "X", 0, QApplication::UnicodeUTF8));
+        label_7->setText(QApplication::translate("Form", "Rx", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("Form", "Y", 0, QApplication::UnicodeUTF8));
+        label_8->setText(QApplication::translate("Form", "Ry", 0, QApplication::UnicodeUTF8));
+        label_3->setText(QApplication::translate("Form", "Z", 0, QApplication::UnicodeUTF8));
+        label_9->setText(QApplication::translate("Form", "Rz", 0, QApplication::UnicodeUTF8));
+        _setCamera->setText(QApplication::translate("Form", "Set Camera", 0, QApplication::UnicodeUTF8));
+        groupBox_4->setTitle(QApplication::translate("Form", "Current", 0, QApplication::UnicodeUTF8));
+        label_4->setText(QApplication::translate("Form", "X", 0, QApplication::UnicodeUTF8));
+        label_10->setText(QApplication::translate("Form", "Rx", 0, QApplication::UnicodeUTF8));
+        label_5->setText(QApplication::translate("Form", "Y", 0, QApplication::UnicodeUTF8));
+        label_12->setText(QApplication::translate("Form", "Ry", 0, QApplication::UnicodeUTF8));
+        label_6->setText(QApplication::translate("Form", "Z", 0, QApplication::UnicodeUTF8));
+        label_11->setText(QApplication::translate("Form", "Rz", 0, QApplication::UnicodeUTF8));
+        _getCamera->setText(QApplication::translate("Form", "Get Camera", 0, QApplication::UnicodeUTF8));
+        groupBox_2->setTitle(QApplication::translate("Form", "Teleoperation", 0, QApplication::UnicodeUTF8));
+        groupBox_6->setTitle(QApplication::translate("Form", "Real Cell", 0, QApplication::UnicodeUTF8));
+        _cmdConfConnection->setText(QApplication::translate("Form", "Conf. Connection", 0, QApplication::UnicodeUTF8));
+        _cmdConnectCell->setText(QApplication::translate("Form", "Connect", 0, QApplication::UnicodeUTF8));
+        _groupRobots->setTitle(QApplication::translate("Form", "Robots", 0, QApplication::UnicodeUTF8));
+        _radBttRobot0->setText(QApplication::translate("Form", "0", 0, QApplication::UnicodeUTF8));
+        _radBttRobot1->setText(QApplication::translate("Form", "1", 0, QApplication::UnicodeUTF8));
+        groupBox_5->setTitle(QApplication::translate("Form", "Method", 0, QApplication::UnicodeUTF8));
+        _radCamera->setText(QApplication::translate("Form", "Cam.", 0, QApplication::UnicodeUTF8));
+        _radWorld->setText(QApplication::translate("Form", "World", 0, QApplication::UnicodeUTF8));
+        _lblTransScale->setText(QApplication::translate("Form", "Translational Scale: 1.0", 0, QApplication::UnicodeUTF8));
+        _lblRotScale->setText(QApplication::translate("Form", "Rotational Scale: 1.0", 0, QApplication::UnicodeUTF8));
+        _chkMagnetic->setText(QApplication::translate("Form", "Magnetic Forces", 0, QApplication::UnicodeUTF8));
+        _chkAxial->setText(QApplication::translate("Form", "Axial Forces", 0, QApplication::UnicodeUTF8));
+        _startOperation->setText(QApplication::translate("Form", "Start", 0, QApplication::UnicodeUTF8));
+        _stopOperation->setText(QApplication::translate("Form", "Stop", 0, QApplication::UnicodeUTF8));
    
-
-    QGridLayout* gridLayout_10 = new QGridLayout(this);
-		QScrollArea* scrollArea = new QScrollArea();
-    scrollArea->setBackgroundRole(QPalette::Light);
-    scrollArea->setWidget(widget);
-
-    gridLayout_10->addWidget(scrollArea);
   }
 }
