@@ -13,14 +13,6 @@
 	</Parameters>
 	<Queries>
 		<Query Init="0" Goal="1" Solved="True">
-			<Result name="Path">0 11 12 13 14 15 10 16 17 18 19 20 1</Result>
-			<Result name="TotalTime">0.619</Result>
-			<Result name="SmoothTime">0</Result>
-			<Result name="Generated Samples">22</Result>
-			<Result name="Generated Edges">0</Result>
-			<Result name="Collision-check calls">228</Result>
-		</Query>
-		<Query Init="0" Goal="1" Solved="True">
 			<Result name="Path">0 21 12 22 1</Result>
 			<Result name="TotalTime">0.619</Result>
 			<Result name="SmoothTime">0</Result>
