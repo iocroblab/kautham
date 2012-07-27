@@ -75,13 +75,14 @@ using namespace std;
 			bool getSampleRandPCA(float R);
 			bool SamplerPCASpace(bool spca,float R,float tradius);
 			////////////////////////////////////////////////////////
+			int getSamplesBetweenInitGoal(double tdeltaM, double rdeltaM, bool handWholeRange);
+			////////////////////////////////////////////////////////
 			bool getSampleInGoalRegionRealworld(double tradius, double rradius, bool handWholeRange);
 			//////////////////////////////////////////////////////////
 			void printPCAComponents();
 			//////////////////////////////////////////////////////////
 			bool  getSampleInRegion(SE3Conf  *smpse3, double tradius, double rradius);
 			void saveData();//reimplemented
-			void writeFiles(FILE *fpr, FILE *fph, RobConf* joints);
 
 			bool ArmInverseKinematics(vector<KthReal> &carm, Sample *smp, bool maintainSameWrist=true);
  			void setIniGoalSe3();
@@ -102,6 +103,7 @@ using namespace std;
 			float _deltaR;
 			float _deltaI;
 			mat matPCA;
+			FILE *fp;
 	};	
   }
 }

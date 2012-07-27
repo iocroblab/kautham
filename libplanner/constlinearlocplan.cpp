@@ -60,7 +60,7 @@ namespace libPlanner {
 		oy = 0.0;
 		oz = 0.5;
 		type = 1; //1= sphere - 2=cylinder
-			_gen = new LCPRNG();
+			_gen = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
 	}
 
 /**

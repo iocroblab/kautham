@@ -48,7 +48,7 @@ namespace SDK{
   float SDKSample::sizeContainer=0.0;
   
   SDKSampler::SDKSampler(char dim, char maxLevel){
-    generator = new LCPRNG(15485341);//15485341 is a big prime number
+    generator = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
     setDim(dim);
     unsigned long int NumSamples = 0x01<<(maxLevel*dim);
     _tMat = new TMat(dim);

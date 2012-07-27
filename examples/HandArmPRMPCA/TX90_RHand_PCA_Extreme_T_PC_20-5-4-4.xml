@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<Problem name="TX90_RHand_PCA_Extreme_T.xml">
+	<Robot robot="robots/TX90_RHand_5PMD_thumb2.rob" scale="1.0">
+		<Limits name="X" min="0.0" max="1000.0" />
+		<Limits name="Y" min="0.0" max="1000.0" />
+		<Limits name="Z" min="0.0" max="1000.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-180.0" max="180.0" />
+    <Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="425.1" X="-318.5" />
+		<InvKinematic name="TX90" />
+	</Robot>
+  <Scene scene="scenes/sceneRevistaICRA09-exhaustive.iv" scale="1.0">
+    <Location TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+  </Scene>
+  <Scene scene="scenes/t.iv" scale="4.0">
+    <Location TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="810.0" Y="1280.0" X="-570.0" />
+  </Scene>
+  <Scene scene="scenes/can.wrl" scale="1000.0">
+    <Location TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="580.0" Y="1200.0" X="-350.0" />
+  </Scene>
+  <Scene scene="scenes/can.wrl" scale="1000.0">
+    <Location TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="580.0" Y="1200.0" X="-750.0" />
+  </Scene>
+	<Planner>
+		<Parameters>
+			<Name>PRMPCA HandArm</Name>
+			<LocalPlanner stepSize="0.05">Linear</LocalPlanner>
+			<Parameter name="Step Size">0.5000000075</Parameter>
+			<Parameter name="Speed Factor">3</Parameter>
+			<Parameter name="Distance Goal">150</Parameter>
+			<Parameter name="Distance Sampling PCA Goal">50</Parameter>
+			<Parameter name="Drawn Path Link">-1</Parameter>
+			<Parameter name="Max. Samples">2000</Parameter>
+			<Parameter name="Num Sampling Free PCA">20</Parameter>
+			<Parameter name="Num Sampling Free RW">5</Parameter>
+			<Parameter name="Lambda">4.0</Parameter>
+			<Parameter name="Max. Neighs">4</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="11">0.256 0.333 0.969 0.462 0.467 0.703 0.708 0.5 0 0.5 0.5</Init>
+				<Goal dim="11">0.274 0.591 0.797 0.487 0.333 0.668 0.4 0.851 0.743 1 0.5</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

@@ -50,7 +50,7 @@ namespace libSampling{
 
   GaussianSampler::GaussianSampler(char dim, KthReal s, WorkSpace *w){
 	ws = w;
-    genRand = new LCPRNG(15485341);//15485341 is a big prime number
+    genRand = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
     setDim(dim);
 	randgen = new RandomSampler(dim);
 	sigma = s;

@@ -50,7 +50,7 @@ namespace libSampling{
   LCPRNG* RandomSample::gen = NULL;
 
   RandomSampler::RandomSampler(char dim){
-    genRand = new LCPRNG(15485341);//15485341 is a big prime number
+    genRand = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
     setDim(dim);
     RandomSample::gen=genRand;
   }

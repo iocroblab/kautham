@@ -52,7 +52,8 @@
       WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloudSize, KthReal cloudRad)
       :PRMPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize){
 			
-	    _gen = new LCPRNG();
+	    //_gen = new LCPRNG(15485341);//15485341 is a big prime number
+		_gen = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//
 
         _guiName = "PRMHand Planner";
         _cloudSize = cloudSize;

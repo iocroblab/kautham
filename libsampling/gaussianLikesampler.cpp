@@ -53,7 +53,7 @@ namespace SDK{
 		sdkgen = new SDKSampler(dim,maxLevel);
 		randgen = new RandomSampler(dim);
 		haltgen = new HaltonSampler(dim);
-		generator = new LCPRNG(15485341);//15485341 is a big prime number
+		generator = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
 		ss = new SampleSet();
 		ws = w;
 		ss->setTypeSearch(ANNMETHOD);//(BRUTEFORCE);//

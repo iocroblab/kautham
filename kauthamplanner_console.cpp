@@ -151,6 +151,7 @@ int main(int argc, char* argv[]){
         }else{
           cout << "The problem has not been solve successfully.\n";
           badSol++;
+/*
           KthQuery& tmp = _planner->getQueries().at( _planner->getQueries().size() - 1 );
           times[0] += tmp.getTotalTime();
           times[1] += tmp.getSmoothTime();
@@ -158,7 +159,7 @@ int main(int argc, char* argv[]){
           sampCount[1] += tmp.getConnectedSamples();
           sampCount[2] += tmp.getPath().size();
 		  checks += tmp.getCollCheckCalls();
-
+*/
 #ifndef KAUTHAM_USE_MPI
           //if( badSol >= tryTimes / 5 )
           //  throw(1);
@@ -197,6 +198,7 @@ int main(int argc, char* argv[]){
         ofstream outputFile("stats.kth", ios::out|ios::app);
 
 	      if( outputFile.is_open() ){
+			  /*
           outputFile << "Problem solved:\t"     << absPath                << endl;
           outputFile << "TryTimes: \t"          << tryTimes               << endl;
           outputFile << "BadSolved: \t"         << badSol                 << endl;
@@ -206,6 +208,17 @@ int main(int argc, char* argv[]){
           outputFile << "Connected samples: \t" << sampCount[1]/(float) tryTimes  << endl;
           outputFile << "Nodes in solution path: \t"   << sampCount[2]/(float) tryTimes  << endl;
           outputFile << "Collision-check calls: \t"   << checks/tryTimes << endl;
+		  */
+			outputFile << "Problem solved:\t"     << absPath                << endl;
+			outputFile << tryTimes  << "\t";
+			outputFile << badSol  << "\t";
+			if(badSol!=tryTimes)
+			{
+				outputFile << times[0]/(tryTimes-badSol)  << "\t";
+				outputFile << sampCount[1]/(float) (tryTimes-badSol)  << "\t";
+				outputFile << checks/(tryTimes-badSol)  << endl;
+			}
+			else outputFile << endl;
 	      }else           //there were any problems with the copying process
           throw(1);
 

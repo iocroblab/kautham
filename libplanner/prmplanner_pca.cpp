@@ -311,7 +311,7 @@ namespace libPlanner {
       else
       {
 
-        LCPRNG* rgen = new LCPRNG(15485341);//15485341 is a big prime number
+        LCPRNG* rgen = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
         count = _samples->getSize();
        // Sample* smp = NULL;
         count = _samples->getSize();
@@ -492,7 +492,7 @@ namespace libPlanner {
 
 	bool PRMPlannerPCA::getSampleRandPCA2D()
 {
-	 LCPRNG* gen = new LCPRNG(15485341);
+	 LCPRNG* gen = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);
 	///////////////////////////////////////////////////////////////////////
 	int sizevd=0; //inicialización de la variable
 

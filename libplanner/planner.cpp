@@ -95,6 +95,7 @@ namespace libPlanner{
 
 	  clock_t entertime = clock();
 
+	_solved = false;
     if(trySolve()){
 
 	    if(_totalTime==0.0)
