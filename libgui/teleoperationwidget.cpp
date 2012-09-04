@@ -178,6 +178,10 @@ namespace libGUI{
       param << QString(_ipMaster.c_str()) << QString(_ipNode.c_str()) 
             << QString(_nodeName.c_str()) << QString().setNum(_freqPubli) ;
 #ifdef WIN32
+//TODO: Here I have to include the path to the ROS_FUERTE dependencies in the PATH environment variable
+      QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+      env.insert("PATH", "C:\\opt\\rosdeps\\x86\\lib;" + env.value("Path"));
+      _rosClient->setProcessEnvironment(env);
       _rosClient->start( "localClient.exe", param );
 #else
       _rosClient->start( "./localClient", param );

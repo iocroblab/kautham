@@ -47,7 +47,10 @@
 
 #include "prmAUROhandarmplanner.h"
 #include "ML_locplan.h"
- 
+#include <iostream>
+#include <fstream>
+
+#define RAD2GRAD 180.0/M_PI
  namespace libPlanner {
   namespace PRM{
 	
@@ -1337,7 +1340,6 @@
 
     void PRMAUROHandArmPlanner::saveData()
 	{
-
 		/*
 		setIniGoalSe3();
 		for(int i=0;i<=10;i++)
