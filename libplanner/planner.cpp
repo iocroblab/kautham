@@ -46,11 +46,14 @@
 #include <boost/algorithm/string.hpp>
 #include "planner.h"
 #include <libutil/pugixml/pugixml.hpp>
+#include <iostream>
+#include <fstream>
 
 using namespace Kautham;
 using namespace pugi;
 
 namespace libPlanner{
+  const KthReal RAD2GRAD=180.0/M_PI;
   Planner::Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
     WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize){
     _guiName = _idName = "";
@@ -132,6 +135,31 @@ namespace libPlanner{
     _simulationPath.clear();
     _wkSpace->eraseSolution();
   }
+
+  void Planner::exportSimulationPath(){
+    if( isSolved() ){
+      ofstream  _theFile("Simulation_path_Rn.txt", ios::trunc | ios::out );
+
+      if( getSimulationPath()->size() == 0 )
+        moveAlongPath(0);
+
+      for(size_t i = 0; i < getSimulationPath()->size(); i++){
+        _wkSpace->moveRobotsTo(getSimulationPath()->at(i));
+				std::vector<KthReal>& joints = _wkSpace->getRobot(0)->getCurrentPos()->getRn().getCoordinates();
+        KthReal value=0;
+        for(size_t j=0; j< joints.size(); j++){
+          value = joints.at(j)* RAD2GRAD;
+          _theFile << value << " ";
+        }
+        _theFile << std::endl;
+      }
+
+      _theFile.close();
+    }else{
+      std::cout << "The problem is not solved yet" << std::endl;
+    }
+  }
+
   
   void Planner::moveAlongPath(unsigned int step){
     if(_solved){
@@ -252,6 +280,7 @@ namespace libPlanner{
     }
     
     saveData();
+    exportSimulationPath();
     return doc.save_file(path.c_str());
   }
 

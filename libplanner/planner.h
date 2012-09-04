@@ -117,6 +117,7 @@ namespace libPlanner {
       else
         return NULL;
     }
+    void                           exportSimulationPath();
 
     inline vector<KthQuery>&       getQueries(){return _queries;}
     bool                           addQuery(int init, int goal );
