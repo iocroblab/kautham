@@ -78,6 +78,8 @@ using namespace std;
 			int getSamplesBetweenInitGoal(double tdeltaM, double rdeltaM, bool handWholeRange);
 			////////////////////////////////////////////////////////
 			bool getSampleInGoalRegionRealworld(double tradius, double rradius, bool handWholeRange);
+			/////////////////////////////////////////////////////////
+			//bool getSampleInGoalRegionRealworldGaussian(double tdeltaM, double rdeltaM, bool handWholeRange);
 			//////////////////////////////////////////////////////////
 			void printPCAComponents();
 			//////////////////////////////////////////////////////////
