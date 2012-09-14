@@ -122,6 +122,24 @@ namespace libPlanner {
 		setStepSize(ssize);//also changes stpssize of localplanner
 	  
 		_guiName = _idName = "GUIBRO Grid Planner";
+
+
+		//add parameters defining the bronchoscope
+		_radius = 1.0;
+		_minbeta_DEG = (KthReal) -90; //(-M_PI/2);//-90degrees
+		_maxbeta_DEG = (KthReal) (2*M_PI/3);//120 degrees
+		_minalpha_DEG = (KthReal) (-M_PI/3);//-60degrees;
+		_maxalpha_DEG = (KthReal) (M_PI/2);//90degrees
+		addParameter("Radius", _radius);
+		addParameter("min Beta", _minbeta_DEG);
+		addParameter("Max Beta", _maxbeta_DEG);
+		addParameter("min Alpha", _minalpha_DEG);
+		addParameter("Max Alpha", _maxalpha_DEG);
+
+		//set _minbeta_DEG, _maxbeta_DEG, _minalpha_DEG, _maxalpha_DEG
+		setAngleLimits(_minbeta_DEG*M_PI/180.0, _maxbeta_DEG*M_PI/180.0, _minalpha_DEG*M_PI/180.0, _maxalpha_DEG*M_PI/180.0);
+
+
 		addParameter("Step Size", ssize);
 		addParameter("Speed Factor", _speedFactor);
 
