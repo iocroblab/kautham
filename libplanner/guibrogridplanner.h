@@ -92,7 +92,7 @@ using namespace workspacegridplanner;
 		void printInfo(guibroSample *gs);
 		void moveAlongPath(unsigned int step); //reimplemented
 
-		bool collisionCheck(KthReal *distcost, KthReal *NF1cost, bool onlytip=false, KthReal radius=1.0);
+		bool collisionCheck(KthReal *distcost, KthReal *NF1cost, bool onlytip=false);
 		//Add public data and functions
 		int look(KthReal stepsahead, KthReal *bestAlpha, KthReal *bestBeta);
 		bool testLookAtPoint(int numPoint, KthReal alpha, KthReal xi, KthReal stepsahead, KthReal *dcost, KthReal *NF1cost );
@@ -108,7 +108,7 @@ using namespace workspacegridplanner;
 		inline int getTouchingLinks(){return  _touchinglabels.size();};
 		
 		//moves the bronchoscope if there are linbks touching the walls
-		bool comply(KthReal *distcost, KthReal *NF1cost, bool onlytip=false, KthReal radius=1.0);
+		bool comply(KthReal *distcost, KthReal *NF1cost, bool onlytip=false);
 
 		//computes the distance cost as the dot product of the advance motion with the distance gradient at the tip
 		void computedcost(mt::Point3 posini,mt::Point3 posend, KthReal *dcost);
@@ -133,6 +133,7 @@ using namespace workspacegridplanner;
 
 		workspacegridPlanner* grid;
 
+		KthReal _bronchoscopeRadius;
 
 	    private:
 		//Add private data and functions
@@ -145,6 +146,10 @@ using namespace workspacegridplanner;
 		KthReal _evallookatpointstime;
 		KthReal _testlookatpointtime;
 		KthReal _advancecollchecktime;
+
+		//init of trachea 
+		KthReal _tx,_ty,_tz;
+
 		int _randomness;//to add random noise to the selection of lookatpoints
 		
 		int _nodule;//index of the obstacle that represents the nodule to be reached

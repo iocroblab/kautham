@@ -40,6 +40,7 @@
  ***************************************************************************/
 
 #include "problem.h"
+#include "consbronchoscopykin.h"
 #include <libplanner/linearlocplan.h>
 #include <libplanner/constlinearlocplan.h>
 #include <libplanner/ML_locplan.h>
@@ -261,8 +262,14 @@ namespace libProblem {
         // Setup the Constrained Kinematic if it has one.
         if((*it).child("ConstrainedKinematic")){
           name = (*it).child("ConstrainedKinematic").attribute("name").value();
-          if( name == "BRONCHOSCOPY" )
+		  if( name == "BRONCHOSCOPY" ){
             rob->setConstrainedKinematic( Kautham::BRONCHOSCOPY );
+            double amin = (*it).child("ConstrainedKinematic").attribute("amin").as_double();
+            double amax = (*it).child("ConstrainedKinematic").attribute("amax").as_double();
+            double bmin = (*it).child("ConstrainedKinematic").attribute("bmin").as_double();
+            double bmax = (*it).child("ConstrainedKinematic").attribute("bmax").as_double();
+			((ConsBronchoscopyKin*)rob->getCkine())->setAngleLimits(bmin*M_PI/180.0, bmax*M_PI/180.0, amin*M_PI/180.0, amax*M_PI/180.0);
+		  }
           else
             rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
         }else{
@@ -327,6 +334,10 @@ namespace libProblem {
       if(name == "DistanceMap" ){
 			  _wspace->addDistanceMapFile(dir + (*it).attribute("distanceMap").value());
 	    }
+      if(name == "DimensionsFile" ){
+			  _wspace->addDimensionsFile(dir + (*it).attribute("filename").value());
+			  _wspace->addDirCase(dir);
+	    }	  
 
     }// closing for(xml_node_iterator it = tmpNode.begin(); it != tmpNode.end(); ++it){ // Processing each child
 

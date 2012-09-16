@@ -83,6 +83,12 @@ namespace libProblem{
 
 	    void addDistanceMapFile(string distanceFile);
 	    inline string getDistanceMapFile(){return distanceMapFile;};
+		
+	    void addDimensionsFile(string dfile);
+	    inline string getDimensionsFile(){return dimensionsFile;};
+		
+	    void addDirCase(string dirc);
+	    inline string getDirCase(){return dirCase;};
 	  //void addNeighborhoodMapFile(string neighFile);
 	  //inline string getNeighborhoodMapFile(){return neighborhoodMapFile;};
 
@@ -122,6 +128,8 @@ namespace libProblem{
       vector<RobWeight*>    _robWeight;
 
 	  string distanceMapFile;
+	  string dimensionsFile;
+	  string dirCase;
 	  //string neighborhoodMapFile;
 
 	private:

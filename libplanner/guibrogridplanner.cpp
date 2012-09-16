@@ -124,20 +124,9 @@ namespace libPlanner {
 		_guiName = _idName = "GUIBRO Grid Planner";
 
 
-		//add parameters defining the bronchoscope
-		_radius = 1.0;
-		_minbeta_DEG = (KthReal) -90; //(-M_PI/2);//-90degrees
-		_maxbeta_DEG = (KthReal) (2*M_PI/3);//120 degrees
-		_minalpha_DEG = (KthReal) (-M_PI/3);//-60degrees;
-		_maxalpha_DEG = (KthReal) (M_PI/2);//90degrees
-		addParameter("Radius", _radius);
-		addParameter("min Beta", _minbeta_DEG);
-		addParameter("Max Beta", _maxbeta_DEG);
-		addParameter("min Alpha", _minalpha_DEG);
-		addParameter("Max Alpha", _maxalpha_DEG);
+		////add parameters defining the bronchoscope
+		//_radius = 1.0;
 
-		//set _minbeta_DEG, _maxbeta_DEG, _minalpha_DEG, _maxalpha_DEG
-		setAngleLimits(_minbeta_DEG*M_PI/180.0, _maxbeta_DEG*M_PI/180.0, _minalpha_DEG*M_PI/180.0, _maxalpha_DEG*M_PI/180.0);
 
 
 		addParameter("Step Size", ssize);
@@ -159,6 +148,71 @@ namespace libPlanner {
 		grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize, thresholdDist);
 		pparse = new PathParse(9);
 		//pparse->setDimPoint(9);
+
+		//read dimensions.txt file
+		FILE *fp;
+		string filedim = _wkSpace->getDimensionsFile();
+		fp = fopen(filedim.c_str(),"rt");
+		//read first line: size of CT in voxels
+		int nx,ny,nz;
+		fscanf(fp,"%d %d %d\n",&nx,&ny,&nz);
+		//read second line: size of each voxelsin mm
+		float vx,vy,vz;
+		fscanf(fp,"%f %f %f\n",&vx,&vy,&vz);
+		//read third line: size of CT in mm
+		float dx,dy,dz;
+		fscanf(fp,"%f %f %f\n",&dx,&dy,&dz);
+		//read fourth line: location of center pf trachea in mmm
+		float tx,ty,tz;
+		fscanf(fp,"%f %f %f\n",&tx,&ty,&tz);
+		_tx = (KthReal)(tx/dx);
+		_ty = (KthReal)(ty/dy);
+		_tz = (KthReal)(tz/dz);
+
+		//read fourth line: location of nodule in mm
+		float nodulex,noduley,nodulez,noduleradius;
+		fscanf(fp,"%f %f %f %f\n",&nodulex,&noduley,&nodulez,&noduleradius);
+		fclose(fp);
+
+
+		//write (or rewrite) file box.iv
+		string filebox = _wkSpace->getDirCase() + "MODELS/box.iv";
+		fp = fopen(filebox.c_str(),"wt");
+		fprintf(fp,"#Inventor V2.1 ascii\n");
+		fprintf(fp,"Separator{\n");
+		fprintf(fp,"\t Material {\n");
+		fprintf(fp,"\t\t diffuseColor 1.0 0.0 0.0\n");
+		fprintf(fp,"\t\t transparency 0.5\n");
+		fprintf(fp,"\t }\n");
+		fprintf(fp,"\t Translation {\n");
+		fprintf(fp,"\t\t translation %f %f %f\n",dx/2,dy/2,dz/2);
+		fprintf(fp,"\t }\n");
+		fprintf(fp,"\t Cube {\n");
+		fprintf(fp,"\t\t width %f\n",dx);
+		fprintf(fp,"\t\t height %f\n",dy);
+		fprintf(fp,"\t\t depth %f\n",dz);
+		fprintf(fp,"\t }\n");
+		fprintf(fp,"}\n");
+		fclose(fp);
+
+		//write (or rewrite) file nodule.iv
+		string filenodule = _wkSpace->getDirCase() + "MODELS/nodule.iv";
+		fp = fopen(filenodule.c_str(),"wt");
+		fprintf(fp,"#Inventor V2.1 ascii\n");
+		fprintf(fp,"DEF nodule Separator {\n");
+		fprintf(fp,"\t Material {\n");
+		fprintf(fp,"\t\t diffuseColor 1.0 0.5 0.5\n");
+		fprintf(fp,"\t\t specularColor 0.5 0.5 0.5\n");
+		fprintf(fp,"\t\t transparency 0.5\n");
+		fprintf(fp,"\t }\n");
+		fprintf(fp,"\t Sphere {\n");
+		fprintf(fp,"\t\t radius %f\n",noduleradius);
+		fprintf(fp,"\t }\n");
+		fprintf(fp,"}\n");
+		fclose(fp);
+
+
+		_bronchoscopeRadius = 1.0;
     }
 
 	//! void destructor
@@ -172,7 +226,7 @@ namespace libPlanner {
 	//!at the bottom and top of the cylinder. The bottom sphere of one link coincides with the
 	//!top sphere of the previous link.
 	//!For collision-check purposes the bottom sphere of each link is considered.
-	bool GUIBROgridPlanner::collisionCheck(KthReal *distcost, KthReal *NF1cost, bool onlytip, KthReal radius)
+	bool GUIBROgridPlanner::collisionCheck(KthReal *distcost, KthReal *NF1cost,  bool onlytip)
 	{
 		//number maximum of touching links
 		int maxTouching = 5;
@@ -206,7 +260,7 @@ namespace libPlanner {
 		bool freesphere;
 		//threshold distance, measured in cells,
 		//int threshold = (int)(sqrt(3.0)*maxSize/radius);//sqrt(3) is added to consider the distance to the vertex of the voxel
-		int threshold = (int)(radius/maxSize); //+1;
+		int threshold = (int)(_bronchoscopeRadius/maxSize); //+1;
 
 		//int threshold = 2;
 		//reset the cost
@@ -362,9 +416,9 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
 
 
 	//! comply moves the bronchoscope to comply to a multicontact situation
-	bool GUIBROgridPlanner::comply(KthReal *distcost, KthReal *NF1cost, bool onlytip, KthReal radius)
+	bool GUIBROgridPlanner::comply(KthReal *distcost, KthReal *NF1cost, bool onlytip )
 	{
-		bool c=collisionCheck(distcost, NF1cost, onlytip, radius);
+		bool c=collisionCheck(distcost, NF1cost,  onlytip);
 
 
 		return c;
@@ -1502,11 +1556,16 @@ bool GUIBROgridPlanner::trySolve()
 
 			std::vector<KthReal>& initcoords = _init->getCoords();
 			initcoords.at(6) = 0.5; //alpha forced to zero
-			initcoords.at(7) = 0.5; //beta forced to zero
+			initcoords.at(7) = 0.5; //beta forced to zero	
+			//write the initial position of the bronchoscope (xyz of the Init sample)
+			initcoords.at(0) = _tx; //x  //0.546 0.614 0.759 0.0 0.0 0.244 0.5 0.5
+			initcoords.at(1) = _ty; //y
+			initcoords.at(2) = _tz; //z
 			_init->setCoords(initcoords);
 
+/////////////////////			
+_init->setMappedConf(_wkSpace->getConfigMapping());//no se para que se hace esto. como cambio entonces las coords????
 			
-			_init->setMappedConf(_wkSpace->getConfigMapping());
 
 			//verify correctness of init sample
 			if(findGraphVertex(_init,&vi)==false)

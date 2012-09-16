@@ -1,3 +1,5 @@
+
+#include <libproblem/ivworkspace.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include <boost/graph/astar_search.hpp>
@@ -9,31 +11,35 @@
 
 #include <libsampling/lcprng.h>
 
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoPointSet.h>
+#include <Inventor/nodes/SoLineSet.h>
+
 namespace libPlanner{
     namespace RRT{
       RRTPlanner::RRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
                                WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize)
                                    :Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize){
 			
-			  _wkSpace = ws;			
-			  _neighThress = 50.0;
+		_wkSpace = ws;			
+		_neighThress = 50.0;
         _kNeighs = 1;
         _isGraphSet = false;
         _maxNumSamples = 1000;
         _speedFactor = 1;
-			  _extDist = 5;
+		_extDist = 5;
         _ssize=ssize;
         //ssize=0.01;
 
         _solved = false;
-			  setStepSize(0.01);//also changes stepsize of localplanner
+		setStepSize(0.01);//also changes stepsize of localplanner
 
         _idName = _guiName = "RRT";
         addParameter("DELTA", ssize);
 			  //removeParameter("Max. Neighs");
         addParameter("SAMPLES", _maxNumSamples);
         addParameter("SPEED", _speedFactor);
-			  addParameter("EXTEND_DISTANCE", _extDist); // how far the smp_new is taken
+		addParameter("EXTEND_DISTANCE", _extDist); // how far the smp_new is taken
 
         _labelCC=0;
 
@@ -92,173 +98,244 @@ namespace libPlanner{
 		
 		// TODO: how to save the data
         void RRTPlanner::saveData(){
-   //         //cout << "RRTPlanner::saveData not implemented"<<endl<<flush;
-			//float Distinitgoal = _init->getDistance(_goal,BRONCOSPACE);
-			//cout<<" Distinitgoal: "<<Distinitgoal<<endl<<flush;
+
+
         }
 
 
-		//! The actual planner 
-		bool RRTPlanner::trySolve(){
-
-      // Sample a new sample
-      Sample* smp_rand = NULL;//_sampler->nextSample();
-			Sample* smp_near = NULL;
-			unsigned int idx_near;
-      Sample* smp_new = NULL;
-			//int idx_new;
-			Sample* smp_inter = NULL;
-
-			KthReal dist2goal=_extDist+1;
-			//float dist2goal_0; it's not necessary a comparatory dist. Distance to goal will be always done with the last sample (smp_new) taken: 
-			//if the algorithm has not stopped so far, it means that the distance has not been small enough to connect with the goal.
-
-      unsigned int hms=0;
-      bool nearGoalConnect=false;
-
-			
-      if ((_init==NULL)||(_goal==NULL)){
-        cout << "A problem occured, maybe init and goal configuration you set does not exist anymore. \n"; 
-        return false;
-      }
-
-			// delete all the elements from the sampleList and insert just the _init
-			if( _samples->getSize() > 0){
-				char sampleDIM = _wkSpace->getDimension();
-				SmpInit = new Sample(sampleDIM);
-				SmpInit->setCoords(_init->getCoords());
-				//_wkSpace->collisionCheck(SmpInit);
-        SmpInit->setMappedConf(_wkSpace->getConfigMapping(_init));
-				SmpGoal = new Sample(sampleDIM);
-				SmpGoal->setCoords(_goal->getCoords());
-				//_wkSpace->collisionCheck(SmpGoal);
-        SmpGoal->setMappedConf(_wkSpace->getConfigMapping(_goal));
-				_samples->clear();
-				_init=SmpInit;
-				_goal=SmpGoal;
-				if(typeid(*_sampler) == typeid(SDK::GaussianLikeSampler))
-        {
-          int i=9;
-          ((SDK::GaussianLikeSampler*)_sampler)->clear();
-				}
-				_samples->add(SmpInit);
-				if(_samples->isAnnSet()) _samples->loadAnnData();
-			}
-			else
+	void RRTPlanner::drawCspace()
+	{
+		if(_wkSpace->getDimension()==2)
+		{
+			//first delete whatever is already drawn
+			while (_sceneCspace->getNumChildren() > 0)
 			{
-				return false;
+				_sceneCspace->removeChild(0);
 			}
-			//libGUI::SamplesWidget::updateSampleList();
-			
-			clearGraph();
 
-			//// Assuming that the goal sample is always free of collisions
-   //   _locPlanner->setInitSamp(SmpInit);
-   //   _locPlanner->setGoalSamp(SmpGoal);
-   //   
-   //   if ((SmpInit->getDistance(SmpGoal,CONFIGSPACE))<_extDist && _locPlanner->canConect()){ //If goal is already inside the accepted radius 
-   //     _solved=true;
-   //     _samples->add(SmpGoal);
-   //     SmpGoal->addNeigh(_samples->indexOf(_init));
-   //    	connect2samples(_init,SmpGoal,SmpGoal->getDistance(SmpInit,CONFIGSPACE));
-   //      if (findPath()) {
-   //         cout << "The path size is " << _path.size() << "\n" ;
-   //         cout << "The number of samples used is " << _samples->getSize() << "\n" ;
-   //         return true;
-   //       }
-			//	  else 
-			//		  return false;
-   //   }
-   //   else{
+			//draw points
+			SoSeparator *psep = new SoSeparator();
+			SoCoordinate3 *points  = new SoCoordinate3();
+			SoPointSet *pset  = new SoPointSet();
+			vector<Sample*>::iterator itera = _samples->getBeginIterator();
+			int i=0;
+			KthReal xmin=100000000.0;
+			KthReal xmax=-100000000.0;
+			KthReal ymin=100000000.0;
+			KthReal ymax=-100000000.0;
+			while((itera != _samples->getEndIterator()))
+			{
+				KthReal x=(*itera)->getCoords()[0];
+				KthReal y=(*itera)->getCoords()[1];
+
+				points->point.set1Value(i,x,y,0);
+
+				if(x<xmin) xmin=x;
+				if(x>xmax) xmax=x;
+				if(y<ymin) ymin=y;
+				if(y>ymax) ymax=y;
+
+				itera++;
+				i++;
+			}
+			SoDrawStyle *pstyle = new SoDrawStyle;
+			pstyle->pointSize = 2;
+			SoMaterial *color = new SoMaterial;
+			color->diffuseColor.setValue(0.2,0.8,0.2);
+
+			//draw samples
+			psep->addChild(color);
+			psep->addChild(points);
+			psep->addChild(pstyle);
+			psep->addChild(pset);
+
+			_sceneCspace->addChild(psep);
+			
+
+			//draw edges: 
+			SoSeparator *lsep = new SoSeparator();
+			vector<rrtEdge*>::iterator itC;
+			for(itC = edges.begin(); itC != edges.end(); ++itC)
+			{	
+				SoCoordinate3 *edgepoints  = new SoCoordinate3();
+				edgepoints->point.set1Value(0,points->point[(*itC)->first]);
+				edgepoints->point.set1Value(1,points->point[(*itC)->second]);
+				lsep->addChild(edgepoints);
+
+				SoLineSet *ls = new SoLineSet;
+				ls->numVertices.set1Value(0,2);//two values
+				//cout<<"EDGE "<<(*itC)->first<<" "<<(*itC)->second<<endl;
+				lsep->addChild(ls);
+			}
+			_sceneCspace->addChild(lsep);
+
+			//draw path: 
+			if(_solved)
+			{
+				SoSeparator *pathsep = new SoSeparator();
+				list<rrtVertex>::iterator spi = shortest_path.begin();
+				list<rrtVertex>::iterator spi_init = shortest_path.begin();
+
+				for(++spi; spi != shortest_path.end(); ++spi)
+				{	
+					SoCoordinate3 *edgepoints  = new SoCoordinate3();
+					edgepoints->point.set1Value(0,points->point[*spi_init]);
+					edgepoints->point.set1Value(1,points->point[*spi]);
+					pathsep->addChild(edgepoints);
+
+					SoLineSet *ls = new SoLineSet;
+					ls->numVertices.set1Value(0,2);//two values
+					SoDrawStyle *lstyle = new SoDrawStyle;
+					lstyle->lineWidth=2;
+					SoMaterial *path_color = new SoMaterial;
+					path_color->diffuseColor.setValue(0.8,0.2,0.2);
+					pathsep->addChild(path_color);
+					pathsep->addChild(lstyle);
+					pathsep->addChild(ls);
+					spi_init = spi;
+				}
+				_sceneCspace->addChild(pathsep);
+			}
+
+
+			//draw floor
+			SoSeparator *floorsep = new SoSeparator();
+			SoCube *cs = new SoCube();
+			cs->width = xmax-xmin;
+			cs->depth = (xmax-xmin)/50.0;
+			cs->height = ymax-ymin;
+			
+			SoTransform *cub_transf = new SoTransform;
+			SbVec3f centre;
+			centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,-cs->depth.getValue());
+			cub_transf->translation.setValue(centre);
+			cub_transf->recenter(centre);	
+			
+			SoMaterial *cub_color = new SoMaterial;
+			cub_color->diffuseColor.setValue(0.2,0.2,0.2);
+
+			floorsep->addChild(cub_color);
+			floorsep->addChild(cub_transf);
+			floorsep->addChild(cs);
+			_sceneCspace->addChild(floorsep);
+		}
+	}
+
+
+
+		//! The actual planner 
+	bool RRTPlanner::trySolve()
+	{
+		Sample* smp_rand = NULL;
+		Sample* smp_near = NULL;
+		unsigned int idx_near;
+		Sample* smp_new = NULL;
+		Sample* smp_inter = NULL;
+		KthReal dist2goal;
+		unsigned int hms=0;
+		bool nearGoalConnect=false;
+
+			
+		if ((_init==NULL)||(_goal==NULL)){
+			cout << "A problem occured, maybe init and goal configuration you set does not exist anymore. \n"; 
+			return false;
+		}
+
+		// delete all the elements from the sampleList and insert just the _init
+		if( _samples->getSize() > 0){
+			char sampleDIM = _wkSpace->getDimension();
+			SmpInit = new Sample(sampleDIM);
+			SmpInit->setCoords(_init->getCoords());
+			//_wkSpace->collisionCheck(SmpInit);
+			SmpInit->setMappedConf(_wkSpace->getConfigMapping(_init));
+			SmpGoal = new Sample(sampleDIM);
+			SmpGoal->setCoords(_goal->getCoords());
+			//_wkSpace->collisionCheck(SmpGoal);
+			SmpGoal->setMappedConf(_wkSpace->getConfigMapping(_goal));
+			_samples->clear();
+			_init=SmpInit;
+			_goal=SmpGoal;
+
+			_samples->add(SmpInit);
+			if(_samples->isAnnSet()) _samples->loadAnnData();
+		}
+		else
+		{
+			return false;
+		}
+			
+		clearGraph();
         do{
           if (hms%3==0) // every 3 sample the Goal is used to grow the tree.
             smp_rand=SmpGoal;
           else
             smp_rand = _sampler->nextSample();
 
-          cout << "Total number of samples " << ++hms <<"\n"; 
-          
+			cout << "Total number of samples " << ++hms <<"\n"; 
+
           // Search the nearest sample in the existing RRT graph
-				  vector<unsigned int> * ann_neigh=_samples->findAnnNeighs(smp_rand, 1000000);
-				  idx_near=ann_neigh->at(0);
-				  smp_near=_samples->getSampleAt(idx_near);
 
-				  // Control if the distance between smp_rand and smp_near is < _extDist 
-				  KthReal dist=smp_rand->getDistance(smp_near,CONFIGSPACE);
+			//ERROR: per tal que findAnnNeighs funcioni, smp_rand hauria de pertanyer a samples!!!!!!!
+			//vector<unsigned int> * ann_neigh=_samples->findAnnNeighs(smp_rand, 1000000);
+			vector<unsigned int> * ann_neigh=_samples->findBFNeighs(smp_rand, 1000000,1);
 
-				  if (dist<=_extDist){
-            _locPlanner->setInitSamp(smp_near);
-            _locPlanner->setGoalSamp(smp_rand);
-            if(!_wkSpace->collisionCheck(smp_rand) && _locPlanner->canConect()){
-						  smp_new=smp_rand;
-						  _samples->add(smp_new);
-						  //idx_new=_samples->indexOf(smp_new);
-              smp_new->clearNeighs();
-						  smp_new->addNeigh(idx_near); // considering the father as the neighbour so as to do backtracking when building the path.
-						  connect2samples(smp_near,smp_new,dist);	// building the edge
-              dist2goal=(_samples->getSampleAt((_samples->getSize())-1))->getDistance(SmpGoal,CONFIGSPACE);
-              if (dist2goal==0) nearGoalConnect=true;
-					  }
-					  else if (smp_rand!=SmpGoal)
-						  delete smp_rand; 
-            else
-               smp_rand=NULL;
+			idx_near=ann_neigh->at(0);
+			smp_near=_samples->getSampleAt(idx_near);
 
-				  }
-				  else { // if it is outside the radius, an interpolation must be done (from smp_near till smp_near+_extDist)
-					  _wkSpace->collisionCheck(smp_rand);
-            smp_inter=smp_near->interpolate(smp_rand,_extDist/dist);
-            _locPlanner->setInitSamp(smp_near);
-            _locPlanner->setGoalSamp(smp_inter);
-            if(!_wkSpace->collisionCheck(smp_inter) && _locPlanner->canConect()){
-						  smp_new=smp_inter;
-						  _samples->add(smp_new);
-						  //idx_new=_samples->indexOf(smp_new);
-              smp_new->clearNeighs();
-              smp_new->addNeigh(idx_near); // considering the father as the neighbour so as to do backtracking when building the path.
-              connect2samples(smp_near,smp_new,_extDist); // building the edge 
-              dist2goal=(_samples->getSampleAt((_samples->getSize())-1))->getDistance(SmpGoal,CONFIGSPACE);
-              if (dist2goal==0) nearGoalConnect=true;
-            }
-            else {
-						  if (smp_rand!=SmpGoal) 
-                delete smp_rand; 
-              else
-                smp_rand=NULL;
-						  delete smp_inter; // smp_inter=NULL;
-					  } 
-				  }
+			// Control if the distance between smp_rand and smp_near is < _extDist 
+			//KthReal dist=smp_rand->getDistance(smp_near,CONFIGSPACE);!!!!ERROR falta _config
+			KthReal dist=_wkSpace->distanceBetweenSamples(*smp_rand,*smp_near,CONFIGSPACE);
+			bool incollision=false;
+
+			if (dist<=_extDist){
+				_locPlanner->setInitSamp(smp_near);
+				_locPlanner->setGoalSamp(smp_rand);
+				if (smp_rand!=SmpGoal) incollision = _wkSpace->collisionCheck(smp_rand);
+				if(incollision==false && _locPlanner->canConect()){
+					smp_new=smp_rand;
+					_samples->add(smp_new);
+					smp_new->clearNeighs();
+					smp_new->addNeigh(idx_near); // considering the father as the neighbour so as to do backtracking when building the path.
+					connect2samples(smp_near,smp_new,dist);	// building the edge
+					nearGoalConnect=true;
+				}
+				if (incollision == true)
+				  delete smp_rand; 
+			}
+			else { // if it is outside the radius, an interpolation must be done (from smp_near till smp_near+_extDist)
+				smp_inter=smp_near->interpolate(smp_rand,_extDist); // ,_extDist/dist);
+				if (smp_rand!=SmpGoal) delete smp_rand;
+				_locPlanner->setInitSamp(smp_near);
+				_locPlanner->setGoalSamp(smp_inter);
+				if(_wkSpace->collisionCheck(smp_inter))
+				{
+					delete smp_inter;
+				}
+				else if(_locPlanner->canConect()){
+					smp_new=smp_inter;
+					_samples->add(smp_new);
+					smp_new->clearNeighs();
+					smp_new->addNeigh(idx_near); // considering the father as the neighbour so as to do backtracking when building the path.
+					connect2samples(smp_near,smp_new,_extDist); // building the edge 
+				}
+			}
 				
-          if (_samples->changed() && dist2goal<_extDist && !nearGoalConnect) {
-            _locPlanner->setInitSamp((_samples->getSampleAt((_samples->getSize())-1)));
-            _locPlanner->setGoalSamp(SmpGoal);
-            if (_locPlanner->canConect()) 
-              nearGoalConnect=true;
-          }
-
-			  }while(((_samples->getSize())<_maxNumSamples)&&(!nearGoalConnect));
+		}while(((_samples->getSize())<_maxNumSamples)&&(!nearGoalConnect));
 
         if (nearGoalConnect){ 
-          _solved=true;
-          if (dist2goal!=0){
-            SmpGoal->clearNeighs();
-            SmpGoal->addNeigh(_samples->indexOf(smp_new));
-       		  connect2samples(smp_new,SmpGoal,dist2goal);
-            _samples->add(SmpGoal);
-          }
-          if (findPath()) {
-            cout << "The path size is " << _path.size() << "\n" ;
-            cout << "The number of samples used is " << _samples->getSize() << "\n" ;
-            return true;
-          }
-				  else 
-					  return false;
-        } //  if (near Goal Connect) 
+			_solved=true;
+			if (findPath()) {
+				cout << "The path size is " << _path.size() << "\n" ;
+				cout << "The number of samples used is " << _samples->getSize() << "\n" ;
+				return true;
+			}
+			else 
+			  return false;
+        } 
         else {
-				  cout << "The RRT reaches the maximum number of samples and did not reach the goal";
-				  return false;
+			cout << "The RRT reaches the maximum number of samples and did not reach the goal";
+			return false;
         }
-      //} // closing if - else of "smp_goal inside the accepted radius"
       }//trySolve
 
 		
@@ -277,20 +354,20 @@ namespace libPlanner{
 			//_solved = false;
  			_path.clear();
 			_path.push_back(SmpGoal);
-      //_simulationPath.push_back(SmpGoal);
+			//_simulationPath.push_back(SmpGoal);
 			Sample * currentSmp=_goal;
 			do {
 				nextPathSmp=_samples->getSampleAt((currentSmp->getNeighs())->at(0));
 				_path.push_back(nextPathSmp);
-        //_simulationPath.push_back(nextPathSmp);
+				//_simulationPath.push_back(nextPathSmp);
 				currentSmp=nextPathSmp;
 			//}while((currentSample!=_init) && ((currentSmp->getNeighs())->at(0)!=_samples->indexOf(_init))); 
-    /*_path.push_back(_init);
-      _simulationPath.push_back(_init);*/
+			/*_path.push_back(_init);
+			_simulationPath.push_back(_init);*/
       }while(currentSmp!=_init); // when the _init sample has already been inserted.
       
       return true;
-		}
+	}
 
      
     //!Delete the graph g

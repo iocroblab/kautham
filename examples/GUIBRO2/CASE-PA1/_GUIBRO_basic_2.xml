@@ -9,7 +9,7 @@
 		<Limits name="WZ" min="0.0" max="1.0" />
 		<Limits name="TH" min="-180.0" max="180.0" />
 		<Home X="0.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
-		<ConstrainedKinematic name="BRONCHOSCOPY" amin=-60" amax="90" bmin="-90" bmax="120"/>
+		<ConstrainedKinematic name="BRONCHOSCOPY" amin="-60" amax="90" bmin="-90" bmax="120"/>
 	</Robot>
   <Scene scene="MODELS/airways.wrl" scale="1.0">
     Scene Path
@@ -46,6 +46,11 @@
   
 	<DistanceMap distanceMap="MODELS/distancemap.txt">
 	</DistanceMap>
+
+
+  <DimensionsFile filename="dimensions.txt">
+  </DimensionsFile>
+  
 	<Planner>
 		<Parameters>
 			<Name>GUIBROgrid</Name>
@@ -60,8 +65,8 @@
     </Parameters>
 		<Queries>
 			<Query>
-        <Init dim="8">0.5  0.5 1.0 0.0 0.0 0.244 0.5 0.5</Init>
-        <Goal dim="8">0.5  0.5 0.0 0.0 0.0 0.244 0.5 0.5</Goal>
+        <Init dim="8">0.5 0.5 1.0 0.0 0.0 0.244 0.5 0.5</Init>
+        <Goal dim="8">0.5 0.5 0.0 0.0 0.0 0.244 0.5 0.5</Goal>
     </Query>
 		</Queries>
 	</Planner>

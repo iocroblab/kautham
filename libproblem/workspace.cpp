@@ -67,6 +67,15 @@ namespace libProblem {
 	{
 		distanceMapFile = distanceFile;
 	}
+	void WorkSpace::addDimensionsFile(string dFile)
+	{
+		dimensionsFile = dFile;
+	}
+	void WorkSpace::addDirCase(string dirc)
+	{
+		dirCase = dirc;
+	}
+	
 	/*void WorkSpace::addNeighborhoodMapFile(string neighFile)
 	{
 		neighborhoodMapFile = neighFile;

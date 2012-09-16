@@ -93,6 +93,7 @@ namespace libPlanner{
             bool isGraphSet(){return _isGraphSet;}
             void printConnectedComponents();
             //Sample* predictor(Sample* sampleA, Sample* sampleB);
+			void drawCspace();
 
             protected:
             vector<rrtEdge*> edges;
