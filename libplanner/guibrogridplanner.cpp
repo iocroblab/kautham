@@ -162,6 +162,11 @@ namespace libPlanner {
 		//read third line: size of CT in mm
 		float dx,dy,dz;
 		fscanf(fp,"%f %f %f\n",&dx,&dy,&dz);
+
+		_wkSpace->getRobot(0)->setLimits(0, 0, dx);
+		_wkSpace->getRobot(0)->setLimits(1, 0, dy);
+		_wkSpace->getRobot(0)->setLimits(2, 0, dz);
+
 		//read fourth line: location of center pf trachea in mmm
 		float tx,ty,tz;
 		fscanf(fp,"%f %f %f\n",&tx,&ty,&tz);
@@ -1563,9 +1568,8 @@ bool GUIBROgridPlanner::trySolve()
 			initcoords.at(2) = _tz; //z
 			_init->setCoords(initcoords);
 
-/////////////////////			
-_init->setMappedConf(_wkSpace->getConfigMapping());//no se para que se hace esto. como cambio entonces las coords????
-			
+
+			_wkSpace->collisionCheck(_init);	//to set the mapped config
 
 			//verify correctness of init sample
 			if(findGraphVertex(_init,&vi)==false)
