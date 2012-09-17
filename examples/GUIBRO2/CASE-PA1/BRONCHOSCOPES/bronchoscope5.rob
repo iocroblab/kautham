@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Robot  name="Bronchoscope" DHType="Modified" robType="Chain">
+<Robot  name="Bronchoscope5" DHType="Modified" robType="Chain">
 
   <WeightSE3 rho_t="1.0" rho_r="1.0" />
 
