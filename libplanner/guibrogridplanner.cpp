@@ -49,6 +49,7 @@
 #include "localplanner.h"
 #include "guibrogridplanner.h"
 #include <libproblem/consbronchoscopykin.h>
+#include <cctype>
 
 using namespace libSampling;
 
@@ -217,8 +218,8 @@ namespace libPlanner {
 		fclose(fp);
 
     string s=_wkSpace->getRobot(0)->getName();
-    stringstream ss(s);
-    ss >> _bronchoscopeRadius;
+    s.erase(std::remove_if(s.begin(), s.end(), (int(*)(int))std::isalpha), s.end()); 
+    _bronchoscopeRadius = atoi(s.c_str()) / 2.;
   	_bronchoscopeRadius = _bronchoscopeRadius <= 1.0 ? 1.0 : _bronchoscopeRadius ;
     }
 
