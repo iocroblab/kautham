@@ -216,8 +216,10 @@ namespace libPlanner {
 		fprintf(fp,"}\n");
 		fclose(fp);
 
-
-		_bronchoscopeRadius = 1.0;
+    string s=_wkSpace->getRobot(0)->getName();
+    stringstream ss(s);
+    ss >> _bronchoscopeRadius;
+  	_bronchoscopeRadius = _bronchoscopeRadius <= 1.0 ? 1.0 : _bronchoscopeRadius ;
     }
 
 	//! void destructor
