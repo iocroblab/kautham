@@ -154,73 +154,75 @@ namespace libPlanner {
 		FILE *fp;
 		string filedim = _wkSpace->getDimensionsFile();
 		fp = fopen(filedim.c_str(),"rt");
-		//read first line: size of CT in voxels
-		int nx,ny,nz;
-		fscanf(fp,"%d %d %d\n",&nx,&ny,&nz);
-		//read second line: size of each voxelsin mm
-		float vx,vy,vz;
-		fscanf(fp,"%f %f %f\n",&vx,&vy,&vz);
-		//read third line: size of CT in mm
-		float dx,dy,dz;
-		fscanf(fp,"%f %f %f\n",&dx,&dy,&dz);
+    if( fp != NULL){
+		  //read first line: size of CT in voxels
+		  int nx,ny,nz;
+		  fscanf(fp,"%d %d %d\n",&nx,&ny,&nz);
+		  //read second line: size of each voxelsin mm
+		  float vx,vy,vz;
+		  fscanf(fp,"%f %f %f\n",&vx,&vy,&vz);
+		  //read third line: size of CT in mm
+		  float dx,dy,dz;
+		  fscanf(fp,"%f %f %f\n",&dx,&dy,&dz);
 
-		_wkSpace->getRobot(0)->setLimits(0, 0, dx);
-		_wkSpace->getRobot(0)->setLimits(1, 0, dy);
-		_wkSpace->getRobot(0)->setLimits(2, 0, dz);
+		  _wkSpace->getRobot(0)->setLimits(0, 0, dx);
+		  _wkSpace->getRobot(0)->setLimits(1, 0, dy);
+		  _wkSpace->getRobot(0)->setLimits(2, 0, dz);
 
-		//read fourth line: location of center pf trachea in mmm
-		float tx,ty,tz;
-		fscanf(fp,"%f %f %f\n",&tx,&ty,&tz);
-		_tx = (KthReal)(tx/dx);
-		_ty = (KthReal)(ty/dy);
-		_tz = (KthReal)(tz/dz);
+		  //read fourth line: location of center pf trachea in mmm
+		  float tx,ty,tz;
+		  fscanf(fp,"%f %f %f\n",&tx,&ty,&tz);
+		  _tx = (KthReal)(tx/dx);
+		  _ty = (KthReal)(ty/dy);
+		  _tz = (KthReal)(tz/dz);
 
-		//read fourth line: location of nodule in mm
-		float nodulex,noduley,nodulez,noduleradius;
-		fscanf(fp,"%f %f %f %f\n",&nodulex,&noduley,&nodulez,&noduleradius);
-		fclose(fp);
+		  //read fourth line: location of nodule in mm
+		  float nodulex,noduley,nodulez,noduleradius;
+		  fscanf(fp,"%f %f %f %f\n",&nodulex,&noduley,&nodulez,&noduleradius);
+		  fclose(fp);
+    
 
+		  //write (or rewrite) file box.iv
+		  string filebox = _wkSpace->getDirCase() + "MODELS/box.iv";
+		  fp = fopen(filebox.c_str(),"wt");
+		  fprintf(fp,"#Inventor V2.1 ascii\n");
+		  fprintf(fp,"Separator{\n");
+		  fprintf(fp,"\t Material {\n");
+		  fprintf(fp,"\t\t diffuseColor 1.0 0.0 0.0\n");
+		  fprintf(fp,"\t\t transparency 0.5\n");
+		  fprintf(fp,"\t }\n");
+		  fprintf(fp,"\t Translation {\n");
+		  fprintf(fp,"\t\t translation %f %f %f\n",dx/2,dy/2,dz/2);
+		  fprintf(fp,"\t }\n");
+		  fprintf(fp,"\t Cube {\n");
+		  fprintf(fp,"\t\t width %f\n",dx);
+		  fprintf(fp,"\t\t height %f\n",dy);
+		  fprintf(fp,"\t\t depth %f\n",dz);
+		  fprintf(fp,"\t }\n");
+		  fprintf(fp,"}\n");
+		  fclose(fp);
 
-		//write (or rewrite) file box.iv
-		string filebox = _wkSpace->getDirCase() + "MODELS/box.iv";
-		fp = fopen(filebox.c_str(),"wt");
-		fprintf(fp,"#Inventor V2.1 ascii\n");
-		fprintf(fp,"Separator{\n");
-		fprintf(fp,"\t Material {\n");
-		fprintf(fp,"\t\t diffuseColor 1.0 0.0 0.0\n");
-		fprintf(fp,"\t\t transparency 0.5\n");
-		fprintf(fp,"\t }\n");
-		fprintf(fp,"\t Translation {\n");
-		fprintf(fp,"\t\t translation %f %f %f\n",dx/2,dy/2,dz/2);
-		fprintf(fp,"\t }\n");
-		fprintf(fp,"\t Cube {\n");
-		fprintf(fp,"\t\t width %f\n",dx);
-		fprintf(fp,"\t\t height %f\n",dy);
-		fprintf(fp,"\t\t depth %f\n",dz);
-		fprintf(fp,"\t }\n");
-		fprintf(fp,"}\n");
-		fclose(fp);
-
-		//write (or rewrite) file nodule.iv
-		string filenodule = _wkSpace->getDirCase() + "MODELS/nodule.iv";
-		fp = fopen(filenodule.c_str(),"wt");
-		fprintf(fp,"#Inventor V2.1 ascii\n");
-		fprintf(fp,"DEF nodule Separator {\n");
-		fprintf(fp,"\t Material {\n");
-		fprintf(fp,"\t\t diffuseColor 1.0 0.5 0.5\n");
-		fprintf(fp,"\t\t specularColor 0.5 0.5 0.5\n");
-		fprintf(fp,"\t\t transparency 0.5\n");
-		fprintf(fp,"\t }\n");
-		fprintf(fp,"\t Sphere {\n");
-		fprintf(fp,"\t\t radius %f\n",noduleradius);
-		fprintf(fp,"\t }\n");
-		fprintf(fp,"}\n");
-		fclose(fp);
+		  //write (or rewrite) file nodule.iv
+		  string filenodule = _wkSpace->getDirCase() + "MODELS/nodule.iv";
+		  fp = fopen(filenodule.c_str(),"wt");
+		  fprintf(fp,"#Inventor V2.1 ascii\n");
+		  fprintf(fp,"DEF nodule Separator {\n");
+		  fprintf(fp,"\t Material {\n");
+		  fprintf(fp,"\t\t diffuseColor 1.0 0.5 0.5\n");
+		  fprintf(fp,"\t\t specularColor 0.5 0.5 0.5\n");
+		  fprintf(fp,"\t\t transparency 0.5\n");
+		  fprintf(fp,"\t }\n");
+		  fprintf(fp,"\t Sphere {\n");
+		  fprintf(fp,"\t\t radius %f\n",noduleradius);
+		  fprintf(fp,"\t }\n");
+		  fprintf(fp,"}\n");
+		  fclose(fp);
+    }
 
     string s=_wkSpace->getRobot(0)->getName();
-    s.erase(std::remove_if(s.begin(), s.end(), (int(*)(int))std::isalpha), s.end()); 
-    _bronchoscopeRadius = atoi(s.c_str()) / 2.;
-  	_bronchoscopeRadius = _bronchoscopeRadius <= 1.0 ? 1.0 : _bronchoscopeRadius ;
+    s.erase(std::remove_if(s.begin(), s.end(), (int(*)(int))std::isalpha), s.end());
+    _bronchoscopeRadius = s.length() > 0 ? atoi(s.c_str()) / 2. : 1. ;
+  	_bronchoscopeRadius = _bronchoscopeRadius <= 1. ? 1. : _bronchoscopeRadius ;
     }
 
 	//! void destructor
