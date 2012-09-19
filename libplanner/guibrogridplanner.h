@@ -106,6 +106,8 @@ using namespace workspacegridplanner;
 		inline int getShowPoints(){return _showPoints;};
 
 		inline int getTouchingLinks(){return  _touchinglabels.size();};
+
+		inline KthReal getBronchoscopeRadius(){return _bronchoscopeRadius;};
 		
 		//moves the bronchoscope if there are linbks touching the walls
 		bool comply(KthReal *distcost, KthReal *NF1cost, bool onlytip=false);

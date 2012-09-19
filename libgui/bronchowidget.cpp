@@ -278,7 +278,9 @@ void bronchoWidget::updateView()
 		mt::Transform T_tz;
 		T_Ry.setRotation( mt::Rotation(mt::Vector3(0,1,0),-M_PI/2) );
 		
-		T_tz.setTranslation( mt::Vector3(0,0,-(_robot->getLink(_robot->getNumLinks()-1)->getA()+1.1)) );
+		KthReal offset = ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->getBronchoscopeRadius() * 1.1;
+
+		T_tz.setTranslation( mt::Vector3(0,0,-(_robot->getLink(_robot->getNumLinks()-1)->getA()+offset)) );
 		mt::Transform camTrsf = _robot->getLastLinkTransform()*T_Ry*T_tz;
 		_gui->setActiveCameraTransform(camTrsf);
 	}
