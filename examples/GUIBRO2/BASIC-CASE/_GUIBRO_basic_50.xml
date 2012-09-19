@@ -46,6 +46,10 @@
   
 	<DistanceMap distanceMap="MODELS/distancemap.txt">
 	</DistanceMap>
+	
+  <DimensionsFile filename="dimensions.txt">
+  </DimensionsFile>
+  
 	<Planner>
 		<Parameters>
 			<Name>GUIBROgrid</Name>
