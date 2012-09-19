@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="" topology="SE3">
-	<Robot robot="BRONCHOSCOPES/bronchoscope5.rob" scale="1.0">
+	<Robot robot="BRONCHOSCOPES/bronchoscope20.rob" scale="1.0">
 		<Limits name="X" min="0.0" max="100.0" />
 		<Limits name="Y" min="0.0" max="100.0" />
 		<Limits name="Z" min="0.0" max="100.0" />

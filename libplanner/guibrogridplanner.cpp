@@ -87,12 +87,24 @@ namespace libPlanner {
 	  char str[50];
 	  for(int i=0; i<_counterFirstPoint;i++) 
 	  {
+		if(i==_counterFirstPoint-1 || i==0)
+		{		  
+			//traqueobronquial tree is assumed to be the first object. It is shown
+			//nodule is assumed to be the last obstacle. Is is shown.
+			sprintf(str,"Show Obstacle %d (0/1)",i);
+			addParameter(str, 1);//shown
+		}
+		else{
+		  //the box and the grid are not shown
 		  sprintf(str,"Show Obstacle %d (0/1)",i);
-		  addParameter(str, 1);//shown
+		  addParameter(str, 0);//not shown
+		}
 	  }
+
+
 	  //interface to select goal obstacle (nodule)
 	  _obstaclenodule=NULL;
-	  _nodule = -1;
+	  _nodule = _counterFirstPoint-1;//nodule is assumed to be the last obstacle.
 	  addParameter("Select Nodule",_nodule);
 
 	  //interface to show look-ahead points
@@ -102,7 +114,7 @@ namespace libPlanner {
 	  _stepsAdvance = 10.0;
 	  addParameter("Steps Advance",_stepsAdvance);
 
-	  _onlyNF1=1;
+	  _onlyNF1=0;
 	  addParameter("Only NF1(0/1)",_onlyNF1);
 
 	  
@@ -219,10 +231,13 @@ namespace libPlanner {
 		  fclose(fp);
     }
 
-    string s=_wkSpace->getRobot(0)->getName();
-    s.erase(std::remove_if(s.begin(), s.end(), (int(*)(int))std::isalpha), s.end());
-    _bronchoscopeRadius = s.length() > 0 ? atoi(s.c_str()) / 2. : 1. ;
-  	_bronchoscopeRadius = _bronchoscopeRadius <= 1. ? 1. : _bronchoscopeRadius ;
+ //read the bronchsocope diameter from the name of the robot in the file *.rob
+		//the name is to be composed of a string plus a number in thenth of mm
+		//and convert to radius in mm
+		string s=_wkSpace->getRobot(0)->getName();
+		s.erase(std::remove_if(s.begin(), s.end(), (int(*)(int))std::isalpha), s.end()); 
+		_bronchoscopeRadius = atoi(s.c_str()) / 20.;
+  		_bronchoscopeRadius = _bronchoscopeRadius <= 1.0 ? 1.0 : _bronchoscopeRadius ;
     }
 
 	//! void destructor
