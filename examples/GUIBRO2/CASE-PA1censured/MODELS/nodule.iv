@@ -6,6 +6,6 @@ DEF nodule Separator {
 		 transparency 0.5
 	 }
 	 Sphere {
-		 radius 4.000000
+		 radius 2.000000
 	 }
 }

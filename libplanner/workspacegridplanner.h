@@ -207,7 +207,15 @@ namespace libPlanner {
 
 		//!Function to compute the distance gradient for cell with label "label"
 		bool  computeDistanceGradient(unsigned int label,  mt::Point3 *f);
+
+		//!Function to set the size of the CT image, in voxels 
+		inline void setImageSize(int nx,int ny,int nz){_stepsDiscretization[0]=nx;_stepsDiscretization[1]=ny;_stepsDiscretization[2]=nz;};
+
+		//!Function to to set the size a voxel in mm 
+		inline void setVoxelSize(KthReal vx,KthReal vy,KthReal vz){voxelSize[0]=vx;voxelSize[1]=vy;voxelSize[2]=vz;};
 		
+		//!Function to construct the grid and load it as a boost graph
+		void discretizeCspace();
 
 	protected:
 		//!position of the grid in the world
@@ -259,9 +267,6 @@ namespace libPlanner {
 
 		//!Function to delete the graphs
 	    void clearGraph();
-
-		//!Function to construct the grid and load it as a boost graph
-		void discretizeCspace();
 
 		//!Function that reads the distanceMap file
 		void readDistances(string file);

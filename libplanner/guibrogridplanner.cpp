@@ -157,24 +157,19 @@ namespace libPlanner {
 		_wkSpace->getRobot(0)->setLinkPathDrawn(_drawnLink);
 
 
-		KthReal thresholdDist = 0;//-5; //to consider a grpah including cells from distance -5 upwards.
-		grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize, thresholdDist);
-		pparse = new PathParse(9);
-		//pparse->setDimPoint(9);
-
 		//read dimensions.txt file
+		int nx=100,ny=100,nz=100;
+		float vx=0.5,vy=0.5,vz=0.5;
+		float dx,dy,dz;
 		FILE *fp;
 		string filedim = _wkSpace->getDimensionsFile();
 		fp = fopen(filedim.c_str(),"rt");
-    if( fp != NULL){
+		if( fp != NULL){
 		  //read first line: size of CT in voxels
-		  int nx,ny,nz;
 		  fscanf(fp,"%d %d %d\n",&nx,&ny,&nz);
 		  //read second line: size of each voxelsin mm
-		  float vx,vy,vz;
 		  fscanf(fp,"%f %f %f\n",&vx,&vy,&vz);
 		  //read third line: size of CT in mm
-		  float dx,dy,dz;
 		  fscanf(fp,"%f %f %f\n",&dx,&dy,&dz);
 
 		  _wkSpace->getRobot(0)->setLimits(0, 0, dx);
@@ -229,10 +224,21 @@ namespace libPlanner {
 		  fprintf(fp,"\t }\n");
 		  fprintf(fp,"}\n");
 		  fclose(fp);
-    }
-	else{
-		cout<<"ERROR opening dimension.txt file"<<endl;
-	}
+		}
+		else{
+			cout<<"ERROR opening dimension.txt file"<<endl;
+		}
+
+
+		KthReal thresholdDist = 0;//-5; //to consider a grpah including cells from distance -5 upwards.
+		grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize, thresholdDist);
+		grid->setImageSize(nx,ny,nz);
+		grid->setVoxelSize(vx,vy,vz);
+		grid->discretizeCspace();
+
+		pparse = new PathParse(9);
+		//pparse->setDimPoint(9);
+
 
  //read the bronchsocope diameter from the name of the robot in the file *.rob
 		//the name is to be composed of a string plus a number in thenth of mm

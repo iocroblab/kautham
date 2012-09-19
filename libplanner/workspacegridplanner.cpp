@@ -66,7 +66,7 @@ namespace libPlanner {
 	  
 		_thresholdDist = thDist;
 
-		discretizeCspace();
+		//discretizeCspace();this is now called from outside
 		
 	
     }
@@ -136,18 +136,27 @@ namespace libPlanner {
 		//open file
 		FILE *fp;
 		fp = fopen(file.c_str(),"rt");
-		int nx,ny,nz;
 
+		//the following is now read from deimension.txt file in guibroplanner.cpp
+		//int nx,ny,nz;
 		//read first line and set discrtization steps
-		fscanf(fp,"%d %d %d\n",&nx,&ny,&nz);
-		
-		_stepsDiscretization[0] = nx;
-		_stepsDiscretization[1] = ny;
-		_stepsDiscretization[2] = nz;
+		//fscanf(fp,"%d %d %d\n",&nx,&ny,&nz);
+		//_stepsDiscretization[0] = nx;
+		//_stepsDiscretization[1] = ny;
+		//_stepsDiscretization[2] = nz;
 		//read origin
-		fscanf(fp,"%f %f %f\n",&originGrid[0],&originGrid[1],&originGrid[2]);
+		//fscanf(fp,"%f %f %f\n",&originGrid[0],&originGrid[1],&originGrid[2]);
 		//read voxelsize
-		fscanf(fp,"%f %f %f\n",&voxelSize[0],&voxelSize[1],&voxelSize[2]);
+		//fscanf(fp,"%f %f %f\n",&voxelSize[0],&voxelSize[1],&voxelSize[2]);
+
+		originGrid[0]=0.0;
+		originGrid[1]=0.0;
+		originGrid[2]=0.0;
+		int nx,ny,nz;
+		nx = _stepsDiscretization[0];
+		ny = _stepsDiscretization[1];
+		nz = _stepsDiscretization[2];
+
 
 		//read the other lines and load the distance values into the locations vector
 		locations.reserve((int)(0.1*nx*ny*nz));
