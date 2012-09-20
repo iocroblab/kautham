@@ -47,7 +47,7 @@
 
 #include <libplanner/myplanner.h>
 #include <libplanner/drmplanner.h>
-#include <libplanner/drmpcaplanner.h>
+//#include <libplanner/drmpcaplanner.h>
 #include <libplanner/prmplanner.h>
 #include <libplanner/prmplanner_pca.h>
 #include <libplanner/rrtplanner.h>
@@ -76,7 +76,7 @@
 
 using namespace std;
 using namespace DRM;
-using namespace DRMPCA;
+//using namespace DRMPCA;
 using namespace PRM;
 using namespace RRT;
 using namespace gridplanner;
@@ -518,7 +518,8 @@ namespace libProblem {
   }
 
   string Problem::plannersNames(){
-    return   "DRM|DRMPCA|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
+   // return   "DRM|DRMPCA|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
+	    return   "DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
   }
 
   bool Problem::createPlanner( string name, KthReal step ){
@@ -538,9 +539,9 @@ namespace libProblem {
 	  else if(name == "PRM PCA")
 		 _planner = new PRMPlannerPCA(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step,1,1);
-	  else if(name == "DRMPCA")
-		_planner = new DRMPCAPlanner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+	  //else if(name == "DRMPCA")
+		//_planner = new DRMPCAPlanner(CONTROLSPACE, NULL, NULL,
+                           //    _cspace, _sampler, _wspace, _locPlanner, step);
 #endif	
 
     else if(name == "RRT")

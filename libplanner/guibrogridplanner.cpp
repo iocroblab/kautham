@@ -1858,7 +1858,10 @@ bool GUIBROgridPlanner::trySolve()
 			else _solved = false;
 
 			if(_solved) 
-				pparse->savePath2File("path2guide.xml", path2guide);
+			{
+				string file2guide = _wkSpace->getDirCase() + "HAPTIC/path2guide.xml";
+				pparse->savePath2File(file2guide.c_str(), path2guide);
+			}
 			
 			clock_t finaltime = clock();
 			cout<<"TIME TO COMPUTE THE PATH = "<<(double)(finaltime-entertime)/CLOCKS_PER_SEC<<endl;
