@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<Planner ProblemName="" Date="">
+	<Parameters>
+		<Name>PRM</Name>
+		<LocalPlanner stepSize="1">Linear</LocalPlanner>
+		<Parameter name="Drawn Path Link">-1</Parameter>
+		<Parameter name="Max. Neighs">10</Parameter>
+		<Parameter name="Max. Samples">2000</Parameter>
+		<Parameter name="Neigh Thresshold">25</Parameter>
+		<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
+		<Parameter name="Speed Factor">1</Parameter>
+		<Parameter name="Step Size">1</Parameter>
+	</Parameters>
+	
+	<Queries />
+	<SampleSet dim="12" size="7">
+
+		<Sample conComp="0">1.0775 0.5791 0.8353 0.7828 -1.2134 -1.0561 -1.6559 -1.1283 -5.9737 5.8206 2.6792 9.0502</Sample>
+		<Sample conComp="0">1.3122 0.4204 1.6644 1.8369 -1.6793 -2.5593 0.1571 -4.2781 -9.1428 15.9012 -1.7148 12.6104</Sample>
+		<Sample conComp="0">1.2641 0.51 1.6775 1.8541 -1.9759 -2.0061 -0.7799 -6.1507 -11.0889 15.7407 -1.0073 11.7642</Sample>
+		<Sample conComp="0">1.231 0.4803 1.8988 1.9053 -1.8212 -2.2054 -0.5006 -5.6962 -10.5434 15.4245 -0.0580 12.9439</Sample>
+		<Sample conComp="0">1.259 0.4596 1.6554 1.8698 -1.6369 -2.9405 0.6081 -5.0644 -9.0544 16.4611 -1.8194 12.0227</Sample>
+		<Sample conComp="0">1.247 0.4923 1.966 1.2957 -1.9991 -3.1396 0.037 -5.4718 -6.4682 18.7979 -0.7175 13.7534</Sample>
+    <Sample conComp="0">1.2641 0.51 1.6775 1.8541 -1.9759 -2.0061 -0.78 -6.1507 -11.0889 15.7407 -1.0073 11.7642</Sample>
+
+
+		
+	
+  </SampleSet>
+	<Conectivity />
+	<ConnComponents size="0" />
+</Planner>

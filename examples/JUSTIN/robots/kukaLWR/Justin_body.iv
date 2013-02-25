@@ -1,0 +1,90 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  Transform {
+    translation 0 0 0
+    rotation 0 0 1  0
+    scaleFactor 1 1 1
+    scaleOrientation 0 0 1  0
+    center 0 0 0
+
+  }
+  Cube {
+    width 200
+    height 10
+    depth 200
+
+  }
+  Transform {
+    translation -195.9211 -98.900063 -1.3454757
+    rotation -1.5023181e-14 -1.1920933e-07 1.0000001  0.78871238
+    scaleFactor 1.0000004 0.99999994 1.000001
+    scaleOrientation 1.583365e-07 3.0354377e-07 0.99999958  0.29400143
+    center 0 0 0
+
+  }
+  Cube {
+    width 282.84
+    height 10
+    depth 200
+
+  }
+  Transform {
+    translation 277.4501 -278.53702 1.5764741
+    rotation -2.4869077e-14 1.1920927e-07 -1  1.5682281
+    scaleFactor 0.99999845 0.99999869 0.99999988
+    scaleOrientation 1.2715276e-06 -2.3172653e-08 -1.0000256  0.05398709
+    center 0 0 0
+
+  }
+  Cube {
+    width 282.84
+    height 10
+    depth 200
+
+  }
+  Transform {
+    translation 243.94966 -104.84766 -0.78049129
+    rotation 0.00078075775 0.001876935 -0.99999821  0.78844857
+    scaleFactor 0.9999994 1.0000005 1
+    scaleOrientation 0.0030442236 0.015507235 -0.99988812  0.16971302
+    center 0 0 0
+
+  }
+  Cube {
+    width 300
+    height 10
+    depth 200
+
+  }
+  Transform {
+    translation -0.47937047 -590.25635 -0.92451829
+    rotation 0 0 1  0
+    scaleFactor 1.0000004 1 1.0000002
+    scaleOrientation -0.00090805418 0.0016802717 0.99999917  0.59246218
+    center 0 0 0
+
+  }
+  Cube {
+    width 300
+    height 10
+    depth 200
+
+  }
+  Transform {
+    translation 146.53395 292.68127 1.4507732
+    rotation 1.1078954e-09 -1.1968972e-07 1  1.5750852
+    scaleFactor 0.99999982 1.0000017 1.0000019
+    scaleOrientation 0.080538042 -0.0018894506 0.99675298  0.10040668
+    center 0 0 0
+
+  }
+  Cube {
+    width 595
+    height 10
+    depth 200
+
+  }
+}
