@@ -51,7 +51,7 @@
 #endif
 
 #ifndef MAXPOINTS
-#define MAXPOINTS 1000000
+#define MAXPOINTS 100000 //1000000
 #endif
 
 MultiANN::MultiANN(					// constructor

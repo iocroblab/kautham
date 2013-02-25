@@ -719,13 +719,15 @@ namespace libProblem {
 
       for(int i=0; i< maxLinksTested; i++){
         //Collision detection with the Palm are avoided
-        if(links[i]->getName() == "Palm") {
+        if(links[i]->getName() == "Palm" || links[i]->getName() == "Palm_izq" || links[i]->getName() == "Palm_der") {
           //cout <<"Palm detected - skipping collisions"<<endl;
           continue;
         }
         for(int j=i+2; j < maxLinksTested; j++){
           if(links[i]->getElement()->collideTo(links[j]->getElement())){
               //cout <<"...collision between links "<<i<<" and "<<j<<endl;
+              //cout <<"...collision between links "<<links[i]->getName()<<" and "<<links[j]->getName()<<endl;
+			  
                     _autocoll = true;
               return _autocoll;
             }

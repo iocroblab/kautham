@@ -202,6 +202,12 @@ namespace libGUI{
     if(_planner != NULL ){
       _planner->lcPlanner()->setInitSamp(_samples->getSampleAt(_spFrom->text().toInt()));
       _planner->lcPlanner()->setGoalSamp(_samples->getSampleAt(_spTo->text().toInt()));
+	  
+	  KthReal d = _planner->lcPlanner()->distance(_samples->getSampleAt(_spFrom->text().toInt()),
+												   _samples->getSampleAt(_spTo->text().toInt()));
+	  char str[30];
+	  sprintf(str,"Distance:  %f",d);
+      writeGUI(str);
       if( _planner->lcPlanner()->canConect() ){
         _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
         writeGUI("The samples can be connected.");
