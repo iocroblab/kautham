@@ -82,11 +82,19 @@ namespace libGUI {
       sliders.push_back(tempSli);
       QObject::connect(tempSli,SIGNAL(valueChanged(int)),SLOT(sliderChanged(int)));
     }
+	
+    vboxLayout1 = new QVBoxLayout();
+    btnUpdate = new QPushButton(this);
+    btnUpdate->setText("Update Controls To Last Moved Sample");
+    btnUpdate->setObjectName(QString::fromUtf8("Update Controls"));
+    connect(btnUpdate, SIGNAL( clicked() ), this, SLOT( updateControls() ) ); 
+    vboxLayout1->addWidget(btnUpdate);
 
     values.resize(cont.size());
     for(int i=0; i<cont.size(); i++)
       values[i]=0.5;
 
+    vboxLayout->addLayout(vboxLayout1);
     gridLayout->addLayout(vboxLayout,0,1,1,1);
 		
 	}
@@ -98,15 +106,36 @@ namespace libGUI {
     }
     values.clear();
   }
+  
+	void ControlWidget::updateControls(){
+		for(int i=0;i<values.size();i++) 
+		{
+			//values[i] =0.6;
+			//compute the index from where the controls of the current robot start
+			Sample *s  = _ptProblem->wSpace()->getLastSampleMovedTo();
+			if(s!=NULL){
+				int from=0;
+				for(unsigned int i=0; i< _ptProblem->wSpace()->robotsCount(); i++){
+					if(_robot->getName() != _ptProblem->wSpace()->getRobot(i)->getName())
+						from += _ptProblem->wSpace()->getRobot(i)->getNumControls();
+				}
+				
+				for(int j=0; j < _robot->getNumControls(); j++ )
+					values[j] = s->getCoords()[from + j];
+
+				setValues(values);
+			}
+		}
+	}
 
 	void ControlWidget::sliderChanged(int value){
     QString tmp;
     for(unsigned int i=0; i<sliders.size(); i++){
       values[i]=(KthReal)((QSlider*)sliders[i])->value()/1000.0;
+	  //values[i] = (KthReal)(-10.0+(KthReal)((QSlider*)sliders[i])->value()*20.0/1000.0);
       tmp = labels[i]->text().left(labels[i]->text().indexOf("=") + 2);
       labels[i]->setText( tmp.append( QString().setNum(values[i],'g',5)));
     }
-    
     _ptProblem->setCurrentControls(values,_globalOffset);
     if(_robot != NULL) _robot->control2Pose(values);
 	}

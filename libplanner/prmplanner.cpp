@@ -643,12 +643,12 @@ namespace libPlanner {
 			//add sample connectToSmp as the first neighbor of sample smpFrom (set distance = 0)
 			// Modified to avoid the false order.
 			KthReal dis = smpFrom->getDistance(connectToSmp, Kautham::CONFIGSPACE );
-			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), dis, _kNeighs);
+			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), dis, _kNeighs, true);
 		}
 		if(connectToSmp2 != NULL)
 		{
 			KthReal dis = smpFrom->getDistance(connectToSmp2, Kautham::CONFIGSPACE );
-			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp2 ), dis, _kNeighs);
+			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp2 ), dis, _kNeighs, true);
 		}
 
 		//srtart connecting with neighs

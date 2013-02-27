@@ -131,7 +131,7 @@ namespace libSampling{
       void addNeigh(unsigned int  newNeigh);
 	  //! Adds a neighbor at its place folowwing an incrasing distance
 	  //! Also stores the distance at the distance vector
-      void addNeighOrdered(unsigned int  newNeigh, KthReal newDistance, int max);
+      void addNeighOrdered(unsigned int  newNeigh, KthReal newDistance, int max, bool force=false);
 	  //! Adds a neighbor distance
       void addNeighDistance(KthReal newNeighDistance);
 

@@ -653,7 +653,7 @@ namespace libPlanner {
 		
 			// Modified to avoid the false order.
 			KthReal dis = smpFrom->getDistance(connectToSmp, Kautham::CONFIGSPACE );
-			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), dis, _kNeighs);
+			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), dis, _kNeighs, true);
 		}
 
 		//srtart connecting with neighs
@@ -863,17 +863,17 @@ namespace libPlanner {
 	{
 		std::map<int, SampleSet*>::iterator it;
 		cout<<"NUM CONNECTED COMPONENTS = "<<_ccMap.size()<<endl;
-		//for ( it=_ccMap.begin(); it != _ccMap.end(); it++ )
-		//{
-		//	cout << "CC " << (*it).first << " => " << (*it).second->getSize()<<" samples: " ;
-		//	vector<Sample*>::iterator itera = (*it).second->getBeginIterator();
-		//	while((itera != (*it).second->getEndIterator()))
-		//	{
-		//		cout <<_samples->indexOf( (*itera) )<<", ";
-		//		itera++;
-		//	}
-		//	cout << endl;
-		//}	
+		for ( it=_ccMap.begin(); it != _ccMap.end(); it++ )
+		{
+			cout << "CC " << (*it).first << " => " << (*it).second->getSize()<<" samples: " ;
+			vector<Sample*>::iterator itera = (*it).second->getBeginIterator();
+			while((itera != (*it).second->getEndIterator()))
+			{
+				cout <<_samples->indexOf( (*itera) )<<", ";
+				itera++;
+			}
+			cout << endl;
+		}	
 		cout<<"TOTAL NUMBER OF NODES = "<< _samples->getSize() <<endl;
 		//cout << "Weights.size = "<< weights.size() <<" Edges size = " << edges.size()<<endl;
 		

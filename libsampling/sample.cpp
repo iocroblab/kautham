@@ -132,7 +132,7 @@ namespace libSampling{
     _neighset.push_back(newNeigh);
   }
 
-  void Sample::addNeighOrdered(unsigned int newNeigh, KthReal newDistance, int max){
+  void Sample::addNeighOrdered(unsigned int newNeigh, KthReal newDistance, int max, bool force){
 	 //find where to place the sample in an increasing order of distances
 	unsigned int pos=0;
   for(unsigned int i=0; i< neighsetdistances.size();i++)
@@ -144,8 +144,18 @@ namespace libSampling{
 	neighsetdistances.insert(neighsetdistances.begin()+pos, newDistance);
 	//delete the last sample if vector list out of bounds
     if(_neighset.size() > max){
-		  _neighset.erase(_neighset.end()-1);
-      neighsetdistances.erase(neighsetdistances.end()-1);
+		if(pos==max && force==true){
+			//if the new sample has to be included by force (flag force set to true) and it results to
+			//be the last one (the farthest) then we should delete not the last of the list but the 
+			//the last minus one, in order not to delete the new sample
+			_neighset.erase(_neighset.end()-2);
+			neighsetdistances.erase(neighsetdistances.end()-2);
+		}
+		else{
+			//delete the one that is farthest, i.e. the last one in the list
+			_neighset.erase(_neighset.end()-1);
+			neighsetdistances.erase(neighsetdistances.end()-1);
+		}
     }
 	
   }

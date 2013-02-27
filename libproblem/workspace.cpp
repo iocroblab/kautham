@@ -115,6 +115,7 @@ namespace libProblem {
 			  robots[i]->Kinematics(sample->getMappedConf().at(i));
 		  }
     }
+	_lastSampleMovedTo = sample;
   }
 
   void WorkSpace::moveObstacleTo( size_t mobObst, vector<KthReal>& pmd ){

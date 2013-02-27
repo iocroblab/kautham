@@ -781,7 +781,7 @@ namespace libPlanner {
 		{
 			//smpFrom->addNeigh( _samples->indexOf( connectToSmp ) );
 			//add sample connectToSmp as the first neighbor of sample smpFrom (set distance = 0)
-			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), 0.0, _kNeighs);
+			smpFrom->addNeighOrdered(_samples->indexOf( connectToSmp ), 0.0, _kNeighs, true);
 		}
 
 		//srtart connecting with neighs

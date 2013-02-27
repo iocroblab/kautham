@@ -64,6 +64,7 @@ namespace libGUI {
 
 	private slots:
 		void              sliderChanged(int val);
+		void              updateControls();
 	public:
 		ControlWidget( Robot* rob, Problem* prob, int offset );
 		~ControlWidget();
@@ -74,6 +75,8 @@ namespace libGUI {
 		vector<QLabel*>   labels;
 		QGridLayout       *gridLayout;
 		QVBoxLayout       *vboxLayout;
+		QVBoxLayout       *vboxLayout1;
+        QPushButton		  *btnUpdate;
 		vector<KthReal>   values;
 		Robot*            _robot;
     int               _globalOffset;

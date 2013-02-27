@@ -61,6 +61,7 @@
 #include <libproblem/inversekinematic.h>
 #include <libdevice/device.h>
 #include <libutil/data_ioc_cell.hpp>
+#include "controlwidget.h"
 
 
 using namespace std;
@@ -142,6 +143,10 @@ namespace libGUI {
     bool                setActiveCameraPointAt(float x, float y, float z );
     bool                setActiveCameraTransform(mt::Transform tra);
     std::string         getActiveViewTitle();
+	
+    ControlWidget*		getControlWidget();
+
+	int					indexControlsTab;
   private:
     vector<Viewer>      viewers;
     StreamLog*          qout;

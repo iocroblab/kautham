@@ -115,6 +115,9 @@ namespace libProblem{
 		static unsigned int   getCollCheckCounter();
 		static void           increaseCollCheckCounter();
 
+		
+		Sample* getLastSampleMovedTo(){return _lastSampleMovedTo;};
+
 	  protected:
 		  virtual void          updateScene() = 0;
 		  vector<Obstacle*>     obstacles;
@@ -134,6 +137,7 @@ namespace libProblem{
 
 	private:
 		static unsigned int   _countWorldCollCheck;
+		Sample* _lastSampleMovedTo;
   };
 }
 

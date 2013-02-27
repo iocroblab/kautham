@@ -149,6 +149,8 @@ namespace libGUI {
     if( rob != NULL){
       ControlWidget* tmpControl = new ControlWidget( rob, prob, offset );
       propertiesTab->addTab(tmpControl, "UsrCtrl-" + QString((rob->getName()).c_str()));
+	  //JAN
+		  indexControlsTab = propertiesTab->indexOf(tmpControl);
       return true;
     }else{
       ControlWidget* tmpControl = new ControlWidget( NULL, NULL, 0 );
@@ -157,6 +159,12 @@ namespace libGUI {
     }
     return false;
   }
+
+  ControlWidget* GUI::getControlWidget()
+  {
+		return (ControlWidget*)propertiesTab->widget(indexControlsTab);
+  }
+
 
   bool GUI::addBronchoWidget( Robot* rob, Problem* prob, int offset, GUI* gui ){
     if( rob != NULL){
