@@ -143,9 +143,16 @@ public:
     }
 
     //! Returns the layout of the robot at node index.
-    inline libProblem::RobLayout getLayout(int index){ 
+    //inline libProblem::RobLayout getLayout(int index){ 
+      //if(index >= 0 && index < _layouts.size() )
+      //  return _layouts.at(index);
+      
+      //libProblem::RobLayout tmp;
+      //return tmp;
+    //}
+     inline libProblem::RobLayout&   getLayout(int index){ 
       if(index >= 0 && index < _layouts.size() )
-        return _layouts.at(index);
+	return _layouts.at(index);
       
       libProblem::RobLayout tmp;
       return tmp;
