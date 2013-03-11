@@ -7,6 +7,7 @@
 #include <time.h>
 #include "prmPCAhandarmplanner.h"
 #include "ML_locplan.h"
+#include <boost/random.hpp>
 
 ///////////////Armadillo////////
 #include <iostream>
@@ -46,6 +47,14 @@ using namespace std;
 		removeParameter("Cloud Size");
 	    removeParameter("P(connect to Ini-Goal)");
 
+		_samplingmethod=0;
+		addParameter("Sampling (0:PCA, 1:Gauss, 2:Bridge)",_samplingmethod);
+
+		//boost::mt19937 rng(time(0));
+		//boost::normal_distribution<double> gaussian_dist(0,0.1); // Parametro sigma
+		//_gaussianGen = new GaussianGenerator(rng, gaussian_dist);
+
+		// _samples->setANNdatastructures(_kNeighs, _maxNumSamples*2);
 		//fp = fopen("rand.txt","wt"); 
 	}
 
@@ -63,6 +72,16 @@ using namespace std;
         else
           return false;
 
+		it = _parameters.find("Sampling (0:PCA, 1:Gauss, 2:Bridge)");
+        if(it != _parameters.end())
+		{
+          if(it->second==2) _samplingmethod = 2;
+		  else if(it->second==1) _samplingmethod = 1;
+		  else _samplingmethod = 0;
+	    }
+        else
+          return false;
+
         it = _parameters.find("Speed Factor");
         if(it != _parameters.end())
           _speedFactor = it->second;
@@ -72,7 +91,7 @@ using namespace std;
         it = _parameters.find("Max. Samples");
 		if(it != _parameters.end()){
           _maxNumSamples = it->second;
-		  _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+		  _samples->setANNdatastructures(_kNeighs, _maxNumSamples*2);
 	    }
         else
           return false;
@@ -86,7 +105,7 @@ using namespace std;
         it = _parameters.find("Max. Neighs");
 		if(it != _parameters.end()){
           _kNeighs = (int)it->second;
-		  _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
+		  _samples->setANNdatastructures(_kNeighs, _maxNumSamples*2);
 	  }
         else
           return false;
@@ -301,11 +320,49 @@ using namespace std;
 	}
 
 
+	//!verifies if init an goal are in the same connected component, fins the path in the graph, and
+	//!reports the info.
+ 	bool PRMPCAHandArmPlanner::verifySuccess(clock_t inittime, int nloops, int nPCAcalls)
+	{
+		if(goalSamp()->getConnectedComponent() == initSamp()->getConnectedComponent()) 
+		{
+			if(PRMPlanner::findPath())
+			{
+					printConnectedComponents();
+					//cout << "PRM Nodes = " << _samples->getSize() << endl;
+					cout << "NUMBER OF SAMPLED CONFIGURATIONS = " << _triedSamples << endl;
+														
+					clock_t finaltime = clock();
+					cout<<"TIME TO COMPUTE THE PATH = "<<(double)(finaltime-inittime)/CLOCKS_PER_SEC<<endl;
+					PRMPlanner::smoothPath();
+
+					clock_t finalsmoothtime = clock();
+					cout<<"TIME TO SMOOTH THE PATH = "<<(double)(finalsmoothtime - finaltime)/CLOCKS_PER_SEC<<endl;
+														
+					cout << "Number of passes = " << nloops << endl; //" deltaM = " << deltaM<< endl;
+					cout << " Call PCA = "<<nPCAcalls<<endl<<flush;
+					//cout << " Call Sampling World Real = "<<countwr<<endl<<flush;
+					printPCAComponents();
+																		
+														
+					_solved = true;
+					_generatedEdges = weights.size();
+					_totalTime = (KthReal)(finaltime - inittime)/CLOCKS_PER_SEC ;
+					_smoothTime = (KthReal)(finalsmoothtime - finaltime)/CLOCKS_PER_SEC ;
+								
+					return true;
+			}
+		}
+		return false;
+	}
+
 
 	bool PRMPCAHandArmPlanner::trySolve()
 	{
 		//_gen->rand_init();
 		//fprintf(fp,"---------------------------------------------\n");
+
+		wkSpace()->resetCollCheckCounter();
 
 		if(_solved) {
 			cout << "PATH ALREADY SOLVED"<<endl;
@@ -351,7 +408,7 @@ using namespace std;
 		int trials = 0;
 		int maxtrials = 100;
 		int ig=0;
-		int maxsamplesingoal=11;//PCA Action on 11 elements (Arm:6 and Hand:5 )
+		int maxsamplesingoal=_wkSpace->getDimension();//PCA Action on 11 elements (Arm:6 and Hand:5 )
 
 		_distance.clear();//clear vector distancia
 		_indexpca.clear();//clear vector indexpca
@@ -360,15 +417,21 @@ using namespace std;
 		int myflag=0, z=0;
 		float R=0;
 		callpca=0;
+		int countSamples=0;
 		//////////////////////////////////////////////////////////////////////////////
 	 
 	  	//Sample around goal up to maxsamplesingoal (in order to have as many samples as required for a first call to PCA)
+		_samples->setTypeSearch(BRUTEFORCE);
 		for(ig=0; trials<maxtrials && ig<maxsamplesingoal; ig) {
 		  if(getSampleInGoalRegion(_deltaI , 0.02)) 
 		  {
 			  ig++;
 		  }	  
 		}
+		_samples->setTypeSearch(ANNMETHOD);
+
+		cout << "Initial Sampling: " << (_samples->getSize()-countSamples) << " samples" << endl;
+		countSamples = _samples->getSize();
 	 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		int p=0;
@@ -391,11 +454,16 @@ using namespace std;
 				if(deltaM> _deltaR) deltaM = _deltaI;
 
 				//add interpolated samples between init and goal
-				getSamplesBetweenInitGoal(deltaM, 0.02, false);
+				int numinterpoations=2;
+				getSamplesBetweenInitGoal(numinterpoations,deltaM, 0.02, false);
+				cout << "Sampling Interpolated: " << (_samples->getSize()-countSamples) << " samples" << endl;
+				countSamples = _samples->getSize();
 						
-				//get samples from V
-				if(getSampleRandPCA(_deltaR))
-				{		
+				//get samples from V using PCA
+				if(_samplingmethod==0)
+				{
+				  if(getSampleRandPCA(_deltaR))
+				  {		
 					//verify if the samples from V are within bounds and free
 					if(matPCA.n_rows>0)//matrand
 					{
@@ -409,7 +477,7 @@ using namespace std;
 						for(int z=0; z<matPCA.n_rows ; z++)
 						{
 							rowvec pointpca=matPCA.row(z);//Fila de 11 elementos(6 primeros del brazo y los 5 ultimos de la mano)
-							for(int k=0; k < 11; k++)
+							for(int k=0; k < _wkSpace->getDimension(); k++)
 								coord[k]=pointpca(0,k);//coord:variable para almacenar los 11 elementos
 							
 							//load sample coordinates
@@ -442,65 +510,64 @@ using namespace std;
 								
 								_indexpca.push_back(_samples->getSize()-1);//Se agrega el indice de la muestra generada por Sampling PCA									
 
-								if(goalSamp()->getConnectedComponent() == initSamp()->getConnectedComponent()) 
-								{
-									if(PRMPlanner::findPath())
-									{
-										printConnectedComponents();
-										cout << "PRM Nodes = " << _samples->getSize() << endl;
-										cout << "Number sampled configurations = " << n << endl;
-														
-										clock_t finaltime = clock();
-										cout<<"TIME TO COMPUTE THE PATH = "<<(double)(finaltime-entertime)/CLOCKS_PER_SEC<<endl;
-										PRMPlanner::smoothPath();
-
-										clock_t finalsmoothtime = clock();
-										cout<<"TIME TO SMOOTH THE PATH = "<<(double)(finalsmoothtime - finaltime)/CLOCKS_PER_SEC<<endl;
-														
-										cout << "Number of passes = " << p << " deltaM = " << deltaM<< endl;
-										cout << " Call PCA = "<<callpca<<endl<<flush;
-										cout << " Call Sampling World Real = "<<countwr<<endl<<flush;
-										printPCAComponents();
-																		
-										cout << " number of collision-checks = "<<_triedSamples<<endl<<flush;
-														
-										_solved = true;
-										_triedSamples = n;
-										_generatedEdges = weights.size();
-										_totalTime = (KthReal)(finaltime - entertime)/CLOCKS_PER_SEC ;
-										_smoothTime = (KthReal)(finalsmoothtime - finaltime)/CLOCKS_PER_SEC ;
-											
-										
-										return _solved;
-									}
+								if(verifySuccess( entertime, p, callpca)==true)  {
+									cout << " COLLISION-CHECK COUNT: "<< wkSpace()->getCollCheckCounter() << endl;
+									return _solved;
 								}
+								
 								///////////////////////////////////////////////////////////////// 
 								if(freepca>=_samplingV) {freepca=0; break;}
 								////////////////////////////////////////////////////////////////
 							}
 						}
 					}
+				  }
 				}
-				
-				/* 
-				//Alternativa al sampling de V: Gaussian sampling around the goal
-				//Sample _samplingR samples from region R_S (the "real world")
-				for(int t=0;t<_samplingV;t++)
-				{		 
-					//cout<<"deltaM = "<<deltaM<<" n = "<<n<<endl;
-					if(getSampleInGoalRegionRealworldGaussian(deltaM, 0.05, true)) 
-					{	
-						//t++;
-						countwr++;
-						n++;
+				//get samples from V using Gaussian					
+				else if(_samplingmethod==0)
+				{
+					//Alternativa al sampling de V: Gaussian sampling around the goal
+					for(int t=0;t<_samplingV;t++)
+					{		 
+						//cout<<"deltaM = "<<deltaM<<" n = "<<n<<endl;
+						if(getSampleInGoalRegionRealworldGaussian(_deltaI, 0.05, true)) 
+						{	
+							//t++;
+							n++;
+							_indexpca.push_back(_samples->getSize()-1);//Se usa para reportar las muestras generadas por el gaussian, usamos el mismo vector...
+							if(verifySuccess( entertime, p, callpca)==true)  {
+								cout << " COLLISION-CHECK COUNT: "<< wkSpace()->getCollCheckCounter() << endl;
+								return _solved;
+							}
+						}
 					}
+					//END alternativa Gaussian
 				}
-				//END alternativa
-				*/
-
+				else
+				{
+					//Alternativa al sampling de V: Bridge-test sampling around the goal
+					for(int t=0;t<_samplingV;t++)
+					{		 
+						//cout<<"deltaM = "<<deltaM<<" n = "<<n<<endl;
+						if(getSampleInGoalRegionRealworldBridgeTest(_deltaI, 0.05, true)) 
+						{	
+							//t++;
+							n++;
+							_indexpca.push_back(_samples->getSize()-1);//Se usa para reportar las muestras generadas por el gaussian, usamos el mismo vector...
+							if(verifySuccess( entertime, p, callpca)==true) {
+								cout << " COLLISION-CHECK COUNT: "<< wkSpace()->getCollCheckCounter() << endl;
+								return _solved;
+							}
+						}
+					}
+					//END alternativa Bridge-test
+				}
 			}
 			catch (...){ cout<<"Data not recognize"<<endl;}
 			
+			cout << "Sampling from V: " << (_samples->getSize()-countSamples) << " samples" << endl;
+			countSamples = _samples->getSize();
+
 				
 			if(_triedSamples > _maxNumSamples) break;
 
@@ -513,8 +580,16 @@ using namespace std;
 					t++;
 					countwr++;
 					n++;
+					if(verifySuccess( entertime, p, callpca)==true){
+						cout << " COLLISION-CHECK COUNT: "<< wkSpace()->getCollCheckCounter() << endl;
+						return _solved;
+					}
 				}
 			}
+			
+			cout << "Sampling from RW: " << (_samples->getSize()-countSamples) << " samples" << endl;
+			countSamples = _samples->getSize();
+
 	  }while(_triedSamples < _maxNumSamples);
 
 	  cout << "PRM Free Nodes = " << _samples->getSize() << endl;
@@ -528,12 +603,13 @@ using namespace std;
 	  cout << " number of collision-checks = "<<_triedSamples<<endl<<flush;
 	  cout << "Number of passes = " << p << " deltaM = " << deltaM<< endl;
 	  cout << " Call PCA = "<<callpca<<endl<<flush;
+	  cout << " COLLISION-CHECK COUNT: "<< wkSpace()->getCollCheckCounter() << endl;
 	  printPCAComponents();
 	 
 
 
     _solved = false;
-    _triedSamples = n;
+    //_triedSamples = n; ???
     _totalTime = (KthReal)(finaltime - entertime)/CLOCKS_PER_SEC ;
     _smoothTime = 0. ;
    return _solved;
@@ -547,36 +623,36 @@ using namespace std;
 		sizevd=_distance.size();//numero de elementos del vector de distancias
 		
 		//if not enough ssmples return
-		if(sizevd<11) return false;
+		if(sizevd<_wkSpace->getDimension()) return false;
 	
 		//else compute the V region
 		///////////////////////////////////
 				
 		///////////Fill Matrix PCA11PMDs to compute PCA /////////////////////
-		//use those samples within a distance R, and if more than 11 are available use those 
+		//use those samples within a distance R, and if more than 11 (_wkSpace->getDimension()) are available use those 
 		//that also belong to the same connected component as the goal
 		vector<Sample*> pacsamplevector;
 		for(int i=0;i<sizevd;i++)
 		{
 			//consider only those of the same connected component as the goal
-			if(i>=11 && _samples->getSampleAt(i+2)->getConnectedComponent()!=goalSamp()->getConnectedComponent()) continue;
+			if(i>=_wkSpace->getDimension() && _samples->getSampleAt(i+2)->getConnectedComponent()!=goalSamp()->getConnectedComponent()) continue;
 
 			if(_distance.at(i)<R)//condición para muestras que se encuentran a una distancia menor a R
 			{
 				pacsamplevector.push_back(_samples->getSampleAt(i+2));//Conseguimos las muestras libre a partir del elemento numero 3 :(0)= Ini y (1)=Goal, 
 			}
 		}
-		mat PCA11PMDs(pacsamplevector.size(),11);
+		mat PCA11PMDs(pacsamplevector.size(),_wkSpace->getDimension());
 		PCA11PMDs.fill(0.0);//inicilización de la matriz
 		for(int i=0;i<pacsamplevector.size();i++)
 		{
-			for(int k = 0; k <11; k++) 
+			for(int k = 0; k <_wkSpace->getDimension(); k++) 
 				PCA11PMDs(i,k)=pacsamplevector[i]->getCoords()[k];		
 		}
 
 		try
 		{
-			if(PCA11PMDs.n_rows>=11)//Condición para el calculo de PCA(minimo 11 elementos)
+			if(PCA11PMDs.n_rows>=_wkSpace->getDimension())//Condición para el calculo de PCA(minimo _wkSpace->getDimension(),11, elementos)
 			{
 				///////////////PCA Armadillo//////////////////////////////
 				mat coeff;//coeff: principal component coefficients
@@ -600,14 +676,14 @@ using namespace std;
 				//mat::fixed<50,11> matrand;
 				//matrand.fill(0.0);
 				int numsamplespca=500;//200;
-				mat matrand(numsamplespca,11);
+				mat matrand(numsamplespca,_wkSpace->getDimension());
 				//matrand(numsamplespca,11);
 				matrand.fill(0.0);
 
 				//_gen->rand_init();
 				for(int i=0; i < numsamplespca; i++)
 				{
-					for(int j=0; j<11; j++){
+					for(int j=0; j<_wkSpace->getDimension(); j++){
 						double rr=_gen->d_rand();
 						//fprintf(fp,"%f\n",rr);
 						matrand(i,j)=-lambdapca(0,j)+(2*lambdapca(0,j)*(rr));
@@ -615,7 +691,7 @@ using namespace std;
 					
 					rowvec zeta=trans((coeff*trans(matrand.row(i)))+trans(bar));
 					
-					for(int j=0; j<11; j++)
+					for(int j=0; j<_wkSpace->getDimension(); j++)
 						matrand(i,j)=zeta(0,j);
 					
 				}
@@ -834,264 +910,529 @@ using namespace std;
 	}
 
 
-	//
-	////!samples aroun the goal sample or around a sample that belongs to the same connected component than the goal
-	////!uses Gaussina sampling
-	//bool PRMPCAHandArmPlanner::getSampleInGoalRegionRealworldGaussian(double tdeltaM, double rdeltaM, bool handWholeRange)
-	//{
-	//    int trials, maxtrials;
-	//	vector<KthReal> coord(_wkSpace->getDimension());
-	//	bool autocol;//flag to test autocollisions
-	//	Sample *tmpSample;
- //       tmpSample = new Sample(_wkSpace->getDimension());
-	//	Sample *tmpSample2;
- //       tmpSample2 = new Sample(_wkSpace->getDimension());
+	
+	//!samples aroun the goal sample or around a sample that belongs to the same connected component than the goal
+	//!uses Gaussina sampling
+	bool PRMPCAHandArmPlanner::getSampleInGoalRegionRealworldGaussian(double tdeltaM, double rdeltaM, bool handWholeRange)
+	{
+		boost::mt19937 rng(time(0));
+		boost::normal_distribution<double> gaussian_dist(0,0.1); // Parametro sigma
+		GaussianGenerator gaussianGen(rng,gaussian_dist);
 
-	//	//Set the coordinates of the robot joints 
-	//	//Randomly set the coordinates of the robot joints at a autocollision-free conf
-	//	trials=0;
-	//	maxtrials=100;
-	//	Sample *s;
-	//	//_gen->rand_init();
-	//	do{
-	//		vector<KthReal> tmpSpos; tmpSpos.resize(3); 
-	//		vector<KthReal> tmpSrot; tmpSrot.resize(3); 
-	//		vector<KthReal> coordrobot; coordrobot.resize(6); 
-	//
-	//		//randomly compute the coords of a smaple of the conecected component of the goal
-	//		//or the coordinates of the goal
-	//		
-	//		double rr=_gen->d_rand();
-	//		//fprintf(fp,"%f\n",rr);
-	//		if(rr<0.8)
-	//		{
-	//			int cc = goalSamp()->getConnectedComponent();
-	//			int kcc = _ccMap[cc]->getSize(); 
-	//			
-	//			double rr=_gen->d_rand();
-	//			//fprintf(fp,"%f\n",rr);
-	//			int indexsam = rr*kcc;
-	//			//cout<<"sampling around "<<indexsam<<endl;
-	//			 s = _ccMap[cc]->getSampleAt(indexsam);
-	//		}
-	//		else s = goalSamp();
+	    int trials, maxtrials;
+		vector<KthReal> coord(_wkSpace->getDimension());
+		bool autocol;//flag to test autocollisions
+		Sample *tmpSample;
+        tmpSample = new Sample(_wkSpace->getDimension());
+		Sample *tmpSample2;
+        tmpSample2 = new Sample(_wkSpace->getDimension());
 
-	//		std::vector<KthReal> tmpcoordTCPpos; tmpcoordTCPpos.resize(3);  
-	//		std::vector<KthReal> tmpcoordTCPori; tmpcoordTCPori.resize(4);
-	//		_wkSpace->getRobot(0)->Kinematics(s->getMappedConf().at(0).getRn()); 
-	//		mt::Transform ctransfgoal = _wkSpace->getRobot(0)->getLinkTransform(6);
-	//		mt::Point3 ctransgoal = ctransfgoal.getTranslation();
-	//		mt::Rotation crotgoal = ctransfgoal.getRotation();
-	//		for(int k=0;k<3;k++) tmpcoordTCPpos[k] =  ctransgoal[k];
-	//		for(int k=0;k<4;k++) tmpcoordTCPori[k] =  crotgoal[k];
-	//		_goalse3.setPos(tmpcoordTCPpos);
-	//		_goalse3.setOrient(tmpcoordTCPori);
-	//		
-	//		tmpSpos	= _goalse3.getPos();
-	//		tmpSrot	= _goalse3.getParams();
-	//		
-	//					
-	//		//sample position in a ball centered at tmpSpos and radius tdeltaM
-	//		double rx,ry,rz,rrmod=0;
-	//		do 
-	//		{
-	//			rx= (2 * _gen->d_rand()) - 1;
-	//			ry= (2 * _gen->d_rand()) - 1;
-	//			rz= (2 * _gen->d_rand()) - 1;
-	//			rrmod = rx*rx + ry*ry + rz*rz;
-	//		}while(rrmod>1);
-	//		coordrobot[0] = tmpSpos[0] + tdeltaM*rx;
-	//		coordrobot[1] = tmpSpos[1] + tdeltaM*ry;
-	//		coordrobot[2] = tmpSpos[2] + tdeltaM*rz;
+		//Set the coordinates of the robot joints 
+		//Randomly set the coordinates of the robot joints at a autocollision-free conf
+		trials=0;
+		maxtrials=100;
+		Sample *s;
+		int indexsam;
+		int kcc;
+		//_gen->rand_init();
+		do{
+			vector<KthReal> tmpSpos; tmpSpos.resize(3); 
+			vector<KthReal> tmpSrot; tmpSrot.resize(3); 
+			vector<KthReal> coordrobot; coordrobot.resize(6); 
+	
+			//randomly compute the coords of a sample of the conecected component of the goal
+			//or the coordinates of the goal
+			
+			double rr=_gen->d_rand();
+			//fprintf(fp,"%f\n",rr);
+			if(rr<0.8)
+			{
+				int cc = goalSamp()->getConnectedComponent();
+				kcc = _ccMap[cc]->getSize(); 
+				
+				double rr=_gen->d_rand();
+				//fprintf(fp,"%f\n",rr);
+				indexsam = rr*kcc;
+				//cout<<"sampling around "<<indexsam<<endl;
+				 s = _ccMap[cc]->getSampleAt(indexsam);
+			}
+			else s = goalSamp();
 
-	//		//sample from box centered at tmpSpos
-	//		//for(int k =0; k < 3; k++)
-	//		//{
-	//		//	double rr=_gen->d_rand();
-	//		//	//fprintf(fp,"%f\n",rr);
-	//		//	coordrobot[k] = tmpSpos[k] + tdeltaM*(2*(KthReal)rr-1);
-	//		//}
+			std::vector<KthReal> tmpcoordTCPpos; tmpcoordTCPpos.resize(3);  
+			std::vector<KthReal> tmpcoordTCPori; tmpcoordTCPori.resize(4);
+			_wkSpace->getRobot(0)->Kinematics(s->getMappedConf().at(0).getRn()); 
+			mt::Transform ctransfgoal = _wkSpace->getRobot(0)->getLinkTransform(6);
+			mt::Point3 ctransgoal = ctransfgoal.getTranslation();
+			mt::Rotation crotgoal = ctransfgoal.getRotation();
+			for(int k=0;k<3;k++) tmpcoordTCPpos[k] =  ctransgoal[k];
+			for(int k=0;k<4;k++) tmpcoordTCPori[k] =  crotgoal[k];
+			_goalse3.setPos(tmpcoordTCPpos);
+			_goalse3.setOrient(tmpcoordTCPori);
+			
+			tmpSpos	= _goalse3.getPos();
+			tmpSrot	= _goalse3.getParams();
+			
+						
+			//sample position in a ball centered at tmpSpos and radius tdeltaM
+			double rx,ry,rz,rrmod=0;
+			do 
+			{
+				rx= (2 * _gen->d_rand()) - 1;
+				ry= (2 * _gen->d_rand()) - 1;
+				rz= (2 * _gen->d_rand()) - 1;
+				rrmod = rx*rx + ry*ry + rz*rz;
+			}while(rrmod>1);
+			double tt = tdeltaM * _gen->d_rand();
+			coordrobot[0] = tmpSpos[0] + tt*rx;
+			coordrobot[1] = tmpSpos[1] + tt*ry;
+			coordrobot[2] = tmpSpos[2] + tt*rz;
 
-	//		//sample orientation
-	//		for(int k =0; k < 3; k++)
-	//		{
-	//			double rr=_gen->d_rand();
-	//			//fprintf(fp,"%f\n",rr);
-	//			coordrobot[k+3] = tmpSrot[k]+ rdeltaM*(2*(KthReal)rr-1);
-	//			if(coordrobot[k+3]<0) coordrobot[k+3]=0;
-	//			else if(coordrobot[k+3]>1) coordrobot[k+3]=1;
-	//		}
+			//sample from box centered at tmpSpos
+			//for(int k =0; k < 3; k++)
+			//{
+			//	double rr=_gen->d_rand();
+			//	//fprintf(fp,"%f\n",rr);
+			//	coordrobot[k] = tmpSpos[k] + tdeltaM*(2*(KthReal)rr-1);
+			//}
 
-	//		//compute inverse kinematics. solution is reloaded in same vector coord
-	//		//bool maintainSameWrist=true;
-	//		bool maintainSameWrist;
-	//		//if(_gen->d_rand()<0.5) maintainSameWrist=true;
-	//		//else maintainSameWrist=false;
-	//		maintainSameWrist=true;
-	//		bool invKinSolved=ArmInverseKinematics(coordrobot, goalSamp(), maintainSameWrist);
-	//					
-	//				
-	//		if(invKinSolved==true) 
-	//		{
-	//			//load arm coordinates (normalized)
-	//			KthReal low[6];
-	//			KthReal high[6];
-	//			for(int k=0; k < 6; k++)
-	//			{
-	//				//normalize
-	//				low[k] = *_wkSpace->getRobot(0)->getLink(k+1)->getLimits(true);
-	//				high[k] = *_wkSpace->getRobot(0)->getLink(k+1)->getLimits(false);
-	//				coord[k]=(coordrobot[k]-low[k])/(high[k]-low[k]);
-	//			}
+			//sample orientation
+			for(int k =0; k < 3; k++)
+			{
+				double rr=_gen->d_rand();
+				//fprintf(fp,"%f\n",rr);
+				coordrobot[k+3] = tmpSrot[k]+ rdeltaM*(2*(KthReal)rr-1);
+				if(coordrobot[k+3]<0) coordrobot[k+3]=0;
+				else if(coordrobot[k+3]>1) coordrobot[k+3]=1;
+			}
 
-	//			//Set the new sample with the arm coorinates and check for autocollision.	
-	//			for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig		
-	//			_wkSpace->getRobot(0)->control2Pose(coord); 
-	//			autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
-	//		}
-	//		else{
-	//			autocol = true;//invkinematics failed, considered as an autocolision to continue looping
-	//		}
+			//compute inverse kinematics. solution is reloaded in same vector coord
+			//bool maintainSameWrist=true;
+			bool maintainSameWrist;
+			//if(_gen->d_rand()<0.5) maintainSameWrist=true;
+			//else maintainSameWrist=false;
+			maintainSameWrist=true;
+			bool invKinSolved=ArmInverseKinematics(coordrobot, goalSamp(), maintainSameWrist);
+						
+					
+			if(invKinSolved==true) 
+			{
+				//load arm coordinates (normalized)
+				KthReal low[6];
+				KthReal high[6];
+				for(int k=0; k < 6; k++)
+				{
+					//normalize
+					low[k] = *_wkSpace->getRobot(0)->getLink(k+1)->getLimits(true);
+					high[k] = *_wkSpace->getRobot(0)->getLink(k+1)->getLimits(false);
+					coord[k]=(coordrobot[k]-low[k])/(high[k]-low[k]);
+				}
 
-	//		trials++;
-	//	}while(autocol==true && trials<maxtrials);
+				//Set the new sample with the arm coorinates and check for autocollision.	
+				for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig		
+				_wkSpace->getRobot(0)->control2Pose(coord); 
+				autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
+			}
+			else{
+				autocol = true;//invkinematics failed, considered as an autocolision to continue looping
+			}
 
-	//	if(autocol==true) return false;
-	//	
-	//	//Set the coordinates of the hand joints at a autocollision-free conf
-	//	bool flag;
-	//	//float r=0;
-	//	
-	//	//if(_gen->d_rand()<0.5) flag = false; //use as hand coords those of the goal sample
-	//	//else flag = true; //random sample the hand 
+			trials++;
+		}while(autocol==true && trials<maxtrials);
 
-	//	flag = true; //random sample the hand 
-	//	if(handWholeRange)
-	//	{
-	//		//Set the coord values to -1 in order to sample within the whole hand workspace, not only around the goal
-	//		//when calling to getHandConfig
-	//		for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]=-1;
-	//	}
-	//	else{
-	//		vector<KthReal>& coordgoal = s->getCoords();
-	//		for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]= coordgoal[k];
-	//	}
-	//	if(getHandConfig(coord, flag, -1))	
-	//	{
-	//		//autocollisionfree sample found
-	//		tmpSample->setCoords(coord);
-	//		
-	//		///////////////////////////////////////////////////////////////////////
-	//		_triedSamples++;
-	//			
-	//		trials=0;
-	//		//compute tmpSample2
-	//		do
-	//		{
-	//			KthReal v=-1.0;
-	//			KthReal sigma=0.01;
-	//			vector<KthReal>& coords = tmpSample->getCoords();
-	//			//change coords
-	//			for(int j = 0; j < _wkSpace->getDimension() ; j++)
-	//			{
-	//				v=-1.0;
-	//				while(v<0.0 || v>1.0)
-	//					v = coords.at(j) + 2*sigma*(_gen->d_rand()-0.5);
-	//				coords[j]=v;
-	//			}		
-	//			//load coords to sample
-	//			tmpSample2->setCoords(coords);
-	//			//check autocolision				
-	//			_wkSpace->getRobot(0)->control2Pose(coords); 
-	//			autocol = _wkSpace->getRobot(0)->autocollision();
-	//			trials++;
-	//		}while( autocol == true && trials<maxtrials);
-	//		if(autocol==true) return false;
+		if(autocol==true) return false;
+		
+		//Set the coordinates of the hand joints at a autocollision-free conf
+		bool flag;
+		//float r=0;
+		
+		//if(_gen->d_rand()<0.5) flag = false; //use as hand coords those of the goal sample
+		//else flag = true; //random sample the hand 
 
-	//		//now we have two close autocolision-free samples
-	//		//we check for collision and keep the one that is free (if one is in collision and the other free)
-	//		//otherwise we discard both
-	//		bool tmpSample_IsCollision = _wkSpace->collisionCheck(tmpSample);
-	//		bool tmpSample2_IsCollision = _wkSpace->collisionCheck(tmpSample2);
+		flag = true; //random sample the hand 
+		if(handWholeRange)
+		{
+			//Set the coord values to -1 in order to sample within the whole hand workspace, not only around the goal
+			//when calling to getHandConfig
+			for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]=-1;
+		}
+		else{
+			vector<KthReal>& coordgoal = s->getCoords();
+			for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]= coordgoal[k];
+		}
+		if(getHandConfig(coord, flag, -1))	
+		{
+			//autocollisionfree sample found
+			tmpSample->setCoords(coord);
+			
+			///////////////////////////////////////////////////////////////////////
+			_triedSamples++;
+				
+			trials=0;
+			//compute tmpSample2
+			do
+			{
+				KthReal v=-1.0;
+				KthReal sigmaHand=1.0;//0.01;
+				KthReal sigmaArm=0.05;//0.01;
+				vector<KthReal>& coords = tmpSample->getCoords();
+				vector<KthReal> coords2; coords2.resize(coords.size());
+				//change coords
+				//arm
+				for(int j = 0; j < 6 ; j++)
+				{
+					v=-1.0;
+					while(v<0.0 || v>1.0)
+						v = coords.at(j) + sigmaArm * gaussianGen();
+						//v = coords.at(j) + sigmaArm* (*_gaussianGen)();
+						//v = coords.at(j) + 2*sigmaArm*(_gen->d_rand()-0.5);
+						//v = coords.at(j);
+					coords2[j]=v;
+				}	
+				//hand
+				for(int j = 6; j < _wkSpace->getDimension() ; j++)
+				{
+					v=-1.0;
+					while(v<0.0 || v>1.0)
+						v = coords.at(j) + sigmaHand * gaussianGen();
+						//v = coords.at(j) + sigmaHand*(*_gaussianGen)();
+						//v = coords.at(j) + 2*sigmaHand*(_gen->d_rand()-0.5);
+					coords2[j]=v;
+				}		
+				//load coords to sample
+				tmpSample2->setCoords(coords2);
+				//check autocolision				
+				_wkSpace->getRobot(0)->control2Pose(coords2); 
+				autocol = _wkSpace->getRobot(0)->autocollision();
+				trials++;
+			}while( autocol == true && trials<maxtrials);
+			if(autocol==true) return false;
 
-	//		if(tmpSample_IsCollision == false)
-	//		{				
-	//			//////////////////////////////////////////////////////////////////////
-	//			//Cinematica Directa para encontrar la posición del Robot con la nueva muestra
-	//			_wkSpace->getRobot(0)->Kinematics(tmpSample->getMappedConf().at(0).getRn()); 
-	//			mt::Transform temptransf = _wkSpace->getRobot(0)->getLinkTransform(6);
-	//			mt::Point3 temptrans = temptransf.getTranslation();
-	//			///////////////////////////////////////////////////////////
-	//			float dist=0;//,dif_dist;
-	//			//Distancia de la nueva muestra libre al objetivo
-	//			dist=temptrans.distance(_goaltrans);//goaltrans: distancia objetivo
-	//				
-	//			//Adicionamos una nueva muestra libre de colisiones
-	//			_samples->add(tmpSample);
-	//			PRMPlanner::connectLastSample( );
-	//			_distance.push_back(dist);
-	//		}
-	//		if(tmpSample2_IsCollision==false)
-	//		{			
-	//			//////////////////////////////////////////////////////////////////////
-	//			//Cinematica Directa para encontrar la posición del Robot con la nueva muestra
-	//			_wkSpace->getRobot(0)->Kinematics(tmpSample2->getMappedConf().at(0).getRn()); 
-	//			mt::Transform temptransf = _wkSpace->getRobot(0)->getLinkTransform(6);
-	//			mt::Point3 temptrans = temptransf.getTranslation();
-	//			///////////////////////////////////////////////////////////
-	//			float dist=0;//,dif_dist;
-	//			//Distancia de la nueva muestra libre al objetivo
-	//			dist=temptrans.distance(_goaltrans);//goaltrans: distancia objetivo
-	//				
-	//			//Adicionamos una nueva muestra libre de colisiones
-	//			_samples->add(tmpSample);
-	//			PRMPlanner::connectLastSample( );
-	//			_distance.push_back(dist);
-	//		}
-	//		if(tmpSample_IsCollision == false || tmpSample2_IsCollision == false) return true;
+			//now we have two close autocolision-free samples
+			//we check for collision and keep the one that is free (if one is in collision and the other free)
+			//otherwise we discard both
+			bool tmpSample_IsCollision = _wkSpace->collisionCheck(tmpSample);
+			bool tmpSample2_IsCollision = _wkSpace->collisionCheck(tmpSample2);
 
-	//		/*
-	//		Sample *chosenSample;
-	//		bool foundsample=false;
-	//		if(tmpSample_IsCollision == true && tmpSample2_IsCollision == false )
-	//		{
-	//			chosenSample = tmpSample2;
-	//			foundsample = true;
-	//		}
-	//		else if(tmpSample_IsCollision == false && tmpSample2_IsCollision==true)
-	//		{
-	//			chosenSample = tmpSample;
-	//			foundsample = true;
-	//		}
-	//			
-	//		if(foundsample==true)
-	//		{
-	//			//////////////////////////////////////////////////////////////////////
-	//			//Cinematica Directa para encontrar la posición del Robot con la nueva muestra
-	//			_wkSpace->getRobot(0)->Kinematics(chosenSample->getMappedConf().at(0).getRn()); 
-	//			mt::Transform temptransf = _wkSpace->getRobot(0)->getLinkTransform(6);
-	//			mt::Point3 temptrans = temptransf.getTranslation();
-	//			///////////////////////////////////////////////////////////
-	//			float dist=0;//,dif_dist;
-	//			//Distancia de la nueva muestra libre al objetivo
-	//			dist=temptrans.distance(_goaltrans);//goaltrans: distancia objetivo
-	//				
-	//			//Adicionamos una nueva muestra libre de colisiones
-	//			_samples->add(tmpSample);
-	//			PRMPlanner::connectLastSample( );
-	//			_distance.push_back(dist);
-	//			return true;
-	//		}
-	//		*/
-	//	}
-	//	return false;
-	//}
+			/*
+			if(tmpSample_IsCollision == false)
+			{				
+				//////////////////////////////////////////////////////////////////////
+				//Cinematica Directa para encontrar la posición del Robot con la nueva muestra
+				_wkSpace->getRobot(0)->Kinematics(tmpSample->getMappedConf().at(0).getRn()); 
+				mt::Transform temptransf = _wkSpace->getRobot(0)->getLinkTransform(6);
+				mt::Point3 temptrans = temptransf.getTranslation();
+				///////////////////////////////////////////////////////////
+				float dist=0;//,dif_dist;
+				//Distancia de la nueva muestra libre al objetivo
+				dist=temptrans.distance(_goaltrans);//goaltrans: distancia objetivo
+					
+				//Adicionamos una nueva muestra libre de colisiones
+				_samples->add(tmpSample);
+				PRMPlanner::connectLastSample( );
+				_distance.push_back(dist);
+			}
+			if(tmpSample2_IsCollision==false)
+			{			
+				//////////////////////////////////////////////////////////////////////
+				//Cinematica Directa para encontrar la posición del Robot con la nueva muestra
+				_wkSpace->getRobot(0)->Kinematics(tmpSample2->getMappedConf().at(0).getRn()); 
+				mt::Transform temptransf = _wkSpace->getRobot(0)->getLinkTransform(6);
+				mt::Point3 temptrans = temptransf.getTranslation();
+				///////////////////////////////////////////////////////////
+				float dist=0;//,dif_dist;
+				//Distancia de la nueva muestra libre al objetivo
+				dist=temptrans.distance(_goaltrans);//goaltrans: distancia objetivo
+					
+				//Adicionamos una nueva muestra libre de colisiones
+				_samples->add(tmpSample2);
+				PRMPlanner::connectLastSample( );
+				_distance.push_back(dist);
+			}
+			if(tmpSample_IsCollision == false || tmpSample2_IsCollision == false) return true;
+			*/
+			
+			
+			Sample *chosenSample;
+			bool foundsample=false;
+			if(tmpSample_IsCollision == true && tmpSample2_IsCollision == false )
+			{
+				chosenSample = tmpSample2;
+				foundsample = true;
+			}
+			else if(tmpSample_IsCollision == false && tmpSample2_IsCollision==true)
+			{
+				chosenSample = tmpSample;
+				foundsample = true;
+			}
+				
+			if(foundsample==true)
+			{
+				//////////////////////////////////////////////////////////////////////
+				//Cinematica Directa para encontrar la posición del Robot con la nueva muestra
+				_wkSpace->getRobot(0)->Kinematics(chosenSample->getMappedConf().at(0).getRn()); 
+				mt::Transform temptransf = _wkSpace->getRobot(0)->getLinkTransform(6);
+				mt::Point3 temptrans = temptransf.getTranslation();
+				///////////////////////////////////////////////////////////
+				float dist=0;//,dif_dist;
+				//Distancia de la nueva muestra libre al objetivo
+				dist=temptrans.distance(_goaltrans);//goaltrans: distancia objetivo
+					
+				//Adicionamos una nueva muestra libre de colisiones
+				_samples->add(chosenSample);
+				PRMPlanner::connectLastSample( );
+				_distance.push_back(dist);
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	//!samples aroun the goal sample or around a sample that belongs to the same connected component than the goal
+	//!uses BridgeTest sampling
+	bool PRMPCAHandArmPlanner::getSampleInGoalRegionRealworldBridgeTest(double tdeltaM, double rdeltaM, bool handWholeRange)
+	{
+		boost::mt19937 rng(time(0));
+		boost::normal_distribution<double> gaussian_dist(0,0.1); // Parametro sigma
+		GaussianGenerator gaussianGen(rng,gaussian_dist);
+
+	    int trials, maxtrials;
+		vector<KthReal> coord(_wkSpace->getDimension());
+		bool autocol;//flag to test autocollisions
+		Sample *tmpSample;
+        tmpSample = new Sample(_wkSpace->getDimension());
+		Sample *tmpSample2;
+        tmpSample2 = new Sample(_wkSpace->getDimension());
+
+		//Set the coordinates of the robot joints 
+		//Randomly set the coordinates of the robot joints at a autocollision-free conf
+		trials=0;
+		maxtrials=100;
+		Sample *s;
+		int indexsam;
+		int kcc;
+		//_gen->rand_init();
+		do{
+			vector<KthReal> tmpSpos; tmpSpos.resize(3); 
+			vector<KthReal> tmpSrot; tmpSrot.resize(3); 
+			vector<KthReal> coordrobot; coordrobot.resize(6); 
+	
+			//randomly compute the coords of a sample of the conecected component of the goal
+			//or the coordinates of the goal
+			
+			double rr=_gen->d_rand();
+			//fprintf(fp,"%f\n",rr);
+			if(rr<0.8)
+			{
+				int cc = goalSamp()->getConnectedComponent();
+				kcc = _ccMap[cc]->getSize(); 
+				
+				double rr=_gen->d_rand();
+				//fprintf(fp,"%f\n",rr);
+				indexsam = rr*kcc;
+				//cout<<"sampling around "<<indexsam<<endl;
+				 s = _ccMap[cc]->getSampleAt(indexsam);
+			}
+			else s = goalSamp();
+
+			std::vector<KthReal> tmpcoordTCPpos; tmpcoordTCPpos.resize(3);  
+			std::vector<KthReal> tmpcoordTCPori; tmpcoordTCPori.resize(4);
+			_wkSpace->getRobot(0)->Kinematics(s->getMappedConf().at(0).getRn()); 
+			mt::Transform ctransfgoal = _wkSpace->getRobot(0)->getLinkTransform(6);
+			mt::Point3 ctransgoal = ctransfgoal.getTranslation();
+			mt::Rotation crotgoal = ctransfgoal.getRotation();
+			for(int k=0;k<3;k++) tmpcoordTCPpos[k] =  ctransgoal[k];
+			for(int k=0;k<4;k++) tmpcoordTCPori[k] =  crotgoal[k];
+			_goalse3.setPos(tmpcoordTCPpos);
+			_goalse3.setOrient(tmpcoordTCPori);
+			
+			tmpSpos	= _goalse3.getPos();
+			tmpSrot	= _goalse3.getParams();
+			
+						
+			//sample position in a ball centered at tmpSpos and radius tdeltaM
+			double rx,ry,rz,rrmod=0;
+			do 
+			{
+				rx= (2 * _gen->d_rand()) - 1;
+				ry= (2 * _gen->d_rand()) - 1;
+				rz= (2 * _gen->d_rand()) - 1;
+				rrmod = rx*rx + ry*ry + rz*rz;
+			}while(rrmod>1);
+			double tt = tdeltaM * _gen->d_rand();
+			coordrobot[0] = tmpSpos[0] + tt*rx;
+			coordrobot[1] = tmpSpos[1] + tt*ry;
+			coordrobot[2] = tmpSpos[2] + tt*rz;
+
+			//sample from box centered at tmpSpos
+			//for(int k =0; k < 3; k++)
+			//{
+			//	double rr=_gen->d_rand();
+			//	//fprintf(fp,"%f\n",rr);
+			//	coordrobot[k] = tmpSpos[k] + tdeltaM*(2*(KthReal)rr-1);
+			//}
+
+			//sample orientation
+			for(int k =0; k < 3; k++)
+			{
+				double rr=_gen->d_rand();
+				//fprintf(fp,"%f\n",rr);
+				coordrobot[k+3] = tmpSrot[k]+ rdeltaM*(2*(KthReal)rr-1);
+				if(coordrobot[k+3]<0) coordrobot[k+3]=0;
+				else if(coordrobot[k+3]>1) coordrobot[k+3]=1;
+			}
+
+			//compute inverse kinematics. solution is reloaded in same vector coord
+			//bool maintainSameWrist=true;
+			bool maintainSameWrist;
+			//if(_gen->d_rand()<0.5) maintainSameWrist=true;
+			//else maintainSameWrist=false;
+			maintainSameWrist=true;
+			bool invKinSolved=ArmInverseKinematics(coordrobot, goalSamp(), maintainSameWrist);
+						
+					
+			if(invKinSolved==true) 
+			{
+				//load arm coordinates (normalized)
+				KthReal low[6];
+				KthReal high[6];
+				for(int k=0; k < 6; k++)
+				{
+					//normalize
+					low[k] = *_wkSpace->getRobot(0)->getLink(k+1)->getLimits(true);
+					high[k] = *_wkSpace->getRobot(0)->getLink(k+1)->getLimits(false);
+					coord[k]=(coordrobot[k]-low[k])/(high[k]-low[k]);
+				}
+
+				//Set the new sample with the arm coorinates and check for autocollision.	
+				for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig		
+				_wkSpace->getRobot(0)->control2Pose(coord); 
+				autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
+			}
+			else{
+				autocol = true;//invkinematics failed, considered as an autocolision to continue looping
+			}
+
+			trials++;
+		}while(autocol==true && trials<maxtrials);
+
+		if(autocol==true) return false;
+		
+		//Set the coordinates of the hand joints at a autocollision-free conf
+		bool flag;
+		//float r=0;
+		
+		//if(_gen->d_rand()<0.5) flag = false; //use as hand coords those of the goal sample
+		//else flag = true; //random sample the hand 
+
+		flag = true; //random sample the hand 
+		if(handWholeRange)
+		{
+			//Set the coord values to -1 in order to sample within the whole hand workspace, not only around the goal
+			//when calling to getHandConfig
+			for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]=-1;
+		}
+		else{
+			vector<KthReal>& coordgoal = s->getCoords();
+			for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]= coordgoal[k];
+		}
+		if(getHandConfig(coord, flag, -1))	
+		{
+			//autocollisionfree sample found
+			tmpSample->setCoords(coord);
+			
+			///////////////////////////////////////////////////////////////////////
+			_triedSamples++;
+				
+			trials=0;
+			//compute tmpSample2
+			do
+			{
+				KthReal v=-1.0;
+				KthReal sigmaHand=1.0;//0.01;
+				KthReal sigmaArm=0.05;//0.01;
+				vector<KthReal>& coords = tmpSample->getCoords();
+				vector<KthReal> coords2; coords2.resize(coords.size());
+				//change coords
+				//arm
+				for(int j = 0; j < 6 ; j++)
+				{
+					v=-1.0;
+					while(v<0.0 || v>1.0)
+						v = coords.at(j) + sigmaArm * gaussianGen();
+						//v = coords.at(j) + sigmaArm* (*_gaussianGen)();
+						//v = coords.at(j) + 2*sigmaArm*(_gen->d_rand()-0.5);
+						//v = coords.at(j);
+					coords2[j]=v;
+				}	
+				//hand
+				for(int j = 6; j < _wkSpace->getDimension() ; j++)
+				{
+					v=-1.0;
+					while(v<0.0 || v>1.0)
+						v = coords.at(j) + sigmaHand * gaussianGen();
+						//v = coords.at(j) + sigmaHand*(*_gaussianGen)();
+						//v = coords.at(j) + 2*sigmaHand*(_gen->d_rand()-0.5);
+					coords2[j]=v;
+				}		
+				//load coords to sample
+				tmpSample2->setCoords(coords2);
+				//check autocolision				
+				_wkSpace->getRobot(0)->control2Pose(coords2); 
+				autocol = _wkSpace->getRobot(0)->autocollision();
+				trials++;
+			}while( autocol == true && trials<maxtrials);
+			if(autocol==true) return false;
+
+			//now we have two close autocolision-free samples
+			//we check for collision and keep the one that is free (if one is in collision and the other free)
+			//otherwise we discard both
+			bool tmpSample_IsCollision = _wkSpace->collisionCheck(tmpSample);
+			bool tmpSample2_IsCollision = _wkSpace->collisionCheck(tmpSample2);
+			
+			if(tmpSample_IsCollision == true && tmpSample2_IsCollision == true )
+			{
+				Sample *midpointSample;
+				KthReal midpoint;
+				int maxmidpointtrials=10;
+				int midpointtrials=0;
+
+				while(midpointtrials<maxmidpointtrials)
+				{
+					midpointtrials++;
+					KthReal midpoint = _gen->d_rand();
+
+					midpointSample = tmpSample->interpolate(tmpSample2,midpoint);
+
+					if(_wkSpace->collisionCheck(midpointSample)==false)
+					{
+						//////////////////////////////////////////////////////////////////////
+						//Cinematica Directa para encontrar la posición del Robot con la nueva muestra
+						_wkSpace->getRobot(0)->Kinematics(midpointSample->getMappedConf().at(0).getRn()); 
+						mt::Transform temptransf = _wkSpace->getRobot(0)->getLinkTransform(6);
+						mt::Point3 temptrans = temptransf.getTranslation();
+						///////////////////////////////////////////////////////////
+						float dist=0;//,dif_dist;
+						//Distancia de la nueva muestra libre al objetivo
+						dist=temptrans.distance(_goaltrans);//goaltrans: distancia objetivo
+					
+						//Adicionamos una nueva muestra libre de colisiones
+						_samples->add(midpointSample);
+						PRMPlanner::connectLastSample( );
+						_distance.push_back(dist);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 
 
 
 		//!samples around the line connecting init and goal configurations 
-	int PRMPCAHandArmPlanner::getSamplesBetweenInitGoal(double tdeltaM, double rdeltaM, bool handWholeRange)
+	int PRMPCAHandArmPlanner::getSamplesBetweenInitGoal(int maxinterpolatedpoints, double tdeltaM, double rdeltaM, bool handWholeRange)
 	{
 		int samplesadded=0;
 	    int trials, maxtrials;
@@ -1106,7 +1447,7 @@ using namespace std;
 		maxtrials=100;
 		Sample *s;
 
-		int maxinterpolatedpoints=10;
+		
 		//t is the interpolation parameter
 		double t; 
 		for(int i=0;i<=maxinterpolatedpoints;i++)

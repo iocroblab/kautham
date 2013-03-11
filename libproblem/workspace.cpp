@@ -61,7 +61,10 @@ namespace libProblem {
   unsigned int    libProblem::WorkSpace::_countWorldCollCheck = 0;
   void            libProblem::WorkSpace::resetCollCheckCounter(){_countWorldCollCheck = 0;}
   unsigned int    libProblem::WorkSpace::getCollCheckCounter(){ return _countWorldCollCheck;}
-  void            libProblem::WorkSpace::increaseCollCheckCounter(){_countWorldCollCheck++;}
+  void            libProblem::WorkSpace::increaseCollCheckCounter()
+  {
+	  _countWorldCollCheck++;
+  }
 
 	void WorkSpace::addDistanceMapFile(string distanceFile)
 	{

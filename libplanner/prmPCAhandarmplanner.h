@@ -49,11 +49,15 @@
 #if defined(KAUTHAM_USE_ARMADILLO)
 #include <iostream>
 #include <armadillo>
+#include <boost/random.hpp>
 
 using namespace arma;
 using namespace std;
 
-
+typedef boost::normal_distribution<double> NormalDistribution;
+typedef boost::mt19937 RandomGenerator;
+typedef boost::variate_generator<RandomGenerator&, NormalDistribution> GaussianGenerator;
+ 
  namespace libPlanner {
   namespace PRM{
       typedef std::pair<KthReal, KthReal> thumbLimits;
@@ -75,11 +79,9 @@ using namespace std;
 			bool getSampleRandPCA(float R);
 			bool SamplerPCASpace(bool spca,float R,float tradius);
 			////////////////////////////////////////////////////////
-			int getSamplesBetweenInitGoal(double tdeltaM, double rdeltaM, bool handWholeRange);
+			int getSamplesBetweenInitGoal(int maxinterpolatedpoints, double tdeltaM, double rdeltaM, bool handWholeRange);
 			////////////////////////////////////////////////////////
 			bool getSampleInGoalRegionRealworld(double tradius, double rradius, bool handWholeRange);
-			/////////////////////////////////////////////////////////
-			//bool getSampleInGoalRegionRealworldGaussian(double tdeltaM, double rdeltaM, bool handWholeRange);
 			//////////////////////////////////////////////////////////
 			void printPCAComponents();
 			//////////////////////////////////////////////////////////
@@ -88,6 +90,10 @@ using namespace std;
 
 			bool ArmInverseKinematics(vector<KthReal> &carm, Sample *smp, bool maintainSameWrist=true);
  			void setIniGoalSe3();
+
+			bool getSampleInGoalRegionRealworldGaussian(double tdeltaM, double rdeltaM, bool handWholeRange);
+			bool getSampleInGoalRegionRealworldBridgeTest(double tdeltaM, double rdeltaM, bool handWholeRange);
+			bool PRMPCAHandArmPlanner::verifySuccess(clock_t inittime, int nloops, int nPCAcalls);
 	 
 		private:
 			int _incrementalPMDs;
@@ -104,8 +110,10 @@ using namespace std;
 			int callpca;
 			float _deltaR;
 			float _deltaI;
+			int _samplingmethod; //flag to use gaussian instead of sampling in V using the pca. For comparison purposes. 
 			mat matPCA;
 			FILE *fp;
+			//GaussianGenerator *_gaussianGen;
 	};	
   }
 }
