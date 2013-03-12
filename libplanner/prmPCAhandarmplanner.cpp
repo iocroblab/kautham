@@ -658,7 +658,7 @@ using namespace std;
 				mat coeff;//coeff: principal component coefficients
 				vec latent;//latent: principal component variances.
 				vec explained;//explained: percentage of the total variance explained by each principal component. 
-				princomp_cov(coeff, latent, explained,PCA11PMDs);//Calcula el PCA
+				princomp(coeff, latent, explained,cov(PCA11PMDs));//Calcula el PCA
 				/////////Print///////////////////////////////////////////////////////////
 				//cout << "Matrix Rotation:" << endl << coeff << endl;
 				//////////Contador Call PCA/////////////////////////////////////////

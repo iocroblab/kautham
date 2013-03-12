@@ -93,7 +93,7 @@ typedef boost::variate_generator<RandomGenerator&, NormalDistribution> GaussianG
 
 			bool getSampleInGoalRegionRealworldGaussian(double tdeltaM, double rdeltaM, bool handWholeRange);
 			bool getSampleInGoalRegionRealworldBridgeTest(double tdeltaM, double rdeltaM, bool handWholeRange);
-			bool PRMPCAHandArmPlanner::verifySuccess(clock_t inittime, int nloops, int nPCAcalls);
+			bool verifySuccess(clock_t inittime, int nloops, int nPCAcalls);
 	 
 		private:
 			int _incrementalPMDs;
