@@ -210,12 +210,16 @@ int main(int argc, char* argv[]){
           outputFile << "Collision-check calls: \t"   << checks/tryTimes << endl;
 		  */
 			outputFile << "Problem solved:\t"     << absPath                << endl;
-			outputFile << tryTimes  << "\t";
-			outputFile << badSol  << "\t";
+			outputFile << "SuccesRate Time Samples PRMnodes PathNodes CollChecks" << endl;
+			//outputFile << tryTimes  << "\t";
+			//outputFile << badSol  << "\t";
+			outputFile << 100*(tryTimes-badSol)/tryTimes  << "\t";
 			if(badSol!=tryTimes)
 			{
 				outputFile << times[0]/(tryTimes-badSol)  << "\t";
+				outputFile << sampCount[0]/(float) (tryTimes-badSol)  << "\t";
 				outputFile << sampCount[1]/(float) (tryTimes-badSol)  << "\t";
+				outputFile << sampCount[2]/(float) (tryTimes-badSol)  << "\t";
 				outputFile << checks/(tryTimes-badSol)  << endl;
 			}
 			else outputFile << endl;
