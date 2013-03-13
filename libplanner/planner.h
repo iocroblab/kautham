@@ -153,6 +153,7 @@ namespace libPlanner {
 
     // Stats
     unsigned int                  _collChecks;
+    unsigned int                  _worldcollChecks;
     unsigned int                  _maxNumSamples;
     unsigned int                  _triedSamples;
     unsigned int                  _generatedEdges;

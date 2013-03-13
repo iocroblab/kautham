@@ -110,14 +110,15 @@ namespace libPlanner{
       addZeroCrossingToPath();
       moveAlongPath(0);
       _wkSpace->inheritSolution(_simulationPath);
-	    _collChecks = libProblem::WorkSpace::getCollCheckCounter();
+	  _worldcollChecks = libProblem::WorkSpace::getCollCheckCounter();
+	  _collChecks = libProblem::Element::getCollCheckCounter();
 
       // Add the results to the Query vector.
       KthQuery* currQue = NULL;
       addQuery( _samples->indexOf( _init ), _samples->indexOf( _goal ));
       currQue = &(_queries.at( _queries.size() - 1 ));
       currQue->solved(_solved);
-      currQue->setSampleStats(_triedSamples, _samples->getSize(), _generatedEdges, _collChecks);
+      currQue->setSampleStats(_triedSamples, _samples->getSize(), _generatedEdges, _collChecks, _worldcollChecks);
       currQue->setTotalTime( _totalTime );
       currQue->setSmoothTime( _smoothTime );
       vector<int> solu;
@@ -265,6 +266,12 @@ namespace libPlanner{
       queryItemResultC.set_name("Result");
       queryItemResultC.append_attribute("name") = "Collision-check calls";
       queryItemResultC.append_child(node_pcdata).set_value( (*it).printCollCheckCalls().c_str() );
+
+	  
+      xml_node queryItemResultWC = queryItem.append_child();
+      queryItemResultWC.set_name("Result");
+      queryItemResultWC.append_attribute("name") = "WorldCollision-check calls";
+      queryItemResultWC.append_child(node_pcdata).set_value( (*it).printWorldCollCheckCalls().c_str() );
     }
 
     //  Now it is adding the samples set.
@@ -368,6 +375,7 @@ namespace libPlanner{
         if( par=="Generated Samples" )      currQue->setGeneratedSamples( atoi( it2->child_value() )  );
         if( par=="Generated Edges" )        currQue->setGeneratedEdges( atoi( it2->child_value() )  );
         if( par=="Collision-check calls" )  currQue->setCollCheckCalls( atoi( it2->child_value() )  );
+        if( par=="WorldCollision-check calls" )  currQue->setWorldCollCheckCalls( atoi( it2->child_value() )  );
       }
     }
     // If load data of the planner includes the Queries information then the first solved

@@ -86,6 +86,12 @@ namespace libPlanner{
     return ss.str();
   }
 
+  string KthQuery::printWorldCollCheckCalls(){
+    stringstream ss;
+    ss << _worldcollCheckCalls ;
+    return ss.str();
+  }
+
   string KthQuery::printGeneratedEdges(){
     stringstream ss;
     ss << _generatedEdges ;

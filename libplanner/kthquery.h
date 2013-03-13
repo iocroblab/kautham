@@ -67,17 +67,19 @@ namespace libPlanner{
       inline int              getConnectedSamples(){return _connectedSamples;}
       inline int              getGeneratedEdges(){return _generatedEdges;}
       inline int              getCollCheckCalls(){return _collCheckCalls;}
+      inline int              getWorldCollCheckCalls(){return _worldcollCheckCalls;}
       inline void             solved(bool solved){_solved = solved;}
       inline bool             solved(){return _solved;}
       inline int              getInit(){return _init;}
       inline int              getGoal(){return _goal;}
       inline bool             setInitGoal(int init, int goal){_init = init; _goal = goal;}
-      inline void             setSampleStats(int generated, int connected, int edges, int checks){_generatedSamples = generated;
-                                            _connectedSamples = connected; _generatedEdges = edges;_collCheckCalls = checks;}
+      inline void             setSampleStats(int generated, int connected, int edges, int checks, int wchecks){_generatedSamples = generated;
+                                            _connectedSamples = connected; _generatedEdges = edges;_collCheckCalls = checks; _worldcollCheckCalls = wchecks;}
       inline void             setGeneratedSamples(int generated){ _generatedSamples = generated;}
       inline void             setConnectedSamples(int connected){ _connectedSamples = connected; }
       inline void             setGeneratedEdges(int edges){_generatedEdges = edges;}
       inline void             setCollCheckCalls(int checks){_collCheckCalls = checks;}
+      inline void             setWorldCollCheckCalls(int wchecks){_worldcollCheckCalls = wchecks;}
 
       string printInit();
       string printGoal();
@@ -89,6 +91,7 @@ namespace libPlanner{
       string printTotalTime();
       string printSmoothTime();
       string printCollCheckCalls();
+      string printWorldCollCheckCalls();
 
       void setPath(string path);
       bool sameInitGoal(const KthQuery &other) const;
@@ -105,6 +108,7 @@ namespace libPlanner{
       int         _generatedSamples;
       int         _connectedSamples;
       int         _generatedEdges;
+	    int		      _worldcollCheckCalls;
 	    int		      _collCheckCalls;
   };
 }

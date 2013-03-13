@@ -127,6 +127,7 @@ int main(int argc, char* argv[]){
       KthReal times[2]={0., 0.};
       int sampCount[3]={0, 0, 0};
       unsigned int checks=0;
+      unsigned int worldchecks=0;
       for(int i = 0; i < tryTimes; i++){
         _samples->clear();
         Sample* smp = new Sample(d);
@@ -145,6 +146,7 @@ int main(int argc, char* argv[]){
           sampCount[0] += tmp.getGeneratedSamples();
           sampCount[1] += tmp.getConnectedSamples();
           sampCount[2] += tmp.getPath().size();
+		  worldchecks += tmp.getWorldCollCheckCalls();
 		  checks += tmp.getCollCheckCalls();
           //ss << i << ".kps";
           //_planner->saveData( soluFile.c_str() );
@@ -210,17 +212,18 @@ int main(int argc, char* argv[]){
           outputFile << "Collision-check calls: \t"   << checks/tryTimes << endl;
 		  */
 			outputFile << "Problem solved:\t"     << absPath                << endl;
-			outputFile << "SuccesRate Time Samples PRMnodes PathNodes CollChecks" << endl;
+			outputFile << "SuccesRate Time Samples PRMnodes PathNodes WorldCollChecks TotalPQPCollChecks" << endl;
 			//outputFile << tryTimes  << "\t";
 			//outputFile << badSol  << "\t";
-			outputFile << 100*(tryTimes-badSol)/tryTimes  << "\t";
+			outputFile << 100.0*(float)(tryTimes-badSol)/tryTimes  << "\t";
 			if(badSol!=tryTimes)
 			{
-				outputFile << times[0]/(tryTimes-badSol)  << "\t";
+				outputFile << times[0]/(float) (tryTimes-badSol)  << "\t";
 				outputFile << sampCount[0]/(float) (tryTimes-badSol)  << "\t";
 				outputFile << sampCount[1]/(float) (tryTimes-badSol)  << "\t";
 				outputFile << sampCount[2]/(float) (tryTimes-badSol)  << "\t";
-				outputFile << checks/(tryTimes-badSol)  << endl;
+				outputFile << worldchecks/(float) (tryTimes-badSol)  <<  "\t";
+				outputFile << checks/(float) (tryTimes-badSol)  << endl;
 			}
 			else outputFile << endl;
 	      }else           //there were any problems with the copying process
