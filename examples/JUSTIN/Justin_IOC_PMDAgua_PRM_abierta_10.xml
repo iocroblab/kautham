@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Problem name="" topology="SE3">
+
+  
+  <Robot robot="robots/Justin_PMD_Agua_abierta_10.rob" scale="1.0"> 
+   <!--Robot Path-->
+	<Limits name="X" min="0.0" max="1000.0"></Limits>
+	<Limits name="Y" min="0.0" max="1000.0"></Limits>
+	<Limits name="Z" min="0.0" max="1000.0"></Limits>
+	<Limits name="WX" min="0.0" max="1.0"></Limits>
+	<Limits name="WY" min="0.0" max="1.0"></Limits>
+	<Limits name="WZ" min="0.0" max="1.0"></Limits>
+   	<Limits name="THETA" min="-360.0" max="360.0"></Limits>
+       	<Home TH="180.0" WZ="0.0" WY="1.0" WX="0.0" Z="0.0" Y="500.0" X="0.0" />
+  </Robot>
+
+  <Scene scene="scenes/IOC2.iv" scale="1.0"> 
+    <!--Scene Path-->
+    <Location TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="200.0" Y="-300.0" X="-1000.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/glass.wrl" scale="100"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="-1.0" Z="500.0" Y="0.0" X="400.0"> 
+     <!--Problem of the scene -->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/can.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="500.0" Y="60.0" X="-400.0"> 
+     <!--Problem of the scene -->
+    </Location>
+  </Scene>
+
+<Planner ProblemName="" Date="">
+	<Parameters>
+		<Name>PRM</Name>
+		<LocalPlanner stepSize="1">Linear</LocalPlanner>
+		<Parameter name="Drawn Path Link">-1</Parameter>
+		<Parameter name="Max. Neighs">10</Parameter>
+		<Parameter name="Max. Samples">2000</Parameter>
+		<Parameter name="Neigh Thresshold">1.5</Parameter>
+		<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
+		<Parameter name="Speed Factor">1</Parameter>
+		<Parameter name="Step Size">0.2</Parameter>
+	</Parameters>
+	
+	<Queries>
+		<Query>
+			<Init dim="12">0.2701 0.8265 0.2981 0.7447 0.2894 0.4271 0.4843 0.4938 0.7046 0.8881 0.6133 0.7079</Init>
+			<Goal dim="12">0.3342 0.6747 0.4107 0.5384 0.2332 0.478 0.5728 0.4872 0.5402 0.5346 0.6369 0.4559</Goal>
+		</Query>
+	</Queries>
+
+</Planner>
+</Problem>

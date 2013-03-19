@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Problem name="" topology="SE3">
+
+  
+  <Robot robot="robots/Justin_PMD_Caja_abierta_30.rob" scale="1.0"> 
+   <!--Robot Path-->
+	<Limits name="X" min="0.0" max="1000.0"></Limits>
+	<Limits name="Y" min="0.0" max="1000.0"></Limits>
+	<Limits name="Z" min="0.0" max="1000.0"></Limits>
+	<Limits name="WX" min="0.0" max="1.0"></Limits>
+	<Limits name="WY" min="0.0" max="1.0"></Limits>
+	<Limits name="WZ" min="0.0" max="1.0"></Limits>
+   	<Limits name="THETA" min="-360.0" max="360.0"></Limits>
+       	<Home TH="180.0" WZ="0.0" WY="1.0" WX="0.0" Z="0.0" Y="500.0" X="0.0" />
+  </Robot>
+
+  <Scene scene="scenes/IOC2.iv" scale="1.0"> 
+    <!--Scene Path-->
+    <Location TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="200.0" Y="-300.0" X="-1000.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/glass.wrl" scale="100"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="-1.0" Z="500.0" Y="0.0" X="400.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/can.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="500.0" Y="60.0" X="-400.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/transparentTable.iv" scale="0.5"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="400.0" Y="125.0" X="0.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+<Planner ProblemName="" Date="">
+	<Parameters>
+		<Name>PRM</Name>
+		<LocalPlanner stepSize="1">Linear</LocalPlanner>
+		<Parameter name="Drawn Path Link">-1</Parameter>
+		<Parameter name="Max. Neighs">10</Parameter>
+		<Parameter name="Max. Samples">2000</Parameter>
+		<Parameter name="Neigh Thresshold">1.5</Parameter>
+		<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
+		<Parameter name="Speed Factor">1</Parameter>
+		<Parameter name="Step Size">0.2</Parameter>
+	</Parameters>
+	
+	<Queries>
+		<Query>
+			<Init dim="12">0.6881 0.706 0.4796 0.504 0.5438 0.4687 0.4518 0.4527 0.4494 0.4573 0.4573 0.5129</Init>
+			<Goal dim="12">0.6329 0.5522 0.6007 0.5859 0.8674 0.2866 0.5005 0.3919 0.2768 0.2026 -0.013 0.1123</Goal>
+		</Query>
+	</Queries>
+
+</Planner>
+</Problem>
