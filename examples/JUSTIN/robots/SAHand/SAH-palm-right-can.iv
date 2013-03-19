@@ -4,8 +4,8 @@
 DEF root Separator {
   Separator {
 	Transform {
-      ##translation 100 100 10
-      ##rotation -0.58409345 -0.57417756 0.5737204  2.0836163
+      translation 50 0 150
+      rotation 0 0.006853838 0  -1.5
       scaleFactor 1000 1000 1000 
     }
 	File {
