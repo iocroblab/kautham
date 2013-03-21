@@ -2,7 +2,7 @@
 <Problem name="" topology="SE3">
 
   
-  <Robot robot="robots/Justin.rob" scale="1.0"> 
+  <Robot robot="robots/Justin_cerrada.rob" scale="1.0"> 
    <!--Robot Path-->
 	<Limits name="X" min="0.0" max="1000.0"></Limits>
 	<Limits name="Y" min="0.0" max="1000.0"></Limits>
