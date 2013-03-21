@@ -2,7 +2,7 @@
 <Problem name="" topology="SE3">
 
   
-  <Robot robot="robots/Justin_PMD_Esfera_cerrada_30.rob" scale="1.0"> 
+  <Robot robot="robots/Justin_PMD_Esfera_cerrada_10.rob" scale="1.0"> 
    <!--Robot Path-->
 	<Limits name="X" min="0.0" max="1000.0"></Limits>
 	<Limits name="Y" min="0.0" max="1000.0"></Limits>
@@ -54,8 +54,8 @@
 	
 	<Queries>
 		<Query>
-			<Init dim="12">0.3457 0.4345 0.3441 1.0665 0.4449 0.7991 2.5488 0.2564 0.9947 0.8169 2.8148 2.5836</Init>
-			<Goal dim="12">0.624 0.4885 0.3447 1.1888 -0.0839 -1.0847 0.0194 0.8335 -0.2726 -0.1769 -1.1037 -2.4581</Goal>
+			<Init dim="12">0.3349 0.5104 0.6827 1.0112 -0.0049 2.0102 -0.4429 0.0093 1.5165 0.9935 3.2730 3.7429</Init>
+			<Goal dim="12">0.6243 0.4274 0.5332 1.2691 -0.0022 0.6347 2.0969 0.7041 -2.1112 0.4671 -1.2252 -4.3048</Goal>
 		</Query>
 	</Queries>
 

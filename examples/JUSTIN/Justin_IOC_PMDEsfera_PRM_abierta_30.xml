@@ -21,6 +21,30 @@
     </Location>
   </Scene>
 
+  <Scene scene="scenes/can.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="300.0" Y="60.0" X="0.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/can.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="600.0" Y="60.0" X="0.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/can.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="900.0" Y="60.0" X="0.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/transparentTable.iv" scale="0.5"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="350.0" Y="130.0" X="300.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
 <Planner ProblemName="" Date="">
 	<Parameters>
 		<Name>PRM</Name>
@@ -36,8 +60,8 @@
 	
 	<Queries>
 		<Query>
-			<Init dim="12">0.6329 0.5522 0.6007 0.5859 0.8674 0.2866 0.5005 0.3919 0.2768 0.2026 -0.013 0.1123</Init>
-			<Goal dim="12">0.5409 0.4595 0.716 0.6498 0.6878 0.4353 1.1223 0.68 0.3753 0.0937 -0.3268 0.4781</Goal>
+			<Init dim="12">0.4465 0.7511 0.8113 0.2223 0.4306 0.4635 0.3351 0.53 0.543 0.4106 0.5687 0.5609</Init>
+			<Goal dim="12">0.3457 0.4345 0.3441 1.0665 0.4449 0.7991 2.5488 0.2564 0.9947 0.8169 2.8148 2.5836</Goal>
 		</Query>
 	</Queries>
 
