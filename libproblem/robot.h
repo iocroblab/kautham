@@ -356,7 +356,10 @@ namespace libProblem {
     KthReal           **mapMatrix;
     string            controlsName;
     int               numControls;  //!> This is the number of control used to command the robot
-    int               numCoupledControls;  //!> This is the number of control used to command the robot that are couped with other robots
+    int               numCoupledControls;  //!> This is the number of controls used to command the robot that are couped with other robots
+                                      //!> From the set of controls defined in the input file *.rob, the first numCoupledControls controls
+                                      //!> will be those that are coupled with other robots. This is implemented by maintaining those
+                                      //!> controls at the same value for all the robots.
     bool              _autocoll;
     bool              _hasChanged;
     int               nTrunk; //!> Number of control for the trunk in case of TREE robot
