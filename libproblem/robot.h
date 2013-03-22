@@ -251,6 +251,9 @@ namespace libProblem {
 
     inline int getNumControls(){if( armed ) return numControls; return -1;}
 
+    inline int getNumCoupledControls(){if( armed ) return numCoupledControls; return -1;}
+    inline int setNumCoupledControls(int n){numCoupledControls=n;}
+
     inline mt::Transform& getLastLinkTransform(){ return
                                     *(((Link*)links.at(links.size()-1))->getTransformation());}
 
@@ -353,6 +356,7 @@ namespace libProblem {
     KthReal           **mapMatrix;
     string            controlsName;
     int               numControls;  //!> This is the number of control used to command the robot
+    int               numCoupledControls;  //!> This is the number of control used to command the robot that are couped with other robots
     bool              _autocoll;
     bool              _hasChanged;
     int               nTrunk; //!> Number of control for the trunk in case of TREE robot

@@ -62,25 +62,30 @@ namespace libGUI {
     QString content(names.c_str());
 		QStringList cont = content.split("|");
     QStringList::const_iterator iterator;
+    //int count=0;
     for (iterator = cont.constBegin(); iterator != cont.constEnd();
-					++iterator){
-      tempLab = new QLabel(this);
-      tempLab->setObjectName(/*QString("lbl")  +*/ (*iterator).toUtf8().constData());
-      content = (*iterator).toUtf8().constData();
-      tempLab->setText(content.append(" = 0.5"));
-      this->vboxLayout->addWidget(tempLab);
-      labels.push_back(tempLab);
+                    ++iterator)
+    {
+        //count++;
+        //if(_globalOffset!=0 && count<_robot->getNumCoupledControls()) continue;
 
-      tempSli = new QSlider(this);
-      tempSli->setObjectName(/*"sld" + */(*iterator).toUtf8().constData());
-      tempSli->setOrientation(Qt::Horizontal);
-      tempSli->setMinimum(0);
-      tempSli->setMaximum(1000);
-      tempSli->setSingleStep(1);
-      tempSli->setValue(500);
-      vboxLayout->addWidget(tempSli);
-      sliders.push_back(tempSli);
-      QObject::connect(tempSli,SIGNAL(valueChanged(int)),SLOT(sliderChanged(int)));
+        tempLab = new QLabel(this);
+        tempLab->setObjectName(/*QString("lbl")  +*/ (*iterator).toUtf8().constData());
+        content = (*iterator).toUtf8().constData();
+        tempLab->setText(content.append(" = 0.5"));
+        this->vboxLayout->addWidget(tempLab);
+        labels.push_back(tempLab);
+
+        tempSli = new QSlider(this);
+        tempSli->setObjectName(/*"sld" + */(*iterator).toUtf8().constData());
+        tempSli->setOrientation(Qt::Horizontal);
+        tempSli->setMinimum(0);
+        tempSli->setMaximum(1000);
+        tempSli->setSingleStep(1);
+        tempSli->setValue(500);
+        vboxLayout->addWidget(tempSli);
+        sliders.push_back(tempSli);
+        QObject::connect(tempSli,SIGNAL(valueChanged(int)),SLOT(sliderChanged(int)));
     }
 	
     vboxLayout1 = new QVBoxLayout();
@@ -90,8 +95,9 @@ namespace libGUI {
     connect(btnUpdate, SIGNAL( clicked() ), this, SLOT( updateControls() ) ); 
     vboxLayout1->addWidget(btnUpdate);
 
-    values.resize(cont.size());
-    for(int i=0; i<cont.size(); i++)
+    //values.resize(cont.size());
+    values.resize(sliders.size());
+    for(int i=0; i<values.size(); i++)
       values[i]=0.5;
 
     vboxLayout->addLayout(vboxLayout1);
@@ -108,44 +114,73 @@ namespace libGUI {
   }
   
 	void ControlWidget::updateControls(){
-		for(int i=0;i<values.size();i++) 
-		{
-			//values[i] =0.6;
-			//compute the index from where the controls of the current robot start
-			Sample *s  = _ptProblem->wSpace()->getLastSampleMovedTo();
-			if(s!=NULL){
-				int from=0;
-				for(unsigned int i=0; i< _ptProblem->wSpace()->robotsCount(); i++){
-					if(_robot->getName() != _ptProblem->wSpace()->getRobot(i)->getName())
-						from += _ptProblem->wSpace()->getRobot(i)->getNumControls();
-				}
-				
-				for(int j=0; j < _robot->getNumControls(); j++ )
-					values[j] = s->getCoords()[from + j];
+        Sample *s  = _ptProblem->wSpace()->getLastSampleMovedTo();
+        if(s!=NULL){
+           int j=0;
+           //the first controls are coupled with all the robots, then the values are
+           //stored from the coordinates of the sample corresponding to the first robot
+           for(; j < _robot->getNumCoupledControls(); j++ )
+               values[j] = s->getCoords()[j];
 
-				setValues(values);
-			}
+           //the other values of the controls are read form the correspodning place in the sample vector
+           //i.e. staring at globalOffset.
+           for(; j < _robot->getNumControls(); j++ )
+                values[j] = s->getCoords()[_globalOffset + j];
+
+            setValues();
 		}
 	}
 
 	void ControlWidget::sliderChanged(int value){
-    QString tmp;
-    for(unsigned int i=0; i<sliders.size(); i++){
-      values[i]=(KthReal)((QSlider*)sliders[i])->value()/1000.0;
-	  //values[i] = (KthReal)(-10.0+(KthReal)((QSlider*)sliders[i])->value()*20.0/1000.0);
-      tmp = labels[i]->text().left(labels[i]->text().indexOf("=") + 2);
-      labels[i]->setText( tmp.append( QString().setNum(values[i],'g',5)));
-    }
-    _ptProblem->setCurrentControls(values,_globalOffset);
-    if(_robot != NULL) _robot->control2Pose(values);
-	}
+        QString tmp;
+        for(unsigned int i=0; i<sliders.size(); i++){
+            values[i]=(KthReal)((QSlider*)sliders[i])->value()/1000.0;
 
-  void ControlWidget::setValues(vector<KthReal> &val){
-    if(val.size() == sliders.size()){
-      for(unsigned int i = 0; i < val.size(); i++)
-        ((QSlider*)sliders[i])->setValue((int)(val[i]*1000.0));
+            tmp = labels[i]->text().left(labels[i]->text().indexOf("=") + 2);
+            labels[i]->setText( tmp.append( QString().setNum(values[i],'g',5)));
+        }
+        _ptProblem->setCurrentControls(values,_globalOffset);
+        //if(_robot != NULL) _robot->control2Pose(values);
+
+        //move the robots
+        Sample *s=_ptProblem->wSpace()->getLastSampleMovedTo();
+
+        vector<KthReal> coords;
+        if(s==NULL){
+            coords.resize(_ptProblem->wSpace()->getDimension());
+            for(int i=0; i < _ptProblem->wSpace()->getDimension(); i++ ) coords[i] = 0.5;
+        }
+        else{
+            //vector<KthReal>& coords = s->getCoords();
+            coords = s->getCoords();
+
+        }
+
+
+        int j=0;
+        for(; j < _robot->getNumCoupledControls(); j++ ){
+            coords[j]=values[j];
+            coords[_globalOffset+j]=values[j];//dummy, not used in moveRobotsTo
+        }
+        for(; j < _robot->getNumControls(); j++ )
+            coords[_globalOffset+j]=values[j];
+
+        //Sample *s2 = new Sample(s);
+        Sample *s2 = new Sample(_ptProblem->wSpace()->getDimension());
+
+        s2->setCoords(coords);
+        _ptProblem->wSpace()->moveRobotsTo(s2);
     }
-  }
+
+  void ControlWidget::setValues(){
+      vector<KthReal>   values2;
+      values2.resize(values.size());
+      for(unsigned int i = 0; i < values.size(); i++)
+            values2[i] = values[i];
+
+      for(unsigned int i = 0; i < values.size(); i++)
+        ((QSlider*)sliders[i])->setValue((int)(values2[i]*1000.0));
+    }
 
 }
 

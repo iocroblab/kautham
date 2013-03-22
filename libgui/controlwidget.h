@@ -69,7 +69,7 @@ namespace libGUI {
 		ControlWidget( Robot* rob, Problem* prob, int offset );
 		~ControlWidget();
 		inline vector<KthReal>   *getValues(){return &values;}
-    void setValues(vector<KthReal> &val);
+    void setValues();
 	private:
 		vector<QSlider*>  sliders;
 		vector<QLabel*>   labels;

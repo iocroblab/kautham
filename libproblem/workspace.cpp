@@ -55,6 +55,7 @@ namespace libProblem {
     workDim = 0;
     _configMap.clear();
     _robWeight.clear();
+    _lastSampleMovedTo=NULL;
   }
 
 
@@ -106,20 +107,50 @@ namespace libProblem {
   void WorkSpace::moveRobotsTo(Sample* sample){
     vector<KthReal> tmpVec;
     int j, from = 0;
-    for(unsigned int i=0; i< robots.size(); i++){
-		  if(sample->getMappedConf().size()==0){
-        tmpVec.clear();
-        for( j=0; j < robots[i]->getNumControls(); j++ )
-           tmpVec.push_back(sample->getCoords()[from + j]);
 
-        from = j;
-        robots[i]->control2Pose(tmpVec);
-	    }else{
+    //for(unsigned int i=0; i< robots.size(); i++)
+    //    robots[i]->setNumCoupledControls(2);
+
+    for(unsigned int i=0; i< robots.size(); i++){
+        if(sample->getMappedConf().size()==0 || robots[i]->getNumCoupledControls()){
+            tmpVec.clear();
+            //start coupledcontrols
+            //for( j=0; j < robots[i]->getNumCoupledControls(); j++ )
+            for( j=0; j < robots[i]->getNumCoupledControls(); j++ )
+                tmpVec.push_back(sample->getCoords()[j]);
+
+            for(; j < robots[i]->getNumControls(); j++ )
+                tmpVec.push_back(sample->getCoords()[from + j]);
+
+            from = j;
+            robots[i]->control2Pose(tmpVec);
+        }
+        else{
 			  robots[i]->Kinematics(sample->getMappedConf().at(i));
-		  }
+        }
     }
 	_lastSampleMovedTo = sample;
   }
+  /*
+  void WorkSpace::moveRobotsTo(Sample* sample){
+    vector<KthReal> tmpVec;
+    int j, from = 0;
+    for(unsigned int i=0; i< robots.size(); i++){
+        if(sample->getMappedConf().size()==0){
+            tmpVec.clear();
+            for( j=0; j < robots[i]->getNumControls(); j++ )
+                tmpVec.push_back(sample->getCoords()[from + j]);
+
+            from = j;
+            robots[i]->control2Pose(tmpVec);
+        }
+        else{
+              robots[i]->Kinematics(sample->getMappedConf().at(i));
+        }
+    }
+    _lastSampleMovedTo = sample;
+  }
+  */
 
   void WorkSpace::moveObstacleTo( size_t mobObst, vector<KthReal>& pmd ){
     // The parameter pmd is the same type of data the user will be send to
@@ -291,6 +322,10 @@ namespace libProblem {
   }
 
   void WorkSpace::addRobot(Robot* robot){
+
+    //to test the coupling
+    //robot->setNumCoupledControls(12);
+
     robots.push_back(robot);
     workDim = 0;
     _configMap.clear();

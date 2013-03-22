@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Robot  name="TX90" DHType="Modified" robType="Chain">
+<Robot  name="TX90b" DHType="Modified" robType="Chain">
 
   <WeightSE3 rho_r="1.0"></WeightSE3>
   <Joints size="7">

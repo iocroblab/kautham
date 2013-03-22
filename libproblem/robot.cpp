@@ -68,6 +68,7 @@ using namespace pugi;
 namespace libProblem {
   Robot::Robot(string robFile, KthReal scale, LIBUSED lib) {	
 	  _linkPathDrawn = -1;
+      numCoupledControls=0;
     nTrunk = 0;
     libs = lib;
     this->scale=scale;
@@ -213,6 +214,7 @@ namespace libProblem {
 
           numControls = doc.child("Robot").child("ControlSet").attribute("size").as_int();
           nTrunk = doc.child("Robot").child("ControlSet").attribute("nTrunk").as_int();
+          numCoupledControls = doc.child("Robot").child("ControlSet").attribute("coupled").as_int();
 
           for(int i=0; i < 6 + _currentConf.getRn().getDim(); i++){
             mapMatrix[i] = new KthReal[numControls];
