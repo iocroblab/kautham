@@ -35,7 +35,19 @@ FIND_PACKAGE( Coin REQUIRED )
 FIND_PACKAGE( GSL )
 
 
-  
+IF( WIN32 )
+  MESSAGE( STATUS "OMPL Not yet prepared for WIN32")
+ELSE( WIN32 )
+    find_package(ompl  REQUIRED )
+    IF( OMPL_FOUND )
+        MESSAGE( STATUS "OMPL Package FOUND")
+        ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
+        SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  "-lompl")
+        MESSAGE( STATUS ${KC_EXTRA_LIBS})
+    ELSE( OMPL_FOUND )
+        MESSAGE( STATUS "OMPL Package NOT FOUND!!!!")
+    ENDIF( OMPL_FOUND )
+ENDIF( WIN32 )
   
 
 

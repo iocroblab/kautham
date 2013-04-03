@@ -69,7 +69,8 @@ namespace libPlanner{
     _parameters.clear();
     _solved = false;
     _hasCameraInformation = false;
-    _triedSamples = _maxNumSamples = _generatedEdges = _collChecks = 0;
+    _triedSamples = _generatedEdges = _collChecks = 0;
+    _maxNumSamples = 1000;
     _totalTime = _smoothTime = 0. ;
 	_sceneCspace=NULL;
 	}
