@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Problem name="" topology="SE3">
+
+  
+  <Robot robot="robots/Justin_PMD_CajaEsfera_cerrada_30.rob" scale="1.0"> 
+   <!--Robot Path-->
+	<Limits name="X" min="0.0" max="1000.0"></Limits>
+	<Limits name="Y" min="0.0" max="1000.0"></Limits>
+	<Limits name="Z" min="0.0" max="1000.0"></Limits>
+	<Limits name="WX" min="0.0" max="1.0"></Limits>
+	<Limits name="WY" min="0.0" max="1.0"></Limits>
+	<Limits name="WZ" min="0.0" max="1.0"></Limits>
+   	<Limits name="THETA" min="-360.0" max="360.0"></Limits>
+       	<Home TH="180.0" WZ="0.0" WY="1.0" WX="0.0" Z="0.0" Y="500.0" X="0.0" />
+  </Robot>
+  
+  <Scene scene="scenes/IOC2.iv" scale="1.0"> 
+    <!--Scene Path-->
+    <Location TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="200.0" Y="-300.0" X="-1000.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+<Planner ProblemName="" Date="">
+	<Parameters>
+		<Name>PRM</Name>
+		<LocalPlanner stepSize="1">Linear</LocalPlanner>
+		<Parameter name="Drawn Path Link">-1</Parameter>
+		<Parameter name="Max. Neighs">10</Parameter>
+		<Parameter name="Max. Samples">2000</Parameter>
+		<Parameter name="Neigh Thresshold">1.5</Parameter>
+		<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
+		<Parameter name="Speed Factor">1</Parameter>
+		<Parameter name="Step Size">0.2</Parameter>
+	</Parameters>
+	
+	<Queries>
+		<Query>
+			<Init dim="12">0.5293 0.5866 0.4198 0.5684 0.417 0.4885 0.3295 0.5847 0.5062 0.6503 0.306 0.2801</Init>
+			<Goal dim="12">0.5564 0.4856 0.4994 0.7499 0.6093 0.4571 1.517 -0.1583 1.2063 1.274 -0.657 0.0366</Goal>
+		</Query>
+	</Queries>
+
+</Planner>
+
+</Problem>
