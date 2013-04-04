@@ -15,20 +15,14 @@
 	<Queries />
 	<SampleSet dim="12" size="7">
 
-		<!-- Poses para tarea de recoger objetos del suelo y colocar sobre la mesa -->
-		<Sample conComp="0">0.6881 0.706 0.4796 0.504 0.5438 0.4687 0.4518 0.4527 0.4494 0.4573 0.4573 0.5129</Sample>
-		<Sample conComp="0">0.6329 0.5522 0.6007 0.5859 0.8674 0.2866 0.5005 0.3919 0.2768 0.2026 -0.013 0.1123</Sample>
-		<Sample conComp="0">0.5409 0.4595 0.716 0.6498 0.6878 0.4353 1.1223 0.68 0.3753 0.0937 -0.3268 0.4781</Sample>
-
-		<!-- Poses para tarea de recoger objetos de una estrantería en baldas 2 y 4 y colocarlos en balda 3-->
-		<Sample conComp="0">0.6881 0.706 0.4796 0.504 0.5438 0.4687 0.4518 0.4527 0.4494 0.4573 0.4573 0.5129</Sample>
-		<Sample conComp="0">0.4128 0.3326 0.5824 0.856 1.0162 1.2426 0.7998 0.7579 -0.4413 -1.077 0.1638 -3.3505</Sample>
-		<Sample conComp="0">0.413 0.3346 0.6009 0.8891 1.1265 0.6414 0.8882 1.1422 0.4012 -0.3086 -1.1439 -0.1319</Sample>
-
-		<!-- Poses para tarea de recoger objetos de una estrantería en balda 2 y colocarlos en balda 3-->
-		<Sample conComp="0">0.6881 0.706 0.4796 0.504 0.5438 0.4687 0.4518 0.4527 0.4494 0.4573 0.4573 0.5129</Sample>
-		<Sample conComp="0">0.5111 0.4015 0.7586 0.8196 0.7547 0.7471 1.1223 1.0632 0.0561 0.4186 0.7551 -0.7344</Sample>
-		<Sample conComp="0">0.3745 0.3394 0.593 0.959 0.906 0.586 0.8743 0.837 -0.2278 0.2345 0.8499 0.2344</Sample>
+		<!-- Posición inicial -->
+		<Sample conComp="0">0.4033 0.6789 0.5597 0.7595 0.4276 0.4161 0.4835 0.4542 0.5113 0.4682 0.4691 0.5551</Sample>
+		<!-- Posición coger objetos del suelo -->
+		<Sample conComp="0">0.4795 0.6064 0.5115 0.6227 0.5151 0.4714 0.4455 0.4545 0.4708 0.3895 0.3278 0.4617</Sample>
+		<!-- Posición poner objetos sobre caja -->
+		<Sample conComp="0">0.4884 0.5122 0.4666 0.4883 0.4319 0.6271 0.51 0.5504 0.5256 0.3868 0.5055 0.453</Sample>
+		<!-- Posición llenado vaso de agua -->
+		<Sample conComp="0">0.5587 0.4598 0.4663 0.5774 0.007 0.3513 0.4613 0.7782 0.9759 0.5729 0.0952 0.6093</Sample>
 	
   	</SampleSet>
 	<Conectivity />
