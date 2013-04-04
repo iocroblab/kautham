@@ -15,21 +15,14 @@
 	<Queries />
 	<SampleSet dim="12" size="7">
 
-		<!-- Poses para tarea de recoger objetos del suelo y colocar sobre la mesa -->
-		<Sample conComp="0">0.6881 0.706 0.4796 0.504 0.5438 0.4687 0.4518 0.4527 0.4494 0.4573 0.4573 0.5129</Sample>
-		<Sample conComp="0">0.6329 0.5522 0.6007 0.5859 0.8674 0.2866 0.5005 0.3919 0.2768 0.2026 -0.013 0.1123</Sample>
-		<Sample conComp="0">0.5409 0.4595 0.716 0.6498 0.6878 0.4353 1.1223 0.68 0.3753 0.0937 -0.3268 0.4781</Sample>
-
-		<!-- Poses para tarea de recoger objetos de una estrantería en baldas 2 y 4 y colocarlos en balda 3-->
-		<Sample conComp="0">0.6881 0.706 0.4796 0.504 0.5438 0.4687 0.4518 0.4527 0.4494 0.4573 0.4573 0.5129</Sample>
-		<Sample conComp="0">0.4128 0.3326 0.5824 0.856 1.0162 1.2426 0.7998 0.7579 -0.4413 -1.077 0.1638 -3.3505</Sample>
-		<Sample conComp="0">0.413 0.3346 0.6009 0.8891 1.1265 0.6414 0.8882 1.1422 0.4012 -0.3086 -1.1439 -0.1319</Sample>
-
-		<!-- Poses para tarea de recoger objetos de una estrantería en balda 2 y colocarlos en balda 3-->
-		<Sample conComp="0">0.6881 0.706 0.4796 0.504 0.5438 0.4687 0.4518 0.4527 0.4494 0.4573 0.4573 0.5129</Sample>
-		<Sample conComp="0">0.5111 0.4015 0.7586 0.8196 0.7547 0.7471 1.1223 1.0632 0.0561 0.4186 0.7551 -0.7344</Sample>
-		<Sample conComp="0">0.3745 0.3394 0.593 0.959 0.906 0.586 0.8743 0.837 -0.2278 0.2345 0.8499 0.2344</Sample>
-	
+		<!-- Posición inicial -->
+		<Sample conComp="0">0.6879 0.4724 0.655 0.2245 0.4555 0.6893 0.319 0.4416 0.452 0.5986 0.4909 0.6411</Sample>
+		<!-- Posición coger objetos del suelo -->
+		<Sample conComp="0">0.6122 0.4834 0.5538 0.3429 0.4758 0.5267 0.3839 0.4718 0.5598 0.3809 0.3727 0.4714</Sample>
+		<!-- Posición poner objetos sobre caja -->
+		<Sample conComp="0">0.5347 0.4424 0.5803 0.496 0.5996 0.4446 0.5173 0.6106 0.5969 0.4896 0.3948 0.4153</Sample>
+		<!-- Posición llenado vaso de agua -->
+		<Sample conComp="0">0.4558 0.4143 0.639 0.7055 0.4289 1.0099 0.2411 0.6041 0.6211 0.6727 0.0833 0.6009</Sample>
   	</SampleSet>
 	<Conectivity />
 	<ConnComponents size="0" />
