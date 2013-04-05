@@ -41,6 +41,7 @@
 #if !defined(_omplPRMPLANNER_H)
 #define _omplPRMPLANNER_H
 
+#if defined(KAUTHAM_USE_OMPL)
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/geometric/planners/prm/PRM.h>

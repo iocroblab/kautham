@@ -42,6 +42,7 @@
 #define _omplRRTPLANNER_H
 
 
+#if defined(KAUTHAM_USE_OMPL)
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/geometric/planners/rrt/RRT.h>
 //#include "myRRT.h"

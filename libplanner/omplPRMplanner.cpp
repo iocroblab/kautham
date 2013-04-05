@@ -41,6 +41,7 @@
  
  
 
+#if defined(KAUTHAM_USE_OMPL)
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 

@@ -41,6 +41,7 @@
 #if !defined(_omplRRTconnectPLANNER_H)
 #define _omplRRTconnectPLANNER_H
 
+#if defined(KAUTHAM_USE_OMPL)
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
