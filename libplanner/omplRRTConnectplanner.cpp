@@ -64,13 +64,16 @@ namespace libPlanner {
         _guiName = "ompl RRTConnect Planner";
         _idName = "ompl RRTConnect Planner";
 
+
+        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
+        ss->setStateValidityChecker(boost::bind(&isStateValid, _1, (Planner*)this));
         ob::SpaceInformationPtr si=ss->getSpaceInformation();
         ob::PlannerPtr planner(new og::RRTConnect(si));
         ss->setPlanner(planner);
         //_Range=(planner->as<og::RRTConnect>())->getRange();
         _Range=0.05;
         addParameter("Range", _Range);
-        (planner->as<og::RRTConnect>())->setRange(_Range);
+        ss->getPlanner()->as<og::RRTConnect>()->setRange(_Range);
     }
 
 	//! void destructor

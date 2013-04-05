@@ -46,11 +46,13 @@
 #if defined(KAUTHAM_USE_OMPL)
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/geometric/SimpleSetup.h>
+#include <ompl/control/SimpleSetup.h>
 #include <ompl/config.h>
 
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
+namespace oc = ompl::control;
 
 
 #include <libproblem/workspace.h>
@@ -64,6 +66,9 @@ using namespace libSampling;
 
 namespace libPlanner {
   namespace omplplanner{
+
+    bool isStateValid(const ob::State *state, Planner *p);
+
     class omplPlanner:public Planner {
 	    public:
         omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
@@ -82,10 +87,9 @@ namespace libPlanner {
 
 
         og::SimpleSetupPtr ss;
+        oc::SimpleSetupPtr ssc;
         ob::StateSpacePtr space;
-        //ob::PlannerDataPtr plannerdata;
-
-        //std::ostream outGraphviz;
+        oc::ControlSpacePtr spacec;
 
 	    private:
 		//Add private data and functions

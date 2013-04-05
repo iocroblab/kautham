@@ -194,7 +194,7 @@
     <Offset>
       <DOF name="Thumb" value="0.3055	"></DOF> 
       <DOF name="Thumb-Base" value="0.3055"></DOF> 
-      <DOF name="Thumb-Prox" value="0.6308"></DOF> 
+      <DOF name="Thumb-Prox" value="0.6308"></DOF> DOF name="Thumb" va
       <DOF name="Thumb-Med" value="0.5143"></DOF> 
       <DOF name="Thumb-Dist" value="0.5143"></DOF> 
       <DOF name="Index-Base" value="0.5544"></DOF> 

@@ -49,6 +49,7 @@
 #include <libplanner/omplplanner.h>
 #include <libplanner/omplPRMplanner.h>
 #include <libplanner/omplRRTplanner.h>
+#include <libplanner/omplcRRTplanner.h>
 #include <libplanner/omplRRTConnectplanner.h>
 #include <libplanner/drmplanner.h>
 //#include <libplanner/drmpcaplanner.h>
@@ -524,7 +525,7 @@ namespace libProblem {
 
   string Problem::plannersNames(){
    // return   "DRM|DRMPCA|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
-        return   "omplDefault|omplPRM|omplRRT|omplRRTConnect|DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
+        return   "omplcRRT|omplPRM|omplRRT|omplRRTConnect|DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
   }
 
   bool Problem::createPlanner( string name, KthReal step ){
@@ -557,7 +558,9 @@ namespace libProblem {
     else if(name == "omplRRTConnect")
       _planner = new omplRRTConnectPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
-
+    else if(name == "omplcRRT")
+      _planner = new omplcRRTPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
 #endif
 
 #if defined(KAUTHAM_USE_ARMADILLO)

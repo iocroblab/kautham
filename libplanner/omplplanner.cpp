@@ -107,7 +107,7 @@ namespace libPlanner {
         space->as<ob::RealVectorStateSpace>()->setBounds(bounds);
 
         // define a simple setup class
-        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
+        //ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
         //plannerdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
 
         //Derived classes should specify a given planner
@@ -117,7 +117,7 @@ namespace libPlanner {
         //ob::PlannerPtr planner(new og::RRTConnect(si));
         //ss->setPlanner(planner);
 
-        ss->setStateValidityChecker(boost::bind(&isStateValid, _1, (Planner*)this));
+        //ss->setStateValidityChecker(boost::bind(&isStateValid, _1, (Planner*)this));
     }
 
 	//! void destructor

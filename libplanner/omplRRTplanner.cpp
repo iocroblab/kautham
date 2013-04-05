@@ -64,22 +64,18 @@ namespace libPlanner {
         _guiName = "ompl RRT Planner";
         _idName = "ompl RRT Planner";
 
+        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
+        ss->setStateValidityChecker(boost::bind(&isStateValid, _1, (Planner*)this));
         ob::SpaceInformationPtr si=ss->getSpaceInformation();
-        //ob::PlannerPtr planner(new og::myRRT(si));
         ob::PlannerPtr planner(new og::RRT(si));
         ss->setPlanner(planner);
-        //_Range=(planner->as<og::RRT>())->getRange();
-        //_Range=(planner->as<og::myRRT>())->getRange();
         _Range=0.05;
 
         _GoalBias=(planner->as<og::RRT>())->getGoalBias();
-        //_GoalBias=(planner->as<og::myRRT>())->getGoalBias();
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
-        (planner->as<og::RRT>())->setRange(_Range);
-        (planner->as<og::RRT>())->setGoalBias(_GoalBias);
-        //(planner->as<og::myRRT>())->setRange(_Range);
-        //(planner->as<og::myRRT>())->setGoalBias(_GoalBias);
+        ss->getPlanner()->as<og::RRT>()->setRange(_Range);
+        ss->getPlanner()->as<og::RRT>()->setGoalBias(_GoalBias);
 
     }
 

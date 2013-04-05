@@ -63,18 +63,21 @@ namespace libPlanner {
 	{
         _guiName = "ompl PRM Planner";
         _idName = "ompl PRM Planner";
+
+
+        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
+        ss->setStateValidityChecker(boost::bind(&isStateValid, _1, (Planner*)this));
+        ob::SpaceInformationPtr si=ss->getSpaceInformation();
+        ob::PlannerPtr planner(new og::PRM(si));
+        ss->setPlanner(planner);
+
         _MaxNearestNeighbors=10;
         addParameter("MaxNearestNeighbors", _MaxNearestNeighbors);
         _expandRoadmap=0.0;
         addParameter("Expand Roadmap (s)", _expandRoadmap);
 
-        ob::SpaceInformationPtr si=ss->getSpaceInformation();
-        ob::PlannerPtr planner(new og::PRM(si));
-        ss->setPlanner(planner);
-
-        (planner->as<og::PRM>())->setMaxNearestNeighbors(_MaxNearestNeighbors);
-        (planner->as<og::PRM>())->expandRoadmap(_expandRoadmap);
-
+        ss->getPlanner()->as<og::PRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
+        ss->getPlanner()->as<og::PRM>()->expandRoadmap(_expandRoadmap);
 
     }
 
