@@ -78,5 +78,6 @@ namespace libPlanner {
   }
 }
 
+#endif // KAUTHAM_USE_OMPL
 #endif  //_omplPRMPLANNER_H
 
