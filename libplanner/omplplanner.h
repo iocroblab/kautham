@@ -87,9 +87,8 @@ namespace libPlanner {
 
 
         og::SimpleSetupPtr ss;
-        oc::SimpleSetupPtr ssc;
         ob::StateSpacePtr space;
-        oc::ControlSpacePtr spacec;
+
 
 	    private:
 		//Add private data and functions

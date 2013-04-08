@@ -100,6 +100,7 @@ namespace libPlanner {
         int d = _wkSpace->getDimension();
         space =  ((ob::StateSpacePtr) new ob::RealVectorStateSpace(d));
 
+
         // set the bounds
         ob::RealVectorBounds bounds(d);
         bounds.setLow(0);
@@ -331,6 +332,7 @@ namespace libPlanner {
 	//! function to find a solution path
         bool omplPlanner::trySolve()
 		{
+
            //Start
             int d = _wkSpace->getDimension();
             ob::ScopedState<> startompl(space);
@@ -359,41 +361,34 @@ namespace libPlanner {
 
             if (solved)
             {
-                std::vector< KthReal > coords;
-                coords.resize(d);
-                std::cout << "Found solution:" << std::endl;
-                // print the path to screen
-                ss->simplifySolution();
-                ss->getSolutionPath().print(std::cout);
-                std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
-                Sample *smp=new Sample(d);
+                    std::vector< KthReal > coords;
+                    coords.resize(d);
+                    std::cout << "Found solution:" << std::endl;
+                    // print the path to screen
+                    ss->simplifySolution();
+                    ss->getSolutionPath().print(std::cout);
+                    std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
+                    Sample *smp=new Sample(d);
 
-                _path.clear();
-                clearSimulationPath();
-                for(int i=0;i<ss->getSolutionPath().getStateCount();i++){
-                    for(int j=0;j<d;j++)
-                        coords[j]=pathstates[i]->as<ob::RealVectorStateSpace::StateType>()->values[j];
-                    smp->setCoords(coords);
-                    _path.push_back(smp);
-                    smp=new Sample(d);
+                    _path.clear();
+                    clearSimulationPath();
+                    for(int i=0;i<ss->getSolutionPath().getStateCount();i++){
+                        for(int j=0;j<d;j++)
+                            coords[j]=pathstates[i]->as<ob::RealVectorStateSpace::StateType>()->values[j];
+                        smp->setCoords(coords);
+                        _path.push_back(smp);
+                        smp=new Sample(d);
+                   }
+
+                    _solved = true;
+                    drawCspace();
+                    return _solved;
                 }
-
-                //if(plannerdata!=NULL) {
-                //    plannerdata->clear();
-                //    drawCspace();
-                //}
-                //ss->getPlanner()->getPlannerData(*plannerdata);
-                _solved = true;
-                drawCspace();
-                return _solved;
-            }
-            else{
-                std::cout << "No solution found" << std::endl;
-                //if(plannerdata!=NULL) plannerdata->clear();
-                //ss->getPlanner()->getPlannerData(*plannerdata);
-                _solved = false;
-                drawCspace();
-                return _solved;
+                else{
+                    std::cout << "No solution found" << std::endl;
+                    _solved = false;
+                    drawCspace();
+                    return _solved;
             }
 		}
     }

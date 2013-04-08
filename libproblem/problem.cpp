@@ -47,6 +47,7 @@
 
 #include <libplanner/myplanner.h>
 #include <libplanner/omplplanner.h>
+#include <libplanner/omplplanner.h>
 #include <libplanner/omplPRMplanner.h>
 #include <libplanner/omplRRTplanner.h>
 #include <libplanner/omplcRRTplanner.h>
@@ -559,7 +560,7 @@ namespace libProblem {
       _planner = new omplRRTConnectPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
     else if(name == "omplcRRT")
-      _planner = new omplcRRTPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplcplanner::omplcRRTPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 #endif
 

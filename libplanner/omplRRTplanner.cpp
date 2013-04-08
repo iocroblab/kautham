@@ -65,7 +65,7 @@ namespace libPlanner {
         _idName = "ompl RRT Planner";
 
         ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
-        ss->setStateValidityChecker(boost::bind(&isStateValid, _1, (Planner*)this));
+        ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, _1, (Planner*)this));
         ob::SpaceInformationPtr si=ss->getSpaceInformation();
         ob::PlannerPtr planner(new og::RRT(si));
         ss->setPlanner(planner);
