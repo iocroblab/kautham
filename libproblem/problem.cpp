@@ -46,8 +46,6 @@
 #include <libplanner/ML_locplan.h>
 
 #include <libplanner/myplanner.h>
-#include <libplanner/omplplanner.h>
-#include <libplanner/omplplanner.h>
 #include <libplanner/omplPRMplanner.h>
 #include <libplanner/omplRRTplanner.h>
 #include <libplanner/omplcRRTplanner.h>
@@ -93,7 +91,7 @@ using namespace myprmplanner;
 using namespace HF_planner;
 using namespace mygridplanner;
 using namespace libPlanner;
-using namespace omplplanner;
+//using namespace omplplanner;
 using namespace pugi;
 
 namespace libProblem {
@@ -546,18 +544,18 @@ namespace libProblem {
 #if defined(KAUTHAM_USE_OMPL)
 
     else if(name == "omplDefault")
-      _planner = new omplPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplPRM")
-      _planner = new omplPRMPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplPRMPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplRRT")
-      _planner = new omplRRTPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplRRTPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
     else if(name == "omplRRTConnect")
-      _planner = new omplRRTConnectPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplRRTConnectPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
     else if(name == "omplcRRT")
       _planner = new libPlanner::omplcplanner::omplcRRTPlanner(CONTROLSPACE, NULL, NULL,
