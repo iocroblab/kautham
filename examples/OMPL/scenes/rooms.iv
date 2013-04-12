@@ -1,0 +1,76 @@
+#Inventor V2.1 ascii
+
+Separator {
+    Material {
+            diffuseColor        1.0 0.0 0.0
+    }
+
+    Cube {
+     width 300.0
+     height 2.0
+     depth 300.0
+    }
+
+    Translation {
+     translation 0.0 -52.05 -150.0
+    }
+Separator {Material {
+diffuseColor        0.0 0.0 1.0
+}
+    Cube {
+     width 300.0
+     height 100.0
+     depth 2.0
+    }
+    }
+
+    Translation {
+     translation 0.0 0.0 300.0
+    }
+
+    Cube {
+     width 300.0
+     height 100.0
+     depth 2.0
+    }
+
+    Translation {
+     translation 150.0 0.0 -150.0
+    }
+
+    Cube {
+     width 2.0
+     height 100.0
+     depth 295.6
+    }  
+
+    Translation {
+     translation -150.0 0.0 50.0
+    }
+
+    Cube {
+     width 2.0
+     height 100
+     depth 196.6
+    }
+
+    Translation {
+     translation 0.0 0.0 -175.0
+    }
+
+    Cube {
+     width 2.0
+     height 100.0
+     depth 45.0
+    }
+
+     Translation {
+     translation -150.0 0.0 125.0
+    }
+
+    Cube {
+     width 2.0
+     height 100.0
+     depth 295.6
+    }
+}
