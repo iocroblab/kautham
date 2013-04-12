@@ -74,6 +74,12 @@ namespace libPlanner {
         bool setParameters();
 
          KthReal _GoalBias;
+         double _propagationStepSize;
+         unsigned int _minControlDuration;
+         unsigned int _maxControlDuration;
+         double _controlBound_Tras;
+         double _controlBound_Rot;
+         int _onlyForward;
 	  };
   }
 }

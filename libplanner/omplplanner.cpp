@@ -90,9 +90,11 @@ namespace libPlanner {
 		//set intial values from parent class data
 		_speedFactor = 1;
         _solved = false;
+        _stepSize = ssize;
 	  
         _guiName = "ompl Planner";
         _idName = "ompl Planner";
+        addParameter("Step Size", ssize);
         addParameter("Speed Factor", _speedFactor);
         addParameter("Max Planning Time", _planningTime);
 
@@ -138,6 +140,12 @@ namespace libPlanner {
         it = _parameters.find("Max Planning Time");
         if(it != _parameters.end())
             _planningTime = it->second;
+        else
+          return false;
+
+        it = _parameters.find("Step Size");
+        if(it != _parameters.end())
+             _stepSize = it->second;
         else
           return false;
 

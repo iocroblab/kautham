@@ -105,9 +105,11 @@ namespace libPlanner {
 		//set intial values from parent class data
 		_speedFactor = 1;
         _solved = false;
+        _stepSize = ssize;
 	  
         _guiName = "ompl Planner";
         _idName = "ompl Planner";
+        addParameter("Step Size", ssize);
         addParameter("Speed Factor", _speedFactor);
         addParameter("Max Planning Time", _planningTime);
 
@@ -167,7 +169,7 @@ namespace libPlanner {
   	
     SoSeparator *omplcPlanner::getIvCspaceScene()
     {
-        if(_wkSpace->getDimension()==2)
+        if(_wkSpace->getDimension()<=3)
         {
             //_sceneCspace = ((IVWorkSpace*)_wkSpace)->getIvScene();
             _sceneCspace = new SoSeparator();
@@ -181,7 +183,7 @@ namespace libPlanner {
     {
         if(_sceneCspace==NULL) return;
 
-        if(_wkSpace->getDimension()==2)
+        if(_wkSpace->getDimension()<=3)
         {
             //first delete whatever is already drawn
             while (_sceneCspace->getNumChildren() > 0)
@@ -306,7 +308,7 @@ namespace libPlanner {
                     SoLineSet *ls = new SoLineSet;
                     ls->numVertices.set1Value(0,2);//two values
                     SoDrawStyle *lstyle = new SoDrawStyle;
-                    lstyle->lineWidth=2;
+                    lstyle->lineWidth=3;
                     SoMaterial *path_color = new SoMaterial;
                     path_color->diffuseColor.setValue(0.8,0.2,0.2);
                     pathsep->addChild(path_color);
@@ -430,7 +432,7 @@ namespace libPlanner {
                         //coords[2] = ss->getSolutionPath().asGeometric().getState(i)->as<ob::SE2StateSpace::StateType>()->getYaw();
 
                         smp->setCoords(coords);
-                        _wkSpace->collisionCheck(smp);
+                        //_wkSpace->collisionCheck(smp);
                         _path.push_back(smp);
                         smp=new Sample(d);
                    }

@@ -85,13 +85,18 @@ namespace libPlanner {
       vector<KthReal> coordsresult;
       coordsresult.resize(3);
 
-      coordsresult[0] = R2state->values[0] + (*rctrl)[0] * duration * cos(R2state->values[2]*M_PI);
-      if(coordsresult[0]>1.0) coordsresult[0] = 1.0;
-      else if (coordsresult[0]<0.0) coordsresult[0] = 0.0;
-      coordsresult[1] = R2state->values[1] + (*rctrl)[0] * duration * sin(R2state->values[2]*M_PI);
-      if(coordsresult[1]>1.0) coordsresult[1] = 1.0;
-      else if (coordsresult[1]<0.0) coordsresult[1] = 0.0;
-      coordsresult[2] = (R2state->values[2]*2*M_PI + (*rctrl)[1]/10.0)/(2*M_PI);
+      double du;
+      du=duration;
+      //if(duration>0) du=duration;
+      //else du = -duration;
+
+      coordsresult[0] = R2state->values[0] + (*rctrl)[0] * duration * cos(R2state->values[2]*2*M_PI);
+      //if(coordsresult[0]>1.0) coordsresult[0] = 1.0;
+      //else if (coordsresult[0]<0.0) coordsresult[0] = 0.0;
+      coordsresult[1] = R2state->values[1] + (*rctrl)[0] * duration * sin(R2state->values[2]*2*M_PI);
+      //if(coordsresult[1]>1.0) coordsresult[1] = 1.0;
+      //else if (coordsresult[1]<0.0) coordsresult[1] = 0.0;
+      coordsresult[2] = (R2state->values[2]*2*M_PI + (*rctrl)[1]/1.0)/(2*M_PI);
       if(coordsresult[2]<0.0)
       {
           coordsresult[2] = 1.0 - coordsresult[2];
@@ -131,9 +136,17 @@ namespace libPlanner {
 
 
         // set the bounds for the control space
+        _controlBound_Tras = 0.3;
+        _controlBound_Rot = 0.03;
+        _onlyForward = 1;
+        addParameter("ControlBound_Tras", _controlBound_Tras);
+        addParameter("ControlBound_Rot", _controlBound_Rot);
+        addParameter("OnlyForward (0/1)", _onlyForward);
         ob::RealVectorBounds cbounds(2);
-        cbounds.setLow(-0.1);
-        cbounds.setHigh(0.1);
+        cbounds.setLow(0, - _controlBound_Tras * (1 - _onlyForward));
+        cbounds.setHigh(0, _controlBound_Tras);
+        cbounds.setLow(1, -_controlBound_Rot);
+        cbounds.setHigh(1, _controlBound_Rot);
         spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
 
         ss = ((oc::SimpleSetupPtr) new oc::SimpleSetup(spacec));
@@ -141,11 +154,19 @@ namespace libPlanner {
 
         // set the state propagation routine
         ss->setStatePropagator(boost::bind(&propagate, _1, _2, _3, _4));
-
-        double dd = ss->getSpaceInformation()->getPropagationStepSize();
-        ss->getSpaceInformation()->setPropagationStepSize(0.1);
-
         oc::SpaceInformationPtr si=ss->getSpaceInformation();
+
+
+        _propagationStepSize = 1.0;
+        addParameter("PropagationStepSize", _propagationStepSize);
+        si->setPropagationStepSize(_propagationStepSize);
+
+        _minControlDuration = 1;
+        _maxControlDuration = 10;
+        addParameter("MinControlDuration", _minControlDuration);
+        addParameter("MaxControlDuration", _maxControlDuration);
+        si->setMinMaxControlDuration(_minControlDuration, _maxControlDuration);
+
 
         // create a planner for the defined space
         ob::PlannerPtr planner(new oc::RRT(si));
@@ -153,8 +174,10 @@ namespace libPlanner {
 
         _GoalBias=(planner->as<oc::RRT>())->getGoalBias();
         addParameter("Goal Bias", _GoalBias);
-
         ss->getPlanner()->as<oc::RRT>()->setGoalBias(_GoalBias);
+
+
+        addParameter("PropagationStepSize", _propagationStepSize);
     }
 
 	//! void destructor
@@ -174,6 +197,87 @@ namespace libPlanner {
         }
         else
           return false;
+
+        it = _parameters.find("Goal Bias");
+                if(it != _parameters.end()){
+                    _GoalBias = it->second;
+                    ss->getPlanner()->as<oc::RRT>()->setGoalBias(_GoalBias);
+                }
+                else
+                  return false;
+
+        it = _parameters.find("Step Size");
+            if(it != _parameters.end())
+                     _stepSize = it->second;
+                else
+                  return false;
+
+        it = _parameters.find("MinControlDuration");
+            if(it != _parameters.end()){
+                _minControlDuration = it->second;
+                ss->getSpaceInformation()->setMinMaxControlDuration(_minControlDuration, _maxControlDuration);
+            }
+            else
+                return false;
+
+        it = _parameters.find("MaxControlDuration");
+            if(it != _parameters.end()){
+                 _maxControlDuration = it->second;
+                 ss->getSpaceInformation()->setMinMaxControlDuration(_minControlDuration, _maxControlDuration);
+            }
+            else
+                return false;
+
+        it = _parameters.find("PropagationStepSize");
+                if(it != _parameters.end()){
+                     _propagationStepSize = it->second;
+                     ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize);
+                }
+                else
+                    return false;
+
+        it = _parameters.find("ControlBound_Tras");
+                if(it != _parameters.end()){
+                             _controlBound_Tras = it->second;
+                             ob::RealVectorBounds cbounds(2);
+                             cbounds.setLow(0, - _controlBound_Tras * (1 - _onlyForward));
+                             cbounds.setHigh(0, _controlBound_Tras);
+                             cbounds.setLow(1, -_controlBound_Rot);
+                             cbounds.setHigh(1, _controlBound_Rot);
+                             spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
+                }
+                else
+                   return false;
+
+        it = _parameters.find("ControlBound_Rot");
+               if(it != _parameters.end()){
+                      _controlBound_Rot = it->second;
+                      ob::RealVectorBounds cbounds(2);
+                      cbounds.setLow(0, - _controlBound_Tras * (1 - _onlyForward));
+                      cbounds.setHigh(0, _controlBound_Tras);
+                      cbounds.setLow(1, -_controlBound_Rot);
+                      cbounds.setHigh(1, _controlBound_Rot);
+                      spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
+                }
+                else
+                   return false;
+
+        it = _parameters.find("OnlyForward (0/1)");
+                if(it != _parameters.end()){
+                    if(it->second != 0) _onlyForward=1;
+                    else _onlyForward=0;
+
+                    ob::RealVectorBounds cbounds(2);
+                    cbounds.setLow(0, - _controlBound_Tras * (1 - _onlyForward));
+                    cbounds.setHigh(0, _controlBound_Tras);
+                    cbounds.setLow(1, -_controlBound_Rot);
+                    cbounds.setHigh(1, _controlBound_Rot);
+                    spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
+                }
+                else
+                   return false;
+
+
 
       }catch(...){
         return false;

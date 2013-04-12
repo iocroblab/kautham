@@ -99,7 +99,7 @@ namespace libPlanner{
 
 	  clock_t entertime = clock();
 
-	_solved = false;
+    _solved = false;
     if(trySolve()){
 
 	    if(_totalTime==0.0)
@@ -177,11 +177,11 @@ namespace libPlanner{
             dist = wkSpace()->distanceBetweenSamples(*_path.at(i), *_path.at(i+1), Kautham::CONFIGSPACE);
 		        maxsteps = (int)(dist/_stepSize) + 2; //the 2 is necessary to always reduce the distance...???
 			  
-                if(maxsteps>100)
-                {
-                    dist = wkSpace()->distanceBetweenSamples(*_path.at(i), *_path.at(i+1), Kautham::CONFIGSPACE);
-                    maxsteps = 2;
-                }
+                //if(maxsteps>100)
+                //{
+                //    dist = wkSpace()->distanceBetweenSamples(*_path.at(i), *_path.at(i+1), Kautham::CONFIGSPACE);
+                //    maxsteps = 2;
+                //}
             for(unsigned int j = 0; j < maxsteps; j++){
 			        tmpSam = _path[i]->interpolate( _path[i+1], j/(KthReal)maxsteps );
 			        _simulationPath.push_back(tmpSam);
