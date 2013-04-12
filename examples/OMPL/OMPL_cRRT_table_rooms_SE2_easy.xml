@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="" topology="SE3">
-        <Robot robot="robots/tableR2.rob" scale="1.0">
-	
+        <Robot robot="robots/tableSE2.rob" scale="0.8">
    Robot Path
    <Limits name="X" min="-115.0" max="115.0" />
    <Limits name="Y" min="-125.0" max="125.0" />
@@ -20,16 +19,22 @@
         </Scene>
 	<Planner>
                  <Parameters>
-                    <Name>omplRRT</Name>
+                    <Name>omplcRRT</Name>
                     <LocalPlanner stepSize="1">Linear</LocalPlanner>
                     <Parameter name="Step Size">5</Parameter>
-                    <Parameter name="Max Planning Time">10.0</Parameter>
-                    <Parameter name="Speed Factor">1</Parameter>
+                    <Parameter name="Max Planning Time">5.0</Parameter>
+                    <Parameter name="Speed Factor">10</Parameter>
+                    <Parameter name="PropagationStepSize">0.01</Parameter>
+                    <Parameter name="MaxControlDuration">50</Parameter>
+                    <Parameter name="MinControlDuration">1</Parameter>
+                    <Parameter name="ControlBound_Tras">0.25</Parameter>
+                    <Parameter name="ControlBound_Rot">0.025</Parameter>
+                    <Parameter name="OnlyForward">1</Parameter>
                 </Parameters>
 		<Queries>
                         <Query>
-                        <Init dim="2">0.9 0.1</Init>
-                        <Goal dim="2">0.6 0.8</Goal>
+                        <Init dim="3">0.9 0.1 0.25</Init>
+                        <Goal dim="3">0.6 0.8 0.75</Goal>
 			</Query>
 		</Queries>
 	</Planner>
