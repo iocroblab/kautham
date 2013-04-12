@@ -405,6 +405,8 @@ namespace libPlanner {
         if( _samples->changed())
         {
           clearGraph();
+          _init->addNeigh(_samples->indexOf(_goal));
+          _goal->addNeigh(_samples->indexOf(_init));
           _samples->findNeighs(_neighThress, _kNeighs);
           connectSamples();
           loadGraph();
