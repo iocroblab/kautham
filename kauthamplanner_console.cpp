@@ -46,7 +46,10 @@
 #include "libproblem/problem.h"
 #include "libplanner/kthquery.h"
 #include <Inventor/SoDB.h>
+
+#ifdef KAUTHAM_USE_MPI
 #include <mpi.h>
+#endif
 
 using namespace std;
 
