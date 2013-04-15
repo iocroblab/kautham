@@ -62,7 +62,7 @@ namespace libPlanner {
               omplPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
 	{
         _guiName = "ompl PRM Planner";
-        _idName = "ompl PRM Planner";
+        _idName = "omplPRM";
 
 
         ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));

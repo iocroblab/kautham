@@ -62,7 +62,7 @@ namespace libPlanner {
               omplPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
 	{
         _guiName = "ompl RRTConnect Planner";
-        _idName = "ompl RRTConnect Planner";
+        _idName = "omplRRTConnect";
 
         ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
         ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, _1, (Planner*)this));

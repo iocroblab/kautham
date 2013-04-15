@@ -38,7 +38,7 @@ FIND_PACKAGE( GSL )
 IF( WIN32 )
   MESSAGE( STATUS "OMPL Not yet prepared for WIN32")
 ELSE( WIN32 )
-    find_package(ompl)
+   find_package(ompl)
     IF( OMPL_FOUND )
         MESSAGE( STATUS "OMPL Package FOUND")
         ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
@@ -84,7 +84,7 @@ ENDIF( WIN32 )
 
 OPTION( KAUTHAM_GUI "Build the gui version" ON )
 OPTION( USE_HAPTIC "Build with OpenHaptics" OFF )
-OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
+OPTION( KAUTHAM_CONSOLE "Build the console version" ON )
 
 INCLUDE_DIRECTORIES( libutil )
 
@@ -96,6 +96,7 @@ ADD_SUBDIRECTORY ( libsampling )
 ADD_SUBDIRECTORY ( libplanner )
 
 IF( KAUTHAM_GUI )
+  MESSAGE( STATUS "making KAUTHAM GUI" )
   FIND_PACKAGE( Qt4 REQUIRED )
   IF( QT4_FOUND )
     SET( QT_USE_QTMAIN TRUE )
@@ -139,9 +140,11 @@ ENDIF( KAUTHAM_GUI )
 
 
 IF( KAUTHAM_CONSOLE )
+
+  MESSAGE( STATUS "making KAUTHAM CONSOLE" )
  # MPI Library used to turn the KauthamConsole parallel process.
   INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}  ${mt_DIR} ${COIN_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/libgui )
-  FIND_PACKAGE( MPI )
+  #FIND_PACKAGE( MPI )
   IF( MPI_FOUND )
     INCLUDE_DIRECTORIES( ${MPI_INCLUDE_PATH} )
     ADD_DEFINITIONS( -DKAUTHAM_USE_MPI )

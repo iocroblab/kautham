@@ -48,7 +48,7 @@
 #include <boost/bind/mem_fn.hpp>
 #include <ompl/base/spaces/SE2StateSpace.h>
 
-#include "omplcRRTplanner.h"
+#include "omplcRRTcarplanner.h"
 
 
 
@@ -58,67 +58,172 @@ using namespace libSampling;
 namespace libPlanner {
   namespace omplcplanner{
 
-  void propagate(const ob::State *start, const oc::Control *control, const double duration, ob::State *result)
+
+  /// Model defining the motion of the robot
+  class KinematicCarModel
   {
-      /*
-      const ob::SE2StateSpace::StateType *se2state = start->as<ob::SE2StateSpace::StateType>();
-      const ob::RealVectorStateSpace::StateType *pos = se2state->as<ob::RealVectorStateSpace::StateType>(0);
-      const ob::SO2StateSpace::StateType *rot = se2state->as<ob::SO2StateSpace::StateType>(1);
-      const oc::RealVectorControlSpace::ControlType *rctrl = control->as<oc::RealVectorControlSpace::ControlType>();
+  public:
 
-      result->as<ob::SE2StateSpace::StateType>()->as<ob::RealVectorStateSpace::StateType>(0)->values[0] =
-          (*pos)[0] + (*rctrl)[0] * duration * cos(rot->value);
-
-      result->as<ob::SE2StateSpace::StateType>()->as<ob::RealVectorStateSpace::StateType>(0)->values[1] =
-          (*pos)[1] + (*rctrl)[0] * duration * sin(rot->value);
-
-      result->as<ob::SE2StateSpace::StateType>()->as<ob::SO2StateSpace::StateType>(1)->value =
-          rot->value + (*rctrl)[1];
-      */
-      const ob::RealVectorStateSpace::StateType *R2state = start->as<ob::RealVectorStateSpace::StateType>();
-      const oc::RealVectorControlSpace::ControlType *rctrl = control->as<oc::RealVectorControlSpace::ControlType>();
-
-      //smp->setCoords(coords);
-      //vector<RobConf*>& rconf = getConfigMapping(smp);
-
-
-      vector<KthReal> coordsresult;
-      coordsresult.resize(3);
-
-      double du;
-      du=duration;
-      //if(duration>0) du=duration;
-      //else du = -duration;
-
-      coordsresult[0] = R2state->values[0] + (*rctrl)[0] * duration * cos(R2state->values[2]*2*M_PI);
-      //if(coordsresult[0]>1.0) coordsresult[0] = 1.0;
-      //else if (coordsresult[0]<0.0) coordsresult[0] = 0.0;
-      coordsresult[1] = R2state->values[1] + (*rctrl)[0] * duration * sin(R2state->values[2]*2*M_PI);
-      //if(coordsresult[1]>1.0) coordsresult[1] = 1.0;
-      //else if (coordsresult[1]<0.0) coordsresult[1] = 0.0;
-      coordsresult[2] = (R2state->values[2]*2*M_PI + (*rctrl)[1]/1.0)/(2*M_PI);
-      if(coordsresult[2]<0.0)
+      KinematicCarModel(const ob::StateSpace *space) : space_(space), carLength_(0.2)
       {
-          coordsresult[2] = 1.0 - coordsresult[2];
-      }
-      else if(coordsresult[2]>1.0)
-      {
-          coordsresult[2] = coordsresult[2] - 1.0;
       }
 
-      result->as<ob::RealVectorStateSpace::StateType>()->values[0] = coordsresult[0];
-      result->as<ob::RealVectorStateSpace::StateType>()->values[1] = coordsresult[1];
-      result->as<ob::RealVectorStateSpace::StateType>()->values[2] = coordsresult[2];
+      /// implement the function describing the robot motion: qdot = f(q, u)
+      void operator()(const ob::State *state, const oc::Control *control, std::valarray<double> &dstate) const
+      {
+          const double *u = control->as<oc::RealVectorControlSpace::ControlType>()->values;
+          const double theta = state->as<ob::RealVectorStateSpace::StateType>()->values[2];
+          //const double theta = state->as<ob::SE2StateSpace::StateType>()->getYaw();
 
-  }
+          dstate.resize(3);
+          dstate[0] = u[0] * cos(theta*2*M_PI);
+          dstate[1] = u[0] * sin(theta*2*M_PI);
+          dstate[2] = u[0] * tan(u[1]*2*M_PI) / carLength_;
+      }
 
+      /// implement y(n+1) = y(n) + d
+      void update(ob::State *state, const std::valarray<double> &dstate) const
+      {
+          //ob::SE2StateSpace::StateType &s = *state->as<ob::SE2StateSpace::StateType>();
+          //s.setX(s.getX() + dstate[0]);
+          //s.setY(s.getY() + dstate[1]);
+          //s.setYaw(s.getYaw() + dstate[2]);
+          //space_->enforceBounds(state);
+
+          ob::RealVectorStateSpace::StateType &s = *state->as<ob::RealVectorStateSpace::StateType>();
+          s.values[0] = s.values[0] + dstate[0];
+          s.values[1] = s.values[1] + dstate[1];
+          s.values[2] = s.values[2] + dstate[2];
+          if(s.values[2]<0.0)
+          {
+             s.values[2] = 1.0 - s.values[2];
+          }
+          else if(s.values[2]>1.0)
+          {
+             s.values[2] = s.values[2] - 1.0;
+          }
+
+          space_->enforceBounds(state);
+      }
+
+      void setCarLength(double d)
+      {
+          carLength_ = d;
+      }
+
+      double getCarLength()
+      {
+          return carLength_;
+      }
+
+  private:
+
+      const ob::StateSpace *space_;
+      double             carLength_;
+
+  };
+
+
+  /// Simple integrator: Euclidean method
+  template<typename F>
+  class EulerIntegrator
+  {
+  public:
+
+      EulerIntegrator(const ob::StateSpace *space, double timeStep) : space_(space), timeStep_(timeStep), ode_(space)
+      {
+      }
+
+      void propagate(const ob::State *start, const oc::Control *control, const double duration, ob::State *result) const
+      {
+          double t = timeStep_;
+          std::valarray<double> dstate;
+          space_->copyState(result, start);
+          while (t < duration + std::numeric_limits<double>::epsilon())
+          {
+              ode_(result, control, dstate);
+              ode_.update(result, timeStep_ * dstate);
+              t += timeStep_;
+          }
+          if (t + std::numeric_limits<double>::epsilon() > duration)
+          {
+              ode_(result, control, dstate);
+              ode_.update(result, (t - duration) * dstate);
+          }
+      }
+
+      double getTimeStep(void) const
+      {
+          return timeStep_;
+      }
+
+      void setTimeStep(double timeStep)
+      {
+          timeStep_ = timeStep;
+      }
+
+      F* getOde()
+      {
+          return &ode_;
+      }
+
+  private:
+
+      const ob::StateSpace *space_;
+      double                   timeStep_;
+      F                        ode_;
+
+  };
+
+
+
+  class DemoControlSpace : public oc::RealVectorControlSpace
+  {
+  public:
+
+      DemoControlSpace(const ob::StateSpacePtr &stateSpace) : oc::RealVectorControlSpace(stateSpace, 2)
+      {
+      }
+  };
+
+  class DemoStatePropagator : public oc::StatePropagator
+  {
+  public:
+
+      DemoStatePropagator(const oc::SpaceInformationPtr &si) : oc::StatePropagator(si),
+                                                               integrator_(si->getStateSpace().get(), 0.0)
+      {
+      }
+
+      virtual void propagate(const ob::State *state, const oc::Control* control, const double duration, ob::State *result) const
+      {
+          integrator_.propagate(state, control, duration, result);
+      }
+
+      void setIntegrationTimeStep(double timeStep)
+      {
+          integrator_.setTimeStep(timeStep);
+      }
+
+      double getIntegrationTimeStep(void) const
+      {
+          return integrator_.getTimeStep();
+      }
+
+      EulerIntegrator<KinematicCarModel> *getIntegrator()
+      {
+          return &integrator_;
+      }
+
+      EulerIntegrator<KinematicCarModel> integrator_;
+  };
 
 	//! Constructor
-    omplcRRTPlanner::omplcRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
+    omplcRRTcarPlanner::omplcRRTcarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               omplcPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
 	{
         _guiName = "ompl cRRT Planner";
-        _idName = "omplcRRT";
+        _idName = "omplcRRTcar";
 
   // construct the state space we are planning in
  // space =  ((ob::StateSpacePtr) new ob::SE2StateSpace());
@@ -132,8 +237,7 @@ namespace libPlanner {
 
 
         // create a control space
-        spacec = ((oc::ControlSpacePtr) new oc::RealVectorControlSpace(space, 2));
-
+        spacec = ((oc::ControlSpacePtr) new DemoControlSpace(space));
 
         // set the bounds for the control space
         _controlBound_Tras = 0.3;
@@ -147,25 +251,30 @@ namespace libPlanner {
         cbounds.setHigh(0, _controlBound_Tras);
         cbounds.setLow(1, -_controlBound_Rot);
         cbounds.setHigh(1, _controlBound_Rot);
-        spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
+        spacec->as<DemoControlSpace>()->setBounds(cbounds);
 
+        // define a simple setup class
         ss = ((oc::SimpleSetupPtr) new oc::SimpleSetup(spacec));
+
+        // set state validity checking for this space
         ss->setStateValidityChecker(boost::bind(&omplcplanner::isStateValid, ss->getSpaceInformation().get(), _1, (Planner*)this));
 
-        // set the state propagation routine
-        ss->setStatePropagator(boost::bind(&propagate, _1, _2, _3, _4));
+        // set the propagation routine for this space
         oc::SpaceInformationPtr si=ss->getSpaceInformation();
+        ss->setStatePropagator(oc::StatePropagatorPtr(new DemoStatePropagator(si)));
 
-
-        _propagationStepSize = 1.0;
+        // propagation step size
+        _propagationStepSize = 0.01;
+        _duration = 1;
         addParameter("PropagationStepSize", _propagationStepSize);
-        si->setPropagationStepSize(_propagationStepSize);
+        addParameter("Duration", _duration);
+        static_cast<DemoStatePropagator*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
+        si->setPropagationStepSize(_propagationStepSize*_duration);
 
-        _minControlDuration = 1;
-        _maxControlDuration = 10;
-        addParameter("MinControlDuration", _minControlDuration);
-        addParameter("MaxControlDuration", _maxControlDuration);
-        si->setMinMaxControlDuration(_minControlDuration, _maxControlDuration);
+        //carLength
+        _carLength = 0.2;
+        addParameter("CarLength", _carLength);
+        static_cast<DemoStatePropagator*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setCarLength(_carLength);
 
 
         // create a planner for the defined space
@@ -176,17 +285,20 @@ namespace libPlanner {
         addParameter("Goal Bias", _GoalBias);
         ss->getPlanner()->as<oc::RRT>()->setGoalBias(_GoalBias);
 
+        //kautham step size used when discretizing the path for visualizatuin,
+        //set very big, then simulatuionpath = path. This is ok since this planner generates a fine discretization path
+        //and in this way we aviod interpolating orientations when moving form e.g. 2º to -1º=359º.
+        _stepSize = 10000;
 
-        addParameter("PropagationStepSize", _propagationStepSize);
     }
 
 	//! void destructor
-    omplcRRTPlanner::~omplcRRTPlanner(){
+    omplcRRTcarPlanner::~omplcRRTcarPlanner(){
 			
 	}
 	
 	//! setParameters sets the parameters of the planner
-    bool omplcRRTPlanner::setParameters(){
+    bool omplcRRTcarPlanner::setParameters(){
 
       omplcPlanner::setParameters();
       try{
@@ -206,35 +318,37 @@ namespace libPlanner {
                 else
                   return false;
 
-        it = _parameters.find("Step Size");
-            if(it != _parameters.end())
-                     _stepSize = it->second;
-                else
-                  return false;
 
-        it = _parameters.find("MinControlDuration");
+
+        it = _parameters.find("Duration");
             if(it != _parameters.end()){
-                _minControlDuration = it->second;
-                ss->getSpaceInformation()->setMinMaxControlDuration(_minControlDuration, _maxControlDuration);
+                _duration = it->second;
+                ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize*_duration);
             }
             else
                 return false;
 
-        it = _parameters.find("MaxControlDuration");
-            if(it != _parameters.end()){
-                 _maxControlDuration = it->second;
-                 ss->getSpaceInformation()->setMinMaxControlDuration(_minControlDuration, _maxControlDuration);
-            }
-            else
-                return false;
-
-        it = _parameters.find("PropagationStepSize");
+       it = _parameters.find("PropagationStepSize");
                 if(it != _parameters.end()){
                      _propagationStepSize = it->second;
-                     ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize);
+                     static_cast<DemoStatePropagator*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
+                     ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize*_duration);
                 }
                 else
                     return false;
+
+       it = _parameters.find("CarLength");
+                if(it != _parameters.end()){
+                    _carLength = it->second;
+                    static_cast<DemoStatePropagator*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setCarLength(_carLength);
+
+                }
+                else
+                    return false;
+
+
+
+
 
         it = _parameters.find("ControlBound_Tras");
                 if(it != _parameters.end()){
@@ -244,7 +358,7 @@ namespace libPlanner {
                              cbounds.setHigh(0, _controlBound_Tras);
                              cbounds.setLow(1, -_controlBound_Rot);
                              cbounds.setHigh(1, _controlBound_Rot);
-                             spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
+                             spacec->as<DemoControlSpace>()->setBounds(cbounds);
                 }
                 else
                    return false;
@@ -257,7 +371,7 @@ namespace libPlanner {
                       cbounds.setHigh(0, _controlBound_Tras);
                       cbounds.setLow(1, -_controlBound_Rot);
                       cbounds.setHigh(1, _controlBound_Rot);
-                      spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
+                      spacec->as<DemoControlSpace>()->setBounds(cbounds);
                 }
                 else
                    return false;
@@ -272,7 +386,7 @@ namespace libPlanner {
                     cbounds.setHigh(0, _controlBound_Tras);
                     cbounds.setLow(1, -_controlBound_Rot);
                     cbounds.setHigh(1, _controlBound_Rot);
-                    spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
+                    spacec->as<DemoControlSpace>()->setBounds(cbounds);
                 }
                 else
                    return false;
