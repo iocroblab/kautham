@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Problem name="" topology="SE3">
+<Problem name="OMPL_PRM_ele_two_columns">
 	<Robot robot="robots/ele_transDOF.rob" scale="0.5">
    Robot Path
 		<Limits name="X" min="0.0" max="100.0" />

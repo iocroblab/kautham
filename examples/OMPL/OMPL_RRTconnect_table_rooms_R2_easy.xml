@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Problem name="" topology="SE3">
+<Problem name="OMPL_RRTConnect_table_rooms">
         <Robot robot="robots/tableR2.rob" scale="1.0">
 	
    Robot Path
