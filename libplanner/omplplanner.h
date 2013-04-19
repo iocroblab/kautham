@@ -50,9 +50,11 @@
 #include <ompl/config.h>
 
 #include <ompl/base/spaces/RealVectorStateSpace.h>
-namespace ob = ompl::base;
+#include <ompl/base/spaces/SE3StateSpace.h>
+#include <ompl/base/spaces/SO3StateSpace.h>
 namespace og = ompl::geometric;
 namespace oc = ompl::control;
+namespace ob = ompl::base;
 
 
 #include <libproblem/workspace.h>
@@ -69,6 +71,18 @@ namespace libPlanner {
 
     bool isStateValid(const ob::State *state, Planner *p);
 
+    /*
+    class weigthedRealVectorStateSpace:public RealVectorStatSpace {
+    public:
+        vector<KthReal> weights;
+
+        weightedRealVectorStateSpace(unsigned int dim = 0);
+        weightedRealVectorStateSpace(unsigned int dim = 0, vector<KthReal> w);
+        ~weightedRealVectorStateSpace(void){};
+        distance(const State *state1, const ob::State *state2) const;
+    };
+    */
+
     class omplPlanner:public Planner {
 	    public:
         omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
@@ -80,6 +94,8 @@ namespace libPlanner {
         //Add public data and functionsvoid
         SoSeparator *getIvCspaceScene();//reimplemented
         void drawCspace();
+        void drawCspaceSE3();
+        void drawCspaceRn();
 
 		protected:
 		//Add protected data and functions

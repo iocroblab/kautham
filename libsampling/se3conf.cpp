@@ -148,8 +148,16 @@ namespace libSampling {
 
 	vector<KthReal>& SE3Conf::getAxisAngle() {
 		KthReal sin_angle_2 = sin(getAngle()/2);
-		for(int i=0;i<3;i++)
-			_axisAn.at(i) = coord.at(i+3)/sin_angle_2;
+
+        if(sin_angle_2 != 0)
+            for(int i=0;i<3;i++)
+                _axisAn.at(i) = coord.at(i+3)/sin_angle_2;
+        else{
+            _axisAn.at(0) = 0;
+            _axisAn.at(1) = 0;
+            _axisAn.at(2) = 1; //it is a dummy axis since the angle is zero
+        }
+
 
 		_axisAn.at(3) = getAngle();
 		return _axisAn;

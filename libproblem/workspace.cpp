@@ -124,12 +124,17 @@ namespace libProblem {
 
             from = j;
             robots[i]->control2Pose(tmpVec);
+
+
         }
         else{
 			  robots[i]->Kinematics(sample->getMappedConf().at(i));
         }
     }
 	_lastSampleMovedTo = sample;
+
+    //set _sample::_config if it was nbot set
+    if(sample->getMappedConf().size()==0) sample->setMappedConf(_configMap);
   }
   /*
   void WorkSpace::moveRobotsTo(Sample* sample){
