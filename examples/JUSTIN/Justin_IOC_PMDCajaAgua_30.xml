@@ -34,7 +34,7 @@
   </Scene>
 
   <Scene scene="scenes/transparentTable.iv" scale="0.5"> 
-     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="400.0" Y="125.0" X="0.0"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="400.0" Y="75.0" X="0.0"> 
      <!--Problem of the scene-->
     </Location>
   </Scene>
