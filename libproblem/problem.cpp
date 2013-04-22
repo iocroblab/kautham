@@ -47,7 +47,9 @@
 
 #include <libplanner/myplanner.h>
 #include <libplanner/omplPRMplanner.h>
+#include <libplanner/omplPRMplanner_v1.h>
 #include <libplanner/omplRRTplanner.h>
+#include <libplanner/omplRRTplanner_v1.h>
 #include <libplanner/omplcRRTplanner.h>
 #include <libplanner/omplcRRTcarplanner.h>
 #include <libplanner/omplRRTConnectplanner.h>
@@ -525,7 +527,7 @@ namespace libProblem {
 
   string Problem::plannersNames(){
    // return   "DRM|DRMPCA|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
-        return   "omplcRRT|omplcRRTcar|omplPRM|omplRRT|omplRRTConnect|DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
+        return   "omplcRRT|omplcRRTcar|omplPRM|omplPRMV1|omplRRT|omplRRTV1|omplRRTConnect|DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
   }
 
   bool Problem::createPlanner( string name, KthReal step ){
@@ -552,9 +554,20 @@ namespace libProblem {
       _planner = new libPlanner::omplplanner::omplPRMPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
+    else if(name == "omplPRMV1")
+      _planner = new libPlanner::omplplannerV1::omplPRMPlannerV1(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
+
+
     else if(name == "omplRRT")
       _planner = new libPlanner::omplplanner::omplRRTPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
+
+
+    else if(name == "omplRRTV1")
+      _planner = new libPlanner::omplplannerV1::omplRRTPlannerV1(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
+
     else if(name == "omplRRTConnect")
       _planner = new libPlanner::omplplanner::omplRRTConnectPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);

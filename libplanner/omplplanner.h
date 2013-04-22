@@ -52,6 +52,7 @@
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <ompl/base/spaces/SO3StateSpace.h>
+#include <ompl/base/samplers/UniformValidStateSampler.h>
 namespace og = ompl::geometric;
 namespace oc = ompl::control;
 namespace ob = ompl::base;
@@ -69,7 +70,12 @@ using namespace libSampling;
 namespace libPlanner {
   namespace omplplanner{
 
-    bool isStateValid(const ob::State *state, Planner *p);
+
+
+  ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p);
+  ob::ValidStateSamplerPtr allocValidStateSampler(const ob::SpaceInformation *si, Planner *p);
+  bool isStateValid(const ob::State *state, Planner *p);
+
 
     /*
     class weigthedRealVectorStateSpace:public RealVectorStatSpace {
@@ -96,6 +102,13 @@ namespace libPlanner {
         void drawCspace();
         void drawCspaceSE3();
         void drawCspaceRn();
+
+        void omplState2smp(const ob::State *state, Sample* smp);
+        void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
+        void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
+        inline ob::StateSpacePtr getSpace(){return space;};
+
+
 
 		protected:
 		//Add protected data and functions

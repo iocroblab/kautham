@@ -64,6 +64,8 @@ using namespace libSampling;
 
 namespace libPlanner {
   namespace omplplanner{
+
+
     class omplPRMPlanner:public omplPlanner {
 	    public:
         omplPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
