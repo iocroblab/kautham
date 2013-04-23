@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="TX90 SA Hand Right" DHType="Modified" robType="Tree">
+
+  <Joints size="25">
+    <Joint name="Base" ivFile="rtx90/base.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="false" movable="false"  ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name=""></Parent>
+    </Joint>
+    
+    <Joint name="Shoulder" ivFile="rtx90/shoulder.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="478.0"  ></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Base"></Parent>
+    </Joint>
+    
+    <Joint name="ForeArm" ivFile="rtx90/forearm.wrl">
+      <DHPars  alpha="-90.0" a="50.0" theta="-90.0" d="50.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="147.5" Low="-130.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Shoulder"></Parent>
+    </Joint>
+    
+    <Joint name="Elbow" ivFile="rtx90/elbow.wrl">
+      <DHPars  alpha="0.0" a="425.0" theta="90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="145.0" Low="-145.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="ForeArm"></Parent>
+    </Joint>
+    
+    <Joint name="Arm" ivFile="rtx90/arm.wrl">
+      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="425.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="270.0" Low="-270.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Elbow"></Parent>
+    </Joint>
+    
+    <Joint name="Wrist" ivFile="rtx90/wrist.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="140.0" Low="-115.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Arm"></Parent>
+    </Joint>
+    
+    <Joint name="Tcp" ivFile="rtx90/tcp.wrl">
+      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="100.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="270.0" Low="-270.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Wrist"></Parent>
+    </Joint>
+    
+    <Joint name="Palm" ivFile="SAHand/SAH-palm-right.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Parent name="Tcp"></Parent>
+    </Joint>
+    
+  <Joint name="Thumb" ivFile="SAHand/SAH-thumb-base-right.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-3.0" Y="27.1" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0.0" Low="-90.0"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb-Base" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-6.0" Y="86.9" Z="97.0" WX="0.419" WY="-0.419" WZ="0.805" TH="102.31" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="15.0" Low="-15.0"></Limits>
+      <Parent name="Thumb"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb-Prox" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="-75.0"></Limits>
+      <Parent name="Thumb-Base"></Parent>
+    </Joint>
+
+    <Joint name="Thumb-Med" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="-4.0" Low="-75.0"></Limits>
+      <Parent name="Thumb-Prox"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb-Dist" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="-4.0" Low="-75.0"></Limits>
+      <Parent name="Thumb-Med"></Parent>
+    </Joint>
+    
+    <Joint name="Index-Base" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-4.3" Y="40.165" Z="145.43" WX="0.707" WY="0.0125" WZ="0.707" TH="178.5623" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="15.0" Low="-15.0"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+    
+    <Joint name="Index-Prox" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="-75.0"></Limits>
+      <Parent name="Index-Base"></Parent>
+    </Joint>
+
+    <Joint name="Index-Med" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="-4.0" Low="-75.0"></Limits>
+      <Parent name="Index-Prox"></Parent>
+    </Joint>
+    
+    <Joint name="Index-Dist" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="-4.0" Low="-75.0"></Limits>
+      <Parent name="Index-Med"></Parent>
+    </Joint>
+    
+    <Joint name="Mid-Base" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-4.3" Y="0.0" Z="150.143" WX="0.707" WY="0.0" WZ="0.707" TH="180.0" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="15.0" Low="-15.0"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+    
+    <Joint name="Mid-Prox" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="-75.0"></Limits>
+      <Parent name="Mid-Base"></Parent>
+    </Joint>
+
+    <Joint name="Mid-Med" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="-4.0" Low="-75.0"></Limits>
+      <Parent name="Mid-Prox"></Parent>
+    </Joint>
+    
+    <Joint name="Mid-Dist" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="-4.0" Low="-75.0"></Limits>
+      <Parent name="Mid-Med"></Parent>
+    </Joint>
+    
+    <Joint name="Ring-Base" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-4.3" Y="-40.165" Z="145.43" WX="0.707" WY="-0.0121" WZ="0.707" TH="181.3898" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="15.0" Low="-15.0"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+    
+    <Joint name="Ring-Prox" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="-75.0"></Limits>
+      <Parent name="Ring-Base"></Parent>
+    </Joint>
+
+    <Joint name="Ring-Med" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="-4.0" Low="-75.0"></Limits>
+      <Parent name="Ring-Prox"></Parent>
+    </Joint>
+    
+    <Joint name="Ring-Dist" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="-4.0" Low="-75.0"></Limits>
+      <Parent name="Ring-Med"></Parent>
+    </Joint>
+  </Joints>
+
+	<ControlSet size="19" nTrunk="6">
+    <Offset>
+      <DOF name="Thumb" value="0.5265"></DOF> 
+      <DOF name="Thumb-Base" value="0.6867"></DOF> 
+      <DOF name="Thumb-Prox" value="0.6494"></DOF> 
+      <DOF name="Thumb-Med" value="0.7281"></DOF> 
+      <DOF name="Thumb-Dist" value="0.7281"></DOF> 
+      <DOF name="Index-Base" value="0.6308"></DOF> 
+      <DOF name="Index-Prox" value="0.7242"></DOF> 
+      <DOF name="Index-Med" value="0.7491"></DOF> 
+      <DOF name="Index-Dist" value="0.7491"></DOF> 
+      <DOF name="Mid-Base" value="0.5"></DOF> 
+      <DOF name="Mid-Prox" value="0.7419"></DOF> 
+      <DOF name="Mid-Med" value="0.7995"></DOF> 
+      <DOF name="Mid-Dist" value="0.7995"></DOF> 
+      <DOF name="Ring-Base" value="0.2371"></DOF> 
+      <DOF name="Ring-Prox" value="0.8001"></DOF> 
+      <DOF name="Ring-Med" value="0.8323"></DOF> 
+      <DOF name="Ring-Dist" value="0.8323"></DOF>
+
+      <DOF name="Shoulder" value="0.5"></DOF>
+      <DOF name="ForeArm" value="0.5"></DOF>
+      <DOF name="Elbow" value="0.5"></DOF>
+      <DOF name="Arm" value="0.5"></DOF>
+      <DOF name="Wrist" value="0.5"></DOF>
+      <DOF name="Tcp" value="0.5"></DOF>
+    </Offset>
+
+    <Control name="Shoulder" eigValue="1.0">
+      <DOF name="Shoulder" value="1.0"></DOF>
+    </Control>
+	
+    <Control name="ForeArm" eigValue="1.0">
+      <DOF name="ForeArm" value="1.0"></DOF>
+    </Control>
+	
+    <Control name="Elbow" eigValue="1.0">
+      <DOF name="Elbow" value="1.0"></DOF>
+    </Control>
+	
+    <Control name="Arm" eigValue="1.0">
+      <DOF name="Arm" value="1.0"></DOF>
+    </Control>
+	
+    <Control name="Wrist" eigValue="1.0">
+      <DOF name="Wrist" value="1.0"></DOF>
+    </Control>
+	
+    <Control name="Tcp" eigValue="1.0">
+      <DOF name="Tcp" value="1.0"></DOF>
+    </Control>
+	
+    <Control name="C1" eigValue="1.4775">
+      <DOF name="Thumb" value="-0.4366"></DOF> 
+      <DOF name="Thumb-Base" value="0.2013"></DOF> 
+      <DOF name="Thumb-Prox" value="-0.2529"></DOF> 
+      <DOF name="Thumb-Med" value="-0.1948"></DOF> 
+      <DOF name="Thumb-Dist" value="-0.1948"></DOF> 
+      <DOF name="Index-Base" value="0.1515"></DOF> 
+      <DOF name="Index-Prox" value="0.2465"></DOF> 
+      <DOF name="Index-Med" value="0.1087"></DOF> 
+      <DOF name="Index-Dist" value="0.1087"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="0.3084"></DOF> 
+      <DOF name="Mid-Med" value="0.2006"></DOF> 
+      <DOF name="Mid-Dist" value="0.2006"></DOF> 
+      <DOF name="Ring-Base" value="0.3983"></DOF> 
+      <DOF name="Ring-Prox" value="0.3976"></DOF> 
+      <DOF name="Ring-Med" value="0.3455"></DOF> 
+      <DOF name="Ring-Dist" value="0.3455"></DOF> 
+    </Control>
+
+    <Control name="C2" eigValue="0.3035">
+      <DOF name="Thumb" value="0.3431"></DOF> 
+      <DOF name="Thumb-Base" value="-0.2054"></DOF> 
+      <DOF name="Thumb-Prox" value="0.2046"></DOF> 
+      <DOF name="Thumb-Med" value="0.1029"></DOF> 
+      <DOF name="Thumb-Dist" value="0.1029"></DOF> 
+      <DOF name="Index-Base" value="0.0031"></DOF> 
+      <DOF name="Index-Prox" value="-0.2290"></DOF> 
+      <DOF name="Index-Med" value="-0.1236"></DOF> 
+      <DOF name="Index-Dist" value="-0.1236"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="-0.28505"></DOF> 
+      <DOF name="Mid-Med" value="-0.2740"></DOF> 
+      <DOF name="Mid-Dist" value="-0.2740"></DOF> 
+      <DOF name="Ring-Base" value="-0.6050"></DOF> 
+      <DOF name="Ring-Prox" value="0.3350"></DOF> 
+      <DOF name="Ring-Med" value="0.2921"></DOF> 
+      <DOF name="Ring-Dist" value="0.2921"></DOF> 
+    </Control>
+
+    <Control name="C3" eigValue="0.2210">
+      <DOF name="Thumb" value="0.5146"></DOF> 
+      <DOF name="Thumb-Base" value="-0.2553"></DOF> 
+      <DOF name="Thumb-Prox" value="0.2760"></DOF> 
+      <DOF name="Thumb-Med" value="0.1919"></DOF> 
+      <DOF name="Thumb-Dist" value="0.1919"></DOF> 
+      <DOF name="Index-Base" value="0.0620"></DOF> 
+      <DOF name="Index-Prox" value="0.3039"></DOF> 
+      <DOF name="Index-Med" value="0.1999"></DOF> 
+      <DOF name="Index-Dist" value="0.1999"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="0.3884"></DOF> 
+      <DOF name="Mid-Med" value="0.4443"></DOF> 
+      <DOF name="Mid-Dist" value="0.4443"></DOF> 
+      <DOF name="Ring-Base" value="0.1349"></DOF> 
+      <DOF name="Ring-Prox" value="0.1573"></DOF> 
+      <DOF name="Ring-Med" value="0.1722"></DOF> 
+      <DOF name="Ring-Dist" value="0.1722"></DOF> 
+    </Control>
+
+    <Control name="C4" eigValue="0.1702">
+      <DOF name="Thumb" value="0.0778"></DOF> 
+      <DOF name="Thumb-Base" value="0.0020"></DOF> 
+      <DOF name="Thumb-Prox" value="-0.0301"></DOF> 
+      <DOF name="Thumb-Med" value="0.0251"></DOF> 
+      <DOF name="Thumb-Dist" value="0.0251"></DOF> 
+      <DOF name="Index-Base" value="0.4623"></DOF> 
+      <DOF name="Index-Prox" value="0.4831"></DOF> 
+      <DOF name="Index-Med" value="0.5308"></DOF> 
+      <DOF name="Index-Dist" value="0.5308"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="-0.2537"></DOF> 
+      <DOF name="Mid-Med" value="-0.4307"></DOF> 
+      <DOF name="Mid-Dist" value="-0.4307"></DOF> 
+      <DOF name="Ring-Base" value="-0.0190"></DOF> 
+      <DOF name="Ring-Prox" value="-0.1021"></DOF> 
+      <DOF name="Ring-Med" value="-0.0531"></DOF> 
+      <DOF name="Ring-Dist" value="-0.0531"></DOF> 
+    </Control>
+
+    <Control name="C5" eigValue="0.0828">
+      <DOF name="Thumb" value="-0.4749"></DOF> 
+      <DOF name="Thumb-Base" value="0.0217"></DOF> 
+      <DOF name="Thumb-Prox" value="0.2806"></DOF> 
+      <DOF name="Thumb-Med" value="0.7422"></DOF> 
+      <DOF name="Thumb-Dist" value="0.7422"></DOF> 
+      <DOF name="Index-Base" value="-0.0282"></DOF> 
+      <DOF name="Index-Prox" value="-0.1511"></DOF> 
+      <DOF name="Index-Med" value="0.2514"></DOF> 
+      <DOF name="Index-Dist" value="0.2514"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="-0.1324"></DOF> 
+      <DOF name="Mid-Med" value="0.1074"></DOF> 
+      <DOF name="Mid-Dist" value="0.1074"></DOF> 
+      <DOF name="Ring-Base" value="0.0360"></DOF> 
+      <DOF name="Ring-Prox" value="-0.0131"></DOF> 
+      <DOF name="Ring-Med" value="0.1645"></DOF> 
+      <DOF name="Ring-Dist" value="0.1645"></DOF> 
+    </Control>
+
+
+    <Control name="C6" eigValue="0.0586">
+      <DOF name="Thumb" value="0.1160"></DOF> 
+      <DOF name="Thumb-Base" value="0.0871"></DOF> 
+      <DOF name="Thumb-Prox" value="-0.1758"></DOF> 
+      <DOF name="Thumb-Med" value="-0.1758"></DOF> 
+      <DOF name="Thumb-Dist" value="-0.4646"></DOF> 
+      <DOF name="Index-Base" value="-0.1198"></DOF> 
+      <DOF name="Index-Prox" value="0.3039"></DOF> 
+      <DOF name="Index-Med" value="0.3855"></DOF> 
+      <DOF name="Index-Dist" value="0.3855"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="-0.1572"></DOF> 
+      <DOF name="Mid-Med" value="-0.1546"></DOF> 
+      <DOF name="Mid-Dist" value="-0.1546"></DOF> 
+      <DOF name="Ring-Base" value="0.3859"></DOF> 
+      <DOF name="Ring-Prox" value="0.1139"></DOF> 
+      <DOF name="Ring-Med" value="0.5668"></DOF> 
+      <DOF name="Ring-Dist" value="0.5668"></DOF> 
+    </Control>
+
+    <Control name="C7" eigValue="0.0512">
+      <DOF name="Thumb" value="-0.0666"></DOF> 
+      <DOF name="Thumb-Base" value="0.2097"></DOF> 
+      <DOF name="Thumb-Prox" value="0.2724"></DOF> 
+      <DOF name="Thumb-Med" value="0.1695"></DOF> 
+      <DOF name="Thumb-Dist" value="0.1695"></DOF> 
+      <DOF name="Index-Base" value="-0.2948"></DOF> 
+      <DOF name="Index-Prox" value="0.4868"></DOF> 
+      <DOF name="Index-Med" value="-0.4056"></DOF> 
+      <DOF name="Index-Dist" value="-0.4056"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="0.1961"></DOF> 
+      <DOF name="Mid-Med" value="-0.4755"></DOF> 
+      <DOF name="Mid-Dist" value="-0.4755"></DOF> 
+      <DOF name="Ring-Base" value="0.1792"></DOF> 
+      <DOF name="Ring-Prox" value="0.2517"></DOF> 
+      <DOF name="Ring-Med" value="0.0161"></DOF> 
+      <DOF name="Ring-Dist" value="0.0161"></DOF> 
+    </Control>
+
+    <Control name="C8" eigValue="0.0309">
+      <DOF name="Thumb" value="0.0789"></DOF> 
+      <DOF name="Thumb-Base" value="-0.0598"></DOF> 
+      <DOF name="Thumb-Prox" value="-0.2788"></DOF> 
+      <DOF name="Thumb-Med" value="0.1897"></DOF> 
+      <DOF name="Thumb-Dist" value="0.1897"></DOF> 
+      <DOF name="Index-Base" value="-0.4983"></DOF> 
+      <DOF name="Index-Prox" value="-0.0017"></DOF> 
+      <DOF name="Index-Med" value="0.3959"></DOF> 
+      <DOF name="Index-Dist" value="0.3959"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="0.1862"></DOF> 
+      <DOF name="Mid-Med" value="-0.0867"></DOF> 
+      <DOF name="Mid-Dist" value="-0.0867"></DOF> 
+      <DOF name="Ring-Base" value="-0.2720"></DOF> 
+      <DOF name="Ring-Prox" value="0.2225"></DOF> 
+      <DOF name="Ring-Med" value="-0.5529"></DOF> 
+      <DOF name="Ring-Dist" value="-0.5529"></DOF> 
+    </Control>
+
+    <Control name="C9" eigValue="0.0274">
+      <DOF name="Thumb" value="-0.0043"></DOF> 
+      <DOF name="Thumb-Base" value="0.2148"></DOF> 
+      <DOF name="Thumb-Prox" value="0.2975"></DOF> 
+      <DOF name="Thumb-Med" value="-0.1811"></DOF> 
+      <DOF name="Thumb-Dist" value="-0.1811"></DOF> 
+      <DOF name="Index-Base" value="-0.4194"></DOF> 
+      <DOF name="Index-Prox" value="0.3831"></DOF> 
+      <DOF name="Index-Med" value="0.0568"></DOF> 
+      <DOF name="Index-Dist" value="0.0568"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="-0.3290"></DOF> 
+      <DOF name="Mid-Med" value="0.3198"></DOF> 
+      <DOF name="Mid-Dist" value="0.3198"></DOF> 
+      <DOF name="Ring-Base" value="-0.3615"></DOF> 
+      <DOF name="Ring-Prox" value="-0.4052"></DOF> 
+      <DOF name="Ring-Med" value="0.0353"></DOF> 
+      <DOF name="Ring-Dist" value="0.0353"></DOF> 
+    </Control>
+
+    <Control name="C10" eigValue="0.0240">
+      <DOF name="Thumb" value="0.1708"></DOF> 
+      <DOF name="Thumb-Base" value="-0.0529"></DOF> 
+      <DOF name="Thumb-Prox" value="-0.6680"></DOF> 
+      <DOF name="Thumb-Med" value="0.4292"></DOF> 
+      <DOF name="Thumb-Dist" value="0.4292"></DOF> 
+      <DOF name="Index-Base" value="-0.0190"></DOF> 
+      <DOF name="Index-Prox" value="0.2987"></DOF> 
+      <DOF name="Index-Med" value="-0.3349"></DOF> 
+      <DOF name="Index-Dist" value="-0.3349"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="-0.2847"></DOF> 
+      <DOF name="Mid-Med" value="0.1729"></DOF> 
+      <DOF name="Mid-Dist" value="0.1729"></DOF> 
+      <DOF name="Ring-Base" value="-0.0020"></DOF> 
+      <DOF name="Ring-Prox" value="-0.0754"></DOF> 
+      <DOF name="Ring-Med" value="0.1384"></DOF> 
+      <DOF name="Ring-Dist" value="0.1384"></DOF> 
+    </Control>
+
+
+    <Control name="C11" eigValue="0.0165">
+      <DOF name="Thumb" value="0.0088"></DOF> 
+      <DOF name="Thumb-Base" value="0.2036"></DOF> 
+      <DOF name="Thumb-Prox" value="0.1161"></DOF> 
+      <DOF name="Thumb-Med" value="-0.1045"></DOF> 
+      <DOF name="Thumb-Dist" value="-0.1045"></DOF> 
+      <DOF name="Index-Base" value="0.0866"></DOF> 
+      <DOF name="Index-Prox" value="0.0489"></DOF> 
+      <DOF name="Index-Med" value="-0.0063"></DOF> 
+      <DOF name="Index-Dist" value="-0.0063"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="-0.5293"></DOF> 
+      <DOF name="Mid-Med" value="0.3171"></DOF> 
+      <DOF name="Mid-Dist" value="0.3171"></DOF> 
+      <DOF name="Ring-Base" value="0.2501"></DOF> 
+      <DOF name="Ring-Prox" value="0.6267"></DOF> 
+      <DOF name="Ring-Med" value="-0.2968"></DOF> 
+      <DOF name="Ring-Dist" value="-0.2968"></DOF> 
+    </Control>
+
+
+    <Control name="C12" eigValue="0.0157">
+      <DOF name="Thumb" value="0.3767"></DOF> 
+      <DOF name="Thumb-Base" value="0.8403"></DOF> 
+      <DOF name="Thumb-Prox" value="-0.0267"></DOF> 
+      <DOF name="Thumb-Med" value="0.1989"></DOF> 
+      <DOF name="Thumb-Dist" value="0.1989"></DOF> 
+      <DOF name="Index-Base" value="0.1542"></DOF> 
+      <DOF name="Index-Prox" value="-0.2201"></DOF> 
+      <DOF name="Index-Med" value="0.0521"></DOF> 
+      <DOF name="Index-Dist" value="0.0521"></DOF> 
+      <DOF name="Mid-Base" value="0.0"></DOF> 
+      <DOF name="Mid-Prox" value="0.1535"></DOF> 
+      <DOF name="Mid-Med" value="-0.0010"></DOF> 
+      <DOF name="Mid-Dist" value="-0.0010"></DOF> 
+      <DOF name="Ring-Base" value="-0.0847"></DOF> 
+      <DOF name="Ring-Prox" value="-0.0768"></DOF> 
+      <DOF name="Ring-Med" value="0.0063"></DOF> 
+      <DOF name="Ring-Dist" value="0.0063"></DOF> 
+    </Control>
+
+    <Control name="C13" eigValue="0.0000">
+      <DOF name="Thumb" value="0.0000"></DOF> 
+      <DOF name="Thumb-Base" value="0.0000"></DOF> 
+      <DOF name="Thumb-Prox" value="0.0000"></DOF> 
+      <DOF name="Thumb-Med" value="0.0000"></DOF> 
+      <DOF name="Thumb-Dist" value="0.0000"></DOF> 
+      <DOF name="Index-Base" value="0.00000"></DOF> 
+      <DOF name="Index-Prox" value="0.0000"></DOF> 
+      <DOF name="Index-Med" value="0.0000"></DOF> 
+      <DOF name="Index-Dist" value="0.0000"></DOF> 
+      <DOF name="Mid-Base" value="1.0000"></DOF> 
+      <DOF name="Mid-Prox" value="0.0000"></DOF> 
+      <DOF name="Mid-Med" value="0.0000"></DOF> 
+      <DOF name="Mid-Dist" value="0.0000"></DOF> 
+      <DOF name="Ring-Base" value="0.0000"></DOF> 
+      <DOF name="Ring-Prox" value="0.0000"></DOF> 
+      <DOF name="Ring-Med" value="0.0000"></DOF> 
+      <DOF name="Ring-Dist" value="0.0000"></DOF> 
+    </Control>
+  </ControlSet>
+</Robot>
+

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="tableSE2" DHType="Modified" robType="Chain">
+  Robot description name, Type and Denavit-Hartemberg approach used.
+
+  <WeightSE3 rho_t="1.0" rho_r="1.0"/>
+  <Joints size="1">
+    <Joint name="Base" ivFile="freeflying/table.iv">
+      <PreTrans X="0" Y="0.0" Z="0.0" WX="1.0" WY="0.0" WZ="0.0" TH="90.0" ></PreTrans>
+      <Description movable="true" ></Description>
+    </Joint>
+  </Joints>
+     	
+  <ControlSet size="3">
+    <Offset>
+      This vector can be added in order to provide a offset or centre values to adjust
+      the control values and the DOF values.
+      <DOF name="X" value="0.5"></DOF> 
+      <DOF name="Y" value="0.5"></DOF>
+      <DOF name="X3" value="0.5"></DOF>
+    </Offset>
+
+    <Control name="x" eigValue="1.0">
+      <DOF name="X" value="1.0"></DOF> 
+    </Control>
+    <Control name="y" eigValue="1.0">
+    <DOF name="Y" value="1.0"></DOF>
+  </Control>
+    <Control name="x3" eigValue="1.0">
+    <DOF name="X3" value="1.0"></DOF>
+    </Control>
+
+	</ControlSet>
+</Robot>
