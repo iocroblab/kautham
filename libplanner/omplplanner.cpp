@@ -147,21 +147,22 @@ namespace libPlanner {
       ompl::RNG rng_;
   };
 
-  class KauthamStateSampler : public ob::CompoundStateSampler //public ob::RealVectorStateSampler
+  class KauthamStateSampler : public ob::CompoundStateSampler //public ob::RealVectorStateSampler //
   {
   public:
-      KauthamStateSampler(const ob::StateSpace *sspace, Planner *p) : ob::CompoundStateSampler(sspace) //ob::RealVectorStateSampler(sspace)
+      KauthamStateSampler(const ob::StateSpace *sspace, Planner *p) : ob::CompoundStateSampler(sspace) //ob::RealVectorStateSampler(sspace) //
       //  KauthamStateSampler(const ob::StateSpace *sspace) : ob::RealVectorStateSampler(sspace)
       {
           kauthamPlanner_ = p;
+          //s_ =  ((ob::StateSamplerPtr) new ob::CompoundStateSampler(sspace));
+          //s_->addSampler(const StateSamplerPtr &sampler, double weightImportance)
       }
 
       virtual void sampleUniform(ob::State *state)
       {
 
-          ob::CompoundStateSampler::sampleUniform(state);
+          //s_->sampleUniform(state);
 
-          /*
 
           int d = kauthamPlanner_->wkSpace()->getDimension();
           vector<KthReal> coords(d);
@@ -174,13 +175,21 @@ namespace libPlanner {
 
           ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
           ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
-          state = sstate.get();
-            */
+          //state = sstate.get();
+
+          //RealVectorStateSpace::StateType *rstate = static_cast<RealVectorStateSpace::StateType*>(state);
+          //for (unsigned int i = 0 ; i < dim ; ++i)
+          //    rstate->values[i] = rng_.uniformReal(bounds.low[i], bounds.high[i]);
+
+          ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
+
+
       }
 
   protected:
       ompl::RNG rng_;
       Planner *kauthamPlanner_;
+      //ob::StateSamplerPtr s_;
   };
 
   class KauthamValidStateSampler : public ob::ValidStateSampler
@@ -192,12 +201,13 @@ namespace libPlanner {
           name_ = "kautham sampler";
           kauthamPlanner_ = p;
 
-          us_ =  ((ob::ValidStateSamplerPtr) new ob::UniformValidStateSampler(si));
+          //us_ =  ((ob::ValidStateSamplerPtr) new ob::UniformValidStateSampler(si));
       }
 
       virtual bool sample(ob::State *state)
       {
 
+          /*
           us_->sample(state);
           int d = kauthamPlanner_->wkSpace()->getDimension();
           Sample *smp = new Sample(d);
@@ -205,8 +215,8 @@ namespace libPlanner {
           if( kauthamPlanner_->wkSpace()->collisionCheck(smp) )
               return false;
           return true;
+*/
 
-          /*
           int d = kauthamPlanner_->wkSpace()->getDimension();
           vector<KthReal> coords(d);
           for(int i=0;i<d;i++)
@@ -218,12 +228,13 @@ namespace libPlanner {
 
           ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
           ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
-          state = sstate.get();
+
+
+          ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
 
           if( kauthamPlanner_->wkSpace()->collisionCheck(smp) )
               return false;
           return true;
-          */
 
       }
       // We don't need this in the example below.
@@ -236,7 +247,7 @@ namespace libPlanner {
   protected:
       ompl::RNG rng_;
       Planner *kauthamPlanner_;
-      ob::ValidStateSamplerPtr us_;
+     // ob::ValidStateSamplerPtr us_;
   };
 
 //  // return an instance of my sampler

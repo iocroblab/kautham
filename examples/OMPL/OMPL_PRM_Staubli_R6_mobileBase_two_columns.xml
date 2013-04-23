@@ -33,7 +33,7 @@
                 <Parameter name="Max Planning Time">10.0</Parameter>
                 <Parameter name="Speed Factor">1</Parameter>
                         <Parameter name="MaxNearestNeighbors">10</Parameter>
-                        <Parameter name="Expand Roadmap (s)">0.0</Parameter>
+                        <Parameter name="DistanceThreshold">40.0</Parameter>
         </Parameters>
 		<Queries>
 			<Query>

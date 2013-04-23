@@ -57,6 +57,36 @@ using namespace libSampling;
 namespace libPlanner {
   namespace omplplanner{
 
+  struct vertex_state_t {
+                      typedef boost::vertex_property_tag kind;
+                  };
+
+                  struct vertex_total_connection_attempts_t {
+                      typedef boost::vertex_property_tag kind;
+                  };
+
+                  struct vertex_successful_connection_attempts_t {
+                      typedef boost::vertex_property_tag kind;
+                  };
+
+  typedef boost::adjacency_list <
+                     boost::vecS, boost::vecS, boost::undirectedS,
+                     boost::property < vertex_state_t, ob::State*,
+                     boost::property < vertex_total_connection_attempts_t, unsigned int,
+                     boost::property < vertex_successful_connection_attempts_t, unsigned int,
+                     boost::property < boost::vertex_predecessor_t, unsigned long int,
+                     boost::property < boost::vertex_rank_t, unsigned long int > > > > >,
+                     boost::property < boost::edge_weight_t, double,
+                     boost::property < boost::edge_index_t, unsigned int> >
+                 > Graph;
+ typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
+
+  bool connectionDistanceFilter(const Vertex& v1, const Vertex& v2, double d, ob::PlannerPtr pl)
+  {
+      if(pl->as<og::PRM>()->distanceFunction(v1,v2) < d) return true;
+      else return false;
+  }
+
 	//! Constructor
     omplPRMPlanner::omplPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               omplPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
@@ -65,24 +95,32 @@ namespace libPlanner {
         _idName = "omplPRM";
 
 
+        space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
+
         ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
         ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, _1, (Planner*)this));
-        ob::SpaceInformationPtr si=ss->getSpaceInformation();
 
-        //si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-        //space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
+        ob::SpaceInformationPtr si=ss->getSpaceInformation();
+        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
 
 
         ob::PlannerPtr planner(new og::PRM(si));
+
+
+       //typedef boost::function<bool(const State *)>   StateValidityCheckerFn
+       // typedef boost::function<bool(const Vertex&, const Vertex&)> ompl::geometric::PRM::ConnectionFilter
+
+        double _distanceThreshold = 5.0;
+        addParameter("DistanceThreshold", _distanceThreshold);
+        planner->as<og::PRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, planner));
+
         ss->setPlanner(planner);
 
         _MaxNearestNeighbors=10;
         addParameter("MaxNearestNeighbors", _MaxNearestNeighbors);
-        _expandRoadmap=0.0;
-        addParameter("Expand Roadmap (s)", _expandRoadmap);
 
         ss->getPlanner()->as<og::PRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
-        ss->getPlanner()->as<og::PRM>()->expandRoadmap(_expandRoadmap);
+
 
     }
 
@@ -104,10 +142,11 @@ namespace libPlanner {
         else
           return false;
 
-        it = _parameters.find("Expand Roadmap (s)");
+        it = _parameters.find("DistanceThreshold");
         if(it != _parameters.end()){
-            _expandRoadmap = it->second;
-            ss->getPlanner()->as<og::PRM>()->expandRoadmap(_expandRoadmap);
+            _distanceThreshold = it->second;
+            ss->getPlanner()->as<og::PRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, ss->getPlanner()));
+
       }
         else
           return false;

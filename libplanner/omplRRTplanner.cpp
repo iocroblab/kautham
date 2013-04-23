@@ -64,13 +64,13 @@ namespace libPlanner {
         _guiName = "ompl RRT Planner";
         _idName = "omplRRT";
 
+        space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
+
         ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
         ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, _1, (Planner*)this));
+
         ob::SpaceInformationPtr si=ss->getSpaceInformation();
-
-
-        //si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-        //space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
+        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
 
         ob::PlannerPtr planner(new og::RRT(si));
         ss->setPlanner(planner);

@@ -75,7 +75,7 @@ namespace libPlanner {
         bool setParameters();
 
          KthReal _MaxNearestNeighbors;
-         KthReal _expandRoadmap;
+         KthReal _distanceThreshold;
 	  };
   }
 }
