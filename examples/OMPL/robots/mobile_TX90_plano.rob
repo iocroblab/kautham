@@ -2,12 +2,12 @@
 <Robot  name="Staubli TX90" DHType="Modified" robType="Chain">
   Robot description name, Type and Denavit-Hartemberg approach used.
 
-  <WeightSE3  rho_t="0.001" rho_r="1.0"></WeightSE3>
+ <WeightSE3  rho_t="1.0" rho_r="25.0"></WeightSE3>
   <Joints size="7">
     <Joint name="Base" ivFile="rtx90/base_mobile.wrl">
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="false" movable="false"  ></Description>
-      <Limits Hi="0" Low="0.0001"></Limits>
+      <Limits Hi="0" Low="0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name=""></Parent>
     </Joint>
@@ -16,7 +16,7 @@
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="478.0"  ></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="180.0" Low="-180.0"></Limits>
-      <Weight weight="1.0"></Weight>
+      <Weight weight="25.0"></Weight>
       <Parent name="Base"></Parent>
     </Joint>
     
@@ -24,7 +24,7 @@
       <DHPars  alpha="-90.0" a="50.0" theta="-90.0" d="50.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="147.5" Low="-130.0"></Limits>
-      <Weight weight="1.0"></Weight>
+      <Weight weight="25.0"></Weight>
       <Parent name="Shoulder"></Parent>
     </Joint>
     
@@ -32,7 +32,7 @@
       <DHPars  alpha="0.0" a="425.0" theta="90.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="145.0" Low="-145.0"></Limits>
-      <Weight weight="1.0"></Weight>
+      <Weight weight="25.0"></Weight>
       <Parent name="ForeArm"></Parent>
     </Joint>
     
@@ -40,7 +40,7 @@
       <DHPars  alpha="90.0" a="0.0" theta="0.0" d="425.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="270.0" Low="-270.0"></Limits>
-      <Weight weight="1.0"></Weight>
+      <Weight weight="25.0"></Weight>
       <Parent name="Elbow"></Parent>
     </Joint>
     
@@ -48,7 +48,7 @@
       <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="140.0" Low="-115.0"></Limits>
-      <Weight weight="1.0"></Weight>
+      <Weight weight="25.0"></Weight>
       <Parent name="Arm"></Parent>
     </Joint>
     
@@ -56,7 +56,7 @@
       <DHPars  alpha="90.0" a="0.0" theta="0.0" d="100.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="270.0" Low="-270.0"></Limits>
-      <Weight weight="1.0"></Weight>
+      <Weight weight="25.0"></Weight>
       <Parent name="Wrist"></Parent>
     </Joint>
   </Joints>

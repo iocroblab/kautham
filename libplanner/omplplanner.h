@@ -77,17 +77,8 @@ namespace libPlanner {
   bool isStateValid(const ob::State *state, Planner *p);
 
 
-    /*
-    class weigthedRealVectorStateSpace:public RealVectorStatSpace {
-    public:
-        vector<KthReal> weights;
 
-        weightedRealVectorStateSpace(unsigned int dim = 0);
-        weightedRealVectorStateSpace(unsigned int dim = 0, vector<KthReal> w);
-        ~weightedRealVectorStateSpace(void){};
-        distance(const State *state1, const ob::State *state2) const;
-    };
-    */
+
 
     class omplPlanner:public Planner {
 	    public:
@@ -108,7 +99,7 @@ namespace libPlanner {
         void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
         inline ob::StateSpacePtr getSpace(){return space;};
 
-
+        void filterBounds(double &l, double &h, double epsilon);
 
 		protected:
 		//Add protected data and functions

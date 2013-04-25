@@ -3,17 +3,25 @@ PROJECT(Kautham2)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 CMAKE_POLICY(SET CMP0003 OLD)
 
+########### Options ####################
+OPTION( KAUTHAM_GUI "Build the gui version" ON )
+OPTION( USE_DEVICES "Include the device library (haptic+glove)" OFF )
+OPTION( USE_HAPTIC "Build with OpenHaptics" OFF )
+OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
 
-# Setup mt library
+########### Modules path ###############
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
-SET(mt_DIR ${CMAKE_SOURCE_DIR}/libmt)
 
+
+
+##############################################################################
+# Required packages
+
+#### mt package ##################
+SET(mt_DIR ${CMAKE_SOURCE_DIR}/libmt)
 FIND_PACKAGE( mt REQUIRED )
 
-##############################################################################
-# Required common packages
-##############################################################################
-
+#### Boost package ###############
 FIND_PACKAGE( Boost COMPONENTS  system serialization thread REQUIRED )
 IF(Boost_FOUND)
   MESSAGE(STATUS "Boost library found at first attempt.")
@@ -30,70 +38,61 @@ ELSE(Boost_FOUND)
 	ENDIF(Boost_FOUND)
 ENDIF(Boost_FOUND)
 
+
+#### Coin3D package ###############
 FIND_PACKAGE( Coin REQUIRED )
 
+
+#### GSL package ###############
 FIND_PACKAGE( GSL )
+IF( GSL_FOUND )
+  MESSAGE( STATUS "GSL FOUND. (Used in libproblem for the hand inverse kinematics")
+ELSE( GSL_FOUND )
+  MESSAGE( STATUS "GSL NOT FOUND. Hand inverse kinematics will be disabled")
+ENDIF( GSL_FOUND )
 
 
-IF( WIN32 )
-  MESSAGE( STATUS "OMPL Not yet prepared for WIN32")
-ELSE( WIN32 )
-   find_package(ompl)
-    IF( OMPL_FOUND )
-        MESSAGE( STATUS "OMPL Package FOUND")
-        ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
-        SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  "-lompl")
-        MESSAGE( STATUS ${KC_EXTRA_LIBS})
-    ELSE( OMPL_FOUND )
-        MESSAGE( STATUS "OMPL Package NOT FOUND!!!!")
-    ENDIF( OMPL_FOUND )
-ENDIF( WIN32 )
+#### OMPL package ###############
+find_package(ompl)
+IF( OMPL_FOUND )
+   MESSAGE( STATUS "OMPL Package FOUND")
+   ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
+   SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  "-lompl")
+   MESSAGE( STATUS ${KC_EXTRA_LIBS})
+ELSE( OMPL_FOUND )
+   MESSAGE( STATUS "OMPL Package NOT FOUND. OMPL planners will be disabled.")
+ENDIF( OMPL_FOUND )
+
   
 
-
+#### Armadillo package ###############
 FIND_PACKAGE( Armadillo )
 IF( ARMADILLO_FOUND )
   MESSAGE( STATUS "armadillo Package FOUND")
   ADD_DEFINITIONS( -DKAUTHAM_USE_ARMADILLO )
   SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  ${ARMADILLO_LIBRARY})
   MESSAGE( STATUS ${KC_EXTRA_LIBS})
-  
 ELSE( ARMADILLO_FOUND )
-  IF( WIN32 )
-    IF( "$ENV{ARMADILLO_DIR}" STREQUAL "" )
-      MESSAGE( STATUS "armadillo Package NOT FOUND 1")
-    ELSE()
-      SET(Armadillo_DIR $ENV{ARMADILLO_DIR} )
-      SET(Armadillo_INCLUDE_DIR ${Armadillo_DIR}/include )
-      SET(Armadillo_LIBRARY ${Armadillo_DIR}/lib_win32/blas_win32_MT.lib 
-                            ${Armadillo_DIR}/lib_win32/lapack_win32_MT.lib )
-    
-      MESSAGE( STATUS "Armadillo_INCLUDE_DIR: " ${Armadillo_INCLUDE_DIR} )
-      ADD_DEFINITIONS( -DKAUTHAM_USE_ARMADILLO )
-	  SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS} ${Armadillo_LIBRARY} )
-    ENDIF(  )
-  ELSE()
-    MESSAGE( STATUS "armadillo Package NOT FOUND 2")
-  ENDIF( WIN32 )
+  MESSAGE( STATUS "armadillo Package NOT FOUND. Planners using PCA will be disabled.")
 ENDIF( ARMADILLO_FOUND )
 
-IF( WIN32 )
-  ADD_DEFINITIONS( -D_CRT_SECURE_NO_DEPRECATE )
-  ADD_DEFINITIONS( -D_WIN32_WINNT=0x0501 )
-ENDIF( WIN32 )
 
-OPTION( KAUTHAM_GUI "Build the gui version" ON )
-OPTION( USE_HAPTIC "Build with OpenHaptics" OFF )
-OPTION( KAUTHAM_CONSOLE "Build the console version" ON )
+
+##############################################################################
+# Building librarires
 
 INCLUDE_DIRECTORIES( libutil )
-
 ADD_SUBDIRECTORY ( libann )
 ADD_SUBDIRECTORY ( libutil )
 ADD_SUBDIRECTORY ( libpqp )
 ADD_SUBDIRECTORY ( libproblem )
 ADD_SUBDIRECTORY ( libsampling )
 ADD_SUBDIRECTORY ( libplanner )
+
+
+
+##############################################################################
+#
 
 IF( KAUTHAM_GUI )
   MESSAGE( STATUS "making KAUTHAM GUI" )
@@ -117,10 +116,16 @@ IF( KAUTHAM_GUI )
                        
   LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
                        
-  
-  ADD_SUBDIRECTORY ( libdevice )
+
+
   ADD_SUBDIRECTORY ( libgui )
-  ADD_SUBDIRECTORY ( libguiding )
+    ADD_SUBDIRECTORY ( libdevice )
+    ADD_SUBDIRECTORY ( libguiding )
+  #IF( USE_DEVICES )
+  #  ADD_SUBDIRECTORY ( libdevice )
+  #  ADD_SUBDIRECTORY ( libguiding )
+  #  SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  libdevice  libguiding)
+  #ENDIF( USE_DEVICES )
     
   FILE( GLOB RES_FILES *.rc )
   QT4_WRAP_CPP( QT_MOC_SRC application.h )
@@ -129,12 +134,8 @@ IF( KAUTHAM_GUI )
   SET( HDR_FILES_GUI application.h )
   
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
-  IF(WIN32) 
-    SET_TARGET_PROPERTIES( Kautham2 PROPERTIES WIN32_EXECUTABLE "True" )
-    TARGET_LINK_LIBRARIES( Kautham2 Ws2_32 )
-  ENDIF(WIN32)
 
-  TARGET_LINK_LIBRARIES( Kautham2 libDNN libPQP libdevice libgui libsampling 
+  TARGET_LINK_LIBRARIES( Kautham2 libDNN libPQP libgui libsampling
 						libproblem libkthutil ${KC_EXTRA_LIBS} )
 ENDIF( KAUTHAM_GUI )
 

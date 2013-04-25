@@ -63,7 +63,7 @@ using namespace libSampling;
 namespace libPlanner {
   namespace omplplanner{
 
-
+class weightedRealVectorStateSpace;
 
   bool isStateValid(const ob::State *state, Planner *p)//, Sample *smp)
   {
@@ -74,29 +74,17 @@ namespace libPlanner {
       if( p->wkSpace()->collisionCheck(smp) )
           return false;
       return true;
-
-
-
-      return true;
-      /*
-      const ob::RealVectorStateSpace::StateType *R2state = state->as<ob::RealVectorStateSpace::StateType>();
-      int d = p->wkSpace()->getDimension();
-      Sample *smp = new Sample(d);
-      vector<KthReal> coords;
-      coords.resize(d);
-      for(int i=0;i<d;i++)
-        coords[i] = R2state->values[i];
-      smp->setCoords(coords);
-      if( p->wkSpace()->collisionCheck(smp) )
-          return false;
-      return true;
-      */
   }
 
 
-  ////////////////////////////////////////////77
-  /*
-      weightedRealVectorStateSpace::weightedRealVectorStateSpace(unsigned int dim = 0) : RealVectorStateSpace(dim)
+  ////////////////////////////////////////////
+  class weigthedRealVectorStateSpace:public ob::RealVectorStateSpace {
+    public:
+      vector<KthReal> weights;
+
+      ~weigthedRealVectorStateSpace(void){};
+
+      weigthedRealVectorStateSpace(unsigned int dim=0) : RealVectorStateSpace(dim)
       {
           for(int i=0; i<dim; i++)
           {
@@ -104,7 +92,7 @@ namespace libPlanner {
           }
       };
 
-      weightedRealVectorStateSpace::weightedRealVectorStateSpace(unsigned int dim = 0, vector<KthReal> w) : RealVectorStateSpace(dim)
+      weigthedRealVectorStateSpace(unsigned int dim, vector<KthReal> w) : RealVectorStateSpace(dim)
       {
           for(int i=0; i<dim; i++)
           {
@@ -112,9 +100,15 @@ namespace libPlanner {
           }
       };
 
+      void setWeights(vector<KthReal> w)
+      {
+          for(int i=0; i<dimension_; i++)
+          {
+              weights[i] = w[i];
+          }
+      };
 
-
-      weightedRealVectorStateSpace::distance(const State *state1, const State *state2) const
+      double distance(const ob::State *state1, const ob::State *state2) const
       {
          double dist = 0.0;
          const double *s1 = static_cast<const StateType*>(state1)->values;
@@ -127,25 +121,11 @@ namespace libPlanner {
         }
         return sqrt(dist);
       };
-      */
+};
 
 //////////////////////////////////////////////////////
 
-  class myStateSampler : public ob::RealVectorStateSampler
-  {
-  public:
-        myStateSampler(const ob::StateSpace *sspace) : ob::RealVectorStateSampler(sspace)
-      {
-      }
 
-      virtual void sampleUniform(ob::State *state)
-      {
-            ob::RealVectorStateSampler::sampleUniform(state);
-      }
-
-  protected:
-      ompl::RNG rng_;
-  };
 
   class KauthamStateSampler : public ob::CompoundStateSampler //public ob::RealVectorStateSampler //
   {
@@ -175,47 +155,26 @@ namespace libPlanner {
 
           ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
           ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
-          //state = sstate.get();
-
-          //RealVectorStateSpace::StateType *rstate = static_cast<RealVectorStateSpace::StateType*>(state);
-          //for (unsigned int i = 0 ; i < dim ; ++i)
-          //    rstate->values[i] = rng_.uniformReal(bounds.low[i], bounds.high[i]);
 
           ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
-
-
       }
 
   protected:
       ompl::RNG rng_;
       Planner *kauthamPlanner_;
-      //ob::StateSamplerPtr s_;
   };
 
   class KauthamValidStateSampler : public ob::ValidStateSampler
   {
   public:
       KauthamValidStateSampler(const ob::SpaceInformation *si, Planner *p) : ob::ValidStateSampler(si)
-      //  KauthamStateSampler(const ob::StateSpace *sspace) : ob::RealVectorStateSampler(sspace)
       {
           name_ = "kautham sampler";
           kauthamPlanner_ = p;
-
-          //us_ =  ((ob::ValidStateSamplerPtr) new ob::UniformValidStateSampler(si));
       }
 
       virtual bool sample(ob::State *state)
       {
-
-          /*
-          us_->sample(state);
-          int d = kauthamPlanner_->wkSpace()->getDimension();
-          Sample *smp = new Sample(d);
-          ((omplPlanner*)kauthamPlanner_)->omplState2smp( state, smp);
-          if( kauthamPlanner_->wkSpace()->collisionCheck(smp) )
-              return false;
-          return true;
-*/
 
           int d = kauthamPlanner_->wkSpace()->getDimension();
           vector<KthReal> coords(d);
@@ -250,11 +209,7 @@ namespace libPlanner {
      // ob::ValidStateSamplerPtr us_;
   };
 
-//  // return an instance of my sampler
-//  ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace)
-//  {
-//      return ob::StateSamplerPtr(new myStateSampler(mysspace));
-//  }
+
   // return an instance of my sampler
   ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p)
   {
@@ -267,6 +222,11 @@ namespace libPlanner {
       return ob::ValidStateSamplerPtr(new KauthamValidStateSampler(si, p));
   }
 
+
+  void omplPlanner::filterBounds(double &l, double &h, double epsilon)
+  {
+      if((h - l) < epsilon) h = l + epsilon;
+  }
 
 	//! Constructor
     omplPlanner::omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
@@ -315,12 +275,25 @@ namespace libPlanner {
                 // set the bounds
 
                 ob::RealVectorBounds bounds(3);
-                bounds.setLow(0, _wkSpace->getRobot(i)->getLimits(0)[0]);
-                bounds.setLow(1, _wkSpace->getRobot(i)->getLimits(1)[0]);
-                bounds.setLow(2, _wkSpace->getRobot(i)->getLimits(2)[0]);
-                bounds.setHigh(0, _wkSpace->getRobot(i)->getLimits(0)[1]);
-                bounds.setHigh(1, _wkSpace->getRobot(i)->getLimits(1)[1]);
-                bounds.setHigh(2, _wkSpace->getRobot(i)->getLimits(2)[1]+0.00001);
+
+                double low = _wkSpace->getRobot(i)->getLimits(0)[0];
+                double high = _wkSpace->getRobot(i)->getLimits(0)[1];
+                filterBounds(low, high, 0.001);
+                bounds.setLow(0, low);
+                bounds.setHigh(0, high);
+
+                low = _wkSpace->getRobot(i)->getLimits(1)[0];
+                high = _wkSpace->getRobot(i)->getLimits(1)[1];
+                filterBounds(low, high, 0.001);
+                bounds.setLow(1, low);
+                bounds.setHigh(1, high);
+
+                low = _wkSpace->getRobot(i)->getLimits(2)[0];
+                high = _wkSpace->getRobot(i)->getLimits(2)[1];
+                filterBounds(low, high, 0.001);
+                bounds.setLow(2, low);
+                bounds.setHigh(2, high);
+
                 spaceSE3[i]->as<ob::SE3StateSpace>()->setBounds(bounds);
 
                 //sets the weights between translation and rotation
@@ -332,19 +305,29 @@ namespace libPlanner {
             }
 
             //create the Rn state space for the kinematic chain, if necessary
-            if(_wkSpace->getRobot(i)->getNumJoints()>1)
+            int nj = _wkSpace->getRobot(i)->getNumJoints();
+            if(nj>0)
             {
-                spaceRn[i] = ((ob::StateSpacePtr) new ob::RealVectorStateSpace(_wkSpace->getRobot(i)->getNumJoints()));
+                spaceRn[i] = ((ob::StateSpacePtr) new weigthedRealVectorStateSpace(nj));
                 sstm << "ssRobot" << i<<"_Rn";
                 spaceRn[i]->setName(sstm.str());
-                // set the bounds
-                ob::RealVectorBounds bounds(_wkSpace->getRobot(i)->getNumJoints());
-                for(int j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
+                // set the bounds and the weights
+                vector<KthReal> jointweights;
+                ob::RealVectorBounds bounds(nj);
+                double low, high;
+                for(int j=0; j<nj;j++)
                 {
-                    bounds.setLow(j, *_wkSpace->getRobot(i)->getLink(j)->getLimits(true));//low limit
-                    bounds.setHigh(j,*_wkSpace->getRobot(i)->getLink(j)->getLimits(false));//high limit
+                    //the limits of joint j between link j and link (j+1) are stroed in the data structure of link (j+1)
+                    low = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(true);
+                    high = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(false);
+                    filterBounds(low, high, 0.001);
+                    bounds.setLow(j, low);
+                    bounds.setHigh(j, high);
+                    //the weights
+                    jointweights.push_back(_wkSpace->getRobot(i)->getLink(j+1)->getWeight());
                 }
-                spaceRn[i]->as<ob::RealVectorStateSpace>()->setBounds(bounds);
+                spaceRn[i]->as<weigthedRealVectorStateSpace>()->setBounds(bounds);
+                spaceRn[i]->as<weigthedRealVectorStateSpace>()->setWeights(jointweights);
 
                 compoundspaceRob.push_back(spaceRn[i]);
                 weightsRob.push_back(1);
@@ -360,118 +343,8 @@ namespace libPlanner {
         //the state space for the set of robots
         space = ((ob::StateSpacePtr) new ob::CompoundStateSpace(spaceRob,weights));
 
-
-
-        // use my sampler
-
-        //ob::StateSamplerPtr ssampler = ((ob::StateSamplerPtr) new KauthamStateSampler(space.get(), this));
-
-        //ob::StateSamplerPtr ssampler = ((ob::StateSamplerPtr) new myStateSampler(sspace.get()));
-       // ob::StateSpacePtr sspace(new ob::RealVectorStateSpace());
-        //ob::StateSamplerPtr ssampler(new myStateSampler(sspace.get()));
-
-        //ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, _1, (Planner*)this));
-
-        //ob::SpaceInformationPtr si=ss->getSpaceInformation();
-        //si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-        //sspace->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
-        //sspace->setStateSamplerAllocator(allocStateSampler(sspace.get()));
-
-        //sspace->setStateSamplerAllocator(ob::StateSamplerAllocator(ssampler));
-
         //The derived classes will create a planner,
         //the simplesetup and call the setStateValididyChecker function
-
-
-
-        /****************************************************************************
-//PROVES PER OMPLIR UN COMPUND STATE SPACE...
-
-
-        ob::StateSpacePtr myspaceSE3;
-        ob::StateSpacePtr myspaceRn;
-        vector<ob::StateSpacePtr> mycompoundvector;
-        vector< double > myweightsRob;
-
-        //////////////////////////////////
-        //The SE3 space for the mobile base
-        myspaceSE3 = ((ob::StateSpacePtr) new ob::SE3StateSpace());
-        // set the bounds
-        ob::RealVectorBounds myse3bounds(3);
-        myse3bounds.setLow(0, 0.0);
-        myse3bounds.setLow(1, 0.0);
-        myse3bounds.setLow(2, 0.0);
-        myse3bounds.setHigh(0, 1.0);
-        myse3bounds.setHigh(1, 1.0);
-        myse3bounds.setHigh(2, 1.0);
-        myspaceSE3->as<ob::SE3StateSpace>()->setBounds(myse3bounds);
-        //prepare the vectors to set up the compound state space
-        mycompoundvector.push_back(myspaceSE3);
-        myweightsRob.push_back(1);
-
-        //////////////////////////////////
-        //The Rn space for the kinematic chain of the arm
-        int numjoints = 6;
-        myspaceRn = ((ob::StateSpacePtr) new ob::RealVectorStateSpace(numjoints));
-        // set the bounds
-        ob::RealVectorBounds myrnbounds(numjoints);
-        for(int i=0; i<numjoints;i++)
-        {
-            myrnbounds.setLow(i, 0.0);
-            myrnbounds.setHigh(i,1.0);
-        }
-        myspaceRn->as<ob::RealVectorStateSpace>()->setBounds(myrnbounds);
-        //prepare the vectors to set up the compound state space
-        mycompoundvector.push_back(myspaceRn);
-        myweightsRob.push_back(1);
-
-        //////////////////////////////////
-        //The compound state space for the mobile manipulator
-        ob::StateSpacePtr mycompoundspaceRob;
-        mycompoundspaceRob = ((ob::StateSpacePtr) new ob::CompoundStateSpace(mycompoundvector,myweightsRob));
-
-
-        //////////////////////////////////
-        //Set the start configuration
-        ob::ScopedState<ob::CompoundStateSpace> mystartompl(mycompoundspaceRob);
-
-        //Set the SE3 part
-        ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) mycompoundspaceRob->as<ob::CompoundStateSpace>()->getSubspace(0));
-        ob::ScopedState<ob::SE3StateSpace> cstartse3(ssRobotiSE3);
-        cstartse3->setX(1.0);
-        cstartse3->setY(2.0);
-        cstartse3->setZ(3.0);
-        cstartse3->rotation().setAxisAngle(0.0, 0.0, 1.0,0.5);
-        //mystartompl[ssRobotiSE3] = cstartse3.get();
-        //mystartompl[ssRobotiSE3].get() << cstartse3.get();
-        mystartompl << cstartse3;
-        //ob::operator<< (mystartompl, cstartse3);
-//        mystartompl[ssRobotiSE3]->as<ob::SE3StateSpace::StateType>()->setX(1.0);
-//        mystartompl[ssRobotiSE3]->as<ob::SE3StateSpace::StateType>()->setX(2.0);
-//        mystartompl[ssRobotiSE3]->as<ob::SE3StateSpace::StateType>()->setX(3.0);
-//        mystartompl[ssRobotiSE3]->as<ob::SE3StateSpace::StateType>()->rotation().setAxisAngle(0.0, 0.0, 1.0,0.5);
-
-        //Set the Rn part
-        ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) mycompoundspaceRob->as<ob::CompoundStateSpace>()->getSubspace(1));
-        ob::ScopedState<ob::RealVectorStateSpace> cstartrn(ssRobotiRn);
-        for(int j=0; j<numjoints;j++)
-        {
-            cstartrn[j] = 0.0;
-            //(*mystartompl[ssRobotiRn]->as<ob::RealVectorStateSpace::StateType>())[j] = 0.0;
-        }
-        //mystartompl[ssRobotiRn] = cstartrn.get();
-        mystartompl << cstartrn;
-
-        cout<<"cstartse3:"<<endl;
-        cstartse3.print();
-        cout<<"cstartrn:"<<endl;
-        cstartrn.print();
-
-        cout<<"startompl:"<<endl;
-        mystartompl.print();
-*****************************************************************************/
-
-
     }
 
 	//! void destructor
@@ -775,22 +648,29 @@ namespace libPlanner {
                 cstart->rotation().setAxisAngle(aa[0],aa[1],aa[2],aa[3]);
 
                 (*sstate)<<cstart;
+                k++;
             }
 
             //has Rn part
-            if(_wkSpace->getRobot(i)->getNumJoints()>1)
+            if(_wkSpace->getRobot(i)->getNumJoints()>0)
             {
                 //get the kautham Rn configuration
                 RnConf r = smpRobotsConf.at(i).getRn();
 
                 //set the omple Rn configuration
-                //ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k)->as<ob::RealVectorStateSpace>());
                 ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
-                ob::ScopedState<ob::RealVectorStateSpace> rstart(ssRobotiRn);
+                ob::ScopedState<weigthedRealVectorStateSpace> rstart(ssRobotiRn);
 
-                for(int j=1; j<_wkSpace->getRobot(i)->getNumJoints();j++)
-                    rstart[j] = r.getCoordinate(j);
+                for(int j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
+                {
+                    rstart->values[j] = r.getCoordinate(j);
+                    double rr = r.getCoordinate(j);
+                    double dd=rstart->values[j];
+                    int hh;
+                    hh=0;
+                }
                 (*sstate) << rstart;
+                k++;//dummy
             }
         }
     }
@@ -836,13 +716,16 @@ namespace libPlanner {
                  rcj->setSE3(se3);
                  k++;
              }
-             if(_wkSpace->getRobot(i)->getNumJoints()>1)
+             if(_wkSpace->getRobot(i)->getNumJoints()>0)
              {
                  ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
 
-                 ob::RealVectorStateSpace::StateType *prn = sstate[ssRobotiRn].get()->as<ob::RealVectorStateSpace::StateType>();
+                 ob::ScopedState<weigthedRealVectorStateSpace> pathscopedstateRn(ssRobotiRn);
+                 sstate >> pathscopedstateRn;
 
-                 rcj->setRn((vector<KthReal>&) prn);
+                 vector<KthReal> coords;
+                 for(int j=0;j<_wkSpace->getRobot(i)->getNumJoints();j++) coords.push_back(pathscopedstateRn->values[j]);
+                 rcj->setRn(coords);
                  k++;//dummy
              }
              rc.push_back(*rcj);
@@ -857,113 +740,15 @@ namespace libPlanner {
 
            //Start
             ob::ScopedState<ob::CompoundStateSpace> startompl(space);
-            //startompl.random();
-            //_wkSpace->moveRobotsTo(_init);
-            //std::vector<RobConf>& initRobotsConf = _init->getMappedConf();
+            smp2omplScopedState(_init, &startompl);
+            cout<<"startompl:"<<endl;
+            startompl.print();
 
             //Goal
             ob::ScopedState<ob::CompoundStateSpace> goalompl(space);
-            //goalompl.random();
-            //_wkSpace->moveRobotsTo(_goal);
-            //std::vector<RobConf>& goalRobotsConf = _goal->getMappedConf();
-
-
             smp2omplScopedState(_goal, &goalompl);
-            smp2omplScopedState(_init, &startompl);
-
-            cout<<"startompl:"<<endl;
-            startompl.print();
             cout<<"goalompl:"<<endl;
             goalompl.print();
-
-
-/*
-            for(int i=0; i<_wkSpace->robotsCount(); i++)
-            {
-                int k=0; //counter of subspaces contained in subspace of robot i
-
-                //ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(i)->as<ob::CompoundStateSpace>());
-                ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(i));
-                string ssRobotiname = ssRoboti->getName();
-
-                //has se3 part
-                if(_wkSpace->getRobot(i)->isSE3Enabled())
-                {
-                    //INIT
-                    //get the kautham SE3 configuration
-                    SE3Conf c = initRobotsConf.at(i).getSE3();
-                    vector<KthReal>& pp = c.getPos();
-                    vector<KthReal>& aa = c.getAxisAngle();
-
-                    //set the ompl SE3 configuration
-                    //ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k)->as<ob::SE3StateSpace>());
-                    ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
-                    string ssRobotiSE3name = ssRobotiSE3->getName();
-
-                    ob::ScopedState<ob::SE3StateSpace> cstart(ssRobotiSE3);
-                    cstart->setX(pp[0]);
-                    cstart->setY(pp[1]);
-                    cstart->setZ(pp[2]);
-                    cstart->rotation().setAxisAngle(aa[0],aa[1],aa[2],aa[3]);
-
-                    //string kk = startompl[ssRobotiSE3].getSpace()->getName();
-                    startompl<<cstart;
-
-//                    std::ostringstream cstartout;
-//                    std::ostringstream startomplout;
-                    cout<<"cstart:"<<endl;
-                    cstart.print();
-                    cout<<"startomple:"<<endl;
-                    startompl[ssRobotiSE3].print();
-
-                    //GOAL
-                    //get the kautham SE3 configuration
-                    c = goalRobotsConf.at(i).getSE3();
-                    pp = c.getPos();
-                    aa = c.getAxisAngle();
-
-                    //set the ompl SE3 configuration
-                    ob::ScopedState<ob::SE3StateSpace> cgoal(ssRobotiSE3);
-                    cgoal->setX(pp[0]);
-                    cgoal->setY(pp[1]);
-                    cgoal->setZ(pp[2]);
-                    cgoal->rotation().setAxisAngle(aa[0],aa[1],aa[2],aa[3]);
-                    goalompl<< cgoal;
-                    k++;
-
-                }
-
-                //has Rn part
-                if(_wkSpace->getRobot(i)->getNumJoints()>1)
-                {
-                    //INIT
-                    //get the kautham Rn configuration
-                    RnConf r = initRobotsConf.at(i).getRn();
-
-                    //set the omple Rn configuration
-                    //ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k)->as<ob::RealVectorStateSpace>());
-                    ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
-                    ob::ScopedState<ob::RealVectorStateSpace> rstart(ssRobotiRn);
-
-                    for(int j=1; j<_wkSpace->getRobot(i)->getNumJoints();j++)
-                        rstart[j] = r.getCoordinate(j);
-                    startompl << rstart;
-
-
-                    //GOAL
-                    //get the kautham Rn configuration
-                    r = goalRobotsConf.at(i).getRn();
-
-                    //set the omple Rn configuration
-                    ob::ScopedState<ob::RealVectorStateSpace> rgoal(ssRobotiRn);
-                    for(int j=1; j<_wkSpace->getRobot(i)->getNumJoints();j++)
-                        rgoal[j] = r.getCoordinate(j);
-                    startompl << rgoal;
-                    k++;
-
-                }
-            }
-*/
 
             // set the start and goal states
             ss->setStartAndGoalStates(startompl, goalompl);
@@ -973,6 +758,16 @@ namespace libPlanner {
             ss->getPlanner()->clear();
             ob::PlannerStatus solved = ss->solve(_planningTime);
             ss->print();
+            //retrieve all the states
+            Sample *smp=new Sample(_wkSpace->getDimension());
+            ob::PlannerData data(ss->getSpaceInformation());
+            ss->getPlannerData(data);
+            for(int i=0; i<data.numVertices();i++)
+            {
+                omplState2smp(data.getVertex(i).getState(), smp);
+                _samples->add(smp);
+                smp=new Sample(_wkSpace->getDimension());//next
+            }
 
             if (solved)
             {
@@ -981,8 +776,6 @@ namespace libPlanner {
                     ss->simplifySolution();
                     ss->getSolutionPath().print(std::cout);
                     std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
-
-
                     ob::ScopedState<ob::CompoundStateSpace> pathscopedstate(space);
 
                     Sample *smp=new Sample(_wkSpace->getDimension());
@@ -993,65 +786,10 @@ namespace libPlanner {
                     //load the kautham _path variable from the ompl solution
                     for(int j=0;j<ss->getSolutionPath().getStateCount();j++){
 
-                        //ob::CompoundStateSpace::StateType *p;
-
-                        //p = pathstates[j]->as<ob::CompoundStateSpace::StateType>();
-
                         pathscopedstate = (*pathstates[j]->as<ob::CompoundStateSpace::StateType>());
 
                        omplScopedState2smp(pathscopedstate,smp);
 
-                        /*
-                        vector<RobConf> rc;
-                        int k=0;
-                        for(int i=0; i<_wkSpace->robotsCount(); i++)
-                        {
-                            RobConf *rcj = new RobConf;
-
-                            ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(i));
-                            ob::CompoundStateSpace::StateType *pi = pathscopedstate[ssRoboti].get()->as<ob::CompoundStateSpace::StateType>();
-
-                             int k=0;
-                             if(_wkSpace->getRobot(i)->isSE3Enabled())
-                             {
-                                 ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
-
-
-                                 //ob::SE3StateSpace::StateType *pse3 = pathscopedstate[ssRobotiSE3].get()->as<ob::SE3StateSpace::StateType>();
-                                 //ob::SE3StateSpace::StateType *pse3 = (*(*pathstates[j])[i])[k];
-                                 //ob::SE3StateSpace::StateType *pse3 = p->as<ob::SE3StateSpace::StateType>(k++);
-
-                                 ob::ScopedState<ob::SE3StateSpace> pathscopedstatese3(ssRobotiSE3);
-                                 pathscopedstate >> pathscopedstatese3;
-                                 //ob::SE3StateSpace::StateType *pse3 = pathscopedstatese3.get();
-                                 vector<KthReal> se3coords;
-                                 se3coords.resize(7);
-                                 se3coords[0] = pathscopedstatese3->getX();
-                                 se3coords[1] = pathscopedstatese3->getY();
-                                 se3coords[2] = pathscopedstatese3->getZ();
-                                 se3coords[3] = pathscopedstatese3->rotation().x;
-                                 se3coords[4] = pathscopedstatese3->rotation().y;
-                                 se3coords[5] = pathscopedstatese3->rotation().z;
-                                 se3coords[6] = pathscopedstatese3->rotation().w;
-                                 SE3Conf se3;
-                                 se3.setCoordinates(se3coords);
-                                 rcj->setSE3(se3);
-                                 k++;
-                             }
-                             if(_wkSpace->getRobot(i)->getNumJoints()>1)
-                             {
-                                 ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
-
-                                 ob::RealVectorStateSpace::StateType *prn = pathscopedstate[ssRobotiRn].get()->as<ob::RealVectorStateSpace::StateType>();
-
-                                 //ob::RealVectorStateSpace::StateType *prn = p->as<ob::RealVectorStateSpace::StateType>(k++);
-                                 rcj->setRn((vector<KthReal>&) prn);
-                                 k++;//dummy
-                             }
-                             rc.push_back(*rcj);
-                        }
-                        smp->setMappedConf(rc);
-*/
 
                         _path.push_back(smp);
                         smp=new Sample(_wkSpace->getDimension());

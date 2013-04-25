@@ -8,7 +8,7 @@
 		
 		<Limits name="X" min="-400.0" max="1200.0" />
 		<Limits name="Y" min="-200.0" max="1000.0" />
-		<Limits name="Z" min="0.0" max="1000.0" />
+                <Limits name="Z" min="0.0" max="0.0" />
 		<Limits name="WX" min="0.0" max="1.0" />
 		<Limits name="WY" min="0.0" max="1.0" />
 		<Limits name="WZ" min="0.0" max="1.0" />
@@ -29,8 +29,11 @@
 	<Planner>
         <Parameters>
                 <Name>omplRRT</Name>
-                <LocalPlanner stepSize="1">Linear</LocalPlanner>
+                <LocalPlanner stepSize="10">Linear</LocalPlanner>
+                <Parameter name="Step Size">10</Parameter>
                 <Parameter name="Max Planning Time">10.0</Parameter>
+                <Parameter name="Range">10</Parameter>
+                <Parameter name="Speed Factor">1</Parameter>
                 <Parameter name="Speed Factor">1</Parameter>
         </Parameters>
 		<Queries>
