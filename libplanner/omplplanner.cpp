@@ -70,6 +70,9 @@ class weightedRealVectorStateSpace;
 
       int d = p->wkSpace()->getDimension();
       Sample *smp = new Sample(d);
+      //copy the conf of the init smp. Needed to capture the home positions.
+      smp->setMappedConf(p->initSamp()->getMappedConf());
+      //load the RobConf of smp form the values of the ompl::state
       ((omplPlanner*)p)->omplState2smp(state,smp);
       if( p->wkSpace()->collisionCheck(smp) )
           return false;
@@ -92,19 +95,24 @@ class weightedRealVectorStateSpace;
           }
       };
 
-      weigthedRealVectorStateSpace(unsigned int dim, vector<KthReal> w) : RealVectorStateSpace(dim)
-      {
-          for(int i=0; i<dim; i++)
-          {
-              weights.push_back(w[i]);
-          }
-      };
 
       void setWeights(vector<KthReal> w)
       {
+          double fitFactor; //factor to force weighted distance to be within the getExtend (determined by the bounds of the RealVectorStateSpace)
+
+          double maxweightdist=0.0;
           for(int i=0; i<dimension_; i++)
           {
-              weights[i] = w[i];
+              double diff = getBounds().getDifference()[i]*w[i];
+              maxweightdist += diff * diff;
+          }
+          maxweightdist = sqrt(maxweightdist);
+          fitFactor = getMaximumExtent()/maxweightdist;
+
+          //set the weights
+          for(int i=0; i<dimension_; i++)
+          {
+              weights[i] = w[i]*fitFactor;
           }
       };
 
@@ -328,6 +336,8 @@ class weightedRealVectorStateSpace;
                 }
                 spaceRn[i]->as<weigthedRealVectorStateSpace>()->setBounds(bounds);
                 spaceRn[i]->as<weigthedRealVectorStateSpace>()->setWeights(jointweights);
+
+
 
                 compoundspaceRob.push_back(spaceRn[i]);
                 weightsRob.push_back(1);
@@ -692,6 +702,7 @@ class weightedRealVectorStateSpace;
         {
             RobConf *rcj = new RobConf;
 
+
             ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(i));
 
              int k=0;
@@ -716,6 +727,10 @@ class weightedRealVectorStateSpace;
                  rcj->setSE3(se3);
                  k++;
              }
+             else
+             {
+                 rcj->setSE3(smp->getMappedConf()[i].getSE3());
+             }
              if(_wkSpace->getRobot(i)->getNumJoints()>0)
              {
                  ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
@@ -727,6 +742,10 @@ class weightedRealVectorStateSpace;
                  for(int j=0;j<_wkSpace->getRobot(i)->getNumJoints();j++) coords.push_back(pathscopedstateRn->values[j]);
                  rcj->setRn(coords);
                  k++;//dummy
+             }
+             else
+             {
+                 rcj->setRn(smp->getMappedConf()[i].getRn());
              }
              rc.push_back(*rcj);
         }
@@ -759,14 +778,15 @@ class weightedRealVectorStateSpace;
             ob::PlannerStatus solved = ss->solve(_planningTime);
             ss->print();
             //retrieve all the states
-            Sample *smp=new Sample(_wkSpace->getDimension());
+            Sample *smp;
             ob::PlannerData data(ss->getSpaceInformation());
             ss->getPlannerData(data);
             for(int i=0; i<data.numVertices();i++)
             {
+                smp=new Sample(_wkSpace->getDimension());
+                smp->setMappedConf(_init->getMappedConf());//copy the conf of the start smp
                 omplState2smp(data.getVertex(i).getState(), smp);
                 _samples->add(smp);
-                smp=new Sample(_wkSpace->getDimension());//next
             }
 
             if (solved)
@@ -778,7 +798,7 @@ class weightedRealVectorStateSpace;
                     std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
                     ob::ScopedState<ob::CompoundStateSpace> pathscopedstate(space);
 
-                    Sample *smp=new Sample(_wkSpace->getDimension());
+                    Sample *smp;
 
                     _path.clear();
                     clearSimulationPath();
@@ -788,11 +808,11 @@ class weightedRealVectorStateSpace;
 
                         pathscopedstate = (*pathstates[j]->as<ob::CompoundStateSpace::StateType>());
 
-                       omplScopedState2smp(pathscopedstate,smp);
-
-
-                        _path.push_back(smp);
                         smp=new Sample(_wkSpace->getDimension());
+                        smp->setMappedConf(_init->getMappedConf());//copy the conf of the start smp
+
+                        omplScopedState2smp(pathscopedstate,smp);
+                        _path.push_back(smp);
                    }
 
                     _solved = true;
