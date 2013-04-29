@@ -163,6 +163,7 @@ namespace libProblem{
 
 	KthReal             getdhMatrix(int i,int j){return dhMatrix[i][j];}
       	
+    inline KthReal      getValue(){return value;};
     bool                setValue(KthReal q);
     bool                setParameter(KthReal p);
     void                setArmed();

@@ -1109,7 +1109,8 @@ namespace libProblem {
         vector<KthReal> coords(_currentConf.getRn().getDim());
         for(int i =0; i < _currentConf.getRn().getDim(); i++){
           links[i+1]->setParameter(values[6+i]);
-          coords[i] = ((Link*)links[i+1])->parameter2Value(values[i+6]);
+          coords[i] = ((Link*)links[i+1])->getValue();
+          //coords[i] = ((Link*)links[i+1])->parameter2Value(values[i+6]);
         }
 
         _currentConf.setRn(coords);
