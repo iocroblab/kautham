@@ -39,7 +39,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
- 
 
 #if defined(KAUTHAM_USE_OMPL)
 #include <libproblem/workspace.h>
@@ -48,8 +47,6 @@
 #include <boost/bind/mem_fn.hpp>
 
 #include "omplRRTplanner.h"
-
-
 
 
 using namespace libSampling;
@@ -64,24 +61,29 @@ namespace libPlanner {
         _guiName = "ompl RRT Planner";
         _idName = "omplRRT";
 
+
+        //create simple setup
+        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
+        ob::SpaceInformationPtr si=ss->getSpaceInformation();
+        //set validity checker
+        ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, _1, (Planner*)this));
+        //alloc valid state sampler
+        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
+        //alloc state sampler
         space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
 
-        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
-        ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, _1, (Planner*)this));
-
-        ob::SpaceInformationPtr si=ss->getSpaceInformation();
-        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-
+        //create planner
         ob::PlannerPtr planner(new og::RRT(si));
-        ss->setPlanner(planner);
+        //set planner parameters: range and goalbias
         _Range=0.05;
-
         _GoalBias=(planner->as<og::RRT>())->getGoalBias();
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
-        ss->getPlanner()->as<og::RRT>()->setRange(_Range);
-        ss->getPlanner()->as<og::RRT>()->setGoalBias(_GoalBias);
+        planner->as<og::RRT>()->setRange(_Range);
+        planner->as<og::RRT>()->setGoalBias(_GoalBias);
 
+        //set the planner
+        ss->setPlanner(planner);
     }
 
 	//! void destructor
@@ -98,7 +100,6 @@ namespace libPlanner {
         if(it != _parameters.end()){
           _Range = it->second;
           ss->getPlanner()->as<og::RRT>()->setRange(_Range);
-          //ss->getPlanner()->as<og::myRRT>()->setRange(_Range);
          }
         else
           return false;
@@ -107,7 +108,6 @@ namespace libPlanner {
         if(it != _parameters.end()){
             _GoalBias = it->second;
             ss->getPlanner()->as<og::RRT>()->setGoalBias(_GoalBias);
-            //ss->getPlanner()->as<og::myRRT>()->setGoalBias(_GoalBias);
         }
         else
           return false;

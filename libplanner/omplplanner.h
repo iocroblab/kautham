@@ -41,14 +41,11 @@
 #if !defined(_omplPLANNER_H)
 #define _omplPLANNER_H
 
-
-
 #if defined(KAUTHAM_USE_OMPL)
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/control/SimpleSetup.h>
 #include <ompl/config.h>
-
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <ompl/base/spaces/SO3StateSpace.h>
@@ -60,7 +57,6 @@ namespace ob = ompl::base;
 
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
-//#include "localplanner.h"
 #include "planner.h"
 
 
@@ -70,25 +66,21 @@ using namespace libSampling;
 namespace libPlanner {
   namespace omplplanner{
 
+    //Functions
+    ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p);
+    ob::ValidStateSamplerPtr allocValidStateSampler(const ob::SpaceInformation *si, Planner *p);
+    bool isStateValid(const ob::State *state, Planner *p);
 
-
-  ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p);
-  ob::ValidStateSamplerPtr allocValidStateSampler(const ob::SpaceInformation *si, Planner *p);
-  bool isStateValid(const ob::State *state, Planner *p);
-
-
-
-
-
+    //Class omnplPlanner
     class omplPlanner:public Planner {
 	    public:
+        //Add public data and functions
         omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
           WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
         ~omplPlanner();
         
-		bool trySolve();
-		bool setParameters();
-        //Add public data and functionsvoid
+        bool trySolve();//reimplemented
+        bool setParameters();//reimplemented
         SoSeparator *getIvCspaceScene();//reimplemented
         void drawCspace();
         void drawCspaceSE3();
@@ -98,17 +90,13 @@ namespace libPlanner {
         void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
         void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
         inline ob::StateSpacePtr getSpace(){return space;};
-
         void filterBounds(double &l, double &h, double epsilon);
 
 		protected:
 		//Add protected data and functions
         KthReal _planningTime;
-
-
         og::SimpleSetupPtr ss;
         ob::StateSpacePtr space;
-
 
 	    private:
 		//Add private data and functions

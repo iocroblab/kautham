@@ -47,16 +47,15 @@
 #include <ompl/geometric/planners/prm/PRM.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/config.h>
-
+#include <ompl/datastructures/PDF.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
-namespace ob = ompl::base;
-namespace og = ompl::geometric;
-
 
 #include <libplanner/omplplanner.h>
-
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
+
+namespace ob = ompl::base;
+namespace og = ompl::geometric;
 
 
 using namespace std;
@@ -68,14 +67,16 @@ namespace libPlanner {
 
     class omplPRMPlanner:public omplPlanner {
 	    public:
-        omplPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
+         omplPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
           WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
-        ~omplPRMPlanner();
+         ~omplPRMPlanner();
 
-        bool setParameters();
+         bool setParameters();
 
          KthReal _MaxNearestNeighbors;
          KthReal _distanceThreshold;
+         KthReal _MinGrowTime;
+         KthReal _MinExpandTime;
 	  };
   }
 }

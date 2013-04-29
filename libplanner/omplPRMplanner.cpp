@@ -45,18 +45,55 @@
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 
+#include <ompl/geometric/planners/prm/ConnectionStrategy.h>
+#include <ompl/base/goals/GoalSampleableRegion.h>
+#include <ompl/datastructures/PDF.h>
+#include <ompl/tools/config/SelfConfig.h>
 #include <boost/bind/mem_fn.hpp>
+#include <boost/lambda/bind.hpp>
+#include <boost/graph/astar_search.hpp>
+#include <boost/graph/incremental_components.hpp>
+#include <boost/property_map/vector_property_map.hpp>
+#include <boost/foreach.hpp>
+#include <boost/thread.hpp>
+
+#define foreach BOOST_FOREACH
+#define foreach_reverse BOOST_REVERSE_FOREACH
 
 #include "omplPRMplanner.h"
-
-
-
 
 using namespace libSampling;
 
 namespace libPlanner {
   namespace omplplanner{
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+      //The following magic values are the same as the ones in ompl::PRM.cpp file. I did not know how to use them from here so I duplicated them,
+      namespace mymagic
+      {
+          /** \brief Maximum number of sampling attempts to find a valid state,
+              without checking whether the allowed time elapsed. This value
+              should not really be changed. */
+          static const unsigned int FIND_VALID_STATE_ATTEMPTS_WITHOUT_TIME_CHECK = 2;
+
+          /** \brief The number of steps to take for a random bounce
+              motion generated as part of the expansion step of PRM. */
+          static const unsigned int MAX_RANDOM_BOUNCE_STEPS   = 5;
+
+          /** \brief The number of nearest neighbors to consider by
+              default in the construction of the PRM roadmap */
+          static const unsigned int DEFAULT_NEAREST_NEIGHBORS = 10;
+
+          /** \brief The time in seconds for a single roadmap building operation (dt)*/
+          static const double ROADMAP_BUILD_TIME = 0.2;
+      }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+  class myPRM; //class definition
+
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //the same typedefs used in ompl::PRM class
   struct vertex_state_t {
                       typedef boost::vertex_property_tag kind;
                   };
@@ -79,49 +116,285 @@ namespace libPlanner {
                      boost::property < boost::edge_weight_t, double,
                      boost::property < boost::edge_index_t, unsigned int> >
                  > Graph;
+
  typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
 
+
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //! This is a class derived form the class ompl::PRM. Its purpose is to slightly change its behavior, by
+  //!      1) Making the ratio fo the steps grow and expand variable. It is done in the reimplementation of the solve function
+  //!      2) The function expandRoadmap is changed by myexpandRoadmap. For now they are equal, but possible changes include
+  //!          the distance threshold in the edges of the bounce motions and changing the number of bounce steps
+  class myPRM:public og::PRM
+  {
+    public:
+      double mingrowtime;
+      double minexpandtime;
+
+      //! myPRM creator. The variables mingrowtime and minexpandtime are set at the values used in the ompl::PRM.
+      myPRM(const ob::SpaceInformationPtr &si, bool starStrategy=false) :  og::PRM(si,starStrategy)
+      {
+          mingrowtime = 2.0*mymagic::ROADMAP_BUILD_TIME;
+          minexpandtime = mymagic::ROADMAP_BUILD_TIME;
+      }
+
+      //! destructor
+      ~myPRM(void)
+      {
+          freeMemory();
+      }
+
+      //!  Sets the mingrowtime value
+      void setMinGrowTime(double gt)
+      {
+          mingrowtime = gt;
+          if(mingrowtime < mymagic::ROADMAP_BUILD_TIME) mingrowtime = mymagic::ROADMAP_BUILD_TIME;
+      }
+
+      //!  Sets the minexpandtime value
+      void setMinExpandTime(double et)
+      {
+          minexpandtime = et;
+      }
+
+      //! This functions is identical to the PRM::solve function except that the ratio between grow and expand steps is not
+      //! fixed to 2:1 but is configurable by the mingrowtime and mingrowtime class variables
+      ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
+      {
+          checkValidity();
+          ob::GoalSampleableRegion *goal = dynamic_cast<ob::GoalSampleableRegion*>(pdef_->getGoal().get());
+
+          if (!goal)
+          {
+              OMPL_ERROR("Goal undefined or unknown type of goal");
+              return ob::PlannerStatus::UNRECOGNIZED_GOAL_TYPE;
+          }
+
+          // Add the valid start states as milestones
+          while (const ob::State *st = pis_.nextStart())
+              startM_.push_back(addMilestone(si_->cloneState(st)));
+
+          if (startM_.size() == 0)
+          {
+              OMPL_ERROR("There are no valid initial states!");
+              return ob::PlannerStatus::INVALID_START;
+          }
+
+          if (!goal->couldSample())
+          {
+              OMPL_ERROR("Insufficient states in sampleable goal region");
+              return ob::PlannerStatus::INVALID_GOAL;
+          }
+
+          // Ensure there is at least one valid goal state
+          if (goal->maxSampleCount() > goalM_.size() || goalM_.empty())
+          {
+              const ob::State *st = goalM_.empty() ? pis_.nextGoal(ptc) : pis_.nextGoal();
+              if (st)
+                  goalM_.push_back(addMilestone(si_->cloneState(st)));
+
+              if (goalM_.empty())
+              {
+                  OMPL_ERROR("Unable to find any valid goal states");
+                  return ob::PlannerStatus::INVALID_GOAL;
+              }
+          }
+
+          if (!sampler_)
+              sampler_ = si_->allocValidStateSampler();
+          if (!simpleSampler_)
+              simpleSampler_ = si_->allocStateSampler();
+
+          unsigned int nrStartStates = boost::num_vertices(g_);
+          OMPL_INFORM("Starting with %u states", nrStartStates);
+
+          std::vector<ob::State*> xstates(mymagic::MAX_RANDOM_BOUNCE_STEPS);
+          si_->allocStates(xstates);
+          bool grow = true;
+
+          // Reset addedSolution_ member and create solution checking thread
+          addedSolution_ = false;
+          ob::PathPtr sol;
+          sol.reset();
+          boost::thread slnThread (boost::bind(&myPRM::checkForSolution, this, ptc, boost::ref(sol)));
+
+          // construct new planner termination condition that fires when the given ptc is true, or a solution is found
+          ob::PlannerOrTerminationCondition ptcOrSolutionFound (ptc, ob::PlannerTerminationCondition(boost::bind(&myPRM::addedNewSolution, this)));
+
+          while (ptcOrSolutionFound() == false)
+          {
+              // maintain a 2:1 ratio for growing/expansion of roadmap
+              // call growRoadmap() twice as long for every call of expandRoadmap()
+              //This has changed for myPRM: the time of the expand step is minexpandtime and the time of the grow step is mingrowtime
+              if (grow)
+                  //growRoadmap(ob::PlannerOrTerminationCondition(ptcOrSolutionFound, ob::timedPlannerTerminationCondition(2.0*magic::ROADMAP_BUILD_TIME)), xstates[0]);
+                  growRoadmap(ob::PlannerOrTerminationCondition(ptcOrSolutionFound, ob::timedPlannerTerminationCondition(mingrowtime)), xstates[0]);
+              else
+                  //expandRoadmap(ob::PlannerOrTerminationCondition(ptcOrSolutionFound, ob::timedPlannerTerminationCondition(magic::ROADMAP_BUILD_TIME)), xstates);
+                  myexpandRoadmap(ob::PlannerOrTerminationCondition(ptcOrSolutionFound, ob::timedPlannerTerminationCondition( minexpandtime)), xstates);
+              grow = !grow;
+          }
+
+          // Ensure slnThread is ceased before exiting solve
+          slnThread.join();
+
+          OMPL_INFORM("Created %u states", boost::num_vertices(g_) - nrStartStates);
+
+          if (sol)
+          {
+              if (addedNewSolution())
+                  pdef_->addSolutionPath (sol);
+              else
+                  // the solution is exact, but not as short as we'd like it to be
+                  pdef_->addSolutionPath (sol, true, 0.0);
+          }
+
+          si_->freeStates(xstates);
+
+          // Return true if any solution was found.
+          return sol ? (addedNewSolution() ? ob::PlannerStatus::EXACT_SOLUTION : ob::PlannerStatus::APPROXIMATE_SOLUTION) : ob::PlannerStatus::TIMEOUT;
+      }
+
+      //! This function is reimplemented to call to  myexpandRoadmap(ptc, states) instead of calling to expandRoadmap(ptc, states)
+      void expandRoadmap(const ob::PlannerTerminationCondition &ptc)
+      {
+          if (!simpleSampler_)
+              simpleSampler_ = si_->allocStateSampler();
+
+          std::vector<ob::State*> states(mymagic::MAX_RANDOM_BOUNCE_STEPS);
+          si_->allocStates(states);
+          myexpandRoadmap(ptc, states);
+          si_->freeStates(states);
+      }
+
+      //! This function is, by now, equal to ompl::PRM:expandRoadmap. It can be changed to include a different number
+      //! of bounce steps or to filter the length of the bounce edges.
+      void myexpandRoadmap(const ob::PlannerTerminationCondition &ptc,
+                                               std::vector<ob::State*> &workStates)
+      {
+          // construct a probability distribution over the vertices in the roadmap
+          // as indicated in
+          //  "Probabilistic Roadmaps for Path Planning in High-Dimensional Configuration Spaces"
+          //        Lydia E. Kavraki, Petr Svestka, Jean-Claude Latombe, and Mark H. Overmars
+
+          ompl::PDF<Vertex> pdf;
+          foreach (Vertex v, boost::vertices(g_))
+          {
+              const unsigned int t = totalConnectionAttemptsProperty_[v];
+              pdf.add(v, (double)(t - successfulConnectionAttemptsProperty_[v]) / (double)t);
+          }
+
+          if (pdf.empty())
+              return;
+
+          while (ptc == false)
+          {
+              Vertex v = pdf.sample(rng_.uniform01());
+
+              unsigned int s = si_->randomBounceMotion(simpleSampler_, stateProperty_[v], workStates.size(), workStates, false);
+              if (s > 0)
+              {
+                  s--;
+                  Vertex last = addMilestone(si_->cloneState(workStates[s]));
+
+                  graphMutex_.lock();
+                  for (unsigned int i = 0 ; i < s ; ++i)
+                  {
+                      // add the vertex along the bouncing motion
+                      Vertex m = boost::add_vertex(g_);
+                      stateProperty_[m] = si_->cloneState(workStates[i]);
+                      totalConnectionAttemptsProperty_[m] = 1;
+                      successfulConnectionAttemptsProperty_[m] = 0;
+                      disjointSets_.make_set(m);
+
+                      // add the edge to the parent vertex
+                      //if(connectionFilter_(v, m))
+                      {
+                         const double weight = distanceFunction(v, m);
+                         //cout<<"d= "<<weight<<endl;
+                         const unsigned int id = maxEdgeID_++;
+                         const Graph::edge_property_type properties(weight, id);
+                         boost::add_edge(v, m, properties, g_);
+                         uniteComponents(v, m);
+                      }
+
+                      // add the vertex to the nearest neighbors data structure
+                      nn_->add(m);
+                      v = m;
+                  }
+
+                  // if there are intermediary states or the milestone has not been connected to the initially sampled vertex,
+                  // we add an edge
+                  if (s > 0 || !boost::same_component(v, last, disjointSets_))
+                  {
+                      //if(connectionFilter_(v, last))
+                      {
+                        // add the edge to the parent vertex
+                        const double weight = distanceFunction(v, last);
+                        const unsigned int id = maxEdgeID_++;
+                        const Graph::edge_property_type properties(weight, id);
+                        boost::add_edge(v, last, properties, g_);
+                        uniteComponents(v, last);
+                      }
+                  }
+                  graphMutex_.unlock();
+              }
+          }
+      }
+
+  };
+
+
+  ////////////////////////////////////////////////////////////////////////////
+  //! This function is a distance filter used as a connectionFilter_ in the PRM
   bool connectionDistanceFilter(const Vertex& v1, const Vertex& v2, double d, ob::PlannerPtr pl)
   {
-      if(pl->as<og::PRM>()->distanceFunction(v1,v2) < d) return true;
+      if(pl->as<myPRM>()->distanceFunction(v1,v2) < d) return true;
       else return false;
   }
 
-	//! Constructor
-    omplPRMPlanner::omplPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
+  ////////////////////////////////////////////////////////////////////////////
+  //! Constructor
+  omplPRMPlanner::omplPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               omplPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
-	{
+  {
         _guiName = "ompl PRM Planner";
         _idName = "omplPRM";
 
-
+        //create simple setup
+        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
+        ob::SpaceInformationPtr si=ss->getSpaceInformation();
+        //set validity checker
+        ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, _1, (Planner*)this));
+        //alloc valid state sampler
+        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
+        //alloc state sampler
         space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
 
-        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
-        ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, _1, (Planner*)this));
+        //create planner
+        ob::PlannerPtr planner(new myPRM(si));
 
-        ob::SpaceInformationPtr si=ss->getSpaceInformation();
-        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
+        //set grow and expand time
+        _MinGrowTime = 2.0*mymagic::ROADMAP_BUILD_TIME;
+        _MinExpandTime = mymagic::ROADMAP_BUILD_TIME;
+        planner->as<myPRM>()->setMinGrowTime(_MinGrowTime);
+        planner->as<myPRM>()->setMinExpandTime(_MinExpandTime);
+        addParameter("MinGrowTime", _MinGrowTime);
+        addParameter("MinExpandTime", _MinExpandTime);
 
-
-        ob::PlannerPtr planner(new og::PRM(si));
-
-
-       //typedef boost::function<bool(const State *)>   StateValidityCheckerFn
-       // typedef boost::function<bool(const Vertex&, const Vertex&)> ompl::geometric::PRM::ConnectionFilter
-
+        //set the connectionFilter_
         double _distanceThreshold = 5.0;
         addParameter("DistanceThreshold", _distanceThreshold);
-        planner->as<og::PRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, planner));
+        planner->as<myPRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, planner));
 
-        ss->setPlanner(planner);
-
+        //set max neighbors
         _MaxNearestNeighbors=10;
         addParameter("MaxNearestNeighbors", _MaxNearestNeighbors);
+        planner->as<myPRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
 
-        ss->getPlanner()->as<og::PRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
-
-
+        //set the planner
+        ss->setPlanner(planner);
     }
 
 	//! void destructor
@@ -137,7 +410,23 @@ namespace libPlanner {
         HASH_S_K::iterator it = _parameters.find("MaxNearestNeighbors");
         if(it != _parameters.end()){
           _MaxNearestNeighbors = it->second;
-          ss->getPlanner()->as<og::PRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
+          ss->getPlanner()->as<myPRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
+         }
+        else
+          return false;
+
+        it = _parameters.find("MinExpandTime");
+        if(it != _parameters.end()){
+            _MinExpandTime = it->second;
+            ss->getPlanner()->as<myPRM>()->setMinExpandTime(_MinExpandTime);
+        }
+        else
+          return false;
+
+        it = _parameters.find("MinGrowTime");
+        if(it != _parameters.end()){
+            _MinGrowTime = it->second;
+            ss->getPlanner()->as<myPRM>()->setMinGrowTime(_MinGrowTime);
         }
         else
           return false;
@@ -145,9 +434,8 @@ namespace libPlanner {
         it = _parameters.find("DistanceThreshold");
         if(it != _parameters.end()){
             _distanceThreshold = it->second;
-            ss->getPlanner()->as<og::PRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, ss->getPlanner()));
-
-      }
+            ss->getPlanner()->as<myPRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, ss->getPlanner()));
+         }
         else
           return false;
 

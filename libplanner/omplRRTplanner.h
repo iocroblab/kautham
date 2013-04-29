@@ -41,31 +41,25 @@
 #if !defined(_omplRRTPLANNER_H)
 #define _omplRRTPLANNER_H
 
-
 #if defined(KAUTHAM_USE_OMPL)
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/geometric/planners/rrt/RRT.h>
-//#include "myRRT.h"
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/config.h>
-
 #include <ompl/base/spaces/RealVectorStateSpace.h>
-namespace ob = ompl::base;
-namespace og = ompl::geometric;
-
 
 #include <libplanner/omplplanner.h>
-
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 
+namespace ob = ompl::base;
+namespace og = ompl::geometric;
 
 using namespace std;
 using namespace libSampling;
 
 namespace libPlanner {
   namespace omplplanner{
-
 
     class omplRRTPlanner:public omplPlanner {
 	    public:

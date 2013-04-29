@@ -39,17 +39,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
-
 #if defined(KAUTHAM_USE_OMPL)
 
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
-
 #include <boost/bind/mem_fn.hpp>
 
 #include "omplRRTConnectplanner.h"
-
-
 
 
 using namespace libSampling;
@@ -64,22 +60,26 @@ namespace libPlanner {
         _guiName = "ompl RRTConnect Planner";
         _idName = "omplRRTConnect";
 
+        //create simple setup
+        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
+        ob::SpaceInformationPtr si=ss->getSpaceInformation();
+        //set validity checker
+        ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, _1, (Planner*)this));
+        //alloc valid state sampler
+        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
+        //alloc state sampler
         space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
 
-        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
-        ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, _1, (Planner*)this));
-
-        ob::SpaceInformationPtr si=ss->getSpaceInformation();
-        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-
-
+        //create planner
         ob::PlannerPtr planner(new og::RRTConnect(si));
 
-        ss->setPlanner(planner);
-        //_Range=(planner->as<og::RRTConnect>())->getRange();
+        //set planner parameters: range
         _Range=0.05;
         addParameter("Range", _Range);
-        ss->getPlanner()->as<og::RRTConnect>()->setRange(_Range);
+        planner->as<og::RRTConnect>()->setRange(_Range);
+
+        //set the planner
+        ss->setPlanner(planner);
     }
 
 	//! void destructor
