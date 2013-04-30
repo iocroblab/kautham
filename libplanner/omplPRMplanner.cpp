@@ -49,6 +49,9 @@
 #include <ompl/base/goals/GoalSampleableRegion.h>
 #include <ompl/datastructures/PDF.h>
 #include <ompl/tools/config/SelfConfig.h>
+
+#include <ompl/base/StateSampler.h>
+
 #include <boost/bind/mem_fn.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/graph/astar_search.hpp>
@@ -61,11 +64,14 @@
 #define foreach_reverse BOOST_REVERSE_FOREACH
 
 #include "omplPRMplanner.h"
+//#include "omplplanner.h"
 
 using namespace libSampling;
 
 namespace libPlanner {
   namespace omplplanner{
+
+  class KauthamStateSampler;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
       //The following magic values are the same as the ones in ompl::PRM.cpp file. I did not know how to use them from here so I duplicated them,
@@ -86,6 +92,9 @@ namespace libPlanner {
 
           /** \brief The time in seconds for a single roadmap building operation (dt)*/
           static const double ROADMAP_BUILD_TIME = 0.2;
+
+          /** \brief The distance threshold is DISTANCE_THRESHOLD_FACTOR times the step size*/
+          static const double DISTANCE_THRESHOLD_FACTOR = 100.0;
       }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -131,18 +140,30 @@ namespace libPlanner {
     public:
       double mingrowtime;
       double minexpandtime;
+      double maxdistancebouncemotions;
+      bool useKauthamSampler;
+      int bouncesteps;
 
       //! myPRM creator. The variables mingrowtime and minexpandtime are set at the values used in the ompl::PRM.
       myPRM(const ob::SpaceInformationPtr &si, bool starStrategy=false) :  og::PRM(si,starStrategy)
       {
           mingrowtime = 2.0*mymagic::ROADMAP_BUILD_TIME;
           minexpandtime = mymagic::ROADMAP_BUILD_TIME;
+          maxdistancebouncemotions = -1;//not set
+          useKauthamSampler = false;
+          bouncesteps = mymagic::MAX_RANDOM_BOUNCE_STEPS;
       }
 
       //! destructor
       ~myPRM(void)
       {
           freeMemory();
+      }
+
+      //!  Sets the number of bounce steps in the expansion phase
+      void setBounceSteps(int n)
+      {
+          bouncesteps = n;
       }
 
       //!  Sets the mingrowtime value
@@ -156,6 +177,20 @@ namespace libPlanner {
       void setMinExpandTime(double et)
       {
           minexpandtime = et;
+      }
+
+      //! sets the flag saying that the kautham sampler is being used. It is necessary to limit the distance in the expand step
+      //! during bounce motions
+      void usingKauthamSampler(bool f)
+      {
+          useKauthamSampler = true;
+      }
+
+
+      //!  Sets the maxdistance for the bounce motions in the expand step
+      void setMaxDistanceBounceMotions(double m)
+      {
+          maxdistancebouncemotions = m;
       }
 
       //! This functions is identical to the PRM::solve function except that the ratio between grow and expand steps is not
@@ -209,7 +244,7 @@ namespace libPlanner {
           unsigned int nrStartStates = boost::num_vertices(g_);
           OMPL_INFORM("Starting with %u states", nrStartStates);
 
-          std::vector<ob::State*> xstates(mymagic::MAX_RANDOM_BOUNCE_STEPS);
+          std::vector<ob::State*> xstates(bouncesteps);
           si_->allocStates(xstates);
           bool grow = true;
 
@@ -262,7 +297,7 @@ namespace libPlanner {
           if (!simpleSampler_)
               simpleSampler_ = si_->allocStateSampler();
 
-          std::vector<ob::State*> states(mymagic::MAX_RANDOM_BOUNCE_STEPS);
+          std::vector<ob::State*> states(bouncesteps);
           si_->allocStates(states);
           myexpandRoadmap(ptc, states);
           si_->freeStates(states);
@@ -292,7 +327,32 @@ namespace libPlanner {
           {
               Vertex v = pdf.sample(rng_.uniform01());
 
+              //verify if the sampler is a KauthamStateSampler, in order to be sure that it has the setCenterSample function
+              if(useKauthamSampler)
+              {
+                  try
+                  {
+                    ((KauthamStateSampler*) &(*simpleSampler_))->setCenterSample(stateProperty_[v],maxdistancebouncemotions);
+                  }
+                  catch(...){
+                      OMPL_ERROR("myPRM: You should have allocated the kautham sampler...");
+                  }
+              }
+              //Call the random bounce walk
               unsigned int s = si_->randomBounceMotion(simpleSampler_, stateProperty_[v], workStates.size(), workStates, false);
+              //reset the sample near option of the kautham samper
+              if(useKauthamSampler)
+              {
+                  try
+                  {
+                      //call the setCenterSample with NULL argument
+                    ((KauthamStateSampler*) &(*simpleSampler_))->setCenterSample(NULL,maxdistancebouncemotions);
+                  }
+                  catch(...){
+                      OMPL_ERROR("myPRM: You should have allocated the kautham sampler...");
+                  }
+              }
+              //create the edges
               if (s > 0)
               {
                   s--;
@@ -309,15 +369,12 @@ namespace libPlanner {
                       disjointSets_.make_set(m);
 
                       // add the edge to the parent vertex
-                      //if(connectionFilter_(v, m))
-                      {
-                         const double weight = distanceFunction(v, m);
-                         //cout<<"d= "<<weight<<endl;
-                         const unsigned int id = maxEdgeID_++;
-                         const Graph::edge_property_type properties(weight, id);
-                         boost::add_edge(v, m, properties, g_);
-                         uniteComponents(v, m);
-                      }
+                      const double weight = distanceFunction(v, m);
+                      //cout<<"d= "<<weight<<endl;
+                      const unsigned int id = maxEdgeID_++;
+                      const Graph::edge_property_type properties(weight, id);
+                      boost::add_edge(v, m, properties, g_);
+                      uniteComponents(v, m);
 
                       // add the vertex to the nearest neighbors data structure
                       nn_->add(m);
@@ -328,15 +385,13 @@ namespace libPlanner {
                   // we add an edge
                   if (s > 0 || !boost::same_component(v, last, disjointSets_))
                   {
-                      //if(connectionFilter_(v, last))
-                      {
-                        // add the edge to the parent vertex
-                        const double weight = distanceFunction(v, last);
-                        const unsigned int id = maxEdgeID_++;
-                        const Graph::edge_property_type properties(weight, id);
-                        boost::add_edge(v, last, properties, g_);
-                        uniteComponents(v, last);
-                      }
+                      // add the edge to the parent vertex
+                      const double weight = distanceFunction(v, last);
+                      //cout<<"d2= "<<weight<<endl;
+                      const unsigned int id = maxEdgeID_++;
+                      const Graph::edge_property_type properties(weight, id);
+                      boost::add_edge(v, last, properties, g_);
+                      uniteComponents(v, last);
                   }
                   graphMutex_.unlock();
               }
@@ -372,6 +427,7 @@ namespace libPlanner {
         //alloc state sampler
         space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
 
+
         //create planner
         ob::PlannerPtr planner(new myPRM(si));
 
@@ -384,14 +440,25 @@ namespace libPlanner {
         addParameter("MinExpandTime", _MinExpandTime);
 
         //set the connectionFilter_
-        double _distanceThreshold = 5.0;
+        double _distanceThreshold = _stepSize * mymagic::DISTANCE_THRESHOLD_FACTOR;
         addParameter("DistanceThreshold", _distanceThreshold);
         planner->as<myPRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, planner));
 
+        //set the number of maxbouncesteps
+        _BounceSteps = mymagic::MAX_RANDOM_BOUNCE_STEPS;
+        addParameter("BounceSteps", _BounceSteps);
+        planner->as<myPRM>()->setBounceSteps(_BounceSteps);
+
+        //set the distance threshold for expand motions. Can be set if kauthamsampler is used
+        planner->as<myPRM>()->usingKauthamSampler(true);
+        planner->as<myPRM>()->setMaxDistanceBounceMotions(_BounceSteps*_distanceThreshold);
+
         //set max neighbors
-        _MaxNearestNeighbors=10;
+        _MaxNearestNeighbors = mymagic::DEFAULT_NEAREST_NEIGHBORS;
         addParameter("MaxNearestNeighbors", _MaxNearestNeighbors);
         planner->as<myPRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
+
+
 
         //set the planner
         ss->setPlanner(planner);
@@ -430,6 +497,15 @@ namespace libPlanner {
         }
         else
           return false;
+
+        it = _parameters.find("BounceSteps");
+        if(it != _parameters.end()){
+            _BounceSteps = it->second;
+            ss->getPlanner()->as<myPRM>()->setBounceSteps(_BounceSteps);
+        }
+        else
+          return false;
+
 
         it = _parameters.find("DistanceThreshold");
         if(it != _parameters.end()){

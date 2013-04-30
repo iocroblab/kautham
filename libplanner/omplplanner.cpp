@@ -66,47 +66,26 @@ namespace libPlanner {
   //declaration of class
   class weightedRealVectorStateSpace;
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //! This function converts smp a state to a smp and tests if it is in collision or not
-  bool isStateValid(const ob::State *state, Planner *p)
-  {
-      //create sample
-      int d = p->wkSpace()->getDimension();
-      Sample *smp = new Sample(d);
-      //copy the conf of the init smp. Needed to capture the home positions.
-      smp->setMappedConf(p->initSamp()->getMappedConf());
-      //load the RobConf of smp form the values of the ompl::state
-      ((omplPlanner*)p)->omplState2smp(state,smp);
-      //collision-check
-      if( p->wkSpace()->collisionCheck(smp) )
-          return false;
-      return true;
-  }
-
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  //! This class represents a RealVectorStateSpace with a weighted distance. It is used to describe the state space of
-  //! the kinematic chains where different weights are set to the joints.
-  class weigthedRealVectorStateSpace:public ob::RealVectorStateSpace
-  {
-    public:
-      vector<KthReal> weights;
-
-      ~weigthedRealVectorStateSpace(void){};
-
+  // weigthedRealVectorStateSpace functions
+  /////////////////////////////////////////////////////////////////////////////////////////////////
       //! The constructor initializes all the weights to 1
-      weigthedRealVectorStateSpace(unsigned int dim=0) : RealVectorStateSpace(dim)
+      weigthedRealVectorStateSpace::weigthedRealVectorStateSpace(unsigned int dim) : RealVectorStateSpace(dim)
       {
           //by default set all the weights to 1
           for(int i=0; i<dim; i++)
           {
               weights.push_back(1.0);
           }
-      };
+      }
+
+      //! The destructor
+      weigthedRealVectorStateSpace::~weigthedRealVectorStateSpace(void){}
 
 
       //! This function sets the values of the weights. The values passed as a parameter are scaled in order not to change the maximim extend of the space
-      void setWeights(vector<KthReal> w)
+      void weigthedRealVectorStateSpace::setWeights(vector<KthReal> w)
       {
           double fitFactor;
 
@@ -125,10 +104,10 @@ namespace libPlanner {
           {
               weights[i] = w[i]*fitFactor;
           }
-      };
+      }
 
       //! This function computes the weighted distance between states
-      double distance(const ob::State *state1, const ob::State *state2) const
+      double weigthedRealVectorStateSpace::distance(const ob::State *state1, const ob::State *state2) const
       {
          double dist = 0.0;
          const double *s1 = static_cast<const StateType*>(state1)->values;
@@ -140,62 +119,117 @@ namespace libPlanner {
             dist += diff * diff;
         }
         return sqrt(dist);
-      };
-  };
+      }
 
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  //! This class represents a state sampler based on the sampling of the Kautham control space and
-  //! its conversion to samples
-  class KauthamStateSampler : public ob::CompoundStateSampler
-  {
-  public:
-      KauthamStateSampler(const ob::StateSpace *sspace, Planner *p) : ob::CompoundStateSampler(sspace)
+  // KauthamStateSampler functions
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+      KauthamStateSampler::KauthamStateSampler(const ob::StateSpace *sspace, Planner *p) : ob::CompoundStateSampler(sspace)
       {
           kauthamPlanner_ = p;
+          centersmp = NULL;
       }
 
-      virtual void sampleUniform(ob::State *state)
+      void KauthamStateSampler::setCenterSample(ob::State *state, double th)
       {
-          //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-          int d = kauthamPlanner_->wkSpace()->getDimension();
-          vector<KthReal> coords(d);
-          for(int i=0;i<d;i++)
-            coords[i] = rng_.uniformReal(0,1.0);
+          if(state!=NULL)
+          {
+            //create sample
+            int d = kauthamPlanner_->wkSpace()->getDimension();
+            centersmp = new Sample(d);
+            //copy the conf of the init smp. Needed to capture the home positions.
+            centersmp->setMappedConf(kauthamPlanner_->initSamp()->getMappedConf());
+            //load the RobConf of smp form the values of the ompl::state
+            ((omplPlanner*)kauthamPlanner_)->omplState2smp(state,centersmp);
+          }
+          else
+              centersmp = NULL;
 
-          //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
-          Sample *smp = new Sample(d);
-          smp->setCoords(coords);
-          kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
-
-          //convert from sample to scoped state
-          ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
-          ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
-
-          //return in parameter state
-          ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
+          //initialize threshold
+          threshold = th;
       }
 
-  protected:
-      ompl::RNG rng_; //random generator
-      Planner *kauthamPlanner_; //pointer to planner in order to have access to the workspace
-  };
+      void KauthamStateSampler::sampleUniform(ob::State *state)
+      {
+          //Sample around centersmp
+          if(centersmp != NULL && threshold > 0.0)
+          {
+            int trials = 0;
+            int maxtrials=100;
+            bool found = false;
+            int d = kauthamPlanner_->wkSpace()->getDimension();
+            Sample *smp = new Sample(d);
+            double dist;
+
+            do{
+                //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
+                vector<KthReal> coords(d);
+                for(int i=0;i<d;i++)
+                    coords[i] = rng_.uniformReal(0,1.0);
+
+                //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                smp->setCoords(coords);
+                kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+
+                dist = kauthamPlanner_->wkSpace()->distanceBetweenSamples(*smp,*centersmp,CONFIGSPACE);
+                if(dist < threshold)
+                    found = true;
+                trials ++;
+            }while(found==false && trials <maxtrials);
+
+
+            ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
+            if(trials==maxtrials)
+            {
+                //not found within the limits. return the centersmp
+                ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(centersmp, &sstate);
+            }
+            else
+            {
+                //convert the sample found to scoped state
+                ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
+            }
+
+            //return in parameter state
+            ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
+         }
+        //sample the whole workspace
+         else
+         {
+              //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
+              int d = kauthamPlanner_->wkSpace()->getDimension();
+              vector<KthReal> coords(d);
+              for(int i=0;i<d;i++)
+                  coords[i] = rng_.uniformReal(0,1.0);
+
+              //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+              Sample *smp = new Sample(d);
+              smp->setCoords(coords);
+              kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+
+              //convert from sample to scoped state
+              ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
+              ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
+
+              //return in parameter state
+             ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
+         }
+
+      }
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  //! This class represents a valid state sampler based on the sampling of the Kautham control space and
-  //! its conversion to samples. Does a collision-check to verify validity.
-  class KauthamValidStateSampler : public ob::ValidStateSampler
-  {
-  public:
-      KauthamValidStateSampler(const ob::SpaceInformation *si, Planner *p) : ob::ValidStateSampler(si)
+  // KauthamValidStateSampler functions
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+      KauthamValidStateSampler::KauthamValidStateSampler(const ob::SpaceInformation *si, Planner *p) : ob::ValidStateSampler(si)
       {
           name_ = "kautham sampler";
           kauthamPlanner_ = p;
       }
 
-      virtual bool sample(ob::State *state)
+      bool KauthamValidStateSampler::sample(ob::State *state)
       {
           //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
           int d = kauthamPlanner_->wkSpace()->getDimension();
@@ -219,17 +253,17 @@ namespace libPlanner {
           return true;
       }
       // We don't need this in the example below.
-      virtual bool sampleNear(ob::State *state, const ob::State *near, const double distance)
+      bool KauthamValidStateSampler::sampleNear(ob::State *state, const ob::State *near, const double distance)
       {
           throw ompl::Exception("KauthamValidStateSampler::sampleNear", "not implemented");
           return false;
       }
 
-  protected:
-      ompl::RNG rng_; //random generator
-      Planner *kauthamPlanner_; //pointer to planner in order to have access to the workspace
-  };
 
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // AUXILIAR functions
+  /////////////////////////////////////////////////////////////////////////////////////////////////
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //! This function is used to allocate a state sampler
@@ -245,8 +279,26 @@ namespace libPlanner {
       return ob::ValidStateSamplerPtr(new KauthamValidStateSampler(si, p));
   }
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //! This function converts smp a state to a smp and tests if it is in collision or not
+  bool isStateValid(const ob::State *state, Planner *p)
+  {
+      //create sample
+      int d = p->wkSpace()->getDimension();
+      Sample *smp = new Sample(d);
+      //copy the conf of the init smp. Needed to capture the home positions.
+      smp->setMappedConf(p->initSamp()->getMappedConf());
+      //load the RobConf of smp form the values of the ompl::state
+      ((omplPlanner*)p)->omplState2smp(state,smp);
+      //collision-check
+      if( p->wkSpace()->collisionCheck(smp) )
+          return false;
+      return true;
+  }
+
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // omplPlanner functions
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //! Constructor
   omplPlanner::omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
@@ -432,8 +484,10 @@ namespace libPlanner {
 
         if(_wkSpace->getDimension()==2)
         {
-            //drawCspaceRn();
-            drawCspaceSE3();
+            if(_wkSpace->getRobot(0)->isSE3Enabled())
+                drawCspaceSE3();
+            else
+                drawCspaceRn();
         }
     }
 
@@ -601,12 +655,167 @@ namespace libPlanner {
     }
 
 
-    //This routine allows to draw the roadmap or tree for a sigle robot with 2 dof
+    //! This routine allows to draw the roadmap or tree for a single robot with 2 joints
     void omplPlanner::drawCspaceRn()
     {
+        //first delete whatever is already drawn
+        while (_sceneCspace->getNumChildren() > 0)
+        {
+            _sceneCspace->removeChild(0);
+        }
+
+        //to draw points
+        SoSeparator *psep = new SoSeparator();
+        SoCoordinate3 *points  = new SoCoordinate3();
+        SoPointSet *pset  = new SoPointSet();
+
+        const ob::RealVectorStateSpace::StateType *pos;
+        const weigthedRealVectorStateSpace::StateType *rnstate;
+        ob::ScopedState<ob::CompoundStateSpace> pathscopedstate(space);
+
+        //get the SE3 subspace
+        ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
+        ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
+
+        //space bounds
+        KthReal xmin=ssRobotiRn->as<weigthedRealVectorStateSpace>()->getBounds().low[0];
+        KthReal xmax=ssRobotiRn->as<weigthedRealVectorStateSpace>()->getBounds().high[0];
+        KthReal ymin=ssRobotiRn->as<weigthedRealVectorStateSpace>()->getBounds().low[1];
+        KthReal ymax=ssRobotiRn->as<weigthedRealVectorStateSpace>()->getBounds().high[1];
+
+        KthReal x,y;
+        //load the planner data to be drawn
+        ob::PlannerDataPtr pdata;
+        pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
+        ss->getPlanner()->getPlannerData(*pdata);
+
+        //loop for all vertices of the roadmap or tree and create the coin3D points
+        for(int i=0;i<pdata->numVertices();i++)
+        {
+            pathscopedstate = pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>();
+            ob::ScopedState<weigthedRealVectorStateSpace> pathscopedstatern(ssRobotiRn);
+            pathscopedstate >> pathscopedstatern;
+            x = pathscopedstatern->values[0];
+            y = pathscopedstatern->values[1];
+
+            points->point.set1Value(i,x,y,0);
+        }
+        SoDrawStyle *pstyle = new SoDrawStyle;
+        pstyle->pointSize = 2;
+        SoMaterial *color = new SoMaterial;
+        color->diffuseColor.setValue(0.2,0.8,0.2);
+
+        //draw the points
+        psep->addChild(color);
+        psep->addChild(points);
+        psep->addChild(pstyle);
+        psep->addChild(pset);
+        _sceneCspace->addChild(psep);
+
+        //draw edges:
+        SoSeparator *lsep = new SoSeparator();
+        int numOutgoingEdges;
+        std::vector< unsigned int > outgoingVertices;
+
+        //loop for all nodes
+        for(int i=0;i<pdata->numVertices();i++)
+        {
+             numOutgoingEdges = pdata->getEdges (i, outgoingVertices);
+
+             //for each node loop for all the outgoing edges
+             for ( int j=0; j<numOutgoingEdges; j++ ){
+
+                SoCoordinate3 *edgepoints  = new SoCoordinate3();
+
+                //initial edgepoint
+                float x1,y1,x2,y2,z;
+                pathscopedstate = pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>();
+                ob::ScopedState<weigthedRealVectorStateSpace> pathscopedstatern(ssRobotiRn);
+                pathscopedstate >> pathscopedstatern;
+                x1 = pathscopedstatern->values[0];
+                y1 = pathscopedstatern->values[1];
+                z=0.0;
+                edgepoints->point.set1Value(0,x1,y1,z);
+
+                //final edgepoint
+                pathscopedstate = pdata->getVertex(outgoingVertices.at(j)).getState()->as<ob::CompoundStateSpace::StateType>();
+                 pathscopedstate >> pathscopedstatern;
+                 x2 = pathscopedstatern->values[0];
+                 y2 = pathscopedstatern->values[1];
+                edgepoints->point.set1Value(1,x2,y2,z);
+
+                //the edge
+                lsep->addChild(edgepoints);
+                SoLineSet *ls = new SoLineSet;
+                ls->numVertices.set1Value(0,2);//two values
+                lsep->addChild(ls);
+              }
+        }
+        _sceneCspace->addChild(lsep);
+
+        //draw path:
+        if(_solved)
+        {
+            //separator for the solution path
+            SoSeparator *pathsep = new SoSeparator();
+            //get the states of the solution path
+            std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
+
+            //loop for al the states of the solution path
+            for(int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
+            {
+                //initial edgepoint
+                SoCoordinate3 *edgepoints  = new SoCoordinate3();
+                pathscopedstate = pathstates[i]->as<ob::CompoundStateSpace::StateType>();
+                ob::ScopedState<weigthedRealVectorStateSpace> pathscopedstatern(ssRobotiRn);
+                pathscopedstate >> pathscopedstatern;
+                x = pathscopedstatern->values[0];
+                y = pathscopedstatern->values[1];
+                edgepoints->point.set1Value(0,x,y,0);
+
+                //final edgepoint
+                pathscopedstate = pathstates[i+1]->as<ob::CompoundStateSpace::StateType>();
+                pathscopedstate >> pathscopedstatern;
+                x = pathscopedstatern->values[0];
+                y = pathscopedstatern->values[1];
+                edgepoints->point.set1Value(1,x,y,0);
+
+                //edge of the path
+                pathsep->addChild(edgepoints);
+                SoLineSet *ls = new SoLineSet;
+                ls->numVertices.set1Value(0,2);//two values
+                SoDrawStyle *lstyle = new SoDrawStyle;
+                lstyle->lineWidth=2;
+                SoMaterial *path_color = new SoMaterial;
+                path_color->diffuseColor.setValue(0.8,0.2,0.2);
+                pathsep->addChild(path_color);
+                pathsep->addChild(lstyle);
+                pathsep->addChild(ls);
+            }
+            _sceneCspace->addChild(pathsep);
+        }
 
 
-        //           pos = pdata->getVertex(i).getState()->as<ob::RealVectorStateSpace::StateType>()
+        //draw floor
+        SoSeparator *floorsep = new SoSeparator();
+        SoCube *cs = new SoCube();
+        cs->width = xmax-xmin;
+        cs->depth = (xmax-xmin)/50.0;
+        cs->height = ymax-ymin;
+
+        SoTransform *cub_transf = new SoTransform;
+        SbVec3f centre;
+        centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,-cs->depth.getValue());
+        cub_transf->translation.setValue(centre);
+        cub_transf->recenter(centre);
+
+        SoMaterial *cub_color = new SoMaterial;
+        cub_color->diffuseColor.setValue(0.2,0.2,0.2);
+
+        floorsep->addChild(cub_color);
+        floorsep->addChild(cub_transf);
+        floorsep->addChild(cs);
+        _sceneCspace->addChild(floorsep);
 
 
     }

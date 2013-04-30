@@ -66,12 +66,71 @@ using namespace libSampling;
 namespace libPlanner {
   namespace omplplanner{
 
-    //Functions
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //AUXILIAR Functions
     ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p);
     ob::ValidStateSamplerPtr allocValidStateSampler(const ob::SpaceInformation *si, Planner *p);
     bool isStateValid(const ob::State *state, Planner *p);
 
-    //Class omnplPlanner
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class weigthedRealVectorStateSpace
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //! This class represents a RealVectorStateSpace with a weighted distance. It is used to describe the state space of
+    //! the kinematic chains where different weights are set to the joints.
+    class weigthedRealVectorStateSpace:public ob::RealVectorStateSpace
+    {
+      public:
+        weigthedRealVectorStateSpace(unsigned int dim=0);
+        ~weigthedRealVectorStateSpace(void);
+        void setWeights(vector<KthReal> w);
+        double distance(const ob::State *state1, const ob::State *state2) const;
+      protected:
+        vector<KthReal> weights;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class KauthamValidStateSampler
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //! This class represents a valid state sampler based on the sampling of the Kautham control space and
+    //! its conversion to samples. Does a collision-check to verify validity.
+    class KauthamValidStateSampler : public ob::ValidStateSampler
+    {
+      public:
+        KauthamValidStateSampler(const ob::SpaceInformation *si, Planner *p);
+        virtual bool sample(ob::State *state);
+        virtual bool sampleNear(ob::State *state, const ob::State *near, const double distance);
+
+      protected:
+        ompl::RNG rng_; //random generator
+        Planner *kauthamPlanner_; //pointer to planner in order to have access to the workspace
+    };
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class KauthamStateSampler
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //! This class represents a  state sampler based on the sampling of the Kautham control space and
+    //! its conversion to samples.
+    class KauthamStateSampler : public ob::CompoundStateSampler
+    {
+      public:
+        KauthamStateSampler(const ob::StateSpace *sspace, Planner *p);
+        void setCenterSample(ob::State *state, double th);
+        virtual void sampleUniform(ob::State *state);
+
+      protected:
+        ompl::RNG rng_; //random generator
+        Planner *kauthamPlanner_; //pointer to planner in order to have access to the workspace
+        Sample *centersmp;
+        double threshold;
+    };
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    //Class omplPlanner
+    ////////////////////////////////////////////////////////////////////////////////////////
     class omplPlanner:public Planner {
 	    public:
         //Add public data and functions

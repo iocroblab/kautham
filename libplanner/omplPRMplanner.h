@@ -77,6 +77,7 @@ namespace libPlanner {
          KthReal _distanceThreshold;
          KthReal _MinGrowTime;
          KthReal _MinExpandTime;
+         int _BounceSteps;
 	  };
   }
 }
