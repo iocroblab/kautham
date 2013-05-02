@@ -502,6 +502,7 @@ namespace libPlanner {
         if(it != _parameters.end()){
             _BounceSteps = it->second;
             ss->getPlanner()->as<myPRM>()->setBounceSteps(_BounceSteps);
+            ss->getPlanner()->as<myPRM>()->setMaxDistanceBounceMotions(_BounceSteps*_distanceThreshold);
         }
         else
           return false;
@@ -511,6 +512,7 @@ namespace libPlanner {
         if(it != _parameters.end()){
             _distanceThreshold = it->second;
             ss->getPlanner()->as<myPRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, ss->getPlanner()));
+            ss->getPlanner()->as<myPRM>()->setMaxDistanceBounceMotions(_BounceSteps*_distanceThreshold);
          }
         else
           return false;
