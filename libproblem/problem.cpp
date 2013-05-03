@@ -56,7 +56,7 @@
 #include <libplanner/omplESTplanner.h>
 #include <libplanner/omplSBLplanner.h>
 #include <libplanner/omplKPIECEplanner.h>
-#include <libplanner/omplBKPIECEplanner.h>
+#include <libplanner/omplKPIECEplanner.h>
 #include <libplanner/drmplanner.h>
 //#include <libplanner/drmpcaplanner.h>
 #include <libplanner/prmplanner.h>
@@ -589,7 +589,7 @@ namespace libProblem {
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplBKPIECE")
-      _planner = new libPlanner::omplplanner::omplBKPIECEPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplKPIECEPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplcRRT")
