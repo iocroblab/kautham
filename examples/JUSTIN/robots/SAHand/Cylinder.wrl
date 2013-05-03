@@ -10,14 +10,14 @@ Separator {
         center            0 0 0
     }
     Material {
-            diffuseColor        1.0 0.6 0.3
-            transparency 0.3
+            diffuseColor        1.0 1.0 0.8
+            transparency 0.5
     }
     Cylinder {
-	    height 200
-	    radius 50
-	    bottom TRUE
-	    top FALSE
+	    height 60
+	    radius 15
+	    bottom FALSE
+	    top TRUE
 	    side TRUE
     }
 }    

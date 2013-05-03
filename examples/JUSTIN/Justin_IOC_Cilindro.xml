@@ -2,7 +2,7 @@
 <Problem name="" topology="SE3">
 
   
-  <Robot robot="robots/Justin_cerrada.rob" scale="1.0"> 
+  <Robot robot="robots/Justin_cerrada_Cilindro.rob" scale="1.0"> 
    <!--Robot Path-->
 	<Limits name="X" min="0.0" max="1000.0"></Limits>
 	<Limits name="Y" min="0.0" max="1000.0"></Limits>
@@ -21,20 +21,8 @@
     </Location>
   </Scene>
 
-  <Scene scene="scenes/glass.wrl" scale="100"> 
-     <Location TH="90.0" WZ="0.0" WY="0.0" WX="-1.0" Z="500.0" Y="0.0" X="400.0"> 
-     <!--Problem of the scene-->
-    </Location>
-  </Scene>
-
-  <Scene scene="scenes/can.wrl" scale="1000"> 
-     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="500.0" Y="60.0" X="-400.0"> 
-     <!--Problem of the scene-->
-    </Location>
-  </Scene>
-
-  <Scene scene="scenes/transparentTable.iv" scale="0.8"> 
-     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="350.0" Y="60.0" X="-20.0"> 
+  <Scene scene="scenes/Cylinder.wrl" scale="1"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="450.0" Y="100.0" X="0.0"> 
      <!--Problem of the scene-->
     </Location>
   </Scene>

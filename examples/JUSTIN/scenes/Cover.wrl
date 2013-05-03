@@ -1,5 +1,5 @@
 #VRML V2.0 utf8
-# A Cylinder
+# A Cylinder to make a cover
   
 Separator {  
     Transform {
@@ -10,14 +10,14 @@ Separator {
         center            0 0 0
     }
     Material {
-            diffuseColor        1.0 0.6 0.3
+            diffuseColor        1.0 0.7 0.4
             transparency 0.3
     }
     Cylinder {
-	    height 200
-	    radius 50
+	    height 30
+	    radius 48
 	    bottom TRUE
-	    top FALSE
+	    top TRUE
 	    side TRUE
     }
 }    
