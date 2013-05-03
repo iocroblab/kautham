@@ -60,12 +60,13 @@ namespace libPlanner {
 
 
   /// Model defining the motion of the robot
-  class KinematicCarModel
+  class KinematicCarModel : public KinematicRobotModel
   {
   public:
 
-      KinematicCarModel(const ob::StateSpace *space) : space_(space), carLength_(0.2)
+      KinematicCarModel(const ob::StateSpace *space) : KinematicRobotModel(space)
       {
+          param_.resize(1);
       }
 
       /// implement the function describing the robot motion: qdot = f(q, u)
@@ -78,49 +79,18 @@ namespace libPlanner {
           dstate.resize(3);
           dstate[0] = u[0] * cos(theta*2*M_PI);
           dstate[1] = u[0] * sin(theta*2*M_PI);
-          dstate[2] = u[0] * tan(u[1]*2*M_PI) / carLength_;
-      }
-
-      /// implement y(n+1) = y(n) + d
-      void update(ob::State *state, const std::valarray<double> &dstate) const
-      {
-          //ob::SE2StateSpace::StateType &s = *state->as<ob::SE2StateSpace::StateType>();
-          //s.setX(s.getX() + dstate[0]);
-          //s.setY(s.getY() + dstate[1]);
-          //s.setYaw(s.getYaw() + dstate[2]);
-          //space_->enforceBounds(state);
-
-          ob::RealVectorStateSpace::StateType &s = *state->as<ob::RealVectorStateSpace::StateType>();
-          s.values[0] = s.values[0] + dstate[0];
-          s.values[1] = s.values[1] + dstate[1];
-          s.values[2] = s.values[2] + dstate[2];
-          if(s.values[2]<0.0)
-          {
-             s.values[2] = 1.0 - s.values[2];
-          }
-          else if(s.values[2]>1.0)
-          {
-             s.values[2] = s.values[2] - 1.0;
-          }
-
-          space_->enforceBounds(state);
+          dstate[2] = u[0] * tan(u[1]*2*M_PI) / getCarLength();
       }
 
       void setCarLength(double d)
       {
-          carLength_ = d;
+          setParameter(0, d);
       }
-
       double getCarLength()
       {
-          return carLength_;
+          return getParameter(0);
       }
-
-  private:
-
-      const ob::StateSpace *space_;
-      double             carLength_;
-
+   private:
   };
 
 
@@ -177,14 +147,7 @@ namespace libPlanner {
 
 
 
-  class DemoControlSpace : public oc::RealVectorControlSpace
-  {
-  public:
 
-      DemoControlSpace(const ob::StateSpacePtr &stateSpace) : oc::RealVectorControlSpace(stateSpace, 2)
-      {
-      }
-  };
 
   class DemoStatePropagator : public oc::StatePropagator
   {
@@ -237,7 +200,11 @@ namespace libPlanner {
 
 
         // create a control space
-        spacec = ((oc::ControlSpacePtr) new DemoControlSpace(space));
+        //spacec = ((oc::ControlSpacePtr) new DemoControlSpace(space));
+
+        int numcontrols = 2;
+        spacec = ((oc::ControlSpacePtr) new oc::RealVectorControlSpace(space, numcontrols));
+
 
         // set the bounds for the control space
         _controlBound_Tras = 0.3;
@@ -251,7 +218,7 @@ namespace libPlanner {
         cbounds.setHigh(0, _controlBound_Tras);
         cbounds.setLow(1, -_controlBound_Rot);
         cbounds.setHigh(1, _controlBound_Rot);
-        spacec->as<DemoControlSpace>()->setBounds(cbounds);
+        spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
 
         // define a simple setup class
         ss = ((oc::SimpleSetupPtr) new oc::SimpleSetup(spacec));
@@ -358,7 +325,7 @@ namespace libPlanner {
                              cbounds.setHigh(0, _controlBound_Tras);
                              cbounds.setLow(1, -_controlBound_Rot);
                              cbounds.setHigh(1, _controlBound_Rot);
-                             spacec->as<DemoControlSpace>()->setBounds(cbounds);
+                             spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
                 }
                 else
                    return false;
@@ -371,7 +338,7 @@ namespace libPlanner {
                       cbounds.setHigh(0, _controlBound_Tras);
                       cbounds.setLow(1, -_controlBound_Rot);
                       cbounds.setHigh(1, _controlBound_Rot);
-                      spacec->as<DemoControlSpace>()->setBounds(cbounds);
+                      spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
                 }
                 else
                    return false;
@@ -386,7 +353,7 @@ namespace libPlanner {
                     cbounds.setHigh(0, _controlBound_Tras);
                     cbounds.setLow(1, -_controlBound_Rot);
                     cbounds.setHigh(1, _controlBound_Rot);
-                    spacec->as<DemoControlSpace>()->setBounds(cbounds);
+                    spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
                 }
                 else
                    return false;

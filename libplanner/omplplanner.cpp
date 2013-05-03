@@ -994,6 +994,7 @@ namespace libPlanner {
          // attempt to solve the problem within _planningTime seconds of planning time
          ss->clear();//to remove previous solutions, if any
          ss->getPlanner()->clear();
+         ss->setup();
          ob::PlannerStatus solved = ss->solve(_planningTime);
 
          ss->print();

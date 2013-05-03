@@ -50,6 +50,10 @@
 #include <ompl/config.h>
 
 #include <ompl/base/spaces/RealVectorStateSpace.h>
+#include <ompl/base/spaces/SE3StateSpace.h>
+#include <ompl/base/spaces/SO3StateSpace.h>
+#include <ompl/control/spaces/RealVectorControlSpace.h>
+#include <ompl/control/SpaceInformation.h>
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 namespace oc = ompl::control;
@@ -69,8 +73,27 @@ using namespace libSampling;
 namespace libPlanner {
   namespace omplcplanner{
 
+
+    //Auxiliar functions
     bool isStateValid(const oc::SpaceInformation *si, const ob::State *state, Planner *p);
 
+
+    //Class KinematicRobotModel
+    /// Model defining the motion of the robot
+    class KinematicRobotModel
+    {
+    public:
+        KinematicRobotModel(const ob::StateSpace *space);
+        virtual void operator()(const ob::State *state, const oc::Control *control, std::valarray<double> &dstate) const;
+        void update(ob::State *state, const std::valarray<double> &dstate) const;
+        void setParameter(int i, double d);
+        double getParameter(int i);
+    protected:
+        const ob::StateSpace *space_;
+        vector<double> param_;
+    };
+
+    //Class omplcPlanner
     class omplcPlanner:public Planner {
 	    public:
         omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
@@ -82,6 +105,13 @@ namespace libPlanner {
         //Add public data and functionsvoid
         SoSeparator *getIvCspaceScene();//reimplemented
         void drawCspace();
+        void drawCspaceSE3();
+        void drawCspaceRn();
+
+        void omplState2smp(const ob::State *state, Sample* smp);
+        void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
+        void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
+        void filterBounds(double &l, double &h, double epsilon);
 
 		protected:
 		//Add protected data and functions

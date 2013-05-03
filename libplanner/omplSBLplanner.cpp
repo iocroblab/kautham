@@ -46,6 +46,8 @@
 
 #include <boost/bind/mem_fn.hpp>
 
+#include <ompl/base/ProjectionEvaluator.h>
+#include <ompl/base/spaces/RealVectorStateProjections.h>
 #include "omplSBLplanner.h"
 
 
@@ -81,6 +83,17 @@ namespace libPlanner {
         //addParameter("Goal Bias", _GoalBias);
         planner->as<og::SBL>()->setRange(_Range);
        // planner->as<og::EST>()->setGoalBias(_GoalBias);
+
+
+        //sets the projection evaluator
+        //ob::ProjectionMatrix *pmat;
+        //pmat = new ob::ProjectionMatrix;
+        //pmat->ComputeRandom(2,1);
+        ob::ProjectionEvaluatorPtr pe = ((ob::ProjectionEvaluatorPtr) new ob::RealVectorRandomLinearProjectionEvaluator(space,2));
+        ob::ProjectionEvaluatorPtr pe2 = ((ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0));
+
+         planner->as<og::SBL>()->setProjectionEvaluator(pe2);
+
 
         //set the planner
         ss->setPlanner(planner);
