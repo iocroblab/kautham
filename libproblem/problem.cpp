@@ -53,6 +53,10 @@
 #include <libplanner/omplcRRTplanner.h>
 #include <libplanner/omplcRRTcarplanner.h>
 #include <libplanner/omplRRTConnectplanner.h>
+#include <libplanner/omplESTplanner.h>
+#include <libplanner/omplSBLplanner.h>
+#include <libplanner/omplKPIECEplanner.h>
+#include <libplanner/omplBKPIECEplanner.h>
 #include <libplanner/drmplanner.h>
 //#include <libplanner/drmpcaplanner.h>
 #include <libplanner/prmplanner.h>
@@ -527,7 +531,7 @@ namespace libProblem {
 
   string Problem::plannersNames(){
    // return   "DRM|DRMPCA|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
-        return   "omplcRRT|omplcRRTcar|omplPRM|omplPRMV1|omplRRT|omplRRTV1|omplRRTConnect|DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
+        return   "omplcRRT|omplEST|omplSBL|omplKPIECE|omplBKPIECE|omplcRRTcar|omplPRM|omplPRMV1|omplRRT|omplRRTV1|omplRRTConnect|DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
   }
 
   bool Problem::createPlanner( string name, KthReal step ){
@@ -571,12 +575,30 @@ namespace libProblem {
     else if(name == "omplRRTConnect")
       _planner = new libPlanner::omplplanner::omplRRTConnectPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
+
+    else if(name == "omplEST")
+      _planner = new libPlanner::omplplanner::omplESTPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
+
+    else if(name == "omplSBL")
+      _planner = new libPlanner::omplplanner::omplSBLPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
+
+    else if(name == "omplKPIECE")
+      _planner = new libPlanner::omplplanner::omplKPIECEPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
+
+    else if(name == "omplBKPIECE")
+      _planner = new libPlanner::omplplanner::omplBKPIECEPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
+
     else if(name == "omplcRRT")
       _planner = new libPlanner::omplcplanner::omplcRRTPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
     else if(name == "omplcRRTcar")
       _planner = new libPlanner::omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
+
 #endif
 
 #if defined(KAUTHAM_USE_ARMADILLO)
