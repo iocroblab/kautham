@@ -413,241 +413,241 @@
   </Joints>
 
   <ControlSet size="12">	
-    <Offset>
+  <Offset>
 
-      <DOF name="Link1_der" value="0.7669"></DOF>
-      <DOF name="Link2_der" value="0.1794"></DOF>                                              
-      <DOF name="Link3_der" value="0.6677"></DOF>                                              
-      <DOF name="Link4_der" value="0.9222"></DOF>                                              
-      <DOF name="Link5_der" value="0.5"></DOF>                                                 
-      <DOF name="Link6_der" value="0.4177"></DOF>                                              
-      <DOF name="Link7_der" value="0.6404"></DOF>                                              
-                                                                                                    
-      <DOF name="Link1_izq" value="0.7306"></DOF>      
-      <DOF name="Link2_izq" value="0.7884"></DOF>      
-      <DOF name="Link3_izq" value="0.3701"></DOF>      
-      <DOF name="Link4_izq" value="0.0631"></DOF>      
-      <DOF name="Link5_izq" value="0.5"></DOF>         
-      <DOF name="Link6_izq" value="0.5369"></DOF>
-      <DOF name="Link7_izq" value="0.3874"></DOF> 
+    <DOF name="Link1_der" value="0.79684"></DOF>
+    <DOF name="Link2_der" value="0.163988"></DOF>                         
+    <DOF name="Link3_der" value="0.632742"></DOF>                         
+    <DOF name="Link4_der" value="0.950372"></DOF>                         
+    <DOF name="Link5_der" value="0.5"></DOF>                              
+    <DOF name="Link6_der" value="0.531997"></DOF>                         
+    <DOF name="Link7_der" value="0.638319"></DOF>                         
+                                                                          
+    <DOF name="Link1_izq" value="0.741868"></DOF>      
+    <DOF name="Link2_izq" value="0.850615"></DOF>      
+    <DOF name="Link3_izq" value="0.351543"></DOF>      
+    <DOF name="Link4_izq" value="0.0485913"></DOF>      
+    <DOF name="Link5_izq" value="0.5"></DOF>         
+    <DOF name="Link6_izq" value="0.482273"></DOF>
+    <DOF name="Link7_izq" value="0.368897"></DOF> 
 
-      <DOF name="Thumb_der" value="0.3055"></DOF> 
-      <DOF name="Thumb-Base_der" value="0.3055"></DOF> 
-      <DOF name="Thumb-Prox_der" value="0.6308"></DOF> 
-      <DOF name="Thumb-Med_der" value="0.5143"></DOF> 
-      <DOF name="Thumb-Dist_der" value="0.5143"></DOF> 
-      <DOF name="Index-Base_der" value="0.5544"></DOF> 
-      <DOF name="Index-Prox_der" value="0.5400"></DOF> 
-      <DOF name="Index-Med_der" value="0.5075"></DOF> 
-      <DOF name="Index-Dist_der" value="0.5075"></DOF> 
-      <DOF name="Mid-Base_der" value="0.5"></DOF> 
-      <DOF name="Mid-Prox_der" value="0.5579"></DOF> 
-      <DOF name="Mid-Med_der" value="0.4118"></DOF> 
-      <DOF name="Mid-Dist_der" value="0.4118"></DOF> 
-      <DOF name="Ring-Base_der" value="0.4909"></DOF> 
-      <DOF name="Ring-Prox_der" value="0.5407"></DOF> 
-      <DOF name="Ring-Med_der" value="0.4806"></DOF> 
-      <DOF name="Ring-Dist_der" value="0.4806"></DOF>
+    <DOF name="Thumb_der" value="0.3055"></DOF> 
+    <DOF name="Thumb-Base_der" value="0.3055"></DOF> 
+    <DOF name="Thumb-Prox_der" value="0.6308"></DOF> 
+    <DOF name="Thumb-Med_der" value="0.5143"></DOF> 
+    <DOF name="Thumb-Dist_der" value="0.5143"></DOF> 
+    <DOF name="Index-Base_der" value="0.5544"></DOF> 
+    <DOF name="Index-Prox_der" value="0.5400"></DOF> 
+    <DOF name="Index-Med_der" value="0.5075"></DOF> 
+    <DOF name="Index-Dist_der" value="0.5075"></DOF> 
+    <DOF name="Mid-Base_der" value="0.5"></DOF> 
+    <DOF name="Mid-Prox_der" value="0.5579"></DOF> 
+    <DOF name="Mid-Med_der" value="0.4118"></DOF> 
+    <DOF name="Mid-Dist_der" value="0.4118"></DOF> 
+    <DOF name="Ring-Base_der" value="0.4909"></DOF> 
+    <DOF name="Ring-Prox_der" value="0.5407"></DOF> 
+    <DOF name="Ring-Med_der" value="0.4806"></DOF> 
+    <DOF name="Ring-Dist_der" value="0.4806"></DOF>
 
-      <DOF name="Thumb_izq" value="0.3055"></DOF> 
-      <DOF name="Thumb-Base_izq" value="0.3055"></DOF> 
-      <DOF name="Thumb-Prox_izq" value="0.6308"></DOF> 
-      <DOF name="Thumb-Med_izq" value="0.5143"></DOF> 
-      <DOF name="Thumb-Dist_izq" value="0.5143"></DOF> 
-      <DOF name="Index-Base_izq" value="0.5544"></DOF> 
-      <DOF name="Index-Prox_izq" value="0.5400"></DOF> 
-      <DOF name="Index-Med_izq" value="0.5075"></DOF> 
-      <DOF name="Index-Dist_izq" value="0.5075"></DOF> 
-      <DOF name="Mid-Base_izq" value="0.5"></DOF> 
-      <DOF name="Mid-Prox_izq" value="0.5579"></DOF> 
-      <DOF name="Mid-Med_izq" value="0.4118"></DOF> 
-      <DOF name="Mid-Dist_izq" value="0.4118"></DOF> 
-      <DOF name="Ring-Base_izq" value="0.4909"></DOF> 
-      <DOF name="Ring-Prox_izq" value="0.5407"></DOF> 
-      <DOF name="Ring-Med_izq" value="0.4806"></DOF> 
-      <DOF name="Ring-Dist_izq" value="0.4806"></DOF>
+    <DOF name="Thumb_izq" value="0.3055"></DOF> 
+    <DOF name="Thumb-Base_izq" value="0.3055"></DOF> 
+    <DOF name="Thumb-Prox_izq" value="0.6308"></DOF> 
+    <DOF name="Thumb-Med_izq" value="0.5143"></DOF> 
+    <DOF name="Thumb-Dist_izq" value="0.5143"></DOF> 
+    <DOF name="Index-Base_izq" value="0.5544"></DOF> 
+    <DOF name="Index-Prox_izq" value="0.5400"></DOF> 
+    <DOF name="Index-Med_izq" value="0.5075"></DOF> 
+    <DOF name="Index-Dist_izq" value="0.5075"></DOF> 
+    <DOF name="Mid-Base_izq" value="0.5"></DOF> 
+    <DOF name="Mid-Prox_izq" value="0.5579"></DOF> 
+    <DOF name="Mid-Med_izq" value="0.4118"></DOF> 
+    <DOF name="Mid-Dist_izq" value="0.4118"></DOF> 
+    <DOF name="Ring-Base_izq" value="0.4909"></DOF> 
+    <DOF name="Ring-Prox_izq" value="0.5407"></DOF> 
+    <DOF name="Ring-Med_izq" value="0.4806"></DOF> 
+    <DOF name="Ring-Dist_izq" value="0.4806"></DOF>
 
-    </Offset>
+  </Offset>
 
-    <Control name="C1" eigValue="1.4107">     
-      <DOF name="Link1_der" value="-0.3832"></DOF>
-      <DOF name="Link2_der" value="-0.4349"></DOF>
-      <DOF name="Link3_der" value="0.1468"></DOF>
-      <DOF name="Link4_der" value="-0.1914"></DOF>
-      <DOF name="Link6_der" value="0.0350"></DOF>
-      <DOF name="Link7_der" value="-0.1836"></DOF>
-      <DOF name="Link1_izq" value="0.4467"></DOF>
-      <DOF name="Link2_izq" value="0.4700"></DOF>
-      <DOF name="Link3_izq" value="-0.2235"></DOF>
-      <DOF name="Link4_izq" value="0.2764"></DOF>
-      <DOF name="Link6_izq" value="0.1024"></DOF>
-      <DOF name="Link7_izq" value="0.1169"></DOF>
-    </Control>
+  <Control name="C1" eigValue="2.1400">     
+    <DOF name="Link1_der" value="0.6756"></DOF>
+    <DOF name="Link2_der" value="-0.6269"></DOF>
+    <DOF name="Link3_der" value="-0.0786"></DOF>
+    <DOF name="Link4_der" value="-0.0862"></DOF>
+    <DOF name="Link6_der" value="-0.1031"></DOF>
+    <DOF name="Link7_der" value="0.3335"></DOF>
+    <DOF name="Link1_izq" value="-0.0611"></DOF>
+    <DOF name="Link2_izq" value="-0.0309"></DOF>
+    <DOF name="Link3_izq" value="0.0284"></DOF>
+    <DOF name="Link4_izq" value="0.0597"></DOF>
+    <DOF name="Link6_izq" value="-0.0675"></DOF>
+    <DOF name="Link7_izq" value="-0.0389"></DOF>
+  </Control>
 
-    <Control name="C2" eigValue="0.9786">
-      <DOF name="Link1_der" value="-0.0775"></DOF>
-      <DOF name="Link2_der" value="0.1650"></DOF>
-      <DOF name="Link3_der" value="-0.2178"></DOF>
-      <DOF name="Link4_der" value="0.0823"></DOF>
-      <DOF name="Link6_der" value="-0.5985"></DOF>
-      <DOF name="Link7_der" value="-0.1531"></DOF>
-      <DOF name="Link1_izq" value="0.1305"></DOF>
-      <DOF name="Link2_izq" value="-0.0308"></DOF>
-      <DOF name="Link3_izq" value="0.1340"></DOF>
-      <DOF name="Link4_izq" value="-0.0818"></DOF>
-      <DOF name="Link6_izq" value="0.6714"></DOF>
-      <DOF name="Link7_izq" value="0.1936"></DOF>
-    </Control>
+  <Control name="C2" eigValue="1.3805">
+    <DOF name="Link1_der" value="-0.3617"></DOF>
+    <DOF name="Link2_der" value="-0.4894"></DOF>
+    <DOF name="Link3_der" value="0.5715"></DOF>
+    <DOF name="Link4_der" value="0.1291"></DOF>
+    <DOF name="Link6_der" value="-0.4712"></DOF>
+    <DOF name="Link7_der" value="-0.0937"></DOF>
+    <DOF name="Link1_izq" value="0.0907"></DOF>
+    <DOF name="Link2_izq" value="0.0830"></DOF>
+    <DOF name="Link3_izq" value="-0.0015"></DOF>
+    <DOF name="Link4_izq" value="0.0002"></DOF>
+    <DOF name="Link6_izq" value="0.1811"></DOF>
+    <DOF name="Link7_izq" value="0.0880"></DOF>
+  </Control>
 
-    <Control name="C3" eigValue="0.5083">
-      <DOF name="Link1_der" value="0.2857"></DOF>
-      <DOF name="Link2_der" value="-0.0752"></DOF>
-      <DOF name="Link3_der" value="-0.4419"></DOF>
-      <DOF name="Link4_der" value="-0.2680"></DOF>
-      <DOF name="Link6_der" value="-0.0999"></DOF>
-      <DOF name="Link7_der" value="-0.1738"></DOF>
-      <DOF name="Link1_izq" value="-0.2889"></DOF>
-      <DOF name="Link2_izq" value="0.4461"></DOF>
-      <DOF name="Link3_izq" value="0.4124"></DOF>
-      <DOF name="Link4_izq" value="0.2657"></DOF>
-      <DOF name="Link6_izq" value="-0.2156"></DOF>
-      <DOF name="Link7_izq" value="0.1894"></DOF>
-    </Control>
+  <Control name="C3" eigValue="1.1321">
+    <DOF name="Link1_der" value="-0.0678"></DOF>
+    <DOF name="Link2_der" value="0.0066"></DOF>
+    <DOF name="Link3_der" value="-0.5258"></DOF>
+    <DOF name="Link4_der" value="-0.1331"></DOF>
+    <DOF name="Link6_der" value="-0.3220"></DOF>
+    <DOF name="Link7_der" value="0.1269"></DOF>
+    <DOF name="Link1_izq" value="0.5468"></DOF>
+    <DOF name="Link2_izq" value="0.1125"></DOF>
+    <DOF name="Link3_izq" value="-0.1823"></DOF>
+    <DOF name="Link4_izq" value="0.0161"></DOF>
+    <DOF name="Link6_izq" value="0.4570"></DOF>
+    <DOF name="Link7_izq" value="0.1654"></DOF>
+  </Control>
 
-    <Control name="C4" eigValue="0.2596">
-      <DOF name="Link1_der" value="0.0772"></DOF>
-      <DOF name="Link2_der" value="-0.3756"></DOF>
-      <DOF name="Link3_der" value="-0.1278"></DOF>
-      <DOF name="Link4_der" value="0.2105"></DOF>
-      <DOF name="Link6_der" value="-0.2965"></DOF>
-      <DOF name="Link7_der" value="0.6263"></DOF>
-      <DOF name="Link1_izq" value="-0.0629"></DOF>
-      <DOF name="Link2_izq" value="0.3629"></DOF>
-      <DOF name="Link3_izq" value="-0.0464"></DOF>
-      <DOF name="Link4_izq" value="-0.2314"></DOF>
-      <DOF name="Link6_izq" value="0.0224"></DOF>
-      <DOF name="Link7_izq" value="-0.3468"></DOF>
-    </Control>
+  <Control name="C4" eigValue="0.9781">
+    <DOF name="Link1_der" value="0.3252"></DOF>
+    <DOF name="Link2_der" value="-0.0880"></DOF>
+    <DOF name="Link3_der" value="0.3340"></DOF>
+    <DOF name="Link4_der" value="-0.1098"></DOF>
+    <DOF name="Link6_der" value="0.5147"></DOF>
+    <DOF name="Link7_der" value="-0.4475"></DOF>
+    <DOF name="Link1_izq" value="0.4159"></DOF>
+    <DOF name="Link2_izq" value="0.0628"></DOF>
+    <DOF name="Link3_izq" value="-0.1955"></DOF>
+    <DOF name="Link4_izq" value="-0.0349"></DOF>
+    <DOF name="Link6_izq" value="0.2811"></DOF>
+    <DOF name="Link7_izq" value="0.0490"></DOF>
+  </Control>
 
-    <Control name="C5" eigValue="0.2261">
-      <DOF name="Link1_der" value="0.2732"></DOF>
-      <DOF name="Link2_der" value="0.0070"></DOF>
-      <DOF name="Link3_der" value="0.3008"></DOF>
-      <DOF name="Link4_der" value="-0.4041"></DOF>
-      <DOF name="Link6_der" value="-0.0824"></DOF>
-      <DOF name="Link7_der" value="0.2155"></DOF>
-      <DOF name="Link1_izq" value="-0.2743"></DOF>
-      <DOF name="Link2_izq" value="-0.1131"></DOF>
-      <DOF name="Link3_izq" value="-0.1824"></DOF>
-      <DOF name="Link4_izq" value="0.5525"></DOF>
-      <DOF name="Link6_izq" value="0.3714"></DOF>
-      <DOF name="Link7_izq" value="-0.2320"></DOF>
-    </Control>
+  <Control name="C5" eigValue="0.6765">
+    <DOF name="Link1_der" value="0.0187"></DOF>
+    <DOF name="Link2_der" value="0.0584"></DOF>
+    <DOF name="Link3_der" value="0.0180"></DOF>
+    <DOF name="Link4_der" value="-0.2568"></DOF>
+    <DOF name="Link6_der" value="-0.1448"></DOF>
+    <DOF name="Link7_der" value="-0.2034"></DOF>
+    <DOF name="Link1_izq" value="-0.0809"></DOF>
+    <DOF name="Link2_izq" value="-0.5065"></DOF>
+    <DOF name="Link3_izq" value="0.1337"></DOF>
+    <DOF name="Link4_izq" value="0.6250"></DOF>
+    <DOF name="Link6_izq" value="0.2794"></DOF>
+    <DOF name="Link7_izq" value="-0.3435"></DOF>
+  </Control>
 
-    <Control name="C6" eigValue="0.1748">
-      <DOF name="Link1_der" value="-0.3965"></DOF>
-      <DOF name="Link2_der" value="-0.3107"></DOF>
-      <DOF name="Link3_der" value="0.1449"></DOF>
-      <DOF name="Link4_der" value="0.2399"></DOF>
-      <DOF name="Link6_der" value="0.1043"></DOF>
-      <DOF name="Link7_der" value="-0.2683"></DOF>
-      <DOF name="Link1_izq" value="-0.3533"></DOF>
-      <DOF name="Link2_izq" value="-0.0968"></DOF>
-      <DOF name="Link3_izq" value="0.5025"></DOF>
-      <DOF name="Link4_izq" value="0.1055"></DOF>
-      <DOF name="Link6_izq" value="0.1713"></DOF>
-      <DOF name="Link7_izq" value="-0.3971"></DOF>
-    </Control>
+  <Control name="C6" eigValue="0.4366">
+    <DOF name="Link1_der" value="0.0684"></DOF>
+    <DOF name="Link2_der" value="0.0829"></DOF>
+    <DOF name="Link3_der" value="0.0289"></DOF>
+    <DOF name="Link4_der" value="-0.4937"></DOF>
+    <DOF name="Link6_der" value="-0.1017"></DOF>
+    <DOF name="Link7_der" value="-0.1696"></DOF>
+    <DOF name="Link1_izq" value="-0.1730"></DOF>
+    <DOF name="Link2_izq" value="0.6739"></DOF>
+    <DOF name="Link3_izq" value="0.2997"></DOF>
+    <DOF name="Link4_izq" value="0.2983"></DOF>
+    <DOF name="Link6_izq" value="-0.0480"></DOF>
+    <DOF name="Link7_izq" value="0.1991"></DOF>
+  </Control>
 
-    <Control name="C7" eigValue="0.1472">     
-      <DOF name="Link1_der" value="0.3528"></DOF>
-      <DOF name="Link2_der" value="-0.2615"></DOF>
-      <DOF name="Link3_der" value="0.2592"></DOF>
-      <DOF name="Link4_der" value="0.4650"></DOF>
-      <DOF name="Link6_der" value="0.0618"></DOF>
-      <DOF name="Link7_der" value="-0.2640"></DOF>
-      <DOF name="Link1_izq" value="-0.3871"></DOF>
-      <DOF name="Link2_izq" value="0.1774"></DOF>
-      <DOF name="Link3_izq" value="-0.3161"></DOF>
-      <DOF name="Link4_izq" value="-0.0691"></DOF>
-      <DOF name="Link6_izq" value="0.1574"></DOF>
-      <DOF name="Link7_izq" value="0.3734"></DOF>
-    </Control>
+  <Control name="C7" eigValue="0.2727">     
+    <DOF name="Link1_der" value="0.2425"></DOF>
+    <DOF name="Link2_der" value="0.3346"></DOF>
+    <DOF name="Link3_der" value="0.2584"></DOF>
+    <DOF name="Link4_der" value="0.0095"></DOF>
+    <DOF name="Link6_der" value="-0.1091"></DOF>
+    <DOF name="Link7_der" value="0.2780"></DOF>
+    <DOF name="Link1_izq" value="-0.2984"></DOF>
+    <DOF name="Link2_izq" value="0.1329"></DOF>
+    <DOF name="Link3_izq" value="0.0787"></DOF>
+    <DOF name="Link4_izq" value="-0.3333"></DOF>
+    <DOF name="Link6_izq" value="0.6287"></DOF>
+    <DOF name="Link7_izq" value="-0.2323"></DOF>
+  </Control>
 
-    <Control name="C8" eigValue="0.1355">
-      <DOF name="Link1_der" value="0.1856"></DOF>
-      <DOF name="Link2_der" value="0.1816"></DOF>
-      <DOF name="Link3_der" value="-0.3782"></DOF>
-      <DOF name="Link4_der" value="0.2193"></DOF>
-      <DOF name="Link6_der" value="0.6374"></DOF>
-      <DOF name="Link7_der" value="0.0443"></DOF>
-      <DOF name="Link1_izq" value="0.1940"></DOF>
-      <DOF name="Link2_izq" value="0.2049"></DOF>
-      <DOF name="Link3_izq" value="-0.0054"></DOF>
-      <DOF name="Link4_izq" value="0.0985"></DOF>
-      <DOF name="Link6_izq" value="0.4494"></DOF>
-      <DOF name="Link7_izq" value="-0.2047"></DOF>
-    </Control>
+  <Control name="C8" eigValue="0.2551">
+    <DOF name="Link1_der" value="0.2325"></DOF>
+    <DOF name="Link2_der" value="0.2252"></DOF>
+    <DOF name="Link3_der" value="0.1454"></DOF>
+    <DOF name="Link4_der" value="-0.3334"></DOF>
+    <DOF name="Link6_der" value="-0.3265"></DOF>
+    <DOF name="Link7_der" value="-0.1544"></DOF>
+    <DOF name="Link1_izq" value="0.0280"></DOF>
+    <DOF name="Link2_izq" value="-0.4551"></DOF>
+    <DOF name="Link3_izq" value="0.1201"></DOF>
+    <DOF name="Link4_izq" value="-0.3330"></DOF>
+    <DOF name="Link6_izq" value="-0.1391"></DOF>
+    <DOF name="Link7_izq" value="0.5291"></DOF>
+  </Control>
 
-    <Control name="C9" eigValue="0.0922">
-      <DOF name="Link1_der" value="-0.1154"></DOF>
-      <DOF name="Link2_der" value="-0.3381"></DOF>
-      <DOF name="Link3_der" value="-0.0288"></DOF>
-      <DOF name="Link4_der" value="-0.1650"></DOF>
-      <DOF name="Link6_der" value="0.2921"></DOF>
-      <DOF name="Link7_der" value="0.4614"></DOF>
-      <DOF name="Link1_izq" value="-0.0567"></DOF>
-      <DOF name="Link2_izq" value="-0.2696"></DOF>
-      <DOF name="Link3_izq" value="0.2837"></DOF>
-      <DOF name="Link4_izq" value="-0.0673"></DOF>
-      <DOF name="Link6_izq" value="0.2120"></DOF>
-      <DOF name="Link7_izq" value="0.5833"></DOF>
-    </Control>
+  <Control name="C9" eigValue="0.1941">
+    <DOF name="Link1_der" value="0.3324"></DOF>
+    <DOF name="Link2_der" value="0.4211"></DOF>
+    <DOF name="Link3_der" value="0.2884"></DOF>
+    <DOF name="Link4_der" value="0.2556"></DOF>
+    <DOF name="Link6_der" value="-0.3568"></DOF>
+    <DOF name="Link7_der" value="0.1039"></DOF>
+    <DOF name="Link1_izq" value="0.3499"></DOF>
+    <DOF name="Link2_izq" value="0.1605"></DOF>
+    <DOF name="Link3_izq" value="-0.2411"></DOF>
+    <DOF name="Link4_izq" value="0.2815"></DOF>
+    <DOF name="Link6_izq" value="-0.3336"></DOF>
+    <DOF name="Link7_izq" value="-0.1696"></DOF>
+  </Control>
 
-    <Control name="C10" eigValue="0.083">
-      <DOF name="Link1_der" value="-0.4032"></DOF>
-      <DOF name="Link2_der" value="0.5499"></DOF>
-      <DOF name="Link3_der" value="0.2389"></DOF>
-      <DOF name="Link4_der" value="0.2413"></DOF>
-      <DOF name="Link6_der" value="0.0082"></DOF>
-      <DOF name="Link7_der" value="0.3207"></DOF>
-      <DOF name="Link1_izq" value="-0.2243"></DOF>
-      <DOF name="Link2_izq" value="0.3916"></DOF>
-      <DOF name="Link3_izq" value="0.0714"></DOF>
-      <DOF name="Link4_izq" value="0.2325"></DOF>
-      <DOF name="Link6_izq" value="-0.0435"></DOF>
-      <DOF name="Link7_izq" value="0.2283"></DOF>
-    </Control>
+  <Control name="C10" eigValue="0.1676">
+    <DOF name="Link1_der" value="-0.2517"></DOF>
+    <DOF name="Link2_der" value="0.0340"></DOF>
+    <DOF name="Link3_der" value="0.2946"></DOF>
+    <DOF name="Link4_der" value="-0.5178"></DOF>
+    <DOF name="Link6_der" value="0.2396"></DOF>
+    <DOF name="Link7_der" value="0.5903"></DOF>
+    <DOF name="Link1_izq" value="0.0564"></DOF>
+    <DOF name="Link2_izq" value="-0.0859"></DOF>
+    <DOF name="Link3_izq" value="-0.3729"></DOF>
+    <DOF name="Link4_izq" value="0.1206"></DOF>
+    <DOF name="Link6_izq" value="-0.0709"></DOF>
+    <DOF name="Link7_izq" value="0.0741"></DOF>
+  </Control>
 
-    <Control name="C11" eigValue="0.0454">
-      <DOF name="Link1_der" value="-0.0050"></DOF>
-      <DOF name="Link2_der" value="-0.1465"></DOF>
-      <DOF name="Link3_der" value="-0.2943"></DOF>
-      <DOF name="Link4_der" value="0.4907"></DOF>
-      <DOF name="Link6_der" value="-0.1644"></DOF>
-      <DOF name="Link7_der" value="0.1097"></DOF>
-      <DOF name="Link1_izq" value="0.1755"></DOF>
-      <DOF name="Link2_izq" value="-0.3433"></DOF>
-      <DOF name="Link3_izq" value="-0.0825"></DOF>
-      <DOF name="Link4_izq" value="0.6319"></DOF>
-      <DOF name="Link6_izq" value="-0.2230"></DOF>
-      <DOF name="Link7_izq" value="0.0863"></DOF>
-    </Control>
+  <Control name="C11" eigValue="0.1172">
+    <DOF name="Link1_der" value="-0.0976"></DOF>
+    <DOF name="Link2_der" value="-0.0084"></DOF>
+    <DOF name="Link3_der" value="0.0901"></DOF>
+    <DOF name="Link4_der" value="-0.1630"></DOF>
+    <DOF name="Link6_der" value="0.0771"></DOF>
+    <DOF name="Link7_der" value="0.1850"></DOF>
+    <DOF name="Link1_izq" value="0.5086"></DOF>
+    <DOF name="Link2_izq" value="-0.0285"></DOF>
+    <DOF name="Link3_izq" value="0.6733"></DOF>
+    <DOF name="Link4_izq" value="-0.2216"></DOF>
+    <DOF name="Link6_izq" value="-0.1492"></DOF>
+    <DOF name="Link7_izq" value="-0.3625"></DOF>
+  </Control>
 
-    <Control name="C12" eigValue="0.0273">
-      <DOF name="Link1_der" value="0.4393"></DOF>
-      <DOF name="Link2_der" value="0.0273"></DOF>
-      <DOF name="Link3_der" value="0.5031"></DOF>
-      <DOF name="Link4_der" value="0.1704"></DOF>
-      <DOF name="Link6_der" value="-0.0491"></DOF>
-      <DOF name="Link7_der" value="0.0497"></DOF>
-      <DOF name="Link1_izq" value="0.4735"></DOF>
-      <DOF name="Link2_izq" value="0.0893"></DOF>
-      <DOF name="Link3_izq" value="0.5309"></DOF>
-      <DOF name="Link4_izq" value="0.0629"></DOF>
-      <DOF name="Link6_izq" value="-0.0353"></DOF>
-      <DOF name="Link7_izq" value="0.0103"></DOF>
-    </Control>
-       
-  </ControlSet>
+  <Control name="C12" eigValue="0.0974">
+    <DOF name="Link1_der" value="0.0348"></DOF>
+    <DOF name="Link2_der" value="0.0905"></DOF>
+    <DOF name="Link3_der" value="0.1098"></DOF>
+    <DOF name="Link4_der" value="0.4064"></DOF>
+    <DOF name="Link6_der" value="0.2415"></DOF>
+    <DOF name="Link7_der" value="0.3144"></DOF>
+    <DOF name="Link1_izq" value="0.0741"></DOF>
+    <DOF name="Link2_izq" value="-0.0788"></DOF>
+    <DOF name="Link3_izq" value="0.3859"></DOF>
+    <DOF name="Link4_izq" value="0.3880"></DOF>
+    <DOF name="Link6_izq" value="0.2029"></DOF>
+    <DOF name="Link7_izq" value="0.5512"></DOF>
+  </Control>
+     
+</ControlSet>
 </Robot>
