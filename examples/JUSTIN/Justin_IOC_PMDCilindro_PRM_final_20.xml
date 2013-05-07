@@ -2,7 +2,7 @@
 <Problem name="" topology="SE3">
 
   
-  <Robot robot="robots/Justin_PMD_Cilindro_cerrada_30.rob" scale="1.0"> 
+  <Robot robot="robots/Justin_PMD_Cilindro_final_20.rob" scale="1.0"> 
    <!--Robot Path-->
 	<Limits name="X" min="0.0" max="1000.0"></Limits>
 	<Limits name="Y" min="0.0" max="1000.0"></Limits>
@@ -17,6 +17,12 @@
   <Scene scene="scenes/IOC2.iv" scale="1.0">
     <!--Scene Path-->
     <Location TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="200.0" Y="-300.0" X="-1000.0">
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/can.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="449.0" Y="100.0" X="0.0"> 
      <!--Problem of the scene-->
     </Location>
   </Scene>
@@ -42,8 +48,8 @@
 	
 	<Queries>
 		<Query>
-			<Init dim="12">0.5042 0.6225 0.4735 0.307 0.8456 0.7338 0.5185 0.4494 0.4245 0.3515 0.3297 0.0863</Init>
-			<Goal dim="12">0.6053 0.5744 0.61 0.2337 0.8405 0.4641 0.3955 0.0598 0.189 0.0452 -0.134 0.1358</Goal>
+			<Init dim="12">0.6037 0.3521 0.4566 0.2957 0.8181 0.6041 0.4843 -0.1469 0.257 0.5243 0.0697 -0.2486</Init>
+			<Goal dim="12">0.4256 0.3218 0.4202 0.3286 0.745 0.8087 0.4726 0.5637 0.3421 0.6142 0.3944 -0.09</Goal>
 		</Query>
 	</Queries>
 
