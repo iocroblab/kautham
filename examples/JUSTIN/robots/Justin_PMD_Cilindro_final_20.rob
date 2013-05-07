@@ -79,7 +79,7 @@
 
 <!--  Mano cerrada -->
 
-    <Joint name="Palm_der" ivFile="SAHand/SAH-palm-right-can-cilindro.iv">
+    <Joint name="Palm_der" ivFile="SAHand/SAH-palm-right.iv">
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true" ></Description>
       <Limits Hi="0" Low="-90"></Limits>
@@ -275,6 +275,7 @@
       <Weight weight="1.0"></Weight>
       <Parent name="Link6_izq"></Parent>
     </Joint>
+
 
 <!--  Mano cerrada  -->
 
