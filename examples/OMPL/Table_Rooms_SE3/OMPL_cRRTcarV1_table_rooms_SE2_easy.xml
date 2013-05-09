@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Problem name="OMPL_cRRT_table_rooms_SE2">
+<Problem name="OMPL_cRRTcar_table_rooms_SE2">
         <Robot robot="robots/tableSE2.rob" scale="0.8">
    Robot Path
    <Limits name="X" min="-125.0" max="125.0" />
@@ -19,17 +19,16 @@
         </Scene>
 	<Planner>
                  <Parameters>
-                    <Name>omplcRRT</Name>
+                    <Name>omplcRRTcarV1</Name>
                     <LocalPlanner stepSize="1">Linear</LocalPlanner>
-                    <Parameter name="Step Size">5</Parameter>
-                    <Parameter name="Max Planning Time">5.0</Parameter>
+                    <Parameter name="Max Planning Time">10.0</Parameter>
                     <Parameter name="Speed Factor">10</Parameter>
                     <Parameter name="PropagationStepSize">0.01</Parameter>
-                    <Parameter name="MaxControlDuration">50</Parameter>
-                    <Parameter name="MinControlDuration">1</Parameter>
+                    <Parameter name="Duration">2</Parameter>
                     <Parameter name="ControlBound_Tras">0.25</Parameter>
                     <Parameter name="ControlBound_Rot">0.025</Parameter>
-                    <Parameter name="OnlyForward">1</Parameter>
+                    <Parameter name="OnlyForward (0/1)">1</Parameter>
+                    <Parameter name="CarLength">0.2</Parameter>
                 </Parameters>
 		<Queries>
                         <Query>

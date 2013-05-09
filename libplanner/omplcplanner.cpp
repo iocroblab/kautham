@@ -55,6 +55,7 @@
 #include <ompl/base/spaces/SE2StateSpace.h>
 #include <ompl/base/PlannerStatus.h>
 #include <ompl/base/StateSpace.h>
+#include <ompl/base/spaces/SO3StateSpace.h>
 
 
 #include <Inventor/nodes/SoTransform.h>
@@ -66,11 +67,17 @@
 
 using namespace libSampling;
 
+
+
 namespace libPlanner {
   namespace omplcplanner{
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  //! This function converts smp a state to a smp and tests if it is in collision or not
+  // AUXILIAR functions
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //! This function converts a state to a smp and tests if it is in collision or not
   bool isStateValid(const oc::SpaceInformation *si, const ob::State *state, Planner *p)
   {
       //create sample
@@ -85,235 +92,190 @@ namespace libPlanner {
           return false;
       return true;
   }
-  /*
-  bool isStateValid(const oc::SpaceInformation *si, const ob::State *state, Planner *p)//, Sample *smp)
-  //bool isStateValid(const ob::State *state, Planner *p)//, Sample *smp)
+
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // KinematicRobotModel functions
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /// KinematicRobotModel Constructor
+  KinematicRobotModel::KinematicRobotModel(const ob::StateSpacePtr space) : space_(space)
   {
-
-      //const ob::SE2StateSpace::StateType *se2state = state->as<ob::SE2StateSpace::StateType>();
-      //const ob::RealVectorStateSpace::StateType *pos = se2state->as<ob::RealVectorStateSpace::StateType>(0);
-      //const ob::SO2StateSpace::StateType *rot = se2state->as<ob::SO2StateSpace::StateType>(1);
-
-      const ob::RealVectorStateSpace::StateType *R2state = state->as<ob::RealVectorStateSpace::StateType>();
-      int d = p->wkSpace()->getDimension();
-      Sample *smp = new Sample(d);
-      vector<KthReal> coords;
-      coords.resize(d);
-
-      for(int i=0;i<d;i++)
-        coords[i] = R2state->values[i];
-
-      //coords[0] = pos->values[0];
-      //coords[1] = pos->values[1];
-      //coords[2] = rot->value;
-      smp->setCoords(coords);
-      if( si->satisfiesBounds(state)==false | p->wkSpace()->collisionCheck(smp) )
-          return false;
-      return true;
   }
-  */
 
-
-  /////////////////////////////////////////////////////////////////////
-  /// Model defining the motion of the robot
-      KinematicRobotModel::KinematicRobotModel(const ob::StateSpace *space) : space_(space)
-      {
-      }
-
-      /// implement the function describing the robot motion: qdot = f(q, u)
-      void KinematicRobotModel::operator()(const ob::State *state, const oc::Control *control, std::valarray<double> &dstate) const
-      {
-          //Do nothing-This should be reimplemented in a derived class depending on the problem at hand.
-          //dstate = state
-
-          //TODO: trobar la dimensio del compound state space
-          int d = 3;
-          dstate.resize(d);
-          for(int i=0;i<d; i++)
-              dstate[i] = 0;
-      }
-
-
-      /// implement y(n+1) = y(n) + d
-      void KinematicRobotModel::update(ob::State *state, const std::valarray<double> &dstate) const
-      {
-          /*
-          ob::RealVectorStateSpace::StateType &s = *state->as<ob::RealVectorStateSpace::StateType>();
-          s.values[0] = s.values[0] + dstate[0];
-          s.values[1] = s.values[1] + dstate[1];
-          s.values[2] = s.values[2] + dstate[2];
-
-          space_->enforceBounds(state);
-          */
+   //! Implement the function describing the robot motion: qdot = f(q, u).
+   //! This function is to be reimplemeted by derived classes defining different types of behavior
+   //! The derived classes should first call this function, the parent operator() function, because it
+   //! sets the dimension of the dstate.
+   void KinematicRobotModel::operator()(const ob::State *state, const oc::Control *control, std::valarray<double> &dstate) const
+   {
+          //compute the dimension of the compound statespace
           //loop for all the robots
           std::vector< ob::StateSpacePtr> sss = space_->as<ob::CompoundStateSpace>()->getSubspaces();
+          std::stringstream sstm;
+
+          int d=0;
           for(int i=0;i<sss.size();i++)
           {
-              //update robot i
-              //update SE3 conf
-              sss[i]->getName();
-              //update Rn conf
+              //update robot i. Get the subspaces (SE3+Rn, or SE3 or Rn)
+              std::vector< ob::StateSpacePtr> sssi = sss[i]->as<ob::CompoundStateSpace>()->getSubspaces();
+
+              for(int j=0;i<sssi.size();i++)
+              {
+                //SE3 subspace
+                sstm.str("");
+                sstm << "ssRobot" << i<<"_SE3";
+                if(sssi[j]->getName() == sstm.str())
+                {
+                    //add the dimension of a se3 configuration
+                    d +=7;
+                }
+                //Rn subspace
+                sstm.str("");
+                sstm << "ssRobot" << i<<"_Rn";
+                if(sssi[j]->getName() == sstm.str())
+                {
+                    //add the dimension of the Rn configuration
+                    d += sssi[j]->as<omplplanner::weigthedRealVectorStateSpace>()->getDimension();
+                }
+              }//end robot i
+          }
+
+          //resize the dstate
+          dstate.resize(d);
+          //do nothing. Derived classes should do it.
+          for(int i=0;i<d; i++)
+             dstate[i] = 0.0;
+   }
 
 
+   //! Implements y(n+1) = y(n) + d
+   //! This function is called as ode_.update(...) in EulerIntegrator<KinematicRobotModel>::propagate function.
+   void KinematicRobotModel::update(ob::State *state, const std::valarray<double> &dstate) const
+   {
+          //Create a scoped state in order to retreive each subspace in an easy way using the >> operators
+          ob::ScopedState<ob::CompoundStateSpace> sstate(space_);
+          sstate = *state;
+
+          //create a scoped state to store the new state
+          ob::ScopedState<ob::CompoundStateSpace> newsstate(space_);
+
+          //loop for all the robots
+          std::vector< ob::StateSpacePtr> sss = space_->as<ob::CompoundStateSpace>()->getSubspaces();
+          std::stringstream sstm;
+
+          int d=0;//index to access the increment stored in parameter dstate
+          for(int i=0;i<sss.size();i++)
+          {
+              //Update robot i.
+              //Get the robot i subspaces (SE3+Rn, or SE3 or Rn)
+              std::vector< ob::StateSpacePtr> sssi = sss[i]->as<ob::CompoundStateSpace>()->getSubspaces();
+
+              //update the state of each subspace
+              for(int j=0;j<sssi.size();j++)
+              {
+                //SE3 subspace
+                sstm.str("");
+                sstm << "ssRobot" << i<<"_SE3";
+                if(sssi[j]->getName() == sstm.str())
+                {
+                    //update SE3 conf
+                    //retrieve the SE3 part
+                    ob::ScopedState<ob::SE3StateSpace> scopedstatese3(sssi[j]);
+                    sstate >> scopedstatese3;
+
+                    //create the new SE3 part
+                    ob::ScopedState<ob::SE3StateSpace> newscopedstatese3(sssi[j]);
+
+                    //update the position
+                    newscopedstatese3->setX(scopedstatese3->getX() + dstate[d++]);
+                    newscopedstatese3->setY(scopedstatese3->getY() + dstate[d++]);
+                    newscopedstatese3->setZ(scopedstatese3->getZ() + dstate[d++]);
+
+                    //current orientation
+                    mt::Rotation ori(scopedstatese3->rotation().x,
+                                     scopedstatese3->rotation().y,
+                                     scopedstatese3->rotation().z,
+                                     scopedstatese3->rotation().w);
+                    //mt::Unit3 axis0;
+                    //float angle0;
+                    //ori.getAxisAngle(axis0, angle0);
+
+                    //rotation to apply
+                    double ax = dstate[d++];
+                    double ay = dstate[d++];
+                    double az = dstate[d++];
+                    mt::Unit3 axis(ax,ay,az);//a unit vector is generated
+                    float angle = dstate[d++];
+                    mt::Rotation rot(axis, angle);
+
+                    //update the orientation
+                    mt::Rotation newori = rot*ori;
+                    mt::Unit3 axis1;
+                    float angle1;
+                    newori.getAxisAngle(axis1, angle1);
+                    newscopedstatese3->rotation().setAxisAngle(axis1[0],axis1[1],axis1[2],angle1);
+
+                    //load the global scoped state with the info of the se3 data of robot i
+                    newsstate<<newscopedstatese3;
+                }
+
+                //Rn subspace
+                sstm.str("");
+                sstm << "ssRobot" << i<<"_Rn";
+                if(sssi[j]->getName() == sstm.str())
+                {
+                    //update Rn conf
+                    //retrieve the Rn part
+                    ob::ScopedState<omplplanner::weigthedRealVectorStateSpace> scopedstatern(sssi[j]);
+                    sstate >> scopedstatern;
+
+                    //create the new Rn part
+                    ob::ScopedState<omplplanner::weigthedRealVectorStateSpace> newscopedstatern(sssi[j]);
+                    //update the Rn part
+                    for(int k=0; k< sssi[j]->as<omplplanner::weigthedRealVectorStateSpace>()->getDimension();k++)
+                        newscopedstatern->values[k] = scopedstatern->values[k] + dstate[d++];
+
+                    //load the global scoped state with the info of the se3 data of robot i
+                    newsstate << newscopedstatern;
+                }
+              }
               //end update robot i
            }
           //end loop for all robots
+
+          //return the newstate in the parameter state
+          space_->copyState(state, newsstate.get());
       }
 
-      void KinematicRobotModel::setParameter(int i, double d)
-      {
-          param_[i] = d;
-      }
+   /// function to set parameters
+   void KinematicRobotModel::setParameter(int i, double d)
+   {
+       param_[i] = d;
+   }
 
-      double KinematicRobotModel::getParameter(int i)
-      {
-          return param_[i];
-      }
-      //////////////////////////////////////////////////////
-
-
-  /// Simple integrator: Euclidean method
-  template<typename F>
-  class EulerIntegrator
-  {
-  public:
-
-      EulerIntegrator(const ob::StateSpace *space, double timeStep) : space_(space), timeStep_(timeStep), ode_(space)
-      {
-      }
-
-      void propagate(const ob::State *start, const oc::Control *control, const double duration, ob::State *result) const
-      {
-          double t = timeStep_;
-          std::valarray<double> dstate;
-          space_->copyState(result, start);
-          while (t < duration + std::numeric_limits<double>::epsilon())
-          {
-              ode_(result, control, dstate);
-              ode_.update(result, timeStep_ * dstate);
-              t += timeStep_;
-          }
-          if (t + std::numeric_limits<double>::epsilon() > duration)
-          {
-              ode_(result, control, dstate);
-              ode_.update(result, (t - duration) * dstate);
-          }
-      }
-
-      double getTimeStep(void) const
-      {
-          return timeStep_;
-      }
-
-      void setTimeStep(double timeStep)
-      {
-          timeStep_ = timeStep;
-      }
-
-      F* getOde()
-      {
-          return &ode_;
-      }
-
-  private:
-
-      const ob::StateSpace *space_;
-      double                   timeStep_;
-      F                        ode_;
-
-  };
+   /// function to get parameters
+   double KinematicRobotModel::getParameter(int i)
+   {
+       return param_[i];
+   }
 
 
 
+   /////////////////////////////////////////////////////////////////////////////////////////////////
+   // KinematicRobotModel functions
+   /////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-  class DemoStatePropagator : public oc::StatePropagator
-  {
-  public:
-
-      DemoStatePropagator(const oc::SpaceInformationPtr &si) : oc::StatePropagator(si),
-                                                               integrator_(si->getStateSpace().get(), 0.0)
-      {
-      }
-
-      virtual void propagate(const ob::State *state, const oc::Control* control, const double duration, ob::State *result) const
-      {
-          integrator_.propagate(state, control, duration, result);
-      }
-
-      void setIntegrationTimeStep(double timeStep)
-      {
-          integrator_.setTimeStep(timeStep);
-      }
-
-      double getIntegrationTimeStep(void) const
-      {
-          return integrator_.getTimeStep();
-      }
-
-      EulerIntegrator<KinematicRobotModel> *getIntegrator()
-      {
-          return &integrator_;
-      }
-
-      EulerIntegrator<KinematicRobotModel> integrator_;
-  };
-
-
-	//! Constructor
+    //! Constructor
     omplcPlanner::omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
-	{
-        /*
-		//set intial values
-        _planningTime = 10;
-
-		//set intial values from parent class data
-		_speedFactor = 1;
-        _solved = false;
-        _stepSize = ssize;
-	  
-        _guiName = "ompl Planner";
-        _idName = "ompl Planner";
-        addParameter("Step Size", ssize);
-        addParameter("Speed Factor", _speedFactor);
-        addParameter("Max Planning Time", _planningTime);
-
-
-        // construct the state space we are planning in
-        int d = _wkSpace->getDimension();
-        space =  ((ob::StateSpacePtr) new ob::RealVectorStateSpace(d));
-
-
-        // set the bounds
-        ob::RealVectorBounds bounds(d);
-        bounds.setLow(0);
-        bounds.setHigh(1);
-        space->as<ob::RealVectorStateSpace>()->setBounds(bounds);
-
-
-        // define a simple setup class
-        //ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
-        //plannerdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
-
-        //Derived classes should specify a given planner
-        //ob::SpaceInformationPtr si=ss->getSpaceInformation();
-        //ob::PlannerPtr planner(new og::PRM(si));
-        //ob::PlannerPtr planner(new og::RRT(si));
-        //ob::PlannerPtr planner(new og::RRTConnect(si));
-        //ss->setPlanner(planner);
-
-        //ss->setStateValidityChecker(boost::bind(&isStateValid, _1, (Planner*)this));
-        */
-
-
-
+    {
         //set intial values from parent class data
         _speedFactor = 1;
         _stepSize = ssize;
         _solved = false;
-        _guiName = "ompl Planner";
-        _idName = "ompl Planner";
+        _guiName = "omplc Planner";
+        _idName = "omplc Planner";
 
         //set own intial values
         _planningTime = 10;
@@ -347,6 +309,7 @@ namespace libPlanner {
             {
                 //create the SE3 state space
                 spaceSE3[i] = ((ob::StateSpacePtr) new ob::SE3StateSpace());
+                sstm.str("");
                 sstm << "ssRobot" << i<<"_SE3";
                 spaceSE3[i]->setName(sstm.str());
 
@@ -392,6 +355,7 @@ namespace libPlanner {
             {
                 //create the Rn state space
                 spaceRn[i] = ((ob::StateSpacePtr) new omplplanner::weigthedRealVectorStateSpace(nj));
+                sstm.str("");
                 sstm << "ssRobot" << i<<"_Rn";
                 spaceRn[i]->setName(sstm.str());
 
@@ -429,8 +393,6 @@ namespace libPlanner {
 
         //The classes derived from this omplplanner class will create a planner,
         //the simplesetup and call the setStateValididyChecker function
-
-
     }
 
 	//! void destructor
@@ -465,12 +427,12 @@ namespace libPlanner {
       return true;
     }
 
-  	
+
+    //! This function sets the SoSeparator to draw a 2D configuration space
     SoSeparator *omplcPlanner::getIvCspaceScene()
     {
         if(_wkSpace->getDimension()<=3)
         {
-            //_sceneCspace = ((IVWorkSpace*)_wkSpace)->getIvScene();
             _sceneCspace = new SoSeparator();
         }
         else _sceneCspace=NULL;
@@ -484,7 +446,7 @@ namespace libPlanner {
     {
         if(_sceneCspace==NULL) return;
 
-        if(_wkSpace->getDimension()<=2)
+        if(_wkSpace->getDimension()<=3)
         {
             if(_wkSpace->getRobot(0)->isSE3Enabled())
                 drawCspaceSE3();
@@ -797,7 +759,6 @@ namespace libPlanner {
             _sceneCspace->addChild(pathsep);
         }
 
-
         //draw floor
         SoSeparator *floorsep = new SoSeparator();
         SoCube *cs = new SoCube();
@@ -818,8 +779,6 @@ namespace libPlanner {
         floorsep->addChild(cub_transf);
         floorsep->addChild(cs);
         _sceneCspace->addChild(floorsep);
-
-
     }
 
 
@@ -976,91 +935,89 @@ namespace libPlanner {
     }
 
 	//! function to find a solution path
-        bool omplcPlanner::trySolve()
-		{
-            //Start state: convert from smp to scoped state
-            ob::ScopedState<ob::CompoundStateSpace> startompl(space);
-            smp2omplScopedState(_init, &startompl);
-            cout<<"startompl:"<<endl;
-            startompl.print();
+    bool omplcPlanner::trySolve()
+    {
+        //Start state: convert from smp to scoped state
+        ob::ScopedState<ob::CompoundStateSpace> startompl(space);
+        smp2omplScopedState(_init, &startompl);
+        cout<<"startompl:"<<endl;
+        startompl.print();
 
-            //Goal state: convert from smp to scoped state
-             ob::ScopedState<ob::CompoundStateSpace> goalompl(space);
-             smp2omplScopedState(_goal, &goalompl);
-             cout<<"goalompl:"<<endl;
-             goalompl.print();
+        //Goal state: convert from smp to scoped state
+        ob::ScopedState<ob::CompoundStateSpace> goalompl(space);
+        smp2omplScopedState(_goal, &goalompl);
+        cout<<"goalompl:"<<endl;
+        goalompl.print();
 
-             // set the start and goal states
-             //TODO: verificar 0.01
-            ss->setStartAndGoalStates(startompl, goalompl, 0.01);//0.05);
+        // set the start and goal states
+        // set a threshold to reach the goal - should it be set as a planner parameter?
+        ss->setStartAndGoalStates(startompl, goalompl, 0.01);
 
-            // attempt to solve the problem within _planningTime seconds of planning time
-            ss->clear();//to remove previous solutions, if any
-            ss->getPlanner()->clear();
-            ob::PlannerStatus solved = ss->solve(_planningTime);
-            //UNKNOWN = 0,
-            //INVALID_START,
-            //INVALID_GOAL,
-            //UNRECOGNIZED_GOAL_TYPE,
-            //TIMEOUT,
-            //APPROXIMATE_SOLUTION,
-            //EXACT_SOLUTION,
-            //CRASH,
-            //TYPE_COUNT
+        // attempt to solve the problem within _planningTime seconds of planning time
+        ss->clear();//to remove previous solutions, if any
+        ss->getPlanner()->clear();
+        ob::PlannerStatus solved = ss->solve(_planningTime);
+        //UNKNOWN = 0,
+        //INVALID_START,
+        //INVALID_GOAL,
+        //UNRECOGNIZED_GOAL_TYPE,
+        //TIMEOUT,
+        //APPROXIMATE_SOLUTION,
+        //EXACT_SOLUTION,
+        //CRASH,
+        //TYPE_COUNT
 
-            ss->print();
+         ss->print();
 
-            //retrieve all the states. Load the SampleSet _samples
-            Sample *smp;
-            ob::PlannerData data(ss->getSpaceInformation());
-            ss->getPlannerData(data);
-            for(int i=0; i<data.numVertices();i++)
-            {
-                   smp=new Sample(_wkSpace->getDimension());
-                   smp->setMappedConf(_init->getMappedConf());//copy the conf of the start smp
-                   omplState2smp(data.getVertex(i).getState(), smp);
-                   _samples->add(smp);
+        //retrieve all the states. Load the SampleSet _samples
+        Sample *smp;
+        ob::PlannerData data(ss->getSpaceInformation());
+        ss->getPlannerData(data);
+        int imax = data.numVertices();
+        for(int i=0; i<imax;i++)
+        {
+             smp=new Sample(_wkSpace->getDimension());
+             smp->setMappedConf(_init->getMappedConf());//copy the conf of the start smp
+             omplState2smp(data.getVertex(i).getState(), smp);
+             _samples->add(smp);
+        }
+
+        if (solved)
+        {
+             std::cout << "Found solution (solved=<<"<<solved.asString()<<"):" << std::endl;
+             // print the path to screen
+             std::cout << "Geomeric Path solution:" << std::endl;
+             ss->getSolutionPath().asGeometric().print(std::cout);
+             std::cout << "Control Path solution:" << std::endl;
+             ss->getSolutionPath().print(std::cout);
+
+             //retrieve the geometric path
+             std::vector< ob::State * > & pathstates = ss->getSolutionPath().asGeometric().getStates();
+
+             Sample *smp;
+             _path.clear();
+             clearSimulationPath();
+             int l = ss->getSolutionPath().asGeometric().getStateCount();
+
+             //load the kautham _path variable from the ompl solution
+             for(int j=0;j<l;j++){
+                 //create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
+                 smp=new Sample(_wkSpace->getDimension());
+                 smp->setMappedConf(_init->getMappedConf());
+                 //convert form state to smp
+                 omplState2smp(ss->getSolutionPath().asGeometric().getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
+
+                 _path.push_back(smp);
+               }
+               _solved = true;
+               drawCspace();
+               return _solved;
             }
-
-            if (solved)
-            {
-                    std::cout << "Found solution (solved=<<"<<solved.asString()<<"):" << std::endl;
-                    // print the path to screen
-                    std::cout << "Geomeric Path solution:" << std::endl;
-                    ss->getSolutionPath().asGeometric().print(std::cout);
-                    std::cout << "Control Path solution:" << std::endl;
-                    ss->getSolutionPath().print(std::cout);
-
-
-                    std::vector< ob::State * > & pathstates = ss->getSolutionPath().asGeometric().getStates();
-                    ob::ScopedState<ob::CompoundStateSpace> pathscopedstate(space);
-
-                    Sample *smp;
-
-                    _path.clear();
-                    clearSimulationPath();
-                    int l = ss->getSolutionPath().asGeometric().getStateCount();
-
-                    //load the kautham _path variable from the ompl solution
-                    for(int j=0;j<l;j++){
-                        //create a scoped state
-                        pathscopedstate = (*pathstates[j]->as<ob::CompoundStateSpace::StateType>());
-                        //create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
-                        smp=new Sample(_wkSpace->getDimension());
-                        smp->setMappedConf(_init->getMappedConf());
-                        //convert form scoped state to smp
-                        omplScopedState2smp(pathscopedstate,smp);
-                        _path.push_back(smp);
-                   }
-                    _solved = true;
-                    drawCspace();
-                    return _solved;
-                }
-                else{
-                    std::cout << "No solution found (solved=<<"<<solved.asString()<<")" << std::endl;
-                    _solved = false;
-                    drawCspace();
-                    return _solved;
+            else{
+                std::cout << "No solution found (solved=<<"<<solved.asString()<<")" << std::endl;
+                _solved = false;
+                drawCspace();
+                return _solved;
             }
 		}
     }

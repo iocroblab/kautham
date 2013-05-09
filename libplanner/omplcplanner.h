@@ -41,8 +41,6 @@
 #if !defined(_omplcPLANNER_H)
 #define _omplcPLANNER_H
 
-
-
 #if defined(KAUTHAM_USE_OMPL)
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/geometric/SimpleSetup.h>
@@ -61,7 +59,6 @@ namespace oc = ompl::control;
 
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
-//#include "localplanner.h"
 #include "planner.h"
 
 
@@ -69,31 +66,131 @@ using namespace std;
 using namespace libSampling;
 
 
-
 namespace libPlanner {
   namespace omplcplanner{
 
-
-    //Auxiliar functions
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //AUXILIAR Functions
     bool isStateValid(const oc::SpaceInformation *si, const ob::State *state, Planner *p);
 
 
-    //Class KinematicRobotModel
-    /// Model defining the motion of the robot
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class KinematicRobotModel
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //! This class represents the motion of the robot
+    //! The derived classes should reimplement the operator() that defines qdot = f(q, u)
     class KinematicRobotModel
     {
     public:
-        KinematicRobotModel(const ob::StateSpace *space);
+        KinematicRobotModel(const ob::StateSpacePtr space);
         virtual void operator()(const ob::State *state, const oc::Control *control, std::valarray<double> &dstate) const;
         void update(ob::State *state, const std::valarray<double> &dstate) const;
         void setParameter(int i, double d);
         double getParameter(int i);
     protected:
-        const ob::StateSpace *space_;
+        //const ob::StateSpace *space_;
+        const ob::StateSpacePtr space_;
         vector<double> param_;
     };
 
-    //Class omplcPlanner
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class EulerIntegrator
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //! This class is a simple integrator (Euclidean method)
+    //! It is a template class, and the ode used is defined by F.
+    template<typename F>
+    class EulerIntegrator
+    {
+    public:
+        EulerIntegrator(const ob::StateSpacePtr space, double timeStep) : space_(space), timeStep_(timeStep), ode_(space)
+        {
+        }
+
+        void propagate(const ob::State *start, const oc::Control *control, const double duration, ob::State *result) const
+        {
+            double t = timeStep_;
+            std::valarray<double> dstate;
+            space_->copyState(result, start);
+            //integrates during a while (defined by the duration parameter)
+            while (t < duration + std::numeric_limits<double>::epsilon())
+            {
+                //qdot = f(q, u). From result(q), apply control(u) to obtain the increment dstate (qdot)
+                ode_(result, control, dstate);
+                //update, i.e. y(n+1) = y(n) + d, where d is a fraction of the computed dstate (e.g. timeStep_ = 0.001)
+                ode_.update(result, timeStep_ * dstate);
+                t += timeStep_;
+            }
+            if (t + std::numeric_limits<double>::epsilon() > duration)
+            {
+                ode_(result, control, dstate);
+                ode_.update(result, (t - duration) * dstate);
+            }
+        }
+
+        double getTimeStep(void) const
+        {
+            return timeStep_;
+        }
+
+        void setTimeStep(double timeStep)
+        {
+            timeStep_ = timeStep;
+        }
+
+        F* getOde()
+        {
+            return &ode_;
+        }
+
+    private:
+        const ob::StateSpacePtr space_;
+        double timeStep_;
+        F  ode_;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class omplcPlannerStatePropagator
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //! This class implements the state propagator used for all the omplcPlanners.
+    //! It used the EulerIntegrator class to define an integrator for the propagate function.
+    //! It derives from the oc::StatePropagator and includes some functions to set and get the integration time step.
+    template<typename KinModel>
+    class omplcPlannerStatePropagator : public oc::StatePropagator
+    {
+    public:
+        omplcPlannerStatePropagator(const oc::SpaceInformationPtr &si) : oc::StatePropagator(si),
+                                                                 integrator_(si->getStateSpace(), 0.0)
+        {
+        }
+
+        void propagate(const ob::State *state, const oc::Control* control, const double duration, ob::State *result) const
+        {
+            integrator_.propagate(state, control, duration, result);
+        }
+
+        void setIntegrationTimeStep(double timeStep)
+        {
+            integrator_.setTimeStep(timeStep);
+        }
+
+        double getIntegrationTimeStep(void) const
+        {
+            return integrator_.getTimeStep();
+        }
+
+        EulerIntegrator<KinModel> *getIntegrator()
+        {
+            return &integrator_;
+        }
+
+    private:
+        EulerIntegrator<KinModel> integrator_;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // Class omplcPlanner
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //! This class is the base class for all the kautham planners that use the ompl::control planners.
     class omplcPlanner:public Planner {
 	    public:
         omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
@@ -117,11 +214,9 @@ namespace libPlanner {
 		//Add protected data and functions
         KthReal _planningTime;
 
-
         oc::SimpleSetupPtr ss;
         ob::StateSpacePtr space;
         oc::ControlSpacePtr spacec;
-
 
 	    private:
 		//Add private data and functions

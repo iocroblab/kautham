@@ -38,8 +38,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
- 
 
 #if defined(KAUTHAM_USE_OMPL)
 #include <libproblem/workspace.h>
@@ -51,20 +49,23 @@
 #include "omplcRRTcarplanner.h"
 
 
-
-
 using namespace libSampling;
 
 namespace libPlanner {
   namespace omplcplanner{
 
 
-  /// Model defining the motion of the robot
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Class KinematicCarModel
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //! This class derives from KinematicRobotModel and reimplements the operator() function that
+  //! defines the qdot = f(q, u) equations of a car
   class KinematicCarModel : public KinematicRobotModel
   {
   public:
 
-      KinematicCarModel(const ob::StateSpace *space) : KinematicRobotModel(space)
+      /// Constructor
+      KinematicCarModel(const ob::StateSpacePtr space) : KinematicRobotModel(space)
       {
           param_.resize(1);
       }
@@ -72,115 +73,68 @@ namespace libPlanner {
       /// implement the function describing the robot motion: qdot = f(q, u)
       void operator()(const ob::State *state, const oc::Control *control, std::valarray<double> &dstate) const
       {
-          const double *u = control->as<oc::RealVectorControlSpace::ControlType>()->values;
-          const double theta = state->as<ob::RealVectorStateSpace::StateType>()->values[2];
-          //const double theta = state->as<ob::SE2StateSpace::StateType>()->getYaw();
+          //Call the parent operator to resize the dstate
+          KinematicRobotModel::operator()(state,  control, dstate);
 
-          dstate.resize(3);
-          dstate[0] = u[0] * cos(theta*2*M_PI);
-          dstate[1] = u[0] * sin(theta*2*M_PI);
-          dstate[2] = u[0] * tan(u[1]*2*M_PI) / getCarLength();
+          //Get the control values
+          const double *u = control->as<oc::RealVectorControlSpace::ControlType>()->values;
+
+          //Get the subspace corresponding to robot 0
+          ob::StateSpacePtr ssRobot0 = ((ob::StateSpacePtr) space_->as<ob::CompoundStateSpace>()->getSubspace(0));
+
+          //Get the SE3 subspace of robot 0
+          ob::StateSpacePtr ssRobot0SE3 =  ((ob::StateSpacePtr) ssRobot0->as<ob::CompoundStateSpace>()->getSubspace(0));
+
+          //Retrieve the SE3 configuration
+          ob::ScopedState<ob::SE3StateSpace> pathscopedstatese3(ssRobot0SE3);
+          ob::ScopedState<ob::CompoundStateSpace> sstate(space_);
+          sstate = *state;
+          sstate >> pathscopedstatese3;
+
+          //Get the current orientation (theta)
+          mt::Rotation ori(pathscopedstatese3->rotation().x,
+                           pathscopedstatese3->rotation().y,
+                           pathscopedstatese3->rotation().z,
+                           pathscopedstatese3->rotation().w);
+          mt::Unit3 axis;
+          float theta;
+          ori.getAxisAngle(axis, theta);
+          //correct theta since axis may be (0,0,1) or (0,0,-1)!
+          //this assures that theta is a rotation along the positive z-axis:
+          theta = axis[2]*theta;
+
+          //computes dstate, the se3 incremental motion
+          //translation
+          dstate[0] = u[0] * cos(theta+M_PI/2);//the +M_PI/2 is to move along the y axis when angle is zero
+          dstate[1] = u[0] * sin(theta+M_PI/2);
+          dstate[2] = 0;
+          //rotation: axis-angle
+          dstate[3] = 0.0; //rotation along the z-axis
+          dstate[4] = 0.0;
+          dstate[5] = 1.0;
+          dstate[6] = u[0] * tan(u[1]) / cl;//u[1]
       }
 
+      /// Sets the car length
       void setCarLength(double d)
       {
           setParameter(0, d);
+          cl = d;
       }
+
+      /// Gets the car length
       double getCarLength()
       {
           return getParameter(0);
       }
    private:
+      double cl;
   };
 
 
-  /// Simple integrator: Euclidean method
-  template<typename F>
-  class EulerIntegrator
-  {
-  public:
-
-      EulerIntegrator(const ob::StateSpace *space, double timeStep) : space_(space), timeStep_(timeStep), ode_(space)
-      {
-      }
-
-      void propagate(const ob::State *start, const oc::Control *control, const double duration, ob::State *result) const
-      {
-          double t = timeStep_;
-          std::valarray<double> dstate;
-          space_->copyState(result, start);
-          while (t < duration + std::numeric_limits<double>::epsilon())
-          {
-              ode_(result, control, dstate);
-              ode_.update(result, timeStep_ * dstate);
-              t += timeStep_;
-          }
-          if (t + std::numeric_limits<double>::epsilon() > duration)
-          {
-              ode_(result, control, dstate);
-              ode_.update(result, (t - duration) * dstate);
-          }
-      }
-
-      double getTimeStep(void) const
-      {
-          return timeStep_;
-      }
-
-      void setTimeStep(double timeStep)
-      {
-          timeStep_ = timeStep;
-      }
-
-      F* getOde()
-      {
-          return &ode_;
-      }
-
-  private:
-
-      const ob::StateSpace *space_;
-      double                   timeStep_;
-      F                        ode_;
-
-  };
-
-
-
-
-
-  class DemoStatePropagator : public oc::StatePropagator
-  {
-  public:
-
-      DemoStatePropagator(const oc::SpaceInformationPtr &si) : oc::StatePropagator(si),
-                                                               integrator_(si->getStateSpace().get(), 0.0)
-      {
-      }
-
-      virtual void propagate(const ob::State *state, const oc::Control* control, const double duration, ob::State *result) const
-      {
-          integrator_.propagate(state, control, duration, result);
-      }
-
-      void setIntegrationTimeStep(double timeStep)
-      {
-          integrator_.setTimeStep(timeStep);
-      }
-
-      double getIntegrationTimeStep(void) const
-      {
-          return integrator_.getTimeStep();
-      }
-
-      EulerIntegrator<KinematicCarModel> *getIntegrator()
-      {
-          return &integrator_;
-      }
-
-      EulerIntegrator<KinematicCarModel> integrator_;
-  };
-
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // omplcRRTcarPlanner functions
+  /////////////////////////////////////////////////////////////////////////////////////////////////
 	//! Constructor
     omplcRRTcarPlanner::omplcRRTcarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               omplcPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
@@ -188,28 +142,14 @@ namespace libPlanner {
         _guiName = "ompl cRRT Planner";
         _idName = "omplcRRTcar";
 
-  // construct the state space we are planning in
- // space =  ((ob::StateSpacePtr) new ob::SE2StateSpace());
-
-  // set the bounds for the R^2 part of SE(2)
-  //ob::RealVectorBounds bounds(2);
-  //bounds.setLow(0);
-  //bounds.setHigh(1);
-
-  //space->as<ob::SE2StateSpace>()->setBounds(bounds);
-
-
         // create a control space
-        //spacec = ((oc::ControlSpacePtr) new DemoControlSpace(space));
-
         int numcontrols = 2;
         spacec = ((oc::ControlSpacePtr) new oc::RealVectorControlSpace(space, numcontrols));
 
-
         // set the bounds for the control space
-        _controlBound_Tras = 0.3;
-        _controlBound_Rot = 0.03;
-        _onlyForward = 1;
+        _controlBound_Tras = 30;
+        _controlBound_Rot = 0.3;
+        _onlyForward = 0;
         addParameter("ControlBound_Tras", _controlBound_Tras);
         addParameter("ControlBound_Rot", _controlBound_Rot);
         addParameter("OnlyForward (0/1)", _onlyForward);
@@ -228,35 +168,38 @@ namespace libPlanner {
 
         // set the propagation routine for this space
         oc::SpaceInformationPtr si=ss->getSpaceInformation();
-        ss->setStatePropagator(oc::StatePropagatorPtr(new DemoStatePropagator(si)));
+        KinematicCarModel *p = new KinematicCarModel(space);
+        ss->setStatePropagator(oc::StatePropagatorPtr(new omplcPlannerStatePropagator<KinematicCarModel>(si)));
 
         // propagation step size
         _propagationStepSize = 0.01;
         _duration = 1;
         addParameter("PropagationStepSize", _propagationStepSize);
         addParameter("Duration", _duration);
-        static_cast<DemoStatePropagator*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
+        static_cast<omplcPlannerStatePropagator<KinematicCarModel>*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
         si->setPropagationStepSize(_propagationStepSize*_duration);
 
         //carLength
         _carLength = 0.2;
         addParameter("CarLength", _carLength);
-        static_cast<DemoStatePropagator*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setCarLength(_carLength);
-
+        static_cast<omplcPlannerStatePropagator<KinematicCarModel>*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setCarLength(_carLength);
 
         // create a planner for the defined space
         ob::PlannerPtr planner(new oc::RRT(si));
-        ss->setPlanner(planner);
 
+        //set RRT Ggoal Bias
         _GoalBias=(planner->as<oc::RRT>())->getGoalBias();
         addParameter("Goal Bias", _GoalBias);
-        ss->getPlanner()->as<oc::RRT>()->setGoalBias(_GoalBias);
+        planner->as<oc::RRT>()->setGoalBias(_GoalBias);
+
+        //set the planner
+        ss->setPlanner(planner);
 
         //kautham step size used when discretizing the path for visualizatuin,
         //set very big, then simulatuionpath = path. This is ok since this planner generates a fine discretization path
-        //and in this way we aviod interpolating orientations when moving form e.g. 2º to -1º=359º.
+        //and in this way we avoid interpolating orientations when moving form e.g. 2º to -1º=359º.
         _stepSize = 10000;
-
+        removeParameter("Step Size");
     }
 
 	//! void destructor
@@ -277,88 +220,70 @@ namespace libPlanner {
         else
           return false;
 
-        it = _parameters.find("Goal Bias");
-                if(it != _parameters.end()){
-                    _GoalBias = it->second;
-                    ss->getPlanner()->as<oc::RRT>()->setGoalBias(_GoalBias);
-                }
-                else
-                  return false;
+     it = _parameters.find("CarLength");
+     if(it != _parameters.end()){
+          _carLength = it->second;
+          static_cast<omplcPlannerStatePropagator<KinematicCarModel>*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setCarLength(_carLength);
+      }
+      else
+         return false;
 
-
-
-        it = _parameters.find("Duration");
-            if(it != _parameters.end()){
-                _duration = it->second;
-                ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize*_duration);
-            }
-            else
-                return false;
+     it = _parameters.find("Duration");
+     if(it != _parameters.end()){
+         _duration = it->second;
+         ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize*_duration);
+      }
+      else
+         return false;
 
        it = _parameters.find("PropagationStepSize");
-                if(it != _parameters.end()){
-                     _propagationStepSize = it->second;
-                     static_cast<DemoStatePropagator*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
-                     ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize*_duration);
-                }
-                else
-                    return false;
-
-       it = _parameters.find("CarLength");
-                if(it != _parameters.end()){
-                    _carLength = it->second;
-                    static_cast<DemoStatePropagator*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setCarLength(_carLength);
-
-                }
-                else
-                    return false;
-
-
-
-
+       if(it != _parameters.end()){
+           _propagationStepSize = it->second;
+           static_cast<omplcPlannerStatePropagator<KinematicCarModel>*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
+           ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize*_duration);
+        }
+        else
+           return false;
 
         it = _parameters.find("ControlBound_Tras");
-                if(it != _parameters.end()){
-                             _controlBound_Tras = it->second;
-                             ob::RealVectorBounds cbounds(2);
-                             cbounds.setLow(0, - _controlBound_Tras * (1 - _onlyForward));
-                             cbounds.setHigh(0, _controlBound_Tras);
-                             cbounds.setLow(1, -_controlBound_Rot);
-                             cbounds.setHigh(1, _controlBound_Rot);
-                             spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
-                }
-                else
-                   return false;
+        if(it != _parameters.end()){
+            _controlBound_Tras = it->second;
+            ob::RealVectorBounds cbounds(2);
+            cbounds.setLow(0, - _controlBound_Tras * (1 - _onlyForward));
+            cbounds.setHigh(0, _controlBound_Tras);
+            cbounds.setLow(1, -_controlBound_Rot);
+            cbounds.setHigh(1, _controlBound_Rot);
+            spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
+         }
+         else
+            return false;
 
         it = _parameters.find("ControlBound_Rot");
-               if(it != _parameters.end()){
-                      _controlBound_Rot = it->second;
-                      ob::RealVectorBounds cbounds(2);
-                      cbounds.setLow(0, - _controlBound_Tras * (1 - _onlyForward));
-                      cbounds.setHigh(0, _controlBound_Tras);
-                      cbounds.setLow(1, -_controlBound_Rot);
-                      cbounds.setHigh(1, _controlBound_Rot);
-                      spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
-                }
-                else
-                   return false;
+        if(it != _parameters.end()){
+              _controlBound_Rot = it->second;
+              ob::RealVectorBounds cbounds(2);
+              cbounds.setLow(0, - _controlBound_Tras * (1 - _onlyForward));
+              cbounds.setHigh(0, _controlBound_Tras);
+              cbounds.setLow(1, -_controlBound_Rot);
+              cbounds.setHigh(1, _controlBound_Rot);
+              spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
+         }
+         else
+            return false;
 
         it = _parameters.find("OnlyForward (0/1)");
-                if(it != _parameters.end()){
-                    if(it->second != 0) _onlyForward=1;
-                    else _onlyForward=0;
-
-                    ob::RealVectorBounds cbounds(2);
-                    cbounds.setLow(0, - _controlBound_Tras * (1 - _onlyForward));
-                    cbounds.setHigh(0, _controlBound_Tras);
-                    cbounds.setLow(1, -_controlBound_Rot);
-                    cbounds.setHigh(1, _controlBound_Rot);
-                    spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
-                }
-                else
-                   return false;
-
-
+        if(it != _parameters.end()){
+               if(it->second != 0) _onlyForward=1;
+               else _onlyForward=0;
+               ob::RealVectorBounds cbounds(2);
+               cbounds.setLow(0, - _controlBound_Tras * (1 - _onlyForward));
+               cbounds.setHigh(0, _controlBound_Tras);
+               cbounds.setLow(1, -_controlBound_Rot);
+               cbounds.setHigh(1, _controlBound_Rot);
+               spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
+          }
+          else
+             return false;
 
       }catch(...){
         return false;
@@ -367,6 +292,5 @@ namespace libPlanner {
     }
   }
 }
-
 
 #endif // KAUTHAM_USE_OMPL

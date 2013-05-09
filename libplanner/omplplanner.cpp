@@ -280,7 +280,7 @@ namespace libPlanner {
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  //! This function converts smp a state to a smp and tests if it is in collision or not
+  //! This function converts a state to a smp and tests if it is in collision or not
   bool isStateValid(const ob::State *state, Planner *p)
   {
       //create sample
@@ -1018,7 +1018,6 @@ namespace libPlanner {
                 ss->simplifySolution();
                 ss->getSolutionPath().print(std::cout);
                 std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
-                ob::ScopedState<ob::CompoundStateSpace> pathscopedstate(space);
 
                 Sample *smp;
 
@@ -1027,13 +1026,12 @@ namespace libPlanner {
 
                //load the kautham _path variable from the ompl solution
                 for(int j=0;j<ss->getSolutionPath().getStateCount();j++){
-                    //create a scoped state
-                    pathscopedstate = (*pathstates[j]->as<ob::CompoundStateSpace::StateType>());
-                    //create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
+                   //create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
                     smp=new Sample(_wkSpace->getDimension());
                     smp->setMappedConf(_init->getMappedConf());
-                    //convert form scoped state to smp
-                    omplScopedState2smp(pathscopedstate,smp);
+                    //convert form state to smp
+                    omplState2smp(ss->getSolutionPath().getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
+
                     _path.push_back(smp);
                 }
                 _solved = true;

@@ -21,18 +21,18 @@
                  <Parameters>
                     <Name>omplcRRTcar</Name>
                     <LocalPlanner stepSize="1">Linear</LocalPlanner>
-                    <Parameter name="Max Planning Time">10.0</Parameter>
+                    <Parameter name="Max Planning Time">3.0</Parameter>
                     <Parameter name="Speed Factor">10</Parameter>
                     <Parameter name="PropagationStepSize">0.01</Parameter>
                     <Parameter name="Duration">2</Parameter>
-                    <Parameter name="ControlBound_Tras">0.25</Parameter>
-                    <Parameter name="ControlBound_Rot">0.025</Parameter>
-                    <Parameter name="OnlyForward">1</Parameter>
-                    <Parameter name="CarLength">0.2</Parameter>
+                    <Parameter name="ControlBound_Tras">25</Parameter>
+                    <Parameter name="ControlBound_Rot">1.0</Parameter>
+                    <Parameter name="OnlyForward (0/1)">1</Parameter>
+                    <Parameter name="CarLength">20</Parameter>
                 </Parameters>
 		<Queries>
                         <Query>
-                        <Init dim="3">0.9 0.1 0.25</Init>
+                        <Init dim="3">0.8 0.1 0.25</Init>
                         <Goal dim="3">0.6 0.8 0.75</Goal>
 			</Query>
 		</Queries>
