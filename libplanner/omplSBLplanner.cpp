@@ -90,7 +90,10 @@ namespace libPlanner {
         //pmat = new ob::ProjectionMatrix;
         //pmat->ComputeRandom(2,1);
         ob::ProjectionEvaluatorPtr pe = ((ob::ProjectionEvaluatorPtr) new ob::RealVectorRandomLinearProjectionEvaluator(space,2));
-        ob::ProjectionEvaluatorPtr pe2 = ((ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0));
+
+        ob::ProjectionEvaluatorPtr pe2 = ((ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0),pe);
+
+        ob::ProjectionEvaluatorPtr pe3 = ((ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0),pe2);
 
          planner->as<og::SBL>()->setProjectionEvaluator(pe2);
 
