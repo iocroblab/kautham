@@ -63,7 +63,7 @@ using namespace libSampling;
 namespace libPlanner {
   namespace omplplannerV1{
 
-  bool isStateValid(const ob::State *state, Planner *p)//, Sample *smp)
+  bool isStateValid(const ob::SpaceInformation *si, const ob::State *state, Planner *p)//, Sample *smp)
   {
       const ob::RealVectorStateSpace::StateType *R2state = state->as<ob::RealVectorStateSpace::StateType>();
       int d = p->wkSpace()->getDimension();
@@ -73,7 +73,8 @@ namespace libPlanner {
       for(int i=0;i<d;i++)
         coords[i] = R2state->values[i];
       smp->setCoords(coords);
-      if( p->wkSpace()->collisionCheck(smp) )
+      if(  si->satisfiesBounds(state)==false | p->wkSpace()->collisionCheck(smp) )
+     // if( p->wkSpace()->collisionCheck(smp) )
           return false;
       return true;
   }

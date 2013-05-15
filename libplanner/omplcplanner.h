@@ -116,6 +116,12 @@ namespace libPlanner {
             {
                 //qdot = f(q, u). From result(q), apply control(u) to obtain the increment dstate (qdot)
                 ode_(result, control, dstate);
+
+                /**/
+                const double *u = control->as<oc::RealVectorControlSpace::ControlType>()->values;
+
+
+                /**/
                 //update, i.e. y(n+1) = y(n) + d, where d is a fraction of the computed dstate (e.g. timeStep_ = 0.001)
                 ode_.update(result, timeStep_ * dstate);
                 t += timeStep_;

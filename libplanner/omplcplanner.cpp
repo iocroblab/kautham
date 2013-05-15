@@ -80,6 +80,9 @@ namespace libPlanner {
   //! This function converts a state to a smp and tests if it is in collision or not
   bool isStateValid(const oc::SpaceInformation *si, const ob::State *state, Planner *p)
   {
+
+      if(  si->satisfiesBounds(state)==false )
+          return false;
       //create sample
       int d = p->wkSpace()->getDimension();
       Sample *smp = new Sample(d);
@@ -88,7 +91,7 @@ namespace libPlanner {
       //load the RobConf of smp form the values of the ompl::state
       ((omplcPlanner*)p)->omplState2smp(state,smp);
       //collision-check
-      if(  si->satisfiesBounds(state)==false | p->wkSpace()->collisionCheck(smp) )
+      if( p->wkSpace()->collisionCheck(smp) )
           return false;
       return true;
   }
@@ -197,9 +200,9 @@ namespace libPlanner {
                                      scopedstatese3->rotation().y,
                                      scopedstatese3->rotation().z,
                                      scopedstatese3->rotation().w);
-                    //mt::Unit3 axis0;
-                    //float angle0;
-                    //ori.getAxisAngle(axis0, angle0);
+                    mt::Unit3 axis0;
+                    float angle0;
+                    ori.getAxisAngle(axis0, angle0);
 
                     //rotation to apply
                     double ax = dstate[d++];
@@ -209,12 +212,29 @@ namespace libPlanner {
                     float angle = dstate[d++];
                     mt::Rotation rot(axis, angle);
 
+/*
+                    if(axis[0]!=1.0 && axis[1]!=0.0 && axis[2]!=0.0)
+                    {
+                        int k;
+                        k=0;
+                    }
+                    */
+
                     //update the orientation
                     mt::Rotation newori = rot*ori;
                     mt::Unit3 axis1;
                     float angle1;
                     newori.getAxisAngle(axis1, angle1);
                     newscopedstatese3->rotation().setAxisAngle(axis1[0],axis1[1],axis1[2],angle1);
+
+                    /*
+                    if(abs(axis0[0]-axis1[0])>0.001)
+                    {
+                        int k;
+                        k=0;
+                    }
+                    */
+
 
                     //load the global scoped state with the info of the se3 data of robot i
                     newsstate<<newscopedstatese3;
@@ -973,6 +993,7 @@ namespace libPlanner {
         Sample *smp;
         ob::PlannerData data(ss->getSpaceInformation());
         ss->getPlannerData(data);
+        /*
         int imax = data.numVertices();
         for(int i=0; i<imax;i++)
         {
@@ -981,6 +1002,7 @@ namespace libPlanner {
              omplState2smp(data.getVertex(i).getState(), smp);
              _samples->add(smp);
         }
+        */
 
         if (solved)
         {
@@ -1008,6 +1030,7 @@ namespace libPlanner {
                  omplState2smp(ss->getSolutionPath().asGeometric().getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
 
                  _path.push_back(smp);
+                 //_samples->add(smp);
                }
                _solved = true;
                drawCspace();

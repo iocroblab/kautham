@@ -96,18 +96,28 @@ namespace libPlanner {
                            pathscopedstatese3->rotation().y,
                            pathscopedstatese3->rotation().z,
                            pathscopedstatese3->rotation().w);
+
+
+          //computes dstate, the se3 incremental motion
+          //translation
+          mt::Vector3 advance(0.0,u[0], 0.0);//we move along the y axis when angle is zero
+          mt::Vector3 v = ori(advance);
+          dstate[0] = v[0];
+          dstate[1] = v[1];
+          dstate[2] = v[2];
+          /*
           mt::Unit3 axis;
           float theta;
           ori.getAxisAngle(axis, theta);
           //correct theta since axis may be (0,0,1) or (0,0,-1)!
           //this assures that theta is a rotation along the positive z-axis:
           theta = axis[2]*theta;
-
-          //computes dstate, the se3 incremental motion
-          //translation
           dstate[0] = u[0] * cos(theta+M_PI/2);//the +M_PI/2 is to move along the y axis when angle is zero
           dstate[1] = u[0] * sin(theta+M_PI/2);
           dstate[2] = 0;
+          */
+
+
           //rotation: axis-angle
           dstate[3] = 0.0; //rotation along the z-axis
           dstate[4] = 0.0;

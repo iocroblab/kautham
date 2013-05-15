@@ -67,7 +67,7 @@ using namespace libSampling;
 namespace libPlanner {
   namespace omplplannerV1{
 
-    bool isStateValid(const ob::State *state, Planner *p);
+    bool isStateValid(const ob::SpaceInformation *si, const ob::State *state, Planner *p);
 
     class omplPlannerV1:public Planner {
 	    public:

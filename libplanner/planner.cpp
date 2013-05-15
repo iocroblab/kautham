@@ -175,7 +175,9 @@ namespace libPlanner{
         if(_path.size() >= 2 ){     
           for(unsigned i = 0; i < _path.size()-1; i++){
             dist = wkSpace()->distanceBetweenSamples(*_path.at(i), *_path.at(i+1), Kautham::CONFIGSPACE);
-		        maxsteps = (int)(dist/_stepSize) + 2; //the 2 is necessary to always reduce the distance...???
+
+                //maxsteps = (int)(dist/_stepSize) + 2; //the 2 is necessary to always reduce the distance...???
+                maxsteps = (int)(dist/_stepSize) + 1;
 			  
                 //if(maxsteps>100)
                 //{

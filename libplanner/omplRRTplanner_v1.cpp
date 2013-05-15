@@ -65,8 +65,8 @@ namespace libPlanner {
         _idName = "omplRRTV1";
 
         ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
-        ss->setStateValidityChecker(boost::bind(&omplplannerV1::isStateValid, _1, (Planner*)this));
         ob::SpaceInformationPtr si=ss->getSpaceInformation();
+        ss->setStateValidityChecker(boost::bind(&omplplannerV1::isStateValid, si.get(),_1, (Planner*)this));
 
 
         //si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));

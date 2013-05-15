@@ -71,7 +71,7 @@ namespace libPlanner {
   //AUXILIAR Functions
     ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p);
     ob::ValidStateSamplerPtr allocValidStateSampler(const ob::SpaceInformation *si, Planner *p);
-    bool isStateValid(const ob::State *state, Planner *p);
+    bool isStateValid(const ob::SpaceInformation *si, const ob::State *state, Planner *p);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // Class weigthedRealVectorStateSpace
@@ -104,6 +104,7 @@ namespace libPlanner {
       protected:
         ompl::RNG rng_; //random generator
         Planner *kauthamPlanner_; //pointer to planner in order to have access to the workspace
+        const ob::SpaceInformation *si_;
     };
 
 

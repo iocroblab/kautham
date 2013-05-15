@@ -227,6 +227,7 @@ namespace libPlanner {
       {
           name_ = "kautham sampler";
           kauthamPlanner_ = p;
+          si_ = si;
       }
 
       bool KauthamValidStateSampler::sample(ob::State *state)
@@ -248,15 +249,40 @@ namespace libPlanner {
 
           //return the stae in the parameter state and a bool telling if the smp is in collision or not
           ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
-          if( kauthamPlanner_->wkSpace()->collisionCheck(smp) )
+
+          if(  si_->satisfiesBounds(state)==false | kauthamPlanner_->wkSpace()->collisionCheck(smp) )
+          //if( kauthamPlanner_->wkSpace()->collisionCheck(smp) )
               return false;
           return true;
       }
       // We don't need this in the example below.
       bool KauthamValidStateSampler::sampleNear(ob::State *state, const ob::State *near, const double distance)
       {
-          throw ompl::Exception("KauthamValidStateSampler::sampleNear", "not implemented");
-          return false;
+          //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
+          int d = kauthamPlanner_->wkSpace()->getDimension();
+          vector<KthReal> coords(d);
+          for(int i=0;i<d;i++)
+            coords[i] = rng_.uniformReal(0,1.0);
+
+          //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+          Sample *smp = new Sample(d);
+          smp->setCoords(coords);
+          kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+
+          //convert from sample to scoped state
+          ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
+          ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
+
+          //return the stae in the parameter state and a bool telling if the smp is in collision or not
+          ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
+
+          if(  si_->satisfiesBounds(state)==false |
+               kauthamPlanner_->wkSpace()->collisionCheck(smp) |
+               ((omplPlanner*)kauthamPlanner_)->getSpace()->distance(state,near)>distance)
+              return false;
+          return true;
+          //throw ompl::Exception("KauthamValidStateSampler::sampleNear", "not implemented");
+          //return false;
       }
 
 
@@ -281,8 +307,11 @@ namespace libPlanner {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //! This function converts a state to a smp and tests if it is in collision or not
-  bool isStateValid(const ob::State *state, Planner *p)
+  bool isStateValid(const ob::SpaceInformation *si, const ob::State *state, Planner *p)
   {
+      //verify bounds
+      if(si->satisfiesBounds(state)==false)
+          return false;
       //create sample
       int d = p->wkSpace()->getDimension();
       Sample *smp = new Sample(d);
@@ -1003,6 +1032,7 @@ namespace libPlanner {
          Sample *smp;
          ob::PlannerData data(ss->getSpaceInformation());
          ss->getPlannerData(data);
+         /*
          for(int i=0; i<data.numVertices();i++)
          {
                 smp=new Sample(_wkSpace->getDimension());
@@ -1010,6 +1040,7 @@ namespace libPlanner {
                 omplState2smp(data.getVertex(i).getState(), smp);
                 _samples->add(smp);
          }
+         */
 
          if (solved)
          {
@@ -1033,6 +1064,7 @@ namespace libPlanner {
                     omplState2smp(ss->getSolutionPath().getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
 
                     _path.push_back(smp);
+                    _samples->add(smp);
                 }
                 _solved = true;
                 drawCspace();
