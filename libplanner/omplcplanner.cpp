@@ -1030,7 +1030,7 @@ namespace libPlanner {
                  omplState2smp(ss->getSolutionPath().asGeometric().getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
 
                  _path.push_back(smp);
-                 //_samples->add(smp);
+                 _samples->add(smp);
                }
                _solved = true;
                drawCspace();

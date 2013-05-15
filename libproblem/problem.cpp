@@ -52,6 +52,7 @@
 #include <libplanner/omplRRTplanner_v1.h>
 #include <libplanner/omplcRRTplanner.h>
 #include <libplanner/omplcRRTcarplanner.h>
+#include <libplanner/omplcRRTf16planner.h>
 #include <libplanner/omplcRRTcarplanner_v1.h>
 #include <libplanner/omplRRTConnectplanner.h>
 #include <libplanner/omplESTplanner.h>
@@ -595,6 +596,9 @@ namespace libProblem {
 
     else if(name == "omplcRRT")
       _planner = new libPlanner::omplcplanner::omplcRRTPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
+    else if(name == "omplcRRTf16")
+      _planner = new libPlanner::omplcplanner::omplcRRTf16Planner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
     else if(name == "omplcRRTcar")
       _planner = new libPlanner::omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, NULL, NULL,

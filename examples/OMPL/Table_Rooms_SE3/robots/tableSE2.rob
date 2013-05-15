@@ -5,7 +5,7 @@
   <WeightSE3 rho_t="1.0" rho_r="1.0"/>
   <Joints size="1">
     <Joint name="Base" ivFile="freeflying/table.iv">
-    <PreTrans X="0.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="90.0" ></PreTrans>
+    <PreTrans X="0.0" Y="30.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="90.0" ></PreTrans>
       <Description movable="true" ></Description>
     </Joint>
   </Joints>

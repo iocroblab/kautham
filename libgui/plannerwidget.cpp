@@ -43,6 +43,8 @@
  
 #include "plannerwidget.h"
 #include "gui.h"
+#include "libsampling/se3conf.h"
+#include "libsampling/robconf.h"
 
 
 namespace libGUI{
@@ -330,6 +332,15 @@ namespace libGUI{
         cout << c[i] << ", ";
 
 	    cout << endl;
+
+        if(smp->getMappedConf().size()!=0)
+        {
+            SE3Conf &s = smp->getMappedConf()[0].getSE3();
+            cout << s.getPos().at(0) << " ";
+            cout << s.getPos().at(1) << " ";
+            cout << s.getPos().at(2) << endl;
+
+        }
 
       // print neighbours
       //cout << "Neights: " ;

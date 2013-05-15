@@ -23,12 +23,12 @@
                     <LocalPlanner stepSize="1">Linear</LocalPlanner>
                     <Parameter name="Max Planning Time">3.0</Parameter>
                     <Parameter name="Speed Factor">10</Parameter>
-                    <Parameter name="PropagationStepSize">0.01</Parameter>
-                    <Parameter name="Duration">2</Parameter>
+                    <Parameter name="PropagationStepSize">0.002</Parameter>
+                    <Parameter name="Duration">10</Parameter>
                     <Parameter name="ControlBound_Tras">25</Parameter>
-                    <Parameter name="ControlBound_Rot">1.0</Parameter>
+                    <Parameter name="ControlBound_Rot">1.2</Parameter>
                     <Parameter name="OnlyForward (0/1)">1</Parameter>
-                    <Parameter name="CarLength">20</Parameter>
+                    <Parameter name="CarLength">48</Parameter>
                 </Parameters>
 		<Queries>
                         <Query>
