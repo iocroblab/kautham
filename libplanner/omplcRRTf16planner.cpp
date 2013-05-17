@@ -47,7 +47,6 @@
 #include <ompl/base/spaces/SE2StateSpace.h>
 
 #include "omplcRRTf16planner.h"
-#include "omplcRRT.h"
 
 
 using namespace libSampling;
