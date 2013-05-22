@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Problem name="" topology="SE3">
+
+  
+  <Robot robot="robots/Justin_PMD_Cilindro_Caja_cerrada_30.rob" scale="1.0"> 
+   <!--Robot Path-->
+	<Limits name="X" min="0.0" max="1000.0"></Limits>
+	<Limits name="Y" min="0.0" max="1000.0"></Limits>
+	<Limits name="Z" min="0.0" max="1000.0"></Limits>
+	<Limits name="WX" min="0.0" max="1.0"></Limits>
+	<Limits name="WY" min="0.0" max="1.0"></Limits>
+	<Limits name="WZ" min="0.0" max="1.0"></Limits>
+   	<Limits name="THETA" min="-360.0" max="360.0"></Limits>
+       	<Home TH="180.0" WZ="0.0" WY="1.0" WX="0.0" Z="0.0" Y="500.0" X="0.0" />
+  </Robot>
+
+  <Scene scene="scenes/IOC2.iv" scale="1.0"> 
+    <!--Scene Path-->
+    <Location TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="200.0" Y="-300.0" X="-1000.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/cangoal.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="480.0" Y="60.0" X="-250.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/cangoal.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="310.0" Y="60.0" X="-370.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/cangoal.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="470.0" Y="60.0" X="250.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/cangoal.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="310.0" Y="60.0" X="380.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+<Planner ProblemName="" Date="">
+	<Parameters>
+		<Name>PRM</Name>
+		<LocalPlanner stepSize="1">Linear</LocalPlanner>
+		<Parameter name="Drawn Path Link">-1</Parameter>
+		<Parameter name="Max. Neighs">10</Parameter>
+		<Parameter name="Max. Samples">2000</Parameter>
+		<Parameter name="Neigh Thresshold">5</Parameter>
+		<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
+		<Parameter name="Speed Factor">1</Parameter>
+		<Parameter name="Step Size">0.2</Parameter>
+	</Parameters>
+	
+	<Queries>
+		<Query>
+			<Init dim="12">0.5032 0.6475 0.5727 0.3778 0.6686 0.6644 0.4527 0.2845 0.5174 0.5834 0.356 0.01</Init>
+			<Goal dim="12">0.5328 0.5823 0.4733 0.5971 0.9474 0.8153 0.1402 0.7719 0.8214 -0.746 -0.0271 -0.1088</Goal>
+		</Query>
+	</Queries>
+
+</Planner>
+</Problem>
