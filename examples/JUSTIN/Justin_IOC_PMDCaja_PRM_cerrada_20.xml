@@ -33,7 +33,7 @@
 		<Parameter name="Drawn Path Link">-1</Parameter>
 		<Parameter name="Max. Neighs">10</Parameter>
 		<Parameter name="Max. Samples">2000</Parameter>
-		<Parameter name="Neigh Thresshold">1.5</Parameter>
+		<Parameter name="Neigh Thresshold">5</Parameter>
 		<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
 		<Parameter name="Speed Factor">1</Parameter>
 		<Parameter name="Step Size">0.2</Parameter>

@@ -33,8 +33,26 @@
     </Location>
   </Scene>
 
-  <Scene scene="scenes/transparentTable.iv" scale="0.5"> 
-     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="400.0" Y="125.0" X="0.0"> 
+  <Scene scene="scenes/cangoal.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="480.0" Y="60.0" X="-250.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/cangoal.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="310.0" Y="60.0" X="-370.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/cangoal.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="470.0" Y="60.0" X="250.0"> 
+     <!--Problem of the scene-->
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/cangoal.wrl" scale="1000"> 
+     <Location TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="310.0" Y="60.0" X="380.0"> 
      <!--Problem of the scene-->
     </Location>
   </Scene>
