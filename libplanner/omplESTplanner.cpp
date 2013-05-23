@@ -81,7 +81,7 @@ namespace libPlanner {
         addParameter("Goal Bias", _GoalBias);
         planner->as<og::EST>()->setRange(_Range);
         planner->as<og::EST>()->setGoalBias(_GoalBias);
-
+        planner->as<og::EST>()->setProjectionEvaluator(space->getDefaultProjection());
         //set the planner
         ss->setPlanner(planner);
     }

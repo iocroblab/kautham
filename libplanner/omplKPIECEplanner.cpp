@@ -88,7 +88,7 @@ namespace libPlanner {
         planner->as<og::KPIECE1>()->setGoalBias(_GoalBias);
         planner->as<og::KPIECE1>()->setMinValidPathFraction(_minValidPathFraction);
         planner->as<og::KPIECE1>()->setFailedExpansionCellScoreFactor(_failedExpansionScoreFactor);
-
+        planner->as<og::KPIECE1>()->setProjectionEvaluator(space->getDefaultProjection());
 
         //set the planner
         ss->setPlanner(planner);

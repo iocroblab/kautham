@@ -50,6 +50,9 @@
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <ompl/base/spaces/SO3StateSpace.h>
 #include <ompl/base/samplers/UniformValidStateSampler.h>
+#include <ompl/base/ProjectionEvaluator.h>
+#include <ompl/base/spaces/RealVectorStateProjections.h>
+#include <ompl/util/Exception.h>
 namespace og = ompl::geometric;
 namespace oc = ompl::control;
 namespace ob = ompl::base;
@@ -119,6 +122,8 @@ namespace libPlanner {
         KauthamStateSampler(const ob::StateSpace *sspace, Planner *p);
         void setCenterSample(ob::State *state, double th);
         virtual void sampleUniform(ob::State *state);
+        virtual void sampleUniformNear(ob::State *state, const ob::State *near, const double distance);
+
 
       protected:
         ompl::RNG rng_; //random generator

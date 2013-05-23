@@ -220,6 +220,43 @@ namespace libPlanner {
       }
 
 
+      void KauthamStateSampler::sampleUniformNear(ob::State *state, const ob::State *near, const double distance)
+           {
+               int trials = 0;
+               int maxtrials=100;
+               bool found = false;
+               do{
+                 //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
+                 int d = kauthamPlanner_->wkSpace()->getDimension();
+                 vector<KthReal> coords(d);
+                 for(int i=0;i<d;i++)
+                     coords[i] = rng_.uniformReal(0,1.0);
+                 //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                 Sample *smp = new Sample(d);
+                 smp->setCoords(coords);
+                 kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+                 //convert from sample to scoped state
+                 ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
+                 ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
+                 //return the stae in the parameter state and a bool telling if the smp is in collision or not
+                 ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
+                 if (((omplPlanner*)kauthamPlanner_)->getSpace()->distance(state,near)> distance)
+                     found = false;
+                 else
+                     found=true;
+                  trials ++;
+               }while(found==false && trials <maxtrials);
+
+                if (!found){
+                ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, near);
+                }
+
+
+               //throw ompl::Exception("KauthamValidStateSampler::sampleNear", "not implemented");
+               //return false;
+           }
+
+
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // KauthamValidStateSampler functions
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -255,35 +292,37 @@ namespace libPlanner {
               return false;
           return true;
       }
-      // We don't need this in the example below.
+
       bool KauthamValidStateSampler::sampleNear(ob::State *state, const ob::State *near, const double distance)
-      {
-          //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-          int d = kauthamPlanner_->wkSpace()->getDimension();
-          vector<KthReal> coords(d);
-          for(int i=0;i<d;i++)
-            coords[i] = rng_.uniformReal(0,1.0);
-
-          //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
-          Sample *smp = new Sample(d);
-          smp->setCoords(coords);
-          kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
-
-          //convert from sample to scoped state
-          ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
-          ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
-
-          //return the stae in the parameter state and a bool telling if the smp is in collision or not
-          ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
-
-          if(  si_->satisfiesBounds(state)==false |
-               kauthamPlanner_->wkSpace()->collisionCheck(smp) |
-               ((omplPlanner*)kauthamPlanner_)->getSpace()->distance(state,near)>distance)
-              return false;
-          return true;
-          //throw ompl::Exception("KauthamValidStateSampler::sampleNear", "not implemented");
-          //return false;
-      }
+           {
+               int trials = 0;
+               int maxtrials=100;
+               bool found = false;
+               do{
+                 //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
+                 int d = kauthamPlanner_->wkSpace()->getDimension();
+                 vector<KthReal> coords(d);
+                 for(int i=0;i<d;i++)
+                     coords[i] = rng_.uniformReal(0,1.0);
+                 //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                 Sample *smp = new Sample(d);
+                 smp->setCoords(coords);
+                 kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+                 //convert from sample to scoped state
+                 ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
+                 ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
+                 //return the stae in the parameter state and a bool telling if the smp is in collision or not
+                 ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
+                 if( kauthamPlanner_->wkSpace()->collisionCheck(smp) | (((omplPlanner*)kauthamPlanner_)->getSpace()->distance(state,near)> distance) | !(si_->satisfiesBounds(state)))
+                     found = false;
+                 else
+                     found=true;
+                  trials ++;
+               }while(found==false && trials <maxtrials);
+               return found;
+               //throw ompl::Exception("KauthamValidStateSampler::sampleNear", "not implemented");
+               //return false;
+           }
 
 
 
@@ -333,7 +372,7 @@ namespace libPlanner {
   omplPlanner::omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
              Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
     {
-		//set intial values from parent class data
+        //set intial values from parent class data
         _speedFactor = 1;
         _stepSize = ssize;
         _solved = false;
@@ -402,6 +441,16 @@ namespace libPlanner {
 
                 spaceSE3[i]->as<ob::SE3StateSpace>()->setBounds(bounds);
 
+                //create projections evaluator for this spaces
+                ob::ProjectionEvaluatorPtr pei;
+                pei = (ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0));
+                spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0)->registerDefaultProjection(pei);
+                ob::ProjectionEvaluatorPtr pess;
+                pess = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceSE3[i],0);
+                spaceSE3[i]->registerDefaultProjection(pess);
+                //spaceSE3[i]->registerDefaultProjection(ob::ProjectionEvaluatorPtr (new ob::RealVectorIdentityProjectionEvaluator(spaceSE3[i])));
+
+
                 //sets the weights between translation and rotation
                 spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(0,_wkSpace->getRobot(i)->getWeightSE3()[0]);//translational weight
                 spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(1,_wkSpace->getRobot(i)->getWeightSE3()[1]);//rotational weight
@@ -419,6 +468,11 @@ namespace libPlanner {
                 spaceRn[i] = ((ob::StateSpacePtr) new weigthedRealVectorStateSpace(nj));
                 sstm << "ssRobot" << i<<"_Rn";
                 spaceRn[i]->setName(sstm.str());
+
+                //create projections evaluator for this spaces
+                ob::ProjectionEvaluatorPtr pei;
+                pei = ((ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceRn[i]));
+                spaceRn[i]->registerDefaultProjection(pei);
 
                 // set the bounds and the weights
                 vector<KthReal> jointweights;
@@ -448,9 +502,18 @@ namespace libPlanner {
             sstm.str("");
             sstm << "ssRobot" << i;
             spaceRob[i]->setName(sstm.str());
+
+            ob::ProjectionEvaluatorPtr peri;
+            peri = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceRob[i],0);
+            spaceRob[i]->registerDefaultProjection(peri);
         }
         //the state space for the set of robots. All the robots have the same weight.
         space = ((ob::StateSpacePtr) new ob::CompoundStateSpace(spaceRob,weights));
+
+        ob::ProjectionEvaluatorPtr pesp;
+        pesp = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0);
+        space->registerDefaultProjection(pesp);
+
 
         //The classes derived from this omplplanner class will create a planner,
         //the simplesetup and call the setStateValididyChecker function

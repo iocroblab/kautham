@@ -28,12 +28,14 @@
 	
 	<Planner>
         <Parameters>
-                <Name>omplRRT</Name>
-                <LocalPlanner stepSize="0.1">Linear</LocalPlanner>
-                <Parameter name="Step Size">0.1</Parameter>
-                <Parameter name="Max Planning Time">300.0</Parameter>
-                <Parameter name="Range">400.0</Parameter>
-                <Parameter name="Speed Factor">10</Parameter>
+                <Name>omplPRMV1</Name>
+                <LocalPlanner stepSize="5">Linear</LocalPlanner>
+                <Parameter name="Step Size">5</Parameter>
+		<Parameter name="Max Planning Time">300.0</Parameter>
+		<Parameter name="Speed Factor">1</Parameter>
+		<Parameter name="MaxNearestNeighbors">10</Parameter>
+                <Parameter name="Expand Roadmap (s)">0.0</Parameter>
+		
         </Parameters>
 		<Queries>
 			<Query>
