@@ -63,7 +63,9 @@ ELSE( OMPL_FOUND )
    MESSAGE( STATUS "OMPL Package NOT FOUND. OMPL planners will be disabled.")
 ENDIF( OMPL_FOUND )
 
-  
+####  SET(OMPL_DIR /home/jan.rosell/ompl/omplapp-0.12.2-Source/build/Debug/lib)
+####  SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}   ${OMPL_DIR}/libompl.so)
+####    ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
 
 #### Armadillo package ###############
 FIND_PACKAGE( Armadillo )
@@ -71,7 +73,7 @@ IF( ARMADILLO_FOUND )
   MESSAGE( STATUS "armadillo Package FOUND")
   ADD_DEFINITIONS( -DKAUTHAM_USE_ARMADILLO )
   SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  ${ARMADILLO_LIBRARY})
-  MESSAGE( STATUS ${KC_EXTRA_LIBS})
+  MESSAGE( STATUS "Kc EXTRa libs: " ${KC_EXTRA_LIBS})
 ELSE( ARMADILLO_FOUND )
   MESSAGE( STATUS "armadillo Package NOT FOUND. Planners using PCA will be disabled.")
 ENDIF( ARMADILLO_FOUND )
