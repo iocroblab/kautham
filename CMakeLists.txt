@@ -55,12 +55,8 @@ ENDIF( GSL_FOUND )
 #### OMPL package ###############
 find_package(ompl)
 IF( OMPL_FOUND )
-   MESSAGE( STATUS "OMPL Package FOUND")
+   MESSAGE( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_OMPL flag")
    ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
-   SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  "-lompl")
-   MESSAGE( STATUS ${KC_EXTRA_LIBS})
-ELSE( OMPL_FOUND )
-   MESSAGE( STATUS "OMPL Package NOT FOUND. OMPL planners will be disabled.")
 ENDIF( OMPL_FOUND )
 
 ####  SET(OMPL_DIR /home/jan.rosell/ompl/omplapp-0.12.2-Source/build/Debug/lib)
@@ -137,8 +133,8 @@ IF( KAUTHAM_GUI )
   
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
 
-  TARGET_LINK_LIBRARIES( Kautham2 libDNN libPQP libgui libsampling
-						libproblem libkthutil ${KC_EXTRA_LIBS} )
+  TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS} libDNN libPQP libgui libsampling
+                                                libproblem libkthutil  )
 ENDIF( KAUTHAM_GUI )
 
 
