@@ -1,0 +1,51 @@
+Linux installation guide:
+
+Following instructions are defined to be used with Ubuntu distributions, another one may be simmilar but it uses another commnads to obtain the same results.  This process will be explained to be done using the console.  First update your source (apt-get update). Open a console window and do the follows as a root:
+
+1) Compiler and Debugger tools: It installs the compiler, headers and the minimun tool set to compile something into the system and the debuger tools.
+  
+  apt-get install build-essential gdb
+
+2)   Development tools:
+
+A)   CMake: CMake is a cross-platform build system: It is a family of tools designed to build, test and package software. CMake generates native makefiles and workspaces that can be used in the compiler environment of your choice.
+
+	apt-get install cmake
+
+B)   Subversion client: Subversion, also known as svn, is a version control system similar to "Concurrent Versions System" (CVS).
+
+	apt-get install subversion
+
+C)   Doxygen: Documentation system.
+
+	apt-get install doxygen doxygen-doc doxygen-gui graphviz 
+
+D)   Qt Creator SDK: Qt Creator is a new cross-platform integrated development environment (IDE) tailored to the needs of Qt developers.
+
+  apt-get install qt-sdk
+
+3)   Libraries:
+
+A)   Coin3D: Coin3D is a high-level cross-platform toolkit for effective 3D graphics development. It installs runtime library, develope library documentation and  auxiliary libraries.
+  
+  apt-get install libcoin60*
+
+B)   SoQt: SoQt is a library which provides the glue between Systems in Motion's Coin high-level 3D visualization library and Troll Tech's Qt 2D user interface library
+
+	apt-get install libsoqt*
+
+C)   Boost: Download Boost library
+
+	apt-get install libboost-all-dev
+
+D) Armadillo: streamlined C++ linear algebra library (matrix maths)
+
+  apt-get install libarmadillo*
+
+4) Kautham project code. You can download the Kautham project code from svn repository using svn co *****
+
+A) To compile the code go to Release_2.2/build directory and use cmake ../ to generate the project.
+
+B) Use make command to make the executable.
+
+Tuesday, February 7th 2012

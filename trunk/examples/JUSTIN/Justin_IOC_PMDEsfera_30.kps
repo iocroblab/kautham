@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Planner ProblemName="" Date="">
+	<Parameters>
+		<Name>PRM</Name>
+		<LocalPlanner stepSize="1">Linear</LocalPlanner>
+		<Parameter name="Drawn Path Link">-1</Parameter>
+		<Parameter name="Max. Neighs">10</Parameter>
+		<Parameter name="Max. Samples">2000</Parameter>
+		<Parameter name="Neigh Thresshold">1.5</Parameter>
+		<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
+		<Parameter name="Speed Factor">1</Parameter>
+		<Parameter name="Step Size">0.2</Parameter>
+	</Parameters>
+	
+	<Queries />
+	<SampleSet dim="12" size="3">
+
+		<Sample conComp="0">0.6843 0.7385 0.5438 0.5456 0.4852 0.5227 0.4294 0.4522 0.4306 0.14 0.445 0.5207</Sample>
+		<Sample conComp="0">0.6348 0.5821 0.423 0.8156 0.4099 0.7658 0.4822 0.6452 0.1425 0.3027 -0.0307 0.0057</Sample>
+		<Sample conComp="0">0.5454 0.4834 0.2981 0.6855 0.5712 0.4738 1.0493 0.8816 0.0852 0.0487 -0.3379 0.3619</Sample>
+
+  	</SampleSet>
+	<Conectivity />
+	<ConnComponents size="0" />
+</Planner>

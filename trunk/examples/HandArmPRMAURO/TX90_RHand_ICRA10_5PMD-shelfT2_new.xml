@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Problem name="" topology="SE3">
+
+  <Robot robot="robots/TX90_RHand_5PMD_thumb2.rob" scale="1.0"> 
+   Robot Path
+	 <Limits name="X" min="0.0" max="1000.0"></Limits>
+	 <Limits name="Y" min="0.0" max="1000.0"></Limits>
+	 <Limits name="Z" min="0.0" max="1000.0"></Limits>
+	 <Limits name="WX" min="0.0" max="1.0"></Limits>
+	 <Limits name="WY" min="0.0" max="1.0"></Limits>
+	 <Limits name="WZ" min="0.0" max="1.0"></Limits>
+	 <Limits name="THETA" min="-180.0" max="180.0"></Limits>
+    <Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="425.1" X="-318.5" />
+	 <InvKinematic name="TX90"/>
+  </Robot>
+	
+  <Scene scene="scenes/sceneRevistaICRA09-exhaustive.iv" scale="1.0"> 
+    <Location TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0"/>
+  </Scene>
+
+  <Scene scene="scenes/t.iv" scale="4.0"> 
+    <Location TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="810.0" Y="1280.0" X="-570.0"/> 
+   </Scene>
+
+  <Scene scene="scenes/can.wrl" scale="1000.0">
+    Scene Path
+
+    <Location TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="580.0" Y="1200.0" X="-350.0">
+      Problem of the scene
+    </Location>
+  </Scene>
+
+  <Scene scene="scenes/can.wrl" scale="1000.0">
+    Scene Path
+
+    <Location TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="580.0" Y="1200.0" X="-750.0">
+      Problem of the scene
+    </Location>
+  </Scene>
+
+  <Planner>
+    <Parameters>
+      <Name>PRMAURO HandArm</Name>
+      <LocalPlanner stepSize="0.2" >Linear</LocalPlanner>
+      <Parameter name="Max. Samples">300</Parameter>
+      <Parameter name="Speed Factor">1</Parameter>
+      <Parameter name="Cloud Radius Max">300</Parameter>
+      <Parameter name="Cloud Radius">30</Parameter>
+      <Parameter name="Ratio Hand/Arm Conf">2</Parameter>
+      <Parameter name="Cloud Size">2</Parameter>
+    </Parameters>
+
+    <Queries>
+      <Query>
+		<Init dim="11">0.256 0.333 0.969 0.462 0.467 0.703 0.708 0.5 0 0.5 0.5</Init>
+		<Goal dim="11">0.265 0.567 0.829 0.487 0.333 0.668 0.354 1.0 0.0 0.613 0.694</Goal>
+      </Query>
+    </Queries>
+  </Planner>
+
+</Problem>
+

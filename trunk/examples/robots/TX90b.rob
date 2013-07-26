@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="TX90b" DHType="Modified" robType="Chain">
+
+  <WeightSE3 rho_r="1.0"></WeightSE3>
+  <Joints size="7">
+    <Joint name="Base" ivFile="rtx90/base.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-318.5" Y="425.1" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="180.0" ></PreTrans>
+      <Description rotational="false" movable="false"  ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name=""></Parent>
+    </Joint>
+    
+    <Joint name="Shoulder" ivFile="rtx90/shoulder.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="478.0"  ></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Base"></Parent>
+    </Joint>
+    
+    <Joint name="ForeArm" ivFile="rtx90/forearm.wrl">
+      <DHPars  alpha="-90.0" a="50.0" theta="-90.0" d="50.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="147.5" Low="-130.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Shoulder"></Parent>
+    </Joint>
+    
+    <Joint name="Elbow" ivFile="rtx90/elbow.wrl">
+      <DHPars  alpha="0.0" a="425.0" theta="90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="145.0" Low="-145.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="ForeArm"></Parent>
+    </Joint>
+    
+    <Joint name="Arm" ivFile="rtx90/arm.wrl">
+      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="425.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="270.0" Low="-270.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Elbow"></Parent>
+    </Joint>
+    
+    <Joint name="Wrist" ivFile="rtx90/wrist.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="140.0" Low="-115.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Arm"></Parent>
+    </Joint>
+    
+    <Joint name="Tcp" ivFile="rtx90/tcp.wrl">
+      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="100.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="270.0" Low="-270.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Wrist"></Parent>
+    </Joint>
+	</Joints>
+
+  <ControlSet size="6">
+	This control set is thinkig to be as EigenVector collection with their own 
+	EigenValue used to obtain the respective DOF vector of the robot. All the 
+	robots need to be positioned in any location in SE3 WorkSpace as well it need 
+	6 values (X, Y, Z, X1, X2, X3) to reach it. The X1, X2, X3 values will be mapped to 
+	axis-angle notation (Wx, Wy, Wz, angle) and the other DOF are respectively the 
+	articular values in Chain or Tree robot types.
+	
+	<Offset>
+    This vector can be added in order to provide a offset or centre values to adjust
+    the control values and the DOF values.
+
+		<DOF name="Shoulder" value="0.5"></DOF>
+		<DOF name="ForeArm" value="0.5"></DOF>
+		<DOF name="Elbow" value="0.5"></DOF>
+		<DOF name="Arm" value="0.5"></DOF>
+		<DOF name="Wrist" value="0.5"></DOF>
+		<DOF name="Tcp" value="0.5"></DOF>
+
+	</Offset>
+
+	At less, the robot needs to be controled through a 6 values corresponding to a 
+	SE3 configuration. 
+	
+	<Control name="Shoulder" eigValue="1.0">
+		<DOF name="Shoulder" value="1.0"></DOF>
+	</Control>
+	
+	<Control name="ForeArm" eigValue="1.0">
+		<DOF name="ForeArm" value="1.0"></DOF>
+	</Control>
+	
+	<Control name="Elbow" eigValue="1.0">
+		<DOF name="Elbow" value="1.0"></DOF>
+	</Control>
+	
+	<Control name="Arm" eigValue="1.0">
+		<DOF name="Arm" value="1.0"></DOF>
+	</Control>
+	
+	<Control name="Wrist" eigValue="1.0">
+		<DOF name="Wrist" value="1.0"></DOF>
+	</Control>
+	
+	<Control name="Tcp" eigValue="1.0">
+		<DOF name="Tcp" value="1.0"></DOF>
+	</Control>
+  </ControlSet>
+</Robot>

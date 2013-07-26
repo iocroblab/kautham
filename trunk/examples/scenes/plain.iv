@@ -1,0 +1,13 @@
+#Inventor V2.1 ascii
+
+Separator {
+    Material {
+            diffuseColor        1.0 1.0 1.0
+    }
+    Cube {
+     height 120
+     width 120
+     depth 2
+    }
+
+}

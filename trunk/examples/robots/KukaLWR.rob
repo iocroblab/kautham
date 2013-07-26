@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="KukaLWR" DHType="Modified" robType="Chain">
+
+  <WeightSE3 rho_t="1.0" rho_r="1.0" />
+  <Joints size="8">
+    <Joint name="Base" ivFile="kukaLWR/base.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="false" movable="false"  ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name=""></Parent>
+    </Joint>
+    
+    <Joint name="Link1" ivFile="kukaLWR/link1.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="310.0"  ></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+    <Parent name="Base"></Parent>
+    </Joint>
+    
+    <Joint name="Link2" ivFile="kukaLWR/link2.wrl">
+      <DHPars  alpha="90.0" a="0.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="210.0" Low="-30.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link1"></Parent>
+    </Joint>
+    
+    <Joint name="Link3" ivFile="kukaLWR/link3.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="400.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link2"></Parent>
+    </Joint>
+    
+    <Joint name="Link4" ivFile="kukaLWR/link4.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="180.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="120.0" Low="-120.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link3"></Parent>
+    </Joint>
+    
+    <Joint name="Link5" ivFile="kukaLWR/link5.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="180.0" d="390.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link4"></Parent>
+    </Joint>
+    
+    <Joint name="Link6" ivFile="kukaLWR/link6.wrl">
+      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="120.0" Low="-120.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link5"></Parent>
+    </Joint>
+    
+    <Joint name="Link7" ivFile="kukaLWR/link7.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="78.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link6"></Parent>
+    </Joint>
+  </Joints>
+
+  <ControlSet size="7">	
+    <Offset>
+      <DOF name="Link1" value="0.5"></DOF>
+      <DOF name="Link2" value="0.5"></DOF>
+      <DOF name="Link3" value="0.5"></DOF>
+      <DOF name="Link4" value="0.5"></DOF>
+      <DOF name="Link5" value="0.5"></DOF>
+      <DOF name="Link6" value="0.5"></DOF>
+      <DOF name="Link7" value="0.5"></DOF>
+    </Offset>
+	
+    <Control name="Axis1" eigValue="1.0">
+      <DOF name="Link1" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Axis2" eigValue="1.0">
+      <DOF name="Link2" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Axis3" eigValue="1.0">
+      <DOF name="Link4" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Axis4" eigValue="1.0">
+      <DOF name="Link5" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Axis5" eigValue="1.0">
+      <DOF name="Link6" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Axis6" eigValue="1.0">
+      <DOF name="Link7" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Axis7" eigValue="1.0">
+      <DOF name="Link3" value="1.0"></DOF>
+    </Control>
+  </ControlSet>
+</Robot>
+

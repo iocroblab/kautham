@@ -1,0 +1,19 @@
+<package>
+  <description brief="kautham">
+
+     This is the envelop to the Kautham Planner in order to implement the communication framework between the clients and the server
+
+  </description>
+  <author>Alexander Perez Ruiz</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/kautham</url>
+  <depend package="std_msgs"/>
+  <depend package="rospy"/>
+  <depend package="roscpp"/>
+  <depend package="geometry_msgs"/>
+  <depend package="sensor_msgs"/>
+  <depend package="nav_msgs"/>
+</package>
+
+

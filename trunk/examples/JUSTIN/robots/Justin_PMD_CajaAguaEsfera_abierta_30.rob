@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="Justin" DHType="Modified" robType="Tree">
+
+  <WeightSE3 rho_t="1.0" rho_r="1.0" />
+  <Joints size="53">
+
+    <Joint name="Torso" ivFile="kukaLWR/Justin_body.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="false" movable="false"   ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Parent name=""></Parent>
+    </Joint>
+
+    <Joint name="Base_der" ivFile="kukaLWR/base.wrl">
+      <PreTrans X="210.0" Y="-100.0" Z="0.0" WX="-1.0" WY="1.0" WZ="0.0" TH="90.0" ></PreTrans>
+      <DHPars alpha="0.0" a="0.0" theta="-134.0" d="0.0"></DHPars>
+<!-- Mediante el parámetro theta se puede rotar el brazo para colocar la caja de los conectores de los cables en la posición deseada-->
+      <Description rotational="false" movable="false"  ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Torso"></Parent>
+    </Joint>
+    
+    <Joint name="Link1_der" ivFile="kukaLWR/link1.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="310.0"  ></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+    <Parent name="Base_der"></Parent>
+    </Joint>
+    
+    <Joint name="Link2_der" ivFile="kukaLWR/link2.wrl">
+      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="120.0" Low="-120.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link1_der"></Parent>
+    </Joint>
+    
+    <Joint name="Link3_der" ivFile="kukaLWR/link3.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="400.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link2_der"></Parent>
+    </Joint>
+    
+    <Joint name="Link4_der" ivFile="kukaLWR/link4.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="180.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="120.0" Low="-120.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link3_der"></Parent>
+    </Joint>
+    
+    <Joint name="Link5_der" ivFile="kukaLWR/link5.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="180.0" d="390.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link4_der"></Parent>
+    </Joint>
+    
+    <Joint name="Link6_der" ivFile="kukaLWR/link6.wrl">
+      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="120.0" Low="-120.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link5_der"></Parent>
+    </Joint>
+    
+    <Joint name="Link7_der" ivFile="kukaLWR/link7.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="78.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link6_der"></Parent>
+    </Joint>
+
+<!-- Mano abierta  -->
+
+    <Joint name="Palm_der" ivFile="SAHand/SAH-palm-right.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0" Low="-90"></Limits>
+      <Parent name="Link7_der"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb_der" ivFile="SAHand/SAH-thumb-base-right.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-3.0" Y="27.1" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="-89.0" Low="-90.0"></Limits>
+      <Parent name="Palm_der"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb-Base_der" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-6.0" Y="86.9" Z="97.0" WX="0.419" WY="-0.419" WZ="0.805" TH="102.31" ></PreTrans> 
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0.0" Low="0.0"></Limits>
+      <Parent name="Thumb_der"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb-Prox_der" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Thumb-Base_der"></Parent>
+    </Joint>
+
+    <Joint name="Thumb-Med_der" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Thumb-Prox_der"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb-Dist_der" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Thumb-Med_der"></Parent>
+    </Joint>
+    
+    <Joint name="Index-Base_der" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-4.3" Y="40.165" Z="145.43" WX="0.707" WY="0.0125" WZ="0.707" TH="178.5623" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0.0" Low="0.0"></Limits>
+      <Parent name="Palm_der"></Parent>
+    </Joint>
+    
+    <Joint name="Index-Prox_der" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Index-Base_der"></Parent>
+    </Joint>
+
+    <Joint name="Index-Med_der" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Index-Prox_der"></Parent>
+    </Joint>
+    
+    <Joint name="Index-Dist_der" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Index-Med_der"></Parent>
+    </Joint>
+    
+    <Joint name="Mid-Base_der" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-4.3" Y="0.0" Z="150.143" WX="0.707" WY="0.0" WZ="0.707" TH="180.0" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0.0" Low="0.0"></Limits>
+      <Parent name="Palm_der"></Parent>
+    </Joint>
+    
+    <Joint name="Mid-Prox_der" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Mid-Base_der"></Parent>
+    </Joint>
+
+    <Joint name="Mid-Med_der" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Mid-Prox_der"></Parent>
+    </Joint>
+    
+    <Joint name="Mid-Dist_der" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Mid-Med_der"></Parent>
+    </Joint>
+    
+    <Joint name="Ring-Base_der" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-4.3" Y="-40.165" Z="145.43" WX="0.707" WY="-0.0121" WZ="0.707" TH="181.3898" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0.0" Low="0.0"></Limits>
+      <Parent name="Palm_der"></Parent>
+    </Joint>
+    
+    <Joint name="Ring-Prox_der" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Ring-Base_der"></Parent>
+    </Joint>
+
+    <Joint name="Ring-Med_der" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Ring-Prox_der"></Parent>
+    </Joint>
+    
+    <Joint name="Ring-Dist_der" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Ring-Med_der"></Parent>
+    </Joint>
+
+    <Joint name="Base_izq" ivFile="kukaLWR/base.wrl">
+      <PreTrans X="-210.0" Y="-100.0" Z="0.0" WX="1.0" WY="1.0" WZ="0.0" TH="-90.0" ></PreTrans>
+      <DHPars alpha="0.0" a="0.0" theta="-45.0" d="0.0"></DHPars>
+<!-- Mediante el parámetro theta se puede rotar el brazo para colocar la caja de los conectores de los cables en la posición deseada-->
+      <Description rotational="false" movable="false"  ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Torso"></Parent>
+    </Joint>
+    
+    <Joint name="Link1_izq" ivFile="kukaLWR/link1.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="310.0"  ></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+    <Parent name="Base_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Link2_izq" ivFile="kukaLWR/link2.wrl">
+      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="120.0" Low="-120.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link1_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Link3_izq" ivFile="kukaLWR/link3.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="400.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link2_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Link4_izq" ivFile="kukaLWR/link4.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="180.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="120.0" Low="-120.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link3_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Link5_izq" ivFile="kukaLWR/link5.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="180.0" d="390.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link4_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Link6_izq" ivFile="kukaLWR/link6.wrl">
+      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="120.0" Low="-120.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link5_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Link7_izq" ivFile="kukaLWR/link7.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="78.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="170.0" Low="-170.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Link6_izq"></Parent>
+    </Joint>
+
+<!-- Mano abierta  -->
+
+    <Joint name="Palm_izq" ivFile="SAHand/SAH-palm-left.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0" Low="-90"></Limits>
+      <Parent name="Link7_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb_izq" ivFile="SAHand/SAH-thumb-base-left.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-3.0" Y="-27.1" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="180.0" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="-89.0" Low="-90.0"></Limits>
+      <Parent name="Palm_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb-Base_izq" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-6.0" Y="-86.9" Z="97.0" WX="-0.419" WY="-0.419" WZ="-0.805" TH="102.31" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0.0" Low="0.0"></Limits>
+      <Parent name="Thumb_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb-Prox_izq" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Thumb-Base_izq"></Parent>
+    </Joint>
+
+    <Joint name="Thumb-Med_izq" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Thumb-Prox_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb-Dist_izq" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Thumb-Med_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Index-Base_izq" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-4.3" Y="40.165" Z="145.43" WX="0.707" WY="0.0125" WZ="0.707" TH="178.5623" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0.0" Low="0.0"></Limits>
+      <Parent name="Palm_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Index-Prox_izq" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Index-Base_izq"></Parent>
+    </Joint>
+
+    <Joint name="Index-Med_izq" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Index-Prox_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Index-Dist_izq" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Index-Med_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Mid-Base_izq" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-4.3" Y="0.0" Z="150.143" WX="0.707" WY="0.0" WZ="0.707" TH="180.0" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0.0" Low="0.0"></Limits>
+      <Parent name="Palm_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Mid-Prox_izq" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Mid-Base_izq"></Parent>
+    </Joint>
+
+    <Joint name="Mid-Med_izq" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Mid-Prox_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Mid-Dist_izq" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Mid-Med_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Ring-Base_izq" ivFile="SAHand/SAH-finger-base.iv">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="-4.3" Y="-40.165" Z="145.43" WX="0.707" WY="-0.0121" WZ="0.707" TH="181.3898" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="0.0" Low="0.0"></Limits>
+      <Parent name="Palm_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Ring-Prox_izq" ivFile="SAHand/SAH-finger-phaprox.iv">
+      <DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Ring-Base_izq"></Parent>
+    </Joint>
+
+    <Joint name="Ring-Med_izq" ivFile="SAHand/SAH-finger-phamed.iv">
+      <DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Ring-Prox_izq"></Parent>
+    </Joint>
+    
+    <Joint name="Ring-Dist_izq" ivFile="SAHand/SAH-finger-phadist.iv">
+      <DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="4.0" Low="4.0"></Limits>
+      <Parent name="Ring-Med_izq"></Parent>
+    </Joint>
+
+  </Joints>
+
+ <ControlSet size="12">	
+    <Offset>
+
+      <DOF name="Link1_der" value="0.825718"></DOF>
+      <DOF name="Link2_der" value="0.13863"></DOF>                                              
+      <DOF name="Link3_der" value="0.661115"></DOF>                                             
+      <DOF name="Link4_der" value="0.850096"></DOF>                                             
+      <DOF name="Link5_der" value="0.5"></DOF>                                                
+      <DOF name="Link6_der" value="0.446121"></DOF>                                             
+      <DOF name="Link7_der" value="0.624585"></DOF>                                              
+                                                                                                    
+      <DOF name="Link1_izq" value="0.690426"></DOF>      
+      <DOF name="Link2_izq" value="0.860755"></DOF>      
+      <DOF name="Link3_izq" value="0.355372"></DOF>      
+      <DOF name="Link4_izq" value="0.147201"></DOF>      
+      <DOF name="Link5_izq" value="0.5"></DOF>         
+      <DOF name="Link6_izq" value="0.545609"></DOF>
+      <DOF name="Link7_izq" value="0.376424"></DOF> 
+
+      <DOF name="Thumb_der" value="0.3055"></DOF> 
+      <DOF name="Thumb-Base_der" value="0.3055"></DOF> 
+      <DOF name="Thumb-Prox_der" value="0.6308"></DOF> 
+      <DOF name="Thumb-Med_der" value="0.5143"></DOF> 
+      <DOF name="Thumb-Dist_der" value="0.5143"></DOF> 
+      <DOF name="Index-Base_der" value="0.5544"></DOF> 
+      <DOF name="Index-Prox_der" value="0.5400"></DOF> 
+      <DOF name="Index-Med_der" value="0.5075"></DOF> 
+      <DOF name="Index-Dist_der" value="0.5075"></DOF> 
+      <DOF name="Mid-Base_der" value="0.5"></DOF> 
+      <DOF name="Mid-Prox_der" value="0.5579"></DOF> 
+      <DOF name="Mid-Med_der" value="0.4118"></DOF> 
+      <DOF name="Mid-Dist_der" value="0.4118"></DOF> 
+      <DOF name="Ring-Base_der" value="0.4909"></DOF> 
+      <DOF name="Ring-Prox_der" value="0.5407"></DOF> 
+      <DOF name="Ring-Med_der" value="0.4806"></DOF> 
+      <DOF name="Ring-Dist_der" value="0.4806"></DOF>
+
+      <DOF name="Thumb_izq" value="0.3055"></DOF> 
+      <DOF name="Thumb-Base_izq" value="0.3055"></DOF> 
+      <DOF name="Thumb-Prox_izq" value="0.6308"></DOF> 
+      <DOF name="Thumb-Med_izq" value="0.5143"></DOF> 
+      <DOF name="Thumb-Dist_izq" value="0.5143"></DOF> 
+      <DOF name="Index-Base_izq" value="0.5544"></DOF> 
+      <DOF name="Index-Prox_izq" value="0.5400"></DOF> 
+      <DOF name="Index-Med_izq" value="0.5075"></DOF> 
+      <DOF name="Index-Dist_izq" value="0.5075"></DOF> 
+      <DOF name="Mid-Base_izq" value="0.5"></DOF> 
+      <DOF name="Mid-Prox_izq" value="0.5579"></DOF> 
+      <DOF name="Mid-Med_izq" value="0.4118"></DOF> 
+      <DOF name="Mid-Dist_izq" value="0.4118"></DOF> 
+      <DOF name="Ring-Base_izq" value="0.4909"></DOF> 
+      <DOF name="Ring-Prox_izq" value="0.5407"></DOF> 
+      <DOF name="Ring-Med_izq" value="0.4806"></DOF> 
+      <DOF name="Ring-Dist_izq" value="0.4806"></DOF>
+
+    </Offset>
+
+    <Control name="C1" eigValue="1.5100">     
+      <DOF name="Link1_der" value="0.3199"></DOF>
+      <DOF name="Link2_der" value="-0.2577"></DOF>
+      <DOF name="Link3_der" value="-0.0146"></DOF>
+      <DOF name="Link4_der" value="-0.4700"></DOF>
+      <DOF name="Link6_der" value="0.1637"></DOF>
+      <DOF name="Link7_der" value="-0.0314"></DOF>
+      <DOF name="Link1_izq" value="-0.2756"></DOF>
+      <DOF name="Link2_izq" value="0.4015"></DOF>
+      <DOF name="Link3_izq" value="-0.0742"></DOF>
+      <DOF name="Link4_izq" value="0.5726"></DOF>
+      <DOF name="Link6_izq" value="-0.0376"></DOF>
+      <DOF name="Link7_izq" value="-0.1020"></DOF>
+    </Control>
+
+    <Control name="C2" eigValue="1.3818">
+      <DOF name="Link1_der" value="-0.4650"></DOF>
+      <DOF name="Link2_der" value="-0.4490"></DOF>
+      <DOF name="Link3_der" value="0.2882"></DOF>
+      <DOF name="Link4_der" value="-0.0721"></DOF>
+      <DOF name="Link6_der" value="-0.0656"></DOF>
+      <DOF name="Link7_der" value="-0.0665"></DOF>
+      <DOF name="Link1_izq" value="0.4729"></DOF>
+      <DOF name="Link2_izq" value="0.3105"></DOF>
+      <DOF name="Link3_izq" value="-0.2770"></DOF>
+      <DOF name="Link4_izq" value="0.0490"></DOF>
+      <DOF name="Link6_izq" value="0.0341"></DOF>
+      <DOF name="Link7_izq" value="0.2913"></DOF>
+    </Control>
+
+    <Control name="C3" eigValue="0.8979">
+      <DOF name="Link1_der" value="-0.4648"></DOF>
+      <DOF name="Link2_der" value="0.4899"></DOF>
+      <DOF name="Link3_der" value="0.0632"></DOF>
+      <DOF name="Link4_der" value="0.2831"></DOF>
+      <DOF name="Link6_der" value="-0.2271"></DOF>
+      <DOF name="Link7_der" value="0.1305"></DOF>
+      <DOF name="Link1_izq" value="-0.3022"></DOF>
+      <DOF name="Link2_izq" value="0.2773"></DOF>
+      <DOF name="Link3_izq" value="-0.0298"></DOF>
+      <DOF name="Link4_izq" value="0.4607"></DOF>
+      <DOF name="Link6_izq" value="0.0554"></DOF>
+      <DOF name="Link7_izq" value="0.0821"></DOF>
+    </Control>
+
+    <Control name="C4" eigValue="0.7337">
+      <DOF name="Link1_der" value="0.0878"></DOF>
+      <DOF name="Link2_der" value="-0.0818"></DOF>
+      <DOF name="Link3_der" value="-0.3507"></DOF>
+      <DOF name="Link4_der" value="-0.1670"></DOF>
+      <DOF name="Link6_der" value="-0.5949"></DOF>
+      <DOF name="Link7_der" value="0.0002"></DOF>
+      <DOF name="Link1_izq" value="0.1601"></DOF>
+      <DOF name="Link2_izq" value="-0.0052"></DOF>
+      <DOF name="Link3_izq" value="0.1408"></DOF>
+      <DOF name="Link4_izq" value="0.0759"></DOF>
+      <DOF name="Link6_izq" value="0.6550"></DOF>
+      <DOF name="Link7_izq" value="-0.0240"></DOF>
+    </Control>
+
+    <Control name="C5" eigValue="0.6630">
+      <DOF name="Link1_der" value="-0.1297"></DOF>
+      <DOF name="Link2_der" value="-0.0905"></DOF>
+      <DOF name="Link3_der" value="0.1675"></DOF>
+      <DOF name="Link4_der" value="-0.3168"></DOF>
+      <DOF name="Link6_der" value="-0.2455"></DOF>
+      <DOF name="Link7_der" value="0.7468"></DOF>
+      <DOF name="Link1_izq" value="0.0420"></DOF>
+      <DOF name="Link2_izq" value="-0.3561"></DOF>
+      <DOF name="Link3_izq" value="-0.0297"></DOF>
+      <DOF name="Link4_izq" value="0.1052"></DOF>
+      <DOF name="Link6_izq" value="-0.2338"></DOF>
+      <DOF name="Link7_izq" value="-0.1829"></DOF>
+    </Control>
+
+    <Control name="C6" eigValue="0.5520">
+      <DOF name="Link1_der" value="0.2755"></DOF>
+      <DOF name="Link2_der" value="-0.2675"></DOF>
+      <DOF name="Link3_der" value="-0.1911"></DOF>
+      <DOF name="Link4_der" value="0.2766"></DOF>
+      <DOF name="Link6_der" value="-0.3053"></DOF>
+      <DOF name="Link7_der" value="0.3260"></DOF>
+      <DOF name="Link1_izq" value="-0.2991"></DOF>
+      <DOF name="Link2_izq" value="0.3498"></DOF>
+      <DOF name="Link3_izq" value="-0.0498"></DOF>
+      <DOF name="Link4_izq" value="-0.2818"></DOF>
+      <DOF name="Link6_izq" value="-0.2443"></DOF>
+      <DOF name="Link7_izq" value="0.4320"></DOF>
+    </Control>
+
+    <Control name="C7" eigValue="0.3748">     
+      <DOF name="Link1_der" value="-0.1644"></DOF>
+      <DOF name="Link2_der" value="-0.3903"></DOF>
+      <DOF name="Link3_der" value="-0.4725"></DOF>
+      <DOF name="Link4_der" value="0.4971"></DOF>
+      <DOF name="Link6_der" value="0.2503"></DOF>
+      <DOF name="Link7_der" value="0.1949"></DOF>
+      <DOF name="Link1_izq" value="0.1406"></DOF>
+      <DOF name="Link2_izq" value="0.0327"></DOF>
+      <DOF name="Link3_izq" value="0.0601"></DOF>
+      <DOF name="Link4_izq" value="0.2289"></DOF>
+      <DOF name="Link6_izq" value="-0.0145"></DOF>
+      <DOF name="Link7_izq" value="-0.4154"></DOF>
+    </Control>
+
+    <Control name="C8" eigValue="0.3224">
+      <DOF name="Link1_der" value="0.1754"></DOF>
+      <DOF name="Link2_der" value="-0.3034"></DOF>
+      <DOF name="Link3_der" value="0.5309"></DOF>
+      <DOF name="Link4_der" value="0.3634"></DOF>
+      <DOF name="Link6_der" value="0.0083"></DOF>
+      <DOF name="Link7_der" value="0.0322"></DOF>
+      <DOF name="Link1_izq" value="-0.3482"></DOF>
+      <DOF name="Link2_izq" value="-0.2497"></DOF>
+      <DOF name="Link3_izq" value="-0.2536"></DOF>
+      <DOF name="Link4_izq" value="0.0654"></DOF>
+      <DOF name="Link6_izq" value="0.4499"></DOF>
+      <DOF name="Link7_izq" value="-0.0870"></DOF>
+    </Control>
+
+    <Control name="C9" eigValue="0.2550">
+      <DOF name="Link1_der" value="-0.2382"></DOF>
+      <DOF name="Link2_der" value="-0.3617"></DOF>
+      <DOF name="Link3_der" value="0.1566"></DOF>
+      <DOF name="Link4_der" value="0.0063"></DOF>
+      <DOF name="Link6_der" value="-0.3454"></DOF>
+      <DOF name="Link7_der" value="-0.3892"></DOF>
+      <DOF name="Link1_izq" value="-0.2730"></DOF>
+      <DOF name="Link2_izq" value="-0.1372"></DOF>
+      <DOF name="Link3_izq" value="0.5612"></DOF>
+      <DOF name="Link4_izq" value="0.0550"></DOF>
+      <DOF name="Link6_izq" value="-0.3067"></DOF>
+      <DOF name="Link7_izq" value="-0.1081"></DOF>
+    </Control>
+
+    <Control name="C10" eigValue="0.2164">
+      <DOF name="Link1_der" value="-0.0229"></DOF>
+      <DOF name="Link2_der" value="-0.0996"></DOF>
+      <DOF name="Link3_der" value="-0.2783"></DOF>
+      <DOF name="Link4_der" value="0.0112"></DOF>
+      <DOF name="Link6_der" value="0.1422"></DOF>
+      <DOF name="Link7_der" value="-0.0766"></DOF>
+      <DOF name="Link1_izq" value="-0.0365"></DOF>
+      <DOF name="Link2_izq" value="-0.5543"></DOF>
+      <DOF name="Link3_izq" value="-0.0496"></DOF>
+      <DOF name="Link4_izq" value="0.4021"></DOF>
+      <DOF name="Link6_izq" value="-0.0342"></DOF>
+      <DOF name="Link7_izq" value="0.6419"></DOF>
+    </Control>
+
+    <Control name="C11" eigValue="0.1648">
+      <DOF name="Link1_der" value="-0.1223"></DOF>
+      <DOF name="Link2_der" value="-0.0451"></DOF>
+      <DOF name="Link3_der" value="0.1449"></DOF>
+      <DOF name="Link4_der" value="-0.0846"></DOF>
+      <DOF name="Link6_der" value="0.4320"></DOF>
+      <DOF name="Link7_der" value="0.3399"></DOF>
+      <DOF name="Link1_izq" value="-0.0552"></DOF>
+      <DOF name="Link2_izq" value="0.1548"></DOF>
+      <DOF name="Link3_izq" value="0.6475"></DOF>
+      <DOF name="Link4_izq" value="-0.1036"></DOF>
+      <DOF name="Link6_izq" value="0.3562"></DOF>
+      <DOF name="Link7_izq" value="0.2622"></DOF>
+    </Control>
+
+    <Control name="C12" eigValue="0.0798">
+      <DOF name="Link1_der" value="0.4848"></DOF>
+      <DOF name="Link2_der" value="0.1353"></DOF>
+      <DOF name="Link3_der" value="0.3117"></DOF>
+      <DOF name="Link4_der" value="0.3201"></DOF>
+      <DOF name="Link6_der" value="-0.1452"></DOF>
+      <DOF name="Link7_der" value="0.0419"></DOF>
+      <DOF name="Link1_izq" value="0.5219"></DOF>
+      <DOF name="Link2_izq" value="0.0525"></DOF>
+      <DOF name="Link3_izq" value="0.2984"></DOF>
+      <DOF name="Link4_izq" value="0.3594"></DOF>
+      <DOF name="Link6_izq" value="-0.1619"></DOF>
+      <DOF name="Link7_izq" value="0.0693"></DOF>
+    </Control>
+       
+  </ControlSet>
+</Robot>

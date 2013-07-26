@@ -1,0 +1,12 @@
+Información de interés sobre los ficheros contenidos en esta carpeta.
+
+Los distintos archivos .kps contienen las muestras de interés para cada experimento.
+
+Los archivos .xml cargan las distintas escenas. Los nombres indican:
+
+Justin: Carga el modelo del robot Justin.
+IOC: Carga la escena con nombre IOC, representando la celda de trabajo.
+PMDNombre: El robot se controla mediente los PMD correspondientes al experimento que indica el Nombre.
+PRMNombre: La escena tiene cargado un planificador PRM con posición inicial y final correspondiente al experimento que indica el nombre, si no tiene nombre el experimento corresponde al nombrado en PMD.
+abierta/cerrada: Indica la posición de la mano para esa escena.
+10/20/30: Número de muestras utilizadas para calcular los PMD de esa escena. 

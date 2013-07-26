@@ -1,0 +1,35 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  Material {
+    specularColor 0.5 0.5 0.5
+
+  }
+  Sphere {
+    radius 2
+
+  }
+  Translation {
+    translation 10 0 0
+
+  }
+  Rotation {
+    rotation 0 0 1  1.5707999
+
+  }
+  Cylinder {
+    radius 2
+    height 20
+
+  }
+  Translation {
+    translation 0 -10 0
+
+  }
+  Sphere {
+    radius 2
+
+  }
+}

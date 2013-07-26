@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_PRM_table_rooms">
+        <Robot robot="robots/tableR2.rob" scale="1.0">
+	
+   Robot Path
+   <Limits name="X" min="-125.0" max="125.0" />
+   <Limits name="Y" min="-115.0" max="115.0" />
+   <Limits name="Z" min="50.0" max="50.0" />
+   <Limits name="WX" min="0.0" max="1.0" />
+   <Limits name="WY" min="0.0" max="1.0" />
+   <Limits name="WZ" min="0.0" max="1.0" />
+   <Limits name="THETA" min="-360.0" max="360.0" />
+   <Home X="0.0" Y="0.0" Z="50.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+	</Robot>
+        <Scene scene="scenes/rooms2.iv" scale="1.0">
+            Scene Path
+            <Location TH="0.0" WZ="-1.0" WY="-1.0" WX="0.0" Z="25.0" Y="0.0" X="0.0">
+            Problem of the scene
+            </Location>
+        </Scene>
+	<Planner>
+                 <Parameters>
+                    <Name>omplPRMV1</Name>
+                    <LocalPlanner stepSize="1">Linear</LocalPlanner>
+                    <Parameter name="Step Size">5</Parameter>
+                    <Parameter name="Max Planning Time">1.0</Parameter>
+                    <Parameter name="Speed Factor">1</Parameter>
+                        <Parameter name="MaxNearestNeighbors">10</Parameter>
+                        <Parameter name="Expand Roadmap (s)">0.0</Parameter>
+                </Parameters>
+		<Queries>
+                        <Query>
+                        <Init dim="2">0.9 0.1</Init>
+                        <Goal dim="2">0.6 0.8</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

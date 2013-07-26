@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Planner ProblemName="" Date="">
+	<Parameters>
+		<Name>PRM</Name>
+		<LocalPlanner stepSize="1">Linear</LocalPlanner>
+		<Parameter name="Drawn Path Link">-1</Parameter>
+		<Parameter name="Max. Neighs">10</Parameter>
+		<Parameter name="Max. Samples">2000</Parameter>
+		<Parameter name="Neigh Thresshold">25</Parameter>
+		<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
+		<Parameter name="Speed Factor">1</Parameter>
+		<Parameter name="Step Size">1</Parameter>
+	</Parameters>
+	
+	<Queries />
+	<SampleSet dim="12" size="7">
+
+		<!-- Posición inicial -->
+		<Sample conComp="0">0.4033 0.6789 0.5597 0.7595 0.4276 0.4161 0.4835 0.4542 0.5113 0.4682 0.4691 0.5551</Sample>
+		<!-- Posición coger objetos del suelo -->
+		<Sample conComp="0">0.4795 0.6064 0.5115 0.6227 0.5151 0.4714 0.4455 0.4545 0.4708 0.3895 0.3278 0.4617</Sample>
+		<!-- Posición poner objetos sobre caja -->
+		<Sample conComp="0">0.4884 0.5122 0.4666 0.4883 0.4319 0.6271 0.51 0.5504 0.5256 0.3868 0.5055 0.453</Sample>
+		<!-- Posición llenado vaso de agua -->
+		<Sample conComp="0">0.5587 0.4598 0.4663 0.5774 0.007 0.3513 0.4613 0.7782 0.9759 0.5729 0.0952 0.6093</Sample>
+	
+  	</SampleSet>
+	<Conectivity />
+	<ConnComponents size="0" />
+</Planner>

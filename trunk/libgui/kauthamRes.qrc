@@ -1,0 +1,40 @@
+<RCC>
+  <qresource prefix="/">
+    <file>icons/tryconnect.xpm</file>
+    <file>icons/connect.xpm</file>
+    <file>icons/noconnect.xpm</file>
+    <file>icons/animate.xpm</file>
+    <file>icons/blackbox.xpm</file>
+    <file>icons/logo_ioc.png</file>
+    <file>icons/close.xpm</file>
+    <file>icons/logo_eci.png</file>
+    <file>icons/clrobot.xpm</file>
+    <file>icons/determ.xpm</file>
+    <file>icons/fileopen.xpm</file>
+    <file>icons/filesave.xpm</file>
+    <file>icons/kautham.xpm</file>
+    <file>icons/phantom_off.xpm</file>
+    <file>icons/kth.png</file>
+    <file>icons/phantom_on.xpm</file>
+    <file>icons/populate.xpm</file>
+    <file>icons/prm.xpm</file>
+    <file>icons/rand.xpm</file>
+    <file>icons/robot.xpm</file>
+    <file>icons/saveas.xpm</file>
+    <file>icons/vreta.xpm</file>
+    <file>icons/vrphi.xpm</file>
+    <file>icons/vrtheta.xpm</file>
+    <file>icons/vrx.xpm</file>
+    <file>icons/vry.xpm</file>
+    <file>icons/vrz.xpm</file>
+    <file>icons/vrzoom.xpm</file>
+    <file>icons/vseta.xpm</file>
+    <file>icons/vsphi.xpm</file>
+    <file>icons/vstheta.xpm</file>
+    <file>icons/vsx.xpm</file>
+    <file>icons/vsy.xpm</file>
+    <file>icons/vsz.xpm</file>
+    <file>icons/vszoom.xpm</file>
+    <file>kautham.html</file>
+  </qresource>
+</RCC>

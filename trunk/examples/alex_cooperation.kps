@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<Planner ProblemName="" Date="">
+	<Parameters>
+		<Name>PRM</Name>
+		<LocalPlanner stepSize="1">Linear</LocalPlanner>
+		<Parameter name="Drawn Path Link">6</Parameter>
+		<Parameter name="Max. Neighs">10</Parameter>
+		<Parameter name="Max. Samples">2200</Parameter>
+		<Parameter name="Neigh Thresshold">50</Parameter>
+		<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
+		<Parameter name="Speed Factor">1</Parameter>
+		<Parameter name="Step Size">1</Parameter>
+	</Parameters>
+	<Queries>
+		<Query Init="0" Goal="1" Solved="True">
+			<Result name="Path">0 21 12 22 1</Result>
+			<Result name="TotalTime">0.619</Result>
+			<Result name="SmoothTime">0</Result>
+			<Result name="Generated Samples">21</Result>
+			<Result name="Generated Edges">0</Result>
+			<Result name="Collision-check calls">198</Result>
+		</Query>
+	</Queries>
+	<SampleSet dim="13" size="23">
+		<Sample conComp="0">0.5 0.434 0.717 0.669 0.5 0.5 0.5 0.51 0.593 0.891 0.5 0.572 0.5</Sample>
+		<Sample conComp="0">0.5 0.542 0.757 0.589 0.52 0.57 0.5 0.373 0.661 0.772 0.5 0.572 0.5</Sample>
+		<Sample conComp="0">0.691321 0.984946 0.826584 0.340131 0.495724 0.201511 0.239416 0.486374 0.146253 0.282346 0.435546 0.39592 0.102968</Sample>
+		<Sample conComp="0">0.704677 0.294142 0.745352 0.921568 0.884174 0.42189 0.746233 0.0592352 0.7276 0.729174 0.228575 0.481304 0.329</Sample>
+		<Sample conComp="0">0.232399 0.998262 0.212915 0.291042 0.195627 0.826464 0.560727 0.439324 0.614464 0.189799 0.241513 0.0201035 0.686069</Sample>
+		<Sample conComp="0">0.274357 0.216315 0.134379 0.675386 0.559512 0.213493 0.411924 0.755936 0.684172 0.253747 0.0036668 0.676931 0.422013</Sample>
+		<Sample conComp="0">0.297496 0.285127 0.937937 0.0675279 0.966975 0.917953 0.391357 0.234398 0.30263 0.0198093 0.831608 0.337209 0.462764</Sample>
+		<Sample conComp="0">0.759282 0.788904 0.995394 0.521447 0.941581 0.627326 0.343635 0.72454 0.629479 0.236654 0.71684 0.97288 0.433599</Sample>
+		<Sample conComp="0">0.62513 0.125983 0.814891 0.557704 0.803808 0.0213561 0.169791 0.0448916 0.208124 0.683511 0.0272678 0.458097 0.774868</Sample>
+		<Sample conComp="0">0.135071 0.677596 0.978439 0.0906871 0.864976 0.533519 0.172893 0.670084 0.0691846 0.717742 0.527435 0.926984 0.610716</Sample>
+		<Sample conComp="0">0.971019 0.434948 0.361124 0.89642 0.751681 0.276941 0.069398 0.18359 0.246799 0.381263 0.357743 0.787746 0.300876</Sample>
+		<Sample conComp="0">0.51443 0.434029 0.706097 0.675967 0.507711 0.493166 0.486808 0.5 0.582394 0.875383 0.495642 0.57861 0.4939</Sample>
+		<Sample conComp="0">0.603512 0.434208 0.638792 0.718978 0.55531 0.45098 0.405371 0.438268 0.516919 0.77898 0.468737 0.619413 0.45624</Sample>
+		<Sample conComp="0">0.66943 0.434341 0.588988 0.750805 0.590532 0.419764 0.345109 0.392588 0.468468 0.707643 0.448829 0.649606 0.428373</Sample>
+		<Sample conComp="0">0.828944 0.434662 0.468468 0.827822 0.675765 0.344223 0.199282 0.282047 0.351225 0.535017 0.400652 0.72267 0.360939</Sample>
+		<Sample conComp="0">0.861301 0.434727 0.444021 0.843445 0.693055 0.3289 0.169701 0.259623 0.327442 0.5 0.39088 0.737491 0.347259</Sample>
+		<Sample conComp="0">0.8433 0.463976 0.468468 0.813061 0.688859 0.356406 0.186158 0.23495 0.359112 0.487214 0.396317 0.729245 0.35487</Sample>
+		<Sample conComp="0">0.827887 0.467479 0.481423 0.803001 0.681278 0.365996 0.200249 0.241148 0.372666 0.5 0.400972 0.722185 0.361386</Sample>
+		<Sample conComp="0">0.718942 0.492239 0.572987 0.731897 0.627691 0.433779 0.299845 0.284957 0.468468 0.590375 0.433875 0.672284 0.407442</Sample>
+		<Sample conComp="0">0.691295 0.498523 0.596224 0.713852 0.614092 0.45098 0.32512 0.296075 0.492781 0.613311 0.442225 0.659621 0.41913</Sample>
+		<Sample conComp="0">0.684796 0.5 0.601685 0.709611 0.610896 0.455023 0.331061 0.298688 0.498495 0.618701 0.444188 0.656644 0.421877</Sample>
+		<Sample conComp="-1">0.51443 0.434029 0.706097 0.675967 0.507711 0.493166 0.486808 0.5 0.582394 0.875383 0.495642 0.57861 0.4939</Sample>
+		<Sample conComp="-1">0.540332 0.5 0.710942 0.639645 0.533758 0.523625 0.463129 0.398431 0.60486 0.77472 0.487819 0.590474 0.482949</Sample>
+	</SampleSet>
+	<Conectivity>
+		<Pair Weight="1.5333">0 12</Pair>
+		<Pair Weight="2.50973">0 13</Pair>
+		<Pair Weight="3.03969">0 20</Pair>
+		<Pair Weight="3.12321">0 19</Pair>
+		<Pair Weight="3.48455">0 18</Pair>
+		<Pair Weight="4.87259">0 14</Pair>
+		<Pair Weight="4.96662">0 17</Pair>
+		<Pair Weight="1.38681">1 11</Pair>
+		<Pair Weight="1.85225">1 12</Pair>
+		<Pair Weight="5.84674">2 18</Pair>
+		<Pair Weight="6.02042">2 16</Pair>
+		<Pair Weight="6.17008">2 15</Pair>
+		<Pair Weight="5.88124">3 20</Pair>
+		<Pair Weight="7.26722">4 1</Pair>
+		<Pair Weight="8.5551">4 5</Pair>
+		<Pair Weight="7.25897">6 9</Pair>
+		<Pair Weight="7.5867">6 20</Pair>
+		<Pair Weight="5.51316">7 9</Pair>
+		<Pair Weight="6.67527">8 14</Pair>
+		<Pair Weight="7.04705">8 10</Pair>
+	</Conectivity>
+	<ConnComponents size="1">
+		<Component name="0" size="21">0 12 13 20 19 18 14 17 1 11 2 16 15 3 4 5 6 9 7 8 10 </Component>
+	</ConnComponents>
+</Planner>
