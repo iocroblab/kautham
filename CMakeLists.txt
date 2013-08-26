@@ -5,8 +5,6 @@ CMAKE_POLICY(SET CMP0003 OLD)
 
 ########### Options ####################
 OPTION( KAUTHAM_GUI "Build the gui version" ON )
-OPTION( USE_DEVICES "Include the device library (haptic+glove)" OFF )
-OPTION( USE_HAPTIC "Build with OpenHaptics" OFF )
 OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
 
 ########### Modules path ###############
@@ -117,13 +115,6 @@ IF( KAUTHAM_GUI )
 
 
   ADD_SUBDIRECTORY ( libgui )
-    ADD_SUBDIRECTORY ( libdevice )
-    ADD_SUBDIRECTORY ( libguiding )
-  #IF( USE_DEVICES )
-  #  ADD_SUBDIRECTORY ( libdevice )
-  #  ADD_SUBDIRECTORY ( libguiding )
-  #  SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  libdevice  libguiding)
-  #ENDIF( USE_DEVICES )
     
   FILE( GLOB RES_FILES *.rc )
   QT4_WRAP_CPP( QT_MOC_SRC application.h )

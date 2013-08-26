@@ -46,21 +46,13 @@
 #include <QMessageBox>
 #include <sstream>
 #include <libproblem/ivworkspace.h>
-#include <libdevice/device.h>
-#include <libdevice/hapticdevice.h>
 #include <libutil/kauthamdefs.h>
 #include "application.h"
 
 using namespace libProblem;
 using namespace libPlanner;
 
-Application::Application(kautham::data_ioc_cell* dataCell) { 
-  Q_INIT_RESOURCE(kauthamRes);
-  initApp();
-  _dataCell = dataCell;
-}
-
-Application::Application() { 
+Application::Application() {
   Q_INIT_RESOURCE(kauthamRes);
   initApp();
 }
@@ -72,20 +64,12 @@ void Application::initApp(){
 	mainWindow->setText("Open a problem file to start...");
 	appState = INITIAL ;
   _problem = NULL;
-  _hapticLoaded = false;
   _planner = NULL;
   _localPlanner = NULL;
-  _dataCell = NULL;
 }
 
 Application::~Application() {
-  //try{
-  //  if(_devices.size() > 0){
-  //    for(int i = 0; i < _devices.size();i++)
-  //      if(_devices.at(i) != NULL ) delete _devices.at(i);
-  //    _devices.clear();
-  //  }
-  //}catch(...){}
+
 }
 
 void Application::setActions(){
@@ -221,40 +205,8 @@ void Application::changePlanner(string loc, string glob){
   mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
 
-void Application::loadHaptic(){
-  if( appState == INITIAL )return;
-  mainWindow->setCursor(QCursor(Qt::WaitCursor));
-  if(_hapticLoaded == false){
-    Device* tmpDev = new HapticDevice("Haptic",10);
-    _devices.push_back(tmpDev);
-    mainWindow->addDevice(tmpDev, 50);
-    mainWindow->addTeleoperationWidget(_problem, ((HapticDevice*)tmpDev), _dataCell);
-    _hapticLoaded = true;
-  }else
-    mainWindow->setText("Use the tab provided to drive the Haptic");
 
-  mainWindow->setCursor(QCursor(Qt::ArrowCursor));
-}
 
-void Application::unloadHaptic(){
-  mainWindow->setCursor(QCursor(Qt::WaitCursor));
-  if(_hapticLoaded == false){
-    mainWindow->setText("You do not have the Haptic connection loaded");
-  }else{
-    _hapticLoaded = false;
-    
-    for(int i=0; i < _devices.size(); i++)
-      if(((Device*)_devices.at(i))->getGuiName() == "Haptic"){
-        delete _devices.at(i);
-        _devices.erase(_devices.begin()+i);
-        //vector<Device*>::iterator it = _devices.erase(_devices.begin()+i);
-        //delete (*it);
-      }
-    mainWindow->removePropTab("Teleoperation");
-    mainWindow->removePropTab("Haptic");
-  }
-  mainWindow->setCursor(QCursor(Qt::ArrowCursor));
-}
 
 bool Application::problemSetup(string path){
   mainWindow->setCursor(QCursor(Qt::WaitCursor));

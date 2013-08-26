@@ -49,7 +49,6 @@
 #include <vector>
 #include <string>
 #include <Inventor/nodes/SoSeparator.h>
-//#include <libproblem/probstruc.h>
 #include <libproblem/robot.h>
 #include "ui_RobotSim.h"
 #include "viewertype.h"
@@ -57,17 +56,13 @@
 #include <libproblem/problem.h>
 #include <libsampling/sampling.h>
 #include "streamlog.h"
-#include <libdevice/device.h>
 #include <libproblem/inversekinematic.h>
-#include <libdevice/device.h>
-#include <libutil/data_ioc_cell.hpp>
 #include "controlwidget.h"
 
 
 using namespace std;
 using namespace libProblem;
 using namespace libPlanner;
-using namespace libDevice;
 
 namespace libGUI {
 	enum WHERETYPE{
@@ -132,10 +127,9 @@ namespace libGUI {
     bool                setSampleWidget(SampleSet* samples, Sampler* sampler, Problem* prob);
     bool                createPlannerToolBar(string loc, string plan, QObject* receiver, const char* member);
     bool                addPlanner(Planner *plan, SampleSet* samp, GUI* gui = NULL);
-    bool                addDevice(Device* dev, unsigned int period);
+
     bool                addInverseKinematic(InverseKinematic* ikine);
     bool                addWidgetToTab(QWidget* widget, QString name);
-    bool                addTeleoperationWidget(Problem* _problem, Device* hap, kautham::data_ioc_cell* dataCell);
 
     const mt::Transform getActiveCameraTransfom();
     bool                setActiveCameraPosition(float x, float y, float z );

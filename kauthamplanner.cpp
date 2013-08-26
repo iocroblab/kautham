@@ -46,55 +46,18 @@
 #include <QWidget>
 #include <Inventor/Qt/SoQt.h>
 
-// Included to use the shared memory between the Kautham and the publisher
-#include <boost/interprocess/shared_memory_object.hpp>
-#include <boost/interprocess/mapped_region.hpp>
-#include <boost/interprocess/sync/scoped_lock.hpp>
-#include <libutil/data_ioc_cell.hpp>
-
-using namespace boost::interprocess;
 
 int main(int argc, char* argv[]){       
-  //Q_INIT_RESOURCE(kauthamRes);
-  try{
-    //  Remove shared memory on construction and destruction
-    shared_memory_object::remove("KauthamSharedMemory"); 
-    // //Create a shared memory object.
-    shared_memory_object shm( create_only,            //only create
-                           "KauthamSharedMemory",     //name
-                           read_write );	      //read-write mode
 
-    //set size
-    shm.truncate(sizeof(kautham::data_ioc_cell));
-
-    //map the whole shared memory in this process
-    mapped_region region( shm,					        //what to map
-				                  read_write);          //map it as read-write
-
-    //get the address of the mapped region
-    void * addr       = region.get_address();
-
-    // construct the shared structure in memory
-
-    kautham::data_ioc_cell* datacell = new (addr) kautham::data_ioc_cell;
-    QWidget *app = SoQt::init(argv[0]);//argc, argv,argv[0]);
-    app->setVisible(false);
-    Application kauthApp( datacell );
-    SoQt::mainLoop();
-
-  }catch(interprocess_exception &ex){
-    std::cout << "Kautham error: " << ex.what() << std::endl;
-    //  Remove shared memory on construction and destruction
-    shared_memory_object::remove("KauthamSharedMemory");
-  }catch(...){
-    std::cout << "Unexpected error in the Kautham initialization.\n";
-    //  Remove shared memory on construction and destruction
-    shared_memory_object::remove("KauthamSharedMemory");
-  }
-  
-  //  Remove shared memory on construction and destruction
-  shared_memory_object::remove("KauthamSharedMemory");
-
-  return 0;
+    try{
+        QWidget *app = SoQt::init(argv[0]);//argc, argv,argv[0]);
+        app->setVisible(false);
+        Application kauthApp;
+        SoQt::mainLoop();
+        return 0;
+    }
+    catch(...){
+            std::cout <<"Unexpected error in Kautham initialization"<<endl;
+        }
 }
 

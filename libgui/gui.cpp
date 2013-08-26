@@ -46,7 +46,6 @@
 #include "dofwidget.h"
 #include "sampleswidget.h"
 #include "plannerwidget.h"
-#include "devicewidget.h"
 #include "controlwidget.h"
 #include "bronchowidget.h"
 #include "constrainedcontrolwidget.h"
@@ -54,13 +53,10 @@
 #include <QtGui>
 #include <libsampling/sampling.h>
 #include "planners_toolbar.h"
-#include "teleoperationwidget.h"
 #include <Inventor/nodes/SoCamera.h>
 #include <libutil/pugixml/pugixml.hpp>
-#include <libutil/data_ioc_cell.hpp>
 
 using namespace libProblem;
-using namespace libDevice;
 using namespace SDK;
 using namespace pugi;
 
@@ -214,19 +210,6 @@ namespace libGUI {
     return true;
   }
 
-  bool GUI::addDevice(Device* dev, unsigned int period){
-    if( dev != NULL){
-      DeviceWidget* tmpDOF = new DeviceWidget( dev/*, period*/ );
-      propertiesTab->addTab(tmpDOF, QString((dev->getGuiName()).c_str()));
-      connect(tmpDOF, SIGNAL(sendText(string)), this, SLOT(setText(string)));
-      return true;
-    }else{
-      DeviceWidget* tmpDOF = new DeviceWidget( NULL /*, period*/ );
-      propertiesTab->addTab(tmpDOF, "Device");
-      return true;
-    }
-    return false;
-  }
 
   bool GUI::addWidgetToTab(QWidget* widget, QString name){
     if( widget != NULL){
@@ -256,16 +239,6 @@ namespace libGUI {
     boolPlanVis = !boolPlanVis;
   }
 
-  bool GUI::addTeleoperationWidget(Problem* _problem, Device* hap, kautham::data_ioc_cell* dataCell){
-    try{
-      // Creating the Mouse Jump Widget interface
-      TeleoperationWidget* tmp = new TeleoperationWidget(_problem, hap, this, dataCell);
-      propertiesTab->addTab(tmp, "Teleoperation");
-      return true;
-    }catch(...){
-      return false;
-    }
-  }
 
   bool GUI::addPlanner(Planner *plan, SampleSet* samp, GUI* gui){
     if( plan != NULL){
