@@ -48,7 +48,7 @@
 #include <vector>
 #include <string>
 #include "lcprng.h"
-#include <libutil/kauthamdefs.h>
+#include <kauthamdefs.h>
 #include <sstream>
 #include <iostream>
 

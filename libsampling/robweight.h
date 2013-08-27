@@ -1,7 +1,7 @@
 #ifndef ROBWEIGHT_H
 #define ROBWEIGHT_H
 
-#include <libutil/kauthamdefs.h>
+#include <kauthamdefs.h>
 
 namespace libSampling{
   class RobWeight{

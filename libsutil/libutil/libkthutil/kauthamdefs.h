@@ -10,6 +10,7 @@
 *                Project Name:       Kautham Planner                       *
 *                                                                          *
 *     Copyright (C) 2007 - 2009 by Alexander Pérez and Jan Rosell          *
+
 *            alexander.perez@upc.edu and jan.rosell@upc.edu                *
 *                                                                          *
 *             This is a motion planning tool to be used into               *
@@ -39,39 +40,145 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
- 
- 
-#if !defined(_SE2CONF_H)
-#define _SE2CONF_H
+  
+ /*	This file contains some useful definitions to be used into Kautham planning
+		system.
+*/
 
-#include "conf.h"
+
+/**
+* \mainpage THE KAUTHAM PROJECT
+*  A robot simulation toolkit for motion planning and teleoperation guiding
+* \section Features
+*  - Multiplatform and open-source
+*  -# Programming language: C++
+*  -# 3D rendering: coin3D
+*  -# GUI: Qt
+*  -# Collision detection: PQP
+*  -# Graph management: Boost Graph
+*  -# Neighborhood: MPNN
+*  -# Input data: XML files
+*
+*  - Modular and extensible
+*  -# Geometric library: freeflying robots, kinematic chains and trees
+*  -# Sampling library: random and deterministic sampling strategies (Halton, sdk)
+*  -# Planning library: sampling-based roadmaps, RRTs
+*  -# GUI library: graphic rendering and flexible library management
+*  -# Device library: haptic devices, data gloves, robots and mechanical hands  (Phantom, CyberGlove, Staubli TX90, SAH)
+* \section Credits
+* Alexander Perez and Jan Rosell \n
+* alexander.perez@upc.edu - jan.rosell@upc.edu\n
+*
+* Institute of Industrial and Control Engineering\n
+* Technical University of Catalunya\n
+* Barcelona, Spain\n
+* <A HREF="http://www.ioc.upc.edu"> www.ioc.upc.edu</A>\n
+*
+* Alexander Perez is also with the Escuela Colombiana
+* de Ingenieria "Julio Garavito" placed in Bogota D.C.
+* Colombia (alexander.perez@escuelaing.edu.co)
+*
+*
+*/
+
+
+
+#if !defined(_KAUTHAMDEFS_H)
+#define _KAUTHAMDEFS_H
+
+#include <iostream> 
 #include <string>
-#include <sstream>
-#include <iostream>
-#include <kauthamdefs.h>
+#include <vector>
+#include <map>
+
+
 
 using namespace std;
-using namespace Kautham;
 
-namespace libSampling {
-	class SE2Conf : public Conf {
-	public:
-		SE2Conf();
-		~SE2Conf();
-    bool    setCoordinates(std::vector<KthReal> coordinates);
-    KthReal getDistance2(Conf* conf);
-    KthReal getDistance2(Conf* conf, std::vector<KthReal>& weights);
+namespace Kautham{
+  #define KthReal float
+  #define MAJOR_VERSION "2"
+  #define MINOR_VERSION "1"
 
-    //! Returns the interpolated configuration based on coordinates.
-    SE2Conf     interpolate(SE2Conf& se2, KthReal fraction);
-		std::string print();
-    void		setPos(KthReal pos[3]);
-		KthReal*	getPos();
+	enum ROBOTTYPE{
+		FREEFLY,
+		CHAIN,
+		TREE,
+		CLOSEDCHAIN
+	};
 
-		void		  setAngle(KthReal angle);
-		KthReal		getAngle();
+	enum DHAPPROACH{
+		DHSTANDARD,
+		DHMODIFIED
+  };
+	
+	enum NEIGHSEARCHTYPE {
+		BRUTEFORCE,
+		ANNMETHOD,
+	};
+
+	enum CONFIGTYPE {
+		SE2,
+		SE3,
+		Rn
+	};
+
+  enum LIBUSED{
+    INVENTOR,
+    IVPQP,
+    IVSOLID
+  };
+
+  enum SPACETYPE{
+    SAMPLEDSPACE,
+    CONTROLSPACE,
+    CONFIGSPACE
+  };
+
+  enum PROBLEMSTATE{
+	  INITIAL,
+	  PROBLEMLOADED,
+	  CSPACECREATED,
+	  PRMCALCULATED
+  };
+
+  enum CONSTRAINEDKINEMATICS{
+    UNCONSTRAINED,
+    BRONCHOSCOPY
+  };
+
+  //! This enumeration has the relationship of all Inverse Kinematic models
+  //! available to be used as solver of the robot inverser kinematics.
+  enum INVKINECLASSES{
+    UNIMPLEMENTED,
+    RR2D,
+    TX90,
+    HAND,
+    TX90HAND
+  };
+
+#ifndef INFINITY
+#define INFINITY 1.0e40
+#endif
+
+    typedef std::map<std::string, KthReal> HASH_S_K;
+    typedef std::map<std::string, std::string> HASH_S_S;
+
+	
+	//!	Structure  that save the object position and orientation in the WSpace.	
+	/*!	This structure save  temporarily the most important information about 
+	*		the object position and orientation in the 3D physical space regardless
+	*		If the problem is or not 3D.*/
+	struct DATA{
+		DATA(){
+			for(int i=0;i<3;i++)
+				pos[i]=ori[i]= (KthReal)0.0;
+			ori[3]= (KthReal)0.0;
+		}
+		KthReal pos[3];
+		KthReal ori[4];
 	};
 }
 
-#endif  //_SE2CONF_H
+#endif //_KAUTHAMDEFS_H
 

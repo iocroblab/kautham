@@ -40,38 +40,71 @@
  ***************************************************************************/
  
  
- 
-#if !defined(_SE2CONF_H)
-#define _SE2CONF_H
-
-#include "conf.h"
+#include "kauthamobject.h"
 #include <string>
 #include <sstream>
-#include <iostream>
-#include <kauthamdefs.h>
+#include <cstdio>
+#include <cstdlib>
+#include <boost/algorithm/string.hpp>
 
-using namespace std;
-using namespace Kautham;
+namespace Kautham{
 
-namespace libSampling {
-	class SE2Conf : public Conf {
-	public:
-		SE2Conf();
-		~SE2Conf();
-    bool    setCoordinates(std::vector<KthReal> coordinates);
-    KthReal getDistance2(Conf* conf);
-    KthReal getDistance2(Conf* conf, std::vector<KthReal>& weights);
+  KthReal KauthamObject::getParameter(string key){
+    HASH_S_K::iterator it = _parameters.find(key);
+    if(it != _parameters.end() )
+      return it->second;
+    else
+      throw -1;
+  }
 
-    //! Returns the interpolated configuration based on coordinates.
-    SE2Conf     interpolate(SE2Conf& se2, KthReal fraction);
-		std::string print();
-    void		setPos(KthReal pos[3]);
-		KthReal*	getPos();
+  string KauthamObject::getParametersAsString(){
+    std::stringstream par;
+    string p;
+    par.precision(10);
+    HASH_S_K::iterator it;
+    for(it = _parameters.begin(); it != _parameters.end(); ++it) { 
+      par << it->first << "|";
+      par << it->second << "|"; 
+    }
+    p = par.str();
+    return p.substr(0,p.length()-1);
+  }
 
-		void		  setAngle(KthReal angle);
-		KthReal		getAngle();
-	};
+  bool KauthamObject::setParameter(string key, KthReal value){
+    HASH_S_K::iterator it = _parameters.find(key);
+    if(it != _parameters.end() ){
+      it->second = value;
+      return true;
+    }
+    return false;
+  }
+
+  bool KauthamObject::setParametersFromString(const string& par){
+    if(par == "") return false;
+    string prop="", sval="";
+    KthReal val = 0.0;
+    HASH_S_K::iterator it;
+    vector<string> tokens;
+    boost::split(tokens, par, boost::is_any_of("|"));
+    
+    for(int i=0; i<tokens.size(); i=i+2){
+      try{
+        it = _parameters.find(tokens[i]);
+        val = (KthReal)atof(tokens[i+1].c_str());
+        if(it != _parameters.end()) 
+          it->second = val;
+        else{
+          cout << "Error:" << tokens[i] << "\t";
+          throw -1;
+        }
+      }catch(...){
+        cout << "Error:" << tokens[i] << "\t";
+            throw -2;
+      }
+    }
+    
+    return setParameters();
+  }
+      
 }
-
-#endif  //_SE2CONF_H
 

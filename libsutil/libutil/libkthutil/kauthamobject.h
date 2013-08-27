@@ -40,38 +40,41 @@
  ***************************************************************************/
  
  
- 
-#if !defined(_SE2CONF_H)
-#define _SE2CONF_H
+#if !defined(_KAUTHAMOBJECT_H)
+#define _KAUTHAMOBJECT_H
 
-#include "conf.h"
-#include <string>
-#include <sstream>
-#include <iostream>
-#include <kauthamdefs.h>
+#include "kauthamdefs.h"
 
 using namespace std;
 using namespace Kautham;
 
-namespace libSampling {
-	class SE2Conf : public Conf {
-	public:
-		SE2Conf();
-		~SE2Conf();
-    bool    setCoordinates(std::vector<KthReal> coordinates);
-    KthReal getDistance2(Conf* conf);
-    KthReal getDistance2(Conf* conf, std::vector<KthReal>& weights);
+namespace Kautham{
+  class KauthamObject{
+    public:
+      virtual bool    setParameters()=0;
+      inline          KauthamObject(string name){_guiName = name;}
+      inline string   getGuiName() const {return _guiName;}
+      inline void     addParameter(string key, KthReal value){_parameters[key] = value;}
+      inline bool     removeParameter(string key){
+			HASH_S_K::iterator it = _parameters.find(key);
+			if(it != _parameters.end())	{
+				_parameters.erase(it);
+				return true;
+			}
+			else return false;}
+      KthReal         getParameter(string key);
 
-    //! Returns the interpolated configuration based on coordinates.
-    SE2Conf     interpolate(SE2Conf& se2, KthReal fraction);
-		std::string print();
-    void		setPos(KthReal pos[3]);
-		KthReal*	getPos();
+      string          getParametersAsString();
 
-		void		  setAngle(KthReal angle);
-		KthReal		getAngle();
-	};
+      bool            setParameter(string key, KthReal value);
+
+      bool            setParametersFromString(const string& par);
+  
+      inline KauthamObject(){}
+    protected:
+      HASH_S_K      _parameters;
+      string        _guiName;
+  };
 }
 
-#endif  //_SE2CONF_H
-
+#endif	//_KAUTHAMOBJECT_H
