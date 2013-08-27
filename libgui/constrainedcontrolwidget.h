@@ -8,7 +8,7 @@
 #include <libproblem/robot.h>
 #include <libproblem/problem.h>
 #include <libproblem/constrainedkinematic.h>
-#include <libutil/kauthamdefs.h>
+#include <libkthutil/kauthamdefs.h>
 
 
 using namespace std;
