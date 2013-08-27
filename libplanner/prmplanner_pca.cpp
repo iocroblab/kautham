@@ -50,7 +50,7 @@
 #include "localplanner.h"
 #include "prmplanner_pca.h"
 #include <stdio.h>
-#include <libutil/pugixml/pugixml.hpp>
+#include <libpugixml/pugixml.hpp>
 
 #include <libsampling/lcprng.h>
 

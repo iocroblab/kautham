@@ -44,7 +44,7 @@
 #if !defined(_GUIBROGRIDPLANNER_H)
 #define _GUIBROGRIDPLANNER_H
 
-#include <libutil/pathparse.h>
+#include <libkthutil/pathparse.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include "localplanner.h"

@@ -41,7 +41,7 @@
 #ifndef KTHQUERY_H
 #define KTHQUERY_H
 
-#include <libutil/kauthamdefs.h>
+#include <libkthutil/kauthamdefs.h>
 #include <vector>
 #include <string>
 #include <sstream>

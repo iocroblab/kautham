@@ -45,7 +45,7 @@
 #include <sstream>
 #include <boost/algorithm/string.hpp>
 #include "planner.h"
-#include <libutil/pugixml/pugixml.hpp>
+#include <libpugixml/pugixml.hpp>
 #include <iostream>
 #include <fstream>
 
