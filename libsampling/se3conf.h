@@ -49,7 +49,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <mt/mt.h>
+#include <libmt/mt/mt.h>
 #include "lcprng.h"
 
 

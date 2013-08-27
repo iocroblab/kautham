@@ -48,7 +48,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <kauthamdefs.h>
+#include <libkthutil/kauthamdefs.h>
 
 using namespace std;
 using namespace Kautham;
