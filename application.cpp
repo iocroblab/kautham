@@ -88,10 +88,7 @@ void Application::setActions(){
   mainWindow->addSeparator(TOOLBAR);
   mainWindow->addSeparator(ACTIONMENU);
 
-  mainWindow->setAction(ACTIONTOOL,"Haptic connection","CTRL+U",":/icons/phantom_on.xpm",
-                        this,SLOT(loadHaptic()));
-  mainWindow->setAction(ACTIONTOOL,"Stop Haptic connection","CTRL+D",":/icons/phantom_off.xpm",this,SLOT(unloadHaptic()));
-	mainWindow->addSeparator(TOOLBAR);
+  mainWindow->addSeparator(TOOLBAR);
   mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G",
                               ":/icons/determ.xpm", mainWindow, SLOT(changeActiveBackground()));
   mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close.xpm",this,SLOT(closeProblem()));
