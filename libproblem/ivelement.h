@@ -56,7 +56,7 @@
 #include <Inventor/nodes/SoScale.h>
 #include <Inventor/nodes/SoSphere.h>
 #include <Inventor/SbLinear.h>
-#include <libutil/kauthamdefs.h>
+#include <libkthutil/kauthamdefs.h>
 
 using namespace Kautham;
 

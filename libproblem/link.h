@@ -48,8 +48,8 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/SbLinear.h>
 #include "element.h"
-#include <mt/mt.h> 
-#include <libutil/kauthamdefs.h>
+#include <libmt/mt/mt.h>
+#include <libkthutil/kauthamdefs.h>
 #include <string>
 
 using namespace mt;

@@ -75,7 +75,7 @@
 #include <libplanner/NF1planner.h>
 #include <libplanner/HFplanner.h>
 #include <libplanner/guibrogridplanner.h>
-#include <libutil/pugixml/pugixml.hpp> 
+#include <libpugixml/pugixml.hpp>
 #include <string>
 #include <fstream>
 #include <iostream>

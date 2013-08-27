@@ -45,11 +45,11 @@
 #if !defined(_INVERSEKINEMATIC_H)
 #define _INVERSEKINEMATIC_H
 
-#include <libutil/kauthamdefs.h>
+#include <libkthutil/kauthamdefs.h>
 #include <libsampling/robconf.h>
 #include <libsampling/se3conf.h>
 #include <libsampling/rnconf.h>
-#include <libutil/kauthamobject.h>
+#include <libkthutil/kauthamobject.h>
 
 using namespace Kautham;
 using namespace libSampling;

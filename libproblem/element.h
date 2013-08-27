@@ -45,7 +45,7 @@
 #if !defined(_ELEMENT_H)
 #define _ELEMENT_H
 
-#include <libutil/kauthamdefs.h>
+#include <libkthutil/kauthamdefs.h>
 
 using namespace Kautham;
 

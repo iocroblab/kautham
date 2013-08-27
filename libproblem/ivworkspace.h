@@ -45,7 +45,7 @@
 #define _IVWORKSPACE_H
 
 #include "workspace.h"
-#include <libutil/kauthamdefs.h>
+#include <libkthutil/kauthamdefs.h>
 #include <Inventor/engines/SoComputeBoundingBox.h>
 #include <Inventor/engines/SoCompose.h>
 #include <Inventor/engines/SoConcatenate.h>

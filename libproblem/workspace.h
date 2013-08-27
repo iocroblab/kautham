@@ -47,7 +47,7 @@
 
 #include <vector>
 #include <libsampling/robconf.h>
-#include <libutil/kauthamdefs.h>
+#include <libkthutil/kauthamdefs.h>
 #include <libsampling/sample.h>
 #include "obstacle.h"
 #include "robot.h"

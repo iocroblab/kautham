@@ -44,7 +44,7 @@
 
 #include "robot.h"
 #include "ivsolidelement.h"
-#include <libutil/kauthamdefs.h>
+#include <libkthutil/kauthamdefs.h>
 #include "inversekinematic.h"
 #include "ivkintx90.h"
 #include "ivkintxhand.h"
@@ -58,7 +58,7 @@
 #include <cstdio>
 #include <fstream>
 #include <string>
-#include <libutil/pugixml/pugixml.hpp>
+#include <libpugixml/pugixml.hpp>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 
 using namespace std;
