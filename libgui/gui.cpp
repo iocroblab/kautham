@@ -54,7 +54,7 @@
 #include <libsampling/sampling.h>
 #include "planners_toolbar.h"
 #include <Inventor/nodes/SoCamera.h>
-#include <libsutil/pugixml/pugixml.hpp>
+#include <libpugixml/pugixml.hpp>
 
 using namespace libProblem;
 using namespace SDK;

@@ -1,5 +1,5 @@
 
-#include "pugixml.hpp"
+#include <libpugixml/pugixml.hpp>
 #include <sstream>
 #include <string>
 #include <iostream>

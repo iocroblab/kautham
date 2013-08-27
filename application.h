@@ -51,7 +51,7 @@
 #include <QtGui>
 #include <QFile>
 #include <QObject>
-#include <libutil/kauthamdefs.h>
+#include <libkthutil/kauthamdefs.h>
 #include <string>
 
 using namespace std;

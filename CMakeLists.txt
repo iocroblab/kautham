@@ -79,13 +79,14 @@ ENDIF( ARMADILLO_FOUND )
 ##############################################################################
 # Building librarires
 
+INCLUDE_DIRECTORIES( libsutil )
 INCLUDE_DIRECTORIES( libutil/libmt )
-INCLUDE_DIRECTORIES( libutil/pugixml )
-INCLUDE_DIRECTORIES( libutil/libkthutil )
+#INCLUDE_DIRECTORIES( libutil/pugixml )
+#INCLUDE_DIRECTORIES( libutil/libkthutil )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIRS} )
 ADD_SUBDIRECTORY ( libann )
-ADD_SUBDIRECTORY ( libutil/libkthutil )
-ADD_SUBDIRECTORY ( libutil/pugixml )
+ADD_SUBDIRECTORY ( libsutil/libkthutil )
+ADD_SUBDIRECTORY ( libsutil/pugixml )
 ADD_SUBDIRECTORY ( libpqp )
 ADD_SUBDIRECTORY ( libproblem )
 ADD_SUBDIRECTORY ( libsampling )

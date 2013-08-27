@@ -46,7 +46,7 @@
 #include <QMessageBox>
 #include <sstream>
 #include <libproblem/ivworkspace.h>
-#include <libutil/kauthamdefs.h>
+#include <libkthutil/kauthamdefs.h>
 #include "application.h"
 
 using namespace libProblem;
