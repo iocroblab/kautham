@@ -16,8 +16,8 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 # Required packages
 
 #### mt package ##################
-SET(mt_DIR ${CMAKE_SOURCE_DIR}/libmt)
-FIND_PACKAGE( mt REQUIRED )
+SET(mt_DIR ${CMAKE_SOURCE_DIR}/libutil/libmt)
+
 
 #### Boost package ###############
 FIND_PACKAGE( Boost COMPONENTS  system serialization thread REQUIRED )
@@ -80,8 +80,11 @@ ENDIF( ARMADILLO_FOUND )
 # Building librarires
 
 INCLUDE_DIRECTORIES( libutil )
+INCLUDE_DIRECTORIES( libutil/libmt )
+INCLUDE_DIRECTORIES( libutil/pugixml ${Boost_INCLUDE_DIRS} )
 ADD_SUBDIRECTORY ( libann )
 ADD_SUBDIRECTORY ( libutil )
+ADD_SUBDIRECTORY ( libutil/pugixml )
 ADD_SUBDIRECTORY ( libpqp )
 ADD_SUBDIRECTORY ( libproblem )
 ADD_SUBDIRECTORY ( libsampling )
@@ -127,7 +130,7 @@ IF( KAUTHAM_GUI )
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
 
   TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS} libDNN libPQP libgui libsampling
-                                                libproblem libkthutil  )
+                                                libproblem libkthutil libpugixml )
 ENDIF( KAUTHAM_GUI )
 
 
@@ -151,7 +154,7 @@ IF( KAUTHAM_CONSOLE )
   
     # Adding console bath mode executable
   ADD_EXECUTABLE( KauthamConsole ${SRC_FILES} ${HDR_FILES} ${RES_FILES} )
-  TARGET_LINK_LIBRARIES( KauthamConsole libDNN libPQP libproblem libkthutil ${KC_EXTRA_LIBS} )
+  TARGET_LINK_LIBRARIES( KauthamConsole libDNN libPQP libproblem libkthutil libpugixml ${KC_EXTRA_LIBS} )
   
   MESSAGE( STATUS "KC_EXTRA_LIBS = " ${KC_EXTRA_LIBS} )
 ENDIF( KAUTHAM_CONSOLE )
