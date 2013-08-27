@@ -65,7 +65,10 @@ namespace libGUI{
   //! the setParametersFromString method of Inverser Kinematic object.
   void InvKinWidget::getSolution(){
     if(_invKin->solve())
+    {
       _invKin->getRobot().Kinematics(_invKin->getRobConf());
+       writeGUI("Inverse Kinematic: Solution found");
+  }
     else
       writeGUI("Inverse Kinematic has not a solution.");
   }
