@@ -16,7 +16,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 # Required packages
 
 #### mt package ##################
-SET(mt_DIR ${CMAKE_SOURCE_DIR}/libutil/libmt)
+SET(mt_DIR ${CMAKE_SOURCE_DIR}/libsutil/libmt)
 
 
 #### Boost package ###############
@@ -80,13 +80,11 @@ ENDIF( ARMADILLO_FOUND )
 # Building librarires
 
 INCLUDE_DIRECTORIES( libsutil )
-INCLUDE_DIRECTORIES( libutil/libmt )
-#INCLUDE_DIRECTORIES( libutil/pugixml )
-#INCLUDE_DIRECTORIES( libutil/libkthutil )
+INCLUDE_DIRECTORIES( libsutil/libmt )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIRS} )
 ADD_SUBDIRECTORY ( libann )
 ADD_SUBDIRECTORY ( libsutil/libkthutil )
-ADD_SUBDIRECTORY ( libsutil/pugixml )
+ADD_SUBDIRECTORY ( libsutil/libpugixml )
 ADD_SUBDIRECTORY ( libpqp )
 ADD_SUBDIRECTORY ( libproblem )
 ADD_SUBDIRECTORY ( libsampling )
