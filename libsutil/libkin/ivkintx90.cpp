@@ -42,7 +42,7 @@
  
  
 #include "ivkintx90.h"
-#include "robot.h"
+#include <libproblem/robot.h>
 
 
 namespace libProblem {

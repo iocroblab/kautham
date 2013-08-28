@@ -14,10 +14,10 @@
 using namespace libGUI;
 
 namespace Ui {
-	class bronchoWidget;
+    class bronchoWidget;
 }
 
-	class bronchoWidget : public QWidget {
+    class bronchoWidget : public QWidget {
 		Q_OBJECT
 
 	private slots:
@@ -40,7 +40,7 @@ namespace Ui {
 		void updateLookAt();
 
 	private:
-		Ui::bronchoWidget *ui;
+        Ui::bronchoWidget *ui;
 			//vector<QSlider*>  sliders;
 			//vector<QLabel*>   labels;
 			//QGridLayout       *gridLayout;

@@ -78,7 +78,7 @@ ENDIF( ARMADILLO_FOUND )
 
 ##############################################################################
 # Building librarires
-
+INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIR} )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} )
 INCLUDE_DIRECTORIES( libsutil )
 INCLUDE_DIRECTORIES( libsutil/libmt )
@@ -123,6 +123,7 @@ IF( KAUTHAM_GUI )
 
 
   ADD_SUBDIRECTORY ( libgui )
+  ADD_SUBDIRECTORY ( libsexternal/libguibro )
     
   FILE( GLOB RES_FILES *.rc )
   QT4_WRAP_CPP( QT_MOC_SRC application.h )
@@ -133,7 +134,7 @@ IF( KAUTHAM_GUI )
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
 
   TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS} libDNN libPQP libgui libsampling
-                                                libproblem libkthutil libkin libpugixml )
+                                                libproblem libkthutil libkin libpugixml libguibro)
 ENDIF( KAUTHAM_GUI )
 
 

@@ -1,5 +1,5 @@
 #include "consbronchoscopykin.h"
-#include "robot.h"
+#include <libproblem/robot.h>
 #include <libmt/mt/mt.h>
 
 namespace libProblem {

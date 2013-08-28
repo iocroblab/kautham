@@ -1,6 +1,6 @@
 
 #include <QtGui>
-#include "constrainedcontrolwidget.h"
+#include <libgui/constrainedcontrolwidget.h>
 #include <QString>
 
 

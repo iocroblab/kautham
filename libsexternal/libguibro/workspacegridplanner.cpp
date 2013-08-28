@@ -44,7 +44,7 @@
 #include <stdio.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
-#include "localplanner.h"
+#include <libplanner/localplanner.h>
 #include "workspacegridplanner.h"
 
 using namespace libSampling;

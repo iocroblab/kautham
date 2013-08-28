@@ -42,7 +42,7 @@
  
  
 #include "ivkin2drr.h"
-#include "robot.h"
+#include <libproblem/robot.h>
 
 
 namespace libProblem {

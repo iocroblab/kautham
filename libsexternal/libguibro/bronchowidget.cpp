@@ -1,8 +1,9 @@
 #include "bronchowidget.h"
+//#include "ui_bronchowidget.h"
 #include <ui_bronchowidget.h>
-#include <libproblem/consbronchoscopykin.h>
-#include <libplanner/guibrogridplanner.h>
-#include "gui.h"
+#include "consbronchoscopykin.h"
+#include "guibrogridplanner.h"
+#include <libgui/gui.h>
 
 using namespace  libGUI;
 

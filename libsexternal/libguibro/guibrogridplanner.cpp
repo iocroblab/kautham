@@ -46,9 +46,9 @@
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include <libsampling/robconf.h>
-#include "localplanner.h"
+#include <libplanner/localplanner.h>
 #include "guibrogridplanner.h"
-#include <libproblem/consbronchoscopykin.h>
+#include "consbronchoscopykin.h"
 #include <cctype>
 
 using namespace libSampling;
