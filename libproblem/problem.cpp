@@ -43,7 +43,6 @@
 #include <libguibro/consbronchoscopykin.h>
 #include <libplanner/linearlocplan.h>
 #include <libplanner/constlinearlocplan.h>
-#include <libplanner/ML_locplan.h>
 
 #include <libplanner/myplanner.h>
 #include <libplanner/omplPRMplanner.h>
@@ -65,7 +64,6 @@
 #include <libplanner/prmplanner_pca.h>
 #include <libplanner/rrtplanner.h>
 #include <libplanner/prmhandplannerICRA.h>
-#include <libplanner/prmhandplannerICRAthumb.h>
 #include <libplanner/prmAUROhandarmplanner.h>
 #include <libplanner/prmPCAhandarmplanner.h>
 #include <libplanner/prmrobothandconstplannerICRA.h>
@@ -527,14 +525,14 @@ namespace libProblem {
     return false;
   }
 
-  /*
+
   string Problem::plannersNames(){
    // return   "DRM|DRMPCA|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
         return   "omplcRRT|omplEST|omplSBL|omplKPIECE|omplBKPIECE|omplcRRTcar|omplPRM|omplPRMV1|omplRRT|omplRRTV1|omplRRTConnect|DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
   }
-  */
 
-  /*
+
+
   bool Problem::createPlanner( string name, KthReal step ){
     if(_planner != NULL )
       delete _planner;
@@ -674,18 +672,14 @@ namespace libProblem {
       _planner = new HFPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
    
-   
 
-   
-
-   
 
     if(_planner != NULL)
       return true;
     else
       return false;
   }
-  */
+
 
   bool Problem::createPlannerFromFile(string path){
     if(_planner == NULL ){
