@@ -29,15 +29,8 @@ INCLUDE_DIRECTORIES( #${Boost_INCLUDE_DIRS}
 ADD_LIBRARY( libguibro ${SRC_FILES} ${HDR_FILES} ${QT_MOC_HDR}
                                         ${QT_MOC_SRC}  )
 
-
+#??
 TARGET_LINK_LIBRARIES( libguibro ${QT_LIBRARIES} libproblem libplanner
                        libsampling libkthutil ${SOQT_LIBRARY} ${COIN_LIBRARY} )
 
 
-
-
-#FILE(GLOB SRC_FILES *.c* )
-#FILE(GLOB HDR_FILES *.h*)
-
-
-#ADD_LIBRARY(libguibro STATIC ${SRC_FILES} ${HDR_FILES} )
