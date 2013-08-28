@@ -72,8 +72,8 @@ namespace libProblem {
     //! This method is deprecated. Please take care with the problem XML file.
     //bool			              createWSpace(ProbStruc *reader);
 
-    static string           plannersNames();
-    bool                    createPlanner(string name, KthReal step = 0.05);
+    //static string           plannersNames();
+    //bool                    createPlanner(string name, KthReal step = 0.05);
     bool                    createPlannerFromFile(string path);
     static string           localPlannersNames();
     bool                    createLocalPlanner(string name, KthReal step = 0.5);

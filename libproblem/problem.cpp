@@ -527,11 +527,14 @@ namespace libProblem {
     return false;
   }
 
+  /*
   string Problem::plannersNames(){
    // return   "DRM|DRMPCA|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
         return   "omplcRRT|omplEST|omplSBL|omplKPIECE|omplBKPIECE|omplcRRTcar|omplPRM|omplPRMV1|omplRRT|omplRRTV1|omplRRTConnect|DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
   }
+  */
 
+  /*
   bool Problem::createPlanner( string name, KthReal step ){
     if(_planner != NULL )
       delete _planner;
@@ -682,6 +685,7 @@ namespace libProblem {
     else
       return false;
   }
+  */
 
   bool Problem::createPlannerFromFile(string path){
     if(_planner == NULL ){
