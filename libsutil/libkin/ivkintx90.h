@@ -46,7 +46,7 @@
 #define _IVKINTX90_H
 
 #include "inversekinematic.h"
-#include <hardlab/robot/txrobot.h>
+#include "txrobot.h"
 
 using namespace Kautham;
 using namespace robot;

@@ -2,10 +2,9 @@
 #define _ConsBronchoscopyKin_H
 
 #include <libkin/constrainedkinematic.h>
-#include <hardlab/robot/txrobot.h>
+
 
 using namespace Kautham;
-using namespace robot;
 
 namespace libProblem {
 	class ConsBronchoscopyKin :	public ConstrainedKinematic{

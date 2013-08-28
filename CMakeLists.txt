@@ -79,6 +79,7 @@ ENDIF( ARMADILLO_FOUND )
 ##############################################################################
 # Building librarires
 INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIR} )
+INCLUDE_DIRECTORIES( ${COIN_INCLUDE_DIR} )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} )
 INCLUDE_DIRECTORIES( libsutil )
 INCLUDE_DIRECTORIES( libsutil/libmt )
