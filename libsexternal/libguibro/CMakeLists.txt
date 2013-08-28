@@ -12,7 +12,8 @@ FILE( GLOB RES_FILES *.qrc )
 
 ADD_DEFINITIONS( -DSOQT_DLL -DCOIN_DLL )
 
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIRS}
+                     ${CMAKE_SOURCE_DIR}
                      ${CMAKE_SOURCE_DIR}/libmt
                      ${SOQT_INCLUDE_DIR}
                      ${QT_INCLUDE_DIR}
