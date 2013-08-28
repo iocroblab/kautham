@@ -503,10 +503,6 @@ namespace libProblem {
       _locPlanner = new LinearLocalPlanner(CONTROLSPACE, NULL,NULL,
                                       _wspace, step);
 
-    else if(name == "Manhattan Like")
-      _locPlanner = new ManhattanLikeLocalPlanner(CONTROLSPACE, NULL,NULL,
-                                             _wspace, step);
-
     if(_locPlanner != NULL)
       return true;
     else
