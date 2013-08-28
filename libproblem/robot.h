@@ -51,7 +51,7 @@
 #include <mt/transform.h>
 #include <libsampling/robconf.h>
 //#include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
-#include "inversekinematic.h"
+#include <libkin/inversekinematic.h>
 #include "constrainedkinematic.h"
 #include <list>
 
