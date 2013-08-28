@@ -40,7 +40,7 @@
  ***************************************************************************/
 
 #include "problem.h"
-#include "consbronchoscopykin.h"
+#include <libguibro/consbronchoscopykin.h>
 #include <libplanner/linearlocplan.h>
 #include <libplanner/constlinearlocplan.h>
 #include <libplanner/ML_locplan.h>

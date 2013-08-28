@@ -1,7 +1,7 @@
 #if !defined(_ConsBronchoscopyKin_H)
 #define _ConsBronchoscopyKin_H
 
-#include "constrainedkinematic.h"
+#include <libkin/constrainedkinematic.h>
 #include <hardlab/robot/txrobot.h>
 
 using namespace Kautham;
