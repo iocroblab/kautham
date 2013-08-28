@@ -55,7 +55,7 @@
 #include <Inventor/nodes/SoCamera.h>
 #include <libpugixml/pugixml.hpp>
 
-#include <libguibro/bronchowidget.h>
+#include "bronchowidget.h"
 
 using namespace libProblem;
 using namespace SDK;
