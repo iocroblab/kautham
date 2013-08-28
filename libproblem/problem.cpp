@@ -615,10 +615,7 @@ namespace libProblem {
                            //    _cspace, _sampler, _wspace, _locPlanner, step);
 #endif	
 
-    else if(name == "RRT")
-      _planner = new RRTPlanner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
-	
+
 	else if(name == "GUIBROgrid")
       _planner = new GUIBROgridPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
@@ -631,10 +628,7 @@ namespace libProblem {
       _planner = new PRMHandPlannerICRA(CONTROLSPACE, NULL, NULL,
                                        _cspace, _sampler, _wspace, _locPlanner,
                                        step, 100, 5, (KthReal)0.010, 5);
-    else if(name == "PRM Hand-Thumb ICRA")
-      _planner = new PRMHandPlannerICRAthumb(CONTROLSPACE, NULL, NULL, _cspace,
-                                             _sampler, _wspace, _locPlanner,
-                                             step, 10, (KthReal)0.0010, 10);
+
 	else if(name == "PRMAURO HandArm")
       _planner = new PRMAUROHandArmPlanner(CONTROLSPACE, NULL, NULL, _cspace,
                                              _sampler, _wspace, _locPlanner,
