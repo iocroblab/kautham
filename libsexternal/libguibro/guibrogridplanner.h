@@ -44,13 +44,13 @@
 #if !defined(_GUIBROGRIDPLANNER_H)
 #define _GUIBROGRIDPLANNER_H
 
-#include <libkthutil/pathparse.h>
+#include <libguibro/pathparse.h>
+#include <libguibro/workspacegridplanner.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
-#include "localplanner.h"
-#include "NF1planner.h"
-#include "prmplanner.h"
-#include "workspacegridplanner.h"
+#include <libplanner/localplanner.h>
+#include <libplanner/NF1planner.h>
+#include <libplanner/prmplanner.h>
 
 class PathParse;
 

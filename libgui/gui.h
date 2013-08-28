@@ -56,7 +56,7 @@
 #include <libproblem/problem.h>
 #include <libsampling/sampling.h>
 #include "streamlog.h"
-#include <libproblem/inversekinematic.h>
+#include <libkin/inversekinematic.h>
 #include "controlwidget.h"
 
 

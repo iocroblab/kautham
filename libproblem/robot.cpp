@@ -50,7 +50,7 @@
 #include <libkin/ivkintxhand.h>
 #include <libkin/ivkinhand.h>
 #include <libkin/ivkin2drr.h>
-#include <libguibro/constrainedkinematic.h>
+#include <libkin/constrainedkinematic.h>
 #include <libguibro/consbronchoscopykin.h>
 #include <mt/point3.h>
 #include <mt/rotation.h>

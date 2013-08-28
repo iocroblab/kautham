@@ -44,7 +44,7 @@
 #define _INVKINWIDGET_H
 
 #include "kauthamwidget.h"
-#include <libproblem/inversekinematic.h>
+#include <libkin/inversekinematic.h>
 #include <QtGui>
 
 

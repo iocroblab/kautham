@@ -52,7 +52,7 @@
 #include <libsampling/robconf.h>
 //#include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include <libkin/inversekinematic.h>
-#include "constrainedkinematic.h"
+#include <libkin/constrainedkinematic.h>
 #include <list>
 
 

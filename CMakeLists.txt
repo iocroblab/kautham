@@ -79,6 +79,7 @@ ENDIF( ARMADILLO_FOUND )
 ##############################################################################
 # Building librarires
 
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} )
 INCLUDE_DIRECTORIES( libsutil )
 INCLUDE_DIRECTORIES( libsutil/libmt )
 INCLUDE_DIRECTORIES( libsexternal )

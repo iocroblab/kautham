@@ -59,7 +59,7 @@
  
  
 #include "ivkinhand.h"
-#include "robot.h"
+#include <libproblem/robot.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>

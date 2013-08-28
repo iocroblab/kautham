@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QtGui>
-#include "gui.h"
+#include <libgui/gui.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <vector>
 #include <string>

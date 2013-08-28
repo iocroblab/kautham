@@ -7,7 +7,7 @@
 #include <string>
 #include <libproblem/robot.h>
 #include <libproblem/problem.h>
-#include <libproblem/constrainedkinematic.h>
+#include <libkin/constrainedkinematic.h>
 #include <libkthutil/kauthamdefs.h>
 
 

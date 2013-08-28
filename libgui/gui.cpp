@@ -47,7 +47,6 @@
 #include "sampleswidget.h"
 #include "plannerwidget.h"
 #include "controlwidget.h"
-#include "bronchowidget.h"
 #include "constrainedcontrolwidget.h"
 #include "invkinwidget.h"
 #include <QtGui>
@@ -55,6 +54,8 @@
 #include "planners_toolbar.h"
 #include <Inventor/nodes/SoCamera.h>
 #include <libpugixml/pugixml.hpp>
+
+#include <libguibro/bronchowidget.h>
 
 using namespace libProblem;
 using namespace SDK;

@@ -50,8 +50,8 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
-#include "localplanner.h"
-#include "planner.h"
+#include <libplanner/localplanner.h>
+#include <libplanner/planner.h>
 
 using namespace std;
 using namespace libSampling;
