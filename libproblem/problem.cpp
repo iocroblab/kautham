@@ -62,7 +62,6 @@
 //#include <libplanner/drmpcaplanner.h>
 #include <libplanner/prmplanner.h>
 #include <libplanner/prmplanner_pca.h>
-#include <libplanner/rrtplanner.h>
 #include <libplanner/prmhandplannerICRA.h>
 #include <libplanner/prmAUROhandarmplanner.h>
 #include <libplanner/prmPCAhandarmplanner.h>
@@ -89,7 +88,6 @@ using namespace std;
 using namespace DRM;
 //using namespace DRMPCA;
 using namespace PRM;
-using namespace RRT;
 using namespace gridplanner;
 using namespace NF1_planner;
 using namespace GUIBROGRID;

@@ -186,7 +186,7 @@ void Application::closeProblem(){
   mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
 
-/*
+
 void Application::changePlanner(string loc, string glob){
   mainWindow->setCursor(QCursor(Qt::WaitCursor));
   if(_problem != NULL){
@@ -202,7 +202,7 @@ void Application::changePlanner(string loc, string glob){
   }
   mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
-*/
+
 
 
 
