@@ -44,8 +44,8 @@
 #if !defined(_PROBLEM_H)
 #define _PROBLEM_H
 
-#include <libplanner/planner.h>
-#include <libplanner/localplanner.h>
+#include <libsplanner/planner.h>
+#include <libsplanner/localplanner.h>
 #include <libsampling/sampling.h>
 #include "robot.h"
 #include "ivworkspace.h"

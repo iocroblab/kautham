@@ -6,11 +6,11 @@ FILE( GLOB HDR_FILES *.h )
 ADD_LIBRARY( libplanner ${SRC_FILES} ${HDR_FILES} )
 
   IF( KAUTHAM_OMPL )
-    ADD_SUBDIRECTORY ( libsplanner/libompl )
+    ADD_SUBDIRECTORY ( libompl )
     SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libgomplplanner)
   ENDIF( KAUTHAM_OMPL )
   IF( KAUTHAM_IOC )
-    ADD_SUBDIRECTORY ( libsplanner/libioc )
+    ADD_SUBDIRECTORY ( libioc )
     SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libiocplanner)
   ENDIF( KAUTHAM_IOC )
 
