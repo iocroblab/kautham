@@ -47,7 +47,7 @@
 #define _PLANNERWIDGET_H
 
 #include <libgui/kauthamwidget.h>
-#include <libplanner/planner.h>
+#include <libsplanner/planner.h>
 #include <QtGui>
 #include "gui.h"
 

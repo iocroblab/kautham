@@ -52,7 +52,7 @@
 #include <libproblem/robot.h>
 #include "ui_RobotSim.h"
 #include "viewertype.h"
-#include <libplanner/planner.h>
+#include <libsplanner/planner.h>
 #include <libproblem/problem.h>
 #include <libsampling/sampling.h>
 #include "streamlog.h"
