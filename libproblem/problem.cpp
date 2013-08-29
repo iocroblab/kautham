@@ -42,36 +42,37 @@
 #include "problem.h"
 
 
-#include <libplanner/linearlocplan.h>
-#include <libplanner/constlinearlocplan.h>
+#include <libsplanner/linearlocplan.h>
+#include <libsplanner/constlinearlocplan.h>
 
-#include <libplanner/myplanner.h>
-#include <libplanner/omplPRMplanner.h>
-#include <libplanner/omplPRMplanner_v1.h>
-#include <libplanner/omplRRTplanner.h>
-#include <libplanner/omplRRTplanner_v1.h>
-#include <libplanner/omplcRRTplanner.h>
-#include <libplanner/omplcRRTcarplanner.h>
-#include <libplanner/omplcRRTf16planner.h>
-#include <libplanner/omplcRRTcarplanner_v1.h>
-#include <libplanner/omplRRTConnectplanner.h>
-#include <libplanner/omplESTplanner.h>
-#include <libplanner/omplSBLplanner.h>
-#include <libplanner/omplKPIECEplanner.h>
-#include <libplanner/omplKPIECEplanner.h>
-#include <libplanner/drmplanner.h>
-//#include <libplanner/drmpcaplanner.h>
-#include <libplanner/prmplanner.h>
-#include <libplanner/prmplanner_pca.h>
-#include <libplanner/prmhandplannerICRA.h>
-#include <libplanner/prmAUROhandarmplanner.h>
-#include <libplanner/prmPCAhandarmplanner.h>
-#include <libplanner/prmrobothandconstplannerICRA.h>
-#include <libplanner/prmhandplannerIROS.h>
-#include <libplanner/myprmplanner.h>
-#include <libplanner/mygridplanner.h>
-#include <libplanner/NF1planner.h>
-#include <libplanner/HFplanner.h>
+#include <libiocplanner/myplanner.h>
+#include <libiocplanner/drmplanner.h>
+#include <libiocplanner/prmplanner.h>
+#include <libiocplanner/prmplanner_pca.h>
+#include <libiocplanner/prmhandplannerICRA.h>
+#include <libiocplanner/prmAUROhandarmplanner.h>
+#include <libiocplanner/prmPCAhandarmplanner.h>
+#include <libiocplanner/prmrobothandconstplannerICRA.h>
+#include <libiocplanner/prmhandplannerIROS.h>
+#include <libiocplanner/myprmplanner.h>
+#include <libiocplanner/mygridplanner.h>
+#include <libiocplanner/NF1planner.h>
+#include <libiocplanner/HFplanner.h>
+
+#include <libomplplanner/omplPRMplanner.h>
+#include <libomplplanner/omplPRMplanner_v1.h>
+#include <libomplplanner/omplRRTplanner.h>
+#include <libomplplanner/omplRRTplanner_v1.h>
+#include <libomplplanner/omplcRRTplanner.h>
+#include <libomplplanner/omplcRRTcarplanner.h>
+#include <libomplplanner/omplcRRTf16planner.h>
+#include <libomplplanner/omplcRRTcarplanner_v1.h>
+#include <libomplplanner/omplRRTConnectplanner.h>
+#include <libomplplanner/omplESTplanner.h>
+#include <libomplplanner/omplSBLplanner.h>
+#include <libomplplanner/omplKPIECEplanner.h>
+#include <libomplplanner/omplKPIECEplanner.h>
+
 #include <libpugixml/pugixml.hpp>
 #include <string>
 #include <fstream>
