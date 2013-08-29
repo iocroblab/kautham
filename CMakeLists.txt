@@ -140,7 +140,12 @@ ENDIF( KAUTHAM_IOC )
   ADD_SUBDIRECTORY ( libsutil/libpqp )
   ADD_SUBDIRECTORY ( libproblem )
   ADD_SUBDIRECTORY ( libsampling )
-  ADD_SUBDIRECTORY ( libplanner )
+  IF( KAUTHAM_OMPL )
+    ADD_SUBDIRECTORY ( libsplanner/libompl )
+  ENDIF( KAUTHAM_OMPL )
+  IF( KAUTHAM_IOC )
+    ADD_SUBDIRECTORY ( libsplanner/libioc )
+  ENDIF( KAUTHAM_IOC )
 
 
 

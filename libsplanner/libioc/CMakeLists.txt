@@ -1,0 +1,20 @@
+# this file makes the libplanner library.
+
+FILE( GLOB SRC_FILES *.cpp )
+FILE( GLOB HDR_FILES *.h )
+
+ADD_DEFINITIONS( -DCOIN_DLL )
+
+IF( ARMADILLO_FOUND )
+    SET(KC_EXTRA_PLANNERS_LIBS ${KC_EXTRA_PLANNERS_LIBS}  ${ARMADILLO_LIBRARY})
+    INCLUDE_DIRECTORIES( ${Armadillo_INCLUDE_DIR} )
+ELSE( ARMADILLO_FOUND )
+    MESSAGE( STATUS "armadillo Package NOT FOUND. Planners using PCA will be disabled.")
+ENDIF( ARMADILLO_FOUND )
+
+MESSAGE( STATUS "KC_EXTRA_PLANNERS_LIBS: " ${KC_EXTRA_PLANNERS_LIBS})
+
+ADD_LIBRARY( libiocplanner ${SRC_FILES} ${HDR_FILES} )
+TARGET_LINK_LIBRARIES( libiocplanner libproblem libsampling libkthutil ${COIN_LIBS} ${KC_EXTRA_PLANNERS_LIBS}  ${Boost_LIBRARIES})
+TARGET_LINK_LIBRARIES( libplanner libiocplanner)
+
