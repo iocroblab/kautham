@@ -1,0 +1,158 @@
+ 
+A) CLASSES
+===========
+
+Classes Bàsiques:
+
+1) OpenDEStateSpace
+2) OpenDESimpleSetup
+3) OpenDEEnvironment
+4) OpenDEStatePropagator
+5) OpenDEControlSpace
+
+Classes Derivades:
+6) RigidBodyStateSpace::OpenDEStateSpace
+7) RigidBodyEnvironment::OpenDEEnvironment
+8) CarControlSpace:OpenDEControlSpace
+
+----------------------------------------
+1)  OpenDEStateSpace
+
+Hereda del CompoundStateSpace.
+Representa l'espai d'estats, on l'estat està format per el següent conjunt de variables de cada un dels 
+cossos que s'hagin definit en el entorn:
+  - posició R3
+  - velocitat lineal R3
+  - velocitat angular R3
+  - orientació SO3
+Inclou funcions com: getEnvironment, getNrBodies, fucnions sobre els bounds, readState, setState, interpolate, evaluateCollision.
+
+-----------------------------------------
+2) OpenDESimpleSetup
+
+Hereda de la classe SimpleSetup.
+Carrega per defecte com a propagator el OpenDEStatePropagator.
+Inclou funcions com: getEnvironment, getCurrentState, setCurrentState, playPath, simulateControl,...
+i les pròpies del SimpleSetup com setPanner, setPropagator...
+
+------------------------------------------
+3) OpenDEEnvironment
+
+Conté les estructures de dades de les ODE que són necessàries per la planificació de les ompl.
+Conté funcions (virtuals) com: getControlBounds, gerControlDimensions, applyControl, isValidCollision, 
+				setMaxXontacts, setUpContact..
+Conté atributs com: 
+  world_ que representa el moón ODE (és del tipus dWorld),
+  geomNames_ que nombra els cossos,
+  stepSize_ que és l'step de simulació
+  stateBodies_ que representa els cossos usats pel planning
+  
+------------------------------------------
+4) OpenDEStatePropagator
+
+Hereda de l'StatePropagator
+Conté com a atribut el OpenDEEnvironment i implemnta la funció propagate que carrega l'estat, aplica el control de les ODE,
+i llegeix l'estat que en resulta.
+
+-------------------------------------------
+5) OpenDEControlSpace
+
+Hereda de RealVectorControlSpace
+
+
+
+------------------------------------------
+6) RigidBodyStateSpace::OpenDEStateSpace
+
+Reimplementa la funció distància i la regiterProjection.
+
+------------------------------------------
+7) RigidBodyEnvironment::OpenDEEnvironment
+
+Reimplementa getControlDimension, getControlBounds, applyControl, isValidCollision, setupContact.
+
+Implementa createWorld per crear el món ODE.
+
+Implementa destroyWorld per destruir el món ODE.
+
+Implementa setPlanningParameters per definir els paràmetres del món ODE relacionats amb el comprtament del planner com
+l'stepsize, els cossos que s'involucren en el planning,...
+
+------------------------------------------
+8) CarControlSpace:OpenDEControlSpace
+
+Reimplementa la funció allocControlSampler(void) que permet redefinir un controlsample.
+
+
+
+B) PROCEDIMENT
+===============
+Procediment usat en RigidBodyStateSpace::OpenDEStateSpace
+
+
+1) El OpenDESimpleSetup fa servier el planner per defecte (KPIECE), pero pot carregar per ex. el planner oc::RRT
+2) El solve del planner oc::RRT conté la crida a si->propagateWhileValid
+3) La funció propagateWhileValid del space_information conté la crida a la funció propagate del propagator que 
+  s'hagi carregat (per defecte és el OpenDEStatePropagator).
+4) La funció propagate del OpenDEStatePropagator fa:
+    - setState (carrega l'estat actual)
+    - env->applyControl (aplica el control de les ODE)
+    - getState (llegeix l'estat resultant de l'aplicació del control)
+5) La funció env->applyControl es reimplemnta en la classe derivada RigidBodyEnvironment i el que fa és cridar a
+   la funcio de les ODE dBodyAddForce(body,Fx,Fy,Fz) que aplica una força 3D a un cos.
+   
+   
+   
+C) Kautham::OmplcPlanner
+========================
+Segueix l'esquema de l'exemple de ompl "PlanningWithIntegrationAndControls" que:
+a) definiex la calsses KinematicCarModel amb el model cinemàtic del cotxe (funció update i operator()),
+b) Defineix la classe EulerIntegrator amb un ode genèric
+c) Defineix un DemoStatePropagator:StatePropagator, que usa un EulerIntegrator amb el KinematicCarModel com a ode.
+
+La classe omplcplanner definiex el propagator omplcPlannerStatePropagator genèric per un determinat KinModel, que es defineix
+en cada planner (i que deriven de la classe genèrica KinematicRobotModel). En cada planner el simplesetup carrega l'statepropagator
+corresponent.
+
+L'alternativa simple de planners ompl de control està en l'exemple de ompl "PlanningWithControls" que simplement implementa
+una funció propagate que carrega al si->setStatePropagator (usant el boost::bind).
+
+L'exemple de ompl que usa OpenDE, no usa integradors sino que definieix un control que s'aplica un stepsize de ODE.
+
+
+D) IMPLEMENTACIÓ de OpenDE en el KAUTHAM
+=========================================
+
+
+a) Definir la classe KauthamDEEnvironment::OpenDEEnvironment
+   
+   Punts clau:
+   - Ha d'implementar una funció createWorld on es crea el món ODE a partir del món Kautham (seguir el PFC de l'ALfredo).
+      Cada link del robot serà un cos ODE, se li assignarà dinàmica (cas broncoscopi) o no (cas robot industrial).
+      Els obstacles també es definiràn com cossos ODE.
+      S'assignaràn els cossos del robot com a cossos que intervenen en el planning (als que se'ls aplicarà força).
+   
+   - Ha d'implementar les funcions getControlDimension, getControlBounds
+   - Ha d'implementar la funció applyControl
+   - Ha d'implementar la funció isValidCollision
+   - Ha d'implementar la funció setUpContact
+     
+b) Definir la classe KauthamDEStateSpace::OpenDEStateSpace
+
+   - Reimplemntar una funció distància i una de registerProjections (pel KPIECE)?
+   
+   
+c) DUBTES:
+  - Com incloure l'integrator? s'hauria de reimplementar el propagate heredant de la classe OpenDEStatePropagator una 
+  classe omplOpenDEPlannerStatePropagator)
+
+
+
+
+
+
+
+
+
+
+   
