@@ -55,7 +55,9 @@
 #include <Inventor/nodes/SoCamera.h>
 #include <libpugixml/pugixml.hpp>
 
+#if defined(KAUTHAM_USE_GUIBRO)
 #include <libguibro/bronchowidget.h>
+#endif
 
 using namespace libProblem;
 using namespace SDK;
@@ -163,7 +165,9 @@ namespace libGUI {
   }
 
 
-  bool GUI::addBronchoWidget( Robot* rob, Problem* prob, int offset, GUI* gui ){
+  //widged used for virtual bronchsocopy application
+  bool GUI::addExternalWidget1( Robot* rob, Problem* prob, int offset, GUI* gui ){
+#if defined(KAUTHAM_USE_GUIBRO)
     if( rob != NULL){
       bronchoWidget* tmpControl = new bronchoWidget( rob, prob, offset, gui  );
       propertiesTab->addTab(tmpControl, "bronchoCtrl-" + QString((rob->getName()).c_str()));
@@ -174,7 +178,22 @@ namespace libGUI {
       return true;
     }
     return false;
+#endif
+    return false;
   }
+
+  //widged not used
+  bool GUI::addExternalWidget2( Robot* rob, Problem* prob, int offset, GUI* gui ){
+      return false;
+  }
+
+  //widged not used
+  bool GUI::addExternalWidget3( Robot* rob, Problem* prob, int offset, GUI* gui ){
+      return false;
+  }
+
+
+
 
   bool GUI::addConstrainedControlWidget( Robot* rob, Problem* prob, int offset ){
     if( rob != NULL){

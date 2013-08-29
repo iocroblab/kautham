@@ -40,7 +40,8 @@
  ***************************************************************************/
 
 #include "problem.h"
-#include <libguibro/consbronchoscopykin.h>
+
+
 #include <libplanner/linearlocplan.h>
 #include <libplanner/constlinearlocplan.h>
 
@@ -71,13 +72,19 @@
 #include <libplanner/mygridplanner.h>
 #include <libplanner/NF1planner.h>
 #include <libplanner/HFplanner.h>
-#include <libguibro/guibrogridplanner.h>
 #include <libpugixml/pugixml.hpp>
 #include <string>
 #include <fstream>
 #include <iostream>
 
 #include <boost/algorithm/string.hpp>
+
+
+#if defined(KAUTHAM_USE_GUIBRO)
+#include <libguibro/consbronchoscopykin.h>
+#include <libguibro/guibrogridplanner.h>
+using namespace GUIBROGRID;
+#endif // KAUTHAM_USE_GUIBRO
 
 #if !defined(M_PI)
 #define M_PI 3.1415926535897932384626433832795
@@ -90,7 +97,6 @@ using namespace DRM;
 using namespace PRM;
 using namespace gridplanner;
 using namespace NF1_planner;
-using namespace GUIBROGRID;
 using namespace myplanner;
 using namespace myprmplanner;
 using namespace HF_planner;
@@ -274,6 +280,9 @@ namespace libProblem {
         // Setup the Constrained Kinematic if it has one.
         if((*it).child("ConstrainedKinematic")){
           name = (*it).child("ConstrainedKinematic").attribute("name").value();
+
+          rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
+#if defined(KAUTHAM_USE_GUIBRO)
 		  if( name == "BRONCHOSCOPY" ){
             rob->setConstrainedKinematic( Kautham::BRONCHOSCOPY );
             double amin = (*it).child("ConstrainedKinematic").attribute("amin").as_double();
@@ -284,6 +293,7 @@ namespace libProblem {
 		  }
           else
             rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
+#endif
         }else{
           rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
         }
@@ -536,6 +546,8 @@ namespace libProblem {
       delete _planner;
 
     if(_locPlanner == NULL ) return false;
+
+
     if(name == "DRM")
       _planner = new DRMPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step); 
@@ -544,6 +556,63 @@ namespace libProblem {
       _planner = new PRMPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
+    else if(name == "PRM Hand IROS")
+      _planner = new PRMHandPlannerIROS(CONTROLSPACE, NULL, NULL,
+                                       _cspace, _sampler, _wspace, _locPlanner,
+                                       step, 5, (KthReal)0.001 );
+    else if(name == "PRM Hand ICRA")
+      _planner = new PRMHandPlannerICRA(CONTROLSPACE, NULL, NULL,
+                                       _cspace, _sampler, _wspace, _locPlanner,
+                                       step, 100, 5, (KthReal)0.010, 5);
+
+     else if(name == "PRMAURO HandArm")
+      _planner = new PRMAUROHandArmPlanner(CONTROLSPACE, NULL, NULL, _cspace,
+                                             _sampler, _wspace, _locPlanner,
+                                             step, 10, (KthReal)0.0010, 10);
+	
+     else if(name == "PRM RobotHand-Const ICRA")
+      _planner = new PRMRobotHandConstPlannerICRA(CONTROLSPACE, NULL, NULL, _cspace,
+                                             _sampler, _wspace, _locPlanner,
+                                             step, 3, (KthReal)50.0);                                        
+   	 else if(name == "MyPlanner")
+      _planner = new MyPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01); 
+	  
+	 else if(name == "MyPRMPlanner")
+      _planner = new MyPRMPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
+	   
+	  else if(name == "MyGridPlanner")
+      _planner = new MyGridPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);	   
+	   
+	   else if(name == "NF1Planner")
+      _planner = new NF1Planner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);  
+	   
+	   else if(name == "HFPlanner")
+      _planner = new HFPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
+
+#if defined(KAUTHAM_USE_ARMADILLO)
+      else if(name == "PRM PCA")
+         _planner = new PRMPlannerPCA(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, step,1,1);
+      //else if(name == "DRMPCA")
+        //_planner = new DRMPCAPlanner(CONTROLSPACE, NULL, NULL,
+                           //    _cspace, _sampler, _wspace, _locPlanner, step);
+
+    else if(name == "PRMPCA HandArm")
+      _planner = new PRMPCAHandArmPlanner(CONTROLSPACE, NULL, NULL, _cspace,
+                                             _sampler, _wspace, _locPlanner,
+                                             step, 10,0, (KthReal)0.0010, 10,0.0,0.0);
+#endif
+
+#if defined(KAUTHAM_USE_GUIBRO)
+    else if(name == "GUIBROgrid")
+      _planner = new GUIBROgridPlanner(CONTROLSPACE, NULL, NULL,
+                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
+#endif
 
 #if defined(KAUTHAM_USE_OMPL)
 
@@ -601,70 +670,10 @@ namespace libProblem {
     else if(name == "omplcRRTcarV1")
       _planner = new libPlanner::omplcplannerV1::omplcRRTcarPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
+    else
+        cout<<"Planner "<< name <<" is unknow or not loaded (check the CMakeFiles.txt options)" << endl;
 
 #endif
-
-#if defined(KAUTHAM_USE_ARMADILLO)
-	  else if(name == "PRM PCA")
-		 _planner = new PRMPlannerPCA(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, step,1,1);
-	  //else if(name == "DRMPCA")
-		//_planner = new DRMPCAPlanner(CONTROLSPACE, NULL, NULL,
-                           //    _cspace, _sampler, _wspace, _locPlanner, step);
-#endif	
-
-
-	else if(name == "GUIBROgrid")
-      _planner = new GUIBROgridPlanner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
-
-    else if(name == "PRM Hand IROS")
-      _planner = new PRMHandPlannerIROS(CONTROLSPACE, NULL, NULL,
-                                       _cspace, _sampler, _wspace, _locPlanner,
-                                       step, 5, (KthReal)0.001 );
-    else if(name == "PRM Hand ICRA")
-      _planner = new PRMHandPlannerICRA(CONTROLSPACE, NULL, NULL,
-                                       _cspace, _sampler, _wspace, _locPlanner,
-                                       step, 100, 5, (KthReal)0.010, 5);
-
-	else if(name == "PRMAURO HandArm")
-      _planner = new PRMAUROHandArmPlanner(CONTROLSPACE, NULL, NULL, _cspace,
-                                             _sampler, _wspace, _locPlanner,
-                                             step, 10, (KthReal)0.0010, 10);
-	
-#if defined(KAUTHAM_USE_ARMADILLO)
-//////////////////////////////////////////////////////////////////////////
-	else if(name == "PRMPCA HandArm")
-      _planner = new PRMPCAHandArmPlanner(CONTROLSPACE, NULL, NULL, _cspace,
-                                             _sampler, _wspace, _locPlanner,
-                                             step, 10,0, (KthReal)0.0010, 10,0.0,0.0);
-#endif
-	//////////////////////////////////////////////////////////////////////////
-   else if(name == "PRM RobotHand-Const ICRA")
-      _planner = new PRMRobotHandConstPlannerICRA(CONTROLSPACE, NULL, NULL, _cspace,
-                                             _sampler, _wspace, _locPlanner,
-                                             step, 3, (KthReal)50.0);                                        
-   	 else if(name == "MyPlanner")
-      _planner = new MyPlanner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01); 
-	  
-	 else if(name == "MyPRMPlanner")
-      _planner = new MyPRMPlanner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
-	   
-	  else if(name == "MyGridPlanner")
-      _planner = new MyGridPlanner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);	   
-	   
-	   else if(name == "NF1Planner")
-      _planner = new NF1Planner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);  
-	   
-	   else if(name == "HFPlanner")
-      _planner = new HFPlanner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
-   
-
 
     if(_planner != NULL)
       return true;

@@ -223,11 +223,19 @@ bool Application::problemSetup(string path){
   for(unsigned i = 0; i < _problem->wSpace()->robotsCount(); i++){
     mainWindow->addControlWidget(_problem->wSpace()->getRobot(i), _problem, globOffset);
 	if(_problem->wSpace()->getRobot(i)->getCkine() != NULL)
-		//mainWindow->addConstrainedControlWidget(_problem->wSpace()->getRobot(i), _problem, globOffset);
+        mainWindow->addConstrainedControlWidget(_problem->wSpace()->getRobot(i), _problem, globOffset);
     // Use the following widget if the user can modified all the dof instead of the controls.
     //mainWindow->addDOFWidget(_problem->wSpace()->getRobot(i) );
 
-    mainWindow->addBronchoWidget(_problem->wSpace()->getRobot(i), _problem, globOffset, mainWindow);
+
+    //Add widget for external applications
+    //widget 1 used for virtual bronchoscopy apllication
+    mainWindow->addExternalWidget1(_problem->wSpace()->getRobot(i), _problem, globOffset, mainWindow);
+    //widget 2 not used
+    mainWindow->addExternalWidget2(_problem->wSpace()->getRobot(i), _problem, globOffset, mainWindow);
+    //widget 3 not used
+    mainWindow->addExternalWidget3(_problem->wSpace()->getRobot(i), _problem, globOffset, mainWindow);
+
 
     if(_problem->wSpace()->getRobot(i)->getIkine() != NULL)
       mainWindow->addInverseKinematic(_problem->wSpace()->getRobot(i)->getIkine());

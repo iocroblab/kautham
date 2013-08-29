@@ -39,8 +39,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
- 
- 
 
 #include "robot.h"
 #include "ivsolidelement.h"
@@ -51,7 +49,6 @@
 #include <libkin/ivkinhand.h>
 #include <libkin/ivkin2drr.h>
 #include <libkin/constrainedkinematic.h>
-#include <libguibro/consbronchoscopykin.h>
 #include <mt/point3.h>
 #include <mt/rotation.h>
 #include <cstdlib>
@@ -60,6 +57,11 @@
 #include <string>
 #include <libpugixml/pugixml.hpp>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
+
+#if defined(KAUTHAM_USE_GUIBRO)
+#include <libguibro/consbronchoscopykin.h>
+#endif
+
 
 using namespace std;
 using namespace Kautham;
@@ -508,9 +510,11 @@ namespace libProblem {
       case Kautham::UNCONSTRAINED:
         _constrainKin = NULL;
         break;
+#if defined(KAUTHAM_USE_GUIBRO)
       case Kautham::BRONCHOSCOPY:
         _constrainKin = new ConsBronchoscopyKin(this);		  
         break;
+#endif
       default:
         cout << "The Constrained Kinematic model has not be configured properly.\n" <<
           "See the ConsBronchoscopyKin of the Robot class to call the constructor. " << endl;

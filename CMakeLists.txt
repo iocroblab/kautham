@@ -6,6 +6,36 @@ CMAKE_POLICY(SET CMP0003 OLD)
 ########### Options ####################
 OPTION( KAUTHAM_GUI "Build the gui version" ON )
 OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
+OPTION( KAUTHAM_OMPL "Use OMPL planners" OFF )
+OPTION( KAUTHAM_IOC "Use IOC planners" ON )
+OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF )
+
+
+########### Set flags ####################
+IF( KAUTHAM_GUI )
+  MESSAGE( STATUS "prepared to make KAUTHAM GUI" )
+ENDIF( KAUTHAM_GUI )
+
+IF( KAUTHAM_CONSOLE )
+  MESSAGE( STATUS "prepared to make KAUTHAM CONSOLE" )
+ENDIF( KAUTHAM_CONSOLE )
+
+IF( KAUTHAM_OMPL )
+  MESSAGE( STATUS "prepared to include OMPL" )
+ENDIF( KAUTHAM_OMPL )
+
+IF( KAUTHAM_IOC )
+    MESSAGE( STATUS "Use IOC planners: setting -DKAUTHAM_USE_IOC flag")
+    ADD_DEFINITIONS( -DKAUTHAM_USE_IOC )
+ENDIF( KAUTHAM_IOC )
+
+IF( KAUTHAM_GUIBRO )
+    MESSAGE( STATUS "Use GUIBRO: setting -DKAUTHAM_USE_GUIBRO flag")
+    ADD_DEFINITIONS( -DKAUTHAM_USE_GUIBRO )
+ENDIF( KAUTHAM_GUIBRO )
+
+
+
 
 ########### Modules path ###############
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
@@ -13,11 +43,13 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
 
 ##############################################################################
-# Required packages
+##############################################################################
+# START General required packages
 
 #### mt package ##################
+# utility functions for managing transforms
 SET(mt_DIR ${CMAKE_SOURCE_DIR}/libsutil/libmt)
-
+INCLUDE_DIRECTORIES( libsutil/libmt )
 
 #### Boost package ###############
 FIND_PACKAGE( Boost COMPONENTS  system serialization thread REQUIRED )
@@ -25,86 +57,102 @@ IF(Boost_FOUND)
   MESSAGE(STATUS "Boost library found at first attempt.")
 ELSE(Boost_FOUND)
   SET( BOOST_ROOT $ENV{BOOSTDIR})
-	MESSAGE(STATUS "Boost library NOT found at first attempt. Setting BOOST_ROOT to" $ENV{BOOSTDIR})
-	FIND_PACKAGE( Boost COMPONENTS  system serialization thread REQUIRED )
-	IF(Boost_FOUND)
-		MESSAGE(STATUS "Boost library found in " ${BOOST_ROOT})
-        #INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-        LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
-	ELSE(Boost_FOUND)
-		MESSAGE(STATUS "Boost library not found. Boost-dependent headers will NOT be available")
-	ENDIF(Boost_FOUND)
+        MESSAGE(STATUS "Boost library NOT found at first attempt. Setting BOOST_ROOT to" $ENV{BOOSTDIR})
+        FIND_PACKAGE( Boost COMPONENTS  system serialization thread REQUIRED )
+        IF(Boost_FOUND)
+                MESSAGE(STATUS "Boost library found in " ${BOOST_ROOT})
+                INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+                LINK_DIRECTORIES( ${Boost_LIBRARY_DIRS} )
+        ELSE(Boost_FOUND)
+                MESSAGE(STATUS "Boost library not found. Boost-dependent headers will NOT be available")
+        ENDIF(Boost_FOUND)
 ENDIF(Boost_FOUND)
 
-
 #### Coin3D package ###############
+# graphics library
 FIND_PACKAGE( Coin REQUIRED )
+INCLUDE_DIRECTORIES( ${COIN_INCLUDE_DIR} )
+
+# END General required packages
+##############################################################################
+
+##############################################################################
+##############################################################################
+# START Required packages when using OMPL planners
+IF( KAUTHAM_OMPL )
+    #### OMPL package ###############
+    find_package(ompl)
+    IF( OMPL_FOUND )
+        MESSAGE( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_OMPL flag")
+        ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
+    ELSE( OMPL_FOUND )
+        MESSAGE( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be abaliable")
+    ENDIF( OMPL_FOUND )
+ENDIF( KAUTHAM_OMPL )
+# END Required packages when using OMPL planners
+##############################################################################
 
 
-#### GSL package ###############
-FIND_PACKAGE( GSL )
-IF( GSL_FOUND )
-  MESSAGE( STATUS "GSL FOUND. (Used in libproblem for the hand inverse kinematics)")
-   ADD_DEFINITIONS( -DNDEBUG )
-   ADD_DEFINITIONS( -DKAUTHAM_USE_GSL )
-ELSE( GSL_FOUND )
-  MESSAGE( STATUS "GSL NOT FOUND. Hand inverse kinematics will be disabled")
-ENDIF( GSL_FOUND )
+##############################################################################
+##############################################################################
+# START Required packages when using IOC planners
+IF( KAUTHAM_IOC )
+  #### GSL package ###############
+  # maths lobrary used in libproblem for the SAH hand inverse kinematics
+  FIND_PACKAGE( GSL )
+  IF( GSL_FOUND )
+    MESSAGE( STATUS "GSL FOUND.")
+     ADD_DEFINITIONS( -DNDEBUG )
+     ADD_DEFINITIONS( -DKAUTHAM_USE_GSL )
+  ELSE( GSL_FOUND )
+    MESSAGE( STATUS "GSL NOT FOUND. Hand inverse kinematics will be disabled")
+  ENDIF( GSL_FOUND )
 
-
-#### OMPL package ###############
-find_package(ompl)
-IF( OMPL_FOUND )
-   MESSAGE( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_OMPL flag")
-   ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
-ENDIF( OMPL_FOUND )
-
-####  SET(OMPL_DIR /home/jan.rosell/ompl/omplapp-0.12.2-Source/build/Debug/lib)
-####  SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}   ${OMPL_DIR}/libompl.so)
-####    ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
-
-#### Armadillo package ###############
-FIND_PACKAGE( Armadillo )
-IF( ARMADILLO_FOUND )
-  MESSAGE( STATUS "armadillo Package FOUND")
-  ADD_DEFINITIONS( -DKAUTHAM_USE_ARMADILLO )
-  SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  ${ARMADILLO_LIBRARY})
-  MESSAGE( STATUS "Kc EXTRa libs: " ${KC_EXTRA_LIBS})
-ELSE( ARMADILLO_FOUND )
-  MESSAGE( STATUS "armadillo Package NOT FOUND. Planners using PCA will be disabled.")
-ENDIF( ARMADILLO_FOUND )
-
+  #### Armadillo package ###############
+  #used for PCA
+  FIND_PACKAGE( Armadillo )
+  IF( ARMADILLO_FOUND )
+    MESSAGE( STATUS "armadillo Package FOUND")
+    ADD_DEFINITIONS( -DKAUTHAM_USE_ARMADILLO )
+    SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  ${ARMADILLO_LIBRARY})
+    MESSAGE( STATUS "KC_EXTRA_LIBSs: " ${KC_EXTRA_LIBS})
+  ELSE( ARMADILLO_FOUND )
+    MESSAGE( STATUS "armadillo Package NOT FOUND. Planners using PCA will be disabled.")
+  ENDIF( ARMADILLO_FOUND )
+ENDIF( KAUTHAM_IOC )
+# END Required packages when using IOC planners
+##############################################################################
 
 
 ##############################################################################
 # Building librarires
-INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIR} )
-INCLUDE_DIRECTORIES( ${COIN_INCLUDE_DIR} )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} )
-INCLUDE_DIRECTORIES( libsutil )
-INCLUDE_DIRECTORIES( libsutil/libmt )
-INCLUDE_DIRECTORIES( libsexternal )
-INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIRS} )
-ADD_SUBDIRECTORY ( libsutil/libkin )
-ADD_SUBDIRECTORY ( libsutil/libann )
-ADD_SUBDIRECTORY ( libsutil/libkthutil )
-ADD_SUBDIRECTORY ( libsutil/libpugixml )
-ADD_SUBDIRECTORY ( libsutil/libpqp )
-ADD_SUBDIRECTORY ( libproblem )
-ADD_SUBDIRECTORY ( libsampling )
-ADD_SUBDIRECTORY ( libplanner )
+  INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} )
+  INCLUDE_DIRECTORIES( libsutil )
+  INCLUDE_DIRECTORIES( libsexternal )
+  ADD_SUBDIRECTORY ( libsutil/libkin )
+  ADD_SUBDIRECTORY ( libsutil/libann )
+  ADD_SUBDIRECTORY ( libsutil/libkthutil )
+  ADD_SUBDIRECTORY ( libsutil/libpugixml )
+  ADD_SUBDIRECTORY ( libsutil/libpqp )
+  ADD_SUBDIRECTORY ( libproblem )
+  ADD_SUBDIRECTORY ( libsampling )
+  ADD_SUBDIRECTORY ( libplanner )
+
 
 
 
 ##############################################################################
-#
-
+# START building Kautham GUI application
 IF( KAUTHAM_GUI )
   MESSAGE( STATUS "making KAUTHAM GUI" )
+
+##############################################################################
+# START Required packages for GUI
   FIND_PACKAGE( Qt4 REQUIRED )
   IF( QT4_FOUND )
     SET( QT_USE_QTMAIN TRUE )
     INCLUDE ( ${QT_USE_FILE} )
+    INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIR} )
     ADD_DEFINITIONS( ${QT_DEFINITIONS} )
   ENDIF( QT4_FOUND )
 
@@ -113,19 +161,24 @@ IF( KAUTHAM_GUI )
     ADD_DEFINITIONS( -DSOQT_DLL -DCOIN_DLL )
     INCLUDE_DIRECTORIES( ${SOQT_INCLUDE_DIR} )
   ENDIF( SOQT_LIBRARY_FOUND )
+# END Required packages for GUI
+##############################################################################
 
-  INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} 
-                       ${CMAKE_SOURCE_DIR}/libmt  
-                       ${Armadillo_INCLUDE_DIR}
-                       ${Boost_INCLUDE_DIRS} )
-                       
-  LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
-                       
-
-
+##############################################################################
+# Building librarires
   ADD_SUBDIRECTORY ( libgui )
-  ADD_SUBDIRECTORY ( libsexternal/libguibro )
-    
+  IF( KAUTHAM_GUIBRO )
+    MESSAGE( STATUS "Creating libguibro")
+    INCLUDE_DIRECTORIES( libsexternal )
+    ADD_SUBDIRECTORY ( libsexternal/libguibro )
+    SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  libguibro)
+    MESSAGE( STATUS "KC_EXTRA_LIBSs: " ${KC_EXTRA_LIBS})
+  ENDIF( KAUTHAM_GUIBRO )
+
+
+
+##############################################################################
+# Creating executable
   FILE( GLOB RES_FILES *.rc )
   QT4_WRAP_CPP( QT_MOC_SRC application.h )
   
@@ -133,16 +186,23 @@ IF( KAUTHAM_GUI )
   SET( HDR_FILES_GUI application.h )
   
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
-
   TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS} libDNN libPQP libgui libsampling
-                                                libproblem libkthutil libkin libpugixml libguibro)
+                                                libproblem libkthutil libkin libpugixml)
 ENDIF( KAUTHAM_GUI )
 
+# END building Kautham GUI application
+##############################################################################
 
+
+
+##############################################################################
+##############################################################################
+# START building Kautham Console application
 IF( KAUTHAM_CONSOLE )
 
   MESSAGE( STATUS "making KAUTHAM CONSOLE" )
- # MPI Library used to turn the KauthamConsole parallel process.
+
+  #MPI Library used to turn the KauthamConsole parallel process.
   INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}  ${mt_DIR} ${COIN_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/libgui )
   #FIND_PACKAGE( MPI )
   IF( MPI_FOUND )
@@ -163,6 +223,9 @@ IF( KAUTHAM_CONSOLE )
   
   MESSAGE( STATUS "KC_EXTRA_LIBS = " ${KC_EXTRA_LIBS} )
 ENDIF( KAUTHAM_CONSOLE )
+
+# END building Kautham Console application
+##############################################################################
 
 
 
