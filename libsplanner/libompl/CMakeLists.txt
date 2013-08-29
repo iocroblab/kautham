@@ -15,6 +15,5 @@ MESSAGE( STATUS "KC_EXTRA_PLANNERS_LIBS: " ${KC_EXTRA_PLANNERS_LIBS})
 
 ADD_LIBRARY( libomplplanner ${SRC_FILES} ${HDR_FILES} )
 TARGET_LINK_LIBRARIES( libomplplanner libproblem libsampling libkthutil ${COIN_LIBS} ${KC_EXTRA_PLANNERS_LIBS}  ${Boost_LIBRARIES})
-TARGET_LINK_LIBRARIES( libplanner libomplplanner)
 
 

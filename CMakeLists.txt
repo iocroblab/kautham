@@ -3,9 +3,6 @@ PROJECT(Kautham2)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 CMAKE_POLICY(SET CMP0003 OLD)
 
-MESSAGE(STATUS "build dir=" ${CMAKE_BINARY_DIR})
-MESSAGE(STATUS "source dir=" ${CMAKE_CURRENT_SOURCE_DIR})
-execute_process(COMMAND rm ${CMAKE_BINARY_DIR}/CMakeCache.txt)
 
 ########### Options ####################
 OPTION( KAUTHAM_GUI "Build the gui version" ON )
@@ -133,19 +130,23 @@ ENDIF( KAUTHAM_IOC )
   INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} )
   INCLUDE_DIRECTORIES( libsutil )
   INCLUDE_DIRECTORIES( libsexternal )
+  INCLUDE_DIRECTORIES( libsplanner )
   ADD_SUBDIRECTORY ( libsutil/libkin )
   ADD_SUBDIRECTORY ( libsutil/libann )
   ADD_SUBDIRECTORY ( libsutil/libkthutil )
   ADD_SUBDIRECTORY ( libsutil/libpugixml )
   ADD_SUBDIRECTORY ( libsutil/libpqp )
-  ADD_SUBDIRECTORY ( libproblem )
-  ADD_SUBDIRECTORY ( libsampling )
   IF( KAUTHAM_OMPL )
     ADD_SUBDIRECTORY ( libsplanner/libompl )
+    SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libgomplplanner)
   ENDIF( KAUTHAM_OMPL )
   IF( KAUTHAM_IOC )
     ADD_SUBDIRECTORY ( libsplanner/libioc )
+    SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libiocplanner)
   ENDIF( KAUTHAM_IOC )
+  ADD_SUBDIRECTORY ( libproblem )
+  ADD_SUBDIRECTORY ( libsampling )
+
 
 
 

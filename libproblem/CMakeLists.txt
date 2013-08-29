@@ -15,6 +15,7 @@ FILE( GLOB SRC_FILES *.cpp )
 FILE( GLOB HDR_FILES *.h )
 
 ADD_LIBRARY(libproblem ${SRC_FILES} ${HDR_FILES})
-TARGET_LINK_LIBRARIES( libproblem libPQP libsampling libkthutil libplanner ${BOOST_LIBRARIES} ${COIN_LIBRARY} )
+
+TARGET_LINK_LIBRARIES( libproblem libPQP libsampling libkthutil ${KC_PLANNERS_LIBS} ${BOOST_LIBRARIES} ${COIN_LIBRARY} )
 
 
