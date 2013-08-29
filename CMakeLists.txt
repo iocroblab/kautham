@@ -3,6 +3,10 @@ PROJECT(Kautham2)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 CMAKE_POLICY(SET CMP0003 OLD)
 
+MESSAGE(STATUS "build dir=" ${CMAKE_BINARY_DIR})
+MESSAGE(STATUS "source dir=" ${CMAKE_CURRENT_SOURCE_DIR})
+execute_process(COMMAND rm ${CMAKE_BINARY_DIR}/CMakeCache.txt)
+
 ########### Options ####################
 OPTION( KAUTHAM_GUI "Build the gui version" ON )
 OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
@@ -11,7 +15,9 @@ OPTION( KAUTHAM_IOC "Use IOC planners" ON )
 OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF )
 
 
+
 ########### Set flags ####################
+MESSAGE( STATUS "flags: " ${KAUTHAM_GUI} " " ${KAUTHAM_CONSOLE} " "  ${KAUTHAM_OMPL}  " "  ${KAUTHAM_IOC} " "  ${KAUTHAM_GUIBRO} )
 IF( KAUTHAM_GUI )
   MESSAGE( STATUS "prepared to make KAUTHAM GUI" )
 ENDIF( KAUTHAM_GUI )
@@ -114,8 +120,6 @@ IF( KAUTHAM_IOC )
   IF( ARMADILLO_FOUND )
     MESSAGE( STATUS "armadillo Package FOUND")
     ADD_DEFINITIONS( -DKAUTHAM_USE_ARMADILLO )
-    SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  ${ARMADILLO_LIBRARY})
-    MESSAGE( STATUS "KC_EXTRA_LIBSs: " ${KC_EXTRA_LIBS})
   ELSE( ARMADILLO_FOUND )
     MESSAGE( STATUS "armadillo Package NOT FOUND. Planners using PCA will be disabled.")
   ENDIF( ARMADILLO_FOUND )
