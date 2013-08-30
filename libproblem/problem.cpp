@@ -543,11 +543,6 @@ namespace libProblem {
 
     if(_locPlanner == NULL ) return false;
 
-
-    //if(name == "DRM")
-    //  _planner = new DRMPlanner(CONTROLSPACE, NULL, NULL,
-    //                           _cspace, _sampler, _wspace, _locPlanner, step);
-	
     else if(name == "PRM")
       _planner = new PRMPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
@@ -594,9 +589,6 @@ namespace libProblem {
       //else if(name == "PRM PCA")
       //   _planner = new PRMPlannerPCA(CONTROLSPACE, NULL, NULL,
        //                        _cspace, _sampler, _wspace, _locPlanner, step,1,1);
-      //else if(name == "DRMPCA")
-        //_planner = new DRMPCAPlanner(CONTROLSPACE, NULL, NULL,
-                           //    _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "PRMPCA HandArm")
       _planner = new PRMPCAHandArmPlanner(CONTROLSPACE, NULL, NULL, _cspace,
