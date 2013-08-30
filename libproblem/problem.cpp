@@ -69,13 +69,10 @@
 
 #if defined(KAUTHAM_USE_OMPL)
 #include <libompl/omplPRMplanner.h>
-#include <libompl/omplPRMplanner_v1.h>
 #include <libompl/omplRRTplanner.h>
-#include <libompl/omplRRTplanner_v1.h>
 #include <libompl/omplcRRTplanner.h>
 #include <libompl/omplcRRTcarplanner.h>
 #include <libompl/omplcRRTf16planner.h>
-#include <libompl/omplcRRTcarplanner_v1.h>
 #include <libompl/omplRRTConnectplanner.h>
 #include <libompl/omplESTplanner.h>
 #include <libompl/omplSBLplanner.h>
@@ -612,19 +609,10 @@ namespace libProblem {
       _planner = new libPlanner::omplplanner::omplPRMPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
-    else if(name == "omplPRMV1")
-      _planner = new libPlanner::omplplannerV1::omplPRMPlannerV1(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
-
-
     else if(name == "omplRRT")
       _planner = new libPlanner::omplplanner::omplRRTPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
-
-    else if(name == "omplRRTV1")
-      _planner = new libPlanner::omplplannerV1::omplRRTPlannerV1(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplRRTConnect")
       _planner = new libPlanner::omplplanner::omplRRTConnectPlanner(CONTROLSPACE, NULL, NULL,
@@ -655,9 +643,7 @@ namespace libProblem {
     else if(name == "omplcRRTcar")
       _planner = new libPlanner::omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
-    else if(name == "omplcRRTcarV1")
-      _planner = new libPlanner::omplcplannerV1::omplcRRTcarPlanner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+
     else
         cout<<"Planner "<< name <<" is unknow or not loaded (check the CMakeFiles.txt options)" << endl;
 
