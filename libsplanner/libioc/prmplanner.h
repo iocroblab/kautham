@@ -57,7 +57,7 @@ using namespace libSampling;
 using namespace boost;
 
 namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
 	//Typedefs
     typedef Sample* location;
     typedef KthReal cost;

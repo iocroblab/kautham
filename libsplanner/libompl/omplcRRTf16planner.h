@@ -54,7 +54,7 @@ namespace ob = ompl::base;
 namespace oc = ompl::control;
 
 
-#include <libplanner/omplcplanner.h>
+#include <libompl/omplcplanner.h>
 
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>

@@ -48,7 +48,7 @@
 #include "prmhandplannerICRA.h"
  
  namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
 		
 	PRMHandPlannerICRA::PRMHandPlannerICRA(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
            WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int numSam, int cloudSize, KthReal cloudRad, int numHC)

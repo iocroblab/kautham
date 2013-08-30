@@ -136,20 +136,9 @@ ENDIF( KAUTHAM_IOC )
   ADD_SUBDIRECTORY ( libsutil/libkthutil )
   ADD_SUBDIRECTORY ( libsutil/libpugixml )
   ADD_SUBDIRECTORY ( libsutil/libpqp )
-  #IF( KAUTHAM_OMPL )
-  #  ADD_SUBDIRECTORY ( libsplanner/libompl )
-  #  SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libgomplplanner)
-  #ENDIF( KAUTHAM_OMPL )
-  #IF( KAUTHAM_IOC )
-  #  ADD_SUBDIRECTORY ( libsplanner/libioc )
-  #  SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libiocplanner)
-  #ENDIF( KAUTHAM_IOC )
   ADD_SUBDIRECTORY ( libsplanner )
   ADD_SUBDIRECTORY ( libproblem )
   ADD_SUBDIRECTORY ( libsampling )
-
-
-
 
 
 ##############################################################################

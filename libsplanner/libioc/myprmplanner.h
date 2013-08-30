@@ -54,8 +54,7 @@ using namespace std;
 using namespace libSampling;
 
 namespace libPlanner {
-  namespace PRM{
-   namespace myprmplanner{
+  namespace IOC{
     class MyPRMPlanner:public PRMPlanner {
 	    public:
         MyPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
@@ -77,7 +76,6 @@ namespace libPlanner {
 
 	  };
    }
-  }
 }
 
 #endif  //_MYPRMPLANNER_H

@@ -59,7 +59,7 @@ typedef boost::mt19937 RandomGenerator;
 typedef boost::variate_generator<RandomGenerator&, NormalDistribution> GaussianGenerator;
  
  namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
       typedef std::pair<KthReal, KthReal> thumbLimits;
 	  
 

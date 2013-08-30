@@ -49,7 +49,7 @@
 using namespace libSampling;
 
 namespace libPlanner {
-  namespace myplanner{
+  namespace IOC{
 	//! Constructor
     MyPlanner::MyPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)

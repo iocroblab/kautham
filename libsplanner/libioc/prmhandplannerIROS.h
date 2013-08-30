@@ -44,7 +44,7 @@
 #if !defined(_PRMHANDPLANNERIROS_H)
 #define _PRMHANDPLANNERIROS_H
  namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
 	class PRMHandPlannerIROS:public PRMHandPlanner{
 		public:
 			PRMHandPlannerIROS(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,

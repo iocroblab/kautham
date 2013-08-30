@@ -49,8 +49,7 @@
 using namespace libSampling;
 
 namespace libPlanner {
-  namespace PRM{
-   namespace myprmplanner{
+  namespace IOC{
 	//! Constructor
     MyPRMPlanner::MyPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               PRMPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
@@ -151,7 +150,6 @@ namespace libPlanner {
 
 		}
 	  }
-    }
 }
 
 

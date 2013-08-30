@@ -53,7 +53,7 @@ using namespace std;
 using namespace libSampling;
 
 namespace libPlanner {
-  namespace myplanner{
+  namespace IOC{
     class MyPlanner:public Planner {
 	    public:
         MyPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 

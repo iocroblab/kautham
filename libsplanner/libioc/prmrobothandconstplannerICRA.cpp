@@ -54,7 +54,7 @@
 
  
  namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
 		
   PRMRobotHandConstPlannerICRA::PRMRobotHandConstPlannerICRA(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
            WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloudSize, KthReal cloudRad)

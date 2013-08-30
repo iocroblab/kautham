@@ -44,7 +44,7 @@
 #if !defined(_PRMAUROHANDPLANNER_H)
 #define _PRMAUROHANDPLANNER_H
  namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
       typedef std::pair<KthReal, KthReal> thumbLimits;
 	  
 

@@ -46,7 +46,7 @@
 #include "prmhandplannerIROS.h"
  
  namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
 		
 	PRMHandPlannerIROS::PRMHandPlannerIROS(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
 		WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloudSize, KthReal cloudRad)

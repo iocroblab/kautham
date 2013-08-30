@@ -53,7 +53,7 @@ namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
 
-#include <libplanner/omplplanner_v1.h>
+#include <libompl/omplplanner_v1.h>
 
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>

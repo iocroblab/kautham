@@ -67,7 +67,7 @@ using namespace SDK;
 using namespace pugi;
 
 namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
     PRMPlanner::PRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize){
 
@@ -506,7 +506,7 @@ namespace libPlanner {
                       predecessor_map(&p[0]).distance_map(&d[0]).
                       visitor(astar_goal_visitor<prmVertex>(goal)));
 
-		}catch(PRM::found_goal fg){ // found a path to the goal
+        }catch(found_goal fg){ // found a path to the goal
 			_solved = true;
 			//Load the vector shortest_path that represents the solution as a sequence of prmvertex
 			for( prmVertex v = goal; ; v = p[v] )
@@ -972,7 +972,7 @@ namespace libPlanner {
                       predecessor_map(&p[0]).distance_map(&d[0]).
                       visitor(astar_goal_visitor<prmVertex>(goal)));
 
-    }catch(PRM::found_goal fg) { // found a path to the goal
+    }catch(found_goal fg) { // found a path to the goal
 			//list<prmVertex> shortest_path; now is a class parameter
 			for( prmVertex v = goal; ; v = p[v] ){
 				shortest_path.push_front(v);

@@ -50,8 +50,7 @@
 using namespace libSampling;
 
 namespace libPlanner {
-  namespace gridplanner{
-   namespace NF1_planner{
+  namespace IOC{
 	//! Constructor
     NF1Planner::NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               gridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
@@ -234,7 +233,6 @@ namespace libPlanner {
 			
 		}
 	  }
-    }
 }
 
 

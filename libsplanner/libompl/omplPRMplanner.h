@@ -50,7 +50,7 @@
 #include <ompl/datastructures/PDF.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 
-#include <libplanner/omplplanner.h>
+#include <libompl/omplplanner.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 

@@ -57,7 +57,7 @@ using namespace libSampling;
 using namespace boost;
 
 namespace libPlanner {
-   namespace gridplanner{
+   namespace IOC{
 	//Typedefs
 	//!The location associated to a vertex of the graph will be a sample pointer
     typedef Sample* location;

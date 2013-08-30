@@ -54,8 +54,7 @@ using namespace std;
 using namespace libSampling;
 
 namespace libPlanner {
-  namespace gridplanner{
-   namespace mygridplanner{
+  namespace IOC{
     class MyGridPlanner:public gridPlanner {
 	    public:
         MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
@@ -79,7 +78,6 @@ namespace libPlanner {
 
 	  };
    }
-  }
 }
 
 #endif  //_MYGRIDPLANNER_H

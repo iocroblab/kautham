@@ -45,10 +45,17 @@
 #include <libsplanner/linearlocplan.h>
 #include <libsplanner/constlinearlocplan.h>
 
+#include <libpugixml/pugixml.hpp>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <boost/algorithm/string.hpp>
+
+#if defined(KAUTHAM_USE_IOC)
 #include <libioc/myplanner.h>
-#include <libioc/drmplanner.h>
+//#include <libioc/drmplanner.h>
 #include <libioc/prmplanner.h>
-#include <libioc/prmplanner_pca.h>
+//#include <libioc/prmplanner_pca.h>
 #include <libioc/prmhandplannerICRA.h>
 #include <libioc/prmAUROhandarmplanner.h>
 #include <libioc/prmPCAhandarmplanner.h>
@@ -58,7 +65,9 @@
 #include <libioc/mygridplanner.h>
 #include <libioc/NF1planner.h>
 #include <libioc/HFplanner.h>
+#endif
 
+#if defined(KAUTHAM_USE_OMPL)
 #include <libompl/omplPRMplanner.h>
 #include <libompl/omplPRMplanner_v1.h>
 #include <libompl/omplRRTplanner.h>
@@ -72,13 +81,7 @@
 #include <libompl/omplSBLplanner.h>
 #include <libompl/omplKPIECEplanner.h>
 #include <libompl/omplKPIECEplanner.h>
-
-#include <libpugixml/pugixml.hpp>
-#include <string>
-#include <fstream>
-#include <iostream>
-
-#include <boost/algorithm/string.hpp>
+#endif
 
 
 #if defined(KAUTHAM_USE_GUIBRO)
@@ -93,15 +96,7 @@ using namespace GUIBROGRID;
 
 
 using namespace std;
-using namespace DRM;
-//using namespace DRMPCA;
-using namespace PRM;
-using namespace gridplanner;
-using namespace NF1_planner;
-using namespace myplanner;
-using namespace myprmplanner;
-using namespace HF_planner;
-using namespace mygridplanner;
+using namespace IOC;
 using namespace libPlanner;
 //using namespace omplplanner;
 using namespace pugi;
@@ -549,9 +544,9 @@ namespace libProblem {
     if(_locPlanner == NULL ) return false;
 
 
-    if(name == "DRM")
-      _planner = new DRMPlanner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, step); 
+    //if(name == "DRM")
+    //  _planner = new DRMPlanner(CONTROLSPACE, NULL, NULL,
+    //                           _cspace, _sampler, _wspace, _locPlanner, step);
 	
     else if(name == "PRM")
       _planner = new PRMPlanner(CONTROLSPACE, NULL, NULL,
@@ -596,9 +591,9 @@ namespace libProblem {
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
 
 #if defined(KAUTHAM_USE_ARMADILLO)
-      else if(name == "PRM PCA")
-         _planner = new PRMPlannerPCA(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, step,1,1);
+      //else if(name == "PRM PCA")
+      //   _planner = new PRMPlannerPCA(CONTROLSPACE, NULL, NULL,
+       //                        _cspace, _sampler, _wspace, _locPlanner, step,1,1);
       //else if(name == "DRMPCA")
         //_planner = new DRMPCAPlanner(CONTROLSPACE, NULL, NULL,
                            //    _cspace, _sampler, _wspace, _locPlanner, step);

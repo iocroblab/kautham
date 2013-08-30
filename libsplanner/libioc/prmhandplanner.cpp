@@ -46,7 +46,7 @@
 #include "prmhandplanner.h"
  
  namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
 		
 		PRMHandPlanner::PRMHandPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
       WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloudSize, KthReal cloudRad)

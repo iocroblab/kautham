@@ -51,7 +51,7 @@
 
 #define RAD2GRAD 180.0/M_PI
  namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
 	
 	PRMAUROHandArmPlanner::PRMAUROHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
            WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloudSize, KthReal cloudRad, int numHC)

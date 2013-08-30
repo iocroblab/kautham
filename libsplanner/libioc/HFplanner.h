@@ -59,8 +59,7 @@ using namespace std;
 using namespace libSampling;
 
 namespace libPlanner {
-  namespace gridplanner{
-   namespace HF_planner{
+  namespace IOC{
 
     class HFPlanner:public gridPlanner {
 	    public:
@@ -88,7 +87,6 @@ namespace libPlanner {
 
 	  };
    }
-  }
 }
 
 #endif  //_HFPLANNER_H

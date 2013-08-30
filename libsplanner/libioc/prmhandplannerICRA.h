@@ -44,7 +44,7 @@
 #if !defined(_PRMHANDPLANNERICRA_H)
 #define _PRMHANDPLANNERICRA_H
  namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
 	class PRMHandPlannerICRA:public PRMHandPlanner{
 		public:
 			PRMHandPlannerICRA(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 

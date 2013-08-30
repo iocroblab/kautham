@@ -17,7 +17,7 @@ using namespace std;
 //////////////////////
  
  namespace libPlanner {
-  namespace PRM{
+  namespace IOC{
 		
 	PRMPCAHandArmPlanner::PRMPCAHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
            WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize,int cloudSize, int samplingV, KthReal cloudRad, int samplingR,float distgoal,float distsamplingpcagoal)

@@ -59,8 +59,7 @@ using namespace std;
 using namespace libSampling;
 
 namespace libPlanner {
-  namespace gridplanner{
-   namespace NF1_planner{
+  namespace IOC{
 
     //CLASS bfs_distance_visitor
     // visitor that terminates when we find the goal
@@ -106,7 +105,6 @@ namespace libPlanner {
 
 	  };
    }
-  }
 }
 
 #endif  //_MYGRIDPLANNER_H

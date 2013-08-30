@@ -51,7 +51,7 @@
 using namespace libSampling;
 
 namespace libPlanner {
-  namespace gridplanner{
+  namespace IOC{
 
     gridPlanner::gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
