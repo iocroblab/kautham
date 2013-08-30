@@ -502,7 +502,7 @@ using namespace std;
 								_samples->add(tmpSample);//Adicionamos una nueva muestra libre de colisiones		
 								_distance.push_back(dist);//Se agrega la distancia de la muestra (en centimetros)
 								//connect sample to roadmap
-								PRMPlanner::connectLastSample(initSamp(), goalSamp());
+                                connectLastSample(initSamp(), goalSamp());
 
 								//create next sample
 								tmpSample = new Sample(_wkSpace->getDimension());
@@ -681,11 +681,11 @@ using namespace std;
 
 				//_gen->rand_init();
 				for(int i=0; i < numsamplespca; i++)
-				{
+                {
 					for(int j=0; j<_wkSpace->getDimension(); j++){
 						double rr=_gen->d_rand();
-						//fprintf(fp,"%f\n",rr);
-						matrand(i,j)=-lambdapca(0,j)+(2*lambdapca(0,j)*(rr));
+                        //fprintf(fp,"%f\n",rr);
+                        matrand(i,j)=-lambdapca(0,j)+(2*lambdapca(0,j)*(rr));
 					}
 					
 					rowvec zeta=trans((coeff*trans(matrand.row(i)))+trans(bar));
@@ -696,8 +696,8 @@ using namespace std;
 				}
 
 				matPCA= matrand;
-				matrand.~Mat();
-				PCA11PMDs.~Mat();
+                matrand.~Mat();
+                PCA11PMDs.~Mat();
 
 				return true;
 			}
