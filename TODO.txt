@@ -1,0 +1,9 @@
+ 
+1) Revisar les classes:
+    - Simplificar Sample
+    
+2) Comentar classes Doxygen
+
+3) Incorporar projections (Joan)
+
+4) Incoporar OpenDE (Joan)
