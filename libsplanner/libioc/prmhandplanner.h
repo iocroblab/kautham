@@ -40,6 +40,7 @@
  ***************************************************************************/
  
 #include "prmplanner.h"
+#include <libsampling/lcprng.h>
 
 #if !defined(_PRMHANDPLANNER_H)
 #define _PRMHANDPLANNER_H
