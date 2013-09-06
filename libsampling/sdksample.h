@@ -48,7 +48,7 @@
 #include <string>
 #include <vector>
 #include "wmat.h"
-#include "lcprng.h"			//class for linear congruential generators
+#include <libsutil/lcprng.h>			//class for linear congruential generators
 #include "sample.h"
 
 using namespace std;

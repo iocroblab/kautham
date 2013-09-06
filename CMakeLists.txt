@@ -7,7 +7,7 @@ CMAKE_POLICY(SET CMP0003 OLD)
 ########### Options ####################
 OPTION( KAUTHAM_GUI "Build the gui version" ON )
 OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
-OPTION( KAUTHAM_OMPL "Use OMPL planners" OFF )
+OPTION( KAUTHAM_OMPL "Use OMPL planners" ON )
 OPTION( KAUTHAM_IOC "Use IOC planners" ON )
 OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF )
 

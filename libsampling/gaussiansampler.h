@@ -46,7 +46,7 @@
 #define _GAUSSIANSAMPLER_H
 
 #include "sampler.h"
-#include "lcprng.h"
+#include <libsutil/lcprng.h>
 #include "randomsampler.h"
 
 

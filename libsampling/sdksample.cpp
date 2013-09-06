@@ -41,7 +41,7 @@
  
  
 #include "sdksample.h"
-#include "lcprng.h"
+#include <libsutil/lcprng.h>
 #include <sstream>
 #include <iostream>
 #include <time.h>

@@ -47,7 +47,7 @@
 
 #include "sampler.h"
 #include "sequence.h"
-#include "lcprng.h"
+#include <libsutil/lcprng.h>
 #include "sdksample.h"
 #include "wmat.h"
 #include "tmat.h"

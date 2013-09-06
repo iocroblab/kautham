@@ -48,7 +48,7 @@
 #include <libkthutil/kauthamdefs.h>
 #include <Inventor/SoPrimitiveVertex.h>
 #include <libpqp/PQP.h>
-#include "lcprng.h"
+#include <libsutil/lcprng.h>
 #include <Inventor/actions/SoCallbackAction.h>
 #include <Inventor/SbLinear.h>
 #include <Inventor/nodes/SoVertexProperty.h>

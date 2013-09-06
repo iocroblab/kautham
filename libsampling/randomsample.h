@@ -46,7 +46,7 @@
 
 #include <string>
 #include "sample.h"
-#include "lcprng.h"
+#include <libsutil/lcprng.h>
 
 namespace libSampling{
   class RandomSample : public Sample {

@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <libpugixml/pugixml.hpp>
 
-#include <libsampling/lcprng.h>
+#include <libsutil/lcprng.h>
 
 
 #include <Inventor/nodes/SoCube.h>

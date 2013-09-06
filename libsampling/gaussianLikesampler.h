@@ -47,7 +47,7 @@
 
 #include "sampler.h"
 #include "sdksampler.h"
-#include "lcprng.h"
+#include <libsutil/lcprng.h>
 //#include "sdksample.h"
 #include "haltonsampler.h"
 #include "randomsampler.h"

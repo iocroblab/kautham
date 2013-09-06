@@ -41,7 +41,7 @@
  
  
 #include "sequence.h"
-#include "lcprng.h"
+#include <libsutil/lcprng.h>
 
 namespace SDK {
   Sequence::Sequence(int dim, int M, bool randOffset){

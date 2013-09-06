@@ -50,7 +50,7 @@
 #include <sstream>
 #include <iostream>
 #include <libmt/mt/mt.h>
-#include "lcprng.h"
+#include <libsutil/lcprng.h>
 
 
 using namespace std;

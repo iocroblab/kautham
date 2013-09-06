@@ -43,7 +43,7 @@
      
 #include "sampleswidget.h"
 #include <libsampling/sampling.h>
-#include <libsampling/lcprng.h>
+#include <libsutil/lcprng.h>
 #include <sstream>
 
 using namespace libSampling;
