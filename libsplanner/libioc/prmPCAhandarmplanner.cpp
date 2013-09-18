@@ -55,6 +55,8 @@ using namespace std;
 
 		// _samples->setANNdatastructures(_kNeighs, _maxNumSamples*2);
 		//fp = fopen("rand.txt","wt"); 
+
+         //matPCA = new mat(500,_wkSpace->getDimension());
 	}
 
 
@@ -464,7 +466,7 @@ using namespace std;
 				  if(getSampleRandPCA(_deltaR))
 				  {		
 					//verify if the samples from V are within bounds and free
-					if(matPCA.n_rows>0)//matrand
+                    if(matPCA.n_rows>0)//matrand
 					{
 						////////////////Creación de variables////////////////////
 						vector<KthReal> coord(_wkSpace->getDimension());
@@ -473,9 +475,9 @@ using namespace std;
 						
 						///////////////////////////////////////////////////////////
 						//Procesamiento para comprobar las nuevas muestas 20x11, son libres de colisión
-						for(int z=0; z<matPCA.n_rows ; z++)
+                        for(int z=0; z<matPCA.n_rows ; z++)
 						{
-							rowvec pointpca=matPCA.row(z);//Fila de 11 elementos(6 primeros del brazo y los 5 ultimos de la mano)
+                            rowvec pointpca=matPCA.row(z);//Fila de 11 elementos(6 primeros del brazo y los 5 ultimos de la mano)
 							for(int k=0; k < _wkSpace->getDimension(); k++)
 								coord[k]=pointpca(0,k);//coord:variable para almacenar los 11 elementos
 							
@@ -523,7 +525,7 @@ using namespace std;
 				  }
 				}
 				//get samples from V using Gaussian					
-				else if(_samplingmethod==0)
+                else if(_samplingmethod==1)
 				{
 					//Alternativa al sampling de V: Gaussian sampling around the goal
 					for(int t=0;t<_samplingV;t++)
@@ -656,8 +658,11 @@ using namespace std;
 				///////////////PCA Armadillo//////////////////////////////
 				mat coeff;//coeff: principal component coefficients
 				vec latent;//latent: principal component variances.
-				vec explained;//explained: percentage of the total variance explained by each principal component. 
-				princomp(coeff, latent, explained,cov(PCA11PMDs));//Calcula el PCA
+                mat score; //projected data
+                //princomp(coeff, score, latent, X)
+                princomp(coeff, score, latent,cov(PCA11PMDs));//Calcula el PCA
+
+
 				/////////Print///////////////////////////////////////////////////////////
 				//cout << "Matrix Rotation:" << endl << coeff << endl;
 				//////////Contador Call PCA/////////////////////////////////////////
@@ -675,9 +680,9 @@ using namespace std;
 				//mat::fixed<50,11> matrand;
 				//matrand.fill(0.0);
 				int numsamplespca=500;//200;
-				mat matrand(numsamplespca,_wkSpace->getDimension());
-				//matrand(numsamplespca,11);
-				matrand.fill(0.0);
+                mat matrand(numsamplespca,_wkSpace->getDimension());
+                //matrand(numsamplespca,11);
+                matrand.fill(0.0);
 
 				//_gen->rand_init();
 				for(int i=0; i < numsamplespca; i++)
@@ -687,17 +692,15 @@ using namespace std;
                         //fprintf(fp,"%f\n",rr);
                         matrand(i,j)=-lambdapca(0,j)+(2*lambdapca(0,j)*(rr));
 					}
+
+                    rowvec zeta=trans((coeff*trans(matrand.row(i)))+trans(bar));
 					
-					rowvec zeta=trans((coeff*trans(matrand.row(i)))+trans(bar));
-					
-					for(int j=0; j<_wkSpace->getDimension(); j++)
-						matrand(i,j)=zeta(0,j);
+                    for(int j=0; j<_wkSpace->getDimension(); j++)
+                        matrand(i,j)=zeta(0,j);
 					
 				}
 
-				matPCA= matrand;
-                matrand.~Mat();
-                PCA11PMDs.~Mat();
+                matPCA= matrand;
 
 				return true;
 			}

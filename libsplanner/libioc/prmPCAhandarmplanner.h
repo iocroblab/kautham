@@ -111,7 +111,8 @@ typedef boost::variate_generator<RandomGenerator&, NormalDistribution> GaussianG
 			float _deltaR;
 			float _deltaI;
 			int _samplingmethod; //flag to use gaussian instead of sampling in V using the pca. For comparison purposes. 
-			mat matPCA;
+            mat matPCA;
+
 			FILE *fp;
 			//GaussianGenerator *_gaussianGen;
 	};	
