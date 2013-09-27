@@ -9,7 +9,7 @@ OPTION( KAUTHAM_GUI "Build the gui version" ON )
 OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
 OPTION( KAUTHAM_OMPL "Use OMPL planners" ON )
 OPTION( KAUTHAM_IOC "Use IOC planners" ON )
-OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF )
+OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" ON )
 
 
 
@@ -166,7 +166,6 @@ IF( KAUTHAM_GUI )
 
 ##############################################################################
 # Building librarires
-  ADD_SUBDIRECTORY ( libgui )
   IF( KAUTHAM_GUIBRO )
     MESSAGE( STATUS "Creating libguibro")
     INCLUDE_DIRECTORIES( libsexternal )
@@ -174,6 +173,7 @@ IF( KAUTHAM_GUI )
     SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  libguibro)
     MESSAGE( STATUS "KC_EXTRA_LIBSs: " ${KC_EXTRA_LIBS})
   ENDIF( KAUTHAM_GUIBRO )
+  ADD_SUBDIRECTORY ( libgui )
 
 
 

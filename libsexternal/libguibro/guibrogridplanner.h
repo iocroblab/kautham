@@ -48,9 +48,9 @@
 #include <libguibro/workspacegridplanner.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
-#include <libplanner/localplanner.h>
-#include <libplanner/NF1planner.h>
-#include <libplanner/prmplanner.h>
+#include <libsplanner/localplanner.h>
+#include <libsplanner/libioc/NF1planner.h>
+#include <libsplanner/libioc/prmplanner.h>
 
 class PathParse;
 

@@ -1,4 +1,4 @@
-# this file makes the libplanner library.
+# this file makes the libomplplanner library.
 
 FILE( GLOB SRC_FILES *.cpp )
 FILE( GLOB HDR_FILES *.h )

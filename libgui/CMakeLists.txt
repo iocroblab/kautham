@@ -25,10 +25,14 @@ QT4_ADD_RESOURCES( CPP_RES_FILES ${RES_FILES} )
 ADD_LIBRARY( libgui ${CPP_RES_FILES} ${SRC_FILES} ${HDR_FILES} ${QT_MOC_HDR} 
                                         ${QT_MOC_SRC} ${QTUI_H_SRC})
 
-TARGET_LINK_LIBRARIES( libgui ${QT_LIBRARIES} libproblem libplanner
+  IF( KAUTHAM_GUIBRO )
+    SET(KC_EXTERNAL_LIBS ${KC_EXTERNAL_LIBS}  libguibro)
+    MESSAGE( STATUS "Adding external libs for gui: " ${KC_EXTERNAL_LIBS})
+  ENDIF( KAUTHAM_GUIBRO )
+
+
+TARGET_LINK_LIBRARIES( libgui ${QT_LIBRARIES} libproblem libplanner ${KC_EXTERNAL_LIBS}
                        libsampling libkthutil ${SOQT_LIBRARY} ${COIN_LIBRARY} )
 
-IF(UNIX)
-  SET_TARGET_PROPERTIES( libgui PROPERTIES OUTPUT_NAME gui )
-ENDIF(UNIX)
+
   
