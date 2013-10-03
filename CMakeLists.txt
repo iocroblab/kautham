@@ -9,7 +9,7 @@ OPTION( KAUTHAM_GUI "Build the gui version" ON )
 OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
 OPTION( KAUTHAM_OMPL "Use OMPL planners" ON )
 OPTION( KAUTHAM_IOC "Use IOC planners" ON )
-OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" ON )
+OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF )
 
 
 
@@ -87,6 +87,8 @@ IF( KAUTHAM_OMPL )
     find_package(ompl)
     IF( OMPL_FOUND )
         MESSAGE( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_OMPL flag")
+        MESSAGE( STATUS "OMPL lib is: " ${OMPL_LIBRARIES})
+        MESSAGE( STATUS "OMPL include is: "${OMPL_INCLUDE_DIRS})
         ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
     ELSE( OMPL_FOUND )
         MESSAGE( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be abaliable")

@@ -65,6 +65,7 @@
 #include <libioc/mygridplanner.h>
 #include <libioc/NF1planner.h>
 #include <libioc/HFplanner.h>
+using namespace IOC;
 #endif
 
 #if defined(KAUTHAM_USE_OMPL)
@@ -93,7 +94,6 @@ using namespace GUIBROGRID;
 
 
 using namespace std;
-using namespace IOC;
 using namespace libPlanner;
 //using namespace omplplanner;
 using namespace pugi;
@@ -540,6 +540,8 @@ namespace libProblem {
 
     if(_locPlanner == NULL ) return false;
 
+
+#if defined(KAUTHAM_USE_IOC)
     else if(name == "PRM")
       _planner = new PRMPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, step);
@@ -591,6 +593,7 @@ namespace libProblem {
       _planner = new PRMPCAHandArmPlanner(CONTROLSPACE, NULL, NULL, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 10,0, (KthReal)0.0010, 10,0.0,0.0);
+#endif
 #endif
 
 #if defined(KAUTHAM_USE_GUIBRO)
