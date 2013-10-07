@@ -57,7 +57,7 @@ namespace libPlanner {
 	{
 		//set intial values
 	  
-		_guiName = _idName =  "HF Planner";
+        _guiName = _idName =  "HFPlanner";
 		removeParameter("Max. Samples");
 		removeParameter("Step Size");
       
@@ -96,8 +96,11 @@ namespace libPlanner {
           return false;
 		
 		it = _parameters.find("(1)dirichlet (0)neumann");
-		if(it != _parameters.end())
+        if(it != _parameters.end()){
           _dirichlet = it->second;
+          //reset HF values
+          setRandValues();
+        }
 		else
           return false;
 
@@ -120,8 +123,9 @@ namespace libPlanner {
 			it = _parameters.find(str);
 			if(it != _parameters.end())
 			{
-				setStepsDiscretization(it->second,i);
-				//drawCspace();
+                setStepsDiscretization(it->second,i);
+                setRandValues();
+                computeHF(indexgoal);
 			}
 			else
 				return false;
@@ -137,7 +141,7 @@ namespace libPlanner {
 	
 
 	void HFPlanner::computeHF(gridVertex  vgoal)
-	{
+	{           
 		//initialize potential to -1 and goal to 0
 		setPotential(vgoal, _goalPotential);
 		//relax potential
@@ -200,31 +204,38 @@ namespace libPlanner {
 			}
 
 			//set init and goal vertices
-			gridVertex  vg = _samples->indexOf(goalSamp());
-			gridVertex  vi = _samples->indexOf(initSamp());
+            indexgoal = _samples->indexOf(goalSamp());
+            indexinit = _samples->indexOf(initSamp());
 			
+            static int svg = -1;
+
+            if(svg == -1 || svg!=indexgoal){
+                //reset HF function because goal has changed
+                svg = indexgoal;
+                setRandValues();
+            }
 
 			Sample* curr;
 			gridVertex vc;
 			gridVertex vmin;
 
 			curr = _init;
-			vc = vi;
+            vc = indexinit;
 
 			_path.clear();
 			clearSimulationPath();
 			graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
 
 			//relax HF
-			computeHF(vg);
+            computeHF(indexgoal);
 			int count = 0;
 			int countmax = _mainiter;
 
 			std::vector<int> cellpath;
-			cellpath.push_back(vi);
-			_path.push_back(locations[vi]);
+            cellpath.push_back(indexinit);
+            _path.push_back(locations[indexinit]);
 
-			while(vc != vg && count < countmax)
+            while(vc != indexgoal && count < countmax)
 			{
 				vmin = vc;
 				for(tie(avi,avi_end)=adjacent_vertices(vc, *g); avi!=avi_end; ++avi)
@@ -239,10 +250,10 @@ namespace libPlanner {
 				}
 				if(vc == vmin) {
 					//relax HF again and resume
-					computeHF(vg);
+                    computeHF(indexgoal);
 					_path.clear();
 					cellpath.clear();
-					vc = vi;
+                    vc = indexinit;
 					count++;
 				}
 				else vc = vmin;

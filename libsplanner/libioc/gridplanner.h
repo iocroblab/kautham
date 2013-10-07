@@ -188,6 +188,9 @@ namespace libPlanner {
 		//!Function to setup the value of _stepsDiscretization in the given axis, and recompute the grid
 		void setStepsDiscretization(int numsteps, int axis);
 
+        //!set random values to alla the cells of the grid
+        void setRandValues();
+
 		//!function that returns the pointer to the cspace separator in the case of 2D
 		SoSeparator *getIvCspaceScene();//reimplemented
 		//!Function that draws the cspace (loads the cspace separator)
