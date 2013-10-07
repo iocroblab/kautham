@@ -84,6 +84,8 @@ namespace libPlanner {
 			if(it != _parameters.end())
 			{
 				setStepsDiscretization(it->second,i);
+                //recompute NF1 fucntion because grid has changed
+                computeNF1(indexgoal);
 			}
 			else
 				return false;
@@ -123,11 +125,15 @@ namespace libPlanner {
 		//propagate potential
 		breadth_first_search(*fg, vgoal, visitor(bfs_distance_visitor<PotentialMap>(getpotmat())));
 
-		graph_traits<filteredGridGraph>::vertex_iterator i, end;
+
+        //print dist info
+        /*
+         *graph_traits<filteredGridGraph>::vertex_iterator i, end;
 		for(tie(i,end)=vertices(*fg); i!=end; ++i)
 		{
 			cout<<"vertex "<< *i<<" dist "<<getPotential(*i)<<endl;
 		}
+        */
 	}
 
 	  
@@ -142,15 +148,15 @@ namespace libPlanner {
 				return false;
 			}
 
-			gridVertex  vg = _samples->indexOf(goalSamp());
-			gridVertex  vi = _samples->indexOf(initSamp());
+            indexgoal = _samples->indexOf(goalSamp());
+            indexinit = _samples->indexOf(initSamp());
 
 			static int svg = -1;
 			
-			if(svg == -1 || svg!=vg){
+            if(svg == -1 || svg!=indexgoal){
 				//recompute navigation function because goal has changed
-				svg = vg;
-				computeNF1(vg);
+                svg = indexgoal;
+                computeNF1(indexgoal);
 			}
 			
 			Sample* curr;
@@ -158,13 +164,13 @@ namespace libPlanner {
 			gridVertex vmin;
 
 			curr = _init;
-			vc = vi;
+            vc = indexinit;
 
 			
 			PotentialMap pm = getpotmat();
 
 			//if navigation function did'nt arrive at initial cell, return false
-			if(pm[vi] == -1) 
+            if(pm[indexinit] == -1)
 			{
 				cout<<"CONNECTION NOT POSSIBLE: Init and goal configurations not on the same connected component..."<<endl;
 				drawCspace();
@@ -176,7 +182,8 @@ namespace libPlanner {
 			clearSimulationPath();
 			graph_traits<filteredGridGraph>::adjacency_iterator avi, avi_end;
 
-			while(vc != vg)
+            int whilecount=0;
+            while(vc != indexgoal)
 			{
 				_path.push_back(locations[vc]);
 				vmin = vc;
@@ -186,10 +193,22 @@ namespace libPlanner {
 					KthReal pcurr = pm[vmin];
 					if(pneigh < pcurr) vmin = *avi; 
 					//if(pm[*avi] < pm[vmin]) vmin = *avi; 
-				}
-				vc = vmin;
+                }
+                //init control code:
+                //the following code should never be executed. NF1 is suposed not to have local minima!
+                //something wrong might be happening...
+                if(vc==vmin)
+                {
+                    cout<<"something wrong is happening. NF1 encontered a local minima ¿?"<<endl;
+                    _solved = false;
+                    return _solved;
+                }
+                //end control code
+
+
+                vc = vmin;
 			}
-			_path.push_back(locations[vg]);
+            _path.push_back(locations[indexgoal]);
 			_solved = true;
 			drawCspace();
 			return _solved;

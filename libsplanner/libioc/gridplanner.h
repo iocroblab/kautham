@@ -148,9 +148,15 @@ namespace libPlanner {
 		//!Bool to determine if the graph has been loaded
         bool _isGraphSet;
 
-        //!temporal storage of init and goal config. Used when discretization steps change
+        //!temporal storage of init config. Used when discretization steps change
         Sample *tmpSamInit;
+        //!temporal storage of goal config. Used when discretization steps change
         Sample *tmpSamGoal;
+
+        //!index of init cell in the current discretization of the cspace
+        gridVertex indexinit;
+        //!index of goal cell in the current discretization of the cspace
+        gridVertex indexgoal;
 
 	    //!Function to load the boost graph data
 	    void loadGraph();	 

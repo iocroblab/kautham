@@ -103,16 +103,16 @@ namespace libPlanner {
 
         //recompute the init and goal to coincide with a cell of the grid
         int stepd=1;
-        int indexgoal=tmpSamGoal->getCoords()[0]*_stepsDiscretization[0];
-        int indexinit=tmpSamInit->getCoords()[0]*_stepsDiscretization[0];
+        indexgoal= (gridVertex)(tmpSamGoal->getCoords()[0]*_stepsDiscretization[0]);
+        indexinit= (gridVertex)(tmpSamInit->getCoords()[0]*_stepsDiscretization[0]);
         int r;
         for(int i=1; i<_wkSpace->getDimension();i++)
         {
             stepd = stepd * _stepsDiscretization[i-1];
             r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
-            indexgoal += stepd*r;
+            indexgoal += (gridVertex)(stepd*r);
             r=tmpSamInit->getCoords()[i]*_stepsDiscretization[i];
-            indexinit += stepd*r;
+            indexinit += (gridVertex)(stepd*r);
         }
         _goal=_samples->getSampleAt(indexgoal);
         if(_wkSpace->collisionCheck(_goal)==true)
@@ -296,16 +296,16 @@ namespace libPlanner {
 
             //recompute the init and goal to coincide with a cell of the grid
             int stepd=1;
-            int indexgoal=tmpSamGoal->getCoords()[0]*_stepsDiscretization[0];
-            int indexinit=tmpSamInit->getCoords()[0]*_stepsDiscretization[0];
+            indexgoal=(gridVertex)(tmpSamGoal->getCoords()[0]*_stepsDiscretization[0]);
+            indexinit=(gridVertex)(tmpSamInit->getCoords()[0]*_stepsDiscretization[0]);
             int r;
             for(int i=1; i<_wkSpace->getDimension();i++)
             {
                 stepd = stepd * _stepsDiscretization[i-1];
                 r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
-                indexgoal += stepd*r;
+                indexgoal += (gridVertex)(stepd*r);
                 r=tmpSamInit->getCoords()[i]*_stepsDiscretization[i];
-                indexinit += stepd*r;
+                indexinit += (gridVertex)(stepd*r);
             }
             _goal=_samples->getSampleAt(indexgoal);
             if(_wkSpace->collisionCheck(_goal)==true)
@@ -318,7 +318,9 @@ namespace libPlanner {
             else
                 cout<<"INIT sample must be set to saple number "<< indexinit <<endl;
 
-		}
+        }
+
+        drawCspace();
    }
 		
 	void  gridPlanner::loadgrid(vector<KthReal> &coords, int coord_i)
