@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTV1_2DRR_columns">
+	<Robot robot="robots/2DRR.rob" scale="1.0">
+		<InvKinematic name="RR2D" />
+	</Robot>
+	<Scene scene="scenes/columns.iv" scale="0.5">
+		<Location TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="50.0" X="150.0" />
+	</Scene>
+	<Planner>
+		<Parameters>
+                        <Name>omplRRTV1</Name>
+                        <LocalPlanner stepSize="0.05">Linear</LocalPlanner>
+                        <Parameter name="Max Planning Time">1.0</Parameter>
+                        <Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">0.02</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="2">0.574 0.687</Init>
+				<Goal dim="2">0.431 0.69</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
