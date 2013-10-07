@@ -46,7 +46,8 @@ namespace libPlanner {
       _samplerGaussian = new GaussianSampler(_wkSpace->getDimension(),sigma,_wkSpace);
       _samplerGaussianLike = new GaussianLikeSampler(_wkSpace->getDimension(), _levelSDK,_wkSpace);
 
-      _samplertype = 1;
+      //default gaussian
+      _samplertype = 3;
       setsampler(_samplertype);
       addParameter("Step Size", ssize);
       addParameter("Sampler 1(sdk),2(h),3(g),4(gl),5(r)", _samplertype);
@@ -370,6 +371,14 @@ namespace libPlanner {
 
     //!function that constructs the PRM and finds a solution path
     bool PRMPlanner::trySolve(){
+        //verify init and goal samples
+        if(goalSamp()->isFree()==false || initSamp()->isFree()==false)
+        {
+            cout<<"init or goal configuration are in COLLISION!"<<endl;
+            return false;
+        }
+
+
       _solved = false;
       int count = 0;
       if( _isGraphSet ){  //If graph already available
@@ -415,21 +424,28 @@ namespace libPlanner {
             if( smp != NULL ) delete smp;
             smp = _samplerUsed->nextSample();
             count++;
-          }while(_wkSpace->collisionCheck(smp) == true);
-          _samples->add(smp);
-          double r=rgen->d_rand();
-          if(r < _probabilityConnectionIniGoal) connectLastSample(_init);
-          else if(r < 2*_probabilityConnectionIniGoal) connectLastSample(_goal);
-          else connectLastSample();
-          if( findPath() )
+          }while(_wkSpace->collisionCheck(smp) == true && count<_maxNumSamples);
+          //if found free smp
+          if(_wkSpace->collisionCheck(smp) == false)
           {
-            printConnectedComponents();
-            smoothPath();
-            //cout << "Calls to collision-check = " << count <<endl;
-            _solved = true;
+            _samples->add(smp);
+            double r=rgen->d_rand();
+            if(r < _probabilityConnectionIniGoal) connectLastSample(_init);
+            else if(r < 2*_probabilityConnectionIniGoal) connectLastSample(_goal);
+            else connectLastSample();
+            if( findPath() )
+            {
+                printConnectedComponents();
+                smoothPath();
+                //cout << "Calls to collision-check = " << count <<endl;
+                _solved = true;
 
-            drawCspace();
-            break;
+                drawCspace();
+                break;
+            }
+          }
+          else{
+              _solved = false;
           }
         }
       }
