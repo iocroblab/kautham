@@ -504,6 +504,20 @@ namespace libPlanner {
 	    _isGraphSet = false;
 		_solved = false;
     }
+
+    void gridPlanner::setRandValues()
+    {
+        LCPRNG* rgen = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
+        for(unsigned int i=0;i<num_vertices(*g); i++)
+        {
+            if(locations[i]->isFree()==true)
+            {
+                setPotential(i, rgen->d_rand()); //random initialization of potential
+            }
+            else setPotential(i, _obstaclePotential);
+        }
+  }
+
   
     void gridPlanner::loadGraph()
 	{
@@ -534,15 +548,8 @@ namespace libPlanner {
 		//if the cell is free, or to value 10 if it is in collsion
 		potmap = get(potential_value_t(), *g);
 		
-        LCPRNG* rgen = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
-		for(unsigned int i=0;i<num_vertices(*g); i++)
-		{
-			if(locations[i]->isFree()==true)
-			{
-				setPotential(i, rgen->d_rand()); //random initialization of potential
-			}
-			else setPotential(i, _obstaclePotential);
-		}
+        setRandValues();
+
 		_isGraphSet = true;
 	}
 
