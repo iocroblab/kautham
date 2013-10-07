@@ -89,8 +89,42 @@ namespace libPlanner {
 			_maxNumSamples = _maxNumSamples * _stepsDiscretization[i];
 		}
 
-		_samples->clear();
+
+        //store the init and goal config
+        tmpSamInit = new Sample(_wkSpace->getDimension());
+        tmpSamGoal = new Sample(_wkSpace->getDimension());
+        tmpSamGoal->setCoords(goalSamp()->getCoords());
+        tmpSamInit->setCoords(initSamp()->getCoords());
+        tmpSamGoal->setFree(goalSamp()->getcolor());
+        tmpSamInit->setFree(initSamp()->getcolor());
+
+        _samples->clear();
 		discretizeCspace();
+
+        //recompute the init and goal to coincide with a cell of the grid
+        int stepd=1;
+        int indexgoal=tmpSamGoal->getCoords()[0]*_stepsDiscretization[0];
+        int indexinit=tmpSamInit->getCoords()[0]*_stepsDiscretization[0];
+        int r;
+        for(int i=1; i<_wkSpace->getDimension();i++)
+        {
+            stepd = stepd * _stepsDiscretization[i-1];
+            r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
+            indexgoal += stepd*r;
+            r=tmpSamInit->getCoords()[i]*_stepsDiscretization[i];
+            indexinit += stepd*r;
+        }
+        _goal=_samples->getSampleAt(indexgoal);
+        if(_wkSpace->collisionCheck(_goal)==true)
+            cout<<"Goal sample is in collision"<<endl;
+        else
+            cout<<"GOAL sample must be set to saple number "<< indexgoal <<endl;
+        _init=_samples->getSampleAt(indexinit);
+        if(_wkSpace->collisionCheck(_init) == true)
+            cout<<"Init sample is in collision"<<endl;
+        else
+            cout<<"INIT sample must be set to saple number "<< indexinit <<endl;
+
     }
 
 	gridPlanner::~gridPlanner(){
@@ -256,8 +290,34 @@ namespace libPlanner {
 				_maxNumSamples = _maxNumSamples * _stepsDiscretization[i];
 			}
 			if(_isGraphSet) clearGraph();
-			_samples->clear();
+
+           _samples->clear();
 			discretizeCspace();
+
+            //recompute the init and goal to coincide with a cell of the grid
+            int stepd=1;
+            int indexgoal=tmpSamGoal->getCoords()[0]*_stepsDiscretization[0];
+            int indexinit=tmpSamInit->getCoords()[0]*_stepsDiscretization[0];
+            int r;
+            for(int i=1; i<_wkSpace->getDimension();i++)
+            {
+                stepd = stepd * _stepsDiscretization[i-1];
+                r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
+                indexgoal += stepd*r;
+                r=tmpSamInit->getCoords()[i]*_stepsDiscretization[i];
+                indexinit += stepd*r;
+            }
+            _goal=_samples->getSampleAt(indexgoal);
+            if(_wkSpace->collisionCheck(_goal)==true)
+                cout<<"Goal sample is in collision"<<endl;
+            else
+                cout<<"GOAL sample must be set to saple number "<< indexgoal <<endl;
+            _init=_samples->getSampleAt(indexinit);
+            if(_wkSpace->collisionCheck(_init) == true)
+                cout<<"Init sample is in collision"<<endl;
+            else
+                cout<<"INIT sample must be set to saple number "<< indexinit <<endl;
+
 		}
    }
 		
@@ -387,7 +447,7 @@ namespace libPlanner {
 			//create graph vertices, i.e. sample and collision-check at grid cell centers
 			vector<KthReal> coords(_wkSpace->getDimension());
 			loadgrid(coords, _wkSpace->getDimension()-1);
-			//connect neighbor grid cells
+            //connect neighbor grid cells
 			vector<int> index(_wkSpace->getDimension());
 			connectgrid(index, 0);
 			//create grid as graph (alse sets initial potential values)

@@ -540,48 +540,58 @@ namespace libProblem {
 
     if(_locPlanner == NULL ) return false;
 
+    Sample *sinit=NULL;
+    Sample *sgoal=NULL;
+    if(_cspace->getSize()>=2)
+    {
+        sinit=_cspace->getSampleAt(0);
+        sgoal=_cspace->getSampleAt(1);
+    }
+
+    if(name == "dummy") //Dummy if to start.
+        cout<<"planer name is dummy?"<<endl;
 
 #if defined(KAUTHAM_USE_IOC)
     else if(name == "PRM")
-      _planner = new PRMPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new PRMPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "PRM Hand IROS")
-      _planner = new PRMHandPlannerIROS(CONTROLSPACE, NULL, NULL,
+      _planner = new PRMHandPlannerIROS(CONTROLSPACE, sinit, sgoal,
                                        _cspace, _sampler, _wspace, _locPlanner,
                                        step, 5, (KthReal)0.001 );
     else if(name == "PRM Hand ICRA")
-      _planner = new PRMHandPlannerICRA(CONTROLSPACE, NULL, NULL,
+      _planner = new PRMHandPlannerICRA(CONTROLSPACE, sinit, sgoal,
                                        _cspace, _sampler, _wspace, _locPlanner,
                                        step, 100, 5, (KthReal)0.010, 5);
 
      else if(name == "PRMAURO HandArm")
-      _planner = new PRMAUROHandArmPlanner(CONTROLSPACE, NULL, NULL, _cspace,
+      _planner = new PRMAUROHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 10, (KthReal)0.0010, 10);
 	
      else if(name == "PRM RobotHand-Const ICRA")
-      _planner = new PRMRobotHandConstPlannerICRA(CONTROLSPACE, NULL, NULL, _cspace,
+      _planner = new PRMRobotHandConstPlannerICRA(CONTROLSPACE, sinit, sgoal, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 3, (KthReal)50.0);                                        
    	 else if(name == "MyPlanner")
-      _planner = new MyPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new MyPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01); 
 	  
 	 else if(name == "MyPRMPlanner")
-      _planner = new MyPRMPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new MyPRMPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
 	   
 	  else if(name == "MyGridPlanner")
-      _planner = new MyGridPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new MyGridPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);	   
 	   
 	   else if(name == "NF1Planner")
-      _planner = new NF1Planner(CONTROLSPACE, NULL, NULL,
+      _planner = new NF1Planner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);  
 	   
 	   else if(name == "HFPlanner")
-      _planner = new HFPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new HFPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
 
 #if defined(KAUTHAM_USE_ARMADILLO)
@@ -590,7 +600,7 @@ namespace libProblem {
        //                        _cspace, _sampler, _wspace, _locPlanner, step,1,1);
 
     else if(name == "PRMPCA HandArm")
-      _planner = new PRMPCAHandArmPlanner(CONTROLSPACE, NULL, NULL, _cspace,
+      _planner = new PRMPCAHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 10,0, (KthReal)0.0010, 10,0.0,0.0);
 #endif
@@ -605,46 +615,46 @@ namespace libProblem {
 #if defined(KAUTHAM_USE_OMPL)
 
     else if(name == "omplDefault")
-      _planner = new libPlanner::omplplanner::omplPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplPRM")
-      _planner = new libPlanner::omplplanner::omplPRMPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplPRMPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplRRT")
-      _planner = new libPlanner::omplplanner::omplRRTPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
 
     else if(name == "omplRRTConnect")
-      _planner = new libPlanner::omplplanner::omplRRTConnectPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplEST")
-      _planner = new libPlanner::omplplanner::omplESTPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplESTPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplSBL")
-      _planner = new libPlanner::omplplanner::omplSBLPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplSBLPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplKPIECE")
-      _planner = new libPlanner::omplplanner::omplKPIECEPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplBKPIECE")
-      _planner = new libPlanner::omplplanner::omplKPIECEPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplcRRT")
-      _planner = new libPlanner::omplcplanner::omplcRRTPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
     else if(name == "omplcRRTf16")
-      _planner = new libPlanner::omplcplanner::omplcRRTf16Planner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplcplanner::omplcRRTf16Planner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
     else if(name == "omplcRRTcar")
-      _planner = new libPlanner::omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new libPlanner::omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else
@@ -664,6 +674,7 @@ namespace libProblem {
       xml_document doc;
       xml_parse_result result = doc.load_file( path.c_str() );
       if( result ){
+        //Create the planner and set the parameters
         xml_node planNode = doc.child("Problem").child("Planner").child("Parameters");
         string name = planNode.child("Name").child_value();
 
@@ -694,6 +705,7 @@ namespace libProblem {
 
   bool Problem::createCSpaceFromFile(string xml_doc){
     if( createCSpace() ){
+
       xml_document doc;
       xml_parse_result res = doc.load_file(xml_doc.c_str());
       if( res ){
@@ -722,7 +734,8 @@ namespace libProblem {
 
             tmpSampPointer->setCoords(coordsVec);
             // Adding the mapping to configuration space with the collision test.
-            _wspace->collisionCheck(tmpSampPointer);
+            if(_wspace->collisionCheck(tmpSampPointer) == true)
+                cout<<"Init sample is in collision"<<endl;
             _cspace->add(tmpSampPointer);
 
           }else{
@@ -745,6 +758,9 @@ namespace libProblem {
               coordsVec[i] = (KthReal)atof(tokens[i].c_str());
 
             tmpSampPointer->setCoords(coordsVec);
+            // Adding the mapping to configuration space with the collision test.
+            if(_wspace->collisionCheck(tmpSampPointer)==true)
+                cout<<"Goal sample is in collision"<<endl;
             _cspace->add(tmpSampPointer);
 
           }else{
@@ -758,6 +774,7 @@ namespace libProblem {
           return true;
         }
       }
+
     }
     return false;
   }

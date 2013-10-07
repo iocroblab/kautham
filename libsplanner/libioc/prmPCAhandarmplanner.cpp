@@ -40,11 +40,12 @@ using namespace std;
 		_lambda = cloudRad;
         addParameter("Lambda", _lambda);
 
-		removeParameter("Neigh Thresshold");
-		removeParameter("Cloud deltaM");
-		removeParameter("Cloud Radius");
-		removeParameter("Cloud Size");
-	    removeParameter("P(connect to Ini-Goal)");
+        removeParameter("Cloud deltaM");//from prmhandplanner class
+        removeParameter("Cloud Radius");//from prmhandplanner class
+        removeParameter("Cloud Size");//from prmhandplanner class
+        removeParameter("Neigh Thresshold");//from prmplanner class
+        removeParameter("P(connect to Ini-Goal)");//from prmplanner class
+        removeParameter("Sampler 1(sdk),2(h),3(g),4(gl),5(r)");//from prmplanner class
 
 		_samplingmethod=0;
 		addParameter("Sampling (0:PCA, 1:Gauss, 2:Bridge)",_samplingmethod);

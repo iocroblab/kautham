@@ -197,6 +197,10 @@ namespace libGUI{
       connect(_spTo, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
       connect(_cmbTry, SIGNAL( clicked() ), this, SLOT( tryConnect( )));
       connect(chkCamera, SIGNAL( clicked() ), this, SLOT( chkCameraClick( )));
+
+      //init sample is defaulted to zero, i.e. spnInit->setValue( 0 );
+      //goal sample is dafaulted to 1 since in problem.cpp it is loaded in this order when there is a query to solve
+      if(_planner->goalSamp()!=NULL && _planner->goalSamp()->isFree()) spnGoal->setValue( 1 );
     }
 	}
 

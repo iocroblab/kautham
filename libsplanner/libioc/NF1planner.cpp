@@ -57,7 +57,7 @@ namespace libPlanner {
 	{
 		//set intial values
 	  
-		_guiName = _idName =  "NF1 Planner";
+        _guiName = _idName =  "NF1Planner";
 		removeParameter("Max. Samples");
 		removeParameter("Step Size");
     }
