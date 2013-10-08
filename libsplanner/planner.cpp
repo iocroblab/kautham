@@ -358,6 +358,9 @@ namespace libPlanner{
 
       tmpSampPointer->setCoords(coordsVec);
       tmpSampPointer->setConnectedComponent(it->attribute("conComp").as_int());
+      //samples are free samples, then set the flag
+      tmpSampPointer->setFree(true);
+
       _samples->add(tmpSampPointer);
     }
     if(_samples->getSize() != tempNode.attribute("size").as_int()){
