@@ -203,7 +203,7 @@ namespace libProblem {
         }
         // second test if a robot collides with another one present in the workspace.
         if( i > 0 ){
-          for( int k = i-1; k = 0; --k){
+          for( int k = i-1; k == 0; k--){
             if( robots[i]->collisionCheck( robots[k] ) ){
               collision = true;
               break;
