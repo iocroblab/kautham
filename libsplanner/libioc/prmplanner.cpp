@@ -47,7 +47,7 @@ namespace libPlanner {
       _samplerGaussianLike = new GaussianLikeSampler(_wkSpace->getDimension(), _levelSDK,_wkSpace);
 
       //default gaussian
-      _samplertype = 3;
+      _samplertype = 5;
       setsampler(_samplertype);
       addParameter("Step Size", ssize);
       addParameter("Sampler 1(sdk),2(h),3(g),4(gl),5(r)", _samplertype);
