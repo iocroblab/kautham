@@ -113,11 +113,11 @@ namespace libProblem {
 	}
 
   Problem::~Problem(){
+      delete _cspace; //must be deleted first, if not the program crashes...
     delete _wspace;
     delete _locPlanner;
     delete _planner;
     delete _sampler;
-    delete _cspace; 
   }
 	
   // This is the new implementation trying to avoid the old strucparse and ProbStruc.
