@@ -458,9 +458,9 @@ namespace libPlanner {
         planner->as<myPRM>()->setMaxDistanceBounceMotions(_BounceSteps*_distanceThreshold);
 
         //set max neighbors
-        _MaxNearestNeighbors = mymagic::DEFAULT_NEAREST_NEIGHBORS;
-        addParameter("MaxNearestNeighbors", _MaxNearestNeighbors);
-        planner->as<myPRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
+        //_MaxNearestNeighbors = mymagic::DEFAULT_NEAREST_NEIGHBORS;
+        //addParameter("MaxNearestNeighbors", _MaxNearestNeighbors);
+        //planner->as<myPRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
 
 
 
@@ -479,12 +479,14 @@ namespace libPlanner {
       omplPlanner::setParameters();
       try{
         HASH_S_K::iterator it = _parameters.find("MaxNearestNeighbors");
-        if(it != _parameters.end()){
+        /*
+         *if(it != _parameters.end()){
           _MaxNearestNeighbors = it->second;
           ss->getPlanner()->as<myPRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
          }
         else
           return false;
+          */
 
         it = _parameters.find("MinExpandTime");
         if(it != _parameters.end()){
