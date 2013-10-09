@@ -301,10 +301,11 @@ namespace libGUI {
 		return false;
 	}
 
+    //removes the viewer tab. The Introduction tab viewer cannot be eliminated.
 	void GUI::removeViewerTab(string title){
 		vector<Viewer>::iterator it_v;
-    if( title.compare("Introduction") == -1 )
-      for(it_v = viewers.begin(); it_v != viewers.end(); it_v++)
+      if( title.compare("Introduction") != 0 )
+        for(it_v = viewers.begin(); it_v != viewers.end(); it_v++)
 				if((*it_v).title == title){
 					viewsTab->removeTab(viewsTab->indexOf( it_v->tab ));
 					delete it_v->window;
@@ -547,10 +548,17 @@ namespace libGUI {
   }
 
 	bool GUI::restart(){
+        //do not put the index i inside the loop since the vector keeps decreasing after each remove
+        for(int i=0; i<viewers.size() ;i++)
+           removeViewerTab(viewers[0].title);
+
+        //the same
     for(int i=viewsTab->count(); i>1 ;i--)
-      viewsTab->removeTab(1);
+      viewsTab->removeTab(1);//tab 0 is never removed
+
+    //the same
     for(int i=propertiesTab->count();i>0;i--)
-      propertiesTab->removeTab(1);
+      propertiesTab->removeTab(1);//tab 0 is never removed
 
     viewers.clear();
     problemTree->clear();
