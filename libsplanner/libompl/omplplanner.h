@@ -148,8 +148,9 @@ namespace libPlanner {
         bool setParameters();//reimplemented
         SoSeparator *getIvCspaceScene();//reimplemented
         void drawCspace();
-        void drawCspaceSE3();
-        void drawCspaceRn();
+        //void drawCspaceSE3();
+        //void drawCspaceRn();
+        //void drawCspaceprojections();
 
         void omplState2smp(const ob::State *state, Sample* smp);
         void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);

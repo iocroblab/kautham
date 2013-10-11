@@ -557,34 +557,16 @@ namespace libPlanner {
         if((h - l) < epsilon) h = l + epsilon;
     }
 
-    //! This function creates the separator for the ivscene to show the configuration space, in case it is 2D.
+    //! This function creates the separator for the ivscene to show the configuration space.
     SoSeparator *omplPlanner::getIvCspaceScene()
     {
-        if(_wkSpace->getDimension()==2)
-        {
-            _sceneCspace = new SoSeparator();
-        }
-        else _sceneCspace=NULL;
+        _sceneCspace = new SoSeparator();
         return Planner::getIvCspaceScene();
     }
 
 
-    //! This routine allows to draw the roadmap or tree for a sigle robot with 2 dof
-    void omplPlanner::drawCspace()
-    {
-        if(_sceneCspace==NULL) return;
-
-        if(_wkSpace->getDimension()==2)
-        {
-            if(_wkSpace->getRobot(0)->isSE3Enabled())
-                drawCspaceSE3();
-            else
-                drawCspaceRn();
-        }
-    }
-
-    //! This routine allows to draw the roadmap or tree for a sigle robot with 2 translational dof
-    void omplPlanner::drawCspaceSE3()
+    //! This routine allows to draw the 2D projection of a roadmap or tree
+   void omplPlanner::drawCspace()
     {
             //first delete whatever is already drawn
             while (_sceneCspace->getNumChildren() > 0)
@@ -597,21 +579,53 @@ namespace libPlanner {
             SoCoordinate3 *points  = new SoCoordinate3();
             SoPointSet *pset  = new SoPointSet();
 
-            const ob::RealVectorStateSpace::StateType *pos;
-            const ob::SE3StateSpace::StateType *se3state;
-            ob::ScopedState<ob::CompoundStateSpace> pathscopedstate(space);
-
-            //get the SE3 subspace
+            //get the first subspace
             ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
-            ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
+            ob::StateSpacePtr ssRobotifirst =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
 
             //space bounds
-            KthReal xmin=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().low[0];
-            KthReal xmax=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().high[0];
-            KthReal ymin=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().low[1];
-            KthReal ymax=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().high[1];
+            int k;
+            KthReal xmin;
+            KthReal xmax;
+            KthReal ymin;
+            KthReal ymax;
+            KthReal zmin;
+            KthReal zmax;
 
-            KthReal x,y;
+            if(_wkSpace->getRobot(0)->isSE3Enabled())
+            {
+
+                xmin=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().low[0];
+                xmax=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().high[0];
+                ymin=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().low[1];
+                ymax=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().high[1];
+                zmin=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().low[2];
+                zmax=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().high[2];
+                k = ssRobotifirst->as<ob::SE3StateSpace>()->getDimension();
+            }
+            else
+            {
+                k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
+                if(k<=2)
+                {
+                    xmin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[0];
+                    xmax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[0];
+                    ymin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[1];
+                    ymax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[1];
+                }
+                else
+                {
+                    xmin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[0];
+                    xmax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[0];
+                    ymin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[1];
+                    ymax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[1];
+                    zmin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[2];
+                    zmax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[2];
+                }
+            }
+
+
+            KthReal x,y,z;
             //load the planner data to be drawn
             ob::PlannerDataPtr pdata;
             pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
@@ -620,16 +634,48 @@ namespace libPlanner {
             //loop for all vertices of the roadmap or tree and create the coin3D points
             for(int i=0;i<pdata->numVertices();i++)
             {
-                pathscopedstate = pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>();
-                ob::ScopedState<ob::SE3StateSpace> pathscopedstatese3(ssRobotiSE3);
-                pathscopedstate >> pathscopedstatese3;
-                x = pathscopedstatese3->getX();
-                y = pathscopedstatese3->getY();
+                if(_wkSpace->getRobot(0)->isSE3Enabled())
+                {
+                    ob::EuclideanProjection projection(k);
+                //&(projection) = new ob::EuclideanProjection;
+                //try
+                //{
+                    space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
+                // }
+                //catch(ompl::Exception e){
+                  //  e.what();
+                //}
+                    x = projection[0];
+                    y = projection[1];
+                    z = projection[2];
 
-                points->point.set1Value(i,x,y,0);
+                    points->point.set1Value(i,x,y,z);
+                }
+                else
+                {
+                    k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
+                    if(k<=2)
+                    {
+                        ob::EuclideanProjection projection(k);
+                        space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
+                        x = projection[0];
+                        y = projection[1];
+                        points->point.set1Value(i,x,y,0);
+                    }
+                    else
+                    {
+                        ob::EuclideanProjection projection(k);
+                        space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
+                        x = projection[0];
+                        y = projection[1];
+                        z = projection[2];
+                        points->point.set1Value(i,x,y,z);
+                    }
+                }
+
             }
             SoDrawStyle *pstyle = new SoDrawStyle;
-            pstyle->pointSize = 2;
+            pstyle->pointSize = 3;
             SoMaterial *color = new SoMaterial;
             color->diffuseColor.setValue(0.2,0.8,0.2);
 
@@ -651,35 +697,68 @@ namespace libPlanner {
                  numOutgoingEdges = pdata->getEdges (i, outgoingVertices);
 
                  //for each node loop for all the outgoing edges
-                 for ( int j=0; j<numOutgoingEdges; j++ ){
+                 for ( int j=0; j<numOutgoingEdges; j++ )
+                 {
 
                     SoCoordinate3 *edgepoints  = new SoCoordinate3();
 
                     //initial edgepoint
-                    float x1,y1,x2,y2,z;
-                    pathscopedstate = pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>();
-                    ob::ScopedState<ob::SE3StateSpace> pathscopedstatese3(ssRobotiSE3);
-                    pathscopedstate >> pathscopedstatese3;
-                    x1 = pathscopedstatese3->getX();
-                    y1 = pathscopedstatese3->getY();
-                    z=0.0;
-                    edgepoints->point.set1Value(0,x1,y1,z);
+                    float x1,y1,x2,y2,z1,z2;
+                    if(_wkSpace->getRobot(0)->isSE3Enabled())
+                    {
+                        ob::EuclideanProjection projection(k);
+                        space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
+                        x1=projection[0];
+                        y1=projection[1];
+                        z1=projection[2];
+                        edgepoints->point.set1Value(0,x1,y1,z1);
 
                     //final edgepoint
-                    pathscopedstate = pdata->getVertex(outgoingVertices.at(j)).getState()->as<ob::CompoundStateSpace::StateType>();
-                     pathscopedstate >> pathscopedstatese3;
-                    x2 = pathscopedstatese3->getX();
-                    y2 = pathscopedstatese3->getY();
-                    edgepoints->point.set1Value(1,x2,y2,z);
-
+                        space->getDefaultProjection()->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
+                        x2=projection[0];
+                        y2=projection[1];
+                        z2=projection[2];
+                        edgepoints->point.set1Value(1,x2,y2,z2);
+                    }
+                    else
+                    {
+                        k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
+                        if(k<=2)
+                        {
+                            ob::EuclideanProjection projection(k);
+                            space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
+                            x1=projection[0];
+                            y1=projection[1];
+                            z=0.0;
+                            edgepoints->point.set1Value(0,x1,y1,z);
+                            space->getDefaultProjection()->project(pdata->getVertex(outgoingVertices.at(j)).getState(),projection);
+                            x2=projection[0];
+                            y2=projection[1];
+                            edgepoints->point.set1Value(1,x2,y2,z);
+                        }
+                        else
+                        {
+                            ob::EuclideanProjection projection(k);
+                            space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
+                            x1=projection[0];
+                            y1=projection[1];
+                            z1=projection[2];
+                            edgepoints->point.set1Value(0,x1,y1,z1);
+                            space->getDefaultProjection()->project(pdata->getVertex(outgoingVertices.at(j)).getState(),projection);
+                            x2=projection[0];
+                            y2=projection[1];
+                            z2=projection[2];
+                            edgepoints->point.set1Value(1,x2,y2,z2);
+                        }
+                    }
                     //the edge
                     lsep->addChild(edgepoints);
                     SoLineSet *ls = new SoLineSet;
                     ls->numVertices.set1Value(0,2);//two values
                     lsep->addChild(ls);
-                  }
+                 }
             }
-            _sceneCspace->addChild(lsep);
+           _sceneCspace->addChild(lsep);
 
             //draw path:
             if(_solved)
@@ -694,19 +773,53 @@ namespace libPlanner {
                 {
                     //initial edgepoint
                     SoCoordinate3 *edgepoints  = new SoCoordinate3();
-                    pathscopedstate = pathstates[i]->as<ob::CompoundStateSpace::StateType>();
-                    ob::ScopedState<ob::SE3StateSpace> pathscopedstatese3(ssRobotiSE3);
-                    pathscopedstate >> pathscopedstatese3;
-                    x = pathscopedstatese3->getX();
-                    y = pathscopedstatese3->getY();
-                    edgepoints->point.set1Value(0,x,y,0);
+                    if(_wkSpace->getRobot(0)->isSE3Enabled())
+                    {
+                        ob::EuclideanProjection projection(k);
+                        space->getDefaultProjection()->project(pathstates[i], projection);
+                        x=projection[0];
+                        y=projection[1];
+                        z=projection[2];
+                        edgepoints->point.set1Value(0,x,y,z);
 
                     //final edgepoint
-                    pathscopedstate = pathstates[i+1]->as<ob::CompoundStateSpace::StateType>();
-                    pathscopedstate >> pathscopedstatese3;
-                    x = pathscopedstatese3->getX();
-                    y = pathscopedstatese3->getY();
-                    edgepoints->point.set1Value(1,x,y,0);
+                        space->getDefaultProjection()->project(pathstates[i+1], projection);
+                        x=projection[0];
+                        y=projection[1];
+                        z=projection[2];
+                        edgepoints->point.set1Value(1,x,y,z);
+                    }
+                    else
+                    {
+                        k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
+                        if(k<=2)
+                        {
+                            ob::EuclideanProjection projection(k);
+                            space->getDefaultProjection()->project(pathstates[i], projection);
+                            x=projection[0];
+                            y=projection[1];
+                            z=0.0;
+                            edgepoints->point.set1Value(0,x,y,z);
+                            space->getDefaultProjection()->project(pathstates[i+1],projection);
+                            x=projection[0];
+                            y=projection[1];
+                            edgepoints->point.set1Value(1,x,y,z);
+                        }
+                        else
+                        {
+                            ob::EuclideanProjection projection(k);
+                            space->getDefaultProjection()->project(pathstates[i], projection);
+                            x=projection[0];
+                            y=projection[1];
+                            z=projection[2];
+                            edgepoints->point.set1Value(0,x,y,z);
+                            space->getDefaultProjection()->project(pathstates[i+1],projection);
+                            x=projection[0];
+                            y=projection[1];
+                            z=projection[2];
+                            edgepoints->point.set1Value(1,x,y,z);
+                        }
+                    }
 
                     //edge of the path
                     pathsep->addChild(edgepoints);
@@ -723,195 +836,66 @@ namespace libPlanner {
                 _sceneCspace->addChild(pathsep);
             }
 
-
-            //draw floor
             SoSeparator *floorsep = new SoSeparator();
             SoCube *cs = new SoCube();
-            cs->width = xmax-xmin;
-            cs->depth = (xmax-xmin)/50.0;
-            cs->height = ymax-ymin;
-
             SoTransform *cub_transf = new SoTransform;
             SbVec3f centre;
-            centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,-cs->depth.getValue());
-            cub_transf->translation.setValue(centre);
-            cub_transf->recenter(centre);
-
             SoMaterial *cub_color = new SoMaterial;
-            cub_color->diffuseColor.setValue(0.2,0.2,0.2);
-
-            floorsep->addChild(cub_color);
-            floorsep->addChild(cub_transf);
-            floorsep->addChild(cs);
-            _sceneCspace->addChild(floorsep);
-    }
-
-
-    //! This routine allows to draw the roadmap or tree for a single robot with 2 joints
-    void omplPlanner::drawCspaceRn()
-    {
-        //first delete whatever is already drawn
-        while (_sceneCspace->getNumChildren() > 0)
-        {
-            _sceneCspace->removeChild(0);
-        }
-
-        //to draw points
-        SoSeparator *psep = new SoSeparator();
-        SoCoordinate3 *points  = new SoCoordinate3();
-        SoPointSet *pset  = new SoPointSet();
-
-        const ob::RealVectorStateSpace::StateType *pos;
-        const weigthedRealVectorStateSpace::StateType *rnstate;
-        ob::ScopedState<ob::CompoundStateSpace> pathscopedstate(space);
-
-        //get the SE3 subspace
-        ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
-        ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
-
-        //space bounds
-        KthReal xmin=ssRobotiRn->as<weigthedRealVectorStateSpace>()->getBounds().low[0];
-        KthReal xmax=ssRobotiRn->as<weigthedRealVectorStateSpace>()->getBounds().high[0];
-        KthReal ymin=ssRobotiRn->as<weigthedRealVectorStateSpace>()->getBounds().low[1];
-        KthReal ymax=ssRobotiRn->as<weigthedRealVectorStateSpace>()->getBounds().high[1];
-
-        KthReal x,y;
-        //load the planner data to be drawn
-        ob::PlannerDataPtr pdata;
-        pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
-        ss->getPlanner()->getPlannerData(*pdata);
-
-        //loop for all vertices of the roadmap or tree and create the coin3D points
-        for(int i=0;i<pdata->numVertices();i++)
-        {
-            pathscopedstate = pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>();
-            ob::ScopedState<weigthedRealVectorStateSpace> pathscopedstatern(ssRobotiRn);
-            pathscopedstate >> pathscopedstatern;
-            x = pathscopedstatern->values[0];
-            y = pathscopedstatern->values[1];
-
-            points->point.set1Value(i,x,y,0);
-        }
-        SoDrawStyle *pstyle = new SoDrawStyle;
-        pstyle->pointSize = 2;
-        SoMaterial *color = new SoMaterial;
-        color->diffuseColor.setValue(0.2,0.8,0.2);
-
-        //draw the points
-        psep->addChild(color);
-        psep->addChild(points);
-        psep->addChild(pstyle);
-        psep->addChild(pset);
-        _sceneCspace->addChild(psep);
-
-        //draw edges:
-        SoSeparator *lsep = new SoSeparator();
-        int numOutgoingEdges;
-        std::vector< unsigned int > outgoingVertices;
-
-        //loop for all nodes
-        for(int i=0;i<pdata->numVertices();i++)
-        {
-             numOutgoingEdges = pdata->getEdges (i, outgoingVertices);
-
-             //for each node loop for all the outgoing edges
-             for ( int j=0; j<numOutgoingEdges; j++ ){
-
-                SoCoordinate3 *edgepoints  = new SoCoordinate3();
-
-                //initial edgepoint
-                float x1,y1,x2,y2,z;
-                pathscopedstate = pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>();
-                ob::ScopedState<weigthedRealVectorStateSpace> pathscopedstatern(ssRobotiRn);
-                pathscopedstate >> pathscopedstatern;
-                x1 = pathscopedstatern->values[0];
-                y1 = pathscopedstatern->values[1];
-                z=0.0;
-                edgepoints->point.set1Value(0,x1,y1,z);
-
-                //final edgepoint
-                pathscopedstate = pdata->getVertex(outgoingVertices.at(j)).getState()->as<ob::CompoundStateSpace::StateType>();
-                 pathscopedstate >> pathscopedstatern;
-                 x2 = pathscopedstatern->values[0];
-                 y2 = pathscopedstatern->values[1];
-                edgepoints->point.set1Value(1,x2,y2,z);
-
-                //the edge
-                lsep->addChild(edgepoints);
-                SoLineSet *ls = new SoLineSet;
-                ls->numVertices.set1Value(0,2);//two values
-                lsep->addChild(ls);
-              }
-        }
-        _sceneCspace->addChild(lsep);
-
-        //draw path:
-        if(_solved)
-        {
-            //separator for the solution path
-            SoSeparator *pathsep = new SoSeparator();
-            //get the states of the solution path
-            std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
-
-            //loop for al the states of the solution path
-            for(int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
+            //draw floor
+            if(_wkSpace->getRobot(0)->isSE3Enabled())
             {
-                //initial edgepoint
-                SoCoordinate3 *edgepoints  = new SoCoordinate3();
-                pathscopedstate = pathstates[i]->as<ob::CompoundStateSpace::StateType>();
-                ob::ScopedState<weigthedRealVectorStateSpace> pathscopedstatern(ssRobotiRn);
-                pathscopedstate >> pathscopedstatern;
-                x = pathscopedstatern->values[0];
-                y = pathscopedstatern->values[1];
-                edgepoints->point.set1Value(0,x,y,0);
+                cs->width = xmax-xmin;
+                cs->depth = (zmax-zmin);
+                cs->height = ymax-ymin;
 
-                //final edgepoint
-                pathscopedstate = pathstates[i+1]->as<ob::CompoundStateSpace::StateType>();
-                pathscopedstate >> pathscopedstatern;
-                x = pathscopedstatern->values[0];
-                y = pathscopedstatern->values[1];
-                edgepoints->point.set1Value(1,x,y,0);
+                centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,zmin+(zmax-zmin)/2);
+                cub_transf->translation.setValue(centre);
+                cub_transf->recenter(centre);
 
-                //edge of the path
-                pathsep->addChild(edgepoints);
-                SoLineSet *ls = new SoLineSet;
-                ls->numVertices.set1Value(0,2);//two values
-                SoDrawStyle *lstyle = new SoDrawStyle;
-                lstyle->lineWidth=2;
-                SoMaterial *path_color = new SoMaterial;
-                path_color->diffuseColor.setValue(0.8,0.2,0.2);
-                pathsep->addChild(path_color);
-                pathsep->addChild(lstyle);
-                pathsep->addChild(ls);
+                //SoMaterial *cub_color = new SoMaterial;
+                cub_color->diffuseColor.setValue(0.2,0.2,0.2);
+                cub_color->transparency.setValue(0.5);
+
+                floorsep->addChild(cub_color);
+                floorsep->addChild(cub_transf);
+                floorsep->addChild(cs);
+                _sceneCspace->addChild(floorsep);
             }
-            _sceneCspace->addChild(pathsep);
-        }
-
-
-        //draw floor
-        SoSeparator *floorsep = new SoSeparator();
-        SoCube *cs = new SoCube();
-        cs->width = xmax-xmin;
-        cs->depth = (xmax-xmin)/50.0;
-        cs->height = ymax-ymin;
-
-        SoTransform *cub_transf = new SoTransform;
-        SbVec3f centre;
-        centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,-cs->depth.getValue());
-        cub_transf->translation.setValue(centre);
-        cub_transf->recenter(centre);
-
-        SoMaterial *cub_color = new SoMaterial;
-        cub_color->diffuseColor.setValue(0.2,0.2,0.2);
-
-        floorsep->addChild(cub_color);
-        floorsep->addChild(cub_transf);
-        floorsep->addChild(cs);
-        _sceneCspace->addChild(floorsep);
-
-
+            else
+            {
+                k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
+                if(k<=2)
+                {
+                    cs->width = xmax-xmin;
+                    cs->depth = (xmax-xmin)/50.0;
+                    cs->height = ymax-ymin;
+                    centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,-cs->depth.getValue());
+                    cub_transf->translation.setValue(centre);
+                    cub_transf->recenter(centre);
+                    cub_color->diffuseColor.setValue(0.2,0.2,0.2);
+                    cub_color->transparency.setValue(0.98);
+                    floorsep->addChild(cub_color);
+                    floorsep->addChild(cub_transf);
+                    floorsep->addChild(cs);
+                    _sceneCspace->addChild(floorsep);
+                }
+                else
+                {
+                    cs->width = xmax-xmin;
+                    cs->depth = (zmax-zmin);
+                    cs->height = ymax-ymin;
+                    centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,zmin+(zmax-zmin)/2);
+                    cub_transf->translation.setValue(centre);
+                    cub_transf->recenter(centre);
+                    cub_color->diffuseColor.setValue(0.2,0.2,0.2);
+                    cub_color->transparency.setValue(0.98);
+                    floorsep->addChild(cub_color);
+                    floorsep->addChild(cub_transf);
+                    floorsep->addChild(cs);
+                    _sceneCspace->addChild(floorsep);
+                }
+             }
     }
-
 
     //! This function converts a Kautham sample to an ompl scoped state.
     void omplPlanner::smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate)
@@ -1143,6 +1127,7 @@ namespace libPlanner {
 		}
     }
 }
+
 
 #endif // KAUTHAM_USE_OMPL
 
