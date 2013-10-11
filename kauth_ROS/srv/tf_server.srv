@@ -1,3 +1,0 @@
-geometry_msgs/TransformStamped tcp
----
-sensor_msgs/JointState joints
