@@ -51,9 +51,10 @@
 #include "omplSBLplanner.h"
 
 
-using namespace libSampling;
-
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace omplplanner{
 
     //! Constructor
@@ -128,6 +129,7 @@ namespace libPlanner {
       return true;
     }
   }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 

@@ -48,10 +48,13 @@
 #include <QtGui>
 
 
-using namespace libProblem;
 using namespace std;
 
-namespace libGUI{
+namespace Kautham{
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	class InvKinWidget: public KauthamWidget{
 	  Q_OBJECT 
 	  private slots:
@@ -64,6 +67,8 @@ namespace libGUI{
 		  QPushButton *btnSolve;
 		  InverseKinematic *_invKin;
 		};
+
+    /** @}   end of Doxygen module "libGUI" */
  }
 
 

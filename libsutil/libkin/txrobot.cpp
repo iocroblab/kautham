@@ -33,10 +33,13 @@
 using namespace std;
 
 
+/** \defgroup libKin
+ *  @{
+ */
 
 /////////////////////////////// NAMESPACE SCOPE //////////////////////////////
 
-namespace robot
+namespace TXrobot
 {
 
 /////////////////////////////// CLASS IMPLEMENTATION /////////////////////////
@@ -948,4 +951,5 @@ TXerror TXRobot::getJacobian(const Vect6& q, ublas::matrix<mt::Scalar> &j) const
 
 
 
-}// robot
+}// TXrobot
+/** @}   end of Doxygen module "libKin */

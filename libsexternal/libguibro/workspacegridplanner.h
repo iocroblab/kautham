@@ -54,11 +54,10 @@
 #include <libsplanner/planner.h>
 
 using namespace std;
-using namespace libSampling;
+using namespace Kautham;
 using namespace boost;
 
-namespace libPlanner {
-   namespace workspacegridplanner{
+namespace GUIBRO {
 	//Typedefs
 	//!The location associated to a vertex of the graph will be the distance value to the obstacles
 	   struct location{
@@ -285,7 +284,7 @@ namespace libPlanner {
 		//void  connectGridFromFile(string file);
 	  };
    }
-}
+
 
 #endif  //_WORKSPACEGRIDPLANNER_H
 

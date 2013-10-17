@@ -60,7 +60,12 @@ using namespace std;
 	
 //class InverseKinematic;
 
-namespace libProblem {
+namespace Kautham {
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
   struct attObj{
     attObj(){obs=NULL; link=NULL;}
     ~attObj(){obs=NULL; link=NULL;}
@@ -371,6 +376,8 @@ namespace libProblem {
     int               _linkPathDrawn; //!> This is the number of the link whose path will be drawn
     list<attObj>      _attachedObject;
   };
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 
 #endif  //_ROBOT_H

@@ -41,7 +41,10 @@
  
 #include "inversekinematic.h" 
 
-namespace libProblem {
+namespace Kautham {
+/** \defgroup libKin
+ *  @{
+ */
   InverseKinematic::InverseKinematic(Robot* const rob){
     _robot = rob;
 	}
@@ -126,5 +129,6 @@ namespace libProblem {
     return _robLay;
   }
 
+  /** @}   end of Doxygen module "libKin */
 }
 

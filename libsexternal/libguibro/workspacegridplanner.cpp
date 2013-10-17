@@ -47,10 +47,9 @@
 #include <libsplanner/localplanner.h>
 #include "workspacegridplanner.h"
 
-using namespace libSampling;
+using namespace Kautham;
 
-namespace libPlanner {
-  namespace workspacegridplanner{
+namespace GUIBRO {
 
     workspacegridPlanner::workspacegridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, KthReal thDist):
               Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
@@ -537,6 +536,6 @@ bool workspacegridPlanner::computeHF(gridVertex vgoal)
 
 
   }
-}
+
 
 

@@ -63,10 +63,13 @@ namespace oc = ompl::control;
 
 
 using namespace std;
-using namespace libSampling;
 
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
+
   namespace omplcplanner{
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -228,6 +231,7 @@ namespace libPlanner {
 		//Add private data and functions
 	  };
   }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif // KAUTHAM_USE_OMPL

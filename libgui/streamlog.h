@@ -7,6 +7,11 @@
 
 #include <QtGui>
 
+
+/** \addtogroup libGUI
+ *  @{
+ */
+
 class StreamLog : public std::basic_streambuf<char>{
   public:
     StreamLog(std::ostream &stream, QTextEdit* text_edit) : m_stream(stream) {
@@ -56,4 +61,6 @@ class StreamLog : public std::basic_streambuf<char>{
     QTextEdit* log_window;
 };
 
+
+/** @}   end of Doxygen module "libGUI" */
 #endif // STREAMLOG_H

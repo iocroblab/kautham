@@ -46,7 +46,13 @@
 
 using namespace std;
 
-namespace SDK {
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
 	WMat::WMat(int dim, int level) {
 		int i;
 		int j;
@@ -92,5 +98,6 @@ namespace SDK {
 		return sal.str();
 	}
 
+    /** @}   end of Doxygen module "libSampling" */
 }
 

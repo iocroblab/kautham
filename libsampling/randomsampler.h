@@ -48,7 +48,12 @@
 #include "sampler.h"
 #include <libsutil/lcprng.h>
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
 
   //! This is the Sampler implementation using a random numbers generator.
   class RandomSampler : public Sampler {
@@ -65,6 +70,9 @@ namespace libSampling{
   private:
 	  LCPRNG* genRand;
   };
+
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_RANDOMSAMPLER_H

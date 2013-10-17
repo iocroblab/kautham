@@ -53,9 +53,13 @@
 #include <Inventor/nodes/SoIndexedLineSet.h>
 #include <Inventor/nodes/SoTransform.h>
 
-using namespace Kautham;
 
-namespace libProblem{
+namespace Kautham{
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
   class IVWorkSpace: public WorkSpace {
 	  public:
 		  IVWorkSpace();
@@ -67,6 +71,8 @@ namespace libProblem{
 		  void updateScene();
 		  SoSeparator *scene;
   };
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 
 #endif  //_IVWORKSPACE_H

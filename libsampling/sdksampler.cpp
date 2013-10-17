@@ -43,7 +43,13 @@
 
 #include "sdksampler.h"
 
-namespace SDK{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   char SDKSample::M=0;
   float SDKSample::sizeContainer=0.0;
   
@@ -90,6 +96,7 @@ namespace SDK{
 
 	};
 
+    /** @}   end of Doxygen module "libSampling" */
 }
 
 

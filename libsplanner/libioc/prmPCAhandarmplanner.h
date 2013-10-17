@@ -58,7 +58,10 @@ typedef boost::normal_distribution<double> NormalDistribution;
 typedef boost::mt19937 RandomGenerator;
 typedef boost::variate_generator<RandomGenerator&, NormalDistribution> GaussianGenerator;
  
- namespace libPlanner {
+ namespace Kautham {
+ /** \addtogroup libPlanner
+  *  @{
+  */
   namespace IOC{
       typedef std::pair<KthReal, KthReal> thumbLimits;
 	  
@@ -117,6 +120,7 @@ typedef boost::variate_generator<RandomGenerator&, NormalDistribution> GaussianG
 			//GaussianGenerator *_gaussianGen;
 	};	
   }
+  /** @}   end of Doxygen module "libPlanner */
 }
 #endif // KAUTHAM_USE_ARMADILLO
  

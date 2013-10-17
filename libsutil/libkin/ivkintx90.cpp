@@ -45,11 +45,13 @@
 #include <libproblem/robot.h>
 
 
-namespace libProblem {
-  
-  IvKinTx90::IvKinTx90(Robot* const rob):InverseKinematic(rob){
 
-    TXtype tipus = robot::TX90;
+/** \defgroup libKin
+ *  @{
+ */
+  IvKinTx90::IvKinTx90(Robot* const rob) : Kautham::InverseKinematic(rob){
+
+    TXtype tipus = TXrobot::TX90;
     _tx = new TXRobot(tipus);
     _target.resize(7);  // This contains the pos and quaternion as a vector
     _result = new Vect6(6);
@@ -176,7 +178,7 @@ namespace libProblem {
     //else
     //  tmpError = _tx->invKin(targetInHome, results ,_txConf, *solution, *qNear);
 
-    if( tmpError == robot::SUCCESS){
+    if( tmpError == TXrobot::SUCCESS){
       std::vector<KthReal> tmp(6);
       for(int i = 0; i < 6; i++ )
         tmp.at(i) = results[i];
@@ -304,5 +306,4 @@ namespace libProblem {
       }
       return true;
   }
-
-}
+  /** @}   end of Doxygen module "libKin */

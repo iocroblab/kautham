@@ -43,7 +43,11 @@
  
 #include "kauthamwidget.h"
 
-namespace libGUI{
+namespace Kautham{
+/** \addtogroup libGUI
+ *  @{
+ */
+
   KauthamWidget::KauthamWidget(KauthamObject* kObj){
 		_kauthObject= kObj;
     gridLayout = new QGridLayout(this);
@@ -138,5 +142,6 @@ namespace libGUI{
   void KauthamWidget::writeGUI(string text){
     emit sendText(text);
   }
-  
+
+  /** @}   end of Doxygen module "libGUI" */
 }

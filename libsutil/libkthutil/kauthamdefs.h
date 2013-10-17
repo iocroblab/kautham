@@ -62,9 +62,8 @@
 *  - Modular and extensible
 *  -# Geometric library: freeflying robots, kinematic chains and trees
 *  -# Sampling library: random and deterministic sampling strategies (Halton, sdk)
-*  -# Planning library: sampling-based roadmaps, RRTs
-*  -# GUI library: graphic rendering and flexible library management
-*  -# Device library: haptic devices, data gloves, robots and mechanical hands  (Phantom, CyberGlove, Staubli TX90, SAH)
+*  -# Planning library: gridbased planners (NF1,HF), roadmaps and all the suite of planners provided by the OMPL library (ompl.kavrakilab.org)
+*  -# GUI library: graphic rendering and flexible management to include new planners
 * \section Credits
 * Alexander Perez and Jan Rosell \n
 * alexander.perez@upc.edu - jan.rosell@upc.edu\n

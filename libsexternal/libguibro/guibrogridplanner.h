@@ -55,11 +55,8 @@
 class PathParse;
 
 using namespace std;
-using namespace libSampling;
 
-namespace libPlanner {
-using namespace workspacegridplanner;
-   namespace GUIBROGRID{
+   namespace GUIBRO{
 
 	struct guibroSample
 	{
@@ -174,7 +171,7 @@ using namespace workspacegridplanner;
 
 	  };
    }
-}
+
 
 
 #endif // _GUIBROGRIDPLANNER_H

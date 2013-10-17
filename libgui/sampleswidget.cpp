@@ -46,11 +46,12 @@
 #include <libsutil/lcprng.h>
 #include <sstream>
 
-using namespace libSampling;
-using namespace SDK;
 
-namespace libGUI{
-	
+namespace Kautham{
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	SamplesWidget::SamplesWidget(SampleSet* samples, Sampler* sampler, Problem* prob){
     _samples = samples;
     _sampler = sampler;
@@ -413,5 +414,6 @@ namespace libGUI{
       _ptProblem->wSpace()->moveRobotsTo(_samples->getSampleAt(index));
   }
 
+  /** @}   end of Doxygen module "libGUI" */
 }
 

@@ -7,6 +7,12 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/actions/SoSearchAction.h>
 
+
+/** \addtogroup libGUI
+ *  @{
+ */
+
+
 static const char *axis_str[] = {
     "#Inventor V2.1 ascii\n",
     "DEF root Separator {\n",
@@ -131,4 +137,7 @@ public:
 
   }
 };
+
+
+/** @}   end of Doxygen module "libGUI" */
 #endif

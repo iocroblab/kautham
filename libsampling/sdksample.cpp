@@ -48,7 +48,13 @@
 
 using namespace std;
 
-namespace SDK {  
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   LCPRNG* SDKSample::gen = NULL;
 
   SDKSample::SDKSample(char d, unsigned long int code, char* indexes, bool random):Sample(d){
@@ -108,6 +114,7 @@ namespace SDK {
 		return s.str();	
   }
 
+  /** @}   end of Doxygen module "libSampling" */
 }
 
 

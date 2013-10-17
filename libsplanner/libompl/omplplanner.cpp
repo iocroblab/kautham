@@ -58,9 +58,13 @@
 #include <Inventor/nodes/SoLineSet.h>
 
 
-using namespace libSampling;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
+
+//! Namespace omplplanner contains the planners based on the OMPL::geometric library
   namespace omplplanner{
 
   //declaration of class
@@ -1126,6 +1130,7 @@ namespace libPlanner {
             }
 		}
     }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 

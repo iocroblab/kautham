@@ -1,3 +1,8 @@
+
+/** \defgroup libKin
+ *  @{
+ */
+
 #ifndef FUNC_MATH_H
 #define FUNC_MATH_H
 
@@ -12,6 +17,7 @@ using namespace boost::numeric::ublas;
 matrix<double> inv(const matrix<double>& mat);
 matrix<double> pinv(const matrix<double>& A);
 
+/** @}   end of Doxygen module "libKin */
 #endif  // KAUTHAM_USE_GSL
 
 #endif   // FUNC_MATH_H //

@@ -46,7 +46,12 @@
 
 
 
-namespace libProblem {
+namespace Kautham {
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
 	IVElement::IVElement(string ivfile, KthReal sc) {
 		for(int i=0;i<3;i++){
 			position[i]= 0.0f;
@@ -176,5 +181,8 @@ namespace libProblem {
 	  // if the Kautham will be called without a collision checker system.
 	  return 0.0;
   }
+
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 

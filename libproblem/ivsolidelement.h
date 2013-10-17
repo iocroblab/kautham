@@ -48,13 +48,20 @@
 
 #include "ivelement.h"
 
-namespace libProblem{
+namespace Kautham{
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
   class IVSOLIDElement : public IVElement {
   public:
 	  bool collideTo(Element* other);
 	  KthReal getDistanceTo(Element* other);
     SoSeparator* getIvFromSOLIDModel(bool tran = true);
   };
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 
 #endif  //_IVSOLIDELEMENT_H

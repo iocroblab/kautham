@@ -59,11 +59,13 @@
 #include <libguibro/bronchowidget.h>
 #endif
 
-using namespace libProblem;
-using namespace SDK;
 using namespace pugi;
 
-namespace libGUI {
+namespace Kautham {
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	GUI::GUI(QWidget *p) {
 		setupUi(this);
 		problemTree->setEnabled(true);
@@ -169,11 +171,11 @@ namespace libGUI {
   bool GUI::addExternalWidget1( Robot* rob, Problem* prob, int offset, GUI* gui ){
 #if defined(KAUTHAM_USE_GUIBRO)
     if( rob != NULL){
-      bronchoWidget* tmpControl = new bronchoWidget( rob, prob, offset, gui  );
+      GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( rob, prob, offset, gui  );
       propertiesTab->addTab(tmpControl, "bronchoCtrl-" + QString((rob->getName()).c_str()));
       return true;
     }else{
-      bronchoWidget* tmpControl = new bronchoWidget( NULL, NULL, 0 , NULL);
+      GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( NULL, NULL, 0 , NULL);
       propertiesTab->addTab(tmpControl, "bronchoControlTest");
       return true;
     }
@@ -267,7 +269,7 @@ namespace libGUI {
       connect(tmpPlan, SIGNAL(sendText(string)), this, SLOT(setText(string)) );
 	  if(plan->getIvCspaceScene() != NULL)
 	  {
-		addViewerTab("CSpace", libGUI::SPACE, plan->getIvCspaceScene());
+        addViewerTab("CSpace", SPACE, plan->getIvCspaceScene());
 	  }
       return true;
     }else{
@@ -669,5 +671,6 @@ namespace libGUI {
 		return true;
 	}
 
+    /** @}   end of Doxygen module "libGUI" */
 }
 

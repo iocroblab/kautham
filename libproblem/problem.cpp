@@ -53,9 +53,7 @@
 
 #if defined(KAUTHAM_USE_IOC)
 #include <libioc/myplanner.h>
-//#include <libioc/drmplanner.h>
 #include <libioc/prmplanner.h>
-//#include <libioc/prmplanner_pca.h>
 #include <libioc/prmhandplannerICRA.h>
 #include <libioc/prmAUROhandarmplanner.h>
 #include <libioc/prmPCAhandarmplanner.h>
@@ -65,7 +63,6 @@
 #include <libioc/mygridplanner.h>
 #include <libioc/NF1planner.h>
 #include <libioc/HFplanner.h>
-using namespace IOC;
 #endif
 
 #if defined(KAUTHAM_USE_OMPL)
@@ -85,7 +82,6 @@ using namespace IOC;
 #if defined(KAUTHAM_USE_GUIBRO)
 #include <libguibro/consbronchoscopykin.h>
 #include <libguibro/guibrogridplanner.h>
-using namespace GUIBROGRID;
 #endif // KAUTHAM_USE_GUIBRO
 
 #if !defined(M_PI)
@@ -94,11 +90,14 @@ using namespace GUIBROGRID;
 
 
 using namespace std;
-using namespace libPlanner;
-//using namespace omplplanner;
 using namespace pugi;
 
-namespace libProblem {
+namespace Kautham {
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
   const KthReal Problem::_toRad = (KthReal)(M_PI/180.0);
   Problem::Problem() {
 		_wspace = NULL;
@@ -282,7 +281,7 @@ namespace libProblem {
             double amax = (*it).child("ConstrainedKinematic").attribute("amax").as_double();
             double bmin = (*it).child("ConstrainedKinematic").attribute("bmin").as_double();
             double bmax = (*it).child("ConstrainedKinematic").attribute("bmax").as_double();
-			((ConsBronchoscopyKin*)rob->getCkine())->setAngleLimits(bmin*M_PI/180.0, bmax*M_PI/180.0, amin*M_PI/180.0, amax*M_PI/180.0);
+            ((GUIBRO::ConsBronchoscopyKin*)rob->getCkine())->setAngleLimits(bmin*M_PI/180.0, bmax*M_PI/180.0, amin*M_PI/180.0, amax*M_PI/180.0);
 		  }
           else
             rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
@@ -553,45 +552,45 @@ namespace libProblem {
 
 #if defined(KAUTHAM_USE_IOC)
     else if(name == "PRM")
-      _planner = new PRMPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new IOC::PRMPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "PRM Hand IROS")
-      _planner = new PRMHandPlannerIROS(CONTROLSPACE, sinit, sgoal,
+      _planner = new IOC::PRMHandPlannerIROS(CONTROLSPACE, sinit, sgoal,
                                        _cspace, _sampler, _wspace, _locPlanner,
                                        step, 5, (KthReal)0.001 );
     else if(name == "PRM Hand ICRA")
-      _planner = new PRMHandPlannerICRA(CONTROLSPACE, sinit, sgoal,
+      _planner = new IOC::PRMHandPlannerICRA(CONTROLSPACE, sinit, sgoal,
                                        _cspace, _sampler, _wspace, _locPlanner,
                                        step, 100, 5, (KthReal)0.010, 5);
 
      else if(name == "PRMAURO HandArm")
-      _planner = new PRMAUROHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
+      _planner = new IOC::PRMAUROHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 10, (KthReal)0.0010, 10);
 	
      else if(name == "PRM RobotHand-Const ICRA")
-      _planner = new PRMRobotHandConstPlannerICRA(CONTROLSPACE, sinit, sgoal, _cspace,
+      _planner = new IOC::PRMRobotHandConstPlannerICRA(CONTROLSPACE, sinit, sgoal, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 3, (KthReal)50.0);                                        
    	 else if(name == "MyPlanner")
-      _planner = new MyPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new IOC::MyPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01); 
 	  
 	 else if(name == "MyPRMPlanner")
-      _planner = new MyPRMPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new IOC::MyPRMPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
 	   
 	  else if(name == "MyGridPlanner")
-      _planner = new MyGridPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new IOC::MyGridPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);	   
 	   
 	   else if(name == "NF1Planner")
-      _planner = new NF1Planner(CONTROLSPACE, sinit, sgoal,
+      _planner = new IOC::NF1Planner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);  
 	   
 	   else if(name == "HFPlanner")
-      _planner = new HFPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new IOC::HFPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
 
 #if defined(KAUTHAM_USE_ARMADILLO)
@@ -600,7 +599,7 @@ namespace libProblem {
        //                        _cspace, _sampler, _wspace, _locPlanner, step,1,1);
 
     else if(name == "PRMPCA HandArm")
-      _planner = new PRMPCAHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
+      _planner = new IOC::PRMPCAHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
                                              _sampler, _wspace, _locPlanner,
                                              step, 10,0, (KthReal)0.0010, 10,0.0,0.0);
 #endif
@@ -608,53 +607,53 @@ namespace libProblem {
 
 #if defined(KAUTHAM_USE_GUIBRO)
     else if(name == "GUIBROgrid")
-      _planner = new GUIBROgridPlanner(CONTROLSPACE, NULL, NULL,
+      _planner = new GUIBRO::GUIBROgridPlanner(CONTROLSPACE, NULL, NULL,
                                _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
 #endif
 
 #if defined(KAUTHAM_USE_OMPL)
 
     else if(name == "omplDefault")
-      _planner = new libPlanner::omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplPRM")
-      _planner = new libPlanner::omplplanner::omplPRMPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new omplplanner::omplPRMPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplRRT")
-      _planner = new libPlanner::omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
 
     else if(name == "omplRRTConnect")
-      _planner = new libPlanner::omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplEST")
-      _planner = new libPlanner::omplplanner::omplESTPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new omplplanner::omplESTPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplSBL")
-      _planner = new libPlanner::omplplanner::omplSBLPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new omplplanner::omplSBLPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplKPIECE")
-      _planner = new libPlanner::omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplBKPIECE")
-      _planner = new libPlanner::omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplcRRT")
-      _planner = new libPlanner::omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
     else if(name == "omplcRRTf16")
-      _planner = new libPlanner::omplcplanner::omplcRRTf16Planner(CONTROLSPACE, sinit, sgoal,
+      _planner = new omplcplanner::omplcRRTf16Planner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
     else if(name == "omplcRRTcar")
-      _planner = new libPlanner::omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, sinit, sgoal,
+      _planner = new omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
     else
@@ -890,5 +889,7 @@ namespace libProblem {
     }
     return false;
   }
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 

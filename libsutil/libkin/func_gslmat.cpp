@@ -10,6 +10,9 @@
 */
 
 
+/** \defgroup libKin
+ *  @{
+ */
 #ifndef FUNC_GSLMAT_CPP
 #define FUNC_GSLMAT_CPP
 
@@ -319,6 +322,7 @@
 
 	  return p_inv;
   }
+  /** @}   end of Doxygen module "libKin */
 #endif   // KAUTHAM_USE_GSL
 
 #endif   // FUNC_GSLMAT_CPP //

@@ -51,10 +51,13 @@
 #include "ivworkspace.h"
 #include "workspace.h"
 
-using namespace libSampling;
-using namespace libPlanner;
 
-namespace libProblem {
+namespace Kautham {
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
 	class Problem {
   public:
     Problem();
@@ -120,6 +123,8 @@ namespace libProblem {
     vector<KthReal>         _currentControls;
     string                  _filePath;
 	};
+
+    /** @}   end of Doxygen module "libProblem" */
 }
 
 #endif  //_PROBLEM_H

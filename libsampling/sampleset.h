@@ -49,14 +49,19 @@
 #include "sample.h"
 
 #include <libproblem/workspace.h>
-using namespace libProblem;
 #include <libann/DNN/ANN.h>
 #include <libann/DNN/multiann.h>
 
 using namespace std;
 
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   //! This is the samples container.  It provides some functionalities like 
   //! neighbours searching in several ways.
   class SampleSet{
@@ -184,6 +189,8 @@ namespace libSampling{
 	WorkSpace *ws;
 	
   };
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_SAMPLESET_H

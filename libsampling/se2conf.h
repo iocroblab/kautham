@@ -51,9 +51,13 @@
 #include <libkthutil/kauthamdefs.h>
 
 using namespace std;
-using namespace Kautham;
 
-namespace libSampling {
+namespace Kautham {
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
 	class SE2Conf : public Conf {
 	public:
 		SE2Conf();
@@ -71,6 +75,8 @@ namespace libSampling {
 		void		  setAngle(KthReal angle);
 		KthReal		getAngle();
 	};
+
+    /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_SE2CONF_H

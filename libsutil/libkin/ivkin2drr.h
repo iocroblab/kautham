@@ -47,10 +47,11 @@
 
 #include "inversekinematic.h"
 
-using namespace Kautham;
 
-namespace libProblem {
-  class IvKin2DRR:public InverseKinematic{
+/** \defgroup libKin
+ *  @{
+ */
+class IvKin2DRR : public Kautham::InverseKinematic{
   public:
     IvKin2DRR(Robot* const rob);
     ~IvKin2DRR();
@@ -65,5 +66,5 @@ namespace libProblem {
     KthReal         _llong[2];
   };
 
-}
+/** @}   end of Doxygen module "libKin */
 #endif  //_IVKIN2DRR_H

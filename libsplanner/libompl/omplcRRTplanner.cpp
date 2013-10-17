@@ -52,10 +52,10 @@
 
 
 
-
-using namespace libSampling;
-
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace omplcplanner{
 
   void propagate(const ob::State *start, const oc::Control *control, const double duration, ob::State *result)
@@ -285,6 +285,7 @@ namespace libPlanner {
       return true;
     }
   }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 

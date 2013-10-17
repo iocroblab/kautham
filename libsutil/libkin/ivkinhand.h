@@ -67,9 +67,10 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-using namespace Kautham;
 
-namespace libProblem {
+/** \defgroup libKin
+ *  @{
+ */
 #if defined(KAUTHAM_USE_GSL) && defined(NDEBUG)
   struct ikSahandResults {
 	boost::numeric::ublas::vector<double> t_wrist;
@@ -93,7 +94,7 @@ namespace libProblem {
 
 #endif  // KAUTHAM_USE_GSL 
 
-  class IvKinHand:public InverseKinematic{
+  class IvKinHand:public Kautham::InverseKinematic{
   public:
     IvKinHand(Robot* const rob);
     ~IvKinHand();
@@ -224,6 +225,6 @@ namespace libProblem {
 	inline void DataPlot(void);
 #endif  // KAUTHAM_USE_GSL
   };
+  /** @}   end of Doxygen module "libKin */
 
-}
 #endif  //_IVKINHAND_H

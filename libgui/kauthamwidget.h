@@ -50,10 +50,13 @@
 #include <libkthutil/kauthamdefs.h>
 #include <libkthutil/kauthamobject.h>
 
-using namespace Kautham;
 using namespace std;
 
-namespace libGUI{
+namespace Kautham{
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	class KauthamWidget: public QWidget{
 	  Q_OBJECT
 	  signals:
@@ -81,6 +84,8 @@ namespace libGUI{
     protected:
     	QVBoxLayout*    vboxLayout;
 		};
+
+/** @}   end of Doxygen module "libGUI" */
  }
 
 

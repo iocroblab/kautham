@@ -12,11 +12,13 @@
 
 
 using namespace std;
-using namespace Kautham;
-using namespace libProblem;
 
 
-namespace libGUI {
+namespace Kautham {
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	class ConstrainedControlWidget:public QWidget{
 		Q_OBJECT
 
@@ -40,6 +42,7 @@ namespace libGUI {
 	};
 
 
+    /** @}   end of Doxygen module "libGUI" */
 }
 
 #endif  //_CONSTRAINEDCONTROLWIDGET_H

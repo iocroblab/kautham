@@ -47,7 +47,12 @@
 
 using namespace std;
 
-namespace libProblem {
+namespace Kautham {
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
   WorkSpace::WorkSpace(){
 	  obstacles.clear();
 	  robots.clear();
@@ -59,10 +64,10 @@ namespace libProblem {
   }
 
 
-  unsigned int    libProblem::WorkSpace::_countWorldCollCheck = 0;
-  void            libProblem::WorkSpace::resetCollCheckCounter(){_countWorldCollCheck = 0;}
-  unsigned int    libProblem::WorkSpace::getCollCheckCounter(){ return _countWorldCollCheck;}
-  void            libProblem::WorkSpace::increaseCollCheckCounter()
+  unsigned int    WorkSpace::_countWorldCollCheck = 0;
+  void            WorkSpace::resetCollCheckCounter(){_countWorldCollCheck = 0;}
+  unsigned int    WorkSpace::getCollCheckCounter(){ return _countWorldCollCheck;}
+  void            WorkSpace::increaseCollCheckCounter()
   {
 	  _countWorldCollCheck++;
   }
@@ -398,6 +403,7 @@ namespace libProblem {
     return false;
   }
 
+  /** @}   end of Doxygen module "libProblem" */
 }
 
 

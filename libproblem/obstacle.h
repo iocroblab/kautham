@@ -47,10 +47,13 @@
 #include "ivpqpelement.h"
 #include <libkthutil/kauthamdefs.h>
 
-using namespace Kautham;
 
+namespace Kautham {
 
-namespace libProblem {
+/** \addtogroup libProblem
+ *  @{
+ */
+
 	class Obstacle {
 	public:
 		Obstacle(string modFile, KthReal pos[3], KthReal ori[4], KthReal scale, LIBUSED lib, bool flagCol);
@@ -74,6 +77,8 @@ namespace libProblem {
 		LIBUSED libs;
     string    _name;
 	};
+
+    /** @}   end of Doxygen module "libProblem" */
 }
 
 #endif  //_OBSTACLE_H

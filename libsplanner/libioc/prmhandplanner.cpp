@@ -45,7 +45,10 @@
 
 #include "prmhandplanner.h"
  
- namespace libPlanner {
+ namespace Kautham {
+ /** \addtogroup libPlanner
+  *  @{
+  */
   namespace IOC{
 		
 		PRMHandPlanner::PRMHandPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
@@ -219,4 +222,5 @@
 
 
   }
+  /** @}   end of Doxygen module "libPlanner */
 };

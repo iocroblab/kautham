@@ -67,7 +67,12 @@ using namespace std;
 using namespace Kautham;
 using namespace pugi;
 
-namespace libProblem {
+namespace Kautham {
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
   Robot::Robot(string robFile, KthReal scale, LIBUSED lib) {	
 	  _linkPathDrawn = -1;
       numCoupledControls=0;
@@ -512,7 +517,7 @@ namespace libProblem {
         break;
 #if defined(KAUTHAM_USE_GUIBRO)
       case Kautham::BRONCHOSCOPY:
-        _constrainKin = new ConsBronchoscopyKin(this);		  
+        _constrainKin = new GUIBRO::ConsBronchoscopyKin(this);
         break;
 #endif
       default:
@@ -1229,5 +1234,7 @@ namespace libProblem {
 
     return response;
   }
+
+  /** @}   end of Doxygen module "libProblem" */
 }  	
 

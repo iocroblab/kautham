@@ -47,7 +47,13 @@
 #include "rnconf.h"
 #include "robweight.h"
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   class RobConf: public std::pair<SE3Conf,RnConf>{
 
   public:
@@ -92,6 +98,7 @@ namespace libSampling{
 
   };
 
+  /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif //_ROBCONF_H

@@ -51,10 +51,10 @@
 #include "consbronchoscopykin.h"
 #include <cctype>
 
-using namespace libSampling;
 
-namespace libPlanner {
-   namespace GUIBROGRID{
+using namespace Kautham;
+
+   namespace GUIBRO{
 	//! Constructor
     GUIBROgridPlanner::GUIBROgridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
@@ -2023,4 +2023,4 @@ bool GUIBROgridPlanner::trySolve()
 
 
 	  }
-}
+

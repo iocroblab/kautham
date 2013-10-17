@@ -11,12 +11,13 @@
 #include <libproblem/problem.h>
 #include <libkthutil/kauthamdefs.h>
 
-using namespace libGUI;
+using namespace Kautham;
 
 namespace Ui {
     class bronchoWidget;
 }
 
+namespace GUIBRO {
     class bronchoWidget : public QWidget {
 		Q_OBJECT
 
@@ -57,5 +58,6 @@ namespace Ui {
 		bool _updateValues;
 		//int		  _stepAdvance;
 	};
+}
 
 #endif // BRONCHOWIDGET_H

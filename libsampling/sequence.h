@@ -47,16 +47,15 @@
 #include "wmat.h"
 #include "tmat.h"
 
-/*! \namespace SDK
-*   \brief Namespace that groups classes implementing the SDK deterministic sampling sequence.
-*
-*   This namespace has been provided for convenience. It is our deterministic sequence used in 
-*   sampling process to build some particular planners. This namespace groups the SDKSampler,
-*   the SDKSample and the Sequence in order to provide them as a unit. Using these classes will
-*   create samples to be used in a planning process as happening here.
-*/
 
-namespace SDK {
+
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   //! This class provides the simply and fast way to use the deterministic sequence.
   //! This class is the minimal implementation of the deterministic sequence algorithm.
   //! More information about it, will be found in:
@@ -139,5 +138,7 @@ namespace SDK {
     //! Pointer to the unique indexes matrix that contains the indexes of a cell.
     char* _indexes;
   };
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 #endif //_SEQUENCE_H

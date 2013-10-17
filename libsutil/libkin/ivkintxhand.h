@@ -47,10 +47,11 @@
 
 #include "inversekinematic.h"
 
-using namespace Kautham;
+/** \defgroup libKin
+ *  @{
+ */
 
-namespace libProblem {
-  class IvKinTxHand:public InverseKinematic{
+  class IvKinTxHand:public Kautham::InverseKinematic{
   public:
     IvKinTxHand(Robot* const rob);
     ~IvKinTxHand();
@@ -60,5 +61,5 @@ namespace libProblem {
     IvKinTxHand();
   };
 
-}
+  /** @}   end of Doxygen module "libKin */
 #endif  //_IVKINTXHAND_H

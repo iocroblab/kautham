@@ -54,11 +54,13 @@
 
 
 using namespace std;
-using namespace Kautham;
-using namespace libProblem;
 
 
-namespace libGUI {
+namespace Kautham {
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	class DOFWidget:public QWidget{
 		Q_OBJECT
 
@@ -80,6 +82,7 @@ namespace libGUI {
 	};
 
 
+    /** @}   end of Doxygen module "libGUI" */
 }
 
 #endif  //_DOFWIDGET_H

@@ -16,7 +16,10 @@ using namespace std;
 
 //////////////////////
  
- namespace libPlanner {
+ namespace Kautham {
+ /** \addtogroup libPlanner
+  *  @{
+  */
   namespace IOC{
 		
 	PRMPCAHandArmPlanner::PRMPCAHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
@@ -1621,6 +1624,7 @@ using namespace std;
     }
 
   }
+  /** @}   end of Doxygen module "libPlanner */
 };
 
 #endif // KAUTHAM_USE_ARMADILLO

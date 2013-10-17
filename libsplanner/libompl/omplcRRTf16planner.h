@@ -61,9 +61,11 @@ namespace oc = ompl::control;
 
 
 using namespace std;
-using namespace libSampling;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace omplcplanner{
     class omplcRRTf16Planner:public omplcPlanner {
 	    public:
@@ -79,8 +81,9 @@ namespace libPlanner {
          double _controlBound_Tras;
          double _controlBound_Rot;
          double _length;
-	  };
+      };
   }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif // KAUTHAM_USE_OMPL

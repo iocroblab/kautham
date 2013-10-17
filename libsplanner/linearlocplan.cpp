@@ -45,9 +45,12 @@
 #include <libsampling/sampling.h>
 #include "linearlocplan.h"
 
-using namespace libProblem;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
+
   LinearLocalPlanner::LinearLocalPlanner(SPACETYPE stype, Sample *init, Sample *goal, WorkSpace *ws, KthReal st )
     :LocalPlanner(stype,init,goal,ws,st) {
     vanderMethod = true;
@@ -62,7 +65,6 @@ namespace libPlanner {
     
     KthReal dist = 0;
     int wkDim = wkSpace()->getDimension();
-    //libSampling::Sample tmpSample(wkDim);
     Sample *tmpSample = NULL;
     vector<KthReal> steps;
     steps.resize(wkDim);
@@ -134,6 +136,7 @@ namespace libPlanner {
   {
     return _wkSpace->distanceBetweenSamples(*from, *to, CONFIGSPACE);
   }
+/** @}   end of Doxygen module "libPlanner */
 }
 
 

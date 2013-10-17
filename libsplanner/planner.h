@@ -53,10 +53,12 @@
 #include "kthquery.h"
 
 using namespace std;
-using namespace libSampling;
-using namespace Kautham;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
+
   class Planner: public KauthamObject{
 	public:
     Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
@@ -162,6 +164,8 @@ namespace libPlanner {
 
 
 	};
+
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif  //_PLANNER_H

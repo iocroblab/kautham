@@ -65,11 +65,13 @@
 #include <Inventor/nodes/SoLineSet.h>
 
 
-using namespace libSampling;
 
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
 
-
-namespace libPlanner {
+//! Namespace omplcplanner contains the planners based on the OMPL::control library
   namespace omplcplanner{
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1044,6 +1046,7 @@ namespace libPlanner {
             }
 		}
     }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif // KAUTHAM_USE_OMPL

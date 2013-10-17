@@ -51,10 +51,11 @@
 #include <libsampling/rnconf.h>
 #include <libkthutil/kauthamobject.h>
 
-using namespace Kautham;
-using namespace libSampling;
 
-namespace libProblem {
+namespace Kautham {
+/** \defgroup libKin
+ *  @{
+ */
   class Robot;
   //! This vector contains the layout of the robot adopted by the solution. The layout is a descriptive
   //! configuration of the pose of the robot. It is normally used as shoulder left/right, or elbow up/down.
@@ -145,5 +146,6 @@ namespace libProblem {
 
   };
 
+  /** @}   end of Doxygen module "libKin */
 }
 #endif  //_INVERSEKINEMATIC_H

@@ -55,7 +55,12 @@
 
 using namespace std;
 
-namespace libSampling {
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
 
 	//!	 SE3Conf is an abstractions of a configuration of the SE3 space.
 	//!  This class stores their coordinates internally as a 3 values for 
@@ -107,6 +112,8 @@ namespace libSampling {
     vector<KthReal>  _ori;
     vector<KthReal>  _axisAn;
 	};
+
+    /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_SE3CONF_H

@@ -52,10 +52,13 @@
 #include "gui.h"
 
 
-using namespace libPlanner;
 using namespace std;
 
-namespace libGUI{
+namespace Kautham{
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	class PlannerWidget: public KauthamWidget{
 		Q_OBJECT
 	private slots:
@@ -99,7 +102,9 @@ namespace libGUI{
     QLabel      *_lblRes;
 	
 	};
- }
+
+    /** @}   end of Doxygen module "libGUI" */
+}
 
 
 

@@ -49,7 +49,13 @@
 
 
 
-namespace libSampling {
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
 	SE2Conf::SE2Conf():Conf(SE2) {
 		dim = 3;
 		coord.resize(dim);	
@@ -141,5 +147,7 @@ namespace libSampling {
     tmpC.coord.at(2) = min(tmpC.coord.at(2),(KthReal)(2.0* M_PI - tmpC.coord.at(2)));
     return tmpC;
   }
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 

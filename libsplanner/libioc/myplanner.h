@@ -50,9 +50,11 @@
 #include "planner.h"
 
 using namespace std;
-using namespace libSampling;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace IOC{
     class MyPlanner:public Planner {
 	    public:
@@ -74,6 +76,7 @@ namespace libPlanner {
 		//Add private data and functions
 	  };
   }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif  //_MYPLANNER_H

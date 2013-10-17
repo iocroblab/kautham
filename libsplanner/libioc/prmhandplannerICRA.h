@@ -43,7 +43,10 @@
 
 #if !defined(_PRMHANDPLANNERICRA_H)
 #define _PRMHANDPLANNERICRA_H
- namespace libPlanner {
+ namespace Kautham {
+ /** \addtogroup libPlanner
+  *  @{
+  */
   namespace IOC{
 	class PRMHandPlannerICRA:public PRMHandPlanner{
 		public:
@@ -64,6 +67,7 @@
 
 	};	
   }
+  /** @}   end of Doxygen module "libPlanner */
 };
  
 #endif  //_PRMPLANNERICRA_H

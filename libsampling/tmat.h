@@ -45,7 +45,12 @@
 #include <string>
 using namespace std;
 
-namespace SDK {
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
 
   //! This class is the abstraction of the \f$d x d\f$ binary matrix \f$T_{d}\f$ .
   //! This class implements the square (dxd) matrix \f$T_{d}\f$ that is used to find the
@@ -89,6 +94,8 @@ namespace SDK {
     //! Pointer to the matrix that contains the results of any multiplication operation.
 		char** matRes;
 	};
+
+    /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_TMAT_H
