@@ -46,7 +46,13 @@
 #include "randomsample.h"
 #include <vector>
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   LCPRNG* RandomSample::gen = NULL;
 
   RandomSampler::RandomSampler(char dim){
@@ -62,5 +68,7 @@ namespace libSampling{
   //Sample* RandomSampler::getSample(){
   //  return _current;
   //}
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 

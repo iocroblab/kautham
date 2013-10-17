@@ -43,7 +43,11 @@
 #include <sstream>
 #include <boost/algorithm/string.hpp>
 
-namespace libPlanner{
+namespace Kautham{
+/** \addtogroup libPlanner
+ *  @{
+ */
+
   KthQuery::KthQuery(){
     KthQuery(-1,-1);
   }
@@ -159,6 +163,7 @@ namespace libPlanner{
     }
     return false;
   }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 

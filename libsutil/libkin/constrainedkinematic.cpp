@@ -39,8 +39,11 @@
 
 #include "constrainedkinematic.h"
 
-namespace libProblem{
-
+namespace Kautham{
+/** \addtogroup libKin Library libsutil/libkin
+ *  \brief contains classes to solve direct and invers kinematics
+ *  @{
+ */
   ConstrainedKinematic::ConstrainedKinematic(Robot* rob){
     _robot = rob;
     _target.clear();
@@ -55,4 +58,5 @@ namespace libProblem{
     for(int i =0; i< target.size(); i++)
       _target.push_back(target.at(i));
   }
+  /** @}   end of Doxygen module "libKin */
 }

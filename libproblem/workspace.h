@@ -53,10 +53,13 @@
 #include "robot.h"
 
 using namespace std;
-using namespace Kautham;
-using namespace libSampling;
 
-namespace libProblem{
+namespace Kautham{
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
   class WorkSpace {
 	  public:
       WorkSpace();
@@ -139,6 +142,8 @@ namespace libProblem{
 		static unsigned int   _countWorldCollCheck;
 		Sample* _lastSampleMovedTo;
   };
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 
 #endif  //_WORKSPACE_H

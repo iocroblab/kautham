@@ -48,8 +48,14 @@
 
 using namespace std;
 
-namespace SDK {
-	TMat::TMat(int d) {
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
+TMat::TMat(int d) {
 
 		this->d = d;
     _tMat = new char*[d]; //The matrix Td
@@ -396,5 +402,7 @@ namespace SDK {
 		}
 		return out.str();
 	}
+
+    /** @}   end of Doxygen module "libSampling" */
 }
 

@@ -42,7 +42,11 @@
  
 #include "localplanner.h"
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
+
   LocalPlanner::LocalPlanner(SPACETYPE type, Sample *init, Sample *goal, WorkSpace *ws, KthReal st ){
 		_spType = type;
 		_init = init;
@@ -57,4 +61,5 @@ namespace libPlanner {
     _init = NULL;
     _goal = NULL;
   }
+  /** @}   end of Doxygen module "libPlanner */
 }

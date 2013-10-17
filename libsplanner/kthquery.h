@@ -48,7 +48,11 @@
 
 using namespace std;
 
-namespace libPlanner{
+namespace Kautham{
+/** \addtogroup libPlanner
+ *  @{
+ */
+
 //  class Planner();
   class KthQuery{
   public:
@@ -111,6 +115,7 @@ namespace libPlanner{
 	    int		      _worldcollCheckCalls;
 	    int		      _collCheckCalls;
   };
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif // KTHQUERY_H

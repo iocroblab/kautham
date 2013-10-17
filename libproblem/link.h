@@ -53,9 +53,12 @@
 #include <string>
 
 using namespace mt;
-using namespace Kautham;
 
-namespace libProblem{
+namespace Kautham{
+
+/** \addtogroup libProblem
+ *  @{
+ */
 
   //!  This class is definition of Link part in cinematic chain robot.
 	/*!	This class defines a Link part in cinematic chain robot like 
@@ -278,5 +281,7 @@ namespace libProblem{
     bool                changeChilds();
 
   };
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 #endif  //_Link_H

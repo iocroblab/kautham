@@ -4,7 +4,11 @@
 #include <QString>
 
 
-namespace libGUI {
+namespace Kautham {
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	ConstrainedControlWidget::ConstrainedControlWidget( Robot* rob, Problem* prob, int offset) {
     _robot = rob;
     _globalOffset = offset;
@@ -77,5 +81,6 @@ namespace libGUI {
     }
   }
 
+  /** @}   end of Doxygen module "libGUI" */
 }
 

@@ -47,7 +47,12 @@
 #include "sample.h"
 
 //using namespace std;
-namespace libSampling{
+namespace Kautham{
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   //! This is the abstract sampler used as a template to generate
   //! all the sampler variants. To create a new Sampler you will only need
   //! to derive this class and implement the nextSample() method.
@@ -77,6 +82,8 @@ namespace libSampling{
     //! This is an internal pointer to the latest generated sample.
     Sample* _current;
   };
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_SAMPLER_H

@@ -58,10 +58,14 @@
 #include <Inventor/SbLinear.h>
 #include <libkthutil/kauthamdefs.h>
 
-using namespace Kautham;
 
 
-namespace libProblem {
+namespace Kautham {
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
 class IVElement : public Element {
   public:
 	  IVElement(string ivfile, KthReal sc);
@@ -85,6 +89,9 @@ class IVElement : public Element {
 	  SoMaterial    *color;
     SoScale       *sca;
   };
+
+
+/** @}   end of Doxygen module "libProblem" */
 }
 
 #endif  //_IVELEMENT_H

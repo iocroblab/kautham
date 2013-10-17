@@ -49,8 +49,6 @@
 #include <libkthutil/kauthamdefs.h>
 #include "application.h"
 
-using namespace libProblem;
-using namespace libPlanner;
 
 Application::Application() {
   Q_INIT_RESOURCE(kauthamRes);
@@ -213,11 +211,11 @@ bool Application::problemSetup(string path){
   _problem->setupFromFile( path );
 
   mainWindow->addToProblemTree( path );
-  mainWindow->addViewerTab("WSpace", libGUI::SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvScene());
+  mainWindow->addViewerTab("WSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvScene());
   
 
   //  Using to show the IV models reconstructed from the PQP triangular meshes.
-  //mainWindow->addViewerTab("PQP", libGUI::SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvFromPQPScene());
+  //mainWindow->addViewerTab("PQP", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvFromPQPScene());
 
   int globOffset = 0;
   for(unsigned i = 0; i < _problem->wSpace()->robotsCount(); i++){

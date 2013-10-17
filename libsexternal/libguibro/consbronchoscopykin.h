@@ -4,9 +4,8 @@
 #include <libkin/constrainedkinematic.h>
 
 
-using namespace Kautham;
 
-namespace libProblem {
+namespace GUIBRO {
 	class ConsBronchoscopyKin :	public ConstrainedKinematic{
 	public:
 		ConsBronchoscopyKin(Robot* const rob);

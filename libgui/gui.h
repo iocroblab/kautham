@@ -61,10 +61,12 @@
 
 
 using namespace std;
-using namespace libProblem;
-using namespace libPlanner;
 
-namespace libGUI {
+namespace Kautham {
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	enum WHERETYPE{
 		TOOLBAR,
 		FILEMENU,
@@ -151,6 +153,8 @@ namespace libGUI {
     StreamLog*          qout;
     bool                boolPlanVis;
 	};
+
+    /** @}   end of Doxygen module "libGUI" */
 }
 
 #endif  //_GUI_H

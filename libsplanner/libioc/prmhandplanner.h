@@ -44,7 +44,10 @@
 
 #if !defined(_PRMHANDPLANNER_H)
 #define _PRMHANDPLANNER_H
- namespace libPlanner {
+ namespace Kautham {
+ /** \addtogroup libPlanner
+  *  @{
+  */
   namespace IOC{
 		class PRMHandPlanner:public PRMPlanner{
     public:
@@ -68,6 +71,7 @@
       KthReal           _cloudRadius;
 	};	
   }
+  /** @}   end of Doxygen module "libPlanner */
 };
  
 #endif  //_PRMPLANNER_H

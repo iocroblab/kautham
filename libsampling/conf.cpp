@@ -38,8 +38,9 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
-  
+
+
+
  
 #include "conf.h"
 #include <stdexcept>
@@ -47,7 +48,16 @@
 using namespace std;
 
 
-namespace libSampling {
+namespace Kautham {
+
+
+/** \defgroup libSampling Library libsampling
+ *  \brief contains classes to sample the configuration space
+ *  @{
+ */
+
+
+
 	LCPRNG* Conf::genRand = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
 	Conf::Conf(CONFIGTYPE typ):type(typ){
 
@@ -86,5 +96,7 @@ namespace libSampling {
   }
 
 
+  /** @}   end of Doxygen module "libSampling" */
 }
+
 

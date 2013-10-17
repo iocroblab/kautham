@@ -56,9 +56,11 @@
 #include "gridplanner.h"
 
 using namespace std;
-using namespace libSampling;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace IOC{
 
     class HFPlanner:public gridPlanner {
@@ -87,6 +89,7 @@ namespace libPlanner {
 
 	  };
    }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif  //_HFPLANNER_H

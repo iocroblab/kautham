@@ -48,7 +48,13 @@
 
 using namespace std;
 
-namespace SDK {
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   //! This class is the abstraction of the \f$d x M\f$ matrix of weights, W.
   //! This class is the matrix that it contains the values of weigths.
   
@@ -89,6 +95,8 @@ namespace SDK {
     //! This is a protected constructor used to restrict the construction way without a correct parameters.
 		WMat();
 	};
+
+    /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_WMAT_H

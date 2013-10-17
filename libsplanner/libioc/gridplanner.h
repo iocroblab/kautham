@@ -53,10 +53,12 @@
 #include "planner.h"
 
 using namespace std;
-using namespace libSampling;
 using namespace boost;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
    namespace IOC{
 	//Typedefs
 	//!The location associated to a vertex of the graph will be a sample pointer
@@ -197,6 +199,7 @@ namespace libPlanner {
 		void drawCspace();
 	  };
    }
+   /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif  //_GRIDPLANNER_H

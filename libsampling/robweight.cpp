@@ -1,6 +1,12 @@
 #include "robweight.h"
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   RobWeight::RobWeight(unsigned int dim) {
     setRnDim(dim);
     for(unsigned int i =0; i < dim; i++)
@@ -13,4 +19,6 @@ namespace libSampling{
     if( i < _rn.size())
       _rn.at(i) = w;
   }
+
+  /** @}   end of Doxygen module "libSampling" */
 }

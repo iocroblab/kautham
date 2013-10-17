@@ -55,7 +55,12 @@
 #include <Inventor/nodes/SoFaceSet.h>
 
 
-namespace libProblem {
+namespace Kautham {
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
   class IVPQPElement : public IVElement {
   public:
     IVPQPElement(string visFile, KthReal sc);
@@ -79,6 +84,8 @@ namespace libProblem {
 		    const SoPrimitiveVertex *vertex2,
 		    const SoPrimitiveVertex *vertex3);
   };
+
+  /** @}   end of Doxygen module "libProblem" */
  }
 
 #endif  //_IVPQPELEMENT_H

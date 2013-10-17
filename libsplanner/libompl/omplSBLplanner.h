@@ -56,9 +56,11 @@ namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
 using namespace std;
-using namespace libSampling;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace omplplanner{
 
     class omplSBLPlanner:public omplPlanner {
@@ -73,6 +75,7 @@ namespace libPlanner {
 
       };
   }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif // KAUTHAM_USE_OMPL

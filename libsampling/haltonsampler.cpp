@@ -48,7 +48,12 @@
 # include <iostream> 
 # include <iomanip>
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
   
 //! This class is the sampler implementation based on the Halton 
 //! This wraps the C functions implemented by John Burkardt 
@@ -2663,6 +2668,7 @@ void u3_to_ball_unit_3d ( double u[3], double x[3] )
 
 
 
+/** @}   end of Doxygen module "libSampling" */
 }
 
 

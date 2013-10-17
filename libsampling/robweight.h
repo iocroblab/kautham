@@ -3,7 +3,13 @@
 
 #include <libkthutil/kauthamdefs.h>
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   class RobWeight{
   public:
       RobWeight(unsigned int dim);
@@ -22,6 +28,8 @@ namespace libSampling{
       //! the respective weight for each joint.
       std::vector<KthReal>          _rn;
   };
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif // ROBWEIGHT_H

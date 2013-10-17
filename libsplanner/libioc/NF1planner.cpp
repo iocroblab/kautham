@@ -47,9 +47,11 @@
 #include "localplanner.h"
 #include "NF1planner.h"
 
-using namespace libSampling;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace IOC{
 	//! Constructor
     NF1Planner::NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
@@ -252,6 +254,7 @@ namespace libPlanner {
 			
 		}
 	  }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 

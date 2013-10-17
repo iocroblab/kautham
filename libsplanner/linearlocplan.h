@@ -48,9 +48,12 @@
 #include <libsampling/sampling.h>
 #include "localplanner.h"
 
-using namespace libProblem;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
+
 class LinearLocalPlanner:public LocalPlanner {
     public:
       LinearLocalPlanner(SPACETYPE stype, Sample *init, Sample *goal, WorkSpace *ws, KthReal st );
@@ -61,6 +64,7 @@ class LinearLocalPlanner:public LocalPlanner {
       LinearLocalPlanner();
       bool vanderMethod;
 	};
+/** @}   end of Doxygen module "libPlanner */
 }
 
 #endif  //_LINEARLOCALPLANNER_H

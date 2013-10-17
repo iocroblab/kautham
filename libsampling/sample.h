@@ -54,9 +54,8 @@
 
 
 using namespace std;
-using namespace Kautham;
 
-/*! \namespace libSampling
+/*! \namespace Kautham
 *   This is the libSampling  namespace provided to grouping the classes
 *   who drives the sampling process.  This group has as a template the 
 *   Sampler and Sample abstract classes  in order to provide the way to 
@@ -64,7 +63,12 @@ using namespace Kautham;
 *
 */
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
 
   //! This class is the Sample abstraction. It has the dimSample coordinates
   //! into a unit cube. If the sample represent an SE3 sample(dimSample=6),
@@ -187,5 +191,7 @@ namespace libSampling{
     
     
   };
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 #endif  //_SAMPLE_H

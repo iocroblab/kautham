@@ -47,10 +47,11 @@
 #include <libsampling/rnconf.h>
 #include <libkthutil/kauthamobject.h>
 
-using namespace Kautham;
-using namespace libSampling;
 
-namespace libProblem{
+namespace Kautham{
+/** \defgroup libKin
+ *  @{
+ */
   class Robot;
   class ConstrainedKinematic:public KauthamObject{
   public:
@@ -80,6 +81,7 @@ namespace libProblem{
     vector<KthReal> _target;      //!< This is a generic way to set up the target.
 
   };
+  /** @}   end of Doxygen module "libKin */
 }
 
 #endif //_CONSTRAINEDKINEMATIC_H

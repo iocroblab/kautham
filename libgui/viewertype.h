@@ -45,7 +45,11 @@
 #define _VIEWERTYPE_H
 
 
-namespace libGUI {
+namespace Kautham {
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	enum VIEWERTYPE {
 		SPACE,
 		DETERMINISTIC,
@@ -53,6 +57,8 @@ namespace libGUI {
 		CELLS,
 		HARMONIC
 	};
+
+    /** @}   end of Doxygen module "libGUI" */
 }
 
 #endif  //_VIEWERTYPE_H

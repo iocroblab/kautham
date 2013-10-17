@@ -46,9 +46,11 @@
 #include "localplanner.h"
 #include "mygridplanner.h"
 
-using namespace libSampling;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace IOC{
 	//! Constructor
     MyGridPlanner::MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
@@ -148,6 +150,7 @@ namespace libPlanner {
 			
 		}
 	  }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 

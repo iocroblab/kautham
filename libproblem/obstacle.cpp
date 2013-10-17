@@ -45,7 +45,12 @@
 #include "obstacle.h"
 
 
-namespace libProblem {
+namespace Kautham {
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
   Obstacle::Obstacle(string modFile, KthReal pos[3], KthReal ori[4], KthReal scale, LIBUSED lib, bool flagCol){
 	  enablecollisions = flagCol;
     libs = lib;
@@ -93,7 +98,8 @@ namespace libProblem {
     }
     return NULL;
   }
-	
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 
 

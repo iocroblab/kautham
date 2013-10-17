@@ -55,8 +55,6 @@
 #include <string>
 
 using namespace std;
-using namespace libProblem;
-using namespace libGUI;
 using namespace Kautham;
 
 class Application:public QObject {

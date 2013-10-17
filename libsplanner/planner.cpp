@@ -49,10 +49,13 @@
 #include <iostream>
 #include <fstream>
 
-using namespace Kautham;
 using namespace pugi;
 
-namespace libPlanner{
+namespace Kautham{
+/** \addtogroup libPlanner
+ *  @{
+ */
+
   const KthReal RAD2GRAD=180.0/M_PI;
   Planner::Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
     WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize){
@@ -94,8 +97,8 @@ namespace libPlanner{
   }
 
   bool Planner::solveAndInherit(){
-    libProblem::Element::resetCollCheckCounter();
-    libProblem::WorkSpace::resetCollCheckCounter();
+    Element::resetCollCheckCounter();
+    WorkSpace::resetCollCheckCounter();
 
 	  clock_t entertime = clock();
 
@@ -111,8 +114,8 @@ namespace libPlanner{
       addZeroCrossingToPath();
       moveAlongPath(0);
       _wkSpace->inheritSolution(_simulationPath);
-	  _worldcollChecks = libProblem::WorkSpace::getCollCheckCounter();
-	  _collChecks = libProblem::Element::getCollCheckCounter();
+      _worldcollChecks = WorkSpace::getCollCheckCounter();
+      _collChecks = Element::getCollCheckCounter();
 
       // Add the results to the Query vector.
       KthQuery* currQue = NULL;
@@ -497,6 +500,6 @@ namespace libPlanner{
     delete[] signs;
   }
 
-
+/** @}   end of Doxygen module "libPlanner */
 }
 

@@ -39,8 +39,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
- 
- 
+
 
 #if !defined(_CONF_H)
 #define _CONF_H
@@ -54,9 +53,15 @@
 
 
 using namespace std;
-using namespace Kautham;
 
-namespace libSampling {
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
+
 	class Conf {
 	public:
 		Conf(CONFIGTYPE typ);
@@ -82,7 +87,13 @@ namespace libSampling {
     unsigned int          dim;
     CONFIGTYPE            type;
 	};
+
+
+    /** @}   end of Doxygen module "libSampling" */
+
 }
 
 #endif  //_CONF_H
+
+
 

@@ -46,7 +46,11 @@
 #include <QString>
 
 
-namespace libGUI {
+namespace Kautham {
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	DOFWidget::DOFWidget( Robot* rob ) {
     _robot = rob;
     string names = "This|is|a|test";
@@ -123,5 +127,6 @@ namespace libGUI {
     }
   }
 
+  /** @}   end of Doxygen module "libGUI" */
 }
 

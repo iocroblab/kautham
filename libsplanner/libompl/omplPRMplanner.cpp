@@ -66,9 +66,11 @@
 #include "omplPRMplanner.h"
 //#include "omplplanner.h"
 
-using namespace libSampling;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace omplplanner{
 
   class KauthamStateSampler;
@@ -529,6 +531,7 @@ namespace libPlanner {
       return true;
     }
   }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif // KAUTHAM_USE_OMPL

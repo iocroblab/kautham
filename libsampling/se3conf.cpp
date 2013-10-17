@@ -48,7 +48,12 @@
 #endif
 
 
-namespace libSampling {
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
 
   SE3Conf::SE3Conf():Conf(SE3),_pos(3,0.), _axisAn(4,0.), _ori(4,0.) {
 		// 3 for position and 4 as a quaternion.
@@ -396,5 +401,7 @@ namespace libSampling {
 
     return temp;
   }
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 

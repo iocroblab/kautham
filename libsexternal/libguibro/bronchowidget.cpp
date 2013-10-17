@@ -5,10 +5,11 @@
 #include <libguibro/guibrogridplanner.h>
 #include <libgui/gui.h>
 
-using namespace  libGUI;
+using namespace  Kautham;
 
  
 
+namespace GUIBRO {
 
 bronchoWidget::bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui) : //QWidget *parent
     ui(new Ui::bronchoWidget)
@@ -69,12 +70,12 @@ void bronchoWidget::advanceBronchoscope()
 	if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
 	{
 		//restore alpha0, beta0
-		((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->registerValues();
+        ((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->registerValues();
 		//get advance step
-		KthReal s = ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->getAdvanceStep();
+        KthReal s = ((GUIBROgridPlanner*)_ptProblem->getPlanner())->getAdvanceStep();
 		//advance
 		KthReal a,b;//dummy. not used
-		((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->advanceToBest(s, &a, &b);
+        ((GUIBROgridPlanner*)_ptProblem->getPlanner())->advanceToBest(s, &a, &b);
 		updateView();
 		//update alpha0, beta0
 		((ConsBronchoscopyKin*)_ptProblem->getPlanner()->wkSpace()->getRobot(0)->getCkine())->registerValues();
@@ -108,7 +109,7 @@ void bronchoWidget::collisionCheck()
 		KthReal dcost;
 		KthReal NF1cost;
 		//bool c =((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->collisionCheck(&dcost,&NF1cost);
-		bool c =((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->comply(&dcost,&NF1cost);
+        bool c =((GUIBROgridPlanner*)_ptProblem->getPlanner())->comply(&dcost,&NF1cost);
 		if(c==true)
 		{
 			cout<<"The bronchoscope is in collision or out of bounds"<<endl;
@@ -221,11 +222,11 @@ void bronchoWidget::updateLookAt()
 {
   if(_ptProblem->getPlanner()->getIDName()=="GUIBRO Grid Planner")
   {
-	  if( ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->getShowPoints() != 0)
+      if( ((GUIBROgridPlanner*)_ptProblem->getPlanner())->getShowPoints() != 0)
 	  {
 		KthReal bestalpha, bestbeta;
-		KthReal s = ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->getAdvanceStep();
-		((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->look(s, &bestalpha, &bestbeta);
+        KthReal s = ((GUIBROgridPlanner*)_ptProblem->getPlanner())->getAdvanceStep();
+        ((GUIBROgridPlanner*)_ptProblem->getPlanner())->look(s, &bestalpha, &bestbeta);
 		//cout<<"Best Alpha = "<<bestalpha<<" Best Beta = "<<bestbeta<<endl;
 	  }
   }	
@@ -279,7 +280,7 @@ void bronchoWidget::updateView()
 		mt::Transform T_tz;
 		T_Ry.setRotation( mt::Rotation(mt::Vector3(0,1,0),-M_PI/2) );
 		
-		KthReal offset = ((libPlanner::GUIBROGRID::GUIBROgridPlanner*)_ptProblem->getPlanner())->getBronchoscopeRadius() * 1.1;
+        KthReal offset = ((GUIBRO::GUIBROgridPlanner*)_ptProblem->getPlanner())->getBronchoscopeRadius() * 1.1;
 
 		T_tz.setTranslation( mt::Vector3(0,0,-(_robot->getLink(_robot->getNumLinks()-1)->getA()+offset)) );
 		mt::Transform camTrsf = _robot->getLastLinkTransform()*T_Ry*T_tz;
@@ -287,3 +288,4 @@ void bronchoWidget::updateView()
 	}
 }
 
+}

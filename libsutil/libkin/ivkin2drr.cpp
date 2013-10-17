@@ -44,10 +44,11 @@
 #include "ivkin2drr.h"
 #include <libproblem/robot.h>
 
-
-namespace libProblem {
+/** \defgroup libKin
+ *  @{
+ */
   
-  IvKin2DRR::IvKin2DRR(Robot* const rob):InverseKinematic(rob){
+IvKin2DRR::IvKin2DRR(Robot* const rob) : Kautham::InverseKinematic(rob){
 
     _target.resize(3);  // This contains the X, Y and Lefty parameters.
     _tcp[0] = 0.;
@@ -152,5 +153,5 @@ namespace libProblem {
 
     return _robLay;
   }
+  /** @}   end of Doxygen module "libKin */
 
-}

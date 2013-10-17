@@ -80,10 +80,11 @@
 #define N_POS_FING_THUMB 18	// Output dimension
 #define FT_RAD 10		// Fingertip radius
 
+/** \defgroup libKin
+ *  @{
+ */
 
-namespace libProblem {
-
-  IvKinHand::IvKinHand(Robot* const rob):InverseKinematic(rob){
+  IvKinHand::IvKinHand(Robot* const rob) : Kautham::InverseKinematic(rob){
 
 	  _robot = rob;
 	_robConf.setRn(rob->getNumJoints());
@@ -3998,7 +3999,8 @@ namespace libProblem {
 		return;
 	}
 
+    /** @}   end of Doxygen module "libKin */
 #endif  // KAUTHAM_USE_GSL
 
-}
+
 

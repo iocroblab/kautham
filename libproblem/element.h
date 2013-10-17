@@ -47,10 +47,11 @@
 
 #include <libkthutil/kauthamdefs.h>
 
-using namespace Kautham;
 
-namespace libProblem {
-  
+namespace Kautham {
+/** \addtogroup libProblem
+ *  @{
+ */
   class Element {
   public:
     virtual void          setPosition(KthReal pos[3]) = 0;
@@ -74,6 +75,8 @@ namespace libProblem {
   private:
     static unsigned int   _countCollCheck;
   };
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 
 #endif  //_ELEMENT_H

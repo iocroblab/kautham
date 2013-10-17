@@ -53,7 +53,10 @@
 #include "constlinearlocplan.h"
 
  
- namespace libPlanner {
+ namespace Kautham {
+ /** \addtogroup libPlanner
+  *  @{
+  */
   namespace IOC{
 		
   PRMRobotHandConstPlannerICRA::PRMRobotHandConstPlannerICRA(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
@@ -997,4 +1000,5 @@
   }//closes moveAlongPath
 
  }//closes namespace PRM
-};//closes namespace libPlanner
+  /** @}   end of Doxygen module "libPlanner */
+};//closes namespace Kautham

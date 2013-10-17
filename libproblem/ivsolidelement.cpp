@@ -43,7 +43,12 @@
 
 #include "ivsolidelement.h"
 
-namespace libProblem {
+namespace Kautham {
+
+/** \addtogroup libProblem
+ *  @{
+ */
+
   bool IVSOLIDElement::collideTo(Element* other) {
     return true;
   }
@@ -56,5 +61,7 @@ namespace libProblem {
     SoSeparator* tmp = new SoSeparator();
     return tmp;
   }
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 

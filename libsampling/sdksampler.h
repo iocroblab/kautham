@@ -53,7 +53,13 @@
 #include "tmat.h"
 
 
-namespace SDK{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   class SDKSampler : public Sampler {
   public:
     //! This is the unique constructor. In order to create an SDK sampler
@@ -102,6 +108,8 @@ namespace SDK{
         //! Pointer to object that generates a random number sequence.
     LCPRNG* generator;
   };
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_SDKSAMPLER_H

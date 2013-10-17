@@ -46,7 +46,11 @@
 #include <QString>
 
 
-namespace libGUI {
+namespace Kautham {
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	ControlWidget::ControlWidget( Robot* rob, Problem* prob, int offset) {
     _robot = rob;
     _globalOffset = offset;
@@ -182,5 +186,6 @@ namespace libGUI {
         ((QSlider*)sliders[i])->setValue((int)(values2[i]*1000.0));
     }
 
+  /** @}   end of Doxygen module "libGUI" */
 }
 

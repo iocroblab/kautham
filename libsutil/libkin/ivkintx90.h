@@ -48,11 +48,12 @@
 #include "inversekinematic.h"
 #include "txrobot.h"
 
-using namespace Kautham;
-using namespace robot;
+using namespace TXrobot;
 
-namespace libProblem {
-  class IvKinTx90:public InverseKinematic{
+/** \defgroup libKin
+ *  @{
+ */
+  class IvKinTx90:public Kautham::InverseKinematic{
   public:
     IvKinTx90(Robot* const rob);
     ~IvKinTx90();
@@ -60,18 +61,18 @@ namespace libProblem {
     bool            setParameters();
     RobLayout&      getRobLayout(vector<KthReal> &target);
     void            setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);
-    bool            solve(mt::Transform& tcp, const config& conf = robot::config(), config* solution = NULL, Vect6* qNear = NULL );
+    bool            solve(mt::Transform& tcp, const config& conf = TXrobot::config(), config* solution = NULL, Vect6* qNear = NULL );
     bool            solve(mt::Transform& tcp, const Vect6 &current);
-    inline void     setConfiguration(const config& conf = robot::config());
+    inline void     setConfiguration(const config& conf = TXrobot::config());
   private:
     IvKinTx90();
-    robot::TXRobot* _tx;
-    robot::TXerror  _error;
+    TXrobot::TXRobot* _tx;
+    TXrobot::TXerror  _error;
     config          _txConf;
     Vect6*          _result;
     vector<KthReal> _eulPos;
     mt::Transform   _rHomeOffset; //!< This is an offset from Modeled Home to Real Home
   };
 
-}
+  /** @}   end of Doxygen module "libKin */
 #endif  //_IVKINTX90_H

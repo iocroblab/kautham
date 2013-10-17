@@ -52,9 +52,13 @@
 
 
 #include <libproblem/workspace.h>
-using namespace libProblem;
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
 
   //! This is the Sampler implementation using a random numbers generator.
   class GaussianSampler : public Sampler {
@@ -74,6 +78,9 @@ namespace libSampling{
 	  WorkSpace *ws;
 	  KthReal sigma;
   };
+
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_RANDOMSAMPLER_H

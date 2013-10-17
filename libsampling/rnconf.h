@@ -52,7 +52,13 @@
 
 using namespace std;
 
-namespace libSampling {
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
 	class RnConf : public Conf {
 	public:
 //    RnConf();
@@ -70,6 +76,8 @@ namespace libSampling {
 	private:
 //		RnConf();
 	};
+
+    /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_RNCONF_H

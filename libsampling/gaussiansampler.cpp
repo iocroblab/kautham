@@ -46,7 +46,12 @@
 #include "randomsample.h"
 #include <vector>
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
 
   GaussianSampler::GaussianSampler(char dim, KthReal s, WorkSpace *w){
 	ws = w;
@@ -118,5 +123,8 @@ namespace libSampling{
 	delete secondSample;
 	return NULL;
   }
+
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 

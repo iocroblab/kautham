@@ -39,7 +39,13 @@
 
 #include "robconf.h"
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   RobConf::RobConf(){
 
   }
@@ -135,4 +141,6 @@ namespace libSampling{
     return tmpRobConf;
       
   }
+
+  /** @}   end of Doxygen module "libSampling" */
 }

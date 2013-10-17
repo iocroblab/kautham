@@ -49,9 +49,11 @@
 #include "omplcRRTf16planner.h"
 
 
-using namespace libSampling;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace omplcplanner{
 
 
@@ -317,6 +319,7 @@ namespace libPlanner {
       return true;
     }
   }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif // KAUTHAM_USE_OMPL

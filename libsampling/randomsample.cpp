@@ -44,12 +44,19 @@
 #include "randomsample.h"
 #include "sample.h"
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   RandomSample::RandomSample(char d):Sample(d){
     //_coords.resize(d);
     for(int j = 0; j < d ; j++)
       _coords[j] = (KthReal)gen->d_rand();
   }
 
+  /** @}   end of Doxygen module "libSampling" */
 }
 

@@ -42,7 +42,11 @@
 #include "planners_toolbar.h"
 
 
-namespace libGUI{ 
+namespace Kautham{
+/** \addtogroup libGUI
+ *  @{
+ */
+
   PlannerToolBar::PlannerToolBar(QWidget *Form, string loc, string glob, QObject* receiver, const char* member){
     label = new QLabel(Form);
     label->setObjectName(QString::fromUtf8("lblLocals"));
@@ -102,5 +106,6 @@ namespace libGUI{
     //string plan = comboBox_2->currentText().toLocal8Bit().constData();
     emit addPlanner(loc,plan);
   }
-		
+
+  /** @}   end of Doxygen module "libGUI" */
 }

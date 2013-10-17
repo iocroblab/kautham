@@ -46,8 +46,13 @@
 #include <fstream>
 //#include <stdio.h>
 
-namespace SDK{
+namespace Kautham{
   
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
 	GaussianLikeSampler::GaussianLikeSampler(char dim, char maxLevel, WorkSpace *w):Sampler()
 	{
 		sdkgen = new SDKSampler(dim,maxLevel);
@@ -233,6 +238,9 @@ namespace SDK{
 //                    exit(0);
                     return NULL;
 	}
+
+
+    /** @}   end of Doxygen module "libSampling" */
 }
 
 

@@ -42,14 +42,21 @@
 
 #include "element.h"
 
-using namespace Kautham;
 
-namespace libProblem {
+namespace Kautham {
 
-  unsigned int    libProblem::Element::_countCollCheck = 0;
-  void            libProblem::Element::resetCollCheckCounter(){_countCollCheck = 0;}
-  unsigned int    libProblem::Element::getCollCheckCounter(){ return _countCollCheck;}
-  void            libProblem::Element::increaseCollCheckCounter(){_countCollCheck++;}
+
+/** \defgroup libProblem Library libproblem
+ *  \brief contains classes to define the setup: robots and workspace
+ *  @{
+ */
+  unsigned int    Element::_countCollCheck = 0;
+  void            Element::resetCollCheckCounter(){_countCollCheck = 0;}
+  unsigned int    Element::getCollCheckCounter(){ return _countCollCheck;}
+  void            Element::increaseCollCheckCounter(){_countCollCheck++;}
+
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 
 

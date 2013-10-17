@@ -51,9 +51,11 @@
 #include "prmplanner.h"
 
 using namespace std;
-using namespace libSampling;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace IOC{
     class MyPRMPlanner:public PRMPlanner {
 	    public:
@@ -76,6 +78,7 @@ namespace libPlanner {
 
 	  };
    }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif  //_MYPRMPLANNER_H

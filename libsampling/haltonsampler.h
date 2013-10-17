@@ -51,7 +51,12 @@
 
 using namespace std;
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
 
 class HaltonSampler: public Sampler 
 {
@@ -113,6 +118,7 @@ void u3_to_ball_unit_3d ( double u[3], double x[3] );
 
 
 
+/** @}   end of Doxygen module "libSampling" */
 
 }
 

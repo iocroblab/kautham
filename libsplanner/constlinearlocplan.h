@@ -49,9 +49,11 @@
 #include "localplanner.h"
 #include "linearlocplan.h"
 
-using namespace libProblem;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
 
 
 /**
@@ -98,6 +100,7 @@ class ConstLinearLocalPlanner:public LinearLocalPlanner {
 	  LCPRNG* _gen;
 	  mt::Transform _cameraTransform;
 	};
+/** @}   end of Doxygen module "libPlanner */
 }
 
 #endif  //_CONSTLINEARLOCALPLANNER_H

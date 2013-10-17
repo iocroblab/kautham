@@ -48,7 +48,11 @@
 #include <QtGui/QTextBrowser>
 #include <QtGui/QDialog>
 
-namespace libGUI {
+namespace Kautham {
+/** \defgroup libGUI Library libGUI
+ *  \brief contains classes for the Graphical User Interface
+ *  @{
+ */
 
 class AboutWidget:public QDialog {
   Q_OBJECT
@@ -111,6 +115,8 @@ public:
     } // retranslateUi
 
 };
+
+/** @}   end of Doxygen module "libGUI" */
 }
 
 #endif // ABOUTWIDGET_H

@@ -52,9 +52,14 @@
 #include "sample.h"
 
 using namespace std;
-using namespace libSampling;
 
-namespace SDK {
+namespace Kautham {
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   //! This class is the abstraction of a sample entity. This class contains the code, the indexes
   //! and the coordinates of a sample and it provides some methods to extract and to use its 
   //! information in the exploration process.
@@ -104,6 +109,8 @@ namespace SDK {
 		unsigned long int code;
     
 	};
+
+    /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_SDKSAMPLE_H

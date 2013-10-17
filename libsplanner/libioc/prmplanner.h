@@ -53,13 +53,14 @@
 #include "planner.h"
 
 
-using namespace SDK;
 
 using namespace std;
-using namespace libSampling;
 using namespace boost;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace IOC{
     //Typedefs
     typedef Sample* location;
@@ -195,6 +196,7 @@ namespace libPlanner {
       vector<location> locations;
       };
     }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif  //_PRMPLANNER_H

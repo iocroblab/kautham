@@ -47,9 +47,12 @@
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 
-using namespace libProblem;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
+
 	class LocalPlanner {
 	  public:
       LocalPlanner(SPACETYPE type, Sample *init, Sample *goal, WorkSpace *ws, KthReal st );
@@ -77,6 +80,7 @@ namespace libPlanner {
       SPACETYPE         _spType;
 	    //string _name;
 	};
+    /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif  //_PLANNER_H

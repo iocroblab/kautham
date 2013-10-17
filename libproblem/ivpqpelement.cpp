@@ -45,7 +45,11 @@
 #include "ivpqpelement.h"
 
 	
-namespace libProblem {
+namespace Kautham {
+
+/** \addtogroup libProblem
+ *  @{
+ */
 
   IVPQPElement::IVPQPElement(string visFile, KthReal sc)
     :IVElement(visFile,sc){
@@ -236,6 +240,9 @@ namespace libProblem {
 	  }
 	  return false;
   }
+
+
+  /** @}   end of Doxygen module "libProblem" */
 }
 
 

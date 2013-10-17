@@ -40,16 +40,16 @@
  ***************************************************************************/
  
  
-
-
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include "localplanner.h"
 #include "HFplanner.h"
 
-using namespace libSampling;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace IOC{
 	//! Constructor
     HFPlanner::HFPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
@@ -279,6 +279,7 @@ namespace libPlanner {
 			return _solved;
 		}
 	  }
+  /** @}   end of Doxygen module "libPlanner */
 }
 
 

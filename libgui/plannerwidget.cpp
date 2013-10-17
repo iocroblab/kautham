@@ -47,7 +47,11 @@
 #include "libsampling/robconf.h"
 
 
-namespace libGUI{
+namespace Kautham{
+/** \addtogroup libGUI
+ *  @{
+ */
+
   PlannerWidget::PlannerWidget(Planner* plan, SampleSet* samp, bool camera, GUI* gui):KauthamWidget(plan){
     _samples = samp;
     _planner = plan;
@@ -366,4 +370,6 @@ namespace libGUI{
     else
       _planner->wkSpace()->setPathVisibility( true );
   }
+
+  /** @}   end of Doxygen module "libGUI" */
 }

@@ -65,10 +65,13 @@
 #include <libsampling/sampling.h>
 #include <libproblem/problem.h>
 
-using namespace libSampling;
 using namespace std;
 
-namespace libGUI{
+namespace Kautham{
+/** \addtogroup libGUI
+ *  @{
+ */
+
   class SamplesWidget: public QWidget {
     Q_OBJECT
 
@@ -123,6 +126,8 @@ namespace libGUI{
 
 
   };
+
+  /** @}   end of Doxygen module "libGUI" */
 }
 
 

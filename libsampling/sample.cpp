@@ -48,7 +48,13 @@
 
 using namespace std;
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   Sample::Sample(char d){
     _dim = d;
     _coords.resize(_dim);
@@ -299,4 +305,5 @@ namespace libSampling{
   }
 
 
+  /** @}   end of Doxygen module "libSampling" */
 }

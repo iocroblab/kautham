@@ -18,11 +18,12 @@
 #include <Inventor/nodes/SoPointSet.h>
 #include <Inventor/nodes/SoLineSet.h>
 
-using namespace libSampling;
-using namespace SDK;
 using namespace pugi;
 
-namespace libPlanner {
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace IOC{
     PRMPlanner::PRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
               Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize){
@@ -968,7 +969,8 @@ namespace libPlanner {
     }
   }
  } //namespace IOC
-} //namespace libPlanner
+  /** @}   end of Doxygen module "libPlanner */
+} //namespace Kautham
 
 
 

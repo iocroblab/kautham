@@ -55,7 +55,13 @@
 #include <libproblem/workspace.h>
 
 
-namespace SDK{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   class GaussianLikeSampler : public Sampler {
   public:
     //! This is the unique constructor. In order to create an Gaussian like SDK sampler
@@ -89,6 +95,9 @@ namespace SDK{
 	int	_maxNeighs;
 	int	_maxSamples;
   };
+
+
+  /** @}   end of Doxygen module "libSampling" */
 }
 
 #endif  //_SDKSAMPLER_H

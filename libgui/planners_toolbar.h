@@ -54,7 +54,11 @@
 using namespace std;
 
 
-namespace libGUI{
+namespace Kautham{
+/** \addtogroup libGUI
+ *  @{
+ */
+
 	class PlannerToolBar: public QToolBar{
 	Q_OBJECT
   signals:
@@ -78,6 +82,7 @@ namespace libGUI{
 
 	};
 
+    /** @}   end of Doxygen module "libGUI" */
 }
 
 #endif // PLANNERS_TOOLBAR_H

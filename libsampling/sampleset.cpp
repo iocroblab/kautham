@@ -50,9 +50,14 @@
 //#include <crtdbg.h>
 
 
-using namespace SDK;
 
-namespace libSampling{
+namespace Kautham{
+
+
+/** \addtogroup libSampling
+ *  @{
+ */
+
   SampleSet::SampleSet(){
     samples.clear();
 	  typesearch = ANNMETHOD; //BRUTEFORCE
@@ -685,5 +690,6 @@ namespace libSampling{
 		return true;
 	}
 
+  /** @}   end of Doxygen module "libSampling" */
 }
 

@@ -2,7 +2,7 @@
 #include <libproblem/robot.h>
 #include <libmt/mt/mt.h>
 
-namespace libProblem {
+namespace GUIBRO {
 	
 	ConsBronchoscopyKin::ConsBronchoscopyKin(Robot* const rob):ConstrainedKinematic(rob){
 		
