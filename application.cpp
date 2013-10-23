@@ -50,6 +50,7 @@
 #include "application.h"
 
 
+
 Application::Application() {
   Q_INIT_RESOURCE(kauthamRes);
   initApp();
