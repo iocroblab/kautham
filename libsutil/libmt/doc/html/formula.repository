@@ -1,0 +1,107 @@
+\form#0:$ s_1 $
+\form#1:$ s_2 $
+\form#2:$ d \leq tol + 2 \epsilon $
+\form#3:$ d > tol + 2 \epsilon $
+\form#4:$ tol $
+\form#5:$ \epsilon $
+\form#6:$ d $
+\form#7:$ \mid s_2 - s_1 \mid $
+\form#8:$ \mid s_2 - s_1 \mid / \mathrm{min}(\mid s_1 \mid, \mid s_2 \mid) $
+\form#9:$ \mathrm{min}(\mid s_1 \mid, \mid s_2 \mid) \geq \epsilon $
+\form#10:$ \mathrm{min}(\mid s_1 \mid, \mid s_2 \mid) < \epsilon $
+\form#11:$ (a = b)$
+\form#12:$ (b = c) $
+\form#13:$ (a = c) $
+\form#14:$ a = 0.9 $
+\form#15:$ b = 1.0 $
+\form#16:$ c = 1.1 $
+\form#17:$ tol = 0.1 $
+\form#18:$ (a = b) $
+\form#19:$ (a \neq c) $
+\form#20:$ m\_tol + 2 \epsilon $
+\form#21:$ \mathbf{p} $
+\form#22:$ \mathbf{C}(\mathbf{c}, r, \mathbf{\hat n}) $
+\form#23:$ \Vert\overrightarrow{\mathbf{pc}}\Vert = r $
+\form#24:$ \overrightarrow{\mathbf{pc}} \cdot \mathbf{\hat n} = 0 $
+\form#25:$ \mathbf{c} $
+\form#26:$ r $
+\form#27:$ \mathbf{\hat n} $
+\form#28:$ \mathbf{C}(\mathcal{L}, r) $
+\form#29:$ d(\mathbf{p}, \mathcal{L}) = r $
+\form#30:$ \mathcal{L} $
+\form#31:$ a $
+\form#32:$ b $
+\form#33:$ \mathbf{\hat d}_a $
+\form#34:$ \mathbf{\hat d}_b $
+\form#35:$ \mathbf{E}(\mathbf{c}, \mathbf{\hat d}_a, \mathbf{\hat d}_b, a, b) $
+\form#36:$ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 $
+\form#37:$ \mathbf{P} = (x, y) $
+\form#38:\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \]
+\form#39:$ \mathbf{P}_n $
+\form#40:$ \mathbf{P} $
+\form#41:$ t $
+\form#42:$ (a \cos(t), b \sin(T)) $
+\form#43:$ (-a \sin(t), b \cos(t)) $
+\form#44:$ ( \mathbf{P} - \mathbf{P}_n ) $
+\form#45:\[ -a \sin(t)(x - a \cos(t)) + b \cos(t) (y - b \sin(t)) = 0 \]
+\form#46:\[ \mathbf{x} = \mathbf{p} + \hat{\mathbf{d}}t \]
+\form#47:$ \hat{\mathbf{d}} $
+\form#48:$ x $
+\form#49:$ \mathbf{x} = \mathbf{p} + \hat{\mathbf{d}}t $
+\form#50:$ \mathrm{M_1}^T \mathrm{M_2} $
+\form#51:$ \mathrm{M_1} \mathrm{M_2}^T $
+\form#52:\[ \left[ \begin{array}{l l} a_{r_1, c_1} & a_{r_1, c_2} \\ a_{r_2, c_1} & a_{r_2, c_2} \\ \end{array} \right] \]
+\form#53:\[ \hat{\mathbf{n}} \mathbf{x} + d = 0 \]
+\form#54:$ \hat{\mathbf{n}} $
+\form#55:$ q $
+\form#56:$ \mathbf{q} = [ x, y, z, w ] = xi + yj + zk + w $
+\form#57:$ xi + yj + zk + w $
+\form#58:$ \mathbf{q} $
+\form#59:$ \Vert \mathbf{q} \Vert = 1 $
+\form#60:$ [0, \pi] $
+\form#61:\[ \alpha = 2 acos(q_w) \]
+\form#62:\begin{eqnarray*} u_x & = & q_x / s \\ u_y & = & q_y / s \\ u_z & = & q_z / s \end{eqnarray*}
+\form#63:$ s = \sqrt{1 - q_w^2} $
+\form#64:\begin{eqnarray*} pitch & = & asin(2(q_y q_w - q_x q_z)) \\ yaw & = & atan2 \left( \frac{2(q_x q_y + q_z q_w)}{q_x^2 - q_y^2 - q_z^2 + q_w^2} \right) \\ roll & = & atan2 \left( \frac{2(q_x q_w + q_y q_z)}{-q_x^2 - q_y^2 + q_z^2 + q_w^2} \right) \\ \end{eqnarray*}
+\form#65:$ [0, 2\pi) $
+\form#66:$ \pi / 2 $
+\form#67:$ 3 \pi / 2 $
+\form#68:$ pitch = \pi / 2 $
+\form#69:\[ yaw = roll -atan2(\frac{-r_{23}}{r_{13}}) \]
+\form#70:$ pitch = 3 \pi / 2 $
+\form#71:\[ yaw = -roll + atan2(\frac{-r_{23}}{-r_{13}}) \]
+\form#72:\begin{eqnarray*} r_{13} & = & s (q_x q_z + q_y q_w) \\ r_{23} & = & s (q_y q_z + q_x q_w) \\ s & = & 2 / \Vert \mathbf{q} \Vert ^ 2 \end{eqnarray*}
+\form#73:\[ \left[ \begin{array}{c c c} 1 - 2(q_y^2 + q_z^2) & 2(q_x q_y - q_z q_w) & 2(q_x q_z + q_y q_w) \\ 2(q_x q_y + q_z q_w) & 1 - 2(q_x^2 + q_z^2) & 2(q_y q_z - q_x q_w) \\ 2(q_x q_z - q_y q_w) & 2(q_y q_z + q_x q_w) & 1 - 2(q_x^2 + q_y^2) \\ \end{array} \right] \]
+\form#74:\begin{eqnarray*} q_x & = & u_x sin(\alpha / 2) \\ q_y & = & u_y sin(\alpha / 2) \\ q_z & = & u_z sin(\alpha / 2) \\ q_w & = & cos(\alpha / 2) \end{eqnarray*}
+\form#75:$ \hat{\mathbf{u}} $
+\form#76:$ \alpha $
+\form#77:\begin{eqnarray*} q_x & = & cos(yaw / 2) cos(pitch / 2) sin(roll / 2) - sin(yaw / 2) sin(pitch / 2) cos(roll / 2) \\ q_y & = & cos(yaw / 2) sin(pitch / 2) cos(roll / 2) + sin(yaw / 2) cos(pitch / 2) sin(roll / 2) \\ q_z & = & sin(yaw / 2) cos(pitch / 2) cos(roll / 2) - cos(yaw / 2) sin(pitch / 2) sin(roll / 2) \\ q_w & = & cos(yaw / 2) cos(pitch / 2) cos(roll / 2) + sin(yaw / 2) sin(pitch / 2) sin(roll / 2) \end{eqnarray*}
+\form#78:\[ R = R_y R_p R_r \left[ \begin{array}{c c c} c_y c_p & c_y s_p s_r - s_y c_r & c_y s_p c_r + s_y s_r \\ s_y c_p & s_y s_p s_r + c_y c_r & s_y s_p c_r - c_y s_r \\ -s_p & c_p s_r & c_p c_r \end{array} \right] \]
+\form#79:$ s_\alpha = sin(\alpha) $
+\form#80:$ c_\alpha = cos(\alpha) $
+\form#81:\[ R = \left[ \begin{array}{c c c} r_{11} & r_{12} & r_{13} \\ r_{21} & r_{22} & r_{23} \\ r_{31} & r_{32} & r_{33} \\ \end{array} \right] \]
+\form#82:$ (r_{22} \geq -r_{33}) \wedge (r_{11} \geq -r_{22}) \wedge (r_{11} \geq -r_{33}) $
+\form#83:\[ \mathbf{q} = \left[ \begin{array}{c} (r_{32} - r_{23}) / s \\ (r_{13} - r_{31}) / s \\ (r_{21} - r_{12}) / s \\ 1 / (4s) \end{array} \right] \]
+\form#84:$ s = 2 \sqrt{1 + r_{11} + r_{22} + r_{33}} $
+\form#85:$ (r_{22} < -r_{33}) \wedge (r_{11} \geq r_{22}) \wedge (r_{11} \geq r_{33}) $
+\form#86:\[ \mathbf{q} = \left[ \begin{array}{c} 1 / (4s) \\ (r_{21} + r_{12}) / s \\ (r_{13} + r_{31}) / s \\ (r_{32} - r_{23}) / s \end{array} \right] \]
+\form#87:$ s = 2 \sqrt{1 + r_{11} - r_{22} - r_{33}} $
+\form#88:$ (r_{22} \geq r_{33}) \wedge (r_{11} < r_{22}) \wedge (r_{11} < -r_{33}) $
+\form#89:\[ \mathbf{q} = \left[ \begin{array}{c} (r_{21} + r_{12}) / s \\ 1 / (4s) \\ (r_{32} + r_{23}) / s \\ (r_{13} - r_{31}) / s \end{array} \right] \]
+\form#90:$ s = 2 \sqrt{1 - r_{11} + r_{22} - r_{33}} $
+\form#91:$ (r_{22} < r_{33}) \wedge (r_{11} < -r_{22}) \wedge (r_{11} < r_{33}) $
+\form#92:\[ \mathbf{q} = \left[ \begin{array}{c} (r_{13} + r_{31}) / s \\ (r_{32} + r_{23}) / s \\ 1 / (4s) \\ (r_{21} - r_{12}) / s \end{array} \right] \]
+\form#93:$ s = 2 \sqrt{1 - r_{11} - r_{22} + r_{33}} $
+\form#94:$ \{ \hat\mathbf{u}, \hat\mathbf{v} \} $
+\form#95:$ \{ \hat\mathbf{r}, \hat\mathbf{s} \} $
+\form#96:$ \mathrm{R} (\hat\mathbf{u}, \hat\mathbf{v} \rightarrow \hat\mathbf{r}, \hat\mathbf{s})$
+\form#97:$ \hat\mathbf{u} $
+\form#98:$ \hat\mathbf{r} $
+\form#99:$ \hat\mathbf{v} $
+\form#100:$ \hat\mathbf{s} $
+\form#101:$ \hat\mathbf{u} \cdot \hat\mathbf{v} = \hat\mathbf{r} \cdot \hat\mathbf{s} $
+\form#102:\[ \mathrm{R} (\hat\mathbf{u}, \hat\mathbf{v} \rightarrow \hat\mathbf{r}, \hat\mathbf{s}) = \left[ \begin{array}{c c c} \hat\mathbf{r} & \hat\mathbf{s}_r & \hat\mathbf{t} \end{array} \right] \left[ \begin{array}{c c c} \hat\mathbf{u} & \hat\mathbf{v}_u & \hat\mathbf{w} \end{array} \right]^T \]
+\form#103:$ \{ \hat\mathbf{u}, \hat\mathbf{v}_u, \hat\mathbf{w} \} $
+\form#104:$ \{ \hat\mathbf{r}, \hat\mathbf{s}_r, \hat\mathbf{t} \} $
+\form#105:$ \mathbf{S}(\mathbf{c}, r) $
+\form#106:$ d(\mathbf{p}, \mathbf{c}) = r $

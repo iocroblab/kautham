@@ -52,7 +52,11 @@ namespace Kautham {
 /** \defgroup libPlanner Library libplanner
  *  \brief contains planners to solve the path planning problems
  *  @{
+ *
  */
+
+
+
 
   ConstLinearLocalPlanner::ConstLinearLocalPlanner(SPACETYPE stype, Sample *init, Sample *goal, WorkSpace *ws, KthReal st )
     :LinearLocalPlanner(stype,init,goal,ws,st)
