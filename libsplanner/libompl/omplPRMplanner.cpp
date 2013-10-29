@@ -371,9 +371,12 @@ namespace Kautham {
                       disjointSets_.make_set(m);
 
                       // add the edge to the parent vertex
-                      //const double weight = distanceFunction(v, m);
+#if defined(KAUTHAM_USE_OMPL_LATEST)
                       const ob::Cost weight = ((ob::Cost)distanceFunction(v, m));
                       //const ob::Cost weight = opt_->motionCost(stateProperty_[v], stateProperty_[m]);
+#else
+                      const double weight = distanceFunction(v, m);
+#endif
                       //cout<<"d= "<<weight<<endl;
                       const unsigned int id = maxEdgeID_++;
                       const Graph::edge_property_type properties(weight, id);
@@ -390,9 +393,12 @@ namespace Kautham {
                   if (s > 0 || !boost::same_component(v, last, disjointSets_))
                   {
                       // add the edge to the parent vertex
-                      //const double weight = distanceFunction(v, last);
+#if defined(KAUTHAM_USE_OMPL_LATEST)
                       const ob::Cost weight = ((ob::Cost)distanceFunction(v, last));
                       //const ob::Cost weight = opt_->motionCost(stateProperty_[v], stateProperty_[m]);
+#else
+                      const double weight = distanceFunction(v, last);
+#endif
                       //cout<<"d2= "<<weight<<endl;
                       const unsigned int id = maxEdgeID_++;
                       const Graph::edge_property_type properties(weight, id);

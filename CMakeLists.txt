@@ -8,6 +8,7 @@ CMAKE_POLICY(SET CMP0003 OLD)
 OPTION( KAUTHAM_GUI "Build the gui version" ON )
 OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
 OPTION( KAUTHAM_OMPL "Use OMPL planners" ON )
+OPTION( KAUTHAM_OMPL_LATEST "Use latest OMPL version" ON )
 OPTION( KAUTHAM_IOC "Use IOC planners" ON )
 OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF )
 
@@ -25,6 +26,10 @@ ENDIF( KAUTHAM_CONSOLE )
 
 IF( KAUTHAM_OMPL )
   MESSAGE( STATUS "prepared to include OMPL" )
+  IF( KAUTHAM_OMPL_LATEST )
+        MESSAGE( STATUS "Use latest OMPL version (from GIT): setting -DKAUTHAM_USE_OMPL_LATEST flag")
+        ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL_LATEST)
+    ENDIF( KAUTHAM_OMPL_LATEST )
 ENDIF( KAUTHAM_OMPL )
 
 IF( KAUTHAM_IOC )
@@ -36,6 +41,8 @@ IF( KAUTHAM_GUIBRO )
     MESSAGE( STATUS "Use GUIBRO: setting -DKAUTHAM_USE_GUIBRO flag")
     ADD_DEFINITIONS( -DKAUTHAM_USE_GUIBRO )
 ENDIF( KAUTHAM_GUIBRO )
+
+
 
 
 
@@ -90,6 +97,7 @@ IF( KAUTHAM_OMPL )
         MESSAGE( STATUS "OMPL lib is: " ${OMPL_LIBRARIES})
         MESSAGE( STATUS "OMPL include is: "${OMPL_INCLUDE_DIRS})
         ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
+        MESSAGE( STATUS "OMPL VERSION is: " ${OMPL_VERSION})
     ELSE( OMPL_FOUND )
         MESSAGE( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be abaliable")
     ENDIF( OMPL_FOUND )
