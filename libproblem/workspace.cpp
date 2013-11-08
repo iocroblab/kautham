@@ -100,7 +100,7 @@ namespace Kautham {
       for( j=0; j < robots[i]->getNumControls(); j++ )
         tmpVec.push_back(sample->getCoords()[from + j]);
       
-      from = j;
+      from = from+j;
       robots[i]->control2Pose(tmpVec);
       for(unsigned int m = 0; m < obstacles.size(); m++){
         distVec.push_back(robots[i]->distanceCheck(obstacles[m]));
@@ -127,7 +127,7 @@ namespace Kautham {
             for(; j < robots[i]->getNumControls(); j++ )
                 tmpVec.push_back(sample->getCoords()[from + j]);
 
-            from = j;
+            from = from+j;
             robots[i]->control2Pose(tmpVec);
 
 
@@ -195,7 +195,7 @@ namespace Kautham {
         for( j=0; j < robots[i]->getNumControls(); j++ )
           tmpVec.push_back(sample->getCoords()[from + j]);
 
-        from = j;
+        from = from+j;
         robots[i]->control2Pose(tmpVec);
 
         //first is testing if the robots collide with the environment (obstacles)
