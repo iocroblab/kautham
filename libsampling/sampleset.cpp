@@ -180,7 +180,7 @@ namespace Kautham{
 			  {
 				  tmpVec.push_back(samp->getCoords()[from + j]);
 			  }
-			  from = j;
+              from = from+j;
 			  ws->getRobot(i)->control2Pose(tmpVec);
 			  confSmp = ws->getRobot(i)->getCurrentPos();
 			  p = &(confSmp->getSE3().getCoordinates());
@@ -458,7 +458,7 @@ namespace Kautham{
               tmpVec.push_back(samples[h]->getCoords()[from + j]);
             }
 
-            from = j;
+            from = from+j;
             ws->getRobot(i)->control2Pose(tmpVec);
             confSmp = ws->getRobot(i)->getCurrentPos();
             p = &(confSmp->getSE3().getCoordinates());
@@ -590,7 +590,7 @@ namespace Kautham{
 			{
 				tmpVec.push_back(samp->getCoords()[from + j]);
 			}
-			from = j;
+            from = from+j;
 			ws->getRobot(i)->control2Pose(tmpVec);
 			confSmp = ws->getRobot(i)->getCurrentPos();
 			p = &(confSmp->getSE3().getCoordinates());
