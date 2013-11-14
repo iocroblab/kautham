@@ -78,6 +78,12 @@ namespace Kautham {
         else
           return false;
 
+        it = _parameters.find("Show labels (0/1)");
+        if(it != _parameters.end())
+          _showLabels = it->second;
+        else
+          return false;
+
 		char *str = new char[20];
 		for(int i=0; i<_wkSpace->getDimension();i++)
 		{

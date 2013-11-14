@@ -157,8 +157,12 @@ namespace Kautham {
 
         //!index of init cell in the current discretization of the cspace
         gridVertex indexinit;
+
         //!index of goal cell in the current discretization of the cspace
         gridVertex indexgoal;
+
+        //!flag to set/unset the visualization of the potential values of the cells
+        int _showLabels;
 
 	    //!Function to load the boost graph data
 	    void loadGraph();	 
