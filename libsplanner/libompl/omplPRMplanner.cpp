@@ -162,10 +162,9 @@ namespace Kautham {
           freeMemory();
       }
 
-      //!  Sets the number of bounce steps in the expansion phase
-      void setBounceSteps(int n)
+      bool checkSameComponent(Vertex v1, Vertex v2)
       {
-          bouncesteps = n;
+           return sameComponent(v1,v2);
       }
 
       //!  Sets the mingrowtime value
@@ -188,6 +187,12 @@ namespace Kautham {
           useKauthamSampler = true;
       }
 
+
+      //!  Sets the mnumber of bounce steps of the expand phase
+      void setBounceSteps(double n)
+      {
+        bouncesteps = n;
+      }
 
       //!  Sets the maxdistance for the bounce motions in the expand step
       void setMaxDistanceBounceMotions(double m)
@@ -417,8 +422,11 @@ namespace Kautham {
   //! This function is a distance filter used as a connectionFilter_ in the PRM
   bool connectionDistanceFilter(const Vertex& v1, const Vertex& v2, double d, ob::PlannerPtr pl)
   {
-      if(pl->as<myPRM>()->distanceFunction(v1,v2) < d) return true;
-      else return false;
+      if(pl->as<myPRM>()->checkSameComponent(v1,v2) == false)
+      {
+        if(pl->as<myPRM>()->distanceFunction(v1,v2) < d) return true;
+      }
+      return false;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -456,14 +464,16 @@ namespace Kautham {
         addParameter("DistanceThreshold", _distanceThreshold);
         planner->as<myPRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, planner));
 
-        //set the number of maxbouncesteps
+        //set the distance threshold for expand motions. Can be set if kauthamsampler is used
+        _BounceDistanceThreshold = _distanceThreshold;
+        addParameter("BounceDistanceThreshold", _BounceDistanceThreshold);
+        planner->as<myPRM>()->usingKauthamSampler(true);
+        planner->as<myPRM>()->setMaxDistanceBounceMotions(_BounceDistanceThreshold);
+
+        //set the number of bounce steps in the expand phase
         _BounceSteps = mymagic::MAX_RANDOM_BOUNCE_STEPS;
         addParameter("BounceSteps", _BounceSteps);
         planner->as<myPRM>()->setBounceSteps(_BounceSteps);
-
-        //set the distance threshold for expand motions. Can be set if kauthamsampler is used
-        planner->as<myPRM>()->usingKauthamSampler(true);
-        planner->as<myPRM>()->setMaxDistanceBounceMotions(_BounceSteps*_distanceThreshold);
 
         //set max neighbors
         //_MaxNearestNeighbors = mymagic::DEFAULT_NEAREST_NEIGHBORS;
@@ -516,7 +526,15 @@ namespace Kautham {
         if(it != _parameters.end()){
             _BounceSteps = it->second;
             ss->getPlanner()->as<myPRM>()->setBounceSteps(_BounceSteps);
-            ss->getPlanner()->as<myPRM>()->setMaxDistanceBounceMotions(_BounceSteps*_distanceThreshold);
+        }
+        else
+          return false;
+
+
+        it = _parameters.find("BounceDistanceThreshold");
+        if(it != _parameters.end()){
+            _BounceDistanceThreshold = it->second;
+            ss->getPlanner()->as<myPRM>()->setMaxDistanceBounceMotions(_BounceDistanceThreshold);
         }
         else
           return false;
@@ -526,7 +544,6 @@ namespace Kautham {
         if(it != _parameters.end()){
             _distanceThreshold = it->second;
             ss->getPlanner()->as<myPRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, ss->getPlanner()));
-            ss->getPlanner()->as<myPRM>()->setMaxDistanceBounceMotions(_BounceSteps*_distanceThreshold);
          }
         else
           return false;
