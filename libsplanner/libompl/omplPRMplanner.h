@@ -79,7 +79,8 @@ namespace Kautham {
          KthReal _distanceThreshold;
          KthReal _MinGrowTime;
          KthReal _MinExpandTime;
-         int _BounceSteps;
+         KthReal _BounceDistanceThreshold;
+         KthReal _BounceSteps;
 	  };
   }
   /** @}   end of Doxygen module "libPlanner */
