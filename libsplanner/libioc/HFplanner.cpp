@@ -88,6 +88,11 @@ namespace Kautham {
           return false;
 
 
+        it = _parameters.find("Show labels (0/1)");
+        if(it != _parameters.end())
+          _showLabels = it->second;
+        else
+          return false;
 
 		it = _parameters.find("Goal potential");
 		if(it != _parameters.end())

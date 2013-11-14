@@ -48,6 +48,7 @@
 #include "gridplanner.h"
 
 #include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoText3.h>
 
 namespace Kautham {
 /** \addtogroup libPlanner
@@ -64,6 +65,7 @@ namespace Kautham {
 		//set intial values
 		_obstaclePotential = 10.0;
 		_goalPotential = 0.0;
+        _showLabels = 1;
 
 		//set intial values from parent class data
 		_speedFactor = 1;
@@ -73,6 +75,7 @@ namespace Kautham {
 		addParameter("Step Size", ssize);
 		addParameter("Speed Factor", _speedFactor);
         addParameter("Max. Samples", _maxNumSamples);
+        addParameter("Show labels (0/1)", _showLabels);
 
 		//set step discrtization
 		_stepsDiscretization.resize(_wkSpace->getDimension());
@@ -213,6 +216,32 @@ namespace Kautham {
 				cellsep->addChild(cell_color);
 				cellsep->addChild(cell_transf);
 				cellsep->addChild(cellcube);
+
+                if(_showLabels)
+                {
+                    //Add text to the cells wiht the potential value
+                    //text position
+                    SoTransform *text_transf = new SoTransform;
+                    text_transf->translation.setValue(-cellside/4,-cellside/4,cellcube->depth.getValue());
+                    //text scale
+                    SoScale *textsc = new SoScale();
+                    textsc->scaleFactor.setValue(0.2,0.2,1.0);
+                    //text color
+                    SoMaterial *text_color = new SoMaterial;
+                    text_color->diffuseColor.setValue(0.2,0.2,0.2);
+                    //text string
+                    SoText3 *cell_text = new SoText3();
+                    char textpot[10];
+                    sprintf(textpot,"%.0f",getPotential(*vi));
+                    cell_text->string.setValue(textpot);
+                    //text separator
+                    SoSeparator *textsep = new SoSeparator();
+                    textsep->addChild(text_transf);
+                    textsep->addChild(textsc);
+                    textsep->addChild(text_color);
+                    textsep->addChild(cell_text);
+                    cellsep->addChild(textsep);
+                }
 				gsep->addChild(cellsep);
 			}
 			_sceneCspace->addChild(gsep);
