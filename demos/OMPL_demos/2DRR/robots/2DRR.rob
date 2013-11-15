@@ -26,7 +26,7 @@
       <Limits Hi="180.0" Low="-180.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="link1"></Parent>
-    </Joint>
+    </Joint>    
     
     <Joint name="tcp" ivFile="2DRR/tcp.iv">
       <DHPars alpha="0.0" a="100.0" theta="0.0" d="0.0"  ></DHPars>
@@ -35,6 +35,7 @@
       <Weight weight="1.0"></Weight>
       <Parent name="link2"></Parent>
     </Joint>
+
   </Joints>
   
   <ControlSet size="2">

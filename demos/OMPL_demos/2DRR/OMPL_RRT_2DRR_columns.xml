@@ -2,6 +2,7 @@
 <Problem name="OMPL_RRT_2DRR_columns">
 	<Robot robot="robots/2DRR.rob" scale="1.0">
 		<InvKinematic name="RR2D" />
+	  
 	</Robot>
 	<Scene scene="scenes/columns.iv" scale="0.5">
 		<Location TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="50.0" X="150.0" />
