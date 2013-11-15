@@ -153,11 +153,14 @@ namespace Kautham {
 
           //initialize threshold
           threshold = th;
-      }
+      }      
 
       void KauthamStateSampler::sampleUniform(ob::State *state)
       {
           //Sample around centersmp
+          //this does the same as sampleUniformNear, but the Near configuration is set beforehand as "centersmp" configuration.
+          //this has been added to modify the behavior of the randombounce walk of the PRM. It used the sampleUniform and
+          //we wanted to use the sampleUniformNear
           if(centersmp != NULL && threshold > 0.0)
           {
             int trials = 0;
