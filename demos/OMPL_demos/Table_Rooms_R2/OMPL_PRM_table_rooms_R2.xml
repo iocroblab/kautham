@@ -25,7 +25,6 @@
                     <Parameter name="Step Size">2</Parameter>
                     <Parameter name="Max Planning Time">1.5</Parameter>
                     <Parameter name="Speed Factor">1</Parameter>
-                        <Parameter name="MaxNearestNeighbors">4</Parameter>
                         <Parameter name="MinGrowTime">0.2</Parameter>
                         <Parameter name="MinExpandTime">0.05</Parameter>
                         <Parameter name="DistanceThreshold">20</Parameter>
