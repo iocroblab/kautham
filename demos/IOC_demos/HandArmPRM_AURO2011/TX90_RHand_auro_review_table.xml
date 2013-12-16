@@ -17,6 +17,26 @@
   <Scene scene="scenes/table_clutter_review_auro.iv" scale="1.0"> 
     <Location TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0"/>
   </Scene>
+  
+    <Planner>
+    <Parameters>
+      <Name>PRMAURO HandArm</Name>
+      <LocalPlanner stepSize="0.2" >Linear</LocalPlanner>
+      <Parameter name="Max. Samples">300</Parameter>
+      <Parameter name="Speed Factor">1</Parameter>
+      <Parameter name="Cloud Radius Max">300</Parameter>
+      <Parameter name="Cloud Radius">30</Parameter>
+      <Parameter name="Ratio Hand/Arm Conf">2</Parameter>
+      <Parameter name="Cloud Size">2</Parameter>
+    </Parameters>
+
+    <Queries>
+      <Query>
+		<Init dim="11">0.256 0.333 0.969 0.462 0.467 0.703 0.708 0.5 0 0.5 0.5</Init>
+		<Goal dim="11">0.265 0.567 0.829 0.487 0.333 0.668 0.354 1.0 0.0 0.613 0.694</Goal>
+      </Query>
+    </Queries>
+  </Planner>
 
 </Problem>
 

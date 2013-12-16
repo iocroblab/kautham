@@ -28,7 +28,7 @@ DEF root Separator {
       center 0 0 0
     }
     File {
-      name "Shelf.wrl"
+      name "shelf.wrl"
     }
   }
 }
