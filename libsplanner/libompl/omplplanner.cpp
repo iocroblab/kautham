@@ -267,24 +267,41 @@ namespace Kautham {
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // KauthamValidStateSampler functions
   /////////////////////////////////////////////////////////////////////////////////////////////////
+      //! Creator. The parameter samplername is defaulted to "Random" and the value to "0.0
       KauthamValidStateSampler::KauthamValidStateSampler(const ob::SpaceInformation *si, Planner *p) : ob::ValidStateSampler(si)
       {
           name_ = "kautham sampler";
           kauthamPlanner_ = p;
           si_ = si;
-      }
+          //be careful these values should be set somehow!
+          int level = 3;
+          KthReal sigma = 0.1;
 
+          _samplerRandom = new RandomSampler(kauthamPlanner_->wkSpace()->getDimension());
+          _samplerHalton = new HaltonSampler(kauthamPlanner_->wkSpace()->getDimension());
+          _samplerSDK = new SDKSampler(kauthamPlanner_->wkSpace()->getDimension(), level);
+          _samplerGaussian = new GaussianSampler(kauthamPlanner_->wkSpace()->getDimension(), sigma, kauthamPlanner_->wkSpace());
+          _samplerGaussianLike = new GaussianLikeSampler(kauthamPlanner_->wkSpace()->getDimension(), level, kauthamPlanner_->wkSpace());
+
+          _samplerVector.push_back(_samplerRandom);
+          _samplerVector.push_back(_samplerHalton);
+          _samplerVector.push_back(_samplerSDK);
+          _samplerVector.push_back(_samplerGaussian);
+          _samplerVector.push_back(_samplerGaussianLike);
+       }
+
+
+      //!Gets a sample. The samplername parameter is defaulted to Random.
+      //bool KauthamValidStateSampler::sample(ob::State *state, string samplername)
       bool KauthamValidStateSampler::sample(ob::State *state)
       {
-          //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-          int d = kauthamPlanner_->wkSpace()->getDimension();
-          vector<KthReal> coords(d);
-          for(int i=0;i<d;i++)
-            coords[i] = rng_.uniformReal(0,1.0);
+          //gets a new sample using the sampler specified by the planner
+          Sample* smp = NULL;
+          int numSampler = ((omplPlanner*)kauthamPlanner_)->getSamplerUsed();
+          if(numSampler>= _samplerVector.size()) numSampler = 0;//set default Random sampler if out of bounds value
+          smp = _samplerVector[numSampler]->nextSample();
 
-          //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
-          Sample *smp = new Sample(d);
-          smp->setCoords(coords);
+          //computes the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
           kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
 
           //convert from sample to scoped state
@@ -300,20 +317,17 @@ namespace Kautham {
           return true;
       }
 
+      //!Gets a sample near a given state, after several trials (retruns false if not found)
       bool KauthamValidStateSampler::sampleNear(ob::State *state, const ob::State *near, const double distance)
            {
                int trials = 0;
                int maxtrials=100;
                bool found = false;
                do{
-                 //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-                 int d = kauthamPlanner_->wkSpace()->getDimension();
-                 vector<KthReal> coords(d);
-                 for(int i=0;i<d;i++)
-                     coords[i] = rng_.uniformReal(0,1.0);
-                 //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
-                 Sample *smp = new Sample(d);
-                 smp->setCoords(coords);
+                 //get a random sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                 Sample* smp = NULL;
+                 int numSampler = 0; //Random sampler
+                 smp = _samplerVector[numSampler]->nextSample();
                  kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
                  //convert from sample to scoped state
                  ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
@@ -385,6 +399,8 @@ namespace Kautham {
         _solved = false;
         _guiName = "ompl Planner";
         _idName = "ompl Planner";
+
+        _samplerUsed = 0;
 
         //set own intial values
         _planningTime = 10;

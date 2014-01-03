@@ -451,6 +451,7 @@ namespace Kautham {
         //create planner
         ob::PlannerPtr planner(new myPRM(si));
 
+
         //set grow and expand time
         _MinGrowTime = 2.0*mymagic::ROADMAP_BUILD_TIME;
         _MinExpandTime = mymagic::ROADMAP_BUILD_TIME;
@@ -458,6 +459,8 @@ namespace Kautham {
         planner->as<myPRM>()->setMinExpandTime(_MinExpandTime);
         addParameter("MinGrowTime", _MinGrowTime);
         addParameter("MinExpandTime", _MinExpandTime);
+
+        addParameter("samplerUsed", _samplerUsed);//defaulted to 0 (Random)
 
         //set the connectionFilter_
         double _distanceThreshold = _stepSize * mymagic::DISTANCE_THRESHOLD_FACTOR;
@@ -547,6 +550,14 @@ namespace Kautham {
          }
         else
           return false;
+
+        it = _parameters.find("samplerUsed");
+        if(it != _parameters.end()){
+            setSamplerUsed(it->second);
+         }
+        else
+          return false;
+
 
       }catch(...){
         return false;
