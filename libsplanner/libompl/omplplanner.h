@@ -103,6 +103,7 @@ namespace Kautham {
     {
       public:
         KauthamValidStateSampler(const ob::SpaceInformation *si, Planner *p);
+        //virtual bool sample(ob::State *state, string samplername="Random");
         virtual bool sample(ob::State *state);
         virtual bool sampleNear(ob::State *state, const ob::State *near, const double distance);
 
@@ -110,6 +111,12 @@ namespace Kautham {
         ompl::RNG rng_; //random generator
         Planner *kauthamPlanner_; //pointer to planner in order to have access to the workspace
         const ob::SpaceInformation *si_;
+        vector<Sampler*> _samplerVector;
+        SDKSampler* _samplerSDK;
+        HaltonSampler* _samplerHalton;
+        GaussianLikeSampler* _samplerGaussianLike;
+        GaussianSampler* _samplerGaussian;
+        RandomSampler* _samplerRandom;
     };
 
 
@@ -160,11 +167,16 @@ namespace Kautham {
         inline ob::StateSpacePtr getSpace(){return space;};
         void filterBounds(double &l, double &h, double epsilon);
 
+        inline void setSamplerUsed(int su){_samplerUsed=su;};
+        inline int getSamplerUsed(){return _samplerUsed;};
+
 		protected:
 		//Add protected data and functions
         KthReal _planningTime;
         og::SimpleSetupPtr ss;
         ob::StateSpacePtr space;
+
+        int _samplerUsed;
 
 	    private:
 		//Add private data and functions
