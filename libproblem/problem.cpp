@@ -68,6 +68,10 @@
 #if defined(KAUTHAM_USE_OMPL)
 #include <libompl/omplPRMplanner.h>
 #include <libompl/omplRRTplanner.h>
+#include <libompl/omplRRTStarplanner.h>
+#include <libompl/omplTRRTplanner.h>
+#include <libompl/omplpRRTplanner.h>
+#include <libompl/omplLazyRRTplanner.h>
 #include <libompl/omplcRRTplanner.h>
 #include <libompl/omplcRRTcarplanner.h>
 #include <libompl/omplcRRTf16planner.h>
@@ -625,6 +629,21 @@ namespace Kautham {
       _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal,
                                _cspace, _sampler, _wspace, _locPlanner, step);
 
+    else if(name == "omplRRTStar")
+      _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE, sinit, sgoal,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
+
+    else if(name == "omplTRRT")
+      _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE, sinit, sgoal,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
+
+    else if(name == "omplpRRT")
+      _planner = new omplplanner::omplpRRTPlanner(CONTROLSPACE, sinit, sgoal,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
+
+    else if(name == "omplLazyRRT")
+      _planner = new omplplanner::omplLazyRRTPlanner(CONTROLSPACE, sinit, sgoal,
+                               _cspace, _sampler, _wspace, _locPlanner, step);
 
     else if(name == "omplRRTConnect")
       _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal,
