@@ -50,8 +50,8 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
-#include <libsplanner/localplanner.h>
-#include <libsplanner/planner.h>
+#include <libsplanner/libioc/localplanner.h>
+#include <libsplanner/libioc/iocplanner.h>
 
 using namespace std;
 using namespace Kautham;
@@ -153,11 +153,10 @@ namespace GUIBRO {
 	//!It contains a graph representing the whole regular grid with both collision and free cells
 	//!associated to the vertices, and a subgraph that contains only those free.
 	
-    class workspacegridPlanner:public Planner {
+    class workspacegridPlanner:public iocPlanner {
 	    public:
 		//!Constructor
-        workspacegridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, KthReal thDist);
+        workspacegridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, KthReal thDist);
         ~workspacegridPlanner();
         
 		//!implemented as NF1 navigation function

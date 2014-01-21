@@ -46,7 +46,7 @@
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include <libsampling/robconf.h>
-#include <libsplanner/localplanner.h>
+#include <libsplanner/libioc/localplanner.h>
 #include "guibrogridplanner.h"
 #include "consbronchoscopykin.h"
 #include <cctype>
@@ -56,8 +56,8 @@ using namespace Kautham;
 
    namespace GUIBRO{
 	//! Constructor
-    GUIBROgridPlanner::GUIBROgridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    GUIBROgridPlanner::GUIBROgridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
+              iocPlanner(stype, init, goal, samples, sampler, ws)
 	{
 		//set intial values
 	    _gen = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
@@ -132,7 +132,8 @@ using namespace Kautham;
 		//set intial values from parent class data
 		_speedFactor = 1;
 		_solved = false;
-		setStepSize(ssize);//also changes stpssize of localplanner
+
+
 	  
 		_guiName = _idName = "GUIBRO Grid Planner";
 
@@ -141,8 +142,10 @@ using namespace Kautham;
 		//_radius = 1.0;
 
 
-
+        KthReal ssize=1.0;
+        _locPlanner->setStepSize(ssize);
 		addParameter("Step Size", ssize);
+
 		addParameter("Speed Factor", _speedFactor);
 
         addParameter("Drawn Path Link",_drawnLink);
@@ -231,7 +234,7 @@ using namespace Kautham;
 
 
 		KthReal thresholdDist = 0;//-5; //to consider a grpah including cells from distance -5 upwards.
-		grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize, thresholdDist);
+        grid = new workspacegridPlanner(stype, init, goal, samples, sampler, ws, thresholdDist);
 		grid->setImageSize(nx,ny,nz);
 		grid->setVoxelSize(vx,vy,vz);
 		grid->discretizeCspace();

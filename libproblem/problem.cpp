@@ -550,8 +550,7 @@ namespace Kautham {
 
 #if defined(KAUTHAM_USE_GUIBRO)
     else if(name == "GUIBROgrid")
-      _planner = new GUIBRO::GUIBROgridPlanner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace);
+      _planner = new GUIBRO::GUIBROgridPlanner(CONTROLSPACE, NULL, NULL, _cspace, _sampler, _wspace);
 #endif
 
 #if defined(KAUTHAM_USE_OMPL)
