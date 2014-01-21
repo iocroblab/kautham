@@ -44,15 +44,15 @@
 #include <stdio.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
-#include <libsplanner/localplanner.h>
+#include <libsplanner/libioc/localplanner.h>
 #include "workspacegridplanner.h"
 
 using namespace Kautham;
 
 namespace GUIBRO {
 
-    workspacegridPlanner::workspacegridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, KthReal thDist):
-              Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    workspacegridPlanner::workspacegridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, KthReal thDist):
+              iocPlanner(stype, init, goal, samples, sampler, ws)
 	{
 		//set intial values
 		_obstaclePotential = 10.0;

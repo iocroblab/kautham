@@ -10,7 +10,7 @@ OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
 OPTION( KAUTHAM_OMPL "Use OMPL planners" ON )
 OPTION( KAUTHAM_OMPL_LATEST "Use latest OMPL version" ON )
 OPTION( KAUTHAM_IOC "Use IOC planners" ON )
-OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF )
+OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" ON )
 
 
 

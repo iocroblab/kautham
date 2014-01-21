@@ -48,7 +48,7 @@
 #include <libguibro/workspacegridplanner.h>
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
-#include <libsplanner/localplanner.h>
+#include <libsplanner/libioc/localplanner.h>
 #include <libsplanner/libioc/NF1planner.h>
 #include <libsplanner/libioc/prmplanner.h>
 
@@ -77,10 +77,9 @@ using namespace std;
 
 
 
-    class GUIBROgridPlanner:public Planner {
+    class GUIBROgridPlanner:public iocPlanner {
 	    public:
-        GUIBROgridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+        GUIBROgridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws);
         ~GUIBROgridPlanner();
 
 		bool trySolve();
