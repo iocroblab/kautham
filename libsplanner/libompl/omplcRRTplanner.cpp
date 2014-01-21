@@ -114,8 +114,8 @@ namespace Kautham {
 
 
 	//! Constructor
-    omplcRRTPlanner::omplcRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              omplcPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    omplcRRTPlanner::omplcRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+              omplcPlanner(stype, init, goal, samples, ws)
 	{
         _guiName = "ompl cRRT Planner";
         _idName = "omplcRRT";
@@ -206,11 +206,6 @@ namespace Kautham {
                 else
                   return false;
 
-        it = _parameters.find("Step Size");
-            if(it != _parameters.end())
-                     _stepSize = it->second;
-                else
-                  return false;
 
         it = _parameters.find("MinControlDuration");
             if(it != _parameters.end()){

@@ -69,7 +69,7 @@ typedef boost::variate_generator<RandomGenerator&, NormalDistribution> GaussianG
 	class PRMPCAHandArmPlanner:public PRMHandPlanner{
 		public:
 			PRMPCAHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-				WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloundSize,int samplingV, KthReal cloudRad, int samplingR,float distgoal,float distsamplingpcagoal);
+                WorkSpace *ws, int cloundSize,int samplingV, KthReal cloudRad, int samplingR,float distgoal,float distsamplingpcagoal);
 	  
 			~PRMPCAHandArmPlanner();
       

@@ -54,8 +54,8 @@
   namespace IOC{
 		
 	PRMHandPlannerICRA::PRMHandPlannerICRA(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-           WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int numSam, int cloudSize, KthReal cloudRad, int numHC)
-      :PRMHandPlanner(stype, init, goal, samples, sampler, ws, lcPlan,  ssize, cloudSize,  cloudRad)
+           WorkSpace *ws, int numSam, int cloudSize, KthReal cloudRad, int numHC)
+      :PRMHandPlanner(stype, init, goal, samples, sampler, ws, cloudSize,  cloudRad)
 	{
       _idName = "PRM Hand ICRA";
 			_numberSamples = numSam;

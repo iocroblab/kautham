@@ -148,8 +148,8 @@ namespace Kautham {
   // omplcRRTcarPlanner functions
   /////////////////////////////////////////////////////////////////////////////////////////////////
 	//! Constructor
-    omplcRRTcarPlanner::omplcRRTcarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              omplcPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    omplcRRTcarPlanner::omplcRRTcarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+              omplcPlanner(stype, init, goal, samples, ws)
 	{
         _guiName = "ompl cRRT Planner";
         _idName = "omplcRRTcar";
@@ -207,11 +207,7 @@ namespace Kautham {
         //set the planner
         ss->setPlanner(planner);
 
-        //kautham step size used when discretizing the path for visualizatuin,
-        //set very big, then simulatuionpath = path. This is ok since this planner generates a fine discretization path
-        //and in this way we avoid interpolating orientations when moving form e.g. 2º to -1º=359º.
-        _stepSize = 10000;
-        removeParameter("Step Size");
+
     }
 
 	//! void destructor

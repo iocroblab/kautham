@@ -69,8 +69,7 @@ namespace Kautham {
   namespace omplcplanner{
     class omplcRRTf16Planner:public omplcPlanner {
 	    public:
-        omplcRRTf16Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+        omplcRRTf16Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
         ~omplcRRTf16Planner();
 
         bool setParameters();

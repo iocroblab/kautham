@@ -54,7 +54,7 @@
 	class PRMAUROHandArmPlanner:public PRMHandPlanner{
 		public:
 			PRMAUROHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-				WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloundSize, KthReal cloudRad, int numHC);
+                WorkSpace *ws,  int cloundSize, KthReal cloudRad, int numHC);
 	  
 			~PRMAUROHandArmPlanner();
       

@@ -54,14 +54,15 @@ namespace Kautham {
  */
   namespace IOC{
 	//! Constructor
-    NF1Planner::NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              gridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    NF1Planner::NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
+              gridPlanner(stype, init, goal, samples, sampler, ws)
 	{
 		//set intial values
 	  
         _guiName = _idName =  "NF1Planner";
 		removeParameter("Max. Samples");
 		removeParameter("Step Size");
+
     }
 
 	//! void destructor
@@ -220,43 +221,6 @@ namespace Kautham {
 			_solved = true;
 			drawCspace();
 			return _solved;
-			/*
-			_path.clear();
-			clearSimulationPath();
-			_path.push_back(_init);
-			_path.push_back(_goal);
-			_solved = true;
-			return _solved;
-			*/
-
-			/*
-			The available resorces to implement your planner are:
-			1) Grid represented as a graph, already created in parent class gridplanner. It contains
-				both free and collision samples.
-
-			2) setPotential(int i, KthReal value) and getPotential(int i): functions to set and get the values of 
-				the potential function.
-
-			3) As a derived class from planner, also the following is available:
-				3a) A sampler to obtain more samples:
-					Sample *smp;
-					smp = _sampler->nextSample();
-			      or a way to determine new sample at a given configuration, e.g.:
-					Sample *smp = new Sample();
-					KthReal* coords = new KthReal[_wkSpace->getDimension()];
-					for(int k = 0; k < _wkSpace->getDimension(); k++) coords[k] = 0.0;
-					smp->setCoords(coords);
-
-			   3b) A collision-checker to check for collision at a given sample smp:
-					_wkSpace->collisionCheck(smp)
-
-			   3c) A local planner to connect two samples
-					_locPlanner->canConect();
-
-			The solution must be specified as a sequence of samples (vector _path)
-		  	*/
-
-			
 			
 		}
 	  }

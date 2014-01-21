@@ -52,8 +52,8 @@
   namespace IOC{
 		
 		PRMHandPlanner::PRMHandPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-      WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloudSize, KthReal cloudRad)
-      :PRMPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize){
+      WorkSpace *ws,  int cloudSize, KthReal cloudRad)
+      :PRMPlanner(stype, init, goal, samples, sampler, ws){
 			
 	    //_gen = new LCPRNG(15485341);//15485341 is a big prime number
 		_gen = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//

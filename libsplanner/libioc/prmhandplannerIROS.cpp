@@ -52,8 +52,8 @@
   namespace IOC{
 		
 	PRMHandPlannerIROS::PRMHandPlannerIROS(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-		WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloudSize, KthReal cloudRad)
-      :PRMHandPlanner(stype, init, goal, samples, sampler, ws, lcPlan,  ssize, cloudSize,  cloudRad)
+        WorkSpace *ws, int cloudSize, KthReal cloudRad)
+      :PRMHandPlanner(stype, init, goal, samples, sampler, ws, cloudSize,  cloudRad)
 	{	
 			_testSamples.clear();
       _idName = "PRM Hand IROS";
@@ -141,7 +141,7 @@
 		//compute the number of steps to interpolate robot motion
 		// int maxsteps = (dist/(2*_cloudRadius))+2; //the 2 is necessary to always reduce the distance...
 		//int maxsteps = (dist/(_cloudRadius))+2; //the 2 is necessary to always reduce the distance...
-		int maxsteps = (dist/(5*_stepSize))+2; //the 2 is necessary to always reduce the distance...
+        int maxsteps = (dist/(5*_locPlanner->stepSize()))+2; //the 2 is necessary to always reduce the distance...
 		//int maxsteps = 5; //the 2 is necessary to always reduce the distance...
       
 		//compute the stepsize in each robotjoint

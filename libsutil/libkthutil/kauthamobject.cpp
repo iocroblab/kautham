@@ -94,11 +94,11 @@ namespace Kautham{
         if(it != _parameters.end()) 
           it->second = val;
         else{
-          cout << "Error:" << tokens[i] << "\t";
+          cout << "Error - parameter not found:" << tokens[i] << "\n";
           throw -1;
         }
       }catch(...){
-        cout << "Error:" << tokens[i] << "\t";
+        cout << "Error - parameter not found:" << tokens[i] << "\n";
             throw -2;
       }
     }

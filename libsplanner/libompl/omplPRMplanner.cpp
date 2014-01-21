@@ -431,8 +431,8 @@ namespace Kautham {
 
   ////////////////////////////////////////////////////////////////////////////
   //! Constructor
-  omplPRMPlanner::omplPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              omplPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+  omplPRMPlanner::omplPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+              omplPlanner(stype, init, goal, samples, ws)
   {
         _guiName = "ompl PRM Planner";
         _idName = "omplPRM";
@@ -460,10 +460,10 @@ namespace Kautham {
         addParameter("MinGrowTime", _MinGrowTime);
         addParameter("MinExpandTime", _MinExpandTime);
 
-        addParameter("samplerUsed", _samplerUsed);//defaulted to 0 (Random)
+        addParameter("Sampler 0(r) 1(h) 2(sdk) 3(g) 4(gl)", _samplerUsed);//defaulted to 0 (Random)
 
         //set the connectionFilter_
-        double _distanceThreshold = _stepSize * mymagic::DISTANCE_THRESHOLD_FACTOR;
+        double _distanceThreshold = 0.1 * mymagic::DISTANCE_THRESHOLD_FACTOR;//default value
         addParameter("DistanceThreshold", _distanceThreshold);
         planner->as<myPRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, planner));
 
@@ -551,7 +551,7 @@ namespace Kautham {
         else
           return false;
 
-        it = _parameters.find("samplerUsed");
+        it = _parameters.find("Sampler 0(r) 1(h) 2(sdk) 3(g) 4(gl)");
         if(it != _parameters.end()){
             setSamplerUsed(it->second);
          }

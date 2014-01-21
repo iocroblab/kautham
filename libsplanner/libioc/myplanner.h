@@ -47,7 +47,7 @@
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 #include "localplanner.h"
-#include "planner.h"
+#include "iocplanner.h"
 
 using namespace std;
 
@@ -56,10 +56,10 @@ namespace Kautham {
  *  @{
  */
   namespace IOC{
-    class MyPlanner:public Planner {
+    class MyPlanner:public iocPlanner {
 	    public:
         MyPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+          WorkSpace *ws);
         ~MyPlanner();
         
 		bool trySolve();

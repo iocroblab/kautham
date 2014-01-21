@@ -52,7 +52,7 @@
 		class PRMHandPlanner:public PRMPlanner{
     public:
 			PRMHandPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloundSize, KthReal cloudRad);
+          WorkSpace *ws,  int cloundSize, KthReal cloudRad);
 			~PRMHandPlanner();
       bool            setParameters();
 	  void            saveData();

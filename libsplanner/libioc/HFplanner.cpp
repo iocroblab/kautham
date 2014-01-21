@@ -52,8 +52,8 @@ namespace Kautham {
  */
   namespace IOC{
 	//! Constructor
-    HFPlanner::HFPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              gridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    HFPlanner::HFPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
+              gridPlanner(stype, init, goal, samples, sampler, ws)
 	{
 		//set intial values
 	  
@@ -69,7 +69,6 @@ namespace Kautham {
 		addParameter("(1)dirichlet (0)neumann", _dirichlet);
 		_goalPotential=-1000;
         addParameter("Goal potential", _goalPotential);
-		_stepSize=1.0;
 
     }
 

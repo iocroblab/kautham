@@ -59,8 +59,8 @@ namespace Kautham {
 //! Namespace IOC contains the planners developed at the IOC
   namespace IOC{
 
-    gridPlanner::gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    gridPlanner::gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
+              iocPlanner(stype, init, goal, samples, sampler, ws)
 	{
 		//set intial values
 		_obstaclePotential = 10.0;
@@ -71,8 +71,7 @@ namespace Kautham {
 		_speedFactor = 1;
 		_solved = false;
 	  
-		_guiName = "Grid Planner";
-		addParameter("Step Size", ssize);
+        _guiName = "Grid Planner";
 		addParameter("Speed Factor", _speedFactor);
         addParameter("Max. Samples", _maxNumSamples);
         addParameter("Show labels (0/1)", _showLabels);
@@ -88,10 +87,10 @@ namespace Kautham {
 			step+=_stepsDiscretization[i];
 		}
 
-		//setStepSize(ssize);//also changes stpssize of localplanner
-		setStepSize(1/step);//also changes stpssize of localplanner
+        _locPlanner->setStepSize(1/step);
 
-		//set max samples
+
+        //set max samples
 		_maxNumSamples = 1;
 		for(int i=0; i<_wkSpace->getDimension();i++){
 			_maxNumSamples = _maxNumSamples * _stepsDiscretization[i];

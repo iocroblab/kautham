@@ -45,7 +45,6 @@
 #define _PROBLEM_H
 
 #include <libsplanner/planner.h>
-#include <libsplanner/localplanner.h>
 #include <libsampling/sampling.h>
 #include "robot.h"
 #include "ivworkspace.h"
@@ -75,12 +74,8 @@ namespace Kautham {
     //! This method is deprecated. Please take care with the problem XML file.
     //bool			              createWSpace(ProbStruc *reader);
 
-    static string           plannersNames();
     bool                    createPlanner(string name, KthReal step = 0.05);
     bool                    createPlannerFromFile(string path);
-    static string           localPlannersNames();
-    bool                    createLocalPlanner(string name, KthReal step = 0.5);
-    bool                    createLocalPlannerFromFile(string path);
     bool                    createCSpace();
     bool                    createCSpaceFromFile(string xml_doc);
     bool                    tryToSolve();
@@ -89,11 +84,9 @@ namespace Kautham {
     void                    setHomeConf(Robot* rob, HASH_S_K* param);
 		void			              setStartConf(Robot* rob, HASH_S_K* param);
     void			              setGoalConf(Robot* rob, HASH_S_K* param);
-    void                    setLocalPlanner(LocalPlanner* loc){if(_locPlanner==NULL)_locPlanner = loc;}
     void                    setPlanner(Planner* plan){if(_planner==NULL)_planner = plan;}
     inline vector<Conf*>*		startConf(){return &_qStart;}
     inline vector<Conf*>*		GoalConf(){return &_qGoal;}
-    inline LocalPlanner*    getLocalPlanner(){return _locPlanner;}
     inline Planner*         getPlanner(){return _planner;}
     inline SampleSet*       getSampleSet(){return _cspace;}
     inline Sampler*         getSampler(){return _sampler;}
@@ -110,6 +103,7 @@ namespace Kautham {
     //! problem file and adds the planner's attributes.
     bool                    saveToFile(string file_path = "");
   
+
   private:
     const static KthReal    _toRad;
     WorkSpace*              _wspace;
@@ -119,7 +113,6 @@ namespace Kautham {
     SampleSet*              _cspace;
     Sampler*                _sampler;
     Planner*                _planner;
-    LocalPlanner*           _locPlanner;
     vector<KthReal>         _currentControls;
     string                  _filePath;
 	};

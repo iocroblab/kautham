@@ -289,12 +289,12 @@ namespace Kautham {
    /////////////////////////////////////////////////////////////////////////////////////////////////
 
     //! Constructor
-    omplcPlanner::omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    omplcPlanner::omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+              Planner(stype, init, goal, samples, ws)
     {
+        _family = "omplc";
         //set intial values from parent class data
         _speedFactor = 1;
-        _stepSize = ssize;
         _solved = false;
         _guiName = "omplc Planner";
         _idName = "omplc Planner";
@@ -304,7 +304,6 @@ namespace Kautham {
 
         //add planner parameters
         addParameter("Max Planning Time", _planningTime);
-        addParameter("Step Size", ssize);
         addParameter("Speed Factor", _speedFactor);
 
         //Construct the state space we are planning in. It is a compound state space composed of a compound state space for each robot

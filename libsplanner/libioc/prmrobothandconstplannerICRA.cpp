@@ -60,8 +60,8 @@
   namespace IOC{
 		
   PRMRobotHandConstPlannerICRA::PRMRobotHandConstPlannerICRA(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-           WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloudSize, KthReal cloudRad)
-      :PRMHandPlanner(stype, init, goal, samples, sampler, ws, lcPlan,  ssize, cloudSize,  cloudRad)
+           WorkSpace *ws, int cloudSize, KthReal cloudRad)
+      :PRMHandPlanner(stype, init, goal, samples, sampler, ws,  cloudSize,  cloudRad)
 	{
     _idName = "PRM RobotHand-Const ICRA";
     _sampletimeok = 0;
@@ -81,6 +81,14 @@
 
     //_numberSamples = numSam;
     //addParameter("Number Samples", _numberSamples);
+
+
+    //change the linear loc plan defined in class prm with the constrained one
+    //default ssize = 0.05
+    KthReal ssize = 0.05;
+    addParameter("Step Size", ssize);
+    _locPlanner =  new ConstLinearLocalPlanner(CONTROLSPACE, NULL,NULL, _wkSpace, ssize);
+
     _constrained = 1; //0:no constaints, 1:spherical constraints; 2: nothing yet
     addParameter("Consider Constraints",_constrained);
     if(_constrained==0) ((ConstLinearLocalPlanner*)_locPlanner)->setConstrained(false);
@@ -943,7 +951,7 @@
             for(unsigned int i = 0; i < _path.size()-1; i++) {
            
               dist = wkSpace()->distanceBetweenSamples(*_path.at(i), *_path.at(i+1), Kautham::CONFIGSPACE);
-              maxsteps = (dist/_stepSize) + 2; //the 2 is necessary to always reduce the distance...???
+              maxsteps = (dist/_locPlanner->stepSize()) + 2; //the 2 is necessary to always reduce the distance...???
 			      
               _wkSpace->getRobot(0)->Kinematics(_path[i]->getMappedConf().at(0).getRn());
               std::vector<KthReal> tmpcoordTCP7; tmpcoordTCP7.resize(7);

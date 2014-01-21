@@ -64,7 +64,6 @@ void Application::initApp(){
 	appState = INITIAL ;
   _problem = NULL;
   _planner = NULL;
-  _localPlanner = NULL;
 }
 
 Application::~Application() {
@@ -78,12 +77,12 @@ void Application::setActions(){
 	mainWindow->addSeparator(TOOLBAR);
 
   // Creating the planner toolbar in the main Window. This list may change.
-  string loc = Problem::localPlannersNames();
-  string glob = Problem::plannersNames();
+  //string loc = Problem::localPlannersNames();
+  //string glob = Problem::plannersNames();
 
 
-  mainWindow->createPlannerToolBar(loc, glob,this,SLOT(changePlanner(string,string)));
-  mainWindow->setToogleAction(ACTIONTOOL,"&Find path","CTRL+F",":/icons/prm.xpm",mainWindow,SLOT(showPlannerToolBar()));
+  //mainWindow->createPlannerToolBar(loc, glob,this,SLOT(changePlanner(string,string)));
+  //mainWindow->setToogleAction(ACTIONTOOL,"&Find path","CTRL+F",":/icons/prm.xpm",mainWindow,SLOT(showPlannerToolBar()));
   mainWindow->addSeparator(TOOLBAR);
   mainWindow->addSeparator(ACTIONMENU);
 
@@ -184,26 +183,6 @@ void Application::closeProblem(){
   }
   mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
-
-
-void Application::changePlanner(string loc, string glob){
-  mainWindow->setCursor(QCursor(Qt::WaitCursor));
-  if(_problem != NULL){
-    if(_problem->getPlanner() != NULL){
-      string name = _problem->getPlanner()->getGuiName();
-      mainWindow->removePropTab(name);
-    }
-
-    _problem->createLocalPlanner(loc);
-    _problem->createPlanner(glob);
-
-    mainWindow->addPlanner(_problem->getPlanner(), _problem->getSampleSet(), mainWindow);
-  }
-  mainWindow->setCursor(QCursor(Qt::ArrowCursor));
-}
-
-
-
 
 
 bool Application::problemSetup(string path){

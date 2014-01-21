@@ -50,7 +50,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include "localplanner.h"
-#include "planner.h"
+#include "iocplanner.h"
 
 using namespace std;
 using namespace boost;
@@ -108,11 +108,11 @@ namespace Kautham {
 	//!associated to the vertices, and a subgraph that contains only those free.
 	//!Its derived classes must implement the trysolve function to implement any grid-based 
 	//!planning method .
-    class gridPlanner:public Planner {
+    class gridPlanner:public iocPlanner {
 	    public:
 		//!Constructor
         gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+          WorkSpace *ws);
         ~gridPlanner();
         
 		//!Abstract class to be implemented by the derived classes with planning methods based on grids

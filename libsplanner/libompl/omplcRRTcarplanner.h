@@ -69,8 +69,7 @@ namespace Kautham {
   namespace omplcplanner{
     class omplcRRTcarPlanner:public omplcPlanner {
 	    public:
-        omplcRRTcarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+        omplcRRTcarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
         ~omplcRRTcarPlanner();
 
         bool setParameters();

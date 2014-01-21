@@ -51,7 +51,7 @@
 	class PRMHandPlannerICRA:public PRMHandPlanner{
 		public:
 			PRMHandPlannerICRA(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-				WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int numSam, int cloundSize, KthReal cloudRad, int numHC);
+                WorkSpace *ws,int numSam, int cloundSize, KthReal cloudRad, int numHC);
 	  
 			~PRMHandPlannerICRA();
       

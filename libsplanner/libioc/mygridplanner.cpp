@@ -53,8 +53,8 @@ namespace Kautham {
  */
   namespace IOC{
 	//! Constructor
-    MyGridPlanner::MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              gridPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    MyGridPlanner::MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
+              gridPlanner(stype, init, goal, samples, sampler, ws)
 	{
 		//set intial values
 		_firstParameter = 10;
@@ -75,13 +75,7 @@ namespace Kautham {
 	//! setParameters sets the parameters of the planner
     bool MyGridPlanner::setParameters(){
       try{
-        HASH_S_K::iterator it = _parameters.find("Step Size");
-		if(it != _parameters.end())
-			setStepSize(it->second);//also changes stpssize of localplanner
-        else
-          return false;
-
-        it = _parameters.find("Speed Factor");
+        HASH_S_K::iterator it  = _parameters.find("Speed Factor");
         if(it != _parameters.end())
           _speedFactor = it->second;
         else
@@ -113,32 +107,7 @@ namespace Kautham {
 		bool MyGridPlanner::trySolve()
 		{
 			cout << "MyGridPlanner::trySolve - now a simple rectilinear connection without collision checking..."<<endl<<flush;
-			/*
-			The available resorces to implement your planner are:
-			1) Grid represented as a graph, already created in parent class gridplanner. It contains
-				both free and collision samples.
 
-			2) setPotential(int i, KthReal value) and getPotential(int i): functions to set and get the values of 
-				the potential function.
-
-			3) As a derived class from planner, also the following is available:
-				3a) A sampler to obtain more samples:
-					Sample *smp;
-					smp = _sampler->nextSample();
-			      or a way to determine new sample at a given configuration, e.g.:
-					Sample *smp = new Sample();
-					KthReal* coords = new KthReal[_wkSpace->getDimension()];
-					for(int k = 0; k < _wkSpace->getDimension(); k++) coords[k] = 0.0;
-					smp->setCoords(coords);
-
-			   3b) A collision-checker to check for collision at a given sample smp:
-					_wkSpace->collisionCheck(smp)
-
-			   3c) A local planner to connect two samples
-					_locPlanner->canConect();
-
-			The solution must be specified as a sequence of samples (vector _path)
-		  	*/
 
 			
 			_path.clear();

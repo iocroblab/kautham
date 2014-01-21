@@ -59,8 +59,7 @@ namespace Kautham {
   namespace IOC{
     class MyPRMPlanner:public PRMPlanner {
 	    public:
-        MyPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+        MyPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws);
         ~MyPRMPlanner();
 
 		bool trySolve();
