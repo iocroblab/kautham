@@ -42,8 +42,6 @@
 #include "problem.h"
 
 
-#include <libsplanner/linearlocplan.h>
-#include <libsplanner/constlinearlocplan.h>
 
 #include <libpugixml/pugixml.hpp>
 #include <string>
