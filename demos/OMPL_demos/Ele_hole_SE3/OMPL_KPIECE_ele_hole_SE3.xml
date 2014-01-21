@@ -16,8 +16,6 @@
 	<Planner>
 		<Parameters>
                         <Name>omplKPIECE</Name>
-                        <LocalPlanner stepSize="1">Linear</LocalPlanner>
-                        <Parameter name="Step Size">1</Parameter>
                         <Parameter name="Max Planning Time">20.0</Parameter>
                         <Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Range">10.0</Parameter>

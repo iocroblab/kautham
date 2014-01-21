@@ -149,8 +149,7 @@ namespace Kautham {
     class omplPlanner:public Planner {
 	    public:
         //Add public data and functions
-        omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+        omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
         ~omplPlanner();
         
         bool trySolve();//reimplemented

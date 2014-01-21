@@ -23,8 +23,8 @@ using namespace std;
   namespace IOC{
 		
 	PRMPCAHandArmPlanner::PRMPCAHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-           WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize,int cloudSize, int samplingV, KthReal cloudRad, int samplingR,float distgoal,float distsamplingpcagoal)
-      :PRMHandPlanner(stype, init, goal, samples, sampler, ws, lcPlan,  ssize, cloudSize,  cloudRad)
+           WorkSpace *ws, int cloudSize, int samplingV, KthReal cloudRad, int samplingR,float distgoal,float distsamplingpcagoal)
+      :PRMHandPlanner(stype, init, goal, samples, sampler, ws,  cloudSize,  cloudRad)
 	{
 		_idName = "PRMPCA HandArm";
         _guiName = "PRMPCA HandArm";
@@ -73,7 +73,7 @@ using namespace std;
       try{
         HASH_S_K::iterator it = _parameters.find("Step Size");
         if(it != _parameters.end())
-			setStepSize(it->second);//also changes stpssize of localplanner
+            _locPlanner->setStepSize(it->second);
         else
           return false;
 

@@ -60,7 +60,7 @@ namespace Kautham {
     class MyGridPlanner:public gridPlanner {
 	    public:
         MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+          WorkSpace *ws);
         ~MyGridPlanner();
         
 		bool trySolve();

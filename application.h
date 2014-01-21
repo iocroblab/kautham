@@ -74,7 +74,6 @@ public slots:
   void              saveFile();
   void              saveAsFile();
   void              closeProblem();
-  void              changePlanner(string loc, string glob);
 private:
   void              initApp();
   void              setActions();
@@ -83,8 +82,6 @@ private:
   GUI*              mainWindow;
   PROBLEMSTATE      appState;
   Planner*          _planner;
-  LocalPlanner*     _localPlanner;
-  //MouseJump*        _mJumpApp;
 };
 
 #endif  //_APPLICATION_H

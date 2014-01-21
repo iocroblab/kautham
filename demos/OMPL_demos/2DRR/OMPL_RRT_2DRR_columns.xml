@@ -10,11 +10,10 @@
 	<Planner>
 		<Parameters>
                         <Name>omplRRT</Name>
-                        <LocalPlanner stepSize="0.05">Linear</LocalPlanner>
-                        <Parameter name="Step Size">0.05</Parameter>
                         <Parameter name="Max Planning Time">1.0</Parameter>
                         <Parameter name="Speed Factor">1</Parameter>
                         <Parameter name="Range">0.05</Parameter>
+		        <Parameter name="Goal Bias">0.05</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>

@@ -26,7 +26,7 @@
 	<Planner>
 		<Parameters>
 			<Name>PRMAURO HandArm</Name>
-			<LocalPlanner stepSize="0.2">Linear</LocalPlanner>
+			<Parameter name="Step Size">0.2"</Parameter>
 			<Parameter name="Cloud Exhaustive">0</Parameter>
 			<Parameter name="Cloud Radius">30</Parameter>
 			<Parameter name="Cloud Radius Max">300</Parameter>
@@ -37,7 +37,6 @@
 			<Parameter name="Max. Samples">3000</Parameter>
 			<Parameter name="Ratio Hand/Arm Conf">10</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
-			<Parameter name="Step Size">0.200000003</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>

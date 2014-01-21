@@ -58,8 +58,8 @@ namespace Kautham {
   namespace omplplanner{
 
     //! Constructor
-    omplSBLPlanner::omplSBLPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              omplPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    omplSBLPlanner::omplSBLPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+              omplPlanner(stype, init, goal, samples, ws)
     {
         _guiName = "ompl SBL Planner";
         _idName = "omplSBL";

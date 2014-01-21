@@ -57,8 +57,8 @@ namespace Kautham {
   namespace omplplanner{
 
 	//! Constructor
-    omplLazyRRTPlanner::omplLazyRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              omplPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    omplLazyRRTPlanner::omplLazyRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+              omplPlanner(stype, init, goal, samples, ws)
 	{
         _guiName = "ompl Lazy RRT Planner";
         _idName = "omplLazyRRT";

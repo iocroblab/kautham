@@ -57,8 +57,8 @@
   namespace IOC{
 	
 	PRMAUROHandArmPlanner::PRMAUROHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-           WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloudSize, KthReal cloudRad, int numHC)
-      :PRMHandPlanner(stype, init, goal, samples, sampler, ws, lcPlan,  ssize, cloudSize,  cloudRad)
+           WorkSpace *ws, int cloudSize, KthReal cloudRad, int numHC)
+      :PRMHandPlanner(stype, init, goal, samples, sampler, ws, cloudSize,  cloudRad)
 	{
 		_idName = "PRMAURO HandArm";
         _guiName = "PRMAURO HandArm";
@@ -88,7 +88,7 @@
       try{
         HASH_S_K::iterator it = _parameters.find("Step Size");
         if(it != _parameters.end())
-			setStepSize(it->second);//also changes stpssize of localplanner
+            _locPlanner->setStepSize(it->second);
         else
           return false;
 

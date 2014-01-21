@@ -19,8 +19,6 @@
 	<Planner>
 		<Parameters>
                         <Name>omplPRMV1</Name>
-                        <LocalPlanner stepSize="1">Linear</LocalPlanner>
-			<Parameter name="Step Size">5</Parameter>
 			<Parameter name="Max Planning Time">1.0</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
                         <Parameter name="MaxNearestNeighbors">10</Parameter>

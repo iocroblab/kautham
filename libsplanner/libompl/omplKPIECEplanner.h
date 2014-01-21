@@ -65,8 +65,7 @@ namespace Kautham {
 
     class omplKPIECEPlanner:public omplPlanner {
         public:
-        omplKPIECEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+        omplKPIECEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
         ~omplKPIECEPlanner();
 
         bool setParameters();

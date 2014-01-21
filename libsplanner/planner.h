@@ -48,9 +48,7 @@
 #include <libsampling/sampling.h>
 #include <cmath>
 #include <string>
-#include "localplanner.h"
 #include <mt/transform.h>
-#include "kthquery.h"
 
 using namespace std;
 
@@ -60,9 +58,8 @@ namespace Kautham {
  */
 
   class Planner: public KauthamObject{
-	public:
-    Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-      WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+    public:
+    Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
 
     ~Planner();
     virtual bool                  trySolve()=0;
@@ -70,27 +67,8 @@ namespace Kautham {
     virtual void                  moveAlongPath(unsigned int step);
     virtual bool                  solveAndInherit();
 
-    //! This is a simple save method to store the samples set. It should be overload in the
-    //! derived class in order to save the connectivity and the solutions if exists. The
-    //! data is saved in a KPS (Kautham Planner Solution)file using xml format. For an
-    //! example see /libplanner/output_file_model.kps
-    virtual bool                  saveData(string path);
-
-    //! This functions provides the user to save any interested data in a convenient way. 
-    //! Data saved using this method can not be loaded by the loadData method. This function
-    //! is called when the standard saveData method is finishing.
-    virtual void                  saveData();
-
-    //! This method is a simple load method to restore the samples set. It should be
-    //! overload in the derived class in order to load the connectivity and the solutions
-    //! if exists.  The
-    //! data is saved in a KPS (Kautham Planner Solution)file using xml format. For an
-    //! example see /libplanner/output_file_model.kps
-    virtual bool                  loadData(string path);
 
     inline string                 getIDName(){return _idName;}
-    inline void                   setSampler(Sampler* smp){_sampler = smp;}
-    inline Sampler*               getSampler(){return _sampler;}
     inline void                   setSampleSet(SampleSet* smpSet){_samples = smpSet;}
     inline Sample*                initSamp(){return _init;}
     inline Sample*                goalSamp(){return _goal;}
@@ -98,14 +76,10 @@ namespace Kautham {
     inline void                   setGoalSamp(Sample* goal){_goal = goal;}
     inline WorkSpace*             wkSpace(){return _wkSpace;}
     inline void                   setWorkSpace(WorkSpace *ws){_wkSpace = ws;}
-    inline LocalPlanner*          lcPlanner(){return _locPlanner;}
-    inline void                   setLocalPlanner(LocalPlanner *lcPlan){_locPlanner = lcPlan;}
-    inline KthReal                stepSize(){return _stepSize;}
-    inline void                   setStepSize(KthReal step){_stepSize = step; _locPlanner->setStepSize(step);}
+
     inline vector<Sample*>*       getPath(){if(_solved)return &_path;else return NULL;}
     inline int                    getSpeedFactor(){return _speedFactor;}
     inline void                   setSpeedFactor(int sf){_speedFactor = sf;}
-    inline long int               getMaxNumSamples(){return _maxNumSamples;}
     void                          clearSimulationPath();
     inline bool                   isSolved(){return _solved;}
     inline vector<Sample*>*       getSimulationPath(){if(_solved)return &_simulationPath;else return NULL;}
@@ -121,22 +95,15 @@ namespace Kautham {
     }
     void                           exportSimulationPath();
 
-    inline vector<KthQuery>&       getQueries(){return _queries;}
-    bool                           addQuery(int init, int goal );
-    int                            findQuery(int init, int goal, int from = 0);
 
 	  virtual inline SoSeparator*    getIvCspaceScene(){return _sceneCspace;};//_sceneCspace is initiallized to NULL
 
-    //!  This method must be used to add samples that corresponds with the 
-    //! zero crossing point in case the planner will provide a path to be 
-    //! teleoperated and it must have the possibility to crossing singular points.
-    void                           addZeroCrossingToPath();
+    inline long int               getMaxNumSamples(){return _maxNumSamples;}
+    inline string getFamily(){return _family;};
 
 	protected:
     Planner();
-    vector<KthQuery>              _queries;
     std::string                   _idName;
-    Sampler*                      _sampler;
     SampleSet*                    _samples;
     Sample*                       _init;
     Sample*                       _goal;
@@ -144,23 +111,16 @@ namespace Kautham {
     vector<Sample*>               _simulationPath;
     vector<mt::Transform>         _cameraPath;
     WorkSpace*                    _wkSpace;
-    LocalPlanner*                 _locPlanner;
-    KthReal                       _stepSize;
     bool                          _solved;
     SPACETYPE                     _spType;
     int                           _speedFactor;
     bool                          _hasCameraInformation;
+    unsigned int                  _maxNumSamples;
+    string                        _family;
 	
 	  SoSeparator*                  _sceneCspace;
 
-    // Stats
-    unsigned int                  _collChecks;
-    unsigned int                  _worldcollChecks;
-    unsigned int                  _maxNumSamples;
-    unsigned int                  _triedSamples;
-    unsigned int                  _generatedEdges;
-    KthReal                       _totalTime;
-    KthReal                       _smoothTime;
+
 
 
 	};

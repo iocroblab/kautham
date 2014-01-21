@@ -65,8 +65,7 @@ namespace Kautham {
 
     class omplTRRTPlanner:public omplPlanner {
 	    public:
-        omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+        omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
         ~omplTRRTPlanner();
 
         bool setParameters();

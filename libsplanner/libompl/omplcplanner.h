@@ -202,8 +202,7 @@ namespace Kautham {
     //! This class is the base class for all the kautham planners that use the ompl::control planners.
     class omplcPlanner:public Planner {
 	    public:
-        omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+        omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
         ~omplcPlanner();
         
 		bool trySolve();

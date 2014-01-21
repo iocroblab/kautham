@@ -25,8 +25,9 @@ namespace Kautham {
  *  @{
  */
   namespace IOC{
-    PRMPlanner::PRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize){
+        PRMPlanner::PRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
+        iocPlanner(stype, init, goal, samples, sampler, ws){
+
 
       _guiName = _idName = "PRM";
       _neighThress = 1.5;//0.5//50000.0;
@@ -35,7 +36,9 @@ namespace Kautham {
         _maxNumSamples = 300;//1000;
         _speedFactor = 1;
         _solved = false;
-        setStepSize(ssize);//also changes stpssize of localplanner
+
+
+
       _drawnLink = -1; //the path of last link is defaulted
       _probabilityConnectionIniGoal = 0.1;
 
@@ -50,7 +53,12 @@ namespace Kautham {
       //default gaussian
       _samplertype = 5;
       setsampler(_samplertype);
+
+      //default ssize = 0.05
+
+      KthReal ssize = 0.05;
       addParameter("Step Size", ssize);
+
       addParameter("Sampler 1(sdk),2(h),3(g),4(gl),5(r)", _samplertype);
       addParameter("Neigh Thresshold", _neighThress);
       addParameter("Max. Neighs", _kNeighs);
@@ -80,7 +88,7 @@ namespace Kautham {
       try{
         HASH_S_K::iterator it = _parameters.find("Step Size");
         if(it != _parameters.end())
-                setStepSize(it->second);//also changes stpssize of localplanner
+                _locPlanner->setStepSize(it->second);
         else
           return false;
 
@@ -283,7 +291,7 @@ namespace Kautham {
     bool PRMPlanner::saveData(string path){
       //  First the Planner method is invoked to store the planner's
       //  parameters and the samples in sample set.
-      if(Planner::saveData(path)){
+      if(iocPlanner::saveData(path)){
 
         //  Then, the saved file is loaded again in order to appending
         //  the planner own information
@@ -335,7 +343,7 @@ namespace Kautham {
     bool PRMPlanner::loadData(string path){
       // First, the current graph is reset.
       clearGraph();
-      if(Planner::loadData(path)){
+      if(iocPlanner::loadData(path)){
         //  If it is correct, the planner has loaded the
         //  SampleSet with the that samples from the file.
         xml_document doc;
@@ -369,6 +377,48 @@ namespace Kautham {
       {  // Put here the code you want in order to save your data in an informal way.
 
       }
+
+
+      void PRMPlanner::moveAlongPath(unsigned int step){
+        if(_solved){
+          if(_simulationPath.size() == 0 ){ // Then calculate the simulation path based on stepsize
+                char sampleDIM = _path[0]->getDim();
+            unsigned int maxsteps = 0;
+            Sample *tmpSam;
+            KthReal dist = ( KthReal )0.0;
+            vector<KthReal> tmpCoords( sampleDIM );
+
+            if(_path.size() >= 2 ){
+              for(unsigned i = 0; i < _path.size()-1; i++){
+                dist = wkSpace()->distanceBetweenSamples(*_path.at(i), *_path.at(i+1), Kautham::CONFIGSPACE);
+
+                    //maxsteps = (int)(dist/_stepSize) + 2; //the 2 is necessary to always reduce the distance...???
+                    maxsteps = (int)(dist/_locPlanner->stepSize()) + 1;
+
+                    //if(maxsteps>100)
+                    //{
+                    //    dist = wkSpace()->distanceBetweenSamples(*_path.at(i), *_path.at(i+1), Kautham::CONFIGSPACE);
+                    //    maxsteps = 2;
+                    //}
+                for(unsigned int j = 0; j < maxsteps; j++){
+                        tmpSam = _path[i]->interpolate( _path[i+1], j/(KthReal)maxsteps );
+                        _simulationPath.push_back(tmpSam);
+                }
+              }
+            }
+                tmpSam = new Sample(*_path.at(_path.size()-1));
+            _simulationPath.push_back(tmpSam);
+            _wkSpace->moveRobotsTo(_simulationPath[0]);
+          }
+          if( _simulationPath.size() >= 2 ){
+            step = step % _simulationPath.size();
+            _wkSpace->moveRobotsTo(_simulationPath[step]);
+          }else
+            std::cout << "The problem is wrong solved. The solution path has less than two elements." << std::endl;
+        }
+      }
+
+
 
     //!function that constructs the PRM and finds a solution path
     bool PRMPlanner::trySolve(){

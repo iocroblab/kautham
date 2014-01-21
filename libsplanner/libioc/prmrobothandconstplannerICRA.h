@@ -51,7 +51,7 @@
   class PRMRobotHandConstPlannerICRA:public PRMHandPlanner{
 		public:
       PRMRobotHandConstPlannerICRA(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-				WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloundSize, KthReal cloudRad);
+                WorkSpace *ws,  int cloundSize, KthReal cloudRad);
 	  
       ~PRMRobotHandConstPlannerICRA();
       

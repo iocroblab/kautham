@@ -66,7 +66,7 @@ namespace Kautham {
     class HFPlanner:public gridPlanner {
 	    public:
         HFPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+          WorkSpace *ws);
         ~HFPlanner();
         
 		bool trySolve();

@@ -29,8 +29,6 @@
 	<Planner>
                 <Parameters>
                 <Name>omplRRT</Name>
-                <LocalPlanner stepSize="10">Linear</LocalPlanner>
-                <Parameter name="Step Size">0.5</Parameter>
                 <Parameter name="Max Planning Time">300.0</Parameter>
                 <Parameter name="Range">0.5</Parameter>
                 <Parameter name="Speed Factor">10</Parameter>

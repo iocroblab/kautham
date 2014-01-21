@@ -69,8 +69,7 @@ namespace Kautham {
 
     class omplPRMPlanner:public omplPlanner {
 	    public:
-         omplPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+         omplPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
          ~omplPRMPlanner();
 
          bool setParameters();

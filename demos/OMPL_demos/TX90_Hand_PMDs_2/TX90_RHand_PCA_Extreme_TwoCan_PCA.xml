@@ -29,8 +29,6 @@
 	<Planner>
 		<Parameters>
 			<Name>PRMPCA HandArm</Name>
-			<LocalPlanner stepSize="0.05">Linear</LocalPlanner>
-			<Parameter name="Lambda">3.0</Parameter>
 			<Parameter name="Distance Goal">150</Parameter>
 			<Parameter name="Distance Sampling PCA Goal">50</Parameter>
 			<Parameter name="Drawn Path Link">-1</Parameter>

@@ -51,7 +51,7 @@
 	class PRMHandPlannerIROS:public PRMHandPlanner{
 		public:
 			PRMHandPlannerIROS(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-				WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize, int cloundSize, KthReal cloudRad);
+                WorkSpace *ws, int cloundSize, KthReal cloudRad);
 			~PRMHandPlannerIROS();
 			bool setParameters();
 			bool trySolve();

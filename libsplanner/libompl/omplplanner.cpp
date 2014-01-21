@@ -390,12 +390,12 @@ namespace Kautham {
   // omplPlanner functions
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //! Constructor
-  omplPlanner::omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-             Planner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+  omplPlanner::omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+             Planner(stype, init, goal, samples, ws)
     {
+      _family = "ompl";
         //set intial values from parent class data
         _speedFactor = 1;
-        _stepSize = ssize;
         _solved = false;
         _guiName = "ompl Planner";
         _idName = "ompl Planner";
@@ -407,7 +407,6 @@ namespace Kautham {
 
         //add planner parameters
         addParameter("Max Planning Time", _planningTime);
-        addParameter("Step Size", ssize);
         addParameter("Speed Factor", _speedFactor);
 
         //Construct the state space we are planning in. It is a compound state space composed of a compound state space for each robot
@@ -559,12 +558,6 @@ namespace Kautham {
         it = _parameters.find("Max Planning Time");
         if(it != _parameters.end())
             _planningTime = it->second;
-        else
-          return false;
-
-        it = _parameters.find("Step Size");
-        if(it != _parameters.end())
-             _stepSize = it->second;
         else
           return false;
 

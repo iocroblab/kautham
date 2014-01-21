@@ -53,8 +53,8 @@ namespace Kautham {
  */
   namespace IOC{
 	//! Constructor
-    MyPRMPlanner::MyPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize):
-              PRMPlanner(stype, init, goal, samples, sampler, ws, lcPlan, ssize)
+    MyPRMPlanner::MyPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
+              PRMPlanner(stype, init, goal, samples, sampler, ws)
 	{
 		//set intial values
 		_firstParameter = 10;
@@ -63,11 +63,9 @@ namespace Kautham {
 
 		//set intial values from parent class data
 		_speedFactor = 1;
-		_solved = false;
-		setStepSize(ssize);//also changes stpssize of localplanner
+        _solved = false;
 	  
-		_guiName = "My PRM Planner";
-		addParameter("Step Size", ssize);
+        _guiName = "My PRM Planner";
 		addParameter("Speed Factor", _speedFactor);
 		addParameter("First parameter", _firstParameter);
 		addParameter("Second parameter", _secondParameter);
@@ -83,13 +81,7 @@ namespace Kautham {
 	//! setParameters sets the parameters of the planner
     bool MyPRMPlanner::setParameters(){
       try{
-        HASH_S_K::iterator it = _parameters.find("Step Size");
-		if(it != _parameters.end())
-			setStepSize(it->second);//also changes stpssize of localplanner
-        else
-          return false;
-
-        it = _parameters.find("Speed Factor");
+        HASH_S_K::iterator it =  _parameters.find("Speed Factor");
         if(it != _parameters.end())
           _speedFactor = it->second;
         else

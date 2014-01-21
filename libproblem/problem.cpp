@@ -104,8 +104,7 @@ namespace Kautham {
 
   const KthReal Problem::_toRad = (KthReal)(M_PI/180.0);
   Problem::Problem() {
-		_wspace = NULL;
-    _locPlanner = NULL;
+        _wspace = NULL;
     _planner = NULL;
     _sampler = NULL;
     _cspace = new SampleSet();
@@ -113,12 +112,13 @@ namespace Kautham {
     _qStart.clear();
 		_qGoal.clear();
     _currentControls.clear();
+
+
 	}
 
   Problem::~Problem(){
       delete _cspace; //must be deleted first, if not the program crashes...
     delete _wspace;
-    delete _locPlanner;
     delete _planner;
     delete _sampler;
   }
@@ -489,51 +489,6 @@ namespace Kautham {
     }
 	}
 
-  string Problem::localPlannersNames(){
-    return "Linear|Const Linear|Manhattan Like";
-  }
-
-  bool Problem::createLocalPlanner(string name, KthReal step){
-    //if(_locPlanner != NULL)
-      delete _locPlanner;
-
-    if(name == "Const Linear")
-      _locPlanner = new ConstLinearLocalPlanner(CONTROLSPACE, NULL,NULL,
-                                           _wspace, step);
-
-    else if(name == "Linear")
-      _locPlanner = new LinearLocalPlanner(CONTROLSPACE, NULL,NULL,
-                                      _wspace, step);
-
-    if(_locPlanner != NULL)
-      return true;
-    else
-      return false;
-  }
-
-  
-  bool Problem::createLocalPlannerFromFile(string path){
-    xml_document doc;
-    xml_parse_result result = doc.load_file( path.c_str() );
-    if( result ){
-      xml_node locplanNode = doc.child("Problem").child("Planner").child("Parameters").child("LocalPlanner");
-
-      if(_locPlanner != NULL ) delete _locPlanner;
-
-      string name = locplanNode.child_value();
-      if( name != "" ){
-        createLocalPlanner(name, (KthReal)locplanNode.attribute("stepSize").as_double() );
-        return true;
-      }
-    }
-    return false;
-  }
-
-
-  string Problem::plannersNames(){
-   // return   "DRM|DRMPCA|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
-        return   "omplcRRT|omplEST|omplSBL|omplKPIECE|omplBKPIECE|omplcRRTcar|omplPRM|omplPRMV1|omplRRT|omplRRTV1|omplRRTConnect|DRM|PRM|PRM PCA|RRT|GUIBROgrid|PRM Hand IROS|PRM Hand ICRA|PRM Hand-Thumb ICRA|PRM RobotHand-Const ICRA|PRMAURO HandArm|PRMPCA HandArm |MyPlanner|MyPRMPlanner|MyGridPlanner|NF1Planner|HFPlanner";
-  }
 
 
 
@@ -541,7 +496,7 @@ namespace Kautham {
     if(_planner != NULL )
       delete _planner;
 
-    if(_locPlanner == NULL ) return false;
+
 
     Sample *sinit=NULL;
     Sample *sgoal=NULL;
@@ -556,124 +511,97 @@ namespace Kautham {
 
 #if defined(KAUTHAM_USE_IOC)
     else if(name == "PRM")
-      _planner = new IOC::PRMPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new IOC::PRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 
     else if(name == "PRM Hand IROS")
       _planner = new IOC::PRMHandPlannerIROS(CONTROLSPACE, sinit, sgoal,
-                                       _cspace, _sampler, _wspace, _locPlanner,
-                                       step, 5, (KthReal)0.001 );
+                                       _cspace, _sampler, _wspace, 5, (KthReal)0.001 );
     else if(name == "PRM Hand ICRA")
       _planner = new IOC::PRMHandPlannerICRA(CONTROLSPACE, sinit, sgoal,
-                                       _cspace, _sampler, _wspace, _locPlanner,
-                                       step, 100, 5, (KthReal)0.010, 5);
+                                       _cspace, _sampler, _wspace, 100, 5, (KthReal)0.010, 5);
 
      else if(name == "PRMAURO HandArm")
       _planner = new IOC::PRMAUROHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
-                                             _sampler, _wspace, _locPlanner,
-                                             step, 10, (KthReal)0.0010, 10);
+                                             _sampler, _wspace, 10, (KthReal)0.0010, 10);
 	
      else if(name == "PRM RobotHand-Const ICRA")
       _planner = new IOC::PRMRobotHandConstPlannerICRA(CONTROLSPACE, sinit, sgoal, _cspace,
-                                             _sampler, _wspace, _locPlanner,
-                                             step, 3, (KthReal)50.0);                                        
+                                             _sampler, _wspace, 3, (KthReal)50.0);
    	 else if(name == "MyPlanner")
-      _planner = new IOC::MyPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01); 
+      _planner = new IOC::MyPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 	  
 	 else if(name == "MyPRMPlanner")
-      _planner = new IOC::MyPRMPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
+      _planner = new IOC::MyPRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 	   
 	  else if(name == "MyGridPlanner")
-      _planner = new IOC::MyGridPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);	   
+      _planner = new IOC::MyGridPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 	   
 	   else if(name == "NF1Planner")
-      _planner = new IOC::NF1Planner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);  
+      _planner = new IOC::NF1Planner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 	   
 	   else if(name == "HFPlanner")
-      _planner = new IOC::HFPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
+      _planner = new IOC::HFPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 
 #if defined(KAUTHAM_USE_ARMADILLO)
-      //else if(name == "PRM PCA")
-      //   _planner = new PRMPlannerPCA(CONTROLSPACE, NULL, NULL,
-       //                        _cspace, _sampler, _wspace, _locPlanner, step,1,1);
 
     else if(name == "PRMPCA HandArm")
       _planner = new IOC::PRMPCAHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
-                                             _sampler, _wspace, _locPlanner,
-                                             step, 10,0, (KthReal)0.0010, 10,0.0,0.0);
+                                             _sampler, _wspace, 10,0, (KthReal)0.0010, 10,0.0,0.0);
 #endif
 #endif
 
 #if defined(KAUTHAM_USE_GUIBRO)
     else if(name == "GUIBROgrid")
       _planner = new GUIBRO::GUIBROgridPlanner(CONTROLSPACE, NULL, NULL,
-                               _cspace, _sampler, _wspace, _locPlanner, (KthReal)0.01);
+                               _cspace, _sampler, _wspace);
 #endif
 
 #if defined(KAUTHAM_USE_OMPL)
 
     else if(name == "omplDefault")
-      _planner = new omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplPRM")
-      _planner = new omplplanner::omplPRMPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplPRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplRRT")
-      _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplRRTStar")
-      _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplTRRT")
-      _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplpRRT")
-      _planner = new omplplanner::omplpRRTPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplpRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplLazyRRT")
-      _planner = new omplplanner::omplLazyRRTPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplLazyRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplRRTConnect")
-      _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplEST")
-      _planner = new omplplanner::omplESTPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplESTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplSBL")
-      _planner = new omplplanner::omplSBLPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplSBLPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplKPIECE")
-      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplBKPIECE")
-      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else if(name == "omplcRRT")
-      _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
     else if(name == "omplcRRTf16")
-      _planner = new omplcplanner::omplcRRTf16Planner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplcplanner::omplcRRTf16Planner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+
     else if(name == "omplcRRTcar")
-      _planner = new omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, sinit, sgoal,
-                               _cspace, _sampler, _wspace, _locPlanner, step);
+      _planner = new omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
     else
         cout<<"Planner "<< name <<" is unknow or not loaded (check the CMakeFiles.txt options)" << endl;
@@ -694,7 +622,7 @@ namespace Kautham {
       if( result ){
         //Create the planner and set the parameters
         xml_node planNode = doc.child("Problem").child("Planner").child("Parameters");
-        string name = planNode.child("Name").child_value();
+        string name = planNode.child("Name").child_value();        
 
         if( name != ""){
           if( createPlanner( name )){
@@ -708,8 +636,8 @@ namespace Kautham {
                 }
               }catch(...){
                 std::cout << "Current planner doesn't have at least one of the parameters" 
-                  << " you found in the file (" << name << ")." << std::endl; 
-                return false; //if it is wrong maybe the file has been generated with another planner.
+                  << " found in the file (" << name << ")." << std::endl;
+                //return false; //changed, let it continue -
               }
             }
             return true;
@@ -823,9 +751,10 @@ namespace Kautham {
     _filePath = xml_doc;
     if( createWSpace( xml_doc ) &&
         createCSpaceFromFile( xml_doc ) &&
-        createLocalPlannerFromFile( xml_doc ) &&
-        createPlannerFromFile( xml_doc ) )
-        return true;
+        createPlannerFromFile( xml_doc ))
+    {
+       return true;
+    }
     else
       return false;
   }
@@ -850,7 +779,7 @@ namespace Kautham {
     xml_parse_result result = doc.load_file( file_path.c_str() );
     if( !result ) return false;
 
-    if( _planner == NULL || _locPlanner == NULL ) return false;
+    if( _planner == NULL ) return false;
     if( _planner->initSamp() == NULL || _planner->goalSamp() == NULL ) 
       return false;
 
@@ -865,10 +794,7 @@ namespace Kautham {
     planname.set_name("Name");
     planname.append_child(node_pcdata).set_value(_planner->getIDName().c_str());
     
-    xml_node localPlan = paramNode.append_child();
-    localPlan.set_name("LocalPlanner");
-    localPlan.append_child(node_pcdata).set_value(_locPlanner->getIDName().c_str());
-    localPlan.append_attribute("stepSize") = _locPlanner->stepSize();
+
 
     // Adding the parameters
     string param = _planner->getParametersAsString();

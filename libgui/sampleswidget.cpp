@@ -230,8 +230,7 @@ namespace Kautham{
 			//if( _sampler != NULL )
 				delete _sampler;
 			_sampler = new RandomSampler(_ptProblem->wSpace()->getDimension());
-			_ptProblem->setSampler(_sampler);
-			_ptProblem->getPlanner()->setSampler(_sampler);
+            _ptProblem->setSampler(_sampler);
 		}
       
 		
@@ -239,16 +238,14 @@ namespace Kautham{
 			//if( _sampler != NULL )
 				delete _sampler;
 			_sampler = new SDKSampler(_ptProblem->wSpace()->getDimension(),2);
-			_ptProblem->setSampler(_sampler);
-			_ptProblem->getPlanner()->setSampler(_sampler);
+            _ptProblem->setSampler(_sampler);
 		}
 		
 		if( rbtnHalton->isChecked() && typeid(*_sampler) != typeid(HaltonSampler) ){
 			//if( _sampler != NULL )
 				delete _sampler;
 			_sampler = new HaltonSampler(_ptProblem->wSpace()->getDimension());
-			_ptProblem->setSampler(_sampler);
-			_ptProblem->getPlanner()->setSampler(_sampler);
+            _ptProblem->setSampler(_sampler);
 		}
 
 		
@@ -257,8 +254,7 @@ namespace Kautham{
 				delete _sampler;
 			//_sampler = new GaussianSampler(_ptProblem->wSpace()->getDimension());
 			_sampler = new GaussianSampler(_ptProblem->wSpace()->getDimension(),0.1,_ptProblem->wSpace());
-			_ptProblem->setSampler(_sampler);
-			_ptProblem->getPlanner()->setSampler(_sampler);
+            _ptProblem->setSampler(_sampler);
 		}
 
 		
@@ -266,8 +262,7 @@ namespace Kautham{
 			//if( _sampler != NULL )
 				delete _sampler;
 			_sampler = new GaussianLikeSampler(_ptProblem->wSpace()->getDimension(),2, _ptProblem->wSpace());
-			_ptProblem->setSampler(_sampler);
-			_ptProblem->getPlanner()->setSampler(_sampler);
+            _ptProblem->setSampler(_sampler);
 		}
   }
 

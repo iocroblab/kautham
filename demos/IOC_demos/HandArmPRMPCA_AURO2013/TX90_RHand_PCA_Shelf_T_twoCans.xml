@@ -26,7 +26,7 @@
 	<Planner>
 		<Parameters>
 			<Name>PRMPCA HandArm</Name>
-			<LocalPlanner stepSize="0.05">Linear</LocalPlanner>
+			<Parameter name="Step Size">0.05"</Parameter>
 			<Parameter name="Lambda">3.0</Parameter>
 			<Parameter name="Distance Goal">150</Parameter>
 			<Parameter name="Distance Sampling PCA Goal">50</Parameter>
@@ -36,7 +36,6 @@
 			<Parameter name="Num Sampling Free PCA">20</Parameter>
 			<Parameter name="Num Sampling Free RW">5</Parameter>
 			<Parameter name="Speed Factor">3</Parameter>
-			<Parameter name="Step Size">0.5000000075</Parameter>
 			<Parameter name="Sampling (0:PCA, 1:Gauss, 2:Bridge)">0</Parameter>
 		</Parameters>
 		<Queries>

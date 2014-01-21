@@ -50,7 +50,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/astar_search.hpp>
 #include "localplanner.h"
-#include "planner.h"
+#include "iocplanner.h"
 
 
 
@@ -117,11 +117,11 @@ namespace Kautham {
 
 
     //CLASS PRMPlanner
-    class PRMPlanner:public Planner
+    class PRMPlanner:public iocPlanner
     {
         public:
         PRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
-          WorkSpace *ws, LocalPlanner *lcPlan, KthReal ssize);
+          WorkSpace *ws);
         ~PRMPlanner();
             bool        setParameters();
 
@@ -136,6 +136,10 @@ namespace Kautham {
       bool        loadData(string path); // Overwriting the Planner::loadData(string) method.
             //void        setIniGoal();
             bool        trySolve();
+
+
+            //!overloaded
+        void moveAlongPath(unsigned int step);
 
         //!find path
         bool findPath();
@@ -157,6 +161,10 @@ namespace Kautham {
      void drawCspace();
 
         protected:
+
+
+
+
             vector<prmEdge*> edges;
       //!edge weights
       vector<cost> weights;

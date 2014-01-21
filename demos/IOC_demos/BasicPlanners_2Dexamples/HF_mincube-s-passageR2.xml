@@ -16,7 +16,6 @@
 	<Planner>
 		<Parameters>
 			<Name>HFPlanner</Name>
-			<LocalPlanner stepSize="0.05">Linear</LocalPlanner>
 			<Parameter name="Discr. Steps 0">30</Parameter>
 			<Parameter name="Discr. Steps 1">30</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>

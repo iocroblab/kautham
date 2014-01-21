@@ -46,6 +46,9 @@
 #include "libsampling/se3conf.h"
 #include "libsampling/robconf.h"
 
+#if defined(KAUTHAM_USE_IOC)
+#include "libsplanner/libioc/iocplanner.h"
+#endif
 
 namespace Kautham{
 /** \addtogroup libGUI
@@ -210,23 +213,29 @@ namespace Kautham{
 
   void PlannerWidget::tryConnect(){
     if(_planner != NULL ){
-      _planner->lcPlanner()->setInitSamp(_samples->getSampleAt(_spFrom->text().toInt()));
-      _planner->lcPlanner()->setGoalSamp(_samples->getSampleAt(_spTo->text().toInt()));
+        if(_planner->getFamily()=="ioc")
+        {
+            ((iocPlanner*)_planner)->getLocalPlanner()->setInitSamp(_samples->getSampleAt(_spFrom->text().toInt()));
+            ((iocPlanner*)_planner)->getLocalPlanner()->setGoalSamp(_samples->getSampleAt(_spTo->text().toInt()));
 	  
-	  KthReal d = _planner->lcPlanner()->distance(_samples->getSampleAt(_spFrom->text().toInt()),
+            KthReal d = ((iocPlanner*)_planner)->getLocalPlanner()->distance(_samples->getSampleAt(_spFrom->text().toInt()),
 												   _samples->getSampleAt(_spTo->text().toInt()));
-	  char str[30];
-	  sprintf(str,"Distance:  %f",d);
-      writeGUI(str);
-      if( _planner->lcPlanner()->canConect() ){
-        _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
-        writeGUI("The samples can be connected.");
-      }else{
-        _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/noconnect.xpm")));
-        writeGUI("The samples can NOT be connected.");
-      }
+            char str[30];
+            sprintf(str,"Distance:  %f",d);
+            writeGUI(str);
+            if( ((iocPlanner*)_planner)->getLocalPlanner()->canConect() ){
+                _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
+                writeGUI("The samples can be connected.");
+            }else{
+                _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/noconnect.xpm")));
+                writeGUI("The samples can NOT be connected.");
+            }
+
+        }
+        else  writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
     }else
       writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+
   }
 
   void PlannerWidget::getPathCall(){
@@ -248,42 +257,52 @@ namespace Kautham{
   }
 
   void PlannerWidget::saveDataCall(){
+
     if(_planner != NULL ){
-      QString path,dir;
-	    QDir workDir;
-      _gui->setCursor(QCursor(Qt::WaitCursor));
-      path = QFileDialog::getSaveFileName( _gui,
+        if(_planner->getFamily()=="ioc")
+        {
+            QString path,dir;
+            QDir workDir;
+            _gui->setCursor(QCursor(Qt::WaitCursor));
+            path = QFileDialog::getSaveFileName( _gui,
 		      "Save planner data as...", workDir.absolutePath(),
 		      "Kautham Planner Solution (*.kps)");
-      if(!path.isEmpty()){
-        sendText(QString("Kautham is saving a planner data in a file: " + path).toUtf8().constData() );
-        dir = path;
-        dir.truncate(dir.lastIndexOf("/"));
-        _planner->saveData(path.toUtf8().constData());
-      }
-      _gui->setCursor(QCursor(Qt::ArrowCursor));
-      setTable(_planner->getParametersAsString());      
+            if(!path.isEmpty()){
+                sendText(QString("Kautham is saving a planner data in a file: " + path).toUtf8().constData() );
+                dir = path;
+                dir.truncate(dir.lastIndexOf("/"));
+                ((iocPlanner*)_planner)->saveData(path.toUtf8().constData());
+            }
+            _gui->setCursor(QCursor(Qt::ArrowCursor));
+            setTable(_planner->getParametersAsString());
+         }
+        else  writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
     }
-  }
+}
 
   void PlannerWidget::loadDataCall(){
+
     if(_planner != NULL ){
-      QString path,dir;
-	    QDir workDir;
-      _gui->setCursor(QCursor(Qt::WaitCursor));
-      path = QFileDialog::getOpenFileName( _gui,
+        if(_planner->getFamily()=="ioc")
+        {
+            QString path,dir;
+            QDir workDir;
+            _gui->setCursor(QCursor(Qt::WaitCursor));
+            path = QFileDialog::getOpenFileName( _gui,
 		      "Load a file...", workDir.absolutePath(),
 		      "Kautham Planner Solution (*.kps)");
-      if(!path.isEmpty()){
-        sendText(QString("The solution file in " + path + " is being loaded.").toUtf8().constData() );
-        dir = path;
-        dir.truncate(dir.lastIndexOf("/"));
-        _planner->loadData(path.toUtf8().constData());
-        if( _planner->isSolved() ) btnMove->setEnabled(true);
-      }
-      _gui->setCursor(QCursor(Qt::ArrowCursor));
-      setTable(_planner->getParametersAsString());      
-    }
+            if(!path.isEmpty()){
+                sendText(QString("The solution file in " + path + " is being loaded.").toUtf8().constData() );
+                dir = path;
+                dir.truncate(dir.lastIndexOf("/"));
+                ((iocPlanner*)_planner)->loadData(path.toUtf8().constData());
+                if( _planner->isSolved() ) btnMove->setEnabled(true);
+            }
+            _gui->setCursor(QCursor(Qt::ArrowCursor));
+            setTable(_planner->getParametersAsString());
+            }
+        }
+        else  writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
   }
   
 

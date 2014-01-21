@@ -14,14 +14,13 @@
 	<Planner>
 		<Parameters>
 			<Name>PRM</Name>
-			<LocalPlanner stepSize="1">Linear</LocalPlanner>
+		        <Parameter name="Step Size">1"</Parameter>
 			<Parameter name="Drawn Path Link">6</Parameter>
 			<Parameter name="Max. Neighs">10</Parameter>
 			<Parameter name="Max. Samples">2200</Parameter>
 			<Parameter name="Neigh Thresshold">50</Parameter>
 			<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
-			<Parameter name="Step Size">1</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
