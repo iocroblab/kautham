@@ -47,7 +47,6 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include "localplanner.h"
 #include "omplcplanner.h"
 #include "omplplanner.h"
 
@@ -808,6 +807,10 @@ namespace Kautham {
     {
         //Extract the mapped configuration of the sample. It is a vector with as many components as robots.
         //each component has the RobConf of the robot (the SE3 and the Rn configurations)
+        if(smp->getMappedConf().size()==0)
+        {
+            _wkSpace->moveRobotsTo(smp); // to set the mapped configuration
+        }
         std::vector<RobConf>& smpRobotsConf = smp->getMappedConf();
 
         //loop for all the robots
