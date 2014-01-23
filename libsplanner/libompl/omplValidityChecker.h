@@ -38,22 +38,15 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#if !defined(_omplRRTSTARPLANNER_H)
-#define _omplRRTSTARPLANNER_H
+#if !defined(_omplVALIDITYCHECKER_H)
+#define _omplVALIDITYCHECKER_H
 
 #if defined(KAUTHAM_USE_OMPL)
-#include <ompl/base/SpaceInformation.h>
-#include <ompl/geometric/planners/rrt/RRTstar.h>
-#include <ompl/geometric/SimpleSetup.h>
-#include <ompl/config.h>
-#include <ompl/base/spaces/RealVectorStateSpace.h>
 
-#include <libompl/omplplanner.h>
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <ompl/base/SpaceInformation.h>
+#include <planner.h>
 
 namespace ob = ompl::base;
-namespace og = ompl::geometric;
 
 using namespace std;
 
@@ -63,24 +56,25 @@ namespace Kautham {
  */
   namespace omplplanner{
 
-    class omplRRTStarPlanner:public omplPlanner {
-	    public:
-        omplRRTStarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
-        ~omplRRTStarPlanner();
+    class ValidityChecker : public ob::StateValidityChecker
+    {
+        public:
+            Planner *theplanner;
+            ob::SpaceInformationPtr thesi;
 
-        bool setParameters();
-
-         KthReal _Range;
-         KthReal _GoalBias;
-         bool _DelayCC;
-         unsigned int _opti;
-         ob::OptimizationObjectivePtr _lengthopti;
-         ob::OptimizationObjectivePtr _clearanceopti;
-	  };
-  }
-  /** @}   end of Doxygen module "libPlanner */
+            //! Creator
+            ValidityChecker(const ob::SpaceInformationPtr& si, Planner *p) :
+                ob::StateValidityChecker(si), theplanner(p), thesi(si){};
+            //! isValid returns whether the given state's position overlaps the obstacles
+            bool isValid(const ob::State* state) const;
+            //! clearance returns the distance from the given state's position to the obstacles
+            double clearance(const ob::State* state) const;
+   };
+ }
+/** @}   end of Doxygen module "libPlanner */
 }
 
+
 #endif // KAUTHAM_USE_OMPL
-#endif  //_omplRRTStarPLANNER_H
+#endif  //_omplVALIDITYCHECKER_H
 

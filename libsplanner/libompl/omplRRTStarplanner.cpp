@@ -47,8 +47,12 @@
 #include <boost/bind/mem_fn.hpp>
 
 #include "omplRRTStarplanner.h"
+#include "omplValidityChecker.h"
 
 
+#include <ompl/base/OptimizationObjective.h>
+#include <ompl/base/objectives/PathLengthOptimizationObjective.h>
+#include <ompl/base/objectives/MaximizeMinClearanceObjective.h>
 
 namespace Kautham {
 /** \addtogroup libPlanner
@@ -68,7 +72,8 @@ namespace Kautham {
         ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
         ob::SpaceInformationPtr si=ss->getSpaceInformation();
         //set validity checker
-        ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, si.get(), _1, (Planner*)this));
+        //ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, si.get(), _1, (Planner*)this));
+        si->setStateValidityChecker(ob::StateValidityCheckerPtr(new omplplanner::ValidityChecker(si,  (Planner*)this)));
         //alloc valid state sampler
         si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
         //alloc state sampler
@@ -76,16 +81,34 @@ namespace Kautham {
 
         //create planner
         ob::PlannerPtr planner(new og::RRTstar(si));
-        //set planner parameters: range and goalbias
-        _Range=0.05;
-        _GoalBias=(planner->as<og::RRTstar>())->getGoalBias();
-        _DelayCC=(planner->as<og::RRTstar>())->getDelayCC();
+
+        //set planner parameters: range, goalbias, delay collision checking and optimization option
+        _Range = 0.05;
+        _GoalBias = (planner->as<og::RRTstar>())->getGoalBias();
+        _DelayCC = (planner->as<og::RRTstar>())->getDelayCC();
+        _opti = 0; //optimize path lenght by default
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
         addParameter("DelayCC (0/1)", _DelayCC);
+        addParameter("Optimize dist(0)/clear(1)", _opti);
         planner->as<og::RRTstar>()->setRange(_Range);
         planner->as<og::RRTstar>()->setGoalBias(_GoalBias);
         planner->as<og::RRTstar>()->setDelayCC(_DelayCC);
+
+        //optimization criteria
+        ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
+        _lengthopti = ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
+        _clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
+
+        if(_opti==0)
+            pdefPtr->setOptimizationObjective(_lengthopti);
+            //pdefPtr->setOptimizationObjective(ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation())));
+        else
+            pdefPtr->setOptimizationObjective(_clearanceopti);
+            //pdefPtr->setOptimizationObjective(ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation())));
+
+        planner->setProblemDefinition(pdefPtr);
+        planner->setup();
 
         //set the planner
         ss->setPlanner(planner);
@@ -106,6 +129,20 @@ namespace Kautham {
           _Range = it->second;
           ss->getPlanner()->as<og::RRTstar>()->setRange(_Range);
          }
+        else
+          return false;
+
+        it = _parameters.find("Optimize dist(0)/clear(1)");
+        if(it != _parameters.end()){
+            _opti = it->second;
+            ob::ProblemDefinitionPtr pdefPtr = ss->getPlanner()->getProblemDefinition();
+            if(_opti==0)
+               pdefPtr->setOptimizationObjective(_lengthopti);
+            else
+                pdefPtr->setOptimizationObjective(_clearanceopti);
+            ss->getPlanner()->setup();
+
+        }
         else
           return false;
 
