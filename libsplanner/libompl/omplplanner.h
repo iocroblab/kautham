@@ -176,6 +176,7 @@ namespace Kautham {
         ob::StateSpacePtr space;
 
         int _samplerUsed;
+        unsigned int _simplify;
 
 	    private:
 		//Add private data and functions

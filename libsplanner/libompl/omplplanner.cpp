@@ -56,7 +56,10 @@
 #include <Inventor/nodes/SoPointSet.h>
 #include <Inventor/nodes/SoLineSet.h>
 
-
+#include <ompl/base/ProblemDefinition.h>
+//#include <ompl/base/OptimizationObjective.h>
+//#include <ompl/base/objectives/PathLengthOptimizationObjective.h>
+//#include <ompl/base/objectives/MaximizeMinClearanceObjective.h>
 
 namespace Kautham {
 /** \addtogroup libPlanner
@@ -385,6 +388,8 @@ namespace Kautham {
   }
 
 
+
+
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // omplPlanner functions
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -407,6 +412,7 @@ namespace Kautham {
         //add planner parameters
         addParameter("Max Planning Time", _planningTime);
         addParameter("Speed Factor", _speedFactor);
+        addParameter("Simplify Solution", _simplify);
 
         //Construct the state space we are planning in. It is a compound state space composed of a compound state space for each robot
         //Each robot has a compound state space composed of a (oprional) SE3 state space and a (optional) Rn state space
@@ -560,6 +566,15 @@ namespace Kautham {
         else
           return false;
 
+        it = _parameters.find("Simplify Solution");
+        if(it != _parameters.end())
+        {
+            if(it->second==0) _simplify=0;
+            else _simplify=1;
+        }
+        else
+          return false;
+
       }catch(...){
         return false;
       }
@@ -645,6 +660,85 @@ namespace Kautham {
             ob::PlannerDataPtr pdata;
             pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
             ss->getPlanner()->getPlannerData(*pdata);
+
+            //draw path:
+            if(_solved)
+            {
+                //separator for the solution path
+                SoSeparator *pathsep = new SoSeparator();
+                //get the states of the solution path
+                std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
+
+                //loop for al the states of the solution path
+                for(int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
+                {
+                    //initial edgepoint
+                    SoCoordinate3 *edgepoints  = new SoCoordinate3();
+                    if(_wkSpace->getRobot(0)->isSE3Enabled())
+                    {
+                        ob::EuclideanProjection projection(k);
+                        space->getDefaultProjection()->project(pathstates[i], projection);
+                        x=projection[0];
+                        y=projection[1];
+                        z=projection[2];
+                        edgepoints->point.set1Value(0,x,y,z);
+
+                    //final edgepoint
+                        space->getDefaultProjection()->project(pathstates[i+1], projection);
+                        x=projection[0];
+                        y=projection[1];
+                        z=projection[2];
+                        edgepoints->point.set1Value(1,x,y,z);
+                    }
+                    else
+                    {
+                        k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
+                        if(k<=2)
+                        {
+                            ob::EuclideanProjection projection(k);
+                            space->getDefaultProjection()->project(pathstates[i], projection);
+                            x=projection[0];
+                            y=projection[1];
+                            z=0.0;
+                            edgepoints->point.set1Value(0,x,y,z);
+                            space->getDefaultProjection()->project(pathstates[i+1],projection);
+                            x=projection[0];
+                            y=projection[1];
+                            edgepoints->point.set1Value(1,x,y,z);
+                        }
+                        else
+                        {
+                            ob::EuclideanProjection projection(k);
+                            space->getDefaultProjection()->project(pathstates[i], projection);
+                            x=projection[0];
+                            y=projection[1];
+                            z=projection[2];
+                            edgepoints->point.set1Value(0,x,y,z);
+                            space->getDefaultProjection()->project(pathstates[i+1],projection);
+                            x=projection[0];
+                            y=projection[1];
+                            z=projection[2];
+                            edgepoints->point.set1Value(1,x,y,z);
+                        }
+                    }
+
+                    //edge of the path
+                    pathsep->addChild(edgepoints);
+                    SoLineSet *ls = new SoLineSet;
+                    ls->numVertices.set1Value(0,2);//two values
+                    SoDrawStyle *lstyle = new SoDrawStyle;
+                    lstyle->lineWidth=2;
+                    SoMaterial *path_color = new SoMaterial;
+                    path_color->diffuseColor.setValue(0.8,0.2,0.2);
+                    pathsep->addChild(path_color);
+                    pathsep->addChild(lstyle);
+                    pathsep->addChild(ls);
+                }
+                _sceneCspace->addChild(pathsep);
+            }
+
+
+
 
             //loop for all vertices of the roadmap or tree and create the coin3D points
             for(int i=0;i<pdata->numVertices();i++)
@@ -775,81 +869,7 @@ namespace Kautham {
             }
            _sceneCspace->addChild(lsep);
 
-            //draw path:
-            if(_solved)
-            {
-                //separator for the solution path
-                SoSeparator *pathsep = new SoSeparator();
-                //get the states of the solution path
-                std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
 
-                //loop for al the states of the solution path
-                for(int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
-                {
-                    //initial edgepoint
-                    SoCoordinate3 *edgepoints  = new SoCoordinate3();
-                    if(_wkSpace->getRobot(0)->isSE3Enabled())
-                    {
-                        ob::EuclideanProjection projection(k);
-                        space->getDefaultProjection()->project(pathstates[i], projection);
-                        x=projection[0];
-                        y=projection[1];
-                        z=projection[2];
-                        edgepoints->point.set1Value(0,x,y,z);
-
-                    //final edgepoint
-                        space->getDefaultProjection()->project(pathstates[i+1], projection);
-                        x=projection[0];
-                        y=projection[1];
-                        z=projection[2];
-                        edgepoints->point.set1Value(1,x,y,z);
-                    }
-                    else
-                    {
-                        k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
-                        if(k<=2)
-                        {
-                            ob::EuclideanProjection projection(k);
-                            space->getDefaultProjection()->project(pathstates[i], projection);
-                            x=projection[0];
-                            y=projection[1];
-                            z=0.0;
-                            edgepoints->point.set1Value(0,x,y,z);
-                            space->getDefaultProjection()->project(pathstates[i+1],projection);
-                            x=projection[0];
-                            y=projection[1];
-                            edgepoints->point.set1Value(1,x,y,z);
-                        }
-                        else
-                        {
-                            ob::EuclideanProjection projection(k);
-                            space->getDefaultProjection()->project(pathstates[i], projection);
-                            x=projection[0];
-                            y=projection[1];
-                            z=projection[2];
-                            edgepoints->point.set1Value(0,x,y,z);
-                            space->getDefaultProjection()->project(pathstates[i+1],projection);
-                            x=projection[0];
-                            y=projection[1];
-                            z=projection[2];
-                            edgepoints->point.set1Value(1,x,y,z);
-                        }
-                    }
-
-                    //edge of the path
-                    pathsep->addChild(edgepoints);
-                    SoLineSet *ls = new SoLineSet;
-                    ls->numVertices.set1Value(0,2);//two values
-                    SoDrawStyle *lstyle = new SoDrawStyle;
-                    lstyle->lineWidth=2;
-                    SoMaterial *path_color = new SoMaterial;
-                    path_color->diffuseColor.setValue(0.8,0.2,0.2);
-                    pathsep->addChild(path_color);
-                    pathsep->addChild(lstyle);
-                    pathsep->addChild(ls);
-                }
-                _sceneCspace->addChild(pathsep);
-            }
 
             SoSeparator *floorsep = new SoSeparator();
             SoCube *cs = new SoCube();
@@ -1087,9 +1107,11 @@ namespace Kautham {
          // set the start and goal states
          ss->setStartAndGoalStates(startompl, goalompl);
 
-         // attempt to solve the problem within _planningTime seconds of planning time
-         ss->clear();//to remove previous solutions, if any
+         //remove previous solutions, if any
+         ss->clear();
          ss->getPlanner()->clear();
+
+         // attempt to solve the problem within _planningTime seconds of planning time
          ss->setup();
          ob::PlannerStatus solved = ss->solve(_planningTime);
 
@@ -1113,7 +1135,7 @@ namespace Kautham {
          {
                 std::cout << "Found solution:" << std::endl;
                 // print the path to screen
-                ss->simplifySolution();
+                if(_simplify!=0) ss->simplifySolution();
                 ss->getSolutionPath().print(std::cout);
                 std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
 

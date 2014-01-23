@@ -45,9 +45,12 @@
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
 
+#include <ompl/base/OptimizationObjective.h>
+
 #include <ompl/geometric/planners/prm/ConnectionStrategy.h>
 #include <ompl/base/goals/GoalSampleableRegion.h>
 #include <ompl/datastructures/PDF.h>
+#include <ompl/datastructures/NearestNeighbors.h>
 #include <ompl/tools/config/SelfConfig.h>
 
 #include <ompl/base/StateSampler.h>
@@ -102,33 +105,45 @@ namespace Kautham {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
   class myPRM; //class definition
 
-
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
   //the same typedefs used in ompl::PRM class
   struct vertex_state_t {
-                      typedef boost::vertex_property_tag kind;
-                  };
+      typedef boost::vertex_property_tag kind;
+  };
 
-                  struct vertex_total_connection_attempts_t {
-                      typedef boost::vertex_property_tag kind;
-                  };
+  struct vertex_total_connection_attempts_t {
+      typedef boost::vertex_property_tag kind;
+  };
 
-                  struct vertex_successful_connection_attempts_t {
-                      typedef boost::vertex_property_tag kind;
-                  };
+  struct vertex_successful_connection_attempts_t {
+      typedef boost::vertex_property_tag kind;
+  };
 
-  typedef boost::adjacency_list <
-                     boost::vecS, boost::vecS, boost::undirectedS,
-                     boost::property < vertex_state_t, ob::State*,
-                     boost::property < vertex_total_connection_attempts_t, unsigned int,
-                     boost::property < vertex_successful_connection_attempts_t, unsigned int,
-                     boost::property < boost::vertex_predecessor_t, unsigned long int,
-                     boost::property < boost::vertex_rank_t, unsigned long int > > > > >,
-                     boost::property < boost::edge_weight_t, double,
-                     boost::property < boost::edge_index_t, unsigned int> >
-                 > Graph;
+  struct vertex_flags_t {
+      typedef boost::vertex_property_tag kind;
+  };
 
- typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  struct edge_flags_t {
+      typedef boost::edge_property_tag kind;
+  };
+
+
+                  typedef boost::adjacency_list <
+                      boost::vecS, boost::vecS, boost::undirectedS,
+                      boost::property < vertex_state_t, ob::State*,
+                      boost::property < vertex_total_connection_attempts_t, unsigned int,
+                      boost::property < vertex_successful_connection_attempts_t, unsigned int,
+                      boost::property < vertex_flags_t, unsigned int,
+                      boost::property < boost::vertex_predecessor_t, unsigned long int,
+                      boost::property < boost::vertex_rank_t, unsigned long int > > > > > >,
+                      boost::property < boost::edge_weight_t, ob::Cost,
+                      boost::property < boost::edge_index_t, unsigned int,
+                      boost::property < edge_flags_t, unsigned int > > >
+                  > Graph;
+
+                  typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
+                  typedef boost::graph_traits<Graph>::edge_descriptor   Edge;
+
 
 
 
@@ -154,7 +169,12 @@ namespace Kautham {
           maxdistancebouncemotions = -1;//not set
           useKauthamSampler = false;
           bouncesteps = mymagic::MAX_RANDOM_BOUNCE_STEPS;
+
+          //By default PRM uses minimization of distance as optimization goal
+          //this can be changed by modifying the problem definition (pdef). If pdef has optimization then it uses it (see PRM::setup)
+          //Also PRM::setconnectionstrategy can be used to change the behavior of the PRM- To be explored!! e. using PCA!
       }
+
 
       //! destructor
       ~myPRM(void)
@@ -200,103 +220,39 @@ namespace Kautham {
           maxdistancebouncemotions = m;
       }
 
-      //! This functions is identical to the PRM::solve function except that the ratio between grow and expand steps is not
+
+      //! This functions is identical to the PRM::constructRoadmap function except that the ratio between grow and expand steps is not
       //! fixed to 2:1 but is configurable by the mingrowtime and mingrowtime class variables
-      ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
+      void constructRoadmap(const ob::PlannerTerminationCondition &ptc)
       {
-          checkValidity();
-          ob::GoalSampleableRegion *goal = dynamic_cast<ob::GoalSampleableRegion*>(pdef_->getGoal().get());
-
-          if (!goal)
-          {
-              OMPL_ERROR("Goal undefined or unknown type of goal");
-              return ob::PlannerStatus::UNRECOGNIZED_GOAL_TYPE;
-          }
-
-          // Add the valid start states as milestones
-          while (const ob::State *st = pis_.nextStart())
-              startM_.push_back(addMilestone(si_->cloneState(st)));
-
-          if (startM_.size() == 0)
-          {
-              OMPL_ERROR("There are no valid initial states!");
-              return ob::PlannerStatus::INVALID_START;
-          }
-
-          if (!goal->couldSample())
-          {
-              OMPL_ERROR("Insufficient states in sampleable goal region");
-              return ob::PlannerStatus::INVALID_GOAL;
-          }
-
-          // Ensure there is at least one valid goal state
-          if (goal->maxSampleCount() > goalM_.size() || goalM_.empty())
-          {
-              const ob::State *st = goalM_.empty() ? pis_.nextGoal(ptc) : pis_.nextGoal();
-              if (st)
-                  goalM_.push_back(addMilestone(si_->cloneState(st)));
-
-              if (goalM_.empty())
-              {
-                  OMPL_ERROR("Unable to find any valid goal states");
-                  return ob::PlannerStatus::INVALID_GOAL;
-              }
-          }
-
+          if (!isSetup())
+              setup();
           if (!sampler_)
               sampler_ = si_->allocValidStateSampler();
           if (!simpleSampler_)
               simpleSampler_ = si_->allocStateSampler();
 
-          unsigned int nrStartStates = boost::num_vertices(g_);
-          OMPL_INFORM("Starting with %u states", nrStartStates);
-
-          std::vector<ob::State*> xstates(bouncesteps);
+          std::vector<ob::State*> xstates(mymagic::MAX_RANDOM_BOUNCE_STEPS);
           si_->allocStates(xstates);
           bool grow = true;
 
-          // Reset addedSolution_ member and create solution checking thread
-          addedSolution_ = false;
-          ob::PathPtr sol;
-          sol.reset();
-          boost::thread slnThread (boost::bind(&myPRM::checkForSolution, this, ptc, boost::ref(sol)));
-
-          // construct new planner termination condition that fires when the given ptc is true, or a solution is found
-          ob::PlannerOrTerminationCondition ptcOrSolutionFound (ptc, ob::PlannerTerminationCondition(boost::bind(&myPRM::addedNewSolution, this)));
-
-          while (ptcOrSolutionFound() == false)
+          while (ptc() == false)
           {
               // maintain a 2:1 ratio for growing/expansion of roadmap
               // call growRoadmap() twice as long for every call of expandRoadmap()
               //This has changed for myPRM: the time of the expand step is minexpandtime and the time of the grow step is mingrowtime
               if (grow)
-                  //growRoadmap(ob::PlannerOrTerminationCondition(ptcOrSolutionFound, ob::timedPlannerTerminationCondition(2.0*magic::ROADMAP_BUILD_TIME)), xstates[0]);
-                  growRoadmap(ob::PlannerOrTerminationCondition(ptcOrSolutionFound, ob::timedPlannerTerminationCondition(mingrowtime)), xstates[0]);
+                  //growRoadmap(base::plannerOrTerminationCondition(ptc, base::timedPlannerTerminationCondition(2.0 * magic::ROADMAP_BUILD_TIME)), xstates[0]);
+                  growRoadmap(ob::plannerOrTerminationCondition(ptc, ob::timedPlannerTerminationCondition(mingrowtime)), xstates[0]);
               else
-                  //expandRoadmap(ob::PlannerOrTerminationCondition(ptcOrSolutionFound, ob::timedPlannerTerminationCondition(magic::ROADMAP_BUILD_TIME)), xstates);
-                  myexpandRoadmap(ob::PlannerOrTerminationCondition(ptcOrSolutionFound, ob::timedPlannerTerminationCondition( minexpandtime)), xstates);
+                  //expandRoadmap(base::plannerOrTerminationCondition(ptc, base::timedPlannerTerminationCondition(magic::ROADMAP_BUILD_TIME)), xstates);
+                  myexpandRoadmap(ob::plannerOrTerminationCondition(ptc, ob::timedPlannerTerminationCondition(minexpandtime)), xstates);
               grow = !grow;
           }
 
-          // Ensure slnThread is ceased before exiting solve
-          slnThread.join();
-
-          OMPL_INFORM("Created %u states", boost::num_vertices(g_) - nrStartStates);
-
-          if (sol)
-          {
-              if (addedNewSolution())
-                  pdef_->addSolutionPath (sol);
-              else
-                  // the solution is exact, but not as short as we'd like it to be
-                  pdef_->addSolutionPath (sol, true, 0.0);
-          }
-
           si_->freeStates(xstates);
-
-          // Return true if any solution was found.
-          return sol ? (addedNewSolution() ? ob::PlannerStatus::EXACT_SOLUTION : ob::PlannerStatus::APPROXIMATE_SOLUTION) : ob::PlannerStatus::TIMEOUT;
       }
+
 
       //! This function is reimplemented to call to  myexpandRoadmap(ptc, states) instead of calling to expandRoadmap(ptc, states)
       void expandRoadmap(const ob::PlannerTerminationCondition &ptc)
@@ -376,12 +332,8 @@ namespace Kautham {
                       disjointSets_.make_set(m);
 
                       // add the edge to the parent vertex
-#if defined(KAUTHAM_USE_OMPL_LATEST)
-                      const ob::Cost weight = ((ob::Cost)distanceFunction(v, m));
-                      //const ob::Cost weight = opt_->motionCost(stateProperty_[v], stateProperty_[m]);
-#else
-                      const double weight = distanceFunction(v, m);
-#endif
+                      const ob::Cost weight = opt_->motionCost(stateProperty_[v], stateProperty_[m]);
+
                       //cout<<"d= "<<weight<<endl;
                       const unsigned int id = maxEdgeID_++;
                       const Graph::edge_property_type properties(weight, id);
@@ -398,12 +350,8 @@ namespace Kautham {
                   if (s > 0 || !boost::same_component(v, last, disjointSets_))
                   {
                       // add the edge to the parent vertex
-#if defined(KAUTHAM_USE_OMPL_LATEST)
-                      const ob::Cost weight = ((ob::Cost)distanceFunction(v, last));
-                      //const ob::Cost weight = opt_->motionCost(stateProperty_[v], stateProperty_[m]);
-#else
-                      const double weight = distanceFunction(v, last);
-#endif
+                      const ob::Cost weight = opt_->motionCost(stateProperty_[v], stateProperty_[last]);
+
                       //cout<<"d2= "<<weight<<endl;
                       const unsigned int id = maxEdgeID_++;
                       const Graph::edge_property_type properties(weight, id);
@@ -482,6 +430,7 @@ namespace Kautham {
         //_MaxNearestNeighbors = mymagic::DEFAULT_NEAREST_NEIGHBORS;
         //addParameter("MaxNearestNeighbors", _MaxNearestNeighbors);
         //planner->as<myPRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
+
 
 
 
