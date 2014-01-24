@@ -13,6 +13,9 @@
         <Scene scene="scenes/cluttered2D.iv" scale="1.0">
 		<Location TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Scene>
+        <Scene scene="scenes/walls.iv" scale="1.0">
+		<Location TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Scene>
 	<Planner>
                  <Parameters>
                     <Name>omplRRTConnect</Name>
