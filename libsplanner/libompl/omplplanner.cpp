@@ -367,25 +367,25 @@ namespace Kautham {
       return ob::ValidStateSamplerPtr(new KauthamValidStateSampler(si, p));
   }
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //! This function converts a state to a smp and tests if it is in collision or not
-  bool isStateValid(const ob::SpaceInformation *si, const ob::State *state, Planner *p)
-  {
-      //verify bounds
-      if(si->satisfiesBounds(state)==false)
-          return false;
-      //create sample
-      int d = p->wkSpace()->getDimension();
-      Sample *smp = new Sample(d);
-      //copy the conf of the init smp. Needed to capture the home positions.
-      smp->setMappedConf(p->initSamp()->getMappedConf());
-      //load the RobConf of smp form the values of the ompl::state
-      ((omplPlanner*)p)->omplState2smp(state,smp);
-      //collision-check
-      if( p->wkSpace()->collisionCheck(smp) )
-          return false;
-      return true;
-  }
+//  /////////////////////////////////////////////////////////////////////////////////////////////////
+//  //! This function converts a state to a smp and tests if it is in collision or not
+//  bool isStateValid(const ob::SpaceInformation *si, const ob::State *state, Planner *p)
+//  {
+//      //verify bounds
+//      if(si->satisfiesBounds(state)==false)
+//          return false;
+//      //create sample
+//      int d = p->wkSpace()->getDimension();
+//      Sample *smp = new Sample(d);
+//      //copy the conf of the init smp. Needed to capture the home positions.
+//      smp->setMappedConf(p->initSamp()->getMappedConf());
+//      //load the RobConf of smp form the values of the ompl::state
+//      ((omplPlanner*)p)->omplState2smp(state,smp);
+//      //collision-check
+//      if( p->wkSpace()->collisionCheck(smp) )
+//          return false;
+//      return true;
+//  }
 
 
 
@@ -408,6 +408,7 @@ namespace Kautham {
 
         //set own intial values
         _planningTime = 10;
+        _simplify = 1;
 
         //add planner parameters
         addParameter("Max Planning Time", _planningTime);
@@ -923,7 +924,7 @@ namespace Kautham {
                     cub_transf->translation.setValue(centre);
                     cub_transf->recenter(centre);
                     cub_color->diffuseColor.setValue(0.2,0.2,0.2);
-                    cub_color->transparency.setValue(0.98);
+                    //cub_color->transparency.setValue(0.9);
                     floorsep->addChild(cub_color);
                     floorsep->addChild(cub_transf);
                     floorsep->addChild(cs);

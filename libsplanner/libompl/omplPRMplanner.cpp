@@ -67,6 +67,7 @@
 #define foreach_reverse BOOST_REVERSE_FOREACH
 
 #include "omplPRMplanner.h"
+#include "omplValidityChecker.h"
 //#include "omplplanner.h"
 
 
@@ -389,7 +390,9 @@ namespace Kautham {
         ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
         ob::SpaceInformationPtr si=ss->getSpaceInformation();
         //set validity checker
-        ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, si.get(), _1, (Planner*)this));
+        si->setStateValidityChecker(ob::StateValidityCheckerPtr(new omplplanner::ValidityChecker(si,  (Planner*)this)));
+       // ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, si.get(), _1, (Planner*)this));
+
         //alloc valid state sampler
         si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
         //alloc state sampler

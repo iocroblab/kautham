@@ -170,16 +170,19 @@ namespace Kautham {
   //widged used for virtual bronchsocopy application
   bool GUI::addExternalWidget1( Robot* rob, Problem* prob, int offset, GUI* gui ){
 #if defined(KAUTHAM_USE_GUIBRO)
-    if( rob != NULL){
-      GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( rob, prob, offset, gui  );
-      propertiesTab->addTab(tmpControl, "bronchoCtrl-" + QString((rob->getName()).c_str()));
-      return true;
-    }else{
-      GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( NULL, NULL, 0 , NULL);
-      propertiesTab->addTab(tmpControl, "bronchoControlTest");
-      return true;
-    }
-    return false;
+      if(prob->getPlanner()->getIDName() == "GUIBRO Grid Planner")
+      {
+            if( rob != NULL){
+                GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( rob, prob, offset, gui  );
+                propertiesTab->addTab(tmpControl, "bronchoCtrl-" + QString((rob->getName()).c_str()));
+                return true;
+            }else{
+            GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( NULL, NULL, 0 , NULL);
+            propertiesTab->addTab(tmpControl, "bronchoControlTest");
+            return true;
+        }
+      }
+      return false;
 #endif
     return false;
   }
