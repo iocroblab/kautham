@@ -835,6 +835,7 @@ namespace Kautham {
 
 
                         /**/
+                        ss->getSpaceInformation()->printState(pdata->getVertex(i).getState());
                         KthReal xxx=pdata->getVertex(i).getState()->as<weigthedRealVectorStateSpace::StateType>()->values[0];
                         KthReal yyy=pdata->getVertex(i).getState()->as<weigthedRealVectorStateSpace::StateType>()->values[1];
                         cout<<"x="<<x<<" y="<<y<<endl;
