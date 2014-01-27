@@ -277,6 +277,9 @@ namespace Kautham {
           //  "Probabilistic Roadmaps for Path Planning in High-Dimensional Configuration Spaces"
           //        Lydia E. Kavraki, Petr Svestka, Jean-Claude Latombe, and Mark H. Overmars
 
+          while (ptc == true)
+               return;
+
           ompl::PDF<Vertex> pdf;
           foreach (Vertex v, boost::vertices(g_))
           {

@@ -303,12 +303,57 @@ namespace Kautham {
           if(numSampler>= _samplerVector.size()) numSampler = 0;//set default Random sampler if out of bounds value
           smp = _samplerVector[numSampler]->nextSample();
 
+
+          /**/
+          int d = kauthamPlanner_->wkSpace()->getDimension();
+          vector<KthReal> coords(d);
+          /*
+          KthReal dummy=rng_.uniformReal(0,1.0);
+          if(dummy < 0.2) {coords[0]=0.1; coords[1]=0.1;}
+          else if(dummy < 0.4) {coords[0]=0.1; coords[1]=0.9;}
+          else if(dummy < 0.6) {coords[0]=0.9; coords[1]=0.1;}
+          else if(dummy < 0.999) {coords[0]=0.9; coords[1]=0.9;}
+          if(dummy<1.0)
+          {
+              smp->setCoords(coords);
+          }
+          else
+          {
+              int kkk=0;
+              kkk++;
+          }
+          */
+          static int jj=0;
+          if(jj==0) {coords[0]=0.1; coords[1]=0.1;jj++;}
+          else if(jj==1) {coords[0]=0.1; coords[1]=0.9;jj++;}
+          else if(jj==2) {coords[0]=0.9; coords[1]=0.1;jj++;}
+          else if(jj==3) {coords[0]=0.9; coords[1]=0.9;jj=0;}
+          else return false;
+          smp->setCoords(coords);
+          cout<<"smp coords= ("<<coords[0]<<", "<<coords[1]<<")"<<endl;
+
+          /**/
+
           //computes the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
           kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
 
           //convert from sample to scoped state
           ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
           ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
+
+
+          /**/
+          ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) ((omplPlanner*)kauthamPlanner_)->getSpace()->as<ob::CompoundStateSpace>()->getSubspace(0));
+          ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
+          ob::ScopedState<weigthedRealVectorStateSpace> pathscopedstateRn(ssRobotiRn);
+          sstate >> pathscopedstateRn;
+          cout<<"scopedState coords= ("<<pathscopedstateRn->values[0]<<", "<<pathscopedstateRn->values[1]<<")"<<endl;
+          /**/
+
+
+
+
+
 
           //return the stae in the parameter state and a bool telling if the smp is in collision or not
           ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
@@ -760,6 +805,13 @@ namespace Kautham {
                     z = projection[2];
 
                     points->point.set1Value(i,x,y,z);
+
+                    /**/
+                    KthReal xxx=pdata->getVertex(i).getState()->as<ob::SE3StateSpace::StateType>()->getX();
+                    KthReal yyy=pdata->getVertex(i).getState()->as<ob::SE3StateSpace::StateType>()->getY();
+                    cout<<"x="<<x<<" y="<<y<<endl;
+                    cout<<"xxx="<<x<<" yyy="<<y<<endl;
+                    /**/
                 }
                 else
                 {
@@ -780,6 +832,17 @@ namespace Kautham {
                         y = projection[1];
                         z = projection[2];
                         points->point.set1Value(i,x,y,z);
+
+
+                        /**/
+                        KthReal xxx=pdata->getVertex(i).getState()->as<weigthedRealVectorStateSpace::StateType>()->values[0];
+                        KthReal yyy=pdata->getVertex(i).getState()->as<weigthedRealVectorStateSpace::StateType>()->values[1];
+                        cout<<"x="<<x<<" y="<<y<<endl;
+                        cout<<"xxx="<<x<<" yyy="<<y<<endl;
+                        /**/
+
+
+
                     }
                 }
 
@@ -909,7 +972,7 @@ namespace Kautham {
                     cub_transf->translation.setValue(centre);
                     cub_transf->recenter(centre);
                     cub_color->diffuseColor.setValue(0.2,0.2,0.2);
-                    cub_color->transparency.setValue(0.98);
+                    //cub_color->transparency.setValue(0.98);
                     floorsep->addChild(cub_color);
                     floorsep->addChild(cub_transf);
                     floorsep->addChild(cs);
@@ -924,7 +987,7 @@ namespace Kautham {
                     cub_transf->translation.setValue(centre);
                     cub_transf->recenter(centre);
                     cub_color->diffuseColor.setValue(0.2,0.2,0.2);
-                    //cub_color->transparency.setValue(0.9);
+                    cub_color->transparency.setValue(0.08);//(0.98);
                     floorsep->addChild(cub_color);
                     floorsep->addChild(cub_transf);
                     floorsep->addChild(cs);
@@ -989,6 +1052,9 @@ namespace Kautham {
 
                 for(int j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
                     rstart->values[j] = r.getCoordinate(j);
+
+                cout<<"sstate[0]="<<rstart->values[0]<<"sstate[1]="<<rstart->values[1]<<endl;
+
 
                 //load the global scoped state with the info of the Rn data of robot i
                 (*sstate) << rstart;
@@ -1116,7 +1182,7 @@ namespace Kautham {
          ss->setup();
          ob::PlannerStatus solved = ss->solve(_planningTime);
 
-         ss->print();
+         //ss->print();
 
          //retrieve all the states. Load the SampleSet _samples
          Sample *smp;
@@ -1144,6 +1210,7 @@ namespace Kautham {
 
                 _path.clear();
                 clearSimulationPath();
+
 
                //load the kautham _path variable from the ompl solution
                 for(int j=0;j<ss->getSolutionPath().getStateCount();j++){
