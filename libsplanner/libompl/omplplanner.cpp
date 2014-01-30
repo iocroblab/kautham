@@ -303,56 +303,12 @@ namespace Kautham {
           if(numSampler>= _samplerVector.size()) numSampler = 0;//set default Random sampler if out of bounds value
           smp = _samplerVector[numSampler]->nextSample();
 
-
-          /*
-          int d = kauthamPlanner_->wkSpace()->getDimension();
-          vector<KthReal> coords(d);
-          KthReal dummy=rng_.uniformReal(0,1.0);
-          if(dummy < 0.2) {coords[0]=0.1; coords[1]=0.1;}
-          else if(dummy < 0.4) {coords[0]=0.1; coords[1]=0.9;}
-          else if(dummy < 0.6) {coords[0]=0.9; coords[1]=0.1;}
-          else if(dummy < 0.999) {coords[0]=0.9; coords[1]=0.9;}
-          if(dummy<1.0)
-          {
-              smp->setCoords(coords);
-          }
-          else
-          {
-              int kkk=0;
-              kkk++;
-          }
-          */
-          /*
-          static int jj=0;
-          if(jj==0) {coords[0]=0.1; coords[1]=0.1;jj++;}
-          else if(jj==1) {coords[0]=0.1; coords[1]=0.9;jj++;}
-          else if(jj==2) {coords[0]=0.9; coords[1]=0.1;jj++;}
-          else if(jj==3) {coords[0]=0.9; coords[1]=0.9;jj=0;}
-          else return false;
-          smp->setCoords(coords);
-          cout<<"smp coords= ("<<coords[0]<<", "<<coords[1]<<")"<<endl;
-          */
-
           //computes the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
           kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
 
           //convert from sample to scoped state
           ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
           ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
-
-
-          /**/
-          ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) ((omplPlanner*)kauthamPlanner_)->getSpace()->as<ob::CompoundStateSpace>()->getSubspace(0));
-          ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
-          ob::ScopedState<weigthedRealVectorStateSpace> pathscopedstateRn(ssRobotiRn);
-          sstate >> pathscopedstateRn;
-          cout<<"scopedState coords= ("<<pathscopedstateRn->values[0]<<", "<<pathscopedstateRn->values[1]<<")"<<endl;
-          /**/
-
-
-
-
-
 
           //return the stae in the parameter state and a bool telling if the smp is in collision or not
           ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
@@ -390,7 +346,6 @@ namespace Kautham {
                //throw ompl::Exception("KauthamValidStateSampler::sampleNear", "not implemented");
                //return false;
            }
-
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -513,22 +468,18 @@ namespace Kautham {
 
                 spaceSE3[i]->as<ob::SE3StateSpace>()->setBounds(bounds);
 
-                //create projections evaluator for this spaces
-                ob::ProjectionEvaluatorPtr pei;
-                pei = (ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0));
-                spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0)->registerDefaultProjection(pei);
-                spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0)->registerProjection("drawprojection",pei);
-
-                ob::ProjectionEvaluatorPtr pess;
-                pess = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceSE3[i],0);
-                spaceSE3[i]->registerDefaultProjection(pess);
-
-                ob::ProjectionEvaluatorPtr pess_draw;
+                //create projections evaluator for this spaces - call them "drawprojections"
+				//(the use of defaultProjections did not succeed because the ss->setup() calls registerProjections() function that
+				//for the case of RealVectorStateSpace sets the projections as random for dim>2 and identity otherwise, thus
+				//resetting what the user could have tried to do.
+                ob::ProjectionEvaluatorPtr peR3; //projection for R3
+                peR3 = (ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0));
+                spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0)->registerProjection("drawprojection",peR3); 
+                ob::ProjectionEvaluatorPtr peSE3; //projection for SE3
                 ob::ProjectionEvaluatorPtr projToUse = spaceSE3[i]->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
-                pess_draw = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceSE3[i],0,projToUse);
-                pess_draw->setup();
-                spaceSE3[i]->registerProjection("drawprojection",pess_draw);
-
+                peSE3 = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceSE3[i],0,projToUse);
+                peSE3->setup(); //necessary to set projToUse as theprojection
+                spaceSE3[i]->registerProjection("drawprojection",peSE3);
 
                 //sets the weights between translation and rotation
                 spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(0,_wkSpace->getRobot(i)->getWeightSE3()[0]);//translational weight
@@ -549,13 +500,9 @@ namespace Kautham {
                 spaceRn[i]->setName(sstm.str());
 
                 //create projections evaluator for this spaces
-                ob::ProjectionEvaluatorPtr pei;
-                pei = ((ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceRn[i]));
-                spaceRn[i]->registerDefaultProjection(pei);
-
-                //??
-                spaceRn[i]->registerProjection("drawprojection",pei);
-                //??
+                ob::ProjectionEvaluatorPtr peRn;
+                peRn = ((ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceRn[i]));
+                spaceRn[i]->registerProjection("drawprojection",peRn);
 
                 // set the bounds and the weights
                 vector<KthReal> jointweights;
@@ -586,33 +533,20 @@ namespace Kautham {
             sstm << "ssRobot" << i;
             spaceRob[i]->setName(sstm.str());
 
-            ob::ProjectionEvaluatorPtr peri;
-            peri = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceRob[i],0);
-            spaceRob[i]->registerDefaultProjection(peri);
-
-            //??
-            ob::ProjectionEvaluatorPtr peri_draw;
+            ob::ProjectionEvaluatorPtr peRob;
             ob::ProjectionEvaluatorPtr projToUse = spaceRob[i]->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
-            peri_draw = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceRob[i],0,projToUse);
-            peri_draw->setup();
-            spaceRob[i]->registerProjection("drawprojection",peri_draw);
-            //??
+            peRob = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceRob[i],0,projToUse);
+            peRob->setup();
+            spaceRob[i]->registerProjection("drawprojection",peRob);
         }
         //the state space for the set of robots. All the robots have the same weight.
         space = ((ob::StateSpacePtr) new ob::CompoundStateSpace(spaceRob,weights));
 
-        ob::ProjectionEvaluatorPtr pesp;
-        pesp = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0);
-        space->registerDefaultProjection(pesp);
-
-        //??
-        ob::ProjectionEvaluatorPtr pesp_draw;
+        ob::ProjectionEvaluatorPtr peSpace;
         ob::ProjectionEvaluatorPtr projToUse = space->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
-        pesp_draw = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0,projToUse);
-        pesp_draw->setup();
-        space->registerProjection("drawprojection",pesp_draw);
-        //??
-
+        peSpace = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0,projToUse);
+        peSpace->setup();
+        space->registerProjection("drawprojection",peSpace);
 
         //The classes derived from this omplplanner class will create a planner,
         //the simplesetup and call the setStateValididyChecker function
@@ -749,7 +683,6 @@ namespace Kautham {
                     if(_wkSpace->getRobot(0)->isSE3Enabled())
                     {
                         ob::EuclideanProjection projection(k);
-                        //space->getDefaultProjection()->project(pathstates[i], projection);
                         space->getProjection("drawprojection")->project(pathstates[i], projection);
                         x=projection[0];
                         y=projection[1];
@@ -757,7 +690,6 @@ namespace Kautham {
                         edgepoints->point.set1Value(0,x,y,z);
 
                     //final edgepoint
-                        //space->getDefaultProjection()->project(pathstates[i+1], projection);
                         space->getProjection("drawprojection")->project(pathstates[i+1], projection);
                         x=projection[0];
                         y=projection[1];
@@ -770,13 +702,11 @@ namespace Kautham {
                         if(k<=2)
                         {
                             ob::EuclideanProjection projection(k);
-                            //space->getDefaultProjection()->project(pathstates[i], projection);
                             space->getProjection("drawprojection")->project(pathstates[i], projection);
                             x=projection[0];
                             y=projection[1];
                             z=0.0;
                             edgepoints->point.set1Value(0,x,y,z);
-                            //space->getDefaultProjection()->project(pathstates[i+1],projection);
                             space->getProjection("drawprojection")->project(pathstates[i+1], projection);
                             x=projection[0];
                             y=projection[1];
@@ -785,13 +715,11 @@ namespace Kautham {
                         else
                         {
                             ob::EuclideanProjection projection(k);
-                            //space->getDefaultProjection()->project(pathstates[i], projection);
                             space->getProjection("drawprojection")->project(pathstates[i], projection);
                             x=projection[0];
                             y=projection[1];
                             z=projection[2];
                             edgepoints->point.set1Value(0,x,y,z);
-                            //space->getDefaultProjection()->project(pathstates[i+1],projection);
                             space->getProjection("drawprojection")->project(pathstates[i+1], projection);
                             x=projection[0];
                             y=projection[1];
@@ -827,8 +755,6 @@ namespace Kautham {
                 //&(projection) = new ob::EuclideanProjection;
                 //try
                 //{
-                    //space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
-
                     space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                 // }
                 //catch(ompl::Exception e){
@@ -837,16 +763,7 @@ namespace Kautham {
                     x = projection[0];
                     y = projection[1];
                     z = projection[2];
-
                     points->point.set1Value(i,x,y,z);
-
-                    /*
-                    ss->getSpaceInformation()->printState(pdata->getVertex(i).getState());
-                    KthReal xxx=pdata->getVertex(i).getState()->as<ob::SE3StateSpace::StateType>()->getX();
-                    KthReal yyy=pdata->getVertex(i).getState()->as<ob::SE3StateSpace::StateType>()->getY();
-                    cout<<"x="<<x<<" y="<<y<<endl;
-                    cout<<"xxx="<<x<<" yyy="<<y<<endl;
-                    */
                 }
                 else
                 {
@@ -854,7 +771,6 @@ namespace Kautham {
                     if(k<=2)
                     {
                         ob::EuclideanProjection projection(k);
-                        //space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
                         space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                         x = projection[0];
                         y = projection[1];
@@ -862,33 +778,14 @@ namespace Kautham {
                     }
                     else
                     {
-                        //space->setup();//??
                         ob::EuclideanProjection projection(k);
-                        //space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
-
                         space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-
-
-
                         x = projection[0];
                         y = projection[1];
                         z = projection[2];
                         points->point.set1Value(i,x,y,z);
-
-
-                        /*
-                        ss->getSpaceInformation()->printState(pdata->getVertex(i).getState());
-                        KthReal xxx=pdata->getVertex(i).getState()->as<ob::RealVectorStateSpace::StateType>()->values[0];
-                        KthReal yyy=pdata->getVertex(i).getState()->as<ob::RealVectorStateSpace::StateType>()->values[1];
-                        cout<<"x="<<x<<" y="<<y<<endl;
-                        cout<<"xxx="<<x<<" yyy="<<y<<endl;
-                        */
-
-
-
                     }
                 }
-
             }
             SoDrawStyle *pstyle = new SoDrawStyle;
             pstyle->pointSize = 3;
@@ -915,7 +812,6 @@ namespace Kautham {
                  //for each node loop for all the outgoing edges
                  for ( int j=0; j<numOutgoingEdges; j++ )
                  {
-
                     SoCoordinate3 *edgepoints  = new SoCoordinate3();
 
                     //initial edgepoint
@@ -923,7 +819,6 @@ namespace Kautham {
                     if(_wkSpace->getRobot(0)->isSE3Enabled())
                     {
                         ob::EuclideanProjection projection(k);
-                        //space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
                         space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                         x1=projection[0];
                         y1=projection[1];
@@ -931,7 +826,6 @@ namespace Kautham {
                         edgepoints->point.set1Value(0,x1,y1,z1);
 
                     //final edgepoint
-                        //space->getDefaultProjection()->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
                         space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
                         x2=projection[0];
                         y2=projection[1];
@@ -944,13 +838,11 @@ namespace Kautham {
                         if(k<=2)
                         {
                             ob::EuclideanProjection projection(k);
-                            //space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
                             space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                             x1=projection[0];
                             y1=projection[1];
                             z=0.0;
                             edgepoints->point.set1Value(0,x1,y1,z);
-                            //space->getDefaultProjection()->project(pdata->getVertex(outgoingVertices.at(j)).getState(),projection);
                             space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
                             x2=projection[0];
                             y2=projection[1];
@@ -959,13 +851,11 @@ namespace Kautham {
                         else
                         {
                             ob::EuclideanProjection projection(k);
-                            //space->getDefaultProjection()->project(pdata->getVertex(i).getState(), projection);
                             space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                             x1=projection[0];
                             y1=projection[1];
                             z1=projection[2];
                             edgepoints->point.set1Value(0,x1,y1,z1);
-                            //space->getDefaultProjection()->project(pdata->getVertex(outgoingVertices.at(j)).getState(),projection);
                             space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
                             x2=projection[0];
                             y2=projection[1];
@@ -1036,7 +926,7 @@ namespace Kautham {
                     cub_transf->translation.setValue(centre);
                     cub_transf->recenter(centre);
                     cub_color->diffuseColor.setValue(0.2,0.2,0.2);
-                    cub_color->transparency.setValue(0.08);//(0.98);
+                    cub_color->transparency.setValue(0.98);
                     floorsep->addChild(cub_color);
                     floorsep->addChild(cub_transf);
                     floorsep->addChild(cs);
