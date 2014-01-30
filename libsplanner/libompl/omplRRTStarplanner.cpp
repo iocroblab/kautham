@@ -53,6 +53,7 @@
 #include <ompl/base/OptimizationObjective.h>
 #include <ompl/base/objectives/PathLengthOptimizationObjective.h>
 #include <ompl/base/objectives/MaximizeMinClearanceObjective.h>
+#include "omplPCAalignmentOptimizationObjective.h"
 
 namespace Kautham {
 /** \addtogroup libPlanner
@@ -60,7 +61,7 @@ namespace Kautham {
  */
   namespace omplplanner{
 
-	//! Constructor
+    //! Constructor
     omplRRTStarPlanner::omplRRTStarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
               omplPlanner(stype, init, goal, samples, ws)
 	{
@@ -91,7 +92,7 @@ namespace Kautham {
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
         addParameter("DelayCC (0/1)", _DelayCC);
-        addParameter("Optimize dist(0)/clear(1)", _opti);
+        addParameter("Optimize dist(0)/clear(1)/PCA(2)", _opti);
         planner->as<og::RRTstar>()->setRange(_Range);
         planner->as<og::RRTstar>()->setGoalBias(_GoalBias);
         planner->as<og::RRTstar>()->setDelayCC(_DelayCC);
@@ -100,13 +101,15 @@ namespace Kautham {
         ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
         _lengthopti = ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
         _clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
+        _pcaalignmentopti = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective(ss->getSpaceInformation()));
 
-        if(_opti==0)
-            pdefPtr->setOptimizationObjective(_lengthopti);
-            //pdefPtr->setOptimizationObjective(ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation())));
-        else
+
+        if(_opti==1)
             pdefPtr->setOptimizationObjective(_clearanceopti);
-            //pdefPtr->setOptimizationObjective(ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation())));
+        else if(_opti==2)
+            pdefPtr->setOptimizationObjective(_pcaalignmentopti);
+        else //_opti==0 and default
+            pdefPtr->setOptimizationObjective(_lengthopti);
 
         planner->setProblemDefinition(pdefPtr);
         planner->setup();
@@ -133,16 +136,17 @@ namespace Kautham {
         else
           return false;
 
-        it = _parameters.find("Optimize dist(0)/clear(1)");
+        it = _parameters.find("Optimize dist(0)/clear(1)/PCA(2)");
         if(it != _parameters.end()){
             _opti = it->second;
             ob::ProblemDefinitionPtr pdefPtr = ss->getPlanner()->getProblemDefinition();
-            if(_opti==0)
-               pdefPtr->setOptimizationObjective(_lengthopti);
-            else
+            if(_opti==1)
                 pdefPtr->setOptimizationObjective(_clearanceopti);
+            else if(_opti==2)
+                pdefPtr->setOptimizationObjective(_pcaalignmentopti);
+            else //_opti==0 and default
+                pdefPtr->setOptimizationObjective(_lengthopti);
             ss->getPlanner()->setup();
-
         }
         else
           return false;

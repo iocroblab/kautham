@@ -76,6 +76,7 @@ namespace Kautham {
          unsigned int _opti;
          ob::OptimizationObjectivePtr _lengthopti;
          ob::OptimizationObjectivePtr _clearanceopti;
+         ob::OptimizationObjectivePtr _pcaalignmentopti;
 	  };
   }
   /** @}   end of Doxygen module "libPlanner */
