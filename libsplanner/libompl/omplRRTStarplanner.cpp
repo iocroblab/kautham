@@ -101,7 +101,11 @@ namespace Kautham {
         ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
         _lengthopti = ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
         _clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
-        _pcaalignmentopti = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective(ss->getSpaceInformation()));
+
+        int dimpca=2;//de moment!!!!
+        _pcaalignmentopti = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective(ss->getSpaceInformation(),dimpca));
+        _changePCA=0;
+        addParameter("change PCA", _changePCA);
 
 
         if(_opti==1)
@@ -167,6 +171,18 @@ namespace Kautham {
         }
         else
           return false;
+
+        it = _parameters.find("change PCA");
+        if(it != _parameters.end()){
+            if(_opti==2)
+            {
+                _changePCA = it->second;
+                ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setPCAdata(_changePCA);
+            }
+        }
+        else
+          return false;
+
 
       }catch(...){
         return false;
