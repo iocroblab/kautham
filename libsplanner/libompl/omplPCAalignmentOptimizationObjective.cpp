@@ -44,9 +44,21 @@
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/OptimizationObjective.h>
+#include <ompl/base/ProjectionEvaluator.h>
+#include <ompl/base/spaces/RealVectorStateSpace.h>
 #include "omplPCAalignmentOptimizationObjective.h"
 
+
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/lu.hpp>
+#include <boost/numeric/ublas/io.hpp>
+
+#include <ompl/tools/config/MagicConstants.h>
+
+
+using namespace boost::numeric::ublas;
 namespace ob = ompl::base;
+namespace om = ompl::magic;
 
 namespace Kautham {
 /** \addtogroup libPlanner
@@ -54,26 +66,153 @@ namespace Kautham {
  */
   namespace omplplanner{
 
+    //http://savingyoutime.wordpress.com/2009/09/21/c-matrix-inversion-boostublas/
+    /* Matrix inversion routine.
+        Uses lu_factorize and lu_substitute in uBLAS to invert a matrix */
+    template<class T>
+        bool InvertMatrix(const matrix<T>& input, matrix<T>& inverse)
+        {
+        typedef permutation_matrix<std::size_t> pmatrix;
+
+        // create a working copy of the input
+        matrix<T> A(input);
+
+        // create a permutation matrix for the LU-factorization
+        pmatrix pm(A.size1());
+
+        // perform LU-factorization
+        int res = lu_factorize(A, pm);
+        if (res != 0)
+            return false;
+
+        // create identity matrix of "inverse"
+        inverse.assign(identity_matrix<T> (A.size1()));
+
+        // backsubstitute to get the inverse
+        lu_substitute(A, pm, inverse);
+
+        return true;
+    }
+
+
   //! Constructor
-    PCAalignmentOptimizationObjective::PCAalignmentOptimizationObjective(const ob::SpaceInformationPtr &si) :
+    PCAalignmentOptimizationObjective::PCAalignmentOptimizationObjective(const ob::SpaceInformationPtr &si, int dim) :
     ob::OptimizationObjective(si)
     {
-        description_ = "Path Length";
+        description_ = "PCA alignment";
+        PCAdataset=false;
+        dimension = dim;
+
+        //de moment ho fixem a 2
+        dimension = 2;
+        setPCAdata(0);
     }
+
     //! void destructor
     PCAalignmentOptimizationObjective::~PCAalignmentOptimizationObjective(){
 
     }
 
+    void PCAalignmentOptimizationObjective::setPCAdata(int option)//ob::ProjectionMatrix M, ob::EuclideanProjection v){
+    {
+        //de moment ho fixo a ma
+        Matrix pca(dimension,dimension);
+        Matrix invpca(dimension,dimension);
+        ob::EuclideanProjection v(dimension);
+        if(option==0)
+        {
+            pca(0,0) = sqrt(2.0)/2.0;
+            pca(0,1) = sqrt(2.0)/2.0;
+            pca(1,0) = -sqrt(2.0)/2.0;
+            pca(1,1) = sqrt(2.0)/2.0;
+            InvertMatrix(pca, invpca);
+            pcaM.mat = invpca;
+            pcaM.print();
+        }
+        else
+        {
+            pca(0,0) = sqrt(2.0)/2.0;
+            pca(0,1) = -sqrt(2.0)/2.0;
+            pca(1,0) = sqrt(2.0)/2.0;
+            pca(1,1) = sqrt(2.0)/2.0;
+            InvertMatrix(pca, invpca);
+            pcaM.mat = invpca;
+            pcaM.print();
+        }
+
+        v[0] = 1.0;
+        v[1] = 0.1;
+        lambda = v;
+        PCAdataset=true;
+    }
+
     ob::Cost PCAalignmentOptimizationObjective::motionCost(const ob::State *s1, const ob::State *s2) const
     {
-        return ob::Cost(si_->distance(s1, s2));
+        double from[2];
+        //vector from s1 to s2 in state space: from = s2-s1
+
+        ob::EuclideanProjection p1(dimension);
+        ob::EuclideanProjection p2(dimension);
+        getSpaceInformation()->getStateSpace()->getProjection("drawprojection")->project(s1, p1);
+        getSpaceInformation()->getStateSpace()->getProjection("drawprojection")->project(s2, p2);
+
+        for(int i=0; i<dimension;i++)
+        {
+            from[i] = p2[i] - p1[i];
+         }
+
+        //vector from s1 to s2 using the pca reference frame: vpca = M*v
+        ob::EuclideanProjection to(dimension);
+        pcaM.project(from,to);
+
+        //scale the projections by the eignevalues lambda
+        vector<double> wcost(to.size());
+        double maxcost=0.0;
+        for(int i=0; i<to.size();i++)
+            wcost[i] = abs(to[i]*lambda[i]);
+        //the cost is the maximum scales projection
+        for(int i=0; i<wcost.size();i++)
+            if(wcost[i]>maxcost) maxcost=wcost[i];
+
+        return ob::Cost(maxcost);
     }
 
     ob::Cost PCAalignmentOptimizationObjective::motionCostHeuristic(const ob::State *s1, const ob::State *s2) const
     {
-        return motionCost(s1, s2);
+        //????aixo no ho tinc clar!!1
+        return ob::Cost(motionCost(s1, s2));
     }
+
+    //!Since we are maximizing alignment, the greater the better
+    bool PCAalignmentOptimizationObjective::isCostBetterThan(ob::Cost c1, ob::Cost c2) const
+    {
+        return c1.v > c2.v + om::BETTER_PATH_COST_MARGIN;
+    }
+
+    //!Since we're only concerned about the "worst" state cost in the path, combining two costs just returns the worse of the two, which is the lower.
+    //!Combine cost retunrns the lower cost (we are maximizing the alignment, so the greater the better)
+    ob::Cost PCAalignmentOptimizationObjective::combineCosts(ob::Cost c1, ob::Cost c2) const
+    {
+        if (this->isCostBetterThan(c1, c2))
+            return c2;
+        else
+            return c1;
+    }
+
+    //!Returns +infinity, since any cost combined with +infinity under this objective will always return the other cost.
+    //!i.e. combineCosts(c1,identityCost())=c1
+    ob::Cost PCAalignmentOptimizationObjective::identityCost(void) const
+    {
+        return ob::Cost(std::numeric_limits<double>::infinity());
+    }
+
+    //!Returns -infinity, since no alignment value can be considered worse than this.
+    //!in fact the minimum alignment will be zero
+    ob::Cost PCAalignmentOptimizationObjective::infiniteCost(void) const
+    {
+        return ob::Cost(-std::numeric_limits<double>::infinity());
+    }
+
  }
   /** @}   end of Doxygen module "libPlanner */
 }
