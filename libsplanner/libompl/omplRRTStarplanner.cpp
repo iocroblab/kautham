@@ -102,8 +102,10 @@ namespace Kautham {
         _lengthopti = ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
         _clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
 
+
         int dimpca=2;//de moment!!!!
         _pcaalignmentopti = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective(ss->getSpaceInformation(),dimpca));
+         _pcaalignmentopti->setCostThreshold(ob::Cost(1000.0));
         _changePCA=0;
         addParameter("change PCA", _changePCA);
 

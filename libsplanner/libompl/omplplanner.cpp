@@ -474,6 +474,7 @@ namespace Kautham {
 				//resetting what the user could have tried to do.
                 ob::ProjectionEvaluatorPtr peR3; //projection for R3
                 peR3 = (ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0));
+                peR3->setup();//??
                 spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0)->registerProjection("drawprojection",peR3); 
                 ob::ProjectionEvaluatorPtr peSE3; //projection for SE3
                 ob::ProjectionEvaluatorPtr projToUse = spaceSE3[i]->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
@@ -502,6 +503,7 @@ namespace Kautham {
                 //create projections evaluator for this spaces
                 ob::ProjectionEvaluatorPtr peRn;
                 peRn = ((ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceRn[i]));
+                peRn->setup();
                 spaceRn[i]->registerProjection("drawprojection",peRn);
 
                 // set the bounds and the weights
@@ -1141,7 +1143,10 @@ namespace Kautham {
          {
                 std::cout << "Found solution:" << std::endl;
                 // print the path to screen
-                if(_simplify!=0) ss->simplifySolution();
+                if(_simplify!=0) {
+                    ss->getPathSimplifier()->shortcutPath(ss->getSolutionPath(),0,0,0.15);//smoothBSpline(ss->getSolutionPath());
+                    //ss->simplifySolution();
+                }
                 ss->getSolutionPath().print(std::cout);
                 std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
 
