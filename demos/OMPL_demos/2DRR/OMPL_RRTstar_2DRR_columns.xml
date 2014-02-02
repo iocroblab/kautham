@@ -1,17 +1,19 @@
 <?xml version="1.0"?>
-<Problem name="OMPL_RRTConnect_2DRR_columns">
+<Problem name="OMPL_RRTstar_2DRR_columns">
 	<Robot robot="robots/2DRR.rob" scale="1.0">
 		<InvKinematic name="RR2D" />
+	  
 	</Robot>
 	<Scene scene="scenes/columns.iv" scale="0.5">
 		<Location TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="50.0" X="150.0" />
 	</Scene>
 	<Planner>
 		<Parameters>
-                        <Name>omplRRTConnect</Name>
+                        <Name>omplRRTStar</Name>
                         <Parameter name="Max Planning Time">1.0</Parameter>
                         <Parameter name="Speed Factor">1</Parameter>
                         <Parameter name="Range">0.05</Parameter>
+		        <Parameter name="Goal Bias">0.05</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>

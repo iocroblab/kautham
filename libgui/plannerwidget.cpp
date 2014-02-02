@@ -207,7 +207,16 @@ namespace Kautham{
 
       //init sample is defaulted to zero, i.e. spnInit->setValue( 0 );
       //goal sample is dafaulted to 1 since in problem.cpp it is loaded in this order when there is a query to solve
-      if(_planner->goalSamp()!=NULL && _planner->goalSamp()->isFree()) spnGoal->setValue( 1 );
+//      if(_planner->goalSamp()!=NULL && _planner->goalSamp()->isFree())
+//      {
+//          spnGoal->setValue( 1 );
+//      }
+
+       spnInit->setValue( 0 );
+       spnGoal->setValue( 1 );
+       _spFrom->setValue( 0 );
+       _spTo->setValue( 1 );
+
     }
 	}
 
@@ -334,12 +343,14 @@ namespace Kautham{
 	  int max;
 
     _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/tryconnect.xpm")));
-    if(_samples->getSize() < _planner->getMaxNumSamples()) 
-      max = _samples->getSize();
-	  else{
-		  max = _planner->getMaxNumSamples();
-		  if(index>max) cout<<"Using a maximum of "<<max<<" samples"<<endl;
-	  }
+
+    max = _samples->getSize();
+//    if(_samples->getSize() < _planner->getMaxNumSamples())
+//      max = _samples->getSize();
+//	  else{
+//		  max = _planner->getMaxNumSamples();
+//		  if(index>max) cout<<"Using a maximum of "<<max<<" samples"<<endl;
+//	  }
   	
     if( _samples->getSize() > 1 ){
       spnInit->setMaximum(max- 1 );

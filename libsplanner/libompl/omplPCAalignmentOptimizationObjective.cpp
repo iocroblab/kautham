@@ -54,6 +54,9 @@
 #include <boost/numeric/ublas/io.hpp>
 
 #include <ompl/tools/config/MagicConstants.h>
+#include <ompl/base/ScopedState.h>
+#include <ompl/base/spaces/SE3StateSpace.h>
+#include <ompl/base/spaces/RealVectorStateSpace.h>
 
 
 using namespace boost::numeric::ublas;
@@ -148,33 +151,58 @@ namespace Kautham {
 
     ob::Cost PCAalignmentOptimizationObjective::motionCost(const ob::State *s1, const ob::State *s2) const
     {
-        double from[2];
+
+        vector<double> from(dimension);
         //vector from s1 to s2 in state space: from = s2-s1
 
-        ob::EuclideanProjection p1(dimension);
-        ob::EuclideanProjection p2(dimension);
-        getSpaceInformation()->getStateSpace()->getProjection("drawprojection")->project(s1, p1);
-        getSpaceInformation()->getStateSpace()->getProjection("drawprojection")->project(s2, p2);
+        ob::StateSpacePtr space = getSpaceInformation()->getStateSpace();
 
+        ob::ScopedState<ob::CompoundStateSpace> ss1(space);
+        ob::ScopedState<ob::CompoundStateSpace> ss2(space);
+        ss1 = *s1;
+        ss2 = *s2;
+
+        //Get the SE3 subspace of robot 0
+        ob::StateSpacePtr ssRobot0 = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
+        ob::StateSpacePtr ssRobot0SE3 =  ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
+        ob::ScopedState<ob::SE3StateSpace> s1se3(ssRobot0SE3);
+        ss1 >> s1se3;
+        ob::ScopedState<ob::SE3StateSpace> s2se3(ssRobot0SE3);
+        ss2 >> s2se3;
+
+        //convert to a vector of 7 components
+        vector<double> s1_se3coords;
+        vector<double> s2_se3coords;
+        s1_se3coords.resize(2);
+        s2_se3coords.resize(2);
+        s1_se3coords[0] = s1se3->getX();
+        s1_se3coords[1] = s1se3->getY();
+        s2_se3coords[0] = s2se3->getX();
+        s2_se3coords[1] = s2se3->getY();
+
+        double modul=0.0;
         for(int i=0; i<dimension;i++)
         {
-            from[i] = p2[i] - p1[i];
-         }
+            from[i] = s2_se3coords[i] - s1_se3coords[i];
+            modul += from[i]*from[i];
+        }
+        from[0] /= sqrt(modul);
+        from[1] /= sqrt(modul);
 
         //vector from s1 to s2 using the pca reference frame: vpca = M*v
         ob::EuclideanProjection to(dimension);
-        pcaM.project(from,to);
+        pcaM.project(&from[0],to);
 
         //scale the projections by the eignevalues lambda
-        vector<double> wcost(to.size());
+        vector<double> wcost(dimension);
         double maxcost=0.0;
         for(int i=0; i<to.size();i++)
-            wcost[i] = abs(to[i]*lambda[i]);
+            wcost[i] = fabs(to[i]*lambda[i]);
         //the cost is the maximum scales projection
         for(int i=0; i<wcost.size();i++)
             if(wcost[i]>maxcost) maxcost=wcost[i];
 
-        return ob::Cost(maxcost);
+        return ob::Cost(maxcost);//*modul);
     }
 
     ob::Cost PCAalignmentOptimizationObjective::motionCostHeuristic(const ob::State *s1, const ob::State *s2) const
