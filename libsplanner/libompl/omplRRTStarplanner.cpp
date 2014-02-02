@@ -109,11 +109,14 @@ namespace Kautham {
         _changePCA=0;
         addParameter("change PCA", _changePCA);
 
+        _multiopti = ob::OptimizationObjectivePtr(new ob::MultiOptimizationObjective(ss->getSpaceInformation()));
+        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_lengthopti,0.3);
+        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_pcaalignmentopti,0.7);
 
         if(_opti==1)
             pdefPtr->setOptimizationObjective(_clearanceopti);
         else if(_opti==2)
-            pdefPtr->setOptimizationObjective(_pcaalignmentopti);
+            pdefPtr->setOptimizationObjective(_multiopti);
         else //_opti==0 and default
             pdefPtr->setOptimizationObjective(_lengthopti);
 
@@ -149,7 +152,7 @@ namespace Kautham {
             if(_opti==1)
                 pdefPtr->setOptimizationObjective(_clearanceopti);
             else if(_opti==2)
-                pdefPtr->setOptimizationObjective(_pcaalignmentopti);
+                pdefPtr->setOptimizationObjective(_multiopti);
             else //_opti==0 and default
                 pdefPtr->setOptimizationObjective(_lengthopti);
             ss->getPlanner()->setup();
