@@ -19,9 +19,9 @@
 	<Planner>
                  <Parameters>
                     <Name>omplLazyRRT</Name>0
-                    <Parameter name="Max Planning Time">1.0</Parameter>
+                    <Parameter name="Max Planning Time">60.0</Parameter>
                     <Parameter name="Speed Factor">1</Parameter>
-                    <Parameter name="Range">0.02</Parameter>
+                    <Parameter name="Range">0.05</Parameter>
                 </Parameters>
 		<Queries>
 			<Query>
