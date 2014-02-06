@@ -407,9 +407,11 @@ namespace Kautham {
 
         //set own intial values
         _planningTime = 10;
-        _simplify = 1;
+        _simplify = 2;//by default shorten and smooth
+        _incremental=0;//by default makes a clear before any new call to solve in function trysolve().
 
         //add planner parameters
+        addParameter("Incremental (0/1)", _incremental);
         addParameter("Max Planning Time", _planningTime);
         addParameter("Speed Factor", _speedFactor);
         addParameter("Simplify Solution", _simplify);
@@ -578,7 +580,20 @@ namespace Kautham {
         if(it != _parameters.end())
         {
             if(it->second==0) _simplify=0;
-            else _simplify=1;
+            else if(it->second==1) _simplify=1;
+            else _simplify=2;
+        }
+        else
+          return false;
+
+        it = _parameters.find("Incremental (0/1)");
+        if(it != _parameters.end()){
+            if(it->second == 0) _incremental = 0;
+            else {
+                _incremental = 1;
+                _simplify = 0;//for incremental solution the smootihng of the path is disabled to spped up the process
+                setParameter("Simplify Solution", _simplify);
+            }
         }
         else
           return false;
@@ -735,7 +750,7 @@ namespace Kautham {
                     SoLineSet *ls = new SoLineSet;
                     ls->numVertices.set1Value(0,2);//two values
                     SoDrawStyle *lstyle = new SoDrawStyle;
-                    lstyle->lineWidth=2;
+                    lstyle->lineWidth=3;
                     SoMaterial *path_color = new SoMaterial;
                     path_color->diffuseColor.setValue(0.8,0.2,0.2);
                     pathsep->addChild(path_color);
@@ -1116,8 +1131,13 @@ namespace Kautham {
          ss->setStartAndGoalStates(startompl, goalompl);
 
          //remove previous solutions, if any
-         ss->clear();
-         ss->getPlanner()->clear();
+         if(_incremental == 0)
+         {
+             ss->clear();
+             ss->getPlanner()->clear();
+         }
+         else
+             ss->getProblemDefinition()->clearSolutionPaths();
 
          // attempt to solve the problem within _planningTime seconds of planning time
          ss->setup();
@@ -1142,12 +1162,20 @@ namespace Kautham {
          if (solved)
          {
                 std::cout << "Found solution:" << std::endl;
+
                 // print the path to screen
-                if(_simplify!=0) {
-                    ss->getPathSimplifier()->shortcutPath(ss->getSolutionPath(),0,0,0.15);//smoothBSpline(ss->getSolutionPath());
-                    //ss->simplifySolution();
+                if(_simplify==1) {//smooth
+                    //ss->getPathSimplifier()->shortcutPath(ss->getSolutionPath(),0,0,0.15);
+                    ss->getPathSimplifier()->smoothBSpline(ss->getSolutionPath(),5);
+                }
+                else if(_simplify==2) {//shorten and smoot
+                    ss->simplifySolution();
                 }
                 ss->getSolutionPath().print(std::cout);
+
+
+                //refine
+                //ss->getSolutionPath().interpolate();
                 std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
 
                 Sample *smp;

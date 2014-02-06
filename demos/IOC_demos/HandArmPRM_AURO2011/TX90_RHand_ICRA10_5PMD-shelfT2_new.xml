@@ -42,7 +42,7 @@
     <Parameters>
       <Name>PRMAURO HandArm</Name>
       <Parameter name="Step Size">0.2"</Parameter>
-      <Parameter name="Max. Samples">300</Parameter>
+      <Parameter name="Max. Samples">3000</Parameter>
       <Parameter name="Speed Factor">1</Parameter>
       <Parameter name="Cloud Radius Max">300</Parameter>
       <Parameter name="Cloud Radius">30</Parameter>

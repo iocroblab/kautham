@@ -125,12 +125,12 @@ namespace Kautham {
         if(_wkSpace->collisionCheck(_goal)==true)
             cout<<"Goal sample is in collision"<<endl;
         else
-            cout<<"GOAL sample must be set to saple number "<< indexgoal <<endl;
+            cout<<"GOAL sample must be set to sample number "<< indexgoal <<endl;
         _init=_samples->getSampleAt(indexinit);
         if(_wkSpace->collisionCheck(_init) == true)
             cout<<"Init sample is in collision"<<endl;
         else
-            cout<<"INIT sample must be set to saple number "<< indexinit <<endl;
+            cout<<"INIT sample must be set to sample number "<< indexinit <<endl;
 
     }
 
@@ -344,12 +344,13 @@ namespace Kautham {
             if(_wkSpace->collisionCheck(_goal)==true)
                 cout<<"Goal sample is in collision"<<endl;
             else
-                cout<<"GOAL sample must be set to saple number "<< indexgoal <<endl;
+                cout<<"GOAL sample must be set to sample number "<< indexgoal <<endl;
+
             _init=_samples->getSampleAt(indexinit);
             if(_wkSpace->collisionCheck(_init) == true)
                 cout<<"Init sample is in collision"<<endl;
             else
-                cout<<"INIT sample must be set to saple number "<< indexinit <<endl;
+                cout<<"INIT sample must be set to sample number "<< indexinit <<endl;
 
         }
 

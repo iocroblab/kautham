@@ -74,11 +74,14 @@ namespace Kautham {
          KthReal _GoalBias;
          bool _DelayCC;
          unsigned int _opti;
+         double _lengthewight;
+         bool _incremental;
          int _changePCA;//provisional
          ob::OptimizationObjectivePtr _lengthopti;
          ob::OptimizationObjectivePtr _clearanceopti;
          ob::OptimizationObjectivePtr _pcaalignmentopti;
          ob::OptimizationObjectivePtr _multiopti;
+         ob::OptimizationObjectivePtr _pcaalignmentopti2;
 	  };
   }
   /** @}   end of Doxygen module "libPlanner */

@@ -10,9 +10,10 @@
 	 <Limits name="WY" min="0.0" max="1.0"></Limits>
 	 <Limits name="WZ" min="0.0" max="1.0"></Limits>
 	 <Limits name="TH" min="-180.0" max="180.0"></Limits>
-	 <InvKinematic name="TX90"/>
-	 <Home X="1484.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="180.0" />
+         <InvKinematic name="TX90"/>
+         <Home X="1484.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="180.0" />
   </Robot>
+
 	
   <Scene scene="scenes/table_clutter_review_auro.iv" scale="1.0"> 
     <Location TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0"/>

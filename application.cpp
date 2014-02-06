@@ -176,6 +176,8 @@ void Application::closeProblem(){
     mainWindow->setText("First open a problem");
     break;
   case PROBLEMLOADED:
+    if(mainWindow->getPlannerWidget()->ismoving())
+            mainWindow->getPlannerWidget()->simulatePath();//stops simulation
     mainWindow->restart();
     delete _problem;
     appState = INITIAL;
