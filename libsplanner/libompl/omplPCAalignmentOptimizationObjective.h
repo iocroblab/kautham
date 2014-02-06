@@ -45,6 +45,7 @@
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/OptimizationObjective.h>
+#include <ompl/base/objectives/StateCostIntegralObjective.h>
 #include <ompl/base/ProjectionEvaluator.h>
 
 namespace ob = ompl::base;
@@ -69,19 +70,25 @@ namespace Kautham {
         ~PCAalignmentOptimizationObjective();
 
         virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
-
         virtual ob::Cost motionCostHeuristic(const ob::State *s1, const ob::State *s2) const;
-
-        bool isCostBetterThan(ob::Cost c1, ob::Cost c2) const;
-
-        ob::Cost combineCosts(ob::Cost c1, ob::Cost c2) const;
-
-        ob::Cost identityCost(void) const;
-
-        ob::Cost infiniteCost(void) const;
-
         void setPCAdata(int v);//ob::ProjectionMatrix M, ob::EuclideanProjection v);
+        inline bool isPCAdataset(){return PCAdataset;};
+      };
 
+    class PCAalignmentOptimizationObjective2:public ob::StateCostIntegralObjective {
+        public:
+        typedef boost::numeric::ublas::matrix<double> Matrix;
+
+        ob::ProjectionMatrix pcaM;
+        ob::EuclideanProjection lambda;//this is a typedef of boost::numeric::ublas::vector < double >
+        bool PCAdataset;
+        int dimension;
+
+        PCAalignmentOptimizationObjective2(const ob::SpaceInformationPtr &si, int dim);
+        ~PCAalignmentOptimizationObjective2();
+
+        ob::Cost stateCost(const ob::State *s1) const;
+        void setPCAdata(int v);//ob::ProjectionMatrix M, ob::EuclideanProjection v);
         inline bool isPCAdataset(){return PCAdataset;};
       };
   }

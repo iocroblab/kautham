@@ -177,6 +177,7 @@ namespace Kautham {
 
         int _samplerUsed;
         unsigned int _simplify;
+        unsigned int _incremental;
 
 	    private:
 		//Add private data and functions

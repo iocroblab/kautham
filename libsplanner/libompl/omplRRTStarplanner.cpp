@@ -55,11 +55,425 @@
 #include <ompl/base/objectives/MaximizeMinClearanceObjective.h>
 #include "omplPCAalignmentOptimizationObjective.h"
 
+//for myRRTstar
+#include "ompl/base/goals/GoalSampleableRegion.h"
+#include <boost/math/constants/constants.hpp>
+//#include <ompl/geometric/planners/PlannerIncludes.h>
+//#include <ompl/datastructures/NearestNeighbors.h>
+//#include <limits>
+//#include <vector>
+//#include <utility>
+
 namespace Kautham {
 /** \addtogroup libPlanner
  *  @{
  */
   namespace omplplanner{
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+  class myRRTstar:public og::RRTstar
+  {
+      public:
+
+
+      myRRTstar(const ob::SpaceInformationPtr &si):RRTstar(si)
+      {
+          setName("myRRTstar");
+      }
+
+      /** \brief Compute distance between motions (actually distance between contained states) */
+      double distanceFunction(const Motion* a, const Motion* b) const
+      {
+          return si_->distance(a->state, b->state);
+          //return (opt_->motionCost(a->state, b->state).v);
+      }
+
+      ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
+      {
+          checkValidity();
+          ob::Goal                  *goal   = pdef_->getGoal().get();
+          ob::GoalSampleableRegion  *goal_s = dynamic_cast<ob::GoalSampleableRegion*>(goal);
+
+          bool symDist = si_->getStateSpace()->hasSymmetricDistance();
+          bool symInterp = si_->getStateSpace()->hasSymmetricInterpolate();
+          bool symCost = opt_->isSymmetric();
+
+          while (const ob::State *st = pis_.nextStart())
+          {
+              Motion *motion = new Motion(si_);
+              si_->copyState(motion->state, st);
+              motion->cost = opt_->identityCost();
+              nn_->add(motion);
+          }
+
+          if (nn_->size() == 0)
+          {
+              OMPL_ERROR("%s: There are no valid initial states!", getName().c_str());
+              return ob::PlannerStatus::INVALID_START;
+          }
+
+          if (!sampler_)
+              sampler_ = si_->allocStateSampler();
+
+          OMPL_INFORM("%s: Starting with %u states", getName().c_str(), nn_->size());
+
+          Motion *solution       = lastGoalMotion_;
+
+          // \TODO Make this variable unnecessary, or at least have it
+          // persist across solve runs
+          ob::Cost bestCost    = opt_->infiniteCost();
+
+          Motion *approximation  = NULL;
+          double approximatedist = std::numeric_limits<double>::infinity();
+          bool sufficientlyShort = false;
+
+          Motion *rmotion        = new Motion(si_);
+          ob::State *rstate    = rmotion->state;
+          ob::State *xstate    = si_->allocState();
+
+          // e+e/d.  K-nearest RRT*
+          double k_rrg           = boost::math::constants::e<double>() + (boost::math::constants::e<double>()/(double)si_->getStateSpace()->getDimension());
+
+          std::vector<Motion*>       nbh;
+
+          std::vector<ob::Cost>    costs;
+          std::vector<ob::Cost>    incCosts;
+          std::vector<std::size_t>   sortedCostIndices;
+
+          std::vector<int>           valid;
+          unsigned int               rewireTest = 0;
+          unsigned int               statesGenerated = 0;
+
+          if (solution)
+              OMPL_INFORM("%s: Starting with existing solution of cost %.5f", getName().c_str(), solution->cost.v);
+          OMPL_INFORM("%s: Initial k-nearest value of %u", getName().c_str(), (unsigned int)std::ceil(k_rrg * log((double)(nn_->size()+1))));
+
+
+          // our functor for sorting nearest neighbors
+          CostIndexCompare compareFn(costs, *opt_);
+
+          while (ptc == false)
+          {
+              iterations_++;
+              // sample random state (with goal biasing)
+              // Goal samples are only sampled until maxSampleCount() goals are in the tree, to prohibit duplicate goal states.
+              if (goal_s && goalMotions_.size() < goal_s->maxSampleCount() && rng_.uniform01() < goalBias_ && goal_s->canSample())
+                  goal_s->sampleGoal(rstate);
+              else
+                  sampler_->sampleUniform(rstate);
+
+              // find closest state in the tree
+              Motion *nmotion = nn_->nearest(rmotion);
+
+              ob::State *dstate = rstate;
+
+              // find state to add to the tree
+              double d = si_->distance(nmotion->state, rstate);
+              if (d > maxDistance_)
+              {
+                  si_->getStateSpace()->interpolate(nmotion->state, rstate, maxDistance_ / d, xstate);
+                  dstate = xstate;
+              }
+
+              // Check if the motion between the nearest state and the state to add is valid
+              ++collisionChecks_;
+              if (si_->checkMotion(nmotion->state, dstate))
+              {
+                  // create a motion
+                  Motion *motion = new Motion(si_);
+                  si_->copyState(motion->state, dstate);
+                  motion->parent = nmotion;
+
+                  // This sounds crazy but for asymmetric distance functions this is necessary
+                  // For this case, it has to be FROM every other point TO our new point
+                  // NOTE THE ORDER OF THE boost::bind PARAMETERS
+                  if (!symDist)
+                      nn_->setDistanceFunction(boost::bind(&myRRTstar::distanceFunction, this, _1, _2));
+
+                  // Find nearby neighbors of the new motion - k-nearest RRT*
+                  unsigned int k = std::ceil(k_rrg * log((double)(nn_->size()+1)));
+                  nn_->nearestK(motion, k, nbh);
+                  rewireTest += nbh.size();
+                  statesGenerated++;
+
+                  // cache for distance computations
+                  //
+                  // Our cost caches only increase in size, so they're only
+                  // resized if they can't fit the current neighborhood
+                  if (costs.size() < nbh.size())
+                  {
+                      costs.resize(nbh.size());
+                      incCosts.resize(nbh.size());
+                      sortedCostIndices.resize(nbh.size());
+                  }
+
+                  // cache for motion validity (only useful in a symmetric space)
+                  //
+                  // Our validity caches only increase in size, so they're
+                  // only resized if they can't fit the current neighborhood
+                  if (symDist && symInterp)
+                  {
+                      if (valid.size() < nbh.size())
+                          valid.resize(nbh.size());
+                      std::fill(valid.begin(), valid.begin()+nbh.size(), 0);
+                  }
+
+                  // Finding the nearest neighbor to connect to
+                  // By default, neighborhood states are sorted by cost, and collision checking
+                  // is performed in increasing order of cost
+                  if (delayCC_)
+                  {
+                      // calculate all costs and distances
+                      for (std::size_t i = 0 ; i < nbh.size(); ++i)
+                      {
+                          incCosts[i] = opt_->motionCost(nbh[i]->state, motion->state);
+                          costs[i] = opt_->combineCosts(nbh[i]->cost, incCosts[i]);
+                      }
+
+                      // sort the nodes
+                      //
+                      // we're using index-value pairs so that we can get at
+                      // original, unsorted indices
+                      for (std::size_t i = 0; i < nbh.size(); ++i)
+                          sortedCostIndices[i] = i;
+                      std::sort(sortedCostIndices.begin(), sortedCostIndices.begin()+nbh.size(),
+                                compareFn);
+
+                      //JAN
+                      //bool thresholdChangeCost;
+                      //double ratioChangeCost;
+                      //JAN
+
+                      // collision check until a valid motion is found
+                      for (std::vector<std::size_t>::const_iterator i = sortedCostIndices.begin();
+                           i != sortedCostIndices.begin()+nbh.size();
+                           ++i)
+                      {
+                          if (nbh[*i] != nmotion)
+                              ++collisionChecks_;
+                          //JAN
+                          //if(nbh[*i]->incCost.v != 0.0)
+                          //{
+                            //thresholdChangeCost = false;
+                            //ratioChangeCost = (incCosts[*i].v - nbh[*i]->incCost.v)/nbh[*i]->incCost.v;
+                           //cout<<ratioChangeCost<<endl;
+                            //if( ratioChangeCost <= -0.2)
+                           //{
+                           //     thresholdChangeCost = true;
+                           // }
+                          //}
+                          //else thresholdChangeCost = true;
+                          //if (nbh[*i] == nmotion || (si_->checkMotion(nbh[*i]->state, motion->state) && thresholdChangeCost))
+                          //if (nbh[*i] == nmotion || (si_->checkMotion(nbh[*i]->state, motion->state) && distanceFunction(nbh[*i], motion)<getRange() ))
+                          //JAN
+                          if (nbh[*i] == nmotion || si_->checkMotion(nbh[*i]->state, motion->state))
+                          {
+                              motion->incCost = incCosts[*i];
+                              motion->cost = costs[*i];
+                              motion->parent = nbh[*i];
+                              if (symDist && symInterp)
+                                  valid[*i] = 1;
+                              break;
+                          }
+                          else if (symDist && symInterp)
+                              valid[*i] = -1;
+                      }
+                  }
+                  else // if not delayCC
+                  {
+                      motion->incCost = opt_->motionCost(nmotion->state, motion->state);
+                      motion->cost = opt_->combineCosts(nmotion->cost, motion->incCost);
+                      // find which one we connect the new state to
+                      for (std::size_t i = 0 ; i < nbh.size(); ++i)
+                      {
+                          if (nbh[i] != nmotion)
+                          {
+                              incCosts[i] = opt_->motionCost(nbh[i]->state, motion->state);
+                              costs[i] = opt_->combineCosts(nbh[i]->cost, incCosts[i]);
+                              if (opt_->isCostBetterThan(costs[i], motion->cost))
+                              {
+                                  ++collisionChecks_;
+                                  if (si_->checkMotion(nbh[i]->state, motion->state))
+                                  {
+                                      motion->incCost = incCosts[i];
+                                      motion->cost = costs[i];
+                                      motion->parent = nbh[i];
+                                      if (symDist && symInterp)
+                                          valid[i] = 1;
+                                  }
+                                  else if (symDist && symInterp)
+                                      valid[i] = -1;
+                              }
+                          }
+                          else
+                          {
+                              incCosts[i] = motion->incCost;
+                              costs[i] = motion->cost;
+                              if (symDist && symInterp)
+                                  valid[i] = 1;
+                          }
+                      }
+                  }
+
+                  // add motion to the tree
+                  nn_->add(motion);
+                  motion->parent->children.push_back(motion);
+
+                  bool checkForSolution = false;
+                  // rewire tree if needed
+                  //
+                  // This sounds crazy but for asymmetric distance functions this is necessary
+                  // For this case, it has to be FROM our new point TO each other point
+                  // NOTE THE ORDER OF THE boost::bind PARAMETERS
+                  if (!symDist)
+                  {
+                      nn_->setDistanceFunction(boost::bind(&myRRTstar::distanceFunction, this, _2, _1));
+                      nn_->nearestK(motion, k, nbh);
+                      rewireTest += nbh.size();
+                  }
+
+                  for (std::size_t i = 0; i < nbh.size(); ++i)
+                  {
+                      if (nbh[i] != motion->parent)
+                      {
+                          ob::Cost nbhIncCost;
+                          if (symDist && symCost)
+                              nbhIncCost = incCosts[i];
+                          else
+                              nbhIncCost = opt_->motionCost(motion->state, nbh[i]->state);
+                          ob::Cost nbhNewCost = opt_->combineCosts(motion->cost, nbhIncCost);
+                          if (opt_->isCostBetterThan(nbhNewCost, nbh[i]->cost))
+                          {
+                              bool motionValid;
+                              if (symDist && symInterp)
+                              {
+                                  if (valid[i] == 0)
+                                  {
+                                      ++collisionChecks_;
+                                      motionValid = si_->checkMotion(motion->state, nbh[i]->state);
+                                  }
+                                  else
+                                      motionValid = (valid[i] == 1);
+                              }
+                              else
+                              {
+                                  ++collisionChecks_;
+                                  motionValid = si_->checkMotion(motion->state, nbh[i]->state);
+                              }
+                              if (motionValid)
+                              {
+                                  // Remove this node from its parent list
+                                  removeFromParent (nbh[i]);
+
+                                  // Add this node to the new parent
+                                  nbh[i]->parent = motion;
+                                  nbh[i]->incCost = nbhIncCost;
+                                  nbh[i]->cost = nbhNewCost;
+                                  nbh[i]->parent->children.push_back(nbh[i]);
+
+                                  // Update the costs of the node's children
+                                  updateChildCosts(nbh[i]);
+
+                                  checkForSolution = true;
+                              }
+                          }
+                      }
+                  }
+
+                  // Add the new motion to the goalMotion_ list, if it satisfies the goal
+                  double distanceFromGoal;
+                  if (goal->isSatisfied(motion->state, &distanceFromGoal))
+                  {
+                      goalMotions_.push_back(motion);
+                      checkForSolution = true;
+                  }
+
+                  // Checking for solution or iterative improvement
+                  if (checkForSolution)
+                  {
+                      for (size_t i = 0; i < goalMotions_.size(); ++i)
+                      {
+                          if (opt_->isCostBetterThan(goalMotions_[i]->cost, bestCost))
+                          {
+                              bestCost = goalMotions_[i]->cost;
+                              bestCost_ = bestCost;
+                          }
+
+                          sufficientlyShort = opt_->isSatisfied(goalMotions_[i]->cost);
+                          if (sufficientlyShort)
+                          {
+                              solution = goalMotions_[i];
+                              break;
+                          }
+                          else if (!solution ||
+                                   opt_->isCostBetterThan(goalMotions_[i]->cost,solution->cost))
+                              solution = goalMotions_[i];
+                      }
+                  }
+
+                  // Checking for approximate solution (closest state found to the goal)
+                  if (goalMotions_.size() == 0 && distanceFromGoal < approximatedist)
+                  {
+                      approximation = motion;
+                      approximatedist = distanceFromGoal;
+                  }
+              }
+
+              // terminate if a sufficient solution is found
+              if (solution && sufficientlyShort)
+                  break;
+          }
+
+          bool approximate = (solution == 0);
+          bool addedSolution = false;
+          if (approximate)
+              solution = approximation;
+          else
+              lastGoalMotion_ = solution;
+
+          if (solution != 0)
+          {
+              // construct the solution path
+              std::vector<Motion*> mpath;
+              while (solution != 0)
+              {
+                  mpath.push_back(solution);
+                  solution = solution->parent;
+              }
+
+              // set the solution path
+              og::PathGeometric *geoPath = new og::PathGeometric(si_);
+              for (int i = mpath.size() - 1 ; i >= 0 ; --i)
+                  geoPath->append(mpath[i]->state);
+
+              ob::PathPtr path(geoPath);
+              // Add the solution path, whether it is approximate (not reaching the goal), and the
+              // distance from the end of the path to the goal (-1 if satisfying the goal).
+              ob::PlannerSolution psol(path, approximate, approximate ? approximatedist : -1.0);
+              // Does the solution satisfy the optimization objective?
+              psol.optimized_ = sufficientlyShort;
+
+              pdef_->addSolutionPath (psol);
+
+              addedSolution = true;
+          }
+
+          si_->freeState(xstate);
+          if (rmotion->state)
+              si_->freeState(rmotion->state);
+          delete rmotion;
+
+          OMPL_INFORM("%s: Created %u new states. Checked %u rewire options. %u goal states in tree.", getName().c_str(), statesGenerated, rewireTest, goalMotions_.size());
+
+          return ob::PlannerStatus(addedSolution, approximate);
+      }
+
+  };
+
+
+
+
+
 
     //! Constructor
     omplRRTStarPlanner::omplRRTStarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
@@ -82,7 +496,8 @@ namespace Kautham {
         space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
 
         //create planner
-        ob::PlannerPtr planner(new og::RRTstar(si));
+        ob::PlannerPtr planner(new myRRTstar(si));
+        //ob::PlannerPtr planner(new og::RRTstar(si));
 
         //set planner parameters: range, goalbias, delay collision checking and optimization option
         _Range = 0.05;
@@ -102,23 +517,31 @@ namespace Kautham {
         _lengthopti = ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
         _clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
 
-
         int dimpca=2;//de moment!!!!
         _pcaalignmentopti = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective(ss->getSpaceInformation(),dimpca));
-         _pcaalignmentopti->setCostThreshold(ob::Cost(1000.0));
+         _pcaalignmentopti->setCostThreshold(ob::Cost(0.0));
         _changePCA=0;
         addParameter("change PCA", _changePCA);
+        _lengthewight = 0.3;
+        addParameter("lengthweight(0..1)", _lengthewight);
 
         _multiopti = ob::OptimizationObjectivePtr(new ob::MultiOptimizationObjective(ss->getSpaceInformation()));
-        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_lengthopti,0.3);
-        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_pcaalignmentopti,0.7);
+        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_lengthopti,_lengthewight);
+        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_pcaalignmentopti,1.0-_lengthewight);
+
+
+        _pcaalignmentopti2 = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective2(ss->getSpaceInformation(),dimpca));
+
 
         if(_opti==1)
             pdefPtr->setOptimizationObjective(_clearanceopti);
         else if(_opti==2)
             pdefPtr->setOptimizationObjective(_multiopti);
+        else if(_opti==3)
+            pdefPtr->setOptimizationObjective(_pcaalignmentopti2);
         else //_opti==0 and default
             pdefPtr->setOptimizationObjective(_lengthopti);
+
 
         planner->setProblemDefinition(pdefPtr);
         planner->setup();
@@ -153,6 +576,8 @@ namespace Kautham {
                 pdefPtr->setOptimizationObjective(_clearanceopti);
             else if(_opti==2)
                 pdefPtr->setOptimizationObjective(_multiopti);
+            else if(_opti==3)
+                pdefPtr->setOptimizationObjective(_pcaalignmentopti2);
             else //_opti==0 and default
                 pdefPtr->setOptimizationObjective(_lengthopti);
             ss->getPlanner()->setup();
@@ -179,10 +604,24 @@ namespace Kautham {
 
         it = _parameters.find("change PCA");
         if(it != _parameters.end()){
-            if(_opti==2)
+            if(_opti==2 || _opti==3)
             {
                 _changePCA = it->second;
                 ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setPCAdata(_changePCA);
+                ((PCAalignmentOptimizationObjective2*)_pcaalignmentopti2.get())->setPCAdata(_changePCA);
+            }
+        }
+        else
+          return false;
+
+        it = _parameters.find("lengthweight(0..1)");
+        if(it != _parameters.end()){
+            if(it->second >=0.0 && it->second<=1.0) _lengthewight = it->second;
+            else _lengthewight = 0.5;
+            if(_opti==2 )
+            {
+                ((ob::MultiOptimizationObjective*)_multiopti.get())->setObjectiveWeight(0,_lengthewight);
+                ((ob::MultiOptimizationObjective*)_multiopti.get())->setObjectiveWeight(1,1.0-_lengthewight);
             }
         }
         else
