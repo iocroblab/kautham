@@ -58,6 +58,7 @@
 #include "streamlog.h"
 #include <libkin/inversekinematic.h>
 #include "controlwidget.h"
+#include "plannerwidget.h"
 
 
 using namespace std;
@@ -94,6 +95,9 @@ namespace Kautham {
     //  if(window != NULL) delete window;
     //}
 	};
+
+
+    class PlannerWidget; //needed here because PlannerWidget has #include "gui.h"
 
 	class GUI:public QMainWindow, private Ui::kauthamMain {
 	  Q_OBJECT
@@ -146,8 +150,10 @@ namespace Kautham {
     std::string         getActiveViewTitle();
 	
     ControlWidget*		getControlWidget();
+    PlannerWidget*		getPlannerWidget();
 
 	int					indexControlsTab;
+    int                 indexPlannerTab;
   private:
     vector<Viewer>      viewers;
     StreamLog*          qout;

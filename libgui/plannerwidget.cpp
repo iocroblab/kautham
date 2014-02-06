@@ -60,6 +60,7 @@ namespace Kautham{
     _planner = plan;
     _gui = gui;
     _stepSim = 0;
+    _ismoving = false;
 
     //XXXXXXXXXXXXXXXXXXXXXXXXX
         QGroupBox *groupBox = new QGroupBox(this);
@@ -318,18 +319,21 @@ namespace Kautham{
   void PlannerWidget::simulatePath(){
     if(btnMove->text() == QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8)){
       _plannerTimer->start(200);
+      _ismoving = true;
       //_stepSim = 0;
       btnMove->setText(QApplication::translate("Form", "Stop Move ", 0, QApplication::UnicodeUTF8));
     }else{
       _plannerTimer->stop();
       btnMove->setText(QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8));
+      _ismoving = false;
     }
 
   }
 
+
+
   void PlannerWidget::moveAlongPath(){
     _planner->moveAlongPath(_stepSim);
-
     // It moves the camera if the associated planner provides the
     // transformation information of the camera
     if( chkCamera->isChecked() && _gui != NULL
@@ -337,6 +341,7 @@ namespace Kautham{
         _gui->setActiveCameraTransform(*_planner->getCameraMovement( _stepSim ));
     
     _stepSim += _planner->getSpeedFactor();
+
   }
 
   void PlannerWidget::showSample(int index){
