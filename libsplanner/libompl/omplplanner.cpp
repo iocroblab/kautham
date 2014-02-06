@@ -470,19 +470,23 @@ namespace Kautham {
 
                 spaceSE3[i]->as<ob::SE3StateSpace>()->setBounds(bounds);
 
-                //create projections evaluator for this spaces - call them "drawprojections"
-				//(the use of defaultProjections did not succeed because the ss->setup() calls registerProjections() function that
+                //create projections evaluator for this spaces -
+                //The default projections (needed for some planners) and
+                //the projections called "drawprojections"for the drawcspace function.
+                //(the use of defaultProjections for drawspace did not succeed because the ss->setup() calls registerProjections() function that
 				//for the case of RealVectorStateSpace sets the projections as random for dim>2 and identity otherwise, thus
 				//resetting what the user could have tried to do.
                 ob::ProjectionEvaluatorPtr peR3; //projection for R3
                 peR3 = (ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0));
                 peR3->setup();//??
                 spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0)->registerProjection("drawprojection",peR3); 
+                spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0)->registerDefaultProjection(peR3);
                 ob::ProjectionEvaluatorPtr peSE3; //projection for SE3
                 ob::ProjectionEvaluatorPtr projToUse = spaceSE3[i]->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
                 peSE3 = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceSE3[i],0,projToUse);
                 peSE3->setup(); //necessary to set projToUse as theprojection
                 spaceSE3[i]->registerProjection("drawprojection",peSE3);
+                spaceSE3[i]->registerDefaultProjection(peSE3);
 
                 //sets the weights between translation and rotation
                 spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(0,_wkSpace->getRobot(i)->getWeightSE3()[0]);//translational weight
@@ -507,6 +511,7 @@ namespace Kautham {
                 peRn = ((ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceRn[i]));
                 peRn->setup();
                 spaceRn[i]->registerProjection("drawprojection",peRn);
+                spaceRn[i]->registerDefaultProjection(peRn);
 
                 // set the bounds and the weights
                 vector<KthReal> jointweights;
@@ -542,6 +547,7 @@ namespace Kautham {
             peRob = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceRob[i],0,projToUse);
             peRob->setup();
             spaceRob[i]->registerProjection("drawprojection",peRob);
+            spaceRob[i]->registerDefaultProjection(peRob);
         }
         //the state space for the set of robots. All the robots have the same weight.
         space = ((ob::StateSpacePtr) new ob::CompoundStateSpace(spaceRob,weights));
@@ -551,6 +557,7 @@ namespace Kautham {
         peSpace = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0,projToUse);
         peSpace->setup();
         space->registerProjection("drawprojection",peSpace);
+        space->registerDefaultProjection(peSpace);
 
         //The classes derived from this omplplanner class will create a planner,
         //the simplesetup and call the setStateValididyChecker function
