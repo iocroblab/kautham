@@ -58,6 +58,7 @@ namespace Kautham{
 /** \addtogroup libGUI
  *  @{
  */
+class GUI;//needed here because GUI has #include "plannerwidget.h"
 
 	class PlannerWidget: public KauthamWidget{
 		Q_OBJECT
@@ -66,14 +67,16 @@ namespace Kautham{
     void saveDataCall();
     void loadDataCall();
     //void setIniGoalCall();
-    void simulatePath();
     void moveAlongPath();
     void showSample(int index);
     void tryConnect();
     void chkCameraClick();
+    public slots:
+    void simulatePath();
 
 	public:
     PlannerWidget(Planner* plan, SampleSet* samp, bool camera = false, GUI* gui = NULL );
+    inline bool ismoving(){return _ismoving;};
 		
 	private:
     PlannerWidget();
@@ -91,6 +94,7 @@ namespace Kautham{
     SampleSet*    _samples;
     QTimer*       _plannerTimer;
     unsigned int  _stepSim;
+    bool          _ismoving;
 
     // Added to provide access to the local Planner
     QLabel      *label;

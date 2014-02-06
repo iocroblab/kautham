@@ -166,6 +166,12 @@ namespace Kautham {
 		return (ControlWidget*)propertiesTab->widget(indexControlsTab);
   }
 
+  PlannerWidget* GUI::getPlannerWidget()
+  {
+        return (PlannerWidget*)propertiesTab->widget(indexPlannerTab);
+  }
+
+
 
   //widged used for virtual bronchsocopy application
   bool GUI::addExternalWidget1( Robot* rob, Problem* prob, int offset, GUI* gui ){
@@ -269,6 +275,8 @@ namespace Kautham {
     if( plan != NULL){
       PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, plan->hasCameraMovements(), gui );
       propertiesTab->addTab(tmpPlan, QString((plan->getGuiName()).c_str()));
+      //JAN
+        indexPlannerTab = propertiesTab->indexOf(tmpPlan);
       connect(tmpPlan, SIGNAL(sendText(string)), this, SLOT(setText(string)) );
 	  if(plan->getIvCspaceScene() != NULL)
 	  {
@@ -278,6 +286,8 @@ namespace Kautham {
     }else{
       PlannerWidget* tmpPlan = new PlannerWidget( NULL, NULL, gui );
       propertiesTab->addTab(tmpPlan, "Planner");
+      //JAN
+        indexPlannerTab = propertiesTab->indexOf(tmpPlan);
       return true;
     }
     return false;
@@ -552,7 +562,7 @@ namespace Kautham {
 
   }
 
-	bool GUI::restart(){
+    bool GUI::restart(){
         //do not put the index i inside the loop since the vector keeps decreasing after each remove
         for(int i=0; i<viewers.size() ;i++)
            removeViewerTab(viewers[0].title);
