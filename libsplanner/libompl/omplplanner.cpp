@@ -1191,6 +1191,7 @@ namespace Kautham {
                 clearSimulationPath();
 
 
+
                //load the kautham _path variable from the ompl solution
                 for(int j=0;j<ss->getSolutionPath().getStateCount();j++){
                    //create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)

@@ -16,9 +16,9 @@
 	<Planner>
 		<Parameters>
                         <Name>omplSBL</Name>
-                        <Parameter name="Max Planning Time">20.0</Parameter>
+                        <Parameter name="Max Planning Time">40.0</Parameter>
                         <Parameter name="Speed Factor">1</Parameter>
-			<Parameter name="Range">10.0</Parameter>
+                        <Parameter name="Range">20.0</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>

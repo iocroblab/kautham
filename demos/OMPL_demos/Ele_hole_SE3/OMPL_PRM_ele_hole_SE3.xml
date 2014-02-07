@@ -16,10 +16,12 @@
 	<Planner>
 		<Parameters>
                         <Name>omplPRM</Name>
-                        <Parameter name="Max Planning Time">20.0</Parameter>
+                        <Parameter name="Max Planning Time">40.0</Parameter>
                         <Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="MaxNearestNeighbors">10</Parameter>
-                        <Parameter name="DistanceThreshold">1.0</Parameter>
+                        <Parameter name="DistanceThreshold">100.0</Parameter>
+                        <Parameter name="BounceDistanceThreshold">50.0</Parameter>
+                        <Parameter name="Sampler 0(r) 1(h) 2(sdk) 3(g) 4(gl)">3</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>

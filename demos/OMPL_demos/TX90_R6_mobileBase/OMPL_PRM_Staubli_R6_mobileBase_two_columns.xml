@@ -31,8 +31,9 @@
                 <Name>omplPRM</Name>
                 <Parameter name="Max Planning Time">300.0</Parameter>
                 <Parameter name="Speed Factor">1</Parameter>
-                        <Parameter name="MaxNearestNeighbors">10</Parameter>
-                        <Parameter name="DistanceThreshold">400.0</Parameter>
+                <Parameter name="MaxNearestNeighbors">10</Parameter>
+                <Parameter name="DistanceThreshold">400.0</Parameter>
+                <Parameter name="Sampler 0(r) 1(h) 2(sdk) 3(g) 4(gl)">3</Parameter>
         </Parameters>
 		<Queries>
 			<Query>
