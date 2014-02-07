@@ -433,9 +433,9 @@ namespace Kautham {
         planner->as<myPRM>()->setBounceSteps(_BounceSteps);
 
         //set max neighbors
-        //_MaxNearestNeighbors = mymagic::DEFAULT_NEAREST_NEIGHBORS;
-        //addParameter("MaxNearestNeighbors", _MaxNearestNeighbors);
-        //planner->as<myPRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
+        _MaxNearestNeighbors = mymagic::DEFAULT_NEAREST_NEIGHBORS;
+        addParameter("MaxNearestNeighbors", _MaxNearestNeighbors);
+        planner->as<myPRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
 
 
 
@@ -455,14 +455,14 @@ namespace Kautham {
       omplPlanner::setParameters();
       try{
         HASH_S_K::iterator it = _parameters.find("MaxNearestNeighbors");
-        /*
-         *if(it != _parameters.end()){
+
+         if(it != _parameters.end()){
           _MaxNearestNeighbors = it->second;
           ss->getPlanner()->as<myPRM>()->setMaxNearestNeighbors(_MaxNearestNeighbors);
          }
         else
           return false;
-          */
+
 
         it = _parameters.find("MinExpandTime");
         if(it != _parameters.end()){
