@@ -48,6 +48,8 @@
 #include <ompl/base/objectives/StateCostIntegralObjective.h>
 #include <ompl/base/ProjectionEvaluator.h>
 
+
+
 namespace ob = ompl::base;
 
 
@@ -65,14 +67,21 @@ namespace Kautham {
         ob::EuclideanProjection lambda;//this is a typedef of boost::numeric::ublas::vector < double >
         bool PCAdataset;
         int dimension;
+        double wpenalization;
+        double wdistance;
 
         PCAalignmentOptimizationObjective(const ob::SpaceInformationPtr &si, int dim);
         ~PCAalignmentOptimizationObjective();
 
         virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
+        virtual ob::Cost motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const;
         virtual ob::Cost motionCostHeuristic(const ob::State *s1, const ob::State *s2) const;
         void setPCAdata(int v);//ob::ProjectionMatrix M, ob::EuclideanProjection v);
         inline bool isPCAdataset(){return PCAdataset;};
+        inline double getOrientationPenalization(){return wpenalization;}
+        inline void setOrientationPenalization(double w){wpenalization=w;};
+        inline double getDistanceWeight(){return wdistance;}
+        inline void setDistanceWeight(double w){wdistance=w;};
       };
 
     class PCAalignmentOptimizationObjective2:public ob::StateCostIntegralObjective {

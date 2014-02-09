@@ -74,7 +74,8 @@ namespace Kautham {
          KthReal _GoalBias;
          bool _DelayCC;
          unsigned int _opti;
-         double _lengthewight;
+         double _lengthweight;
+         double _penalizationweight;
          bool _incremental;
          int _changePCA;//provisional
          ob::OptimizationObjectivePtr _lengthopti;

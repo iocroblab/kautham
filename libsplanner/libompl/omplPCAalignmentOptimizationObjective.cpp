@@ -59,9 +59,11 @@
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 
 
+
 using namespace boost::numeric::ublas;
 namespace ob = ompl::base;
 namespace om = ompl::magic;
+
 
 namespace Kautham {
 /** \addtogroup libPlanner
@@ -105,6 +107,7 @@ namespace Kautham {
         description_ = "PCA alignment";
         PCAdataset=false;
         dimension = dim;
+        wpenalization = 1.0;
 
         //de moment ho fixem a 2
         dimension = 2;
@@ -115,6 +118,8 @@ namespace Kautham {
     PCAalignmentOptimizationObjective::~PCAalignmentOptimizationObjective(){
 
     }
+
+
 
     void PCAalignmentOptimizationObjective::setPCAdata(int option)//ob::ProjectionMatrix M, ob::EuclideanProjection v){
     {
@@ -148,6 +153,97 @@ namespace Kautham {
         lambda = v;
         PCAdataset=true;
     }
+
+
+    ob::Cost PCAalignmentOptimizationObjective::motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const
+    {
+        ob::StateSpacePtr space = getSpaceInformation()->getStateSpace();
+
+        ob::ScopedState<ob::CompoundStateSpace> ss1(space);
+        ob::ScopedState<ob::CompoundStateSpace> ss2(space);
+        ss1 = *s1;
+        ss2 = *s2;
+
+        //Get the SE3 subspace of robot 0
+        ob::StateSpacePtr ssRobot0 = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
+        ob::StateSpacePtr ssRobot0SE3 =  ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
+
+        ob::ScopedState<ob::SE3StateSpace> s1se3(ssRobot0SE3);
+        ss1 >> s1se3;
+        ob::ScopedState<ob::SE3StateSpace> s2se3(ssRobot0SE3);
+        ss2 >> s2se3;
+
+        //convert to a vector of 7 components
+        vector<double> s1_se3coords;
+        vector<double> s2_se3coords;
+        s1_se3coords.resize(2);
+        s2_se3coords.resize(2);
+        s1_se3coords[0] = s1se3->getX();
+        s1_se3coords[1] = s1se3->getY();
+        s2_se3coords[0] = s2se3->getX();
+        s2_se3coords[1] = s2se3->getY();
+
+
+        //vector from s1 to s2 in state space: from12 = s2-s1
+        vector<double> from12(dimension);
+        double modul12=0.0;
+        for(int i=0; i<dimension;i++)
+        {
+            from12[i] = s2_se3coords[i] - s1_se3coords[i];
+            modul12 += from12[i]*from12[i];
+        }
+        modul12 = sqrt(modul12);
+
+        //vector from s1 to s2 using the pca reference frame: vpca = M*v
+        ob::EuclideanProjection to12(dimension);
+        pcaM.project(&from12[0],to12);
+
+        //to[i] es la projeccio de l'edge en la direccio de l'eigenvector i (PMDi)
+        double alpha = acos(fabs(to12[0]/modul12));//angle entre l'edge i el main PMD
+        //std::cout<<alpha<<" "<<modul<<std::endl;
+
+
+        //Compute now the possible penalization due to a big change in orientation
+        double orientationpenalization=1.0;
+        if(s0!=NULL)
+        {
+            ob::ScopedState<ob::CompoundStateSpace> ss0(space);
+            ss0 = *s0;
+            ob::ScopedState<ob::SE3StateSpace> s0se3(ssRobot0SE3);
+            ss0 >> s0se3;
+            vector<double> s0_se3coords;
+            s0_se3coords.resize(2);
+            s0_se3coords[0] = s0se3->getX();
+            s0_se3coords[1] = s0se3->getY();
+            //vector from s0 to s1 in state space: from01 = s1-s0
+            vector<double> from01(dimension);
+            double modul01=0.0;
+            for(int i=0; i<dimension;i++)
+            {
+                from01[i] = s1_se3coords[i] - s0_se3coords[i];
+                modul01 += from01[i]*from01[i];
+            }
+            modul01 = sqrt(modul01);
+
+            //if angle between vector 01 and vector 12 is not between -90 and +90 set a cost penalization
+            double cosbeta = (from01[0]*from12[0]+from01[1]*from12[1])/(modul01*modul12);
+            if(cosbeta<0)
+            {
+                orientationpenalization = wpenalization;
+            }
+        }
+
+
+        double distcost = wdistance*modul12;
+        double orientcost = (1.0-wdistance)*alpha*(0.1+0.9*modul12);
+        orientcost *= orientationpenalization;
+
+        return ob::Cost(distcost+orientcost);
+        //return ob::Cost(alpha*modul12 * orientationpenalization);
+        //return ob::Cost(modul12*(wdistance+alpha*(1.0-wdistance)*orientationpenalization));
+
+    }
+
 
     ob::Cost PCAalignmentOptimizationObjective::motionCost(const ob::State *s1, const ob::State *s2) const
     {

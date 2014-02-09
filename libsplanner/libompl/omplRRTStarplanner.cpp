@@ -226,7 +226,14 @@ namespace Kautham {
                       // calculate all costs and distances
                       for (std::size_t i = 0 ; i < nbh.size(); ++i)
                       {
-                          incCosts[i] = opt_->motionCost(nbh[i]->state, motion->state);
+                          if(opt_->getDescription()=="PCA alignment"){
+                              ob::State *s0;
+                              if(nbh[i]->parent==NULL) s0=NULL;
+                              else s0=nbh[i]->parent->state;
+                              incCosts[i] = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
+                          }
+                          else
+                              incCosts[i] = opt_->motionCost(nbh[i]->state, motion->state);
                           costs[i] = opt_->combineCosts(nbh[i]->cost, incCosts[i]);
                       }
 
@@ -281,14 +288,30 @@ namespace Kautham {
                   }
                   else // if not delayCC
                   {
-                      motion->incCost = opt_->motionCost(nmotion->state, motion->state);
+                      if(opt_->getDescription()=="PCA alignment"){
+                          ob::State *s0;
+                          if(nmotion->parent==NULL) s0=NULL;
+                          else s0=nmotion->parent->state;
+                          motion->incCost = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nmotion->state, motion->state);
+                      }
+                      else
+                          motion->incCost = opt_->motionCost(nmotion->state, motion->state);
+
                       motion->cost = opt_->combineCosts(nmotion->cost, motion->incCost);
                       // find which one we connect the new state to
                       for (std::size_t i = 0 ; i < nbh.size(); ++i)
                       {
                           if (nbh[i] != nmotion)
                           {
-                              incCosts[i] = opt_->motionCost(nbh[i]->state, motion->state);
+                              if(opt_->getDescription()=="PCA alignment"){
+                                  ob::State *s0;
+                                  if(nbh[i]->parent==NULL) s0=NULL;
+                                  else s0=nbh[i]->parent->state;
+                                  incCosts[i] = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
+                              }
+                              else
+                                  incCosts[i] = opt_->motionCost(nbh[i]->state, motion->state);
+
                               costs[i] = opt_->combineCosts(nbh[i]->cost, incCosts[i]);
                               if (opt_->isCostBetterThan(costs[i], motion->cost))
                               {
@@ -339,8 +362,17 @@ namespace Kautham {
                           ob::Cost nbhIncCost;
                           if (symDist && symCost)
                               nbhIncCost = incCosts[i];
-                          else
-                              nbhIncCost = opt_->motionCost(motion->state, nbh[i]->state);
+                          else{
+                              if(opt_->getDescription()=="PCA alignment"){
+                                  ob::State *s0;
+                                  if(motion->parent==NULL) s0=NULL;
+                                  else s0=motion->parent->state;
+                                  nbhIncCost = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,motion->state, nbh[i]->state);
+                              }
+                              else
+                                  nbhIncCost = opt_->motionCost(motion->state, nbh[i]->state);
+                          }
+
                           ob::Cost nbhNewCost = opt_->combineCosts(motion->cost, nbhIncCost);
                           if (opt_->isCostBetterThan(nbhNewCost, nbh[i]->cost))
                           {
@@ -522,12 +554,14 @@ namespace Kautham {
          _pcaalignmentopti->setCostThreshold(ob::Cost(0.0));
         _changePCA=0;
         addParameter("change PCA", _changePCA);
-        _lengthewight = 0.3;
-        addParameter("lengthweight(0..1)", _lengthewight);
+        _lengthweight = 0.3;
+        addParameter("lengthweight(0..1)", _lengthweight);
+        _penalizationweight = 1.0;
+        addParameter("penalizationweight", _penalizationweight);
 
         _multiopti = ob::OptimizationObjectivePtr(new ob::MultiOptimizationObjective(ss->getSpaceInformation()));
-        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_lengthopti,_lengthewight);
-        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_pcaalignmentopti,1.0-_lengthewight);
+        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_lengthopti,_lengthweight);
+        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_pcaalignmentopti,1.0-_lengthweight);
 
 
         _pcaalignmentopti2 = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective2(ss->getSpaceInformation(),dimpca));
@@ -536,7 +570,7 @@ namespace Kautham {
         if(_opti==1)
             pdefPtr->setOptimizationObjective(_clearanceopti);
         else if(_opti==2)
-            pdefPtr->setOptimizationObjective(_multiopti);
+            pdefPtr->setOptimizationObjective(_pcaalignmentopti);//_multiopti);
         else if(_opti==3)
             pdefPtr->setOptimizationObjective(_pcaalignmentopti2);
         else //_opti==0 and default
@@ -575,7 +609,7 @@ namespace Kautham {
             if(_opti==1)
                 pdefPtr->setOptimizationObjective(_clearanceopti);
             else if(_opti==2)
-                pdefPtr->setOptimizationObjective(_multiopti);
+                pdefPtr->setOptimizationObjective(_pcaalignmentopti);//_multiopti);
             else if(_opti==3)
                 pdefPtr->setOptimizationObjective(_pcaalignmentopti2);
             else //_opti==0 and default
@@ -616,12 +650,24 @@ namespace Kautham {
 
         it = _parameters.find("lengthweight(0..1)");
         if(it != _parameters.end()){
-            if(it->second >=0.0 && it->second<=1.0) _lengthewight = it->second;
-            else _lengthewight = 0.5;
+            if(it->second >=0.0 && it->second<=1.0) _lengthweight = it->second;
+            else _lengthweight = 0.5;
             if(_opti==2 )
             {
-                ((ob::MultiOptimizationObjective*)_multiopti.get())->setObjectiveWeight(0,_lengthewight);
-                ((ob::MultiOptimizationObjective*)_multiopti.get())->setObjectiveWeight(1,1.0-_lengthewight);
+                ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setDistanceWeight(_lengthweight);
+                //((ob::MultiOptimizationObjective*)_multiopti.get())->setObjectiveWeight(0,_lengthewight);
+                //((ob::MultiOptimizationObjective*)_multiopti.get())->setObjectiveWeight(1,1.0-_lengthewight);
+            }
+        }
+        else
+          return false;
+
+        it = _parameters.find("penalizationweight");
+        if(it != _parameters.end()){
+            _penalizationweight = it->second;
+            if(_opti==2 )
+            {
+                ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setOrientationPenalization(_penalizationweight);
             }
         }
         else
