@@ -52,6 +52,7 @@ namespace Kautham {
 /** \addtogroup libPlanner
  *  @{
  */
+ namespace IOC{
 
 	class LocalPlanner {
 	  public:
@@ -79,8 +80,9 @@ namespace Kautham {
       Sample*           _goal;
       SPACETYPE         _spType;
 	    //string _name;
-	};
-    /** @}   end of Doxygen module "libPlanner */
+    };
+ }
+ /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif  //_PLANNER_H

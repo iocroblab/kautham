@@ -49,9 +49,6 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
- *  @{
- */
 
   GaussianSampler::GaussianSampler(char dim, KthReal s, WorkSpace *w){
 	ws = w;
@@ -125,6 +122,5 @@ namespace Kautham{
   }
 
 
-  /** @}   end of Doxygen module "libSampling" */
 }
 

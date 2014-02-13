@@ -53,6 +53,8 @@ namespace Kautham{
  *  @{
  */
 
+
+namespace IOC{
 //  class Planner();
   class KthQuery{
   public:
@@ -115,6 +117,7 @@ namespace Kautham{
 	    int		      _worldcollCheckCalls;
 	    int		      _collCheckCalls;
   };
+}
   /** @}   end of Doxygen module "libPlanner */
 }
 

@@ -55,6 +55,7 @@
 
 using namespace std;
 using namespace Kautham;
+using namespace IOC;
 using namespace boost;
 
 namespace GUIBRO {

@@ -51,9 +51,6 @@ using namespace std;
 namespace Kautham{
 
 
-/** \addtogroup libSampling
- *  @{
- */
 
   Sample::Sample(char d){
     _dim = d;
@@ -304,6 +301,4 @@ namespace Kautham{
     return tmp;
   }
 
-
-  /** @}   end of Doxygen module "libSampling" */
 }

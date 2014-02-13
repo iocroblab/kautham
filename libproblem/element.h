@@ -49,7 +49,11 @@
 
 
 namespace Kautham {
-/** \addtogroup libProblem
+/** \defgroup libProblem Library libproblem
+ *  \brief contains classes to define the setup: robots and workspace
+ *
+ *   \todo Add detailed description of library libproblem
+ *
  *  @{
  */
   class Element {

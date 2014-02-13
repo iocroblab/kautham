@@ -54,10 +54,6 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
- *  @{
- */
-
   SampleSet::SampleSet(){
     samples.clear();
 	  typesearch = ANNMETHOD; //BRUTEFORCE
@@ -690,6 +686,5 @@ namespace Kautham{
 		return true;
 	}
 
-  /** @}   end of Doxygen module "libSampling" */
 }
 

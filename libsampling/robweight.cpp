@@ -3,9 +3,6 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
- *  @{
- */
 
   RobWeight::RobWeight(unsigned int dim) {
     setRnDim(dim);
@@ -20,5 +17,4 @@ namespace Kautham{
       _rn.at(i) = w;
   }
 
-  /** @}   end of Doxygen module "libSampling" */
 }

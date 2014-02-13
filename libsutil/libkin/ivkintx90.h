@@ -50,7 +50,7 @@
 
 using namespace TXrobot;
 
-/** \defgroup libKin
+/** \addtogroup libKin
  *  @{
  */
   class IvKinTx90:public Kautham::InverseKinematic{

@@ -47,9 +47,6 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
- *  @{
- */
 
   RandomSample::RandomSample(char d):Sample(d){
     //_coords.resize(d);
@@ -57,6 +54,5 @@ namespace Kautham{
       _coords[j] = (KthReal)gen->d_rand();
   }
 
-  /** @}   end of Doxygen module "libSampling" */
 }
 

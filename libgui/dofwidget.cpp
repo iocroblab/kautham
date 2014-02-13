@@ -47,9 +47,7 @@
 
 
 namespace Kautham {
-/** \addtogroup libGUI
- *  @{
- */
+
 
 	DOFWidget::DOFWidget( Robot* rob ) {
     _robot = rob;
@@ -127,6 +125,5 @@ namespace Kautham {
     }
   }
 
-  /** @}   end of Doxygen module "libGUI" */
 }
 

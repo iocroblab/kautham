@@ -96,9 +96,7 @@ using namespace pugi;
 
 namespace Kautham {
 
-/** \addtogroup libProblem
- *  @{
- */
+
 
   const KthReal Problem::_toRad = (KthReal)(M_PI/180.0);
   Problem::Problem() {
@@ -831,7 +829,5 @@ namespace Kautham {
     }
     return false;
   }
-
-  /** @}   end of Doxygen module "libProblem" */
 }
 

@@ -44,9 +44,6 @@
 #include "ivkin2drr.h"
 #include <libproblem/robot.h>
 
-/** \defgroup libKin
- *  @{
- */
   
 IvKin2DRR::IvKin2DRR(Robot* const rob) : Kautham::InverseKinematic(rob){
 
@@ -153,5 +150,4 @@ IvKin2DRR::IvKin2DRR(Robot* const rob) : Kautham::InverseKinematic(rob){
 
     return _robLay;
   }
-  /** @}   end of Doxygen module "libKin */
 

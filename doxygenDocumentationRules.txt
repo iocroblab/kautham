@@ -35,8 +35,6 @@ class X
 ----------------------------------------------------------------------------------------------
 3.- Descrition of a Class function
 
-The description of an inline class function is done in the *.h file where the class is defined, just before the function, with the following syntaxis:
-
 
 /** 
 *  This is a  description of class funct2. Optionally it may include the parameteres and 
@@ -55,7 +53,6 @@ void X::funct2(int a, int b)
 
 ----------------------------------------------------------------------------------------------
 4.- Descrition of a Class data
-The description of an inline class function is done in the *.h file where the class is defined, in the same line just after the function is defined.
 
 class X
 {

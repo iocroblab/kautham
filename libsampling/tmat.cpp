@@ -51,9 +51,6 @@ using namespace std;
 namespace Kautham {
 
 
-/** \addtogroup libSampling
- *  @{
- */
 
 TMat::TMat(int d) {
 
@@ -403,6 +400,5 @@ TMat::TMat(int d) {
 		return out.str();
 	}
 
-    /** @}   end of Doxygen module "libSampling" */
 }
 

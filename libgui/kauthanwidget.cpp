@@ -44,9 +44,7 @@
 #include "kauthamwidget.h"
 
 namespace Kautham{
-/** \addtogroup libGUI
- *  @{
- */
+
 
   KauthamWidget::KauthamWidget(KauthamObject* kObj){
 		_kauthObject= kObj;
@@ -143,5 +141,4 @@ namespace Kautham{
     emit sendText(text);
   }
 
-  /** @}   end of Doxygen module "libGUI" */
 }

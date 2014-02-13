@@ -48,9 +48,7 @@
 
 
 namespace Kautham{
-/** \addtogroup libGUI
- *  @{
- */
+
 
 	SamplesWidget::SamplesWidget(SampleSet* samples, Sampler* sampler, Problem* prob){
     _samples = samples;
@@ -409,6 +407,5 @@ namespace Kautham{
       _ptProblem->wSpace()->moveRobotsTo(_samples->getSampleAt(index));
   }
 
-  /** @}   end of Doxygen module "libGUI" */
 }
 

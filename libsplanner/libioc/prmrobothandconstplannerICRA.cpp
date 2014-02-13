@@ -54,9 +54,6 @@
 
  
  namespace Kautham {
- /** \addtogroup libPlanner
-  *  @{
-  */
   namespace IOC{
 		
   PRMRobotHandConstPlannerICRA::PRMRobotHandConstPlannerICRA(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler,
@@ -1008,5 +1005,4 @@
   }//closes moveAlongPath
 
  }//closes namespace PRM
-  /** @}   end of Doxygen module "libPlanner */
 };//closes namespace Kautham

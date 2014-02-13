@@ -47,9 +47,6 @@
 	
 namespace Kautham {
 
-/** \addtogroup libProblem
- *  @{
- */
 
   IVPQPElement::IVPQPElement(string visFile, KthReal sc)
     :IVElement(visFile,sc){
@@ -242,7 +239,6 @@ namespace Kautham {
   }
 
 
-  /** @}   end of Doxygen module "libProblem" */
 }
 
 

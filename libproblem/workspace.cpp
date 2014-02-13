@@ -49,9 +49,7 @@ using namespace std;
 
 namespace Kautham {
 
-/** \addtogroup libProblem
- *  @{
- */
+
 
   WorkSpace::WorkSpace(){
 	  obstacles.clear();
@@ -403,7 +401,6 @@ namespace Kautham {
     return false;
   }
 
-  /** @}   end of Doxygen module "libProblem" */
 }
 
 

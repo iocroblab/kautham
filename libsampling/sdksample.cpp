@@ -51,9 +51,6 @@ using namespace std;
 namespace Kautham {
 
 
-/** \addtogroup libSampling
- *  @{
- */
 
   LCPRNG* SDKSample::gen = NULL;
 
@@ -114,7 +111,6 @@ namespace Kautham {
 		return s.str();	
   }
 
-  /** @}   end of Doxygen module "libSampling" */
 }
 
 

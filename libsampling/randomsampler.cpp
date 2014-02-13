@@ -49,9 +49,6 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
- *  @{
- */
 
   LCPRNG* RandomSample::gen = NULL;
 
@@ -69,6 +66,5 @@ namespace Kautham{
   //  return _current;
   //}
 
-  /** @}   end of Doxygen module "libSampling" */
 }
 

@@ -47,9 +47,7 @@
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
+
   namespace IOC{
 	//! Constructor
     HFPlanner::HFPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
@@ -282,8 +280,7 @@ namespace Kautham {
 			drawCspace();
 			return _solved;
 		}
-	  }
-  /** @}   end of Doxygen module "libPlanner */
+      }
 }
 
 

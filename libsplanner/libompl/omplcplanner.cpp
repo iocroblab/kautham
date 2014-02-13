@@ -66,9 +66,6 @@
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
 
 //! Namespace omplcplanner contains the planners based on the OMPL::control library
   namespace omplcplanner{
@@ -1048,7 +1045,6 @@ namespace Kautham {
             }
 		}
     }
-  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif // KAUTHAM_USE_OMPL

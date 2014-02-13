@@ -47,9 +47,8 @@
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
+
+namespace IOC{
 
   LinearLocalPlanner::LinearLocalPlanner(SPACETYPE stype, Sample *init, Sample *goal, WorkSpace *ws, KthReal st )
     :LocalPlanner(stype,init,goal,ws,st) {
@@ -136,7 +135,7 @@ namespace Kautham {
   {
     return _wkSpace->distanceBetweenSamples(*from, *to, CONFIGSPACE);
   }
-/** @}   end of Doxygen module "libPlanner */
+}
 }
 
 

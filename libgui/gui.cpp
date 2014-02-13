@@ -62,9 +62,7 @@
 using namespace pugi;
 
 namespace Kautham {
-/** \addtogroup libGUI
- *  @{
- */
+
 
 	GUI::GUI(QWidget *p) {
 		setupUi(this);
@@ -684,6 +682,5 @@ namespace Kautham {
 		return true;
 	}
 
-    /** @}   end of Doxygen module "libGUI" */
 }
 

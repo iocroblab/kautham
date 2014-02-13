@@ -51,9 +51,6 @@
 
 #define RAD2GRAD 180.0/M_PI
  namespace Kautham {
- /** \addtogroup libPlanner
-  *  @{
-  */
   namespace IOC{
 	
 	PRMAUROHandArmPlanner::PRMAUROHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
@@ -1480,5 +1477,4 @@
 
 
   }
-  /** @}   end of Doxygen module "libPlanner */
 };

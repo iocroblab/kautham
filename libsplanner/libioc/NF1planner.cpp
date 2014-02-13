@@ -49,9 +49,6 @@
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
   namespace IOC{
 	//! Constructor
     NF1Planner::NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
@@ -223,8 +220,7 @@ namespace Kautham {
 			return _solved;
 			
 		}
-	  }
-  /** @}   end of Doxygen module "libPlanner */
+      }
 }
 
 

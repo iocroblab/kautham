@@ -46,10 +46,6 @@
 namespace Kautham {
 
 
-/** \addtogroup libSampling
- *  @{
- */
-
   Sequence::Sequence(int dim, int M, bool randOffset){
     LCPRNG* gen1 = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
     _index=0;
@@ -162,5 +158,4 @@ namespace Kautham {
 		return ret;
   }
 
-  /** @}   end of Doxygen module "libSampling" */
 }

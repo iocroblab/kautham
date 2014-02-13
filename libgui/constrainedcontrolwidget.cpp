@@ -5,9 +5,7 @@
 
 
 namespace Kautham {
-/** \addtogroup libGUI
- *  @{
- */
+
 
 	ConstrainedControlWidget::ConstrainedControlWidget( Robot* rob, Problem* prob, int offset) {
     _robot = rob;
@@ -81,6 +79,6 @@ namespace Kautham {
     }
   }
 
-  /** @}   end of Doxygen module "libGUI" */
+
 }
 

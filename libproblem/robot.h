@@ -66,6 +66,7 @@ namespace Kautham {
  *  @{
  */
 
+//! Struct attObj defines the transformation between an object and the robot link to which it is attached.
   struct attObj{
     attObj(){obs=NULL; link=NULL;}
     ~attObj(){obs=NULL; link=NULL;}
@@ -77,187 +78,88 @@ namespace Kautham {
     }
   };
 
+//! Class robot implements a kinematic tree with a free-flying base
   class Robot {
+  private:
+    //ATTRIBUTES
+      ROBOTTYPE         robType; //!< The robot type FREEFLY,CHAIN, TREE, CLOSEDCHAIN
+      LIBUSED           libs; //!< Flag indicating the collision-check library used PQP or SOLID.
+
+      string            name; //!< A descriptive name of robot
+      KthReal           scale;//!< This is the global scale for all the links that compound the robot. Normally it is equal to one.
+      RobWeight*        _weights; //!< Weights that affect the distance computations.
+      mt::Transform     _homeTrans; //!< This is the Home Reference frame at time zero (used to calculate the spatial limits).
+      void*             visModel; //!< Visualitzation model for the path.
+      string            controlsName; //!< Names of the controls, as a string, separated with the vertical bar character.
+      int               numControls;  //!< This is the number of control used to command the robot
+      int               numCoupledControls; //!< This is the number of controls used to command the robot that are couped with other robots
+                                        //!< From the set of controls defined in the input file *.rob, the first numCoupledControls controls
+                                        //!< will be those that are coupled with other robots. This is implemented by maintaining those
+                                        //!< controls at the same value for all the robots.
+      int               nTrunk; //!< Number of control for the trunk in case of TREE robot
+      InverseKinematic* _ikine; //!< Defines the inverse kinematics of the robot, if available.
+      ConstrainedKinematic* _constrainKin; //!< Defines the constrained kinematics of the robot, if it has one.
+      vector<RobConf>   _proposedSolution; //!< Solution path to be drawn.
+      SoMFVec3f*        _graphicalPath; //!< This corresponds to translational part of the link origin selected while following the path to be drawn.
+      SoSeparator*      _pathSeparator; //!< This is the SoSeparator to visualize the solution path. It is attached to the robot model.
+      int               _linkPathDrawn; //!< This is the number of the link whose path will be drawn
+      list<attObj>      _attachedObject; //!< List of objects attached to the robot gripper.
+
+      KthReal           _spatialLimits[7][2]; //!< Limits of motions of the base of the robot, in world coordinates.
+      KthReal           _homeLimits[7][2]; //!< Limits of motions of the base of the robo, with respect to the robot reference frame.
+      vector<Link*>     links; //!< Vector of the robot links, starting at the base and ending at the end effector.In case of Tree robots, each branch is inserted sequentially.
+      bool              _autocoll; //!< Flag that indicates if the robot is auto-colliding
+      bool              _hasChanged; //!< Flag that indicates if the robot has changed its configuration. To speed up some computations.
+      KthReal           *offMatrix; //!< Offset vector. If copuling is generated with PCA it contains the baricenter coordinates, otherwise 0.5.
+      KthReal           **mapMatrix; //!< Matrix to compute the robot configuration from the controls. If copuling is generated with PCA it contains the scaled eignevectors.
+
+
+      DHAPPROACH        dhApproach;//!< It identifies the D-H description method (Standard/Modified).
+      bool              se3Enabled; //!< This attribute is true if the robot has a mobile base.
+      bool              armed;//!< Flag that shows if the Robot is complete or still is under construction.
+      RobConf           _homeConf;     //!< This attribute is the Home configuration of the robot.
+      RobConf           _initConf;     //!< This attribute is the initial configuration of the robot planning problem.
+      RobConf           _goalConf;     //!< This attribute is the goal configuration of the robot planning problem.
+      RobConf           _currentConf;  //!< This attribute is the current configuration of the robot.
+
+
   public:
-    Robot(string robFile, KthReal scale, LIBUSED lib = IVPQP);
 
-	  Link* getLink(unsigned int i);
-    Link* getLinkByName( string linkName );
+    Robot(string robFile, KthReal scale, LIBUSED lib = IVPQP); //!<  Constructor
 
-	  bool autocollision(int t=0);
+    inline string getName() const {return name;} //!< Returns the robot name.
 
-    //! This method builds the link model and all their data structures in order
-    //! to keep the coherence in the robot assembly. It doesn't use any intermediate
-    //! structure to adquire the information to do the job.
-    bool addLink(string name, string ivFile, KthReal theta, KthReal d, KthReal a,
-                 KthReal alpha, bool rotational, bool movable, KthReal low,
-                 KthReal hi, KthReal w, string parentName, KthReal preTrans[] = NULL);
+    inline RobConf* getCurrentPos(){return &_currentConf;} //!< Returns the current RobConf used to represent the SE3 position and Rn configuration
 
-//    //! This method is deprecated because It uses the DATA intermediate structure.
-//    //! Please don't use it and take care with your Rob file to define the robot correctly.
-//	  bool addLink(string name, string ivFile, KthReal theta, KthReal d, KthReal a,
-//                 KthReal alpha, bool rotational, bool movable, KthReal low,
-//                 KthReal hi,  KthReal w, string parentName, DATA *preTrans = NULL);
-  	
-	  //!	This member function set the robot name.
-	  inline void setName(string nam){name = nam;}
+    inline RobConf* getInialPos(){ return &_initConf;} //!< Returns the Initial robot configuration
 
-    inline string getName() const {return name;}
+    inline RobConf* getGoalPos(){ return &_goalConf;} //!< Returns the Goal robot configuration
 
-    //! It sets the robot to the pose bring by the robq parameter.
-    bool Kinematics(RobConf *robq);
+    inline RobConf* getHomePos(){ return &_homeConf;} //!< Returns the Home robot configuration
 
-    bool Kinematics(RobConf& robq);
+    inline LIBUSED whatLibs(){return libs;}//!< Returns the type of libraries used to build the models.
 
-    bool Kinematics(SE3Conf& q) ;
+    inline KthReal* getLimits(int member){return _spatialLimits[member];} //!< Returns the limits of the robot (needed for mobile bases).
 
-    bool Kinematics(RnConf& q);
+    inline ROBOTTYPE getRobotType(){return robType;} //!< Returns the robot type.
 
-    //!	This method uses the Configuration q to set up the position, orientation,
-    //!	and articular values if the robot has one. If the configuration q is SE2 or SE3
-    //!	the robot change the position and/or orientation either the configuration is
-    //!	Rn the robot change the articular values.
-	  bool Kinematics(Conf *q);
+    inline KthReal getScale() const {return scale;} //!< Returns the scale.
 
-    // This member method is the interface to calling the inverse kinematic
-    //   object associated. It returns the RobConf<SE3Conf,RnConf> configuration
-    //   that describe the pose of the robot completely.
-    //
-    RobConf& InverseKinematics(vector<KthReal> &target);
-	
-    /** This member method is another interface to calling the inverse kinematic
-      *   object associated. It returns the RobConf<SE3Conf,RnConf> configuration
-      *   that describe the pose of the robot completely.
-      */
-    RobConf& InverseKinematics(vector<KthReal> &target, vector<KthReal> masterconf,
-                               bool maintainSameWrist);
+    inline int getTrunk() const {return nTrunk;} //!< Returns the number of links that compose the trunk of the kinematic tree.
 
-    void setHomePos(Conf* qh);
+    inline DHAPPROACH getDHApproach(){return dhApproach;} //!< Returns the typs of D-H parameters used
 
-    void setInitPos(Conf *qi);
+    inline unsigned int getNumJoints(){return ((unsigned int)links.size()) - 1;}//!< Returns the number of joints of the robot (nlinks-1).
 
-	  void setGoalPos(Conf *qg);
+    inline unsigned int getNumLinks(){return (unsigned int)links.size();} //!< Returns the number of links of the robot.
 
-    //! This method returns the current RobConf used to
-    //! represent the SE3 position and Rn configuration
-    inline RobConf* getCurrentPos(){return &_currentConf;}
+    inline bool isSE3Enabled() const {return se3Enabled;} //!< retruns wether the robot has a mobile base
 
-    inline RobConf* getInialPos(){ return &_initConf;}
+    inline string getControlsName() const {return controlsName;} //!< Returns the string containing the control names, separated by the veritcal line character
 
-    inline RobConf* getGoalPos(){ return &_goalConf;}
+    inline int getNumControls(){if( armed ) return numControls; return -1;} //!< Retruns the number of controls
 
-    inline RobConf* getHomePos(){ return &_homeConf;}
-
-	  bool collisionCheck(Obstacle *obs);
-
-    bool collisionCheck(Robot *rob);
-
-	  KthReal distanceCheck(Obstacle *obs, bool min = true);
-
-    KthReal distanceCheck(Robot *rob, bool min = true);
-
-	  bool setLimits(int member, KthReal min, KthReal max);
-
-    void* getModel();
-
-    void* getModelFromColl();
-
-    //! This method makes the mapping between control values and configurations.
-    //! The method receives the values and it makes the changes in respective configurations 
-    //! If the robot is freeflying only changes the SE3/SE2 Conf corresponding to 
-    //! position and orientation of it using the Kinematics methods, but if the robot 
-    //! is a chain or a tree robot, this method changes a SE3/SE2 Conf (position 
-    //! and orientation) and a Rn Conf for articular values. All values are between 0 and 1.
-    void control2Pose(vector<KthReal> &values);
-
-    //! This method maps the values of position/pose of robot taking into account the movement
-    //! limits.  
-    Conf& parameter2Conf(vector<KthReal> &values, CONFIGTYPE type);
-
-    //! This method returns the type of libraries used to build the models.
-    inline LIBUSED whatLibs(){return libs;}
-
-	  inline KthReal* getLimits(int member){return _spatialLimits[member];}
-  	
-	  //!	This member function returns the robot type.
-	  //!	This member function returns the robot type, in this case it returns a 
-	  //	FREEFLY constant. For compatibility with other robot types. 
-	  inline ROBOTTYPE getRobotType(){return robType;}
-
-	  //!	This member funcion set a robot type.
-	  //!	This member funcion set a robot type, in this case is FREEFLY constant 
-	  //		For compatibility with other type of robots.
-	  inline void setRobotType(ROBOTTYPE rob){robType = rob;}
-
-	  //!	This member funcion return a problem type.
-	  //!	This member funcion return a problem type. For freefling robots, it can
-	  //	be SE2, SE3, R2 or R3. 
-	  //inline CONFIGTYPE getProblemType(){return probType;}
-
-	  //!	This member funcion set a problem type.
-	  //!	This member funcion set a problem type.  For freefling robots, it can
-	  //	be SE2, SE3, R2 or R3. 
-	  //inline void setProblemType(CONFIGTYPE pT){probType = pT;}
-
-    inline KthReal getScale() const {return scale;}
-
-
-	
-    inline int getTrunk() const {return nTrunk;}
-
-    inline KthReal* getWeightSE3(){
-      KthReal tmp=1.;
-      if( _weights != NULL ) 
-        return _weights->getSE3Weight(); 
-      else 
-        throw exception();
-    }
-
-    inline vector<KthReal>& getWeightRn(){
-      if( _weights != NULL ) 
-        return _weights->getRnWeights();
-      else
-        throw exception();
-    }
-
-    RobWeight* getRobWeight(){return _weights;}
-    
-    inline void setDHApproach(DHAPPROACH dhA){dhApproach = dhA;}
-
-    inline DHAPPROACH getDHApproach(){return dhApproach;}
-
-    //!	This fuction return the joint number that compose the Robot. 
-    inline unsigned int getNumJoints(){return ((unsigned int)links.size()) - 1;}
-
-    //!	This fuction return the link number that compose the Robot. 
-    inline unsigned int getNumLinks(){return (unsigned int)links.size();}
-
-    void parameter2Pose(vector<KthReal> &values);
-
-    void control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters);
-
-    inline bool isSE3Enabled() const {return se3Enabled;}
-    bool setInverseKinematic(INVKINECLASSES type);
-    bool setInverseKinematicParameter(string name, KthReal value);
-	  InverseKinematic* getIkine(){return _ikine;}
-    
-    // \brief This method defines the control and the offset matrixes.
-    //   Keep in mind that the control are values between [-0.5,0.5]
-    //   meanwhile the normalized configuration are values between
-    //   [0, 1] for this reason in the SE3 freeflying robots the offset
-    //   matrix should be forced to be 0.5.
-    
-    //void setControls(xml_document &doc = xml_document);
-
-    bool setControlItem(string control, string dof, KthReal value);
-
-    inline string getControlsName() const {return controlsName;}
-    string getDOFNames();
-
-    inline int getNumControls(){if( armed ) return numControls; return -1;}
-
-    inline int getNumCoupledControls(){if( armed ) return numCoupledControls; return -1;}
-    inline int setNumCoupledControls(int n){numCoupledControls=n;}
+    inline int getNumCoupledControls(){if( armed ) return numCoupledControls; return -1;} //!< Retruns the number of controls that are copupled with another robot
 
     inline mt::Transform& getLastLinkTransform(){ return
                                     *(((Link*)links.at(links.size()-1))->getTransformation());}
@@ -265,38 +167,129 @@ namespace Kautham {
     inline mt::Transform& getLinkTransform(unsigned int numLink){
                                     if(numLink<0 || numLink>=links.size()) numLink = links.size()-1;
                                     return
-                                        *(((Link*)links.at(numLink))->getTransformation());}
+                                        *(((Link*)links.at(numLink))->getTransformation());} //!< R
 
-    inline mt::Transform& getHomeTransform(){return *(links[0]->getTransformation());}
+    inline mt::Transform& getHomeTransform(){return *(links[0]->getTransformation());} //!< Retruns the transform of the robot base wrt the world
+
+    inline vector<RobConf>& getProposedSolution(){return _proposedSolution;} //!< Returns the Proposed Solution as a vector of RobConf; for visualization purposes.
+
+
+    inline void setName(string nam){name = nam;} //!< Sets the robot name.
+
+    inline void setRobotType(ROBOTTYPE rob){robType = rob;} //!< Sets the robot type.
+
+    inline void setDHApproach(DHAPPROACH dhA){dhApproach = dhA;} //!< Sets the type of D-H parameters to be used
+
+    inline int setNumCoupledControls(int n){numCoupledControls=n;}
+
+    inline void           setLinkPathDrawn(int n){_linkPathDrawn = n;}
+
+
+    //! Returns the values that weight translations vs. rotations in SE3 distance computations.
+    KthReal* getWeightSE3();
+
+    //!< Returns the values that weights the motions of each link in Rn distance computations.
+    vector<KthReal>& getWeightRn();
+
+    //! Test for autocollision
+    bool autocollision(int t=0);
+
+    //! Add link to the robot
+    bool addLink(string name, string ivFile, KthReal theta, KthReal d, KthReal a,
+                 KthReal alpha, bool rotational, bool movable, KthReal low,
+                 KthReal hi, KthReal w, string parentName, KthReal preTrans[] = NULL);
+
+    //! Returns the pointer to link number i
+    Link* getLink(unsigned int i);
+
+    //! Retunrs the pointer to the link named linkName
+    Link* getLinkByName( string linkName );
+
+    //! Computes direct kinematics
+    bool Kinematics(RobConf *robq);
+
+    //! Computes direct kinematics
+    bool Kinematics(RobConf& robq);
+
+    //! Computes direct kinematics
+    bool Kinematics(SE3Conf& q) ;
+
+    //! Computes direct kinematics
+    bool Kinematics(RnConf& q);
+
+    //! Computes direct kinematics
+    bool Kinematics(Conf *q);
+
+    //! Computes inverse kinematics
+    RobConf& InverseKinematics(vector<KthReal> &target);
+
+    //! Computes inverse kinematics
+    RobConf& InverseKinematics(vector<KthReal> &target, vector<KthReal> masterconf,
+                               bool maintainSameWrist);
+
+    //! Sets the inverse kinematics to be used
+    bool setInverseKinematic(INVKINECLASSES type);
+
+    //! Sets parameters inverse kinematics
+    bool setInverseKinematicParameter(string name, KthReal value);
+
+    //! Returns the inverse kinematics used
+    InverseKinematic* getIkine(){return _ikine;}
+
+    //! Sets the constrained kinematics
+    bool                  setConstrainedKinematic(CONSTRAINEDKINEMATICS type);
+
+    //! Sets parameters constrained kinematics
+    bool                  setConstrainedKinematicParameter(string name, KthReal value);
+
+    //! Returns the constrained kinematics used
+    ConstrainedKinematic* getCkine(){return _constrainKin;}
+
+    //! Computes direct constrrained kinematics
+    RobConf&              ConstrainedKinematics(vector<KthReal> &target);
+
+    //! Sets the home position of the robot
+    void setHomePos(Conf* qh);
+
+    //! Sets the init configuration of the robot
+    void setInitPos(Conf *qi);
+
+    //! Sets the goal configuration of the robot
+    void setGoalPos(Conf *qg);
+
+    bool collisionCheck(Obstacle *obs);
+    bool collisionCheck(Robot *rob);
+    KthReal distanceCheck(Obstacle *obs, bool min = true);
+    KthReal distanceCheck(Robot *rob, bool min = true);
+
+    bool setLimits(int member, KthReal min, KthReal max);
+    void* getModel();
+    void* getModelFromColl();
+
+    void control2Pose(vector<KthReal> &values);
+    //! This method maps the values of position/pose of robot taking into account the movement limits.
+    Conf& parameter2Conf(vector<KthReal> &values, CONFIGTYPE type);
+    void parameter2Pose(vector<KthReal> &values);
+    void control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters);
+
+    RobWeight* getRobWeight(){return _weights;}
+    bool setControlItem(string control, string dof, KthReal value);
+    string getDOFNames();
+
     bool                  setProposedSolution(vector<mt::Point3>& pathSE3);
     bool                  setProposedSolution(vector<RobConf*>& path);
     bool                  cleanProposedSolution();
-
-    //! This method returns the Proposed Solution as a vector of RobConf that may be used to guide 
-    //! the user.
-    inline vector<RobConf>& getProposedSolution(){return _proposedSolution;}
-    inline void           setLinkPathDrawn(int n){_linkPathDrawn = n;}
-    bool                  setConstrainedKinematic(CONSTRAINEDKINEMATICS type);  
-    bool                  setConstrainedKinematicParameter(string name, KthReal value);
-	  ConstrainedKinematic* getCkine(){return _constrainKin;}
-    RobConf&              ConstrainedKinematics(vector<KthReal> &target);
     bool                  setPathVisibility(bool visible);
 
-    //! This method attaches an existing obstacle to the link specified by the linkName parameter.
-    //! This method
     bool                  attachObject(Obstacle* obs, string linkName );
-
     //! This method moves the attached object to the robot. The object can be attached to any link
     //! of the robot. This method processes the _attachedObj list to calculated the new position and 
     //! orientation based on the position and orientation of the robot link where the object is attached 
     //! and the mt::Transform calculated on the attached instant.
     void                  moveAttachedObj();
-
-    //! This method detaches the previously attached objects to the link named linkName.
     bool                  detachObject( string linkName );
 
-    //! This method returns the maximum value of the D_H parameters. It is used to have an idea about the 
-    //! dimension of the links.
+    //! This method returns the maximum value of the D_H parameters. It is used to have an idea about the dimension of the links.
     KthReal               maxDHParameter();
 
   private:
@@ -311,70 +304,9 @@ namespace Kautham {
     //! rotation (quaternion) in a single vector.
     vector<KthReal>   deNormalizeSE3(vector<KthReal> &values);
 
-    //void              setRobotWeights(RobotParse *parser);
-
-
     float             diagLimits();
 
-    ROBOTTYPE         robType;
-    LIBUSED           libs;
 
-    RobConf           _homeConf;     //!< This attribute is the Home configuration of the robot.
-    RobConf           _initConf;     //!< This attribute is the initial configuration of the robot planning problem.
-    RobConf           _goalConf;     //!< This attribute is the goal configuration of the robot planning problem.
-    RobConf           _currentConf;  //!< This attribute is the current configuration of the robot.
-
-	  KthReal           _spatialLimits[7][2];
-    KthReal           _homeLimits[7][2];
-  	
-	  //!	This Vector contains pointers to each Link
-    /*!	This method begins with the Link base and it ends with the location of final effector.
-     *  In case of Tree robots, each branch is inserted sequentially
-    */
-    vector<Link*>     links;
-
-    //!	This attribute show if the Robot is complete or still is under construction.
-    bool              armed;
-
-    //!	It is a descriptive name of robot
-    string            name;
-
-    //! This is the global scale for all the links that compound the robot.
-    //! Normally it is equal to one.
-    KthReal scale;
-
-    DHAPPROACH        dhApproach;//! It identifies the D-H description method (Standar/Modified).
-
-    //! This attribute is true if the robot is not freeflying and it could be moved.
-    bool              se3Enabled;
-
-    //! weight between translational and rotational components in distance computations
-    //KthReal           _weightSE3;
-    RobWeight*        _weights;
-  	
-    //! This is the transformation used to calculate the spatial limits into the home
-    //! frame in order to preserve the home ubication at time zero.
-    mt::Transform     _homeTrans; //!< This is the Home Reference frame at time zero.
-
-    void*             visModel;
-    KthReal           *offMatrix;
-    KthReal           **mapMatrix;
-    string            controlsName;
-    int               numControls;  //!> This is the number of control used to command the robot
-    int               numCoupledControls;  //!> This is the number of controls used to command the robot that are couped with other robots
-                                      //!> From the set of controls defined in the input file *.rob, the first numCoupledControls controls
-                                      //!> will be those that are coupled with other robots. This is implemented by maintaining those
-                                      //!> controls at the same value for all the robots.
-    bool              _autocoll;
-    bool              _hasChanged;
-    int               nTrunk; //!> Number of control for the trunk in case of TREE robot
-    InverseKinematic* _ikine;
-    ConstrainedKinematic* _constrainKin;
-    vector<RobConf>   _proposedSolution;
-    SoMFVec3f*        _graphicalPath; //!> This corresponds to translational part of the last link absolute path.
-    SoSeparator*      _pathSeparator;
-    int               _linkPathDrawn; //!> This is the number of the link whose path will be drawn
-    list<attObj>      _attachedObject;
   };
 
   /** @}   end of Doxygen module "libProblem" */

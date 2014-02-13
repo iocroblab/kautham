@@ -51,9 +51,6 @@
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
   namespace omplplanner{
 
 	//! Constructor
@@ -111,7 +108,6 @@ namespace Kautham {
       return true;
     }
   }
-  /** @}   end of Doxygen module "libPlanner */
 }
 
 #endif // KAUTHAM_USE_OMPL

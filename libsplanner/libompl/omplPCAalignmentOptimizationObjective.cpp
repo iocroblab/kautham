@@ -66,9 +66,6 @@ namespace om = ompl::magic;
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
   namespace omplplanner{
 
     //http://savingyoutime.wordpress.com/2009/09/21/c-matrix-inversion-boostublas/
@@ -202,9 +199,24 @@ namespace Kautham {
         double alpha = acos(fabs(to12[0]/modul12));//angle entre l'edge i el main PMD
         //std::cout<<alpha<<" "<<modul<<std::endl;
 
+        //prova
+        double modulto12=0.0;
+        for(int i=0; i<dimension;i++)
+        {
+            modulto12 += to12[i]*to12[i]*lambda[i]*lambda[i];
+        }
+        modulto12 = sqrt(modulto12);
+        //std::cout<<alpha<<" "<<modul12/modulto12<<std::endl;
+        alpha = (modul12/modulto12)-1;
+
+        //end prova
+
+
+
 
         //Compute now the possible penalization due to a big change in orientation
-        double orientationpenalization=1.0;
+        //double orientationpenalization=1.0;
+        double orientationpenalization=0.0;
         if(s0!=NULL)
         {
             ob::ScopedState<ob::CompoundStateSpace> ss0(space);
@@ -227,18 +239,20 @@ namespace Kautham {
 
             //if angle between vector 01 and vector 12 is not between -90 and +90 set a cost penalization
             double cosbeta = (from01[0]*from12[0]+from01[1]*from12[1])/(modul01*modul12);
-            if(cosbeta<0)
-            {
-                orientationpenalization = wpenalization;
-            }
+            //if(cosbeta<0)
+            //{
+            //    orientationpenalization = wpenalization;
+            //}
+            orientationpenalization = acos(cosbeta)*wpenalization*modul12;
         }
 
-
         double distcost = wdistance*modul12;
-        double orientcost = (1.0-wdistance)*alpha*(0.1+0.9*modul12);
-        orientcost *= orientationpenalization;
+        double orientcost = alpha*wfix*modul12;//(1.0-wdistance)*alpha*(wfix+(1-wfix)*modul12);
+        //orientcost *= orientationpenalization;
+        //return ob::Cost(distcost+orientcost);
+        return ob::Cost(distcost+orientcost+orientationpenalization);
+        //return ob::Cost(distcost+orientcost*orientationpenalization);
 
-        return ob::Cost(distcost+orientcost);
         //return ob::Cost(alpha*modul12 * orientationpenalization);
         //return ob::Cost(modul12*(wdistance+alpha*(1.0-wdistance)*orientationpenalization));
 
@@ -346,7 +360,15 @@ namespace Kautham {
         double alpha = acos(fabs(to[0]/modul));//angle entre l'edge i el main PMD
 
         //std::cout<<alpha<<" "<<modul<<std::endl;
-        return ob::Cost(alpha*modul);
+
+
+        double distcost = wdistance*modul;
+        double orientcost = alpha*wfix*modul;//(1.0-wdistance)*alpha*(wfix+(1-wfix)*modul);
+        return ob::Cost(distcost+orientcost);
+
+        //return ob::Cost(alpha*modul);
+
+
         //return ob::Cost(alpha*modul+0.1);
         //return ob::Cost(alpha*(0.1+modul));
         //return ob::Cost(alpha);
@@ -394,9 +416,9 @@ namespace Kautham {
 
     //! Constructor
       PCAalignmentOptimizationObjective2::PCAalignmentOptimizationObjective2(const ob::SpaceInformationPtr &si, int dim) :
-      ob::StateCostIntegralObjective(si)
+      ob::OptimizationObjective(si)
       {
-          description_ = "PCA alignment";
+          description_ = "PCA alignment2";
           PCAdataset=false;
           dimension = dim;
 
@@ -443,6 +465,68 @@ namespace Kautham {
           PCAdataset=true;
       }
 
+      ob::Cost PCAalignmentOptimizationObjective2::motionCost(const ob::State *s1, const ob::State *s2) const
+      {
+          vector<double> from(dimension);
+          //vector from s1 to s2 in state space: from = s2-s1
+
+          ob::StateSpacePtr space = getSpaceInformation()->getStateSpace();
+
+          ob::ScopedState<ob::CompoundStateSpace> ss1(space);
+          ob::ScopedState<ob::CompoundStateSpace> ss2(space);
+          ss1 = *s1;
+          ss2 = *s2;
+
+          //Get the SE3 subspace of robot 0
+          ob::StateSpacePtr ssRobot0 = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
+          ob::StateSpacePtr ssRobot0SE3 =  ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
+          ob::ScopedState<ob::SE3StateSpace> s1se3(ssRobot0SE3);
+          ss1 >> s1se3;
+          ob::ScopedState<ob::SE3StateSpace> s2se3(ssRobot0SE3);
+          ss2 >> s2se3;
+
+          //convert to a vector of 7 components
+          vector<double> s1_se3coords;
+          vector<double> s2_se3coords;
+          s1_se3coords.resize(2);
+          s2_se3coords.resize(2);
+          s1_se3coords[0] = s1se3->getX();
+          s1_se3coords[1] = s1se3->getY();
+          s2_se3coords[0] = s2se3->getX();
+          s2_se3coords[1] = s2se3->getY();
+
+          double modul=0.0;
+          for(int i=0; i<dimension;i++)
+          {
+              from[i] = s2_se3coords[i] - s1_se3coords[i];
+              modul += from[i]*from[i];
+          }
+          modul = sqrt(modul);
+          //from[0] /= modul;
+          //from[1] /= modul;
+
+
+          //vector from s1 to s2 using the pca reference frame: vpca = M*v
+          ob::EuclideanProjection to(dimension);
+          pcaM.project(&from[0],to);
+
+          //to[i] es la projeccio de l'edge en la direccio de l'eigenvector i (PMDi)
+          double alpha = acos(fabs(to[0]/modul));//angle entre l'edge i el main PMD
+
+          //std::cout<<alpha<<" "<<modul<<std::endl;
+
+
+          double distcost = wdistance*modul;
+          double orientcost = (1.0-wdistance)*tan(alpha)*(wfix+(1-wfix)*modul);
+
+          distcost=1.0;
+          orientcost=alpha*modul;
+          return ob::Cost(distcost+orientcost);
+
+          //return ob::Cost(alpha*modul);
+      }
+
+      /*
       ob::Cost PCAalignmentOptimizationObjective2::stateCost(const ob::State *s1) const
       {
           ob::StateSpacePtr space = getSpaceInformation()->getStateSpace();
@@ -475,8 +559,122 @@ namespace Kautham {
           dist = sqrt(dist);
           return ob::Cost(dist);
       }
- }
-  /** @}   end of Doxygen module "libPlanner */
+      */
+
+
+
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+
+  //! Constructor
+    PCAalignmentOptimizationObjective3::PCAalignmentOptimizationObjective3(const ob::SpaceInformationPtr &si, int dim) :
+    ob::MechanicalWorkOptimizationObjective(si)
+    {
+        description_ = "PCA alignment2";
+        PCAdataset=false;
+        dimension = dim;
+
+        //de moment ho fixem a 2
+        dimension = 2;
+        setPCAdata(0);
+    }
+
+    //! void destructor
+    PCAalignmentOptimizationObjective3::~PCAalignmentOptimizationObjective3(){
+
+    }
+
+    void PCAalignmentOptimizationObjective3::setPCAdata(int option)//ob::ProjectionMatrix M, ob::EuclideanProjection v){
+    {
+        //de moment ho fixo a ma
+        Matrix pca(dimension,dimension);
+        Matrix invpca(dimension,dimension);
+        ob::EuclideanProjection v(dimension);
+        bari.resize(dimension);
+
+        if(option==0)
+        {
+            pca(0,0) = sqrt(2.0)/2.0;
+            pca(0,1) = sqrt(2.0)/2.0;
+            pca(1,0) = -sqrt(2.0)/2.0;
+            pca(1,1) = sqrt(2.0)/2.0;
+            InvertMatrix(pca, invpca);
+            pcaM.mat = invpca;
+            pcaM.print();
+        }
+        else
+        {
+            pca(0,0) = sqrt(2.0)/2.0;
+            pca(0,1) = -sqrt(2.0)/2.0;
+            pca(1,0) = sqrt(2.0)/2.0;
+            pca(1,1) = sqrt(2.0)/2.0;
+            InvertMatrix(pca, invpca);
+            pcaM.mat = invpca;
+            pcaM.print();
+        }
+
+        v[0] = 1.0;
+        v[1] = 0.1;
+        lambda = v;
+
+        bari[0]=0.5;
+        bari[1]=0.5;
+        PCAdataset=true;
+    }
+
+    ob::Cost PCAalignmentOptimizationObjective3::motionCost(const ob::State *s1, const ob::State *s2) const
+    {
+      // Only accrue positive changes in cost
+      double positiveCostAccrued = std::max(stateCost(s2).v - stateCost(s1).v, 0.0);
+      return ob::Cost(wfix*positiveCostAccrued/si_->distance(s1,s2) + wdistance*si_->distance(s1,s2));
+    }
+
+    ob::Cost PCAalignmentOptimizationObjective3::stateCost(const ob::State *s1) const
+    {
+        ob::StateSpacePtr space = getSpaceInformation()->getStateSpace();
+
+        ob::ScopedState<ob::CompoundStateSpace> ss1(space);
+        ss1 = *s1;
+
+        //Get the SE3 subspace of robot 0
+        ob::StateSpacePtr ssRobot0 = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
+        ob::StateSpacePtr ssRobot0SE3 =  ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
+        ob::ScopedState<ob::SE3StateSpace> s1se3(ssRobot0SE3);
+        ss1 >> s1se3;
+
+        //convert to a vector of 7 components
+        vector<double> s1_se3coords;
+        s1_se3coords.resize(2);
+        s1_se3coords[0] = s1se3->getX();
+        s1_se3coords[1] = s1se3->getY();
+
+        vector<double> from;
+        from.resize(dimension);
+        for(int i=0; i<dimension;i++)
+        {
+            from[i] = s1_se3coords[i] - bari[i];
+        }
+
+        //vector from s1 to s2 using the pca reference frame: vpca = M*v
+        ob::EuclideanProjection to(dimension);
+        pcaM.project(&from[0],to);
+
+        double dist=0.0;
+        for(int i=0; i<dimension;i++)
+        {
+            dist += (to[i]/lambda[i])*(to[i]/lambda[i]);
+        }
+        dist = sqrt(dist);
+        return ob::Cost(dist);
+    }
+  }
 }
 
 

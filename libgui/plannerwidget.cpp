@@ -51,9 +51,7 @@
 #endif
 
 namespace Kautham{
-/** \addtogroup libGUI
- *  @{
- */
+
 
   PlannerWidget::PlannerWidget(Planner* plan, SampleSet* samp, bool camera, GUI* gui):KauthamWidget(plan){
     _samples = samp;
@@ -222,18 +220,19 @@ namespace Kautham{
 	}
 
   void PlannerWidget::tryConnect(){
+#if defined(KAUTHAM_USE_IOC)
     if(_planner != NULL ){
         if(_planner->getFamily()=="ioc")
         {
-            ((iocPlanner*)_planner)->getLocalPlanner()->setInitSamp(_samples->getSampleAt(_spFrom->text().toInt()));
-            ((iocPlanner*)_planner)->getLocalPlanner()->setGoalSamp(_samples->getSampleAt(_spTo->text().toInt()));
+            ((IOC::iocPlanner*)_planner)->getLocalPlanner()->setInitSamp(_samples->getSampleAt(_spFrom->text().toInt()));
+            ((IOC::iocPlanner*)_planner)->getLocalPlanner()->setGoalSamp(_samples->getSampleAt(_spTo->text().toInt()));
 	  
-            KthReal d = ((iocPlanner*)_planner)->getLocalPlanner()->distance(_samples->getSampleAt(_spFrom->text().toInt()),
+            KthReal d = ((IOC::iocPlanner*)_planner)->getLocalPlanner()->distance(_samples->getSampleAt(_spFrom->text().toInt()),
 												   _samples->getSampleAt(_spTo->text().toInt()));
             char str[30];
             sprintf(str,"Distance:  %f",d);
             writeGUI(str);
-            if( ((iocPlanner*)_planner)->getLocalPlanner()->canConect() ){
+            if( ((IOC::iocPlanner*)_planner)->getLocalPlanner()->canConect() ){
                 _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
                 writeGUI("The samples can be connected.");
             }else{
@@ -245,7 +244,7 @@ namespace Kautham{
         else  writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
     }else
       writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
-
+#endif
   }
 
   void PlannerWidget::getPathCall(){
@@ -267,7 +266,7 @@ namespace Kautham{
   }
 
   void PlannerWidget::saveDataCall(){
-
+#if defined(KAUTHAM_USE_IOC)
     if(_planner != NULL ){
         if(_planner->getFamily()=="ioc")
         {
@@ -281,17 +280,18 @@ namespace Kautham{
                 sendText(QString("Kautham is saving a planner data in a file: " + path).toUtf8().constData() );
                 dir = path;
                 dir.truncate(dir.lastIndexOf("/"));
-                ((iocPlanner*)_planner)->saveData(path.toUtf8().constData());
+                ((IOC::iocPlanner*)_planner)->saveData(path.toUtf8().constData());
             }
             _gui->setCursor(QCursor(Qt::ArrowCursor));
             setTable(_planner->getParametersAsString());
          }
         else  writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
     }
+#endif
 }
 
   void PlannerWidget::loadDataCall(){
-
+#if defined(KAUTHAM_USE_IOC)
     if(_planner != NULL ){
         if(_planner->getFamily()=="ioc")
         {
@@ -305,7 +305,7 @@ namespace Kautham{
                 sendText(QString("The solution file in " + path + " is being loaded.").toUtf8().constData() );
                 dir = path;
                 dir.truncate(dir.lastIndexOf("/"));
-                ((iocPlanner*)_planner)->loadData(path.toUtf8().constData());
+                ((IOC::iocPlanner*)_planner)->loadData(path.toUtf8().constData());
                 if( _planner->isSolved() ) btnMove->setEnabled(true);
             }
             _gui->setCursor(QCursor(Qt::ArrowCursor));
@@ -313,6 +313,7 @@ namespace Kautham{
             }
         }
         else  writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+    #endif
   }
   
 
@@ -406,5 +407,4 @@ namespace Kautham{
       _planner->wkSpace()->setPathVisibility( true );
   }
 
-  /** @}   end of Doxygen module "libGUI" */
 }

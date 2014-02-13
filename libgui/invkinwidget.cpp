@@ -45,9 +45,7 @@
 #include <libproblem/robot.h>
 
 namespace Kautham{
-/** \addtogroup libGUI
- *  @{
- */
+
 
   InvKinWidget::InvKinWidget(InverseKinematic* ivKin):KauthamWidget(ivKin){
 	  _invKin = ivKin;
@@ -77,5 +75,4 @@ namespace Kautham{
       writeGUI("Inverse Kinematic has not a solution.");
   }
 
-  /** @}   end of Doxygen module "libGUI" */
 }

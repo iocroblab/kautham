@@ -42,9 +42,6 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
- *  @{
- */
 
   RobConf::RobConf(){
 
@@ -141,6 +138,4 @@ namespace Kautham{
     return tmpRobConf;
       
   }
-
-  /** @}   end of Doxygen module "libSampling" */
 }
