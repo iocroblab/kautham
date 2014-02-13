@@ -49,9 +49,6 @@ using namespace std;
 namespace Kautham {
 
 
-/** \addtogroup libSampling
- *  @{
- */
 
 //  RnConf::RnConf():RnConf(1){
 //
@@ -138,6 +135,5 @@ namespace Kautham {
     return tmpC;
   }
 
-  /** @}   end of Doxygen module "libSampling" */
 }
 

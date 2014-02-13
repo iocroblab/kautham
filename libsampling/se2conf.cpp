@@ -52,10 +52,6 @@
 namespace Kautham {
 
 
-/** \addtogroup libSampling
- *  @{
- */
-
 	SE2Conf::SE2Conf():Conf(SE2) {
 		dim = 3;
 		coord.resize(dim);	
@@ -148,6 +144,5 @@ namespace Kautham {
     return tmpC;
   }
 
-  /** @}   end of Doxygen module "libSampling" */
 }
 

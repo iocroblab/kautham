@@ -50,9 +50,6 @@
 
 namespace Kautham {
 
-/** \addtogroup libProblem
- *  @{
- */
 
   //!	Unique constructor.
   /*!	This constructor provide the way to create any Link and you progressively can build
@@ -311,6 +308,5 @@ namespace Kautham {
     return false;
   }
 
-  /** @}   end of Doxygen module "libProblem" */
 }
 

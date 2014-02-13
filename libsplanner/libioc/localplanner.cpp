@@ -43,9 +43,8 @@
 #include "localplanner.h"
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
+
+ namespace IOC{
 
   LocalPlanner::LocalPlanner(SPACETYPE type, Sample *init, Sample *goal, WorkSpace *ws, KthReal st ){
 		_spType = type;
@@ -61,5 +60,5 @@ namespace Kautham {
     _init = NULL;
     _goal = NULL;
   }
-  /** @}   end of Doxygen module "libPlanner */
+ }
 }

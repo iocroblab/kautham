@@ -43,9 +43,6 @@
 #include "ivkintxhand.h"
 
 
-/** \defgroup libKin
- *  @{
- */
   
   IvKinTxHand::IvKinTxHand(Robot* const rob): Kautham::InverseKinematic(rob){
 
@@ -63,4 +60,3 @@
     return true;
   }
 
-  /** @}   end of Doxygen module "libKin */

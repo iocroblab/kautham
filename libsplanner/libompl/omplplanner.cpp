@@ -62,9 +62,6 @@
 //#include <ompl/base/objectives/MaximizeMinClearanceObjective.h>
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
 
 //! Namespace omplplanner contains the planners based on the OMPL::geometric library
   namespace omplplanner{
@@ -691,6 +688,11 @@ namespace Kautham {
             pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
             ss->getPlanner()->getPlannerData(*pdata);
 
+            if(ss->getPlanner()->getProblemDefinition()->hasOptimizationObjective())
+                pdata->computeEdgeWeights( *ss->getPlanner()->getProblemDefinition()->getOptimizationObjective() );
+            else
+                pdata->computeEdgeWeights();
+
             //draw path:
             if(_solved)
             {
@@ -827,6 +829,7 @@ namespace Kautham {
             SoSeparator *lsep = new SoSeparator();
             int numOutgoingEdges;
             std::vector< unsigned int > outgoingVertices;
+            ob::Cost edgeweight;
 
             //loop for all nodes
             for(int i=0;i<pdata->numVertices();i++)
@@ -888,6 +891,13 @@ namespace Kautham {
                         }
                     }
                     //the edge
+                    pdata->getEdgeWeight(i, outgoingVertices.at(j), &edgeweight);
+                    SoMaterial *edge_color = new SoMaterial;
+
+                    //BE CAREFUL! a magic number!
+                    if(edgeweight.v>0.1) edge_color->diffuseColor.setValue(1.0,0.8,0.8);
+                    else edge_color->diffuseColor.setValue(1.0,1.0,1.0);
+                    lsep->addChild(edge_color);
                     lsep->addChild(edgepoints);
                     SoLineSet *ls = new SoLineSet;
                     ls->numVertices.set1Value(0,2);//two values
@@ -1140,7 +1150,7 @@ namespace Kautham {
          //remove previous solutions, if any
          if(_incremental == 0)
          {
-             ss->clear();
+             ss->clear();       
              ss->getPlanner()->clear();
          }
          else
@@ -1151,6 +1161,11 @@ namespace Kautham {
          ob::PlannerStatus solved = ss->solve(_planningTime);
 
          //ss->print();
+
+         //the following line is added to restore the problem definition and its optimization objective that was lost after solve
+         //needed in drawcspace that wants to access the weights of the edges that have to be recomputed with the optimization fro rrtstar.
+         this->setParameters();
+
 
          //retrieve all the states. Load the SampleSet _samples
          Sample *smp;
@@ -1216,7 +1231,6 @@ namespace Kautham {
             }
 		}
     }
-  /** @}   end of Doxygen module "libPlanner */
 }
 
 

@@ -47,9 +47,6 @@
 
 namespace Kautham {
 
-/** \addtogroup libProblem
- *  @{
- */
 
   Obstacle::Obstacle(string modFile, KthReal pos[3], KthReal ori[4], KthReal scale, LIBUSED lib, bool flagCol){
 	  enablecollisions = flagCol;
@@ -98,8 +95,6 @@ namespace Kautham {
     }
     return NULL;
   }
-
-  /** @}   end of Doxygen module "libProblem" */
 }
 
 

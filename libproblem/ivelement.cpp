@@ -48,9 +48,6 @@
 
 namespace Kautham {
 
-/** \addtogroup libProblem
- *  @{
- */
 
 	IVElement::IVElement(string ivfile, KthReal sc) {
 		for(int i=0;i<3;i++){
@@ -183,6 +180,5 @@ namespace Kautham {
   }
 
 
-  /** @}   end of Doxygen module "libProblem" */
 }
 

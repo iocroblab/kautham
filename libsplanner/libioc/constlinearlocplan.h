@@ -51,9 +51,16 @@
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \defgroup libPlanner Library libplanner
+ *  \brief contains planners to solve the path planning problems
+ *
+ *   \todo  Add detailed description of library libplanner
+ *
  *  @{
+ *
  */
+
+namespace IOC{
 
 
 /**
@@ -99,7 +106,8 @@ class ConstLinearLocalPlanner:public LinearLocalPlanner {
 	  bool constrained;
 	  LCPRNG* _gen;
 	  mt::Transform _cameraTransform;
-	};
+    };
+}
 /** @}   end of Doxygen module "libPlanner */
 }
 

@@ -49,11 +49,7 @@
 
 namespace Kautham {
 
-/** \defgroup libPlanner Library libplanner
- *  \brief contains planners to solve the path planning problems
- *  @{
- *
- */
+namespace IOC{
 
 
 
@@ -447,7 +443,7 @@ namespace Kautham {
 		return sqrt(dist);
 		*/
   }
-    /** @}   end of Doxygen module "libPlanner */
+}
 }
 
 

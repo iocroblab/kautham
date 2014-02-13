@@ -48,9 +48,6 @@
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
   namespace IOC{
 	//! Constructor
     MyPRMPlanner::MyPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
@@ -143,8 +140,7 @@ namespace Kautham {
 		  	*/
 
 		}
-	  }
-  /** @}   end of Doxygen module "libPlanner */
+      }
 }
 
 

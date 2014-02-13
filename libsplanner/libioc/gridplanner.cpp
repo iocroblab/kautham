@@ -51,9 +51,7 @@
 #include <Inventor/nodes/SoText3.h>
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
+
 
 
 //! Namespace IOC contains the planners developed at the IOC
@@ -588,7 +586,6 @@ namespace Kautham {
 	}
 
   }
-  /** @}   end of Doxygen module "libPlanner */
 }
 
 

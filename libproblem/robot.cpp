@@ -69,13 +69,19 @@ using namespace pugi;
 
 namespace Kautham {
 
-/** \addtogroup libProblem
- *  @{
+
+/*! \class Robot
+ *  Robots are kinematic trees composed of a trunk and branches and with a mobile base
+  *     They are defined as a vector fo links and described in the *.rob files.
+  *     A robot can have a fixed base if no controls are attached to the corresponding dof.
+  *     A robot can be a free-flying object if it has a single link and has controls attached to the corresponding dof.
+  *     The dof of the kinematic tree can be coupled by setting the controls that define the copupling.
+  *     A dof is fixed if no control is attached to it.
  */
 
   Robot::Robot(string robFile, KthReal scale, LIBUSED lib) {	
-	  _linkPathDrawn = -1;
-      numCoupledControls=0;
+    _linkPathDrawn = -1;
+    numCoupledControls=0;
     nTrunk = 0;
     libs = lib;
     this->scale=scale;
@@ -92,18 +98,17 @@ namespace Kautham {
     _ikine = NULL;
     _constrainKin = NULL;
     _weights = NULL;
-	  visModel = NULL;
-	  _graphicalPath = NULL;
-	  for(int i =0; i<7;i++)
+    visModel = NULL;
+    _graphicalPath = NULL;
+    for(int i =0; i<7;i++)
 	    for(int j=0; j<2; j++){
 	      _homeLimits[i][j] = 0.;
 		  _spatialLimits[i][j] = 0.;
-	  }
+    }
     const KthReal toRad = M_PI/180.;
 
     //  if the file has rob extension it will be parsed in order to 
-    //  create the links, otherwise there are create the base "Link"
-    //  as a freefly.
+    //  create the links.
     fstream fin;
     fin.open(robFile.c_str(),ios::in);
     if( fin.is_open() ){ // The file already exists.
@@ -317,55 +322,25 @@ namespace Kautham {
           cout << "The robot file: " << robFile << " can not be read." << std::endl;
 
 
-      }else{ //If robot is freeflying the robFile is a single Inventor file.
-        robType = FREEFLY;
-        name = "free";
-        dhApproach = DHMODIFIED;
-        addLink("", robFile, (KthReal)0.0, (KthReal)0.0, (KthReal)0.0, (KthReal)0.0,
-                   false, false, (KthReal)0.0, (KthReal)0.0, (KthReal)1.0, "");
-
-        //==============
-        //  The freeflying robot has posible movements in all SE3 space and it hasn't controls.
-        mapMatrix = new KthReal*[6];
-        offMatrix = new KthReal[6];
-        for(int i=0; i<6; i++){
-          mapMatrix[i] = new KthReal[6];
-          offMatrix[i] = (KthReal)0.5;
-        }
-
-        for(int i=0; i<6 ; i++)
-          for(int j=0 ; j<6; j++)
-            if(i == j)
-              mapMatrix[i][j] = (KthReal)1.0;
-            else
-              mapMatrix[i][j] = (KthReal)0.0;
-        controlsName = "X|Y|Z|X1|X2|X3";
-        se3Enabled = true;
-        numControls = 6;
-
-        //======================
-        //Now the associated weights
-        _weights = new RobWeight(1);
-        _weights->setSE3Weight(1., 1.);
-        _weights->setRnWeigh(0,1.);
-
-      } // closing if(robType != FREEFLY
-
+      }
       for(int i=0; i<7; i++)
         _spatialLimits[i][0] = _spatialLimits[i][1] = (KthReal) 0.0;
+
+
+      armed = true;
 
     }else{ // File does not exists.
       fin.close();
       cout << "The Robot file: " << robFile << "doesn't exist. Please confirm it." << endl;
-      robType = FREEFLY;
-      name = "free";
-      dhApproach = DHMODIFIED;
     }
-
-    armed = true;
   }
 
-  
+  //! This method attaches an existing obstacle to the link specified by the linkName parameter.
+ /*!
+ \sa testMe()
+ \param c1 the first argument.
+ \param c2 the second argument.
+ */
   bool Robot::attachObject(Obstacle* obs, string linkName ){
     try{
       attObj newObj;
@@ -413,6 +388,7 @@ namespace Kautham {
     }
   }
 
+  /*! This method detaches the previously attached objects to the link named linkName.*/
   bool Robot::detachObject( string linkName ){
     bool found = false;
     list<attObj>::iterator it = _attachedObject.begin();
@@ -647,7 +623,10 @@ namespace Kautham {
   }
 
 
-
+  //!	This method uses the Configuration q to set up the position, orientation,
+  //!	and articular values if the robot has one. If the configuration q is SE2 or SE3
+  //!	the robot change the position and/or orientation either the configuration is
+  //!	Rn the robot change the articular values.
   bool Robot::Kinematics(Conf *q) {
     vector<KthReal>& coor = q->getCoordinates();
 
@@ -684,9 +663,14 @@ namespace Kautham {
     return true;
   }
 
-  //!Call to inverseKinematics given the target defined as:
-  //! a) the tcp transform
-  //! b) a tcp transform and configuration parameters e.g. for the TX90: (l/r,ep/en,wp/wn)
+  /** This member method is the interface to calling the inverse kinematic
+  *   object associated. It returns the RobConf<SE3Conf,RnConf> configuration
+  *   that describe the pose of the robot completely.
+  *
+  * Call to inverseKinematics given the target defined as:
+  * a) the tcp transform
+  * b) a tcp transform and configuration parameters e.g. for the TX90: (l/r,ep/en,wp/wn)
+  */
   RobConf& Robot::InverseKinematics(vector<KthReal> &target){
     if(_ikine != NULL){
       //First i try to conect to the remote object
@@ -879,6 +863,10 @@ namespace Kautham {
     }
   }
 
+
+  //! This method builds the link model and all their data structures in order
+  //! to keep the coherence in the robot assembly. It doesn't use any intermediate
+  //! structure to adquire the information to do the job.
   bool	Robot::addLink(string name, string ivFile, KthReal theta, KthReal d,
                               KthReal a,KthReal alpha, bool rotational, bool movable,
                               KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]){
@@ -967,6 +955,22 @@ namespace Kautham {
     return visModel;
   }
 
+  KthReal* Robot::getWeightSE3(){
+    KthReal tmp=1.;
+    if( _weights != NULL )
+      return _weights->getSE3Weight();
+    else
+      throw exception();
+  }
+
+  vector<KthReal>& Robot::getWeightRn(){
+    if( _weights != NULL )
+      return _weights->getRnWeights();
+    else
+      throw exception();
+  }
+
+
   float Robot::diagLimits(){
     float dia = 0.;
     for(int i = 0; i < 3; i++)
@@ -1025,7 +1029,13 @@ namespace Kautham {
       }
     }
   }
-  
+
+  //! This method makes the mapping between control values and configurations.
+  //! The method receives the values and it makes the changes in respective configurations
+  //! If the robot is freeflying only changes the SE3/SE2 Conf corresponding to
+  //! position and orientation of it using the Kinematics methods, but if the robot
+  //! is a chain or a tree robot, this method changes a SE3/SE2 Conf (position
+  //! and orientation) and a Rn Conf for articular values. All values are between 0 and 1.
   void Robot::control2Pose(vector<KthReal> &values){
     vector<KthReal> vecTmp;
     _hasChanged = true;
@@ -1170,13 +1180,13 @@ namespace Kautham {
         _proposedSolution.push_back(*(path.at(i)));
 
       // Updating the graphical path if needed
-      if( _graphicalPath != NULL ) 
+      if( _graphicalPath != NULL )
         _graphicalPath->deleteValues(0);
 
-	  //if no need to draw path then return
-	  if(_linkPathDrawn<0) return true;
+      //if no need to draw path then return
+      if(_linkPathDrawn<0) return true;
 
-	  //else fill graphicalPath
+      //else fill graphicalPath
       SbVec3f* temp = new SbVec3f[path.size()];
 
       vector<RobConf>::iterator it;
@@ -1235,6 +1245,5 @@ namespace Kautham {
     return response;
   }
 
-  /** @}   end of Doxygen module "libProblem" */
 }  	
 

@@ -53,9 +53,6 @@
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
   namespace omplcplanner{
 
   void propagate(const ob::State *start, const oc::Control *control, const double duration, ob::State *result)
@@ -280,7 +277,6 @@ namespace Kautham {
       return true;
     }
   }
-  /** @}   end of Doxygen module "libPlanner */
 }
 
 

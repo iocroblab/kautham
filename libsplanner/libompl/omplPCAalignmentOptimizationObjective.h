@@ -46,6 +46,7 @@
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/OptimizationObjective.h>
 #include <ompl/base/objectives/StateCostIntegralObjective.h>
+#include <ompl/base/objectives/MechanicalWorkOptimizationObjective.h>
 #include <ompl/base/ProjectionEvaluator.h>
 
 
@@ -69,6 +70,7 @@ namespace Kautham {
         int dimension;
         double wpenalization;
         double wdistance;
+        double wfix;
 
         PCAalignmentOptimizationObjective(const ob::SpaceInformationPtr &si, int dim);
         ~PCAalignmentOptimizationObjective();
@@ -82,9 +84,11 @@ namespace Kautham {
         inline void setOrientationPenalization(double w){wpenalization=w;};
         inline double getDistanceWeight(){return wdistance;}
         inline void setDistanceWeight(double w){wdistance=w;};
+        inline void setFixWeight(double w){wfix=w;};
+        inline double getFixWeight(){return wfix;};
       };
 
-    class PCAalignmentOptimizationObjective2:public ob::StateCostIntegralObjective {
+    class PCAalignmentOptimizationObjective2:public ob::OptimizationObjective {
         public:
         typedef boost::numeric::ublas::matrix<double> Matrix;
 
@@ -92,14 +96,48 @@ namespace Kautham {
         ob::EuclideanProjection lambda;//this is a typedef of boost::numeric::ublas::vector < double >
         bool PCAdataset;
         int dimension;
+        double wdistance;
+        double wfix;
 
         PCAalignmentOptimizationObjective2(const ob::SpaceInformationPtr &si, int dim);
         ~PCAalignmentOptimizationObjective2();
 
-        ob::Cost stateCost(const ob::State *s1) const;
+        //ob::Cost stateCost(const ob::State *s1) const;
+        virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
         void setPCAdata(int v);//ob::ProjectionMatrix M, ob::EuclideanProjection v);
         inline bool isPCAdataset(){return PCAdataset;};
+        inline double getDistanceWeight(){return wdistance;}
+        inline void setDistanceWeight(double w){wdistance=w;};
+        inline void setFixWeight(double w){wfix=w;};
+        inline double getFixWeight(){return wfix;};
       };
+
+    class PCAalignmentOptimizationObjective3:public ob::MechanicalWorkOptimizationObjective {
+        public:
+        typedef boost::numeric::ublas::matrix<double> Matrix;
+
+        ob::ProjectionMatrix pcaM;
+        std::vector<double> bari;
+        ob::EuclideanProjection lambda;//this is a typedef of boost::numeric::ublas::vector < double >
+        bool PCAdataset;
+        int dimension;
+        double wdistance;
+        double wfix;
+
+        PCAalignmentOptimizationObjective3(const ob::SpaceInformationPtr &si, int dim);
+        ~PCAalignmentOptimizationObjective3();
+
+        ob::Cost stateCost(const ob::State *s1) const;
+        ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
+        void setPCAdata(int v);//ob::ProjectionMatrix M, ob::EuclideanProjection v);
+        inline bool isPCAdataset(){return PCAdataset;};
+        inline double getDistanceWeight(){return wdistance;}
+        inline void setDistanceWeight(double w){wdistance=w;};
+        inline void setFixWeight(double w){wfix=w;};
+        inline double getFixWeight(){return wfix;};
+      };
+
+
   }
   /** @}   end of Doxygen module "libPlanner */
 }

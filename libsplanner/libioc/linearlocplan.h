@@ -54,6 +54,7 @@ namespace Kautham {
  *  @{
  */
 
+namespace IOC{
 class LinearLocalPlanner:public LocalPlanner {
     public:
       LinearLocalPlanner(SPACETYPE stype, Sample *init, Sample *goal, WorkSpace *ws, KthReal st );
@@ -64,6 +65,7 @@ class LinearLocalPlanner:public LocalPlanner {
       LinearLocalPlanner();
       bool vanderMethod;
 	};
+}
 /** @}   end of Doxygen module "libPlanner */
 }
 

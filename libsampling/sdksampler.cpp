@@ -46,9 +46,6 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
- *  @{
- */
 
   char SDKSample::M=0;
   float SDKSample::sizeContainer=0.0;
@@ -94,9 +91,7 @@ namespace Kautham{
 	SDKSampler::~SDKSampler()
 	{
 
-	};
-
-    /** @}   end of Doxygen module "libSampling" */
+    };
 }
 
 

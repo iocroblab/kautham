@@ -45,9 +45,7 @@
 
 namespace Kautham {
 
-/** \addtogroup libProblem
- *  @{
- */
+
 
   bool IVSOLIDElement::collideTo(Element* other) {
     return true;
@@ -62,6 +60,5 @@ namespace Kautham {
     return tmp;
   }
 
-  /** @}   end of Doxygen module "libProblem" */
 }
 

@@ -46,9 +46,7 @@
 
 
 
-/** \defgroup libKin
- *  @{
- */
+
   IvKinTx90::IvKinTx90(Robot* const rob) : Kautham::InverseKinematic(rob){
 
     TXtype tipus = TXrobot::TX90;
@@ -306,4 +304,3 @@
       }
       return true;
   }
-  /** @}   end of Doxygen module "libKin */

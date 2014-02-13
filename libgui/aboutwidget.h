@@ -1,23 +1,4 @@
-/***************************************************************************
-*                                                                          *
-*           Institute of Industrial and Control Engineering                *
-*                 Technical University of Catalunya                        *
-*                        Barcelona, Spain                                  *
-*                                                                          *
-*                Project Name:       Kautham Planner                       *
-*                                                                          *
-*     Copyright (C) 2007 - 2009 by Alexander Pérez and Jan Rosell          *
-*            alexander.perez@upc.edu and jan.rosell@upc.edu                *
-*                                                                          *
-*             This is a motion planning tool to be used into               *
-*             academic environment and it's provided without               *
-*                     any warranty by the authors.                         *
-*                                                                          *
-*          Alexander Pérez is also with the Escuela Colombiana             *
-*          de Ingeniería "Julio Garavito" placed in Bogotá D.C.            *
-*             Colombia.  alexander.perez@escuelaing.edu.co                 *
-*                                                                          *
-***************************************************************************/
+
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -51,6 +32,9 @@
 namespace Kautham {
 /** \defgroup libGUI Library libGUI
  *  \brief contains classes for the Graphical User Interface
+ *
+ *  \todo Add detailed description of library libGUI
+ *
  *  @{
  */
 

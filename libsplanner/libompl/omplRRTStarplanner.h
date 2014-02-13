@@ -76,6 +76,7 @@ namespace Kautham {
          unsigned int _opti;
          double _lengthweight;
          double _penalizationweight;
+         double _fixweight;
          bool _incremental;
          int _changePCA;//provisional
          ob::OptimizationObjectivePtr _lengthopti;
@@ -83,6 +84,7 @@ namespace Kautham {
          ob::OptimizationObjectivePtr _pcaalignmentopti;
          ob::OptimizationObjectivePtr _multiopti;
          ob::OptimizationObjectivePtr _pcaalignmentopti2;
+         ob::OptimizationObjectivePtr _pcaalignmentopti3;
 	  };
   }
   /** @}   end of Doxygen module "libPlanner */

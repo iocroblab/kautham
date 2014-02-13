@@ -21,9 +21,6 @@
 using namespace pugi;
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
   namespace IOC{
         PRMPlanner::PRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
         iocPlanner(stype, init, goal, samples, sampler, ws){
@@ -1019,7 +1016,6 @@ namespace Kautham {
     }
   }
  } //namespace IOC
-  /** @}   end of Doxygen module "libPlanner */
 } //namespace Kautham
 
 

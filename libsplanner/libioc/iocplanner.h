@@ -59,6 +59,8 @@ namespace Kautham {
  *  @{
  */
 
+ namespace IOC{
+
   class iocPlanner: public Planner{
     public:
     iocPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws);
@@ -118,7 +120,7 @@ namespace Kautham {
 
 
 	};
-
+ }
   /** @}   end of Doxygen module "libPlanner */
 }
 

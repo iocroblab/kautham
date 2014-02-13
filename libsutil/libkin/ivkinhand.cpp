@@ -80,9 +80,6 @@
 #define N_POS_FING_THUMB 18	// Output dimension
 #define FT_RAD 10		// Fingertip radius
 
-/** \defgroup libKin
- *  @{
- */
 
   IvKinHand::IvKinHand(Robot* const rob) : Kautham::InverseKinematic(rob){
 
@@ -3999,7 +3996,6 @@
 		return;
 	}
 
-    /** @}   end of Doxygen module "libKin */
 #endif  // KAUTHAM_USE_GSL
 
 

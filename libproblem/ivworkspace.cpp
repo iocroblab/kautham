@@ -46,9 +46,6 @@
 
 namespace Kautham {
 
-/** \addtogroup libProblem
- *  @{
- */
  
   IVWorkSpace::IVWorkSpace():WorkSpace(){
 		scene = NULL;
@@ -215,6 +212,5 @@ namespace Kautham {
 		return sep;
 	}
 
-    /** @}   end of Doxygen module "libProblem" */
 }
 

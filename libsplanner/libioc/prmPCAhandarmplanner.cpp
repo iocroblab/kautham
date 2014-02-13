@@ -17,9 +17,7 @@ using namespace std;
 //////////////////////
  
  namespace Kautham {
- /** \addtogroup libPlanner
-  *  @{
-  */
+
   namespace IOC{
 		
 	PRMPCAHandArmPlanner::PRMPCAHandArmPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
@@ -149,6 +147,13 @@ using namespace std;
         else
           return false;
 
+        it = _parameters.find("Drawn Path Link");
+        if(it != _parameters.end()){
+          _drawnLink = it->second;
+          for(int i=0; i<_wkSpace->robotsCount();i++)
+            _wkSpace->getRobot(i)->setLinkPathDrawn(_drawnLink);
+        }else
+          return false;
 
       }catch(...){
         return false;
@@ -1624,7 +1629,6 @@ using namespace std;
     }
 
   }
-  /** @}   end of Doxygen module "libPlanner */
 };
 
 #endif // KAUTHAM_USE_ARMADILLO

@@ -52,9 +52,6 @@
 using namespace pugi;
 
 namespace Kautham{
-/** \addtogroup libPlanner
- *  @{
- */
 
   const KthReal RAD2GRAD=180.0/M_PI;
   Planner::Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws){
@@ -138,14 +135,5 @@ namespace Kautham{
         std::cout << "The problem is wrong solved. The solution path has less than two elements." << std::endl;
     }
   }
-
-
-
-
-
-
-
-
-/** @}   end of Doxygen module "libPlanner */
 }
 

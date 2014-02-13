@@ -53,9 +53,8 @@
 using namespace pugi;
 
 namespace Kautham{
-/** \addtogroup libPlanner
- *  @{
- */
+
+ namespace IOC{
 
   const KthReal RAD2GRAD=180.0/M_PI;
 
@@ -424,7 +423,6 @@ namespace Kautham{
     delete[] advance;
     delete[] signs;
   }
-
-/** @}   end of Doxygen module "libPlanner */
+ }
 }
 

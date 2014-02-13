@@ -48,9 +48,6 @@
 #include "omplplanner.h"
 
 namespace Kautham {
-/** \addtogroup libPlanner
- *  @{
- */
   namespace omplplanner{
 
     // Returns whether the given state's position overlaps the obstacles
@@ -95,7 +92,6 @@ namespace Kautham {
     }
 
   }
-  /** @}   end of Doxygen module "libPlanner */
 }
 
 

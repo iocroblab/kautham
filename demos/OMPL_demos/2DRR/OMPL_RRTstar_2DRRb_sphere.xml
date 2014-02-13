@@ -19,7 +19,7 @@
 		</Parameters>
 		<Queries>
 			<Query>
-                                <Init dim="2">0.25 0.5</Init>
+                                <Init dim="2">0.25 0.3</Init>
                                 <Goal dim="2">0.75 0.5</Goal>
 			</Query>
 		</Queries>
