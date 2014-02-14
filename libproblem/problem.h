@@ -82,11 +82,7 @@ namespace Kautham {
     bool                    setCurrentControls(vector<KthReal> &val, int offset=0);
 		WorkSpace*		          wSpace();
     void                    setHomeConf(Robot* rob, HASH_S_K* param);
-		void			              setStartConf(Robot* rob, HASH_S_K* param);
-    void			              setGoalConf(Robot* rob, HASH_S_K* param);
     void                    setPlanner(Planner* plan){if(_planner==NULL)_planner = plan;}
-    inline vector<Conf*>*		startConf(){return &_qStart;}
-    inline vector<Conf*>*		GoalConf(){return &_qGoal;}
     inline Planner*         getPlanner(){return _planner;}
     inline SampleSet*       getSampleSet(){return _cspace;}
     inline Sampler*         getSampler(){return _sampler;}
@@ -107,8 +103,6 @@ namespace Kautham {
   private:
     const static KthReal    _toRad;
     WorkSpace*              _wspace;
-    vector<Conf*>           _qStart;
-    vector<Conf*>           _qGoal;
     CONFIGTYPE              _problemType;
     SampleSet*              _cspace;
     Sampler*                _sampler;

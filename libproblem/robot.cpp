@@ -79,6 +79,12 @@ namespace Kautham {
   *     A dof is fixed if no control is attached to it.
  */
 
+
+/*! Constructor for a robot.
+ *  \param robFile is an xml file with extension*.rob
+ *  \param scale is a global scale for all the links
+ *  \param lib identifies wether PQP or SOLID collision libs are used
+ */
   Robot::Robot(string robFile, KthReal scale, LIBUSED lib) {	
     _linkPathDrawn = -1;
     numCoupledControls=0;
@@ -92,8 +98,6 @@ namespace Kautham {
     numControls = 0;
     // Inialization of SE3 configurations.
     _homeConf.setSE3();
-    _initConf.setSE3();
-    _goalConf.setSE3();
     _currentConf.setSE3();
     _ikine = NULL;
     _constrainKin = NULL;
@@ -115,85 +119,100 @@ namespace Kautham {
       fin.close();
       string::size_type loc = robFile.find( ".rob", 0 );
       string dir;
-      if( loc != string::npos ) { // It means that the robot is a kinematic chain.
+      if( loc != string::npos ) { // It means that the robot is defined by a *.rob file
         dir = robFile.substr(0,robFile.find_last_of("/")+1);
 
         // Opening the file with the new pugiXML library.
         xml_document doc;
+        string tmpString = "";
         xml_parse_result result = doc.load_file(robFile.c_str());
 
-        string tmpString = "";
+        //Parse the rob file
         if(result){
-          //  Once the file has been parsed, it contains the links information
-          //  and now the links could be constructed.
+            //Robot Name
+            name = doc.child("Robot").attribute("name").value();
 
-          name = doc.child("Robot").attribute("name").value();
-
-          tmpString = doc.child("Robot").attribute("DHType").value();
-          if( tmpString == "Standard")
-            dhApproach = DHSTANDARD;
-          else
-            dhApproach = DHMODIFIED;
-
-          tmpString = doc.child("Robot").attribute("robType").value();
-          if( tmpString == "Tree")
-            robType = TREE;
-          else
-            robType = CHAIN;
-
-          int numLinks = doc.child("Robot").child("Joints").attribute("size").as_int();
-
-          _weights = new RobWeight( numLinks - 1 );
-
-          if( doc.child("Robot").child("WeightSE3") ){
-            KthReal tra = 1.;
-            KthReal rot = 1.;
-            xml_node tmp = doc.child("Robot").child("WeightSE3");
-            if( tmp.attribute("rho_t") )
-              tra = (KthReal) tmp.attribute("rho_t").as_double();
-            if( tmp.attribute("rho_r") )
-              rot = (KthReal) tmp.attribute("rho_r").as_double();
-            _weights->setSE3Weight( tra, rot );
-
-          }else
-            _weights->setSE3Weight(1., 1.);
-
-
-          // Initialization of the RnConf part of the RobConf for each
-          // special poses, the initial, the goal, the Home and the current poses.
-          
-          _homeConf.setRn( numLinks - 1 );
-          _currentConf.setRn( numLinks - 1 );
-          _initConf.setRn( numLinks - 1 );
-          _goalConf.setRn( numLinks - 1 );
-
-          xml_node linkNode = doc.child("Robot").child("Joints");
-          KthReal* preTransP = NULL;
-          KthReal preTrans[7]= {0., 0., 0., 0., 0., 0., 0.};
-          int i = 0;
-          KthReal limMin, limMax;
-          limMin = limMax = 0.;
-          for(xml_node_iterator it = linkNode.begin(); it != linkNode.end(); ++it){
-            xml_node preTNode = (*it).child("PreTrans");
-            if( preTNode != NULL ){
-              preTransP = preTrans;
-              preTrans[0] = (KthReal)preTNode.attribute("X").as_double();
-              preTrans[1] = (KthReal)preTNode.attribute("Y").as_double();
-              preTrans[2] = (KthReal)preTNode.attribute("Z").as_double();
-              preTrans[3] = (KthReal)preTNode.attribute("WX").as_double();
-              preTrans[4] = (KthReal)preTNode.attribute("WY").as_double();
-              preTrans[5] = (KthReal)preTNode.attribute("WZ").as_double();
-              preTrans[6] = (KthReal)preTNode.attribute("TH").as_double() * toRad;
+            //Robot type
+            tmpString = doc.child("Robot").attribute("robType").value();
+            if( tmpString == "Tree")
+                robType = TREE;
+            else if( tmpString == "Chain")
+                robType = CHAIN;
+            else  if( tmpString == "Freeflying")
+                robType = FREEFLY;
+            else{
+              cout<<"Error in *.rob file: Robottype must be set to either Chain, Tree or Freeflying"<<endl;
+              return;
             }
 
-            limMin = (KthReal)(*it).child("Limits").attribute("Low").as_double();
-            limMax = (KthReal)(*it).child("Limits").attribute("Hi").as_double();
-            if( (*it).child("Description").attribute("rotational").as_bool() ){
-              limMin *= toRad;
-              limMax *= toRad;
+            //Type of convention used to define the robot, in case of Chain or Tree
+            if(tmpString != "Freeflying")
+            {
+                tmpString = doc.child("Robot").attribute("DHType").value();
+                if( tmpString == "Standard")
+                    dhApproach = DHSTANDARD;
+                else
+                    dhApproach = DHMODIFIED;
             }
 
-            addLink((*it).attribute("name").value(), dir + (*it).attribute("ivFile").value(),
+
+            //Links of the robot
+            int numLinks = doc.child("Robot").child("Joints").attribute("size").as_int();
+
+            // Initialization of the RnConf part of the RobConf for each
+            // special poses, the initial, the goal, the Home and the current poses.
+            _homeConf.setRn( numLinks - 1 );
+            _currentConf.setRn( numLinks - 1 );
+
+             _weights = new RobWeight( numLinks - 1 );
+             //Set the SE3 weights for the distance computations, in case of mobile base
+             if( doc.child("Robot").child("WeightSE3") ){
+                 KthReal tra = 1.;
+                 KthReal rot = 1.;
+                 xml_node tmp = doc.child("Robot").child("WeightSE3");
+                 if( tmp.attribute("rho_t") )
+                     tra = (KthReal) tmp.attribute("rho_t").as_double();
+                 if( tmp.attribute("rho_r") )
+                     rot = (KthReal) tmp.attribute("rho_r").as_double();
+                 _weights->setSE3Weight( tra, rot );
+             }else
+                 _weights->setSE3Weight(1., 1.);
+
+
+
+            xml_node linkNode = doc.child("Robot").child("Joints");
+            KthReal* preTransP = NULL;
+            KthReal preTrans[7]= {0., 0., 0., 0., 0., 0., 0.};
+            int i = 0;
+            KthReal limMin, limMax;
+            limMin = limMax = 0.;
+
+            //Loop for all the links
+            for(xml_node_iterator it = linkNode.begin(); it != linkNode.end(); ++it){
+                //Sets the Pretransfomation needed when DH parameters are not able to secify the transform between links
+                //used for instance in the definition of the transofrms between tha palm and the finger bases in the SAH hand
+                xml_node preTNode = (*it).child("PreTrans");
+                if( preTNode != NULL ){
+                    preTransP = preTrans;
+                    preTrans[0] = (KthReal)preTNode.attribute("X").as_double();
+                    preTrans[1] = (KthReal)preTNode.attribute("Y").as_double();
+                    preTrans[2] = (KthReal)preTNode.attribute("Z").as_double();
+                    preTrans[3] = (KthReal)preTNode.attribute("WX").as_double();
+                    preTrans[4] = (KthReal)preTNode.attribute("WY").as_double();
+                    preTrans[5] = (KthReal)preTNode.attribute("WZ").as_double();
+                    preTrans[6] = (KthReal)preTNode.attribute("TH").as_double() * toRad;
+                }
+
+                //Sets the limits of the joint
+                limMin = (KthReal)(*it).child("Limits").attribute("Low").as_double();
+                limMax = (KthReal)(*it).child("Limits").attribute("Hi").as_double();
+                if( (*it).child("Description").attribute("rotational").as_bool() ){
+                    limMin *= toRad;
+                    limMax *= toRad;
+                }
+
+                //Create the link
+                addLink((*it).attribute("name").value(), dir + (*it).attribute("ivFile").value(),
                     (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
                     (KthReal)(*it).child("DHPars").attribute("d").as_double(),
                     (KthReal)(*it).child("DHPars").attribute("a").as_double(),
@@ -204,136 +223,133 @@ namespace Kautham {
                     (KthReal)(*it).child("Weight").attribute("weight").as_double(),
                     (*it).child("Parent").attribute("name").value(), preTransP);
 
-            if( i > 0 ){ //First link is ommited because it is the base.
-              if( (*it).child("Weight") ) 
-                _weights->setRnWeigh(i-1,(KthReal)(*it).child("Weight").attribute("weight").as_double());
-              else
-                _weights->setRnWeigh(i-1,(KthReal)1.0);
-            }
-
-            i++;
-
-            preTransP = NULL ;
-
-          }
-
-          //  =====================
-          //  Once the links were added, the controls can be configured
-          //  Creating the mapping Matrix between controls and DOF parameters and initializing it.
-          controlsName = "";
-          mapMatrix = new KthReal*[6 + _currentConf.getRn().getDim()];
-          offMatrix = new KthReal[6 + _currentConf.getRn().getDim()];
-
-          numControls = doc.child("Robot").child("ControlSet").attribute("size").as_int();
-          nTrunk = doc.child("Robot").child("ControlSet").attribute("nTrunk").as_int();
-          numCoupledControls = doc.child("Robot").child("ControlSet").attribute("coupled").as_int();
-
-          for(int i=0; i < 6 + _currentConf.getRn().getDim(); i++){
-            mapMatrix[i] = new KthReal[numControls];
-            offMatrix[i] = (KthReal)0.0;
-            for(unsigned int j = 0; j < numControls; j++)
-              mapMatrix[i][j] = (KthReal)0.0;
-          }
-
-          xml_node tmpNode = doc.child("Robot").child("ControlSet").child("Offset");
-          xml_node::iterator it;
-          string dofName = "";
-          for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FINDED
-            dofName = (*it).attribute("name").value();
-            if( dofName == "X"){
-              se3Enabled = true;
-              offMatrix[0] = (KthReal)(*it).attribute("value").as_double();
-            }else if( dofName == "Y"){
-              se3Enabled = true;
-              offMatrix[1] = (KthReal)(*it).attribute("value").as_double();
-            }else if( dofName == "Z"){
-              se3Enabled = true;
-              offMatrix[2] = (KthReal)(*it).attribute("value").as_double();
-            }else if( dofName == "X1"){
-              se3Enabled = true;
-              offMatrix[3] = (KthReal)(*it).attribute("value").as_double();
-            }else if( dofName == "X2"){
-              se3Enabled = true;
-              offMatrix[4] = (KthReal)(*it).attribute("value").as_double();
-            }else if( dofName == "X3"){
-              se3Enabled = true;
-              offMatrix[5] = (KthReal)(*it).attribute("value").as_double();
-
-            }else{    // It's not a SE3 control and could have any name.
-                      //  Find the index orden into the links vector without the first static link.
-              for(int ind = 0; ind < _currentConf.getRn().getDim(); ind++)
-                if( dofName == links[ind+1]->getName()){
-                  offMatrix[6 + ind ] = (KthReal)(*it).attribute("value").as_double();
-                  break;
+                //Add the weight. Defaults to 1.0
+                if( i > 0 ){ //First link is ommited because it is the base.
+                    if( (*it).child("Weight") )
+                        _weights->setRnWeigh(i-1,(KthReal)(*it).child("Weight").attribute("weight").as_double());
+                    else
+                        _weights->setRnWeigh(i-1,(KthReal)1.0);
                 }
-            }
-          }
 
-          tmpNode = doc.child("Robot").child("ControlSet");
-          string nodeType = "";
-          int cont = 0;
-          for(it = tmpNode.begin(); it != tmpNode.end(); ++it){  
-            nodeType = it->name();
-            if( nodeType == "Control" ){                       // Processing all controls found.
-              xml_node::iterator itDOF;
-              KthReal eigVal = (KthReal) (*it).attribute("eigValue").as_double();
-              dofName = "";
-              for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FINDED
-                dofName = itDOF->attribute("name").value();
+                i++;
+
+                preTransP = NULL ;//initialize for the next link
+            }
+
+            //  =====================
+            //  Once the links were added, the controls can be configured
+            //  Creating the mapping Matrix between controls and DOF parameters and initializing it.
+            controlsName = "";
+            mapMatrix = new KthReal*[6 + _currentConf.getRn().getDim()];
+            offMatrix = new KthReal[6 + _currentConf.getRn().getDim()];
+
+            numControls = doc.child("Robot").child("ControlSet").attribute("size").as_int();
+            nTrunk = doc.child("Robot").child("ControlSet").attribute("nTrunk").as_int();
+            numCoupledControls = doc.child("Robot").child("ControlSet").attribute("coupled").as_int();
+
+            for(int i=0; i < 6 + _currentConf.getRn().getDim(); i++){
+                mapMatrix[i] = new KthReal[numControls];
+                offMatrix[i] = (KthReal)0.0;
+                for(unsigned int j = 0; j < numControls; j++)
+                mapMatrix[i][j] = (KthReal)0.0;
+            }
+
+            //Load the Offset vector
+            xml_node tmpNode = doc.child("Robot").child("ControlSet").child("Offset");
+            xml_node::iterator it;
+            string dofName = "";
+            for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
+                dofName = (*it).attribute("name").value();
                 if( dofName == "X"){
-                  se3Enabled = true;
-                  mapMatrix[0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                se3Enabled = true;
+                offMatrix[0] = (KthReal)(*it).attribute("value").as_double();
                 }else if( dofName == "Y"){
-                  se3Enabled = true;
-                  mapMatrix[1][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                    se3Enabled = true;
+                    offMatrix[1] = (KthReal)(*it).attribute("value").as_double();
                 }else if( dofName == "Z"){
-                  se3Enabled = true;
-                  mapMatrix[2][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                    se3Enabled = true;
+                    offMatrix[2] = (KthReal)(*it).attribute("value").as_double();
                 }else if( dofName == "X1"){
-                  se3Enabled = true;
-                  mapMatrix[3][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                    se3Enabled = true;
+                    offMatrix[3] = (KthReal)(*it).attribute("value").as_double();
                 }else if( dofName == "X2"){
-                  se3Enabled = true;
-                  mapMatrix[4][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                    se3Enabled = true;
+                    offMatrix[4] = (KthReal)(*it).attribute("value").as_double();
                 }else if( dofName == "X3"){
-                  se3Enabled = true;
-                  mapMatrix[5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                }else{      // It's not a SE3 control and could have any name.
-                            //  Find the index orden into the links vector without the first static link.
-                  for(int ind = 0; ind < _currentConf.getRn().getDim(); ind++)
-                    if( dofName == links[ind+1]->getName()){
-                      mapMatrix[6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                      break;
+                    se3Enabled = true;
+                    offMatrix[5] = (KthReal)(*it).attribute("value").as_double();
+                }else{    // It's not a SE3 control and could have any name.
+                          // Find the index orden into the links vector without the first static link.
+                    for(int ind = 0; ind < _currentConf.getRn().getDim(); ind++)
+                        if( dofName == links[ind+1]->getName()){
+                            offMatrix[6 + ind ] = (KthReal)(*it).attribute("value").as_double();
+                            break;
                     }
                 }
-              }// for(itDOF = dofItem.begin(); itDOF != dofItem.end(); ++itDOF) {// PROCESSING ALL DOF FINDED
+            }//End processing Offset vector
+
+            //Process the controls to load the mapMatrix
+            tmpNode = doc.child("Robot").child("ControlSet");
+            string nodeType = "";
+            int cont = 0;
+            for(it = tmpNode.begin(); it != tmpNode.end(); ++it){
+                nodeType = it->name();
+                if( nodeType == "Control" ){
+                    xml_node::iterator itDOF;
+                    KthReal eigVal = (KthReal) (*it).attribute("eigValue").as_double();
+                    dofName = "";
+                    for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FINDED
+                        dofName = itDOF->attribute("name").value();
+                        if( dofName == "X"){
+                            se3Enabled = true;
+                            mapMatrix[0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else if( dofName == "Y"){
+                            se3Enabled = true;
+                            mapMatrix[1][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else if( dofName == "Z"){
+                            se3Enabled = true;
+                            mapMatrix[2][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else if( dofName == "X1"){
+                            se3Enabled = true;
+                            mapMatrix[3][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else if( dofName == "X2"){
+                            se3Enabled = true;
+                            mapMatrix[4][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else if( dofName == "X3"){
+                            se3Enabled = true;
+                            mapMatrix[5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else{  // It's not a SE3 control and could have any name.
+                                // Find the index orden into the links vector without the first static link.
+                            for(int ind = 0; ind < _currentConf.getRn().getDim(); ind++)
+                                if( dofName == links[ind+1]->getName()){
+                                    mapMatrix[6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                    break;
+                                }
+                            }
+                        }
               
-              if(controlsName != "") controlsName.append("|");
-                controlsName.append((*it).attribute("name").value());
-
-              cont++;
-
-            }// closing if(nodeType == "Control" )
-          }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
-
-
-
+                    if(controlsName != "") controlsName.append("|");
+                        controlsName.append((*it).attribute("name").value());
+                    cont++;
+                }// closing if(nodeType == "Control" )
+            }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
         }else // the result of the file pasers is bad
           cout << "The robot file: " << robFile << " can not be read." << std::endl;
-
-
       }
+      armed = true;
+
+      //Initialize the limits to 0.
       for(int i=0; i<7; i++)
         _spatialLimits[i][0] = _spatialLimits[i][1] = (KthReal) 0.0;
 
-
-      armed = true;
 
     }else{ // File does not exists.
       fin.close();
       cout << "The Robot file: " << robFile << "doesn't exist. Please confirm it." << endl;
     }
   }
+
+
 
   //! This method attaches an existing obstacle to the link specified by the linkName parameter.
  /*!
@@ -830,36 +846,6 @@ namespace Kautham {
       }
       Kinematics(qh);
 
-    }
-  }
-
-  void Robot::setInitPos(Conf* qi){
-    if( qi != NULL ){
-	    switch(qi->getType()){
-		    case SE3:
-		    case SE2:
-				  _initConf.setSE3(qi->getCoordinates());
-			    break;
-		    case Rn:
-			    if(qi->getDim() == links.size() - 1){
-				  _initConf.setRn(qi->getCoordinates());
-			  }
-      }
-    }
-  }
-
-  void Robot::setGoalPos(Conf* qg){
-    if(qg != NULL){
-	    switch(qg->getType()){
-	      case SE3:
-	      case SE2:
-				  _goalConf.setSE3(qg->getCoordinates());
-			    break;
-		    case Rn:
-			    if(qg->getDim() == links.size() - 1){
-				  _goalConf.setRn(qg->getCoordinates());
-			  }
-      }
     }
   }
 

@@ -105,11 +105,7 @@ namespace Kautham {
     _sampler = NULL;
     _cspace = new SampleSet();
     _cspace->clear();
-    _qStart.clear();
-		_qGoal.clear();
     _currentControls.clear();
-
-
 	}
 
   Problem::~Problem(){
@@ -408,91 +404,10 @@ namespace Kautham {
   }
 
 
-	void Problem::setStartConf(Robot* rob, HASH_S_K* param){
-    Conf* tmpC = new SE3Conf();
-    vector<KthReal> cords(7);
-    string search[]={"X", "Y", "Z", "WX", "WY", "WZ", "TH"};
-    HASH_S_K::iterator it;
-
-    for(int i = 0; i < 7; i++){
-      it = param->find(search[i]);
-      if( it != param->end())
-        cords[i]= it->second;
-      else
-        cords[i] = 0.0;
-    }  
-    // Here is needed to convert from axis-angle to
-    // quaternion internal represtantation.
-    SE3Conf::fromAxisToQuaternion(cords);
-
-    tmpC->setCoordinates(cords);
-    rob->setInitPos(tmpC);
-    delete tmpC;
-    cords.clear();
-
-    if(rob->getNumJoints() > 0){
-      cords.resize(rob->getNumJoints());
-      tmpC = new RnConf(rob->getNumJoints());
-      for(int i = 0; i < tmpC->getDim(); i++){
-        it = param->find(rob->getLink(i+1)->getName());
-        if( it != param->end())
-          cords[i]= it->second;
-        else
-          cords[i] = 0.0;
-      }
-      tmpC->setCoordinates(cords);
-      rob->setInitPos(tmpC);
-      delete tmpC;
-    }
-	}
-
-	void Problem::setGoalConf(Robot* rob, HASH_S_K* param){
-    Conf* tmpC = new SE3Conf();
-    vector<KthReal> cords(7);
-    string search[]={"X", "Y", "Z", "WX", "WY", "WZ", "TH"};
-    HASH_S_K::iterator it;
-
-    for(int i = 0; i < 7; i++){
-      it = param->find(search[i]);
-      if( it != param->end())
-        cords[i]= it->second;
-      else
-        cords[i] = 0.0;
-    }  
-
-    // Here is needed to convert from axis-angle to
-    // quaternion internal represtantation.
-    SE3Conf::fromAxisToQuaternion(cords);
-
-    tmpC->setCoordinates(cords);
-    rob->setGoalPos(tmpC);
-    delete tmpC;
-    cords.clear();
-
-    if(rob->getNumJoints() > 0){
-      cords.resize(rob->getNumJoints());
-      tmpC = new RnConf(rob->getNumJoints());
-      for(int i = 0; i < tmpC->getDim(); i++){
-        it = param->find(rob->getLink(i+1)->getName());
-        if( it != param->end())
-          cords[i]= it->second;
-        else
-          cords[i] = 0.0;
-      }
-      tmpC->setCoordinates(cords);
-      rob->setGoalPos(tmpC);
-      delete tmpC;
-    }
-	}
-
-
-
 
   bool Problem::createPlanner( string name, KthReal step ){
     if(_planner != NULL )
       delete _planner;
-
-
 
     Sample *sinit=NULL;
     Sample *sgoal=NULL;
