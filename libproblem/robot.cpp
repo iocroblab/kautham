@@ -891,7 +891,7 @@ namespace Kautham {
 		  return NULL;
   }
 
-  void* Robot::getModel(){
+  SoSeparator* Robot::getModel(){
     if(visModel == NULL){
       switch(libs){
         case IVPQP:
@@ -934,7 +934,7 @@ namespace Kautham {
           _pathSeparator->addChild(tmpVRML);
 
           robot->addChild(_pathSeparator);
-          visModel = (void*)robot;
+          visModel = robot;
           break; 
       }    
     }
@@ -965,20 +965,20 @@ namespace Kautham {
     return sqrt(dia);
   }
 
-  void* Robot::getModelFromColl(){
+  SoSeparator* Robot::getModelFromColl(){
     SoSeparator* root = NULL;
     switch(libs){
       case IVPQP:
         root = new SoSeparator();
         for(unsigned int i =0; i < links.size(); i++)
           root->addChild(((IVPQPElement*)links[i]->getElement())->getIvFromPQPModel());
-        return (void*)root;
+        return root;
         break;
       case IVSOLID:
         root = new SoSeparator();
         for(unsigned int i =0; i < links.size(); i++)
           root->addChild(((IVSOLIDElement*)links[i]->getElement())->getIvFromSOLIDModel());
-        return (void*)root;
+        return root;
         break;
       default:
         return NULL;
@@ -1016,7 +1016,7 @@ namespace Kautham {
     }
   }
 
-  //! This method makes the mapping between control values and configurations.
+
   //! The method receives the values and it makes the changes in respective configurations
   //! If the robot is freeflying only changes the SE3/SE2 Conf corresponding to
   //! position and orientation of it using the Kinematics methods, but if the robot
@@ -1088,7 +1088,6 @@ namespace Kautham {
       }
     }
     throw exception();
-    
   }
  
   //! This member function makes the movements needed to achieve the pose.
@@ -1100,9 +1099,7 @@ namespace Kautham {
       if(se3Enabled){
         // SE3 Denormalization in the wold frame
         vector<KthReal> coords = deNormalizeSE3(values);
-
         _currentConf.setSE3(coords);
-
         links[0]->getTransformation()->setTranslation(Point3(coords.at(0),coords.at(1), coords.at(2)));
         links[0]->getTransformation()->setRotation(Rotation(coords.at(3), coords.at(4),
                                                             coords.at(5), coords.at(6)));
@@ -1212,18 +1209,13 @@ namespace Kautham {
     SoNode *sepgrid = NULL;
     try{
       if( visible ){
-       //sepgrid = ((SoSeparator*)visModel)->getByName("Path");
-       //if( sepgrid == NULL ) // It is OK, they is not attached to the root.
-					((SoSeparator*)visModel)->addChild(_pathSeparator);
-       
+        visModel->addChild(_pathSeparator);
        response = true;
       }else{
-        sepgrid = ((SoSeparator*)visModel)->getByName("Path");
+        sepgrid = visModel->getByName("Path");
         if( sepgrid != NULL ){
-					((SoSeparator*)visModel)->removeChild(sepgrid);
-          //sepgrid->unref();
+            visModel->removeChild(sepgrid);
         }
-
         response = false;
       }
     }catch(...){ }
