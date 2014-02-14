@@ -118,8 +118,6 @@ namespace Kautham {
       bool              se3Enabled; //!< This attribute is true if the robot has a mobile base.
       bool              armed;//!< Flag that shows if the Robot is complete or still is under construction.
       RobConf           _homeConf;     //!< This attribute is the Home configuration of the robot.
-      RobConf           _initConf;     //!< This attribute is the initial configuration of the robot planning problem.
-      RobConf           _goalConf;     //!< This attribute is the goal configuration of the robot planning problem.
       RobConf           _currentConf;  //!< This attribute is the current configuration of the robot.
 
 
@@ -130,10 +128,6 @@ namespace Kautham {
     inline string getName() const {return name;} //!< Returns the robot name.
 
     inline RobConf* getCurrentPos(){return &_currentConf;} //!< Returns the current RobConf used to represent the SE3 position and Rn configuration
-
-    inline RobConf* getInialPos(){ return &_initConf;} //!< Returns the Initial robot configuration
-
-    inline RobConf* getGoalPos(){ return &_goalConf;} //!< Returns the Goal robot configuration
 
     inline RobConf* getHomePos(){ return &_homeConf;} //!< Returns the Home robot configuration
 
@@ -250,12 +244,6 @@ namespace Kautham {
 
     //! Sets the home position of the robot
     void setHomePos(Conf* qh);
-
-    //! Sets the init configuration of the robot
-    void setInitPos(Conf *qi);
-
-    //! Sets the goal configuration of the robot
-    void setGoalPos(Conf *qg);
 
     bool collisionCheck(Obstacle *obs);
     bool collisionCheck(Robot *rob);

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Robot  name="ele" DHType="Modified" robType="Chain">
-  Robot description name, Type and Denavit-Hartemberg approach used.
+<Robot  name="ele" robType="Freeflying">
 
   <WeightSE3 rho_t="0.01" rho_r="1.0" />
   <Joints size="1">
@@ -10,28 +9,11 @@
   </Joints>
   
   <ControlSet size="3">
-	This control set is thinkig to be as EigenVector collection with their own 
-	EigenValue used to obtain the respective DOF vector of the robot. All the 
-	robots need to be positioned in any location in SE3 WorkSpace as well it need 
-	6 values (X, Y, Z, X1, X2, X3) to reach it. The X1, X2, X3 values will be mapped to 
-	axis-angle notation (Wx, Wy, Wz, angle) and the other DOF are respectively the 
-	articular values in Chain or Tree robot types.
-	
-	
-	<Offset>
-		This vector can be added in order to provide a offset or centre values to adjust
-		the control values and the DOF values.
+        <Offset>
 		<DOF name="X" value="0.5"></DOF> 
 		<DOF name="Y" value="0.5"></DOF> 
 		<DOF name="Z" value="0.5"></DOF> 
-	</Offset>
-
-
-	
-	At less, the robot needs to be controled through a 6 values corresponding to a 
-	SE3 configuration. 
-
-
+        </Offset>
 	<Control name="x" eigValue="1.0">
 		<DOF name="X" value="1.0"></DOF> 
 	</Control>

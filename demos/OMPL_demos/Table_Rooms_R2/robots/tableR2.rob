@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Robot  name="tableR2" DHType="Modified" robType="Chain">
-  Robot description name, Type and Denavit-Hartemberg approach used.
+<Robot  name="tableR2" robType="Freeflying">
 
   <WeightSE3 rho_t="1.0" rho_r="1.0"/>
   <Joints size="1">
@@ -12,8 +11,6 @@
      	
   <ControlSet size="2">
     <Offset>
-      This vector can be added in order to provide a offset or centre values to adjust
-      the control values and the DOF values.
       <DOF name="X" value="0.5"></DOF> 
       <DOF name="Y" value="0.5"></DOF>
     </Offset>
