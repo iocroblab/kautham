@@ -89,7 +89,8 @@ namespace Kautham {
       KthReal           scale;//!< This is the global scale for all the links that compound the robot. Normally it is equal to one.
       RobWeight*        _weights; //!< Weights that affect the distance computations.
       mt::Transform     _homeTrans; //!< This is the Home Reference frame at time zero (used to calculate the spatial limits).
-      void*             visModel; //!< Visualitzation model for the path.
+      SoSeparator*      visModel; //!< Visualitzation model for the path.
+
       string            controlsName; //!< Names of the controls, as a string, separated with the vertical bar character.
       int               numControls;  //!< This is the number of control used to command the robot
       int               numCoupledControls; //!< This is the number of controls used to command the robot that are couped with other robots
@@ -166,7 +167,6 @@ namespace Kautham {
     inline mt::Transform& getHomeTransform(){return *(links[0]->getTransformation());} //!< Retruns the transform of the robot base wrt the world
 
     inline vector<RobConf>& getProposedSolution(){return _proposedSolution;} //!< Returns the Proposed Solution as a vector of RobConf; for visualization purposes.
-
 
     inline void setName(string nam){name = nam;} //!< Sets the robot name.
 
@@ -245,36 +245,62 @@ namespace Kautham {
     //! Sets the home position of the robot
     void setHomePos(Conf* qh);
 
+    //! Verifies collision with another robot
     bool collisionCheck(Obstacle *obs);
+
+    //! Verifies collision with an obstacle
     bool collisionCheck(Robot *rob);
-    KthReal distanceCheck(Obstacle *obs, bool min = true);
+
+    //! Verifies distance with another robot
     KthReal distanceCheck(Robot *rob, bool min = true);
 
-    bool setLimits(int member, KthReal min, KthReal max);
-    void* getModel();
-    void* getModelFromColl();
+    //! Verifies distance with an obstacle
+    KthReal distanceCheck(Obstacle *obs, bool min = true);
 
+    //! Sets the values of _spatialLimits[member]
+    bool setLimits(int member, KthReal min, KthReal max);
+
+    //! Returns a pointer to the visualitzation model
+    SoSeparator* getModel();
+
+    //! Returns a pointer to visualize the model used for collisions
+    SoSeparator* getModelFromColl();
+
+    //! Maps from control values to configurations.
     void control2Pose(vector<KthReal> &values);
-    //! This method maps the values of position/pose of robot taking into account the movement limits.
-    Conf& parameter2Conf(vector<KthReal> &values, CONFIGTYPE type);
-    void parameter2Pose(vector<KthReal> &values);
+
+    //! Maps from control values to parameters (normalized configurations).
     void control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters);
 
+    //! Loads the robot configuration _currentConf from the normalized values of the configuration (parameters)
+    void parameter2Pose(vector<KthReal> &values);
+
+    //! Depending on the type specified, retruns the SE3 config or the Rn configuration from the normalized values of the configuration (parameters)
+    Conf& parameter2Conf(vector<KthReal> &values, CONFIGTYPE type);
+
+    //! Retunrs the weights of the robot used in the computation of the distances
     RobWeight* getRobWeight(){return _weights;}
+
     bool setControlItem(string control, string dof, KthReal value);
+
     string getDOFNames();
 
     bool                  setProposedSolution(vector<mt::Point3>& pathSE3);
+
     bool                  setProposedSolution(vector<RobConf*>& path);
+
     bool                  cleanProposedSolution();
+
     bool                  setPathVisibility(bool visible);
 
     bool                  attachObject(Obstacle* obs, string linkName );
+
     //! This method moves the attached object to the robot. The object can be attached to any link
     //! of the robot. This method processes the _attachedObj list to calculated the new position and 
     //! orientation based on the position and orientation of the robot link where the object is attached 
     //! and the mt::Transform calculated on the attached instant.
     void                  moveAttachedObj();
+
     bool                  detachObject( string linkName );
 
     //! This method returns the maximum value of the D_H parameters. It is used to have an idea about the dimension of the links.
