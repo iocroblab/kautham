@@ -81,7 +81,6 @@ namespace Kautham {
 //! Class robot implements a kinematic tree with a free-flying base
   class Robot {
   private:
-    //ATTRIBUTES
       ROBOTTYPE         robType; //!< The robot type FREEFLY,CHAIN, TREE, CLOSEDCHAIN
       LIBUSED           libs; //!< Flag indicating the collision-check library used PQP or SOLID.
 
@@ -176,7 +175,7 @@ namespace Kautham {
 
     inline int setNumCoupledControls(int n){numCoupledControls=n;}
 
-    inline void           setLinkPathDrawn(int n){_linkPathDrawn = n;}
+    inline void setLinkPathDrawn(int n){_linkPathDrawn = n;}
 
 
     //! Returns the values that weight translations vs. rotations in SE3 distance computations.
@@ -231,16 +230,16 @@ namespace Kautham {
     InverseKinematic* getIkine(){return _ikine;}
 
     //! Sets the constrained kinematics
-    bool                  setConstrainedKinematic(CONSTRAINEDKINEMATICS type);
+    bool setConstrainedKinematic(CONSTRAINEDKINEMATICS type);
 
     //! Sets parameters constrained kinematics
-    bool                  setConstrainedKinematicParameter(string name, KthReal value);
+    bool setConstrainedKinematicParameter(string name, KthReal value);
 
     //! Returns the constrained kinematics used
     ConstrainedKinematic* getCkine(){return _constrainKin;}
 
     //! Computes direct constrrained kinematics
-    RobConf&              ConstrainedKinematics(vector<KthReal> &target);
+    RobConf& ConstrainedKinematics(vector<KthReal> &target);
 
     //! Sets the home position of the robot
     void setHomePos(Conf* qh);
@@ -281,46 +280,45 @@ namespace Kautham {
     //! Retunrs the weights of the robot used in the computation of the distances
     RobWeight* getRobWeight(){return _weights;}
 
+    //! Sets the value of the mapMatrix corresponding to the column control and row dof.
     bool setControlItem(string control, string dof, KthReal value);
 
+    //! Returns the string with the names of the DOFs, separated by |
     string getDOFNames();
 
-    bool                  setProposedSolution(vector<mt::Point3>& pathSE3);
+    //! Sets a solution path to be visualized (corresponding to the origin of a given selected link of the robot)
+    bool setProposedSolution(vector<RobConf*>& path);
 
-    bool                  setProposedSolution(vector<RobConf*>& path);
+    //! Deletes the solution path to be visualized.
+    bool cleanProposedSolution();
 
-    bool                  cleanProposedSolution();
+    //! Toggles on/off the vision of the solution path.
+    bool setPathVisibility(bool visible);
 
-    bool                  setPathVisibility(bool visible);
+    //! Attachs an object to a given link, usually the end effector.
+    bool attachObject(Obstacle* obs, string linkName );
 
-    bool                  attachObject(Obstacle* obs, string linkName );
+    //! Moves the attached object.
+    void moveAttachedObj();
 
-    //! This method moves the attached object to the robot. The object can be attached to any link
-    //! of the robot. This method processes the _attachedObj list to calculated the new position and 
-    //! orientation based on the position and orientation of the robot link where the object is attached 
-    //! and the mt::Transform calculated on the attached instant.
-    void                  moveAttachedObj();
+    //! Dettaches the attached object.
+    bool detachObject( string linkName );
 
-    bool                  detachObject( string linkName );
-
-    //! This method returns the maximum value of the D_H parameters. It is used to have an idea about the dimension of the links.
-    KthReal               maxDHParameter();
+    //! This method returns the maximum value of the D_H parameters.
+    KthReal maxDHParameter();
 
   private:
     //! This method updates the absolute position and orientation of each link in the robot.
-    void              updateRobot();
+    void updateRobot();
 
-    //! This method recalculates the limits in the home frame to be used in the de-normalization
-    //! of the mapping between the controls and the absolute SE3 position.
-    void              recalculateHomeLimits();
+    //! Recomputes the limits in the home frame
+    void recalculateHomeLimits();
 
-    //! This method denormalizes the SE3 unit representation and returns the positon and the
-    //! rotation (quaternion) in a single vector.
-    vector<KthReal>   deNormalizeSE3(vector<KthReal> &values);
+    //! Denormalizes the SE3 unit representation and returns the positon and the rotation (quaternion) in a single vector.
+    vector<KthReal>  deNormalizeSE3(vector<KthReal> &values);
 
-    float             diagLimits();
-
-
+    //! Returns the diagonal of the cube defined by the home-limits of the robot
+    float diagLimits();
   };
 
   /** @}   end of Doxygen module "libProblem" */

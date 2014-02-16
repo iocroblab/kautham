@@ -50,7 +50,12 @@ using namespace std;
 
 namespace Kautham{
 
-
+/*! \class Sample
+ * This class is the Sample abstraction. It has the dimSample coordinates
+ * into a unit cube. If the sample represent an SE3 sample(dimSample=6),
+ * it would be mapped to the respective position and orientation
+ * representation.
+ */
 
   Sample::Sample(char d){
     _dim = d;
