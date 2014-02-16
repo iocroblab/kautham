@@ -349,13 +349,11 @@ namespace Kautham {
     }
   }
 
-
-
-  //! This method attaches an existing obstacle to the link specified by the linkName parameter.
  /*!
- \sa testMe()
- \param c1 the first argument.
- \param c2 the second argument.
+  * Computes the transform between an object and a link that will be used to
+  * update the object pose when the link is moved.
+  * \param obs is a pointer to the obstacle to be attached.
+  * \param linkName is the name of the link to which the object is to be attached.
  */
   bool Robot::attachObject(Obstacle* obs, string linkName ){
     try{
@@ -375,6 +373,9 @@ namespace Kautham {
     }
   }
 
+  /*!
+    * The returned value gives a rough idea of the dimension of the links.
+    */
   KthReal Robot::maxDHParameter(){
     KthReal maxim=0.;
     for(size_t i = 0; i < links.size(); ++i){
@@ -384,6 +385,11 @@ namespace Kautham {
     return maxim;
   }
 
+
+  /*! Processes the _attachedObj list to calculate the new position and
+   * orientation based on the position and orientation of the robot link where the object is attached
+   * and the mt::Transform calculated on the attached instant.
+   */
   void Robot::moveAttachedObj(){
     KthReal pos[3]={0.};
     KthReal ori[4]={0.};
@@ -404,7 +410,9 @@ namespace Kautham {
     }
   }
 
-  /*! This method detaches the previously attached objects to the link named linkName.*/
+  /*!
+   *
+   */
   bool Robot::detachObject( string linkName ){
     bool found = false;
     list<attObj>::iterator it = _attachedObject.begin();
@@ -417,6 +425,9 @@ namespace Kautham {
     return found;
   }
   
+  /*!
+   *
+   */
   Link* Robot::getLinkByName( string linkName ){
     for(size_t i=0; i < links.size(); ++i){
       if(links[i]->getName() == linkName )
@@ -425,6 +436,10 @@ namespace Kautham {
     return NULL;
   }
 
+
+  /*!
+   *
+   */
   string Robot::getDOFNames(){
     string tmp = "X|Y|Z|X1|X2|X3";
     for(unsigned int i = 1; i< links.size(); i++){
@@ -434,10 +449,11 @@ namespace Kautham {
     return tmp;
   }
 
-  //! This method sets the new value for a particular dof of a particular 
-  //! control
+  /*!
+   *
+   */
   bool Robot::setControlItem(string control, string dof, KthReal value){
-    // First I will found the column index looking for "|" number before the control name.
+    // First I will find the column index looking for "|" number before the control name.
     string::size_type pos = controlsName.find(control,0); 
     if(pos == string::npos) return false;
     int j=0;
@@ -454,10 +470,13 @@ namespace Kautham {
     return false;
   }
   
-  //! This member function allows to change the values of every
-  //! limit as well: x, y, z, wx, wy, wz, angle. There are respectively
-  //! the position and orientation of all the robot. These values are
-  //! in the world frame. 
+
+  /*!
+   * Allows to change the values of the robot base limits.
+   * These values are in the world frame.
+   *   \param member is an integer between 0 and 6 corresponding to three coordinates
+   *    of position and four of orientation (axis-angle)
+   */
   bool Robot::setLimits(int member, KthReal min, KthReal max){
 	  if(member >= 0 && member < 7){
 		  _spatialLimits[member][0] = min;
@@ -469,6 +488,9 @@ namespace Kautham {
 	  return false;
   }
 
+  /*!
+   *
+   */
   void Robot::recalculateHomeLimits(){
     mt::Point3 Pmin_W(_spatialLimits[0][0], _spatialLimits[1][0], _spatialLimits[2][0]);
     mt::Point3 Pmax_W(_spatialLimits[0][1], _spatialLimits[1][1], _spatialLimits[2][1]);
@@ -502,6 +524,10 @@ namespace Kautham {
 
   }
 
+
+  /*!
+   *
+   */
   bool Robot::setConstrainedKinematic(CONSTRAINEDKINEMATICS type){
     switch(type){
       case Kautham::UNCONSTRAINED:
@@ -521,12 +547,18 @@ namespace Kautham {
     return true;
   }
   
+  /*!
+   *
+   */
   bool Robot::setConstrainedKinematicParameter(string name, KthReal value){
     if( _constrainKin != NULL)
       return _constrainKin->setParameter(name, value);
     return false;
   }
 
+  /*!
+   *
+   */
   RobConf& Robot::ConstrainedKinematics(vector<KthReal> &target){
     if(_constrainKin != NULL){
       //First i try to connect to the remote object
@@ -539,6 +571,9 @@ namespace Kautham {
     return _currentConf;
   }
 
+  /*!
+   *
+   */
   bool Robot::setInverseKinematic(INVKINECLASSES type){
     switch(type){
       case Kautham::RR2D:
@@ -562,12 +597,18 @@ namespace Kautham {
     return true;
   }
 
+  /*!
+   *
+   */
   bool Robot::setInverseKinematicParameter(string name, KthReal value){
     if( _ikine != NULL)
       return _ikine->setParameter(name, value);
     return false;
   }
 
+  /*!
+   *
+   */
   bool Robot::Kinematics(RobConf *robq) {
     bool se = Kinematics(robq->getSE3());
     if(se && Kinematics(robq->getRn()))
@@ -576,6 +617,9 @@ namespace Kautham {
       return false;
   }
 
+  /*!
+   *
+   */
   bool Robot::Kinematics(RobConf& robq) {
     bool se = Kinematics(robq.getSE3());
     if(se && Kinematics(robq.getRn()))
@@ -584,6 +628,9 @@ namespace Kautham {
       return false;
   }
 
+  /*!
+   *
+   */
   bool Robot::Kinematics(SE3Conf& q) {
     vector<KthReal>& coor = q.getCoordinates();
 
@@ -596,6 +643,9 @@ namespace Kautham {
     return true;
   }
 
+  /*!
+   *
+   */
   bool Robot::Kinematics(RnConf& q) {
 
 	  /*
@@ -639,10 +689,13 @@ namespace Kautham {
   }
 
 
-  //!	This method uses the Configuration q to set up the position, orientation,
-  //!	and articular values if the robot has one. If the configuration q is SE2 or SE3
-  //!	the robot change the position and/or orientation either the configuration is
-  //!	Rn the robot change the articular values.
+
+  /*!
+   * This method uses the Configuration q to set up the position, orientation,
+   * and articular values if the robot has one. If the configuration q is SE2 or SE3
+   * the robot change the position and/or orientation either the configuration is
+   * Rn the robot change the articular values.
+   */
   bool Robot::Kinematics(Conf *q) {
     vector<KthReal>& coor = q->getCoordinates();
 
@@ -699,9 +752,12 @@ namespace Kautham {
     throw InvKinEx(0);
   }
 
-  //!Call to inverseKinematics given:
-  //! a) the target defined as the tcp transform
-  //! b) a robot configuration used as a reference to copy its same configuration parameters e.g. for the TX90: (l/r,ep/en,wp/wn)
+  /*!
+   * Call to inverseKinematics given:
+   * a) the target defined as the tcp transform
+   * b) a robot configuration used as a reference to copy its same configuration
+   * parameters e.g. for the TX90: (l/r,ep/en,wp/wn)
+   */
   RobConf& Robot::InverseKinematics(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
     if(_ikine != NULL){
       //First i try to conect to the remote object
@@ -714,6 +770,9 @@ namespace Kautham {
     throw InvKinEx(0);
   }
 
+  /*!
+   *
+   */
   bool Robot::autocollision(int t){
     //parameter t is used to only test the autocollision of the trunk part of a TREE robot
 	  //it is set to 0 in robot.h 
@@ -749,6 +808,9 @@ namespace Kautham {
     return _autocoll;
   }
 
+  /*!
+   *
+   */
   bool Robot::collisionCheck(Obstacle *obs) {
     if( autocollision() )
       return true;
@@ -765,8 +827,11 @@ namespace Kautham {
     return false;
   }
 
-  //! This method verifies if this robot collides with the robot rob passed as a parameter.
-  //! The method returns true when the two robots collide, otherwise returns false.
+
+  /*!
+   * This method verifies if this robot collides with the robot rob passed as a parameter.
+   * The method returns true when the two robots collide, otherwise returns false.
+   */
   bool Robot::collisionCheck(Robot *rob){
     if( _autocoll || rob->autocollision() ) return true;
 
@@ -782,9 +847,11 @@ namespace Kautham {
   }
 
 
-  //! This methods returns the distance between the robot and the obstacle passed as parameter. 
-  //! The distance returned is between the endEfector or the most distal link, but 
-  //! if parameter min is true, the distace is the 
+  /*!
+   * This methods returns the distance between the robot and the obstacle passed as parameter.
+   * The distance returned is between the endEfector or the most distal link, but
+   * if parameter min is true, the distace is the
+   */
   KthReal Robot::distanceCheck(Obstacle *obs, bool min) {
     KthReal minDist = -1.0;
     KthReal tempDist = 0.0;
@@ -803,6 +870,9 @@ namespace Kautham {
       return minDist;
   }
 
+  /*!
+   *
+   */
   KthReal Robot::distanceCheck(Robot *rob, bool min ){
     KthReal minDist = -1.0;
     KthReal tempDist = 0.0;
@@ -822,6 +892,9 @@ namespace Kautham {
     return minDist;
   }
 
+  /*!
+   *
+   */
   void Robot::setHomePos(Conf* qh){
     if( qh != NULL ){
       switch(qh->getType()){
@@ -891,6 +964,9 @@ namespace Kautham {
 		  return NULL;
   }
 
+  /*!
+   *
+   */
   SoSeparator* Robot::getModel(){
     if(visModel == NULL){
       switch(libs){
@@ -909,10 +985,9 @@ namespace Kautham {
           tmpMat->diffuseColor.setValue( 0., 0., 1.);
           _pathSeparator->addChild( tmpMat );
           SoVRMLExtrusion* tmpVRML = new SoVRMLExtrusion();
-          //_pathSeparator->setName("Path");
           tmpVRML->solid.setValue(true);
           float diag = diagLimits()/100.;
-          diag = diag < 2. ? 2. : diag;
+          //diag = diag < 2. ? 2. : diag;
           tmpVRML->scale.setValue( diag,diag );
           float vertex[13][2];
           vertex[0][0] = 0.1000;    vertex[0][1] = 0.;
@@ -941,6 +1016,9 @@ namespace Kautham {
     return visModel;
   }
 
+  /*!
+   *
+   */
   KthReal* Robot::getWeightSE3(){
     KthReal tmp=1.;
     if( _weights != NULL )
@@ -949,6 +1027,9 @@ namespace Kautham {
       throw exception();
   }
 
+  /*!
+   *
+   */
   vector<KthReal>& Robot::getWeightRn(){
     if( _weights != NULL )
       return _weights->getRnWeights();
@@ -956,7 +1037,9 @@ namespace Kautham {
       throw exception();
   }
 
-
+  /*!
+   *
+   */
   float Robot::diagLimits(){
     float dia = 0.;
     for(int i = 0; i < 3; i++)
@@ -985,7 +1068,9 @@ namespace Kautham {
     }
   }
 
-    
+  /*!
+   *
+   */
   void Robot::control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters){
     parameters.clear();
     if(robType == FREEFLY ){
@@ -1029,6 +1114,9 @@ namespace Kautham {
     parameter2Pose(vecTmp);
   }
 
+  /*!
+   *
+   */
   vector<KthReal> Robot::deNormalizeSE3(vector<KthReal> &values){
          std::vector<KthReal> coords(6);
     SE3Conf tmp;
@@ -1121,6 +1209,9 @@ namespace Kautham {
     }
   }
 
+  /*!
+   *
+   */
   void Robot::updateRobot(){
     for(unsigned int i =0; i < links.size(); i++){
       if(links[i]->changed()){
@@ -1133,28 +1224,9 @@ namespace Kautham {
       moveAttachedObj();
   }
 
-  bool Robot::setProposedSolution(vector<mt::Point3>& pathSE3){
-    try{
-      // Updating the graphical path if needed
-      if( _graphicalPath != NULL )
-        _graphicalPath->deleteValues( 0 );
-
-      SbVec3f* temp = new SbVec3f[pathSE3.size()];
-      vector<mt::Point3>::iterator it;
-      unsigned int i = 0;
-      for(it = pathSE3.begin(); it != pathSE3.end(); ++it){
-        temp[i].setValue( (*it).at(0), (*it).at(1), (*it).at(2));
-        ++i;
-      }
-
-      if( _graphicalPath != NULL )
-        _graphicalPath->setValues(0, pathSE3.size(), temp);
-      return true;
-    }catch(...){
-      return false;
-    }
-  }
-
+  /*!
+   *
+   */
   bool Robot::setProposedSolution(vector<RobConf*>& path){
     try{
       unsigned int i = 0;
@@ -1193,6 +1265,9 @@ namespace Kautham {
     }
   }
 
+  /*!
+   *
+   */
   bool Robot::cleanProposedSolution(){
     try{
       _proposedSolution.clear();
@@ -1204,6 +1279,9 @@ namespace Kautham {
     }
   }
 
+  /*!
+   *
+   */
   bool Robot::setPathVisibility(bool visible){
     bool response=false;
     SoNode *sepgrid = NULL;

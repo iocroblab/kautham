@@ -8,5 +8,5 @@ var searchData=
   ['kinematiccarmodel',['KinematicCarModel',['../class_kautham_1_1omplcplanner_1_1_kinematic_car_model.html',1,'Kautham::omplcplanner']]],
   ['kinematicf16model',['KinematicF16Model',['../class_kautham_1_1omplcplanner_1_1_kinematic_f16_model.html',1,'Kautham::omplcplanner']]],
   ['kinematicrobotmodel',['KinematicRobotModel',['../class_kautham_1_1omplcplanner_1_1_kinematic_robot_model.html',1,'Kautham::omplcplanner']]],
-  ['kthquery',['KthQuery',['../class_kautham_1_1_kth_query.html',1,'Kautham']]]
+  ['kthquery',['KthQuery',['../class_kautham_1_1_i_o_c_1_1_kth_query.html',1,'Kautham::IOC']]]
 ];

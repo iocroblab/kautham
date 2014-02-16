@@ -65,23 +65,20 @@ using namespace std;
 
 namespace Kautham{
 
-
 /** \addtogroup libSampling
  *  @{
  */
 
-  //! This class is the Sample abstraction. It has the dimSample coordinates
-  //! into a unit cube. If the sample represent an SE3 sample(dimSample=6),
-  //! it would be mapped to the respective position and orientation 
-  //! representation.
+//! Class sample is used to represent a configuration of Cspace.
   class Sample {
     public:
       //! Omission Constructor. This is the simplest way to create a new generic Sample.
       Sample(char d);
 
-      //!copy constructor
-	    Sample(Sample *s);
+      //! Copy constructor
+      Sample(Sample *s);
 
+      //! Destructor
       virtual ~Sample();
 
       //! Sets the coordinates from the array parameter coords. It create the own copy 
