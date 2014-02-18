@@ -547,8 +547,18 @@ namespace Kautham {
         _lengthopti = ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
         _clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
 
-        int dimpca=2;//de moment!!!!
-        _pcaalignmentopti = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective(ss->getSpaceInformation(),dimpca));
+
+        int dimpca=wkSpace()->getDimension();
+        ob::ProjectionMatrix M;
+        M.mat = ob::ProjectionMatrix::Matrix(dimpca,dimpca);
+        KthReal **mm = wkSpace()->getRobot(0)->getMapMatrix();
+        for(int i=0;i<dimpca;i++)
+            for(int j=0;j<dimpca;j++)
+                M.mat(i,j) = mm[6+i][j];
+
+
+        _pcaalignmentopti = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective(ss->getSpaceInformation(),dimpca,M));
+
          _pcaalignmentopti->setCostThreshold(ob::Cost(0.0));
         _changePCA=1;
         addParameter("change PCA", _changePCA);
@@ -556,26 +566,20 @@ namespace Kautham {
         addParameter("lengthweight(0..1)", _lengthweight);
         _penalizationweight = 1.0;
         addParameter("penalizationweight", _penalizationweight);
-        _fixweight = 1.0;
-        addParameter("fixweight", _fixweight);
+        _orientationweight = 1.0;
+        addParameter("orientationweight", _orientationweight);
 
-        _multiopti = ob::OptimizationObjectivePtr(new ob::MultiOptimizationObjective(ss->getSpaceInformation()));
-        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_lengthopti,_lengthweight);
-        ((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_pcaalignmentopti,1.0-_lengthweight);
-
-
-        _pcaalignmentopti2 = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective2(ss->getSpaceInformation(),dimpca));
-        _pcaalignmentopti3 = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective3(ss->getSpaceInformation(),dimpca));
+        //_multiopti = ob::OptimizationObjectivePtr(new ob::MultiOptimizationObjective(ss->getSpaceInformation()));
+        //((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_lengthopti,_lengthweight);
+        //((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_pcaalignmentopti,1.0-_lengthweight);
+        //_pcaalignmentopti2 = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective2(ss->getSpaceInformation(),dimpca));
+        //_pcaalignmentopti3 = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective3(ss->getSpaceInformation(),dimpca));
 
 
         if(_opti==1)
             pdefPtr->setOptimizationObjective(_clearanceopti);
         else if(_opti==2)
             pdefPtr->setOptimizationObjective(_pcaalignmentopti);//_multiopti);
-        else if(_opti==3)
-            pdefPtr->setOptimizationObjective(_pcaalignmentopti2);
-        else if(_opti==4)
-            pdefPtr->setOptimizationObjective(_pcaalignmentopti3);
         else //_opti==0 and default
             pdefPtr->setOptimizationObjective(_lengthopti);
 
@@ -613,11 +617,7 @@ namespace Kautham {
             if(_opti==1)
                 pdefPtr->setOptimizationObjective(_clearanceopti);
             else if(_opti==2)
-                pdefPtr->setOptimizationObjective(_pcaalignmentopti);//_multiopti);
-            else if(_opti==3)
-                pdefPtr->setOptimizationObjective(_pcaalignmentopti2);
-            else if(_opti==4)
-                pdefPtr->setOptimizationObjective(_pcaalignmentopti3);
+                pdefPtr->setOptimizationObjective(_pcaalignmentopti);
             else //_opti==0 and default
                 pdefPtr->setOptimizationObjective(_lengthopti);
             ss->getPlanner()->setup();
@@ -644,12 +644,10 @@ namespace Kautham {
 
         it = _parameters.find("change PCA");
         if(it != _parameters.end()){
-            if(_opti==2 || _opti==3|| _opti==4)
+            if(_opti==2)
             {
                 _changePCA = it->second;
-                ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setPCAdata(_changePCA);
-                ((PCAalignmentOptimizationObjective2*)_pcaalignmentopti2.get())->setPCAdata(_changePCA);
-                ((PCAalignmentOptimizationObjective3*)_pcaalignmentopti3.get())->setPCAdata(_changePCA);
+                //((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setPCAdata(_changePCA);
             }
         }
         else
@@ -659,13 +657,9 @@ namespace Kautham {
         if(it != _parameters.end()){
             if(it->second >=0.0 && it->second<=1.0) _lengthweight = it->second;
             else _lengthweight = 0.5;
-            if(_opti==2 || _opti==3|| _opti==4)
+            if(_opti==2)
             {
                 ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setDistanceWeight(_lengthweight);
-                ((PCAalignmentOptimizationObjective2*)_pcaalignmentopti2.get())->setDistanceWeight(_lengthweight);
-                ((PCAalignmentOptimizationObjective3*)_pcaalignmentopti3.get())->setDistanceWeight(_lengthweight);
-                //((ob::MultiOptimizationObjective*)_multiopti.get())->setObjectiveWeight(0,_lengthewight);
-                //((ob::MultiOptimizationObjective*)_multiopti.get())->setObjectiveWeight(1,1.0-_lengthewight);
             }
         }
         else
@@ -682,14 +676,12 @@ namespace Kautham {
         else
           return false;
 
-        it = _parameters.find("fixweight");
+        it = _parameters.find("orientationweight");
         if(it != _parameters.end()){
-            _fixweight = it->second;
-            if(_opti==2 || _opti==3|| _opti==4)
+            _orientationweight = it->second;
+            if(_opti==2)
             {
-                ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setFixWeight(_fixweight);
-                ((PCAalignmentOptimizationObjective2*)_pcaalignmentopti2.get())->setFixWeight(_fixweight);
-                ((PCAalignmentOptimizationObjective3*)_pcaalignmentopti3.get())->setFixWeight(_fixweight);
+                ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setOrientationWeight(_orientationweight);
             }
         }
         else

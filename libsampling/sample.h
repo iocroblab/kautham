@@ -162,6 +162,10 @@ namespace Kautham{
 
       Sample* interpolate(Sample* smp, KthReal fraction);
 
+
+      inline void setwithinbounds(bool t){withinbounds=t;};
+      inline bool getwithinbounds(){return withinbounds;};
+
     protected:
       //! Configuration mapping
       vector<RobConf> _config;
@@ -186,7 +190,8 @@ namespace Kautham{
 	  //! Label of the connected component for its use in PRM planners
 	  int _connectedComponent;
     
-    
+      //! This flag is used because the coords of the sample may pose the robot in an out-of-bounds configuration
+      bool withinbounds;
   };
 
   /** @}   end of Doxygen module "libSampling" */

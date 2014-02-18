@@ -107,7 +107,13 @@ namespace Kautham {
     return &distVec;
   }
 
+  /*!
+   * Moves the robot to the configuration specified by the sample
+   *  loads the flag withinbounds of the sample. If outofbounds, one of the
+   *  robot ends at the border of one or more of its limits.
+   */
   void WorkSpace::moveRobotsTo(Sample* sample){
+    bool withinbounds=true;
     vector<KthReal> tmpVec;
     int j, from = 0;
 
@@ -126,18 +132,18 @@ namespace Kautham {
                 tmpVec.push_back(sample->getCoords()[from + j]);
 
             from = from+j;
-            robots[i]->control2Pose(tmpVec);
-
-
+            withinbounds = withinbounds && robots[i]->control2Pose(tmpVec);
         }
         else{
-			  robots[i]->Kinematics(sample->getMappedConf().at(i));
+              robots[i]->Kinematics(sample->getMappedConf().at(i));
         }
     }
 	_lastSampleMovedTo = sample;
 
     //set _sample::_config if it was nbot set
     if(sample->getMappedConf().size()==0) sample->setMappedConf(_configMap);
+
+    sample->setwithinbounds(withinbounds);
   }
   /*
   void WorkSpace::moveRobotsTo(Sample* sample){
