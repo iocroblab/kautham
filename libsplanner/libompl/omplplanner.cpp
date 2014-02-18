@@ -169,20 +169,25 @@ namespace Kautham {
             Sample *smp = new Sample(d);
             double dist;
 
+            bool withinbounds=false;
             do{
-                //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-                vector<KthReal> coords(d);
-                for(int i=0;i<d;i++)
-                    coords[i] = rng_.uniformReal(0,1.0);
+                    //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
+                    vector<KthReal> coords(d);
+                    for(int i=0;i<d;i++)
+                        coords[i] = rng_.uniformReal(0,1.0);
 
-                //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
-                smp->setCoords(coords);
-                kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
-
-                dist = kauthamPlanner_->wkSpace()->distanceBetweenSamples(*smp,*centersmp,CONFIGSPACE);
-                if(dist < threshold)
-                    found = true;
-                trials ++;
+                    //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                    smp->setCoords(coords);
+                    kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+                    withinbounds = smp->getwithinbounds();
+                    //if within bounds then check if its within the given distance threshold
+                    if(withinbounds)
+                    {
+                        dist = kauthamPlanner_->wkSpace()->distanceBetweenSamples(*smp,*centersmp,CONFIGSPACE);
+                        if(dist < threshold)
+                            found = true;
+                    }
+                    trials ++;
             }while(found==false && trials <maxtrials);
 
 
@@ -204,6 +209,7 @@ namespace Kautham {
         //sample the whole workspace
          else
          {
+              /*
               //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
               int d = kauthamPlanner_->wkSpace()->getDimension();
               vector<KthReal> coords(d);
@@ -221,8 +227,35 @@ namespace Kautham {
 
               //return in parameter state
              ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
-         }
+              */
 
+              bool withinbounds=false;
+              int trials=0;
+              int d = kauthamPlanner_->wkSpace()->getDimension();
+              Sample *smp = new Sample(d);
+              do{
+                //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
+                vector<KthReal> coords(d);
+                for(int i=0;i<d;i++)
+                  coords[i] = rng_.uniformReal(0,1.0);
+
+                //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                smp->setCoords(coords);
+                kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+                withinbounds = smp->getwithinbounds();
+                trials++;
+              }while(withinbounds==false && trials<100);
+
+              //If trials==100 is because we have not been able to find a sample within limits
+              //In this case the config is set to the border in the moveRobotsTo function.
+              //The smp is finally converted to state and returned
+
+              //convert from sample to scoped state
+              ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
+              ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
+              //return in parameter state
+              ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
+         }
       }
 
 
@@ -231,16 +264,22 @@ namespace Kautham {
                int trials = 0;
                int maxtrials=100;
                bool found = false;
+               int d = kauthamPlanner_->wkSpace()->getDimension();
+               Sample *smp = new Sample(d);
                do{
-                 //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-                 int d = kauthamPlanner_->wkSpace()->getDimension();
-                 vector<KthReal> coords(d);
-                 for(int i=0;i<d;i++)
-                     coords[i] = rng_.uniformReal(0,1.0);
-                 //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
-                 Sample *smp = new Sample(d);
-                 smp->setCoords(coords);
-                 kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+                 bool withinbounds=false;
+                 int trialsbounds=0;
+                 do{
+                      //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
+                      vector<KthReal> coords(d);
+                      for(int i=0;i<d;i++)
+                            coords[i] = rng_.uniformReal(0,1.0);
+                      //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                      smp->setCoords(coords);
+                      kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+                      withinbounds = smp->getwithinbounds();
+                      trialsbounds++;
+                 }while(withinbounds==false && trialsbounds<100);
                  //convert from sample to scoped state
                  ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
                  ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);

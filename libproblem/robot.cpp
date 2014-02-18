@@ -1069,9 +1069,12 @@ namespace Kautham {
   }
 
   /*!
-   *
+   * parameters = mapMaptrix*controls + offMatrix
+   * the parameters define the robot configuration and their values lies in the range 0..1
+   * \returns false if any of the parameters falls out of range (i.e. <0 or >1), and true otherwise
    */
-  void Robot::control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters){
+  bool Robot::control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters){
+      bool retvalue = true;
     parameters.clear();
     if(robType == FREEFLY ){
       for(int i = 0; i < 6; i++)
@@ -1096,22 +1099,27 @@ namespace Kautham {
         //}
         //cout << offMatrix[i+6];
         parameters[i+6] += offMatrix[i+6];
+        if(parameters[i+6]<0.0 || parameters[i+6]>1.0) retvalue=false;
         //cout << endl;
       }
     }
+    return retvalue;
   }
 
 
-  //! The method receives the values and it makes the changes in respective configurations
-  //! If the robot is freeflying only changes the SE3/SE2 Conf corresponding to
-  //! position and orientation of it using the Kinematics methods, but if the robot
-  //! is a chain or a tree robot, this method changes a SE3/SE2 Conf (position
-  //! and orientation) and a Rn Conf for articular values. All values are between 0 and 1.
-  void Robot::control2Pose(vector<KthReal> &values){
+    /*!
+   * Computes the pose of the robot (currentconf) from a vector of controls.
+   * \param values is the set of controls (their value lies in the range 0..1)
+   * \returns true if the controls make the robot be places in a configuration within bounds
+   * and false otherwise (in this case it is located at the border by the parameter2pose function)
+   */
+  bool Robot::control2Pose(vector<KthReal> &values){
+      bool retvalue;
     vector<KthReal> vecTmp;
     _hasChanged = true;
-    control2Parameters(values,vecTmp);
+    retvalue = control2Parameters(values,vecTmp);
     parameter2Pose(vecTmp);
+    return retvalue;
   }
 
   /*!
@@ -1178,9 +1186,11 @@ namespace Kautham {
     throw exception();
   }
  
-  //! This member function makes the movements needed to achieve the pose.
-  //! The vector values has the 6+Rn->getDim() size, in other words, the size
-  //! of this vector is all posible movements of any robot (SE3 + links).
+
+  /*!
+   * Denormalizes the configuration (the parameters are values in the range 0..1), updates the values in the links
+   * and stores the _currentConf variable with these denormalized values
+   */
   void Robot::parameter2Pose(vector<KthReal> &values){
     if( armed /*&& numControls == values.size() */){
       _hasChanged = true;

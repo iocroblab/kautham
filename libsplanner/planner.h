@@ -46,6 +46,7 @@
 
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
+#include <libkthutil/kauthamdefs.h>
 #include <cmath>
 #include <string>
 #include <mt/transform.h>

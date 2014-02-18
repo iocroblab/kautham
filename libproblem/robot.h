@@ -125,6 +125,10 @@ namespace Kautham {
 
     Robot(string robFile, KthReal scale, LIBUSED lib = IVPQP); //!<  Constructor
 
+    inline KthReal** getMapMatrix() const {return mapMatrix;} //!< Returns the mapMatrix.
+
+    inline KthReal* getOffMatrix() const {return offMatrix;} //!< Returns the offMatrix.
+
     inline string getName() const {return name;} //!< Returns the robot name.
 
     inline RobConf* getCurrentPos(){return &_currentConf;} //!< Returns the current RobConf used to represent the SE3 position and Rn configuration
@@ -266,10 +270,10 @@ namespace Kautham {
     SoSeparator* getModelFromColl();
 
     //! Maps from control values to configurations.
-    void control2Pose(vector<KthReal> &values);
+    bool control2Pose(vector<KthReal> &values);
 
     //! Maps from control values to parameters (normalized configurations).
-    void control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters);
+    bool control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters);
 
     //! Loads the robot configuration _currentConf from the normalized values of the configuration (parameters)
     void parameter2Pose(vector<KthReal> &values);
