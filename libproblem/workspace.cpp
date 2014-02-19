@@ -245,6 +245,14 @@ namespace Kautham {
         }
       }
     }
+
+    //the autoccolision procedures is called inside the collision_check with either obstacles
+    //or other robots, but if there are no obstacels and there is only a single robot we must
+    //call it here!
+    if(obstacles.size()==0 && robots.size()==1)
+        collision = robots[0]->autocollision();
+
+
     // Here will be putted the configuration mapping 
     sample->setMappedConf(_configMap);
     
