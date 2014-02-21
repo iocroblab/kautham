@@ -322,6 +322,8 @@ namespace Kautham {
                                 // Find the index orden into the links vector without the first static link.
                             for(int ind = 0; ind < _currentConf.getRn().getDim(); ind++)
                                 if( dofName == links[ind+1]->getName()){
+                                    double kk = (KthReal)itDOF->attribute("value").as_double();
+                                    double kk1 = eigVal*kk;
                                     mapMatrix[6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
                                     break;
                                 }
@@ -449,27 +451,7 @@ namespace Kautham {
     return tmp;
   }
 
-  /*!
-   *
-   */
-  bool Robot::setControlItem(string control, string dof, KthReal value){
-    // First I will find the column index looking for "|" number before the control name.
-    string::size_type pos = controlsName.find(control,0); 
-    if(pos == string::npos) return false;
-    int j=0;
-    string::size_type trick=controlsName.find("|",0); 
-    while(trick < pos){
-      trick=controlsName.find("|",trick+1);
-      j++;
-    }
-    for(unsigned int i = 1; i < links.size(); i++)
-      if(links[i]->getName() == dof){ // Now I am finding the row index.
-        mapMatrix[i][j] = value;
-        return true;
-      }
-    return false;
-  }
-  
+
 
   /*!
    * Allows to change the values of the robot base limits.

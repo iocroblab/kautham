@@ -284,9 +284,6 @@ namespace Kautham {
     //! Retunrs the weights of the robot used in the computation of the distances
     RobWeight* getRobWeight(){return _weights;}
 
-    //! Sets the value of the mapMatrix corresponding to the column control and row dof.
-    bool setControlItem(string control, string dof, KthReal value);
-
     //! Returns the string with the names of the DOFs, separated by |
     string getDOFNames();
 

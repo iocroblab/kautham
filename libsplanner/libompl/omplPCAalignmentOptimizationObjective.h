@@ -87,6 +87,40 @@ namespace Kautham {
         inline double getOrientationWeight(){return worientation;};
       };
 
+    class handPMDalignmentOptimizationObjective:public ob::OptimizationObjective {
+        public:
+        typedef boost::numeric::ublas::matrix<double> Matrix;
+
+        ob::ProjectionMatrix PMD; //!< The copupling matrix
+        ob::EuclideanProjection lambda;//!< The eignevalues of the PMDs. This is a typedef of boost::numeric::ublas::vector < double >
+        bool PCAdataset; //!< Flag that indicates if the PCA data is set
+        int numPMD; //!< Number of PMDs considered for the hand. It corresponds to the number of columns of te copupling matrix
+        int numDOF; //!< Number of DOF coupled. It corresponds to the number of rows of the coupling matrix
+
+        double wpenalization; //!< To penalize changes in orientation between consecutive edges of a path
+        double wdistance;//!< To weight the distance
+        double worientation;//!< To weight the alignment with the PMDs
+        double weightSE3;//!< To weight the costs in Rn subspace (cost=distcost+alignmentcost+penalization)
+        double weightRn;//!< To weight the cost in SE3 subspace (cost=distance)
+        int robotindex;
+
+        handPMDalignmentOptimizationObjective(int roboti, const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M);
+        ~handPMDalignmentOptimizationObjective();
+
+        virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
+        virtual ob::Cost motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const;
+        ob::Cost motionCostRn(const ob::State *s0, const ob::State *s1, const ob::State *s2) const;
+        ob::Cost motionCostSE3(const ob::State *s1, const ob::State *s2) const;
+        void setPCAdata(ob::ProjectionMatrix M);
+        inline bool isPCAdataset(){return PCAdataset;};
+        inline double getOrientationPenalization(){return wpenalization;}
+        inline void setOrientationPenalization(double w){wpenalization=w;};
+        inline double getDistanceWeight(){return wdistance;}
+        inline void setDistanceWeight(double w){wdistance=w;};
+        inline void setOrientationWeight(double w){worientation=w;};
+        inline double getOrientationWeight(){return worientation;};
+      };
+
 
     /*
 

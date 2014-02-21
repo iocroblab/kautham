@@ -230,6 +230,12 @@ namespace Kautham {
                               else s0=nbh[i]->parent->state;
                               incCosts[i] = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
                           }
+                          else if(opt_->getDescription()=="handPMD alignment"){
+                              ob::State *s0;
+                              if(nbh[i]->parent==NULL) s0=NULL;
+                              else s0=nbh[i]->parent->state;
+                              incCosts[i] = ((handPMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
+                          }
                           else
                               incCosts[i] = opt_->motionCost(nbh[i]->state, motion->state);
                           costs[i] = opt_->combineCosts(nbh[i]->cost, incCosts[i]);
@@ -244,11 +250,6 @@ namespace Kautham {
                       std::sort(sortedCostIndices.begin(), sortedCostIndices.begin()+nbh.size(),
                                 compareFn);
 
-                      //JAN
-                      //bool thresholdChangeCost;
-                      //double ratioChangeCost;
-                      //JAN
-
                       // collision check until a valid motion is found
                       for (std::vector<std::size_t>::const_iterator i = sortedCostIndices.begin();
                            i != sortedCostIndices.begin()+nbh.size();
@@ -256,21 +257,7 @@ namespace Kautham {
                       {
                           if (nbh[*i] != nmotion)
                               ++collisionChecks_;
-                          //JAN
-                          //if(nbh[*i]->incCost.v != 0.0)
-                          //{
-                            //thresholdChangeCost = false;
-                            //ratioChangeCost = (incCosts[*i].v - nbh[*i]->incCost.v)/nbh[*i]->incCost.v;
-                           //cout<<ratioChangeCost<<endl;
-                            //if( ratioChangeCost <= -0.2)
-                           //{
-                           //     thresholdChangeCost = true;
-                           // }
-                          //}
-                          //else thresholdChangeCost = true;
-                          //if (nbh[*i] == nmotion || (si_->checkMotion(nbh[*i]->state, motion->state) && thresholdChangeCost))
-                          //if (nbh[*i] == nmotion || (si_->checkMotion(nbh[*i]->state, motion->state) && distanceFunction(nbh[*i], motion)<getRange() ))
-                          //JAN
+
                           if (nbh[*i] == nmotion || si_->checkMotion(nbh[*i]->state, motion->state))
                           {
                               motion->incCost = incCosts[*i];
@@ -292,6 +279,12 @@ namespace Kautham {
                           else s0=nmotion->parent->state;
                           motion->incCost = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nmotion->state, motion->state);
                       }
+                      else if(opt_->getDescription()=="handPMD alignment"){
+                          ob::State *s0;
+                          if(nmotion->parent==NULL) s0=NULL;
+                          else s0=nmotion->parent->state;
+                          motion->incCost = ((handPMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nmotion->state, motion->state);
+                      }
                       else
                           motion->incCost = opt_->motionCost(nmotion->state, motion->state);
 
@@ -306,6 +299,12 @@ namespace Kautham {
                                   if(nbh[i]->parent==NULL) s0=NULL;
                                   else s0=nbh[i]->parent->state;
                                   incCosts[i] = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
+                              }
+                              else if(opt_->getDescription()=="handPMD alignment"){
+                                  ob::State *s0;
+                                  if(nbh[i]->parent==NULL) s0=NULL;
+                                  else s0=nbh[i]->parent->state;
+                                  incCosts[i] = ((handPMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
                               }
                               else
                                   incCosts[i] = opt_->motionCost(nbh[i]->state, motion->state);
@@ -366,6 +365,12 @@ namespace Kautham {
                                   if(motion->parent==NULL) s0=NULL;
                                   else s0=motion->parent->state;
                                   nbhIncCost = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,motion->state, nbh[i]->state);
+                              }
+                              else if(opt_->getDescription()=="handPMD alignment"){
+                                  ob::State *s0;
+                                  if(motion->parent==NULL) s0=NULL;
+                                  else s0=motion->parent->state;
+                                  nbhIncCost = ((handPMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,motion->state, nbh[i]->state);
                               }
                               else
                                   nbhIncCost = opt_->motionCost(motion->state, nbh[i]->state);
@@ -537,31 +542,100 @@ namespace Kautham {
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
         addParameter("DelayCC (0/1)", _DelayCC);
-        addParameter("Optimize dist(0)/clear(1)/PCA(2)", _opti);
+        addParameter("Optimize dist(0)/clear(1)/PCA(2)/PMD(3)", _opti);
         planner->as<og::RRTstar>()->setRange(_Range);
         planner->as<og::RRTstar>()->setGoalBias(_GoalBias);
         planner->as<og::RRTstar>()->setDelayCC(_DelayCC);
 
-        //optimization criteria
+        //START optimization criteria:
         ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
+        // 1) Length optimization criteria
         _lengthopti = ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
+
+        // 2) clearance optimization criteria
         _clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
 
-
+        // 3) PCA alignment optimization criteria
+        int robotindex = 0;
         int dimpca=wkSpace()->getDimension();
         ob::ProjectionMatrix M;
         M.mat = ob::ProjectionMatrix::Matrix(dimpca,dimpca);
-        KthReal **mm = wkSpace()->getRobot(0)->getMapMatrix();
+        KthReal **mm = wkSpace()->getRobot(robotindex)->getMapMatrix();
         for(int i=0;i<dimpca;i++)
             for(int j=0;j<dimpca;j++)
                 M.mat(i,j) = mm[6+i][j];
-
-
         _pcaalignmentopti = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective(ss->getSpaceInformation(),dimpca,M));
+        _pcaalignmentopti->setCostThreshold(ob::Cost(0.0));
 
-         _pcaalignmentopti->setCostThreshold(ob::Cost(0.0));
-        _changePCA=1;
-        addParameter("change PCA", _changePCA);
+        // 4) handPMD alignment optimization criteria
+        robotindex = 0;
+        int numPMD = 0;
+        /*
+        std::string controlsname = wkSpace()->getRobot(robotindex)->getControlsName();
+        QString handpmdlabel("handPMD");
+        QString content(controlsname.c_str());
+        QStringList cont = content.split("|");
+        QStringList::const_iterator iterator;
+        int column=0;
+        vector<int> handpmdcolumns;
+        for (iterator = cont.constBegin(); iterator != cont.constEnd(); ++iterator)
+        {
+            if((*iterator).contains(handpmdlabel))
+            {
+                //store the columns of the matrix of controls that will contain the handpmd control
+                handpmdcolumns.push_back(column);
+            }
+            columns++;
+        }
+        numPMD = handpmdcolumns.size();
+        */
+
+        string listcontrolsname = wkSpace()->getRobot(robotindex)->getControlsName();
+        vector<string*> controlname;
+        string *newcontrol = new string;
+        for(int i=0; i<listcontrolsname.length();i++)
+        {
+            if(listcontrolsname[i]=='|')
+            {
+                controlname.push_back(newcontrol);
+                newcontrol = new string;
+            }
+            else
+                newcontrol->push_back(listcontrolsname[i]);
+        }
+        //add last control (since listcontrolsname does not end with a |)
+        controlname.push_back(newcontrol);
+
+        std::size_t foundlabel;
+        vector<int> handpmdcolumns;
+        for(int i=0;i<controlname.size();i++)
+        {
+            if(controlname[i]->find("handPMD") != string::npos)
+            {
+                //store the columns of the matrix of controls that will contain the handpmd control
+                handpmdcolumns.push_back(i);
+             }
+        }
+        numPMD = handpmdcolumns.size();
+
+        int numDOF = wkSpace()->getRobot(robotindex)->getNumJoints();
+        ob::ProjectionMatrix PMD;
+        PMD.mat = ob::ProjectionMatrix::Matrix(numDOF,numPMD);
+        KthReal **mm2 = wkSpace()->getRobot(robotindex)->getMapMatrix();
+        double kk;
+        int col;
+        for(int j=0;j<numPMD;j++)//columns
+        {
+            for(int i=0;i<numDOF;i++)//rows
+            {
+                col = handpmdcolumns[j];
+                kk = mm2[6+i][handpmdcolumns[j]];
+                PMD.mat(i,j) = mm2[6+i][handpmdcolumns[j]];
+            }
+        }
+        _handpmdalignmentopti = ob::OptimizationObjectivePtr(new handPMDalignmentOptimizationObjective(robotindex, ss->getSpaceInformation(),PMD));
+        _handpmdalignmentopti->setCostThreshold(ob::Cost(0.0));
+
         _lengthweight = 0.1;
         addParameter("lengthweight(0..1)", _lengthweight);
         _penalizationweight = 1.0;
@@ -580,6 +654,8 @@ namespace Kautham {
             pdefPtr->setOptimizationObjective(_clearanceopti);
         else if(_opti==2)
             pdefPtr->setOptimizationObjective(_pcaalignmentopti);//_multiopti);
+        else if(_opti==3)
+            pdefPtr->setOptimizationObjective(_handpmdalignmentopti);
         else //_opti==0 and default
             pdefPtr->setOptimizationObjective(_lengthopti);
 
@@ -610,7 +686,7 @@ namespace Kautham {
         else
           return false;
 
-        it = _parameters.find("Optimize dist(0)/clear(1)/PCA(2)");
+        it = _parameters.find("Optimize dist(0)/clear(1)/PCA(2)/PMD(3)");
         if(it != _parameters.end()){
             _opti = it->second;
             ob::ProblemDefinitionPtr pdefPtr = ss->getPlanner()->getProblemDefinition();
@@ -618,6 +694,8 @@ namespace Kautham {
                 pdefPtr->setOptimizationObjective(_clearanceopti);
             else if(_opti==2)
                 pdefPtr->setOptimizationObjective(_pcaalignmentopti);
+            else if(_opti==3)
+                pdefPtr->setOptimizationObjective(_handpmdalignmentopti);
             else //_opti==0 and default
                 pdefPtr->setOptimizationObjective(_lengthopti);
             ss->getPlanner()->setup();
@@ -642,25 +720,14 @@ namespace Kautham {
         else
           return false;
 
-        it = _parameters.find("change PCA");
-        if(it != _parameters.end()){
-            if(_opti==2)
-            {
-                _changePCA = it->second;
-                //((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setPCAdata(_changePCA);
-            }
-        }
-        else
-          return false;
-
         it = _parameters.find("lengthweight(0..1)");
         if(it != _parameters.end()){
             if(it->second >=0.0 && it->second<=1.0) _lengthweight = it->second;
             else _lengthweight = 0.5;
             if(_opti==2)
-            {
-                ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setDistanceWeight(_lengthweight);
-            }
+               ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setDistanceWeight(_lengthweight);
+            else if(_opti==3)
+                ((handPMDalignmentOptimizationObjective*)_handpmdalignmentopti.get())->setDistanceWeight(_lengthweight);
         }
         else
           return false;
@@ -669,9 +736,9 @@ namespace Kautham {
         if(it != _parameters.end()){
             _penalizationweight = it->second;
             if(_opti==2)
-            {
                 ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setOrientationPenalization(_penalizationweight);
-            }
+            else if(_opti==3)
+                ((handPMDalignmentOptimizationObjective*)_handpmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
         }
         else
           return false;
@@ -680,9 +747,9 @@ namespace Kautham {
         if(it != _parameters.end()){
             _orientationweight = it->second;
             if(_opti==2)
-            {
                 ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setOrientationWeight(_orientationweight);
-            }
+            else if(_opti==3)
+                ((handPMDalignmentOptimizationObjective*)_handpmdalignmentopti.get())->setOrientationWeight(_orientationweight);
         }
         else
           return false;
