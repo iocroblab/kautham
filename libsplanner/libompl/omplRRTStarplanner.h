@@ -78,10 +78,10 @@ namespace Kautham {
          double _penalizationweight;
          double _orientationweight;
          bool _incremental;
-         int _changePCA;//provisional
          ob::OptimizationObjectivePtr _lengthopti;
          ob::OptimizationObjectivePtr _clearanceopti;
          ob::OptimizationObjectivePtr _pcaalignmentopti;
+         ob::OptimizationObjectivePtr _handpmdalignmentopti;
 	  };
   }
   /** @}   end of Doxygen module "libPlanner */

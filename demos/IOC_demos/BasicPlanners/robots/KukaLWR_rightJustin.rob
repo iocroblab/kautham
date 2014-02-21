@@ -251,7 +251,7 @@
     </Offset>
 
     
-        <Control name="C1" eigValue="1.4761">     
+        <Control name="armPMD_C1" eigValue="1.4761">     
       <DOF name="Link1_der" value="0.6205"></DOF>
       <DOF name="Link2_der" value="0.2333"></DOF>
       <DOF name="Link3_der" value="-0.4124"></DOF>
@@ -260,7 +260,7 @@
       <DOF name="Link7_der" value="-0.2008"></DOF>
     </Control>
 
-    <Control name="C2" eigValue="0.9127">
+    <Control name="armPMD_C2" eigValue="0.9127">
       <DOF name="Link1_der" value="-0.1951"></DOF>
       <DOF name="Link2_der" value="0.1313"></DOF>
       <DOF name="Link3_der" value="-0.1913"></DOF>
@@ -269,7 +269,7 @@
       <DOF name="Link7_der" value="-0.3739"></DOF>
     </Control>
 
-    <Control name="C3" eigValue="0.4874">
+    <Control name="armPMD_C3" eigValue="0.4874">
       <DOF name="Link1_der" value="0.0401"></DOF>
       <DOF name="Link2_der" value="0.0453"></DOF>
       <DOF name="Link3_der" value="0.0427"></DOF>
@@ -278,7 +278,7 @@
       <DOF name="Link7_der" value="-0.3787"></DOF>
     </Control>
 
-    <Control name="C4" eigValue="0.4282">
+    <Control name="armPMD_C4" eigValue="0.4282">
       <DOF name="Link1_der" value="-0.0602"></DOF>
       <DOF name="Link2_der" value="-0.0779"></DOF>
       <DOF name="Link3_der" value="-0.0689"></DOF>
@@ -287,7 +287,7 @@
       <DOF name="Link7_der" value="-0.3836"></DOF>
     </Control>
 
-    <Control name="C5" eigValue="0.3012">
+    <Control name="armPMD_C5" eigValue="0.3012">
       <DOF name="Link1_der" value="-0.2980"></DOF>
       <DOF name="Link2_der" value="0.2612"></DOF>
       <DOF name="Link3_der" value="0.0576"></DOF>
@@ -296,7 +296,7 @@
       <DOF name="Link7_der" value="0.2430"></DOF>
     </Control>
 
-    <Control name="C6" eigValue="0.2589">
+    <Control name="armPMD_C6" eigValue="0.2589">
       <DOF name="Link1_der" value="-0.2941"></DOF>
       <DOF name="Link2_der" value="-0.0848"></DOF>
       <DOF name="Link3_der" value="-0.0558"></DOF>
@@ -305,7 +305,7 @@
       <DOF name="Link7_der" value="0.3188"></DOF>
     </Control>
 
-    <Control name="C7" eigValue="0.1344">     
+    <Control name="armPMD_C7" eigValue="0.1344">     
       <DOF name="Link1_der" value="0.3172"></DOF>
       <DOF name="Link2_der" value="-0.1714"></DOF>
       <DOF name="Link3_der" value="0.1254"></DOF>
@@ -314,7 +314,7 @@
       <DOF name="Link7_der" value="0.4646"></DOF>
     </Control>
 
-    <Control name="C8" eigValue="0.1285">
+    <Control name="armPMD_C8" eigValue="0.1285">
       <DOF name="Link1_der" value="0.0986"></DOF>
       <DOF name="Link2_der" value="-0.2907"></DOF>
       <DOF name="Link3_der" value="-0.4832"></DOF>
@@ -323,7 +323,7 @@
       <DOF name="Link7_der" value="0.1767"></DOF>
     </Control>
 
-    <Control name="C9" eigValue="0.1092">
+    <Control name="armPMD_C9" eigValue="0.1092">
       <DOF name="Link1_der" value="-0.0085"></DOF>
       <DOF name="Link2_der" value="0.5960"></DOF>
       <DOF name="Link3_der" value="-0.4608"></DOF>
@@ -332,7 +332,7 @@
       <DOF name="Link7_der" value="0.3345"></DOF>
     </Control>
 
-    <Control name="C10" eigValue="0.0763">
+    <Control name="armPMD_C10" eigValue="0.0763">
       <DOF name="Link1_der" value="-0.2567"></DOF>
       <DOF name="Link2_der" value="-0.1967"></DOF>
       <DOF name="Link3_der" value="-0.3491"></DOF>
@@ -341,7 +341,7 @@
       <DOF name="Link7_der" value="-0.0203"></DOF>
     </Control>
 
-    <Control name="C11" eigValue="0.0556">
+    <Control name="armPMD_C11" eigValue="0.0556">
       <DOF name="Link1_der" value="-0.1500"></DOF>
       <DOF name="Link2_der" value="0.5694"></DOF>
       <DOF name="Link3_der" value="0.2449"></DOF>
@@ -350,7 +350,7 @@
       <DOF name="Link7_der" value="-0.0600"></DOF>
     </Control>
 
-    <Control name="C12" eigValue="0.0441">
+    <Control name="armPMD_C12" eigValue="0.0441">
       <DOF name="Link1_der" value="0.4446"></DOF>
       <DOF name="Link2_der" value="0.1131"></DOF>
       <DOF name="Link3_der" value="0.3700"></DOF>
@@ -362,11 +362,11 @@
     
     
     
-     <Control name="Thumb_der" eigValue="1.0">
+     <Control name="handPMD_Thumb_der" eigValue="1.0">
       <DOF name="Thumb_der" value="1.0"></DOF>
     </Control>
 
-    <Control name="CH1" eigValue="1.6550">
+    <Control name="handPMD_CH1" eigValue="1.6550">
       <DOF name="Thumb_der" value="0.0"></DOF> 
       <DOF name="Thumb-Base_der" value="-0.0683"></DOF> 
       <DOF name="Thumb-Prox_der" value="0.2222"></DOF> 
@@ -386,7 +386,7 @@
       <DOF name="Ring-Dist_der" value="0.1897"></DOF> 
     </Control>
 
-    <Control name="CH2" eigValue="1.4355">
+    <Control name="handPMD_CH2" eigValue="1.4355">
       <DOF name="Thumb_der" value="0.0"></DOF> 
       <DOF name="Thumb-Base_der" value="-0.0144"></DOF> 
       <DOF name="Thumb-Prox_der" value="-0.1323"></DOF> 
@@ -406,7 +406,7 @@
       <DOF name="Ring-Dist_der" value="-0.4554"></DOF> 
     </Control>
 
-    <Control name="CH3" eigValue="0.8851">
+    <Control name="handPMD_CH3" eigValue="0.8851">
       <DOF name="Thumb_der" value="0.0"></DOF> 
       <DOF name="Thumb-Base_der" value="0.6638"></DOF> 
       <DOF name="Thumb-Prox_der" value="0.6816"></DOF> 
@@ -426,7 +426,7 @@
       <DOF name="Ring-Dist_der" value="0.0030"></DOF> 
     </Control>
 
-    <Control name="CH4" eigValue="0.7174">
+    <Control name="handPMD_CH4" eigValue="0.7174">
       <DOF name="Thumb_der" value="0.0"></DOF> 
       <DOF name="Thumb-Base_der" value="-0.2879"></DOF> 
       <DOF name="Thumb-Prox_der" value="0.2207"></DOF> 

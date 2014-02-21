@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Problem name="ompl_PRM_TX90_RHAnd_Extreme_TwoCan_Shelf.xml.xml">
+<Problem name="ompl_PRM_TX90_RHAnd_Extreme_TwoCan_Shelf.xml">
 	<Robot robot="robots/TX90_RHand_5PMD_thumb2.rob" scale="1.0">
 		<Limits name="X" min="0.0" max="1000.0" />
 		<Limits name="Y" min="0.0" max="1000.0" />

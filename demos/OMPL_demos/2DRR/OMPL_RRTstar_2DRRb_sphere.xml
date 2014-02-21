@@ -14,7 +14,7 @@
                         <Parameter name="Speed Factor">1</Parameter>
                         <Parameter name="Range">0.05</Parameter>
                         <Parameter name="Goal Bias">0.05</Parameter>
-                        <Parameter name="Optimize dist(0)/clear(1)/PCA(2)">2</Parameter>
+                        <Parameter name="Optimize dist(0)/clear(1)/PCA(2)/PMD(3)">2</Parameter>
                         <Parameter name="Simplify Solution">1</Parameter>
 		</Parameters>
 		<Queries>

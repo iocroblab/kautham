@@ -242,11 +242,11 @@
       <DOF name="Tcp" value="1.0"></DOF>
     </Control>
 
-    <Control name="Thumb" eigValue="1.0">
+    <Control name="handPMD_Thumb" eigValue="1.0">
       <DOF name="Thumb" value="1.0"></DOF>
     </Control>
 
-    <Control name="C1" eigValue="1.6550">
+    <Control name="handPMD_C1" eigValue="1.6550">
       <DOF name="Thumb" value="0.0"></DOF> 
       <DOF name="Thumb-Base" value="-0.0683"></DOF> 
       <DOF name="Thumb-Prox" value="0.2222"></DOF> 
@@ -266,7 +266,7 @@
       <DOF name="Ring-Dist" value="0.1897"></DOF> 
     </Control>
 
-    <Control name="C2" eigValue="1.4355">
+    <Control name="handPMD_C2" eigValue="1.4355">
       <DOF name="Thumb" value="0.0"></DOF> 
       <DOF name="Thumb-Base" value="-0.0144"></DOF> 
       <DOF name="Thumb-Prox" value="-0.1323"></DOF> 
@@ -286,7 +286,7 @@
       <DOF name="Ring-Dist" value="-0.4554"></DOF> 
     </Control>
 
-    <Control name="C3" eigValue="0.8851">
+    <Control name="handPMD_C3" eigValue="0.8851">
       <DOF name="Thumb" value="0.0"></DOF> 
       <DOF name="Thumb-Base" value="0.6638"></DOF> 
       <DOF name="Thumb-Prox" value="0.6816"></DOF> 
@@ -306,7 +306,7 @@
       <DOF name="Ring-Dist" value="0.0030"></DOF> 
     </Control>
 
-    <Control name="C4" eigValue="0.7174">
+    <Control name="handPMD_C4" eigValue="0.7174">
       <DOF name="Thumb" value="0.0"></DOF> 
       <DOF name="Thumb-Base" value="-0.2879"></DOF> 
       <DOF name="Thumb-Prox" value="0.2207"></DOF> 
