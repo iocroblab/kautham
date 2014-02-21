@@ -108,7 +108,8 @@ namespace Kautham{
 
 	enum DHAPPROACH{
 		DHSTANDARD,
-		DHMODIFIED
+        DHMODIFIED,
+        DHURDF
   };
 	
 	enum NEIGHSEARCHTYPE {

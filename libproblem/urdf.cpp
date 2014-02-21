@@ -1,0 +1,284 @@
+#include "urdf.h"
+
+#include <libpugixml/pugixml.hpp>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <stdlib.h>
+#include <mt/point3.h>
+#include <mt/rotation.h>
+#include <mt/transform.h>
+
+using namespace std;
+using namespace pugi;
+
+urdf_origin::urdf_origin () {
+    r = 0.;
+    p = 0.;
+    y = 0.;
+};
+
+void urdf_origin::fill (xml_node *node) {
+    string tmpString;
+    if (node->attribute("xyz").value()) {
+        double tmpDouble[3];
+        tmpString = node->attribute("xyz").value();
+        istringstream ss( tmpString );
+        getline(ss,tmpString,' ');
+        tmpDouble[0] = atof(tmpString.c_str());
+        getline(ss,tmpString,' ');
+        tmpDouble[1] = atof(tmpString.c_str());
+        getline(ss,tmpString,' ');
+        tmpDouble[2] = atof(tmpString.c_str());
+        xyz = 1000. * mt::Point3(tmpDouble[0],tmpDouble[1],tmpDouble[2]);
+    }
+    if (node->attribute("rpy").value()) {
+        tmpString = node->attribute("rpy").value();
+        istringstream ss(tmpString);
+        getline(ss,tmpString,' ');
+        r = atof(tmpString.c_str());
+        getline(ss,tmpString,' ');
+        p = atof(tmpString.c_str());
+        getline(ss,tmpString,' ');
+        y = atof(tmpString.c_str());
+    }
+    transform = mt::Transform(mt::Rotation(y,p,r),xyz);
+};
+
+
+urdf_inertia::urdf_inertia () {
+    ixx = 0.;
+    ixy = 0.;
+    ixz = 0.;
+    iyy = 0.;
+    iyz = 0.;
+    izz = 0.;
+};
+
+void urdf_inertia::fill (xml_node *node) {
+    ixx = node->attribute("ixx").as_double();
+    ixy = node->attribute("ixy").as_double();
+    ixz = node->attribute("ixz").as_double();
+    iyy = node->attribute("iyy").as_double();
+    iyz = node->attribute("iyz").as_double();
+    izz = node->attribute("izz").as_double();
+    matrix = mt::Matrix3x3(ixx,ixy,ixz,ixy,iyy,iyz,ixz,iyz,izz);
+};
+
+urdf_inertial::urdf_inertial () {
+    mass = 0.;
+};
+
+void urdf_inertial::fill (xml_node * node) {
+    xml_node tmpNode;
+    if (node->child("origin")) {
+        tmpNode = node->child("origin");
+        origin.fill(&tmpNode);
+    }
+    mass = node->child("mass").attribute("value").as_double();
+    tmpNode = node->child("inertia");
+    inertia.fill(&tmpNode);
+};
+
+urdf_geometry::urdf_geometry () {
+    scale = 1.;
+};
+
+urdf_dynamics::urdf_dynamics () {
+    friction = 0.;
+    damping = 0.;
+};
+void urdf_dynamics::fill (xml_node *node) {
+    if (node->attribute("damping")){
+        damping = node->attribute("damping").as_double();
+    }
+    if (node->attribute("friction")){
+        friction = node->attribute("friction").as_double();
+    }
+};
+
+urdf_limit::urdf_limit () {
+    lower = 0.;
+    upper = 0.;
+    effort = 0.;
+    velocity = 0.;
+};
+
+void urdf_limit::fill (xml_node *node) {
+    if (node->attribute("lower")) {
+        lower = node->attribute("lower").as_double();
+    }
+    if (node->attribute("upper")) {
+        upper = node->attribute("upper").as_double();
+    }
+    effort = node->attribute("effort").as_double();
+    velocity = node->attribute("velocity").as_double();
+};
+
+
+urdf_link::urdf_link () {
+    axis = mt::Unit3(1,0,0);
+    is_base = false;
+};
+
+void urdf_link::fill (xml_node *node) {
+    name = node->attribute("name").value();
+    visual.ivfile = node->child("visual").child("geometry").child("mesh").attribute("filename").value();
+    if (node->child("visual").child("geometry").child("mesh").attribute("scale")) {
+        visual.scale = node->child("visual").child("geometry").child("mesh").attribute("scale").as_double();
+    }
+    if (node->child("collision").child("geometry").child("mesh").attribute("filename")) {
+        collision.ivfile = node->child("collision").child("geometry").child("mesh").attribute("filename").value();
+        if (node->child("collision").child("geometry").child("mesh").attribute("scale")){
+            collision.scale = node->child("collision").child("geometry").child("mesh").attribute("scale").as_double();
+        }
+    } else {
+        collision.ivfile = visual.ivfile;
+        collision.scale = visual.scale;
+    }
+    if (node->child("inertial")) {
+        xml_node tmpNode = node->child("inertial");
+        inertial.fill(&tmpNode);
+    }
+
+    xml_node tmpNode = node->parent().child("joint");
+    node = &tmpNode;
+    while (name != node->child("child").attribute("link").value() && node->next_sibling("joint")) {
+        *node = node->next_sibling("joint");
+    }
+    if (name == node->child("child").attribute("link").value()) {
+        joint = node->attribute("name").value();
+        type = node->attribute("type").value();
+        xml_node tmpNode;
+        if (node->child("origin")) {
+            tmpNode = node->child("origin");
+            origin.fill(&tmpNode);
+        }
+        parent = node->child("parent").attribute("link").value();
+        if (node->child("axis")) {
+            string tmpString = "";
+            double tmpDouble[3];
+            tmpString = node->child("axis").attribute("xyz").value();
+            istringstream ss(tmpString);
+            getline(ss,tmpString,' ');
+            tmpDouble[0] = atof(tmpString.c_str());
+            getline(ss,tmpString,' ');
+            tmpDouble[1] = atof(tmpString.c_str());
+            getline(ss,tmpString,' ');
+            tmpDouble[2] = atof(tmpString.c_str());
+            axis = mt::Unit3(tmpDouble[0],tmpDouble[1],tmpDouble[2]);
+        }
+        if (node->child("dynamics")) {
+            tmpNode = node->child("dynamics");
+            dynamics.fill(&tmpNode);
+        }
+        tmpNode = node->child("limit");
+        limit.fill(&tmpNode);
+    } else {
+        //link is robot's base
+        //origin, parent, axis, dynamics and limit need to be filled differently
+        is_base = true;
+    }
+};
+
+mt::Transform urdf_link::transform (double theta) {
+    return(mt::Transform(mt::Rotation(axis,theta),mt::Point3()) * origin.transform);
+};
+
+
+urdf_robot::urdf_robot () {
+    num_links = 0;
+    link = NULL;
+};
+
+void urdf_robot::fill (xml_node *node) {
+    name = node->attribute("name").value();
+
+    xml_node tmpNode = node->child("link");
+
+    while (tmpNode) {
+        num_links += 1;
+
+        tmpNode = tmpNode.next_sibling("link");
+    }
+
+    link = new urdf_link[num_links];
+
+    int i;
+    tmpNode = node->child("link");
+    for (i = 0; i < num_links; i++) {
+        link[i].fill(&tmpNode);
+
+        tmpNode = tmpNode.next_sibling("link");
+    }
+
+
+    if (num_links > 1) {
+        //find base's index
+        i = 0;
+        while (!link[i].is_base){
+            i++;
+        };
+
+        //count links in the kinematic chain from the base
+        int links = 1;
+        bool end = false;
+        int j;
+        bool child_found;
+        while (!end && links <= num_links) {
+            child_found = false;
+            j = 0;
+            while (!child_found && j < num_links) {
+                if (link[i].name == link [j].parent) {
+                    child_found = true;
+                } else {
+                    j++;
+                }
+            };
+            if (child_found) {
+                i = j;
+                links++;
+            } else {
+                end = true;
+            }
+        };
+
+        //determine robot's type
+        if (links == num_links) {
+            type = "Chain";
+        } else {
+            type = "Tree";
+        }
+    } else {
+        type = "Freeflying";
+    }
+};
+
+void urdf_robot::print() {
+    cout << "robot: " << name << endl;
+    cout << "number of links: " << num_links << endl;
+    for (int i = 0; i < num_links; i++) {
+        cout << endl;
+        cout << "link: " << link[i].name << endl;
+        cout << "inertial:" << endl;
+        cout << "  origin: xyz=(" << link[i].inertial.origin.xyz[0] << ", " << link[i].inertial.origin.xyz[1]
+             << ", " << link[i].inertial.origin.xyz[2] << ") rpy=(" << link[i].inertial.origin.r << ", "
+             << link[i].inertial.origin.p << ", " << link[i].inertial.origin.y << ")" << endl;
+        cout << "  mass: " << link[i].inertial.mass << endl;
+        cout << "  inertia: ixx=" << link[i].inertial.inertia.ixx << " ixy=" << link[i].inertial.inertia.ixy
+             << " ixz=" << link[i].inertial.inertia.ixz << " iyy=" << link[i].inertial.inertia.iyy << " iyz="
+             << link[i].inertial.inertia.iyz << " izz=" << link[i].inertial.inertia.izz << endl;
+        cout << "visual: ivfile=" << link[i].visual.ivfile << " scale=" << link[i].visual.scale << endl;
+        cout << "collision: ivfile=" << link[i].collision.ivfile << " scale=" << link[i].collision.scale << endl;
+        cout << "parent: " << link[i].parent << endl;
+        cout << "joint: " << link[i].joint << endl;
+        cout << "type: " << link[i].type << endl;
+        cout << "origin: xyz=(" << link[i].origin.xyz[0] << ", " << link[i].origin.xyz[1] << ", "
+             << link[i].origin.xyz[2] << ") rpy=(" << link[i].origin.r << ", " << link[i].origin.p
+             << ", " << link[i].origin.y << ")" << endl;
+        cout << "axis: (" << link[i].axis[0] << ", " << link[i].axis[1] << ", " << link[i].axis[2] << ")" << endl;
+        cout << "dynamics: damping=" << link[i].dynamics.damping << " friction=" << link[i].dynamics.friction << endl;
+        cout << "limit: lower=" << link[i].limit.lower << " upper=" << link[i].limit.upper << " effort="
+             << link[i].limit.effort << " velocity=" << link[i].limit.velocity << endl;
+    }
+};

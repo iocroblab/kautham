@@ -57,6 +57,7 @@
 #include <string>
 #include <libpugixml/pugixml.hpp>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
+#include "urdf.h"
 
 #if defined(KAUTHAM_USE_GUIBRO)
 #include <libguibro/consbronchoscopykin.h>
@@ -86,6 +87,7 @@ namespace Kautham {
  *  \param lib identifies wether PQP or SOLID collision libs are used
  */
   Robot::Robot(string robFile, KthReal scale, LIBUSED lib) {	
+
     _linkPathDrawn = -1;
     numCoupledControls=0;
     nTrunk = 0;
@@ -119,12 +121,12 @@ namespace Kautham {
       fin.close();
       string::size_type loc = robFile.find( ".rob", 0 );
       string dir;
+      string tmpString = "";
       if( loc != string::npos ) { // It means that the robot is defined by a *.rob file
         dir = robFile.substr(0,robFile.find_last_of("/")+1);
 
         // Opening the file with the new pugiXML library.
         xml_document doc;
-        string tmpString = "";
         xml_parse_result result = doc.load_file(robFile.c_str());
 
         //Parse the rob file
@@ -322,8 +324,6 @@ namespace Kautham {
                                 // Find the index orden into the links vector without the first static link.
                             for(int ind = 0; ind < _currentConf.getRn().getDim(); ind++)
                                 if( dofName == links[ind+1]->getName()){
-                                    double kk = (KthReal)itDOF->attribute("value").as_double();
-                                    double kk1 = eigVal*kk;
                                     mapMatrix[6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
                                     break;
                                 }
@@ -338,6 +338,224 @@ namespace Kautham {
         }else // the result of the file pasers is bad
           cout << "The robot file: " << robFile << " can not be read." << std::endl;
       }
+
+      loc = robFile.find( ".urdf", 0 );
+      dir = "";
+      tmpString = "";
+      if( loc != string::npos ) { // It means that the robot is defined by a *.urdf file
+        dir = robFile.substr(0,robFile.find_last_of("/")+1);
+
+        // Opening the file with the new pugiXML library.
+        xml_document doc;
+        xml_parse_result result = doc.load_file(robFile.c_str());
+
+        //Parse the rob file
+        if(result){
+            //if file could be loaded
+            urdf_robot robot;
+            xml_node tmpNode = doc.child("robot"); //node containing robot information
+
+            robot.fill(&tmpNode); //fill robot information
+
+
+            //Robot Name
+            name = robot.name;
+
+            //Robot type
+            robot.type = "Tree";
+            if( robot.type == "Tree")
+                robType = TREE;
+            else if( robot.type == "Chain")
+                robType = CHAIN;
+            else  if( robot.type == "Freeflying")
+                robType = FREEFLY;
+
+
+            //Type of convention used to define the robot, in case of Chain or Tree
+            if(robType != FREEFLY)
+            {
+                dhApproach = DHURDF;
+            }
+
+
+            //Links of the robot
+            int numLinks = robot.num_links;
+
+            // Initialization of the RnConf part of the RobConf for each
+            // special poses, the initial, the goal, the Home and the current poses.
+            _homeConf.setRn( numLinks - 1 );
+            _currentConf.setRn( numLinks - 1 );
+
+             _weights = new RobWeight( numLinks - 1 );
+             //Set the SE3 weights for the distance computations
+             _weights->setSE3Weight(1., 1.);
+
+
+
+            KthReal* preTransP;
+            KthReal preTrans[7]= {0., 0., 0., 0., 0., 0., 0.};
+            KthReal limMin, limMax;
+            ode_element ode;
+
+            //Loop for all the links
+            for(int i = 0; i < numLinks; i++){
+                preTransP = NULL;
+                limMin = 0;
+                limMax = 0.;
+
+                //Sets the Pretransfomation from parent's frame to joint's frame
+                if (i > 0) {
+                    preTransP = preTrans;
+                    preTrans[0] = (KthReal)robot.link[i].origin.xyz[0];
+                    preTrans[1] = (KthReal)robot.link[i].origin.xyz[1];
+                    preTrans[2] = (KthReal)robot.link[i].origin.xyz[2];
+                    preTrans[3] = (KthReal)robot.link[i].origin.r;
+                    preTrans[4] = (KthReal)robot.link[i].origin.p;
+                    preTrans[5] = (KthReal)robot.link[i].origin.y;
+                    preTrans[6] = 0.;
+                }
+
+                //Sets the limits of the joint
+                limMin = (KthReal)robot.link[i].limit.lower;
+                limMax = (KthReal)robot.link[i].limit.upper;
+
+                //Set the ode parameters
+                ode.dynamics.damping = robot.link[i].dynamics.damping;
+                ode.dynamics.friction = robot.link[i].dynamics.friction;
+                ode.inertial.inertia.ixx = robot.link[i].inertial.inertia.ixx;
+                ode.inertial.inertia.ixy = robot.link[i].inertial.inertia.ixy;
+                ode.inertial.inertia.ixz = robot.link[i].inertial.inertia.ixz;
+                ode.inertial.inertia.iyy = robot.link[i].inertial.inertia.iyy;
+                ode.inertial.inertia.iyz = robot.link[i].inertial.inertia.iyz;
+                ode.inertial.inertia.izz = robot.link[i].inertial.inertia.izz;
+                ode.inertial.inertia.matrix = robot.link[i].inertial.inertia.matrix;
+                ode.inertial.mass = robot.link[i].inertial.mass;
+                ode.inertial.origin.xyz = robot.link[i].inertial.origin.xyz;
+                ode.inertial.origin.r = robot.link[i].inertial.origin.r;
+                ode.inertial.origin.p = robot.link[i].inertial.origin.p;
+                ode.inertial.origin.y = robot.link[i].inertial.origin.y;
+                ode.inertial.origin.transform = robot.link[i].inertial.origin.transform;
+                ode.limit.effort = robot.link[i].limit.effort;
+                ode.limit.velocity = robot.link[i].limit.velocity;
+                ode.limit.lower = robot.link[i].limit.lower;
+                ode.limit.upper = robot.link[i].limit.upper;
+
+                //Create the link
+                addLinkURDF(robot.link[i].name,dir + robot.link[i].visual.ivfile,
+                        (KthReal)robot.link[i].visual.scale,
+                        dir + robot.link[i].collision.ivfile,
+                        (KthReal)robot.link[i].collision.scale,
+                        robot.link[i].axis,robot.link[i].type == "revolute",
+                        robot.link[i].type != "fixed",limMin,
+                        limMax,robot.link[i].parent,preTransP,ode);
+
+                //Add the weight. Defaults to 1.0
+                if( i > 0 ){ //First link is ommited because it is the base.
+                        _weights->setRnWeigh(i-1,(KthReal)1.0);
+                }
+            }
+
+            //  =====================
+            //  Once the links were added, the controls can be configured
+            //  Creating the mapping Matrix between controls and DOF parameters and initializing it.
+            controlsName = "";
+            mapMatrix = new KthReal*[6 + _currentConf.getRn().getDim()];
+            offMatrix = new KthReal[6 + _currentConf.getRn().getDim()];
+
+            numControls = doc.child("robot").child("ControlSet").attribute("size").as_int();
+            nTrunk = doc.child("robot").child("ControlSet").attribute("nTrunk").as_int();
+            numCoupledControls = doc.child("robot").child("ControlSet").attribute("coupled").as_int();
+
+            for(int i=0; i < 6 + _currentConf.getRn().getDim(); i++){
+                mapMatrix[i] = new KthReal[numControls];
+                offMatrix[i] = (KthReal)0.0;
+                for(unsigned int j = 0; j < numControls; j++)
+                mapMatrix[i][j] = (KthReal)0.0;
+            }
+
+            //Load the Offset vector
+            tmpNode = doc.child("robot").child("ControlSet").child("Offset");
+            xml_node::iterator it;
+            string dofName = "";
+            for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
+                dofName = (*it).attribute("name").value();
+                if( dofName == "X"){
+                se3Enabled = true;
+                offMatrix[0] = (KthReal)(*it).attribute("value").as_double();
+                }else if( dofName == "Y"){
+                    se3Enabled = true;
+                    offMatrix[1] = (KthReal)(*it).attribute("value").as_double();
+                }else if( dofName == "Z"){
+                    se3Enabled = true;
+                    offMatrix[2] = (KthReal)(*it).attribute("value").as_double();
+                }else if( dofName == "X1"){
+                    se3Enabled = true;
+                    offMatrix[3] = (KthReal)(*it).attribute("value").as_double();
+                }else if( dofName == "X2"){
+                    se3Enabled = true;
+                    offMatrix[4] = (KthReal)(*it).attribute("value").as_double();
+                }else if( dofName == "X3"){
+                    se3Enabled = true;
+                    offMatrix[5] = (KthReal)(*it).attribute("value").as_double();
+                }else{    // It's not a SE3 control and could have any name.
+                          // Find the index orden into the links vector without the first static link.
+                    for(int ind = 0; ind < _currentConf.getRn().getDim(); ind++)
+                        if( dofName == links[ind+1]->getName()){
+                            offMatrix[6 + ind ] = (KthReal)(*it).attribute("value").as_double();
+                            break;
+                    }
+                }
+            }//End processing Offset vector
+
+            //Process the controls to load the mapMatrix
+            tmpNode = doc.child("robot").child("ControlSet");
+            string nodeType = "";
+            int cont = 0;
+            for(it = tmpNode.begin(); it != tmpNode.end(); ++it){
+                nodeType = it->name();
+                if( nodeType == "Control" ){
+                    xml_node::iterator itDOF;
+                    KthReal eigVal = (KthReal) (*it).attribute("eigValue").as_double();
+                    dofName = "";
+                    for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FINDED
+                        dofName = itDOF->attribute("name").value();
+                        if( dofName == "X"){
+                            se3Enabled = true;
+                            mapMatrix[0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else if( dofName == "Y"){
+                            se3Enabled = true;
+                            mapMatrix[1][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else if( dofName == "Z"){
+                            se3Enabled = true;
+                            mapMatrix[2][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else if( dofName == "X1"){
+                            se3Enabled = true;
+                            mapMatrix[3][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else if( dofName == "X2"){
+                            se3Enabled = true;
+                            mapMatrix[4][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else if( dofName == "X3"){
+                            se3Enabled = true;
+                            mapMatrix[5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                        }else{  // It's not a SE3 control and could have any name.
+                                // Find the index orden into the links vector without the first static link.
+                            for(int ind = 0; ind < _currentConf.getRn().getDim(); ind++)
+                                if( dofName == links[ind+1]->getName()){
+                                    mapMatrix[6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                    break;
+                                }
+                            }
+                        }
+
+                    if(controlsName != "") controlsName.append("|");
+                        controlsName.append((*it).attribute("name").value());
+                    cont++;
+                }// closing if(nodeType == "Control" )
+            }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
+        }else // the result of the file pasers is bad
+          cout << "The robot file: " << robFile << " can not be read." << std::endl;
+      }
+
       armed = true;
 
       //Initialize the limits to 0.
@@ -451,7 +669,7 @@ namespace Kautham {
     return tmp;
   }
 
-
+  
 
   /*!
    * Allows to change the values of the robot base limits.
@@ -909,31 +1127,62 @@ namespace Kautham {
   //! to keep the coherence in the robot assembly. It doesn't use any intermediate
   //! structure to adquire the information to do the job.
   bool	Robot::addLink(string name, string ivFile, KthReal theta, KthReal d,
-                              KthReal a,KthReal alpha, bool rotational, bool movable,
-                              KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]){
-    Link* temp = new Link(ivFile, this->getScale(), dhApproach, libs);
-	  temp->setName(name);
-    temp->setMovable(movable);
-	  temp->setRotational(rotational);
-	  temp->setDHPars(theta, d, a, alpha);
-	  temp->setLimits(low, hi);
-	  temp->setWeight(w);
-    if(preTrans != NULL)
-      temp->setPreTransform(preTrans[0],preTrans[1],preTrans[2], preTrans[3],
-                            preTrans[4], preTrans[5], preTrans[6]);
-    if(links.size() > 0 ){ 
-      // There are finding the link by the name
-      for(unsigned int i = links.size()-1; i >= 0 ; i--)
-        if(parentName == links[i]->getName()){
-          temp->setParent(links[i]);
-          break;
-        }
-    }
+                       KthReal a,KthReal alpha, bool rotational, bool movable,
+                       KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]){
+      Link* temp = new Link(ivFile, this->getScale(), ivFile, this->getScale(), dhApproach, libs);
+      temp->setName(name);
+      temp->setMovable(movable);
+      temp->setRotational(rotational);
+      temp->setDHPars(theta, d, a, alpha);
+      temp->setLimits(low, hi);
+      temp->setWeight(w);
+      if(preTrans != NULL)
+          temp->setPreTransform(preTrans[0],preTrans[1],preTrans[2], preTrans[3],
+                                preTrans[4], preTrans[5], preTrans[6]);
+      if(links.size() > 0 ){
+          // There are finding the link by the name
+          for(unsigned int i = links.size()-1; i >= 0 ; i--)
+              if(parentName == links[i]->getName()){
+                  temp->setParent(links[i]);
+                  break;
+              }
+      }
 
 	  temp->setArmed();
 	  temp->setValue(0.0); //This is the home position
     links.push_back(temp);
 	  return true;
+  }
+
+  bool	Robot::addLinkURDF(string name, string ivFile, KthReal scale, string collision_ivFile,
+                       KthReal collision_scale, Unit3 axis, bool rotational, bool movable,
+                       KthReal low, KthReal hi, string parentName, KthReal preTrans[], ode_element ode){
+      Link* temp = new Link(ivFile, scale * this->getScale(), collision_ivFile,
+                            collision_scale * this->getScale(), dhApproach, libs);
+      temp->setName(name);
+      temp->setMovable(movable);
+      temp->setRotational(rotational);
+      temp->setAxis(axis);
+      temp->setDHPars(0., 0., 0., 0.);
+      temp->setLimits(low, hi);
+      temp->setWeight(1.);
+      temp->setOde(ode);
+      if(preTrans != NULL)
+          temp->setPreTransform(preTrans[0],preTrans[1],preTrans[2], preTrans[3],
+                                preTrans[4], preTrans[5], 0.);
+      if(links.size() > 0 ){
+          // There are finding the link by the name
+          for(unsigned int i = links.size()-1; i >= 0 ; i--)
+              if(parentName == links[i]->getName()){
+                  temp->setParent(links[i]);
+                  break;
+              }
+      }
+
+      temp->setArmed();
+      temp->setValue(0.0); //This is the home position
+    links.push_back(temp);
+      return true;
   }
 
   
