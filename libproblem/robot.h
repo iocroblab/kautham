@@ -196,6 +196,10 @@ namespace Kautham {
                  KthReal alpha, bool rotational, bool movable, KthReal low,
                  KthReal hi, KthReal w, string parentName, KthReal preTrans[] = NULL);
 
+    bool	addLinkURDF(string name, string ivFile, KthReal scale, string collision_ivFile,
+                    KthReal collision_scale, Unit3 axis, bool rotational, bool movable,
+                    KthReal low, KthReal hi, string parentName, KthReal preTrans[], ode_element ode);
+
     //! Returns the pointer to link number i
     Link* getLink(unsigned int i);
 

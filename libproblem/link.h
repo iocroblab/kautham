@@ -51,6 +51,7 @@
 #include <libmt/mt/mt.h>
 #include <libkthutil/kauthamdefs.h>
 #include <string>
+#include "odeelement.h"
 
 using namespace mt;
 
@@ -99,7 +100,8 @@ namespace Kautham{
 	  *		associated link and put this link in the origin of absolute frame. 
 	  *		You can build a complete robot, if you adding progresively a each Link
 	  *		from absolute coordinates frame to final effector frame.*/
-	  Link(string ivFile, KthReal scale, DHAPPROACH dhType, LIBUSED lib = IVPQP);
+      Link(string ivFile, KthReal scale, string collision_ivFile, KthReal collision_scale,
+           DHAPPROACH dhType, LIBUSED lib = IVPQP);
 
 	  //! Function to set \f$ \alpha \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ \alpha \f$ parameter.*/
@@ -116,6 +118,10 @@ namespace Kautham{
 	  //! Function to set \f$ d \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ d \f$ parameter.*/
     inline void         setD(KthReal d){if(!armed)this->d = d;}
+
+    inline void         setAxis(Unit3 axis){if(!armed)this->axis = axis;}
+
+    inline void         setOde(ode_element ode){if(!armed)this->ode = ode;}
   	
 	  //! Function to get \f$ d \f$ parameter.
 	  /*!	This function get the current value from Denavit - Hartemberg \f$ d \f$ 
@@ -136,6 +142,11 @@ namespace Kautham{
 	  /*!	This function get the current value from Denavit - Hartemberg \f$ \alpha \f$ 
 	  *		parameter.	*/
     inline KthReal      getAlpha() const {return alpha;}
+
+
+    inline Unit3        getAxis() const {return axis;}
+
+    inline ode_element  getOde() const {return ode;}
 
 	  //! Function to set movable parameter.
 	  /*!	This function set the current value from a movable parameter. 
@@ -207,11 +218,14 @@ namespace Kautham{
     inline KthReal      getZeroOffset() const {return zeroOffset;}
 
     inline Element*     getElement(){return element;}
+    inline Element*     getCollisionElement(){return collision_element;}
     inline bool         forceChange(Link* who){if(who == parent){ hasChanged = true; return true;}return false;}
     inline bool         changed(){return hasChanged;}
   private:
     //! This is the pointer to the element assigned to the link. This is the link model
     Element*            element;
+
+    Element*            collision_element;
 
 	  //!	Pointer to prior Link in chain sequence from the absolute frame to the final effector frame.
     Link*               parent;
@@ -230,6 +244,8 @@ namespace Kautham{
   	
 	  //!	\f$ d \f$ parameter for D-H description.
     KthReal             d;
+
+    Unit3               axis;
   	
 	  //! This variable is true for rotational Links.
     bool                rotational;
@@ -279,6 +295,8 @@ namespace Kautham{
     bool                hasChanged;
 
     bool                changeChilds();
+
+    ode_element         ode;
 
   };
 

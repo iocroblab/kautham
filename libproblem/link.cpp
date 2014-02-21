@@ -59,18 +59,22 @@ namespace Kautham {
   *		\param scale is the global scale for this link and It is only used for 
   *		graphical representation.
   */
-  Link::Link(string ivFile, KthReal scale, DHAPPROACH dhType, LIBUSED lib){
+  Link::Link(string ivFile, KthReal scale, string collision_ivFile, KthReal collision_scale,
+             DHAPPROACH dhType, LIBUSED lib){
     libs = lib;
     switch(libs){
       case INVENTOR:
         element = new IVElement(ivFile,scale);
+        collision_element = new IVElement(collision_ivFile,collision_scale);
       case IVPQP:
         element = new IVPQPElement(ivFile,scale);
+        collision_element = new IVPQPElement(collision_ivFile,collision_scale);
         break;
       case IVSOLID:
         
       default:
         element = NULL;
+        collision_element = NULL;
     }
 	  a = (KthReal)0.0;
 	  alpha = (KthReal)0.0;
@@ -107,31 +111,38 @@ namespace Kautham {
   *		robot is armed, and its Links and its links are complete. When this 
   *		attribute is set to true is not posible to change fixed D - H parameters.*/
   void Link::setArmed(){
-    if(!armed){
-	    armed = true;
-      if(dhType == DHSTANDARD){
-		    dhMatrix[0][0] = cos(theta);							dhMatrix[0][1] = -cos(alpha)*sin(theta);
-		    dhMatrix[0][2] = sin(alpha)*sin(theta);	  dhMatrix[0][3] = a*cos(theta);
+      if(!armed){
+          armed = true;
+          switch (dhType) {
+          case DHSTANDARD:
+              dhMatrix[0][0] = cos(theta);							dhMatrix[0][1] = -cos(alpha)*sin(theta);
+              dhMatrix[0][2] = sin(alpha)*sin(theta);	  dhMatrix[0][3] = a*cos(theta);
 
-		    dhMatrix[1][0] = sin(theta);							dhMatrix[1][1] = cos(alpha)*cos(theta);
-		    dhMatrix[1][2] = -sin(alpha)*cos(theta);	dhMatrix[1][3] = a*sin(theta);
+              dhMatrix[1][0] = sin(theta);							dhMatrix[1][1] = cos(alpha)*cos(theta);
+              dhMatrix[1][2] = -sin(alpha)*cos(theta);	dhMatrix[1][3] = a*sin(theta);
 
-		    /*dhMatrix[2][0] = 0 */                   dhMatrix[2][1] = sin(alpha);
-		    dhMatrix[2][2] = cos(alpha);							dhMatrix[2][3] = d;
-	    }else{ //dhType == DHMODIFIED
-		    dhMatrix[0][0] = cos(theta);							dhMatrix[0][1] = -sin(theta);
-		    /*dhMatrix[0][2] = 0;*/                   dhMatrix[0][3] = a;
+              /*dhMatrix[2][0] = 0 */                   dhMatrix[2][1] = sin(alpha);
+              dhMatrix[2][2] = cos(alpha);							dhMatrix[2][3] = d;
+              break;
+          case DHMODIFIED:
+              dhMatrix[0][0] = cos(theta);							dhMatrix[0][1] = -sin(theta);
+              /*dhMatrix[0][2] = 0;*/                   dhMatrix[0][3] = a;
 
-		    dhMatrix[1][0] = cos(alpha)*sin(theta);	  dhMatrix[1][1] = cos(alpha)*cos(theta);
-		    dhMatrix[1][2] = -sin(alpha);	            dhMatrix[1][3] = -d*sin(alpha);
+              dhMatrix[1][0] = cos(alpha)*sin(theta);	  dhMatrix[1][1] = cos(alpha)*cos(theta);
+              dhMatrix[1][2] = -sin(alpha);	            dhMatrix[1][3] = -d*sin(alpha);
 
-		    dhMatrix[2][0] = sin(alpha)*sin(theta);   dhMatrix[2][1] = sin(alpha)*cos(theta);
-		    dhMatrix[2][2] = cos(alpha);							dhMatrix[2][3] = d*cos(alpha);
-	    }
+              dhMatrix[2][0] = sin(alpha)*sin(theta);   dhMatrix[2][1] = sin(alpha)*cos(theta);
+              dhMatrix[2][2] = cos(alpha);							dhMatrix[2][3] = d*cos(alpha);
+              break;
+          case DHURDF:
+              //dhMatrix has default value
+              break;
+          }
+      }
       hasChanged = true;
       calculatePnO();
-    }
   }
+
 
   //!	This function set a Link of variable value.
   /*! This funcition set a Link of variable value between 0 and 1, corresponding 
@@ -191,16 +202,18 @@ namespace Kautham {
 	  KthReal tranv[3], rotv[4];
 
     if(hasChanged){ 
-      if(dhType == DHSTANDARD){
+      switch (dhType) {
+      case DHSTANDARD:
 	      if(rotational){
-		      dhMatrix[0][0] = cos(theta);							dhMatrix[0][1] = -cos(alpha)*sin(theta);
+              dhMatrix[0][0] = cos(theta);							dhMatrix[0][1] = -cos(alpha)*sin(theta);
 		      dhMatrix[0][2] = sin(alpha)*sin(theta);	  dhMatrix[0][3] = a*cos(theta);
 		      dhMatrix[1][0] = sin(theta);							dhMatrix[1][1] = cos(alpha)*cos(theta);
 		      dhMatrix[1][2] = -sin(alpha)*cos(theta);	dhMatrix[1][3] = a*sin(theta);
 	      }else{
 		      dhMatrix[2][3] = d;
 	      }
-      }else{ //dhType == dhModified
+          break;
+      case DHMODIFIED:
 	      if(rotational){
 		      dhMatrix[0][0] = cos(theta);							dhMatrix[0][1] = -sin(theta);
 		      dhMatrix[1][0] = cos(alpha)*sin(theta);	  dhMatrix[1][1] = cos(alpha)*cos(theta);
@@ -208,6 +221,22 @@ namespace Kautham {
 	      }else{
 		      dhMatrix[1][3] = -d*sin(alpha);           dhMatrix[2][3] = d*cos(alpha);
 	      }
+          break;
+      case DHURDF:
+          if(rotational){
+              Rotation tmp_rotation(axis,theta);
+              Matrix3x3 tmp_matrix = tmp_rotation.getMatrix();
+              for(int i = 0;i < 3;i++) {
+                  for(int j = 0;j < 3;j++){
+                      dhMatrix[i][j] = tmp_matrix[i][j];
+                  }
+              }
+          }else{
+              for(int i = 0;i < 3;i++){
+                  dhMatrix[i][3] = d*axis[i];
+              };
+          }
+          break;
       }
     
       mt::Rotation tempRot(Matrix3x3(dhMatrix[0][0],dhMatrix[0][1],dhMatrix[0][2],
@@ -297,16 +326,26 @@ namespace Kautham {
     return false;
   }
 
-  bool Link::setPreTransform(KthReal x, KthReal y, KthReal z, 
-                              KthReal wx, KthReal wy, KthReal wz, KthReal angle){ 
-    if(preTransform == NULL){
-      mt::Point3 tempTran(x,y,z);
-      mt::Rotation tempRot(mt::Unit3(wx,wy,wz),angle);
-      preTransform = new mt::Transform(tempRot,tempTran);
-      return true;
-    }
-    return false;
+  bool Link::setPreTransform(KthReal x, KthReal y, KthReal z,
+                             KthReal wx, KthReal wy, KthReal wz, KthReal angle){
+      if (dhType != DHURDF) {
+          if(preTransform == NULL){
+              mt::Point3 tempTran(x,y,z);
+              mt::Rotation tempRot(mt::Unit3(wx,wy,wz),angle);
+              preTransform = new mt::Transform(tempRot,tempTran);
+              return true;
+          } else
+              return false;
+      } else {
+          mt::Rotation tempRot(wz,wy,wx);
+          //mt::Vector3 tempVect = tempRot(mt::Vector3(x,y,z));
+          //mt::Point3 tempTran(tempVect[0],tempVect[1],tempVect[2]);
+          mt::Point3 tempTran(x,y,z);
+          preTransform = new mt::Transform(tempRot,tempTran);
+          return true;
+      }
   }
+
 
 }
 
