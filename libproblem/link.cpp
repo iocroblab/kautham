@@ -55,26 +55,25 @@ namespace Kautham {
   /*!	This constructor provide the way to create any Link and you progressively can build
   *		any cinematic chain robot from the absolute reference frame
   *		to Final Efector frame.
-  *		\param ivFile is the path string in the Inventor file that contain the link solid.
+  *		\param ivFile is the path string in the Inventor file that contain the visual model from the link solid.
+  *     \param collision_ivFile is the path string in the Inventor file that contain the collision model from the link solid.
   *		\param scale is the global scale for this link and It is only used for 
   *		graphical representation.
   */
-  Link::Link(string ivFile, KthReal scale, string collision_ivFile, KthReal collision_scale,
+  Link::Link(string ivFile, string collision_ivFile, KthReal scale,
              DHAPPROACH dhType, LIBUSED lib){
     libs = lib;
     switch(libs){
       case INVENTOR:
-        element = new IVElement(ivFile,scale);
-        collision_element = new IVElement(collision_ivFile,collision_scale);
+        element = new IVElement(ivFile,collision_ivFile,scale);
+        break;
       case IVPQP:
-        element = new IVPQPElement(ivFile,scale);
-        collision_element = new IVPQPElement(collision_ivFile,collision_scale);
+        element = new IVPQPElement(ivFile,collision_ivFile,scale);
         break;
       case IVSOLID:
         
       default:
         element = NULL;
-        collision_element = NULL;
     }
 	  a = (KthReal)0.0;
 	  alpha = (KthReal)0.0;
@@ -86,7 +85,7 @@ namespace Kautham {
 	  lowLimit = (KthReal)-M_PI;
 	  hiLimit = (KthReal)M_PI;
 	  value = (KthReal)0.0;
-    zeroOffset = (KthReal)0.0;
+      zeroOffset = (KthReal)0.0;
 	  parent = NULL;
 	  childs.clear();
 	  this->dhType = dhType;
@@ -135,7 +134,7 @@ namespace Kautham {
               dhMatrix[2][2] = cos(alpha);							dhMatrix[2][3] = d*cos(alpha);
               break;
           case DHURDF:
-              //dhMatrix has default value
+              //dhMatrix has default value: identity matrix
               break;
           }
       }
@@ -223,7 +222,7 @@ namespace Kautham {
 	      }
           break;
       case DHURDF:
-          if(rotational){
+          if(rotational){//only rotattion has changed
               Rotation tmp_rotation(axis,theta);
               Matrix3x3 tmp_matrix = tmp_rotation.getMatrix();
               for(int i = 0;i < 3;i++) {
@@ -231,7 +230,7 @@ namespace Kautham {
                       dhMatrix[i][j] = tmp_matrix[i][j];
                   }
               }
-          }else{
+          }else{//only traslation has changed
               for(int i = 0;i < 3;i++){
                   dhMatrix[i][3] = d*axis[i];
               };
@@ -337,10 +336,9 @@ namespace Kautham {
           } else
               return false;
       } else {
-          mt::Rotation tempRot(wz,wy,wx);
-          //mt::Vector3 tempVect = tempRot(mt::Vector3(x,y,z));
-          //mt::Point3 tempTran(tempVect[0],tempVect[1],tempVect[2]);
-          mt::Point3 tempTran(x,y,z);
+          mt::Rotation tempRot(wz,wy,wx);//rotatation around fixed axis: first roll around x axis,
+          //then pitch around y axis and finally yaw around z axis
+          mt::Point3 tempTran(x,y,z);//translation
           preTransform = new mt::Transform(tempRot,tempTran);
           return true;
       }
