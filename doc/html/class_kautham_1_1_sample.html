@@ -167,6 +167,8 @@ std::vector&lt; <a class="el" href="class_kautham_1_1_rob_conf.html">RobConf</a>
 <tr><td class="memItemLeft" align="right" valign="top">vector&lt; unsigned int &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_sample.html#a86eaba10654c5207f724dba9fad2d45a">getNeighs</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a111386db9bc9175fbabc751de9215f81"></a><!-- doxytag: member="Kautham::Sample::getTransparency" ref="a111386db9bc9175fbabc751de9215f81" args="()" -->
 KthReal&#160;</td><td class="memItemRight" valign="bottom"><b>getTransparency</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a4a527ffd25cc97ff999ffa85f54fe5"></a><!-- doxytag: member="Kautham::Sample::getwithinbounds" ref="a5a4a527ffd25cc97ff999ffa85f54fe5" args="()" -->
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>getwithinbounds</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_kautham_1_1_sample.html">Sample</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_sample.html#a180e1970020b07810302820be7038491">interpolate</a> (<a class="el" href="class_kautham_1_1_sample.html">Sample</a> *smp, KthReal fraction)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_sample.html#ada0d5f890e6046ad1342338506af29ed">isChecked</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_sample.html#a8ea8d1a801d80cfbffc34d784556fbe3">isFree</a> ()</td></tr>
@@ -187,6 +189,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setMappedConf</b> (ve
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2a27b2b6ee3805b0217ad0ffda7b4e3d"></a><!-- doxytag: member="Kautham::Sample::setTransparency" ref="a2a27b2b6ee3805b0217ad0ffda7b4e3d" args="(KthReal t)" -->
 KthReal&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_sample.html#a2a27b2b6ee3805b0217ad0ffda7b4e3d">setTransparency</a> (KthReal t)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">sets transparency. Returns incremental change in tranparency <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1cc1d88a783d10512c1d302e322960e"></a><!-- doxytag: member="Kautham::Sample::setwithinbounds" ref="ac1cc1d88a783d10512c1d302e322960e" args="(bool t)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setwithinbounds</b> (bool t)</td></tr>
 <tr><td colspan="2"><h2><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_sample.html#a6fcb93711d06f79f2b8aec8a216a7def">_color</a></td></tr>
@@ -211,6 +215,9 @@ KthReal&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a432e93546f58f3b197dadd3fbd1b90b9"></a><!-- doxytag: member="Kautham::Sample::neighsetdistances" ref="a432e93546f58f3b197dadd3fbd1b90b9" args="" -->
 vector&lt; KthReal &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_sample.html#a432e93546f58f3b197dadd3fbd1b90b9">neighsetdistances</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the ditances to the neighbours. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="affb2b4075dea818dfdfba0d4db481f3c"></a><!-- doxytag: member="Kautham::Sample::withinbounds" ref="affb2b4075dea818dfdfba0d4db481f3c" args="" -->
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_sample.html#affb2b4075dea818dfdfba0d4db481f3c">withinbounds</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This flag is used because the coords of the sample may pose the robot in an out-of-bounds configuration. <br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Class sample is used to represent a configuration of Cspace. </p>
@@ -534,7 +541,7 @@ vector&lt; KthReal &gt;&#160;</td><td class="memItemRight" valign="bottom"><a cl
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Feb 16 2014 19:38:07 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 24 2014 09:15:58 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

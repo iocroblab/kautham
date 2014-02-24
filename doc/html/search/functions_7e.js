@@ -23,8 +23,6 @@ var searchData=
   ['_7eomplsblplanner',['~omplSBLPlanner',['../class_kautham_1_1omplplanner_1_1ompl_s_b_l_planner.html#accc2445962bea861fcc559498ddee1c3',1,'Kautham::omplplanner::omplSBLPlanner']]],
   ['_7eompltrrtplanner',['~omplTRRTPlanner',['../class_kautham_1_1omplplanner_1_1ompl_t_r_r_t_planner.html#a51cea0e68ef4afe9cca25aa2c2a1b7df',1,'Kautham::omplplanner::omplTRRTPlanner']]],
   ['_7epcaalignmentoptimizationobjective',['~PCAalignmentOptimizationObjective',['../class_kautham_1_1omplplanner_1_1_p_c_aalignment_optimization_objective.html#acced9ac28b7844d32b2c40961ef4a543',1,'Kautham::omplplanner::PCAalignmentOptimizationObjective']]],
-  ['_7epcaalignmentoptimizationobjective2',['~PCAalignmentOptimizationObjective2',['../class_kautham_1_1omplplanner_1_1_p_c_aalignment_optimization_objective2.html#a832c784ad8ab9a2668334b38b03a5206',1,'Kautham::omplplanner::PCAalignmentOptimizationObjective2']]],
-  ['_7epcaalignmentoptimizationobjective3',['~PCAalignmentOptimizationObjective3',['../class_kautham_1_1omplplanner_1_1_p_c_aalignment_optimization_objective3.html#a79bdd3840517f0fa680bbc1c003a0374',1,'Kautham::omplplanner::PCAalignmentOptimizationObjective3']]],
   ['_7eprmplanner',['~PRMPlanner',['../class_kautham_1_1_i_o_c_1_1_p_r_m_planner.html#a27ae9de58f7e53faea405aa1965ffff4',1,'Kautham::IOC::PRMPlanner']]],
   ['_7esample',['~Sample',['../class_kautham_1_1_sample.html#ad0696cbce6ded1f945fac28611223e4a',1,'Kautham::Sample']]],
   ['_7esdksampler',['~SDKSampler',['../class_kautham_1_1_s_d_k_sampler.html#a1c95e97240d4abe76548c34bb616729e',1,'Kautham::SDKSampler']]],
