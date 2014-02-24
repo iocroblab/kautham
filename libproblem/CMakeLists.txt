@@ -12,7 +12,7 @@ ADD_DEFINITIONS( -DCOIN_DLL )
 ADD_DEFINITIONS( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
 
 FILE( GLOB SRC_FILES *.cpp )
-FILE( GLOB HDR_FILES *.h )
+FILE( GLOB HDR_FILES *.h* )
 
 ADD_LIBRARY(libproblem ${SRC_FILES} ${HDR_FILES})
 
