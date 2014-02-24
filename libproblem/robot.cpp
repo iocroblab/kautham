@@ -105,6 +105,7 @@ namespace Kautham {
     _constrainKin = NULL;
     _weights = NULL;
     visModel = NULL;
+    collModel = NULL;
     _graphicalPath = NULL;
     for(int i =0; i<7;i++)
 	    for(int j=0; j<2; j++){
@@ -362,7 +363,6 @@ namespace Kautham {
             name = robot.name;
 
             //Robot type
-            robot.type = "Tree";
             if( robot.type == "Tree")
                 robType = TREE;
             else if( robot.type == "Chain")
@@ -406,20 +406,20 @@ namespace Kautham {
                 //Sets the Pretransfomation from parent's frame to joint's frame
                 if (i > 0) {
                     preTransP = preTrans;
-                    preTrans[0] = (KthReal)robot.link[i].origin.xyz[0];
-                    preTrans[1] = (KthReal)robot.link[i].origin.xyz[1];
-                    preTrans[2] = (KthReal)robot.link[i].origin.xyz[2];
-                    preTrans[3] = (KthReal)robot.link[i].origin.r;
-                    preTrans[4] = (KthReal)robot.link[i].origin.p;
-                    preTrans[5] = (KthReal)robot.link[i].origin.y;
-                    preTrans[6] = 0.;
+                    preTrans[0] = (KthReal)robot.link[i].origin.xyz[0];//x translation
+                    preTrans[1] = (KthReal)robot.link[i].origin.xyz[1];//y translation
+                    preTrans[2] = (KthReal)robot.link[i].origin.xyz[2];//z translation
+                    preTrans[3] = (KthReal)robot.link[i].origin.r;//roll rotation
+                    preTrans[4] = (KthReal)robot.link[i].origin.p;//yaw rotation
+                    preTrans[5] = (KthReal)robot.link[i].origin.y;//pitch rotation
+                    preTrans[6] = 0.;//unused parameter
                 }
 
                 //Sets the limits of the joint
                 limMin = (KthReal)robot.link[i].limit.lower;
                 limMax = (KthReal)robot.link[i].limit.upper;
 
-                //Set the ode parameters
+                //Set ode parameters
                 ode.dynamics.damping = robot.link[i].dynamics.damping;
                 ode.dynamics.friction = robot.link[i].dynamics.friction;
                 ode.inertial.inertia.ixx = robot.link[i].inertial.inertia.ixx;
@@ -435,16 +435,18 @@ namespace Kautham {
                 ode.inertial.origin.p = robot.link[i].inertial.origin.p;
                 ode.inertial.origin.y = robot.link[i].inertial.origin.y;
                 ode.inertial.origin.transform = robot.link[i].inertial.origin.transform;
+                ode.contact_coefficients.mu = robot.link[i].contact_coefficients.mu;
+                ode.contact_coefficients.kp = robot.link[i].contact_coefficients.kp;
+                ode.contact_coefficients.kd = robot.link[i].contact_coefficients.kd;
                 ode.limit.effort = robot.link[i].limit.effort;
                 ode.limit.velocity = robot.link[i].limit.velocity;
                 ode.limit.lower = robot.link[i].limit.lower;
                 ode.limit.upper = robot.link[i].limit.upper;
 
                 //Create the link
-                addLinkURDF(robot.link[i].name,dir + robot.link[i].visual.ivfile,
-                        (KthReal)robot.link[i].visual.scale,
+                addLink(robot.link[i].name,dir + robot.link[i].visual.ivfile,
                         dir + robot.link[i].collision.ivfile,
-                        (KthReal)robot.link[i].collision.scale,
+                        (KthReal)robot.link[i].visual.scale,
                         robot.link[i].axis,robot.link[i].type == "revolute",
                         robot.link[i].type != "fixed",limMin,
                         limMax,robot.link[i].parent,preTransP,ode);
@@ -669,6 +671,26 @@ namespace Kautham {
     return tmp;
   }
 
+  /*!
+   *
+   */
+  bool Robot::setControlItem(string control, string dof, KthReal value){
+    // First I will find the column index looking for "|" number before the control name.
+    string::size_type pos = controlsName.find(control,0); 
+    if(pos == string::npos) return false;
+    int j=0;
+    string::size_type trick=controlsName.find("|",0); 
+    while(trick < pos){
+      trick=controlsName.find("|",trick+1);
+      j++;
+    }
+    for(unsigned int i = 1; i < links.size(); i++)
+      if(links[i]->getName() == dof){ // Now I am finding the row index.
+        mapMatrix[i][j] = value;
+        return true;
+      }
+    return false;
+  }
   
 
   /*!
@@ -988,11 +1010,18 @@ namespace Kautham {
         maxLinksTested = links.size();
 
       for(int i=0; i< maxLinksTested; i++){
-        //Collision detection with the Palm are avoided
-        if(links[i]->getName() == "Palm" || links[i]->getName() == "Palm_izq" || links[i]->getName() == "Palm_der") {
+          //Collision detection with the Palm are avoided
+        /*if(links[i]->getName() == "Palm" || links[i]->getName() == "Palm_izq" || links[i]->getName() == "Palm_der") {
           //cout <<"Palm detected - skipping collisions"<<endl;
           continue;
-        }
+        }*/
+
+          //Collision detection with the Palm are avoided
+          if(links[i]->numChilds() > 1) {
+              //cout <<"Palm detected - skipping collisions"<<endl;
+              continue;
+          }
+
         for(int j=i+2; j < maxLinksTested; j++){
           if(links[i]->getElement()->collideTo(links[j]->getElement())){
               //cout <<"...collision between links "<<i<<" and "<<j<<endl;
@@ -1129,7 +1158,7 @@ namespace Kautham {
   bool	Robot::addLink(string name, string ivFile, KthReal theta, KthReal d,
                        KthReal a,KthReal alpha, bool rotational, bool movable,
                        KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]){
-      Link* temp = new Link(ivFile, this->getScale(), ivFile, this->getScale(), dhApproach, libs);
+      Link* temp = new Link(ivFile, ivFile, this->getScale(), dhApproach, libs);
       temp->setName(name);
       temp->setMovable(movable);
       temp->setRotational(rotational);
@@ -1154,18 +1183,20 @@ namespace Kautham {
 	  return true;
   }
 
-  bool	Robot::addLinkURDF(string name, string ivFile, KthReal scale, string collision_ivFile,
-                       KthReal collision_scale, Unit3 axis, bool rotational, bool movable,
+  //! This method builds the link model and all their data structures in order
+  //! to keep the coherence in the robot assembly. It doesn't use any intermediate
+  //! structure to adquire the information to do the job.
+  bool	Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal scale, Unit3 axis, bool rotational, bool movable,
                        KthReal low, KthReal hi, string parentName, KthReal preTrans[], ode_element ode){
-      Link* temp = new Link(ivFile, scale * this->getScale(), collision_ivFile,
-                            collision_scale * this->getScale(), dhApproach, libs);
+      Link* temp = new Link(ivFile, collision_ivFile, scale * this->getScale(),
+                            dhApproach, libs);
       temp->setName(name);
       temp->setMovable(movable);
       temp->setRotational(rotational);
       temp->setAxis(axis);
-      temp->setDHPars(0., 0., 0., 0.);
+      temp->setDHPars(0., 0., 0., 0.);//defaults to zero
       temp->setLimits(low, hi);
-      temp->setWeight(1.);
+      temp->setWeight(1.);//defaults to one
       temp->setOde(ode);
       if(preTrans != NULL)
           temp->setPreTransform(preTrans[0],preTrans[1],preTrans[2], preTrans[3],
@@ -1246,6 +1277,30 @@ namespace Kautham {
     }
     return visModel;
   }
+
+
+  /*!
+   *
+   */
+  SoSeparator* Robot::getCollisionModel(){
+    if(collModel == NULL){
+      switch(libs){
+        case IVPQP:
+        case IVSOLID:
+          SoSeparator* robot = new SoSeparator();
+          robot->ref();
+          for(unsigned int i =0; i < links.size(); i++)
+            robot->addChild(((IVElement*)links[i]->getElement())->collision_ivModel(true));
+
+
+          collModel = robot;
+          break;
+      }
+    }
+    return collModel;
+  }
+
+
 
   /*!
    *
