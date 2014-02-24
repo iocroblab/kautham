@@ -68,12 +68,13 @@ namespace Kautham {
 
 class IVElement : public Element {
   public:
-	  IVElement(string ivfile, KthReal sc);
+      IVElement(string ivfile, string collision_ivfile, float sc);
 	  void setColor(KthReal c[3]);
     void setPosition(KthReal pos[3]);
 	  void setOrientation(KthReal ori[4]);
 	  SbMatrix orientationMatrix();
 	  SoSeparator* ivModel(bool tran=false);
+      SoSeparator* collision_ivModel(bool tran=false);
 	  bool collideTo(Element* other);
 	  KthReal getDistanceTo(Element* other);
     inline SoTranslation* getTrans(){return trans;}
@@ -81,13 +82,14 @@ class IVElement : public Element {
     inline SoMaterial* getMaterial(){return color;}
   private:
 	  SoSeparator   *ivmodel;
+      SoSeparator   *collision_ivmodel;
 	  SoSFVec3f     *scaVec;
 	  SoSFVec3f     *posVec;
 	  SoSFRotation  *rotVec;
 	  SoTranslation *trans;
 	  SoRotation    *rot;
 	  SoMaterial    *color;
-    SoScale       *sca;
+      SoScale       *sca;
   };
 
 

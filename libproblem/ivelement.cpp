@@ -49,7 +49,7 @@
 namespace Kautham {
 
 
-	IVElement::IVElement(string ivfile, KthReal sc) {
+    IVElement::IVElement(string ivfile, string collision_ivfile, KthReal sc) {
 		for(int i=0;i<3;i++){
 			position[i]= 0.0f;
 			orientation[i]=0.0f;
@@ -116,6 +116,46 @@ namespace Kautham {
 
 		ivmodel->ref();
 
+        collision_ivmodel = new SoSeparator;
+        collision_ivmodel->ref();
+        collision_ivmodel->addChild(sca);
+
+        if(input.openFile(ivfile.c_str()))
+            collision_ivmodel->addChild(SoDB::readAll(&input));
+        else
+        {
+            //collision_ivmodel->addChild(new SoSphere());
+            static const char *str[] = {
+                "#VRML V1.0 ascii\n",
+                "DEF pointgoal Separator {\n",
+                "  Separator {\n",
+                "    MaterialBinding { value PER_PART }\n",
+                "    Coordinate3 {\n",
+                "      point [\n",
+                "        0.0 0.0 0.0\n",
+                "      ]\n",
+                "    }\n",
+                "    DrawStyle { pointSize 5 }\n",
+                "    PointSet { }\n",
+                "   }\n",
+                "}\n",
+                NULL
+            };
+            input.setStringArray(str);
+            SoSeparator *sep = SoDB::readAll(&input);
+            sep->ref();
+            while (sep->getNumChildren() > 0)
+            {
+                collision_ivmodel->addChild(sep->getChild(0));
+                sep->removeChild(0);
+            }
+            sep->unref();
+
+        }
+
+        collision_ivmodel->ref();
+
+
 	}
 	
 	void IVElement::setColor(KthReal c[3]){
@@ -164,6 +204,21 @@ namespace Kautham {
 	  }else
 			return ivmodel;
   }
+
+  SoSeparator* IVElement::collision_ivModel(bool tran) {
+      if(tran){
+          SoSeparator* temp = new SoSeparator;
+          temp->ref();
+          temp->addChild(color);
+          temp->addChild(trans);
+          temp->addChild(rot);
+          temp->addChild(ivmodel);
+          return temp;
+      }else
+            return collision_ivmodel;
+  }
+
+
 
   bool IVElement::collideTo(Element* other) {
 	  // this method only return a value;
