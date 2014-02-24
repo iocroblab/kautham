@@ -51,7 +51,7 @@
 #include <libmt/mt/mt.h>
 #include <libkthutil/kauthamdefs.h>
 #include <string>
-#include "odeelement.h"
+
 
 using namespace mt;
 
@@ -70,8 +70,8 @@ namespace Kautham{
 	*		It use a standar  Denavit - Hartember description for simples
 	*		movements denoted for \f$ \alpha \f$ , a, \f$ \theta \f$ and d parameters.
 	*		
-	*		There are used the only two ways to define a transformation, the Standard
-	*		and Modified D-H, and they one has the respective transformation matrix
+    *		There are used three ways to define a transformation, the Standard D-H,
+    *		the Modified D-H and the URDF one, and they one has the respective transformation matrix
 	*		associated.  The transformation matrix used in Standar method is:
 	*		\f$ ^{i-1}A_{i}=\left[
 	*			\begin{array}{cccc}
@@ -82,7 +82,7 @@ namespace Kautham{
 	*			\end{array}
 	*		\right] \f$
 	*		
-	*		And the transfomation matrix corresponding to the Modified method is:
+    *		The transfomation matrix corresponding to the Modified method is:
 	*		\f$ ^{i-1}A_{i}=\left[
 	*			\begin{array}{cccc}
 	*					C\theta	        & -S\theta        & 0          & a \\
@@ -91,16 +91,23 @@ namespace Kautham{
 	*					0 & 0 & 0 & 1
 	*			\end{array}
 	*		\right] \f$
+    *       The transfomation matrix corresponding to the URDF method is:
+    *		\f$ ^{i-1}A_{i}=\left[
+    *			\begin{array}{cccc}
+    *					R(axis,theta) [3x3] & d*axis [3,1] \\
+    *					0 [1x3]             & 1
+    *			\end{array}
+    *		\right] \f$
 	*/
 
   class Link {
   public:
 	  //!	Unique constructor.
-	  /*!	This constructor receive an Inventor file and a global scale for the
+      /*!	This constructor receive two Inventor files, visual and collision, and a global scale for the
 	  *		associated link and put this link in the origin of absolute frame. 
-	  *		You can build a complete robot, if you adding progresively a each Link
+      *		You can build a complete robot, if you adding progresively a each Link
 	  *		from absolute coordinates frame to final effector frame.*/
-      Link(string ivFile, KthReal scale, string collision_ivFile, KthReal collision_scale,
+      Link(string ivFile, string collision_ivFile, float scale,
            DHAPPROACH dhType, LIBUSED lib = IVPQP);
 
 	  //! Function to set \f$ \alpha \f$ parameter.
@@ -119,10 +126,10 @@ namespace Kautham{
 	  /*!	This function set Denavit - Hartemberg \f$ d \f$ parameter.*/
     inline void         setD(KthReal d){if(!armed)this->d = d;}
 
+      //! Function to set \f$ axis \f$ parameter.
+      /*!	This function sets \f$ axis \f$ parameter.*/
     inline void         setAxis(Unit3 axis){if(!armed)this->axis = axis;}
 
-    inline void         setOde(ode_element ode){if(!armed)this->ode = ode;}
-  	
 	  //! Function to get \f$ d \f$ parameter.
 	  /*!	This function get the current value from Denavit - Hartemberg \f$ d \f$ 
 	  *		parameter.	*/
@@ -143,10 +150,21 @@ namespace Kautham{
 	  *		parameter.	*/
     inline KthReal      getAlpha() const {return alpha;}
 
-
+      //! Function to get \f$ \axis \f$ parameter.
+      /*!	This function gets the current value from \f$ \axis \f$
+      *		parameter.	*/
     inline Unit3        getAxis() const {return axis;}
 
-    inline ode_element  getOde() const {return ode;}
+    //! Function to set \f$ ode \f$ element.
+    /*!	This function sets \f$ ode \f$ element.*/
+    inline void         setOde(ode_element ode){ode = ode;if(!armed)this->element->ode = ode;}
+
+
+    //! Function to get \f$ \ode \f$ element.
+    /*!	This function gets the current value from \f$ \ode \f$
+          *		element.	*/
+    inline ode_element getOde() const {return this->element->ode;}
+
 
 	  //! Function to set movable parameter.
 	  /*!	This function set the current value from a movable parameter. 
@@ -185,7 +203,7 @@ namespace Kautham{
 	  //!	It member function used to calculate new position and orientation.
 	  /*!	It function calculate new  position and orientation after change 
 	  *		articular variable and it use the absolute transformation matrix 
-	  *		of prior Link and multiply it with D-H own matrix.*/
+      *		of prior Link and multiply it with D-H (or URDF) own matrix.*/
     void                calculatePnO();
   	
 	  //!	This member function set the Link name.
@@ -218,14 +236,11 @@ namespace Kautham{
     inline KthReal      getZeroOffset() const {return zeroOffset;}
 
     inline Element*     getElement(){return element;}
-    inline Element*     getCollisionElement(){return collision_element;}
     inline bool         forceChange(Link* who){if(who == parent){ hasChanged = true; return true;}return false;}
     inline bool         changed(){return hasChanged;}
   private:
     //! This is the pointer to the element assigned to the link. This is the link model
     Element*            element;
-
-    Element*            collision_element;
 
 	  //!	Pointer to prior Link in chain sequence from the absolute frame to the final effector frame.
     Link*               parent;
@@ -239,12 +254,13 @@ namespace Kautham{
 	  //!	\f$ a \f$ parameter for D-H description.
     KthReal             a;
   	
-	  //!	\f$ \theta \f$ parameter for D-H description.
+      //!	\f$ \theta \f$ parameter for D-H and URDF description.
     KthReal             theta;
   	
-	  //!	\f$ d \f$ parameter for D-H description.
+      //!	\f$ d \f$ parameter for D-H and URDF description.
     KthReal             d;
 
+      //!	\f$ axis \f$ parameter for URDF description.
     Unit3               axis;
   	
 	  //! This variable is true for rotational Links.
@@ -253,7 +269,7 @@ namespace Kautham{
 	  //! This variable is true if it can move together.
     bool                movable;
   	
-	  //! This variable is true when all robot's part are armed and then the D-H fixed 
+      //! This variable is true when all robot's part are armed and then the D-H (or URDF) fixed
 	  //!	parameters are not posible to change.
     bool                armed;
   	
@@ -263,10 +279,9 @@ namespace Kautham{
 	  //! It is the hi limit for moveable Link. In rotational Links normaly is \f$ \pi \f$
     KthReal             hiLimit;
   	
-	  //! It is the weight to compute weighted distances between configurations
+      //! It is the weight to compute weighted distances between configurations, defaults to 1;
     KthReal             weight;
   	
-
 	  //! Value beetwen Low Limit and Hi Limit.
     KthReal             value;
   	
@@ -295,8 +310,6 @@ namespace Kautham{
     bool                hasChanged;
 
     bool                changeChilds();
-
-    ode_element         ode;
 
   };
 
