@@ -89,6 +89,7 @@ namespace Kautham {
       RobWeight*        _weights; //!< Weights that affect the distance computations.
       mt::Transform     _homeTrans; //!< This is the Home Reference frame at time zero (used to calculate the spatial limits).
       SoSeparator*      visModel; //!< Visualitzation model for the path.
+      SoSeparator*      collModel; //!< Collision model for the path.
 
       string            controlsName; //!< Names of the controls, as a string, separated with the vertical bar character.
       int               numControls;  //!< This is the number of control used to command the robot
@@ -196,8 +197,9 @@ namespace Kautham {
                  KthReal alpha, bool rotational, bool movable, KthReal low,
                  KthReal hi, KthReal w, string parentName, KthReal preTrans[] = NULL);
 
-    bool	addLinkURDF(string name, string ivFile, KthReal scale, string collision_ivFile,
-                    KthReal collision_scale, Unit3 axis, bool rotational, bool movable,
+    //! Add link to the robot
+    bool addLink(string name, string ivFile, string collision_ivFile, KthReal scale,
+                    Unit3 axis, bool rotational, bool movable,
                     KthReal low, KthReal hi, string parentName, KthReal preTrans[], ode_element ode);
 
     //! Returns the pointer to link number i
@@ -270,6 +272,9 @@ namespace Kautham {
     //! Returns a pointer to the visualitzation model
     SoSeparator* getModel();
 
+    //! Returns a pointer to the collision model
+    SoSeparator* getCollisionModel();
+
     //! Returns a pointer to visualize the model used for collisions
     SoSeparator* getModelFromColl();
 
@@ -287,6 +292,9 @@ namespace Kautham {
 
     //! Retunrs the weights of the robot used in the computation of the distances
     RobWeight* getRobWeight(){return _weights;}
+
+    //! Sets the value of the mapMatrix corresponding to the column control and row dof.
+    bool setControlItem(string control, string dof, KthReal value);
 
     //! Returns the string with the names of the DOFs, separated by |
     string getDOFNames();
