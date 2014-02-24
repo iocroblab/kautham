@@ -48,8 +48,8 @@
 namespace Kautham {
 
 
-  IVPQPElement::IVPQPElement(string visFile, KthReal sc)
-    :IVElement(visFile,sc){
+IVPQPElement::IVPQPElement(string visFile, string collFile, KthReal sc)
+    :IVElement(visFile,collFile,sc){
       pqpmodel = NULL;
       makePQPModel();
   }
@@ -222,7 +222,7 @@ namespace Kautham {
   }
 
   bool IVPQPElement::makePQPModel() {
-    if(ivModel() != NULL){
+    if(collision_ivModel() != NULL){
 		  if(this->pqpmodel == NULL){
 			  this->pqpmodel = new PQP_Model;
 			  SoCallbackAction triAction;
@@ -230,7 +230,7 @@ namespace Kautham {
 			  pqpmodel->BeginModel();
 			  triAction.addTriangleCallback(SoShape::getClassTypeId(),
 							  triang_CB, (void*)&info);
-			  triAction.apply(ivModel());
+              triAction.apply(collision_ivModel());
 			  pqpmodel->EndModel();
 			  return true;
 		  }

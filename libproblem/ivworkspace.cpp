@@ -96,6 +96,53 @@ namespace Kautham {
 			scene->addChild(calculateBoundingBox(scene));
 		return scene;
 	}
+
+    SoSeparator* IVWorkSpace::getCollisionIvScene(bool bounding){
+        if(scene == NULL){
+      if(robots.size() != 0){
+              scene = new SoSeparator();
+        //scene->addChild(SoUnits::MILLIMETERS);
+              for(unsigned int i=0; i<robots.size(); i++)
+                  scene->addChild((SoSeparator*)robots[i]->getCollisionModel());
+
+        for(unsigned int i=0; i<obstacles.size(); i++){
+                  SoSeparator* sep = (SoSeparator*)obstacles[i]->getCollisionModel();
+                  char str[20];
+                  sprintf(str,"obstacle%d",i);
+                  sep->setName(str);
+                  scene->addChild(sep);
+                  //scene->addChild((SoSeparator*)obstacles[i]->getModel());
+              }
+
+              for(unsigned int i=0; i<_mobileObstacle.size(); i++)
+                  scene->addChild((SoSeparator*)_mobileObstacle[i]->getCollisionModel());
+
+              scene->ref();
+      }
+    }
+
+        /* The following does not work properly when cildren should be accesseb by labels.
+           The scene pointer should be returned instead.*/
+        /*
+            SoSeparator* temp = new SoSeparator();
+            temp->addChild(scene);
+            temp->ref();
+            if(bounding)
+                temp->addChild(calculateBoundingBox(scene));
+            return temp;
+        */
+
+        //comporvacio
+        //SoNode *sepgrid = scene->getByName("obstacle1");
+        //int c = scene->findChild(sepgrid);
+        //scene->removeChild(sepgrid);
+
+
+        if(bounding)
+            scene->addChild(calculateBoundingBox(scene));
+        return scene;
+    }
+
 	
 	void IVWorkSpace::updateScene(){
 	
