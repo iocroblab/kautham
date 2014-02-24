@@ -54,7 +54,7 @@ namespace Kautham {
     switch(libs){
       case IVPQP:
       case IVSOLID:
-        element = new IVPQPElement(modFile,scale);
+        element = new IVPQPElement(modFile,modFile,scale);
     }
 		element->setPosition(pos);
 		element->setOrientation(ori);
@@ -77,6 +77,17 @@ namespace Kautham {
       case IVPQP:
       case IVSOLID:
         return (void*)((IVElement*)element)->ivModel(tran);
+        break;
+      default:
+        return NULL;
+    }
+  }
+
+  void* Obstacle::getCollisionModel(bool tran){
+    switch(libs){
+      case IVPQP:
+      case IVSOLID:
+        return (void*)((IVElement*)element)->collision_ivModel(tran);
         break;
       default:
         return NULL;
