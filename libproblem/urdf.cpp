@@ -9,8 +9,10 @@
 #include <mt/rotation.h>
 #include <mt/transform.h>
 
+
 using namespace std;
 using namespace pugi;
+
 
 urdf_origin::urdf_origin () {
     r = 0.;
@@ -44,7 +46,6 @@ void urdf_origin::fill (xml_node *node) {
     }
     transform = mt::Transform(mt::Rotation(y,p,r),xyz);
 };
-
 
 urdf_inertia::urdf_inertia () {
     ixx = 0.;
@@ -88,12 +89,31 @@ urdf_dynamics::urdf_dynamics () {
     friction = 0.;
     damping = 0.;
 };
+
 void urdf_dynamics::fill (xml_node *node) {
     if (node->attribute("damping")){
         damping = node->attribute("damping").as_double();
     }
     if (node->attribute("friction")){
         friction = node->attribute("friction").as_double();
+    }
+};
+
+urdf_contact_coefficients::urdf_contact_coefficients() {
+    mu = 0.;
+    kp = 0.;
+    kd = 0.;
+};
+
+void urdf_contact_coefficients::fill(xml_node *node) {
+    if (node->attribute("mu")){
+        mu = node->attribute("mu").as_double();
+    }
+    if (node->attribute("kp")){
+        kd = node->attribute("kd").as_double();
+    }
+    if (node->attribute("kp")){
+        kp = node->attribute("kp").as_double();
     }
 };
 
@@ -115,13 +135,14 @@ void urdf_limit::fill (xml_node *node) {
     velocity = node->attribute("velocity").as_double();
 };
 
-
 urdf_link::urdf_link () {
     axis = mt::Unit3(1,0,0);
     is_base = false;
 };
 
 void urdf_link::fill (xml_node *node) {
+    xml_node tmpNode;
+
     name = node->attribute("name").value();
     visual.ivfile = node->child("visual").child("geometry").child("mesh").attribute("filename").value();
     if (node->child("visual").child("geometry").child("mesh").attribute("scale")) {
@@ -136,12 +157,16 @@ void urdf_link::fill (xml_node *node) {
         collision.ivfile = visual.ivfile;
         collision.scale = visual.scale;
     }
+    if (node->child("collision").child("contact_coefficients")) {
+        tmpNode = node->child("collision").child("contact_coefficients");
+        contact_coefficients.fill(&tmpNode);
+    }
     if (node->child("inertial")) {
         xml_node tmpNode = node->child("inertial");
         inertial.fill(&tmpNode);
     }
 
-    xml_node tmpNode = node->parent().child("joint");
+    tmpNode = node->parent().child("joint");
     node = &tmpNode;
     while (name != node->child("child").attribute("link").value() && node->next_sibling("joint")) {
         *node = node->next_sibling("joint");
@@ -176,7 +201,7 @@ void urdf_link::fill (xml_node *node) {
         limit.fill(&tmpNode);
     } else {
         //link is robot's base
-        //origin, parent, axis, dynamics and limit need to be filled differently
+        //origin, parent, axis, dynamics and limit need to be filled in another way
         is_base = true;
     }
 };
@@ -184,7 +209,6 @@ void urdf_link::fill (xml_node *node) {
 mt::Transform urdf_link::transform (double theta) {
     return(mt::Transform(mt::Rotation(axis,theta),mt::Point3()) * origin.transform);
 };
-
 
 urdf_robot::urdf_robot () {
     num_links = 0;
@@ -278,6 +302,8 @@ void urdf_robot::print() {
              << ", " << link[i].origin.y << ")" << endl;
         cout << "axis: (" << link[i].axis[0] << ", " << link[i].axis[1] << ", " << link[i].axis[2] << ")" << endl;
         cout << "dynamics: damping=" << link[i].dynamics.damping << " friction=" << link[i].dynamics.friction << endl;
+        cout << "contact coefficients: mu=" << link[i].contact_coefficients.mu << " kp="
+             << link[i].contact_coefficients.kp << " kd" << link[i].contact_coefficients.kd << endl;
         cout << "limit: lower=" << link[i].limit.lower << " upper=" << link[i].limit.upper << " effort="
              << link[i].limit.effort << " velocity=" << link[i].limit.velocity << endl;
     }
