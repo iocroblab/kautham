@@ -2,9 +2,7 @@ var searchData=
 [
   ['parameter2conf',['parameter2Conf',['../class_kautham_1_1_robot.html#a76eaa4a2f89761a1d4eea9b0b61028e5',1,'Kautham::Robot']]],
   ['parameter2pose',['parameter2Pose',['../class_kautham_1_1_robot.html#ae4cad1eca641bfcf1bdbc5bdafbc9cd8',1,'Kautham::Robot']]],
-  ['pcaalignmentoptimizationobjective',['PCAalignmentOptimizationObjective',['../class_kautham_1_1omplplanner_1_1_p_c_aalignment_optimization_objective.html#aa8d344a4622e8a249fdfcdf8a7296070',1,'Kautham::omplplanner::PCAalignmentOptimizationObjective']]],
-  ['pcaalignmentoptimizationobjective2',['PCAalignmentOptimizationObjective2',['../class_kautham_1_1omplplanner_1_1_p_c_aalignment_optimization_objective2.html#a6fa0343b37c9d16a0f337248f7523d90',1,'Kautham::omplplanner::PCAalignmentOptimizationObjective2']]],
-  ['pcaalignmentoptimizationobjective3',['PCAalignmentOptimizationObjective3',['../class_kautham_1_1omplplanner_1_1_p_c_aalignment_optimization_objective3.html#a4ed0f33d23c49b51f27f771a9f9dc75a',1,'Kautham::omplplanner::PCAalignmentOptimizationObjective3']]],
+  ['pcaalignmentoptimizationobjective',['PCAalignmentOptimizationObjective',['../class_kautham_1_1omplplanner_1_1_p_c_aalignment_optimization_objective.html#a7528c61fc4f9e69b1035520b0e5ca89e',1,'Kautham::omplplanner::PCAalignmentOptimizationObjective']]],
   ['prime_5ffactorization',['prime_factorization',['../class_kautham_1_1_t_mat.html#a57bea1fba6ee33713347e03d99d990fa',1,'Kautham::TMat']]],
   ['print',['print',['../class_kautham_1_1_sample.html#a27e6923516715733bf2c1731b2eec881',1,'Kautham::Sample::print()'],['../class_kautham_1_1_s_d_k_sample.html#a2341240a93f5cad902eda735eb6b232c',1,'Kautham::SDKSample::print()']]],
   ['printconnectedcomponents',['printConnectedComponents',['../class_kautham_1_1_i_o_c_1_1_p_r_m_planner.html#ab43d8f85fc3d3d62878b811d1109c9fd',1,'Kautham::IOC::PRMPlanner']]],
