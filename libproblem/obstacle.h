@@ -60,6 +60,7 @@ namespace Kautham {
 		void setLinVelocity(KthReal vel[3]);
 		void setAngVelocity(KthReal vel[3]);
 		void* getModel(bool tran = true);
+        void* getCollisionModel(bool tran = true);
 		void* getModelFromColl(bool tran = true);
 		inline KthReal* getLinVelocity(){return linVel;}
 		inline KthReal* getAngVelocity(){return angVel;}
