@@ -167,196 +167,207 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00089"></a><a class="code" href="class_kautham_1_1_robot.html#a0affcd556b70dda9bccfe9ec4fbfb24b">00089</a>       <a class="code" href="class_kautham_1_1_rob_weight.html">RobWeight</a>*        <a class="code" href="class_kautham_1_1_robot.html#a0affcd556b70dda9bccfe9ec4fbfb24b" title="Weights that affect the distance computations.">_weights</a>; 
 <a name="l00090"></a><a class="code" href="class_kautham_1_1_robot.html#ae064dd91c923bd27022bb2989b7ae033">00090</a>       mt::Transform     <a class="code" href="class_kautham_1_1_robot.html#ae064dd91c923bd27022bb2989b7ae033" title="This is the Home Reference frame at time zero (used to calculate the spatial limits).">_homeTrans</a>; 
 <a name="l00091"></a><a class="code" href="class_kautham_1_1_robot.html#a950726f606d72219d26cb963fd65f43d">00091</a>       SoSeparator*      <a class="code" href="class_kautham_1_1_robot.html#a950726f606d72219d26cb963fd65f43d" title="Visualitzation model for the path.">visModel</a>; 
-<a name="l00092"></a>00092 
-<a name="l00093"></a><a class="code" href="class_kautham_1_1_robot.html#ac5f7f8498a1dbec1b4d8ab9f1bee2c73">00093</a>       <span class="keywordtype">string</span>            <a class="code" href="class_kautham_1_1_robot.html#ac5f7f8498a1dbec1b4d8ab9f1bee2c73" title="Names of the controls, as a string, separated with the vertical bar character.">controlsName</a>; 
-<a name="l00094"></a><a class="code" href="class_kautham_1_1_robot.html#a3df656de2d83ece84d90750c4f0a1703">00094</a>       <span class="keywordtype">int</span>               <a class="code" href="class_kautham_1_1_robot.html#a3df656de2d83ece84d90750c4f0a1703" title="This is the number of control used to command the robot.">numControls</a>;  
-<a name="l00095"></a><a class="code" href="class_kautham_1_1_robot.html#aef61cb895c65859df28b779af9a78359">00095</a>       <span class="keywordtype">int</span>               numCoupledControls; 
-<a name="l00096"></a>00096 
+<a name="l00092"></a><a class="code" href="class_kautham_1_1_robot.html#a90e1fc225d9905188990f2b50e73388f">00092</a>       SoSeparator*      <a class="code" href="class_kautham_1_1_robot.html#a90e1fc225d9905188990f2b50e73388f" title="Collision model for the path.">collModel</a>; 
+<a name="l00093"></a>00093 
+<a name="l00094"></a><a class="code" href="class_kautham_1_1_robot.html#ac5f7f8498a1dbec1b4d8ab9f1bee2c73">00094</a>       <span class="keywordtype">string</span>            <a class="code" href="class_kautham_1_1_robot.html#ac5f7f8498a1dbec1b4d8ab9f1bee2c73" title="Names of the controls, as a string, separated with the vertical bar character.">controlsName</a>; 
+<a name="l00095"></a><a class="code" href="class_kautham_1_1_robot.html#a3df656de2d83ece84d90750c4f0a1703">00095</a>       <span class="keywordtype">int</span>               <a class="code" href="class_kautham_1_1_robot.html#a3df656de2d83ece84d90750c4f0a1703" title="This is the number of control used to command the robot.">numControls</a>;  
+<a name="l00096"></a><a class="code" href="class_kautham_1_1_robot.html#aef61cb895c65859df28b779af9a78359">00096</a>       <span class="keywordtype">int</span>               numCoupledControls; 
 <a name="l00097"></a>00097 
 <a name="l00098"></a>00098 
-<a name="l00099"></a><a class="code" href="class_kautham_1_1_robot.html#a667963486ac8803f32919fb7ad97dd52">00099</a>       <span class="keywordtype">int</span>               <a class="code" href="class_kautham_1_1_robot.html#a667963486ac8803f32919fb7ad97dd52" title="Number of control for the trunk in case of TREE robot.">nTrunk</a>; 
-<a name="l00100"></a><a class="code" href="class_kautham_1_1_robot.html#a04224a1a951afdb09f05ee631e368bd8">00100</a>       <a class="code" href="class_kautham_1_1_inverse_kinematic.html">InverseKinematic</a>* <a class="code" href="class_kautham_1_1_robot.html#a04224a1a951afdb09f05ee631e368bd8" title="Defines the inverse kinematics of the robot, if available.">_ikine</a>; 
-<a name="l00101"></a><a class="code" href="class_kautham_1_1_robot.html#afa66be268fa4625939ae3966a2447966">00101</a>       <a class="code" href="class_kautham_1_1_constrained_kinematic.html">ConstrainedKinematic</a>* <a class="code" href="class_kautham_1_1_robot.html#afa66be268fa4625939ae3966a2447966" title="Defines the constrained kinematics of the robot, if it has one.">_constrainKin</a>; 
-<a name="l00102"></a><a class="code" href="class_kautham_1_1_robot.html#a2b67c1e4564a37a346f1ec17055497c4">00102</a>       vector&lt;RobConf&gt;   <a class="code" href="class_kautham_1_1_robot.html#a2b67c1e4564a37a346f1ec17055497c4" title="Solution path to be drawn.">_proposedSolution</a>; 
-<a name="l00103"></a><a class="code" href="class_kautham_1_1_robot.html#a1c62ca2eb417f5b1400fef1aca763a4e">00103</a>       SoMFVec3f*        <a class="code" href="class_kautham_1_1_robot.html#a1c62ca2eb417f5b1400fef1aca763a4e" title="This corresponds to translational part of the link origin selected while following the path to be dra...">_graphicalPath</a>; 
-<a name="l00104"></a><a class="code" href="class_kautham_1_1_robot.html#a097c95a3372546851154f3bcf81c77be">00104</a>       SoSeparator*      <a class="code" href="class_kautham_1_1_robot.html#a097c95a3372546851154f3bcf81c77be" title="This is the SoSeparator to visualize the solution path. It is attached to the robot model...">_pathSeparator</a>; 
-<a name="l00105"></a><a class="code" href="class_kautham_1_1_robot.html#a12be366096d498e09a595e2d25aed68c">00105</a>       <span class="keywordtype">int</span>               <a class="code" href="class_kautham_1_1_robot.html#a12be366096d498e09a595e2d25aed68c" title="This is the number of the link whose path will be drawn.">_linkPathDrawn</a>; 
-<a name="l00106"></a><a class="code" href="class_kautham_1_1_robot.html#a76e3ca57679d83790f6e0678eaa4196e">00106</a>       list&lt;attObj&gt;      <a class="code" href="class_kautham_1_1_robot.html#a76e3ca57679d83790f6e0678eaa4196e" title="List of objects attached to the robot gripper.">_attachedObject</a>; 
-<a name="l00107"></a>00107 
-<a name="l00108"></a><a class="code" href="class_kautham_1_1_robot.html#a22a77a5389cf6ee6165ae4908083614f">00108</a>       KthReal           _spatialLimits[7][2]; 
-<a name="l00109"></a><a class="code" href="class_kautham_1_1_robot.html#ab0b4d3a61777b139bfe0fbc4d5d462a2">00109</a>       KthReal           _homeLimits[7][2]; 
-<a name="l00110"></a><a class="code" href="class_kautham_1_1_robot.html#a970cd7d556856be514998ffd070ddda9">00110</a>       vector&lt;Link*&gt;     <a class="code" href="class_kautham_1_1_robot.html#a970cd7d556856be514998ffd070ddda9" title="Vector of the robot links, starting at the base and ending at the end effector.In case of Tree robots...">links</a>; 
-<a name="l00111"></a><a class="code" href="class_kautham_1_1_robot.html#a81deb6d410bceb40aff8155ade6769f4">00111</a>       <span class="keywordtype">bool</span>              <a class="code" href="class_kautham_1_1_robot.html#a81deb6d410bceb40aff8155ade6769f4" title="Flag that indicates if the robot is auto-colliding.">_autocoll</a>; 
-<a name="l00112"></a><a class="code" href="class_kautham_1_1_robot.html#aafa3efdc0dcf526f854ac8b6b174fce9">00112</a>       <span class="keywordtype">bool</span>              <a class="code" href="class_kautham_1_1_robot.html#aafa3efdc0dcf526f854ac8b6b174fce9" title="Flag that indicates if the robot has changed its configuration. To speed up some computations.">_hasChanged</a>; 
-<a name="l00113"></a><a class="code" href="class_kautham_1_1_robot.html#a1e7b78e458e044f1d36d71132386a5fe">00113</a>       KthReal           *<a class="code" href="class_kautham_1_1_robot.html#a1e7b78e458e044f1d36d71132386a5fe" title="Offset vector. If copuling is generated with PCA it contains the baricenter coordinates, otherwise 0.5.">offMatrix</a>; 
-<a name="l00114"></a><a class="code" href="class_kautham_1_1_robot.html#ab3bb1edc634167946ccd8d60cd9f430b">00114</a>       KthReal           **<a class="code" href="class_kautham_1_1_robot.html#ab3bb1edc634167946ccd8d60cd9f430b" title="Matrix to compute the robot configuration from the controls. If copuling is generated with PCA it con...">mapMatrix</a>; 
-<a name="l00115"></a>00115 
+<a name="l00099"></a>00099 
+<a name="l00100"></a><a class="code" href="class_kautham_1_1_robot.html#a667963486ac8803f32919fb7ad97dd52">00100</a>       <span class="keywordtype">int</span>               <a class="code" href="class_kautham_1_1_robot.html#a667963486ac8803f32919fb7ad97dd52" title="Number of control for the trunk in case of TREE robot.">nTrunk</a>; 
+<a name="l00101"></a><a class="code" href="class_kautham_1_1_robot.html#a04224a1a951afdb09f05ee631e368bd8">00101</a>       <a class="code" href="class_kautham_1_1_inverse_kinematic.html">InverseKinematic</a>* <a class="code" href="class_kautham_1_1_robot.html#a04224a1a951afdb09f05ee631e368bd8" title="Defines the inverse kinematics of the robot, if available.">_ikine</a>; 
+<a name="l00102"></a><a class="code" href="class_kautham_1_1_robot.html#afa66be268fa4625939ae3966a2447966">00102</a>       <a class="code" href="class_kautham_1_1_constrained_kinematic.html">ConstrainedKinematic</a>* <a class="code" href="class_kautham_1_1_robot.html#afa66be268fa4625939ae3966a2447966" title="Defines the constrained kinematics of the robot, if it has one.">_constrainKin</a>; 
+<a name="l00103"></a><a class="code" href="class_kautham_1_1_robot.html#a2b67c1e4564a37a346f1ec17055497c4">00103</a>       vector&lt;RobConf&gt;   <a class="code" href="class_kautham_1_1_robot.html#a2b67c1e4564a37a346f1ec17055497c4" title="Solution path to be drawn.">_proposedSolution</a>; 
+<a name="l00104"></a><a class="code" href="class_kautham_1_1_robot.html#a1c62ca2eb417f5b1400fef1aca763a4e">00104</a>       SoMFVec3f*        <a class="code" href="class_kautham_1_1_robot.html#a1c62ca2eb417f5b1400fef1aca763a4e" title="This corresponds to translational part of the link origin selected while following the path to be dra...">_graphicalPath</a>; 
+<a name="l00105"></a><a class="code" href="class_kautham_1_1_robot.html#a097c95a3372546851154f3bcf81c77be">00105</a>       SoSeparator*      <a class="code" href="class_kautham_1_1_robot.html#a097c95a3372546851154f3bcf81c77be" title="This is the SoSeparator to visualize the solution path. It is attached to the robot model...">_pathSeparator</a>; 
+<a name="l00106"></a><a class="code" href="class_kautham_1_1_robot.html#a12be366096d498e09a595e2d25aed68c">00106</a>       <span class="keywordtype">int</span>               <a class="code" href="class_kautham_1_1_robot.html#a12be366096d498e09a595e2d25aed68c" title="This is the number of the link whose path will be drawn.">_linkPathDrawn</a>; 
+<a name="l00107"></a><a class="code" href="class_kautham_1_1_robot.html#a76e3ca57679d83790f6e0678eaa4196e">00107</a>       list&lt;attObj&gt;      <a class="code" href="class_kautham_1_1_robot.html#a76e3ca57679d83790f6e0678eaa4196e" title="List of objects attached to the robot gripper.">_attachedObject</a>; 
+<a name="l00108"></a>00108 
+<a name="l00109"></a><a class="code" href="class_kautham_1_1_robot.html#a22a77a5389cf6ee6165ae4908083614f">00109</a>       KthReal           _spatialLimits[7][2]; 
+<a name="l00110"></a><a class="code" href="class_kautham_1_1_robot.html#ab0b4d3a61777b139bfe0fbc4d5d462a2">00110</a>       KthReal           _homeLimits[7][2]; 
+<a name="l00111"></a><a class="code" href="class_kautham_1_1_robot.html#a970cd7d556856be514998ffd070ddda9">00111</a>       vector&lt;Link*&gt;     <a class="code" href="class_kautham_1_1_robot.html#a970cd7d556856be514998ffd070ddda9" title="Vector of the robot links, starting at the base and ending at the end effector.In case of Tree robots...">links</a>; 
+<a name="l00112"></a><a class="code" href="class_kautham_1_1_robot.html#a81deb6d410bceb40aff8155ade6769f4">00112</a>       <span class="keywordtype">bool</span>              <a class="code" href="class_kautham_1_1_robot.html#a81deb6d410bceb40aff8155ade6769f4" title="Flag that indicates if the robot is auto-colliding.">_autocoll</a>; 
+<a name="l00113"></a><a class="code" href="class_kautham_1_1_robot.html#aafa3efdc0dcf526f854ac8b6b174fce9">00113</a>       <span class="keywordtype">bool</span>              <a class="code" href="class_kautham_1_1_robot.html#aafa3efdc0dcf526f854ac8b6b174fce9" title="Flag that indicates if the robot has changed its configuration. To speed up some computations.">_hasChanged</a>; 
+<a name="l00114"></a><a class="code" href="class_kautham_1_1_robot.html#a1e7b78e458e044f1d36d71132386a5fe">00114</a>       KthReal           *<a class="code" href="class_kautham_1_1_robot.html#a1e7b78e458e044f1d36d71132386a5fe" title="Offset vector. If copuling is generated with PCA it contains the baricenter coordinates, otherwise 0.5.">offMatrix</a>; 
+<a name="l00115"></a><a class="code" href="class_kautham_1_1_robot.html#ab3bb1edc634167946ccd8d60cd9f430b">00115</a>       KthReal           **<a class="code" href="class_kautham_1_1_robot.html#ab3bb1edc634167946ccd8d60cd9f430b" title="Matrix to compute the robot configuration from the controls. If copuling is generated with PCA it con...">mapMatrix</a>; 
 <a name="l00116"></a>00116 
-<a name="l00117"></a><a class="code" href="class_kautham_1_1_robot.html#a83e6d3923accb63afe5013d40aec54d4">00117</a>       DHAPPROACH        <a class="code" href="class_kautham_1_1_robot.html#a83e6d3923accb63afe5013d40aec54d4" title="It identifies the D-H description method (Standard/Modified).">dhApproach</a>;
-<a name="l00118"></a><a class="code" href="class_kautham_1_1_robot.html#a189c20ccb4189f21d2916744a72acc12">00118</a>       <span class="keywordtype">bool</span>              <a class="code" href="class_kautham_1_1_robot.html#a189c20ccb4189f21d2916744a72acc12" title="This attribute is true if the robot has a mobile base.">se3Enabled</a>; 
-<a name="l00119"></a><a class="code" href="class_kautham_1_1_robot.html#a3b72ab10083836784ec73367abf9220f">00119</a>       <span class="keywordtype">bool</span>              <a class="code" href="class_kautham_1_1_robot.html#a3b72ab10083836784ec73367abf9220f" title="Flag that shows if the Robot is complete or still is under construction.">armed</a>;
-<a name="l00120"></a><a class="code" href="class_kautham_1_1_robot.html#a91aca73ee6b0d0b00854af203b3520c1">00120</a>       <a class="code" href="class_kautham_1_1_rob_conf.html">RobConf</a>           <a class="code" href="class_kautham_1_1_robot.html#a91aca73ee6b0d0b00854af203b3520c1" title="This attribute is the Home configuration of the robot.">_homeConf</a>;     
-<a name="l00121"></a><a class="code" href="class_kautham_1_1_robot.html#ac676d98f67c609196bb3533d9ca475f8">00121</a>       <a class="code" href="class_kautham_1_1_rob_conf.html">RobConf</a>           <a class="code" href="class_kautham_1_1_robot.html#ac676d98f67c609196bb3533d9ca475f8" title="This attribute is the current configuration of the robot.">_currentConf</a>;  
-<a name="l00122"></a>00122 
+<a name="l00117"></a>00117 
+<a name="l00118"></a><a class="code" href="class_kautham_1_1_robot.html#a83e6d3923accb63afe5013d40aec54d4">00118</a>       DHAPPROACH        <a class="code" href="class_kautham_1_1_robot.html#a83e6d3923accb63afe5013d40aec54d4" title="It identifies the D-H description method (Standard/Modified).">dhApproach</a>;
+<a name="l00119"></a><a class="code" href="class_kautham_1_1_robot.html#a189c20ccb4189f21d2916744a72acc12">00119</a>       <span class="keywordtype">bool</span>              <a class="code" href="class_kautham_1_1_robot.html#a189c20ccb4189f21d2916744a72acc12" title="This attribute is true if the robot has a mobile base.">se3Enabled</a>; 
+<a name="l00120"></a><a class="code" href="class_kautham_1_1_robot.html#a3b72ab10083836784ec73367abf9220f">00120</a>       <span class="keywordtype">bool</span>              <a class="code" href="class_kautham_1_1_robot.html#a3b72ab10083836784ec73367abf9220f" title="Flag that shows if the Robot is complete or still is under construction.">armed</a>;
+<a name="l00121"></a><a class="code" href="class_kautham_1_1_robot.html#a91aca73ee6b0d0b00854af203b3520c1">00121</a>       <a class="code" href="class_kautham_1_1_rob_conf.html">RobConf</a>           <a class="code" href="class_kautham_1_1_robot.html#a91aca73ee6b0d0b00854af203b3520c1" title="This attribute is the Home configuration of the robot.">_homeConf</a>;     
+<a name="l00122"></a><a class="code" href="class_kautham_1_1_robot.html#ac676d98f67c609196bb3533d9ca475f8">00122</a>       <a class="code" href="class_kautham_1_1_rob_conf.html">RobConf</a>           <a class="code" href="class_kautham_1_1_robot.html#ac676d98f67c609196bb3533d9ca475f8" title="This attribute is the current configuration of the robot.">_currentConf</a>;  
 <a name="l00123"></a>00123 
-<a name="l00124"></a>00124   <span class="keyword">public</span>:
-<a name="l00125"></a>00125 
-<a name="l00126"></a>00126     <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>(<span class="keywordtype">string</span> robFile, KthReal scale, LIBUSED lib = IVPQP); 
-<a name="l00127"></a>00127 
-<a name="l00128"></a><a class="code" href="class_kautham_1_1_robot.html#acc42dc0f92cc82bc9b7cba2997e327bf">00128</a>     <span class="keyword">inline</span> <span class="keywordtype">string</span> <a class="code" href="class_kautham_1_1_robot.html#acc42dc0f92cc82bc9b7cba2997e327bf" title="Returns the robot name.">getName</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> name;} 
-<a name="l00129"></a>00129 
-<a name="l00130"></a><a class="code" href="class_kautham_1_1_robot.html#a295f54d73be2b96bd54e82a16c528c52">00130</a>     <span class="keyword">inline</span> <a class="code" href="class_kautham_1_1_rob_conf.html">RobConf</a>* <a class="code" href="class_kautham_1_1_robot.html#a295f54d73be2b96bd54e82a16c528c52" title="Returns the current RobConf used to represent the SE3 position and Rn configuration.">getCurrentPos</a>(){<span class="keywordflow">return</span> &amp;_currentConf;} 
-<a name="l00131"></a>00131 
-<a name="l00132"></a><a class="code" href="class_kautham_1_1_robot.html#a516f44c0f6f7e2330a41c27bf23d58fb">00132</a>     <span class="keyword">inline</span> <a class="code" href="class_kautham_1_1_rob_conf.html">RobConf</a>* <a class="code" href="class_kautham_1_1_robot.html#a516f44c0f6f7e2330a41c27bf23d58fb" title="Returns the Home robot configuration.">getHomePos</a>(){ <span class="keywordflow">return</span> &amp;_homeConf;} 
-<a name="l00133"></a>00133 
-<a name="l00134"></a><a class="code" href="class_kautham_1_1_robot.html#a57612aa6bf038d2e7eb8582ed41aef53">00134</a>     <span class="keyword">inline</span> LIBUSED <a class="code" href="class_kautham_1_1_robot.html#a57612aa6bf038d2e7eb8582ed41aef53" title="Returns the type of libraries used to build the models.">whatLibs</a>(){<span class="keywordflow">return</span> libs;}
-<a name="l00135"></a>00135 
-<a name="l00136"></a><a class="code" href="class_kautham_1_1_robot.html#ab9b9de9bc40cb1c86d6b738cc19765fa">00136</a>     <span class="keyword">inline</span> KthReal* <a class="code" href="class_kautham_1_1_robot.html#ab9b9de9bc40cb1c86d6b738cc19765fa" title="Returns the limits of the robot (needed for mobile bases).">getLimits</a>(<span class="keywordtype">int</span> member){<span class="keywordflow">return</span> _spatialLimits[member];} 
-<a name="l00137"></a>00137 
-<a name="l00138"></a><a class="code" href="class_kautham_1_1_robot.html#aaa1673d40c4819368d477fb7a134bb1b">00138</a>     <span class="keyword">inline</span> ROBOTTYPE <a class="code" href="class_kautham_1_1_robot.html#aaa1673d40c4819368d477fb7a134bb1b" title="Returns the robot type.">getRobotType</a>(){<span class="keywordflow">return</span> robType;} 
-<a name="l00139"></a>00139 
-<a name="l00140"></a><a class="code" href="class_kautham_1_1_robot.html#ad0c14dca58e4e7856a91155a570ddff0">00140</a>     <span class="keyword">inline</span> KthReal <a class="code" href="class_kautham_1_1_robot.html#ad0c14dca58e4e7856a91155a570ddff0" title="Returns the scale.">getScale</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> scale;} 
-<a name="l00141"></a>00141 
-<a name="l00142"></a><a class="code" href="class_kautham_1_1_robot.html#a145f6b4bf0fb304058a175bca36d90a3">00142</a>     <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="class_kautham_1_1_robot.html#a145f6b4bf0fb304058a175bca36d90a3" title="Returns the number of links that compose the trunk of the kinematic tree.">getTrunk</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> nTrunk;} 
-<a name="l00143"></a>00143 
-<a name="l00144"></a><a class="code" href="class_kautham_1_1_robot.html#a7870180b770c79653540e70f40c1ec56">00144</a>     <span class="keyword">inline</span> DHAPPROACH <a class="code" href="class_kautham_1_1_robot.html#a7870180b770c79653540e70f40c1ec56" title="Returns the typs of D-H parameters used.">getDHApproach</a>(){<span class="keywordflow">return</span> dhApproach;} 
-<a name="l00145"></a>00145 
-<a name="l00146"></a><a class="code" href="class_kautham_1_1_robot.html#ab756b68f32b30cdaa48c729ce2e6b2fe">00146</a>     <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="class_kautham_1_1_robot.html#ab756b68f32b30cdaa48c729ce2e6b2fe" title="Returns the number of joints of the robot (nlinks-1).">getNumJoints</a>(){<span class="keywordflow">return</span> ((<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>)links.size()) - 1;}
-<a name="l00147"></a>00147 
-<a name="l00148"></a><a class="code" href="class_kautham_1_1_robot.html#ac73631e6c6af8895142796572bffd9cd">00148</a>     <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="class_kautham_1_1_robot.html#ac73631e6c6af8895142796572bffd9cd" title="Returns the number of links of the robot.">getNumLinks</a>(){<span class="keywordflow">return</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>)links.size();} 
-<a name="l00149"></a>00149 
-<a name="l00150"></a><a class="code" href="class_kautham_1_1_robot.html#a69ef4965c4a0e40d7f10343c9735f22a">00150</a>     <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="class_kautham_1_1_robot.html#a69ef4965c4a0e40d7f10343c9735f22a" title="retruns wether the robot has a mobile base">isSE3Enabled</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> se3Enabled;} 
-<a name="l00151"></a>00151 
-<a name="l00152"></a><a class="code" href="class_kautham_1_1_robot.html#aea44fd0ddc1ee29513258544e360080f">00152</a>     <span class="keyword">inline</span> <span class="keywordtype">string</span> <a class="code" href="class_kautham_1_1_robot.html#aea44fd0ddc1ee29513258544e360080f" title="Returns the string containing the control names, separated by the veritcal line character.">getControlsName</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> controlsName;} 
-<a name="l00153"></a>00153 
-<a name="l00154"></a><a class="code" href="class_kautham_1_1_robot.html#af082214525dbbbdedf184d8d45e8865a">00154</a>     <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="class_kautham_1_1_robot.html#af082214525dbbbdedf184d8d45e8865a" title="Retruns the number of controls.">getNumControls</a>(){<span class="keywordflow">if</span>( armed ) <span class="keywordflow">return</span> numControls; <span class="keywordflow">return</span> -1;} 
-<a name="l00155"></a>00155 
-<a name="l00156"></a><a class="code" href="class_kautham_1_1_robot.html#ad98b91607d14102c1a26f1b630527166">00156</a>     <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="class_kautham_1_1_robot.html#ad98b91607d14102c1a26f1b630527166" title="Retruns the number of controls that are copupled with another robot.">getNumCoupledControls</a>(){<span class="keywordflow">if</span>( armed ) <span class="keywordflow">return</span> numCoupledControls; <span class="keywordflow">return</span> -1;} 
-<a name="l00157"></a>00157 
-<a name="l00158"></a>00158     <span class="keyword">inline</span> mt::Transform&amp; getLastLinkTransform(){ <span class="keywordflow">return</span>
-<a name="l00159"></a>00159                                     *(((<a class="code" href="class_kautham_1_1_link.html" title="This class is definition of Link part in cinematic chain robot.">Link</a>*)links.at(links.size()-1))-&gt;getTransformation());}
+<a name="l00124"></a>00124 
+<a name="l00125"></a>00125   <span class="keyword">public</span>:
+<a name="l00126"></a>00126 
+<a name="l00127"></a>00127     <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>(<span class="keywordtype">string</span> robFile, KthReal scale, LIBUSED lib = IVPQP); 
+<a name="l00128"></a>00128 
+<a name="l00129"></a><a class="code" href="class_kautham_1_1_robot.html#ad39d31691787091dd9e12ff44eb8529a">00129</a>     <span class="keyword">inline</span> KthReal** <a class="code" href="class_kautham_1_1_robot.html#ad39d31691787091dd9e12ff44eb8529a" title="Returns the mapMatrix.">getMapMatrix</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> mapMatrix;} 
+<a name="l00130"></a>00130 
+<a name="l00131"></a><a class="code" href="class_kautham_1_1_robot.html#a0cd0e8974f4a2fbd2f64951158e6ee2d">00131</a>     <span class="keyword">inline</span> KthReal* <a class="code" href="class_kautham_1_1_robot.html#a0cd0e8974f4a2fbd2f64951158e6ee2d" title="Returns the offMatrix.">getOffMatrix</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> offMatrix;} 
+<a name="l00132"></a>00132 
+<a name="l00133"></a><a class="code" href="class_kautham_1_1_robot.html#acc42dc0f92cc82bc9b7cba2997e327bf">00133</a>     <span class="keyword">inline</span> <span class="keywordtype">string</span> <a class="code" href="class_kautham_1_1_robot.html#acc42dc0f92cc82bc9b7cba2997e327bf" title="Returns the robot name.">getName</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> name;} 
+<a name="l00134"></a>00134 
+<a name="l00135"></a><a class="code" href="class_kautham_1_1_robot.html#a295f54d73be2b96bd54e82a16c528c52">00135</a>     <span class="keyword">inline</span> <a class="code" href="class_kautham_1_1_rob_conf.html">RobConf</a>* <a class="code" href="class_kautham_1_1_robot.html#a295f54d73be2b96bd54e82a16c528c52" title="Returns the current RobConf used to represent the SE3 position and Rn configuration.">getCurrentPos</a>(){<span class="keywordflow">return</span> &amp;_currentConf;} 
+<a name="l00136"></a>00136 
+<a name="l00137"></a><a class="code" href="class_kautham_1_1_robot.html#a516f44c0f6f7e2330a41c27bf23d58fb">00137</a>     <span class="keyword">inline</span> <a class="code" href="class_kautham_1_1_rob_conf.html">RobConf</a>* <a class="code" href="class_kautham_1_1_robot.html#a516f44c0f6f7e2330a41c27bf23d58fb" title="Returns the Home robot configuration.">getHomePos</a>(){ <span class="keywordflow">return</span> &amp;_homeConf;} 
+<a name="l00138"></a>00138 
+<a name="l00139"></a><a class="code" href="class_kautham_1_1_robot.html#a57612aa6bf038d2e7eb8582ed41aef53">00139</a>     <span class="keyword">inline</span> LIBUSED <a class="code" href="class_kautham_1_1_robot.html#a57612aa6bf038d2e7eb8582ed41aef53" title="Returns the type of libraries used to build the models.">whatLibs</a>(){<span class="keywordflow">return</span> libs;}
+<a name="l00140"></a>00140 
+<a name="l00141"></a><a class="code" href="class_kautham_1_1_robot.html#ab9b9de9bc40cb1c86d6b738cc19765fa">00141</a>     <span class="keyword">inline</span> KthReal* <a class="code" href="class_kautham_1_1_robot.html#ab9b9de9bc40cb1c86d6b738cc19765fa" title="Returns the limits of the robot (needed for mobile bases).">getLimits</a>(<span class="keywordtype">int</span> member){<span class="keywordflow">return</span> _spatialLimits[member];} 
+<a name="l00142"></a>00142 
+<a name="l00143"></a><a class="code" href="class_kautham_1_1_robot.html#aaa1673d40c4819368d477fb7a134bb1b">00143</a>     <span class="keyword">inline</span> ROBOTTYPE <a class="code" href="class_kautham_1_1_robot.html#aaa1673d40c4819368d477fb7a134bb1b" title="Returns the robot type.">getRobotType</a>(){<span class="keywordflow">return</span> robType;} 
+<a name="l00144"></a>00144 
+<a name="l00145"></a><a class="code" href="class_kautham_1_1_robot.html#ad0c14dca58e4e7856a91155a570ddff0">00145</a>     <span class="keyword">inline</span> KthReal <a class="code" href="class_kautham_1_1_robot.html#ad0c14dca58e4e7856a91155a570ddff0" title="Returns the scale.">getScale</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> scale;} 
+<a name="l00146"></a>00146 
+<a name="l00147"></a><a class="code" href="class_kautham_1_1_robot.html#a145f6b4bf0fb304058a175bca36d90a3">00147</a>     <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="class_kautham_1_1_robot.html#a145f6b4bf0fb304058a175bca36d90a3" title="Returns the number of links that compose the trunk of the kinematic tree.">getTrunk</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> nTrunk;} 
+<a name="l00148"></a>00148 
+<a name="l00149"></a><a class="code" href="class_kautham_1_1_robot.html#a7870180b770c79653540e70f40c1ec56">00149</a>     <span class="keyword">inline</span> DHAPPROACH <a class="code" href="class_kautham_1_1_robot.html#a7870180b770c79653540e70f40c1ec56" title="Returns the typs of D-H parameters used.">getDHApproach</a>(){<span class="keywordflow">return</span> dhApproach;} 
+<a name="l00150"></a>00150 
+<a name="l00151"></a><a class="code" href="class_kautham_1_1_robot.html#ab756b68f32b30cdaa48c729ce2e6b2fe">00151</a>     <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="class_kautham_1_1_robot.html#ab756b68f32b30cdaa48c729ce2e6b2fe" title="Returns the number of joints of the robot (nlinks-1).">getNumJoints</a>(){<span class="keywordflow">return</span> ((<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>)links.size()) - 1;}
+<a name="l00152"></a>00152 
+<a name="l00153"></a><a class="code" href="class_kautham_1_1_robot.html#ac73631e6c6af8895142796572bffd9cd">00153</a>     <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="class_kautham_1_1_robot.html#ac73631e6c6af8895142796572bffd9cd" title="Returns the number of links of the robot.">getNumLinks</a>(){<span class="keywordflow">return</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>)links.size();} 
+<a name="l00154"></a>00154 
+<a name="l00155"></a><a class="code" href="class_kautham_1_1_robot.html#a69ef4965c4a0e40d7f10343c9735f22a">00155</a>     <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="class_kautham_1_1_robot.html#a69ef4965c4a0e40d7f10343c9735f22a" title="retruns wether the robot has a mobile base">isSE3Enabled</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> se3Enabled;} 
+<a name="l00156"></a>00156 
+<a name="l00157"></a><a class="code" href="class_kautham_1_1_robot.html#aea44fd0ddc1ee29513258544e360080f">00157</a>     <span class="keyword">inline</span> <span class="keywordtype">string</span> <a class="code" href="class_kautham_1_1_robot.html#aea44fd0ddc1ee29513258544e360080f" title="Returns the string containing the control names, separated by the veritcal line character.">getControlsName</a>()<span class="keyword"> const </span>{<span class="keywordflow">return</span> controlsName;} 
+<a name="l00158"></a>00158 
+<a name="l00159"></a><a class="code" href="class_kautham_1_1_robot.html#af082214525dbbbdedf184d8d45e8865a">00159</a>     <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="class_kautham_1_1_robot.html#af082214525dbbbdedf184d8d45e8865a" title="Retruns the number of controls.">getNumControls</a>(){<span class="keywordflow">if</span>( armed ) <span class="keywordflow">return</span> numControls; <span class="keywordflow">return</span> -1;} 
 <a name="l00160"></a>00160 
-<a name="l00161"></a><a class="code" href="class_kautham_1_1_robot.html#ac8a9a0596637fe69588aefab32951c56">00161</a>     <span class="keyword">inline</span> mt::Transform&amp; <a class="code" href="class_kautham_1_1_robot.html#ac8a9a0596637fe69588aefab32951c56" title="R.">getLinkTransform</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> numLink){
-<a name="l00162"></a>00162                                     <span class="keywordflow">if</span>(numLink&lt;0 || numLink&gt;=links.size()) numLink = links.size()-1;
-<a name="l00163"></a>00163                                     <span class="keywordflow">return</span>
-<a name="l00164"></a>00164                                         *(((<a class="code" href="class_kautham_1_1_link.html" title="This class is definition of Link part in cinematic chain robot.">Link</a>*)links.at(numLink))-&gt;getTransformation());} 
+<a name="l00161"></a><a class="code" href="class_kautham_1_1_robot.html#ad98b91607d14102c1a26f1b630527166">00161</a>     <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="class_kautham_1_1_robot.html#ad98b91607d14102c1a26f1b630527166" title="Retruns the number of controls that are copupled with another robot.">getNumCoupledControls</a>(){<span class="keywordflow">if</span>( armed ) <span class="keywordflow">return</span> numCoupledControls; <span class="keywordflow">return</span> -1;} 
+<a name="l00162"></a>00162 
+<a name="l00163"></a>00163     <span class="keyword">inline</span> mt::Transform&amp; getLastLinkTransform(){ <span class="keywordflow">return</span>
+<a name="l00164"></a>00164                                     *(((<a class="code" href="class_kautham_1_1_link.html" title="This class is definition of Link part in cinematic chain robot.">Link</a>*)links.at(links.size()-1))-&gt;getTransformation());}
 <a name="l00165"></a>00165 
-<a name="l00166"></a><a class="code" href="class_kautham_1_1_robot.html#ad021775ec6cf22d77abe3f5e8d1ecb42">00166</a>     <span class="keyword">inline</span> mt::Transform&amp; <a class="code" href="class_kautham_1_1_robot.html#ad021775ec6cf22d77abe3f5e8d1ecb42" title="Retruns the transform of the robot base wrt the world.">getHomeTransform</a>(){<span class="keywordflow">return</span> *(links[0]-&gt;getTransformation());} 
-<a name="l00167"></a>00167 
-<a name="l00168"></a><a class="code" href="class_kautham_1_1_robot.html#af9898451238428d5a04a8c1535104ef0">00168</a>     <span class="keyword">inline</span> vector&lt;RobConf&gt;&amp; <a class="code" href="class_kautham_1_1_robot.html#af9898451238428d5a04a8c1535104ef0" title="Returns the Proposed Solution as a vector of RobConf; for visualization purposes.">getProposedSolution</a>(){<span class="keywordflow">return</span> _proposedSolution;} 
-<a name="l00169"></a>00169 
-<a name="l00170"></a><a class="code" href="class_kautham_1_1_robot.html#ac0b7dc541bb68170400913e87b658a44">00170</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_kautham_1_1_robot.html#ac0b7dc541bb68170400913e87b658a44" title="Sets the robot name.">setName</a>(<span class="keywordtype">string</span> nam){name = nam;} 
-<a name="l00171"></a>00171 
-<a name="l00172"></a><a class="code" href="class_kautham_1_1_robot.html#acbfb50f7540b50e4f044efaaf9f62c22">00172</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_kautham_1_1_robot.html#acbfb50f7540b50e4f044efaaf9f62c22" title="Sets the robot type.">setRobotType</a>(ROBOTTYPE rob){robType = rob;} 
-<a name="l00173"></a>00173 
-<a name="l00174"></a><a class="code" href="class_kautham_1_1_robot.html#a17d3383a67af7d9718047d4769e651c2">00174</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_kautham_1_1_robot.html#a17d3383a67af7d9718047d4769e651c2" title="Sets the type of D-H parameters to be used.">setDHApproach</a>(DHAPPROACH dhA){dhApproach = dhA;} 
-<a name="l00175"></a>00175 
-<a name="l00176"></a>00176     <span class="keyword">inline</span> <span class="keywordtype">int</span> setNumCoupledControls(<span class="keywordtype">int</span> n){numCoupledControls=n;}
-<a name="l00177"></a>00177 
-<a name="l00178"></a>00178     <span class="keyword">inline</span> <span class="keywordtype">void</span> setLinkPathDrawn(<span class="keywordtype">int</span> n){_linkPathDrawn = n;}
-<a name="l00179"></a>00179 
+<a name="l00166"></a><a class="code" href="class_kautham_1_1_robot.html#ac8a9a0596637fe69588aefab32951c56">00166</a>     <span class="keyword">inline</span> mt::Transform&amp; <a class="code" href="class_kautham_1_1_robot.html#ac8a9a0596637fe69588aefab32951c56" title="R.">getLinkTransform</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> numLink){
+<a name="l00167"></a>00167                                     <span class="keywordflow">if</span>(numLink&lt;0 || numLink&gt;=links.size()) numLink = links.size()-1;
+<a name="l00168"></a>00168                                     <span class="keywordflow">return</span>
+<a name="l00169"></a>00169                                         *(((<a class="code" href="class_kautham_1_1_link.html" title="This class is definition of Link part in cinematic chain robot.">Link</a>*)links.at(numLink))-&gt;getTransformation());} 
+<a name="l00170"></a>00170 
+<a name="l00171"></a><a class="code" href="class_kautham_1_1_robot.html#ad021775ec6cf22d77abe3f5e8d1ecb42">00171</a>     <span class="keyword">inline</span> mt::Transform&amp; <a class="code" href="class_kautham_1_1_robot.html#ad021775ec6cf22d77abe3f5e8d1ecb42" title="Retruns the transform of the robot base wrt the world.">getHomeTransform</a>(){<span class="keywordflow">return</span> *(links[0]-&gt;getTransformation());} 
+<a name="l00172"></a>00172 
+<a name="l00173"></a><a class="code" href="class_kautham_1_1_robot.html#af9898451238428d5a04a8c1535104ef0">00173</a>     <span class="keyword">inline</span> vector&lt;RobConf&gt;&amp; <a class="code" href="class_kautham_1_1_robot.html#af9898451238428d5a04a8c1535104ef0" title="Returns the Proposed Solution as a vector of RobConf; for visualization purposes.">getProposedSolution</a>(){<span class="keywordflow">return</span> _proposedSolution;} 
+<a name="l00174"></a>00174 
+<a name="l00175"></a><a class="code" href="class_kautham_1_1_robot.html#ac0b7dc541bb68170400913e87b658a44">00175</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_kautham_1_1_robot.html#ac0b7dc541bb68170400913e87b658a44" title="Sets the robot name.">setName</a>(<span class="keywordtype">string</span> nam){name = nam;} 
+<a name="l00176"></a>00176 
+<a name="l00177"></a><a class="code" href="class_kautham_1_1_robot.html#acbfb50f7540b50e4f044efaaf9f62c22">00177</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_kautham_1_1_robot.html#acbfb50f7540b50e4f044efaaf9f62c22" title="Sets the robot type.">setRobotType</a>(ROBOTTYPE rob){robType = rob;} 
+<a name="l00178"></a>00178 
+<a name="l00179"></a><a class="code" href="class_kautham_1_1_robot.html#a17d3383a67af7d9718047d4769e651c2">00179</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_kautham_1_1_robot.html#a17d3383a67af7d9718047d4769e651c2" title="Sets the type of D-H parameters to be used.">setDHApproach</a>(DHAPPROACH dhA){dhApproach = dhA;} 
 <a name="l00180"></a>00180 
-<a name="l00182"></a>00182     KthReal* getWeightSE3();
-<a name="l00183"></a>00183 
-<a name="l00185"></a>00185     vector&lt;KthReal&gt;&amp; getWeightRn();
-<a name="l00186"></a>00186 
-<a name="l00188"></a>00188     <span class="keywordtype">bool</span> autocollision(<span class="keywordtype">int</span> t=0);
-<a name="l00189"></a>00189 
-<a name="l00191"></a>00191     <span class="keywordtype">bool</span> addLink(<span class="keywordtype">string</span> name, <span class="keywordtype">string</span> ivFile, KthReal theta, KthReal d, KthReal a,
-<a name="l00192"></a>00192                  KthReal alpha, <span class="keywordtype">bool</span> rotational, <span class="keywordtype">bool</span> movable, KthReal low,
-<a name="l00193"></a>00193                  KthReal hi, KthReal w, <span class="keywordtype">string</span> parentName, KthReal preTrans[] = NULL);
+<a name="l00181"></a>00181     <span class="keyword">inline</span> <span class="keywordtype">int</span> setNumCoupledControls(<span class="keywordtype">int</span> n){numCoupledControls=n;}
+<a name="l00182"></a>00182 
+<a name="l00183"></a>00183     <span class="keyword">inline</span> <span class="keywordtype">void</span> setLinkPathDrawn(<span class="keywordtype">int</span> n){_linkPathDrawn = n;}
+<a name="l00184"></a>00184 
+<a name="l00185"></a>00185 
+<a name="l00187"></a>00187     KthReal* getWeightSE3();
+<a name="l00188"></a>00188 
+<a name="l00190"></a>00190     vector&lt;KthReal&gt;&amp; getWeightRn();
+<a name="l00191"></a>00191 
+<a name="l00193"></a>00193     <span class="keywordtype">bool</span> autocollision(<span class="keywordtype">int</span> t=0);
 <a name="l00194"></a>00194 
-<a name="l00196"></a>00196     Link* getLink(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i);
-<a name="l00197"></a>00197 
-<a name="l00199"></a>00199     Link* getLinkByName( <span class="keywordtype">string</span> linkName );
-<a name="l00200"></a>00200 
-<a name="l00202"></a>00202     <span class="keywordtype">bool</span> Kinematics(RobConf *robq);
-<a name="l00203"></a>00203 
-<a name="l00205"></a>00205     <span class="keywordtype">bool</span> Kinematics(RobConf&amp; robq);
-<a name="l00206"></a>00206 
-<a name="l00208"></a>00208     <span class="keywordtype">bool</span> Kinematics(SE3Conf&amp; q) ;
-<a name="l00209"></a>00209 
-<a name="l00211"></a>00211     <span class="keywordtype">bool</span> Kinematics(RnConf&amp; q);
-<a name="l00212"></a>00212 
-<a name="l00214"></a>00214     <span class="keywordtype">bool</span> Kinematics(Conf *q);
-<a name="l00215"></a>00215 
-<a name="l00217"></a>00217     RobConf&amp; InverseKinematics(vector&lt;KthReal&gt; &amp;target);
-<a name="l00218"></a>00218 
-<a name="l00220"></a>00220     RobConf&amp; InverseKinematics(vector&lt;KthReal&gt; &amp;target, vector&lt;KthReal&gt; masterconf,
-<a name="l00221"></a>00221                                <span class="keywordtype">bool</span> maintainSameWrist);
+<a name="l00196"></a>00196     <span class="keywordtype">bool</span> addLink(<span class="keywordtype">string</span> name, <span class="keywordtype">string</span> ivFile, KthReal theta, KthReal d, KthReal a,
+<a name="l00197"></a>00197                  KthReal alpha, <span class="keywordtype">bool</span> rotational, <span class="keywordtype">bool</span> movable, KthReal low,
+<a name="l00198"></a>00198                  KthReal hi, KthReal w, <span class="keywordtype">string</span> parentName, KthReal preTrans[] = NULL);
+<a name="l00199"></a>00199 
+<a name="l00201"></a>00201     <span class="keywordtype">bool</span> addLink(<span class="keywordtype">string</span> name, <span class="keywordtype">string</span> ivFile, <span class="keywordtype">string</span> collision_ivFile, KthReal scale,
+<a name="l00202"></a>00202                     Unit3 axis, <span class="keywordtype">bool</span> rotational, <span class="keywordtype">bool</span> movable,
+<a name="l00203"></a>00203                     KthReal low, KthReal hi, <span class="keywordtype">string</span> parentName, KthReal preTrans[], <a class="code" href="classode__element.html">ode_element</a> ode);
+<a name="l00204"></a>00204 
+<a name="l00206"></a>00206     Link* getLink(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i);
+<a name="l00207"></a>00207 
+<a name="l00209"></a>00209     Link* getLinkByName( <span class="keywordtype">string</span> linkName );
+<a name="l00210"></a>00210 
+<a name="l00212"></a>00212     <span class="keywordtype">bool</span> Kinematics(RobConf *robq);
+<a name="l00213"></a>00213 
+<a name="l00215"></a>00215     <span class="keywordtype">bool</span> Kinematics(RobConf&amp; robq);
+<a name="l00216"></a>00216 
+<a name="l00218"></a>00218     <span class="keywordtype">bool</span> Kinematics(SE3Conf&amp; q) ;
+<a name="l00219"></a>00219 
+<a name="l00221"></a>00221     <span class="keywordtype">bool</span> Kinematics(RnConf&amp; q);
 <a name="l00222"></a>00222 
-<a name="l00224"></a>00224     <span class="keywordtype">bool</span> setInverseKinematic(INVKINECLASSES type);
+<a name="l00224"></a>00224     <span class="keywordtype">bool</span> Kinematics(Conf *q);
 <a name="l00225"></a>00225 
-<a name="l00227"></a>00227     <span class="keywordtype">bool</span> setInverseKinematicParameter(<span class="keywordtype">string</span> name, KthReal value);
+<a name="l00227"></a>00227     RobConf&amp; InverseKinematics(vector&lt;KthReal&gt; &amp;target);
 <a name="l00228"></a>00228 
-<a name="l00230"></a><a class="code" href="class_kautham_1_1_robot.html#a9bd1d28f0807b53fb6f326b40bef1d72">00230</a>     <a class="code" href="class_kautham_1_1_inverse_kinematic.html">InverseKinematic</a>* <a class="code" href="class_kautham_1_1_robot.html#a9bd1d28f0807b53fb6f326b40bef1d72" title="Returns the inverse kinematics used.">getIkine</a>(){<span class="keywordflow">return</span> _ikine;}
-<a name="l00231"></a>00231 
-<a name="l00233"></a>00233     <span class="keywordtype">bool</span> setConstrainedKinematic(CONSTRAINEDKINEMATICS type);
-<a name="l00234"></a>00234 
-<a name="l00236"></a>00236     <span class="keywordtype">bool</span> setConstrainedKinematicParameter(<span class="keywordtype">string</span> name, KthReal value);
-<a name="l00237"></a>00237 
-<a name="l00239"></a><a class="code" href="class_kautham_1_1_robot.html#a1b13714207affeaf798f5dc366421544">00239</a>     <a class="code" href="class_kautham_1_1_constrained_kinematic.html">ConstrainedKinematic</a>* <a class="code" href="class_kautham_1_1_robot.html#a1b13714207affeaf798f5dc366421544" title="Returns the constrained kinematics used.">getCkine</a>(){<span class="keywordflow">return</span> _constrainKin;}
-<a name="l00240"></a>00240 
-<a name="l00242"></a>00242     <a class="code" href="class_kautham_1_1_rob_conf.html">RobConf</a>&amp; ConstrainedKinematics(vector&lt;KthReal&gt; &amp;target);
-<a name="l00243"></a>00243 
-<a name="l00245"></a>00245     <span class="keywordtype">void</span> setHomePos(<a class="code" href="class_kautham_1_1_conf.html">Conf</a>* qh);
-<a name="l00246"></a>00246 
-<a name="l00248"></a>00248     <span class="keywordtype">bool</span> collisionCheck(<a class="code" href="class_kautham_1_1_obstacle.html">Obstacle</a> *obs);
-<a name="l00249"></a>00249 
-<a name="l00251"></a>00251     <span class="keywordtype">bool</span> collisionCheck(<a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a> *rob);
-<a name="l00252"></a>00252 
-<a name="l00254"></a>00254     KthReal distanceCheck(<a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a> *rob, <span class="keywordtype">bool</span> min = <span class="keyword">true</span>);
-<a name="l00255"></a>00255 
-<a name="l00257"></a>00257     KthReal distanceCheck(<a class="code" href="class_kautham_1_1_obstacle.html">Obstacle</a> *obs, <span class="keywordtype">bool</span> min = <span class="keyword">true</span>);
-<a name="l00258"></a>00258 
-<a name="l00260"></a>00260     <span class="keywordtype">bool</span> setLimits(<span class="keywordtype">int</span> member, KthReal min, KthReal max);
-<a name="l00261"></a>00261 
-<a name="l00263"></a>00263     SoSeparator* getModel();
-<a name="l00264"></a>00264 
-<a name="l00266"></a>00266     SoSeparator* getModelFromColl();
-<a name="l00267"></a>00267 
-<a name="l00269"></a>00269     <span class="keywordtype">void</span> control2Pose(vector&lt;KthReal&gt; &amp;values);
-<a name="l00270"></a>00270 
-<a name="l00272"></a>00272     <span class="keywordtype">void</span> control2Parameters(vector&lt;KthReal&gt; &amp;control, vector&lt;KthReal&gt; &amp;parameters);
-<a name="l00273"></a>00273 
-<a name="l00275"></a>00275     <span class="keywordtype">void</span> parameter2Pose(vector&lt;KthReal&gt; &amp;values);
-<a name="l00276"></a>00276 
-<a name="l00278"></a>00278     <a class="code" href="class_kautham_1_1_conf.html">Conf</a>&amp; parameter2Conf(vector&lt;KthReal&gt; &amp;values, CONFIGTYPE type);
-<a name="l00279"></a>00279 
-<a name="l00281"></a><a class="code" href="class_kautham_1_1_robot.html#ae8ffe41d3e3c11563802072cdd2262b0">00281</a>     <a class="code" href="class_kautham_1_1_rob_weight.html">RobWeight</a>* <a class="code" href="class_kautham_1_1_robot.html#ae8ffe41d3e3c11563802072cdd2262b0" title="Retunrs the weights of the robot used in the computation of the distances.">getRobWeight</a>(){<span class="keywordflow">return</span> _weights;}
-<a name="l00282"></a>00282 
-<a name="l00284"></a>00284     <span class="keywordtype">bool</span> setControlItem(<span class="keywordtype">string</span> control, <span class="keywordtype">string</span> dof, KthReal value);
-<a name="l00285"></a>00285 
-<a name="l00287"></a>00287     <span class="keywordtype">string</span> getDOFNames();
-<a name="l00288"></a>00288 
-<a name="l00290"></a>00290     <span class="keywordtype">bool</span> setProposedSolution(vector&lt;RobConf*&gt;&amp; path);
-<a name="l00291"></a>00291 
-<a name="l00293"></a>00293     <span class="keywordtype">bool</span> cleanProposedSolution();
-<a name="l00294"></a>00294 
-<a name="l00296"></a>00296     <span class="keywordtype">bool</span> setPathVisibility(<span class="keywordtype">bool</span> visible);
-<a name="l00297"></a>00297 
-<a name="l00299"></a>00299     <span class="keywordtype">bool</span> attachObject(<a class="code" href="class_kautham_1_1_obstacle.html">Obstacle</a>* obs, <span class="keywordtype">string</span> linkName );
-<a name="l00300"></a>00300 
-<a name="l00302"></a>00302     <span class="keywordtype">void</span> moveAttachedObj();
-<a name="l00303"></a>00303 
-<a name="l00305"></a>00305     <span class="keywordtype">bool</span> detachObject( <span class="keywordtype">string</span> linkName );
-<a name="l00306"></a>00306 
-<a name="l00308"></a>00308     KthReal maxDHParameter();
-<a name="l00309"></a>00309 
-<a name="l00310"></a>00310   <span class="keyword">private</span>:
-<a name="l00312"></a>00312     <span class="keywordtype">void</span> updateRobot();
+<a name="l00230"></a>00230     RobConf&amp; InverseKinematics(vector&lt;KthReal&gt; &amp;target, vector&lt;KthReal&gt; masterconf,
+<a name="l00231"></a>00231                                <span class="keywordtype">bool</span> maintainSameWrist);
+<a name="l00232"></a>00232 
+<a name="l00234"></a>00234     <span class="keywordtype">bool</span> setInverseKinematic(INVKINECLASSES type);
+<a name="l00235"></a>00235 
+<a name="l00237"></a>00237     <span class="keywordtype">bool</span> setInverseKinematicParameter(<span class="keywordtype">string</span> name, KthReal value);
+<a name="l00238"></a>00238 
+<a name="l00240"></a><a class="code" href="class_kautham_1_1_robot.html#a9bd1d28f0807b53fb6f326b40bef1d72">00240</a>     <a class="code" href="class_kautham_1_1_inverse_kinematic.html">InverseKinematic</a>* <a class="code" href="class_kautham_1_1_robot.html#a9bd1d28f0807b53fb6f326b40bef1d72" title="Returns the inverse kinematics used.">getIkine</a>(){<span class="keywordflow">return</span> _ikine;}
+<a name="l00241"></a>00241 
+<a name="l00243"></a>00243     <span class="keywordtype">bool</span> setConstrainedKinematic(CONSTRAINEDKINEMATICS type);
+<a name="l00244"></a>00244 
+<a name="l00246"></a>00246     <span class="keywordtype">bool</span> setConstrainedKinematicParameter(<span class="keywordtype">string</span> name, KthReal value);
+<a name="l00247"></a>00247 
+<a name="l00249"></a><a class="code" href="class_kautham_1_1_robot.html#a1b13714207affeaf798f5dc366421544">00249</a>     <a class="code" href="class_kautham_1_1_constrained_kinematic.html">ConstrainedKinematic</a>* <a class="code" href="class_kautham_1_1_robot.html#a1b13714207affeaf798f5dc366421544" title="Returns the constrained kinematics used.">getCkine</a>(){<span class="keywordflow">return</span> _constrainKin;}
+<a name="l00250"></a>00250 
+<a name="l00252"></a>00252     <a class="code" href="class_kautham_1_1_rob_conf.html">RobConf</a>&amp; ConstrainedKinematics(vector&lt;KthReal&gt; &amp;target);
+<a name="l00253"></a>00253 
+<a name="l00255"></a>00255     <span class="keywordtype">void</span> setHomePos(<a class="code" href="class_kautham_1_1_conf.html">Conf</a>* qh);
+<a name="l00256"></a>00256 
+<a name="l00258"></a>00258     <span class="keywordtype">bool</span> collisionCheck(<a class="code" href="class_kautham_1_1_obstacle.html">Obstacle</a> *obs);
+<a name="l00259"></a>00259 
+<a name="l00261"></a>00261     <span class="keywordtype">bool</span> collisionCheck(<a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a> *rob);
+<a name="l00262"></a>00262 
+<a name="l00264"></a>00264     KthReal distanceCheck(<a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a> *rob, <span class="keywordtype">bool</span> min = <span class="keyword">true</span>);
+<a name="l00265"></a>00265 
+<a name="l00267"></a>00267     KthReal distanceCheck(<a class="code" href="class_kautham_1_1_obstacle.html">Obstacle</a> *obs, <span class="keywordtype">bool</span> min = <span class="keyword">true</span>);
+<a name="l00268"></a>00268 
+<a name="l00270"></a>00270     <span class="keywordtype">bool</span> setLimits(<span class="keywordtype">int</span> member, KthReal min, KthReal max);
+<a name="l00271"></a>00271 
+<a name="l00273"></a>00273     SoSeparator* getModel();
+<a name="l00274"></a>00274 
+<a name="l00276"></a>00276     SoSeparator* getCollisionModel();
+<a name="l00277"></a>00277 
+<a name="l00279"></a>00279     SoSeparator* getModelFromColl();
+<a name="l00280"></a>00280 
+<a name="l00282"></a>00282     <span class="keywordtype">bool</span> control2Pose(vector&lt;KthReal&gt; &amp;values);
+<a name="l00283"></a>00283 
+<a name="l00285"></a>00285     <span class="keywordtype">bool</span> control2Parameters(vector&lt;KthReal&gt; &amp;control, vector&lt;KthReal&gt; &amp;parameters);
+<a name="l00286"></a>00286 
+<a name="l00288"></a>00288     <span class="keywordtype">void</span> parameter2Pose(vector&lt;KthReal&gt; &amp;values);
+<a name="l00289"></a>00289 
+<a name="l00291"></a>00291     <a class="code" href="class_kautham_1_1_conf.html">Conf</a>&amp; parameter2Conf(vector&lt;KthReal&gt; &amp;values, CONFIGTYPE type);
+<a name="l00292"></a>00292 
+<a name="l00294"></a><a class="code" href="class_kautham_1_1_robot.html#ae8ffe41d3e3c11563802072cdd2262b0">00294</a>     <a class="code" href="class_kautham_1_1_rob_weight.html">RobWeight</a>* <a class="code" href="class_kautham_1_1_robot.html#ae8ffe41d3e3c11563802072cdd2262b0" title="Retunrs the weights of the robot used in the computation of the distances.">getRobWeight</a>(){<span class="keywordflow">return</span> _weights;}
+<a name="l00295"></a>00295 
+<a name="l00297"></a>00297     <span class="keywordtype">bool</span> setControlItem(<span class="keywordtype">string</span> control, <span class="keywordtype">string</span> dof, KthReal value);
+<a name="l00298"></a>00298 
+<a name="l00300"></a>00300     <span class="keywordtype">string</span> getDOFNames();
+<a name="l00301"></a>00301 
+<a name="l00303"></a>00303     <span class="keywordtype">bool</span> setProposedSolution(vector&lt;RobConf*&gt;&amp; path);
+<a name="l00304"></a>00304 
+<a name="l00306"></a>00306     <span class="keywordtype">bool</span> cleanProposedSolution();
+<a name="l00307"></a>00307 
+<a name="l00309"></a>00309     <span class="keywordtype">bool</span> setPathVisibility(<span class="keywordtype">bool</span> visible);
+<a name="l00310"></a>00310 
+<a name="l00312"></a>00312     <span class="keywordtype">bool</span> attachObject(<a class="code" href="class_kautham_1_1_obstacle.html">Obstacle</a>* obs, <span class="keywordtype">string</span> linkName );
 <a name="l00313"></a>00313 
-<a name="l00315"></a>00315     <span class="keywordtype">void</span> recalculateHomeLimits();
+<a name="l00315"></a>00315     <span class="keywordtype">void</span> moveAttachedObj();
 <a name="l00316"></a>00316 
-<a name="l00318"></a>00318     vector&lt;KthReal&gt;  deNormalizeSE3(vector&lt;KthReal&gt; &amp;values);
+<a name="l00318"></a>00318     <span class="keywordtype">bool</span> detachObject( <span class="keywordtype">string</span> linkName );
 <a name="l00319"></a>00319 
-<a name="l00321"></a>00321     <span class="keywordtype">float</span> diagLimits();
-<a name="l00322"></a>00322   };
-<a name="l00323"></a>00323 
-<a name="l00325"></a>00325 }
+<a name="l00321"></a>00321     KthReal maxDHParameter();
+<a name="l00322"></a>00322 
+<a name="l00323"></a>00323   <span class="keyword">private</span>:
+<a name="l00325"></a>00325     <span class="keywordtype">void</span> updateRobot();
 <a name="l00326"></a>00326 
-<a name="l00327"></a>00327 <span class="preprocessor">#endif  //_ROBOT_H</span>
-<a name="l00328"></a>00328 <span class="preprocessor"></span>
+<a name="l00328"></a>00328     <span class="keywordtype">void</span> recalculateHomeLimits();
+<a name="l00329"></a>00329 
+<a name="l00331"></a>00331     vector&lt;KthReal&gt;  deNormalizeSE3(vector&lt;KthReal&gt; &amp;values);
+<a name="l00332"></a>00332 
+<a name="l00334"></a>00334     <span class="keywordtype">float</span> diagLimits();
+<a name="l00335"></a>00335   };
+<a name="l00336"></a>00336 
+<a name="l00338"></a>00338 }
+<a name="l00339"></a>00339 
+<a name="l00340"></a>00340 <span class="preprocessor">#endif  //_ROBOT_H</span>
+<a name="l00341"></a>00341 <span class="preprocessor"></span>
 </pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -375,7 +386,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Feb 16 2014 19:38:04 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 24 2014 09:15:55 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

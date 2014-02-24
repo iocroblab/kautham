@@ -155,74 +155,75 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00108"></a>00108 
 <a name="l00109"></a>00109         <span class="keyword">enum</span> DHAPPROACH{
 <a name="l00110"></a>00110                 DHSTANDARD,
-<a name="l00111"></a>00111                 DHMODIFIED
-<a name="l00112"></a>00112   };
-<a name="l00113"></a>00113         
-<a name="l00114"></a>00114         <span class="keyword">enum</span> NEIGHSEARCHTYPE {
-<a name="l00115"></a>00115                 BRUTEFORCE,
-<a name="l00116"></a>00116                 ANNMETHOD,
-<a name="l00117"></a>00117         };
-<a name="l00118"></a>00118 
-<a name="l00119"></a>00119         <span class="keyword">enum</span> CONFIGTYPE {
-<a name="l00120"></a>00120                 SE2,
-<a name="l00121"></a>00121                 SE3,
-<a name="l00122"></a>00122                 Rn
-<a name="l00123"></a>00123         };
-<a name="l00124"></a>00124 
-<a name="l00125"></a>00125   <span class="keyword">enum</span> LIBUSED{
-<a name="l00126"></a>00126     INVENTOR,
-<a name="l00127"></a>00127     IVPQP,
-<a name="l00128"></a>00128     IVSOLID
-<a name="l00129"></a>00129   };
-<a name="l00130"></a>00130 
-<a name="l00131"></a>00131   <span class="keyword">enum</span> SPACETYPE{
-<a name="l00132"></a>00132     SAMPLEDSPACE,
-<a name="l00133"></a>00133     CONTROLSPACE,
-<a name="l00134"></a>00134     CONFIGSPACE
-<a name="l00135"></a>00135   };
-<a name="l00136"></a>00136 
-<a name="l00137"></a>00137   <span class="keyword">enum</span> PROBLEMSTATE{
-<a name="l00138"></a>00138           INITIAL,
-<a name="l00139"></a>00139           PROBLEMLOADED,
-<a name="l00140"></a>00140           CSPACECREATED,
-<a name="l00141"></a>00141           PRMCALCULATED
-<a name="l00142"></a>00142   };
-<a name="l00143"></a>00143 
-<a name="l00144"></a>00144   <span class="keyword">enum</span> CONSTRAINEDKINEMATICS{
-<a name="l00145"></a>00145     UNCONSTRAINED,
-<a name="l00146"></a>00146     BRONCHOSCOPY
-<a name="l00147"></a>00147   };
-<a name="l00148"></a>00148 
-<a name="l00151"></a><a class="code" href="namespace_kautham.html#aeca90b5d782bc2514792963bdeca1730">00151</a>   <span class="keyword">enum</span> <a class="code" href="namespace_kautham.html#aeca90b5d782bc2514792963bdeca1730">INVKINECLASSES</a>{
-<a name="l00152"></a>00152     UNIMPLEMENTED,
-<a name="l00153"></a>00153     RR2D,
-<a name="l00154"></a>00154     TX90,
-<a name="l00155"></a>00155     HAND,
-<a name="l00156"></a>00156     TX90HAND
-<a name="l00157"></a>00157   };
-<a name="l00158"></a>00158 
-<a name="l00159"></a>00159 <span class="preprocessor">#ifndef INFINITY</span>
-<a name="l00160"></a>00160 <span class="preprocessor"></span><span class="preprocessor">#define INFINITY 1.0e40</span>
-<a name="l00161"></a>00161 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00162"></a>00162 <span class="preprocessor"></span>
-<a name="l00163"></a>00163     <span class="keyword">typedef</span> std::map&lt;std::string, KthReal&gt; HASH_S_K;
-<a name="l00164"></a>00164     <span class="keyword">typedef</span> std::map&lt;std::string, std::string&gt; HASH_S_S;
-<a name="l00165"></a>00165 
-<a name="l00166"></a>00166         
-<a name="l00168"></a>00168 
-<a name="l00171"></a><a class="code" href="struct_kautham_1_1_d_a_t_a.html">00171</a>         <span class="keyword">struct </span><a class="code" href="struct_kautham_1_1_d_a_t_a.html" title="Structure that save the object position and orientation in the WSpace.">DATA</a>{
-<a name="l00172"></a>00172                 <a class="code" href="struct_kautham_1_1_d_a_t_a.html" title="Structure that save the object position and orientation in the WSpace.">DATA</a>(){
-<a name="l00173"></a>00173                         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=0;i&lt;3;i++)
-<a name="l00174"></a>00174                                 pos[i]=ori[i]= (KthReal)0.0;
-<a name="l00175"></a>00175                         ori[3]= (KthReal)0.0;
-<a name="l00176"></a>00176                 }
-<a name="l00177"></a>00177                 KthReal pos[3];
-<a name="l00178"></a>00178                 KthReal ori[4];
-<a name="l00179"></a>00179         };
-<a name="l00180"></a>00180 }
-<a name="l00181"></a>00181 
-<a name="l00182"></a>00182 <span class="preprocessor">#endif //_KAUTHAMDEFS_H</span>
-<a name="l00183"></a>00183 <span class="preprocessor"></span>
+<a name="l00111"></a>00111         DHMODIFIED,
+<a name="l00112"></a>00112         DHURDF
+<a name="l00113"></a>00113   };
+<a name="l00114"></a>00114         
+<a name="l00115"></a>00115         <span class="keyword">enum</span> NEIGHSEARCHTYPE {
+<a name="l00116"></a>00116                 BRUTEFORCE,
+<a name="l00117"></a>00117                 ANNMETHOD,
+<a name="l00118"></a>00118         };
+<a name="l00119"></a>00119 
+<a name="l00120"></a>00120         <span class="keyword">enum</span> CONFIGTYPE {
+<a name="l00121"></a>00121                 SE2,
+<a name="l00122"></a>00122                 SE3,
+<a name="l00123"></a>00123                 Rn
+<a name="l00124"></a>00124         };
+<a name="l00125"></a>00125 
+<a name="l00126"></a>00126   <span class="keyword">enum</span> LIBUSED{
+<a name="l00127"></a>00127     INVENTOR,
+<a name="l00128"></a>00128     IVPQP,
+<a name="l00129"></a>00129     IVSOLID
+<a name="l00130"></a>00130   };
+<a name="l00131"></a>00131 
+<a name="l00132"></a>00132   <span class="keyword">enum</span> SPACETYPE{
+<a name="l00133"></a>00133     SAMPLEDSPACE,
+<a name="l00134"></a>00134     CONTROLSPACE,
+<a name="l00135"></a>00135     CONFIGSPACE
+<a name="l00136"></a>00136   };
+<a name="l00137"></a>00137 
+<a name="l00138"></a>00138   <span class="keyword">enum</span> PROBLEMSTATE{
+<a name="l00139"></a>00139           INITIAL,
+<a name="l00140"></a>00140           PROBLEMLOADED,
+<a name="l00141"></a>00141           CSPACECREATED,
+<a name="l00142"></a>00142           PRMCALCULATED
+<a name="l00143"></a>00143   };
+<a name="l00144"></a>00144 
+<a name="l00145"></a>00145   <span class="keyword">enum</span> CONSTRAINEDKINEMATICS{
+<a name="l00146"></a>00146     UNCONSTRAINED,
+<a name="l00147"></a>00147     BRONCHOSCOPY
+<a name="l00148"></a>00148   };
+<a name="l00149"></a>00149 
+<a name="l00152"></a><a class="code" href="namespace_kautham.html#aeca90b5d782bc2514792963bdeca1730">00152</a>   <span class="keyword">enum</span> <a class="code" href="namespace_kautham.html#aeca90b5d782bc2514792963bdeca1730">INVKINECLASSES</a>{
+<a name="l00153"></a>00153     UNIMPLEMENTED,
+<a name="l00154"></a>00154     RR2D,
+<a name="l00155"></a>00155     TX90,
+<a name="l00156"></a>00156     HAND,
+<a name="l00157"></a>00157     TX90HAND
+<a name="l00158"></a>00158   };
+<a name="l00159"></a>00159 
+<a name="l00160"></a>00160 <span class="preprocessor">#ifndef INFINITY</span>
+<a name="l00161"></a>00161 <span class="preprocessor"></span><span class="preprocessor">#define INFINITY 1.0e40</span>
+<a name="l00162"></a>00162 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00163"></a>00163 <span class="preprocessor"></span>
+<a name="l00164"></a>00164     <span class="keyword">typedef</span> std::map&lt;std::string, KthReal&gt; HASH_S_K;
+<a name="l00165"></a>00165     <span class="keyword">typedef</span> std::map&lt;std::string, std::string&gt; HASH_S_S;
+<a name="l00166"></a>00166 
+<a name="l00167"></a>00167         
+<a name="l00169"></a>00169 
+<a name="l00172"></a><a class="code" href="struct_kautham_1_1_d_a_t_a.html">00172</a>         <span class="keyword">struct </span><a class="code" href="struct_kautham_1_1_d_a_t_a.html" title="Structure that save the object position and orientation in the WSpace.">DATA</a>{
+<a name="l00173"></a>00173                 <a class="code" href="struct_kautham_1_1_d_a_t_a.html" title="Structure that save the object position and orientation in the WSpace.">DATA</a>(){
+<a name="l00174"></a>00174                         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=0;i&lt;3;i++)
+<a name="l00175"></a>00175                                 pos[i]=ori[i]= (KthReal)0.0;
+<a name="l00176"></a>00176                         ori[3]= (KthReal)0.0;
+<a name="l00177"></a>00177                 }
+<a name="l00178"></a>00178                 KthReal pos[3];
+<a name="l00179"></a>00179                 KthReal ori[4];
+<a name="l00180"></a>00180         };
+<a name="l00181"></a>00181 }
+<a name="l00182"></a>00182 
+<a name="l00183"></a>00183 <span class="preprocessor">#endif //_KAUTHAMDEFS_H</span>
+<a name="l00184"></a>00184 <span class="preprocessor"></span>
 </pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -241,7 +242,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Feb 16 2014 19:38:05 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 24 2014 09:15:55 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

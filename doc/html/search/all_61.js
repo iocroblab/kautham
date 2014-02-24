@@ -4,7 +4,7 @@ var searchData=
   ['aboutwidget',['AboutWidget',['../class_kautham_1_1_about_widget.html',1,'Kautham']]],
   ['absolutetransform',['absoluteTransform',['../class_kautham_1_1_link.html#a3d86e145ce03a455690313382f5c1f28',1,'Kautham::Link']]],
   ['add',['add',['../class_kautham_1_1_sample_set.html#ab6cc8f9088c3df99081f43b9a1ffd53d',1,'Kautham::SampleSet']]],
-  ['addlink',['addLink',['../class_kautham_1_1_robot.html#ac28b568412aedb5a2ad2978d7770a86c',1,'Kautham::Robot']]],
+  ['addlink',['addLink',['../class_kautham_1_1_robot.html#ac28b568412aedb5a2ad2978d7770a86c',1,'Kautham::Robot::addLink(string name, string ivFile, KthReal theta, KthReal d, KthReal a, KthReal alpha, bool rotational, bool movable, KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]=NULL)'],['../class_kautham_1_1_robot.html#a86415c8b638b8c0a686f0f0c22c60f6a',1,'Kautham::Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal scale, Unit3 axis, bool rotational, bool movable, KthReal low, KthReal hi, string parentName, KthReal preTrans[], ode_element ode)']]],
   ['addneigh',['addNeigh',['../class_kautham_1_1_sample.html#aaf3cd19a9bc4c27f5df76234d7493010',1,'Kautham::Sample']]],
   ['addneighdistance',['addNeighDistance',['../class_kautham_1_1_sample.html#adbe31c5cc274d7921568c33b6ab776b5',1,'Kautham::Sample']]],
   ['addneighordered',['addNeighOrdered',['../class_kautham_1_1_sample.html#afe3dd3e230164470745da5fcd697d39a',1,'Kautham::Sample']]],
@@ -20,5 +20,5 @@ var searchData=
   ['attachobstacle2robotlink',['attachObstacle2RobotLink',['../class_kautham_1_1_work_space.html#a7fd4e2fbdd307c5a6f1e2d137f31d824',1,'Kautham::WorkSpace']]],
   ['attobj',['attObj',['../struct_kautham_1_1att_obj.html',1,'Kautham']]],
   ['autocollision',['autocollision',['../class_kautham_1_1_robot.html#a160880ea1fb85a3d786a1d5622f66996',1,'Kautham::Robot']]],
-  ['axis',['Axis',['../class_axis.html',1,'']]]
+  ['axis',['Axis',['../class_axis.html',1,'Axis'],['../class_kautham_1_1_link.html#a036b90a66300cba80b28e53c676aaab0',1,'Kautham::Link::axis()']]]
 ];
