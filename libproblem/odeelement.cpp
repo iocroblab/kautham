@@ -1,14 +1,6 @@
 #include "odeelement.h"
 
 
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <stdlib.h>
-#include <mt/point3.h>
-#include <mt/rotation.h>
-#include <mt/transform.h>
-
 using namespace std;
 
 
@@ -34,6 +26,12 @@ ode_inertial::ode_inertial () {
 ode_dynamics::ode_dynamics () {
     friction = 0.;
     damping = 0.;
+};
+
+ode_contact_coefficients::ode_contact_coefficients() {
+    mu = 0.;
+    kp = 0.;
+    kd = 0.;
 };
 
 ode_limit::ode_limit () {
