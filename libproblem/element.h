@@ -46,7 +46,7 @@
 #define _ELEMENT_H
 
 #include <libkthutil/kauthamdefs.h>
-
+#include "odeelement.h"
 
 namespace Kautham {
 /** \defgroup libProblem Library libproblem
@@ -58,6 +58,10 @@ namespace Kautham {
  */
   class Element {
   public:
+
+      //! Used for dynamic simulation.
+      ode_element         ode;
+
     virtual void          setPosition(KthReal pos[3]) = 0;
 
     //! Sets the orientation. Remember that orientation is a quaternion
