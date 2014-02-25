@@ -122,8 +122,8 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a29e05b0350eda39dfcccb9a5d2aa96ba"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#ac28b568412aedb5a2ad2978d7770a86c">addLink</a> (string <a class="el" href="class_kautham_1_1_robot.html#a42957f06fbaa2748bc4b761a8e9703dd">name</a>, string ivFile, KthReal theta, KthReal d, KthReal a, KthReal alpha, bool rotational, bool movable, KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]=NULL)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Add link to the robot.  <a href="#ac28b568412aedb5a2ad2978d7770a86c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a86415c8b638b8c0a686f0f0c22c60f6a">addLink</a> (string <a class="el" href="class_kautham_1_1_robot.html#a42957f06fbaa2748bc4b761a8e9703dd">name</a>, string ivFile, string collision_ivFile, KthReal <a class="el" href="class_kautham_1_1_robot.html#a65f4333a0e253f791c96cb44bc58149c">scale</a>, Unit3 axis, bool rotational, bool movable, KthReal low, KthReal hi, string parentName, KthReal preTrans[], <a class="el" href="classode__element.html">ode_element</a> ode)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Add link to the robot.  <a href="#a86415c8b638b8c0a686f0f0c22c60f6a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a0dcfaa9e5fd520a6989d82f3d5d0ad5f">addLink</a> (string <a class="el" href="class_kautham_1_1_robot.html#a42957f06fbaa2748bc4b761a8e9703dd">name</a>, string ivFile, string collision_ivFile, KthReal <a class="el" href="class_kautham_1_1_robot.html#a65f4333a0e253f791c96cb44bc58149c">scale</a>, Unit3 axis, bool rotational, bool movable, KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], <a class="el" href="classode__element.html">ode_element</a> ode)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Add link to the robot.  <a href="#a0dcfaa9e5fd520a6989d82f3d5d0ad5f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a1df7ddeefe32da6df2cb1acbbd4fd7a6">attachObject</a> (<a class="el" href="class_kautham_1_1_obstacle.html">Obstacle</a> *obs, string linkName)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Attachs an object to a given link, usually the end effector.  <a href="#a1df7ddeefe32da6df2cb1acbbd4fd7a6"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a160880ea1fb85a3d786a1d5622f66996"></a><!-- doxytag: member="Kautham::Robot::autocollision" ref="a160880ea1fb85a3d786a1d5622f66996" args="(int t=0)" -->
@@ -562,7 +562,7 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<a class="anchor" id="a86415c8b638b8c0a686f0f0c22c60f6a"></a><!-- doxytag: member="Kautham::Robot::addLink" ref="a86415c8b638b8c0a686f0f0c22c60f6a" args="(string name, string ivFile, string collision_ivFile, KthReal scale, Unit3 axis, bool rotational, bool movable, KthReal low, KthReal hi, string parentName, KthReal preTrans[], ode_element ode)" -->
+<a class="anchor" id="a0dcfaa9e5fd520a6989d82f3d5d0ad5f"></a><!-- doxytag: member="Kautham::Robot::addLink" ref="a0dcfaa9e5fd520a6989d82f3d5d0ad5f" args="(string name, string ivFile, string collision_ivFile, KthReal scale, Unit3 axis, bool rotational, bool movable, KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], ode_element ode)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -619,6 +619,12 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
           <td></td>
           <td class="paramtype">KthReal&#160;</td>
           <td class="paramname"><em>hi</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">KthReal&#160;</td>
+          <td class="paramname"><em>w</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1081,7 +1087,7 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 24 2014 09:15:58 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 25 2014 11:41:31 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
