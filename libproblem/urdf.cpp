@@ -138,6 +138,7 @@ void urdf_limit::fill (xml_node *node) {
 urdf_link::urdf_link () {
     axis = mt::Unit3(1,0,0);
     is_base = false;
+    weight = 1.0;
 };
 
 void urdf_link::fill (xml_node *node) {
@@ -178,6 +179,9 @@ void urdf_link::fill (xml_node *node) {
         if (node->child("origin")) {
             tmpNode = node->child("origin");
             origin.fill(&tmpNode);
+        }
+        if (node->child("weight").attribute("value")) {
+            weight = node->child("weight").attribute("value").as_double();
         }
         parent = node->child("parent").attribute("link").value();
         if (node->child("axis")) {
@@ -307,4 +311,46 @@ void urdf_robot::print() {
         cout << "limit: lower=" << link[i].limit.lower << " upper=" << link[i].limit.upper << " effort="
              << link[i].limit.effort << " velocity=" << link[i].limit.velocity << endl;
     }
+};
+
+void urdf_obstacle::fill (xml_node *node) {
+    xml_node tmpNode;
+
+    visual.ivfile = node->child("visual").child("geometry").child("mesh").attribute("filename").value();
+    if (node->child("visual").child("geometry").child("mesh").attribute("scale")) {
+        visual.scale = node->child("visual").child("geometry").child("mesh").attribute("scale").as_double();
+    }
+    if (node->child("collision").child("geometry").child("mesh").attribute("filename")) {
+        collision.ivfile = node->child("collision").child("geometry").child("mesh").attribute("filename").value();
+        if (node->child("collision").child("geometry").child("mesh").attribute("scale")){
+            collision.scale = node->child("collision").child("geometry").child("mesh").attribute("scale").as_double();
+        }
+    } else {
+        collision.ivfile = visual.ivfile;
+        collision.scale = visual.scale;
+    }
+    if (node->child("collision").child("contact_coefficients")) {
+        tmpNode = node->child("collision").child("contact_coefficients");
+        contact_coefficients.fill(&tmpNode);
+    }
+    if (node->child("inertial")) {
+        xml_node tmpNode = node->child("inertial");
+        inertial.fill(&tmpNode);
+    }
+};
+
+void urdf_obstacle::print() {
+    cout << "obstacle: " << endl;
+    cout << "inertial:" << endl;
+    cout << "  origin: xyz=(" << inertial.origin.xyz[0] << ", " << inertial.origin.xyz[1]
+         << ", " << inertial.origin.xyz[2] << ") rpy=(" << inertial.origin.r << ", "
+         << inertial.origin.p << ", " << inertial.origin.y << ")" << endl;
+    cout << "  mass: " << inertial.mass << endl;
+    cout << "  inertia: ixx=" << inertial.inertia.ixx << " ixy=" << inertial.inertia.ixy
+         << " ixz=" << inertial.inertia.ixz << " iyy=" << inertial.inertia.iyy << " iyz="
+         << inertial.inertia.iyz << " izz=" << inertial.inertia.izz << endl;
+    cout << "visual: ivfile=" << visual.ivfile << " scale=" << visual.scale << endl;
+    cout << "collision: ivfile=" << collision.ivfile << " scale=" << collision.scale << endl;
+    cout << "contact coefficients: mu=" << contact_coefficients.mu << " kp="
+         << contact_coefficients.kp << " kd" << contact_coefficients.kd << endl;
 };

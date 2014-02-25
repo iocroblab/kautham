@@ -3,70 +3,93 @@
 
 using namespace std;
 
-class ode_origin {//class containing origin data
-public:
-    mt::Point3 xyz;//translation in mm, defaults to zero vector
-    double r;//roll angle around x axis in rad
-    double p;//pitch angle around y axis in rad
-    double y;//yaw angle around z axis in rad
-    mt::Transform transform;//transform
+/** \addtogroup libProblem
+ *  @{
+ */
 
-    ode_origin ();//class constructor
+//! Class containing origin data
+class ode_origin {
+public:
+    mt::Point3 xyz;//!< Translation in mm, defaults to zero vector
+    double r;//!< Roll angle around x axis in rad
+    double p;//!< Pitch angle around y axis in rad
+    double y;//!< Yaw angle around z axis in rad
+    mt::Transform transform;//!< Transform
+
+    ode_origin ();//!< Class constructor
 };
 
-class ode_inertia {//class containing inertia data
+//! Class containing inertia data
+class ode_inertia {
 public:
-    double ixx, ixy, ixz, iyy, iyz, izz;//above-diagonal elements of the matrix inertia in kg·m², defaults to zero
-    mt::Matrix3x3 matrix;//3x3 rotational inertia matrix, represented in the inertia frame, defaults to zero matrix
+    double ixx;//!< Above-diagonal element of the matrix inertia in kg·m², defaults to zero
+    double ixy;//!< Above-diagonal element of the matrix inertia in kg·m², defaults to zero
+    double ixz;//!< Above-diagonal element of the matrix inertia in kg·m², defaults to zero
+    double iyy;//!< Above-diagonal element of the matrix inertia in kg·m², defaults to zero
+    double iyz;//!< Above-diagonal element of the matrix inertia in kg·m², defaults to zero
+    double izz;//!< Above-diagonal element of the matrix inertia in kg·m², defaults to zero
+    mt::Matrix3x3 matrix;//!< 3x3 rotational inertia matrix, represented in the inertia frame, defaults to zero matrix
 
-    ode_inertia ();//class constructor
+    ode_inertia ();//!< Class constructor
 };
 
-class ode_inertial {//class containing the inertial properties of the link
+//! Class containing the inertial properties of the link
+class ode_inertial {
 public:
-    ode_origin origin;//pose of the inertial reference frame, relative to the link reference frame.
-    //The origin of the inertial reference frame needs to be at the center of gravity.
-    //The axes of the inertial reference frame do not need to be aligned with the principal axes of the inertia.
-    double mass;//mass in kg, defaults to zero
-    ode_inertia inertia;//inertia
+    //! Pose of the inertial reference frame, relative to the link reference frame.
+    /*! The origin of the inertial reference frame needs to be at the center of gravity.
+        The axes of the inertial reference frame do not need to be aligned with the principal axes of the inertia.
+    */
+    ode_origin origin;
+    double mass;//!< Mass in kg, defaults to zero
+    ode_inertia inertia;//!< Inertia
 
-    ode_inertial ();//class constructor
+    ode_inertial ();//!< Class constructor
 };
 
-class ode_dynamics {//class containing joint's dynamics data
+//! Class containing joint's dynamics data
+class ode_dynamics {
 public:
-    double friction;//physical static friction, defaults to zero
-    //For prismatic joints, in N and for revolving joints, in N·m
-    double damping;//physical damping value, defaults to zero
-    //For prismatic joints, in N·s/m and for revolving joints, N·m·s/rad
+    //! Physical static friction, defaults to zero
+    /*! For prismatic joints, in N and for revolving joints, in N·m
+    */
+    double friction;
+    //! Physical damping value, defaults to zero
+    /*! For prismatic joints, in N·s/m and for revolving joints, N·m·s/rad
+    */
+    double damping;
 
-    ode_dynamics ();//class constructor
+    ode_dynamics ();//!< class constructor
 };
 
-class ode_contact_coefficients {//class that defines how the links behave when they are in contact with one another.
-    //This is done with a subelement of the collision tag called contact_coefficients.
+//! Class that defines how the links behave when they are in contact with one another.
+class ode_contact_coefficients {
 public:
-    double mu;//friction coefficient, defaults to zero
-    double kp;//stiffness coefficient, defaults to zero
-    double kd;//dampening coefficient, defaults to zero
+    double mu;//!< Friction coefficient, defaults to zero
+    double kp;//!< Stiffness coefficient, defaults to zero
+    double kd;//!< Dampening coefficient, defaults to zero
 
-    ode_contact_coefficients ();//class constructor
+    ode_contact_coefficients ();//!< Class constructor
 };
 
-class ode_limit {//class containing the limits of the joint
+//! Class containing the limits of the joint
+class ode_limit {
 public:
-    double lower;//lower joint limit (rad for revolute joints, m for prismatic joints), defaults to zero
-    double upper;//upper joint limit (rad for revolute joints, m for prismatic joints), defaults to zero
-    double effort;//enforces the maximum joint effort (|applied effort| < |effort|), defaults to zero
-    double velocity;//enforces the maximum joint velocity, defaults to zero
+    double lower;//!< Lower joint limit (rad for revolute joints, m for prismatic joints), defaults to zero
+    double upper;//!< Upper joint limit (rad for revolute joints, m for prismatic joints), defaults to zero
+    double effort;//!< Enforces the maximum joint effort (|applied effort| < |effort|), defaults to zero
+    double velocity;//!< Enforces the maximum joint velocity, defaults to zero
 
-    ode_limit ();//class constructor
+    ode_limit ();//!< Class constructor
 };
 
+//! Class containing all data needed for dynamic simulation
 class ode_element {
 public:
-    ode_inertial inertial;//inertial propierties from the link
-    ode_dynamics dynamics;//dynamics of the joint
-    ode_contact_coefficients contact_coefficients;//contact coefficients of the link
-    ode_limit limit;//limits of the joint
+    ode_inertial inertial;//!< Inertial propierties from the link
+    ode_dynamics dynamics;//!< Dynamics of the joint
+    ode_contact_coefficients contact_coefficients;//!< Contact coefficients of the link
+    ode_limit limit;//!< Limits of the joint
 };
+
+/** @}   end of Doxygen module "libProblem" */
