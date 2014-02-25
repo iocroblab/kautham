@@ -119,3 +119,6 @@
 \form#118:$ \{ \hat\mathbf{r}, \hat\mathbf{s}_r, \hat\mathbf{t} \} $
 \form#119:$ \mathbf{S}(\mathbf{c}, r) $
 \form#120:$ d(\mathbf{p}, \mathbf{c}) = r $
+\form#121:$ ^{i-1}A_{i}=\left[ \begin{array}{cccc} R(axis,theta) [3x3] & d*axis [3,1] \\ 0 [1x3] & 1 \end{array} \right] $
+\form#122:$ axis $
+\form#123:$ ode $

@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['r',['r',['../classode__origin.html#a1cf4dcae4770924553d842624503d817',1,'ode_origin::r()'],['../classurdf__origin.html#aee351bc5c1beadf98bc87c979605a79f',1,'urdf_origin::r()']]],
   ['randomsample',['RandomSample',['../class_kautham_1_1_random_sample.html',1,'Kautham']]],
   ['randomsample',['RandomSample',['../class_kautham_1_1_random_sample.html#a1e2abff9991cb1e53e305016d0b27899',1,'Kautham::RandomSample']]],
   ['randomsampler',['RandomSampler',['../class_kautham_1_1_random_sampler.html',1,'Kautham']]],

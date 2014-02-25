@@ -8,6 +8,7 @@ var searchData=
   ['urdf_5finertial',['urdf_inertial',['../classurdf__inertial.html',1,'']]],
   ['urdf_5flimit',['urdf_limit',['../classurdf__limit.html',1,'']]],
   ['urdf_5flink',['urdf_link',['../classurdf__link.html',1,'']]],
+  ['urdf_5fobstacle',['urdf_obstacle',['../classurdf__obstacle.html',1,'']]],
   ['urdf_5forigin',['urdf_origin',['../classurdf__origin.html',1,'']]],
   ['urdf_5frobot',['urdf_robot',['../classurdf__robot.html',1,'']]]
 ];
