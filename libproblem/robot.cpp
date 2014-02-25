@@ -230,8 +230,10 @@ namespace Kautham {
                 if( i > 0 ){ //First link is ommited because it is the base.
                     if( (*it).child("Weight") )
                         _weights->setRnWeigh(i-1,(KthReal)(*it).child("Weight").attribute("weight").as_double());
-                    else
+                    else{
                         _weights->setRnWeigh(i-1,(KthReal)1.0);
+                        links[i]->setWeight(1.0); //defaulted to 1, if not added it is put to 0 in the creator!
+                    }
                 }
 
                 i++;
