@@ -199,8 +199,8 @@ namespace Kautham {
 
     //! Add link to the robot
     bool addLink(string name, string ivFile, string collision_ivFile, KthReal scale,
-                    Unit3 axis, bool rotational, bool movable,
-                    KthReal low, KthReal hi, string parentName, KthReal preTrans[], ode_element ode);
+                    Unit3 axis, bool rotational, bool movable, KthReal low, KthReal hi,
+                 KthReal w, string parentName, KthReal preTrans[], ode_element ode);
 
     //! Returns the pointer to link number i
     Link* getLink(unsigned int i);
