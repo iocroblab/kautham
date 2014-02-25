@@ -352,7 +352,7 @@ namespace Kautham {
         xml_document doc;
         xml_parse_result result = doc.load_file(robFile.c_str());
 
-        //Parse the rob file
+        //Parse the urdf file
         if(result){
             //if file could be loaded
             urdf_robot robot;
@@ -388,9 +388,20 @@ namespace Kautham {
             _homeConf.setRn( numLinks - 1 );
             _currentConf.setRn( numLinks - 1 );
 
-             _weights = new RobWeight( numLinks - 1 );
-             //Set the SE3 weights for the distance computations
-             _weights->setSE3Weight(1., 1.);
+            _weights = new RobWeight( numLinks - 1 );
+            //Set the SE3 weights for the distance computations, in case of mobile base
+            if( doc.child("robot").child("WeightSE3") ){
+                KthReal tra = 1.;
+                KthReal rot = 1.;
+                xml_node tmp = doc.child("robot").child("WeightSE3");
+                if( tmp.attribute("rho_t") )
+                    tra = (KthReal) tmp.attribute("rho_t").as_double();
+                if( tmp.attribute("rho_r") )
+                    rot = (KthReal) tmp.attribute("rho_r").as_double();
+                _weights->setSE3Weight( tra, rot );
+            }else
+                _weights->setSE3Weight(1., 1.);
+
 
 
 
@@ -451,11 +462,11 @@ namespace Kautham {
                         (KthReal)robot.link[i].visual.scale,
                         robot.link[i].axis,robot.link[i].type == "revolute",
                         robot.link[i].type != "fixed",limMin,
-                        limMax,robot.link[i].parent,preTransP,ode);
+                        limMax,robot.link[i].weight,robot.link[i].parent,preTransP,ode);
 
                 //Add the weight. Defaults to 1.0
                 if( i > 0 ){ //First link is ommited because it is the base.
-                        _weights->setRnWeigh(i-1,(KthReal)1.0);
+                    _weights->setRnWeigh(i-1,(KthReal)robot.link[i].weight);
                 }
             }
 
@@ -1189,7 +1200,7 @@ namespace Kautham {
   //! to keep the coherence in the robot assembly. It doesn't use any intermediate
   //! structure to adquire the information to do the job.
   bool	Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal scale, Unit3 axis, bool rotational, bool movable,
-                       KthReal low, KthReal hi, string parentName, KthReal preTrans[], ode_element ode){
+                       KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], ode_element ode){
       Link* temp = new Link(ivFile, collision_ivFile, scale * this->getScale(),
                             dhApproach, libs);
       temp->setName(name);
@@ -1198,7 +1209,7 @@ namespace Kautham {
       temp->setAxis(axis);
       temp->setDHPars(0., 0., 0., 0.);//defaults to zero
       temp->setLimits(low, hi);
-      temp->setWeight(1.);//defaults to one
+      temp->setWeight(w);
       temp->setOde(ode);
       if(preTrans != NULL)
           temp->setPreTransform(preTrans[0],preTrans[1],preTrans[2], preTrans[3],

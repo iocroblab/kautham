@@ -150,8 +150,8 @@ namespace Kautham{
 	  *		parameter.	*/
     inline KthReal      getAlpha() const {return alpha;}
 
-      //! Function to get \f$ \axis \f$ parameter.
-      /*!	This function gets the current value from \f$ \axis \f$
+      //! Function to get \f$ axis \f$ parameter.
+      /*!	This function gets the current value from \f$ axis \f$
       *		parameter.	*/
     inline Unit3        getAxis() const {return axis;}
 
@@ -160,8 +160,8 @@ namespace Kautham{
     inline void         setOde(ode_element ode){ode = ode;if(!armed)this->element->ode = ode;}
 
 
-    //! Function to get \f$ \ode \f$ element.
-    /*!	This function gets the current value from \f$ \ode \f$
+    //! Function to get \f$ ode \f$ element.
+    /*!	This function gets the current value from \f$ ode \f$
           *		element.	*/
     inline ode_element getOde() const {return this->element->ode;}
 
