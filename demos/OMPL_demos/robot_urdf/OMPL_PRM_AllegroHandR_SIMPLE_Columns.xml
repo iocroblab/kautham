@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<Problem name="" topology="SE3">
+	<Robot robot="robots/allegro_hand_description_right.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1000.0" />
+		<Limits name="Y" min="0.0" max="1000.0" />
+		<Limits name="Z" min="0.0" max="1000.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-180.0" max="180.0" />
+    		<Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="500.0" Y="600" X="-400" />
+		<InvKinematic name="TX90" />
+	</Robot>
+	<Scene scene="scenes/columns.urdf" scale="4">
+		<Location TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="50.0">
+                </Location>
+	</Scene>
+	<Planner>
+        <Parameters>
+                <Name>omplPRM</Name>
+                <Parameter name="Max Planning Time">300.0</Parameter>
+                <Parameter name="Speed Factor">1</Parameter>
+                        <Parameter name="MaxNearestNeighbors">10</Parameter>
+                        <Parameter name="DistanceThreshold">400.0</Parameter>
+        </Parameters>
+		<Queries>
+			<Query>
+				<Init dim="16">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Init>
+				<Goal dim="16">0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
+
+
