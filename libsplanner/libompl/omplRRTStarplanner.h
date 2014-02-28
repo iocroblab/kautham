@@ -67,6 +67,7 @@ namespace Kautham {
 	    public:
         omplRRTStarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
         ~omplRRTStarPlanner();
+        bool trySolve();//!< Overloaded trySolve function to include evaluation of final path cost
 
         bool setParameters();
 
@@ -78,10 +79,11 @@ namespace Kautham {
          double _penalizationweight;
          double _orientationweight;
          bool _incremental;
+         ob::OptimizationObjectivePtr _optiselected;
          ob::OptimizationObjectivePtr _lengthopti;
          ob::OptimizationObjectivePtr _clearanceopti;
-         ob::OptimizationObjectivePtr _pcaalignmentopti;
-         ob::OptimizationObjectivePtr _handpmdalignmentopti;
+         //ob::OptimizationObjectivePtr _pcaalignmentopti;
+         ob::OptimizationObjectivePtr _pmdalignmentopti;
 	  };
   }
   /** @}   end of Doxygen module "libPlanner */

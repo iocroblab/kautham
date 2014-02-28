@@ -70,19 +70,25 @@ namespace Kautham {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
   class myRRTstar:public og::RRTstar
   {
-      public:
+  private:
+      bool _optimize; //!< flag that allows to disable optimization when set to false. Defaults to true.
 
+  public:
 
       myRRTstar(const ob::SpaceInformationPtr &si):RRTstar(si)
       {
           setName("myRRTstar");
+          _optimize = true;
       }
+
+      bool getOptimize(){ return _optimize;}; //!< Returns the _optimize flag
+      void setOptimize(bool s){_optimize=s;}; //!< Sets the _optimize flag
 
       /** \brief Compute distance between motions (actually distance between contained states) */
       double distanceFunction(const Motion* a, const Motion* b) const
       {
-          //return si_->distance(a->state, b->state);
-          return (opt_->motionCost(a->state, b->state).v);
+          return si_->distance(a->state, b->state);
+          //return (opt_->motionCost(a->state, b->state).v);
       }
 
       ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
@@ -129,7 +135,11 @@ namespace Kautham {
           ob::State *xstate    = si_->allocState();
 
           // e+e/d.  K-nearest RRT*
-          double k_rrg           = boost::math::constants::e<double>() + (boost::math::constants::e<double>()/(double)si_->getStateSpace()->getDimension());
+          double k_rrg;
+          if(_optimize)
+              k_rrg = boost::math::constants::e<double>() + (boost::math::constants::e<double>()/(double)si_->getStateSpace()->getDimension());
+          else
+              k_rrg = 0.0; //When set to zero RRTStar behavies as a standard RRT
 
           std::vector<Motion*>       nbh;
 
@@ -224,17 +234,20 @@ namespace Kautham {
                       // calculate all costs and distances
                       for (std::size_t i = 0 ; i < nbh.size(); ++i)
                       {
+                          /*
                           if(opt_->getDescription()=="PCA alignment"){
                               ob::State *s0;
                               if(nbh[i]->parent==NULL) s0=NULL;
                               else s0=nbh[i]->parent->state;
                               incCosts[i] = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
                           }
-                          else if(opt_->getDescription()=="handPMD alignment"){
+                          else
+                              */
+                          if(opt_->getDescription()=="PMD alignment"){
                               ob::State *s0;
                               if(nbh[i]->parent==NULL) s0=NULL;
                               else s0=nbh[i]->parent->state;
-                              incCosts[i] = ((handPMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
+                              incCosts[i] = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
                           }
                           else
                               incCosts[i] = opt_->motionCost(nbh[i]->state, motion->state);
@@ -273,17 +286,20 @@ namespace Kautham {
                   }
                   else // if not delayCC
                   {
-                      if(opt_->getDescription()=="PCA alignment"){
+                      /*
+                       if(opt_->getDescription()=="PCA alignment"){
                           ob::State *s0;
                           if(nmotion->parent==NULL) s0=NULL;
                           else s0=nmotion->parent->state;
                           motion->incCost = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nmotion->state, motion->state);
                       }
-                      else if(opt_->getDescription()=="handPMD alignment"){
+                      else
+                          */
+                      if(opt_->getDescription()=="PMD alignment"){
                           ob::State *s0;
                           if(nmotion->parent==NULL) s0=NULL;
                           else s0=nmotion->parent->state;
-                          motion->incCost = ((handPMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nmotion->state, motion->state);
+                          motion->incCost = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nmotion->state, motion->state);
                       }
                       else
                           motion->incCost = opt_->motionCost(nmotion->state, motion->state);
@@ -294,17 +310,18 @@ namespace Kautham {
                       {
                           if (nbh[i] != nmotion)
                           {
-                              if(opt_->getDescription()=="PCA alignment"){
+                              /*if(opt_->getDescription()=="PCA alignment"){
                                   ob::State *s0;
                                   if(nbh[i]->parent==NULL) s0=NULL;
                                   else s0=nbh[i]->parent->state;
                                   incCosts[i] = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
                               }
-                              else if(opt_->getDescription()=="handPMD alignment"){
+                              else */
+                              if(opt_->getDescription()=="PMD alignment"){
                                   ob::State *s0;
                                   if(nbh[i]->parent==NULL) s0=NULL;
                                   else s0=nbh[i]->parent->state;
-                                  incCosts[i] = ((handPMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
+                                  incCosts[i] = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
                               }
                               else
                                   incCosts[i] = opt_->motionCost(nbh[i]->state, motion->state);
@@ -360,17 +377,18 @@ namespace Kautham {
                           if (symDist && symCost)
                               nbhIncCost = incCosts[i];
                           else{
-                              if(opt_->getDescription()=="PCA alignment"){
+                              /*if(opt_->getDescription()=="PCA alignment"){
                                   ob::State *s0;
                                   if(motion->parent==NULL) s0=NULL;
                                   else s0=motion->parent->state;
                                   nbhIncCost = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,motion->state, nbh[i]->state);
                               }
-                              else if(opt_->getDescription()=="handPMD alignment"){
+                              else */
+                              if(opt_->getDescription()=="PMD alignment"){
                                   ob::State *s0;
                                   if(motion->parent==NULL) s0=NULL;
                                   else s0=motion->parent->state;
-                                  nbhIncCost = ((handPMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,motion->state, nbh[i]->state);
+                                  nbhIncCost = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,motion->state, nbh[i]->state);
                               }
                               else
                                   nbhIncCost = opt_->motionCost(motion->state, nbh[i]->state);
@@ -542,7 +560,7 @@ namespace Kautham {
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
         addParameter("DelayCC (0/1)", _DelayCC);
-        addParameter("Optimize dist(0)/clear(1)/PCA(2)/PMD(3)", _opti);
+        addParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _opti);
         planner->as<og::RRTstar>()->setRange(_Range);
         planner->as<og::RRTstar>()->setGoalBias(_GoalBias);
         planner->as<og::RRTstar>()->setDelayCC(_DelayCC);
@@ -555,6 +573,7 @@ namespace Kautham {
         // 2) clearance optimization criteria
         _clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
 
+        /*
         // 3) PCA alignment optimization criteria
         int robotindex = 0;
         int dimpca=wkSpace()->getDimension();
@@ -566,29 +585,11 @@ namespace Kautham {
                 M.mat(i,j) = mm[6+i][j];
         _pcaalignmentopti = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective(ss->getSpaceInformation(),dimpca,M));
         _pcaalignmentopti->setCostThreshold(ob::Cost(0.0));
+        */
 
         // 4) handPMD alignment optimization criteria
-        robotindex = 0;
+        int robotindex = 0;
         int numPMD = 0;
-        /*
-        std::string controlsname = wkSpace()->getRobot(robotindex)->getControlsName();
-        QString handpmdlabel("handPMD");
-        QString content(controlsname.c_str());
-        QStringList cont = content.split("|");
-        QStringList::const_iterator iterator;
-        int column=0;
-        vector<int> handpmdcolumns;
-        for (iterator = cont.constBegin(); iterator != cont.constEnd(); ++iterator)
-        {
-            if((*iterator).contains(handpmdlabel))
-            {
-                //store the columns of the matrix of controls that will contain the handpmd control
-                handpmdcolumns.push_back(column);
-            }
-            columns++;
-        }
-        numPMD = handpmdcolumns.size();
-        */
 
         string listcontrolsname = wkSpace()->getRobot(robotindex)->getControlsName();
         vector<string*> controlname;
@@ -610,7 +611,7 @@ namespace Kautham {
         vector<int> handpmdcolumns;
         for(int i=0;i<controlname.size();i++)
         {
-            if(controlname[i]->find("handPMD") != string::npos)
+            if(controlname[i]->find("PMD") != string::npos)
             {
                 //store the columns of the matrix of controls that will contain the handpmd control
                 handpmdcolumns.push_back(i);
@@ -633,8 +634,8 @@ namespace Kautham {
                 PMD.mat(i,j) = mm2[6+i][handpmdcolumns[j]];
             }
         }
-        _handpmdalignmentopti = ob::OptimizationObjectivePtr(new handPMDalignmentOptimizationObjective(robotindex, ss->getSpaceInformation(),PMD));
-        _handpmdalignmentopti->setCostThreshold(ob::Cost(0.0));
+        _pmdalignmentopti = ob::OptimizationObjectivePtr(new PMDalignmentOptimizationObjective(robotindex, ss->getSpaceInformation(),PMD));
+        _pmdalignmentopti->setCostThreshold(ob::Cost(0.0));
 
         _lengthweight = 0.1;
         addParameter("lengthweight(0..1)", _lengthweight);
@@ -650,14 +651,31 @@ namespace Kautham {
         //_pcaalignmentopti3 = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective3(ss->getSpaceInformation(),dimpca));
 
 
-        if(_opti==1)
-            pdefPtr->setOptimizationObjective(_clearanceopti);
-        else if(_opti==2)
-            pdefPtr->setOptimizationObjective(_pcaalignmentopti);//_multiopti);
-        else if(_opti==3)
-            pdefPtr->setOptimizationObjective(_handpmdalignmentopti);
-        else //_opti==0 and default
-            pdefPtr->setOptimizationObjective(_lengthopti);
+
+        if(_opti==0){
+            _optiselected = _lengthopti; //dummy
+            planner->as<myRRTstar>()->setOptimize(false); //Disable optimization
+        }
+        else if(_opti==1){
+            _optiselected = _lengthopti; //length optimization
+            planner->as<myRRTstar>()->setOptimize(true);
+        }
+        else if(_opti==2){
+            _optiselected = _clearanceopti;//clearnace optimization
+            planner->as<myRRTstar>()->setOptimize(true);
+        }
+        else if(_opti==3){
+            _optiselected = _pmdalignmentopti; //pmd alignment optimization
+            planner->as<myRRTstar>()->setOptimize(true);
+        }
+        else { //default
+            _opti=1;
+            _optiselected = _lengthopti; //length optimization
+            setParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _simplify);
+            planner->as<myRRTstar>()->setOptimize(true);
+        }
+
+        pdefPtr->setOptimizationObjective(_optiselected);
 
 
         planner->setProblemDefinition(pdefPtr);
@@ -673,6 +691,47 @@ namespace Kautham {
 			
 	}
 	
+
+    //! function to find a solution path
+    bool omplRRTStarPlanner::trySolve()
+    {
+        bool ret;
+        //solve
+        ret = omplPlanner::trySolve();
+        //evaluate path
+        ob::Cost pathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(_optiselected);
+        cout<<"Path cost = "<<pathcost.v<<endl;
+        if(_opti==3)
+        {
+            //eval only the alignment with the PMDs
+            _orientationweight = 1.0;
+            _lengthweight = 0.0;
+            _penalizationweight = 0.0;
+            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(_orientationweight);
+            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(_lengthweight);
+            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
+
+            ob::Cost alignmentpathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(_optiselected);
+            cout<<"Path alignment cost = "<<alignmentpathcost.v<<endl;
+
+            //eval only the distance
+            _orientationweight = 0.0;
+            _lengthweight = 1.0;
+            _penalizationweight = 0.0;
+            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(_orientationweight);
+            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(_lengthweight);
+            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
+
+             ob::Cost distancepathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(_optiselected);
+             cout<<"Path distance cost = "<<distancepathcost.v<<endl;
+
+             cout<<"Alignment cost per unitary distance traveled = "<< (alignmentpathcost.v/distancepathcost.v)<<endl;
+        }
+
+        return ret;
+
+     }
+
 	//! setParameters sets the parameters of the planner
     bool omplRRTStarPlanner::setParameters(){
 
@@ -686,18 +745,36 @@ namespace Kautham {
         else
           return false;
 
-        it = _parameters.find("Optimize dist(0)/clear(1)/PCA(2)/PMD(3)");
+        it = _parameters.find("Optimize none(0)/dist(1)/clear(2)/PMD(3)");
         if(it != _parameters.end()){
             _opti = it->second;
             ob::ProblemDefinitionPtr pdefPtr = ss->getPlanner()->getProblemDefinition();
-            if(_opti==1)
-                pdefPtr->setOptimizationObjective(_clearanceopti);
-            else if(_opti==2)
-                pdefPtr->setOptimizationObjective(_pcaalignmentopti);
-            else if(_opti==3)
-                pdefPtr->setOptimizationObjective(_handpmdalignmentopti);
-            else //_opti==0 and default
-                pdefPtr->setOptimizationObjective(_lengthopti);
+
+            if(_opti==0){
+                _optiselected = _lengthopti; //dummy
+                ss->getPlanner()->as<myRRTstar>()->setOptimize(false); //Disable optimization
+            }
+            else if(_opti==1){
+                _optiselected = _lengthopti; //length optimization
+                ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
+            }
+            else if(_opti==2){
+                _optiselected = _clearanceopti;//clearnace optimization
+                ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
+            }
+            else if(_opti==3){
+                _optiselected = _pmdalignmentopti; //pmd alignment optimization
+                ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
+            }
+            else { //default
+                _opti=1;
+                _optiselected = _lengthopti; //length optimization
+                setParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _simplify);
+                ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
+            }
+
+            pdefPtr->setOptimizationObjective(_optiselected);
+
             ss->getPlanner()->setup();
         }
         else
@@ -724,10 +801,11 @@ namespace Kautham {
         if(it != _parameters.end()){
             if(it->second >=0.0 && it->second<=1.0) _lengthweight = it->second;
             else _lengthweight = 0.5;
-            if(_opti==2)
+            /*if(_opti==2)
                ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setDistanceWeight(_lengthweight);
-            else if(_opti==3)
-                ((handPMDalignmentOptimizationObjective*)_handpmdalignmentopti.get())->setDistanceWeight(_lengthweight);
+            else */
+            if(_opti==3)
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(_lengthweight);
         }
         else
           return false;
@@ -735,10 +813,11 @@ namespace Kautham {
         it = _parameters.find("penalizationweight");
         if(it != _parameters.end()){
             _penalizationweight = it->second;
-            if(_opti==2)
-                ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setOrientationPenalization(_penalizationweight);
-            else if(_opti==3)
-                ((handPMDalignmentOptimizationObjective*)_handpmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
+            //if(_opti==2)
+            //    ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setOrientationPenalization(_penalizationweight);
+            //else
+            if(_opti==3)
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
         }
         else
           return false;
@@ -746,10 +825,11 @@ namespace Kautham {
         it = _parameters.find("orientationweight");
         if(it != _parameters.end()){
             _orientationweight = it->second;
-            if(_opti==2)
-                ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setOrientationWeight(_orientationweight);
-            else if(_opti==3)
-                ((handPMDalignmentOptimizationObjective*)_handpmdalignmentopti.get())->setOrientationWeight(_orientationweight);
+            //if(_opti==2)
+            //    ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setOrientationWeight(_orientationweight);
+            //else
+            if(_opti==3)
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(_orientationweight);
         }
         else
           return false;
