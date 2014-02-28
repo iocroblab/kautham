@@ -392,7 +392,70 @@ namespace Kautham {
   //! This function is used to allocate a state sampler
   ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p)
   {
-      return ob::StateSamplerPtr(new KauthamStateSampler(mysspace, p));
+     //return ob::StateSamplerPtr(new KauthamStateSampler(mysspace, p));
+
+
+      //Create sampler
+      ob::StateSamplerPtr globalSampler(new ob::CompoundStateSampler(mysspace));
+      //weights defined for when sampling near a state
+      //they are now all set to 1.0. To be explored later...
+      double weightImportanceRobots; //weight of robot i
+      double weightSO3; //rotational weight
+      double weightR3; //translational weight
+      double weightSE3; //weight of the monile base
+      double weightRn; //weight of the chain
+      //loop for all robots
+      for(int i=0; i<p->wkSpace()->robotsCount(); i++)
+      {
+          weightImportanceRobots = 1.0; //all robots weight the same
+
+          //Create sampler for robot i
+          //ssRoboti is the subspace corresponding to robot i
+          ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) mysspace->as<ob::CompoundStateSpace>()->getSubspace(i));
+          ob::StateSamplerPtr samplerRoboti(new ob::CompoundStateSampler(ssRoboti.get()));
+
+          int numsubspace=0;
+          //If SE3 workspace exisits
+          if(p->wkSpace()->getRobot(i)->isSE3Enabled())
+          {
+              //ssRoboti_sub is the subspace corresponding to the SE3 part of robot i
+              ob::StateSpacePtr ssRoboti_sub_SE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(numsubspace));
+              numsubspace++;
+              //the sampler is a compound sampler
+              ob::StateSamplerPtr samplerRoboti_SE3(new ob::CompoundStateSampler(ssRoboti_sub_SE3.get()));
+              //ssRoboti_sub_R3 is the R3 subspace of robot i
+              ob::StateSpacePtr ssRoboti_sub_R3  = ((ob::StateSpacePtr) ssRoboti_sub_SE3->as<ob::SE3StateSpace>()->getSubspace(0));
+              //add the sampler of the R3 part
+              weightR3=1.0;
+              ob::StateSamplerPtr samplerRoboti_R3(new ob::RealVectorStateSampler(ssRoboti_sub_R3.get()));
+              ((ob::CompoundStateSampler*) samplerRoboti_SE3.get())->addSampler(samplerRoboti_R3, weightR3);
+              //ssRoboti_sub_SO3 is the SO3 subspace of robot i
+              ob::StateSpacePtr ssRoboti_sub_SO3 = ((ob::StateSpacePtr) ssRoboti_sub_SE3->as<ob::SE3StateSpace>()->getSubspace(1));
+              //add the sampler of the SO3 part
+              weightSO3=1.0;
+              ob::StateSamplerPtr samplerRoboti_SO3(new ob::SO3StateSampler(ssRoboti_sub_SO3.get()));
+              ((ob::CompoundStateSampler*) samplerRoboti_SE3.get())->addSampler(samplerRoboti_SO3, weightSO3);
+              //add the compound sampler of the SE3 part
+              weightSE3 = 1.0;
+              ((ob::CompoundStateSampler*) samplerRoboti.get())->addSampler(samplerRoboti_SE3, weightSE3);
+          }
+          //If Rn state space exisits
+          if(p->wkSpace()->getRobot(i)->getNumJoints()>0)
+          {
+              //ssRoboti_sub is the subspace corresponding to the Rn part of robot i
+              ob::StateSpacePtr ssRoboti_sub_Rn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(numsubspace));
+              //add the sampler of the Rn part
+              weightRn = 1.0;
+              ob::StateSamplerPtr samplerRoboti_Rn(new ob::RealVectorStateSampler(ssRoboti_sub_Rn.get()));
+              ((ob::CompoundStateSampler*) samplerRoboti.get())->addSampler(samplerRoboti_Rn, weightRn);
+          }
+          //add the sampler of robot i to global sampler
+          ((ob::CompoundStateSampler*) globalSampler.get())->addSampler(samplerRoboti, weightImportanceRobots);
+      }
+
+      return globalSampler;
+
+
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1065,7 +1128,7 @@ namespace Kautham {
                 for(int j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
                     rstart->values[j] = r.getCoordinate(j);
 
-                cout<<"sstate[0]="<<rstart->values[0]<<"sstate[1]="<<rstart->values[1]<<endl;
+                //cout<<"sstate[0]="<<rstart->values[0]<<"sstate[1]="<<rstart->values[1]<<endl;
 
 
                 //load the global scoped state with the info of the Rn data of robot i
@@ -1232,7 +1295,13 @@ namespace Kautham {
                 else if(_simplify==2) {//shorten and smoot
                     ss->simplifySolution();
                 }
+                std::cout<<"Path: ";
                 ss->getSolutionPath().print(std::cout);
+
+                ss->getSolutionPath().interpolate();
+                //std::cout<<"Path after interpolation: ";
+                //ss->getSolutionPath().interpolate(10);
+                //ss->getSolutionPath().print(std::cout);
 
 
                 //refine

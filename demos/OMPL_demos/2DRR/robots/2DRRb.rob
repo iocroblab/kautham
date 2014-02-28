@@ -44,12 +44,12 @@
       <DOF name="link2" value="0.5"></DOF>
     </Offset>
 
-    <Control name="control1" eigValue="14.142">
+    <Control name="PMD1" eigValue="10.0">
       <DOF name="link1" value="0.70710678118654752440084436210485"/>
       <DOF name="link2" value="0.70710678118654752440084436210485"/>
     </Control>
 
-    <Control name="control2" eigValue="1.4142">
+    <Control name="PMD2" eigValue="1.0">
       <DOF name="link1" value="-0.70710678118654752440084436210485"/>
       <DOF name="link2" value="0.70710678118654752440084436210485"/>
     </Control>
