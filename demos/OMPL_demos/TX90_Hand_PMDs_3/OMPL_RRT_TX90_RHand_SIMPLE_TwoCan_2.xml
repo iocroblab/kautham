@@ -22,17 +22,15 @@
 	</Scene>
 	<Planner>
 		 <Parameters>
-                    <Name>omplRRTStar</Name>
-                    <Parameter name="Max Planning Time">30.0</Parameter>
-                    <Parameter name="Speed Factor">1</Parameter>
-                    <Parameter name="Range">0.01</Parameter>
-		    <Parameter name="DelayCC (0/1)">0</Parameter>
-                    <Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">3</Parameter>
-                </Parameters>
+		  <Name>omplRRT</Name>
+		  <Parameter name="Max Planning Time">30.0</Parameter>
+		  <Parameter name="Range">0.01</Parameter>
+		  <Parameter name="Speed Factor">1</Parameter>
+		  </Parameters>
 		<Queries>
-                        <Query>
-                        <Init dim="11">0.271 0.597 0.81 0.477 0.304 0.688 0.285 0.589 0.302 0.892 0.529</Init>
-                        <Goal dim="11">0.373 0.359 0.969 0.332 0.6 0.837 1.0 0.5 0 0.698 0.881</Goal>
+			<Query>
+                                <Goal dim="11">0.271 0.597 0.81 0.477 0.304 0.688 1.0 0.5 0 0.698 0.881</Goal>
+                                <Init dim="11">0.25 0.618 0.773 0.476 0.316 0.678 0.171 0.588 0.323 0.838 0.528</Init>
 			</Query>
 		</Queries>
 	</Planner>

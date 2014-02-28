@@ -14,7 +14,7 @@
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="478.0"  ></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="180.0" Low="-180.0"></Limits>
-      <Weight weight="10.0"></Weight>
+      <Weight weight="1.0"></Weight>
       <Parent name="Base"></Parent>
     </Joint>
     
@@ -22,7 +22,7 @@
       <DHPars  alpha="-90.0" a="50.0" theta="-90.0" d="50.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="147.5" Low="-130.0"></Limits>
-      <Weight weight="10.0"></Weight>
+      <Weight weight="1.0"></Weight>
       <Parent name="Shoulder"></Parent>
     </Joint>
     
@@ -30,7 +30,7 @@
       <DHPars  alpha="0.0" a="425.0" theta="90.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="145.0" Low="-145.0"></Limits>
-      <Weight weight="10.0"></Weight>
+      <Weight weight="1.0"></Weight>
       <Parent name="ForeArm"></Parent>
     </Joint>
     
@@ -190,7 +190,7 @@
     </Joint>
   </Joints>
 
-	<ControlSet size="11" nTrunk="6">
+	<ControlSet size="5" nTrunk="0">
     <Offset>
       <DOF name="Thumb" value="0.3055	"></DOF> 
       <DOF name="Thumb-Base" value="0.3055"></DOF> 
@@ -210,37 +210,14 @@
       <DOF name="Ring-Med" value="0.4806"></DOF> 
       <DOF name="Ring-Dist" value="0.4806"></DOF>
 
-      <DOF name="Shoulder" value="0.5"></DOF>
+      <DOF name="Shoulder" value="0.271"></DOF> 
       <DOF name="ForeArm" value="0.5"></DOF>
-      <DOF name="Elbow" value="0.5"></DOF>
-      <DOF name="Arm" value="0.5"></DOF>
-      <DOF name="Wrist" value="0.5"></DOF>
-      <DOF name="Tcp" value="0.5"></DOF>
+      <DOF name="Elbow" value="0.81"></DOF>
+      <DOF name="Arm" value="0.477"></DOF>
+      <DOF name="Wrist" value="0.304"></DOF>
+      <DOF name="Tcp" value="0.688"></DOF>
     </Offset>
 
-    <Control name="Shoulder" eigValue="1.0">
-      <DOF name="Shoulder" value="1.0"></DOF>
-    </Control>
-
-    <Control name="ForeArm" eigValue="1.0">
-      <DOF name="ForeArm" value="1.0"></DOF>
-    </Control>
-
-    <Control name="Elbow" eigValue="1.0">
-      <DOF name="Elbow" value="1.0"></DOF>
-    </Control>
-
-    <Control name="Arm" eigValue="1.0">
-      <DOF name="Arm" value="1.0"></DOF>
-    </Control>
-
-    <Control name="Wrist" eigValue="1.0">
-      <DOF name="Wrist" value="1.0"></DOF>
-    </Control>
-
-    <Control name="Tcp" eigValue="1.0">
-      <DOF name="Tcp" value="1.0"></DOF>
-    </Control>
 
     <Control name="handPMD_Thumb" eigValue="1.0">
       <DOF name="Thumb" value="1.0"></DOF>
