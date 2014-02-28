@@ -69,207 +69,32 @@ namespace om = ompl::magic;
 namespace Kautham {
   namespace omplplanner{
 
-    //http://savingyoutime.wordpress.com/2009/09/21/c-matrix-inversion-boostublas/
-    /* Matrix inversion routine.
-        Uses lu_factorize and lu_substitute in uBLAS to invert a matrix */
-    template<class T>
-        bool InvertMatrix(const matrix<T>& input, matrix<T>& inverse)
-        {
-        typedef permutation_matrix<std::size_t> pmatrix;
 
-        // create a working copy of the input
-        matrix<T> A(input);
-
-        // create a permutation matrix for the LU-factorization
-        pmatrix pm(A.size1());
-
-        // perform LU-factorization
-        int res = lu_factorize(A, pm);
-        if (res != 0)
-            return false;
-
-        // create identity matrix of "inverse"
-        inverse.assign(identity_matrix<T> (A.size1()));
-
-        // backsubstitute to get the inverse
-        lu_substitute(A, pm, inverse);
-
-        return true;
-    }
-
-
-  //! Constructor
-    PCAalignmentOptimizationObjective::PCAalignmentOptimizationObjective(const ob::SpaceInformationPtr &si, int dim, ob::ProjectionMatrix M) :
-    ob::OptimizationObjective(si)
-    {
-        description_ = "PCA alignment";
-        PCAdataset=false;
-        dimension = dim;
-        wpenalization = 1.0;
-        wdistance = 0.1;
-        worientation = 1.0;
-
-        lambda.resize(dimension);
-        pcaM.mat.resize(dimension,dimension);
-        setPCAdata(M);
-    }
-
-    //! void destructor
-    PCAalignmentOptimizationObjective::~PCAalignmentOptimizationObjective(){
-
-    }
-
-
-
-    //void PCAalignmentOptimizationObjective::setPCAdata(int option)//ob::ProjectionMatrix M, ob::EuclideanProjection v){
-    void PCAalignmentOptimizationObjective::setPCAdata(ob::ProjectionMatrix M)
-    {
-        Matrix pca(dimension,dimension);
-        Matrix invpca(dimension,dimension);
-
-        double modul;
-        for(int j=0;j<dimension;j++)//column
-        {
-            modul = 0.0;
-            for(int i=0;i<dimension;i++)//row
-            {
-                pca(i,j) = M.mat(i,j);
-                modul += M.mat(i,j)*M.mat(i,j);
-            }
-            lambda[j] = sqrt(modul);
-            for(int i=0;i<dimension;i++) //columns vectors must be unitary vectors
-                pca(i,j) /= lambda[j];
-        }
-        InvertMatrix(pca, invpca);
-        pcaM.mat = invpca;
-        pcaM.print();
-
-        PCAdataset=true;
-    }
-
-
-    ob::Cost PCAalignmentOptimizationObjective::motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const
-    {
-        ob::StateSpacePtr space = getSpaceInformation()->getStateSpace();
-
-        ob::ScopedState<ob::CompoundStateSpace> ss1(space);
-        ob::ScopedState<ob::CompoundStateSpace> ss2(space);
-        ss1 = *s1;
-        ss2 = *s2;
-
-        //Get the SE3 subspace of robot 0
-        ob::StateSpacePtr ssRobot0 = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
-        ob::StateSpacePtr ssRobot0SE3 =  ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
-
-        ob::ScopedState<ob::SE3StateSpace> s1se3(ssRobot0SE3);
-        ss1 >> s1se3;
-        ob::ScopedState<ob::SE3StateSpace> s2se3(ssRobot0SE3);
-        ss2 >> s2se3;
-
-        //convert to a vector of 7 components
-        std::vector<double> s1_se3coords;
-        std::vector<double> s2_se3coords;
-        s1_se3coords.resize(2);
-        s2_se3coords.resize(2);
-        s1_se3coords[0] = s1se3->getX();
-        s1_se3coords[1] = s1se3->getY();
-        s2_se3coords[0] = s2se3->getX();
-        s2_se3coords[1] = s2se3->getY();
-
-
-        //vector from s1 to s2 in state space: from12 = s2-s1
-        std::vector<double> from12(dimension);
-        double modul12=0.0;
-        for(int i=0; i<dimension;i++)
-        {
-            from12[i] = s2_se3coords[i] - s1_se3coords[i];
-            modul12 += from12[i]*from12[i];
-        }
-        modul12 = sqrt(modul12);
-
-        //vector from s1 to s2 using the pca reference frame: vpca = M*v
-        ob::EuclideanProjection to12(dimension);
-        pcaM.project(&from12[0],to12);
-
-
-        //normalize the lambdas (eignvalues).
-        std::vector<double> lambdanorm;
-        lambdanorm.resize(dimension);
-        double lambdamax=0.0;
-        //The first one is always the largest (it should be!). Chack it, perhaps they are not ordered....
-        for(int i=0; i<dimension;i++)
-        {
-            if(lambda[i]>lambdamax) lambdamax=lambda[i];
-        }
-        for(int i=0; i<dimension;i++)
-        {
-            lambdanorm[i] = lambda[i] / lambdamax;
-        }
-        double modulto12=0.0;
-        for(int i=0; i<dimension;i++)
-        {
-            modulto12 += to12[i]*to12[i]*lambdanorm[i]*lambdanorm[i];
-        }
-        modulto12 = sqrt(modulto12);
-        //std::cout<<alpha<<" "<<modul12/modulto12<<std::endl;
-        //when aligned with the main PMD the cost is zero ((1/lambdanorm1)-1 = 0)
-        //when aligned with the second PMD the cost is ((1/lambdanorm2)-1)
-        double alpha = (modul12/modulto12)-1.0;
-        //modul12 should always be larger than modulto12 because the lambdas are normalized. Then alpha must be >= 0
-        if(alpha<0)
-        {
-            alpha=0.0; //this should not happen
-        }
-        double orientcost=alpha*worientation*modul12;
-
-        //Compute now the possible penalization due to a big change in orientation
-        //double orientationpenalization=1.0;
-        double orientationpenalization=0.0;
-        if(s0!=NULL)
-        {
-            ob::ScopedState<ob::CompoundStateSpace> ss0(space);
-            ss0 = *s0;
-            ob::ScopedState<ob::SE3StateSpace> s0se3(ssRobot0SE3);
-            ss0 >> s0se3;
-            std::vector<double> s0_se3coords;
-            s0_se3coords.resize(2);
-            s0_se3coords[0] = s0se3->getX();
-            s0_se3coords[1] = s0se3->getY();
-            //vector from s0 to s1 in state space: from01 = s1-s0
-            std::vector<double> from01(dimension);
-            double modul01=0.0;
-            for(int i=0; i<dimension;i++)
-            {
-                from01[i] = s1_se3coords[i] - s0_se3coords[i];
-                modul01 += from01[i]*from01[i];
-            }
-            modul01 = sqrt(modul01);
-
-            double cosbeta = (from01[0]*from12[0]+from01[1]*from12[1])/(modul01*modul12);
-            orientationpenalization = acos(cosbeta)*wpenalization*modul12;
-        }
-
-        double distcost = wdistance*modul12;
-        std::cout<<" d="<<distcost<<" o="<<orientcost<<" p="<<orientationpenalization<<" "<<std::endl;
-        return ob::Cost(distcost+orientcost+orientationpenalization);
-    }
-
-
-    ob::Cost PCAalignmentOptimizationObjective::motionCost(const ob::State *s1, const ob::State *s2) const
-    {
-        motionCost(NULL,s1,s2);
-    }
-
+  /*! \class PMDalignmentOptimizationObjective
+   *  This objective function aims the obtaintion of a path as much aligned to the main PMDs as possible.
+   *  It defines a cost composed of three weighted components:
+   *    1) distance cost: It measures the lenght of each edge of the path
+   *    2) alignment cost: this cost evaluates the alignment of the path edge along the mian PMDs. Each edge is projected onto the eignevectors
+   *         of the PMDs and scaled according to its eigenvalues; the module of this projection is computed. Then this cost is
+   *          (edge_module/projection_module - 1). It is zero when the edge is aligned along the main PMD.
+   *    3) penalization cost: this cost increases when the path has many turns. It is evaluated by measurng the angle between consecutive edges,
+   *        the bigger the angle the higher the cost is.
+   *  The cost is associated to a single robot, and the PMDs are assumed to be defined for the copupling of the Rn part (the chain). If the robot
+   *  has mobile edge, this contributes to the cost as the (weighted) distance of the SE3 part.
+   */
     //////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////
 
-    //! Constructor
-      handPMDalignmentOptimizationObjective::handPMDalignmentOptimizationObjective(int roboti, const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M) :
+  /*! Constructor.
+   *  \param roboti is the index of the robot.
+   *  \param si is the space information of the problem
+   *  \param M is the PMD matrix (it has as many columns as controls and as many rows as DOF). It is taken from the robot mapMatrix.
+   */
+      PMDalignmentOptimizationObjective::PMDalignmentOptimizationObjective(int roboti, const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M) :
       ob::OptimizationObjective(si)
       {
-          description_ = "handPMD alignment";
+          description_ = "PMD alignment"; //This label is used in myRRTstar - be careful not to change it!
           robotindex = roboti;
-          PCAdataset=false;
           wpenalization = 1.0;
           wdistance = 0.1;
           worientation = 1.0;
@@ -283,13 +108,15 @@ namespace Kautham {
           setPCAdata(M);
       }
 
-      //! void destructor
-      handPMDalignmentOptimizationObjective::~handPMDalignmentOptimizationObjective(){
+      /*! void destructor
+       */
+      PMDalignmentOptimizationObjective::~PMDalignmentOptimizationObjective(){
 
       }
 
-      //void PCAalignmentOptimizationObjective::setPCAdata(int option)//ob::ProjectionMatrix M, ob::EuclideanProjection v){
-      void handPMDalignmentOptimizationObjective::setPCAdata(ob::ProjectionMatrix M)
+      /*! The function setPCAdata loads the PMD matrix.
+       */
+      void PMDalignmentOptimizationObjective::setPCAdata(ob::ProjectionMatrix M)
       {
           double modul;
           for(int j=0;j<numPMD;j++)//column
@@ -305,12 +132,15 @@ namespace Kautham {
                   PMD.mat(i,j) /= lambda[j];
           }
           PMD.print();
-
-          PCAdataset=true;
       }
 
-
-      ob::Cost handPMDalignmentOptimizationObjective::motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const
+      /*! The function motionCost computes the cost of an edge s1s2. The function extracts the subspace of the robot and weights the
+        * cost of the SE3 part (if it exisits) and of the Rn part (if it exisits), returned by funtions  motionCostSE3 and motionCostRn, respectively.
+        *  \param s0 is the tail node of the previous edge. It can be null.
+        *  \param s1 is the tail of the edge
+        *  \param s2 is the head of the edge
+       */
+      ob::Cost PMDalignmentOptimizationObjective::motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const
       {
           double cost=0.0;
           ob::StateSpacePtr space = getSpaceInformation()->getStateSpace();
@@ -366,15 +196,29 @@ namespace Kautham {
           return ob::Cost(cost);
       }
 
-
-      ob::Cost handPMDalignmentOptimizationObjective::motionCostSE3(const ob::State *s1, const ob::State *s2) const
+      /*! The function motionCostSE3 computes the cost of the SE3 part of edge s1s2, as the SE3 distance.
+        *  \param s1 is the tail of the edge (a state of a SE3 State Space)
+        *  \param s2 is the head of the edge (a state of a SE3 State Space)
+       */
+      ob::Cost PMDalignmentOptimizationObjective::motionCostSE3(const ob::State *s1, const ob::State *s2) const
       {
           return ob::Cost(distance(s1,s2));
       }
 
 
-
-      ob::Cost handPMDalignmentOptimizationObjective::motionCostRn(const ob::State *s0, const ob::State *s1, const ob::State *s2) const
+      /*! The function motionCostRn computes the cost of the Rn part of edge s1s2.
+        *  \param s0 is the tail of the previous edge (a state of a weigthedRealVectorStateSpace). It can be null.
+        *  \param s1 is the tail of the edge (a state of a weigthedRealVectorStateSpace)
+        *  \param s2 is the head of the edge (a state of a weigthedRealVectorStateSpace)
+        * The cost has three weighted components:
+        *    1) distance cost: It measures the lenght of each edge of the path
+        *    2) alignment cost: this cost evaluates the alignment of the path edge along the mian PMDs. Each edge is projected onto the eignevectors
+        *         of the PMDs and scaled according to its eigenvalues; the module of this projection is computed. Then this cost is
+        *          (edge_module/projection_module - 1). It is zero when the edge is aligned along the main PMD.
+        *    3) penalization cost: this cost increases when the path has many turns. It is evaluated by measurng the angle between consecutive edges,
+        *        the bigger the angle the higher the cost is.
+       */
+      ob::Cost PMDalignmentOptimizationObjective::motionCostRn(const ob::State *s0, const ob::State *s1, const ob::State *s2) const
       {
           std::vector<double> s1_coords;
           std::vector<double> s2_coords;
@@ -399,7 +243,6 @@ namespace Kautham {
           }
           modul12 = sqrt(modul12);
           double distcost = wdistance*modul12;
-
           ////////////////
           //ALIGNMENT COST:
           ////////////////
@@ -468,7 +311,7 @@ namespace Kautham {
               orientationpenalization = acos(cosbeta)*wpenalization*modul12;
           }
 
-          std::cout<<" d="<<distcost<<" o="<<orientcost<<" p="<<orientationpenalization<<" "<<std::endl;
+          //std::cout<<" d="<<distcost<<" o="<<orientcost<<" p="<<orientationpenalization<<" "<<std::endl;
           return ob::Cost(distcost+orientcost+orientationpenalization);
       }
 
@@ -478,11 +321,223 @@ namespace Kautham {
        * include the penalization for the changes in orientation. In the drawcspace function this is not possible since
        * we loose the information of the previous state (s0).
        */
-      ob::Cost handPMDalignmentOptimizationObjective::motionCost(const ob::State *s1, const ob::State *s2) const
+      ob::Cost PMDalignmentOptimizationObjective::motionCost(const ob::State *s1, const ob::State *s2) const
       {
           motionCost(NULL,s1,s2);
       }
 
+
+      /////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////
+
+      /////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////
+
+      /*
+        //http://savingyoutime.wordpress.com/2009/09/21/c-matrix-inversion-boostublas/
+        // Matrix inversion routine.
+        //    Uses lu_factorize and lu_substitute in uBLAS to invert a matrix
+        template<class T>
+            bool InvertMatrix(const matrix<T>& input, matrix<T>& inverse)
+            {
+            typedef permutation_matrix<std::size_t> pmatrix;
+
+            // create a working copy of the input
+            matrix<T> A(input);
+
+            // create a permutation matrix for the LU-factorization
+            pmatrix pm(A.size1());
+
+            // perform LU-factorization
+            int res = lu_factorize(A, pm);
+            if (res != 0)
+                return false;
+
+            // create identity matrix of "inverse"
+            inverse.assign(identity_matrix<T> (A.size1()));
+
+            // backsubstitute to get the inverse
+            lu_substitute(A, pm, inverse);
+
+            return true;
+        }
+            */
+
+    /*
+      //! Constructor
+        PCAalignmentOptimizationObjective::PCAalignmentOptimizationObjective(const ob::SpaceInformationPtr &si, int dim, ob::ProjectionMatrix M) :
+        ob::OptimizationObjective(si)
+        {
+            description_ = "PCA alignment";
+            PCAdataset=false;
+            dimension = dim;
+            wpenalization = 1.0;
+            wdistance = 0.1;
+            worientation = 1.0;
+
+            lambda.resize(dimension);
+            pcaM.mat.resize(dimension,dimension);
+            setPCAdata(M);
+        }
+
+        //! void destructor
+        PCAalignmentOptimizationObjective::~PCAalignmentOptimizationObjective(){
+
+        }
+
+
+
+        //void PCAalignmentOptimizationObjective::setPCAdata(int option)//ob::ProjectionMatrix M, ob::EuclideanProjection v){
+        void PCAalignmentOptimizationObjective::setPCAdata(ob::ProjectionMatrix M)
+        {
+            Matrix pca(dimension,dimension);
+            Matrix invpca(dimension,dimension);
+
+            double modul;
+            for(int j=0;j<dimension;j++)//column
+            {
+                modul = 0.0;
+                for(int i=0;i<dimension;i++)//row
+                {
+                    pca(i,j) = M.mat(i,j);
+                    modul += M.mat(i,j)*M.mat(i,j);
+                }
+                lambda[j] = sqrt(modul);
+                for(int i=0;i<dimension;i++) //columns vectors must be unitary vectors
+                    pca(i,j) /= lambda[j];
+            }
+            pcaM.mat = pca;
+            pcaM.print();
+
+            InvertMatrix(pca, invpca);
+            pcaMinv.mat = invpca;
+            pcaMinv.print();
+
+            PCAdataset=true;
+        }
+
+
+        ob::Cost PCAalignmentOptimizationObjective::motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const
+        {
+            if(wdistance==0.0 && worientation==0 && wpenalization==0) return ob::Cost(1.0);
+
+
+
+            ob::StateSpacePtr space = getSpaceInformation()->getStateSpace();
+
+            ob::ScopedState<ob::CompoundStateSpace> ss1(space);
+            ob::ScopedState<ob::CompoundStateSpace> ss2(space);
+            ss1 = *s1;
+            ss2 = *s2;
+
+            //Get the SE3 subspace of robot 0
+            ob::StateSpacePtr ssRobot0 = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
+            ob::StateSpacePtr ssRobot0rn =  ((ob::StateSpacePtr) ssRobot0->as<ob::CompoundStateSpace>()->getSubspace(0));
+            ob::ScopedState<weigthedRealVectorStateSpace> robotiRn_s1(ssRobot0rn);
+            ss1 >> robotiRn_s1;
+            ob::ScopedState<weigthedRealVectorStateSpace> robotiRn_s2(ssRobot0rn);
+            ss2 >> robotiRn_s2;
+            std::vector<double> s1_se3coords;
+            std::vector<double> s2_se3coords;
+            s1_se3coords.resize(2);
+            s2_se3coords.resize(2);
+            s1_se3coords[0] = robotiRn_s1->values[0];
+            s1_se3coords[1] = robotiRn_s1->values[1];
+            s2_se3coords[0] = robotiRn_s2->values[0];
+            s2_se3coords[1] = robotiRn_s2->values[1];
+
+
+            //vector from s1 to s2 in state space: from12 = s2-s1
+            std::vector<double> from12(dimension);
+            double modul12=0.0;
+            for(int i=0; i<dimension;i++)
+            {
+                from12[i] = s2_se3coords[i] - s1_se3coords[i];
+                modul12 += from12[i]*from12[i];
+            }
+            modul12 = sqrt(modul12);
+
+            //vector from s1 to s2 using the pca reference frame: vpca = M*v
+            ob::EuclideanProjection to12(dimension);
+            pcaMinv.project(&from12[0],to12);
+
+
+            //normalize the lambdas (eignvalues).
+            std::vector<double> lambdanorm;
+            lambdanorm.resize(dimension);
+            double lambdamax=0.0;
+            //The first one is always the largest (it should be!). Chack it, perhaps they are not ordered....
+            for(int i=0; i<dimension;i++)
+            {
+                if(lambda[i]>lambdamax) lambdamax=lambda[i];
+            }
+            for(int i=0; i<dimension;i++)
+            {
+                lambdanorm[i] = lambda[i] / lambdamax;
+            }
+
+            double modulto12=0.0;
+            for(int i=0; i<dimension;i++)
+            {
+                modulto12 += to12[i]*to12[i]*lambdanorm[i]*lambdanorm[i];
+            }
+            modulto12 = sqrt(modulto12);
+
+
+
+
+            //std::cout<<alpha<<" "<<modul12/modulto12<<std::endl;
+            //when aligned with the main PMD the cost is zero ((1/lambdanorm1)-1 = 0)
+            //when aligned with the second PMD the cost is ((1/lambdanorm2)-1)
+            double alpha = (modul12/modulto12)-1.0;
+            //modul12 should always be larger than modulto12 because the lambdas are normalized. Then alpha must be >= 0
+            if(alpha<0)
+            {
+                alpha=0.0; //this should not happen
+            }
+            double orientcost=alpha*worientation*modul12;
+
+            //Compute now the possible penalization due to a big change in orientation
+            //double orientationpenalization=1.0;
+            double orientationpenalization=0.0;
+            if(s0!=NULL)
+            {
+                ob::ScopedState<ob::CompoundStateSpace> ss0(space);
+                ss0 = *s0;
+                ob::ScopedState<weigthedRealVectorStateSpace> robotiRn_s0(ssRobot0rn);
+                ss0 >> robotiRn_s0;
+                std::vector<double> s0_se3coords;
+                s0_se3coords.resize(2);
+                s0_se3coords[0] = robotiRn_s0->values[0];
+                s0_se3coords[1] = robotiRn_s0->values[1];
+
+
+
+                //vector from s0 to s1 in state space: from01 = s1-s0
+                std::vector<double> from01(dimension);
+                double modul01=0.0;
+                for(int i=0; i<dimension;i++)
+                {
+                    from01[i] = s1_se3coords[i] - s0_se3coords[i];
+                    modul01 += from01[i]*from01[i];
+                }
+                modul01 = sqrt(modul01);
+
+                double cosbeta = (from01[0]*from12[0]+from01[1]*from12[1])/(modul01*modul12);
+                orientationpenalization = acos(cosbeta)*wpenalization*modul12;
+            }
+
+            double distcost = wdistance*modul12;
+            //std::cout<<" d="<<distcost<<" o="<<orientcost<<" p="<<orientationpenalization<<" "<<std::endl;
+            return ob::Cost(distcost+orientcost+orientationpenalization);
+        }
+
+
+        ob::Cost PCAalignmentOptimizationObjective::motionCost(const ob::State *s1, const ob::State *s2) const
+        {
+            motionCost(NULL,s1,s2);
+        }
+        */
 
 
 
