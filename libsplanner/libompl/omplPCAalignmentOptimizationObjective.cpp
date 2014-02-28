@@ -81,6 +81,8 @@ namespace Kautham {
    *        the bigger the angle the higher the cost is.
    *  The cost is associated to a single robot, and the PMDs are assumed to be defined for the copupling of the Rn part (the chain). If the robot
    *  has mobile edge, this contributes to the cost as the (weighted) distance of the SE3 part.
+   *
+   *  IMPORTANT: The controls of the robot that can take part in this objective funtion must have the word PMD in its name, e.g. handPMD1.
    */
     //////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////
