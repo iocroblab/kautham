@@ -48,6 +48,7 @@
 #include <libkin/ivkintxhand.h>
 #include <libkin/ivkinhand.h>
 #include <libkin/ivkin2drr.h>
+#include <libkin/ivkinUR5.h>
 #include <libkin/constrainedkinematic.h>
 #include <mt/point3.h>
 #include <mt/rotation.h>
@@ -823,6 +824,9 @@ namespace Kautham {
       case Kautham::TX90HAND:
         _ikine = new IvKinTxHand(this);
         break;
+      case Kautham::UR5:
+        _ikine = new IvKinUR5(this);
+      break;
       default:
         cout << "The new Inverse Kinematic model have not been configured properly.\n" <<
           "See the setInverseKinematic of the Robot class to call the constructor. " << endl;
