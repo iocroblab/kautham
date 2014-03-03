@@ -154,7 +154,8 @@ namespace Kautham{
     RR2D,
     TX90,
     HAND,
-    TX90HAND
+    TX90HAND,
+    UR5
   };
 
 #ifndef INFINITY
