@@ -703,6 +703,10 @@ namespace Kautham {
         cout<<"Path cost = "<<pathcost.v<<endl;
         if(_opti==3)
         {
+            //store the values
+            double ow = ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->getOrientationWeight();
+            double dw = ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->getDistanceWeight();
+            double pw = ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->getOrientationPenalization();
             //eval only the alignment with the PMDs
             _orientationweight = 1.0;
             _lengthweight = 0.0;
@@ -726,6 +730,11 @@ namespace Kautham {
              cout<<"Path distance cost = "<<distancepathcost.v<<endl;
 
              cout<<"Alignment cost per unitary distance traveled = "<< (alignmentpathcost.v/distancepathcost.v)<<endl;
+
+             //restore the values
+             ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(ow);
+             ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(dw);
+             ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(pw);
         }
 
         return ret;
