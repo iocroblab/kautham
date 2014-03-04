@@ -322,7 +322,7 @@ namespace Kautham {
 				if((*it_v).title == title){
 					viewsTab->removeTab(viewsTab->indexOf( it_v->tab ));
 					delete it_v->window;
-					it_v->root->unref();
+                    //it_v->root->unref();
 					viewers.erase(it_v);
 					break;
 				}
