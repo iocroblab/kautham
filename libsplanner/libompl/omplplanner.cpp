@@ -697,8 +697,8 @@ namespace Kautham {
             if(it->second == 0) _incremental = 0;
             else {
                 _incremental = 1;
-                _simplify = 0;//for incremental solution the smootihng of the path is disabled to spped up the process
-                setParameter("Simplify Solution", _simplify);
+                //_simplify = 0;//for incremental solution the smootihng of the path is disabled to spped up the process
+                //setParameter("Simplify Solution", _simplify);
             }
         }
         else
@@ -995,10 +995,13 @@ namespace Kautham {
                     //the edge
                     pdata->getEdgeWeight(i, outgoingVertices.at(j), &edgeweight);
                     SoMaterial *edge_color = new SoMaterial;
+                    edge_color->diffuseColor.setValue(1.0,1.0,1.0);
 
                     //BE CAREFUL! a magic number!
+                    /*
                     if(edgeweight.v>0.1) edge_color->diffuseColor.setValue(1.0,0.8,0.8);
                     else edge_color->diffuseColor.setValue(1.0,1.0,1.0);
+                    */
                     lsep->addChild(edge_color);
                     lsep->addChild(edgepoints);
                     SoLineSet *ls = new SoLineSet;

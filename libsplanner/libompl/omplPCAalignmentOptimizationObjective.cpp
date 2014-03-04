@@ -251,10 +251,13 @@ namespace Kautham {
           //normalize the lambdas (eignvalues).
           std::vector<double> lambdanorm;
           lambdanorm.resize(numPMD);
-          double lambdamax=0.0;
+          double lambdamax=lambda[0];
+          double lambdamin=lambda[0];
           //The first one is always the largest (it should be!). Check it, perhaps they are not ordered....
-          for(int i=0; i<numPMD;i++)
+          for(int i=1; i<numPMD;i++){
              if(lambda[i]>lambdamax) lambdamax=lambda[i];
+             if(lambda[i]<lambdamin) lambdamin=lambda[i];
+          }
           for(int i=0; i<numPMD;i++)
               lambdanorm[i] = lambda[i] / lambdamax;
 
@@ -274,6 +277,8 @@ namespace Kautham {
               newmodul12 += projectionPMD[j]*projectionPMD[j];
           }
           newmodul12 = sqrt(newmodul12);
+          if(newmodul12==0.0) newmodul12 = lambdamin/100;//is the edge is perpendicular to all the PMDs then the newmodul12 obtained is zero.
+                                                         //set it to a small value in order not to have an infinite cost.
 
           //The value alpha is capture the variation in modules. The more aligned the edge is with the main PMDs then
           //the smaller is alpha because then newmodul12 i approximately equal to modul12. When the edge is exactly
