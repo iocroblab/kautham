@@ -20,8 +20,8 @@
 
 
 #include <mt/transform.h>
-#include <cmath>
 #include <math.h>
+#include <utility>
 
 //modified DH alpha values
 #define alpha0 0.0
@@ -82,9 +82,27 @@
 #define in true
 #define out !in
 
+//default absolute tolerance for interval inclusion
+#define TOL 0.01
+
+//other constant values
+#define MAX_DIST 24 // MAX_DIST > distance(high,low)
+#define INF 1.0/0.0
+
+
+//error values for inv_kin
+enum {UR5_NO_ERROR = 1,//succeed
+      UR5_JOINT_1,     //1st joint failed
+      UR5_JOINT_2,     //2nd joint failed
+      UR5_JOINT_3,     //3rd joint failed
+      UR5_JOINT_4,     //4th joint failed
+      UR5_JOINT_5,     //5th joint failed
+      UR5_JOINT_6};    //6th joint failed
+
 
 using namespace std;
 using namespace mt;
+
 
 //class containing a possible solution for the UR5 inverse kinematics
 class Solution {
@@ -107,70 +125,99 @@ public:
 //returns the modified DH transform for the specified modified DH parameters
 Transform DH_transform(double alpha, double a, double theta, double d);
 
-//solves the UR5 direct kinematics for the specified joint values and returns the TCP transform
+//solves the UR5 direct kinematics for the specified joint values
+//and returns the TCP transform
 Transform UR5_dir_kin(double *theta);
 
-//solves the UR5 inverse kinematics for the specified configuration, puts the result in theta,
-//and returns true if a solution was found
-//configuration is definied as: shoulder=right/left, elbow=up/down and wrist=in/out
-//default_theta6 value will be used in case of theta_6 indetermination
-bool UR5_inv_kin(Transform transform, bool shoulder, bool elbow, bool wrist, double *theta, double default_theta6 = offset6);
+//solves the UR5 inverse kinematics for the specified configuration,
+//puts the result in theta, and returns true if a solution was found
+//configuration is definied as:
+//shoulder=right/left, elbow=up/down and wrist=in/out
+//joint values will be the nearest ones next to the reference
+//if no reference is specified, offset values will be used as reference
+int UR5_inv_kin(Transform transform, bool shoulder, bool elbow, bool wrist,
+                 double *theta, double *theta_ref = NULL);
 
-//solves the UR5 inverse kinematics for all the possible solutions, puts the result in solution_set,
-//and returns true if at least a solution was found
-//default_theta6 value will be used in case of theta_6 indetermination
-bool UR5_inv_kin(Transform transform, Solution_set *solution_set,double default_theta6 = offset6);
+//solves the UR5 inverse kinematics for all the 8 possible configurations,
+//puts the result in solution_set, and returns true if a solution was found
+//joint values will be the nearest ones next to the reference
+//if no reference is specified, offset values will be used as reference
+bool UR5_inv_kin(Transform transform, Solution_set *solution_set,
+                 double *theta_ref = NULL);
 
-//solves the UR5 inverse kinematics for the nearest configuration next to the specified joint values,
-//puts the result in theta and returns true if at least a solution was found
-bool UR5_inv_kin(Transform transform, double *theta, double *theta_ref);
+//solves the UR5 inverse kinematics for the nearest configuration next to the
+//specified joint values, puts the result in theta and returns true if at
+//least a solution was found
+//joint values will be the nearest ones next to the reference
+bool UR5_inv_kin(Transform transform, double *theta,
+                 double *theta_ref);
 
 //finds the control values for the specified joint values
-//joint values must be physically achievable for control values are between 0 and 1
+//joint values must be physically achievable for control values are between
+//0 and 1
 void UR5_controls(double *control, double *theta);
 
 //finds the joint values for the specified control values
-//the control values must be between 0 and 1 for the joint values are physically achievable
+//the control values must be between 0 and 1 for the joint values are
+//physically achievable
 void UR5_thetas(double *control, double *theta);
 
 //solves the UR5 inverse kinematics for the two 1st joint possible values
 //and calls the function that calculates the 5th joint value
-void find_theta1(Transform transform, Solution *solution, double default_theta6);
+//joint value will be the nearest one next to the reference
+void find_theta1(Transform transform, Solution *solution,
+                 double *theta_ref);
 
 //solves the UR5 inverse kinematics for the two 2nd joint possible values
 //and calls the functions that calculates the 3rd joint value
-void find_theta2(Transform transform, Solution *solution);
+//joint value will be the nearest one next to the reference
+void find_theta2(Transform transform, Solution *solution,
+                 double *theta_ref);
 
 //solves the UR5 inverse kinematics for the 3rd joint possible value
 //and calls the function that calculates the 4th joint value
-void find_theta3(Transform transform, Solution *solution);
+//joint value will be the nearest one next to the reference
+void find_theta3(Transform transform, Solution *solution,
+                 double *theta_ref);
 
 //solves the UR5 inverse kinematics for the 4th joint possible value
 //and decides if the solution is valid
-void find_theta4(Transform transform, Solution *solution);
+//joint value will be the nearest one next to the reference
+void find_theta4(Transform transform, Solution *solution,
+                 double *theta_ref);
 
 //solves the UR5 inverse kinematics for the two 5th joint possible values
 //and calls the function that calculates the 6th joint value
-void find_theta5(Transform transform, Solution *solution, double default_theta6);
+//joint value will be the nearest one next to the reference
+void find_theta5(Transform transform, Solution *solution,
+                 double *theta_ref);
 
-//solves the UR5 inverse kinematics for the 6th joint possible value
-//and calls the function that calculates the 2nd joint value
-void find_theta6(Transform transform, Solution *solution, double default_theta6);
+//solves the UR5 inverse kinematics for the 6th joint and calls the function
+//that calculates the 2nd joint value
+//joint value will be the nearest one next to the reference
+void find_theta6(Transform transform, Solution *solution,
+                 double *theta_ref);
 
-//adjust every joint value to be the nearest one, in the physically achievable interval, next to the reference
-void adjust(double *theta, double *theta_reference);
+//adjusts the specified i-th joint value to be the nearest one next to the
+//reference, in the physically achievable interval
+void adjust(double *theta, double theta_ref, int i);
 
-//finds the nearest solution next to the reference and puts the result in theta
+//puts in theta the nearest solution next to the reference
 void nearest(Solution_set solution_set, double *theta, double *theta_ref);
 
-//prints the specified transform
-void print_transform(Transform transform);
+//returns the distance between two configurations
+double distance(double *theta_a, double *theta_b);
+
+//returns true if x is the interval [xmin, xmax] with a tol absolute tolerance
+//in case x is in the interval, it will be adjusted to be in the interval
+//without needing a tolerance anymore
+bool in_interval(double *x, double xmin, double xmax, double tol = TOL);
 
 //returns sign of x
 double sign(double x);
 
 //returns theta in the [-pi, pi] interval
-double saturate (double theta);
+double saturate(double theta);
 
-//returns the distance between two configurations
-double distance(double *theta_a, double *theta_b);
+//prints the specified transform
+void print_transform(Transform transform);
