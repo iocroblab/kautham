@@ -38,7 +38,7 @@
 
   </Joints>
   
-  <ControlSet size="2">
+  <ControlSet size="4">
     <Offset>
       <DOF name="link1" value="0.5"></DOF>
       <DOF name="link2" value="0.5"></DOF>
@@ -53,5 +53,15 @@
       <DOF name="link1" value="-0.70710678118654752440084436210485"/>
       <DOF name="link2" value="0.70710678118654752440084436210485"/>
     </Control>
+
+    <Control name="Joint1" eigValue="1.0">
+      <DOF name="link1" value="1.0"/>
+    </Control>
+
+    <Control name="Joint2" eigValue="1.0">
+      <DOF name="link2" value="1.0"/>
+    </Control>
+
+
   </ControlSet>
 </Robot>
