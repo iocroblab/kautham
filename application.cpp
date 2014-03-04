@@ -194,6 +194,7 @@ bool Application::problemSetup(string path){
 
   mainWindow->addToProblemTree( path );
   mainWindow->addViewerTab("WSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvScene());
+  mainWindow->addViewerTab("CollisionWSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getCollisionIvScene());
   
 
   //  Using to show the IV models reconstructed from the PQP triangular meshes.
