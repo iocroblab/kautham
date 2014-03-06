@@ -7,15 +7,15 @@
 *                                                                          *
 *                Project Name:       Kautham Planner                       *
 *                                                                          *
-*     Copyright (C) 2007 - 2010 by Alexander PÈrez and Jan Rosell          *
+*     Copyright (C) 2007 - 2010 by Alexander P√©rez and Jan Rosell          *
 *            alexander.perez@upc.edu and jan.rosell@upc.edu                *
 *                                                                          *
 *             This is a motion planning tool to be used into               *
 *             academic environment and it's provided without               *
 *                     any warranty by the authors.                         *
 *                                                                          *
-*          Alexander PÈrez is also with the Escuela Colombiana             *
-*          de IngenierÌa "Julio Garavito" placed in Bogot· D.C.            *
+*          Alexander P√©rez is also with the Escuela Colombiana             *
+*          de Ingenier√≠a "Julio Garavito" placed in Bogot√° D.C.            *
 *             Colombia.  alexander.perez@escuelaing.edu.co                 *
 *                                                                          *
 ***************************************************************************/
