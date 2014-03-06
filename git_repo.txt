@@ -1,0 +1,5 @@
+The Kautham project is allocated here:
+
+git clone ssh://ris.upc.es/gitroot/kautham.git 
+
+
