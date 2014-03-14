@@ -43,11 +43,16 @@
 
 
 
-#include <libpugixml/pugixml.hpp>
+//#include <libpugixml/pugixml.hpp>
+#include <pugixml.hpp>
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
+
+//solving convertions problems
+#include <locale.h>
+
 
 #if defined(KAUTHAM_USE_IOC)
 #include <libioc/myplanner.h>
@@ -114,11 +119,13 @@ namespace Kautham {
     delete _planner;
     delete _sampler;
   }
-	
+
   // This is the new implementation trying to avoid the old strucparse and ProbStruc.
   bool Problem::createWSpace(string xml_doc){
     if(_wspace != NULL ) delete _wspace;
     _wspace = new IVWorkSpace();
+
+    char *old = setlocale (LC_NUMERIC, "C");
 
     xml_document doc;
 
@@ -433,7 +440,7 @@ namespace Kautham {
 
         _wspace->addRobot(rob);
       }
-            
+
       //  it can be a distance map file
       if(name == "DistanceMap" ){
 			  _wspace->addDistanceMapFile(dir + (*it).attribute("distanceMap").value());
@@ -441,7 +448,7 @@ namespace Kautham {
       if(name == "DimensionsFile" ){
 			  _wspace->addDimensionsFile(dir + (*it).attribute("filename").value());
 			  _wspace->addDirCase(dir);
-	    }	  
+	    }
 
     }// closing for(xml_node_iterator it = tmpNode.begin(); it != tmpNode.end(); ++it){ // Processing each child
 
@@ -450,6 +457,9 @@ namespace Kautham {
 
     for(int i = 0; i<_wspace->getDimension(); i++)
       _currentControls[i] = (KthReal)0.0;
+
+    setlocale (LC_NUMERIC, old);
+
     return true;
   }
 
@@ -474,7 +484,7 @@ namespace Kautham {
     // Here is needed to convert from axis-angle to
     // quaternion internal represtantation.
     SE3Conf::fromAxisToQuaternion(cords);
-    
+
     tmpC->setCoordinates(cords);
     rob->setHomePos(tmpC);
     delete tmpC;
@@ -528,22 +538,22 @@ namespace Kautham {
      else if(name == "PRMAURO HandArm")
       _planner = new IOC::PRMAUROHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
                                              _sampler, _wspace, 10, (KthReal)0.0010, 10);
-	
+
      else if(name == "PRM RobotHand-Const ICRA")
       _planner = new IOC::PRMRobotHandConstPlannerICRA(CONTROLSPACE, sinit, sgoal, _cspace,
                                              _sampler, _wspace, 3, (KthReal)50.0);
    	 else if(name == "MyPlanner")
       _planner = new IOC::MyPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
-	  
+
 	 else if(name == "MyPRMPlanner")
       _planner = new IOC::MyPRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
-	   
+
 	  else if(name == "MyGridPlanner")
       _planner = new IOC::MyGridPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
-	   
+
 	   else if(name == "NF1Planner")
       _planner = new IOC::NF1Planner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
-	   
+
 	   else if(name == "HFPlanner")
       _planner = new IOC::HFPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 
@@ -626,7 +636,7 @@ namespace Kautham {
       if( result ){
         //Create the planner and set the parameters
         xml_node planNode = doc.child("Problem").child("Planner").child("Parameters");
-        string name = planNode.child("Name").child_value();        
+        string name = planNode.child("Name").child_value();
 
         if( name != ""){
           if( createPlanner( name )){
@@ -639,7 +649,7 @@ namespace Kautham {
                   _planner->setParametersFromString( name.append("|").append(it->child_value()));
                 }
               }catch(...){
-                std::cout << "Current planner doesn't have at least one of the parameters" 
+                std::cout << "Current planner doesn't have at least one of the parameters"
                   << " found in the file (" << name << ")." << std::endl;
                 //return false; //changed, let it continue -
               }
@@ -765,7 +775,7 @@ namespace Kautham {
 
   bool Problem::saveToFile(string file_path){
     if( file_path == "" )  file_path = _filePath;
-    if( _filePath != file_path ){ // If save as 
+    if( _filePath != file_path ){ // If save as
       ifstream initialFile(_filePath.c_str(), ios::in|ios::binary);
 	    ofstream outputFile(file_path.c_str(), ios::out|ios::binary);
 
@@ -774,7 +784,7 @@ namespace Kautham {
         outputFile << initialFile.rdbuf() ;
 	    }else           //there were any problems with the copying process
         return false;
-    		
+
 	    initialFile.close();
 	    outputFile.close();
     }
@@ -784,7 +794,7 @@ namespace Kautham {
     if( !result ) return false;
 
     if( _planner == NULL ) return false;
-    if( _planner->initSamp() == NULL || _planner->goalSamp() == NULL ) 
+    if( _planner->initSamp() == NULL || _planner->goalSamp() == NULL )
       return false;
 
     if( doc.child("Problem").child("Planner") )
@@ -797,7 +807,7 @@ namespace Kautham {
     xml_node planname = paramNode.append_child();
     planname.set_name("Name");
     planname.append_child(node_pcdata).set_value(_planner->getIDName().c_str());
-    
+
 
 
     // Adding the parameters
@@ -813,7 +823,7 @@ namespace Kautham {
     }
 
     // Adding the Query information
-    
+
     xml_node queryNode = planNode.append_child();
     queryNode.set_name("Queries");
 
@@ -827,7 +837,7 @@ namespace Kautham {
     goalNode.set_name( "Goal" );
     goalNode.append_attribute("dim") = _wspace->getDimension();
     goalNode.append_child(node_pcdata).set_value( _planner->goalSamp()->print(true).c_str() );
-    
+
     return doc.save_file(file_path.c_str());
   }
 
