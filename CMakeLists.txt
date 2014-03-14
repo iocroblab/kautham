@@ -47,6 +47,7 @@ ENDIF( KAUTHAM_GUIBRO )
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
 
+find_package(PugiXML REQUIRED)
 
 ##############################################################################
 ##############################################################################
@@ -140,7 +141,7 @@ ENDIF( KAUTHAM_IOC )
   ADD_SUBDIRECTORY ( libsutil/libkin )
   ADD_SUBDIRECTORY ( libsutil/libann )
   ADD_SUBDIRECTORY ( libsutil/libkthutil )
-  ADD_SUBDIRECTORY ( libsutil/libpugixml )
+  #ADD_SUBDIRECTORY ( libsutil/libpugixml )
   ADD_SUBDIRECTORY ( libsutil/libpqp )
   ADD_SUBDIRECTORY ( libsplanner )
   ADD_SUBDIRECTORY ( libproblem )
@@ -193,7 +194,7 @@ IF( KAUTHAM_GUI )
   
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
   TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS} libDNN libPQP libgui libsampling
-                                                libproblem libkthutil libkin libpugixml)
+                                                libproblem libkthutil libkin ${PUGI_XML_LIBRARIES})
 ENDIF( KAUTHAM_GUI )
 
 # END building Kautham GUI application
@@ -225,7 +226,7 @@ IF( KAUTHAM_CONSOLE )
   
     # Adding console bath mode executable
   ADD_EXECUTABLE( KauthamConsole ${SRC_FILES} ${HDR_FILES} ${RES_FILES} )
-  TARGET_LINK_LIBRARIES( KauthamConsole libDNN libPQP libproblem libkthutil libkin libpugixml ${KC_EXTRA_LIBS} )
+  TARGET_LINK_LIBRARIES( KauthamConsole libDNN libPQP libproblem libkthutil libkin ${KC_EXTRA_LIBS} ${PUGI_XML_LIBRARIES} )
   
   MESSAGE( STATUS "KC_EXTRA_LIBS = " ${KC_EXTRA_LIBS} )
 ENDIF( KAUTHAM_CONSOLE )

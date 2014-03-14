@@ -38,7 +38,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 
 #include "robot.h"
 #include "ivsolidelement.h"
@@ -56,7 +56,9 @@
 #include <cstdio>
 #include <fstream>
 #include <string>
-#include <libpugixml/pugixml.hpp>
+//to solve local convertions problems
+#include <locale.h>
+//#include <libpugixml/pugixml.hpp>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include "urdf.h"
 
@@ -87,7 +89,7 @@ namespace Kautham {
  *  \param scale is a global scale for all the links
  *  \param lib identifies wether PQP or SOLID collision libs are used
  */
-  Robot::Robot(string robFile, KthReal scale, LIBUSED lib) {	
+  Robot::Robot(string robFile, KthReal scale, LIBUSED lib) {
 
     _linkPathDrawn = -1;
     numCoupledControls=0;
@@ -115,8 +117,12 @@ namespace Kautham {
     }
     const KthReal toRad = M_PI/180.;
 
-    //  if the file has rob extension it will be parsed in order to 
+    //  if the file has rob extension it will be parsed in order to
     //  create the links.
+    //setting numeric parameter to avoid convertions problems
+    char *old = setlocale (LC_NUMERIC, "C");
+
+
     fstream fin;
     fin.open(robFile.c_str(),ios::in);
     if( fin.is_open() ){ // The file already exists.
@@ -333,7 +339,7 @@ namespace Kautham {
                                 }
                             }
                         }
-              
+
                     if(controlsName != "") controlsName.append("|");
                         controlsName.append((*it).attribute("name").value());
                     cont++;
@@ -583,6 +589,9 @@ namespace Kautham {
       fin.close();
       cout << "The Robot file: " << robFile << "doesn't exist. Please confirm it." << endl;
     }
+
+    //restoring environtment values
+    setlocale (LC_NUMERIC, old);
   }
 
  /*!
@@ -616,7 +625,7 @@ namespace Kautham {
     KthReal maxim=0.;
     for(size_t i = 0; i < links.size(); ++i){
       maxim = getLink(i)->getA() > maxim ? getLink(i)->getA(): maxim;
-      maxim = getLink(i)->getD() > maxim ? getLink(i)->getD(): maxim;   
+      maxim = getLink(i)->getD() > maxim ? getLink(i)->getD(): maxim;
     }
     return maxim;
   }
@@ -641,7 +650,7 @@ namespace Kautham {
       ori[0] = tmp.getRotation().at(0);
       ori[1] = tmp.getRotation().at(1);
       ori[2] = tmp.getRotation().at(2);
-      ori[3] = tmp.getRotation().at(3);      
+      ori[3] = tmp.getRotation().at(3);
       (*it).obs->getElement()->setOrientation( ori );
     }
   }
@@ -660,7 +669,7 @@ namespace Kautham {
     }
     return found;
   }
-  
+
   /*!
    *
    */
@@ -690,10 +699,10 @@ namespace Kautham {
    */
   bool Robot::setControlItem(string control, string dof, KthReal value){
     // First I will find the column index looking for "|" number before the control name.
-    string::size_type pos = controlsName.find(control,0); 
+    string::size_type pos = controlsName.find(control,0);
     if(pos == string::npos) return false;
     int j=0;
-    string::size_type trick=controlsName.find("|",0); 
+    string::size_type trick=controlsName.find("|",0);
     while(trick < pos){
       trick=controlsName.find("|",trick+1);
       j++;
@@ -705,7 +714,7 @@ namespace Kautham {
       }
     return false;
   }
-  
+
 
   /*!
    * Allows to change the values of the robot base limits.
@@ -782,7 +791,7 @@ namespace Kautham {
     }
     return true;
   }
-  
+
   /*!
    *
    */
@@ -906,20 +915,20 @@ namespace Kautham {
 	  if(q.getDim() < n){
 		  RnConf q2(n);
 		  int i;
-		  std::vector<KthReal> coords(n); 
+		  std::vector<KthReal> coords(n);
 		  for(i = 0; i < q.getDim(); i++) coords[i]=q.getCoordinate(i);
 		  for(; i < n; i++) coords[i]=0.0;
 		  q2.setCoordinates(coords);
 
 		  for(int i = 0; i < q2.getDim(); i++)
 			  links[i+1]->setValue(q2.getCoordinate(i));
-       
+
 		  _currentConf.setRn(q2);
 	  }
 	  else{ //q.getDim() == getNumJoints()
 		  for(int i = 0; i < q.getDim(); i++)
 			  links[i+1]->setValue(q.getCoordinate(i));
-       
+
 		  _currentConf.setRn(q);
 	  }
 
@@ -941,7 +950,7 @@ namespace Kautham {
     //cout << "q.gettype "<<q->getType()<<endl;
     switch(q->getType()){
 		  case SE3:
-        links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], coor[2])); 
+        links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], coor[2]));
         links[0]->getTransformation()->setRotation(Rotation(coor[3], coor[4], coor[5], coor[6]));
         links[0]->forceChange(NULL);
         _currentConf.setSE3(q->getCoordinates());
@@ -949,7 +958,7 @@ namespace Kautham {
         //", "<< _currentConf.getSE3()->getCoordinate(2)<<")"<<endl;
 			  break;
 		  case SE2:
-        links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], (KthReal)0.0)); 
+        links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], (KthReal)0.0));
         links[0]->getTransformation()->setRotation(Rotation((KthReal)0.0, (KthReal)0.0,
                                                             (KthReal)1.0, coor[2]));
         links[0]->forceChange(NULL);
@@ -1014,7 +1023,7 @@ namespace Kautham {
    */
   bool Robot::autocollision(int t){
     //parameter t is used to only test the autocollision of the trunk part of a TREE robot
-	  //it is set to 0 in robot.h 
+	  //it is set to 0 in robot.h
 
     if(_hasChanged ){
       _autocoll = false;
@@ -1043,7 +1052,7 @@ namespace Kautham {
           if(links[i]->getElement()->collideTo(links[j]->getElement())){
               //cout <<"...collision between links "<<i<<" and "<<j<<endl;
               //cout <<"...collision between links "<<links[i]->getName()<<" and "<<links[j]->getName()<<endl;
-			  
+
                     _autocoll = true;
               return _autocoll;
             }
@@ -1084,7 +1093,7 @@ namespace Kautham {
     for(int i=0; i < links.size(); i++){
       for( int j = 0; j < rob->getNumLinks(); j++ ){
         if( links[i]->getElement()->collideTo(rob->getLink(j)->getElement()) )//{
-            //cout <<"...collision between links "<<i<<" and "<<j<<endl;      
+            //cout <<"...collision between links "<<i<<" and "<<j<<endl;
             return true;
           //}
       }
@@ -1233,7 +1242,7 @@ namespace Kautham {
       return true;
   }
 
-  
+
   //! This function return a pointer to the Link demanded.
   /*! If you pass a Link identification not valid it will return a null pointer.*/
   Link* Robot::getLink(unsigned int i) {
@@ -1255,7 +1264,7 @@ namespace Kautham {
           robot->ref();
           for(unsigned int i =0; i < links.size(); i++)
             robot->addChild(((IVElement*)links[i]->getElement())->ivModel(true));
-          
+
           // Now is adding the three dimensional proposed path for the last link
           _pathSeparator = new SoSeparator();
           _pathSeparator->ref();
@@ -1289,8 +1298,8 @@ namespace Kautham {
 
           robot->addChild(_pathSeparator);
           visModel = robot;
-          break; 
-      }    
+          break;
+      }
     }
     return visModel;
   }
@@ -1386,7 +1395,7 @@ namespace Kautham {
       for(int i = 0; i < 6 + _currentConf.getRn().getDim(); i++)
         parameters.push_back((KthReal)0.0);
     }
-    
+
     if(se3Enabled){
       for(int i =0; i < 6; i++){
         for(unsigned int j= 0; j < control.size(); j++)
@@ -1488,7 +1497,7 @@ namespace Kautham {
     }
     throw exception();
   }
- 
+
 
   /*!
    * Denormalizes the configuration (the parameters are values in the range 0..1), updates the values in the links
@@ -1505,7 +1514,7 @@ namespace Kautham {
         links[0]->getTransformation()->setRotation(Rotation(coords.at(3), coords.at(4),
                                                             coords.at(5), coords.at(6)));
         links[0]->forceChange(NULL);
-        
+
       }
       if(_currentConf.getRn().getDim() != 0){
         // Rn denormalization
@@ -1533,7 +1542,7 @@ namespace Kautham {
       }
     }
 
-    if(_attachedObject.size() != 0 ) 
+    if(_attachedObject.size() != 0 )
       moveAttachedObj();
   }
 
@@ -1614,5 +1623,5 @@ namespace Kautham {
     return response;
   }
 
-}  	
+}
 
