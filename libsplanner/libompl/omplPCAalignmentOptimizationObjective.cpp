@@ -70,8 +70,73 @@ namespace Kautham {
   namespace omplplanner{
 
 
-  /*! \class PMDalignmentOptimizationObjective
-   *  This objective function aims the obtaintion of a path as much aligned to the main PMDs as possible.
+  /*! Constructor.
+   *  \param roboti is the index of the robot.
+   *  \param si is the space information of the problem
+   *  \param M is the PMD matrix (it has as many columns as controls and as many rows as DOF). It is taken from the robot mapMatrix.
+   */
+      PMDalignmentOptimizationObjective::PMDalignmentOptimizationObjective(const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M) :
+          ob::OptimizationObjective(si)
+      {
+          description_ = "PMD alignment"; //This label is used in myRRTstar - be careful not to change it!
+
+          wpenalization = 1.0;
+          wdistance = 0.1;
+          worientation = 1.0;
+
+          numDOF = M.mat.size1();//rows
+          numPMD = M.mat.size2();//columns
+          lambda.resize(numPMD);
+          PMD.mat.resize(numDOF,numPMD);
+          setPCAdata(M);
+      }
+
+      /*! void destructor
+       */
+      PMDalignmentOptimizationObjective::~PMDalignmentOptimizationObjective(){
+
+      }
+
+
+  /*! The function setPCAdata loads the PMD matrix.
+   */
+  void PMDalignmentOptimizationObjective::setPCAdata(ob::ProjectionMatrix M)
+  {
+      double modul;
+      int nr = M.mat.size1();
+      int nc = M.mat.size2();
+
+      for(int j=0;j<numPMD;j++)//column
+      {
+          modul = 0.0;
+          for(int i=0;i<numDOF;i++)//row
+          {
+              double kk = M.mat(i,j);
+              PMD.mat(i,j) = M.mat(i,j);
+              modul += M.mat(i,j)*M.mat(i,j);
+          }
+          lambda[j] = sqrt(modul);
+          for(int i=0;i<numDOF;i++) //columns vectors must be unitary vectors
+              PMD.mat(i,j) /= lambda[j];
+      }
+      cout<<"PMD matrix: "<<endl;
+      PMD.print();
+  }
+
+  /*!
+   * This function is only used in the drawcspace function, because the RRTstar calls the motionCost(s0,s1,s2) to
+   * include the penalization for the changes in orientation. In the drawcspace function this is not possible since
+   * we loose the information of the previous state (s0).
+   */
+  ob::Cost PMDalignmentOptimizationObjective::motionCost(const ob::State *s1, const ob::State *s2) const
+  {
+      motionCost(NULL,s1,s2);
+  }
+
+
+  /*! \class singleRobotPMDalignmentOptimizationObjective
+   *  For a given robot, this objective function aims the obtaintion of a path as much aligned to the main PMDs as possible.
+   *  The PMDs are assumed to be defined on the Rn part of the robot.
    *  It defines a cost composed of three weighted components:
    *    1) distance cost: It measures the lenght of each edge of the path
    *    2) alignment cost: this cost evaluates the alignment of the path edge along the mian PMDs. Each edge is projected onto the eignevectors
