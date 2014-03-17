@@ -69,11 +69,14 @@ namespace Kautham {
         ~omplRRTStarPlanner();
         bool trySolve();//!< Overloaded trySolve function to include evaluation of final path cost
 
+        ob::OptimizationObjectivePtr createOptimizationObjectivePMD();
+
         bool setParameters();
 
          KthReal _Range;
          KthReal _GoalBias;
          bool _DelayCC;
+         double _KneighFactor;
          unsigned int _opti;
          double _lengthweight;
          double _penalizationweight;
@@ -83,6 +86,8 @@ namespace Kautham {
          ob::OptimizationObjectivePtr _lengthopti;
          ob::OptimizationObjectivePtr _clearanceopti;
          //ob::OptimizationObjectivePtr _pcaalignmentopti;
+         //ob::OptimizationObjectivePtr _handpmdalignmentopti;
+         //ob::OptimizationObjectivePtr _multise3pmdalignmentopti;
          ob::OptimizationObjectivePtr _pmdalignmentopti;
 	  };
   }

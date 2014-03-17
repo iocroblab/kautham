@@ -121,7 +121,8 @@ namespace Kautham {
     //    robots[i]->setNumCoupledControls(2);
 
     for(unsigned int i=0; i< robots.size(); i++){
-        if(sample->getMappedConf().size()==0 || robots[i]->getNumCoupledControls()){
+        //if(sample->getMappedConf().size()==0 || robots[i]->getNumCoupledControls()){ //??Why
+        if(sample->getMappedConf().size()==0){
             tmpVec.clear();
             //start coupledcontrols
             //for( j=0; j < robots[i]->getNumCoupledControls(); j++ )
