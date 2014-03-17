@@ -72,6 +72,7 @@ namespace Kautham {
   {
   private:
       bool _optimize; //!< flag that allows to disable optimization when set to false. Defaults to true.
+      double _factor_k_rrg;//!< Value that modifies the number K of nearest neighbors (multiplication factor)
 
   public:
 
@@ -79,10 +80,14 @@ namespace Kautham {
       {
           setName("myRRTstar");
           _optimize = true;
+          _factor_k_rrg = 1.0;
       }
 
       bool getOptimize(){ return _optimize;}; //!< Returns the _optimize flag
       void setOptimize(bool s){_optimize=s;}; //!< Sets the _optimize flag
+      bool getNeighFactor(){ return _factor_k_rrg;}; //!< Returns _factor_k_rrg that modifies the number K of nearest neighbors
+      void setNeighFactor(double f){_factor_k_rrg=f;}; //!< Sets  _factor_k_rrg to modify the number K of nearest neighbors
+
 
       /** \brief Compute distance between motions (actually distance between contained states) */
       double distanceFunction(const Motion* a, const Motion* b) const
@@ -115,6 +120,7 @@ namespace Kautham {
               return ob::PlannerStatus::INVALID_START;
           }
 
+
           if (!sampler_)
               sampler_ = si_->allocStateSampler();
 
@@ -136,8 +142,10 @@ namespace Kautham {
 
           // e+e/d.  K-nearest RRT*
           double k_rrg;
-          if(_optimize)
+          if(_optimize){
               k_rrg = boost::math::constants::e<double>() + (boost::math::constants::e<double>()/(double)si_->getStateSpace()->getDimension());
+              k_rrg = _factor_k_rrg*k_rrg;
+          }
           else
               k_rrg = 0.0; //When set to zero RRTStar behavies as a standard RRT
 
@@ -525,6 +533,170 @@ namespace Kautham {
 
 
 
+  /*!
+   * createOptimizationObjectivePMD creates a PMD alignment Optimization Objective.
+   * If there is only a single robot, it is basicly corresponds to the PMDs of the hand synergies.
+   * If there are more than one robot it corresponds to the coupling in the x,y,z coordinates of the base.
+   * \return the pointer to the OptimizationObjective
+   */
+  ob::OptimizationObjectivePtr omplRRTStarPlanner::createOptimizationObjectivePMD()
+  {
+      if(wkSpace()->robotsCount() == 1)
+      {
+          //////////////////////////////////////////////////////////////////////////////
+          // 3) single robot handPMD alignment optimization criteria
+          int robotindex = 0;
+          int numPMD = 0;
+
+          string listcontrolsname = wkSpace()->getRobot(robotindex)->getControlsName();
+          vector<string*> controlname;
+          string *newcontrol = new string;
+          for(int i=0; i<listcontrolsname.length();i++)
+          {
+              if(listcontrolsname[i]=='|')
+              {
+                  controlname.push_back(newcontrol);
+                  newcontrol = new string;
+              }
+              else
+                  newcontrol->push_back(listcontrolsname[i]);
+          }
+          //add last control (since listcontrolsname does not end with a |)
+          controlname.push_back(newcontrol);
+
+          std::size_t foundlabel;
+          vector<int> handpmdcolumns;
+          for(int i=0;i<controlname.size();i++)
+          {
+              if(controlname[i]->find("PMD") != string::npos)
+              {
+                  //store the columns of the matrix of controls that will contain the handpmd control
+                  handpmdcolumns.push_back(i);
+              }
+          }
+          numPMD = handpmdcolumns.size();
+
+          int numDOF = wkSpace()->getRobot(robotindex)->getNumJoints();
+          ob::ProjectionMatrix PMD;
+          PMD.mat = ob::ProjectionMatrix::Matrix(numDOF,numPMD);
+          KthReal **mm2 = wkSpace()->getRobot(robotindex)->getMapMatrix();
+          double kk;
+          int col;
+          for(int j=0;j<numPMD;j++)//columns
+          {
+              for(int i=0;i<numDOF;i++)//rows
+              {
+                  col = handpmdcolumns[j];
+                  kk = mm2[6+i][handpmdcolumns[j]];
+                  PMD.mat(i,j) = mm2[6+i][handpmdcolumns[j]];
+              }
+          }
+
+          ob::OptimizationObjectivePtr _handpmdalignmentopti;
+          _handpmdalignmentopti = ob::OptimizationObjectivePtr(new singleRobotPMDalignmentOptimizationObjective(robotindex, ss->getSpaceInformation(),PMD));
+          _handpmdalignmentopti->setCostThreshold(ob::Cost(0.0));
+          return _handpmdalignmentopti;
+      }
+
+      else
+      {
+          //////////////////////////////////////////////////////////////////////////////
+          // 4) multi robot se3PMD alignment optimization criteria
+          int numPMD = 0;
+          int numDOF = 3*wkSpace()->robotsCount(); //the coupling is allowed with the x,y,z of each robot
+
+          std::map< string, vector< pair<int,int> >  > pmdMap;
+          std::map< string, vector< pair<int,int> >  >::iterator itpmdMap;
+
+          for(int k=0;k<wkSpace()->robotsCount(); k++)
+          {
+              //find the controls that are coupled, i.e. those that have the PMD leters in their name
+              string listcontrolsname = wkSpace()->getRobot(k)->getControlsName();
+              vector<string*> controlname;
+              string *newcontrol = new string;
+              //split the list of controls to obtain the control names
+              for(int i=0; i<listcontrolsname.length();i++)
+              {
+                  if(listcontrolsname[i]=='|')
+                  {
+                      controlname.push_back(newcontrol);
+                      newcontrol = new string;
+                  }
+                  else
+                      newcontrol->push_back(listcontrolsname[i]);
+              }
+              //add last control (since listcontrolsname does not end with a |)
+              controlname.push_back(newcontrol);
+
+              //verify those control names that have the leters PMD in their name
+              std::size_t foundlabel;
+              for(int i=0;i<controlname.size();i++)
+              {
+                  if(controlname[i]->find("PMD") != string::npos)
+                  {
+                      //if the pmd has not yet been enountered (the Key does not exists), create it
+                      itpmdMap=pmdMap.find(*controlname[i]);
+                      if(itpmdMap == pmdMap.end())//not found
+                      {
+                          pair< string, vector< pair<int,int> > > pmdfound;
+                          pmdfound.first = *controlname[i]; //string
+
+                          vector< pair<int,int> > *pmdcolumns = new vector< pair<int,int> >;
+                          pmdfound.second = *pmdcolumns; //indices
+
+                          pmdMap.insert(pmdfound);
+                      }
+
+                      //add the pair indices to the map
+                      pair<int,int> pmdfoundindex;
+                      pmdfoundindex.first = k; //robot index
+                      pmdfoundindex.second = i; //pmd index
+                      pmdMap[*controlname[i]].push_back( pmdfoundindex );
+                  }
+              }
+          }
+          numPMD = pmdMap.size();
+          //check correctness
+          for (itpmdMap=pmdMap.begin(); itpmdMap!=pmdMap.end(); ++itpmdMap)
+          {
+              if(itpmdMap->second.size() != wkSpace()->robotsCount())
+              {
+                  cout<<"Error configuring the PMD matrix. The same number of coupled controls (PMDs) is required per robot (and with the same name!)"<<endl;
+                  exit(1);
+              }
+          }
+
+          //Now load the PMD matrix
+          ob::ProjectionMatrix PMD;
+          PMD.mat = ob::ProjectionMatrix::Matrix(numDOF,numPMD);
+
+          int ic=0; //column counter
+          for (itpmdMap=pmdMap.begin(); itpmdMap!=pmdMap.end(); ++itpmdMap)//columns
+          {
+              int ir=0; //row counter
+              for(int j=0; j< itpmdMap->second.size(); j++) //this loops as many times as robots
+              {
+                  int robotindex = itpmdMap->second[j].first; //the robot
+                  int pmdcolumn = itpmdMap->second[j].second; //the columns in the mapMatrix of robot robotindex
+                  KthReal **mm2 = wkSpace()->getRobot(robotindex)->getMapMatrix(); //the mapMatrix of robot robotindex
+
+                  //copy the first three rows of the mapMatrix of robot robotindex, that correspond to the x,y and z coordinates
+                  for(int ii=0; ii< 3; ii++)
+                  {
+                      double kk = mm2[ii][pmdcolumn];
+                      PMD.mat(ir,ic) = mm2[ii][pmdcolumn];
+                      ir++;//next row in PMD matrix
+                  }
+              }
+              ic++;
+          }
+
+          ob::OptimizationObjectivePtr _multise3pmdalignmentopti;
+          _multise3pmdalignmentopti = ob::OptimizationObjectivePtr(new multiRobotSE3PMDalignmentOptimizationObjective(ss->getSpaceInformation(),PMD));
+          _multise3pmdalignmentopti->setCostThreshold(ob::Cost(0.0));
+          return _multise3pmdalignmentopti;
+      }
+  }
 
 
 
@@ -565,84 +737,36 @@ namespace Kautham {
         planner->as<og::RRTstar>()->setGoalBias(_GoalBias);
         planner->as<og::RRTstar>()->setDelayCC(_DelayCC);
 
+
+        //set the parameter that modifies the number K of near neighbors to search in the RRT* solve
+        _KneighFactor = 1.0;
+        addParameter("K-Neigh Factor", _KneighFactor);
+        planner->as<myRRTstar>()->setNeighFactor(_KneighFactor);
+
+        //////////////////////////////////////////////////////////////////////////////
         //START optimization criteria:
         ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
+
+        //////////////////////////////////////////////////////////////////////////////
         // 1) Length optimization criteria
         _lengthopti = ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
 
+        //////////////////////////////////////////////////////////////////////////////
         // 2) clearance optimization criteria
         _clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
 
-        /*
-        // 3) PCA alignment optimization criteria
-        int robotindex = 0;
-        int dimpca=wkSpace()->getDimension();
-        ob::ProjectionMatrix M;
-        M.mat = ob::ProjectionMatrix::Matrix(dimpca,dimpca);
-        KthReal **mm = wkSpace()->getRobot(robotindex)->getMapMatrix();
-        for(int i=0;i<dimpca;i++)
-            for(int j=0;j<dimpca;j++)
-                M.mat(i,j) = mm[6+i][j];
-        _pcaalignmentopti = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective(ss->getSpaceInformation(),dimpca,M));
-        _pcaalignmentopti->setCostThreshold(ob::Cost(0.0));
-        */
+        //////////////////////////////////////////////////////////////////////////////
+        // 3) pmd alignment optimization criteria
+        _pmdalignmentopti = createOptimizationObjectivePMD();
 
-        // 4) handPMD alignment optimization criteria
-        int robotindex = 0;
-        int numPMD = 0;
-
-        string listcontrolsname = wkSpace()->getRobot(robotindex)->getControlsName();
-        vector<string*> controlname;
-        string *newcontrol = new string;
-        for(int i=0; i<listcontrolsname.length();i++)
-        {
-            if(listcontrolsname[i]=='|')
-            {
-                controlname.push_back(newcontrol);
-                newcontrol = new string;
-            }
-            else
-                newcontrol->push_back(listcontrolsname[i]);
-        }
-        //add last control (since listcontrolsname does not end with a |)
-        controlname.push_back(newcontrol);
-
-        std::size_t foundlabel;
-        vector<int> handpmdcolumns;
-        for(int i=0;i<controlname.size();i++)
-        {
-            if(controlname[i]->find("PMD") != string::npos)
-            {
-                //store the columns of the matrix of controls that will contain the handpmd control
-                handpmdcolumns.push_back(i);
-             }
-        }
-        numPMD = handpmdcolumns.size();
-
-        int numDOF = wkSpace()->getRobot(robotindex)->getNumJoints();
-        ob::ProjectionMatrix PMD;
-        PMD.mat = ob::ProjectionMatrix::Matrix(numDOF,numPMD);
-        KthReal **mm2 = wkSpace()->getRobot(robotindex)->getMapMatrix();
-        double kk;
-        int col;
-        for(int j=0;j<numPMD;j++)//columns
-        {
-            for(int i=0;i<numDOF;i++)//rows
-            {
-                col = handpmdcolumns[j];
-                kk = mm2[6+i][handpmdcolumns[j]];
-                PMD.mat(i,j) = mm2[6+i][handpmdcolumns[j]];
-            }
-        }
-        _pmdalignmentopti = ob::OptimizationObjectivePtr(new PMDalignmentOptimizationObjective(robotindex, ss->getSpaceInformation(),PMD));
-        _pmdalignmentopti->setCostThreshold(ob::Cost(0.0));
-
+        //////////////////////////////////////////////////////////////////////////////
         _lengthweight = 0.1;
         addParameter("lengthweight(0..1)", _lengthweight);
         _penalizationweight = 1.0;
         addParameter("penalizationweight", _penalizationweight);
         _orientationweight = 1.0;
         addParameter("orientationweight", _orientationweight);
+
 
         //_multiopti = ob::OptimizationObjectivePtr(new ob::MultiOptimizationObjective(ss->getSpaceInformation()));
         //((ob::MultiOptimizationObjective*)_multiopti.get())->addObjective(_lengthopti,_lengthweight);
@@ -684,6 +808,8 @@ namespace Kautham {
         //set the planner
         ss->setPlanner(planner);
 
+        //for the RRT type of planners we do not want to constrain the samppling in the PMD subspace, then disable these controls
+        disableControlsFromSampling();
     }
 
 	//! void destructor
@@ -793,6 +919,14 @@ namespace Kautham {
         if(it != _parameters.end()){
             _GoalBias = it->second;
             ss->getPlanner()->as<og::RRTstar>()->setGoalBias(_GoalBias);
+        }
+        else
+          return false;
+
+        it = _parameters.find("K-Neigh Factor");
+        if(it != _parameters.end()){
+            _KneighFactor = it->second;
+            ss->getPlanner()->as<myRRTstar>()->setNeighFactor(_KneighFactor);
         }
         else
           return false;
