@@ -157,8 +157,8 @@ namespace Kautham {
    *  \param si is the space information of the problem
    *  \param M is the PMD matrix (it has as many columns as controls and as many rows as DOF). It is taken from the robot mapMatrix.
    */
-      PMDalignmentOptimizationObjective::PMDalignmentOptimizationObjective(int roboti, const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M) :
-      ob::OptimizationObjective(si)
+      singleRobotPMDalignmentOptimizationObjective::singleRobotPMDalignmentOptimizationObjective(int roboti, const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M) :
+          PMDalignmentOptimizationObjective(si, M)
       {
           description_ = "PMD alignment"; //This label is used in myRRTstar - be careful not to change it!
           robotindex = roboti;
