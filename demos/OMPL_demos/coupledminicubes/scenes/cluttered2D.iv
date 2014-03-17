@@ -1,0 +1,93 @@
+#Inventor V2.1 ascii
+
+Separator {
+	#Separator {
+	#	Material {
+        #   diffuseColor        0.7 0.7 0.7
+	#	}
+
+	#	Translation {
+	#		translation 0.5 0.5 0.0
+	#	}
+
+	#	Cube {
+	#		width 1.0
+	#		height 1.0
+	#		depth 0.1
+	#	}
+	#}
+	
+	Separator {
+		Material {
+		    diffuseColor 1.0 0.0 0.0
+		}
+		Separator {
+		  Translation{translation 0.2 0.2 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		}
+		Separator {
+		  Translation{translation 0.2 0.4 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		}
+		Separator {
+		  Translation{translation 0.2 0.6 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		 }
+		Separator {
+		  Translation{translation 0.2 0.8 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		 }
+		 
+		Separator {
+		  Translation{translation 0.4 0.2 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		}
+		Separator {
+		  Translation{translation 0.4 0.4 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		}
+		Separator {
+		  Translation{translation 0.4 0.6 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		 }
+		Separator {
+		  Translation{translation 0.4 0.8 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		 }
+		 
+		 
+		Separator {
+		  Translation{translation 0.6 0.2 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		}
+		Separator {
+		  Translation{translation 0.6 0.4 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		}
+		Separator {
+		  Translation{translation 0.6 0.6 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		 }
+		Separator {
+		  Translation{translation 0.6 0.8 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		 }
+		 
+		Separator {
+		  Translation{translation 0.8 0.2 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		}
+		Separator {
+		  Translation{translation 0.8 0.4 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		}
+		Separator {
+		  Translation{translation 0.8 0.6 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		 }
+		Separator {
+		  Translation{translation 0.8 0.8 0.01}
+		  Cube {width 0.1 height 0.1 depth 0.1}
+		 }
+	}
+}

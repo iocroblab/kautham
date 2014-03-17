@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
-<Problem name="OMPL_RRTstar_2DRR_sphere">
+<Problem name="OMPL_RRTstar_2DRR_withoutobstacles">
         <Robot robot="robots/2DRRb.rob" scale="1.0">
 		<InvKinematic name="RR2D" />
-	  
 	</Robot>
         
 	<Planner>
@@ -17,8 +16,8 @@
 		</Parameters>
 		<Queries>
                         <Query>
-                                <Init dim="2">0.5 0.5</Init>
-                                <Goal dim="2">0.5 1.0</Goal>
+                                <Init dim="4">0.5 0.5 0.5 0.5</Init>
+                                <Goal dim="4">0.5 1.0 0.5 0.5</Goal>
 			</Query>
 		</Queries>
 	</Planner>
