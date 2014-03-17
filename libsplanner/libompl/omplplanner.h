@@ -135,8 +135,8 @@ namespace Kautham {
 
 
       protected:
-        ompl::RNG rng_; //random generator
-        Planner *kauthamPlanner_; //pointer to planner in order to have access to the workspace
+        ompl::RNG rng_; //!< random generator
+        Planner *kauthamPlanner_; //!< pointer to planner in order to have access to the workspace
         Sample *centersmp;
         double threshold;
     };
