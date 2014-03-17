@@ -60,7 +60,66 @@ namespace Kautham {
  */
   namespace omplplanner{
 
-    class PMDalignmentOptimizationObjective:public ob::OptimizationObjective {
+  class PMDalignmentOptimizationObjective:public ob::OptimizationObjective {
+      protected:
+      typedef boost::numeric::ublas::matrix<double> Matrix;
+
+      ob::ProjectionMatrix PMD; //!< The copupling matrix
+      ob::EuclideanProjection lambda;//!< The eignevalues of the PMDs. This is a typedef of boost::numeric::ublas::vector < double >
+      int numPMD; //!< Number of PMDs considered for the hand. It corresponds to the number of columns of te copupling matrix
+      int numDOF; //!< Number of DOF coupled. It corresponds to the number of rows of the coupling matrix
+
+      double wpenalization; //!< To penalize changes in orientation between consecutive edges of a path
+      double wdistance;//!< To weight the distance
+      double worientation;//!< To weight the alignment with the PMDs
+
+  public:
+      PMDalignmentOptimizationObjective(const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M);
+      ~PMDalignmentOptimizationObjective();
+
+      virtual ob::Cost motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const = 0;
+      virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
+      void setPCAdata(ob::ProjectionMatrix M);
+      inline double getOrientationPenalization(){return wpenalization;}
+      inline void setOrientationPenalization(double w){wpenalization=w;};
+      inline double getDistanceWeight(){return wdistance;}
+      inline void setDistanceWeight(double w){wdistance=w;};
+      inline void setOrientationWeight(double w){worientation=w;};
+      inline double getOrientationWeight(){return worientation;};
+    };
+
+  class singleRobotPMDalignmentOptimizationObjective:public PMDalignmentOptimizationObjective {
+      private:
+      typedef boost::numeric::ublas::matrix<double> Matrix;
+
+      double weightSE3;//!< To weight the costs in Rn subspace (cost=distcost+alignmentcost+penalization)
+      double weightRn;//!< To weight the cost in SE3 subspace (cost=distance)
+      int robotindex;
+
+  public:
+      singleRobotPMDalignmentOptimizationObjective(int roboti, const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M);
+      ~singleRobotPMDalignmentOptimizationObjective();
+
+      virtual ob::Cost motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const;
+      ob::Cost motionCostRn(const ob::State *s0, const ob::State *s1, const ob::State *s2) const;
+      ob::Cost motionCostSE3(const ob::State *s1, const ob::State *s2) const;
+    };
+
+
+  class multiRobotSE3PMDalignmentOptimizationObjective:public PMDalignmentOptimizationObjective {
+      private:
+      typedef boost::numeric::ublas::matrix<double> Matrix;
+
+  public:
+      multiRobotSE3PMDalignmentOptimizationObjective(const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M);
+      ~multiRobotSE3PMDalignmentOptimizationObjective();
+
+      virtual ob::Cost motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const;
+    };
+
+
+  /*
+    class singleRobotPMDalignmentOptimizationObjective:public ob::OptimizationObjective {
         private:
         typedef boost::numeric::ublas::matrix<double> Matrix;
 
