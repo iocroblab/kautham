@@ -136,8 +136,8 @@ namespace Kautham {
         int robotindex;
 
     public:
-        PMDalignmentOptimizationObjective(int roboti, const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M);
-        ~PMDalignmentOptimizationObjective();
+        singleRobotPMDalignmentOptimizationObjective(int roboti, const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M);
+        ~singleRobotPMDalignmentOptimizationObjective();
 
         virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
         virtual ob::Cost motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const;
@@ -151,6 +151,7 @@ namespace Kautham {
         inline void setOrientationWeight(double w){worientation=w;};
         inline double getOrientationWeight(){return worientation;};
       };
+      */
 
     /*
         class PCAalignmentOptimizationObjective:public ob::OptimizationObjective {
