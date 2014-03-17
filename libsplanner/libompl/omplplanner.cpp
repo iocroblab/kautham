@@ -176,6 +176,10 @@ namespace Kautham {
                     vector<KthReal> coords(d);
                     for(int i=0;i<d;i++)
                         coords[i] = rng_.uniformReal(0,1.0);
+                    //those controls that are disabled for sampling are now restored to 0.5
+                    for(int j=0; j < ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
+                        coords[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
+
 
                     //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
                     smp->setCoords(coords);

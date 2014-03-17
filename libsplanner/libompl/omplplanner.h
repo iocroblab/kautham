@@ -155,7 +155,7 @@ namespace Kautham {
         bool trySolve();//reimplemented
         bool setParameters();//reimplemented
         SoSeparator *getIvCspaceScene();//reimplemented
-        void drawCspace();
+        void drawCspace(int numrob=0);
         //void drawCspaceSE3();
         //void drawCspaceRn();
         //void drawCspaceprojections();
@@ -169,6 +169,9 @@ namespace Kautham {
         inline void setSamplerUsed(int su){_samplerUsed=su;};
         inline int getSamplerUsed(){return _samplerUsed;};
 
+        void disableControlsFromSampling();
+        inline vector<int> *getDisabledControls(){return &_disabledcontrols;};
+
 		protected:
 		//Add protected data and functions
         KthReal _planningTime;
@@ -178,6 +181,8 @@ namespace Kautham {
         int _samplerUsed;
         unsigned int _simplify;
         unsigned int _incremental;
+        int _drawnrobot; //!< Index of the robot whose Cspace is drawn. Defaults to 0.
+        vector<int> _disabledcontrols;//!< those disabled controls will not be sampled, they are fixed at 0.5
 
 	    private:
 		//Add private data and functions
