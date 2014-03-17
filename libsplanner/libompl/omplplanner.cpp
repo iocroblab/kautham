@@ -133,6 +133,7 @@ namespace Kautham {
       {
           kauthamPlanner_ = p;
           centersmp = NULL;
+
       }
 
       void KauthamStateSampler::setCenterSample(ob::State *state, double th)
