@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jan.rosell/kautham.git/libsutil/libkthutil/kauthamdefs.h
+iostream
+-
+string
+-
+vector
+-
+map
+-
+
+/home/jan.rosell/kautham.git/libsutil/libkthutil/kauthamobject.cpp
+kauthamobject.h
+/home/jan.rosell/kautham.git/libsutil/libkthutil/kauthamobject.h
+string
+-
+sstream
+-
+cstdio
+-
+cstdlib
+-
+boost/algorithm/string.hpp
+-
+
+/home/jan.rosell/kautham.git/libsutil/libkthutil/kauthamobject.h
+kauthamdefs.h
+/home/jan.rosell/kautham.git/libsutil/libkthutil/kauthamdefs.h
+

@@ -1,0 +1,2 @@
+/usr/bin/ar cr libDNN.a  CMakeFiles/libDNN.dir/kd_split.C.o CMakeFiles/libDNN.dir/ANN.C.o CMakeFiles/libDNN.dir/kd_util.C.o CMakeFiles/libDNN.dir/kd_search.C.o CMakeFiles/libDNN.dir/multiann.C.o CMakeFiles/libDNN.dir/kd_tree.C.o CMakeFiles/libDNN.dir/nn.C.o
+/usr/bin/ranlib libDNN.a
