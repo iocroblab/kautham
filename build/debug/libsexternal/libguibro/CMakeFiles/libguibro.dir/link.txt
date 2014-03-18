@@ -1,0 +1,2 @@
+/usr/bin/ar cr liblibguibro.a  CMakeFiles/libguibro.dir/workspacegridplanner.cpp.o CMakeFiles/libguibro.dir/guibrogridplanner.cpp.o CMakeFiles/libguibro.dir/pathparse.cpp.o CMakeFiles/libguibro.dir/bronchowidget.cpp.o CMakeFiles/libguibro.dir/consbronchoscopykin.cpp.o CMakeFiles/libguibro.dir/moc_bronchowidget.cxx.o
+/usr/bin/ranlib liblibguibro.a

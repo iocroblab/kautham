@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<Problem name="" topology="SE3">
+
+<!-- ROBOTS -->
+	<Robot robot="robots/AllegroHandL.rob" scale="1.0">
+		<Home X="0.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="0.0" TH="0.0" />
+		<InvKinematic name="TX90" />
+	</Robot>
+
+</Problem>

@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="Allegro Hand Right" DHType="Modified" robType="Tree">
+
+  <Joints size="21">
+     <Joint name="Palm" ivFile="AllegroHand/right/base_link_right_axis.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="false" movable="false" ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Parent name=""></Parent>
+    </Joint>
+ 
+    <!-- Medium Finger----------------------------------------------------------------->
+    
+    <Joint name="Medium-base" ivFile="AllegroHand/right/link_0_0_axis.wrl">Index
+      <DHPars alpha="0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="0" Y="0" Z="16.4" WX="1.0" WY="0.0" WZ="0.0" TH="0" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="26.93" Low="-26.93"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+
+   <Joint name="Medium-proximal" ivFile="AllegroHand/right/link_1_0_axis.wrl">
+      <DHPars alpha="90" a="0" theta="90" d="0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="11.46" Low="-92.25"></Limits>
+      <Parent name="Medium-base"></Parent>
+    </Joint>
+ 
+    <Joint name="Medium-distal" ivFile="AllegroHand/right/link_2_0_axis.wrl">
+      <DHPars alpha="0" a="54" theta="0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="9.74" Low="-97.98"></Limits>
+      <Parent name="Medium-proximal"></Parent>
+    </Joint>
+
+    <Joint name="Medium-last" ivFile="AllegroHand/right/link_3_0_axis.wrl">
+      <DHPars alpha="0" a="38.4" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="13.18" Low="-92.82"></Limits>
+      <Parent name="Medium-distal"></Parent>
+    </Joint>
+
+    <Joint name="Medium-tip" ivFile="AllegroHand/right/link_3_0_tip_axis.wrl">
+      <DHPars alpha="0" a="17" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="false" movable="false" ></Description>
+      <Limits Hi="0.0" Low="-90.0"></Limits>
+      <Parent name="Medium-last"></Parent>
+    </Joint>
+    
+    
+    <!-- Ring Finger----------------------------------------------------------------->
+    
+    
+    <Joint name="Ring-base" ivFile="AllegroHand/right/link_0_0_axis.wrl">
+      <DHPars alpha="0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="0" Y="-44.981" Z="14.102" WX="1.0" WY="0.0" WZ="0.0" TH="5" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="26.93" Low="-26.93"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+
+   <Joint name="Ring-proximal" ivFile="AllegroHand/right/link_1_0_axis.wrl">
+      <DHPars alpha="90" a="0" theta="90" d="0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="11.46" Low="-92.25"></Limits>
+      <Parent name="Ring-base"></Parent>
+    </Joint>
+ 
+    <Joint name="Ring-distal" ivFile="AllegroHand/right/link_2_0_axis.wrl">
+      <DHPars alpha="0" a="54" theta="0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="9.74" Low="-97.98"></Limits>
+      <Parent name="Ring-proximal"></Parent>
+    </Joint>
+
+    <Joint name="Ring-last" ivFile="AllegroHand/right/link_3_0_axis.wrl">
+      <DHPars alpha="0" a="38.4" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="13.18" Low="-92.82"></Limits>
+      <Parent name="Ring-distal"></Parent>
+    </Joint>
+
+    <Joint name="Ring-tip" ivFile="AllegroHand/right/link_3_0_tip_axis.wrl">
+      <DHPars alpha="0" a="17" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="false" movable="false" ></Description>
+      <Limits Hi="0.0" Low="-90.0"></Limits>
+      <Parent name="Ring-last"></Parent>
+    </Joint>
+    
+ <!-- Index Finger----------------------------------------------------------------->
+    
+    
+    <Joint name="Index-base" ivFile="AllegroHand/right/link_0_0_axis.wrl">
+      <DHPars alpha="0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <PreTrans X="0" Y="44.981" Z="14.102" WX="1.0" WY="0.0" WZ="0.0" TH="-5" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="26.93" Low="-26.93"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+
+   <Joint name="Index-proximal" ivFile="AllegroHand/right/link_1_0_axis.wrl">
+      <DHPars alpha="90" a="0" theta="90" d="0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="11.46" Low="-92.25"></Limits>
+      <Parent name="Index-base"></Parent>
+    </Joint>
+ 
+    <Joint name="Index-distal" ivFile="AllegroHand/right/link_2_0_axis.wrl">
+      <DHPars alpha="0" a="54" theta="0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="9.74" Low="-97.98"></Limits>
+      <Parent name="Index-proximal"></Parent>
+    </Joint>
+
+    <Joint name="Index-last" ivFile="AllegroHand/right/link_3_0_axis.wrl">
+      <DHPars alpha="0" a="38.4" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="13.18" Low="-92.82"></Limits>
+      <Parent name="Index-distal"></Parent>
+    </Joint>
+
+    <Joint name="Index-tip" ivFile="AllegroHand/right/link_3_0_tip_axis.wrl">
+      <DHPars alpha="0" a="17" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="false" movable="false" ></Description>
+      <Limits Hi="0.0" Low="-90.0"></Limits>
+      <Parent name="Index-last"></Parent>
+    </Joint>
+
+ <!-- Thumb Finger----------------------------------------------------------------->
+    
+    
+    <Joint name="Thumb-base" ivFile="AllegroHand/right/link_12_0_right_axis.wrl">
+      <DHPars alpha="0" a="0.0" theta="0" d="0.0"></DHPars>
+      <PreTrans X="-18.2" Y="19.333" Z="-74" WX="1.0" WY="0.0" WZ="0.0" TH="-5" ></PreTrans>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="9.7975.1" Low="-75.1"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+    
+     <Joint name="Thumb-proximal" ivFile="AllegroHand/right/link_13_0_axis.wrl">
+      <DHPars alpha="90" a="4.5" theta="90" d="-55"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="14.9" Low="-80.21"></Limits>
+      <Parent name="Thumb-base"></Parent>
+    </Joint>
+    
+     <Joint name="Thumb-distal" ivFile="AllegroHand/right/link_14_0_axis.wrl">
+      <DHPars alpha="90" a="0" theta="90" d="0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="93.97" Low="-10.89"></Limits>
+      <Parent name="Thumb-proximal"></Parent>
+    </Joint>
+    
+      <Joint name="Thumb-last" ivFile="AllegroHand/right/link_15_0_axis.wrl">
+      <DHPars alpha="0" a="-51.5" theta="0" d="0"></DHPars>
+      <Description rotational="true" movable="true" ></Description>
+      <Limits Hi="98.55" Low="-9.17"></Limits>
+      <Parent name="Thumb-distal"></Parent>
+    </Joint>
+    
+    <Joint name="Thumb-tip" ivFile="AllegroHand/right/link_15_0_tip_axis.wrl">
+      <DHPars alpha="0" a="-32.3" theta="0" d="0"></DHPars>
+      <Description rotational="false" movable="false" ></Description>
+      <Limits Hi="0.0" Low="-90.0"></Limits>
+      <Parent name="Thumb-last"></Parent>
+    </Joint>
+    
+   </Joints>
+
+
+	<ControlSet size="16">
+    <Offset>
+
+<!-- Medium Finger----------------------------------------------------------------->
+      <DOF name="Medium-base" value="0.5544"></DOF> 
+      <DOF name="Medium-proximal" value="0.5544"></DOF> 
+      <DOF name="Medium-distal" value="0.5544"></DOF>
+      <DOF name="Medium-last" value="0.5544"></DOF> 
+<!-- Medium Finger----------------------------------------------------------------->
+      <DOF name="Index-base" value="0.5544"></DOF> 
+      <DOF name="Index-proximal" value="0.5544"></DOF> 
+      <DOF name="Index-distal" value="0.5544"></DOF>
+      <DOF name="Index-last" value="0.5544"></DOF> 
+<!-- Ring Finger----------------------------------------------------------------->
+      <DOF name="Ring-base" value="0.5544"></DOF> 
+      <DOF name="Ring-proximal" value="0.5544"></DOF> 
+      <DOF name="Ring-distal" value="0.5544"></DOF>
+      <DOF name="Ring-last" value="0.5544"></DOF> 
+<!-- Thumb Finger----------------------------------------------------------------->
+      <DOF name="Thumb-base" value="0.5544"></DOF> 
+      <DOF name="Thumb-proximal" value="0.5544"></DOF> 
+      <DOF name="Thumb-distal" value="0.5544"></DOF>
+      <DOF name="Thumb-last" value="0.5544"></DOF> 
+      
+   </Offset>
+
+<!-- Medium Finger----------------------------------------------------------------->
+    <Control name="Medium-base" eigValue="1.0">
+      <DOF name="Medium-base" value="1.0"></DOF>
+    </Control>
+
+    <Control name="Medium-proximal" eigValue="1.0">
+      <DOF name="Medium-proximal" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Medium-distal" eigValue="1.0">
+      <DOF name="Medium-distal" value="1.0"></DOF>
+    </Control>
+
+    <Control name="Medium-last" eigValue="1.0">
+      <DOF name="Medium-last" value="1.0"></DOF>
+    </Control>
+    
+<!-- Medium Finger----------------------------------------------------------------->
+
+    <Control name="Index-base" eigValue="1.0">
+      <DOF name="Index-base" value="1.0"></DOF>
+    </Control>
+
+    <Control name="Index-proximal" eigValue="1.0">
+      <DOF name="Index-proximal" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Index-distal" eigValue="1.0">
+      <DOF name="Index-distal" value="1.0"></DOF>
+    </Control>
+
+    <Control name="Index-last" eigValue="1.0">
+      <DOF name="Index-last" value="1.0"></DOF>
+    </Control>
+
+<!-- Ring Finger----------------------------------------------------------------->
+
+    <Control name="Ring-base" eigValue="1.0">
+      <DOF name="Ring-base" value="1.0"></DOF>
+    </Control>
+
+    <Control name="Ring-proximal" eigValue="1.0">
+      <DOF name="Ring-proximal" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Ring-distal" eigValue="1.0">
+      <DOF name="Ring-distal" value="1.0"></DOF>
+    </Control>
+
+    <Control name="Ring-last" eigValue="1.0">
+      <DOF name="Ring-last" value="1.0"></DOF>
+    </Control>
+
+<!-- Thumb Finger----------------------------------------------------------------->
+
+    <Control name="Thumb-base" eigValue="1.0">
+      <DOF name="Thumb-base" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Thumb-proximal" eigValue="1.0">
+      <DOF name="Thumb-proximal" value="1.0"></DOF>
+    </Control>
+
+    <Control name="Thumb-distal" eigValue="1.0">
+      <DOF name="Thumb-distal" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Thumb-last" eigValue="1.0">
+      <DOF name="Thumb-last" value="1.0"></DOF>
+    </Control>    
+   	</ControlSet>
+ </Robot>
