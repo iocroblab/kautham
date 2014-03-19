@@ -133,7 +133,6 @@ namespace Kautham {
         virtual void sampleUniform(ob::State *state);
         virtual void sampleUniformNear(ob::State *state, const ob::State *near, const double distance);
 
-        RandomSampler* _samplerRandom;
 
       protected:
         ompl::RNG rng_; //!< random generator
@@ -170,14 +169,13 @@ namespace Kautham {
         inline void setSamplerUsed(int su){_samplerUsed=su;};
         inline int getSamplerUsed(){return _samplerUsed;};
 
-        void disablePMDControlsFromSampling(bool enableall=false);
+        void disableControlsFromSampling();
         inline vector<int> *getDisabledControls(){return &_disabledcontrols;};
 
-        og::SimpleSetupPtr ss;
 		protected:
 		//Add protected data and functions
         KthReal _planningTime;
-        //og::SimpleSetupPtr ss;
+        og::SimpleSetupPtr ss;
         ob::StateSpacePtr space;
 
         int _samplerUsed;
