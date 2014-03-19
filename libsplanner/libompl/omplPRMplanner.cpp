@@ -439,7 +439,6 @@ namespace Kautham {
 
         //set the planner
         ss->setPlanner(planner);
-        //disablePMDControlsFromSampling();
     }
 
 	//! void destructor
