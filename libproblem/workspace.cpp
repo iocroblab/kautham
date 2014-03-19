@@ -236,7 +236,7 @@ namespace Kautham {
         // second test if the robot collides with another one present in the workspace.
         // This validation is done with the robots validated previously.
         if( i > 0 ){
-          for( int k = i-1; k == 0; k--){
+          for( int k = i-1; k >= 0; k--){
             if( robots[i]->collisionCheck( robots[k] ) ){
               collision = true;
               break;
