@@ -757,7 +757,7 @@ namespace Kautham {
         it = _parameters.find("Cspace Drawn");
         if(it != _parameters.end()){
             _drawnrobot = it->second;
-            if(_drawnrobot<0 || _drawnrobot > _wkSpace->robotsCount()) {
+            if(_drawnrobot<0 || _drawnrobot >= _wkSpace->robotsCount()) {
                 _drawnrobot = 0;
                 setParameter("Cspace Drawn",0);
             }
