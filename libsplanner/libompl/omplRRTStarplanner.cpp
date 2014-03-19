@@ -96,8 +96,6 @@ namespace Kautham {
           //return (opt_->motionCost(a->state, b->state).v);
       }
 
-
-
       ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
       {
           checkValidity();
@@ -244,7 +242,15 @@ namespace Kautham {
                       // calculate all costs and distances
                       for (std::size_t i = 0 ; i < nbh.size(); ++i)
                       {
-
+                          /*
+                          if(opt_->getDescription()=="PCA alignment"){
+                              ob::State *s0;
+                              if(nbh[i]->parent==NULL) s0=NULL;
+                              else s0=nbh[i]->parent->state;
+                              incCosts[i] = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
+                          }
+                          else
+                              */
                           if(opt_->getDescription()=="PMD alignment"){
                               ob::State *s0;
                               if(nbh[i]->parent==NULL) s0=NULL;
@@ -288,7 +294,15 @@ namespace Kautham {
                   }
                   else // if not delayCC
                   {
-
+                      /*
+                       if(opt_->getDescription()=="PCA alignment"){
+                          ob::State *s0;
+                          if(nmotion->parent==NULL) s0=NULL;
+                          else s0=nmotion->parent->state;
+                          motion->incCost = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nmotion->state, motion->state);
+                      }
+                      else
+                          */
                       if(opt_->getDescription()=="PMD alignment"){
                           ob::State *s0;
                           if(nmotion->parent==NULL) s0=NULL;
@@ -304,7 +318,13 @@ namespace Kautham {
                       {
                           if (nbh[i] != nmotion)
                           {
-
+                              /*if(opt_->getDescription()=="PCA alignment"){
+                                  ob::State *s0;
+                                  if(nbh[i]->parent==NULL) s0=NULL;
+                                  else s0=nbh[i]->parent->state;
+                                  incCosts[i] = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
+                              }
+                              else */
                               if(opt_->getDescription()=="PMD alignment"){
                                   ob::State *s0;
                                   if(nbh[i]->parent==NULL) s0=NULL;
@@ -365,6 +385,13 @@ namespace Kautham {
                           if (symDist && symCost)
                               nbhIncCost = incCosts[i];
                           else{
+                              /*if(opt_->getDescription()=="PCA alignment"){
+                                  ob::State *s0;
+                                  if(motion->parent==NULL) s0=NULL;
+                                  else s0=motion->parent->state;
+                                  nbhIncCost = ((PCAalignmentOptimizationObjective*)opt_.get())->motionCost(s0,motion->state, nbh[i]->state);
+                              }
+                              else */
                               if(opt_->getDescription()=="PMD alignment"){
                                   ob::State *s0;
                                   if(motion->parent==NULL) s0=NULL;
@@ -506,7 +533,6 @@ namespace Kautham {
 
 
 
-
   /*!
    * createOptimizationObjectivePMD creates a PMD alignment Optimization Objective.
    * If there is only a single robot, it is basicly corresponds to the PMDs of the hand synergies.
@@ -549,14 +575,6 @@ namespace Kautham {
               }
           }
           numPMD = handpmdcolumns.size();
-
-          //be careful, if no PMD control is provides return the distance optimization function
-          if(numPMD==0)
-          {
-              cout<<"Error configuring the PMD matrix. No PMD controls provided. Returning distance optimization objective)"<<endl;
-              return ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
-          }
-
 
           int numDOF = wkSpace()->getRobot(robotindex)->getNumJoints();
           ob::ProjectionMatrix PMD;
@@ -644,14 +662,8 @@ namespace Kautham {
               if(itpmdMap->second.size() != wkSpace()->robotsCount())
               {
                   cout<<"Error configuring the PMD matrix. The same number of coupled controls (PMDs) is required per robot (and with the same name!)"<<endl;
-                  return ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
+                  exit(1);
               }
-          }
-          //be careful, if no PMD control is provides return the distance optimization function
-          if(numPMD==0)
-          {
-              cout<<"Error configuring the PMD matrix. No PMD controls provided. Returning distance optimization objective)"<<endl;
-              return ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
           }
 
           //Now load the PMD matrix
@@ -797,9 +809,7 @@ namespace Kautham {
         ss->setPlanner(planner);
 
         //for the RRT type of planners we do not want to constrain the samppling in the PMD subspace, then disable these controls
-        _disablePMDControlsFromSampling=1;
-        addParameter("disablePMDControlsFromSampling", _disablePMDControlsFromSampling);
-        disablePMDControlsFromSampling();
+        disableControlsFromSampling();
     }
 
 	//! void destructor
@@ -905,25 +915,6 @@ namespace Kautham {
         else
           return false;
 
-
-
-        it = _parameters.find("disablePMDControlsFromSampling");
-        if(it != _parameters.end()){
-            _disablePMDControlsFromSampling = it->second;
-            if(_disablePMDControlsFromSampling==0)
-            {
-                disablePMDControlsFromSampling(true);//enable all controls
-            }
-            else
-            {
-                disablePMDControlsFromSampling(false);//disable those named PMD
-                //setParameter("disablePMDControlsFromSampling", 1); //force to 1
-            }
-        }
-        else
-          return false;
-
-
         it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
             _GoalBias = it->second;
@@ -953,7 +944,9 @@ namespace Kautham {
         if(it != _parameters.end()){
             if(it->second >=0.0 && it->second<=1.0) _lengthweight = it->second;
             else _lengthweight = 0.5;
-
+            /*if(_opti==2)
+               ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setDistanceWeight(_lengthweight);
+            else */
             if(_opti==3)
                 ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(_lengthweight);
         }
@@ -963,7 +956,9 @@ namespace Kautham {
         it = _parameters.find("penalizationweight");
         if(it != _parameters.end()){
             _penalizationweight = it->second;
-
+            //if(_opti==2)
+            //    ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setOrientationPenalization(_penalizationweight);
+            //else
             if(_opti==3)
                 ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
         }
@@ -973,7 +968,9 @@ namespace Kautham {
         it = _parameters.find("orientationweight");
         if(it != _parameters.end()){
             _orientationweight = it->second;
-
+            //if(_opti==2)
+            //    ((PCAalignmentOptimizationObjective*)_pcaalignmentopti.get())->setOrientationWeight(_orientationweight);
+            //else
             if(_opti==3)
                 ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(_orientationweight);
         }

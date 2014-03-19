@@ -133,7 +133,7 @@ namespace Kautham {
       {
           kauthamPlanner_ = p;
           centersmp = NULL;
-  _samplerRandom = new RandomSampler(kauthamPlanner_->wkSpace()->getDimension());
+
       }
 
       void KauthamStateSampler::setCenterSample(ob::State *state, double th)
@@ -236,16 +236,16 @@ namespace Kautham {
 
               bool withinbounds=false;
               int trials=0;
-              Sample* smp = NULL;
+              int d = kauthamPlanner_->wkSpace()->getDimension();
+              Sample *smp = new Sample(d);
               do{
                 //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-                smp = _samplerRandom->nextSample();
+                vector<KthReal> coords(d);
+                for(int i=0;i<d;i++)
+                  coords[i] = rng_.uniformReal(0,1.0);
 
-                //those controls that are disabled for sampling are now restored to 0.5
-                for(int j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
-                    smp->getCoords()[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
-
-                //compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                smp->setCoords(coords);
                 kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
                 withinbounds = smp->getwithinbounds();
                 trials++;
@@ -269,14 +269,18 @@ namespace Kautham {
                int trials = 0;
                int maxtrials=100;
                bool found = false;
-               Sample *smp;
+               int d = kauthamPlanner_->wkSpace()->getDimension();
+               Sample *smp = new Sample(d);
                do{
                  bool withinbounds=false;
                  int trialsbounds=0;
                  do{
                       //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-                     smp = _samplerRandom->nextSample();
-                     //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                      vector<KthReal> coords(d);
+                      for(int i=0;i<d;i++)
+                            coords[i] = rng_.uniformReal(0,1.0);
+                      //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                      smp->setCoords(coords);
                       kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
                       withinbounds = smp->getwithinbounds();
                       trialsbounds++;
@@ -340,11 +344,6 @@ namespace Kautham {
           if(numSampler>= _samplerVector.size()) numSampler = 0;//set default Random sampler if out of bounds value
           smp = _samplerVector[numSampler]->nextSample();
 
-          //those controls that are disabled for sampling are now restored to 0.5
-          for(int j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
-              smp->getCoords()[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
-
-
           //computes the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
           kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
 
@@ -372,12 +371,6 @@ namespace Kautham {
                  Sample* smp = NULL;
                  int numSampler = 0; //Random sampler
                  smp = _samplerVector[numSampler]->nextSample();
-
-                 //those controls that are disabled for sampling are now restored to 0.5
-                 for(int j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
-                     smp->getCoords()[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
-
-
                  kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
                  //convert from sample to scoped state
                  ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
@@ -404,9 +397,9 @@ namespace Kautham {
   //! This function is used to allocate a state sampler
   ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p)
   {
-        return ob::StateSamplerPtr(new KauthamStateSampler(mysspace, p));
+     //return ob::StateSamplerPtr(new KauthamStateSampler(mysspace, p));
 
-/*
+
       //Create sampler
       ob::StateSamplerPtr globalSampler(new ob::CompoundStateSampler(mysspace));
       //weights defined for when sampling near a state
@@ -466,7 +459,7 @@ namespace Kautham {
       }
 
       return globalSampler;
-*/
+
 
   }
 
@@ -520,14 +513,12 @@ namespace Kautham {
         _planningTime = 10;
         _simplify = 2;//by default shorten and smooth
         _incremental=0;//by default makes a clear before any new call to solve in function trysolve().
-        _drawnrobot=0; //by default we draw the cspace of robot 0.
 
         //add planner parameters
         addParameter("Incremental (0/1)", _incremental);
         addParameter("Max Planning Time", _planningTime);
         addParameter("Speed Factor", _speedFactor);
         addParameter("Simplify Solution", _simplify);
-        addParameter("Cspace Drawn", _drawnrobot);
 
         //Construct the state space we are planning in. It is a compound state space composed of a compound state space for each robot
         //Each robot has a compound state space composed of a (oprional) SE3 state space and a (optional) Rn state space
@@ -665,26 +656,12 @@ namespace Kautham {
         //the state space for the set of robots. All the robots have the same weight.
         space = ((ob::StateSpacePtr) new ob::CompoundStateSpace(spaceRob,weights));
 
-        /*
         ob::ProjectionEvaluatorPtr peSpace;
         ob::ProjectionEvaluatorPtr projToUse = space->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
         peSpace = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0,projToUse);
         peSpace->setup();
         space->registerProjection("drawprojection",peSpace);
         space->registerDefaultProjection(peSpace);
-        */
-        vector<ob::ProjectionEvaluatorPtr> peSpace;
-        for(int i=0; i<_wkSpace->robotsCount();i++)
-        {
-            ob::ProjectionEvaluatorPtr projToUse = space->as<ob::CompoundStateSpace>()->getSubspace(i)->getProjection("drawprojection");
-            peSpace.push_back( (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,i,projToUse) );
-            peSpace[i]->setup();
-            string projname = "drawprojection"; //
-            string robotnumber = static_cast<ostringstream*>( &(ostringstream() << i) )->str();//the string correspoding to number i
-            projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
-            space->registerProjection(projname.c_str(),peSpace[i]);
-        }
-        space->registerDefaultProjection(peSpace[0]);//the one corresponding to the first robot is set as default
 
         //The classes derived from this omplplanner class will create a planner,
         //the simplesetup and call the setStateValididyChecker function
@@ -694,49 +671,6 @@ namespace Kautham {
     omplPlanner::~omplPlanner(){
 			
 	}
-
-    /*!
-     * disablePMDControlsFromSampling disables from sampling those controls that have the PMD in its name.
-     * \param enableall if its true the function is used to enable all, It is defaulted to false.
-     */
-    void omplPlanner::disablePMDControlsFromSampling(bool enableall)
-    {
-        //enable all
-        if(enableall)
-        {
-            _disabledcontrols.clear();
-            return;
-        }
-        //else diable those that are called PMD
-
-        int robotindex = 0; //do it for robot 0, For more than one robot the PMD controls are those coupled and are repeated
-
-        string listcontrolsname = wkSpace()->getRobot(robotindex)->getControlsName();
-        vector<string*> controlname;
-        string *newcontrol = new string;
-        for(int i=0; i<listcontrolsname.length();i++)
-        {
-            if(listcontrolsname[i]=='|')
-            {
-                controlname.push_back(newcontrol);
-                newcontrol = new string;
-            }
-            else
-                newcontrol->push_back(listcontrolsname[i]);
-        }
-        //add last control (since listcontrolsname does not end with a |)
-        controlname.push_back(newcontrol);
-
-        for(int i=0;i<controlname.size();i++)
-        {
-            if(controlname[i]->find("PMD") != string::npos)
-            {
-                //Load to the diable vector for disabling sampling. We do not want to sample coupled controls.
-                _disabledcontrols.push_back(i);
-            }
-        }
-    }
-
 	
     //! This function setParameters sets the parameters of the planner
     bool omplPlanner::setParameters(){
@@ -750,18 +684,6 @@ namespace Kautham {
         it = _parameters.find("Max Planning Time");
         if(it != _parameters.end())
             _planningTime = it->second;
-        else
-          return false;
-
-
-        it = _parameters.find("Cspace Drawn");
-        if(it != _parameters.end()){
-            _drawnrobot = it->second;
-            if(_drawnrobot<0 || _drawnrobot > _wkSpace->robotsCount()) {
-                _drawnrobot = 0;
-                setParameter("Cspace Drawn",0);
-            }
-        }
         else
           return false;
 
@@ -807,8 +729,8 @@ namespace Kautham {
     }
 
 
-    //! This routine allows to draw the 2D projection of a roadmap or tree. The one corresponding to robot number numrob is drawn.
-   void omplPlanner::drawCspace(int numrob)
+    //! This routine allows to draw the 2D projection of a roadmap or tree
+   void omplPlanner::drawCspace()
     {
             //first delete whatever is already drawn
             while (_sceneCspace->getNumChildren() > 0)
@@ -822,7 +744,7 @@ namespace Kautham {
             SoPointSet *pset  = new SoPointSet();
 
             //get the first subspace
-            ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(numrob));
+            ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(0));
             ob::StateSpacePtr ssRobotifirst =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
 
             //space bounds
@@ -834,7 +756,7 @@ namespace Kautham {
             KthReal zmin;
             KthReal zmax;
 
-            if(_wkSpace->getRobot(numrob)->isSE3Enabled())
+            if(_wkSpace->getRobot(0)->isSE3Enabled())
             {
 
                 xmin=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().low[0];
@@ -878,13 +800,6 @@ namespace Kautham {
             else
                 pdata->computeEdgeWeights();
 
-
-            //Use the rpojection associated to the subspace of the robot index passed as a parameter.
-            string projname = "drawprojection"; //
-            string robotnumber = static_cast<ostringstream*>( &(ostringstream() << numrob) )->str();//the string correspoding to number numrob
-            projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
-            ob::ProjectionEvaluatorPtr projToUse = space->getProjection(projname.c_str());
-
             //draw path:
             if(_solved)
             {
@@ -898,19 +813,17 @@ namespace Kautham {
                 {
                     //initial edgepoint
                     SoCoordinate3 *edgepoints  = new SoCoordinate3();
-                    if(_wkSpace->getRobot(numrob)->isSE3Enabled())
+                    if(_wkSpace->getRobot(0)->isSE3Enabled())
                     {
                         ob::EuclideanProjection projection(k);
-                        //space->getProjection("drawprojection")->project(pathstates[i], projection);
-                        projToUse->project(pathstates[i], projection);
+                        space->getProjection("drawprojection")->project(pathstates[i], projection);
                         x=projection[0];
                         y=projection[1];
                         z=projection[2];
                         edgepoints->point.set1Value(0,x,y,z);
 
                     //final edgepoint
-                        //space->getProjection("drawprojection")->project(pathstates[i+1], projection);
-                        projToUse->project(pathstates[i+1], projection);
+                        space->getProjection("drawprojection")->project(pathstates[i+1], projection);
                         x=projection[0];
                         y=projection[1];
                         z=projection[2];
@@ -922,14 +835,12 @@ namespace Kautham {
                         if(k<=2)
                         {
                             ob::EuclideanProjection projection(k);
-                            //space->getProjection("drawprojection")->project(pathstates[i], projection);
-                            projToUse->project(pathstates[i], projection);
+                            space->getProjection("drawprojection")->project(pathstates[i], projection);
                             x=projection[0];
                             y=projection[1];
                             z=0.0;
                             edgepoints->point.set1Value(0,x,y,z);
-                            //space->getProjection("drawprojection")->project(pathstates[i+1], projection);
-                            projToUse->project(pathstates[i+1], projection);
+                            space->getProjection("drawprojection")->project(pathstates[i+1], projection);
                             x=projection[0];
                             y=projection[1];
                             edgepoints->point.set1Value(1,x,y,z);
@@ -937,14 +848,12 @@ namespace Kautham {
                         else
                         {
                             ob::EuclideanProjection projection(k);
-                            //space->getProjection("drawprojection")->project(pathstates[i], projection);
-                            projToUse->project(pathstates[i], projection);
+                            space->getProjection("drawprojection")->project(pathstates[i], projection);
                             x=projection[0];
                             y=projection[1];
                             z=projection[2];
                             edgepoints->point.set1Value(0,x,y,z);
-                            //space->getProjection("drawprojection")->project(pathstates[i+1], projection);
-                            projToUse->project(pathstates[i+1], projection);
+                            space->getProjection("drawprojection")->project(pathstates[i+1], projection);
                             x=projection[0];
                             y=projection[1];
                             z=projection[2];
@@ -957,7 +866,7 @@ namespace Kautham {
                     SoLineSet *ls = new SoLineSet;
                     ls->numVertices.set1Value(0,2);//two values
                     SoDrawStyle *lstyle = new SoDrawStyle;
-                    lstyle->lineWidth=6;//3;
+                    lstyle->lineWidth=3;
                     SoMaterial *path_color = new SoMaterial;
                     path_color->diffuseColor.setValue(0.8,0.2,0.2);
                     pathsep->addChild(path_color);
@@ -973,14 +882,13 @@ namespace Kautham {
             //loop for all vertices of the roadmap or tree and create the coin3D points
             for(int i=0;i<pdata->numVertices();i++)
             {
-                if(_wkSpace->getRobot(numrob)->isSE3Enabled())
+                if(_wkSpace->getRobot(0)->isSE3Enabled())
                 {
                     ob::EuclideanProjection projection(k);
                 //&(projection) = new ob::EuclideanProjection;
                 //try
                 //{
-                    //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-                    projToUse->project(pdata->getVertex(i).getState(), projection);
+                    space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                 // }
                 //catch(ompl::Exception e){
                   //  e.what();
@@ -996,8 +904,7 @@ namespace Kautham {
                     if(k<=2)
                     {
                         ob::EuclideanProjection projection(k);
-                        //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-                        projToUse->project(pdata->getVertex(i).getState(), projection);
+                        space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                         x = projection[0];
                         y = projection[1];
                         points->point.set1Value(i,x,y,0);
@@ -1005,8 +912,7 @@ namespace Kautham {
                     else
                     {
                         ob::EuclideanProjection projection(k);
-                        //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-                        projToUse->project(pdata->getVertex(i).getState(), projection);
+                        space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                         x = projection[0];
                         y = projection[1];
                         z = projection[2];
@@ -1044,19 +950,17 @@ namespace Kautham {
 
                     //initial edgepoint
                     float x1,y1,x2,y2,z1,z2;
-                    if(_wkSpace->getRobot(numrob)->isSE3Enabled())
+                    if(_wkSpace->getRobot(0)->isSE3Enabled())
                     {
                         ob::EuclideanProjection projection(k);
-                        //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-                        projToUse->project(pdata->getVertex(i).getState(), projection);
+                        space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                         x1=projection[0];
                         y1=projection[1];
                         z1=projection[2];
                         edgepoints->point.set1Value(0,x1,y1,z1);
 
                     //final edgepoint
-                        //space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                        projToUse->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
+                        space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
                         x2=projection[0];
                         y2=projection[1];
                         z2=projection[2];
@@ -1068,14 +972,12 @@ namespace Kautham {
                         if(k<=2)
                         {
                             ob::EuclideanProjection projection(k);
-                            //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-                            projToUse->project(pdata->getVertex(i).getState(), projection);
+                            space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                             x1=projection[0];
                             y1=projection[1];
                             z=0.0;
                             edgepoints->point.set1Value(0,x1,y1,z);
-                            //space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                            projToUse->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
+                            space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
                             x2=projection[0];
                             y2=projection[1];
                             edgepoints->point.set1Value(1,x2,y2,z);
@@ -1083,14 +985,12 @@ namespace Kautham {
                         else
                         {
                             ob::EuclideanProjection projection(k);
-                            //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-                            projToUse->project(pdata->getVertex(i).getState(), projection);
+                            space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                             x1=projection[0];
                             y1=projection[1];
                             z1=projection[2];
                             edgepoints->point.set1Value(0,x1,y1,z1);
-                            //space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                            projToUse->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
+                            space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
                             x2=projection[0];
                             y2=projection[1];
                             z2=projection[2];
@@ -1124,7 +1024,7 @@ namespace Kautham {
             SbVec3f centre;
             SoMaterial *cub_color = new SoMaterial;
             //draw floor
-            if(_wkSpace->getRobot(numrob)->isSE3Enabled())
+            if(_wkSpace->getRobot(0)->isSE3Enabled())
             {
                 cs->width = xmax-xmin;
                 cs->depth = (zmax-zmin);
@@ -1435,14 +1335,14 @@ namespace Kautham {
                     _samples->add(smp);
                 }
                 _solved = true;
-                drawCspace(_drawnrobot);
+                drawCspace();
                 return _solved;
             }
             //solution not found
             else{
                 std::cout << "No solution found" << std::endl;
                 _solved = false;
-                drawCspace(_drawnrobot);
+                drawCspace();
                 return _solved;
             }
 		}

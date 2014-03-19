@@ -82,7 +82,6 @@ namespace Kautham {
          double _penalizationweight;
          double _orientationweight;
          bool _incremental;
-         int _disablePMDControlsFromSampling;
          ob::OptimizationObjectivePtr _optiselected;
          ob::OptimizationObjectivePtr _lengthopti;
          ob::OptimizationObjectivePtr _clearanceopti;

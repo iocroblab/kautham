@@ -1,2 +1,0 @@
-/usr/bin/ar cr liblibkthutil.a  CMakeFiles/libkthutil.dir/kauthamobject.cpp.o
-/usr/bin/ranlib liblibkthutil.a
