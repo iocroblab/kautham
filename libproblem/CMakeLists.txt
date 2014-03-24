@@ -4,6 +4,7 @@ INCLUDE_DIRECTORIES( #${CMAKE_SOURCE_DIR}/hardlab
                      ${CMAKE_SOURCE_DIR}/libutil
                      ${CMAKE_SOURCE_DIR}
                      ${mt_DIR}
+		     ${GDIAM_DIR}
                      ${Boost_INCLUDE_DIRS}
                      ${COIN_INCLUDE_DIR}
                      ${Armadillo_INCLUDE_DIR} )
@@ -16,6 +17,6 @@ FILE( GLOB HDR_FILES *.h* )
 
 ADD_LIBRARY(libproblem ${SRC_FILES} ${HDR_FILES})
 
-TARGET_LINK_LIBRARIES( libproblem libPQP libsampling libkthutil libplanner ${BOOST_LIBRARIES} ${COIN_LIBRARY} )
+TARGET_LINK_LIBRARIES( libproblem libPQP libsampling libkthutil libplanner libgdiam ${BOOST_LIBRARIES} ${COIN_LIBRARY} )
 
 
