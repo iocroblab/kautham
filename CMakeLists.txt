@@ -58,6 +58,12 @@ find_package(PugiXML REQUIRED)
 SET(mt_DIR ${CMAKE_SOURCE_DIR}/libsutil/libmt)
 INCLUDE_DIRECTORIES( libsutil/libmt )
 
+#### gdiam package ##################
+# utility functions for finding minimum-volume bounding boxes
+SET(gdiam_DIR ${CMAKE_SOURCE_DIR}/libsutil/libgdiam)
+INCLUDE_DIRECTORIES( libsutil/libgdiam )
+
+
 #### Boost package ###############
 FIND_PACKAGE( Boost COMPONENTS  system serialization thread REQUIRED )
 IF(Boost_FOUND)
@@ -143,6 +149,7 @@ ENDIF( KAUTHAM_IOC )
   ADD_SUBDIRECTORY ( libsutil/libkthutil )
   #ADD_SUBDIRECTORY ( libsutil/libpugixml )
   ADD_SUBDIRECTORY ( libsutil/libpqp )
+  ADD_SUBDIRECTORY ( libsutil/libgdiam )
   ADD_SUBDIRECTORY ( libsplanner )
   ADD_SUBDIRECTORY ( libproblem )
   ADD_SUBDIRECTORY ( libsampling )
@@ -194,7 +201,7 @@ IF( KAUTHAM_GUI )
   
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
   TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS} libDNN libPQP libgui libsampling
-                                                libproblem libkthutil libkin ${PUGI_XML_LIBRARIES})
+                                                libproblem libkthutil libkin libgdiam ${PUGI_XML_LIBRARIES})
 ENDIF( KAUTHAM_GUI )
 
 # END building Kautham GUI application
@@ -226,7 +233,7 @@ IF( KAUTHAM_CONSOLE )
   
     # Adding console bath mode executable
   ADD_EXECUTABLE( KauthamConsole ${SRC_FILES} ${HDR_FILES} ${RES_FILES} )
-  TARGET_LINK_LIBRARIES( KauthamConsole libDNN libPQP libproblem libkthutil libkin ${KC_EXTRA_LIBS} ${PUGI_XML_LIBRARIES} )
+  TARGET_LINK_LIBRARIES( KauthamConsole libDNN libPQP libproblem libkthutil libkin libgdiam ${KC_EXTRA_LIBS} ${PUGI_XML_LIBRARIES} )
   
   MESSAGE( STATUS "KC_EXTRA_LIBS = " ${KC_EXTRA_LIBS} )
 ENDIF( KAUTHAM_CONSOLE )
