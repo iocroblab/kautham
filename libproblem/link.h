@@ -108,7 +108,7 @@ namespace Kautham{
       *		You can build a complete robot, if you adding progresively a each Link
 	  *		from absolute coordinates frame to final effector frame.*/
       Link(string ivFile, string collision_ivFile, float scale,
-           DHAPPROACH dhType, LIBUSED lib = IVPQP);
+           APPROACH Type, LIBUSED lib = IVPQP);
 
 	  //! Function to set \f$ \alpha \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ \alpha \f$ parameter.*/
@@ -302,7 +302,7 @@ namespace Kautham{
     string              name;
   	
 	  //! Approach used to describe this robot.
-    DHAPPROACH          dhType;
+    APPROACH          Type;
 
     LIBUSED             libs;
   
