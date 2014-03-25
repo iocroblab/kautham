@@ -61,7 +61,7 @@ namespace Kautham {
   *		graphical representation.
   */
   Link::Link(string ivFile, string collision_ivFile, KthReal scale,
-             DHAPPROACH dhType, LIBUSED lib){
+             APPROACH Type, LIBUSED lib){
     libs = lib;
     switch(libs){
       case INVENTOR:
@@ -88,7 +88,7 @@ namespace Kautham {
       zeroOffset = (KthReal)0.0;
 	  parent = NULL;
 	  childs.clear();
-	  this->dhType = dhType;
+      this->Type = Type;
 	  //KthReal matTemp[4][4]={{1.0f,0.0f,0.0f,0.0f},{0.0f,1.0f,0.0f,0.0f},
     // {0.0f,0.0f,1.0f,0.0f},{0.0f,0.0f,0.0f,1.0f}};
 	  
@@ -112,7 +112,7 @@ namespace Kautham {
   void Link::setArmed(){
       if(!armed){
           armed = true;
-          switch (dhType) {
+          switch (Type) {
           case DHSTANDARD:
               dhMatrix[0][0] = cos(theta);							dhMatrix[0][1] = -cos(alpha)*sin(theta);
               dhMatrix[0][2] = sin(alpha)*sin(theta);	  dhMatrix[0][3] = a*cos(theta);
@@ -133,7 +133,7 @@ namespace Kautham {
               dhMatrix[2][0] = sin(alpha)*sin(theta);   dhMatrix[2][1] = sin(alpha)*cos(theta);
               dhMatrix[2][2] = cos(alpha);							dhMatrix[2][3] = d*cos(alpha);
               break;
-          case DHURDF:
+          case URDF:
               //dhMatrix has default value: identity matrix
               break;
           }
@@ -201,7 +201,7 @@ namespace Kautham {
 	  KthReal tranv[3], rotv[4];
 
     if(hasChanged){ 
-      switch (dhType) {
+      switch (Type) {
       case DHSTANDARD:
 	      if(rotational){
               dhMatrix[0][0] = cos(theta);							dhMatrix[0][1] = -cos(alpha)*sin(theta);
@@ -221,7 +221,7 @@ namespace Kautham {
 		      dhMatrix[1][3] = -d*sin(alpha);           dhMatrix[2][3] = d*cos(alpha);
 	      }
           break;
-      case DHURDF:
+      case URDF:
           if(rotational){//only rotattion has changed
               Rotation tmp_rotation(axis,theta);
               Matrix3x3 tmp_matrix = tmp_rotation.getMatrix();
@@ -327,7 +327,7 @@ namespace Kautham {
 
   bool Link::setPreTransform(KthReal x, KthReal y, KthReal z,
                              KthReal wx, KthReal wy, KthReal wz, KthReal angle){
-      if (dhType != DHURDF) {
+      if (Type != URDF) {
           if(preTransform == NULL){
               mt::Point3 tempTran(x,y,z);
               mt::Rotation tempRot(mt::Unit3(wx,wy,wz),angle);

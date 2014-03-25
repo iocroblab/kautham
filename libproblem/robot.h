@@ -94,7 +94,7 @@ namespace Kautham {
       string            controlsName; //!< Names of the controls, as a string, separated with the vertical bar character.
       int               numControls;  //!< This is the number of control used to command the robot
       int               numCoupledControls; //!< This is the number of controls used to command the robot that are couped with other robots
-                                        //!< From the set of controls defined in the input file *.rob, the first numCoupledControls controls
+                                        //!< From the set of controls defined in the input file *.dh or *.urdf, the first numCoupledControls controls
                                         //!< will be those that are coupled with other robots. This is implemented by maintaining those
                                         //!< controls at the same value for all the robots.
       int               nTrunk; //!< Number of control for the trunk in case of TREE robot
@@ -115,7 +115,7 @@ namespace Kautham {
       KthReal           **mapMatrix; //!< Matrix to compute the robot configuration from the controls. If copuling is generated with PCA it contains the scaled eignevectors.
 
 
-      DHAPPROACH        dhApproach;//!< It identifies the D-H description method (Standard/Modified).
+      APPROACH        Approach;//!< It identifies the robot description method (D-H Standard/D-H Modified/urdf).
       bool              se3Enabled; //!< This attribute is true if the robot has a mobile base.
       bool              armed;//!< Flag that shows if the Robot is complete or still is under construction.
       RobConf           _homeConf;     //!< This attribute is the Home configuration of the robot.
@@ -125,6 +125,10 @@ namespace Kautham {
   public:
 
     Robot(string robFile, KthReal scale, LIBUSED lib = IVPQP); //!<  Constructor
+
+    inline void setMapMatrix(KthReal **MapMatrix) {mapMatrix = MapMatrix;} //!< Sets the mapMatrix.
+
+    inline void setOffMatrix(KthReal *OffMatrix) {offMatrix = OffMatrix;} //!< Sets the offMatrix.
 
     inline KthReal** getMapMatrix() const {return mapMatrix;} //!< Returns the mapMatrix.
 
@@ -146,7 +150,7 @@ namespace Kautham {
 
     inline int getTrunk() const {return nTrunk;} //!< Returns the number of links that compose the trunk of the kinematic tree.
 
-    inline DHAPPROACH getDHApproach(){return dhApproach;} //!< Returns the typs of D-H parameters used
+    inline APPROACH getDHApproach(){return Approach;} //!< Returns the typs of D-H parameters used
 
     inline unsigned int getNumJoints(){return ((unsigned int)links.size()) - 1;}//!< Returns the number of joints of the robot (nlinks-1).
 
@@ -176,7 +180,7 @@ namespace Kautham {
 
     inline void setRobotType(ROBOTTYPE rob){robType = rob;} //!< Sets the robot type.
 
-    inline void setDHApproach(DHAPPROACH dhA){dhApproach = dhA;} //!< Sets the type of D-H parameters to be used
+    inline void setDHApproach(APPROACH dhA){Approach = dhA;} //!< Sets the type of D-H parameters to be used
 
     inline int setNumCoupledControls(int n){numCoupledControls=n;}
 

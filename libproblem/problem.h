@@ -51,6 +51,63 @@
 #include "workspace.h"
 
 
+//#include <libpugixml/pugixml.hpp>
+#include <pugixml.hpp>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <boost/algorithm/string.hpp>
+
+//solving convertions problems
+#include <locale.h>
+
+
+#if defined(KAUTHAM_USE_IOC)
+#include <libioc/myplanner.h>
+#include <libioc/prmplanner.h>
+#include <libioc/prmhandplannerICRA.h>
+#include <libioc/prmAUROhandarmplanner.h>
+#include <libioc/prmPCAhandarmplanner.h>
+#include <libioc/prmrobothandconstplannerICRA.h>
+#include <libioc/prmhandplannerIROS.h>
+#include <libioc/myprmplanner.h>
+#include <libioc/mygridplanner.h>
+#include <libioc/NF1planner.h>
+#include <libioc/HFplanner.h>
+#endif
+
+#if defined(KAUTHAM_USE_OMPL)
+#include <libompl/omplPRMplanner.h>
+#include <libompl/omplRRTplanner.h>
+#include <libompl/omplRRTStarplanner.h>
+#include <libompl/omplTRRTplanner.h>
+#include <libompl/omplpRRTplanner.h>
+#include <libompl/omplLazyRRTplanner.h>
+#include <libompl/omplcRRTplanner.h>
+#include <libompl/omplcRRTcarplanner.h>
+#include <libompl/omplcRRTf16planner.h>
+#include <libompl/omplRRTConnectplanner.h>
+#include <libompl/omplESTplanner.h>
+#include <libompl/omplSBLplanner.h>
+#include <libompl/omplKPIECEplanner.h>
+#include <libompl/omplKPIECEplanner.h>
+#endif
+
+
+#if defined(KAUTHAM_USE_GUIBRO)
+#include <libguibro/consbronchoscopykin.h>
+#include <libguibro/guibrogridplanner.h>
+#endif // KAUTHAM_USE_GUIBRO
+
+#if !defined(M_PI)
+#define M_PI 3.1415926535897932384626433832795
+#endif
+
+
+using namespace std;
+using namespace pugi;
+
+
 namespace Kautham {
 
 /** \addtogroup libProblem
@@ -109,6 +166,20 @@ namespace Kautham {
     Planner*                _planner;
     vector<KthReal>         _currentControls;
     string                  _filePath;
+
+    //! This method loads a robot node of the problem file,
+    //! creates the robot and adds it to workspace
+    void addRobot2WSpace(xml_node *robot_node, string dir);
+
+    //! This method loads the controls node of the problem file,
+    //! creates the controls, adds them to workspace
+    //! and creates the mapMatrix and offMatrix of every Robot.
+    //! All the robots must be loaded first
+    void addControls2WSpace(string cntrFile);
+
+    //! This method loads an obstacle node of the problem file,
+    //! creates the obstacle and adds it to workspace
+    void addObstacle2WSpace(xml_node *obstacle_node, string dir);
 	};
 
     /** @}   end of Doxygen module "libProblem" */
