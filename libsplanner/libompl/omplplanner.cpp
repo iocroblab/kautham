@@ -709,9 +709,8 @@ namespace Kautham {
         }
         //else diable those that are called PMD
 
-        int robotindex = 0; //do it for robot 0, For more than one robot the PMD controls are those coupled and are repeated
 
-        string listcontrolsname = wkSpace()->getRobot(robotindex)->getControlsName();
+        string listcontrolsname = wkSpace()->getControlsName();
         vector<string*> controlname;
         string *newcontrol = new string;
         for(int i=0; i<listcontrolsname.length();i++)

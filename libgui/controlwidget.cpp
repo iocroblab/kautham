@@ -49,13 +49,11 @@
 namespace Kautham {
 
 
-	ControlWidget::ControlWidget( Robot* rob, Problem* prob, int offset) {
-    _robot = rob;
-    _globalOffset = offset;
+    ControlWidget::ControlWidget(Problem* prob) {
     _ptProblem = prob;
     string names = "This|is|a|test";
-    if(rob != NULL) names= rob->getControlsName();
-		gridLayout = new QGridLayout(this);
+    names= _ptProblem->wSpace()->getControlsName();
+    gridLayout = new QGridLayout(this);
     gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
     vboxLayout = new QVBoxLayout();
     vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
@@ -64,13 +62,9 @@ namespace Kautham {
     QString content(names.c_str());
 		QStringList cont = content.split("|");
     QStringList::const_iterator iterator;
-    //int count=0;
     for (iterator = cont.constBegin(); iterator != cont.constEnd();
                     ++iterator)
     {
-        //count++;
-        //if(_globalOffset!=0 && count<_robot->getNumCoupledControls()) continue;
-
         tempLab = new QLabel(this);
         tempLab->setObjectName(/*QString("lbl")  +*/ (*iterator).toUtf8().constData());
         content = (*iterator).toUtf8().constData();
@@ -97,7 +91,6 @@ namespace Kautham {
     connect(btnUpdate, SIGNAL( clicked() ), this, SLOT( updateControls() ) ); 
     vboxLayout1->addWidget(btnUpdate);
 
-    //values.resize(cont.size());
     values.resize(sliders.size());
     for(int i=0; i<values.size(); i++)
       values[i]=0.5;
@@ -118,16 +111,8 @@ namespace Kautham {
 	void ControlWidget::updateControls(){
         Sample *s  = _ptProblem->wSpace()->getLastSampleMovedTo();
         if(s!=NULL){
-           int j=0;
-           //the first controls are coupled with all the robots, then the values are
-           //stored from the coordinates of the sample corresponding to the first robot
-           for(; j < _robot->getNumCoupledControls(); j++ )
+           for(int j = 0; j < _ptProblem->wSpace()->getNumControls(); j++ )
                values[j] = s->getCoords()[j];
-
-           //the other values of the controls are read form the correspodning place in the sample vector
-           //i.e. staring at globalOffset.
-           for(; j < _robot->getNumControls(); j++ )
-                values[j] = s->getCoords()[_globalOffset + j];
 
             setValues();
 		}
@@ -141,7 +126,7 @@ namespace Kautham {
             tmp = labels[i]->text().left(labels[i]->text().indexOf("=") + 2);
             labels[i]->setText( tmp.append( QString().setNum(values[i],'g',5)));
         }
-        _ptProblem->setCurrentControls(values,_globalOffset);
+        _ptProblem->setCurrentControls(values,0);
         //if(_robot != NULL) _robot->control2Pose(values);
 
         //move the robots
@@ -159,14 +144,9 @@ namespace Kautham {
         }
 
 
-        int j=0;
-        for(; j < _robot->getNumCoupledControls(); j++ ){
+        for(int j=0; j < _ptProblem->wSpace()->getNumControls(); j++ ){
             coords[j]=values[j];
-            coords[_globalOffset+j]=values[j];//dummy, not used in moveRobotsTo
         }
-        for(; j < _robot->getNumControls(); j++ )
-            coords[_globalOffset+j]=values[j];
-
         //Sample *s2 = new Sample(s);
         Sample *s2 = new Sample(_ptProblem->wSpace()->getDimension());
 

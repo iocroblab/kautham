@@ -194,7 +194,7 @@ IF( KAUTHAM_GUI )
 ##############################################################################
 # Creating executable
   FILE( GLOB RES_FILES *.rc )
-  QT4_WRAP_CPP( QT_MOC_SRC application.h )
+  QT4_WRAP_CPP( QT_MOC_SRC application.h OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
   
   SET( SRC_FILES_GUI application.cpp kauthamplanner.cpp )
   SET( HDR_FILES_GUI application.h )

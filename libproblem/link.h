@@ -219,6 +219,8 @@ namespace Kautham{
     void                setParent(Link* par);
     unsigned int        addChild(Link* child);
     inline unsigned int numChilds(){return (unsigned int)childs.size();}
+    //!	This member function returns the specified child
+    inline Link*        getChild(int i){if(i < 0 || i > childs.size()) {return NULL;} else {return childs.at(i);}}
     bool                setPreTransform(KthReal x, KthReal y, KthReal z,
                                         KthReal wx, KthReal wy, KthReal wz,
                                         KthReal angle);
