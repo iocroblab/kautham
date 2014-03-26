@@ -136,7 +136,7 @@ namespace Kautham {
     bool                    createCSpace();
     bool                    createCSpaceFromFile(string xml_doc);
     bool                    tryToSolve();
-    bool                    setCurrentControls(vector<KthReal> &val, int offset=0);
+    bool                    setCurrentControls(vector<KthReal> &val, int offset);
 		WorkSpace*		          wSpace();
     void                    setHomeConf(Robot* rob, HASH_S_K* param);
     void                    setPlanner(Planner* plan){if(_planner==NULL)_planner = plan;}
@@ -144,7 +144,7 @@ namespace Kautham {
     inline SampleSet*       getSampleSet(){return _cspace;}
     inline Sampler*         getSampler(){return _sampler;}
     inline void             setSampler(Sampler* smp){_sampler = smp;}
-    inline int              getDimension(){return _wspace->getDimension();}
+    inline int              getDimension(){return _wspace->getNumControls();}
     inline vector<KthReal>& getCurrentControls(){return _currentControls;}
     inline string           getFilePath(){return _filePath;}
 		bool                    inheritSolution();
