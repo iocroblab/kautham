@@ -126,7 +126,7 @@ namespace Kautham {
     bool                addSeparator(WHERETYPE typ);
     bool                restart();
     bool                addToProblemTree(string problemPath);
-    bool                addControlWidget( Robot* rob, Problem* prob, int offset = 0);
+    bool                addControlWidget(Problem* prob);
 
     bool                addExternalWidget1( Robot* rob, Problem* prob, int offset = 0, GUI* gui = NULL);
     bool                addExternalWidget2( Robot* rob, Problem* prob, int offset = 0, GUI* gui = NULL);

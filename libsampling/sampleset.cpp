@@ -165,18 +165,16 @@ namespace Kautham{
 		  vector<KthReal> *p;
 
 		  unsigned int h = indexOf(samp);
-
 		  unsigned int c=0;
-		  unsigned int j, from = 0;
-		  for(unsigned int i=0; i< ws->robotsCount(); i++)
+
+          tmpVec.clear();
+          for(unsigned int j=0; j < ws->getNumControls(); j++) {
+              tmpVec.push_back(samp->getCoords()[j]);
+          }
+
+          for(unsigned int i=0; i< ws->robotsCount(); i++)
 		  {
-			  //compute conf of robot i corresponding to the sample samples[k]
-			  tmpVec.clear();
-			  for(j=0; j < ws->getRobot(i)->getNumControls(); j++ )
-			  {
-				  tmpVec.push_back(samp->getCoords()[from + j]);
-			  }
-              from = from+j;
+              //compute conf of robot i corresponding to the sample samples[k]
 			  ws->getRobot(i)->control2Pose(tmpVec);
 			  confSmp = ws->getRobot(i)->getCurrentPos();
 			  p = &(confSmp->getSE3().getCoordinates());
@@ -445,16 +443,14 @@ namespace Kautham{
 
     for(unsigned int h = 0; h < max; h++){
         int c=0;
-        int j, from = 0;
+
+        tmpVec.clear();
+        for(int j=0; j < ws->getNumControls(); j++ ){
+          tmpVec.push_back(samples[h]->getCoords()[j]);
+        }
+
         for(unsigned int i=0; i< ws->robotsCount(); i++){
-            //compute conf of robot i corresponding to the sample samples[k]
-            tmpVec.clear();
-
-            for(j=0; j < ws->getRobot(i)->getNumControls(); j++ ){
-              tmpVec.push_back(samples[h]->getCoords()[from + j]);
-            }
-
-            from = from+j;
+            //compute conf of robot i corresponding to the sample samples[k]          
             ws->getRobot(i)->control2Pose(tmpVec);
             confSmp = ws->getRobot(i)->getCurrentPos();
             p = &(confSmp->getSE3().getCoordinates());
@@ -566,7 +562,6 @@ namespace Kautham{
 		//data_pts array also created in cspace constructor		
 	  
 		unsigned int c=0;
-		unsigned int j, from = 0;
 
 
 		int dim=0;
@@ -577,16 +572,15 @@ namespace Kautham{
 		}
 
 		ANNpoint pts = annAllocPt(dim);
+        tmpVec.clear();
+        for(unsigned int j=0; j < ws->getNumControls(); j++)
+        {
+            tmpVec.push_back(samp->getCoords()[j]);
+        }
 
 		for(unsigned int i=0; i< ws->robotsCount(); i++)
 		{
 			//compute conf of robot i corresponding to the sample samples[k]
-			tmpVec.clear();
-			for(j=0; j < ws->getRobot(i)->getNumControls(); j++ )
-			{
-				tmpVec.push_back(samp->getCoords()[from + j]);
-			}
-            from = from+j;
 			ws->getRobot(i)->control2Pose(tmpVec);
 			confSmp = ws->getRobot(i)->getCurrentPos();
 			p = &(confSmp->getSE3().getCoordinates());

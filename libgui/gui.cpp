@@ -144,15 +144,15 @@ namespace Kautham {
     return true;
   }
 
-  bool GUI::addControlWidget( Robot* rob, Problem* prob, int offset ){
-    if( rob != NULL){
-      ControlWidget* tmpControl = new ControlWidget( rob, prob, offset );
-      propertiesTab->addTab(tmpControl, "UsrCtrl-" + QString((rob->getName()).c_str()));
+  bool GUI::addControlWidget(Problem* prob){
+    if( prob != NULL){
+      ControlWidget* tmpControl = new ControlWidget(prob);
+      propertiesTab->addTab(tmpControl, "UsrCtrl-");
 	  //JAN
 		  indexControlsTab = propertiesTab->indexOf(tmpControl);
       return true;
     }else{
-      ControlWidget* tmpControl = new ControlWidget( NULL, NULL, 0 );
+      ControlWidget* tmpControl = new ControlWidget(NULL);
       propertiesTab->addTab(tmpControl, "ControlTest");
       return true;
     }

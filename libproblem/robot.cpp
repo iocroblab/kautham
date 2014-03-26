@@ -92,7 +92,6 @@ namespace Kautham {
   Robot::Robot(string robFile, KthReal scale, LIBUSED lib) {
 
     _linkPathDrawn = -1;
-    numCoupledControls=0;
     nTrunk = 0;
     libs = lib;
     this->scale=scale;
@@ -100,7 +99,6 @@ namespace Kautham {
     se3Enabled = false;
     _autocoll = false;
     _hasChanged = false;
-    numControls = 0;
     // Inialization of SE3 configurations.
     _homeConf.setSE3();
     _currentConf.setSE3();
@@ -391,6 +389,26 @@ namespace Kautham {
         _spatialLimits[i][0] = _spatialLimits[i][1] = (KthReal) 0.0;
 
 
+      //Set nTrunk
+      if (links.size() > 0) {
+          if (robType == TREE) {
+              Link *link = links.at(0);//starting from the base
+              nTrunk = 1;
+              bool trunk_end = false;
+              while (!trunk_end && nTrunk <= links.size()) {
+                  if (link->numChilds() > 1) {
+                      //trunk's end was found
+                      trunk_end = true;
+                  } else {
+                      //load next link
+                      link = link->getChild(0);
+                      nTrunk++;
+                  }
+              }
+          } else {
+              nTrunk = links.size();
+          }
+      }
     }else{ // File does not exists.
       fin.close();
       cout << "The Robot file: " << robFile << "doesn't exist. Please confirm it." << endl;
@@ -498,27 +516,6 @@ namespace Kautham {
       tmp.append(links[i]->getName());
     }
     return tmp;
-  }
-
-  /*!
-   *
-   */
-  bool Robot::setControlItem(string control, string dof, KthReal value){
-    // First I will find the column index looking for "|" number before the control name.
-    string::size_type pos = controlsName.find(control,0);
-    if(pos == string::npos) return false;
-    int j=0;
-    string::size_type trick=controlsName.find("|",0);
-    while(trick < pos){
-      trick=controlsName.find("|",trick+1);
-      j++;
-    }
-    for(unsigned int i = 1; i < links.size(); i++)
-      if(links[i]->getName() == dof){ // Now I am finding the row index.
-        mapMatrix[i][j] = value;
-        return true;
-      }
-    return false;
   }
 
 
