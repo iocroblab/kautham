@@ -90,14 +90,7 @@ namespace Kautham {
       mt::Transform     _homeTrans; //!< This is the Home Reference frame at time zero (used to calculate the spatial limits).
       SoSeparator*      visModel; //!< Visualitzation model for the path.
       SoSeparator*      collModel; //!< Collision model for the path.
-
-      string            controlsName; //!< Names of the controls, as a string, separated with the vertical bar character.
-      int               numControls;  //!< This is the number of control used to command the robot
-      int               numCoupledControls; //!< This is the number of controls used to command the robot that are couped with other robots
-                                        //!< From the set of controls defined in the input file *.dh or *.urdf, the first numCoupledControls controls
-                                        //!< will be those that are coupled with other robots. This is implemented by maintaining those
-                                        //!< controls at the same value for all the robots.
-      int               nTrunk; //!< Number of control for the trunk in case of TREE robot
+      int               nTrunk; //!< Number of links for the trunk in case of TREE robot
       InverseKinematic* _ikine; //!< Defines the inverse kinematics of the robot, if available.
       ConstrainedKinematic* _constrainKin; //!< Defines the constrained kinematics of the robot, if it has one.
       vector<RobConf>   _proposedSolution; //!< Solution path to be drawn.
@@ -157,12 +150,7 @@ namespace Kautham {
     inline unsigned int getNumLinks(){return (unsigned int)links.size();} //!< Returns the number of links of the robot.
 
     inline bool isSE3Enabled() const {return se3Enabled;} //!< retruns wether the robot has a mobile base
-
-    inline string getControlsName() const {return controlsName;} //!< Returns the string containing the control names, separated by the veritcal line character
-
-    inline int getNumControls(){if( armed ) return numControls; return -1;} //!< Retruns the number of controls
-
-    inline int getNumCoupledControls(){if( armed ) return numCoupledControls; return -1;} //!< Retruns the number of controls that are copupled with another robot
+    inline void setSE3(bool SE3Enabled) {se3Enabled = SE3Enabled;} //!< Sets wether the robot has a mobile base
 
     inline mt::Transform& getLastLinkTransform(){ return
                                     *(((Link*)links.at(links.size()-1))->getTransformation());}
@@ -181,8 +169,6 @@ namespace Kautham {
     inline void setRobotType(ROBOTTYPE rob){robType = rob;} //!< Sets the robot type.
 
     inline void setDHApproach(APPROACH dhA){Approach = dhA;} //!< Sets the type of D-H parameters to be used
-
-    inline int setNumCoupledControls(int n){numCoupledControls=n;}
 
     inline void setLinkPathDrawn(int n){_linkPathDrawn = n;}
 
@@ -296,9 +282,6 @@ namespace Kautham {
 
     //! Retunrs the weights of the robot used in the computation of the distances
     RobWeight* getRobWeight(){return _weights;}
-
-    //! Sets the value of the mapMatrix corresponding to the column control and row dof.
-    bool setControlItem(string control, string dof, KthReal value);
 
     //! Returns the string with the names of the DOFs, separated by |
     string getDOFNames();

@@ -12,7 +12,7 @@ namespace Kautham {
     _globalOffset = offset;
     _ptProblem = prob;
     string names = "This|is|a|test";
-    if(rob != NULL) names= rob->getControlsName();
+    if(rob != NULL) names= prob->wSpace()->getControlsName();
 		gridLayout = new QGridLayout(this);
     gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
     vboxLayout = new QVBoxLayout();
