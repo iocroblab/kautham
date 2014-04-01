@@ -263,7 +263,7 @@ bool valid_num_triangles(int T, int V) {
 
                     printf("bbox has a volume of %f\n",(float)bbox.volume());
 
-                    //get the 8 vertices
+                    //get the 8 vertices (and correct the scale - since the collision_ivmodel has already a child sca (collision_ivmodel->addChild(sca));
                     int i;
                     static float vertexPositions[8][3];
                     double tmp[3];
@@ -272,9 +272,9 @@ bool valid_num_triangles(int T, int V) {
                             for (int sel3 = 0; sel3 <= 1; sel3++) {
                                 i = sel1*4 + sel2*2 + sel3;
                                 bbox.get_vertex(sel1,sel2,sel3,&tmp[0],&tmp[1],&tmp[2]);
-                                vertexPositions[i][0]=(float)tmp[0];
-                                vertexPositions[i][1]=(float)tmp[1];
-                                vertexPositions[i][2]=(float)tmp[2];
+                                vertexPositions[i][0]=(float)tmp[0] / scale;
+                                vertexPositions[i][1]=(float)tmp[1] / scale;
+                                vertexPositions[i][2]=(float)tmp[2] / scale;
                             }
                         }
                     }
