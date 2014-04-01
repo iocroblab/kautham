@@ -3,7 +3,7 @@
         <Robot robot="robots/minicubecoupled_xy.rob" scale="3.0">
 		<Limits name="X" min="0.0" max="1.0"/>
 		<Limits name="Y" min="0.0" max="1.0"/>
-		<Limits name="Z" min="0.07" max="0.07"/>
+                <Limits name="Z" min="0.07" max="0.07"/>
 		<Limits name="WX" min="0.0" max="1.0"/>
 		<Limits name="WY" min="0.0" max="1.0"/>
 		<Limits name="WZ" min="0.0" max="1.0"/>
@@ -14,7 +14,7 @@
         <Robot robot="robots/minicubeGreencoupled_xy.rob" scale="3.0">
                 <Limits name="X" min="0.0" max="1.0"/>
                 <Limits name="Y" min="0.0" max="1.0"/>
-		<Limits name="Z" min="0.07" max="0.07"/>
+                <Limits name="Z" min="0.07" max="0.07"/>
                 <Limits name="WX" min="0.0" max="1.0"/>
                 <Limits name="WY" min="0.0" max="1.0"/>
                 <Limits name="WZ" min="0.0" max="1.0"/>
@@ -25,7 +25,7 @@
         <Robot robot="robots/minicubeWhitecoupled_xy.rob" scale="3.0">
                 <Limits name="X" min="0.0" max="1.0"/>
                 <Limits name="Y" min="0.0" max="1.0"/>
-		<Limits name="Z" min="0.07" max="0.07"/>
+                <Limits name="Z" min="0.07" max="0.07"/>
                 <Limits name="WX" min="0.0" max="1.0"/>
                 <Limits name="WY" min="0.0" max="1.0"/>
                 <Limits name="WZ" min="0.0" max="1.0"/>
@@ -36,7 +36,7 @@
         <Robot robot="robots/minicubeRedcoupled_xy.rob" scale="3.0">
                 <Limits name="X" min="0.0" max="1.0"/>
                 <Limits name="Y" min="0.0" max="1.0"/>
-		<Limits name="Z" min="0.07" max="0.07"/>
+                <Limits name="Z" min="0.07" max="0.07"/>
                 <Limits name="WX" min="0.0" max="1.0"/>
                 <Limits name="WY" min="0.0" max="1.0"/>
                 <Limits name="WZ" min="0.0" max="1.0"/>
@@ -53,15 +53,16 @@
 	<Planner>
                  <Parameters>
                     <Name>omplRRTStar</Name>
-                    <Parameter name="Max Planning Time">5.0</Parameter>
+                    <Parameter name="Max Planning Time">30.0</Parameter>
                     <Parameter name="Speed Factor">1</Parameter>
                     <Parameter name="Range">0.1</Parameter>
                     <Parameter name="DelayCC (0/1)">0</Parameter>
                     <Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">3</Parameter>
                     <Parameter name="Simplify Solution">1</Parameter>
-                    <Parameter name="lengthweight(0..1)">1</Parameter>
-                    <Parameter name="orientationweight">100</Parameter>
-                    <Parameter name="penalizationweight">10</Parameter>
+                    <Parameter name="lengthweight(0..1)">0.1</Parameter>
+                    <Parameter name="orientationweight">1</Parameter>
+                    <Parameter name="penalizationweight">1</Parameter>
+                    <Parameter name="disablePMDControlsFromSampling">0</Parameter>
                 </Parameters>
 		<Queries>
 			<Query>
