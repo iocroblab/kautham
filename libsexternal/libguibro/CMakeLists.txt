@@ -30,7 +30,7 @@ ADD_LIBRARY( libguibro ${SRC_FILES} ${HDR_FILES} ${QT_MOC_HDR}
                                         ${QT_MOC_SRC} ${QTUI_H_SRC} )
 
 #??
-TARGET_LINK_LIBRARIES( libguibro ${QT_LIBRARIES} libproblem libplanner
-                       libsampling libkthutil ${SOQT_LIBRARY} ${COIN_LIBRARY} )
+TARGET_LINK_LIBRARIES( libguibro ${QT_LIBRARIES}  libplanner libsampling
+                         ${SOQT_LIBRARY} ${COIN_LIBRARY} )
 
 

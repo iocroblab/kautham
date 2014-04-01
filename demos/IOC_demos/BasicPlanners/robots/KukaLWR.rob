@@ -20,7 +20,7 @@
     </Joint>
     
     <Joint name="Link2" ivFile="kukaLWR/link2.wrl">
-      <DHPars  alpha="90.0" a="0.0" theta="-90.0" d="0.0"></DHPars>
+      <DHPars  alpha="90.0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="210.0" Low="-30.0"></Limits>
       <Weight weight="1.0"></Weight>
