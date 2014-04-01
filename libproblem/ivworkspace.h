@@ -71,6 +71,7 @@ namespace Kautham{
 	  protected:
 		  void updateScene();
 		  SoSeparator *scene;
+          SoSeparator *collisionscene;
   };
 
   /** @}   end of Doxygen module "libProblem" */
