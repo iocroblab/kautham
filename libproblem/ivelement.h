@@ -46,7 +46,15 @@
 #if !defined(_IVELEMENT_H)
 #define _IVELEMENT_H
 
+//define BBOX if you want that if collision_ivfile is the same file as ivfile,
+//then the minimum-volume bounding box will be computed and used instead
+//#define BBOX
+
+#include <sstream>
+#include <fstream>
 #include "element.h"
+#include <gdiam.hpp>
+#include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/fields/SoSFVec3f.h>
 #include <Inventor/fields/SoSFRotation.h>
 #include <Inventor/nodes/SoTranslation.h>
@@ -55,6 +63,10 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoScale.h>
 #include <Inventor/nodes/SoSphere.h>
+#include <Inventor/actions/SoCallbackAction.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoIndexedFaceSet.h>
+#include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/SbLinear.h>
 #include <libkthutil/kauthamdefs.h>
 
@@ -75,11 +87,18 @@ class IVElement : public Element {
 	  SbMatrix orientationMatrix();
 	  SoSeparator* ivModel(bool tran=false);
       SoSeparator* collision_ivModel(bool tran=false);
-	  bool collideTo(Element* other);
+      bool collideTo(Element* other);
+      static void point_CB(void *data, SoCallbackAction *action,
+                           const SoPrimitiveVertex *v);
+      static void triangle_CB(void *data, SoCallbackAction *action,
+                                         const SoPrimitiveVertex *v1,
+                                         const SoPrimitiveVertex *v2,
+                                         const SoPrimitiveVertex *v3);
 	  KthReal getDistanceTo(Element* other);
     inline SoTranslation* getTrans(){return trans;}
     inline SoRotation* getRot(){return rot;}
     inline SoMaterial* getMaterial(){return color;}
+
   private:
 	  SoSeparator   *ivmodel;
       SoSeparator   *collision_ivmodel;
@@ -91,7 +110,6 @@ class IVElement : public Element {
 	  SoMaterial    *color;
       SoScale       *sca;
   };
-
 
 /** @}   end of Doxygen module "libProblem" */
 }
