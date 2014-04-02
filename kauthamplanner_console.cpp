@@ -44,8 +44,12 @@
 #include <string>
 #include <sstream>
 #include "libproblem/problem.h"
-#include "libplanner/kthquery.h"
+#include "libsplanner/libioc/kthquery.h"
+#include "libsplanner/libioc/iocplanner.h"
 #include <Inventor/SoDB.h>
+
+//solving convertions problems
+#include <locale.h>
 
 #ifdef KAUTHAM_USE_MPI
 #include <mpi.h>
@@ -74,9 +78,11 @@ int main(int argc, char* argv[]){
       << "and the number_of_runs is the integer number that the problem is trying to be "
       << "solved. Please take care with the relative paths where robots files and "
       << "scenes files are located relative to the problem file.";
+
     return 0;
   }
 
+  char *old = setlocale (LC_NUMERIC, "C");
   //=====================
   SoDB::init();
 
@@ -121,7 +127,7 @@ int main(int argc, char* argv[]){
 
     if( _problem->setupFromFile( absPath ) ){
       cout << "The problem file has been loaded successfully.\n";
-      Planner* _planner = _problem->getPlanner();
+      IOC::iocPlanner* _planner = (IOC::iocPlanner*)_problem->getPlanner();
       SampleSet* _samples = _problem->getSampleSet();
       unsigned int d =  _samples->getSampleAt(0)->getDim();
       //vector<KthReal> init(d), goal(d);
@@ -143,7 +149,7 @@ int main(int argc, char* argv[]){
         _planner->setGoalSamp( _samples->getSampleAt(1) );
 
         if(_planner->solveAndInherit()){
-          KthQuery& tmp = _planner->getQueries().at( _planner->getQueries().size() - 1 );
+          IOC::KthQuery& tmp = _planner->getQueries().at( _planner->getQueries().size() - 1 );
           times[0] += tmp.getTotalTime();
           times[1] += tmp.getSmoothTime();
           sampCount[0] += tmp.getGeneratedSamples();
@@ -251,6 +257,7 @@ int main(int argc, char* argv[]){
 #ifdef KAUTHAM_USE_MPI
 	  MPI_Finalize(); 
 #endif
+      setlocale (LC_NUMERIC, old);
     return 1;
   }
 
@@ -260,6 +267,7 @@ int main(int argc, char* argv[]){
 #endif
 
 
+    setlocale (LC_NUMERIC, old);
   return 0;
 }
 
