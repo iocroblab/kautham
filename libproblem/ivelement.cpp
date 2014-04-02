@@ -152,7 +152,7 @@ bool valid_num_triangles(int T, int V) {
         collision_ivmodel = new SoSeparator;
         collision_ivmodel->ref();
         collision_ivmodel->addChild(sca);
-#define BBOX
+//#define BBOX
 #ifdef BBOX
         //check if collision_ivfile is a different file from ivfile
         //and if collision_ivmodel could be the minimum-volume bounding box of ivmodel
