@@ -6,7 +6,7 @@ CMAKE_POLICY(SET CMP0003 OLD)
 
 ########### Options ####################
 OPTION( KAUTHAM_GUI "Build the gui version" ON )
-OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
+OPTION( KAUTHAM_CONSOLE "Build the console version" ON )
 OPTION( KAUTHAM_OMPL "Use OMPL planners" ON )
 OPTION( KAUTHAM_OMPL_LATEST "Use latest OMPL version" ON )
 OPTION( KAUTHAM_IOC "Use IOC planners" ON )
@@ -229,7 +229,7 @@ IF( KAUTHAM_CONSOLE )
     MESSAGE( STATUS "MPI library not found" )
   ENDIF( MPI_FOUND )
 
-  SET( SRC_FILES kauthamplanner_console.cpp libutil/kauthamobject.cpp )
+  SET( SRC_FILES kauthamplanner_console.cpp libsutil/libkthutil/kauthamobject.cpp )
   
     # Adding console bath mode executable
   ADD_EXECUTABLE( KauthamConsole ${SRC_FILES} ${HDR_FILES} ${RES_FILES} )
