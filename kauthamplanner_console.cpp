@@ -48,9 +48,6 @@
 #include "libsplanner/libioc/iocplanner.h"
 #include <Inventor/SoDB.h>
 
-//solving convertions problems
-#include <locale.h>
-
 #ifdef KAUTHAM_USE_MPI
 #include <mpi.h>
 #endif
@@ -82,7 +79,6 @@ int main(int argc, char* argv[]){
     return 0;
   }
 
-  char *old = setlocale (LC_NUMERIC, "C");
   //=====================
   SoDB::init();
 
@@ -141,9 +137,11 @@ int main(int argc, char* argv[]){
         _samples->clear();
         Sample* smp = new Sample(d);
         smp->setCoords( init );
+        _problem->wSpace()->collisionCheck( smp);
         _samples->add( smp );
         smp = new Sample(d);
         smp->setCoords( goal );
+        _problem->wSpace()->collisionCheck( smp);
         _samples->add( smp );
         _planner->setInitSamp( _samples->getSampleAt(0) );
         _planner->setGoalSamp( _samples->getSampleAt(1) );
@@ -257,7 +255,6 @@ int main(int argc, char* argv[]){
 #ifdef KAUTHAM_USE_MPI
 	  MPI_Finalize(); 
 #endif
-      setlocale (LC_NUMERIC, old);
     return 1;
   }
 
@@ -267,7 +264,6 @@ int main(int argc, char* argv[]){
 #endif
 
 
-    setlocale (LC_NUMERIC, old);
   return 0;
 }
 
