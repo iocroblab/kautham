@@ -31,8 +31,7 @@ ADD_LIBRARY( libgui ${CPP_RES_FILES} ${SRC_FILES} ${HDR_FILES} ${QT_MOC_HDR}
   ENDIF( KAUTHAM_GUIBRO )
 
 
-TARGET_LINK_LIBRARIES( libgui ${QT_LIBRARIES} libproblem libplanner ${KC_EXTERNAL_LIBS}
-                       libsampling libkthutil ${SOQT_LIBRARY} ${COIN_LIBRARY} )
+TARGET_LINK_LIBRARIES( libgui ${KC_EXTERNAL_LIBS} )
 
 
   
