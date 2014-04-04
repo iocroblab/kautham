@@ -504,10 +504,10 @@ namespace Kautham {
   // omplPlanner functions
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //! Constructor
-  omplPlanner::omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+  omplPlanner::omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
              Planner(stype, init, goal, samples, ws)
     {
-      _family = "ompl";
+        _family = "ompl";
         //set intial values from parent class data
         _speedFactor = 1;
         _solved = false;
@@ -529,143 +529,145 @@ namespace Kautham {
         addParameter("Simplify Solution", _simplify);
         addParameter("Cspace Drawn", _drawnrobot);
 
-        //Construct the state space we are planning in. It is a compound state space composed of a compound state space for each robot
-        //Each robot has a compound state space composed of a (oprional) SE3 state space and a (optional) Rn state space
-        vector<ob::StateSpacePtr> spaceRn;
-        vector<ob::StateSpacePtr> spaceSE3;
-        vector<ob::StateSpacePtr> spaceRob;
-        vector< double > weights;
 
-        spaceRn.resize(_wkSpace->robotsCount());
-        spaceSE3.resize(_wkSpace->robotsCount());
-        spaceRob.resize(_wkSpace->robotsCount());
-        weights.resize(_wkSpace->robotsCount());
+        if (ssptr == NULL) {
+            //Construct the state space we are planning in. It is a compound state space composed of a compound state space for each robot
+            //Each robot has a compound state space composed of a (oprional) SE3 state space and a (optional) Rn state space
+            vector<ob::StateSpacePtr> spaceRn;
+            vector<ob::StateSpacePtr> spaceSE3;
+            vector<ob::StateSpacePtr> spaceRob;
+            vector< double > weights;
 
-        //loop for all robots
-        for(int i=0; i<_wkSpace->robotsCount(); i++)
-        {
-            vector<ob::StateSpacePtr> compoundspaceRob;
-            vector< double > weightsRob;
-            std::stringstream sstm;
+            spaceRn.resize(_wkSpace->robotsCount());
+            spaceSE3.resize(_wkSpace->robotsCount());
+            spaceRob.resize(_wkSpace->robotsCount());
+            weights.resize(_wkSpace->robotsCount());
 
-            //create state space SE3 for the mobile base, if necessary
-            if(_wkSpace->getRobot(i)->isSE3Enabled())
+            //loop for all robots
+            for(int i=0; i<_wkSpace->robotsCount(); i++)
             {
-                //create the SE3 state space
-                spaceSE3[i] = ((ob::StateSpacePtr) new ob::SE3StateSpace());
-                sstm << "ssRobot" << i<<"_SE3";
-                spaceSE3[i]->setName(sstm.str());
+                vector<ob::StateSpacePtr> compoundspaceRob;
+                vector< double > weightsRob;
+                std::stringstream sstm;
 
-                //set the bounds. If the bounds are equal or its difference is below a given epsilon value (0.001) then
-                //set the higher bound to the lower bound plus this eplsion
-                ob::RealVectorBounds bounds(3);
-
-                //x-direction
-                double low = _wkSpace->getRobot(i)->getLimits(0)[0];
-                double high = _wkSpace->getRobot(i)->getLimits(0)[1];
-                filterBounds(low, high, 0.001);
-                bounds.setLow(0, low);
-                bounds.setHigh(0, high);
-
-                //y-direction
-                low = _wkSpace->getRobot(i)->getLimits(1)[0];
-                high = _wkSpace->getRobot(i)->getLimits(1)[1];
-                filterBounds(low, high, 0.001);
-                bounds.setLow(1, low);
-                bounds.setHigh(1, high);
-
-                //z-direction
-                low = _wkSpace->getRobot(i)->getLimits(2)[0];
-                high = _wkSpace->getRobot(i)->getLimits(2)[1];
-                filterBounds(low, high, 0.001);
-                bounds.setLow(2, low);
-                bounds.setHigh(2, high);
-
-                spaceSE3[i]->as<ob::SE3StateSpace>()->setBounds(bounds);
-
-                //create projections evaluator for this spaces -
-                //The default projections (needed for some planners) and
-                //the projections called "drawprojections"for the drawcspace function.
-                //(the use of defaultProjections for drawspace did not succeed because the ss->setup() calls registerProjections() function that
-				//for the case of RealVectorStateSpace sets the projections as random for dim>2 and identity otherwise, thus
-				//resetting what the user could have tried to do.
-                ob::ProjectionEvaluatorPtr peR3; //projection for R3
-                peR3 = (ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0));
-                peR3->setup();//??
-                spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0)->registerProjection("drawprojection",peR3); 
-                spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0)->registerDefaultProjection(peR3);
-                ob::ProjectionEvaluatorPtr peSE3; //projection for SE3
-                ob::ProjectionEvaluatorPtr projToUse = spaceSE3[i]->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
-                peSE3 = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceSE3[i],0,projToUse);
-                peSE3->setup(); //necessary to set projToUse as theprojection
-                spaceSE3[i]->registerProjection("drawprojection",peSE3);
-                spaceSE3[i]->registerDefaultProjection(peSE3);
-
-                //sets the weights between translation and rotation
-                spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(0,_wkSpace->getRobot(i)->getWeightSE3()[0]);//translational weight
-                spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(1,_wkSpace->getRobot(i)->getWeightSE3()[1]);//rotational weight
-
-                //load to the compound state space of robot i
-                compoundspaceRob.push_back(spaceSE3[i]);
-                weightsRob.push_back(1);
-            }
-
-            //create the Rn state space for the kinematic chain, if necessary
-            int nj = _wkSpace->getRobot(i)->getNumJoints();
-            if(nj>0)
-            {
-                //create the Rn state space
-                spaceRn[i] = ((ob::StateSpacePtr) new weigthedRealVectorStateSpace(nj));
-                sstm << "ssRobot" << i<<"_Rn";
-                spaceRn[i]->setName(sstm.str());
-
-                //create projections evaluator for this spaces
-                ob::ProjectionEvaluatorPtr peRn;
-                peRn = ((ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceRn[i]));
-                peRn->setup();
-                spaceRn[i]->registerProjection("drawprojection",peRn);
-                spaceRn[i]->registerDefaultProjection(peRn);
-
-                // set the bounds and the weights
-                vector<KthReal> jointweights;
-                ob::RealVectorBounds bounds(nj);
-                double low, high;
-                for(int j=0; j<nj;j++)
+                //create state space SE3 for the mobile base, if necessary
+                if(_wkSpace->getRobot(i)->isSE3Enabled())
                 {
-                    //the limits of joint j between link j and link (j+1) are stroed in the data structure of link (j+1)
-                    low = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(true);
-                    high = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(false);
+                    //create the SE3 state space
+                    spaceSE3[i] = ((ob::StateSpacePtr) new ob::SE3StateSpace());
+                    sstm << "ssRobot" << i<<"_SE3";
+                    spaceSE3[i]->setName(sstm.str());
+
+                    //set the bounds. If the bounds are equal or its difference is below a given epsilon value (0.001) then
+                    //set the higher bound to the lower bound plus this eplsion
+                    ob::RealVectorBounds bounds(3);
+
+                    //x-direction
+                    double low = _wkSpace->getRobot(i)->getLimits(0)[0];
+                    double high = _wkSpace->getRobot(i)->getLimits(0)[1];
                     filterBounds(low, high, 0.001);
-                    bounds.setLow(j, low);
-                    bounds.setHigh(j, high);
-                    //the weights
-                    jointweights.push_back(_wkSpace->getRobot(i)->getLink(j+1)->getWeight());
+                    bounds.setLow(0, low);
+                    bounds.setHigh(0, high);
+
+                    //y-direction
+                    low = _wkSpace->getRobot(i)->getLimits(1)[0];
+                    high = _wkSpace->getRobot(i)->getLimits(1)[1];
+                    filterBounds(low, high, 0.001);
+                    bounds.setLow(1, low);
+                    bounds.setHigh(1, high);
+
+                    //z-direction
+                    low = _wkSpace->getRobot(i)->getLimits(2)[0];
+                    high = _wkSpace->getRobot(i)->getLimits(2)[1];
+                    filterBounds(low, high, 0.001);
+                    bounds.setLow(2, low);
+                    bounds.setHigh(2, high);
+
+                    spaceSE3[i]->as<ob::SE3StateSpace>()->setBounds(bounds);
+
+                    //create projections evaluator for this spaces -
+                    //The default projections (needed for some planners) and
+                    //the projections called "drawprojections"for the drawcspace function.
+                    //(the use of defaultProjections for drawspace did not succeed because the ss->setup() calls registerProjections() function that
+                    //for the case of RealVectorStateSpace sets the projections as random for dim>2 and identity otherwise, thus
+                    //resetting what the user could have tried to do.
+                    ob::ProjectionEvaluatorPtr peR3; //projection for R3
+                    peR3 = (ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0));
+                    peR3->setup();//??
+                    spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0)->registerProjection("drawprojection",peR3);
+                    spaceSE3[i]->as<ob::SE3StateSpace>()->getSubspace(0)->registerDefaultProjection(peR3);
+                    ob::ProjectionEvaluatorPtr peSE3; //projection for SE3
+                    ob::ProjectionEvaluatorPtr projToUse = spaceSE3[i]->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
+                    peSE3 = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceSE3[i],0,projToUse);
+                    peSE3->setup(); //necessary to set projToUse as theprojection
+                    spaceSE3[i]->registerProjection("drawprojection",peSE3);
+                    spaceSE3[i]->registerDefaultProjection(peSE3);
+
+                    //sets the weights between translation and rotation
+                    spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(0,_wkSpace->getRobot(i)->getWeightSE3()[0]);//translational weight
+                    spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(1,_wkSpace->getRobot(i)->getWeightSE3()[1]);//rotational weight
+
+                    //load to the compound state space of robot i
+                    compoundspaceRob.push_back(spaceSE3[i]);
+                    weightsRob.push_back(1);
                 }
-                spaceRn[i]->as<weigthedRealVectorStateSpace>()->setBounds(bounds);
-                spaceRn[i]->as<weigthedRealVectorStateSpace>()->setWeights(jointweights);
 
-                //load to the compound state space of robot i
-                compoundspaceRob.push_back(spaceRn[i]);
-                weightsRob.push_back(1);
+                //create the Rn state space for the kinematic chain, if necessary
+                int nj = _wkSpace->getRobot(i)->getNumJoints();
+                if(nj>0)
+                {
+                    //create the Rn state space
+                    spaceRn[i] = ((ob::StateSpacePtr) new weigthedRealVectorStateSpace(nj));
+                    sstm << "ssRobot" << i<<"_Rn";
+                    spaceRn[i]->setName(sstm.str());
+
+                    //create projections evaluator for this spaces
+                    ob::ProjectionEvaluatorPtr peRn;
+                    peRn = ((ob::ProjectionEvaluatorPtr) new ob::RealVectorIdentityProjectionEvaluator(spaceRn[i]));
+                    peRn->setup();
+                    spaceRn[i]->registerProjection("drawprojection",peRn);
+                    spaceRn[i]->registerDefaultProjection(peRn);
+
+                    // set the bounds and the weights
+                    vector<KthReal> jointweights;
+                    ob::RealVectorBounds bounds(nj);
+                    double low, high;
+                    for(int j=0; j<nj;j++)
+                    {
+                        //the limits of joint j between link j and link (j+1) are stroed in the data structure of link (j+1)
+                        low = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(true);
+                        high = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(false);
+                        filterBounds(low, high, 0.001);
+                        bounds.setLow(j, low);
+                        bounds.setHigh(j, high);
+                        //the weights
+                        jointweights.push_back(_wkSpace->getRobot(i)->getLink(j+1)->getWeight());
+                    }
+                    spaceRn[i]->as<weigthedRealVectorStateSpace>()->setBounds(bounds);
+                    spaceRn[i]->as<weigthedRealVectorStateSpace>()->setWeights(jointweights);
+
+                    //load to the compound state space of robot i
+                    compoundspaceRob.push_back(spaceRn[i]);
+                    weightsRob.push_back(1);
+                }
+                //the compound state space for robot i is (SE3xRn), and either SE3 or Rn may be missing
+                spaceRob[i] = ((ob::StateSpacePtr) new ob::CompoundStateSpace(compoundspaceRob,weightsRob));
+                weights[i] = 1;
+                sstm.str("");
+                sstm << "ssRobot" << i;
+                spaceRob[i]->setName(sstm.str());
+
+                ob::ProjectionEvaluatorPtr peRob;
+                ob::ProjectionEvaluatorPtr projToUse = spaceRob[i]->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
+                peRob = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceRob[i],0,projToUse);
+                peRob->setup();
+                spaceRob[i]->registerProjection("drawprojection",peRob);
+                spaceRob[i]->registerDefaultProjection(peRob);
             }
-            //the compound state space for robot i is (SE3xRn), and either SE3 or Rn may be missing
-            spaceRob[i] = ((ob::StateSpacePtr) new ob::CompoundStateSpace(compoundspaceRob,weightsRob));
-            weights[i] = 1;
-            sstm.str("");
-            sstm << "ssRobot" << i;
-            spaceRob[i]->setName(sstm.str());
+            //the state space for the set of robots. All the robots have the same weight.
+            space = ((ob::StateSpacePtr) new ob::CompoundStateSpace(spaceRob,weights));
 
-            ob::ProjectionEvaluatorPtr peRob;
-            ob::ProjectionEvaluatorPtr projToUse = spaceRob[i]->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
-            peRob = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*spaceRob[i],0,projToUse);
-            peRob->setup();
-            spaceRob[i]->registerProjection("drawprojection",peRob);
-            spaceRob[i]->registerDefaultProjection(peRob);
-        }
-        //the state space for the set of robots. All the robots have the same weight.
-        space = ((ob::StateSpacePtr) new ob::CompoundStateSpace(spaceRob,weights));
-
-        /*
+            /*
         ob::ProjectionEvaluatorPtr peSpace;
         ob::ProjectionEvaluatorPtr projToUse = space->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
         peSpace = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0,projToUse);
@@ -673,21 +675,45 @@ namespace Kautham {
         space->registerProjection("drawprojection",peSpace);
         space->registerDefaultProjection(peSpace);
         */
-        vector<ob::ProjectionEvaluatorPtr> peSpace;
-        for(int i=0; i<_wkSpace->robotsCount();i++)
-        {
-            ob::ProjectionEvaluatorPtr projToUse = space->as<ob::CompoundStateSpace>()->getSubspace(i)->getProjection("drawprojection");
-            peSpace.push_back( (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,i,projToUse) );
-            peSpace[i]->setup();
-            string projname = "drawprojection"; //
-            string robotnumber = static_cast<ostringstream*>( &(ostringstream() << i) )->str();//the string correspoding to number i
-            projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
-            space->registerProjection(projname.c_str(),peSpace[i]);
-        }
-        space->registerDefaultProjection(peSpace[0]);//the one corresponding to the first robot is set as default
+            vector<ob::ProjectionEvaluatorPtr> peSpace;
+            for(int i=0; i<_wkSpace->robotsCount();i++)
+            {
+                ob::ProjectionEvaluatorPtr projToUse = space->as<ob::CompoundStateSpace>()->getSubspace(i)->getProjection("drawprojection");
+                peSpace.push_back( (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,i,projToUse) );
+                peSpace[i]->setup();
+                string projname = "drawprojection"; //
+                string robotnumber = static_cast<ostringstream*>( &(ostringstream() << i) )->str();//the string correspoding to number i
+                projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
+                space->registerProjection(projname.c_str(),peSpace[i]);
+            }
+            space->registerDefaultProjection(peSpace[0]);//the one corresponding to the first robot is set as default
 
-        //The classes derived from this omplplanner class will create a planner,
-        //the simplesetup and call the setStateValididyChecker function
+            //create simple setup
+            ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
+            si=ss->getSpaceInformation();
+            //set validity checker
+            si->setStateValidityChecker(ob::StateValidityCheckerPtr(new ValidityChecker(si,  (Planner*)this)));
+            //ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, si.get(),_1, (Planner*)this));
+
+            //Start state: convert from smp to scoped state
+            ob::ScopedState<ob::CompoundStateSpace> startompl(space);
+            smp2omplScopedState(_init, &startompl);
+            cout<<"startompl:"<<endl;
+            startompl.print();
+
+            //Goal state: convert from smp to scoped state
+            ob::ScopedState<ob::CompoundStateSpace> goalompl(space);
+            smp2omplScopedState(_goal, &goalompl);
+            cout<<"goalompl:"<<endl;
+            goalompl.print();
+
+            // set the start and goal states
+            ss->setStartAndGoalStates(startompl, goalompl);
+        } else {
+            ss = (og::SimpleSetupPtr)ssptr;
+            si = ss->getSpaceInformation();
+            space = ss->getStateSpace();
+        }
     }
 
 	//! void destructor
@@ -756,7 +782,7 @@ namespace Kautham {
         it = _parameters.find("Cspace Drawn");
         if(it != _parameters.end()){
             _drawnrobot = it->second;
-            if(_drawnrobot<0 || _drawnrobot > _wkSpace->robotsCount()) {
+            if(_drawnrobot<0 || _drawnrobot >= _wkSpace->robotsCount()) {
                 _drawnrobot = 0;
                 setParameter("Cspace Drawn",0);
             }
