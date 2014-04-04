@@ -11,12 +11,11 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/libmt
                      
 ADD_DEFINITIONS( -DCOIN_DLL )
 
-ADD_LIBRARY( libsampling ${SRC_FILES} ${HDR_FILES} ) 
-TARGET_LINK_LIBRARIES( libsampling libDNN libproblem )
+ADD_LIBRARY( libsampling ${SRC_FILES} ${HDR_FILES} )
 
-IF(UNIX)
- SET_TARGET_PROPERTIES( libsampling PROPERTIES OUTPUT_NAME sampling )
-ENDIF(UNIX)
+TARGET_LINK_LIBRARIES( libsampling libDNN )
+
+
 
 
 
