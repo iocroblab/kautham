@@ -44,6 +44,7 @@
 #include <string>
 #include <sstream>
 #include "libproblem/problem.h"
+#include "libproblem/benchmark.h"
 #include "libsplanner/libioc/kthquery.h"
 #include "libsplanner/libioc/iocplanner.h"
 #include <Inventor/SoDB.h>
@@ -69,147 +70,151 @@ int main(int argc, char* argv[]){
 #endif
 
 
-  if( argv[1] == "-h" || argc != 3 ){
-    std::cout << "Kautham console has been called without a problem file path, "
+  if( (argc > 1 && string(argv[1]) == "-h") || (argc != 3 && argc != 2)){//print help info
+    std::cout << "Kautham console has been called with an invalid number of parameters "
       << "or you want to read this help. "
-      << "The correct way to run this program is as follow: \n\n"
-      << "KauthamConsole xml_problem_file number_of_runs \n\n" 
+      << "The correct way to run this program is as follow:\n\n"
+      << "If you want to benchmark OMPL planners:\n"
+      << "KauthamConsole xml_benchmarking_file\n\n"
+      << "where xml_benchmarking_file is a relative path of the benchamrk to be solved \n\n"
+      << "Or if you want to benchmark IOC planners:\n"
+      << "KauthamConsole xml_problem_file number_of_runs\n\n"
       << "where xml_problem_file is a relative path of the problem to be solved "
       << "and the number_of_runs is the integer number that the problem is trying to be "
-      << "solved. Please take care with the relative paths where robots files and "
-      << "scenes files are located relative to the problem file.";
+      << "solved.\n\n"
+      << "Please take care with the relative paths where robots files and "
+      << "scenes files are located relative to the problem file.\n\n";
 
     return 0;
-  }
+  } else if (argc == 3) {//IOC planners benchmarking
+      char *old = setlocale (LC_NUMERIC, "C");
+      //=====================
+      SoDB::init();
 
-  char *old = setlocale (LC_NUMERIC, "C");
-  //=====================
-  SoDB::init();
+      string dir = argv[0];
 
-  string dir = argv[0];
+      // If this is a windows executable, the path is unix format converted, changing  "\" for "/"
+      size_t found;
+      found = dir.find_first_of("\\");
+      while (found != string::npos){
+          dir[found]='/';
+          found = dir.find_first_of("\\",found+1);
+      }
 
-  // If this is a windows executable, the path is unix format converted, changing  "\" for "/"
-  size_t found;
-  found = dir.find_first_of("\\");
-  while (found != string::npos){
-    dir[found]='/';
-    found = dir.find_first_of("\\",found+1);
-  }
+      dir.erase(dir.find_last_of("/") + 1, dir.length());
+      string absPath = dir;
+      absPath.append( argv[1] );
 
-  dir.erase(dir.find_last_of("/") + 1, dir.length());
-  string absPath = dir;
-  absPath.append( argv[1] );
+      found = absPath.find_first_of("\\");
+      while (found != string::npos){
+          absPath[found]='/';
+          found = absPath.find_first_of("\\",found+1);
+      }
 
-  found = absPath.find_first_of("\\");
-  while (found != string::npos){
-    absPath[found]='/';
-    found = absPath.find_first_of("\\",found+1);
-  }
+      string baseName = absPath;
+      baseName.erase(0,baseName.find_last_of("/") + 1);
+      baseName.erase(baseName.find_first_of("."), baseName.length());
 
-  string baseName = absPath;
-  baseName.erase(0,baseName.find_last_of("/") + 1);
-  baseName.erase(baseName.find_first_of("."), baseName.length());
+      string soluFile = dir + baseName;
+      soluFile.append("_solution_");
+      std::cout << "Kautham is opening a problem file: " << absPath << endl;
 
-  string soluFile = dir + baseName;
-  soluFile.append("_solution_");
-  std::cout << "Kautham is opening a problem file: " << absPath << endl;
-
-  try{
-    int tryTimes = atoi( argv[2] );
+      try{
+          int tryTimes = atoi( argv[2] );
 #ifdef KAUTHAM_USE_MPI 
-    tryTimes /= numProcs;
+          tryTimes /= numProcs;
 #endif
-    cout << "The problem will be trying to solve " << tryTimes << " times.\n" ;
-    int badSol = 0;
-    Problem* _problem = new Problem();
-    stringstream ss;
-    ss.str(soluFile);
+          cout << "The problem will be trying to solve " << tryTimes << " times.\n" ;
+          int badSol = 0;
+          Problem* _problem = new Problem();
+          stringstream ss;
+          ss.str(soluFile);
 
-    if( _problem->setupFromFile( absPath ) ){
-      cout << "The problem file has been loaded successfully.\n";
-      IOC::iocPlanner* _planner = (IOC::iocPlanner*)_problem->getPlanner();
-      SampleSet* _samples = _problem->getSampleSet();
-      unsigned int d =  _samples->getSampleAt(0)->getDim();
-      //vector<KthReal> init(d), goal(d);
-      vector<KthReal> init( _samples->getSampleAt(0)->getCoords());
-      vector<KthReal> goal( _samples->getSampleAt(1)->getCoords());
-      KthReal times[2]={0., 0.};
-      int sampCount[3]={0, 0, 0};
-      unsigned int checks=0;
-      unsigned int worldchecks=0;
-      for(int i = 0; i < tryTimes; i++){
-        _samples->clear();
-        Sample* smp = new Sample(d);
-        smp->setCoords( init );
-        _samples->add( smp );
-        smp = new Sample(d);
-        smp->setCoords( goal );
-        _samples->add( smp );
-        _planner->setInitSamp( _samples->getSampleAt(0) );
-        _planner->setGoalSamp( _samples->getSampleAt(1) );
+          if( _problem->setupFromFile( absPath ) ){
+              cout << "The problem file has been loaded successfully.\n";
+              IOC::iocPlanner* _planner = (IOC::iocPlanner*)_problem->getPlanner();
+              SampleSet* _samples = _problem->getSampleSet();
+              unsigned int d =  _samples->getSampleAt(0)->getDim();
+              //vector<KthReal> init(d), goal(d);
+              vector<KthReal> init( _samples->getSampleAt(0)->getCoords());
+              vector<KthReal> goal( _samples->getSampleAt(1)->getCoords());
+              KthReal times[2]={0., 0.};
+              int sampCount[3]={0, 0, 0};
+              unsigned int checks=0;
+              unsigned int worldchecks=0;
+              for(int i = 0; i < tryTimes; i++){
+                  _samples->clear();
+                  Sample* smp = new Sample(d);
+                  smp->setCoords( init );
+                  _samples->add( smp );
+                  smp = new Sample(d);
+                  smp->setCoords( goal );
+                  _samples->add( smp );
+                  _planner->setInitSamp( _samples->getSampleAt(0) );
+                  _planner->setGoalSamp( _samples->getSampleAt(1) );
 
-        if(_planner->solveAndInherit()){
-          IOC::KthQuery& tmp = _planner->getQueries().at( _planner->getQueries().size() - 1 );
-          times[0] += tmp.getTotalTime();
-          times[1] += tmp.getSmoothTime();
-          sampCount[0] += tmp.getGeneratedSamples();
-          sampCount[1] += tmp.getConnectedSamples();
-          sampCount[2] += tmp.getPath().size();
-		  worldchecks += tmp.getWorldCollCheckCalls();
-		  checks += tmp.getCollCheckCalls();
-          //ss << i << ".kps";
-          //_planner->saveData( soluFile.c_str() );
-        }else{
-          cout << "The problem has not been solve successfully.\n";
-          badSol++;
-/*
+                  if(_planner->solveAndInherit()){
+                      IOC::KthQuery& tmp = _planner->getQueries().at( _planner->getQueries().size() - 1 );
+                      times[0] += tmp.getTotalTime();
+                      times[1] += tmp.getSmoothTime();
+                      sampCount[0] += tmp.getGeneratedSamples();
+                      sampCount[1] += tmp.getConnectedSamples();
+                      sampCount[2] += tmp.getPath().size();
+                      worldchecks += tmp.getWorldCollCheckCalls();
+                      checks += tmp.getCollCheckCalls();
+                      //ss << i << ".kps";
+                      //_planner->saveData( soluFile.c_str() );
+                  }else{
+                      cout << "The problem has not been solve successfully.\n";
+                      badSol++;
+                      /*
           KthQuery& tmp = _planner->getQueries().at( _planner->getQueries().size() - 1 );
           times[0] += tmp.getTotalTime();
           times[1] += tmp.getSmoothTime();
           sampCount[0] += tmp.getGeneratedSamples();
           sampCount[1] += tmp.getConnectedSamples();
           sampCount[2] += tmp.getPath().size();
-		  checks += tmp.getCollCheckCalls();
+          checks += tmp.getCollCheckCalls();
 */
 #ifndef KAUTHAM_USE_MPI
-          //if( badSol >= tryTimes / 5 )
-          //  throw(1);
+                      //if( badSol >= tryTimes / 5 )
+                      //  throw(1);
 #endif
-        }
-      }
+                  }
+              }
 
 #ifdef KAUTHAM_USE_MPI
-      // Now use the REDUCE MPI function to collect the data from the other active process.
-      // Reducing: buff2 will contain the sum of all buff
-      KthReal allTimes[2]={0., 0.};
-      int allSampCount[3]={0, 0, 0};
-      int allBadSol = 0;
-	    if( typeid( KthReal ) == typeid( float ) )
-        MPI_Reduce(times, allTimes, 2, MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
-      else
-        MPI_Reduce(times, allTimes, 2, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+              // Now use the REDUCE MPI function to collect the data from the other active process.
+              // Reducing: buff2 will contain the sum of all buff
+              KthReal allTimes[2]={0., 0.};
+              int allSampCount[3]={0, 0, 0};
+              int allBadSol = 0;
+              if( typeid( KthReal ) == typeid( float ) )
+                  MPI_Reduce(times, allTimes, 2, MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
+              else
+                  MPI_Reduce(times, allTimes, 2, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
-      MPI_Reduce(sampCount, allSampCount, 3, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-      MPI_Reduce(&badSol, &allBadSol, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+              MPI_Reduce(sampCount, allSampCount, 3, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+              MPI_Reduce(&badSol, &allBadSol, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
-      //  Now it saves the data to a file in the root process or the unique one 
-      //  if it doesn't use the MPI parallelization
-      //
-      if( myId == 0 ){ // it means the root process
-        // unifying the data between some parallel process and unique one.
-        tryTimes *= numProcs;
-        badSol = allBadSol;
-        for( int i = 0; i < 2; i++ ){
-          times[i] = allTimes[i];
-          sampCount[i] = allSampCount[i];
-        }
-        sampCount[2] = allSampCount[2];
+              //  Now it saves the data to a file in the root process or the unique one
+              //  if it doesn't use the MPI parallelization
+              //
+              if( myId == 0 ){ // it means the root process
+                  // unifying the data between some parallel process and unique one.
+                  tryTimes *= numProcs;
+                  badSol = allBadSol;
+                  for( int i = 0; i < 2; i++ ){
+                      times[i] = allTimes[i];
+                      sampCount[i] = allSampCount[i];
+                  }
+                  sampCount[2] = allSampCount[2];
 #endif
-        //ofstream outputFile("stats.kth", ios::out|ios::trunc);
-        ofstream outputFile("stats.kth", ios::out|ios::app);
+                  //ofstream outputFile("stats.kth", ios::out|ios::trunc);
+                  ofstream outputFile("stats.kth", ios::out|ios::app);
 
-	      if( outputFile.is_open() ){
-			  /*
+                  if( outputFile.is_open() ){
+                      /*
           outputFile << "Problem solved:\t"     << absPath                << endl;
           outputFile << "TryTimes: \t"          << tryTimes               << endl;
           outputFile << "BadSolved: \t"         << badSol                 << endl;
@@ -219,55 +224,62 @@ int main(int argc, char* argv[]){
           outputFile << "Connected samples: \t" << sampCount[1]/(float) tryTimes  << endl;
           outputFile << "Nodes in solution path: \t"   << sampCount[2]/(float) tryTimes  << endl;
           outputFile << "Collision-check calls: \t"   << checks/tryTimes << endl;
-		  */
-			outputFile << "Problem solved:\t"     << absPath                << endl;
-			outputFile << "NumExecutions SuccesRate Time Samples PRMnodes PathNodes WorldCollChecks TotalPQPCollChecks" << endl;
-			outputFile << tryTimes  << "\t";
-			//outputFile << badSol  << "\t";
-			outputFile << 100.0*(float)(tryTimes-badSol)/tryTimes  << "\t";
-			if(badSol!=tryTimes)
-			{
-				outputFile << times[0]/(float) (tryTimes-badSol)  << "\t";
-				outputFile << sampCount[0]/(float) (tryTimes-badSol)  << "\t";
-				outputFile << sampCount[1]/(float) (tryTimes-badSol)  << "\t";
-				outputFile << sampCount[2]/(float) (tryTimes-badSol)  << "\t";
-				outputFile << worldchecks/(float) (tryTimes-badSol)  <<  "\t";
-				outputFile << checks/(float) (tryTimes-badSol)  << endl;
-			}
-			else outputFile << endl;
-	      }else           //there were any problems with the copying process
-          throw(1);
+          */
+                      outputFile << "Problem solved:\t"     << absPath                << endl;
+                      outputFile << "NumExecutions SuccesRate Time Samples PRMnodes PathNodes WorldCollChecks TotalPQPCollChecks" << endl;
+                      outputFile << tryTimes  << "\t";
+                      //outputFile << badSol  << "\t";
+                      outputFile << 100.0*(float)(tryTimes-badSol)/tryTimes  << "\t";
+                      if(badSol!=tryTimes)
+                      {
+                          outputFile << times[0]/(float) (tryTimes-badSol)  << "\t";
+                          outputFile << sampCount[0]/(float) (tryTimes-badSol)  << "\t";
+                          outputFile << sampCount[1]/(float) (tryTimes-badSol)  << "\t";
+                          outputFile << sampCount[2]/(float) (tryTimes-badSol)  << "\t";
+                          outputFile << worldchecks/(float) (tryTimes-badSol)  <<  "\t";
+                          outputFile << checks/(float) (tryTimes-badSol)  << endl;
+                      }
+                      else outputFile << endl;
+                  }else           //there were any problems with the copying process
+                      throw(1);
 
-	      outputFile.close();
+                  outputFile.close();
 
 #ifdef KAUTHAM_USE_MPI
+              }
+#endif
+
+          }else{
+              cout << "The problem file has not been loaded successfully. "
+                   << "Please take care with the problem definition.\n";
+              throw(1);
+          }
+          delete _problem;
+      }catch(...){
+          cout << "Something is wrong with the problem. Please run the "
+               << "problem with the Kautham2 application al less once in order "
+               << "to verify the correctness of the problem formulation.\n";
+#ifdef KAUTHAM_USE_MPI
+          MPI_Finalize();
+#endif
+          setlocale (LC_NUMERIC, old);
+          return 1;
       }
+
+#ifdef KAUTHAM_USE_MPI
+      // Ending MPI
+      MPI_Finalize();
 #endif
 
-    }else{
-      cout << "The problem file has not been loaded successfully. "
-           << "Please take care with the problem definition.\n";
-      throw(1);
-    }
-    delete _problem;
-  }catch(...){
-    cout << "Something is wrong with the problem. Please run the "
-      << "problem with the Kautham2 application al less once in order "
-      << "to verify the correctness of the problem formulation.\n";
-#ifdef KAUTHAM_USE_MPI
-	  MPI_Finalize(); 
-#endif
+
       setlocale (LC_NUMERIC, old);
-    return 1;
+      return 0;
+  } else {//OMPL planners benchmarking
+      SoDB::init();
+
+      benchmark(string(argv[1]));
+
+      return (0);
   }
-
-#ifdef KAUTHAM_USE_MPI
-  // Ending MPI
-	MPI_Finalize(); 
-#endif
-
-
-    setlocale (LC_NUMERIC, old);
-  return 0;
 }
 
