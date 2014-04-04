@@ -57,19 +57,12 @@ namespace Kautham {
   namespace omplplanner{
 
     //! Constructor
-    omplSBLPlanner::omplSBLPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
-              omplPlanner(stype, init, goal, samples, ws)
+    omplSBLPlanner::omplSBLPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
+              omplPlanner(stype, init, goal, samples, ws, ssptr)
     {
         _guiName = "ompl SBL Planner";
         _idName = "omplSBL";
 
-
-        //create simple setup
-        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
-        ob::SpaceInformationPtr si=ss->getSpaceInformation();
-        //set validity checker
-        si->setStateValidityChecker(ob::StateValidityCheckerPtr(new omplplanner::ValidityChecker(si,  (Planner*)this)));
-        //ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, si.get(),_1, (Planner*)this));
 
         //alloc valid state sampler
         si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));

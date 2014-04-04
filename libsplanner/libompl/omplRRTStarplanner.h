@@ -65,7 +65,7 @@ namespace Kautham {
 
     class omplRRTStarPlanner:public omplPlanner {
 	    public:
-        omplRRTStarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
+        omplRRTStarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
         ~omplRRTStarPlanner();
         bool trySolve();//!< Overloaded trySolve function to include evaluation of final path cost
 
