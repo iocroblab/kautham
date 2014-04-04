@@ -46,6 +46,7 @@
 
 #include <libsplanner/planner.h>
 #include <libsampling/sampling.h>
+#include <ompl/geometric/SimpleSetup.h>
 #include "robot.h"
 #include "ivworkspace.h"
 #include "workspace.h"
@@ -74,13 +75,26 @@ namespace Kautham {
     //! This method is deprecated. Please take care with the problem XML file.
     //bool			              createWSpace(ProbStruc *reader);
 
-    bool                    createPlanner(string name, KthReal step = 0.05);
-    bool                    createPlannerFromFile(string path);
+    bool                    createPlanner(string name, ompl::geometric::SimpleSetup *ssptr = NULL);
+    bool                    createPlannerFromFile(string path, ompl::geometric::SimpleSetup *ssptr = NULL);
     bool                    createCSpace();
     bool                    createCSpaceFromFile(string xml_doc);
     bool                    tryToSolve();
     bool                    setCurrentControls(vector<KthReal> &val, int offset=0);
-		WorkSpace*		          wSpace();
+    //! Returns WSpace
+    WorkSpace*		        wSpace();
+    //! Returns CSpace
+    SampleSet*              cSpace();
+    //! Sets WSpace
+    inline void             setWSpace(WorkSpace* WSpace) {
+        _wspace = WSpace;
+    }
+
+    //! Sets CSpace
+    inline void             setCSpace(SampleSet* CSpace) {
+        _cspace = CSpace;
+    }
+
     void                    setHomeConf(Robot* rob, HASH_S_K* param);
     void                    setPlanner(Planner* plan){if(_planner==NULL)_planner = plan;}
     inline Planner*         getPlanner(){return _planner;}
@@ -90,7 +104,7 @@ namespace Kautham {
     inline int              getDimension(){return _wspace->getDimension();}
     inline vector<KthReal>& getCurrentControls(){return _currentControls;}
     inline string           getFilePath(){return _filePath;}
-		bool                    inheritSolution();
+    bool                    inheritSolution();
     bool                    setupFromFile(string xml_doc);
 
     //! This method saves the information of the problem's planner . 
@@ -98,6 +112,7 @@ namespace Kautham {
     //! case the file doesn't exist, the method copies the current 
     //! problem file and adds the planner's attributes.
     bool                    saveToFile(string file_path = "");
+
   
 
   private:

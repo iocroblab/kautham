@@ -97,10 +97,10 @@ namespace Kautham {
     void                           exportSimulationPath();
 
 
-	  virtual inline SoSeparator*    getIvCspaceScene(){return _sceneCspace;};//_sceneCspace is initiallized to NULL
+    virtual inline SoSeparator*    getIvCspaceScene(){return _sceneCspace;}//_sceneCspace is initiallized to NULL
 
     inline long int               getMaxNumSamples(){return _maxNumSamples;}
-    inline string getFamily(){return _family;};
+    inline string getFamily(){return _family;}
 
 	protected:
     Planner();
@@ -118,8 +118,7 @@ namespace Kautham {
     bool                          _hasCameraInformation;
     unsigned int                  _maxNumSamples;
     string                        _family;
-	
-	  SoSeparator*                  _sceneCspace;
+    SoSeparator*                  _sceneCspace;
 
 
 

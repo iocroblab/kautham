@@ -65,7 +65,7 @@ namespace Kautham {
 
     class omplSBLPlanner:public omplPlanner {
         public:
-        omplSBLPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
+        omplSBLPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
         ~omplSBLPlanner();
 
         bool setParameters();
