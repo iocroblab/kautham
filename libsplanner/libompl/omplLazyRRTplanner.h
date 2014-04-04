@@ -65,7 +65,7 @@ namespace Kautham {
 
     class omplLazyRRTPlanner:public omplPlanner {
 	    public:
-        omplLazyRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
+        omplLazyRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
         ~omplLazyRRTPlanner();
 
         bool setParameters();
