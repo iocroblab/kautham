@@ -810,6 +810,8 @@ namespace Kautham {
     //! This routine allows to draw the 2D projection of a roadmap or tree. The one corresponding to robot number numrob is drawn.
    void omplPlanner::drawCspace(int numrob)
     {
+       if(_sceneCspace==NULL) return;
+
             //first delete whatever is already drawn
             while (_sceneCspace->getNumChildren() > 0)
             {
