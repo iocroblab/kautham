@@ -127,7 +127,7 @@ namespace Kautham{
 		
 		Sample* getLastSampleMovedTo(){return _lastSampleMovedTo;};
         inline string getControlsName() const {return controlsName;} //!< Returns the string containing the control names, separated by the veritcal line character
-        inline string setControlsName(string controlsname){controlsName=controlsname;} //!< Sets the string containing the control names, separated by the veritcal line character
+        inline void setControlsName(string controlsname){controlsName=controlsname;} //!< Sets the string containing the control names, separated by the veritcal line character
 
 	  protected:
 		  virtual void          updateScene() = 0;

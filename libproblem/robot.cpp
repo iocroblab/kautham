@@ -1214,6 +1214,7 @@ namespace Kautham {
         //}
         //cout << offMatrix[i+6];
         parameters[i+6] += offMatrix[i+6];
+        i = i;
         if(parameters[i+6]<0.0 || parameters[i+6]>1.0) retvalue=false;
         //cout << endl;
       }

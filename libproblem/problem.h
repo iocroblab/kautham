@@ -190,7 +190,7 @@ namespace Kautham {
     //! creates the controls, adds them to workspace
     //! and creates the mapMatrix and offMatrix of every Robot.
     //! All the robots must be loaded first
-    void addControls2WSpace(string cntrFile);
+    bool addControls2WSpace(string cntrFile);
 
     //! This method loads an obstacle node of the problem file,
     //! creates the obstacle and adds it to workspace
