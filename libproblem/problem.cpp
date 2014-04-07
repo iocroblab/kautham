@@ -615,13 +615,12 @@ namespace Kautham {
         _wspace->addRobot(rob);
   }
 
-  void Problem::addControls2WSpace(string cntrFile) {
+  bool Problem::addControls2WSpace(string cntrFile) {
       fstream fin;
       fin.open(cntrFile.c_str(),ios::in);
       if( fin.is_open() ){ // The file already exists.
         fin.close();
         string::size_type loc = cntrFile.find( ".cntr", 0 );
-        string tmpString = "";
         if( loc != string::npos ) { // It means that controls are defined by a *.cntr file
           // Opening the file with the new pugiXML library.
           xml_document doc;
@@ -667,13 +666,25 @@ namespace Kautham {
               for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
                   tmpstr = (*it).attribute("name").as_string();
                   unsigned found = tmpstr.find_last_of("/");
+                  if (found == string::npos) {
+                      return (false);
+                  }
                   dofName = tmpstr.substr(found+1);
-                  robotName = tmpstr.substr(0,found-1);
+                  robotName = tmpstr.substr(0,found);
 
                   //Find the robot index into the robots vector
                   int i = 0;
-                  while (_wspace->getRobot(i)->getName() != robotName && i < _wspace->getNumRobots()) {
-                      i++;
+                  bool robot_found = false;
+                  while (!robot_found && i < _wspace->getNumRobots()) {
+                      if (_wspace->getRobot(i)->getName() == robotName) {
+                          robot_found = true;
+                      } else {
+                          i++;
+                      }
+                  }
+
+                  if (!robot_found) {
+                      return (false);
                   }
 
                   if( dofName == "X"){
