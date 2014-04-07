@@ -335,10 +335,8 @@ namespace Kautham {
         rob = new Robot( dir + (*it).attribute("robot").value(),
                         (KthReal)(*it).attribute("scale").as_double(),INVENTOR);
 #else
-          string sst = dir + (*it).attribute("robot").value();
-        rob = new Robot( sst, (KthReal)(*it).attribute("scale").as_double(),IVPQP);
-        //rob = new Robot( dir + (*it).attribute("robot").value(),
-        //                (KthReal)(*it).attribute("scale").as_double(),IVPQP);
+        rob = new Robot( dir + (*it).attribute("robot").value(),
+                        (KthReal)(*it).attribute("scale").as_double(),IVPQP);
 #endif
 
         // Setup the Inverse Kinematic if it has one.
@@ -458,6 +456,10 @@ namespace Kautham {
 		return _wspace;
 	}
 
+    SampleSet* Problem::cSpace(){
+        return _cspace;
+    }
+
   void Problem::setHomeConf(Robot* rob, HASH_S_K* param){
     Conf* tmpC = new SE3Conf();
     vector<KthReal> cords(7);
@@ -500,7 +502,7 @@ namespace Kautham {
 
 
 
-  bool Problem::createPlanner( string name, KthReal step ){
+  bool Problem::createPlanner( string name, ompl::geometric::SimpleSetup *ssptr ){
     if(_planner != NULL )
       delete _planner;
 
@@ -564,40 +566,40 @@ namespace Kautham {
 #if defined(KAUTHAM_USE_OMPL)
 
     else if(name == "omplDefault")
-      _planner = new omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplPRM")
-      _planner = new omplplanner::omplPRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplPRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplRRT")
-      _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplRRTStar")
-      _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplTRRT")
-      _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplpRRT")
-      _planner = new omplplanner::omplpRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplpRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplLazyRRT")
-      _planner = new omplplanner::omplLazyRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplLazyRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplRRTConnect")
-      _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplEST")
-      _planner = new omplplanner::omplESTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplESTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplSBL")
-      _planner = new omplplanner::omplSBLPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplSBLPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplKPIECE")
-      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplBKPIECE")
-      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
     else if(name == "omplcRRT")
       _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
@@ -620,14 +622,14 @@ namespace Kautham {
   }
 
 
-  bool Problem::createPlannerFromFile(xml_document *doc){
+  bool Problem::createPlannerFromFile(xml_document *doc, ompl::geometric::SimpleSetup *ssptr){
     if(_planner == NULL ){
         //Create the planner and set the parameters
         xml_node planNode = doc->child("Problem").child("Planner").child("Parameters");
         string name = planNode.child("Name").child_value();
 
         if( name != ""){
-          if( createPlanner( name )){
+          if( createPlanner(name,ssptr) ){
             xml_node::iterator it;
             for(it = planNode.begin(); it != planNode.end(); ++it){
               name = it->name();

@@ -41,6 +41,7 @@ var searchData=
   ['getmovable',['getMovable',['../class_kautham_1_1_link.html#afe1fafe8e01156edb5d675be7328390a',1,'Kautham::Link']]],
   ['getname',['getName',['../class_kautham_1_1_robot.html#acc42dc0f92cc82bc9b7cba2997e327bf',1,'Kautham::Robot']]],
   ['getneighdistances',['getNeighDistances',['../class_kautham_1_1_sample.html#ab2e52545d46fc25a8e93843f247a5b12',1,'Kautham::Sample']]],
+  ['getneighfactor',['getNeighFactor',['../class_kautham_1_1omplplanner_1_1my_r_r_tstar.html#aa6b234385d8cb204837a3c6c73d531a9',1,'Kautham::omplplanner::myRRTstar']]],
   ['getneighs',['getNeighs',['../class_kautham_1_1_sample.html#a86eaba10654c5207f724dba9fad2d45a',1,'Kautham::Sample::getNeighs()'],['../class_kautham_1_1_s_d_k_sample.html#a3161b8a69b235c0a7a5f7fdb574685d2',1,'Kautham::SDKSample::getNeighs()']]],
   ['getnumcontrols',['getNumControls',['../class_kautham_1_1_robot.html#af082214525dbbbdedf184d8d45e8865a',1,'Kautham::Robot']]],
   ['getnumcoupledcontrols',['getNumCoupledControls',['../class_kautham_1_1_robot.html#ad98b91607d14102c1a26f1b630527166',1,'Kautham::Robot']]],
