@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['comparebyangle',['CompareByAngle',['../struct_compare_by_angle.html',1,'']]],
   ['conf',['Conf',['../class_kautham_1_1_conf.html',1,'Kautham']]],
   ['config',['config',['../struct_t_xrobot_1_1config.html',1,'TXrobot']]],
   ['constlinearlocalplanner',['ConstLinearLocalPlanner',['../class_kautham_1_1_i_o_c_1_1_const_linear_local_planner.html',1,'Kautham::IOC']]],

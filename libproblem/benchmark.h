@@ -32,22 +32,109 @@ using namespace pugi;
 using namespace Kautham;
 
 
+/** \addtogroup libProblem
+ *  @{
+ */
+
+
+/*!
+ * \brief The Benchmark class contains all data needed to run a benchmarking
+ */
 class Benchmark {
 public:
+    /*!
+     * \brief initializes a benchmarking
+     * \param bm_node benchmarking node where problems to be run and the
+     benchmarking parameters are defined
+     * \param dir relative path where problems files will be looked for
+     * \return true if benchmarking setting succeed
+     */
     bool set(xml_node *bm_node, string dir);
+
+    /*!
+     * \brief runs the benchmarking previously set
+     */
     void run();
+
+    /*!
+     * \brief saves the benchmarking results in the file specified when
+     the benchmarking was set. If no filename was definied, default value will be used.
+     * \return true if saving succeed
+     */
     bool save();
+
+    /*!
+     * \brief clears all data created when the benchmarking was set
+     */
     void clear();
 private:
+    /*!
+     * \brief parameters for the execution of the benchmark
+     *
+     A request can be configured setting some of the next parameters in the benchmarking file:
+
+     -maxTime: the maximum amount of time a planner is allowed to run (seconds); 5.0 by default.
+
+     -maxMem: the maximum amount of memory a planner is allowed to use (MB); 4096.0 by default.
+
+     -runCount: the number of times to run each planner; 100 by default.
+
+     -timeBetweenUpdates: When collecting time-varying data from a planner during its execution,
+     the planner's progress will be queried every timeBetweenUpdates seconds; 0.001 by default.
+
+     -displayProgress: flag indicating whether progress is to be displayed or not; true by default.
+
+     -saveConsoleOutput: flag indicating whether console output is saved
+     (in an automatically generated filename); true by default.
+
+     -useThreads: flag indicating whether planner runs should be run in a separate thread.
+     It is advisable to set this to true, so that a crashing planner doesn't result in a crash
+     of the benchmark program.
+     */
     ompl::tools::Benchmark::Request *req;
+
+    /*!
+     * \brief set of planners on a problem instance
+     */
     ompl::tools::Benchmark *bm;
+
+    /*!
+     * \brief list of problems to be run in the benchmarking
+     */
     vector<Problem*> problem;
+
+    /*!
+     * \brief file where results will be saved
+     *
+     Default value is the current date and time
+     */
     string filename;
+
+    /*!
+     * \brief name of the benchmarking
+     */
     string name;
 
+    /*!
+     * \brief adds a problem to the benchmarking
+     * \param prob_file problem description file of the problem to be added
+     * \return true if the problem could be added
+     */
     bool add_problem(string prob_file);
+
+    /*!
+     * \brief sets a request parameter
+     * \param param_node node where parameter's name and value are defined
+     * \return true if the parameter could be added
+     */
     bool add_parameter(xml_node *param_node);
 };
 
-
+/*!
+ * \brief loads a the benchmarking to be run and tries to run them
+ * \param file benchmarking file where all benchmarking to be run are defined
+ */
 void benchmark(string file);
+
+
+/** @}   end of Doxygen module "libProblem" */

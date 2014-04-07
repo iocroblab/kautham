@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['lambda',['lambda',['../class_kautham_1_1omplplanner_1_1hand_p_m_dalignment_optimization_objective.html#a5e6a1bf2f91ddecdbe0803179e596513',1,'Kautham::omplplanner::handPMDalignmentOptimizationObjective']]],
+  ['lambda',['lambda',['../class_kautham_1_1omplplanner_1_1_p_m_dalignment_optimization_objective.html#a70b648c97125daea012877cff5da1045',1,'Kautham::omplplanner::PMDalignmentOptimizationObjective']]],
   ['libs',['libs',['../class_kautham_1_1_robot.html#a2f72c524cb186fb4a6051842285c448c',1,'Kautham::Robot']]],
   ['limit',['limit',['../classode__element.html#a371399d539b8a51e606f6e446b04bc21',1,'ode_element::limit()'],['../classurdf__link.html#a031ca4c0fb5d10efdb28eafd4bbe82ad',1,'urdf_link::limit()']]],
   ['link',['link',['../classurdf__robot.html#acfc48152de2da36913da80f5469e13ae',1,'urdf_robot']]],
