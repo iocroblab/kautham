@@ -1,8 +1,8 @@
 var searchData=
 [
   ['_7egaussianlikesampler',['~GaussianLikeSampler',['../class_kautham_1_1_gaussian_like_sampler.html#a4e10ec50ce6a028684a16e22337aca8d',1,'Kautham::GaussianLikeSampler']]],
-  ['_7ehandpmdalignmentoptimizationobjective',['~handPMDalignmentOptimizationObjective',['../class_kautham_1_1omplplanner_1_1hand_p_m_dalignment_optimization_objective.html#a4edc49aea25ead402795736910ae49c4',1,'Kautham::omplplanner::handPMDalignmentOptimizationObjective']]],
   ['_7ehfplanner',['~HFPlanner',['../class_kautham_1_1_i_o_c_1_1_h_f_planner.html#a4776925861cc3bf00c50048f1d05650c',1,'Kautham::IOC::HFPlanner']]],
+  ['_7emultirobotse3pmdalignmentoptimizationobjective',['~multiRobotSE3PMDalignmentOptimizationObjective',['../class_kautham_1_1omplplanner_1_1multi_robot_s_e3_p_m_dalignment_optimization_objective.html#ae3c4a70903b84fdd32766b9eb4a0dabb',1,'Kautham::omplplanner::multiRobotSE3PMDalignmentOptimizationObjective']]],
   ['_7emygridplanner',['~MyGridPlanner',['../class_kautham_1_1_i_o_c_1_1_my_grid_planner.html#ad5bf01b39c92074c73123739f9fd37d7',1,'Kautham::IOC::MyGridPlanner']]],
   ['_7emyplanner',['~MyPlanner',['../class_kautham_1_1_i_o_c_1_1_my_planner.html#a4d8bdc123e0a5350bd9ac5d117d337fd',1,'Kautham::IOC::MyPlanner']]],
   ['_7emyprm',['~myPRM',['../class_kautham_1_1omplplanner_1_1my_p_r_m.html#acef5b41f0a09a3fd375b8edf4740dcb4',1,'Kautham::omplplanner::myPRM']]],
@@ -23,10 +23,11 @@ var searchData=
   ['_7eomplrrtstarplanner',['~omplRRTStarPlanner',['../class_kautham_1_1omplplanner_1_1ompl_r_r_t_star_planner.html#a70fc615da49c98e60b97c7fc71c18186',1,'Kautham::omplplanner::omplRRTStarPlanner']]],
   ['_7eomplsblplanner',['~omplSBLPlanner',['../class_kautham_1_1omplplanner_1_1ompl_s_b_l_planner.html#accc2445962bea861fcc559498ddee1c3',1,'Kautham::omplplanner::omplSBLPlanner']]],
   ['_7eompltrrtplanner',['~omplTRRTPlanner',['../class_kautham_1_1omplplanner_1_1ompl_t_r_r_t_planner.html#a51cea0e68ef4afe9cca25aa2c2a1b7df',1,'Kautham::omplplanner::omplTRRTPlanner']]],
-  ['_7epcaalignmentoptimizationobjective',['~PCAalignmentOptimizationObjective',['../class_kautham_1_1omplplanner_1_1_p_c_aalignment_optimization_objective.html#acced9ac28b7844d32b2c40961ef4a543',1,'Kautham::omplplanner::PCAalignmentOptimizationObjective']]],
+  ['_7epmdalignmentoptimizationobjective',['~PMDalignmentOptimizationObjective',['../class_kautham_1_1omplplanner_1_1_p_m_dalignment_optimization_objective.html#a29c16e6eb262edd5251412c6caad1bfd',1,'Kautham::omplplanner::PMDalignmentOptimizationObjective']]],
   ['_7eprmplanner',['~PRMPlanner',['../class_kautham_1_1_i_o_c_1_1_p_r_m_planner.html#a27ae9de58f7e53faea405aa1965ffff4',1,'Kautham::IOC::PRMPlanner']]],
   ['_7esample',['~Sample',['../class_kautham_1_1_sample.html#ad0696cbce6ded1f945fac28611223e4a',1,'Kautham::Sample']]],
   ['_7esdksampler',['~SDKSampler',['../class_kautham_1_1_s_d_k_sampler.html#a1c95e97240d4abe76548c34bb616729e',1,'Kautham::SDKSampler']]],
   ['_7esequence',['~Sequence',['../class_kautham_1_1_sequence.html#a8a5f56b8f44be044c26aca0419151fe2',1,'Kautham::Sequence']]],
+  ['_7esinglerobotpmdalignmentoptimizationobjective',['~singleRobotPMDalignmentOptimizationObjective',['../class_kautham_1_1omplplanner_1_1single_robot_p_m_dalignment_optimization_objective.html#acb2a80f74ec8167f02bce27f5a7eeb33',1,'Kautham::omplplanner::singleRobotPMDalignmentOptimizationObjective']]],
   ['_7eweigthedrealvectorstatespace',['~weigthedRealVectorStateSpace',['../class_kautham_1_1omplplanner_1_1weigthed_real_vector_state_space.html#a2961240c4a15dc0a612d4ecc8eea3837',1,'Kautham::omplplanner::weigthedRealVectorStateSpace']]]
 ];

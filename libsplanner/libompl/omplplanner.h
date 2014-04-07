@@ -60,6 +60,7 @@ namespace ob = ompl::base;
 
 #include <libproblem/workspace.h>
 #include <libsampling/sampling.h>
+#include "omplValidityChecker.h"
 #include "planner.h"
 
 
@@ -150,7 +151,7 @@ namespace Kautham {
     class omplPlanner:public Planner {
 	    public:
         //Add public data and functions
-        omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
+        omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
         ~omplPlanner();
         
         bool trySolve();//reimplemented
@@ -164,21 +165,29 @@ namespace Kautham {
         void omplState2smp(const ob::State *state, Sample* smp);
         void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
         void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
-        inline ob::StateSpacePtr getSpace(){return space;};
+        inline ob::StateSpacePtr getSpace(){return space;}
         void filterBounds(double &l, double &h, double epsilon);
 
-        inline void setSamplerUsed(int su){_samplerUsed=su;};
-        inline int getSamplerUsed(){return _samplerUsed;};
+        inline void setSamplerUsed(int su){_samplerUsed=su;}
+        inline int getSamplerUsed(){return _samplerUsed;}
 
         void disablePMDControlsFromSampling(bool enableall=false);
-        inline vector<int> *getDisabledControls(){return &_disabledcontrols;};
+        inline vector<int> *getDisabledControls(){return &_disabledcontrols;}
 
         og::SimpleSetupPtr ss;
+
+        //! Returns the simple setup pointer
+        inline og::SimpleSetupPtr SimpleSetupPtr() {return ss;}
+
+        //! Returns a pointer to the simple setup
+        inline og::SimpleSetup *SimpleSetup() {return ss.get();}
+
 		protected:
 		//Add protected data and functions
         KthReal _planningTime;
         //og::SimpleSetupPtr ss;
         ob::StateSpacePtr space;
+        ob::SpaceInformationPtr si;
 
         int _samplerUsed;
         unsigned int _simplify;

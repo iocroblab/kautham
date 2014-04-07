@@ -1,6 +1,7 @@
 var searchData=
 [
   ['ui_5fkauthammain',['Ui_kauthamMain',['../class_ui__kautham_main.html',1,'']]],
+  ['ur5config',['UR5config',['../struct_u_r5config.html',1,'']]],
   ['urdf_5fcontact_5fcoefficients',['urdf_contact_coefficients',['../classurdf__contact__coefficients.html',1,'']]],
   ['urdf_5fdynamics',['urdf_dynamics',['../classurdf__dynamics.html',1,'']]],
   ['urdf_5fgeometry',['urdf_geometry',['../classurdf__geometry.html',1,'']]],
