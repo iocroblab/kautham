@@ -43,8 +43,6 @@
 
 
 
-//#include <libpugixml/pugixml.hpp>
-#include <pugixml.hpp>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -120,22 +118,15 @@ namespace Kautham {
     delete _sampler;
   }
 
+
   // This is the new implementation trying to avoid the old strucparse and ProbStruc.
-  bool Problem::createWSpace(string xml_doc){
+  void Problem::createWSpace(xml_document *doc){
     if(_wspace != NULL ) delete _wspace;
     _wspace = new IVWorkSpace();
 
     char *old = setlocale (LC_NUMERIC, "C");
-
-    xml_document doc;
-
-    xml_parse_result result = doc.load_file(xml_doc.c_str());
-
-    if(!result) return false;
-
     // Setup the examples directory.
-    string dir = xml_doc;
-
+    string dir = _filePath;
     dir.erase(dir.find_last_of("/") + 1 );
 
     KthReal pob[3], oob[4];
@@ -143,7 +134,7 @@ namespace Kautham {
     Robot *rob;
     bool flagCol;
 
-    xml_node tmpNode = doc.child("Problem");
+    xml_node tmpNode = doc->child("Problem");
     string name = "";
     for(xml_node_iterator it = tmpNode.begin(); it != tmpNode.end(); ++it){ // Processing each child
       name = it->name();
@@ -344,8 +335,10 @@ namespace Kautham {
         rob = new Robot( dir + (*it).attribute("robot").value(),
                         (KthReal)(*it).attribute("scale").as_double(),INVENTOR);
 #else
-        rob = new Robot( dir + (*it).attribute("robot").value(),
-                        (KthReal)(*it).attribute("scale").as_double(),IVPQP);
+          string sst = dir + (*it).attribute("robot").value();
+        rob = new Robot( sst, (KthReal)(*it).attribute("scale").as_double(),IVPQP);
+        //rob = new Robot( dir + (*it).attribute("robot").value(),
+        //                (KthReal)(*it).attribute("scale").as_double(),IVPQP);
 #endif
 
         // Setup the Inverse Kinematic if it has one.
@@ -459,8 +452,6 @@ namespace Kautham {
       _currentControls[i] = (KthReal)0.0;
 
     setlocale (LC_NUMERIC, old);
-
-    return true;
   }
 
 	WorkSpace* Problem::wSpace(){
@@ -629,13 +620,10 @@ namespace Kautham {
   }
 
 
-  bool Problem::createPlannerFromFile(string path){
+  bool Problem::createPlannerFromFile(xml_document *doc){
     if(_planner == NULL ){
-      xml_document doc;
-      xml_parse_result result = doc.load_file( path.c_str() );
-      if( result ){
         //Create the planner and set the parameters
-        xml_node planNode = doc.child("Problem").child("Planner").child("Parameters");
+        xml_node planNode = doc->child("Problem").child("Planner").child("Parameters");
         string name = planNode.child("Name").child_value();
 
         if( name != ""){
@@ -657,19 +645,14 @@ namespace Kautham {
             return true;
           }
         }
-      }
     }
     return false;
   }
 
 
-  bool Problem::createCSpaceFromFile(string xml_doc){
+  bool Problem::createCSpaceFromFile(xml_document *doc){
     if( createCSpace() ){
-
-      xml_document doc;
-      xml_parse_result res = doc.load_file(xml_doc.c_str());
-      if( res ){
-        xml_node queryNode = doc.child("Problem").child("Planner").child("Queries");
+        xml_node queryNode = doc->child("Problem").child("Planner").child("Queries");
         xml_node::iterator it;
         int i = 0;
         vector<string> tokens;
@@ -733,8 +716,6 @@ namespace Kautham {
           _cspace->getSampleAt(1)->addNeigh(0);
           return true;
         }
-      }
-
     }
     return false;
   }
@@ -761,16 +742,40 @@ namespace Kautham {
 
   }
 
-  bool Problem::setupFromFile(string xml_doc){
-    _filePath = xml_doc;
-    if( createWSpace( xml_doc ) &&
-        createCSpaceFromFile( xml_doc ) &&
-        createPlannerFromFile( xml_doc ))
-    {
-       return true;
-    }
-    else
-      return false;
+
+
+  bool Problem::setupFromFile(ifstream* xml_inputfile, string modelsfolder)
+  {
+      _filePath = modelsfolder.c_str();
+      xml_document *doc = new xml_document;
+      xml_parse_result result = doc->load( *xml_inputfile );
+      if(result)
+            return setupFromFile(doc);
+  }
+
+
+
+  bool Problem::setupFromFile(string xml_doc)
+  {
+      _filePath = xml_doc;
+      xml_document *doc = new xml_document;
+      xml_parse_result result = doc->load_file( xml_doc.c_str() );
+      if(result)
+            return setupFromFile(doc);
+  }
+
+  bool Problem::setupFromFile(xml_document *doc)
+  {
+      createWSpace( doc );
+      if( createCSpaceFromFile( doc ) == false)
+      {
+          return false;
+      }
+      if( createPlannerFromFile( doc ) == false)
+      {
+          return false;
+      }
+      return true;
   }
 
   bool Problem::saveToFile(string file_path){

@@ -63,7 +63,6 @@ void Application::initApp(){
 	mainWindow->setText("Open a problem file to start...");
 	appState = INITIAL ;
   _problem = NULL;
-  _planner = NULL;
 }
 
 Application::~Application() {
@@ -165,9 +164,6 @@ void Application::saveAsFile(){
   mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
 
-void Application::open(){
-	QMessageBox::information(0, "Kautham 2.0","Is calling an Open procedure.");
-}
 
 void Application::closeProblem(){
   mainWindow->setCursor(QCursor(Qt::WaitCursor));

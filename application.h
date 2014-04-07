@@ -69,7 +69,6 @@ public:
   bool              problemSetup(string path);
 
 public slots:
-  void              open();
   void              openFile();
   void              saveFile();
   void              saveAsFile();
@@ -81,7 +80,6 @@ private:
   Problem*          _problem;
   GUI*              mainWindow;
   PROBLEMSTATE      appState;
-  Planner*          _planner;
 };
 
 #endif  //_APPLICATION_H
