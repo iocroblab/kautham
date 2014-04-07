@@ -147,7 +147,7 @@ namespace Kautham {
   bool GUI::addControlWidget(Problem* prob){
     if( prob != NULL){
       ControlWidget* tmpControl = new ControlWidget(prob);
-      propertiesTab->addTab(tmpControl, "UsrCtrl-");
+      propertiesTab->addTab(tmpControl, "Controls");
 	  //JAN
 		  indexControlsTab = propertiesTab->indexOf(tmpControl);
       return true;
