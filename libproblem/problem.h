@@ -46,6 +46,7 @@
 
 #include <libsplanner/planner.h>
 #include <libsampling/sampling.h>
+#include <ompl/geometric/SimpleSetup.h>
 #include "robot.h"
 #include "ivworkspace.h"
 #include "workspace.h"
@@ -75,13 +76,26 @@ namespace Kautham {
     //! This method is deprecated. Please take care with the problem XML file.
     //bool			              createWSpace(ProbStruc *reader);
 
-    bool                    createPlanner(string name, KthReal step = 0.05);
-    bool                    createPlannerFromFile(pugi::xml_document *doc);
+    bool                    createPlanner(string name, ompl::geometric::SimpleSetup *ssptr = NULL);
+    bool                    createPlannerFromFile(pugi::xml_document *doc, ompl::geometric::SimpleSetup *ssptr = NULL);
     bool                    createCSpace();
     bool                    createCSpaceFromFile(pugi::xml_document *doc);
     bool                    tryToSolve();
     bool                    setCurrentControls(vector<KthReal> &val, int offset=0);
+    //! Returns WSpace
     WorkSpace*		        wSpace();
+    //! Returns CSpace
+    SampleSet*              cSpace();
+    //! Sets WSpace
+    inline void             setWSpace(WorkSpace* WSpace) {
+        _wspace = WSpace;
+    }
+
+    //! Sets CSpace
+    inline void             setCSpace(SampleSet* CSpace) {
+        _cspace = CSpace;
+    }
+
     void                    setHomeConf(Robot* rob, HASH_S_K* param);
     void                    setPlanner(Planner* plan){if(_planner==NULL)_planner = plan;}
     inline Planner*         getPlanner(){return _planner;}
@@ -102,6 +116,7 @@ namespace Kautham {
     //! case the file doesn't exist, the method copies the current 
     //! problem file and adds the planner's attributes.
     bool                    saveToFile(string file_path = "");
+
   
 
   private:
