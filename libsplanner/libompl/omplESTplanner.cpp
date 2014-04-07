@@ -55,24 +55,16 @@ namespace Kautham {
   namespace omplplanner{
 
     //! Constructor
-    omplESTPlanner::omplESTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
-              omplPlanner(stype, init, goal, samples, ws)
+    omplESTPlanner::omplESTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
+              omplPlanner(stype, init, goal, samples, ws, ssptr)
     {
         _guiName = "ompl EST Planner";
         _idName = "omplEST";
 
-
-        //create simple setup
-        ss = ((og::SimpleSetupPtr) new og::SimpleSetup(space));
-        ob::SpaceInformationPtr si=ss->getSpaceInformation();
-        //set validity checker
-        si->setStateValidityChecker(ob::StateValidityCheckerPtr(new omplplanner::ValidityChecker(si,  (Planner*)this)));
-        //ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, si.get(), _1, (Planner*)this));
-
         //alloc valid state sampler
-        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
+        si->setValidStateSamplerAllocator(boost::bind(&allocValidStateSampler, _1, (Planner*)this));
         //alloc state sampler
-        space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
+        space->setStateSamplerAllocator(boost::bind(&allocStateSampler, _1, (Planner*)this));
 
         //create planner
         ob::PlannerPtr planner(new og::EST(si));
