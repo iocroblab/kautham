@@ -49,6 +49,7 @@
 #include "robot.h"
 #include "ivworkspace.h"
 #include "workspace.h"
+#include <pugixml.hpp>
 
 
 namespace Kautham {
@@ -69,18 +70,18 @@ namespace Kautham {
     *		mean that if a problem contain many robots all of them should be the
     *		same class.
     *		\sa WSpace Robot ChainRobot Obstacle*/
-    bool			              createWSpace(string xml_doc);
+    void 	               createWSpace(pugi::xml_document *doc);
 
     //! This method is deprecated. Please take care with the problem XML file.
     //bool			              createWSpace(ProbStruc *reader);
 
     bool                    createPlanner(string name, KthReal step = 0.05);
-    bool                    createPlannerFromFile(string path);
+    bool                    createPlannerFromFile(pugi::xml_document *doc);
     bool                    createCSpace();
-    bool                    createCSpaceFromFile(string xml_doc);
+    bool                    createCSpaceFromFile(pugi::xml_document *doc);
     bool                    tryToSolve();
     bool                    setCurrentControls(vector<KthReal> &val, int offset=0);
-		WorkSpace*		          wSpace();
+    WorkSpace*		        wSpace();
     void                    setHomeConf(Robot* rob, HASH_S_K* param);
     void                    setPlanner(Planner* plan){if(_planner==NULL)_planner = plan;}
     inline Planner*         getPlanner(){return _planner;}
@@ -90,8 +91,11 @@ namespace Kautham {
     inline int              getDimension(){return _wspace->getDimension();}
     inline vector<KthReal>& getCurrentControls(){return _currentControls;}
     inline string           getFilePath(){return _filePath;}
-		bool                    inheritSolution();
+    bool                    inheritSolution();
     bool                    setupFromFile(string xml_doc);
+    bool                    setupFromFile(ifstream* xml_inputfile, string modelsfolder);
+    bool                    setupFromFile(pugi::xml_document *doc);
+
 
     //! This method saves the information of the problem's planner . 
     //! This method checks if the file_path file exists or not. In 
