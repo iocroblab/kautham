@@ -229,7 +229,8 @@ IF( KAUTHAM_CONSOLE )
     MESSAGE( STATUS "MPI library not found" )
   ENDIF( MPI_FOUND )
 
-  SET( SRC_FILES kauthamplanner_console.cpp libsutil/libkthutil/kauthamobject.cpp )
+  SET( HDR_FILES_GUI kauthamshell.h )
+  SET( SRC_FILES kauthamshell.cpp kauthamplanner_console.cpp libsutil/libkthutil/kauthamobject.cpp )
   
     # Adding console bath mode executable
   ADD_EXECUTABLE( KauthamConsole ${SRC_FILES} ${HDR_FILES} ${RES_FILES} )
