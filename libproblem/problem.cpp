@@ -716,7 +716,7 @@ namespace Kautham {
               }//End processing Offset vector
 
               //Process the controls to load the mapMatrix
-              tmpNode = doc.child("robot").child("ControlSet");
+              tmpNode = doc.child("ControlSet");
               string nodeType = "";
               int cont = 0;
               for(it = tmpNode.begin(); it != tmpNode.end(); ++it){
@@ -728,17 +728,30 @@ namespace Kautham {
                           eigVal = (KthReal) (*it).attribute("eigValue").as_double();
                       }
 
-                      for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FINDED
+                      for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
                           tmpstr = itDOF->attribute("name").as_string();
                           unsigned found = tmpstr.find_last_of("/");
+                          if (found == string::npos) {
+                              return (false);
+                          }
                           dofName = tmpstr.substr(found+1);
-                          robotName = tmpstr.substr(0,found-1);
+                          robotName = tmpstr.substr(0,found);
 
                           //Find the robot index into the robots vector
                           int i = 0;
-                          while (_wspace->getRobot(i)->getName() != robotName && i < _wspace->getNumRobots()) {
-                              i++;
+                          bool robot_found = false;
+                          while (!robot_found && i < _wspace->getNumRobots()) {
+                              if (_wspace->getRobot(i)->getName() == robotName) {
+                                  robot_found = true;
+                              } else {
+                                  i++;
+                              }
                           }
+
+                          if (!robot_found) {
+                              return (false);
+                          }
+
                           if( dofName == "X"){
                               _wspace->getRobot(i)->setSE3(true);
                               mapMatrix[i][0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
@@ -773,16 +786,30 @@ namespace Kautham {
 
               for (int i = 0; i < _wspace->getNumRobots(); i++) {
                   _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
+                  /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
+                      for (int k = 0; k < _wspace->getNumControls(); k++) {
+                          cout << mapMatrix[i][j][k] << " ";
+                      }
+                      cout << endl;
+                  }
+                  cout << endl;*/
                   _wspace->getRobot(i)->setOffMatrix(offMatrix[i]);
+                  /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
+                      cout << offMatrix[i][j] << endl;
+                  }
+                  cout << endl;*/
               }
+              return (true);
 
           }else  {// the result of the file pasers is bad
             cout << "The cntr file: " << cntrFile << " can not be read." << std::endl;
+            return (false);
           }
         }
       }else{ // File does not exists.
           fin.close();
           cout << "The control file: " << cntrFile << "doesn't exist. Please confirm it." << endl;
+          return (false);
       }
 
   }
