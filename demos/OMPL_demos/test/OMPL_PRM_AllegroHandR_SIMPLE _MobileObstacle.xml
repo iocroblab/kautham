@@ -11,6 +11,7 @@
     <Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="500.0" Y="600" X="-400" />
 		<InvKinematic name="TX90" />
 	</Robot>
+	<Controls controls="controls/allegro_hand_description_right.cntr"/>
 	<Scene scene="robots/allegro_hand_description_right.urdf" scale="1">
 		<Limits name="X" min="0.0" max="1000.0" />
 		<Limits name="Y" min="0.0" max="1000.0" />
