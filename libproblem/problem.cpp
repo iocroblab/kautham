@@ -74,29 +74,29 @@ namespace Kautham {
       xml_node tmpNode;
 
       //add all robots to worskpace
-      for (tmpNode = doc.child("Problem").child("Robot");
+      for (tmpNode = doc->child("Problem").child("Robot");
            tmpNode; tmpNode = tmpNode.next_sibling("Robot")) {
           addRobot2WSpace(&tmpNode,dir);
       }
 
       //add controls to worskpace
-      addControls2WSpace(dir + doc.child("Problem").child("Controls").
+      addControls2WSpace(dir + doc->child("Problem").child("Controls").
                          attribute("controls").as_string());
 
       //add all obstacles to worskpace
-      for (tmpNode = doc.child("Problem").child("Scene");
+      for (tmpNode = doc->child("Problem").child("Scene");
            tmpNode; tmpNode = tmpNode.next_sibling("Scene")) {
           addObstacle2WSpace(&tmpNode,dir);
       }
 
       //add all distance maps to worskpace
-      for (tmpNode = doc.child("Problem").child("DistanceMap");
+      for (tmpNode = doc->child("Problem").child("DistanceMap");
            tmpNode; tmpNode = tmpNode.next_sibling("DistanceMap")) {
           _wspace->addDistanceMapFile(dir + tmpNode.attribute("distanceMap").value());
       }
 
       //add all dimensions files to worskpace
-      for (tmpNode = doc.child("Problem").child("DimensionsFile");
+      for (tmpNode = doc->child("Problem").child("DimensionsFile");
            tmpNode; tmpNode = tmpNode.next_sibling("DimensionsFile")) {
           _wspace->addDimensionsFile(dir + tmpNode.attribute("filename").value());
           _wspace->addDirCase(dir);
