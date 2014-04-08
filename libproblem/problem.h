@@ -128,7 +128,7 @@ namespace Kautham {
     *		mean that if a problem contain many robots all of them should be the
     *		same class.
     *		\sa WSpace Robot ChainRobot Obstacle*/
-    void 	               createWSpace(pugi::xml_document *doc);
+    bool 	               createWSpace(pugi::xml_document *doc);
 
     //! This method is deprecated. Please take care with the problem XML file.
     //bool			              createWSpace(ProbStruc *reader);
