@@ -522,7 +522,7 @@ namespace Kautham {
           int robotindex = 0;
           int numPMD = 0;
 
-          string listcontrolsname = wkSpace()->getRobot(robotindex)->getControlsName();
+          string listcontrolsname = wkSpace()->getControlsName();
           vector<string*> controlname;
           string *newcontrol = new string;
           for(int i=0; i<listcontrolsname.length();i++)
@@ -590,10 +590,11 @@ namespace Kautham {
           std::map< string, vector< pair<int,int> >  > pmdMap;
           std::map< string, vector< pair<int,int> >  >::iterator itpmdMap;
 
+
           for(int k=0;k<wkSpace()->robotsCount(); k++)
           {
               //find the controls that are coupled, i.e. those that have the PMD leters in their name
-              string listcontrolsname = wkSpace()->getRobot(k)->getControlsName();
+              string listcontrolsname = wkSpace()->getControlsName();
               vector<string*> controlname;
               string *newcontrol = new string;
               //split the list of controls to obtain the control names
