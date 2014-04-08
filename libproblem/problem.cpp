@@ -42,68 +42,10 @@
 #include "problem.h"
 
 
-
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <boost/algorithm/string.hpp>
-
-//solving convertions problems
-#include <locale.h>
-
-
-#if defined(KAUTHAM_USE_IOC)
-#include <libioc/myplanner.h>
-#include <libioc/prmplanner.h>
-#include <libioc/prmhandplannerICRA.h>
-#include <libioc/prmAUROhandarmplanner.h>
-#include <libioc/prmPCAhandarmplanner.h>
-#include <libioc/prmrobothandconstplannerICRA.h>
-#include <libioc/prmhandplannerIROS.h>
-#include <libioc/myprmplanner.h>
-#include <libioc/mygridplanner.h>
-#include <libioc/NF1planner.h>
-#include <libioc/HFplanner.h>
-#endif
-
-#if defined(KAUTHAM_USE_OMPL)
-#include <libompl/omplPRMplanner.h>
-#include <libompl/omplRRTplanner.h>
-#include <libompl/omplRRTStarplanner.h>
-#include <libompl/omplTRRTplanner.h>
-#include <libompl/omplpRRTplanner.h>
-#include <libompl/omplLazyRRTplanner.h>
-#include <libompl/omplcRRTplanner.h>
-#include <libompl/omplcRRTcarplanner.h>
-#include <libompl/omplcRRTf16planner.h>
-#include <libompl/omplRRTConnectplanner.h>
-#include <libompl/omplESTplanner.h>
-#include <libompl/omplSBLplanner.h>
-#include <libompl/omplKPIECEplanner.h>
-#include <libompl/omplKPIECEplanner.h>
-#endif
-
-
-#if defined(KAUTHAM_USE_GUIBRO)
-#include <libguibro/consbronchoscopykin.h>
-#include <libguibro/guibrogridplanner.h>
-#endif // KAUTHAM_USE_GUIBRO
-
-#if !defined(M_PI)
-#define M_PI 3.1415926535897932384626433832795
-#endif
-
-
-using namespace std;
-using namespace pugi;
-
 namespace Kautham {
-
-
-
   const KthReal Problem::_toRad = (KthReal)(M_PI/180.0);
   Problem::Problem() {
-        _wspace = NULL;
+    _wspace = NULL;
     _planner = NULL;
     _sampler = NULL;
     _cspace = new SampleSet();
@@ -112,7 +54,7 @@ namespace Kautham {
 	}
 
   Problem::~Problem(){
-      delete _cspace; //must be deleted first, if not the program crashes...
+    delete _cspace; //must be deleted first, if not the program crashes...
     delete _wspace;
     delete _planner;
     delete _sampler;
@@ -120,336 +62,54 @@ namespace Kautham {
 
 
   // This is the new implementation trying to avoid the old strucparse and ProbStruc.
-  void Problem::createWSpace(xml_document *doc){
-    if(_wspace != NULL ) delete _wspace;
-    _wspace = new IVWorkSpace();
+  bool Problem::createWSpace(xml_document *doc){
+      if(_wspace != NULL ) delete _wspace;
+      _wspace = new IVWorkSpace();
 
-    char *old = setlocale (LC_NUMERIC, "C");
-    // Setup the examples directory.
+      char *old = setlocale (LC_NUMERIC, "C");
+      // Setup the examples directory.
     string dir = _filePath;
-    dir.erase(dir.find_last_of("/") + 1 );
+      dir.erase(dir.find_last_of("/") + 1 );
 
-    KthReal pob[3], oob[4];
-    Obstacle *obs;
-    Robot *rob;
-    bool flagCol;
+      xml_node tmpNode;
 
-    xml_node tmpNode = doc->child("Problem");
-    string name = "";
-    for(xml_node_iterator it = tmpNode.begin(); it != tmpNode.end(); ++it){ // Processing each child
-      name = it->name();
-      // it can be an Scene or an obstacle.
-      if(name == "Scene" ){
-        // It can be either a mobile obstacle (Robot) or a fixed obstacle.
-        fstream fin;
-        string obsFile = dir + (*it).attribute("scene").value();
-        fin.open(obsFile.c_str(),ios::in);
-        if( fin.is_open() ){ // The file already exists.
-          fin.close();
-          string::size_type loc = obsFile.find( ".rob", 0 );
-          if( loc != string::npos ) { // It means that the obstacle is a robot.
-#ifndef KAUTHAM_COLLISION_PQP
-            rob = new Robot( dir + (*it).attribute("scene").value(),
-                        (KthReal)(*it).attribute("scale").as_double(),INVENTOR);
-#else
-            rob = new Robot( dir + (*it).attribute("scene").value(),
-                        (KthReal)(*it).attribute("scale").as_double(),IVPQP);
-#endif
-            // Setup the limits of the moveable base
-            for(xml_node_iterator itL = (*it).begin(); itL != (*it).end(); ++itL){
-              name = (*itL).name();
-              if( name == "Limits" ){
-                name = (*itL).attribute("name").value();
-                if( name == "X")
-                  rob->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-                else if( name == "Y")
-                  rob->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-                else if( name == "Z")
-                  rob->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-                else if( name == "WX")
-                  rob->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-                else if( name == "WY")
-                  rob->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-                else if( name == "WZ")
-                  rob->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-                else if( name == "TH")
-                  rob->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
-                                 (KthReal)(*itL).attribute("max").as_double() * _toRad);
-              }
-              if( name == "Home" ){
-              // If robot hasn't a home, it will be assumed in the origin.
-                SE3Conf tmpC;
-                vector<KthReal> cords(7);
-                cords[0] = (KthReal)(*itL).attribute("X").as_double();
-                cords[1] = (KthReal)(*itL).attribute("Y").as_double();
-                cords[2] = (KthReal)(*itL).attribute("Z").as_double();
-                cords[3] = (KthReal)(*itL).attribute("WX").as_double();
-                cords[4] = (KthReal)(*itL).attribute("WY").as_double();
-                cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
-                cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
-
-                // Here is needed to convert from axis-angle to
-                // quaternion internal represtantation.
-                SE3Conf::fromAxisToQuaternion(cords);
-
-                tmpC.setCoordinates(cords);
-
-                rob->setHomePos(&tmpC);
-              }
-            }
-
-            _wspace->addMobileObstacle(rob);
-          } else {
-              loc = obsFile.find( ".urdf", 0 );
-              if( loc != string::npos ) {
-                  // It can be a mobile obstacle (Robot) or a fixed obstacle.
-                  if ((*it).child("Limits") || (*it).child("Home")) {
-                      // It means that the obstacle is a robot.
-#ifndef KAUTHAM_COLLISION_PQP
-                      rob = new Robot( dir + (*it).attribute("scene").value(),
-                                       (KthReal)(*it).attribute("scale").as_double(),INVENTOR);
-#else
-                      rob = new Robot( dir + (*it).attribute("scene").value(),
-                                       (KthReal)(*it).attribute("scale").as_double(),IVPQP);
-#endif
-                      // Setup the limits of the moveable base
-                      for(xml_node_iterator itL = (*it).begin(); itL != (*it).end(); ++itL){
-                          name = (*itL).name();
-                          if( name == "Limits" ){
-                              name = (*itL).attribute("name").value();
-                              if( name == "X")
-                                  rob->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
-                                                 (KthReal)(*itL).attribute("max").as_double());
-                              else if( name == "Y")
-                                  rob->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
-                                                 (KthReal)(*itL).attribute("max").as_double());
-                              else if( name == "Z")
-                                  rob->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
-                                                 (KthReal)(*itL).attribute("max").as_double());
-                              else if( name == "WX")
-                                  rob->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
-                                                 (KthReal)(*itL).attribute("max").as_double());
-                              else if( name == "WY")
-                                  rob->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
-                                                 (KthReal)(*itL).attribute("max").as_double());
-                              else if( name == "WZ")
-                                  rob->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
-                                                 (KthReal)(*itL).attribute("max").as_double());
-                              else if( name == "TH")
-                                  rob->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
-                                                 (KthReal)(*itL).attribute("max").as_double() * _toRad);
-                          }
-                          if( name == "Home" ){
-                              // If robot hasn't a home, it will be assumed in the origin.
-                              SE3Conf tmpC;
-                              vector<KthReal> cords(7);
-                              cords[0] = (KthReal)(*itL).attribute("X").as_double();
-                              cords[1] = (KthReal)(*itL).attribute("Y").as_double();
-                              cords[2] = (KthReal)(*itL).attribute("Z").as_double();
-                              cords[3] = (KthReal)(*itL).attribute("WX").as_double();
-                              cords[4] = (KthReal)(*itL).attribute("WY").as_double();
-                              cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
-                              cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
-
-                              // Here is needed to convert from axis-angle to
-                              // quaternion internal represtantation.
-                              SE3Conf::fromAxisToQuaternion(cords);
-
-                              tmpC.setCoordinates(cords);
-
-                              rob->setHomePos(&tmpC);
-                          }
-                      }
-
-                      _wspace->addMobileObstacle(rob);
-                  } else {
-                      // It means that it is a fixed object.
-                      if((*it).child("Collision"))
-                          flagCol = (*it).child("Collision").attribute("Enable").as_bool();
-                      else
-                          flagCol = true;
-
-                      xml_node locObs = (*it).child("Location");
-                      pob[0] = (KthReal)locObs.attribute("X").as_double();
-                      pob[1] = (KthReal)locObs.attribute("Y").as_double();
-                      pob[2] = (KthReal)locObs.attribute("Z").as_double();
-                      oob[0] = (KthReal)locObs.attribute("WX").as_double();
-                      oob[1] = (KthReal)locObs.attribute("WY").as_double();
-                      oob[2] = (KthReal)locObs.attribute("WZ").as_double();
-                      oob[3] = (KthReal)locObs.attribute("TH").as_double() * _toRad;
-
-                      // Changing between axis angle to quaternion.
-                      SE3Conf::fromAxisToQuaternion(oob);
-
-#ifndef KAUTHAM_COLLISION_PQP
-                      obs = new Obstacle(dir + (*it).attribute("scene").value(), pob, oob,
-                                         (KthReal)(*it).attribute("scale").as_double(), INVENTOR, flagCol);
-#else
-                      obs = new Obstacle( dir + (*it).attribute("scene").value(), pob, oob,
-                                          (KthReal)(*it).attribute("scale").as_double(), IVPQP, flagCol);
-#endif
-                      _wspace->addObstacle(obs);
-                  }
-              } else {
-                  //  It is a fixed object
-                  if((*it).child("Collision"))
-                      flagCol = (*it).child("Collision").attribute("Enable").as_bool();
-                  else
-                      flagCol = true;
-
-                  xml_node locObs = (*it).child("Location");
-                  pob[0] = (KthReal)locObs.attribute("X").as_double();
-                  pob[1] = (KthReal)locObs.attribute("Y").as_double();
-                  pob[2] = (KthReal)locObs.attribute("Z").as_double();
-                  oob[0] = (KthReal)locObs.attribute("WX").as_double();
-                  oob[1] = (KthReal)locObs.attribute("WY").as_double();
-                  oob[2] = (KthReal)locObs.attribute("WZ").as_double();
-                  oob[3] = (KthReal)locObs.attribute("TH").as_double() * _toRad;
-
-                  // Changing between axis angle to quaternion.
-                  SE3Conf::fromAxisToQuaternion(oob);
-
-#ifndef KAUTHAM_COLLISION_PQP
-                  obs = new Obstacle(dir + (*it).attribute("scene").value(), pob, oob,
-                                     (KthReal)(*it).attribute("scale").as_double(), INVENTOR, flagCol);
-#else
-                  obs = new Obstacle( dir + (*it).attribute("scene").value(), pob, oob,
-                                      (KthReal)(*it).attribute("scale").as_double(), IVPQP, flagCol);
-#endif
-                  _wspace->addObstacle(obs);
-              }
-          }
-        } else {
-            cout << "The obstacle " << (*it).attribute("scene").value() <<" is improperly configured.";
-        }
-      }
-      // it can be a Robot.
-      if(name == "Robot" ){
-#ifndef KAUTHAM_COLLISION_PQP
-        rob = new Robot( dir + (*it).attribute("robot").value(),
-                        (KthReal)(*it).attribute("scale").as_double(),INVENTOR);
-#else
-        rob = new Robot( dir + (*it).attribute("robot").value(),
-                        (KthReal)(*it).attribute("scale").as_double(),IVPQP);
-#endif
-
-        // Setup the Inverse Kinematic if it has one.
-        if((*it).child("InvKinematic")){
-          name = (*it).child("InvKinematic").attribute("name").value();
-          if( name == "RR2D" )
-            rob->setInverseKinematic( Kautham::RR2D );
-          else if( name == "TX90")
-            rob->setInverseKinematic( Kautham::TX90 );
-          else if( name == "HAND")
-            rob->setInverseKinematic( Kautham::HAND );
-          else if( name == "TX90HAND")
-            rob->setInverseKinematic( Kautham::TX90HAND );
-          else if( name == "UR5")
-            rob->setInverseKinematic( Kautham::UR5 );
-          else
-            rob->setInverseKinematic(Kautham::UNIMPLEMENTED);
-        }else
-          rob->setInverseKinematic(Kautham::UNIMPLEMENTED);
-
-        // Setup the Constrained Kinematic if it has one.
-        if((*it).child("ConstrainedKinematic")){
-          name = (*it).child("ConstrainedKinematic").attribute("name").value();
-
-          rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
-#if defined(KAUTHAM_USE_GUIBRO)
-		  if( name == "BRONCHOSCOPY" ){
-            rob->setConstrainedKinematic( Kautham::BRONCHOSCOPY );
-            double amin = (*it).child("ConstrainedKinematic").attribute("amin").as_double();
-            double amax = (*it).child("ConstrainedKinematic").attribute("amax").as_double();
-            double bmin = (*it).child("ConstrainedKinematic").attribute("bmin").as_double();
-            double bmax = (*it).child("ConstrainedKinematic").attribute("bmax").as_double();
-            ((GUIBRO::ConsBronchoscopyKin*)rob->getCkine())->setAngleLimits(bmin*M_PI/180.0, bmax*M_PI/180.0, amin*M_PI/180.0, amax*M_PI/180.0);
-		  }
-          else
-            rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
-#endif
-        }else{
-          rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
-        }
-
-        // Setup the limits of the moveable base
-        for(xml_node_iterator itL = (*it).begin(); itL != (*it).end(); ++itL){
-          name = (*itL).name();
-          if( name == "Limits" ){
-            name = (*itL).attribute("name").value();
-            if( name == "X")
-              rob->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "Y")
-              rob->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "Z")
-              rob->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "WX")
-              rob->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "WY")
-              rob->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "WZ")
-              rob->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "TH")
-              rob->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
-                             (KthReal)(*itL).attribute("max").as_double() * _toRad);
-          }
-          if( name == "Home" ){
-          // If robot hasn't a home, it will be assumed in the origin.
-            SE3Conf tmpC;
-            vector<KthReal> cords(7);
-            cords[0] = (KthReal)(*itL).attribute("X").as_double();
-            cords[1] = (KthReal)(*itL).attribute("Y").as_double();
-            cords[2] = (KthReal)(*itL).attribute("Z").as_double();
-            cords[3] = (KthReal)(*itL).attribute("WX").as_double();
-            cords[4] = (KthReal)(*itL).attribute("WY").as_double();
-            cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
-            cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
-
-            // Here is needed to convert from axis-angle to
-            // quaternion internal represtantation.
-            SE3Conf::fromAxisToQuaternion(cords);
-
-            tmpC.setCoordinates(cords);
-
-            //cout << tmpC.print();
-
-            rob->setHomePos(&tmpC);
-          }
-        }
-
-        _wspace->addRobot(rob);
+      //add all robots to worskpace
+      for (tmpNode = doc.child("Problem").child("Robot");
+           tmpNode; tmpNode = tmpNode.next_sibling("Robot")) {
+          addRobot2WSpace(&tmpNode,dir);
       }
 
-      //  it can be a distance map file
-      if(name == "DistanceMap" ){
-			  _wspace->addDistanceMapFile(dir + (*it).attribute("distanceMap").value());
-	    }
-      if(name == "DimensionsFile" ){
-			  _wspace->addDimensionsFile(dir + (*it).attribute("filename").value());
-			  _wspace->addDirCase(dir);
-	    }
+      //add controls to worskpace
+      addControls2WSpace(dir + doc.child("Problem").child("Controls").
+                         attribute("controls").as_string());
 
-    }// closing for(xml_node_iterator it = tmpNode.begin(); it != tmpNode.end(); ++it){ // Processing each child
+      //add all obstacles to worskpace
+      for (tmpNode = doc.child("Problem").child("Scene");
+           tmpNode; tmpNode = tmpNode.next_sibling("Scene")) {
+          addObstacle2WSpace(&tmpNode,dir);
+      }
 
-    _currentControls.clear();
-    _currentControls.resize(_wspace->getDimension());
+      //add all distance maps to worskpace
+      for (tmpNode = doc.child("Problem").child("DistanceMap");
+           tmpNode; tmpNode = tmpNode.next_sibling("DistanceMap")) {
+          _wspace->addDistanceMapFile(dir + tmpNode.attribute("distanceMap").value());
+      }
 
-    for(int i = 0; i<_wspace->getDimension(); i++)
-      _currentControls[i] = (KthReal)0.0;
+      //add all dimensions files to worskpace
+      for (tmpNode = doc.child("Problem").child("DimensionsFile");
+           tmpNode; tmpNode = tmpNode.next_sibling("DimensionsFile")) {
+          _wspace->addDimensionsFile(dir + tmpNode.attribute("filename").value());
+          _wspace->addDirCase(dir);
+      }
 
-    setlocale (LC_NUMERIC, old);
+      _currentControls.clear();
+      _currentControls.resize(_wspace->getDimension());
+
+      for(int i = 0; i<_wspace->getDimension(); i++)
+          _currentControls[i] = (KthReal)0.0;
+
+      setlocale (LC_NUMERIC, old);
+      return true;
   }
 
 	WorkSpace* Problem::wSpace(){
@@ -854,6 +514,508 @@ namespace Kautham {
       return true;
     }
     return false;
+  }
+
+  void Problem::addRobot2WSpace(xml_node *robot_node, string dir) {
+      Robot *rob;
+      string name;
+
+#ifndef KAUTHAM_COLLISION_PQP
+        rob = new Robot( dir + robot_node->attribute("robot").value(),
+                         (KthReal)robot_node->attribute("scale").as_double(),INVENTOR);
+#else
+        rob = new Robot( dir + robot_node->attribute("robot").value(),
+                         (KthReal)robot_node->attribute("scale").as_double(),IVPQP);
+#endif
+
+        // Setup the Inverse Kinematic if it has one.
+        if(robot_node->child("InvKinematic")){
+            name = robot_node->child("InvKinematic").attribute("name").value();
+            if( name == "RR2D" )
+            rob->setInverseKinematic( Kautham::RR2D );
+          else if( name == "TX90")
+            rob->setInverseKinematic( Kautham::TX90 );
+          else if( name == "HAND")
+            rob->setInverseKinematic( Kautham::HAND );
+          else if( name == "TX90HAND")
+            rob->setInverseKinematic( Kautham::TX90HAND );
+          else if( name == "UR5")
+            rob->setInverseKinematic( Kautham::UR5 );
+          else
+            rob->setInverseKinematic(Kautham::UNIMPLEMENTED);
+        }else
+          rob->setInverseKinematic(Kautham::UNIMPLEMENTED);
+
+        // Setup the Constrained Kinematic if it has one.
+        if(robot_node->child("ConstrainedKinematic")){
+          name = robot_node->child("ConstrainedKinematic").attribute("name").value();
+
+          rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
+#if defined(KAUTHAM_USE_GUIBRO)
+          if( name == "BRONCHOSCOPY" ){
+            rob->setConstrainedKinematic( Kautham::BRONCHOSCOPY );
+            double amin = robot_node->child("ConstrainedKinematic").attribute("amin").as_double();
+            double amax = robot_node->child("ConstrainedKinematic").attribute("amax").as_double();
+            double bmin = robot_node->child("ConstrainedKinematic").attribute("bmin").as_double();
+            double bmax = robot_node->child("ConstrainedKinematic").attribute("bmax").as_double();
+            ((GUIBRO::ConsBronchoscopyKin*)rob->getCkine())->setAngleLimits(bmin*M_PI/180.0, bmax*M_PI/180.0, amin*M_PI/180.0, amax*M_PI/180.0);
+          }
+          else
+            rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
+#endif
+        }else{
+          rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
+        }
+
+        // Setup the limits of the moveable base
+        for(xml_node_iterator itL = robot_node->begin(); itL != robot_node->end(); ++itL){
+          name = (*itL).name();
+          if( name == "Limits" ){
+            name = (*itL).attribute("name").value();
+            if( name == "X")
+              rob->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
+                             (KthReal)(*itL).attribute("max").as_double());
+            else if( name == "Y")
+              rob->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
+                             (KthReal)(*itL).attribute("max").as_double());
+            else if( name == "Z")
+              rob->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
+                             (KthReal)(*itL).attribute("max").as_double());
+            else if( name == "WX")
+              rob->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
+                             (KthReal)(*itL).attribute("max").as_double());
+            else if( name == "WY")
+              rob->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
+                             (KthReal)(*itL).attribute("max").as_double());
+            else if( name == "WZ")
+              rob->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
+                             (KthReal)(*itL).attribute("max").as_double());
+            else if( name == "TH")
+              rob->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
+                             (KthReal)(*itL).attribute("max").as_double() * _toRad);
+          }
+          if( name == "Home" ){
+          // If robot hasn't a home, it will be assumed in the origin.
+            SE3Conf tmpC;
+            vector<KthReal> cords(7);
+            cords[0] = (KthReal)(*itL).attribute("X").as_double();
+            cords[1] = (KthReal)(*itL).attribute("Y").as_double();
+            cords[2] = (KthReal)(*itL).attribute("Z").as_double();
+            cords[3] = (KthReal)(*itL).attribute("WX").as_double();
+            cords[4] = (KthReal)(*itL).attribute("WY").as_double();
+            cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
+            cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
+
+            // Here is needed to convert from axis-angle to
+            // quaternion internal represtantation.
+            SE3Conf::fromAxisToQuaternion(cords);
+
+            tmpC.setCoordinates(cords);
+
+            //cout << tmpC.print();
+
+            rob->setHomePos(&tmpC);
+          }
+        }
+
+        _wspace->addRobot(rob);
+  }
+
+  bool Problem::addControls2WSpace(string cntrFile) {
+      fstream fin;
+      fin.open(cntrFile.c_str(),ios::in);
+      if( fin.is_open() ){ // The file already exists.
+        fin.close();
+        string::size_type loc = cntrFile.find( ".cntr", 0 );
+        if( loc != string::npos ) { // It means that controls are defined by a *.cntr file
+          // Opening the file with the new pugiXML library.
+          xml_document doc;
+          xml_parse_result result = doc.load_file(cntrFile.c_str());
+
+          //Parse the cntr file
+          if(result){
+              //  Once the robots were added, the controls can be configured
+              int numControls = 0;
+              string controlsName = "";
+              xml_node tmpNode = doc.child("ControlSet").child("Control");
+              while (tmpNode) {
+                  numControls++;
+                  if(controlsName != "") controlsName.append("|");
+                  controlsName.append(tmpNode.attribute("name").as_string());
+                  tmpNode = tmpNode.next_sibling("Control");
+              }
+              _wspace->setNumControls(numControls);
+              _wspace->setControlsName(controlsName);
+
+              //  Creating the mapping and offset Matrices between controls
+              //  and DOF parameters and initializing them.
+              KthReal ***mapMatrix;
+              KthReal **offMatrix;
+              mapMatrix = new KthReal**[_wspace->getNumRobots()];
+              offMatrix = new KthReal*[_wspace->getNumRobots()];
+              for (int i = 0; i < _wspace->getNumRobots(); i++) {
+                  mapMatrix[i] = new KthReal*[_wspace->getRobot(i)->getNumJoints()+6];
+                  offMatrix[i] = new KthReal[_wspace->getRobot(i)->getNumJoints()+6];
+                  for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6; j++) {
+                      mapMatrix[i][j] = new KthReal[numControls];
+                      offMatrix[i][j] = (KthReal)0.5;
+                      for (int k = 0; k < numControls; k++) {
+                          mapMatrix[i][j][k] = (KthReal)0.0;
+                      }
+                  }
+              }
+
+              //Load the Offset vector
+              tmpNode = doc.child("ControlSet").child("Offset");
+              xml_node::iterator it;
+              string dofName, robotName, tmpstr;
+              for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
+                  tmpstr = (*it).attribute("name").as_string();
+                  unsigned found = tmpstr.find_last_of("/");
+                  if (found == string::npos) {
+                      return (false);
+                  }
+                  dofName = tmpstr.substr(found+1);
+                  robotName = tmpstr.substr(0,found);
+
+                  //Find the robot index into the robots vector
+                  int i = 0;
+                  bool robot_found = false;
+                  while (!robot_found && i < _wspace->getNumRobots()) {
+                      if (_wspace->getRobot(i)->getName() == robotName) {
+                          robot_found = true;
+                      } else {
+                          i++;
+                      }
+                  }
+
+                  if (!robot_found) {
+                      return (false);
+                  }
+
+                  if( dofName == "X"){
+                      _wspace->getRobot(i)->setSE3(true);
+                      offMatrix[i][0] = (KthReal)(*it).attribute("value").as_double();
+                  }else if( dofName == "Y"){
+                      _wspace->getRobot(i)->setSE3(true);
+                      offMatrix[i][1] = (KthReal)(*it).attribute("value").as_double();
+                  }else if( dofName == "Z"){
+                      _wspace->getRobot(i)->setSE3(true);
+                      offMatrix[i][2] = (KthReal)(*it).attribute("value").as_double();
+                  }else if( dofName == "X1"){
+                      _wspace->getRobot(i)->setSE3(true);
+                      offMatrix[i][3] = (KthReal)(*it).attribute("value").as_double();
+                  }else if( dofName == "X2"){
+                      _wspace->getRobot(i)->setSE3(true);
+                      offMatrix[i][4] = (KthReal)(*it).attribute("value").as_double();
+                  }else if( dofName == "X3"){
+                      _wspace->getRobot(i)->setSE3(true);
+                      offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
+                  }else{    // It's not a SE3 control and could have any name.
+                            // Find the index orden into the links vector without the first static link.
+                      for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
+                          if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
+                              offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
+                              break;
+                      }
+                  }
+              }//End processing Offset vector
+
+              //Process the controls to load the mapMatrix
+              tmpNode = doc.child("ControlSet");
+              string nodeType = "";
+              int cont = 0;
+              for(it = tmpNode.begin(); it != tmpNode.end(); ++it){
+                  nodeType = it->name();
+                  if( nodeType == "Control" ){
+                      xml_node::iterator itDOF;
+                      KthReal eigVal = 1;
+                      if ((*it).attribute("eigValue")) {
+                          eigVal = (KthReal) (*it).attribute("eigValue").as_double();
+                      }
+
+                      for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
+                          tmpstr = itDOF->attribute("name").as_string();
+                          unsigned found = tmpstr.find_last_of("/");
+                          if (found == string::npos) {
+                              return (false);
+                          }
+                          dofName = tmpstr.substr(found+1);
+                          robotName = tmpstr.substr(0,found);
+
+                          //Find the robot index into the robots vector
+                          int i = 0;
+                          bool robot_found = false;
+                          while (!robot_found && i < _wspace->getNumRobots()) {
+                              if (_wspace->getRobot(i)->getName() == robotName) {
+                                  robot_found = true;
+                              } else {
+                                  i++;
+                              }
+                          }
+
+                          if (!robot_found) {
+                              return (false);
+                          }
+
+                          if( dofName == "X"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              mapMatrix[i][0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                          }else if( dofName == "Y"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              mapMatrix[i][1][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                          }else if( dofName == "Z"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              mapMatrix[i][2][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                          }else if( dofName == "X1"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              mapMatrix[i][3][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                          }else if( dofName == "X2"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              mapMatrix[i][4][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                          }else if( dofName == "X3"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                          }else{  // It's not a SE3 control and could have any name.
+                                  // Find the index orden into the links vector without the first static link.
+                              for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
+                                  if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
+                                      mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                      break;
+                                  }
+                              }
+                          }
+
+                      cont++;
+                  }// closing if(nodeType == "Control" )
+              }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
+
+              for (int i = 0; i < _wspace->getNumRobots(); i++) {
+                  _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
+                  /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
+                      for (int k = 0; k < _wspace->getNumControls(); k++) {
+                          cout << mapMatrix[i][j][k] << " ";
+                      }
+                      cout << endl;
+                  }
+                  cout << endl;*/
+                  _wspace->getRobot(i)->setOffMatrix(offMatrix[i]);
+                  /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
+                      cout << offMatrix[i][j] << endl;
+                  }
+                  cout << endl;*/
+              }
+              return (true);
+
+          }else  {// the result of the file pasers is bad
+            cout << "The cntr file: " << cntrFile << " can not be read." << std::endl;
+            return (false);
+          }
+        }
+      }else{ // File does not exists.
+          fin.close();
+          cout << "The control file: " << cntrFile << "doesn't exist. Please confirm it." << endl;
+          return (false);
+      }
+
+  }
+
+  void Problem::addObstacle2WSpace(xml_node *obstacle_node, string dir) {
+      Robot *rob;
+      Obstacle *obs;
+      string name;
+      bool flagCol;
+      KthReal pob[3], oob[4];
+
+
+      // It can be either a mobile obstacle (Robot) or a fixed obstacle.
+      fstream fin;
+      string obsFile = dir + obstacle_node->attribute("scene").value();
+      fin.open(obsFile.c_str(),ios::in);
+      if( fin.is_open() ){ // The file already exists.
+          fin.close();
+          string::size_type loc = obsFile.find( ".dh", 0 );
+          if( loc != string::npos ) { // It means that the obstacle is a robot.
+#ifndef KAUTHAM_COLLISION_PQP
+              rob = new Robot( dir + obstacle_node->attribute("scene").value(),
+                               (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR);
+#else
+              rob = new Robot( dir + obstacle_node->attribute("scene").value(),
+                               (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP);
+#endif
+              // Setup the limits of the moveable base
+              for(xml_node_iterator itL = obstacle_node->begin(); itL != obstacle_node->end(); ++itL){
+                  name = (*itL).name();
+                  if( name == "Limits" ){
+                      name = (*itL).attribute("name").value();
+                      if( name == "X")
+                          rob->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
+                                         (KthReal)(*itL).attribute("max").as_double());
+                      else if( name == "Y")
+                          rob->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
+                                         (KthReal)(*itL).attribute("max").as_double());
+                      else if( name == "Z")
+                          rob->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
+                                         (KthReal)(*itL).attribute("max").as_double());
+                      else if( name == "WX")
+                          rob->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
+                                         (KthReal)(*itL).attribute("max").as_double());
+                      else if( name == "WY")
+                          rob->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
+                                         (KthReal)(*itL).attribute("max").as_double());
+                      else if( name == "WZ")
+                          rob->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
+                                         (KthReal)(*itL).attribute("max").as_double());
+                      else if( name == "TH")
+                          rob->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
+                                         (KthReal)(*itL).attribute("max").as_double() * _toRad);
+                  }
+                  if( name == "Home" ){
+                      // If robot hasn't a home, it will be assumed in the origin.
+                      SE3Conf tmpC;
+                      vector<KthReal> cords(7);
+                      cords[0] = (KthReal)(*itL).attribute("X").as_double();
+                      cords[1] = (KthReal)(*itL).attribute("Y").as_double();
+                      cords[2] = (KthReal)(*itL).attribute("Z").as_double();
+                      cords[3] = (KthReal)(*itL).attribute("WX").as_double();
+                      cords[4] = (KthReal)(*itL).attribute("WY").as_double();
+                      cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
+                      cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
+
+                      // Here is needed to convert from axis-angle to
+                      // quaternion internal represtantation.
+                      SE3Conf::fromAxisToQuaternion(cords);
+
+                      tmpC.setCoordinates(cords);
+
+                      rob->setHomePos(&tmpC);
+                  }
+              }
+
+              _wspace->addMobileObstacle(rob);
+          } else {
+              loc = obsFile.find( ".urdf", 0 );
+              if( loc != string::npos ) {
+                  // It can be a mobile obstacle (Robot) or a fixed obstacle.
+                  if (obstacle_node->child("Limits") || obstacle_node->child("Home")) {
+                      // It means that the obstacle is a robot.
+#ifndef KAUTHAM_COLLISION_PQP
+                      rob = new Robot( dir + obstacle_node->attribute("scene").value(),
+                                       (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR);
+#else
+                      rob = new Robot( dir + obstacle_node->attribute("scene").value(),
+                                       (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP);
+#endif
+                      // Setup the limits of the moveable base
+                      for(xml_node_iterator itL = obstacle_node->begin(); itL != obstacle_node->end(); ++itL){
+                          name = (*itL).name();
+                          if( name == "Limits" ){
+                              name = (*itL).attribute("name").value();
+                              if( name == "X")
+                                  rob->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
+                                                 (KthReal)(*itL).attribute("max").as_double());
+                              else if( name == "Y")
+                                  rob->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
+                                                 (KthReal)(*itL).attribute("max").as_double());
+                              else if( name == "Z")
+                                  rob->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
+                                                 (KthReal)(*itL).attribute("max").as_double());
+                              else if( name == "WX")
+                                  rob->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
+                                                 (KthReal)(*itL).attribute("max").as_double());
+                              else if( name == "WY")
+                                  rob->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
+                                                 (KthReal)(*itL).attribute("max").as_double());
+                              else if( name == "WZ")
+                                  rob->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
+                                                 (KthReal)(*itL).attribute("max").as_double());
+                              else if( name == "TH")
+                                  rob->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
+                                                 (KthReal)(*itL).attribute("max").as_double() * _toRad);
+                          }
+                          if( name == "Home" ){
+                              // If robot hasn't a home, it will be assumed in the origin.
+                              SE3Conf tmpC;
+                              vector<KthReal> cords(7);
+                              cords[0] = (KthReal)(*itL).attribute("X").as_double();
+                              cords[1] = (KthReal)(*itL).attribute("Y").as_double();
+                              cords[2] = (KthReal)(*itL).attribute("Z").as_double();
+                              cords[3] = (KthReal)(*itL).attribute("WX").as_double();
+                              cords[4] = (KthReal)(*itL).attribute("WY").as_double();
+                              cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
+                              cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
+
+                              // Here is needed to convert from axis-angle to
+                              // quaternion internal represtantation.
+                              SE3Conf::fromAxisToQuaternion(cords);
+
+                              tmpC.setCoordinates(cords);
+
+                              rob->setHomePos(&tmpC);
+                          }
+                      }
+
+                      _wspace->addMobileObstacle(rob);
+                  } else {
+                      // It means that it is a fixed object.
+                      if(obstacle_node->child("Collision"))
+                          flagCol = obstacle_node->child("Collision").attribute("Enable").as_bool();
+                      else
+                          flagCol = true;
+
+                      xml_node locObs = obstacle_node->child("Location");
+                      pob[0] = (KthReal)locObs.attribute("X").as_double();
+                      pob[1] = (KthReal)locObs.attribute("Y").as_double();
+                      pob[2] = (KthReal)locObs.attribute("Z").as_double();
+                      oob[0] = (KthReal)locObs.attribute("WX").as_double();
+                      oob[1] = (KthReal)locObs.attribute("WY").as_double();
+                      oob[2] = (KthReal)locObs.attribute("WZ").as_double();
+                      oob[3] = (KthReal)locObs.attribute("TH").as_double() * _toRad;
+
+                      // Changing between axis angle to quaternion.
+                      SE3Conf::fromAxisToQuaternion(oob);
+
+#ifndef KAUTHAM_COLLISION_PQP
+                      obs = new Obstacle(dir + obstacle_node->attribute("scene").value(), pob, oob,
+                                         (KthReal)obstacle_node->attribute("scale").as_double(), INVENTOR, flagCol);
+#else
+                      obs = new Obstacle( dir + obstacle_node->attribute("scene").value(), pob, oob,
+                                          (KthReal)obstacle_node->attribute("scale").as_double(), IVPQP, flagCol);
+#endif
+                      _wspace->addObstacle(obs);
+                  }
+              } else {
+                  //  It is a fixed object
+                  if(obstacle_node->child("Collision"))
+                      flagCol = obstacle_node->child("Collision").attribute("Enable").as_bool();
+                  else
+                      flagCol = true;
+
+                  xml_node locObs = obstacle_node->child("Location");
+                  pob[0] = (KthReal)locObs.attribute("X").as_double();
+                  pob[1] = (KthReal)locObs.attribute("Y").as_double();
+                  pob[2] = (KthReal)locObs.attribute("Z").as_double();
+                  oob[0] = (KthReal)locObs.attribute("WX").as_double();
+                  oob[1] = (KthReal)locObs.attribute("WY").as_double();
+                  oob[2] = (KthReal)locObs.attribute("WZ").as_double();
+                  oob[3] = (KthReal)locObs.attribute("TH").as_double() * _toRad;
+
+                  // Changing between axis angle to quaternion.
+                  SE3Conf::fromAxisToQuaternion(oob);
+
+#ifndef KAUTHAM_COLLISION_PQP
+                  obs = new Obstacle(dir + obstacle_node->attribute("scene").value(), pob, oob,
+                                     (KthReal)obstacle_node->attribute("scale").as_double(), INVENTOR, flagCol);
+#else
+                  obs = new Obstacle( dir + obstacle_node->attribute("scene").value(), pob, oob,
+                                      (KthReal)obstacle_node->attribute("scale").as_double(), IVPQP, flagCol);
+#endif
+                  _wspace->addObstacle(obs);
+              }
+          }
+      } else {
+          cout << "The obstacle " << obstacle_node->attribute("scene").value() <<" is improperly configured.";
+      }
   }
 }
 

@@ -73,27 +73,33 @@ namespace Kautham{
       void                  moveRobotsTo(Sample* sample);
       void                  moveObstacleTo( size_t mobObst, vector<KthReal>& pose );
       void                  moveObstacleTo( size_t mobObst, RobConf& robConf );
-		  void                  addRobot(Robot* robot);
+      void                  addRobot(Robot* robot);
       inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;}
-		  void                  addObstacle(Obstacle* obs);
-		  void                  addMobileObstacle(Robot* obs);
+      inline int            getNumRobots(){return robots.size();}
+      void                  addObstacle(Obstacle* obs);
+      void                  addMobileObstacle(Robot* obs);
       inline Obstacle*      getObstacle(unsigned int i){if(i < obstacles.size()) return obstacles[i]; return NULL;}
       inline Robot*         getMobileObstacle(unsigned int i){if( i<_mobileObstacle.size() ) return _mobileObstacle[i];return NULL;}
       inline unsigned int   robotsCount(){return robots.size();}
       inline unsigned int   obstaclesCount(){return obstacles.size();}
       inline unsigned int   mobileObstaclesCount(){return _mobileObstacle.size();}
-      inline int            getDimension() const {return workDim;}
 
-	    void addDistanceMapFile(string distanceFile);
-	    inline string getDistanceMapFile(){return distanceMapFile;};
-		
-	    void addDimensionsFile(string dfile);
-	    inline string getDimensionsFile(){return dimensionsFile;};
-		
-	    void addDirCase(string dirc);
-	    inline string getDirCase(){return dirCase;};
-	  //void addNeighborhoodMapFile(string neighFile);
-	  //inline string getNeighborhoodMapFile(){return neighborhoodMapFile;};
+      inline int getDimension (){return numControls;} //!< Returns the dimension of the workspace
+      inline int getNumControls(){return numControls;} //!< Returns the number of controls
+
+      inline int setNumControls(int numcontrols){numControls = numcontrols;} //!< Sets the number of controls
+
+
+      void addDistanceMapFile(string distanceFile);
+      inline string getDistanceMapFile(){return distanceMapFile;}
+
+      void addDimensionsFile(string dfile);
+      inline string getDimensionsFile(){return dimensionsFile;}
+
+      void addDirCase(string dirc);
+      inline string getDirCase(){return dirCase;}
+      //void addNeighborhoodMapFile(string neighFile);
+      //inline string getNeighborhoodMapFile(){return neighborhoodMapFile;};
 
 //      //! This method returns true if the all robots in the scene only accepts SE3 data;
 //      //! This method is deprecated. Maybe it never has been used.
@@ -120,14 +126,15 @@ namespace Kautham{
 
 		
 		Sample* getLastSampleMovedTo(){return _lastSampleMovedTo;};
+        inline string getControlsName() const {return controlsName;} //!< Returns the string containing the control names, separated by the veritcal line character
+        inline void setControlsName(string controlsname){controlsName=controlsname;} //!< Sets the string containing the control names, separated by the veritcal line character
 
 	  protected:
 		  virtual void          updateScene() = 0;
-		  vector<Obstacle*>     obstacles;
+          vector<Obstacle*>     obstacles;
 		  vector<Robot*>        _mobileObstacle;
 		  vector<Robot*>        robots;
       vector<KthReal>       distVec;
-      int                   workDim;
 
       //! This attribute groups the configurations of the robots
       vector<RobConf*>      _configMap;
@@ -139,8 +146,11 @@ namespace Kautham{
 	  //string neighborhoodMapFile;
 
 	private:
-		static unsigned int   _countWorldCollCheck;
-		Sample* _lastSampleMovedTo;
+      bool              armed;
+      int               numControls;  //!< This is the number of control used to command the robot
+      string            controlsName; //!< Names of the controls, as a string, separated with the vertical bar character.
+      static unsigned int   _countWorldCollCheck;
+      Sample* _lastSampleMovedTo;
   };
 
   /** @}   end of Doxygen module "libProblem" */

@@ -106,10 +106,10 @@ namespace Kautham{
 		CLOSEDCHAIN
 	};
 
-	enum DHAPPROACH{
+    enum APPROACH{
 		DHSTANDARD,
         DHMODIFIED,
-        DHURDF
+        URDF
   };
 	
 	enum NEIGHSEARCHTYPE {

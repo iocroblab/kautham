@@ -108,7 +108,7 @@ namespace Kautham{
       *		You can build a complete robot, if you adding progresively a each Link
 	  *		from absolute coordinates frame to final effector frame.*/
       Link(string ivFile, string collision_ivFile, float scale,
-           DHAPPROACH dhType, LIBUSED lib = IVPQP);
+           APPROACH Type, LIBUSED lib = IVPQP);
 
 	  //! Function to set \f$ \alpha \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ \alpha \f$ parameter.*/
@@ -219,6 +219,8 @@ namespace Kautham{
     void                setParent(Link* par);
     unsigned int        addChild(Link* child);
     inline unsigned int numChilds(){return (unsigned int)childs.size();}
+    //!	This member function returns the specified child
+    inline Link*        getChild(int i){if(i < 0 || i > childs.size()) {return NULL;} else {return childs.at(i);}}
     bool                setPreTransform(KthReal x, KthReal y, KthReal z,
                                         KthReal wx, KthReal wy, KthReal wz,
                                         KthReal angle);
@@ -302,7 +304,7 @@ namespace Kautham{
     string              name;
   	
 	  //! Approach used to describe this robot.
-    DHAPPROACH          dhType;
+    APPROACH          Type;
 
     LIBUSED             libs;
   

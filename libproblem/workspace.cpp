@@ -52,13 +52,13 @@ namespace Kautham {
 
 
   WorkSpace::WorkSpace(){
-	  obstacles.clear();
-	  robots.clear();
-    distVec.clear();
-    workDim = 0;
-    _configMap.clear();
-    _robWeight.clear();
-    _lastSampleMovedTo=NULL;
+      obstacles.clear();
+      robots.clear();
+      distVec.clear();
+      _configMap.clear();
+      _robWeight.clear();
+      _lastSampleMovedTo=NULL;
+      numControls = 0;
   }
 
 
@@ -91,14 +91,12 @@ namespace Kautham {
 
   vector<KthReal>* WorkSpace::distanceCheck(Sample* sample) {
     vector<KthReal> tmpVec;
-    int j, from = 0;
+    tmpVec.clear();
+    for(unsigned int j=0; j < getNumControls(); j++ )
+      tmpVec.push_back(sample->getCoords()[j]);
+
     distVec.clear();
     for(unsigned int i=0; i< robots.size(); i++){
-      tmpVec.clear();
-      for( j=0; j < robots[i]->getNumControls(); j++ )
-        tmpVec.push_back(sample->getCoords()[from + j]);
-      
-      from = from+j;
       robots[i]->control2Pose(tmpVec);
       for(unsigned int m = 0; m < obstacles.size(); m++){
         distVec.push_back(robots[i]->distanceCheck(obstacles[m]));
@@ -115,25 +113,13 @@ namespace Kautham {
   void WorkSpace::moveRobotsTo(Sample* sample){
     bool withinbounds=true;
     vector<KthReal> tmpVec;
-    int j, from = 0;
-
-    //for(unsigned int i=0; i< robots.size(); i++)
-    //    robots[i]->setNumCoupledControls(2);
+    tmpVec.clear();
+    for(unsigned int j=0; j < getNumControls(); j++ )
+        tmpVec.push_back(sample->getCoords()[j]);
 
     for(unsigned int i=0; i< robots.size(); i++){
-        //if(sample->getMappedConf().size()==0 || robots[i]->getNumCoupledControls()){ //??Why
         if(sample->getMappedConf().size()==0){
-            tmpVec.clear();
-            //start coupledcontrols
-            //for( j=0; j < robots[i]->getNumCoupledControls(); j++ )
-            for( j=0; j < robots[i]->getNumCoupledControls(); j++ )
-                tmpVec.push_back(sample->getCoords()[j]);
-
-            for(; j < robots[i]->getNumControls(); j++ )
-                tmpVec.push_back(sample->getCoords()[from + j]);
-
-            from = from+j;
-            withinbounds = withinbounds && robots[i]->control2Pose(tmpVec);
+            withinbounds &= robots[i]->control2Pose(tmpVec);
         }
         else{
               robots[i]->Kinematics(sample->getMappedConf().at(i));
@@ -193,14 +179,12 @@ namespace Kautham {
 
     vector<KthReal> tmpVec;
     bool collision = false;
-    int j, from = 0;
+    tmpVec.clear();
+    for(int j=0; j < getNumControls(); j++ )
+      tmpVec.push_back(sample->getCoords()[j]);
+
     if(sample->getMappedConf().size() == 0){
       for(unsigned int i=0; i< robots.size(); i++){
-        tmpVec.clear();
-        for( j=0; j < robots[i]->getNumControls(); j++ )
-          tmpVec.push_back(sample->getCoords()[from + j]);
-
-        from = from+j;
         robots[i]->control2Pose(tmpVec);
 
         //first is testing if the robots collide with the environment (obstacles)
@@ -350,11 +334,9 @@ namespace Kautham {
     //robot->setNumCoupledControls(12);
 
     robots.push_back(robot);
-    workDim = 0;
     _configMap.clear();
     _robWeight.clear();
     for(unsigned int i = 0; i < robots.size(); i++){
-      workDim += robots[i]->getNumControls();
       _configMap.push_back(((Robot*)robots.at(i))->getCurrentPos());
       _robWeight.push_back( ((Robot*)robots.at(i))->getRobWeight() );
     }
@@ -417,6 +399,33 @@ namespace Kautham {
   }
 
 }
+
+
+/*
+    //! Sets the value of the mapMatrix corresponding to the column control and row dof.
+    bool setControlItem(string control, string dof, KthReal value);
+
+    /*!
+     *
+     */
+   /* bool Robot::setControlItem(string control, string dof, KthReal value){
+      // First I will find the column index looking for "|" number before the control name.
+      string::size_type pos = controlsName.find(control,0);
+      if(pos == string::npos) return false;
+      int j=0;
+      string::size_type trick=controlsName.find("|",0);
+      while(trick < pos){
+        trick=controlsName.find("|",trick+1);
+        j++;
+      }
+      for(unsigned int i = 1; i < links.size(); i++)
+        if(links[i]->getName() == dof){ // Now I am finding the row index.
+          mapMatrix[i][j] = value;
+          return true;
+        }
+      return false;
+    }
+*/
 
 
  
