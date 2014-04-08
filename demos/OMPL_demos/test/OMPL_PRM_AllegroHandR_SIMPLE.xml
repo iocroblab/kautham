@@ -8,18 +8,18 @@
 		<Limits name="WY" min="0.0" max="1.0" />
 		<Limits name="WZ" min="0.0" max="1.0" />
 		<Limits name="THETA" min="-180.0" max="180.0" />
-    <Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="500.0" Y="600" X="-400" />
+    		<Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="500.0" Y="600" X="-400" />
 		<InvKinematic name="TX90" />
 	</Robot>
 	<Controls controls="controls/allegro_hand_description_right.cntr"/>
 	<Planner>
-        <Parameters>
-                <Name>omplPRM</Name>
-                <Parameter name="Max Planning Time">300.0</Parameter>
-                <Parameter name="Speed Factor">1</Parameter>
+        	<Parameters>
+                	<Name>omplPRM</Name>
+                	<Parameter name="Max Planning Time">300.0</Parameter>
+                	<Parameter name="Speed Factor">1</Parameter>
                         <Parameter name="MaxNearestNeighbors">10</Parameter>
                         <Parameter name="DistanceThreshold">400.0</Parameter>
-        </Parameters>
+        	</Parameters>
 		<Queries>
 			<Query>
 				<Init dim="16">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Init>
