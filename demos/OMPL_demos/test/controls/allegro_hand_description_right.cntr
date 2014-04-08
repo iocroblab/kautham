@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+<ControlSet size="16">
+    <Offset>
+      <DOF name="allegro_hand_right/link_0.0" value="0.0044"></DOF> 
+      <DOF name="allegro_hand_right/link_1.0" value="0.0144"></DOF> 
+      <DOF name="allegro_hand_right/link_2.0" value="0.0244"></DOF>
+      <DOF name="allegro_hand_right/link_3.0" value="0.0344"></DOF> 
+      <DOF name="allegro_hand_right/link_4.0" value="0.0444"></DOF> 
+      <DOF name="allegro_hand_right/link_5.0" value="0.0544"></DOF> 
+      <DOF name="allegro_hand_right/link_6.0" value="0.0644"></DOF>
+      <DOF name="allegro_hand_right/link_7.0" value="0.0744"></DOF> 
+      <DOF name="allegro_hand_right/link_8.0" value="0.0844"></DOF> 
+      <DOF name="allegro_hand_right/link_9.0" value="0.0944"></DOF> 
+      <DOF name="allegro_hand_right/link_10.0" value="0.1044"></DOF>
+      <DOF name="allegro_hand_right/link_11.0" value="0.1144"></DOF> 
+      <DOF name="allegro_hand_right/link_12.0" value="0.1244"></DOF> 
+      <DOF name="allegro_hand_right/link_13.0" value="0.1344"></DOF> 
+      <DOF name="allegro_hand_right/link_14.0" value="0.1444"></DOF>
+      <DOF name="allegro_hand_right/link_15.0" value="0.1544"></DOF> 
+
+      <DOF name="UR5/Shoulder" value="0.5"></DOF>
+      <DOF name="UR5/ForeArm" value="0.5"></DOF>
+      <DOF name="UR5/UpperArm" value="0.5"></DOF>
+      <DOF name="UR5/Wrist1" value="0.5"></DOF>
+      <DOF name="UR5/Wrist2" value="0.5"></DOF>
+      <DOF name="UR5/Wrist3" value="0.5"></DOF>
+   </Offset>
+
+
+    <Control name="link_0.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_0.0" value="1.00"></DOF>
+      <DOF name="allegro_hand_right/link_4.0" value="1.00"></DOF>
+      <DOF name="allegro_hand_right/link_8.0" value="1.00"></DOF>
+      <DOF name="UR5/Shoulder" value="1.0"></DOF>
+      <DOF name="UR5/ForeArm" value="1.0"></DOF>
+      <DOF name="UR5/UpperArm" value="1.0"></DOF>
+    </Control>
+
+    <Control name="link_1.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_1.0" value="1.01"></DOF>
+      <DOF name="UR5/Wrist1" value="1.0"></DOF>
+      <DOF name="UR5/Wrist2" value="1.0"></DOF>
+      <DOF name="UR5/Wrist3" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="link_2.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_2.0" value="1.02"></DOF>
+      <DOF name="UR5/Shoulder" value="1.0"></DOF>
+    </Control>
+
+    <Control name="link_3.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_3.0" value="1.03"></DOF>
+    </Control>
+    
+    <Control name="link_4.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_4.0" value="1.04"></DOF>
+    </Control>
+
+    <Control name="link_5.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_5.0" value="1.05"></DOF>
+    </Control>
+    
+    <Control name="link_6.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_6.0" value="1.06"></DOF>
+    </Control>
+
+    <Control name="link_7.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_7.0" value="1.07"></DOF>
+    </Control>
+
+    <Control name="link_8.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_8.0" value="1.08"></DOF>
+    </Control>
+
+    <Control name="link_9.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_9.0" value="1.09"></DOF>
+    </Control>
+    
+    <Control name="link_10.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_10.0" value="1.10"></DOF>
+    </Control>
+
+    <Control name="link_11.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_11.0" value="1.11"></DOF>
+    </Control>
+
+    <Control name="link_12.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_12.0" value="1.12"></DOF>
+    </Control>
+    
+    <Control name="link_13.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_13.0" value="1.13"></DOF>
+    </Control>
+
+    <Control name="link_14.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_14.0" value="1.14"></DOF>
+    </Control>
+    
+    <Control name="link_15.0" eigValue="1.0">
+      <DOF name="allegro_hand_right/link_15.0" value="1.15"></DOF>
+    </Control>    
+</ControlSet>
