@@ -118,9 +118,8 @@ namespace Kautham {
         tmpVec.push_back(sample->getCoords()[j]);
 
     for(unsigned int i=0; i< robots.size(); i++){
-        //if(sample->getMappedConf().size()==0 || robots[i]->getNumCoupledControls()){ //??Why
         if(sample->getMappedConf().size()==0){
-            withinbounds = withinbounds && robots[i]->control2Pose(tmpVec);
+            withinbounds &= robots[i]->control2Pose(tmpVec);
         }
         else{
               robots[i]->Kinematics(sample->getMappedConf().at(i));
