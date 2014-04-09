@@ -121,6 +121,8 @@ void Application::openFile(){
 			}
 			break;
 		case PROBLEMLOADED:
+            closeProblem();
+            openFile();
 			break;
 		default:
 			break;
