@@ -104,7 +104,8 @@ namespace Kautham {
     s << "code: " << code << "\tNeighs: ";
     s << _neighset.size() << " Codes: ";
     for(unsigned int i=0; i < _neighset.size(); i++){
-      s << ((SDKSample*)_neighset[i])->getCode() << ", "  ;
+      //s << ((SDKSample*)_neighset[i])->getCode() << ", "  ;
+        s << _neighset[i] << ", "  ;
 		}
     
     s << std::endl;
