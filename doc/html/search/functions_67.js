@@ -14,6 +14,8 @@ var searchData=
   ['getcollisionmodel',['getCollisionModel',['../class_kautham_1_1_robot.html#a2331d6490ee8964b9d44b4d85b4919e4',1,'Kautham::Robot']]],
   ['getconfigmapping',['getConfigMapping',['../class_kautham_1_1_work_space.html#a15e4d1d8beca9992a9f4f1e6716a7c05',1,'Kautham::WorkSpace']]],
   ['getconnectedcomponent',['getConnectedComponent',['../class_kautham_1_1_sample.html#a83d08a44142da51cab8b123b2a92833c',1,'Kautham::Sample']]],
+  ['getcontrolbounds',['getControlBounds',['../class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html#a6a8aaabf9ff672e35166c523fd409057',1,'Kautham::omplcplanner::KauthamDEtableEnvironment']]],
+  ['getcontroldimension',['getControlDimension',['../class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html#a6e20a79cb6a9187b55b068c71a02b982',1,'Kautham::omplcplanner::KauthamDEtableEnvironment']]],
   ['getcontrolsname',['getControlsName',['../class_kautham_1_1_work_space.html#aafd3b600d89203dc6677ca7a3345315b',1,'Kautham::WorkSpace']]],
   ['getcoords',['getCoords',['../class_kautham_1_1_sample.html#a52d2956f49242e96a9b5b58f15cfee36',1,'Kautham::Sample']]],
   ['getcurrentpos',['getCurrentPos',['../class_kautham_1_1_robot.html#a295f54d73be2b96bd54e82a16c528c52',1,'Kautham::Robot']]],

@@ -44,27 +44,13 @@
 #if !defined(_KauthamOpenDERRTplanner_H)
 #define _KauthamOpenDERRTplanner_H
 #define dDOUBLE
-//#include <ompl/extensions/opende/OpenDESimpleSetup.h>
-//#include <ompl/extensions/opende/OpenDEControlSpace.h>
-//#include <ompl/extensions/opende/OpenDEStateSpace.h>
-//#include <ompl/extensions/opende/OpenDESimpleSetup.h>
-//#include <ompl/extensions/opende/OpenDEStatePropagator.h>
-//#include <ompl/extensions/opende/OpenDEStateValidityChecker.h>
-//#include <ompl/base/goals/GoalRegion.h>
-//#include <ompl/config.h>
-//#include <iostream>
-//#include <ode/ode.h>
+
 #include "KauthamOpenDEPlanner.h"
 #include "KauthamOpenDEtableEnvironment.h"
 #include "libompl/omplcplanner.h"
 #include "libsampling/sampling.h"
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
-
-
-
-
 #define _USE_MATH_DEFINES
-
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
@@ -73,25 +59,20 @@ namespace oc = ompl::control;
 using namespace std;
 
 namespace Kautham {
-
-    namespace omplcplanner{
+namespace omplcplanner{
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Class KauthamOpenDEPlanner
 /////////////////////////////////////////////////////////////////////////////////////////////////
+//! This class implement the RRT Planner (provied by the ompl) to plan in dynamic enviroment.
 class KauthamDERRTPlanner: public KauthamDEPlanner
 {
 public:
+    //! Constructor create dynamic enviroment and setup all the necessary parameters for planning.
     KauthamDERRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~KauthamDERRTPlanner();
-    bool setParameters();
-
+    bool setParameters();//!< this function set the planning parameters for RRT.
     KthReal _GoalBias;
-    double _propagationStepSize;
-    unsigned int _duration;
-
-    int _onlyForward;
-  //  double _carLength;
 
 };
 

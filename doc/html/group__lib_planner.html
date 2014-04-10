@@ -104,9 +104,8 @@ Namespaces</h2></td></tr>
 <br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga90fc1f645c5b78bb44ccabfd4d23482d"></a><!-- doxytag: member="libPlanner::KauthamDEPlanner" ref="ga90fc1f645c5b78bb44ccabfd4d23482d" args="(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga90fc1f645c5b78bb44ccabfd4d23482d">Kautham::omplcplanner::KauthamDEPlanner::KauthamDEPlanner</a> (SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">KauthanDEplanner is the base class for all the planner that use the dynamic enviroment for planning. all the planners will be drived from this class and will reimplement the trysolve function. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga90fc1f645c5b78bb44ccabfd4d23482d">Kautham::omplcplanner::KauthamDEPlanner::KauthamDEPlanner</a> (SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">The constructor will define all the necessary parameters for planning.  <a href="#ga90fc1f645c5b78bb44ccabfd4d23482d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga59f114f935626b444d645360a8db1915"></a><!-- doxytag: member="libPlanner::~KauthamDEPlanner" ref="ga59f114f935626b444d645360a8db1915" args="()" -->
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga59f114f935626b444d645360a8db1915">Kautham::omplcplanner::KauthamDEPlanner::~KauthamDEPlanner</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">void destructor <br/></td></tr>
@@ -146,6 +145,54 @@ ob::StateSpacePtr&#160;</td><td class="memItemRight" valign="bottom"><a class="e
 <p>contains planners to solve the path planning problems </p>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>Add detailed description of library libplanner</dd></dl>
 <hr/><h2>Function Documentation</h2>
+<a class="anchor" id="ga90fc1f645c5b78bb44ccabfd4d23482d"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEPlanner::KauthamDEPlanner" ref="ga90fc1f645c5b78bb44ccabfd4d23482d" args="(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lib_planner.html#ga90fc1f645c5b78bb44ccabfd4d23482d">Kautham::omplcplanner::KauthamDEPlanner::KauthamDEPlanner</a> </td>
+          <td>(</td>
+          <td class="paramtype">SPACETYPE&#160;</td>
+          <td class="paramname"><em>stype</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_sample.html">Sample</a> *&#160;</td>
+          <td class="paramname"><em>init</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_sample.html">Sample</a> *&#160;</td>
+          <td class="paramname"><em>goal</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_sample_set.html">SampleSet</a> *&#160;</td>
+          <td class="paramname"><em>samples</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *&#160;</td>
+          <td class="paramname"><em>ws</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>The constructor will define all the necessary parameters for planning. </p>
+<p>Constructor define all the necessary parameters for planning in dynamic enviroment. It define the pointer to the dynamic enviroment and pointer to the start space. </p>
+
+</div>
+</div>
 <a class="anchor" id="ga9faa30e88dec1cb2ced73b6fa2a0ffec"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEPlanner::setParameters" ref="ga9faa30e88dec1cb2ced73b6fa2a0ffec" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -185,7 +232,7 @@ ob::StateSpacePtr&#160;</td><td class="memItemRight" valign="bottom"><a class="e
 <div class="memdoc">
 
 <p>Compute the path and returns the boolean value. </p>
-<p>this is the main function that compute the path in dynamic enviroment. where the controles will be applied by the ODE. </p>
+<p>this is the main function that compute the path in dynamic enviroment. where the control will be applied by the ODE.If it found the siolution it returns true otherwise false. </p>
 
 <p>Implements <a class="el" href="class_kautham_1_1_planner.html">Kautham::Planner</a>.</p>
 
@@ -209,7 +256,7 @@ ob::StateSpacePtr&#160;</td><td class="memItemRight" valign="bottom"><a class="e
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 10 2014 16:10:08 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 10 2014 18:57:57 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
