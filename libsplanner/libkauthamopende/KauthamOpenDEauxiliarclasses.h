@@ -84,56 +84,61 @@ This smp2KauthamOpenDEState method moves the robot to its goal configuration and
 We've added the onlyend bool for further improvements as we have considered interesting to set the possibility that the goal position to be just the position of the ending point (the tcp) instead of the position of each element.
 the distance is considered to be the addition of the differences between each considered element's position and its goal position
 */
+//! The KauthamDEGoal is mainly used to set as a derived class from a GoalRegion the operation distance which the planner is going to check in order to decide wether the goal has been reached or not.
 class KauthamDEGoal : public ob::GoalRegion
 {
 public:
     KauthamDEGoal(const ob::SpaceInformationPtr &si, WorkSpace* ws, bool a,Sample *goal);
     ~KauthamDEGoal();
-    virtual double distanceGoal(const ob::State *st) const;
-    //typedef struct
+    virtual double distanceGoal(const ob::State *st) const; //!< This function compute the distance from the goal.
+  
+/*! This structure keeps the position and orientation of each element of the robot once the configuration has been moved GOAL.
+ *   This information can be used to compute the distance of any configuration.
+ */
    typedef struct
     {
         KthReal objectposition[3];
         KthReal objectorientation[4];
     }KauthamODEobject;
-    //En aquesta estructura es guarda la posició i la orientació de cada element del robot una vegada aquest s'ha mogut a la configuració de goal.
+    //En aquesta estructura es guarda la posició i la orientació de cada element del robot una vegada aquest s'ha mogut a la configuració de 		goal.
     //Així aquesta informació la puc utilitzar a la hora de calcular la distancia de qualsevol configuració a la configuració del GOAL.
 
-     // This structure keeps the position and orientation of each element of the robot once the configuration has been moved GOAL.
-     // So I can use this information in calculating the distance of any configuration settings GOAL.
+    
+    vector<KauthamODEobject> smp2KauthamOpenDEState(WorkSpace* w,Sample *goal);//!< This function check the position and orientation of the objects at the goal configuration.
 
-    vector<KauthamODEobject> smp2KauthamOpenDEState(WorkSpace* w,Sample *goal);
+    vector<KauthamODEobject> Kauthamodebodies; //!<  Kauthamodebodies is a vector KauthamODEobject which keeps information on all the elements that make up the kinematic chain of the robot.
 
-    vector<KauthamODEobject> Kauthamodebodies;
     //Kauthamodebodies es un vector de KauthamODEobject on es guarda la informació de tots els elements que formen la cadena cinemàtica del robot.
 
-    // Kauthamodebodies is a vector KauthamODEobject which keeps information on all the elements that make up the kinematic chain of the robot.
-
-    bool onlyend;
+   
+    bool onlyend; //!< It is meant to adapt to the possibility that the planner GOAL involves only the TCP.
     //Esta pensat per poder adaptar el planner a la possibilitat que el GOAL només involucri al TCP ja que podria ajudar en tasques en que l'important sigui la posició del manipulador.
 
-// It is meant to adapt to the possibility that the planner GOAL involves only the TCP since it could help in the important task is the position of the manipulator.
 };
 
- /*The KauthamDEStateSpace intherits from OpenDEStateSpace and just defines the method distance and the registerprojections.
- An OpenDEStateSpace inherits from a CompoundStateSpace where each body has 3 RealVectorSstateSpace representing the position and the linear and angular velocity and
-then a SO3 that represents the orientation*/
+/
+/*! The KauthamDEStateSpace intherits from OpenDEStateSpace and just defines the method distance and the registerprojections.
+ * An OpenDEStateSpace inherits from a CompoundStateSpace where each body has three RealVectorSstateSpace representing the
+ * position,linear and angular velocity and then a SO3 that represents the orientation
+ */
 class KauthamDEStateSpace : public oc::OpenDEStateSpace
 {
 public:
-    KauthamDEStateSpace(const oc::OpenDEEnvironmentPtr &env);
+    KauthamDEStateSpace(const oc::OpenDEEnvironmentPtr &env);//!< Constructor
     ~KauthamDEStateSpace();
-    virtual double distance(const ob::State *s1, const ob::State *s2) const;
-    virtual void registerProjections(void);
+    virtual double distance(const ob::State *s1, const ob::State *s2) const; //!< Define the method to compute the distance.
+    virtual void registerProjections(void); //!< This function register the projetions for state space.
 };
-
+/*! this class define how the state will be projected. this class inherit from the
+ * ProjectionEvaluator and define the virtual functions.
+ */
 class KauthamDEStateProjectionEvaluator: public ob::ProjectionEvaluator
 {
 public:
-    KauthamDEStateProjectionEvaluator(const ob::StateSpace *space);
-    virtual unsigned int getDimension(void) const;
-    virtual void defaultCellSizes(void);
-    virtual void project(const ob::State *state, ob::EuclideanProjection &projection) const;
+    KauthamDEStateProjectionEvaluator(const ob::StateSpace *space); //!< Constructor
+    virtual unsigned int getDimension(void) const; //!< This function returns the dimension of the projection.
+    virtual void defaultCellSizes(void);//!< This function set the default dimension of the cell for projection.
+    virtual void project(const ob::State *state, ob::EuclideanProjection &projection) const;//!< This function calculate the projections
 };
 
 //this class reimplement the sampling mechanism as it is done in ompl for ode bodies
