@@ -54,13 +54,16 @@ namespace omplcplanner{
 
 // The planner is based on the example of OpenDERigidBodyPlanning. 
 // Create the Environment, the State Space, and simple setup. It is said that the Goal class KAuthamDEGoal and planning through simple setup after haverli declared planner and Bounds.
-  KauthamDERRTPlanner::KauthamDERRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+/*! Constructor create the dynamic environment, and setup all the parameters for planning.
+ * it defines simple setup, Planner and Planning parameters.
+ */
+KauthamDERRTPlanner::KauthamDERRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
       KauthamDEPlanner(stype, init, goal, samples, ws)
   {
       //set intial values from parent class data
       _guiName = "ompl ODE RRT Planner";
       _idName = "omplODERRTPlanner";
-      dInitODE2(0);
+       dInitODE2(0);
 
 
      ss = new oc::OpenDESimpleSetup(stateSpacePtr);
@@ -72,11 +75,8 @@ namespace omplcplanner{
      _GoalBias=(planner->as<oc::RRT>())->getGoalBias();
      addParameter("Goal Bias", _GoalBias);
      planner->as<oc::RRT>()->setGoalBias(_GoalBias);
-    _duration = 1;
-     addParameter("Duration", _duration);
-     addParameter("Max Planning Time", _planningTime);
-     addParameter("PropagationStepSize", _propagationStepSize);
-      //set the planner
+
+     //set the planner
      ss->setPlanner(planner);
 
 }
@@ -84,7 +84,7 @@ namespace omplcplanner{
   KauthamDERRTPlanner::~KauthamDERRTPlanner(){
 
   }
-
+//! this function set the necessary parameters for RRT Planner.
   bool KauthamDERRTPlanner::setParameters()
   {
       try{
@@ -95,34 +95,6 @@ namespace omplcplanner{
           }
           else
             return false;
-
-
-        it = _parameters.find("Max Planning Time");
-        if(it != _parameters.end())
-          _planningTime = it->second;
-        else
-         return false;
-
-       it = _parameters.find("PropagationStepSize");
-               if(it != _parameters.end()){
-                     _propagationStepSize = it->second;
-                     ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize);
-         }
-
-              else
-                   return false;
-
-        it = _parameters.find("Max Speed motors");
-        if(it != _parameters.end())
-            _maxspeed = it->second;
-        else
-          return false;
-
-        it = _parameters.find("only final link position?");
-        if(it != _parameters.end())
-             _onlyend = it->second;
-        else
-          return false;
 
       }catch(...){
         return false;

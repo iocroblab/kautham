@@ -69,7 +69,8 @@ namespace Kautham {
 namespace omplcplanner{
 
 
-  //! Constructor
+  //! Constructor create the ODE table enviroment and setup the parameters for ODE.
+
   KauthamDEtableEnvironment::KauthamDEtableEnvironment(WorkSpace* ws, KthReal maxspeed):KauthamDEEnvironment(ws, maxspeed)
   {
 
@@ -80,6 +81,7 @@ namespace omplcplanner{
   {
 
   }
+  //! Setup the parameters for ODE.
 void KauthamDEtableEnvironment::SetPlanningParameters()
 {
 
@@ -88,12 +90,15 @@ void KauthamDEtableEnvironment::SetPlanningParameters()
     minControlSteps_ = 10;
     maxControlSteps_ = 50;
 }
-
+//! this is the reimplementation of the virtual function of OpenDEEnvironment, that describe the number of parameter used to describe control input.
 unsigned int KauthamDEtableEnvironment::getControlDimension(void) const
 {
     return 2;
     //return 3;
 }
+/*! this is the reimplementation of the virtual function of OpenDEEnvironment
+ * which describe the control bounds,the bounding box to performe sampling control.
+ */
 void KauthamDEtableEnvironment::getControlBounds(std::vector< double > &lower, std::vector< double > &upper) const
 {
 
@@ -107,6 +112,10 @@ void KauthamDEtableEnvironment::getControlBounds(std::vector< double > &lower, s
         upper[i]=_maxspeed;
     }
 }
+/*! this is the reimplementation of the virtual function of OpenDEEnvironment
+ * that explain how the control will apply.This function apply the control by
+ * setting the forces, velocities and torques.
+ */
 void KauthamDEtableEnvironment::applyControl (const double *control) const
 {
     //es podria mirar de posar velocitats angulars etc...
@@ -126,7 +135,10 @@ void KauthamDEtableEnvironment::applyControl (const double *control) const
    // return true;
    // }
 
-
+/*! This is the reimplementation of the virtual function of OpenDEEnvironment
+ * This method set the parameters for the contact, like what will be the value
+ * of friction coefficient, etc.
+ */
  void KauthamDEtableEnvironment::setupContact(dGeomID geom1, dGeomID geom2, dContact &contact) const
    {
 
