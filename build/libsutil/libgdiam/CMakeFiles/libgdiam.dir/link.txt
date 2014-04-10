@@ -1,2 +1,0 @@
-/usr/bin/ar cr liblibgdiam.a  CMakeFiles/libgdiam.dir/gdiam.cpp.o
-/usr/bin/ranlib liblibgdiam.a
