@@ -105,38 +105,92 @@ Namespaces</h2></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga90fc1f645c5b78bb44ccabfd4d23482d"></a><!-- doxytag: member="libPlanner::KauthamDEPlanner" ref="ga90fc1f645c5b78bb44ccabfd4d23482d" args="(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::KauthamDEPlanner</b> (SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga90fc1f645c5b78bb44ccabfd4d23482d">Kautham::omplcplanner::KauthamDEPlanner::KauthamDEPlanner</a> (SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">KauthanDEplanner is the base class for all the planner that use the dynamic enviroment for planning. all the planners will be drived from this class and will reimplement the trysolve function. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga59f114f935626b444d645360a8db1915"></a><!-- doxytag: member="libPlanner::~KauthamDEPlanner" ref="ga59f114f935626b444d645360a8db1915" args="()" -->
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga59f114f935626b444d645360a8db1915">Kautham::omplcplanner::KauthamDEPlanner::~KauthamDEPlanner</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">void destructor <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga9faa30e88dec1cb2ced73b6fa2a0ffec"></a><!-- doxytag: member="libPlanner::setParameters" ref="ga9faa30e88dec1cb2ced73b6fa2a0ffec" args="()" -->
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::setParameters</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga6fcb6471833157adad155db3efba47c7"></a><!-- doxytag: member="libPlanner::trySolve" ref="ga6fcb6471833157adad155db3efba47c7" args="()" -->
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::trySolve</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga9faa30e88dec1cb2ced73b6fa2a0ffec">Kautham::omplcplanner::KauthamDEPlanner::setParameters</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">set the planning parameters.  <a href="#ga9faa30e88dec1cb2ced73b6fa2a0ffec"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga6fcb6471833157adad155db3efba47c7">Kautham::omplcplanner::KauthamDEPlanner::trySolve</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the path and returns the boolean value.  <a href="#ga6fcb6471833157adad155db3efba47c7"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga506cf9f7a73d43eb87178babb73a68a6"></a><!-- doxytag: member="libPlanner::_maxspeed" ref="ga506cf9f7a73d43eb87178babb73a68a6" args="" -->
-KthReal&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::_maxspeed</b></td></tr>
+KthReal&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga506cf9f7a73d43eb87178babb73a68a6">Kautham::omplcplanner::KauthamDEPlanner::_maxspeed</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">describe the max. speed of motors. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gaf7be375aa926847d34c2592b138c18f2"></a><!-- doxytag: member="libPlanner::_onlyend" ref="gaf7be375aa926847d34c2592b138c18f2" args="" -->
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::_onlyend</b></td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#gaf7be375aa926847d34c2592b138c18f2">Kautham::omplcplanner::KauthamDEPlanner::_onlyend</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">describe that only TCP will move of complete robot. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga070b53dad36b78f67bfe8efe158443f6"></a><!-- doxytag: member="libPlanner::_planningTime" ref="ga070b53dad36b78f67bfe8efe158443f6" args="" -->
-double&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::_planningTime</b></td></tr>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga070b53dad36b78f67bfe8efe158443f6">Kautham::omplcplanner::KauthamDEPlanner::_planningTime</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">describe the max. planning time. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga57b3688894340ecdc69674b1017f31ca"></a><!-- doxytag: member="libPlanner::_propagationStepSize" ref="ga57b3688894340ecdc69674b1017f31ca" args="" -->
-double&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::_propagationStepSize</b></td></tr>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga57b3688894340ecdc69674b1017f31ca">Kautham::omplcplanner::KauthamDEPlanner::_propagationStepSize</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the step size of the world. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga0dcf8e23d7d9a4e6167f2e1a5548dd72"></a><!-- doxytag: member="libPlanner::envPtr" ref="ga0dcf8e23d7d9a4e6167f2e1a5548dd72" args="" -->
-oc::OpenDEEnvironmentPtr&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::envPtr</b></td></tr>
+oc::OpenDEEnvironmentPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga0dcf8e23d7d9a4e6167f2e1a5548dd72">Kautham::omplcplanner::KauthamDEPlanner::envPtr</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">pointer to KauthamDE ENviroment. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga022e32fb1c5d210815c43a733bbb5dd6"></a><!-- doxytag: member="libPlanner::m" ref="ga022e32fb1c5d210815c43a733bbb5dd6" args="" -->
 int&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::m</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga7735cd797ba659f2e123a83a84922869"></a><!-- doxytag: member="libPlanner::ss" ref="ga7735cd797ba659f2e123a83a84922869" args="" -->
 oc::OpenDESimpleSetup *&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::ss</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gaf5e6d18220b9876d3bd3373f4c4181a8"></a><!-- doxytag: member="libPlanner::stateSpace" ref="gaf5e6d18220b9876d3bd3373f4c4181a8" args="" -->
-KauthamDEStateSpace *&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::stateSpace</b></td></tr>
+KauthamDEStateSpace *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#gaf5e6d18220b9876d3bd3373f4c4181a8">Kautham::omplcplanner::KauthamDEPlanner::stateSpace</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">pointer to kauthamDEStatespace. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga1cc1d819b5b582ddd28bbfbfe6ea06a6"></a><!-- doxytag: member="libPlanner::stateSpacePtr" ref="ga1cc1d819b5b582ddd28bbfbfe6ea06a6" args="" -->
-ob::StateSpacePtr&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham::omplcplanner::KauthamDEPlanner::stateSpacePtr</b></td></tr>
+ob::StateSpacePtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lib_planner.html#ga1cc1d819b5b582ddd28bbfbfe6ea06a6">Kautham::omplcplanner::KauthamDEPlanner::stateSpacePtr</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">state space pointer to <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_state_space.html">KauthamDEStateSpace</a>. <br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <p>contains planners to solve the path planning problems </p>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>Add detailed description of library libplanner</dd></dl>
+<hr/><h2>Function Documentation</h2>
+<a class="anchor" id="ga9faa30e88dec1cb2ced73b6fa2a0ffec"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEPlanner::setParameters" ref="ga9faa30e88dec1cb2ced73b6fa2a0ffec" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="group__lib_planner.html#ga9faa30e88dec1cb2ced73b6fa2a0ffec">Kautham::omplcplanner::KauthamDEPlanner::setParameters</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>set the planning parameters. </p>
+<p>setParameter function set the planning parameters for the planners </p>
+
+<p>Implements <a class="el" href="class_kautham_1_1_planner.html">Kautham::Planner</a>.</p>
+
+<p>Reimplemented in <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_r_r_t_planner.html#a873f9fc0a2e3c7adc68c56d324f48980">Kautham::omplcplanner::KauthamDERRTPlanner</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga6fcb6471833157adad155db3efba47c7"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEPlanner::trySolve" ref="ga6fcb6471833157adad155db3efba47c7" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="group__lib_planner.html#ga6fcb6471833157adad155db3efba47c7">Kautham::omplcplanner::KauthamDEPlanner::trySolve</a> </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Compute the path and returns the boolean value. </p>
+<p>this is the main function that compute the path in dynamic enviroment. where the controles will be applied by the ODE. </p>
+
+<p>Implements <a class="el" href="class_kautham_1_1_planner.html">Kautham::Planner</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -155,7 +209,7 @@ ob::StateSpacePtr&#160;</td><td class="memItemRight" valign="bottom"><b>Kautham:
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 10 2014 12:14:48 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 10 2014 16:10:08 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
