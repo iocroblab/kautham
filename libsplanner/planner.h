@@ -98,6 +98,7 @@ namespace Kautham {
     Sample*                       _init;
     Sample*                       _goal;
     vector<Sample*>               _path;
+    vector< vector< vector<KthReal> > >  _StateBodies;
     vector<Sample*>               _simulationPath;
     vector<mt::Transform>         _cameraPath;
     WorkSpace*                    _wkSpace;
