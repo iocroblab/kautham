@@ -84,6 +84,7 @@ namespace omplcplanner{
      // Constructor to pass all the bodies of the scene (workspace) and reading their information (position, orientation, vertices, etc ...)
      // Once filled chainMap worldCreate method is called.
      //! Constructor
+
 KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed): oc::OpenDEEnvironment()
   {
       KinematicChain* chain(new KinematicChain);

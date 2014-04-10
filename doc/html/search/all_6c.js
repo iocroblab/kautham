@@ -7,7 +7,7 @@ var searchData=
   ['limit',['limit',['../classode__element.html#a371399d539b8a51e606f6e446b04bc21',1,'ode_element::limit()'],['../classurdf__link.html#a031ca4c0fb5d10efdb28eafd4bbe82ad',1,'urdf_link::limit()']]],
   ['limits',['limits',['../struct_t_xrobot_1_1limits.html',1,'TXrobot']]],
   ['linearlocalplanner',['LinearLocalPlanner',['../class_kautham_1_1_i_o_c_1_1_linear_local_planner.html',1,'Kautham::IOC']]],
-  ['link',['Link',['../class_kautham_1_1_link.html#a76b63c74ee5b4b9b66a21571f40e6950',1,'Kautham::Link::Link()'],['../classurdf__robot.html#acfc48152de2da36913da80f5469e13ae',1,'urdf_robot::link()']]],
+  ['link',['link',['../classurdf__robot.html#acfc48152de2da36913da80f5469e13ae',1,'urdf_robot::link()'],['../class_kautham_1_1_link.html#a76b63c74ee5b4b9b66a21571f40e6950',1,'Kautham::Link::Link()']]],
   ['link',['Link',['../class_kautham_1_1_link.html',1,'Kautham']]],
   ['links',['links',['../class_kautham_1_1_robot.html#a970cd7d556856be514998ffd070ddda9',1,'Kautham::Robot']]],
   ['loadanndata',['loadAnnData',['../class_kautham_1_1_sample_set.html#a9dcb4578c2d64a23ac115d4a4c1ec043',1,'Kautham::SampleSet']]],

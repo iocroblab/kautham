@@ -149,7 +149,8 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // Class KauthamDEEnvironment
     /////////////////////////////////////////////////////////////////////////////////////////////////*/
-    //! This class is the base class for all the kautham planners that use the ompl::control planners.
+//! KauthamDEEnvironment class read the workspace and generate the dynamic environment.
+//! this class is the parent of all the enviroments (like KauthamDERobotEnvironment, KauthamDETableEnvironment,..) in which ODE will apply the control.
     class KauthamDEEnvironment: public oc::OpenDEEnvironment
     {
         public:
@@ -163,7 +164,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
          // call ChainMap. (each chain has information object joints, etc ... (see documentation Odin.) Once full ChainMap called the creation of the world with createWorld.
          // every body within chainMap called as nomrobot + nomlink
 
-        KauthamDEEnvironment(WorkSpace* wkspace, KthReal maxspeed);
+        KauthamDEEnvironment(WorkSpace* wkspace, KthReal maxspeed);//!< constructor will build the KinamaticChainMap (each chain has information about objects, joints, etc)and creat the world.
         ~KauthamDEEnvironment(void);
 
         //aprofitant la informació del ChainMap va recorrent tots els cossos del workspace altre cop i va creant bodysode i omplint un mapa StateBodiesmap_ amb els bodys. Aquest mapa després s'anirà extreient
@@ -178,10 +179,10 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
          // since ODIN only accepted if entered via primitive GUI.
          // Call setjointandmotors2bodies is also part of the code that I doubt not dominate quite as if I introduce engines joints or links.
          // At first I chose to introduce engines (this is what I think makes the code).
-        void createWorld(WorkSpace *wkspace);
-        void destroyWorld();
+        void createWorld(WorkSpace *wkspace); //!< This function will create the ODE world
+        void destroyWorld(); //!< This function destory the world.
 
-        virtual void SetPlanningParameters();
+        virtual void SetPlanningParameters(); //!< setup the necessary planning parameter for OpenDE.
 
 
 
@@ -222,7 +223,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
         // Fill up so early Doby vector corresponding to the robot which is planned .
 
         dBodyID makePrimitive(const vector< double >& position, const vector< double >& orientation,
-                               const double mass, const vector< double >& params);
+                               const double mass, const vector< double >& params); //!< this function creates ODE Bodies (dBody).
 
         void makePrimitiveForComposite(const vector< double >& position, const vector< double >& orientation,
                                         const double mass, const vector< double > params, const dBodyID coreBody);
@@ -231,13 +232,13 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
                              const vector<double> orientation,
                            const vector<double> vertexes,
                            const vector<unsigned int> indexes,
-                           const double mass);
+                           const double mass); //!< This function make the ODE bodies (dBody) using triangular mesh.
 
          void makeGeomPrimitive(const string name, const vector<double>& position,
                                 const vector<double>& orientation, const vector<double>& params);
 
          void makeGeomTrimesh(const string name, const vector<double>& position, const vector<double>& orientation,
-                            const vector<double>& vertexes, const vector<unsigned int>& indexes);
+                            const vector<double>& vertexes, const vector<unsigned int>& indexes); //!< This function create the geometries of ODE bodies using triangular mesh.
 
 
 
@@ -263,8 +264,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
             double d;
             double theta;
             double alpha;
-        } odinObject;
-
+        } odinObject;//! Contains information about a single body position , orientation , shape, size, etc.
 
         typedef struct
         {
@@ -274,7 +274,8 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
             unsigned int type;
             double loStop;
             double hiStop;
-        } Joint;
+        } Joint;  //! Contains information about the type of joint that is their position , the limits of their values ​​and the names of the objects that we want to join.
+
 
 
         typedef struct
@@ -282,7 +283,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
             string name;
             string targetJoint;
             vector<double> fmax;
-        } Motor;
+        } Motor; //! Contains information about the motor
 
 
 
@@ -301,52 +302,50 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
             map<string, Motor> motors;
             bool internalCollision;
             string dhType;
-        } KinematicChain;
+        } KinematicChain; //! KinematicChain represents a robot with all its objects, joints and all information .
 
 
-        map<string, KinematicChain> chainMap;
-        virtual void setjointsandmotors2bodies(map<string,dBodyID> stateBodiesmap_, map<string, KinematicChain> chainMapchainMap, WorkSpace* ws);
-        void getTrimesh(SoSeparator *ivmodel, odinObject* obj, double scale);
 
-        vector<dBodyID> bodies;
-        dSpaceID _OpenDEspace;
-        dWorldID bodyworld;
-        map<string, dBodyID> stateBodiesmap_;
-        int _NumLinksFirstRobot;
-        KthReal _maxspeed;
+        map<string, KinematicChain> chainMap; //!< map KinamaticChain
+        virtual void setjointsandmotors2bodies(map<string,dBodyID> stateBodiesmap_, map<string, KinematicChain> chainMapchainMap, WorkSpace* ws);//!< this function set the joint and motor for in ODE bodies
+        void getTrimesh(SoSeparator *ivmodel, odinObject* obj, double scale);//!< get the triangular mesh.
 
-        unsigned int getNumLinksFirstRobot(){return _NumLinksFirstRobot;};
+        vector<dBodyID> bodies; //!< Vector of ODE Bodies.
+        dSpaceID _OpenDEspace;  //!< Define the ODE space.
+        dWorldID bodyworld;     //!< Define the ODE world.
+        map<string, dBodyID> stateBodiesmap_;//!< stateBodiesmap_  Map ODE bodies , it contains the same information as ODE bodies has but in the form of chainMap.
+
+        int _NumLinksFirstRobot; //!< define number of links of robot.
+        KthReal _maxspeed;       //!< Define max. speed of motor.
+
+        unsigned int getNumLinksFirstRobot(){return _NumLinksFirstRobot;}; //!< returns number of links of first robot
 
         //la idea es omplir _StateBodies de ompl fent que els dels primers indexs siguin els cossos a planejar amb ells , es a dir el robot o la taula
 
 
         // fill _StateBodies the idea of making the fill Indexes are the first bodies to plan with them, ie the robot or table
 
-        vector<dBodyID> fillstatebodies(map<string,dBodyID> stateBodiesmap_, WorkSpace *wkspace);
-
-
-
+        vector<dBodyID> fillstatebodies(map<string,dBodyID> stateBodiesmap_, WorkSpace *wkspace);//!< this function return the vector of ODE bodies in such a way that, robot will be the first body.
 
 
            private:
 
             static const double toRad  = M_PI/180.;
 
-
+            //!< This function will build the kinamatic chain for Robot
             bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector<double>& basePos);
+
+            //!< This function will build the kinamatic chain for Obstracle
             bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Obstacle *obstacle, double scale, int k);
 
 
             bool getTransformation(KauthamDEEnvironment::KinematicChain* chain, string robotDHType, Link* link, odinObject* obj, string robotName, vector<double>& rotAxis);
 
-
             bool getMotion(KauthamDEEnvironment::KinematicChain* chain, Link* link, odinObject* obj, string robotName, vector<double>& rotAxis);
 
             void searchColor(SoSeparator* root, odinObject* obj);
 
-
-            vector<double> baseGetPos(Robot* robot);
-
+            vector<double> baseGetPos(Robot* robot);// this function will returns the position and orientation of robot.
 
             void makeMotor(dBodyID body1, dBodyID body2,const unsigned int type, const vector< double >& axes,const vector< double >& fmax);
             void addMotor2Joint(dJointID joint, vector<double>& maxForces);

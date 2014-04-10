@@ -81,6 +81,7 @@ var searchData=
   ['gettheta',['getTheta',['../class_kautham_1_1_link.html#a9c785fdc80c84d23cb1b432213ff11ce',1,'Kautham::Link::getTheta()'],['../class_kautham_1_1_i_o_c_1_1_const_linear_local_planner.html#aff940cfcb08532ca577276e021108417',1,'Kautham::IOC::ConstLinearLocalPlanner::getTheta()']]],
   ['gettmat',['getTMat',['../class_kautham_1_1_s_d_k_sampler.html#a5f9968376702fb0e3cecaf2d0a134019',1,'Kautham::SDKSampler']]],
   ['gettransformation',['getTransformation',['../class_kautham_1_1_link.html#aa7de09ca202971a706e5a6a2ebab143f',1,'Kautham::Link']]],
+  ['gettrimesh',['getTrimesh',['../class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#acfb01cb7c870506852c3cda4e1786be2',1,'Kautham::omplcplanner::KauthamDEEnvironment']]],
   ['gettrunk',['getTrunk',['../class_kautham_1_1_robot.html#a145f6b4bf0fb304058a175bca36d90a3',1,'Kautham::Robot']]],
   ['getvmatrix',['getVMatrix',['../class_kautham_1_1_sequence.html#a7f359370f4ea9cb2a8a2b2672c7598d9',1,'Kautham::Sequence::getVMatrix(unsigned long int code)'],['../class_kautham_1_1_sequence.html#a64b2d1311f8ff2f9e974f9c7630cc9b9',1,'Kautham::Sequence::getVMatrix(void)']]],
   ['getw',['getW',['../class_kautham_1_1_sequence.html#a4c74debc5872e12a4bce2e0d0d879b40',1,'Kautham::Sequence']]],

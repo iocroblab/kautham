@@ -53,8 +53,9 @@ namespace omplcplanner{
 
 
 //Igual que omplcplanner es la base per a tots els planners de control com omplcrrtplanner , etc.. KauthamOpenDEPlanner té com a objectiu servir de base per a tots els planners que derivessin i que usessin la simulació dinàmica) Sobretot ha de reimplementar el mètode trysolve basantse en la demo d'OMPL OpenDERigidBodyPlanning.
-
 // Like omplcplanner is the basis for all planners as omplcrrtplanner control, etc. .. KauthamOpenDEPlanner aims to serve as a basis for deriving all the planners and would use dynamic simulation) Especially should reimplement the method trysolve On the basis of the demo fill OpenDERigidBodyPlanning.
+
+//!KauthanDEplanner is the base class for all the planner that use the dynamic enviroment for planning. all the planners will be drived from this class and will reimplement the trysolve function.
   KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws) : Planner(stype, init, goal, samples, ws)
   {
       //set intial values from parent class data
@@ -95,7 +96,7 @@ namespace omplcplanner{
   KauthamDEPlanner::~KauthamDEPlanner(){
 
   }
-
+  //! this is the main function that compute the path in dynamic enviroment. where the controles will be applied by the ODE.
   bool KauthamDEPlanner::trySolve(void)
   {
   dInitODE2(0);
@@ -274,7 +275,7 @@ namespace omplcplanner{
         return 0;
 
   }
-
+//! setParameter function set the planning parameters for the planners
   bool KauthamDEPlanner::setParameters()
     {
         try{
