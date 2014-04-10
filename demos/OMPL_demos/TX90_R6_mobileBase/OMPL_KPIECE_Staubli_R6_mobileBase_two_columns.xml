@@ -13,6 +13,7 @@
 	<Scene scene="scenes/columns.iv" scale="18.0">
 		<Location TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="0.0" X="250.0"/> 
 	</Scene>
+	<Controls controls="controls/mobile_TX90_plano.cntr"/>
 	<Planner>
         <Parameters>
                 <Name>omplKPIECE</Name>
