@@ -1,0 +1,2 @@
+/usr/bin/ar cr liblibplanner.a  CMakeFiles/libplanner.dir/planner.cpp.o
+/usr/bin/ranlib liblibplanner.a

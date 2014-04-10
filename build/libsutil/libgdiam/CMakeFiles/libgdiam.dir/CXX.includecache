@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/muhayyuddin/IOC/kautham/libsutil/libgdiam/gdiam.cpp
+gdiam.hpp
+/home/muhayyuddin/IOC/kautham/libsutil/libgdiam/gdiam.hpp
+
+/home/muhayyuddin/IOC/kautham/libsutil/libgdiam/gdiam.hpp
+stdlib.h
+-
+stdio.h
+-
+assert.h
+-
+memory.h
+-
+math.h
+-
+vector
+-
+algorithm
+-
+cstring
+-
+
