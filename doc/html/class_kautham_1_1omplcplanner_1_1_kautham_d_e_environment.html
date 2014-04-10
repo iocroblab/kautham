@@ -124,7 +124,7 @@ Inheritance diagram for Kautham::omplcplanner::KauthamDEEnvironment:</div>
   <img src="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.png" usemap="#Kautham::omplcplanner::KauthamDEEnvironment_map" alt=""/>
   <map id="Kautham::omplcplanner::KauthamDEEnvironment_map" name="Kautham::omplcplanner::KauthamDEEnvironment_map">
 <area href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html" alt="Kautham::omplcplanner::KauthamDErobotEnvironment" shape="rect" coords="0,56,312,80"/>
-<area href="class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html" alt="Kautham::omplcplanner::KauthamDEtableEnvironment" shape="rect" coords="322,56,634,80"/>
+<area href="class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html" title="This class define the pure virtual methods of OpenDEEnviroment and define how the control will be app..." alt="Kautham::omplcplanner::KauthamDEtableEnvironment" shape="rect" coords="322,56,634,80"/>
 </map>
  </div></div>
 
@@ -133,11 +133,12 @@ Inheritance diagram for Kautham::omplcplanner::KauthamDEEnvironment:</div>
 <tr><td colspan="2"><h2><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_joint.html">Joint</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains information about the type of joint that is their position , the limits of their values ​​and the names of the Bodies that we want to join.  <a href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_joint.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KinematicChain</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_motor.html">Motor</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains information about the type of joint that is their position , the limits of their values ​​and the names of the objects that we want to join.  <a href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_motor.html#details">More...</a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains information about the motor.  <a href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_motor.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1odin_object.html">odinObject</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains information about a single body position , orientation , shape, size, etc.  <a href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1odin_object.html#details">More...</a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains information about body position , orientation , shape, size, etc.  <a href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1odin_object.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#abd0a30c238ad92fa738624566ead4963">KauthamDEEnvironment</a> (<a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *wkspace, KthReal maxspeed)</td></tr>
@@ -151,8 +152,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa04105d20716eeca13c39e921c06a92e"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::destroyWorld" ref="aa04105d20716eeca13c39e921c06a92e" args="()" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#aa04105d20716eeca13c39e921c06a92e">destroyWorld</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function destory the world. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a32bc3e1de3d08ec7e5a0ce320e2c423f"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::fillstatebodies" ref="a32bc3e1de3d08ec7e5a0ce320e2c423f" args="(map&lt; string, dBodyID &gt; stateBodiesmap_, WorkSpace *wkspace)" -->
-vector&lt; dBodyID &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fillstatebodies</b> (map&lt; string, dBodyID &gt; stateBodiesmap_, <a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *wkspace)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">vector&lt; dBodyID &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a32bc3e1de3d08ec7e5a0ce320e2c423f">fillstatebodies</a> (map&lt; string, dBodyID &gt; <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#aa0d361a5b3c6dd34ed823e74b50ead95">stateBodiesmap_</a>, <a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *wkspace)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">returns number of links of first robot  <a href="#a32bc3e1de3d08ec7e5a0ce320e2c423f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aefd55e2cf0c6af629775e0b0170dd0a1"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::getNumLinksFirstRobot" ref="aefd55e2cf0c6af629775e0b0170dd0a1" args="()" -->
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getNumLinksFirstRobot</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acfb01cb7c870506852c3cda4e1786be2"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::getTrimesh" ref="acfb01cb7c870506852c3cda4e1786be2" args="(SoSeparator *ivmodel, odinObject *obj, double scale)" -->
@@ -172,7 +173,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>makePrimitiveForCompo
 dBodyID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a62ff37c1cee87be8d400fe24325f04b2">makeTriMesh</a> (const vector&lt; double &gt; position, const vector&lt; double &gt; orientation, const vector&lt; double &gt; vertexes, const vector&lt; unsigned int &gt; indexes, const double mass)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function make the ODE bodies (dBody) using triangular mesh. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6bad96a7cb7f58483c4d481b5c06bab8"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::setjointsandmotors2bodies" ref="a6bad96a7cb7f58483c4d481b5c06bab8" args="(map&lt; string, dBodyID &gt; stateBodiesmap_, map&lt; string, KinematicChain &gt; chainMapchainMap, WorkSpace *ws)" -->
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a6bad96a7cb7f58483c4d481b5c06bab8">setjointsandmotors2bodies</a> (map&lt; string, dBodyID &gt; stateBodiesmap_, map&lt; string, <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KinematicChain</a> &gt; chainMapchainMap, <a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *ws)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a6bad96a7cb7f58483c4d481b5c06bab8">setjointsandmotors2bodies</a> (map&lt; string, dBodyID &gt; <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#aa0d361a5b3c6dd34ed823e74b50ead95">stateBodiesmap_</a>, map&lt; string, <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KinematicChain</a> &gt; chainMapchainMap, <a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *ws)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">this function set the joint and motor for in ODE bodies <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a469ece4e58a206ac3b712e53b4ba097b"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::SetPlanningParameters" ref="a469ece4e58a206ac3b712e53b4ba097b" args="()" -->
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a469ece4e58a206ac3b712e53b4ba097b">SetPlanningParameters</a> ()</td></tr>
@@ -184,20 +185,25 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>triang_CB</b> 
 <tr><td colspan="2"><h2><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac41a748386c5ac986c8a82acb48baebe"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::_maxspeed" ref="ac41a748386c5ac986c8a82acb48baebe" args="" -->
-KthReal&#160;</td><td class="memItemRight" valign="bottom"><b>_maxspeed</b></td></tr>
+KthReal&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#ac41a748386c5ac986c8a82acb48baebe">_maxspeed</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define max. speed of motor. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae52a1ffe4daaee91b344f112ebe4d7f1"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::_NumLinksFirstRobot" ref="ae52a1ffe4daaee91b344f112ebe4d7f1" args="" -->
-int&#160;</td><td class="memItemRight" valign="bottom"><b>_NumLinksFirstRobot</b></td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#ae52a1ffe4daaee91b344f112ebe4d7f1">_NumLinksFirstRobot</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">define number of links of robot. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a63e4710a05ffd916c27a9bf4c9d5ba1a"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::_OpenDEspace" ref="a63e4710a05ffd916c27a9bf4c9d5ba1a" args="" -->
-dSpaceID&#160;</td><td class="memItemRight" valign="bottom"><b>_OpenDEspace</b></td></tr>
+dSpaceID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a63e4710a05ffd916c27a9bf4c9d5ba1a">_OpenDEspace</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the ODE space. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab8321af318beb85dcead0b18c7fb57fd"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::bodies" ref="ab8321af318beb85dcead0b18c7fb57fd" args="" -->
-vector&lt; dBodyID &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>bodies</b></td></tr>
+vector&lt; dBodyID &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#ab8321af318beb85dcead0b18c7fb57fd">bodies</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Vector of ODE Bodies. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add89c0945ea2f2e723aa6f463fb172cc"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::bodyworld" ref="add89c0945ea2f2e723aa6f463fb172cc" args="" -->
-dWorldID&#160;</td><td class="memItemRight" valign="bottom"><b>bodyworld</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4ca2ee8214fdeb20f22a066f927d5730"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::chainMap" ref="a4ca2ee8214fdeb20f22a066f927d5730" args="" -->
-map&lt; string, <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KinematicChain</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a4ca2ee8214fdeb20f22a066f927d5730">chainMap</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">map KinamaticChain <br/></td></tr>
+dWorldID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#add89c0945ea2f2e723aa6f463fb172cc">bodyworld</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the ODE world. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">map&lt; string, <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KinematicChain</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a4ca2ee8214fdeb20f22a066f927d5730">chainMap</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KinematicChain</a> represents a robot with all its objects, joints and all information .  <a href="#a4ca2ee8214fdeb20f22a066f927d5730"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0d361a5b3c6dd34ed823e74b50ead95"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::stateBodiesmap_" ref="aa0d361a5b3c6dd34ed823e74b50ead95" args="" -->
-map&lt; string, dBodyID &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>stateBodiesmap_</b></td></tr>
+map&lt; string, dBodyID &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#aa0d361a5b3c6dd34ed823e74b50ead95">stateBodiesmap_</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">stateBodiesmap_ Map ODE bodies , it contains the same information as ODE bodies has but in the form of chainMap. <br/></td></tr>
 <tr><td colspan="2"><h2><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac95135b699121c340d5e0abcc2b96b3f"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::addMotor2Joint" ref="ac95135b699121c340d5e0abcc2b96b3f" args="(dJointID joint, vector&lt; double &gt; &amp;maxForces)" -->
@@ -205,9 +211,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>addMotor2Joint</b> (d
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e9977061c538825101d4f21227375fd"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::baseGetPos" ref="a9e9977061c538825101d4f21227375fd" args="(Robot *robot)" -->
 vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>baseGetPos</b> (<a class="el" href="class_kautham_1_1_robot.html">Robot</a> *robot)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a11d90796c16096ff8e9a78a0a19fb75b"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::buildKinematicChain" ref="a11d90796c16096ff8e9a78a0a19fb75b" args="(KauthamDEEnvironment::KinematicChain *chain, Robot *robot, double scale, vector&lt; double &gt; &amp;basePos)" -->
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>buildKinematicChain</b> (<a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KauthamDEEnvironment::KinematicChain</a> *chain, <a class="el" href="class_kautham_1_1_robot.html">Robot</a> *robot, double scale, vector&lt; double &gt; &amp;basePos)</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a11d90796c16096ff8e9a78a0a19fb75b">buildKinematicChain</a> (<a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KauthamDEEnvironment::KinematicChain</a> *chain, <a class="el" href="class_kautham_1_1_robot.html">Robot</a> *robot, double scale, vector&lt; double &gt; &amp;basePos)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function will build the kinamatic chain for <a class="el" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a122a1ea3205bbd77067ead6e6eaf341f"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::buildKinematicChain" ref="a122a1ea3205bbd77067ead6e6eaf341f" args="(KauthamDEEnvironment::KinematicChain *chain, Obstacle *obstacle, double scale, int k)" -->
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>buildKinematicChain</b> (<a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KauthamDEEnvironment::KinematicChain</a> *chain, <a class="el" href="class_kautham_1_1_obstacle.html">Obstacle</a> *obstacle, double scale, int k)</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a122a1ea3205bbd77067ead6e6eaf341f">buildKinematicChain</a> (<a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KauthamDEEnvironment::KinematicChain</a> *chain, <a class="el" href="class_kautham_1_1_obstacle.html">Obstacle</a> *obstacle, double scale, int k)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function will build the kinamatic chain for Obstracle. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5058d6eec8d2aabf9a00bbdde92998d"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::getMotion" ref="ac5058d6eec8d2aabf9a00bbdde92998d" args="(KauthamDEEnvironment::KinematicChain *chain, Link *link, odinObject *obj, string robotName, vector&lt; double &gt; &amp;rotAxis)" -->
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>getMotion</b> (<a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KauthamDEEnvironment::KinematicChain</a> *chain, <a class="el" href="class_kautham_1_1_link.html">Link</a> *link, <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1odin_object.html">odinObject</a> *obj, string robotName, vector&lt; double &gt; &amp;rotAxis)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6071732e959bc3d2e49eb9b749006988"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::getTransformation" ref="a6071732e959bc3d2e49eb9b749006988" args="(KauthamDEEnvironment::KinematicChain *chain, string robotDHType, Link *link, odinObject *obj, string robotName, vector&lt; double &gt; &amp;rotAxis)" -->
@@ -261,6 +269,54 @@ static const double&#160;</td><td class="memItemRight" valign="bottom"><b>toRad<
 
 </div>
 </div>
+<hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a32bc3e1de3d08ec7e5a0ce320e2c423f"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::fillstatebodies" ref="a32bc3e1de3d08ec7e5a0ce320e2c423f" args="(map&lt; string, dBodyID &gt; stateBodiesmap_, WorkSpace *wkspace)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">vector&lt; dBodyID &gt; <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a32bc3e1de3d08ec7e5a0ce320e2c423f">Kautham::omplcplanner::KauthamDEEnvironment::fillstatebodies</a> </td>
+          <td>(</td>
+          <td class="paramtype">map&lt; string, dBodyID &gt;&#160;</td>
+          <td class="paramname"><em>stateBodiesmap_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *&#160;</td>
+          <td class="paramname"><em>wkspace</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>returns number of links of first robot </p>
+<p>this function return the vector of ODE bodies in such a way that, robot will be the first body. </p>
+
+</div>
+</div>
+<hr/><h2>Member Data Documentation</h2>
+<a class="anchor" id="a4ca2ee8214fdeb20f22a066f927d5730"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEEnvironment::chainMap" ref="a4ca2ee8214fdeb20f22a066f927d5730" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">map&lt;string, <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KinematicChain</a>&gt; <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a4ca2ee8214fdeb20f22a066f927d5730">Kautham::omplcplanner::KauthamDEEnvironment::chainMap</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p><a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html">KinematicChain</a> represents a robot with all its objects, joints and all information . </p>
+<p>map KinamaticChain </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>libsplanner/libkauthamopende/<a class="el" href="_kautham_open_d_e_environment_8h_source.html">KauthamOpenDEEnvironment.h</a></li>
 <li>libsplanner/libkauthamopende/KauthamOpenDEEnvironment.cpp</li>
@@ -283,7 +339,7 @@ static const double&#160;</td><td class="memItemRight" valign="bottom"><b>toRad<
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 10 2014 16:10:10 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 10 2014 18:57:59 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

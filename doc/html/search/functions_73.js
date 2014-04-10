@@ -67,6 +67,7 @@ var searchData=
   ['settarget',['setTarget',['../class_kautham_1_1_constrained_kinematic.html#aed85824282c8b37dfee134160c0aaa43',1,'Kautham::ConstrainedKinematic::setTarget()'],['../class_kautham_1_1_inverse_kinematic.html#a85beeabdedff8592ba864f43f4dc1f04',1,'Kautham::InverseKinematic::setTarget()']]],
   ['settheta',['setTheta',['../class_kautham_1_1_link.html#a3bfb15fe10636e3347cec5936b3a6df3',1,'Kautham::Link']]],
   ['settransparency',['setTransparency',['../class_kautham_1_1_sample.html#a2a27b2b6ee3805b0217ad0ffda7b4e3d',1,'Kautham::Sample']]],
+  ['setupcontact',['setupContact',['../class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html#a435ec7f0481908d87e6f722c6d045097',1,'Kautham::omplcplanner::KauthamDEtableEnvironment']]],
   ['setvalue',['setValue',['../class_kautham_1_1_link.html#a0af6a48584b0144a4131e149f5c24d73',1,'Kautham::Link']]],
   ['setw',['setW',['../class_kautham_1_1_sequence.html#a5d2cd4905ef2ffd207b503ef6d1db2c7',1,'Kautham::Sequence']]],
   ['setweights',['setWeights',['../class_kautham_1_1omplplanner_1_1weigthed_real_vector_state_space.html#a430cd83c477dd61c9b947f2e01178b13',1,'Kautham::omplplanner::weigthedRealVectorStateSpace']]],

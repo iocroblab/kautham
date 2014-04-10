@@ -93,10 +93,14 @@ namespace omplcplanner{
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Class KauthamOpenDEPlanner
 /////////////////////////////////////////////////////////////////////////////////////////////////
-//! KauthamDEPlanner will be the parent class of all the planners that will plan in dynamic enviroment.
+
+/*! KauthanDEplanner is the base class for all the planner that use the dynamic enviroment for planning.
+ * All the planners will be drived from this class and reimplement the trysolve function.
+ */
 class KauthamDEPlanner: public Planner
 {
 public:
+    //! The constructor will define all the necessary parameters for planning.
     KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~KauthamDEPlanner();
     double _propagationStepSize; //!< Define the step size of the world.
