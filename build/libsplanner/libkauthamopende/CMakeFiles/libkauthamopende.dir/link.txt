@@ -1,2 +1,0 @@
-/usr/bin/ar cr liblibkauthamopende.a  CMakeFiles/libkauthamopende.dir/KauthamOpenDErobotEnvironment.cpp.o CMakeFiles/libkauthamopende.dir/KauthamOpenDEPlanner.cpp.o CMakeFiles/libkauthamopende.dir/KauthamOpenDEauxiliarclasses.cpp.o CMakeFiles/libkauthamopende.dir/KauthamOpenDEEnvironment.cpp.o CMakeFiles/libkauthamopende.dir/KauthamOpenDEtableEnvironment.cpp.o CMakeFiles/libkauthamopende.dir/KauthamOpenDERRTPlanner.cpp.o
-/usr/bin/ranlib liblibkauthamopende.a
