@@ -9,6 +9,7 @@ var searchData=
   ['clearance',['clearance',['../class_kautham_1_1omplplanner_1_1_validity_checker.html#a863caa90bb26bb121de12f591c3b0135',1,'Kautham::omplplanner::ValidityChecker']]],
   ['cleargraph',['clearGraph',['../class_kautham_1_1_i_o_c_1_1grid_planner.html#a487d57a7018fd302614755e9c90f425d',1,'Kautham::IOC::gridPlanner::clearGraph()'],['../class_kautham_1_1_i_o_c_1_1_p_r_m_planner.html#a2b52500321d14144b7b19a15b2193ce5',1,'Kautham::IOC::PRMPlanner::clearGraph()']]],
   ['clearneighs',['clearNeighs',['../class_kautham_1_1_sample.html#a7318d2e707bfcdf979bd8449d65315c5',1,'Kautham::Sample::clearNeighs()'],['../class_kautham_1_1_sample_set.html#aa9ae596f8120a03c65a7f4dd328e3bb3',1,'Kautham::SampleSet::clearNeighs(unsigned int i)'],['../class_kautham_1_1_sample_set.html#abf20d4d9c9f6c0c086bd915db3caaa9c',1,'Kautham::SampleSet::clearNeighs()']]],
+  ['closeproblem',['closeProblem',['../class_kautham_1_1kauthamshell.html#a905b17dcc4bba0c589e4fdd2b5372a44',1,'Kautham::kauthamshell']]],
   ['collisioncheck',['collisionCheck',['../class_kautham_1_1_robot.html#a6bdd33a2f14276b668473826b561070b',1,'Kautham::Robot::collisionCheck(Obstacle *obs)'],['../class_kautham_1_1_robot.html#a868772d56b20c36f5cc7032faf111270',1,'Kautham::Robot::collisionCheck(Robot *rob)']]],
   ['compose',['compose',['../class_kautham_1_1_t_mat.html#ac977407db80ff38ee0cca7221c6b12cd',1,'Kautham::TMat']]],
   ['computeorientation',['computeorientation',['../class_kautham_1_1_i_o_c_1_1_const_linear_local_planner.html#a7d4c7b59bb403705f99009a7a3e1fb71',1,'Kautham::IOC::ConstLinearLocalPlanner']]],
@@ -26,6 +27,6 @@ var searchData=
   ['createoptimizationobjectivepmd',['createOptimizationObjectivePMD',['../class_kautham_1_1omplplanner_1_1ompl_r_r_t_star_planner.html#ae169131e7860cd7fa51bf8f1bbd1114f',1,'Kautham::omplplanner::omplRRTStarPlanner']]],
   ['createplanner',['createPlanner',['../class_kautham_1_1_problem.html#a4cfbe90889b172b28a47ff704b6303ef',1,'Kautham::Problem']]],
   ['createtd',['createTd',['../class_kautham_1_1_t_mat.html#a29066f8ee6b163cee10795e5333540c5',1,'Kautham::TMat']]],
-  ['createwspace',['createWSpace',['../class_kautham_1_1_problem.html#ae07d35f4738b3d66e2dff90a1e01cc7b',1,'Kautham::Problem']]],
+  ['createwspace',['createWSpace',['../class_kautham_1_1_problem.html#a4f44e067c47f7431996b0c58eeb3f37c',1,'Kautham::Problem']]],
   ['cspace',['cSpace',['../class_kautham_1_1_problem.html#a3e5df75ffb110ba818a0ba066f3a03b8',1,'Kautham::Problem']]]
 ];
