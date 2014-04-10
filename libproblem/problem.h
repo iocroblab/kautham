@@ -95,6 +95,9 @@
 #include <libompl/omplKPIECEplanner.h>
 #endif
 
+#if defined(KAUTHAM_USE_ODE)
+#include <libkauthamopende/KauthamOpenDERRTPlanner.h>
+#endif
 
 #if defined(KAUTHAM_USE_GUIBRO)
 #include <libguibro/consbronchoscopykin.h>
