@@ -77,46 +77,39 @@
 
 #define _USE_MATH_DEFINES
 
-
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 namespace oc = ompl::control;
 
-
-
-
 using namespace std;
-//using namespace libSampling;
 
 namespace Kautham {
 /** \addtogroup libPlanner
  *  @{
  */
-
-
-//namespace libPlanner{
-    namespace omplcplanner{
+namespace omplcplanner{
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Class KauthamOpenDEPlanner
 /////////////////////////////////////////////////////////////////////////////////////////////////
+//! KauthamDEPlanner will be the parent class of all the planners that will plan in dynamic enviroment.
 class KauthamDEPlanner: public Planner
 {
 public:
     KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~KauthamDEPlanner();
-    virtual bool trySolve();
-    double _propagationStepSize;
-    bool setParameters();
-    KthReal _maxspeed;
-    bool _onlyend;
-    double _planningTime;
+    double _propagationStepSize; //!< Define the step size of the world.
+    KthReal _maxspeed; //!< describe the max. speed of motors.
+    bool _onlyend; //!< describe that only TCP will move of complete robot.
+    double _planningTime; //!< describe the max. planning time.
     //oc::SimpleSetupPtr ss;
-    ob::StateSpacePtr stateSpacePtr;
-    oc::OpenDEEnvironmentPtr envPtr;
-    KauthamDEStateSpace *stateSpace;
+    ob::StateSpacePtr stateSpacePtr; //!< state space pointer to KauthamDEStateSpace.
+    oc::OpenDEEnvironmentPtr envPtr; //!< pointer to KauthamDE ENviroment.
+    KauthamDEStateSpace *stateSpace; //!< pointer to kauthamDEStatespace.
     oc::OpenDESimpleSetup *ss;
+    virtual bool trySolve();//!< Compute the path and returns the boolean value.
+    bool setParameters();//!< set the planning parameters.
     int m;
 };
 

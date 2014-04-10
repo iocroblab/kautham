@@ -184,7 +184,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00099"></a>00099     <span class="comment">//En aquesta estructura es guarda la posició i la orientació de cada element del robot una vegada aquest s&#39;ha mogut a la configuració de goal.</span>
 <a name="l00100"></a>00100     <span class="comment">//Així aquesta informació la puc utilitzar a la hora de calcular la distancia de qualsevol configuració a la configuració del GOAL.</span>
 <a name="l00101"></a>00101 
-<a name="l00102"></a>00102 <span class="comment">// This structure keeps the position and orientation of each element of the robot once the configuration has been moved GOAL. </span>
+<a name="l00102"></a>00102      <span class="comment">// This structure keeps the position and orientation of each element of the robot once the configuration has been moved GOAL.</span>
 <a name="l00103"></a>00103      <span class="comment">// So I can use this information in calculating the distance of any configuration settings GOAL.</span>
 <a name="l00104"></a>00104 
 <a name="l00105"></a>00105     vector&lt;KauthamODEobject&gt; smp2KauthamOpenDEState(<a class="code" href="class_kautham_1_1_work_space.html">WorkSpace</a>* w,<a class="code" href="class_kautham_1_1_sample.html" title="Class sample is used to represent a configuration of Cspace.">Sample</a> *goal);
@@ -192,7 +192,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00107"></a>00107     vector&lt;KauthamODEobject&gt; Kauthamodebodies;
 <a name="l00108"></a>00108     <span class="comment">//Kauthamodebodies es un vector de KauthamODEobject on es guarda la informació de tots els elements que formen la cadena cinemàtica del robot.</span>
 <a name="l00109"></a>00109 
-<a name="l00110"></a>00110 <span class="comment">// Kauthamodebodies is a vector KauthamODEobject which keeps information on all the elements that make up the kinematic chain of the robot.</span>
+<a name="l00110"></a>00110     <span class="comment">// Kauthamodebodies is a vector KauthamODEobject which keeps information on all the elements that make up the kinematic chain of the robot.</span>
 <a name="l00111"></a>00111 
 <a name="l00112"></a>00112     <span class="keywordtype">bool</span> onlyend;
 <a name="l00113"></a>00113     <span class="comment">//Esta pensat per poder adaptar el planner a la possibilitat que el GOAL només involucri al TCP ja que podria ajudar en tasques en que l&#39;important sigui la posició del manipulador.</span>
@@ -256,7 +256,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 10 2014 12:14:48 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 10 2014 16:10:07 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
