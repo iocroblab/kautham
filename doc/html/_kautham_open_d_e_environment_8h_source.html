@@ -329,23 +329,22 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00248"></a>00248 <span class="comment">                              const SoPrimitiveVertex *vertex2,</span>
 <a name="l00249"></a>00249 <span class="comment">                              const SoPrimitiveVertex *vertex3);</span>
 <a name="l00250"></a>00250 <span class="comment"></span>
-<a name="l00252"></a>00252 <span class="comment"></span>
-<a name="l00253"></a><a class="code" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1odin_object.html">00253</a> <span class="comment">        typedef struct</span>
-<a name="l00254"></a>00254 <span class="comment">        {</span>
-<a name="l00255"></a>00255 <span class="comment">            string name;</span>
-<a name="l00256"></a>00256 <span class="comment">            vector&lt;double&gt; position;</span>
-<a name="l00257"></a>00257 <span class="comment">            vector&lt;double&gt; orientation;</span>
-<a name="l00258"></a>00258 <span class="comment">            mt::Transform preTransform;</span>
-<a name="l00259"></a>00259 <span class="comment">            vector&lt;double&gt; vertexes;</span>
-<a name="l00260"></a>00260 <span class="comment">            vector&lt;unsigned int&gt; indexes;</span>
-<a name="l00261"></a>00261 <span class="comment">            double mass;</span>
-<a name="l00262"></a>00262 <span class="comment">            vector&lt;float&gt; color;</span>
-<a name="l00263"></a>00263 <span class="comment">            bool fixed;</span>
-<a name="l00264"></a>00264 <span class="comment">            double a;</span>
-<a name="l00265"></a>00265 <span class="comment">            double d;</span>
-<a name="l00266"></a>00266 <span class="comment">            double theta;</span>
-<a name="l00267"></a>00267 <span class="comment">            double alpha;</span>
-<a name="l00268"></a>00268 <span class="comment">        } odinObject;</span>
+<a name="l00252"></a><a class="code" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1odin_object.html">00252</a> <span class="comment">        typedef struct</span>
+<a name="l00253"></a>00253 <span class="comment">        {</span>
+<a name="l00254"></a>00254 <span class="comment">            string name;</span>
+<a name="l00255"></a>00255 <span class="comment">            vector&lt;double&gt; position;</span>
+<a name="l00256"></a>00256 <span class="comment">            vector&lt;double&gt; orientation;</span>
+<a name="l00257"></a>00257 <span class="comment">            mt::Transform preTransform;</span>
+<a name="l00258"></a>00258 <span class="comment">            vector&lt;double&gt; vertexes;</span>
+<a name="l00259"></a>00259 <span class="comment">            vector&lt;unsigned int&gt; indexes;</span>
+<a name="l00260"></a>00260 <span class="comment">            double mass;</span>
+<a name="l00261"></a>00261 <span class="comment">            vector&lt;float&gt; color;</span>
+<a name="l00262"></a>00262 <span class="comment">            bool fixed;</span>
+<a name="l00263"></a>00263 <span class="comment">            double a;</span>
+<a name="l00264"></a>00264 <span class="comment">            double d;</span>
+<a name="l00265"></a>00265 <span class="comment">            double theta;</span>
+<a name="l00266"></a>00266 <span class="comment">            double alpha;</span>
+<a name="l00267"></a>00267 <span class="comment">        } odinObject;</span>
 <a name="l00269"></a><a class="code" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_joint.html">00269</a> <span class="comment">        typedef struct</span>
 <a name="l00270"></a>00270 <span class="comment">        {</span>
 <a name="l00271"></a>00271 <span class="comment">            string target1;</span>
@@ -354,10 +353,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00274"></a>00274 <span class="comment">            unsigned int type;</span>
 <a name="l00275"></a>00275 <span class="comment">            double loStop;</span>
 <a name="l00276"></a>00276 <span class="comment">            double hiStop;</span>
-<a name="l00277"></a>00277 <span class="comment">        } Joint;  //! Contains information about the type of joint that is their position , the limits of their values ​​and the names of the objects that we want to join.</span>
+<a name="l00277"></a>00277 <span class="comment">        } Joint;</span>
 <a name="l00278"></a>00278 <span class="comment"></span>
 <a name="l00279"></a>00279 <span class="comment"></span>
-<a name="l00280"></a>00280 <span class="comment"></span>
 <a name="l00281"></a><a class="code" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_motor.html">00281</a> <span class="comment">        typedef struct</span>
 <a name="l00282"></a>00282 <span class="comment">        {</span>
 <a name="l00283"></a>00283 <span class="comment">            string name;</span>
@@ -382,7 +380,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00302"></a>00302 <span class="comment">            map&lt;string, Motor&gt; motors;</span>
 <a name="l00303"></a>00303 <span class="comment">            bool internalCollision;</span>
 <a name="l00304"></a>00304 <span class="comment">            string dhType;</span>
-<a name="l00305"></a>00305 <span class="comment">        } KinematicChain; //!&lt; KinematicChain represents a robot with all its objects, joints and all information .</span>
+<a name="l00305"></a>00305 <span class="comment">        } KinematicChain; //! KinematicChain represents a robot with all its objects, joints and all information .</span>
 <a name="l00306"></a>00306 <span class="comment"></span>
 <a name="l00307"></a>00307 <span class="comment"></span>
 <a name="l00308"></a>00308 <span class="comment"></span>
@@ -390,64 +388,59 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00310"></a>00310 <span class="comment">        virtual void setjointsandmotors2bodies(map&lt;string,dBodyID&gt; stateBodiesmap_, map&lt;string, KinematicChain&gt; chainMapchainMap, WorkSpace* ws);//!&lt; this function set the joint and motor for in ODE bodies</span>
 <a name="l00311"></a>00311 <span class="comment">        void getTrimesh(SoSeparator *ivmodel, odinObject* obj, double scale);//!&lt; get the triangular mesh.</span>
 <a name="l00312"></a>00312 <span class="comment"></span>
-<a name="l00313"></a>00313 <span class="comment">        vector&lt;dBodyID&gt; bodies;</span>
-<a name="l00314"></a>00314 <span class="comment">        dSpaceID _OpenDEspace;</span>
-<a name="l00315"></a>00315 <span class="comment">        dWorldID bodyworld;</span>
-<a name="l00316"></a>00316 <span class="comment">        map&lt;string, dBodyID&gt; stateBodiesmap_;</span>
-<a name="l00317"></a>00317 <span class="comment">        int _NumLinksFirstRobot;</span>
-<a name="l00318"></a>00318 <span class="comment">        KthReal _maxspeed;</span>
-<a name="l00319"></a>00319 <span class="comment"></span>
-<a name="l00320"></a>00320 <span class="comment">        unsigned int getNumLinksFirstRobot(){return _NumLinksFirstRobot;};</span>
-<a name="l00321"></a>00321 <span class="comment"></span>
-<a name="l00322"></a>00322 <span class="comment">        //la idea es omplir _StateBodies de ompl fent que els dels primers indexs siguin els cossos a planejar amb ells , es a dir el robot o la taula</span>
-<a name="l00323"></a>00323 <span class="comment"></span>
+<a name="l00313"></a><a class="code" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#ab8321af318beb85dcead0b18c7fb57fd">00313</a> <span class="comment">        vector&lt;dBodyID&gt; bodies; //!&lt; Vector of ODE Bodies.</span>
+<a name="l00314"></a><a class="code" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a63e4710a05ffd916c27a9bf4c9d5ba1a">00314</a> <span class="comment">        dSpaceID _OpenDEspace;  //!&lt; Define the ODE space.</span>
+<a name="l00315"></a><a class="code" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#add89c0945ea2f2e723aa6f463fb172cc">00315</a> <span class="comment">        dWorldID bodyworld;     //!&lt; Define the ODE world.</span>
+<a name="l00316"></a><a class="code" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#aa0d361a5b3c6dd34ed823e74b50ead95">00316</a> <span class="comment">        map&lt;string, dBodyID&gt; stateBodiesmap_;//!&lt; stateBodiesmap_  Map ODE bodies , it contains the same information as ODE bodies has but in the form of chainMap.</span>
+<a name="l00317"></a>00317 <span class="comment"></span>
+<a name="l00318"></a><a class="code" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#ae52a1ffe4daaee91b344f112ebe4d7f1">00318</a> <span class="comment">        int _NumLinksFirstRobot; //!&lt; define number of links of robot.</span>
+<a name="l00319"></a><a class="code" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#ac41a748386c5ac986c8a82acb48baebe">00319</a> <span class="comment">        KthReal _maxspeed;       //!&lt; Define max. speed of motor.</span>
+<a name="l00320"></a>00320 <span class="comment"></span>
+<a name="l00321"></a>00321 <span class="comment">        unsigned int getNumLinksFirstRobot(){return _NumLinksFirstRobot;}; //!&lt; returns number of links of first robot</span>
+<a name="l00322"></a>00322 <span class="comment"></span>
+<a name="l00323"></a>00323 <span class="comment">        //la idea es omplir _StateBodies de ompl fent que els dels primers indexs siguin els cossos a planejar amb ells , es a dir el robot o la taula</span>
 <a name="l00324"></a>00324 <span class="comment"></span>
-<a name="l00325"></a>00325 <span class="comment">        // fill _StateBodies the idea of making the fill Indexes are the first bodies to plan with them, ie the robot or table</span>
-<a name="l00326"></a>00326 <span class="comment"></span>
-<a name="l00327"></a>00327 <span class="comment">        vector&lt;dBodyID&gt; fillstatebodies(map&lt;string,dBodyID&gt; stateBodiesmap_, WorkSpace *wkspace);</span>
-<a name="l00328"></a>00328 <span class="comment"></span>
+<a name="l00325"></a>00325 <span class="comment"></span>
+<a name="l00326"></a>00326 <span class="comment">        // fill _StateBodies the idea of making the fill Indexes are the first bodies to plan with them, ie the robot or table</span>
+<a name="l00327"></a>00327 <span class="comment"></span>
+<a name="l00328"></a>00328 <span class="comment">        vector&lt;dBodyID&gt; fillstatebodies(map&lt;string,dBodyID&gt; stateBodiesmap_, WorkSpace *wkspace);//!&lt; this function return the vector of ODE bodies in such a way that, robot will be the first body.</span>
 <a name="l00329"></a>00329 <span class="comment"></span>
 <a name="l00330"></a>00330 <span class="comment"></span>
-<a name="l00331"></a>00331 <span class="comment"></span>
+<a name="l00331"></a>00331 <span class="comment">           private:</span>
 <a name="l00332"></a>00332 <span class="comment"></span>
-<a name="l00333"></a>00333 <span class="comment">           private:</span>
+<a name="l00333"></a>00333 <span class="comment">            static const double toRad  = M_PI/180.;</span>
 <a name="l00334"></a>00334 <span class="comment"></span>
-<a name="l00335"></a>00335 <span class="comment">            static const double toRad  = M_PI/180.;</span>
-<a name="l00336"></a>00336 <span class="comment"></span>
+<a name="l00336"></a>00336 <span class="comment">            bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector&lt;double&gt;&amp; basePos);</span>
 <a name="l00337"></a>00337 <span class="comment"></span>
-<a name="l00338"></a>00338 <span class="comment">            bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector&lt;double&gt;&amp; basePos);</span>
 <a name="l00339"></a>00339 <span class="comment">            bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Obstacle *obstacle, double scale, int k);</span>
 <a name="l00340"></a>00340 <span class="comment"></span>
 <a name="l00341"></a>00341 <span class="comment"></span>
 <a name="l00342"></a>00342 <span class="comment">            bool getTransformation(KauthamDEEnvironment::KinematicChain* chain, string robotDHType, Link* link, odinObject* obj, string robotName, vector&lt;double&gt;&amp; rotAxis);</span>
 <a name="l00343"></a>00343 <span class="comment"></span>
-<a name="l00344"></a>00344 <span class="comment"></span>
-<a name="l00345"></a>00345 <span class="comment">            bool getMotion(KauthamDEEnvironment::KinematicChain* chain, Link* link, odinObject* obj, string robotName, vector&lt;double&gt;&amp; rotAxis);</span>
-<a name="l00346"></a>00346 <span class="comment"></span>
-<a name="l00347"></a>00347 <span class="comment">            void searchColor(SoSeparator* root, odinObject* obj);</span>
-<a name="l00348"></a>00348 <span class="comment"></span>
+<a name="l00344"></a>00344 <span class="comment">            bool getMotion(KauthamDEEnvironment::KinematicChain* chain, Link* link, odinObject* obj, string robotName, vector&lt;double&gt;&amp; rotAxis);</span>
+<a name="l00345"></a>00345 <span class="comment"></span>
+<a name="l00346"></a>00346 <span class="comment">            void searchColor(SoSeparator* root, odinObject* obj);</span>
+<a name="l00347"></a>00347 <span class="comment"></span>
+<a name="l00348"></a>00348 <span class="comment">            vector&lt;double&gt; baseGetPos(Robot* robot);// this function will returns the position and orientation of robot.</span>
 <a name="l00349"></a>00349 <span class="comment"></span>
-<a name="l00350"></a>00350 <span class="comment">            vector&lt;double&gt; baseGetPos(Robot* robot);</span>
-<a name="l00351"></a>00351 <span class="comment"></span>
-<a name="l00352"></a>00352 <span class="comment"></span>
-<a name="l00353"></a>00353 <span class="comment">            void makeMotor(dBodyID body1, dBodyID body2,const unsigned int type, const vector&lt; double &gt;&amp; axes,const vector&lt; double &gt;&amp; fmax);</span>
-<a name="l00354"></a>00354 <span class="comment">            void addMotor2Joint(dJointID joint, vector&lt;double&gt;&amp; maxForces);</span>
-<a name="l00355"></a>00355 <span class="comment">            dJointID makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector&lt;double&gt;&amp; params);</span>
+<a name="l00350"></a>00350 <span class="comment">            void makeMotor(dBodyID body1, dBodyID body2,const unsigned int type, const vector&lt; double &gt;&amp; axes,const vector&lt; double &gt;&amp; fmax);</span>
+<a name="l00351"></a>00351 <span class="comment">            void addMotor2Joint(dJointID joint, vector&lt;double&gt;&amp; maxForces);</span>
+<a name="l00352"></a>00352 <span class="comment">            dJointID makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector&lt;double&gt;&amp; params);</span>
+<a name="l00353"></a>00353 <span class="comment"></span>
+<a name="l00354"></a>00354 <span class="comment">            int sceneObjectNumber;</span>
+<a name="l00355"></a>00355 <span class="comment"></span>
 <a name="l00356"></a>00356 <span class="comment"></span>
-<a name="l00357"></a>00357 <span class="comment">            int sceneObjectNumber;</span>
+<a name="l00357"></a>00357 <span class="comment">    };</span>
 <a name="l00358"></a>00358 <span class="comment"></span>
 <a name="l00359"></a>00359 <span class="comment"></span>
-<a name="l00360"></a>00360 <span class="comment">    };</span>
-<a name="l00361"></a>00361 <span class="comment"></span>
+<a name="l00360"></a>00360 <span class="comment">}</span>
+<a name="l00361"></a>00361 <span class="comment">}</span>
 <a name="l00362"></a>00362 <span class="comment"></span>
-<a name="l00363"></a>00363 <span class="comment">}</span>
-<a name="l00364"></a>00364 <span class="comment">}</span>
-<a name="l00365"></a>00365 <span class="comment"></span>
-<a name="l00366"></a>00366 <span class="comment"></span>
-<a name="l00367"></a>00367 <span class="comment">#endif  //_KauthamOpenDEEnvironment_H</span>
-<a name="l00368"></a>00368 <span class="comment">#endif //KAUTHAM_USE_ODE</span>
-<a name="l00369"></a>00369 <span class="comment">#endif // KAUTHAM_USE_OMPL</span>
-<a name="l00370"></a>00370 <span class="comment"></span>
+<a name="l00363"></a>00363 <span class="comment"></span>
+<a name="l00364"></a>00364 <span class="comment">#endif  //_KauthamOpenDEEnvironment_H</span>
+<a name="l00365"></a>00365 <span class="comment">#endif //KAUTHAM_USE_ODE</span>
+<a name="l00366"></a>00366 <span class="comment">#endif // KAUTHAM_USE_OMPL</span>
+<a name="l00367"></a>00367 <span class="comment"></span>
 </pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -466,7 +459,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 10 2014 16:10:07 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 10 2014 18:57:56 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

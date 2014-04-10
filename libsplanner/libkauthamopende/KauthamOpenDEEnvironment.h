@@ -248,7 +248,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
                               const SoPrimitiveVertex *vertex2,
                               const SoPrimitiveVertex *vertex3);
 
-
+        //! Contains information about body position , orientation , shape, size, etc.
         typedef struct
         {
             string name;
@@ -264,8 +264,8 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
             double d;
             double theta;
             double alpha;
-        } odinObject;//! Contains information about a single body position , orientation , shape, size, etc.
-
+        } odinObject;
+        //! Contains information about the type of joint that is their position , the limits of their values ​​and the names of the Bodies that we want to join.
         typedef struct
         {
             string target1;
@@ -274,16 +274,16 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
             unsigned int type;
             double loStop;
             double hiStop;
-        } Joint;  //! Contains information about the type of joint that is their position , the limits of their values ​​and the names of the objects that we want to join.
+        } Joint;
 
 
-
+        //! Contains information about the motor
         typedef struct
         {
             string name;
             string targetJoint;
             vector<double> fmax;
-        } Motor; //! Contains information about the motor
+        } Motor;
 
 
 
@@ -332,10 +332,10 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
 
             static const double toRad  = M_PI/180.;
 
-            //!< This function will build the kinamatic chain for Robot
+            //! This function will build the kinamatic chain for Robot
             bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector<double>& basePos);
 
-            //!< This function will build the kinamatic chain for Obstracle
+            //! This function will build the kinamatic chain for Obstracle
             bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Obstacle *obstacle, double scale, int k);
 
 

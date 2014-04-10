@@ -85,39 +85,24 @@
 #include <Inventor/VRMLnodes/SoVRMLMaterial.h>
 #include <vector>
 #include <cmath>
-//#include <ros/ros.h>
 #include <libmt/mt/mt.h>
 #include <libproblem/link.h>
 #include <libproblem/robot.h>
 #include <libproblem/ivelement.h>
 #include "KauthamOpenDEEnvironment.h"
-
-
-
-
-//#include <ompl/base/spaces/RealVectorStateSpace.h>
-//#include <ompl/base/spaces/SE3StateSpace.h>
-//#include <ompl/base/spaces/SO3StateSpace.h>
 #include <ompl/base/ProjectionEvaluator.h>
-//#include <ompl/control/spaces/RealVectorControlSpace.h>
-//#include <ompl/control/SpaceInformation.h>
-
+#include <libproblem/workspace.h>
+#include <libsampling/sampling.h>
+#include "planner.h"
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 namespace oc = ompl::control;
 
 
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
-#include "planner.h"
-
-
 using namespace std;
-//using namespace libSampling;
 
 namespace Kautham
-//namespace libPlanner
 {
 namespace omplcplanner
 {
@@ -128,26 +113,26 @@ namespace omplcplanner
     // Class KauthamDEEnvironment
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
-//Aquesta classe està feta per definir els mètodes virtuals purs de OPENDEENVIRONMENT i que defineixen la manera com es fa el control dels cossos.
-//No sé fins a quin punt es 100% correcte però en aquest cas a la taula el control actua sobre la velocitat lineal del cos de la taula.
+    //Aquesta classe està feta per definir els mètodes virtuals purs de OPENDEENVIRONMENT i que defineixen la manera com es fa el control dels cossos.
+    //No sé fins a quin punt es 100% correcte però en aquest cas a la taula el control actua sobre la velocitat lineal del cos de la taula.
 
-// This class is meant to define the pure virtual methods OPENDEENVIRONMENT and define how it is controlling bodies. 
-// I do not know how far you are 100% correct but in this case the control board acts on the linear velocity of the body of the table.
+    // This class is meant to define the pure virtual methods OPENDEENVIRONMENT and define how it is controlling bodies.
+    // I do not know how far you are 100% correct but in this case the control board acts on the linear velocity of the body of the table.
+
+   //! This class define the pure virtual methods of OpenDEEnviroment and define how the control will be applied on the bodies.
     class KauthamDEtableEnvironment: public KauthamDEEnvironment
     {
         public:
 
-
-        KauthamDEtableEnvironment(WorkSpace* ws, KthReal maxspeed);
+        KauthamDEtableEnvironment(WorkSpace* ws, KthReal maxspeed);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
         ~KauthamDEtableEnvironment(void);
 
-
-        virtual unsigned int getControlDimension(void) const;
-        virtual void getControlBounds (std::vector< double > &lower, std::vector< double > &upper) const;
-        virtual void applyControl (const double *control) const;
-        virtual void SetPlanningParameters();
+        virtual unsigned int getControlDimension(void) const;//!< describe the number of parameter used to describe control input.
+        virtual void getControlBounds (std::vector< double > &lower, std::vector< double > &upper) const;//!< describe the control bounds, the bounding box to performe sampling
+        virtual void applyControl (const double *control) const;//!< This function apply the control by setting the forces, velocities and torques.
+        virtual void SetPlanningParameters();//!< Set the planning parameters for planner.
         //virtual bool    isValidCollision(dGeomID geom1, dGeomID geom2, const dContact& /*contact*/) const;
-        virtual void setupContact(dGeomID geom1, dGeomID geom2, dContact &contact) const;
+        virtual void setupContact(dGeomID geom1, dGeomID geom2, dContact &contact) const; //!< This method set the parameters for the contact.
 
     };
 

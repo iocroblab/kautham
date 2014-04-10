@@ -79,7 +79,7 @@ namespace omplcplanner{
     //Un cop s'ha omplert chainMap es crida el mètode worldCreate.
     //! Constructor
 
-// When you create the Environment calling the contructor. Reserves a chain (KinematicChain) that once filled by way of calling methods buildKinematicChain, will be within the chainMap mapped by name string.
+     // When you create the Environment calling the contructor. Reserves a chain (KinematicChain) that once filled by way of calling methods buildKinematicChain, will be within the chainMap mapped by name string.
      // The buildKinematicChain would be the way Alfredo with ODIN parsing XML documents, as here Kautham already read the scene above all this information copy of the workspace without preocuparnos for XML documents.
      // Constructor to pass all the bodies of the scene (workspace) and reading their information (position, orientation, vertices, etc ...)
      // Once filled chainMap worldCreate method is called.
