@@ -1,30 +1,24 @@
 /*************************************************************************\
-  Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
-  All Rights Reserved.
+    All Rights Reserved.
 
-  Permission to use, copy, modify and distribute this software and its
-  documentation for educational, research and non-profit purposes, without
-  fee, and without a written agreement is hereby granted, provided that the
-  above copyright notice and the following three paragraphs appear in all
-  copies.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
 
-  IN NO EVENT SHALL THE UNIVERSITAT POLITECNICA DE CATALUNYA BE
-  LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR
-  CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE
-  USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY
-  OF NORTH CAROLINA HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH
-  DAMAGES.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-  THE UNIVERSITAT POLITECNICA DE CATALUNYA SPECIFICALLY DISCLAIM ANY
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE
-  PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITAT
-  POLITECNICA DE CATALUNYA  HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE,
-  SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
-
-\***************************************************************************/
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the
+    Free Software Foundation, Inc.,
+    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ \*************************************************************************/
 
 /* Author: Alexander Perez, Jan Rosell */
  
@@ -98,6 +92,7 @@ namespace Kautham {
     Sample*                       _init;
     Sample*                       _goal;
     vector<Sample*>               _path;
+    vector< vector< vector<KthReal> > >  _StateBodies;
     vector<Sample*>               _simulationPath;
     vector<mt::Transform>         _cameraPath;
     WorkSpace*                    _wkSpace;

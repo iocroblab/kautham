@@ -1,0 +1,30 @@
+# this file makes the libplanner library.
+
+FILE( GLOB SRC_FILES *.cpp )
+FILE( GLOB HDR_FILES *.h )
+
+ADD_LIBRARY( libplanner ${SRC_FILES} ${HDR_FILES} )
+
+  IF( KAUTHAM_OMPL )
+    MESSAGE( STATUS "Adding subdirectory LIBOMPL")
+    ADD_SUBDIRECTORY ( libompl )
+    SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libomplplanner)
+  ENDIF( KAUTHAM_OMPL )
+  IF( KAUTHAM_IOC )
+    MESSAGE( STATUS "Adding subdirectory LIBIOC")
+    ADD_SUBDIRECTORY ( libioc )
+    SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libiocplanner)
+  ENDIF( KAUTHAM_IOC )
+  #IF( OPENDE_DEFINITIONS )
+    MESSAGE( STATUS "Adding subdirectory LIBKAUTHAMOPENDE")
+    ADD_SUBDIRECTORY ( libkauthamopende )
+    SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libkauthamopende)
+  #ENDIF( OPENDE_DEFINITIONS )
+
+
+MESSAGE( STATUS "----------------KC_PLANNERS_LIBS: " ${KC_PLANNERS_LIBS})
+
+TARGET_LINK_LIBRARIES( libplanner ${KC_PLANNERS_LIBS})
+
+
+
