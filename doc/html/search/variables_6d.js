@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['m',['m',['../class_kautham_1_1_w_mat.html#a678bf9b5b7ea1423117295ef3270c57e',1,'Kautham::WMat::m()'],['../class_kautham_1_1_s_d_k_sample.html#a9c89a38d20cba63af38622b012e7feff',1,'Kautham::SDKSample::M()'],['../class_kautham_1_1_s_d_k_sampler.html#a661ffa46c13e332542ab2d01b14c5757',1,'Kautham::SDKSampler::M()']]],
+  ['m',['M',['../class_kautham_1_1_s_d_k_sample.html#a9c89a38d20cba63af38622b012e7feff',1,'Kautham::SDKSample::M()'],['../class_kautham_1_1_s_d_k_sampler.html#a661ffa46c13e332542ab2d01b14c5757',1,'Kautham::SDKSampler::M()'],['../class_kautham_1_1_w_mat.html#a678bf9b5b7ea1423117295ef3270c57e',1,'Kautham::WMat::m()']]],
   ['mag',['MAG',['../class_kautham_1_1_sample_set.html#a078a617ebe8cfa57012a3a243e6e5eef',1,'Kautham::SampleSet']]],
   ['mapmatrix',['mapMatrix',['../class_kautham_1_1_robot.html#ab3bb1edc634167946ccd8d60cd9f430b',1,'Kautham::Robot']]],
   ['mass',['mass',['../classode__inertial.html#ae4bb8b1f09c02dc5f9053b9b31adb567',1,'ode_inertial::mass()'],['../classurdf__inertial.html#a0e38af0812f80b47f66a286a0aadac31',1,'urdf_inertial::mass()']]],
