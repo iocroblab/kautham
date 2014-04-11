@@ -139,6 +139,16 @@ ENDIF( KAUTHAM_IOC )
 
 
 ##############################################################################
+# START Required packages for GUI
+  FIND_PACKAGE( Qt4 REQUIRED QtCore QtGui QtXml )
+  IF( QT4_FOUND )
+    include(${QT_USE_FILE})
+    #ADD_DEFINITIONS( ${QT_DEFINITIONS} )
+  ENDIF( QT4_FOUND )
+
+
+
+##############################################################################
 # Building librarires
   INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} )
   INCLUDE_DIRECTORIES( libsutil )
@@ -160,15 +170,8 @@ ENDIF( KAUTHAM_IOC )
 IF( KAUTHAM_GUI )
   MESSAGE( STATUS "making KAUTHAM GUI" )
 
+
 ##############################################################################
-# START Required packages for GUI
-  FIND_PACKAGE( Qt4 REQUIRED )
-  IF( QT4_FOUND )
-    SET( QT_USE_QTMAIN TRUE )
-    INCLUDE ( ${QT_USE_FILE} )
-    INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIR} )
-    ADD_DEFINITIONS( ${QT_DEFINITIONS} )
-  ENDIF( QT4_FOUND )
 
   FIND_PACKAGE( SoQt4 REQUIRED )
   IF( SOQT_LIBRARY_FOUND )
@@ -177,6 +180,11 @@ IF( KAUTHAM_GUI )
   ENDIF( SOQT_LIBRARY_FOUND )
 # END Required packages for GUI
 ##############################################################################
+
+
+
+
+
 
 ##############################################################################
 # Building librarires
