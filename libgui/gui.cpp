@@ -674,7 +674,7 @@ namespace Kautham {
 				  subSubItemTree = new QTreeWidgetItem(subItemTree);
           tmp = (*iterator++).toUtf8().constData();
           subSubItemTree->setText( 0, tmp.c_str() );
-				  subSubItemTree->setText( 1, it->child("Location").attribute( tmp.c_str() ).value() ); 
+                  subSubItemTree->setText( 1, it->child("Home").attribute( tmp.c_str() ).value() );
 			  }
 		  }
     }
