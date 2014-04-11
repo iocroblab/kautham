@@ -15,10 +15,10 @@
 		<Home X="-200.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="0.0" TH="0.3" />
 		<InvKinematic name="TX90" />
 	</Robot>
-	<Controls controls="controls/allegro_hand_description_right.cntr"/>
-	<Scene scene="scenes/columns/columns.iv" scale="4">
-		<Location TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="50.0" />
-	</Scene>
+	<Controls robot="controls/allegro_hand_description_right.cntr"/>
+	<Obstacle obstacle="scenes/columns/columns.iv" scale="4">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="50.0" />
+	</Obstacle>
 	<Planner>
         	<Parameters>
                 	<Name>omplPRM</Name>
