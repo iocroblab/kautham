@@ -188,7 +188,7 @@ void Application::closeProblem(){
 bool Application::problemSetup(string path){
   mainWindow->setCursor(QCursor(Qt::WaitCursor));
   _problem = new Problem();
-  _problem->setupFromFile( path );
+  if (!_problem->setupFromFile(path)) return false;
 
   mainWindow->addToProblemTree( path );
   mainWindow->addViewerTab("WSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvScene());
