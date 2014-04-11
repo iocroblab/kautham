@@ -2,6 +2,7 @@ var searchData=
 [
   ['calculatepno',['calculatePnO',['../class_kautham_1_1_link.html#a7856a58d45c7f340bf1767dfc40cf606',1,'Kautham::Link']]],
   ['canconect',['canConect',['../class_kautham_1_1_i_o_c_1_1_const_linear_local_planner.html#ad59a21c5b5d87087fa0376d4816e1403',1,'Kautham::IOC::ConstLinearLocalPlanner']]],
+  ['chainmap',['chainMap',['../class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a4ca2ee8214fdeb20f22a066f927d5730',1,'Kautham::omplcplanner::KauthamDEEnvironment']]],
   ['changed',['changed',['../class_kautham_1_1_sample_set.html#adc4711bb953a3d63ed746e340dfc8976',1,'Kautham::SampleSet']]],
   ['childs',['childs',['../class_kautham_1_1_link.html#a29cc3779a16679b9e4d13af0b5446390',1,'Kautham::Link']]],
   ['clean',['clean',['../class_kautham_1_1_sample_set.html#ad7b4e77f6ff0f8177b42476dde010e24',1,'Kautham::SampleSet']]],
@@ -10,6 +11,7 @@ var searchData=
   ['clearance',['clearance',['../class_kautham_1_1omplplanner_1_1_validity_checker.html#a863caa90bb26bb121de12f591c3b0135',1,'Kautham::omplplanner::ValidityChecker']]],
   ['cleargraph',['clearGraph',['../class_kautham_1_1_i_o_c_1_1grid_planner.html#a487d57a7018fd302614755e9c90f425d',1,'Kautham::IOC::gridPlanner::clearGraph()'],['../class_kautham_1_1_i_o_c_1_1_p_r_m_planner.html#a2b52500321d14144b7b19a15b2193ce5',1,'Kautham::IOC::PRMPlanner::clearGraph()']]],
   ['clearneighs',['clearNeighs',['../class_kautham_1_1_sample.html#a7318d2e707bfcdf979bd8449d65315c5',1,'Kautham::Sample::clearNeighs()'],['../class_kautham_1_1_sample_set.html#aa9ae596f8120a03c65a7f4dd328e3bb3',1,'Kautham::SampleSet::clearNeighs(unsigned int i)'],['../class_kautham_1_1_sample_set.html#abf20d4d9c9f6c0c086bd915db3caaa9c',1,'Kautham::SampleSet::clearNeighs()']]],
+  ['closeproblem',['closeProblem',['../class_kautham_1_1kauthamshell.html#a905b17dcc4bba0c589e4fdd2b5372a44',1,'Kautham::kauthamshell']]],
   ['code',['code',['../class_kautham_1_1_s_d_k_sample.html#a39bc2193ab45568c10ef465c9feb7ce4',1,'Kautham::SDKSample']]],
   ['collision',['collision',['../classurdf__link.html#a083df17cab041b67e6a92f8ee6d15a75',1,'urdf_link::collision()'],['../classurdf__obstacle.html#a469fa27c365eea9ae59487e15bc3c505',1,'urdf_obstacle::collision()']]],
   ['collisioncheck',['collisionCheck',['../class_kautham_1_1_robot.html#a6bdd33a2f14276b668473826b561070b',1,'Kautham::Robot::collisionCheck(Obstacle *obs)'],['../class_kautham_1_1_robot.html#a868772d56b20c36f5cc7032faf111270',1,'Kautham::Robot::collisionCheck(Robot *rob)']]],
@@ -33,13 +35,14 @@ var searchData=
   ['contact_5fcoefficients',['contact_coefficients',['../classode__element.html#a37d1860ee8bf733cd7eba41c90161836',1,'ode_element::contact_coefficients()'],['../classurdf__link.html#a86f2018fb9218964ab703aa6a4245c0f',1,'urdf_link::contact_coefficients()'],['../classurdf__obstacle.html#a73efba090f3ec53d3f556dd172484d72',1,'urdf_obstacle::contact_coefficients()']]],
   ['control2parameters',['control2Parameters',['../class_kautham_1_1_robot.html#a724e68a5e185b727b75f3d51c1801f31',1,'Kautham::Robot']]],
   ['control2pose',['control2Pose',['../class_kautham_1_1_robot.html#a12303c54d5fd03d345ff2437880cf353',1,'Kautham::Robot']]],
-  ['controlsname',['controlsName',['../class_kautham_1_1_robot.html#ac5f7f8498a1dbec1b4d8ab9f1bee2c73',1,'Kautham::Robot']]],
+  ['controlsname',['controlsName',['../class_kautham_1_1_work_space.html#a84b1e0206db3b8cbbc316edf6143f4a0',1,'Kautham::WorkSpace']]],
   ['controlwidget',['ControlWidget',['../class_kautham_1_1_control_widget.html',1,'Kautham']]],
   ['correctorientation',['correctorientation',['../class_kautham_1_1_i_o_c_1_1_const_linear_local_planner.html#a1e5666884d2b5970c89e9c8b057276fa',1,'Kautham::IOC::ConstLinearLocalPlanner']]],
   ['cost',['cost',['../namespace_kautham_1_1_i_o_c.html#aa0ff006d27e894ee467ba90e80c69d88',1,'Kautham::IOC']]],
   ['createoptimizationobjectivepmd',['createOptimizationObjectivePMD',['../class_kautham_1_1omplplanner_1_1ompl_r_r_t_star_planner.html#ae169131e7860cd7fa51bf8f1bbd1114f',1,'Kautham::omplplanner::omplRRTStarPlanner']]],
   ['createplanner',['createPlanner',['../class_kautham_1_1_problem.html#a4cfbe90889b172b28a47ff704b6303ef',1,'Kautham::Problem']]],
   ['createtd',['createTd',['../class_kautham_1_1_t_mat.html#a29066f8ee6b163cee10795e5333540c5',1,'Kautham::TMat']]],
-  ['createwspace',['createWSpace',['../class_kautham_1_1_problem.html#ae07d35f4738b3d66e2dff90a1e01cc7b',1,'Kautham::Problem']]],
+  ['createworld',['createWorld',['../class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a15a8d0c54c39e99913c9a61f43298726',1,'Kautham::omplcplanner::KauthamDEEnvironment']]],
+  ['createwspace',['createWSpace',['../class_kautham_1_1_problem.html#a4f44e067c47f7431996b0c58eeb3f37c',1,'Kautham::Problem']]],
   ['cspace',['cSpace',['../class_kautham_1_1_problem.html#a3e5df75ffb110ba818a0ba066f3a03b8',1,'Kautham::Problem']]]
 ];
