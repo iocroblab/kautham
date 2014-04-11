@@ -44,6 +44,9 @@
 #if !defined(_PROBLEM_H)
 #define _PROBLEM_H
 
+#include <QSettings>
+#include <QString>
+
 #include <libsplanner/planner.h>
 #include <libsampling/sampling.h>
 #include <ompl/geometric/SimpleSetup.h>
@@ -51,7 +54,6 @@
 #include "ivworkspace.h"
 #include "workspace.h"
 #include <pugixml.hpp>
-
 
 //#include <libpugixml/pugixml.hpp>
 #include <pugixml.hpp>
@@ -186,19 +188,69 @@ namespace Kautham {
     vector<KthReal>         _currentControls;
     string                  _filePath;
 
-    //! This method loads a robot node of the problem file,
-    //! creates the robot and adds it to workspace
-    void addRobot2WSpace(xml_node *robot_node, string dir);
 
-    //! This method loads the controls node of the problem file,
-    //! creates the controls, adds them to workspace
-    //! and creates the mapMatrix and offMatrix of every Robot.
-    //! All the robots must be loaded first
+    /*!
+     * \brief loads a robot node of the problem file,
+     creates the robot and adds it to workspace
+     * \param robot_node robot node with the information of the robot
+     to add to the workspace
+     */
+    bool addRobot2WSpace(xml_node *robot_node);
+
+    /*!
+     * \brief loads the controls node of the problem file,
+     creates the controls, adds them to workspace and creates the mapMatrix and
+     offMatrix of every Robots. All the robots must have already been loaded.
+     * \param cntrFile file where controls are defined
+     * \return true if controls could be loaded to the workspace
+     */
     bool addControls2WSpace(string cntrFile);
 
-    //! This method loads an obstacle node of the problem file,
-    //! creates the obstacle and adds it to workspace
-    void addObstacle2WSpace(xml_node *obstacle_node, string dir);
+    /*!
+     * \brief loads an obstacle node of the problem file,
+     creates the obstacle and adds it to workspace
+     * \param obstacle_node obstacle node with the information of the obstacle
+     to add to the workspace
+     */
+    bool addObstacle2WSpace(xml_node *obstacle_node);
+
+    /*!
+     * \brief isFileOK checks if all the information required
+     to setup a problem is defined in the dile
+     * \param doc problem file correctly parsed
+     * \return true if the file seems to be OK
+     */
+    bool isFileOK (xml_document *doc);
+
+    /*!
+     * \brief exists checks if a spcified file exists
+     * \param file is the file which existence is to be checked
+     * \return true if the file exists
+     */
+    bool exists(string file);
+
+    /*!
+     * \brief checks the file, finds the files defined in the problem file and
+     completes their absolute path
+     * \param doc problem file to prepare before setting up the porblem
+     * \return true if the file could be prepared
+     */
+    bool prepareFile (xml_document *doc);
+
+    /*!
+     * \brief finds all the files defined in the atribute called \param attribute
+     of the nodes called \param child that children of the \param parent node.
+     Files will be looked for in the specified paths. If file is found, its absolute
+     path will be completed
+     * \param parent node that contains the files to be found
+     * \param child name of the children nodes that contains the files to be found
+     * \param attribute name of the atribute that contains the file to be found
+     * \param path vector of paths where the file will be recursively looked for until
+     the file is found
+     * \return true if and only if all the files were found
+     */
+    bool findAllFiles(xml_node *parent, string child, string attribute,
+                      vector<string> path);
 	};
 
     /** @}   end of Doxygen module "libProblem" */

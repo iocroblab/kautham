@@ -45,60 +45,59 @@
 namespace Kautham {
   const KthReal Problem::_toRad = (KthReal)(M_PI/180.0);
   Problem::Problem() {
-    _wspace = NULL;
-    _planner = NULL;
-    _sampler = NULL;
-    _cspace = new SampleSet();
-    _cspace->clear();
-    _currentControls.clear();
-	}
+      _wspace = NULL;
+      _planner = NULL;
+      _sampler = NULL;
+      _cspace = new SampleSet();
+      _cspace->clear();
+      _currentControls.clear();
+  }
 
   Problem::~Problem(){
-    delete _cspace; //must be deleted first, if not the program crashes...
-    delete _wspace;
-    delete _planner;
-    delete _sampler;
+      delete _cspace; //must be deleted first, if not the program crashes...
+      delete _wspace;
+      delete _planner;
+      delete _sampler;
   }
 
 
   // This is the new implementation trying to avoid the old strucparse and ProbStruc.
-  bool Problem::createWSpace(xml_document *doc){
+  bool Problem::createWSpace(xml_document *doc) {
       if(_wspace != NULL ) delete _wspace;
       _wspace = new IVWorkSpace();
 
       char *old = setlocale (LC_NUMERIC, "C");
-      // Setup the examples directory.
-    string dir = _filePath;
-      dir.erase(dir.find_last_of("/") + 1 );
 
       xml_node tmpNode;
 
       //add all robots to worskpace
       for (tmpNode = doc->child("Problem").child("Robot");
            tmpNode; tmpNode = tmpNode.next_sibling("Robot")) {
-          addRobot2WSpace(&tmpNode,dir);
+          if (!addRobot2WSpace(&tmpNode)) return false;
       }
 
       //add controls to worskpace
-      addControls2WSpace(dir + doc->child("Problem").child("Controls").
-                         attribute("controls").as_string());
+      if (!addControls2WSpace(doc->child("Problem").child("Controls").
+                              attribute("robot").as_string())) return false;
 
       //add all obstacles to worskpace
-      for (tmpNode = doc->child("Problem").child("Scene");
-           tmpNode; tmpNode = tmpNode.next_sibling("Scene")) {
-          addObstacle2WSpace(&tmpNode,dir);
+      for (tmpNode = doc->child("Problem").child("Obstacle");
+           tmpNode; tmpNode = tmpNode.next_sibling("Obstacle")) {
+          if (!addObstacle2WSpace(&tmpNode)) return false;
       }
 
       //add all distance maps to worskpace
       for (tmpNode = doc->child("Problem").child("DistanceMap");
            tmpNode; tmpNode = tmpNode.next_sibling("DistanceMap")) {
-          _wspace->addDistanceMapFile(dir + tmpNode.attribute("distanceMap").value());
+          _wspace->addDistanceMapFile(tmpNode.attribute("distanceMap").as_string());
       }
 
       //add all dimensions files to worskpace
       for (tmpNode = doc->child("Problem").child("DimensionsFile");
            tmpNode; tmpNode = tmpNode.next_sibling("DimensionsFile")) {
-          _wspace->addDimensionsFile(dir + tmpNode.attribute("filename").value());
+          string file = tmpNode.attribute("filename").as_string();
+          _wspace->addDimensionsFile(file);
+          string dir = file.substr(0,file.find_last_of("/")+1);
           _wspace->addDirCase(dir);
       }
 
@@ -112,706 +111,813 @@ namespace Kautham {
       return true;
   }
 
-	WorkSpace* Problem::wSpace(){
-		return _wspace;
-	}
+  WorkSpace* Problem::wSpace() {
+      return _wspace;
+  }
 
-    SampleSet* Problem::cSpace(){
-        return _cspace;
-    }
+  SampleSet* Problem::cSpace() {
+      return _cspace;
+  }
 
-  void Problem::setHomeConf(Robot* rob, HASH_S_K* param){
-    Conf* tmpC = new SE3Conf();
-    vector<KthReal> cords(7);
-    string search[]={"X", "Y", "Z", "WX", "WY", "WZ", "TH"};
-    HASH_S_K::iterator it;
+  void Problem::setHomeConf(Robot* rob, HASH_S_K* param) {
+      Conf* tmpC = new SE3Conf();
+      vector<KthReal> cords(7);
+      string search[]={"X", "Y", "Z", "WX", "WY", "WZ", "TH"};
+      HASH_S_K::iterator it;
 
-    for(int i = 0; i < 7; i++){
-      it = param->find(search[i]);
-      if( it != param->end())
-        cords[i]= it->second;
-      else
-        cords[i] = 0.0;
-    }
-
-    // Here is needed to convert from axis-angle to
-    // quaternion internal represtantation.
-    SE3Conf::fromAxisToQuaternion(cords);
-
-    tmpC->setCoordinates(cords);
-    rob->setHomePos(tmpC);
-    delete tmpC;
-    cords.clear();
-
-    if(rob->getNumJoints() > 0){
-      cords.resize(rob->getNumJoints());
-      tmpC = new RnConf(rob->getNumJoints());
-      for(int i = 0; i < tmpC->getDim(); i++){
-        it = param->find(rob->getLink(i+1)->getName());
-        if( it != param->end())
-          cords[i]= it->second;
-        else
-          cords[i] = 0.0;
+      for(int i = 0; i < 7; i++){
+          it = param->find(search[i]);
+          if( it != param->end())
+              cords[i]= it->second;
+          else
+              cords[i] = 0.0;
       }
+
+      // Here is needed to convert from axis-angle to
+      // quaternion internal represtantation.
+      SE3Conf::fromAxisToQuaternion(cords);
 
       tmpC->setCoordinates(cords);
       rob->setHomePos(tmpC);
       delete tmpC;
-    }
+      cords.clear();
+
+      if(rob->getNumJoints() > 0){
+          cords.resize(rob->getNumJoints());
+          tmpC = new RnConf(rob->getNumJoints());
+          for(int i = 0; i < tmpC->getDim(); i++){
+              it = param->find(rob->getLink(i+1)->getName());
+              if( it != param->end())
+                  cords[i]= it->second;
+              else
+                  cords[i] = 0.0;
+          }
+
+          tmpC->setCoordinates(cords);
+          rob->setHomePos(tmpC);
+          delete tmpC;
+      }
   }
 
+  bool Problem::createPlanner( string name, ompl::geometric::SimpleSetup *ssptr ) {
+      if(_planner != NULL )
+          delete _planner;
 
+      Sample *sinit=NULL;
+      Sample *sgoal=NULL;
+      if(_cspace->getSize()>=2)
+      {
+          sinit=_cspace->getSampleAt(0);
+          sgoal=_cspace->getSampleAt(1);
+      }
 
-  bool Problem::createPlanner( string name, ompl::geometric::SimpleSetup *ssptr ){
-    if(_planner != NULL )
-      delete _planner;
-
-    Sample *sinit=NULL;
-    Sample *sgoal=NULL;
-    if(_cspace->getSize()>=2)
-    {
-        sinit=_cspace->getSampleAt(0);
-        sgoal=_cspace->getSampleAt(1);
-    }
-
-    if(name == "dummy") //Dummy if to start.
-        cout<<"planer name is dummy?"<<endl;
+      if(name == "dummy") //Dummy if to start.
+          cout<<"planer name is dummy?"<<endl;
 
 #if defined(KAUTHAM_USE_IOC)
-    else if(name == "PRM")
-      _planner = new IOC::PRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
+      else if(name == "PRM")
+          _planner = new IOC::PRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 
-    else if(name == "PRM Hand IROS")
-      _planner = new IOC::PRMHandPlannerIROS(CONTROLSPACE, sinit, sgoal,
-                                       _cspace, _sampler, _wspace, 5, (KthReal)0.001 );
-    else if(name == "PRM Hand ICRA")
-      _planner = new IOC::PRMHandPlannerICRA(CONTROLSPACE, sinit, sgoal,
-                                       _cspace, _sampler, _wspace, 100, 5, (KthReal)0.010, 5);
+      else if(name == "PRM Hand IROS")
+          _planner = new IOC::PRMHandPlannerIROS(CONTROLSPACE, sinit, sgoal,
+                                                 _cspace, _sampler, _wspace, 5, (KthReal)0.001 );
+      else if(name == "PRM Hand ICRA")
+          _planner = new IOC::PRMHandPlannerICRA(CONTROLSPACE, sinit, sgoal,
+                                                 _cspace, _sampler, _wspace, 100, 5, (KthReal)0.010, 5);
 
-     else if(name == "PRMAURO HandArm")
-      _planner = new IOC::PRMAUROHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
-                                             _sampler, _wspace, 10, (KthReal)0.0010, 10);
+      else if(name == "PRMAURO HandArm")
+          _planner = new IOC::PRMAUROHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
+                                                    _sampler, _wspace, 10, (KthReal)0.0010, 10);
 
-     else if(name == "PRM RobotHand-Const ICRA")
-      _planner = new IOC::PRMRobotHandConstPlannerICRA(CONTROLSPACE, sinit, sgoal, _cspace,
-                                             _sampler, _wspace, 3, (KthReal)50.0);
-   	 else if(name == "MyPlanner")
-      _planner = new IOC::MyPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
+      else if(name == "PRM RobotHand-Const ICRA")
+          _planner = new IOC::PRMRobotHandConstPlannerICRA(CONTROLSPACE, sinit, sgoal, _cspace,
+                                                           _sampler, _wspace, 3, (KthReal)50.0);
+      else if(name == "MyPlanner")
+          _planner = new IOC::MyPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 
-	 else if(name == "MyPRMPlanner")
-      _planner = new IOC::MyPRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
+      else if(name == "MyPRMPlanner")
+          _planner = new IOC::MyPRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 
-	  else if(name == "MyGridPlanner")
-      _planner = new IOC::MyGridPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
+      else if(name == "MyGridPlanner")
+          _planner = new IOC::MyGridPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 
-	   else if(name == "NF1Planner")
-      _planner = new IOC::NF1Planner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
+      else if(name == "NF1Planner")
+          _planner = new IOC::NF1Planner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 
-	   else if(name == "HFPlanner")
-      _planner = new IOC::HFPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
+      else if(name == "HFPlanner")
+          _planner = new IOC::HFPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 
 #if defined(KAUTHAM_USE_ARMADILLO)
 
-    else if(name == "PRMPCA HandArm")
-      _planner = new IOC::PRMPCAHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
-                                             _sampler, _wspace, 10,0, (KthReal)0.0010, 10,0.0,0.0);
+      else if(name == "PRMPCA HandArm")
+          _planner = new IOC::PRMPCAHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
+                                                   _sampler, _wspace, 10,0, (KthReal)0.0010, 10,0.0,0.0);
 #endif
 #endif
 
 #if defined(KAUTHAM_USE_GUIBRO)
-    else if(name == "GUIBROgrid")
-      _planner = new GUIBRO::GUIBROgridPlanner(CONTROLSPACE, NULL, NULL, _cspace, _sampler, _wspace);
+      else if(name == "GUIBROgrid")
+          _planner = new GUIBRO::GUIBROgridPlanner(CONTROLSPACE, NULL, NULL, _cspace, _sampler, _wspace);
 #endif
 
 #if defined(KAUTHAM_USE_OMPL)
 
-    else if(name == "omplDefault")
-      _planner = new omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplDefault")
+          _planner = new omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplPRM")
-      _planner = new omplplanner::omplPRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplPRM")
+          _planner = new omplplanner::omplPRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplRRT")
-      _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplRRT")
+          _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplRRTStar")
-      _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplRRTStar")
+          _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplTRRT")
-      _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplTRRT")
+          _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplpRRT")
-      _planner = new omplplanner::omplpRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplpRRT")
+          _planner = new omplplanner::omplpRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplLazyRRT")
-      _planner = new omplplanner::omplLazyRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplLazyRRT")
+          _planner = new omplplanner::omplLazyRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplRRTConnect")
-      _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplRRTConnect")
+          _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplEST")
-      _planner = new omplplanner::omplESTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplEST")
+          _planner = new omplplanner::omplESTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplSBL")
-      _planner = new omplplanner::omplSBLPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplSBL")
+          _planner = new omplplanner::omplSBLPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplKPIECE")
-      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplKPIECE")
+          _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplBKPIECE")
-      _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if(name == "omplBKPIECE")
+          _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-    else if(name == "omplcRRT")
-      _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+      else if(name == "omplcRRT")
+          _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
 
-    else if(name == "omplcRRTf16")
-      _planner = new omplcplanner::omplcRRTf16Planner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      else if(name == "omplcRRTf16")
+          _planner = new omplcplanner::omplcRRTf16Planner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
-    else if(name == "omplcRRTcar")
-      _planner = new omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
+      else if(name == "omplcRRTcar")
+          _planner = new omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
-    else
-        cout<<"Planner "<< name <<" is unknow or not loaded (check the CMakeFiles.txt options)" << endl;
+      else
+          cout<<"Planner "<< name <<" is unknow or not loaded (check the CMakeFiles.txt options)" << endl;
 
 #endif
 
-    if(_planner != NULL)
-      return true;
-    else
-      return false;
-  }
-
-
-  bool Problem::createPlannerFromFile(xml_document *doc, ompl::geometric::SimpleSetup *ssptr){
-    if(_planner == NULL ){
-        //Create the planner and set the parameters
-        xml_node planNode = doc->child("Problem").child("Planner").child("Parameters");
-        string name = planNode.child("Name").child_value();
-
-        if( name != ""){
-          if( createPlanner(name,ssptr) ){
-            xml_node::iterator it;
-            for(it = planNode.begin(); it != planNode.end(); ++it){
-              name = it->name();
-              try{
-                if( name == "Parameter" ){
-                  name = it->attribute("name").value();
-                  _planner->setParametersFromString( name.append("|").append(it->child_value()));
-                }
-              }catch(...){
-                std::cout << "Current planner doesn't have at least one of the parameters"
-                  << " found in the file (" << name << ")." << std::endl;
-                //return false; //changed, let it continue -
-              }
-            }
-            return true;
-          }
-        }
-    }
-    return false;
-  }
-
-
-  bool Problem::createCSpaceFromFile(xml_document *doc){
-    if( createCSpace() ){
-        xml_node queryNode = doc->child("Problem").child("Planner").child("Queries");
-        xml_node::iterator it;
-        int i = 0;
-        vector<string> tokens;
-        string sentence = "";
-        Sample* tmpSampPointer = NULL;
-        unsigned int dim = _wspace->getDimension();
-        vector<KthReal> coordsVec( dim );
-        for( it = queryNode.begin(); it != queryNode.end(); ++it ){
-          xml_node sampNode = it->child("Init");
-          if( dim == sampNode.attribute("dim").as_int() ){
-            sentence = sampNode.child_value();
-
-            boost::split(tokens, sentence, boost::is_any_of("| "));
-            if(tokens.size() != dim){
-              std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
-              break;
-            }
-
-            tmpSampPointer = new Sample(dim);
-            for(char i=0; i<dim; i++)
-              coordsVec[i] = (KthReal)atof(tokens[i].c_str());
-
-            tmpSampPointer->setCoords(coordsVec);
-            // Adding the mapping to configuration space with the collision test.
-            if(_wspace->collisionCheck(tmpSampPointer) == true)
-                cout<<"Init sample is in collision"<<endl;
-            _cspace->add(tmpSampPointer);
-
-          }else{
-            cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
-            break;
-          }
-
-          sampNode = it->child("Goal");
-          if( dim == sampNode.attribute("dim").as_int() ){
-            sentence = sampNode.child_value();
-
-            boost::split(tokens, sentence, boost::is_any_of("| "));
-            if(tokens.size() != dim){
-              std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
-              break;
-            }
-
-            tmpSampPointer = new Sample(dim);
-            for(char i=0; i<dim; i++)
-              coordsVec[i] = (KthReal)atof(tokens[i].c_str());
-
-            tmpSampPointer->setCoords(coordsVec);
-            // Adding the mapping to configuration space with the collision test.
-            if(_wspace->collisionCheck(tmpSampPointer)==true)
-                cout<<"Goal sample is in collision"<<endl;
-            _cspace->add(tmpSampPointer);
-
-          }else{
-            cout << "Sample doesn't have the right dimension.\n";
-            break;
-          }
-        }
-        if( _cspace->getSize() >= 2 ){
-          _cspace->getSampleAt(0)->addNeigh(1);
-          _cspace->getSampleAt(1)->addNeigh(0);
+      if(_planner != NULL)
           return true;
-        }
-    }
-    return false;
+      else
+          return false;
   }
 
-  bool Problem::createCSpace(){
-    try{
-      if(_cspace == NULL) _cspace = new SampleSet();
-      if(_sampler == NULL) _sampler = new RandomSampler(_wspace->getDimension());
-      _cspace->clear();
-      return true;
-    }catch(...){
+  bool Problem::createPlannerFromFile(xml_document *doc, ompl::geometric::SimpleSetup *ssptr) {
+      if(_planner == NULL ){
+          //Create the planner and set the parameters
+          xml_node planNode = doc->child("Problem").child("Planner").child("Parameters");
+          string name = planNode.child("Name").child_value();
+
+          if( name != ""){
+              if( createPlanner(name,ssptr) ){
+                  xml_node::iterator it;
+                  for(it = planNode.begin(); it != planNode.end(); ++it){
+                      name = it->name();
+                      try{
+                          if( name == "Parameter" ){
+                              name = it->attribute("name").value();
+                              _planner->setParametersFromString( name.append("|").append(it->child_value()));
+                          }
+                      }catch(...){
+                          std::cout << "Current planner doesn't have at least one of the parameters"
+                                    << " found in the file (" << name << ")." << std::endl;
+                          //return false; //changed, let it continue -
+                      }
+                  }
+                  return true;
+              }
+          }
+      }
       return false;
-    }
   }
 
-  bool Problem::setCurrentControls(vector<KthReal> &val, int offset){
-    try{
-      for(unsigned int i=0; i < val.size(); i++)
-        _currentControls[i+offset] = (KthReal)val[i];
-      return true;
-    }catch(...){
+  bool Problem::createCSpaceFromFile(xml_document *doc) {
+      if( createCSpace() ){
+          xml_node queryNode = doc->child("Problem").child("Planner").child("Queries");
+          xml_node::iterator it;
+          int i = 0;
+          vector<string> tokens;
+          string sentence = "";
+          Sample* tmpSampPointer = NULL;
+          unsigned int dim = _wspace->getDimension();
+          vector<KthReal> coordsVec( dim );
+          for( it = queryNode.begin(); it != queryNode.end(); ++it ){
+              xml_node sampNode = it->child("Init");
+              if( dim == sampNode.attribute("dim").as_int() ){
+                  sentence = sampNode.child_value();
+
+                  boost::split(tokens, sentence, boost::is_any_of("| "));
+                  if(tokens.size() != dim){
+                      std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
+                      break;
+                  }
+
+                  tmpSampPointer = new Sample(dim);
+                  for(char i=0; i<dim; i++)
+                      coordsVec[i] = (KthReal)atof(tokens[i].c_str());
+
+                  tmpSampPointer->setCoords(coordsVec);
+                  // Adding the mapping to configuration space with the collision test.
+                  if(_wspace->collisionCheck(tmpSampPointer) == true)
+                      cout<<"Init sample is in collision"<<endl;
+                  _cspace->add(tmpSampPointer);
+
+              }else{
+                  cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
+                  break;
+              }
+
+              sampNode = it->child("Goal");
+              if( dim == sampNode.attribute("dim").as_int() ){
+                  sentence = sampNode.child_value();
+
+                  boost::split(tokens, sentence, boost::is_any_of("| "));
+                  if(tokens.size() != dim){
+                      std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
+                      break;
+                  }
+
+                  tmpSampPointer = new Sample(dim);
+                  for(char i=0; i<dim; i++)
+                      coordsVec[i] = (KthReal)atof(tokens[i].c_str());
+
+                  tmpSampPointer->setCoords(coordsVec);
+                  // Adding the mapping to configuration space with the collision test.
+                  if(_wspace->collisionCheck(tmpSampPointer)==true)
+                      cout<<"Goal sample is in collision"<<endl;
+                  _cspace->add(tmpSampPointer);
+
+              }else{
+                  cout << "Sample doesn't have the right dimension.\n";
+                  break;
+              }
+          }
+          if( _cspace->getSize() >= 2 ){
+              _cspace->getSampleAt(0)->addNeigh(1);
+              _cspace->getSampleAt(1)->addNeigh(0);
+              return true;
+          }
+      }
       return false;
-    }
+  }
+
+  bool Problem::createCSpace() {
+      try{
+          if(_cspace == NULL) _cspace = new SampleSet();
+          if(_sampler == NULL) _sampler = new RandomSampler(_wspace->getDimension());
+          _cspace->clear();
+          return true;
+      }catch(...){
+          return false;
+      }
+  }
+
+  bool Problem::setCurrentControls(vector<KthReal> &val, int offset) {
+      try{
+          for(unsigned int i=0; i < val.size(); i++)
+              _currentControls[i+offset] = (KthReal)val[i];
+          return true;
+      }catch(...){
+          return false;
+      }
 
   }
 
-
-
-  bool Problem::setupFromFile(ifstream* xml_inputfile, string modelsfolder)
-  {
+  bool Problem::setupFromFile(ifstream* xml_inputfile, string modelsfolder) {
       _filePath = modelsfolder.c_str();
       xml_document *doc = new xml_document;
       xml_parse_result result = doc->load( *xml_inputfile );
       if(result)
-            return setupFromFile(doc);
+          return setupFromFile(doc);
   }
 
-
-
-  bool Problem::setupFromFile(string xml_doc)
-  {
-      _filePath = xml_doc;
-      xml_document *doc = new xml_document;
-      xml_parse_result result = doc->load_file( xml_doc.c_str() );
-      if(result)
-            return setupFromFile(doc);
+  bool Problem::exists(string file) {
+      fstream fin;
+      fin.open(file.c_str(),ios::in);
+      if (fin.is_open()) {
+          //the file exists
+          fin.close();
+          return (true);
+      } else {
+          //the file doesn't exist
+          fin.close();
+          return (false);
+      }
   }
 
-  bool Problem::setupFromFile(xml_document *doc)
-  {
-      createWSpace( doc );
-      if( createCSpaceFromFile( doc ) == false)
-      {
+  bool Problem::isFileOK (xml_document *doc) {
+      //a correct problem file must have a planner node
+      if (!doc->child("Problem").child("Planner")) {
           return false;
       }
-      if( createPlannerFromFile( doc ) == false)
-      {
+
+      //a correct problem file must have at least a robot node
+      if (!doc->child("Problem").child("Robot").attribute("robot")) {
           return false;
       }
+
+      //a correct problem file must have a robot controls node
+      if (!doc->child("Problem").child("Controls").attribute("robot")) {
+          return false;
+      }
+
+      //if all the required information exists
       return true;
   }
 
-  bool Problem::saveToFile(string file_path){
-    if( file_path == "" )  file_path = _filePath;
-    if( _filePath != file_path ){ // If save as
-      ifstream initialFile(_filePath.c_str(), ios::in|ios::binary);
-	    ofstream outputFile(file_path.c_str(), ios::out|ios::binary);
+  bool Problem::findAllFiles(xml_node *parent, string child, string attribute,
+                             vector<string> path) {
+      if (path.size() > 0) {
+          string file;
+          bool found;
+          int i;
+          bool end = false;
+          xml_node node = parent->child(child.c_str());
+          while (node && !end) {
+              //load file
+              file = node.attribute(attribute.c_str()).as_string();
 
-	    //As long as both the input and output files are open...
-	    if(initialFile.is_open() && outputFile.is_open()){
-        outputFile << initialFile.rdbuf() ;
-	    }else           //there were any problems with the copying process
-        return false;
+              //look for the file
+              found = false;
+              i = 0;
+              while (!found && i < path.size()) {
+                  if (exists(path.at(i)+file)) {
+                      file = path.at(i)+file;
+                      node.attribute(attribute.c_str()).set_value(file.c_str());
+                      found = true;
+                  } else {
+                      i++;
+                  }
+              }
 
-	    initialFile.close();
-	    outputFile.close();
-    }
+              if (found) {
+                  node = node.next_sibling(child.c_str());
+              } else {
+                  end = true;
+              }
+          }
 
-    xml_document doc;
-    xml_parse_result result = doc.load_file( file_path.c_str() );
-    if( !result ) return false;
+          return (!end);
+      } else {
+          return false;
+      }
+  }
 
-    if( _planner == NULL ) return false;
-    if( _planner->initSamp() == NULL || _planner->goalSamp() == NULL )
+  bool Problem::prepareFile (xml_document *doc) {
+      if (isFileOK(doc)) {
+          //get the relative paths where robots and obstacle files will be looked for
+          QSettings settings("IOC", "Kautham");
+          string rob_def_path = settings.value("default_path/robot").toString().toStdString();
+          string obs_def_path = settings.value("default_path/obstacle").toString().toStdString();
+          string dir = _filePath;
+          dir.erase(dir.find_last_of("/")+1);
+
+          vector <string> path;
+          path.push_back(dir);
+          path.push_back(rob_def_path);
+          path.push_back(obs_def_path);
+
+          xml_node prob_node = doc->child("Problem");
+
+          //find all the robot files and set their complete path if found
+          if (!findAllFiles(&prob_node,"Robot","robot",path)) return false;
+
+          //find all the obstacle files and set their complete path if found
+          if (!findAllFiles(&prob_node,"Obstacle","obstacle",path)) return false;
+
+          //find the robot controls file and set its complete path if found
+          if (!findAllFiles(&prob_node,"Controls","robot",path)) return false;
+
+          //find the obstacle controls file and set its complete path if found
+          if (!findAllFiles(&prob_node,"Controls","obstacle",path)) return false;
+
+          //find all the distancemap files and set their complete path if found
+          if (!findAllFiles(&prob_node,"DistanceMap","distanceMap",path)) return false;
+
+          //find all the dimensions files and set their complete path if found
+          if (!findAllFiles(&prob_node,"DimensionsFile","filename",path)) return false;
+
+          return true;
+      }
       return false;
+  }
 
-    if( doc.child("Problem").child("Planner") )
-      doc.child("Problem").remove_child("Planner");
+  bool Problem::setupFromFile(string xml_doc) {
+      _filePath = xml_doc;
+      xml_document *doc = new xml_document;
+      if(doc->load_file( xml_doc.c_str())) {
+          //if the file was correctly parsed
+          if (prepareFile(doc)) {
+              //if everything seems to be OK, try to setup the problem
+              return setupFromFile(doc);
+          } else {
+              return false;
+          }
+      } else {
+          return false;
+      }
+  }
 
-    xml_node planNode = doc.child("Problem").append_child();
-    planNode.set_name("Planner");
-    xml_node paramNode = planNode.append_child();
-    paramNode.set_name("Parameters");
-    xml_node planname = paramNode.append_child();
-    planname.set_name("Name");
-    planname.append_child(node_pcdata).set_value(_planner->getIDName().c_str());
+  bool Problem::setupFromFile(xml_document *doc) {
+      if (!createWSpace(doc)) return false;
+
+      if (!createCSpaceFromFile(doc)) return false;
+
+      if (!createPlannerFromFile(doc)) return false;
+
+      return true;
+  }
+
+  bool Problem::saveToFile(string file_path) {
+      if( file_path == "" )  file_path = _filePath;
+      if( _filePath != file_path ){ // If save as
+          ifstream initialFile(_filePath.c_str(), ios::in|ios::binary);
+          ofstream outputFile(file_path.c_str(), ios::out|ios::binary);
+
+          //As long as both the input and output files are open...
+          if(initialFile.is_open() && outputFile.is_open()){
+              outputFile << initialFile.rdbuf() ;
+          }else           //there were any problems with the copying process
+              return false;
+
+          initialFile.close();
+          outputFile.close();
+      }
+
+      xml_document doc;
+      xml_parse_result result = doc.load_file( file_path.c_str() );
+      if( !result ) return false;
+
+      if( _planner == NULL ) return false;
+      if( _planner->initSamp() == NULL || _planner->goalSamp() == NULL )
+          return false;
+
+      if( doc.child("Problem").child("Planner") )
+          doc.child("Problem").remove_child("Planner");
+
+      xml_node planNode = doc.child("Problem").append_child();
+      planNode.set_name("Planner");
+      xml_node paramNode = planNode.append_child();
+      paramNode.set_name("Parameters");
+      xml_node planname = paramNode.append_child();
+      planname.set_name("Name");
+      planname.append_child(node_pcdata).set_value(_planner->getIDName().c_str());
 
 
 
-    // Adding the parameters
-    string param = _planner->getParametersAsString();
-    vector<string> tokens;
-    boost::split(tokens, param, boost::is_any_of("|"));
+      // Adding the parameters
+      string param = _planner->getParametersAsString();
+      vector<string> tokens;
+      boost::split(tokens, param, boost::is_any_of("|"));
 
-    for(int i=0; i<tokens.size(); i=i+2){
-      xml_node paramItem = paramNode.append_child();
-      paramItem.set_name("Parameter");
-      paramItem.append_attribute("name") = tokens[i].c_str();
-      paramItem.append_child(node_pcdata).set_value(tokens[i+1].c_str());
-    }
+      for(int i=0; i<tokens.size(); i=i+2){
+          xml_node paramItem = paramNode.append_child();
+          paramItem.set_name("Parameter");
+          paramItem.append_attribute("name") = tokens[i].c_str();
+          paramItem.append_child(node_pcdata).set_value(tokens[i+1].c_str());
+      }
 
-    // Adding the Query information
+      // Adding the Query information
 
-    xml_node queryNode = planNode.append_child();
-    queryNode.set_name("Queries");
+      xml_node queryNode = planNode.append_child();
+      queryNode.set_name("Queries");
 
-    xml_node queryItem = queryNode.append_child();
-    queryItem.set_name("Query");
-    xml_node initNode = queryItem.append_child();
-    initNode.set_name( "Init" );
-    initNode.append_attribute("dim") = _wspace->getDimension();
-    initNode.append_child(node_pcdata).set_value( _planner->initSamp()->print(true).c_str() );
-    xml_node goalNode = queryItem.append_child();
-    goalNode.set_name( "Goal" );
-    goalNode.append_attribute("dim") = _wspace->getDimension();
-    goalNode.append_child(node_pcdata).set_value( _planner->goalSamp()->print(true).c_str() );
+      xml_node queryItem = queryNode.append_child();
+      queryItem.set_name("Query");
+      xml_node initNode = queryItem.append_child();
+      initNode.set_name( "Init" );
+      initNode.append_attribute("dim") = _wspace->getDimension();
+      initNode.append_child(node_pcdata).set_value( _planner->initSamp()->print(true).c_str() );
+      xml_node goalNode = queryItem.append_child();
+      goalNode.set_name( "Goal" );
+      goalNode.append_attribute("dim") = _wspace->getDimension();
+      goalNode.append_child(node_pcdata).set_value( _planner->goalSamp()->print(true).c_str() );
 
-    return doc.save_file(file_path.c_str());
+      return doc.save_file(file_path.c_str());
   }
 
   bool Problem::inheritSolution(){
-    if(_planner->isSolved()){
-      _wspace->inheritSolution(*(_planner->getSimulationPath()));
-      return true;
-    }
-    return false;
+      if(_planner->isSolved()){
+          _wspace->inheritSolution(*(_planner->getSimulationPath()));
+          return true;
+      }
+      return false;
   }
 
-  void Problem::addRobot2WSpace(xml_node *robot_node, string dir) {
+  bool Problem::addRobot2WSpace(xml_node *robot_node) {
       Robot *rob;
       string name;
 
 #ifndef KAUTHAM_COLLISION_PQP
-        rob = new Robot( dir + robot_node->attribute("robot").value(),
-                         (KthReal)robot_node->attribute("scale").as_double(),INVENTOR);
+      rob = new Robot(robot_node->attribute("robot").value(),
+                      (KthReal)robot_node->attribute("scale").as_double(),INVENTOR);
 #else
-        rob = new Robot( dir + robot_node->attribute("robot").value(),
-                         (KthReal)robot_node->attribute("scale").as_double(),IVPQP);
+      rob = new Robot(robot_node->attribute("robot").value(),
+                      (KthReal)robot_node->attribute("scale").as_double(),IVPQP);
 #endif
 
-        // Setup the Inverse Kinematic if it has one.
-        if(robot_node->child("InvKinematic")){
-            name = robot_node->child("InvKinematic").attribute("name").value();
-            if( name == "RR2D" )
-            rob->setInverseKinematic( Kautham::RR2D );
+      // Setup the Inverse Kinematic if it has one.
+      if(robot_node->child("InvKinematic")){
+          name = robot_node->child("InvKinematic").attribute("name").value();
+          if( name == "RR2D" )
+              rob->setInverseKinematic( Kautham::RR2D );
           else if( name == "TX90")
-            rob->setInverseKinematic( Kautham::TX90 );
+              rob->setInverseKinematic( Kautham::TX90 );
           else if( name == "HAND")
-            rob->setInverseKinematic( Kautham::HAND );
+              rob->setInverseKinematic( Kautham::HAND );
           else if( name == "TX90HAND")
-            rob->setInverseKinematic( Kautham::TX90HAND );
+              rob->setInverseKinematic( Kautham::TX90HAND );
           else if( name == "UR5")
-            rob->setInverseKinematic( Kautham::UR5 );
+              rob->setInverseKinematic( Kautham::UR5 );
           else
-            rob->setInverseKinematic(Kautham::UNIMPLEMENTED);
-        }else
+              rob->setInverseKinematic(Kautham::UNIMPLEMENTED);
+      }else
           rob->setInverseKinematic(Kautham::UNIMPLEMENTED);
 
-        // Setup the Constrained Kinematic if it has one.
-        if(robot_node->child("ConstrainedKinematic")){
+      // Setup the Constrained Kinematic if it has one.
+      if(robot_node->child("ConstrainedKinematic")){
           name = robot_node->child("ConstrainedKinematic").attribute("name").value();
 
           rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
 #if defined(KAUTHAM_USE_GUIBRO)
           if( name == "BRONCHOSCOPY" ){
-            rob->setConstrainedKinematic( Kautham::BRONCHOSCOPY );
-            double amin = robot_node->child("ConstrainedKinematic").attribute("amin").as_double();
-            double amax = robot_node->child("ConstrainedKinematic").attribute("amax").as_double();
-            double bmin = robot_node->child("ConstrainedKinematic").attribute("bmin").as_double();
-            double bmax = robot_node->child("ConstrainedKinematic").attribute("bmax").as_double();
-            ((GUIBRO::ConsBronchoscopyKin*)rob->getCkine())->setAngleLimits(bmin*M_PI/180.0, bmax*M_PI/180.0, amin*M_PI/180.0, amax*M_PI/180.0);
+              rob->setConstrainedKinematic( Kautham::BRONCHOSCOPY );
+              double amin = robot_node->child("ConstrainedKinematic").attribute("amin").as_double();
+              double amax = robot_node->child("ConstrainedKinematic").attribute("amax").as_double();
+              double bmin = robot_node->child("ConstrainedKinematic").attribute("bmin").as_double();
+              double bmax = robot_node->child("ConstrainedKinematic").attribute("bmax").as_double();
+              ((GUIBRO::ConsBronchoscopyKin*)rob->getCkine())->setAngleLimits(bmin*M_PI/180.0, bmax*M_PI/180.0, amin*M_PI/180.0, amax*M_PI/180.0);
           }
           else
-            rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
+              rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
 #endif
-        }else{
+      }else{
           rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
-        }
+      }
 
-        // Setup the limits of the moveable base
-        for(xml_node_iterator itL = robot_node->begin(); itL != robot_node->end(); ++itL){
+      // Setup the limits of the moveable base
+      for(xml_node_iterator itL = robot_node->begin(); itL != robot_node->end(); ++itL){
           name = (*itL).name();
           if( name == "Limits" ){
-            name = (*itL).attribute("name").value();
-            if( name == "X")
-              rob->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "Y")
-              rob->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "Z")
-              rob->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "WX")
-              rob->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "WY")
-              rob->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "WZ")
-              rob->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
-                             (KthReal)(*itL).attribute("max").as_double());
-            else if( name == "TH")
-              rob->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
-                             (KthReal)(*itL).attribute("max").as_double() * _toRad);
+              name = (*itL).attribute("name").value();
+              if( name == "X")
+                  rob->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "Y")
+                  rob->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "Z")
+                  rob->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "WX")
+                  rob->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "WY")
+                  rob->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "WZ")
+                  rob->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "TH")
+                  rob->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
+                                 (KthReal)(*itL).attribute("max").as_double() * _toRad);
           }
           if( name == "Home" ){
-          // If robot hasn't a home, it will be assumed in the origin.
-            SE3Conf tmpC;
-            vector<KthReal> cords(7);
-            cords[0] = (KthReal)(*itL).attribute("X").as_double();
-            cords[1] = (KthReal)(*itL).attribute("Y").as_double();
-            cords[2] = (KthReal)(*itL).attribute("Z").as_double();
-            cords[3] = (KthReal)(*itL).attribute("WX").as_double();
-            cords[4] = (KthReal)(*itL).attribute("WY").as_double();
-            cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
-            cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
+              // If robot hasn't a home, it will be assumed in the origin.
+              SE3Conf tmpC;
+              vector<KthReal> cords(7);
+              cords[0] = (KthReal)(*itL).attribute("X").as_double();
+              cords[1] = (KthReal)(*itL).attribute("Y").as_double();
+              cords[2] = (KthReal)(*itL).attribute("Z").as_double();
+              cords[3] = (KthReal)(*itL).attribute("WX").as_double();
+              cords[4] = (KthReal)(*itL).attribute("WY").as_double();
+              cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
+              cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
 
-            // Here is needed to convert from axis-angle to
-            // quaternion internal represtantation.
-            SE3Conf::fromAxisToQuaternion(cords);
+              // Here is needed to convert from axis-angle to
+              // quaternion internal represtantation.
+              SE3Conf::fromAxisToQuaternion(cords);
 
-            tmpC.setCoordinates(cords);
+              tmpC.setCoordinates(cords);
 
-            //cout << tmpC.print();
+              //cout << tmpC.print();
 
-            rob->setHomePos(&tmpC);
+              rob->setHomePos(&tmpC);
           }
-        }
+      }
 
-        _wspace->addRobot(rob);
+      _wspace->addRobot(rob);
+
+      return true;
   }
 
   bool Problem::addControls2WSpace(string cntrFile) {
       fstream fin;
       fin.open(cntrFile.c_str(),ios::in);
       if( fin.is_open() ){ // The file already exists.
-        fin.close();
-        string::size_type loc = cntrFile.find( ".cntr", 0 );
-        if( loc != string::npos ) { // It means that controls are defined by a *.cntr file
-          // Opening the file with the new pugiXML library.
-          xml_document doc;
-          xml_parse_result result = doc.load_file(cntrFile.c_str());
+          fin.close();
+          string::size_type loc = cntrFile.find( ".cntr", 0 );
+          if( loc != string::npos ) { // It means that controls are defined by a *.cntr file
+              //Opening the file with the new pugiXML library.
+              xml_document doc;
+              xml_parse_result result = doc.load_file(cntrFile.c_str());
 
-          //Parse the cntr file
-          if(result){
-              //  Once the robots were added, the controls can be configured
-              int numControls = 0;
-              string controlsName = "";
-              xml_node tmpNode = doc.child("ControlSet").child("Control");
-              while (tmpNode) {
-                  numControls++;
-                  if(controlsName != "") controlsName.append("|");
-                  controlsName.append(tmpNode.attribute("name").as_string());
-                  tmpNode = tmpNode.next_sibling("Control");
-              }
-              _wspace->setNumControls(numControls);
-              _wspace->setControlsName(controlsName);
-
-              //  Creating the mapping and offset Matrices between controls
-              //  and DOF parameters and initializing them.
-              KthReal ***mapMatrix;
-              KthReal **offMatrix;
-              mapMatrix = new KthReal**[_wspace->getNumRobots()];
-              offMatrix = new KthReal*[_wspace->getNumRobots()];
-              for (int i = 0; i < _wspace->getNumRobots(); i++) {
-                  mapMatrix[i] = new KthReal*[_wspace->getRobot(i)->getNumJoints()+6];
-                  offMatrix[i] = new KthReal[_wspace->getRobot(i)->getNumJoints()+6];
-                  for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6; j++) {
-                      mapMatrix[i][j] = new KthReal[numControls];
-                      offMatrix[i][j] = (KthReal)0.5;
-                      for (int k = 0; k < numControls; k++) {
-                          mapMatrix[i][j][k] = (KthReal)0.0;
-                      }
+              //Parse the cntr file
+              if(result){
+                  //Once the robots were added, the controls can be configured
+                  int numControls = 0;
+                  string controlsName = "";
+                  xml_node tmpNode = doc.child("ControlSet").child("Control");
+                  while (tmpNode) {
+                      numControls++;
+                      if(controlsName != "") controlsName.append("|");
+                      controlsName.append(tmpNode.attribute("name").as_string());
+                      tmpNode = tmpNode.next_sibling("Control");
                   }
-              }
+                  _wspace->setNumControls(numControls);
+                  _wspace->setControlsName(controlsName);
 
-              //Load the Offset vector
-              tmpNode = doc.child("ControlSet").child("Offset");
-              xml_node::iterator it;
-              string dofName, robotName, tmpstr;
-              for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
-                  tmpstr = (*it).attribute("name").as_string();
-                  unsigned found = tmpstr.find_last_of("/");
-                  if (found == string::npos) {
-                      return (false);
-                  }
-                  dofName = tmpstr.substr(found+1);
-                  robotName = tmpstr.substr(0,found);
-
-                  //Find the robot index into the robots vector
-                  int i = 0;
-                  bool robot_found = false;
-                  while (!robot_found && i < _wspace->getNumRobots()) {
-                      if (_wspace->getRobot(i)->getName() == robotName) {
-                          robot_found = true;
-                      } else {
-                          i++;
-                      }
-                  }
-
-                  if (!robot_found) {
-                      return (false);
-                  }
-
-                  if( dofName == "X"){
-                      _wspace->getRobot(i)->setSE3(true);
-                      offMatrix[i][0] = (KthReal)(*it).attribute("value").as_double();
-                  }else if( dofName == "Y"){
-                      _wspace->getRobot(i)->setSE3(true);
-                      offMatrix[i][1] = (KthReal)(*it).attribute("value").as_double();
-                  }else if( dofName == "Z"){
-                      _wspace->getRobot(i)->setSE3(true);
-                      offMatrix[i][2] = (KthReal)(*it).attribute("value").as_double();
-                  }else if( dofName == "X1"){
-                      _wspace->getRobot(i)->setSE3(true);
-                      offMatrix[i][3] = (KthReal)(*it).attribute("value").as_double();
-                  }else if( dofName == "X2"){
-                      _wspace->getRobot(i)->setSE3(true);
-                      offMatrix[i][4] = (KthReal)(*it).attribute("value").as_double();
-                  }else if( dofName == "X3"){
-                      _wspace->getRobot(i)->setSE3(true);
-                      offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
-                  }else{    // It's not a SE3 control and could have any name.
-                            // Find the index orden into the links vector without the first static link.
-                      for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
-                          if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
-                              offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
-                              break;
-                      }
-                  }
-              }//End processing Offset vector
-
-              //Process the controls to load the mapMatrix
-              tmpNode = doc.child("ControlSet");
-              string nodeType = "";
-              int cont = 0;
-              for(it = tmpNode.begin(); it != tmpNode.end(); ++it){
-                  nodeType = it->name();
-                  if( nodeType == "Control" ){
-                      xml_node::iterator itDOF;
-                      KthReal eigVal = 1;
-                      if ((*it).attribute("eigValue")) {
-                          eigVal = (KthReal) (*it).attribute("eigValue").as_double();
-                      }
-
-                      for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
-                          tmpstr = itDOF->attribute("name").as_string();
-                          unsigned found = tmpstr.find_last_of("/");
-                          if (found == string::npos) {
-                              return (false);
+                  //Creating the mapping and offset Matrices between controls
+                  //and DOF parameters and initializing them.
+                  KthReal ***mapMatrix;
+                  KthReal **offMatrix;
+                  mapMatrix = new KthReal**[_wspace->getNumRobots()];
+                  offMatrix = new KthReal*[_wspace->getNumRobots()];
+                  for (int i = 0; i < _wspace->getNumRobots(); i++) {
+                      mapMatrix[i] = new KthReal*[_wspace->getRobot(i)->getNumJoints()+6];
+                      offMatrix[i] = new KthReal[_wspace->getRobot(i)->getNumJoints()+6];
+                      for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6; j++) {
+                          mapMatrix[i][j] = new KthReal[numControls];
+                          offMatrix[i][j] = (KthReal)0.5;
+                          for (int k = 0; k < numControls; k++) {
+                              mapMatrix[i][j][k] = (KthReal)0.0;
                           }
-                          dofName = tmpstr.substr(found+1);
-                          robotName = tmpstr.substr(0,found);
+                      }
+                  }
 
-                          //Find the robot index into the robots vector
-                          int i = 0;
-                          bool robot_found = false;
-                          while (!robot_found && i < _wspace->getNumRobots()) {
-                              if (_wspace->getRobot(i)->getName() == robotName) {
-                                  robot_found = true;
-                              } else {
-                                  i++;
+                  //Load the Offset vector
+                  tmpNode = doc.child("ControlSet").child("Offset");
+                  xml_node::iterator it;
+                  string dofName, robotName, tmpstr;
+                  for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
+                      tmpstr = (*it).attribute("name").as_string();
+                      unsigned found = tmpstr.find_last_of("/");
+                      if (found == string::npos) {
+                          return (false);
+                      }
+                      dofName = tmpstr.substr(found+1);
+                      robotName = tmpstr.substr(0,found);
+
+                      //Find the robot index into the robots vector
+                      int i = 0;
+                      bool robot_found = false;
+                      while (!robot_found && i < _wspace->getNumRobots()) {
+                          if (_wspace->getRobot(i)->getName() == robotName) {
+                              robot_found = true;
+                          } else {
+                              i++;
+                          }
+                      }
+
+                      if (!robot_found) {
+                          return (false);
+                      }
+
+                      if( dofName == "X"){
+                          _wspace->getRobot(i)->setSE3(true);
+                          offMatrix[i][0] = (KthReal)(*it).attribute("value").as_double();
+                      }else if( dofName == "Y"){
+                          _wspace->getRobot(i)->setSE3(true);
+                          offMatrix[i][1] = (KthReal)(*it).attribute("value").as_double();
+                      }else if( dofName == "Z"){
+                          _wspace->getRobot(i)->setSE3(true);
+                          offMatrix[i][2] = (KthReal)(*it).attribute("value").as_double();
+                      }else if( dofName == "X1"){
+                          _wspace->getRobot(i)->setSE3(true);
+                          offMatrix[i][3] = (KthReal)(*it).attribute("value").as_double();
+                      }else if( dofName == "X2"){
+                          _wspace->getRobot(i)->setSE3(true);
+                          offMatrix[i][4] = (KthReal)(*it).attribute("value").as_double();
+                      }else if( dofName == "X3"){
+                          _wspace->getRobot(i)->setSE3(true);
+                          offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
+                      }else{    // It's not a SE3 control and could have any name.
+                          // Find the index orden into the links vector without the first static link.
+                          for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
+                              if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
+                                  offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
+                                  break;
                               }
+                      }
+                  }//End processing Offset vector
+
+                  //Process the controls to load the mapMatrix
+                  tmpNode = doc.child("ControlSet");
+                  string nodeType = "";
+                  int cont = 0;
+                  for(it = tmpNode.begin(); it != tmpNode.end(); ++it){
+                      nodeType = it->name();
+                      if( nodeType == "Control" ){
+                          xml_node::iterator itDOF;
+                          KthReal eigVal = 1;
+                          if ((*it).attribute("eigValue")) {
+                              eigVal = (KthReal) (*it).attribute("eigValue").as_double();
                           }
 
-                          if (!robot_found) {
-                              return (false);
-                          }
+                          for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
+                              tmpstr = itDOF->attribute("name").as_string();
+                              unsigned found = tmpstr.find_last_of("/");
+                              if (found == string::npos) {
+                                  return (false);
+                              }
+                              dofName = tmpstr.substr(found+1);
+                              robotName = tmpstr.substr(0,found);
 
-                          if( dofName == "X"){
-                              _wspace->getRobot(i)->setSE3(true);
-                              mapMatrix[i][0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                          }else if( dofName == "Y"){
-                              _wspace->getRobot(i)->setSE3(true);
-                              mapMatrix[i][1][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                          }else if( dofName == "Z"){
-                              _wspace->getRobot(i)->setSE3(true);
-                              mapMatrix[i][2][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                          }else if( dofName == "X1"){
-                              _wspace->getRobot(i)->setSE3(true);
-                              mapMatrix[i][3][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                          }else if( dofName == "X2"){
-                              _wspace->getRobot(i)->setSE3(true);
-                              mapMatrix[i][4][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                          }else if( dofName == "X3"){
-                              _wspace->getRobot(i)->setSE3(true);
-                              mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                          }else{  // It's not a SE3 control and could have any name.
-                                  // Find the index orden into the links vector without the first static link.
-                              for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
-                                  if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
-                                      mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                                      break;
+                              //Find the robot index into the robots vector
+                              int i = 0;
+                              bool robot_found = false;
+                              while (!robot_found && i < _wspace->getNumRobots()) {
+                                  if (_wspace->getRobot(i)->getName() == robotName) {
+                                      robot_found = true;
+                                  } else {
+                                      i++;
                                   }
                               }
+
+                              if (!robot_found) {
+                                  return (false);
+                              }
+
+                              if( dofName == "X"){
+                                  _wspace->getRobot(i)->setSE3(true);
+                                  mapMatrix[i][0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else if( dofName == "Y"){
+                                  _wspace->getRobot(i)->setSE3(true);
+                                  mapMatrix[i][1][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else if( dofName == "Z"){
+                                  _wspace->getRobot(i)->setSE3(true);
+                                  mapMatrix[i][2][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else if( dofName == "X1"){
+                                  _wspace->getRobot(i)->setSE3(true);
+                                  mapMatrix[i][3][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else if( dofName == "X2"){
+                                  _wspace->getRobot(i)->setSE3(true);
+                                  mapMatrix[i][4][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else if( dofName == "X3"){
+                                  _wspace->getRobot(i)->setSE3(true);
+                                  mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else{  // It's not a SE3 control and could have any name.
+                                  // Find the index orden into the links vector without the first static link.
+                                  for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
+                                      if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
+                                          mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                          break;
+                                      }
+                              }
                           }
 
-                      cont++;
-                  }// closing if(nodeType == "Control" )
-              }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
+                          cont++;
+                      }// closing if(nodeType == "Control" )
+                  }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
 
-              for (int i = 0; i < _wspace->getNumRobots(); i++) {
-                  _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
-                  /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
+                  for (int i = 0; i < _wspace->getNumRobots(); i++) {
+                      _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
+                      /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
                       for (int k = 0; k < _wspace->getNumControls(); k++) {
                           cout << mapMatrix[i][j][k] << " ";
                       }
                       cout << endl;
                   }
                   cout << endl;*/
-                  _wspace->getRobot(i)->setOffMatrix(offMatrix[i]);
-                  /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
+                      _wspace->getRobot(i)->setOffMatrix(offMatrix[i]);
+                      /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
                       cout << offMatrix[i][j] << endl;
                   }
                   cout << endl;*/
-              }
-              return (true);
+                  }
+                  return (true);
 
-          }else  {// the result of the file pasers is bad
-            cout << "The cntr file: " << cntrFile << " can not be read." << std::endl;
-            return (false);
+              }else  {// the result of the file pasers is bad
+                  cout << "The cntr file: " << cntrFile << " can not be read." << std::endl;
+                  return (false);
+              }
           }
-        }
       }else{ // File does not exists.
           fin.close();
           cout << "The control file: " << cntrFile << "doesn't exist. Please confirm it." << endl;
@@ -820,7 +926,7 @@ namespace Kautham {
 
   }
 
-  void Problem::addObstacle2WSpace(xml_node *obstacle_node, string dir) {
+  bool Problem::addObstacle2WSpace(xml_node *obstacle_node) {
       Robot *rob;
       Obstacle *obs;
       string name;
@@ -830,17 +936,17 @@ namespace Kautham {
 
       // It can be either a mobile obstacle (Robot) or a fixed obstacle.
       fstream fin;
-      string obsFile = dir + obstacle_node->attribute("scene").value();
+      string obsFile = obstacle_node->attribute("obstacle").value();
       fin.open(obsFile.c_str(),ios::in);
       if( fin.is_open() ){ // The file already exists.
           fin.close();
           string::size_type loc = obsFile.find( ".dh", 0 );
           if( loc != string::npos ) { // It means that the obstacle is a robot.
 #ifndef KAUTHAM_COLLISION_PQP
-              rob = new Robot( dir + obstacle_node->attribute("scene").value(),
+              rob = new Robot( obstacle_node->attribute("obstacle").value(),
                                (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR);
 #else
-              rob = new Robot( dir + obstacle_node->attribute("scene").value(),
+              rob = new Robot( obstacle_node->attribute("obstacle").value(),
                                (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP);
 #endif
               // Setup the limits of the moveable base
@@ -900,10 +1006,10 @@ namespace Kautham {
                   if (obstacle_node->child("Limits") || obstacle_node->child("Home")) {
                       // It means that the obstacle is a robot.
 #ifndef KAUTHAM_COLLISION_PQP
-                      rob = new Robot( dir + obstacle_node->attribute("scene").value(),
+                      rob = new Robot( obstacle_node->attribute("obstacle").value(),
                                        (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR);
 #else
-                      rob = new Robot( dir + obstacle_node->attribute("scene").value(),
+                      rob = new Robot( obstacle_node->attribute("obstacle").value(),
                                        (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP);
 #endif
                       // Setup the limits of the moveable base
@@ -963,7 +1069,7 @@ namespace Kautham {
                       else
                           flagCol = true;
 
-                      xml_node locObs = obstacle_node->child("Location");
+                      xml_node locObs = obstacle_node->child("Home");
                       pob[0] = (KthReal)locObs.attribute("X").as_double();
                       pob[1] = (KthReal)locObs.attribute("Y").as_double();
                       pob[2] = (KthReal)locObs.attribute("Z").as_double();
@@ -976,10 +1082,10 @@ namespace Kautham {
                       SE3Conf::fromAxisToQuaternion(oob);
 
 #ifndef KAUTHAM_COLLISION_PQP
-                      obs = new Obstacle(dir + obstacle_node->attribute("scene").value(), pob, oob,
-                                         (KthReal)obstacle_node->attribute("scale").as_double(), INVENTOR, flagCol);
+                      obs = new Obstacle( obstacle_node->attribute("obstacle").value(), pob, oob,
+                                          (KthReal)obstacle_node->attribute("scale").as_double(), INVENTOR, flagCol);
 #else
-                      obs = new Obstacle( dir + obstacle_node->attribute("scene").value(), pob, oob,
+                      obs = new Obstacle( obstacle_node->attribute("obstacle").value(), pob, oob,
                                           (KthReal)obstacle_node->attribute("scale").as_double(), IVPQP, flagCol);
 #endif
                       _wspace->addObstacle(obs);
@@ -991,7 +1097,7 @@ namespace Kautham {
                   else
                       flagCol = true;
 
-                  xml_node locObs = obstacle_node->child("Location");
+                  xml_node locObs = obstacle_node->child("Home");
                   pob[0] = (KthReal)locObs.attribute("X").as_double();
                   pob[1] = (KthReal)locObs.attribute("Y").as_double();
                   pob[2] = (KthReal)locObs.attribute("Z").as_double();
@@ -1004,18 +1110,19 @@ namespace Kautham {
                   SE3Conf::fromAxisToQuaternion(oob);
 
 #ifndef KAUTHAM_COLLISION_PQP
-                  obs = new Obstacle(dir + obstacle_node->attribute("scene").value(), pob, oob,
-                                     (KthReal)obstacle_node->attribute("scale").as_double(), INVENTOR, flagCol);
+                  obs = new Obstacle( obstacle_node->attribute("obstacle").value(), pob, oob,
+                                      (KthReal)obstacle_node->attribute("scale").as_double(), INVENTOR, flagCol);
 #else
-                  obs = new Obstacle( dir + obstacle_node->attribute("scene").value(), pob, oob,
+                  obs = new Obstacle( obstacle_node->attribute("obstacle").value(), pob, oob,
                                       (KthReal)obstacle_node->attribute("scale").as_double(), IVPQP, flagCol);
 #endif
                   _wspace->addObstacle(obs);
               }
           }
+          return true;
       } else {
-          cout << "The obstacle " << obstacle_node->attribute("scene").value() <<" is improperly configured.";
+          cout << "The obstacle " << obstacle_node->attribute("obstacle").value() <<" is improperly configured.";
+          return false;
       }
   }
 }
-
