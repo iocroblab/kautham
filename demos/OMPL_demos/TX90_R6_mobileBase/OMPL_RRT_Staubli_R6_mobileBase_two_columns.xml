@@ -1,11 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_RRT_Staubli_R6_mobileBase_two_columns">
-	<Robot robot="robots/mobile_TX90_plano.rob" scale="1.0">
-		
-		
-   Robot Path
-   
-		
+	<Robot robot="robots/mobile_TX90_plano.dh" scale="1.0">
 		<Limits name="X" min="-400.0" max="1200.0" />
 		<Limits name="Y" min="-200.0" max="1000.0" />
                 <Limits name="Z" min="0.0" max="0.0" />
@@ -16,16 +11,9 @@
 		<Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="400.0" X="-300.0" />
 	</Robot>
 	<Scene scene="scenes/columns.iv" scale="18.0">
-		
-		 
-    Scene Path
-
-    
-		
-		<Location TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="0.0" X="250.0"> 
-     Problem of the scene
-    </Location>
+		<Location TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="0.0" X="250.0"/> 
 	</Scene>
+	<Controls controls="controls/mobile_TX90_plano.cntr"/>
 	<Planner>
         <Parameters>
                 <Name>omplRRT</Name>

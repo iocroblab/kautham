@@ -6,16 +6,16 @@ CMAKE_POLICY(SET CMP0003 OLD)
 
 ########### Options ####################
 OPTION( KAUTHAM_GUI "Build the gui version" ON )
-OPTION( KAUTHAM_CONSOLE "Build the console version" ON )
+OPTION( KAUTHAM_CONSOLE "Build the console version" OFF )
 OPTION( KAUTHAM_OMPL "Use OMPL planners" ON )
 OPTION( KAUTHAM_OMPL_LATEST "Use latest OMPL version" ON )
 OPTION( KAUTHAM_IOC "Use IOC planners" ON )
-OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" ON )
-
+OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" ON)
+OPTION( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 
 
 ########### Set flags ####################
-MESSAGE( STATUS "flags: " ${KAUTHAM_GUI} " " ${KAUTHAM_CONSOLE} " "  ${KAUTHAM_OMPL}  " "  ${KAUTHAM_IOC} " "  ${KAUTHAM_GUIBRO} )
+MESSAGE( STATUS "flags: " ${KAUTHAM_GUI} " " ${KAUTHAM_CONSOLE} " "  ${KAUTHAM_OMPL}  " "  ${KAUTHAM_IOC} " "  ${KAUTHAM_GUIBRO} " " ${KAUTHAM_OPENDE})
 IF( KAUTHAM_GUI )
   MESSAGE( STATUS "prepared to make KAUTHAM GUI" )
 ENDIF( KAUTHAM_GUI )
@@ -38,8 +38,9 @@ IF( KAUTHAM_GUIBRO )
     ADD_DEFINITIONS( -DKAUTHAM_USE_GUIBRO )
 ENDIF( KAUTHAM_GUIBRO )
 
-
-
+IF( KAUTHAM_OPENDE )
+  MESSAGE( STATUS "prepared to include ODE" )
+ENDIF( KAUTHAM_OPENDE )
 
 
 
@@ -48,6 +49,14 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
 
 find_package(PugiXML REQUIRED)
+
+IF(KAUTHAM_OPENDE)
+find_package(OpenDE REQUIRED)
+MESSAGE( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_ODE flag")
+ADD_DEFINITIONS( -DKAUTHAM_USE_ODE )
+ENDIF(KAUTHAM_OPENDE)
+
+
 
 ##############################################################################
 ##############################################################################

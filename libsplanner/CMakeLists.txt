@@ -16,6 +16,11 @@ ADD_LIBRARY( libplanner ${SRC_FILES} ${HDR_FILES} )
     SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libiocplanner)
   ENDIF( KAUTHAM_IOC )
 
+  IF( KAUTHAM_OPENDE )
+    MESSAGE( STATUS "Adding subdirectory LIBKAUTHAMOPENDE")
+    ADD_SUBDIRECTORY ( libkauthamopende )
+    SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libkauthamopende)
+  ENDIF( KAUTHAM_OPENDE )
 
 MESSAGE( STATUS "----------------KC_PLANNERS_LIBS: " ${KC_PLANNERS_LIBS})
 
