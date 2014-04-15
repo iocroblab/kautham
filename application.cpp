@@ -92,21 +92,30 @@ void Application::setActions(){
 }
 
 void Application::openFile(){
-    QString path,dir;
-    QDir workDir;
+    QString last_path, path, dir;
+
+    QSettings settings("IOC", "Kautham");
+    if (settings.contains("last_path")) {
+        last_path = settings.value("last_path").toString();
+    } else {
+        QDir workDir;
+        last_path = workDir.absolutePath();
+    }
     mainWindow->setCursor(QCursor(Qt::WaitCursor));
     switch(appState){
     case INITIAL:
         path = QFileDialog::getOpenFileName(
                     mainWindow,
                     "Choose a file to open",
-                    workDir.absolutePath(),
+                    last_path,
                     "All configuration files (*.xml)");
         if(!path.isEmpty()){
             mainWindow->setText("Kautham is opening a problem file...");
             dir = path;
             dir.truncate(dir.lastIndexOf("/"));
             if (problemSetup(path.toUtf8().constData())) {
+                settings.setValue("last_path",dir);
+
                 stringstream tmp;
                 tmp << "Kautham ";
                 tmp << MAJOR_VERSION;
