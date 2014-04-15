@@ -499,7 +499,6 @@ namespace Kautham {
           string rob_def_path = settings.value("default_path/robot").toString().toStdString();
           string obs_def_path = settings.value("default_path/obstacle").toString().toStdString();
 
-
           vector <string> path;
           path.push_back(dir);
           path.push_back(rob_def_path);
