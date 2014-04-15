@@ -582,7 +582,7 @@ namespace Kautham {
     tmp << ".";
     tmp << MINOR_VERSION;
     tmp << " - Institute of Industrial and Control Engineering";
-    tmp << "- Technical University of Catalonia";
+    tmp << " - Technical University of Catalonia";
     setWindowTitle( tmp.str().c_str() );
 		return true;
 	}
