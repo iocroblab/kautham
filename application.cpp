@@ -102,41 +102,35 @@ void Application::openFile(){
         last_path = workDir.absolutePath();
     }
     mainWindow->setCursor(QCursor(Qt::WaitCursor));
-    switch(appState){
-    case INITIAL:
-        path = QFileDialog::getOpenFileName(
-                    mainWindow,
-                    "Choose a file to open",
-                    last_path,
-                    "All configuration files (*.xml)");
-        if(!path.isEmpty()){
-            mainWindow->setText("Kautham is opening a problem file...");
-            dir = path;
-            dir.truncate(dir.lastIndexOf("/"));
-            if (problemSetup(path.toUtf8().constData())) {
-                settings.setValue("last_path",dir);
-
-                stringstream tmp;
-                tmp << "Kautham ";
-                tmp << MAJOR_VERSION;
-                tmp << ".";
-                tmp << MINOR_VERSION;
-                tmp << " - ";
-                tmp << path.toUtf8().constData();
-                mainWindow->setWindowTitle( tmp.str().c_str() );
-                mainWindow->setText(QString("File: ").append(path).toUtf8().constData() );
-                mainWindow->setText("opened successfully.");
-            } else {
-                mainWindow->setText("Kautham couldn't open the problem file...");
-            }
+    path = QFileDialog::getOpenFileName(
+                mainWindow,
+                "Choose a file to open",
+                last_path,
+                "All configuration files (*.xml)");
+    if(!path.isEmpty()){
+        if (appState == PROBLEMLOADED) {
+            closeProblem();
+            appState = INITIAL;
         }
-        break;
-    case PROBLEMLOADED:
-        closeProblem();
-        openFile();
-        break;
-    default:
-        break;
+        mainWindow->setText("Kautham is opening a problem file...");
+        dir = path;
+        dir.truncate(dir.lastIndexOf("/"));
+        if (problemSetup(path.toUtf8().constData())) {
+            settings.setValue("last_path",dir);
+
+            stringstream tmp;
+            tmp << "Kautham ";
+            tmp << MAJOR_VERSION;
+            tmp << ".";
+            tmp << MINOR_VERSION;
+            tmp << " - ";
+            tmp << path.toUtf8().constData();
+            mainWindow->setWindowTitle( tmp.str().c_str() );
+            mainWindow->setText(QString("File: ").append(path).toUtf8().constData() );
+            mainWindow->setText("opened successfully.");
+        } else {
+            mainWindow->setText("Kautham couldn't open the problem file...");
+        }
     }
     mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
