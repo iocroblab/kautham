@@ -493,11 +493,12 @@ namespace Kautham {
   bool Problem::prepareFile (xml_document *doc) {
       if (isFileOK(doc)) {
           //get the relative paths where robots and obstacle files will be looked for
+          string  dir = _filePath.substr(0,_filePath.find_last_of("/")+1);
+
           QSettings settings("IOC", "Kautham");
           string rob_def_path = settings.value("default_path/robot").toString().toStdString();
           string obs_def_path = settings.value("default_path/obstacle").toString().toStdString();
-          string dir = _filePath;
-          dir.erase(dir.find_last_of("/")+1);
+
 
           vector <string> path;
           path.push_back(dir);
