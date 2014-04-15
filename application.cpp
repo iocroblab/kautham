@@ -92,42 +92,44 @@ void Application::setActions(){
 }
 
 void Application::openFile(){
-	QString path,dir;
-	QDir workDir;
-  mainWindow->setCursor(QCursor(Qt::WaitCursor));
-	switch(appState){
-		case INITIAL:
-      path = QFileDialog::getOpenFileName(
-					mainWindow,
-					"Choose a file to open",
-					workDir.absolutePath(),
-					"All configuration files (*.xml)");
-			if(!path.isEmpty()){
-        
-        mainWindow->setText("Kautham is opening a problem file...");
-        dir = path;
-        dir.truncate(dir.lastIndexOf("/"));
-        problemSetup(path.toUtf8().constData());
-        stringstream tmp;
-        tmp << "Kautham ";
-        tmp << MAJOR_VERSION;
-        tmp << ".";
-        tmp << MINOR_VERSION;
-        tmp << " - ";
-        tmp << path.toUtf8().constData();
-        mainWindow->setWindowTitle( tmp.str().c_str() );
-        mainWindow->setText(QString("File: ").append(path).toUtf8().constData() );
-				mainWindow->setText("opened successfully.");
-			}
-			break;
-		case PROBLEMLOADED:
-            closeProblem();
-            openFile();
-			break;
-		default:
-			break;
-	}
-  mainWindow->setCursor(QCursor(Qt::ArrowCursor));
+    QString path,dir;
+    QDir workDir;
+    mainWindow->setCursor(QCursor(Qt::WaitCursor));
+    switch(appState){
+    case INITIAL:
+        path = QFileDialog::getOpenFileName(
+                    mainWindow,
+                    "Choose a file to open",
+                    workDir.absolutePath(),
+                    "All configuration files (*.xml)");
+        if(!path.isEmpty()){
+            mainWindow->setText("Kautham is opening a problem file...");
+            dir = path;
+            dir.truncate(dir.lastIndexOf("/"));
+            if (problemSetup(path.toUtf8().constData())) {
+                stringstream tmp;
+                tmp << "Kautham ";
+                tmp << MAJOR_VERSION;
+                tmp << ".";
+                tmp << MINOR_VERSION;
+                tmp << " - ";
+                tmp << path.toUtf8().constData();
+                mainWindow->setWindowTitle( tmp.str().c_str() );
+                mainWindow->setText(QString("File: ").append(path).toUtf8().constData() );
+                mainWindow->setText("opened successfully.");
+            } else {
+                mainWindow->setText("Kautham couldn't open the problem file...");
+            }
+        }
+        break;
+    case PROBLEMLOADED:
+        closeProblem();
+        openFile();
+        break;
+    default:
+        break;
+    }
+    mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
 
 void Application::saveFile(){
@@ -188,7 +190,11 @@ void Application::closeProblem(){
 bool Application::problemSetup(string path){
   mainWindow->setCursor(QCursor(Qt::WaitCursor));
   _problem = new Problem();
-  if (!_problem->setupFromFile(path)) return false;
+  if (!_problem->setupFromFile(path)) {
+      appState = INITIAL;
+      delete _problem;
+      return false;
+  }
 
   mainWindow->addToProblemTree( path );
   mainWindow->addViewerTab("WSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvScene());
