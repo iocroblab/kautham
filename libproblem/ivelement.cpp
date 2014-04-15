@@ -48,7 +48,6 @@
 using namespace arma;
 
 
-
 namespace Kautham {
 bool valid_num_triangles(int T, int V) {
     //return (fabs((double)T/(double)V-1.5)<=0.5);
@@ -152,12 +151,13 @@ bool valid_num_triangles(int T, int V) {
         collision_ivmodel = new SoSeparator;
         collision_ivmodel->ref();
         collision_ivmodel->addChild(sca);
-//#define BBOX
-#ifdef BBOX
+
         //check if collision_ivfile is a different file from ivfile
         //and if collision_ivmodel could be the minimum-volume bounding box of ivmodel
+        QSettings settings("IOC", "Kautham");
+        bool useBBOX = settings.value("use_BBOX","false").toBool();
 
-        if (collision_ivfile == ivfile && ivModel() != NULL &&
+        if (useBBOX && collision_ivfile == ivfile && ivModel() != NULL &&
                 string::npos == collision_ivfile.find( "_bbox", 0 )) {
             //collision_ivmodel will be the minimum-volume bounding box of ivmodel
             cout << "The minimum-volume bounding box of model in " << collision_ivfile
@@ -351,7 +351,7 @@ bool valid_num_triangles(int T, int V) {
                 }
             }
         } else {
-#endif
+
             //collision_ivmodel will be the model in collision_ivfile
             if(input.openFile(collision_ivfile.c_str())) {
                 collision_ivmodel->addChild(SoDB::readAll(&input));
@@ -383,9 +383,9 @@ bool valid_num_triangles(int T, int V) {
                 }
                 sep->unref();
             }
-#ifdef BBOX
+
         }
-#endif
+
         collision_ivmodel->ref();
         fflush(stdout);
     }
