@@ -69,6 +69,8 @@
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/SbLinear.h>
 #include <libkthutil/kauthamdefs.h>
+#include <QSettings>
+#include <QString>
 
 
 
