@@ -220,16 +220,31 @@ namespace Kautham {
                 }
 
                 //Create the link
-                addLink((*it).attribute("name").value(), dir + (*it).attribute("ivFile").value(),
-                    (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
-                    (KthReal)(*it).child("DHPars").attribute("d").as_double(),
-                    (KthReal)(*it).child("DHPars").attribute("a").as_double(),
-                    (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
-                    (*it).child("Description").attribute("rotational").as_bool(),
-                    (*it).child("Description").attribute("movable").as_bool(),
-                    limMin, limMax,
-                    (KthReal)(*it).child("Weight").attribute("weight").as_double(),
-                    (*it).child("Parent").attribute("name").value(), preTransP);
+                if ((*it).attribute("collision_ivFile")) {
+                    addLink((*it).attribute("name").value(), dir + (*it).attribute("ivFile").value(),
+                            dir + (*it).attribute("collision_ivFile").value(),
+                            (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
+                            (KthReal)(*it).child("DHPars").attribute("d").as_double(),
+                            (KthReal)(*it).child("DHPars").attribute("a").as_double(),
+                            (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
+                            (*it).child("Description").attribute("rotational").as_bool(),
+                            (*it).child("Description").attribute("movable").as_bool(),
+                            limMin, limMax,
+                            (KthReal)(*it).child("Weight").attribute("weight").as_double(),
+                            (*it).child("Parent").attribute("name").value(), preTransP);
+                } else {
+                    addLink((*it).attribute("name").value(), dir + (*it).attribute("ivFile").value(),
+                            dir + (*it).attribute("ivFile").value(),
+                            (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
+                            (KthReal)(*it).child("DHPars").attribute("d").as_double(),
+                            (KthReal)(*it).child("DHPars").attribute("a").as_double(),
+                            (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
+                            (*it).child("Description").attribute("rotational").as_bool(),
+                            (*it).child("Description").attribute("movable").as_bool(),
+                            limMin, limMax,
+                            (KthReal)(*it).child("Weight").attribute("weight").as_double(),
+                            (*it).child("Parent").attribute("name").value(), preTransP);
+                }
 
                 //Add the weight. Defaults to 1.0
                 if( i > 0 ){ //First link is ommited because it is the base.
@@ -984,10 +999,10 @@ namespace Kautham {
   //! This method builds the link model and all their data structures in order
   //! to keep the coherence in the robot assembly. It doesn't use any intermediate
   //! structure to adquire the information to do the job.
-  bool	Robot::addLink(string name, string ivFile, KthReal theta, KthReal d,
+  bool	Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal theta, KthReal d,
                        KthReal a,KthReal alpha, bool rotational, bool movable,
                        KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]){
-      Link* temp = new Link(ivFile, ivFile, this->getScale(), Approach, libs);
+      Link* temp = new Link(ivFile, collision_ivFile, this->getScale(), Approach, libs);
       temp->setName(name);
       temp->setMovable(movable);
       temp->setRotational(rotational);
