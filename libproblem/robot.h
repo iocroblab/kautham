@@ -183,7 +183,7 @@ namespace Kautham {
     bool autocollision(int t=0);
 
     //! Add link to the robot
-    bool addLink(string name, string ivFile, KthReal theta, KthReal d, KthReal a,
+    bool addLink(string name, string ivFile, string collision_ivFile, KthReal theta, KthReal d, KthReal a,
                  KthReal alpha, bool rotational, bool movable, KthReal low,
                  KthReal hi, KthReal w, string parentName, KthReal preTrans[] = NULL);
 
