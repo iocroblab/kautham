@@ -122,11 +122,43 @@ namespace Kautham {
                                                          (int)(255.0*initial.getValue()[1]),
                                                          (int)(255.0*initial.getValue()[2])), this);
             if (color.isValid()) {
-                window->setBackgroundColor(SbColor(color.redF(),color.greenF(), color.blueF()));
+                window->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
             }
         }catch(...){
         }
     }
+
+
+    void GUI::toogleBBOXflag() {
+        QSettings settings("IOC","Kautham");
+        bool use_BBOX = settings.value("use_BBOX","false").toBool();
+        settings.setValue("use_BBOX",!use_BBOX);
+        QList<QAction*> actions = menuActions->actions();
+        int i = 0;
+        if (use_BBOX) {
+            setText("Bounding boxes computation was disabled");
+
+            while (actions.at(i)->text() != "Disable BBOX" && i < actions.size()) {
+                i++;
+            }
+            if (i < actions.size()) {
+                actions.at(i)->setText("Enable BBOX");
+                actions.at(i)->setIcon(QIcon(":/icons/BBOXenabled.xpm"));
+            }
+        } else {
+            setText("Bounding boxes computation was enabled");
+
+            while (actions.at(i)->text() != "Enable BBOX" && i < actions.size()) {
+                i++;
+            }
+            if (i < actions.size()) {
+                actions.at(i)->setText("Disable BBOX");
+                actions.at(i)->setIcon(QIcon(":/icons/BBOXdisabled.xpm"));
+            }
+        }
+
+    }
+
 
     void GUI::clearText(){
         textEdit->clear();

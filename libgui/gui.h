@@ -110,6 +110,7 @@ namespace Kautham {
     void                showPlannerToolBar();
     void                changeActiveBackground();
     void                changeDockAreaForOutput(Qt::DockWidgetArea area);
+    void                toogleBBOXflag();
 
     public:
     GUI(QWidget *p=0);
