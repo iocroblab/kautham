@@ -116,10 +116,13 @@ namespace Kautham {
 
     void GUI::changeActiveBackground(){
         try{
-            QColor color = QColorDialog::getColor(Qt::black, this);
+            SoQtExaminerViewer* window = ((Viewer)viewers.at(viewsTab->currentIndex())).window;
+            SbColor initial = window->getBackgroundColor();
+            QColor color = QColorDialog::getColor(QColor((int)(255.0*initial.getValue()[0]),
+                                                         (int)(255.0*initial.getValue()[1]),
+                                                         (int)(255.0*initial.getValue()[2])), this);
             if (color.isValid()) {
-                SoQtExaminerViewer* tmp = ((Viewer)viewers.at(viewsTab->currentIndex())).window;
-                tmp->setBackgroundColor(SbColor(color.redF(),color.greenF(), color.blueF()));
+                window->setBackgroundColor(SbColor(color.redF(),color.greenF(), color.blueF()));
             }
         }catch(...){
         }
