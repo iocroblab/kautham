@@ -73,6 +73,7 @@ public slots:
 private:
   void              initApp();
   void              setActions();
+  //! Saves the background colors of the active tabs to the settings file
   void              saveTabColors();
   //!  This method setups the problem and create the WorkSpace, the Planner and
   //!  its corresponding LocalPlanner.
