@@ -37,6 +37,7 @@
         <file>icons/vszoom.xpm</file>
         <file>icons/BBOXdisabled.xpm</file>
         <file>icons/BBOXenabled.xpm</file>
+        <file>icons/search.xpm</file>
         <file>kautham.html</file>
     </qresource>
 </RCC>
