@@ -110,8 +110,9 @@ namespace Kautham {
     void                showPlannerToolBar();
     void                changeActiveBackground();
     void                changeDockAreaForOutput(Qt::DockWidgetArea area);
-	public:
-		GUI(QWidget *p=0);
+
+    public:
+    GUI(QWidget *p=0);
     void                clearText();
     bool                addViewerTab(string title, VIEWERTYPE typ, SoSeparator *root);
     void                removePropTab(string title);
