@@ -160,6 +160,38 @@ namespace Kautham {
     }
 
 
+    void GUI::setModelsDefaultPath() {
+        QSettings settings("IOC","Kautham");
+        settings.beginGroup("default_path");
+
+        QDir workDir;
+        QString dir;
+
+        QString rob_path = settings.value("robot",workDir.absolutePath()).toString();
+        QString obs_path = settings.value("obstacle",workDir.absolutePath()).toString();
+
+        this->setCursor(QCursor(Qt::WaitCursor));
+
+        dir = QFileDialog::getExistingDirectory(this,"Choose the default robot directory",
+                                                rob_path,QFileDialog::ShowDirsOnly
+                                                | QFileDialog::DontResolveSymlinks);
+        if (!dir.isEmpty()) {
+            settings.setValue("robot",dir);
+        }
+
+        dir = QFileDialog::getExistingDirectory(this,"Choose the default obstacle directory",
+                                                obs_path,QFileDialog::ShowDirsOnly
+                                                | QFileDialog::DontResolveSymlinks);
+        if (!dir.isEmpty()) {
+            settings.setValue("obstacle",dir);
+        }
+
+        this->setCursor(QCursor(Qt::ArrowCursor));
+
+        settings.endGroup();
+    }
+
+
     void GUI::clearText(){
         textEdit->clear();
     }

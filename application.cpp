@@ -113,6 +113,9 @@ void Application::setActions(){
     } else {
         mainWindow->setAction(ACTIONTOOL,"Enable BBOX","",":/icons/BBOXenabled.xpm", mainWindow, SLOT(toogleBBOXflag()));
     }
+
+    mainWindow->setAction(ACTIONTOOL,"Default Path","",":/icons/search.xpm", mainWindow, SLOT(setModelsDefaultPath()));
+
     mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close.xpm",this,SLOT(closeProblem()));
 }
 
