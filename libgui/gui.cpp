@@ -118,7 +118,7 @@ namespace Kautham {
         try{
             QColor color = QColorDialog::getColor(Qt::black, this);
             if (color.isValid()) {
-                SoQtExaminerViewer* tmp = ((Viewer)viewers.at(viewsTab->currentIndex()-1)).window;
+                SoQtExaminerViewer* tmp = ((Viewer)viewers.at(viewsTab->currentIndex())).window;
                 tmp->setBackgroundColor(SbColor(color.redF(),color.greenF(), color.blueF()));
             }
         }catch(...){
@@ -559,16 +559,18 @@ namespace Kautham {
 
     bool GUI::restart(){
         //do not put the index i inside the loop since the vector keeps decreasing after each remove
-        for(int i=0; i<viewers.size() ;i++)
+        for(int i=viewers.size(); i>0 ;i--)
             removeViewerTab(viewers[0].title);
 
         //the same
-        for(int i=viewsTab->count(); i>1 ;i--)
-            viewsTab->removeTab(1);//tab 0 is never removed
+        for(int i=viewsTab->count(); i>0 ;i--)
+            viewsTab->removeTab(0);//tab 0 is never removed
 
         //the same
         for(int i=propertiesTab->count();i>0;i--)
             propertiesTab->removeTab(1);//tab 0 is never removed
+
+        showIntroTab();
 
         viewers.clear();
         problemTree->clear();
@@ -679,5 +681,13 @@ namespace Kautham {
         return true;
     }
 
-}
+    void GUI::hideIntroTab() {
+        viewsTab->removeTab(viewsTab->indexOf(introTab));
+    }
 
+    void GUI::showIntroTab() {
+        viewsTab->addTab(introTab, QApplication::translate
+                         ("kauthamMain","Introduction",0,QApplication::UnicodeUTF8));
+    }
+
+}

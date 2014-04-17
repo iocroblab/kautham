@@ -152,7 +152,13 @@ namespace Kautham {
     ControlWidget*		getControlWidget();
     PlannerWidget*		getPlannerWidget();
 
-	int					indexControlsTab;
+    //! Hides the Introduction Tab
+    void hideIntroTab();
+
+    //! Shows the Introduction Tab
+    void showIntroTab();
+
+    int			 		indexControlsTab;
     int                 indexPlannerTab;
   private:
     vector<Viewer>      viewers;
