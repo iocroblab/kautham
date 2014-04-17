@@ -81,7 +81,10 @@ Application::~Application() {
     settings->setValue("fullScreen",mainWindow->isFullScreen());
     settings->endGroup();
 
-    if (appState == PROBLEMLOADED) saveTabColors();
+    if (appState == PROBLEMLOADED) {
+        saveTabColors();
+        closeProblem();
+    }
 
     delete settings;
 }
@@ -127,6 +130,7 @@ void Application::openFile(){
         dir = path;
         dir.truncate(dir.lastIndexOf("/"));
         if (problemSetup(path.toUtf8().constData())) {
+            mainWindow->hideIntroTab();
             settings->setValue("last_path",dir);
 
             stringstream tmp;
@@ -196,6 +200,7 @@ void Application::closeProblem(){
         mainWindow->restart();
         delete _problem;
         appState = INITIAL;
+
         break;
     }
     mainWindow->setCursor(QCursor(Qt::ArrowCursor));
@@ -241,7 +246,7 @@ bool Application::problemSetup(string path){
     color = settings->value("mainWindow/CollisionWSpace/color",QColor("black")).value<QColor>();
     mainWindow->getViewerTab("CollisionWSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
 
-    //  Using to show the IV models reconstructed from the PQP triangular meshes.
+    //  Used to show the IV models reconstructed from the PQP triangular meshes.
     //mainWindow->addViewerTab("PQP", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvFromPQPScene());
 
     mainWindow->addControlWidget(_problem);
@@ -276,6 +281,7 @@ bool Application::problemSetup(string path){
     }
 
     appState = PROBLEMLOADED;
+
     mainWindow->setCursor(QCursor(Qt::ArrowCursor));
     return true;
 }
