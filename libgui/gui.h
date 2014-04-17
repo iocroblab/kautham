@@ -110,7 +110,10 @@ namespace Kautham {
     void                showPlannerToolBar();
     void                changeActiveBackground();
     void                changeDockAreaForOutput(Qt::DockWidgetArea area);
+    //! Enables/Disables the use of bounding boxes as collision models
     void                toogleBBOXflag();
+    //! Sets the directories where robot and obstacles models will be looked for
+    void                setModelsDefaultPath();
 
     public:
     GUI(QWidget *p=0);
