@@ -50,57 +50,68 @@
 #include "application.h"
 
 
-
 Application::Application() {
-  Q_INIT_RESOURCE(kauthamRes);
-  initApp();
+    settings = new QSettings("IOC","Kautham");
+    Q_INIT_RESOURCE(kauthamRes);
+    initApp();
 }
 
 void Application::initApp(){
-	mainWindow = new GUI();
-  SoQt::show(mainWindow);
-	setActions();
-	mainWindow->setText("Open a problem file to start...");
-	appState = INITIAL ;
-  _problem = NULL;
+    mainWindow = new GUI();
+    settings->beginGroup("mainWindow");
+
+    mainWindow->resize(settings->value("size",QSize(1024,768)).toSize());
+    mainWindow->move(settings->value("pos",QPoint(0,0)).toPoint()-mainWindow->pos());
+    if (settings->value("fullScreen",false).toBool()) {
+        mainWindow->showFullScreen();
+    }
+    settings->endGroup();
+
+    SoQt::show(mainWindow);
+    setActions();
+    mainWindow->setText("Open a problem file to start...");
+    appState = INITIAL ;
+    _problem = NULL;
 }
 
 Application::~Application() {
+    settings->beginGroup("mainWindow");
+    settings->setValue("size",mainWindow->size());
+    settings->setValue("pos",mainWindow->pos());
+    settings->setValue("fullScreen",mainWindow->isFullScreen());
+    settings->endGroup();
 
+    if (appState == PROBLEMLOADED) saveTabColors();
+
+    delete settings;
 }
 
 void Application::setActions(){
-	mainWindow->setAction(FILETOOL,"&Open","CTRL+O",":/icons/fileopen.xpm",this,SLOT(openFile()));
-	mainWindow->setAction(FILETOOL,"&Save","CTRL+S",":/icons/filesave.xpm",this,SLOT(saveFile()));
-	mainWindow->setAction(FILETOOL,"Save &as","CTRL+A",":/icons/saveas.xpm",this,SLOT(saveAsFile()));
-	mainWindow->addSeparator(TOOLBAR);
+    mainWindow->setAction(FILETOOL,"&Open","CTRL+O",":/icons/fileopen.xpm",this,SLOT(openFile()));
+    mainWindow->setAction(FILETOOL,"&Save","CTRL+S",":/icons/filesave.xpm",this,SLOT(saveFile()));
+    mainWindow->setAction(FILETOOL,"Save &as","CTRL+A",":/icons/saveas.xpm",this,SLOT(saveAsFile()));
+    mainWindow->addSeparator(TOOLBAR);
 
-  // Creating the planner toolbar in the main Window. This list may change.
-  //string loc = Problem::localPlannersNames();
-  //string glob = Problem::plannersNames();
+    // Creating the planner toolbar in the main Window. This list may change.
+    //string loc = Problem::localPlannersNames();
+    //string glob = Problem::plannersNames();
 
 
-  //mainWindow->createPlannerToolBar(loc, glob,this,SLOT(changePlanner(string,string)));
-  //mainWindow->setToogleAction(ACTIONTOOL,"&Find path","CTRL+F",":/icons/prm.xpm",mainWindow,SLOT(showPlannerToolBar()));
-  mainWindow->addSeparator(TOOLBAR);
-  mainWindow->addSeparator(ACTIONMENU);
+    //mainWindow->createPlannerToolBar(loc, glob,this,SLOT(changePlanner(string,string)));
+    //mainWindow->setToogleAction(ACTIONTOOL,"&Find path","CTRL+F",":/icons/prm.xpm",mainWindow,SLOT(showPlannerToolBar()));
+    mainWindow->addSeparator(TOOLBAR);
+    mainWindow->addSeparator(ACTIONMENU);
 
-  mainWindow->addSeparator(TOOLBAR);
-  mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G",
-                              ":/icons/determ.xpm", mainWindow, SLOT(changeActiveBackground()));
-  mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close.xpm",this,SLOT(closeProblem()));
+    mainWindow->addSeparator(TOOLBAR);
+    mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G",
+                          ":/icons/determ.xpm", mainWindow, SLOT(changeActiveBackground()));
+    mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close.xpm",this,SLOT(closeProblem()));
 }
 
 void Application::openFile(){
     QString last_path, path, dir;
-
-    QSettings settings("IOC", "Kautham");
-    if (settings.contains("last_path")) {
-        last_path = settings.value("last_path").toString();
-    } else {
-        QDir workDir;
-        last_path = workDir.absolutePath();
-    }
+    QDir workDir;
+    last_path = settings->value("last_path",workDir.absolutePath()).toString();
     mainWindow->setCursor(QCursor(Qt::WaitCursor));
     path = QFileDialog::getOpenFileName(
                 mainWindow,
@@ -116,7 +127,7 @@ void Application::openFile(){
         dir = path;
         dir.truncate(dir.lastIndexOf("/"));
         if (problemSetup(path.toUtf8().constData())) {
-            settings.setValue("last_path",dir);
+            settings->setValue("last_path",dir);
 
             stringstream tmp;
             tmp << "Kautham ";
@@ -136,109 +147,137 @@ void Application::openFile(){
 }
 
 void Application::saveFile(){
-  mainWindow->setCursor(QCursor(Qt::WaitCursor));
-  if( appState == PROBLEMLOADED ){
-    if( _problem->saveToFile() )
-      mainWindow->setText( "File saved successfully" );
-    else
-      mainWindow->setText( "Sorry but the file is not saved" );
-  }
-  mainWindow->setCursor(QCursor(Qt::ArrowCursor));
+    mainWindow->setCursor(QCursor(Qt::WaitCursor));
+    if( appState == PROBLEMLOADED ){
+        if( _problem->saveToFile() )
+            mainWindow->setText( "File saved successfully" );
+        else
+            mainWindow->setText( "Sorry but the file is not saved" );
+    }
+    mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
 
 void Application::saveAsFile(){
-  QString path,dir;
-	QDir workDir;
-  mainWindow->setCursor(QCursor(Qt::WaitCursor));
-	switch(appState){
-		case PROBLEMLOADED:
-      path = QFileDialog::getSaveFileName(
-					mainWindow,
-					"Save as ...",
-					workDir.absolutePath(),
-					"All configuration files (*.xml)");
-			if(!path.isEmpty()){
-        mainWindow->setText( "Kautham is saving a problem file: " );
-        mainWindow->setText( path.toUtf8().constData() );
-        dir = path;
-        dir.truncate(dir.lastIndexOf("/"));
-        if( _problem->saveToFile( path.toUtf8().constData() ) )
-          mainWindow->setText( "File saved successfully" );
-        else
-          mainWindow->setText( "Sorry but the file is not saved" );
-      }
-  }
-  mainWindow->setCursor(QCursor(Qt::ArrowCursor));
+    QString path,dir;
+    QDir workDir;
+    mainWindow->setCursor(QCursor(Qt::WaitCursor));
+    switch(appState){
+    case PROBLEMLOADED:
+        path = QFileDialog::getSaveFileName(
+                    mainWindow,
+                    "Save as ...",
+                    workDir.absolutePath(),
+                    "All configuration files (*.xml)");
+        if(!path.isEmpty()){
+            mainWindow->setText( "Kautham is saving a problem file: " );
+            mainWindow->setText( path.toUtf8().constData() );
+            dir = path;
+            dir.truncate(dir.lastIndexOf("/"));
+            if( _problem->saveToFile( path.toUtf8().constData() ) )
+                mainWindow->setText( "File saved successfully" );
+            else
+                mainWindow->setText( "Sorry but the file is not saved" );
+        }
+    }
+    mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
 
 
 void Application::closeProblem(){
-  mainWindow->setCursor(QCursor(Qt::WaitCursor));
-  switch(appState){
-  case INITIAL:
-    mainWindow->setText("First open a problem");
-    break;
-  case PROBLEMLOADED:
-    if(mainWindow->getPlannerWidget()->ismoving())
+    mainWindow->setCursor(QCursor(Qt::WaitCursor));
+    switch(appState){
+    case INITIAL:
+        mainWindow->setText("First open a problem");
+        break;
+    case PROBLEMLOADED:
+        if(mainWindow->getPlannerWidget()->ismoving())
             mainWindow->getPlannerWidget()->simulatePath();//stops simulation
-    mainWindow->restart();
-    delete _problem;
-    appState = INITIAL;
-    break;
-  }
-  mainWindow->setCursor(QCursor(Qt::ArrowCursor));
+        saveTabColors();
+        mainWindow->restart();
+        delete _problem;
+        appState = INITIAL;
+        break;
+    }
+    mainWindow->setCursor(QCursor(Qt::ArrowCursor));
+}
+
+
+void Application::saveTabColors() {
+    vector <string> viewers;
+    viewers.push_back("WSpace");
+    viewers.push_back("CollisionWSpace");
+    viewers.push_back("CSpace");
+    SbColor color;
+    settings->beginGroup("mainWindow");
+    for (int i = 0; i < viewers.size(); i++) {
+        settings->beginGroup(viewers.at(i).c_str());
+        color = mainWindow->getViewerTab(viewers.at(i))->getBackgroundColor();
+        settings->setValue("color",QColor((int)(255.0*color.getValue()[0]),
+                                          (int)(255.0*color.getValue()[1]),
+                                          (int)(255.0*color.getValue()[2])));
+        settings->endGroup();
+    }
+    settings->endGroup();
 }
 
 
 bool Application::problemSetup(string path){
-  mainWindow->setCursor(QCursor(Qt::WaitCursor));
-  _problem = new Problem();
-  if (!_problem->setupFromFile(path)) {
-      appState = INITIAL;
-      delete _problem;
-      return false;
-  }
+    mainWindow->setCursor(QCursor(Qt::WaitCursor));
+    _problem = new Problem();
+    if (!_problem->setupFromFile(path)) {
+        appState = INITIAL;
+        delete _problem;
+        return false;
+    }
 
-  mainWindow->addToProblemTree( path );
-  mainWindow->addViewerTab("WSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvScene());
-  mainWindow->addViewerTab("CollisionWSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getCollisionIvScene());
-  
+    mainWindow->addToProblemTree( path );
 
-  //  Using to show the IV models reconstructed from the PQP triangular meshes.
-  //mainWindow->addViewerTab("PQP", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvFromPQPScene());
+    mainWindow->addViewerTab("WSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvScene());
+    QColor color = settings->value("mainWindow/WSpace/color",QColor("black")).value<QColor>();
+    mainWindow->getViewerTab("WSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
 
-  mainWindow->addControlWidget(_problem);
+    mainWindow->addViewerTab("CollisionWSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getCollisionIvScene());
 
-  for(unsigned i = 0; i < _problem->wSpace()->robotsCount(); i++){
+    color = settings->value("mainWindow/CollisionWSpace/color",QColor("black")).value<QColor>();
+    mainWindow->getViewerTab("CollisionWSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
 
-	if(_problem->wSpace()->getRobot(i)->getCkine() != NULL)
-        mainWindow->addConstrainedControlWidget(_problem->wSpace()->getRobot(i), _problem, 0);
-    // Use the following widget if the user can modified all the dof instead of the controls.
-    //mainWindow->addDOFWidget(_problem->wSpace()->getRobot(i) );
+    //  Using to show the IV models reconstructed from the PQP triangular meshes.
+    //mainWindow->addViewerTab("PQP", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvFromPQPScene());
 
+    mainWindow->addControlWidget(_problem);
 
-    //Add widget for external applications
-    //widget 1 used for virtual bronchoscopy apllication
-    mainWindow->addExternalWidget1(_problem->wSpace()->getRobot(i), _problem, 0, mainWindow);
-    //widget 2 not used
-    mainWindow->addExternalWidget2(_problem->wSpace()->getRobot(i), _problem, 0, mainWindow);
-    //widget 3 not used
-    mainWindow->addExternalWidget3(_problem->wSpace()->getRobot(i), _problem, 0, mainWindow);
+    for(unsigned i = 0; i < _problem->wSpace()->robotsCount(); i++){
+
+        if(_problem->wSpace()->getRobot(i)->getCkine() != NULL)
+            mainWindow->addConstrainedControlWidget(_problem->wSpace()->getRobot(i), _problem, 0);
+        // Use the following widget if the user can modified all the dof instead of the controls.
+        //mainWindow->addDOFWidget(_problem->wSpace()->getRobot(i) );
 
 
-    if(_problem->wSpace()->getRobot(i)->getIkine() != NULL)
-      mainWindow->addInverseKinematic(_problem->wSpace()->getRobot(i)->getIkine());
-  }
+        //Add widget for external applications
+        //widget 1 used for virtual bronchoscopy apllication
+        mainWindow->addExternalWidget1(_problem->wSpace()->getRobot(i), _problem, 0, mainWindow);
+        //widget 2 not used
+        mainWindow->addExternalWidget2(_problem->wSpace()->getRobot(i), _problem, 0, mainWindow);
+        //widget 3 not used
+        mainWindow->addExternalWidget3(_problem->wSpace()->getRobot(i), _problem, 0, mainWindow);
 
-  mainWindow->setSampleWidget(_problem->getSampleSet(), _problem->getSampler(), _problem);
 
-  if( _problem->getPlanner() != NULL ){
-    mainWindow->addPlanner(_problem->getPlanner(), _problem->getSampleSet(), mainWindow);
-  }
+        if(_problem->wSpace()->getRobot(i)->getIkine() != NULL)
+            mainWindow->addInverseKinematic(_problem->wSpace()->getRobot(i)->getIkine());
+    }
 
-  appState = PROBLEMLOADED;
-  mainWindow->setCursor(QCursor(Qt::ArrowCursor));
-  return true;
+    mainWindow->setSampleWidget(_problem->getSampleSet(), _problem->getSampler(), _problem);
+
+    if( _problem->getPlanner() != NULL ){
+        mainWindow->addPlanner(_problem->getPlanner(), _problem->getSampleSet(), mainWindow);
+        color = settings->value("mainWindow/CSpace/color",QColor("black")).value<QColor>();
+        mainWindow->getViewerTab("CSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
+    }
+
+    appState = PROBLEMLOADED;
+    mainWindow->setCursor(QCursor(Qt::ArrowCursor));
+    return true;
 }
 
 
