@@ -259,6 +259,10 @@ ENDIF( KAUTHAM_CONSOLE )
 # END building Kautham Console application
 ##############################################################################
 
+##############################################################################
+# Copy Help file
+CONFIGURE_FILE(Kautham2.chm Kautham2.chm COPYONLY)
+
 
 
 
