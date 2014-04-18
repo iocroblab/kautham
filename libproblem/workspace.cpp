@@ -58,7 +58,7 @@ namespace Kautham {
       _configMap.clear();
       _robWeight.clear();
       _lastSampleMovedTo=NULL;
-      numControls = 0;
+      numRobControls = 0;
   }
 
 
@@ -92,7 +92,7 @@ namespace Kautham {
   vector<KthReal>* WorkSpace::distanceCheck(Sample* sample) {
     vector<KthReal> tmpVec;
     tmpVec.clear();
-    for(unsigned int j=0; j < getNumControls(); j++ )
+    for(unsigned int j=0; j < getNumRobControls(); j++ )
       tmpVec.push_back(sample->getCoords()[j]);
 
     distVec.clear();
@@ -114,7 +114,7 @@ namespace Kautham {
     bool withinbounds=true;
     vector<KthReal> tmpVec;
     tmpVec.clear();
-    for(unsigned int j=0; j < getNumControls(); j++ )
+    for(unsigned int j=0; j < getNumRobControls(); j++ )
         tmpVec.push_back(sample->getCoords()[j]);
 
     for(unsigned int i=0; i< robots.size(); i++){
@@ -139,7 +139,7 @@ namespace Kautham {
     for(unsigned int i=0; i< robots.size(); i++){
         if(sample->getMappedConf().size()==0){
             tmpVec.clear();
-            for( j=0; j < robots[i]->getNumControls(); j++ )
+            for( j=0; j < robots[i]->getNumRobControls(); j++ )
                 tmpVec.push_back(sample->getCoords()[from + j]);
 
             from = j;
@@ -180,7 +180,7 @@ namespace Kautham {
     vector<KthReal> tmpVec;
     bool collision = false;
     tmpVec.clear();
-    for(int j=0; j < getNumControls(); j++ )
+    for(int j=0; j < getNumRobControls(); j++ )
       tmpVec.push_back(sample->getCoords()[j]);
 
     if(sample->getMappedConf().size() == 0){

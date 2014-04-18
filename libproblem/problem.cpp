@@ -76,8 +76,8 @@ namespace Kautham {
           if (!addRobot2WSpace(&tmpNode)) return false;
       }
 
-      //add controls to worskpace
-      if (!addControls2WSpace(doc->child("Problem").child("Controls").
+      //add robot controls to worskpace
+      if (!addRobotControls2WSpace(doc->child("Problem").child("Controls").
                               attribute("robot").as_string())) return false;
 
       //add all obstacles to worskpace
@@ -85,6 +85,10 @@ namespace Kautham {
            tmpNode; tmpNode = tmpNode.next_sibling("Obstacle")) {
           if (!addObstacle2WSpace(&tmpNode)) return false;
       }
+
+      //add obstacle controls to workspace
+      if (!addObstacleControls2WSpace(doc->child("Problem").child("Controls").
+                              attribute("obstacle").as_string())) return false;
 
       //add all distance maps to worskpace
       for (tmpNode = doc->child("Problem").child("DistanceMap");
@@ -410,14 +414,6 @@ namespace Kautham {
 
   }
 
-  bool Problem::setupFromFile(ifstream* xml_inputfile, string modelsfolder) {
-      _filePath = modelsfolder.c_str();
-      xml_document *doc = new xml_document;
-      xml_parse_result result = doc->load( *xml_inputfile );
-      if(result)
-          return setupFromFile(doc);
-  }
-
   bool Problem::exists(string file) {
       fstream fin;
       fin.open(file.c_str(),ios::in);
@@ -496,8 +492,8 @@ namespace Kautham {
           string  dir = _filePath.substr(0,_filePath.find_last_of("/")+1);
 
           QSettings settings("IOC", "Kautham");
-          string rob_def_path = settings.value("default_path/robot").toString().toStdString();
-          string obs_def_path = settings.value("default_path/obstacle").toString().toStdString();
+          string rob_def_path = settings.value("default_path/robot").toString().toStdString()+"/";
+          string obs_def_path = settings.value("default_path/obstacle").toString().toStdString()+"/";
 
           vector <string> path;
           path.push_back(dir);
@@ -527,6 +523,22 @@ namespace Kautham {
           return true;
       }
       return false;
+  }
+
+  bool Problem::setupFromFile(ifstream* xml_inputfile, string modelsfolder) {
+      _filePath = modelsfolder.c_str();
+      xml_document *doc = new xml_document;
+      if(doc->load( *xml_inputfile )) {
+          //if the file was correctly parsed
+          if (prepareFile(doc)) {
+              //if everything seems to be OK, try to setup the problem
+              return setupFromFile(doc);
+          } else {
+              return false;
+          }
+      } else {
+          return false;
+      }
   }
 
   bool Problem::setupFromFile(string xml_doc) {
@@ -738,7 +750,7 @@ namespace Kautham {
       return true;
   }
 
-  bool Problem::addControls2WSpace(string cntrFile) {
+  bool Problem::addRobotControls2WSpace(string cntrFile) {
       fstream fin;
       fin.open(cntrFile.c_str(),ios::in);
       if( fin.is_open() ){ // The file already exists.
@@ -761,8 +773,8 @@ namespace Kautham {
                       controlsName.append(tmpNode.attribute("name").as_string());
                       tmpNode = tmpNode.next_sibling("Control");
                   }
-                  _wspace->setNumControls(numControls);
-                  _wspace->setControlsName(controlsName);
+                  _wspace->setNumRobControls(numControls);
+                  _wspace->setRobControlsName(controlsName);
 
                   //Creating the mapping and offset Matrices between controls
                   //and DOF parameters and initializing them.
@@ -910,7 +922,7 @@ namespace Kautham {
                   for (int i = 0; i < _wspace->getNumRobots(); i++) {
                       _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
                       /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
-                      for (int k = 0; k < _wspace->getNumControls(); k++) {
+                      for (int k = 0; k < _wspace->getNumRobControls(); k++) {
                           cout << mapMatrix[i][j][k] << " ";
                       }
                       cout << endl;
@@ -1136,4 +1148,12 @@ namespace Kautham {
           return false;
       }
   }
+
+  bool Problem::addObstacleControls2WSpace(string cntrFile) {
+      return true;
+  }
+
+  /*bool Problem::addObstacleControls2CSpace(string cntrFile) {
+      return true;
+  }*/
 }
