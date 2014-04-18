@@ -164,7 +164,7 @@ namespace Kautham {
     inline SampleSet*       getSampleSet(){return _cspace;}
     inline Sampler*         getSampler(){return _sampler;}
     inline void             setSampler(Sampler* smp){_sampler = smp;}
-    inline int              getDimension(){return _wspace->getNumControls();}
+    inline int              getDimension(){return _wspace->getNumRobControls();}
     inline vector<KthReal>& getCurrentControls(){return _currentControls;}
     inline string           getFilePath(){return _filePath;}
     bool                    inheritSolution();
@@ -194,28 +194,37 @@ namespace Kautham {
 
     /*!
      * \brief loads a robot node of the problem file,
-     creates the robot and adds it to workspace
+     creates the robot and adds it to the workspace
      * \param robot_node robot node with the information of the robot
      to add to the workspace
      */
     bool addRobot2WSpace(xml_node *robot_node);
 
     /*!
-     * \brief loads the controls node of the problem file,
-     creates the controls, adds them to workspace and creates the mapMatrix and
-     offMatrix of every Robots. All the robots must have already been loaded.
+     * \brief loads the robot controls file of the problem file,
+     creates the controls, adds them to the workspace and creates the mapMatrix and
+     offMatrix of every robot. All the robots must have already been loaded.
      * \param cntrFile file where controls are defined
      * \return true if controls could be loaded to the workspace
      */
-    bool addControls2WSpace(string cntrFile);
+    bool addRobotControls2WSpace(string cntrFile);
 
     /*!
      * \brief loads an obstacle node of the problem file,
-     creates the obstacle and adds it to workspace
+     creates the obstacle and adds it to the workspace
      * \param obstacle_node obstacle node with the information of the obstacle
      to add to the workspace
      */
     bool addObstacle2WSpace(xml_node *obstacle_node);
+
+    /*!
+     * \brief loads the obstacle controls file of the problem file,
+     creates the controls, adds them to the workspace and creates the mapMatrix and
+     offMatrix of every osbtacle. All the obstacles must have already been loaded.
+     * \param cntrFile file where controls are defined
+     * \return true if controls could be loaded to the workspace
+     */
+    bool addObstacleControls2WSpace(string cntrFile);
 
     /*!
      * \brief isFileOK checks if all the information required

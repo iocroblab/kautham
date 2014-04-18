@@ -48,6 +48,7 @@
 #include <libproblem/ivworkspace.h>
 #include <libkthutil/kauthamdefs.h>
 #include "application.h"
+#include <libgui/dofwidget.h>
 
 
 Application::Application() {
@@ -138,7 +139,7 @@ void Application::openFile(){
         dir = path;
         dir.truncate(dir.lastIndexOf("/"));
         if (problemSetup(path.toUtf8().constData())) {
-            mainWindow->hideIntroTab();
+            mainWindow->showProblemAppearance();
             settings->setValue("last_path",dir);
 
             stringstream tmp;
@@ -250,22 +251,21 @@ bool Application::problemSetup(string path){
     mainWindow->getViewerTab("WSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
 
     mainWindow->addViewerTab("CollisionWSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getCollisionIvScene());
-
     color = settings->value("mainWindow/CollisionWSpace/color",QColor("black")).value<QColor>();
     mainWindow->getViewerTab("CollisionWSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
 
     //  Used to show the IV models reconstructed from the PQP triangular meshes.
     //mainWindow->addViewerTab("PQP", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvFromPQPScene());
 
-    mainWindow->addControlWidget(_problem);
+    vector <DOFWidget*> robDOFWidgets;
+    robDOFWidgets.resize(_problem->wSpace()->getNumRobots());
 
     for(unsigned i = 0; i < _problem->wSpace()->robotsCount(); i++){
 
         if(_problem->wSpace()->getRobot(i)->getCkine() != NULL)
             mainWindow->addConstrainedControlWidget(_problem->wSpace()->getRobot(i), _problem, 0);
-        // Use the following widget if the user can modified all the dof instead of the controls.
-        //mainWindow->addDOFWidget(_problem->wSpace()->getRobot(i) );
 
+        robDOFWidgets[i] = mainWindow->addDOFWidget(_problem->wSpace()->getRobot(i));
 
         //Add widget for external applications
         //widget 1 used for virtual bronchoscopy apllication
@@ -279,6 +279,8 @@ bool Application::problemSetup(string path){
         if(_problem->wSpace()->getRobot(i)->getIkine() != NULL)
             mainWindow->addInverseKinematic(_problem->wSpace()->getRobot(i)->getIkine());
     }
+
+    mainWindow->addRobControlWidget(_problem,robDOFWidgets);
 
     mainWindow->setSampleWidget(_problem->getSampleSet(), _problem->getSampler(), _problem);
 

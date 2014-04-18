@@ -736,7 +736,7 @@ namespace Kautham {
         //else diable those that are called PMD
 
 
-        string listcontrolsname = wkSpace()->getControlsName();
+        string listcontrolsname = wkSpace()->getRobControlsName();
         vector<string*> controlname;
         string *newcontrol = new string;
         for(int i=0; i<listcontrolsname.length();i++)
