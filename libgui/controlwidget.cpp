@@ -49,10 +49,11 @@
 namespace Kautham {
 
 
-    ControlWidget::ControlWidget(Problem* prob) {
+    ControlWidget::ControlWidget(Problem* prob, vector<DOFWidget*> DOFWidgets) {
     _ptProblem = prob;
+    _DOFWidgets = DOFWidgets;
     string names = "This|is|a|test";
-    names= _ptProblem->wSpace()->getControlsName();
+    names= _ptProblem->wSpace()->getRobControlsName();
     gridLayout = new QGridLayout(this);
     gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
     vboxLayout = new QVBoxLayout();
@@ -60,7 +61,7 @@ namespace Kautham {
     QLabel* tempLab;
     QSlider* tempSli;
     QString content(names.c_str());
-		QStringList cont = content.split("|");
+    QStringList cont = content.split("|");
     QStringList::const_iterator iterator;
     for (iterator = cont.constBegin(); iterator != cont.constEnd();
                     ++iterator)
@@ -111,7 +112,7 @@ namespace Kautham {
 	void ControlWidget::updateControls(){
         Sample *s  = _ptProblem->wSpace()->getLastSampleMovedTo();
         if(s!=NULL){
-           for(int j = 0; j < _ptProblem->wSpace()->getNumControls(); j++ )
+           for(int j = 0; j < _ptProblem->wSpace()->getNumRobControls(); j++ )
                values[j] = s->getCoords()[j];
 
             setValues();
@@ -144,7 +145,7 @@ namespace Kautham {
         }
 
 
-        for(int j=0; j < _ptProblem->wSpace()->getNumControls(); j++ ){
+        for(int j=0; j < _ptProblem->wSpace()->getNumRobControls(); j++ ){
             coords[j]=values[j];
         }
         //Sample *s2 = new Sample(s);
@@ -152,18 +153,19 @@ namespace Kautham {
 
         s2->setCoords(coords);
         _ptProblem->wSpace()->moveRobotsTo(s2);
+
+        vector <float> params;
+        for (uint i = 0; i < _DOFWidgets.size(); i++) {
+            _ptProblem->wSpace()->getRobot(i)->control2Parameters(coords,params);
+            ((DOFWidget*)_DOFWidgets.at(i))->setValues(params);
+        }
+
     }
 
   void ControlWidget::setValues(){
-      vector<KthReal>   values2;
-      values2.resize(values.size());
       for(unsigned int i = 0; i < values.size(); i++)
-            values2[i] = values[i];
-
-      for(unsigned int i = 0; i < values.size(); i++)
-        ((QSlider*)sliders[i])->setValue((int)(values2[i]*1000.0));
+        ((QSlider*)sliders[i])->setValue((int)(values[i]*1000.0));
     }
-
 
 }
 
