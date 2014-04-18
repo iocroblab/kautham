@@ -209,16 +209,16 @@ namespace Kautham {
         return true;
     }
 
-    bool GUI::addControlWidget(Problem* prob){
+    bool GUI::addRobControlWidget(Problem* prob, vector<DOFWidget*> robDOFWidgets){
         if( prob != NULL){
-            ControlWidget* tmpControl = new ControlWidget(prob);
-            propertiesTab->addTab(tmpControl, "Controls");
+            ControlWidget* tmpControl = new ControlWidget(prob,robDOFWidgets);
+            propertiesTab->addTab(tmpControl, "RobContr");
             //JAN
             indexControlsTab = propertiesTab->indexOf(tmpControl);
             return true;
         }else{
-            ControlWidget* tmpControl = new ControlWidget(NULL);
-            propertiesTab->addTab(tmpControl, "ControlTest");
+            ControlWidget* tmpControl = new ControlWidget(NULL,robDOFWidgets);
+            propertiesTab->addTab(tmpControl, "RobContr-Test");
             return true;
         }
         return false;
@@ -282,7 +282,21 @@ namespace Kautham {
         return false;
     }
 
-    bool GUI::addDOFWidget(Robot* rob ){
+    DOFWidget* GUI::addDOFWidget(Robot* rob) {
+        if( rob != NULL){
+            DOFWidget* tmpDOF = new DOFWidget(rob);
+            string rob_name = rob->getName();
+            if (rob_name.length() > 10) {
+                rob_name = rob_name.substr(0,7)+"...";
+            }
+            DOFsTab->addTab(tmpDOF, string(rob_name+"-DOF").c_str());
+            connect(tmpDOF, SIGNAL(sendText(string)), this, SLOT(setText(string)));
+            return tmpDOF;
+        }
+        return NULL;
+    }
+
+   /*bool GUI::addDOFWidget(Robot* rob ){
         if( rob != NULL){
             DOFWidget* tmpDOF = new DOFWidget( rob );
             propertiesTab->addTab(tmpDOF, "DOF-" +QString((rob->getName()).c_str()));
@@ -295,11 +309,15 @@ namespace Kautham {
             return true;
         }
         return false;
-    }
+    }*/
 
     bool GUI::addInverseKinematic(InverseKinematic* ikine){
         InvKinWidget* tmpIkine = new InvKinWidget(ikine);
-        propertiesTab->addTab(tmpIkine,"IKine");
+        string rob_name = ikine->getRobot().getName();
+        if (rob_name.length() > 10) {
+            rob_name = rob_name.substr(0,7)+"...";
+        }
+        propertiesTab->addTab(tmpIkine,string(rob_name+"-IK").c_str());
         connect(tmpIkine, SIGNAL(sendText(string)), this, SLOT(setText(string)));
         return true;
     }
@@ -625,19 +643,19 @@ namespace Kautham {
     }
 
     bool GUI::restart(){
-        //do not put the index i inside the loop since the vector keeps decreasing after each remove
         for(int i=viewers.size(); i>0 ;i--)
             removeViewerTab(viewers[0].title);
 
-        //the same
         for(int i=viewsTab->count(); i>0 ;i--)
-            viewsTab->removeTab(0);//tab 0 is never removed
+            viewsTab->removeTab(0);
 
-        //the same
         for(int i=propertiesTab->count();i>0;i--)
             propertiesTab->removeTab(1);//tab 0 is never removed
 
-        showIntroTab();
+        for(int i=DOFsTab->count();i>0;i--)
+            DOFsTab->removeTab(0);
+
+        showInitialAppearance();
 
         viewers.clear();
         problemTree->clear();
@@ -748,13 +766,17 @@ namespace Kautham {
         return true;
     }
 
-    void GUI::hideIntroTab() {
+    void GUI::showProblemAppearance() {
         viewsTab->removeTab(viewsTab->indexOf(introTab));
+        DOFsTab->show();
+        propertiesTab->show();
     }
 
-    void GUI::showIntroTab() {
+    void GUI::showInitialAppearance() {
         viewsTab->addTab(introTab, QApplication::translate
                          ("kauthamMain","Introduction",0,QApplication::UnicodeUTF8));
+        DOFsTab->hide();
+        propertiesTab->hide();
     }
 
 }

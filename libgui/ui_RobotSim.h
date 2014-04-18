@@ -34,31 +34,32 @@ QT_BEGIN_NAMESPACE
 class Ui_kauthamMain
 {
 public:
-    QAction *actionNew;
-    QAction *actionHelp;
-    QAction *actionAbout;
-    QWidget *centralwidget;
-    QGridLayout *gridLayout_2;
-    QSplitter *splitter;
-    QTabWidget *propertiesTab;
-    QWidget *probTab;
-    QGridLayout *gridLayout;
-    QTreeWidget *problemTree;
-    QTabWidget *viewsTab;
-    QWidget *introTab;
-    QGridLayout *gridLayout1;
-    QTextBrowser *textBrowser;
-    QMenuBar *menubar;
-    QMenu *menuActions;
-    QMenu *menuFile;
-    QMenu *menuHelp;
-    QStatusBar *statusbar;
-    QToolBar *toolBar;
-    QDockWidget *outputWindow;
-    QWidget *dockWidgetContents;
-    QToolBar*     planToolBar;
-    QGridLayout *gridLayout2;
-    QTextEdit *textEdit;
+    QAction         *actionNew;
+    QAction         *actionHelp;
+    QAction         *actionAbout;
+    QWidget         *centralwidget;
+    QWidget         *probTab;
+    QWidget         *introTab;
+    QWidget         *dockWidgetContents;
+    QGridLayout     *gridLayout;
+    QGridLayout     *gridLayout1;
+    QGridLayout     *gridLayout2;
+    QGridLayout     *gridLayout_2;
+    QSplitter       *splitter;
+    QTabWidget      *propertiesTab;
+    QTabWidget      *DOFsTab;
+    QTabWidget      *viewsTab;
+    QTreeWidget     *problemTree;
+    QTextBrowser    *textBrowser;
+    QMenuBar        *menubar;
+    QMenu           *menuActions;
+    QMenu           *menuFile;
+    QMenu           *menuHelp;
+    QStatusBar      *statusbar;
+    QToolBar        *toolBar;
+    QToolBar        *planToolBar;
+    QDockWidget     *outputWindow;
+    QTextEdit       *textEdit;
 
     void setupUi(QMainWindow *kauthamMain)
     {
@@ -102,9 +103,7 @@ public:
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         problemTree = new QTreeWidget(probTab);
         problemTree->setObjectName(QString::fromUtf8("problemTree"));
-
         gridLayout->addWidget(problemTree, 0, 0, 1, 1);
-
         propertiesTab->addTab(probTab, QString());
         splitter->addWidget(propertiesTab);
         viewsTab = new QTabWidget(splitter);
@@ -125,14 +124,17 @@ public:
         textBrowser->setObjectName(QString::fromUtf8("textBrowser"));
         textBrowser->setSource(QUrl(""));
         textBrowser->setOpenExternalLinks(true);
-
         gridLayout1->addWidget(textBrowser, 0, 0, 1, 1);
-
         viewsTab->addTab(introTab, QString());
         splitter->addWidget(viewsTab);
-
         gridLayout_2->addWidget(splitter, 0, 0, 1, 1);
-
+        DOFsTab = new QTabWidget(splitter);
+        DOFsTab->setObjectName(QString::fromUtf8("DOFsTab"));
+        DOFsTab->setMaximumSize(QSize(350, 16777215));
+        DOFsTab->setMinimumSize(QSize(200, 69));
+        DOFsTab->setTabPosition(QTabWidget::East);
+        DOFsTab->setTabShape(QTabWidget::Rounded);
+        splitter->addWidget(DOFsTab);
         kauthamMain->setCentralWidget(centralwidget);
         menubar = new QMenuBar(kauthamMain);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -175,25 +177,19 @@ public:
         textEdit->setSizePolicy(sizePolicy2);
         textEdit->setMinimumSize(QSize(50, 50));
         textEdit->setMaximumSize(QSize(16777215, 16777215));
-
         gridLayout2->addWidget(textEdit, 0, 0, 1, 1);
-
         outputWindow->setWidget(dockWidgetContents);
         kauthamMain->addDockWidget(static_cast<Qt::DockWidgetArea>(8), outputWindow);
-
         menubar->addAction(menuFile->menuAction());
         menubar->addAction(menuActions->menuAction());
         menubar->addAction(menuHelp->menuAction());
         menuHelp->addAction(actionHelp);
         menuHelp->addSeparator();
         menuHelp->addAction(actionAbout);
-
         retranslateUi(kauthamMain);
-
         propertiesTab->setCurrentIndex(0);
         viewsTab->setCurrentIndex(0);
-
-
+        DOFsTab->setCurrentIndex(0);
         QMetaObject::connectSlotsByName(kauthamMain);
     } // setupUi
 

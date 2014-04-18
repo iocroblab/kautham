@@ -79,7 +79,7 @@ namespace Kautham {
   *     They are defined as a vector fo links and described in the *.dh or *.urdf files.
   *     A robot can have a fixed base if no controls are attached to the corresponding dof.
   *     A robot can be a free-flying object if it has a single link and has controls attached to the corresponding dof.
-  *     The dof of the kinematic tree can be coupled by setting the controls that define the copupling.
+  *     The dof of the kinematic tree can be coupled by setting the controls that define the coupling.
   *     A dof is fixed if no control is attached to it.
  */
 

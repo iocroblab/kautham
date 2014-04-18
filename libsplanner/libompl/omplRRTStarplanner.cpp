@@ -522,7 +522,7 @@ namespace Kautham {
           int robotindex = 0;
           int numPMD = 0;
 
-          string listcontrolsname = wkSpace()->getControlsName();
+          string listcontrolsname = wkSpace()->getRobControlsName();
           vector<string*> controlname;
           string *newcontrol = new string;
           for(int i=0; i<listcontrolsname.length();i++)
@@ -593,8 +593,8 @@ namespace Kautham {
 
           for(int k=0;k<wkSpace()->robotsCount(); k++)
           {
-              //find the controls that are coupled, i.e. those that have the PMD leters in their name
-              string listcontrolsname = wkSpace()->getControlsName();
+              //find the controls that are coupled, i.e. those that have the PMD letters in their name
+              string listcontrolsname = wkSpace()->getRobControlsName();
               vector<string*> controlname;
               string *newcontrol = new string;
               //split the list of controls to obtain the control names
@@ -617,7 +617,7 @@ namespace Kautham {
               {
                   if(controlname[i]->find("PMD") != string::npos)
                   {
-                      //if the pmd has not yet been enountered (the Key does not exists), create it
+                      //if the pmd has not yet been found (the Key does not exists), create it
                       itpmdMap=pmdMap.find(*controlname[i]);
                       if(itpmdMap == pmdMap.end())//not found
                       {

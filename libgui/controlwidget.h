@@ -51,6 +51,7 @@
 #include <libproblem/robot.h>
 #include <libproblem/problem.h>
 #include <libkthutil/kauthamdefs.h>
+#include "dofwidget.h"
 
 
 using namespace std;
@@ -68,11 +69,12 @@ namespace Kautham {
 		void              sliderChanged(int val);
 		void              updateControls();
 	public:
-        ControlWidget(Problem* prob);
+        ControlWidget(Problem* prob,vector<DOFWidget*> DOFWidgets);
 		~ControlWidget();
 		inline vector<KthReal>   *getValues(){return &values;}
-    void setValues();
+        void setValues();
 	private:
+        vector<DOFWidget*> _DOFWidgets;
 		vector<QSlider*>  sliders;
 		vector<QLabel*>   labels;
 		QGridLayout       *gridLayout;

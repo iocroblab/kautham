@@ -131,7 +131,7 @@ namespace Kautham {
     bool                addSeparator(WHERETYPE typ);
     bool                restart();
     bool                addToProblemTree(string problemPath);
-    bool                addControlWidget(Problem* prob);
+    bool                addRobControlWidget(Problem* prob, vector<Kautham::DOFWidget *> robDOFWidgets);
 
     bool                addExternalWidget1( Robot* rob, Problem* prob, int offset = 0, GUI* gui = NULL);
     bool                addExternalWidget2( Robot* rob, Problem* prob, int offset = 0, GUI* gui = NULL);
@@ -139,7 +139,7 @@ namespace Kautham {
 
 
     bool                addConstrainedControlWidget( Robot* rob, Problem* prob, int offset = 0);
-    bool                addDOFWidget( Robot* rob );
+    Kautham::DOFWidget *addDOFWidget( Robot* rob );
     bool                setSampleWidget(SampleSet* samples, Sampler* sampler, Problem* prob);
     bool                createPlannerToolBar(string loc, string plan, QObject* receiver, const char* member);
     bool                addPlanner(Planner *plan, SampleSet* samp, GUI* gui = NULL);
@@ -157,11 +157,11 @@ namespace Kautham {
     ControlWidget*		getControlWidget();
     PlannerWidget*		getPlannerWidget();
 
-    //! Hides the Introduction Tab
-    void hideIntroTab();
+    //! Hides the Introduction Tab and shows the Properties and DOF tabs
+    void showProblemAppearance();
 
-    //! Shows the Introduction Tab
-    void showIntroTab();
+    //! Shows the Introduction Tab and hides the Properties and DOF tabs
+    void showInitialAppearance();
 
     int			 		indexControlsTab;
     int                 indexPlannerTab;
