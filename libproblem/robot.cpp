@@ -128,6 +128,7 @@ namespace Kautham {
       string::size_type loc = robFile.find( ".dh", 0 );
       string dir;
       string tmpString = "";
+      string extension = robFile.substr(robFile.find_last_of(".")+1);
       if( loc != string::npos ) { // It means that the robot is defined by a *.dh file
         dir = robFile.substr(0,robFile.find_last_of("/")+1);
 
@@ -439,15 +440,15 @@ namespace Kautham {
   * \param obs is a pointer to the obstacle to be attached.
   * \param linkName is the name of the link to which the object is to be attached.
  */
-  bool Robot::attachObject(Obstacle* obs, string linkName ){
+  bool Robot::attachObject(Robot* obs, string linkName ){
     try{
       attObj newObj;
       newObj.obs = obs;
       newObj.link = getLinkByName( linkName );
       mt::Transform tmpO;
-      KthReal* pos = obs->getElement()->getPosition();
+      KthReal* pos = obs->getLink(0)->getElement()->getPosition();
       tmpO.setTranslation( mt::Point3(pos[0], pos[1], pos[2] ) );
-      pos = obs->getElement()->getOrientation();
+      pos = obs->getLink(0)->getElement()->getOrientation();
       tmpO.setRotation( mt::Rotation( pos[0], pos[1], pos[2], pos[3] ) );
       newObj.trans = newObj.link->getTransformation()->inverse() * tmpO;
       _attachedObject.push_back( newObj );
@@ -484,13 +485,13 @@ namespace Kautham {
       pos[0] = tmp.getTranslation().at(0);
       pos[1] = tmp.getTranslation().at(1);
       pos[2] = tmp.getTranslation().at(2);
-      (*it).obs->getElement()->setPosition( pos );
+      (*it).obs->getLink(0)->getElement()->setPosition( pos );
 
       ori[0] = tmp.getRotation().at(0);
       ori[1] = tmp.getRotation().at(1);
       ori[2] = tmp.getRotation().at(2);
       ori[3] = tmp.getRotation().at(3);
-      (*it).obs->getElement()->setOrientation( ori );
+      (*it).obs->getLink(0)->getElement()->setOrientation( ori );
     }
   }
 
@@ -881,25 +882,6 @@ namespace Kautham {
     return _autocoll;
   }
 
-  /*!
-   *
-   */
-  bool Robot::collisionCheck(Obstacle *obs) {
-    if( autocollision() )
-      return true;
-    else{
-      if(obs->getEnableCollisions()==false)
-        return false; //transparent obstacle...
-
-      //First probe the more moveable Link
-      for(int i=links.size()-1; i >= 0; i--){
-        if(links[i]->getElement()->collideTo(obs->getElement()))
-          return true;
-        }
-      }
-    return false;
-  }
-
 
   /*!
    * This method verifies if this robot collides with the robot rob passed as a parameter.
@@ -921,30 +903,9 @@ namespace Kautham {
 
 
   /*!
-   * This methods returns the distance between the robot and the obstacle passed as parameter.
+   * This methods returns the distance between the robot and the obstacle or robot passed as parameter.
    * The distance returned is between the endEfector or the most distal link, but
-   * if parameter min is true, the distace is the
-   */
-  KthReal Robot::distanceCheck(Obstacle *obs, bool min) {
-    KthReal minDist = -1.0;
-    KthReal tempDist = 0.0;
-    if( autocollision() )
-      return (KthReal)-1.0;
-    else
-      // First the most distal link
-      minDist = links[links.size()-1]->getElement()->getDistanceTo(obs->getElement());
-      if( min ){
-        for(int i = links.size()-2; i >= 0 ; i--){
-          tempDist = links[i]->getElement()->getDistanceTo(obs->getElement());
-          if(minDist > tempDist)
-            minDist = tempDist;
-        }
-      }
-      return minDist;
-  }
-
-  /*!
-   *
+   * if parameter min is true, the distance is the minimum distance between all the links
    */
   KthReal Robot::distanceCheck(Robot *rob, bool min ){
     KthReal minDist = -1.0;

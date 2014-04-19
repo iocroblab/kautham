@@ -261,28 +261,36 @@ bool Application::problemSetup(string path){
 
     vector <DOFWidget*> robDOFWidgets;
     robDOFWidgets.resize(_problem->wSpace()->getNumRobots());
-
-    for(unsigned i = 0; i < _problem->wSpace()->getNumRobots(); i++){
+    for(uint i = 0; i < _problem->wSpace()->getNumRobots(); i++) {
 
         if(_problem->wSpace()->getRobot(i)->getCkine() != NULL)
-            mainWindow->addConstrainedControlWidget(_problem->wSpace()->getRobot(i), _problem, 0);
+            mainWindow->addConstrainedControlWidget(_problem->wSpace()->getRobot(i), _problem);
 
         robDOFWidgets[i] = mainWindow->addDOFWidget(_problem->wSpace()->getRobot(i));
 
         //Add widget for external applications
         //widget 1 used for virtual bronchoscopy apllication
-        mainWindow->addExternalWidget1(_problem->wSpace()->getRobot(i), _problem, 0, mainWindow);
+        mainWindow->addExternalWidget1(_problem->wSpace()->getRobot(i), _problem, mainWindow);
         //widget 2 not used
-        mainWindow->addExternalWidget2(_problem->wSpace()->getRobot(i), _problem, 0, mainWindow);
+        mainWindow->addExternalWidget2(_problem->wSpace()->getRobot(i), _problem, mainWindow);
         //widget 3 not used
-        mainWindow->addExternalWidget3(_problem->wSpace()->getRobot(i), _problem, 0, mainWindow);
+        mainWindow->addExternalWidget3(_problem->wSpace()->getRobot(i), _problem, mainWindow);
 
 
         if(_problem->wSpace()->getRobot(i)->getIkine() != NULL)
             mainWindow->addInverseKinematic(_problem->wSpace()->getRobot(i)->getIkine());
     }
-
     mainWindow->addRobControlWidget(_problem,robDOFWidgets);
+
+    if (_problem->wSpace()->getNumObsControls() > 0) {
+        vector <DOFWidget*> obsDOFWidgets;
+        obsDOFWidgets.resize(_problem->wSpace()->getNumObstacles());
+        for(uint i = 0; i < _problem->wSpace()->getNumObstacles(); i++) {
+            obsDOFWidgets[i] = mainWindow->addDOFWidget(_problem->wSpace()->getObstacle(i));
+        }
+
+        mainWindow->addObsControlWidget(_problem,obsDOFWidgets);
+    }
 
     mainWindow->setSampleWidget(_problem->getSampleSet(), _problem->getSampler(), _problem);
 

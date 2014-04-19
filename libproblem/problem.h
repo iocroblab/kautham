@@ -144,8 +144,8 @@ namespace Kautham {
     bool                    createCSpace();
     bool                    createCSpaceFromFile(pugi::xml_document *doc);
     bool                    tryToSolve();
-    bool                    setCurrentRobControls(vector<KthReal> &val, int offset);
-    bool                    setCurrentObsControls(vector<KthReal> &val, int offset);
+    bool                    setCurrentRobControls(vector<KthReal> &val);
+    bool                    setCurrentObsControls(vector<KthReal> &val);
     //! Returns WSpace
     WorkSpace*		        wSpace();
     //! Returns CSpace
