@@ -88,7 +88,7 @@ namespace Kautham{
 		}
 
 		int dim=0;
-		for(unsigned int i=0; i< ws->robotsCount(); i++)
+        for(unsigned int i=0; i< ws->getNumRobots(); i++)
 		{
 			dim += 7;
 			dim += ws->getRobot(i)->getNumJoints();
@@ -100,7 +100,7 @@ namespace Kautham{
 		int c=0;
 		double rho_t = 1.0;
 		double rho_r = 1.0;
-		for(unsigned int i=0; i< ws->robotsCount(); i++)
+        for(unsigned int i=0; i< ws->getNumRobots(); i++)
 		{
 			rho_t = ws->getRobot(i)->getWeightSE3()[0]; 
 			rho_r = ws->getRobot(i)->getWeightSE3()[1]; 
@@ -172,7 +172,7 @@ namespace Kautham{
               tmpVec.push_back(samp->getCoords()[j]);
           }
 
-          for(unsigned int i=0; i< ws->robotsCount(); i++)
+          for(unsigned int i=0; i< ws->getNumRobots(); i++)
 		  {
               //compute conf of robot i corresponding to the sample samples[k]
 			  ws->getRobot(i)->control2Pose(tmpVec);
@@ -449,7 +449,7 @@ namespace Kautham{
           tmpVec.push_back(samples[h]->getCoords()[j]);
         }
 
-        for(unsigned int i=0; i< ws->robotsCount(); i++){
+        for(unsigned int i=0; i< ws->getNumRobots(); i++){
             //compute conf of robot i corresponding to the sample samples[k]          
             ws->getRobot(i)->control2Pose(tmpVec);
             confSmp = ws->getRobot(i)->getCurrentPos();
@@ -565,7 +565,7 @@ namespace Kautham{
 
 
 		int dim=0;
-		for(unsigned int i=0; i< ws->robotsCount(); i++)
+        for(unsigned int i=0; i< ws->getNumRobots(); i++)
 		{
 			dim += 7;
 			dim += ws->getRobot(i)->getNumJoints();
@@ -578,7 +578,7 @@ namespace Kautham{
             tmpVec.push_back(samp->getCoords()[j]);
         }
 
-		for(unsigned int i=0; i< ws->robotsCount(); i++)
+        for(unsigned int i=0; i< ws->getNumRobots(); i++)
 		{
 			//compute conf of robot i corresponding to the sample samples[k]
 			ws->getRobot(i)->control2Pose(tmpVec);

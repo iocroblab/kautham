@@ -50,7 +50,9 @@ namespace Kautham {
       _sampler = NULL;
       _cspace = new SampleSet();
       _cspace->clear();
-      _currentControls.clear();
+      _currentRobControls.clear();
+      _currentObsControls.clear();
+
   }
 
   Problem::~Problem(){
@@ -105,11 +107,16 @@ namespace Kautham {
           _wspace->addDirCase(dir);
       }
 
-      _currentControls.clear();
-      _currentControls.resize(_wspace->getDimension());
+      _currentRobControls.clear();
+      _currentRobControls.resize(_wspace->getNumRobControls());
+      for(int i = 0; i<_currentRobControls.size(); i++)
+          _currentRobControls[i] = (KthReal)0.0;
 
-      for(int i = 0; i<_wspace->getDimension(); i++)
-          _currentControls[i] = (KthReal)0.0;
+      _currentObsControls.clear();
+      _currentObsControls.resize(_wspace->getNumObsControls());
+      for(int i = 0; i<_currentObsControls.size(); i++)
+          _currentObsControls[i] = (KthReal)0.0;
+
 
       setlocale (LC_NUMERIC, old);
       return true;
@@ -330,7 +337,7 @@ namespace Kautham {
           vector<string> tokens;
           string sentence = "";
           Sample* tmpSampPointer = NULL;
-          unsigned int dim = _wspace->getDimension();
+          unsigned int dim = _wspace->getNumRobControls();
           vector<KthReal> coordsVec( dim );
           for( it = queryNode.begin(); it != queryNode.end(); ++it ){
               xml_node sampNode = it->child("Init");
@@ -395,7 +402,7 @@ namespace Kautham {
   bool Problem::createCSpace() {
       try{
           if(_cspace == NULL) _cspace = new SampleSet();
-          if(_sampler == NULL) _sampler = new RandomSampler(_wspace->getDimension());
+          if(_sampler == NULL) _sampler = new RandomSampler(_wspace->getNumRobControls());
           _cspace->clear();
           return true;
       }catch(...){
@@ -403,10 +410,21 @@ namespace Kautham {
       }
   }
 
-  bool Problem::setCurrentControls(vector<KthReal> &val, int offset) {
+  bool Problem::setCurrentRobControls(vector<KthReal> &val, int offset) {
       try{
           for(unsigned int i=0; i < val.size(); i++)
-              _currentControls[i+offset] = (KthReal)val[i];
+              _currentRobControls[i+offset] = (KthReal)val[i];
+          return true;
+      }catch(...){
+          return false;
+      }
+
+  }
+
+  bool Problem::setCurrentObsControls(vector<KthReal> &val, int offset) {
+      try{
+          for(unsigned int i=0; i < val.size(); i++)
+              _currentObsControls[i+offset] = (KthReal)val[i];
           return true;
       }catch(...){
           return false;
@@ -625,11 +643,11 @@ namespace Kautham {
       queryItem.set_name("Query");
       xml_node initNode = queryItem.append_child();
       initNode.set_name( "Init" );
-      initNode.append_attribute("dim") = _wspace->getDimension();
+      initNode.append_attribute("dim") = _wspace->getNumRobControls();
       initNode.append_child(node_pcdata).set_value( _planner->initSamp()->print(true).c_str() );
       xml_node goalNode = queryItem.append_child();
       goalNode.set_name( "Goal" );
-      goalNode.append_attribute("dim") = _wspace->getDimension();
+      goalNode.append_attribute("dim") = _wspace->getNumRobControls();
       goalNode.append_child(node_pcdata).set_value( _planner->goalSamp()->print(true).c_str() );
 
       return doc.save_file(file_path.c_str());
@@ -751,25 +769,20 @@ namespace Kautham {
   }
 
   bool Problem::addRobotControls2WSpace(string cntrFile) {
-      fstream fin;
-      fin.open(cntrFile.c_str(),ios::in);
-      if( fin.is_open() ){ // The file already exists.
-          fin.close();
-          string::size_type loc = cntrFile.find( ".cntr", 0 );
-          if( loc != string::npos ) { // It means that controls are defined by a *.cntr file
+      if (exists(cntrFile)) { // The file already exists.
+          if (cntrFile.find(".cntr",0) != string::npos) { // It means that controls are defined by a *.cntr file
               //Opening the file with the new pugiXML library.
               xml_document doc;
-              xml_parse_result result = doc.load_file(cntrFile.c_str());
 
               //Parse the cntr file
-              if(result){
+              if (doc.load_file(cntrFile.c_str())){
                   //Once the robots were added, the controls can be configured
                   int numControls = 0;
                   string controlsName = "";
                   xml_node tmpNode = doc.child("ControlSet").child("Control");
                   while (tmpNode) {
                       numControls++;
-                      if(controlsName != "") controlsName.append("|");
+                      if (controlsName != "") controlsName.append("|");
                       controlsName.append(tmpNode.attribute("name").as_string());
                       tmpNode = tmpNode.next_sibling("Control");
                   }
@@ -778,14 +791,17 @@ namespace Kautham {
 
                   //Creating the mapping and offset Matrices between controls
                   //and DOF parameters and initializing them.
+                  int numRob = _wspace->getNumRobots();
                   KthReal ***mapMatrix;
                   KthReal **offMatrix;
-                  mapMatrix = new KthReal**[_wspace->getNumRobots()];
-                  offMatrix = new KthReal*[_wspace->getNumRobots()];
-                  for (int i = 0; i < _wspace->getNumRobots(); i++) {
-                      mapMatrix[i] = new KthReal*[_wspace->getRobot(i)->getNumJoints()+6];
-                      offMatrix[i] = new KthReal[_wspace->getRobot(i)->getNumJoints()+6];
-                      for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6; j++) {
+                  mapMatrix = new KthReal**[numRob];
+                  offMatrix = new KthReal*[numRob];
+                  int numDOFs;
+                  for (int i = 0; i < numRob; i++) {
+                      numDOFs = _wspace->getRobot(i)->getNumJoints()+6;
+                      mapMatrix[i] = new KthReal*[numDOFs];
+                      offMatrix[i] = new KthReal[numDOFs];
+                      for (int j = 0; j < numDOFs; j++) {
                           mapMatrix[i][j] = new KthReal[numControls];
                           offMatrix[i][j] = (KthReal)0.5;
                           for (int k = 0; k < numControls; k++) {
@@ -810,7 +826,7 @@ namespace Kautham {
                       //Find the robot index into the robots vector
                       int i = 0;
                       bool robot_found = false;
-                      while (!robot_found && i < _wspace->getNumRobots()) {
+                      while (!robot_found && i < numRob) {
                           if (_wspace->getRobot(i)->getName() == robotName) {
                               robot_found = true;
                           } else {
@@ -875,7 +891,7 @@ namespace Kautham {
                               //Find the robot index into the robots vector
                               int i = 0;
                               bool robot_found = false;
-                              while (!robot_found && i < _wspace->getNumRobots()) {
+                              while (!robot_found && i < numRob) {
                                   if (_wspace->getRobot(i)->getName() == robotName) {
                                       robot_found = true;
                                   } else {
@@ -919,10 +935,10 @@ namespace Kautham {
                       }// closing if(nodeType == "Control" )
                   }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
 
-                  for (int i = 0; i < _wspace->getNumRobots(); i++) {
+                  for (int i = 0; i < numRob; i++) {
                       _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
                       /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
-                      for (int k = 0; k < _wspace->getNumRobControls(); k++) {
+                      for (int k = 0; k < numControls; k++) {
                           cout << mapMatrix[i][j][k] << " ";
                       }
                       cout << endl;
@@ -942,7 +958,6 @@ namespace Kautham {
               }
           }
       }else{ // File does not exists.
-          fin.close();
           cout << "The control file: " << cntrFile << "doesn't exist. Please confirm it." << endl;
           return (false);
       }
@@ -958,11 +973,8 @@ namespace Kautham {
 
 
       // It can be either a mobile obstacle (Robot) or a fixed obstacle.
-      fstream fin;
       string obsFile = obstacle_node->attribute("obstacle").value();
-      fin.open(obsFile.c_str(),ios::in);
-      if( fin.is_open() ){ // The file already exists.
-          fin.close();
+      if( exists(obsFile) ){ // The file already exists.
           string::size_type loc = obsFile.find( ".dh", 0 );
           if( loc != string::npos ) { // It means that the obstacle is a robot.
 #ifndef KAUTHAM_COLLISION_PQP
@@ -1150,10 +1162,215 @@ namespace Kautham {
   }
 
   bool Problem::addObstacleControls2WSpace(string cntrFile) {
+
       return true;
+#ifdef OBS
+      if (exists(cntrFile)) { // The file already exists.
+          string::size_type loc = cntrFile.find( ".cntr", 0 );
+          if( loc != string::npos ) { // It means that controls are defined by a *.cntr file
+              //Opening the file with the new pugiXML library.
+              xml_document doc;
+
+              //Parse the cntr file
+              if (doc.load_file(cntrFile.c_str())){
+                  //Once the obstacles were added, the controls can be configured
+                  int numControls = 0;
+                  string controlsName = "";
+                  xml_node tmpNode = doc.child("ControlSet").child("Control");
+                  while (tmpNode) {
+                      numControls++;
+                      if(controlsName != "") controlsName.append("|");
+                      controlsName.append(tmpNode.attribute("name").as_string());
+                      tmpNode = tmpNode.next_sibling("Control");
+                  }
+                  _wspace->setNumObsControls(numControls);
+                  _wspace->setObsControlsName(controlsName);
+
+                  //Creating the mapping and offset Matrices between controls
+                  //and DOF parameters and initializing them.
+                  int numObs = _wspace->getNumObstacles();
+                  int numDOFs;
+                  KthReal ***mapMatrix;
+                  KthReal **offMatrix;
+                  mapMatrix = new KthReal**[numObs];
+                  offMatrix = new KthReal*[numObs];
+                  for (int i = 0; i < numObs; i++) {
+                      numDOFs = _wspace->getObstacle(i)->getNumJoints()+6;
+                      mapMatrix[i] = new KthReal*[numDOFs];
+                      offMatrix[i] = new KthReal[numDOFs];
+                      for (int j = 0; j < numDOFs; j++) {
+                          mapMatrix[i][j] = new KthReal[numControls];
+                          offMatrix[i][j] = (KthReal)0.5;
+                          for (int k = 0; k < numControls; k++) {
+                              mapMatrix[i][j][k] = (KthReal)0.0;
+                          }
+                      }
+                  }
+
+                  //Load the Offset vector
+                  tmpNode = doc.child("ControlSet").child("Offset");
+                  xml_node::iterator it;
+                  string dofName, obstacleName, tmpstr;
+                  for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
+                      tmpstr = (*it).attribute("name").as_string();
+                      unsigned found = tmpstr.find_last_of("/");
+                      if (found == string::npos) {
+                          return (false);
+                      }
+                      dofName = tmpstr.substr(found+1);
+                      obstacleName = tmpstr.substr(0,found);
+
+                      //Find the obstacle index into the obstacles vector
+                      int i = 0;
+                      bool obstacle_found = false;
+                      while (!obstacle_found && i < numObs) {
+                          if (_wspace->getObstacle(i)->getName() == obstacleName) {
+                              obstacle_found = true;
+                          } else {
+                              i++;
+                          }
+                      }
+
+                      if (!obstacle_found) {
+                          return (false);
+                      }
+
+                      if( dofName == "X"){
+                          _wspace->getObstacle(i)->setSE3(true);
+                          offMatrix[i][0] = (KthReal)(*it).attribute("value").as_double();
+                      }else if( dofName == "Y"){
+                          _wspace->getObstacle(i)->setSE3(true);
+                          offMatrix[i][1] = (KthReal)(*it).attribute("value").as_double();
+                      }else if( dofName == "Z"){
+                          _wspace->getObstacle(i)->setSE3(true);
+                          offMatrix[i][2] = (KthReal)(*it).attribute("value").as_double();
+                      }else if( dofName == "X1"){
+                          _wspace->getObstacle(i)->setSE3(true);
+                          offMatrix[i][3] = (KthReal)(*it).attribute("value").as_double();
+                      }else if( dofName == "X2"){
+                          _wspace->getObstacle(i)->setSE3(true);
+                          offMatrix[i][4] = (KthReal)(*it).attribute("value").as_double();
+                      }else if( dofName == "X3"){
+                          _wspace->getObstacle(i)->setSE3(true);
+                          offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
+                      }else{    // It's not a SE3 control and could have any name.
+                          // Find the index orden into the links vector without the first static link.
+                          for(int ind = 0; ind < _wspace->getObstacle(i)->getNumJoints(); ind++)
+                              if( dofName == _wspace->getObstacle(i)->getLink(ind+1)->getName()){
+                                  offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
+                                  break;
+                              }
+                      }
+                  }//End processing Offset vector
+
+                  //Process the controls to load the mapMatrix
+                  tmpNode = doc.child("ControlSet");
+                  string nodeType = "";
+                  int cont = 0;
+                  for(it = tmpNode.begin(); it != tmpNode.end(); ++it){
+                      nodeType = it->name();
+                      if( nodeType == "Control" ){
+                          xml_node::iterator itDOF;
+                          KthReal eigVal = 1;
+                          if ((*it).attribute("eigValue")) {
+                              eigVal = (KthReal) (*it).attribute("eigValue").as_double();
+                          }
+
+                          for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
+                              tmpstr = itDOF->attribute("name").as_string();
+                              unsigned found = tmpstr.find_last_of("/");
+                              if (found == string::npos) {
+                                  return (false);
+                              }
+                              dofName = tmpstr.substr(found+1);
+                              obstacleName = tmpstr.substr(0,found);
+
+                              //Find the obstacle index into the obstacles vector
+                              int i = 0;
+                              bool obstacle_found = false;
+                              while (!obstacle_found && i < numObs) {
+                                  if (_wspace->getObstacle(i)->getName() == obstacleName) {
+                                      obstacle_found = true;
+                                  } else {
+                                      i++;
+                                  }
+                              }
+
+                              if (!obstacle_found) {
+                                  return (false);
+                              }
+
+                              if( dofName == "X"){
+                                  _wspace->getObstacle(i)->setSE3(true);
+                                  mapMatrix[i][0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else if( dofName == "Y"){
+                                  _wspace->getObstacle(i)->setSE3(true);
+                                  mapMatrix[i][1][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else if( dofName == "Z"){
+                                  _wspace->getObstacle(i)->setSE3(true);
+                                  mapMatrix[i][2][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else if( dofName == "X1"){
+                                  _wspace->getObstacle(i)->setSE3(true);
+                                  mapMatrix[i][3][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else if( dofName == "X2"){
+                                  _wspace->getObstacle(i)->setSE3(true);
+                                  mapMatrix[i][4][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else if( dofName == "X3"){
+                                  _wspace->getObstacle(i)->setSE3(true);
+                                  mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              }else{  // It's not a SE3 control and could have any name.
+                                  // Find the index orden into the links vector without the first static link.
+                                  for(int ind = 0; ind < _wspace->getObstacle(i)->getNumJoints(); ind++)
+                                      if( dofName == _wspace->getObstacle(i)->getLink(ind+1)->getName()){
+                                          mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                          break;
+                                      }
+                              }
+                          }
+
+                          cont++;
+                      }// closing if(nodeType == "Control" )
+                  }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
+
+                  for (int i = 0; i < numObs; i++) {
+                      _wspace->getObstacle(i)->setMapMatrix(mapMatrix[i]);
+                      /*for (int j = 0; j < _wspace->getObstacle(i)->getNumJoints()+6;j++) {
+                      for (int k = 0; k < _wspace->getNumRobControls(); k++) {
+                          cout << mapMatrix[i][j][k] << " ";
+                      }
+                      cout << endl;
+                  }
+                  cout << endl;*/
+                      _wspace->getObstacle(i)->setOffMatrix(offMatrix[i]);
+                      /*for (int j = 0; j < _wspace->getObstacle(i)->getNumJoints()+6;j++) {
+                      cout << offMatrix[i][j] << endl;
+                  }
+                  cout << endl;*/
+                  }
+                  return (true);
+
+              } else {// the result of the file pasers is bad
+                  cout << "The cntr file: " << cntrFile << " can not be read." << std::endl;
+                  return (false);
+              }
+          }
+      } else { // File does not exists. All DOF must fixed.
+          int numObs = _wspace->getNumObstacles();
+          int numDOFs;
+          KthReal **offMatrix;
+          offMatrix = new KthReal*[numObs];
+          for (int i = 0; i < numObs; i++) {
+              numDOFs = _wspace->getObstacle(i)->getNumJoints()+6;
+              offMatrix[i] = new KthReal[numDOFs];
+              for (int j = 0; j < numDOFs; j++) {
+                  offMatrix[i][j] = (KthReal)0.5;
+              }
+              _wspace->getObstacle(i)->setOffMatrix(offMatrix[i]);
+          }
+
+          return (true);
+      }
+#endif
   }
 
-  /*bool Problem::addObstacleControls2CSpace(string cntrFile) {
-      return true;
-  }*/
 }

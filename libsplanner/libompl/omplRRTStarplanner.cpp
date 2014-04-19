@@ -515,7 +515,7 @@ namespace Kautham {
    */
   ob::OptimizationObjectivePtr omplRRTStarPlanner::createOptimizationObjectivePMD()
   {
-      if(wkSpace()->robotsCount() == 1)
+      if(wkSpace()->getNumRobots() == 1)
       {
           //////////////////////////////////////////////////////////////////////////////
           // 3) single robot handPMD alignment optimization criteria
@@ -585,13 +585,13 @@ namespace Kautham {
           //////////////////////////////////////////////////////////////////////////////
           // 4) multi robot se3PMD alignment optimization criteria
           int numPMD = 0;
-          int numDOF = 3*wkSpace()->robotsCount(); //the coupling is allowed with the x,y,z of each robot
+          int numDOF = 3*wkSpace()->getNumRobots(); //the coupling is allowed with the x,y,z of each robot
 
           std::map< string, vector< pair<int,int> >  > pmdMap;
           std::map< string, vector< pair<int,int> >  >::iterator itpmdMap;
 
 
-          for(int k=0;k<wkSpace()->robotsCount(); k++)
+          for(int k=0;k<wkSpace()->getNumRobots(); k++)
           {
               //find the controls that are coupled, i.e. those that have the PMD letters in their name
               string listcontrolsname = wkSpace()->getRobControlsName();
@@ -642,7 +642,7 @@ namespace Kautham {
           //check correctness
           for (itpmdMap=pmdMap.begin(); itpmdMap!=pmdMap.end(); ++itpmdMap)
           {
-              if(itpmdMap->second.size() != wkSpace()->robotsCount())
+              if(itpmdMap->second.size() != wkSpace()->getNumRobots())
               {
                   cout<<"Error configuring the PMD matrix. The same number of coupled controls (PMDs) is required per robot (and with the same name!)"<<endl;
                   return ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));

@@ -233,7 +233,7 @@
 	    clock_t entertime = clock();
 		
 
-      std::vector<KthReal> coord; coord.resize(_wkSpace->getDimension());
+      std::vector<KthReal> coord; coord.resize(_wkSpace->getNumRobControls());
       std::vector<KthReal> coordarm; coordarm.resize(6);
       Sample *tmpSample;
 	  vector<KthReal> coordvector;
@@ -546,7 +546,7 @@
 	}
 
 //    void PRMRobotHandConstPlannerICRA::setIniGoal() {
-//      if(_wkSpace->getDimension()==11)
+//      if(_wkSpace->getNumRobControls()==11)
 //      {
 //		  //SET GOAL CONFIGURATION
 //        std::vector<KthReal> c(11);
@@ -571,7 +571,7 @@
 //        c[9] = (KthReal)0.821;
 //        c[10] = (KthReal)0.928;//0.169;
 		
-//        _goal = new Sample(_wkSpace->getDimension());
+//        _goal = new Sample(_wkSpace->getNumRobControls());
 
 //        goalSamp()->setCoords(c);
 //        _samples->add(_goal);
@@ -626,7 +626,7 @@
 //        c[10] = (KthReal)0.169;
 //		*/
 
-//        _init = new Sample(_wkSpace->getDimension());
+//        _init = new Sample(_wkSpace->getNumRobControls());
 
 //        initSamp()->setCoords(c);
 //		_wkSpace->collisionCheck(initSamp()); //to load config
@@ -684,7 +684,7 @@
 //        c[3] = (KthReal)0.5;
 //        c[4] = (KthReal)0.6;
 //        c[5] = (KthReal)0.109;
-//        _goal = new Sample(_wkSpace->getDimension());
+//        _goal = new Sample(_wkSpace->getNumRobControls());
 //        goalSamp()->setCoords(c);
 //        _samples->add(_goal);
 //       if( _wkSpace->collisionCheck(goalSamp()))
@@ -698,7 +698,7 @@
 //        c[3] = 0.5;
 //        c[4] = 0.508;
 //        c[5] = 0.251;
-//        _init = new Sample(_wkSpace->getDimension());
+//        _init = new Sample(_wkSpace->getNumRobControls());
 //        initSamp()->setCoords(c);
 //        _samples->add(_init);
 //        if( _wkSpace->collisionCheck(initSamp()))
@@ -720,7 +720,7 @@
 	{
 		//compute random arm configurations only every cloudsize times
 		static int count = 0;
-        static std::vector<KthReal> coord(_wkSpace->getDimension());
+        static std::vector<KthReal> coord(_wkSpace->getNumRobControls());
 		static bool validarmconf=false;
 		static KthReal rd[6];
 		static KthReal rdtheta;
@@ -751,7 +751,7 @@
 	    int trials, maxtrials;
 		bool autocol = true;//flag to test autocollisions
         Sample *tmpSample;
-		tmpSample = new Sample(_wkSpace->getDimension());
+        tmpSample = new Sample(_wkSpace->getNumRobControls());
 
 
 		//compute the xyz of the tcp of the robot at the smp configuration
@@ -808,7 +808,7 @@
 					}
 
 					//Set the new sample with the arm coorinates and check for autocollision.	
-					for(int k=6; k < _wkSpace->getDimension(); k++)	coord[k]=0.0;//dummmy			
+                    for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=0.0;//dummmy
 					_wkSpace->getRobot(0)->control2Pose(coord); 
 					autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
 					if(autocol==true) {
@@ -836,7 +836,7 @@
 						int trialshand=0;
 						int maxtrialshand=100;
 						do{
-							for(int k=6; k < _wkSpace->getDimension(); k++)
+                            for(int k=6; k < _wkSpace->getNumRobControls(); k++)
 							{
 								coord[k] = (KthReal)_gen->d_rand();
 							}
@@ -854,7 +854,7 @@
 				int trialshand=0;
 				int maxtrialshand=100;
 				do{
-					for(int k=6; k < _wkSpace->getDimension(); k++)
+                    for(int k=6; k < _wkSpace->getNumRobControls(); k++)
 					{
 						coord[k] = (KthReal)_gen->d_rand();
 					}

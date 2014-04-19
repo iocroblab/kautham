@@ -184,7 +184,7 @@ void bronchoWidget::xiSliderChanged(int val){
 	  //values goes in the range -1..1
 	values[1]=(KthReal) -readVal/ui->XiSlider->minimum();
   }
-  _ptProblem->setCurrentControls(values,_globalOffset);
+  _ptProblem->setCurrentRobControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
   updateView();
   updateLookAt();
@@ -199,7 +199,7 @@ void bronchoWidget::xiSliderChanged(int val){
 void bronchoWidget::zetaSliderChanged(int val){
   KthReal readVal=(KthReal) val;
   values[2]=(KthReal)(readVal-lastZsliderPos)/5;  // slider goes from -100 to 100, every delta is 10 ¿?
-  _ptProblem->setCurrentControls(values,_globalOffset);
+  _ptProblem->setCurrentRobControls(values,_globalOffset);
   _robot->ConstrainedKinematics(values);
   lastZsliderPos=readVal;
   updateView();
@@ -210,11 +210,10 @@ void bronchoWidget::zetaSliderChanged1(){
   KthReal readVal=(KthReal) ui->DzSlider->value();
   values[2]=(KthReal) (readVal/1000);  // slider goes from -100 to 100, every step is of 0.05 ¿?
     if (values[2]!=0){
-      _ptProblem->setCurrentControls(values,_globalOffset);
+      _ptProblem->setCurrentRobControls(values,_globalOffset);
       _robot->ConstrainedKinematics(values);
 	  updateView();
     }
-  //updateLookAt();
 }
 
 

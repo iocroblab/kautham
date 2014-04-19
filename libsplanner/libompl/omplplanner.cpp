@@ -133,7 +133,7 @@ namespace Kautham {
       {
           kauthamPlanner_ = p;
           centersmp = NULL;
-  _samplerRandom = new RandomSampler(kauthamPlanner_->wkSpace()->getDimension());
+  _samplerRandom = new RandomSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
       }
 
       void KauthamStateSampler::setCenterSample(ob::State *state, double th)
@@ -141,7 +141,7 @@ namespace Kautham {
           if(state!=NULL)
           {
             //create sample
-            int d = kauthamPlanner_->wkSpace()->getDimension();
+            int d = kauthamPlanner_->wkSpace()->getNumRobControls();
             centersmp = new Sample(d);
             //copy the conf of the init smp. Needed to capture the home positions.
             centersmp->setMappedConf(kauthamPlanner_->initSamp()->getMappedConf());
@@ -166,7 +166,7 @@ namespace Kautham {
             int trials = 0;
             int maxtrials=100;
             bool found = false;
-            int d = kauthamPlanner_->wkSpace()->getDimension();
+            int d = kauthamPlanner_->wkSpace()->getNumRobControls();
             Sample *smp = new Sample(d);
             double dist;
 
@@ -216,7 +216,7 @@ namespace Kautham {
          {
               /*
               //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-              int d = kauthamPlanner_->wkSpace()->getDimension();
+              int d = kauthamPlanner_->wkSpace()->getNumRobControls();
               vector<KthReal> coords(d);
               for(int i=0;i<d;i++)
                   coords[i] = rng_.uniformReal(0,1.0);
@@ -316,11 +316,11 @@ namespace Kautham {
           int level = 3;
           KthReal sigma = 0.1;
 
-          _samplerRandom = new RandomSampler(kauthamPlanner_->wkSpace()->getDimension());
-          _samplerHalton = new HaltonSampler(kauthamPlanner_->wkSpace()->getDimension());
-          _samplerSDK = new SDKSampler(kauthamPlanner_->wkSpace()->getDimension(), level);
-          _samplerGaussian = new GaussianSampler(kauthamPlanner_->wkSpace()->getDimension(), sigma, kauthamPlanner_->wkSpace());
-          _samplerGaussianLike = new GaussianLikeSampler(kauthamPlanner_->wkSpace()->getDimension(), level, kauthamPlanner_->wkSpace());
+          _samplerRandom = new RandomSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
+          _samplerHalton = new HaltonSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
+          _samplerSDK = new SDKSampler(kauthamPlanner_->wkSpace()->getNumRobControls(), level);
+          _samplerGaussian = new GaussianSampler(kauthamPlanner_->wkSpace()->getNumRobControls(), sigma, kauthamPlanner_->wkSpace());
+          _samplerGaussianLike = new GaussianLikeSampler(kauthamPlanner_->wkSpace()->getNumRobControls(), level, kauthamPlanner_->wkSpace());
 
           _samplerVector.push_back(_samplerRandom);
           _samplerVector.push_back(_samplerHalton);
@@ -417,7 +417,7 @@ namespace Kautham {
       double weightSE3; //weight of the monile base
       double weightRn; //weight of the chain
       //loop for all robots
-      for(int i=0; i<p->wkSpace()->robotsCount(); i++)
+      for(int i=0; i<p->wkSpace()->getNumRobots(); i++)
       {
           weightImportanceRobots = 1.0; //all robots weight the same
 
@@ -485,7 +485,7 @@ namespace Kautham {
 //      if(si->satisfiesBounds(state)==false)
 //          return false;
 //      //create sample
-//      int d = p->wkSpace()->getDimension();
+//      int d = p->wkSpace()->getNumRobControls();
 //      Sample *smp = new Sample(d);
 //      //copy the conf of the init smp. Needed to capture the home positions.
 //      smp->setMappedConf(p->initSamp()->getMappedConf());
@@ -538,13 +538,13 @@ namespace Kautham {
             vector<ob::StateSpacePtr> spaceRob;
             vector< double > weights;
 
-            spaceRn.resize(_wkSpace->robotsCount());
-            spaceSE3.resize(_wkSpace->robotsCount());
-            spaceRob.resize(_wkSpace->robotsCount());
-            weights.resize(_wkSpace->robotsCount());
+            spaceRn.resize(_wkSpace->getNumRobots());
+            spaceSE3.resize(_wkSpace->getNumRobots());
+            spaceRob.resize(_wkSpace->getNumRobots());
+            weights.resize(_wkSpace->getNumRobots());
 
             //loop for all robots
-            for(int i=0; i<_wkSpace->robotsCount(); i++)
+            for(int i=0; i<_wkSpace->getNumRobots(); i++)
             {
                 vector<ob::StateSpacePtr> compoundspaceRob;
                 vector< double > weightsRob;
@@ -676,7 +676,7 @@ namespace Kautham {
         space->registerDefaultProjection(peSpace);
         */
             vector<ob::ProjectionEvaluatorPtr> peSpace;
-            for(int i=0; i<_wkSpace->robotsCount();i++)
+            for(int i=0; i<_wkSpace->getNumRobots();i++)
             {
                 ob::ProjectionEvaluatorPtr projToUse = space->as<ob::CompoundStateSpace>()->getSubspace(i)->getProjection("drawprojection");
                 peSpace.push_back( (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,i,projToUse) );
@@ -782,7 +782,7 @@ namespace Kautham {
         it = _parameters.find("Cspace Drawn");
         if(it != _parameters.end()){
             _drawnrobot = it->second;
-            if(_drawnrobot<0 || _drawnrobot >= _wkSpace->robotsCount()) {
+            if(_drawnrobot<0 || _drawnrobot >= _wkSpace->getNumRobots()) {
                 _drawnrobot = 0;
                 setParameter("Cspace Drawn",0);
             }
@@ -1219,7 +1219,7 @@ namespace Kautham {
 
 
         //loop for all the robots
-        for(int i=0; i<_wkSpace->robotsCount(); i++)
+        for(int i=0; i<_wkSpace->getNumRobots(); i++)
         {
             int k=0; //counter of subspaces contained in subspace of robot i
 
@@ -1288,7 +1288,7 @@ namespace Kautham {
         vector<RobConf> rc;
 
         //loop for all the robots
-        for(int i=0; i<_wkSpace->robotsCount(); i++)
+        for(int i=0; i<_wkSpace->getNumRobots(); i++)
         {
             //RobConf to store the robots configurations read form the ompl state
             RobConf *rcj = new RobConf;
@@ -1411,7 +1411,7 @@ namespace Kautham {
          /*
          for(int i=0; i<data.numVertices();i++)
          {
-                smp=new Sample(_wkSpace->getDimension());
+                smp=new Sample(_wkSpace->getNumRobControls());
                 smp->setMappedConf(_init->getMappedConf());//copy the conf of the start smp
                 omplState2smp(data.getVertex(i).getState(), smp);
                 _samples->add(smp);
@@ -1453,7 +1453,7 @@ namespace Kautham {
                //load the kautham _path variable from the ompl solution
                 for(int j=0;j<ss->getSolutionPath().getStateCount();j++){
                    //create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
-                    smp=new Sample(_wkSpace->getDimension());
+                    smp=new Sample(_wkSpace->getNumRobControls());
                     smp->setMappedConf(_init->getMappedConf());
                     //convert form state to smp
                     omplState2smp(ss->getSolutionPath().getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
