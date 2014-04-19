@@ -25,8 +25,6 @@
  <tbody>
  <tr style="height: 56px;">
   
-  <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
-  
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">The Kautham Project
@@ -94,33 +92,42 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 This is the complete list of members for <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>, including all inherited members.<table>
   <tr bgcolor="#f0f0f0"><td><b>_cspace</b> (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>_currentControls</b> (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>_currentObsControls</b> (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>_currentRobControls</b> (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>_filePath</b> (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>_planner</b> (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>_problemType</b> (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>_sampler</b> (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>_sspace</b> (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>_toRad</b> (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private, static]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>_wspace</b> (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a68585647cddd83069ab63a9be80c3ab4">addControls2WSpace</a>(string cntrFile)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#abd858b323c2fad087423df5fe877457c">addObstacle2WSpace</a>(xml_node *obstacle_node, string dir)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a55ad750196a42a2721b139df0177e3b8">addRobot2WSpace</a>(xml_node *robot_node, string dir)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a64a94bf7750e8a3b800b144a37176644">addObstacle2WSpace</a>(xml_node *obstacle_node)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a280904725493b3c87e2f84e7be050a63">addObstacleControls2WSpace</a>(string cntrFile)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a47c4f18d75f665b5f6dc7c5b8851ba0b">addRobot2WSpace</a>(xml_node *robot_node)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a484ab7202803203da806fdadb3a4977b">addRobotControls2WSpace</a>(string cntrFile)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>createCSpace</b>() (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>createCSpaceFromFile</b>(pugi::xml_document *doc) (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a4cfbe90889b172b28a47ff704b6303ef">createPlanner</a>(string name, ompl::geometric::SimpleSetup *ssptr=NULL)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>createPlannerFromFile</b>(pugi::xml_document *doc, ompl::geometric::SimpleSetup *ssptr=NULL) (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a4f44e067c47f7431996b0c58eeb3f37c">createWSpace</a>(pugi::xml_document *doc)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a3e5df75ffb110ba818a0ba066f3a03b8">cSpace</a>()</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>getCurrentControls</b>() (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [inline]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a25b05035d84f34460dfa0582e0722f67">exists</a>(string file)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#acaec7c068a739b13680e11f55008596e">findAllFiles</a>(xml_node *parent, string child, string attribute, vector&lt; string &gt; path)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>getCurrentObsControls</b>() (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [inline]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>getCurrentRobControls</b>() (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [inline]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>getDimension</b>() (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [inline]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>getFilePath</b>() (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [inline]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>getPlanner</b>() (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [inline]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>getSampler</b>() (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [inline]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>getSampleSet</b>() (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [inline]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>inheritSolution</b>() (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a1d5afd577b139c1ec7cff17c2d3f6f27">isFileOK</a>(xml_document *doc)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#a96c6f88909ce53534d7585bfc27d5f14">prepareFile</a>(xml_document *doc)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [private]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>Problem</b>() (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#ab2623e5832d222d7f97437d00ddbbd86">saveToFile</a>(string file_path=&quot;&quot;)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="class_kautham_1_1_problem.html#abe9607489f556b984d2e184cdf230a9a">setCSpace</a>(SampleSet *CSpace)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [inline]</code></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>setCurrentControls</b>(vector&lt; KthReal &gt; &amp;val, int offset) (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>setCurrentObsControls</b>(vector&lt; KthReal &gt; &amp;val) (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>setCurrentRobControls</b>(vector&lt; KthReal &gt; &amp;val) (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>setHomeConf</b>(Robot *rob, HASH_S_K *param) (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>setPlanner</b>(Planner *plan) (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [inline]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>setSampler</b>(Sampler *smp) (defined in <a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a>)</td><td><a class="el" href="class_kautham_1_1_problem.html">Kautham::Problem</a></td><td><code> [inline]</code></td></tr>
@@ -149,7 +156,7 @@ This is the complete list of members for <a class="el" href="class_kautham_1_1_p
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Apr 11 2014 00:20:00 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 19 2014 20:50:13 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

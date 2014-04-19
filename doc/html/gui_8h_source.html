@@ -25,8 +25,6 @@
  <tbody>
  <tr style="height: 56px;">
   
-  <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
-  
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">The Kautham Project
@@ -191,61 +189,71 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00110"></a>00110     <span class="keywordtype">void</span>                showPlannerToolBar();
 <a name="l00111"></a>00111     <span class="keywordtype">void</span>                changeActiveBackground();
 <a name="l00112"></a>00112     <span class="keywordtype">void</span>                changeDockAreaForOutput(Qt::DockWidgetArea area);
-<a name="l00113"></a>00113         <span class="keyword">public</span>:
-<a name="l00114"></a>00114                 <a class="code" href="class_kautham_1_1_g_u_i.html">GUI</a>(QWidget *p=0);
-<a name="l00115"></a>00115     <span class="keywordtype">void</span>                clearText();
-<a name="l00116"></a>00116     <span class="keywordtype">bool</span>                addViewerTab(<span class="keywordtype">string</span> title, VIEWERTYPE typ, SoSeparator *root);
-<a name="l00117"></a>00117     <span class="keywordtype">void</span>                removePropTab(<span class="keywordtype">string</span> title);
-<a name="l00118"></a>00118     <span class="keywordtype">void</span>                removeViewerTab(<span class="keywordtype">string</span> title);
-<a name="l00119"></a>00119     SoQtExaminerViewer* getViewerTab(<span class="keywordtype">string</span> title);
-<a name="l00120"></a>00120     SoSeparator*        getRootTab(<span class="keywordtype">string</span> title);
-<a name="l00121"></a>00121     <span class="comment">//bool              setTable(string s);</span>
-<a name="l00122"></a>00122     <span class="keywordtype">bool</span>                setAction(WHERETYPE typ, <span class="keywordtype">string</span> name, <span class="keywordtype">string</span> shortcut, <span class="keywordtype">string</span> iconame,
-<a name="l00123"></a>00123                         QObject* receiver, <span class="keyword">const</span> <span class="keywordtype">char</span> *member);
-<a name="l00124"></a>00124     <span class="keywordtype">bool</span>                setToogleAction(WHERETYPE typ, <span class="keywordtype">string</span> name, <span class="keywordtype">string</span> shortcut, <span class="keywordtype">string</span> iconame,
-<a name="l00125"></a>00125                         QObject* receiver, <span class="keyword">const</span> <span class="keywordtype">char</span> *member);
-<a name="l00126"></a>00126     <span class="keywordtype">bool</span>                addSeparator(WHERETYPE typ);
-<a name="l00127"></a>00127     <span class="keywordtype">bool</span>                restart();
-<a name="l00128"></a>00128     <span class="keywordtype">bool</span>                addToProblemTree(<span class="keywordtype">string</span> problemPath);
-<a name="l00129"></a>00129     <span class="keywordtype">bool</span>                addControlWidget(<a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob);
-<a name="l00130"></a>00130 
-<a name="l00131"></a>00131     <span class="keywordtype">bool</span>                addExternalWidget1( <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob, <a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob, <span class="keywordtype">int</span> offset = 0, <a class="code" href="class_kautham_1_1_g_u_i.html">GUI</a>* gui = NULL);
-<a name="l00132"></a>00132     <span class="keywordtype">bool</span>                addExternalWidget2( <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob, <a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob, <span class="keywordtype">int</span> offset = 0, <a class="code" href="class_kautham_1_1_g_u_i.html">GUI</a>* gui = NULL);
-<a name="l00133"></a>00133     <span class="keywordtype">bool</span>                addExternalWidget3( <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob, <a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob, <span class="keywordtype">int</span> offset = 0, <a class="code" href="class_kautham_1_1_g_u_i.html">GUI</a>* gui = NULL);
-<a name="l00134"></a>00134 
-<a name="l00135"></a>00135 
-<a name="l00136"></a>00136     <span class="keywordtype">bool</span>                addConstrainedControlWidget( <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob, <a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob, <span class="keywordtype">int</span> offset = 0);
-<a name="l00137"></a>00137     <span class="keywordtype">bool</span>                addDOFWidget( <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob );
-<a name="l00138"></a>00138     <span class="keywordtype">bool</span>                setSampleWidget(<a class="code" href="class_kautham_1_1_sample_set.html">SampleSet</a>* samples, <a class="code" href="class_kautham_1_1_sampler.html">Sampler</a>* sampler, <a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob);
-<a name="l00139"></a>00139     <span class="keywordtype">bool</span>                createPlannerToolBar(<span class="keywordtype">string</span> loc, <span class="keywordtype">string</span> plan, QObject* receiver, <span class="keyword">const</span> <span class="keywordtype">char</span>* member);
-<a name="l00140"></a>00140     <span class="keywordtype">bool</span>                addPlanner(<a class="code" href="class_kautham_1_1_planner.html">Planner</a> *plan, <a class="code" href="class_kautham_1_1_sample_set.html">SampleSet</a>* samp, <a class="code" href="class_kautham_1_1_g_u_i.html">GUI</a>* gui = NULL);
+<a name="l00114"></a>00114     <span class="keywordtype">void</span>                toogleBBOXflag();
+<a name="l00116"></a>00116     <span class="keywordtype">void</span>                setModelsDefaultPath();
+<a name="l00117"></a>00117 
+<a name="l00118"></a>00118     <span class="keyword">public</span>:
+<a name="l00119"></a>00119     <a class="code" href="class_kautham_1_1_g_u_i.html">GUI</a>(QWidget *p=0);
+<a name="l00120"></a>00120     <span class="keywordtype">void</span>                clearText();
+<a name="l00121"></a>00121     <span class="keywordtype">bool</span>                addViewerTab(<span class="keywordtype">string</span> title, VIEWERTYPE typ, SoSeparator *root);
+<a name="l00122"></a>00122     <span class="keywordtype">void</span>                removePropTab(<span class="keywordtype">string</span> title);
+<a name="l00123"></a>00123     <span class="keywordtype">void</span>                removeViewerTab(<span class="keywordtype">string</span> title);
+<a name="l00124"></a>00124     SoQtExaminerViewer* getViewerTab(<span class="keywordtype">string</span> title);
+<a name="l00125"></a>00125     SoSeparator*        getRootTab(<span class="keywordtype">string</span> title);
+<a name="l00126"></a>00126     <span class="comment">//bool              setTable(string s);</span>
+<a name="l00127"></a>00127     <span class="keywordtype">bool</span>                setAction(WHERETYPE typ, <span class="keywordtype">string</span> name, <span class="keywordtype">string</span> shortcut, <span class="keywordtype">string</span> iconame,
+<a name="l00128"></a>00128                         QObject* receiver, <span class="keyword">const</span> <span class="keywordtype">char</span> *member);
+<a name="l00129"></a>00129     <span class="keywordtype">bool</span>                setToogleAction(WHERETYPE typ, <span class="keywordtype">string</span> name, <span class="keywordtype">string</span> shortcut, <span class="keywordtype">string</span> iconame,
+<a name="l00130"></a>00130                         QObject* receiver, <span class="keyword">const</span> <span class="keywordtype">char</span> *member);
+<a name="l00131"></a>00131     <span class="keywordtype">bool</span>                addSeparator(WHERETYPE typ);
+<a name="l00132"></a>00132     <span class="keywordtype">bool</span>                restart();
+<a name="l00133"></a>00133     <span class="keywordtype">bool</span>                addToProblemTree(<span class="keywordtype">string</span> problemPath);
+<a name="l00134"></a>00134     <span class="keywordtype">bool</span>                addRobControlWidget(<a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob, vector&lt;Kautham::DOFWidget *&gt; robDOFWidgets);
+<a name="l00135"></a>00135     <span class="keywordtype">bool</span>                addObsControlWidget(<a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob, vector&lt;Kautham::DOFWidget *&gt; obsDOFWidgets);
+<a name="l00136"></a>00136 
+<a name="l00137"></a>00137     <span class="keywordtype">bool</span>                addExternalWidget1( <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob, <a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob, <a class="code" href="class_kautham_1_1_g_u_i.html">GUI</a>* gui = NULL);
+<a name="l00138"></a>00138     <span class="keywordtype">bool</span>                addExternalWidget2( <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob, <a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob, <a class="code" href="class_kautham_1_1_g_u_i.html">GUI</a>* gui = NULL);
+<a name="l00139"></a>00139     <span class="keywordtype">bool</span>                addExternalWidget3( <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob, <a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob, <a class="code" href="class_kautham_1_1_g_u_i.html">GUI</a>* gui = NULL);
+<a name="l00140"></a>00140 
 <a name="l00141"></a>00141 
-<a name="l00142"></a>00142     <span class="keywordtype">bool</span>                addInverseKinematic(<a class="code" href="class_kautham_1_1_inverse_kinematic.html">InverseKinematic</a>* ikine);
-<a name="l00143"></a>00143     <span class="keywordtype">bool</span>                addWidgetToTab(QWidget* widget, QString name);
-<a name="l00144"></a>00144 
-<a name="l00145"></a>00145     <span class="keyword">const</span> mt::Transform getActiveCameraTransfom();
-<a name="l00146"></a>00146     <span class="keywordtype">bool</span>                setActiveCameraPosition(<span class="keywordtype">float</span> x, <span class="keywordtype">float</span> y, <span class="keywordtype">float</span> z );
-<a name="l00147"></a>00147     <span class="keywordtype">bool</span>                setActiveCameraRotation(<span class="keywordtype">float</span> qx, <span class="keywordtype">float</span> qy, <span class="keywordtype">float</span> qz, <span class="keywordtype">float</span> qw);
-<a name="l00148"></a>00148     <span class="keywordtype">bool</span>                setActiveCameraPointAt(<span class="keywordtype">float</span> x, <span class="keywordtype">float</span> y, <span class="keywordtype">float</span> z );
-<a name="l00149"></a>00149     <span class="keywordtype">bool</span>                setActiveCameraTransform(mt::Transform tra);
-<a name="l00150"></a>00150     std::string         getActiveViewTitle();
-<a name="l00151"></a>00151         
-<a name="l00152"></a>00152     <a class="code" href="class_kautham_1_1_control_widget.html">ControlWidget</a>*              getControlWidget();
-<a name="l00153"></a>00153     <a class="code" href="class_kautham_1_1_planner_widget.html">PlannerWidget</a>*              getPlannerWidget();
-<a name="l00154"></a>00154 
-<a name="l00155"></a>00155         <span class="keywordtype">int</span>                                     indexControlsTab;
-<a name="l00156"></a>00156     <span class="keywordtype">int</span>                 indexPlannerTab;
-<a name="l00157"></a>00157   <span class="keyword">private</span>:
-<a name="l00158"></a>00158     vector&lt;Viewer&gt;      viewers;
-<a name="l00159"></a>00159     <a class="code" href="class_stream_log.html">StreamLog</a>*          qout;
-<a name="l00160"></a>00160     <span class="keywordtype">bool</span>                boolPlanVis;
-<a name="l00161"></a>00161         };
-<a name="l00162"></a>00162 
-<a name="l00164"></a>00164 }
-<a name="l00165"></a>00165 
-<a name="l00166"></a>00166 <span class="preprocessor">#endif  //_GUI_H</span>
-<a name="l00167"></a>00167 <span class="preprocessor"></span>
-<a name="l00168"></a>00168 
+<a name="l00142"></a>00142     <span class="keywordtype">bool</span>                addConstrainedControlWidget( <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob, <a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob);
+<a name="l00143"></a>00143     <a class="code" href="class_kautham_1_1_d_o_f_widget.html">Kautham::DOFWidget</a> *addDOFWidget( <a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob );
+<a name="l00144"></a>00144     <span class="keywordtype">bool</span>                setSampleWidget(<a class="code" href="class_kautham_1_1_sample_set.html">SampleSet</a>* samples, <a class="code" href="class_kautham_1_1_sampler.html">Sampler</a>* sampler, <a class="code" href="class_kautham_1_1_problem.html">Problem</a>* prob);
+<a name="l00145"></a>00145     <span class="keywordtype">bool</span>                createPlannerToolBar(<span class="keywordtype">string</span> loc, <span class="keywordtype">string</span> plan, QObject* receiver, <span class="keyword">const</span> <span class="keywordtype">char</span>* member);
+<a name="l00146"></a>00146     <span class="keywordtype">bool</span>                addPlanner(<a class="code" href="class_kautham_1_1_planner.html">Planner</a> *plan, <a class="code" href="class_kautham_1_1_sample_set.html">SampleSet</a>* samp, <a class="code" href="class_kautham_1_1_g_u_i.html">GUI</a>* gui = NULL);
+<a name="l00147"></a>00147 
+<a name="l00148"></a>00148     <span class="keywordtype">bool</span>                addInverseKinematic(<a class="code" href="class_kautham_1_1_inverse_kinematic.html">InverseKinematic</a>* ikine);
+<a name="l00149"></a>00149     <span class="keywordtype">bool</span>                addWidgetToTab(QWidget* widget, QString name);
+<a name="l00150"></a>00150 
+<a name="l00151"></a>00151     <span class="keyword">const</span> mt::Transform getActiveCameraTransfom();
+<a name="l00152"></a>00152     <span class="keywordtype">bool</span>                setActiveCameraPosition(<span class="keywordtype">float</span> x, <span class="keywordtype">float</span> y, <span class="keywordtype">float</span> z );
+<a name="l00153"></a>00153     <span class="keywordtype">bool</span>                setActiveCameraRotation(<span class="keywordtype">float</span> qx, <span class="keywordtype">float</span> qy, <span class="keywordtype">float</span> qz, <span class="keywordtype">float</span> qw);
+<a name="l00154"></a>00154     <span class="keywordtype">bool</span>                setActiveCameraPointAt(<span class="keywordtype">float</span> x, <span class="keywordtype">float</span> y, <span class="keywordtype">float</span> z );
+<a name="l00155"></a>00155     <span class="keywordtype">bool</span>                setActiveCameraTransform(mt::Transform tra);
+<a name="l00156"></a>00156     std::string         getActiveViewTitle();
+<a name="l00157"></a>00157         
+<a name="l00158"></a>00158     <a class="code" href="class_kautham_1_1_control_widget.html">ControlWidget</a>*              getRobControlWidget();
+<a name="l00159"></a>00159     <a class="code" href="class_kautham_1_1_control_widget.html">ControlWidget</a>*              getObsControlWidget();
+<a name="l00160"></a>00160     <a class="code" href="class_kautham_1_1_planner_widget.html">PlannerWidget</a>*              getPlannerWidget();
+<a name="l00161"></a>00161 
+<a name="l00163"></a>00163     <span class="keywordtype">void</span> showProblemAppearance();
+<a name="l00164"></a>00164 
+<a name="l00166"></a>00166     <span class="keywordtype">void</span> showInitialAppearance();
+<a name="l00167"></a>00167 
+<a name="l00168"></a>00168     <span class="keywordtype">int</span>                                 indexRobControlsTab;
+<a name="l00169"></a>00169     <span class="keywordtype">int</span>                                 indexObsControlsTab;
+<a name="l00170"></a>00170     <span class="keywordtype">int</span>                 indexPlannerTab;
+<a name="l00171"></a>00171   <span class="keyword">private</span>:
+<a name="l00172"></a>00172     vector&lt;Viewer&gt;      viewers;
+<a name="l00173"></a>00173     <a class="code" href="class_stream_log.html">StreamLog</a>*          qout;
+<a name="l00174"></a>00174     <span class="keywordtype">bool</span>                boolPlanVis;
+<a name="l00175"></a>00175         };
+<a name="l00176"></a>00176 
+<a name="l00178"></a>00178 }
+<a name="l00179"></a>00179 
+<a name="l00180"></a>00180 <span class="preprocessor">#endif  //_GUI_H</span>
+<a name="l00181"></a>00181 <span class="preprocessor"></span>
+<a name="l00182"></a>00182 
 </pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -264,7 +272,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Apr 11 2014 00:19:59 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 19 2014 20:50:11 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

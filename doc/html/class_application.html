@@ -25,8 +25,6 @@
  <tbody>
  <tr style="height: 56px;">
   
-  <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
-  
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">The Kautham Project
@@ -84,7 +82,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-slots">Public Slots</a> &#124;
-<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a>  </div>
   <div class="headertitle">
@@ -104,13 +101,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>openFile</b> ()</td><
 void&#160;</td><td class="memItemRight" valign="bottom"><b>saveAsFile</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac44667af46d1e4888f05cab6407ba541"></a><!-- doxytag: member="Application::saveFile" ref="ac44667af46d1e4888f05cab6407ba541" args="()" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><b>saveFile</b> ()</td></tr>
-<tr><td colspan="2"><h2><a name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_application.html#a5c57ee8a8fc75acbd7e5277ed88c9776">problemSetup</a> (string path)</td></tr>
 <tr><td colspan="2"><h2><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac3fa5d4a2f804458229d9e039c71ed7f"></a><!-- doxytag: member="Application::initApp" ref="ac3fa5d4a2f804458229d9e039c71ed7f" args="()" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><b>initApp</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_application.html#a5c57ee8a8fc75acbd7e5277ed88c9776">problemSetup</a> (string path)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a63b2a4c7c535919331a72063923442ac"></a><!-- doxytag: member="Application::saveTabColors" ref="a63b2a4c7c535919331a72063923442ac" args="()" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_application.html#a63b2a4c7c535919331a72063923442ac">saveTabColors</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the background colors of the active tabs to the settings file. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1e8c8a3caa8fe7eb70fcfe618e2cf5e"></a><!-- doxytag: member="Application::setActions" ref="af1e8c8a3caa8fe7eb70fcfe618e2cf5e" args="()" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setActions</b> ()</td></tr>
 <tr><td colspan="2"><h2><a name="pri-attribs"></a>
@@ -121,6 +119,8 @@ Private Attributes</h2></td></tr>
 PROBLEMSTATE&#160;</td><td class="memItemRight" valign="bottom"><b>appState</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad7f3852d33553df486dbcfae75e712c8"></a><!-- doxytag: member="Application::mainWindow" ref="ad7f3852d33553df486dbcfae75e712c8" args="" -->
 <a class="el" href="class_kautham_1_1_g_u_i.html">GUI</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>mainWindow</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5aebb35bc0174ee9b8a96f91d402859f"></a><!-- doxytag: member="Application::settings" ref="a5aebb35bc0174ee9b8a96f91d402859f" args="" -->
+QSettings *&#160;</td><td class="memItemRight" valign="bottom"><b>settings</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af0689baf5dbb0fc535f29c3a4283b071"></a><!-- doxytag: member="Application::xmlFile" ref="af0689baf5dbb0fc535f29c3a4283b071" args="" -->
 QFile *&#160;</td><td class="memItemRight" valign="bottom"><b>xmlFile</b></td></tr>
 </table>
@@ -134,7 +134,7 @@ QFile *&#160;</td><td class="memItemRight" valign="bottom"><b>xmlFile</b></td></
           <td>(</td>
           <td class="paramtype">string&#160;</td>
           <td class="paramname"><em>path</em></td><td>)</td>
-          <td></td>
+          <td><code> [private]</code></td>
         </tr>
       </table>
 </div>
@@ -165,7 +165,7 @@ QFile *&#160;</td><td class="memItemRight" valign="bottom"><b>xmlFile</b></td></
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Apr 11 2014 00:19:59 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 19 2014 20:50:12 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

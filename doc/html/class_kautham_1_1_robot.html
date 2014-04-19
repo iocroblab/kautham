@@ -25,8 +25,6 @@
  <tbody>
  <tr style="height: 56px;">
   
-  <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
-  
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">The Kautham Project
@@ -122,23 +120,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a29e05b0350eda39dfcccb9a5d2aa96ba">Robot</a> (string robFile, KthReal <a class="el" href="class_kautham_1_1_robot.html#a65f4333a0e253f791c96cb44bc58149c">scale</a>, LIBUSED lib=IVPQP)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a29e05b0350eda39dfcccb9a5d2aa96ba"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#ac28b568412aedb5a2ad2978d7770a86c">addLink</a> (string <a class="el" href="class_kautham_1_1_robot.html#a42957f06fbaa2748bc4b761a8e9703dd">name</a>, string ivFile, KthReal theta, KthReal d, KthReal a, KthReal alpha, bool rotational, bool movable, KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]=NULL)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Add link to the robot.  <a href="#ac28b568412aedb5a2ad2978d7770a86c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a8bf737282b069e939d77721e0bc38822">addLink</a> (string <a class="el" href="class_kautham_1_1_robot.html#a42957f06fbaa2748bc4b761a8e9703dd">name</a>, string ivFile, string collision_ivFile, KthReal theta, KthReal d, KthReal a, KthReal alpha, bool rotational, bool movable, KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Add link to the robot.  <a href="#a8bf737282b069e939d77721e0bc38822"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a0dcfaa9e5fd520a6989d82f3d5d0ad5f">addLink</a> (string <a class="el" href="class_kautham_1_1_robot.html#a42957f06fbaa2748bc4b761a8e9703dd">name</a>, string ivFile, string collision_ivFile, KthReal <a class="el" href="class_kautham_1_1_robot.html#a65f4333a0e253f791c96cb44bc58149c">scale</a>, Unit3 axis, bool rotational, bool movable, KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], <a class="el" href="classode__element.html">ode_element</a> ode)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Add link to the robot.  <a href="#a0dcfaa9e5fd520a6989d82f3d5d0ad5f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a1df7ddeefe32da6df2cb1acbbd4fd7a6">attachObject</a> (<a class="el" href="class_kautham_1_1_obstacle.html">Obstacle</a> *obs, string linkName)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Attachs an object to a given link, usually the end effector.  <a href="#a1df7ddeefe32da6df2cb1acbbd4fd7a6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a045cef31c203d1cbce022a52c463daf1">attachObject</a> (<a class="el" href="class_kautham_1_1_robot.html">Robot</a> *obs, string linkName)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Attachs an object to a given link, usually the end effector.  <a href="#a045cef31c203d1cbce022a52c463daf1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a160880ea1fb85a3d786a1d5622f66996"></a><!-- doxytag: member="Kautham::Robot::autocollision" ref="a160880ea1fb85a3d786a1d5622f66996" args="(int t=0)" -->
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a160880ea1fb85a3d786a1d5622f66996">autocollision</a> (int t=0)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Test for autocollision. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc68a266ee14d1224df5f01fc0f1db07"></a><!-- doxytag: member="Kautham::Robot::cleanProposedSolution" ref="acc68a266ee14d1224df5f01fc0f1db07" args="()" -->
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#acc68a266ee14d1224df5f01fc0f1db07">cleanProposedSolution</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes the solution path to be visualized. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6bdd33a2f14276b668473826b561070b"></a><!-- doxytag: member="Kautham::Robot::collisionCheck" ref="a6bdd33a2f14276b668473826b561070b" args="(Obstacle *obs)" -->
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a6bdd33a2f14276b668473826b561070b">collisionCheck</a> (<a class="el" href="class_kautham_1_1_obstacle.html">Obstacle</a> *obs)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies collision with another robot. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a868772d56b20c36f5cc7032faf111270">collisionCheck</a> (<a class="el" href="class_kautham_1_1_robot.html">Robot</a> *rob)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies collision with an obstacle.  <a href="#a868772d56b20c36f5cc7032faf111270"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a95f863b9c0e46542b5dcb3c84cdcaa31">collisionCheck</a> (<a class="el" href="class_kautham_1_1_robot.html">Robot</a> *obs)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies collision with an obstacke or with another robot.  <a href="#a95f863b9c0e46542b5dcb3c84cdcaa31"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a29cd26e4eed99fa69da18c147dff67ce"></a><!-- doxytag: member="Kautham::Robot::ConstrainedKinematics" ref="a29cd26e4eed99fa69da18c147dff67ce" args="(vector&lt; KthReal &gt; &amp;target)" -->
 <a class="el" href="class_kautham_1_1_rob_conf.html">RobConf</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a29cd26e4eed99fa69da18c147dff67ce">ConstrainedKinematics</a> (vector&lt; KthReal &gt; &amp;target)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes direct constrrained kinematics. <br/></td></tr>
@@ -149,11 +144,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aabede6dbfdb8e33fb187054502d31055"></a><!-- doxytag: member="Kautham::Robot::detachObject" ref="aabede6dbfdb8e33fb187054502d31055" args="(string linkName)" -->
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#aabede6dbfdb8e33fb187054502d31055">detachObject</a> (string linkName)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Dettaches the attached object. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac2e64c61a914072197fa7f21fc9fd645"></a><!-- doxytag: member="Kautham::Robot::distanceCheck" ref="ac2e64c61a914072197fa7f21fc9fd645" args="(Robot *rob, bool min=true)" -->
-KthReal&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#ac2e64c61a914072197fa7f21fc9fd645">distanceCheck</a> (<a class="el" href="class_kautham_1_1_robot.html">Robot</a> *rob, bool min=true)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies distance with another robot. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">KthReal&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a5fd1a8045895c91015ba81ede61fcb98">distanceCheck</a> (<a class="el" href="class_kautham_1_1_obstacle.html">Obstacle</a> *obs, bool min=true)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies distance with an obstacle.  <a href="#a5fd1a8045895c91015ba81ede61fcb98"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">KthReal&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#ac2e64c61a914072197fa7f21fc9fd645">distanceCheck</a> (<a class="el" href="class_kautham_1_1_robot.html">Robot</a> *rob, bool min=true)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies distance with an obstacle or with another robot.  <a href="#ac2e64c61a914072197fa7f21fc9fd645"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1b13714207affeaf798f5dc366421544"></a><!-- doxytag: member="Kautham::Robot::getCkine" ref="a1b13714207affeaf798f5dc366421544" args="()" -->
 <a class="el" href="class_kautham_1_1_constrained_kinematic.html">ConstrainedKinematic</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_robot.html#a1b13714207affeaf798f5dc366421544">getCkine</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the constrained kinematics used. <br/></td></tr>
@@ -409,7 +401,7 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Class robot implements a kinematic tree with a free-flying base. </p>
-<p>Robots are kinematic trees composed of a trunk and branches and with a mobile base They are defined as a vector fo links and described in the *.dh or *.urdf files. A robot can have a fixed base if no controls are attached to the corresponding dof. A robot can be a free-flying object if it has a single link and has controls attached to the corresponding dof. The dof of the kinematic tree can be coupled by setting the controls that define the copupling. A dof is fixed if no control is attached to it. </p>
+<p>Robots are kinematic trees composed of a trunk and branches and with a mobile base They are defined as a vector fo links and described in the *.dh or *.urdf files. A robot can have a fixed base if no controls are attached to the corresponding dof. A robot can be a free-flying object if it has a single link and has controls attached to the corresponding dof. The dof of the kinematic tree can be coupled by setting the controls that define the coupling. A dof is fixed if no control is attached to it. </p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a29e05b0350eda39dfcccb9a5d2aa96ba"></a><!-- doxytag: member="Kautham::Robot::Robot" ref="a29e05b0350eda39dfcccb9a5d2aa96ba" args="(string robFile, KthReal scale, LIBUSED lib=IVPQP)" -->
 <div class="memitem">
@@ -456,12 +448,12 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="ac28b568412aedb5a2ad2978d7770a86c"></a><!-- doxytag: member="Kautham::Robot::addLink" ref="ac28b568412aedb5a2ad2978d7770a86c" args="(string name, string ivFile, KthReal theta, KthReal d, KthReal a, KthReal alpha, bool rotational, bool movable, KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]=NULL)" -->
+<a class="anchor" id="a8bf737282b069e939d77721e0bc38822"></a><!-- doxytag: member="Kautham::Robot::addLink" ref="a8bf737282b069e939d77721e0bc38822" args="(string name, string ivFile, string collision_ivFile, KthReal theta, KthReal d, KthReal a, KthReal alpha, bool rotational, bool movable, KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]=NULL)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="class_kautham_1_1_robot.html#ac28b568412aedb5a2ad2978d7770a86c">Kautham::Robot::addLink</a> </td>
+          <td class="memname">bool <a class="el" href="class_kautham_1_1_robot.html#a8bf737282b069e939d77721e0bc38822">Kautham::Robot::addLink</a> </td>
           <td>(</td>
           <td class="paramtype">string&#160;</td>
           <td class="paramname"><em>name</em>, </td>
@@ -471,6 +463,12 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
           <td></td>
           <td class="paramtype">string&#160;</td>
           <td class="paramname"><em>ivFile</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>collision_ivFile</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -557,7 +555,7 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="class_kautham_1_1_robot.html#ac28b568412aedb5a2ad2978d7770a86c">Kautham::Robot::addLink</a> </td>
+          <td class="memname">bool <a class="el" href="class_kautham_1_1_robot.html#a8bf737282b069e939d77721e0bc38822">Kautham::Robot::addLink</a> </td>
           <td>(</td>
           <td class="paramtype">string&#160;</td>
           <td class="paramname"><em>name</em>, </td>
@@ -648,14 +646,14 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<a class="anchor" id="a1df7ddeefe32da6df2cb1acbbd4fd7a6"></a><!-- doxytag: member="Kautham::Robot::attachObject" ref="a1df7ddeefe32da6df2cb1acbbd4fd7a6" args="(Obstacle *obs, string linkName)" -->
+<a class="anchor" id="a045cef31c203d1cbce022a52c463daf1"></a><!-- doxytag: member="Kautham::Robot::attachObject" ref="a045cef31c203d1cbce022a52c463daf1" args="(Robot *obs, string linkName)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="class_kautham_1_1_robot.html#a1df7ddeefe32da6df2cb1acbbd4fd7a6">Kautham::Robot::attachObject</a> </td>
+          <td class="memname">bool <a class="el" href="class_kautham_1_1_robot.html#a045cef31c203d1cbce022a52c463daf1">Kautham::Robot::attachObject</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_kautham_1_1_obstacle.html">Obstacle</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_robot.html">Robot</a> *&#160;</td>
           <td class="paramname"><em>obs</em>, </td>
         </tr>
         <tr>
@@ -685,12 +683,12 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<a class="anchor" id="a868772d56b20c36f5cc7032faf111270"></a><!-- doxytag: member="Kautham::Robot::collisionCheck" ref="a868772d56b20c36f5cc7032faf111270" args="(Robot *rob)" -->
+<a class="anchor" id="a95f863b9c0e46542b5dcb3c84cdcaa31"></a><!-- doxytag: member="Kautham::Robot::collisionCheck" ref="a95f863b9c0e46542b5dcb3c84cdcaa31" args="(Robot *obs)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="class_kautham_1_1_robot.html#a6bdd33a2f14276b668473826b561070b">Kautham::Robot::collisionCheck</a> </td>
+          <td class="memname">bool <a class="el" href="class_kautham_1_1_robot.html#a95f863b9c0e46542b5dcb3c84cdcaa31">Kautham::Robot::collisionCheck</a> </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_kautham_1_1_robot.html">Robot</a> *&#160;</td>
           <td class="paramname"><em>rob</em></td><td>)</td>
@@ -700,7 +698,7 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 </div>
 <div class="memdoc">
 
-<p>Verifies collision with an obstacle. </p>
+<p>Verifies collision with an obstacke or with another robot. </p>
 <p>This method verifies if this robot collides with the robot rob passed as a parameter. The method returns true when the two robots collide, otherwise returns false. </p>
 
 </div>
@@ -763,15 +761,15 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<a class="anchor" id="a5fd1a8045895c91015ba81ede61fcb98"></a><!-- doxytag: member="Kautham::Robot::distanceCheck" ref="a5fd1a8045895c91015ba81ede61fcb98" args="(Obstacle *obs, bool min=true)" -->
+<a class="anchor" id="ac2e64c61a914072197fa7f21fc9fd645"></a><!-- doxytag: member="Kautham::Robot::distanceCheck" ref="ac2e64c61a914072197fa7f21fc9fd645" args="(Robot *rob, bool min=true)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">KthReal <a class="el" href="class_kautham_1_1_robot.html#ac2e64c61a914072197fa7f21fc9fd645">Kautham::Robot::distanceCheck</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_kautham_1_1_obstacle.html">Obstacle</a> *&#160;</td>
-          <td class="paramname"><em>obs</em>, </td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_robot.html">Robot</a> *&#160;</td>
+          <td class="paramname"><em>rob</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -788,8 +786,8 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 </div>
 <div class="memdoc">
 
-<p>Verifies distance with an obstacle. </p>
-<p>This methods returns the distance between the robot and the obstacle passed as parameter. The distance returned is between the endEfector or the most distal link, but if parameter min is true, the distace is the </p>
+<p>Verifies distance with an obstacle or with another robot. </p>
+<p>This methods returns the distance between the robot and the obstacle or robot passed as parameter. The distance returned is between the endEfector or the most distal link, but if parameter min is true, the distance is the minimum distance between all the links </p>
 
 </div>
 </div>
@@ -1062,7 +1060,7 @@ SoSeparator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Apr 11 2014 00:20:00 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 19 2014 20:50:14 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
