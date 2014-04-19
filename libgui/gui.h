@@ -132,13 +132,14 @@ namespace Kautham {
     bool                restart();
     bool                addToProblemTree(string problemPath);
     bool                addRobControlWidget(Problem* prob, vector<Kautham::DOFWidget *> robDOFWidgets);
+    bool                addObsControlWidget(Problem* prob, vector<Kautham::DOFWidget *> obsDOFWidgets);
 
-    bool                addExternalWidget1( Robot* rob, Problem* prob, int offset = 0, GUI* gui = NULL);
-    bool                addExternalWidget2( Robot* rob, Problem* prob, int offset = 0, GUI* gui = NULL);
-    bool                addExternalWidget3( Robot* rob, Problem* prob, int offset = 0, GUI* gui = NULL);
+    bool                addExternalWidget1( Robot* rob, Problem* prob, GUI* gui = NULL);
+    bool                addExternalWidget2( Robot* rob, Problem* prob, GUI* gui = NULL);
+    bool                addExternalWidget3( Robot* rob, Problem* prob, GUI* gui = NULL);
 
 
-    bool                addConstrainedControlWidget( Robot* rob, Problem* prob, int offset = 0);
+    bool                addConstrainedControlWidget( Robot* rob, Problem* prob);
     Kautham::DOFWidget *addDOFWidget( Robot* rob );
     bool                setSampleWidget(SampleSet* samples, Sampler* sampler, Problem* prob);
     bool                createPlannerToolBar(string loc, string plan, QObject* receiver, const char* member);
@@ -154,7 +155,8 @@ namespace Kautham {
     bool                setActiveCameraTransform(mt::Transform tra);
     std::string         getActiveViewTitle();
 	
-    ControlWidget*		getControlWidget();
+    ControlWidget*		getRobControlWidget();
+    ControlWidget*		getObsControlWidget();
     PlannerWidget*		getPlannerWidget();
 
     //! Hides the Introduction Tab and shows the Properties and DOF tabs
@@ -163,7 +165,8 @@ namespace Kautham {
     //! Shows the Introduction Tab and hides the Properties and DOF tabs
     void showInitialAppearance();
 
-    int			 		indexControlsTab;
+    int			 		indexRobControlsTab;
+    int			 		indexObsControlsTab;
     int                 indexPlannerTab;
   private:
     vector<Viewer>      viewers;

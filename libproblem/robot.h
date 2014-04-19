@@ -45,14 +45,13 @@
 #if !defined(_ROBOT_H)
 #define _ROBOT_H
 
-
-#include "obstacle.h"
 #include "link.h"
 #include <mt/transform.h>
 #include <libsampling/robconf.h>
-//#include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
+#include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include <libkin/inversekinematic.h>
 #include <libkin/constrainedkinematic.h>
+#include <libproblem/ivpqpelement.h>
 #include <list>
 
 
@@ -68,14 +67,14 @@ namespace Kautham {
 
 //! Struct attObj defines the transformation between an object and the robot link to which it is attached.
   struct attObj{
-    attObj(){obs=NULL; link=NULL;}
-    ~attObj(){obs=NULL; link=NULL;}
-    Obstacle*     obs;
-    Link*         link;
-    mt::Transform trans;
-    bool toLink( string linkName ){
-      return link->getName() == linkName;
-    }
+      attObj() {obs=NULL; link=NULL;}
+      ~attObj() {obs=NULL; link=NULL;}
+      Robot*        obs;
+      Link*         link;
+      mt::Transform trans;
+      bool toLink( string linkName ){
+          return link->getName() == linkName;
+      }
   };
 
 //! Class robot implements a kinematic tree with a free-flying base
@@ -244,17 +243,11 @@ namespace Kautham {
     //! Sets the home position of the robot
     void setHomePos(Conf* qh);
 
-    //! Verifies collision with another robot
-    bool collisionCheck(Obstacle *obs);
+    //! Verifies collision with an obstacke or with another robot
+    bool collisionCheck(Robot *obs);
 
-    //! Verifies collision with an obstacle
-    bool collisionCheck(Robot *rob);
-
-    //! Verifies distance with another robot
+    //! Verifies distance with an obstacle or with another robot
     KthReal distanceCheck(Robot *rob, bool min = true);
-
-    //! Verifies distance with an obstacle
-    KthReal distanceCheck(Obstacle *obs, bool min = true);
 
     //! Sets the values of _spatialLimits[member]
     bool setLimits(int member, KthReal min, KthReal max);
@@ -296,7 +289,7 @@ namespace Kautham {
     bool setPathVisibility(bool visible);
 
     //! Attachs an object to a given link, usually the end effector.
-    bool attachObject(Obstacle* obs, string linkName );
+    bool attachObject(Robot* obs, string linkName );
 
     //! Moves the attached object.
     void moveAttachedObj();

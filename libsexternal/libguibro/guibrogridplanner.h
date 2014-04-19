@@ -151,7 +151,7 @@ using namespace std;
 		int _randomness;//to add random noise to the selection of lookatpoints
 		
 		int _nodule;//index of the obstacle that represents the nodule to be reached
-		Obstacle *_obstaclenodule; //pointer to the obstacle that represents the nodule
+        Robot *_obstaclenodule; //pointer to the obstacle that represents the nodule
 
 		vector<unsigned int> _touchinglabels;//vector of labels corresponding to links of the bronchoscope that are touching the walls
 		vector<unsigned int> _collisionlabels;//vector of labels corresponding to links of the bronchoscope that are in collision
