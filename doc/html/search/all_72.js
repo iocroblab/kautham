@@ -13,6 +13,7 @@ var searchData=
   ['rnconf',['RnConf',['../class_kautham_1_1_rn_conf.html',1,'Kautham']]],
   ['rng_5f',['rng_',['../class_kautham_1_1omplplanner_1_1_kautham_state_sampler.html#a4ace57be9a8d14cbc0e8528ddb24ef7f',1,'Kautham::omplplanner::KauthamStateSampler']]],
   ['robconf',['RobConf',['../class_kautham_1_1_rob_conf.html',1,'Kautham']]],
+  ['robcontrolsname',['robControlsName',['../class_kautham_1_1_work_space.html#ab4cc8744f925bb9a17c5916a1de59c24',1,'Kautham::WorkSpace']]],
   ['roblayout',['RobLayout',['../class_kautham_1_1_rob_layout.html',1,'Kautham']]],
   ['robot',['Robot',['../class_kautham_1_1_robot.html#a29e05b0350eda39dfcccb9a5d2aa96ba',1,'Kautham::Robot']]],
   ['robot',['Robot',['../class_kautham_1_1_robot.html',1,'Kautham']]],

@@ -25,8 +25,6 @@
  <tbody>
  <tr style="height: 56px;">
   
-  <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
-  
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">The Kautham Project
@@ -115,12 +113,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d7a1ec85e7584b99eaeff592d975759"></a><!-- doxytag: member="Kautham::ControlWidget::ControlWidget" ref="a5d7a1ec85e7584b99eaeff592d975759" args="(Problem *prob)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>ControlWidget</b> (<a class="el" href="class_kautham_1_1_problem.html">Problem</a> *prob)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abf2282b0a4d76dd4f610d3458e187dea"></a><!-- doxytag: member="Kautham::ControlWidget::ControlWidget" ref="abf2282b0a4d76dd4f610d3458e187dea" args="(Problem *prob, vector&lt; DOFWidget * &gt; DOFWidgets, bool robot)" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>ControlWidget</b> (<a class="el" href="class_kautham_1_1_problem.html">Problem</a> *prob, vector&lt; <a class="el" href="class_kautham_1_1_d_o_f_widget.html">DOFWidget</a> * &gt; DOFWidgets, bool robot)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ccc0426faad42e4f7715a2865bb0595"></a><!-- doxytag: member="Kautham::ControlWidget::getValues" ref="a6ccc0426faad42e4f7715a2865bb0595" args="()" -->
 vector&lt; KthReal &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>getValues</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af8d79b29e087b3490fb4471002300599"></a><!-- doxytag: member="Kautham::ControlWidget::setValues" ref="af8d79b29e087b3490fb4471002300599" args="()" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setValues</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26418f42426175754a71ddcbf75daa73"></a><!-- doxytag: member="Kautham::ControlWidget::setValues" ref="a26418f42426175754a71ddcbf75daa73" args="(vector&lt; KthReal &gt; coords)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setValues</b> (vector&lt; KthReal &gt; coords)</td></tr>
 <tr><td colspan="2"><h2><a name="pri-slots"></a>
 Private Slots</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e2b0f8d829faa524e7d2eb754a85658"></a><!-- doxytag: member="Kautham::ControlWidget::sliderChanged" ref="a4e2b0f8d829faa524e7d2eb754a85658" args="(int val)" -->
@@ -129,6 +127,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>sliderChanged</b> (in
 void&#160;</td><td class="memItemRight" valign="bottom"><b>updateControls</b> ()</td></tr>
 <tr><td colspan="2"><h2><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0bc4d5d4dec9a5785fb90da8d3bfde26"></a><!-- doxytag: member="Kautham::ControlWidget::_DOFWidgets" ref="a0bc4d5d4dec9a5785fb90da8d3bfde26" args="" -->
+vector&lt; <a class="el" href="class_kautham_1_1_d_o_f_widget.html">DOFWidget</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_DOFWidgets</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2a6e7aea53371cf944818db6d229cc02"></a><!-- doxytag: member="Kautham::ControlWidget::_ptProblem" ref="a2a6e7aea53371cf944818db6d229cc02" args="" -->
 <a class="el" href="class_kautham_1_1_problem.html">Problem</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>_ptProblem</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec007eda427de13f68e0cc0be6f077e6"></a><!-- doxytag: member="Kautham::ControlWidget::btnUpdate" ref="aec007eda427de13f68e0cc0be6f077e6" args="" -->
@@ -137,6 +137,8 @@ QPushButton *&#160;</td><td class="memItemRight" valign="bottom"><b>btnUpdate</b
 QGridLayout *&#160;</td><td class="memItemRight" valign="bottom"><b>gridLayout</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c8d8d29dd54dec6458d77b9606e2d43"></a><!-- doxytag: member="Kautham::ControlWidget::labels" ref="a1c8d8d29dd54dec6458d77b9606e2d43" args="" -->
 vector&lt; QLabel * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>labels</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd8a4d21dd60a6912d1a8ea5d375f16d"></a><!-- doxytag: member="Kautham::ControlWidget::robWidget" ref="abd8a4d21dd60a6912d1a8ea5d375f16d" args="" -->
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>robWidget</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98801aae48345052e6f2eb9b84200887"></a><!-- doxytag: member="Kautham::ControlWidget::sliders" ref="a98801aae48345052e6f2eb9b84200887" args="" -->
 vector&lt; QSlider * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sliders</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb798cf0b704a643f49024f83405b948"></a><!-- doxytag: member="Kautham::ControlWidget::values" ref="abb798cf0b704a643f49024f83405b948" args="" -->
@@ -168,7 +170,7 @@ QVBoxLayout *&#160;</td><td class="memItemRight" valign="bottom"><b>vboxLayout1<
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Apr 11 2014 00:19:59 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 19 2014 20:50:12 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

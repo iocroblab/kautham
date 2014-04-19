@@ -12,5 +12,6 @@ var searchData=
   ['singlerobotpmdalignmentoptimizationobjective',['singleRobotPMDalignmentOptimizationObjective',['../class_kautham_1_1omplplanner_1_1single_robot_p_m_dalignment_optimization_objective.html',1,'Kautham::omplplanner']]],
   ['solution',['Solution',['../class_solution.html',1,'']]],
   ['solution_5fset',['Solution_set',['../class_solution__set.html',1,'']]],
+  ['state',['State',['../class_kautham_1_1_state.html',1,'Kautham']]],
   ['streamlog',['StreamLog',['../class_stream_log.html',1,'']]]
 ];
