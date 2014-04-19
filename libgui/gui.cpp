@@ -214,19 +214,49 @@ namespace Kautham {
             ControlWidget* tmpControl = new ControlWidget(prob,robDOFWidgets,true);
             propertiesTab->addTab(tmpControl, "RobContr");
             //JAN
-            indexControlsTab = propertiesTab->indexOf(tmpControl);
+            indexRobControlsTab = propertiesTab->indexOf(tmpControl);
             return true;
         }else{
             ControlWidget* tmpControl = new ControlWidget(NULL,robDOFWidgets,true);
             propertiesTab->addTab(tmpControl, "RobContr-Test");
+            indexRobControlsTab = propertiesTab->indexOf(tmpControl);
             return true;
         }
         return false;
     }
 
-    ControlWidget* GUI::getControlWidget()
+    bool GUI::addObsControlWidget(Problem* prob, vector<DOFWidget*> obsDOFWidgets){
+        if( prob != NULL){
+            ControlWidget* tmpControl = new ControlWidget(prob,obsDOFWidgets,false);
+            propertiesTab->addTab(tmpControl, "ObsContr");
+            //JAN
+            indexObsControlsTab = propertiesTab->indexOf(tmpControl);
+            return true;
+        }else{
+            ControlWidget* tmpControl = new ControlWidget(NULL,obsDOFWidgets,false);
+            propertiesTab->addTab(tmpControl, "ObsContr-Test");
+            indexObsControlsTab = propertiesTab->indexOf(tmpControl);
+            return true;
+        }
+        return false;
+    }
+
+    ControlWidget* GUI::getRobControlWidget()
     {
-        return (ControlWidget*)propertiesTab->widget(indexControlsTab);
+        if (indexRobControlsTab < 0) {
+            return (NULL);
+        } else {
+            return (ControlWidget*)propertiesTab->widget(indexRobControlsTab);
+        }
+    }
+
+    ControlWidget* GUI::getObsControlWidget()
+    {
+        if (indexObsControlsTab < 0) {
+            return (NULL);
+        } else {
+            return (ControlWidget*)propertiesTab->widget(indexObsControlsTab);
+        }
     }
 
     PlannerWidget* GUI::getPlannerWidget()
@@ -237,16 +267,16 @@ namespace Kautham {
 
 
     //widged used for virtual bronchsocopy application
-    bool GUI::addExternalWidget1( Robot* rob, Problem* prob, int offset, GUI* gui ){
+    bool GUI::addExternalWidget1( Robot* rob, Problem* prob, GUI* gui ){
 #if defined(KAUTHAM_USE_GUIBRO)
         if(prob->getPlanner()->getIDName() == "GUIBRO Grid Planner")
         {
             if( rob != NULL){
-                GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( rob, prob, offset, gui  );
+                GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( rob, prob, gui  );
                 propertiesTab->addTab(tmpControl, "bronchoCtrl-" + QString((rob->getName()).c_str()));
                 return true;
             }else{
-                GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( NULL, NULL, 0 , NULL);
+                GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( NULL, NULL, NULL);
                 propertiesTab->addTab(tmpControl, "bronchoControlTest");
                 return true;
             }
@@ -257,25 +287,22 @@ namespace Kautham {
     }
 
     //widged not used
-    bool GUI::addExternalWidget2( Robot* rob, Problem* prob, int offset, GUI* gui ){
+    bool GUI::addExternalWidget2( Robot* rob, Problem* prob, GUI* gui ){
         return false;
     }
 
     //widged not used
-    bool GUI::addExternalWidget3( Robot* rob, Problem* prob, int offset, GUI* gui ){
+    bool GUI::addExternalWidget3( Robot* rob, Problem* prob, GUI *gui ){
         return false;
     }
 
-
-
-
-    bool GUI::addConstrainedControlWidget( Robot* rob, Problem* prob, int offset ){
+    bool GUI::addConstrainedControlWidget( Robot* rob, Problem* prob){
         if( rob != NULL){
-            ConstrainedControlWidget* tmpControl = new ConstrainedControlWidget( rob, prob, offset );
+            ConstrainedControlWidget* tmpControl = new ConstrainedControlWidget( rob, prob);
             propertiesTab->addTab(tmpControl, "ConstrainedCtrl-" + QString((rob->getName()).c_str()));
             return true;
         }else{
-            ConstrainedControlWidget* tmpControl = new ConstrainedControlWidget( NULL, NULL, 0 );
+            ConstrainedControlWidget* tmpControl = new ConstrainedControlWidget( NULL, NULL);
             propertiesTab->addTab(tmpControl, "ConstrainedControlTest");
             return true;
         }
@@ -668,6 +695,10 @@ namespace Kautham {
         tmp << " - Institute of Industrial and Control Engineering";
         tmp << " - Technical University of Catalonia";
         setWindowTitle( tmp.str().c_str() );
+
+        indexRobControlsTab = -1;
+        indexObsControlsTab = -1;
+
         return true;
     }
 

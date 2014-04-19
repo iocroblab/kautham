@@ -20,25 +20,24 @@ namespace Kautham {
  */
 
 	class ConstrainedControlWidget:public QWidget{
-		Q_OBJECT
+        Q_OBJECT
 
-	private slots:
-		void              sliderChanged(int val);
-	public:
-		ConstrainedControlWidget( Robot* rob, Problem* prob, int offset );
-		~ConstrainedControlWidget();
-		inline vector<KthReal>   *getValues(){return &values;}
-    void setValues(vector<KthReal> &val);
-	private:
-		ConstrainedKinematic *_conKin;
-		vector<QSlider*>  sliders;
-		vector<QLabel*>   labels;
-		QGridLayout       *gridLayout;
-		QVBoxLayout       *vboxLayout;
-		vector<KthReal>   values;
-		Robot*            _robot;
-    int               _globalOffset;
-    Problem*          _ptProblem;
+    private slots:
+        void              sliderChanged(int val);
+    public:
+        ConstrainedControlWidget( Robot* rob, Problem* prob );
+        ~ConstrainedControlWidget();
+        inline vector<KthReal>   *getValues(){return &values;}
+        void setValues(vector<KthReal> &val);
+    private:
+        ConstrainedKinematic *_conKin;
+        vector<QSlider*>  sliders;
+        vector<QLabel*>   labels;
+        QGridLayout       *gridLayout;
+        QVBoxLayout       *vboxLayout;
+        vector<KthReal>   values;
+        Robot*            _robot;
+        Problem*          _ptProblem;
 	};
 
 
