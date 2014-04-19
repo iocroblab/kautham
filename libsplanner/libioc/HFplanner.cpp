@@ -119,7 +119,7 @@ namespace Kautham {
           return false;
 
 		char *str = new char[20];
-		for(int i=0; i<_wkSpace->getDimension();i++)
+        for(int i=0; i<_wkSpace->getNumRobControls();i++)
 		{
 			sprintf(str,"Discr. Steps %d",i);
 			it = _parameters.find(str);
@@ -147,7 +147,7 @@ namespace Kautham {
 		//initialize potential to -1 and goal to 0
 		setPotential(vgoal, _goalPotential);
 		//relax potential
-		int numneighs = _wkSpace->getDimension()*2;
+        int numneighs = _wkSpace->getNumRobControls()*2;
 		graph_traits<gridGraph>::vertex_iterator vi, vend;
 		graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
 		for(int i=0; i<_hfiter; i++)

@@ -211,13 +211,13 @@ namespace Kautham {
 
     bool GUI::addRobControlWidget(Problem* prob, vector<DOFWidget*> robDOFWidgets){
         if( prob != NULL){
-            ControlWidget* tmpControl = new ControlWidget(prob,robDOFWidgets);
+            ControlWidget* tmpControl = new ControlWidget(prob,robDOFWidgets,true);
             propertiesTab->addTab(tmpControl, "RobContr");
             //JAN
             indexControlsTab = propertiesTab->indexOf(tmpControl);
             return true;
         }else{
-            ControlWidget* tmpControl = new ControlWidget(NULL,robDOFWidgets);
+            ControlWidget* tmpControl = new ControlWidget(NULL,robDOFWidgets,true);
             propertiesTab->addTab(tmpControl, "RobContr-Test");
             return true;
         }

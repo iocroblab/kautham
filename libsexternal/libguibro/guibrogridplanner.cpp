@@ -64,7 +64,7 @@ using namespace Kautham;
         _drawnLink = _wkSpace->getRobot(0)->getNumLinks()-1; //the path of tip is defaulted
 	  
 	  //define look-ahead points
-		_counterFirstPoint = _wkSpace->obstaclesCount();
+		_counterFirstPoint = _wkSpace->getNumObstacles();
 		KthReal pos[3] = {0.0,0.0,0.0};
 		KthReal ori[4] = {1.0,0.0,0.0,0.0};
 		KthReal scale = 1;
@@ -79,8 +79,8 @@ using namespace Kautham;
 		}
 
 
-	  _showObstacle = new int[_wkSpace->obstaclesCount()];
-	  for(int i=0; i<_wkSpace->obstaclesCount();i++) 
+	  _showObstacle = new int[_wkSpace->getNumObstacles()];
+	  for(int i=0; i<_wkSpace->getNumObstacles();i++) 
 		  _showObstacle[i]=-1;
 
 	  //interface to show obstacles (not considering look-ahead points
@@ -735,7 +735,7 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
 		if(it != _parameters.end())
 		{
             _showPoints = it->second;
-			for(int i=_counterFirstPoint; i<_wkSpace->obstaclesCount();i++)
+			for(int i=_counterFirstPoint; i<_wkSpace->getNumObstacles();i++)
 			{
 				//if the points should be removed
 				if(_showPoints ==0)
@@ -1690,7 +1690,7 @@ bool GUIBROgridPlanner::trySolve()
 
 			//////////////////////
 			//Start finding a path
-			Sample *smp = new Sample(_wkSpace->getDimension());
+            Sample *smp = new Sample(_wkSpace->getNumRobControls());
 			
 			
 
@@ -1804,7 +1804,7 @@ bool GUIBROgridPlanner::trySolve()
 					path2guide.push_back(ppoint);
 
 					//create the next sample
-					smp = new Sample(_wkSpace->getDimension());
+                    smp = new Sample(_wkSpace->getNumRobControls());
 
 					//info for debug purposes:
 					collisionCheck(&currentdcost,&currentNF1cost);
