@@ -39,13 +39,13 @@ namespace Kautham {
       _drawnLink = -1; //the path of last link is defaulted
       _probabilityConnectionIniGoal = 0.1;
 
-      _samplerHalton = new HaltonSampler(_wkSpace->getDimension());
+      _samplerHalton = new HaltonSampler(_wkSpace->getNumRobControls());
       _levelSDK = 5;
-      _samplerSDK = new SDKSampler(_wkSpace->getDimension(), _levelSDK);
-      //_samplerGaussian = new GaussianSampler(_wkSpace->getDimension());
+      _samplerSDK = new SDKSampler(_wkSpace->getNumRobControls(), _levelSDK);
+      //_samplerGaussian = new GaussianSampler(_wkSpace->getNumRobControls());
       KthReal sigma = 0.1;
-      _samplerGaussian = new GaussianSampler(_wkSpace->getDimension(),sigma,_wkSpace);
-      _samplerGaussianLike = new GaussianLikeSampler(_wkSpace->getDimension(), _levelSDK,_wkSpace);
+      _samplerGaussian = new GaussianSampler(_wkSpace->getNumRobControls(),sigma,_wkSpace);
+      _samplerGaussianLike = new GaussianLikeSampler(_wkSpace->getNumRobControls(), _levelSDK,_wkSpace);
 
       //default gaussian
       _samplertype = 5;
@@ -70,7 +70,7 @@ namespace Kautham {
         _samples->setWorkspacePtr(_wkSpace);
         _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
 
-      for(int i=0; i<_wkSpace->robotsCount();i++)
+      for(int i=0; i<_wkSpace->getNumRobots();i++)
         _wkSpace->getRobot(i)->setLinkPathDrawn(_drawnLink);
     }
 
@@ -111,7 +111,7 @@ namespace Kautham {
         it = _parameters.find("Drawn Path Link");
         if(it != _parameters.end()){
           _drawnLink = it->second;
-          for(int i=0; i<_wkSpace->robotsCount();i++)
+          for(int i=0; i<_wkSpace->getNumRobots();i++)
             _wkSpace->getRobot(i)->setLinkPathDrawn(_drawnLink);
         }else
           return false;
@@ -145,7 +145,7 @@ namespace Kautham {
 
     SoSeparator *PRMPlanner::getIvCspaceScene()
     {
-        if(_wkSpace->getDimension()==2)
+        if(_wkSpace->getNumRobControls()==2)
         {
             //_sceneCspace = ((IVWorkSpace*)_wkSpace)->getIvScene();
             _sceneCspace = new SoSeparator();
@@ -159,7 +159,7 @@ namespace Kautham {
     void PRMPlanner::drawCspace()
     {
         if(_sceneCspace==NULL) return;
-        if(_wkSpace->getDimension()==2)
+        if(_wkSpace->getNumRobControls()==2)
         {
             //first delete whatever is already drawn
             while (_sceneCspace->getNumChildren() > 0)

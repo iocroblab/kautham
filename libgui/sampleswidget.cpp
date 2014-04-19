@@ -227,7 +227,7 @@ namespace Kautham{
 		if( rbtnRandom->isChecked() && typeid(*_sampler) != typeid(RandomSampler) ){
 			//if( _sampler != NULL )
 				delete _sampler;
-			_sampler = new RandomSampler(_ptProblem->wSpace()->getDimension());
+            _sampler = new RandomSampler(_ptProblem->wSpace()->getNumRobControls());
             _ptProblem->setSampler(_sampler);
 		}
       
@@ -235,14 +235,14 @@ namespace Kautham{
 		if( rbtnSDK->isChecked() && typeid(*_sampler) != typeid(SDKSampler) ){
 			//if( _sampler != NULL )
 				delete _sampler;
-			_sampler = new SDKSampler(_ptProblem->wSpace()->getDimension(),2);
+            _sampler = new SDKSampler(_ptProblem->wSpace()->getNumRobControls(),2);
             _ptProblem->setSampler(_sampler);
 		}
 		
 		if( rbtnHalton->isChecked() && typeid(*_sampler) != typeid(HaltonSampler) ){
 			//if( _sampler != NULL )
 				delete _sampler;
-			_sampler = new HaltonSampler(_ptProblem->wSpace()->getDimension());
+            _sampler = new HaltonSampler(_ptProblem->wSpace()->getNumRobControls());
             _ptProblem->setSampler(_sampler);
 		}
 
@@ -250,8 +250,8 @@ namespace Kautham{
 		if( rbtnGaussian->isChecked() && typeid(*_sampler) != typeid(GaussianSampler) ){
 			//if( _sampler != NULL )
 				delete _sampler;
-			//_sampler = new GaussianSampler(_ptProblem->wSpace()->getDimension());
-			_sampler = new GaussianSampler(_ptProblem->wSpace()->getDimension(),0.1,_ptProblem->wSpace());
+            //_sampler = new GaussianSampler(_ptProblem->wSpace()->getNumRobControls());
+            _sampler = new GaussianSampler(_ptProblem->wSpace()->getNumRobControls(),0.1,_ptProblem->wSpace());
             _ptProblem->setSampler(_sampler);
 		}
 
@@ -259,7 +259,7 @@ namespace Kautham{
 		if( rbtnGaussianLike->isChecked() && typeid(*_sampler) != typeid(GaussianLikeSampler) ){
 			//if( _sampler != NULL )
 				delete _sampler;
-			_sampler = new GaussianLikeSampler(_ptProblem->wSpace()->getDimension(),2, _ptProblem->wSpace());
+            _sampler = new GaussianLikeSampler(_ptProblem->wSpace()->getNumRobControls(),2, _ptProblem->wSpace());
             _ptProblem->setSampler(_sampler);
 		}
   }
@@ -305,9 +305,9 @@ namespace Kautham{
   }
 
   void SamplesWidget::addCurrent(){
-	char sampleDIM = _ptProblem->wSpace()->getDimension();
+    char sampleDIM = _ptProblem->wSpace()->getNumRobControls();
     Sample* tmpSam = new Sample(sampleDIM);
-    tmpSam->setCoords(_ptProblem->getCurrentControls());
+    tmpSam->setCoords(_ptProblem->getCurrentRobControls());
     if( ! _ptProblem->wSpace()->collisionCheck(tmpSam)){
 		  _samples->add(tmpSam);
 		  updateSampleList();
@@ -331,7 +331,7 @@ namespace Kautham{
 
   void SamplesWidget::removeAllEx2(){
     if( _samples->getSize() > 0){
-	  char sampleDIM = _ptProblem->wSpace()->getDimension();
+      char sampleDIM = _ptProblem->wSpace()->getNumRobControls();
       Sample *tmpSamInit = new Sample(sampleDIM); 
       Sample *tmpSamGoal = new Sample(sampleDIM);
       tmpSamInit->setCoords(_samples->getSampleAt(0)->getCoords());

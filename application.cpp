@@ -224,12 +224,14 @@ void Application::saveTabColors() {
     SbColor color;
     settings->beginGroup("mainWindow");
     for (int i = 0; i < viewers.size(); i++) {
-        settings->beginGroup(viewers.at(i).c_str());
-        color = mainWindow->getViewerTab(viewers.at(i))->getBackgroundColor();
-        settings->setValue("color",QColor((int)(255.0*color.getValue()[0]),
-                                          (int)(255.0*color.getValue()[1]),
-                                          (int)(255.0*color.getValue()[2])));
-        settings->endGroup();
+        if (mainWindow->getViewerTab(viewers.at(i)) != NULL) {
+            settings->beginGroup(viewers.at(i).c_str());
+            color = mainWindow->getViewerTab(viewers.at(i))->getBackgroundColor();
+            settings->setValue("color",QColor((int)(255.0*color.getValue()[0]),
+                                              (int)(255.0*color.getValue()[1]),
+                                              (int)(255.0*color.getValue()[2])));
+            settings->endGroup();
+        }
     }
     settings->endGroup();
 }
@@ -260,7 +262,7 @@ bool Application::problemSetup(string path){
     vector <DOFWidget*> robDOFWidgets;
     robDOFWidgets.resize(_problem->wSpace()->getNumRobots());
 
-    for(unsigned i = 0; i < _problem->wSpace()->robotsCount(); i++){
+    for(unsigned i = 0; i < _problem->wSpace()->getNumRobots(); i++){
 
         if(_problem->wSpace()->getRobot(i)->getCkine() != NULL)
             mainWindow->addConstrainedControlWidget(_problem->wSpace()->getRobot(i), _problem, 0);
@@ -287,9 +289,10 @@ bool Application::problemSetup(string path){
     if( _problem->getPlanner() != NULL ){
         mainWindow->addPlanner(_problem->getPlanner(), _problem->getSampleSet(), mainWindow);
         color = settings->value("mainWindow/CSpace/color",QColor("black")).value<QColor>();
-        mainWindow->getViewerTab("CSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
+        if (mainWindow->getViewerTab("CSpace") != NULL) {
+            mainWindow->getViewerTab("CSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
+        }
     }
-
     appState = PROBLEMLOADED;
 
     mainWindow->setCursor(QCursor(Qt::ArrowCursor));

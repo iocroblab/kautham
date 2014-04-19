@@ -57,8 +57,8 @@ namespace Kautham {
       distVec.clear();
       _configMap.clear();
       _robWeight.clear();
-      _lastSampleMovedTo=NULL;
       numRobControls = 0;
+      numObsControls = 0;
   }
 
 
@@ -106,9 +106,9 @@ namespace Kautham {
   }
 
   /*!
-   * Moves the robot to the configuration specified by the sample
+   * Moves the robots to the configuration specified by the sample
    *  loads the flag withinbounds of the sample. If outofbounds, one of the
-   *  robot ends at the border of one or more of its limits.
+   *  robots ends at the border of one or more of its limits.
    */
   void WorkSpace::moveRobotsTo(Sample* sample){
     bool withinbounds=true;
@@ -125,53 +125,45 @@ namespace Kautham {
               robots[i]->Kinematics(sample->getMappedConf().at(i));
         }
     }
-	_lastSampleMovedTo = sample;
+    _lastRobSampleMovedTo = sample;
 
-    //set _sample::_config if it was nbot set
+    //set _sample::_config if it was not set
     if(sample->getMappedConf().size()==0) sample->setMappedConf(_configMap);
 
     sample->setwithinbounds(withinbounds);
   }
-  /*
-  void WorkSpace::moveRobotsTo(Sample* sample){
-    vector<KthReal> tmpVec;
-    int j, from = 0;
-    for(unsigned int i=0; i< robots.size(); i++){
-        if(sample->getMappedConf().size()==0){
-            tmpVec.clear();
-            for( j=0; j < robots[i]->getNumRobControls(); j++ )
-                tmpVec.push_back(sample->getCoords()[from + j]);
 
-            from = j;
-            robots[i]->control2Pose(tmpVec);
-        }
-        else{
-              robots[i]->Kinematics(sample->getMappedConf().at(i));
-        }
-    }
-    _lastSampleMovedTo = sample;
+
+  /*!
+   * Moves the obstacles to the configuration specified by the sample
+   *  loads the flag withinbounds of the sample. If outofbounds, one of the
+   *  obstacles ends at the border of one or more of its limits.
+   */
+  void WorkSpace::moveObstaclesTo( Sample *sample ){
+ #ifdef OBS
+      bool withinbounds=true;
+      vector<KthReal> tmpVec;
+      tmpVec.clear();
+      for(unsigned int j=0; j < getNumObsControls(); j++ )
+          tmpVec.push_back(sample->getCoords()[j]);
+
+      for(unsigned int i=0; i< obstacle.size(); i++){
+          if(sample->getMappedConf().size()==0){
+              withinbounds &= obstacles[i]->control2Pose(tmpVec);
+          }
+          else{
+                obstacles[i]->Kinematics(sample->getMappedConf().at(i));
+          }
+      }
+      _lastObsSampleMovedTo = sample;
+
+      //set _sample::_config if it was not set
+      //if(sample->getMappedConf().size()==0) sample->setMappedConf(_configMap);
+
+      sample->setwithinbounds(withinbounds);
+#endif
   }
-  */
 
-  void WorkSpace::moveObstacleTo( size_t mobObst, vector<KthReal>& pmd ){
-    // The parameter pmd is the same type of data the user will be send to
-    // move a robot. It is the value of parameter of a normal sample.
-    if( mobObst < _mobileObstacle.size() ){
-      _mobileObstacle[mobObst]->control2Pose( pmd );
-    }else
-      cout << "The mobObst index is greater than the counter of mobile obstacles.\n"; 
-
-  }
-
-  void WorkSpace::moveObstacleTo( size_t mobObst, RobConf& robConf ){
-    // The parameter pmd is the same type of data the user will be send to
-    // move a robot. It is the value of parameter of a normal sample.
-    if( mobObst < _mobileObstacle.size() ){
-      _mobileObstacle[mobObst]->Kinematics( robConf );
-    }else
-      cout << "The mobObst index is greater than the counter of mobile obstacles.\n"; 
-
-  }
 
   bool WorkSpace::collisionCheck(Sample* sample ) {
 
@@ -329,16 +321,12 @@ namespace Kautham {
   }
 
   void WorkSpace::addRobot(Robot* robot){
-
-    //to test the coupling
-    //robot->setNumCoupledControls(12);
-
     robots.push_back(robot);
     _configMap.clear();
     _robWeight.clear();
     for(unsigned int i = 0; i < robots.size(); i++){
       _configMap.push_back(((Robot*)robots.at(i))->getCurrentPos());
-      _robWeight.push_back( ((Robot*)robots.at(i))->getRobWeight() );
+      _robWeight.push_back(((Robot*)robots.at(i))->getRobWeight());
     }
   }
 

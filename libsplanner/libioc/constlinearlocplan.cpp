@@ -74,7 +74,7 @@ namespace IOC{
 	bool ConstLinearLocalPlanner::canConect()
 	{
 		if(initSamp() == NULL || goalSamp() == NULL) return false; //problem not set.
-		if(initSamp()->getDim() != wkSpace()->getDimension()) return false;  //sample is not for the workspace.
+        if(initSamp()->getDim() != wkSpace()->getNumRobControls()) return false;  //sample is not for the workspace.
     
 		KthReal dist = 0;
 		Sample *tmpSample = NULL;
@@ -426,7 +426,7 @@ namespace IOC{
 		KthReal dd=0.0;
 		if( weights != NULL )
 		{
-			for(int k=0; k < _wkSpace->getDimension() ; k++)
+            for(int k=0; k < _wkSpace->getNumRobControls() ; k++)
 			{
 				dd = from->getCoords()[k] - to->getCoords()[k];
 				dist += (dd*dd*weights[k]);
@@ -434,7 +434,7 @@ namespace IOC{
 		}
 		else
 		{
-			for(int k=0; k < _wkSpace->getDimension() ; k++)
+            for(int k=0; k < _wkSpace->getNumRobControls() ; k++)
 			{
 				dd = from->getCoords()[k] - to->getCoords()[k];
 				dist += (dd*dd);
