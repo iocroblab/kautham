@@ -69,7 +69,7 @@ namespace Kautham {
 		void              sliderChanged(int val);
 		void              updateControls();
 	public:
-        ControlWidget(Problem* prob,vector<DOFWidget*> DOFWidgets);
+        ControlWidget(Problem* prob,vector<DOFWidget*> DOFWidgets, bool robot);
 		~ControlWidget();
 		inline vector<KthReal>   *getValues(){return &values;}
         void setValues();
@@ -83,6 +83,7 @@ namespace Kautham {
         QPushButton		  *btnUpdate;
 		vector<KthReal>   values;
         Problem*          _ptProblem;
+        bool              robWidget;
 	};
 
 

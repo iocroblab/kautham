@@ -124,12 +124,12 @@
 		}
 
 		KthReal dist = 0;
-    std::vector<KthReal> stps(wkSpace()->getDimension());
-    std::vector<KthReal> coord(wkSpace()->getDimension());
+    std::vector<KthReal> stps(wkSpace()->getNumRobControls());
+    std::vector<KthReal> coord(wkSpace()->getNumRobControls());
 		Sample *tmpSample;
 
 		//compute distance between cini and cgoal in robotjoint coordinates
-		for(int i = _wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); i < _wkSpace->getDimension(); i ++)
+        for(int i = _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); i < _wkSpace->getNumRobControls(); i ++)
 		{
 			stps[i] = goalSamp()->getCoords()[i] - initSamp()->getCoords()[i];
 			dist += (stps[i]*stps[i]);
@@ -143,14 +143,14 @@
 		//int maxsteps = 5; //the 2 is necessary to always reduce the distance...
       
 		//compute the stepsize in each robotjoint
-		for(int k =_wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getDimension(); k++) 
+        for(int k =_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getNumRobControls(); k++)
 			stps[k] = stps[k]/maxsteps; //this is the delta step for each dimension
 			
 		//Sampling the clouds...
 		//Iterate through all the steps of the robot, centering a cloud of hand configurations
 		//around each robot configuration.
 		//Iterate backwards from goal to ini since cloud of hand joints is initialized at goal sample
-                tmpSample = new Sample(_wkSpace->getDimension());
+                tmpSample = new Sample(_wkSpace->getNumRobControls());
 
 		//FIXME-prepared for a max of 5 PMDs. This should ot be hardcoded...
 		for(int pmd=1;pmd<=5;pmd++)
@@ -170,10 +170,10 @@
 				for(itSam=_testSamples.begin(); itSam!=_testSamples.end();++itSam)
 				{		
 					//Set the coordinates of the robot joints 
-					for(int k =_wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getDimension(); k++)
+                    for(int k =_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getNumRobControls(); k++)
 						coord[k] = initSamp()->getCoords()[k] + i*stps[k];
 
-					for(int k = 0; k < _wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k++){
+                    for(int k = 0; k < _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k++){
 						coord[k] = (*itSam)->getCoords()[k];
 					}
 					//Set the new sample with the hand-arm coorinates and collision-check.
@@ -181,7 +181,7 @@
 					if( !_wkSpace->collisionCheck(tmpSample)){ 
 						//Free sample. Add to the sampleset _samples.
 						_samples->add(tmpSample);
-                                                tmpSample = new Sample(_wkSpace->getDimension());
+                                                tmpSample = new Sample(_wkSpace->getNumRobControls());
 						//add to graph
 						if(i==0) PRMPlanner::connectLastSample( initSamp() );
 						else if (i==maxsteps) PRMPlanner::connectLastSample( goalSamp() );
@@ -196,7 +196,7 @@
 					//next arm configuration.
 					//The new sample must be set around the iterpolated hand-pose between ini and goal hand poses.
 						/*
-						for(int k = 0; k < _wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k++){
+                        for(int k = 0; k < _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k++){
 							double advancedratio = (double)i/(double)maxsteps;
 							coord[k]=_init->getCoords()[k] + advancedratio*(_goal->getCoords()[k]-_init->getCoords()[k]);
 						}
@@ -211,13 +211,13 @@
 							{
 								coord[k] = (KthReal)_gen->d_rand();
 							}
-							for(;k < _wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk();k++)
+                            for(;k < _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk();k++)
 							{
 								//coord[k] = 0.5;
 								coord[k] = (KthReal)_gen->d_rand();
 							}
 							
-							for(k=_wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk();k < _wkSpace->getDimension();k++)
+                            for(k=_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk();k < _wkSpace->getNumRobControls();k++)
 							{
 								coord[k] = initSamp()->getCoords()[k] + i*stps[k] + _cloudRadius*(2*(KthReal)_gen->d_rand()-1);
 								//coord[k] = (KthReal)_gen->d_rand();
@@ -231,7 +231,7 @@
 							{
 								//Free sample. Add to the sampleset _samples.
 								_samples->add(tmpSample);
-                                                                tmpSample = new Sample(_wkSpace->getDimension());
+                                                                tmpSample = new Sample(_wkSpace->getNumRobControls());
 
 								//add to graph
 								if(i==0) PRMPlanner::connectLastSample( initSamp() );
@@ -240,10 +240,10 @@
 
 								//substitue its value in the _testSamples vector for further propagation
 								/*
-								KthReal *newcoord = new KthReal[_wkSpace->getDimension()];					
-								for(int k =_wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getDimension(); k++)
+                                KthReal *newcoord = new KthReal[_wkSpace->getNumRobControls()];
+                                for(int k =_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getNumRobControls(); k++)
 									newcoord[k] = 0;
-								for(int k = 0; k < _wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k++)
+                                for(int k = 0; k < _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k++)
 									newcoord[k] = coord[k];
 								(*itSam)->setCoords(newcoord);
 								*/
@@ -332,10 +332,10 @@
 
 	  //KthReal* tmpcoord = _goal->getCoords();
 	  //KthReal* tmpcoord = _init->getCoords();
-    std::vector<KthReal> tmpcoord2(_wkSpace->getDimension());
+    std::vector<KthReal> tmpcoord2(_wkSpace->getNumRobControls());
 	    			
 	  //Set the coordinates of the robot joints 
-	  for(int k =_wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getDimension(); k++)
+      for(int k =_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getNumRobControls(); k++)
 		   tmpcoord2[k] = sam->getCoords()[k];
 
 	    
@@ -343,10 +343,10 @@
 	  //Only set random values for the controls dealing with the hand.
 	  //Let the last controls equal
 
-	  int kend = _wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); 
+      int kend = _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk();
 
 
-      tmpSam = new Sample(_wkSpace->getDimension());
+      tmpSam = new Sample(_wkSpace->getNumRobControls());
 	  int added=0;
       for(int i=0; i<_cloudSize*100; i++)
 	  {
@@ -365,20 +365,20 @@
 		    tmpSam->setCoords(tmpcoord2);
 
 			//cout<<"try: ";
-			//for(int t=0;t<_wkSpace->getDimension();t++) cout<<tmpcoord2[t]<<", ";
+            //for(int t=0;t<_wkSpace->getNumRobControls();t++) cout<<tmpcoord2[t]<<", ";
 			//cout<<endl;
 
 		    if( ! _wkSpace->collisionCheck(tmpSam))
 			{
 				//store with the arm joints set to zero
 				/*
-				for(int k =_wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getDimension(); k++)
+                for(int k =_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getNumRobControls(); k++)
 					tmpcoord2[k] = 0;
 				tmpSam->setCoords(tmpcoord2);
 				*/
 			    _testSamples.push_back(tmpSam);
 				added++;
-                                tmpSam = new Sample(_wkSpace->getDimension());
+                                tmpSam = new Sample(_wkSpace->getNumRobControls());
 			}
 		    if(added >= _cloudSize) break;
 	    }

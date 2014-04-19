@@ -53,6 +53,7 @@
 #include "robot.h"
 #include "ivworkspace.h"
 #include "workspace.h"
+#include <libsampling/state.h>
 #include <pugixml.hpp>
 
 //#include <libpugixml/pugixml.hpp>
@@ -143,7 +144,8 @@ namespace Kautham {
     bool                    createCSpace();
     bool                    createCSpaceFromFile(pugi::xml_document *doc);
     bool                    tryToSolve();
-    bool                    setCurrentControls(vector<KthReal> &val, int offset);
+    bool                    setCurrentRobControls(vector<KthReal> &val, int offset);
+    bool                    setCurrentObsControls(vector<KthReal> &val, int offset);
     //! Returns WSpace
     WorkSpace*		        wSpace();
     //! Returns CSpace
@@ -165,7 +167,8 @@ namespace Kautham {
     inline Sampler*         getSampler(){return _sampler;}
     inline void             setSampler(Sampler* smp){_sampler = smp;}
     inline int              getDimension(){return _wspace->getNumRobControls();}
-    inline vector<KthReal>& getCurrentControls(){return _currentControls;}
+    inline vector<KthReal>& getCurrentRobControls(){return _currentRobControls;}
+    inline vector<KthReal>& getCurrentObsControls(){return _currentObsControls;}
     inline string           getFilePath(){return _filePath;}
     bool                    inheritSolution();
     bool                    setupFromFile(string xml_doc);
@@ -184,11 +187,13 @@ namespace Kautham {
   private:
     const static KthReal    _toRad;
     WorkSpace*              _wspace;
-    CONFIGTYPE              _problemType;
     SampleSet*              _cspace;
+    vector<State>           _sspace;
+    CONFIGTYPE              _problemType;
     Sampler*                _sampler;
     Planner*                _planner;
-    vector<KthReal>         _currentControls;
+    vector<KthReal>         _currentRobControls;
+    vector<KthReal>         _currentObsControls;
     string                  _filePath;
 
 

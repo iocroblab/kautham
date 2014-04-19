@@ -69,16 +69,15 @@ namespace Kautham{
       vector<KthReal>*      distanceCheck(Sample* sample) ;
       bool                  collisionCheck(Sample* sample ) ;
       void                  moveRobotsTo(Sample* sample);
-      void                  moveObstacleTo( size_t mobObst, vector<KthReal>& pose );
-      void                  moveObstacleTo( size_t mobObst, RobConf& robConf );
+      void                  moveObstaclesTo(Sample* sample);
       void                  addRobot(Robot* robot);
-      inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;}
-      inline int            getNumRobots(){return robots.size();}
       void                  addObstacle(Obstacle* obs);
       void                  addMobileObstacle(Robot* obs);
+      inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;} 
       inline Obstacle*      getObstacle(unsigned int i){if(i < obstacles.size()) return obstacles[i]; return NULL;}
       inline Robot*         getMobileObstacle(unsigned int i){if( i<_mobileObstacle.size() ) return _mobileObstacle[i];return NULL;}
-      inline unsigned int   robotsCount(){return robots.size();}
+      inline int            getNumRobots(){return robots.size();}
+      inline int            getNumObstacles(){return obstacles.size();}
       inline unsigned int   obstaclesCount(){return obstacles.size();}
       inline unsigned int   mobileObstaclesCount(){return _mobileObstacle.size();}
       void                  addDistanceMapFile(string distanceFile);
@@ -111,8 +110,8 @@ namespace Kautham{
       static void           resetCollCheckCounter();
       static unsigned int   getCollCheckCounter();
       static void           increaseCollCheckCounter();
-      Sample*               getLastSampleMovedTo(){return _lastSampleMovedTo;}
-      inline int            getDimension (){return numRobControls;} //!< Returns the dimension of the workspace
+      Sample*               getLastRobSampleMovedTo(){return _lastRobSampleMovedTo;}
+      Sample*               getLastObsSampleMovedTo(){return _lastObsSampleMovedTo;}
       inline int            getNumRobControls(){return numRobControls;} //!< Returns the number of robot controls
       inline int            getNumObsControls(){return numObsControls;} //!< Returns the number of obstacle controls
       inline int            setNumRobControls(int numcontrols){numRobControls = numcontrols;} //!< Sets the number of robot controls
@@ -143,7 +142,8 @@ namespace Kautham{
       string                robControlsName; //!< Names of the robot controls, as a string, separated with the vertical bar character.
       string                obsControlsName; //!< Names of the obstacle controls, as a string, separated with the vertical bar character.
       static unsigned int   _countWorldCollCheck;
-      Sample*               _lastSampleMovedTo;
+      Sample*               _lastRobSampleMovedTo;
+      Sample*               _lastObsSampleMovedTo;
   };
 
   /** @}   end of Doxygen module "libProblem" */

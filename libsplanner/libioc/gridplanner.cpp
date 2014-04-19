@@ -74,11 +74,11 @@ namespace Kautham {
         addParameter("Max. Samples", _maxNumSamples);
         addParameter("Show labels (0/1)", _showLabels);
 
-		//set step discrtization
-		_stepsDiscretization.resize(_wkSpace->getDimension());
+        //set step discretization
+        _stepsDiscretization.resize(_wkSpace->getNumRobControls());
 		char *str = new char[20];
 		KthReal step=0;
-		for(int i=0;i<_wkSpace->getDimension();i++){
+        for(int i=0;i<_wkSpace->getNumRobControls();i++){
 			_stepsDiscretization[i] = 4;
 			sprintf(str,"Discr. Steps %d",i);
 			addParameter(str, _stepsDiscretization[i]);
@@ -90,14 +90,14 @@ namespace Kautham {
 
         //set max samples
 		_maxNumSamples = 1;
-		for(int i=0; i<_wkSpace->getDimension();i++){
+        for(int i=0; i<_wkSpace->getNumRobControls();i++){
 			_maxNumSamples = _maxNumSamples * _stepsDiscretization[i];
 		}
 
 
         //store the init and goal config
-        tmpSamInit = new Sample(_wkSpace->getDimension());
-        tmpSamGoal = new Sample(_wkSpace->getDimension());
+        tmpSamInit = new Sample(_wkSpace->getNumRobControls());
+        tmpSamGoal = new Sample(_wkSpace->getNumRobControls());
         tmpSamGoal->setCoords(goalSamp()->getCoords());
         tmpSamInit->setCoords(initSamp()->getCoords());
         tmpSamGoal->setFree(goalSamp()->getcolor());
@@ -111,7 +111,7 @@ namespace Kautham {
         indexgoal= (gridVertex)(tmpSamGoal->getCoords()[0]*_stepsDiscretization[0]);
         indexinit= (gridVertex)(tmpSamInit->getCoords()[0]*_stepsDiscretization[0]);
         int r;
-        for(int i=1; i<_wkSpace->getDimension();i++)
+        for(int i=1; i<_wkSpace->getNumRobControls();i++)
         {
             stepd = stepd * _stepsDiscretization[i-1];
             r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
@@ -139,7 +139,7 @@ namespace Kautham {
 
 	SoSeparator *gridPlanner::getIvCspaceScene()
 	{
-		if(_wkSpace->getDimension()==2)
+        if(_wkSpace->getNumRobControls()==2)
 		{
 			//_sceneCspace = ((IVWorkSpace*)_wkSpace)->getIvScene();
 			_sceneCspace = new SoSeparator();
@@ -153,7 +153,7 @@ namespace Kautham {
 	void gridPlanner::drawCspace()
 	{
 		if(_sceneCspace==NULL) return;
-		if(_wkSpace->getDimension()==2)
+        if(_wkSpace->getNumRobControls()==2)
 		{
 			//first delete whatever is already drawn
 			while (_sceneCspace->getNumChildren() > 0)
@@ -317,7 +317,7 @@ namespace Kautham {
 			_stepsDiscretization[axis] = numsteps;
 
 			_maxNumSamples = 1;
-			for(int i=0; i<_wkSpace->getDimension();i++){
+            for(int i=0; i<_wkSpace->getNumRobControls();i++){
 				_maxNumSamples = _maxNumSamples * _stepsDiscretization[i];
 			}
 			if(_isGraphSet) clearGraph();
@@ -330,7 +330,7 @@ namespace Kautham {
             indexgoal=(gridVertex)(tmpSamGoal->getCoords()[0]*_stepsDiscretization[0]);
             indexinit=(gridVertex)(tmpSamInit->getCoords()[0]*_stepsDiscretization[0]);
             int r;
-            for(int i=1; i<_wkSpace->getDimension();i++)
+            for(int i=1; i<_wkSpace->getNumRobControls();i++)
             {
                 stepd = stepd * _stepsDiscretization[i-1];
                 r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
@@ -375,13 +375,13 @@ namespace Kautham {
 				//and the sample created and collision-checked
 				else
 				{
-					Sample *smp = new Sample(_wkSpace->getDimension());
+                    Sample *smp = new Sample(_wkSpace->getNumRobControls());
 					smp->setCoords(coords);
 					_wkSpace->collisionCheck(smp);
 					_samples->add(smp);
 					/* Print INFO: collision-cehck nature of samples  
 					cout<<"sample "<<_samples->getSize()<<": ";
-					for(int i=0;i<_wkSpace->getDimension();i++) cout<<coords[i]<<", ";
+                    for(int i=0;i<_wkSpace->getNumRobControls();i++) cout<<coords[i]<<", ";
 					cout<<"SAMPLE COLOR = "<<smp->getcolor()<<endl;
 					*/
 				}
@@ -398,7 +398,7 @@ namespace Kautham {
 				//if not last coordinate, continue  
 				//i.e. by means of a recursive call, all the coordinates are swept
 				//until the last coordinate is reached
-				if(coord_i != _wkSpace->getDimension()-1) 
+                if(coord_i != _wkSpace->getNumRobControls()-1)
 				{
 					connectgrid(index, coord_i + 1);	
 				}
@@ -409,7 +409,7 @@ namespace Kautham {
 					//find sample label from indices
 					int smplabel = 0;
 					int coef;
-					for(int k=0;k<_wkSpace->getDimension();k++){ 
+                    for(int k=0;k<_wkSpace->getNumRobControls();k++){
 						if(k==0) coef=1;
 						else coef = coef * _stepsDiscretization[k-1];
 						smplabel += coef*index[k];
@@ -418,7 +418,7 @@ namespace Kautham {
 					//sweep for all directions to find (Manhattan) neighbors
 					//neighbors are looked for in the positive drection of the axis
 					//i.e. incrementing the index of the current sample
-					for(int n=0;n<_wkSpace->getDimension();n++)
+                    for(int n=0;n<_wkSpace->getNumRobControls();n++)
 					{
 						//find the label of the neighbor samples from indices
 						//a Manhattan neighbor (in the positive direction of an axis)
@@ -427,7 +427,7 @@ namespace Kautham {
 						int smplabelneighplus = 0;
 						bool plusneighexists = true;
 						
-						for(int k=0;k<_wkSpace->getDimension();k++) 
+                        for(int k=0;k<_wkSpace->getNumRobControls();k++)
 						{
 							if(k==0) coef=1;
 							else coef = coef*_stepsDiscretization[k-1];
@@ -479,10 +479,10 @@ namespace Kautham {
 		void  gridPlanner::discretizeCspace()
 		{
 			//create graph vertices, i.e. sample and collision-check at grid cell centers
-			vector<KthReal> coords(_wkSpace->getDimension());
-			loadgrid(coords, _wkSpace->getDimension()-1);
+            vector<KthReal> coords(_wkSpace->getNumRobControls());
+            loadgrid(coords, _wkSpace->getNumRobControls()-1);
             //connect neighbor grid cells
-			vector<int> index(_wkSpace->getDimension());
+            vector<int> index(_wkSpace->getNumRobControls());
 			connectgrid(index, 0);
 			//create grid as graph (alse sets initial potential values)
 			loadGraph();

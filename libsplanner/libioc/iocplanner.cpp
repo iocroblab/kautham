@@ -213,7 +213,7 @@ namespace Kautham{
     //  Now it is adding the samples set.
     xml_node sampNode = planNode.append_child();
     sampNode.set_name("SampleSet");
-    sampNode.append_attribute("dim") = _wkSpace->getDimension();
+    sampNode.append_attribute("dim") = _wkSpace->getNumRobControls();
     sampNode.append_attribute("size") = _samples->getSize();
     for(int i = 0; i < _samples->getSize(); i++){
       xml_node sampItem = sampNode.append_child();
@@ -259,7 +259,7 @@ namespace Kautham{
 
     tempNode = doc.child("Planner").child("SampleSet");
 
-    char dim = _wkSpace->getDimension();
+    char dim = _wkSpace->getNumRobControls();
     if( dim != tempNode.attribute("dim").as_int()){
       std::cout << "Dimension of samples doesn't correspond with the problem's dimension."
           << std::endl;

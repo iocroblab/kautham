@@ -1205,36 +1205,36 @@ namespace Kautham {
    */
   bool Robot::control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters){
       bool retvalue = true;
-    parameters.clear();
-    if(robType == FREEFLY ){
-      for(int i = 0; i < 6; i++)
-        parameters.push_back((KthReal)0.0);
-    }else{
-      for(int i = 0; i < 6 + _currentConf.getRn().getDim(); i++)
-        parameters.push_back((KthReal)0.0);
-    }
+      parameters.clear();
+      if(robType == FREEFLY ){
+          for(int i = 0; i < 6; i++)
+              parameters.push_back((KthReal)0.0);
+      }else{
+          for(int i = 0; i < 6 + _currentConf.getRn().getDim(); i++)
+              parameters.push_back((KthReal)0.0);
+      }
 
-    if(se3Enabled){
-      for(int i =0; i < 6; i++){
-        for(unsigned int j= 0; j < control.size(); j++)
-          parameters[i] += mapMatrix[i][j] * (control[j]-0.5) ;
-        parameters[i] += offMatrix[i];
+      if(se3Enabled){
+          for(int i =0; i < 6; i++){
+              for(unsigned int j= 0; j < control.size(); j++)
+                  parameters[i] += mapMatrix[i][j] * (control[j]-0.5) ;
+              parameters[i] += offMatrix[i];
+          }
       }
-    }
-    if( _currentConf.getRn().getDim() != 0 ){
-      for(int i =0; i < _currentConf.getRn().getDim(); i++){
-        for(unsigned int j= 0; j < control.size(); j++)//{
-          parameters[i+6] += mapMatrix[i+6][j] * (control[j]-0.5);
-          //cout << mapMatrix[i+6][j] << "\t" ;
-        //}
-        //cout << offMatrix[i+6];
-        parameters[i+6] += offMatrix[i+6];
-        i = i;
-        if(parameters[i+6]<0.0 || parameters[i+6]>1.0) retvalue=false;
-        //cout << endl;
+      if( _currentConf.getRn().getDim() != 0 ){
+          for(int i =0; i < _currentConf.getRn().getDim(); i++){
+              for(unsigned int j= 0; j < control.size(); j++) {
+                  parameters[i+6] += mapMatrix[i+6][j] * (control[j]-0.5);
+                  //cout << mapMatrix[i+6][j] << "\t" ;
+              }
+              //cout << offMatrix[i+6];
+              parameters[i+6] += offMatrix[i+6];
+              i = i;
+              if(parameters[i+6]<0.0 || parameters[i+6]>1.0) retvalue=false;
+              //cout << endl;
+          }
       }
-    }
-    return retvalue;
+      return retvalue;
   }
 
 

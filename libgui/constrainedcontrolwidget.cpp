@@ -66,7 +66,7 @@ namespace Kautham {
 		  labels[i]->setText( tmp.append( QString().setNum(values[i],'g',5)));
 		}
 	    
-		_ptProblem->setCurrentControls(values,_globalOffset);
+        _ptProblem->setCurrentRobControls(values,_globalOffset);
 		if(_robot != NULL){
 			_robot->ConstrainedKinematics(values);
 		}
