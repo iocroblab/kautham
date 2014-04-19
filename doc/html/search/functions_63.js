@@ -10,7 +10,7 @@ var searchData=
   ['cleargraph',['clearGraph',['../class_kautham_1_1_i_o_c_1_1grid_planner.html#a487d57a7018fd302614755e9c90f425d',1,'Kautham::IOC::gridPlanner::clearGraph()'],['../class_kautham_1_1_i_o_c_1_1_p_r_m_planner.html#a2b52500321d14144b7b19a15b2193ce5',1,'Kautham::IOC::PRMPlanner::clearGraph()']]],
   ['clearneighs',['clearNeighs',['../class_kautham_1_1_sample.html#a7318d2e707bfcdf979bd8449d65315c5',1,'Kautham::Sample::clearNeighs()'],['../class_kautham_1_1_sample_set.html#aa9ae596f8120a03c65a7f4dd328e3bb3',1,'Kautham::SampleSet::clearNeighs(unsigned int i)'],['../class_kautham_1_1_sample_set.html#abf20d4d9c9f6c0c086bd915db3caaa9c',1,'Kautham::SampleSet::clearNeighs()']]],
   ['closeproblem',['closeProblem',['../class_kautham_1_1kauthamshell.html#a905b17dcc4bba0c589e4fdd2b5372a44',1,'Kautham::kauthamshell']]],
-  ['collisioncheck',['collisionCheck',['../class_kautham_1_1_robot.html#a6bdd33a2f14276b668473826b561070b',1,'Kautham::Robot::collisionCheck(Obstacle *obs)'],['../class_kautham_1_1_robot.html#a868772d56b20c36f5cc7032faf111270',1,'Kautham::Robot::collisionCheck(Robot *rob)']]],
+  ['collisioncheck',['collisionCheck',['../class_kautham_1_1_robot.html#a95f863b9c0e46542b5dcb3c84cdcaa31',1,'Kautham::Robot']]],
   ['compose',['compose',['../class_kautham_1_1_t_mat.html#ac977407db80ff38ee0cca7221c6b12cd',1,'Kautham::TMat']]],
   ['computeorientation',['computeorientation',['../class_kautham_1_1_i_o_c_1_1_const_linear_local_planner.html#a7d4c7b59bb403705f99009a7a3e1fb71',1,'Kautham::IOC::ConstLinearLocalPlanner']]],
   ['computestaringpoint',['computeStaringPoint',['../class_kautham_1_1_i_o_c_1_1_p_r_m_robot_hand_const_planner_i_c_r_a.html#aab98d17ed87d9c700be4212cc2068201',1,'Kautham::IOC::PRMRobotHandConstPlannerICRA']]],
