@@ -49,7 +49,6 @@
 #include <libsampling/robconf.h>
 #include <libkthutil/kauthamdefs.h>
 #include <libsampling/sample.h>
-#include "obstacle.h"
 #include "robot.h"
 
 using namespace std;
@@ -71,15 +70,11 @@ namespace Kautham{
       void                  moveRobotsTo(Sample* sample);
       void                  moveObstaclesTo(Sample* sample);
       void                  addRobot(Robot* robot);
-      void                  addObstacle(Obstacle* obs);
-      void                  addMobileObstacle(Robot* obs);
+      void                  addObstacle(Robot* obs);
       inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;} 
-      inline Obstacle*      getObstacle(unsigned int i){if(i < obstacles.size()) return obstacles[i]; return NULL;}
-      inline Robot*         getMobileObstacle(unsigned int i){if( i<_mobileObstacle.size() ) return _mobileObstacle[i];return NULL;}
+      inline Robot*         getObstacle(unsigned int i){if(i < obstacles.size()) return obstacles[i]; return NULL;}
       inline int            getNumRobots(){return robots.size();}
       inline int            getNumObstacles(){return obstacles.size();}
-      inline unsigned int   obstaclesCount(){return obstacles.size();}
-      inline unsigned int   mobileObstaclesCount(){return _mobileObstacle.size();}
       void                  addDistanceMapFile(string distanceFile);
       inline string         getDistanceMapFile(){return distanceMapFile;}
       void                  addDimensionsFile(string dfile);
@@ -123,9 +118,8 @@ namespace Kautham{
 
   protected:
       virtual void          updateScene() = 0;
-      vector<Obstacle*>     obstacles;
-      vector<Robot*>        _mobileObstacle;
       vector<Robot*>        robots;
+      vector<Robot*>        obstacles;
       vector<KthReal>       distVec;
       //! This attribute groups the configurations of the robots
       vector<RobConf*>      _configMap;
@@ -137,11 +131,11 @@ namespace Kautham{
 
   private:
       bool                  armed;
+      static unsigned int   _countWorldCollCheck;
       int                   numRobControls;  //!< This is the number of controls used to command the robots
       int                   numObsControls;  //!< This is the number of controls used to command the obstacles
       string                robControlsName; //!< Names of the robot controls, as a string, separated with the vertical bar character.
-      string                obsControlsName; //!< Names of the obstacle controls, as a string, separated with the vertical bar character.
-      static unsigned int   _countWorldCollCheck;
+      string                obsControlsName; //!< Names of the obstacle controls, as a string, separated with the vertical bar character. 
       Sample*               _lastRobSampleMovedTo;
       Sample*               _lastObsSampleMovedTo;
   };

@@ -117,7 +117,6 @@ namespace Kautham {
       for(int i = 0; i<_currentObsControls.size(); i++)
           _currentObsControls[i] = (KthReal)0.0;
 
-
       setlocale (LC_NUMERIC, old);
       return true;
   }
@@ -410,10 +409,11 @@ namespace Kautham {
       }
   }
 
-  bool Problem::setCurrentRobControls(vector<KthReal> &val, int offset) {
+  bool Problem::setCurrentRobControls(vector<KthReal> &val) {
       try{
+          if (val.size() !=  _currentRobControls.size()) return false;
           for(unsigned int i=0; i < val.size(); i++)
-              _currentRobControls[i+offset] = (KthReal)val[i];
+              _currentRobControls[i] = (KthReal)val[i];
           return true;
       }catch(...){
           return false;
@@ -421,10 +421,11 @@ namespace Kautham {
 
   }
 
-  bool Problem::setCurrentObsControls(vector<KthReal> &val, int offset) {
+  bool Problem::setCurrentObsControls(vector<KthReal> &val) {
       try{
+          if (val.size() !=  _currentObsControls.size()) return false;
           for(unsigned int i=0; i < val.size(); i++)
-              _currentObsControls[i+offset] = (KthReal)val[i];
+              _currentObsControls[i] = (KthReal)val[i];
           return true;
       }catch(...){
           return false;
@@ -965,8 +966,74 @@ namespace Kautham {
   }
 
   bool Problem::addObstacle2WSpace(xml_node *obstacle_node) {
-      Robot *rob;
-      Obstacle *obs;
+      Robot *obs;
+      string name;
+
+#ifndef KAUTHAM_COLLISION_PQP
+      obs = new Robot(obstacle_node->attribute("obstacle").value(),
+                      (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR);
+#else
+      obs = new Robot(obstacle_node->attribute("obstacle").value(),
+                      (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP);
+#endif
+
+      // Setup the limits of the moveable base
+      for(xml_node_iterator itL = obstacle_node->begin(); itL != obstacle_node->end(); ++itL){
+          name = (*itL).name();
+          if( name == "Limits" ){
+              name = (*itL).attribute("name").value();
+              if( name == "X")
+                  obs->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "Y")
+                  obs->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "Z")
+                  obs->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "WX")
+                  obs->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "WY")
+                  obs->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "WZ")
+                  obs->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
+                                 (KthReal)(*itL).attribute("max").as_double());
+              else if( name == "TH")
+                  obs->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
+                                 (KthReal)(*itL).attribute("max").as_double() * _toRad);
+          }
+          if( name == "Home" ){
+              // If obstacle hasn't a home, it will be assumed in the origin.
+              SE3Conf tmpC;
+              vector<KthReal> cords(7);
+              cords[0] = (KthReal)(*itL).attribute("X").as_double();
+              cords[1] = (KthReal)(*itL).attribute("Y").as_double();
+              cords[2] = (KthReal)(*itL).attribute("Z").as_double();
+              cords[3] = (KthReal)(*itL).attribute("WX").as_double();
+              cords[4] = (KthReal)(*itL).attribute("WY").as_double();
+              cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
+              cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
+
+              // Here is needed to convert from axis-angle to
+              // quaternion internal represtantation.
+              SE3Conf::fromAxisToQuaternion(cords);
+
+              tmpC.setCoordinates(cords);
+
+              //cout << tmpC.print();
+
+              obs->setHomePos(&tmpC);
+          }
+      }
+
+      _wspace->addObstacle(obs);
+
+      return true;
+
+
+      /*Robot *obs;
       string name;
       bool flagCol;
       KthReal pob[3], oob[4];
@@ -1159,12 +1226,10 @@ namespace Kautham {
           cout << "The obstacle " << obstacle_node->attribute("obstacle").value() <<" is improperly configured.";
           return false;
       }
+      */
   }
 
   bool Problem::addObstacleControls2WSpace(string cntrFile) {
-
-      return true;
-#ifdef OBS
       if (exists(cntrFile)) { // The file already exists.
           string::size_type loc = cntrFile.find( ".cntr", 0 );
           if( loc != string::npos ) { // It means that controls are defined by a *.cntr file
@@ -1370,7 +1435,6 @@ namespace Kautham {
 
           return (true);
       }
-#endif
   }
 
 }

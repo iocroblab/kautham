@@ -72,7 +72,7 @@ namespace Kautham {
         ControlWidget(Problem* prob,vector<DOFWidget*> DOFWidgets, bool robot);
 		~ControlWidget();
 		inline vector<KthReal>   *getValues(){return &values;}
-        void setValues();
+        void setValues(vector <KthReal> coords);
 	private:
         vector<DOFWidget*> _DOFWidgets;
 		vector<QSlider*>  sliders;

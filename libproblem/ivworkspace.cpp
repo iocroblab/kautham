@@ -68,9 +68,6 @@ namespace Kautham {
 				  scene->addChild(sep);
 				  //scene->addChild((SoSeparator*)obstacles[i]->getModel());
 			  }
-  			
-			  for(unsigned int i=0; i<_mobileObstacle.size(); i++)
-				  scene->addChild((SoSeparator*)_mobileObstacle[i]->getModel());
 
 			  scene->ref();
       }
@@ -114,9 +111,6 @@ namespace Kautham {
                   collisionscene->addChild(sep);
                   //scene->addChild((SoSeparator*)obstacles[i]->getModel());
               }
-
-              for(unsigned int i=0; i<_mobileObstacle.size(); i++)
-                  collisionscene->addChild((SoSeparator*)_mobileObstacle[i]->getCollisionModel());
 
               collisionscene->ref();
       }

@@ -140,14 +140,14 @@ namespace Kautham {
    *  obstacles ends at the border of one or more of its limits.
    */
   void WorkSpace::moveObstaclesTo( Sample *sample ){
- #ifdef OBS
+
       bool withinbounds=true;
       vector<KthReal> tmpVec;
       tmpVec.clear();
       for(unsigned int j=0; j < getNumObsControls(); j++ )
           tmpVec.push_back(sample->getCoords()[j]);
 
-      for(unsigned int i=0; i< obstacle.size(); i++){
+      for(unsigned int i=0; i< obstacles.size(); i++){
           if(sample->getMappedConf().size()==0){
               withinbounds &= obstacles[i]->control2Pose(tmpVec);
           }
@@ -157,11 +157,11 @@ namespace Kautham {
       }
       _lastObsSampleMovedTo = sample;
 
+      // Is this needed for Obstacles? :S
       //set _sample::_config if it was not set
       //if(sample->getMappedConf().size()==0) sample->setMappedConf(_configMap);
 
       sample->setwithinbounds(withinbounds);
-#endif
   }
 
 
@@ -329,12 +329,8 @@ namespace Kautham {
       _robWeight.push_back(((Robot*)robots.at(i))->getRobWeight());
     }
   }
-
-  void WorkSpace::addMobileObstacle(Robot* obs){
-    _mobileObstacle.push_back( obs );
-  }
       
-  void WorkSpace::addObstacle(Obstacle* obs){
+  void WorkSpace::addObstacle(Robot *obs){
     obstacles.push_back(obs);
   }
 
@@ -387,33 +383,3 @@ namespace Kautham {
   }
 
 }
-
-
-/*
-    //! Sets the value of the mapMatrix corresponding to the column control and row dof.
-    bool setControlItem(string control, string dof, KthReal value);
-
-    /*!
-     *
-     */
-   /* bool Robot::setControlItem(string control, string dof, KthReal value){
-      // First I will find the column index looking for "|" number before the control name.
-      string::size_type pos = controlsName.find(control,0);
-      if(pos == string::npos) return false;
-      int j=0;
-      string::size_type trick=controlsName.find("|",0);
-      while(trick < pos){
-        trick=controlsName.find("|",trick+1);
-        j++;
-      }
-      for(unsigned int i = 1; i < links.size(); i++)
-        if(links[i]->getName() == dof){ // Now I am finding the row index.
-          mapMatrix[i][j] = value;
-          return true;
-        }
-      return false;
-    }
-*/
-
-
- 
