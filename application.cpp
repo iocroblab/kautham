@@ -109,11 +109,14 @@ void Application::setActions(){
     mainWindow->addSeparator(TOOLBAR);
     mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G",
                           ":/icons/determ.xpm", mainWindow, SLOT(changeActiveBackground()));
+
+#if  defined(KAUTHAM_USE_ARMADILLO)
     if (settings->value("use_BBOX","false").toBool()) {
         mainWindow->setAction(ACTIONTOOL,"Disable BBOX","",":/icons/BBOXdisabled.xpm", mainWindow, SLOT(toogleBBOXflag()));
     } else {
         mainWindow->setAction(ACTIONTOOL,"Enable BBOX","",":/icons/BBOXenabled.xpm", mainWindow, SLOT(toogleBBOXflag()));
     }
+#endif
 
     mainWindow->setAction(ACTIONTOOL,"Default Path","",":/icons/search.xpm", mainWindow, SLOT(setModelsDefaultPath()));
 
