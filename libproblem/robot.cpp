@@ -1036,11 +1036,15 @@ namespace Kautham {
       temp->setName(name);
       temp->setMovable(movable);
       temp->setRotational(rotational);
-      temp->setDHPars(theta, d, a, alpha);
-      temp->setLimits(low, hi);
+      temp->setDHPars(theta, scale*d, scale*a, alpha);
+      if (rotational) {
+          temp->setLimits(low, hi);
+      } else {
+          temp->setLimits(scale*low, scale*hi);
+      }
       temp->setWeight(w);
       if(preTrans != NULL)
-          temp->setPreTransform(preTrans[0],preTrans[1],preTrans[2], preTrans[3],
+          temp->setPreTransform(scale*preTrans[0],scale*preTrans[1],scale*preTrans[2], preTrans[3],
                                 preTrans[4], preTrans[5], preTrans[6]);
       if(links.size() > 0 ){
           // There are finding the link by the name
@@ -1062,18 +1066,22 @@ namespace Kautham {
   //! structure to adquire the information to do the job.
   bool	Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal scale, Unit3 axis, bool rotational, bool movable,
                        KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], ode_element ode){
-      Link* temp = new Link(ivFile, collision_ivFile, scale * this->getScale(),
+      Link* temp = new Link(ivFile, collision_ivFile, this->scale*scale,
                             Approach, libs);
       temp->setName(name);
       temp->setMovable(movable);
       temp->setRotational(rotational);
       temp->setAxis(axis);
       temp->setDHPars(0., 0., 0., 0.);//defaults to zero
-      temp->setLimits(low, hi);
+      if (rotational) {
+          temp->setLimits(low, hi);
+      } else {
+          temp->setLimits(this->scale*low, this->scale*hi);
+      }
       temp->setWeight(w);
       temp->setOde(ode);
       if(preTrans != NULL)
-          temp->setPreTransform(preTrans[0],preTrans[1],preTrans[2], preTrans[3],
+          temp->setPreTransform(this->scale*preTrans[0],this->scale*preTrans[1],this->scale*preTrans[2], preTrans[3],
                                 preTrans[4], preTrans[5], 0.);
       if(links.size() > 0 ){
           // There are finding the link by the name
