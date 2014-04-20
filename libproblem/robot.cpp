@@ -84,390 +84,459 @@ namespace Kautham {
  */
 
 
-/*! Constructor for a robot.
- *  \param robFile is an xml file with extension *.dh or *.urdf
- *  \param scale is a global scale for all the links
- *  \param lib identifies wether PQP or SOLID collision libs are used
- */
-  Robot::Robot(string robFile, KthReal scale, LIBUSED lib) {
-
-    _linkPathDrawn = -1;
-    nTrunk = 0;
-    libs = lib;
-    this->scale=scale;
-    this->armed=false;
-    se3Enabled = false;
-    _autocoll = false;
-    _hasChanged = false;
-    // Inialization of SE3 configurations.
-    _homeConf.setSE3();
-    _currentConf.setSE3();
-    _ikine = NULL;
-    _constrainKin = NULL;
-    _weights = NULL;
-    visModel = NULL;
-    collModel = NULL;
-    _graphicalPath = NULL;
-    for(int i =0; i<7;i++)
-	    for(int j=0; j<2; j++){
-	      _homeLimits[i][j] = 0.;
-		  _spatialLimits[i][j] = 0.;
-    }
-    const KthReal toRad = M_PI/180.;
-
-    //  if the file has rob extension it will be parsed in order to
-    //  create the links.
-    //setting numeric parameter to avoid convertions problems
-    char *old = setlocale (LC_NUMERIC, "C");
-
-
-    fstream fin;
-    fin.open(robFile.c_str(),ios::in);
-    if( fin.is_open() ){ // The file already exists.
-      fin.close();
-      string::size_type loc = robFile.find( ".dh", 0 );
-      string dir;
-      string tmpString = "";
-      string extension = robFile.substr(robFile.find_last_of(".")+1);
-      if( loc != string::npos ) { // It means that the robot is defined by a *.dh file
-        dir = robFile.substr(0,robFile.find_last_of("/")+1);
-
-        // Opening the file with the new pugiXML library.
-        xml_document doc;
-        xml_parse_result result = doc.load_file(robFile.c_str());
-
-        //Parse the rob file
-        if(result){
-            //Robot Name
-            name = doc.child("Robot").attribute("name").value();
-
-            //Robot type
-            tmpString = doc.child("Robot").attribute("robType").value();
-            if( tmpString == "Tree")
-                robType = TREE;
-            else if( tmpString == "Chain")
-                robType = CHAIN;
-            else  if( tmpString == "Freeflying")
-                robType = FREEFLY;
-            else{
-              cout<<"Error in *.dh file: Robottype must be set to either Chain, Tree or Freeflying"<<endl;
-              return;
-            }
-
-            //Type of convention used to define the robot, in case of Chain or Tree
-            if(tmpString != "Freeflying")
-            {
-                tmpString = doc.child("Robot").attribute("DHType").value();
-                if( tmpString == "Standard")
-                    Approach = DHSTANDARD;
-                else
-                    Approach = DHMODIFIED;
-            }
-
-
-            //Links of the robot
-            int numLinks = doc.child("Robot").child("Joints").attribute("size").as_int();
-
-            // Initialization of the RnConf part of the RobConf for each
-            // special poses, the initial, the goal, the Home and the current poses.
-            _homeConf.setRn( numLinks - 1 );
-            _currentConf.setRn( numLinks - 1 );
-
-             _weights = new RobWeight( numLinks - 1 );
-             //Set the SE3 weights for the distance computations, in case of mobile base
-             if( doc.child("Robot").child("WeightSE3") ){
-                 KthReal tra = 1.;
-                 KthReal rot = 1.;
-                 xml_node tmp = doc.child("Robot").child("WeightSE3");
-                 if( tmp.attribute("rho_t") )
-                     tra = (KthReal) tmp.attribute("rho_t").as_double();
-                 if( tmp.attribute("rho_r") )
-                     rot = (KthReal) tmp.attribute("rho_r").as_double();
-                 _weights->setSE3Weight( tra, rot );
-             }else
-                 _weights->setSE3Weight(1., 1.);
-
-
-
-            xml_node linkNode = doc.child("Robot").child("Joints");
-            KthReal* preTransP = NULL;
-            KthReal preTrans[7]= {0., 0., 0., 0., 0., 0., 0.};
-            int i = 0;
-            KthReal limMin, limMax;
-            limMin = limMax = 0.;
-
-            //Loop for all the links
-            for(xml_node_iterator it = linkNode.begin(); it != linkNode.end(); ++it){
-                //Sets the Pretransfomation needed when DH parameters are not able to secify the transform between links
-                //used for instance in the definition of the transofrms between tha palm and the finger bases in the SAH hand
-                xml_node preTNode = (*it).child("PreTrans");
-                if( preTNode != NULL ){
-                    preTransP = preTrans;
-                    preTrans[0] = (KthReal)preTNode.attribute("X").as_double();
-                    preTrans[1] = (KthReal)preTNode.attribute("Y").as_double();
-                    preTrans[2] = (KthReal)preTNode.attribute("Z").as_double();
-                    preTrans[3] = (KthReal)preTNode.attribute("WX").as_double();
-                    preTrans[4] = (KthReal)preTNode.attribute("WY").as_double();
-                    preTrans[5] = (KthReal)preTNode.attribute("WZ").as_double();
-                    preTrans[6] = (KthReal)preTNode.attribute("TH").as_double() * toRad;
-                }
-
-                //Sets the limits of the joint
-                limMin = (KthReal)(*it).child("Limits").attribute("Low").as_double();
-                limMax = (KthReal)(*it).child("Limits").attribute("Hi").as_double();
-                if( (*it).child("Description").attribute("rotational").as_bool() ){
-                    limMin *= toRad;
-                    limMax *= toRad;
-                }
-
-                //Create the link
-                if ((*it).attribute("collision_ivFile")) {
-                    addLink((*it).attribute("name").value(), dir + (*it).attribute("ivFile").value(),
-                            dir + (*it).attribute("collision_ivFile").value(),
-                            (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
-                            (KthReal)(*it).child("DHPars").attribute("d").as_double(),
-                            (KthReal)(*it).child("DHPars").attribute("a").as_double(),
-                            (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
-                            (*it).child("Description").attribute("rotational").as_bool(),
-                            (*it).child("Description").attribute("movable").as_bool(),
-                            limMin, limMax,
-                            (KthReal)(*it).child("Weight").attribute("weight").as_double(),
-                            (*it).child("Parent").attribute("name").value(), preTransP);
-                } else {
-                    addLink((*it).attribute("name").value(), dir + (*it).attribute("ivFile").value(),
-                            dir + (*it).attribute("ivFile").value(),
-                            (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
-                            (KthReal)(*it).child("DHPars").attribute("d").as_double(),
-                            (KthReal)(*it).child("DHPars").attribute("a").as_double(),
-                            (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
-                            (*it).child("Description").attribute("rotational").as_bool(),
-                            (*it).child("Description").attribute("movable").as_bool(),
-                            limMin, limMax,
-                            (KthReal)(*it).child("Weight").attribute("weight").as_double(),
-                            (*it).child("Parent").attribute("name").value(), preTransP);
-                }
-
-                //Add the weight. Defaults to 1.0
-                if( i > 0 ){ //First link is ommited because it is the base.
-                    if( (*it).child("Weight") )
-                        _weights->setRnWeigh(i-1,(KthReal)(*it).child("Weight").attribute("weight").as_double());
-                    else{
-                        _weights->setRnWeigh(i-1,(KthReal)1.0);
-                        links[i]->setWeight(1.0); //defaulted to 1, if not added it is put to 0 in the creator!
-                    }
-                }
-
-                i++;
-
-                preTransP = NULL ;//initialize for the next link
-            }
-        }else // the result of the file pasers is bad
-          cout << "The robot file: " << robFile << " can not be read." << std::endl;
-      }
-
-      loc = robFile.find( ".urdf", 0 );
-      dir = "";
-      tmpString = "";
-      if( loc != string::npos ) { // It means that the robot is defined by a *.urdf file
-        dir = robFile.substr(0,robFile.find_last_of("/")+1);
-
-        // Opening the file with the new pugiXML library.
-        xml_document doc;
-        xml_parse_result result = doc.load_file(robFile.c_str());
-
-        //Parse the urdf file
-        if(result){
-            //if file could be loaded
-            urdf_robot robot;
-            xml_node tmpNode = doc.child("robot"); //node containing robot information
-
-            robot.fill(&tmpNode); //fill robot information
-
-
-            //Robot Name
-            name = robot.name;
-
-            //Robot type
-            if( robot.type == "Tree")
-                robType = TREE;
-            else if( robot.type == "Chain")
-                robType = CHAIN;
-            else  if( robot.type == "Freeflying")
-                robType = FREEFLY;
-
-
-            //Type of convention used to define the robot, in case of Chain or Tree
-            if(robType != FREEFLY)
-            {
-                Approach = URDF;
-            }
-
-
-            //Links of the robot
-            int numLinks = robot.num_links;
-
-            // Initialization of the RnConf part of the RobConf for each
-            // special poses, the initial, the goal, the Home and the current poses.
-            _homeConf.setRn( numLinks - 1 );
-            _currentConf.setRn( numLinks - 1 );
-
-            _weights = new RobWeight( numLinks - 1 );
-            //Set the SE3 weights for the distance computations, in case of mobile base
-            if( doc.child("robot").child("WeightSE3") ){
-                KthReal tra = 1.;
-                KthReal rot = 1.;
-                xml_node tmp = doc.child("robot").child("WeightSE3");
-                if( tmp.attribute("rho_t") )
-                    tra = (KthReal) tmp.attribute("rho_t").as_double();
-                if( tmp.attribute("rho_r") )
-                    rot = (KthReal) tmp.attribute("rho_r").as_double();
-                _weights->setSE3Weight( tra, rot );
-            }else
-                _weights->setSE3Weight(1., 1.);
-
-
-
-
-            KthReal* preTransP;
-            KthReal preTrans[7]= {0., 0., 0., 0., 0., 0., 0.};
-            KthReal limMin, limMax;
-            ode_element ode;
-
-            //Loop for all the links
-            for(int i = 0; i < numLinks; i++){
-                preTransP = NULL;
-                limMin = 0;
-                limMax = 0.;
-
-                //Sets the Pretransfomation from parent's frame to joint's frame
-                if (i > 0) {
-                    preTransP = preTrans;
-                    preTrans[0] = (KthReal)robot.link[i].origin.xyz[0];//x translation
-                    preTrans[1] = (KthReal)robot.link[i].origin.xyz[1];//y translation
-                    preTrans[2] = (KthReal)robot.link[i].origin.xyz[2];//z translation
-                    preTrans[3] = (KthReal)robot.link[i].origin.r;//roll rotation
-                    preTrans[4] = (KthReal)robot.link[i].origin.p;//yaw rotation
-                    preTrans[5] = (KthReal)robot.link[i].origin.y;//pitch rotation
-                    preTrans[6] = 0.;//unused parameter
-                }
-
-                //Sets the limits of the joint
-                limMin = (KthReal)robot.link[i].limit.lower;
-                limMax = (KthReal)robot.link[i].limit.upper;
-
-                //Set ode parameters
-                ode.dynamics.damping = robot.link[i].dynamics.damping;
-                ode.dynamics.friction = robot.link[i].dynamics.friction;
-                ode.inertial.inertia.ixx = robot.link[i].inertial.inertia.ixx;
-                ode.inertial.inertia.ixy = robot.link[i].inertial.inertia.ixy;
-                ode.inertial.inertia.ixz = robot.link[i].inertial.inertia.ixz;
-                ode.inertial.inertia.iyy = robot.link[i].inertial.inertia.iyy;
-                ode.inertial.inertia.iyz = robot.link[i].inertial.inertia.iyz;
-                ode.inertial.inertia.izz = robot.link[i].inertial.inertia.izz;
-                ode.inertial.inertia.matrix = robot.link[i].inertial.inertia.matrix;
-                ode.inertial.mass = robot.link[i].inertial.mass;
-                ode.inertial.origin.xyz = robot.link[i].inertial.origin.xyz;
-                ode.inertial.origin.r = robot.link[i].inertial.origin.r;
-                ode.inertial.origin.p = robot.link[i].inertial.origin.p;
-                ode.inertial.origin.y = robot.link[i].inertial.origin.y;
-                ode.inertial.origin.transform = robot.link[i].inertial.origin.transform;
-                ode.contact_coefficients.mu = robot.link[i].contact_coefficients.mu;
-                ode.contact_coefficients.kp = robot.link[i].contact_coefficients.kp;
-                ode.contact_coefficients.kd = robot.link[i].contact_coefficients.kd;
-                ode.limit.effort = robot.link[i].limit.effort;
-                ode.limit.velocity = robot.link[i].limit.velocity;
-                ode.limit.lower = robot.link[i].limit.lower;
-                ode.limit.upper = robot.link[i].limit.upper;
-
-                //Create the link
-                addLink(robot.link[i].name,dir + robot.link[i].visual.ivfile,
-                        dir + robot.link[i].collision.ivfile,
-                        (KthReal)robot.link[i].visual.scale,
-                        robot.link[i].axis,robot.link[i].type == "revolute",
-                        robot.link[i].type != "fixed",limMin,
-                        limMax,robot.link[i].weight,robot.link[i].parent,preTransP,ode);
-
-                //Add the weight. Defaults to 1.0
-                if( i > 0 ){ //First link is ommited because it is the base.
-                    _weights->setRnWeigh(i-1,(KthReal)robot.link[i].weight);
-                }
-            }
-
-
-        }else // the result of the file pasers is bad
-          cout << "The robot file: " << robFile << " can not be read." << std::endl;
-      }
-
-      armed = true;
-
-      //Initialize the limits to 0.
-      for(int i=0; i<7; i++)
-        _spatialLimits[i][0] = _spatialLimits[i][1] = (KthReal) 0.0;
-
-
-      //Set nTrunk
-      if (links.size() > 0) {
-          if (robType == TREE) {
-              Link *link = links.at(0);//starting from the base
-              nTrunk = 1;
-              bool trunk_end = false;
-              while (!trunk_end && nTrunk <= links.size()) {
-                  if (link->numChilds() > 1) {
-                      //trunk's end was found
-                      trunk_end = true;
-                  } else {
-                      //load next link
-                      link = link->getChild(0);
-                      nTrunk++;
-                  }
-              }
-          } else {
-              nTrunk = links.size();
+  /*! Constructor for a robot.
+   *  \param robFile is an xml file with extension *.dh or *.urdf
+   *  \param robScale is a global scale for all the links
+   *  \param lib identifies wether PQP or SOLID collision libs are used
+   */
+  Robot::Robot(string robFile, KthReal robScale, LIBUSED lib) {
+      //set initial values
+      _linkPathDrawn = -1;
+      nTrunk = 0;
+      libs = lib;
+      scale = robScale;
+      armed = false;
+      se3Enabled = false;
+      _autocoll = false;
+      _hasChanged = false;
+      //Inialization of SE3 configurations.
+      _homeConf.setSE3();
+      _currentConf.setSE3();
+      _ikine = NULL;
+      _constrainKin = NULL;
+      _weights = NULL;
+      visModel = NULL;
+      collModel = NULL;
+      _graphicalPath = NULL;
+      for (int i = 0; i < 7; i++) {
+          for (int j = 0; j < 2; j++) {
+              _homeLimits[i][j] = 0.;
+              _spatialLimits[i][j] = 0.;
           }
       }
-    }else{ // File does not exists.
-      fin.close();
-      cout << "The Robot file: " << robFile << "doesn't exist. Please confirm it." << endl;
-    }
 
-    //restoring environtment values
-    setlocale (LC_NUMERIC, old);
+      //open the file
+      fstream fin;
+      fin.open(robFile.c_str(),ios::in);
+      if (fin.is_open()){// The file already exists.
+          fin.close();
+
+          string extension = robFile.substr(robFile.find_last_of(".")+1);
+
+          if (extension == "dh") {
+              armed = setFromdhFile(robFile);
+          } else if (extension == "urdf") {
+              armed = setFromurdfFile(robFile);
+          } else if (extension == "iv" || extension == "wrl") {
+              armed = setFromivFile(robFile);
+          } else {
+              cout << "The Robot file: " << robFile << " has an incorrect extension. "
+                   << "Accepted file format are dh, urdf, iv or wrl" << endl;
+          }
+
+          if (armed) {
+              //Initialize the limits to 0.
+              for(int i=0; i<7; i++)
+                  _spatialLimits[i][0] = _spatialLimits[i][1] = (KthReal) 0.0;
+
+              //Set nTrunk
+              if (links.size() > 0) {
+                  if (robType == TREE) {
+                      Link *link = links.at(0);//starting from the base
+                      nTrunk = 1;
+                      bool trunk_end = false;
+                      while (!trunk_end && nTrunk <= links.size()) {
+                          if (link->numChilds() > 1) {
+                              //trunk's end was found
+                              trunk_end = true;
+                          } else {
+                              //load next link
+                              link = link->getChild(0);
+                              nTrunk++;
+                          }
+                      }
+                  } else {
+                      nTrunk = links.size();
+                  }
+              }
+          }
+      } else {// File does not exists
+          fin.close();
+          cout << "The Robot file: " << robFile << "doesn't exist. Please confirm it." << endl;
+      }
   }
 
- /*!
+
+  bool Robot::setFromdhFile(string robFile) {
+      //setting numeric parameter to avoid convertions problems
+      char *old = setlocale(LC_NUMERIC, "C");
+
+      const KthReal toRad = M_PI/180.;
+      string dir = robFile.substr(0,robFile.find_last_of("/")+1);
+      string tmpString = "";
+
+      // Opening the file with the new pugiXML library.
+      xml_document doc;
+
+      //Parse the rob file
+      if (doc.load_file(robFile.c_str())) {
+          //Robot Name
+          name = doc.child("Robot").attribute("name").value();
+
+          //Robot type
+          tmpString = doc.child("Robot").attribute("robType").value();
+          if (tmpString == "Tree") {
+              robType = TREE;
+          } else if (tmpString == "Chain") {
+              robType = CHAIN;
+          } else  if (tmpString == "Freeflying") {
+              robType = FREEFLY;
+          } else {
+              cout << "Error in Robot file: " << robFile <<
+                      "Robottype must be set to either Chain, Tree or Freeflying" << endl;
+
+              //restoring environtment values
+              setlocale(LC_NUMERIC,old);
+              return false;
+          }
+
+          //Type of convention used to define the robot, in case of Chain or Tree
+          if (tmpString != "Freeflying") {
+              tmpString = doc.child("Robot").attribute("DHType").value();
+              if (tmpString == "Standard") {
+                  Approach = DHSTANDARD;
+              } else {
+                  Approach = DHMODIFIED;
+              }
+          }
+
+
+          //Links of the robot
+          int numLinks = doc.child("Robot").child("Joints").attribute("size").as_int();
+
+          // Initialization of the RnConf part of the RobConf for each
+          // special poses, the initial, the goal, the Home and the current poses.
+          _homeConf.setRn( numLinks - 1 );
+          _currentConf.setRn( numLinks - 1 );
+
+          _weights = new RobWeight( numLinks - 1 );
+          //Set the SE3 weights for the distance computations, in case of mobile base
+          if (doc.child("Robot").child("WeightSE3")) {
+              KthReal tra = 1.;
+              KthReal rot = 1.;
+              xml_node tmp = doc.child("Robot").child("WeightSE3");
+              if( tmp.attribute("rho_t") )
+                  tra = (KthReal) tmp.attribute("rho_t").as_double();
+              if( tmp.attribute("rho_r") )
+                  rot = (KthReal) tmp.attribute("rho_r").as_double();
+              _weights->setSE3Weight(tra,rot);
+          } else {
+              _weights->setSE3Weight(1., 1.);
+          }
+
+          xml_node linkNode = doc.child("Robot").child("Joints");
+          KthReal* preTransP = NULL;
+          KthReal preTrans[7] = {0., 0., 0., 0., 0., 0., 0.};
+          int i = 0;
+          KthReal limMin = 0.;
+          KthReal limMax = 0.;
+
+          //Loop for all the links
+          for (xml_node_iterator it = linkNode.begin(); it != linkNode.end(); ++it) {
+              //Sets the Pretransfomation needed when DH parameters are not able to secify the transform between links
+              //used for instance in the definition of the transofrms between tha palm and the finger bases in the SAH hand
+              xml_node preTNode = (*it).child("PreTrans");
+              if (preTNode != NULL) {
+                  preTransP = preTrans;
+                  preTrans[0] = (KthReal)preTNode.attribute("X").as_double();
+                  preTrans[1] = (KthReal)preTNode.attribute("Y").as_double();
+                  preTrans[2] = (KthReal)preTNode.attribute("Z").as_double();
+                  preTrans[3] = (KthReal)preTNode.attribute("WX").as_double();
+                  preTrans[4] = (KthReal)preTNode.attribute("WY").as_double();
+                  preTrans[5] = (KthReal)preTNode.attribute("WZ").as_double();
+                  preTrans[6] = (KthReal)preTNode.attribute("TH").as_double() * toRad;
+              }
+
+              //Sets the limits of the joint
+              limMin = (KthReal)(*it).child("Limits").attribute("Low").as_double();
+              limMax = (KthReal)(*it).child("Limits").attribute("Hi").as_double();
+              if ((*it).child("Description").attribute("rotational").as_bool()) {
+                  limMin *= toRad;
+                  limMax *= toRad;
+              }
+
+              //Create the link
+              if ((*it).attribute("collision_ivFile")) {
+                  addLink((*it).attribute("name").value(), dir + (*it).attribute("ivFile").value(),
+                          dir + (*it).attribute("collision_ivFile").value(),
+                          (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
+                          (KthReal)(*it).child("DHPars").attribute("d").as_double(),
+                          (KthReal)(*it).child("DHPars").attribute("a").as_double(),
+                          (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
+                          (*it).child("Description").attribute("rotational").as_bool(),
+                          (*it).child("Description").attribute("movable").as_bool(),
+                          limMin, limMax,
+                          (KthReal)(*it).child("Weight").attribute("weight").as_double(),
+                          (*it).child("Parent").attribute("name").value(), preTransP);
+              } else {
+                  addLink((*it).attribute("name").value(), dir + (*it).attribute("ivFile").value(),
+                          dir + (*it).attribute("ivFile").value(),
+                          (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
+                          (KthReal)(*it).child("DHPars").attribute("d").as_double(),
+                          (KthReal)(*it).child("DHPars").attribute("a").as_double(),
+                          (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
+                          (*it).child("Description").attribute("rotational").as_bool(),
+                          (*it).child("Description").attribute("movable").as_bool(),
+                          limMin, limMax,
+                          (KthReal)(*it).child("Weight").attribute("weight").as_double(),
+                          (*it).child("Parent").attribute("name").value(), preTransP);
+              }
+
+              if (!((Link*)links.at(i))->isArmed()) {
+                  //restoring environtment values
+                  setlocale(LC_NUMERIC,old);
+                  return false;
+              }
+
+              //Add the weight. Defaults to 1.0
+              if (i > 0) { //First link is ommited because it is the base.
+                  if ((*it).child("Weight")) {
+                      _weights->setRnWeigh(i-1,(KthReal)(*it).child("Weight").attribute("weight").as_double());
+                  } else {
+                      _weights->setRnWeigh(i-1,(KthReal)1.0);
+                      links[i]->setWeight(1.0); //defaulted to 1, if not added it is put to 0 in the creator!
+                  }
+              }
+
+              i++;
+
+              preTransP = NULL ;//initialize for the next link
+          }
+
+          //restoring environtment values
+          setlocale(LC_NUMERIC,old);
+          return true;
+      } else {// the result of the file parser is bad
+          cout << "The Robot file: " << robFile << " can not be read." << endl;
+
+          //restoring environtment values
+          setlocale(LC_NUMERIC,old);
+          return false;
+      }
+  }
+
+
+  bool Robot::setFromurdfFile(string robFile) {
+      //setting numeric parameter to avoid convertions problems
+      char *old = setlocale(LC_NUMERIC, "C");
+
+      const KthReal toRad = M_PI/180.;
+      string dir = robFile.substr(0,robFile.find_last_of("/")+1);
+      string tmpString = "";
+
+      // Opening the file with the new pugiXML library.
+      xml_document doc;
+
+      //Parse the urdf file
+      if (doc.load_file(robFile.c_str())) {
+          //if file could be loaded
+          urdf_robot robot;
+          xml_node tmpNode = doc.child("robot"); //node containing robot information
+
+          robot.fill(&tmpNode); //fill robot information
+
+          //Robot Name
+          name = robot.name;
+
+          //Robot type
+          if (robot.type == "Tree") {
+              robType = TREE;
+          } else if (robot.type == "Chain") {
+              robType = CHAIN;
+          } else  if (robot.type == "Freeflying") {
+              robType = FREEFLY;
+          } else {
+              cout << "Error in Robot file: " << robFile <<
+                      "Robottype must be set to either Chain, Tree or Freeflying" << endl;
+
+              //restoring environtment values
+              setlocale(LC_NUMERIC,old);
+              return false;
+          }
+
+          //Type of convention used to define the robot, in case of Chain or Tree
+          if (robType != FREEFLY) {
+              Approach = URDF;
+          }
+
+          //Links of the robot
+          int numLinks = robot.num_links;
+
+          // Initialization of the RnConf part of the RobConf for each
+          // special poses, the initial, the goal, the Home and the current poses.
+          _homeConf.setRn(numLinks - 1);
+          _currentConf.setRn(numLinks - 1);
+
+          _weights = new RobWeight(numLinks - 1);
+          //Set the SE3 weights for the distance computations, in case of mobile base
+          if (doc.child("robot").child("WeightSE3")) {
+              KthReal tra = 1.;
+              KthReal rot = 1.;
+              xml_node tmp = doc.child("robot").child("WeightSE3");
+              if( tmp.attribute("rho_t") )
+                  tra = (KthReal) tmp.attribute("rho_t").as_double();
+              if( tmp.attribute("rho_r") )
+                  rot = (KthReal) tmp.attribute("rho_r").as_double();
+              _weights->setSE3Weight( tra, rot );
+          } else {
+              _weights->setSE3Weight(1., 1.);
+          }
+
+          KthReal* preTransP;
+          KthReal preTrans[7]= {0., 0., 0., 0., 0., 0., 0.};
+          KthReal limMin, limMax;
+          ode_element ode;
+
+          //Loop for all the links
+          for (int i = 0; i < numLinks; i++) {
+              preTransP = NULL;
+              limMin = 0;
+              limMax = 0.;
+
+              //Sets the Pretransfomation from parent's frame to joint's frame
+              if (i > 0) {
+                  preTransP = preTrans;
+                  preTrans[0] = (KthReal)robot.link[i].origin.xyz[0];//x translation
+                  preTrans[1] = (KthReal)robot.link[i].origin.xyz[1];//y translation
+                  preTrans[2] = (KthReal)robot.link[i].origin.xyz[2];//z translation
+                  preTrans[3] = (KthReal)robot.link[i].origin.r;//roll rotation
+                  preTrans[4] = (KthReal)robot.link[i].origin.p;//yaw rotation
+                  preTrans[5] = (KthReal)robot.link[i].origin.y;//pitch rotation
+                  preTrans[6] = 0.;//unused parameter
+              }
+
+              //Sets the limits of the joint
+              limMin = (KthReal)robot.link[i].limit.lower;
+              limMax = (KthReal)robot.link[i].limit.upper;
+
+              //Set ode parameters
+              ode.dynamics.damping = robot.link[i].dynamics.damping;
+              ode.dynamics.friction = robot.link[i].dynamics.friction;
+              ode.inertial.inertia.ixx = robot.link[i].inertial.inertia.ixx;
+              ode.inertial.inertia.ixy = robot.link[i].inertial.inertia.ixy;
+              ode.inertial.inertia.ixz = robot.link[i].inertial.inertia.ixz;
+              ode.inertial.inertia.iyy = robot.link[i].inertial.inertia.iyy;
+              ode.inertial.inertia.iyz = robot.link[i].inertial.inertia.iyz;
+              ode.inertial.inertia.izz = robot.link[i].inertial.inertia.izz;
+              ode.inertial.inertia.matrix = robot.link[i].inertial.inertia.matrix;
+              ode.inertial.mass = robot.link[i].inertial.mass;
+              ode.inertial.origin.xyz = robot.link[i].inertial.origin.xyz;
+              ode.inertial.origin.r = robot.link[i].inertial.origin.r;
+              ode.inertial.origin.p = robot.link[i].inertial.origin.p;
+              ode.inertial.origin.y = robot.link[i].inertial.origin.y;
+              ode.inertial.origin.transform = robot.link[i].inertial.origin.transform;
+              ode.contact_coefficients.mu = robot.link[i].contact_coefficients.mu;
+              ode.contact_coefficients.kp = robot.link[i].contact_coefficients.kp;
+              ode.contact_coefficients.kd = robot.link[i].contact_coefficients.kd;
+              ode.limit.effort = robot.link[i].limit.effort;
+              ode.limit.velocity = robot.link[i].limit.velocity;
+              ode.limit.lower = robot.link[i].limit.lower;
+              ode.limit.upper = robot.link[i].limit.upper;
+
+              //Create the link
+              addLink(robot.link[i].name,dir + robot.link[i].visual.ivfile,
+                      dir + robot.link[i].collision.ivfile,
+                      (KthReal)robot.link[i].visual.scale,
+                      robot.link[i].axis,robot.link[i].type == "revolute",
+                      robot.link[i].type != "fixed",limMin,
+                      limMax,robot.link[i].weight,robot.link[i].parent,preTransP,ode);
+
+              if (!((Link*)links.at(i))->isArmed()) {
+                  //restoring environtment values
+                  setlocale(LC_NUMERIC,old);
+                  return false;
+              }
+
+              //Add the weight. Defaults to 1.0
+              if (i > 0) { //First link is ommited because it is the base.
+                  _weights->setRnWeigh(i-1,(KthReal)robot.link[i].weight);
+              }
+          }
+
+          //restoring environtment values
+          setlocale(LC_NUMERIC,old);
+          return true;
+      } else {// the result of the file parser is bad
+          cout << "The Robot file: " << robFile << " can not be read." << endl;
+
+          //restoring environtment values
+          setlocale(LC_NUMERIC,old);
+          return false;
+      }
+  }
+
+
+  bool Robot::setFromivFile(string robFile) {
+      char *old = setlocale(LC_NUMERIC, "C");
+
+      //Robot Name
+      int pos = robFile.find_last_of("/")+1;
+      name = robFile.substr(pos,robFile.find_last_of(".")-pos);
+
+      //Robot type
+      robType = FREEFLY;
+
+      // Initialization of the RnConf part of the RobConf for each
+      // special poses, the initial, the goal, the Home and the current poses.
+      _homeConf.setRn(0);
+      _currentConf.setRn(0);
+
+      _weights = new RobWeight(0);
+      _weights->setSE3Weight(1., 1.);
+
+      addLink("Base", robFile, robFile, 0, 0, 0, 0, false, true, 0, 0, 1, "", NULL);
+
+      //restoring environtment values
+      setlocale(LC_NUMERIC,old);
+
+      return (((Link*)links.at(0))->isArmed());
+  }
+
+
+  /*!
   * Computes the transform between an object and a link that will be used to
   * update the object pose when the link is moved.
   * \param obs is a pointer to the obstacle to be attached.
   * \param linkName is the name of the link to which the object is to be attached.
  */
   bool Robot::attachObject(Robot* obs, string linkName ){
-    try{
-      attObj newObj;
-      newObj.obs = obs;
-      newObj.link = getLinkByName( linkName );
-      mt::Transform tmpO;
-      KthReal* pos = obs->getLink(0)->getElement()->getPosition();
-      tmpO.setTranslation( mt::Point3(pos[0], pos[1], pos[2] ) );
-      pos = obs->getLink(0)->getElement()->getOrientation();
-      tmpO.setRotation( mt::Rotation( pos[0], pos[1], pos[2], pos[3] ) );
-      newObj.trans = newObj.link->getTransformation()->inverse() * tmpO;
-      _attachedObject.push_back( newObj );
-      return true;
-    }catch(...){
-      return false;
-    }
+      try{
+          attObj newObj;
+          newObj.obs = obs;
+          newObj.link = getLinkByName( linkName );
+          mt::Transform tmpO;
+          KthReal* pos = obs->getLink(0)->getElement()->getPosition();
+          tmpO.setTranslation( mt::Point3(pos[0], pos[1], pos[2] ) );
+          pos = obs->getLink(0)->getElement()->getOrientation();
+          tmpO.setRotation( mt::Rotation( pos[0], pos[1], pos[2], pos[3] ) );
+          newObj.trans = newObj.link->getTransformation()->inverse() * tmpO;
+          _attachedObject.push_back( newObj );
+          return true;
+      }catch(...){
+          return false;
+      }
   }
 
   /*!
     * The returned value gives a rough idea of the dimension of the links.
     */
   KthReal Robot::maxDHParameter(){
-    KthReal maxim=0.;
-    for(size_t i = 0; i < links.size(); ++i){
-      maxim = getLink(i)->getA() > maxim ? getLink(i)->getA(): maxim;
-      maxim = getLink(i)->getD() > maxim ? getLink(i)->getD(): maxim;
-    }
-    return maxim;
+      KthReal maxim=0.;
+      for(size_t i = 0; i < links.size(); ++i){
+          maxim = getLink(i)->getA() > maxim ? getLink(i)->getA(): maxim;
+          maxim = getLink(i)->getD() > maxim ? getLink(i)->getD(): maxim;
+      }
+      return maxim;
   }
 
 
@@ -476,49 +545,49 @@ namespace Kautham {
    * and the mt::Transform calculated on the attached instant.
    */
   void Robot::moveAttachedObj(){
-    KthReal pos[3]={0.};
-    KthReal ori[4]={0.};
-    list<attObj>::iterator it = _attachedObject.begin();
-    for( it = _attachedObject.begin(); it != _attachedObject.end(); ++it){
-      mt::Transform tmp = *((*it).link->getTransformation());
-      tmp *= (*it).trans;
-      pos[0] = tmp.getTranslation().at(0);
-      pos[1] = tmp.getTranslation().at(1);
-      pos[2] = tmp.getTranslation().at(2);
-      (*it).obs->getLink(0)->getElement()->setPosition( pos );
+      KthReal pos[3]={0.};
+      KthReal ori[4]={0.};
+      list<attObj>::iterator it = _attachedObject.begin();
+      for( it = _attachedObject.begin(); it != _attachedObject.end(); ++it){
+          mt::Transform tmp = *((*it).link->getTransformation());
+          tmp *= (*it).trans;
+          pos[0] = tmp.getTranslation().at(0);
+          pos[1] = tmp.getTranslation().at(1);
+          pos[2] = tmp.getTranslation().at(2);
+          (*it).obs->getLink(0)->getElement()->setPosition( pos );
 
-      ori[0] = tmp.getRotation().at(0);
-      ori[1] = tmp.getRotation().at(1);
-      ori[2] = tmp.getRotation().at(2);
-      ori[3] = tmp.getRotation().at(3);
-      (*it).obs->getLink(0)->getElement()->setOrientation( ori );
-    }
+          ori[0] = tmp.getRotation().at(0);
+          ori[1] = tmp.getRotation().at(1);
+          ori[2] = tmp.getRotation().at(2);
+          ori[3] = tmp.getRotation().at(3);
+          (*it).obs->getLink(0)->getElement()->setOrientation( ori );
+      }
   }
 
   /*!
    *
    */
   bool Robot::detachObject( string linkName ){
-    bool found = false;
-    list<attObj>::iterator it = _attachedObject.begin();
-    for( it = _attachedObject.begin(); it != _attachedObject.end(); ++it){
-      if((*it).toLink( linkName )){
-        _attachedObject.erase(it);
-        found = true;
+      bool found = false;
+      list<attObj>::iterator it = _attachedObject.begin();
+      for( it = _attachedObject.begin(); it != _attachedObject.end(); ++it){
+          if((*it).toLink( linkName )){
+              _attachedObject.erase(it);
+              found = true;
+          }
       }
-    }
-    return found;
+      return found;
   }
 
   /*!
    *
    */
   Link* Robot::getLinkByName( string linkName ){
-    for(size_t i=0; i < links.size(); ++i){
-      if(links[i]->getName() == linkName )
-        return links[i];
-    }
-    return NULL;
+      for(size_t i=0; i < links.size(); ++i){
+          if(links[i]->getName() == linkName )
+              return links[i];
+      }
+      return NULL;
   }
 
 
@@ -526,12 +595,12 @@ namespace Kautham {
    *
    */
   string Robot::getDOFNames(){
-    string tmp = "X|Y|Z|X1|X2|X3";
-    for(unsigned int i = 1; i< links.size(); i++){
-      tmp.append("|");
-      tmp.append(links[i]->getName());
-    }
-    return tmp;
+      string tmp = "X|Y|Z|X1|X2|X3";
+      for(unsigned int i = 1; i< links.size(); i++){
+          tmp.append("|");
+          tmp.append(links[i]->getName());
+      }
+      return tmp;
   }
 
 
@@ -542,49 +611,49 @@ namespace Kautham {
    *    of position and four of orientation (axis-angle)
    */
   bool Robot::setLimits(int member, KthReal min, KthReal max){
-	  if(member >= 0 && member < 7){
-		  _spatialLimits[member][0] = min;
-		  _spatialLimits[member][1] = max;
-		  // It needs to recalculate the limits in home frame.
-		  recalculateHomeLimits();
-		  return true;
-	  }
-	  return false;
+      if(member >= 0 && member < 7){
+          _spatialLimits[member][0] = min;
+          _spatialLimits[member][1] = max;
+          // It needs to recalculate the limits in home frame.
+          recalculateHomeLimits();
+          return true;
+      }
+      return false;
   }
 
   /*!
    *
    */
   void Robot::recalculateHomeLimits(){
-    mt::Point3 Pmin_W(_spatialLimits[0][0], _spatialLimits[1][0], _spatialLimits[2][0]);
-    mt::Point3 Pmax_W(_spatialLimits[0][1], _spatialLimits[1][1], _spatialLimits[2][1]);
-    mt::Point3 Pmin_H, Pmax_H;
-    mt::Transform homeInv = _homeTrans.inverse();
-    Pmin_H = homeInv*Pmin_W;
-    Pmax_H = homeInv*Pmax_W;
-    if( Pmin_H[0] == Pmax_H[0]){
-      _homeLimits[0][0] = 0;                // Sets the Xmin in home frame
-      _homeLimits[0][1] = 0;                // Sets the Xmax in home frame
-    }else{
-      _homeLimits[0][0] = Pmin_H[0];        // Sets the Xmin in home frame
-      _homeLimits[0][1] = Pmax_H[0];        // Sets the Xmax in home frame
-    }
+      mt::Point3 Pmin_W(_spatialLimits[0][0], _spatialLimits[1][0], _spatialLimits[2][0]);
+      mt::Point3 Pmax_W(_spatialLimits[0][1], _spatialLimits[1][1], _spatialLimits[2][1]);
+      mt::Point3 Pmin_H, Pmax_H;
+      mt::Transform homeInv = _homeTrans.inverse();
+      Pmin_H = homeInv*Pmin_W;
+      Pmax_H = homeInv*Pmax_W;
+      if( Pmin_H[0] == Pmax_H[0]){
+          _homeLimits[0][0] = 0;                // Sets the Xmin in home frame
+          _homeLimits[0][1] = 0;                // Sets the Xmax in home frame
+      }else{
+          _homeLimits[0][0] = Pmin_H[0];        // Sets the Xmin in home frame
+          _homeLimits[0][1] = Pmax_H[0];        // Sets the Xmax in home frame
+      }
 
-    if( Pmin_H[1] == Pmax_H[1]){
-      _homeLimits[1][0] = 0;                // Sets the Xmin in home frame
-      _homeLimits[1][1] = 0;                // Sets the Xmax in home frame
-    }else{
-      _homeLimits[1][0] = Pmin_H[1];        // Sets the Ymin in home frame
-      _homeLimits[1][1] = Pmax_H[1];        // Sets the Ymax in home frame
-    }
+      if( Pmin_H[1] == Pmax_H[1]){
+          _homeLimits[1][0] = 0;                // Sets the Xmin in home frame
+          _homeLimits[1][1] = 0;                // Sets the Xmax in home frame
+      }else{
+          _homeLimits[1][0] = Pmin_H[1];        // Sets the Ymin in home frame
+          _homeLimits[1][1] = Pmax_H[1];        // Sets the Ymax in home frame
+      }
 
-    if( Pmin_H[2] == Pmax_H[2]){
-      _homeLimits[2][0] = 0;                // Sets the Xmin in home frame
-      _homeLimits[2][1] = 0;                // Sets the Xmax in home frame
-    }else{
-      _homeLimits[2][0] = Pmin_H[2];        // Sets the Zmin in home frame
-      _homeLimits[2][1] = Pmax_H[2];        // Sets the Zmax in home frame
-    }
+      if( Pmin_H[2] == Pmax_H[2]){
+          _homeLimits[2][0] = 0;                // Sets the Xmin in home frame
+          _homeLimits[2][1] = 0;                // Sets the Xmax in home frame
+      }else{
+          _homeLimits[2][0] = Pmin_H[2];        // Sets the Zmin in home frame
+          _homeLimits[2][1] = Pmax_H[2];        // Sets the Zmax in home frame
+      }
 
   }
 
@@ -593,121 +662,121 @@ namespace Kautham {
    *
    */
   bool Robot::setConstrainedKinematic(CONSTRAINEDKINEMATICS type){
-    switch(type){
+      switch(type){
       case Kautham::UNCONSTRAINED:
-        _constrainKin = NULL;
-        break;
+          _constrainKin = NULL;
+          break;
 #if defined(KAUTHAM_USE_GUIBRO)
       case Kautham::BRONCHOSCOPY:
-        _constrainKin = new GUIBRO::ConsBronchoscopyKin(this);
-        break;
+          _constrainKin = new GUIBRO::ConsBronchoscopyKin(this);
+          break;
 #endif
       default:
-        cout << "The Constrained Kinematic model has not be configured properly.\n" <<
-          "See the ConsBronchoscopyKin of the Robot class to call the constructor. " << endl;
-        _constrainKin = NULL;
-        return false;
-    }
-    return true;
+          cout << "The Constrained Kinematic model has not be configured properly.\n" <<
+                  "See the ConsBronchoscopyKin of the Robot class to call the constructor. " << endl;
+          _constrainKin = NULL;
+          return false;
+      }
+      return true;
   }
 
   /*!
    *
    */
   bool Robot::setConstrainedKinematicParameter(string name, KthReal value){
-    if( _constrainKin != NULL)
-      return _constrainKin->setParameter(name, value);
-    return false;
+      if( _constrainKin != NULL)
+          return _constrainKin->setParameter(name, value);
+      return false;
   }
 
   /*!
    *
    */
   RobConf& Robot::ConstrainedKinematics(vector<KthReal> &target){
-    if(_constrainKin != NULL){
-      //First i try to connect to the remote object
-      //if this pointer is not null, the object has been instantiate correctly.
-      _constrainKin->setTarget(target);
-      if(_constrainKin->solve()){
-		    return _constrainKin->getRobConf();
+      if(_constrainKin != NULL){
+          //First i try to connect to the remote object
+          //if this pointer is not null, the object has been instantiate correctly.
+          _constrainKin->setTarget(target);
+          if(_constrainKin->solve()){
+              return _constrainKin->getRobConf();
+          }
       }
-    }
-    return _currentConf;
+      return _currentConf;
   }
 
   /*!
    *
    */
   bool Robot::setInverseKinematic(INVKINECLASSES type){
-    switch(type){
+      switch(type){
       case Kautham::RR2D:
-        _ikine = new IvKin2DRR(this);
-        break;
+          _ikine = new IvKin2DRR(this);
+          break;
       case Kautham::TX90:
-        _ikine = new IvKinTx90(this);
-        break;
+          _ikine = new IvKinTx90(this);
+          break;
       case Kautham::HAND:
-        _ikine = new IvKinHand(this);
-        break;
+          _ikine = new IvKinHand(this);
+          break;
       case Kautham::TX90HAND:
-        _ikine = new IvKinTxHand(this);
-        break;
+          _ikine = new IvKinTxHand(this);
+          break;
       case Kautham::UR5:
-        _ikine = new IvKinUR5(this);
-      break;
+          _ikine = new IvKinUR5(this);
+          break;
       default:
-        cout << "The new Inverse Kinematic model have not been configured properly.\n" <<
-          "See the setInverseKinematic of the Robot class to call the constructor. " << endl;
-        _ikine = NULL;
-        return false;
-    }
-    return true;
+          cout << "The new Inverse Kinematic model have not been configured properly.\n" <<
+                  "See the setInverseKinematic of the Robot class to call the constructor. " << endl;
+          _ikine = NULL;
+          return false;
+      }
+      return true;
   }
 
   /*!
    *
    */
   bool Robot::setInverseKinematicParameter(string name, KthReal value){
-    if( _ikine != NULL)
-      return _ikine->setParameter(name, value);
-    return false;
+      if( _ikine != NULL)
+          return _ikine->setParameter(name, value);
+      return false;
   }
 
   /*!
    *
    */
   bool Robot::Kinematics(RobConf *robq) {
-    bool se = Kinematics(robq->getSE3());
-    if(se && Kinematics(robq->getRn()))
-      return true;
-    else
-      return false;
+      bool se = Kinematics(robq->getSE3());
+      if(se && Kinematics(robq->getRn()))
+          return true;
+      else
+          return false;
   }
 
   /*!
    *
    */
   bool Robot::Kinematics(RobConf& robq) {
-    bool se = Kinematics(robq.getSE3());
-    if(se && Kinematics(robq.getRn()))
-      return true;
-    else
-      return false;
+      bool se = Kinematics(robq.getSE3());
+      if(se && Kinematics(robq.getRn()))
+          return true;
+      else
+          return false;
   }
 
   /*!
    *
    */
   bool Robot::Kinematics(SE3Conf& q) {
-    vector<KthReal>& coor = q.getCoordinates();
+      vector<KthReal>& coor = q.getCoordinates();
 
-    links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], coor[2]));
-    links[0]->getTransformation()->setRotation(Rotation(coor[3], coor[4], coor[5], coor[6]));
-    links[0]->forceChange(NULL);
+      links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], coor[2]));
+      links[0]->getTransformation()->setRotation(Rotation(coor[3], coor[4], coor[5], coor[6]));
+      links[0]->forceChange(NULL);
 
-    _currentConf.setSE3(q);
-    updateRobot();
-    return true;
+      _currentConf.setSE3(q);
+      updateRobot();
+      return true;
   }
 
   /*!
@@ -715,7 +784,7 @@ namespace Kautham {
    */
   bool Robot::Kinematics(RnConf& q) {
 
-	  /*
+      /*
     if(q.getDim() == getNumJoints()){
       for(int i = 0; i < q.getDim(); i++)
         links[i+1]->setValue(q.getCoordinate(i));
@@ -726,33 +795,33 @@ namespace Kautham {
       return true;
     }else
       return false;
-	  */
+      */
 
-	  if(q.getDim() > getNumJoints()) return false;
+      if(q.getDim() > getNumJoints()) return false;
 
-	  int n = getNumJoints();
-	  if(q.getDim() < n){
-		  RnConf q2(n);
-		  int i;
-		  std::vector<KthReal> coords(n);
-		  for(i = 0; i < q.getDim(); i++) coords[i]=q.getCoordinate(i);
-		  for(; i < n; i++) coords[i]=0.0;
-		  q2.setCoordinates(coords);
+      int n = getNumJoints();
+      if(q.getDim() < n){
+          RnConf q2(n);
+          int i;
+          vector<KthReal> coords(n);
+          for(i = 0; i < q.getDim(); i++) coords[i]=q.getCoordinate(i);
+          for(; i < n; i++) coords[i]=0.0;
+          q2.setCoordinates(coords);
 
-		  for(int i = 0; i < q2.getDim(); i++)
-			  links[i+1]->setValue(q2.getCoordinate(i));
+          for(int i = 0; i < q2.getDim(); i++)
+              links[i+1]->setValue(q2.getCoordinate(i));
 
-		  _currentConf.setRn(q2);
-	  }
-	  else{ //q.getDim() == getNumJoints()
-		  for(int i = 0; i < q.getDim(); i++)
-			  links[i+1]->setValue(q.getCoordinate(i));
+          _currentConf.setRn(q2);
+      }
+      else{ //q.getDim() == getNumJoints()
+          for(int i = 0; i < q.getDim(); i++)
+              links[i+1]->setValue(q.getCoordinate(i));
 
-		  _currentConf.setRn(q);
-	  }
+          _currentConf.setRn(q);
+      }
 
-    updateRobot();
-    return true;
+      updateRobot();
+      return true;
   }
 
 
@@ -764,39 +833,39 @@ namespace Kautham {
    * Rn the robot change the articular values.
    */
   bool Robot::Kinematics(Conf *q) {
-    vector<KthReal>& coor = q->getCoordinates();
+      vector<KthReal>& coor = q->getCoordinates();
 
-    //cout << "q.gettype "<<q->getType()<<endl;
-    switch(q->getType()){
-		  case SE3:
-        links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], coor[2]));
-        links[0]->getTransformation()->setRotation(Rotation(coor[3], coor[4], coor[5], coor[6]));
-        links[0]->forceChange(NULL);
-        _currentConf.setSE3(q->getCoordinates());
-        //cout<<"current conf ("<< _currentConf.getSE3()->getCoordinate(0)<<", "<< _currentConf.getSE3()->getCoordinate(1)<<
-        //", "<< _currentConf.getSE3()->getCoordinate(2)<<")"<<endl;
-			  break;
-		  case SE2:
-        links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], (KthReal)0.0));
-        links[0]->getTransformation()->setRotation(Rotation((KthReal)0.0, (KthReal)0.0,
-                                                            (KthReal)1.0, coor[2]));
-        links[0]->forceChange(NULL);
-        _currentConf.setSE3(q->getCoordinates());
-        break;
-		  case Rn:
-		    if(q->getDim() == getNumJoints()){
-				  for(int i=0; i<q->getDim(); i++)
-					  links[i+1]->setValue(q->getCoordinate(i));
+      //cout << "q.gettype "<<q->getType()<<endl;
+      switch(q->getType()){
+      case SE3:
+          links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], coor[2]));
+          links[0]->getTransformation()->setRotation(Rotation(coor[3], coor[4], coor[5], coor[6]));
+          links[0]->forceChange(NULL);
+          _currentConf.setSE3(q->getCoordinates());
+          //cout<<"current conf ("<< _currentConf.getSE3()->getCoordinate(0)<<", "<< _currentConf.getSE3()->getCoordinate(1)<<
+          //", "<< _currentConf.getSE3()->getCoordinate(2)<<")"<<endl;
+          break;
+      case SE2:
+          links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], (KthReal)0.0));
+          links[0]->getTransformation()->setRotation(Rotation((KthReal)0.0, (KthReal)0.0,
+                                                              (KthReal)1.0, coor[2]));
+          links[0]->forceChange(NULL);
+          _currentConf.setSE3(q->getCoordinates());
+          break;
+      case Rn:
+          if(q->getDim() == getNumJoints()){
+              for(int i=0; i<q->getDim(); i++)
+                  links[i+1]->setValue(q->getCoordinate(i));
 
-          _currentConf.setRn(q->getCoordinates());
-			  }
-        //cout<<"current conf Link[0] = "<< _currentConf.getRn().getCoordinate(0)<<endl;
-			  break;
-		  default:
-			  return false;
-	  }
-     updateRobot();
-    return true;
+              _currentConf.setRn(q->getCoordinates());
+          }
+          //cout<<"current conf Link[0] = "<< _currentConf.getRn().getCoordinate(0)<<endl;
+          break;
+      default:
+          return false;
+      }
+      updateRobot();
+      return true;
   }
 
   /** This member method is the interface to calling the inverse kinematic
@@ -808,15 +877,15 @@ namespace Kautham {
   * b) a tcp transform and configuration parameters e.g. for the TX90: (l/r,ep/en,wp/wn)
   */
   RobConf& Robot::InverseKinematics(vector<KthReal> &target){
-    if(_ikine != NULL){
-      //First i try to conect to the remote object
-      //if this pointer is not null, the object has been instantiate correctly.
-      _ikine->setTarget(target);
-      if(_ikine->solve()){
-        return _ikine->getRobConf();
+      if(_ikine != NULL){
+          //First i try to conect to the remote object
+          //if this pointer is not null, the object has been instantiate correctly.
+          _ikine->setTarget(target);
+          if(_ikine->solve()){
+              return _ikine->getRobConf();
+          }
       }
-    }
-    throw InvKinEx(0);
+      throw InvKinEx(0);
   }
 
   /*!
@@ -826,60 +895,60 @@ namespace Kautham {
    * parameters e.g. for the TX90: (l/r,ep/en,wp/wn)
    */
   RobConf& Robot::InverseKinematics(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
-    if(_ikine != NULL){
-      //First i try to conect to the remote object
-      //if this pointer is not null, the object has been instantiate correctly.
-      _ikine->setTarget(target, masterconf, maintainSameWrist);
-      if(_ikine->solve()){
-        return _ikine->getRobConf();
+      if(_ikine != NULL){
+          //First i try to conect to the remote object
+          //if this pointer is not null, the object has been instantiate correctly.
+          _ikine->setTarget(target, masterconf, maintainSameWrist);
+          if(_ikine->solve()){
+              return _ikine->getRobConf();
+          }
       }
-    }
-    throw InvKinEx(0);
+      throw InvKinEx(0);
   }
 
   /*!
    *
    */
   bool Robot::autocollision(int t){
-    //parameter t is used to only test the autocollision of the trunk part of a TREE robot
-	  //it is set to 0 in robot.h
+      //parameter t is used to only test the autocollision of the trunk part of a TREE robot
+      //it is set to 0 in robot.h
 
-    if(_hasChanged ){
-      _autocoll = false;
+      if(_hasChanged ){
+          _autocoll = false;
 
-      int maxLinksTested;
-      //Restricted test to trunk in case of TREE robots
-      if(robType==TREE && t==1)
-        maxLinksTested = nTrunk;
-      else
-        maxLinksTested = links.size();
+          int maxLinksTested;
+          //Restricted test to trunk in case of TREE robots
+          if(robType==TREE && t==1)
+              maxLinksTested = nTrunk;
+          else
+              maxLinksTested = links.size();
 
-      for(int i=0; i< maxLinksTested; i++){
-          //Collision detection with the Palm are avoided
-        /*if(links[i]->getName() == "Palm" || links[i]->getName() == "Palm_izq" || links[i]->getName() == "Palm_der") {
+          for(int i=0; i< maxLinksTested; i++){
+              //Collision detection with the Palm are avoided
+              /*if(links[i]->getName() == "Palm" || links[i]->getName() == "Palm_izq" || links[i]->getName() == "Palm_der") {
           //cout <<"Palm detected - skipping collisions"<<endl;
           continue;
         }*/
 
-          //Collision detection with the Palm are avoided
-          if(links[i]->numChilds() > 1) {
-              //cout <<"Palm detected - skipping collisions"<<endl;
-              continue;
+              //Collision detection with the Palm are avoided
+              if(links[i]->numChilds() > 1) {
+                  //cout <<"Palm detected - skipping collisions"<<endl;
+                  continue;
+              }
+
+              for(int j=i+2; j < maxLinksTested; j++){
+                  if(links[i]->getElement()->collideTo(links[j]->getElement())){
+                      //cout <<"...collision between links "<<i<<" and "<<j<<endl;
+                      //cout <<"...collision between links "<<links[i]->getName()<<" and "<<links[j]->getName()<<endl;
+
+                      _autocoll = true;
+                      return _autocoll;
+                  }
+              }
           }
-
-        for(int j=i+2; j < maxLinksTested; j++){
-          if(links[i]->getElement()->collideTo(links[j]->getElement())){
-              //cout <<"...collision between links "<<i<<" and "<<j<<endl;
-              //cout <<"...collision between links "<<links[i]->getName()<<" and "<<links[j]->getName()<<endl;
-
-                    _autocoll = true;
-              return _autocoll;
-            }
-        }
       }
-    }
-    //cout<<"hasChanged = "<<_hasChanged<<" return autocollision "<<_autocoll<<endl;
-    return _autocoll;
+      //cout<<"hasChanged = "<<_hasChanged<<" return autocollision "<<_autocoll<<endl;
+      return _autocoll;
   }
 
 
@@ -888,17 +957,17 @@ namespace Kautham {
    * The method returns true when the two robots collide, otherwise returns false.
    */
   bool Robot::collisionCheck(Robot *rob){
-    if( _autocoll || rob->autocollision() ) return true;
+      if( _autocoll || rob->autocollision() ) return true;
 
-    for(int i=0; i < links.size(); i++){
-      for( int j = 0; j < rob->getNumLinks(); j++ ){
-        if( links[i]->getElement()->collideTo(rob->getLink(j)->getElement()) )//{
-            //cout <<"...collision between links "<<i<<" and "<<j<<endl;
-            return true;
-          //}
+      for(int i=0; i < links.size(); i++){
+          for( int j = 0; j < rob->getNumLinks(); j++ ){
+              if( links[i]->getElement()->collideTo(rob->getLink(j)->getElement()) )//{
+                  //cout <<"...collision between links "<<i<<" and "<<j<<endl;
+                  return true;
+              //}
+          }
       }
-    }
-    return false;
+      return false;
   }
 
 
@@ -908,52 +977,52 @@ namespace Kautham {
    * if parameter min is true, the distance is the minimum distance between all the links
    */
   KthReal Robot::distanceCheck(Robot *rob, bool min ){
-    KthReal minDist = -1.0;
-    KthReal tempDist = 0.0;
+      KthReal minDist = -1.0;
+      KthReal tempDist = 0.0;
 
-    if( !autocollision() )
-      // First the most distal link
-      minDist = links[links.size()-1]->getElement()->getDistanceTo(rob->getLink(0)->getElement());
+      if( !autocollision() )
+          // First the most distal link
+          minDist = links[links.size()-1]->getElement()->getDistanceTo(rob->getLink(0)->getElement());
       if( min ){
-        for(int i = links.size() - 1; i >= 0 ; i--)
-          for(size_t j = rob->getNumLinks() - 1; j >= 0; j--){
-            tempDist = links[i]->getElement()->getDistanceTo(rob->getLink(j)->getElement());
-            if(minDist > tempDist)
-              minDist = tempDist;
-        }
+          for(int i = links.size() - 1; i >= 0 ; i--)
+              for(size_t j = rob->getNumLinks() - 1; j >= 0; j--){
+                  tempDist = links[i]->getElement()->getDistanceTo(rob->getLink(j)->getElement());
+                  if(minDist > tempDist)
+                      minDist = tempDist;
+              }
       }
 
-    return minDist;
+      return minDist;
   }
 
   /*!
    *
    */
   void Robot::setHomePos(Conf* qh){
-    if( qh != NULL ){
-      switch(qh->getType()){
-        case SE3:
-        case SE2:
+      if( qh != NULL ){
+          switch(qh->getType()){
+          case SE3:
+          case SE2:
           {
-            _homeConf.setSE3(qh->getCoordinates());
-            mt::Point3 tempTran(qh->getCoordinate(0),qh->getCoordinate(1),qh->getCoordinate(2));
-            mt::Rotation tempRot(qh->getCoordinate(3),qh->getCoordinate(4),
-                                 qh->getCoordinate(5),qh->getCoordinate(6));
+              _homeConf.setSE3(qh->getCoordinates());
+              mt::Point3 tempTran(qh->getCoordinate(0),qh->getCoordinate(1),qh->getCoordinate(2));
+              mt::Rotation tempRot(qh->getCoordinate(3),qh->getCoordinate(4),
+                                   qh->getCoordinate(5),qh->getCoordinate(6));
 
-            _homeTrans.setRotation(tempRot);
-            _homeTrans.setTranslation(tempTran);
+              _homeTrans.setRotation(tempRot);
+              _homeTrans.setTranslation(tempTran);
 
-            recalculateHomeLimits();
+              recalculateHomeLimits();
           }
-          break;
-        case Rn:
-          if(qh->getDim() == links.size() - 1){
-          _homeConf.setRn(qh->getCoordinates());
-        }
-      }
-      Kinematics(qh);
+              break;
+          case Rn:
+              if(qh->getDim() == links.size() - 1){
+                  _homeConf.setRn(qh->getCoordinates());
+              }
+          }
+          Kinematics(qh);
 
-    }
+      }
   }
 
 
@@ -982,10 +1051,10 @@ namespace Kautham {
               }
       }
 
-	  temp->setArmed();
-	  temp->setValue(0.0); //This is the home position
-    links.push_back(temp);
-	  return true;
+      temp->setArmed();
+      temp->setValue(0.0); //This is the home position
+      links.push_back(temp);
+      return true;
   }
 
   //! This method builds the link model and all their data structures in order
@@ -1017,7 +1086,7 @@ namespace Kautham {
 
       temp->setArmed();
       temp->setValue(0.0); //This is the home position
-    links.push_back(temp);
+      links.push_back(temp);
       return true;
   }
 
@@ -1025,62 +1094,62 @@ namespace Kautham {
   //! This function return a pointer to the Link demanded.
   /*! If you pass a Link identification not valid it will return a null pointer.*/
   Link* Robot::getLink(unsigned int i) {
-	  if(i<links.size())
-		  return links[i];
-	  else
-		  return NULL;
+      if(i<links.size())
+          return links[i];
+      else
+          return NULL;
   }
 
   /*!
    *
    */
   SoSeparator* Robot::getModel(){
-    if(visModel == NULL){
-      switch(libs){
-        case IVPQP:
-        case IVSOLID:
-          SoSeparator* robot = new SoSeparator();
-          robot->ref();
-          for(unsigned int i =0; i < links.size(); i++)
-            robot->addChild(((IVElement*)links[i]->getElement())->ivModel(true));
+      if(visModel == NULL){
+          switch(libs){
+          case IVPQP:
+          case IVSOLID:
+              SoSeparator* robot = new SoSeparator();
+              robot->ref();
+              for(unsigned int i =0; i < links.size(); i++)
+                  robot->addChild(((IVElement*)links[i]->getElement())->ivModel(true));
 
-          // Now is adding the three dimensional proposed path for the last link
-          _pathSeparator = new SoSeparator();
-          _pathSeparator->ref();
-          _pathSeparator->setName("Path");
-          SoMaterial*  tmpMat = new SoMaterial();
-          tmpMat->diffuseColor.setValue( 0., 0., 1.);
-          _pathSeparator->addChild( tmpMat );
-          SoVRMLExtrusion* tmpVRML = new SoVRMLExtrusion();
-          tmpVRML->solid.setValue(true);
-          float diag = diagLimits()/100.;
-          //diag = diag < 2. ? 2. : diag;
-          tmpVRML->scale.setValue( diag,diag );
-          float vertex[13][2];
-          vertex[0][0] = 0.1000;    vertex[0][1] = 0.;
-          vertex[1][0] = 0.0866;    vertex[1][1] = 0.0500;
-          vertex[2][0] = 0.0500;    vertex[2][1] = 0.0866;
-          vertex[3][0] = 0.0000;    vertex[3][1] = 0.1000;
-          vertex[4][0] = -0.0500;   vertex[4][1] = 0.0866;
-          vertex[5][0] = -0.0866;   vertex[5][1] = 0.0500;
-          vertex[6][0] = -0.1000;   vertex[6][1] = 0.0000;
-          vertex[7][0] = -0.0866;   vertex[7][1] = -0.0500;
-          vertex[8][0] = -0.0500;   vertex[8][1] = -0.0866;
-          vertex[9][0] = -0.0000;   vertex[9][1] = -0.1000;
-          vertex[10][0] = 0.0500;   vertex[10][1] = -0.0866;
-          vertex[11][0] = 0.0866;   vertex[11][1] = -0.0500;
-          vertex[12][0] = 0.1000;   vertex[12][1] = 0.;
-          tmpVRML->crossSection.setValues(0,13,vertex);
-          _graphicalPath = new SoMFVec3f();
-          tmpVRML->spine.connectFrom(_graphicalPath);
-          _pathSeparator->addChild(tmpVRML);
+              // Now is adding the three dimensional proposed path for the last link
+              _pathSeparator = new SoSeparator();
+              _pathSeparator->ref();
+              _pathSeparator->setName("Path");
+              SoMaterial*  tmpMat = new SoMaterial();
+              tmpMat->diffuseColor.setValue( 0., 0., 1.);
+              _pathSeparator->addChild( tmpMat );
+              SoVRMLExtrusion* tmpVRML = new SoVRMLExtrusion();
+              tmpVRML->solid.setValue(true);
+              float diag = diagLimits()/100.;
+              //diag = diag < 2. ? 2. : diag;
+              tmpVRML->scale.setValue( diag,diag );
+              float vertex[13][2];
+              vertex[0][0] = 0.1000;    vertex[0][1] = 0.;
+              vertex[1][0] = 0.0866;    vertex[1][1] = 0.0500;
+              vertex[2][0] = 0.0500;    vertex[2][1] = 0.0866;
+              vertex[3][0] = 0.0000;    vertex[3][1] = 0.1000;
+              vertex[4][0] = -0.0500;   vertex[4][1] = 0.0866;
+              vertex[5][0] = -0.0866;   vertex[5][1] = 0.0500;
+              vertex[6][0] = -0.1000;   vertex[6][1] = 0.0000;
+              vertex[7][0] = -0.0866;   vertex[7][1] = -0.0500;
+              vertex[8][0] = -0.0500;   vertex[8][1] = -0.0866;
+              vertex[9][0] = -0.0000;   vertex[9][1] = -0.1000;
+              vertex[10][0] = 0.0500;   vertex[10][1] = -0.0866;
+              vertex[11][0] = 0.0866;   vertex[11][1] = -0.0500;
+              vertex[12][0] = 0.1000;   vertex[12][1] = 0.;
+              tmpVRML->crossSection.setValues(0,13,vertex);
+              _graphicalPath = new SoMFVec3f();
+              tmpVRML->spine.connectFrom(_graphicalPath);
+              _pathSeparator->addChild(tmpVRML);
 
-          robot->addChild(_pathSeparator);
-          visModel = robot;
-          break;
+              robot->addChild(_pathSeparator);
+              visModel = robot;
+              break;
+          }
       }
-    }
-    return visModel;
+      return visModel;
   }
 
 
@@ -1088,21 +1157,21 @@ namespace Kautham {
    *
    */
   SoSeparator* Robot::getCollisionModel(){
-    if(collModel == NULL){
-      switch(libs){
-        case IVPQP:
-        case IVSOLID:
-          SoSeparator* robot = new SoSeparator();
-          robot->ref();
-          for(unsigned int i =0; i < links.size(); i++)
-            robot->addChild(((IVElement*)links[i]->getElement())->collision_ivModel(true));
+      if(collModel == NULL){
+          switch(libs){
+          case IVPQP:
+          case IVSOLID:
+              SoSeparator* robot = new SoSeparator();
+              robot->ref();
+              for(unsigned int i =0; i < links.size(); i++)
+                  robot->addChild(((IVElement*)links[i]->getElement())->collision_ivModel(true));
 
 
-          collModel = robot;
-          break;
+              collModel = robot;
+              break;
+          }
       }
-    }
-    return collModel;
+      return collModel;
   }
 
 
@@ -1111,52 +1180,52 @@ namespace Kautham {
    *
    */
   KthReal* Robot::getWeightSE3(){
-    KthReal tmp=1.;
-    if( _weights != NULL )
-      return _weights->getSE3Weight();
-    else
-      throw exception();
+      KthReal tmp=1.;
+      if( _weights != NULL )
+          return _weights->getSE3Weight();
+      else
+          throw exception();
   }
 
   /*!
    *
    */
   vector<KthReal>& Robot::getWeightRn(){
-    if( _weights != NULL )
-      return _weights->getRnWeights();
-    else
-      throw exception();
+      if( _weights != NULL )
+          return _weights->getRnWeights();
+      else
+          throw exception();
   }
 
   /*!
    *
    */
   float Robot::diagLimits(){
-    float dia = 0.;
-    for(int i = 0; i < 3; i++)
-      dia += (_homeLimits[i][1] - _homeLimits[i][0] ) *
-             (_homeLimits[i][1] - _homeLimits[i][0] );
-    return sqrt(dia);
+      float dia = 0.;
+      for(int i = 0; i < 3; i++)
+          dia += (_homeLimits[i][1] - _homeLimits[i][0] ) *
+                  (_homeLimits[i][1] - _homeLimits[i][0] );
+      return sqrt(dia);
   }
 
   SoSeparator* Robot::getModelFromColl(){
-    SoSeparator* root = NULL;
-    switch(libs){
+      SoSeparator* root = NULL;
+      switch(libs){
       case IVPQP:
-        root = new SoSeparator();
-        for(unsigned int i =0; i < links.size(); i++)
-          root->addChild(((IVPQPElement*)links[i]->getElement())->getIvFromPQPModel());
-        return root;
-        break;
+          root = new SoSeparator();
+          for(unsigned int i =0; i < links.size(); i++)
+              root->addChild(((IVPQPElement*)links[i]->getElement())->getIvFromPQPModel());
+          return root;
+          break;
       case IVSOLID:
-        root = new SoSeparator();
-        for(unsigned int i =0; i < links.size(); i++)
-          root->addChild(((IVSOLIDElement*)links[i]->getElement())->getIvFromSOLIDModel());
-        return root;
-        break;
+          root = new SoSeparator();
+          for(unsigned int i =0; i < links.size(); i++)
+              root->addChild(((IVSOLIDElement*)links[i]->getElement())->getIvFromSOLIDModel());
+          return root;
+          break;
       default:
-        return NULL;
-    }
+          return NULL;
+      }
   }
 
   /*!
@@ -1199,7 +1268,7 @@ namespace Kautham {
   }
 
 
-    /*!
+  /*!
    * Computes the pose of the robot (currentconf) from a vector of controls.
    * \param values is the set of controls (their value lies in the range 0..1)
    * \returns true if the controls make the robot be places in a configuration within bounds
@@ -1207,75 +1276,75 @@ namespace Kautham {
    */
   bool Robot::control2Pose(vector<KthReal> &values){
       bool retvalue;
-    vector<KthReal> vecTmp;
-    _hasChanged = true;
-    retvalue = control2Parameters(values,vecTmp);
-    parameter2Pose(vecTmp);
-    return retvalue;
+      vector<KthReal> vecTmp;
+      _hasChanged = true;
+      retvalue = control2Parameters(values,vecTmp);
+      parameter2Pose(vecTmp);
+      return retvalue;
   }
 
   /*!
    *
    */
   vector<KthReal> Robot::deNormalizeSE3(vector<KthReal> &values){
-         std::vector<KthReal> coords(6);
-    SE3Conf tmp;
+      vector<KthReal> coords(6);
+      SE3Conf tmp;
 
-    coords[0] = values[0]*(_homeLimits[0][1]-_homeLimits[0][0]) + _homeLimits[0][0];
-    coords[1] = values[1]*(_homeLimits[1][1]-_homeLimits[1][0]) + _homeLimits[1][0];
-    coords[2] = values[2]*(_homeLimits[2][1]-_homeLimits[2][0]) + _homeLimits[2][0];
-    coords[3] = values[3];
-    coords[4] = values[4];
-    coords[5] = values[5];
+      coords[0] = values[0]*(_homeLimits[0][1]-_homeLimits[0][0]) + _homeLimits[0][0];
+      coords[1] = values[1]*(_homeLimits[1][1]-_homeLimits[1][0]) + _homeLimits[1][0];
+      coords[2] = values[2]*(_homeLimits[2][1]-_homeLimits[2][0]) + _homeLimits[2][0];
+      coords[3] = values[3];
+      coords[4] = values[4];
+      coords[5] = values[5];
 
-    tmp.setCoordinates(coords); // It is the actual position but in the Home Frame
+      tmp.setCoordinates(coords); // It is the actual position but in the Home Frame
 
-    mt::Point3 tempTran(tmp.getCoordinate(0),tmp.getCoordinate(1),tmp.getCoordinate(2));
-    mt::Rotation tempRot(tmp.getCoordinate(3),tmp.getCoordinate(4),
-                         tmp.getCoordinate(5),tmp.getCoordinate(6));
+      mt::Point3 tempTran(tmp.getCoordinate(0),tmp.getCoordinate(1),tmp.getCoordinate(2));
+      mt::Rotation tempRot(tmp.getCoordinate(3),tmp.getCoordinate(4),
+                           tmp.getCoordinate(5),tmp.getCoordinate(6));
 
-    mt::Transform in_home, in_world;
-    in_home.setRotation(tempRot);
-    in_home.setTranslation(tempTran);
+      mt::Transform in_home, in_world;
+      in_home.setRotation(tempRot);
+      in_home.setTranslation(tempTran);
 
-    in_world = _homeTrans * in_home;      // Obtaining it in the world frame.
-    tempTran = in_world.getTranslation();
-    tempRot  = in_world.getRotation();
+      in_world = _homeTrans * in_home;      // Obtaining it in the world frame.
+      tempTran = in_world.getTranslation();
+      tempRot  = in_world.getRotation();
 
-    coords.resize(7); // Resizing is needed to use quaternions
-    coords[0] = tempTran[0];
-    coords[1] = tempTran[1];
-    coords[2] = tempTran[2];
-    coords[3] = tempRot[0];
-    coords[4] = tempRot[1];
-    coords[5] = tempRot[2];
-    coords[6] = tempRot[3];
+      coords.resize(7); // Resizing is needed to use quaternions
+      coords[0] = tempTran[0];
+      coords[1] = tempTran[1];
+      coords[2] = tempTran[2];
+      coords[3] = tempRot[0];
+      coords[4] = tempRot[1];
+      coords[5] = tempRot[2];
+      coords[6] = tempRot[3];
 
-    return coords;
+      return coords;
   }
 
   //! This method maps between [0,1] parameter values to human readable values.
   //! The values vector must have the controls size.
   Conf& Robot::parameter2Conf(vector<KthReal> &values, CONFIGTYPE type){
-    std::vector<KthReal> coords;
-    switch(type){
-    case SE3:
-      //  First, denormalize the SE3 configuration from 6 values in the Home frame.
-      coords = deNormalizeSE3(values);
-      _currentConf.setSE3(coords);
-      return _currentConf.getSE3();
-      break;
-    case Rn:
-      if(_currentConf.getRn().getDim() == values.size()-6){
-        coords.resize(_currentConf.getRn().getDim());
-        for(unsigned int i = 1; i< links.size(); i++)
-          coords[i-1] = ((Link*)links[i])->parameter2Value(values[i+5]);
+      vector<KthReal> coords;
+      switch(type){
+      case SE3:
+          //  First, denormalize the SE3 configuration from 6 values in the Home frame.
+          coords = deNormalizeSE3(values);
+          _currentConf.setSE3(coords);
+          return _currentConf.getSE3();
+          break;
+      case Rn:
+          if(_currentConf.getRn().getDim() == values.size()-6){
+              coords.resize(_currentConf.getRn().getDim());
+              for(unsigned int i = 1; i< links.size(); i++)
+                  coords[i-1] = ((Link*)links[i])->parameter2Value(values[i+5]);
 
-        _currentConf.setRn(coords);
-        return _currentConf.getRn();
+              _currentConf.setRn(coords);
+              return _currentConf.getRn();
+          }
       }
-    }
-    throw exception();
+      throw exception();
   }
 
 
@@ -1284,123 +1353,123 @@ namespace Kautham {
    * and stores the _currentConf variable with these denormalized values
    */
   void Robot::parameter2Pose(vector<KthReal> &values){
-    if( armed /*&& numControls == values.size() */){
-      _hasChanged = true;
-      if(se3Enabled){
-        // SE3 Denormalization in the wold frame
-        vector<KthReal> coords = deNormalizeSE3(values);
-        _currentConf.setSE3(coords);
-        links[0]->getTransformation()->setTranslation(Point3(coords.at(0),coords.at(1), coords.at(2)));
-        links[0]->getTransformation()->setRotation(Rotation(coords.at(3), coords.at(4),
-                                                            coords.at(5), coords.at(6)));
-        links[0]->forceChange(NULL);
+      if( armed /*&& numControls == values.size() */){
+          _hasChanged = true;
+          if(se3Enabled){
+              // SE3 Denormalization in the wold frame
+              vector<KthReal> coords = deNormalizeSE3(values);
+              _currentConf.setSE3(coords);
+              links[0]->getTransformation()->setTranslation(Point3(coords.at(0),coords.at(1), coords.at(2)));
+              links[0]->getTransformation()->setRotation(Rotation(coords.at(3), coords.at(4),
+                                                                  coords.at(5), coords.at(6)));
+              links[0]->forceChange(NULL);
 
-      }
-      if(_currentConf.getRn().getDim() != 0){
-        // Rn denormalization
-        vector<KthReal> coords(_currentConf.getRn().getDim());
-        for(int i =0; i < _currentConf.getRn().getDim(); i++){
-          links[i+1]->setParameter(values[6+i]);
-          coords[i] = ((Link*)links[i+1])->getValue();
-          //coords[i] = ((Link*)links[i+1])->parameter2Value(values[i+6]);
-        }
+          }
+          if(_currentConf.getRn().getDim() != 0){
+              // Rn denormalization
+              vector<KthReal> coords(_currentConf.getRn().getDim());
+              for(int i =0; i < _currentConf.getRn().getDim(); i++){
+                  links[i+1]->setParameter(values[6+i]);
+                  coords[i] = ((Link*)links[i+1])->getValue();
+                  //coords[i] = ((Link*)links[i+1])->parameter2Value(values[i+6]);
+              }
 
-        _currentConf.setRn(coords);
+              _currentConf.setRn(coords);
+          }
+          updateRobot();
       }
-      updateRobot();
-    }
   }
 
   /*!
    *
    */
   void Robot::updateRobot(){
-    for(unsigned int i =0; i < links.size(); i++){
-      if(links[i]->changed()){
-       links[i]->calculatePnO();
-       _hasChanged = true;
+      for(unsigned int i =0; i < links.size(); i++){
+          if(links[i]->changed()){
+              links[i]->calculatePnO();
+              _hasChanged = true;
+          }
       }
-    }
 
-    if(_attachedObject.size() != 0 )
-      moveAttachedObj();
+      if(_attachedObject.size() != 0 )
+          moveAttachedObj();
   }
 
   /*!
    *
    */
   bool Robot::setProposedSolution(vector<RobConf*>& path){
-    try{
-      unsigned int i = 0;
-      _proposedSolution.clear();
-      for( i = 0; i < path.size(); i++)
-        _proposedSolution.push_back(*(path.at(i)));
+      try{
+          unsigned int i = 0;
+          _proposedSolution.clear();
+          for( i = 0; i < path.size(); i++)
+              _proposedSolution.push_back(*(path.at(i)));
 
-      // Updating the graphical path if needed
-      if( _graphicalPath != NULL )
-        _graphicalPath->deleteValues(0);
+          // Updating the graphical path if needed
+          if( _graphicalPath != NULL )
+              _graphicalPath->deleteValues(0);
 
-      //if no need to draw path then return
-      if(_linkPathDrawn<0) return true;
+          //if no need to draw path then return
+          if(_linkPathDrawn<0) return true;
 
-      //else fill graphicalPath
-      SbVec3f* temp = new SbVec3f[path.size()];
+          //else fill graphicalPath
+          SbVec3f* temp = new SbVec3f[path.size()];
 
-      vector<RobConf>::iterator it;
-      mt::Point3 pos;
-      mt::Transform trans;
-      i = 0;
-      for(it = _proposedSolution.begin(); it != _proposedSolution.end(); ++it){
-        Kinematics(*it);
-        trans = getLinkTransform(_linkPathDrawn); //draws the path of link number linkPathDrawn
-        //trans = getLastLinkTransform();
-        pos = trans.getTranslation();
-        temp[i].setValue( pos.at(0), pos.at(1), pos.at(2));
-        ++i;
+          vector<RobConf>::iterator it;
+          mt::Point3 pos;
+          mt::Transform trans;
+          i = 0;
+          for(it = _proposedSolution.begin(); it != _proposedSolution.end(); ++it){
+              Kinematics(*it);
+              trans = getLinkTransform(_linkPathDrawn); //draws the path of link number linkPathDrawn
+              //trans = getLastLinkTransform();
+              pos = trans.getTranslation();
+              temp[i].setValue( pos.at(0), pos.at(1), pos.at(2));
+              ++i;
+          }
+          if( _graphicalPath != NULL )
+              _graphicalPath->setValues(0, path.size(), temp);
+          delete[] temp;
+          return true;
+      }catch(...){
+          return false;
       }
-      if( _graphicalPath != NULL )
-        _graphicalPath->setValues(0, path.size(), temp);
-      delete[] temp;
-      return true;
-    }catch(...){
-      return false;
-    }
   }
 
   /*!
    *
    */
   bool Robot::cleanProposedSolution(){
-    try{
-      _proposedSolution.clear();
-      if( _graphicalPath != NULL )
-        _graphicalPath->deleteValues(0);
-      return true;
-    }catch(...){
-      return false;
-    }
+      try{
+          _proposedSolution.clear();
+          if( _graphicalPath != NULL )
+              _graphicalPath->deleteValues(0);
+          return true;
+      }catch(...){
+          return false;
+      }
   }
 
   /*!
    *
    */
   bool Robot::setPathVisibility(bool visible){
-    bool response=false;
-    SoNode *sepgrid = NULL;
-    try{
-      if( visible ){
-        visModel->addChild(_pathSeparator);
-       response = true;
-      }else{
-        sepgrid = visModel->getByName("Path");
-        if( sepgrid != NULL ){
-            visModel->removeChild(sepgrid);
-        }
-        response = false;
-      }
-    }catch(...){ }
+      bool response=false;
+      SoNode *sepgrid = NULL;
+      try{
+          if( visible ){
+              visModel->addChild(_pathSeparator);
+              response = true;
+          }else{
+              sepgrid = visModel->getByName("Path");
+              if( sepgrid != NULL ){
+                  visModel->removeChild(sepgrid);
+              }
+              response = false;
+          }
+      }catch(...){ }
 
-    return response;
+      return response;
   }
 
 }

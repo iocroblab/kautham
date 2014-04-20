@@ -63,11 +63,11 @@ namespace Kautham {
 
   class IVPQPElement : public IVElement {
   public:
-    IVPQPElement(string visFile, string colFile, KthReal sc);
+      IVPQPElement(string visFile, string colFile, KthReal sc);
 	  SoSeparator* getIvFromPQPModel(bool tran = true);
 	  bool collideTo(Element* other);
 	  KthReal getDistanceTo(Element* other);
-    inline PQP_Model* pqpModel(){return pqpmodel;}
+      inline PQP_Model* pqpModel(){return pqpmodel;}
   private:
 	  PQP_Model *pqpmodel;
 	  bool makePQPModel();
