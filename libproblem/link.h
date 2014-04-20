@@ -185,7 +185,7 @@ namespace Kautham{
 	  //!	This member function return the value of armed attribute.
 	  /*!	This member function return de value of armed attribute.
 	  *		\return armed */
-    inline bool         getArmed() const {return armed;}
+    inline bool         isArmed() const {return armed;}
 
 	  //!	This member function returns the current transformation.
 	  /*!	This member function returns the current absolute link transformation 
