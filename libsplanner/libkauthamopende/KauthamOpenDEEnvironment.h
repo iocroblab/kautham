@@ -123,6 +123,7 @@ namespace Kautham
 namespace omplcplanner
 {
 
+
 /***************************************************************************
  *  /* OpenDEEnvironment es una classe en que es recicla gran part del codi ODIn de l'Alfredo sobretot en
      la part en què es construeixen els bodys i les geometries de ODE. ODIN tenia la possibilitat de construir el món
@@ -149,6 +150,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
     // Class KauthamDEEnvironment
     /////////////////////////////////////////////////////////////////////////////////////////////////*/
 //! KauthamDEEnvironment class read the workspace and generate the dynamic environment.
+//! this class is the parent of all the enviroments (like KauthamDERobotEnvironment, KauthamDETableEnvironment,..) in which ODE will apply the control.
     class KauthamDEEnvironment: public oc::OpenDEEnvironment
     {
         public:
@@ -263,7 +265,6 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
             double theta;
             double alpha;
         } odinObject;
-
         //! Contains information about the type of joint that is their position , the limits of their values ​​and the names of the Bodies that we want to join.
         typedef struct
         {

@@ -133,18 +133,18 @@ namespace omplcplanner
 
 // This class is meant to define the pure virtual methods OPENDEENVIRONMENT and define how it is controlling bodies. 
 // Until the robot I could not reach 100% know the correct way to give commands and orders to joints and motors to move correctly.
-//! This class define the pure virtual methods of OpenDEEnviroment and define how the control will be applied on the bodies.
+
 class KauthamDErobotEnvironment: public KauthamDEEnvironment
 {
     public:
 
-    KauthamDErobotEnvironment(WorkSpace* ws, KthReal maxspeed); //!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
+    KauthamDErobotEnvironment(WorkSpace* ws, KthReal maxspeed);
     ~KauthamDErobotEnvironment(void);
 
-    virtual unsigned int getControlDimension(void) const; //!< describe the number of parameter used to describe control input.
-    virtual void getControlBounds (std::vector< double > &lower, std::vector< double > &upper) const; //!< describe the control bounds, the bounding box to performe sampling.
-    virtual void applyControl (const double *control) const; //!< This function apply the control by setting the forces, velocities and torques.
-    virtual void SetPlanningParameters();//!< Set the planning parameters for planner.
+    virtual unsigned int getControlDimension(void) const;
+    virtual void getControlBounds (std::vector< double > &lower, std::vector< double > &upper) const;
+    virtual void applyControl (const double *control) const;
+    virtual void SetPlanningParameters();
 
 
 };

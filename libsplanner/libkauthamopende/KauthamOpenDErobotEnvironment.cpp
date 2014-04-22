@@ -71,7 +71,8 @@ namespace Kautham {
 
 namespace omplcplanner{
 
-//! Constructor create the ODE table enviroment and setup the parameters for ODE.
+
+  //! Constructor
   KauthamDErobotEnvironment::KauthamDErobotEnvironment(WorkSpace* ws, KthReal maxspeed):KauthamDEEnvironment(ws, maxspeed)
   {
       SetPlanningParameters();
@@ -80,7 +81,7 @@ namespace omplcplanner{
 
 
 
-//! Setup the parameters for ODE.
+
 void KauthamDErobotEnvironment::SetPlanningParameters()
 {
     stepSize_ = 0.05;
@@ -88,14 +89,11 @@ void KauthamDErobotEnvironment::SetPlanningParameters()
     minControlSteps_ = 10;
     maxControlSteps_ = 500;
 }
-//! this is the reimplementation of the virtual function of OpenDEEnvironment, that describe the number of parameter used to describe control input.
+
 unsigned int KauthamDErobotEnvironment::getControlDimension(void) const
 {
     return _NumLinksFirstRobot;
 }
-/*! this is the reimplementation of the virtual function of OpenDEEnvironment
- * which describe the control bounds,the bounding box to performe sampling control.
- */
 void KauthamDErobotEnvironment::getControlBounds(std::vector< double > &lower, std::vector< double > &upper) const
 {
 
@@ -107,10 +105,6 @@ void KauthamDErobotEnvironment::getControlBounds(std::vector< double > &lower, s
         upper[i]=_maxspeed;
     }
 }
-/*! this is the reimplementation of the virtual function of OpenDEEnvironment
- * that explain how the control will apply.This function apply the control by
- * setting the forces, velocities and torques.
- */
 void KauthamDErobotEnvironment::applyControl (const double *control) const
 {
     for(int i=0; i < _NumLinksFirstRobot; i++)
