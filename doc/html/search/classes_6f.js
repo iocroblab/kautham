@@ -8,7 +8,6 @@ var searchData=
   ['ode_5finertial',['ode_inertial',['../classode__inertial.html',1,'']]],
   ['ode_5flimit',['ode_limit',['../classode__limit.html',1,'']]],
   ['ode_5forigin',['ode_origin',['../classode__origin.html',1,'']]],
-  ['odinobject',['odinObject',['../struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1odin_object.html',1,'Kautham::omplcplanner::KauthamDEEnvironment']]],
   ['omplcplanner',['omplcPlanner',['../class_kautham_1_1omplcplanner_1_1omplc_planner.html',1,'Kautham::omplcplanner']]],
   ['omplcplannerstatepropagator',['omplcPlannerStatePropagator',['../class_kautham_1_1omplcplanner_1_1omplc_planner_state_propagator.html',1,'Kautham::omplcplanner']]],
   ['omplcrrtcarplanner',['omplcRRTcarPlanner',['../class_kautham_1_1omplcplanner_1_1omplc_r_r_tcar_planner.html',1,'Kautham::omplcplanner']]],

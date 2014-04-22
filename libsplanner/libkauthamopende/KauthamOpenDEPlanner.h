@@ -94,9 +94,8 @@ namespace omplcplanner{
 // Class KauthamOpenDEPlanner
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-/*! KauthanDEplanner is the base class for all the planner that use the dynamic enviroment for planning.
- * All the planners will be drived from this class and reimplement the trysolve function.
- */
+//! KauthanDEplanner is the base class for all the planner that use the dynamic enviroment for planning. All the planners will be drived from this class and reimplement the trysolve function.
+
 class KauthamDEPlanner: public Planner
 {
 public:
@@ -109,7 +108,7 @@ public:
     double _planningTime; //!< describe the max. planning time.
     //oc::SimpleSetupPtr ss;
     ob::StateSpacePtr stateSpacePtr; //!< state space pointer to KauthamDEStateSpace.
-    oc::OpenDEEnvironmentPtr envPtr; //!< pointer to KauthamDE ENviroment.
+    oc::OpenDEEnvironmentPtr envPtr; //!< pointer to KauthamDE Environment.
     KauthamDEStateSpace *stateSpace; //!< pointer to kauthamDEStatespace.
     oc::OpenDESimpleSetup *ss;
     virtual bool trySolve();//!< Compute the path and returns the boolean value.
