@@ -68,12 +68,11 @@ namespace omplcplanner{
 class KauthamDERRTPlanner: public KauthamDEPlanner
 {
 public:
-
+    //! Constructor create dynamic enviroment and setup all the necessary parameters for planning.
     KauthamDERRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
-    //!< Constructor create dynamic enviroment and setup all the necessary parameters for planning.
     ~KauthamDERRTPlanner();
     bool setParameters();//!< this function set the planning parameters for RRT.
-    KthReal _GoalBias; //!< contains the value of goal bias for RRT
+    KthReal _GoalBias;
 
 };
 
