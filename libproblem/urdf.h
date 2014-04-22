@@ -85,6 +85,7 @@ public:
     double scale;//!< Model scale, defaults to one
 
     urdf_geometry();//!< Class constructor
+    void fill(xml_node * node);//!< Fills variables given a geometry node
 };
 
 //! Class containing joint's dynamics data
