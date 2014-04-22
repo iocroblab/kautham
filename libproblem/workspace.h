@@ -90,8 +90,10 @@ namespace Kautham{
 
       //! This vector contains a pointers to the RobConf of each robot in the
       //! WorkSpace
-      inline vector<RobConf*>&     getConfigMapping(){return _configMap;}
-      inline vector<RobConf*>&     getConfigMapping(Sample* sample){moveRobotsTo(sample); return _configMap;}
+      inline vector<RobConf*>&     getRobConfigMapping(){return _robConfigMap;}
+      inline vector<RobConf*>&     getRobConfigMapping(Sample* sample){moveRobotsTo(sample); return _robConfigMap;}
+      inline vector<RobConf*>&     getObsConfigMapping(){return _obsConfigMap;}
+      inline vector<RobConf*>&     getObsConfigMapping(Sample* sample){moveObstaclesTo(sample); return _obsConfigMap;}
       bool                         inheritSolution(vector<Sample*>& path);
       void                         eraseSolution();
       void                         setPathVisibility(bool vis);
@@ -122,7 +124,8 @@ namespace Kautham{
       vector<Robot*>        obstacles;
       vector<KthReal>       distVec;
       //! This attribute groups the configurations of the robots
-      vector<RobConf*>      _configMap;
+      vector<RobConf*>      _robConfigMap;
+      vector<RobConf*>      _obsConfigMap;
       vector<RobWeight*>    _robWeight;
       string                distanceMapFile;
       string                dimensionsFile;
