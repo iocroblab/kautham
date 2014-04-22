@@ -67,6 +67,10 @@ namespace Kautham {
 
 namespace omplcplanner{
 
+/*! The KauthamDEGoal drived form GoalRegion and reimplement the distanceGoalfunction.
+ * In order to check the position and orientation of the objects at the goal configuration
+ * smp2KauthamOpenDEState method is defined.
+ */
 KauthamDEGoal::KauthamDEGoal(const ob::SpaceInformationPtr &si, WorkSpace *ws, bool a,Sample *goal):ob::GoalRegion(si)
 {
 
@@ -78,7 +82,9 @@ KauthamDEGoal::KauthamDEGoal(const ob::SpaceInformationPtr &si, WorkSpace *ws, b
 KauthamDEGoal::~KauthamDEGoal()
 {
 }
-
+/*! This smp2KauthamOpenDEState method moves the robot to its goal configuration and from them extracts the position and orientation
+ * of each element in the scene and fills the KauthamOdeobject structure.
+ */
 vector<KauthamDEGoal::KauthamODEobject> KauthamDEGoal::smp2KauthamOpenDEState(WorkSpace *wkSpace,Sample *goal)
 {
 
@@ -127,7 +133,7 @@ vector<KauthamDEGoal::KauthamODEobject> KauthamDEGoal::smp2KauthamOpenDEState(Wo
     return kauthamob;
 
 }
-
+//! This function returns the distance between the current state of the robot and the goal.
 double KauthamDEGoal::distanceGoal(const ob::State *st) const
 {
     //smp2KauthamOpenDEState(Kauthamodebodies,ws);
@@ -179,16 +185,18 @@ double KauthamDEGoal::distanceGoal(const ob::State *st) const
 //    }
 //    return distance;
 }
-
+/*! This class inherit from the ProjectionEvaluator and define the virtual functions to describe that how the KauthamDEState will be projected.
+  */
 KauthamDEStateProjectionEvaluator::KauthamDEStateProjectionEvaluator(const ob::StateSpace *space) : ob::ProjectionEvaluator(space)
 {
 }
-
+//! Returns the number of dimensions  of the projection for KauthamDEStateProjectionEValuator.
 unsigned int KauthamDEStateProjectionEvaluator::getDimension(void) const
 {
     return 2;
     //return 3;
 }
+//! This method describe the default dimension of the cell for KauthamDEStateProjectionEvaluator.
 void KauthamDEStateProjectionEvaluator :: defaultCellSizes(void)
    {
     cellSizes_.resize(2);
@@ -198,7 +206,7 @@ void KauthamDEStateProjectionEvaluator :: defaultCellSizes(void)
    //cellSizes_[2] = 1.0;
 
    }
-
+//! this function get the position of the body and pass to the array of projection.
 void KauthamDEStateProjectionEvaluator::project(const ob::State *state, ob::EuclideanProjection &projection) const
 {
    const double *pos = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
@@ -207,14 +215,17 @@ void KauthamDEStateProjectionEvaluator::project(const ob::State *state, ob::Eucl
  //   projection[2] = pos[2];
 
 }
-
+/*! The KauthamDEStateSpace intherits from OpenDEStateSpace and just defines the method distance and the registerprojections.
+ * An OpenDEStateSpace inherits from a CompoundStateSpace where each body has three RealVectorSstateSpace representing the
+ * position,linear and angular velocity and then a SO3 that represents the orientation
+ */
  KauthamDEStateSpace::KauthamDEStateSpace(const oc::OpenDEEnvironmentPtr &env) : oc::OpenDEStateSpace(env)
  {
  }
  KauthamDEStateSpace::~KauthamDEStateSpace()
  {
  }
-
+//! Reimplement the distance method,this method compute the distance between two states in KauthamDEStateSpace.
  double KauthamDEStateSpace::distance(const ob::State *s1, const ob::State *s2) const
  {
      double distance = 0;
@@ -233,6 +244,7 @@ void KauthamDEStateProjectionEvaluator::project(const ob::State *state, ob::Eucl
      return distance;
 
  }
+//! This method register the projections for KauthamDEStateSpace as KauthamDEStateProjectionEvaluator.
  void KauthamDEStateSpace::registerProjections(void)
  {
      registerDefaultProjection(ob::ProjectionEvaluatorPtr(new KauthamDEStateProjectionEvaluator(this)));
@@ -276,8 +288,6 @@ void KauthamDEStateProjectionEvaluator::project(const ob::State *state, ob::Eucl
  }
 
 }
-
-
 
 #endif//KAUTHAM_USE_ODE
 #endif// KAUTHAM_USE_OMPL

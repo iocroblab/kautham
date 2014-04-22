@@ -173,8 +173,19 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>tryToSolve</b> ()</td
 <tr><td colspan="2"><h2><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_problem.html#a68585647cddd83069ab63a9be80c3ab4">addControls2WSpace</a> (string cntrFile)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_problem.html#abd858b323c2fad087423df5fe877457c">addObstacle2WSpace</a> (xml_node *obstacle_node, string dir)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_problem.html#a55ad750196a42a2721b139df0177e3b8">addRobot2WSpace</a> (xml_node *robot_node, string dir)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">loads the controls node of the problem file, creates the controls, adds them to workspace and creates the mapMatrix and offMatrix of every Robots. All the robots must have already been loaded.  <a href="#a68585647cddd83069ab63a9be80c3ab4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_problem.html#a64a94bf7750e8a3b800b144a37176644">addObstacle2WSpace</a> (xml_node *obstacle_node)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">loads an obstacle node of the problem file, creates the obstacle and adds it to workspace  <a href="#a64a94bf7750e8a3b800b144a37176644"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_problem.html#a47c4f18d75f665b5f6dc7c5b8851ba0b">addRobot2WSpace</a> (xml_node *robot_node)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">loads a robot node of the problem file, creates the robot and adds it to workspace  <a href="#a47c4f18d75f665b5f6dc7c5b8851ba0b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_problem.html#a25b05035d84f34460dfa0582e0722f67">exists</a> (string file)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">exists checks if a spcified file exists  <a href="#a25b05035d84f34460dfa0582e0722f67"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_problem.html#acaec7c068a739b13680e11f55008596e">findAllFiles</a> (xml_node *parent, string child, string attribute, vector&lt; string &gt; path)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">finds all the files defined in the atribute called  <a href="#acaec7c068a739b13680e11f55008596e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_problem.html#a1d5afd577b139c1ec7cff17c2d3f6f27">isFileOK</a> (xml_document *doc)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">isFileOK checks if all the information required to setup a problem is defined in the dile  <a href="#a1d5afd577b139c1ec7cff17c2d3f6f27"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1_problem.html#a96c6f88909ce53534d7585bfc27d5f14">prepareFile</a> (xml_document *doc)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">checks the file, finds the files defined in the problem file and completes their absolute path  <a href="#a96c6f88909ce53534d7585bfc27d5f14"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad422c64bb44cbeafca637c742304b363"></a><!-- doxytag: member="Kautham::Problem::_cspace" ref="ad422c64bb44cbeafca637c742304b363" args="" -->
@@ -211,63 +222,65 @@ static const KthReal&#160;</td><td class="memItemRight" valign="bottom"><b>_toRa
       </table>
 </div>
 <div class="memdoc">
-<p>This method loads the controls node of the problem file, creates the controls, adds them to workspace and creates the mapMatrix and offMatrix of every <a class="el" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>. All the robots must be loaded first </p>
+
+<p>loads the controls node of the problem file, creates the controls, adds them to workspace and creates the mapMatrix and offMatrix of every Robots. All the robots must have already been loaded. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cntrFile</td><td>file where controls are defined </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if controls could be loaded to the workspace </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="abd858b323c2fad087423df5fe877457c"></a><!-- doxytag: member="Kautham::Problem::addObstacle2WSpace" ref="abd858b323c2fad087423df5fe877457c" args="(xml_node *obstacle_node, string dir)" -->
+<a class="anchor" id="a64a94bf7750e8a3b800b144a37176644"></a><!-- doxytag: member="Kautham::Problem::addObstacle2WSpace" ref="a64a94bf7750e8a3b800b144a37176644" args="(xml_node *obstacle_node)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_kautham_1_1_problem.html#abd858b323c2fad087423df5fe877457c">Kautham::Problem::addObstacle2WSpace</a> </td>
+          <td class="memname">bool <a class="el" href="class_kautham_1_1_problem.html#a64a94bf7750e8a3b800b144a37176644">Kautham::Problem::addObstacle2WSpace</a> </td>
           <td>(</td>
           <td class="paramtype">xml_node *&#160;</td>
-          <td class="paramname"><em>obstacle_node</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>dir</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td><code> [private]</code></td>
+          <td class="paramname"><em>obstacle_node</em></td><td>)</td>
+          <td><code> [private]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<p>This method loads an obstacle node of the problem file, creates the obstacle and adds it to workspace </p>
+
+<p>loads an obstacle node of the problem file, creates the obstacle and adds it to workspace </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">obstacle_node</td><td>obstacle node with the information of the obstacle to add to the workspace </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a class="anchor" id="a55ad750196a42a2721b139df0177e3b8"></a><!-- doxytag: member="Kautham::Problem::addRobot2WSpace" ref="a55ad750196a42a2721b139df0177e3b8" args="(xml_node *robot_node, string dir)" -->
+<a class="anchor" id="a47c4f18d75f665b5f6dc7c5b8851ba0b"></a><!-- doxytag: member="Kautham::Problem::addRobot2WSpace" ref="a47c4f18d75f665b5f6dc7c5b8851ba0b" args="(xml_node *robot_node)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_kautham_1_1_problem.html#a55ad750196a42a2721b139df0177e3b8">Kautham::Problem::addRobot2WSpace</a> </td>
+          <td class="memname">bool <a class="el" href="class_kautham_1_1_problem.html#a47c4f18d75f665b5f6dc7c5b8851ba0b">Kautham::Problem::addRobot2WSpace</a> </td>
           <td>(</td>
           <td class="paramtype">xml_node *&#160;</td>
-          <td class="paramname"><em>robot_node</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>dir</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td><code> [private]</code></td>
+          <td class="paramname"><em>robot_node</em></td><td>)</td>
+          <td><code> [private]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<p>This method loads a robot node of the problem file, creates the robot and adds it to workspace </p>
+
+<p>loads a robot node of the problem file, creates the robot and adds it to workspace </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">robot_node</td><td>robot node with the information of the robot to add to the workspace </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -289,6 +302,138 @@ static const KthReal&#160;</td><td class="memItemRight" valign="bottom"><b>_toRa
 <p>This member function create the work phisycal space. </p>
 <p>With this fuction you can to create the work phisycal space that represent the problem. One or more <a class="el" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a> and one or more obstacle compose it. These Robots could be both the freefly type or cinematic chain type, it mean that if a problem contain many robots all of them should be the same class. </p>
 <dl class="see"><dt><b>See also:</b></dt><dd>WSpace <a class="el" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a> ChainRobot <a class="el" href="class_kautham_1_1_obstacle.html">Obstacle</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a25b05035d84f34460dfa0582e0722f67"></a><!-- doxytag: member="Kautham::Problem::exists" ref="a25b05035d84f34460dfa0582e0722f67" args="(string file)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_kautham_1_1_problem.html#a25b05035d84f34460dfa0582e0722f67">Kautham::Problem::exists</a> </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>file</em></td><td>)</td>
+          <td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>exists checks if a spcified file exists </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">file</td><td>is the file which existence is to be checked </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if the file exists </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="acaec7c068a739b13680e11f55008596e"></a><!-- doxytag: member="Kautham::Problem::findAllFiles" ref="acaec7c068a739b13680e11f55008596e" args="(xml_node *parent, string child, string attribute, vector&lt; string &gt; path)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_kautham_1_1_problem.html#acaec7c068a739b13680e11f55008596e">Kautham::Problem::findAllFiles</a> </td>
+          <td>(</td>
+          <td class="paramtype">xml_node *&#160;</td>
+          <td class="paramname"><em>parent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>child</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>attribute</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">vector&lt; string &gt;&#160;</td>
+          <td class="paramname"><em>path</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>finds all the files defined in the atribute called </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">attribute</td><td>of the nodes called </td></tr>
+    <tr><td class="paramname">child</td><td>that children of the </td></tr>
+    <tr><td class="paramname">parent</td><td>node. Files will be looked for in the specified paths. If file is found, its absolute path will be completed </td></tr>
+    <tr><td class="paramname">parent</td><td>node that contains the files to be found </td></tr>
+    <tr><td class="paramname">child</td><td>name of the children nodes that contains the files to be found </td></tr>
+    <tr><td class="paramname">attribute</td><td>name of the atribute that contains the file to be found </td></tr>
+    <tr><td class="paramname">path</td><td>vector of paths where the file will be recursively looked for until the file is found </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if and only if all the files were found </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1d5afd577b139c1ec7cff17c2d3f6f27"></a><!-- doxytag: member="Kautham::Problem::isFileOK" ref="a1d5afd577b139c1ec7cff17c2d3f6f27" args="(xml_document *doc)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_kautham_1_1_problem.html#a1d5afd577b139c1ec7cff17c2d3f6f27">Kautham::Problem::isFileOK</a> </td>
+          <td>(</td>
+          <td class="paramtype">xml_document *&#160;</td>
+          <td class="paramname"><em>doc</em></td><td>)</td>
+          <td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>isFileOK checks if all the information required to setup a problem is defined in the dile </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">doc</td><td>problem file correctly parsed </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if the file seems to be OK </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a96c6f88909ce53534d7585bfc27d5f14"></a><!-- doxytag: member="Kautham::Problem::prepareFile" ref="a96c6f88909ce53534d7585bfc27d5f14" args="(xml_document *doc)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_kautham_1_1_problem.html#a96c6f88909ce53534d7585bfc27d5f14">Kautham::Problem::prepareFile</a> </td>
+          <td>(</td>
+          <td class="paramtype">xml_document *&#160;</td>
+          <td class="paramname"><em>doc</em></td><td>)</td>
+          <td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>checks the file, finds the files defined in the problem file and completes their absolute path </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">doc</td><td>problem file to prepare before setting up the porblem </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if the file could be prepared </dd></dl>
 
 </div>
 </div>
@@ -332,7 +477,7 @@ static const KthReal&#160;</td><td class="memItemRight" valign="bottom"><b>_toRa
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Apr 11 2014 00:20:00 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Apr 13 2014 17:27:52 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
