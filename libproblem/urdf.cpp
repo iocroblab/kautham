@@ -39,13 +39,13 @@ urdf_origin::urdf_origin () {
     r = 0.;
     p = 0.;
     y = 0.;
-};
+}
 
 void urdf_origin::fill (xml_node *node) {
     string tmpString;
-    if (node->attribute("xyz").value()) {
+    if (node->attribute("xyz").as_string()) {
         double tmpDouble[3];
-        tmpString = node->attribute("xyz").value();
+        tmpString = node->attribute("xyz").as_string();
         istringstream ss( tmpString );
         getline(ss,tmpString,' ');
         tmpDouble[0] = atof(tmpString.c_str());
@@ -55,8 +55,8 @@ void urdf_origin::fill (xml_node *node) {
         tmpDouble[2] = atof(tmpString.c_str());
         xyz = 1000. * mt::Point3(tmpDouble[0],tmpDouble[1],tmpDouble[2]);
     }
-    if (node->attribute("rpy").value()) {
-        tmpString = node->attribute("rpy").value();
+    if (node->attribute("rpy").as_string()) {
+        tmpString = node->attribute("rpy").as_string();
         istringstream ss(tmpString);
         getline(ss,tmpString,' ');
         r = atof(tmpString.c_str());
@@ -66,7 +66,7 @@ void urdf_origin::fill (xml_node *node) {
         y = atof(tmpString.c_str());
     }
     transform = mt::Transform(mt::Rotation(y,p,r),xyz);
-};
+}
 
 urdf_inertia::urdf_inertia () {
     ixx = 0.;
@@ -75,7 +75,7 @@ urdf_inertia::urdf_inertia () {
     iyy = 0.;
     iyz = 0.;
     izz = 0.;
-};
+}
 
 void urdf_inertia::fill (xml_node *node) {
     ixx = node->attribute("ixx").as_double();
@@ -85,11 +85,11 @@ void urdf_inertia::fill (xml_node *node) {
     iyz = node->attribute("iyz").as_double();
     izz = node->attribute("izz").as_double();
     matrix = mt::Matrix3x3(ixx,ixy,ixz,ixy,iyy,iyz,ixz,iyz,izz);
-};
+}
 
 urdf_inertial::urdf_inertial () {
     mass = 0.;
-};
+}
 
 void urdf_inertial::fill (xml_node * node) {
     xml_node tmpNode;
@@ -100,16 +100,34 @@ void urdf_inertial::fill (xml_node * node) {
     mass = node->child("mass").attribute("value").as_double();
     tmpNode = node->child("inertia");
     inertia.fill(&tmpNode);
-};
+}
 
 urdf_geometry::urdf_geometry () {
     scale = 1.;
-};
+}
+
+void urdf_geometry::fill(xml_node *node) {
+    xml_node tmpNode = node->first_child();
+    string type = tmpNode.name();
+    if (type == "box") {
+        ivfile = "box " + string(tmpNode.attribute("size").as_string());
+    } else if (type == "cylinder") {
+        ivfile = "cylinder " + string(tmpNode.attribute("radius").as_string())
+                + string(tmpNode.attribute("length").as_string());
+    } else if (type == "sphere") {
+        ivfile = "sphere " + string(tmpNode.attribute("radius").as_string());
+    } else if (type == "mesh") {
+        ivfile = tmpNode.attribute("filename").as_string();
+        if (tmpNode.attribute("scale")) {
+            scale = tmpNode.attribute("scale").as_double();
+        }
+    }
+}
 
 urdf_dynamics::urdf_dynamics () {
     friction = 0.;
     damping = 0.;
-};
+}
 
 void urdf_dynamics::fill (xml_node *node) {
     if (node->attribute("damping")){
@@ -118,13 +136,13 @@ void urdf_dynamics::fill (xml_node *node) {
     if (node->attribute("friction")){
         friction = node->attribute("friction").as_double();
     }
-};
+}
 
 urdf_contact_coefficients::urdf_contact_coefficients() {
     mu = 0.;
     kp = 0.;
     kd = 0.;
-};
+}
 
 void urdf_contact_coefficients::fill(xml_node *node) {
     if (node->attribute("mu")){
@@ -136,14 +154,14 @@ void urdf_contact_coefficients::fill(xml_node *node) {
     if (node->attribute("kp")){
         kp = node->attribute("kp").as_double();
     }
-};
+}
 
 urdf_limit::urdf_limit () {
     lower = 0.;
     upper = 0.;
     effort = 0.;
     velocity = 0.;
-};
+}
 
 void urdf_limit::fill (xml_node *node) {
     if (node->attribute("lower")) {
@@ -154,27 +172,25 @@ void urdf_limit::fill (xml_node *node) {
     }
     effort = node->attribute("effort").as_double();
     velocity = node->attribute("velocity").as_double();
-};
+}
 
 urdf_link::urdf_link () {
     axis = mt::Unit3(1,0,0);
     is_base = false;
     weight = 1.0;
-};
+}
 
 void urdf_link::fill (xml_node *node) {
     xml_node tmpNode;
 
-    name = node->attribute("name").value();
-    visual.ivfile = node->child("visual").child("geometry").child("mesh").attribute("filename").value();
-    if (node->child("visual").child("geometry").child("mesh").attribute("scale")) {
-        visual.scale = node->child("visual").child("geometry").child("mesh").attribute("scale").as_double();
-    }
-    if (node->child("collision").child("geometry").child("mesh").attribute("filename")) {
-        collision.ivfile = node->child("collision").child("geometry").child("mesh").attribute("filename").value();
-        if (node->child("collision").child("geometry").child("mesh").attribute("scale")){
-            collision.scale = node->child("collision").child("geometry").child("mesh").attribute("scale").as_double();
-        }
+    name = node->attribute("name").as_string();
+
+    tmpNode = node->child("visual").child("geometry");
+    visual.fill(&tmpNode);
+
+    if (node->child("collision").child("geometry")) {
+        tmpNode = node->child("visual").child("geometry");
+        collision.fill(&tmpNode);
     } else {
         collision.ivfile = visual.ivfile;
         collision.scale = visual.scale;
@@ -184,18 +200,18 @@ void urdf_link::fill (xml_node *node) {
         contact_coefficients.fill(&tmpNode);
     }
     if (node->child("inertial")) {
-        xml_node tmpNode = node->child("inertial");
+        tmpNode = node->child("inertial");
         inertial.fill(&tmpNode);
     }
 
     tmpNode = node->parent().child("joint");
     node = &tmpNode;
-    while (name != node->child("child").attribute("link").value() && node->next_sibling("joint")) {
+    while (name != node->child("child").attribute("link").as_string() && node->next_sibling("joint")) {
         *node = node->next_sibling("joint");
     }
-    if (name == node->child("child").attribute("link").value()) {
-        joint = node->attribute("name").value();
-        type = node->attribute("type").value();
+    if (name == node->child("child").attribute("link").as_string()) {
+        joint = node->attribute("name").as_string();
+        type = node->attribute("type").as_string();
         xml_node tmpNode;
         if (node->child("origin")) {
             tmpNode = node->child("origin");
@@ -204,11 +220,11 @@ void urdf_link::fill (xml_node *node) {
         if (node->child("weight").attribute("value")) {
             weight = node->child("weight").attribute("value").as_double();
         }
-        parent = node->child("parent").attribute("link").value();
+        parent = node->child("parent").attribute("link").as_string();
         if (node->child("axis")) {
             string tmpString = "";
             double tmpDouble[3];
-            tmpString = node->child("axis").attribute("xyz").value();
+            tmpString = node->child("axis").attribute("xyz").as_string();
             istringstream ss(tmpString);
             getline(ss,tmpString,' ');
             tmpDouble[0] = atof(tmpString.c_str());
@@ -229,19 +245,19 @@ void urdf_link::fill (xml_node *node) {
         //origin, parent, axis, dynamics and limit need to be filled in another way
         is_base = true;
     }
-};
+}
 
 mt::Transform urdf_link::transform (double theta) {
     return(mt::Transform(mt::Rotation(axis,theta),mt::Point3()) * origin.transform);
-};
+}
 
 urdf_robot::urdf_robot () {
     num_links = 0;
     link = NULL;
-};
+}
 
 void urdf_robot::fill (xml_node *node) {
-    name = node->attribute("name").value();
+    name = node->attribute("name").as_string();
 
     xml_node tmpNode = node->child("link");
 
@@ -267,7 +283,7 @@ void urdf_robot::fill (xml_node *node) {
         i = 0;
         while (!link[i].is_base){
             i++;
-        };
+        }
 
         //count links in the kinematic chain from the base
         int links = 1;
@@ -283,14 +299,14 @@ void urdf_robot::fill (xml_node *node) {
                 } else {
                     j++;
                 }
-            };
+            }
             if (child_found) {
                 i = j;
                 links++;
             } else {
                 end = true;
             }
-        };
+        }
 
         //determine robot's type
         if (links == num_links) {
@@ -301,7 +317,7 @@ void urdf_robot::fill (xml_node *node) {
     } else {
         type = "Freeflying";
     }
-};
+}
 
 void urdf_robot::print() {
     cout << "robot: " << name << endl;
@@ -332,17 +348,17 @@ void urdf_robot::print() {
         cout << "limit: lower=" << link[i].limit.lower << " upper=" << link[i].limit.upper << " effort="
              << link[i].limit.effort << " velocity=" << link[i].limit.velocity << endl;
     }
-};
+}
 
 void urdf_obstacle::fill (xml_node *node) {
     xml_node tmpNode;
 
-    visual.ivfile = node->child("visual").child("geometry").child("mesh").attribute("filename").value();
+    visual.ivfile = node->child("visual").child("geometry").child("mesh").attribute("filename").as_string();
     if (node->child("visual").child("geometry").child("mesh").attribute("scale")) {
         visual.scale = node->child("visual").child("geometry").child("mesh").attribute("scale").as_double();
     }
     if (node->child("collision").child("geometry").child("mesh").attribute("filename")) {
-        collision.ivfile = node->child("collision").child("geometry").child("mesh").attribute("filename").value();
+        collision.ivfile = node->child("collision").child("geometry").child("mesh").attribute("filename").as_string();
         if (node->child("collision").child("geometry").child("mesh").attribute("scale")){
             collision.scale = node->child("collision").child("geometry").child("mesh").attribute("scale").as_double();
         }
@@ -358,7 +374,7 @@ void urdf_obstacle::fill (xml_node *node) {
         xml_node tmpNode = node->child("inertial");
         inertial.fill(&tmpNode);
     }
-};
+}
 
 void urdf_obstacle::print() {
     cout << "obstacle: " << endl;
@@ -374,4 +390,4 @@ void urdf_obstacle::print() {
     cout << "collision: ivfile=" << collision.ivfile << " scale=" << collision.scale << endl;
     cout << "contact coefficients: mu=" << contact_coefficients.mu << " kp="
          << contact_coefficients.kp << " kd" << contact_coefficients.kd << endl;
-};
+}
