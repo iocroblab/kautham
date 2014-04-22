@@ -45,6 +45,7 @@
 #define _APPLICATION_H
 
 #include <QtCore>
+#include <QSettings>
 #include <libproblem/problem.h>
 #include <libgui/gui.h>
 #include <Inventor/Qt/SoQt.h>
@@ -61,21 +62,25 @@ class Application:public QObject {
 	Q_OBJECT
 public:
   Application();
-
   ~Application();
-
-  //!  This method setups the problem and create the WorkSpace, the Planner and
-  //!  its corresponding LocalPlanner.
-  bool              problemSetup(string path);
 
 public slots:
   void              openFile();
   void              saveFile();
   void              saveAsFile();
   void              closeProblem();
+
 private:
   void              initApp();
   void              setActions();
+  //! Saves the background colors of the active tabs to the settings file
+  void              saveTabColors();
+  //!  This method setups the problem and create the WorkSpace, the Planner and
+  //!  its corresponding LocalPlanner.
+  bool              problemSetup(string path);
+
+
+  QSettings         *settings;
   QFile*            xmlFile;
   Problem*          _problem;
   GUI*              mainWindow;

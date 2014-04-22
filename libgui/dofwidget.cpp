@@ -3,7 +3,7 @@
 ***************************************************************************/
 /***************************************************************************
 *                                                                          *
-*           Institute of Industrial and Control Engineering                *
+*           Institute of Industrial and namesrol Engineering                *
 *                 Technical University of Catalunya                        *
 *                        Barcelona, Spain                                  *
 *                                                                          *
@@ -48,82 +48,111 @@
 
 namespace Kautham {
 
+    DOFWidget::DOFWidget(Robot* rob) {
+        names = QString(rob->getDOFNames().c_str()).split("|");
 
-	DOFWidget::DOFWidget( Robot* rob ) {
-    _robot = rob;
-    string names = "This|is|a|test";
-    if(rob != NULL) names= rob->getDOFNames();
+        QWidget* tmpWid = new QWidget();
 
-    QWidget* tmpWid = new QWidget();
-		gridLayout = new QGridLayout(tmpWid);
-    
-    gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-    vboxLayout = new QVBoxLayout();
-    vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
-    QLabel* tempLab;
-    QSlider* tempSli;
-    QString content(names.c_str());
-		QStringList cont = content.split("|");
-    QStringList::const_iterator iterator;
-    for (iterator = cont.constBegin(); iterator != cont.constEnd();
-					++iterator){
-      tempLab = new QLabel(this);
-      tempLab->setObjectName( (*iterator).toUtf8().constData());
-      content = (*iterator).toUtf8().constData();
-      tempLab->setText(content.append(" = 0.5"));
-      vboxLayout->addWidget(tempLab);
-      labels.push_back(tempLab);
+        gridLayout = new QGridLayout(tmpWid);
+        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
 
-      tempSli = new QSlider(this);
-      tempSli->setObjectName((*iterator).toUtf8().constData());
-      tempSli->setOrientation(Qt::Horizontal);
-      tempSli->setMinimum(0);
-      tempSli->setMaximum(1000);
-      tempSli->setSingleStep(10);
-      tempSli->setValue(500);
-      vboxLayout->addWidget(tempSli);
-      sliders.push_back(tempSli);
-      QObject::connect(tempSli,SIGNAL(valueChanged(int)),SLOT(sliderChanged(int)));
+        vboxLayout = new QVBoxLayout();
+        vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
+
+        QLabel* tmpLab;
+        QSlider* tmpSli;
+        QString name;
+
+        low.resize(names.size());
+        high.resize(names.size());
+        for (uint i = 0; i < 3; i++) {
+            //label value will be defined in milimeters
+            low[i] = rob->getLimits(i)[0];
+            high[i] = rob->getLimits(i)[1];
+        }
+        for (uint i = 3; i < 6; i++) {
+            //label value will be unitary and adimesional
+            low[i] = 0.;
+            high[i] = 1.;
+        }
+        double to_degrees = 180./M_PI;
+        for (uint i = 6; i < names.size(); i++) {
+            //label value will be defined in degrees
+            low[i] = *rob->getLink(i-5)->getLimits(true);
+            high[i] = *rob->getLink(i-5)->getLimits(false);
+
+            if (rob->getLink(i-5)->getRotational()) {
+                low[i] *= to_degrees;
+                high[i] *= to_degrees;
+            }
+        }
+
+        values.resize(names.size());
+        labels.resize(names.size());
+        sliders.resize(names.size());
+        for (uint i = 0; i < names.size(); i++){
+            values[i] = rob->getOffMatrix()[i];
+
+            tmpLab = new QLabel(this);
+            name = names.at(i).toUtf8().constData();
+            tmpLab->setObjectName(name);
+            vboxLayout->addWidget(tmpLab);
+            labels[i] = tmpLab;
+
+            tmpSli = new QSlider(this);
+            tmpSli->setObjectName(names.at(i).toUtf8().constData());
+            tmpSli->setOrientation(Qt::Horizontal);
+            tmpSli->setMinimum(0);
+            tmpSli->setMaximum(1000);
+            tmpSli->setSingleStep(10);
+            tmpSli->setValue(500);
+            QObject::connect(tmpSli,SIGNAL(valueChanged(int)),SLOT(sliderChanged(int)));
+            vboxLayout->addWidget(tmpSli);
+            sliders[i] = tmpSli;
+        }
+
+        setValues(values);
+
+        gridLayout->addLayout(vboxLayout, 0, 1, 1, 1);
+
+        QScrollArea* scrollArea = new QScrollArea();
+        scrollArea->setWidget(tmpWid);
+        scrollArea->setWidgetResizable(true);
+
+        QGridLayout *grid;
+        grid = new QGridLayout(this);
+        grid->addWidget(scrollArea);
     }
 
-    values.resize(cont.size());
-
-    for(int i=0; i<values.size(); i++)
-      values[i]=0.5;
-
-    gridLayout->addLayout(vboxLayout, 0, 1, 1, 1);
-    gridLayout = new QGridLayout(this);
-		QScrollArea* scrollArea = new QScrollArea();
-    scrollArea->setBackgroundRole(QPalette::Dark);
-    scrollArea->setWidget(tmpWid);
-    gridLayout->addWidget(scrollArea);
-	}
-
-  DOFWidget::~DOFWidget(){
-    for(unsigned int i=0; i<sliders.size(); i++){
-      delete (QSlider*)sliders[i];
-      delete (QLabel*)labels[i];
+    DOFWidget::~DOFWidget(){
+        for (uint i = 0; i < sliders.size(); i++){
+            delete (QSlider*)sliders[i];
+            delete (QLabel*)labels[i];
+        }
+        values.clear();
     }
-    values.clear();
-  }
 
-	void DOFWidget::sliderChanged(int value){
-    QString tmp;
-    for(unsigned int i=0; i<sliders.size(); i++){
-      values[i]=(KthReal)((QSlider*)sliders[i])->value()/1000.0;
-      tmp = labels[i]->text().left(labels[i]->text().indexOf("=") + 2);
-      labels[i]->setText( tmp.append( QString().setNum(values[i],'g',5)));
+    void DOFWidget::sliderChanged(int value){
+        //values only can be changed if the control sliders changed
+        setValues(values);
     }
-    if(_robot != NULL) _robot->parameter2Pose(values);
 
-	}
+    void DOFWidget::setValues(vector<KthReal> &val){
+        if (val.size() == sliders.size()){
+            double realval;
+            for(uint i = 0; i < val.size(); i++) {
+                values[i] = val.at(i);
+                if (values[i] > 1.0) values[i] = 1.0;
+                if (values[i] < 0.0) values[i] = 0.0;
 
-  void DOFWidget::setValues(vector<KthReal> &val){
-    if(val.size() == sliders.size()){
-      for(unsigned int i = 0; i < val.size(); i++)
-        ((QSlider*)sliders[i])->setValue((int)(val[i]*1000.0));
+                ((QSlider*)sliders[i])->setValue((int)(values[i]*1000.0));
+
+                realval = low[i] + values[i]*(high[i]-low[i]);
+                ((QLabel*)labels[i])->setText(QString(names[i] + " = " +
+                                                      QString::number(realval,'f',3)));
+            }
+        }
     }
-  }
 
 }
 

@@ -57,7 +57,7 @@ namespace Kautham {
       if(thesi->satisfiesBounds(state)==false)
           return false;
       //create sample
-      int d = theplanner->wkSpace()->getDimension();
+      int d = theplanner->wkSpace()->getNumRobControls();
       Sample *smp = new Sample(d);
       //copy the conf of the init smp. Needed to capture the home positions.
       smp->setMappedConf(theplanner->initSamp()->getMappedConf());
@@ -76,7 +76,7 @@ namespace Kautham {
       if(thesi->satisfiesBounds(state)==false)
           return false;
       //create sample
-      int d = theplanner->wkSpace()->getDimension();
+      int d = theplanner->wkSpace()->getNumRobControls();
       Sample *smp = new Sample(d);
       //copy the conf of the init smp. Needed to capture the home positions.
       smp->setMappedConf(theplanner->initSamp()->getMappedConf());

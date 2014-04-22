@@ -53,45 +53,19 @@ namespace Kautham {
 	}
 
 	SoSeparator* IVWorkSpace::getIvScene(bool bounding){
-		if(scene == NULL){
-      if(robots.size() != 0){
-			  scene = new SoSeparator();
-        //scene->addChild(SoUnits::MILLIMETERS);
-			  for(unsigned int i=0; i<robots.size(); i++)
-				  scene->addChild((SoSeparator*)robots[i]->getModel());
-  			  			
-        for(unsigned int i=0; i<obstacles.size(); i++){
-				  SoSeparator* sep = (SoSeparator*)obstacles[i]->getModel();
-				  char str[20];
-				  sprintf(str,"obstacle%d",i);
-				  sep->setName(str);
-				  scene->addChild(sep);
-				  //scene->addChild((SoSeparator*)obstacles[i]->getModel());
-			  }
-  			
-			  for(unsigned int i=0; i<_mobileObstacle.size(); i++)
-				  scene->addChild((SoSeparator*)_mobileObstacle[i]->getModel());
+        if(scene == NULL){
+            if(robots.size() != 0){
+                scene = new SoSeparator();
 
-			  scene->ref();
-      }
-    }
+                for(unsigned int i=0; i<robots.size(); i++)
+                    scene->addChild((SoSeparator*)robots[i]->getModel());
 
-		/* The following does not work properly when cildren should be accesseb by labels.
-		   The scene pointer should be returned instead.*/
-		/*
-			SoSeparator* temp = new SoSeparator();
-			temp->addChild(scene);
-			temp->ref();
-			if(bounding)
-				temp->addChild(calculateBoundingBox(scene));
-			return temp;
-		*/
+                for(unsigned int i=0; i<obstacles.size(); i++)
+                    scene->addChild((SoSeparator*)obstacles[i]->getModel());
 
-		//comporvacio
-		//SoNode *sepgrid = scene->getByName("obstacle1");
-		//int c = scene->findChild(sepgrid);
-		//scene->removeChild(sepgrid);
-
+                scene->ref();
+            }
+        }
 
 		if(bounding)
 			scene->addChild(calculateBoundingBox(scene));
@@ -100,44 +74,18 @@ namespace Kautham {
 
     SoSeparator* IVWorkSpace::getCollisionIvScene(bool bounding){
         if(collisionscene == NULL){
-      if(robots.size() != 0){
-              collisionscene = new SoSeparator();
-        //scene->addChild(SoUnits::MILLIMETERS);
-              for(unsigned int i=0; i<robots.size(); i++)
-                  collisionscene->addChild((SoSeparator*)robots[i]->getCollisionModel());
+            if(robots.size() != 0){
+                collisionscene = new SoSeparator();
+                //scene->addChild(SoUnits::MILLIMETERS);
+                for(unsigned int i=0; i<robots.size(); i++)
+                    collisionscene->addChild((SoSeparator*)robots[i]->getCollisionModel());
 
-        for(unsigned int i=0; i<obstacles.size(); i++){
-                  SoSeparator* sep = (SoSeparator*)obstacles[i]->getCollisionModel();
-                  char str[20];
-                  sprintf(str,"obstacle%d",i);
-                  sep->setName(str);
-                  collisionscene->addChild(sep);
-                  //scene->addChild((SoSeparator*)obstacles[i]->getModel());
-              }
+                for(unsigned int i=0; i<obstacles.size(); i++)
+                    collisionscene->addChild((SoSeparator*)obstacles[i]->getCollisionModel());
 
-              for(unsigned int i=0; i<_mobileObstacle.size(); i++)
-                  collisionscene->addChild((SoSeparator*)_mobileObstacle[i]->getCollisionModel());
-
-              collisionscene->ref();
-      }
-    }
-
-        /* The following does not work properly when cildren should be accesseb by labels.
-           The scene pointer should be returned instead.*/
-        /*
-            SoSeparator* temp = new SoSeparator();
-            temp->addChild(scene);
-            temp->ref();
-            if(bounding)
-                temp->addChild(calculateBoundingBox(scene));
-            return temp;
-        */
-
-        //comporvacio
-        //SoNode *sepgrid = scene->getByName("obstacle1");
-        //int c = scene->findChild(sepgrid);
-        //scene->removeChild(sepgrid);
-
+                collisionscene->ref();
+            }
+        }
 
         if(bounding)
             collisionscene->addChild(calculateBoundingBox(scene));

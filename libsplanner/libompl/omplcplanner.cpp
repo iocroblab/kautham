@@ -82,7 +82,7 @@ namespace Kautham {
       if(  si->satisfiesBounds(state)==false )
           return false;
       //create sample
-      int d = p->wkSpace()->getDimension();
+      int d = p->wkSpace()->getNumRobControls();
       Sample *smp = new Sample(d);
       //copy the conf of the init smp. Needed to capture the home positions.
       smp->setMappedConf(p->initSamp()->getMappedConf());
@@ -309,13 +309,13 @@ namespace Kautham {
         vector<ob::StateSpacePtr> spaceRob;
         vector< double > weights;
 
-        spaceRn.resize(_wkSpace->robotsCount());
-        spaceSE3.resize(_wkSpace->robotsCount());
-        spaceRob.resize(_wkSpace->robotsCount());
-        weights.resize(_wkSpace->robotsCount());
+        spaceRn.resize(_wkSpace->getNumRobots());
+        spaceSE3.resize(_wkSpace->getNumRobots());
+        spaceRob.resize(_wkSpace->getNumRobots());
+        weights.resize(_wkSpace->getNumRobots());
 
         //loop for all robots
-        for(int i=0; i<_wkSpace->robotsCount(); i++)
+        for(int i=0; i<_wkSpace->getNumRobots(); i++)
         {
             vector<ob::StateSpacePtr> compoundspaceRob;
             vector< double > weightsRob;
@@ -448,7 +448,7 @@ namespace Kautham {
     //! This function sets the SoSeparator to draw a 2D configuration space
     SoSeparator *omplcPlanner::getIvCspaceScene()
     {
-        if(_wkSpace->getDimension()<=3)
+        if(_wkSpace->getNumRobControls()<=3)
         {
             _sceneCspace = new SoSeparator();
         }
@@ -463,7 +463,7 @@ namespace Kautham {
     {
         if(_sceneCspace==NULL) return;
 
-        if(_wkSpace->getDimension()<=3)
+        if(_wkSpace->getNumRobControls()<=3)
         {
             if(_wkSpace->getRobot(0)->isSE3Enabled())
                 drawCspaceSE3();
@@ -811,7 +811,7 @@ namespace Kautham {
         std::vector<RobConf>& smpRobotsConf = smp->getMappedConf();
 
         //loop for all the robots
-        for(int i=0; i<_wkSpace->robotsCount(); i++)
+        for(int i=0; i<_wkSpace->getNumRobots(); i++)
         {
             int k=0; //counter of subspaces contained in subspace of robot i
 
@@ -878,7 +878,7 @@ namespace Kautham {
         vector<RobConf> rc;
 
         //loop for all the robots
-        for(int i=0; i<_wkSpace->robotsCount(); i++)
+        for(int i=0; i<_wkSpace->getNumRobots(); i++)
         {
             //RobConf to store the robots configurations read form the ompl state
             RobConf *rcj = new RobConf;
@@ -998,7 +998,7 @@ namespace Kautham {
         int imax = data.numVertices();
         for(int i=0; i<imax;i++)
         {
-             smp=new Sample(_wkSpace->getDimension());
+             smp=new Sample(_wkSpace->getNumRobControls());
              smp->setMappedConf(_init->getMappedConf());//copy the conf of the start smp
              omplState2smp(data.getVertex(i).getState(), smp);
              _samples->add(smp);
@@ -1025,7 +1025,7 @@ namespace Kautham {
              //load the kautham _path variable from the ompl solution
              for(int j=0;j<l;j++){
                  //create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
-                 smp=new Sample(_wkSpace->getDimension());
+                 smp=new Sample(_wkSpace->getNumRobControls());
                  smp->setMappedConf(_init->getMappedConf());
                  //convert form state to smp
                  omplState2smp(ss->getSolutionPath().asGeometric().getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);

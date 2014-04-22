@@ -60,10 +60,10 @@ namespace IOC{
 	bool LinearLocalPlanner::canConect(){
     if(initSamp() == NULL || goalSamp() == NULL) return false; //problem not set.
 
-    if(initSamp()->getDim() != wkSpace()->getDimension()) return false;  //sample is not come from the workspace.
+    if(initSamp()->getDim() != wkSpace()->getNumRobControls()) return false;  //sample is not come from the workspace.
     
     KthReal dist = 0;
-    int wkDim = wkSpace()->getDimension();
+    int wkDim = wkSpace()->getNumRobControls();
     Sample *tmpSample = NULL;
     vector<KthReal> steps;
     steps.resize(wkDim);
