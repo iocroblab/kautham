@@ -83,7 +83,7 @@ namespace Kautham {
           return false;
 
 		char *str = new char[20];
-		for(int i=0; i<_wkSpace->getDimension();i++)
+        for(int i=0; i<_wkSpace->getNumRobControls();i++)
 		{
 			sprintf(str,"Discr. Steps %d",i);
 			it = _parameters.find(str);

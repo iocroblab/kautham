@@ -110,8 +110,13 @@ namespace Kautham {
     void                showPlannerToolBar();
     void                changeActiveBackground();
     void                changeDockAreaForOutput(Qt::DockWidgetArea area);
-	public:
-		GUI(QWidget *p=0);
+    //! Enables/Disables the use of bounding boxes as collision models
+    void                toogleBBOXflag();
+    //! Sets the directories where robot and obstacles models will be looked for
+    void                setModelsDefaultPath();
+
+    public:
+    GUI(QWidget *p=0);
     void                clearText();
     bool                addViewerTab(string title, VIEWERTYPE typ, SoSeparator *root);
     void                removePropTab(string title);
@@ -126,15 +131,16 @@ namespace Kautham {
     bool                addSeparator(WHERETYPE typ);
     bool                restart();
     bool                addToProblemTree(string problemPath);
-    bool                addControlWidget(Problem* prob);
+    bool                addRobControlWidget(Problem* prob, vector<Kautham::DOFWidget *> robDOFWidgets);
+    bool                addObsControlWidget(Problem* prob, vector<Kautham::DOFWidget *> obsDOFWidgets);
 
-    bool                addExternalWidget1( Robot* rob, Problem* prob, int offset = 0, GUI* gui = NULL);
-    bool                addExternalWidget2( Robot* rob, Problem* prob, int offset = 0, GUI* gui = NULL);
-    bool                addExternalWidget3( Robot* rob, Problem* prob, int offset = 0, GUI* gui = NULL);
+    bool                addExternalWidget1( Robot* rob, Problem* prob, GUI* gui = NULL);
+    bool                addExternalWidget2( Robot* rob, Problem* prob, GUI* gui = NULL);
+    bool                addExternalWidget3( Robot* rob, Problem* prob, GUI* gui = NULL);
 
 
-    bool                addConstrainedControlWidget( Robot* rob, Problem* prob, int offset = 0);
-    bool                addDOFWidget( Robot* rob );
+    bool                addConstrainedControlWidget( Robot* rob, Problem* prob);
+    Kautham::DOFWidget *addDOFWidget( Robot* rob );
     bool                setSampleWidget(SampleSet* samples, Sampler* sampler, Problem* prob);
     bool                createPlannerToolBar(string loc, string plan, QObject* receiver, const char* member);
     bool                addPlanner(Planner *plan, SampleSet* samp, GUI* gui = NULL);
@@ -149,10 +155,18 @@ namespace Kautham {
     bool                setActiveCameraTransform(mt::Transform tra);
     std::string         getActiveViewTitle();
 	
-    ControlWidget*		getControlWidget();
+    ControlWidget*		getRobControlWidget();
+    ControlWidget*		getObsControlWidget();
     PlannerWidget*		getPlannerWidget();
 
-	int					indexControlsTab;
+    //! Hides the Introduction Tab and shows the Properties and DOF tabs
+    void showProblemAppearance();
+
+    //! Shows the Introduction Tab and hides the Properties and DOF tabs
+    void showInitialAppearance();
+
+    int			 		indexRobControlsTab;
+    int			 		indexObsControlsTab;
     int                 indexPlannerTab;
   private:
     vector<Viewer>      viewers;

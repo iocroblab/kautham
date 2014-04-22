@@ -63,11 +63,11 @@
 
 		//set weights
         /*
-		_weightPerJoint = new KthReal[_wkSpace->getDimension()];
+        _weightPerJoint = new KthReal[_wkSpace->getNumRobControls()];
 		int i;
-		for(i = 0; i < _wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); i ++)
+        for(i = 0; i < _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); i ++)
 			_weightPerJoint[i]=1;//don't know how to play with that...
-		for(; i < _wkSpace->getDimension(); i ++)
+        for(; i < _wkSpace->getNumRobControls(); i ++)
 			_weightPerJoint[i]=10; //don't know how to play with that...try penalyzing arm motions
         */
 		}
@@ -116,7 +116,7 @@
 			for(unsigned i = 0; i < _path.size(); i++){
 				coordvector.clear();
 				//convert from controls to real coordinates
-				for(int k = 0; k < _wkSpace->getDimension(); k++)
+                for(int k = 0; k < _wkSpace->getNumRobControls(); k++)
 					coordvector.push_back( _path[i]->getCoords()[k] ); 
 								
 				_wkSpace->getRobot(0)->control2Pose(coordvector);
@@ -150,12 +150,12 @@
       double radius = _cloudRadius / 2;
 	    vector<KthReal> coordvector;
 	    int trials, maxtrials;
-      std::vector<KthReal> coord(_wkSpace->getDimension());
-      std::vector<KthReal> coordarm(_wkSpace->getDimension());
+      std::vector<KthReal> coord(_wkSpace->getNumRobControls());
+      std::vector<KthReal> coordarm(_wkSpace->getNumRobControls());
       bool autocol;//flag to test autocollisions
       Sample *tmpSample;
 		
-                tmpSample = new Sample(_wkSpace->getDimension());
+                tmpSample = new Sample(_wkSpace->getNumRobControls());
 
 		//Set the coordinates of the robot joints 
 		//Randomly set the coordinates of the robot joints at a autocollision-free conf
@@ -163,11 +163,11 @@
 		maxtrials=10;
 		do{
 			coordvector.clear();
-			for(int k = 0; k < _wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k++)
+            for(int k = 0; k < _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k++)
 			{
 				coordvector.push_back(0.0); //dummy values - not used in call to autocollision with parameter 1
 			}
-			for(int k =_wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getDimension(); k++)
+            for(int k =_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getNumRobControls(); k++)
 			{
 				coordarm[k] = goalSamp()->getCoords()[k] + radius*(2*(KthReal)_gen->d_rand()-1);
 				coordvector.push_back(coordarm[k]);
@@ -186,13 +186,13 @@
 		do{
 			coordvector.clear();
 			//sample the hand coordinates
-			for(int k = 0; k < _wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k++)
+            for(int k = 0; k < _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k++)
 			{
 				coord[k] = (KthReal)_gen->d_rand();
 				coordvector.push_back(coord[k]);
 			}
 			//load the arm coordinates computed before
-			for(int k =_wkSpace->getDimension()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getDimension(); k++)
+            for(int k =_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getNumRobControls(); k++)
 			{
 				coord[k]=coordarm[k];
 				coordvector.push_back(coord[k]);

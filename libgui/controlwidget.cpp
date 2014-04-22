@@ -48,77 +48,105 @@
 
 namespace Kautham {
 
+    ControlWidget::ControlWidget(Problem* prob, vector<DOFWidget*> DOFWidgets, bool robot) {
+        _ptProblem = prob;
+        robWidget = robot;
+        _DOFWidgets = DOFWidgets;
+        string names = "This|is|a|test";
+        if (robot) {
+            names = _ptProblem->wSpace()->getRobControlsName();
+        } else {
+            names = _ptProblem->wSpace()->getObsControlsName();
+        }
+        gridLayout = new QGridLayout(this);
+        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        vboxLayout = new QVBoxLayout();
+        vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
+        QLabel* tempLab;
+        QSlider* tempSli;
+        QString content(names.c_str());
+        QStringList cont = content.split("|");
+        QStringList::const_iterator iterator;
+        for (iterator = cont.constBegin(); iterator != cont.constEnd();
+             ++iterator) {
+            tempLab = new QLabel(this);
+            tempLab->setObjectName(/*QString("lbl")  +*/ (*iterator).toUtf8().constData());
+            content = (*iterator).toUtf8().constData();
+            tempLab->setText(content.append(" = 0.5"));
+            this->vboxLayout->addWidget(tempLab);
+            labels.push_back(tempLab);
 
-    ControlWidget::ControlWidget(Problem* prob) {
-    _ptProblem = prob;
-    string names = "This|is|a|test";
-    names= _ptProblem->wSpace()->getControlsName();
-    gridLayout = new QGridLayout(this);
-    gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-    vboxLayout = new QVBoxLayout();
-    vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
-    QLabel* tempLab;
-    QSlider* tempSli;
-    QString content(names.c_str());
-		QStringList cont = content.split("|");
-    QStringList::const_iterator iterator;
-    for (iterator = cont.constBegin(); iterator != cont.constEnd();
-                    ++iterator)
-    {
-        tempLab = new QLabel(this);
-        tempLab->setObjectName(/*QString("lbl")  +*/ (*iterator).toUtf8().constData());
-        content = (*iterator).toUtf8().constData();
-        tempLab->setText(content.append(" = 0.5"));
-        this->vboxLayout->addWidget(tempLab);
-        labels.push_back(tempLab);
+            tempSli = new QSlider(this);
+            tempSli->setObjectName(/*"sld" + */(*iterator).toUtf8().constData());
+            tempSli->setOrientation(Qt::Horizontal);
+            tempSli->setMinimum(0);
+            tempSli->setMaximum(1000);
+            tempSli->setSingleStep(1);
+            tempSli->setValue(500);
+            vboxLayout->addWidget(tempSli);
+            sliders.push_back(tempSli);
+            QObject::connect(tempSli,SIGNAL(valueChanged(int)),SLOT(sliderChanged(int)));
+        }
 
-        tempSli = new QSlider(this);
-        tempSli->setObjectName(/*"sld" + */(*iterator).toUtf8().constData());
-        tempSli->setOrientation(Qt::Horizontal);
-        tempSli->setMinimum(0);
-        tempSli->setMaximum(1000);
-        tempSli->setSingleStep(1);
-        tempSli->setValue(500);
-        vboxLayout->addWidget(tempSli);
-        sliders.push_back(tempSli);
-        QObject::connect(tempSli,SIGNAL(valueChanged(int)),SLOT(sliderChanged(int)));
+        vboxLayout1 = new QVBoxLayout();
+        btnUpdate = new QPushButton(this);
+        //btnUpdate->setText("Update Controls To Last Moved Sample");
+        if (robWidget) {
+            btnUpdate->setText("Update Controls To Last Moved Sample");
+        } else {
+            btnUpdate->setText("Update Controls To Initial Sample");
+        }
+        btnUpdate->setObjectName(QString::fromUtf8("Update Controls"));
+        connect(btnUpdate, SIGNAL( clicked() ), this, SLOT( updateControls() ) );
+        vboxLayout1->addWidget(btnUpdate);
+
+        values.resize(sliders.size());
+        for(int i=0; i<values.size(); i++)
+            values[i]=0.5;
+
+        vboxLayout->addLayout(vboxLayout1);
+        gridLayout->addLayout(vboxLayout,0,1,1,1);
+
     }
-	
-    vboxLayout1 = new QVBoxLayout();
-    btnUpdate = new QPushButton(this);
-    btnUpdate->setText("Update Controls To Last Moved Sample");
-    btnUpdate->setObjectName(QString::fromUtf8("Update Controls"));
-    connect(btnUpdate, SIGNAL( clicked() ), this, SLOT( updateControls() ) ); 
-    vboxLayout1->addWidget(btnUpdate);
 
-    values.resize(sliders.size());
-    for(int i=0; i<values.size(); i++)
-      values[i]=0.5;
-
-    vboxLayout->addLayout(vboxLayout1);
-    gridLayout->addLayout(vboxLayout,0,1,1,1);
-		
-	}
-
-  ControlWidget::~ControlWidget(){
-    for(unsigned int i=0; i<sliders.size(); i++){
-      delete (QSlider*)sliders[i];
-      delete (QLabel*)labels[i];
+    ControlWidget::~ControlWidget(){
+        for(uint i = 0; i < sliders.size(); i++) {
+            delete (QSlider*)sliders[i];
+            delete (QLabel*)labels[i];
+        }
+        sliders.clear();
+        labels.clear();
+        values.clear();
+        for (uint i = 0; _DOFWidgets.size(); i++) {
+            delete (DOFWidget*)_DOFWidgets[i];
+        }
+        _DOFWidgets.clear();
+        delete gridLayout;
+        delete vboxLayout;
+        delete vboxLayout1;
+        delete btnUpdate;
     }
-    values.clear();
-  }
-  
-	void ControlWidget::updateControls(){
-        Sample *s  = _ptProblem->wSpace()->getLastSampleMovedTo();
-        if(s!=NULL){
-           for(int j = 0; j < _ptProblem->wSpace()->getNumControls(); j++ )
-               values[j] = s->getCoords()[j];
 
-            setValues();
-		}
-	}
+    void ControlWidget::updateControls(){
+        Sample *s;
+        if (robWidget) {
+            s  = _ptProblem->wSpace()->getLastRobSampleMovedTo();
+        } else {
+            //s  = _ptProblem->wSpace()->getLastObsSampleMovedTo();
+            s = new Sample(_ptProblem->wSpace()->getNumObsControls());
+            vector <KthReal> coords;
+            coords.resize(_ptProblem->wSpace()->getNumObsControls());
+            for (uint i = 0; i < coords.size(); i++) {
+                coords[i] = 0;
+            }
+            s->setCoords(coords);
+        }
+        if (s != NULL){
+            setValues(s->getCoords());
+        }
+    }
 
-	void ControlWidget::sliderChanged(int value){
+    void ControlWidget::sliderChanged(int value){
         QString tmp;
         for(unsigned int i=0; i<sliders.size(); i++){
             values[i]=(KthReal)((QSlider*)sliders[i])->value()/1000.0;
@@ -126,44 +154,68 @@ namespace Kautham {
             tmp = labels[i]->text().left(labels[i]->text().indexOf("=") + 2);
             labels[i]->setText( tmp.append( QString().setNum(values[i],'g',5)));
         }
-        _ptProblem->setCurrentControls(values,0);
-        //if(_robot != NULL) _robot->control2Pose(values);
 
-        //move the robots
-        Sample *s=_ptProblem->wSpace()->getLastSampleMovedTo();
-
-        vector<KthReal> coords;
-        if(s==NULL){
-            coords.resize(_ptProblem->wSpace()->getDimension());
-            for(int i=0; i < _ptProblem->wSpace()->getDimension(); i++ ) coords[i] = 0.5;
-        }
-        else{
-            //vector<KthReal>& coords = s->getCoords();
-            coords = s->getCoords();
-
+        if (robWidget) {
+            _ptProblem->setCurrentRobControls(values);
+        } else {
+            _ptProblem->setCurrentObsControls(values);
         }
 
+        Sample *sample = new Sample(values.size());
+        sample->setCoords(values);
 
-        for(int j=0; j < _ptProblem->wSpace()->getNumControls(); j++ ){
-            coords[j]=values[j];
+        vector <float> params;
+        if (robWidget) {
+            _ptProblem->wSpace()->moveRobotsTo(sample);
+            for (uint i = 0; i < _DOFWidgets.size(); i++) {
+                _ptProblem->wSpace()->getRobot(i)->control2Parameters(values,params);
+                ((DOFWidget*)_DOFWidgets.at(i))->setValues(params);
+            }
+        } else {
+            _ptProblem->wSpace()->moveObstaclesTo(sample);
+            for (uint i = 0; i < _DOFWidgets.size(); i++) {
+                _ptProblem->wSpace()->getObstacle(i)->control2Parameters(values,params);
+                ((DOFWidget*)_DOFWidgets.at(i))->setValues(params);
+            }
         }
-        //Sample *s2 = new Sample(s);
-        Sample *s2 = new Sample(_ptProblem->wSpace()->getDimension());
-
-        s2->setCoords(coords);
-        _ptProblem->wSpace()->moveRobotsTo(s2);
     }
 
-  void ControlWidget::setValues(){
-      vector<KthReal>   values2;
-      values2.resize(values.size());
-      for(unsigned int i = 0; i < values.size(); i++)
-            values2[i] = values[i];
+    void ControlWidget::setValues(vector<KthReal> coords){
+        QString tmp;
+        for(unsigned int i = 0; i < coords.size(); i++) {
+            ((QSlider*)sliders[i])->setValue((int)(coords[i]*1000.0));
 
-      for(unsigned int i = 0; i < values.size(); i++)
-        ((QSlider*)sliders[i])->setValue((int)(values2[i]*1000.0));
+            tmp = labels[i]->text().left(labels[i]->text().indexOf("=") + 2);
+            labels[i]->setText( tmp.append( QString().setNum(coords[i],'g',5)));
+        }
+
+        for (int j = 0; j < values.size(); j++)
+            values[j] = coords[j];
+
+        if (robWidget) {
+            _ptProblem->setCurrentRobControls(values);
+        } else {
+            _ptProblem->setCurrentObsControls(values);
+        }
+
+        Sample *sample = new Sample(values.size());
+        sample->setCoords(values);
+
+        vector <float> params;
+        if (robWidget) {
+            _ptProblem->wSpace()->moveRobotsTo(sample);
+            for (uint i = 0; i < _DOFWidgets.size(); i++) {
+                _ptProblem->wSpace()->getRobot(i)->control2Parameters(values,params);
+                ((DOFWidget*)_DOFWidgets.at(i))->setValues(params);
+            }
+        } else {
+            _ptProblem->wSpace()->moveObstaclesTo(sample);
+            for (uint i = 0; i < _DOFWidgets.size(); i++) {
+                _ptProblem->wSpace()->getObstacle(i)->control2Parameters(values,params);
+                ((DOFWidget*)_DOFWidgets.at(i))->setValues(params);
+            }
+        }
     }
-
 
 }
 

@@ -45,14 +45,13 @@
 #if !defined(_ROBOT_H)
 #define _ROBOT_H
 
-
-#include "obstacle.h"
 #include "link.h"
 #include <mt/transform.h>
 #include <libsampling/robconf.h>
-//#include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
+#include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include <libkin/inversekinematic.h>
 #include <libkin/constrainedkinematic.h>
+#include <libproblem/ivpqpelement.h>
 #include <list>
 
 
@@ -68,14 +67,14 @@ namespace Kautham {
 
 //! Struct attObj defines the transformation between an object and the robot link to which it is attached.
   struct attObj{
-    attObj(){obs=NULL; link=NULL;}
-    ~attObj(){obs=NULL; link=NULL;}
-    Obstacle*     obs;
-    Link*         link;
-    mt::Transform trans;
-    bool toLink( string linkName ){
-      return link->getName() == linkName;
-    }
+      attObj() {obs=NULL; link=NULL;}
+      ~attObj() {obs=NULL; link=NULL;}
+      Robot*        obs;
+      Link*         link;
+      mt::Transform trans;
+      bool toLink( string linkName ){
+          return link->getName() == linkName;
+      }
   };
 
 //! Class robot implements a kinematic tree with a free-flying base
@@ -83,7 +82,6 @@ namespace Kautham {
   private:
       ROBOTTYPE         robType; //!< The robot type FREEFLY,CHAIN, TREE, CLOSEDCHAIN
       LIBUSED           libs; //!< Flag indicating the collision-check library used PQP or SOLID.
-
       string            name; //!< A descriptive name of robot
       KthReal           scale;//!< This is the global scale for all the links that compound the robot. Normally it is equal to one.
       RobWeight*        _weights; //!< Weights that affect the distance computations.
@@ -98,7 +96,6 @@ namespace Kautham {
       SoSeparator*      _pathSeparator; //!< This is the SoSeparator to visualize the solution path. It is attached to the robot model.
       int               _linkPathDrawn; //!< This is the number of the link whose path will be drawn
       list<attObj>      _attachedObject; //!< List of objects attached to the robot gripper.
-
       KthReal           _spatialLimits[7][2]; //!< Limits of motions of the base of the robot, in world coordinates.
       KthReal           _homeLimits[7][2]; //!< Limits of motions of the base of the robo, with respect to the robot reference frame.
       vector<Link*>     links; //!< Vector of the robot links, starting at the base and ending at the end effector.In case of Tree robots, each branch is inserted sequentially.
@@ -106,9 +103,7 @@ namespace Kautham {
       bool              _hasChanged; //!< Flag that indicates if the robot has changed its configuration. To speed up some computations.
       KthReal           *offMatrix; //!< Offset vector. If copuling is generated with PCA it contains the baricenter coordinates, otherwise 0.5.
       KthReal           **mapMatrix; //!< Matrix to compute the robot configuration from the controls. If copuling is generated with PCA it contains the scaled eignevectors.
-
-
-      APPROACH        Approach;//!< It identifies the robot description method (D-H Standard/D-H Modified/urdf).
+      APPROACH          Approach;//!< It identifies the robot description method (D-H Standard/D-H Modified/urdf).
       bool              se3Enabled; //!< This attribute is true if the robot has a mobile base.
       bool              armed;//!< Flag that shows if the Robot is complete or still is under construction.
       RobConf           _homeConf;     //!< This attribute is the Home configuration of the robot.
@@ -117,7 +112,9 @@ namespace Kautham {
 
   public:
 
-    Robot(string robFile, KthReal scale, LIBUSED lib = IVPQP); //!<  Constructor
+    Robot(string robFile, KthReal robScale, LIBUSED lib = IVPQP); //!<  Constructor
+
+    inline bool isArmed() {return armed;} //!< Returns true if the Robot is correctly armed
 
     inline void setMapMatrix(KthReal **MapMatrix) {mapMatrix = MapMatrix;} //!< Sets the mapMatrix.
 
@@ -150,6 +147,7 @@ namespace Kautham {
     inline unsigned int getNumLinks(){return (unsigned int)links.size();} //!< Returns the number of links of the robot.
 
     inline bool isSE3Enabled() const {return se3Enabled;} //!< retruns wether the robot has a mobile base
+
     inline void setSE3(bool SE3Enabled) {se3Enabled = SE3Enabled;} //!< Sets wether the robot has a mobile base
 
     inline mt::Transform& getLastLinkTransform(){ return
@@ -172,7 +170,6 @@ namespace Kautham {
 
     inline void setLinkPathDrawn(int n){_linkPathDrawn = n;}
 
-
     //! Returns the values that weight translations vs. rotations in SE3 distance computations.
     KthReal* getWeightSE3();
 
@@ -183,7 +180,7 @@ namespace Kautham {
     bool autocollision(int t=0);
 
     //! Add link to the robot
-    bool addLink(string name, string ivFile, KthReal theta, KthReal d, KthReal a,
+    bool addLink(string name, string ivFile, string collision_ivFile, KthReal theta, KthReal d, KthReal a,
                  KthReal alpha, bool rotational, bool movable, KthReal low,
                  KthReal hi, KthReal w, string parentName, KthReal preTrans[] = NULL);
 
@@ -244,17 +241,11 @@ namespace Kautham {
     //! Sets the home position of the robot
     void setHomePos(Conf* qh);
 
-    //! Verifies collision with another robot
-    bool collisionCheck(Obstacle *obs);
+    //! Verifies collision with an obstacke or with another robot
+    bool collisionCheck(Robot *obs);
 
-    //! Verifies collision with an obstacle
-    bool collisionCheck(Robot *rob);
-
-    //! Verifies distance with another robot
+    //! Verifies distance with an obstacle or with another robot
     KthReal distanceCheck(Robot *rob, bool min = true);
-
-    //! Verifies distance with an obstacle
-    KthReal distanceCheck(Obstacle *obs, bool min = true);
 
     //! Sets the values of _spatialLimits[member]
     bool setLimits(int member, KthReal min, KthReal max);
@@ -296,7 +287,7 @@ namespace Kautham {
     bool setPathVisibility(bool visible);
 
     //! Attachs an object to a given link, usually the end effector.
-    bool attachObject(Obstacle* obs, string linkName );
+    bool attachObject(Robot* obs, string linkName );
 
     //! Moves the attached object.
     void moveAttachedObj();
@@ -308,6 +299,15 @@ namespace Kautham {
     KthReal maxDHParameter();
 
   private:
+    //! sets the Robot from a *.dh file
+    bool setFromdhFile(string robFile);
+
+    //! sets the Robot from a *.urdf file
+    bool setFromurdfFile(string robFile);
+
+    //! sets the Robot from a *.iv or *.wrl file
+    bool setFromivFile(string robFile);
+
     //! This method updates the absolute position and orientation of each link in the robot.
     void updateRobot();
 

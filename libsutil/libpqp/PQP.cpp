@@ -250,11 +250,11 @@ PQP_Model::MemUsage(int msg)
 
   if (msg) 
   {
-    fprintf(stderr,"Total for model %x: %d bytes\n", this, total_mem);
+    fprintf(stderr,"Total for model: %d bytes\n", total_mem);
     fprintf(stderr,"BVs: %d alloced, take %d bytes each\n", 
-            num_bvs, sizeof(BV));
+            num_bvs, (int)sizeof(BV));
     fprintf(stderr,"Tris: %d alloced, take %d bytes each\n", 
-            num_tris, sizeof(Tri));
+            num_tris, (int)sizeof(Tri));
   }
   
   return total_mem;

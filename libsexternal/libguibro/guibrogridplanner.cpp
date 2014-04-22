@@ -64,23 +64,23 @@ using namespace Kautham;
         _drawnLink = _wkSpace->getRobot(0)->getNumLinks()-1; //the path of tip is defaulted
 	  
 	  //define look-ahead points
-		_counterFirstPoint = _wkSpace->obstaclesCount();
+		_counterFirstPoint = _wkSpace->getNumObstacles();
 		KthReal pos[3] = {0.0,0.0,0.0};
 		KthReal ori[4] = {1.0,0.0,0.0,0.0};
 		KthReal scale = 1;
 		bool obscollisions = false;
-		Obstacle *obs; 
+        Robot *obs;
 		//add points to look-ahead points as obstacles
 		_maxLookAtPoints = 121;
 		for(int i=0;i<_maxLookAtPoints;i++)
 		{
-			obs = new Obstacle("",pos,ori,scale,IVPQP,obscollisions);
+            obs = new Robot("",scale,IVPQP);
 			_wkSpace->addObstacle(obs);
 		}
 
 
-	  _showObstacle = new int[_wkSpace->obstaclesCount()];
-	  for(int i=0; i<_wkSpace->obstaclesCount();i++) 
+	  _showObstacle = new int[_wkSpace->getNumObstacles()];
+	  for(int i=0; i<_wkSpace->getNumObstacles();i++) 
 		  _showObstacle[i]=-1;
 
 	  //interface to show obstacles (not considering look-ahead points
@@ -735,7 +735,7 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
 		if(it != _parameters.end())
 		{
             _showPoints = it->second;
-			for(int i=_counterFirstPoint; i<_wkSpace->obstaclesCount();i++)
+			for(int i=_counterFirstPoint; i<_wkSpace->getNumObstacles();i++)
 			{
 				//if the points should be removed
 				if(_showPoints ==0)
@@ -1202,7 +1202,9 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha_11, KthReal *
 					color[0]=0.8;
 					color[1]=0.2;
 					color[2]=0.2;
-					_wkSpace->getObstacle(_counterFirstPoint+i)->getElement()->setColor(color);
+                    for (uint j = 0;  j < _wkSpace->getObstacle(_counterFirstPoint+i)->getNumLinks(); j++) {
+                        _wkSpace->getObstacle(_counterFirstPoint+i)->getLink(j)->getElement()->setColor(color);
+                    }
 				}
 				//return to current position
 				/*vector<KthReal>  values;
@@ -1315,7 +1317,9 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha_11, KthReal *
 					color[1]=(0.2+(1-r)*0.8);
 					color[2]=0.8*r;
 				}
-				_wkSpace->getObstacle(_counterFirstPoint+i)->getElement()->setColor(color);
+                for (uint j = 0;  j < _wkSpace->getObstacle(_counterFirstPoint+i)->getNumLinks(); j++) {
+                    _wkSpace->getObstacle(_counterFirstPoint+i)->getLink(j)->getElement()->setColor(color);
+                }
 			}
 			//draw the best point in White
 			if(besti!=-1)
@@ -1323,7 +1327,9 @@ int GUIBROgridPlanner::look(KthReal stepsahead, KthReal *bestAlpha_11, KthReal *
 				color[0]=1.0;
 				color[1]=1.0;
 				color[2]=1.0;
-				_wkSpace->getObstacle(_counterFirstPoint+besti)->getElement()->setColor(color);
+                for (uint j = 0;  j < _wkSpace->getObstacle(_counterFirstPoint+besti)->getNumLinks(); j++) {
+                    _wkSpace->getObstacle(_counterFirstPoint+besti)->getLink(j)->getElement()->setColor(color);
+                }
 			}
 
 			//clock_t evallookatpointsfinaltime = clock();
@@ -1493,7 +1499,7 @@ bool GUIBROgridPlanner::testLookAtPoint(int numPoint, KthReal alpha_11,
 			p[0]=pos[0];
 			p[1]=pos[1];
 			p[2]=pos[2];
-			_wkSpace->getObstacle(numPoint)->getElement()->setPosition(p);
+            _wkSpace->getObstacle(numPoint)->getLink(0)->getElement()->setPosition(p);
 
 			//return to current position
 			_wkSpace->getRobot(0)->Kinematics(currentRobConf);
@@ -1632,10 +1638,10 @@ bool GUIBROgridPlanner::trySolve()
 				//a nodule is selected as a goal
 				else
 				{
-					KthReal x=_obstaclenodule->getElement()->getPosition()[0];
-					KthReal y=_obstaclenodule->getElement()->getPosition()[1];
-					KthReal z=_obstaclenodule->getElement()->getPosition()[2];
-					KthReal R=_obstaclenodule->getElement()->getScale();
+                    KthReal x=_obstaclenodule->getLink(0)->getElement()->getPosition()[0];
+                    KthReal y=_obstaclenodule->getLink(0)->getElement()->getPosition()[1];
+                    KthReal z=_obstaclenodule->getLink(0)->getElement()->getPosition()[2];
+                    KthReal R=_obstaclenodule->getLink(0)->getElement()->getScale();
 					if(findGraphVertex(x,y,z,R,&vg)==false)
 					{
 						cout<<"ERROR: No graph vertex found for goal sample"<<endl;
@@ -1690,7 +1696,7 @@ bool GUIBROgridPlanner::trySolve()
 
 			//////////////////////
 			//Start finding a path
-			Sample *smp = new Sample(_wkSpace->getDimension());
+            Sample *smp = new Sample(_wkSpace->getNumRobControls());
 			
 			
 
@@ -1804,7 +1810,7 @@ bool GUIBROgridPlanner::trySolve()
 					path2guide.push_back(ppoint);
 
 					//create the next sample
-					smp = new Sample(_wkSpace->getDimension());
+                    smp = new Sample(_wkSpace->getNumRobControls());
 
 					//info for debug purposes:
 					collisionCheck(&currentdcost,&currentNF1cost);

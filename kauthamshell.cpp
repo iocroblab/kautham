@@ -79,7 +79,7 @@ bool kauthamshell::openProblem(string problemfilename)
 
   bool kauthamshell::checkCollision(vector<KthReal> smpcoords)
   {
-      Sample* smp = new Sample(_problem->wSpace()->getDimension());
+      Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
       smp->setCoords(smpcoords);
       return _problem->wSpace()->collisionCheck(smp);
   }
@@ -87,7 +87,7 @@ bool kauthamshell::openProblem(string problemfilename)
 
   void kauthamshell::setRobotsConfig(vector<KthReal> smpcoords)
   {
-      Sample* smp = new Sample(_problem->wSpace()->getDimension());
+      Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
       smp->setCoords(smpcoords);
       _problem->wSpace()->moveRobotsTo(smp);
   }
@@ -95,7 +95,7 @@ bool kauthamshell::openProblem(string problemfilename)
 
   bool kauthamshell::setQuery(vector<KthReal> init, vector<KthReal> goal)
   {
-      int d = _problem->wSpace()->getDimension();
+      int d = _problem->wSpace()->getNumRobControls();
       SampleSet* samples = _problem->getSampleSet();
       samples->clear();
 
