@@ -109,18 +109,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Kautham::omplcplanner::KauthamDEtableEnvironment Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<!-- doxytag: class="Kautham::omplcplanner::KauthamDEtableEnvironment" -->
+<!-- doxytag: class="Kautham::omplcplanner::KauthamDEtableEnvironment" --><!-- doxytag: inherits="Kautham::omplcplanner::KauthamDEEnvironment" -->
 <p>This class define the pure virtual methods of OpenDEEnviroment and define how the control will be applied on the bodies.  
  <a href="class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_kautham_open_d_etable_environment_8h_source.html">KauthamOpenDEtableEnvironment.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for Kautham::omplcplanner::KauthamDEtableEnvironment:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.png" usemap="#Kautham::omplcplanner::KauthamDEtableEnvironment_map" alt=""/>
+  <map id="Kautham::omplcplanner::KauthamDEtableEnvironment_map" name="Kautham::omplcplanner::KauthamDEtableEnvironment_map">
+<area href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html" alt="Kautham::omplcplanner::KauthamDEEnvironment" shape="rect" coords="0,0,310,24"/>
+</map>
+ </div></div>
 
 <p><a href="class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html#a382c8dab234cd3f8a14ab6b26d1ad435">KauthamDEtableEnvironment</a> (<a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *ws, KthReal maxspeed)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.  <a href="#a382c8dab234cd3f8a14ab6b26d1ad435"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor define the robot environment(i.e. table environment ) by calling the <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html">KauthamDEEnvironment</a>.  <a href="#a382c8dab234cd3f8a14ab6b26d1ad435"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html#a1a5e2060673ecba2ee3a2ad4c62205ab">applyControl</a> (const double *control) const </td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function apply the control by setting the forces, velocities and torques.  <a href="#a1a5e2060673ecba2ee3a2ad4c62205ab"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html#a6a8aaabf9ff672e35166c523fd409057">getControlBounds</a> (std::vector&lt; double &gt; &amp;lower, std::vector&lt; double &gt; &amp;upper) const </td></tr>
@@ -160,7 +169,7 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment. </p>
+<p>Constructor define the robot environment(i.e. table environment ) by calling the <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html">KauthamDEEnvironment</a>. </p>
 <p>Constructor create the ODE table enviroment and setup the parameters for ODE. </p>
 
 </div>
@@ -253,6 +262,8 @@ Public Member Functions</h2></td></tr>
 <p>Set the planning parameters for planner. </p>
 <p>Setup the parameters for ODE. </p>
 
+<p>Reimplemented from <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#a469ece4e58a206ac3b712e53b4ba097b">Kautham::omplcplanner::KauthamDEEnvironment</a>.</p>
+
 </div>
 </div>
 <a class="anchor" id="a435ec7f0481908d87e6f722c6d045097"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEtableEnvironment::setupContact" ref="a435ec7f0481908d87e6f722c6d045097" args="(dGeomID geom1, dGeomID geom2, dContact &amp;contact) const " -->
@@ -313,7 +324,7 @@ Public Member Functions</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Apr 13 2014 17:27:53 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Apr 11 2014 00:20:02 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
