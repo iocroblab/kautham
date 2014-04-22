@@ -80,25 +80,6 @@ namespace Kautham {
 		vector<KthReal>   values;
         vector<KthReal>   low;
         vector<KthReal>   high;
-
-
-        /*
-    private slots:
-        void              sliderChanged(int val);
-    public:
-        DOFWidget( Robot* rob );
-        ~DOFWidget();
-        inline vector<KthReal>   *getValues(){return &values;}
-    void setValues(vector<KthReal> &val);
-    private:
-        vector<QSlider*>  sliders;
-        vector<QLabel*>   labels;
-        QGridLayout       *gridLayout;
-        QVBoxLayout       *vboxLayout;
-        vector<KthReal>   values;
-        Robot*            _robot;
-          */
-
 	};
 
 
