@@ -959,7 +959,7 @@ void GUIBROgridPlanner::computedcost(mt::Point3 posini,mt::Point3 posend, KthRea
 			//store the configuration reaches if a sample pointer smp was passed as a parameter
 			if(smp!=NULL)
 			{
-				smp->setMappedConf(_wkSpace->getConfigMapping());
+                smp->setMappedConf(_wkSpace->getRobConfigMapping());
 			}
 		}
 		//else: goal reached
