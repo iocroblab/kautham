@@ -22,8 +22,8 @@ var searchData=
   ['getcollisionmodel',['getCollisionModel',['../class_kautham_1_1_robot.html#a2331d6490ee8964b9d44b4d85b4919e4',1,'Kautham::Robot']]],
   ['getconfigmapping',['getConfigMapping',['../class_kautham_1_1_work_space.html#a15e4d1d8beca9992a9f4f1e6716a7c05',1,'Kautham::WorkSpace']]],
   ['getconnectedcomponent',['getConnectedComponent',['../class_kautham_1_1_sample.html#a83d08a44142da51cab8b123b2a92833c',1,'Kautham::Sample']]],
-  ['getcontrolbounds',['getControlBounds',['../class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html#a6a8aaabf9ff672e35166c523fd409057',1,'Kautham::omplcplanner::KauthamDEtableEnvironment']]],
-  ['getcontroldimension',['getControlDimension',['../class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html#a6e20a79cb6a9187b55b068c71a02b982',1,'Kautham::omplcplanner::KauthamDEtableEnvironment']]],
+  ['getcontrolbounds',['getControlBounds',['../class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#a789ce7ecdfaac5f926b77beaeaa11e4e',1,'Kautham::omplcplanner::KauthamDErobotEnvironment::getControlBounds()'],['../class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html#a6a8aaabf9ff672e35166c523fd409057',1,'Kautham::omplcplanner::KauthamDEtableEnvironment::getControlBounds()']]],
+  ['getcontroldimension',['getControlDimension',['../class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#a806f0e1f6bb728b1fa113be74c7b7e9f',1,'Kautham::omplcplanner::KauthamDErobotEnvironment::getControlDimension()'],['../class_kautham_1_1omplcplanner_1_1_kautham_d_etable_environment.html#a6e20a79cb6a9187b55b068c71a02b982',1,'Kautham::omplcplanner::KauthamDEtableEnvironment::getControlDimension()']]],
   ['getcontrolsname',['getControlsName',['../class_kautham_1_1_work_space.html#aafd3b600d89203dc6677ca7a3345315b',1,'Kautham::WorkSpace']]],
   ['getcoords',['getCoords',['../class_kautham_1_1_sample.html#a52d2956f49242e96a9b5b58f15cfee36',1,'Kautham::Sample']]],
   ['getcurrentpos',['getCurrentPos',['../class_kautham_1_1_robot.html#a295f54d73be2b96bd54e82a16c528c52',1,'Kautham::Robot']]],
@@ -91,7 +91,6 @@ var searchData=
   ['gettheta',['getTheta',['../class_kautham_1_1_link.html#a9c785fdc80c84d23cb1b432213ff11ce',1,'Kautham::Link::getTheta()'],['../class_kautham_1_1_i_o_c_1_1_const_linear_local_planner.html#aff940cfcb08532ca577276e021108417',1,'Kautham::IOC::ConstLinearLocalPlanner::getTheta()']]],
   ['gettmat',['getTMat',['../class_kautham_1_1_s_d_k_sampler.html#a5f9968376702fb0e3cecaf2d0a134019',1,'Kautham::SDKSampler']]],
   ['gettransformation',['getTransformation',['../class_kautham_1_1_link.html#aa7de09ca202971a706e5a6a2ebab143f',1,'Kautham::Link']]],
-  ['gettrimesh',['getTrimesh',['../class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html#acfb01cb7c870506852c3cda4e1786be2',1,'Kautham::omplcplanner::KauthamDEEnvironment']]],
   ['gettrunk',['getTrunk',['../class_kautham_1_1_robot.html#a145f6b4bf0fb304058a175bca36d90a3',1,'Kautham::Robot']]],
   ['getvmatrix',['getVMatrix',['../class_kautham_1_1_sequence.html#a7f359370f4ea9cb2a8a2b2672c7598d9',1,'Kautham::Sequence::getVMatrix(unsigned long int code)'],['../class_kautham_1_1_sequence.html#a64b2d1311f8ff2f9e974f9c7630cc9b9',1,'Kautham::Sequence::getVMatrix(void)']]],
   ['getw',['getW',['../class_kautham_1_1_sequence.html#a4c74debc5872e12a4bce2e0d0d879b40',1,'Kautham::Sequence']]],
@@ -103,8 +102,8 @@ var searchData=
   ['gpointpair',['GPointPair',['../class_g_point_pair.html',1,'']]],
   ['gridedge',['gridEdge',['../namespace_kautham_1_1_i_o_c.html#a001babef417503a3895176b33c7bd6bd',1,'Kautham::IOC']]],
   ['gridgraph',['gridGraph',['../namespace_kautham_1_1_i_o_c.html#a1bc70cf96a5be7b5984544536d879060',1,'Kautham::IOC']]],
-  ['gridplanner',['gridPlanner',['../class_kautham_1_1_i_o_c_1_1grid_planner.html',1,'Kautham::IOC']]],
   ['gridplanner',['gridPlanner',['../class_kautham_1_1_i_o_c_1_1grid_planner.html#ae86e7b10dda558c8a07edaab55b382f9',1,'Kautham::IOC::gridPlanner']]],
+  ['gridplanner',['gridPlanner',['../class_kautham_1_1_i_o_c_1_1grid_planner.html',1,'Kautham::IOC']]],
   ['gtreediamalg',['GTreeDiamAlg',['../class_g_tree_diam_alg.html',1,'']]],
   ['gui',['GUI',['../class_kautham_1_1_g_u_i.html',1,'Kautham']]]
 ];
