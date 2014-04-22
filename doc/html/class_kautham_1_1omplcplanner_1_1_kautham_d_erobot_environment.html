@@ -109,33 +109,150 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Kautham::omplcplanner::KauthamDErobotEnvironment Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<!-- doxytag: class="Kautham::omplcplanner::KauthamDErobotEnvironment" --><!-- doxytag: inherits="Kautham::omplcplanner::KauthamDEEnvironment" --><div class="dynheader">
-Inheritance diagram for Kautham::omplcplanner::KauthamDErobotEnvironment:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.png" usemap="#Kautham::omplcplanner::KauthamDErobotEnvironment_map" alt=""/>
-  <map id="Kautham::omplcplanner::KauthamDErobotEnvironment_map" name="Kautham::omplcplanner::KauthamDErobotEnvironment_map">
-<area href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html" alt="Kautham::omplcplanner::KauthamDEEnvironment" shape="rect" coords="0,0,312,24"/>
-</map>
- </div></div>
+<!-- doxytag: class="Kautham::omplcplanner::KauthamDErobotEnvironment" -->
+<p>This class define the pure virtual methods of OpenDEEnviroment and define how the control will be applied on the bodies.  
+ <a href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_kautham_open_d_erobot_environment_8h_source.html">KauthamOpenDErobotEnvironment.h</a>&gt;</code></p>
 
 <p><a href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0688ce5288c28d6cc83d6c1fa28f3d99"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDErobotEnvironment::KauthamDErobotEnvironment" ref="a0688ce5288c28d6cc83d6c1fa28f3d99" args="(WorkSpace *ws, KthReal maxspeed)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#a0688ce5288c28d6cc83d6c1fa28f3d99">KauthamDErobotEnvironment</a> (<a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *ws, KthReal maxspeed)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a92d9d7c25b03a678b3f3234aad1a7522"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDErobotEnvironment::applyControl" ref="a92d9d7c25b03a678b3f3234aad1a7522" args="(const double *control) const " -->
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>applyControl</b> (const double *control) const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a789ce7ecdfaac5f926b77beaeaa11e4e"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDErobotEnvironment::getControlBounds" ref="a789ce7ecdfaac5f926b77beaeaa11e4e" args="(std::vector&lt; double &gt; &amp;lower, std::vector&lt; double &gt; &amp;upper) const " -->
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>getControlBounds</b> (std::vector&lt; double &gt; &amp;lower, std::vector&lt; double &gt; &amp;upper) const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a806f0e1f6bb728b1fa113be74c7b7e9f"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDErobotEnvironment::getControlDimension" ref="a806f0e1f6bb728b1fa113be74c7b7e9f" args="(void) const " -->
-virtual unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getControlDimension</b> (void) const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb8c9a20f7d6d923dae853341fb1c0c2"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDErobotEnvironment::SetPlanningParameters" ref="abb8c9a20f7d6d923dae853341fb1c0c2" args="()" -->
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#abb8c9a20f7d6d923dae853341fb1c0c2">SetPlanningParameters</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">setup the necessary planning parameter for OpenDE. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#a0688ce5288c28d6cc83d6c1fa28f3d99">KauthamDErobotEnvironment</a> (<a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *ws, KthReal maxspeed)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.  <a href="#a0688ce5288c28d6cc83d6c1fa28f3d99"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#a92d9d7c25b03a678b3f3234aad1a7522">applyControl</a> (const double *control) const </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function apply the control by setting the forces, velocities and torques.  <a href="#a92d9d7c25b03a678b3f3234aad1a7522"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#a789ce7ecdfaac5f926b77beaeaa11e4e">getControlBounds</a> (std::vector&lt; double &gt; &amp;lower, std::vector&lt; double &gt; &amp;upper) const </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">describe the control bounds, the bounding box to performe sampling.  <a href="#a789ce7ecdfaac5f926b77beaeaa11e4e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#a806f0e1f6bb728b1fa113be74c7b7e9f">getControlDimension</a> (void) const </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">describe the number of parameter used to describe control input.  <a href="#a806f0e1f6bb728b1fa113be74c7b7e9f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#abb8c9a20f7d6d923dae853341fb1c0c2">SetPlanningParameters</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the planning parameters for planner.  <a href="#abb8c9a20f7d6d923dae853341fb1c0c2"></a><br/></td></tr>
 </table>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>This class define the pure virtual methods of OpenDEEnviroment and define how the control will be applied on the bodies. </p>
+</div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a0688ce5288c28d6cc83d6c1fa28f3d99"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDErobotEnvironment::KauthamDErobotEnvironment" ref="a0688ce5288c28d6cc83d6c1fa28f3d99" args="(WorkSpace *ws, KthReal maxspeed)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#a0688ce5288c28d6cc83d6c1fa28f3d99">Kautham::omplcplanner::KauthamDErobotEnvironment::KauthamDErobotEnvironment</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *&#160;</td>
+          <td class="paramname"><em>ws</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">KthReal&#160;</td>
+          <td class="paramname"><em>maxspeed</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment. </p>
+<p>Constructor create the ODE table enviroment and setup the parameters for ODE. </p>
+
+</div>
+</div>
+<hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a92d9d7c25b03a678b3f3234aad1a7522"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDErobotEnvironment::applyControl" ref="a92d9d7c25b03a678b3f3234aad1a7522" args="(const double *control) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#a92d9d7c25b03a678b3f3234aad1a7522">Kautham::omplcplanner::KauthamDErobotEnvironment::applyControl</a> </td>
+          <td>(</td>
+          <td class="paramtype">const double *&#160;</td>
+          <td class="paramname"><em>control</em></td><td>)</td>
+          <td> const<code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>This function apply the control by setting the forces, velocities and torques. </p>
+<p>this is the reimplementation of the virtual function of OpenDEEnvironment that explain how the control will apply.This function apply the control by setting the forces, velocities and torques. </p>
+
+</div>
+</div>
+<a class="anchor" id="a789ce7ecdfaac5f926b77beaeaa11e4e"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDErobotEnvironment::getControlBounds" ref="a789ce7ecdfaac5f926b77beaeaa11e4e" args="(std::vector&lt; double &gt; &amp;lower, std::vector&lt; double &gt; &amp;upper) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#a789ce7ecdfaac5f926b77beaeaa11e4e">Kautham::omplcplanner::KauthamDErobotEnvironment::getControlBounds</a> </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>lower</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>upper</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const<code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>describe the control bounds, the bounding box to performe sampling. </p>
+<p>this is the reimplementation of the virtual function of OpenDEEnvironment which describe the control bounds,the bounding box to performe sampling control. </p>
+
+</div>
+</div>
+<a class="anchor" id="a806f0e1f6bb728b1fa113be74c7b7e9f"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDErobotEnvironment::getControlDimension" ref="a806f0e1f6bb728b1fa113be74c7b7e9f" args="(void) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#a806f0e1f6bb728b1fa113be74c7b7e9f">Kautham::omplcplanner::KauthamDErobotEnvironment::getControlDimension</a> </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const<code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>describe the number of parameter used to describe control input. </p>
+<p>this is the reimplementation of the virtual function of OpenDEEnvironment, that describe the number of parameter used to describe control input. </p>
+
+</div>
+</div>
+<a class="anchor" id="abb8c9a20f7d6d923dae853341fb1c0c2"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDErobotEnvironment::SetPlanningParameters" ref="abb8c9a20f7d6d923dae853341fb1c0c2" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html#abb8c9a20f7d6d923dae853341fb1c0c2">Kautham::omplcplanner::KauthamDErobotEnvironment::SetPlanningParameters</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Set the planning parameters for planner. </p>
+<p>Setup the parameters for ODE. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>libsplanner/libkauthamopende/<a class="el" href="_kautham_open_d_erobot_environment_8h_source.html">KauthamOpenDErobotEnvironment.h</a></li>
 <li>libsplanner/libkauthamopende/KauthamOpenDErobotEnvironment.cpp</li>
@@ -158,7 +275,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Apr 11 2014 00:20:02 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Apr 13 2014 17:27:53 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

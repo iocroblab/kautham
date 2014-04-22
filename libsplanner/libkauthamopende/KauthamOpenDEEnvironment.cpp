@@ -77,14 +77,17 @@ namespace omplcplanner{
     //Els buildKinematicChain vindria a ser la manera com el Alfredo amb ODIN llegia els documents xml , aquí com Kautham ja llegeix la escena abans que res copiem aquesta informació del workspace sense haver de preocuparnos pels documents xml.
     //El constructor pass per tots els cossos de la escena (workspace) i va llegint la seva informacio ( posició , orientacio , vertexs, etc...)
     //Un cop s'ha omplert chainMap es crida el mètode worldCreate.
-    //! Constructor
+
 
      // When you create the Environment calling the contructor. Reserves a chain (KinematicChain) that once filled by way of calling methods buildKinematicChain, will be within the chainMap mapped by name string.
      // The buildKinematicChain would be the way Alfredo with ODIN parsing XML documents, as here Kautham already read the scene above all this information copy of the workspace without preocuparnos for XML documents.
      // Constructor to pass all the bodies of the scene (workspace) and reading their information (position, orientation, vertices, etc ...)
      // Once filled chainMap worldCreate method is called.
-     //! Constructor
 
+/*! Constructor call all the functions that involves in generating the dynamic world.
+ * It call the function buildKinematicChain that developed the chain map for robots and for the obstracles. Then call
+ * the creatworld function to generate the dynamic world.
+ */
 KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed): oc::OpenDEEnvironment()
   {
       KinematicChain* chain(new KinematicChain);
@@ -158,6 +161,10 @@ KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed)
 // ******* makeTriMesh not work very well for this part is not working properly discussed as a way to determine the mass of dBodys.
 // From createWorld calling methods fillstatebodies ---> only fills the vector StateBodies_ from stateBodiesmap_ making bodies of the first objects are the robot plan.
 // also call the setJoints and Motors2bodies which I'm not 100% sure of its operation.
+/*! createWorld method create the dynamic world. this method reads the robots and the
+ * obstracles from the workspace and create ode bodies with the help of makeTriMesh or
+ * makePrimitive method. and setup basic parameters for ODE.
+ */
 void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
 {
     bodyworld=dWorldCreate();
@@ -225,7 +232,7 @@ dBodyID odebody;
 
         if (chainMap[k].objects[k].vertexes.size() <=3)
         {
-dBodyID odebody;
+            dBodyID odebody;
             odebody = makePrimitive(chainMap[k].objects[k].position,chainMap[k].objects[k].orientation,chainMap[k].objects[k].mass,chainMap[k].objects[k].vertexes);
 
             stateBodiesmap_.insert(pair<string,dBodyID>(k,odebody));
@@ -281,7 +288,7 @@ SetPlanningParameters();
 KauthamDEEnvironment::~KauthamDEEnvironment(){
 
 }
-
+//! This function distory the wold and collision spaces.
 void KauthamDEEnvironment::destroyWorld()
 {
     dSpaceDestroy(_OpenDEspace);
@@ -289,7 +296,7 @@ void KauthamDEEnvironment::destroyWorld()
 }
 
 map<string, dBodyID> stateBodiesmap_;
-
+//! Setup basic necessary planning parameters for ODE.
 void KauthamDEEnvironment::SetPlanningParameters()
 {
    world_=bodyworld;
@@ -322,7 +329,7 @@ void KauthamDEEnvironment::setjointsandmotors2bodies(map<string, dBodyID> stateB
     }*/
 
 }
-
+//! This method extract the and returns the vector of ode bodies formt he map (stateBodiesmap_)
 vector<dBodyID> KauthamDEEnvironment::fillstatebodies(map<string,dBodyID> stateBodiesmap_,WorkSpace *wkspace)
 {
 
@@ -401,8 +408,7 @@ vector<dBodyID> KauthamDEEnvironment::fillstatebodies(map<string,dBodyID> stateB
     return bodies;
 }
 
-
-
+//! This method build the kinematic chain for the robot and returns the boolean value.
 bool KauthamDEEnvironment::buildKinematicChain(KinematicChain* chain,
                                       Robot *robot,
                                       double scale,
@@ -458,7 +464,7 @@ bool KauthamDEEnvironment::buildKinematicChain(KinematicChain* chain,
         }
         return true;
     }
-
+//! This method build the kinematic chain for the obstracle and returns the boolean value.
 bool KauthamDEEnvironment::buildKinematicChain(KinematicChain* chain,
                                       Obstacle* obstacle,
                                       double scale, int k)
@@ -769,7 +775,7 @@ bool KauthamDEEnvironment::getTransformation(KauthamDEEnvironment::KinematicChai
     obj->alpha = alpha;
     return true;
 }
-
+//! this method return the vector of pos (position + orientation)
 vector<double> KauthamDEEnvironment::baseGetPos(Robot* robot)
 {
     vector<double> basePos;
@@ -906,7 +912,7 @@ void KauthamDEEnvironment::makeGeomPrimitive(const string name, const vector<dou
      dGeomSetQuaternion(geometry, q);
     return;
  }
-
+//! This method create the ode body with the help of triangular mesh.
  dBodyID KauthamDEEnvironment::makeTriMesh(const vector< double > position, const vector< double > orientation,
                                   const vector< double > vertexes, const vector< unsigned int > indexes, const double mass)
  {

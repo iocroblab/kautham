@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['kauthamdeenvironment',['KauthamDEEnvironment',['../class_kautham_1_1omplcplanner_1_1_kautham_d_e_environment.html',1,'Kautham::omplcplanner']]],
   ['kauthamdegoal',['KauthamDEGoal',['../class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html',1,'Kautham::omplcplanner']]],
   ['kauthamdeplanner',['KauthamDEPlanner',['../class_kautham_1_1omplcplanner_1_1_kautham_d_e_planner.html',1,'Kautham::omplcplanner']]],
   ['kauthamderobotenvironment',['KauthamDErobotEnvironment',['../class_kautham_1_1omplcplanner_1_1_kautham_d_erobot_environment.html',1,'Kautham::omplcplanner']]],
@@ -16,7 +15,6 @@ var searchData=
   ['kauthamvalidstatesampler',['KauthamValidStateSampler',['../class_kautham_1_1omplplanner_1_1_kautham_valid_state_sampler.html',1,'Kautham::omplplanner']]],
   ['kauthamwidget',['KauthamWidget',['../class_kautham_1_1_kautham_widget.html',1,'Kautham']]],
   ['kinematiccarmodel',['KinematicCarModel',['../class_kautham_1_1omplcplanner_1_1_kinematic_car_model.html',1,'Kautham::omplcplanner']]],
-  ['kinematicchain',['KinematicChain',['../struct_kautham_1_1omplcplanner_1_1_kautham_d_e_environment_1_1_kinematic_chain.html',1,'Kautham::omplcplanner::KauthamDEEnvironment']]],
   ['kinematicf16model',['KinematicF16Model',['../class_kautham_1_1omplcplanner_1_1_kinematic_f16_model.html',1,'Kautham::omplcplanner']]],
   ['kinematicrobotmodel',['KinematicRobotModel',['../class_kautham_1_1omplcplanner_1_1_kinematic_robot_model.html',1,'Kautham::omplcplanner']]],
   ['kthquery',['KthQuery',['../class_kautham_1_1_i_o_c_1_1_kth_query.html',1,'Kautham::IOC']]]

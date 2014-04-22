@@ -92,14 +92,13 @@ public:
     ~KauthamDEGoal();
     virtual double distanceGoal(const ob::State *st) const; //!< This function compute the distance from the goal.
   
-/*! This structure keeps the position and orientation of each element of the robot once the configuration has been moved GOAL.
- *   This information can be used to compute the distance of any configuration.
- */
+//! This structure keeps the position and orientation of each element of the robot once the configuration has been moved GOAL. This information can be used to compute the distance of any configuration.
    typedef struct
     {
         KthReal objectposition[3];
         KthReal objectorientation[4];
     }KauthamODEobject;
+
     //En aquesta estructura es guarda la posició i la orientació de cada element del robot una vegada aquest s'ha mogut a la configuració de 		goal.
     //Així aquesta informació la puc utilitzar a la hora de calcular la distancia de qualsevol configuració a la configuració del GOAL.
 
@@ -116,11 +115,7 @@ public:
 
 };
 
-/
-/*! The KauthamDEStateSpace intherits from OpenDEStateSpace and just defines the method distance and the registerprojections.
- * An OpenDEStateSpace inherits from a CompoundStateSpace where each body has three RealVectorSstateSpace representing the
- * position,linear and angular velocity and then a SO3 that represents the orientation
- */
+//! The KauthamDEStateSpace intherits from OpenDEStateSpace and just defines the method distance and the registerprojections.
 class KauthamDEStateSpace : public oc::OpenDEStateSpace
 {
 public:
@@ -129,9 +124,7 @@ public:
     virtual double distance(const ob::State *s1, const ob::State *s2) const; //!< Define the method to compute the distance.
     virtual void registerProjections(void); //!< This function register the projetions for state space.
 };
-/*! this class define how the state will be projected. this class inherit from the
- * ProjectionEvaluator and define the virtual functions.
- */
+//! this class define how the state will be projected.
 class KauthamDEStateProjectionEvaluator: public ob::ProjectionEvaluator
 {
 public:
@@ -146,7 +139,7 @@ public:
 {
 public:
     KauthamDEObjectControlSampler(const oc::ControlSpace *cm);
-      ~KauthamDEObjectControlSampler();
+    ~KauthamDEObjectControlSampler();
     virtual void sampleNext(oc::Control *control, const oc::Control *previous);
     virtual void sampleNext(oc::Control *control, const oc::Control *previous, const ob::State* /*state*///);
 //};

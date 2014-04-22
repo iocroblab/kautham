@@ -122,28 +122,118 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td colspan="2"><h2><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_goal_1_1_kautham_o_d_eobject.html">KauthamODEobject</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This structure keeps the position and orientation of each element of the robot once the configuration has been moved GOAL. This information can be used to compute the distance of any configuration.  <a href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_goal_1_1_kautham_o_d_eobject.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8cc4226dbcabe387d07114c95f0e9b84"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEGoal::KauthamDEGoal" ref="a8cc4226dbcabe387d07114c95f0e9b84" args="(const ob::SpaceInformationPtr &amp;si, WorkSpace *ws, bool a, Sample *goal)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>KauthamDEGoal</b> (const ob::SpaceInformationPtr &amp;si, <a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *ws, bool a, <a class="el" href="class_kautham_1_1_sample.html">Sample</a> *goal)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3665b9626e1eb3e7d0873b47657e9936"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEGoal::distanceGoal" ref="a3665b9626e1eb3e7d0873b47657e9936" args="(const ob::State *st) const " -->
-virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html#a3665b9626e1eb3e7d0873b47657e9936">distanceGoal</a> (const ob::State *st) const </td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function compute the distance from the goal. <br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ee9f24b08fe0a39d46a3628e66634d4"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEGoal::smp2KauthamOpenDEState" ref="a6ee9f24b08fe0a39d46a3628e66634d4" args="(WorkSpace *w, Sample *goal)" -->
-vector&lt; <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_goal_1_1_kautham_o_d_eobject.html">KauthamODEobject</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html#a6ee9f24b08fe0a39d46a3628e66634d4">smp2KauthamOpenDEState</a> (<a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *w, <a class="el" href="class_kautham_1_1_sample.html">Sample</a> *goal)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function check the position and orientation of the objects at the goal configuration. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html#a8cc4226dbcabe387d07114c95f0e9b84">KauthamDEGoal</a> (const ob::SpaceInformationPtr &amp;si, <a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *ws, bool a, <a class="el" href="class_kautham_1_1_sample.html">Sample</a> *goal)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html#a3665b9626e1eb3e7d0873b47657e9936">distanceGoal</a> (const ob::State *st) const </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function compute the distance from the goal.  <a href="#a3665b9626e1eb3e7d0873b47657e9936"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">vector&lt; <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_goal_1_1_kautham_o_d_eobject.html">KauthamODEobject</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html#a6ee9f24b08fe0a39d46a3628e66634d4">smp2KauthamOpenDEState</a> (<a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *w, <a class="el" href="class_kautham_1_1_sample.html">Sample</a> *goal)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function check the position and orientation of the objects at the goal configuration.  <a href="#a6ee9f24b08fe0a39d46a3628e66634d4"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9d98150d474793cfc9a6e04b6382d4ea"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEGoal::Kauthamodebodies" ref="a9d98150d474793cfc9a6e04b6382d4ea" args="" -->
 vector&lt; <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_goal_1_1_kautham_o_d_eobject.html">KauthamODEobject</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html#a9d98150d474793cfc9a6e04b6382d4ea">Kauthamodebodies</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Kauthamodebodies is a vector <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_goal_1_1_kautham_o_d_eobject.html">KauthamODEobject</a> which keeps information on all the elements that make up the kinematic chain of the robot. <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Kauthamodebodies is a vector <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_goal_1_1_kautham_o_d_eobject.html" title="This structure keeps the position and orientation of each element of the robot once the configuration...">KauthamODEobject</a> which keeps information on all the elements that make up the kinematic chain of the robot. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4072a2cce99c46abe5febd5fb47d3990"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEGoal::onlyend" ref="a4072a2cce99c46abe5febd5fb47d3990" args="" -->
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html#a4072a2cce99c46abe5febd5fb47d3990">onlyend</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">It is meant to adapt to the possibility that the planner GOAL involves only the TCP. <br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html" title="The KauthamDEGoal is mainly used to set as a derived class from a GoalRegion the operation distance w...">KauthamDEGoal</a> is mainly used to set as a derived class from a GoalRegion the operation distance which the planner is going to check in order to decide wether the goal has been reached or not. </p>
-</div><hr/>The documentation for this class was generated from the following files:<ul>
+</div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a8cc4226dbcabe387d07114c95f0e9b84"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEGoal::KauthamDEGoal" ref="a8cc4226dbcabe387d07114c95f0e9b84" args="(const ob::SpaceInformationPtr &amp;si, WorkSpace *ws, bool a, Sample *goal)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html#a8cc4226dbcabe387d07114c95f0e9b84">Kautham::omplcplanner::KauthamDEGoal::KauthamDEGoal</a> </td>
+          <td>(</td>
+          <td class="paramtype">const ob::SpaceInformationPtr &amp;&#160;</td>
+          <td class="paramname"><em>si</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *&#160;</td>
+          <td class="paramname"><em>ws</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_sample.html">Sample</a> *&#160;</td>
+          <td class="paramname"><em>goal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>The <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html" title="The KauthamDEGoal is mainly used to set as a derived class from a GoalRegion the operation distance w...">KauthamDEGoal</a> drived form GoalRegion and reimplement the distanceGoalfunction. In order to check the position and orientation of the objects at the goal configuration smp2KauthamOpenDEState method is defined. </p>
+
+</div>
+</div>
+<hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a3665b9626e1eb3e7d0873b47657e9936"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEGoal::distanceGoal" ref="a3665b9626e1eb3e7d0873b47657e9936" args="(const ob::State *st) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html#a3665b9626e1eb3e7d0873b47657e9936">Kautham::omplcplanner::KauthamDEGoal::distanceGoal</a> </td>
+          <td>(</td>
+          <td class="paramtype">const ob::State *&#160;</td>
+          <td class="paramname"><em>st</em></td><td>)</td>
+          <td> const<code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>This function compute the distance from the goal. </p>
+<p>This function returns the distance between the current state of the robot and the goal. </p>
+
+</div>
+</div>
+<a class="anchor" id="a6ee9f24b08fe0a39d46a3628e66634d4"></a><!-- doxytag: member="Kautham::omplcplanner::KauthamDEGoal::smp2KauthamOpenDEState" ref="a6ee9f24b08fe0a39d46a3628e66634d4" args="(WorkSpace *w, Sample *goal)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">vector&lt; <a class="el" href="struct_kautham_1_1omplcplanner_1_1_kautham_d_e_goal_1_1_kautham_o_d_eobject.html">KauthamDEGoal::KauthamODEobject</a> &gt; <a class="el" href="class_kautham_1_1omplcplanner_1_1_kautham_d_e_goal.html#a6ee9f24b08fe0a39d46a3628e66634d4">Kautham::omplcplanner::KauthamDEGoal::smp2KauthamOpenDEState</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_work_space.html">WorkSpace</a> *&#160;</td>
+          <td class="paramname"><em>wkSpace</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_kautham_1_1_sample.html">Sample</a> *&#160;</td>
+          <td class="paramname"><em>goal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>This function check the position and orientation of the objects at the goal configuration. </p>
+<p>This smp2KauthamOpenDEState method moves the robot to its goal configuration and from them extracts the position and orientation of each element in the scene and fills the KauthamOdeobject structure. </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>libsplanner/libkauthamopende/<a class="el" href="_kautham_open_d_eauxiliarclasses_8h_source.html">KauthamOpenDEauxiliarclasses.h</a></li>
 <li>libsplanner/libkauthamopende/KauthamOpenDEauxiliarclasses.cpp</li>
 </ul>
@@ -165,7 +255,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Apr 11 2014 00:20:02 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Apr 13 2014 17:27:53 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

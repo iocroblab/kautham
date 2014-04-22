@@ -129,143 +129,155 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00044"></a>00044 <span class="preprocessor">#if !defined(_PROBLEM_H)</span>
 <a name="l00045"></a>00045 <span class="preprocessor"></span><span class="preprocessor">#define _PROBLEM_H</span>
 <a name="l00046"></a>00046 <span class="preprocessor"></span>
-<a name="l00047"></a>00047 <span class="preprocessor">#include &lt;libsplanner/planner.h&gt;</span>
-<a name="l00048"></a>00048 <span class="preprocessor">#include &lt;libsampling/sampling.h&gt;</span>
-<a name="l00049"></a>00049 <span class="preprocessor">#include &lt;ompl/geometric/SimpleSetup.h&gt;</span>
-<a name="l00050"></a>00050 <span class="preprocessor">#include &quot;robot.h&quot;</span>
-<a name="l00051"></a>00051 <span class="preprocessor">#include &quot;ivworkspace.h&quot;</span>
-<a name="l00052"></a>00052 <span class="preprocessor">#include &quot;workspace.h&quot;</span>
-<a name="l00053"></a>00053 <span class="preprocessor">#include &lt;pugixml.hpp&gt;</span>
-<a name="l00054"></a>00054 
-<a name="l00055"></a>00055 
-<a name="l00056"></a>00056 <span class="comment">//#include &lt;libpugixml/pugixml.hpp&gt;</span>
-<a name="l00057"></a>00057 <span class="preprocessor">#include &lt;pugixml.hpp&gt;</span>
-<a name="l00058"></a>00058 <span class="preprocessor">#include &lt;string&gt;</span>
-<a name="l00059"></a>00059 <span class="preprocessor">#include &lt;fstream&gt;</span>
-<a name="l00060"></a>00060 <span class="preprocessor">#include &lt;iostream&gt;</span>
-<a name="l00061"></a>00061 <span class="preprocessor">#include &lt;boost/algorithm/string.hpp&gt;</span>
-<a name="l00062"></a>00062 
-<a name="l00063"></a>00063 <span class="comment">//solving convertions problems</span>
-<a name="l00064"></a>00064 <span class="preprocessor">#include &lt;locale.h&gt;</span>
-<a name="l00065"></a>00065 
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067 <span class="preprocessor">#if defined(KAUTHAM_USE_IOC)</span>
-<a name="l00068"></a>00068 <span class="preprocessor"></span><span class="preprocessor">#include &lt;libioc/myplanner.h&gt;</span>
-<a name="l00069"></a>00069 <span class="preprocessor">#include &lt;libioc/prmplanner.h&gt;</span>
-<a name="l00070"></a>00070 <span class="preprocessor">#include &lt;libioc/prmhandplannerICRA.h&gt;</span>
-<a name="l00071"></a>00071 <span class="preprocessor">#include &lt;libioc/prmAUROhandarmplanner.h&gt;</span>
-<a name="l00072"></a>00072 <span class="preprocessor">#include &lt;libioc/prmPCAhandarmplanner.h&gt;</span>
-<a name="l00073"></a>00073 <span class="preprocessor">#include &lt;libioc/prmrobothandconstplannerICRA.h&gt;</span>
-<a name="l00074"></a>00074 <span class="preprocessor">#include &lt;libioc/prmhandplannerIROS.h&gt;</span>
-<a name="l00075"></a>00075 <span class="preprocessor">#include &lt;libioc/myprmplanner.h&gt;</span>
-<a name="l00076"></a>00076 <span class="preprocessor">#include &lt;libioc/mygridplanner.h&gt;</span>
-<a name="l00077"></a>00077 <span class="preprocessor">#include &lt;libioc/NF1planner.h&gt;</span>
-<a name="l00078"></a>00078 <span class="preprocessor">#include &lt;libioc/HFplanner.h&gt;</span>
-<a name="l00079"></a>00079 <span class="preprocessor">#endif</span>
-<a name="l00080"></a>00080 <span class="preprocessor"></span>
-<a name="l00081"></a>00081 <span class="preprocessor">#if defined(KAUTHAM_USE_OMPL)</span>
-<a name="l00082"></a>00082 <span class="preprocessor"></span><span class="preprocessor">#include &lt;libompl/omplPRMplanner.h&gt;</span>
-<a name="l00083"></a>00083 <span class="preprocessor">#include &lt;libompl/omplRRTplanner.h&gt;</span>
-<a name="l00084"></a>00084 <span class="preprocessor">#include &lt;libompl/omplRRTStarplanner.h&gt;</span>
-<a name="l00085"></a>00085 <span class="preprocessor">#include &lt;libompl/omplTRRTplanner.h&gt;</span>
-<a name="l00086"></a>00086 <span class="preprocessor">#include &lt;libompl/omplpRRTplanner.h&gt;</span>
-<a name="l00087"></a>00087 <span class="preprocessor">#include &lt;libompl/omplLazyRRTplanner.h&gt;</span>
-<a name="l00088"></a>00088 <span class="preprocessor">#include &lt;libompl/omplcRRTplanner.h&gt;</span>
-<a name="l00089"></a>00089 <span class="preprocessor">#include &lt;libompl/omplcRRTcarplanner.h&gt;</span>
-<a name="l00090"></a>00090 <span class="preprocessor">#include &lt;libompl/omplcRRTf16planner.h&gt;</span>
-<a name="l00091"></a>00091 <span class="preprocessor">#include &lt;libompl/omplRRTConnectplanner.h&gt;</span>
-<a name="l00092"></a>00092 <span class="preprocessor">#include &lt;libompl/omplESTplanner.h&gt;</span>
-<a name="l00093"></a>00093 <span class="preprocessor">#include &lt;libompl/omplSBLplanner.h&gt;</span>
-<a name="l00094"></a>00094 <span class="preprocessor">#include &lt;libompl/omplKPIECEplanner.h&gt;</span>
-<a name="l00095"></a>00095 <span class="preprocessor">#include &lt;libompl/omplKPIECEplanner.h&gt;</span>
-<a name="l00096"></a>00096 <span class="preprocessor">#endif</span>
-<a name="l00097"></a>00097 <span class="preprocessor"></span>
-<a name="l00098"></a>00098 <span class="preprocessor">#if defined(KAUTHAM_USE_ODE)</span>
-<a name="l00099"></a>00099 <span class="preprocessor"></span><span class="preprocessor">#include &lt;libkauthamopende/KauthamOpenDERRTPlanner.h&gt;</span>
-<a name="l00100"></a>00100 <span class="preprocessor">#endif</span>
-<a name="l00101"></a>00101 <span class="preprocessor"></span>
-<a name="l00102"></a>00102 <span class="preprocessor">#if defined(KAUTHAM_USE_GUIBRO)</span>
-<a name="l00103"></a>00103 <span class="preprocessor"></span><span class="preprocessor">#include &lt;libguibro/consbronchoscopykin.h&gt;</span>
-<a name="l00104"></a>00104 <span class="preprocessor">#include &lt;libguibro/guibrogridplanner.h&gt;</span>
-<a name="l00105"></a>00105 <span class="preprocessor">#endif // KAUTHAM_USE_GUIBRO</span>
-<a name="l00106"></a>00106 <span class="preprocessor"></span>
-<a name="l00107"></a>00107 <span class="preprocessor">#if !defined(M_PI)</span>
-<a name="l00108"></a>00108 <span class="preprocessor"></span><span class="preprocessor">#define M_PI 3.1415926535897932384626433832795</span>
-<a name="l00109"></a>00109 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00110"></a>00110 <span class="preprocessor"></span>
-<a name="l00111"></a>00111 
-<a name="l00112"></a>00112 <span class="keyword">using namespace </span>std;
-<a name="l00113"></a>00113 <span class="keyword">using namespace </span>pugi;
-<a name="l00114"></a>00114 
-<a name="l00115"></a>00115 
-<a name="l00116"></a>00116 <span class="keyword">namespace </span>Kautham {
+<a name="l00047"></a>00047 <span class="preprocessor">#include &lt;QSettings&gt;</span>
+<a name="l00048"></a>00048 <span class="preprocessor">#include &lt;QString&gt;</span>
+<a name="l00049"></a>00049 
+<a name="l00050"></a>00050 <span class="preprocessor">#include &lt;libsplanner/planner.h&gt;</span>
+<a name="l00051"></a>00051 <span class="preprocessor">#include &lt;libsampling/sampling.h&gt;</span>
+<a name="l00052"></a>00052 <span class="preprocessor">#include &lt;ompl/geometric/SimpleSetup.h&gt;</span>
+<a name="l00053"></a>00053 <span class="preprocessor">#include &quot;robot.h&quot;</span>
+<a name="l00054"></a>00054 <span class="preprocessor">#include &quot;ivworkspace.h&quot;</span>
+<a name="l00055"></a>00055 <span class="preprocessor">#include &quot;workspace.h&quot;</span>
+<a name="l00056"></a>00056 <span class="preprocessor">#include &lt;pugixml.hpp&gt;</span>
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058 <span class="comment">//#include &lt;libpugixml/pugixml.hpp&gt;</span>
+<a name="l00059"></a>00059 <span class="preprocessor">#include &lt;pugixml.hpp&gt;</span>
+<a name="l00060"></a>00060 <span class="preprocessor">#include &lt;string&gt;</span>
+<a name="l00061"></a>00061 <span class="preprocessor">#include &lt;fstream&gt;</span>
+<a name="l00062"></a>00062 <span class="preprocessor">#include &lt;iostream&gt;</span>
+<a name="l00063"></a>00063 <span class="preprocessor">#include &lt;boost/algorithm/string.hpp&gt;</span>
+<a name="l00064"></a>00064 
+<a name="l00065"></a>00065 <span class="comment">//solving convertions problems</span>
+<a name="l00066"></a>00066 <span class="preprocessor">#include &lt;locale.h&gt;</span>
+<a name="l00067"></a>00067 
+<a name="l00068"></a>00068 
+<a name="l00069"></a>00069 <span class="preprocessor">#if defined(KAUTHAM_USE_IOC)</span>
+<a name="l00070"></a>00070 <span class="preprocessor"></span><span class="preprocessor">#include &lt;libioc/myplanner.h&gt;</span>
+<a name="l00071"></a>00071 <span class="preprocessor">#include &lt;libioc/prmplanner.h&gt;</span>
+<a name="l00072"></a>00072 <span class="preprocessor">#include &lt;libioc/prmhandplannerICRA.h&gt;</span>
+<a name="l00073"></a>00073 <span class="preprocessor">#include &lt;libioc/prmAUROhandarmplanner.h&gt;</span>
+<a name="l00074"></a>00074 <span class="preprocessor">#include &lt;libioc/prmPCAhandarmplanner.h&gt;</span>
+<a name="l00075"></a>00075 <span class="preprocessor">#include &lt;libioc/prmrobothandconstplannerICRA.h&gt;</span>
+<a name="l00076"></a>00076 <span class="preprocessor">#include &lt;libioc/prmhandplannerIROS.h&gt;</span>
+<a name="l00077"></a>00077 <span class="preprocessor">#include &lt;libioc/myprmplanner.h&gt;</span>
+<a name="l00078"></a>00078 <span class="preprocessor">#include &lt;libioc/mygridplanner.h&gt;</span>
+<a name="l00079"></a>00079 <span class="preprocessor">#include &lt;libioc/NF1planner.h&gt;</span>
+<a name="l00080"></a>00080 <span class="preprocessor">#include &lt;libioc/HFplanner.h&gt;</span>
+<a name="l00081"></a>00081 <span class="preprocessor">#endif</span>
+<a name="l00082"></a>00082 <span class="preprocessor"></span>
+<a name="l00083"></a>00083 <span class="preprocessor">#if defined(KAUTHAM_USE_OMPL)</span>
+<a name="l00084"></a>00084 <span class="preprocessor"></span><span class="preprocessor">#include &lt;libompl/omplPRMplanner.h&gt;</span>
+<a name="l00085"></a>00085 <span class="preprocessor">#include &lt;libompl/omplRRTplanner.h&gt;</span>
+<a name="l00086"></a>00086 <span class="preprocessor">#include &lt;libompl/omplRRTStarplanner.h&gt;</span>
+<a name="l00087"></a>00087 <span class="preprocessor">#include &lt;libompl/omplTRRTplanner.h&gt;</span>
+<a name="l00088"></a>00088 <span class="preprocessor">#include &lt;libompl/omplpRRTplanner.h&gt;</span>
+<a name="l00089"></a>00089 <span class="preprocessor">#include &lt;libompl/omplLazyRRTplanner.h&gt;</span>
+<a name="l00090"></a>00090 <span class="preprocessor">#include &lt;libompl/omplcRRTplanner.h&gt;</span>
+<a name="l00091"></a>00091 <span class="preprocessor">#include &lt;libompl/omplcRRTcarplanner.h&gt;</span>
+<a name="l00092"></a>00092 <span class="preprocessor">#include &lt;libompl/omplcRRTf16planner.h&gt;</span>
+<a name="l00093"></a>00093 <span class="preprocessor">#include &lt;libompl/omplRRTConnectplanner.h&gt;</span>
+<a name="l00094"></a>00094 <span class="preprocessor">#include &lt;libompl/omplESTplanner.h&gt;</span>
+<a name="l00095"></a>00095 <span class="preprocessor">#include &lt;libompl/omplSBLplanner.h&gt;</span>
+<a name="l00096"></a>00096 <span class="preprocessor">#include &lt;libompl/omplKPIECEplanner.h&gt;</span>
+<a name="l00097"></a>00097 <span class="preprocessor">#include &lt;libompl/omplKPIECEplanner.h&gt;</span>
+<a name="l00098"></a>00098 <span class="preprocessor">#endif</span>
+<a name="l00099"></a>00099 <span class="preprocessor"></span>
+<a name="l00100"></a>00100 <span class="preprocessor">#if defined(KAUTHAM_USE_ODE)</span>
+<a name="l00101"></a>00101 <span class="preprocessor"></span><span class="preprocessor">#include &lt;libkauthamopende/KauthamOpenDERRTPlanner.h&gt;</span>
+<a name="l00102"></a>00102 <span class="preprocessor">#endif</span>
+<a name="l00103"></a>00103 <span class="preprocessor"></span>
+<a name="l00104"></a>00104 <span class="preprocessor">#if defined(KAUTHAM_USE_GUIBRO)</span>
+<a name="l00105"></a>00105 <span class="preprocessor"></span><span class="preprocessor">#include &lt;libguibro/consbronchoscopykin.h&gt;</span>
+<a name="l00106"></a>00106 <span class="preprocessor">#include &lt;libguibro/guibrogridplanner.h&gt;</span>
+<a name="l00107"></a>00107 <span class="preprocessor">#endif // KAUTHAM_USE_GUIBRO</span>
+<a name="l00108"></a>00108 <span class="preprocessor"></span>
+<a name="l00109"></a>00109 <span class="preprocessor">#if !defined(M_PI)</span>
+<a name="l00110"></a>00110 <span class="preprocessor"></span><span class="preprocessor">#define M_PI 3.1415926535897932384626433832795</span>
+<a name="l00111"></a>00111 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00112"></a>00112 <span class="preprocessor"></span>
+<a name="l00113"></a>00113 
+<a name="l00114"></a>00114 <span class="keyword">using namespace </span>std;
+<a name="l00115"></a>00115 <span class="keyword">using namespace </span>pugi;
+<a name="l00116"></a>00116 
 <a name="l00117"></a>00117 
-<a name="l00122"></a><a class="code" href="class_kautham_1_1_problem.html">00122</a>         <span class="keyword">class </span><a class="code" href="class_kautham_1_1_problem.html">Problem</a> {
-<a name="l00123"></a>00123   <span class="keyword">public</span>:
-<a name="l00124"></a>00124     <a class="code" href="class_kautham_1_1_problem.html">Problem</a>();
-<a name="l00125"></a>00125     ~<a class="code" href="class_kautham_1_1_problem.html">Problem</a>();
-<a name="l00126"></a>00126 
+<a name="l00118"></a>00118 <span class="keyword">namespace </span>Kautham {
+<a name="l00119"></a>00119 
+<a name="l00124"></a><a class="code" href="class_kautham_1_1_problem.html">00124</a>         <span class="keyword">class </span><a class="code" href="class_kautham_1_1_problem.html">Problem</a> {
+<a name="l00125"></a>00125   <span class="keyword">public</span>:
+<a name="l00126"></a>00126     <a class="code" href="class_kautham_1_1_problem.html">Problem</a>();
+<a name="l00127"></a>00127     ~<a class="code" href="class_kautham_1_1_problem.html">Problem</a>();
 <a name="l00128"></a>00128 
-<a name="l00134"></a>00134     <span class="keywordtype">bool</span>                       createWSpace(pugi::xml_document *doc);
-<a name="l00135"></a>00135 
-<a name="l00137"></a>00137     <span class="comment">//bool                                    createWSpace(ProbStruc *reader);</span>
-<a name="l00138"></a>00138 
-<a name="l00139"></a>00139     <span class="keywordtype">bool</span>                    createPlanner(<span class="keywordtype">string</span> name, ompl::geometric::SimpleSetup *ssptr = NULL);
-<a name="l00140"></a>00140     <span class="keywordtype">bool</span>                    createPlannerFromFile(pugi::xml_document *doc, ompl::geometric::SimpleSetup *ssptr = NULL);
-<a name="l00141"></a>00141     <span class="keywordtype">bool</span>                    createCSpace();
-<a name="l00142"></a>00142     <span class="keywordtype">bool</span>                    createCSpaceFromFile(pugi::xml_document *doc);
-<a name="l00143"></a>00143     <span class="keywordtype">bool</span>                    tryToSolve();
-<a name="l00144"></a>00144     <span class="keywordtype">bool</span>                    setCurrentControls(vector&lt;KthReal&gt; &amp;val, <span class="keywordtype">int</span> offset);
-<a name="l00146"></a>00146     <a class="code" href="class_kautham_1_1_work_space.html">WorkSpace</a>*                  wSpace();
-<a name="l00148"></a>00148     <a class="code" href="class_kautham_1_1_sample_set.html">SampleSet</a>*              cSpace();
-<a name="l00150"></a><a class="code" href="class_kautham_1_1_problem.html#a03d03501da45bb8bb243cdeb222f6211">00150</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span>             <a class="code" href="class_kautham_1_1_problem.html#a03d03501da45bb8bb243cdeb222f6211" title="Sets WSpace.">setWSpace</a>(<a class="code" href="class_kautham_1_1_work_space.html">WorkSpace</a>* WSpace) {
-<a name="l00151"></a>00151         _wspace = WSpace;
-<a name="l00152"></a>00152     }
-<a name="l00153"></a>00153 
-<a name="l00155"></a><a class="code" href="class_kautham_1_1_problem.html#abe9607489f556b984d2e184cdf230a9a">00155</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span>             <a class="code" href="class_kautham_1_1_problem.html#abe9607489f556b984d2e184cdf230a9a" title="Sets CSpace.">setCSpace</a>(<a class="code" href="class_kautham_1_1_sample_set.html">SampleSet</a>* CSpace) {
-<a name="l00156"></a>00156         _cspace = CSpace;
-<a name="l00157"></a>00157     }
-<a name="l00158"></a>00158 
-<a name="l00159"></a>00159     <span class="keywordtype">void</span>                    setHomeConf(<a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob, HASH_S_K* param);
-<a name="l00160"></a>00160     <span class="keywordtype">void</span>                    setPlanner(<a class="code" href="class_kautham_1_1_planner.html">Planner</a>* plan){<span class="keywordflow">if</span>(_planner==NULL)_planner = plan;}
-<a name="l00161"></a>00161     <span class="keyword">inline</span> Planner*         getPlanner(){<span class="keywordflow">return</span> _planner;}
-<a name="l00162"></a>00162     <span class="keyword">inline</span> SampleSet*       getSampleSet(){<span class="keywordflow">return</span> _cspace;}
-<a name="l00163"></a>00163     <span class="keyword">inline</span> Sampler*         getSampler(){<span class="keywordflow">return</span> _sampler;}
-<a name="l00164"></a>00164     <span class="keyword">inline</span> <span class="keywordtype">void</span>             setSampler(Sampler* smp){_sampler = smp;}
-<a name="l00165"></a>00165     <span class="keyword">inline</span> <span class="keywordtype">int</span>              getDimension(){<span class="keywordflow">return</span> _wspace-&gt;getNumControls();}
-<a name="l00166"></a>00166     <span class="keyword">inline</span> vector&lt;KthReal&gt;&amp; getCurrentControls(){<span class="keywordflow">return</span> _currentControls;}
-<a name="l00167"></a>00167     <span class="keyword">inline</span> <span class="keywordtype">string</span>           getFilePath(){<span class="keywordflow">return</span> _filePath;}
-<a name="l00168"></a>00168     <span class="keywordtype">bool</span>                    inheritSolution();
-<a name="l00169"></a>00169     <span class="keywordtype">bool</span>                    setupFromFile(<span class="keywordtype">string</span> xml_doc);
-<a name="l00170"></a>00170     <span class="keywordtype">bool</span>                    setupFromFile(ifstream* xml_inputfile, <span class="keywordtype">string</span> modelsfolder);
-<a name="l00171"></a>00171     <span class="keywordtype">bool</span>                    setupFromFile(pugi::xml_document *doc);
-<a name="l00172"></a>00172 
-<a name="l00173"></a>00173 
-<a name="l00178"></a>00178     <span class="keywordtype">bool</span>                    saveToFile(<span class="keywordtype">string</span> file_path = <span class="stringliteral">&quot;&quot;</span>);
-<a name="l00179"></a>00179 
-<a name="l00180"></a>00180   
+<a name="l00130"></a>00130 
+<a name="l00136"></a>00136     <span class="keywordtype">bool</span>                       createWSpace(pugi::xml_document *doc);
+<a name="l00137"></a>00137 
+<a name="l00139"></a>00139     <span class="comment">//bool                                    createWSpace(ProbStruc *reader);</span>
+<a name="l00140"></a>00140 
+<a name="l00141"></a>00141     <span class="keywordtype">bool</span>                    createPlanner(<span class="keywordtype">string</span> name, ompl::geometric::SimpleSetup *ssptr = NULL);
+<a name="l00142"></a>00142     <span class="keywordtype">bool</span>                    createPlannerFromFile(pugi::xml_document *doc, ompl::geometric::SimpleSetup *ssptr = NULL);
+<a name="l00143"></a>00143     <span class="keywordtype">bool</span>                    createCSpace();
+<a name="l00144"></a>00144     <span class="keywordtype">bool</span>                    createCSpaceFromFile(pugi::xml_document *doc);
+<a name="l00145"></a>00145     <span class="keywordtype">bool</span>                    tryToSolve();
+<a name="l00146"></a>00146     <span class="keywordtype">bool</span>                    setCurrentControls(vector&lt;KthReal&gt; &amp;val, <span class="keywordtype">int</span> offset);
+<a name="l00148"></a>00148     <a class="code" href="class_kautham_1_1_work_space.html">WorkSpace</a>*                  wSpace();
+<a name="l00150"></a>00150     <a class="code" href="class_kautham_1_1_sample_set.html">SampleSet</a>*              cSpace();
+<a name="l00152"></a><a class="code" href="class_kautham_1_1_problem.html#a03d03501da45bb8bb243cdeb222f6211">00152</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span>             <a class="code" href="class_kautham_1_1_problem.html#a03d03501da45bb8bb243cdeb222f6211" title="Sets WSpace.">setWSpace</a>(<a class="code" href="class_kautham_1_1_work_space.html">WorkSpace</a>* WSpace) {
+<a name="l00153"></a>00153         _wspace = WSpace;
+<a name="l00154"></a>00154     }
+<a name="l00155"></a>00155 
+<a name="l00157"></a><a class="code" href="class_kautham_1_1_problem.html#abe9607489f556b984d2e184cdf230a9a">00157</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span>             <a class="code" href="class_kautham_1_1_problem.html#abe9607489f556b984d2e184cdf230a9a" title="Sets CSpace.">setCSpace</a>(<a class="code" href="class_kautham_1_1_sample_set.html">SampleSet</a>* CSpace) {
+<a name="l00158"></a>00158         _cspace = CSpace;
+<a name="l00159"></a>00159     }
+<a name="l00160"></a>00160 
+<a name="l00161"></a>00161     <span class="keywordtype">void</span>                    setHomeConf(<a class="code" href="class_kautham_1_1_robot.html" title="Class robot implements a kinematic tree with a free-flying base.">Robot</a>* rob, HASH_S_K* param);
+<a name="l00162"></a>00162     <span class="keywordtype">void</span>                    setPlanner(<a class="code" href="class_kautham_1_1_planner.html">Planner</a>* plan){<span class="keywordflow">if</span>(_planner==NULL)_planner = plan;}
+<a name="l00163"></a>00163     <span class="keyword">inline</span> Planner*         getPlanner(){<span class="keywordflow">return</span> _planner;}
+<a name="l00164"></a>00164     <span class="keyword">inline</span> SampleSet*       getSampleSet(){<span class="keywordflow">return</span> _cspace;}
+<a name="l00165"></a>00165     <span class="keyword">inline</span> Sampler*         getSampler(){<span class="keywordflow">return</span> _sampler;}
+<a name="l00166"></a>00166     <span class="keyword">inline</span> <span class="keywordtype">void</span>             setSampler(Sampler* smp){_sampler = smp;}
+<a name="l00167"></a>00167     <span class="keyword">inline</span> <span class="keywordtype">int</span>              getDimension(){<span class="keywordflow">return</span> _wspace-&gt;getNumControls();}
+<a name="l00168"></a>00168     <span class="keyword">inline</span> vector&lt;KthReal&gt;&amp; getCurrentControls(){<span class="keywordflow">return</span> _currentControls;}
+<a name="l00169"></a>00169     <span class="keyword">inline</span> <span class="keywordtype">string</span>           getFilePath(){<span class="keywordflow">return</span> _filePath;}
+<a name="l00170"></a>00170     <span class="keywordtype">bool</span>                    inheritSolution();
+<a name="l00171"></a>00171     <span class="keywordtype">bool</span>                    setupFromFile(<span class="keywordtype">string</span> xml_doc);
+<a name="l00172"></a>00172     <span class="keywordtype">bool</span>                    setupFromFile(ifstream* xml_inputfile, <span class="keywordtype">string</span> modelsfolder);
+<a name="l00173"></a>00173     <span class="keywordtype">bool</span>                    setupFromFile(pugi::xml_document *doc);
+<a name="l00174"></a>00174 
+<a name="l00175"></a>00175 
+<a name="l00180"></a>00180     <span class="keywordtype">bool</span>                    saveToFile(<span class="keywordtype">string</span> file_path = <span class="stringliteral">&quot;&quot;</span>);
 <a name="l00181"></a>00181 
-<a name="l00182"></a>00182   <span class="keyword">private</span>:
-<a name="l00183"></a>00183     <span class="keyword">const</span> <span class="keyword">static</span> KthReal    _toRad;
-<a name="l00184"></a>00184     WorkSpace*              _wspace;
-<a name="l00185"></a>00185     CONFIGTYPE              _problemType;
-<a name="l00186"></a>00186     SampleSet*              _cspace;
-<a name="l00187"></a>00187     Sampler*                _sampler;
-<a name="l00188"></a>00188     Planner*                _planner;
-<a name="l00189"></a>00189     vector&lt;KthReal&gt;         _currentControls;
-<a name="l00190"></a>00190     <span class="keywordtype">string</span>                  _filePath;
-<a name="l00191"></a>00191 
-<a name="l00194"></a>00194     <span class="keywordtype">void</span> addRobot2WSpace(xml_node *robot_node, <span class="keywordtype">string</span> dir);
-<a name="l00195"></a>00195 
-<a name="l00200"></a>00200     <span class="keywordtype">bool</span> addControls2WSpace(<span class="keywordtype">string</span> cntrFile);
-<a name="l00201"></a>00201 
-<a name="l00204"></a>00204     <span class="keywordtype">void</span> addObstacle2WSpace(xml_node *obstacle_node, <span class="keywordtype">string</span> dir);
-<a name="l00205"></a>00205         };
-<a name="l00206"></a>00206 
-<a name="l00208"></a>00208 }
-<a name="l00209"></a>00209 
-<a name="l00210"></a>00210 <span class="preprocessor">#endif  //_PROBLEM_H</span>
-<a name="l00211"></a>00211 <span class="preprocessor"></span>
+<a name="l00182"></a>00182   
+<a name="l00183"></a>00183 
+<a name="l00184"></a>00184   <span class="keyword">private</span>:
+<a name="l00185"></a>00185     <span class="keyword">const</span> <span class="keyword">static</span> KthReal    _toRad;
+<a name="l00186"></a>00186     WorkSpace*              _wspace;
+<a name="l00187"></a>00187     CONFIGTYPE              _problemType;
+<a name="l00188"></a>00188     SampleSet*              _cspace;
+<a name="l00189"></a>00189     Sampler*                _sampler;
+<a name="l00190"></a>00190     Planner*                _planner;
+<a name="l00191"></a>00191     vector&lt;KthReal&gt;         _currentControls;
+<a name="l00192"></a>00192     <span class="keywordtype">string</span>                  _filePath;
+<a name="l00193"></a>00193 
+<a name="l00194"></a>00194 
+<a name="l00201"></a>00201     <span class="keywordtype">bool</span> addRobot2WSpace(xml_node *robot_node);
+<a name="l00202"></a>00202 
+<a name="l00210"></a>00210     <span class="keywordtype">bool</span> addControls2WSpace(<span class="keywordtype">string</span> cntrFile);
+<a name="l00211"></a>00211 
+<a name="l00218"></a>00218     <span class="keywordtype">bool</span> addObstacle2WSpace(xml_node *obstacle_node);
+<a name="l00219"></a>00219 
+<a name="l00226"></a>00226     <span class="keywordtype">bool</span> isFileOK (xml_document *doc);
+<a name="l00227"></a>00227 
+<a name="l00233"></a>00233     <span class="keywordtype">bool</span> exists(<span class="keywordtype">string</span> file);
+<a name="l00234"></a>00234 
+<a name="l00241"></a>00241     <span class="keywordtype">bool</span> prepareFile (xml_document *doc);
+<a name="l00242"></a>00242 
+<a name="l00255"></a>00255     <span class="keywordtype">bool</span> findAllFiles(xml_node *parent, <span class="keywordtype">string</span> child, <span class="keywordtype">string</span> attribute,
+<a name="l00256"></a>00256                       vector&lt;string&gt; path);
+<a name="l00257"></a>00257         };
+<a name="l00258"></a>00258 
+<a name="l00260"></a>00260 }
+<a name="l00261"></a>00261 
+<a name="l00262"></a>00262 <span class="preprocessor">#endif  //_PROBLEM_H</span>
+<a name="l00263"></a>00263 <span class="preprocessor"></span>
 </pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -284,7 +296,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Apr 11 2014 00:19:59 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Apr 13 2014 17:27:50 for The Kautham Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
