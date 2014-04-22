@@ -44,7 +44,6 @@
 #if !defined(_PROBLEM_H)
 #define _PROBLEM_H
 
-#include <QSettings>
 #include <QString>
 
 #include <libsplanner/planner.h>
