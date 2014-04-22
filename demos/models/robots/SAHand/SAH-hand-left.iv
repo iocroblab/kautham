@@ -1,0 +1,80 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  File {
+    name "SAH-palm-left.iv"
+
+  }
+  Separator {
+
+    DEF aVis_ThumbRotAxisTF MatrixTransform {
+      matrix 1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        -3 -27.1 0 1
+
+    }
+    File {
+      name "SAH-thumb-base-left.iv"
+
+    }
+  }
+  DEF aVis_Thumb Separator {
+
+    DEF aVis_BaseTF MatrixTransform {
+      matrix 0 -0.57358003 0.81914997 0
+        1 0 0 0
+        0 0.81914997 0.57358003 0
+        -9 -114 97 1
+
+    }
+    File {
+      name "SAH-finger.iv"
+
+    }
+  }
+  DEF aVis_ForeFinger Separator {
+
+    DEF aVis_BaseTF MatrixTransform {
+      matrix 0 -0.034301002 0.99936998 0
+        0 -0.99940997 0.035484999 0
+        1 0 0 0
+        -4.3000002 -40.165001 145.42999 1
+
+    }
+    File {
+      name "SAH-finger.iv"
+
+    }
+  }
+  DEF aVis_MiddleFinger Separator {
+
+    DEF aVis_BaseTF MatrixTransform {
+      matrix 0 0 1 0
+        0 -1 0 0
+        1 0 0 0
+        -4.3000002 0 150.14999 1
+
+    }
+    File {
+      name "SAH-finger.iv"
+
+    }
+  }
+  DEF aVis_RingFinger Separator {
+
+    DEF aVis_BaseTF MatrixTransform {
+      matrix 0 0.035485201 0.99936998 0
+        0 -0.99936998 -0.034301002 0
+        1 0 0 0
+        -4.3000002 40.165001 145.42999 1
+
+    }
+    File {
+      name "SAH-finger.iv"
+
+    }
+  }
+}

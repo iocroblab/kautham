@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<Robot name="ele" robType="Freeflying">
+	<WeightSE3 rho_t="1.0" rho_r="1.0" />
+	<Joints size="1">
+		<Joint name="Base" ivFile="freeflying/ele.iv">
+			<PreTrans X="0.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+			<Description movable="true" />
+		</Joint>
+	</Joints>
+</Robot>

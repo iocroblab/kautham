@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<Problem name="ompl_RRT_TX90_RHAnd_Extreme_TwoCan_Shelf.xml">
+	<Robot robot="robots/TX90_RHand_5PMD_thumb2.dh" scale="1.0">
+		<Limits name="X" min="0.0" max="1000.0" />
+		<Limits name="Y" min="0.0" max="1000.0" />
+		<Limits name="Z" min="0.0" max="1000.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-180.0" max="180.0" />
+		<Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="425.1" X="-318.5" />
+		<InvKinematic name="TX90" />
+	</Robot>
+	<Obstacle obstacle="obstacles/sceneRevistaICRA09-exhaustive.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/can.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="700.0" Y="1280.0" X="-570.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/cangoal.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="580.0" Y="1280.0" X="-570.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/can.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="580.0" Y="1200.0" X="-350.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/can.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="580.0" Y="1200.0" X="-750.0" />
+	</Obstacle>
+	<Controls robot="controls/ompl_RRT_TX90_RHand_Extreme_TwoCan_Shelf.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRT</Name>
+			<Parameter name="Max Planning Time">300.0</Parameter>
+			<Parameter name="Range">0.5</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="11">0.256 0.333 0.969 0.462 0.467 0.703 0.708 0.5 0 0.5 0.5</Init>
+				<Goal dim="11">0.274 0.585 0.81 0.487 0.333 0.668 0.097 0.5 0.24 1 0.5</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

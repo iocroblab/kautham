@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Robot name="2D-Robot" DHType="Modified" robType="Chain">
+	<WeightSE3 rho_t="1.0" rho_r="1.0" />
+	<Joints size="4">
+		<Joint name="Base" ivFile="2DRR/base.iv">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="false" movable="false" trunk="true" />
+			<Limits Hi="0" Low="0" />
+			<Weight weight="1.0" />
+			<Parent name="" />
+		</Joint>
+		<Joint name="link1" ivFile="2DRR/link1.iv">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="180.0" Low="-180.0" />
+			<Weight weight="1.0" />
+			<Parent name="Base" />
+		</Joint>
+		<Joint name="link2" ivFile="2DRR/link2.iv">
+			<DHPars alpha="0.0" a="100.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="180.0" Low="-180.0" />
+			<Weight weight="1.0" />
+			<Parent name="link1" />
+		</Joint>
+		<Joint name="tcp" ivFile="2DRR/tcp.iv">
+			<DHPars alpha="0.0" a="100.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="0.0" Low="0.0" />
+			<Weight weight="1.0" />
+			<Parent name="link2" />
+		</Joint>
+	</Joints>
+</Robot>

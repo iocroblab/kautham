@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="KukaLWR/Link1" value="0.5" />
+		<DOF name="KukaLWR/Link2" value="0.5" />
+		<DOF name="KukaLWR/Link3" value="0.5" />
+		<DOF name="KukaLWR/Link4" value="0.5" />
+		<DOF name="KukaLWR/Link5" value="0.5" />
+		<DOF name="KukaLWR/Link6" value="0.5" />
+		<DOF name="KukaLWR/Link7" value="0.5" />
+	</Offset>
+	<Control name="KukaLWR/Axis1" eigValue="1.0">
+		<DOF name="KukaLWR/Link1" value="1.0" />
+	</Control>
+	<Control name="KukaLWR/Axis2" eigValue="1.0">
+		<DOF name="KukaLWR/Link2" value="1.0" />
+	</Control>
+	<Control name="KukaLWR/Axis3" eigValue="1.0">
+		<DOF name="KukaLWR/Link4" value="1.0" />
+	</Control>
+	<Control name="KukaLWR/Axis4" eigValue="1.0">
+		<DOF name="KukaLWR/Link5" value="1.0" />
+	</Control>
+	<Control name="KukaLWR/Axis5" eigValue="1.0">
+		<DOF name="KukaLWR/Link6" value="1.0" />
+	</Control>
+	<Control name="KukaLWR/Axis6" eigValue="1.0">
+		<DOF name="KukaLWR/Link7" value="1.0" />
+	</Control>
+	<Control name="KukaLWR/Axis7" eigValue="1.0">
+		<DOF name="KukaLWR/Link3" value="1.0" />
+	</Control>
+</ControlSet>

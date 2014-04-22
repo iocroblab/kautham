@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="allegro_hand_right/link_0.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_1.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_2.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_3.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_4.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_5.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_6.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_7.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_8.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_9.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_10.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_11.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_12.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_13.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_14.0" value="0.5544" />
+		<DOF name="allegro_hand_right/link_15.0" value="0.5544" />
+	</Offset>
+	<Control name="allegro_hand_right/link_0.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_0.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_1.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_1.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_2.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_2.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_3.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_3.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_4.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_4.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_5.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_5.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_6.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_6.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_7.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_7.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_8.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_8.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_9.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_9.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_10.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_10.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_11.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_11.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_12.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_12.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_13.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_13.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_14.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_14.0" value="1.0" />
+	</Control>
+	<Control name="allegro_hand_right/link_15.0" eigValue="1.0">
+		<DOF name="allegro_hand_right/link_15.0" value="1.0" />
+	</Control>
+</ControlSet>

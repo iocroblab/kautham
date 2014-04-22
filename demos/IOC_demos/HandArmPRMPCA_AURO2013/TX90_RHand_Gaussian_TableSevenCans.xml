@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<Problem name="" topology="SE3">
+	<Robot robot="robots/TX90_RHand_5PMD_thumb2.dh" scale="1.0">
+		<Limits name="X" min="0.0" max="1000.0" />
+		<Limits name="Y" min="0.0" max="1000.0" />
+		<Limits name="Z" min="0.0" max="1000.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-180.0" max="180.0" />
+		<Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="230.1" X="-200.5" />
+		<InvKinematic name="TX90" />
+	</Robot>
+	<Obstacle obstacle="obstacles/cangoal.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="560.0" Y="1100.0" X="-470.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/can.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="680.0" Y="1100.0" X="-470.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/can.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="680.0" Y="1180.0" X="-350.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/can.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="560.0" Y="1180.0" X="-350.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/can.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="560.0" Y="1000.0" X="-280.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/can.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="560.0" Y="950.0" X="-490.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/can.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="680.0" Y="950.0" X="-490.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/stick.iv" scale="3.0">
+		<Home TH="35.0" WZ="1.0" WY="0.0" WX="0.0" Z="755.0" Y="1140.0" X="-400.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/sceneRevistaICRA09.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/TX90_RHand_Gaussian_TableSevenCans.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>PRMPCA HandArm</Name>
+			<Parameter name="Step Size">0.05"</Parameter>
+			<Parameter name="Speed Factor">3</Parameter>
+			<Parameter name="Distance Goal">250</Parameter>
+			<Parameter name="Distance Sampling PCA Goal">50</Parameter>
+			<Parameter name="Drawn Path Link">-1</Parameter>
+			<Parameter name="Max. Samples">50000</Parameter>
+			<Parameter name="Num Sampling Free PCA">100</Parameter>
+			<Parameter name="Num Sampling Free RW">1</Parameter>
+			<Parameter name="Lambda">3.0</Parameter>
+			<Parameter name="Max. Neighs">40</Parameter>
+			<Parameter name="Sampling (0:PCA, 1:Gauss, 2:Bridge)">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="11">0.373 0.359 0.969 0.332 0.6 0.837 1.0 0.5 0 0.698 0.881</Init>
+				<Goal dim="11">0.271 0.597 0.81 0.477 0.304 0.688 0.285 0.589 0.302 0.892 0.529</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

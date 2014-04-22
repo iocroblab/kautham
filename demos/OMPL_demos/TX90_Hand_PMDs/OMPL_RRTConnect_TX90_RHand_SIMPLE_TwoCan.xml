@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTCONNECT_TX90_RHAND_SIMPLE_TWOCAN">
+	<Robot robot="robots/TX90_RHand_5PMD_thumb2.dh" scale="1.0">
+		<Limits name="X" min="0.0" max="1000.0" />
+		<Limits name="Y" min="0.0" max="1000.0" />
+		<Limits name="Z" min="0.0" max="1000.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-180.0" max="180.0" />
+		<Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="230.1" X="-200.5" />
+		<InvKinematic name="TX90" />
+	</Robot>
+	<Obstacle obstacle="obstacles/cangoal.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="560.0" Y="1100.0" X="-470.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/can.wrl" scale="1000.0">
+		<Home TH="90.0" WZ="0.0" WY="0.0" WX="1.0" Z="560.0" Y="1180.0" X="-350.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/sceneRevistaICRA09.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/OMPL_RRTConnect_TX90_RHand_SIMPLE_TwoCan.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="Max Planning Time">300.0</Parameter>
+			<Parameter name="Range">0.1</Parameter>
+			<Parameter name="Speed Factor">10</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="11">0.373 0.359 0.969 0.332 0.6 0.837 1.0 0.5 0 0.698 0.881</Init>
+				<Goal dim="11">0.271 0.597 0.81 0.477 0.304 0.688 0.285 0.589 0.302 0.892 0.529</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
