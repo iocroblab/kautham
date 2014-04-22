@@ -49,7 +49,6 @@
 #include <libsampling/robconf.h>
 #include <libkthutil/kauthamdefs.h>
 #include <libsampling/sample.h>
-#include "obstacle.h"
 #include "robot.h"
 
 using namespace std;
@@ -61,49 +60,33 @@ namespace Kautham{
  */
 
   class WorkSpace {
-	  public:
+  public:
       WorkSpace();
-		  KthReal               distanceCheck( Conf* conf, unsigned int robot ) ;
-		  bool                  collisionCheck( Conf* conf, unsigned int robot ) ;
-      KthReal               distanceBetweenSamples(Sample& smp1, Sample& smp2,
-                                                Kautham::SPACETYPE spc);
-
+      KthReal               distanceCheck( Conf* conf, unsigned int robot ) ;
+      bool                  collisionCheck( Conf* conf, unsigned int robot ) ;
+      KthReal               distanceBetweenSamples(Sample& smp1, Sample& smp2,Kautham::SPACETYPE spc);
       vector<KthReal>*      distanceCheck(Sample* sample) ;
       bool                  collisionCheck(Sample* sample ) ;
       void                  moveRobotsTo(Sample* sample);
-      void                  moveObstacleTo( size_t mobObst, vector<KthReal>& pose );
-      void                  moveObstacleTo( size_t mobObst, RobConf& robConf );
+      void                  moveObstaclesTo(Sample* sample);
       void                  addRobot(Robot* robot);
-      inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;}
+      void                  addObstacle(Robot* obs);
+      inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;} 
+      inline Robot*         getObstacle(unsigned int i){if(i < obstacles.size()) return obstacles[i]; return NULL;}
       inline int            getNumRobots(){return robots.size();}
-      void                  addObstacle(Obstacle* obs);
-      void                  addMobileObstacle(Robot* obs);
-      inline Obstacle*      getObstacle(unsigned int i){if(i < obstacles.size()) return obstacles[i]; return NULL;}
-      inline Robot*         getMobileObstacle(unsigned int i){if( i<_mobileObstacle.size() ) return _mobileObstacle[i];return NULL;}
-      inline unsigned int   robotsCount(){return robots.size();}
-      inline unsigned int   obstaclesCount(){return obstacles.size();}
-      inline unsigned int   mobileObstaclesCount(){return _mobileObstacle.size();}
-
-      inline int getDimension (){return numControls;} //!< Returns the dimension of the workspace
-      inline int getNumControls(){return numControls;} //!< Returns the number of controls
-
-      inline int setNumControls(int numcontrols){numControls = numcontrols;} //!< Sets the number of controls
-
-
-      void addDistanceMapFile(string distanceFile);
-      inline string getDistanceMapFile(){return distanceMapFile;}
-
-      void addDimensionsFile(string dfile);
-      inline string getDimensionsFile(){return dimensionsFile;}
-
-      void addDirCase(string dirc);
-      inline string getDirCase(){return dirCase;}
+      inline int            getNumObstacles(){return obstacles.size();}
+      void                  addDistanceMapFile(string distanceFile);
+      inline string         getDistanceMapFile(){return distanceMapFile;}
+      void                  addDimensionsFile(string dfile);
+      inline string         getDimensionsFile(){return dimensionsFile;}
+      void                  addDirCase(string dirc);
+      inline string         getDirCase(){return dirCase;}
       //void addNeighborhoodMapFile(string neighFile);
       //inline string getNeighborhoodMapFile(){return neighborhoodMapFile;};
 
-//      //! This method returns true if the all robots in the scene only accepts SE3 data;
-//      //! This method is deprecated. Maybe it never has been used.
-//      bool                  isSE3();
+      //      //! This method returns true if the all robots in the scene only accepts SE3 data;
+      //      //! This method is deprecated. Maybe it never has been used.
+      //      bool                  isSE3();
 
       //! This vector contains a pointers to the RobConf of each robot in the
       //! WorkSpace
@@ -119,38 +102,42 @@ namespace Kautham{
       //! This method detaches an object previously attached to a Robot link.
       bool                  detachObstacleFromRobotLink(string robot, string link );
 
-	  
-		static void           resetCollCheckCounter();
-		static unsigned int   getCollCheckCounter();
-		static void           increaseCollCheckCounter();
+      static void           resetCollCheckCounter();
+      static unsigned int   getCollCheckCounter();
+      static void           increaseCollCheckCounter();
+      Sample*               getLastRobSampleMovedTo(){return _lastRobSampleMovedTo;}
+      Sample*               getLastObsSampleMovedTo(){return _lastObsSampleMovedTo;}
+      inline int            getNumRobControls(){return numRobControls;} //!< Returns the number of robot controls
+      inline int            getNumObsControls(){return numObsControls;} //!< Returns the number of obstacle controls
+      inline int            setNumRobControls(int numcontrols){numRobControls = numcontrols;} //!< Sets the number of robot controls
+      inline int            setNumObsControls(int numcontrols){numObsControls = numcontrols;} //!< Sets the number of obstacle controls
+      inline string         getRobControlsName() const {return robControlsName;} //!< Returns the string containing the robot control names, separated by the vertical line character
+      inline string         getObsControlsName() const {return obsControlsName;} //!< Returns the string containing the obstacle control names, separated by the vertical line character
+      inline void           setRobControlsName(string controlsname){robControlsName=controlsname;} //!< Sets the string containing the robot control names, separated by the veritcal line character
+      inline void           setObsControlsName(string controlsname){obsControlsName=controlsname;} //!< Sets the string containing the obstacle control names, separated by the veritcal line character
 
-		
-		Sample* getLastSampleMovedTo(){return _lastSampleMovedTo;};
-        inline string getControlsName() const {return controlsName;} //!< Returns the string containing the control names, separated by the veritcal line character
-        inline void setControlsName(string controlsname){controlsName=controlsname;} //!< Sets the string containing the control names, separated by the veritcal line character
-
-	  protected:
-		  virtual void          updateScene() = 0;
-          vector<Obstacle*>     obstacles;
-		  vector<Robot*>        _mobileObstacle;
-		  vector<Robot*>        robots;
+  protected:
+      virtual void          updateScene() = 0;
+      vector<Robot*>        robots;
+      vector<Robot*>        obstacles;
       vector<KthReal>       distVec;
-
       //! This attribute groups the configurations of the robots
       vector<RobConf*>      _configMap;
       vector<RobWeight*>    _robWeight;
+      string                distanceMapFile;
+      string                dimensionsFile;
+      string                dirCase;
+      //string neighborhoodMapFile;
 
-	  string distanceMapFile;
-	  string dimensionsFile;
-	  string dirCase;
-	  //string neighborhoodMapFile;
-
-	private:
-      bool              armed;
-      int               numControls;  //!< This is the number of control used to command the robot
-      string            controlsName; //!< Names of the controls, as a string, separated with the vertical bar character.
+  private:
+      bool                  armed;
       static unsigned int   _countWorldCollCheck;
-      Sample* _lastSampleMovedTo;
+      int                   numRobControls;  //!< This is the number of controls used to command the robots
+      int                   numObsControls;  //!< This is the number of controls used to command the obstacles
+      string                robControlsName; //!< Names of the robot controls, as a string, separated with the vertical bar character.
+      string                obsControlsName; //!< Names of the obstacle controls, as a string, separated with the vertical bar character. 
+      Sample*               _lastRobSampleMovedTo;
+      Sample*               _lastObsSampleMovedTo;
   };
 
   /** @}   end of Doxygen module "libProblem" */

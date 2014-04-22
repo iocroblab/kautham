@@ -171,7 +171,7 @@ namespace GUIBRO {
 		maxdist = -100000000;
 		while(!feof(fp))
 		{
-			fscanf(fp,"%ld %d\n",&id,&dist);
+            fscanf(fp,"%ud %d\n",&id,&dist);
 			
 			if(dist<_thresholdDist) continue;
 

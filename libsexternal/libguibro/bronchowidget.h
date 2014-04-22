@@ -32,7 +32,7 @@ namespace GUIBRO {
 		void			  collisionCheck();
 		void			  advanceBronchoscope();
 	public:
-		bronchoWidget(Robot* rob, Problem* prob, int offset, GUI* gui ); //QWidget *parent = 0
+        bronchoWidget(Robot* rob, Problem* prob, GUI *gui ); //QWidget *parent = 0
 		~bronchoWidget();
 
 	protected:
@@ -48,7 +48,6 @@ namespace GUIBRO {
 			//QVBoxLayout       *vboxLayout;
 			vector<KthReal>   values;
 			Robot*            _robot;
-	int               _globalOffset;
 		Problem*          _ptProblem;
 		QTimer*           timer;
 		KthReal           lastZsliderPos;

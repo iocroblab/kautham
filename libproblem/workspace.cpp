@@ -57,8 +57,8 @@ namespace Kautham {
       distVec.clear();
       _configMap.clear();
       _robWeight.clear();
-      _lastSampleMovedTo=NULL;
-      numControls = 0;
+      numRobControls = 0;
+      numObsControls = 0;
   }
 
 
@@ -92,7 +92,7 @@ namespace Kautham {
   vector<KthReal>* WorkSpace::distanceCheck(Sample* sample) {
     vector<KthReal> tmpVec;
     tmpVec.clear();
-    for(unsigned int j=0; j < getNumControls(); j++ )
+    for(unsigned int j=0; j < getNumRobControls(); j++ )
       tmpVec.push_back(sample->getCoords()[j]);
 
     distVec.clear();
@@ -106,15 +106,15 @@ namespace Kautham {
   }
 
   /*!
-   * Moves the robot to the configuration specified by the sample
+   * Moves the robots to the configuration specified by the sample
    *  loads the flag withinbounds of the sample. If outofbounds, one of the
-   *  robot ends at the border of one or more of its limits.
+   *  robots ends at the border of one or more of its limits.
    */
   void WorkSpace::moveRobotsTo(Sample* sample){
     bool withinbounds=true;
     vector<KthReal> tmpVec;
     tmpVec.clear();
-    for(unsigned int j=0; j < getNumControls(); j++ )
+    for(unsigned int j=0; j < getNumRobControls(); j++ )
         tmpVec.push_back(sample->getCoords()[j]);
 
     for(unsigned int i=0; i< robots.size(); i++){
@@ -125,53 +125,45 @@ namespace Kautham {
               robots[i]->Kinematics(sample->getMappedConf().at(i));
         }
     }
-	_lastSampleMovedTo = sample;
+    _lastRobSampleMovedTo = sample;
 
-    //set _sample::_config if it was nbot set
+    //set _sample::_config if it was not set
     if(sample->getMappedConf().size()==0) sample->setMappedConf(_configMap);
 
     sample->setwithinbounds(withinbounds);
   }
-  /*
-  void WorkSpace::moveRobotsTo(Sample* sample){
-    vector<KthReal> tmpVec;
-    int j, from = 0;
-    for(unsigned int i=0; i< robots.size(); i++){
-        if(sample->getMappedConf().size()==0){
-            tmpVec.clear();
-            for( j=0; j < robots[i]->getNumControls(); j++ )
-                tmpVec.push_back(sample->getCoords()[from + j]);
 
-            from = j;
-            robots[i]->control2Pose(tmpVec);
-        }
-        else{
-              robots[i]->Kinematics(sample->getMappedConf().at(i));
-        }
-    }
-    _lastSampleMovedTo = sample;
+
+  /*!
+   * Moves the obstacles to the configuration specified by the sample
+   *  loads the flag withinbounds of the sample. If outofbounds, one of the
+   *  obstacles ends at the border of one or more of its limits.
+   */
+  void WorkSpace::moveObstaclesTo( Sample *sample ){
+
+      bool withinbounds=true;
+      vector<KthReal> tmpVec;
+      tmpVec.clear();
+      for(unsigned int j=0; j < getNumObsControls(); j++ )
+          tmpVec.push_back(sample->getCoords()[j]);
+
+      for(unsigned int i=0; i< obstacles.size(); i++){
+          if(sample->getMappedConf().size()==0){
+              withinbounds &= obstacles[i]->control2Pose(tmpVec);
+          }
+          else{
+                obstacles[i]->Kinematics(sample->getMappedConf().at(i));
+          }
+      }
+      _lastObsSampleMovedTo = sample;
+
+      // Is this needed for Obstacles? :S
+      //set _sample::_config if it was not set
+      //if(sample->getMappedConf().size()==0) sample->setMappedConf(_configMap);
+
+      sample->setwithinbounds(withinbounds);
   }
-  */
 
-  void WorkSpace::moveObstacleTo( size_t mobObst, vector<KthReal>& pmd ){
-    // The parameter pmd is the same type of data the user will be send to
-    // move a robot. It is the value of parameter of a normal sample.
-    if( mobObst < _mobileObstacle.size() ){
-      _mobileObstacle[mobObst]->control2Pose( pmd );
-    }else
-      cout << "The mobObst index is greater than the counter of mobile obstacles.\n"; 
-
-  }
-
-  void WorkSpace::moveObstacleTo( size_t mobObst, RobConf& robConf ){
-    // The parameter pmd is the same type of data the user will be send to
-    // move a robot. It is the value of parameter of a normal sample.
-    if( mobObst < _mobileObstacle.size() ){
-      _mobileObstacle[mobObst]->Kinematics( robConf );
-    }else
-      cout << "The mobObst index is greater than the counter of mobile obstacles.\n"; 
-
-  }
 
   bool WorkSpace::collisionCheck(Sample* sample ) {
 
@@ -180,7 +172,7 @@ namespace Kautham {
     vector<KthReal> tmpVec;
     bool collision = false;
     tmpVec.clear();
-    for(int j=0; j < getNumControls(); j++ )
+    for(int j=0; j < getNumRobControls(); j++ )
       tmpVec.push_back(sample->getCoords()[j]);
 
     if(sample->getMappedConf().size() == 0){
@@ -329,24 +321,16 @@ namespace Kautham {
   }
 
   void WorkSpace::addRobot(Robot* robot){
-
-    //to test the coupling
-    //robot->setNumCoupledControls(12);
-
     robots.push_back(robot);
     _configMap.clear();
     _robWeight.clear();
     for(unsigned int i = 0; i < robots.size(); i++){
       _configMap.push_back(((Robot*)robots.at(i))->getCurrentPos());
-      _robWeight.push_back( ((Robot*)robots.at(i))->getRobWeight() );
+      _robWeight.push_back(((Robot*)robots.at(i))->getRobWeight());
     }
   }
-
-  void WorkSpace::addMobileObstacle(Robot* obs){
-    _mobileObstacle.push_back( obs );
-  }
       
-  void WorkSpace::addObstacle(Obstacle* obs){
+  void WorkSpace::addObstacle(Robot *obs){
     obstacles.push_back(obs);
   }
 
@@ -399,33 +383,3 @@ namespace Kautham {
   }
 
 }
-
-
-/*
-    //! Sets the value of the mapMatrix corresponding to the column control and row dof.
-    bool setControlItem(string control, string dof, KthReal value);
-
-    /*!
-     *
-     */
-   /* bool Robot::setControlItem(string control, string dof, KthReal value){
-      // First I will find the column index looking for "|" number before the control name.
-      string::size_type pos = controlsName.find(control,0);
-      if(pos == string::npos) return false;
-      int j=0;
-      string::size_type trick=controlsName.find("|",0);
-      while(trick < pos){
-        trick=controlsName.find("|",trick+1);
-        j++;
-      }
-      for(unsigned int i = 1; i < links.size(); i++)
-        if(links[i]->getName() == dof){ // Now I am finding the row index.
-          mapMatrix[i][j] = value;
-          return true;
-        }
-      return false;
-    }
-*/
-
-
- 

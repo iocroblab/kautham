@@ -70,15 +70,16 @@ namespace Kautham {
 		DOFWidget( Robot* rob );
 		~DOFWidget();
 		inline vector<KthReal>   *getValues(){return &values;}
-    void setValues(vector<KthReal> &val);
+        void setValues(vector<KthReal> &val);
 	private:
 		vector<QSlider*>  sliders;
 		vector<QLabel*>   labels;
 		QGridLayout       *gridLayout;
 		QVBoxLayout       *vboxLayout;
+        QStringList       names;
 		vector<KthReal>   values;
-		Robot*            _robot;
-
+        vector<KthReal>   low;
+        vector<KthReal>   high;
 	};
 
 
