@@ -45,7 +45,6 @@
 #define _APPLICATION_H
 
 #include <QtCore>
-#include <QSettings>
 #include <libproblem/problem.h>
 #include <libgui/gui.h>
 #include <Inventor/Qt/SoQt.h>
