@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<Problem name="" topology="SE3">
+	<Robot robot="robots/TX90_RHand_5PMD_thumb2.dh" scale="1.0">
+		 
+   Robot Path
+	 
+		<Limits name="X" min="0.0" max="1000.0" />
+		<Limits name="Y" min="0.0" max="1000.0" />
+		<Limits name="Z" min="0.0" max="1000.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="TH" min="-180.0" max="180.0" />
+		<InvKinematic name="TX90" />
+		<Home X="1484.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="180.0" />
+	</Robot>
+	<Obstacle obstacle="obstacles/table_clutter_review_auro.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/TX90_RHand_auro_review_table.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>PRMAURO HandArm</Name>
+			<Parameter name="Step Size">0.2"</Parameter>
+			<Parameter name="Max. Samples">300</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Cloud Radius Max">300</Parameter>
+			<Parameter name="Cloud Radius">30</Parameter>
+			<Parameter name="Ratio Hand/Arm Conf">2</Parameter>
+			<Parameter name="Cloud Size">2</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="11">0.256 0.333 0.969 0.462 0.467 0.703 0.708 0.5 0 0.5 0.5</Init>
+				<Goal dim="11">0.265 0.567 0.829 0.487 0.333 0.668 0.354 1.0 0.0 0.613 0.694</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

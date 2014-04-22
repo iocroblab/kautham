@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<ControlSet>
+	
+	This control set is thinkig to be as EigenVector collection with their own 
+	EigenValue used to obtain the respective DOF vector of the robot. All the 
+	robots need to be positioned in any location in SE3 WorkSpace as well it need 
+	6 values (X, Y, Z, X1, X2, X3) to reach it. The X1, X2, X3 values will be mapped to 
+	axis-angle notation (Wx, Wy, Wz, angle) and the other DOF are respectively the 
+	articular values in Chain or Tree robot types.
+	
+	
+	<Offset>
+		
+		This vector can be added in order to provide a offset or centre values to adjust
+		the control values and the DOF values.
+	
+		
+		<DOF name="Bronchoscope2/X" value="0.5" />
+		<DOF name="Bronchoscope2/Y" value="0.5" />
+		<DOF name="Bronchoscope2/Z" value="0.5" />
+		<DOF name="Bronchoscope2/X1" value="0.5" />
+		<DOF name="Bronchoscope2/X2" value="0.0" />
+		<DOF name="Bronchoscope2/X3" value="0.0" />
+		<DOF name="Bronchoscope2/Base" value="0.5" />
+		<DOF name="Bronchoscope2/link0" value="0.5" />
+		<DOF name="Bronchoscope2/link1" value="0.5" />
+		<DOF name="Bronchoscope2/link2" value="0.5" />
+		<DOF name="Bronchoscope2/link3" value="0.5" />
+		<DOF name="Bronchoscope2/link4" value="0.5" />
+		<DOF name="Bronchoscope2/link5" value="0.5" />
+		<DOF name="Bronchoscope2/link6" value="0.5" />
+		<DOF name="Bronchoscope2/link7" value="0.5" />
+		<DOF name="Bronchoscope2/link8" value="0.5" />
+		<DOF name="Bronchoscope2/link9" value="0.5" />
+		<DOF name="Bronchoscope2/link10" value="0.5" />
+		<DOF name="Bronchoscope2/Tcp" value="0.5" />
+	</Offset>
+	
+	
+	At less, the robot needs to be controled through a 6 values corresponding to a 
+	SE3 configuration. 
+	
+		
+	
+	<Control name="Bronchoscope2/x" eigValue="1.0">
+		<DOF name="Bronchoscope2/X" value="1.0" />
+	</Control>
+	<Control name="Bronchoscope2/y" eigValue="1.0">
+		<DOF name="Bronchoscope2/Y" value="1.0" />
+	</Control>
+	<Control name="Bronchoscope2/z" eigValue="1.0">
+		<DOF name="Bronchoscope2/Z" value="1.0" />
+	</Control>
+	<Control name="Bronchoscope2/x1" eigValue="1.0">
+		<DOF name="Bronchoscope2/X1" value="1.0" />
+	</Control>
+	<Control name="Bronchoscope2/x2" eigValue="1.0">
+		<DOF name="Bronchoscope2/X2" value="1.0" />
+	</Control>
+	<Control name="Bronchoscope2/x3" eigValue="1.0">
+		<DOF name="Bronchoscope2/X3" value="1.0" />
+	</Control>
+	<Control name="Bronchoscope2/Alpha" eigValue="1.0">
+		<DOF name="Bronchoscope2/link0" value="1.0" />
+	</Control>
+	<Control name="Bronchoscope2/Beta" eigValue="1.0">
+		<DOF name="Bronchoscope2/link1" value="1.0" />
+		<DOF name="Bronchoscope2/link2" value="1.0" />
+		<DOF name="Bronchoscope2/link3" value="1.0" />
+		<DOF name="Bronchoscope2/link4" value="1.0" />
+		<DOF name="Bronchoscope2/link5" value="1.0" />
+		<DOF name="Bronchoscope2/link6" value="1.0" />
+		<DOF name="Bronchoscope2/link7" value="1.0" />
+		<DOF name="Bronchoscope2/link8" value="1.0" />
+		<DOF name="Bronchoscope2/link9" value="1.0" />
+		<DOF name="Bronchoscope2/link10" value="1.0" />
+	</Control>
+</ControlSet>

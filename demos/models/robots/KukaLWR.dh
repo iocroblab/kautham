@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<Robot name="KukaLWR" DHType="Modified" robType="Chain">
+	<WeightSE3 rho_t="1.0" rho_r="1.0" />
+	<Joints size="8">
+		<Joint name="Base" ivFile="kukaLWR/base.wrl">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="false" movable="false" />
+			<Limits Hi="0" Low="0" />
+			<Weight weight="1.0" />
+			<Parent name="" />
+		</Joint>
+		<Joint name="Link1" ivFile="kukaLWR/link1.wrl">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="310.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="170.0" Low="-170.0" />
+			<Weight weight="1.0" />
+			<Parent name="Base" />
+		</Joint>
+		<Joint name="Link2" ivFile="kukaLWR/link2.wrl">
+			<DHPars alpha="90.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="210.0" Low="-30.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link1" />
+		</Joint>
+		<Joint name="Link3" ivFile="kukaLWR/link3.wrl">
+			<DHPars alpha="-90.0" a="0.0" theta="0.0" d="400.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="170.0" Low="-170.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link2" />
+		</Joint>
+		<Joint name="Link4" ivFile="kukaLWR/link4.wrl">
+			<DHPars alpha="-90.0" a="0.0" theta="180.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="120.0" Low="-120.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link3" />
+		</Joint>
+		<Joint name="Link5" ivFile="kukaLWR/link5.wrl">
+			<DHPars alpha="-90.0" a="0.0" theta="180.0" d="390.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="170.0" Low="-170.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link4" />
+		</Joint>
+		<Joint name="Link6" ivFile="kukaLWR/link6.wrl">
+			<DHPars alpha="90.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="120.0" Low="-120.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link5" />
+		</Joint>
+		<Joint name="Link7" ivFile="kukaLWR/link7.wrl">
+			<DHPars alpha="-90.0" a="0.0" theta="0.0" d="78.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="170.0" Low="-170.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link6" />
+		</Joint>
+	</Joints>
+</Robot>

@@ -1,0 +1,403 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="leftJustin/Thumb_izq" value="0.5" />
+		<DOF name="leftJustin/Thumb-Base_izq" value="0.3055" />
+		<DOF name="leftJustin/Thumb-Prox_izq" value="0.6308" />
+		<DOF name="leftJustin/Thumb-Med_izq" value="0.5143" />
+		<DOF name="leftJustin/Thumb-Dist_izq" value="0.5143" />
+		<DOF name="leftJustin/Index-Base_izq" value="0.5544" />
+		<DOF name="leftJustin/Index-Prox_izq" value="0.5400" />
+		<DOF name="leftJustin/Index-Med_izq" value="0.5075" />
+		<DOF name="leftJustin/Index-Dist_izq" value="0.5075" />
+		<DOF name="leftJustin/Mid-Base_izq" value="0.5" />
+		<DOF name="leftJustin/Mid-Prox_izq" value="0.5579" />
+		<DOF name="leftJustin/Mid-Med_izq" value="0.4118" />
+		<DOF name="leftJustin/Mid-Dist_izq" value="0.4118" />
+		<DOF name="leftJustin/Ring-Base_izq" value="0.4909" />
+		<DOF name="leftJustin/Ring-Prox_izq" value="0.5407" />
+		<DOF name="leftJustin/Ring-Med_izq" value="0.4806" />
+		<DOF name="leftJustin/Ring-Dist_izq" value="0.4806" />
+		<DOF name="leftJustin/Link1_izq" value="0.624485" />
+		<DOF name="leftJustin/Link2_izq" value="0.871321" />
+		<DOF name="leftJustin/Link3_izq" value="0.383292" />
+		<DOF name="leftJustin/Link4_izq" value="0.226816" />
+		<DOF name="leftJustin/Link5_izq" value="0.5" />
+		<DOF name="leftJustin/Link6_izq" value="0.561505" />
+		<DOF name="leftJustin/Link7_izq" value="0.307177" />
+		<DOF name="rightJustin/Thumb_der" value="0.5" />
+		<DOF name="rightJustin/Thumb-Base_der" value="0.3055" />
+		<DOF name="rightJustin/Thumb-Prox_der" value="0.6308" />
+		<DOF name="rightJustin/Thumb-Med_der" value="0.5143" />
+		<DOF name="rightJustin/Thumb-Dist_der" value="0.5143" />
+		<DOF name="rightJustin/Index-Base_der" value="0.5544" />
+		<DOF name="rightJustin/Index-Prox_der" value="0.5400" />
+		<DOF name="rightJustin/Index-Med_der" value="0.5075" />
+		<DOF name="rightJustin/Index-Dist_der" value="0.5075" />
+		<DOF name="rightJustin/Mid-Base_der" value="0.5" />
+		<DOF name="rightJustin/Mid-Prox_der" value="0.5579" />
+		<DOF name="rightJustin/Mid-Med_der" value="0.4118" />
+		<DOF name="rightJustin/Mid-Dist_der" value="0.4118" />
+		<DOF name="rightJustin/Ring-Base_der" value="0.4909" />
+		<DOF name="rightJustin/Ring-Prox_der" value="0.5407" />
+		<DOF name="rightJustin/Ring-Med_der" value="0.4806" />
+		<DOF name="rightJustin/Ring-Dist_der" value="0.4806" />
+		<DOF name="rightJustin/Link1_der" value="0.909876" />
+		<DOF name="rightJustin/Link2_der" value="0.154909" />
+		<DOF name="rightJustin/Link3_der" value="0.616649" />
+		<DOF name="rightJustin/Link4_der" value="0.776664" />
+		<DOF name="rightJustin/Link5_der" value="0.5" />
+		<DOF name="rightJustin/Link6_der" value="0.450564" />
+		<DOF name="rightJustin/Link7_der" value="0.626603" />
+	</Offset>
+	<Control name="leftJustin/armPMD_C1" eigValue="1.4761">
+		<DOF name="leftJustin/Link1_izq" value="-0.4645" />
+		<DOF name="leftJustin/Link2_izq" value="-0.0363" />
+		<DOF name="leftJustin/Link3_izq" value="0.2614" />
+		<DOF name="leftJustin/Link4_izq" value="-0.1151" />
+		<DOF name="leftJustin/Link6_izq" value="-0.0111" />
+		<DOF name="leftJustin/Link7_izq" value="-0.2008" />
+	</Control>
+	<Control name="leftJustin/armPMD_C2" eigValue="0.9127">
+		<DOF name="leftJustin/Link1_izq" value="0.2901" />
+		<DOF name="leftJustin/Link2_izq" value="-0.0776" />
+		<DOF name="leftJustin/Link3_izq" value="0.0022" />
+		<DOF name="leftJustin/Link4_izq" value="-0.5174" />
+		<DOF name="leftJustin/Link6_izq" value="0.1754" />
+		<DOF name="leftJustin/Link7_izq" value="0.1432" />
+	</Control>
+	<Control name="leftJustin/armPMD_C3" eigValue="0.4874">
+		<DOF name="leftJustin/Link1_izq" value="0.0145" />
+		<DOF name="leftJustin/Link2_izq" value="0.2479" />
+		<DOF name="leftJustin/Link3_izq" value="-0.3218" />
+		<DOF name="leftJustin/Link4_izq" value="0.3273" />
+		<DOF name="leftJustin/Link6_izq" value="-0.4009" />
+		<DOF name="leftJustin/Link7_izq" value="0.1142" />
+	</Control>
+	<Control name="leftJustin/armPMD_C4" eigValue="0.4282">
+		<DOF name="leftJustin/Link1_izq" value="-0.0814" />
+		<DOF name="leftJustin/Link2_izq" value="0.3634" />
+		<DOF name="leftJustin/Link3_izq" value="0.0482" />
+		<DOF name="leftJustin/Link4_izq" value="0.5049" />
+		<DOF name="leftJustin/Link6_izq" value="0.6170" />
+		<DOF name="leftJustin/Link7_izq" value="0.0354" />
+	</Control>
+	<Control name="leftJustin/armPMD_C5" eigValue="0.3012">
+		<DOF name="leftJustin/Link1_izq" value="-0.1095" />
+		<DOF name="leftJustin/Link2_izq" value="-0.4240" />
+		<DOF name="leftJustin/Link3_izq" value="0.2708" />
+		<DOF name="leftJustin/Link4_izq" value="0.2866" />
+		<DOF name="leftJustin/Link6_izq" value="0.3175" />
+		<DOF name="leftJustin/Link7_izq" value="-0.2046" />
+	</Control>
+	<Control name="leftJustin/armPMD_C6" eigValue="0.2589">
+		<DOF name="leftJustin/Link1_izq" value="-0.2771" />
+		<DOF name="leftJustin/Link2_izq" value="0.5197" />
+		<DOF name="leftJustin/Link3_izq" value="0.1653" />
+		<DOF name="leftJustin/Link4_izq" value="-0.0087" />
+		<DOF name="leftJustin/Link6_izq" value="-0.2831" />
+		<DOF name="leftJustin/Link7_izq" value="-0.3380" />
+	</Control>
+	<Control name="leftJustin/armPMD_C7" eigValue="0.1344">
+		<DOF name="leftJustin/Link1_izq" value="-0.1899" />
+		<DOF name="leftJustin/Link2_izq" value="0.2322" />
+		<DOF name="leftJustin/Link3_izq" value="-0.2042" />
+		<DOF name="leftJustin/Link4_izq" value="-0.1889" />
+		<DOF name="leftJustin/Link6_izq" value="0.3756" />
+		<DOF name="leftJustin/Link7_izq" value="0.4588" />
+	</Control>
+	<Control name="leftJustin/armPMD_C8" eigValue="0.1285">
+		<DOF name="leftJustin/Link1_izq" value="0.4929" />
+		<DOF name="leftJustin/Link2_izq" value="0.1817" />
+		<DOF name="leftJustin/Link3_izq" value="-0.1123" />
+		<DOF name="leftJustin/Link4_izq" value="-0.0504" />
+		<DOF name="leftJustin/Link6_izq" value="0.1938" />
+		<DOF name="leftJustin/Link7_izq" value="-0.4466" />
+	</Control>
+	<Control name="leftJustin/armPMD_C9" eigValue="0.1092">
+		<DOF name="leftJustin/Link1_izq" value="0.1946" />
+		<DOF name="leftJustin/Link2_izq" value="0.0450" />
+		<DOF name="leftJustin/Link3_izq" value="-0.2271" />
+		<DOF name="leftJustin/Link4_izq" value="0.2864" />
+		<DOF name="leftJustin/Link6_izq" value="-0.0969" />
+		<DOF name="leftJustin/Link7_izq" value="0.2858" />
+	</Control>
+	<Control name="leftJustin/armPMD_C10" eigValue="0.0763">
+		<DOF name="leftJustin/Link1_izq" value="-0.0025" />
+		<DOF name="leftJustin/Link2_izq" value="0.1396" />
+		<DOF name="leftJustin/Link3_izq" value="0.6071" />
+		<DOF name="leftJustin/Link4_izq" value="-0.0221" />
+		<DOF name="leftJustin/Link6_izq" value="-0.1355" />
+		<DOF name="leftJustin/Link7_izq" value="0.5112" />
+	</Control>
+	<Control name="leftJustin/armPMD_C11" eigValue="0.0556">
+		<DOF name="leftJustin/Link1_izq" value="0.0035" />
+		<DOF name="leftJustin/Link2_izq" value="0.4711" />
+		<DOF name="leftJustin/Link3_izq" value="0.0547" />
+		<DOF name="leftJustin/Link4_izq" value="-0.3490" />
+		<DOF name="leftJustin/Link6_izq" value="0.1778" />
+		<DOF name="leftJustin/Link7_izq" value="-0.1254" />
+	</Control>
+	<Control name="leftJustin/armPMD_C12" eigValue="0.0441">
+		<DOF name="leftJustin/Link1_izq" value="0.5363" />
+		<DOF name="leftJustin/Link2_izq" value="0.1374" />
+		<DOF name="leftJustin/Link3_izq" value="0.4977" />
+		<DOF name="leftJustin/Link4_izq" value="0.1797" />
+		<DOF name="leftJustin/Link6_izq" value="-0.0933" />
+		<DOF name="leftJustin/Link7_izq" value="0.0070" />
+	</Control>
+	<Control name="leftJustin/handPMD_Thumb_izq" eigValue="1.0">
+		<DOF name="leftJustin/Thumb_izq" value="-1.0" />
+	</Control>
+	<Control name="leftJustin/handPMD_CH1" eigValue="1.6550">
+		<DOF name="leftJustin/Thumb_izq" value="0.0" />
+		<DOF name="leftJustin/Thumb-Base_izq" value="-0.0683" />
+		<DOF name="leftJustin/Thumb-Prox_izq" value="0.2222" />
+		<DOF name="leftJustin/Thumb-Med_izq" value="0.3194" />
+		<DOF name="leftJustin/Thumb-Dist_izq" value="0.3194" />
+		<DOF name="leftJustin/Index-Base_izq" value="0.2409" />
+		<DOF name="leftJustin/Index-Prox_izq" value="-0.4246" />
+		<DOF name="leftJustin/Index-Med_izq" value="0.2125" />
+		<DOF name="leftJustin/Index-Dist_izq" value="0.2125" />
+		<DOF name="leftJustin/Mid-Base_izq" value="0.0" />
+		<DOF name="leftJustin/Mid-Prox_izq" value="-0.4884" />
+		<DOF name="leftJustin/Mid-Med_izq" value="0.2399" />
+		<DOF name="leftJustin/Mid-Dist_izq" value="0.2399" />
+		<DOF name="leftJustin/Ring-Base_izq" value="-0.1741" />
+		<DOF name="leftJustin/Ring-Prox_izq" value="-0.4451" />
+		<DOF name="leftJustin/Ring-Med_izq" value="0.1897" />
+		<DOF name="leftJustin/Ring-Dist_izq" value="0.1897" />
+	</Control>
+	<Control name="leftJustin/handPMD_CH2" eigValue="1.4355">
+		<DOF name="leftJustin/Thumb_izq" value="0.0" />
+		<DOF name="leftJustin/Thumb-Base_izq" value="-0.0144" />
+		<DOF name="leftJustin/Thumb-Prox_izq" value="-0.1323" />
+		<DOF name="leftJustin/Thumb-Med_izq" value="-0.2335" />
+		<DOF name="leftJustin/Thumb-Dist_izq" value="-0.2335" />
+		<DOF name="leftJustin/Index-Base_izq" value="0.2090" />
+		<DOF name="leftJustin/Index-Prox_izq" value="-0.2023" />
+		<DOF name="leftJustin/Index-Med_izq" value="-0.5050" />
+		<DOF name="leftJustin/Index-Dist_izq" value="-0.5050" />
+		<DOF name="leftJustin/Mid-Base_izq" value="0.0" />
+		<DOF name="leftJustin/Mid-Prox_izq" value="-0.2759" />
+		<DOF name="leftJustin/Mid-Med_izq" value="-0.4695" />
+		<DOF name="leftJustin/Mid-Dist_izq" value="-0.4695" />
+		<DOF name="leftJustin/Ring-Base_izq" value="-0.1258" />
+		<DOF name="leftJustin/Ring-Prox_izq" value="-0.2616" />
+		<DOF name="leftJustin/Ring-Med_izq" value="-0.4554" />
+		<DOF name="leftJustin/Ring-Dist_izq" value="-0.4554" />
+	</Control>
+	<Control name="leftJustin/handPMD_CH3" eigValue="0.8851">
+		<DOF name="leftJustin/Thumb_izq" value="0.0" />
+		<DOF name="leftJustin/Thumb-Base_izq" value="0.6638" />
+		<DOF name="leftJustin/Thumb-Prox_izq" value="0.6816" />
+		<DOF name="leftJustin/Thumb-Med_izq" value="-0.0597" />
+		<DOF name="leftJustin/Thumb-Dist_izq" value="-0.0597" />
+		<DOF name="leftJustin/Index-Base_izq" value="0.0137" />
+		<DOF name="leftJustin/Index-Prox_izq" value="0.1785" />
+		<DOF name="leftJustin/Index-Med_izq" value="-0.1633" />
+		<DOF name="leftJustin/Index-Dist_izq" value="-0.1633" />
+		<DOF name="leftJustin/Mid-Base_izq" value="0.0" />
+		<DOF name="leftJustin/Mid-Prox_izq" value="0.0215" />
+		<DOF name="leftJustin/Mid-Med_izq" value="-0.0470" />
+		<DOF name="leftJustin/Mid-Dist_izq" value="-0.0470" />
+		<DOF name="leftJustin/Ring-Base_izq" value="0.1078" />
+		<DOF name="leftJustin/Ring-Prox_izq" value="-0.1351" />
+		<DOF name="leftJustin/Ring-Med_izq" value="0.0030" />
+		<DOF name="leftJustin/Ring-Dist_izq" value="0.0030" />
+	</Control>
+	<Control name="leftJustin/handPMD_CH4" eigValue="0.7174">
+		<DOF name="leftJustin/Thumb_izq" value="0.0" />
+		<DOF name="leftJustin/Thumb-Base_izq" value="-0.2879" />
+		<DOF name="leftJustin/Thumb-Prox_izq" value="0.2207" />
+		<DOF name="leftJustin/Thumb-Med_izq" value="0.5468" />
+		<DOF name="leftJustin/Thumb-Dist_izq" value="0.5468" />
+		<DOF name="leftJustin/Index-Base_izq" value="-0.4425" />
+		<DOF name="leftJustin/Index-Prox_izq" value="0.0076" />
+		<DOF name="leftJustin/Index-Med_izq" value=" 0.0258" />
+		<DOF name="leftJustin/Index-Dist_izq" value=" 0.0258" />
+		<DOF name="leftJustin/Mid-Base_izq" value="0.0" />
+		<DOF name="leftJustin/Mid-Prox_izq" value="0.0387" />
+		<DOF name="leftJustin/Mid-Med_izq" value="-0.3149" />
+		<DOF name="leftJustin/Mid-Dist_izq" value="-0.3149" />
+		<DOF name="leftJustin/Ring-Base_izq" value="0.4037" />
+		<DOF name="leftJustin/Ring-Prox_izq" value="-0.1768" />
+		<DOF name="leftJustin/Ring-Med_izq" value="-0.2791" />
+		<DOF name="leftJustin/Ring-Dist_izq" value="-0.2791" />
+	</Control>
+	<Control name="rightJustin/armPMD_C1" eigValue="1.4761">
+		<DOF name="rightJustin/Link1_der" value="0.6205" />
+		<DOF name="rightJustin/Link2_der" value="0.2333" />
+		<DOF name="rightJustin/Link3_der" value="-0.4124" />
+		<DOF name="rightJustin/Link4_der" value="0.0724" />
+		<DOF name="rightJustin/Link6_der" value="0.0764" />
+		<DOF name="rightJustin/Link7_der" value="-0.2008" />
+	</Control>
+	<Control name="rightJustin/armPMD_C2" eigValue="0.9127">
+		<DOF name="rightJustin/Link1_der" value="-0.1951" />
+		<DOF name="rightJustin/Link2_der" value="0.1313" />
+		<DOF name="rightJustin/Link3_der" value="-0.1913" />
+		<DOF name="rightJustin/Link4_der" value="0.5968" />
+		<DOF name="rightJustin/Link6_der" value="-0.0545" />
+		<DOF name="rightJustin/Link7_der" value="-0.3739" />
+	</Control>
+	<Control name="rightJustin/armPMD_C3" eigValue="0.4874">
+		<DOF name="rightJustin/Link1_der" value="0.0401" />
+		<DOF name="rightJustin/Link2_der" value="0.0453" />
+		<DOF name="rightJustin/Link3_der" value="0.0427" />
+		<DOF name="rightJustin/Link4_der" value="0.2341" />
+		<DOF name="rightJustin/Link6_der" value="0.5918" />
+		<DOF name="rightJustin/Link7_der" value="-0.3787" />
+	</Control>
+	<Control name="rightJustin/armPMD_C4" eigValue="0.4282">
+		<DOF name="rightJustin/Link1_der" value="-0.0602" />
+		<DOF name="rightJustin/Link2_der" value="-0.0779" />
+		<DOF name="rightJustin/Link3_der" value="-0.0689" />
+		<DOF name="rightJustin/Link4_der" value="0.0475" />
+		<DOF name="rightJustin/Link6_der" value="-0.2414" />
+		<DOF name="rightJustin/Link7_der" value="-0.3836" />
+	</Control>
+	<Control name="rightJustin/armPMD_C5" eigValue="0.3012">
+		<DOF name="rightJustin/Link1_der" value="-0.2980" />
+		<DOF name="rightJustin/Link2_der" value="0.2612" />
+		<DOF name="rightJustin/Link3_der" value="0.0576" />
+		<DOF name="rightJustin/Link4_der" value="0.2602" />
+		<DOF name="rightJustin/Link6_der" value="0.4722" />
+		<DOF name="rightJustin/Link7_der" value="0.2430" />
+	</Control>
+	<Control name="rightJustin/armPMD_C6" eigValue="0.2589">
+		<DOF name="rightJustin/Link1_der" value="-0.2941" />
+		<DOF name="rightJustin/Link2_der" value="-0.0848" />
+		<DOF name="rightJustin/Link3_der" value="-0.0558" />
+		<DOF name="rightJustin/Link4_der" value="0.4459" />
+		<DOF name="rightJustin/Link6_der" value="-0.1848" />
+		<DOF name="rightJustin/Link7_der" value="0.3188" />
+	</Control>
+	<Control name="rightJustin/armPMD_C7" eigValue="0.1344">
+		<DOF name="rightJustin/Link1_der" value="0.3172" />
+		<DOF name="rightJustin/Link2_der" value="-0.1714" />
+		<DOF name="rightJustin/Link3_der" value="0.1254" />
+		<DOF name="rightJustin/Link4_der" value="0.2349" />
+		<DOF name="rightJustin/Link6_der" value="0.2536" />
+		<DOF name="rightJustin/Link7_der" value="0.4646" />
+	</Control>
+	<Control name="rightJustin/armPMD_C8" eigValue="0.1285">
+		<DOF name="rightJustin/Link1_der" value="0.0986" />
+		<DOF name="rightJustin/Link2_der" value="-0.2907" />
+		<DOF name="rightJustin/Link3_der" value="-0.4832" />
+		<DOF name="rightJustin/Link4_der" value="-0.1287" />
+		<DOF name="rightJustin/Link6_der" value="0.3105" />
+		<DOF name="rightJustin/Link7_der" value="0.1767" />
+	</Control>
+	<Control name="rightJustin/armPMD_C9" eigValue="0.1092">
+		<DOF name="rightJustin/Link1_der" value="-0.0085" />
+		<DOF name="rightJustin/Link2_der" value="0.5960" />
+		<DOF name="rightJustin/Link3_der" value="-0.4608" />
+		<DOF name="rightJustin/Link4_der" value="0.0269" />
+		<DOF name="rightJustin/Link6_der" value="-0.2348" />
+		<DOF name="rightJustin/Link7_der" value="0.3345" />
+	</Control>
+	<Control name="rightJustin/armPMD_C10" eigValue="0.0763">
+		<DOF name="rightJustin/Link1_der" value="-0.2567" />
+		<DOF name="rightJustin/Link2_der" value="-0.1967" />
+		<DOF name="rightJustin/Link3_der" value="-0.3491" />
+		<DOF name="rightJustin/Link4_der" value="-0.2293" />
+		<DOF name="rightJustin/Link6_der" value="0.2289" />
+		<DOF name="rightJustin/Link7_der" value="-0.0203" />
+	</Control>
+	<Control name="rightJustin/armPMD_C11" eigValue="0.0556">
+		<DOF name="rightJustin/Link1_der" value="-0.1500" />
+		<DOF name="rightJustin/Link2_der" value="0.5694" />
+		<DOF name="rightJustin/Link3_der" value="0.2449" />
+		<DOF name="rightJustin/Link4_der" value="-0.3778" />
+		<DOF name="rightJustin/Link6_der" value="0.2300" />
+		<DOF name="rightJustin/Link7_der" value="-0.0600" />
+	</Control>
+	<Control name="rightJustin/armPMD_C12" eigValue="0.0441">
+		<DOF name="rightJustin/Link1_der" value="0.4446" />
+		<DOF name="rightJustin/Link2_der" value="0.1131" />
+		<DOF name="rightJustin/Link3_der" value="0.3700" />
+		<DOF name="rightJustin/Link4_der" value="0.2173" />
+		<DOF name="rightJustin/Link6_der" value="-0.0669" />
+		<DOF name="rightJustin/Link7_der" value="0.0758" />
+	</Control>
+	<Control name="rightJustin/handPMD_Thumb_der" eigValue="1.0">
+		<DOF name="rightJustin/Thumb_der" value="1.0" />
+	</Control>
+	<Control name="rightJustin/handPMD_CH1" eigValue="1.6550">
+		<DOF name="rightJustin/Thumb_der" value="0.0" />
+		<DOF name="rightJustin/Thumb-Base_der" value="-0.0683" />
+		<DOF name="rightJustin/Thumb-Prox_der" value="0.2222" />
+		<DOF name="rightJustin/Thumb-Med_der" value="0.3194" />
+		<DOF name="rightJustin/Thumb-Dist_der" value="0.3194" />
+		<DOF name="rightJustin/Index-Base_der" value="0.2409" />
+		<DOF name="rightJustin/Index-Prox_der" value="-0.4246" />
+		<DOF name="rightJustin/Index-Med_der" value="0.2125" />
+		<DOF name="rightJustin/Index-Dist_der" value="0.2125" />
+		<DOF name="rightJustin/Mid-Base_der" value="0.0" />
+		<DOF name="rightJustin/Mid-Prox_der" value="-0.4884" />
+		<DOF name="rightJustin/Mid-Med_der" value="0.2399" />
+		<DOF name="rightJustin/Mid-Dist_der" value="0.2399" />
+		<DOF name="rightJustin/Ring-Base_der" value="-0.1741" />
+		<DOF name="rightJustin/Ring-Prox_der" value="-0.4451" />
+		<DOF name="rightJustin/Ring-Med_der" value="0.1897" />
+		<DOF name="rightJustin/Ring-Dist_der" value="0.1897" />
+	</Control>
+	<Control name="rightJustin/handPMD_CH2" eigValue="1.4355">
+		<DOF name="rightJustin/Thumb_der" value="0.0" />
+		<DOF name="rightJustin/Thumb-Base_der" value="-0.0144" />
+		<DOF name="rightJustin/Thumb-Prox_der" value="-0.1323" />
+		<DOF name="rightJustin/Thumb-Med_der" value="-0.2335" />
+		<DOF name="rightJustin/Thumb-Dist_der" value="-0.2335" />
+		<DOF name="rightJustin/Index-Base_der" value="0.2090" />
+		<DOF name="rightJustin/Index-Prox_der" value="-0.2023" />
+		<DOF name="rightJustin/Index-Med_der" value="-0.5050" />
+		<DOF name="rightJustin/Index-Dist_der" value="-0.5050" />
+		<DOF name="rightJustin/Mid-Base_der" value="0.0" />
+		<DOF name="rightJustin/Mid-Prox_der" value="-0.2759" />
+		<DOF name="rightJustin/Mid-Med_der" value="-0.4695" />
+		<DOF name="rightJustin/Mid-Dist_der" value="-0.4695" />
+		<DOF name="rightJustin/Ring-Base_der" value="-0.1258" />
+		<DOF name="rightJustin/Ring-Prox_der" value="-0.2616" />
+		<DOF name="rightJustin/Ring-Med_der" value="-0.4554" />
+		<DOF name="rightJustin/Ring-Dist_der" value="-0.4554" />
+	</Control>
+	<Control name="rightJustin/handPMD_CH3" eigValue="0.8851">
+		<DOF name="rightJustin/Thumb_der" value="0.0" />
+		<DOF name="rightJustin/Thumb-Base_der" value="0.6638" />
+		<DOF name="rightJustin/Thumb-Prox_der" value="0.6816" />
+		<DOF name="rightJustin/Thumb-Med_der" value="-0.0597" />
+		<DOF name="rightJustin/Thumb-Dist_der" value="-0.0597" />
+		<DOF name="rightJustin/Index-Base_der" value="0.0137" />
+		<DOF name="rightJustin/Index-Prox_der" value="0.1785" />
+		<DOF name="rightJustin/Index-Med_der" value="-0.1633" />
+		<DOF name="rightJustin/Index-Dist_der" value="-0.1633" />
+		<DOF name="rightJustin/Mid-Base_der" value="0.0" />
+		<DOF name="rightJustin/Mid-Prox_der" value="0.0215" />
+		<DOF name="rightJustin/Mid-Med_der" value="-0.0470" />
+		<DOF name="rightJustin/Mid-Dist_der" value="-0.0470" />
+		<DOF name="rightJustin/Ring-Base_der" value="0.1078" />
+		<DOF name="rightJustin/Ring-Prox_der" value="-0.1351" />
+		<DOF name="rightJustin/Ring-Med_der" value="0.0030" />
+		<DOF name="rightJustin/Ring-Dist_der" value="0.0030" />
+	</Control>
+	<Control name="rightJustin/handPMD_CH4" eigValue="0.7174">
+		<DOF name="rightJustin/Thumb_der" value="0.0" />
+		<DOF name="rightJustin/Thumb-Base_der" value="-0.2879" />
+		<DOF name="rightJustin/Thumb-Prox_der" value="0.2207" />
+		<DOF name="rightJustin/Thumb-Med_der" value="0.5468" />
+		<DOF name="rightJustin/Thumb-Dist_der" value="0.5468" />
+		<DOF name="rightJustin/Index-Base_der" value="-0.4425" />
+		<DOF name="rightJustin/Index-Prox_der" value="0.0076" />
+		<DOF name="rightJustin/Index-Med_der" value=" 0.0258" />
+		<DOF name="rightJustin/Index-Dist_der" value=" 0.0258" />
+		<DOF name="rightJustin/Mid-Base_der" value="0.0" />
+		<DOF name="rightJustin/Mid-Prox_der" value="0.0387" />
+		<DOF name="rightJustin/Mid-Med_der" value="-0.3149" />
+		<DOF name="rightJustin/Mid-Dist_der" value="-0.3149" />
+		<DOF name="rightJustin/Ring-Base_der" value="0.4037" />
+		<DOF name="rightJustin/Ring-Prox_der" value="-0.1768" />
+		<DOF name="rightJustin/Ring-Med_der" value="-0.2791" />
+		<DOF name="rightJustin/Ring-Dist_der" value="-0.2791" />
+	</Control>
+</ControlSet>

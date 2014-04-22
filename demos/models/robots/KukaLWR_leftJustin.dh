@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<Robot name="leftJustin" DHType="Modified" robType="Tree">
+	<WeightSE3 rho_t="1.0" rho_r="1.0" />
+	<Joints size="26">
+		<Joint name="Base_izq" ivFile="kukaLWR/base.wrl">
+			<PreTrans X="-210.0" Y="-100.0" Z="0.0" WX="1.0" WY="1.0" WZ="0.0" TH="-90.0" />
+			<DHPars alpha="0.0" a="0.0" theta="-45.0" d="0.0" />
+			<Description rotational="false" movable="false" />
+			<Limits Hi="0" Low="0" />
+			<Weight weight="1.0" />
+			<Parent name="" />
+		</Joint>
+		<Joint name="Link1_izq" ivFile="kukaLWR/link1.wrl">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="310.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="170.0" Low="-170.0" />
+			<Weight weight="1.0" />
+			<Parent name="Base_izq" />
+		</Joint>
+		<Joint name="Link2_izq" ivFile="kukaLWR/link2.wrl">
+			<DHPars alpha="90.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="120.0" Low="-120.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link1_izq" />
+		</Joint>
+		<Joint name="Link3_izq" ivFile="kukaLWR/link3.wrl">
+			<DHPars alpha="-90.0" a="0.0" theta="0.0" d="400.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="170.0" Low="-170.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link2_izq" />
+		</Joint>
+		<Joint name="Link4_izq" ivFile="kukaLWR/link4.wrl">
+			<DHPars alpha="-90.0" a="0.0" theta="180.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="120.0" Low="-120.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link3_izq" />
+		</Joint>
+		<Joint name="Link5_izq" ivFile="kukaLWR/link5.wrl">
+			<DHPars alpha="-90.0" a="0.0" theta="180.0" d="390.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="170.0" Low="-170.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link4_izq" />
+		</Joint>
+		<Joint name="Link6_izq" ivFile="kukaLWR/link6.wrl">
+			<DHPars alpha="90.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="120.0" Low="-120.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link5_izq" />
+		</Joint>
+		<Joint name="Link7_izq" ivFile="kukaLWR/link7.wrl">
+			<DHPars alpha="-90.0" a="0.0" theta="0.0" d="78.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="170.0" Low="-170.0" />
+			<Weight weight="1.0" />
+			<Parent name="Link6_izq" />
+		</Joint>
+		<Joint name="Palm_izq" ivFile="SAHand/SAH-palm-left.iv">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="0" Low="-90" />
+			<Parent name="Link7_izq" />
+		</Joint>
+		<Joint name="Thumb_izq" ivFile="SAHand/SAH-thumb-base-left.iv">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<PreTrans X="-3.0" Y="-27.1" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="90.0" Low="0.0" />
+			<Parent name="Palm_izq" />
+		</Joint>
+		<Joint name="Thumb-Base_izq" ivFile="SAHand/SAH-finger-base.iv">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<PreTrans X="-6.0" Y="-86.9" Z="97.0" WX="-0.419" WY="-0.419" WZ="-0.805" TH="102.31" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="15.0" Low="-15.0" />
+			<Parent name="Thumb_izq" />
+		</Joint>
+		<Joint name="Thumb-Prox_izq" ivFile="SAHand/SAH-finger-phaprox.iv">
+			<DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="4.0" Low="-75.0" />
+			<Parent name="Thumb-Base_izq" />
+		</Joint>
+		<Joint name="Thumb-Med_izq" ivFile="SAHand/SAH-finger-phamed.iv">
+			<DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="-4.0" Low="-75.0" />
+			<Parent name="Thumb-Prox_izq" />
+		</Joint>
+		<Joint name="Thumb-Dist_izq" ivFile="SAHand/SAH-finger-phadist.iv">
+			<DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="-4.0" Low="-75.0" />
+			<Parent name="Thumb-Med_izq" />
+		</Joint>
+		<Joint name="Index-Base_izq" ivFile="SAHand/SAH-finger-base.iv">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<PreTrans X="-4.3" Y="40.165" Z="145.43" WX="0.707" WY="0.0125" WZ="0.707" TH="178.5623" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="15.0" Low="-15.0" />
+			<Parent name="Palm_izq" />
+		</Joint>
+		<Joint name="Index-Prox_izq" ivFile="SAHand/SAH-finger-phaprox.iv">
+			<DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="4.0" Low="-75.0" />
+			<Parent name="Index-Base_izq" />
+		</Joint>
+		<Joint name="Index-Med_izq" ivFile="SAHand/SAH-finger-phamed.iv">
+			<DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="-4.0" Low="-75.0" />
+			<Parent name="Index-Prox_izq" />
+		</Joint>
+		<Joint name="Index-Dist_izq" ivFile="SAHand/SAH-finger-phadist.iv">
+			<DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="-4.0" Low="-75.0" />
+			<Parent name="Index-Med_izq" />
+		</Joint>
+		<Joint name="Mid-Base_izq" ivFile="SAHand/SAH-finger-base.iv">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<PreTrans X="-4.3" Y="0.0" Z="150.143" WX="0.707" WY="0.0" WZ="0.707" TH="180.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="15.0" Low="-15.0" />
+			<Parent name="Palm_izq" />
+		</Joint>
+		<Joint name="Mid-Prox_izq" ivFile="SAHand/SAH-finger-phaprox.iv">
+			<DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="4.0" Low="-75.0" />
+			<Parent name="Mid-Base_izq" />
+		</Joint>
+		<Joint name="Mid-Med_izq" ivFile="SAHand/SAH-finger-phamed.iv">
+			<DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="4.0" Low="-75.0" />
+			<Parent name="Mid-Prox_izq" />
+		</Joint>
+		<Joint name="Mid-Dist_izq" ivFile="SAHand/SAH-finger-phadist.iv">
+			<DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="4.0" Low="-75.0" />
+			<Parent name="Mid-Med_izq" />
+		</Joint>
+		<Joint name="Ring-Base_izq" ivFile="SAHand/SAH-finger-base.iv">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<PreTrans X="-4.3" Y="-40.165" Z="145.43" WX="0.707" WY="-0.0121" WZ="0.707" TH="181.3898" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="15.0" Low="-15.0" />
+			<Parent name="Palm_izq" />
+		</Joint>
+		<Joint name="Ring-Prox_izq" ivFile="SAHand/SAH-finger-phaprox.iv">
+			<DHPars alpha="-90.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="4.0" Low="-75.0" />
+			<Parent name="Ring-Base_izq" />
+		</Joint>
+		<Joint name="Ring-Med_izq" ivFile="SAHand/SAH-finger-phamed.iv">
+			<DHPars alpha="0.0" a="67.8" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="4.0" Low="-75.0" />
+			<Parent name="Ring-Prox_izq" />
+		</Joint>
+		<Joint name="Ring-Dist_izq" ivFile="SAHand/SAH-finger-phadist.iv">
+			<DHPars alpha="0.0" a="30.0" theta="-90.0" d="0.0" />
+			<Description rotational="true" movable="true" />
+			<Limits Hi="4.0" Low="-75.0" />
+			<Parent name="Ring-Med_izq" />
+		</Joint>
+	</Joints>
+</Robot>

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTstar_2DRR_sphere">
+	<Robot robot="robots/2DRRb.dh" scale="1.0">
+		<InvKinematic name="RR2D" />
+	</Robot>
+	<Controls robot="controls/OMPL_RRT_2DRRb_withoutobstacles.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRT</Name>
+			<Parameter name="Max Planning Time">10.0</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">0.05</Parameter>
+			<Parameter name="Goal Bias">0.05</Parameter>
+			<Parameter name="Simplify Solution">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="2">0.4 0.6</Init>
+				<Goal dim="2">0.1 0.8</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

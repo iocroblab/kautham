@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<Robot name="Bronchoscope2" DHType="Modified" robType="Chain">
+	<WeightSE3 rho_t="1.0" rho_r="1.0" />
+	<Joints size="13">
+		<Joint name="Base" ivFile="BRONCHO2/bronchoscope_base.iv">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="false" movable="false" trunk="true" />
+			<Limits Hi="0" Low="0" />
+			<Weight weight="1.0" />
+			<Parent name="" />
+		</Joint>
+		<Joint name="link0" ivFile="BRONCHO2/bronchoscope_base2.iv">
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="180.0" Low="-180.0" />
+			<Weight weight="1.0" />
+			<Parent name="Base" />
+		</Joint>
+		<Joint name="link1" ivFile="BRONCHO2/bronchoscope_module.iv">
+			<PreTrans X="0.0000" Y="0.0000" Z="0.0000" WX="0.0000" WY="1.0000" WZ="0.0000" TH="90.0" />
+			<DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="45.0" Low="-45.0" />
+			<Weight weight="1.0" />
+			<Parent name="link0" />
+		</Joint>
+		<Joint name="link2" ivFile="BRONCHO2/bronchoscope_module.iv">
+			<DHPars alpha="0.0" a="1.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="45.0" Low="-45.0" />
+			<Weight weight="1.0" />
+			<Parent name="link1" />
+		</Joint>
+		<Joint name="link3" ivFile="BRONCHO2/bronchoscope_module.iv">
+			<DHPars alpha="0.0" a="1.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="45.0" Low="-45.0" />
+			<Weight weight="1.0" />
+			<Parent name="link2" />
+		</Joint>
+		<Joint name="link4" ivFile="BRONCHO2/bronchoscope_module.iv">
+			<DHPars alpha="0.0" a="1.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="45.0" Low="-45.0" />
+			<Weight weight="1.0" />
+			<Parent name="link3" />
+		</Joint>
+		<Joint name="link5" ivFile="BRONCHO2/bronchoscope_module.iv">
+			<DHPars alpha="0.0" a="1.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="45.0" Low="-45.0" />
+			<Weight weight="1.0" />
+			<Parent name="link4" />
+		</Joint>
+		<Joint name="link6" ivFile="BRONCHO2/bronchoscope_module.iv">
+			<DHPars alpha="0.0" a="1.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="45.0" Low="-45.0" />
+			<Weight weight="1.0" />
+			<Parent name="link5" />
+		</Joint>
+		<Joint name="link7" ivFile="BRONCHO2/bronchoscope_module.iv">
+			<DHPars alpha="0.0" a="1.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="45.0" Low="-45.0" />
+			<Weight weight="1.0" />
+			<Parent name="link6" />
+		</Joint>
+		<Joint name="link8" ivFile="BRONCHO2/bronchoscope_module.iv">
+			<DHPars alpha="0.0" a="1.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="45.0" Low="-45.0" />
+			<Weight weight="1.0" />
+			<Parent name="link7" />
+		</Joint>
+		<Joint name="link9" ivFile="BRONCHO2/bronchoscope_module.iv">
+			<DHPars alpha="0.0" a="1.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="45.0" Low="-45.0" />
+			<Weight weight="1.0" />
+			<Parent name="link8" />
+		</Joint>
+		<Joint name="link10" ivFile="BRONCHO2/bronchoscope_module.iv">
+			<DHPars alpha="0.0" a="1.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="45.0" Low="-45.0" />
+			<Weight weight="1.0" />
+			<Parent name="link9" />
+		</Joint>
+		<Joint name="Tcp" ivFile="BRONCHO2/bronchoscope_tcp.iv">
+			<DHPars alpha="0.0" a="1.0" theta="0.0" d="0.0" />
+			<Description rotational="true" movable="true" trunk="true" />
+			<Limits Hi="45.0" Low="-45.0" />
+			<Weight weight="1.0" />
+			<Parent name="link10" />
+		</Joint>
+	</Joints>
+</Robot>
