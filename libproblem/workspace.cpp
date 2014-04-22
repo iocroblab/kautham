@@ -55,7 +55,8 @@ namespace Kautham {
       obstacles.clear();
       robots.clear();
       distVec.clear();
-      _configMap.clear();
+      _robConfigMap.clear();
+      _obsConfigMap.clear();
       _robWeight.clear();
       numRobControls = 0;
       numObsControls = 0;
@@ -128,7 +129,7 @@ namespace Kautham {
     _lastRobSampleMovedTo = sample;
 
     //set _sample::_config if it was not set
-    if(sample->getMappedConf().size()==0) sample->setMappedConf(_configMap);
+    if(sample->getMappedConf().size()==0) sample->setMappedConf(_robConfigMap);
 
     sample->setwithinbounds(withinbounds);
   }
@@ -157,9 +158,8 @@ namespace Kautham {
       }
       _lastObsSampleMovedTo = sample;
 
-      // Is this needed for Obstacles? :S
       //set _sample::_config if it was not set
-      //if(sample->getMappedConf().size()==0) sample->setMappedConf(_configMap);
+      if(sample->getMappedConf().size()==0) sample->setMappedConf(_obsConfigMap);
 
       sample->setwithinbounds(withinbounds);
   }
@@ -231,7 +231,7 @@ namespace Kautham {
 
 
     // Here will be putted the configuration mapping 
-    sample->setMappedConf(_configMap);
+    sample->setMappedConf(_robConfigMap);
     
     if(collision) sample->setcolor(-1);
       else sample->setcolor(1);
@@ -257,11 +257,11 @@ namespace Kautham {
     case CONFIGSPACE:
       if( smp1.getMappedConf().size() == 0){
         this->moveRobotsTo(&smp1);
-        smp1.setMappedConf(getConfigMapping());
+        smp1.setMappedConf(getRobConfigMapping());
       }
       if( smp2.getMappedConf().size() == 0){
         this->moveRobotsTo(&smp2);
-        smp2.setMappedConf(getConfigMapping());
+        smp2.setMappedConf(getRobConfigMapping());
       }
       return smp1.getDistance(&smp2, _robWeight, spc);
 
@@ -322,16 +322,17 @@ namespace Kautham {
 
   void WorkSpace::addRobot(Robot* robot){
     robots.push_back(robot);
-    _configMap.clear();
+    _robConfigMap.clear();
     _robWeight.clear();
     for(unsigned int i = 0; i < robots.size(); i++){
-      _configMap.push_back(((Robot*)robots.at(i))->getCurrentPos());
+      _robConfigMap.push_back(((Robot*)robots.at(i))->getCurrentPos());
       _robWeight.push_back(((Robot*)robots.at(i))->getRobWeight());
     }
   }
       
   void WorkSpace::addObstacle(Robot *obs){
     obstacles.push_back(obs);
+    _obsConfigMap.clear();
   }
 
   bool WorkSpace::inheritSolution(vector<Sample*>& path){
