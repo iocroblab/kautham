@@ -91,6 +91,7 @@ namespace Kautham {
    */
   Robot::Robot(string robFile, KthReal robScale, LIBUSED lib) {
       //set initial values
+      collisionable = true;
       _linkPathDrawn = -1;
       nTrunk = 0;
       libs = lib;
@@ -958,6 +959,8 @@ namespace Kautham {
    */
   bool Robot::collisionCheck(Robot *rob){
       if( _autocoll || rob->autocollision() ) return true;
+
+      if(!collisionable || !rob->isCollisionable()) return false;
 
       for(int i=0; i < links.size(); i++){
           for( int j = 0; j < rob->getNumLinks(); j++ ){
