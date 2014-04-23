@@ -165,6 +165,12 @@ namespace Kautham {
   }
 
 
+  void WorkSpace::setInitObsSample(Sample* initsample) {
+      moveObstaclesTo(initsample);
+      _initObsSample = initsample;
+  }
+
+
   bool WorkSpace::collisionCheck(Sample* sample ) {
 
 	  increaseCollCheckCounter();

@@ -90,7 +90,6 @@ namespace Kautham {
 
         vboxLayout1 = new QVBoxLayout();
         btnUpdate = new QPushButton(this);
-        //btnUpdate->setText("Update Controls To Last Moved Sample");
         if (robWidget) {
             btnUpdate->setText("Update Controls To Last Moved Sample");
         } else {
@@ -132,14 +131,7 @@ namespace Kautham {
         if (robWidget) {
             s  = _ptProblem->wSpace()->getLastRobSampleMovedTo();
         } else {
-            //s  = _ptProblem->wSpace()->getLastObsSampleMovedTo();
-            s = new Sample(_ptProblem->wSpace()->getNumObsControls());
-            vector <KthReal> coords;
-            coords.resize(_ptProblem->wSpace()->getNumObsControls());
-            for (uint i = 0; i < coords.size(); i++) {
-                coords[i] = 0;
-            }
-            s->setCoords(coords);
+            s  = _ptProblem->wSpace()->getInitObsSample();
         }
         if (s != NULL){
             setValues(s->getCoords());
