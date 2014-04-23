@@ -107,8 +107,10 @@ namespace Kautham{
       static void           resetCollCheckCounter();
       static unsigned int   getCollCheckCounter();
       static void           increaseCollCheckCounter();
-      Sample*               getLastRobSampleMovedTo(){return _lastRobSampleMovedTo;}
-      Sample*               getLastObsSampleMovedTo(){return _lastObsSampleMovedTo;}
+      inline Sample*        getLastRobSampleMovedTo(){return _lastRobSampleMovedTo;}
+      inline Sample*        getLastObsSampleMovedTo(){return _lastObsSampleMovedTo;}
+      void                  setInitObsSample(Sample* initsample);
+      inline Sample*        getInitObsSample(){return _initObsSample;}
       inline int            getNumRobControls(){return numRobControls;} //!< Returns the number of robot controls
       inline int            getNumObsControls(){return numObsControls;} //!< Returns the number of obstacle controls
       inline int            setNumRobControls(int numcontrols){numRobControls = numcontrols;} //!< Sets the number of robot controls
@@ -141,6 +143,7 @@ namespace Kautham{
       string                obsControlsName; //!< Names of the obstacle controls, as a string, separated with the vertical bar character. 
       Sample*               _lastRobSampleMovedTo;
       Sample*               _lastObsSampleMovedTo;
+      Sample*               _initObsSample;
   };
 
   /** @}   end of Doxygen module "libProblem" */
