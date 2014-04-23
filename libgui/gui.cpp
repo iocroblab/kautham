@@ -167,23 +167,15 @@ namespace Kautham {
         QDir workDir;
         QString dir;
 
-        QString rob_path = settings.value("robot",workDir.absolutePath()).toString();
-        QString obs_path = settings.value("obstacle",workDir.absolutePath()).toString();
+        QString models_path = settings.value("models",workDir.absolutePath()).toString();
 
         this->setCursor(QCursor(Qt::WaitCursor));
 
-        dir = QFileDialog::getExistingDirectory(this,"Choose the default robot directory",
-                                                rob_path,QFileDialog::ShowDirsOnly
+        dir = QFileDialog::getExistingDirectory(this,"Choose the default models directory",
+                                                models_path,QFileDialog::ShowDirsOnly
                                                 | QFileDialog::DontResolveSymlinks);
         if (!dir.isEmpty()) {
-            settings.setValue("robot",dir);
-        }
-
-        dir = QFileDialog::getExistingDirectory(this,"Choose the default obstacle directory",
-                                                obs_path,QFileDialog::ShowDirsOnly
-                                                | QFileDialog::DontResolveSymlinks);
-        if (!dir.isEmpty()) {
-            settings.setValue("obstacle",dir);
+            settings.setValue("models",dir);
         }
 
         this->setCursor(QCursor(Qt::ArrowCursor));
