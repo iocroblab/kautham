@@ -1030,6 +1030,11 @@ namespace Kautham {
 
               obs->setHomePos(&tmpC);
           }
+          if(name == "Collision" ){
+              if (itL->attribute("enabled")) {
+                  obs->setCollisionable(itL->attribute("Enabled").as_bool());
+              }
+          }
       }
 
       _wspace->addObstacle(obs);
