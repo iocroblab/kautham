@@ -546,13 +546,12 @@ namespace Kautham {
           string  dir = _filePath.substr(0,_filePath.find_last_of("/")+1);
 
           QSettings settings("IOC", "Kautham");
-          string rob_def_path = settings.value("default_path/robot").toString().toStdString()+"/";
-          string obs_def_path = settings.value("default_path/obstacle").toString().toStdString()+"/";
+          string models_def_path = settings.value("default_path/models",QString(string(dir+string("/../../models")).c_str())).
+                  toString().toStdString()+"/";
 
           vector <string> path;
           path.push_back(dir);
-          path.push_back(rob_def_path);
-          path.push_back(obs_def_path);
+          path.push_back(models_def_path);
 
           xml_node prob_node = doc->child("Problem");
 
