@@ -108,7 +108,7 @@ namespace Kautham {
       bool              armed;//!< Flag that shows if the Robot is complete or still is under construction.
       RobConf           _homeConf;     //!< This attribute is the Home configuration of the robot.
       RobConf           _currentConf;  //!< This attribute is the current configuration of the robot.
-
+      bool              collisionable; //!< Set to true if the robot can have collision with other robots
 
   public:
 
@@ -149,6 +149,10 @@ namespace Kautham {
     inline bool isSE3Enabled() const {return se3Enabled;} //!< retruns wether the robot has a mobile base
 
     inline void setSE3(bool SE3Enabled) {se3Enabled = SE3Enabled;} //!< Sets wether the robot has a mobile base
+
+    inline bool isCollisionable() const {return collisionable;} //!< returns wether the robot is collisionable
+
+    inline void setCollisionable(bool collEnabled) {collisionable = collEnabled;} //!< Enables/disables collisions with other robots
 
     inline mt::Transform& getLastLinkTransform(){ return
                                     *(((Link*)links.at(links.size()-1))->getTransformation());}
