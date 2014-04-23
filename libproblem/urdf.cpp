@@ -139,7 +139,10 @@ void urdf_geometry::fill(xml_node *node, string dir) {
     if (geom_type == "box") {
 
     } else if (geom_type == "cylinder") {
-
+        SoCylinder *cylinder = new SoCylinder;
+        cylinder->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
+        cylinder->height.setValue((float)geom_node.attribute("length").as_double()*1000.);
+        submodel->addChild(cylinder);
 
     } else if (geom_type == "sphere") {
         SoSphere *sphere = new SoSphere;
