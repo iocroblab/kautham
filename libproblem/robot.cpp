@@ -342,7 +342,7 @@ namespace Kautham {
           urdf_robot robot;
           xml_node tmpNode = doc.child("robot"); //node containing robot information
 
-          robot.fill(&tmpNode,dir,scale); //fill robot information
+          robot.fill(&tmpNode,dir); //fill robot information
 
           //Robot Name
           name = robot.name;
