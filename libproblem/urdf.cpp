@@ -410,14 +410,16 @@ void urdf_robot::print() {
 void urdf_obstacle::fill (xml_node *node, string dir) {
     xml_node tmpNode;
 
-    if (node->child("visual")) {
-        tmpNode = node->child("visual");
+    tmpNode = node->child("visual");
+    while (tmpNode) {
         visual.fill(&tmpNode,dir);
+        tmpNode = tmpNode.next_sibling("visual");
     }
 
-    if (node->child("collision")) {
-        tmpNode = node->child("visual");
+    tmpNode = node->child("collision");
+    while (tmpNode) {
         collision.fill(&tmpNode,dir);
+        tmpNode = tmpNode.next_sibling("collision");
     }
 
     if (node->child("collision").child("contact_coefficients")) {
