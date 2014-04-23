@@ -116,6 +116,12 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         urdf_origin origin;
         origin.fill(&origin_node);
 
+        SoSFVec3f *posVec = new SoSFVec3f;
+        posVec->setValue((float)origin.xyz[0],(float)origin.xyz[1],(float)origin.xyz[2]);
+        SoTranslation *trans = new SoTranslation;
+        trans->translation.connectFrom(posVec);
+        submodel->addChild(trans);
+
         mt::Unit3 axis;
         mt::Scalar angle;
         origin.transform.getRotation().getAxisAngle(axis,angle);
@@ -125,12 +131,6 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         SoRotation *rot = new SoRotation;
         rot->rotation.connectFrom(rotVec);
         submodel->addChild(rot);
-
-        SoSFVec3f *posVec = new SoSFVec3f;
-        posVec->setValue((float)origin.xyz[0],(float)origin.xyz[1],(float)origin.xyz[2]);
-        SoTranslation *trans = new SoTranslation;
-        trans->translation.connectFrom(posVec);
-        submodel->addChild(trans);
     }
 
     xml_node geom_node = node->child("geometry").first_child();
@@ -146,11 +146,16 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         size[1] = atof(tmpString.c_str());
         getline(ss,tmpString,' ');
         size[2] = atof(tmpString.c_str());
-        box->height.setValue((float)size[0]*1000);
-        box->width.setValue((float)size[1]*1000);
+        box->width.setValue((float)size[0]*1000);
+        box->height.setValue((float)size[1]*1000);
         box->depth.setValue((float)size[2]*1000);
         submodel->addChild(box);
     } else if (geom_type == "cylinder") {
+        SoSFRotation *cyl_rotVec = new SoSFRotation;
+        cyl_rotVec->setValue(SbVec3f(1.,0.,0.),(float)M_PI_2);
+        SoRotation *cyl_rot = new SoRotation;
+        cyl_rot->rotation.connectFrom(cyl_rotVec);
+        submodel->addChild(cyl_rot);
         SoCylinder *cylinder = new SoCylinder;
         cylinder->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
         cylinder->height.setValue((float)geom_node.attribute("length").as_double()*1000.);
