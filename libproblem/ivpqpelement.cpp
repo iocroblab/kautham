@@ -54,6 +54,12 @@ IVPQPElement::IVPQPElement(string visFile, string collFile, KthReal sc)
       makePQPModel();
   }
 
+IVPQPElement::IVPQPElement(SoSeparator *visual_model,SoSeparator *collision_model, KthReal sc)
+    :IVElement(visual_model,collision_model,sc){
+      pqpmodel = NULL;
+      makePQPModel();
+  }
+
 // get triangles from inventor models
 	void IVPQPElement::triang_CB(void *data, SoCallbackAction *action,
 		      const SoPrimitiveVertex *vertex1,

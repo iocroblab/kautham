@@ -102,12 +102,20 @@ namespace Kautham{
 
   class Link {
   public:
-	  //!	Unique constructor.
+      //!	Constructor.
       /*!	This constructor receive two Inventor files, visual and collision, and a global scale for the
 	  *		associated link and put this link in the origin of absolute frame. 
       *		You can build a complete robot, if you adding progresively a each Link
 	  *		from absolute coordinates frame to final effector frame.*/
       Link(string ivFile, string collision_ivFile, float scale,
+           APPROACH Type, LIBUSED lib = IVPQP);
+
+      //!	Constructor.
+      /*!	This constructor receive two models, visual and collision, and a global scale for the
+      *		associated link and put this link in the origin of absolute frame.
+      *		You can build a complete robot, if you adding progresively a each Link
+      *		from absolute coordinates frame to final effector frame.*/
+      Link(SoSeparator *visual_model, SoSeparator *collision_model, float scale,
            APPROACH Type, LIBUSED lib = IVPQP);
 
 	  //! Function to set \f$ \alpha \f$ parameter.

@@ -331,9 +331,7 @@ namespace Kautham {
       //setting numeric parameter to avoid convertions problems
       char *old = setlocale(LC_NUMERIC, "C");
 
-      const KthReal toRad = M_PI/180.;
       string dir = robFile.substr(0,robFile.find_last_of("/")+1);
-      string tmpString = "";
 
       // Opening the file with the new pugiXML library.
       xml_document doc;
@@ -344,7 +342,7 @@ namespace Kautham {
           urdf_robot robot;
           xml_node tmpNode = doc.child("robot"); //node containing robot information
 
-          robot.fill(&tmpNode); //fill robot information
+          robot.fill(&tmpNode,dir,scale); //fill robot information
 
           //Robot Name
           name = robot.name;
@@ -445,9 +443,8 @@ namespace Kautham {
               ode.limit.upper = robot.link[i].limit.upper;
 
               //Create the link
-              addLink(robot.link[i].name,dir + robot.link[i].visual.ivfile,
-                      dir + robot.link[i].collision.ivfile,
-                      (KthReal)robot.link[i].visual.scale,
+              addLink(robot.link[i].name,robot.link[i].visual.model,
+                      robot.link[i].collision.model,
                       robot.link[i].axis,robot.link[i].type == "revolute",
                       robot.link[i].type != "fixed",limMin,
                       limMax,robot.link[i].weight,robot.link[i].parent,preTransP,ode);
@@ -1067,10 +1064,10 @@ namespace Kautham {
   //! This method builds the link model and all their data structures in order
   //! to keep the coherence in the robot assembly. It doesn't use any intermediate
   //! structure to adquire the information to do the job.
-  bool	Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal scale, Unit3 axis, bool rotational, bool movable,
+  bool	Robot::addLink(string name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis, bool rotational, bool movable,
                        KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], ode_element ode){
-      Link* temp = new Link(ivFile, collision_ivFile, this->scale*scale,
-                            Approach, libs);
+
+      Link* temp = new Link(visual_model, collision_model, scale, Approach, libs);
       temp->setName(name);
       temp->setMovable(movable);
       temp->setRotational(rotational);
