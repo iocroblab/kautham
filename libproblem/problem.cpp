@@ -336,24 +336,59 @@ namespace Kautham {
           vector<string> tokens;
           string sentence = "";
           Sample* tmpSampPointer = NULL;
-          unsigned int dim = _wspace->getNumRobControls();
-          vector<KthReal> coordsVec( dim );
+          unsigned int numRobCntr = _wspace->getNumRobControls();
+          vector<KthReal> robCoords( numRobCntr );
+          unsigned int numObsCntr = _wspace->getNumObsControls();
+          vector<KthReal> obsCoords( numObsCntr );
           for( it = queryNode.begin(); it != queryNode.end(); ++it ){
-              xml_node sampNode = it->child("Init");
-              if( dim == sampNode.attribute("dim").as_int() ){
+              xml_node sampNode = it->child("InitObs");
+              if (numObsCntr > 0 && sampNode) {
+                  if( _wspace->getNumObsControls() == sampNode.attribute("dim").as_int() ){
+                      sentence = sampNode.child_value();
+
+                      boost::split(tokens, sentence, boost::is_any_of("| "));
+                      if(tokens.size() != numObsCntr){
+                          std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
+                          break;
+                      }
+
+                      tmpSampPointer = new Sample(numObsCntr);
+                      for(char i=0; i<numObsCntr; i++)
+                          obsCoords[i] = (KthReal)atof(tokens[i].c_str());
+
+                      tmpSampPointer->setCoords(obsCoords);
+
+                      _wspace->setInitObsSample(tmpSampPointer);
+
+                  }else{
+                      cout << "Sample doesn't have the right dimension.\n";
+                      break;
+                  }
+              } else {
+                  tmpSampPointer = new Sample(numObsCntr);
+                  for(char i=0; i<numObsCntr; i++)
+                      obsCoords[i] = (KthReal)0.5;
+
+                  tmpSampPointer->setCoords(obsCoords);
+
+                  _wspace->setInitObsSample(tmpSampPointer);
+              }
+
+              sampNode = it->child("Init");
+              if( numRobCntr == sampNode.attribute("dim").as_int() ){
                   sentence = sampNode.child_value();
 
                   boost::split(tokens, sentence, boost::is_any_of("| "));
-                  if(tokens.size() != dim){
+                  if(tokens.size() != numRobCntr){
                       std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
                       break;
                   }
 
-                  tmpSampPointer = new Sample(dim);
-                  for(char i=0; i<dim; i++)
-                      coordsVec[i] = (KthReal)atof(tokens[i].c_str());
+                  tmpSampPointer = new Sample(numRobCntr);
+                  for(char i=0; i<numRobCntr; i++)
+                      robCoords[i] = (KthReal)atof(tokens[i].c_str());
 
-                  tmpSampPointer->setCoords(coordsVec);
+                  tmpSampPointer->setCoords(robCoords);
                   // Adding the mapping to configuration space with the collision test.
                   if(_wspace->collisionCheck(tmpSampPointer) == true)
                       cout<<"Init sample is in collision"<<endl;
@@ -365,20 +400,20 @@ namespace Kautham {
               }
 
               sampNode = it->child("Goal");
-              if( dim == sampNode.attribute("dim").as_int() ){
+              if( numRobCntr == sampNode.attribute("dim").as_int() ){
                   sentence = sampNode.child_value();
 
                   boost::split(tokens, sentence, boost::is_any_of("| "));
-                  if(tokens.size() != dim){
+                  if(tokens.size() != numRobCntr){
                       std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
                       break;
                   }
 
-                  tmpSampPointer = new Sample(dim);
-                  for(char i=0; i<dim; i++)
-                      coordsVec[i] = (KthReal)atof(tokens[i].c_str());
+                  tmpSampPointer = new Sample(numRobCntr);
+                  for(char i=0; i<numRobCntr; i++)
+                      robCoords[i] = (KthReal)atof(tokens[i].c_str());
 
-                  tmpSampPointer->setCoords(coordsVec);
+                  tmpSampPointer->setCoords(robCoords);
                   // Adding the mapping to configuration space with the collision test.
                   if(_wspace->collisionCheck(tmpSampPointer)==true)
                       cout<<"Goal sample is in collision"<<endl;
