@@ -138,13 +138,13 @@ void urdf_geometry::fill(xml_node *node, string dir) {
     string geom_type = geom_node.name();
     if (geom_type == "box") {
 
-
     } else if (geom_type == "cylinder") {
 
 
     } else if (geom_type == "sphere") {
-
-
+        SoSphere *sphere = new SoSphere;
+        sphere->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
+        submodel->addChild(sphere);
     } else if (geom_type == "mesh") {
         if (geom_node.attribute("scale")) {
             float sc = geom_node.attribute("scale").as_double();
@@ -154,7 +154,6 @@ void urdf_geometry::fill(xml_node *node, string dir) {
             sca->scaleFactor.connectFrom(scaVec);
             submodel->addChild(sca);
         }
-
         string filename = geom_node.attribute("filename").as_string();
         SoInput input;
         input.openFile(string(dir+filename).c_str());
