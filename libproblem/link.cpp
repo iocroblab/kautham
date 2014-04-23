@@ -51,7 +51,7 @@
 namespace Kautham {
 
 
-  //!	Unique constructor.
+  //!	Constructor.
   /*!	This constructor provide the way to create any Link and you progressively can build
   *		any cinematic chain robot from the absolute reference frame
   *		to Final Efector frame.
@@ -104,6 +104,61 @@ namespace Kautham {
     preTransform = NULL;
 
   }
+
+
+  //!	Constructor.
+  /*!	This constructor provide the way to create any Link and you progressively can build
+  *		any cinematic chain robot from the absolute reference frame
+  *		to Final Efector frame.
+  *		\param visual_model is the visual model from the link solid.
+  *     \param collision_model is the collision model from the link solid.
+  *     \param scale is the global scale for this link and It is only used for
+  *		graphical representation.
+  */
+  Link::Link(SoSeparator *visual_model, SoSeparator *collision_model, float scale, APPROACH Type, LIBUSED lib){
+    libs = lib;
+    switch(libs){
+      case INVENTOR:
+        element = new IVElement(visual_model,collision_model,scale);
+        break;
+      case IVPQP:
+        element = new IVPQPElement(visual_model,collision_model,scale);
+        break;
+      case IVSOLID:
+
+      default:
+        element = NULL;
+    }
+      a = (KthReal)0.0;
+      alpha = (KthReal)0.0;
+      theta = (KthReal)0.0;
+      d = (KthReal)0.0;
+      movable = true;
+      rotational = true;
+      armed = false;
+      lowLimit = (KthReal)-M_PI;
+      hiLimit = (KthReal)M_PI;
+      value = (KthReal)0.0;
+      zeroOffset = (KthReal)0.0;
+      parent = NULL;
+      childs.clear();
+      this->Type = Type;
+      //KthReal matTemp[4][4]={{1.0f,0.0f,0.0f,0.0f},{0.0f,1.0f,0.0f,0.0f},
+    // {0.0f,0.0f,1.0f,0.0f},{0.0f,0.0f,0.0f,1.0f}};
+
+    for(int i=0; i<4 ; i++)
+      for(int j=0 ; j<4; j++)
+        if(i == j)
+                dhMatrix[i][j]= (KthReal)1.0;
+        else
+          dhMatrix[i][j]= (KthReal)0.0;
+
+
+    hasChanged = false;
+    preTransform = NULL;
+
+  }
+
 
   //!	This member function set the value of armed attribute.
   /*!	This member function set the value of armed attribute, Its means that all 

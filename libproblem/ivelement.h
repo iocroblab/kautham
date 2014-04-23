@@ -46,9 +46,6 @@
 #if !defined(_IVELEMENT_H)
 #define _IVELEMENT_H
 
-//define BBOX if you want that if collision_ivfile is the same file as ivfile,
-//then the minimum-volume bounding box will be computed and used instead
-//#define BBOX
 
 #include <sstream>
 #include <fstream>
@@ -83,6 +80,7 @@ namespace Kautham {
 class IVElement : public Element {
   public:
       IVElement(string ivfile, string collision_ivfile, float sc);
+      IVElement(SoSeparator *visual_model, SoSeparator *collision_model, float sc);
 	  void setColor(KthReal c[3]);
     void setPosition(KthReal pos[3]);
 	  void setOrientation(KthReal ori[4]);
@@ -96,6 +94,7 @@ class IVElement : public Element {
                                          const SoPrimitiveVertex *v1,
                                          const SoPrimitiveVertex *v2,
                                          const SoPrimitiveVertex *v3);
+      SoSeparator *BBOX(SoSeparator *model, float sc, string filename = "");
 	  KthReal getDistanceTo(Element* other);
     inline SoTranslation* getTrans(){return trans;}
     inline SoRotation* getRot(){return rot;}
