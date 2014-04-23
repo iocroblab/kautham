@@ -64,6 +64,9 @@ namespace Kautham {
 	class DOFWidget:public QWidget{
 		Q_OBJECT
 
+    signals:
+      void sendText(string newContent);
+
 	private slots:
 		void              sliderChanged(int val);
 	public:
@@ -80,6 +83,8 @@ namespace Kautham {
 		vector<KthReal>   values;
         vector<KthReal>   low;
         vector<KthReal>   high;
+
+        void writeGUI(string text);
 	};
 
 
