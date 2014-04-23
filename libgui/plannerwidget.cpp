@@ -253,6 +253,7 @@ namespace Kautham{
     //assert(_CrtCheckMemory());
 
     if(_planner != NULL ){
+      _planner->wkSpace()->moveObstaclesTo(_planner->wkSpace()->getInitObsSample());
       _planner->setInitSamp(_samples->getSampleAt(spnInit->text().toInt()));
       _planner->setGoalSamp(_samples->getSampleAt(spnGoal->text().toInt()));
 
