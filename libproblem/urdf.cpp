@@ -133,17 +133,28 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         submodel->addChild(trans);
     }
 
-
     xml_node geom_node = node->child("geometry").first_child();
     string geom_type = geom_node.name();
     if (geom_type == "box") {
-
+        SoCube *box = new SoCube;
+        double size[3];
+        string tmpString = geom_node.attribute("size").as_string();
+        istringstream ss( tmpString );
+        getline(ss,tmpString,' ');
+        size[0] = atof(tmpString.c_str());
+        getline(ss,tmpString,' ');
+        size[1] = atof(tmpString.c_str());
+        getline(ss,tmpString,' ');
+        size[2] = atof(tmpString.c_str());
+        box->height.setValue((float)size[0]*1000);
+        box->width.setValue((float)size[1]*1000);
+        box->depth.setValue((float)size[2]*1000);
+        submodel->addChild(box);
     } else if (geom_type == "cylinder") {
         SoCylinder *cylinder = new SoCylinder;
         cylinder->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
         cylinder->height.setValue((float)geom_node.attribute("length").as_double()*1000.);
         submodel->addChild(cylinder);
-
     } else if (geom_type == "sphere") {
         SoSphere *sphere = new SoSphere;
         sphere->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
