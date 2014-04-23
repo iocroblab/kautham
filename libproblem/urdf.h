@@ -36,12 +36,14 @@
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoScale.h>
-#include <Inventor/nodes/SoSphere.h>
 #include <Inventor/actions/SoCallbackAction.h>
 #include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/SbLinear.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoCylinder.h>
+#include <Inventor/nodes/SoSphere.h>
 
 using namespace std;
 using namespace pugi;
