@@ -68,14 +68,14 @@ Obstacle::Obstacle(string modFile, KthReal pos[3], KthReal ori[4], KthReal scale
             urdf_obstacle obstacle;
             xml_node tmpNode = doc.child("robot").child("link"); //node containing obstacle information
 
-            obstacle.fill(&tmpNode); //fill obstacle information
+            obstacle.fill(&tmpNode,dir,scale); //fill obstacle information
 
             switch(libs){
             case IVPQP:
             case IVSOLID:
-                element = new IVPQPElement(dir + obstacle.visual.ivfile,
-                                           dir + obstacle.collision.ivfile,
-                                           (KthReal)obstacle.visual.scale*scale);
+                element = new IVPQPElement(obstacle.visual.model,
+                                           obstacle.collision.model,
+                                           scale);
 
                 //Set ode parameters
                 element->ode.inertial.inertia.ixx = obstacle.inertial.inertia.ixx;

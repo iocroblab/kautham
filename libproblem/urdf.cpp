@@ -103,23 +103,51 @@ void urdf_inertial::fill (xml_node * node) {
 }
 
 urdf_geometry::urdf_geometry () {
-    scale = 1.;
+    model = NULL;
 }
 
-void urdf_geometry::fill(xml_node *node) {
-    xml_node tmpNode = node->first_child();
-    string type = tmpNode.name();
-    if (type == "box") {
-        ivfile = "box " + string(tmpNode.attribute("size").as_string());
-    } else if (type == "cylinder") {
-        ivfile = "cylinder " + string(tmpNode.attribute("radius").as_string())
-                + string(tmpNode.attribute("length").as_string());
-    } else if (type == "sphere") {
-        ivfile = "sphere " + string(tmpNode.attribute("radius").as_string());
-    } else if (type == "mesh") {
-        ivfile = tmpNode.attribute("filename").as_string();
-        if (tmpNode.attribute("scale")) {
-            scale = tmpNode.attribute("scale").as_double();
+void urdf_geometry::fill(xml_object_range<xml_named_node_iterator> range, string dir, double scale) {
+    SoScale *sca;
+    SoMaterial *color;
+    SoSFVec3f *posVec;
+    SoSFVec3f *scaVec;
+    SoSFRotation *rotVec;
+    SoSeparator *node;
+    SoInput input;
+    //ivmodel->addChild(sca);
+
+    string type;
+    xml_node geom_node;
+    for (xml_named_node_iterator it = range.begin(); it != range.end(); ++it)  {
+        geom_node = it->child("geometry").first_child();
+        type = geom_node.name();
+        if (type == "box") {
+
+        } else if (type == "cylinder") {
+
+        } else if (type == "sphere") {
+
+        } else if (type == "mesh") {
+            string filename = geom_node.attribute("filename").as_string();
+            input.openFile(string(dir+filename).c_str());
+            if (model == NULL) {
+                model = new SoSeparator;
+                model->ref();
+            }
+            node = SoDB::readAll(&input);
+            float sc;
+            if (geom_node.attribute("scale")) {
+               sc = geom_node.attribute("scale").as_double() * scale;
+            } else {
+               sc = scale;
+            }
+            scaVec = new SoSFVec3f;
+            scaVec->setValue((float)sc,(float)sc,(float)sc);
+            sca = new SoScale;
+            sca->scaleFactor.connectFrom(scaVec);
+            //node->addChild(sca);
+            model->addChild(node);
+            model->addChild(sca);
         }
     }
 }
@@ -180,21 +208,19 @@ urdf_link::urdf_link () {
     weight = 1.0;
 }
 
-void urdf_link::fill (xml_node *node) {
+void urdf_link::fill (xml_node *node, string dir, double scale) {
     xml_node tmpNode;
 
     name = node->attribute("name").as_string();
 
-    tmpNode = node->child("visual").child("geometry");
-    visual.fill(&tmpNode);
-
-    if (node->child("collision").child("geometry")) {
-        tmpNode = node->child("visual").child("geometry");
-        collision.fill(&tmpNode);
-    } else {
-        collision.ivfile = visual.ivfile;
-        collision.scale = visual.scale;
+    if (node->child("visual")) {
+        visual.fill(node->children("visual"),dir,scale);
     }
+
+    if (node->child("collision")) {
+        collision.fill(node->children("collision"),dir,scale);
+    }
+
     if (node->child("collision").child("contact_coefficients")) {
         tmpNode = node->child("collision").child("contact_coefficients");
         contact_coefficients.fill(&tmpNode);
@@ -256,7 +282,7 @@ urdf_robot::urdf_robot () {
     link = NULL;
 }
 
-void urdf_robot::fill (xml_node *node) {
+void urdf_robot::fill (xml_node *node, string dir, double scale) {
     name = node->attribute("name").as_string();
 
     xml_node tmpNode = node->child("link");
@@ -272,7 +298,7 @@ void urdf_robot::fill (xml_node *node) {
     int i;
     tmpNode = node->child("link");
     for (i = 0; i < num_links; i++) {
-        link[i].fill(&tmpNode);
+        link[i].fill(&tmpNode,dir,scale);
 
         tmpNode = tmpNode.next_sibling("link");
     }
@@ -333,8 +359,6 @@ void urdf_robot::print() {
         cout << "  inertia: ixx=" << link[i].inertial.inertia.ixx << " ixy=" << link[i].inertial.inertia.ixy
              << " ixz=" << link[i].inertial.inertia.ixz << " iyy=" << link[i].inertial.inertia.iyy << " iyz="
              << link[i].inertial.inertia.iyz << " izz=" << link[i].inertial.inertia.izz << endl;
-        cout << "visual: ivfile=" << link[i].visual.ivfile << " scale=" << link[i].visual.scale << endl;
-        cout << "collision: ivfile=" << link[i].collision.ivfile << " scale=" << link[i].collision.scale << endl;
         cout << "parent: " << link[i].parent << endl;
         cout << "joint: " << link[i].joint << endl;
         cout << "type: " << link[i].type << endl;
@@ -350,21 +374,14 @@ void urdf_robot::print() {
     }
 }
 
-void urdf_obstacle::fill (xml_node *node) {
+void urdf_obstacle::fill (xml_node *node, string dir, double scale) {
     xml_node tmpNode;
 
-    visual.ivfile = node->child("visual").child("geometry").child("mesh").attribute("filename").as_string();
-    if (node->child("visual").child("geometry").child("mesh").attribute("scale")) {
-        visual.scale = node->child("visual").child("geometry").child("mesh").attribute("scale").as_double();
+    if (node->child("visual")) {
+        visual.fill(node->children("visual"),dir,scale);
     }
-    if (node->child("collision").child("geometry").child("mesh").attribute("filename")) {
-        collision.ivfile = node->child("collision").child("geometry").child("mesh").attribute("filename").as_string();
-        if (node->child("collision").child("geometry").child("mesh").attribute("scale")){
-            collision.scale = node->child("collision").child("geometry").child("mesh").attribute("scale").as_double();
-        }
-    } else {
-        collision.ivfile = visual.ivfile;
-        collision.scale = visual.scale;
+    if (node->child("collision")) {
+        collision.fill(node->children("collision"),dir,scale);
     }
     if (node->child("collision").child("contact_coefficients")) {
         tmpNode = node->child("collision").child("contact_coefficients");
@@ -386,8 +403,6 @@ void urdf_obstacle::print() {
     cout << "  inertia: ixx=" << inertial.inertia.ixx << " ixy=" << inertial.inertia.ixy
          << " ixz=" << inertial.inertia.ixz << " iyy=" << inertial.inertia.iyy << " iyz="
          << inertial.inertia.iyz << " izz=" << inertial.inertia.izz << endl;
-    cout << "visual: ivfile=" << visual.ivfile << " scale=" << visual.scale << endl;
-    cout << "collision: ivfile=" << collision.ivfile << " scale=" << collision.scale << endl;
     cout << "contact coefficients: mu=" << contact_coefficients.mu << " kp="
          << contact_coefficients.kp << " kd" << contact_coefficients.kd << endl;
 }
