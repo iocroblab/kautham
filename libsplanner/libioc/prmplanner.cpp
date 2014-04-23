@@ -19,6 +19,7 @@
 #include <Inventor/nodes/SoLineSet.h>
 
 using namespace pugi;
+using namespace boost;
 
 namespace Kautham {
   namespace IOC{
