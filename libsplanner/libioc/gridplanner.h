@@ -53,7 +53,6 @@
 #include "iocplanner.h"
 
 using namespace std;
-using namespace boost;
 
 namespace Kautham {
 /** \addtogroup libPlanner
@@ -70,7 +69,7 @@ namespace Kautham {
 	 
 	//!Definition of the property of vertices to store the value of a potential function
 	struct potential_value_t {
-		typedef vertex_property_tag kind;
+        typedef boost::vertex_property_tag kind;
 	};
 	//!Graph representing the grid, defined as an adjacency_list with 
 	//!a potential value associated to the vertices and a cost associated
@@ -80,8 +79,8 @@ namespace Kautham {
 		boost::property<boost::edge_weight_t, cost> > gridGraph;
 
     typedef gridGraph::vertex_descriptor gridVertex;
-    typedef property_map<gridGraph, boost::edge_weight_t>::type WeightMap;
-    typedef property_map<gridGraph, potential_value_t>::type PotentialMap;
+    typedef boost::property_map<gridGraph, boost::edge_weight_t>::type WeightMap;
+    typedef boost::property_map<gridGraph, potential_value_t>::type PotentialMap;
     typedef gridGraph::edge_descriptor edge_descriptor;
     typedef gridGraph::vertex_iterator vertex_iterator;
 
@@ -100,7 +99,7 @@ namespace Kautham {
 
 	//!Graph representing the subgraph of the grid without the edges that have the source or target
 	//!vertex associated to a collision sample
-	typedef filtered_graph<gridGraph, negative_edge_weight<WeightMap> > filteredGridGraph;
+    typedef boost::filtered_graph<gridGraph, negative_edge_weight<WeightMap> > filteredGridGraph;
 
 
   //! This class is an abstract class that represents a discretization of the configuration space.
