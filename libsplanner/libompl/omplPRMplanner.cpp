@@ -63,7 +63,7 @@
 #include <boost/foreach.hpp>
 #include <boost/thread.hpp>
 
-#define foreach BOOST_FOREACH
+#define foreach_fwd BOOST_FOREACH
 #define foreach_reverse BOOST_REVERSE_FOREACH
 
 #include "omplPRMplanner.h"
@@ -278,7 +278,7 @@ namespace Kautham {
                return;
 
           ompl::PDF<Vertex> pdf;
-          foreach (Vertex v, boost::vertices(g_))
+          foreach_fwd (Vertex v, boost::vertices(g_))
           {
               const unsigned int t = totalConnectionAttemptsProperty_[v];
               pdf.add(v, (double)(t - successfulConnectionAttemptsProperty_[v]) / (double)t);
