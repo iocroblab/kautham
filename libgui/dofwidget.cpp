@@ -137,6 +137,10 @@ namespace Kautham {
         setValues(values);
     }
 
+    void DOFWidget::writeGUI(string text){
+      emit sendText(text);
+    }
+
     void DOFWidget::setValues(vector<KthReal> &val){
         if (val.size() == sliders.size()){
             double realval;
