@@ -111,9 +111,28 @@ void urdf_geometry::fill(xml_node *node, string dir) {
     submodel = new SoSeparator;
     submodel->ref();
 
-    SoMaterial *color;
-    SoSFVec3f *posVec;
-    SoSFRotation *rotVec;
+    if (node->child("origin")) {
+        xml_node origin_node = node->child("origin");
+        urdf_origin origin;
+        origin.fill(&origin_node);
+
+        mt::Unit3 axis;
+        mt::Scalar angle;
+        origin.transform.getRotation().getAxisAngle(axis,angle);
+        SoSFRotation *rotVec = new SoSFRotation;
+        rotVec->setValue(SbVec3f((float)axis[0],(float)axis[1],
+                (float)axis[2]),(float)angle);
+        SoRotation *rot = new SoRotation;
+        rot->rotation.connectFrom(rotVec);
+        submodel->addChild(rot);
+
+        SoSFVec3f *posVec = new SoSFVec3f;
+        posVec->setValue((float)origin.xyz[0],(float)origin.xyz[1],(float)origin.xyz[2]);
+        SoTranslation *trans = new SoTranslation;
+        trans->translation.connectFrom(posVec);
+        submodel->addChild(trans);
+    }
+
 
     xml_node geom_node = node->child("geometry").first_child();
     string geom_type = geom_node.name();
@@ -129,11 +148,9 @@ void urdf_geometry::fill(xml_node *node, string dir) {
     } else if (geom_type == "mesh") {
         if (geom_node.attribute("scale")) {
             float sc = geom_node.attribute("scale").as_double();
-            SoSFVec3f *scaVec;
-            scaVec = new SoSFVec3f;
+            SoSFVec3f *scaVec = new SoSFVec3f;
             scaVec->setValue((float)sc,(float)sc,(float)sc);
-            SoScale *sca;
-            sca = new SoScale;
+            SoScale *sca = new SoScale;
             sca->scaleFactor.connectFrom(scaVec);
             submodel->addChild(sca);
         }
