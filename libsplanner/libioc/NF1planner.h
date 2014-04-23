@@ -74,8 +74,8 @@ namespace Kautham {
 			template <typename Edge, typename Graph> 
 			void tree_edge(Edge e, Graph& g)
 			{
-				typename graph_traits<Graph>::vertex_descriptor s=source(e,g);
-				typename graph_traits<Graph>::vertex_descriptor t=target(e,g);
+                typename boost::graph_traits<Graph>::vertex_descriptor s=source(e,g);
+                typename boost::graph_traits<Graph>::vertex_descriptor t=target(e,g);
 				d[t] = d[s] + 1;
 				//potmap[t] = d[t];
 			}
