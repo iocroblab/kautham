@@ -166,9 +166,18 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         submodel->addChild(sphere);
     } else if (geom_type == "mesh") {
         if (geom_node.attribute("scale")) {
-            float sc = geom_node.attribute("scale").as_double();
+            double scale[3];
+            string tmpString = geom_node.attribute("scale").as_string();
+            istringstream ss( tmpString );
+            getline(ss,tmpString,' ');
+            scale[0] = atof(tmpString.c_str());
+            getline(ss,tmpString,' ');
+            scale[1] = atof(tmpString.c_str());
+            getline(ss,tmpString,' ');
+            scale[2] = atof(tmpString.c_str());
+
             SoSFVec3f *scaVec = new SoSFVec3f;
-            scaVec->setValue((float)sc,(float)sc,(float)sc);
+            scaVec->setValue((float)scale[0],(float)scale[1],(float)scale[2]);
             SoScale *sca = new SoScale;
             sca->scaleFactor.connectFrom(scaVec);
             submodel->addChild(sca);
