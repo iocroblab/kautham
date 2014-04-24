@@ -36,12 +36,14 @@
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoScale.h>
-#include <Inventor/nodes/SoSphere.h>
 #include <Inventor/actions/SoCallbackAction.h>
 #include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/SbLinear.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoCylinder.h>
+#include <Inventor/nodes/SoSphere.h>
 
 using namespace std;
 using namespace pugi;
@@ -99,7 +101,7 @@ public:
     SoSeparator *model;//!< Robot model
 
     urdf_geometry();//!< Class constructor
-    void fill(xml_object_range<xml_named_node_iterator> range, string dir, double scale);//!< Fills variables given a geometry node
+    void fill(xml_node *node, string dir);//!< Fills variables given a geometry node
 };
 
 //! Class containing joint's dynamics data
@@ -194,7 +196,7 @@ public:
     bool is_base;//!< It says if this links is the base from the robot tree structure, defaults to false
 
     urdf_link ();//!< Class constructor
-    void fill (xml_node *node, string dir, double scale);//!< Fills variables given a robot node
+    void fill (xml_node *node, string dir);//!< Fills variables given a robot node
     mt::Transform transform (double theta);//!< Returns the transform from the parent link to the child link given the value of the joint's degree of freedom, only for revolute joints
 };
 
@@ -208,7 +210,7 @@ public:
     urdf_link *link;//!< Robot's links
 
     urdf_robot ();//!< Class constructor
-    void fill (xml_node *node, string dir, double scale);//!< Fills variables given a robot node
+    void fill (xml_node *node, string dir);//!< Fills variables given a robot node
     void print();//!< Prints robot information
 };
 
@@ -226,7 +228,7 @@ public:
     urdf_inertial inertial;//!< Inertial propierties from the obstacle
     urdf_contact_coefficients contact_coefficients;//!< Contact coefficients of the obstacle
 
-    void fill(xml_node *node, string dir, double scale);//!< Fills variables given a link node
+    void fill(xml_node *node, string dir);//!< Fills variables given a link node
     void print();//!< Prints obstacle information
 };
 

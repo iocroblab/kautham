@@ -109,7 +109,7 @@ namespace Kautham {
 	void NF1Planner::computeNF1(gridVertex  vgoal)
 	{
 
-		graph_traits<gridGraph>::vertex_iterator vi, vi_end;
+        boost::graph_traits<gridGraph>::vertex_iterator vi, vi_end;
 
 		/* Prints adjacencies 
 
@@ -186,7 +186,7 @@ namespace Kautham {
 			//otherwise follow the negated values
 			_path.clear();
 			clearSimulationPath();
-			graph_traits<filteredGridGraph>::adjacency_iterator avi, avi_end;
+            boost::graph_traits<filteredGridGraph>::adjacency_iterator avi, avi_end;
 
             int whilecount=0;
             while(vc != indexgoal)
