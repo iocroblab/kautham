@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_SBL_ele_two_columns">
-	<Robot robot="robots/ele_transDOF.dh" scale="0.5">
+	<Robot robot="robots/ele.dh" scale="0.5">
 		
    Robot Path
 		
@@ -20,7 +20,7 @@
      Problem of the scene
     </Home>
 	</Obstacle>
-	<Controls robot="controls/OMPL_SBL_ele_two_columns_R3.cntr" />
+	<Controls robot="controls/ele_R3.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplSBL</Name>
