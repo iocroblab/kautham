@@ -32,7 +32,7 @@
 	<Obstacle obstacle="obstacles/transparentTable.iv" scale="0.5">
 		<Home TH="90.0" WZ="0.0" WY="0.0" WX="0.0" Z="400.0" Y="125.0" X="0.0" />
 	</Obstacle>
-	<Controls robot="controls/PRM_randSamplingPMDs_IOC_Justin.cntr" />
+	<Controls robot="controls/Justin_12ArmPMD_Hands_thumb4PMD.cntr" />
 	<Planner ProblemName="" Date="">
 		<Parameters>
 			<Name>PRM</Name>

@@ -13,7 +13,7 @@
 	<Obstacle obstacle="obstacles/s-passage.iv" scale="1.0">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Controls robot="controls/PRM_SDKsampling_mincube-s-passageR2.cntr" />
+	<Controls robot="controls/mincube_R2.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>PRM</Name>

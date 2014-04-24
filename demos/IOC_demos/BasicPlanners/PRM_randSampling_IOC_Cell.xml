@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <Problem name="" topology="SE3">
-	<Robot robot="robots/StaubliTX90_mobile1DOF.dh" scale="1.0">
+	<Robot robot="robots/TX90_mobile.dh" scale="1.0">
 		<Limits name="Y" min="-300.0" max="2200.0" />
 		<Home X="0.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
 	</Robot>
-	<Robot robot="robots/StaubliTX90.dh" scale="1.0">
+	<Robot robot="robots/TX90.dh" scale="1.0">
 		<Home X="1484.0" Y="50.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="180.0" />
 		<InvKinematic name="TX90" />
 	</Robot>
 	<Obstacle obstacle="obstacles/IOC.iv" scale="1.0">
 		<Home X="0.0" Y="0.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
 	</Obstacle>
-	<Controls robot="controls/PRM_randSampling_IOC_Cell.cntr" />
+	<Controls robot="controls/IOC_Cell.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>PRM</Name>

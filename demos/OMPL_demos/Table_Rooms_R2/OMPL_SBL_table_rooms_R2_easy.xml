@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_SBL_table_rooms">
-	<Robot robot="robots/tableR2.dh" scale="1.0">
+	<Robot robot="robots/table.dh" scale="1.0">
 		
 	
    Robot Path
