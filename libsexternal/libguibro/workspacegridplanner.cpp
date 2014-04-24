@@ -48,6 +48,7 @@
 #include "workspacegridplanner.h"
 
 using namespace Kautham;
+using namespace boost;
 
 namespace GUIBRO {
 

@@ -106,50 +106,84 @@ urdf_geometry::urdf_geometry () {
     model = NULL;
 }
 
-void urdf_geometry::fill(xml_object_range<xml_named_node_iterator> range, string dir, double scale) {
-    SoScale *sca;
-    SoMaterial *color;
-    SoSFVec3f *posVec;
-    SoSFVec3f *scaVec;
-    SoSFRotation *rotVec;
-    SoSeparator *node;
-    SoInput input;
-    //ivmodel->addChild(sca);
+void urdf_geometry::fill(xml_node *node, string dir) {
+    SoSeparator *submodel;
+    submodel = new SoSeparator;
+    submodel->ref();
 
-    string type;
-    xml_node geom_node;
-    for (xml_named_node_iterator it = range.begin(); it != range.end(); ++it)  {
-        geom_node = it->child("geometry").first_child();
-        type = geom_node.name();
-        if (type == "box") {
+    if (node->child("origin")) {
+        xml_node origin_node = node->child("origin");
+        urdf_origin origin;
+        origin.fill(&origin_node);
 
-        } else if (type == "cylinder") {
+        SoSFVec3f *posVec = new SoSFVec3f;
+        posVec->setValue((float)origin.xyz[0],(float)origin.xyz[1],(float)origin.xyz[2]);
+        SoTranslation *trans = new SoTranslation;
+        trans->translation.connectFrom(posVec);
+        submodel->addChild(trans);
 
-        } else if (type == "sphere") {
-
-        } else if (type == "mesh") {
-            string filename = geom_node.attribute("filename").as_string();
-            input.openFile(string(dir+filename).c_str());
-            if (model == NULL) {
-                model = new SoSeparator;
-                model->ref();
-            }
-            node = SoDB::readAll(&input);
-            float sc;
-            if (geom_node.attribute("scale")) {
-               sc = geom_node.attribute("scale").as_double() * scale;
-            } else {
-               sc = scale;
-            }
-            scaVec = new SoSFVec3f;
-            scaVec->setValue((float)sc,(float)sc,(float)sc);
-            sca = new SoScale;
-            sca->scaleFactor.connectFrom(scaVec);
-            //node->addChild(sca);
-            model->addChild(node);
-            model->addChild(sca);
-        }
+        mt::Unit3 axis;
+        mt::Scalar angle;
+        origin.transform.getRotation().getAxisAngle(axis,angle);
+        SoSFRotation *rotVec = new SoSFRotation;
+        rotVec->setValue(SbVec3f((float)axis[0],(float)axis[1],
+                (float)axis[2]),(float)angle);
+        SoRotation *rot = new SoRotation;
+        rot->rotation.connectFrom(rotVec);
+        submodel->addChild(rot);
     }
+
+    xml_node geom_node = node->child("geometry").first_child();
+    string geom_type = geom_node.name();
+    if (geom_type == "box") {
+        SoCube *box = new SoCube;
+        double size[3];
+        string tmpString = geom_node.attribute("size").as_string();
+        istringstream ss( tmpString );
+        getline(ss,tmpString,' ');
+        size[0] = atof(tmpString.c_str());
+        getline(ss,tmpString,' ');
+        size[1] = atof(tmpString.c_str());
+        getline(ss,tmpString,' ');
+        size[2] = atof(tmpString.c_str());
+        box->width.setValue((float)size[0]*1000);
+        box->height.setValue((float)size[1]*1000);
+        box->depth.setValue((float)size[2]*1000);
+        submodel->addChild(box);
+    } else if (geom_type == "cylinder") {
+        SoSFRotation *cyl_rotVec = new SoSFRotation;
+        cyl_rotVec->setValue(SbVec3f(1.,0.,0.),(float)M_PI_2);
+        SoRotation *cyl_rot = new SoRotation;
+        cyl_rot->rotation.connectFrom(cyl_rotVec);
+        submodel->addChild(cyl_rot);
+        SoCylinder *cylinder = new SoCylinder;
+        cylinder->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
+        cylinder->height.setValue((float)geom_node.attribute("length").as_double()*1000.);
+        submodel->addChild(cylinder);
+    } else if (geom_type == "sphere") {
+        SoSphere *sphere = new SoSphere;
+        sphere->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
+        submodel->addChild(sphere);
+    } else if (geom_type == "mesh") {
+        if (geom_node.attribute("scale")) {
+            float sc = geom_node.attribute("scale").as_double();
+            SoSFVec3f *scaVec = new SoSFVec3f;
+            scaVec->setValue((float)sc,(float)sc,(float)sc);
+            SoScale *sca = new SoScale;
+            sca->scaleFactor.connectFrom(scaVec);
+            submodel->addChild(sca);
+        }
+        string filename = geom_node.attribute("filename").as_string();
+        SoInput input;
+        input.openFile(string(dir+filename).c_str());
+        submodel->addChild(SoDB::readAll(&input));
+    }
+
+    if (model == NULL) {
+        model = new SoSeparator;
+        model->ref();
+    }
+    model->addChild(submodel);
 }
 
 urdf_dynamics::urdf_dynamics () {
@@ -208,17 +242,21 @@ urdf_link::urdf_link () {
     weight = 1.0;
 }
 
-void urdf_link::fill (xml_node *node, string dir, double scale) {
+void urdf_link::fill (xml_node *node, string dir) {
     xml_node tmpNode;
 
     name = node->attribute("name").as_string();
 
-    if (node->child("visual")) {
-        visual.fill(node->children("visual"),dir,scale);
+    tmpNode = node->child("visual");
+    while (tmpNode) {
+        visual.fill(&tmpNode,dir);
+        tmpNode = tmpNode.next_sibling("visual");
     }
 
-    if (node->child("collision")) {
-        collision.fill(node->children("collision"),dir,scale);
+    tmpNode = node->child("collision");
+    while (tmpNode) {
+        collision.fill(&tmpNode,dir);
+        tmpNode = tmpNode.next_sibling("collision");
     }
 
     if (node->child("collision").child("contact_coefficients")) {
@@ -282,7 +320,7 @@ urdf_robot::urdf_robot () {
     link = NULL;
 }
 
-void urdf_robot::fill (xml_node *node, string dir, double scale) {
+void urdf_robot::fill (xml_node *node, string dir) {
     name = node->attribute("name").as_string();
 
     xml_node tmpNode = node->child("link");
@@ -298,7 +336,7 @@ void urdf_robot::fill (xml_node *node, string dir, double scale) {
     int i;
     tmpNode = node->child("link");
     for (i = 0; i < num_links; i++) {
-        link[i].fill(&tmpNode,dir,scale);
+        link[i].fill(&tmpNode,dir);
 
         tmpNode = tmpNode.next_sibling("link");
     }
@@ -374,19 +412,26 @@ void urdf_robot::print() {
     }
 }
 
-void urdf_obstacle::fill (xml_node *node, string dir, double scale) {
+void urdf_obstacle::fill (xml_node *node, string dir) {
     xml_node tmpNode;
 
-    if (node->child("visual")) {
-        visual.fill(node->children("visual"),dir,scale);
+    tmpNode = node->child("visual");
+    while (tmpNode) {
+        visual.fill(&tmpNode,dir);
+        tmpNode = tmpNode.next_sibling("visual");
     }
-    if (node->child("collision")) {
-        collision.fill(node->children("collision"),dir,scale);
+
+    tmpNode = node->child("collision");
+    while (tmpNode) {
+        collision.fill(&tmpNode,dir);
+        tmpNode = tmpNode.next_sibling("collision");
     }
+
     if (node->child("collision").child("contact_coefficients")) {
         tmpNode = node->child("collision").child("contact_coefficients");
         contact_coefficients.fill(&tmpNode);
     }
+
     if (node->child("inertial")) {
         xml_node tmpNode = node->child("inertial");
         inertial.fill(&tmpNode);
