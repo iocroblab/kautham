@@ -1,0 +1,20 @@
+<ControlSet>
+	<Control name="R2D2/X" eigValue="1.0">
+		<DOF name="R2D2/X" value="1.0" />
+	</Control>
+	<Control name="R2D2/Y" eigValue="1.0">
+		<DOF name="R2D2/Y" value="1.0" />
+	</Control>
+	<Control name="R2D2/Z" eigValue="1.0">
+		<DOF name="R2D2/Z" value="1.0" />
+	</Control>
+	<Control name="R2D2/X1" eigValue="1.0">
+		<DOF name="R2D2/X1" value="1.0" />
+	</Control>
+	<Control name="R2D2/X2" eigValue="1.0">
+		<DOF name="R2D2/X2" value="1.0" />
+	</Control>
+	<Control name="R2D2/X3" eigValue="1.0">
+		<DOF name="R2D2/X3" value="1.0" />
+	</Control>
+</ControlSet>
