@@ -21,7 +21,6 @@
  \*************************************************************************/
 
 /* Author: Alexander Perez, Jan Rosell */
- 
 
 #include <string>
 #include <sstream>
