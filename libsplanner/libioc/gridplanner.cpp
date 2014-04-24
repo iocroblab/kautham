@@ -50,6 +50,8 @@
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoText3.h>
 
+using namespace boost;
+
 namespace Kautham {
 
 

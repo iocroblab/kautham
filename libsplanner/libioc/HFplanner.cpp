@@ -148,8 +148,8 @@ namespace Kautham {
 		setPotential(vgoal, _goalPotential);
 		//relax potential
         int numneighs = _wkSpace->getNumRobControls()*2;
-		graph_traits<gridGraph>::vertex_iterator vi, vend;
-		graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
+        boost::graph_traits<gridGraph>::vertex_iterator vi, vend;
+        boost::graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
 		for(int i=0; i<_hfiter; i++)
 		{
 			for(tie(vi,vend)=vertices(*g); vi!=vend; ++vi)
@@ -226,7 +226,7 @@ namespace Kautham {
 
 			_path.clear();
 			clearSimulationPath();
-			graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
+            boost::graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
 
 			//relax HF
             computeHF(indexgoal);

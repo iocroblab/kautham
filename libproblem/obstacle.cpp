@@ -68,7 +68,7 @@ Obstacle::Obstacle(string modFile, KthReal pos[3], KthReal ori[4], KthReal scale
             urdf_obstacle obstacle;
             xml_node tmpNode = doc.child("robot").child("link"); //node containing obstacle information
 
-            obstacle.fill(&tmpNode,dir,scale); //fill obstacle information
+            obstacle.fill(&tmpNode,dir); //fill obstacle information
 
             switch(libs){
             case IVPQP:

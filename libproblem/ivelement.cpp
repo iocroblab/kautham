@@ -107,7 +107,7 @@ namespace Kautham {
 
 		scaVec= new SoSFVec3f;
 		scaVec->setValue((float)scale,(float)scale,(float)scale);
-		sca->scaleFactor.connectFrom(scaVec);
+        sca->scaleFactor.connectFrom(scaVec);
 
 		SoInput input;
 		ivmodel = new SoSeparator;
@@ -265,10 +265,17 @@ namespace Kautham {
         scaVec->setValue((float)scale,(float)scale,(float)scale);
         sca->scaleFactor.connectFrom(scaVec);
 
-        ivmodel = visual_model;
+        ivmodel = new SoSeparator;
+        ivmodel->ref();
+        ivmodel->addChild(sca);
+        ivmodel->addChild(visual_model);
 
         if (collision_model != NULL) {
-            collision_ivmodel = collision_model;
+            collision_ivmodel = new SoSeparator;
+            collision_ivmodel->ref();
+            collision_ivmodel->addChild(sca);
+            collision_ivmodel->addChild(collision_model);
+
         } else {
             QSettings settings("IOC", "Kautham");
             bool useBBOX = settings.value("use_BBOX","false").toBool();
