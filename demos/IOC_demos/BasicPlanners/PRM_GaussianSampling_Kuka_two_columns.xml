@@ -13,7 +13,7 @@
 	<Obstacle obstacle="obstacles/columns.iv" scale="15.0">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="150.0" X="200.0" />
 	</Obstacle>
-	<Controls robot="controls/PRM_GaussianSampling_Kuka_two_columns.cntr" />
+	<Controls robot="controls/Kuka_7dof.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>PRM</Name>

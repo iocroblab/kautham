@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_KPIECE_TX90_RHAND_SIMPLE_TWOCAN">
-	<Robot robot="robots/TX90_RHand_5PMD_thumb2.dh" scale="1.0">
+	<Robot robot="robots/TX90_RHand.dh" scale="1.0">
 		<Limits name="X" min="0.0" max="1000.0" />
 		<Limits name="Y" min="0.0" max="1000.0" />
 		<Limits name="Z" min="0.0" max="1000.0" />
@@ -20,7 +20,7 @@
 	<Obstacle obstacle="obstacles/sceneRevistaICRA09.iv" scale="1.0">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Controls robot="controls/OMPL_KPIECE_TX90_RHand_SIMPLE_TwoCan.cntr" />
+	<Controls robot="controls/TX90_6dof_RHand_5PMD.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplKPIECE</Name>

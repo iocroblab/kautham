@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="table/X" value="0.5" />
+		<DOF name="table/Y" value="0.5" />
+	</Offset>
+	<Control name="table/x" eigValue="1.0">
+		<DOF name="table/X" value="1.0" />
+	</Control>
+	<Control name="table/y" eigValue="1.0">
+		<DOF name="table/Y" value="1.0" />
+	</Control>
+</ControlSet>

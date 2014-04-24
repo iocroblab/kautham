@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="" topology="SE3">
-	<Robot robot="robots/StaubliTX90_mobile2DOF.dh" scale="1.0">
-		
-	    Robot Path
-		
+	<Robot robot="robots/TX90_mobile.dh" scale="1.0">
 		<Limits name="X" min="-400.0" max="1200.0" />
 		<Limits name="Y" min="-200.0" max="1000.0" />
 		<Limits name="Z" min="0.0" max="1000.0" />
@@ -15,10 +12,9 @@
 	</Robot>
 	<Obstacle obstacle="obstacles/columns.iv" scale="18.0">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="0.0" X="250.0"> 
-		Problem of the scene
 		</Home>
 	</Obstacle>
-	<Controls robot="controls/PRM_GaussianSampling_TX90_mobileBase_two_columns.cntr" />
+	<Controls robot="controls/TX90_mobileBase_6dof.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>PRM</Name>

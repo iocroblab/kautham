@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_RRT_2DRR_columns">
-	<Robot robot="robots/RHand_5PMD_plusAllDOF.dh" scale="1.0">
+	<Robot robot="robots/RHand_5PMD.dh" scale="1.0">
 		<Limits name="X" min="0.0" max="1000.0" />
 		<Limits name="Y" min="0.0" max="1000.0" />
 		<Limits name="Z" min="0.0" max="1000.0" />
@@ -11,7 +11,7 @@
 		<Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="230.1" X="-200.5" />
 		<InvKinematic name="TX90" />
 	</Robot>
-	<Controls robot="controls/OMPL_RRTStar_RHand_5PMDs_plusAllDOF.cntr" />
+	<Controls robot="controls/RHand_13dof_5PMD.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplRRTStar</Name>

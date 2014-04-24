@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Problem name="" topology="R2">
+<Problem name="OMPL_RRTConnect_3minicubes" topology="R2">
 	<Robot robot="robots/minicube.dh" scale="1.0">
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
@@ -33,7 +33,7 @@
 	<Obstacle obstacle="obstacles/s-passage.iv" scale="1.0">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Controls robot="controls/OMPL_RRTConnect_3mincubes-s-passage.cntr" />
+	<Controls robot="controls/3mincubes.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplRRTConnect</Name>

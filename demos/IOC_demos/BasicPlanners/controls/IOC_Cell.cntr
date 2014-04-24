@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="TX90_mobile/Y" value="0.5" />
+		<DOF name="TX90_mobile/Shoulder" value="0.5" />
+		<DOF name="TX90_mobile/ForeArm" value="0.5" />
+		<DOF name="TX90_mobile/Elbow" value="0.5" />
+		<DOF name="TX90_mobile/Arm" value="0.5" />
+		<DOF name="TX90_mobile/Wrist" value="0.5" />
+		<DOF name="TX90_mobile/Tcp" value="0.5" />
+		<DOF name="TX90/Shoulder" value="0.5" />
+		<DOF name="TX90/ForeArm" value="0.5" />
+		<DOF name="TX90/Elbow" value="0.5" />
+		<DOF name="TX90/Arm" value="0.5" />
+		<DOF name="TX90/Wrist" value="0.5" />
+		<DOF name="TX90/Tcp" value="0.5" />
+	</Offset>
+	<Control name="TX90_mobile/Y" eigValue="1.0">
+		<DOF name="TX90_mobile/Y" value="1.0" />
+	</Control>
+	<Control name="TX90_mobile/Shoulder" eigValue="1.0">
+		<DOF name="TX90_mobile/Shoulder" value="1.0" />
+	</Control>
+	<Control name="TX90_mobile/ForeArm" eigValue="1.0">
+		<DOF name="TX90_mobile/ForeArm" value="1.0" />
+	</Control>
+	<Control name="TX90_mobile/Elbow" eigValue="1.0">
+		<DOF name="TX90_mobile/Elbow" value="1.0" />
+	</Control>
+	<Control name="TX90_mobile/Arm" eigValue="1.0">
+		<DOF name="TX90_mobile/Arm" value="1.0" />
+	</Control>
+	<Control name="TX90_mobile/Wrist" eigValue="1.0">
+		<DOF name="TX90_mobile/Wrist" value="1.0" />
+	</Control>
+	<Control name="TX90_mobile/Tcp" eigValue="1.0">
+		<DOF name="TX90_mobile/Tcp" value="1.0" />
+	</Control>
+	<Control name="TX90/Shoulder" eigValue="1.0">
+		<DOF name="TX90/Shoulder" value="1.0" />
+	</Control>
+	<Control name="TX90/ForeArm" eigValue="1.0">
+		<DOF name="TX90/ForeArm" value="1.0" />
+	</Control>
+	<Control name="TX90/Elbow" eigValue="1.0">
+		<DOF name="TX90/Elbow" value="1.0" />
+	</Control>
+	<Control name="TX90/Arm" eigValue="1.0">
+		<DOF name="TX90/Arm" value="1.0" />
+	</Control>
+	<Control name="TX90/Wrist" eigValue="1.0">
+		<DOF name="TX90/Wrist" value="1.0" />
+	</Control>
+	<Control name="TX90/Tcp" eigValue="1.0">
+		<DOF name="TX90/Tcp" value="1.0" />
+	</Control>
+</ControlSet>

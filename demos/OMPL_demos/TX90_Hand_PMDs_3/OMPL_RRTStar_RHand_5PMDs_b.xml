@@ -11,7 +11,7 @@
 		<Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="230.1" X="-200.5" />
 		<InvKinematic name="TX90" />
 	</Robot>
-	<Controls robot="controls/OMPL_RRTStar_RHand_5PMDs_b.cntr" />
+	<Controls robot="controls/RHand_5PMD.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplRRTStar</Name>
