@@ -6,7 +6,7 @@
 	<Obstacle obstacle="obstacles/columns.iv" scale="0.5">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="50.0" X="150.0" />
 	</Obstacle>
-	<Controls robot="controls/OMPL_KPIECE_2DRR_columns.cntr" />
+	<Controls robot="controls/2DRR_2dof.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplKPIECE</Name>
