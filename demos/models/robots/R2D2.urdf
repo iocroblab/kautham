@@ -1,4 +1,4 @@
-<?xml version="2.0"?>
+<?xml version="1.0"?>
 <robot name="R2D2">
   <link name="base_link">
     <visual>
@@ -11,8 +11,11 @@
     </visual>
     <visual>
       <geometry>
-        <mesh filename="R2D2/axis.iv" scale="5"/>
+        <mesh filename="R2D2/axis.iv" scale="5 5 5"/>
       </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
     </visual>
   </link>
 
@@ -87,6 +90,7 @@
         <box size="0.6 .2 .1"/>
       </geometry>
       <origin rpy="0 1.57075 0" xyz="0 0 -0.3"/>
+      <material name="white"/>    
     </visual>
   </link>
 
