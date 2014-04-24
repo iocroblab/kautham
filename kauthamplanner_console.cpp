@@ -138,7 +138,7 @@ int main(int argc, char* argv[]){
   //benchmarking
   else if(string(argv[1]) == "-b")
   {
-    if (argc == 3) {//IOC planners benchmarking
+    if (argc == 4) {//IOC planners benchmarking
       //=====================
       SoDB::init();
 

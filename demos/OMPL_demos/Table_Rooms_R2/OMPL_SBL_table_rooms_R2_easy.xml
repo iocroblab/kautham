@@ -22,7 +22,7 @@
             Problem of the scene
             </Home>
 	</Obstacle>
-	<Controls robot="controls/OMPL_SBL_table_rooms_R2_easy.cntr" />
+	<Controls robot="controls/table_R2.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplSBL</Name>
