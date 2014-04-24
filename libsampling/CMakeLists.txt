@@ -13,7 +13,7 @@ ADD_DEFINITIONS( -DCOIN_DLL )
 
 ADD_LIBRARY( libsampling ${SRC_FILES} ${HDR_FILES} )
 
-TARGET_LINK_LIBRARIES( libsampling libDNN )
+TARGET_LINK_LIBRARIES( libsampling libDNN -lboost_system )
 
 
 

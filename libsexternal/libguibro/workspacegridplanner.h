@@ -56,7 +56,6 @@
 using namespace std;
 using namespace Kautham;
 using namespace IOC;
-using namespace boost;
 
 namespace GUIBRO {
 	//Typedefs
@@ -74,7 +73,7 @@ namespace GUIBRO {
 	 
 	//!Definition of the property of vertices to store the value of a potential function
 	struct potential_value_t {
-		typedef vertex_property_tag kind;
+        typedef boost::vertex_property_tag kind;
 	};
 	//!Graph representing the grid, defined as an adjacency_list with 
 	//!a potential value associated to the vertices and a cost associated
@@ -84,8 +83,8 @@ namespace GUIBRO {
 		boost::property<boost::edge_weight_t, cost> > gridGraph;
 
     typedef gridGraph::vertex_descriptor gridVertex;
-    typedef property_map<gridGraph, boost::edge_weight_t>::type WeightMap;
-    typedef property_map<gridGraph, potential_value_t>::type PotentialMap;
+    typedef boost::property_map<gridGraph, boost::edge_weight_t>::type WeightMap;
+    typedef boost::property_map<gridGraph, potential_value_t>::type PotentialMap;
     typedef gridGraph::edge_descriptor edge_descriptor;
     typedef gridGraph::vertex_iterator vertex_iterator;
 
@@ -115,8 +114,8 @@ namespace GUIBRO {
 			template <typename Edge, typename Graph> 
 			void tree_edge(Edge e, Graph& g)
 			{
-				typename graph_traits<Graph>::vertex_descriptor s=source(e,g);
-				typename graph_traits<Graph>::vertex_descriptor t=target(e,g);
+                typename boost::graph_traits<Graph>::vertex_descriptor s=source(e,g);
+                typename boost::graph_traits<Graph>::vertex_descriptor t=target(e,g);
 				//expand the wave
 				d[t] = d[s] + 1;
 				//control the expansion value by the distance to the obstacles
@@ -129,8 +128,8 @@ namespace GUIBRO {
 			void gray_target(Edge e, Graph& g)
 			{
 				//for the vertices already visited, update their value if necessary
-				typename graph_traits<Graph>::vertex_descriptor s=source(e,g);
-				typename graph_traits<Graph>::vertex_descriptor t=target(e,g);
+                typename boost::graph_traits<Graph>::vertex_descriptor s=source(e,g);
+                typename boost::graph_traits<Graph>::vertex_descriptor t=target(e,g);
 				KthReal v = (KthReal)loc[t].d/maxdwall;
 				if(v>0.9) v=0.9;
 				KthReal newvalue = d[s] + 1 - v; 
@@ -147,7 +146,7 @@ namespace GUIBRO {
 
 	//!Graph representing the subgraph of the grid without the edges that have the source or target
 	//!vertex associated to a collision cell
-	typedef filtered_graph<gridGraph, threshold_edge_weight<WeightMap> > filteredGridGraph;
+    typedef boost::filtered_graph<gridGraph, threshold_edge_weight<WeightMap> > filteredGridGraph;
 
 
   //! This class is an class that represents a discretization of the workspace.

@@ -53,9 +53,7 @@
 #include "iocplanner.h"
 
 
-
 using namespace std;
-using namespace boost;
 
 namespace Kautham {
 /** \addtogroup libPlanner
@@ -68,7 +66,7 @@ namespace Kautham {
     typedef std::pair<int, int> prmEdge;
     typedef boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS, boost::no_property, boost::property<boost::edge_weight_t, cost> > prmGraph;
     typedef prmGraph::vertex_descriptor prmVertex;
-    typedef property_map<prmGraph, boost::edge_weight_t>::type WeightMap;
+    typedef boost::property_map<prmGraph, boost::edge_weight_t>::type WeightMap;
     typedef prmGraph::edge_descriptor edge_descriptor;
     typedef prmGraph::vertex_iterator vertex_iterator;
 
@@ -76,10 +74,10 @@ namespace Kautham {
 //CLASS distance heuristic
 
     template <class Graph, class CostType, class LocMap>
-    class distance_heuristic : public astar_heuristic<Graph, CostType>
+    class distance_heuristic : public boost::astar_heuristic<Graph, CostType>
     {
         public:
-        typedef typename graph_traits<Graph>::vertex_descriptor prmVertex;
+        typedef typename boost::graph_traits<Graph>::vertex_descriptor prmVertex;
 
         distance_heuristic(LocMap l, prmVertex goal, LocalPlanner* lPlan) : m_location(l), m_goal(goal), locPlan(lPlan) {};
         CostType operator()(prmVertex u)
