@@ -5,7 +5,7 @@ Separator {
             diffuseColor        0.0 1.0 0.0
     }
 
-    Cube {
+   Cube {
      width 70.0
      height 50.0
      depth 2.0
@@ -55,4 +55,5 @@ Separator {
      radius 5.0
      height 20.0
     }
+
 }

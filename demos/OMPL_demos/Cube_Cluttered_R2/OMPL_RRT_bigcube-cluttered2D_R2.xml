@@ -16,7 +16,7 @@
 	<Obstacle obstacle="obstacles/walls.iv" scale="1.0">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Controls robot="controls/OMPL_RRT_bigcube-cluttered2D_R2.cntr" />
+	<Controls robot="controls/bigcube_R2.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplRRT</Name>
