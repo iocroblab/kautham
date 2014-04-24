@@ -17,6 +17,11 @@
         <color rgba="1 0 0 1"/>
       </material>
     </visual>
+    <collision>
+      <geometry>
+        <box size="0.4 0.4 0.6"/>
+      </geometry>
+    </collision>
   </link>
 
   <link name="right_leg">
@@ -61,6 +66,11 @@
         <color rgba="0 0 0 1"/>
       </material>
     </visual>
+    <collision>
+      <geometry>
+        <box size="0.07 0.07 0.1"/>
+      </geometry>
+    </collision>
   </link>
 
   <joint name="right_front_wheel_joint" type="fixed">
@@ -76,6 +86,11 @@
       </geometry>
       <material name="black"/>
     </visual>
+    <collision>
+      <geometry>
+        <box size="0.07 0.07 0.1"/>
+      </geometry>
+    </collision>
   </link>
 
   <joint name="right_back_wheel_joint" type="fixed">
@@ -122,6 +137,11 @@
       </geometry>
       <material name="black"/>
     </visual>
+    <collision>
+      <geometry>
+        <box size="0.07 0.07 0.1"/>
+      </geometry>
+    </collision>
   </link>
 
   <joint name="left_front_wheel_joint" type="fixed">
@@ -137,6 +157,11 @@
       </geometry>
       <material name="black"/>
     </visual>
+    <collision>
+      <geometry>
+        <box size="0.07 0.07 0.1"/>
+      </geometry>
+    </collision>
   </link>
 
   <joint name="left_back_wheel_joint" type="fixed">
@@ -161,6 +186,12 @@
         <color rgba=".7 .7 .7 1"/>
       </material>
     </visual>
+    <collision>
+      <geometry>
+        <box size="0.02 0.02 0.2"/>
+      </geometry>
+      <origin rpy="0 1.57075 0 " xyz="0.1 0 0"/>
+    </collision>
   </link>
 
 <link name="head">
@@ -170,6 +201,11 @@
       </geometry>
       <material name="white"/>
     </visual>
+    <collision>
+      <geometry>
+        <box size="0.4 0.4 0.4"/>
+      </geometry>
+    </collision>
   </link>
 
   <joint name="head_swivel" type="fixed">
