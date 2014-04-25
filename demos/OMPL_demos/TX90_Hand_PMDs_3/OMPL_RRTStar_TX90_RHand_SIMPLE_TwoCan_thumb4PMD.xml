@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_RRT_2DRR_columns">
-	<Robot robot="robots/TX90_RHand_5PMD.dh" scale="1.0">
+	<Robot robot="robots/TX90_RHand.dh" scale="1.0">
 		<Limits name="X" min="0.0" max="1000.0" />
 		<Limits name="Y" min="0.0" max="1000.0" />
 		<Limits name="Z" min="0.0" max="1000.0" />
