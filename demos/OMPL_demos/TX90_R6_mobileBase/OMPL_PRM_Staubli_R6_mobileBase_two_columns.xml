@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_PRM_Staubli_R6_mobileBase_two_columns">
-	<Robot robot="robots/mobile_TX90_plano.dh" scale="1.0">
+	<Robot robot="robots/TX90_mobile.dh" scale="1.0">
 		<Limits name="X" min="-400.0" max="1200.0" />
 		<Limits name="Y" min="-200.0" max="1000.0" />
 		<Limits name="Z" min="0.0" max="1000.0" />
@@ -13,7 +13,7 @@
 	<Obstacle obstacle="obstacles/columns.iv" scale="18.0">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="0.0" X="250.0" />
 	</Obstacle>
-	<Controls robot="controls/mobile_TX90_plano.cntr" />
+	<Controls robot="controls/TX90_mobile.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplPRM</Name>
