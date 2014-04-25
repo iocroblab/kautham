@@ -2,6 +2,9 @@
 <ControlSet>
 	<Offset>
 		<DOF name="TX90_mobile/Y" value="0.5" />
+		<DOF name="TX90_mobile/Z" value="0" />
+		<DOF name="TX90_mobile/X1" value="0" />
+		<DOF name="TX90_mobile/X3" value="0" />
 		<DOF name="TX90_mobile/Shoulder" value="0.5" />
 		<DOF name="TX90_mobile/ForeArm" value="0.5" />
 		<DOF name="TX90_mobile/Elbow" value="0.5" />
