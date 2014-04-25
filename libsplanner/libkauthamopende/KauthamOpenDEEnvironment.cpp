@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Joan Fontanals Martinez, Muhayy ud din */
+/* Author: Joan Fontanals Martinez, Muhayyuddin */
 
 #if defined(KAUTHAM_USE_OMPL)
 #if defined(KAUTHAM_USE_ODE)
@@ -75,7 +75,7 @@ KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed)
       _maxspeed=maxspeed;
 
 
-  for (int i=0; i < wkspace->robotsCount(); i++)
+  for (int i=0; i < wkspace->getNumRobots(); i++)
   {
 
       basePos = baseGetPos(wkspace->getRobot(i));
@@ -88,11 +88,11 @@ KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed)
       chain->motors.clear();
 
   }
-  for (int i=0; i < wkspace->mobileObstaclesCount(); i++)
+  for (int i=0; i < wkspace->getNumObstacles(); i++)
   {
 
-      basePos = baseGetPos(wkspace->getMobileObstacle(i));
-      buildKinematicChain(chain, wkspace->getMobileObstacle(i),SCALE,basePos);
+      basePos = baseGetPos(wkspace->getObstacle(i));
+      buildKinematicChain(chain, wkspace->getObstacle(i),SCALE,basePos);
       chainMap.insert(pair<string,KinematicChain>(chain->name,*chain));
 
       chain->objects.clear();
@@ -143,9 +143,9 @@ KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed)
 void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
 {
     bodyworld=dWorldCreate();
- //   _OpenDEspace = dHashSpaceCreate(0);
-_OpenDEspace =dSweepAndPruneSpaceCreate( 0, dSAP_AXES_XYZ );
-    for (int i=0;i < (int(wkspace->robotsCount())); i++)
+   _OpenDEspace = dHashSpaceCreate(0);
+//_OpenDEspace =dSweepAndPruneSpaceCreate( 0, dSAP_AXES_XYZ );
+    for (int i=0;i < (int(wkspace->getNumRobots()); i++)
     {
         for (int j=0;j< (wkspace->getRobot(i)->getNumLinks()); j++)
         {
@@ -164,7 +164,7 @@ _OpenDEspace =dSweepAndPruneSpaceCreate( 0, dSAP_AXES_XYZ );
             }
             else
             {
-dBodyID odebody;
+                 dBodyID odebody;
                  odebody = makeTriMesh(chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].position,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].orientation,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].vertexes,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].indexes,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].mass);
 
                  stateBodiesmap_.insert(pair<string,dBodyID>(((wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())),odebody));
@@ -180,7 +180,7 @@ dBodyID odebody;
             //intent de deduir que un objecte es un Primitive i no es un trimesh segons la dimensio del seu vector de vertex
             if (chainMap[wkspace->getMobileObstacle(i)->getName()].objects[(wkspace->getMobileObstacle(i)->getName())+(wkspace->getMobileObstacle(i)->getLink(j)->getName())].vertexes.size() <= 3)
             {
-dBodyID odebody;
+                dBodyID odebody;
                 odebody = makePrimitive(chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].position,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].orientation,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].mass,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].vertexes);
 
                 stateBodiesmap_.insert(pair<string,dBodyID>((wkspace->getRobot(i)->getName()),odebody));
