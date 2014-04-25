@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Joan Fontanals Martinez, Muhayy ud din */
+/* Author: Joan Fontanals Martinez, Muhayyuddin  */
 
 
 #if defined(KAUTHAM_USE_OMPL)
@@ -78,11 +78,11 @@ vector<KauthamDEGoal::KauthamODEobject> KauthamDEGoal::smp2KauthamOpenDEState(Wo
     //loop for all the robots
     vector<KauthamODEobject> kauthamob;
 
-    for(int i=0; i<=(int(wkSpace->robotsCount())-1); i++)
+    //for(int i=0; i<=(int(wkSpace->robotsCount())-1); i++)
     {
-        wkSpace->getRobot(i)->Kinematics(goal->getMappedConf()[0]);
+        wkSpace->getRobot(0)->Kinematics(goal->getMappedConf()[0]);
         //_wkSpace->getRobot(i)->Kinematics(smp->getMappedConf().at(0).getSE3());
-        for(int j=0; j<= (wkSpace->getRobot(i)->getNumLinks())-1;j++)
+       // for(int j=0; j<= (wkSpace->getRobot(i)->getNumLinks())-1;j++)
         {
 
             KauthamODEobject odeob;
