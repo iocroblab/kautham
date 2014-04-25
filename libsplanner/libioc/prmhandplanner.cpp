@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell */
+/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
 //FIXME: this planner is done for a single TREE robot (associtated to wkSpace->robots[0])
