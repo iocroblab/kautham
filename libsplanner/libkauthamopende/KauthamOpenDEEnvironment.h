@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Joan Fontanals Martinez, Muhayy ud din */
+/* Author: Joan Fontanals Martinez, Muhayyuddin */
 
 
 #if defined(KAUTHAM_USE_OMPL)
@@ -257,6 +257,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
 
 		// structure that forms the chainMap be filled in class constructor, the objects contain information about the overall geometry (vertices, indices, etc ...)
          // the joints are joints of information (together Bodys, position, type, etc ...)
+        //! KinematicChain represents a robot with all its objects, joints and all information .
         typedef struct
         {
             string name;
@@ -266,10 +267,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
             map<string, Motor> motors;
             bool internalCollision;
             string dhType;
-        } KinematicChain; //! KinematicChain represents a robot with all its objects, joints and all information .
-
-
-
+        } KinematicChain;
         map<string, KinematicChain> chainMap; //!< map KinamaticChain
         virtual void setjointsandmotors2bodies(map<string,dBodyID> stateBodiesmap_, map<string, KinematicChain> chainMapchainMap, WorkSpace* ws);//!< this function set the joint and motor for in ODE bodies
         void getTrimesh(SoSeparator *ivmodel, odinObject* obj, double scale);//!< get the triangular mesh.
