@@ -706,10 +706,12 @@ namespace Kautham {
               rob->setInverseKinematic( Kautham::TX90HAND );
           else if( name == "UR5")
               rob->setInverseKinematic( Kautham::UR5 );
+          else if ( name == "")
+              rob->setInverseKinematic( Kautham::NOINVKIN);
           else
               rob->setInverseKinematic(Kautham::UNIMPLEMENTED);
       }else
-          rob->setInverseKinematic(Kautham::UNIMPLEMENTED);
+          rob->setInverseKinematic(Kautham::NOINVKIN);
 
       // Setup the Constrained Kinematic if it has one.
       if(robot_node->child("ConstrainedKinematic")){

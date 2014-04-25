@@ -133,6 +133,7 @@ namespace Kautham{
   //! This enumeration has the relationship of all Inverse Kinematic models
   //! available to be used as solver of the robot inverser kinematics.
   enum INVKINECLASSES{
+    NOINVKIN,
     UNIMPLEMENTED,
     RR2D,
     TX90,
