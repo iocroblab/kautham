@@ -4,12 +4,8 @@
 		<DOF name="2D-Robot/link1" value="0.5" />
 		<DOF name="2D-Robot/link2" value="0.5" />
 	</Offset>
-	<Control name="2D-Robot/PMD1" eigValue="10.0">
+	<Control name="2D-Robot/PMD1" eigValue="1.0">
 		<DOF name="2D-Robot/link1" value="0.70710678118654752440084436210485" />
-		<DOF name="2D-Robot/link2" value="0.70710678118654752440084436210485" />
-	</Control>
-	<Control name="2D-Robot/PMD2" eigValue="1.0">
-		<DOF name="2D-Robot/link1" value="-0.70710678118654752440084436210485" />
 		<DOF name="2D-Robot/link2" value="0.70710678118654752440084436210485" />
 	</Control>
 </ControlSet>
