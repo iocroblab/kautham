@@ -704,7 +704,10 @@ namespace Kautham {
       case Kautham::UR5:
           _ikine = new IvKinUR5(this);
           break;
-      default:
+      case Kautham::NOINVKIN:
+          _ikine = NULL;
+          break;
+      case Kautham::UNIMPLEMENTED:
           cout << "The new Inverse Kinematic model have not been configured properly.\n" <<
                   "See the setInverseKinematic of the Robot class to call the constructor. " << endl;
           _ikine = NULL;
