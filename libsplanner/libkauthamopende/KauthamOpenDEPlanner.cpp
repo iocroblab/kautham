@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Joan Fontanals Martinez, Muhayy ud din */
+/* Author: Joan Fontanals Martinez, Muhayyuddin */
 
 #if defined(KAUTHAM_USE_OMPL)
 #if defined(KAUTHAM_USE_ODE)
@@ -180,7 +180,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
                      collision.push_back(stateSpace->evaluateCollision(states[i]));
                      vector<RobConf> rc;
                      RobConf *rcj = new RobConf;
-                     smp=new Sample(_wkSpace->getDimension());
+                     smp=new Sample(_wkSpace->getNumRobControls());
                      smp->setMappedConf(_init->getMappedConf());
                      vector<KthReal> se3Robcoords;
                      se3Robcoords.resize(7);
