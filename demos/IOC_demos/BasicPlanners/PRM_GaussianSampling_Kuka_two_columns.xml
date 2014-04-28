@@ -17,18 +17,19 @@
 	<Planner>
 		<Parameters>
 			<Name>PRM</Name>
-			<Parameter name="Step Size">0.1"</Parameter>
 			<Parameter name="Drawn Path Link">-1</Parameter>
 			<Parameter name="Max. Neighs">10</Parameter>
 			<Parameter name="Max. Samples">8000</Parameter>
 			<Parameter name="Neigh Thresshold">20</Parameter>
+			<Parameter name="P(connect to Ini-Goal)">0.1000000015</Parameter>
 			<Parameter name="Sampler 1(sdk),2(h),3(g),4(gl),5(r)">5</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Step Size">0.1000000015</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
 				<Init dim="7">0.736 0.822 0.154 0.5 0.668 0.274 0.284</Init>
-				<Goal dim="7">0.0 0.865 0.462 0.5 0.732 0.258 0.759</Goal>
+				<Goal dim="7">0 0.865 0.462 0.5 0.732 0.258 0.759</Goal>
 			</Query>
 		</Queries>
 	</Planner>
