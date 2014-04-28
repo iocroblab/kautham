@@ -3,6 +3,7 @@
     <Offset>
       <DOF name="TX90_mobile/X" value="0.5"></DOF>
       <DOF name="TX90_mobile/Y" value="0.5"></DOF>
+      <DOF name="TX90_mobile/Z" value="0"></DOF>
       <DOF name="TX90_mobile/X1" value="0"></DOF>
       <DOF name="TX90_mobile/Shoulder" value="0.5"></DOF>
       <DOF name="TX90_mobile/ForeArm" value="0.5"></DOF>

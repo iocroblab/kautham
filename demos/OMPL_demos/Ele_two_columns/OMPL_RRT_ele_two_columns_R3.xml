@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_RRT_ele_two_columns">
-	<Robot robot="robots/ele_R3.dh" scale="0.5">
+	<Robot robot="robots/ele.dh" scale="0.5">
 		<Limits name="X" min="0.0" max="100.0" />
 		<Limits name="Y" min="0.0" max="100.0" />
 		<Limits name="Z" min="0.0" max="100.0" />
