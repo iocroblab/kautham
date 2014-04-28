@@ -4,6 +4,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 CMAKE_POLICY(SET CMP0003 OLD)
 
 
+
 ########### Options ####################
 OPTION( KAUTHAM_GUI "Build the gui version" ON )
 OPTION( KAUTHAM_CONSOLE "Build the console version" ON )
@@ -11,7 +12,7 @@ OPTION( KAUTHAM_OMPL "Use OMPL planners" ON )
 OPTION( KAUTHAM_OMPL_LATEST "Use latest OMPL version" ON )
 OPTION( KAUTHAM_IOC "Use IOC planners" ON )
 OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" ON)
-OPTION( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
+OPTION( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 
 
 ########### Set flags ####################
@@ -211,10 +212,10 @@ IF( KAUTHAM_GUI )
 ##############################################################################
 # Creating executable
   FILE( GLOB RES_FILES *.rc )
-  QT4_WRAP_CPP( QT_MOC_SRC application.h OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
+  QT4_WRAP_CPP( QT_MOC_SRC libguimain/application.h OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
   
-  SET( SRC_FILES_GUI application.cpp kauthamplanner.cpp )
-  SET( HDR_FILES_GUI application.h )
+  SET( SRC_FILES_GUI libguimain/kauthamgui.cpp libguimain/kauthamgui.cpp )
+  SET( HDR_FILES_GUI libguimain/application.h )
   
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
   TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS} libDNN libPQP libgui libsampling
@@ -246,8 +247,8 @@ IF( KAUTHAM_CONSOLE )
     MESSAGE( STATUS "MPI library not found" )
   ENDIF( MPI_FOUND )
 
-  SET( HDR_FILES_GUI kauthamshell.h )
-  SET( SRC_FILES kauthamshell.cpp kauthamplanner_console.cpp libsutil/libkthutil/kauthamobject.cpp )
+  SET( HDR_FILES_GUI libconsole/kauthamshell.h )
+  SET( SRC_FILES libconsole/kauthamshell.cpp libconsole/kauthamplanner_console.cpp libsutil/libkthutil/kauthamobject.cpp )
   
     # Adding console bath mode executable
   ADD_EXECUTABLE( KauthamConsole ${SRC_FILES} ${HDR_FILES} ${RES_FILES} )
