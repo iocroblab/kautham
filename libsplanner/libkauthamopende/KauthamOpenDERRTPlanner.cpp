@@ -48,9 +48,7 @@ KauthamDERRTPlanner::KauthamDERRTPlanner(SPACETYPE stype, Sample *init, Sample *
       _idName = "omplODERRTPlanner";
        dInitODE2(0);
 
-
      ss = new oc::OpenDESimpleSetup(stateSpacePtr);
-
      oc::SpaceInformationPtr si=ss->getSpaceInformation();
      ob::PlannerPtr planner(new oc::RRT(si));
 

@@ -95,14 +95,14 @@ vector<KauthamDEGoal::KauthamODEobject> KauthamDEGoal::smp2KauthamOpenDEState(Wo
             //odeob.objectorientation[2] = wkSpace->getRobot(i)->getLink(j)->getElement()->getOrientation()[2];
             //odeob.objectorientation[3] = wkSpace->getRobot(i)->getLink(j)->getElement()->getOrientation()[3];
 
-            odeob.objectposition[0] =-120;
-            odeob.objectposition[1] = -120;
-            //odeob.objectposition[2] = 55;
+            odeob.objectposition[0] =-100;
+            odeob.objectposition[1] = -100;
+            odeob.objectposition[2] = 55;
             ////Kauthamodebodies.insert(pair<int,KauthamODEobject>(i,*(_wkSpace->getRobot(i)->getLink(j)->getElement()->getPosition());
-           // odeob.objectorientation[0] = 0;
-           //odeob.objectorientation[1] = 0;
-           //odeob.objectorientation[2] = 1;
-           //odeob.objectorientation[3] = 0;
+            odeob.objectorientation[0] = 0;
+           odeob.objectorientation[1] = 0;
+           odeob.objectorientation[2] = 1;
+           odeob.objectorientation[3] = 0;
             kauthamob.push_back(odeob);
         }
 
