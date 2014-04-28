@@ -295,7 +295,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
             static const double toRad  = M_PI/180.;
 
             //! This function will build the kinamatic chain for Robot
-            bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector<double>& basePos);
+            bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector<KthReal>& basePos);
 
             //! This function will build the kinamatic chain for Obstracle
             bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Obstacle *obstacle, double scale, int k);
@@ -307,7 +307,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
 
             void searchColor(SoSeparator* root, odinObject* obj);
 
-            vector<double> baseGetPos(Robot* robot);// this function will returns the position and orientation of robot.
+            vector<KthReal> baseGetPos(Robot* robot);// this function will returns the position and orientation of robot.
 
             void makeMotor(dBodyID body1, dBodyID body2,const unsigned int type, const vector< double >& axes,const vector< double >& fmax);
             void addMotor2Joint(dJointID joint, vector<double>& maxForces);
