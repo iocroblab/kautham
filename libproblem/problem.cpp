@@ -270,6 +270,12 @@ namespace Kautham {
 
         _planner  = new   omplcplanner::KauthamDERRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
        }
+      else if(name == "omplODEKPIECEPlanner")
+         {
+
+          _planner  = new   omplcplanner::KauthamDEKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+         }
+
 #endif
       else
       cout<<"Planner "<< name <<" is unknow or not loaded (check the CMakeFiles.txt options)" << endl;

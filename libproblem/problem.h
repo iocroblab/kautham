@@ -81,6 +81,7 @@
 
 #if defined(KAUTHAM_USE_ODE)
 #include <libkauthamopende/KauthamOpenDERRTPlanner.h>
+#include<libkauthamopende/KauthamOpenDEKPIECEPlanner.h>
 #endif
 
 #if defined(KAUTHAM_USE_GUIBRO)
