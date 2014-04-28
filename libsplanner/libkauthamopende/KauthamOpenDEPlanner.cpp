@@ -94,15 +94,12 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
 
 
        Sample* aux=goalSamp();
-/*
-
      dVector3 pos11;
      dBodyCopyPosition (stateSpacePtr->as<oc::OpenDEStateSpace>()->getEnvironment()->stateBodies_[0], pos11);
      dVector3 pos12;
      dBodyCopyPosition ( stateSpacePtr->as<oc::OpenDEStateSpace>()->getEnvironment()->stateBodies_[1], pos12);
-     dVector3 pos13;
-     dBodyCopyPosition ( stateSpacePtr->as<oc::OpenDEStateSpace>()->getEnvironment()->stateBodies_[2], pos13);
-*/
+     //dVector3 pos13;
+     //dBodyCopyPosition ( stateSpacePtr->as<oc::OpenDEStateSpace>()->getEnvironment()->stateBodies_[2], pos13);
 
        //ob::ScopedState<oc::OpenDEStateSpace> initstate(stateSpacePtr);
        //stateSpacePtr->as<oc::OpenDEStateSpace>()->readState(initstate.get());
@@ -123,7 +120,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
         ss->setup();
         ss->print();
 
-        if (ss->solve(_planningTime))
+        if (ss->solve(20))
         {
 
             og::PathGeometric p = ss->getSolutionPath().asGeometric();
@@ -242,7 +239,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
                     _samples->add(smp);
                  }
 
-            for(int i=0;i<_StateBodies.size();i++)
+           /* for(int i=0;i<_StateBodies.size();i++)
             {
                 for(int j=0;j<_StateBodies[0].size();j++)
                 {
@@ -254,7 +251,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
                 }
                 std::cout <<"Coll  "<<collision[i];
                 std::cout<<std::endl;
-            }
+            }*/
             }
             _solved = true;
 
