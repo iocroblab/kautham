@@ -1019,7 +1019,7 @@ namespace Kautham {
                        KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]){
       Link* temp = new Link(ivFile, collision_ivFile, this->getScale(), Approach, libs);
       temp->setName(name);
-      temp->setMovable(movable);
+      temp->setMovable(movable && (low != hi));
       temp->setRotational(rotational);
       temp->setDHPars(theta, scale*d, scale*a, alpha);
       if (rotational) {
@@ -1054,7 +1054,7 @@ namespace Kautham {
 
       Link* temp = new Link(visual_model, collision_model, scale, Approach, libs);
       temp->setName(name);
-      temp->setMovable(movable);
+      temp->setMovable(movable && (low != hi));
       temp->setRotational(rotational);
       temp->setAxis(axis);
       temp->setDHPars(0., 0., 0., 0.);//defaults to zero
