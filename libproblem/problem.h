@@ -194,7 +194,7 @@ namespace Kautham {
      * \param cntrFile file where controls are defined
      * \return true if controls could be loaded to the workspace
      */
-    bool addRobotControls2WSpace(string cntrFile);
+    bool setRobotControls(string cntrFile);
 
     /*!
      * \brief loads an obstacle node of the problem file,
@@ -211,7 +211,7 @@ namespace Kautham {
      * \param cntrFile file where controls are defined
      * \return true if controls could be loaded to the workspace
      */
-    bool addObstacleControls2WSpace(string cntrFile);
+    bool setObstacleControls(string cntrFile);
 
     /*!
      * \brief isFileOK checks if all the information required
