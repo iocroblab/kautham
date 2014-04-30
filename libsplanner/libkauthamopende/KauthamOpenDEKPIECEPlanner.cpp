@@ -20,64 +20,63 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Joan Fontanals Martinez, Muhayyuddin */
+/* Author: Muhayyuddin */
 
 
 #if defined(KAUTHAM_USE_OMPL)
 #if defined(KAUTHAM_USE_ODE)
 
-#include "KauthamOpenDERRTPlanner.h"
+#include "KauthamOpenDEKPIECEPlanner.h"
 #include <libsampling/state.h>
 namespace Kautham {
 
 namespace omplcplanner{
 
-//EL planner es basa en l'exemple de OpenDERigidBodyPlanning.
-//Es crea el Environment,el State Space, i el simple setup. Se li diu que el goal es de la classe KAuthamDEGoal i es planifica mitjançant el simple setup després d'haverli declarat el planner i els bounds.
 
-// The planner is based on the example of OpenDERigidBodyPlanning. 
-// Create the Environment, the State Space, and simple setup. It is said that the Goal class KAuthamDEGoal and planning through simple setup after haverli declared planner and Bounds.
 /*! Constructor create the dynamic environment, and setup all the parameters for planning.
  * it defines simple setup, Planner and Planning parameters.
  */
-KauthamDERRTPlanner::KauthamDERRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+KauthamDEKPIECEPlanner::KauthamDEKPIECEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
       KauthamDEPlanner(stype, init, goal, samples, ws)
   {
       //set intial values from parent class data
-      _guiName = "ompl ODE RRT Planner";
-      _idName = "omplODERRTPlanner";
+      _guiName = "ompl ODE KPIECE Planner";
+      _idName = "omplODEKPIECEPlanner";
        dInitODE2(0);
 
      ss = new oc::OpenDESimpleSetup(stateSpacePtr);
      oc::SpaceInformationPtr si=ss->getSpaceInformation();
-     ob::PlannerPtr planner(new oc::RRT(si));
 
-     //set RRT Ggoal Bias
-     _GoalBias=(planner->as<oc::RRT>())->getGoalBias();
-     addParameter("Goal Bias", _GoalBias);
-     planner->as<oc::RRT>()->setGoalBias(_GoalBias);
 
+
+     ob::PlannerPtr planner(new oc::KPIECE1(si));
+     //set planner parameters: range and goalbias
+
+     _GoalBias=(planner->as<oc::KPIECE1>())->getGoalBias();
+
+     planner->as<oc::KPIECE1>()->setGoalBias(_GoalBias);
      //set the planner
      ss->setPlanner(planner);
 
 }
 //! void destructor
-  KauthamDERRTPlanner::~KauthamDERRTPlanner(){
+  KauthamDEKPIECEPlanner::~KauthamDEKPIECEPlanner(){
 
   }
-//! this function set the necessary parameters for RRT Planner.
-  bool KauthamDERRTPlanner::setParameters()
+//! this function set the necessary parameters for KAPIECE Planner.
+  bool KauthamDEKPIECEPlanner::setParameters()
   {
-      try{
-          HASH_S_K::iterator it = _parameters.find("Goal Bias");
-          if(it != _parameters.end()){
-              _GoalBias = it->second;
-              ss->getPlanner()->as<oc::RRT>()->setGoalBias(_GoalBias);
-          }
-          else
-            return false;
 
-      }catch(...){
+      try{
+        HASH_S_K::iterator it = _parameters.find("Goal Bias");
+        if(it != _parameters.end()){
+            _GoalBias = it->second;
+            ss->getPlanner()->as<oc::KPIECE1>()->setGoalBias(_GoalBias);
+        }
+        else
+          return false;
+
+         }catch(...){
         return false;
       }
       return true;

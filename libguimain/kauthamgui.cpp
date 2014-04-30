@@ -32,7 +32,10 @@
 #include <libproblem/ivworkspace.h>
 #include <libkthutil/kauthamdefs.h>
 #include "application.h"
-#include <libgui/dofwidget.h>
+#include <libgui/dofwidget.h> 
+#include <QApplication>
+#include <QWidget>
+#include <Inventor/Qt/SoQt.h>
 
 
 Application::Application() {
@@ -292,6 +295,20 @@ bool Application::problemSetup(string path){
 
     mainWindow->setCursor(QCursor(Qt::ArrowCursor));
     return true;
+}
+
+int main(int argc, char* argv[]){       
+
+    try{
+        QWidget *app = SoQt::init(argv[0]);//argc, argv,argv[0]);
+        app->setVisible(false);
+        Application kauthApp;
+        SoQt::mainLoop();
+        return 0;
+    }
+    catch(...){
+            std::cout <<"Unexpected error in Kautham initialization"<<endl;
+        }
 }
 
 

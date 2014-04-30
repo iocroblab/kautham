@@ -61,9 +61,9 @@ namespace Kautham {
           if (!addRobot2WSpace(&tmpNode)) return false;
       }
 
-      //add robot controls to worskpace
-      if (!addRobotControls2WSpace(doc->child("Problem").child("Controls").
-                              attribute("robot").as_string())) return false;
+      //set robot controls
+      if (!setRobotControls(doc->child("Problem").child("Controls").
+                            attribute("robot").as_string())) return false;
 
       //add all obstacles to worskpace
       for (tmpNode = doc->child("Problem").child("Obstacle");
@@ -71,9 +71,9 @@ namespace Kautham {
           if (!addObstacle2WSpace(&tmpNode)) return false;
       }
 
-      //add obstacle controls to workspace
-      if (!addObstacleControls2WSpace(doc->child("Problem").child("Controls").
-                              attribute("obstacle").as_string())) return false;
+      //set obstacle controls
+      if (!setObstacleControls(doc->child("Problem").child("Controls").
+                               attribute("obstacle").as_string())) return false;
 
       //add all distance maps to worskpace
       for (tmpNode = doc->child("Problem").child("DistanceMap");
@@ -270,6 +270,12 @@ namespace Kautham {
 
         _planner  = new   omplcplanner::KauthamDERRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
        }
+      else if(name == "omplODEKPIECEPlanner")
+         {
+
+          _planner  = new   omplcplanner::KauthamDEKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+         }
+
 #endif
       else
       cout<<"Planner "<< name <<" is unknow or not loaded (check the CMakeFiles.txt options)" << endl;
@@ -295,7 +301,7 @@ namespace Kautham {
                       name = it->name();
                       try{
                           if( name == "Parameter" ){
-                              name = it->attribute("name").value();
+                              name = it->attribute("name").as_string();
                               _planner->setParametersFromString( name.append("|").append(it->child_value()));
                           }
                       }catch(...){
@@ -473,11 +479,6 @@ namespace Kautham {
 
       //a correct problem file must have at least a robot node
       if (!doc->child("Problem").child("Robot").attribute("robot")) {
-          return false;
-      }
-
-      //a correct problem file must have a robot controls node
-      if (!doc->child("Problem").child("Controls").attribute("robot")) {
           return false;
       }
 
@@ -684,10 +685,10 @@ namespace Kautham {
       string name;
 
 #ifndef KAUTHAM_COLLISION_PQP
-      rob = new Robot(robot_node->attribute("robot").value(),
+      rob = new Robot(robot_node->attribute("robot").as_string(),
                       (KthReal)robot_node->attribute("scale").as_double(),INVENTOR);
 #else
-      rob = new Robot(robot_node->attribute("robot").value(),
+      rob = new Robot(robot_node->attribute("robot").as_string(),
                       (KthReal)robot_node->attribute("scale").as_double(),IVPQP);
 #endif
 
@@ -695,7 +696,7 @@ namespace Kautham {
 
       // Setup the Inverse Kinematic if it has one.
       if(robot_node->child("InvKinematic")){
-          name = robot_node->child("InvKinematic").attribute("name").value();
+          name = robot_node->child("InvKinematic").attribute("name").as_string();
           if( name == "RR2D" )
               rob->setInverseKinematic( Kautham::RR2D );
           else if( name == "TX90")
@@ -715,7 +716,7 @@ namespace Kautham {
 
       // Setup the Constrained Kinematic if it has one.
       if(robot_node->child("ConstrainedKinematic")){
-          name = robot_node->child("ConstrainedKinematic").attribute("name").value();
+          name = robot_node->child("ConstrainedKinematic").attribute("name").as_string();
 
           rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
 #if defined(KAUTHAM_USE_GUIBRO)
@@ -735,54 +736,57 @@ namespace Kautham {
       }
 
       // Setup the limits of the moveable base
-      for(xml_node_iterator itL = robot_node->begin(); itL != robot_node->end(); ++itL){
-          name = (*itL).name();
-          if( name == "Limits" ){
-              name = (*itL).attribute("name").value();
-              if( name == "X")
-                  rob->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "Y")
-                  rob->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "Z")
-                  rob->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "WX")
-                  rob->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "WY")
-                  rob->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "WZ")
-                  rob->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "TH")
-                  rob->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
-                                 (KthReal)(*itL).attribute("max").as_double() * _toRad);
+      xml_node limits_node = robot_node->child("Limits");
+      while (limits_node) {
+          name = limits_node.attribute("name").as_string();
+          if (name == "X") {
+              rob->setLimits(0, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "Y") {
+              rob->setLimits(1, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "Z") {
+              rob->setLimits(2, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "WX") {
+              rob->setLimits(3, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "WY") {
+              rob->setLimits(4, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "WZ") {
+              rob->setLimits(5, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "TH") {
+              rob->setLimits(6, (KthReal)limits_node.attribute("min").as_double() * _toRad,
+                             (KthReal)limits_node.attribute("max").as_double() * _toRad);
           }
-          if( name == "Home" ){
-              // If robot hasn't a home, it will be assumed in the origin.
-              SE3Conf tmpC;
-              vector<KthReal> cords(7);
-              cords[0] = (KthReal)(*itL).attribute("X").as_double();
-              cords[1] = (KthReal)(*itL).attribute("Y").as_double();
-              cords[2] = (KthReal)(*itL).attribute("Z").as_double();
-              cords[3] = (KthReal)(*itL).attribute("WX").as_double();
-              cords[4] = (KthReal)(*itL).attribute("WY").as_double();
-              cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
-              cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
 
-              // Here is needed to convert from axis-angle to
-              // quaternion internal represtantation.
-              SE3Conf::fromAxisToQuaternion(cords);
+          limits_node = limits_node.next_sibling("Limits");
+      }
 
-              tmpC.setCoordinates(cords);
+      xml_node home_node = robot_node->child("Home");
+      if (home_node) {
+          // If robot hasn't a home, it will be assumed in the origin.
+          SE3Conf tmpC;
+          vector<KthReal> cords(7);
+          cords[0] = (KthReal)home_node.attribute("X").as_double();
+          cords[1] = (KthReal)home_node.attribute("Y").as_double();
+          cords[2] = (KthReal)home_node.attribute("Z").as_double();
+          cords[3] = (KthReal)home_node.attribute("WX").as_double();
+          cords[4] = (KthReal)home_node.attribute("WY").as_double();
+          cords[5] = (KthReal)home_node.attribute("WZ").as_double();
+          cords[6] = (KthReal)home_node.attribute("TH").as_double() * _toRad;
 
-              //cout << tmpC.print();
+          // Here is needed to convert from axis-angle to
+          // quaternion internal represtantation.
+          SE3Conf::fromAxisToQuaternion(cords);
 
-              rob->setHomePos(&tmpC);
-          }
+          tmpC.setCoordinates(cords);
+
+          //cout << tmpC.print();
+
+          rob->setHomePos(&tmpC);
       }
 
       _wspace->addRobot(rob);
@@ -790,200 +794,310 @@ namespace Kautham {
       return true;
   }
 
-  bool Problem::addRobotControls2WSpace(string cntrFile) {
-      if (exists(cntrFile)) { // The file already exists.
-          if (cntrFile.find(".cntr",0) != string::npos) { // It means that controls are defined by a *.cntr file
-              //Opening the file with the new pugiXML library.
-              xml_document doc;
+  bool Problem::setRobotControls(string cntrFile) {
+      //Once the robots were added, the controls can be configured
+      if (cntrFile != "") {//the robo control will be the ones in the controls file
+          if (exists(cntrFile)) { // The file already exists.
+              if (cntrFile.find(".cntr",0) != string::npos) { // It means that controls are defined by a *.cntr file
+                  //Opening the file with the new pugiXML library.
+                  xml_document doc;
 
-              //Parse the cntr file
-              if (doc.load_file(cntrFile.c_str())){
-                  //Once the robots were added, the controls can be configured
-                  int numControls = 0;
-                  string controlsName = "";
-                  xml_node tmpNode = doc.child("ControlSet").child("Control");
-                  while (tmpNode) {
-                      numControls++;
-                      if (controlsName != "") controlsName.append("|");
-                      controlsName.append(tmpNode.attribute("name").as_string());
-                      tmpNode = tmpNode.next_sibling("Control");
-                  }
-                  _wspace->setNumRobControls(numControls);
-                  _wspace->setRobControlsName(controlsName);
-
-                  //Creating the mapping and offset Matrices between controls
-                  //and DOF parameters and initializing them.
-                  int numRob = _wspace->getNumRobots();
-                  KthReal ***mapMatrix;
-                  KthReal **offMatrix;
-                  mapMatrix = new KthReal**[numRob];
-                  offMatrix = new KthReal*[numRob];
-                  int numDOFs;
-                  for (int i = 0; i < numRob; i++) {
-                      numDOFs = _wspace->getRobot(i)->getNumJoints()+6;
-                      mapMatrix[i] = new KthReal*[numDOFs];
-                      offMatrix[i] = new KthReal[numDOFs];
-                      for (int j = 0; j < numDOFs; j++) {
-                          mapMatrix[i][j] = new KthReal[numControls];
-                          offMatrix[i][j] = (KthReal)0.5;
-                          for (int k = 0; k < numControls; k++) {
-                              mapMatrix[i][j][k] = (KthReal)0.0;
-                          }
+                  //Parse the cntr file
+                  if (doc.load_file(cntrFile.c_str())){
+                      int numControls = 0;
+                      string controlsName = "";
+                      xml_node tmpNode = doc.child("ControlSet").child("Control");
+                      while (tmpNode) {
+                          numControls++;
+                          if (controlsName != "") controlsName.append("|");
+                          controlsName.append(tmpNode.attribute("name").as_string());
+                          tmpNode = tmpNode.next_sibling("Control");
                       }
-                  }
+                      _wspace->setNumRobControls(numControls);
+                      _wspace->setRobControlsName(controlsName);
 
-                  //Load the Offset vector
-                  tmpNode = doc.child("ControlSet").child("Offset");
-                  xml_node::iterator it;
-                  string dofName, robotName, tmpstr;
-                  for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
-                      tmpstr = (*it).attribute("name").as_string();
-                      unsigned found = tmpstr.find_last_of("/");
-                      if (found == string::npos) {
-                          return (false);
-                      }
-                      dofName = tmpstr.substr(found+1);
-                      robotName = tmpstr.substr(0,found);
-
-                      //Find the robot index into the robots vector
-                      int i = 0;
-                      bool robot_found = false;
-                      while (!robot_found && i < numRob) {
-                          if (_wspace->getRobot(i)->getName() == robotName) {
-                              robot_found = true;
-                          } else {
-                              i++;
-                          }
-                      }
-
-                      if (!robot_found) {
-                          return (false);
-                      }
-
-                      if( dofName == "X"){
-                          _wspace->getRobot(i)->setSE3(true);
-                          offMatrix[i][0] = (KthReal)(*it).attribute("value").as_double();
-                      }else if( dofName == "Y"){
-                          _wspace->getRobot(i)->setSE3(true);
-                          offMatrix[i][1] = (KthReal)(*it).attribute("value").as_double();
-                      }else if( dofName == "Z"){
-                          _wspace->getRobot(i)->setSE3(true);
-                          offMatrix[i][2] = (KthReal)(*it).attribute("value").as_double();
-                      }else if( dofName == "X1"){
-                          _wspace->getRobot(i)->setSE3(true);
-                          offMatrix[i][3] = (KthReal)(*it).attribute("value").as_double();
-                      }else if( dofName == "X2"){
-                          _wspace->getRobot(i)->setSE3(true);
-                          offMatrix[i][4] = (KthReal)(*it).attribute("value").as_double();
-                      }else if( dofName == "X3"){
-                          _wspace->getRobot(i)->setSE3(true);
-                          offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
-                      }else{    // It's not a SE3 control and could have any name.
-                          // Find the index orden into the links vector without the first static link.
-                          for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
-                              if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
-                                  offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
-                                  break;
+                      //Creating the mapping and offset Matrices between controls
+                      //and DOF parameters and initializing them.
+                      int numRob = _wspace->getNumRobots();
+                      KthReal ***mapMatrix;
+                      KthReal **offMatrix;
+                      mapMatrix = new KthReal**[numRob];
+                      offMatrix = new KthReal*[numRob];
+                      int numDOFs;
+                      for (int i = 0; i < numRob; i++) {
+                          numDOFs = _wspace->getRobot(i)->getNumJoints()+6;
+                          mapMatrix[i] = new KthReal*[numDOFs];
+                          offMatrix[i] = new KthReal[numDOFs];
+                          for (int j = 0; j < numDOFs; j++) {
+                              mapMatrix[i][j] = new KthReal[numControls];
+                              offMatrix[i][j] = (KthReal)0.5;
+                              for (int k = 0; k < numControls; k++) {
+                                  mapMatrix[i][j][k] = (KthReal)0.0;
                               }
+                          }
                       }
-                  }//End processing Offset vector
 
-                  //Process the controls to load the mapMatrix
-                  tmpNode = doc.child("ControlSet");
-                  string nodeType = "";
-                  int cont = 0;
-                  for(it = tmpNode.begin(); it != tmpNode.end(); ++it){
-                      nodeType = it->name();
-                      if( nodeType == "Control" ){
-                          xml_node::iterator itDOF;
-                          KthReal eigVal = 1;
-                          if ((*it).attribute("eigValue")) {
-                              eigVal = (KthReal) (*it).attribute("eigValue").as_double();
+                      //Load the Offset vector
+                      tmpNode = doc.child("ControlSet").child("Offset");
+                      xml_node::iterator it;
+                      string dofName, robotName, tmpstr;
+                      for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
+                          tmpstr = (*it).attribute("name").as_string();
+                          unsigned found = tmpstr.find_last_of("/");
+                          if (found == string::npos) {
+                              return (false);
+                          }
+                          dofName = tmpstr.substr(found+1);
+                          robotName = tmpstr.substr(0,found);
+
+                          //Find the robot index into the robots vector
+                          int i = 0;
+                          bool robot_found = false;
+                          while (!robot_found && i < numRob) {
+                              if (_wspace->getRobot(i)->getName() == robotName) {
+                                  robot_found = true;
+                              } else {
+                                  i++;
+                              }
                           }
 
-                          for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
-                              tmpstr = itDOF->attribute("name").as_string();
-                              unsigned found = tmpstr.find_last_of("/");
-                              if (found == string::npos) {
-                                  return (false);
-                              }
-                              dofName = tmpstr.substr(found+1);
-                              robotName = tmpstr.substr(0,found);
+                          if (!robot_found) {
+                              return (false);
+                          }
 
-                              //Find the robot index into the robots vector
-                              int i = 0;
-                              bool robot_found = false;
-                              while (!robot_found && i < numRob) {
-                                  if (_wspace->getRobot(i)->getName() == robotName) {
-                                      robot_found = true;
-                                  } else {
-                                      i++;
+                          if( dofName == "X"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              offMatrix[i][0] = (KthReal)(*it).attribute("value").as_double();
+                          }else if( dofName == "Y"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              offMatrix[i][1] = (KthReal)(*it).attribute("value").as_double();
+                          }else if( dofName == "Z"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              offMatrix[i][2] = (KthReal)(*it).attribute("value").as_double();
+                          }else if( dofName == "X1"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              offMatrix[i][3] = (KthReal)(*it).attribute("value").as_double();
+                          }else if( dofName == "X2"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              offMatrix[i][4] = (KthReal)(*it).attribute("value").as_double();
+                          }else if( dofName == "X3"){
+                              _wspace->getRobot(i)->setSE3(true);
+                              offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
+                          }else{    // It's not a SE3 control and could have any name.
+                              // Find the index orden into the links vector without the first static link.
+                              for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
+                                  if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
+                                      offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
+                                      break;
+                                  }
+                          }
+                      }//End processing Offset vector
+
+                      //Process the controls to load the mapMatrix
+                      tmpNode = doc.child("ControlSet");
+                      string nodeType = "";
+                      int cont = 0;
+                      for(it = tmpNode.begin(); it != tmpNode.end(); ++it){
+                          nodeType = it->name();
+                          if( nodeType == "Control" ){
+                              xml_node::iterator itDOF;
+                              KthReal eigVal = 1;
+                              if ((*it).attribute("eigValue")) {
+                                  eigVal = (KthReal) (*it).attribute("eigValue").as_double();
+                              }
+
+                              for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
+                                  tmpstr = itDOF->attribute("name").as_string();
+                                  unsigned found = tmpstr.find_last_of("/");
+                                  if (found == string::npos) {
+                                      return (false);
+                                  }
+                                  dofName = tmpstr.substr(found+1);
+                                  robotName = tmpstr.substr(0,found);
+
+                                  //Find the robot index into the robots vector
+                                  int i = 0;
+                                  bool robot_found = false;
+                                  while (!robot_found && i < numRob) {
+                                      if (_wspace->getRobot(i)->getName() == robotName) {
+                                          robot_found = true;
+                                      } else {
+                                          i++;
+                                      }
+                                  }
+
+                                  if (!robot_found) {
+                                      return (false);
+                                  }
+
+                                  if( dofName == "X"){
+                                      _wspace->getRobot(i)->setSE3(true);
+                                      mapMatrix[i][0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                  }else if( dofName == "Y"){
+                                      _wspace->getRobot(i)->setSE3(true);
+                                      mapMatrix[i][1][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                  }else if( dofName == "Z"){
+                                      _wspace->getRobot(i)->setSE3(true);
+                                      mapMatrix[i][2][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                  }else if( dofName == "X1"){
+                                      _wspace->getRobot(i)->setSE3(true);
+                                      mapMatrix[i][3][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                  }else if( dofName == "X2"){
+                                      _wspace->getRobot(i)->setSE3(true);
+                                      mapMatrix[i][4][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                  }else if( dofName == "X3"){
+                                      _wspace->getRobot(i)->setSE3(true);
+                                      mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                  }else{  // It's not a SE3 control and could have any name.
+                                      // Find the index orden into the links vector without the first static link.
+                                      for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
+                                          if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
+                                              mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                                              break;
+                                          }
                                   }
                               }
 
-                              if (!robot_found) {
-                                  return (false);
-                              }
+                              cont++;
+                          }// closing if(nodeType == "Control" )
+                      }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
 
-                              if( dofName == "X"){
-                                  _wspace->getRobot(i)->setSE3(true);
-                                  mapMatrix[i][0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                              }else if( dofName == "Y"){
-                                  _wspace->getRobot(i)->setSE3(true);
-                                  mapMatrix[i][1][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                              }else if( dofName == "Z"){
-                                  _wspace->getRobot(i)->setSE3(true);
-                                  mapMatrix[i][2][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                              }else if( dofName == "X1"){
-                                  _wspace->getRobot(i)->setSE3(true);
-                                  mapMatrix[i][3][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                              }else if( dofName == "X2"){
-                                  _wspace->getRobot(i)->setSE3(true);
-                                  mapMatrix[i][4][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                              }else if( dofName == "X3"){
-                                  _wspace->getRobot(i)->setSE3(true);
-                                  mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                              }else{  // It's not a SE3 control and could have any name.
-                                  // Find the index orden into the links vector without the first static link.
-                                  for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
-                                      if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
-                                          mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
-                                          break;
-                                      }
-                              }
-                          }
-
-                          cont++;
-                      }// closing if(nodeType == "Control" )
-                  }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
-
-                  for (int i = 0; i < numRob; i++) {
-                      _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
-                      /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
+                      for (int i = 0; i < numRob; i++) {
+                          _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
+                          /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
                       for (int k = 0; k < numControls; k++) {
                           cout << mapMatrix[i][j][k] << " ";
                       }
                       cout << endl;
                   }
                   cout << endl;*/
-                      _wspace->getRobot(i)->setOffMatrix(offMatrix[i]);
-                      /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
+                          _wspace->getRobot(i)->setOffMatrix(offMatrix[i]);
+                          /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
                       cout << offMatrix[i][j] << endl;
                   }
                   cout << endl;*/
-                  }
-                  return (true);
+                      }
 
-              }else  {// the result of the file pasers is bad
-                  cout << "The cntr file: " << cntrFile << " can not be read." << std::endl;
-                  return (false);
+                      return (true);
+                  } else {// the result of the file pasers is bad
+                      cout << "The cntr file: " << cntrFile << " can not be read." << std::endl;
+                      return (false);
+                  }
+              }
+          } else { // File does not exists.
+              cout << "The control file: " << cntrFile << "doesn't exist. Please confirm it." << endl;
+              return (false);
+          }
+      } else {//default controls will be set
+          //get the number of really movable DOF for all the robots
+          int numRob = _wspace->getNumRobots();
+          int numControls = 0;
+          Robot *rob;
+          for (uint i = 0; i < numRob; i++) {
+              rob = _wspace->getRobot(i);
+
+              //for X, Y and Z
+              for (uint j = 0; j < 3; j++) {
+                  if (rob->getLimits(j)[0] != rob->getLimits(j)[1]) {
+                      numControls++;
+                  }
+              }
+
+              //for X1, X2, X3
+              numControls += 3;
+
+              //for all the links but the base
+              for (uint j = 1; j < rob->getNumLinks(); j++) {
+                  if (rob->getLink(j)->getMovable()) {
+                      numControls++;
+                  }
               }
           }
-      }else{ // File does not exists.
-          cout << "The control file: " << cntrFile << "doesn't exist. Please confirm it." << endl;
-          return (false);
-      }
+          _wspace->setNumRobControls(numControls);
 
+          KthReal ***mapMatrix;
+          KthReal **offMatrix;
+          mapMatrix = new KthReal**[numRob];
+          offMatrix = new KthReal*[numRob];
+          string controlsName;
+          string robotName;
+          string DOFname;
+          bool movDOF;
+          int numDOFs;
+          Link *link;
+          int c = 0;
+
+          //create and set the matrices and get the name of the controls
+          for (uint i = 0; i < numRob; i++) {
+              rob = _wspace->getRobot(i);
+              robotName = rob->getName();
+              rob->setSE3(true);//At least X1, X2 and X3 are movable
+              numDOFs = 6 + rob->getNumJoints();
+              mapMatrix[i] = new KthReal*[numDOFs];
+              offMatrix[i] = new KthReal[numDOFs];
+              for (uint j = 0; j < numDOFs; j++) {
+                  offMatrix[i][j] = (KthReal)0.5;
+                  mapMatrix[i][j] = new KthReal[numControls];
+
+                  for (uint k = 0; k < numControls; k++) {
+                      mapMatrix[i][j][k] = (KthReal)0.0;
+                  }
+
+                  movDOF = false;
+                  switch (j) {
+                  case 0://X
+                      if (rob->getLimits(j)[0] != rob->getLimits(j)[1]) {
+                          movDOF = true;
+                          DOFname = "X";
+                      }
+                      break;
+                  case 1://Y
+                      if (rob->getLimits(j)[0] != rob->getLimits(j)[1]) {
+                          movDOF = true;
+                          DOFname = "Y";
+                      }
+                      break;
+                  case 2://Z
+                      if (rob->getLimits(j)[0] != rob->getLimits(j)[1]) {
+                          movDOF = true;
+                          DOFname = "Z";
+                      }
+                      break;
+                  case 3://X1
+                      movDOF = true;
+                      DOFname = "X1";
+                      break;
+                  case 4://X2
+                      movDOF = true;
+                      DOFname = "X2";
+                      break;
+                  case 5://X3
+                      movDOF = true;
+                      DOFname = "X3";
+                      break;
+                  default://a joint
+                      link = rob->getLink(j-5);
+                      if (link->getMovable()) {
+                          movDOF = true;
+                          DOFname = link->getName();
+                      }
+                      break;
+                  }
+                  if (movDOF) {
+                      if (controlsName != "") controlsName.append("|");
+                      controlsName.append(robotName+"/"+DOFname);
+                      mapMatrix[i][j][c] = (KthReal)1.0;
+                      c++;
+                  }
+              }
+
+              rob->setMapMatrix(mapMatrix[i]);
+              rob->setOffMatrix(offMatrix[i]);
+          }
+          _wspace->setRobControlsName(controlsName);
+
+          return (true);
+      }
   }
 
   bool Problem::addObstacle2WSpace(xml_node *obstacle_node) {
@@ -991,69 +1105,71 @@ namespace Kautham {
       string name;
 
 #ifndef KAUTHAM_COLLISION_PQP
-      obs = new Robot(obstacle_node->attribute("obstacle").value(),
+      obs = new Robot(obstacle_node->attribute("obstacle").as_string(),
                       (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR);
 #else
-      obs = new Robot(obstacle_node->attribute("obstacle").value(),
+      obs = new Robot(obstacle_node->attribute("obstacle").as_string(),
                       (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP);
 #endif
 
       if (!obs->isArmed()) return false;
 
       // Setup the limits of the moveable base
-      for(xml_node_iterator itL = obstacle_node->begin(); itL != obstacle_node->end(); ++itL){
-          name = (*itL).name();
-          if( name == "Limits" ){
-              name = (*itL).attribute("name").value();
-              if( name == "X")
-                  obs->setLimits(0, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "Y")
-                  obs->setLimits(1, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "Z")
-                  obs->setLimits(2, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "WX")
-                  obs->setLimits(3, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "WY")
-                  obs->setLimits(4, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "WZ")
-                  obs->setLimits(5, (KthReal)(*itL).attribute("min").as_double(),
-                                 (KthReal)(*itL).attribute("max").as_double());
-              else if( name == "TH")
-                  obs->setLimits(6, (KthReal)(*itL).attribute("min").as_double() * _toRad,
-                                 (KthReal)(*itL).attribute("max").as_double() * _toRad);
+      xml_node limits_node = obstacle_node->child("Limits");
+      while (limits_node) {
+          name = limits_node.attribute("name").as_string();
+          if (name == "X") {
+              obs->setLimits(0, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "Y") {
+              obs->setLimits(1, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "Z") {
+              obs->setLimits(2, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "WX") {
+              obs->setLimits(3, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "WY") {
+              obs->setLimits(4, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "WZ") {
+              obs->setLimits(5, (KthReal)limits_node.attribute("min").as_double(),
+                             (KthReal)limits_node.attribute("max").as_double());
+          } else if (name == "TH") {
+              obs->setLimits(6, (KthReal)limits_node.attribute("min").as_double() * _toRad,
+                             (KthReal)limits_node.attribute("max").as_double() * _toRad);
           }
-          if( name == "Home" ){
-              // If obstacle hasn't a home, it will be assumed in the origin.
-              SE3Conf tmpC;
-              vector<KthReal> cords(7);
-              cords[0] = (KthReal)(*itL).attribute("X").as_double();
-              cords[1] = (KthReal)(*itL).attribute("Y").as_double();
-              cords[2] = (KthReal)(*itL).attribute("Z").as_double();
-              cords[3] = (KthReal)(*itL).attribute("WX").as_double();
-              cords[4] = (KthReal)(*itL).attribute("WY").as_double();
-              cords[5] = (KthReal)(*itL).attribute("WZ").as_double();
-              cords[6] = (KthReal)(*itL).attribute("TH").as_double() * _toRad;
 
-              // Here is needed to convert from axis-angle to
-              // quaternion internal represtantation.
-              SE3Conf::fromAxisToQuaternion(cords);
+          limits_node = limits_node.next_sibling("Limits");
+      }
 
-              tmpC.setCoordinates(cords);
+      xml_node home_node = obstacle_node->child("Home");
+      if (home_node) {
+          // If robot hasn't a home, it will be assumed in the origin.
+          SE3Conf tmpC;
+          vector<KthReal> cords(7);
+          cords[0] = (KthReal)home_node.attribute("X").as_double();
+          cords[1] = (KthReal)home_node.attribute("Y").as_double();
+          cords[2] = (KthReal)home_node.attribute("Z").as_double();
+          cords[3] = (KthReal)home_node.attribute("WX").as_double();
+          cords[4] = (KthReal)home_node.attribute("WY").as_double();
+          cords[5] = (KthReal)home_node.attribute("WZ").as_double();
+          cords[6] = (KthReal)home_node.attribute("TH").as_double() * _toRad;
 
-              //cout << tmpC.print();
+          // Here is needed to convert from axis-angle to
+          // quaternion internal represtantation.
+          SE3Conf::fromAxisToQuaternion(cords);
 
-              obs->setHomePos(&tmpC);
-          }
-          if(name == "Collision" ){
-              if (itL->attribute("enabled")) {
-                  obs->setCollisionable(itL->attribute("Enabled").as_bool());
-              }
-          }
+          tmpC.setCoordinates(cords);
+
+          //cout << tmpC.print();
+
+          obs->setHomePos(&tmpC);
+      }
+
+      if (obstacle_node->child("Collision").attribute("enabled")){
+          obs->setCollisionable(obstacle_node->child("Collision").attribute("enabled").as_bool());
       }
 
       _wspace->addObstacle(obs);
@@ -1061,7 +1177,7 @@ namespace Kautham {
       return true;
   }
 
-  bool Problem::addObstacleControls2WSpace(string cntrFile) {
+  bool Problem::setObstacleControls(string cntrFile) {
       if (exists(cntrFile)) { // The file already exists.
           string::size_type loc = cntrFile.find( ".cntr", 0 );
           if( loc != string::npos ) { // It means that controls are defined by a *.cntr file
