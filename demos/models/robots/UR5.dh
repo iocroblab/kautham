@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="UR5" DHType="Modified" robType="Chain">
+
+  <WeightSE3 rho_t="1.0" rho_r="1.0" />
+  <Joints size="7">
+    <Joint name="Base" ivFile="UR5/Base.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="false" movable="false"  ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name=""></Parent>
+    </Joint>
+    
+    <Joint name="Shoulder" ivFile="UR5/Shoulder.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="89.159"  ></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="360.0" Low="-360.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Base"></Parent>
+    </Joint>
+    
+    <Joint name="ForeArm" ivFile="UR5/Upperarm.wrl">
+      <DHPars  alpha="-90.0" a="0" theta="-90.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="360.0" Low="-360.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Shoulder"></Parent>
+    </Joint>
+    
+    <Joint name="UpperArm" ivFile="UR5/Forearm.wrl">
+      <DHPars  alpha="0" a="425" theta="0" d="0"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="360.0" Low="-360.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="ForeArm"></Parent>
+    </Joint>
+    
+    <Joint name="Wrist1" ivFile="UR5/Wrist1.wrl">
+      <DHPars  alpha="0" a="392.25" theta="-90.0" d="109.15"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="45.0" Low="-180.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="UpperArm"></Parent>
+    </Joint>
+    
+    <Joint name="Wrist2" ivFile="UR5/Wrist2.wrl">
+      <DHPars  alpha="90" a="0" theta="0.0" d="-94.65"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Wrist1"></Parent>
+    </Joint>
+    
+    <Joint name="Wrist3" ivFile="UR5/Wrist3.wrl">
+      <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="82.3"></DHPars>
+      <Description rotational="true" movable="true"   ></Description>
+      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Weight weight="1.0"></Weight>
+      <Parent name="Wrist2"></Parent>
+    </Joint>
+  </Joints>
+
+</Robot>
+
