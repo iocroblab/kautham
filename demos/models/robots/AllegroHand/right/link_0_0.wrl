@@ -10,7 +10,7 @@ DEF root Separator {
           VRMLGroup {
             children 
               VRMLTransform {
-                translation 0 0 0
+                translation 0 0 -16.4
                 rotation 0 0 1  0
                 scale 1000 1000 1000
                 scaleOrientation 0 0 1  0
