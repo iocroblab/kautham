@@ -82,7 +82,8 @@ namespace Kautham {
 
           //computes dstate, the se3 incremental motion
           //translation
-          mt::Vector3 advance(0.0,u[0], 0.0);//we move along the y axis when angle is zero
+          //mt::Vector3 advance(0.0,u[0], 0.0);//we move along the y axis when angle is zero
+          mt::Vector3 advance(u[0], 0.0, 0.0);//we move along the x axis when angle is zero
           mt::Vector3 v = ori(advance);
           dstate[0] = v[0];
           dstate[1] = v[1];

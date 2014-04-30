@@ -10,7 +10,7 @@ DEF root Separator {
           VRMLGroup {
             children [ 
               RotationXYZ {
-                angle 0
+                angle -1.5707964
                 axis Z
 
               },
@@ -26,7 +26,7 @@ DEF root Separator {
                     children 
                       VRMLTransform {
                         translation 0 0 0
-                        rotation 0 0 1  0
+                        rotation -1 -0 -0  1.570796
                         scale 1 1 1
                         scaleOrientation 0 0 1  0
                         center 0 0 0
