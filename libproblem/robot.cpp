@@ -91,6 +91,9 @@ namespace Kautham {
       visModel = NULL;
       collModel = NULL;
       _graphicalPath = NULL;
+      mapMatrix=NULL;
+      offMatrix=NULL;
+
       for (int i = 0; i < 7; i++) {
           for (int j = 0; j < 2; j++) {
               _homeLimits[i][j] = 0.;
@@ -164,10 +167,10 @@ namespace Kautham {
       //Parse the rob file
       if (doc.load_file(robFile.c_str())) {
           //Robot Name
-          name = doc.child("Robot").attribute("name").value();
+          name = doc.child("Robot").attribute("name").as_string();
 
           //Robot type
-          tmpString = doc.child("Robot").attribute("robType").value();
+          tmpString = doc.child("Robot").attribute("robType").as_string();
           if (tmpString == "Tree") {
               robType = TREE;
           } else if (tmpString == "Chain") {
@@ -185,7 +188,7 @@ namespace Kautham {
 
           //Type of convention used to define the robot, in case of Chain or Tree
           if (tmpString != "Freeflying") {
-              tmpString = doc.child("Robot").attribute("DHType").value();
+              tmpString = doc.child("Robot").attribute("DHType").as_string();
               if (tmpString == "Standard") {
                   Approach = DHSTANDARD;
               } else {
@@ -250,8 +253,8 @@ namespace Kautham {
 
               //Create the link
               if ((*it).attribute("collision_ivFile")) {
-                  addLink((*it).attribute("name").value(), dir + (*it).attribute("ivFile").value(),
-                          dir + (*it).attribute("collision_ivFile").value(),
+                  addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
+                          dir + (*it).attribute("collision_ivFile").as_string(),
                           (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
                           (KthReal)(*it).child("DHPars").attribute("d").as_double(),
                           (KthReal)(*it).child("DHPars").attribute("a").as_double(),
@@ -260,10 +263,10 @@ namespace Kautham {
                           (*it).child("Description").attribute("movable").as_bool(),
                           limMin, limMax,
                           (KthReal)(*it).child("Weight").attribute("weight").as_double(),
-                          (*it).child("Parent").attribute("name").value(), preTransP);
+                          (*it).child("Parent").attribute("name").as_string(), preTransP);
               } else {
-                  addLink((*it).attribute("name").value(), dir + (*it).attribute("ivFile").value(),
-                          dir + (*it).attribute("ivFile").value(),
+                  addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
+                          dir + (*it).attribute("ivFile").as_string(),
                           (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
                           (KthReal)(*it).child("DHPars").attribute("d").as_double(),
                           (KthReal)(*it).child("DHPars").attribute("a").as_double(),
@@ -272,7 +275,7 @@ namespace Kautham {
                           (*it).child("Description").attribute("movable").as_bool(),
                           limMin, limMax,
                           (KthReal)(*it).child("Weight").attribute("weight").as_double(),
-                          (*it).child("Parent").attribute("name").value(), preTransP);
+                          (*it).child("Parent").attribute("name").as_string(), preTransP);
               }
 
               if (!((Link*)links.at(i))->isArmed()) {
@@ -519,6 +522,16 @@ namespace Kautham {
       return maxim;
   }
 
+
+  void Robot::setMapMatrix(KthReal **MapMatrix) {
+      if (mapMatrix != NULL) delete mapMatrix;
+      mapMatrix = MapMatrix;
+  }
+
+  void Robot::setOffMatrix(KthReal *OffMatrix) {
+      if (offMatrix != NULL) delete offMatrix;
+      offMatrix = OffMatrix;
+  }
 
   /*! Processes the _attachedObj list to calculate the new position and
    * orientation based on the position and orientation of the robot link where the object is attached
@@ -1019,7 +1032,7 @@ namespace Kautham {
                        KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]){
       Link* temp = new Link(ivFile, collision_ivFile, this->getScale(), Approach, libs);
       temp->setName(name);
-      temp->setMovable(movable);
+      temp->setMovable(movable && (low != hi));
       temp->setRotational(rotational);
       temp->setDHPars(theta, scale*d, scale*a, alpha);
       if (rotational) {
@@ -1054,7 +1067,7 @@ namespace Kautham {
 
       Link* temp = new Link(visual_model, collision_model, scale, Approach, libs);
       temp->setName(name);
-      temp->setMovable(movable);
+      temp->setMovable(movable && (low != hi));
       temp->setRotational(rotational);
       temp->setAxis(axis);
       temp->setDHPars(0., 0., 0., 0.);//defaults to zero
