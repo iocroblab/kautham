@@ -70,7 +70,7 @@ namespace omplcplanner{
 KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed): oc::OpenDEEnvironment()
   {
       KinematicChain* chain(new KinematicChain);
-      vector<double> basePos;
+      vector<KthReal> basePos;
       _NumLinksFirstRobot=wkspace->getRobot(0)->getNumLinks();
       _maxspeed=maxspeed;
 
@@ -93,6 +93,8 @@ KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed)
 
       basePos = baseGetPos(wkspace->getObstacle(i));
       buildKinematicChain(chain, wkspace->getObstacle(i),SCALE,basePos);
+      //buildKinematicChain(chain, wkspace->getObstacle(i),SCALE,i);
+
       chainMap.insert(pair<string,KinematicChain>(chain->name,*chain));
 
       chain->objects.clear();
@@ -101,17 +103,7 @@ KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed)
       chain->motors.clear();
 
   }
-  for (int i=0; i < wkspace->obstaclesCount(); i++)
-  {
 
-      buildKinematicChain(chain, wkspace->getObstacle(i),SCALE,i);
-      chainMap.insert(pair<string,KinematicChain>(chain->name,*chain));
-
-      chain->objects.clear();
-      chain->joints.clear();
-      chain->jointsOrdered.clear();
-      chain->motors.clear();
-  }
   createWorld(wkspace);
 /*  dVector3 pos;
   dBodyCopyPosition ( stateBodies_[0], pos);
@@ -145,14 +137,12 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
     bodyworld=dWorldCreate();
    _OpenDEspace = dHashSpaceCreate(0);
 //_OpenDEspace =dSweepAndPruneSpaceCreate( 0, dSAP_AXES_XYZ );
-    for (int i=0;i < (int(wkspace->getNumRobots()); i++)
+    for (int i=0;i < (int(wkspace->getNumRobots())); i++)
     {
         for (int j=0;j< (wkspace->getRobot(i)->getNumLinks()); j++)
         {
             //intent de deduir que un objecte es un Primitive i no es un trimesh segons la dimensio del seu vector de vertex, en odeserver::buildObject aquesta decisio es pren segons req.parameters que te pinta de ser equivalent als vertexs
-
-
-// attempt to infer that an object is a Primitive and not a trimesh depending on the size of your vector vertex in odeserver :: buildObject req.parameters as this decision is that you seems to be equivalent to the vertices
+            // attempt to infer that an object is a Primitive and not a trimesh depending on the size of your vector vertex in odeserver :: buildObject req.parameters as this decision is that you seems to be equivalent to the vertices
             if (chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].vertexes.size() < 0)
             {
 
@@ -173,12 +163,12 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
         }
 
     }
-    for (int i=0;i < (int(wkspace->mobileObstaclesCount()));i++)
+    for (int i=0;i < (int(wkspace->getNumObstacles()));i++)
     {
-        for (int j=0;j < (wkspace->getMobileObstacle(i)->getNumLinks()); j++)
+        for (int j=0;j < (wkspace->getObstacle(i)->getNumLinks()); j++)
         {
             //intent de deduir que un objecte es un Primitive i no es un trimesh segons la dimensio del seu vector de vertex
-            if (chainMap[wkspace->getMobileObstacle(i)->getName()].objects[(wkspace->getMobileObstacle(i)->getName())+(wkspace->getMobileObstacle(i)->getLink(j)->getName())].vertexes.size() <= 3)
+            if (chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes.size() <= 3)
             {
                 dBodyID odebody;
                 odebody = makePrimitive(chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].position,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].orientation,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].mass,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].vertexes);
@@ -189,17 +179,26 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
             }
             else
             {
-dBodyID odebody;
-                 odebody = makeTriMesh(chainMap[wkspace->getMobileObstacle(i)->getName()].objects[(wkspace->getMobileObstacle(i)->getName())+(wkspace->getMobileObstacle(i)->getLink(j)->getName())].position,chainMap[wkspace->getMobileObstacle(i)->getName()].objects[(wkspace->getMobileObstacle(i)->getName())+(wkspace->getMobileObstacle(i)->getLink(j)->getName())].orientation,chainMap[wkspace->getMobileObstacle(i)->getName()].objects[(wkspace->getMobileObstacle(i)->getName())+(wkspace->getMobileObstacle(i)->getLink(j)->getName())].vertexes,chainMap[wkspace->getMobileObstacle(i)->getName()].objects[(wkspace->getMobileObstacle(i)->getName())+(wkspace->getMobileObstacle(i)->getLink(j)->getName())].indexes,chainMap[wkspace->getMobileObstacle(i)->getName()].objects[(wkspace->getMobileObstacle(i)->getName())+(wkspace->getMobileObstacle(i)->getLink(j)->getName())].mass);
+                dBodyID odebody;
+               const vector<double> position= chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].position;
+               const vector<double> orientation=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].orientation;
+               const vector<double> vertexes=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes;
+               const vector<unsigned int> indexes = chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].indexes;
+               double mass=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].mass;
+                // odebody = makeTriMesh(chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].position,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].orientation,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].indexes,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].mass);
+                 odebody = makeTriMesh(position,orientation,vertexes,indexes,mass);
+                 //dVector3 pos;
+                 //dBodyCopyPosition ( odebody, pos);
+                 bodies.push_back(odebody);
 
-                 stateBodiesmap_.insert(pair<string,dBodyID>((wkspace->getRobot(i)->getName()),odebody));
+                 //stateBodiesmap_.insert(pair<string,dBodyID>((wkspace->getRobot(i)->getName()),odebody));
 
                  // dBodyDestroy(odebody);
             }
         }
 
     }
-    for (int i=0;i < (int(wkspace->obstaclesCount()));i++)
+   /* for (int i=0;i < (int(wkspace->getNumObstacles()));i++)
     {
         std::string k = "";
 
@@ -207,7 +206,7 @@ dBodyID odebody;
 
         if (chainMap[k].objects[k].vertexes.size() <=3)
         {
-dBodyID odebody;
+            dBodyID odebody;
             odebody = makePrimitive(chainMap[k].objects[k].position,chainMap[k].objects[k].orientation,chainMap[k].objects[k].mass,chainMap[k].objects[k].vertexes);
 
             stateBodiesmap_.insert(pair<string,dBodyID>(k,odebody));
@@ -233,28 +232,25 @@ dBodyID odebody;
             //dBodyDestroy(odebody);
 
         }
-    }
+    }*/
 
 //setjointsandmotors2bodies(stateBodiesmap_,chainMap,wkspace);
 //vector<dBodyID> tmp;
 
-stateBodies_=fillstatebodies(stateBodiesmap_,wkspace);
+//stateBodies_=fillstatebodies(stateBodiesmap_,wkspace);
+stateBodies_=bodies;
+
+//tmp=bodies;//fillstatebodies(stateBodiesmap_,wkspace);
+
 SetPlanningParameters();
 
-// tmp=stateBodies_;
+    //tmp=stateBodies_;
     //dVector3 pos;
-    //dBodyCopyPosition ( tmp[0], pos);
+   // dBodyCopyPosition ( tmp[0], pos);
     //dVector3 pos1;
     //dBodyCopyPosition ( tmp[1], pos1);
     //dVector3 pos2;
     //dBodyCopyPosition ( tmp[2], pos2);
-
-    //stateBodies_=tmp;
-
-    //stateBodies_.push_back(tmp[0]);
-    //stateBodies_.push_back(tmp[2]);
-
-
 
 
 }
@@ -310,7 +306,7 @@ vector<dBodyID> KauthamDEEnvironment::fillstatebodies(map<string,dBodyID> stateB
 
     vector<dBodyID> bodies;
     //per si algun cop es carrega una escena només per simular sense robots
-    if(wkspace->robotsCount()<1)
+    if(wkspace->getNumRobots()<1)
     {
         for(map<string,dBodyID>::iterator it = stateBodiesmap_.begin(); it!=stateBodiesmap_.end(); ++it)
         {
@@ -324,14 +320,14 @@ vector<dBodyID> KauthamDEEnvironment::fillstatebodies(map<string,dBodyID> stateB
         {
             bodies.push_back(stateBodiesmap_[wkspace->getRobot(0)->getName()+ wkspace->getRobot(0)->getLink(0)->getName()]);
 
-            for (int i=0; i < wkspace->mobileObstaclesCount(); i++)
+            for (int i=0; i < wkspace->getNumObstacles(); i++)
             {
-                for (int j=0; j < (wkspace->getMobileObstacle(i)->getNumLinks()); j++ )
+                for (int j=0; j < (wkspace->getObstacle(i)->getNumLinks()); j++ )
                 {
-                    bodies.push_back(stateBodiesmap_[wkspace->getMobileObstacle(i)->getName()+wkspace->getMobileObstacle(i)->getLink(j)->getName()]);
+                    bodies.push_back(stateBodiesmap_[wkspace->getObstacle(i)->getName()+wkspace->getObstacle(i)->getLink(j)->getName()]);
                 }
             }
-            for (int i=0; (i < wkspace->obstaclesCount()); i++)
+            for (int i=0; (i < wkspace->getNumObstacles()); i++)
             {
                 std::string k = "";
 
@@ -355,21 +351,21 @@ vector<dBodyID> KauthamDEEnvironment::fillstatebodies(map<string,dBodyID> stateB
         else
         {
                         //omplir els cossos corresponents als links
-            for (int i=0; i < wkspace->robotsCount(); i++)
+            for (int i=0; i < wkspace->getNumRobots(); i++)
             {
                 for (int j=0; j < wkspace->getRobot(i)->getNumLinks(); j++ )
                 {
                     bodies.push_back(stateBodiesmap_[(wkspace->getRobot(i)->getName()) + (wkspace->getRobot(i)->getLink(j)->getName())]);
                 }
             }
-            for (int i=0; i < wkspace->mobileObstaclesCount(); i++)
+            for (int i=0; i < wkspace->getNumObstacles(); i++)
             {
-                for (int j=0; j < wkspace->getMobileObstacle(i)->getNumLinks(); j++ )
+                for (int j=0; j < wkspace->getObstacle(i)->getNumLinks(); j++ )
                 {
-                    bodies.push_back(stateBodiesmap_[wkspace->getMobileObstacle(i)->getName()+wkspace->getRobot(i)->getLink(j)->getName()]);
+                    bodies.push_back(stateBodiesmap_[wkspace->getObstacle(i)->getName()+wkspace->getRobot(i)->getLink(j)->getName()]);
                 }
             }
-            for (int i=0; i < wkspace->obstaclesCount(); i++)
+            for (int i=0; i < wkspace->getNumObstacles(); i++)
             {
                 std::string k = "";
 
@@ -388,7 +384,7 @@ vector<dBodyID> KauthamDEEnvironment::fillstatebodies(map<string,dBodyID> stateB
 bool KauthamDEEnvironment::buildKinematicChain(KinematicChain* chain,
                                       Robot *robot,
                                       double scale,
-                                      vector< double >& basePos)
+                                      vector< KthReal >& basePos)
 {
     //string directory = robFileName.substr(0,robFileName.find_last_of("/")+1);
     //xml_document robotXml;
@@ -752,23 +748,35 @@ bool KauthamDEEnvironment::getTransformation(KauthamDEEnvironment::KinematicChai
     return true;
 }
 
-vector<double> KauthamDEEnvironment::baseGetPos(Robot* robot)
+vector<KthReal> KauthamDEEnvironment::baseGetPos(Robot* robot)
 {
-    vector<double> basePos;
+    vector<KthReal> basePos;
+    vector<KthReal> tmp;
     //for(xml_node_iterator robotIterator = (*problemIterator).begin(); robotIterator != (*problemIterator).end(); ++robotIterator)
     //{
         //string attribute = (*robotIterator).name();
         //if("Home" == attribute)
         //{
-            basePos.push_back((robot->getLink(0)->getElement()->getPosition()[0])*SCALE);
+            /*basePos.push_back((robot->getLink(0)->getElement()->getPosition()[0])*SCALE);
             basePos.push_back((robot->getLink(0)->getElement()->getPosition()[1])*SCALE);
-            basePos.push_back((robot->getLink(0)->getElement()->getPosition()[0])*SCALE);
+            basePos.push_back((robot->getLink(0)->getElement()->getPosition()[2])*SCALE);
             mt::Rotation tmp (mt::Unit3((robot->getLink(0)->getElement()->getOrientation()[0]),(robot->getLink(0)->getElement()->getOrientation()[1]),(robot->getLink(0)->getElement()->getOrientation()[2])),(robot->getLink(0)->getElement()->getOrientation()[3])* toRad);
             basePos.push_back(tmp[3]);
             basePos.push_back(tmp[0]);
             basePos.push_back(tmp[1]);
+            basePos.push_back(tmp[2]);*/
+            RobConf* RobC = robot->getCurrentPos();
+            SE3Conf SE3 = RobC->getSE3();
+            tmp=SE3.getPos();
+            basePos.push_back(tmp[0]);
+            basePos.push_back(tmp[1]);
             basePos.push_back(tmp[2]);
-
+            tmp.clear();
+            tmp=SE3.getOrient();
+            basePos.push_back(tmp[3]);
+            basePos.push_back(tmp[0]);
+            basePos.push_back(tmp[1]);
+            basePos.push_back(tmp[2]);
 
     return basePos;
 }
@@ -799,7 +807,7 @@ void KauthamDEEnvironment::makeGeomPrimitive(const string name, const vector<dou
 
  dBodyID KauthamDEEnvironment::makePrimitive(const vector<double>& position, const vector<double>& orientation, const double mass, const vector<double>& params)
  {
-     dBodyID body = dBodyCreate(world_);
+     dBodyID body = dBodyCreate(bodyworld);
      //dBodyID body = dBodyCreate(_world);
      dQuaternion q = {orientation[0], orientation[1], orientation[2], orientation[3]};
      dBodySetPosition(body, position[0], position[1], position[2]);
@@ -919,10 +927,22 @@ void KauthamDEEnvironment::makeGeomPrimitive(const string name, const vector<dou
 
 
      dGeomID geometry = dCreateTriMesh(_OpenDEspace, data, NULL, NULL, NULL);
+    // dMassSetTrimeshTotal(&buildingMass, mass, geometry);
+    // dBodySetMass(body, &buildingMass);
      dGeomSetBody(geometry, body);
 
-       dMassSetTrimeshTotal(&buildingMass, mass, geometry);
-       dBodySetMass(body, &buildingMass);
+
+    // New implementation of Trimesh geom. and building mass     // dGeomTriMeshDataBuildSimple(data, (dReal*) vrtxs,
+     //(int)vertexes.size(), trindexes, indexes.size());
+     // dGeomID geometry = dCreateTriMesh(_OpenDEspace, data, NULL, NULL, NULL);
+     // dGeomSetData(geometry, data);
+     // dMassSetTrimeshTotal(&buildingMass, mass, geometry);
+     // dGeomSetPosition(geometry, -buildingMass.c[0], -buildingMass.c[1], -buildingMass.c[2]);
+     // dMassTranslate(&buildingMass, -buildingMass.c[0], -buildingMass.c[1], -buildingMass.c[2]);
+     // dGeomSetBody(geometry, body);
+     // dBodySetMass(body, &buildingMass);
+
+
 
      //dMass buildingMass;
      //dMassSetTrimeshTotal(&buildingMass, mass, geometry);
