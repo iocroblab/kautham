@@ -1,4 +1,5 @@
 # This CMakeFile is used con create libgui(.lib / .a )
+# this file must fi reviewed
 
 FILE( GLOB QT_MOC_HDR *.h* )	
 QT4_WRAP_CPP( QT_MOC_SRC ${QT_MOC_HDR} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)

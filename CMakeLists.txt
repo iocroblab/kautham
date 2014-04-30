@@ -48,7 +48,14 @@ ENDIF( KAUTHAM_OPENDE )
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
 
-find_package(PugiXML REQUIRED)
+FIND_PACKAGE(PugiXML REQUIRED)
+IF(PUGI_XML_FOUND)
+    MESSAGE( STATUS "PugiXML FOUND, using it")
+ELSE(PUGI_XML_FOUND)
+    MESSAGE(STATUS "PugiXML not found, using internal copy")
+    ADD_SUBDIRECTORY ( libsutil/libpugixml )
+ENDIF(PUGI_XML_FOUND)
+
 
 IF(KAUTHAM_OPENDE)
 find_package(OpenDE REQUIRED)
@@ -166,7 +173,6 @@ ENDIF( KAUTHAM_IOC )
   ADD_SUBDIRECTORY ( libsutil/libkin )
   ADD_SUBDIRECTORY ( libsutil/libann )
   ADD_SUBDIRECTORY ( libsutil/libkthutil )
-  #ADD_SUBDIRECTORY ( libsutil/libpugixml )
   ADD_SUBDIRECTORY ( libsutil/libpqp )
   ADD_SUBDIRECTORY ( libsutil/libgdiam )
   ADD_SUBDIRECTORY ( libsplanner )
@@ -263,6 +269,9 @@ ENDIF( KAUTHAM_CONSOLE )
 # Copy Help file
 CONFIGURE_FILE(Kautham2.chm Kautham2.chm COPYONLY)
 
+INSTALL(TARGETS Kautham2 DESTINATION bin)
+
+INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
 
 
 
