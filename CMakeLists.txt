@@ -58,14 +58,6 @@ ELSE(PUGI_XML_FOUND)
 ENDIF(PUGI_XML_FOUND)
 
 
-IF(KAUTHAM_OPENDE)
-find_package(OpenDE REQUIRED)
-MESSAGE( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_ODE flag")
-ADD_DEFINITIONS( -DKAUTHAM_USE_ODE )
-ENDIF(KAUTHAM_OPENDE)
-
-
-
 ##############################################################################
 ##############################################################################
 # START General required packages
@@ -118,6 +110,18 @@ IF( KAUTHAM_OMPL )
         MESSAGE( STATUS "OMPL include is: "${OMPL_INCLUDE_DIRS})
         ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
         MESSAGE( STATUS "OMPL VERSION is: " ${OMPL_VERSION})
+
+        IF(OMPL_EXTENSION_OPENDE)
+
+        IF(KAUTHAM_OPENDE)
+        find_package(OpenDE REQUIRED)
+            IF(OpenDE_FOUND)
+                MESSAGE( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_ODE flag")
+                ADD_DEFINITIONS( -DKAUTHAM_USE_ODE )
+            ENDIF(OpenDE_FOUND)
+        ENDIF(KAUTHAM_OPENDE)
+
+        ENDIF(OMPL_EXTENSION_OPENDE)
     ELSE( OMPL_FOUND )
         MESSAGE( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be abaliable")
     ENDIF( OMPL_FOUND )
