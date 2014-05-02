@@ -230,8 +230,14 @@ IF( KAUTHAM_GUI )
   SET( HDR_FILES_GUI libui/libguimain/application.h )
   
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
-  TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS} libDNN libPQP libgui libsampling
-                                                libproblem libkthutil libkin libgdiam ${PUGI_XML_LIBRARIES})
+  TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS} 
+					libDNN libPQP 
+					libgui libsampling
+					libproblem libkthutil libkin 
+					libgdiam 
+					${SOQT_LIBRARY} ${COIN_LIBRARY}
+					${QT_LIBRARIES}
+					${PUGI_XML_LIBRARIES})
   ADD_DEPENDENCIES(libDNN libPQP libgui libsampling libproblem libkthutil libkin libgdiam)
 ENDIF( KAUTHAM_GUI )
 
@@ -262,7 +268,12 @@ IF( KAUTHAM_CONSOLE )
   
     # Adding console bath mode executable
   ADD_EXECUTABLE( KauthamConsole ${SRC_FILES} ${HDR_FILES} ${RES_FILES} )
-  TARGET_LINK_LIBRARIES( KauthamConsole libDNN libPQP libproblem libkthutil libkin libgdiam ${KC_EXTRA_LIBS} ${PUGI_XML_LIBRARIES} )
+  TARGET_LINK_LIBRARIES( KauthamConsole libDNN libPQP 
+					libproblem libkthutil 
+					libkin libgdiam 
+					${KC_EXTRA_LIBS} 
+					${SOQT_LIBRARY} ${COIN_LIBRARY}
+					${PUGI_XML_LIBRARIES} )
   
   MESSAGE( STATUS "KC_EXTRA_LIBS = " ${KC_EXTRA_LIBS} )
 ENDIF( KAUTHAM_CONSOLE )
