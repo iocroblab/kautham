@@ -11,8 +11,9 @@ OPTION( KAUTHAM_CONSOLE "Build the console version" ON )
 OPTION( KAUTHAM_OMPL "Use OMPL planners" ON )
 OPTION( KAUTHAM_OMPL_LATEST "Use latest OMPL version" ON )
 OPTION( KAUTHAM_IOC "Use IOC planners" ON )
-OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" ON)
+OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF)
 OPTION( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
+OPTION(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
 
 
 ########### Set flags ####################
@@ -208,14 +209,15 @@ IF( KAUTHAM_GUI )
 
 ##############################################################################
 # Building librarires
-  IF( KAUTHAM_GUIBRO )
-    MESSAGE( STATUS "Creating libguibro")
+#  IF( KAUTHAM_GUIBRO )
+#    MESSAGE( STATUS "Creating libguibro")
 #    INCLUDE_DIRECTORIES( libsexternal )
 #    ADD_SUBDIRECTORY ( libsexternal/libguibro )
-    SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  libguibro)
-    MESSAGE( STATUS "KC_EXTRA_LIBSs: " ${KC_EXTRA_LIBS})
-  ENDIF( KAUTHAM_GUIBRO )
-  ADD_SUBDIRECTORY ( libgui )
+#    SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  libguibro)
+#    MESSAGE( STATUS "KC_EXTRA_LIBSs: " ${KC_EXTRA_LIBS})
+#  ENDIF( KAUTHAM_GUIBRO )
+ 
+ ADD_SUBDIRECTORY ( libgui )
 
 
 
@@ -230,62 +232,12 @@ IF( KAUTHAM_GUI )
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
   TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS} libDNN libPQP libgui libsampling
                                                 libproblem libkthutil libkin libgdiam ${PUGI_XML_LIBRARIES})
+  ADD_DEPENDENCIES(libDNN libPQP libgui libsampling libproblem libkthutil libkin libgdiam)
 ENDIF( KAUTHAM_GUI )
 
 # END building Kautham GUI application
-##############################################################################
-# Documentation 
-# Tip from
-# http://mementocodex.wordpress.com/2013/01/19/how-to-generate-code-documentation-with-doxygen-and-cmake-a-slightly-improved-approach/
-
-option(BUILD_DOCUMENTATION "Create and install the HTML based API
-documentation (requires Doxygen)" OFF)
-IF(BUILD_DOCUMENTATION)
-  FIND_PACKAGE(Doxygen)
-  IF(NOT DOXYGEN_FOUND)
-    MESSAGE(FATAL_ERROR
-      "Doxygen is needed to build the documentation.")
-  ENDIF()
- 
-  SET( doxyfile_in          ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in     )
-  SET( doxyfile             ${PROJECT_BINARY_DIR}/Doxyfile              )
-  SET( doxy_html_index_file ${CMAKE_CURRENT_BINARY_DIR}/html/index.html )
-  SET( doxy_output_root     ${CMAKE_CURRENT_BINARY_DIR}                 ) #  Pasted into Doxyfile.in
-  SET( doxy_input           ${PROJECT_SOURCE_DIR}/src                   ) #  Pasted into Doxyfile.in
-#  SET( doxy_extra_files     ${CMAKE_CURRENT_SOURCE_DIR}/mainpage.dox    ) #  Pasted into Doxyfile.in
- 
-  CONFIGURE_FILE( ${doxyfile_in} ${doxyfile} @ONLY )
- 
-  ADD_CUSTOM_COMMAND( OUTPUT ${doxy_html_index_file}
-                      COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
-                      # The following should be ${doxyfile} only but it
-                      # will break the dependency.
-                      # The optimal solution would be creating a
-                      # custom_command for ${doxyfile} generation
-                      # but I still have to figure out how...
-                      MAIN_DEPENDENCY ${doxyfile} ${doxyfile_in}
-                      DEPENDS project_targets ${doxy_extra_files}
-                      COMMENT "Generating HTML documentation")
- 
-  ADD_CUSTOM_TARGET( doc ALL DEPENDS ${doxy_html_index_file} )
- 
-  INSTALL( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
-ENDIF()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-##############################################################################
 ##############################################################################
 # START building Kautham Console application
 IF( KAUTHAM_CONSOLE )
@@ -317,6 +269,49 @@ ENDIF( KAUTHAM_CONSOLE )
 
 # END building Kautham Console application
 ##############################################################################
+
+
+##############################################################################
+# Documentation 
+# Tip from
+# http://mementocodex.wordpress.com/2013/01/19/how-to-generate-code-documentation-with-doxygen-and-cmake-a-slightly-improved-approach/
+
+option(BUILD_DOCUMENTATION "Create and install the HTML based API
+documentation (requires Doxygen)" OFF)
+IF(BUILD_DOCUMENTATION)
+  FIND_PACKAGE(Doxygen)
+  IF(NOT DOXYGEN_FOUND)
+    MESSAGE(FATAL_ERROR
+      "Doxygen is needed to build the documentation.")
+  ENDIF()
+ 
+  SET( doxyfile_in          ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in     )
+  SET( doxyfile             ${PROJECT_BINARY_DIR}/Doxyfile              )
+  SET( doxy_html_index_file ${CMAKE_CURRENT_BINARY_DIR}/html/index.html )
+  SET( doxy_output_root     ${CMAKE_CURRENT_BINARY_DIR}                 ) #  Pasted into Doxyfile.in
+  SET( doxy_input           ${PROJECT_SOURCE_DIR}/src                   ) #  Pasted into Doxyfile.in
+#  SET( doxy_extra_files     ${CMAKE_CURRENT_SOURCE_DIR}/mainpage.dox    ) #  Pasted into Doxyfile.in
+ 
+  CONFIGURE_FILE( ${doxyfile_in} ${doxyfile} @ONLY )
+ 
+  ADD_CUSTOM_COMMAND( OUTPUT ${doxy_html_index_file}
+                      COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+                      # The following should be ${doxyfile} only but it
+                      # will break the dependency.
+                      # The optimal solution would be creating a
+                      # custom_command for ${doxyfile} generation
+                      # but I still have to figure out how...
+                      MAIN_DEPENDENCY ${doxyfile} ${doxyfile_in}
+                      DEPENDS Kautham2 ${doxy_extra_files}
+                      COMMENT "Generating HTML documentation")
+ 
+  ADD_CUSTOM_TARGET( doc ALL DEPENDS ${doxy_html_index_file} )
+ 
+  INSTALL( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
+ENDIF()
+##############################################################################
+
+
 
 ##############################################################################
 # Copy Help file
