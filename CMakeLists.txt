@@ -316,7 +316,7 @@ IF(BUILD_DOCUMENTATION)
                       DEPENDS Kautham2 ${doxy_extra_files}
                       COMMENT "Generating HTML documentation")
  
-  ADD_CUSTOM_TARGET( doc ALL DEPENDS ${doxy_html_index_file} )
+  ADD_CUSTOM_TARGET( doc DEPENDS ${doxy_html_index_file} )
  
   INSTALL( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
 ENDIF()
