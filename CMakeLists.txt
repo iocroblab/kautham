@@ -12,7 +12,7 @@ OPTION( KAUTHAM_OMPL "Use OMPL planners" ON )
 OPTION( KAUTHAM_OMPL_LATEST "Use latest OMPL version" ON )
 OPTION( KAUTHAM_IOC "Use IOC planners" ON )
 OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF)
-OPTION( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
+OPTION( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
 OPTION(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
 
 
@@ -112,17 +112,17 @@ IF( KAUTHAM_OMPL )
         ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
         MESSAGE( STATUS "OMPL VERSION is: " ${OMPL_VERSION})
 
-        IF(OMPL_EXTENSION_OPENDE)
+        #IF(OMPL_EXTENSION_OPENDE)
 
         IF(KAUTHAM_OPENDE)
         find_package(OpenDE REQUIRED)
-            IF(OpenDE_FOUND)
+            IF(ODE_FOUND)
                 MESSAGE( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_ODE flag")
                 ADD_DEFINITIONS( -DKAUTHAM_USE_ODE )
-            ENDIF(OpenDE_FOUND)
+            ENDIF(ODE_FOUND)
         ENDIF(KAUTHAM_OPENDE)
 
-        ENDIF(OMPL_EXTENSION_OPENDE)
+        #ENDIF(OMPL_EXTENSION_OPENDE)
     ELSE( OMPL_FOUND )
         MESSAGE( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be abaliable")
     ENDIF( OMPL_FOUND )
@@ -326,7 +326,6 @@ ENDIF()
 
 ##############################################################################
 # Copy Help file
-CONFIGURE_FILE(Kautham2.chm Kautham2.chm COPYONLY)
 
 INSTALL(TARGETS Kautham2 DESTINATION bin)
 
