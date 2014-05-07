@@ -1,3 +1,4 @@
+
 PROJECT(Kautham2)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
@@ -13,7 +14,7 @@ OPTION( KAUTHAM_OMPL_LATEST "Use latest OMPL version" ON )
 OPTION( KAUTHAM_IOC "Use IOC planners" ON )
 OPTION( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF)
 OPTION( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
-OPTION(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
+OPTION( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
 
 
 ########### Set flags ####################
@@ -44,12 +45,18 @@ IF( KAUTHAM_OPENDE )
   MESSAGE( STATUS "prepared to include ODE" )
 ENDIF( KAUTHAM_OPENDE )
 
-
+IF( KAUTHAM_DOCUMENTATION)
+   message("prepared to and install the HTML based API documentation")
+ENDIF(KAUTHAM_DOCUMENTATION)
 
 ########### Modules path ###############
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
+##############################################################################
+##############################################################################
+# START General required packages
 
+##### pugixml ########
 FIND_PACKAGE(PugiXML REQUIRED)
 IF(PUGI_XML_FOUND)
     MESSAGE( STATUS "PugiXML FOUND, using it")
@@ -216,7 +223,7 @@ IF( KAUTHAM_GUI )
 #    SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  libguibro)
 #    MESSAGE( STATUS "KC_EXTRA_LIBSs: " ${KC_EXTRA_LIBS})
 #  ENDIF( KAUTHAM_GUIBRO )
- 
+
  ADD_SUBDIRECTORY ( libgui )
 
 
@@ -225,16 +232,16 @@ IF( KAUTHAM_GUI )
 # Creating executable
   FILE( GLOB RES_FILES *.rc )
   QT4_WRAP_CPP( QT_MOC_SRC libui/libguimain/application.h OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
-  
+
   SET( SRC_FILES_GUI libui/libguimain/kauthamgui.cpp libui/libguimain/kauthamgui.cpp )
   SET( HDR_FILES_GUI libui/libguimain/application.h )
-  
+
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
-  TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS} 
-					libDNN libPQP 
+  TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS}
+					libDNN libPQP
 					libgui libsampling
-					libproblem libkthutil libkin 
-					libgdiam 
+					libproblem libkthutil libkin
+					libgdiam
 					${SOQT_LIBRARY} ${COIN_LIBRARY}
 					${QT_LIBRARIES}
 					${PUGI_XML_LIBRARIES})
@@ -265,16 +272,16 @@ IF( KAUTHAM_CONSOLE )
 
   SET( HDR_FILES_GUI libui/libconsole/kauthamshell.h )
   SET( SRC_FILES libui/libconsole/kauthamshell.cpp libui/libconsole/kauthamplanner_console.cpp libsutil/libkthutil/kauthamobject.cpp )
-  
+
     # Adding console bath mode executable
   ADD_EXECUTABLE( KauthamConsole ${SRC_FILES} ${HDR_FILES} ${RES_FILES} )
-  TARGET_LINK_LIBRARIES( KauthamConsole libDNN libPQP 
-					libproblem libkthutil 
-					libkin libgdiam 
-					${KC_EXTRA_LIBS} 
+  TARGET_LINK_LIBRARIES( KauthamConsole libDNN libPQP
+					libproblem libkthutil
+					libkin libgdiam
+					${KC_EXTRA_LIBS}
 					${SOQT_LIBRARY} ${COIN_LIBRARY}
 					${PUGI_XML_LIBRARIES} )
-  
+
   MESSAGE( STATUS "KC_EXTRA_LIBS = " ${KC_EXTRA_LIBS} )
 ENDIF( KAUTHAM_CONSOLE )
 
@@ -283,7 +290,7 @@ ENDIF( KAUTHAM_CONSOLE )
 
 
 ##############################################################################
-# Documentation 
+# Documentation
 # Tip from
 # http://mementocodex.wordpress.com/2013/01/19/how-to-generate-code-documentation-with-doxygen-and-cmake-a-slightly-improved-approach/
 
@@ -295,16 +302,16 @@ IF(BUILD_DOCUMENTATION)
     MESSAGE(FATAL_ERROR
       "Doxygen is needed to build the documentation.")
   ENDIF()
- 
+
   SET( doxyfile_in          ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in     )
   SET( doxyfile             ${PROJECT_BINARY_DIR}/Doxyfile              )
   SET( doxy_html_index_file ${CMAKE_CURRENT_BINARY_DIR}/html/index.html )
   SET( doxy_output_root     ${CMAKE_CURRENT_BINARY_DIR}                 ) #  Pasted into Doxyfile.in
   SET( doxy_input           ${PROJECT_SOURCE_DIR}/src                   ) #  Pasted into Doxyfile.in
 #  SET( doxy_extra_files     ${CMAKE_CURRENT_SOURCE_DIR}/mainpage.dox    ) #  Pasted into Doxyfile.in
- 
+
   CONFIGURE_FILE( ${doxyfile_in} ${doxyfile} @ONLY )
- 
+
   ADD_CUSTOM_COMMAND( OUTPUT ${doxy_html_index_file}
                       COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
                       # The following should be ${doxyfile} only but it
@@ -315,9 +322,9 @@ IF(BUILD_DOCUMENTATION)
                       MAIN_DEPENDENCY ${doxyfile} ${doxyfile_in}
                       DEPENDS Kautham2 ${doxy_extra_files}
                       COMMENT "Generating HTML documentation")
- 
+
   ADD_CUSTOM_TARGET( doc DEPENDS ${doxy_html_index_file} )
- 
+
   INSTALL( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
 ENDIF()
 ##############################################################################
