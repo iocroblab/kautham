@@ -23,7 +23,7 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include <libpugixml/pugixml.hpp>
+#include <pugixml.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>

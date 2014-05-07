@@ -27,12 +27,12 @@
 #define _GAUSSIANSAMPLER_H
 
 #include "sampler.h"
-#include <libsutil/lcprng.h>
+#include <external/lcprng.h>
 #include "randomsampler.h"
 
 
 
-#include <libproblem/workspace.h>
+#include <problem/workspace.h>
 
 namespace Kautham{
 

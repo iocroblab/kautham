@@ -26,8 +26,8 @@
 #if !defined(_iocPLANNER_H)
 #define _iocPLANNER_H
 
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 #include <cmath>
 #include <string>
 #include "localplanner.h"

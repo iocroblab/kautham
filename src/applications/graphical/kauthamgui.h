@@ -29,13 +29,13 @@
 #define _APPLICATION_H
 
 #include <QtCore>
-#include <libproblem/problem.h>
+#include <problem/problem.h>
 #include <libgui/gui.h>
 #include <Inventor/Qt/SoQt.h>
 #include <QtGui>
 #include <QFile>
 #include <QObject>
-#include <libkthutil/kauthamdefs.h>
+#include <kthutil/kauthamdefs.h>
 #include <string>
 
 using namespace std;

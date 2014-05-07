@@ -30,7 +30,7 @@
 #include <Inventor/SbLinear.h>
 #include "element.h"
 #include <libmt/mt/mt.h>
-#include <libkthutil/kauthamdefs.h>
+#include <kthutil/kauthamdefs.h>
 #include <string>
 
 

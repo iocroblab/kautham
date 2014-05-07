@@ -29,7 +29,7 @@
 
 #include <string>
 #include "sample.h"
-#include <libsutil/lcprng.h>
+#include <external/lcprng.h>
 
 namespace Kautham{
 

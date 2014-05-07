@@ -27,8 +27,8 @@
 
 #include <vector>
 #include <string>
-#include <libsutil/lcprng.h>
-#include <libkthutil/kauthamdefs.h>
+#include <external/lcprng.h>
+#include <kthutil/kauthamdefs.h>
 #include <sstream>
 #include <iostream>
 

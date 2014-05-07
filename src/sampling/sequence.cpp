@@ -24,7 +24,7 @@
 
  
 #include "sequence.h"
-#include <libsutil/lcprng.h>
+#include <external/lcprng.h>
 
 namespace Kautham {
 

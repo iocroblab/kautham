@@ -28,12 +28,12 @@
 
 #include "sampler.h"
 #include "sdksampler.h"
-#include <libsutil/lcprng.h>
+#include <external/lcprng.h>
 //#include "sdksample.h"
 #include "haltonsampler.h"
 #include "randomsampler.h"
 #include "sampleset.h"
-#include <libproblem/workspace.h>
+#include <problem/workspace.h>
 
 
 namespace Kautham{

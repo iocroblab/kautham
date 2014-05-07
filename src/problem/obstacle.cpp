@@ -24,7 +24,7 @@
 
 
 #include "obstacle.h"
-#include <libpugixml/pugixml.hpp>
+#include <pugixml.hpp>
 #include "urdf.h"
 
 

@@ -3,7 +3,7 @@
 FILE( GLOB SRC_FILES *.cpp )
 FILE( GLOB HDR_FILES *.h )
 
-ADD_LIBRARY( libplanner ${SRC_FILES} ${HDR_FILES} )
+ADD_LIBRARY( planner ${SRC_FILES} ${HDR_FILES} )
 
   IF( KAUTHAM_OMPL )
     MESSAGE( STATUS "Adding subdirectory LIBOMPL")
@@ -12,7 +12,7 @@ ADD_LIBRARY( libplanner ${SRC_FILES} ${HDR_FILES} )
   ENDIF( KAUTHAM_OMPL )
   IF( KAUTHAM_IOC )
     MESSAGE( STATUS "Adding subdirectory LIBIOC")
-    ADD_SUBDIRECTORY ( libioc )
+    ADD_SUBDIRECTORY ( ioc )
     SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libiocplanner)
   ENDIF( KAUTHAM_IOC )
 
@@ -24,7 +24,7 @@ ADD_LIBRARY( libplanner ${SRC_FILES} ${HDR_FILES} )
 
 MESSAGE( STATUS "----------------KC_PLANNERS_LIBS: " ${KC_PLANNERS_LIBS})
 
-TARGET_LINK_LIBRARIES( libplanner ${KC_PLANNERS_LIBS})
+TARGET_LINK_LIBRARIES( planner ${KC_PLANNERS_LIBS})
 
 
 
