@@ -27,8 +27,8 @@
 #if !defined(_LOCALPLANNER_H)
 #define _LOCALPLANNER_H
 
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 
 
 namespace Kautham {

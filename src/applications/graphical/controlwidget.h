@@ -30,9 +30,9 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <vector>
 #include <string>
-#include <libproblem/robot.h>
-#include <libproblem/problem.h>
-#include <libkthutil/kauthamdefs.h>
+#include <problem/robot.h>
+#include <problem/problem.h>
+#include <kthutil/kauthamdefs.h>
 #include "dofwidget.h"
 
 

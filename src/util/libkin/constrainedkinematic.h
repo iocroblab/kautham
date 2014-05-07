@@ -27,11 +27,11 @@
 #define _CONSTRAINEDKINEMATIC_H
 
 
-#include <libkthutil/kauthamdefs.h>
-#include <libsampling/robconf.h>
-#include <libsampling/se3conf.h>
-#include <libsampling/rnconf.h>
-#include <libkthutil/kauthamobject.h>
+#include <kthutil/kauthamdefs.h>
+#include <kthutil/kauthamobject.h>
+#include <sampling/robconf.h>
+#include <sampling/se3conf.h>
+#include <sampling/rnconf.h>
 
 
 namespace Kautham{

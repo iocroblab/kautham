@@ -37,8 +37,8 @@
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <libompl/omplcplanner.h>
 
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 
 #include <ompl/extensions/opende/OpenDESimpleSetup.h>
 #include <ompl/extensions/opende/OpenDEControlSpace.h>

@@ -30,12 +30,12 @@
 #include <vector>
 #include <string>
 #include <Inventor/nodes/SoSeparator.h>
-#include <libproblem/robot.h>
+#include <problem/robot.h>
 #include "ui_RobotSim.h"
 #include "viewertype.h"
 #include <libsplanner/planner.h>
-#include <libproblem/problem.h>
-#include <libsampling/sampling.h>
+#include <problem/problem.h>
+#include <sampling/sampling.h>
 #include "streamlog.h"
 #include <libkin/inversekinematic.h>
 #include "controlwidget.h"

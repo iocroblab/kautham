@@ -27,8 +27,8 @@
 #if !defined(_GRIDPLANNER_H)
 #define _GRIDPLANNER_H
 
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>

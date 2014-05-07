@@ -27,8 +27,8 @@
 #if !defined(_PRMPLANNER_H)
 #define _PRMPLANNER_H
 
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/astar_search.hpp>

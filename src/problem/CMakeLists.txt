@@ -1,7 +1,6 @@
 # This CMakeFile is used con create libproblem(.lib / .a)
 
-INCLUDE_DIRECTORIES( #${CMAKE_SOURCE_DIR}/hardlab
-                     ${CMAKE_SOURCE_DIR}/libutil
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/libutil
                      ${CMAKE_SOURCE_DIR}
                      ${mt_DIR}
 		     ${GDIAM_DIR}
@@ -9,14 +8,18 @@ INCLUDE_DIRECTORIES( #${CMAKE_SOURCE_DIR}/hardlab
                      ${COIN_INCLUDE_DIR}
                      ${Armadillo_INCLUDE_DIR})
 
+IF(NOT PUGI_XML_FOUND)
+  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/external/pugixml)
+ENDIF(NOT PUGI_XML_FOUND)
+
 ADD_DEFINITIONS( -DCOIN_DLL )
 ADD_DEFINITIONS( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
 
 FILE( GLOB SRC_FILES *.cpp )
 FILE( GLOB HDR_FILES *.h* )
 
-ADD_LIBRARY(libproblem ${SRC_FILES} ${HDR_FILES})
+ADD_LIBRARY(problem ${SRC_FILES} ${HDR_FILES})
 
-TARGET_LINK_LIBRARIES(libproblem libPQP libgdiam libplanner libsampling)
+TARGET_LINK_LIBRARIES(problem libPQP libgdiam planner sampling ${PUGI_XML_LIBRARIES})
 
 

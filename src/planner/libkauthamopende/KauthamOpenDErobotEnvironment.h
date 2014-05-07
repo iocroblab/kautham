@@ -41,10 +41,10 @@
 #include <ompl/extensions/opende/OpenDEStatePropagator.h>
 #include <ompl/extensions/opende/OpenDEStateValidityChecker.h>
 #include <ompl/base/goals/GoalRegion.h>
-#include <libproblem/link.h>
-#include <libproblem/robot.h>
-#include <libproblem/obstacle.h>
-#include <libproblem/workspace.h>
+#include <problem/link.h>
+#include <problem/robot.h>
+#include <problem/obstacle.h>
+#include <problem/workspace.h>
 
 #define _USE_MATH_DEFINES
 
@@ -72,9 +72,9 @@
 #include <cmath>
 //#include <ros/ros.h>
 #include <libmt/mt/mt.h>
-#include <libproblem/link.h>
-#include <libproblem/robot.h>
-#include <libproblem/ivelement.h>
+#include <problem/link.h>
+#include <problem/robot.h>
+#include <problem/ivelement.h>
 #include "KauthamOpenDEEnvironment.h"
 
 
@@ -93,8 +93,8 @@ namespace og = ompl::geometric;
 namespace oc = ompl::control;
 
 
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 #include "planner.h"
 
 

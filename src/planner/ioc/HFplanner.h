@@ -23,16 +23,16 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
-#if !defined(_NF1PLANNER_H)
-#define _NF1PLANNER_H
+#if !defined(_HFPLANNER_H)
+#define _HFPLANNER_H
 
 
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 #include "localplanner.h"
 #include "planner.h"
 #include "gridplanner.h"
@@ -45,32 +45,11 @@ namespace Kautham {
  */
   namespace IOC{
 
-    //CLASS bfs_distance_visitor
-    // visitor that terminates when we find the goal
-    template <class DistanceMap>
-    class bfs_distance_visitor : public boost::default_bfs_visitor 
-	{
-		public:
-			bfs_distance_visitor(DistanceMap dist) : d(dist) {};
-
-			template <typename Edge, typename Graph> 
-			void tree_edge(Edge e, Graph& g)
-			{
-                typename boost::graph_traits<Graph>::vertex_descriptor s=source(e,g);
-                typename boost::graph_traits<Graph>::vertex_descriptor t=target(e,g);
-				d[t] = d[s] + 1;
-				//potmap[t] = d[t];
-			}
-
-		private:
-			DistanceMap d;
-    };
-
-    class NF1Planner:public gridPlanner {
+    class HFPlanner:public gridPlanner {
 	    public:
-        NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
+        HFPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
           WorkSpace *ws);
-        ~NF1Planner();
+        ~HFPlanner();
         
 		bool trySolve();
 		bool setParameters();
@@ -79,11 +58,14 @@ namespace Kautham {
 
 		protected:
 		//Add protected data and functions
+			int _mainiter;
+			int _hfiter;
+			int _dirichlet;
 
 		
 	    private:
 		//Add private data and functions	
-		void computeNF1(gridVertex  vgoal);
+		void computeHF(gridVertex  vgoal);
 
 		
 
@@ -92,5 +74,5 @@ namespace Kautham {
   /** @}   end of Doxygen module "libPlanner */
 }
 
-#endif  //_MYGRIDPLANNER_H
+#endif  //_HFPLANNER_H
 
