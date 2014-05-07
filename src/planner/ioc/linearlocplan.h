@@ -24,47 +24,33 @@
 
  
 
-#if !defined(_MYGRIDPLANNER_H)
-#define _MYGRIDPLANNER_H
+#if !defined(_LINEARLOCALPLANNER_H)
+#define _LINEARLOCALPLANNER_H
 
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 #include "localplanner.h"
-#include "planner.h"
-#include "gridplanner.h"
 
-using namespace std;
 
 namespace Kautham {
 /** \addtogroup libPlanner
  *  @{
  */
-  namespace IOC{
-    class MyGridPlanner:public gridPlanner {
-	    public:
-        MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws);
-        ~MyGridPlanner();
-        
-		bool trySolve();
-		bool setParameters();
-		//Add public data and functions
-		
 
-		protected:
-		//Add protected data and functions
-		int _firstParameter;
-		double _secondParameter;
-		double _thirdParameter;	
-
-		
-	    private:
-		//Add private data and functions
-
-	  };
-   }
-  /** @}   end of Doxygen module "libPlanner */
+namespace IOC{
+class LinearLocalPlanner:public LocalPlanner {
+    public:
+      LinearLocalPlanner(SPACETYPE stype, Sample *init, Sample *goal, WorkSpace *ws, KthReal st );
+      void setMethod(bool vandercorput = true);
+      bool canConect();
+      KthReal distance(Sample* from, Sample* to);
+    private:
+      LinearLocalPlanner();
+      bool vanderMethod;
+	};
+}
+/** @}   end of Doxygen module "libPlanner */
 }
 
-#endif  //_MYGRIDPLANNER_H
+#endif  //_LINEARLOCALPLANNER_H
 

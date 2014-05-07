@@ -40,7 +40,6 @@
 #include <string>
 //to solve local convertions problems
 #include <locale.h>
-//#include <libpugixml/pugixml.hpp>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include "urdf.h"
 

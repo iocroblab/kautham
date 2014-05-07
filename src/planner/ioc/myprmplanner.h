@@ -20,42 +20,47 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Alexander Perez, Jan Rosell */
 
+
+#if !defined(_MYPRMPLANNER_H)
+#define _MYPRMPLANNER_H
+
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
+#include "localplanner.h"
+#include "planner.h"
 #include "prmplanner.h"
-#include <libsutil/lcprng.h>
 
-#if !defined(_PRMHANDPLANNER_H)
-#define _PRMHANDPLANNER_H
- namespace Kautham {
- /** \addtogroup libPlanner
-  *  @{
-  */
+using namespace std;
+
+namespace Kautham {
+/** \addtogroup libPlanner
+ *  @{
+ */
   namespace IOC{
-		class PRMHandPlanner:public PRMPlanner{
-    public:
-			PRMHandPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws,  int cloundSize, KthReal cloudRad);
-			~PRMHandPlanner();
-      bool            setParameters();
-	  void            saveData();
-//	  void            setIniGoal();
-      virtual bool    trySolve()=0;
-      inline void     setCloudSize(int cs){_cloudSize = cs;}
-      inline int      cloudSize(){return _cloudSize;}
-      inline void     setCloudRad(KthReal cr){_cloudRadius = cr;}
-      inline KthReal  cloudRad(){return _cloudRadius;}
-	  
-	  bool getSampleInGoalRegion();
+    class MyPRMPlanner:public PRMPlanner {
+	    public:
+        MyPRMPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws);
+        ~MyPRMPlanner();
 
-	protected:
-	  LCPRNG*			_gen;
-      int               _cloudSize;
-      KthReal           _cloudRadius;
-	};	
-  }
+		bool trySolve();
+		bool setParameters();
+		//Add public data and functions
+
+		protected:
+		//Add protected data and functions	
+		int _firstParameter;
+		double _secondParameter;
+		double _thirdParameter;	
+
+	    private:
+		//Add private data and functions
+
+	  };
+   }
   /** @}   end of Doxygen module "libPlanner */
-};
- 
-#endif  //_PRMPLANNER_H
+}
+
+#endif  //_MYPRMPLANNER_H
 

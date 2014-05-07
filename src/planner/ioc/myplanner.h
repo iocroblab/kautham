@@ -23,19 +23,13 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
-#if !defined(_HFPLANNER_H)
-#define _HFPLANNER_H
+#if !defined(_MYPLANNER_H)
+#define _MYPLANNER_H
 
-
-#include <boost/graph/visitors.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/breadth_first_search.hpp>
-
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 #include "localplanner.h"
-#include "planner.h"
-#include "gridplanner.h"
+#include "iocplanner.h"
 
 using namespace std;
 
@@ -44,35 +38,28 @@ namespace Kautham {
  *  @{
  */
   namespace IOC{
-
-    class HFPlanner:public gridPlanner {
+    class MyPlanner:public iocPlanner {
 	    public:
-        HFPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
+        MyPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
           WorkSpace *ws);
-        ~HFPlanner();
+        ~MyPlanner();
         
 		bool trySolve();
 		bool setParameters();
 		//Add public data and functions
-		
 
 		protected:
 		//Add protected data and functions
-			int _mainiter;
-			int _hfiter;
-			int _dirichlet;
+		int _firstParameter;
+		double _secondParameter;
+		double _thirdParameter;
 
-		
 	    private:
-		//Add private data and functions	
-		void computeHF(gridVertex  vgoal);
-
-		
-
+		//Add private data and functions
 	  };
-   }
+  }
   /** @}   end of Doxygen module "libPlanner */
 }
 
-#endif  //_HFPLANNER_H
+#endif  //_MYPLANNER_H
 

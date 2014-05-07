@@ -27,10 +27,10 @@
 #define _IVPQPELEMENT_H
 
 #include "ivelement.h"
-#include <libkthutil/kauthamdefs.h>
+#include <kthutil/kauthamdefs.h>
 #include <Inventor/SoPrimitiveVertex.h>
 #include <libpqp/PQP.h>
-#include <libsutil/lcprng.h>
+#include <external/lcprng.h>
 #include <Inventor/actions/SoCallbackAction.h>
 #include <Inventor/SbLinear.h>
 #include <Inventor/nodes/SoVertexProperty.h>

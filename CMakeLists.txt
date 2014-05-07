@@ -2,7 +2,7 @@
 PROJECT(Kautham2)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-CMAKE_POLICY(SET CMP0003 OLD)
+#CMAKE_POLICY(SET CMP0003 OLD)
 
 
 
@@ -36,10 +36,10 @@ IF( KAUTHAM_IOC )
     ADD_DEFINITIONS( -DKAUTHAM_USE_IOC )
 ENDIF( KAUTHAM_IOC )
 
-IF( KAUTHAM_GUIBRO )
-    MESSAGE( STATUS "Use GUIBRO: setting -DKAUTHAM_USE_GUIBRO flag")
-    ADD_DEFINITIONS( -DKAUTHAM_USE_GUIBRO )
-ENDIF( KAUTHAM_GUIBRO )
+#IF( KAUTHAM_GUIBRO )
+#    MESSAGE( STATUS "Use GUIBRO: setting -DKAUTHAM_USE_GUIBRO flag")
+#    ADD_DEFINITIONS( -DKAUTHAM_USE_GUIBRO )
+#ENDIF( KAUTHAM_GUIBRO )
 
 IF( KAUTHAM_OPENDE )
   MESSAGE( STATUS "prepared to include ODE" )
@@ -50,11 +50,13 @@ IF( KAUTHAM_DOCUMENTATION)
 ENDIF(KAUTHAM_DOCUMENTATION)
 
 ########### Modules path ###############
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
 
 ##############################################################################
 ##############################################################################
 # START General required packages
+
+MESSAGE(STATUS "Configurating external packages ...")
 
 ##### pugixml ########
 FIND_PACKAGE(PugiXML REQUIRED)
@@ -62,7 +64,8 @@ IF(PUGI_XML_FOUND)
     MESSAGE( STATUS "PugiXML FOUND, using it")
 ELSE(PUGI_XML_FOUND)
     MESSAGE(STATUS "PugiXML not found, using internal copy")
-    ADD_SUBDIRECTORY ( libsutil/libpugixml )
+    ADD_SUBDIRECTORY ( src/external/pugixml )
+    SET(PUGI_XML_LIBRARIES libpugixml)
 ENDIF(PUGI_XML_FOUND)
 
 
@@ -72,14 +75,28 @@ ENDIF(PUGI_XML_FOUND)
 
 #### mt package ##################
 # utility functions for managing transforms
-SET(mt_DIR ${CMAKE_SOURCE_DIR}/libsutil/libmt)
-INCLUDE_DIRECTORIES( libsutil/libmt )
+SET(mt_DIR ${CMAKE_SOURCE_DIR}/src/util/libmt)
+MESSAGE (STATUS "Adding libmt directory")
+
 
 #### gdiam package ##################
 # utility functions for finding minimum-volume bounding boxes
-SET(gdiam_DIR ${CMAKE_SOURCE_DIR}/libsutil/libgdiam)
-INCLUDE_DIRECTORIES( libsutil/libgdiam )
+SET(gdiam_DIR ${CMAKE_SOURCE_DIR}/src/external/gdiam)
+MESSAGE (STATUS "Adding gdiam directory")
+ADD_SUBDIRECTORY ( src/external/gdiam )
 
+#### pqp package ##################
+# collision library
+SET(pqp_DIR ${CMAKE_SOURCE_DIR}/src/external/pqp)
+MESSAGE (STATUS "Adding PQP directory")
+ADD_SUBDIRECTORY ( src/external/pqp )
+
+#### libann package ##################
+#   The Nearest Neighbor Library for Motion Planning
+
+SET(DNN_DIR ${CMAKE_SOURCE_DIR}/src/external/libann)
+MESSAGE (STATUS "Adding libann directory")
+ADD_SUBDIRECTORY ( src/external/libann )
 
 #### Boost package ###############
 FIND_PACKAGE( Boost COMPONENTS  system serialization thread REQUIRED )
@@ -101,7 +118,7 @@ ENDIF(Boost_FOUND)
 #### Coin3D package ###############
 # graphics library
 FIND_PACKAGE( Coin REQUIRED )
-INCLUDE_DIRECTORIES( ${COIN_INCLUDE_DIR} )
+#INCLUDE_DIRECTORIES( ${COIN_INCLUDE_DIR} )
 
 # END General required packages
 ##############################################################################
@@ -119,7 +136,7 @@ IF( KAUTHAM_OMPL )
         ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
         MESSAGE( STATUS "OMPL VERSION is: " ${OMPL_VERSION})
 
-        #IF(OMPL_EXTENSION_OPENDE)
+        IF(OMPL_EXTENSION_OPENDE)
 
         IF(KAUTHAM_OPENDE)
         find_package(OpenDE REQUIRED)
@@ -129,7 +146,7 @@ IF( KAUTHAM_OMPL )
             ENDIF(ODE_FOUND)
         ENDIF(KAUTHAM_OPENDE)
 
-        #ENDIF(OMPL_EXTENSION_OPENDE)
+        ENDIF(OMPL_EXTENSION_OPENDE)
     ELSE( OMPL_FOUND )
         MESSAGE( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be abaliable")
     ENDIF( OMPL_FOUND )
@@ -177,116 +194,24 @@ ENDIF( KAUTHAM_IOC )
 
 
 
-##############################################################################
-# Building librarires
-  INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} )
-  INCLUDE_DIRECTORIES( libsutil )
-#  INCLUDE_DIRECTORIES( libsexternal )
-  INCLUDE_DIRECTORIES( libsplanner )
-  ADD_SUBDIRECTORY ( libsutil/libkin )
-  ADD_SUBDIRECTORY ( libsutil/libann )
-  ADD_SUBDIRECTORY ( libsutil/libkthutil )
-  ADD_SUBDIRECTORY ( libsutil/libpqp )
-  ADD_SUBDIRECTORY ( libsutil/libgdiam )
-  ADD_SUBDIRECTORY ( libsplanner )
-  ADD_SUBDIRECTORY ( libproblem )
-  ADD_SUBDIRECTORY ( libsampling )
-
-
-##############################################################################
-# START building Kautham GUI application
-IF( KAUTHAM_GUI )
-  MESSAGE( STATUS "making KAUTHAM GUI" )
-
 
 ##############################################################################
 
   FIND_PACKAGE( SoQt4 REQUIRED )
   IF( SOQT_LIBRARY_FOUND )
     ADD_DEFINITIONS( -DSOQT_DLL -DCOIN_DLL )
-    INCLUDE_DIRECTORIES( ${SOQT_INCLUDE_DIR} )
+    #INCLUDE_DIRECTORIES( ${SOQT_INCLUDE_DIR} )
   ENDIF( SOQT_LIBRARY_FOUND )
 # END Required packages for GUI
 ##############################################################################
 
 
 
-
-
-
 ##############################################################################
 # Building librarires
-#  IF( KAUTHAM_GUIBRO )
-#    MESSAGE( STATUS "Creating libguibro")
-#    INCLUDE_DIRECTORIES( libsexternal )
-#    ADD_SUBDIRECTORY ( libsexternal/libguibro )
-#    SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS}  libguibro)
-#    MESSAGE( STATUS "KC_EXTRA_LIBSs: " ${KC_EXTRA_LIBS})
-#  ENDIF( KAUTHAM_GUIBRO )
-
- ADD_SUBDIRECTORY ( libgui )
+  ADD_SUBDIRECTORY ( src )
 
 
-
-##############################################################################
-# Creating executable
-  FILE( GLOB RES_FILES *.rc )
-  QT4_WRAP_CPP( QT_MOC_SRC libui/libguimain/application.h OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
-
-  SET( SRC_FILES_GUI libui/libguimain/kauthamgui.cpp libui/libguimain/kauthamgui.cpp )
-  SET( HDR_FILES_GUI libui/libguimain/application.h )
-
-  ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${RES_FILES} )
-  TARGET_LINK_LIBRARIES( Kautham2 ${KC_EXTRA_LIBS}
-					libDNN libPQP
-					libgui libsampling
-					libproblem libkthutil libkin
-					libgdiam
-					${SOQT_LIBRARY} ${COIN_LIBRARY}
-					${QT_LIBRARIES}
-					${PUGI_XML_LIBRARIES})
-  ADD_DEPENDENCIES(libDNN libPQP libgui libsampling libproblem libkthutil libkin libgdiam)
-ENDIF( KAUTHAM_GUI )
-
-# END building Kautham GUI application
-
-
-##############################################################################
-# START building Kautham Console application
-IF( KAUTHAM_CONSOLE )
-
-  MESSAGE( STATUS "making KAUTHAM CONSOLE" )
-
-  #MPI Library used to turn the KauthamConsole parallel process.
-  INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}  ${mt_DIR} ${COIN_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/libgui )
-  #FIND_PACKAGE( MPI )
-  IF( MPI_FOUND )
-    INCLUDE_DIRECTORIES( ${MPI_INCLUDE_PATH} )
-    ADD_DEFINITIONS( -DKAUTHAM_USE_MPI )
-    MESSAGE( STATUS "MPI library found at" ${MPI_INCLUDE_PATH} )
-    SET(KC_EXTRA_LIBS ${KC_EXTRA_LIBS} ${MPI_LIBRARIES} )
-    MESSAGE( STATUS "MPI_LIBRARIES = " ${MPI_LIBRARIES} )
-  ELSE( MPI_FOUND )
-    MESSAGE( STATUS "MPI library not found" )
-  ENDIF( MPI_FOUND )
-
-  SET( HDR_FILES_GUI libui/libconsole/kauthamshell.h )
-  SET( SRC_FILES libui/libconsole/kauthamshell.cpp libui/libconsole/kauthamplanner_console.cpp libsutil/libkthutil/kauthamobject.cpp )
-
-    # Adding console bath mode executable
-  ADD_EXECUTABLE( KauthamConsole ${SRC_FILES} ${HDR_FILES} ${RES_FILES} )
-  TARGET_LINK_LIBRARIES( KauthamConsole libDNN libPQP
-					libproblem libkthutil
-					libkin libgdiam
-					${KC_EXTRA_LIBS}
-					${SOQT_LIBRARY} ${COIN_LIBRARY}
-					${PUGI_XML_LIBRARIES} )
-
-  MESSAGE( STATUS "KC_EXTRA_LIBS = " ${KC_EXTRA_LIBS} )
-ENDIF( KAUTHAM_CONSOLE )
-
-# END building Kautham Console application
-##############################################################################
 
 
 ##############################################################################
@@ -333,8 +258,6 @@ ENDIF()
 
 ##############################################################################
 # Copy Help file
-
-INSTALL(TARGETS Kautham2 DESTINATION bin)
 
 INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
 

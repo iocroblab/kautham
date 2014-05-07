@@ -31,7 +31,7 @@
 #include <sstream>
 #include <iostream>
 #include <libmt/mt/mt.h>
-#include <libsutil/lcprng.h>
+#include <external/lcprng.h>
 
 
 using namespace std;

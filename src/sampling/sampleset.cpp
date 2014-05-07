@@ -27,7 +27,7 @@
 #include "sampleset.h"
 #include "sample.h"
 #include "sdksample.h"
-#include <libann/DNN/multiann.h>
+#include <external/libann/DNN/multiann.h>
 #include <cmath>
 //#include <crtdbg.h>
 

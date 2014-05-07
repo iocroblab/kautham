@@ -29,7 +29,7 @@
 #include <cstdio>
 #include <vector>
 #include <boost/function.hpp>
-#include <libkthutil/kauthamdefs.h>
+#include <kthutil/kauthamdefs.h>
 #include "robweight.h"
 #include "robconf.h"
 

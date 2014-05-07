@@ -29,16 +29,14 @@
 #include <QString>
 
 #include <libsplanner/planner.h>
-#include <libsampling/sampling.h>
+#include <sampling/sampling.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include "robot.h"
 #include "ivworkspace.h"
 #include "workspace.h"
-#include <libsampling/state.h>
+#include <sampling/state.h>
 #include <pugixml.hpp>
 
-//#include <libpugixml/pugixml.hpp>
-#include <pugixml.hpp>
 #include <string>
 #include <fstream>
 #include <iostream>

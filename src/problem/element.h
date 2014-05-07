@@ -27,7 +27,7 @@
 #if !defined(_ELEMENT_H)
 #define _ELEMENT_H
 
-#include <libkthutil/kauthamdefs.h>
+#include <kthutil/kauthamdefs.h>
 #include "odeelement.h"
 
 namespace Kautham {

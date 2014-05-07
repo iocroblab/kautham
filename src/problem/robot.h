@@ -28,11 +28,11 @@
 
 #include "link.h"
 #include <mt/transform.h>
-#include <libsampling/robconf.h>
+#include <sampling/robconf.h>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include <libkin/inversekinematic.h>
 #include <libkin/constrainedkinematic.h>
-#include <libproblem/ivpqpelement.h>
+//#include <problem/ivpqpelement.h>
 #include <list>
 
 
