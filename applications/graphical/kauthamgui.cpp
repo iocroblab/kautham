@@ -31,7 +31,7 @@
 #include <sstream>
 #include <libproblem/ivworkspace.h>
 #include <libkthutil/kauthamdefs.h>
-#include "application.h"
+#include "kauthamgui.h"
 #include <libgui/dofwidget.h> 
 #include <QApplication>
 #include <QWidget>
