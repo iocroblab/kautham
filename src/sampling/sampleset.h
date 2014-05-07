@@ -30,9 +30,9 @@
 #include <vector>
 #include "sample.h"
 
-#include <libproblem/workspace.h>
-#include <libann/DNN/ANN.h>
-#include <libann/DNN/multiann.h>
+#include <problem/workspace.h>
+#include <external/libann/DNN/ANN.h>
+#include <external/libann/DNN/multiann.h>
 
 using namespace std;
 

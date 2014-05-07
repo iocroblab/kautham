@@ -40,8 +40,8 @@ namespace oc = ompl::control;
 
 #include <libompl/omplcplanner.h>
 
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 
 
 using namespace std;

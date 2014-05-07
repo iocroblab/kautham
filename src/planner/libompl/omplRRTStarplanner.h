@@ -33,8 +33,8 @@
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 
 #include <libompl/omplplanner.h>
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;

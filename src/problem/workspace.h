@@ -27,9 +27,9 @@
 #define _WORKSPACE_H
 
 #include <vector>
-#include <libsampling/robconf.h>
-#include <libkthutil/kauthamdefs.h>
-#include <libsampling/sample.h>
+#include <sampling/robconf.h>
+#include <kthutil/kauthamdefs.h>
+#include <sampling/sample.h>
 #include "robot.h"
 
 using namespace std;

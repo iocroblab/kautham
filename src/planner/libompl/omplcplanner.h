@@ -42,8 +42,8 @@ namespace og = ompl::geometric;
 namespace oc = ompl::control;
 
 
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 #include "planner.h"
 
 

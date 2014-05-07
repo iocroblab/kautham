@@ -42,8 +42,8 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
 #include <QtGui/QLineEdit>
-#include <libsampling/sampling.h>
-#include <libproblem/problem.h>
+#include <sampling/sampling.h>
+#include <problem/problem.h>
 
 using namespace std;
 

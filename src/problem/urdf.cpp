@@ -24,7 +24,6 @@
 
 #include "urdf.h"
 
-#include <libpugixml/pugixml.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>

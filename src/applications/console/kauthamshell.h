@@ -26,7 +26,7 @@
  
 #if !defined(_KAUTHAMSHELL_H)
 #define _KAUTHAMSHELL_H
-#include <libproblem/problem.h>
+#include <problem/problem.h>
 
 using namespace std;
 using namespace Kautham;
