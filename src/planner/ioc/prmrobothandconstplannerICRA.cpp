@@ -31,6 +31,8 @@
 #include <Inventor/fields/SoSFRotation.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoRotation.h>
+#include <problem/ivpqpelement.h>
+
 #include "prmrobothandconstplannerICRA.h"
 #include "constlinearlocplan.h"
 

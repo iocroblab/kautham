@@ -26,7 +26,7 @@
 #include <sstream>
 #include <boost/algorithm/string.hpp>
 #include "planner.h"
-#include <libpugixml/pugixml.hpp>
+#include <pugixml.hpp>
 #include <iostream>
 #include <fstream>
 

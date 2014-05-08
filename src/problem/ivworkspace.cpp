@@ -25,7 +25,8 @@
  
 #include "ivworkspace.h"
 
-
+#include <Inventor/nodes/SoLightModel.h>
+#include <Inventor/nodes/SoDrawStyle.h>
 
 namespace Kautham {
 

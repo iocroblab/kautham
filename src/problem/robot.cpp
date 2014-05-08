@@ -24,14 +24,16 @@
 
 #include "robot.h"
 #include "ivsolidelement.h"
-#include <libkthutil/kauthamdefs.h>
-#include <libkin/inversekinematic.h>
-#include <libkin/ivkintx90.h>
-#include <libkin/ivkintxhand.h>
-#include <libkin/ivkinhand.h>
-#include <libkin/ivkin2drr.h>
-#include <libkin/ivkinUR5.h>
-#include <libkin/constrainedkinematic.h>
+#include <util/kthutil/kauthamdefs.h>
+#include <util/libkin/inversekinematic.h>
+#include <util/libkin/ivkintx90.h>
+#include <util/libkin/ivkintxhand.h>
+#include <util/libkin/ivkinhand.h>
+#include <util/libkin/ivkin2drr.h>
+#include <util/libkin/ivkinUR5.h>
+#include <util/libkin/constrainedkinematic.h>
+#include <problem/ivpqpelement.h>
+
 #include <mt/point3.h>
 #include <mt/rotation.h>
 #include <cstdlib>
@@ -43,10 +45,11 @@
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include "urdf.h"
 
+/*
 #if defined(KAUTHAM_USE_GUIBRO)
 #include <libguibro/consbronchoscopykin.h>
 #endif
-
+*/
 
 using namespace std;
 using namespace Kautham;

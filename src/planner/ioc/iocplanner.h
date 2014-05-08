@@ -33,7 +33,7 @@
 #include "localplanner.h"
 #include <mt/transform.h>
 #include "kthquery.h"
-#include "planner.h"
+#include <planner/planner.h>
 
 using namespace std;
 
