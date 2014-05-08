@@ -28,7 +28,7 @@
 #if !defined(_KAUTHAMWIDGET_H)
 #define _KAUTHAMWIDGET_H
 
-#include <kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamdefs.h>
 #include <libkthutil/kauthamobject.h>
 
 using namespace std;

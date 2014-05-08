@@ -30,8 +30,8 @@
 #include <mt/transform.h>
 #include <sampling/robconf.h>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
-#include <libkin/inversekinematic.h>
-#include <libkin/constrainedkinematic.h>
+#include <util/libkin/inversekinematic.h>
+#include <util/libkin/constrainedkinematic.h>
 //#include <problem/ivpqpelement.h>
 #include <list>
 

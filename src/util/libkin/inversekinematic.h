@@ -26,8 +26,8 @@
 #if !defined(_INVERSEKINEMATIC_H)
 #define _INVERSEKINEMATIC_H
 
-#include <kthutil/kauthamdefs.h>
-#include <kthutil/kauthamobject.h>
+#include <util/kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamobject.h>
 
 #include <sampling/robconf.h>
 #include <sampling/se3conf.h>

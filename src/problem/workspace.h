@@ -28,7 +28,7 @@
 
 #include <vector>
 #include <sampling/robconf.h>
-#include <kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamdefs.h>
 #include <sampling/sample.h>
 #include "robot.h"
 

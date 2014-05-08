@@ -76,7 +76,7 @@ ENDIF(PUGI_XML_FOUND)
 #### mt package ##################
 # utility functions for managing transforms
 SET(mt_DIR ${CMAKE_SOURCE_DIR}/src/util/libmt)
-MESSAGE (STATUS "Adding libmt directory")
+MESSAGE (STATUS "Adding libmt directory ${mt_DIR}")
 
 
 #### gdiam package ##################

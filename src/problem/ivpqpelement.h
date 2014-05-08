@@ -27,7 +27,7 @@
 #define _IVPQPELEMENT_H
 
 #include "ivelement.h"
-#include <kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamdefs.h>
 #include <Inventor/SoPrimitiveVertex.h>
 #include <external/pqp/PQP.h>
 #include <external/lcprng.h>
