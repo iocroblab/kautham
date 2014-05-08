@@ -30,7 +30,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamdefs.h>
 
 using namespace std;
 

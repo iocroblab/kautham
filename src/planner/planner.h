@@ -29,7 +29,7 @@
 
 #include <problem/workspace.h>
 #include <sampling/sampling.h>
-#include <kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamdefs.h>
 #include <cmath>
 #include <string>
 #include <mt/transform.h>

@@ -28,7 +28,7 @@
 #define _OBSTACLE_H
 
 #include "ivpqpelement.h"
-#include <kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamdefs.h>
 
 
 namespace Kautham {

@@ -35,7 +35,7 @@
 #include <QtGui>
 #include <QFile>
 #include <QObject>
-#include <kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamdefs.h>
 #include <string>
 
 using namespace std;

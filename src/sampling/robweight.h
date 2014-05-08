@@ -25,7 +25,7 @@
 #ifndef ROBWEIGHT_H
 #define ROBWEIGHT_H
 
-#include <kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamdefs.h>
 
 namespace Kautham{
 
