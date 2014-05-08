@@ -25,7 +25,7 @@
  
  
 #include "ivkintx90.h"
-#include <libproblem/robot.h>
+#include <problem/robot.h>
 
 
 

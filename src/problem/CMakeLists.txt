@@ -1,12 +1,12 @@
 # This CMakeFile is used con create libproblem(.lib / .a)
 
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/libutil
-                     ${CMAKE_SOURCE_DIR}
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src
                      ${mt_DIR}
 		     ${GDIAM_DIR}
                      ${Boost_INCLUDE_DIRS}
                      ${COIN_INCLUDE_DIR}
                      ${Armadillo_INCLUDE_DIR})
+
 
 IF(NOT PUGI_XML_FOUND)
   INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/external/pugixml)

@@ -29,7 +29,7 @@
 #include <boost/algorithm/string.hpp>
 #include "iocplanner.h"
 #include "linearlocplan.h"
-#include <libpugixml/pugixml.hpp>
+#include <pugixml.hpp>
 #include <iostream>
 #include <fstream>
 
