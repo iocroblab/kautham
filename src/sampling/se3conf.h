@@ -30,7 +30,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <libmt/mt/mt.h>
+#include <mt/mt.h>
 #include <external/lcprng.h>
 
 

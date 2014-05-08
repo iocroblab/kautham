@@ -31,7 +31,7 @@
 #include <string>
 #include <problem/robot.h>
 #include <problem/problem.h>
-#include <kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamdefs.h>
 
 
 using namespace std;

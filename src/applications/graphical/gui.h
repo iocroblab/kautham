@@ -37,7 +37,7 @@
 #include <problem/problem.h>
 #include <sampling/sampling.h>
 #include "streamlog.h"
-#include <libkin/inversekinematic.h>
+#include <util/libkin/inversekinematic.h>
 #include "controlwidget.h"
 #include "plannerwidget.h"
 

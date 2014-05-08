@@ -29,8 +29,8 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/SbLinear.h>
 #include "element.h"
-#include <libmt/mt/mt.h>
-#include <kthutil/kauthamdefs.h>
+#include <mt/mt.h>
+#include <util/kthutil/kauthamdefs.h>
 #include <string>
 
 
