@@ -29,7 +29,7 @@
 #define _KAUTHAMWIDGET_H
 
 #include <util/kthutil/kauthamdefs.h>
-#include <libkthutil/kauthamobject.h>
+#include <util/kthutil/kauthamobject.h>
 
 using namespace std;
 

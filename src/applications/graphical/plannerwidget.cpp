@@ -24,11 +24,11 @@
  
 #include "plannerwidget.h"
 #include "gui.h"
-#include "libsampling/se3conf.h"
-#include "libsampling/robconf.h"
+#include <sampling/se3conf.h>
+#include <sampling/robconf.h>
 
 #if defined(KAUTHAM_USE_IOC)
-#include "libsplanner/libioc/iocplanner.h"
+#include <planner/ioc/iocplanner.h>
 #endif
 
 namespace Kautham{

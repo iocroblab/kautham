@@ -33,7 +33,7 @@
 #include <problem/robot.h>
 #include "ui_RobotSim.h"
 #include "viewertype.h"
-#include <libsplanner/planner.h>
+#include <planner/planner.h>
 #include <problem/problem.h>
 #include <sampling/sampling.h>
 #include "streamlog.h"
