@@ -32,11 +32,9 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <problem/robot.h>
 #include "ui_RobotSim.h"
-#include "viewertype.h"
 #include <planner/planner.h>
 #include <problem/problem.h>
 #include <sampling/sampling.h>
-#include "streamlog.h"
 #include <util/libkin/inversekinematic.h>
 #include "controlwidget.h"
 #include "plannerwidget.h"
@@ -57,8 +55,7 @@ namespace Kautham {
 		ACTIONTOOL,
 	};
 
-	struct Viewer{
-		VIEWERTYPE type;
+    struct Viewer{
 		SoQtExaminerViewer *window;
 		SoSeparator *root;
 		string title;
@@ -88,7 +85,6 @@ namespace Kautham {
     void                setText(string s);
     void                about();
     void                help();
-    void                showPlannerToolBar();
     void                changeActiveBackground();
     void                changeDockAreaForOutput(Qt::DockWidgetArea area);
     //! Enables/Disables the use of bounding boxes as collision models
@@ -99,7 +95,7 @@ namespace Kautham {
     public:
     GUI(QWidget *p=0);
     void                clearText();
-    bool                addViewerTab(string title, VIEWERTYPE typ, SoSeparator *root);
+    bool                addViewerTab(string title, SoSeparator *root);
     void                removePropTab(string title);
     void                removeViewerTab(string title);
     SoQtExaminerViewer* getViewerTab(string title);
@@ -123,7 +119,6 @@ namespace Kautham {
     bool                addConstrainedControlWidget( Robot* rob, Problem* prob);
     Kautham::DOFWidget *addDOFWidget( Robot* rob );
     bool                setSampleWidget(SampleSet* samples, Sampler* sampler, Problem* prob);
-    bool                createPlannerToolBar(string loc, string plan, QObject* receiver, const char* member);
     bool                addPlanner(Planner *plan, SampleSet* samp, GUI* gui = NULL);
 
     bool                addInverseKinematic(InverseKinematic* ikine);
@@ -151,7 +146,6 @@ namespace Kautham {
     int                 indexPlannerTab;
   private:
     vector<Viewer>      viewers;
-    StreamLog*          qout;
     bool                boolPlanVis;
 	};
 
