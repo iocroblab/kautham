@@ -33,32 +33,32 @@
 * \mainpage THE KAUTHAM PROJECT
 *  A robot simulation toolkit for motion planning
 *
-*\section Abstract
-*The Kautham Project is a software tool used at the Institute of Industrial and
-*Control Engineering (IOC-UPC) for teaching and research in robot motion planning.
-*The tool allows to cope with problems with one or more robots, being a generic
-*robot defined as a kinematic tree with a mobile base. i.e. the tool can plan
-*and simulate from simple two degrees of freedom free-flying robots to multi-robot
-*scenarios with mobile manipulators equipped with anthropomorphic hands.
-*The main core of planners is provided by the Open Motion Planning Library (OMPL).
-*Different basic planners can be flexibly used and parameterized, allowing
-*students to gain insight into the different planning algorithms. Among the
-*advanced features the tool allows to easily define the coupling between degrees of
-*freedom, the dynamic simulation and the integration with task planers. It is
-*principally being used in the research of motion planning strategies for hand-arm
-*robotic systems.
+* \section Abstract
+* The Kautham Project is a software tool used at the Institute of Industrial and
+* Control Engineering (IOC-UPC) for teaching and research in robot motion planning.
+* The tool allows to cope with problems with one or more robots, being a generic
+* robot defined as a kinematic tree with a mobile base. i.e. the tool can plan
+* and simulate from simple two degrees of freedom free-flying robots to multi-robot
+* scenarios with mobile manipulators equipped with anthropomorphic hands.
+* The main core of planners is provided by the Open Motion Planning Library (OMPL).
+* Different basic planners can be flexibly used and parameterized, allowing
+* students to gain insight into the different planning algorithms. Among the
+* advanced features the tool allows to easily define the coupling between degrees of
+* freedom, the dynamic simulation and the integration with task planers. It is
+* principally being used in the research of motion planning strategies for hand-arm
+* robotic systems.
 *
 * \section Features
-*-# Uses OMPL suite of planners (geometric and control based)
-*-# Uses PQP collision detection library
-*-# Uses Coin3D for visualization
-*-# Uses ODE physics engine
-*-# Robot models are defined using urdf or DH parameters coded in an XML file
-*-# Describes robots as kinematic trees with a mobile base (SE3xRn configuration space)
-*-# Geometry is described in VRML files
-*-# Allows multi-robot systems
-*-# Allows the coupling of degrees of freedom
-*-# Can be encapsuled as a ROS node
+* -# Uses OMPL suite of planners (geometric and control based)
+* -# Uses PQP collision detection library
+* -# Uses Coin3D for visualization
+* -# Uses ODE physics engine
+* -# Robot models are defined using urdf or DH parameters coded in an XML file
+* -# Describes robots as kinematic trees with a mobile base (SE3xRn configuration space)
+* -# Geometry is described in VRML files
+* -# Allows multi-robot systems
+* -# Allows the coupling of degrees of freedom
+* -# Can be encapsuled as a ROS node
 
 * \section Credits
 *
@@ -71,8 +71,8 @@
 * de Ingenieria "Julio Garavito" placed in Bogota D.C.
 * Colombia
 *
-* \section Web Page
-* sir.upc.edu/kautham
+* \section Webpage
+* <A HREF="http://sir.upc.edu/kautham"> sir.upc.edu/kautham</A>\n
 */
 
 
