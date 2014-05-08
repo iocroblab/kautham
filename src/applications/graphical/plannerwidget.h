@@ -25,8 +25,8 @@
 #if !defined(_PLANNERWIDGET_H)
 #define _PLANNERWIDGET_H
 
-#include <libgui/kauthamwidget.h>
-#include <libsplanner/planner.h>
+#include "kauthamwidget.h"
+#include <planner/planner.h>
 #include <QtGui>
 #include "gui.h"
 

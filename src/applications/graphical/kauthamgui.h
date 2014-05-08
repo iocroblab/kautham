@@ -30,7 +30,7 @@
 
 #include <QtCore>
 #include <problem/problem.h>
-#include <libgui/gui.h>
+#include "gui.h"
 #include <Inventor/Qt/SoQt.h>
 #include <QtGui>
 #include <QFile>
