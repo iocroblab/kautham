@@ -238,11 +238,11 @@ bool Application::problemSetup(string path){
 
     mainWindow->addToProblemTree( path );
 
-    mainWindow->addViewerTab("WSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvScene());
+    mainWindow->addViewerTab("WSpace", ((IVWorkSpace*)_problem->wSpace())->getIvScene());
     QColor color = settings->value("mainWindow/WSpace/color",QColor("black")).value<QColor>();
     mainWindow->getViewerTab("WSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
 
-    mainWindow->addViewerTab("CollisionWSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getCollisionIvScene());
+    mainWindow->addViewerTab("CollisionWSpace", ((IVWorkSpace*)_problem->wSpace())->getCollisionIvScene());
     color = settings->value("mainWindow/CollisionWSpace/color",QColor("black")).value<QColor>();
     mainWindow->getViewerTab("CollisionWSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
 
