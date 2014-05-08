@@ -24,6 +24,10 @@
 
 #include "problem.h"
 
+// This part must me leave libproblem!!!!
+#include <QSettings>
+#include <QString>
+
 
 namespace Kautham {
   const KthReal Problem::_toRad = (KthReal)(M_PI/180.0);

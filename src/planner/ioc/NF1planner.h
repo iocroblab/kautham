@@ -34,7 +34,7 @@
 #include <problem/workspace.h>
 #include <sampling/sampling.h>
 #include "localplanner.h"
-#include "planner.h"
+#include <planner/planner.h>
 #include "gridplanner.h"
 
 using namespace std;

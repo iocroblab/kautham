@@ -25,7 +25,7 @@
  
  
 #include "ivkin2drr.h"
-#include <libproblem/robot.h>
+#include <problem/robot.h>
 
   
 IvKin2DRR::IvKin2DRR(Robot* const rob) : Kautham::InverseKinematic(rob){

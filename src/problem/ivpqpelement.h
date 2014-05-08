@@ -29,7 +29,7 @@
 #include "ivelement.h"
 #include <kthutil/kauthamdefs.h>
 #include <Inventor/SoPrimitiveVertex.h>
-#include <libpqp/PQP.h>
+#include <external/pqp/PQP.h>
 #include <external/lcprng.h>
 #include <Inventor/actions/SoCallbackAction.h>
 #include <Inventor/SbLinear.h>

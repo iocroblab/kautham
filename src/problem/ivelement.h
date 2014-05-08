@@ -29,7 +29,7 @@
 #include <sstream>
 #include <fstream>
 #include "element.h"
-#include <gdiam.hpp>
+#include <external/gdiam/gdiam.hpp>
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/fields/SoSFVec3f.h>
 #include <Inventor/fields/SoSFRotation.h>

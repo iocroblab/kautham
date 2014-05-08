@@ -24,14 +24,16 @@
 
  
 
-#include <libproblem/ivworkspace.h>
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/ivworkspace.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 #include "localplanner.h"
 #include "gridplanner.h"
 
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoText3.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoScale.h>
 
 using namespace boost;
 

@@ -23,23 +23,25 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
-#include <libproblem/ivworkspace.h>
-#include <libproblem/workspace.h>
-#include <libsampling/sampling.h>
+#include <problem/ivworkspace.h>
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/algorithm/string.hpp>
 #include "localplanner.h"
 #include "prmplanner.h"
 #include <stdio.h>
-#include <libpugixml/pugixml.hpp>
+#include <pugixml.hpp>
 
-#include <libsutil/lcprng.h>
+#include <external/lcprng.h>
 
 
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoPointSet.h>
 #include <Inventor/nodes/SoLineSet.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoMaterial.h>
 
 using namespace pugi;
 using namespace boost;

@@ -28,7 +28,7 @@
 
 #include <QString>
 
-#include <libsplanner/planner.h>
+#include <planner/planner.h>
 #include <sampling/sampling.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include "robot.h"
@@ -47,46 +47,46 @@
 
 
 #if defined(KAUTHAM_USE_IOC)
-#include <libioc/myplanner.h>
-#include <libioc/prmplanner.h>
-#include <libioc/prmhandplannerICRA.h>
-#include <libioc/prmAUROhandarmplanner.h>
-#include <libioc/prmPCAhandarmplanner.h>
-#include <libioc/prmrobothandconstplannerICRA.h>
-#include <libioc/prmhandplannerIROS.h>
-#include <libioc/myprmplanner.h>
-#include <libioc/mygridplanner.h>
-#include <libioc/NF1planner.h>
-#include <libioc/HFplanner.h>
+#include <planner/ioc/myplanner.h>
+#include <planner/ioc/prmplanner.h>
+#include <planner/ioc/prmhandplannerICRA.h>
+#include <planner/ioc/prmAUROhandarmplanner.h>
+#include <planner/ioc/prmPCAhandarmplanner.h>
+#include <planner/ioc/prmrobothandconstplannerICRA.h>
+#include <planner/ioc/prmhandplannerIROS.h>
+#include <planner/ioc/myprmplanner.h>
+#include <planner/ioc/mygridplanner.h>
+#include <planner/ioc/NF1planner.h>
+#include <planner/ioc/HFplanner.h>
 #endif
 
 #if defined(KAUTHAM_USE_OMPL)
-#include <libompl/omplPRMplanner.h>
-#include <libompl/omplRRTplanner.h>
-#include <libompl/omplRRTStarplanner.h>
-#include <libompl/omplTRRTplanner.h>
-#include <libompl/omplpRRTplanner.h>
-#include <libompl/omplLazyRRTplanner.h>
-#include <libompl/omplcRRTplanner.h>
-#include <libompl/omplcRRTcarplanner.h>
-#include <libompl/omplcRRTf16planner.h>
-#include <libompl/omplRRTConnectplanner.h>
-#include <libompl/omplESTplanner.h>
-#include <libompl/omplSBLplanner.h>
-#include <libompl/omplKPIECEplanner.h>
-#include <libompl/omplKPIECEplanner.h>
+#include <planner/omplg/omplPRMplanner.h>
+#include <planner/omplg/omplRRTplanner.h>
+#include <planner/omplg/omplRRTStarplanner.h>
+#include <planner/omplg/omplTRRTplanner.h>
+#include <planner/omplg/omplpRRTplanner.h>
+#include <planner/omplg/omplLazyRRTplanner.h>
+#include <planner/omplg/omplRRTConnectplanner.h>
+#include <planner/omplg/omplESTplanner.h>
+#include <planner/omplg/omplSBLplanner.h>
+#include <planner/omplg/omplKPIECEplanner.h>
+#include <planner/omplg/omplKPIECEplanner.h>
+#include <planner/omplc/omplcRRTplanner.h>
+#include <planner/omplc/omplcRRTcarplanner.h>
+#include <planner/omplc/omplcRRTf16planner.h>
 #endif
 
 #if defined(KAUTHAM_USE_ODE)
-#include <libkauthamopende/KauthamOpenDERRTPlanner.h>
-#include<libkauthamopende/KauthamOpenDEKPIECEPlanner.h>
+#include <planner/omplOpenDE/KauthamOpenDERRTPlanner.h>
+#include <planner/omplOpenDE/KauthamOpenDEKPIECEPlanner.h>
 #endif
 
-#if defined(KAUTHAM_USE_GUIBRO)
+/*#if defined(KAUTHAM_USE_GUIBRO)
 #include <libguibro/consbronchoscopykin.h>
 #include <libguibro/guibrogridplanner.h>
 #endif // KAUTHAM_USE_GUIBRO
-
+*/
 #if !defined(M_PI)
 #define M_PI 3.1415926535897932384626433832795
 #endif

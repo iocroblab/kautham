@@ -24,7 +24,7 @@
 
  
 #include "ivkinhand.h"
-#include <libproblem/robot.h>
+#include <problem/robot.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
