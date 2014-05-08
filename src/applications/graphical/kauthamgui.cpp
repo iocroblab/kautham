@@ -29,10 +29,10 @@
 #include <QString>
 #include <QMessageBox>
 #include <sstream>
-#include <libproblem/ivworkspace.h>
-#include <libkthutil/kauthamdefs.h>
+#include <problem/ivworkspace.h>
+#include <util/kthutil/kauthamdefs.h>
 #include "kauthamgui.h"
-#include <libgui/dofwidget.h> 
+#include "dofwidget.h"
 #include <QApplication>
 #include <QWidget>
 #include <Inventor/Qt/SoQt.h>

@@ -32,10 +32,10 @@
 #include "constrainedcontrolwidget.h"
 #include "invkinwidget.h"
 #include <QtGui>
-#include <libsampling/sampling.h>
+#include <sampling/sampling.h>
 #include "planners_toolbar.h"
 #include <Inventor/nodes/SoCamera.h>
-#include <libpugixml/pugixml.hpp>
+#include <pugixml.hpp>
 
 #if defined(KAUTHAM_USE_GUIBRO)
 #include <libguibro/bronchowidget.h>
