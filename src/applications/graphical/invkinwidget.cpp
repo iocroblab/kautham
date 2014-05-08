@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell */
  
 #include "invkinwidget.h"
-#include <libproblem/robot.h>
+#include <problem/robot.h>
 
 namespace Kautham{
 

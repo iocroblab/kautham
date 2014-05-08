@@ -23,8 +23,8 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
      
 #include "sampleswidget.h"
-#include <libsampling/sampling.h>
-#include <libsutil/lcprng.h>
+#include <sampling/sampling.h>
+#include <external/lcprng.h>
 #include <sstream>
 
 
