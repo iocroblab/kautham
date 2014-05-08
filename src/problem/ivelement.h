@@ -44,7 +44,7 @@
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/SbLinear.h>
-#include <kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamdefs.h>
 #include <QSettings>
 #include <QString>
 

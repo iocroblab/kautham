@@ -1,0 +1,2 @@
+ADD_SUBDIRECTORY ( libkin )
+ADD_SUBDIRECTORY ( kthutil )
