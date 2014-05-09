@@ -56,7 +56,6 @@ namespace Kautham {
                 textBrowser->setHtml(str);
             }
         }
-        connect(actionHelp, SIGNAL(triggered()), this, SLOT(help()));
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
         connect(outputWindow, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(changeDockAreaForOutput(Qt::DockWidgetArea)));
         boolPlanVis = false;
@@ -80,18 +79,6 @@ namespace Kautham {
                                       QDockWidget::DockWidgetFloatable |
                                       QDockWidget::DockWidgetVerticalTitleBar);
 
-    }
-
-    void GUI::help(){
-        try{
-            QDir currDir;
-            std::cout << "Trying to open " << currDir.absolutePath().toUtf8().constData() << "/Kautham2.chm\n";
-#ifdef _WIN32
-            system("hh.exe Kautham2.chm");
-#else
-            system("kchmviewer Kautham2.chm");
-#endif
-        }catch(...){}
     }
 
     void GUI::changeActiveBackground(){
