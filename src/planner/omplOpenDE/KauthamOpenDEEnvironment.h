@@ -69,7 +69,7 @@
 #include <Inventor/VRMLnodes/SoVRMLMaterial.h>
 #include <vector>
 #include <cmath>
-#include <libmt/mt/mt.h>
+//#include <libmt/mt/mt.h>
 #include <problem/link.h>
 #include <problem/robot.h>
 #include <problem/ivelement.h>
