@@ -8,7 +8,6 @@
 	<Obstacle obstacle="obstacles/axis.iv" scale="10">
 		<Collision enabled="false" />
 	</Obstacle>
-	<Controls robot="controls/R2D2.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplRRT</Name>

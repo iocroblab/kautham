@@ -26,6 +26,7 @@
   
 #include <Inventor/Qt/SoQt.h>
 #include <QFile>
+#include <QSettings>
 #include <QString>
 #include <QMessageBox>
 #include <sstream>
@@ -227,22 +228,28 @@ void Application::saveTabColors() {
 }
 
 
-bool Application::problemSetup(string path){
+bool Application::problemSetup(string problemFile){
     mainWindow->setCursor(QCursor(Qt::WaitCursor));
+
+    string dir = problemFile.substr(problemFile.find_last_of("/")+1);
+    string models_def_path = settings->value("default_path/models",QString(string(dir+string("/../../models")).c_str())).
+            toString().toStdString()+"/";
+    bool useBBOX = settings->value("use_BBOX","false").toBool();
+
     _problem = new Problem();
-    if (!_problem->setupFromFile(path)) {
+    if (!_problem->setupFromFile(problemFile,models_def_path,useBBOX)) {
         appState = INITIAL;
         delete _problem;
         return false;
     }
 
-    mainWindow->addToProblemTree( path );
+    mainWindow->addToProblemTree(problemFile);
 
-    mainWindow->addViewerTab("WSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getIvScene());
+    mainWindow->addViewerTab("WSpace", ((IVWorkSpace*)_problem->wSpace())->getIvScene());
     QColor color = settings->value("mainWindow/WSpace/color",QColor("black")).value<QColor>();
     mainWindow->getViewerTab("WSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
 
-    mainWindow->addViewerTab("CollisionWSpace", SPACE, ((IVWorkSpace*)_problem->wSpace())->getCollisionIvScene());
+    mainWindow->addViewerTab("CollisionWSpace", ((IVWorkSpace*)_problem->wSpace())->getCollisionIvScene());
     color = settings->value("mainWindow/CollisionWSpace/color",QColor("black")).value<QColor>();
     mainWindow->getViewerTab("CollisionWSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
 

@@ -24,11 +24,6 @@
 
 #include "problem.h"
 
-// This part must me leave libproblem!!!!
-#include <QSettings>
-#include <QString>
-
-
 namespace Kautham {
   const KthReal Problem::_toRad = (KthReal)(M_PI/180.0);
   Problem::Problem() {
@@ -51,7 +46,7 @@ namespace Kautham {
 
 
   // This is the new implementation trying to avoid the old strucparse and ProbStruc.
-  bool Problem::createWSpace(xml_document *doc) {
+  bool Problem::createWSpace(xml_document *doc, bool useBBOX) {
       if(_wspace != NULL ) delete _wspace;
       _wspace = new IVWorkSpace();
 
@@ -62,7 +57,7 @@ namespace Kautham {
       //add all robots to worskpace
       for (tmpNode = doc->child("Problem").child("Robot");
            tmpNode; tmpNode = tmpNode.next_sibling("Robot")) {
-          if (!addRobot2WSpace(&tmpNode)) return false;
+          if (!addRobot2WSpace(&tmpNode, useBBOX)) return false;
       }
 
       //set robot controls
@@ -72,7 +67,7 @@ namespace Kautham {
       //add all obstacles to worskpace
       for (tmpNode = doc->child("Problem").child("Obstacle");
            tmpNode; tmpNode = tmpNode.next_sibling("Obstacle")) {
-          if (!addObstacle2WSpace(&tmpNode)) return false;
+          if (!addObstacle2WSpace(&tmpNode, useBBOX)) return false;
       }
 
       //set obstacle controls
@@ -528,18 +523,16 @@ namespace Kautham {
       }
   }
 
-  bool Problem::prepareFile (xml_document *doc) {
+  bool Problem::prepareFile (xml_document *doc, string models_def_path) {
       if (isFileOK(doc)) {
           //get the relative paths where robots and obstacle files will be looked for
           string  dir = _filePath.substr(0,_filePath.find_last_of("/")+1);
 
-          QSettings settings("IOC", "Kautham");
-          string models_def_path = settings.value("default_path/models",QString(string(dir+string("/../../models")).c_str())).
-                  toString().toStdString()+"/";
-
           vector <string> path;
           path.push_back(dir);
-          path.push_back(models_def_path);
+          if (models_def_path != "") {
+              path.push_back(models_def_path);
+          }
 
           xml_node prob_node = doc->child("Problem");
 
@@ -566,14 +559,14 @@ namespace Kautham {
       return false;
   }
 
-  bool Problem::setupFromFile(ifstream* xml_inputfile, string modelsfolder) {
+  bool Problem::setupFromFile(ifstream* xml_inputfile, string modelsfolder, bool useBBOX) {
       _filePath = modelsfolder.c_str();
       xml_document *doc = new xml_document;
       if(doc->load( *xml_inputfile )) {
           //if the file was correctly parsed
-          if (prepareFile(doc)) {
+          if (prepareFile(doc, modelsfolder)) {
               //if everything seems to be OK, try to setup the problem
-              return setupFromFile(doc);
+              return setupFromFile(doc, useBBOX);
           } else {
               return false;
           }
@@ -582,14 +575,14 @@ namespace Kautham {
       }
   }
 
-  bool Problem::setupFromFile(string xml_doc) {
+  bool Problem::setupFromFile(string xml_doc, string models_def_path, bool useBBOX) {
       _filePath = xml_doc;
       xml_document *doc = new xml_document;
       if(doc->load_file( xml_doc.c_str())) {
           //if the file was correctly parsed
-          if (prepareFile(doc)) {
+          if (prepareFile(doc, models_def_path)) {
               //if everything seems to be OK, try to setup the problem
-              return setupFromFile(doc);
+              return setupFromFile(doc, useBBOX);
           } else {
               return false;
           }
@@ -598,8 +591,8 @@ namespace Kautham {
       }
   }
 
-  bool Problem::setupFromFile(xml_document *doc) {
-      if (!createWSpace(doc)) return false;
+  bool Problem::setupFromFile(xml_document *doc, bool useBBOX) {
+      if (!createWSpace(doc, useBBOX)) return false;
 
       if (!createCSpaceFromFile(doc)) return false;
 
@@ -684,16 +677,16 @@ namespace Kautham {
       return false;
   }
 
-  bool Problem::addRobot2WSpace(xml_node *robot_node) {
+  bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX) {
       Robot *rob;
       string name;
 
 #ifndef KAUTHAM_COLLISION_PQP
       rob = new Robot(robot_node->attribute("robot").as_string(),
-                      (KthReal)robot_node->attribute("scale").as_double(),INVENTOR);
+                      (KthReal)robot_node->attribute("scale").as_double(),INVENTOR,useBBOX);
 #else
       rob = new Robot(robot_node->attribute("robot").as_string(),
-                      (KthReal)robot_node->attribute("scale").as_double(),IVPQP);
+                      (KthReal)robot_node->attribute("scale").as_double(),IVPQP,useBBOX);
 #endif
 
       if (!rob->isArmed()) return false;
@@ -1104,16 +1097,16 @@ namespace Kautham {
       }
   }
 
-  bool Problem::addObstacle2WSpace(xml_node *obstacle_node) {
+  bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX) {
       Robot *obs;
       string name;
 
 #ifndef KAUTHAM_COLLISION_PQP
       obs = new Robot(obstacle_node->attribute("obstacle").as_string(),
-                      (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR);
+                      (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR,useBBOX);
 #else
       obs = new Robot(obstacle_node->attribute("obstacle").as_string(),
-                      (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP);
+                      (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP,useBBOX);
 #endif
 
       if (!obs->isArmed()) return false;
