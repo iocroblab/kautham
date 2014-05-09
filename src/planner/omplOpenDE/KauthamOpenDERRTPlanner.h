@@ -31,8 +31,8 @@
 
 #include "KauthamOpenDEPlanner.h"
 #include "KauthamOpenDEtableEnvironment.h"
-#include "libompl/omplcplanner.h"
-#include "libsampling/sampling.h"
+#include "planner/omplc/omplcplanner.h"
+#include "sampling/sampling.h"
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
 #define _USE_MATH_DEFINES
 
