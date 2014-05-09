@@ -69,7 +69,7 @@
 #include <Inventor/VRMLnodes/SoVRMLMaterial.h>
 #include <vector>
 #include <cmath>
-#include <libmt/mt/mt.h>
+//#include <libmt/mt/mt.h>
 #include <problem/link.h>
 #include <problem/robot.h>
 #include <problem/ivelement.h>
@@ -77,7 +77,7 @@
 #include <ompl/base/ProjectionEvaluator.h>
 #include <problem/workspace.h>
 #include <sampling/sampling.h>
-#include "planner.h"
+#include "planner/planner.h"
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
