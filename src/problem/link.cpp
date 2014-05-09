@@ -42,14 +42,14 @@ namespace Kautham {
   *		graphical representation.
   */
   Link::Link(string ivFile, string collision_ivFile, KthReal scale,
-             APPROACH Type, LIBUSED lib){
+             APPROACH Type, LIBUSED lib, bool useBBOX){
     libs = lib;
     switch(libs){
       case INVENTOR:
-        element = new IVElement(ivFile,collision_ivFile,scale);
+        element = new IVElement(ivFile,collision_ivFile,scale,useBBOX);
         break;
       case IVPQP:
-        element = new IVPQPElement(ivFile,collision_ivFile,scale);
+        element = new IVPQPElement(ivFile,collision_ivFile,scale,useBBOX);
         break;
       case IVSOLID:
         
@@ -96,14 +96,14 @@ namespace Kautham {
   *     \param scale is the global scale for this link and It is only used for
   *		graphical representation.
   */
-  Link::Link(SoSeparator *visual_model, SoSeparator *collision_model, float scale, APPROACH Type, LIBUSED lib){
+  Link::Link(SoSeparator *visual_model, SoSeparator *collision_model, float scale, APPROACH Type, LIBUSED lib, bool useBBOX){
     libs = lib;
     switch(libs){
       case INVENTOR:
-        element = new IVElement(visual_model,collision_model,scale);
+        element = new IVElement(visual_model,collision_model,scale,useBBOX);
         break;
       case IVPQP:
-        element = new IVPQPElement(visual_model,collision_model,scale);
+        element = new IVPQPElement(visual_model,collision_model,scale,useBBOX);
         break;
       case IVSOLID:
 
