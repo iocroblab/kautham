@@ -84,7 +84,6 @@ namespace Kautham {
 	public slots:
     void                setText(string s);
     void                about();
-    void                help();
     void                changeActiveBackground();
     void                changeDockAreaForOutput(Qt::DockWidgetArea area);
     //! Enables/Disables the use of bounding boxes as collision models
