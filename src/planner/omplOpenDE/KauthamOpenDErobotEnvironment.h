@@ -71,7 +71,7 @@
 #include <vector>
 #include <cmath>
 //#include <ros/ros.h>
-#include <libmt/mt/mt.h>
+//#include <libmt/mt/mt.h>
 #include <problem/link.h>
 #include <problem/robot.h>
 #include <problem/ivelement.h>
@@ -95,7 +95,7 @@ namespace oc = ompl::control;
 
 #include <problem/workspace.h>
 #include <sampling/sampling.h>
-#include "planner.h"
+//#include "planner.h"
 
 
 using namespace std;

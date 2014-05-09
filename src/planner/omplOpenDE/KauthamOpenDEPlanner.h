@@ -35,7 +35,8 @@
 #include <ompl/config.h>
 
 #include <ompl/base/spaces/RealVectorStateSpace.h>
-#include "omplcplanner.h"
+//#include "omplcplanner.h"
+
 
 #include <problem/workspace.h>
 #include <sampling/sampling.h>
@@ -52,8 +53,9 @@
 
 #include <ode/ode.h>
 #include "KauthamOpenDEauxiliarclasses.h"
-#include "omplcplanner.h"
-#include "planner.h"
+//#include "omplcplanner.h"
+#include "planner/planner.h"
+
 #include "KauthamOpenDEEnvironment.h"
 
 #include "KauthamOpenDEtableEnvironment.h"
