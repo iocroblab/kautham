@@ -24,7 +24,6 @@ ENDIF( KAUTHAM_GUI )
   QT4_ADD_RESOURCES(kautham_RESOURCES_RCC ${kautham_RESOURCES})
   QT4_WRAP_CPP( QT_MOC_SRC kauthamgui.h 
 		aboutwidget.h
-		axis.h
         constrainedcontrolwidget.h
         controlwidget.h
         dofwidget.h
@@ -32,12 +31,9 @@ ENDIF( KAUTHAM_GUI )
         invkinwidget.h
         kauthamgui.h
         kauthamwidget.h
-        planners_toolbar.h
         plannerwidget.h
         sampleswidget.h
-        streamlog.h
         ui_RobotSim.h
-        viewertype.h
 
 		OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
 
@@ -50,11 +46,9 @@ ENDIF( KAUTHAM_GUI )
 	controlwidget.cpp
 	gui.cpp
 	kauthamgui.cpp
-	planners_toolbar.cpp
 	sampleswidget.cpp)
   SET( HDR_FILES_GUI kauthamgui.h 
 	aboutwidget.h
-	axis.h
 	constrainedcontrolwidget.h
 	controlwidget.h
 	dofwidget.h
@@ -62,12 +56,9 @@ ENDIF( KAUTHAM_GUI )
 	invkinwidget.h
 	kauthamgui.h
 	kauthamwidget.h
-	planners_toolbar.h
 	plannerwidget.h
 	sampleswidget.h
-	streamlog.h
-	ui_RobotSim.h
-	viewertype.h)
+	ui_RobotSim.h)
 
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${kautham_RESOURCES_RCC} )
   TARGET_LINK_LIBRARIES( Kautham2 

@@ -45,9 +45,6 @@
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/SbLinear.h>
 #include <util/kthutil/kauthamdefs.h>
-#include <QSettings>
-#include <QString>
-
 
 
 namespace Kautham {
@@ -58,8 +55,8 @@ namespace Kautham {
 
 class IVElement : public Element {
   public:
-      IVElement(string ivfile, string collision_ivfile, float sc);
-      IVElement(SoSeparator *visual_model, SoSeparator *collision_model, float sc);
+      IVElement(string ivfile, string collision_ivfile, float sc, bool useBBOX);
+      IVElement(SoSeparator *visual_model, SoSeparator *collision_model, float sc, bool useBBOX);
 	  void setColor(KthReal c[3]);
     void setPosition(KthReal pos[3]);
 	  void setOrientation(KthReal ori[4]);
