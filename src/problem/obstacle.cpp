@@ -56,7 +56,7 @@ Obstacle::Obstacle(string modFile, KthReal pos[3], KthReal ori[4], KthReal scale
             case IVSOLID:
                 element = new IVPQPElement(obstacle.visual.model,
                                            obstacle.collision.model,
-                                           scale);
+                                           scale,false);
 
                 //Set ode parameters
                 element->ode.inertial.inertia.ixx = obstacle.inertial.inertia.ixx;
@@ -83,7 +83,7 @@ Obstacle::Obstacle(string modFile, KthReal pos[3], KthReal ori[4], KthReal scale
         switch(libs){
         case IVPQP:
         case IVSOLID:
-            element = new IVPQPElement(modFile,modFile,scale);
+            element = new IVPQPElement(modFile,modFile,scale,false);
         }
     }
     element->setPosition(pos);
