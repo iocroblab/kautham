@@ -34,7 +34,7 @@ namespace Kautham{
   //! Class State is used to represent a configuration of the State Space.
   //! The first element contains a Sample of the robot controls.
   //! The second element contains a Sample of the obstacle controls.
-  class State: public std::pair<Sample,Sample> {
+  class State: public std::pair<Sample*,Sample*> {
   public:
 
       //! Initializes the robot sample with the robcoords contents.
