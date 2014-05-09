@@ -73,7 +73,7 @@ namespace Kautham {
    *  \param robScale is a global scale for all the links
    *  \param lib identifies wether PQP or SOLID collision libs are used
    */
-  Robot::Robot(string robFile, KthReal robScale, LIBUSED lib) {
+  Robot::Robot(string robFile, KthReal robScale, LIBUSED lib, bool useBBOX) {
       //set initial values
       collisionable = true;
       _linkPathDrawn = -1;
@@ -112,11 +112,11 @@ namespace Kautham {
           string extension = robFile.substr(robFile.find_last_of(".")+1);
 
           if (extension == "dh") {
-              armed = setFromdhFile(robFile);
+              armed = setFromdhFile(robFile,useBBOX);
           } else if (extension == "urdf") {
-              armed = setFromurdfFile(robFile);
+              armed = setFromurdfFile(robFile,useBBOX);
           } else if (extension == "iv" || extension == "wrl") {
-              armed = setFromivFile(robFile);
+              armed = setFromivFile(robFile,useBBOX);
           } else {
               cout << "The Robot file: " << robFile << " has an incorrect extension. "
                    << "Accepted file format are dh, urdf, iv or wrl" << endl;
@@ -155,7 +155,7 @@ namespace Kautham {
   }
 
 
-  bool Robot::setFromdhFile(string robFile) {
+  bool Robot::setFromdhFile(string robFile, bool useBBOX) {
       //setting numeric parameter to avoid convertions problems
       char *old = setlocale(LC_NUMERIC, "C");
 
@@ -265,7 +265,7 @@ namespace Kautham {
                           (*it).child("Description").attribute("movable").as_bool(),
                           limMin, limMax,
                           (KthReal)(*it).child("Weight").attribute("weight").as_double(),
-                          (*it).child("Parent").attribute("name").as_string(), preTransP);
+                          (*it).child("Parent").attribute("name").as_string(), preTransP, useBBOX);
               } else {
                   addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
                           dir + (*it).attribute("ivFile").as_string(),
@@ -277,7 +277,7 @@ namespace Kautham {
                           (*it).child("Description").attribute("movable").as_bool(),
                           limMin, limMax,
                           (KthReal)(*it).child("Weight").attribute("weight").as_double(),
-                          (*it).child("Parent").attribute("name").as_string(), preTransP);
+                          (*it).child("Parent").attribute("name").as_string(), preTransP, useBBOX);
               }
 
               if (!((Link*)links.at(i))->isArmed()) {
@@ -314,7 +314,7 @@ namespace Kautham {
   }
 
 
-  bool Robot::setFromurdfFile(string robFile) {
+  bool Robot::setFromurdfFile(string robFile, bool useBBOX) {
       //setting numeric parameter to avoid convertions problems
       char *old = setlocale(LC_NUMERIC, "C");
 
@@ -434,7 +434,7 @@ namespace Kautham {
                       robot.link[i].collision.model,
                       robot.link[i].axis,robot.link[i].type == "revolute",
                       robot.link[i].type != "fixed",limMin,
-                      limMax,robot.link[i].weight,robot.link[i].parent,preTransP,ode);
+                      limMax,robot.link[i].weight,robot.link[i].parent,preTransP,ode,useBBOX);
 
               if (!((Link*)links.at(i))->isArmed()) {
                   //restoring environtment values
@@ -461,7 +461,7 @@ namespace Kautham {
   }
 
 
-  bool Robot::setFromivFile(string robFile) {
+  bool Robot::setFromivFile(string robFile, bool useBBOX) {
       char *old = setlocale(LC_NUMERIC, "C");
 
       //Robot Name
@@ -479,7 +479,7 @@ namespace Kautham {
       _weights = new RobWeight(0);
       _weights->setSE3Weight(1., 1.);
 
-      addLink("Base", robFile, robFile, 0, 0, 0, 0, false, true, 0, 0, 1, "", NULL);
+      addLink("Base", robFile, robFile, 0, 0, 0, 0, false, true, 0, 0, 1, "", NULL, useBBOX);
 
       //restoring environtment values
       setlocale(LC_NUMERIC,old);
@@ -1031,8 +1031,8 @@ namespace Kautham {
   //! structure to adquire the information to do the job.
   bool	Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal theta, KthReal d,
                        KthReal a,KthReal alpha, bool rotational, bool movable,
-                       KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[]){
-      Link* temp = new Link(ivFile, collision_ivFile, this->getScale(), Approach, libs);
+                       KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], bool useBBOX){
+      Link* temp = new Link(ivFile, collision_ivFile, this->getScale(), Approach, libs, useBBOX);
       temp->setName(name);
       temp->setMovable(movable && (low != hi));
       temp->setRotational(rotational);
@@ -1065,9 +1065,9 @@ namespace Kautham {
   //! to keep the coherence in the robot assembly. It doesn't use any intermediate
   //! structure to adquire the information to do the job.
   bool	Robot::addLink(string name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis, bool rotational, bool movable,
-                       KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], ode_element ode){
+                       KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], ode_element ode, bool useBBOX){
 
-      Link* temp = new Link(visual_model, collision_model, scale, Approach, libs);
+      Link* temp = new Link(visual_model, collision_model, scale, Approach, libs, useBBOX);
       temp->setName(name);
       temp->setMovable(movable && (low != hi));
       temp->setRotational(rotational);

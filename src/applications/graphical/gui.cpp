@@ -33,7 +33,6 @@
 #include "invkinwidget.h"
 #include <QtGui>
 #include <sampling/sampling.h>
-#include "planners_toolbar.h"
 #include <Inventor/nodes/SoCamera.h>
 #include <pugixml.hpp>
 
@@ -57,8 +56,6 @@ namespace Kautham {
                 textBrowser->setHtml(str);
             }
         }
-        qout = new StreamLog(std::cout, textEdit);
-        connect(actionHelp, SIGNAL(triggered()), this, SLOT(help()));
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
         connect(outputWindow, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(changeDockAreaForOutput(Qt::DockWidgetArea)));
         boolPlanVis = false;
@@ -82,18 +79,6 @@ namespace Kautham {
                                       QDockWidget::DockWidgetFloatable |
                                       QDockWidget::DockWidgetVerticalTitleBar);
 
-    }
-
-    void GUI::help(){
-        try{
-            QDir currDir;
-            std::cout << "Trying to open " << currDir.absolutePath().toUtf8().constData() << "/Kautham2.chm\n";
-#ifdef _WIN32
-            system("hh.exe Kautham2.chm");
-#else
-            system("kchmviewer Kautham2.chm");
-#endif
-        }catch(...){}
     }
 
     void GUI::changeActiveBackground(){
@@ -332,25 +317,6 @@ namespace Kautham {
         return false;
     }
 
-    bool GUI::createPlannerToolBar(string loc, string plan, QObject* receiver, const char* member){
-        if(loc != "" && plan != ""){
-            planToolBar = new PlannerToolBar(this, loc ,plan, receiver, member);;
-            planToolBar->setObjectName(QString::fromUtf8("PlanToolBar"));
-            planToolBar->setOrientation(Qt::Horizontal);
-            addToolBar(Qt::TopToolBarArea, planToolBar);
-            boolPlanVis = true;
-            planToolBar->setVisible(false);
-            return true;
-        }else
-            return false;
-    }
-
-    void GUI::showPlannerToolBar(){
-        if(planToolBar != NULL)
-            planToolBar->setVisible(boolPlanVis);
-
-        boolPlanVis = !boolPlanVis;
-    }
 
 
     bool GUI::addPlanner(Planner *plan, SampleSet* samp, GUI* gui){
@@ -362,7 +328,7 @@ namespace Kautham {
             connect(tmpPlan, SIGNAL(sendText(string)), this, SLOT(setText(string)) );
             if(plan->getIvCspaceScene() != NULL)
             {
-                addViewerTab("CSpace", SPACE, plan->getIvCspaceScene());
+                addViewerTab("CSpace", plan->getIvCspaceScene());
             }
             return true;
         }else{
@@ -375,7 +341,7 @@ namespace Kautham {
         return false;
     }
 
-    bool GUI::addViewerTab(string title, VIEWERTYPE typ, SoSeparator *root){
+    bool GUI::addViewerTab(string title, SoSeparator *root){
         viewsTab->setEnabled(true);
         viewsTab->setCurrentIndex(0);
         if(root!=NULL && title.size()!=0 ){
@@ -383,7 +349,6 @@ namespace Kautham {
             v.tab = new QWidget(viewsTab);
             v.root= root;
             v.title =title;
-            v.type=typ;
             v.window= new SoQtExaminerViewer(v.tab);
             viewsTab->addTab(v.tab,QString(title.c_str()));
             v.window->setViewing(FALSE);
