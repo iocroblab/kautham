@@ -45,8 +45,8 @@ namespace Kautham {
 
   class IVPQPElement : public IVElement {
   public:
-      IVPQPElement(string visFile, string collFile, KthReal sc);
-      IVPQPElement(SoSeparator *visual_model,SoSeparator *collision_model, KthReal sc);
+      IVPQPElement(string visFile, string collFile, KthReal sc, bool useBBOX);
+      IVPQPElement(SoSeparator *visual_model,SoSeparator *collision_model, KthReal sc, bool useBBOX);
 	  SoSeparator* getIvFromPQPModel(bool tran = true);
 	  bool collideTo(Element* other);
 	  KthReal getDistanceTo(Element* other);

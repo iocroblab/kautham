@@ -35,7 +35,6 @@ class Ui_kauthamMain
 {
 public:
     QAction         *actionNew;
-    QAction         *actionHelp;
     QAction         *actionAbout;
     QWidget         *centralwidget;
     QWidget         *probTab;
@@ -80,8 +79,6 @@ public:
         kauthamMain->setDockNestingEnabled(false);
         actionNew = new QAction(kauthamMain);
         actionNew->setObjectName(QString::fromUtf8("actionNew"));
-        actionHelp = new QAction(kauthamMain);
-        actionHelp->setObjectName(QString::fromUtf8("actionHelp"));
         actionAbout = new QAction(kauthamMain);
         actionAbout->setObjectName(QString::fromUtf8("actionAbout"));
         centralwidget = new QWidget(kauthamMain);
@@ -183,7 +180,6 @@ public:
         menubar->addAction(menuFile->menuAction());
         menubar->addAction(menuActions->menuAction());
         menubar->addAction(menuHelp->menuAction());
-        menuHelp->addAction(actionHelp);
         menuHelp->addSeparator();
         menuHelp->addAction(actionAbout);
         retranslateUi(kauthamMain);
@@ -197,7 +193,6 @@ public:
     {
         kauthamMain->setWindowTitle(QApplication::translate("kauthamMain", "Kautham 2.0 - Institute of Industrial and Control Engineering - Technical University of Catalonia", 0, QApplication::UnicodeUTF8));
         actionNew->setText(QApplication::translate("kauthamMain", "New...", 0, QApplication::UnicodeUTF8));
-        actionHelp->setText(QApplication::translate("kauthamMain", "Kautham Planner", 0, QApplication::UnicodeUTF8));
         actionAbout->setText(QApplication::translate("kauthamMain", "About...", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_ACCESSIBILITY
         propertiesTab->setAccessibleName(QApplication::translate("kauthamMain", "l", 0, QApplication::UnicodeUTF8));

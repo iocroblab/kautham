@@ -30,14 +30,14 @@
 namespace Kautham {
 
 
-IVPQPElement::IVPQPElement(string visFile, string collFile, KthReal sc)
-    :IVElement(visFile,collFile,sc){
+IVPQPElement::IVPQPElement(string visFile, string collFile, KthReal sc, bool useBBOX)
+    :IVElement(visFile,collFile,sc,useBBOX){
       pqpmodel = NULL;
       makePQPModel();
   }
 
-IVPQPElement::IVPQPElement(SoSeparator *visual_model,SoSeparator *collision_model, KthReal sc)
-    :IVElement(visual_model,collision_model,sc){
+IVPQPElement::IVPQPElement(SoSeparator *visual_model,SoSeparator *collision_model, KthReal sc, bool useBBOX)
+    :IVElement(visual_model,collision_model,sc,useBBOX){
       pqpmodel = NULL;
       makePQPModel();
   }

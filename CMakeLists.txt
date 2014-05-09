@@ -220,7 +220,7 @@ ENDIF( KAUTHAM_IOC )
 # http://mementocodex.wordpress.com/2013/01/19/how-to-generate-code-documentation-with-doxygen-and-cmake-a-slightly-improved-approach/
 
 option(BUILD_DOCUMENTATION "Create and install the HTML based API
-documentation (requires Doxygen)" OFF)
+documentation (requires Doxygen)" ON)
 IF(BUILD_DOCUMENTATION)
   FIND_PACKAGE(Doxygen)
   IF(NOT DOXYGEN_FOUND)
