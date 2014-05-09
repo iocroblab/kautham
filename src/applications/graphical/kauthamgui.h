@@ -60,7 +60,7 @@ private:
   void              saveTabColors();
   //!  This method setups the problem and create the WorkSpace, the Planner and
   //!  its corresponding LocalPlanner.
-  bool              problemSetup(string path);
+  bool              problemSetup(string problemFile);
 
 
   QSettings         *settings;

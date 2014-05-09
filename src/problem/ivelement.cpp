@@ -65,7 +65,7 @@ namespace Kautham {
         }
     }
 
-    IVElement::IVElement(string ivfile, string collision_ivfile, KthReal sc) {
+    IVElement::IVElement(string ivfile, string collision_ivfile, KthReal sc, bool useBBOX) {
 		for(int i=0;i<3;i++){
 			position[i]= 0.0f;
 			orientation[i]=0.0f;
@@ -133,9 +133,6 @@ namespace Kautham {
 
         //check if collision_ivfile is a different file from ivfile
         //and if collision_ivmodel could be the minimum-volume bounding box of ivmodel
-        QSettings settings("IOC", "Kautham");
-        bool useBBOX = settings.value("use_BBOX","false").toBool();
-
         if (useBBOX && collision_ivfile == ivfile && ivModel() != NULL &&
                 string::npos == collision_ivfile.find( "_bbox", 0 )) {
             //collision_ivmodel will be the minimum-volume bounding box of ivmodel
@@ -221,7 +218,7 @@ namespace Kautham {
     }
 
 
-    IVElement::IVElement(SoSeparator *visual_model, SoSeparator *collision_model, float sc) {
+    IVElement::IVElement(SoSeparator *visual_model, SoSeparator *collision_model, float sc, bool useBBOX) {
         for(int i=0;i<3;i++){
             position[i]= 0.0f;
             orientation[i]=0.0f;
@@ -260,9 +257,6 @@ namespace Kautham {
             collision_ivmodel->addChild(collision_model);
 
         } else {
-            QSettings settings("IOC", "Kautham");
-            bool useBBOX = settings.value("use_BBOX","false").toBool();
-
             if (useBBOX) {
                 collision_ivmodel = BBOX(ivModel(),sc);
                 if (collision_ivmodel == NULL) {
