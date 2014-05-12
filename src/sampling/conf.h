@@ -38,7 +38,7 @@ using namespace std;
 namespace Kautham {
 
 
-/** \defgroup libSampling Library libsampling
+/** \defgroup libSampling Sampling library
  *  \brief contains classes to sample the configuration space
  *
  *   \todo Add detailed description of library libsampling

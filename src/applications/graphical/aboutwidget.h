@@ -34,10 +34,10 @@
 #include <QtGui/QDialog>
 
 namespace Kautham {
-/** \defgroup libGUI Library libGUI
- *  \brief contains classes for the Graphical User Interface
+/** \defgroup libGUI Application
+ *  \brief contains the GUI, the console application and the ROS node
  *
- *  \todo Add detailed description of library libGUI
+ *  \todo Add detailed description of Application
  *
  *  @{
  */
