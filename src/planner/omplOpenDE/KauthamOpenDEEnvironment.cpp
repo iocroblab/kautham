@@ -136,6 +136,13 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
 {
     bodyworld=dWorldCreate();
    _OpenDEspace = dHashSpaceCreate(0);
+   //_OpenDEspace =dSweepAndPruneSpaceCreate( 0, dSAP_AXES_XYZ );
+   // dWorldSetGravity(bodyworld, 0,0,-9.8);
+      dWorldSetCFM (bodyworld, 1e-5);
+      dWorldSetERP (bodyworld, 0.8);
+      dWorldSetQuickStepNumIterations (bodyworld,20);
+
+      //ground = dCreatePlane (_OpenDEspace,0,0,1,0);
 //_OpenDEspace =dSweepAndPruneSpaceCreate( 0, dSAP_AXES_XYZ );
     for (int i=0;i < (int(wkspace->getNumRobots())); i++)
     {
@@ -172,25 +179,47 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
             {
                 dBodyID odebody;
                 odebody = makePrimitive(chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].position,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].orientation,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].mass,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].vertexes);
-
                 stateBodiesmap_.insert(pair<string,dBodyID>((wkspace->getRobot(i)->getName()),odebody));
 
 
             }
             else
             {
-                dBodyID odebody;
+                 dBodyID odebody;
+
+                           /*    if(i==0)
+                                {
+                                vector<double> t;
+                                t.push_back(-90);
+                                 t.push_back(-90);
+                                  t.push_back(50);
+                                    const vector<double> position= t;
+                                    const vector<double> orientation=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].orientation;
+                                    const vector<double> vertexes=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes;
+                                    const vector<unsigned int> indexes = chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].indexes;
+                                    //double mass=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].mass;
+                                    double mass=0.01;
+
+                                     // odebody = makeTriMesh(chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].position,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].orientation,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].indexes,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].mass);
+                                      odebody = makeTriMesh(position,orientation,vertexes,indexes,mass);
+                                      //dVector3 pos;
+                                      //dBodyCopyPosition ( odebody, pos);
+                                      bodies.push_back(odebody);
+                                }
+                                else */
+                                {
+
                const vector<double> position= chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].position;
                const vector<double> orientation=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].orientation;
                const vector<double> vertexes=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes;
                const vector<unsigned int> indexes = chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].indexes;
                double mass=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].mass;
-                // odebody = makeTriMesh(chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].position,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].orientation,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].indexes,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].mass);
-                 odebody = makeTriMesh(position,orientation,vertexes,indexes,mass);
-                 //dVector3 pos;
-                 //dBodyCopyPosition ( odebody, pos);
+               // odebody = makeTriMesh(chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].position,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].orientation,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].indexes,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].mass);
+               odebody = makeTriMesh(position,orientation,vertexes,indexes,mass);
+               //dVector3 pos;
+               //dBodyCopyPosition ( odebody, pos);
                  bodies.push_back(odebody);
-
+                }
                  //stateBodiesmap_.insert(pair<string,dBodyID>((wkspace->getRobot(i)->getName()),odebody));
 
                  // dBodyDestroy(odebody);
@@ -927,10 +956,12 @@ void KauthamDEEnvironment::makeGeomPrimitive(const string name, const vector<dou
 
 
      dGeomID geometry = dCreateTriMesh(_OpenDEspace, data, NULL, NULL, NULL);
-    // dMassSetTrimeshTotal(&buildingMass, mass, geometry);
-    // dBodySetMass(body, &buildingMass);
-     dGeomSetBody(geometry, body);
+     dGeomSetData(geometry, data);
+     dMassSetTrimeshTotal(&buildingMass, mass, geometry);
+     dMassTranslate(&buildingMass, -buildingMass.c[0], -buildingMass.c[1], -buildingMass.c[2]);
 
+     dBodySetMass(body, &buildingMass);
+     dGeomSetBody(geometry, body);
 
     // New implementation of Trimesh geom. and building mass     // dGeomTriMeshDataBuildSimple(data, (dReal*) vrtxs,
      //(int)vertexes.size(), trindexes, indexes.size());
@@ -942,26 +973,6 @@ void KauthamDEEnvironment::makeGeomPrimitive(const string name, const vector<dou
      // dGeomSetBody(geometry, body);
      // dBodySetMass(body, &buildingMass);
 
-
-
-     //dMass buildingMass;
-     //dMassSetTrimeshTotal(&buildingMass, mass, geometry);
-     //dMassSetParameters(mass,1.0,0.0,0.0,0.0,1.0,1.0,1.0,0.0,0.0,0.0);
-     //dMassSetTrimesh(&buildingMass,mass,geometry);
-    /* dMassSetTrimeshTotal(&buildingMass,mass,geometry);
-
-     //dMassSetParameters(&buildingMass,1.0,0,0,0,1.0,1.0,1.0,0,0,0);
-
-     float k=buildingMass.c[0];
-     float kk=buildingMass.c[1];
-     float kkk=buildingMass.c[2];
-
-     dMassTranslate(&buildingMass, -buildingMass.c[0],-buildingMass.c[0], -buildingMass.c[0]);
-     //dMassTranslate(&buildingMass, -k,-kk, -kkk);
-
-*/
-
-     //dBodySetMass(body,&buildingMass);
 
 
      dBodySetPosition(body, position[0], position[1], position[2]);
