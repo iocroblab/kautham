@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="bigcubeDE/X" value="0.5" />
+		<DOF name="bigcubeDE/Y" value="0.5" />
+                <DOF name="bigcubeDE/X1" value="0.5" />
+                <DOF name="bigcubeDE/X2" value="0.5" />
+		<DOF name="bigcubeDE/X3" value="0.5" />
+	</Offset>
+	<Control name="bigcubeDE/x" eigValue="1.0">
+		<DOF name="bigcubeDE/X" value="1.0" />
+	</Control>
+	<Control name="bigcubeDE/y" eigValue="1.0">
+		<DOF name="bigcubeDE/Y" value="1.0" />
+	</Control>
+	<Control name="bigcubeDE/x3" eigValue="1.0">
+		<DOF name="bigcubeDE/X3" value="1.0" />
+	</Control>
+</ControlSet>
