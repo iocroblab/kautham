@@ -34,7 +34,7 @@
 
 
 namespace Kautham {
-/** \defgroup libPlanner Library libplanner
+/** \defgroup libPlanner  Planner library
  *  \brief contains planners to solve the path planning problems
  *
  *   \todo  Add detailed description of library libplanner
