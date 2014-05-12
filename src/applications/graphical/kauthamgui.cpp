@@ -26,6 +26,7 @@
   
 #include <Inventor/Qt/SoQt.h>
 #include <QFile>
+#include <QSettings>
 #include <QString>
 #include <QMessageBox>
 #include <sstream>
@@ -227,16 +228,22 @@ void Application::saveTabColors() {
 }
 
 
-bool Application::problemSetup(string path){
+bool Application::problemSetup(string problemFile){
     mainWindow->setCursor(QCursor(Qt::WaitCursor));
+
+    string dir = problemFile.substr(problemFile.find_last_of("/")+1);
+    string models_def_path = settings->value("default_path/models",QString(string(dir+string("/../../models")).c_str())).
+            toString().toStdString()+"/";
+    bool useBBOX = settings->value("use_BBOX","false").toBool();
+
     _problem = new Problem();
-    if (!_problem->setupFromFile(path)) {
+    if (!_problem->setupFromFile(problemFile,models_def_path,useBBOX)) {
         appState = INITIAL;
         delete _problem;
         return false;
     }
 
-    mainWindow->addToProblemTree( path );
+    mainWindow->addToProblemTree(problemFile);
 
     mainWindow->addViewerTab("WSpace", ((IVWorkSpace*)_problem->wSpace())->getIvScene());
     QColor color = settings->value("mainWindow/WSpace/color",QColor("black")).value<QColor>();

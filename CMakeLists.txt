@@ -136,8 +136,6 @@ IF( KAUTHAM_OMPL )
         ADD_DEFINITIONS( -DKAUTHAM_USE_OMPL )
         MESSAGE( STATUS "OMPL VERSION is: " ${OMPL_VERSION})
 
-        ##IF(OMPL_EXTENSION_OPENDE)
-
         IF(KAUTHAM_OPENDE)
         find_package(OpenDE REQUIRED)
             IF(ODE_FOUND)
@@ -146,7 +144,6 @@ IF( KAUTHAM_OMPL )
             ENDIF(ODE_FOUND)
         ENDIF(KAUTHAM_OPENDE)
 
-        ##ENDIF(OMPL_EXTENSION_OPENDE)
     ELSE( OMPL_FOUND )
         MESSAGE( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be abaliable")
     ENDIF( OMPL_FOUND )
