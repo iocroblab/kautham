@@ -722,11 +722,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is 
 # run.
 
-EXCLUDE                = libsexternal \
-                         libsutil/libmt \
-                         libsutil/libpugixml \
-                         libsutil/libpqp \
-                         libsutil/libann \
+EXCLUDE                = external \
                          doc
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or 

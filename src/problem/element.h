@@ -31,8 +31,8 @@
 #include "odeelement.h"
 
 namespace Kautham {
-/** \defgroup libProblem Library libproblem
- *  \brief contains classes to define the setup: robots and workspace
+/** \defgroup libProblem  Problem library
+ *  \brief contains classes to define the setup: robots and obstacles.
  *
  *   \todo Add detailed description of library libproblem
  *
