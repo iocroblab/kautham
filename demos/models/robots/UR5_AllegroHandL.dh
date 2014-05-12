@@ -2,7 +2,7 @@
 <Robot  name="UR5_AllegroHandL" DHType="Modified" robType="Tree">
 
   <WeightSE3 rho_t="1.0" rho_r="1.0" />
-  <Joints size="28">
+  <Joints size="29">
     <Joint name="Base" ivFile="UR5/Base.wrl">
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="false" movable="false"  ></Description>
@@ -59,14 +59,22 @@
       <Parent name="Wrist2"></Parent>
     </Joint>
 
-    <Joint name="Palm" ivFile="AllegroHand/left/base_link_left.wrl">
-      <DHPars alpha="0.0" a="0.0" theta="0.0" d="100.0"></DHPars>
+    <Joint name="Support" ivFile="UR5/AH_support.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="16.0"></DHPars>
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0" Low="0"></Limits>
       <Parent name="Wrist3"></Parent>
     </Joint>
+
+    <Joint name="Palm" ivFile="AllegroHand/left/base_link_left.wrl">
+      <PreTrans X="0" Y="9" Z="0" WX="0.0" WY="0.0" WZ="1.0" TH="90" ></PreTrans>
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="111.0"></DHPars>
+      <Description rotational="false" movable="false" ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Parent name="Support"></Parent>
+    </Joint>
  
-    <Joint name="Medium-base" ivFile="AllegroHand/left/link_0_0.wrl">Index
+   <Joint name="Medium-base" ivFile="AllegroHand/left/link_0_0.wrl">Index
       <DHPars alpha="0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <PreTrans X="0" Y="0" Z="16.4" WX="1.0" WY="0.0" WZ="0.0" TH="0" ></PreTrans>
       <Description rotational="true" movable="true" ></Description>
@@ -95,8 +103,9 @@
       <Parent name="Medium-distal"></Parent>
     </Joint>
 
-    <Joint name="Medium-tip" ivFile="AllegroHand/left/link_3_0_tip.wrl">
-      <DHPars alpha="0" a="17" theta="0.0" d="0.0"></DHPars>
+     <Joint name="Medium-tip" ivFile="AllegroHand/right/sensing_tip.wrl">
+      <PreTrans X="40.8" Y="-3.8" Z="0" WX="0.577350" WY="0.577350" WZ="-0.577350" TH="120" ></PreTrans>
+      <DHPars alpha="0" a="0" theta="0" d="0"></DHPars>
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0.0" Low="-90.0"></Limits>
       <Parent name="Medium-last"></Parent>
@@ -131,8 +140,9 @@
       <Parent name="Index-distal"></Parent>
     </Joint>
 
-    <Joint name="Index-tip" ivFile="AllegroHand/left/link_3_0_tip.wrl">
-      <DHPars alpha="0" a="17" theta="0.0" d="0.0"></DHPars>
+    <Joint name="Index-tip" ivFile="AllegroHand/right/sensing_tip.wrl">
+      <PreTrans X="40.8" Y="-3.8" Z="0" WX="0.577350" WY="0.577350" WZ="-0.577350" TH="120" ></PreTrans>
+      <DHPars alpha="0" a="0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0.0" Low="-90.0"></Limits>
       <Parent name="Index-last"></Parent>
@@ -167,8 +177,9 @@
       <Parent name="Ring-distal"></Parent>
     </Joint>
 
-    <Joint name="Ring-tip" ivFile="AllegroHand/left/link_3_0_tip.wrl">
-      <DHPars alpha="0" a="17" theta="0.0" d="0.0"></DHPars>
+    <Joint name="Ring-tip" ivFile="AllegroHand/right/sensing_tip.wrl">
+      <PreTrans X="40.8" Y="-3.8" Z="0" WX="0.577350" WY="0.577350" WZ="-0.577350" TH="120" ></PreTrans>
+      <DHPars alpha="0" a="0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0.0" Low="-90.0"></Limits>
       <Parent name="Ring-last"></Parent>
@@ -203,8 +214,9 @@
       <Parent name="Thumb-distal"></Parent>
     </Joint>
     
-    <Joint name="Thumb-tip" ivFile="AllegroHand/left/link_15_0_tip.wrl">
-      <DHPars alpha="0" a="32.3" theta="0" d="0"></DHPars>
+    <Joint name="Thumb-tip" ivFile="AllegroHand/right/sensing_tip.wrl">
+      <PreTrans X="56.54" Y="-3.8" Z="0" WX="0.577350" WY="0.577350" WZ="-0.577350" TH="120" ></PreTrans>
+      <DHPars alpha="0" a="0" theta="0" d="0"></DHPars>
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0.0" Low="-90.0"></Limits>
       <Parent name="Thumb-last"></Parent>

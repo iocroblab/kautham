@@ -26,8 +26,6 @@
 #if !defined(_PROBLEM_H)
 #define _PROBLEM_H
 
-#include <QString>
-
 #include <planner/planner.h>
 #include <sampling/sampling.h>
 #include <ompl/geometric/SimpleSetup.h>
@@ -114,7 +112,7 @@ namespace Kautham {
     *		mean that if a problem contain many robots all of them should be the
     *		same class.
     *		\sa WSpace Robot ChainRobot Obstacle*/
-    bool 	               createWSpace(pugi::xml_document *doc);
+    bool 	               createWSpace(pugi::xml_document *doc, bool useBBOX);
 
     //! This method is deprecated. Please take care with the problem XML file.
     //bool			              createWSpace(ProbStruc *reader);
@@ -151,9 +149,9 @@ namespace Kautham {
     inline vector<KthReal>& getCurrentObsControls(){return _currentObsControls;}
     inline string           getFilePath(){return _filePath;}
     bool                    inheritSolution();
-    bool                    setupFromFile(string xml_doc);
-    bool                    setupFromFile(ifstream* xml_inputfile, string modelsfolder);
-    bool                    setupFromFile(pugi::xml_document *doc);
+    bool                    setupFromFile(string xml_doc, string models_def_path = "", bool useBBOX = false);
+    bool                    setupFromFile(ifstream* xml_inputfile, string modelsfolder = "", bool useBBOX = false);
+    bool                    setupFromFile(pugi::xml_document *doc, bool useBBOX);
 
 
     //! This method saves the information of the problem's planner . 
@@ -183,7 +181,7 @@ namespace Kautham {
      * \param robot_node robot node with the information of the robot
      to add to the workspace
      */
-    bool addRobot2WSpace(xml_node *robot_node);
+    bool addRobot2WSpace(xml_node *robot_node, bool useBBOX);
 
     /*!
      * \brief loads the robot controls file of the problem file,
@@ -200,7 +198,7 @@ namespace Kautham {
      * \param obstacle_node obstacle node with the information of the obstacle
      to add to the workspace
      */
-    bool addObstacle2WSpace(xml_node *obstacle_node);
+    bool addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX);
 
     /*!
      * \brief loads the obstacle controls file of the problem file,
@@ -230,9 +228,10 @@ namespace Kautham {
      * \brief checks the file, finds the files defined in the problem file and
      completes their absolute path
      * \param doc problem file to prepare before setting up the porblem
+     * \param models_def_path
      * \return true if the file could be prepared
      */
-    bool prepareFile (xml_document *doc);
+    bool prepareFile (xml_document *doc, string models_def_path);
 
     /*!
      * \brief finds all the files defined in the atribute called \param attribute

@@ -40,7 +40,10 @@ namespace Kautham {
         } else {
             names = _ptProblem->wSpace()->getObsControlsName();
         }
-        gridLayout = new QGridLayout(this);
+
+        QWidget* tmpWid = new QWidget();
+
+        gridLayout = new QGridLayout(tmpWid);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         vboxLayout = new QVBoxLayout();
         vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
@@ -73,9 +76,9 @@ namespace Kautham {
         vboxLayout1 = new QVBoxLayout();
         btnUpdate = new QPushButton(this);
         if (robWidget) {
-            btnUpdate->setText("Update Controls To Last Moved Sample");
+            btnUpdate->setText("Update to last moved sample");
         } else {
-            btnUpdate->setText("Update Controls To Initial Sample");
+            btnUpdate->setText("Update to initial sample");
         }
         btnUpdate->setObjectName(QString::fromUtf8("Update Controls"));
         connect(btnUpdate, SIGNAL( clicked() ), this, SLOT( updateControls() ) );
@@ -88,6 +91,13 @@ namespace Kautham {
         vboxLayout->addLayout(vboxLayout1);
         gridLayout->addLayout(vboxLayout,0,1,1,1);
 
+        QScrollArea* scrollArea = new QScrollArea();
+        scrollArea->setWidget(tmpWid);
+        scrollArea->setWidgetResizable(true);
+
+        QGridLayout *grid;
+        grid = new QGridLayout(this);
+        grid->addWidget(scrollArea);
     }
 
     ControlWidget::~ControlWidget(){
