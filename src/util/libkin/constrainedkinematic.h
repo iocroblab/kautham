@@ -35,8 +35,8 @@
 
 
 namespace Kautham{
-/** \defgroup libKin Library libsutil/libkin
- *  \brief contains classes to solve direct and invers kinematics
+/** \defgroup libKin  libkin library
+ *  \brief contains classes to solve direct and inverse kinematics of some robots
  *
  *   \todo Add detailed description of library libsutil/libkin
  *
