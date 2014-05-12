@@ -93,7 +93,7 @@ namespace Kautham {
 
   public:
 
-    Robot(string robFile, KthReal robScale, LIBUSED lib = IVPQP); //!<  Constructor
+    Robot(string robFile, KthReal robScale, LIBUSED lib = IVPQP, bool useBBOX = false); //!<  Constructor
 
     inline bool isArmed() {return armed;} //!< Returns true if the Robot is correctly armed
 
@@ -167,11 +167,11 @@ namespace Kautham {
     //! Add link to the robot
     bool addLink(string name, string ivFile, string collision_ivFile, KthReal theta, KthReal d, KthReal a,
                  KthReal alpha, bool rotational, bool movable, KthReal low,
-                 KthReal hi, KthReal w, string parentName, KthReal preTrans[] = NULL);
+                 KthReal hi, KthReal w, string parentName, KthReal preTrans[] = NULL, bool useBBOX = false);
 
     //! Add link to the robot
     bool addLink(string name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis, bool rotational, bool movable,
-                 KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], ode_element ode);
+                 KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], ode_element ode, bool useBBOX = false);
 
     //! Returns the pointer to link number i
     Link* getLink(unsigned int i);
@@ -284,13 +284,13 @@ namespace Kautham {
 
   private:
     //! sets the Robot from a *.dh file
-    bool setFromdhFile(string robFile);
+    bool setFromdhFile(string robFile, bool useBBOX);
 
     //! sets the Robot from a *.urdf file
-    bool setFromurdfFile(string robFile);
+    bool setFromurdfFile(string robFile, bool useBBOX);
 
     //! sets the Robot from a *.iv or *.wrl file
-    bool setFromivFile(string robFile);
+    bool setFromivFile(string robFile, bool useBBOX);
 
     //! This method updates the absolute position and orientation of each link in the robot.
     void updateRobot();
