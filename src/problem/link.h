@@ -89,7 +89,7 @@ namespace Kautham{
       *		You can build a complete robot, if you adding progresively a each Link
 	  *		from absolute coordinates frame to final effector frame.*/
       Link(string ivFile, string collision_ivFile, float scale,
-           APPROACH Type, LIBUSED lib = IVPQP);
+           APPROACH Type, LIBUSED lib = IVPQP, bool useBBOX = false);
 
       //!	Constructor.
       /*!	This constructor receive two models, visual and collision, and a global scale for the
@@ -97,7 +97,7 @@ namespace Kautham{
       *		You can build a complete robot, if you adding progresively a each Link
       *		from absolute coordinates frame to final effector frame.*/
       Link(SoSeparator *visual_model, SoSeparator *collision_model, float scale,
-           APPROACH Type, LIBUSED lib = IVPQP);
+           APPROACH Type, LIBUSED lib = IVPQP, bool useBBOX = false);
 
 	  //! Function to set \f$ \alpha \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ \alpha \f$ parameter.*/
