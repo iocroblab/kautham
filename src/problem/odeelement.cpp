@@ -29,6 +29,9 @@
 using namespace std;
 
 
+namespace Kautham {
+
+
 ode_origin::ode_origin () {
     r = 0.;
     p = 0.;
@@ -65,3 +68,5 @@ ode_limit::ode_limit () {
     effort = 0.;
     velocity = 0.;
 };
+
+}

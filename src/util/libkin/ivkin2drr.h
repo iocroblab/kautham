@@ -30,7 +30,7 @@
 #include "inversekinematic.h"
 
 
-/** \addtogroup Util
+/** \addtogroup libKin
  *  @{
  */
 class IvKin2DRR : public Kautham::InverseKinematic{

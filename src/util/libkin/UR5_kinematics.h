@@ -106,7 +106,7 @@ enum {UR5_NO_ERROR = 1,//succeed
 
 using namespace std;
 using namespace mt;
-/** \addtogroup Util
+/** \addtogroup libKin
  *  @{
  */
 

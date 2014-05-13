@@ -35,7 +35,7 @@
 
 
 namespace Kautham {
-/** \addtogroup Util
+/** \addtogroup libKin
  *  @{
  */
   class Robot;

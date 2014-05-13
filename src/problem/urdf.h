@@ -52,6 +52,10 @@
 using namespace std;
 using namespace pugi;
 
+
+namespace Kautham {
+
+
 /** \addtogroup Problem
  *  @{
  */
@@ -237,3 +241,4 @@ public:
 };
 
 /** @}   end of Doxygen module "Problem" */
+}
