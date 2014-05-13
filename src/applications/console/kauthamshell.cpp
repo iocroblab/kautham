@@ -24,7 +24,7 @@
 
 
  
-#include "libsplanner/libompl/omplplanner.h"
+#include <planner/omplg/omplplanner.h>
 #include "kauthamshell.h"
 #include <iostream>
 
