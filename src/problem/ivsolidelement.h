@@ -30,9 +30,10 @@
 
 #include "ivelement.h"
 
+
 namespace Kautham{
 
-/** \addtogroup libProblem
+/** \addtogroup Problem
  *  @{
  */
 
@@ -43,7 +44,7 @@ namespace Kautham{
     SoSeparator* getIvFromSOLIDModel(bool tran = true);
   };
 
-  /** @}   end of Doxygen module "libProblem" */
+  /** @}   end of Doxygen module "Problem" */
 }
 
 #endif  //_IVSOLIDELEMENT_H

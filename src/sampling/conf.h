@@ -74,7 +74,7 @@ namespace Kautham {
 	};
 
 
-    /** @}   end of Doxygen module "libSampling" */
+    /** @}   end of Doxygen module "Sampling" */
 
 }
 

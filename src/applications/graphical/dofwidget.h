@@ -38,7 +38,8 @@ using namespace std;
 
 
 namespace Kautham {
-/** \addtogroup libGUI
+
+/** \addtogroup Application
  *  @{
  */
 
@@ -69,7 +70,7 @@ namespace Kautham {
 	};
 
 
-    /** @}   end of Doxygen module "libGUI" */
+    /** @}   end of Doxygen module "Application" */
 }
 
 #endif  //_DOFWIDGET_H

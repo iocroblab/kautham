@@ -33,7 +33,8 @@
 using namespace std;
 
 namespace Kautham{
-/** \addtogroup libGUI
+
+/** \addtogroup Application
  *  @{
  */
 
@@ -50,7 +51,7 @@ namespace Kautham{
 		  InverseKinematic *_invKin;
 		};
 
-    /** @}   end of Doxygen module "libGUI" */
+    /** @}   end of Doxygen module "Application" */
  }
 
 
