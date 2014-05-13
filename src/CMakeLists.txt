@@ -19,7 +19,7 @@ ENDIF( GSL_FOUND )
 
 
 FILE( GLOB SRC_FILES problem/*.cpp )
-FILE( GLOB HDR_FILES problem/*.h* ) 
+FILE( GLOB HDR_FILES problem/*.h* external/*.h* )
 
 ADD_DEFINITIONS( -DCOIN_DLL )
 ADD_DEFINITIONS( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
