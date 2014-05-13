@@ -28,7 +28,7 @@
 #if !defined(_PRMROBOTHANDCONSTPLANNERICRA_H)
 #define _PRMROBOTHANDCONSTPLANNERICRA_H
  namespace Kautham {
- /** \addtogroup libPlanner
+ /** \addtogroup Planner
   *  @{
   */
   namespace IOC{
@@ -69,7 +69,7 @@
       mt::Transform _cameraTransform;
 	};	
   }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 };
  
 #endif  //_PRMPLANNERICRA_H
