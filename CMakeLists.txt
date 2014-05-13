@@ -247,7 +247,7 @@ IF(BUILD_DOCUMENTATION)
 
   ADD_CUSTOM_TARGET( doc DEPENDS ${doxy_html_index_file} )
 
-  INSTALL( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
+  INSTALL( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxygen_documentation/html DESTINATION share/doc)
 ENDIF()
 ##############################################################################
 
