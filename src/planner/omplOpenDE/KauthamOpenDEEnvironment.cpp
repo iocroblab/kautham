@@ -181,13 +181,12 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
                 odebody = makePrimitive(chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].position,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].orientation,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].mass,chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].vertexes);
                 stateBodiesmap_.insert(pair<string,dBodyID>((wkspace->getRobot(i)->getName()),odebody));
 
-
             }
             else
             {
                  dBodyID odebody;
 
-                           /*    if(i==0)
+                           /*   if(i==0)
                                 {
                                 vector<double> t;
                                 t.push_back(-90);
@@ -206,7 +205,7 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
                                       //dBodyCopyPosition ( odebody, pos);
                                       bodies.push_back(odebody);
                                 }
-                                else */
+                                else*/
                                 {
 
                const vector<double> position= chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].position;
@@ -931,16 +930,9 @@ void KauthamDEEnvironment::makeGeomPrimitive(const string name, const vector<dou
  {
      dMass buildingMass;
 
-
-
-
-
      //body = NULL;
      dBodyID body = dBodyCreate(bodyworld);
      //dBodyID body = dBodyCreate(_world);
-
-
-
      //Building trimesh data.
      float * vrtxs = new float[vertexes.size()];
      for (int i = 0; i < (vertexes.size()); i++)
