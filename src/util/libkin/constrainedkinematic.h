@@ -71,7 +71,7 @@ namespace Kautham{
     vector<KthReal> _target;      //!< This is a generic way to set up the target.
 
   };
-  /** @}   end of Doxygen module "libKin */
+  /** @}   end of Doxygen module "Util */
 }
 
 #endif //_CONSTRAINEDKINEMATIC_H

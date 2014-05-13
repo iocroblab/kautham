@@ -27,13 +27,14 @@
 
 using namespace std;
 
-/** \addtogroup libProblem
+/** \addtogroup Problem
  *  @{
  */
 
 //! Class containing origin data
 class ode_origin {
 public:
+
     mt::Point3 xyz;//!< Translation in mm, defaults to zero vector
     double r;//!< Roll angle around x axis in rad
     double p;//!< Pitch angle around y axis in rad
@@ -116,4 +117,4 @@ public:
     ode_limit limit;//!< Limits of the joint
 };
 
-/** @}   end of Doxygen module "libProblem" */
+/** @}   end of Doxygen module "Problem" */

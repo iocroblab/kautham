@@ -32,6 +32,7 @@
 
 namespace Kautham {
 /** \defgroup libProblem  Problem  module
+/** \defgroup Problem  Problem Library
  *  \brief contains classes to define the setup: robots and obstacles.
  *
  *   \todo Add detailed description of Problem Definition module
@@ -66,7 +67,7 @@ namespace Kautham {
     static unsigned int   _countCollCheck;
   };
 
-  /** @}   end of Doxygen module "libProblem" */
+  /** @}   end of Doxygen module "Problem" */
 }
 
 #endif  //_ELEMENT_H
