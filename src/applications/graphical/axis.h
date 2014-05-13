@@ -30,7 +30,7 @@
 #include <Inventor/actions/SoSearchAction.h>
 
 
-/** \addtogroup libGUI
+/** \addtogroup Application
  *  @{
  */
 
@@ -161,5 +161,5 @@ public:
 };
 
 
-/** @}   end of Doxygen module "libGUI" */
+/** @}   end of Doxygen module "Applications" */
 #endif

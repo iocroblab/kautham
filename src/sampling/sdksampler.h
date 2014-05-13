@@ -37,7 +37,7 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
@@ -91,7 +91,7 @@ namespace Kautham{
     LCPRNG* generator;
   };
 
-  /** @}   end of Doxygen module "libSampling" */
+  /** @}   end of Doxygen module "Sampling" */
 }
 
 #endif  //_SDKSAMPLER_H
