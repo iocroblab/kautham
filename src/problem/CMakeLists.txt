@@ -7,19 +7,14 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src
                      ${COIN_INCLUDE_DIR}
                      ${Armadillo_INCLUDE_DIR})
 
-
-IF(NOT PUGI_XML_FOUND)
-  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/external/pugixml)
-ENDIF(NOT PUGI_XML_FOUND)
-
 ADD_DEFINITIONS( -DCOIN_DLL )
 ADD_DEFINITIONS( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
 
 FILE( GLOB SRC_FILES *.cpp )
 FILE( GLOB HDR_FILES *.h* )
 
-ADD_LIBRARY(problem ${SRC_FILES} ${HDR_FILES})
+ADD_LIBRARY(problem STATIC ${SRC_FILES} ${HDR_FILES})
 
-TARGET_LINK_LIBRARIES(problem libPQP libgdiam planner sampling ${PUGI_XML_LIBRARIES})
+#TARGET_LINK_LIBRARIES(problem libPQP libgdiam planner sampling ${PUGI_XML_LIBRARIES})
 
 
