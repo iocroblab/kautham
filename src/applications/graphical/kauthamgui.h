@@ -41,6 +41,9 @@
 using namespace std;
 using namespace Kautham;
 
+/** \addtogroup Application
+ *  @{
+ */
 class Application:public QObject {
 	Q_OBJECT
 public:
@@ -69,5 +72,5 @@ private:
   GUI*              mainWindow;
   PROBLEMSTATE      appState;
 };
-
+ /** @}   end of Doxygen module "Application" */
 #endif  //_APPLICATION_H

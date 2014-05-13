@@ -29,7 +29,7 @@
 
 #include "inversekinematic.h"
 
-/** \addtogroup libKin
+/** \addtogroup Util
  *  @{
  */
 
@@ -43,5 +43,5 @@
     IvKinTxHand();
   };
 
-  /** @}   end of Doxygen module "libKin */
+  /** @}   end of Doxygen module "Util */
 #endif  //_IVKINTXHAND_H

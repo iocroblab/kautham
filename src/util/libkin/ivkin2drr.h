@@ -30,7 +30,7 @@
 #include "inversekinematic.h"
 
 
-/** \addtogroup libKin
+/** \addtogroup Util
  *  @{
  */
 class IvKin2DRR : public Kautham::InverseKinematic{
@@ -48,5 +48,5 @@ class IvKin2DRR : public Kautham::InverseKinematic{
     KthReal         _llong[2];
   };
 
-/** @}   end of Doxygen module "libKin */
+/** @}   end of Doxygen module "Util */
 #endif  //_IVKIN2DRR_H
