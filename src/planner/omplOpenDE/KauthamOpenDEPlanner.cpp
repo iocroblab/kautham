@@ -28,7 +28,7 @@
 #include"KauthamOpenDEPlanner.h"
 #include "planner/omplg/omplplanner.h"
 #include "planner/omplc/omplcplanner.h"
-//#include <StateSpace.h>
+#include <sampling/state.h>
 
 
 class KauthamDEGoal;
@@ -239,7 +239,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
                     _samples->add(smp);
                  }
 
-           /* for(int i=0;i<_StateBodies.size();i++)
+           for(int i=0;i<_StateBodies.size();i++)
             {
                 for(int j=0;j<_StateBodies[0].size();j++)
                 {
@@ -251,7 +251,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
                 }
                 std::cout <<"Coll  "<<collision[i];
                 std::cout<<std::endl;
-            }*/
+            }
             }
             _solved = true;
 
