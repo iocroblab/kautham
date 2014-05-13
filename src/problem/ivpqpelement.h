@@ -39,12 +39,13 @@
 
 namespace Kautham {
 
-/** \addtogroup libProblem
+/** \addtogroup Problem
  *  @{
  */
 
   class IVPQPElement : public IVElement {
   public:
+
       IVPQPElement(string visFile, string collFile, KthReal sc, bool useBBOX);
       IVPQPElement(SoSeparator *visual_model,SoSeparator *collision_model, KthReal sc, bool useBBOX);
 	  SoSeparator* getIvFromPQPModel(bool tran = true);
@@ -68,7 +69,7 @@ namespace Kautham {
 		    const SoPrimitiveVertex *vertex3);
   };
 
-  /** @}   end of Doxygen module "libProblem" */
+  /** @}   end of Doxygen module "Problem" */
  }
 
 #endif  //_IVPQPELEMENT_H

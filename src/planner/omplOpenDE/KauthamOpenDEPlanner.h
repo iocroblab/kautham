@@ -70,7 +70,7 @@ namespace oc = ompl::control;
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
 namespace omplcplanner{
@@ -85,6 +85,7 @@ namespace omplcplanner{
  */
 class KauthamDEPlanner: public Planner
 {
+
 public:
     //! The constructor will define all the necessary parameters for planning.
     KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
@@ -104,9 +105,9 @@ public:
 };
 
 }
-
+ /** @}   end of Doxygen module "Planner */
 }
-//}
+
 #endif  //_KauthamOpenDEplanner_H
 #endif  //KAUTHAM_USE_ODE
 #endif // KAUTHAM_USE_OMPL

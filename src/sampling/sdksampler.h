@@ -74,6 +74,7 @@ namespace Kautham{
 
     Sequence* getSeqGenerator(){return sdkSequence;};
   private:
+
     Sequence* sdkSequence;
       //! This is the size of an M-Cell.
     double sizeContainer;
