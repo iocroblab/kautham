@@ -45,9 +45,10 @@ namespace og = ompl::geometric;
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
+
   namespace omplplanner{
 
 
@@ -66,7 +67,7 @@ namespace Kautham {
          KthReal _BounceSteps;
 	  };
   }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif // KAUTHAM_USE_OMPL

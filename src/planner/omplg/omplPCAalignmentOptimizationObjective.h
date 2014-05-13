@@ -39,7 +39,7 @@ namespace ob = ompl::base;
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
   namespace omplplanner{
@@ -166,7 +166,6 @@ namespace Kautham {
             inline double getOrientationWeight(){return worientation;};
           };
           */
-
     /*
 
     class PCAalignmentOptimizationObjective3:public ob::MechanicalWorkOptimizationObjective {
@@ -197,7 +196,7 @@ namespace Kautham {
 
 
   }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif // KAUTHAM_USE_OMPL

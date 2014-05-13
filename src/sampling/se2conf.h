@@ -36,12 +36,13 @@ using namespace std;
 
 namespace Kautham {
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
 	class SE2Conf : public Conf {
 	public:
+
 		SE2Conf();
 		~SE2Conf();
     bool    setCoordinates(std::vector<KthReal> coordinates);
@@ -58,7 +59,7 @@ namespace Kautham {
 		KthReal		getAngle();
 	};
 
-    /** @}   end of Doxygen module "libSampling" */
+    /** @}   end of Doxygen module "Sampling" */
 }
 
 #endif  //_SE2CONF_H
