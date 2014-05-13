@@ -22,7 +22,7 @@
  \*************************************************************************/
 
 /* Author: Alexander Perez, Jan Rosell */
-/** \addtogroup Util
+/** \addtogroup libKin
  *  @{
  */
 

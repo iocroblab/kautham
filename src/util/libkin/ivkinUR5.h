@@ -29,7 +29,7 @@
 #include "inversekinematic.h"
 
 
-/** \addtogroup Util
+/** \addtogroup libKin
  *  @{
  */
 
