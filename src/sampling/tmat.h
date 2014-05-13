@@ -31,7 +31,7 @@ using namespace std;
 namespace Kautham {
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
@@ -78,7 +78,7 @@ namespace Kautham {
 		char** matRes;
 	};
 
-    /** @}   end of Doxygen module "libSampling" */
+    /** @}   end of Doxygen module "Sampling" */
 }
 
 #endif  //_TMAT_H

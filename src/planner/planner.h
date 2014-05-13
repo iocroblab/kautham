@@ -33,11 +33,11 @@
 #include <cmath>
 #include <string>
 #include <mt/transform.h>
-//#include <sampling/state.h>
+
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
 
@@ -50,6 +50,7 @@ namespace Kautham {
     virtual bool                  setParameters() = 0;
     virtual void                  moveAlongPath(unsigned int step);
     virtual bool                  solveAndInherit();
+
 
 
     inline string                 getIDName(){return _idName;}
@@ -103,14 +104,13 @@ namespace Kautham {
     unsigned int                  _maxNumSamples;
     string                        _family;
     SoSeparator*                  _sceneCspace;
-    //vector<State*>                 _stateBodies;
 
 
 
 
 	};
 
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_PLANNER_H

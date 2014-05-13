@@ -38,9 +38,10 @@
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
+
    namespace IOC{
 	//Typedefs
 	//!The location associated to a vertex of the graph will be a sample pointer
@@ -185,7 +186,7 @@ namespace Kautham {
 		void drawCspace();
 	  };
    }
-   /** @}   end of Doxygen module "libPlanner */
+   /** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_GRIDPLANNER_H
