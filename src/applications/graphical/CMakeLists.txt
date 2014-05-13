@@ -61,16 +61,10 @@ ENDIF( KAUTHAM_GUI )
 	ui_RobotSim.h)
 
   ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${kautham_RESOURCES_RCC} )
-  TARGET_LINK_LIBRARIES( Kautham2 
-		#${KC_EXTRA_LIBS}
-					libDNN libPQP
-					sampling
-					problem libkthutil libkin
-					libgdiam
-					${SOQT_LIBRARY} ${COIN_LIBRARY}
-					${QT_LIBRARIES}
-					${PUGI_XML_LIBRARIES})
-#  ADD_DEPENDENCIES(libDNN libPQP sampling problem kthutil libkin libgdiam)
+  TARGET_LINK_LIBRARIES( Kautham2 kautham
+			${SOQT_LIBRARY} ${COIN_LIBRARY}
+			${QT_LIBRARIES})
+ ADD_DEPENDENCIES(Kautham2 kautham)
 
 # END building Kautham GUI application
 
