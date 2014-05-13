@@ -41,7 +41,7 @@ typedef boost::mt19937 RandomGenerator;
 typedef boost::variate_generator<RandomGenerator&, NormalDistribution> GaussianGenerator;
  
  namespace Kautham {
- /** \addtogroup libPlanner
+ /** \addtogroup Planner
   *  @{
   */
   namespace IOC{
@@ -102,7 +102,7 @@ typedef boost::variate_generator<RandomGenerator&, NormalDistribution> GaussianG
 			//GaussianGenerator *_gaussianGen;
 	};	
   }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 #endif // KAUTHAM_USE_ARMADILLO
  
