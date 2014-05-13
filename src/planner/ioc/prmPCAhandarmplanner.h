@@ -104,6 +104,7 @@ typedef boost::variate_generator<RandomGenerator&, NormalDistribution> GaussianG
   }
   /** @}   end of Doxygen module "Planner */
 }
+
 #endif // KAUTHAM_USE_ARMADILLO
  
 #endif  //_PRMHANDPLANNERARMHAND_H

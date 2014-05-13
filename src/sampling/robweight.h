@@ -30,7 +30,7 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
@@ -53,7 +53,7 @@ namespace Kautham{
       std::vector<KthReal>          _rn;
   };
 
-  /** @}   end of Doxygen module "libSampling" */
+  /** @}   end of Doxygen module "Sampling" */
 }
 
 #endif // ROBWEIGHT_H

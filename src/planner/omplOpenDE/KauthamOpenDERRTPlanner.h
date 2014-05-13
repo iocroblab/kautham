@@ -43,6 +43,10 @@ namespace oc = ompl::control;
 using namespace std;
 
 namespace Kautham {
+/** \addtogroup Planner
+ *  @{
+ */
+
 namespace omplcplanner{
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +65,7 @@ public:
 };
 
 }
-
+ /** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_KauthamOpenDERRTplanner_H

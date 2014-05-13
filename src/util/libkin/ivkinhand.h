@@ -32,7 +32,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 
 
-/** \addtogroup libKin
+/** \addtogroup Util
  *  @{
  */
 #if defined(KAUTHAM_USE_GSL) && defined(NDEBUG)
@@ -189,6 +189,6 @@
 	inline void DataPlot(void);
 #endif  // KAUTHAM_USE_GSL
   };
-  /** @}   end of Doxygen module "libKin */
+  /** @}   end of Doxygen module "Util */
 
 #endif  //_IVKINHAND_H

@@ -42,11 +42,10 @@ namespace og = ompl::geometric;
 #include <problem/workspace.h>
 #include <sampling/sampling.h>
 
-
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
   namespace omplplanner{
@@ -60,7 +59,7 @@ namespace Kautham {
          KthReal _Range;
 	  };
   }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif // KAUTHAM_USE_OMPL
