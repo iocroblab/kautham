@@ -11,7 +11,7 @@
 		<Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="500.0" Y="600" X="-400" />
 		<InvKinematic name="TX90" />
 	</Robot>
-	<Obstacle obstacle="robots/allegro_hand_description_right.urdf" scale="8.0">
+	<Obstacle obstacle="robots/AllegroHandR.urdf" scale="8.0">
 		<Limits name="X" min="0.0" max="1000.0" />
 		<Limits name="Y" min="0.0" max="1000.0" />
 		<Limits name="Z" min="0.0" max="1000.0" />
@@ -33,7 +33,7 @@
 		<Queries>
 			<Query>
 				<Init dim="16">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Init>
-				<Goal dim="16">0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5</Goal>
+				<Goal dim="16">0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.6</Goal>
 			</Query>
 		</Queries>
 	</Planner>
