@@ -32,7 +32,6 @@
 
 namespace Kautham {
 /** \defgroup libProblem  Problem  module
-/** \defgroup Problem  Problem Library
  *  \brief contains classes to define the setup: robots and obstacles.
  *
  *   \todo Add detailed description of Problem Definition module
