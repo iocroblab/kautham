@@ -45,7 +45,7 @@ typedef ublas::vector<mt::Scalar> Vect6;
 
 /////////////////////////////// NAMESPACE SCOPE //////////////////////////////
 
-/** \addtogroup Util
+/** \addtogroup libKin
  *  @{
  */
 namespace TXrobot
