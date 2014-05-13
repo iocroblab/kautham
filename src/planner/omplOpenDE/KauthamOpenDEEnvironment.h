@@ -87,7 +87,6 @@ namespace Kautham
 /** \addtogroup Planner
  *  @{
  */
-
 namespace omplcplanner
 {
 
