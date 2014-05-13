@@ -36,7 +36,7 @@ using namespace pugi;
 using namespace Kautham;
 
 
-/** \addtogroup libProblem
+/** \addtogroup Application
  *  @{
  */
 
@@ -141,4 +141,4 @@ private:
 void benchmark(string file);
 
 
-/** @}   end of Doxygen module "libProblem" */
+/** @}   end of Doxygen module "application" */
