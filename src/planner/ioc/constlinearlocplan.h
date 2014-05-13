@@ -36,7 +36,7 @@ namespace Kautham {
 /** \defgroup libPlanner  Planning module
  *  \brief contains planners to solve the path planning problems
  *
- *   \todo  Add detailed description of Planner module
+ *   \todo  Add detailed description of Planning module
  *
  *  @{
  *
