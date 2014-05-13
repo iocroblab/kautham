@@ -282,21 +282,6 @@ namespace Kautham {
         return NULL;
     }
 
-   /*bool GUI::addDOFWidget(Robot* rob ){
-        if( rob != NULL){
-            DOFWidget* tmpDOF = new DOFWidget( rob );
-            propertiesTab->addTab(tmpDOF, "DOF-" +QString((rob->getName()).c_str()));
-            connect(tmpDOF, SIGNAL(sendText(string)), this, SLOT(setText(string)));
-            return true;
-        }else{
-            DOFWidget* tmpDOF = new DOFWidget( NULL );
-            propertiesTab->addTab(tmpDOF, "DOFTest");
-            connect(tmpDOF, SIGNAL(sendText(string)), this, SLOT(setText(string)));
-            return true;
-        }
-        return false;
-    }*/
-
     bool GUI::addInverseKinematic(InverseKinematic* ikine){
         InvKinWidget* tmpIkine = new InvKinWidget(ikine);
         string rob_name = ikine->getRobot().getName();
