@@ -40,7 +40,7 @@
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
   namespace IOC{
@@ -68,10 +68,9 @@ namespace Kautham {
 		void computeHF(gridVertex  vgoal);
 
 		
-
 	  };
    }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_HFPLANNER_H

@@ -37,7 +37,7 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
@@ -74,6 +74,7 @@ namespace Kautham{
 
     Sequence* getSeqGenerator(){return sdkSequence;};
   private:
+
     Sequence* sdkSequence;
       //! This is the size of an M-Cell.
     double sizeContainer;
@@ -90,7 +91,7 @@ namespace Kautham{
     LCPRNG* generator;
   };
 
-  /** @}   end of Doxygen module "libSampling" */
+  /** @}   end of Doxygen module "Sampling" */
 }
 
 #endif  //_SDKSAMPLER_H

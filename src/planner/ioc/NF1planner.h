@@ -40,9 +40,10 @@
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
+
   namespace IOC{
 
     //CLASS bfs_distance_visitor
@@ -89,7 +90,7 @@ namespace Kautham {
 
 	  };
    }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_MYGRIDPLANNER_H

@@ -34,7 +34,7 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
@@ -82,7 +82,7 @@ namespace Kautham{
 
   };
 
-  /** @}   end of Doxygen module "libSampling" */
+  /** @}   end of Doxygen module "Sampling" */
 }
 
 #endif //_ROBCONF_H
