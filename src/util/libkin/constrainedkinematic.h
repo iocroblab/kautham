@@ -35,10 +35,10 @@
 
 
 namespace Kautham{
-/** \defgroup libKin  Kinematics library
+/** \defgroup libKin  Kinematics module
  *  \brief contains classes to solve the inverse kinematics of some robots
  *
- *   \todo Add detailed description of library libsutil/libkin
+ *   \todo Add detailed description of Kinematics module
  *
  *  @{
  */
