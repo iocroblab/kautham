@@ -27,7 +27,7 @@
 #include <fstream>
 #include <pugixml.hpp>
 #include <ompl/tools/benchmark/Benchmark.h>
-#include "problem.h"
+#include <problem/problem.h>
 #include <planner/omplg/omplplanner.h>
 
 
