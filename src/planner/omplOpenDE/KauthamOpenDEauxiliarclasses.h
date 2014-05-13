@@ -58,6 +58,9 @@ using namespace std;
 
 namespace Kautham {
 
+/** \addtogroup Planner
+ *  @{
+ */
     namespace omplcplanner{
 
 /*The KauthamDEGoal is mainly used to set as a derived class from a GoalRegion the operation distance which the planner is going to check in order to decide wether the goal has been reached or not.
@@ -134,6 +137,7 @@ public:
 //};
 
 }
+     /** @}   end of Doxygen module "Planner */
 
 }
 

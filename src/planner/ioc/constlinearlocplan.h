@@ -32,12 +32,11 @@
 #include "localplanner.h"
 #include "linearlocplan.h"
 
-
 namespace Kautham {
-/** \defgroup libPlanner  Planner library
+/** \defgroup Planner Planner Library
  *  \brief contains planners to solve the path planning problems
  *
- *   \todo  Add detailed description of library libplanner
+ *   \todo  Add detailed description of library Planner
  *
  *  @{
  *
@@ -91,7 +90,7 @@ class ConstLinearLocalPlanner:public LinearLocalPlanner {
 	  mt::Transform _cameraTransform;
     };
 }
-/** @}   end of Doxygen module "libPlanner */
+/** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_CONSTLINEARLOCALPLANNER_H

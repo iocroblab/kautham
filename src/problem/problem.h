@@ -96,7 +96,7 @@ using namespace pugi;
 
 namespace Kautham {
 
-/** \addtogroup libProblem
+/** \addtogroup Problem
  *  @{
  */
 
@@ -249,7 +249,7 @@ namespace Kautham {
                       vector<string> path);
 	};
 
-    /** @}   end of Doxygen module "libProblem" */
+    /** @}   end of Doxygen module "Problem" */
 }
 
 #endif  //_PROBLEM_H

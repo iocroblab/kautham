@@ -34,7 +34,8 @@
 using namespace std;
 
 namespace Kautham{
-/** \addtogroup libGUI
+
+/** \addtogroup Application
  *  @{
  */
 class GUI;//needed here because GUI has #include "plannerwidget.h"
@@ -86,7 +87,7 @@ class GUI;//needed here because GUI has #include "plannerwidget.h"
 	
 	};
 
-    /** @}   end of Doxygen module "libGUI" */
+    /** @}   end of Doxygen module "Application" */
 }
 
 

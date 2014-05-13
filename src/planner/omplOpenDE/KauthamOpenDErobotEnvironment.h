@@ -102,12 +102,12 @@ using namespace std;
 //using namespace libSampling;
 
 namespace Kautham
-//namespace libPlanner
 {
+/** \addtogroup Planner
+ *  @{
+ */
 namespace omplcplanner
 {
-
-
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // Class KauthamDEEnvironment
@@ -134,6 +134,7 @@ class KauthamDErobotEnvironment: public KauthamDEEnvironment
 };
 
 }
+ /** @}   end of Doxygen module "Planner */
 }
 #endif  //_KauthamOpenDErobotEnvironment_H
 #endif //KAUTHAM_USE_ODE

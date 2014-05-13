@@ -36,7 +36,7 @@
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
   namespace IOC{
@@ -50,7 +50,6 @@ namespace Kautham {
 		bool setParameters();
 		//Add public data and functions
 		
-
 		protected:
 		//Add protected data and functions
 		int _firstParameter;
@@ -63,7 +62,7 @@ namespace Kautham {
 
 	  };
    }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_MYGRIDPLANNER_H
