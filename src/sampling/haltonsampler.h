@@ -37,7 +37,7 @@ using namespace std;
 namespace Kautham{
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
@@ -101,7 +101,7 @@ void u3_to_ball_unit_3d ( double u[3], double x[3] );
 
 
 
-/** @}   end of Doxygen module "libSampling" */
+/** @}   end of Doxygen module "Sampling" */
 
 }
 

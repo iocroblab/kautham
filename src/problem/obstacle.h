@@ -22,7 +22,7 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
- 
+
 
 #if !defined(_OBSTACLE_H)
 #define _OBSTACLE_H
@@ -33,7 +33,7 @@
 
 namespace Kautham {
 
-/** \addtogroup libProblem
+/** \addtogroup Problem
  *  @{
  */
 
@@ -62,7 +62,7 @@ namespace Kautham {
     string    _name;
 	};
 
-    /** @}   end of Doxygen module "libProblem" */
+    /** @}   end of Doxygen module "Problem" */
 }
 
 #endif  //_OBSTACLE_H

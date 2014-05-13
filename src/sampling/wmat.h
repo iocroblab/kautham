@@ -33,7 +33,7 @@ using namespace std;
 namespace Kautham {
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
@@ -78,7 +78,7 @@ namespace Kautham {
 		WMat();
 	};
 
-    /** @}   end of Doxygen module "libSampling" */
+    /** @}   end of Doxygen module "Sampling" */
 }
 
 #endif  //_WMAT_H

@@ -47,9 +47,10 @@ namespace oc = ompl::control;
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
+
   namespace omplcplanner{
     class omplcRRTf16Planner:public omplcPlanner {
 	    public:
@@ -66,7 +67,7 @@ namespace Kautham {
          double _length;
       };
   }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif // KAUTHAM_USE_OMPL
