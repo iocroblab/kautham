@@ -21,12 +21,16 @@
 		<Limits name="THETA" min="-360.0" max="360.0" />
 		<Home X="-90.0" Y="-90.0" Z="50.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
          </Obstacle>
-	
 		<Obstacle obstacle="obstacles/rooms2.iv" scale="1.0">
             <Home TH="0.0" WZ="-1.0" WY="-1.0" WX="0.0" Z="25.0" Y="0.0" X="0.0"/>
             
+<<<<<<< HEAD
+	</Obstacle>
+	<Controls robot="controls/bigcubeDE.cntr" />
+=======
 	</Obstacle>	
         <Controls robot="controls/bigcubeDE.cntr" obstacle="controls/bigcubeDEO.cntr"  />
+>>>>>>> 9e97acd65055106612d3e2a6acd11a8919eacf83
 	<Planner>
 		<Parameters>
 			<Name>omplODERRTPlanner</Name>
