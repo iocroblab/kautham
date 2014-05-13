@@ -792,43 +792,49 @@ namespace Kautham {
         bool ret;
         //solve
         ret = omplPlanner::trySolve();
-        //evaluate path
-        ob::Cost pathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(_optiselected);
-        cout<<"Path cost = "<<pathcost.v<<endl;
-        if(_opti==3)
+        if(ret)
         {
-            //store the values
-            double ow = ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->getOrientationWeight();
-            double dw = ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->getDistanceWeight();
-            double pw = ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->getOrientationPenalization();
-            //eval only the alignment with the PMDs
-            _orientationweight = 1.0;
-            _lengthweight = 0.0;
-            _penalizationweight = 0.0;
-            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(_orientationweight);
-            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(_lengthweight);
-            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
+            //evaluate path
+            ob::Cost pathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(_optiselected);
+            cout<<"Path cost = "<<pathcost.v<<endl;
+            if(_opti==3)
+            {
+                //store the values
+                double ow = ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->getOrientationWeight();
+                double dw = ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->getDistanceWeight();
+                double pw = ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->getOrientationPenalization();
+                //eval only the alignment with the PMDs
+                _orientationweight = 1.0;
+                _lengthweight = 0.0;
+                _penalizationweight = 0.0;
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(_orientationweight);
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(_lengthweight);
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
 
-            ob::Cost alignmentpathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(_optiselected);
-            cout<<"Path alignment cost = "<<alignmentpathcost.v<<endl;
+                ob::Cost alignmentpathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(_optiselected);
+                cout<<"Path alignment cost = "<<alignmentpathcost.v<<endl;
 
-            //eval only the distance
-            _orientationweight = 0.0;
-            _lengthweight = 1.0;
-            _penalizationweight = 0.0;
-            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(_orientationweight);
-            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(_lengthweight);
-            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
+                //eval only the distance
+                _orientationweight = 0.0;
+                _lengthweight = 1.0;
+                _penalizationweight = 0.0;
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(_orientationweight);
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(_lengthweight);
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
 
-             ob::Cost distancepathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(_optiselected);
-             cout<<"Path distance cost = "<<distancepathcost.v<<endl;
+                 ob::Cost distancepathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(_optiselected);
+                 cout<<"Path distance cost = "<<distancepathcost.v<<endl;
 
-             cout<<"Alignment cost per unitary distance traveled = "<< (alignmentpathcost.v/distancepathcost.v)<<endl;
+                cout<<"Alignment cost per unitary distance traveled = "<< (alignmentpathcost.v/distancepathcost.v)<<endl;
 
-             //restore the values
-             ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(ow);
-             ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(dw);
-             ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(pw);
+                //restore the values
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(ow);
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(dw);
+                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(pw);
+            }
+        }
+        else{
+            cout<<"No solution found"<<endl;
         }
 
         return ret;
