@@ -28,10 +28,10 @@
 #include <string>
 #include <sstream>
 #include "kauthamshell.h"
-#include "libproblem/problem.h"
-#include "libproblem/benchmark.h"
-#include "libsplanner/libioc/kthquery.h"
-#include "libsplanner/libioc/iocplanner.h"
+#include <problem/problem.h>
+#include "benchmark.h"
+#include <planner/ioc/kthquery.h>
+#include <planner/ioc/iocplanner.h>
 #include <Inventor/SoDB.h>
 
 #ifdef KAUTHAM_USE_MPI
