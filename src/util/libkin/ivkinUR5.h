@@ -29,7 +29,7 @@
 #include "inversekinematic.h"
 
 
-/** \addtogroup libKin
+/** \addtogroup Util
  *  @{
  */
 
@@ -71,6 +71,6 @@ private:
     double          _result[6];
 };
 
-/** @}   end of Doxygen module "libKin */
+/** @}   end of Doxygen module "Util */
 #endif  //_IVKINUR5_H
 

@@ -34,8 +34,9 @@ namespace ob = ompl::base;
 
 using namespace std;
 
+
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
   namespace omplplanner{
@@ -55,7 +56,7 @@ namespace Kautham {
             double clearance(const ob::State* state) const;
    };
  }
-/** @}   end of Doxygen module "libPlanner */
+/** @}   end of Doxygen module "Planner */
 }
 
 
