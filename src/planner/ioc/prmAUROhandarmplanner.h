@@ -27,9 +27,10 @@
 #if !defined(_PRMAUROHANDPLANNER_H)
 #define _PRMAUROHANDPLANNER_H
  namespace Kautham {
- /** \addtogroup libPlanner
+ /** \addtogroup Planner
   *  @{
   */
+
   namespace IOC{
       typedef std::pair<KthReal, KthReal> thumbLimits;
 	  
@@ -64,7 +65,7 @@
 
 	};	
   }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
  
 #endif  //_PRMAUROHANDPLANNER_H

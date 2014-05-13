@@ -33,7 +33,8 @@
 
 using namespace TXrobot;
 
-/** \addtogroup libKin
+
+/** \addtogroup Util
  *  @{
  */
   class IvKinTx90:public Kautham::InverseKinematic{
@@ -57,5 +58,5 @@ using namespace TXrobot;
     mt::Transform   _rHomeOffset; //!< This is an offset from Modeled Home to Real Home
   };
 
-  /** @}   end of Doxygen module "libKin */
+  /** @}   end of Doxygen module "Util */
 #endif  //_IVKINTX90_H

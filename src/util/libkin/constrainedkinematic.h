@@ -35,7 +35,7 @@
 
 
 namespace Kautham{
-/** \defgroup libKin  Kinematics library
+/** \defgroup Util  Kinematics Library
  *  \brief contains classes to solve the inverse kinematics of some robots
  *
  *   \todo Add detailed description of library libsutil/libkin
@@ -71,7 +71,7 @@ namespace Kautham{
     vector<KthReal> _target;      //!< This is a generic way to set up the target.
 
   };
-  /** @}   end of Doxygen module "libKin */
+  /** @}   end of Doxygen module "Util */
 }
 
 #endif //_CONSTRAINEDKINEMATIC_H

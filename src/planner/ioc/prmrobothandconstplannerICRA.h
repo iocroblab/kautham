@@ -70,7 +70,7 @@
 	};	
   }
   /** @}   end of Doxygen module "Planner */
-};
+}
  
 #endif  //_PRMPLANNERICRA_H
 
