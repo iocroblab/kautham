@@ -34,7 +34,7 @@
 using namespace TXrobot;
 
 
-/** \addtogroup Util
+/** \addtogroup libKin
  *  @{
  */
   class IvKinTx90:public Kautham::InverseKinematic{

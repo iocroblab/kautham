@@ -1,3 +1,6 @@
+//Based on code by John Burkardt distributed under the GNU LGPL license
+//http://people.sc.fsu.edu/~jburkardt/cpp_src/halton/halton.html
+
 /*************************************************************************\
    Copyright 2014 Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
@@ -81,6 +84,8 @@ Sample* HaltonSampler::nextSample()
 
 
 //What follows are C functions implemented by John Burkardt
+//Code is distributed under the GNU LGPL license
+//http://people.sc.fsu.edu/~jburkardt/cpp_src/halton/halton.html
 //****************************************************************************80
 
 double arc_cosine ( double c )

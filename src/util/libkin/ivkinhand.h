@@ -32,7 +32,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 
 
-/** \addtogroup Util
+/** \addtogroup libKin
  *  @{
  */
 #if defined(KAUTHAM_USE_GSL) && defined(NDEBUG)

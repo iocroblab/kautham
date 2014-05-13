@@ -27,6 +27,7 @@
 
 using namespace std;
 
+namespace Kautham {
 /** \addtogroup Problem
  *  @{
  */
@@ -118,3 +119,4 @@ public:
 };
 
 /** @}   end of Doxygen module "Problem" */
+}

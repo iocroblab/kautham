@@ -33,7 +33,7 @@
 #include "linearlocplan.h"
 
 namespace Kautham {
-/** \defgroup libPlanner  Planning module
+/** \defgroup Planner  Planning module
  *  \brief contains planners to solve the path planning problems
  *
  *   \todo  Add detailed description of Planning module

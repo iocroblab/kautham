@@ -37,6 +37,9 @@ using namespace std;
 using namespace pugi;
 
 
+namespace Kautham {
+
+
 urdf_origin::urdf_origin () {
     r = 0.;
     p = 0.;
@@ -461,4 +464,6 @@ void urdf_obstacle::print() {
          << inertial.inertia.iyz << " izz=" << inertial.inertia.izz << endl;
     cout << "contact coefficients: mu=" << contact_coefficients.mu << " kp="
          << contact_coefficients.kp << " kd" << contact_coefficients.kd << endl;
+}
+
 }
