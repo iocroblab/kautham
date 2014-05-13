@@ -52,7 +52,7 @@
 using namespace std;
 using namespace pugi;
 
-/** \addtogroup libProblem
+/** \addtogroup Problem
  *  @{
  */
 
@@ -236,4 +236,4 @@ public:
     void print();//!< Prints obstacle information
 };
 
-/** @}   end of Doxygen module "libProblem" */
+/** @}   end of Doxygen module "Problem" */

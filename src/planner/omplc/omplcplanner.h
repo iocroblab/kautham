@@ -51,9 +51,10 @@ using namespace std;
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
+
 
   namespace omplcplanner{
 
@@ -215,7 +216,7 @@ namespace Kautham {
 		//Add private data and functions
 	  };
   }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif // KAUTHAM_USE_OMPL

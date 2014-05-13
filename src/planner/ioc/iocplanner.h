@@ -38,10 +38,9 @@
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
-
  namespace IOC{
 
   class iocPlanner: public Planner{
@@ -104,7 +103,7 @@ namespace Kautham {
 
 	};
  }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_PLANNER_H

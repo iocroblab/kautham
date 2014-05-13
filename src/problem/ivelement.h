@@ -49,12 +49,13 @@
 
 namespace Kautham {
 
-/** \addtogroup libProblem
+/** \addtogroup Problem
  *  @{
  */
 
 class IVElement : public Element {
   public:
+
       IVElement(string ivfile, string collision_ivfile, float sc, bool useBBOX);
       IVElement(SoSeparator *visual_model, SoSeparator *collision_model, float sc, bool useBBOX);
 	  void setColor(KthReal c[3]);
@@ -88,7 +89,7 @@ class IVElement : public Element {
       SoScale       *sca;
   };
 
-/** @}   end of Doxygen module "libProblem" */
+/** @}   end of Doxygen module "Problem" */
 }
 
 #endif  //_IVELEMENT_H

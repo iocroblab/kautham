@@ -106,7 +106,9 @@ enum {UR5_NO_ERROR = 1,//succeed
 
 using namespace std;
 using namespace mt;
-
+/** \addtogroup Util
+ *  @{
+ */
 
 //class containing a possible solution for the UR5 inverse kinematics
 class Solution {
@@ -225,3 +227,4 @@ double saturate(double theta);
 
 //prints the specified transform
 void print_transform(Transform transform);
+/** @}   end of Doxygen module "Util */

@@ -84,9 +84,12 @@ using namespace std;
 
 namespace Kautham
 {
+/** \addtogroup Planner
+ *  @{
+ */
+
 namespace omplcplanner
 {
-
 
 /***************************************************************************
  *  /* OpenDEEnvironment es una classe en que es recicla gran part del codi ODIn de l'Alfredo sobretot en
@@ -320,6 +323,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
 
 
 }
+ /** @}   end of Doxygen module "Planner */
 }
 
 

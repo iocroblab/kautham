@@ -34,7 +34,7 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
@@ -49,7 +49,7 @@ namespace Kautham{
     static LCPRNG* gen;
   };
 
-  /** @}   end of Doxygen module "libSampling" */
+  /** @}   end of Doxygen module "Sampling" */
 }
 
 #endif  //_RANDOMSAMPLE_H

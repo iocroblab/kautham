@@ -38,7 +38,7 @@ using namespace mt;
 
 namespace Kautham{
 
-/** \addtogroup libProblem
+/** \addtogroup Problem
  *  @{
  */
 
@@ -304,6 +304,7 @@ namespace Kautham{
 
   };
 
-  /** @}   end of Doxygen module "libProblem" */
+
+  /** @}   end of Doxygen module "Problem" */
 }
 #endif  //_Link_H
