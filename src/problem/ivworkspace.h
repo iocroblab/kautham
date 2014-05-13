@@ -38,12 +38,13 @@
 
 namespace Kautham{
 
-/** \addtogroup libProblem
+/** \addtogroup Problem
  *  @{
  */
 
   class IVWorkSpace: public WorkSpace {
 	  public:
+
 		  IVWorkSpace();
 		  //~IVWorkSpace();
           SoSeparator* getIvScene(bool bounding = false);
@@ -56,7 +57,7 @@ namespace Kautham{
           SoSeparator *collisionscene;
   };
 
-  /** @}   end of Doxygen module "libProblem" */
+  /** @}   end of Doxygen module "Problem" */
 }
 
 #endif  //_IVWORKSPACE_H

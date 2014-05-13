@@ -34,7 +34,8 @@
 #include <QtGui/QDialog>
 
 namespace Kautham {
-/** \defgroup libGUI Application
+
+/** \defgroup Application
  *  \brief contains the GUI, the console application and the ROS node
  *
  *  \todo Add detailed description of Application
@@ -104,7 +105,7 @@ public:
 
 };
 
-/** @}   end of Doxygen module "libGUI" */
+/** @}   end of Doxygen module "Application" */
 }
 
 #endif // ABOUTWIDGET_H

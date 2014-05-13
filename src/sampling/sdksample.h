@@ -38,9 +38,10 @@ using namespace std;
 namespace Kautham {
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
+
 
   //! This class is the abstraction of a sample entity. This class contains the code, the indexes
   //! and the coordinates of a sample and it provides some methods to extract and to use its 
@@ -92,7 +93,7 @@ namespace Kautham {
     
 	};
 
-    /** @}   end of Doxygen module "libSampling" */
+    /** @}   end of Doxygen module "Sampling" */
 }
 
 #endif  //_SDKSAMPLE_H

@@ -30,12 +30,10 @@
 #include "wmat.h"
 #include "tmat.h"
 
-
-
 namespace Kautham {
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
@@ -122,6 +120,6 @@ namespace Kautham {
     char* _indexes;
   };
 
-  /** @}   end of Doxygen module "libSampling" */
+  /** @}   end of Doxygen module "Sampling" */
 }
 #endif //_SEQUENCE_H

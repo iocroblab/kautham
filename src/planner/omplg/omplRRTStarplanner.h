@@ -42,9 +42,10 @@ namespace og = ompl::geometric;
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
+
   namespace omplplanner{
 
     class omplRRTStarPlanner:public omplPlanner {
@@ -76,7 +77,7 @@ namespace Kautham {
          ob::OptimizationObjectivePtr _pmdalignmentopti;
 	  };
   }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif // KAUTHAM_USE_OMPL

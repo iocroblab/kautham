@@ -36,7 +36,7 @@ using namespace std;
 
 namespace Kautham{
 
-/** \addtogroup libProblem
+/** \addtogroup Problem
  *  @{
  */
 
@@ -127,7 +127,7 @@ namespace Kautham{
       Sample*               _initObsSample;
   };
 
-  /** @}   end of Doxygen module "libProblem" */
+  /** @}   end of Doxygen module "Problem" */
 }
 
 #endif  //_WORKSPACE_H
