@@ -28,9 +28,10 @@
 #if !defined(_PRMHANDPLANNERIROS_H)
 #define _PRMHANDPLANNERIROS_H
  namespace Kautham {
- /** \addtogroup libPlanner
+ /** \addtogroup Planner
   *  @{
   */
+
   namespace IOC{
 	class PRMHandPlannerIROS:public PRMHandPlanner{
 		public:
@@ -46,7 +47,7 @@
 			KthReal*   _weightshandarm;
 	};	
   }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 };
  
 #endif  //_PRMPLANNERIROS_H

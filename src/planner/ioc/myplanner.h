@@ -34,7 +34,7 @@
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
   namespace IOC{
@@ -43,7 +43,7 @@ namespace Kautham {
         MyPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
           WorkSpace *ws);
         ~MyPlanner();
-        
+
 		bool trySolve();
 		bool setParameters();
 		//Add public data and functions
@@ -58,7 +58,7 @@ namespace Kautham {
 		//Add private data and functions
 	  };
   }
-  /** @}   end of Doxygen module "libPlanner */
+  /** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_MYPLANNER_H

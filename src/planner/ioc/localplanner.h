@@ -32,11 +32,10 @@
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
  namespace IOC{
-
 	class LocalPlanner {
 	  public:
       LocalPlanner(SPACETYPE type, Sample *init, Sample *goal, WorkSpace *ws, KthReal st );
@@ -65,7 +64,7 @@ namespace Kautham {
 	    //string _name;
     };
  }
- /** @}   end of Doxygen module "libPlanner */
+ /** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_PLANNER_H

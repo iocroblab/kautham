@@ -46,7 +46,7 @@ using namespace std;
 
 namespace Kautham{
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
@@ -175,6 +175,6 @@ namespace Kautham{
       bool withinbounds;
   };
 
-  /** @}   end of Doxygen module "libSampling" */
+  /** @}   end of Doxygen module "Sampling" */
 }
 #endif  //_SAMPLE_H
