@@ -34,10 +34,10 @@
 
 
 namespace Kautham {
-/** \defgroup libPlanner  Planner library
+/** \defgroup libPlanner  Planning module
  *  \brief contains planners to solve the path planning problems
  *
- *   \todo  Add detailed description of library libplanner
+ *   \todo  Add detailed description of PlannerXX module
  *
  *  @{
  *
@@ -91,7 +91,7 @@ class ConstLinearLocalPlanner:public LinearLocalPlanner {
 	  mt::Transform _cameraTransform;
     };
 }
-/** @}   end of Doxygen module "libPlanner */
+/** @}   end of Doxygen module "libPlanner" */
 }
 
 #endif  //_CONSTLINEARLOCALPLANNER_H
