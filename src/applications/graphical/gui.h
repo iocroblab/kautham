@@ -43,7 +43,8 @@
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup libGUI
+
+/** \addtogroup Application
  *  @{
  */
 
@@ -148,7 +149,7 @@ namespace Kautham {
     bool                boolPlanVis;
 	};
 
-    /** @}   end of Doxygen module "libGUI" */
+    /** @}   end of Doxygen module "Application" */
 }
 
 #endif  //_GUI_H

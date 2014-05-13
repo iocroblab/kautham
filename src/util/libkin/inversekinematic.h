@@ -35,7 +35,7 @@
 
 
 namespace Kautham {
-/** \addtogroup libKin
+/** \addtogroup Util
  *  @{
  */
   class Robot;
@@ -128,6 +128,6 @@ namespace Kautham {
 
   };
 
-  /** @}   end of Doxygen module "libKin */
+  /** @}   end of Doxygen module "Util */
 }
 #endif  //_INVERSEKINEMATIC_H

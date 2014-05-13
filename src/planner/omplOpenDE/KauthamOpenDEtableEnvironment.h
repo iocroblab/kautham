@@ -88,6 +88,9 @@ using namespace std;
 
 namespace Kautham
 {
+/** \addtogroup Planner
+ *  @{
+ */
 namespace omplcplanner
 {
 
@@ -122,6 +125,8 @@ namespace omplcplanner
 
 
 }
+
+ /** @}   end of Doxygen module "Planner */
 }
 #endif  //_KauthamOpenDEtableEnvironment_H
 #endif //KAUTHAM_USE_ODE

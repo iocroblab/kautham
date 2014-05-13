@@ -33,10 +33,9 @@
 
 
 namespace Kautham {
-/** \addtogroup libPlanner
+/** \addtogroup Planner
  *  @{
  */
-
 namespace IOC{
 class LinearLocalPlanner:public LocalPlanner {
     public:
@@ -49,7 +48,7 @@ class LinearLocalPlanner:public LocalPlanner {
       bool vanderMethod;
 	};
 }
-/** @}   end of Doxygen module "libPlanner */
+/** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_LINEARLOCALPLANNER_H

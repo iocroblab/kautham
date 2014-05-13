@@ -39,9 +39,10 @@
 namespace Kautham{
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
+
 
   class GaussianLikeSampler : public Sampler {
   public:
@@ -78,7 +79,7 @@ namespace Kautham{
   };
 
 
-  /** @}   end of Doxygen module "libSampling" */
+  /** @}   end of Doxygen module "Sampling" */
 }
 
 #endif  //_SDKSAMPLER_H

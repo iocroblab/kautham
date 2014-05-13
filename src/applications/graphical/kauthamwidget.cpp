@@ -91,7 +91,7 @@ namespace Kautham{
 				//table->setVerticalHeaderItem(i,item);
 				i++;
 			}
-      table->sortItems(0);
+      //table->sortItems(0); Bug found when having items with smallcaps and bigcaps
       connect(table, SIGNAL(cellChanged(int, int)), this, SLOT(tableChanged(int, int)));
       return true;
 		}

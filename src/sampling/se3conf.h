@@ -39,7 +39,7 @@ using namespace std;
 namespace Kautham {
 
 
-/** \addtogroup libSampling
+/** \addtogroup Sampling
  *  @{
  */
 
@@ -94,7 +94,7 @@ namespace Kautham {
     vector<KthReal>  _axisAn;
 	};
 
-    /** @}   end of Doxygen module "libSampling" */
+    /** @}   end of Doxygen module "Sampling" */
 }
 
 #endif  //_SE3CONF_H

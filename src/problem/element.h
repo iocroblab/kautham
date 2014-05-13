@@ -31,10 +31,11 @@
 #include "odeelement.h"
 
 namespace Kautham {
-/** \defgroup libProblem  Problem library
+
+/** \defgroup Problem  Problem Library
  *  \brief contains classes to define the setup: robots and obstacles.
  *
- *   \todo Add detailed description of library libproblem
+ *   \todo Add detailed description of library Problem
  *
  *  @{
  */
@@ -66,7 +67,7 @@ namespace Kautham {
     static unsigned int   _countCollCheck;
   };
 
-  /** @}   end of Doxygen module "libProblem" */
+  /** @}   end of Doxygen module "Problem" */
 }
 
 #endif  //_ELEMENT_H
