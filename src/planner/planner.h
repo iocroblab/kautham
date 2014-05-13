@@ -33,7 +33,7 @@
 #include <cmath>
 #include <string>
 #include <mt/transform.h>
-
+//#include <sampling/state.h>
 using namespace std;
 
 namespace Kautham {
@@ -103,6 +103,7 @@ namespace Kautham {
     unsigned int                  _maxNumSamples;
     string                        _family;
     SoSeparator*                  _sceneCspace;
+    //vector<State*>                 _stateBodies;
 
 
 
