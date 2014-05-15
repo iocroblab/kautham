@@ -110,6 +110,7 @@ void Application::setActions(){
     mainWindow->setAction(ACTIONTOOL,"Default Path","",":/icons/search.xpm", mainWindow, SLOT(setModelsDefaultPath()));
 
     mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close.xpm",this,SLOT(closeProblem()));
+    mainWindow->setAction(FILETOOL,"E&xit","CTRL+X",":/icons/exit.xpm",this,SLOT(quit()));
 }
 
 void Application::openFile(){
@@ -205,6 +206,11 @@ void Application::closeProblem(){
         break;
     }
     mainWindow->setCursor(QCursor(Qt::ArrowCursor));
+}
+
+
+void Application::quit() {
+    QApplication::quit();
 }
 
 
