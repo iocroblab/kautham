@@ -34,7 +34,6 @@
 #include "workspace.h"
 #include <sampling/state.h>
 #include <pugixml.hpp>
-
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -112,7 +111,7 @@ namespace Kautham {
     *		mean that if a problem contain many robots all of them should be the
     *		same class.
     *		\sa WSpace Robot ChainRobot Obstacle*/
-    bool 	               createWSpace(pugi::xml_document *doc, bool useBBOX);
+    bool 	               createWSpaceFromFile(pugi::xml_document *doc, bool useBBOX);
 
     //! This method is deprecated. Please take care with the problem XML file.
     //bool			              createWSpace(ProbStruc *reader);
