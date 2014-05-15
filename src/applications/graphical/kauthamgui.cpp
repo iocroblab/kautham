@@ -32,6 +32,7 @@
 #include <sstream>
 #include <problem/ivworkspace.h>
 #include <util/kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamexception.h>
 #include "kauthamgui.h"
 #include "dofwidget.h"
 #include <QApplication>
@@ -237,7 +238,55 @@ bool Application::problemSetup(string problemFile){
     bool useBBOX = settings->value("use_BBOX","false").toBool();
 
     _problem = new Problem();
-    if (!_problem->setupFromFile(problemFile,models_def_path,useBBOX)) {
+    bool succeed = false;
+    try {
+        succeed = _problem->setupFromFile(problemFile,models_def_path,useBBOX);
+    }
+    catch (const KthExcp& excp) {
+        qDebug() << excp.what() << endl;
+
+        mainWindow->setDisabled(true);
+        QMessageBox msgBox(mainWindow);
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setWindowTitle("Error encountered");
+        msgBox.setText("The problem couldn't be loaded");
+        msgBox.setInformativeText(excp.what());
+        msgBox.setDetailedText(excp.more());
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        mainWindow->setDisabled(false);
+    }
+    catch (const exception& excp) {
+        qDebug() << excp.what() << endl;
+
+        mainWindow->setDisabled(true);
+        QMessageBox msgBox(mainWindow);
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setWindowTitle("Error encountered");
+        msgBox.setText("The problem couldn't be loaded");
+        msgBox.setInformativeText(excp.what());
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        mainWindow->setDisabled(false);
+    }
+    catch (...) {
+        qDebug() << "Unknown error" << endl;
+
+        mainWindow->setDisabled(true);
+        QMessageBox msgBox(mainWindow);
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setWindowTitle("Error encountered");
+        msgBox.setText("The problem couldn't be loaded");
+        msgBox.setInformativeText("Unknown error");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        mainWindow->setDisabled(false);
+    }
+
+    if (!succeed) {
         appState = INITIAL;
         delete _problem;
         return false;
