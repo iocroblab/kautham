@@ -1,22 +1,17 @@
 # this file makes the libiocplanner library.
+include_directories( ${CMAKE_SOURCE_DIR}/src
+                     ${mt_DIR})
+file( GLOB SRC_IOC_FILES *.cpp )
+file( GLOB HDR_IOC_FILES *.h )
 
-FILE( GLOB SRC_FILES *.cpp )
-FILE( GLOB HDR_FILES *.h )
+set(KAUTHAM_SRC ${KAUTHAM_SRC} ${SRC_IOC_FILES} PARENT_SCOPE )
 
-ADD_DEFINITIONS( -DCOIN_DLL )
-
-IF( ARMADILLO_FOUND )
-    MESSAGE( STATUS "armadillo Package FOUND. Adding armadillo library.")
-    SET(KC_EXTRA_PLANNERS_LIBS ${KC_EXTRA_PLANNERS_LIBS}  ${ARMADILLO_LIBRARY})
-    #INCLUDE_DIRECTORIES( ${Armadillo_INCLUDE_DIR} )
-    INCLUDE_DIRECTORIES( ${ARMADILLO_INCLUDE_DIR} )
-MESSAGE( STATUS "ARMADILLO_INCLUDE_DIR: " ${ARMADILLO_INCLUDE_DIR})
-ELSE( ARMADILLO_FOUND )
-    MESSAGE( STATUS "armadillo Package NOT FOUND. Planners using PCA will be disabled.")
-ENDIF( ARMADILLO_FOUND )
-
-MESSAGE( STATUS "KC_EXTRA_PLANNERS_LIBS: " ${KC_EXTRA_PLANNERS_LIBS})
-
-ADD_LIBRARY( libiocplanner ${SRC_FILES} ${HDR_FILES} )
-TARGET_LINK_LIBRARIES( libiocplanner   ${KC_EXTRA_PLANNERS_LIBS}  )
+if( ARMADILLO_FOUND )
+    message( STATUS "armadillo Package FOUND. Adding armadillo library.")
+    set(EXTRA_LIBS ${EXTRA_LIBS} ${ARMADILLO_LIBRARY} PARENT_SCOPE)
+    include_directories( ${ARMADILLO_INCLUDE_DIR} )
+   message( STATUS "ARMADILLO_INCLUDE_DIR: " ${ARMADILLO_INCLUDE_DIR})
+else( ARMADILLO_FOUND )
+    message( STATUS "armadillo Package NOT FOUND. Planners using PCA will be disabled.")
+endif( ARMADILLO_FOUND )
 

@@ -1,30 +1,30 @@
 # this file makes the KauthamOpenDE library.
 
-FILE( GLOB SRC_FILES *.cpp )
-FILE( GLOB HDR_FILES *.h )
+file( GLOB SRC_FILES *.cpp )
+file( GLOB HDR_FILES *.h )
 
-ADD_DEFINITIONS( -DCOIN_DLL )
+add_definitions( -DCOIN_DLL )
 
-IF( OMPL_FOUND )
-        SET(KC_EXTRA_PLANNERS_LIBS ${KC_EXTRA_PLANNERS_LIBS} ${OMPL_LIBRARIES})
-       INCLUDE_DIRECTORIES( OMPL_INCLUDE_DIRS )
-ELSE( OMPL_FOUND )
-        MESSAGE( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be abaliable")
-ENDIF( OMPL_FOUND )
-        
-MESSAGE( STATUS "KC_EXTRA_PLANNERS_LIBS: " ${KC_EXTRA_PLANNERS_LIBS})
+if( OMPL_FOUND )
+        set(KC_EXTRA_PLANNERS_LIBS ${KC_EXTRA_PLANNERS_LIBS} ${OMPL_LIBRARIES})
+       include_directories( OMPL_INCLUDE_DIRS )
+else( OMPL_FOUND )
+        message( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be abaliable")
+endif( OMPL_FOUND )
+
+message( STATUS "KC_EXTRA_PLANNERS_LIBS: " ${KC_EXTRA_PLANNERS_LIBS})
 
 
 
-ADD_LIBRARY( libkauthamopende ${SRC_FILES} ${HDR_FILES} )
-TARGET_LINK_LIBRARIES( libkauthamopende libomplplanner libproblem libsampling libkthutil ${KC_EXTRA_PLANNERS_LIBS} ${Boost_LIBRARIES} ${ODE_LIBRARY})
-       
-       
+add_library( libkauthamopende ${SRC_FILES} ${HDR_FILES} )
+target_link_libraries( libkauthamopende libomplplanner libproblem libsampling libkthutil ${KC_EXTRA_PLANNERS_LIBS} ${Boost_LIBRARIES} ${ODE_LIBRARY})
 
-IF (TRIANGLE_FOUND)
-SET(OMPL_EXTENSION_TRIANGLE ${TRIANGLE_FOUND})
-INCLUDE_DIRECTORIES(SYSTEM ${TRIANGLE_INCLUDE_DIR})
-ENDIF(TRIANGLE_FOUND)
+
+
+if (TRIANGLE_FOUND)
+set(OMPL_EXTENSION_TRIANGLE ${TRIANGLE_FOUND})
+include_directories(SYSTEM ${TRIANGLE_INCLUDE_DIR})
+endif(TRIANGLE_FOUND)
 
 
 

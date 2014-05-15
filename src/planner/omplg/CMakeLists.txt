@@ -1,20 +1,20 @@
 # this file makes the libomplplanner library.
 
-FILE( GLOB SRC_FILES *.cpp )
-FILE( GLOB HDR_FILES *.h )
+file( GLOB SRC_FILES *.cpp )
+file( GLOB HDR_FILES *.h )
 
-ADD_DEFINITIONS( -DCOIN_DLL )
+add_definitions( -DCOIN_DLL )
 
-IF( OMPL_FOUND )
-        SET(KC_EXTRA_PLANNERS_LIBS ${KC_EXTRA_PLANNERS_LIBS} ${OMPL_LIBRARIES})
-        INCLUDE_DIRECTORIES( OMPL_INCLUDE_DIRS )
-ELSE( OMPL_FOUND )
-        MESSAGE( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be abaliable")
-ENDIF( OMPL_FOUND )
+if( OMPL_FOUND )
+        set(KC_EXTRA_PLANNERS_LIBS ${KC_EXTRA_PLANNERS_LIBS} ${OMPL_LIBRARIES})
+        include_directories( OMPL_INCLUDE_DIRS )
+else( OMPL_FOUND )
+        message( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be abaliable")
+endif( OMPL_FOUND )
 
-MESSAGE( STATUS "KC_EXTRA_PLANNERS_LIBS: " ${KC_EXTRA_PLANNERS_LIBS})
+message( STATUS "KC_EXTRA_PLANNERS_LIBS: " ${KC_EXTRA_PLANNERS_LIBS})
 
-ADD_LIBRARY( libomplplanner ${SRC_FILES} ${HDR_FILES} )
-TARGET_LINK_LIBRARIES( libomplplanner   ${KC_EXTRA_PLANNERS_LIBS} )
+add_library( libomplplanner ${SRC_FILES} ${HDR_FILES} )
+target_link_libraries( libomplplanner   ${KC_EXTRA_PLANNERS_LIBS} )
 
 
