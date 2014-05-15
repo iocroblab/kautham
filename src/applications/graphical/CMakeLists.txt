@@ -1,75 +1,77 @@
-INCLUDE_DIRECTORIES( ${COIN_INCLUDE_DIR} )
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src)
-INCLUDE_DIRECTORIES(${mt_DIR})
-
-ADD_DEFINITIONS( ${QT_DEFINITIONS} )
-##############################################################################
-# START building Kautham GUI application
-IF( KAUTHAM_GUI )
-  MESSAGE( STATUS "making KAUTHAM GUI" )
-ENDIF( KAUTHAM_GUI )
+include_directories( ${COIN_INCLUDE_DIR} )
+include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${mt_DIR})
 
 ##############################################################################
- IF( SOQT_LIBRARY_FOUND )
-    ADD_DEFINITIONS( -DSOQT_DLL -DCOIN_DLL )
-    INCLUDE_DIRECTORIES( ${SOQT_INCLUDE_DIR} )
-  ENDIF( SOQT_LIBRARY_FOUND )
+# START Required packages for GUI
+find_package( Qt4 REQUIRED QtCore QtGui QtXml )
+if( QT4_FOUND )
+   include(${QT_USE_FILE})
+   add_definitions( ${QT_DEFINITIONS} )
+endif( QT4_FOUND )
+
+##############################################################################
+find_package( SoQt4 REQUIRED )
+if( SOQT_LIBRARY_FOUND )
+   add_definitions( -DSOQT_DLL -DCOIN_DLL )
+   include_directories( ${SOQT_INCLUDE_DIR} )
+endif( SOQT_LIBRARY_FOUND )
+# END Required packages for GUI
 ##############################################################################
 
+if(KAUTHAM_OMPL)
+   add_definitions( -DKAUTHAM_USE_OMPL )
+endif(KAUTHAM_OMPL)
 ##############################################################################
 # Creating executable
-  FILE( GLOB RES_FILES *.rc )
-  SET(kautham_RESOURCES kauthamRes.qrc)
+file( GLOB RES_FILES *.rc )
+set(kautham_RESOURCES kauthamRes.qrc)
 
-  QT4_ADD_RESOURCES(kautham_RESOURCES_RCC ${kautham_RESOURCES})
-  QT4_WRAP_CPP( QT_MOC_SRC kauthamgui.h 
-		aboutwidget.h
-        constrainedcontrolwidget.h
-        controlwidget.h
-        dofwidget.h
-        gui.h
-        invkinwidget.h
-        kauthamgui.h
-        kauthamwidget.h
-        plannerwidget.h
-        sampleswidget.h
-        ui_RobotSim.h
+QT4_ADD_RESOURCES(kautham_RESOURCES_RCC ${kautham_RESOURCES})
+QT4_WRAP_CPP( QT_MOC_SRC kauthamgui.h
+         aboutwidget.h
+         constrainedcontrolwidget.h
+         controlwidget.h
+         dofwidget.h
+         gui.h
+         invkinwidget.h
+         kauthamgui.h
+         kauthamwidget.h
+         plannerwidget.h
+         sampleswidget.h
+         OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
 
-		OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
+set( SRC_FILES_GUI kauthamgui.cpp
+         constrainedcontrolwidget.cpp
+         dofwidget.cpp
+         invkinwidget.cpp
+         kauthamwidget.cpp
+         plannerwidget.cpp
+         controlwidget.cpp
+         gui.cpp
+         kauthamgui.cpp
+         sampleswidget.cpp)
 
-  SET( SRC_FILES_GUI kauthamgui.cpp 
-	constrainedcontrolwidget.cpp  
-	dofwidget.cpp  
-	invkinwidget.cpp
-	kauthamwidget.cpp     
-	plannerwidget.cpp
-	controlwidget.cpp
-	gui.cpp
-	kauthamgui.cpp
-	sampleswidget.cpp)
-  SET( HDR_FILES_GUI kauthamgui.h 
-	aboutwidget.h
-	constrainedcontrolwidget.h
-	controlwidget.h
-	dofwidget.h
-	gui.h
-	invkinwidget.h
-	kauthamgui.h
-	kauthamwidget.h
-	plannerwidget.h
-	sampleswidget.h
-	ui_RobotSim.h)
+set( HDR_FILES_GUI kauthamgui.h
+         aboutwidget.h
+         constrainedcontrolwidget.h
+         controlwidget.h
+         dofwidget.h
+         gui.h
+         invkinwidget.h
+         kauthamgui.h
+         kauthamwidget.h
+         plannerwidget.h
+         sampleswidget.h
+         ui_RobotSim.h)
 
-  ADD_EXECUTABLE(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${kautham_RESOURCES_RCC} )
-  TARGET_LINK_LIBRARIES( Kautham2 kautham
-			${SOQT_LIBRARY} ${COIN_LIBRARY}
-			${QT_LIBRARIES})
- ADD_DEPENDENCIES(Kautham2 kautham)
+add_executable(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${kautham_RESOURCES_RCC} )
+target_link_libraries( Kautham2 kautham ${SOQT_LIBRARY} ${COIN_LIBRARY} ${QT_LIBRARIES})
+
+add_dependencies(Kautham2 kautham)
+
+install(TARGETS Kautham2 DESTINATION bin)
 
 # END building Kautham GUI application
-
-
-INSTALL(TARGETS Kautham2 DESTINATION bin)
-
 
 

@@ -1,20 +1,20 @@
 # This CMakeFile is used con create libproblem(.lib / .a)
 
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src
-                     ${mt_DIR}
-		     ${GDIAM_DIR}
-                     ${Boost_INCLUDE_DIRS}
-                     ${COIN_INCLUDE_DIR}
-                     ${Armadillo_INCLUDE_DIR})
+include_directories( ${GDIAM_DIR} )
 
-ADD_DEFINITIONS( -DCOIN_DLL )
-ADD_DEFINITIONS( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
+include_directories( ${CMAKE_SOURCE_DIR}/src
+                     ${mt_DIR})
+if( ARMADILLO_FOUND )
+   include_directories( ${Armadillo_INCLUDE_DIR})
+endif( ARMADILLO_FOUND )
 
-FILE( GLOB SRC_FILES *.cpp )
-FILE( GLOB HDR_FILES *.h* )
+add_definitions( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
 
-ADD_LIBRARY(problem STATIC ${SRC_FILES} ${HDR_FILES})
+file( GLOB SRC_FILES *.cpp )
+file( GLOB HDR_FILES *.h* )
 
-#TARGET_LINK_LIBRARIES(problem libPQP libgdiam planner sampling ${PUGI_XML_LIBRARIES})
+set(KAUTHAM_SRC ${KAUTHAM_SRC} ${SRC_FILES} PARENT_SCOPE )
+#add_library(problem STATIC ${SRC_FILES} ${HDR_FILES})
+#target_link_libraries(problem libPQP libgdiam planner sampling ${PUGI_XML_LIBRARIES})
 
 

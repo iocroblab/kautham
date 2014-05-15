@@ -1,13 +1,14 @@
 # kautham utilities library. This library contains the general definitions of the Kautham and the KauthamObject.
 
-FILE(GLOB SRC_FILES *.c* )
-FILE(GLOB HDR_FILES *.h*)
+file(GLOB SRC_FILES *.c* )
+file(GLOB HDR_FILES *.h*)
 
-ADD_LIBRARY(libkthutil STATIC ${SRC_FILES} ${HDR_FILES} )
-IF(UNIX)
-  SET_TARGET_PROPERTIES( libkthutil PROPERTIES
-        LINKER_LANGUAGE CXX
-        COMPILE_FLAGS -fPIC
-        LINK_FLAGS -Wl
-        OUTPUT_NAME kthutil)
-ENDIF(UNIX)
+set(KAUTHAM_SRC ${KAUTHAM_SRC} ${SRC_FILES} PARENT_SCOPE  )
+# # add_library(libkthutil STATIC ${SRC_FILES} ${HDR_FILES} )
+# # if(UNIX)
+# #   set_target_properties( libkthutil PROPERTIES
+# #         LINKER_LANGUAGE CXX
+# #         COMPILE_FLAGS -fPIC
+# #         LINK_FLAGS -Wl
+# #         OUTPUT_NAME kthutil)
+# # endif(UNIX)

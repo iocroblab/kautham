@@ -1,42 +1,95 @@
-ADD_SUBDIRECTORY( applications)
-#ADD_SUBDIRECTORY( external ) 
-ADD_SUBDIRECTORY( planner )
-#ADD_SUBDIRECTORY( problem )
-ADD_SUBDIRECTORY( sampling )
-ADD_SUBDIRECTORY( util )
+#### Adding subdirectories
+
+include_directories( ${CMAKE_SOURCE_DIR}/src)
+set(mt_DIR ${CMAKE_SOURCE_DIR}/src/util/libmt)
+message (STATUS "Adding libmt directory ${mt_DIR}")
+include_directories( ${mt_DIR} )
+
+add_subdirectory ( external )
+add_subdirectory( util )
+
+#### Boost package ###############
+find_package( Boost COMPONENTS  system serialization thread REQUIRED )
+if(Boost_FOUND)
+  message(STATUS "Boost library found at first attempt.")
+else(Boost_FOUND)
+  set( BOOST_ROOT $ENV{BOOSTDIR})
+        message(STATUS "Boost library NOT found at first attempt. Setting BOOST_ROOT to" $ENV{BOOSTDIR})
+        find_package( Boost COMPONENTS  system serialization thread REQUIRED )
+        if(Boost_FOUND)
+                message(STATUS "Boost library found in " ${BOOST_ROOT})
+                include_directories(${Boost_INCLUDE_DIRS})
+                link_directories( ${Boost_LIBRARY_DIRS} )
+        else(Boost_FOUND)
+                message(STATUS "Boost library not found. Boost-dependent headers will NOT be available")
+        endif(Boost_FOUND)
+endif(Boost_FOUND)
+
+#### Coin3D package ###############
+# graphics library
+find_package( Coin REQUIRED )
+if( COIN_LIBRARY_FOUND )
+   message( STATUS "Using Coin library")
+   add_definitions( -DCOIN_DLL )
+   include_directories( ${COIN_INCLUDE_DIR} )
+else( COIN_LIBRARY_FOUND )
+   message(SEND_ERROR "Kautham needs Coin library")
+endif(COIN_LIBRARY_FOUND )
+
+find_package( Armadillo )
+if( ARMADILLO_FOUND )
+   message( STATUS "armadillo Package FOUND")
+   add_definitions( -DKAUTHAM_USE_ARMADILLO )
+else( ARMADILLO_FOUND )
+   message( STATUS "armadillo Package NOT FOUND. Planners using PCA will be disabled.")
+endif( ARMADILLO_FOUND )
+
+find_package(ompl)
+if( OMPL_FOUND )
+   message( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_OMPL flag")
+   message( STATUS "OMPL lib is: " ${OMPL_LIBRARIES})
+   message( STATUS "OMPL include is: " ${OMPL_INCLUDE_DIRS})
+   add_definitions( -DKAUTHAM_USE_OMPL )
+endif()
+
+if( KAUTHAM_IOC )
+   message( STATUS "Use IOC planners: setting -DKAUTHAM_USE_IOC flag")
+   add_definitions( -DKAUTHAM_USE_IOC )
+endif( KAUTHAM_IOC )
 
 
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src
-                     ${mt_DIR}
-		     ${GDIAM_DIR}
-                     ${Boost_INCLUDE_DIRS}
-                     ${COIN_INCLUDE_DIR}
-                     ${Armadillo_INCLUDE_DIR})
-
-IF( GSL_FOUND ) 
-    SET( EXTRA_LIBS ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES} )
-ENDIF( GSL_FOUND ) 
 
 
-FILE( GLOB SRC_FILES problem/*.cpp )
-FILE( GLOB HDR_FILES problem/*.h* external/*.h* )
+add_subdirectory( applications)
+add_subdirectory( planner )
+add_subdirectory( problem )
+add_subdirectory( sampling )
+#                      ${GDIAM_DIR}
+#                      ${Armadillo_INCLUDE_DIR})
 
-ADD_DEFINITIONS( -DCOIN_DLL )
-ADD_DEFINITIONS( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
+#set(KAUTHAM_SRC "")
+#set(KAUTHAM_HRC "")
 
-ADD_LIBRARY(kautham SHARED ${SRC_FILES} ${HDR_FILES})
+#file( GLOB SRC_FILES problem/*.cpp )
+#file( GLOB HDR_FILES problem/*.h* external/*.h* )
 
-TARGET_LINK_LIBRARIES(kautham planner
-			sampling
-			libPQP 
-			libgdiam 
-			${PUGI_XML_LIBRARIES}
-			${OMPL_LIBRARIES} 
-			${ARMADILLO_LIBRARIES}
-			${ODE_LIBRARY}
-			libDNN 
-			libkin
-			libkthutil
-			${BOOST_system_LIBRARY}
-			${EXTRA_LIBS})
+
+add_definitions( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
+#message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
+
+add_library(kautham SHARED ${KAUTHAM_SRC} )
+
+target_link_libraries(kautham ${EXTRA_LIBS} ${Boost_LIBRARIES} )
+# 			sampling
+# 			libPQP
+# 			libgdiam
+# 			${PUGI_XML_LIBRARIES}
+# 			${OMPL_LIBRARIES}
+# 			${ARMADILLO_LIBRARIES}
+# 			${ODE_LIBRARY}
+# 			libDNN
+# 			libkin
+# 			libkthutil
+#
+# 			${EXTRA_LIBS})
 

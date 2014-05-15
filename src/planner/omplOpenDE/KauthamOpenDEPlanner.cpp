@@ -312,7 +312,3 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
 
 #endif //KAUTHAM_USE_ODE
 #endif //KAUTHAM_USE_OMPL
-
-
-
-
