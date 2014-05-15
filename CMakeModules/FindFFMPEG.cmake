@@ -5,62 +5,62 @@
 #   FFMPEG_INCLUDE_DIR
 #   FFMPEG_LIBRARIES
 
-SET( FFMPEG_FOUND "NO" )
+set( FFMPEG_FOUND "NO" )
 
 
-FIND_PATH( FFMPEG_INCLUDE_DIR ffmpeg/avcodec.h
+find_path( FFMPEG_INCLUDE_DIR ffmpeg/avcodec.h
   /usr/include
   /usr/local/include
 )
 
-IF( FFMPEG_INCLUDE_DIR )
+if( FFMPEG_INCLUDE_DIR )
 
-FIND_PROGRAM( FFMPEG_CONFIG ffmpeg-config
+find_program( FFMPEG_CONFIG ffmpeg-config
   /usr/bin
   /usr/local/bin
   ${HOME}/bin
 )
 
-IF( FFMPEG_CONFIG )
-  EXEC_PROGRAM( ${FFMPEG_CONFIG} ARGS "--libs avformat" OUTPUT_VARIABLE FFMPEG_LIBS )
-  SET( FFMPEG_FOUND "YES" )
-  SET( FFMPEG_LIBRARIES "${FFMPEG_LIBS}" )
+if( FFMPEG_CONFIG )
+  exec_program( ${FFMPEG_CONFIG} ARGS "--libs avformat" OUTPUT_VARIABLE FFMPEG_LIBS )
+  set( FFMPEG_FOUND "YES" )
+  set( FFMPEG_LIBRARIES "${FFMPEG_LIBS}" )
   
-ELSE( FFMPEG_CONFIG )
+else( FFMPEG_CONFIG )
 
-  FIND_LIBRARY( FFMPEG_avcodec_LIBRARY avcodec
+  find_library( FFMPEG_avcodec_LIBRARY avcodec
     /usr/lib
     /usr/local/lib
     /usr/lib64
     /usr/local/lib64
   )
 
-  FIND_LIBRARY( FFMPEG_avformat_LIBRARY avformat
+  find_library( FFMPEG_avformat_LIBRARY avformat
     /usr/lib
     /usr/local/lib
     /usr/lib64
     /usr/local/lib64
   )
   
-  FIND_LIBRARY( FFMPEG_avutil_LIBRARY avutil
+  find_library( FFMPEG_avutil_LIBRARY avutil
     /usr/lib
     /usr/local/lib
     /usr/lib64
     /usr/local/lib64
   )
   
-  IF( FFMPEG_avcodec_LIBRARY )
-  IF( FFMPEG_avformat_LIBRARY )
+  if( FFMPEG_avcodec_LIBRARY )
+  if( FFMPEG_avformat_LIBRARY )
 
-    SET( FFMPEG_FOUND "YES" )
-    SET( FFMPEG_LIBRARIES ${FFMPEG_avformat_LIBRARY} ${FFMPEG_avcodec_LIBRARY} )
-    IF( FFMPEG_avutil_LIBRARY )
-       SET( FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES} ${FFMPEG_avutil_LIBRARY} )
-    ENDIF( FFMPEG_avutil_LIBRARY )
+    set( FFMPEG_FOUND "YES" )
+    set( FFMPEG_LIBRARIES ${FFMPEG_avformat_LIBRARY} ${FFMPEG_avcodec_LIBRARY} )
+    if( FFMPEG_avutil_LIBRARY )
+       set( FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES} ${FFMPEG_avutil_LIBRARY} )
+    endif( FFMPEG_avutil_LIBRARY )
 
-  ENDIF( FFMPEG_avformat_LIBRARY )
-  ENDIF( FFMPEG_avcodec_LIBRARY )
+  endif( FFMPEG_avformat_LIBRARY )
+  endif( FFMPEG_avcodec_LIBRARY )
 
-ENDIF( FFMPEG_CONFIG )
+endif( FFMPEG_CONFIG )
 
-ENDIF( FFMPEG_INCLUDE_DIR )
+endif( FFMPEG_INCLUDE_DIR )

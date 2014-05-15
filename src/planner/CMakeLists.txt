@@ -1,63 +1,88 @@
 # this file makes the libplanner library.
+include_directories( ${CMAKE_SOURCE_DIR}/src
+                     ${mt_DIR})
 
-INCLUDE_DIRECTORIES( ${mt_DIR}
-                        ${Boost_INCLUDE_DIRS}
-                        ${CMAKE_SOURCE_DIR}/src )
+file( GLOB SRC_FILES *.cpp )
+file( GLOB HDR_FILES *.h )
 
-INCLUDE_DIRECTORIES( ${COIN_INCLUDE_DIR} )
-ADD_DEFINITIONS( -DCOIN_DLL )
-
-
-FILE( GLOB SRC_FILES *.cpp )
-FILE( GLOB HDR_FILES *.h )
-
-
-IF( KAUTHAM_OMPL )
-    MESSAGE( STATUS "Adding OMPL subdirectories")
-    
-    FILE( GLOB SRC_OMPLG_FILES omplg/*.cpp )
-    FILE( GLOB HDR_OMPLG_FILES omplg/*.h )
-    FILE( GLOB SRC_OMPLC_FILES omplc/*.cpp )
-    FILE( GLOB HDR_OMPLC_FILES omplc/*.h )
-
-    SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libomplplanner)
-ENDIF( KAUTHAM_OMPL )
-IF( KAUTHAM_IOC )
-    MESSAGE( STATUS "Adding subdirectory IOC")
-    FILE( GLOB SRC_IOC_FILES ioc/*.cpp )
-    FILE( GLOB HDR_IOC_FILES ioc/*.h )
-    SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libiocplanner)
-ENDIF( KAUTHAM_IOC )
-
-IF( KAUTHAM_OPENDE )
-    MESSAGE( STATUS "Adding subdirectory omplOpenDE")
-    FILE( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/*.cpp )
-    FILE( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/*.h )
-
-    SET(KC_PLANNERS_LIBS ${KC_PLANNERS_LIBS}  libkauthamopende)
-
-ENDIF( KAUTHAM_OPENDE )
-
-#MESSAGE( STATUS "----------------KC_PLANNERS_LIBS: " ${KC_PLANNERS_LIBS})
-
-ADD_LIBRARY( planner STATIC ${SRC_FILES}
-			${SRC_OMPLG_FILES} 
-			${SRC_OMPLC_FILES} 
-			${SRC_IOC_FILES}
-			${SRC_OMPLOPENDE_FILES})
-
-IF(UNIX)
-  SET_TARGET_PROPERTIES( planner PROPERTIES
-        LINKER_LANGUAGE CXX
-        COMPILE_FLAGS -fPIC
-        LINK_FLAGS -Wl
-        OUTPUT_NAME planner)
-ENDIF(UNIX)
+if( KAUTHAM_IOC )
+   message( STATUS "Adding subdirectory IOC")
+   add_subdirectory( ioc )
+endif( KAUTHAM_IOC )
 
 
 
+##############################################################################
+##############################################################################
+# START Required packages when using OMPL planners
+if( KAUTHAM_OMPL )
+    #### OMPL package ###############
 
-#TARGET_LINK_LIBRARIES( planner ${OMPL_LIBRARIES} ${ARMADILLO_LIBRARIES} ${ODE_LIBRARY})
+   if( OMPL_FOUND )
+      message( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_OMPL flag")
+      message( STATUS "OMPL lib is: " ${OMPL_LIBRARIES})
+      message( STATUS "OMPL include is: " ${OMPL_INCLUDE_DIRS})
+      include_directories( OMPL_INCLUDE_DIRS )
+      set ( PLANNER_EXTRA_LIBS ${OMPL_LIBRARIES} )
+      message( STATUS "OMPL VERSION is: " ${OMPL_VERSION})
+      message( STATUS "Adding OMPL subdirectories")
+
+      file( GLOB SRC_OMPLG_FILES omplg/*.cpp )
+      file( GLOB HDR_OMPLG_FILES omplg/*.h )
+      file( GLOB SRC_OMPLC_FILES omplc/*.cpp )
+      file( GLOB HDR_OMPLC_FILES omplc/*.h )
+      #set(KAUTHAM_SRC ${KAUTHAM_SRC} ${SRC_OMPLG_FILES} ${SRC_OMPLC_FILES} PARENT_SCOPE  )
+
+      if(KAUTHAM_OPENDE)
+         find_package(OpenDE REQUIRED)
+         if(ODE_FOUND)
+            message( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_ODE flag")
+            add_definitions( -DKAUTHAM_USE_ODE )
+            include_directories( ${ODE_INCLUDE_DIR} )
+            set ( PLANNER_EXTRA_LIBS ${PLANNER_EXTRA_LIBS} ${ODE_LIBRARY}  )
+            message( STATUS "Adding subdirectory omplOpenDE")
+            file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/*.cpp )
+            file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/*.h )
+       #     set(KAUTHAM_SRC ${KAUTHAM_SRC} ${SRC_OMPLOPENDE_FILES} PARENT_SCOPE  )
+         endif(ODE_FOUND)
+      endif(KAUTHAM_OPENDE)
+
+    else( OMPL_FOUND )
+      message( STATUS "Error: OMPL Package NOT FOUND. OMPL planers will not be avaliable")
+    endif( OMPL_FOUND )
+endif( KAUTHAM_OMPL )
+
+set(KAUTHAM_SRC ${KAUTHAM_SRC}
+               ${SRC_FILES}
+               ${SRC_OMPLOPENDE_FILES}
+               ${SRC_OMPLG_FILES}
+               ${SRC_OMPLC_FILES}
+               PARENT_SCOPE )
+
+set ( EXTRA_LIBS ${EXTRA_LIBS} ${PLANNER_EXTRA_LIBS} PARENT_SCOPE )
+
+# add_library( planner STATIC ${SRC_FILES}
+# 			${SRC_OMPLG_FILES}
+# 			${SRC_OMPLC_FILES}
+# 			${SRC_IOC_FILES}
+# 			${SRC_OMPLOPENDE_FILES})
+#
+# if(UNIX)
+#   set_target_properties( planner PROPERTIES
+#         LINKER_LANGUAGE CXX
+#         COMPILE_FLAGS -fPIC
+#         LINK_FLAGS -Wl
+#         OUTPUT_NAME planner)
+# endif(UNIX)
+#
+
+#if( KAUTHAM_GUIBRO )
+#    message( STATUS "Use GUIBRO: setting -DKAUTHAM_USE_GUIBRO flag")
+#    add_definitions( -DKAUTHAM_USE_GUIBRO )
+#endif( KAUTHAM_GUIBRO )
+
+
+#target_link_libraries( planner ${OMPL_LIBRARIES} ${ARMADILLO_LIBRARIES} ${ODE_LIBRARY})
 
 
 
