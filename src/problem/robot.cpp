@@ -33,7 +33,7 @@
 #include <util/libkin/ivkinUR5.h>
 #include <util/libkin/constrainedkinematic.h>
 #include <problem/ivpqpelement.h>
-
+#include <util/kthutil/kauthamexception.h>
 #include <mt/point3.h>
 #include <mt/rotation.h>
 #include <cstdlib>
@@ -120,6 +120,9 @@ namespace Kautham {
           } else {
               cout << "The Robot file: " << robFile << " has an incorrect extension. "
                    << "Accepted file format are dh, urdf, iv or wrl" << endl;
+              string message = "Robot file " + robFile + " has an incorrect extension";
+              string details = "Robot file must have urdf, dh, iv or wrl extension";
+              throw KthExcp(message,details);
           }
 
           if (armed) {
@@ -150,7 +153,9 @@ namespace Kautham {
           }
       } else {// File does not exists
           fin.close();
-          cout << "The Robot file: " << robFile << "doesn't exist. Please confirm it." << endl;
+          cout << "Robot file: " << robFile << "doesn't exist. Please confirm it." << endl;
+          string message = "Robot file " +robFile + " couldn't be found";
+          throw KthExcp(message);
       }
   }
 
@@ -167,7 +172,8 @@ namespace Kautham {
       xml_document doc;
 
       //Parse the rob file
-      if (doc.load_file(robFile.c_str())) {
+      xml_parse_result result = doc.load_file(robFile.c_str());
+      if (result) {
           //Robot Name
           name = doc.child("Robot").attribute("name").as_string();
 
@@ -185,6 +191,10 @@ namespace Kautham {
 
               //restoring environtment values
               setlocale(LC_NUMERIC,old);
+
+              string message = "Incorrect robot type " + tmpString + " in robot from file " + robFile;
+              string details = "Robottype must be set to either Chain, Tree or Freeflying";
+              throw KthExcp(message,details);
               return false;
           }
 
@@ -305,10 +315,16 @@ namespace Kautham {
           setlocale(LC_NUMERIC,old);
           return true;
       } else {// the result of the file parser is bad
-          cout << "The Robot file: " << robFile << " can not be read." << endl;
+          cout << "Robot file: " << robFile << " can not be read." << endl;
 
           //restoring environtment values
           setlocale(LC_NUMERIC,old);
+
+          string message = "Robot file " + robFile + " couldn't be parsed";
+          stringstream details;
+          details << "Error: " << result.description() << endl <<
+                     "Last successfully parsed character: " << result.offset;
+          throw KthExcp(message,details.str());
           return false;
       }
   }
@@ -324,7 +340,8 @@ namespace Kautham {
       xml_document doc;
 
       //Parse the urdf file
-      if (doc.load_file(robFile.c_str())) {
+      xml_parse_result result = doc.load_file(robFile.c_str());
+      if (result) {
           //if file could be loaded
           urdf_robot robot;
           xml_node tmpNode = doc.child("robot"); //node containing robot information
@@ -347,6 +364,10 @@ namespace Kautham {
 
               //restoring environtment values
               setlocale(LC_NUMERIC,old);
+
+              string message = "Incorrect robot type " + robot.type + " in robot from file " + robFile;
+              string details = "Robottype must be set to either Chain, Tree or Freeflying";
+              throw KthExcp(message,details);
               return false;
           }
 
@@ -452,10 +473,16 @@ namespace Kautham {
           setlocale(LC_NUMERIC,old);
           return true;
       } else {// the result of the file parser is bad
-          cout << "The Robot file: " << robFile << " can not be read." << endl;
+          cout << "Robot file: " << robFile << " can not be read." << endl;
 
           //restoring environtment values
           setlocale(LC_NUMERIC,old);
+
+          string message = "Robot file " + robFile + " couldn't be parsed";
+          stringstream details;
+          details << "Error: " << result.description() << endl <<
+                     "Last successfully parsed character: " << result.offset;
+          throw KthExcp(message,details.str());
           return false;
       }
   }
