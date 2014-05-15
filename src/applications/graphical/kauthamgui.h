@@ -55,6 +55,7 @@ public slots:
   void              saveFile();
   void              saveAsFile();
   void              closeProblem();
+  void              quit();
 
 private:
   void              initApp();
