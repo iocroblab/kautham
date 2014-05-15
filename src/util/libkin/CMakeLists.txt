@@ -1,23 +1,32 @@
-FILE(GLOB SRC_FILES *.c* )
-FILE(GLOB HDR_FILES *.h*)
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src
-                     ${mt_DIR})
+#### GSL package ###############
+# maths lobrary used in libproblem for the SAH hand inverse kinematics
 
-IF( GSL_FOUND )
-    INCLUDE_DIRECTORIES( ${GSL_INCLUDE_DIR} )
-    ADD_DEFINITIONS( -DKAUTHAM_USE_GSL )
-#    SET( EXTRA_LIBS ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES} )
-ENDIF( GSL_FOUND )
-
-ADD_LIBRARY(libkin STATIC ${SRC_FILES} ${HDR_FILES} )
-
-IF(UNIX)
-  SET_TARGET_PROPERTIES( libkin PROPERTIES
-        LINKER_LANGUAGE CXX
-        COMPILE_FLAGS -fPIC
-        LINK_FLAGS -Wl
-        OUTPUT_NAME kin)
-ENDIF(UNIX)
+find_package( GSL )
+if( GSL_FOUND )
+   message( STATUS "GSL FOUND.")
+   add_definitions( -DNDEBUG )
+   add_definitions( -DKAUTHAM_USE_GSL )
+   include_directories( ${GSL_INCLUDE_DIR} )
+   set( EXTRA_LIBS ${EXTRA_LIBS} ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES} PARENT_SCOPE)
+else( GSL_FOUND )
+   message( SEND_ERROR "GSL NOT FOUND. Hand inverse kinematics will be disabled")
+endif( GSL_FOUND )
 
 
-#TARGET_LINK_LIBRARIES( libkin ${EXTRA_LIBS} )
+file(GLOB SRC_FILES *.c* )
+file(GLOB HDR_FILES *.h*)
+
+set(KAUTHAM_SRC ${KAUTHAM_SRC} ${SRC_FILES} PARENT_SCOPE )
+
+# add_library(libkin STATIC ${SRC_FILES} ${HDR_FILES} )
+#
+# if(UNIX)
+#   set_target_properties( libkin PROPERTIES
+#         LINKER_LANGUAGE CXX
+#         COMPILE_FLAGS -fPIC
+#         LINK_FLAGS -Wl
+#         OUTPUT_NAME kin)
+# endif(UNIX)
+#
+
+#target_link_libraries( libkin ${EXTRA_LIBS} )

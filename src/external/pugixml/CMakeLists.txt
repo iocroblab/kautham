@@ -1,12 +1,18 @@
-FILE(GLOB SRC_FILES *.c* )
-FILE(GLOB HDR_FILES *.h*)
+file(GLOB SRC_FILES *.c* )
+file(GLOB HDR_FILES *.h*)
 
-ADD_LIBRARY(libpugixml STATIC ${SRC_FILES} ${HDR_FILES} )
-IF(UNIX)
-  SET_TARGET_PROPERTIES( libpugixml PROPERTIES
-        LINKER_LANGUAGE CXX
-        COMPILE_FLAGS -fPIC        
-        LINK_FLAGS -Wl
-        OUTPUT_NAME pugixml )
-ENDIF(UNIX)
 
+file( GLOB SRC_FILES *.cpp )
+file( GLOB HDR_FILES *.h* )
+
+set(KAUTHAM_SRC ${KAUTHAM_SRC} ${SRC_FILES} PARENT_SCOPE)
+
+# add_library(libpugixml STATIC ${SRC_FILES} ${HDR_FILES} )
+# if(UNIX)
+#   set_target_properties( libpugixml PROPERTIES
+#         LINKER_LANGUAGE CXX
+#         COMPILE_FLAGS -fPIC
+#         LINK_FLAGS -Wl
+#         OUTPUT_NAME pugixml )
+# endif(UNIX)
+#
