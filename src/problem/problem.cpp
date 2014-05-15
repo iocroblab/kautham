@@ -22,7 +22,10 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
+
 #include "problem.h"
+#include <util/kthutil/kauthamexception.h>
+
 
 namespace Kautham {
   const KthReal Problem::_toRad = (KthReal)(M_PI/180.0);
@@ -46,7 +49,7 @@ namespace Kautham {
 
 
   // This is the new implementation trying to avoid the old strucparse and ProbStruc.
-  bool Problem::createWSpace(xml_document *doc, bool useBBOX) {
+  bool Problem::createWSpaceFromFile(xml_document *doc, bool useBBOX) {
       if(_wspace != NULL ) delete _wspace;
       _wspace = new IVWorkSpace();
 
@@ -276,44 +279,55 @@ namespace Kautham {
          }
 
 #endif
-      else
-      cout<<"Planner "<< name <<" is unknow or not loaded (check the CMakeFiles.txt options)" << endl;
+      else {
+          cout<<"Planner "<< name <<" is unknow or not loaded (check the CMakeFiles.txt options)" << endl;
+          string message = "Planner " + name + " is unknown or not loaded (check the CMakeFiles.txt options)";
+          throw KthExcp(message);
+      }
 
-
-
-      if(_planner != NULL)
+      if (_planner != NULL) {
           return true;
-      else
+      } else {
+          string message = "Planner couldn't be created";
+          throw KthExcp(message);
           return false;
+      }
   }
 
   bool Problem::createPlannerFromFile(xml_document *doc, ompl::geometric::SimpleSetup *ssptr) {
-      if(_planner == NULL ){
+      if (_planner == NULL) {
           //Create the planner and set the parameters
           xml_node planNode = doc->child("Problem").child("Planner").child("Parameters");
           string name = planNode.child("Name").child_value();
 
-          if( name != ""){
-              if( createPlanner(name,ssptr) ){
+          if (name != "") {
+              if(createPlanner(name,ssptr)) {
                   xml_node::iterator it;
-                  for(it = planNode.begin(); it != planNode.end(); ++it){
+                  for (it = planNode.begin(); it != planNode.end(); ++it) {
                       name = it->name();
-                      try{
-                          if( name == "Parameter" ){
+                      try {
+                          if (name == "Parameter") {
                               name = it->attribute("name").as_string();
-                              _planner->setParametersFromString( name.append("|").append(it->child_value()));
+                              _planner->setParametersFromString(name.append("|").append(it->child_value()));
                           }
-                      }catch(...){
+                      } catch(...) {
                           std::cout << "Current planner doesn't have at least one of the parameters"
                                     << " found in the file (" << name << ")." << std::endl;
                           //return false; //changed, let it continue -
                       }
                   }
                   return true;
+              } else {
+                  return false;
               }
+          } else {
+              string message = "Planner name can't be empty";
+              throw KthExcp(message);
+              return false;
           }
+      } else {
+          return false;
       }
-      return false;
   }
 
   bool Problem::createCSpaceFromFile(xml_document *doc) {
@@ -337,7 +351,11 @@ namespace Kautham {
                       boost::split(tokens, sentence, boost::is_any_of("| "));
                       if(tokens.size() != numObsCntr){
                           std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
-                          break;
+                          string message = "Error when creating CSpace: InitObs sample has an incorrect dimension";
+                          stringstream details;
+                          details << "InitObs has dimension " << tokens.size() << " and should have dimension " << numObsCntr;
+                          throw KthExcp(message, details.str());
+                          return false;
                       }
 
                       tmpSampPointer = new Sample(numObsCntr);
@@ -350,7 +368,11 @@ namespace Kautham {
 
                   }else{
                       cout << "Sample doesn't have the right dimension.\n";
-                      break;
+                      string message = "Error when creating CSpace: InitObs sample has an incorrect dimension";
+                      stringstream details;
+                      details << "InitObs has dimension " << sampNode.attribute("dim").as_int() << " and should have dimension " << numObsCntr;
+                      throw KthExcp(message, details.str());
+                      return false;
                   }
               } else {
                   tmpSampPointer = new Sample(numObsCntr);
@@ -369,7 +391,11 @@ namespace Kautham {
                   boost::split(tokens, sentence, boost::is_any_of("| "));
                   if(tokens.size() != numRobCntr){
                       std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
-                      break;
+                      string message = "Error when creating CSpace: Init sample has an incorrect dimension";
+                      stringstream details;
+                      details << "Init has dimension " << tokens.size() << " and should have dimension " << numRobCntr;
+                      throw KthExcp(message, details.str());
+                      return false;
                   }
 
                   tmpSampPointer = new Sample(numRobCntr);
@@ -384,7 +410,11 @@ namespace Kautham {
 
               }else{
                   cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
-                  break;
+                  string message = "Error when creating CSpace: Init sample has an incorrect dimension";
+                  stringstream details;
+                  details << "Init has dimension " << sampNode.attribute("dim").as_int() << " and should have dimension " << numRobCntr;
+                  throw KthExcp(message, details.str());
+                  return false;
               }
 
               sampNode = it->child("Goal");
@@ -394,7 +424,11 @@ namespace Kautham {
                   boost::split(tokens, sentence, boost::is_any_of("| "));
                   if(tokens.size() != numRobCntr){
                       std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
-                      break;
+                      string message = "Error when creating CSpace: Goal sample has an incorrect dimension";
+                      stringstream details;
+                      details << "Goal has dimension " << tokens.size() << " and should have dimension " << numRobCntr;
+                      throw KthExcp(message, details.str());
+                      return false;
                   }
 
                   tmpSampPointer = new Sample(numRobCntr);
@@ -409,7 +443,11 @@ namespace Kautham {
 
               }else{
                   cout << "Sample doesn't have the right dimension.\n";
-                  break;
+                  string message = "Error when creating CSpace: Goal sample has an incorrect dimension";
+                  stringstream details;
+                  details << "Goal has dimension " << sampNode.attribute("dim").as_int() << " and should have dimension " << numRobCntr;
+                  throw KthExcp(message, details.str());
+                  return false;
               }
           }
           if( _cspace->getSize() >= 2 ){
@@ -418,6 +456,8 @@ namespace Kautham {
               return true;
           }
       }
+      string message = "Error when creating CSpace";
+      throw KthExcp(message);
       return false;
   }
 
@@ -473,11 +513,15 @@ namespace Kautham {
   bool Problem::isFileOK (xml_document *doc) {
       //a correct problem file must have a planner node
       if (!doc->child("Problem").child("Planner")) {
+          string message = "Problem file " + _filePath + " doesn't have a planner node";
+          throw KthExcp(message);
           return false;
       }
 
       //a correct problem file must have at least a robot node
       if (!doc->child("Problem").child("Robot").attribute("robot")) {
+          string message = "Problem file " + _filePath + " doesn't have any robot node";
+          throw KthExcp(message);
           return false;
       }
 
@@ -514,11 +558,20 @@ namespace Kautham {
                   node = node.next_sibling(child.c_str());
               } else {
                   end = true;
+
+                  string message = "File " + file + " couldn't be found";
+                  stringstream details;
+                  details << "The file was looked for in the following directories:" << endl;
+                  for (uint i = 0; i < path.size(); i++) {
+                      details << "\t" << path.at(i) << endl;
+                  }
+                  throw KthExcp(message, details.str());
               }
           }
 
           return (!end);
       } else {
+          throw KthExcp("No directories where files must be looked for were specified");
           return false;
       }
   }
@@ -578,7 +631,8 @@ namespace Kautham {
   bool Problem::setupFromFile(string xml_doc, string models_def_path, bool useBBOX) {
       _filePath = xml_doc;
       xml_document *doc = new xml_document;
-      if(doc->load_file( xml_doc.c_str())) {
+      xml_parse_result result = doc->load_file( xml_doc.c_str());
+      if(result) {
           //if the file was correctly parsed
           if (prepareFile(doc, models_def_path)) {
               //if everything seems to be OK, try to setup the problem
@@ -587,12 +641,17 @@ namespace Kautham {
               return false;
           }
       } else {
+          string message = "Problem file " + _filePath + " couldn't be parsed";
+          stringstream details;
+          details << "Error: " << result.description() << endl <<
+                     "Last successfully parsed character: " << result.offset;
+          throw KthExcp(message,details.str());
           return false;
       }
   }
 
   bool Problem::setupFromFile(xml_document *doc, bool useBBOX) {
-      if (!createWSpace(doc, useBBOX)) return false;
+      if (!createWSpaceFromFile(doc, useBBOX)) return false;
 
       if (!createCSpaceFromFile(doc)) return false;
 
@@ -793,14 +852,15 @@ namespace Kautham {
 
   bool Problem::setRobotControls(string cntrFile) {
       //Once the robots were added, the controls can be configured
-      if (cntrFile != "") {//the robo control will be the ones in the controls file
+      if (cntrFile != "") {//the robot control will be the ones in the controls file
           if (exists(cntrFile)) { // The file already exists.
               if (cntrFile.find(".cntr",0) != string::npos) { // It means that controls are defined by a *.cntr file
                   //Opening the file with the new pugiXML library.
                   xml_document doc;
 
                   //Parse the cntr file
-                  if (doc.load_file(cntrFile.c_str())){
+                  xml_parse_result result = doc.load_file(cntrFile.c_str());
+                  if (result){
                       int numControls = 0;
                       string controlsName = "";
                       xml_node tmpNode = doc.child("ControlSet").child("Control");
@@ -841,7 +901,10 @@ namespace Kautham {
                       for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
                           tmpstr = (*it).attribute("name").as_string();
                           unsigned found = tmpstr.find_last_of("/");
-                          if (found == string::npos) {
+                          if (found >= tmpstr.length()) {
+                              string message = "Error when creating robot controls: DOF name " + tmpstr + " is incorrect";
+                              string details = "Name should be: robot_name + / + dof_name";
+                              throw KthExcp(message, details);
                               return (false);
                           }
                           dofName = tmpstr.substr(found+1);
@@ -859,6 +922,8 @@ namespace Kautham {
                           }
 
                           if (!robot_found) {
+                              string message = "Error when creating robot controls: Robot " + robotName + " couldn't be found";
+                              throw KthExcp(message);
                               return (false);
                           }
 
@@ -882,11 +947,21 @@ namespace Kautham {
                               offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
                           }else{    // It's not a SE3 control and could have any name.
                               // Find the index orden into the links vector without the first static link.
-                              for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
+                              int ind = 0;
+                              while (ind < _wspace->getRobot(i)->getNumJoints()) {
                                   if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
                                       offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
                                       break;
+                                  } else {
+                                      ind++;
                                   }
+                              }
+                              if (ind >= _wspace->getRobot(i)->getNumJoints()) {
+                                  string message = "Error when creating robot controls: DOF " + dofName +
+                                          " couldn't be found in robot " + robotName;
+                                  throw KthExcp(message);
+                                  return (false);
+                              }
                           }
                       }//End processing Offset vector
 
@@ -906,7 +981,10 @@ namespace Kautham {
                               for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
                                   tmpstr = itDOF->attribute("name").as_string();
                                   unsigned found = tmpstr.find_last_of("/");
-                                  if (found == string::npos) {
+                                  if (found >= tmpstr.length()) {
+                                      string message = "Error when creating robot controls: DOF name " + tmpstr + " is incorrect";
+                                      string details = "Name should be: robot_name + / + dof_name";
+                                      throw KthExcp(message, details);
                                       return (false);
                                   }
                                   dofName = tmpstr.substr(found+1);
@@ -924,6 +1002,8 @@ namespace Kautham {
                                   }
 
                                   if (!robot_found) {
+                                      string message = "Error when creating robot controls: Robot " + robotName + " couldn't be found";
+                                      throw KthExcp(message);
                                       return (false);
                                   }
 
@@ -947,11 +1027,21 @@ namespace Kautham {
                                       mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
                                   }else{  // It's not a SE3 control and could have any name.
                                       // Find the index orden into the links vector without the first static link.
-                                      for(int ind = 0; ind < _wspace->getRobot(i)->getNumJoints(); ind++)
+                                      int ind = 0;
+                                      while (ind < _wspace->getRobot(i)->getNumJoints()) {
                                           if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
                                               mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
                                               break;
+                                          } else {
+                                              ind++;
                                           }
+                                      }
+                                      if (ind >= _wspace->getRobot(i)->getNumJoints()) {
+                                          string message = "Error when creating robot controls: DOF " + dofName +
+                                                  " couldn't be found in robot " + robotName;
+                                          throw KthExcp(message);
+                                          return (false);
+                                      }
                                   }
                               }
 
@@ -978,11 +1068,23 @@ namespace Kautham {
                       return (true);
                   } else {// the result of the file pasers is bad
                       cout << "The cntr file: " << cntrFile << " can not be read." << std::endl;
+                      string message = "Robot controls file " + cntrFile + " couldn't be parsed";
+                      stringstream details;
+                      details << "Error: " << result.description() << endl <<
+                                 "Last successfully parsed character: " << result.offset;
+                      throw KthExcp(message,details.str());
                       return (false);
                   }
+              } else {//Incorrect extension
+                  string message = "Robot controls file " + cntrFile + " has an incorrect extension";
+                  string details = "Controls file must have cntr extension";
+                  throw KthExcp(message,details);
+                  return (false);
               }
           } else { // File does not exists.
               cout << "The control file: " << cntrFile << "doesn't exist. Please confirm it." << endl;
+              string message = "Robot controls file " + cntrFile + " couldn't be found";
+              throw KthExcp(message);
               return (false);
           }
       } else {//default controls will be set
@@ -1182,7 +1284,8 @@ namespace Kautham {
               xml_document doc;
 
               //Parse the cntr file
-              if (doc.load_file(cntrFile.c_str())){
+              xml_parse_result result = doc.load_file(cntrFile.c_str());
+              if (result){
                   //Once the obstacles were added, the controls can be configured
                   int numControls = 0;
                   string controlsName = "";
@@ -1224,7 +1327,10 @@ namespace Kautham {
                   for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
                       tmpstr = (*it).attribute("name").as_string();
                       unsigned found = tmpstr.find_last_of("/");
-                      if (found == string::npos) {
+                      if (found >= tmpstr.length()) {
+                          string message = "Error when creating obstacle controls: DOF name " + tmpstr + " is incorrect";
+                          string details = "Name should be: obstacle_name + / + dof_name";
+                          throw KthExcp(message, details);
                           return (false);
                       }
                       dofName = tmpstr.substr(found+1);
@@ -1242,6 +1348,8 @@ namespace Kautham {
                       }
 
                       if (!obstacle_found) {
+                          string message = "Error when creating obstacle controls: Osbtacle " + obstacleName + " couldn't be found";
+                          throw KthExcp(message);
                           return (false);
                       }
 
@@ -1265,11 +1373,21 @@ namespace Kautham {
                           offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
                       }else{    // It's not a SE3 control and could have any name.
                           // Find the index orden into the links vector without the first static link.
-                          for(int ind = 0; ind < _wspace->getObstacle(i)->getNumJoints(); ind++)
+                          int ind = 0;
+                          while (ind < _wspace->getObstacle(i)->getNumJoints()) {
                               if( dofName == _wspace->getObstacle(i)->getLink(ind+1)->getName()){
                                   offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
                                   break;
+                              } else {
+                                  ind++;
                               }
+                          }
+                          if (ind >= _wspace->getObstacle(i)->getNumJoints()) {
+                              string message = "Error when creating obstacle controls: DOF " + dofName +
+                                      " couldn't be found in obstacle " + obstacleName;
+                              throw KthExcp(message);
+                              return (false);
+                          }
                       }
                   }//End processing Offset vector
 
@@ -1289,7 +1407,10 @@ namespace Kautham {
                           for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
                               tmpstr = itDOF->attribute("name").as_string();
                               unsigned found = tmpstr.find_last_of("/");
-                              if (found == string::npos) {
+                              if (found >= tmpstr.length()) {
+                                  string message = "Error when creating obstacle controls: DOF name " + tmpstr + " is incorrect";
+                                  string details = "Name should be: obstacle_name + / + dof_name";
+                                  throw KthExcp(message, details);
                                   return (false);
                               }
                               dofName = tmpstr.substr(found+1);
@@ -1307,6 +1428,8 @@ namespace Kautham {
                               }
 
                               if (!obstacle_found) {
+                                  string message = "Error when creating obstacle controls: Obstacle " + obstacleName + " couldn't be found";
+                                  throw KthExcp(message);
                                   return (false);
                               }
 
@@ -1330,11 +1453,21 @@ namespace Kautham {
                                   mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
                               }else{  // It's not a SE3 control and could have any name.
                                   // Find the index orden into the links vector without the first static link.
-                                  for(int ind = 0; ind < _wspace->getObstacle(i)->getNumJoints(); ind++)
+                                  int ind = 0;
+                                  while (ind < _wspace->getObstacle(i)->getNumJoints()) {
                                       if( dofName == _wspace->getObstacle(i)->getLink(ind+1)->getName()){
                                           mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
                                           break;
+                                      } else {
+                                          ind++;
                                       }
+                                  }
+                                  if (ind >= _wspace->getObstacle(i)->getNumJoints()) {
+                                      string message = "Error when creating obstacle controls: DOF " + dofName +
+                                              " couldn't be found in obstacle " + obstacleName;
+                                      throw KthExcp(message);
+                                      return (false);
+                                  }
                               }
                           }
 
@@ -1361,10 +1494,20 @@ namespace Kautham {
 
               } else {// the result of the file pasers is bad
                   cout << "The cntr file: " << cntrFile << " can not be read." << std::endl;
+                  string message = "Obstacle controls file " + cntrFile + " couldn't be parsed";
+                  stringstream details;
+                  details << "Error: " << result.description() << endl <<
+                             "Last successfully parsed character: " << result.offset;
+                  throw KthExcp(message,details.str());
                   return (false);
               }
+          } else {//Incorrect extension
+              string message = "Obstacle controls file " + cntrFile + " has an incorrect extension";
+              string details = "Controls file must have cntr extension";
+              throw KthExcp(message,details);
+              return (false);
           }
-      } else { // File does not exists. All DOF must fixed.
+      } else { // File does not exists. All DOF must be fixed.
           int numObs = _wspace->getNumObstacles();
           int numDOFs;
           KthReal **offMatrix;
