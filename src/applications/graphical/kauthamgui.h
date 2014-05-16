@@ -51,11 +51,13 @@ public:
   ~Application();
 
 public slots:
-  void              openFile();
+  void              openFile(QString problemFile = "");
   void              saveFile();
   void              saveAsFile();
   void              closeProblem();
   void              quit();
+  //! Clears recent files list
+  void clearRecentFiles();
 
 private:
   void              initApp();
@@ -66,6 +68,11 @@ private:
   //!  its corresponding LocalPlanner.
   bool              problemSetup(string problemFile);
 
+  //! Updates recent files list
+  void updateRecentFiles(string problemFile);
+
+  //! Adds recent files to file menu
+  void setRecentFilesAction();
 
   QSettings         *settings;
   QFile*            xmlFile;

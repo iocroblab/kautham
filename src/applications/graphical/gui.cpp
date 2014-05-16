@@ -64,10 +64,12 @@ namespace Kautham {
     }
 
     void GUI::about(){
+        setDisabled(true);
         AboutWidget tmp(this);
         tmp.setModal(true);
         tmp.setVisible(true);
         tmp.exec();
+        setDisabled(false);
     }
 
     void GUI::changeDockAreaForOutput(Qt::DockWidgetArea area){
@@ -504,11 +506,18 @@ namespace Kautham {
             break;
         case FILETOOL:
             menuFile->addSeparator();
-            toolBar->addSeparator();
+            //toolBar->addSeparator();
             break;
         case ACTIONTOOL:
             menuActions->addSeparator();
-            toolBar->addSeparator();
+            //toolBar->addSeparator();
+            break;
+        case RECENTFILESMENU:
+            if (menuRecentFiles == NULL) {
+                return false;
+            } else {
+                menuRecentFiles->addSeparator();
+            }
             break;
         default:
             return false;
@@ -520,13 +529,29 @@ namespace Kautham {
     */
     bool GUI::setAction(WHERETYPE typ, string name, string shortcut, string iconame,
                         QObject *receiver, const char *member){
-        QAction *ac;
+        if (name.size()!= 0 ) {
+            QAction *ac;
 
-        if(iconame.size()!=0 && name.size()!=0 ){
-            ac = new QAction(QIcon(iconame.c_str()), tr(name.c_str()), this);
-            if(shortcut.size()!=0) ac->setShortcut(tr(shortcut.c_str()));
+            if (iconame.size() == 0) {
+                ac = new QAction(tr(name.c_str()), this);
+            } else {
+                ac = new QAction(QIcon(iconame.c_str()), tr(name.c_str()), this);
+            }
+
+            if (shortcut.size() != 0) ac->setShortcut(tr(shortcut.c_str()));
+
             connect(ac, SIGNAL(triggered()), receiver, member);
 
+            return setAction(typ,ac);
+        }
+
+        return false;
+    }
+
+    /*! This function adds an action where do you like in GUI
+    */
+    bool GUI::setAction(WHERETYPE typ, QAction *ac){
+        if(ac != NULL){
             switch(typ){
             case TOOLBAR:
                 toolBar->addAction(ac);
@@ -545,13 +570,31 @@ namespace Kautham {
                 menuActions->addAction(ac);
                 toolBar->addAction(ac);
                 break;
+            case RECENTFILESMENU:
+                if (menuRecentFiles == NULL) {
+                    return false;
+                } else {
+                    menuRecentFiles->addAction(ac);
+                }
             default:
                 return false;
             }
             return true;
         }
         return false;
+    }
 
+    void GUI::setRecentFilesMenu() {
+        if (menuRecentFiles == NULL) {
+            menuRecentFiles = menuFile->addMenu("Recent &Files");
+            menuRecentFiles->setObjectName("menuRecentFiles");
+        } else {
+            menuRecentFiles->clear();
+        }
+    }
+
+    void GUI::showRecentFiles(bool visible) {
+        menuRecentFiles->setEnabled(visible);
     }
 
     bool GUI::setToogleAction(WHERETYPE typ, string name, string shortcut, string iconame,
