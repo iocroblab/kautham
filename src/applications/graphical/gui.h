@@ -53,7 +53,8 @@ namespace Kautham {
 		FILEMENU,
 		ACTIONMENU,
 		FILETOOL,
-		ACTIONTOOL,
+        ACTIONTOOL,
+        RECENTFILESMENU
 	};
 
     struct Viewer{
@@ -101,8 +102,16 @@ namespace Kautham {
     SoQtExaminerViewer* getViewerTab(string title);
     SoSeparator*        getRootTab(string title);
     //bool              setTable(string s);
+    bool                setAction(WHERETYPE typ, QAction *ac);
     bool                setAction(WHERETYPE typ, string name, string shortcut, string iconame,
                         QObject* receiver, const char *member);
+
+    //! Sets menuRecentFiles as a submenu from menuBar
+    void                setRecentFilesMenu();
+
+    //! Shows/hides recent files menu
+    void                showRecentFiles(bool visible);
+
     bool                setToogleAction(WHERETYPE typ, string name, string shortcut, string iconame,
                         QObject* receiver, const char *member);
     bool                addSeparator(WHERETYPE typ);

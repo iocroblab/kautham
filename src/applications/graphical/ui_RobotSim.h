@@ -53,6 +53,7 @@ public:
     QMenuBar        *menubar;
     QMenu           *menuActions;
     QMenu           *menuFile;
+    QMenu           *menuRecentFiles;
     QMenu           *menuHelp;
     QStatusBar      *statusbar;
     QToolBar        *toolBar;
