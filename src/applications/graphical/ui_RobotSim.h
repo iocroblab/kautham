@@ -1,11 +1,27 @@
-/********************************************************************************
-** Form generated from reading UI file 'RobotSim.ui'
-**
-** Created: Thu 31. Mar 16:11:26 2011
-**      by: Qt User Interface Compiler version 4.6.3
-**
-** WARNING! All changes made in this file will be lost when recompiling UI file!
-********************************************************************************/
+/*************************************************************************\
+   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+                 Universitat Politecnica de Catalunya
+                 BarcelonaTech
+    All Rights Reserved.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the
+    Free Software Foundation, Inc.,
+    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ \*************************************************************************/
+
+/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+
 
 #ifndef UI_ROBOTSIM_H
 #define UI_ROBOTSIM_H
@@ -53,6 +69,7 @@ public:
     QMenuBar        *menubar;
     QMenu           *menuActions;
     QMenu           *menuFile;
+    QMenu           *menuRecentFiles;
     QMenu           *menuHelp;
     QStatusBar      *statusbar;
     QToolBar        *toolBar;
@@ -100,6 +117,7 @@ public:
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         problemTree = new QTreeWidget(probTab);
         problemTree->setObjectName(QString::fromUtf8("problemTree"));
+        problemTree->setIconSize(QSize(20,20));
         gridLayout->addWidget(problemTree, 0, 0, 1, 1);
         propertiesTab->addTab(probTab, QString());
         splitter->addWidget(propertiesTab);
@@ -149,6 +167,7 @@ public:
         toolBar = new QToolBar(kauthamMain);
         toolBar->setObjectName(QString::fromUtf8("toolBar"));
         toolBar->setOrientation(Qt::Horizontal);
+        toolBar->setIconSize(QSize(40,40));
         kauthamMain->addToolBar(Qt::TopToolBarArea, toolBar);
         outputWindow = new QDockWidget(kauthamMain);
         outputWindow->setObjectName(QString::fromUtf8("outputWindow"));
@@ -207,9 +226,9 @@ public:
 "</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p></body></html>", 0, QApplication::UnicodeUTF8));
         viewsTab->setTabText(viewsTab->indexOf(introTab), QApplication::translate("kauthamMain", "Introduction", 0, QApplication::UnicodeUTF8));
-        menuActions->setTitle(QApplication::translate("kauthamMain", "Actions", 0, QApplication::UnicodeUTF8));
-        menuFile->setTitle(QApplication::translate("kauthamMain", "File", 0, QApplication::UnicodeUTF8));
-        menuHelp->setTitle(QApplication::translate("kauthamMain", "Help", 0, QApplication::UnicodeUTF8));
+        menuActions->setTitle(QApplication::translate("kauthamMain", "&Actions", 0, QApplication::UnicodeUTF8));
+        menuFile->setTitle(QApplication::translate("kauthamMain", "&File", 0, QApplication::UnicodeUTF8));
+        menuHelp->setTitle(QApplication::translate("kauthamMain", "&Help", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         outputWindow->setToolTip(QApplication::translate("kauthamMain", "Output Window", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
