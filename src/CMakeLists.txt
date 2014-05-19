@@ -5,6 +5,20 @@ set(mt_DIR ${CMAKE_SOURCE_DIR}/src/util/libmt)
 message (STATUS "Adding libmt directory ${mt_DIR}")
 include_directories( ${mt_DIR} )
 
+##### pugixml ########
+find_package( PugiXML )
+if(PUGI_XML_FOUND)
+   message( STATUS "PugiXML FOUND, using it")
+   set(EXTRA_LIBS ${EXTRA_LIBS} ${PUGI_XML_LIBRARIES} )
+   include_directories( ${PUGI_XML_INCLUDE_DIR})
+else(PUGI_XML_FOUND)
+   message(STATUS "PugiXML not found, using internal copy")
+#   add_subdirectory ( pugixml )
+   include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/external/pugixml )
+   #set(PUGI_XML_LIBRARIES libpugixml)
+endif(PUGI_XML_FOUND)
+
+
 add_subdirectory ( external )
 add_subdirectory( util )
 
