@@ -141,4 +141,4 @@ private:
 void benchmark(string file);
 
 
-/** @}   end of Doxygen module "application" */
+/** @}   end of Doxygen module "Application" */

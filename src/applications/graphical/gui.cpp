@@ -64,10 +64,12 @@ namespace Kautham {
     }
 
     void GUI::about(){
+        setDisabled(true);
         AboutWidget tmp(this);
         tmp.setModal(true);
         tmp.setVisible(true);
         tmp.exec();
+        setDisabled(false);
     }
 
     void GUI::changeDockAreaForOutput(Qt::DockWidgetArea area){
@@ -110,7 +112,7 @@ namespace Kautham {
             }
             if (i < actions.size()) {
                 actions.at(i)->setText("Enable BBOX");
-                actions.at(i)->setIcon(QIcon(":/icons/BBOXenabled.xpm"));
+                actions.at(i)->setIcon(QIcon(":/icons/green_box.png"));
             }
         } else {
             setText("Bounding boxes computation was enabled");
@@ -120,7 +122,7 @@ namespace Kautham {
             }
             if (i < actions.size()) {
                 actions.at(i)->setText("Disable BBOX");
-                actions.at(i)->setIcon(QIcon(":/icons/BBOXdisabled.xpm"));
+                actions.at(i)->setIcon(QIcon(":/icons/black_box.png"));
             }
         }
 
@@ -129,25 +131,11 @@ namespace Kautham {
 
     void GUI::setModelsDefaultPath() {
         QSettings settings("IOC","Kautham");
-        settings.beginGroup("default_path");
-
-        QDir workDir;
-        QString dir;
-
-        QString models_path = settings.value("models",workDir.absolutePath()).toString();
-
-        this->setCursor(QCursor(Qt::WaitCursor));
-
-        dir = QFileDialog::getExistingDirectory(this,"Choose the default models directory",
-                                                models_path,QFileDialog::ShowDirsOnly
-                                                | QFileDialog::DontResolveSymlinks);
-        if (!dir.isEmpty()) {
-            settings.setValue("models",dir);
+        QStringList pathList = settings.value("models_directories",QStringList()).toStringList();
+        DefaultPathDialog *defaultPathDialog = new DefaultPathDialog(pathList,this);
+        if (defaultPathDialog->exec(&pathList)) {
+            settings.setValue("models_directories",pathList);
         }
-
-        this->setCursor(QCursor(Qt::ArrowCursor));
-
-        settings.endGroup();
     }
 
 
@@ -504,11 +492,18 @@ namespace Kautham {
             break;
         case FILETOOL:
             menuFile->addSeparator();
-            toolBar->addSeparator();
+            //toolBar->addSeparator();
             break;
         case ACTIONTOOL:
             menuActions->addSeparator();
-            toolBar->addSeparator();
+            //toolBar->addSeparator();
+            break;
+        case RECENTFILESMENU:
+            if (menuRecentFiles == NULL) {
+                return false;
+            } else {
+                menuRecentFiles->addSeparator();
+            }
             break;
         default:
             return false;
@@ -520,13 +515,29 @@ namespace Kautham {
     */
     bool GUI::setAction(WHERETYPE typ, string name, string shortcut, string iconame,
                         QObject *receiver, const char *member){
-        QAction *ac;
+        if (name.size()!= 0 ) {
+            QAction *ac;
 
-        if(iconame.size()!=0 && name.size()!=0 ){
-            ac = new QAction(QIcon(iconame.c_str()), tr(name.c_str()), this);
-            if(shortcut.size()!=0) ac->setShortcut(tr(shortcut.c_str()));
+            if (iconame.size() == 0) {
+                ac = new QAction(tr(name.c_str()), this);
+            } else {
+                ac = new QAction(QIcon(iconame.c_str()), tr(name.c_str()), this);
+            }
+
+            if (shortcut.size() != 0) ac->setShortcut(tr(shortcut.c_str()));
+
             connect(ac, SIGNAL(triggered()), receiver, member);
 
+            return setAction(typ,ac);
+        }
+
+        return false;
+    }
+
+    /*! This function adds an action where do you like in GUI
+    */
+    bool GUI::setAction(WHERETYPE typ, QAction *ac){
+        if(ac != NULL){
             switch(typ){
             case TOOLBAR:
                 toolBar->addAction(ac);
@@ -545,13 +556,31 @@ namespace Kautham {
                 menuActions->addAction(ac);
                 toolBar->addAction(ac);
                 break;
+            case RECENTFILESMENU:
+                if (menuRecentFiles == NULL) {
+                    return false;
+                } else {
+                    menuRecentFiles->addAction(ac);
+                }
             default:
                 return false;
             }
             return true;
         }
         return false;
+    }
 
+    void GUI::setRecentFilesMenu() {
+        if (menuRecentFiles == NULL) {
+            menuRecentFiles = menuFile->addMenu("Recent &Files");
+            menuRecentFiles->setObjectName("menuRecentFiles");
+        } else {
+            menuRecentFiles->clear();
+        }
+    }
+
+    void GUI::showRecentFiles(bool visible) {
+        menuRecentFiles->setEnabled(visible);
     }
 
     bool GUI::setToogleAction(WHERETYPE typ, string name, string shortcut, string iconame,
@@ -646,6 +675,7 @@ namespace Kautham {
             if( names == "Robot" ){
                 itemTree = new QTreeWidgetItem(problemTree);
                 itemTree->setText(0, "Robot");
+                itemTree->setIcon(0,QIcon(":/icons/robot.png"));
                 itemTree->setText(1, it->attribute("robot").value() );
 
                 subItemTree = new QTreeWidgetItem(itemTree);
@@ -653,8 +683,8 @@ namespace Kautham {
                 subItemTree->setText(1, it->attribute("scale").value() );
 
                 subItemTree = new QTreeWidgetItem(itemTree);
-                subItemTree->setText(0, "Home Position");
-                subItemTree->setText(1, QString());
+                subItemTree->setText(0, "Home");
+                subItemTree->setIcon(0,QIcon(":/icons/home.png"));
 
                 iterator = labelList.constBegin();
                 string tmp;
@@ -694,10 +724,10 @@ namespace Kautham {
 
             }//closing if( names == "Robot" )
 
-            if( names == "Scene" ){
+            if( names == "Obstacle" ){
                 itemTree = new QTreeWidgetItem(problemTree);
                 itemTree->setText(0, "Obstacle");
-                itemTree->setText(1, it->attribute("scene").value() );
+                itemTree->setText(1, it->attribute("obstacle").value() );
 
                 subItemTree = new QTreeWidgetItem(itemTree);
                 subItemTree->setText(0, "Scale");

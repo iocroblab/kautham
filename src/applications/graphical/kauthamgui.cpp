@@ -32,11 +32,15 @@
 #include <sstream>
 #include <problem/ivworkspace.h>
 #include <util/kthutil/kauthamdefs.h>
+#include <util/kthutil/kauthamexception.h>
 #include "kauthamgui.h"
 #include "dofwidget.h"
 #include <QApplication>
 #include <QWidget>
 #include <Inventor/Qt/SoQt.h>
+
+
+#define MAXRECENTFILES 5
 
 
 Application::Application() {
@@ -79,59 +83,114 @@ Application::~Application() {
 }
 
 void Application::setActions(){
-    mainWindow->setAction(FILETOOL,"&Open","CTRL+O",":/icons/fileopen.xpm",this,SLOT(openFile()));
-    mainWindow->setAction(FILETOOL,"&Save","CTRL+S",":/icons/filesave.xpm",this,SLOT(saveFile()));
-    mainWindow->setAction(FILETOOL,"Save &as","CTRL+A",":/icons/saveas.xpm",this,SLOT(saveAsFile()));
+    mainWindow->setAction(FILETOOL,"&Open","CTRL+O",":/icons/open_file.png",this,SLOT(openFile()));
+    mainWindow->setAction(FILETOOL,"&Save","CTRL+S",":/icons/save_file.png",this,SLOT(saveFile()));
+    mainWindow->setAction(FILETOOL,"Save &as","CTRL+A",":/icons/save_file_as.png",this,SLOT(saveAsFile()));
+    mainWindow->addSeparator(FILETOOL);
+    setRecentFilesAction();
+    mainWindow->addSeparator(FILEMENU);
+    mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close_file.png",this,SLOT(closeProblem()));
+
     mainWindow->addSeparator(TOOLBAR);
 
     // Creating the planner toolbar in the main Window. This list may change.
     //string loc = Problem::localPlannersNames();
     //string glob = Problem::plannersNames();
-
-
     //mainWindow->createPlannerToolBar(loc, glob,this,SLOT(changePlanner(string,string)));
     //mainWindow->setToogleAction(ACTIONTOOL,"&Find path","CTRL+F",":/icons/prm.xpm",mainWindow,SLOT(showPlannerToolBar()));
-    mainWindow->addSeparator(TOOLBAR);
-    mainWindow->addSeparator(ACTIONMENU);
+    //mainWindow->addSeparator(TOOLBAR);
+    //mainWindow->addSeparator(ACTIONMENU);
+    //mainWindow->addSeparator(TOOLBAR);
 
-    mainWindow->addSeparator(TOOLBAR);
     mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G",
-                          ":/icons/determ.xpm", mainWindow, SLOT(changeActiveBackground()));
-
+                          ":/icons/palette.png", mainWindow, SLOT(changeActiveBackground()));
 #if  defined(KAUTHAM_USE_ARMADILLO)
     if (settings->value("use_BBOX","false").toBool()) {
-        mainWindow->setAction(ACTIONTOOL,"Disable BBOX","",":/icons/BBOXdisabled.xpm", mainWindow, SLOT(toogleBBOXflag()));
+        mainWindow->setAction(ACTIONTOOL,"Disable BBOX","",":/icons/black_box.png", mainWindow, SLOT(toogleBBOXflag()));
     } else {
-        mainWindow->setAction(ACTIONTOOL,"Enable BBOX","",":/icons/BBOXenabled.xpm", mainWindow, SLOT(toogleBBOXflag()));
+        mainWindow->setAction(ACTIONTOOL,"Enable BBOX","",":/icons/green_box.png", mainWindow, SLOT(toogleBBOXflag()));
     }
 #endif
+    mainWindow->setAction(ACTIONTOOL,"Default Path","",":/icons/default_folder.png", mainWindow, SLOT(setModelsDefaultPath()));
 
-    mainWindow->setAction(ACTIONTOOL,"Default Path","",":/icons/search.xpm", mainWindow, SLOT(setModelsDefaultPath()));
+    mainWindow->addSeparator(TOOLBAR);
 
-    mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close.xpm",this,SLOT(closeProblem()));
+    mainWindow->setAction(FILETOOL,"E&xit","CTRL+X",":/icons/exit.png",this,SLOT(quit()));
 }
 
-void Application::openFile(){
-    QString last_path, path, dir;
-    QDir workDir;
-    last_path = settings->value("last_path",workDir.absolutePath()).toString();
-    mainWindow->setCursor(QCursor(Qt::WaitCursor));
-    path = QFileDialog::getOpenFileName(
-                mainWindow,
-                "Choose a file to open",
-                last_path,
-                "All configuration files (*.xml)");
-    if(!path.isEmpty()){
+void Application::setRecentFilesAction() {
+    mainWindow->setRecentFilesMenu();
+    QStringList recentFiles = settings->value("recent_files",QStringList()).toStringList();
+    if (recentFiles.size() > 0) {
+        mainWindow->showRecentFiles(true);
+        QAction *ac;
+        QSignalMapper* signalMapper = new QSignalMapper (this) ;
+        for (int i = 0; i < recentFiles.size(); i++) {
+            string problemFile = recentFiles.at(i).toStdString();
+            stringstream problemName;
+            problemName << "&" << i+1 << " " << problemFile.substr(problemFile.find_last_of("/")+1);
+            ac = new QAction(problemName.str().c_str(),this);
+            connect(ac,SIGNAL(triggered()),signalMapper,SLOT(map()));
+            mainWindow->setAction(RECENTFILESMENU,ac);
+            signalMapper->setMapping(ac,problemFile.c_str());
+        }
+        connect(signalMapper,SIGNAL(mapped(QString)),this,SLOT(openFile(QString)));
+        mainWindow->addSeparator(RECENTFILESMENU);
+        mainWindow->setAction(RECENTFILESMENU,"Clear Menu","","",this,SLOT(clearRecentFiles()));
+    } else {
+        mainWindow->showRecentFiles(false);
+    }
+}
+
+void Application::updateRecentFiles(string problemFile) {
+    QStringList oldrecentFiles = settings->value("recent_files",QStringList()).toStringList();
+    for (QStringList::Iterator i = oldrecentFiles.begin(); i != oldrecentFiles.end(); i++) {
+        if (i->toStdString() == problemFile) {
+            oldrecentFiles.erase(i);
+            break;
+        }
+    }
+    QStringList newrecentFiles;
+    newrecentFiles.push_back(problemFile.c_str());
+    for (int i = 0; i < oldrecentFiles.size() && i < MAXRECENTFILES - 1; i++) {
+        newrecentFiles.push_back(oldrecentFiles.at(i));
+    }
+    settings->setValue("recent_files",newrecentFiles);
+    setRecentFilesAction();
+}
+
+void Application::clearRecentFiles() {
+    settings->remove("recent_files");
+    setRecentFilesAction();
+}
+
+void Application::openFile(QString problemFile) {
+    if (problemFile.isEmpty()) {
+        QString last_path, path;
+        QDir workDir;
+        last_path = settings->value("last_path",workDir.absolutePath()).toString();
+        mainWindow->setCursor(QCursor(Qt::WaitCursor));
+        path = QFileDialog::getOpenFileName(
+                    mainWindow,
+                    "Choose a file to open",
+                    last_path,
+                    "All configuration files (*.xml)");
+        if(!path.isEmpty()) {
+            problemFile = path.toUtf8().constData();
+        }
+    }
+    if (!problemFile.isEmpty()) {
         if (appState == PROBLEMLOADED) {
             closeProblem();
             appState = INITIAL;
         }
         mainWindow->setText("Kautham is opening a problem file...");
-        dir = path;
+        QString dir= problemFile;
         dir.truncate(dir.lastIndexOf("/"));
-        if (problemSetup(path.toUtf8().constData())) {
+        if (problemSetup(problemFile.toStdString())) {
             mainWindow->showProblemAppearance();
             settings->setValue("last_path",dir);
+            updateRecentFiles(problemFile.toStdString());
 
             stringstream tmp;
             tmp << "Kautham ";
@@ -139,9 +198,9 @@ void Application::openFile(){
             tmp << ".";
             tmp << MINOR_VERSION;
             tmp << " - ";
-            tmp << path.toUtf8().constData();
+            tmp << problemFile.toStdString();
             mainWindow->setWindowTitle( tmp.str().c_str() );
-            mainWindow->setText(QString("File: ").append(path).toUtf8().constData() );
+            mainWindow->setText("File: " + problemFile.toStdString());
             mainWindow->setText("opened successfully.");
         } else {
             mainWindow->setText("Kautham couldn't open the problem file...");
@@ -207,6 +266,11 @@ void Application::closeProblem(){
 }
 
 
+void Application::quit() {
+    QApplication::quit();
+}
+
+
 void Application::saveTabColors() {
     vector <string> viewers;
     viewers.push_back("WSpace");
@@ -231,13 +295,69 @@ void Application::saveTabColors() {
 bool Application::problemSetup(string problemFile){
     mainWindow->setCursor(QCursor(Qt::WaitCursor));
 
-    string dir = problemFile.substr(problemFile.find_last_of("/")+1);
-    string models_def_path = settings->value("default_path/models",QString(string(dir+string("/../../models")).c_str())).
-            toString().toStdString()+"/";
+    string dir = problemFile.substr(0,problemFile.find_last_of("/")+1);
+    QStringList pathList = settings->value("models_directories",QStringList()).toStringList();
+    std::vector <string> def_path;
+    def_path.push_back(dir);
+    if (pathList.size() > 0) {
+        for (uint i = 0; i < pathList.size(); i++) {
+            def_path.push_back(pathList.at(i).toStdString()+"/");
+        }
+    } else {
+        def_path.push_back(dir+string("/../../models/"));
+    }
     bool useBBOX = settings->value("use_BBOX","false").toBool();
 
     _problem = new Problem();
-    if (!_problem->setupFromFile(problemFile,models_def_path,useBBOX)) {
+    bool succeed = false;
+    try {
+        succeed = _problem->setupFromFile(problemFile,def_path,useBBOX);
+    }
+    catch (const KthExcp& excp) {
+        qDebug() << excp.what() << endl;
+
+        mainWindow->setDisabled(true);
+        QMessageBox msgBox(mainWindow);
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setWindowTitle("Error encountered");
+        msgBox.setText("The problem couldn't be loaded");
+        msgBox.setInformativeText(excp.what());
+        msgBox.setDetailedText(excp.more());
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        mainWindow->setDisabled(false);
+    }
+    catch (const exception& excp) {
+        qDebug() << excp.what() << endl;
+
+        mainWindow->setDisabled(true);
+        QMessageBox msgBox(mainWindow);
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setWindowTitle("Error encountered");
+        msgBox.setText("The problem couldn't be loaded");
+        msgBox.setInformativeText(excp.what());
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        mainWindow->setDisabled(false);
+    }
+    catch (...) {
+        qDebug() << "Unknown error" << endl;
+
+        mainWindow->setDisabled(true);
+        QMessageBox msgBox(mainWindow);
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setWindowTitle("Error encountered");
+        msgBox.setText("The problem couldn't be loaded");
+        msgBox.setInformativeText("Unknown error");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        mainWindow->setDisabled(false);
+    }
+
+    if (!succeed) {
         appState = INITIAL;
         delete _problem;
         return false;
