@@ -40,5 +40,10 @@
         <file>icons/search.xpm</file>
         <file>icons/exit.xpm</file>
         <file>kautham.html</file>
+        <file>icons/add.png</file>
+        <file>icons/remove.png</file>
+        <file>icons/down.png</file>
+        <file>icons/up.png</file>
+        <file>icons/clear.png</file>
     </qresource>
 </RCC>

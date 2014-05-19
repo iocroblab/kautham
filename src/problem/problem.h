@@ -148,8 +148,8 @@ namespace Kautham {
     inline vector<KthReal>& getCurrentObsControls(){return _currentObsControls;}
     inline string           getFilePath(){return _filePath;}
     bool                    inheritSolution();
-    bool                    setupFromFile(string xml_doc, string models_def_path = "", bool useBBOX = false);
-    bool                    setupFromFile(ifstream* xml_inputfile, string modelsfolder = "", bool useBBOX = false);
+    bool                    setupFromFile(string xml_doc, vector <string> def_path = vector <string>(), bool useBBOX = false);
+    bool                    setupFromFile(ifstream* xml_inputfile, string models_dir = "", bool useBBOX = false);
     bool                    setupFromFile(pugi::xml_document *doc, bool useBBOX);
 
 
@@ -227,10 +227,10 @@ namespace Kautham {
      * \brief checks the file, finds the files defined in the problem file and
      completes their absolute path
      * \param doc problem file to prepare before setting up the porblem
-     * \param models_def_path
+     * \param def_path default path list where files will be looked for
      * \return true if the file could be prepared
      */
-    bool prepareFile (xml_document *doc, string models_def_path);
+    bool prepareFile (xml_document *doc, vector<string> def_path);
 
     /*!
      * \brief finds all the files defined in the atribute called \param attribute

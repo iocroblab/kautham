@@ -131,25 +131,11 @@ namespace Kautham {
 
     void GUI::setModelsDefaultPath() {
         QSettings settings("IOC","Kautham");
-        settings.beginGroup("default_path");
-
-        QDir workDir;
-        QString dir;
-
-        QString models_path = settings.value("models",workDir.absolutePath()).toString();
-
-        this->setCursor(QCursor(Qt::WaitCursor));
-
-        dir = QFileDialog::getExistingDirectory(this,"Choose the default models directory",
-                                                models_path,QFileDialog::ShowDirsOnly
-                                                | QFileDialog::DontResolveSymlinks);
-        if (!dir.isEmpty()) {
-            settings.setValue("models",dir);
+        QStringList pathList = settings.value("models_directories",QStringList()).toStringList();
+        DefaultPathDialog *defaultPathDialog = new DefaultPathDialog(pathList,this);
+        if (defaultPathDialog->exec(&pathList)) {
+            settings.setValue("models_directories",pathList);
         }
-
-        this->setCursor(QCursor(Qt::ArrowCursor));
-
-        settings.endGroup();
     }
 
 

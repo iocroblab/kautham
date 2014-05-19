@@ -38,6 +38,7 @@
 #include <util/libkin/inversekinematic.h>
 #include "controlwidget.h"
 #include "plannerwidget.h"
+#include "defaultpathdialog.h"
 
 
 using namespace std;
@@ -58,7 +59,7 @@ namespace Kautham {
 	};
 
     struct Viewer{
-		SoQtExaminerViewer *window;
+        SoQtExaminerViewer *window;
 		SoSeparator *root;
 		string title;
 		QWidget *tab;
