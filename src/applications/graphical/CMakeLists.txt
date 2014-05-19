@@ -32,6 +32,7 @@ QT4_WRAP_CPP( QT_MOC_SRC kauthamgui.h
          aboutwidget.h
          constrainedcontrolwidget.h
          controlwidget.h
+         defaultpathdialog.h
          dofwidget.h
          gui.h
          invkinwidget.h
@@ -43,6 +44,7 @@ QT4_WRAP_CPP( QT_MOC_SRC kauthamgui.h
 
 set( SRC_FILES_GUI kauthamgui.cpp
          constrainedcontrolwidget.cpp
+         defaultpathdialog.cpp
          dofwidget.cpp
          invkinwidget.cpp
          kauthamwidget.cpp
@@ -56,6 +58,7 @@ set( HDR_FILES_GUI kauthamgui.h
          aboutwidget.h
          constrainedcontrolwidget.h
          controlwidget.h
+         defaultpathdialog.h
          dofwidget.h
          gui.h
          invkinwidget.h

@@ -92,7 +92,7 @@ using namespace std;
 namespace Kautham{
   #define KthReal float
   #define MAJOR_VERSION "2"
-  #define MINOR_VERSION "1"
+  #define MINOR_VERSION "4"
 
 	enum ROBOTTYPE{
 		FREEFLY,
@@ -109,7 +109,7 @@ namespace Kautham{
 	
 	enum NEIGHSEARCHTYPE {
 		BRUTEFORCE,
-		ANNMETHOD,
+        ANNMETHOD
 	};
 
 	enum CONFIGTYPE {
