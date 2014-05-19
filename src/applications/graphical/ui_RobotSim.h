@@ -117,6 +117,7 @@ public:
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         problemTree = new QTreeWidget(probTab);
         problemTree->setObjectName(QString::fromUtf8("problemTree"));
+        problemTree->setIconSize(QSize(20,20));
         gridLayout->addWidget(problemTree, 0, 0, 1, 1);
         propertiesTab->addTab(probTab, QString());
         splitter->addWidget(propertiesTab);
@@ -166,6 +167,7 @@ public:
         toolBar = new QToolBar(kauthamMain);
         toolBar->setObjectName(QString::fromUtf8("toolBar"));
         toolBar->setOrientation(Qt::Horizontal);
+        toolBar->setIconSize(QSize(40,40));
         kauthamMain->addToolBar(Qt::TopToolBarArea, toolBar);
         outputWindow = new QDockWidget(kauthamMain);
         outputWindow->setObjectName(QString::fromUtf8("outputWindow"));
