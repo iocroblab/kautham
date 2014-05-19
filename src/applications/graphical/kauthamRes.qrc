@@ -3,15 +3,8 @@
         <file>icons/tryconnect.xpm</file>
         <file>icons/connect.xpm</file>
         <file>icons/noconnect.xpm</file>
-        <file>icons/animate.xpm</file>
-        <file>icons/blackbox.xpm</file>
         <file>icons/logo_ioc.png</file>
-        <file>icons/close.xpm</file>
         <file>icons/logo_eci.png</file>
-        <file>icons/clrobot.xpm</file>
-        <file>icons/determ.xpm</file>
-        <file>icons/fileopen.xpm</file>
-        <file>icons/filesave.xpm</file>
         <file>icons/kautham.xpm</file>
         <file>icons/phantom_off.xpm</file>
         <file>icons/kth.png</file>
@@ -35,9 +28,31 @@
         <file>icons/vsy.xpm</file>
         <file>icons/vsz.xpm</file>
         <file>icons/vszoom.xpm</file>
-        <file>icons/BBOXdisabled.xpm</file>
-        <file>icons/BBOXenabled.xpm</file>
-        <file>icons/search.xpm</file>
         <file>kautham.html</file>
+        <file>icons/add.png</file>
+        <file>icons/remove.png</file>
+        <file>icons/down.png</file>
+        <file>icons/up.png</file>
+        <file>icons/clear.png</file>
+        <file>icons/default_folder.png</file>
+        <file>icons/exit.png</file>
+        <file>icons/black_box.png</file>
+        <file>icons/green_box.png</file>
+        <file>icons/palette.png</file>
+        <file>icons/close_file.png</file>
+        <file>icons/open_file.png</file>
+        <file>icons/save_file.png</file>
+        <file>icons/save_file_as.png</file>
+        <file>icons/animate.xpm</file>
+        <file>icons/blackbox.xpm</file>
+        <file>icons/close.xpm</file>
+        <file>icons/clrobot.xpm</file>
+        <file>icons/determ.xpm</file>
+        <file>icons/fileopen.xpm</file>
+        <file>icons/filesave.xpm</file>
+        <file>icons/logo.png</file>
+        <file>icons/search.xpm</file>
+        <file>icons/robot.png</file>
+        <file>icons/home.png</file>
     </qresource>
 </RCC>
