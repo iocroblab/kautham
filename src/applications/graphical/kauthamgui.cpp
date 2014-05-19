@@ -295,15 +295,23 @@ void Application::saveTabColors() {
 bool Application::problemSetup(string problemFile){
     mainWindow->setCursor(QCursor(Qt::WaitCursor));
 
-    string dir = problemFile.substr(problemFile.find_last_of("/")+1);
-    string models_def_path = settings->value("default_path/models",QString(string(dir+string("/../../models")).c_str())).
-            toString().toStdString()+"/";
+    string dir = problemFile.substr(0,problemFile.find_last_of("/")+1);
+    QStringList pathList = settings->value("models_directories",QStringList()).toStringList();
+    std::vector <string> def_path;
+    def_path.push_back(dir);
+    if (pathList.size() > 0) {
+        for (uint i = 0; i < pathList.size(); i++) {
+            def_path.push_back(pathList.at(i).toStdString()+"/");
+        }
+    } else {
+        def_path.push_back(dir+string("/../../models/"));
+    }
     bool useBBOX = settings->value("use_BBOX","false").toBool();
 
     _problem = new Problem();
     bool succeed = false;
     try {
-        succeed = _problem->setupFromFile(problemFile,models_def_path,useBBOX);
+        succeed = _problem->setupFromFile(problemFile,def_path,useBBOX);
     }
     catch (const KthExcp& excp) {
         qDebug() << excp.what() << endl;

@@ -576,48 +576,44 @@ namespace Kautham {
       }
   }
 
-  bool Problem::prepareFile (xml_document *doc, string models_def_path) {
+  bool Problem::prepareFile (xml_document *doc, vector <string> def_path) {
       if (isFileOK(doc)) {
           //get the relative paths where robots and obstacle files will be looked for
           string  dir = _filePath.substr(0,_filePath.find_last_of("/")+1);
 
-          vector <string> path;
-          path.push_back(dir);
-          if (models_def_path != "") {
-              path.push_back(models_def_path);
-          }
-
           xml_node prob_node = doc->child("Problem");
 
           //find all the robot files and set their complete path if found
-          if (!findAllFiles(&prob_node,"Robot","robot",path)) return false;
+          if (!findAllFiles(&prob_node,"Robot","robot",def_path)) return false;
 
           //find all the obstacle files and set their complete path if found
-          if (!findAllFiles(&prob_node,"Obstacle","obstacle",path)) return false;
+          if (!findAllFiles(&prob_node,"Obstacle","obstacle",def_path)) return false;
 
           //find the robot controls file and set its complete path if found
-          if (!findAllFiles(&prob_node,"Controls","robot",path)) return false;
+          if (!findAllFiles(&prob_node,"Controls","robot",def_path)) return false;
 
           //find the obstacle controls file and set its complete path if found
-          if (!findAllFiles(&prob_node,"Controls","obstacle",path)) return false;
+          if (!findAllFiles(&prob_node,"Controls","obstacle",def_path)) return false;
 
           //find all the distancemap files and set their complete path if found
-          if (!findAllFiles(&prob_node,"DistanceMap","distanceMap",path)) return false;
+          if (!findAllFiles(&prob_node,"DistanceMap","distanceMap",def_path)) return false;
 
           //find all the dimensions files and set their complete path if found
-          if (!findAllFiles(&prob_node,"DimensionsFile","filename",path)) return false;
+          if (!findAllFiles(&prob_node,"DimensionsFile","filename",def_path)) return false;
 
           return true;
       }
       return false;
   }
 
-  bool Problem::setupFromFile(ifstream* xml_inputfile, string modelsfolder, bool useBBOX) {
-      _filePath = modelsfolder.c_str();
+  bool Problem::setupFromFile(ifstream* xml_inputfile, string models_dir, bool useBBOX) {
+      _filePath = models_dir;
+      vector <string> def_path;
+      def_path.push_back(models_dir);
       xml_document *doc = new xml_document;
       if(doc->load( *xml_inputfile )) {
           //if the file was correctly parsed
-          if (prepareFile(doc, modelsfolder)) {
+          if (prepareFile(doc, def_path)) {
               //if everything seems to be OK, try to setup the problem
               return setupFromFile(doc, useBBOX);
           } else {
@@ -628,13 +624,13 @@ namespace Kautham {
       }
   }
 
-  bool Problem::setupFromFile(string xml_doc, string models_def_path, bool useBBOX) {
+  bool Problem::setupFromFile(string xml_doc, vector <string> def_path, bool useBBOX) {
       _filePath = xml_doc;
       xml_document *doc = new xml_document;
       xml_parse_result result = doc->load_file( xml_doc.c_str());
       if(result) {
           //if the file was correctly parsed
-          if (prepareFile(doc, models_def_path)) {
+          if (prepareFile(doc, def_path)) {
               //if everything seems to be OK, try to setup the problem
               return setupFromFile(doc, useBBOX);
           } else {
