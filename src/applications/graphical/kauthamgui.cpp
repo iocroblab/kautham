@@ -83,13 +83,13 @@ Application::~Application() {
 }
 
 void Application::setActions(){
-    mainWindow->setAction(FILETOOL,"&Open","CTRL+O",":/icons/fileopen.xpm",this,SLOT(openFile()));
-    mainWindow->setAction(FILETOOL,"&Save","CTRL+S",":/icons/filesave.xpm",this,SLOT(saveFile()));
-    mainWindow->setAction(FILETOOL,"Save &as","CTRL+A",":/icons/saveas.xpm",this,SLOT(saveAsFile()));
+    mainWindow->setAction(FILETOOL,"&Open","CTRL+O",":/icons/open_file.png",this,SLOT(openFile()));
+    mainWindow->setAction(FILETOOL,"&Save","CTRL+S",":/icons/save_file.png",this,SLOT(saveFile()));
+    mainWindow->setAction(FILETOOL,"Save &as","CTRL+A",":/icons/save_file_as.png",this,SLOT(saveAsFile()));
     mainWindow->addSeparator(FILETOOL);
     setRecentFilesAction();
     mainWindow->addSeparator(FILEMENU);
-    mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close.xpm",this,SLOT(closeProblem()));
+    mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close_file.png",this,SLOT(closeProblem()));
 
     mainWindow->addSeparator(TOOLBAR);
 
@@ -103,19 +103,19 @@ void Application::setActions(){
     //mainWindow->addSeparator(TOOLBAR);
 
     mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G",
-                          ":/icons/determ.xpm", mainWindow, SLOT(changeActiveBackground()));
+                          ":/icons/palette.png", mainWindow, SLOT(changeActiveBackground()));
 #if  defined(KAUTHAM_USE_ARMADILLO)
     if (settings->value("use_BBOX","false").toBool()) {
-        mainWindow->setAction(ACTIONTOOL,"Disable BBOX","",":/icons/BBOXdisabled.xpm", mainWindow, SLOT(toogleBBOXflag()));
+        mainWindow->setAction(ACTIONTOOL,"Disable BBOX","",":/icons/black_box.png", mainWindow, SLOT(toogleBBOXflag()));
     } else {
-        mainWindow->setAction(ACTIONTOOL,"Enable BBOX","",":/icons/BBOXenabled.xpm", mainWindow, SLOT(toogleBBOXflag()));
+        mainWindow->setAction(ACTIONTOOL,"Enable BBOX","",":/icons/green_box.png", mainWindow, SLOT(toogleBBOXflag()));
     }
 #endif
-    mainWindow->setAction(ACTIONTOOL,"Default Path","",":/icons/search.xpm", mainWindow, SLOT(setModelsDefaultPath()));
+    mainWindow->setAction(ACTIONTOOL,"Default Path","",":/icons/default_folder.png", mainWindow, SLOT(setModelsDefaultPath()));
 
     mainWindow->addSeparator(TOOLBAR);
 
-    mainWindow->setAction(FILETOOL,"E&xit","CTRL+X",":/icons/exit.xpm",this,SLOT(quit()));
+    mainWindow->setAction(FILETOOL,"E&xit","CTRL+X",":/icons/exit.png",this,SLOT(quit()));
 }
 
 void Application::setRecentFilesAction() {

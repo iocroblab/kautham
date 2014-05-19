@@ -112,7 +112,7 @@ namespace Kautham {
             }
             if (i < actions.size()) {
                 actions.at(i)->setText("Enable BBOX");
-                actions.at(i)->setIcon(QIcon(":/icons/BBOXenabled.xpm"));
+                actions.at(i)->setIcon(QIcon(":/icons/green_box.png"));
             }
         } else {
             setText("Bounding boxes computation was enabled");
@@ -122,7 +122,7 @@ namespace Kautham {
             }
             if (i < actions.size()) {
                 actions.at(i)->setText("Disable BBOX");
-                actions.at(i)->setIcon(QIcon(":/icons/BBOXdisabled.xpm"));
+                actions.at(i)->setIcon(QIcon(":/icons/black_box.png"));
             }
         }
 
@@ -675,6 +675,7 @@ namespace Kautham {
             if( names == "Robot" ){
                 itemTree = new QTreeWidgetItem(problemTree);
                 itemTree->setText(0, "Robot");
+                itemTree->setIcon(0,QIcon(":/icons/robot.png"));
                 itemTree->setText(1, it->attribute("robot").value() );
 
                 subItemTree = new QTreeWidgetItem(itemTree);
@@ -682,8 +683,8 @@ namespace Kautham {
                 subItemTree->setText(1, it->attribute("scale").value() );
 
                 subItemTree = new QTreeWidgetItem(itemTree);
-                subItemTree->setText(0, "Home Position");
-                subItemTree->setText(1, QString());
+                subItemTree->setText(0, "Home");
+                subItemTree->setIcon(0,QIcon(":/icons/home.png"));
 
                 iterator = labelList.constBegin();
                 string tmp;
@@ -723,10 +724,10 @@ namespace Kautham {
 
             }//closing if( names == "Robot" )
 
-            if( names == "Scene" ){
+            if( names == "Obstacle" ){
                 itemTree = new QTreeWidgetItem(problemTree);
                 itemTree->setText(0, "Obstacle");
-                itemTree->setText(1, it->attribute("scene").value() );
+                itemTree->setText(1, it->attribute("obstacle").value() );
 
                 subItemTree = new QTreeWidgetItem(itemTree);
                 subItemTree->setText(0, "Scale");

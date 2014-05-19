@@ -32,9 +32,7 @@ namespace Kautham {
  */
 
     /*!
-    * \brief The DefaultPathDialog class allows the user define a list of directories where
-    robot and obstacle models, as well as any file required to open a problem, will be looked for.
-    The directories will be consulted while the files are not found, so the order is important
+    * \brief The DefaultPathDialog class allows the use
     */
     class DefaultPathDialog : public QObject {
         Q_OBJECT
