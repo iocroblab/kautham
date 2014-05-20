@@ -21,7 +21,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell */
+/* Author: Alexander Perez, Jan Rosell and Nestor Garcia Hidalgo */
  
  
 
@@ -31,8 +31,6 @@
 #include "inversekinematic.h"
 #include "txrobot.h"
 
-using namespace TXrobot;
-
 
 /** \addtogroup libKin
  *  @{
@@ -41,21 +39,23 @@ using namespace TXrobot;
   public:
     IvKinTx90(Robot* const rob);
     ~IvKinTx90();
+    INVKINECLASS    type() {return TX90;}
+    string          name() {return "TX90";}
     bool            solve();
     bool            setParameters();
     RobLayout&      getRobLayout(vector<KthReal> &target);
     void            setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);
-    bool            solve(mt::Transform& tcp, const config& conf = TXrobot::config(), config* solution = NULL, Vect6* qNear = NULL );
+    bool            solve(mt::Transform& tcp, const TXrobot::config& conf = TXrobot::config(), TXrobot::config* solution = NULL, Vect6* qNear = NULL );
     bool            solve(mt::Transform& tcp, const Vect6 &current);
-    inline void     setConfiguration(const config& conf = TXrobot::config());
+    inline void     setConfiguration(const TXrobot::config& conf = TXrobot::config());
   private:
     IvKinTx90();
     TXrobot::TXRobot* _tx;
     TXrobot::TXerror  _error;
-    config          _txConf;
-    Vect6*          _result;
-    vector<KthReal> _eulPos;
-    mt::Transform   _rHomeOffset; //!< This is an offset from Modeled Home to Real Home
+    TXrobot::config   _txConf;
+    Vect6*            _result;
+    vector<KthReal>   _eulPos;
+    mt::Transform     _rHomeOffset; //!< This is an offset from Modeled Home to Real Home
   };
 
   /** @}   end of Doxygen module "Util */

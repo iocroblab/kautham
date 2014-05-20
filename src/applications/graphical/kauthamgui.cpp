@@ -363,7 +363,7 @@ bool Application::problemSetup(string problemFile){
         return false;
     }
 
-    mainWindow->addToProblemTree(problemFile);
+    mainWindow->addToProblemTree(_problem);
 
     mainWindow->addViewerTab("WSpace", ((IVWorkSpace*)_problem->wSpace())->getIvScene());
     QColor color = settings->value("mainWindow/WSpace/color",QColor("black")).value<QColor>();

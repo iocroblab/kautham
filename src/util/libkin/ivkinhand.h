@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Josep-Arnau Claret Robert */
+/* Author: Josep-Arnau Claret Robert and Nestor Garcia Hidalgo */
  
 
 #if !defined(_IVKINHAND_H)
@@ -62,6 +62,8 @@
   public:
     IvKinHand(Robot* const rob);
     ~IvKinHand();
+    INVKINECLASS type() {return HAND;}
+    string       name() {return "Hand";}
     bool solve();
     bool setParameters();
 

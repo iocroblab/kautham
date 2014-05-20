@@ -655,99 +655,125 @@ namespace Kautham {
         return true;
     }
 
-    bool GUI::addToProblemTree(string problemPath){
-        xml_document doc;
-        xml_parse_result result = doc.load_file(problemPath.c_str());
-        if( !result ) return false;
+    bool GUI::addToProblemTree(Problem *problem){
+        if (problem == NULL) return false;
 
         problemTree->setEnabled(true);
+
         QTreeWidgetItem *itemTree;
         QTreeWidgetItem *subItemTree;
         QTreeWidgetItem *subSubItemTree;
-        QStringList::const_iterator iterator;
-        QStringList labelList= QString("X Y Z WX WY WZ TH").split(" ");
+        QIcon robotIcon(":/icons/robot.png");
+        QIcon obstacleIcon(":/icons/obstacle.png");
+        QIcon scaleIcon(":/icons/scale.png");
+        QIcon homeIcon(":/icons/home.png");
+        QStringList homeLabels = QString("X Y Z WX WY WZ TH").split(" ");
+        Robot *robot;
+        float low;
+        float high;
+        std::vector<KthReal> homeConf;
+        InverseKinematic *iKine;
+        for (uint i = 0; i < problem->wSpace()->getNumRobots(); i++) {
+            robot = problem->wSpace()->getRobot(i);
 
-        xml_node::iterator it;
-        xml_node tmpNode = doc.child("Problem");
-        string names="";
-        for( it = tmpNode.begin(); it != tmpNode.end(); ++it ){
-            names = it->name();
-            if( names == "Robot" ){
-                itemTree = new QTreeWidgetItem(problemTree);
-                itemTree->setText(0, "Robot");
-                itemTree->setIcon(0,QIcon(":/icons/robot.png"));
-                itemTree->setText(1, it->attribute("robot").value() );
+            //Name
+            itemTree = new QTreeWidgetItem(problemTree);
+            //itemTree->setText(0,"Robot");
+            itemTree->setToolTip(0,"Robot");
+            itemTree->setIcon(0,robotIcon);
+            itemTree->setText(1,robot->getName().c_str());
 
-                subItemTree = new QTreeWidgetItem(itemTree);
-                subItemTree->setText(0, "scale");
-                subItemTree->setText(1, it->attribute("scale").value() );
+            //Scale
+            subItemTree = new QTreeWidgetItem(itemTree);
+            //subItemTree->setText(0,"Scale");
+            subItemTree->setToolTip(0,"Scale");
+            subItemTree->setIcon(0,scaleIcon);
+            subItemTree->setText(1,QString::number(robot->getScale()));
 
-                subItemTree = new QTreeWidgetItem(itemTree);
-                subItemTree->setText(0, "Home");
-                subItemTree->setIcon(0,QIcon(":/icons/home.png"));
+            //Home
+            subItemTree = new QTreeWidgetItem(itemTree);
+            //subItemTree->setText(0,"Home");
+            subItemTree->setToolTip(0,"Home");
+            subItemTree->setIcon(0,homeIcon);
+            homeConf = robot->getHomePos()->first.getCoordinates();
+            for (uint i = 0; i < 7; i++) {
+                subSubItemTree = new QTreeWidgetItem(subItemTree);
+                subSubItemTree->setText(0,homeLabels.at(i));
+                stringstream tmp;
+                tmp << homeConf.at(i);
 
-                iterator = labelList.constBegin();
-                string tmp;
-                for(int i=0; i<7; i++){
-                    subSubItemTree = new QTreeWidgetItem(subItemTree);
-                    tmp = (*iterator++).toUtf8().constData();
-                    subSubItemTree->setText( 0, tmp.c_str() );
-                    subSubItemTree->setText( 1, it->child("Home").attribute(tmp.c_str()).value() );
+                //Limits
+                if (i < 3) {
+                    low = robot->getLimits(i)[0];
+                    high = robot->getLimits(i)[1];
+                    if (low != high) {
+                        tmp << " [" << low << ", " << high << "]";
+                    } else {
+                        tmp << " (fixed)";
+                    }
                 }
+                subSubItemTree->setText(1,tmp.str().c_str());
+            }
 
-                // Limits
+            //Inverse Kinematics
+            iKine = robot->getIkine();
+            if (iKine->type() != UNIMPLEMENTED || iKine->type() != NOINVKIN) {
                 subItemTree = new QTreeWidgetItem(itemTree);
-                subItemTree->setText(0, "Limits");
-                subItemTree->setText(1, QString());
+                subItemTree->setText(0,"InvKin");
+                subItemTree->setToolTip(0,"Inverse Kinematics");
+                subItemTree->setText(1,iKine->name().c_str());
+            }
 
-                xml_node::iterator itLim;
-                //xml_node lim = it->child("Limits");
-                for( itLim = it->begin(); itLim != it->end(); ++itLim){
-                    names = itLim->name();
-                    if( names != "Limits" ) continue;
-                    subSubItemTree = new QTreeWidgetItem(subItemTree);
-                    subSubItemTree->setText( 0, itLim->attribute("name").value() );
-                    tmp = "[";
-                    tmp.append(itLim->attribute("min").value() );
-                    tmp.append(", ");
-                    tmp.append( itLim->attribute("max").value() );
-                    tmp.append("]");
-                    subSubItemTree->setText( 1, tmp.c_str() );
+        }
+
+        for (uint i = 0; i < problem->wSpace()->getNumObstacles(); i++) {
+            robot = problem->wSpace()->getObstacle(i);
+
+            //Name
+            itemTree = new QTreeWidgetItem(problemTree);
+            //itemTree->setText(0,"Obstacle");
+            itemTree->setToolTip(0,"Obstacle");
+            itemTree->setIcon(0,obstacleIcon);
+            itemTree->setText(1,robot->getName().c_str());
+
+            //Scale
+            subItemTree = new QTreeWidgetItem(itemTree);
+            //subItemTree->setText(0,"Scale");
+            subItemTree->setToolTip(0,"Scale");
+            subItemTree->setIcon(0,scaleIcon);
+            subItemTree->setText(1,QString::number(robot->getScale()));
+
+            //Home
+            subItemTree = new QTreeWidgetItem(itemTree);
+            //subItemTree->setText(0,"Home");
+            subItemTree->setToolTip(0,"Home");
+            subItemTree->setIcon(0,homeIcon);
+            homeConf = robot->getHomePos()->first.getCoordinates();
+            for (uint i = 0; i < 7; i++) {
+                subSubItemTree = new QTreeWidgetItem(subItemTree);
+                subSubItemTree->setText(0,homeLabels.at(i));
+                stringstream tmp;
+                tmp << homeConf.at(i);
+
+                //Limits
+                if (i < 3) {
+                    low = robot->getLimits(i)[0];
+                    high = robot->getLimits(i)[1];
+                    if (low != high) {
+                        tmp << " [" << low << ", " << high << "]";
+                    } else {
+                        tmp << " (fixed)";
+                    }
                 }
-
-                //InvKinematic
-                if( it->child("InvKinematic") ){
-                    subItemTree = new QTreeWidgetItem(itemTree);
-                    subItemTree->setText(0, "InvKinematic");
-                    subItemTree->setText(1, it->child("InvKinematic").attribute("name").value());
-                }
-
-            }//closing if( names == "Robot" )
-
-            if( names == "Obstacle" ){
-                itemTree = new QTreeWidgetItem(problemTree);
-                itemTree->setText(0, "Obstacle");
-                itemTree->setText(1, it->attribute("obstacle").value() );
-
-                subItemTree = new QTreeWidgetItem(itemTree);
-                subItemTree->setText(0, "Scale");
-                subItemTree->setText(1, it->attribute("scale").value() );
-
-                subItemTree = new QTreeWidgetItem(itemTree);
-                subItemTree->setText(0, "Position");
-                subItemTree->setText(1, QString());
-
-                iterator = labelList.constBegin();
-                string tmp;
-                for(int i=0; i<7; i++){
-                    subSubItemTree = new QTreeWidgetItem(subItemTree);
-                    tmp = (*iterator++).toUtf8().constData();
-                    subSubItemTree->setText( 0, tmp.c_str() );
-                    subSubItemTree->setText( 1, it->child("Home").attribute( tmp.c_str() ).value() );
-                }
+                subSubItemTree->setText(1,tmp.str().c_str());
             }
         }
+
         problemTree->expandAll();
+        problemTree->header()->hide();
+        problemTree->resizeColumnToContents(0);
+        problemTree->resizeColumnToContents(1);
+
         return true;
     }
 

@@ -202,7 +202,7 @@ namespace Kautham {
                                bool maintainSameWrist);
 
     //! Sets the inverse kinematics to be used
-    bool setInverseKinematic(INVKINECLASSES type);
+    bool setInverseKinematic(INVKINECLASS type);
 
     //! Sets parameters inverse kinematics
     bool setInverseKinematicParameter(string name, KthReal value);

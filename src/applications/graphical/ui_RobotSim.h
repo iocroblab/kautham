@@ -90,7 +90,7 @@ public:
         kauthamMain->setSizePolicy(sizePolicy);
         kauthamMain->setMinimumSize(QSize(850, 600));
         QIcon icon;
-        icon.addFile(QString::fromUtf8(":/icons/kautham.xpm"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QString::fromUtf8(":/icons/kautham.png"), QSize(), QIcon::Normal, QIcon::Off);
         kauthamMain->setWindowIcon(icon);
         kauthamMain->setToolButtonStyle(Qt::ToolButtonIconOnly);
         kauthamMain->setDockNestingEnabled(false);

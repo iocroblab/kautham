@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Alexander Perez, Jan Rosell and Nestor Garcia Hidalgo */
 
 
   
@@ -143,8 +143,8 @@ namespace Kautham{
   };
 
   //! This enumeration has the relationship of all Inverse Kinematic models
-  //! available to be used as solver of the robot inverser kinematics.
-  enum INVKINECLASSES{
+  //! available to be used as solver of the robot inverse kinematics.
+  enum INVKINECLASS{
     NOINVKIN,
     UNIMPLEMENTED,
     RR2D,

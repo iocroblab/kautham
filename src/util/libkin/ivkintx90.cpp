@@ -21,14 +21,14 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell */
+/* Author: Alexander Perez, Jan Rosell and Nestor Garcia Hidalgo */
  
  
 #include "ivkintx90.h"
 #include <problem/robot.h>
 
 
-
+using namespace TXrobot;
 
   IvKinTx90::IvKinTx90(Robot* const rob) : Kautham::InverseKinematic(rob){
 
