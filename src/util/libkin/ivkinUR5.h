@@ -61,6 +61,8 @@ class IvKinUR5:public Kautham::InverseKinematic{
 public:
     IvKinUR5(Robot* const rob);
     ~IvKinUR5();
+    INVKINECLASS type() {return UR5;}
+    string       name() {return "UR5";}
     bool solve();
     bool setParameters();
     void setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);

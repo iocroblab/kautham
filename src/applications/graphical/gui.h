@@ -117,7 +117,7 @@ namespace Kautham {
                         QObject* receiver, const char *member);
     bool                addSeparator(WHERETYPE typ);
     bool                restart();
-    bool                addToProblemTree(string problemPath);
+    bool                addToProblemTree(Problem *problem);
     bool                addRobControlWidget(Problem* prob, vector<Kautham::DOFWidget *> robDOFWidgets);
     bool                addObsControlWidget(Problem* prob, vector<Kautham::DOFWidget *> obsDOFWidgets);
 
