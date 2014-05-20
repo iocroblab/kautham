@@ -21,7 +21,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell */
+/* Author: Alexander Perez, Jan Rosell and Nestor Garcia Hidalgo */
  
 
 #if !defined(_IVKINTXHAND_H)
@@ -37,6 +37,8 @@
   public:
     IvKinTxHand(Robot* const rob);
     ~IvKinTxHand();
+    INVKINECLASS type() {return TX90HAND;}
+    string       name() {return "TX90Hand";}
     bool solve();
     bool setParameters();
   private:

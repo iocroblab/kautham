@@ -729,7 +729,7 @@ namespace Kautham {
   /*!
    *
    */
-  bool Robot::setInverseKinematic(INVKINECLASSES type){
+  bool Robot::setInverseKinematic(INVKINECLASS type){
       switch(type){
       case Kautham::RR2D:
           _ikine = new IvKin2DRR(this);

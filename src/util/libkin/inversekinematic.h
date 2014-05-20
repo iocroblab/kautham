@@ -21,7 +21,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell */
+/* Author: Alexander Perez, Jan Rosell and Nestor Garcia Hidalgo */
 
 #if !defined(_INVERSEKINEMATIC_H)
 #define _INVERSEKINEMATIC_H
@@ -90,17 +90,23 @@ namespace Kautham {
   public:
     InverseKinematic(Robot* const rob);
 
+      //!	This method returns the type of the inverse kinematics.
+    virtual INVKINECLASS type() {}
+
+      //!	This method returns the name of the inverse kinematics.
+    virtual string       name() {}
+
 	  //!	This method must be implemented in order to obtain a solution
 	  //! of the inverse kinematic model for a specific target.
-    virtual bool      solve() = 0;
+    virtual bool         solve() = 0;
 
 	  //!	This method allows extract the information from the Hash_Map
 	  //! and setup the internal variables.
-    virtual bool      setParameters() = 0;
+    virtual bool         setParameters() = 0;
 
     //! This method returns the high level configuration description of the robot i.e. shoulder left/right or 
     //! elbow up/down for the target parameter. This function should be virtual pure.
-    virtual RobLayout& getRobLayout(vector<KthReal> &target); // = 0;
+    virtual RobLayout&   getRobLayout(vector<KthReal> &target); // = 0;
 
 	  //!	This method allow to setup the target. Commonly, the target is se3.coordintes.
     void              setTarget(vector<KthReal> &target, const string& param=string(""));
