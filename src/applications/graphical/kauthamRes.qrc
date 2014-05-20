@@ -56,5 +56,6 @@
         <file>icons/home.png</file>
         <file>icons/obstacle.png</file>
         <file>icons/scale.png</file>
+        <file>icons/link.png</file>
     </qresource>
 </RCC>
