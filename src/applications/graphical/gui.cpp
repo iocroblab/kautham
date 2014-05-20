@@ -717,11 +717,13 @@ namespace Kautham {
 
             //Inverse Kinematics
             iKine = robot->getIkine();
-            if (iKine->type() != UNIMPLEMENTED || iKine->type() != NOINVKIN) {
-                subItemTree = new QTreeWidgetItem(itemTree);
-                subItemTree->setText(0,"InvKin");
-                subItemTree->setToolTip(0,"Inverse Kinematics");
-                subItemTree->setText(1,iKine->name().c_str());
+            if (iKine != NULL) {
+                if (iKine->type() != UNIMPLEMENTED || iKine->type() != NOINVKIN) {
+                    subItemTree = new QTreeWidgetItem(itemTree);
+                    subItemTree->setText(0,"InvKin");
+                    subItemTree->setToolTip(0,"Inverse Kinematics");
+                    subItemTree->setText(1,iKine->name().c_str());
+                }
             }
 
         }
