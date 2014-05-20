@@ -62,6 +62,7 @@ void Application::initApp(){
 
     SoQt::show(mainWindow);
     setActions();
+    mainWindow->showInitialAppearance();
     mainWindow->setText("Open a problem file to start...");
     appState = INITIAL ;
     _problem = NULL;

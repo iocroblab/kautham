@@ -667,8 +667,10 @@ namespace Kautham {
         QIcon obstacleIcon(":/icons/obstacle.png");
         QIcon scaleIcon(":/icons/scale.png");
         QIcon homeIcon(":/icons/home.png");
+        QIcon linkIcon(":/icons/link.png");
         QStringList homeLabels = QString("X Y Z WX WY WZ TH").split(" ");
         Robot *robot;
+        Link *link;
         float low;
         float high;
         std::vector<KthReal> homeConf;
@@ -678,42 +680,53 @@ namespace Kautham {
 
             //Name
             itemTree = new QTreeWidgetItem(problemTree);
-            //itemTree->setText(0,"Robot");
             itemTree->setToolTip(0,"Robot");
             itemTree->setIcon(0,robotIcon);
             itemTree->setText(1,robot->getName().c_str());
+            itemTree->setToolTip(1,"Name");
+
 
             //Scale
             subItemTree = new QTreeWidgetItem(itemTree);
-            //subItemTree->setText(0,"Scale");
             subItemTree->setToolTip(0,"Scale");
             subItemTree->setIcon(0,scaleIcon);
             subItemTree->setText(1,QString::number(robot->getScale()));
 
             //Home
             subItemTree = new QTreeWidgetItem(itemTree);
-            //subItemTree->setText(0,"Home");
             subItemTree->setToolTip(0,"Home");
             subItemTree->setIcon(0,homeIcon);
-            homeConf = robot->getHomePos()->first.getCoordinates();
-            for (uint i = 0; i < 7; i++) {
+            homeConf.clear();
+            homeConf = robot->getHomePos()->first.getPos();
+            for (uint i = 0; i < 3; i++) {
                 subSubItemTree = new QTreeWidgetItem(subItemTree);
                 subSubItemTree->setText(0,homeLabels.at(i));
+                subSubItemTree->setToolTip(0,"Position");
                 stringstream tmp;
                 tmp << homeConf.at(i);
 
                 //Limits
-                if (i < 3) {
-                    low = robot->getLimits(i)[0];
-                    high = robot->getLimits(i)[1];
-                    if (low != high) {
-                        tmp << " [" << low << ", " << high << "]";
-                    } else {
-                        tmp << " (fixed)";
-                    }
+                low = robot->getLimits(i)[0];
+                high = robot->getLimits(i)[1];
+                if (low != high) {
+                    tmp << " [" << low << ", " << high << "]";
+                } else {
+                    tmp << " (fixed)";
                 }
                 subSubItemTree->setText(1,tmp.str().c_str());
+                subSubItemTree->setToolTip(1,"milimeters");
             }
+            homeConf.clear();
+            homeConf = robot->getHomePos()->first.getAxisAngle();
+            for (uint i = 0; i < 4; i++) {
+                subSubItemTree = new QTreeWidgetItem(subItemTree);
+                subSubItemTree->setText(0,homeLabels.at(i+3));
+                subSubItemTree->setToolTip(0,"Orientation");
+                stringstream tmp;
+                tmp << homeConf.at(i);
+                subSubItemTree->setText(1,tmp.str().c_str());
+            }
+            subSubItemTree->setToolTip(1,"radians");
 
             //Inverse Kinematics
             iKine = robot->getIkine();
@@ -723,7 +736,21 @@ namespace Kautham {
                     subItemTree->setText(0,"InvKin");
                     subItemTree->setToolTip(0,"Inverse Kinematics");
                     subItemTree->setText(1,iKine->name().c_str());
+                    subItemTree->setToolTip(1,"Name");
                 }
+            }
+
+            //Links
+            subItemTree = new QTreeWidgetItem(itemTree);
+            subItemTree->setText(0,"Links");
+            for (uint i = 0; i < robot->getNumLinks(); i++) {
+                link = robot->getLink(i);
+
+                subSubItemTree = new QTreeWidgetItem(subItemTree);
+                subSubItemTree->setToolTip(0,"Link");
+                subSubItemTree->setIcon(0,linkIcon);
+                subSubItemTree->setText(1,link->getName().c_str());
+                subSubItemTree->setToolTip(1,"Name");
             }
 
         }
@@ -733,48 +760,74 @@ namespace Kautham {
 
             //Name
             itemTree = new QTreeWidgetItem(problemTree);
-            //itemTree->setText(0,"Obstacle");
             itemTree->setToolTip(0,"Obstacle");
             itemTree->setIcon(0,obstacleIcon);
             itemTree->setText(1,robot->getName().c_str());
+            itemTree->setToolTip(1,"Name");
 
             //Scale
             subItemTree = new QTreeWidgetItem(itemTree);
-            //subItemTree->setText(0,"Scale");
             subItemTree->setToolTip(0,"Scale");
             subItemTree->setIcon(0,scaleIcon);
             subItemTree->setText(1,QString::number(robot->getScale()));
 
+
             //Home
             subItemTree = new QTreeWidgetItem(itemTree);
-            //subItemTree->setText(0,"Home");
             subItemTree->setToolTip(0,"Home");
             subItemTree->setIcon(0,homeIcon);
-            homeConf = robot->getHomePos()->first.getCoordinates();
-            for (uint i = 0; i < 7; i++) {
+            homeConf.clear();
+            homeConf = robot->getHomePos()->first.getPos();
+            for (uint i = 0; i < 3; i++) {
                 subSubItemTree = new QTreeWidgetItem(subItemTree);
                 subSubItemTree->setText(0,homeLabels.at(i));
+                subSubItemTree->setToolTip(0,"Position");
                 stringstream tmp;
                 tmp << homeConf.at(i);
 
                 //Limits
-                if (i < 3) {
-                    low = robot->getLimits(i)[0];
-                    high = robot->getLimits(i)[1];
-                    if (low != high) {
-                        tmp << " [" << low << ", " << high << "]";
-                    } else {
-                        tmp << " (fixed)";
-                    }
+                low = robot->getLimits(i)[0];
+                high = robot->getLimits(i)[1];
+                if (low != high) {
+                    tmp << " [" << low << ", " << high << "]";
+                } else {
+                    tmp << " (fixed)";
                 }
                 subSubItemTree->setText(1,tmp.str().c_str());
+                subSubItemTree->setToolTip(1,"milimeters");
+            }
+            homeConf.clear();
+            homeConf = robot->getHomePos()->first.getAxisAngle();
+            for (uint i = 0; i < 4; i++) {
+                subSubItemTree = new QTreeWidgetItem(subItemTree);
+                subSubItemTree->setText(0,homeLabels.at(i+3));
+                subSubItemTree->setToolTip(0,"Orientation");
+                stringstream tmp;
+                tmp << homeConf.at(i);
+                subSubItemTree->setText(1,tmp.str().c_str());
+            }
+            subSubItemTree->setToolTip(1,"radians");
+
+            //Links
+            subItemTree = new QTreeWidgetItem(itemTree);
+            subItemTree->setText(0,"Links");
+            for (uint i = 0; i < robot->getNumLinks(); i++) {
+                link = robot->getLink(i);
+
+                subSubItemTree = new QTreeWidgetItem(subItemTree);
+                subSubItemTree->setToolTip(0,"Link");
+                subSubItemTree->setIcon(0,linkIcon);
+                subSubItemTree->setText(1,link->getName().c_str());
+                subSubItemTree->setToolTip(1,"Name");
+
             }
         }
 
         problemTree->expandAll();
-        problemTree->header()->hide();
         problemTree->resizeColumnToContents(0);
         problemTree->resizeColumnToContents(1);
+        problemTree->collapseAll();
+        problemTree->header()->hide();
 
         return true;
     }
@@ -783,6 +836,15 @@ namespace Kautham {
         viewsTab->removeTab(viewsTab->indexOf(introTab));
         DOFsTab->show();
         propertiesTab->show();
+        QList <QAction*> actions = toolBar->actions();
+        QAction *ac;
+        for (uint i = 0; i < actions.size(); i++) {
+            ac = actions.at(i);
+            if (ac->text() == "Chan&ge Colour") {
+                ac->setEnabled(true);
+                break;
+            }
+        }
     }
 
     void GUI::showInitialAppearance() {
@@ -790,6 +852,15 @@ namespace Kautham {
                          ("kauthamMain","Introduction",0,QApplication::UnicodeUTF8));
         DOFsTab->hide();
         propertiesTab->hide();
+        QList <QAction*> actions = toolBar->actions();
+        QAction *ac;
+        for (uint i = 0; i < actions.size(); i++) {
+            ac = actions.at(i);
+            if (ac->text() == "Chan&ge Colour") {
+                ac->setDisabled(true);
+                break;
+            }
+        }
     }
 
 }
