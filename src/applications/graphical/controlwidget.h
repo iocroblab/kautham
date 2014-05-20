@@ -58,15 +58,16 @@ namespace Kautham {
         void setValues(vector <KthReal> coords);
 	private:
         vector<DOFWidget*> _DOFWidgets;
-		vector<QSlider*>  sliders;
-		vector<QLabel*>   labels;
-		QGridLayout       *gridLayout;
-		QVBoxLayout       *vboxLayout;
-		QVBoxLayout       *vboxLayout1;
-        QPushButton		  *btnUpdate;
-		vector<KthReal>   values;
-        Problem*          _ptProblem;
-        bool              robWidget;
+        vector<QSlider*>   sliders;
+        vector<QLabel*>    labels;
+        QVBoxLayout        *mainLayout;
+        QScrollArea        *scrollArea;
+        QWidget            *scrollAreaWidget;
+        QVBoxLayout        *controlsLayout;
+        QPushButton		   *btnUpdate;
+        vector<KthReal>    values;
+        Problem*           _ptProblem;
+        bool               robWidget;
 	};
 
 

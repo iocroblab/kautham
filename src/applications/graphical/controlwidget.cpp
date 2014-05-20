@@ -41,63 +41,60 @@ namespace Kautham {
             names = _ptProblem->wSpace()->getObsControlsName();
         }
 
-        QWidget* tmpWid = new QWidget();
+        mainLayout = new QVBoxLayout(this);
+        mainLayout->setObjectName(QString::fromUtf8("mainLayout"));
 
-        gridLayout = new QGridLayout(tmpWid);
-        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        vboxLayout = new QVBoxLayout();
-        vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
-        QLabel* tempLab;
-        QSlider* tempSli;
+        scrollArea = new QScrollArea();
+        scrollArea->setObjectName(QString::fromUtf8("scrollArea"));
+        scrollArea->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+        scrollArea->setWidgetResizable(true);
+        mainLayout->addWidget(scrollArea);
+
+        scrollAreaWidget = new QWidget();
+        scrollAreaWidget->setObjectName(QString::fromUtf8("scrollAreaWidget"));
+        scrollArea->setWidget(scrollAreaWidget);
+
+        controlsLayout = new QVBoxLayout(scrollAreaWidget);
+        controlsLayout->setObjectName(QString::fromUtf8("controlsLayout"));
+
+        QLabel *tempLabel;
+        QSlider *tempSlider;
         QString content(names.c_str());
         QStringList cont = content.split("|");
-        QStringList::const_iterator iterator;
-        for (iterator = cont.constBegin(); iterator != cont.constEnd();
-             ++iterator) {
-            tempLab = new QLabel(this);
-            tempLab->setObjectName(/*QString("lbl")  +*/ (*iterator).toUtf8().constData());
+        for (QStringList::const_iterator iterator = cont.constBegin();
+             iterator != cont.constEnd(); ++iterator) {
+            tempLabel = new QLabel();
+            tempLabel->setObjectName((*iterator).toUtf8().constData());
             content = (*iterator).toUtf8().constData();
-            tempLab->setText(content.append(" = 0.5"));
-            this->vboxLayout->addWidget(tempLab);
-            labels.push_back(tempLab);
+            tempLabel->setText(content.append(" = 0.5"));
+            controlsLayout->addWidget(tempLabel);
+            labels.push_back(tempLabel);
 
-            tempSli = new QSlider(this);
-            tempSli->setObjectName(/*"sld" + */(*iterator).toUtf8().constData());
-            tempSli->setOrientation(Qt::Horizontal);
-            tempSli->setMinimum(0);
-            tempSli->setMaximum(1000);
-            tempSli->setSingleStep(1);
-            tempSli->setValue(500);
-            vboxLayout->addWidget(tempSli);
-            sliders.push_back(tempSli);
-            QObject::connect(tempSli,SIGNAL(valueChanged(int)),SLOT(sliderChanged(int)));
+            tempSlider = new QSlider();
+            tempSlider->setObjectName((*iterator).toUtf8().constData());
+            tempSlider->setOrientation(Qt::Horizontal);
+            tempSlider->setMinimum(0);
+            tempSlider->setMaximum(1000);
+            tempSlider->setSingleStep(1);
+            tempSlider->setValue(500);
+            connect(tempSlider,SIGNAL(valueChanged(int)),this,SLOT(sliderChanged(int)));
+            controlsLayout->addWidget(tempSlider);
+            sliders.push_back(tempSlider);
         }
 
-        vboxLayout1 = new QVBoxLayout();
-        btnUpdate = new QPushButton(this);
+        btnUpdate = new QPushButton();
         if (robWidget) {
             btnUpdate->setText("Update to last moved sample");
         } else {
             btnUpdate->setText("Update to initial sample");
         }
-        btnUpdate->setObjectName(QString::fromUtf8("Update Controls"));
-        connect(btnUpdate, SIGNAL( clicked() ), this, SLOT( updateControls() ) );
-        vboxLayout1->addWidget(btnUpdate);
+        btnUpdate->setObjectName(QString::fromUtf8("btnUpdate"));
+        connect(btnUpdate,SIGNAL(clicked()),this,SLOT(updateControls()));
+        mainLayout->addWidget(btnUpdate);
 
         values.resize(sliders.size());
         for(int i=0; i<values.size(); i++)
             values[i]=0.5;
-
-        vboxLayout->addLayout(vboxLayout1);
-        gridLayout->addLayout(vboxLayout,0,1,1,1);
-
-        QScrollArea* scrollArea = new QScrollArea();
-        scrollArea->setWidget(tmpWid);
-        scrollArea->setWidgetResizable(true);
-
-        QGridLayout *grid;
-        grid = new QGridLayout(this);
-        grid->addWidget(scrollArea);
     }
 
     ControlWidget::~ControlWidget(){
@@ -112,9 +109,9 @@ namespace Kautham {
             delete (DOFWidget*)_DOFWidgets[i];
         }
         _DOFWidgets.clear();
-        delete gridLayout;
-        delete vboxLayout;
-        delete vboxLayout1;
+        delete mainLayout;
+        delete scrollArea;
+        delete controlsLayout;
         delete btnUpdate;
     }
 
