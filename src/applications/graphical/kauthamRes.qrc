@@ -5,7 +5,7 @@
         <file>icons/noconnect.xpm</file>
         <file>icons/logo_ioc.png</file>
         <file>icons/logo_eci.png</file>
-        <file>icons/kautham.xpm</file>
+        <file>icons/kautham.png</file>
         <file>icons/phantom_off.xpm</file>
         <file>icons/kth.png</file>
         <file>icons/phantom_on.xpm</file>
@@ -54,5 +54,7 @@
         <file>icons/search.xpm</file>
         <file>icons/robot.png</file>
         <file>icons/home.png</file>
+        <file>icons/obstacle.png</file>
+        <file>icons/scale.png</file>
     </qresource>
 </RCC>

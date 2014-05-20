@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell */
+/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
  
 
@@ -37,6 +37,8 @@ class IvKin2DRR : public Kautham::InverseKinematic{
   public:
     IvKin2DRR(Robot* const rob);
     ~IvKin2DRR();
+    INVKINECLASS    type() {return RR2D;}
+    string          name() {return "RR2D";}
     bool            solve();
     bool            setParameters();
     RobLayout&      getRobLayout(vector<KthReal> &target);
