@@ -57,17 +57,30 @@ namespace Kautham {
         buttonLayout->setObjectName(QString::fromUtf8("buttonLayout"));
         buttonLayout->setMargin(0);
 
-        addButton = new QPushButton(QIcon(":/icons/add.png"),tr("&Add"));
+
+        QIcon add;
+        add.addFile(":/icons/add_16x16.png");
+        add.addFile(":/icons/add_22x22.png");
+        addButton = new QPushButton(add,tr("&Add"));
         addButton->setObjectName(QString::fromUtf8("addButton"));
         connect(addButton,SIGNAL(clicked()),this,SLOT(addDirectory()));
         buttonLayout->addWidget(addButton);
 
-        removeButton = new QPushButton(QIcon(":/icons/remove.png"),tr("&Remove"));
+        QIcon remove;
+        remove.addFile(":/icons/remove_16x16.png");
+        remove.addFile(":/icons/remove_22x22.png");
+        removeButton = new QPushButton(remove,tr("&Remove"));
         removeButton->setObjectName(QString::fromUtf8("removeButton"));
         connect(removeButton,SIGNAL(clicked()),this,SLOT(removeDirectory()));
         buttonLayout->addWidget(removeButton);
 
-        clearButton = new QPushButton(QIcon(":/icons/clear.png"),tr("C&lear"));
+        QIcon trashcan;
+        trashcan.addFile(":/icons/trashcan_16x16.png");
+        trashcan.addFile(":/icons/trashcan_22x22.png");
+        trashcan.addFile(":/icons/trashcan_32x32.png");
+        trashcan.addFile(":/icons/trashcan_48x48.png");
+        trashcan.addFile(":/icons/trashcan_64x64.png");
+        clearButton = new QPushButton(trashcan,tr("C&lear"));
         clearButton->setObjectName(QString::fromUtf8("clearButton"));
         connect(clearButton,SIGNAL(clicked()),pathListWidget,SLOT(clear()));
         buttonLayout->addWidget(clearButton);
@@ -76,12 +89,18 @@ namespace Kautham {
                                         QSizePolicy::Expanding);
         buttonLayout->addSpacerItem(VSpacer);
 
-        upButton = new QPushButton(QIcon(":/icons/up.png"),tr("&Up"));
+        QIcon up;
+        up.addFile(":/icons/up_16x16.png");
+        up.addFile(":/icons/up_22x22.png");
+        upButton = new QPushButton(up,tr("&Up"));
         addButton->setObjectName(QString::fromUtf8("upButton"));
         connect(upButton,SIGNAL(clicked()),this,SLOT(upDirectory()));
         buttonLayout->addWidget(upButton);
 
-        downButton = new QPushButton(QIcon(":/icons/down.png"),tr("&Down"));
+        QIcon down;
+        down.addFile(":/icons/down_16x16.png");
+        down.addFile(":/icons/down_22x22.png");
+        downButton = new QPushButton(down,tr("&Down"));
         downButton->setObjectName(QString::fromUtf8("downButton"));
         connect(downButton,SIGNAL(clicked()),this,SLOT(downDirectory()));
         buttonLayout->addWidget(downButton);

@@ -56,8 +56,7 @@ public:
         Form->resize(671, 502);
         Form->setMaximumSize(QSize(671, 502));
         Form->setMinimumSize(QSize(671,502));
-        QIcon icon;
-        icon.addFile(QString::fromUtf8(":/icons/kautham.png"), QSize(), QIcon::Normal, QIcon::Off);
+        QIcon icon(QString::fromUtf8(":/icons/logo.svg"));
         Form->setWindowIcon(icon);
         textBrowser = new QTextBrowser(Form);
         textBrowser->setObjectName(QString::fromUtf8("textBrowser"));
