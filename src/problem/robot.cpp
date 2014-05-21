@@ -1011,12 +1011,14 @@ namespace Kautham {
           // First the most distal link
           minDist = links[links.size()-1]->getElement()->getDistanceTo(rob->getLink(0)->getElement());
       if( min ){
-          for(int i = links.size() - 1; i >= 0 ; i--)
-              for(size_t j = rob->getNumLinks() - 1; j >= 0; j--){
-                  tempDist = links[i]->getElement()->getDistanceTo(rob->getLink(j)->getElement());
-                  if(minDist > tempDist)
+          for(uint i = links.size(); i > 0 ; --i) {
+              for(uint j = rob->getNumLinks(); j > 0; --j){
+                  tempDist = links[i-1]->getElement()->getDistanceTo(rob->getLink(j-1)->getElement());
+                  if(minDist > tempDist) {
                       minDist = tempDist;
+                  }
               }
+          }
       }
 
       return minDist;
