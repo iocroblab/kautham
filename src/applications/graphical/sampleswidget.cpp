@@ -267,20 +267,22 @@ namespace Kautham{
     stringstream sstr;
     string p;
     if(cboSampleList->count() >= 1){
-      sstr.precision(10);
-      Sample* tmpSam = _samples->getSampleAt((cboSampleList->currentText()).toInt());
-      vector<KthReal>* val = _ptProblem->wSpace()->distanceCheck(tmpSam);
+        sstr.precision(10);
+        Sample* tmpSam = _samples->getSampleAt((cboSampleList->currentText()).toInt());
+        vector<KthReal>* val = _ptProblem->wSpace()->distanceCheck(tmpSam);
+        if (val->size() > 0) {
+            for(unsigned int i = 0; i<val->size(); i++)
+                sstr << val->at(i) << ", " ;
+            p = sstr.str();
+            p = p.substr(0,p.length()-2);
 
-      for(unsigned int i = 0; i<val->size(); i++)
-        sstr << val->at(i) << ", " ;
-      p = sstr.str();
-	    p = p.substr(0,p.length()-2);
-
-      sstr.clear();
-      sstr << "For sample No: " << cboSampleList->currentText().toUtf8().constData() 
-        << " the distance check is: " << p.c_str();
-
-      writeGUI(sstr.str());
+            sstr.clear();
+            sstr << "For sample No: " << cboSampleList->currentText().toUtf8().constData()
+                 << " the distance check is: " << p.c_str();
+            writeGUI(sstr.str());
+      } else {
+            writeGUI("There are no obstacles to test distance with.")
+      }
     }else
       writeGUI("First create a sample");
   }
