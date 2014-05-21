@@ -107,22 +107,34 @@ namespace Kautham {
         if (use_BBOX) {
             setText("Bounding boxes computation was disabled");
 
-            while (actions.at(i)->text() != "Disable BBOX" && i < actions.size()) {
+            while (actions.at(i)->text() != "BBOX enabled" && i < actions.size()) {
                 i++;
             }
             if (i < actions.size()) {
-                actions.at(i)->setText("Enable BBOX");
-                actions.at(i)->setIcon(QIcon(":/icons/green_box.png"));
+                actions.at(i)->setText("BBOX disabled");
+                QIcon greybox;
+                greybox.addFile(":/icons/greybox_16x16.png");
+                greybox.addFile(":/icons/greybox_22x22.png");
+                greybox.addFile(":/icons/greybox_32x32.png");
+                greybox.addFile(":/icons/greybox_48x48.png");
+                greybox.addFile(":/icons/greybox_64x64.png");
+                actions.at(i)->setIcon(greybox);
             }
         } else {
             setText("Bounding boxes computation was enabled");
 
-            while (actions.at(i)->text() != "Enable BBOX" && i < actions.size()) {
+            while (actions.at(i)->text() != "BBOX disabled" && i < actions.size()) {
                 i++;
             }
             if (i < actions.size()) {
-                actions.at(i)->setText("Disable BBOX");
-                actions.at(i)->setIcon(QIcon(":/icons/black_box.png"));
+                actions.at(i)->setText("BBOX enabled");
+                QIcon box;
+                box.addFile(":/icons/box_16x16.png");
+                box.addFile(":/icons/box_22x22.png");
+                box.addFile(":/icons/box_32x32.png");
+                box.addFile(":/icons/box_48x48.png");
+                box.addFile(":/icons/box_64x64.png");
+                actions.at(i)->setIcon(box);
             }
         }
 
@@ -513,15 +525,15 @@ namespace Kautham {
     /*! This function adds an action where do you like in GUI and asociates it with the QObject
             and the Slot passed throw the parameters
     */
-    bool GUI::setAction(WHERETYPE typ, string name, string shortcut, string iconame,
+    bool GUI::setAction(WHERETYPE typ, string name, string shortcut, QIcon icon,
                         QObject *receiver, const char *member){
         if (name.size()!= 0 ) {
             QAction *ac;
 
-            if (iconame.size() == 0) {
+            if (icon.isNull()) {
                 ac = new QAction(tr(name.c_str()), this);
             } else {
-                ac = new QAction(QIcon(iconame.c_str()), tr(name.c_str()), this);
+                ac = new QAction(icon, tr(name.c_str()), this);
             }
 
             if (shortcut.size() != 0) ac->setShortcut(tr(shortcut.c_str()));
