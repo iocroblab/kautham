@@ -104,7 +104,7 @@ namespace Kautham {
     SoSeparator*        getRootTab(string title);
     //bool              setTable(string s);
     bool                setAction(WHERETYPE typ, QAction *ac);
-    bool                setAction(WHERETYPE typ, string name, string shortcut, string iconame,
+    bool                setAction(WHERETYPE typ, string name, string shortcut, QIcon icon,
                         QObject* receiver, const char *member);
 
     //! Sets menuRecentFiles as a submenu from menuBar

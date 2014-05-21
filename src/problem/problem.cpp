@@ -92,16 +92,6 @@ namespace Kautham {
           _wspace->addDirCase(dir);
       }
 
-      _currentRobControls.clear();
-      _currentRobControls.resize(_wspace->getNumRobControls());
-      for(int i = 0; i<_currentRobControls.size(); i++)
-          _currentRobControls[i] = (KthReal)0.0;
-
-      _currentObsControls.clear();
-      _currentObsControls.resize(_wspace->getNumObsControls());
-      for(int i = 0; i<_currentObsControls.size(); i++)
-          _currentObsControls[i] = (KthReal)0.0;
-
       setlocale (LC_NUMERIC, old);
       return true;
   }
@@ -868,6 +858,10 @@ namespace Kautham {
                       }
                       _wspace->setNumRobControls(numControls);
                       _wspace->setRobControlsName(controlsName);
+                      _currentRobControls.clear();
+                      _currentRobControls.resize(_wspace->getNumRobControls());
+                      for(int i = 0; i<_currentRobControls.size(); i++)
+                          _currentRobControls[i] = (KthReal)0.0;
 
                       //Creating the mapping and offset Matrices between controls
                       //and DOF parameters and initializing them.
@@ -1109,6 +1103,10 @@ namespace Kautham {
               }
           }
           _wspace->setNumRobControls(numControls);
+          _currentRobControls.clear();
+          _currentRobControls.resize(_wspace->getNumRobControls());
+          for(int i = 0; i<_currentRobControls.size(); i++)
+              _currentRobControls[i] = (KthReal)0.0;
 
           KthReal ***mapMatrix;
           KthReal **offMatrix;
@@ -1294,6 +1292,10 @@ namespace Kautham {
                   }
                   _wspace->setNumObsControls(numControls);
                   _wspace->setObsControlsName(controlsName);
+                  _currentObsControls.clear();
+                  _currentObsControls.resize(_wspace->getNumObsControls());
+                  for(int i = 0; i<_currentObsControls.size(); i++)
+                      _currentObsControls[i] = (KthReal)0.0;
 
                   //Creating the mapping and offset Matrices between controls
                   //and DOF parameters and initializing them.

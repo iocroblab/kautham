@@ -89,8 +89,7 @@ public:
         sizePolicy.setHeightForWidth(kauthamMain->sizePolicy().hasHeightForWidth());
         kauthamMain->setSizePolicy(sizePolicy);
         kauthamMain->setMinimumSize(QSize(850, 600));
-        QIcon icon;
-        icon.addFile(QString::fromUtf8(":/icons/kautham.png"), QSize(), QIcon::Normal, QIcon::Off);
+        QIcon icon(QString::fromUtf8(":/icons/logo.svg"));
         kauthamMain->setWindowIcon(icon);
         kauthamMain->setToolButtonStyle(Qt::ToolButtonIconOnly);
         kauthamMain->setDockNestingEnabled(false);
@@ -167,7 +166,7 @@ public:
         toolBar = new QToolBar(kauthamMain);
         toolBar->setObjectName(QString::fromUtf8("toolBar"));
         toolBar->setOrientation(Qt::Horizontal);
-        toolBar->setIconSize(QSize(40,40));
+        toolBar->setIconSize(QSize(48,48));
         kauthamMain->addToolBar(Qt::TopToolBarArea, toolBar);
         outputWindow = new QDockWidget(kauthamMain);
         outputWindow->setObjectName(QString::fromUtf8("outputWindow"));
