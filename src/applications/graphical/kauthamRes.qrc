@@ -5,7 +5,6 @@
         <file>icons/noconnect.xpm</file>
         <file>icons/logo_ioc.png</file>
         <file>icons/logo_eci.png</file>
-        <file>icons/kautham.png</file>
         <file>icons/phantom_off.xpm</file>
         <file>icons/kth.png</file>
         <file>icons/phantom_on.xpm</file>
@@ -13,7 +12,6 @@
         <file>icons/prm.xpm</file>
         <file>icons/rand.xpm</file>
         <file>icons/robot.xpm</file>
-        <file>icons/saveas.xpm</file>
         <file>icons/vreta.xpm</file>
         <file>icons/vrphi.xpm</file>
         <file>icons/vrtheta.xpm</file>
@@ -29,33 +27,72 @@
         <file>icons/vsz.xpm</file>
         <file>icons/vszoom.xpm</file>
         <file>kautham.html</file>
-        <file>icons/add.png</file>
-        <file>icons/remove.png</file>
-        <file>icons/down.png</file>
-        <file>icons/up.png</file>
-        <file>icons/clear.png</file>
-        <file>icons/default_folder.png</file>
-        <file>icons/exit.png</file>
-        <file>icons/black_box.png</file>
-        <file>icons/green_box.png</file>
-        <file>icons/palette.png</file>
-        <file>icons/close_file.png</file>
-        <file>icons/open_file.png</file>
-        <file>icons/save_file.png</file>
-        <file>icons/save_file_as.png</file>
         <file>icons/animate.xpm</file>
-        <file>icons/blackbox.xpm</file>
-        <file>icons/close.xpm</file>
         <file>icons/clrobot.xpm</file>
         <file>icons/determ.xpm</file>
-        <file>icons/fileopen.xpm</file>
-        <file>icons/filesave.xpm</file>
-        <file>icons/logo.png</file>
-        <file>icons/search.xpm</file>
         <file>icons/robot.png</file>
         <file>icons/home.png</file>
         <file>icons/obstacle.png</file>
         <file>icons/scale.png</file>
         <file>icons/link.png</file>
+        <file>icons/logo.svg</file>
+        <file>icons/add_16x16.png</file>
+        <file>icons/add_22x22.png</file>
+        <file>icons/box_16x16.png</file>
+        <file>icons/box_22x22.png</file>
+        <file>icons/box_32x32.png</file>
+        <file>icons/box_48x48.png</file>
+        <file>icons/box_64x64.png</file>
+        <file>icons/colors_16x16.png</file>
+        <file>icons/colors_22x22.png</file>
+        <file>icons/colors_32x32.png</file>
+        <file>icons/colors_48x48.png</file>
+        <file>icons/colors_64x64.png</file>
+        <file>icons/down_16x16.png</file>
+        <file>icons/down_22x22.png</file>
+        <file>icons/exit_16x16.png</file>
+        <file>icons/exit_22x22.png</file>
+        <file>icons/exit_32x32.png</file>
+        <file>icons/exit_48x48.png</file>
+        <file>icons/exit_64x64.png</file>
+        <file>icons/fileclose_16x16.png</file>
+        <file>icons/fileclose_22x22.png</file>
+        <file>icons/fileclose_32x32.png</file>
+        <file>icons/fileclose_48x48.png</file>
+        <file>icons/fileclose_64x64.png</file>
+        <file>icons/filefind_16x16.png</file>
+        <file>icons/filefind_22x22.png</file>
+        <file>icons/filefind_32x32.png</file>
+        <file>icons/filefind_48x48.png</file>
+        <file>icons/filefind_64x64.png</file>
+        <file>icons/fileopen_16x16.png</file>
+        <file>icons/fileopen_22x22.png</file>
+        <file>icons/fileopen_32x32.png</file>
+        <file>icons/fileopen_48x48.png</file>
+        <file>icons/fileopen_64x64.png</file>
+        <file>icons/filesave_16x16.png</file>
+        <file>icons/filesave_22x22.png</file>
+        <file>icons/filesave_32x32.png</file>
+        <file>icons/filesave_48x48.png</file>
+        <file>icons/filesave_64x64.png</file>
+        <file>icons/filesaveas_16x16.png</file>
+        <file>icons/filesaveas_22x22.png</file>
+        <file>icons/filesaveas_32x32.png</file>
+        <file>icons/filesaveas_48x48.png</file>
+        <file>icons/filesaveas_64x64.png</file>
+        <file>icons/greybox_16x16.png</file>
+        <file>icons/greybox_22x22.png</file>
+        <file>icons/greybox_32x32.png</file>
+        <file>icons/greybox_48x48.png</file>
+        <file>icons/greybox_64x64.png</file>
+        <file>icons/remove_16x16.png</file>
+        <file>icons/remove_22x22.png</file>
+        <file>icons/trashcan_16x16.png</file>
+        <file>icons/trashcan_22x22.png</file>
+        <file>icons/trashcan_32x32.png</file>
+        <file>icons/trashcan_48x48.png</file>
+        <file>icons/trashcan_64x64.png</file>
+        <file>icons/up_16x16.png</file>
+        <file>icons/up_22x22.png</file>
     </qresource>
 </RCC>

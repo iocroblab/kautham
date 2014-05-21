@@ -281,7 +281,7 @@ namespace Kautham{
                  << " the distance check is: " << p.c_str();
             writeGUI(sstr.str());
       } else {
-            writeGUI("There are no obstacles to test distance with.")
+            writeGUI("There are no obstacles to test distance with.");
       }
     }else
       writeGUI("First create a sample");

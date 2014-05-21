@@ -84,13 +84,43 @@ Application::~Application() {
 }
 
 void Application::setActions(){
-    mainWindow->setAction(FILETOOL,"&Open","CTRL+O",":/icons/open_file.png",this,SLOT(openFile()));
-    mainWindow->setAction(FILETOOL,"&Save","CTRL+S",":/icons/save_file.png",this,SLOT(saveFile()));
-    mainWindow->setAction(FILETOOL,"Save &as","CTRL+A",":/icons/save_file_as.png",this,SLOT(saveAsFile()));
+    QIcon fileopen;
+    fileopen.addFile(":/icons/fileopen_16x16.png");
+    fileopen.addFile(":/icons/fileopen_22x22.png");
+    fileopen.addFile(":/icons/fileopen_32x32.png");
+    fileopen.addFile(":/icons/fileopen_48x48.png");
+    fileopen.addFile(":/icons/fileopen_64x64.png");
+    mainWindow->setAction(FILETOOL,"&Open","CTRL+O",fileopen,this,SLOT(openFile()));
+    
+    QIcon filesave;
+    filesave.addFile(":/icons/filesave_16x16.png");
+    filesave.addFile(":/icons/filesave_22x22.png");
+    filesave.addFile(":/icons/filesave_32x32.png");
+    filesave.addFile(":/icons/filesave_48x48.png");
+    filesave.addFile(":/icons/filesave_64x64.png");
+    mainWindow->setAction(FILETOOL,"&Save","CTRL+S",filesave,this,SLOT(saveFile()));
+    
+    QIcon filesaveas;
+    filesaveas.addFile(":/icons/filesaveas_16x16.png");
+    filesaveas.addFile(":/icons/filesaveas_22x22.png");
+    filesaveas.addFile(":/icons/filesaveas_32x32.png");
+    filesaveas.addFile(":/icons/filesaveas_48x48.png");
+    filesaveas.addFile(":/icons/filesaveas_64x64.png");
+    mainWindow->setAction(FILETOOL,"Save &as","CTRL+A",filesaveas,this,SLOT(saveAsFile()));
+    
     mainWindow->addSeparator(FILETOOL);
+    
     setRecentFilesAction();
+    
     mainWindow->addSeparator(FILEMENU);
-    mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",":/icons/close_file.png",this,SLOT(closeProblem()));
+    
+    QIcon fileclose;
+    fileclose.addFile(":/icons/fileclose_16x16.png");
+    fileclose.addFile(":/icons/fileclose_22x22.png");
+    fileclose.addFile(":/icons/fileclose_32x32.png");
+    fileclose.addFile(":/icons/fileclose_48x48.png");
+    fileclose.addFile(":/icons/fileclose_64x64.png");
+    mainWindow->setAction(FILETOOL,"&Close","CTRL+Q",fileclose,this,SLOT(closeProblem()));
 
     mainWindow->addSeparator(TOOLBAR);
 
@@ -103,20 +133,51 @@ void Application::setActions(){
     //mainWindow->addSeparator(ACTIONMENU);
     //mainWindow->addSeparator(TOOLBAR);
 
-    mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G",
-                          ":/icons/palette.png", mainWindow, SLOT(changeActiveBackground()));
+    QIcon colors;
+    colors.addFile(":/icons/colors_16x16.png");
+    colors.addFile(":/icons/colors_22x22.png");
+    colors.addFile(":/icons/colors_32x32.png");
+    colors.addFile(":/icons/colors_48x48.png");
+    colors.addFile(":/icons/colors_64x64.png");
+    mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G", colors, mainWindow, SLOT(changeActiveBackground()));
+    
 #if  defined(KAUTHAM_USE_ARMADILLO)
     if (settings->value("use_BBOX","false").toBool()) {
-        mainWindow->setAction(ACTIONTOOL,"Disable BBOX","",":/icons/black_box.png", mainWindow, SLOT(toogleBBOXflag()));
+        QIcon box;
+        box.addFile(":/icons/box_16x16.png");
+        box.addFile(":/icons/box_22x22.png");
+        box.addFile(":/icons/box_32x32.png");
+        box.addFile(":/icons/box_48x48.png");
+        box.addFile(":/icons/box_64x64.png");
+        mainWindow->setAction(ACTIONTOOL,"BBOX enabled","",box, mainWindow, SLOT(toogleBBOXflag()));
     } else {
-        mainWindow->setAction(ACTIONTOOL,"Enable BBOX","",":/icons/green_box.png", mainWindow, SLOT(toogleBBOXflag()));
+        QIcon greybox;
+        greybox.addFile(":/icons/greybox_16x16.png");
+        greybox.addFile(":/icons/greybox_22x22.png");
+        greybox.addFile(":/icons/greybox_32x32.png");
+        greybox.addFile(":/icons/greybox_48x48.png");
+        greybox.addFile(":/icons/greybox_64x64.png");
+        mainWindow->setAction(ACTIONTOOL,"BBOX disabled","",greybox, mainWindow, SLOT(toogleBBOXflag()));
     }
 #endif
-    mainWindow->setAction(ACTIONTOOL,"Default Path","",":/icons/default_folder.png", mainWindow, SLOT(setModelsDefaultPath()));
+    
+    QIcon filefind;
+    filefind.addFile(":/icons/filefind_16x16.png");
+    filefind.addFile(":/icons/filefind_22x22.png");
+    filefind.addFile(":/icons/filefind_32x32.png");
+    filefind.addFile(":/icons/filefind_48x48.png");
+    filefind.addFile(":/icons/box_64x64.png");
+    mainWindow->setAction(ACTIONTOOL,"Default Path","",filefind, mainWindow, SLOT(setModelsDefaultPath()));
 
     mainWindow->addSeparator(TOOLBAR);
 
-    mainWindow->setAction(FILETOOL,"E&xit","CTRL+X",":/icons/exit.png",this,SLOT(quit()));
+    QIcon exit;
+    exit.addFile(":/icons/exit_16x16.png");
+    exit.addFile(":/icons/exit_22x22.png");
+    exit.addFile(":/icons/exit_32x32.png");
+    exit.addFile(":/icons/exit_48x48.png");
+    exit.addFile(":/icons/exit_64x64.png");
+    mainWindow->setAction(FILETOOL,"E&xit","CTRL+X",exit,this,SLOT(quit()));
 }
 
 void Application::setRecentFilesAction() {
@@ -137,7 +198,7 @@ void Application::setRecentFilesAction() {
         }
         connect(signalMapper,SIGNAL(mapped(QString)),this,SLOT(openFile(QString)));
         mainWindow->addSeparator(RECENTFILESMENU);
-        mainWindow->setAction(RECENTFILESMENU,"Clear Menu","","",this,SLOT(clearRecentFiles()));
+        mainWindow->setAction(RECENTFILESMENU,"Clear Menu","",QIcon(),this,SLOT(clearRecentFiles()));
     } else {
         mainWindow->showRecentFiles(false);
     }
