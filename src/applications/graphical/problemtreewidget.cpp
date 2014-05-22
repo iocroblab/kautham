@@ -34,13 +34,23 @@ namespace Kautham {
         problemTree->setIconSize(QSize(20,20));
         problemTree->setEnabled(true);
         problemTree->header()->hide();
+        problemTree->setColumnCount(2);
+        connect(problemTree,SIGNAL(itemCollapsed(QTreeWidgetItem *)),
+                this,SLOT(resizeProblemTree()));
+        connect(problemTree,SIGNAL(itemExpanded(QTreeWidgetItem *)),
+                this,SLOT(resizeProblemTree()));
+        connect(problemTree,SIGNAL(currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)),
+                this,SLOT(updateInfoTable(QTreeWidgetItem *)));
         addWidget(problemTree);
 
-        QTreeWidgetItem *___qtreewidgetitem = problemTree->headerItem();
-        ___qtreewidgetitem->setText(1, QApplication::translate("kauthamMain", "Values", 0, QApplication::UnicodeUTF8));
-        ___qtreewidgetitem->setText(0, QApplication::translate("kauthamMain", "Attributes", 0, QApplication::UnicodeUTF8));
-
         infoTable = new QTableWidget();
+        infoTable->setObjectName(QString::fromUtf8("infoTable"));
+        infoTable->horizontalHeader()->setStretchLastSection(true);
+        infoTable->horizontalHeader()->hide();
+        infoTable->verticalHeader()->setStretchLastSection(true);
+        infoTable->verticalHeader()->hide();
+        infoTable->setIconSize(QSize(20,20));
+        infoTable->setShowGrid(false);
         addWidget(infoTable);
 
         workspace = NULL;
@@ -57,9 +67,10 @@ namespace Kautham {
         if (workSpace == NULL) return false;
 
         workspace = workSpace;
-        problemTree->clear();
-        infoTable->clear();
 
+        showDefaultTable();
+
+        problemTree->clear();
         for (uint i = 0; i < workspace->getNumRobots(); i++) {
             if (addRobot(workspace->getRobot(i),false) == NULL) {
                 problemTree->clear();
@@ -74,12 +85,54 @@ namespace Kautham {
             }
         }
 
-        problemTree->expandAll();
-        problemTree->resizeColumnToContents(0);
-        problemTree->resizeColumnToContents(1);
         problemTree->collapseAll();
+        resizeProblemTree();
 
         return true;
+    }
+
+
+    void ProblemTreeWidget::resizeProblemTree() {
+        problemTree->resizeColumnToContents(0);
+        problemTree->resizeColumnToContents(1);
+    }
+
+
+    void ProblemTreeWidget::updateInfoTable(QTreeWidgetItem *item) {
+        showDefaultTable();
+
+        if (item != NULL) {
+            QTreeWidgetItem *parentItem = item->parent();
+            if (parentItem != NULL) {
+                if (parentItem->text(0) == "Links") {
+                    if (linkMap.contains(item)) {
+                        Link *link = linkMap.value(item);
+
+                        QTableWidgetItem *item;
+                        item = new QTableWidgetItem(linkIcon,link->getName().c_str());
+                        item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+                        infoTable->setColumnCount(1);
+                        infoTable->setHorizontalHeaderItem(0,item);
+                        infoTable->horizontalHeader()->show();
+
+                        QString text;
+                        infoTable->setRowCount(2);
+
+                        text = "Lower Limit: ";
+                        text.append(QString::number(*link->getLimits(true)));
+                        item = new QTableWidgetItem(text);
+                        infoTable->setItem(0,0,item);
+
+                        text = "Higher Limit: ";
+                        text.append(QString::number(*link->getLimits(false)));
+                        item = new QTableWidgetItem(text);
+                        infoTable->setItem(1,0,item);
+
+                        infoTable->resizeRowsToContents();
+                    }
+                }
+            }
+        }
     }
 
 
@@ -193,7 +246,24 @@ namespace Kautham {
         item->setIcon(0,linkIcon);
         item->setText(1,link->getName().c_str());
         item->setToolTip(1,"Name");
+        linkMap.insert(item,link);
 
         return item;
+    }
+
+    void ProblemTreeWidget::showDefaultTable() {
+        for (uint i = 0; i < infoTable->rowCount(); ++i) {
+            for (uint j = 0; j < infoTable->columnCount(); ++j) {
+                delete infoTable->takeItem(i,j);
+            }
+        }
+
+        infoTable->clear();
+        infoTable->horizontalHeader()->hide();
+        infoTable->setColumnCount(1);
+        infoTable->setRowCount(1);
+        QTableWidgetItem *defaultItem = new QTableWidgetItem("Select an item from the tree to see more information");
+        defaultItem->setTextAlignment(Qt::AlignCenter);
+        infoTable->setItem(0,0,defaultItem);
     }
 }
