@@ -56,8 +56,6 @@ namespace Kautham {
     bool ProblemTreeWidget::setTree(WorkSpace *workSpace) {
         if (workSpace == NULL) return false;
 
-        if (workspace != NULL && workspace != workSpace) delete workspace;
-
         workspace = workSpace;
         problemTree->clear();
         infoTable->clear();
