@@ -113,7 +113,7 @@ int main(int argc, char* argv[]){
 
       }catch(...){
         cout << "Something is wrong with the problem. Please run the "
-          << "problem with the Kautham2 application al less once in order "
+          << "problem with the Kautham2 application at less once in order "
           << "to verify the correctness of the problem formulation.\n";
         return 1;
       }
@@ -159,7 +159,7 @@ int main(int argc, char* argv[]){
 #ifdef KAUTHAM_USE_MPI 
           tryTimes /= numProcs;
 #endif
-          cout << "The problem will be trying to solve " << tryTimes << " times.\n" ;
+          cout << "The problem will be tried to solve " << tryTimes << " times.\n" ;
           int badSol = 0;
           Problem* _problem = new Problem();
           stringstream ss;
@@ -294,7 +294,7 @@ int main(int argc, char* argv[]){
           delete _problem;
       }catch(...){
           cout << "Something is wrong with the problem. Please run the "
-               << "problem with the Kautham2 application al less once in order "
+               << "problem with the Kautham2 application at less once in order "
                << "to verify the correctness of the problem formulation.\n";
 #ifdef KAUTHAM_USE_MPI
           MPI_Finalize();
