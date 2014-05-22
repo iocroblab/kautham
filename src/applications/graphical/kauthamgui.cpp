@@ -42,7 +42,6 @@
 
 #define MAXRECENTFILES 5
 
-
 Application::Application() {
     settings = new QSettings("IOC","Kautham");
     Q_INIT_RESOURCE(kauthamRes);
@@ -488,16 +487,17 @@ bool Application::problemSetup(string problemFile){
 
 int main(int argc, char* argv[]){       
 
-    try{
+    try {
         QWidget *app = SoQt::init(argv[0]);//argc, argv,argv[0]);
         app->setVisible(false);
         Application kauthApp;
         SoQt::mainLoop();
-        return 0;
+    } catch(...) {
+        qDebug() << "Unexpected error in Kautham execution" << endl;
     }
-    catch(...){
-            std::cout <<"Unexpected error in Kautham initialization"<<endl;
-        }
+
+    return 0;
 }
+
 
 
