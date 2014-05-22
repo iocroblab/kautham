@@ -117,7 +117,7 @@ namespace Kautham {
                         QObject* receiver, const char *member);
     bool                addSeparator(WHERETYPE typ);
     bool                restart();
-    bool                addToProblemTree(Problem *problem);
+    bool                addToProblemTree(WorkSpace *workSpace);
     bool                addRobControlWidget(Problem* prob, vector<Kautham::DOFWidget *> robDOFWidgets);
     bool                addObsControlWidget(Problem* prob, vector<Kautham::DOFWidget *> obsDOFWidgets);
 
@@ -154,6 +154,7 @@ namespace Kautham {
     int			 		indexRobControlsTab;
     int			 		indexObsControlsTab;
     int                 indexPlannerTab;
+
   private:
     vector<Viewer>      viewers;
     bool                boolPlanVis;
