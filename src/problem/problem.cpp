@@ -555,6 +555,7 @@ namespace Kautham {
                   for (uint i = 0; i < path.size(); i++) {
                       details << "\t" << path.at(i) << endl;
                   }
+                  details << "\nPease, consider updating the Default Path List if necessary";
                   throw KthExcp(message, details.str());
               }
           }
