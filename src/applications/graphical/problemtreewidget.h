@@ -35,6 +35,10 @@ namespace Kautham {
                           QWidget *parent = 0);
         bool setTree(WorkSpace *workSpace);
 
+    private slots:
+        void resizeProblemTree();
+        void updateInfoTable(QTreeWidgetItem *item);
+
     private:
         QTreeWidgetItem *addRobot(Robot *robot, bool isObstacle);
         QTreeWidgetItem *addName(string name, bool isObstacle);
@@ -43,10 +47,12 @@ namespace Kautham {
         QTreeWidgetItem *addInvKin(InverseKinematic *invKin, QTreeWidgetItem *parentItem);
         QTreeWidgetItem *addLinks(Robot *robot, QTreeWidgetItem *parentItem);
         QTreeWidgetItem *addLink(Link*link, QTreeWidgetItem *parentItem);
+        void showDefaultTable();
 
         QTreeWidget *problemTree;
         QTableWidget *infoTable;
         WorkSpace  *workspace;
+        QMap <QTreeWidgetItem *, Link *> linkMap;
         QIcon robotIcon;
         QIcon obstacleIcon;
         QIcon scaleIcon;
