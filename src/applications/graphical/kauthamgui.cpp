@@ -236,7 +236,7 @@ void Application::openFile(QString problemFile) {
                     "Choose a file to open",
                     last_path,
                     "All configuration files (*.xml)");
-        if(!path.isEmpty()) {
+        if (!path.isEmpty()) {
             problemFile = path.toUtf8().constData();
         }
     }
@@ -246,7 +246,7 @@ void Application::openFile(QString problemFile) {
             appState = INITIAL;
         }
         mainWindow->setText("Kautham is opening a problem file...");
-        QString dir= problemFile;
+        QString dir = problemFile;
         dir.truncate(dir.lastIndexOf("/"));
         if (problemSetup(problemFile.toStdString())) {
             mainWindow->showProblemAppearance();
@@ -271,39 +271,40 @@ void Application::openFile(QString problemFile) {
 }
 
 void Application::saveFile(){
-    mainWindow->setCursor(QCursor(Qt::WaitCursor));
     if( appState == PROBLEMLOADED ){
-        if( _problem->saveToFile() )
-            mainWindow->setText( "File saved successfully" );
-        else
-            mainWindow->setText( "Sorry but the file is not saved" );
+        mainWindow->setCursor(QCursor(Qt::WaitCursor));
+        if( _problem->saveToFile() ) {
+            mainWindow->setText( "File was saved successfully" );
+        } else {
+            mainWindow->setText( "Sorry but the file was not saved" );
+        }
+        mainWindow->setCursor(QCursor(Qt::ArrowCursor));
     }
-    mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
 
 void Application::saveAsFile(){
-    QString path,dir;
-    QDir workDir;
-    mainWindow->setCursor(QCursor(Qt::WaitCursor));
-    switch(appState){
-    case PROBLEMLOADED:
-        path = QFileDialog::getSaveFileName(
+    if (appState == PROBLEMLOADED) {
+        mainWindow->setCursor(QCursor(Qt::WaitCursor));
+        QDir workDir;
+        QString last_path = settings->value("last_path",workDir.absolutePath()).toString();
+        QString path = QFileDialog::getSaveFileName(
                     mainWindow,
                     "Save as ...",
-                    workDir.absolutePath(),
+                    last_path,
                     "All configuration files (*.xml)");
-        if(!path.isEmpty()){
-            mainWindow->setText( "Kautham is saving a problem file: " );
+        if (!path.isEmpty()) {
+            mainWindow->setText( "Kautham is saving the problem to the file: " );
             mainWindow->setText( path.toUtf8().constData() );
-            dir = path;
-            dir.truncate(dir.lastIndexOf("/"));
-            if( _problem->saveToFile( path.toUtf8().constData() ) )
-                mainWindow->setText( "File saved successfully" );
-            else
-                mainWindow->setText( "Sorry but the file is not saved" );
+            if( _problem->saveToFile( path.toUtf8().constData() ) ) {
+                mainWindow->setText( "File was saved successfully" );
+                last_path = path;
+                last_path.truncate(last_path.lastIndexOf("/"));
+                settings->setValue("last_path",last_path);
+            } else
+                mainWindow->setText( "Sorry but the file was not saved" );
         }
+        mainWindow->setCursor(QCursor(Qt::ArrowCursor));
     }
-    mainWindow->setCursor(QCursor(Qt::ArrowCursor));
 }
 
 
