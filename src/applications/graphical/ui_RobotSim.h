@@ -44,6 +44,9 @@
 #include <QtGui/QToolBar>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QWidget>
+#include <QtGui/QLabel>
+
+#include "problemtreewidget.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -64,7 +67,7 @@ public:
     QTabWidget      *propertiesTab;
     QTabWidget      *DOFsTab;
     QTabWidget      *viewsTab;
-    QTreeWidget     *problemTree;
+    ProblemTreeWidget     *problemTree;
     QTextBrowser    *textBrowser;
     QMenuBar        *menubar;
     QMenu           *menuActions;
@@ -114,9 +117,8 @@ public:
         probTab->setObjectName(QString::fromUtf8("probTab"));
         gridLayout = new QGridLayout(probTab);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        problemTree = new QTreeWidget(probTab);
+        problemTree = new ProblemTreeWidget(Qt::Vertical);
         problemTree->setObjectName(QString::fromUtf8("problemTree"));
-        problemTree->setIconSize(QSize(20,20));
         gridLayout->addWidget(problemTree, 0, 0, 1, 1);
         propertiesTab->addTab(probTab, QString());
         splitter->addWidget(propertiesTab);
@@ -215,9 +217,6 @@ public:
 #ifndef QT_NO_ACCESSIBILITY
         propertiesTab->setAccessibleName(QApplication::translate("kauthamMain", "l", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_ACCESSIBILITY
-        QTreeWidgetItem *___qtreewidgetitem = problemTree->headerItem();
-        ___qtreewidgetitem->setText(1, QApplication::translate("kauthamMain", "Values", 0, QApplication::UnicodeUTF8));
-        ___qtreewidgetitem->setText(0, QApplication::translate("kauthamMain", "Attributes", 0, QApplication::UnicodeUTF8));
         propertiesTab->setTabText(propertiesTab->indexOf(probTab), QApplication::translate("kauthamMain", "Problem", 0, QApplication::UnicodeUTF8));
         textBrowser->setHtml(QApplication::translate("kauthamMain", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
