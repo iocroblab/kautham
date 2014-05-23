@@ -36,7 +36,6 @@ namespace Kautham {
         bool setTree(WorkSpace *workSpace);
 
     private slots:
-        void resizeProblemTree();
         void updateInfoTable(QTreeWidgetItem *currentItem);
 
     private:
