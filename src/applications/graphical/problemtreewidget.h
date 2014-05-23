@@ -37,17 +37,22 @@ namespace Kautham {
 
     private slots:
         void resizeProblemTree();
-        void updateInfoTable(QTreeWidgetItem *item);
+        void updateInfoTable(QTreeWidgetItem *currentItem);
 
     private:
-        QTreeWidgetItem *addRobot(Robot *robot, bool isObstacle);
-        QTreeWidgetItem *addName(string name, bool isObstacle);
-        QTreeWidgetItem *addScale(KthReal scale, QTreeWidgetItem *parentItem);
-        QTreeWidgetItem *addHome(SE3Conf homeConf, QTreeWidgetItem *parentItem);
-        QTreeWidgetItem *addInvKin(InverseKinematic *invKin, QTreeWidgetItem *parentItem);
-        QTreeWidgetItem *addLinks(Robot *robot, QTreeWidgetItem *parentItem);
-        QTreeWidgetItem *addLink(Link*link, QTreeWidgetItem *parentItem);
+        QTreeWidgetItem *addRobot2Tree(Robot *robot, bool isObstacle);
+        QTreeWidgetItem *addName2Tree(string name, bool isObstacle);
+        QTreeWidgetItem *addScale2Tree(KthReal scale, QTreeWidgetItem *parentItem);
+        QTreeWidgetItem *addHome2Tree(SE3Conf homeConf, QTreeWidgetItem *parentItem);
+        QTreeWidgetItem *addInvKin2Tree(InverseKinematic *invKin, QTreeWidgetItem *parentItem);
+        QTreeWidgetItem *addLinks2Tree(Robot *robot, QTreeWidgetItem *parentItem);
+        QTreeWidgetItem *addLink2Tree(Link*link, QTreeWidgetItem *parentItem);
         void showDefaultTable();
+        void clearTable();
+        void addBaseDOFs2Table(Robot *robot);
+        void addLinkLimits2Table(Link *link);
+        void addParent2Table(Link *parent);
+        void addChildren2Table(Link *link);
 
         QTreeWidget *problemTree;
         QTableWidget *infoTable;
