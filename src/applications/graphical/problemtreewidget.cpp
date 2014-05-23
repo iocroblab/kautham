@@ -35,6 +35,7 @@ namespace Kautham {
         problemTree->setEnabled(true);
         problemTree->header()->hide();
         problemTree->setColumnCount(2);
+        //problemTree->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
         connect(problemTree,SIGNAL(itemCollapsed(QTreeWidgetItem *)),
                 this,SLOT(resizeProblemTree()));
         connect(problemTree,SIGNAL(itemExpanded(QTreeWidgetItem *)),
@@ -47,11 +48,12 @@ namespace Kautham {
         infoTable->setObjectName(QString::fromUtf8("infoTable"));
         infoTable->horizontalHeader()->setStretchLastSection(true);
         infoTable->horizontalHeader()->hide();
-        infoTable->verticalHeader()->setStretchLastSection(true);
         infoTable->verticalHeader()->hide();
         infoTable->setIconSize(QSize(20,20));
         infoTable->setShowGrid(false);
         addWidget(infoTable);
+        //infoTable->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+        //infoTable->resize(infoTable->width(),90);
 
         workspace = NULL;
         robotIcon.addFile(":/icons/robot.png");
@@ -67,8 +69,6 @@ namespace Kautham {
         if (workSpace == NULL) return false;
 
         workspace = workSpace;
-
-        showDefaultTable();
 
         problemTree->clear();
         for (uint i = 0; i < workspace->getNumRobots(); i++) {
@@ -87,6 +87,11 @@ namespace Kautham {
 
         problemTree->collapseAll();
         resizeProblemTree();
+
+        showDefaultTable();
+        int height = problemTree->height()+infoTable->height()-90;
+        problemTree->resize(problemTree->width(),height);
+        infoTable->resize(infoTable->width(),90);
 
         return true;
     }
@@ -111,6 +116,7 @@ namespace Kautham {
                         QTableWidgetItem *item;
                         item = new QTableWidgetItem(linkIcon,link->getName().c_str());
                         item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+                        item->setFlags(Qt::ItemIsEnabled);
                         infoTable->setColumnCount(1);
                         infoTable->setHorizontalHeaderItem(0,item);
                         infoTable->horizontalHeader()->show();
@@ -118,16 +124,63 @@ namespace Kautham {
                         QString text;
                         infoTable->setRowCount(2);
 
-                        text = "Lower Limit: ";
+                        text = "Lower limit ";
                         text.append(QString::number(*link->getLimits(true)));
                         item = new QTableWidgetItem(text);
+                        item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+                        item->setFlags(Qt::ItemIsEnabled);
                         infoTable->setItem(0,0,item);
 
-                        text = "Higher Limit: ";
+                        text = "Higher limit ";
                         text.append(QString::number(*link->getLimits(false)));
                         item = new QTableWidgetItem(text);
+                        item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+                        item->setFlags(Qt::ItemIsEnabled);
                         infoTable->setItem(1,0,item);
 
+                        Link * tmpLink = link->getParent();
+                        if (tmpLink == NULL) {
+
+                        } else {
+                            infoTable->setRowCount(infoTable->rowCount()+1);
+                            text = "Parent link ";
+                            text.append(tmpLink->getName().c_str());
+                            item = new QTableWidgetItem(text);
+                            item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+                            item->setFlags(Qt::ItemIsEnabled);
+                            infoTable->setItem(2,0,item);
+                        }
+
+                        int numChilds = link->numChilds();
+                        if (numChilds > 0) {
+                            uint rows = infoTable->rowCount();
+                            if (numChilds == 1) {
+                                infoTable->setRowCount(rows+1);
+                                text = "Children link ";
+                                text.append(link->getChild(0)->getName().c_str());
+                                item = new QTableWidgetItem(text);
+                                item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+                                item->setFlags(Qt::ItemIsEnabled);
+                                infoTable->setItem(rows,0,item);
+                            } else {
+                                infoTable->setRowCount(rows+1+numChilds);
+                                item = new QTableWidgetItem("Children links");
+                                item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+                                item->setFlags(Qt::ItemIsEnabled);
+                                infoTable->setItem(rows,0,item);
+
+                                ++rows;
+                                for (uint i = 0; i < link->numChilds(); ++i) {
+                                    item = new QTableWidgetItem(link->getChild(i)->getName().c_str());
+                                    item->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
+                                    item->setFlags(Qt::ItemIsEnabled);
+                                    infoTable->setItem(rows+i,0,item);
+                                }
+                            }
+
+                        }
+
+                        infoTable->verticalHeader()->setStretchLastSection(false);
                         infoTable->resizeRowsToContents();
                     }
                 }
@@ -255,15 +308,19 @@ namespace Kautham {
         for (uint i = 0; i < infoTable->rowCount(); ++i) {
             for (uint j = 0; j < infoTable->columnCount(); ++j) {
                 delete infoTable->takeItem(i,j);
+                delete infoTable->takeHorizontalHeaderItem(j);
             }
+            delete infoTable->takeVerticalHeaderItem(i);
         }
 
         infoTable->clear();
-        infoTable->horizontalHeader()->hide();
         infoTable->setColumnCount(1);
         infoTable->setRowCount(1);
         QTableWidgetItem *defaultItem = new QTableWidgetItem("Select an item from the tree to see more information");
         defaultItem->setTextAlignment(Qt::AlignCenter);
+        defaultItem->setFlags(Qt::ItemIsEnabled);
+        infoTable->verticalHeader()->setStretchLastSection(true);
         infoTable->setItem(0,0,defaultItem);
+        infoTable->horizontalHeader()->hide();
     }
 }
