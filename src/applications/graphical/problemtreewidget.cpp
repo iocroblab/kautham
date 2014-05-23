@@ -35,7 +35,6 @@ namespace Kautham {
         problemTree->setEnabled(true);
         problemTree->header()->hide();
         problemTree->setColumnCount(2);
-        //problemTree->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
         connect(problemTree,SIGNAL(itemCollapsed(QTreeWidgetItem *)),
                 this,SLOT(resizeProblemTree()));
         connect(problemTree,SIGNAL(itemExpanded(QTreeWidgetItem *)),
@@ -52,8 +51,6 @@ namespace Kautham {
         infoTable->setIconSize(QSize(20,20));
         infoTable->setShowGrid(false);
         addWidget(infoTable);
-        //infoTable->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-        //infoTable->resize(infoTable->width(),90);
 
         workspace = NULL;
         robotIcon.addFile(":/icons/robot.png");
@@ -70,16 +67,18 @@ namespace Kautham {
 
         workspace = workSpace;
 
+        //robots
         problemTree->clear();
         for (uint i = 0; i < workspace->getNumRobots(); i++) {
-            if (addRobot(workspace->getRobot(i),false) == NULL) {
+            if (addRobot2Tree(workspace->getRobot(i),false) == NULL) {
                 problemTree->clear();
                 return false;
             }
         }
 
+        //obstacles
         for (uint i = 0; i < workspace->getNumObstacles(); i++) {
-            if (addRobot(workspace->getObstacle(i),true) == NULL) {
+            if (addRobot2Tree(workspace->getObstacle(i),true) == NULL) {
                 problemTree->clear();
                 return false;
             }
@@ -103,16 +102,16 @@ namespace Kautham {
     }
 
 
-    void ProblemTreeWidget::updateInfoTable(QTreeWidgetItem *item) {
-        showDefaultTable();
-
-        if (item != NULL) {
-            QTreeWidgetItem *parentItem = item->parent();
+    void ProblemTreeWidget::updateInfoTable(QTreeWidgetItem *currentItem) {
+        clearTable();
+        if (currentItem != NULL) {
+            QTreeWidgetItem *parentItem = currentItem->parent();
             if (parentItem != NULL) {
                 if (parentItem->text(0) == "Links") {
-                    if (linkMap.contains(item)) {
-                        Link *link = linkMap.value(item);
+                    if (linkMap.contains(currentItem)) {
+                        Link *link = linkMap.value(currentItem);
 
+                        //header
                         QTableWidgetItem *item;
                         item = new QTableWidgetItem(linkIcon,link->getName().c_str());
                         item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
@@ -121,93 +120,91 @@ namespace Kautham {
                         infoTable->setHorizontalHeaderItem(0,item);
                         infoTable->horizontalHeader()->show();
 
-                        QString text;
-                        infoTable->setRowCount(2);
-
-                        text = "Lower limit ";
-                        text.append(QString::number(*link->getLimits(true)));
-                        item = new QTableWidgetItem(text);
-                        item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-                        item->setFlags(Qt::ItemIsEnabled);
-                        infoTable->setItem(0,0,item);
-
-                        text = "Higher limit ";
-                        text.append(QString::number(*link->getLimits(false)));
-                        item = new QTableWidgetItem(text);
-                        item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-                        item->setFlags(Qt::ItemIsEnabled);
-                        infoTable->setItem(1,0,item);
-
-                        Link * tmpLink = link->getParent();
-                        if (tmpLink == NULL) {
-
-                        } else {
-                            infoTable->setRowCount(infoTable->rowCount()+1);
-                            text = "Parent link ";
-                            text.append(tmpLink->getName().c_str());
-                            item = new QTableWidgetItem(text);
-                            item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-                            item->setFlags(Qt::ItemIsEnabled);
-                            infoTable->setItem(2,0,item);
-                        }
-
-                        int numChilds = link->numChilds();
-                        if (numChilds > 0) {
-                            uint rows = infoTable->rowCount();
-                            if (numChilds == 1) {
-                                infoTable->setRowCount(rows+1);
-                                text = "Children link ";
-                                text.append(link->getChild(0)->getName().c_str());
-                                item = new QTableWidgetItem(text);
-                                item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-                                item->setFlags(Qt::ItemIsEnabled);
-                                infoTable->setItem(rows,0,item);
-                            } else {
-                                infoTable->setRowCount(rows+1+numChilds);
-                                item = new QTableWidgetItem("Children links");
-                                item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-                                item->setFlags(Qt::ItemIsEnabled);
-                                infoTable->setItem(rows,0,item);
-
-                                ++rows;
-                                for (uint i = 0; i < link->numChilds(); ++i) {
-                                    item = new QTableWidgetItem(link->getChild(i)->getName().c_str());
-                                    item->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
-                                    item->setFlags(Qt::ItemIsEnabled);
-                                    infoTable->setItem(rows+i,0,item);
+                        Link *parentLink = link->getParent();
+                        if (parentLink == NULL) {//base link
+                            //find robot
+                            string robotName = parentItem->parent()->text(1).toStdString();
+                            Robot *robot;
+                            uint i = 0;
+                            bool found = false;
+                            while (!found && i < workspace->getNumRobots()) {
+                                robot = workspace->getRobot(i);
+                                if (robot->getName() == robotName) {
+                                    found = true;
+                                } else {
+                                    ++i;
                                 }
                             }
 
+                            if (!found) {//it is an obstacle link
+                                i = 0;
+                                while (!found && i < workspace->getNumObstacles()) {
+                                    robot = workspace->getObstacle(i);
+                                    if (robot->getName() == robotName) {
+                                        found = true;
+                                    } else {
+                                        ++i;
+                                    }
+                                }
+                            }
+
+                            if (found) {
+                                //limits
+                                addBaseDOFs2Table(robot);
+                            }
+                        } else {//not base link
+                            infoTable->setRowCount(2);
+
+                            //limits
+                            addLinkLimits2Table(link);
+
+                            //parent
+                            addParent2Table(parentLink);
                         }
+
+                        //children
+                        addChildren2Table(link);
 
                         infoTable->verticalHeader()->setStretchLastSection(false);
                         infoTable->resizeRowsToContents();
+                    } else {
+                        showDefaultTable();
                     }
+                } else {
+                    showDefaultTable();
                 }
+            } else {
+                showDefaultTable();
             }
+        } else {
+            showDefaultTable();
         }
     }
 
 
-    QTreeWidgetItem *ProblemTreeWidget::addRobot(Robot *robot, bool isObstacle) {
+    QTreeWidgetItem *ProblemTreeWidget::addRobot2Tree(Robot *robot, bool isObstacle) {
         QTreeWidgetItem *item;
-
-        item = addName(robot->getName(),isObstacle);
+        //name
+        item = addName2Tree(robot->getName(),isObstacle);
         if (item == NULL) return NULL;
 
-        if (addScale(robot->getScale(),item) == NULL) return NULL;
+        //scale
+        if (addScale2Tree(robot->getScale(),item) == NULL) return NULL;
 
-        if (addHome(robot->getHomePos()->first,item) == NULL) return NULL;
+        //home
+        if (addHome2Tree(robot->getHomePos()->first,item) == NULL) return NULL;
 
-        addInvKin(robot->getIkine(),item);
+        //inverse kinematics
+        addInvKin2Tree(robot->getIkine(),item);//No need for a robot to have inverse kinematics
 
-        if (addLinks(robot,item) == NULL) return NULL;
+        //links
+        if (addLinks2Tree(robot,item) == NULL) return NULL;
 
         return item;
     }
 
 
-    QTreeWidgetItem *ProblemTreeWidget::addName(string name, bool isObstacle) {
+    QTreeWidgetItem *ProblemTreeWidget::addName2Tree(string name, bool isObstacle) {
         QTreeWidgetItem *item = new QTreeWidgetItem(problemTree);
         item->setToolTip(0,isObstacle?"Obstacle":"Robot");
         item->setIcon(0,isObstacle?obstacleIcon:robotIcon);
@@ -218,7 +215,7 @@ namespace Kautham {
     }
 
 
-    QTreeWidgetItem *ProblemTreeWidget::addScale(KthReal scale, QTreeWidgetItem *parentItem) {
+    QTreeWidgetItem *ProblemTreeWidget::addScale2Tree(KthReal scale, QTreeWidgetItem *parentItem) {
         QTreeWidgetItem *item = new QTreeWidgetItem(parentItem);
         item->setToolTip(0,"Scale");
         item->setIcon(0,scaleIcon);
@@ -228,7 +225,7 @@ namespace Kautham {
     }
 
 
-    QTreeWidgetItem *ProblemTreeWidget::addHome(SE3Conf homeConf, QTreeWidgetItem *parentItem) {
+    QTreeWidgetItem *ProblemTreeWidget::addHome2Tree(SE3Conf homeConf, QTreeWidgetItem *parentItem) {
         QTreeWidgetItem *item = new QTreeWidgetItem(parentItem);
         item->setToolTip(0,"Home");
         item->setIcon(0,homeIcon);
@@ -241,14 +238,6 @@ namespace Kautham {
             subItem = new QTreeWidgetItem(item);
             subItem->setText(0,homeLabels.at(i));
             subItem->setToolTip(0,"Position");
-            //Limits
-            /*low = robot->getLimits(i)[0];
-            high = robot->getLimits(i)[1];
-            if (low != high) {
-                tmp << " [" << low << ", " << high << "]";
-            } else {
-                tmp << " (fixed)";
-            }*/
             subItem->setText(1,QString::number(coord.at(i)));
             subItem->setToolTip(1,"milimeters");
         }
@@ -265,7 +254,7 @@ namespace Kautham {
     }
 
 
-    QTreeWidgetItem *ProblemTreeWidget::addInvKin(InverseKinematic *invKin, QTreeWidgetItem *parentItem) {
+    QTreeWidgetItem *ProblemTreeWidget::addInvKin2Tree(InverseKinematic *invKin, QTreeWidgetItem *parentItem) {
         if (invKin != NULL) {
             if (invKin->type() != UNIMPLEMENTED || invKin->type() != NOINVKIN) {
                 QTreeWidgetItem *item = new QTreeWidgetItem(parentItem);
@@ -282,18 +271,18 @@ namespace Kautham {
     }
 
 
-    QTreeWidgetItem *ProblemTreeWidget::addLinks(Robot *robot, QTreeWidgetItem *parentItem) {
+    QTreeWidgetItem *ProblemTreeWidget::addLinks2Tree(Robot *robot, QTreeWidgetItem *parentItem) {
         QTreeWidgetItem *item = new QTreeWidgetItem(parentItem);
         item->setText(0,"Links");
         for (uint i = 0; i < robot->getNumLinks(); i++) {
-            if (addLink(robot->getLink(i),item) == NULL) return NULL;
+            if (addLink2Tree(robot->getLink(i),item) == NULL) return NULL;
         }
 
         return item;
     }
 
 
-    QTreeWidgetItem *ProblemTreeWidget::addLink(Link *link, QTreeWidgetItem *parentItem) {
+    QTreeWidgetItem *ProblemTreeWidget::addLink2Tree(Link *link, QTreeWidgetItem *parentItem) {
         QTreeWidgetItem *item = new QTreeWidgetItem(parentItem);
         item->setToolTip(0,"Link");
         item->setIcon(0,linkIcon);
@@ -305,6 +294,21 @@ namespace Kautham {
     }
 
     void ProblemTreeWidget::showDefaultTable() {
+        clearTable();
+        infoTable->setColumnCount(1);
+        infoTable->setRowCount(1);
+        QString text = "Select an item from the tree to get more information ";
+        text.append("(At present, only implemented for links)");
+        QTableWidgetItem *defaultItem = new QTableWidgetItem(text);
+        defaultItem->setTextAlignment(Qt::AlignCenter);
+        defaultItem->setFlags(Qt::ItemIsEnabled);
+        infoTable->verticalHeader()->setStretchLastSection(true);
+        infoTable->setItem(0,0,defaultItem);
+        infoTable->horizontalHeader()->hide();
+    }
+
+
+    void ProblemTreeWidget::clearTable() {
         for (uint i = 0; i < infoTable->rowCount(); ++i) {
             for (uint j = 0; j < infoTable->columnCount(); ++j) {
                 delete infoTable->takeItem(i,j);
@@ -312,15 +316,100 @@ namespace Kautham {
             }
             delete infoTable->takeVerticalHeaderItem(i);
         }
-
         infoTable->clear();
-        infoTable->setColumnCount(1);
-        infoTable->setRowCount(1);
-        QTableWidgetItem *defaultItem = new QTableWidgetItem("Select an item from the tree to see more information");
-        defaultItem->setTextAlignment(Qt::AlignCenter);
-        defaultItem->setFlags(Qt::ItemIsEnabled);
-        infoTable->verticalHeader()->setStretchLastSection(true);
-        infoTable->setItem(0,0,defaultItem);
-        infoTable->horizontalHeader()->hide();
+    }
+
+
+    void ProblemTreeWidget::addBaseDOFs2Table(Robot *robot) {
+        infoTable->setRowCount(3);
+        float low, high;
+        QString text;
+        QTableWidgetItem *item;
+        for (uint i = 0; i < 3; ++i) {
+            text = homeLabels.at(i);
+            low = robot->getLimits(i)[0];
+            high = robot->getLimits(i)[1];
+            if (low == high) {//fixed
+                text.append(" is fixed");
+                item = new QTableWidgetItem(text);
+            } else {//movable
+                text.append(" limits = [");
+                text.append(QString::number(low));
+                text.append(", ");
+                text.append(QString::number(high));
+                text.append("]");
+                item = new QTableWidgetItem(text);
+                item->setToolTip("milimeters");
+            }
+            item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+            item->setFlags(Qt::ItemIsEnabled);
+            infoTable->setItem(i,0,item);
+        }
+    }
+
+
+    void ProblemTreeWidget::addLinkLimits2Table(Link *link) {
+        QString text;
+        QTableWidgetItem *item;
+        if (link->getMovable()) {
+            text = "Limits = [";
+            text.append(QString::number(*link->getLimits(true)));
+            text.append(", ");
+            text.append(QString::number(*link->getLimits(false)));
+            text.append("]");
+            item = new QTableWidgetItem(text);
+            item->setToolTip(link->getRotational()? "radians":"milimeters");
+        } else {
+            text = "Fixed";
+            item = new QTableWidgetItem(text);
+        }
+        item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+        item->setFlags(Qt::ItemIsEnabled);
+        infoTable->setItem(0,0,item);
+    }
+
+
+    void ProblemTreeWidget::addParent2Table(Link *parent) {
+        QString text = "Parent link: ";
+        text.append(parent->getName().c_str());
+        QTableWidgetItem *item = new QTableWidgetItem(text);
+        item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+        item->setFlags(Qt::ItemIsEnabled);
+        infoTable->setItem(1,0,item);
+    }
+
+
+    void ProblemTreeWidget::addChildren2Table(Link *link) {
+        QString text;
+        QTableWidgetItem *item;
+        int numChilds = link->numChilds();
+        if (numChilds > 0) {
+            uint rows = infoTable->rowCount();
+            if (numChilds == 1) {
+                infoTable->setRowCount(rows+1);
+                text = "Children link: ";
+                text.append(link->getChild(0)->getName().c_str());
+                item = new QTableWidgetItem(text);
+                item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+                item->setFlags(Qt::ItemIsEnabled);
+                infoTable->setItem(rows,0,item);
+            } else {
+                infoTable->setRowCount(rows+1+numChilds);
+                item = new QTableWidgetItem("Children links:");
+                item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+                item->setFlags(Qt::ItemIsEnabled);
+                infoTable->setItem(rows,0,item);
+
+                ++rows;
+                for (uint i = 0; i < link->numChilds(); ++i) {
+                    text = "\t";
+                    text.append(link->getChild(i)->getName().c_str());
+                    item = new QTableWidgetItem(text);
+                    item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+                    item->setFlags(Qt::ItemIsEnabled);
+                    infoTable->setItem(rows+i,0,item);
+                }
+            }
+        }
     }
 }
