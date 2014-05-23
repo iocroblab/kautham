@@ -31,14 +31,10 @@ namespace Kautham {
                                          QWidget *parent):QSplitter(orientation, parent) {
         problemTree = new QTreeWidget();
         problemTree->setObjectName(QString::fromUtf8("problemTree"));
-        problemTree->setIconSize(QSize(20,20));
-        problemTree->setEnabled(true);
+        problemTree->header()->setStretchLastSection(true);
         problemTree->header()->hide();
-        problemTree->setColumnCount(2);
-        connect(problemTree,SIGNAL(itemCollapsed(QTreeWidgetItem *)),
-                this,SLOT(resizeProblemTree()));
-        connect(problemTree,SIGNAL(itemExpanded(QTreeWidgetItem *)),
-                this,SLOT(resizeProblemTree()));
+        problemTree->setIconSize(QSize(20,20));
+        problemTree->setColumnCount(1);
         connect(problemTree,SIGNAL(currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *)),
                 this,SLOT(updateInfoTable(QTreeWidgetItem *)));
         addWidget(problemTree);
@@ -85,7 +81,6 @@ namespace Kautham {
         }
 
         problemTree->collapseAll();
-        resizeProblemTree();
 
         showDefaultTable();
         int height = problemTree->height()+infoTable->height()-90;
@@ -93,12 +88,6 @@ namespace Kautham {
         infoTable->resize(infoTable->width(),90);
 
         return true;
-    }
-
-
-    void ProblemTreeWidget::resizeProblemTree() {
-        problemTree->resizeColumnToContents(0);
-        problemTree->resizeColumnToContents(1);
     }
 
 
@@ -123,7 +112,7 @@ namespace Kautham {
                         Link *parentLink = link->getParent();
                         if (parentLink == NULL) {//base link
                             //find robot
-                            string robotName = parentItem->parent()->text(1).toStdString();
+                            string robotName = parentItem->parent()->text(0).toStdString();
                             Robot *robot;
                             uint i = 0;
                             bool found = false;
@@ -206,10 +195,9 @@ namespace Kautham {
 
     QTreeWidgetItem *ProblemTreeWidget::addName2Tree(string name, bool isObstacle) {
         QTreeWidgetItem *item = new QTreeWidgetItem(problemTree);
-        item->setToolTip(0,isObstacle?"Obstacle":"Robot");
         item->setIcon(0,isObstacle?obstacleIcon:robotIcon);
-        item->setText(1,name.c_str());
-        item->setToolTip(1,"Name");
+        item->setText(0,name.c_str());
+        item->setToolTip(0,isObstacle?"Obstacle name":"Robot name");
 
         return item;
     }
@@ -217,9 +205,9 @@ namespace Kautham {
 
     QTreeWidgetItem *ProblemTreeWidget::addScale2Tree(KthReal scale, QTreeWidgetItem *parentItem) {
         QTreeWidgetItem *item = new QTreeWidgetItem(parentItem);
-        item->setToolTip(0,"Scale");
         item->setIcon(0,scaleIcon);
-        item->setText(1,QString::number(scale));
+        item->setText(0,QString::number(scale));
+        item->setToolTip(0,"Scale");
 
         return item;
     }
@@ -227,29 +215,36 @@ namespace Kautham {
 
     QTreeWidgetItem *ProblemTreeWidget::addHome2Tree(SE3Conf homeConf, QTreeWidgetItem *parentItem) {
         QTreeWidgetItem *item = new QTreeWidgetItem(parentItem);
-        item->setToolTip(0,"Home");
         item->setIcon(0,homeIcon);
+        item->setToolTip(0,"Home configuration");
 
         QTreeWidgetItem *subItem;
         vector <KthReal> coord;
 
+        QString text;
         coord = homeConf.getPos();
         for (uint i = 0; i < 3; i++) {
+            text = homeLabels.at(i);
+            text.append(" = ");
+            text.append(QString::number(coord.at(i)));
             subItem = new QTreeWidgetItem(item);
-            subItem->setText(0,homeLabels.at(i));
-            subItem->setToolTip(0,"Position");
-            subItem->setText(1,QString::number(coord.at(i)));
-            subItem->setToolTip(1,"milimeters");
+            subItem->setText(0,text);
+            subItem->setToolTip(0,"Position (milimeters)");
         }
 
         coord.clear();
         coord = homeConf.getAxisAngle();
         for (uint i = 0; i < 4; i++) {
+            text = homeLabels.at(i+3);
+            text.append(" = ");
+            text.append(QString::number(coord.at(i)));
             subItem = new QTreeWidgetItem(item);
-            subItem->setText(0,homeLabels.at(i+3));
-            subItem->setToolTip(0,"Orientation");
-            subItem->setText(1,QString::number(coord.at(i)));
-            subItem->setToolTip(1,"radians");
+            subItem->setText(0,text);
+            if (i < 3) {
+                subItem->setToolTip(0,"Orientation axis");
+            } else {
+                subItem->setToolTip(0,"Orientation angle (radians)");
+            }
         }
     }
 
@@ -257,11 +252,11 @@ namespace Kautham {
     QTreeWidgetItem *ProblemTreeWidget::addInvKin2Tree(InverseKinematic *invKin, QTreeWidgetItem *parentItem) {
         if (invKin != NULL) {
             if (invKin->type() != UNIMPLEMENTED || invKin->type() != NOINVKIN) {
+                QString text = "InvKin: ";
+                text.append(invKin->name().c_str());
                 QTreeWidgetItem *item = new QTreeWidgetItem(parentItem);
-                item->setText(0,"InvKin");
+                item->setText(0,text);
                 item->setToolTip(0,"Inverse Kinematics");
-                item->setText(1,invKin->name().c_str());
-                item->setToolTip(1,"Name");
 
                 return item;
             }
@@ -284,10 +279,9 @@ namespace Kautham {
 
     QTreeWidgetItem *ProblemTreeWidget::addLink2Tree(Link *link, QTreeWidgetItem *parentItem) {
         QTreeWidgetItem *item = new QTreeWidgetItem(parentItem);
-        item->setToolTip(0,"Link");
         item->setIcon(0,linkIcon);
-        item->setText(1,link->getName().c_str());
-        item->setToolTip(1,"Name");
+        item->setText(0,link->getName().c_str());
+        item->setToolTip(0,"Link name");
         linkMap.insert(item,link);
 
         return item;
@@ -298,7 +292,7 @@ namespace Kautham {
         infoTable->setColumnCount(1);
         infoTable->setRowCount(1);
         QString text = "Select an item from the tree to get more information ";
-        text.append("(At present, only implemented for links)");
+        text.append("\n(At present, only implemented for links)");
         QTableWidgetItem *defaultItem = new QTableWidgetItem(text);
         defaultItem->setTextAlignment(Qt::AlignCenter);
         defaultItem->setFlags(Qt::ItemIsEnabled);
@@ -358,7 +352,7 @@ namespace Kautham {
             text.append(QString::number(*link->getLimits(false)));
             text.append("]");
             item = new QTableWidgetItem(text);
-            item->setToolTip(link->getRotational()? "radians":"milimeters");
+            item->setToolTip(link->getRotational()?"radians":"milimeters");
         } else {
             text = "Fixed";
             item = new QTableWidgetItem(text);
@@ -402,7 +396,7 @@ namespace Kautham {
 
                 ++rows;
                 for (uint i = 0; i < link->numChilds(); ++i) {
-                    text = "\t";
+                    text = "    ";
                     text.append(link->getChild(i)->getName().c_str());
                     item = new QTableWidgetItem(text);
                     item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
