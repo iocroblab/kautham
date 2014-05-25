@@ -28,7 +28,7 @@
 
 
 namespace Kautham {
-    DOFWidget::DOFWidget(Robot* robot):QWidget() {
+    DOFWidget::DOFWidget(Robot* robot, QWidget *parent, Qt::WindowFlags f):QWidget(parent, f) {
         setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 
         QGridLayout *gridLayout = new QGridLayout();
@@ -52,32 +52,32 @@ namespace Kautham {
 
         QStringList names = QString(robot->getDOFNames().c_str()).split("|");
 
-        low.resize(names.size());
-        high.resize(names.size());
-        for (uint i = 0; i < 3; i++) {
+        lowValues.resize(names.size());
+        highValues.resize(names.size());
+        for (uint i = 0; i < 3; ++i) {
             //label value will be defined in milimeters
-            low[i] = robot->getLimits(i)[0];
-            high[i] = robot->getLimits(i)[1];
+            lowValues[i] = robot->getLimits(i)[0];
+            highValues[i] = robot->getLimits(i)[1];
         }
-        for (uint i = 3; i < 6; i++) {
+        for (uint i = 3; i < 6; ++i) {
             //label value will be unitary and adimesional
-            low[i] = 0.;
-            high[i] = 1.;
+            lowValues[i] = 0.;
+            highValues[i] = 1.;
         }
-        for (uint i = 6; i < names.size(); i++) {
+        for (uint i = 6; i < names.size(); ++i) {
             //label value will be defined in radians
-            low[i] = *robot->getLink(i-5)->getLimits(true);
-            high[i] = *robot->getLink(i-5)->getLimits(false);
+            lowValues[i] = *robot->getLink(i-5)->getLimits(true);
+            highValues[i] = *robot->getLink(i-5)->getLimits(false);
         }
 
         QString name;
         QFrame *frame;
         QVBoxLayout *frameLayout;
         QLabel *label;
-        values.resize(names.size());
+        currentValues.resize(names.size());
         labels.resize(names.size());
-        for (uint i = 0; i < names.size(); i++){
-            values[i] = robot->getOffMatrix()[i];
+        for (uint i = 0; i < names.size(); ++i){
+            currentValues[i] = robot->getOffMatrix()[i];
 
             name = names.at(i);
 
@@ -91,6 +91,11 @@ namespace Kautham {
             frameLayout->setContentsMargins(3,3,3,3);
             frameLayout->setSpacing(1);
             frame->setLayout(frameLayout);
+
+            QPalette palette = frame->palette();
+            palette.setColor(backgroundRole(),QColor(255,255,255) );
+            frame->setPalette(palette);
+            frame->setAutoFillBackground(true);
 
             label = new QLabel("<b>"+name+"</b>");
             label->setObjectName(name+"Name");
@@ -108,16 +113,16 @@ namespace Kautham {
             labels[i] = label;
         }
 
-        setValues(values);
+        setValues(currentValues);
     }
 
     DOFWidget::~DOFWidget() {
-        for (uint i = 0; i < values.size(); i++) {
+        for (uint i = 0; i < currentValues.size(); ++i) {
             delete (QLabel*)labels[i];
         }
-        values.clear();
-        low.clear();
-        high.clear();
+        currentValues.clear();
+        lowValues.clear();
+        highValues.clear();
     }
 
 
@@ -126,16 +131,16 @@ namespace Kautham {
     }
 
 
-    void DOFWidget::setValues(vector<KthReal> &val) {
-        if (val.size() == labels.size()) {
-            double realval;
-            for (uint i = 0; i < val.size(); i++) {
-                values[i] = val.at(i);
-                if (values[i] > 1.0) values[i] = 1.0;
-                if (values[i] < 0.0) values[i] = 0.0;
+    void DOFWidget::setValues(vector<KthReal> &values) {
+        if (values.size() == labels.size()) {
+            double realValue;
+            for (uint i = 0; i < values.size(); ++i) {
+                currentValues[i] = values.at(i);
+                if (currentValues[i] > 1.0) currentValues[i] = 1.0;
+                if (currentValues[i] < 0.0) currentValues[i] = 0.0;
 
-                realval = low[i] + values[i]*(high[i]-low[i]);
-                ((QLabel*)labels[i])->setText(QString::number(realval,'f',3));
+                realValue = lowValues[i] + currentValues[i]*(highValues[i]-lowValues[i]);
+                ((QLabel*)labels[i])->setText(QString::number(realValue,'f',3));
             }
         }
     }

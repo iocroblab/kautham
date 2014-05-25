@@ -47,16 +47,16 @@ namespace Kautham {
       void sendText(string newContent);
 
 	public:
-        DOFWidget(Robot* robot);
+        DOFWidget(Robot *robot, QWidget *parent = 0, Qt::WindowFlags f = 0);
 		~DOFWidget();
-        void setValues(vector<KthReal> &val);
+        void setValues(vector<KthReal> &values);
 
 	private:
         void writeGUI(string text);
-		vector<QLabel*>   labels;
-        vector<KthReal>   values;
-        vector<KthReal>   low;
-        vector<KthReal>   high;
+        vector<QLabel*> labels;
+        vector<KthReal> currentValues;
+        vector<KthReal> lowValues;
+        vector<KthReal> highValues;
 	};
 
 
