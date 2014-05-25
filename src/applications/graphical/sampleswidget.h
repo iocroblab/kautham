@@ -20,97 +20,71 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Nestor Garcia Hidalgo */
  
-#if !defined(UI_SAMPLES_H)
-#define UI_SAMPLES_H
+
+#if !defined(_SAMPLESWIDGET_H)
+#define _SAMPLESWIDGET_H
 
 
-//#include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QComboBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
-#include <QtGui/QRadioButton>
-#include <QtGui/QSpacerItem>
-#include <QtGui/QTextEdit>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QWidget>
-#include <QtGui/QLineEdit>
-#include <sampling/sampling.h>
+#include <QtGui>
 #include <problem/problem.h>
 
-using namespace std;
 
 namespace Kautham{
-
 /** \addtogroup Application
  *  @{
  */
+    enum COLLECTION {
+        CURRENT,
+        NEW
+    };
 
-  class SamplesWidget: public QWidget {
-    Q_OBJECT
 
+    enum ENGINE {
+        SDK,
+        HALTON,
+        RANDOM,
+        GAUSSIAN,
+        GAUSSIANLIKE
+    };
+
+
+    class SamplesWidget: public QWidget {
+        Q_OBJECT
     signals:
-      void sendText(string newContent);
+        void sendText(string text);
 
     private slots:
-      void collisionCheck();
-      void distanceCheck();
-      void addCurrent();
-      void removeCurrent();
-      void removeAll();
-      void removeAllEx2();
-      void sampling();
-      void updateSampleList();
-      void showSample(int index);
-	  void changeEngine();
+        void changeSample(int index);
+        void testCollision();
+        void testDistance();
+        void addSample();
+        void removeSample();
+        void getSamples();
+        void updateSampleList();
+        void copySampleList();
+        void clearSampleList();
+        void changeCollection(int index);
+        void changeEngine(int index);
+
     public:
-      SamplesWidget(SampleSet* samples, Sampler* sampler, Problem* prob);
-      
+        SamplesWidget(SampleSet* sampleSet, Sampler* sampler, Problem* problem,
+                      QWidget *parent = 0, Qt::WindowFlags f = 0);
+
     private:
-      void writeGUI(string text);
-      QGridLayout *gridLayout;
-      QVBoxLayout *vboxLayout;
-      QVBoxLayout *vboxLayout1;
-      QLabel *label,*label_3;
-      QComboBox *cboSampleList;
-      QHBoxLayout *hboxLayout, *hboxLayout1;
-      QPushButton *btnCollision;
-      QPushButton *btnDistance;      
-      QGroupBox *groupBox;
-      QGridLayout *gridLayout1;
-      QVBoxLayout *vboxLayout2;
-      QRadioButton *rbtnAdd;
-      QRadioButton *rbtnNew;
-      QGroupBox *groupBox_2;
-      QGridLayout *gridLayout2;
-      QVBoxLayout *vboxLayout3;
-      QRadioButton *rbtnRandom;
-      QRadioButton *rbtnSDK;
-      QRadioButton *rbtnHalton;
-	  QRadioButton *rbtnGaussian;
-	  QRadioButton *rbtnGaussianLike;
-      QPushButton *btnSampling;
-      QLineEdit *txtAmount;
-      QPushButton *btnAddCurrent;
-      QPushButton *btnRemoveCurrent;
-      
-      Problem*    _ptProblem;
-      SampleSet*  _samples;
-      Sampler*    _sampler;
+        void writeGUI(string text);
+        Problem *_problem;
+        SampleSet *_sampleSet;
+        Sampler *_sampler;
+        QComboBox *_sampleList;
+        QLineEdit  *_sampleAmount;
+        COLLECTION collection;
+    };
 
-
-  };
-
-  /** @}   end of Doxygen module "Application" */
+/** @}   end of Doxygen module "Application" */
 }
 
 
-#endif // UI_SAMPLES_H
+#endif // _SAMPLESWIDGET_H
 
