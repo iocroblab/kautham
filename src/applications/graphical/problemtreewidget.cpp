@@ -63,15 +63,16 @@ namespace Kautham {
 
         workspace = workSpace;
 
-        //robots
+        linkMap.clear();
+
         problemTree->clear();
+        //robots
         for (uint i = 0; i < workspace->getNumRobots(); i++) {
             if (addRobot2Tree(workspace->getRobot(i),false) == NULL) {
                 problemTree->clear();
                 return false;
             }
         }
-
         //obstacles
         for (uint i = 0; i < workspace->getNumObstacles(); i++) {
             if (addRobot2Tree(workspace->getObstacle(i),true) == NULL) {
@@ -79,7 +80,6 @@ namespace Kautham {
                 return false;
             }
         }
-
         problemTree->collapseAll();
 
         showDefaultTable();
