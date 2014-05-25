@@ -26,10 +26,8 @@
 #define _DOFWIDGET_H
 
 #include <QtGui>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <vector>
 #include <string>
-#include <problem/robot.h>
 #include <problem/problem.h>
 #include <util/kthutil/kauthamdefs.h>
 
@@ -45,28 +43,20 @@ namespace Kautham {
 
 	class DOFWidget:public QWidget{
 		Q_OBJECT
-
     signals:
       void sendText(string newContent);
 
-	private slots:
-		void              sliderChanged(int val);
 	public:
-		DOFWidget( Robot* rob );
+        DOFWidget(Robot* robot);
 		~DOFWidget();
-		inline vector<KthReal>   *getValues(){return &values;}
         void setValues(vector<KthReal> &val);
+
 	private:
-		vector<QSlider*>  sliders;
+        void writeGUI(string text);
 		vector<QLabel*>   labels;
-		QGridLayout       *gridLayout;
-		QVBoxLayout       *vboxLayout;
-        QStringList       names;
-		vector<KthReal>   values;
+        vector<KthReal>   values;
         vector<KthReal>   low;
         vector<KthReal>   high;
-
-        void writeGUI(string text);
 	};
 
 
