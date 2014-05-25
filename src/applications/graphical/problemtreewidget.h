@@ -35,6 +35,9 @@ namespace Kautham {
                           QWidget *parent = 0);
         bool setTree(WorkSpace *workSpace);
 
+    signals:
+        void sendText(string text);
+
     private slots:
         void updateInfoTable(QTreeWidgetItem *currentItem);
 
@@ -52,6 +55,7 @@ namespace Kautham {
         void addLinkLimits2Table(Link *link);
         void addParent2Table(Link *parent);
         void addChildren2Table(Link *link);
+        void writeGUI(string text);
 
         QTreeWidget *problemTree;
         QTableWidget *infoTable;
