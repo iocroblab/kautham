@@ -62,7 +62,7 @@ namespace Kautham{
         Q_OBJECT
     public:
         /*!
-         * \brief SamplesWidget Constructs a samples' widget which
+         * \brief SamplesWidget Constructs the widget
          * \param problem problem to construct the widget of
          * \param parent parent widget
          * \param f window's flags

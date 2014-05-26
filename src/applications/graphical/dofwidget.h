@@ -25,44 +25,72 @@
 #if !defined(_DOFWIDGET_H)
 #define _DOFWIDGET_H
 
+
 #include <QtGui>
-#include <vector>
-#include <string>
 #include <problem/problem.h>
-#include <util/kthutil/kauthamdefs.h>
-
-
-using namespace std;
 
 
 namespace Kautham {
+    /** \addtogroup Application
+    *  @{
+    */
 
-/** \addtogroup Application
- *  @{
- */
-
+    /*!
+     * \brief The DOFWidget class is the class that implements the DOF's Widget.
+     *It shows the DOF values to the user
+     */
 	class DOFWidget:public QWidget{
-		Q_OBJECT
-    signals:
-      void sendText(string newContent);
-
-	public:
+        Q_OBJECT
+    public:
+        /*!
+         * \brief DOFWidget Constructs the widget
+         * \param robot robot where DOFs are stored
+         * \param parent parent of the widget
+         * \param f window flags of the widget
+         */
         DOFWidget(Robot *robot, QWidget *parent = 0, Qt::WindowFlags f = 0);
-		~DOFWidget();
+
+        /*!
+         * \brief ~DOFWidget Destructs the widget
+         */
+        ~DOFWidget();
+
+        /*!
+         * \brief setValues sets new values for DOFs
+         * \param values new values of the DOFs
+         */
         void setValues(vector<KthReal> &values);
 
-	private:
+    signals:
+        /*!
+         * \brief sendText sends a message
+         * \param text message to send
+         */
+        void sendText(string newContent);
+
+    private:
+        /*!
+         * \brief writeGUI writes a message in the GUI
+         * \param text message to write
+         */
         void writeGUI(string text);
+
+        /*!
+         * \brief labels labels where DOF's values are shown
+         */
         vector<QLabel*> labels;
-        vector<KthReal> currentValues;
+
+        /*!
+         * \brief lowValues lower limits of the DOFs
+         */
         vector<KthReal> lowValues;
+
+        /*!
+         * \brief highValues higher limits of the DOFs
+         */
         vector<KthReal> highValues;
-	};
-
-
+    };
     /** @}   end of Doxygen module "Application" */
 }
 
 #endif  //_DOFWIDGET_H
-
-
