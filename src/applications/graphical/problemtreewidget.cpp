@@ -409,6 +409,6 @@ namespace Kautham {
 
 
     void ProblemTreeWidget::writeGUI(string text){
-      emit sendText(text);
+        emit sendText(text);
     }
 }
