@@ -20,57 +20,62 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Nestor Garcia Hidalgo */
  
  
 #if !defined(_CONTROLWIDGET_H)
 #define _CONTROLWIDGET_H
 
+
 #include <QtGui>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <vector>
-#include <string>
-#include <problem/robot.h>
 #include <problem/problem.h>
-#include <util/kthutil/kauthamdefs.h>
 #include "dofwidget.h"
 
 
-using namespace std;
-
-
 namespace Kautham {
+    /** \addtogroup Application
+    *  @{
+    */
 
-/** \addtogroup Application
- *  @{
- */
-
-	class ControlWidget:public QWidget{
+    /*!
+     * \brief The ControlWidget class
+     */
+    class ControlWidget:public QWidget {
 		Q_OBJECT
+    public:
+        ControlWidget(Problem *problem, vector<DOFWidget *> DOFWidgets,
+                      bool isRobotControlWidget, QWidget *parent = 0,
+                      Qt::WindowFlags f = 0);
+        ~ControlWidget();
 
-	private slots:
-		void              sliderChanged(int val);
-		void              updateControls();
-	public:
-        ControlWidget(Problem* prob,vector<DOFWidget*> DOFWidgets, bool robot);
-		~ControlWidget();
-		inline vector<KthReal>   *getValues(){return &values;}
+    signals:
+        /*!
+         * \brief sendText sends a message
+         * \param text message to send
+         */
+        void sendText(string text);
+
+    private slots:
+        void sliderChanged(int index);
+        void lineEditChanged(int index);
+        void updateControls();
+
+    private:
         void setValues(vector <KthReal> coords);
-	private:
-        vector<DOFWidget*> _DOFWidgets;
-        vector<QSlider*>   sliders;
-        vector<QLabel*>    labels;
-        QVBoxLayout        *mainLayout;
-        QScrollArea        *scrollArea;
-        QWidget            *scrollAreaWidget;
-        QVBoxLayout        *controlsLayout;
-        QPushButton		   *btnUpdate;
-        vector<KthReal>    values;
-        Problem*           _ptProblem;
-        bool               robWidget;
+
+        /*!
+         * \brief writeGUI writes a message in the GUI
+         * \param text message to write
+         */
+        void writeGUI(string text);
+
+        vector<DOFWidget *> DOFWids;
+        vector<QSlider *> sliders;
+        vector<QLineEdit *> lineEdits;
+        vector<KthReal> values;
+        Problem *prob;
+        bool               isRobWidget;
 	};
-
-
     /** @}   end of Doxygen module "Application" */
 }
 
