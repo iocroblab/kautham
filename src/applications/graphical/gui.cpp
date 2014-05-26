@@ -175,12 +175,14 @@ namespace Kautham {
     bool GUI::addRobControlWidget(Problem* prob, vector<DOFWidget*> robDOFWidgets){
         if( prob != NULL){
             ControlWidget* tmpControl = new ControlWidget(prob,robDOFWidgets,true);
+            connect(tmpControl,SIGNAL(sendText(string)),this,SLOT(setText(string)));
             propertiesTab->addTab(tmpControl, "RobContr");
             //JAN
             indexRobControlsTab = propertiesTab->indexOf(tmpControl);
             return true;
         }else{
             ControlWidget* tmpControl = new ControlWidget(NULL,robDOFWidgets,true);
+            connect(tmpControl,SIGNAL(sendText(string)),this,SLOT(setText(string)));
             propertiesTab->addTab(tmpControl, "RobContr-Test");
             indexRobControlsTab = propertiesTab->indexOf(tmpControl);
             return true;
@@ -191,12 +193,14 @@ namespace Kautham {
     bool GUI::addObsControlWidget(Problem* prob, vector<DOFWidget*> obsDOFWidgets){
         if( prob != NULL){
             ControlWidget* tmpControl = new ControlWidget(prob,obsDOFWidgets,false);
+            connect(tmpControl,SIGNAL(sendText(string)),this,SLOT(setText(string)));
             propertiesTab->addTab(tmpControl, "ObsContr");
             //JAN
             indexObsControlsTab = propertiesTab->indexOf(tmpControl);
             return true;
         }else{
             ControlWidget* tmpControl = new ControlWidget(NULL,obsDOFWidgets,false);
+            connect(tmpControl,SIGNAL(sendText(string)),this,SLOT(setText(string)));
             propertiesTab->addTab(tmpControl, "ObsContr-Test");
             indexObsControlsTab = propertiesTab->indexOf(tmpControl);
             return true;

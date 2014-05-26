@@ -20,183 +20,244 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Nestor Garcia Hidalgo */
  
  
-#include <QtGui>
 #include "controlwidget.h"
-#include <QString>
+
+
+using namespace std;
 
 
 namespace Kautham {
+    ControlWidget::ControlWidget(Problem *problem, vector<DOFWidget *> DOFWidgets,
+                                 bool isRobotControlWidget, QWidget *parent,
+                                 Qt::WindowFlags f):QWidget(parent, f) {
+        prob = problem;
+        isRobWidget = isRobotControlWidget;
+        DOFWids = DOFWidgets;
 
-    ControlWidget::ControlWidget(Problem* prob, vector<DOFWidget*> DOFWidgets, bool robot) {
-        _ptProblem = prob;
-        robWidget = robot;
-        _DOFWidgets = DOFWidgets;
-        string names = "This|is|a|test";
-        if (robot) {
-            names = _ptProblem->wSpace()->getRobControlsName();
-        } else {
-            names = _ptProblem->wSpace()->getObsControlsName();
-        }
-
-        mainLayout = new QVBoxLayout(this);
+        QVBoxLayout *mainLayout = new QVBoxLayout();
         mainLayout->setObjectName(QString::fromUtf8("mainLayout"));
+        setLayout(mainLayout);
 
-        scrollArea = new QScrollArea();
+        QScrollArea *scrollArea = new QScrollArea();
         scrollArea->setObjectName(QString::fromUtf8("scrollArea"));
         scrollArea->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
         scrollArea->setWidgetResizable(true);
         mainLayout->addWidget(scrollArea);
 
-        scrollAreaWidget = new QWidget();
+        QWidget *scrollAreaWidget = new QWidget();
         scrollAreaWidget->setObjectName(QString::fromUtf8("scrollAreaWidget"));
         scrollArea->setWidget(scrollAreaWidget);
 
-        controlsLayout = new QVBoxLayout(scrollAreaWidget);
+        QGridLayout *controlsLayout = new QGridLayout();
         controlsLayout->setObjectName(QString::fromUtf8("controlsLayout"));
+        scrollAreaWidget->setLayout(controlsLayout);
 
-        QLabel *tempLabel;
-        QSlider *tempSlider;
-        QString content(names.c_str());
-        QStringList cont = content.split("|");
-        for (QStringList::const_iterator iterator = cont.constBegin();
-             iterator != cont.constEnd(); ++iterator) {
-            tempLabel = new QLabel();
-            tempLabel->setObjectName((*iterator).toUtf8().constData());
-            content = (*iterator).toUtf8().constData();
-            tempLabel->setText(content.append(" = 0.5"));
-            controlsLayout->addWidget(tempLabel);
-            labels.push_back(tempLabel);
-
-            tempSlider = new QSlider();
-            tempSlider->setObjectName((*iterator).toUtf8().constData());
-            tempSlider->setOrientation(Qt::Horizontal);
-            tempSlider->setMinimum(0);
-            tempSlider->setMaximum(1000);
-            tempSlider->setSingleStep(1);
-            tempSlider->setValue(500);
-            connect(tempSlider,SIGNAL(valueChanged(int)),this,SLOT(sliderChanged(int)));
-            controlsLayout->addWidget(tempSlider);
-            sliders.push_back(tempSlider);
-        }
-
-        btnUpdate = new QPushButton();
-        if (robWidget) {
-            btnUpdate->setText("Update to last moved sample");
+        QStringList names;
+        if (isRobWidget) {
+            names = QString(prob->wSpace()->getRobControlsName().c_str()).split("|");
         } else {
-            btnUpdate->setText("Update to initial sample");
+            names = QString(prob->wSpace()->getObsControlsName().c_str()).split("|");
         }
-        btnUpdate->setObjectName(QString::fromUtf8("btnUpdate"));
-        connect(btnUpdate,SIGNAL(clicked()),this,SLOT(updateControls()));
-        mainLayout->addWidget(btnUpdate);
+        int dim = names.size();
+        sliders.resize(dim);
+        lineEdits.resize(dim);
+        values.resize(dim);
+        QLabel *label;
+        QLineEdit *lineEdit;
+        QSlider *slider;
+        QString name;
+        QSignalMapper *lineEditSignalMapper = new QSignalMapper(this);
+        QSignalMapper *sliderSignalMapper = new QSignalMapper(this);
+        for (uint i = 0; i < dim; ++i) {
+            name = names.at(i);
 
-        values.resize(sliders.size());
-        for(int i=0; i<values.size(); i++)
-            values[i]=0.5;
+            label = new QLabel("<b>"+name+"</b>");
+            label->setObjectName(name+"Label");
+            controlsLayout->addWidget(label,2*i,0,1,1);
+
+            lineEdit = new QLineEdit("0.500");
+            lineEdit->setObjectName(name+"LineEdit");
+            connect(lineEdit,SIGNAL(editingFinished()),lineEditSignalMapper,SLOT(map()));
+            lineEditSignalMapper->setMapping(lineEdit,i);
+            controlsLayout->addWidget(lineEdit,2*i,1,1,1);
+            lineEdits[i] = lineEdit;
+
+            slider = new QSlider();
+            slider->setObjectName(name+"slider");
+            slider->setOrientation(Qt::Horizontal);
+            slider->setMinimum(0);
+            slider->setMaximum(1000);
+            slider->setSingleStep(1);
+            slider->setValue(500);
+            connect(slider,SIGNAL(valueChanged(int)),sliderSignalMapper,SLOT(map()));
+            sliderSignalMapper->setMapping(slider,i);
+            controlsLayout->addWidget(slider,2*i+1,0,1,2);
+            sliders[i] = slider;
+
+            values[i] = 0.5;
+        }
+        connect(lineEditSignalMapper,SIGNAL(mapped(int)),this,SLOT(lineEditChanged(int)));
+        connect(sliderSignalMapper,SIGNAL(mapped(int)),this,SLOT(sliderChanged(int)));
+
+        QPushButton *updateButton = new QPushButton();
+        if (isRobWidget) {
+            updateButton->setText("Update to last moved sample");
+        } else {
+            updateButton->setText("Update to initial sample");
+        }
+        updateButton->setObjectName(QString::fromUtf8("btnUpdate"));
+        connect(updateButton,SIGNAL(clicked()),this,SLOT(updateControls()));
+        mainLayout->addWidget(updateButton);
     }
+
 
     ControlWidget::~ControlWidget(){
-        for(uint i = 0; i < sliders.size(); i++) {
-            delete (QSlider*)sliders[i];
-            delete (QLabel*)labels[i];
+        for (uint i = 0; i < values.size(); ++i) {
+            delete (QSlider *)sliders[i];
+            delete (QLineEdit *)lineEdits[i];
         }
         sliders.clear();
-        labels.clear();
+        lineEdits.clear();
+
         values.clear();
-        for (uint i = 0; _DOFWidgets.size(); i++) {
-            delete (DOFWidget*)_DOFWidgets[i];
+
+        for (uint i = 0; DOFWids.size(); ++i) {
+            delete (DOFWidget *)DOFWids.at(i);
         }
-        _DOFWidgets.clear();
-        delete mainLayout;
-        delete scrollArea;
-        delete controlsLayout;
-        delete btnUpdate;
+        DOFWids.clear();
     }
+
+
+    void ControlWidget::sliderChanged(int index) {
+        values[index] = (KthReal)((QSlider *)sliders[index])->value()/1000.0;
+        ((QLineEdit *)lineEdits[index])->setText(QString::number(values[index],'f',3));
+
+        if (isRobWidget) {
+            prob->setCurrentRobControls(values);
+        } else {
+            prob->setCurrentObsControls(values);
+        }
+
+        Sample *sample = new Sample(values.size());
+        sample->setCoords(values);
+
+        vector <KthReal> params;
+        if (isRobWidget) {
+            prob->wSpace()->moveRobotsTo(sample);
+            for (uint i = 0; i < DOFWids.size(); ++i) {
+                prob->wSpace()->getRobot(i)->control2Parameters(values,params);
+                DOFWids.at(i)->setValues(params);
+            }
+        } else {
+            prob->wSpace()->moveObstaclesTo(sample);
+            for (uint i = 0; i < DOFWids.size(); ++i) {
+                prob->wSpace()->getObstacle(i)->control2Parameters(values,params);
+                DOFWids.at(i)->setValues(params);
+            }
+        }
+    }
+
+
+    void ControlWidget::lineEditChanged(int index) {
+        bool ok;
+        KthReal value = (((QLineEdit *)lineEdits[index])->text()).toFloat(&ok);
+
+        if (ok) {
+            if (value > 1.0) {
+                value = 1.0;
+                writeGUI("Controls values must be between 0 and 1");
+            } else if (value < 0.0) {
+                value = 0.0;
+                writeGUI("Controls values must be between 0 and 1");
+            }
+
+            values[index] = value;
+            ((QLineEdit *)lineEdits[index])->setText(QString::number(value,'f',3));
+            ((QSlider *)sliders[index])->setValue((int)(value*1000.0));
+
+            if (isRobWidget) {
+                prob->setCurrentRobControls(values);
+            } else {
+                prob->setCurrentObsControls(values);
+            }
+
+            Sample *sample = new Sample(values.size());
+            sample->setCoords(values);
+
+            vector <KthReal> params;
+            if (isRobWidget) {
+                prob->wSpace()->moveRobotsTo(sample);
+                for (uint i = 0; i < DOFWids.size(); ++i) {
+                    prob->wSpace()->getRobot(i)->control2Parameters(values,params);
+                    DOFWids.at(i)->setValues(params);
+                }
+            } else {
+                prob->wSpace()->moveObstaclesTo(sample);
+                for (uint i = 0; i < DOFWids.size(); ++i) {
+                    prob->wSpace()->getObstacle(i)->control2Parameters(values,params);
+                    DOFWids.at(i)->setValues(params);
+                }
+            }
+        } else {
+            ((QLineEdit *)lineEdits[index])->setText(QString::number(values[index],'f',3));
+            writeGUI("Please enter a valid control value");
+        }
+    }
+
 
     void ControlWidget::updateControls(){
-        Sample *s;
-        if (robWidget) {
-            s  = _ptProblem->wSpace()->getLastRobSampleMovedTo();
+        Sample *sample;
+        if (isRobWidget) {
+            sample = prob->wSpace()->getLastRobSampleMovedTo();
         } else {
-            s  = _ptProblem->wSpace()->getInitObsSample();
+            sample = prob->wSpace()->getInitObsSample();
         }
-        if (s != NULL){
-            setValues(s->getCoords());
+
+        if (sample != NULL){
+            setValues(sample->getCoords());
         }
     }
 
-    void ControlWidget::sliderChanged(int value){
-        QString tmp;
-        for(unsigned int i=0; i<sliders.size(); i++){
-            values[i]=(KthReal)((QSlider*)sliders[i])->value()/1000.0;
-
-            tmp = labels[i]->text().left(labels[i]->text().indexOf("=") + 2);
-            labels[i]->setText( tmp.append( QString().setNum(values[i],'g',5)));
-        }
-
-        if (robWidget) {
-            _ptProblem->setCurrentRobControls(values);
-        } else {
-            _ptProblem->setCurrentObsControls(values);
-        }
-
-        Sample *sample = new Sample(values.size());
-        sample->setCoords(values);
-
-        vector <float> params;
-        if (robWidget) {
-            _ptProblem->wSpace()->moveRobotsTo(sample);
-            for (uint i = 0; i < _DOFWidgets.size(); i++) {
-                _ptProblem->wSpace()->getRobot(i)->control2Parameters(values,params);
-                ((DOFWidget*)_DOFWidgets.at(i))->setValues(params);
-            }
-        } else {
-            _ptProblem->wSpace()->moveObstaclesTo(sample);
-            for (uint i = 0; i < _DOFWidgets.size(); i++) {
-                _ptProblem->wSpace()->getObstacle(i)->control2Parameters(values,params);
-                ((DOFWidget*)_DOFWidgets.at(i))->setValues(params);
-            }
-        }
-    }
 
     void ControlWidget::setValues(vector<KthReal> coords){
-        QString tmp;
-        for(unsigned int i = 0; i < coords.size(); i++) {
-            ((QSlider*)sliders[i])->setValue((int)(coords[i]*1000.0));
+        for (uint i = 0; i < coords.size(); ++i) {
+            values[i] = coords[i];
 
-            tmp = labels[i]->text().left(labels[i]->text().indexOf("=") + 2);
-            labels[i]->setText( tmp.append( QString().setNum(coords[i],'g',5)));
+            ((QSlider *)sliders[i])->setValue((int)(values[i]*1000.0));
+
+            ((QLineEdit *)lineEdits[i])->setText(QString::number(values[i],'f',3));
         }
 
-        for (int j = 0; j < values.size(); j++)
-            values[j] = coords[j];
-
-        if (robWidget) {
-            _ptProblem->setCurrentRobControls(values);
+        if (isRobWidget) {
+            prob->setCurrentRobControls(values);
         } else {
-            _ptProblem->setCurrentObsControls(values);
+            prob->setCurrentObsControls(values);
         }
 
         Sample *sample = new Sample(values.size());
         sample->setCoords(values);
 
-        vector <float> params;
-        if (robWidget) {
-            _ptProblem->wSpace()->moveRobotsTo(sample);
-            for (uint i = 0; i < _DOFWidgets.size(); i++) {
-                _ptProblem->wSpace()->getRobot(i)->control2Parameters(values,params);
-                ((DOFWidget*)_DOFWidgets.at(i))->setValues(params);
+        vector <KthReal> params;
+        if (isRobWidget) {
+            prob->wSpace()->moveRobotsTo(sample);
+            for (uint i = 0; i < DOFWids.size(); ++i) {
+                prob->wSpace()->getRobot(i)->control2Parameters(values,params);
+                ((DOFWidget *)DOFWids.at(i))->setValues(params);
             }
         } else {
-            _ptProblem->wSpace()->moveObstaclesTo(sample);
-            for (uint i = 0; i < _DOFWidgets.size(); i++) {
-                _ptProblem->wSpace()->getObstacle(i)->control2Parameters(values,params);
-                ((DOFWidget*)_DOFWidgets.at(i))->setValues(params);
+            prob->wSpace()->moveObstaclesTo(sample);
+            for (uint i = 0; i < DOFWids.size(); ++i) {
+                prob->wSpace()->getObstacle(i)->control2Parameters(values,params);
+                ((DOFWidget *)DOFWids.at(i))->setValues(params);
             }
         }
     }
 
-}
 
+    void ControlWidget::writeGUI(string text){
+        emit sendText(text);
+    }
+}
