@@ -161,8 +161,8 @@ namespace Kautham {
         }
     }
 
-    bool GUI::setSampleWidget(SampleSet* samples, Sampler* sampler, Problem* prob){
-        SamplesWidget* tmpSam = new SamplesWidget(samples, sampler, prob);
+    bool GUI::setSampleWidget(Problem* problem){
+        SamplesWidget* tmpSam = new SamplesWidget(problem);
         propertiesTab->addTab(tmpSam, "Samplers");
         connect(tmpSam, SIGNAL(sendText(string)), this, SLOT(setText(string)) );
         return true;

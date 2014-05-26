@@ -32,15 +32,21 @@
 
 
 namespace Kautham{
-/** \addtogroup Application
- *  @{
- */
+    /** \addtogroup Application
+    *  @{
+    */
+
+    /*!
+     * \brief The COLLECTION enum is the sample's collection which samples will be add to
+     */
     enum COLLECTION {
         CURRENT,
         NEW
     };
 
-
+    /*!
+     * \brief The ENGINE enum is the sampler type used to get new samples
+     */
     enum ENGINE {
         SDK,
         HALTON,
@@ -49,40 +55,125 @@ namespace Kautham{
         GAUSSIANLIKE
     };
 
-
+    /*!
+     * \brief The SamplesWidget class is the class that implements the Samples' Widget
+     */
     class SamplesWidget: public QWidget {
         Q_OBJECT
+    public:
+        /*!
+         * \brief SamplesWidget Constructs a samples' widget which
+         * \param problem problem to construct the widget of
+         * \param parent parent widget
+         * \param f window's flags
+         */
+        SamplesWidget(Problem *problem, QWidget *parent = 0, Qt::WindowFlags f = 0);
+
     signals:
+        /*!
+         * \brief sendText sends a message
+         * \param text message to send
+         */
         void sendText(string text);
 
     private slots:
+        /*!
+         * \brief changeSample changes current sample and moves robots to it
+         * \param index index of current sample
+         */
         void changeSample(int index);
+
+        /*!
+         * \brief testCollision checks whether the current sample is free of collision
+         */
         void testCollision();
+
+        /*!
+         * \brief testDistance computes the distance between robots and obstacles
+         */
         void testDistance();
+
+        /*!
+         * \brief addSample adds the current configuration as a sample
+         */
         void addSample();
+
+        /*!
+         * \brief removeSample removes current sample from the sample's list
+         */
         void removeSample();
+
+        /*!
+         * \brief getSamples gets the amount of samples specified in the widget,
+         * using the selected sampler and adds them to the selected collection
+         */
         void getSamples();
+
+        /*!
+         * \brief updateSampleList updates the sample's list
+         */
         void updateSampleList();
+
+        /*!
+         * \brief copySampleList copies the two first samples in the sample's list in a new collection
+         */
         void copySampleList();
+
+        /*!
+         * \brief clearSampleList clears the sample's list
+         */
         void clearSampleList();
+
+        /*!
+         * \brief changeCollection changes the collection where new samples will be added
+         * \param index
+         */
         void changeCollection(int index);
+
+        /*!
+         * \brief changeEngine changes the sampler's type used to get new samples
+         * \param index
+         */
         void changeEngine(int index);
 
-    public:
-        SamplesWidget(SampleSet* sampleSet, Sampler* sampler, Problem* problem,
-                      QWidget *parent = 0, Qt::WindowFlags f = 0);
-
     private:
+        /*!
+         * \brief writeGUI writes a message in the GUI
+         * \param text message to write
+         */
         void writeGUI(string text);
-        Problem *_problem;
-        SampleSet *_sampleSet;
-        Sampler *_sampler;
-        QComboBox *_sampleList;
-        QLineEdit  *_sampleAmount;
+
+        /*!
+         * \brief prob problem to construct the widget of
+         */
+        Problem *prob;
+
+        /*!
+         * \brief sampleSet set of samples of the problem
+         */
+        SampleSet *sampleSet;
+
+        /*!
+         * \brief sampler sampler of the problem
+         */
+        Sampler *sampler;
+
+        /*!
+         * \brief sampleList shows to the user the list of samples
+         */
+        QComboBox *sampleList;
+
+        /*!
+         * \brief sampleAmount line edit where the user can specify the number of samples to get
+         */
+        QLineEdit  *sampleAmount;
+
+        /*!
+         * \brief collection the sample's collection which samples will be add to
+         */
         COLLECTION collection;
     };
-
-/** @}   end of Doxygen module "Application" */
+    /** @}   end of Doxygen module "Application" */
 }
 
 

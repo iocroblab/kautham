@@ -30,11 +30,11 @@ using namespace std;
 
 
 namespace Kautham {
-    SamplesWidget::SamplesWidget(SampleSet* sampleSet, Sampler* sampler, Problem* problem,
-                                 QWidget *parent, Qt::WindowFlags f):QWidget(parent, f) {
-        _sampleSet = sampleSet;
-        _sampler = sampler;
-        _problem = problem;
+    SamplesWidget::SamplesWidget(Problem *problem, QWidget *parent,
+                                 Qt::WindowFlags f):QWidget(parent, f) {
+        sampleSet = problem->getSampleSet();
+        sampler = problem->getSampler();
+        prob = problem;
         collection = CURRENT;
 
         QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -50,12 +50,12 @@ namespace Kautham {
         label->setToolTip("Current sample");
         hBoxLayout->addWidget(label);
 
-        _sampleList = new QComboBox();
-        _sampleList->setObjectName(QString::fromUtf8("sampleList"));
-        _sampleList->setEditable(false);
-        _sampleList->setToolTip("Current list of samples");
-        connect(_sampleList,SIGNAL(currentIndexChanged(int)),this,SLOT(changeSample(int)));
-        hBoxLayout->addWidget(_sampleList);
+        sampleList = new QComboBox();
+        sampleList->setObjectName(QString::fromUtf8("sampleList"));
+        sampleList->setEditable(false);
+        sampleList->setToolTip("Current list of samples");
+        connect(sampleList,SIGNAL(currentIndexChanged(int)),this,SLOT(changeSample(int)));
+        hBoxLayout->addWidget(sampleList);
 
         QPushButton *button = new QPushButton("Test collision");
         button->setObjectName(QString::fromUtf8("collisionButton"));
@@ -72,8 +72,8 @@ namespace Kautham {
         mainLayout->addLayout(gridLayout);
 
         QIcon addIcon;
-        addIcon.addFile(":/icons/add_16x16.png");
-        addIcon.addFile(":/icons/add_22x22.png");
+        addIcon.addFile(":/icons/add16x16.png");
+        addIcon.addFile(":/icons/add22x22.png");
 
         button = new QPushButton(addIcon,"Add");
         button->setObjectName(QString::fromUtf8("addButton"));
@@ -82,8 +82,8 @@ namespace Kautham {
         gridLayout->addWidget(button,0,0);
 
         QIcon removeIcon;
-        removeIcon.addFile(":/icons/remove_16x16.png");
-        removeIcon.addFile(":/icons/remove_22x22.png");
+        removeIcon.addFile(":/icons/remove16x16.png");
+        removeIcon.addFile(":/icons/remove22x22.png");
 
         button = new QPushButton(removeIcon,"Remove");
         button->setObjectName(QString::fromUtf8("removeButton"));
@@ -92,8 +92,8 @@ namespace Kautham {
         gridLayout->addWidget(button,0,1);
 
         QIcon getIcon;
-        getIcon.addFile(":/icons/right_16x16.png");
-        getIcon.addFile(":/icons/right_22x22.png");
+        getIcon.addFile(":/icons/right16x16.png");
+        getIcon.addFile(":/icons/right22x22.png");
 
         button = new QPushButton(getIcon,"Get");
         button->setObjectName(QString::fromUtf8("getButton"));
@@ -102,8 +102,8 @@ namespace Kautham {
         gridLayout->addWidget(button,1,0);
 
         QIcon updateIcon;
-        updateIcon.addFile(":/icons/reload_16x16.png");
-        updateIcon.addFile(":/icons/reload_22x22.png");
+        updateIcon.addFile(":/icons/reload16x16.png");
+        updateIcon.addFile(":/icons/reload22x22.png");
 
         button = new QPushButton(updateIcon,"Update");
         button->setObjectName(QString::fromUtf8("updateButton"));
@@ -112,8 +112,8 @@ namespace Kautham {
         gridLayout->addWidget(button,1,1);
 
         QIcon copyIcon;
-        copyIcon.addFile(":/icons/copy_16x16.png");
-        copyIcon.addFile(":/icons/copy_22x22.png");
+        copyIcon.addFile(":/icons/copy16x16.png");
+        copyIcon.addFile(":/icons/copy22x22.png");
 
         button = new QPushButton(copyIcon,"Copy");
         button->setObjectName(QString::fromUtf8("copyButton"));
@@ -122,8 +122,8 @@ namespace Kautham {
         gridLayout->addWidget(button,2,0);
 
         QIcon clearIcon;
-        clearIcon.addFile(":/icons/trashcan_16x16.png");
-        clearIcon.addFile(":/icons/trashcan_22x22.png");
+        clearIcon.addFile(":/icons/trashcan16x16.png");
+        clearIcon.addFile(":/icons/trashcan22x22.png");
 
         button = new QPushButton(clearIcon,"Clear");
         button->setObjectName(QString::fromUtf8("clearButton"));
@@ -164,15 +164,15 @@ namespace Kautham {
         comboBox->insertItem(RANDOM,"Random");
         comboBox->insertItem(GAUSSIAN,"Gaussian");
         comboBox->insertItem(GAUSSIANLIKE,"Gaussian-like");
-        if (typeid(*_sampler) == typeid(SDKSampler)) {
+        if (typeid(*sampler) == typeid(SDKSampler)) {
             comboBox->setCurrentIndex(SDK);
-        } else if (typeid(*_sampler) == typeid(HaltonSampler)) {
+        } else if (typeid(*sampler) == typeid(HaltonSampler)) {
             comboBox->setCurrentIndex(HALTON);
-        } else if (typeid(*_sampler) == typeid(RandomSampler)) {
+        } else if (typeid(*sampler) == typeid(RandomSampler)) {
             comboBox->setCurrentIndex(RANDOM);
-        } else if (typeid(*_sampler) == typeid(GaussianSampler)) {
+        } else if (typeid(*sampler) == typeid(GaussianSampler)) {
             comboBox->setCurrentIndex(GAUSSIAN);
-        } else if (typeid(*_sampler) == typeid(GaussianLikeSampler)) {
+        } else if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
             comboBox->setCurrentIndex(GAUSSIANLIKE);
         }
         connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(changeEngine(int)));
@@ -187,29 +187,29 @@ namespace Kautham {
         label->setToolTip("Number of samples to calculate");
         hBoxLayout->addWidget(label);
 
-        _sampleAmount = new QLineEdit();
-        _sampleAmount->setObjectName(QString::fromUtf8("amountLineEdit"));
-        _sampleAmount->setToolTip("Number of samples to calculate");
-        hBoxLayout->addWidget(_sampleAmount);
+        sampleAmount = new QLineEdit();
+        sampleAmount->setObjectName(QString::fromUtf8("amountLineEdit"));
+        sampleAmount->setToolTip("Number of samples to calculate");
+        hBoxLayout->addWidget(sampleAmount);
 
         updateSampleList();
     }
 
 
     void SamplesWidget::changeSample(int index) {
-        if (index >= 0 && index < _sampleSet->getSize()) {
-            _problem->wSpace()->moveRobotsTo(_sampleSet->getSampleAt(index));
+        if (index >= 0 && index < sampleSet->getSize()) {
+            prob->wSpace()->moveRobotsTo(sampleSet->getSampleAt(index));
         }
     }
 
 
     void SamplesWidget::testCollision() {
         stringstream sstr;
-        if (_sampleList->count() > 0) {
-            Sample* sample = _sampleSet->getSampleAt((_sampleList->currentText()).toInt());
-            sstr << "The sample No: " << _sampleList->currentText().toUtf8().constData()
+        if (sampleList->count() > 0) {
+            Sample* sample = sampleSet->getSampleAt((sampleList->currentText()).toInt());
+            sstr << "The sample No: " << sampleList->currentText().toUtf8().constData()
                  << " is: ";
-            if (_problem->wSpace()->collisionCheck(sample)) {
+            if (prob->wSpace()->collisionCheck(sample)) {
                 sstr << "in COLLISION";
             } else {
                 sstr << "FREE";
@@ -222,13 +222,13 @@ namespace Kautham {
 
 
     void SamplesWidget::testDistance(){
-        if (_sampleList->count() > 0){
-            Sample* sample = _sampleSet->getSampleAt((_sampleList->currentText()).toInt());
-            vector<KthReal>* values = _problem->wSpace()->distanceCheck(sample);
+        if (sampleList->count() > 0){
+            Sample* sample = sampleSet->getSampleAt((sampleList->currentText()).toInt());
+            vector<KthReal>* values = prob->wSpace()->distanceCheck(sample);
             if (values->size() > 0) {
                 stringstream sstr;
                 sstr.precision(10);
-                sstr << "For sample No: " << _sampleList->currentText().toUtf8().constData()
+                sstr << "For sample No: " << sampleList->currentText().toUtf8().constData()
                      << " the distance check is: " << values->at(0);
                 for (uint i = 1; i < values->size(); ++i) {
                     sstr<< ", " << values->at(i);
@@ -244,11 +244,11 @@ namespace Kautham {
 
 
     void SamplesWidget::addSample(){
-        int dim = _problem->wSpace()->getNumRobControls();
+        int dim = prob->wSpace()->getNumRobControls();
         Sample* sample = new Sample(dim);
-        sample->setCoords(_problem->getCurrentRobControls());
-        if (!_problem->wSpace()->collisionCheck(sample)) {
-            _sampleSet->add(sample);
+        sample->setCoords(prob->getCurrentRobControls());
+        if (!prob->wSpace()->collisionCheck(sample)) {
+            sampleSet->add(sample);
             updateSampleList();
         } else {
             writeGUI("Samples not added - COLLISION configuration!");
@@ -257,7 +257,7 @@ namespace Kautham {
 
 
     void SamplesWidget::removeSample(){
-        if (!_sampleSet->removeSampleAt((_sampleList->currentText()).toInt())) {
+        if (!sampleSet->removeSampleAt((sampleList->currentText()).toInt())) {
             writeGUI("An unexpected error ocurred. Please try again");
         }
         updateSampleList();
@@ -266,31 +266,31 @@ namespace Kautham {
 
     void SamplesWidget::getSamples() {
         bool ok;
-        int numSamples = (_sampleAmount->text()).toInt(&ok,10);
+        int numSamples = (sampleAmount->text()).toInt(&ok,10);
 
         if (ok) {
             Sample *sample;
             int numFree = 0;
 
-            if (collection == NEW && _sampleSet->getSize() > 1) {
+            if (collection == NEW && sampleSet->getSize() > 1) {
                 copySampleList();
             }
 
             for (uint i = 0; i < numSamples; ++i) {
-                sample = _sampler->nextSample();
-                sample->setFree(!_problem->wSpace()->collisionCheck(sample));
+                sample = sampler->nextSample();
+                sample->setFree(!prob->wSpace()->collisionCheck(sample));
                 if (sample->isFree()) {
                     ++numFree;
-                    _sampleSet->add(sample);
+                    sampleSet->add(sample);
                 } else {
                     delete sample;
                 }
             }
 
-            QString text = _sampleAmount->text() + " samples were generated, "
+            QString text = sampleAmount->text() + " samples were generated, "
                     + QString::number(numFree) + " samples are free.";
             writeGUI(text.toUtf8().constData());
-            _sampleAmount->setText("");
+            sampleAmount->setText("");
             updateSampleList();
         } else {
             writeGUI("Please, enter a valid amount of samples.");
@@ -299,36 +299,36 @@ namespace Kautham {
 
 
     void SamplesWidget::updateSampleList() {
-        if (_sampleList->count() < _sampleSet->getSize()) {
-            for (uint i = _sampleList->count(); i < _sampleSet->getSize(); ++i) {
-                _sampleList->addItem(QString::number(i));
+        if (sampleList->count() < sampleSet->getSize()) {
+            for (uint i = sampleList->count(); i < sampleSet->getSize(); ++i) {
+                sampleList->addItem(QString::number(i));
             }
         } else {
-            for (uint i = _sampleList->count(); i > _sampleSet->getSize(); --i) {
-                _sampleList->removeItem(i-1);
+            for (uint i = sampleList->count(); i > sampleSet->getSize(); --i) {
+                sampleList->removeItem(i-1);
             }
         }
     }
 
 
     void SamplesWidget::copySampleList() {
-        if (_sampleSet->getSize() > 0) {
-            int dim = _problem->wSpace()->getNumRobControls();
+        if (sampleSet->getSize() > 0) {
+            int dim = prob->wSpace()->getNumRobControls();
             Sample *initSample = new Sample(dim);
             Sample *goalSample = new Sample(dim);
-            initSample->setCoords(_sampleSet->getSampleAt(0)->getCoords());
-            goalSample->setCoords(_sampleSet->getSampleAt(1)->getCoords());
-            _sampleSet->clear();
-            if (typeid(*_sampler) == typeid(GaussianLikeSampler)) {
-                ((GaussianLikeSampler*)_sampler)->clear();
+            initSample->setCoords(sampleSet->getSampleAt(0)->getCoords());
+            goalSample->setCoords(sampleSet->getSampleAt(1)->getCoords());
+            sampleSet->clear();
+            if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
+                ((GaussianLikeSampler*)sampler)->clear();
             }
-            _sampleSet->add(initSample);
-            _sampleSet->add(goalSample);
-            if (_sampleSet->isAnnSet()) _sampleSet->loadAnnData();
+            sampleSet->add(initSample);
+            sampleSet->add(goalSample);
+            if (sampleSet->isAnnSet()) sampleSet->loadAnnData();
         } else {
-            _sampleSet->clear();
-            if (typeid(*_sampler) == typeid(GaussianLikeSampler)) {
-                ((GaussianLikeSampler*)_sampler)->clear();
+            sampleSet->clear();
+            if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
+                ((GaussianLikeSampler*)sampler)->clear();
             }
         }
         updateSampleList();
@@ -336,9 +336,9 @@ namespace Kautham {
 
 
     void SamplesWidget::clearSampleList() {
-        _sampleSet->clear();
-        if (typeid(*_sampler) == typeid(GaussianLikeSampler)) {
-            ((GaussianLikeSampler*)_sampler)->clear();
+        sampleSet->clear();
+        if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
+            ((GaussianLikeSampler*)sampler)->clear();
         }
         updateSampleList();
     }
@@ -347,40 +347,40 @@ namespace Kautham {
     void SamplesWidget::changeEngine(int index) {
         switch (index) {
         case SDK:
-            if (typeid(*_sampler) != typeid(SDKSampler)) {
-                delete _sampler;
-                _sampler = new SDKSampler(_problem->wSpace()->getNumRobControls(),2);
-                _problem->setSampler(_sampler);
+            if (typeid(*sampler) != typeid(SDKSampler)) {
+                delete sampler;
+                sampler = new SDKSampler(prob->wSpace()->getNumRobControls(),2);
+                prob->setSampler(sampler);
             }
             break;
         case HALTON:
-            if (typeid(*_sampler) != typeid(HaltonSampler)) {
-                delete _sampler;
-                _sampler = new HaltonSampler(_problem->wSpace()->getNumRobControls());
-                _problem->setSampler(_sampler);
+            if (typeid(*sampler) != typeid(HaltonSampler)) {
+                delete sampler;
+                sampler = new HaltonSampler(prob->wSpace()->getNumRobControls());
+                prob->setSampler(sampler);
             }
             break;
         case RANDOM:
-            if (typeid(*_sampler) != typeid(RandomSampler)) {
-                delete _sampler;
-                _sampler = new RandomSampler(_problem->wSpace()->getNumRobControls());
-                _problem->setSampler(_sampler);
+            if (typeid(*sampler) != typeid(RandomSampler)) {
+                delete sampler;
+                sampler = new RandomSampler(prob->wSpace()->getNumRobControls());
+                prob->setSampler(sampler);
             }
             break;
         case GAUSSIAN:
-            if (typeid(*_sampler) != typeid(GaussianSampler)) {
-                delete _sampler;
-                _sampler = new GaussianSampler(_problem->wSpace()->getNumRobControls(),
-                                               0.1,_problem->wSpace());
-                _problem->setSampler(_sampler);
+            if (typeid(*sampler) != typeid(GaussianSampler)) {
+                delete sampler;
+                sampler = new GaussianSampler(prob->wSpace()->getNumRobControls(),
+                                               0.1,prob->wSpace());
+                prob->setSampler(sampler);
             }
             break;
         case GAUSSIANLIKE:
-            if (typeid(*_sampler) != typeid(GaussianLikeSampler)) {
-                delete _sampler;
-                _sampler = new GaussianLikeSampler(_problem->wSpace()->getNumRobControls(),
-                                                   2, _problem->wSpace());
-                _problem->setSampler(_sampler);
+            if (typeid(*sampler) != typeid(GaussianLikeSampler)) {
+                delete sampler;
+                sampler = new GaussianLikeSampler(prob->wSpace()->getNumRobControls(),
+                                                   2, prob->wSpace());
+                prob->setSampler(sampler);
             }
             break;
         default:
