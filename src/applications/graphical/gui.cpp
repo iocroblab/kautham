@@ -143,10 +143,14 @@ namespace Kautham {
 
     void GUI::setModelsDefaultPath() {
         QSettings settings("IOC","Kautham");
-        QStringList pathList = settings.value("models_directories",QStringList()).toStringList();
-        DefaultPathDialog *defaultPathDialog = new DefaultPathDialog(pathList,this);
-        if (defaultPathDialog->exec(&pathList)) {
-            settings.setValue("models_directories",pathList);
+        DefaultPathDialog *defaultPathDialog = new DefaultPathDialog(settings.value
+                                                                     ("models_directories",
+                                                                      QStringList()).
+                                                                     toStringList(),this);
+        QStringList *pathList = defaultPathDialog->getList();
+        if (pathList != NULL) {
+            settings.setValue("models_directories",*pathList);
+            delete pathList;
         }
     }
 
