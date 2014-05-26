@@ -103,8 +103,8 @@ namespace Kautham {
         connect(sliderSignalMapper,SIGNAL(mapped(int)),this,SLOT(sliderChanged(int)));
 
         QIcon updateIcon;
-        updateIcon.addFile(":/icons/reload16x16.png");
-        updateIcon.addFile(":/icons/reload22x22.png");
+        updateIcon.addFile(":/icons/reload_16x16.png");
+        updateIcon.addFile(":/icons/reload_22x22.png");
 
         QPushButton *updateButton = new QPushButton(updateIcon,"Update");
         if (isRobWidget) {
