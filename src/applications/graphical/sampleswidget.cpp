@@ -137,6 +137,7 @@ namespace Kautham {
 
         QVBoxLayout *vBoxLayout = new QVBoxLayout();
         vBoxLayout->setObjectName(QString::fromUtf8("addLayout"));
+        vBoxLayout->setContentsMargins(0,9,0,0);
         groupBox->setLayout(vBoxLayout);
 
         QComboBox *comboBox = new QComboBox();
@@ -154,6 +155,7 @@ namespace Kautham {
 
         vBoxLayout = new QVBoxLayout();
         vBoxLayout->setObjectName(QString::fromUtf8("engineLayout"));
+        vBoxLayout->setContentsMargins(0,9,0,0);
         groupBox->setLayout(vBoxLayout);
 
         comboBox = new QComboBox();
