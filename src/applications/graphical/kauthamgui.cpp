@@ -123,15 +123,6 @@ void Application::setActions(){
 
     mainWindow->addSeparator(TOOLBAR);
 
-    // Creating the planner toolbar in the main Window. This list may change.
-    //string loc = Problem::localPlannersNames();
-    //string glob = Problem::plannersNames();
-    //mainWindow->createPlannerToolBar(loc, glob,this,SLOT(changePlanner(string,string)));
-    //mainWindow->setToogleAction(ACTIONTOOL,"&Find path","CTRL+F",":/icons/prm.xpm",mainWindow,SLOT(showPlannerToolBar()));
-    //mainWindow->addSeparator(TOOLBAR);
-    //mainWindow->addSeparator(ACTIONMENU);
-    //mainWindow->addSeparator(TOOLBAR);
-
     QIcon colors;
     colors.addFile(":/icons/colors_16x16.png");
     colors.addFile(":/icons/colors_22x22.png");
@@ -471,7 +462,7 @@ bool Application::problemSetup(string problemFile){
         mainWindow->addObsControlWidget(_problem,obsDOFWidgets);
     }
 
-    mainWindow->setSampleWidget(_problem->getSampleSet(), _problem->getSampler(), _problem);
+    mainWindow->setSampleWidget(_problem);
 
     if( _problem->getPlanner() != NULL ){
         mainWindow->addPlanner(_problem->getPlanner(), _problem->getSampleSet(), mainWindow);
