@@ -56,7 +56,7 @@ class GUI;//needed here because GUI has #include "plannerwidget.h"
 
 	public:
     PlannerWidget(Planner* plan, SampleSet* samp, bool camera = false, GUI* gui = NULL );
-    inline bool ismoving(){return _ismoving;};
+    inline bool ismoving() {return _ismoving;}
 		
 	private:
     PlannerWidget();
@@ -86,6 +86,38 @@ class GUI;//needed here because GUI has #include "plannerwidget.h"
     QLabel      *_lblRes;
 	
 	};
+
+
+    class PlannersWidget:public QWidget {
+        Q_OBJECT
+    public:
+        PlannersWidget(Planner *planner, SampleSet *sampleSet, bool camera = false,
+                       QWidget *parent = 0, Qt::WindowFlags f = 0);
+        inline bool isMoving() {return _isMoving;}
+    signals:
+        void sendText(string text);
+
+    private slots:
+        void getPath();
+        void saveData();
+        void loadData();
+        void moveAlongPath();
+        void showSample(int index);
+        void tryConnect();
+        void setCamera();
+
+    private:
+        bool _isMoving;
+        QComboBox *localFromBox;
+        QComboBox *localToBox;
+        QComboBox *globalPlannerBox;
+        QComboBox *globalFromBox;
+        QComboBox *globalToBox;
+        QPushButton *moveButton;
+        QComboBox *linkBox;
+        QCheckBox *cameraCheckBox;
+
+    };
 
     /** @}   end of Doxygen module "Application" */
 }
