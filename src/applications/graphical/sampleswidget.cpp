@@ -72,8 +72,8 @@ namespace Kautham {
         mainLayout->addLayout(gridLayout);
 
         QIcon addIcon;
-        addIcon.addFile(":/icons/add16x16.png");
-        addIcon.addFile(":/icons/add22x22.png");
+        addIcon.addFile(":/icons/add_16x16.png");
+        addIcon.addFile(":/icons/add_22x22.png");
 
         button = new QPushButton(addIcon,"Add");
         button->setObjectName(QString::fromUtf8("addButton"));
@@ -82,8 +82,8 @@ namespace Kautham {
         gridLayout->addWidget(button,0,0);
 
         QIcon removeIcon;
-        removeIcon.addFile(":/icons/remove16x16.png");
-        removeIcon.addFile(":/icons/remove22x22.png");
+        removeIcon.addFile(":/icons/remove_16x16.png");
+        removeIcon.addFile(":/icons/remove_22x22.png");
 
         button = new QPushButton(removeIcon,"Remove");
         button->setObjectName(QString::fromUtf8("removeButton"));
@@ -92,8 +92,8 @@ namespace Kautham {
         gridLayout->addWidget(button,0,1);
 
         QIcon getIcon;
-        getIcon.addFile(":/icons/right16x16.png");
-        getIcon.addFile(":/icons/right22x22.png");
+        getIcon.addFile(":/icons/right_16x16.png");
+        getIcon.addFile(":/icons/right_22x22.png");
 
         button = new QPushButton(getIcon,"Get");
         button->setObjectName(QString::fromUtf8("getButton"));
@@ -102,8 +102,8 @@ namespace Kautham {
         gridLayout->addWidget(button,1,0);
 
         QIcon updateIcon;
-        updateIcon.addFile(":/icons/reload16x16.png");
-        updateIcon.addFile(":/icons/reload22x22.png");
+        updateIcon.addFile(":/icons/reload_16x16.png");
+        updateIcon.addFile(":/icons/reload_22x22.png");
 
         button = new QPushButton(updateIcon,"Update");
         button->setObjectName(QString::fromUtf8("updateButton"));
@@ -112,8 +112,8 @@ namespace Kautham {
         gridLayout->addWidget(button,1,1);
 
         QIcon copyIcon;
-        copyIcon.addFile(":/icons/copy16x16.png");
-        copyIcon.addFile(":/icons/copy22x22.png");
+        copyIcon.addFile(":/icons/copy_16x16.png");
+        copyIcon.addFile(":/icons/copy_22x22.png");
 
         button = new QPushButton(copyIcon,"Copy");
         button->setObjectName(QString::fromUtf8("copyButton"));
@@ -122,8 +122,8 @@ namespace Kautham {
         gridLayout->addWidget(button,2,0);
 
         QIcon clearIcon;
-        clearIcon.addFile(":/icons/trashcan16x16.png");
-        clearIcon.addFile(":/icons/trashcan22x22.png");
+        clearIcon.addFile(":/icons/trashcan_16x16.png");
+        clearIcon.addFile(":/icons/trashcan_22x22.png");
 
         button = new QPushButton(clearIcon,"Clear");
         button->setObjectName(QString::fromUtf8("clearButton"));
