@@ -102,11 +102,15 @@ namespace Kautham {
         connect(lineEditSignalMapper,SIGNAL(mapped(int)),this,SLOT(lineEditChanged(int)));
         connect(sliderSignalMapper,SIGNAL(mapped(int)),this,SLOT(sliderChanged(int)));
 
-        QPushButton *updateButton = new QPushButton();
+        QIcon updateIcon;
+        updateIcon.addFile(":/icons/reload16x16.png");
+        updateIcon.addFile(":/icons/reload22x22.png");
+
+        QPushButton *updateButton = new QPushButton(updateIcon,"Update");
         if (isRobWidget) {
-            updateButton->setText("Update to last moved sample");
+            updateButton->setToolTip("Update to last moved sample");
         } else {
-            updateButton->setText("Update to initial sample");
+            updateButton->setToolTip("Update to initial sample");
         }
         updateButton->setObjectName(QString::fromUtf8("btnUpdate"));
         connect(updateButton,SIGNAL(clicked()),this,SLOT(updateControls()));
