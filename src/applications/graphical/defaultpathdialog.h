@@ -72,6 +72,9 @@ namespace Kautham {
         void downDirectory();
 
     private:
+        /*!
+         * \brief pathListWidget list of paths
+         */
         QListWidget *pathListWidget;
     };
     /** @}   end of Doxygen module "Application" */

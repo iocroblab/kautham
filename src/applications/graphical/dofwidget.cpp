@@ -27,6 +27,9 @@
 #include "dofwidget.h"
 
 
+using namespace std;
+
+
 namespace Kautham {
     DOFWidget::DOFWidget(Robot* robot, QWidget *parent, Qt::WindowFlags f):QWidget(parent, f) {
         setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
@@ -74,6 +77,7 @@ namespace Kautham {
         QFrame *frame;
         QVBoxLayout *frameLayout;
         QLabel *label;
+        vector <KthReal> currentValues;
         currentValues.resize(names.size());
         labels.resize(names.size());
         for (uint i = 0; i < names.size(); ++i){
@@ -116,33 +120,33 @@ namespace Kautham {
         setValues(currentValues);
     }
 
+
     DOFWidget::~DOFWidget() {
-        for (uint i = 0; i < currentValues.size(); ++i) {
+        for (uint i = 0; i < lowValues.size(); ++i) {
             delete (QLabel*)labels[i];
         }
-        currentValues.clear();
         lowValues.clear();
         highValues.clear();
     }
 
 
-    void DOFWidget::writeGUI(string text) {
-        emit sendText(text);
+    void DOFWidget::setValues(vector<KthReal> &values) {
+        if (values.size() == labels.size()) {
+            double value;
+            for (uint i = 0; i < values.size(); ++i) {
+                value = values.at(i);
+                if (value > 1.0) value = 1.0;
+                if (value < 0.0) value = 0.0;
+
+                value = lowValues[i] + value*(highValues[i]-lowValues[i]);
+                ((QLabel*)labels[i])->setText(QString::number(value,'f',3));
+            }
+        }
     }
 
 
-    void DOFWidget::setValues(vector<KthReal> &values) {
-        if (values.size() == labels.size()) {
-            double realValue;
-            for (uint i = 0; i < values.size(); ++i) {
-                currentValues[i] = values.at(i);
-                if (currentValues[i] > 1.0) currentValues[i] = 1.0;
-                if (currentValues[i] < 0.0) currentValues[i] = 0.0;
-
-                realValue = lowValues[i] + currentValues[i]*(highValues[i]-lowValues[i]);
-                ((QLabel*)labels[i])->setText(QString::number(realValue,'f',3));
-            }
-        }
+    void DOFWidget::writeGUI(string text) {
+        emit sendText(text);
     }
 }
 
