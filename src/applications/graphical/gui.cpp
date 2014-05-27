@@ -314,18 +314,19 @@ namespace Kautham {
 
     bool GUI::addPlanner(Planner *plan, SampleSet* samp, GUI* gui){
         if( plan != NULL){
-            PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, plan->hasCameraMovements(), gui );
+            PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, plan->hasCameraMovements());
             propertiesTab->addTab(tmpPlan, QString((plan->getGuiName()).c_str()));
             //JAN
             indexPlannerTab = propertiesTab->indexOf(tmpPlan);
-            connect(tmpPlan, SIGNAL(sendText(string)), this, SLOT(setText(string)) );
+            connect(tmpPlan,SIGNAL(sendText(string)),this,SLOT(setText(string)));
+            connect(tmpPlan,SIGNAL(changeCursor(bool)),this,SLOT(changeCursor(bool)));
             if(plan->getIvCspaceScene() != NULL)
             {
                 addViewerTab("CSpace", plan->getIvCspaceScene());
             }
             return true;
         }else{
-            PlannerWidget* tmpPlan = new PlannerWidget( NULL, NULL, gui );
+            PlannerWidget* tmpPlan = new PlannerWidget( NULL, NULL);
             propertiesTab->addTab(tmpPlan, "Planner");
             //JAN
             indexPlannerTab = propertiesTab->indexOf(tmpPlan);
@@ -333,6 +334,11 @@ namespace Kautham {
         }
         return false;
     }
+
+    void GUI::changeCursor(bool waiting) {
+        setCursor(QCursor(waiting?Qt::WaitCursor:Qt::ArrowCursor));
+    }
+
 
     bool GUI::addViewerTab(string title, SoSeparator *root){
         viewsTab->setEnabled(true);
