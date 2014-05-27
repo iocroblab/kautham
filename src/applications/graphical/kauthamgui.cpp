@@ -292,7 +292,7 @@ void Application::saveAsFile(){
                 last_path.truncate(last_path.lastIndexOf("/"));
                 settings->setValue("last_path",last_path);
             } else
-                mainWindow->setText( "Sorry but the file was not saved" );
+                mainWindow->setText( "Sorry but the file couldn't be saved" );
         }
         mainWindow->setCursor(QCursor(Qt::ArrowCursor));
     }
@@ -306,8 +306,8 @@ void Application::closeProblem(){
         mainWindow->setText("First open a problem");
         break;
     case PROBLEMLOADED:
-        if(mainWindow->getPlannerWidget()->ismoving())
-            mainWindow->getPlannerWidget()->simulatePath();//stops simulation
+        //if (mainWindow->getPlannerWidget()->ismoving())
+            //mainWindow->getPlannerWidget()->simulatePath();//stops simulation
         saveTabColors();
         mainWindow->restart();
         delete _problem;
