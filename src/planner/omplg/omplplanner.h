@@ -147,6 +147,7 @@ namespace Kautham {
         //void drawCspaceprojections();
 
         void omplState2smp(const ob::State *state, Sample* smp);
+        void smp2omplState(Sample* smp, ob::State *state);
         void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
         void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
         inline ob::StateSpacePtr getSpace(){return space;}
