@@ -1496,11 +1496,13 @@ namespace Kautham {
       try{
           if( visible ){
               visModel->addChild(_pathSeparator);
+              collModel->addChild(_pathSeparator);
               response = true;
           }else{
               sepgrid = visModel->getByName("Path");
               if( sepgrid != NULL ){
                   visModel->removeChild(sepgrid);
+                  collModel->removeChild(sepgrid);
               }
               response = false;
           }

@@ -44,7 +44,7 @@ namespace Kautham{
   iocPlanner::iocPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
       Planner(stype, init, goal, samples, ws)
   {
-      _family = "ioc";
+      _family = IOCPLANNER;
     _guiName = _idName = "";
       _sampler = sampler;
 

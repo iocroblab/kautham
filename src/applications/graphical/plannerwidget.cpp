@@ -41,31 +41,35 @@ namespace Kautham{
 
         QGroupBox *groupBox = new QGroupBox(this);
         groupBox->setObjectName(QString::fromUtf8("groupBox"));
+
         QGridLayout *gridLayoutGB = new QGridLayout(groupBox);
         gridLayoutGB->setObjectName(QString::fromUtf8("gridLayout"));
+
         QVBoxLayout *verticalLayoutGB = new QVBoxLayout();
         verticalLayoutGB->setObjectName(QString::fromUtf8("verticalLayout"));
+
         QHBoxLayout *horizontalLayoutGB = new QHBoxLayout();
         horizontalLayoutGB->setObjectName(QString::fromUtf8("horizontalLayout"));
+
         QLabel *labelGB = new QLabel(groupBox);
         labelGB->setObjectName(QString::fromUtf8("label"));
 
         horizontalLayoutGB->addWidget(labelGB);
 
-        _spFrom = new QSpinBox(groupBox);
-        _spFrom->setObjectName(QString::fromUtf8("_spFrom"));
+        localFromBox = new QSpinBox(groupBox);
+        localFromBox->setObjectName(QString::fromUtf8("localFromBox"));
 
-        horizontalLayoutGB->addWidget(_spFrom);
+        horizontalLayoutGB->addWidget(localFromBox);
 
         QLabel *label_2GB = new QLabel(groupBox);
         label_2GB->setObjectName(QString::fromUtf8("label_2"));
 
         horizontalLayoutGB->addWidget(label_2GB);
 
-        _spTo = new QSpinBox(groupBox);
-        _spTo->setObjectName(QString::fromUtf8("_spTo"));
+        localToBox = new QSpinBox(groupBox);
+        localToBox->setObjectName(QString::fromUtf8("localToBox"));
 
-        horizontalLayoutGB->addWidget(_spTo);
+        horizontalLayoutGB->addWidget(localToBox);
 
 
         verticalLayoutGB->addLayout(horizontalLayoutGB);
@@ -77,17 +81,11 @@ namespace Kautham{
 
         horizontalLayout_2GB->addWidget(_cmbTry);
 
-        _lblRes = new QLabel(groupBox);
-        _lblRes->setObjectName(QString::fromUtf8("label_3"));
-        QSizePolicy sizePolicy1(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        sizePolicy1.setHorizontalStretch(0);
-        sizePolicy1.setVerticalStretch(0);
-        sizePolicy1.setHeightForWidth(_lblRes->sizePolicy().hasHeightForWidth());
-        _lblRes->setSizePolicy(sizePolicy1);
-        _lblRes->setMinimumSize(QSize(20, 20));
-        _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/tryconnect.xpm")));
+        connectLabel = new QLabel(groupBox);
+        connectLabel->setObjectName(QString::fromUtf8("label_3"));
+        connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/tryconnect.xpm")));
 
-        horizontalLayout_2GB->addWidget(_lblRes);
+        horizontalLayout_2GB->addWidget(connectLabel);
 
 
         verticalLayoutGB->addLayout(horizontalLayout_2GB);
@@ -100,26 +98,25 @@ namespace Kautham{
 
         tmpLabel = new QLabel(this);
         tmpLabel->setText("Init configuration is the sample:");
-        spnInit = new QSpinBox(this);
+        globalFromBox = new QSpinBox(this);
 
         hboxLayout = new QHBoxLayout();
         hboxLayout->addWidget(tmpLabel);
-        hboxLayout->addWidget(spnInit);
+        hboxLayout->addWidget(globalFromBox);
         vboxLayout->addLayout(hboxLayout);
 
         tmpLabel = new QLabel(this);
         tmpLabel->setText("Goal configuration is the sample:");
-        spnGoal = new QSpinBox(this);
+        globalToBox = new QSpinBox(this);
 
         hboxLayout = new QHBoxLayout();
         hboxLayout->addWidget(tmpLabel);
-        hboxLayout->addWidget(spnGoal);
+        hboxLayout->addWidget(globalToBox);
         vboxLayout->addLayout(hboxLayout);
 
-        chkCamera = new QCheckBox("Move the camera.");
-        chkCamera->setChecked(false);
-
         if(camera = true){
+            chkCamera = new QCheckBox("Move the camera.");
+            chkCamera->setChecked(false);
             vboxLayout->addWidget(chkCamera);
         }
 
@@ -164,83 +161,153 @@ namespace Kautham{
         labelGB->setText(QApplication::translate("Form", "From:", 0, QApplication::UnicodeUTF8));
         label_2GB->setText(QApplication::translate("Form", "To:", 0, QApplication::UnicodeUTF8));
         _cmbTry->setText(QApplication::translate("Form", "Try Connect", 0, QApplication::UnicodeUTF8));
-        _lblRes->setText(QString());
+        connectLabel->setText(QString());
 
         _plannerTimer = new QTimer( this );
 
         if(_planner != NULL ){
-            connect(btnGetPath, SIGNAL( clicked() ), this, SLOT( getPathCall() ) );
-            connect(btnSaveData, SIGNAL( clicked() ), this, SLOT( saveDataCall() ) );
-            connect(btnLoadData, SIGNAL( clicked() ), this, SLOT( loadDataCall() ) );
+            connect(btnGetPath, SIGNAL( clicked() ), this, SLOT( getPath() ) );
+            connect(btnSaveData, SIGNAL( clicked() ), this, SLOT( saveData() ) );
+            connect(btnLoadData, SIGNAL( clicked() ), this, SLOT( loadData() ) );
             connect(btnMove, SIGNAL( clicked() ), this, SLOT( simulatePath() ) );
             connect(_plannerTimer, SIGNAL(timeout()), this, SLOT(moveAlongPath()) );
-            connect(spnInit, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
-            connect(spnGoal, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
-            connect(_spFrom, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
-            connect(_spTo, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
+            connect(globalFromBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
+            connect(globalToBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
+            connect(localFromBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
+            connect(localToBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
             connect(_cmbTry, SIGNAL( clicked() ), this, SLOT( tryConnect( )));
             connect(chkCamera, SIGNAL( clicked() ), this, SLOT( chkCameraClick( )));
 
-            spnInit->setValue( 0 );
-            spnGoal->setValue( 1 );
-            _spFrom->setValue( 0 );
-            _spTo->setValue( 1 );
+            globalFromBox->setValue( 0 );
+            globalToBox->setValue( 1 );
+            localFromBox->setValue( 0 );
+            localToBox->setValue( 1 );
 
         }
     }
 
-    void PlannerWidget::tryConnect(){
+
+    void PlannerWidget::tryConnect() {
+        if (_planner != NULL) {
+            switch ((int)_planner->getFamily()) {
 #if defined(KAUTHAM_USE_IOC)
-        if(_planner != NULL ){
-            if(_planner->getFamily()=="ioc")
-            {
-                ((IOC::iocPlanner*)_planner)->getLocalPlanner()->setInitSamp(_samples->getSampleAt(_spFrom->text().toInt()));
-                ((IOC::iocPlanner*)_planner)->getLocalPlanner()->setGoalSamp(_samples->getSampleAt(_spTo->text().toInt()));
+            case IOCPLANNER:
+                tryConnectIOC();
+                break;
+#endif
+#if defined(KAUTHAM_USE_OMPL)
+            case OMPLPLANNER:
+                tryConnectOMPL();
+                break;
+            case OMPLCPLANNER:
+                writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
 
-                KthReal d = ((IOC::iocPlanner*)_planner)->getLocalPlanner()->distance(_samples->getSampleAt(_spFrom->text().toInt()),
-                                                                                      _samples->getSampleAt(_spTo->text().toInt()));
-                char str[30];
-                sprintf(str,"Distance:  %f",d);
-                writeGUI(str);
-                if( ((IOC::iocPlanner*)_planner)->getLocalPlanner()->canConect() ){
-                    _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
-                    writeGUI("The samples can be connected.");
-                }else{
-                    _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/noconnect.xpm")));
-                    writeGUI("The samples can NOT be connected.");
-                }
+                break;
+#if defined(KAUTHAM_USE_ODE)
+            case ODEPLANNER:
+                writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
 
+                break;
+#endif
+#endif
+            case NOFAMILY:
+                writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+
+                break;
+            default:
+                writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+
+                break;
             }
-            else  writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
-        }else
+        } else {
             writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+        }
+    }
+
+
+    void PlannerWidget::tryConnectIOC() {
+#if defined(KAUTHAM_USE_IOC)
+        Sample *fromSample = _samples->getSampleAt(localFromBox->text().toInt());
+        Sample *toSample = _samples->getSampleAt(localToBox->text().toInt());
+        ((IOC::iocPlanner*)_planner)->getLocalPlanner()->setInitSamp(fromSample);
+        ((IOC::iocPlanner*)_planner)->getLocalPlanner()->setGoalSamp(toSample);
+
+        KthReal distance = ((IOC::iocPlanner*)_planner)->getLocalPlanner()->
+                distance(fromSample,toSample);
+
+        writeGUI("Distance:  "+QString::number(distance).toStdString());
+        if (((IOC::iocPlanner*)_planner)->getLocalPlanner()->canConect()) {
+            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
+            writeGUI("The samples can be connected.");
+        } else {
+            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/noconnect.xpm")));
+            writeGUI("The samples can NOT be connected.");
+        }
 #endif
     }
 
-    void PlannerWidget::getPathCall(){
-        _gui->setCursor(QCursor(Qt::WaitCursor));
 
-        //assert(_CrtCheckMemory());
+    void PlannerWidget::tryConnectOMPL() {
+#if defined(KAUTHAM_USE_OMPL)
+        ob::CompoundState *fromState;
+        ((omplplanner::omplPlanner*)_planner)->
+                smp2omplState(_samples->getSampleAt(localFromBox->text().toInt()),fromState);
+
+        ob::CompoundState *toState;
+        ((omplplanner::omplPlanner*)_planner)->
+                smp2omplState(_samples->getSampleAt(localToBox->text().toInt()),toState);
+
+        bool connected = ((ob::MotionValidator *)((ob::SpaceInformation *)((omplplanner::omplPlanner*)
+                                                                           _planner)->
+                                                  SimpleSetup()->getSpaceInformation().get())->
+                          getMotionValidator().get())->checkMotion(fromState,toState);
+        if (connected) {
+            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
+            writeGUI("The samples can be connected.");
+        } else {
+            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/noconnect.xpm")));
+            writeGUI("The samples can NOT be connected.");
+        }
+#endif
+    }
+
+
+    void PlannerWidget::tryConnectOMPLC() {
+#if defined(KAUTHAM_USE_OMPL)
+        writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+#endif
+    }
+
+
+    void PlannerWidget::tryConnectODE() {
+#if defined(KAUTHAM_USE_OMPL) && defined(KAUTHAM_USE_ODE)
+        writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+#endif
+    }
+
+
+    void PlannerWidget::getPath(){
+        _gui->setCursor(QCursor(Qt::WaitCursor));
 
         if(_planner != NULL ){
             _planner->wkSpace()->moveObstaclesTo(_planner->wkSpace()->getInitObsSample());
-            _planner->setInitSamp(_samples->getSampleAt(spnInit->text().toInt()));
-            _planner->setGoalSamp(_samples->getSampleAt(spnGoal->text().toInt()));
+            _planner->setInitSamp(_samples->getSampleAt(globalFromBox->text().toInt()));
+            _planner->setGoalSamp(_samples->getSampleAt(globalToBox->text().toInt()));
 
             if(_planner->solveAndInherit())
                 btnMove->setEnabled(true);
             else
                 btnMove->setEnabled(false);
         }
-        //assert(_CrtCheckMemory());
         _gui->setCursor(QCursor(Qt::ArrowCursor));
     }
 
-    void PlannerWidget::saveDataCall(){
-#if defined(KAUTHAM_USE_IOC)
+    void PlannerWidget::saveData(){
+
         if(_planner != NULL ){
             if(_planner->getFamily()=="ioc")
             {
+#if defined(KAUTHAM_USE_IOC)
                 QString path,dir;
                 QDir workDir;
                 _gui->setCursor(QCursor(Qt::WaitCursor));
@@ -255,17 +322,17 @@ namespace Kautham{
                 }
                 _gui->setCursor(QCursor(Qt::ArrowCursor));
                 setTable(_planner->getParametersAsString());
-            }
-            else  writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
-        }
 #endif
+            } else  {
+                writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+            }
+        }
     }
 
-    void PlannerWidget::loadDataCall(){
-#if defined(KAUTHAM_USE_IOC)
+    void PlannerWidget::loadData(){
         if(_planner != NULL ){
-            if(_planner->getFamily()=="ioc")
-            {
+            if(_planner->getFamily()=="ioc") {
+#if defined(KAUTHAM_USE_IOC)
                 QString path,dir;
                 QDir workDir;
                 _gui->setCursor(QCursor(Qt::WaitCursor));
@@ -281,10 +348,11 @@ namespace Kautham{
                 }
                 _gui->setCursor(QCursor(Qt::ArrowCursor));
                 setTable(_planner->getParametersAsString());
-            }
-        }
-        else  writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
 #endif
+            }
+        } else {
+            writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+        }
     }
 
 
@@ -319,15 +387,15 @@ namespace Kautham{
     void PlannerWidget::showSample(int index){
         int max;
 
-        _lblRes->setPixmap(QPixmap(QString::fromUtf8(":/icons/tryconnect.xpm")));
+        connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/tryconnect.xpm")));
 
         max = _samples->getSize();
 
         if (_samples->getSize() > 1) {
-            spnInit->setMaximum(max-1);
-            spnGoal->setMaximum(max-1);
-            _spFrom->setMaximum(max-1);
-            _spTo->setMaximum(max-1);
+            globalFromBox->setMaximum(max-1);
+            globalToBox->setMaximum(max-1);
+            localFromBox->setMaximum(max-1);
+            localToBox->setMaximum(max-1);
         }
 
         if (index >= 0 && index < max) {
@@ -350,17 +418,11 @@ namespace Kautham{
 
             }
 
-            // print neighbours
-            //cout << "Neights: " ;
-            //for(int i =0; i< smp->getNeighs()->size(); i++)
-            //  cout << smp->getNeighs()->at(i) << ", ";
-            //cout << endl;
-
         } else {
-            spnInit->setValue(0);
-            spnGoal->setValue(0);
-            _spFrom->setValue(0);
-            _spTo->setValue(0);
+            globalFromBox->setValue(0);
+            globalToBox->setValue(0);
+            localFromBox->setValue(0);
+            localToBox->setValue(0);
         }
     }
 
@@ -374,8 +436,12 @@ namespace Kautham{
     }
 
 
-    PlannersWidget::PlannersWidget(Planner *planner, SampleSet *sampleSet, bool camera,
+    PlannersWidget::PlannersWidget(Planner *planner, SampleSet *sampleSet, bool setCamera,
                                    QWidget *parent, Qt::WindowFlags f):QWidget(parent,f) {
+        _planner = planner;
+        _samples = sampleSet;
+        _stepSim = 0;
+        _isMoving = false;
 
         QVBoxLayout *mainLayout = new QVBoxLayout();
         mainLayout->setObjectName(QString::fromUtf8("mainLayout"));
@@ -396,6 +462,8 @@ namespace Kautham{
 
         localFromBox = new QComboBox();
         localFromBox->setObjectName(QString::fromUtf8("localPlannerFromComboBox"));
+        localFromBox->setCurrentIndex(0);
+        connect(localFromBox,SIGNAL(valueChanged(int)),this,SLOT(showSample(int)));
         gridLayout->addWidget(label,0,1);
 
         label = new QLabel("To");
@@ -404,6 +472,8 @@ namespace Kautham{
 
         localToBox = new QComboBox();
         localToBox->setObjectName(QString::fromUtf8("localPlannerToComboBox"));
+        localToBox->setCurrentIndex(1);
+        connect(localToBox,SIGNAL(valueChanged(int)),this,SLOT(showSample(int)));
         gridLayout->addWidget(label,0,4);
 
         QPushButton *button = new QPushButton("Connect");
@@ -411,10 +481,11 @@ namespace Kautham{
         connect(button,SIGNAL(clicked()),this,SLOT(tryConnect()));
         gridLayout->addWidget(button,1,0,1,2);
 
-        label = new QLabel();
-        label->setPixmap(QPixmap(":/icons/tryconnect.xpm"));
-        label->setAlignment(Qt::AlignCenter);
-        gridLayout->addWidget(label,1,3,1,2);
+        connectLabel = new QLabel();
+        connectLabel->setObjectName(QString::fromUtf8("connectLabel"));
+        connectLabel->setPixmap(QPixmap(":/icons/tryconnect.xpm"));
+        connectLabel->setAlignment(Qt::AlignCenter);
+        gridLayout->addWidget(connectLabel,1,3,1,2);
 
         groupBox = new QGroupBox("Global Planner");
         groupBox->setObjectName(QString::fromUtf8("globalPlannerGroupBox"));
@@ -443,6 +514,8 @@ namespace Kautham{
 
         globalFromBox = new QComboBox();
         globalFromBox->setObjectName(QString::fromUtf8("globalPlannerFromComboBox"));
+        globalFromBox->setCurrentIndex(0);
+        connect(globalFromBox, SIGNAL(valueChanged(int)),this,SLOT(showSample(int)));
         gridLayout->addWidget(label,2,1);
 
         label = new QLabel("To");
@@ -451,6 +524,8 @@ namespace Kautham{
 
         globalToBox = new QComboBox();
         globalToBox->setObjectName(QString::fromUtf8("globalPlannerToComboBox"));
+        globalToBox->setCurrentIndex(1);
+        connect(globalToBox, SIGNAL(valueChanged(int)),this,SLOT(showSample(int)));
         gridLayout->addWidget(label,2,4);
 
         QIcon loadIcon;
@@ -459,6 +534,7 @@ namespace Kautham{
 
         button = new QPushButton(loadIcon,"Load");
         button->setObjectName(QString::fromUtf8("loadButton"));
+        connect(button,SIGNAL(clicked()),this,SLOT(loadData()));
         gridLayout->addWidget(button,3,0,1,2);
 
         QIcon saveIcon;
@@ -467,6 +543,7 @@ namespace Kautham{
 
         button = new QPushButton(saveIcon,"Save");
         button->setObjectName(QString::fromUtf8("saveButton"));
+        connect(button,SIGNAL(clicked()),this,SLOT(saveData()));
         gridLayout->addWidget(button,3,2,1,2);
 
         QIcon solveIcon;
@@ -475,24 +552,35 @@ namespace Kautham{
 
         button = new QPushButton(solveIcon,"Solve");
         button->setObjectName(QString::fromUtf8("solveButton"));
+
         gridLayout->addWidget(button,4,0,1,2);
 
         QIcon moveIcon;
         moveIcon.addFile(":/icons/right_16x16.png");
         moveIcon.addFile(":/icons/right_22x22.png");
 
-        button = new QPushButton(moveIcon,"Move");
-        button->setObjectName(QString::fromUtf8("moveButton"));
-        gridLayout->addWidget(button,4,2,1,2);
+        moveButton = new QPushButton(moveIcon,"Move");
+        moveButton->setObjectName(QString::fromUtf8("moveButton"));
+        moveButton->setDisabled(true);
+        connect(moveButton,SIGNAL(clicked()),this,SLOT(simulatePath()));
+        gridLayout->addWidget(moveButton,4,2,1,2);
 
-        cameraCheckBox = new QCheckBox("Move camera with:");
-        cameraCheckBox->setObjectName(QString::fromUtf8("camerCheckBox"));
-        cameraCheckBox->setChecked(false);
-        gridLayout->addWidget(cameraCheckBox,5,0,1,4);
+        if (setCamera) {
+            cameraCheckBox = new QCheckBox("Move camera with:");
+            cameraCheckBox->setObjectName(QString::fromUtf8("camerCheckBox"));
+            cameraCheckBox->setChecked(false);
+            gridLayout->addWidget(cameraCheckBox,5,0,1,4);
 
-        linkBox = new QComboBox();
-        linkBox->setObjectName(QString::fromUtf8("linkBox"));
-        gridLayout->addWidget(linkBox,6,0,1,4);
+            linkBox = new QComboBox();
+            linkBox->setObjectName(QString::fromUtf8("linkBox"));
+            gridLayout->addWidget(linkBox,6,0,1,4);
+        }
+
+        /*
+        connect(_plannerTimer, SIGNAL(timeout()), this, SLOT(moveAlongPath()));
+        connect(_cmbTry, SIGNAL( clicked() ), this, SLOT( tryConnect( )));
+        connect(chkCamera, SIGNAL( clicked() ), this, SLOT( chkCameraClick( )));
+        */
     }
 
 
@@ -501,7 +589,90 @@ namespace Kautham{
     void PlannersWidget::loadData() {}
     void PlannersWidget::moveAlongPath() {}
     void PlannersWidget::showSample(int index) {}
-    void PlannersWidget::tryConnect() {}
+    void PlannersWidget::tryConnect() {
+        if (_planner != NULL) {
+            switch ((int)_planner->getFamily()) {
+#if defined(KAUTHAM_USE_IOC)
+            case IOCPLANNER:
+                tryConnectIOC();
+                break;
+#endif
+#if defined(KAUTHAM_USE_OMPL)
+            case OMPLPLANNER:
+                tryConnectOMPL();
+                break;
+            case OMPLCPLANNER:
+                writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+
+                break;
+#if defined(KAUTHAM_USE_ODE)
+            case ODEPLANNER:
+                writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+
+                break;
+#endif
+#endif
+            case NOFAMILY:
+                writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+
+                break;
+            default:
+                writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+
+                break;
+            }
+        } else {
+            writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+        }
+    }
+
+
+    void PlannersWidget::tryConnectIOC() {
+#if defined(KAUTHAM_USE_IOC)
+        Sample *fromSample = _samples->getSampleAt(localFromBox->currentText().toInt());
+        Sample *toSample = _samples->getSampleAt(localToBox->currentText().toInt());
+        ((IOC::iocPlanner *)_planner)->getLocalPlanner()->setInitSamp(fromSample);
+        ((IOC::iocPlanner *)_planner)->getLocalPlanner()->setGoalSamp(toSample);
+
+        KthReal distance = ((IOC::iocPlanner*)_planner)->getLocalPlanner()->
+                distance(fromSample,toSample);
+
+        writeGUI("Distance:  "+QString::number(distance).toStdString());
+
+        if (((IOC::iocPlanner*)_planner)->getLocalPlanner()->canConect()) {
+            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
+            writeGUI("The samples can be connected.");
+        } else {
+            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/noconnect.xpm")));
+            writeGUI("The samples can NOT be connected.");
+        }
+#endif
+    }
+
+
+    void PlannersWidget::tryConnectOMPL() {
+#if defined(KAUTHAM_USE_OMPL)
+        writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+#endif
+    }
+
+    void PlannersWidget::tryConnectOMPLC() {
+#if defined(KAUTHAM_USE_OMPL)
+        writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+#endif
+    }
+
+    void PlannersWidget::tryConnectODE() {
+#if defined(KAUTHAM_USE_OMPL) && defined(KAUTHAM_USE_ODE)
+        writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+#endif
+    }
+
+
+    void PlannersWidget::writeGUI(string text){
+        emit sendText(text);
+    }
+
     void PlannersWidget::setCamera() {}
 
 }
