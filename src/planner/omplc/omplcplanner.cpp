@@ -272,7 +272,7 @@ namespace Kautham {
     omplcPlanner::omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
               Planner(stype, init, goal, samples, ws)
     {
-        _family = "omplc";
+        _family = OMPLCPLANNER;
         //set intial values from parent class data
         _speedFactor = 1;
         _solved = false;

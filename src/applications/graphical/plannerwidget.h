@@ -43,10 +43,9 @@ class GUI;//needed here because GUI has #include "plannerwidget.h"
 	class PlannerWidget: public KauthamWidget{
 		Q_OBJECT
 	private slots:
-    void getPathCall();
-    void saveDataCall();
-    void loadDataCall();
-    //void setIniGoalCall();
+    void getPath();
+    void saveData();
+    void loadData();
     void moveAlongPath();
     void showSample(int index);
     void tryConnect();
@@ -59,6 +58,11 @@ class GUI;//needed here because GUI has #include "plannerwidget.h"
     inline bool ismoving() {return _ismoving;}
 		
 	private:
+    void tryConnectIOC();
+    void tryConnectOMPL();
+    void tryConnectOMPLC();
+    void tryConnectODE();
+
     PlannerWidget();
     QHBoxLayout *hboxLayout;
     QHBoxLayout *hboxLayout2;
@@ -67,23 +71,23 @@ class GUI;//needed here because GUI has #include "plannerwidget.h"
     QPushButton *btnMove;
     QCheckBox   *chkCamera;
     QPushButton *btnLoadData;
-    QSpinBox *spnInit, *spnGoal;
-    QLabel* tmpLabel;
-    GUI*          _gui;
-    Planner*      _planner;
-    SampleSet*    _samples;
-    QTimer*       _plannerTimer;
-    unsigned int  _stepSim;
-    bool          _ismoving;
+    QSpinBox *globalFromBox, *globalToBox;
+    QLabel *tmpLabel;
+    GUI *_gui;
+    Planner *_planner;
+    SampleSet *_samples;
+    QTimer *_plannerTimer;
+    uint _stepSim;
+    bool _ismoving;
 
     // Added to provide access to the local Planner
     QLabel      *label;
-    QSpinBox    *_spFrom;
+    QSpinBox    *localFromBox;
     QLabel      *label_2;
-    QSpinBox    *_spTo;
+    QSpinBox    *localToBox;
     QHBoxLayout *horizontalLayout_2;
     QPushButton *_cmbTry;
-    QLabel      *_lblRes;
+    QLabel      *connectLabel;
 	
 	};
 
@@ -91,9 +95,10 @@ class GUI;//needed here because GUI has #include "plannerwidget.h"
     class PlannersWidget:public QWidget {
         Q_OBJECT
     public:
-        PlannersWidget(Planner *planner, SampleSet *sampleSet, bool camera = false,
+        PlannersWidget(Planner *planner, SampleSet *sampleSet, bool setCamera = false,
                        QWidget *parent = 0, Qt::WindowFlags f = 0);
         inline bool isMoving() {return _isMoving;}
+
     signals:
         void sendText(string text);
 
@@ -107,15 +112,25 @@ class GUI;//needed here because GUI has #include "plannerwidget.h"
         void setCamera();
 
     private:
+         void tryConnectIOC();
+         void tryConnectOMPL();
+         void tryConnectOMPLC();
+         void tryConnectODE();
+         void writeGUI(string text);
+
+        Planner *_planner;
+        SampleSet *_samples;
         bool _isMoving;
+        uint _stepSim;
+        QLabel *connectLabel;
+        QPushButton *moveButton;
+        QCheckBox *cameraCheckBox;
         QComboBox *localFromBox;
         QComboBox *localToBox;
         QComboBox *globalPlannerBox;
         QComboBox *globalFromBox;
         QComboBox *globalToBox;
-        QPushButton *moveButton;
         QComboBox *linkBox;
-        QCheckBox *cameraCheckBox;
 
     };
 

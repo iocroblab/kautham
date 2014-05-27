@@ -318,8 +318,8 @@ namespace Kautham {
     _robConfigMap.clear();
     _robWeight.clear();
     for(unsigned int i = 0; i < robots.size(); i++){
-      _robConfigMap.push_back(((Robot*)robots.at(i))->getCurrentPos());
-      _robWeight.push_back(((Robot*)robots.at(i))->getRobWeight());
+      _robConfigMap.push_back(((Robot *)robots.at(i))->getCurrentPos());
+      _robWeight.push_back(((Robot *)robots.at(i))->getRobWeight());
     }
   }
       
@@ -347,7 +347,7 @@ namespace Kautham {
     }
 
     for(unsigned int i = 0; i < robots.size(); i++)
-      robots.at(i)->setProposedSolution(tmpRobPath[i]);
+      ((Robot *)robots.at(i))->setProposedSolution(tmpRobPath[i]);
 
     for(unsigned int i = 0; i < robots.size(); i++)
       tmpRobPath.at(i).clear();
@@ -365,10 +365,10 @@ namespace Kautham {
 
   void WorkSpace::setPathVisibility(bool vis){
     for(size_t i = 0; i < robots.size(); i++ )
-      robots.at(i)->setPathVisibility( vis );
+      ((Robot *)robots.at(i))->setPathVisibility( vis );
   }
 
-  bool WorkSpace::attachObstacle2RobotLink(string robot, string link, unsigned int obs ){
+  bool WorkSpace::attachObstacle2RobotLink(string robot, string link, uint obs ){
     return false;
   }
 
