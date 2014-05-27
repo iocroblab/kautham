@@ -21,9 +21,6 @@
  \*************************************************************************/
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
-
- 
-
 #if defined(KAUTHAM_USE_OMPL)
 
 #include <problem/workspace.h>
@@ -1270,10 +1267,10 @@ namespace Kautham {
     //! This member function converts a Kautham sample to an ompl State
     void omplPlanner::smp2omplState(Sample* smp, ompl::base::State *state)
     {
-        ob::ScopedState<ob::CompoundStateSpace> *sstate = new ob::ScopedState<ob::CompoundStateSpace>(space);
-        smp2omplScopedState(smp,sstate);
+        ob::ScopedState<ob::CompoundStateSpace> sstate(space);
+        smp2omplScopedState(smp,&sstate);
 
-        state = sstate->get();
+        state = sstate.get();
     }
 
     //! This member function converts an ompl ScopedState to a Kautham sample
