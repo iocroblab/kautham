@@ -493,7 +493,7 @@ namespace Kautham {
   omplPlanner::omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
              Planner(stype, init, goal, samples, ws)
     {
-        _family = "ompl";
+        _family = OMPLPLANNER;
         //set intial values from parent class data
         _speedFactor = 1;
         _solved = false;
@@ -1265,6 +1265,15 @@ namespace Kautham {
         ob::ScopedState<ob::CompoundStateSpace> sstate(space);
         sstate = *state;
         omplScopedState2smp( sstate, smp);
+    }
+
+    //! This member function converts a Kautham sample to an ompl State
+    void omplPlanner::smp2omplState(Sample* smp, ompl::base::State *state)
+    {
+        ob::ScopedState<ob::CompoundStateSpace> *sstate = new ob::ScopedState<ob::CompoundStateSpace>(space);
+        smp2omplScopedState(smp,sstate);
+
+        state = sstate->get();
     }
 
     //! This member function converts an ompl ScopedState to a Kautham sample
