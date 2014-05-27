@@ -77,9 +77,6 @@ namespace Kautham {
     //}
 	};
 
-
-    class PlannerWidget; //needed here because PlannerWidget has #include "gui.h"
-
 	class GUI:public QMainWindow, private Ui::kauthamMain {
 	  Q_OBJECT
 	//signals:
@@ -93,6 +90,8 @@ namespace Kautham {
     void                toogleBBOXflag();
     //! Sets the directories where robot and obstacles models will be looked for
     void                setModelsDefaultPath();
+    //! Changes cursor to waiting/arrow cursor
+    void changeCursor(bool waiting);
 
     public:
     GUI(QWidget *p=0);
