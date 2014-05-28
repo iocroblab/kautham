@@ -204,6 +204,13 @@ namespace Kautham {
         void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
         void filterBounds(double &l, double &h, double epsilon);
 
+        //! Returns the simple setup pointer
+        inline oc::SimpleSetupPtr SimpleSetupPtr() {return ss;}
+
+        //! Returns a pointer to the simple setup
+        inline oc::SimpleSetup *SimpleSetup() {return ss.get();}
+
+        inline ob::StateSpacePtr getSpace(){return space;}
 		protected:
 		//Add protected data and functions
         KthReal _planningTime;
