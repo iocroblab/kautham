@@ -269,20 +269,6 @@ namespace Kautham {
 
     void PlannerWidget::tryConnectOMPL() {
 #if defined(KAUTHAM_USE_OMPL)
-        /*ob::CompoundState *fromState;
-        ((omplplanner::omplPlanner*)_planner)->
-                smp2omplState(_samples->getSampleAt(localFromBox->text().toInt()),fromState);
-
-        ob::CompoundState *toState;
-        ((omplplanner::omplPlanner*)_planner)->
-                smp2omplState(_samples->getSampleAt(localToBox->text().toInt()),toState);
-
-        bool connected = ((ob::MotionValidator *)((ob::SpaceInformation *)((omplplanner::omplPlanner*)
-                                                                           _planner)->
-                                                  SimpleSetup()->getSpaceInformation().get())->
-                          getMotionValidator().get())->checkMotion(fromState,toState);
-*/
-
         ((omplplanner::omplPlanner*)_planner)->SimpleSetup()->setup();
 
         ob::ScopedState<ob::CompoundStateSpace> fromState(((omplplanner::omplPlanner*)_planner)->getSpace());
@@ -310,7 +296,27 @@ namespace Kautham {
 
     void PlannerWidget::tryConnectOMPLC() {
 #if defined(KAUTHAM_USE_OMPL)
-        writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+        ((omplcplanner::omplcPlanner*)_planner)->SimpleSetup()->setup();
+
+        ob::ScopedState<ob::CompoundStateSpace> fromState(((omplcplanner::omplcPlanner*)_planner)->getSpace());
+        ((omplcplanner::omplcPlanner*)_planner)->
+                smp2omplScopedState(_samples->getSampleAt(localFromBox->text().toInt()),&fromState);
+
+        ob::ScopedState<ob::CompoundStateSpace> toState(((omplcplanner::omplcPlanner*)_planner)->getSpace());
+        ((omplcplanner::omplcPlanner*)_planner)->
+                smp2omplScopedState(_samples->getSampleAt(localToBox->text().toInt()),&toState);
+
+        bool connected = ((ob::MotionValidator *)((ob::SpaceInformation *)((omplcplanner::omplcPlanner*)
+                                                                           _planner)->
+                                                  SimpleSetup()->getSpaceInformation().get())->
+                          getMotionValidator().get())->checkMotion(fromState.get(),toState.get());
+        if (connected) {
+            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
+            writeGUI("The samples can be connected.");
+        } else {
+            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/noconnect.xpm")));
+            writeGUI("The samples can NOT be connected.");
+        }
 #endif
     }
 
