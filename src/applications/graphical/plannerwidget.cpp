@@ -479,19 +479,24 @@ namespace Kautham {
 
     void PlannerWidget::simulatePath() {
         if (moveButton->text() == QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8)){
-            _plannerTimer->start(200);
-            _ismoving = true;
-            //_stepSim = 0;
-            moveButton->setText(QApplication::translate("Form", "Stop Move ", 0, QApplication::UnicodeUTF8));
+            startSimulation();
         } else {
-            _plannerTimer->stop();
-            moveButton->setText(QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8));
-            _ismoving = false;
+            stopSimulation();
         }
 
     }
 
+    void PlannerWidget::startSimulation() {
+        _plannerTimer->start(200);
+        moveButton->setText(QApplication::translate("Form", "Stop Move ", 0, QApplication::UnicodeUTF8));
+        _ismoving = true;
+    }
 
+    void PlannerWidget::stopSimulation() {
+        _plannerTimer->stop();
+        moveButton->setText(QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8));
+        _ismoving = false;
+    }
 
     void PlannerWidget::moveAlongPath(){
         _planner->moveAlongPath(_stepSim);
