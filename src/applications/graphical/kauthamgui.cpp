@@ -282,8 +282,13 @@ void Application::saveAsFile(){
                     mainWindow,
                     "Save as ...",
                     last_path,
-                    "All configuration files (*.xml)");
+                    "All configuration files (*.xml)");        
         if (!path.isEmpty()) {
+            uint pointIndex = path.lastIndexOf(".");
+            uint slashIndex = path.lastIndexOf("/");
+            if (pointIndex > slashIndex) path.truncate(pointIndex);
+            path.append(".xml");
+
             mainWindow->setText( "Kautham is saving the problem to the file: " );
             mainWindow->setText( path.toUtf8().constData() );
             if( _problem->saveToFile( path.toUtf8().constData() ) ) {

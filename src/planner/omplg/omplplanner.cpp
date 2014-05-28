@@ -1270,7 +1270,10 @@ namespace Kautham {
         ob::ScopedState<ob::CompoundStateSpace> sstate(space);
         smp2omplScopedState(smp,&sstate);
 
-        state = sstate.get();
+        string name = space->getName();
+        ompl::base::State *state2 = sstate.get();
+        state = space->allocState();
+        space->copyState(state,state2);
     }
 
     //! This member function converts an ompl ScopedState to a Kautham sample

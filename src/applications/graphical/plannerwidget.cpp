@@ -269,7 +269,7 @@ namespace Kautham {
 
     void PlannerWidget::tryConnectOMPL() {
 #if defined(KAUTHAM_USE_OMPL)
-        ob::CompoundState *fromState;
+        /*ob::CompoundState *fromState;
         ((omplplanner::omplPlanner*)_planner)->
                 smp2omplState(_samples->getSampleAt(localFromBox->text().toInt()),fromState);
 
@@ -280,8 +280,23 @@ namespace Kautham {
         bool connected = ((ob::MotionValidator *)((ob::SpaceInformation *)((omplplanner::omplPlanner*)
                                                                            _planner)->
                                                   SimpleSetup()->getSpaceInformation().get())->
-                          getMotionValidator().get())->checkMotion(fromState,fromState);
+                          getMotionValidator().get())->checkMotion(fromState,toState);
+*/
 
+        ((omplplanner::omplPlanner*)_planner)->SimpleSetup()->setup();
+
+        ob::ScopedState<ob::CompoundStateSpace> fromState(((omplplanner::omplPlanner*)_planner)->getSpace());
+        ((omplplanner::omplPlanner*)_planner)->
+                smp2omplScopedState(_samples->getSampleAt(localFromBox->text().toInt()),&fromState);
+
+        ob::ScopedState<ob::CompoundStateSpace> toState(((omplplanner::omplPlanner*)_planner)->getSpace());
+        ((omplplanner::omplPlanner*)_planner)->
+                smp2omplScopedState(_samples->getSampleAt(localToBox->text().toInt()),&toState);
+
+        bool connected = ((ob::MotionValidator *)((ob::SpaceInformation *)((omplplanner::omplPlanner*)
+                                                                           _planner)->
+                                                  SimpleSetup()->getSpaceInformation().get())->
+                          getMotionValidator().get())->checkMotion(fromState.get(),toState.get());
         if (connected) {
             connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
             writeGUI("The samples can be connected.");
@@ -419,7 +434,9 @@ namespace Kautham {
                                                         "Save planner data as...", last_path,
                                                         "Kautham Planner Solution (*.kps)");
         if (!filePath.isEmpty()) {
-            if (filePath.contains(".")) filePath.truncate(filePath.lastIndexOf("."));
+            uint pointIndex = filePath.lastIndexOf(".");
+            uint slashIndex = filePath.lastIndexOf("/");
+            if (pointIndex > slashIndex) filePath.truncate(pointIndex);
             filePath.append(".kps");
         }
 
