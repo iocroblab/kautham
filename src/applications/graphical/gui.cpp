@@ -280,6 +280,7 @@ namespace Kautham {
         if( rob != NULL){
             DOFWidget* tmpDOF = new DOFWidget(rob);
             string rob_name = rob->getName();
+            tmpDOF->setToolTip(string(rob_name+"-DOF").c_str());
             if (rob_name.length() > 10) {
                 rob_name = rob_name.substr(0,7)+"...";
             }
