@@ -269,20 +269,6 @@ namespace Kautham {
 
     void PlannerWidget::tryConnectOMPL() {
 #if defined(KAUTHAM_USE_OMPL)
-        /*ob::CompoundState *fromState;
-        ((omplplanner::omplPlanner*)_planner)->
-                smp2omplState(_samples->getSampleAt(localFromBox->text().toInt()),fromState);
-
-        ob::CompoundState *toState;
-        ((omplplanner::omplPlanner*)_planner)->
-                smp2omplState(_samples->getSampleAt(localToBox->text().toInt()),toState);
-
-        bool connected = ((ob::MotionValidator *)((ob::SpaceInformation *)((omplplanner::omplPlanner*)
-                                                                           _planner)->
-                                                  SimpleSetup()->getSpaceInformation().get())->
-                          getMotionValidator().get())->checkMotion(fromState,toState);
-*/
-
         ((omplplanner::omplPlanner*)_planner)->SimpleSetup()->setup();
 
         ob::ScopedState<ob::CompoundStateSpace> fromState(((omplplanner::omplPlanner*)_planner)->getSpace());
@@ -310,7 +296,27 @@ namespace Kautham {
 
     void PlannerWidget::tryConnectOMPLC() {
 #if defined(KAUTHAM_USE_OMPL)
-        writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+        ((omplcplanner::omplcPlanner*)_planner)->SimpleSetup()->setup();
+
+        ob::ScopedState<ob::CompoundStateSpace> fromState(((omplcplanner::omplcPlanner*)_planner)->getSpace());
+        ((omplcplanner::omplcPlanner*)_planner)->
+                smp2omplScopedState(_samples->getSampleAt(localFromBox->text().toInt()),&fromState);
+
+        ob::ScopedState<ob::CompoundStateSpace> toState(((omplcplanner::omplcPlanner*)_planner)->getSpace());
+        ((omplcplanner::omplcPlanner*)_planner)->
+                smp2omplScopedState(_samples->getSampleAt(localToBox->text().toInt()),&toState);
+
+        bool connected = ((ob::MotionValidator *)((ob::SpaceInformation *)((omplcplanner::omplcPlanner*)
+                                                                           _planner)->
+                                                  SimpleSetup()->getSpaceInformation().get())->
+                          getMotionValidator().get())->checkMotion(fromState.get(),toState.get());
+        if (connected) {
+            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
+            writeGUI("The samples can be connected.");
+        } else {
+            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/noconnect.xpm")));
+            writeGUI("The samples can NOT be connected.");
+        }
 #endif
     }
 
@@ -473,19 +479,24 @@ namespace Kautham {
 
     void PlannerWidget::simulatePath() {
         if (moveButton->text() == QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8)){
-            _plannerTimer->start(200);
-            _ismoving = true;
-            //_stepSim = 0;
-            moveButton->setText(QApplication::translate("Form", "Stop Move ", 0, QApplication::UnicodeUTF8));
+            startSimulation();
         } else {
-            _plannerTimer->stop();
-            moveButton->setText(QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8));
-            _ismoving = false;
+            stopSimulation();
         }
 
     }
 
+    void PlannerWidget::startSimulation() {
+        _plannerTimer->start(200);
+        moveButton->setText(QApplication::translate("Form", "Stop Move ", 0, QApplication::UnicodeUTF8));
+        _ismoving = true;
+    }
 
+    void PlannerWidget::stopSimulation() {
+        _plannerTimer->stop();
+        moveButton->setText(QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8));
+        _ismoving = false;
+    }
 
     void PlannerWidget::moveAlongPath(){
         _planner->moveAlongPath(_stepSim);
