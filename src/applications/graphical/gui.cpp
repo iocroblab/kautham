@@ -317,10 +317,11 @@ namespace Kautham {
         if( plan != NULL){
             PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, plan->hasCameraMovements());
             propertiesTab->addTab(tmpPlan, QString((plan->getGuiName()).c_str()));
-            //JAN
-            indexPlannerTab = propertiesTab->indexOf(tmpPlan);
             connect(tmpPlan,SIGNAL(sendText(string)),this,SLOT(setText(string)));
             connect(tmpPlan,SIGNAL(changeCursor(bool)),this,SLOT(changeCursor(bool)));
+            connect(this,SIGNAL(stopSimulation()),tmpPlan,SLOT(stopSimulation()));
+            //JAN
+            indexPlannerTab = propertiesTab->indexOf(tmpPlan);
             if(plan->getIvCspaceScene() != NULL)
             {
                 addViewerTab("CSpace", plan->getIvCspaceScene());
@@ -695,6 +696,13 @@ namespace Kautham {
             ac = actions.at(i);
             if (ac->text() == "Chan&ge Colour") {
                 ac->setEnabled(true);
+                QIcon colors;
+                colors.addFile(":/icons/colors_16x16.png");
+                colors.addFile(":/icons/colors_22x22.png");
+                colors.addFile(":/icons/colors_32x32.png");
+                colors.addFile(":/icons/colors_48x48.png");
+                colors.addFile(":/icons/colors_64x64.png");
+                ac->setIcon(colors);
                 break;
             }
         }
@@ -711,6 +719,13 @@ namespace Kautham {
             ac = actions.at(i);
             if (ac->text() == "Chan&ge Colour") {
                 ac->setDisabled(true);
+                QIcon greycolors;
+                greycolors.addFile(":/icons/greycolors_16x16.png");
+                greycolors.addFile(":/icons/greycolors_22x22.png");
+                greycolors.addFile(":/icons/greycolors_32x32.png");
+                greycolors.addFile(":/icons/greycolors_48x48.png");
+                greycolors.addFile(":/icons/greycolors_64x64.png");
+                ac->setIcon(greycolors);
                 break;
             }
         }

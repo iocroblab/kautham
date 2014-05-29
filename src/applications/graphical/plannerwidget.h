@@ -44,6 +44,10 @@ namespace Kautham{
     signals:
         void changeCursor(bool waiting);
 
+    public slots:
+        void stopSimulation();
+        void startSimulation();
+
     private slots:
         void getPath();
         void saveData();
