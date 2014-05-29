@@ -68,6 +68,11 @@
         <file>icons/greybox_32x32.png</file>
         <file>icons/greybox_48x48.png</file>
         <file>icons/greybox_64x64.png</file>
+        <file>icons/greycolors_16x16.png</file>
+        <file>icons/greycolors_22x22.png</file>
+        <file>icons/greycolors_32x32.png</file>
+        <file>icons/greycolors_48x48.png</file>
+        <file>icons/greycolors_64x64.png</file>
 	<file>icons/left_16x16.png</file>
         <file>icons/left_22x22.png</file>
 	<file>icons/pause_16x16.png</file>

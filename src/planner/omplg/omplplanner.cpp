@@ -1264,18 +1264,6 @@ namespace Kautham {
         omplScopedState2smp( sstate, smp);
     }
 
-    //! This member function converts a Kautham sample to an ompl State
-    void omplPlanner::smp2omplState(Sample* smp, ompl::base::State *state)
-    {
-        ob::ScopedState<ob::CompoundStateSpace> sstate(space);
-        smp2omplScopedState(smp,&sstate);
-
-        string name = space->getName();
-        ompl::base::State *state2 = sstate.get();
-        state = space->allocState();
-        space->copyState(state,state2);
-    }
-
     //! This member function converts an ompl ScopedState to a Kautham sample
     void omplPlanner::omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp)
     {
