@@ -79,8 +79,9 @@ namespace Kautham {
 
 	class GUI:public QMainWindow, private Ui::kauthamMain {
 	  Q_OBJECT
-	//signals:
-	//	void tableChanged(string newContent);
+    signals:
+      void stopSimulation();
+
 	public slots:
     void                setText(string s);
     void                about();
@@ -95,6 +96,7 @@ namespace Kautham {
 
     public:
     GUI(QWidget *p=0);
+    void stopPathSimulation() {emit stopSimulation();}
     void                clearText();
     bool                addViewerTab(string title, SoSeparator *root);
     void                removePropTab(string title);
