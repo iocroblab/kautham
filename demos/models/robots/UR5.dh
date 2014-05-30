@@ -2,7 +2,7 @@
 <Robot  name="UR5" DHType="Modified" robType="Chain">
 
   <WeightSE3 rho_t="1.0" rho_r="1.0" />
-  <Joints size="7">
+  <Joints size="8">
     <Joint name="Base" ivFile="UR5/Base.wrl">
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="false" movable="false"  ></Description>
@@ -20,7 +20,7 @@
     </Joint>
     
     <Joint name="ForeArm" ivFile="UR5/Upperarm.wrl">
-      <DHPars  alpha="-90.0" a="0" theta="-90.0" d="0.0"></DHPars>
+      <DHPars  alpha="90.0" a="0" theta="-90.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
@@ -57,6 +57,14 @@
       <Limits Hi="180.0" Low="-180.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Wrist2"></Parent>
+    </Joint>
+
+   <Joint name="Axis" ivFile="rtx90/axis.iv">
+      <DHPars  alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+      <Description rotational="true" movable="false"   ></Description>
+      <Limits Hi="0.0" Low="0.0"></Limits>
+      <Weight weight="0.0"></Weight>
+      <Parent name="Wrist3"></Parent>
     </Joint>
   </Joints>
 
