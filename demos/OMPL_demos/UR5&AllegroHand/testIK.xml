@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<Problem name="" topology="SE3">
+	<Robot robot="robots/UR5.dh" scale="1.0">
+	</Robot>
+	<Obstacle obstacle="obstacles/axis.iv" scale="4">
+		<Collision enabled="false" />
+	</Obstacle>
+
+	<Obstacle obstacle="obstacles/axis.iv" scale="2">
+		<Home TH="148.708" WZ="-0.582659" WY="-0.138351" WX="0.800854" Z="-540.381" Y="-405.627" X="-87.0378" />
+		<Collision enabled="false" />
+	</Obstacle>
+
+	<Controls robot="controls/UR5.cntr" />
+	
+	<Planner>
+        	<Parameters>
+			<Name>omplPRM</Name>
+                	<Parameter name="Max Planning Time">300.0</Parameter>
+                	<Parameter name="Speed Factor">1</Parameter>
+                        <Parameter name="MaxNearestNeighbors">10</Parameter>
+                        <Parameter name="DistanceThreshold">400.0</Parameter>
+        	</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="6">0.1 0.9 0.1 0.9 0.1 0.9</Init>
+				<Goal dim="6">0.1 0.9 0.1 0.9 0.1 0.9</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
+
+
