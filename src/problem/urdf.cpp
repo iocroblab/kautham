@@ -280,13 +280,13 @@ void urdf_link::fill (xml_node *node, string dir) {
     tmpNode = node->child("visual");
     while (tmpNode) {
         visual.fill(&tmpNode,dir);
-        tmpNode = tmpNode.next_sibling("visual");
+        tmpNode = tmpNode.next_sibling();
     }
 
     tmpNode = node->child("collision");
     while (tmpNode) {
         collision.fill(&tmpNode,dir);
-        tmpNode = tmpNode.next_sibling("collision");
+        tmpNode = tmpNode.next_sibling();
     }
 
     if (node->child("collision").child("contact_coefficients")) {
@@ -300,8 +300,8 @@ void urdf_link::fill (xml_node *node, string dir) {
 
     tmpNode = node->parent().child("joint");
     node = &tmpNode;
-    while (name != node->child("child").attribute("link").as_string() && node->next_sibling("joint")) {
-        *node = node->next_sibling("joint");
+    while (name != node->child("child").attribute("link").as_string() && node->next_sibling()) {
+        *node = node->next_sibling();
     }
     if (name == node->child("child").attribute("link").as_string()) {
         joint = node->attribute("name").as_string();
@@ -358,7 +358,7 @@ void urdf_robot::fill (xml_node *node, string dir) {
     while (tmpNode) {
         num_links += 1;
 
-        tmpNode = tmpNode.next_sibling("link");
+        tmpNode = tmpNode.next_sibling();
     }
 
     link = new urdf_link[num_links];
@@ -368,7 +368,7 @@ void urdf_robot::fill (xml_node *node, string dir) {
     for (i = 0; i < num_links; i++) {
         link[i].fill(&tmpNode,dir);
 
-        tmpNode = tmpNode.next_sibling("link");
+        tmpNode = tmpNode.next_sibling();
     }
 
 
@@ -448,13 +448,13 @@ void urdf_obstacle::fill (xml_node *node, string dir) {
     tmpNode = node->child("visual");
     while (tmpNode) {
         visual.fill(&tmpNode,dir);
-        tmpNode = tmpNode.next_sibling("visual");
+        tmpNode = tmpNode.next_sibling();
     }
 
     tmpNode = node->child("collision");
     while (tmpNode) {
         collision.fill(&tmpNode,dir);
-        tmpNode = tmpNode.next_sibling("collision");
+        tmpNode = tmpNode.next_sibling();
     }
 
     if (node->child("collision").child("contact_coefficients")) {
