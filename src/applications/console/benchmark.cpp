@@ -41,7 +41,7 @@ bool Benchmark::set(xml_node *bm_node, string dir) {
     while (node && ok) {
         ok &= add_problem(dir + node.attribute("File").as_string());
 
-        node = node.next_sibling("Problem");
+        node = node.next_sibling();
     }
 
     req = new ompl::tools::Benchmark::Request;
@@ -49,7 +49,7 @@ bool Benchmark::set(xml_node *bm_node, string dir) {
     while (node && ok) {
         ok &= add_parameter(&node);
 
-        node = node.next_sibling("Parameter");
+        node = node.next_sibling();
     }
 
     if (filename != "") {
@@ -195,7 +195,7 @@ void benchmark(string file) {
                     cout << "Benchmark number " << i << " is incorrectly defined." << endl;
                 }
 
-                bm_node = bm_node.next_sibling("Benchmark");
+                bm_node = bm_node.next_sibling();
             }
 
             cout << i << " benchmarkings were done" << endl;
