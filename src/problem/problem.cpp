@@ -59,7 +59,7 @@ namespace Kautham {
 
       //add all robots to worskpace
       for (tmpNode = doc->child("Problem").child("Robot");
-           tmpNode; tmpNode = tmpNode.next_sibling()) {
+           tmpNode; tmpNode = tmpNode.next_sibling("Robot")) {
           if (!addRobot2WSpace(&tmpNode, useBBOX)) return false;
       }
 
@@ -69,7 +69,7 @@ namespace Kautham {
 
       //add all obstacles to worskpace
       for (tmpNode = doc->child("Problem").child("Obstacle");
-           tmpNode; tmpNode = tmpNode.next_sibling()) {
+           tmpNode; tmpNode = tmpNode.next_sibling("Obstacle")) {
           if (!addObstacle2WSpace(&tmpNode, useBBOX)) return false;
       }
 
@@ -79,13 +79,13 @@ namespace Kautham {
 
       //add all distance maps to worskpace
       for (tmpNode = doc->child("Problem").child("DistanceMap");
-           tmpNode; tmpNode = tmpNode.next_sibling()) {
+           tmpNode; tmpNode = tmpNode.next_sibling("DistanceMap")) {
           _wspace->addDistanceMapFile(tmpNode.attribute("distanceMap").as_string());
       }
 
       //add all dimensions files to worskpace
       for (tmpNode = doc->child("Problem").child("DimensionsFile");
-           tmpNode; tmpNode = tmpNode.next_sibling()) {
+           tmpNode; tmpNode = tmpNode.next_sibling("DimensionsFile")) {
           string file = tmpNode.attribute("filename").as_string();
           _wspace->addDimensionsFile(file);
           string dir = file.substr(0,file.find_last_of("/")+1);
@@ -805,7 +805,7 @@ namespace Kautham {
                              (KthReal)limits_node.attribute("max").as_double() * _toRad);
           }
 
-          limits_node = limits_node.next_sibling();
+          limits_node = limits_node.next_sibling("Limits");
       }
 
       xml_node home_node = robot_node->child("Home");
@@ -855,7 +855,7 @@ namespace Kautham {
                           numControls++;
                           if (controlsName != "") controlsName.append("|");
                           controlsName.append(tmpNode.attribute("name").as_string());
-                          tmpNode = tmpNode.next_sibling();
+                          tmpNode = tmpNode.next_sibling("Control");
                       }
                       _wspace->setNumRobControls(numControls);
                       _wspace->setRobControlsName(controlsName);
@@ -1235,7 +1235,7 @@ namespace Kautham {
                              (KthReal)limits_node.attribute("max").as_double() * _toRad);
           }
 
-          limits_node = limits_node.next_sibling();
+          limits_node = limits_node.next_sibling("Limits");
       }
 
       xml_node home_node = obstacle_node->child("Home");
@@ -1289,7 +1289,7 @@ namespace Kautham {
                       numControls++;
                       if(controlsName != "") controlsName.append("|");
                       controlsName.append(tmpNode.attribute("name").as_string());
-                      tmpNode = tmpNode.next_sibling();
+                      tmpNode = tmpNode.next_sibling("Control");
                   }
                   _wspace->setNumObsControls(numControls);
                   _wspace->setObsControlsName(controlsName);
