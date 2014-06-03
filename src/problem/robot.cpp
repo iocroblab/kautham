@@ -263,10 +263,13 @@ namespace Kautham {
                   limMax *= toRad;
               }
 
+              KthReal linkScale = 1.;
+              if ((*it).attribute("scale")) linkScale = (*it).attribute("scale").as_double();
+
               //Create the link
               if ((*it).attribute("collision_ivFile")) {
                   addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
-                          dir + (*it).attribute("collision_ivFile").as_string(),
+                          dir + (*it).attribute("collision_ivFile").as_string(), linkScale,
                           (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
                           (KthReal)(*it).child("DHPars").attribute("d").as_double(),
                           (KthReal)(*it).child("DHPars").attribute("a").as_double(),
@@ -278,7 +281,7 @@ namespace Kautham {
                           (*it).child("Parent").attribute("name").as_string(), preTransP, useBBOX);
               } else {
                   addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
-                          dir + (*it).attribute("ivFile").as_string(),
+                          dir + (*it).attribute("ivFile").as_string(), linkScale,
                           (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
                           (KthReal)(*it).child("DHPars").attribute("d").as_double(),
                           (KthReal)(*it).child("DHPars").attribute("a").as_double(),
@@ -506,7 +509,7 @@ namespace Kautham {
       _weights = new RobWeight(0);
       _weights->setSE3Weight(1., 1.);
 
-      addLink("Base", robFile, robFile, 0, 0, 0, 0, false, true, 0, 0, 1, "", NULL, useBBOX);
+      addLink("Base", robFile, robFile, 1, 0, 0, 0, 0, false, true, 0, 0, 1, "", NULL, useBBOX);
 
       //restoring environtment values
       setlocale(LC_NUMERIC,old);
@@ -1058,10 +1061,10 @@ namespace Kautham {
   //! This method builds the link model and all their data structures in order
   //! to keep the coherence in the robot assembly. It doesn't use any intermediate
   //! structure to adquire the information to do the job.
-  bool	Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal theta, KthReal d,
-                       KthReal a,KthReal alpha, bool rotational, bool movable,
-                       KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], bool useBBOX){
-      Link* temp = new Link(ivFile, collision_ivFile, this->getScale(), Approach, libs, useBBOX);
+  bool	Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal linkScale, KthReal theta,
+                       KthReal d,KthReal a, float alpha, bool rotational,
+                       bool movable, KthReal low, KthReal hi, float w, string parentName, float preTrans[], bool useBBOX){
+      Link* temp = new Link(ivFile, collision_ivFile, scale*linkScale, Approach, libs, useBBOX);
       temp->setName(name);
       temp->setMovable(movable && (low != hi));
       temp->setRotational(rotational);
