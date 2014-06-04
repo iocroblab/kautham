@@ -162,7 +162,7 @@ namespace Kautham {
     vector<KthReal>& getWeightRn();
 
     //! Test for autocollision
-    bool autocollision(int t=0);
+    bool autocollision(int t = 0, string *message = NULL);
 
     //! Add link to the robot
     bool addLink(string name, string ivFile, string collision_ivFile, KthReal linkScale,
@@ -228,7 +228,7 @@ namespace Kautham {
     void setHomePos(Conf* qh);
 
     //! Verifies collision with an obstacke or with another robot
-    bool collisionCheck(Robot *obs);
+    bool collisionCheck(Robot *obs, string *message = NULL);
 
     //! Verifies distance with an obstacle or with another robot
     KthReal distanceCheck(Robot *rob, bool min = true);
