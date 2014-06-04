@@ -211,8 +211,10 @@ namespace Kautham {
             Sample* sample = sampleSet->getSampleAt((sampleList->currentText()).toInt());
             sstr << "The sample No: " << sampleList->currentText().toUtf8().constData()
                  << " is: ";
-            if (prob->wSpace()->collisionCheck(sample)) {
-                sstr << "in COLLISION";
+            string message;
+            if (prob->wSpace()->collisionCheck(sample,&message)) {
+                sstr << "in COLLISION" << endl;
+                sstr << message;
             } else {
                 sstr << "FREE";
             }
@@ -249,11 +251,12 @@ namespace Kautham {
         int dim = prob->wSpace()->getNumRobControls();
         Sample* sample = new Sample(dim);
         sample->setCoords(prob->getCurrentRobControls());
-        if (!prob->wSpace()->collisionCheck(sample)) {
+        string message;
+        if (!prob->wSpace()->collisionCheck(sample,&message)) {
             sampleSet->add(sample);
             updateSampleList();
         } else {
-            writeGUI("Samples not added - COLLISION configuration!");
+            writeGUI("Samples not added - COLLISION configuration!\n"+message);
         }
     }
 
