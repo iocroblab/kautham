@@ -937,7 +937,7 @@ namespace Kautham {
   /*!
    *
    */
-  bool Robot::autocollision(int t){
+  bool Robot::autocollision(int t, string *message){
       //parameter t is used to only test the autocollision of the trunk part of a TREE robot
       //it is set to 0 in robot.h
 
@@ -966,9 +966,10 @@ namespace Kautham {
 
               for(int j=i+2; j < maxLinksTested; j++){
                   if(links[i]->getElement()->collideTo(links[j]->getElement())){
-                      //cout <<"...collision between links "<<i<<" and "<<j<<endl;
-                      //cout <<"...collision between links "<<links[i]->getName()<<" and "<<links[j]->getName()<<endl;
-
+                      stringstream sstr;
+                      sstr <<"Collision between links " << i << " (" << links[i]->getName()
+                           << ") and " << j << " (" << links[j]->getName() << ")" << endl;
+                      if (message != NULL) *message = sstr.str();
                       _autocoll = true;
                       return _autocoll;
                   }
@@ -984,17 +985,22 @@ namespace Kautham {
    * This method verifies if this robot collides with the robot rob passed as a parameter.
    * The method returns true when the two robots collide, otherwise returns false.
    */
-  bool Robot::collisionCheck(Robot *rob){
+  bool Robot::collisionCheck(Robot *rob, string *message) {
       if( _autocoll || rob->autocollision() ) return true;
 
       if(!collisionable || !rob->isCollisionable()) return false;
 
       for(int i=0; i < links.size(); i++){
           for( int j = 0; j < rob->getNumLinks(); j++ ){
-              if( links[i]->getElement()->collideTo(rob->getLink(j)->getElement()) )//{
-                  //cout <<"...collision between links "<<i<<" and "<<j<<endl;
+              if( links[i]->getElement()->collideTo(rob->getLink(j)->getElement()) ) {
+                  if (message != NULL) {
+                      stringstream sstr;
+                      sstr << "Collision between links " << i << " (" << links[i]->getName()
+                           << ") and " << j << " (" << rob->getLink(j)->getName() << ")" << endl;
+                      *message = sstr.str();
+                  }
                   return true;
-              //}
+              }
           }
       }
       return false;
