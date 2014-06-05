@@ -1,14 +1,22 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<Robot  name="Allegro Hand Left" DHType="Modified" robType="Tree">
-
-  <Joints size="21">
-     <Joint name="Palm" ivFile="AllegroHand/left/base_link_left_axis.wrl">
-      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot name="Allegro Hand Left" DHType="Modified" robType="Tree">
+  <Joints size="22">
+     <Joint name="Palm" ivFile="AllegroHand/left/base_link_left.wrl">
+      <PreTrans X="0" Y="9" Z="0" WX="0.0" WY="0.0" WZ="1.0" TH="90" ></PreTrans>
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="111.0"></DHPars>
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0" Low="0"></Limits>
-      <Parent name=""></Parent>
+      <Parent name="Support"></Parent>
     </Joint>
  
+    <Joint name="Glass" ivFile="cylinder.wrl" scale="1">
+      <PreTrans X="52" Y="0" Z="-15" WX="1" WY="0" WZ="0" TH="90" ></PreTrans>
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0"></DHPars>
+      <Description rotational="false" movable="false" ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Parent name="Palm"></Parent>
+    </Joint>
+
    <Joint name="Medium-base" ivFile="AllegroHand/left/link_0_0.wrl">Index
       <DHPars alpha="0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <PreTrans X="0" Y="0" Z="16.4" WX="1.0" WY="0.0" WZ="0.0" TH="0" ></PreTrans>
@@ -156,7 +164,5 @@
       <Limits Hi="0.0" Low="-90.0"></Limits>
       <Parent name="Thumb-last"></Parent>
     </Joint>
-    
    </Joints>
-
  </Robot>
