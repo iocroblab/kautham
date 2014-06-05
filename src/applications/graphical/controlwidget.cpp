@@ -91,6 +91,7 @@ namespace Kautham {
             slider->setMinimum(0);
             slider->setMaximum(1000);
             slider->setSingleStep(1);
+            slider->setPageStep(1);
             slider->setValue(500);
             connect(slider,SIGNAL(valueChanged(int)),sliderSignalMapper,SLOT(map()));
             sliderSignalMapper->setMapping(slider,i);
