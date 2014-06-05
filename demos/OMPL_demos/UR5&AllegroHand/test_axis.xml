@@ -28,21 +28,21 @@
 	</Obstacle>
 
 	<Obstacle obstacle="obstacles/axis.iv" scale="2">
-		<Home TH="195.37" WZ="0.116484" WY="0.715814" WX="0.688507" Z="-18.6438" Y="317.33" X="299.342"/>
+		<Home X="278.672" Y="574.988" Z="29.7031" WX="-0.426218" WY="0.899167" WZ="0.0991813" TH="193.593"/>
 		<Collision enabled="false" />
 	</Obstacle>
 
 	<Obstacle obstacle="obstacles/axis.iv" scale="2">
-		<Home TH="192.753" WZ="0.130782" WY="0.687517" WX="0.714294" Z="7.16423" Y="308.275" X="-300.223"/>
+		<Home X="-283.305" Y="551.443" Z="54.5868" WX="-0.925687" WY="0.37829" WZ="0.00090154" TH="197.694"/>
 		<Collision enabled="false" />
 	</Obstacle>
 
-	<Obstacle obstacle="obstacles/axis.iv" scale="2">
+	<Obstacle obstacle="obstacles/axis.iv" scale="3">
 		<Home X="-162.291" Y="221.561" Z="-247.136" WX="0.716181" WY="0.697542" WZ="0.0228168" TH="184.701"/>
 		<Collision enabled="false" />
 	</Obstacle>
 
-	<Controls robot="controls/water.cntr" />
+	<Controls robot="controls/test.cntr" />
 	
 	<Planner>
         	<Parameters>
@@ -54,8 +54,8 @@
         	</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="12">0 0 0 0 0 0 0 0 0 0 0 0</Init>
-				<Goal dim="12">1 1 1 1 1 1 1 1 1 1 1 1</Goal>
+				<Init dim="12">0.464085 0.842904 0.5 0.283165 0.358458 0.658032 0.659138 0.685599 0.475167 0.466336 0.351174 0.766901</Init>
+				<Goal dim="12">0.464085 0.842904 0.5 0.283165 0.358458 0.658032 0.659138 0.685599 0.475167 0.466336 0.351174 0.766901</Goal>
 			</Query>
 		</Queries>
 	</Planner>
