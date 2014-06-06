@@ -137,30 +137,32 @@ namespace Kautham {
 
 
     void ControlWidget::sliderChanged(int index) {
-        values[index] = (KthReal)((QSlider *)sliders[index])->value()/1000.0;
-        ((QLineEdit *)lineEdits[index])->setText(QString::number(values[index],'f',3));
+        if (((int)(values[index]*1000.0)) != ((QSlider *)sliders[index])->value()) {
+            values[index] = (KthReal)((QSlider *)sliders[index])->value()/1000.0;
+            ((QLineEdit *)lineEdits[index])->setText(QString::number(values[index],'f',3));
 
-        if (isRobWidget) {
-            prob->setCurrentRobControls(values);
-        } else {
-            prob->setCurrentObsControls(values);
-        }
-
-        Sample *sample = new Sample(values.size());
-        sample->setCoords(values);
-
-        vector <KthReal> params;
-        if (isRobWidget) {
-            prob->wSpace()->moveRobotsTo(sample);
-            for (uint i = 0; i < DOFWids.size(); ++i) {
-                prob->wSpace()->getRobot(i)->control2Parameters(values,params);
-                DOFWids.at(i)->setValues(params);
+            if (isRobWidget) {
+                prob->setCurrentRobControls(values);
+            } else {
+                prob->setCurrentObsControls(values);
             }
-        } else {
-            prob->wSpace()->moveObstaclesTo(sample);
-            for (uint i = 0; i < DOFWids.size(); ++i) {
-                prob->wSpace()->getObstacle(i)->control2Parameters(values,params);
-                DOFWids.at(i)->setValues(params);
+
+            Sample *sample = new Sample(values.size());
+            sample->setCoords(values);
+
+            vector <KthReal> params;
+            if (isRobWidget) {
+                prob->wSpace()->moveRobotsTo(sample);
+                for (uint i = 0; i < DOFWids.size(); ++i) {
+                    prob->wSpace()->getRobot(i)->control2Parameters(values,params);
+                    DOFWids.at(i)->setValues(params);
+                }
+            } else {
+                prob->wSpace()->moveObstaclesTo(sample);
+                for (uint i = 0; i < DOFWids.size(); ++i) {
+                    prob->wSpace()->getObstacle(i)->control2Parameters(values,params);
+                    DOFWids.at(i)->setValues(params);
+                }
             }
         }
     }
