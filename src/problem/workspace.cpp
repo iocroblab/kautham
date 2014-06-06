@@ -238,7 +238,7 @@ namespace Kautham {
                   }
                   if (collision) break;
               }
-
+    
               // third test if a robot autocollides
               string str;
               if (robots[i]->autocollision(0,&str)) {
