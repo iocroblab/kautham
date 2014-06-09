@@ -12,6 +12,17 @@
 		<Home X="0.0" Y="0.0" Z="620.5" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812"/>
 	</Obstacle>
 
+	<Obstacle obstacle="obstacles/axis.iv" scale="2">
+		<Home TH="233.689" WZ="0.405902" WY="0.514968" WX="0.755017" Z="143.216" Y="511.141" X="-164.468" />
+
+		<Collision enabled="false"/>
+	</Obstacle>
+
+	<Obstacle obstacle="obstacles/axis.iv" scale="2">
+		<Home TH="85.7337" WZ="0.295184" WY="-0.0716718" WX="-0.952748" Z="378.552" Y="532.984" X="255.932" />
+		<Collision enabled="false"/>
+	</Obstacle>
+
 	<Controls robot="controls/water.cntr" />
 	
 	<Planner>
@@ -23,8 +34,8 @@
         	</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="12">0.465 0.764 0.631 0.649 0.640 0.075 0.660 0.736 0.369 0.951 0.360 0.925</Init>
-				<Goal dim="12">0.474 0.788 0.622 0.587 0.638 0.096 0.189 0.204 0.340 0.433 0.712 0.108</Goal>
+				<Init dim="12">0.477091 0.804318 0.625681 0.176534 0.781864 0.163958 0.681864 0.720094 0.36416 0.440734 0.740635 0.159566</Init>
+				<Goal dim="12">0.477091 0.804318 0.625681 0.176534 0.781864 0.163958 0.681864 0.720094 0.36416 0.440734 0.740635 0.159566</Goal>
 			</Query>
 		</Queries>
 	</Planner>
