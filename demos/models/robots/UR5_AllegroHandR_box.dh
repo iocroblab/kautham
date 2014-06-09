@@ -60,7 +60,7 @@
     </Joint>
 
    <Joint name="Support" ivFile="UR5/AH_support.wrl">
-      <PreTrans X="0" Y="0" Z="0" WX="0.0" WY="0.0" WZ="1.0" TH="-90" ></PreTrans>
+      <PreTrans X="0" Y="0" Z="0" WX="0.0" WY="0.0" WZ="1.0" TH="0" ></PreTrans>
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="16.0"></DHPars>
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0" Low="0"></Limits>
