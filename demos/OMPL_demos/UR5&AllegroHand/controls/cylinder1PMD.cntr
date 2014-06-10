@@ -2,38 +2,38 @@
 <ControlSet>
 	<Offset>
 		<DOF name="UR5_AllegroHandL/Medium-base" value="0.500" />
-		<DOF name="UR5_AllegroHandL/Medium-proximal" value="0.683" />
-		<DOF name="UR5_AllegroHandL/Medium-distal" value="0.752" />
-		<DOF name="UR5_AllegroHandL/Medium-last" value="0.357" />
-		<DOF name="UR5_AllegroHandL/Index-base" value="0.500" />
-		<DOF name="UR5_AllegroHandL/Index-proximal" value="0.674" />
-		<DOF name="UR5_AllegroHandL/Index-distal" value="0.770" />
-		<DOF name="UR5_AllegroHandL/Index-last" value="0.387" />
-		<DOF name="UR5_AllegroHandL/Ring-base" value="0.500" />
-		<DOF name="UR5_AllegroHandL/Ring-proximal" value="0.674" />
-		<DOF name="UR5_AllegroHandL/Ring-distal" value="0.770" />
-		<DOF name="UR5_AllegroHandL/Ring-last" value="0.386" />
+		<DOF name="UR5_AllegroHandL/Medium-proximal" value="0.303" />
+		<DOF name="UR5_AllegroHandL/Medium-distal" value="0.589" />
+		<DOF name="UR5_AllegroHandL/Medium-last" value="0.330" />
+		<DOF name="UR5_AllegroHandL/Index-base" value="0.308" />
+		<DOF name="UR5_AllegroHandL/Index-proximal" value="0.310" />
+		<DOF name="UR5_AllegroHandL/Index-distal" value="0.624" />
+		<DOF name="UR5_AllegroHandL/Index-last" value="0.340" />
+		<DOF name="UR5_AllegroHandL/Ring-base" value="0.692" />
+		<DOF name="UR5_AllegroHandL/Ring-proximal" value="0.310" />
+		<DOF name="UR5_AllegroHandL/Ring-distal" value="0.624" />
+		<DOF name="UR5_AllegroHandL/Ring-last" value="0.340" />
 		<DOF name="UR5_AllegroHandL/Thumb-base" value="1.000" />
-		<DOF name="UR5_AllegroHandL/Thumb-proximal" value="0.000" />
-		<DOF name="UR5_AllegroHandL/Thumb-distal" value="1.000" />
-		<DOF name="UR5_AllegroHandL/Thumb-last" value="0.000" />
+		<DOF name="UR5_AllegroHandL/Thumb-proximal" value="0.806" />
+		<DOF name="UR5_AllegroHandL/Thumb-distal" value="0.917" />
+		<DOF name="UR5_AllegroHandL/Thumb-last" value="0.243" />
 
 		<DOF name="UR5_AllegroHandR/Medium-base" value="0.500" />
-		<DOF name="UR5_AllegroHandR/Medium-proximal" value="0.331" />
-		<DOF name="UR5_AllegroHandR/Medium-distal" value="0.423" />
-		<DOF name="UR5_AllegroHandR/Medium-last" value="0.339" />
-		<DOF name="UR5_AllegroHandR/Index-base" value="0.335" />
-		<DOF name="UR5_AllegroHandR/Index-proximal" value="0.331" />
-		<DOF name="UR5_AllegroHandR/Index-distal" value="0.424" />
-		<DOF name="UR5_AllegroHandR/Index-last" value="0.371" />
-		<DOF name="UR5_AllegroHandR/Ring-base" value="0.665" />
-		<DOF name="UR5_AllegroHandR/Ring-proximal" value="0.331" />
-		<DOF name="UR5_AllegroHandR/Ring-distal" value="0.424" />
-		<DOF name="UR5_AllegroHandR/Ring-last" value="0.371" />
-		<DOF name="UR5_AllegroHandR/Thumb-base" value="0.026" />
-		<DOF name="UR5_AllegroHandR/Thumb-proximal" value="0.891" />
-		<DOF name="UR5_AllegroHandR/Thumb-distal" value="0.218" />
-		<DOF name="UR5_AllegroHandR/Thumb-last" value="0.740" />
+		<DOF name="UR5_AllegroHandR/Medium-proximal" value="0.685" />
+		<DOF name="UR5_AllegroHandR/Medium-distal" value="0.143" />
+		<DOF name="UR5_AllegroHandR/Medium-last" value="0.852" />
+		<DOF name="UR5_AllegroHandR/Index-base" value="0.260" />
+		<DOF name="UR5_AllegroHandR/Index-proximal" value="0.607" />
+		<DOF name="UR5_AllegroHandR/Index-distal" value="0.213" />
+		<DOF name="UR5_AllegroHandR/Index-last" value="0.852" />
+		<DOF name="UR5_AllegroHandR/Ring-base" value="0.740" />
+		<DOF name="UR5_AllegroHandR/Ring-proximal" value="0.607" />
+		<DOF name="UR5_AllegroHandR/Ring-distal" value="0.213" />
+		<DOF name="UR5_AllegroHandR/Ring-last" value="0.852" />
+		<DOF name="UR5_AllegroHandR/Thumb-base" value="0.243" />
+		<DOF name="UR5_AllegroHandR/Thumb-proximal" value="0.113" />
+		<DOF name="UR5_AllegroHandR/Thumb-distal" value="0.383" />
+		<DOF name="UR5_AllegroHandR/Thumb-last" value="0.648" />
 	</Offset>
     <Control name="L/Shoulder" eigValue="1.0">
       <DOF name="UR5_AllegroHandL/Shoulder" value="1.0"></DOF>

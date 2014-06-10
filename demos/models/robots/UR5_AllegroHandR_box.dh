@@ -75,8 +75,8 @@
       <Parent name="Support"></Parent>
     </Joint>
 
-    <Joint name="Can" ivFile="can.wrl" scale="1000">
-      <PreTrans X="140" Y="0" Z="0" WX="0" WY="0" WZ="1" TH="90" ></PreTrans>
+    <Joint name="Cube" ivFile="freeflying/cube.iv" scale="2.5">
+      <PreTrans X="142" Y="0" Z="0" WX="0" WY="0" WZ="1" TH="90" ></PreTrans>
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="0"></DHPars>
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0" Low="0"></Limits>
