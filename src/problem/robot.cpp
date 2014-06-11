@@ -986,7 +986,7 @@ namespace Kautham {
    * The method returns true when the two robots collide, otherwise returns false.
    */
   bool Robot::collisionCheck(Robot *rob, string *message) {
-      if( _autocoll || rob->autocollision() ) return true;
+      //if( _autocoll || rob->autocollision() ) return true;
 
       if(!collisionable || !rob->isCollisionable()) return false;
 
