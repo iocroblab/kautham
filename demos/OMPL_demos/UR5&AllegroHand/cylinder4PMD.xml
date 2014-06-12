@@ -12,7 +12,7 @@
 		<Home X="0.0" Y="0.0" Z="620" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812"/>
 	</Obstacle>
 
-	<Controls robot="controls/cylinder1PMD.cntr" />
+	<Controls robot="controls/cylinder4PMD.cntr" />
 	
 	<Planner>
         	<Parameters>
@@ -23,8 +23,8 @@
         	</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="1">0</Init>
-				<Goal dim="1">1</Goal>
+				<Init dim="4">0.450078 0.456176 0.501175 0.53073</Init>
+				<Goal dim="4">0.550098 0.478429 0.579523 0.432368</Goal>
 			</Query>
 		</Queries>
 	</Planner>
