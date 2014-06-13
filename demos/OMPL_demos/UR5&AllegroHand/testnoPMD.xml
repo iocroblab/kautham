@@ -15,6 +15,14 @@
 	<Obstacle obstacle="robots/rtx90/axis.iv" scale="2">
 	</Obstacle>
 
+	<Obstacle obstacle="robots/rtx90/axis.iv" scale="2">
+<Home X="182.498" Y="352.555" Z="343.295" WX="0.727494" WY="-0.608151" WZ="-0.317657" TH="146.722"/>
+	</Obstacle>
+
+	<Obstacle obstacle="robots/rtx90/axis.iv" scale="2">
+<Home X="-321.525" Y="-133.877" Z="617.864" WX="-0.85236" WY="0.133084" WZ="0.505738" TH="251.669"/>
+	</Obstacle>
+
 	<Controls robot="controls/test.cntr" />
 	
 	<Planner>
@@ -27,7 +35,7 @@
         	</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="12">1 1 1 1 1 1 1 1 1 1 1 1</Init>
+				<Init dim="12">0.911369 0.124908 0.0549204 0.951023 0.878853 0.575798 0.655525 0.62543 0.516455 0.315261 0.861369 0.655348</Init>
 				<Goal dim="12">0.5 0.375 0.5 0.375 0.5 0.5 0.5 0.375 0.5 0.375 0.5 0.5</Goal>
 			</Query>
 		</Queries>
