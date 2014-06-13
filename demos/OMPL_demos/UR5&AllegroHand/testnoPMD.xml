@@ -1,15 +1,18 @@
 <?xml version="1.0"?>
 <Problem name="" topology="SE3">
 	<Robot robot="robots/UR5_AllegroHandL.dh" scale="1.0">
-    		<Home X="-239.63021891" Y="0.0" Z="609.93808329" WX="0.377964" WY="-0.912487" WZ="-0.156558" TH="138.59"/>
+    		<Home X="-239.63021891" Y="0.0" Z="-11.93808329" WX="0.377964" WY="-0.912487" WZ="-0.156558" TH="138.59"/>
 	</Robot>
 
 	<Robot robot="robots/UR5_AllegroHandR.dh" scale="1.0">
-    		<Home X="239.63021891" Y="0.0" Z="609.93808329" WX="0.377964" WY="-0.912487" WZ="0.156558" TH="221.41"/>
+    		<Home X="239.63021891" Y="0.0" Z="-11.93808329" WX="0.377964" WY="-0.912487" WZ="0.156558" TH="221.41"/>
 	</Robot>
 
 	<Obstacle obstacle="obstacles/structure.wrl" scale="1000.0">
-		<Home X="0.0" Y="0.0" Z="620" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812"/>
+		<Home X="0.0" Y="0.0" Z="0.0" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812"/>
+	</Obstacle>
+
+	<Obstacle obstacle="robots/rtx90/axis.iv" scale="2">
 	</Obstacle>
 
 	<Controls robot="controls/test.cntr" />
@@ -24,8 +27,8 @@
         	</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="12">0.464828 0.797298 0.601238 0.310499 0.383082 0.121914 0.666995 0.71626 0.404267 0.289924 0.678418 0.135239</Init>
-				<Goal dim="12">0.477388 0.824762 0.57626 0.297572 0.397948 0.124451 0.684516 0.71452 0.35059 0.897769 0.538175 0.0829909</Goal>
+				<Init dim="12">1 1 1 1 1 1 1 1 1 1 1 1</Init>
+				<Goal dim="12">0.5 0.375 0.5 0.375 0.5 0.5 0.5 0.375 0.5 0.375 0.5 0.5</Goal>
 			</Query>
 		</Queries>
 	</Planner>
