@@ -2,7 +2,7 @@
 <Robot  name="UR5_AllegroHandL" DHType="Modified" robType="Tree">
 
   <WeightSE3 rho_t="1.0" rho_r="1.0" />
-  <Joints size="28">
+  <Joints size="29">
     <Joint name="Base" ivFile="UR5/Base.wrl">
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="false" movable="false"  ></Description>
@@ -12,7 +12,7 @@
     </Joint>
     
     <Joint name="Shoulder" ivFile="UR5/Shoulder.wrl">
-      <DHPars alpha="0.0" a="0.0" theta="0.0" d="89.159"  ></DHPars>
+      <DHPars alpha="0.0" a="0.0" theta="-135.0" d="89.159"  ></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
@@ -20,7 +20,7 @@
     </Joint>
     
     <Joint name="ForeArm" ivFile="UR5/Upperarm.wrl">
-      <DHPars  alpha="90.0" a="0" theta="-90.0" d="0.0"></DHPars>
+      <DHPars  alpha="90.0" a="0" theta="180.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
@@ -35,18 +35,18 @@
       <Parent name="ForeArm"></Parent>
     </Joint>
     
-    <Joint name="Wrist1" ivFile="UR5/Wrist1.wrl">
-      <DHPars  alpha="0" a="392.25" theta="-90.0" d="109.15"></DHPars>
+       <Joint name="Wrist1" ivFile="UR5/Wrist1.wrl">
+      <DHPars  alpha="0" a="392.25" theta="0" d="109.15"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="45.0" Low="-180.0"></Limits>
+      <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="UpperArm"></Parent>
     </Joint>
     
     <Joint name="Wrist2" ivFile="UR5/Wrist2.wrl">
-      <DHPars  alpha="90" a="0" theta="0.0" d="-94.65"></DHPars>
+      <DHPars  alpha="-90" a="0" theta="180.0" d="94.65"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Wrist1"></Parent>
     </Joint>
@@ -54,160 +54,168 @@
     <Joint name="Wrist3" ivFile="UR5/Wrist3.wrl">
       <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="82.3"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Wrist2"></Parent>
     </Joint>
 
-    <Joint name="Palm" ivFile="AllegroHand/left/base_link_left.wrl">
-      <DHPars alpha="0.0" a="0.0" theta="0.0" d="100.0"></DHPars>
+    <Joint name="Support" ivFile="UR5/AH_support.wrl">
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="16.0"></DHPars>
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0" Low="0"></Limits>
       <Parent name="Wrist3"></Parent>
     </Joint>
- 
-    <Joint name="Medium-base" ivFile="AllegroHand/left/link_0_0.wrl">Index
-      <DHPars alpha="0" a="0.0" theta="0.0" d="0.0"></DHPars>
-      <PreTrans X="0" Y="0" Z="16.4" WX="1.0" WY="0.0" WZ="0.0" TH="0" ></PreTrans>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="26.93" Low="-26.93"></Limits>
-      <Parent name="Palm"></Parent>
-    </Joint>
 
-   <Joint name="Medium-proximal" ivFile="AllegroHand/left/link_1_0.wrl">
-      <DHPars alpha="90" a="0" theta="90" d="0"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="11.46" Low="-92.25"></Limits>
-      <Parent name="Medium-base"></Parent>
-    </Joint>
- 
-    <Joint name="Medium-distal" ivFile="AllegroHand/left/link_2_0.wrl">
-      <DHPars alpha="0" a="54" theta="0" d="0.0"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="9.74" Low="-97.98"></Limits>
-      <Parent name="Medium-proximal"></Parent>
-    </Joint>
-
-    <Joint name="Medium-last" ivFile="AllegroHand/left/link_3_0.wrl">
-      <DHPars alpha="0" a="38.4" theta="0.0" d="0.0"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="13.18" Low="-92.82"></Limits>
-      <Parent name="Medium-distal"></Parent>
-    </Joint>
-
-    <Joint name="Medium-tip" ivFile="AllegroHand/left/link_3_0_tip.wrl">
-      <DHPars alpha="0" a="17" theta="0.0" d="0.0"></DHPars>
+    <Joint name="Palm" ivFile="AllegroHand/left/base_link_left.wrl">
+      <PreTrans X="0" Y="9" Z="0" WX="0.0" WY="0.0" WZ="1.0" TH="90" ></PreTrans>
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="111.0"></DHPars>
       <Description rotational="false" movable="false" ></Description>
-      <Limits Hi="0.0" Low="-90.0"></Limits>
-      <Parent name="Medium-last"></Parent>
+      <Limits Hi="0" Low="0"></Limits>
+      <Parent name="Support"></Parent>
     </Joint>
-        
-    <Joint name="Index-base" ivFile="AllegroHand/left/link_0_0.wrl">
-      <DHPars alpha="0" a="0.0" theta="0.0" d="0.0"></DHPars>
-      <PreTrans X="0" Y="-44.981" Z="14.102" WX="1.0" WY="0.0" WZ="0.0" TH="5" ></PreTrans>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="26.93" Low="-26.93"></Limits>
-      <Parent name="Palm"></Parent>
+ 
+<Joint name="Index-base" ivFile="AllegroHand/left/link_0_0.wrl">
+      <DHPars alpha="0" a="0" theta="0" d="0"/>
+      <PreTrans X="0" Y="-44.981" Z="14.102" WX="1.0" WY="0.0" WZ="0.0" TH="5"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="26.93" Low="-26.93"/>
+      <Parent name="Palm"/>
     </Joint>
 
    <Joint name="Index-proximal" ivFile="AllegroHand/left/link_1_0.wrl">
-      <DHPars alpha="90" a="0" theta="90" d="0"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="11.46" Low="-92.25"></Limits>
-      <Parent name="Index-base"></Parent>
+      <DHPars alpha="-90" a="0" theta="-90" d="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="92.246" Low="-11.230"/>
+      <Parent name="Index-base"/>
     </Joint>
  
     <Joint name="Index-distal" ivFile="AllegroHand/left/link_2_0.wrl">
-      <DHPars alpha="0" a="54" theta="0" d="0.0"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="9.74" Low="-97.98"></Limits>
-      <Parent name="Index-proximal"></Parent>
+      <DHPars alpha="0" a="54" theta="0" d="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="97.918" Low="-9.969"/>
+      <Parent name="Index-proximal"/>
     </Joint>
 
     <Joint name="Index-last" ivFile="AllegroHand/left/link_3_0.wrl">
-      <DHPars alpha="0" a="38.4" theta="0.0" d="0.0"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="13.18" Low="-92.82"></Limits>
-      <Parent name="Index-distal"></Parent>
+      <DHPars alpha="0" a="38.4" theta="0" d="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="92.705" Low="-13.006"/>
+      <Parent name="Index-distal"/>
     </Joint>
 
     <Joint name="Index-tip" ivFile="AllegroHand/left/link_3_0_tip.wrl">
-      <DHPars alpha="0" a="17" theta="0.0" d="0.0"></DHPars>
-      <Description rotational="false" movable="false" ></Description>
-      <Limits Hi="0.0" Low="-90.0"></Limits>
-      <Parent name="Index-last"></Parent>
+      <DHPars alpha="0" a="17" theta="0.0" d="0.0"/>
+      <Description rotational="false" movable="false"/>
+      <Limits Hi="0" Low="0"/>
+      <Parent name="Index-last"/>
     </Joint>
-    
-    <Joint name="Ring-base" ivFile="AllegroHand/left/link_0_0.wrl">
-      <DHPars alpha="0" a="0.0" theta="0.0" d="0.0"></DHPars>
-      <PreTrans X="0" Y="44.981" Z="14.102" WX="1.0" WY="0.0" WZ="0.0" TH="-5" ></PreTrans>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="26.93" Low="-26.93"></Limits>
-      <Parent name="Palm"></Parent>
+        
+    <Joint name="Medium-base" ivFile="AllegroHand/left/link_0_0.wrl">
+      <DHPars alpha="0" a="0" theta="0" d="0"/>
+      <PreTrans X="0" Y="0" Z="16.4" WX="1.0" WY="0.0" WZ="0.0" TH="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="26.93" Low="-26.93"/>
+      <Parent name="Palm"/>
     </Joint>
 
-   <Joint name="Ring-proximal" ivFile="AllegroHand/left/link_1_0.wrl">
-      <DHPars alpha="90" a="0" theta="90" d="0"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="11.46" Low="-92.25"></Limits>
-      <Parent name="Ring-base"></Parent>
+    <Joint name="Medium-proximal" ivFile="AllegroHand/left/link_1_0.wrl">
+      <DHPars alpha="-90" a="0" theta="-90" d="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="92.246" Low="-11.230"/>
+      <Parent name="Medium-base"/>
+    </Joint>
+ 
+    <Joint name="Medium-distal" ivFile="AllegroHand/left/link_2_0.wrl">
+      <DHPars alpha="0" a="54" theta="0" d="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="97.918" Low="-9.969"/>
+      <Parent name="Medium-proximal"/>
+    </Joint>
+
+    <Joint name="Medium-last" ivFile="AllegroHand/left/link_3_0.wrl">
+      <DHPars alpha="0" a="38.4" theta="0" d="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="92.705" Low="-13.006"/>
+      <Parent name="Medium-distal"/>
+    </Joint>
+
+    <Joint name="Medium-tip" ivFile="AllegroHand/left/link_3_0_tip.wrl">
+      <DHPars alpha="0" a="17" theta="0.0" d="0.0"/>
+      <Description rotational="false" movable="false"/>
+      <Limits Hi="0" Low="0"/>
+      <Parent name="Medium-last"/>
+    </Joint>
+
+   <Joint name="Ring-base" ivFile="AllegroHand/left/link_0_0.wrl">
+      <DHPars alpha="0" a="0" theta="0" d="0"/>
+      <PreTrans X="0" Y="44.981" Z="14.102" WX="1.0" WY="0.0" WZ="0.0" TH="-5"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="26.93" Low="-26.93"/>
+      <Parent name="Palm"/>
+    </Joint>
+
+    <Joint name="Ring-proximal" ivFile="AllegroHand/left/link_1_0.wrl">
+      <DHPars alpha="-90" a="0" theta="-90" d="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="92.246" Low="-11.230"/>
+      <Parent name="Ring-base"/>
     </Joint>
  
     <Joint name="Ring-distal" ivFile="AllegroHand/left/link_2_0.wrl">
-      <DHPars alpha="0" a="54" theta="0" d="0.0"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="9.74" Low="-97.98"></Limits>
-      <Parent name="Ring-proximal"></Parent>
+      <DHPars alpha="0" a="54" theta="0" d="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="97.918" Low="-9.969"/>
+      <Parent name="Ring-proximal"/>
     </Joint>
 
     <Joint name="Ring-last" ivFile="AllegroHand/left/link_3_0.wrl">
-      <DHPars alpha="0" a="38.4" theta="0.0" d="0.0"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="13.18" Low="-92.82"></Limits>
-      <Parent name="Ring-distal"></Parent>
+      <DHPars alpha="0" a="38.4" theta="0" d="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="92.705" Low="-13.006"/>
+      <Parent name="Ring-distal"/>
     </Joint>
 
     <Joint name="Ring-tip" ivFile="AllegroHand/left/link_3_0_tip.wrl">
-      <DHPars alpha="0" a="17" theta="0.0" d="0.0"></DHPars>
-      <Description rotational="false" movable="false" ></Description>
-      <Limits Hi="0.0" Low="-90.0"></Limits>
-      <Parent name="Ring-last"></Parent>
+      <DHPars alpha="0" a="17" theta="0" d="0"/>
+      <Description rotational="false" movable="false"/>
+      <Limits Hi="0" Low="0"/>
+      <Parent name="Ring-last"/>
     </Joint>
-    
+
     <Joint name="Thumb-base" ivFile="AllegroHand/left/link_12_0_left.wrl">
-      <DHPars alpha="0" a="0.0" theta="0" d="0.0"></DHPars>
-      <PreTrans X="-18.2" Y="-19.333" Z="-74" WX="1.0" WY="0.0" WZ="0.0" TH="5" ></PreTrans>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="80.21" Low="14.9"></Limits>
-      <Parent name="Palm"></Parent>
+      <DHPars alpha="0" a="0" theta="0" d="0"/>
+      <PreTrans X="-18.2" Y="-19.333" Z="-74" WX="1.0" WY="0.0" WZ="0.0" TH="5"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="79.985" Low="15.069"/>
+      <Parent name="Palm"/>
     </Joint>
     
      <Joint name="Thumb-proximal" ivFile="AllegroHand/left/link_13_0.wrl">
-      <DHPars alpha="90" a="4.5" theta="90" d="55"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="5.73" Low="-66.46"></Limits>
-      <Parent name="Thumb-base"></Parent>
+      <DHPars alpha="-90" a="4.5" theta="90" d="-55"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="66.635" Low="-6.016"/>
+      <Parent name="Thumb-base"/>
     </Joint>
     
      <Joint name="Thumb-distal" ivFile="AllegroHand/left/link_14_0.wrl">
-      <DHPars alpha="90" a="0" theta="90" d="0"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="10.89" Low="-93.97"></Limits>
-      <Parent name="Thumb-proximal"></Parent>
+      <DHPars alpha="-90" a="0" theta="90" d="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="94.194" Low="-10.829"/>
+      <Parent name="Thumb-proximal"/>
     </Joint>
     
       <Joint name="Thumb-last" ivFile="AllegroHand/left/link_15_0.wrl">
-      <DHPars alpha="0" a="51.5" theta="0" d="0"></DHPars>
-      <Description rotational="true" movable="true" ></Description>
-      <Limits Hi="9.17" Low="-98.55"></Limits>
-      <Parent name="Thumb-distal"></Parent>
+      <DHPars alpha="0" a="51.5" theta="0" d="0"/>
+      <Description rotational="true" movable="true"/>
+      <Limits Hi="98.55" Low="-9.17"/>
+      <Parent name="Thumb-distal"/>
     </Joint>
     
     <Joint name="Thumb-tip" ivFile="AllegroHand/left/link_15_0_tip.wrl">
-      <DHPars alpha="0" a="32.3" theta="0" d="0"></DHPars>
-      <Description rotational="false" movable="false" ></Description>
-      <Limits Hi="0.0" Low="-90.0"></Limits>
-      <Parent name="Thumb-last"></Parent>
+      <DHPars alpha="0" a="32.3" theta="0" d="0"/>
+      <Description rotational="false" movable="false"/>
+      <Limits Hi="0" Low="0"/>
+      <Parent name="Thumb-last"/>
     </Joint>
   </Joints>
 
