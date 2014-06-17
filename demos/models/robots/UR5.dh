@@ -12,7 +12,7 @@
     </Joint>
     
     <Joint name="Shoulder" ivFile="UR5/Shoulder.wrl">
-      <DHPars alpha="0.0" a="0.0" theta="0.0" d="89.159"  ></DHPars>
+      <DHPars alpha="0.0" a="0.0" theta="-135.0" d="89.159"  ></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
@@ -20,7 +20,7 @@
     </Joint>
     
     <Joint name="ForeArm" ivFile="UR5/Upperarm.wrl">
-      <DHPars  alpha="-90.0" a="0" theta="-90.0" d="0.0"></DHPars>
+      <DHPars  alpha="90.0" a="0" theta="180.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
@@ -35,18 +35,18 @@
       <Parent name="ForeArm"></Parent>
     </Joint>
     
-    <Joint name="Wrist1" ivFile="UR5/Wrist1.wrl">
-      <DHPars  alpha="0" a="392.25" theta="-90.0" d="109.15"></DHPars>
+       <Joint name="Wrist1" ivFile="UR5/Wrist1.wrl">
+      <DHPars  alpha="0" a="392.25" theta="0" d="109.15"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="45.0" Low="-180.0"></Limits>
+      <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="UpperArm"></Parent>
     </Joint>
     
     <Joint name="Wrist2" ivFile="UR5/Wrist2.wrl">
-      <DHPars  alpha="90" a="0" theta="0.0" d="-94.65"></DHPars>
+      <DHPars  alpha="-90" a="0" theta="180.0" d="94.65"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Wrist1"></Parent>
     </Joint>
@@ -54,11 +54,10 @@
     <Joint name="Wrist3" ivFile="UR5/Wrist3.wrl">
       <DHPars  alpha="-90.0" a="0.0" theta="0.0" d="82.3"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
-      <Limits Hi="180.0" Low="-180.0"></Limits>
+      <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
       <Parent name="Wrist2"></Parent>
     </Joint>
-  </Joints>
-
+  </Joints>	
 </Robot>
 

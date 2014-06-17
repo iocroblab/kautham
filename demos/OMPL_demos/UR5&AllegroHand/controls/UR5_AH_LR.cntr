@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<ControlSet>
+    <Control name="L/Shoulder" eigValue="1.0">
+      <DOF name="UR5_AllegroHandL/Shoulder" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="L/ForeArm" eigValue="1.0">
+      <DOF name="UR5_AllegroHandL/ForeArm" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="L/UpperArm" eigValue="1.0">
+      <DOF name="UR5_AllegroHandL/UpperArm" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="L/Wrist1" eigValue="1.0">
+      <DOF name="UR5_AllegroHandL/Wrist1" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="L/Wrist2" eigValue="1.0">
+      <DOF name="UR5_AllegroHandL/Wrist2" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="L/Wrist3" eigValue="1.0">
+      <DOF name="UR5_AllegroHandL/Wrist3" value="1.0"></DOF>
+    </Control>
+	
+    <Control name="R/Shoulder" eigValue="1.0">
+      <DOF name="UR5_AllegroHandR/Shoulder" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="R/ForeArm" eigValue="1.0">
+      <DOF name="UR5_AllegroHandR/ForeArm" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="R/UpperArm" eigValue="1.0">
+      <DOF name="UR5_AllegroHandR/UpperArm" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="R/Wrist1" eigValue="1.0">
+      <DOF name="UR5_AllegroHandR/Wrist1" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="R/Wrist2" eigValue="1.0">
+      <DOF name="UR5_AllegroHandR/Wrist2" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="R/Wrist3" eigValue="1.0">
+      <DOF name="UR5_AllegroHandR/Wrist3" value="1.0"></DOF>
+    </Control>
+ </ControlSet>
