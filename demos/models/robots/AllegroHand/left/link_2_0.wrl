@@ -8,7 +8,12 @@ DEF root Separator {
       DEF root VRMLGroup {
         children 
           VRMLGroup {
-            children [ 
+            children [
+              RotationXYZ {
+                angle 3.141592654
+                axis X
+
+              },
               RotationXYZ {
                 angle -1.5707964
                 axis Z
@@ -36,8 +41,7 @@ DEF root Separator {
                             VRMLAppearance {
                               material 
                               VRMLMaterial {
-                                ambientIntensity 0.16000001
-
+		   	         diffuseColor 0.2 0.2 0.2
                               }
 
                             }
