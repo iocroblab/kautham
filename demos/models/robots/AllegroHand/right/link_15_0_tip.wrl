@@ -36,7 +36,7 @@ DEF root Separator {
                         VRMLAppearance {
                           material 
                           VRMLMaterial {
-
+				diffuseColor 0.9 0.9 0.9
                           }
 
                         }

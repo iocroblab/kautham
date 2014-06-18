@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ControlSet>
 	<Offset>
-		<DOF name="TX90 SA Hand Right/Thumb" value="0.3055 " />
+		<DOF name="TX90 SA Hand Right/Thumb" value="0.3055" />
 		<DOF name="TX90 SA Hand Right/Thumb-Base" value="0.3055" />
 		<DOF name="TX90 SA Hand Right/Thumb-Prox" value="0.6308" />
 		<DOF name="TX90 SA Hand Right/Thumb-Med" value="0.5143" />
@@ -25,28 +25,28 @@
 		<DOF name="TX90 SA Hand Right/Wrist" value="0.5" />
 		<DOF name="TX90 SA Hand Right/Tcp" value="0.5" />
 	</Offset>
-	<Control name="TX90 SA Hand Right/Shoulder" eigValue="1.0">
+	<Control name="Shoulder" eigValue="1.0">
 		<DOF name="TX90 SA Hand Right/Shoulder" value="1.0" />
 	</Control>
-	<Control name="TX90 SA Hand Right/ForeArm" eigValue="1.0">
+	<Control name="ForeArm" eigValue="1.0">
 		<DOF name="TX90 SA Hand Right/ForeArm" value="1.0" />
 	</Control>
-	<Control name="TX90 SA Hand Right/Elbow" eigValue="1.0">
+	<Control name="Elbow" eigValue="1.0">
 		<DOF name="TX90 SA Hand Right/Elbow" value="1.0" />
 	</Control>
-	<Control name="TX90 SA Hand Right/Arm" eigValue="1.0">
+	<Control name="Arm" eigValue="1.0">
 		<DOF name="TX90 SA Hand Right/Arm" value="1.0" />
 	</Control>
-	<Control name="TX90 SA Hand Right/Wrist" eigValue="1.0">
+	<Control name="Wrist" eigValue="1.0">
 		<DOF name="TX90 SA Hand Right/Wrist" value="1.0" />
 	</Control>
-	<Control name="TX90 SA Hand Right/Tcp" eigValue="1.0">
+	<Control name="Tcp" eigValue="1.0">
 		<DOF name="TX90 SA Hand Right/Tcp" value="1.0" />
 	</Control>
-	<Control name="TX90 SA Hand Right/handPMD_Thumb" eigValue="1.0">
+	<Control name="handPMD_Thumb" eigValue="1.0">
 		<DOF name="TX90 SA Hand Right/Thumb" value="1.0" />
 	</Control>
-	<Control name="TX90 SA Hand Right/handPMD_C1" eigValue="1.6550">
+	<Control name="handPMD_C1" eigValue="1.6550">
 		<DOF name="TX90 SA Hand Right/Thumb" value="0.0" />
 		<DOF name="TX90 SA Hand Right/Thumb-Base" value="-0.0683" />
 		<DOF name="TX90 SA Hand Right/Thumb-Prox" value="0.2222" />
@@ -65,7 +65,7 @@
 		<DOF name="TX90 SA Hand Right/Ring-Med" value="0.1897" />
 		<DOF name="TX90 SA Hand Right/Ring-Dist" value="0.1897" />
 	</Control>
-	<Control name="TX90 SA Hand Right/handPMD_C2" eigValue="1.4355">
+	<Control name="handPMD_C2" eigValue="1.4355">
 		<DOF name="TX90 SA Hand Right/Thumb" value="0.0" />
 		<DOF name="TX90 SA Hand Right/Thumb-Base" value="-0.0144" />
 		<DOF name="TX90 SA Hand Right/Thumb-Prox" value="-0.1323" />
@@ -84,7 +84,7 @@
 		<DOF name="TX90 SA Hand Right/Ring-Med" value="-0.4554" />
 		<DOF name="TX90 SA Hand Right/Ring-Dist" value="-0.4554" />
 	</Control>
-	<Control name="TX90 SA Hand Right/handPMD_C3" eigValue="0.8851">
+	<Control name="handPMD_C3" eigValue="0.8851">
 		<DOF name="TX90 SA Hand Right/Thumb" value="0.0" />
 		<DOF name="TX90 SA Hand Right/Thumb-Base" value="0.6638" />
 		<DOF name="TX90 SA Hand Right/Thumb-Prox" value="0.6816" />
@@ -103,7 +103,7 @@
 		<DOF name="TX90 SA Hand Right/Ring-Med" value="0.0030" />
 		<DOF name="TX90 SA Hand Right/Ring-Dist" value="0.0030" />
 	</Control>
-	<Control name="TX90 SA Hand Right/handPMD_C4" eigValue="0.7174">
+	<Control name="handPMD_C4" eigValue="0.7174">
 		<DOF name="TX90 SA Hand Right/Thumb" value="0.0" />
 		<DOF name="TX90 SA Hand Right/Thumb-Base" value="-0.2879" />
 		<DOF name="TX90 SA Hand Right/Thumb-Prox" value="0.2207" />

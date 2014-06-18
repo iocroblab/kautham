@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Robot  name="Can" DHType="Modified" robType="Freeflying">
+
+  <WeightSE3 rho_t="1.0" rho_r="1.0" />
+  <Joints size="2">
+    <Joint name="Base" ivFile="rtx90/axis.iv" scale="1">
+      <PreTrans X="0" Y="9" Z="0" WX="0.0" WY="0.0" WZ="1.0" TH="90" ></PreTrans> 
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="111.0"></DHPars>     
+      <Description rotational="false" movable="true" ></Description>
+      <Limits Hi="0" Low="0"></Limits>
+      <Parent name=""></Parent>
+    </Joint>
+    <Joint name="Can" ivFile="can.wrl" scale="1000">
+      <PreTrans X="0" Y="0" Z="0" WX="0.5773502692" WY="-0.5773502692" WZ="0.5773502692" TH="-120"/>
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0"/>
+      <Description rotational="false" movable="false"/>
+      <Limits Hi="0" Low="0"/>
+      <Parent name="Base"/>
+    </Joint>
+  </Joints>
+</Robot>
+
