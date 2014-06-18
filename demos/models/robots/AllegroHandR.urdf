@@ -65,7 +65,7 @@
 			<geometry>
 				<mesh filename="AllegroHand/right/link_2_0.wrl" />
 			</geometry>
-			<origin rpy="1.5707963 -1.5707963 0" />
+			<origin rpy="-1.5707963 -1.5707963 0" />
 			<material name="black" />
 		</visual>
 		<collision>
@@ -87,7 +87,7 @@
 			<geometry>
 				<mesh filename="AllegroHand/right/link_3_0.wrl" />
 			</geometry>
-			<origin rpy="1.5707963 -1.5707963 0" />
+			<origin rpy="-1.5707963 -1.5707963 0" />
 			<material name="black" />
 		</visual>
 		<collision>
@@ -175,7 +175,7 @@
 			<geometry>
 				<mesh filename="AllegroHand/right/link_2_0.wrl" />
 			</geometry>
-			<origin rpy="1.5707963 -1.5707963 0" />
+			<origin rpy="-1.5707963 -1.5707963 0" />
 			<material name="black" />
 		</visual>
 		<collision>
@@ -197,7 +197,7 @@
 			<geometry>
 				<mesh filename="AllegroHand/right/link_3_0.wrl" />
 			</geometry>
-			<origin rpy="1.5707963 -1.5707963 0" />
+			<origin rpy="-1.5707963 -1.5707963 0" />
 			<material name="black" />
 		</visual>
 		<collision>
@@ -285,7 +285,7 @@
 			<geometry>
 				<mesh filename="AllegroHand/right/link_2_0.wrl" />
 			</geometry>
-			<origin rpy="1.5707963 -1.5707963 0" />
+			<origin rpy="-1.5707963 -1.5707963 0" />
 			<material name="black" />
 		</visual>
 		<collision>
@@ -307,7 +307,7 @@
 			<geometry>
 				<mesh filename="AllegroHand/right/link_3_0.wrl" />
 			</geometry>
-			<origin rpy="1.5707963 -1.5707963 0" />
+			<origin rpy="-1.5707963 -1.5707963 0" />
 			<material name="black" />
 		</visual>
 		<collision>
@@ -351,7 +351,7 @@
 			<geometry>
 				<mesh filename="AllegroHand/right/link_12_0_right.wrl" />
 			</geometry>
-			<origin rpy="1.5707963 0 1.5707963" xyz="-0.02775 0 0" />
+			<origin rpy="1.570796327 0 -1.570796327" xyz="-0.02775 0 0" />
 			<material name="black">
 				<color rgba=".2 .2 .2 1" />
 			</material>
@@ -375,7 +375,7 @@
 			<geometry>
 				<mesh filename="AllegroHand/right/link_13_0.wrl" />
 			</geometry>
-			<origin rpy="3.1415927 0 0" xyz="0 0 0.016000001" />
+			<origin xyz="0 0 0.016000001" />
 			<material name="black">
 				<color rgba=".2 .2 .2 1" />
 			</material>
@@ -399,7 +399,7 @@
 			<geometry>
 				<mesh filename="AllegroHand/right/link_14_0.wrl" />
 			</geometry>
-			<origin rpy="1.5707963259 1.5707963259 0" />
+			<origin rpy="-1.5707963259 1.5707963259 0" />
 			<material name="black" />
 		</visual>
 		<collision>

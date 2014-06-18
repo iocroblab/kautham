@@ -56,26 +56,26 @@ bool IvKinUR5::solve(){
       //This next 3 parameters define the configuration
 
       if(_target.at(7) == shoulder_left)  // Shoulder Lefty //antes ==1, ok
-        shoulder = left;
+        shoulder = true;
       else
-        shoulder = shoulder_right;
+        shoulder = false;
 
       if(_target.at(8) == elbow_up)  // Elbow Positive //antes ==0, ok
-        elbow = up;
+        elbow = true;
       else
-        elbow = down;
+        elbow = false;
 
       if(_target.at(9) == wrist_in)  // Wrist Positive   //correccion antes ==1!! KO
-        wrist = in;
+        wrist = true;
       else
-        wrist = out;
+        wrist = false;
     }
     _targetTrans.setTranslation(mt::Point3(_target.at(0), _target.at(1),
                                            _target.at(2)));
     _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4),
                                           _target.at(5), _target.at(6) ));
 
-    if (UR5_inv_kin(_targetTrans, shoulder, elbow, wrist, _result)) {
+    if (UR5_inv_kin(_targetTrans, shoulder, wrist, elbow, _result)) {
         double control [6];
         UR5_controls(control,_result);
         cout << "Joint values are:" << endl;
