@@ -71,6 +71,13 @@ if( KAUTHAM_IOC )
    add_definitions( -DKAUTHAM_USE_IOC )
 endif( KAUTHAM_IOC )
 
+if(KAUTHAM_OPENDE)
+   find_package(OpenDE REQUIRED)
+   if(ODE_FOUND)
+      message( STATUS "ODE Package FOUND: setting -DKAUTHAM_USE_ODE flag")
+      add_definitions( -DKAUTHAM_USE_ODE )
+   endif(ODE_FOUND)
+endif(KAUTHAM_OPENDE)
 
 
 
@@ -89,7 +96,7 @@ add_subdirectory( sampling )
 
 
 add_definitions( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
-#message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
+message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
 
 add_library(kautham SHARED ${KAUTHAM_SRC} )
 
