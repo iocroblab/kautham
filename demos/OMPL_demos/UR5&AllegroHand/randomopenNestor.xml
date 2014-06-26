@@ -9,7 +9,7 @@
 	<Obstacle obstacle="obstacles/structure.wrl" scale="1000.0">
 		<Home X="0.0" Y="0.0" Z="620.5" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812" />
 	</Obstacle>
-	<Controls robot="controls/randomopen.cntr" />
+	<Controls robot="controls/randomopenNestor.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplRRTConnect</Name>
