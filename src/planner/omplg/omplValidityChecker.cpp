@@ -37,6 +37,9 @@ namespace Kautham {
     // Returns whether the given state's position overlaps the obstacles
     bool ValidityChecker::isValid(const ob::State* state) const
     {
+        //JAN DEBUG
+        //return true;
+
       //verify bounds
       if(thesi->satisfiesBounds(state)==false)
           return false;

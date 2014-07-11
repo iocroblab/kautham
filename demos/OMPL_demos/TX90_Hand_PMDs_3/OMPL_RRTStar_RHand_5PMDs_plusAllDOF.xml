@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_RRT_2DRR_columns">
-	<Robot robot="robots/RHand_5PMD.dh" scale="1.0">
+        <Robot robot="robots/RHand.dh" scale="1.0">
 		<Limits name="X" min="0.0" max="1000.0" />
 		<Limits name="Y" min="0.0" max="1000.0" />
 		<Limits name="Z" min="0.0" max="1000.0" />
@@ -11,16 +11,18 @@
 		<Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="230.1" X="-200.5" />
 		<InvKinematic name="TX90" />
 	</Robot>
-	<Controls robot="controls/RHand_13dof_5PMD.cntr" />
+        <Controls robot="controls/RHand_13dof_5PMD.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplRRTStar</Name>
-			<Parameter name="Max Planning Time">30.0</Parameter>
+                        <Parameter name="Max Planning Time">5.0</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
-			<Parameter name="Range">0.01</Parameter>
+                        <Parameter name="Path Bias">0.5</Parameter>
+                        <Parameter name="Range">0.1</Parameter>
 			<Parameter name="DelayCC (0/1)">0</Parameter>
-			<Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">3</Parameter>
-			<Parameter name="Simplify Solution">1</Parameter>
+                        <Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">1</Parameter>
+                        <Parameter name="Simplify Solution">0</Parameter>
+                        <Parameter name="Node Rejection (0/1)">1</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>

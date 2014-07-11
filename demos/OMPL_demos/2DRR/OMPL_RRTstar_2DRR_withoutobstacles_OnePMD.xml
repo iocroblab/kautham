@@ -7,17 +7,21 @@
 	<Planner>
 		<Parameters>
 			<Name>omplRRTStar</Name>
-			<Parameter name="Max Planning Time">10.0</Parameter>
+			<Parameter name="Max Planning Time">3.0</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
-			<Parameter name="Range">0.05</Parameter>
-			<Parameter name="Goal Bias">0.05</Parameter>
+			<Parameter name="Range">0.15</Parameter>
+			<Parameter name="Goal Bias">0.1</Parameter>
+			<Parameter name="Path Bias">0.1</Parameter>
 			<Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">3</Parameter>
-			<Parameter name="Simplify Solution">1</Parameter>
+			<Parameter name="Simplify Solution">0</Parameter>
+                        <Parameter name="lengthweight(0..1)">0.1</Parameter>
+                        <Parameter name="orientationweight">1.0</Parameter>
+                        <Parameter name="penalizationweight">1.0</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
-                                <Init dim="3">0.5 0.5 0.5</Init>
-                                <Goal dim="3">0.5 0.0 1.0</Goal>
+          <Init dim="3">0.5 0.5 0.5</Init>
+          <Goal dim="3">0.5 0.0 0.98</Goal>
 			</Query>
 		</Queries>
 	</Planner>

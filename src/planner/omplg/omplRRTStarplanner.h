@@ -60,6 +60,9 @@ namespace Kautham {
 
          KthReal _Range;
          KthReal _GoalBias;
+         KthReal _PathBias;
+         KthReal _PathSamplingRangeFactor;
+         KthReal _NodeRejection;
          bool _DelayCC;
          double _KneighFactor;
          unsigned int _opti;

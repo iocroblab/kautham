@@ -15,8 +15,8 @@
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="2">0.45 0.6</Init>
-				<Goal dim="2">0.55 0.8</Goal>
+				<Init dim="4">0.5 0.5 0.45 0.6</Init>
+				<Goal dim="4">0.5 0.5 0.55 0.8</Goal>
 			</Query>
 		</Queries>
 	</Planner>
