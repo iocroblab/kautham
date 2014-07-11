@@ -94,14 +94,14 @@ namespace Kautham{
   #define MAJOR_VERSION "2"
   #define MINOR_VERSION "4"
 
-	enum ROBOTTYPE{
+    enum ROBOTTYPE {
 		FREEFLY,
 		CHAIN,
 		TREE,
 		CLOSEDCHAIN
 	};
 
-    enum APPROACH{
+    enum APPROACH {
 		DHSTANDARD,
         DHMODIFIED,
         URDF
@@ -118,33 +118,33 @@ namespace Kautham{
 		Rn
 	};
 
-  enum LIBUSED{
+  enum LIBUSED {
     INVENTOR,
     IVPQP,
     IVSOLID
   };
 
-  enum SPACETYPE{
+  enum SPACETYPE {
     SAMPLEDSPACE,
     CONTROLSPACE,
     CONFIGSPACE
   };
 
-  enum PROBLEMSTATE{
+  enum PROBLEMSTATE {
 	  INITIAL,
 	  PROBLEMLOADED,
 	  CSPACECREATED,
 	  PRMCALCULATED
   };
 
-  enum CONSTRAINEDKINEMATICS{
+  enum CONSTRAINEDKINEMATICS {
     UNCONSTRAINED,
     BRONCHOSCOPY
   };
 
   //! This enumeration has the relationship of all Inverse Kinematic models
   //! available to be used as solver of the robot inverse kinematics.
-  enum INVKINECLASS{
+  enum INVKINECLASS {
     NOINVKIN,
     UNIMPLEMENTED,
     RR2D,
@@ -152,6 +152,14 @@ namespace Kautham{
     HAND,
     TX90HAND,
     UR5
+  };
+
+  enum PLANNERFAMILY {
+      NOFAMILY,
+      IOCPLANNER,
+      OMPLPLANNER,
+      OMPLCPLANNER,
+      ODEPLANNER
   };
 
 #ifndef INFINITY

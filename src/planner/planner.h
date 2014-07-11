@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell */
+/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
  
  
 
@@ -84,7 +84,7 @@ namespace Kautham {
     virtual inline SoSeparator*    getIvCspaceScene(){return _sceneCspace;}//_sceneCspace is initiallized to NULL
 
     inline long int               getMaxNumSamples(){return _maxNumSamples;}
-    inline string getFamily(){return _family;}
+    inline PLANNERFAMILY getFamily(){return _family;}
 
 	protected:
     Planner();
@@ -102,7 +102,7 @@ namespace Kautham {
     int                           _speedFactor;
     bool                          _hasCameraInformation;
     unsigned int                  _maxNumSamples;
-    string                        _family;
+    PLANNERFAMILY                 _family;
     SoSeparator*                  _sceneCspace;
 
 
