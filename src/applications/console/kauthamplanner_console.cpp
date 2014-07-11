@@ -85,9 +85,12 @@ int main(int argc, char* argv[]){
       absPath.append( argv[2] );
 
       //directory containing the models
-      dir=absPath;
-      dir.erase(dir.find_last_of("/") + 1, dir.length());
-
+      if(argc == 2) {
+          dir=absPath;
+          dir.erase(dir.find_last_of("/") + 1, dir.length());
+      } else {
+          dir=argv[1];
+      }
       try{
           kauthamshell* ksh = new kauthamshell();
 
