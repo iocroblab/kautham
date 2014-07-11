@@ -143,10 +143,14 @@ namespace Kautham {
 
     void GUI::setModelsDefaultPath() {
         QSettings settings("IOC","Kautham");
-        QStringList pathList = settings.value("models_directories",QStringList()).toStringList();
-        DefaultPathDialog *defaultPathDialog = new DefaultPathDialog(pathList,this);
-        if (defaultPathDialog->exec(&pathList)) {
-            settings.setValue("models_directories",pathList);
+        DefaultPathDialog *defaultPathDialog = new DefaultPathDialog(settings.value
+                                                                     ("models_directories",
+                                                                      QStringList()).
+                                                                     toStringList(),this);
+        QStringList *pathList = defaultPathDialog->getList();
+        if (pathList != NULL) {
+            settings.setValue("models_directories",*pathList);
+            delete pathList;
         }
     }
 
@@ -161,8 +165,8 @@ namespace Kautham {
         }
     }
 
-    bool GUI::setSampleWidget(SampleSet* samples, Sampler* sampler, Problem* prob){
-        SamplesWidget* tmpSam = new SamplesWidget(samples, sampler, prob);
+    bool GUI::setSampleWidget(Problem* problem){
+        SamplesWidget* tmpSam = new SamplesWidget(problem);
         propertiesTab->addTab(tmpSam, "Samplers");
         connect(tmpSam, SIGNAL(sendText(string)), this, SLOT(setText(string)) );
         return true;
@@ -171,12 +175,14 @@ namespace Kautham {
     bool GUI::addRobControlWidget(Problem* prob, vector<DOFWidget*> robDOFWidgets){
         if( prob != NULL){
             ControlWidget* tmpControl = new ControlWidget(prob,robDOFWidgets,true);
+            connect(tmpControl,SIGNAL(sendText(string)),this,SLOT(setText(string)));
             propertiesTab->addTab(tmpControl, "RobContr");
             //JAN
             indexRobControlsTab = propertiesTab->indexOf(tmpControl);
             return true;
         }else{
             ControlWidget* tmpControl = new ControlWidget(NULL,robDOFWidgets,true);
+            connect(tmpControl,SIGNAL(sendText(string)),this,SLOT(setText(string)));
             propertiesTab->addTab(tmpControl, "RobContr-Test");
             indexRobControlsTab = propertiesTab->indexOf(tmpControl);
             return true;
@@ -187,12 +193,14 @@ namespace Kautham {
     bool GUI::addObsControlWidget(Problem* prob, vector<DOFWidget*> obsDOFWidgets){
         if( prob != NULL){
             ControlWidget* tmpControl = new ControlWidget(prob,obsDOFWidgets,false);
+            connect(tmpControl,SIGNAL(sendText(string)),this,SLOT(setText(string)));
             propertiesTab->addTab(tmpControl, "ObsContr");
             //JAN
             indexObsControlsTab = propertiesTab->indexOf(tmpControl);
             return true;
         }else{
             ControlWidget* tmpControl = new ControlWidget(NULL,obsDOFWidgets,false);
+            connect(tmpControl,SIGNAL(sendText(string)),this,SLOT(setText(string)));
             propertiesTab->addTab(tmpControl, "ObsContr-Test");
             indexObsControlsTab = propertiesTab->indexOf(tmpControl);
             return true;
@@ -272,6 +280,7 @@ namespace Kautham {
         if( rob != NULL){
             DOFWidget* tmpDOF = new DOFWidget(rob);
             string rob_name = rob->getName();
+            tmpDOF->setToolTip(string(rob_name+"-DOF").c_str());
             if (rob_name.length() > 10) {
                 rob_name = rob_name.substr(0,7)+"...";
             }
@@ -306,18 +315,20 @@ namespace Kautham {
 
     bool GUI::addPlanner(Planner *plan, SampleSet* samp, GUI* gui){
         if( plan != NULL){
-            PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, plan->hasCameraMovements(), gui );
+            PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, plan->hasCameraMovements());
             propertiesTab->addTab(tmpPlan, QString((plan->getGuiName()).c_str()));
+            connect(tmpPlan,SIGNAL(sendText(string)),this,SLOT(setText(string)));
+            connect(tmpPlan,SIGNAL(changeCursor(bool)),this,SLOT(changeCursor(bool)));
+            connect(this,SIGNAL(stopSimulation()),tmpPlan,SLOT(stopSimulation()));
             //JAN
             indexPlannerTab = propertiesTab->indexOf(tmpPlan);
-            connect(tmpPlan, SIGNAL(sendText(string)), this, SLOT(setText(string)) );
             if(plan->getIvCspaceScene() != NULL)
             {
                 addViewerTab("CSpace", plan->getIvCspaceScene());
             }
             return true;
         }else{
-            PlannerWidget* tmpPlan = new PlannerWidget( NULL, NULL, gui );
+            PlannerWidget* tmpPlan = new PlannerWidget( NULL, NULL);
             propertiesTab->addTab(tmpPlan, "Planner");
             //JAN
             indexPlannerTab = propertiesTab->indexOf(tmpPlan);
@@ -325,6 +336,11 @@ namespace Kautham {
         }
         return false;
     }
+
+    void GUI::changeCursor(bool waiting) {
+        setCursor(QCursor(waiting?Qt::WaitCursor:Qt::ArrowCursor));
+    }
+
 
     bool GUI::addViewerTab(string title, SoSeparator *root){
         viewsTab->setEnabled(true);
@@ -680,6 +696,13 @@ namespace Kautham {
             ac = actions.at(i);
             if (ac->text() == "Chan&ge Colour") {
                 ac->setEnabled(true);
+                QIcon colors;
+                colors.addFile(":/icons/colors_16x16.png");
+                colors.addFile(":/icons/colors_22x22.png");
+                colors.addFile(":/icons/colors_32x32.png");
+                colors.addFile(":/icons/colors_48x48.png");
+                colors.addFile(":/icons/colors_64x64.png");
+                ac->setIcon(colors);
                 break;
             }
         }
@@ -696,6 +719,13 @@ namespace Kautham {
             ac = actions.at(i);
             if (ac->text() == "Chan&ge Colour") {
                 ac->setDisabled(true);
+                QIcon greycolors;
+                greycolors.addFile(":/icons/greycolors_16x16.png");
+                greycolors.addFile(":/icons/greycolors_22x22.png");
+                greycolors.addFile(":/icons/greycolors_32x32.png");
+                greycolors.addFile(":/icons/greycolors_48x48.png");
+                greycolors.addFile(":/icons/greycolors_64x64.png");
+                ac->setIcon(greycolors);
                 break;
             }
         }

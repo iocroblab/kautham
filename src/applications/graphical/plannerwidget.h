@@ -28,65 +28,72 @@
 #include "kauthamwidget.h"
 #include <planner/planner.h>
 #include <QtGui>
-#include "gui.h"
-
-
-using namespace std;
 
 namespace Kautham{
 
 /** \addtogroup Application
  *  @{
  */
-class GUI;//needed here because GUI has #include "plannerwidget.h"
 
 	class PlannerWidget: public KauthamWidget{
 		Q_OBJECT
-	private slots:
-    void getPathCall();
-    void saveDataCall();
-    void loadDataCall();
-    //void setIniGoalCall();
-    void moveAlongPath();
-    void showSample(int index);
-    void tryConnect();
-    void chkCameraClick();
+    public:
+        PlannerWidget(Planner* plan, SampleSet* samp, bool camera = false);
+        ~PlannerWidget();
+
+    signals:
+        void changeCursor(bool waiting);
+
     public slots:
-    void simulatePath();
+        void stopSimulation();
+        void startSimulation();
 
-	public:
-    PlannerWidget(Planner* plan, SampleSet* samp, bool camera = false, GUI* gui = NULL );
-    inline bool ismoving(){return _ismoving;};
-		
-	private:
-    PlannerWidget();
-    QHBoxLayout *hboxLayout;
-    QHBoxLayout *hboxLayout2;
-    QPushButton *btnGetPath;
-    QPushButton *btnSaveData;
-    QPushButton *btnMove;
-    QCheckBox   *chkCamera;
-    QPushButton *btnLoadData;
-    QSpinBox *spnInit, *spnGoal;
-    QLabel* tmpLabel;
-    GUI*          _gui;
-    Planner*      _planner;
-    SampleSet*    _samples;
-    QTimer*       _plannerTimer;
-    unsigned int  _stepSim;
-    bool          _ismoving;
+    private slots:
+        void getPath();
+        void saveData();
+        void loadData();
+        void moveAlongPath();
+        void showSample(int index);
+        void tryConnect();
+        void chkCameraClick();
+        void simulatePath();
 
-    // Added to provide access to the local Planner
-    QLabel      *label;
-    QSpinBox    *_spFrom;
-    QLabel      *label_2;
-    QSpinBox    *_spTo;
-    QHBoxLayout *horizontalLayout_2;
-    QPushButton *_cmbTry;
-    QLabel      *_lblRes;
-	
-	};
+    private:
+        void tryConnectIOC();
+        void tryConnectOMPL();
+        void tryConnectOMPLC();
+        void tryConnectODE();
+        void saveDataIOC();
+        void saveDataOMPL();
+        void saveDataOMPLC();
+        void saveDataODE();
+        QString getFilePath();
 
+        PlannerWidget();
+        QHBoxLayout *hboxLayout;
+        QHBoxLayout *hboxLayout2;
+        QPushButton *btnGetPath;
+        QPushButton *btnSaveData;
+        QPushButton *moveButton;
+        QCheckBox   *chkCamera;
+        QPushButton *btnLoadData;
+        QSpinBox *globalFromBox, *globalToBox;
+        QLabel *tmpLabel;
+        Planner *_planner;
+        SampleSet *_samples;
+        QTimer *_plannerTimer;
+        uint _stepSim;
+        bool _ismoving;
+
+        // Added to provide access to the local Planner
+        QLabel      *label;
+        QSpinBox    *localFromBox;
+        QLabel      *label_2;
+        QSpinBox    *localToBox;
+        QHBoxLayout *horizontalLayout_2;
+        QPushButton *_cmbTry;
+        QLabel      *connectLabel;
+    };
     /** @}   end of Doxygen module "Application" */
 }
 
