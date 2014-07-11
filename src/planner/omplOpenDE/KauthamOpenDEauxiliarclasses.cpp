@@ -52,7 +52,6 @@ namespace omplcplanner{
 
 KauthamDEGoal::KauthamDEGoal(const ob::SpaceInformationPtr &si, WorkSpace *ws, bool a,Sample *goal):ob::GoalRegion(si)
 {
-
     threshold_ = 0.5;
     Kauthamodebodies=smp2KauthamOpenDEState(ws,goal);
     onlyend=a;

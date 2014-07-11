@@ -67,6 +67,7 @@ namespace Kautham {
           wpenalization = 1.0;
           wdistance = 0.1;
           worientation = 1.0;
+          epsilon = 0.1;
 
           numDOF = M.mat.size1();//rows
           numPMD = M.mat.size2();//columns
@@ -116,6 +117,54 @@ namespace Kautham {
   {
       motionCost(NULL,s1,s2);
   }
+
+  /*!
+   * This function computes the cost of a path. It reimplements the computation of the cost of a path in order to take into account the orientation cost correctly
+   */
+
+  ob::Cost  PMDalignmentOptimizationObjective::getCost(const ob::Path &path) const
+  {
+      // Cast path down to a PathGeometric
+      const og::PathGeometric *pathGeom = dynamic_cast<const og::PathGeometric*>(&path);
+
+      // Give up if this isn't a PathGeometric or if the path is empty.
+      if (!pathGeom)
+      {
+          OMPL_ERROR("Error: Cost computation is only implemented for paths of type PathGeometric.");
+          return this->identityCost();
+      }
+      else
+      {
+          std::size_t numStates = pathGeom->getStateCount();
+          if (numStates == 0)
+          {
+              OMPL_ERROR("Cannot compute cost of an empty path.");
+              return this->identityCost();
+          }
+          else
+          {
+              // Compute path cost by accumulating the cost along the path
+              ob::Cost cost(this->identityCost());
+              cout<<"getCost: :";
+              for (std::size_t i = 1; i < numStates; ++i)
+              {
+                  const ob::State *s0;
+                  if(i==1) s0 = NULL;
+                  else s0 = pathGeom->getState(i-2);
+                  const ob::State *s1 = pathGeom->getState(i-1);
+                  const ob::State *s2 = pathGeom->getState(i);
+                  cost = this->combineCosts(cost, motionCost(s0, s1, s2));
+
+                  cout<<" "<<cost.v;
+              }
+              cout<<endl;
+
+              return cost;
+          }
+      }
+  }
+
+
 
 
   /*! \class singleRobotPMDalignmentOptimizationObjective
@@ -317,6 +366,7 @@ namespace Kautham {
           }
           //Finally the alignment cost is:
           double orientcost=alpha*worientation*modul12;
+          //double orientcost=alpha*worientation*epsilon;
 
           ////////////////
           //PENALIZATION COST
@@ -340,8 +390,17 @@ namespace Kautham {
               }
               modul01 = sqrt(modul01);
 
-              double cosbeta = (edge01[0]*edge12[0]+edge01[1]*edge12[1])/(modul01*modul12);
-              orientationpenalization = acos(cosbeta)*wpenalization*modul12;
+              double escalarProduct=0;
+              for(int i=0; i<numDOF;i++)
+              {
+                  escalarProduct += edge01[i]*edge12[i];
+              }
+              double cosbeta = escalarProduct/(modul01*modul12);
+              if(cosbeta>1.0) cosbeta=1.0; //should not be necessary...
+              if(cosbeta<-1.0) cosbeta=-1.0;
+
+              //orientationpenalization = acos(cosbeta)*wpenalization*modul12;
+              orientationpenalization = acos(cosbeta)*wpenalization*epsilon;
           }
 
           //std::cout<<" d="<<distcost<<" o="<<orientcost<<" p="<<orientationpenalization<<" "<<std::endl;
@@ -504,8 +563,17 @@ namespace Kautham {
                 }
                 modul01 = sqrt(modul01);
 
-                double cosbeta = (edge01[0]*edge12[0]+edge01[1]*edge12[1])/(modul01*modul12);
-                orientationpenalization = acos(cosbeta)*wpenalization*modul12;
+                double escalarProduct=0;
+                for(int i=0; i<numDOF;i++)
+                {
+                    escalarProduct += edge01[i]*edge12[i];
+                }
+                double cosbeta = escalarProduct/(modul01*modul12);
+                if(cosbeta>1.0) cosbeta=1.0; //should not be necessary...
+                if(cosbeta<-1.0) cosbeta=-1.0;
+
+                //orientationpenalization = acos(cosbeta)*wpenalization*modul12;
+                orientationpenalization = acos(cosbeta)*wpenalization*epsilon;
             }
 
             //std::cout<<" d="<<distcost<<" o="<<orientcost<<" p="<<orientationpenalization<<" "<<std::endl;
