@@ -94,48 +94,6 @@ namespace Kautham{
         QPushButton *_cmbTry;
         QLabel      *connectLabel;
     };
-
-
-    class PlannersWidget:public QWidget {
-        Q_OBJECT
-    public:
-        PlannersWidget(Planner *planner, SampleSet *sampleSet, bool setCamera = false,
-                       QWidget *parent = 0, Qt::WindowFlags f = 0);
-        inline bool isMoving() {return _isMoving;}
-
-    signals:
-        void sendText(string text);
-
-    private slots:
-        void getPath();
-        void saveData();
-        void loadData();
-        void moveAlongPath();
-        void showSample(int index);
-        void tryConnect();
-        void setCamera();
-
-    private:
-        void tryConnectIOC();
-        void tryConnectOMPL();
-        void tryConnectOMPLC();
-        void tryConnectODE();
-        void writeGUI(string text);
-
-        Planner *_planner;
-        SampleSet *_samples;
-        bool _isMoving;
-        uint _stepSim;
-        QLabel *connectLabel;
-        QPushButton *moveButton;
-        QCheckBox *cameraCheckBox;
-        QComboBox *localFromBox;
-        QComboBox *localToBox;
-        QComboBox *globalPlannerBox;
-        QComboBox *globalFromBox;
-        QComboBox *globalToBox;
-        QComboBox *linkBox;
-    };
     /** @}   end of Doxygen module "Application" */
 }
 
