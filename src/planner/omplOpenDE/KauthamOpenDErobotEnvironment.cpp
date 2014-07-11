@@ -100,9 +100,17 @@ void KauthamDErobotEnvironment::applyControl (const double *control) const
 
 }
 
+KauthamDErobotEnvironment::~KauthamDErobotEnvironment(void)
+{
+  //here is a function that Joan or Muhayyuddin should fill if not doesn't compile
+}
 
 }
 
 }
 #endif //KAUTHAM_USE_ODE
 #endif // KAUTHAM_USE_OMPL
+
+
+    
+                    
