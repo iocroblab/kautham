@@ -119,6 +119,7 @@ namespace Kautham {
         virtual void sampleUniformNear(ob::State *state, const ob::State *near, const double distance);
 
         RandomSampler* _samplerRandom;
+        //HaltonSampler* _samplerHalton;
 
       protected:
         ompl::RNG rng_; //!< random generator

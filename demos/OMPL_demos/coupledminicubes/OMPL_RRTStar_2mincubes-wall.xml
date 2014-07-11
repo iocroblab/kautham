@@ -27,12 +27,17 @@
 	<Planner>
 		<Parameters>
 			<Name>omplRRTStar</Name>
-			<Parameter name="Max Planning Time">5.0</Parameter>
-			<Parameter name="Speed Factor">1</Parameter>
-			<Parameter name="Range">0.1</Parameter>
+			<Parameter name="Cspace Drawn">0</Parameter>
 			<Parameter name="DelayCC (0/1)">0</Parameter>
-			<Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">3</Parameter>
+			<Parameter name="Goal Bias">0.05000000075</Parameter>
+			<Parameter name="Incremental (0/1)">0</Parameter>
+			<Parameter name="K-Neigh Factor">1</Parameter>
+			<Parameter name="Max Planning Time">5</Parameter>
+			<Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">0</Parameter>
+			<Parameter name="Range">0.1000000015</Parameter>
 			<Parameter name="Simplify Solution">1</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="disablePMDControlsFromSampling">1</Parameter>
 			<Parameter name="lengthweight(0..1)">1</Parameter>
 			<Parameter name="orientationweight">100</Parameter>
 			<Parameter name="penalizationweight">10</Parameter>
