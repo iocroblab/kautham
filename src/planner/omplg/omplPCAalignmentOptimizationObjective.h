@@ -56,6 +56,7 @@ namespace Kautham {
       double wpenalization; //!< To penalize changes in orientation between consecutive edges of a path
       double wdistance;//!< To weight the distance
       double worientation;//!< To weight the alignment with the PMDs
+      double epsilon;//!< advance step of the RRT, used to equilize the three parts of the cost function
 
   public:
       PMDalignmentOptimizationObjective(const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M);
@@ -63,6 +64,7 @@ namespace Kautham {
 
       virtual ob::Cost motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const = 0;
       virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
+      ob::Cost getCost(const ob::Path &path) const;
       void setPCAdata(ob::ProjectionMatrix M);
       inline double getOrientationPenalization(){return wpenalization;}
       inline void setOrientationPenalization(double w){wpenalization=w;};
@@ -70,6 +72,8 @@ namespace Kautham {
       inline void setDistanceWeight(double w){wdistance=w;};
       inline void setOrientationWeight(double w){worientation=w;};
       inline double getOrientationWeight(){return worientation;};
+      inline double getEpsilon(){return epsilon;};
+      inline void setEpsilon(double e){epsilon=e;};
     };
 
   class singleRobotPMDalignmentOptimizationObjective:public PMDalignmentOptimizationObjective {

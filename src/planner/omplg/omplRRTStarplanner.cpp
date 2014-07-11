@@ -29,6 +29,7 @@
 #include <sampling/sampling.h>
 
 #include <boost/bind/mem_fn.hpp>
+#include <iostream>
 
 #include "omplRRTStarplanner.h"
 #include "omplValidityChecker.h"
@@ -57,6 +58,9 @@ namespace Kautham {
   private:
       bool _optimize; //!< flag that allows to disable optimization when set to false. Defaults to true.
       double _factor_k_rrg;//!< Value that modifies the number K of nearest neighbors (multiplication factor)
+      double _nodeRejection; //!< Flag to set the filter that eliminates no promising samples (akgun and Stilman, 2011)
+      double _pathBias; //!< Value to bias the sampling around the solution path, once it has been found (akgun and Stilman, 2011)
+      double _pathSamplingRangeFactor; //!< Factor that multiplied by the RRT range gives the radius for sampling near the path
 
   public:
 
@@ -65,18 +69,47 @@ namespace Kautham {
           setName("myRRTstar");
           _optimize = true;
           _factor_k_rrg = 1.0;
+          _pathBias = 0.1;
+          _nodeRejection = 1;
+          _pathSamplingRangeFactor = 2.0;
       }
 
       bool getOptimize(){ return _optimize;}; //!< Returns the _optimize flag
       void setOptimize(bool s){_optimize=s;}; //!< Sets the _optimize flag
       bool getNeighFactor(){ return _factor_k_rrg;}; //!< Returns _factor_k_rrg that modifies the number K of nearest neighbors
       void setNeighFactor(double f){_factor_k_rrg=f;}; //!< Sets  _factor_k_rrg to modify the number K of nearest neighbors
+      double getNodeRejection(){return _nodeRejection;}; //!< Returns NodeRejection probability
+      void setNodeRejection(double v){if(v>1.0) _nodeRejection=1.0; else if(v<0.0) _nodeRejection=0.0; else  _nodeRejection=v;}; //!< Sets NodeRejection flag
+      double getPathBias(){return _pathBias;}; //!< Returns the _PAthBias
+      void setPathBias(double f){if(f>1.0) _pathBias=1.0; else if(f<0.0) _pathBias=0.0; else  _pathBias=f;}; //!< Sets _PathBias to sample near the solution path
+      double getPathSamplingRangeFactor(){return _pathSamplingRangeFactor;}; //!< Returns the factor that multiplied by the RRT range gives the radius for sampling near the path
+      void setPathSamplingRangeFactor(double f){if(f>1.0)_pathSamplingRangeFactor=f; else _pathSamplingRangeFactor=1.0;}; //!< Sets the factor that multiplied by the RRT range gives the radius for sampling near the path
 
 
-      /** \brief Compute distance between motions (actually distance between contained states) */
+      /** \brief Compute distance between motions (actually distance between contained states)
+       * for finding nearest neighbors. If states are already connected their distance is set to infinity*/
       double distanceFunction(const Motion* a, const Motion* b) const
       {
-          return si_->distance(a->state, b->state);
+          double d = si_->distance(a->state, b->state);
+          return d;
+
+          /*
+          if(a->parent==b || b->parent==a) {
+              return 10.0*d;
+          }
+          return d;
+          */
+          /*
+          else {
+                if(d==0) {
+                    return 10.0;
+                }
+                else {
+                    return d;
+                }
+          }
+          */
+
           //return (opt_->motionCost(a->state, b->state).v);
       }
 
@@ -87,6 +120,10 @@ namespace Kautham {
           checkValidity();
           ob::Goal                  *goal   = pdef_->getGoal().get();
           ob::GoalSampleableRegion  *goal_s = dynamic_cast<ob::GoalSampleableRegion*>(goal);
+
+          //JAN??
+          //goal_s->setThreshold(maxDistance_);
+
 
           bool symDist = si_->getStateSpace()->hasSymmetricDistance();
           bool symInterp = si_->getStateSpace()->hasSymmetricInterpolate();
@@ -145,8 +182,12 @@ namespace Kautham {
           unsigned int               rewireTest = 0;
           unsigned int               statesGenerated = 0;
 
-          if (solution)
-              OMPL_INFORM("%s: Starting with existing solution of cost %.5f", getName().c_str(), solution->cost.v);
+          if (solution){
+              ob::Cost pathcost = solution->cost;
+              OMPL_INFORM("%s: Starting with existing solution of cost %.5f", getName().c_str(), pathcost.v);
+              bestCost_ = pathcost;
+              //OMPL_INFORM("%s: Starting with existing solution of cost %.5f", getName().c_str(), solution->cost.v);
+          }
           OMPL_INFORM("%s: Initial k-nearest value of %u", getName().c_str(), (unsigned int)std::ceil(k_rrg * log((double)(nn_->size()+1))));
 
 
@@ -158,13 +199,177 @@ namespace Kautham {
               iterations_++;
               // sample random state (with goal biasing)
               // Goal samples are only sampled until maxSampleCount() goals are in the tree, to prohibit duplicate goal states.
-              if (goal_s && goalMotions_.size() < goal_s->maxSampleCount() && rng_.uniform01() < goalBias_ && goal_s->canSample())
+
+              /* JAN
+              int kk1=goalMotions_.size();
+              int kk2=goal_s->maxSampleCount();
+              int kk3=nn_->size();
+
+              if (goal_s && rng_.uniform01() < goalBias_ && goal_s->canSample())
                   goal_s->sampleGoal(rstate);
               else
                   sampler_->sampleUniform(rstate);
+              */
+
+              //JAN: commen the next OMPL lines
+              //if (goal_s && goalMotions_.size() < goal_s->maxSampleCount() && rng_.uniform01() < goalBias_ && goal_s->canSample())
+              //    goal_s->sampleGoal(rstate);
+              //else
+              //    sampler_->sampleUniform(rstate);
+
+              //JAN added these lines to subsitute the above ones
+              //Motion *nmotion;//the nearest neighbor node
+              Motion* bestGoalMotion;
+              int trials;
+              int maxtrials;
+              bool found;
+              //if goal not yet reached
+              if (solution == 0)
+              {
+                  //sample goal with a certain probability goalBias_
+                  if( rng_.uniform01() < goalBias_ && goal_s->canSample() ) {
+                      goal_s->sampleGoal(rstate);
+                  }
+                  //or randomly otehrwise
+                  else {
+                      sampler_->sampleUniform(rstate);
+                  }
+
+                  //nmotion = nn_->nearest(rmotion);
+              }
+              //else if goal already reached
+              else
+              {
+                  std::vector<Motion*> mpath;
+                  //load the path
+                  Motion *currentsolution = solution;
+                  while (currentsolution != 0)
+                  {
+                      mpath.push_back(currentsolution);
+                      currentsolution = currentsolution->parent;
+                  }
+
+                  //get sample
+                  //sample around path with a certain probability pathBias_
+                  if (rng_.uniform01() < getPathBias())
+                  {
+                        //sample a nodeof the path
+                        double pmin = 0.5;
+                        double pmax = getPathSamplingRangeFactor(); //2.0;
+                        double threshold = (pmin+(pmax-pmin)*rng_.uniform01())*maxDistance_; //10*epsilon
+                        int node = (int)(rng_.uniform01() * mpath.size());
+                        if(node==mpath.size()) node = mpath.size()-1; //just in case rng_.uniform01 returned 1
+
+
+                        //cout<<"node="<<node<<" trheshold="<<threshold<<endl;
+
+                        if(node==0) //the goal node (the path is stored from goal to start in mpath)
+                        {
+                            ((KauthamStateSampler*)sampler_.get())->setCenterSample(mpath[0]->state, threshold);
+                            sampler_->sampleUniform(rstate);
+                            //restore
+                            ((KauthamStateSampler*)sampler_.get())->setCenterSample(NULL, threshold);
+                        }
+                        else if(node==mpath.size()-1)//the start node
+                        {
+                            ((KauthamStateSampler*)sampler_.get())->setCenterSample(mpath[mpath.size()-1]->state, threshold);
+                            sampler_->sampleUniform(rstate);
+                            //restore
+                            ((KauthamStateSampler*)sampler_.get())->setCenterSample(NULL, threshold);
+                        }
+                        else //a node in between start and goal nodes
+                        {
+                            ob::State *astate= si_->allocState();
+                            const ob::State *priornode = mpath[node-1]->state;
+                            const ob::State *nextnode = mpath[node+1]->state;
+                            ob::StateSpacePtr space = getSpaceInformation()->getStateSpace();
+
+
+                            space->interpolate(priornode, nextnode, 0.5, astate);
+                            ((KauthamStateSampler*)sampler_.get())->setCenterSample(astate, threshold);
+                            sampler_->sampleUniform(rstate);
+                            //restore
+                            ((KauthamStateSampler*)sampler_.get())->setCenterSample(NULL, threshold);
+
+                            //space->printState(priornode,std::cout);
+                            //space->printState(nextnode,std::cout);
+                            //space->printState(astate,std::cout);
+                            //space->printState(rstate,std::cout);
+
+                            //Motion *themotion = new Motion(si_);
+                            //themotion->state = mpath[node]->state;
+                            //nmotion = nn_->nearest(themotion);
+                        }
+                    }
+                    //or sample randomly otehrwise
+                    else {
+                      if(rng_.uniform01() < getNodeRejection())
+                      {
+                        trials = 0;
+                        maxtrials = 100;
+                        found=false;
+                        do //loop until non reject or maxtrials
+                        {
+                            sampler_->sampleUniform(rstate);
+                            //node rejection test
+                            //Find nearest state in tree
+                            Motion *nearestmotion = nn_->nearest(rmotion);
+                            //c1 = cost from start to nearestmotion (path in tree)
+                            ob::Cost c1=nearestmotion->cost;
+
+                            //c2 = cost of added edge from nearestmotion to rmotion
+                            ob::Cost c2;
+                            if(opt_->getDescription()=="PMD alignment"){
+                                ob::State *s0;
+                                if(nearestmotion->parent==NULL) s0=NULL;
+                                else s0=nearestmotion->parent->state;
+
+                                double d = si_->distance(nearestmotion->state, rmotion->state);
+                                si_->getStateSpace()->interpolate(nearestmotion->state, rmotion->state, maxDistance_ / d, xstate);
+                                c2 = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nearestmotion->state, xstate);
+
+                                //c2 = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nearestmotion->state, rmotion->state);
+                            }
+                            else
+                                c2=opt_->motionCost(nearestmotion->state, rmotion->state); //from rmotion to goal (straight)
+
+                            //c3 = heuristic cost from rmotion to goal (the edge may not exist)
+                            //ob::Cost c3=opt_->motionCost(rmotion->state, mpath[0]->state); //from rmotion to goal (straight)
+                            ob::Cost c3=opt_->motionCost(xstate, mpath[0]->state); //from rmotion to goal (straight)
+
+
+                            //combine costs
+                            ob::Cost newcost = opt_->combineCosts(c1, opt_->combineCosts(c2,c3));
+
+                            if (opt_->isCostBetterThan(solution->cost, newcost)) //rejected: cannot imprve the current solution
+                            {
+                                trials++;
+                            }
+                            else{//not rejected
+                                found=true;
+                            }
+                        }while(trials<maxtrials && found==false);
+                      }
+                      else{//if node rejection not activated then accept always
+                          sampler_->sampleUniform(rstate);
+                      }
+
+                    }
+              }
+
+              //JAN
+              //sampler_->sampleUniform(rstate);
 
               // find closest state in the tree
               Motion *nmotion = nn_->nearest(rmotion);
+
+              //JAN destination state
+              //recompute the state towards which the tree is growing
+              //in this way a leave may grow towards the goal even if it is not the leave closest to the goal
+              //if (goal_s && rng_.uniform01() < goalBias_ && goal_s->canSample())
+              //    goal_s->sampleGoal(rstate);
+
+
 
               ob::State *dstate = rstate;
 
@@ -194,6 +399,17 @@ namespace Kautham {
                   // Find nearby neighbors of the new motion - k-nearest RRT*
                   unsigned int k = std::ceil(k_rrg * log((double)(nn_->size()+1)));
                   nn_->nearestK(motion, k, nbh);
+
+                  //JAN: prune those that are too far away (more than 10 times the range.
+                  //for(int i=nbh.size()-1;i>=0;i--)
+                  //{
+                  //    if(si_->distance(motion->state, nbh[i]->state) > 10*maxDistance_){
+                  //        nbh.pop_back();//delete last element
+                  //    }
+                  //}
+
+
+
                   rewireTest += nbh.size();
                   statesGenerated++;
 
@@ -338,6 +554,14 @@ namespace Kautham {
                   {
                       nn_->setDistanceFunction(boost::bind(&myRRTstar::distanceFunction, this, _2, _1));
                       nn_->nearestK(motion, k, nbh);
+                      //JAN: prune those that are too far away (more than 10 times the range.
+                      //for(int i=nbh.size()-1;i>=0;i--)
+                      //{
+                      //    if(si_->distance(motion->state, nbh[i]->state) > 10*maxDistance_){
+                      //        nbh.pop_back();//delete last element
+                      //    }
+                      //}
+
                       rewireTest += nbh.size();
                   }
 
@@ -403,6 +627,16 @@ namespace Kautham {
                   if (goal->isSatisfied(motion->state, &distanceFromGoal))
                   {
                       goalMotions_.push_back(motion);
+                      //JAN
+                      //cout<<"goalMotions_.size() = "<<goalMotions_.size()<<endl;
+                      //cout<<"added Goal Motion with cost = "<<motion->cost.v<<endl;
+                      //cout<<"goalMotions_[0]->cost = "<<goalMotions_[0]->cost.v<<endl;
+
+                      //JAN
+                      //nn_->remove(motion);
+
+
+
                       checkForSolution = true;
                   }
 
@@ -427,6 +661,8 @@ namespace Kautham {
                                    opt_->isCostBetterThan(goalMotions_[i]->cost,solution->cost))
                               solution = goalMotions_[i];
                       }
+                      //JAN
+                      //if(solution) cout<<"Solution with cost = "<<solution->cost.v<<endl;
                   }
 
                   // Checking for approximate solution (closest state found to the goal)
@@ -451,6 +687,8 @@ namespace Kautham {
 
           if (solution != 0)
           {
+
+              cout<<"addedSolution with cost = "<<solution->cost.v<<endl;
               // construct the solution path
               std::vector<Motion*> mpath;
               while (solution != 0)
@@ -473,6 +711,21 @@ namespace Kautham {
 
               pdef_->addSolutionPath (psol);
 
+              //JAN
+              cout<<"path with " << geoPath->getStateCount()<<" states"<<endl;
+              cout<<"addedSolution with cost = "<<mpath[0]->cost.v<<endl;
+              //print incremental cost
+              for(int i=mpath.size()-1; i>=0;i--)
+                  cout<<" "<<mpath[i]->cost.v<<endl;
+              cout<<endl;
+
+              ob::Cost pathcost = (pdef_->getSolutionPath())->cost(opt_);
+              og::PathGeometric *gP = (og::PathGeometric *)pdef_->getSolutionPath().get();
+              cout<<"path with  = "<<gP->getStateCount() <<" states"<<endl;
+              cout<<"Path cost = "<<pathcost.v<<endl;
+
+
+
               addedSolution = true;
           }
 
@@ -482,6 +735,10 @@ namespace Kautham {
           delete rmotion;
 
           OMPL_INFORM("%s: Created %u new states. Checked %u rewire options. %u goal states in tree.", getName().c_str(), statesGenerated, rewireTest, goalMotions_.size());
+
+          //JAN
+          if(approximate) cout<<"approximate solution"<<endl;
+          else cout<<"exact  solution"<<endl;
 
           return ob::PlannerStatus(addedSolution, approximate);
       }
@@ -692,16 +949,25 @@ namespace Kautham {
 
         //set planner parameters: range, goalbias, delay collision checking and optimization option
         _Range = 0.05;
-        _GoalBias = (planner->as<og::RRTstar>())->getGoalBias();
-        _DelayCC = (planner->as<og::RRTstar>())->getDelayCC();
+        _GoalBias = (planner->as<myRRTstar>())->getGoalBias();
+        _PathBias = _GoalBias;
+        _PathSamplingRangeFactor = 10.0;
+        _NodeRejection = 0.8;
+        _DelayCC = (planner->as<myRRTstar>())->getDelayCC();
         _opti = 0; //optimize path lenght by default
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
+        addParameter("Path Bias", _PathBias);
+        addParameter("Path Sampling Range Factor", _PathSamplingRangeFactor);
+        addParameter("Node Rejection", _NodeRejection);
         addParameter("DelayCC (0/1)", _DelayCC);
         addParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _opti);
-        planner->as<og::RRTstar>()->setRange(_Range);
-        planner->as<og::RRTstar>()->setGoalBias(_GoalBias);
-        planner->as<og::RRTstar>()->setDelayCC(_DelayCC);
+        planner->as<myRRTstar>()->setRange(_Range);
+        planner->as<myRRTstar>()->setGoalBias(_GoalBias);
+        planner->as<myRRTstar>()->setPathBias(_PathBias);
+        planner->as<myRRTstar>()->setPathSamplingRangeFactor(_PathSamplingRangeFactor);
+        planner->as<myRRTstar>()->setNodeRejection(_NodeRejection);
+        planner->as<myRRTstar>()->setDelayCC(_DelayCC);
 
 
         //set the parameter that modifies the number K of near neighbors to search in the RRT* solve
@@ -795,6 +1061,7 @@ namespace Kautham {
         if(ret)
         {
             //evaluate path
+            cout<<"path with " << ((og::PathGeometric)ss->getSolutionPath()).getStateCount()<<" states"<<endl;
             ob::Cost pathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(_optiselected);
             cout<<"Path cost = "<<pathcost.v<<endl;
             if(_opti==3)
@@ -850,6 +1117,8 @@ namespace Kautham {
         if(it != _parameters.end()){
           _Range = it->second;
           ss->getPlanner()->as<og::RRTstar>()->setRange(_Range);
+          if(_opti==3)
+            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setEpsilon(_Range);
          }
         else
           return false;
@@ -912,6 +1181,30 @@ namespace Kautham {
         if(it != _parameters.end()){
             _GoalBias = it->second;
             ss->getPlanner()->as<og::RRTstar>()->setGoalBias(_GoalBias);
+        }
+        else
+          return false;
+
+        it = _parameters.find("Path Bias");
+        if(it != _parameters.end()){
+            _PathBias = it->second;
+            ss->getPlanner()->as<myRRTstar>()->setPathBias(_PathBias);
+        }
+        else
+          return false;
+
+        it = _parameters.find("Path Sampling Range Factor");
+        if(it != _parameters.end()){
+            _PathSamplingRangeFactor = it->second;
+            ss->getPlanner()->as<myRRTstar>()->setPathSamplingRangeFactor(_PathSamplingRangeFactor);
+        }
+        else
+          return false;
+
+        it = _parameters.find("Node Rejection");
+        if(it != _parameters.end()){
+            _NodeRejection = it->second;
+            ss->getPlanner()->as<myRRTstar>()->setNodeRejection(_NodeRejection);
         }
         else
           return false;

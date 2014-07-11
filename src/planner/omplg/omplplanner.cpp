@@ -52,6 +52,19 @@ namespace Kautham {
 //! Namespace omplplanner contains the planners based on the OMPL::geometric library
   namespace omplplanner{
 
+
+/* DEBUG
+  double xm=100.0;
+  double xM=-100.0;
+  double ym=100.0;
+  double yM=-100.0;
+*/
+
+
+  //for visualization purposes
+  vector< vector<double> > steersamples;
+  //int countwithinbounds=0;//for DEBUG
+
   //declaration of class
   class weightedRealVectorStateSpace;
 
@@ -102,6 +115,8 @@ namespace Kautham {
          const double *s1 = static_cast<const StateType*>(state1)->values;
          const double *s2 = static_cast<const StateType*>(state2)->values;
 
+         //JAN DEBUG
+        //for (unsigned int i = 0 ; i < 3; ++i)
         for (unsigned int i = 0 ; i < dimension_ ; ++i)
         {
             double diff = ((*s1++) - (*s2++))*weights[i];
@@ -119,7 +134,8 @@ namespace Kautham {
       {
           kauthamPlanner_ = p;
           centersmp = NULL;
-  _samplerRandom = new RandomSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
+          _samplerRandom = new RandomSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
+         // _samplerHalton = new HaltonSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
       }
 
       void KauthamStateSampler::setCenterSample(ob::State *state, double th)
@@ -143,10 +159,14 @@ namespace Kautham {
 
       void KauthamStateSampler::sampleUniform(ob::State *state)
       {
+
           //Sample around centersmp
           //this does the same as sampleUniformNear, but the Near configuration is set beforehand as "centersmp" configuration.
           //this has been added to modify the behavior of the randombounce walk of the PRM. It used the sampleUniform and
           //we wanted to use the sampleUniformNear
+
+          ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
+
           if(centersmp != NULL && threshold > 0.0)
           {
             int trials = 0;
@@ -154,18 +174,21 @@ namespace Kautham {
             bool found = false;
             int d = kauthamPlanner_->wkSpace()->getNumRobControls();
             Sample *smp = new Sample(d);
+            Sample *smp2 = new Sample(d);
             double dist;
 
             bool withinbounds=false;
+            vector<KthReal> deltacoords(d);
+            vector<KthReal> coords(d);
+            double fraction;
             do{
+                /*
                     //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-                    vector<KthReal> coords(d);
                     for(int i=0;i<d;i++)
                         coords[i] = rng_.uniformReal(0,1.0);
                     //those controls that are disabled for sampling are now restored to 0.5
                     for(int j=0; j < ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
                         coords[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
-
 
                     //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
                     smp->setCoords(coords);
@@ -179,10 +202,45 @@ namespace Kautham {
                             found = true;
                     }
                     trials ++;
+                */
+
+                //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
+                for(int i=0;i<d;i++)
+                    coords[i] = rng_.uniformReal(0,1.0);
+                //those controls that are disabled for sampling are now restored to 0.5
+                for(int j=0; j < ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
+                    coords[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
+                //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
+                smp2->setCoords(coords);
+                kauthamPlanner_->wkSpace()->moveRobotsTo(smp2);
+                //interpolate from the centersample towards smp a fraction determined by the threshold
+
+                dist = kauthamPlanner_->wkSpace()->distanceBetweenSamples(*smp2,*centersmp,CONFIGSPACE);
+                if(trials==0){
+                    fraction = rng_.uniformReal(0,1.0)*threshold/dist;
+                    if(fraction>1.0) fraction=1.0;
+                }
+                smp = centersmp->interpolate(smp2,fraction);
+                kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+                //check
+                //double dist1 = kauthamPlanner_->wkSpace()->distanceBetweenSamples(*smp,*centersmp,CONFIGSPACE);
+
+                withinbounds = smp->getwithinbounds();
+                if(withinbounds==false) fraction = fraction-fraction/maxtrials;
+                else found = true;
+                trials ++;
             }while(found==false && trials <maxtrials);
+/*DEBUG
+if(coords[0]<xm) xm=coords[0];
+if(coords[0]>xM) xM=coords[0];
+if(coords[1]<ym) ym=coords[1];
+if(coords[1]>yM) yM=coords[1];
+*/
 
+//if(withinbounds){
+//    countwithinbounds++;
+//}
 
-            ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
             if(trials==maxtrials)
             {
                 //not found within the limits. return the centersmp
@@ -226,6 +284,7 @@ namespace Kautham {
               do{
                 //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
                 smp = _samplerRandom->nextSample();
+                //smp = _samplerHalton->nextSample();
 
                 //those controls that are disabled for sampling are now restored to 0.5
                 for(int j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
@@ -237,16 +296,50 @@ namespace Kautham {
                 trials++;
               }while(withinbounds==false && trials<100);
 
+
+/*DEBUG
+ if(smp->getCoords()[0]<xm) xm=smp->getCoords()[0];
+ if(smp->getCoords()[0]>xM) xM=smp->getCoords()[0];
+ if(smp->getCoords()[1]<ym) ym=smp->getCoords()[1];
+if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
+*/
+
               //If trials==100 is because we have not been able to find a sample within limits
               //In this case the config is set to the border in the moveRobotsTo function.
               //The smp is finally converted to state and returned
 
               //convert from sample to scoped state
-              ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
               ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
               //return in parameter state
               ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
+
          }
+          //JAN DEBUG
+        //temporary store for visualizaytion purposes
+        int dim = kauthamPlanner_->wkSpace()->getNumRobControls();
+        Sample* smp2 = new Sample(dim);
+        //convert back to a sample to make sure that the state has been well computed
+        smp2->setMappedConf(((omplPlanner*)kauthamPlanner_)->initSamp()->getMappedConf());//NEEDED
+        ((omplPlanner*)kauthamPlanner_)->omplScopedState2smp(sstate, smp2);
+
+        vector<double> point(3);
+
+        if(kauthamPlanner_->wkSpace()->getRobot(0)->isSE3Enabled())
+        {
+            point[0] = smp2->getMappedConf()[0].getSE3().getPos()[0];
+          point[1] = smp2->getMappedConf()[0].getSE3().getPos()[1];
+          point[2] = smp2->getMappedConf()[0].getSE3().getPos()[2];
+        }
+        else{
+            point[0] = smp2->getMappedConf()[0].getRn().getCoordinate(0);
+            point[1] = smp2->getMappedConf()[0].getRn().getCoordinate(1);
+            if(dim>=3) point[2] = smp2->getMappedConf()[0].getRn().getCoordinate(2);
+            else point[2]=0.0;
+        }
+
+        steersamples.push_back(point);
+
+
       }
 
 
@@ -330,7 +423,13 @@ namespace Kautham {
           for(int j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
               smp->getCoords()[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
 
+/*DEBUG
+   if(smp->getCoords()[0]<xm) xm=smp->getCoords()[0];
+   if(smp->getCoords()[0]>xM) xM=smp->getCoords()[0];
+   if(smp->getCoords()[1]<ym) ym=smp->getCoords()[1];
+   if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
 
+   */
           //computes the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
           kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
 
@@ -342,7 +441,6 @@ namespace Kautham {
           ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
 
           if(  si_->satisfiesBounds(state)==false | kauthamPlanner_->wkSpace()->collisionCheck(smp) )
-          //if( kauthamPlanner_->wkSpace()->collisionCheck(smp) )
               return false;
           return true;
       }
@@ -390,7 +488,7 @@ namespace Kautham {
   //! This function is used to allocate a state sampler
   ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p)
   {
-        return ob::StateSamplerPtr(new KauthamStateSampler(mysspace, p));
+       return ob::StateSamplerPtr(new KauthamStateSampler(mysspace, p));
 
 /*
       //Create sampler
@@ -713,10 +811,10 @@ namespace Kautham {
      */
     void omplPlanner::disablePMDControlsFromSampling(bool enableall)
     {
+        _disabledcontrols.clear();
         //enable all
         if(enableall)
         {
-            _disabledcontrols.clear();
             return;
         }
         //else diable those that are called PMD
@@ -743,8 +841,11 @@ namespace Kautham {
             if(controlname[i]->find("PMD") != string::npos)
             {
                 //Load to the diable vector for disabling sampling. We do not want to sample coupled controls.
+                //JAN DEBUG: commented next line
                 _disabledcontrols.push_back(i);
             }
+            //JAN DEBUG - added next line: add the non PMD controls to be disabled
+            //else _disabledcontrols.push_back(i);
         }
     }
 
@@ -919,6 +1020,8 @@ namespace Kautham {
                         x=projection[0];
                         y=projection[1];
                         z=projection[2];
+                        //z=0;
+
                         edgepoints->point.set1Value(0,x,y,z);
 
                     //final edgepoint
@@ -927,6 +1030,8 @@ namespace Kautham {
                         x=projection[0];
                         y=projection[1];
                         z=projection[2];
+                        //z=0;
+
                         edgepoints->point.set1Value(1,x,y,z);
                     }
                     else
@@ -980,8 +1085,44 @@ namespace Kautham {
                 _sceneCspace->addChild(pathsep);
             }
 
+/* DEBUG
+double xpmax=-1.0;
+double xpmin=100.0;
+double ypmax=-1.0;
+double ypmin=100.0;
+*/
+            //JAN - DEBUG
+            // ///////////////////////////////////////////
+            //for debug. draw streering samples for rrt
 
+//                        SoSeparator *psep_steerpoints = new SoSeparator();
+//                        SoCoordinate3 *steerpoints  = new SoCoordinate3();
+//                        SoPointSet *pset_steerpoints  = new SoPointSet();
 
+//                        SoDrawStyle *pstyle_steerpoints = new SoDrawStyle;
+//                        SoMaterial *color_steerpoints = new SoMaterial;
+//                        pstyle_steerpoints->pointSize = 3;
+//                        color_steerpoints->diffuseColor.setValue(0.5,0.5,1.0);
+
+//                        for(int i=0;i<steersamples.size();i++)
+//                        {
+//                            x = steersamples[i][0];
+//                            y = steersamples[i][1];
+//                            z = steersamples[i][2];
+//                            steerpoints->point.set1Value(i,x,y,z);
+//                        }
+//                        //draw the points
+
+//                        psep_steerpoints->addChild(color_steerpoints);
+//                        psep_steerpoints->addChild(steerpoints);
+//                        psep_steerpoints->addChild(pstyle_steerpoints);
+//                        psep_steerpoints->addChild(pset_steerpoints);
+
+//                        _sceneCspace->addChild(psep_steerpoints);
+
+            //END: for debug. draw streering samples for rrt
+            //JAN - DEBUG
+            // ///////////////////////////////////////////
 
             //loop for all vertices of the roadmap or tree and create the coin3D points
             for(int i=0;i<pdata->numVertices();i++)
@@ -1001,7 +1142,17 @@ namespace Kautham {
                     x = projection[0];
                     y = projection[1];
                     z = projection[2];
+
+                    //z=0;
+
                     points->point.set1Value(i,x,y,z);
+/* DEBUG
+if(x>xpmax) xpmax=x;
+else if(x<xpmin) xpmin=x;
+if(y>ypmax) ypmax=y;
+else if(y<ypmin) ypmin=y;
+*/
+
                 }
                 else
                 {
@@ -1065,6 +1216,7 @@ namespace Kautham {
                         x1=projection[0];
                         y1=projection[1];
                         z1=projection[2];
+
                         edgepoints->point.set1Value(0,x1,y1,z1);
 
                     //final edgepoint
@@ -1073,6 +1225,7 @@ namespace Kautham {
                         x2=projection[0];
                         y2=projection[1];
                         z2=projection[2];
+
                         edgepoints->point.set1Value(1,x2,y2,z2);
                     }
                     else
@@ -1127,7 +1280,7 @@ namespace Kautham {
                     lsep->addChild(ls);
                  }
             }
-           _sceneCspace->addChild(lsep);
+            _sceneCspace->addChild(lsep);
 
 
 
@@ -1183,13 +1336,26 @@ namespace Kautham {
                     cub_transf->translation.setValue(centre);
                     cub_transf->recenter(centre);
                     cub_color->diffuseColor.setValue(0.2,0.2,0.2);
-                    cub_color->transparency.setValue(0.98);
+                    cub_color->transparency.setValue(0.3);//0.98
                     floorsep->addChild(cub_color);
                     floorsep->addChild(cub_transf);
                     floorsep->addChild(cs);
                     _sceneCspace->addChild(floorsep);
                 }
              }
+
+/* DEBUG
+            cout<<"xpmax="<<xpmax;
+            cout<<" xpmin="<<xpmin;
+            cout<<" ypmax="<<ypmax;
+            cout<<" ypmin="<<ypmin<<endl;
+            cout<<"xsmax="<<xM;
+            cout<<" xsmin="<<xm;
+            cout<<" ysmax="<<yM;
+            cout<<" ysmin="<<ym<<endl;
+*/
+
+
     }
 
     //! This function converts a Kautham sample to an ompl scoped state.
@@ -1355,6 +1521,22 @@ namespace Kautham {
 	//! function to find a solution path
     bool omplPlanner::trySolve()
     {
+
+/* DEBUG
+ xm=100.0;
+ xM=-100.0;
+ ym=100.0;
+ yM=-100.0;
+*/
+        //JAN DEBUG
+        //double stats;
+        //if(steersamples.size())
+        //    stats=((double)(countwithinbounds))/steersamples.size();
+        //else stats=-1;
+        steersamples.clear();
+        //countwithinbounds=0;
+
+
         //Start state: convert from smp to scoped state
         ob::ScopedState<ob::CompoundStateSpace> startompl(space);
         smp2omplScopedState(_init, &startompl);
@@ -1420,6 +1602,7 @@ namespace Kautham {
                 ss->getSolutionPath().print(std::cout);
 
                 ss->getSolutionPath().interpolate();
+
                 //std::cout<<"Path after interpolation: ";
                 //ss->getSolutionPath().interpolate(10);
                 //ss->getSolutionPath().print(std::cout);
