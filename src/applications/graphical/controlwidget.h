@@ -20,57 +20,117 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Nestor Garcia Hidalgo */
  
  
 #if !defined(_CONTROLWIDGET_H)
 #define _CONTROLWIDGET_H
 
+
 #include <QtGui>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <vector>
-#include <string>
-#include <problem/robot.h>
 #include <problem/problem.h>
-#include <util/kthutil/kauthamdefs.h>
 #include "dofwidget.h"
 
 
-using namespace std;
-
-
 namespace Kautham {
+    /** \addtogroup Application
+    *  @{
+    */
 
-/** \addtogroup Application
- *  @{
- */
-
-	class ControlWidget:public QWidget{
+    /*!
+     * \brief The ControlWidget class is the class that implements the Controls' Widget.
+     *It lets the user to change the controls of the robots and the obstacles
+     */
+    class ControlWidget:public QWidget {
 		Q_OBJECT
+    public:
+        /*!
+         * \brief ControlWidget Constructs the widget
+         * \param problem problem where the robots/obstacles are stored
+         * \param DOFWidgets DOFWidgets related to the robots/obstacles
+         * \param isRobotControlWidget wether is a widget for robot controls or not
+         * \param parent parent of the widget
+         * \param f window flags f the widget
+         */
+        ControlWidget(Problem *problem, vector<DOFWidget *> DOFWidgets,
+                      bool isRobotControlWidget, QWidget *parent = 0,
+                      Qt::WindowFlags f = 0);
 
-	private slots:
-		void              sliderChanged(int val);
-		void              updateControls();
-	public:
-        ControlWidget(Problem* prob,vector<DOFWidget*> DOFWidgets, bool robot);
-		~ControlWidget();
-		inline vector<KthReal>   *getValues(){return &values;}
+        /*!
+         * \brief ~ControlWidget Destructs the widget
+         */
+        ~ControlWidget();
+
+    signals:
+        /*!
+         * \brief sendText sends a message
+         * \param text message to send
+         */
+        void sendText(string text);
+
+    private slots:
+        /*!
+         * \brief sliderChanged updates the control whose slider has changed
+         * \param index index of the slider that has changed
+         */
+        void sliderChanged(int index);
+
+        /*!
+         * \brief lineEditChanged updates the control whose lineEdit has changed
+         * \param index index of the lineEdit that has changed
+         */
+        void lineEditChanged(int index);
+
+        /*!
+         * \brief updateControls update the controls to the last moved sample or to the
+         *initial sample if it is a robot widget or an osbtacle widget repectively
+         */
+        void updateControls();
+
+    private:
+        /*!
+         * \brief setValues sets new values for the controls
+         * \param coords new values of the controls
+         */
         void setValues(vector <KthReal> coords);
-	private:
-        vector<DOFWidget*> _DOFWidgets;
-        vector<QSlider*>   sliders;
-        vector<QLabel*>    labels;
-        QVBoxLayout        *mainLayout;
-        QScrollArea        *scrollArea;
-        QWidget            *scrollAreaWidget;
-        QVBoxLayout        *controlsLayout;
-        QPushButton		   *btnUpdate;
-        vector<KthReal>    values;
-        Problem*           _ptProblem;
-        bool               robWidget;
+
+        /*!
+         * \brief writeGUI writes a message in the GUI
+         * \param text message to write
+         */
+        void writeGUI(string text);
+
+
+        /*!
+         * \brief DOFWids DOFWidgets related to the robots/obstacles
+         */
+        vector<DOFWidget *> DOFWids;
+
+        /*!
+         * \brief sliders sliders for the user to change the controls
+         */
+        vector<QSlider *> sliders;
+
+        /*!
+         * \brief lineEdits line edits for the user to change the controls
+         */
+        vector<QLineEdit *> lineEdits;
+
+        /*!
+         * \brief values values of the controls
+         */
+        vector<KthReal> values;
+
+        /*!
+         * \brief prob problem where the robots/obstacles are stored
+         */
+        Problem *prob;
+
+        /*!
+         * \brief isRobWidget wether is a widget for robot controls or not
+         */
+        bool isRobWidget;
 	};
-
-
     /** @}   end of Doxygen module "Application" */
 }
 

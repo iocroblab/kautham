@@ -21,9 +21,6 @@
  \*************************************************************************/
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
-
- 
-
 #if defined(KAUTHAM_USE_OMPL)
 
 #include <problem/workspace.h>
@@ -591,7 +588,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
   omplPlanner::omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
              Planner(stype, init, goal, samples, ws)
     {
-        _family = "ompl";
+        _family = OMPLPLANNER;
         //set intial values from parent class data
         _speedFactor = 1;
         _solved = false;

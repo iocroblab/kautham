@@ -47,7 +47,7 @@ namespace Kautham{
       bool                  collisionCheck( Conf* conf, unsigned int robot ) ;
       KthReal               distanceBetweenSamples(Sample& smp1, Sample& smp2,Kautham::SPACETYPE spc);
       vector<KthReal>*      distanceCheck(Sample* sample) ;
-      bool                  collisionCheck(Sample* sample ) ;
+      bool                  collisionCheck(Sample* sample , string *message = NULL) ;
       void                  moveRobotsTo(Sample* sample);
       void                  moveObstaclesTo(Sample* sample);
       void                  addRobot(Robot* robot);
@@ -80,7 +80,7 @@ namespace Kautham{
       void                         setPathVisibility(bool vis);
 
       //! This method attaches an object object to a robot link. The obstacle is designated by its index.
-      bool                  attachObstacle2RobotLink(string robot, string link, unsigned int obs );
+      bool                  attachObstacle2RobotLink(string robot, string link, uint obs );
 
       //! This method detaches an object previously attached to a Robot link.
       bool                  detachObstacleFromRobotLink(string robot, string link );

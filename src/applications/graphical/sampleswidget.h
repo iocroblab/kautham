@@ -20,97 +20,162 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Nestor Garcia Hidalgo */
  
-#if !defined(UI_SAMPLES_H)
-#define UI_SAMPLES_H
+
+#if !defined(_SAMPLESWIDGET_H)
+#define _SAMPLESWIDGET_H
 
 
-//#include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QComboBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
-#include <QtGui/QRadioButton>
-#include <QtGui/QSpacerItem>
-#include <QtGui/QTextEdit>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QWidget>
-#include <QtGui/QLineEdit>
-#include <sampling/sampling.h>
+#include <QtGui>
 #include <problem/problem.h>
 
-using namespace std;
 
 namespace Kautham{
+    /** \addtogroup Application
+    *  @{
+    */
 
-/** \addtogroup Application
- *  @{
- */
+    /*!
+     * \brief The COLLECTION enum is the sample's collection which samples will be add to
+     */
+    enum COLLECTION {
+        CURRENT,
+        NEW
+    };
 
-  class SamplesWidget: public QWidget {
-    Q_OBJECT
+    /*!
+     * \brief The ENGINE enum is the sampler type used to get new samples
+     */
+    enum ENGINE {
+        SDK,
+        HALTON,
+        RANDOM,
+        GAUSSIAN,
+        GAUSSIANLIKE
+    };
+
+    /*!
+     * \brief The SamplesWidget class is the class that implements the Samples' Widget
+     */
+    class SamplesWidget: public QWidget {
+        Q_OBJECT
+    public:
+        /*!
+         * \brief SamplesWidget Constructs the widget
+         * \param problem problem to construct the widget of
+         * \param parent parent widget
+         * \param f window's flags
+         */
+        SamplesWidget(Problem *problem, QWidget *parent = 0, Qt::WindowFlags f = 0);
 
     signals:
-      void sendText(string newContent);
+        /*!
+         * \brief sendText sends a message
+         * \param text message to send
+         */
+        void sendText(string text);
 
     private slots:
-      void collisionCheck();
-      void distanceCheck();
-      void addCurrent();
-      void removeCurrent();
-      void removeAll();
-      void removeAllEx2();
-      void sampling();
-      void updateSampleList();
-      void showSample(int index);
-	  void changeEngine();
-    public:
-      SamplesWidget(SampleSet* samples, Sampler* sampler, Problem* prob);
-      
+        /*!
+         * \brief changeSample changes current sample and moves robots to it
+         * \param index index of current sample
+         */
+        void changeSample(int index);
+
+        /*!
+         * \brief testCollision checks whether the current sample is free of collision
+         */
+        void testCollision();
+
+        /*!
+         * \brief testDistance computes the distance between robots and obstacles
+         */
+        void testDistance();
+
+        /*!
+         * \brief addSample adds the current configuration as a sample
+         */
+        void addSample();
+
+        /*!
+         * \brief removeSample removes current sample from the sample's list
+         */
+        void removeSample();
+
+        /*!
+         * \brief getSamples gets the amount of samples specified in the widget,
+         * using the selected sampler and adds them to the selected collection
+         */
+        void getSamples();
+
+        /*!
+         * \brief updateSampleList updates the sample's list
+         */
+        void updateSampleList();
+
+        /*!
+         * \brief copySampleList copies the two first samples in the sample's list in a new collection
+         */
+        void copySampleList();
+
+        /*!
+         * \brief clearSampleList clears the sample's list
+         */
+        void clearSampleList();
+
+        /*!
+         * \brief changeCollection changes the collection where new samples will be added
+         * \param index
+         */
+        void changeCollection(int index);
+
+        /*!
+         * \brief changeEngine changes the sampler's type used to get new samples
+         * \param index
+         */
+        void changeEngine(int index);
+
     private:
-      void writeGUI(string text);
-      QGridLayout *gridLayout;
-      QVBoxLayout *vboxLayout;
-      QVBoxLayout *vboxLayout1;
-      QLabel *label,*label_3;
-      QComboBox *cboSampleList;
-      QHBoxLayout *hboxLayout, *hboxLayout1;
-      QPushButton *btnCollision;
-      QPushButton *btnDistance;      
-      QGroupBox *groupBox;
-      QGridLayout *gridLayout1;
-      QVBoxLayout *vboxLayout2;
-      QRadioButton *rbtnAdd;
-      QRadioButton *rbtnNew;
-      QGroupBox *groupBox_2;
-      QGridLayout *gridLayout2;
-      QVBoxLayout *vboxLayout3;
-      QRadioButton *rbtnRandom;
-      QRadioButton *rbtnSDK;
-      QRadioButton *rbtnHalton;
-	  QRadioButton *rbtnGaussian;
-	  QRadioButton *rbtnGaussianLike;
-      QPushButton *btnSampling;
-      QLineEdit *txtAmount;
-      QPushButton *btnAddCurrent;
-      QPushButton *btnRemoveCurrent;
-      
-      Problem*    _ptProblem;
-      SampleSet*  _samples;
-      Sampler*    _sampler;
+        /*!
+         * \brief writeGUI writes a message in the GUI
+         * \param text message to write
+         */
+        void writeGUI(string text);
 
+        /*!
+         * \brief prob problem to construct the widget of
+         */
+        Problem *prob;
 
-  };
+        /*!
+         * \brief sampleSet set of samples of the problem
+         */
+        SampleSet *sampleSet;
 
-  /** @}   end of Doxygen module "Application" */
+        /*!
+         * \brief sampler sampler of the problem
+         */
+        Sampler *sampler;
+
+        /*!
+         * \brief sampleList shows to the user the list of samples
+         */
+        QComboBox *sampleList;
+
+        /*!
+         * \brief sampleAmount line edit where the user can specify the number of samples to get
+         */
+        QLineEdit  *sampleAmount;
+
+        /*!
+         * \brief collection the sample's collection which samples will be add to
+         */
+        COLLECTION collection;
+    };
+    /** @}   end of Doxygen module "Application" */
 }
 
 
-#endif // UI_SAMPLES_H
+#endif // _SAMPLESWIDGET_H
 

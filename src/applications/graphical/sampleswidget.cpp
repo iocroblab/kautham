@@ -20,375 +20,395 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Nestor Garcia Hidalgo */
      
+
 #include "sampleswidget.h"
-#include <sampling/sampling.h>
-#include <external/lcprng.h>
-#include <sstream>
 
 
-namespace Kautham{
+using namespace std;
 
 
-	SamplesWidget::SamplesWidget(SampleSet* samples, Sampler* sampler, Problem* prob){
-    _samples = samples;
-    _sampler = sampler;
-    _ptProblem = prob;
-    gridLayout = new QGridLayout(this);
-    gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-    vboxLayout = new QVBoxLayout();
-    vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
-    vboxLayout1 = new QVBoxLayout();
-    vboxLayout1->setObjectName(QString::fromUtf8("vboxLayout1"));
-    label = new QLabel(this);
-    label->setObjectName(QString::fromUtf8("label"));
+namespace Kautham {
+    SamplesWidget::SamplesWidget(Problem *problem, QWidget *parent,
+                                 Qt::WindowFlags f):QWidget(parent, f) {
+        sampleSet = problem->getSampleSet();
+        sampler = problem->getSampler();
+        prob = problem;
+        collection = CURRENT;
 
-    vboxLayout1->addWidget(label);
+        QVBoxLayout *mainLayout = new QVBoxLayout();
+        mainLayout->setObjectName(QString::fromUtf8("mainLayout"));
+        setLayout(mainLayout);
 
-    cboSampleList = new QComboBox(this);
-    cboSampleList->setObjectName(QString::fromUtf8("cboSampleList"));
-    cboSampleList->setEditable(false);
+        QHBoxLayout *hBoxLayout = new QHBoxLayout();
+        hBoxLayout->setObjectName(QString::fromUtf8("sampleLayout"));
+        mainLayout->addLayout(hBoxLayout);
 
-    vboxLayout1->addWidget(cboSampleList);
+        QLabel *label = new QLabel("Sample");
+        label->setObjectName(QString::fromUtf8("sampleLabel"));
+        label->setToolTip("Current sample");
+        hBoxLayout->addWidget(label);
 
+        sampleList = new QComboBox();
+        sampleList->setObjectName(QString::fromUtf8("sampleList"));
+        sampleList->setEditable(false);
+        sampleList->setToolTip("Current list of samples");
+        connect(sampleList,SIGNAL(currentIndexChanged(int)),this,SLOT(changeSample(int)));
+        hBoxLayout->addWidget(sampleList);
 
-    vboxLayout->addLayout(vboxLayout1);
+        QPushButton *button = new QPushButton("Test collision");
+        button->setObjectName(QString::fromUtf8("collisionButton"));
+        connect(button,SIGNAL(clicked()),this,SLOT(testCollision()));
+        mainLayout->addWidget(button);
 
-    hboxLayout = new QHBoxLayout();
-    hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
-    btnCollision = new QPushButton(this);
-    btnCollision->setObjectName(QString::fromUtf8("btnCollision"));
-    hboxLayout->addWidget(btnCollision);
+        button = new QPushButton("Test distance");
+        button->setObjectName(QString::fromUtf8("distanceButton"));
+        connect(button,SIGNAL(clicked()),this,SLOT(testDistance()));
+        mainLayout->addWidget(button);
 
-    btnDistance = new QPushButton(this);
-    btnDistance->setObjectName(QString::fromUtf8("btnDistance"));
-    hboxLayout->addWidget(btnDistance);
+        QGridLayout *gridLayout = new QGridLayout();
+        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        mainLayout->addLayout(gridLayout);
 
-    vboxLayout->addLayout(hboxLayout);
+        QIcon addIcon;
+        addIcon.addFile(":/icons/add_16x16.png");
+        addIcon.addFile(":/icons/add_22x22.png");
 
-    btnAddCurrent = new QPushButton(this);
-    btnAddCurrent->setObjectName(QString::fromUtf8("btnAddCurrent"));
-    btnAddCurrent->setText("Add current configuration as a sample");
-    vboxLayout->addWidget(btnAddCurrent);
+        button = new QPushButton(addIcon,"Add");
+        button->setObjectName(QString::fromUtf8("addButton"));
+        button->setToolTip("Add current configuration as a sample");
+        connect(button,SIGNAL(clicked()),this,SLOT(addSample()));
+        gridLayout->addWidget(button,0,0);
 
-    btnRemoveCurrent = new QPushButton(this);
-    btnRemoveCurrent->setObjectName(QString::fromUtf8("btnRemoveCurrent"));
-    btnRemoveCurrent->setText("Remove current sample from collection");
-    vboxLayout->addWidget(btnRemoveCurrent);
+        QIcon removeIcon;
+        removeIcon.addFile(":/icons/remove_16x16.png");
+        removeIcon.addFile(":/icons/remove_22x22.png");
 
-    QPushButton *btnRemoveAll = new QPushButton(this);
-    btnRemoveAll->setObjectName(QString::fromUtf8("btnRemoveAll"));
-    btnRemoveAll->setText("Remove all samples in collection");
-    vboxLayout->addWidget(btnRemoveAll);
+        button = new QPushButton(removeIcon,"Remove");
+        button->setObjectName(QString::fromUtf8("removeButton"));
+        button->setToolTip("Remove current sample from collection");
+        connect(button,SIGNAL(clicked()),this,SLOT(removeSample()));
+        gridLayout->addWidget(button,0,1);
 
-    QPushButton *btnRemoveAllEx2 = new QPushButton(this);
-    btnRemoveAllEx2->setObjectName(QString::fromUtf8("btnRemoveAllEx2"));
-    btnRemoveAllEx2->setText("Copy the two first in a new collection");
-    vboxLayout->addWidget(btnRemoveAllEx2);
+        QIcon getIcon;
+        getIcon.addFile(":/icons/right_16x16.png");
+        getIcon.addFile(":/icons/right_22x22.png");
 
-    QPushButton *btnUpdateList = new QPushButton(this);
-    btnUpdateList->setObjectName(QString::fromUtf8("btnUpdateList"));
-    btnUpdateList->setText("Update the samples list of collection");
-    vboxLayout->addWidget(btnUpdateList);
+        button = new QPushButton(getIcon,"Get");
+        button->setObjectName(QString::fromUtf8("getButton"));
+        button->setToolTip("Get samples");
+        connect(button,SIGNAL(clicked()),this,SLOT(getSamples()));
+        gridLayout->addWidget(button,1,0);
 
-    groupBox = new QGroupBox(this);
-    groupBox->setObjectName(QString::fromUtf8("groupBox"));
-    gridLayout1 = new QGridLayout(groupBox);
-    gridLayout1->setObjectName(QString::fromUtf8("gridLayout1"));
-    vboxLayout2 = new QVBoxLayout();
-    vboxLayout2->setObjectName(QString::fromUtf8("vboxLayout2"));
-    rbtnAdd = new QRadioButton(groupBox);
-    rbtnAdd->setObjectName(QString::fromUtf8("rbtnAdd"));
-    rbtnAdd->setChecked(true);
-    vboxLayout2->addWidget(rbtnAdd);
+        QIcon updateIcon;
+        updateIcon.addFile(":/icons/reload_16x16.png");
+        updateIcon.addFile(":/icons/reload_22x22.png");
 
-    rbtnNew = new QRadioButton(groupBox);
-    rbtnNew->setObjectName(QString::fromUtf8("rbtnNew"));
+        button = new QPushButton(updateIcon,"Update");
+        button->setObjectName(QString::fromUtf8("updateButton"));
+        button->setToolTip("Update the samples in collection");
+        connect(button,SIGNAL(clicked()),this,SLOT(updateSampleList()));
+        gridLayout->addWidget(button,1,1);
 
-    vboxLayout2->addWidget(rbtnNew);
+        QIcon copyIcon;
+        copyIcon.addFile(":/icons/copy_16x16.png");
+        copyIcon.addFile(":/icons/copy_22x22.png");
 
-    gridLayout1->addLayout(vboxLayout2, 0, 0, 1, 1);
+        button = new QPushButton(copyIcon,"Copy");
+        button->setObjectName(QString::fromUtf8("copyButton"));
+        button->setToolTip("Copy the two first samples in a new collection");
+        connect(button,SIGNAL(clicked()),this,SLOT(copySampleList()));
+        gridLayout->addWidget(button,2,0);
 
-    vboxLayout->addWidget(groupBox);
+        QIcon clearIcon;
+        clearIcon.addFile(":/icons/trashcan_16x16.png");
+        clearIcon.addFile(":/icons/trashcan_22x22.png");
 
-    groupBox_2 = new QGroupBox(this);
-    groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
-    gridLayout2 = new QGridLayout(groupBox_2);
-    gridLayout2->setObjectName(QString::fromUtf8("gridLayout2"));
-    vboxLayout3 = new QVBoxLayout();
-    vboxLayout3->setObjectName(QString::fromUtf8("vboxLayout3"));
+        button = new QPushButton(clearIcon,"Clear");
+        button->setObjectName(QString::fromUtf8("clearButton"));
+        button->setToolTip("Remove all samples in collection");
+        connect(button,SIGNAL(clicked()),this,SLOT(clearSampleList()));
+        gridLayout->addWidget(button,2,1);
 
-	rbtnRandom = new QRadioButton(groupBox_2);
-    rbtnRandom->setObjectName(QString::fromUtf8("rbtnRandom"));
-    rbtnRandom->setChecked(true);
-    vboxLayout3->addWidget(rbtnRandom);
+        QGroupBox *groupBox = new QGroupBox("Add to collection");
+        groupBox->setObjectName(QString::fromUtf8("addGroupBox"));
+        mainLayout->addWidget(groupBox);
 
-    rbtnSDK = new QRadioButton(groupBox_2);
-    rbtnSDK->setObjectName(QString::fromUtf8("rbtnSDK"));
-    vboxLayout3->addWidget(rbtnSDK);
+        QVBoxLayout *vBoxLayout = new QVBoxLayout();
+        vBoxLayout->setObjectName(QString::fromUtf8("addLayout"));
+        vBoxLayout->setContentsMargins(0,9,0,0);
+        groupBox->setLayout(vBoxLayout);
 
-    rbtnHalton = new QRadioButton(groupBox_2);
-    rbtnHalton->setObjectName(QString::fromUtf8("rbtnHalton"));
-    vboxLayout3->addWidget(rbtnHalton);
-	
-	rbtnGaussian = new QRadioButton(groupBox_2);
-	rbtnGaussian->setObjectName(QString::fromUtf8("rbtnGaussian"));
-	vboxLayout3->addWidget(rbtnGaussian);
+        QComboBox *comboBox = new QComboBox();
+        comboBox->setObjectName(QString::fromUtf8("addComboBox"));
+        comboBox->setEditable(false);
+        comboBox->insertItem(CURRENT,"Current");
+        comboBox->insertItem(NEW,"New");
+        comboBox->setCurrentIndex(CURRENT);
+        connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(changeCollection(int)));
+        vBoxLayout->addWidget(comboBox);
 
-	rbtnGaussianLike = new QRadioButton(groupBox_2);
-	rbtnGaussianLike->setObjectName(QString::fromUtf8("rbtnGaussianLike"));
-	vboxLayout3->addWidget(rbtnGaussianLike);
+        groupBox = new QGroupBox("Engine");
+        groupBox->setObjectName(QString::fromUtf8("engineGroupBox"));
+        mainLayout->addWidget(groupBox);
 
-    gridLayout2->addLayout(vboxLayout3, 0, 0, 1, 1);
+        vBoxLayout = new QVBoxLayout();
+        vBoxLayout->setObjectName(QString::fromUtf8("engineLayout"));
+        vBoxLayout->setContentsMargins(0,9,0,0);
+        groupBox->setLayout(vBoxLayout);
 
-    vboxLayout->addWidget(groupBox_2);
+        comboBox = new QComboBox();
+        comboBox->setObjectName(QString::fromUtf8("engineComboBox"));
+        comboBox->setEditable(false);
+        comboBox->insertItem(SDK,"SDK");
+        comboBox->insertItem(HALTON,"Halton");
+        comboBox->insertItem(RANDOM,"Random");
+        comboBox->insertItem(GAUSSIAN,"Gaussian");
+        comboBox->insertItem(GAUSSIANLIKE,"Gaussian-like");
+        if (typeid(*sampler) == typeid(SDKSampler)) {
+            comboBox->setCurrentIndex(SDK);
+        } else if (typeid(*sampler) == typeid(HaltonSampler)) {
+            comboBox->setCurrentIndex(HALTON);
+        } else if (typeid(*sampler) == typeid(RandomSampler)) {
+            comboBox->setCurrentIndex(RANDOM);
+        } else if (typeid(*sampler) == typeid(GaussianSampler)) {
+            comboBox->setCurrentIndex(GAUSSIAN);
+        } else if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
+            comboBox->setCurrentIndex(GAUSSIANLIKE);
+        }
+        connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(changeEngine(int)));
+        vBoxLayout->addWidget(comboBox);
 
-    hboxLayout1 = new QHBoxLayout();
-    hboxLayout1->setObjectName(QString::fromUtf8("hboxLayout1"));
-    label_3 = new QLabel(this);
-    label_3->setObjectName(QString::fromUtf8("label_3"));
+        hBoxLayout = new QHBoxLayout();
+        hBoxLayout->setObjectName(QString::fromUtf8("amountLayout"));
+        mainLayout->addLayout(hBoxLayout);
 
-    hboxLayout1->addWidget(label_3);
+        label = new QLabel("Amount");
+        label->setObjectName(QString::fromUtf8("amountLabel"));
+        label->setToolTip("Number of samples to calculate");
+        hBoxLayout->addWidget(label);
 
-    txtAmount = new QLineEdit(this);
-    txtAmount->setObjectName(QString::fromUtf8("txtAmount"));
+        sampleAmount = new QLineEdit();
+        sampleAmount->setObjectName(QString::fromUtf8("amountLineEdit"));
+        sampleAmount->setToolTip("Number of samples to calculate");
+        hBoxLayout->addWidget(sampleAmount);
 
-    hboxLayout1->addWidget(txtAmount);
-
-
-    vboxLayout->addLayout(hboxLayout1);
-
-    btnSampling = new QPushButton(this);
-    btnSampling->setObjectName(QString::fromUtf8("btnSampling"));
-
-    vboxLayout->addWidget(btnSampling);
-
-
-    gridLayout->addLayout(vboxLayout, 0, 0, 1, 1);
-
-    label->setText("List of current samples");
-    btnCollision->setText("Test Collision");
-    btnDistance->setText("Test Distance");
-    groupBox->setTitle("Strategy");
-    rbtnAdd->setText("Add to collection");
-    rbtnNew->setText("New collection");
-    groupBox_2->setTitle("Engine");
-    rbtnRandom->setText("Random");
-    rbtnSDK->setText("SDK");
-    rbtnHalton->setText("Halton");
-	rbtnGaussian->setText("Gaussian");
-	rbtnGaussianLike->setText("Gaussian-Like");
-    label_3->setText("Samples amount");
-    btnSampling->setText("Get Samples");
-
-    connect(btnCollision, SIGNAL( clicked() ), this, SLOT( collisionCheck() ) ); 
-    connect(btnDistance, SIGNAL( clicked() ), this, SLOT( distanceCheck() ) );
-    connect(btnSampling, SIGNAL( clicked() ), this, SLOT( sampling() ) );
-    connect(btnAddCurrent, SIGNAL( clicked() ), this, SLOT( addCurrent() ) );
-    connect(btnRemoveCurrent, SIGNAL( clicked() ), this, SLOT( removeCurrent() ) );
-    connect(btnRemoveAll, SIGNAL( clicked() ), this, SLOT( removeAll() ) );
-    connect(btnRemoveAllEx2, SIGNAL( clicked() ), this, SLOT( removeAllEx2() ) );
-    connect(btnUpdateList, SIGNAL( clicked() ), this, SLOT( updateSampleList() ) );
-    connect(cboSampleList, SIGNAL( currentIndexChanged( int )), this, SLOT( showSample( int )));
-
-	
-    connect(rbtnSDK, SIGNAL( clicked() ), this, SLOT( changeEngine() ) );
-    connect(rbtnHalton, SIGNAL( clicked() ), this, SLOT( changeEngine() ) );
-    connect(rbtnRandom, SIGNAL( clicked() ), this, SLOT( changeEngine() ) );
-    connect(rbtnGaussian, SIGNAL( clicked() ), this, SLOT( changeEngine() ) );
-    connect(rbtnGaussianLike, SIGNAL( clicked() ), this, SLOT( changeEngine() ) );
-
-    updateSampleList();
-    
-	}
-	
-	void SamplesWidget::changeEngine()
-	{
-		if( rbtnRandom->isChecked() && typeid(*_sampler) != typeid(RandomSampler) ){
-			//if( _sampler != NULL )
-				delete _sampler;
-            _sampler = new RandomSampler(_ptProblem->wSpace()->getNumRobControls());
-            _ptProblem->setSampler(_sampler);
-		}
-      
-		
-		if( rbtnSDK->isChecked() && typeid(*_sampler) != typeid(SDKSampler) ){
-			//if( _sampler != NULL )
-				delete _sampler;
-            _sampler = new SDKSampler(_ptProblem->wSpace()->getNumRobControls(),2);
-            _ptProblem->setSampler(_sampler);
-		}
-		
-		if( rbtnHalton->isChecked() && typeid(*_sampler) != typeid(HaltonSampler) ){
-			//if( _sampler != NULL )
-				delete _sampler;
-            _sampler = new HaltonSampler(_ptProblem->wSpace()->getNumRobControls());
-            _ptProblem->setSampler(_sampler);
-		}
-
-		
-		if( rbtnGaussian->isChecked() && typeid(*_sampler) != typeid(GaussianSampler) ){
-			//if( _sampler != NULL )
-				delete _sampler;
-            //_sampler = new GaussianSampler(_ptProblem->wSpace()->getNumRobControls());
-            _sampler = new GaussianSampler(_ptProblem->wSpace()->getNumRobControls(),0.1,_ptProblem->wSpace());
-            _ptProblem->setSampler(_sampler);
-		}
-
-		
-		if( rbtnGaussianLike->isChecked() && typeid(*_sampler) != typeid(GaussianLikeSampler) ){
-			//if( _sampler != NULL )
-				delete _sampler;
-            _sampler = new GaussianLikeSampler(_ptProblem->wSpace()->getNumRobControls(),2, _ptProblem->wSpace());
-            _ptProblem->setSampler(_sampler);
-		}
-  }
+        updateSampleList();
+    }
 
 
-  void SamplesWidget::collisionCheck(){
-    string str;
-    stringstream sstr;
-    if(cboSampleList->count() >= 1){
-      Sample* tmpSam = _samples->getSampleAt((cboSampleList->currentText()).toInt());
-      if( _ptProblem->wSpace()->collisionCheck(tmpSam))
-        str = "COLLISION";
-      else
-        str = "FREE";
-      sstr << "The sample No: " << cboSampleList->currentText().toUtf8().constData() 
-        << " is: " << str.c_str();
-      writeGUI(sstr.str());
-    }else
-      writeGUI("First create a sample");
+    void SamplesWidget::changeSample(int index) {
+        if (index >= 0 && index < sampleSet->getSize()) {
+            prob->wSpace()->moveRobotsTo(sampleSet->getSampleAt(index));
+        }
+    }
 
-  }
 
-  void SamplesWidget::distanceCheck(){
-    stringstream sstr;
-    string p;
-    if(cboSampleList->count() >= 1){
-        sstr.precision(10);
-        Sample* tmpSam = _samples->getSampleAt((cboSampleList->currentText()).toInt());
-        vector<KthReal>* val = _ptProblem->wSpace()->distanceCheck(tmpSam);
-        if (val->size() > 0) {
-            for(unsigned int i = 0; i<val->size(); i++)
-                sstr << val->at(i) << ", " ;
-            p = sstr.str();
-            p = p.substr(0,p.length()-2);
-
-            sstr.clear();
-            sstr << "For sample No: " << cboSampleList->currentText().toUtf8().constData()
-                 << " the distance check is: " << p.c_str();
+    void SamplesWidget::testCollision() {
+        stringstream sstr;
+        if (sampleList->count() > 0) {
+            Sample* sample = sampleSet->getSampleAt((sampleList->currentText()).toInt());
+            sstr << "The sample No: " << sampleList->currentText().toUtf8().constData()
+                 << " is: ";
+            string message;
+            if (prob->wSpace()->collisionCheck(sample,&message)) {
+                sstr << "in COLLISION" << endl;
+                sstr << message;
+            } else {
+                sstr << "FREE";
+            }
             writeGUI(sstr.str());
-      } else {
-            writeGUI("There are no obstacles to test distance with.");
-      }
-    }else
-      writeGUI("First create a sample");
-  }
-
-  void SamplesWidget::addCurrent(){
-    char sampleDIM = _ptProblem->wSpace()->getNumRobControls();
-    Sample* tmpSam = new Sample(sampleDIM);
-    tmpSam->setCoords(_ptProblem->getCurrentRobControls());
-    if( ! _ptProblem->wSpace()->collisionCheck(tmpSam)){
-		  _samples->add(tmpSam);
-		  updateSampleList();
-	  }else{
-      writeGUI("Samples not added - COLLISION configuration!");
-	    return;
-	  }
-  }
-
-  void SamplesWidget::removeCurrent(){
-    if(!_samples->removeSampleAt((cboSampleList->currentText()).toInt()))
-      writeGUI("an error has been made. Please try again");
-    updateSampleList();
-  }
-
-  void SamplesWidget::removeAll(){
-    _samples->clear();
-	if(typeid(*_sampler) == typeid(GaussianLikeSampler)) ((GaussianLikeSampler*)_sampler)->clear();
-    updateSampleList();
-  }
-
-  void SamplesWidget::removeAllEx2(){
-    if( _samples->getSize() > 0){
-      char sampleDIM = _ptProblem->wSpace()->getNumRobControls();
-      Sample *tmpSamInit = new Sample(sampleDIM); 
-      Sample *tmpSamGoal = new Sample(sampleDIM);
-      tmpSamInit->setCoords(_samples->getSampleAt(0)->getCoords());
-      tmpSamGoal->setCoords(_samples->getSampleAt(1)->getCoords());
-      _samples->clear();
-	  if(typeid(*_sampler) == typeid(GaussianLikeSampler)) 
-	  {
-		  int i=9;
-		  ((GaussianLikeSampler*)_sampler)->clear();
-	  }
-      _samples->add(tmpSamInit);
-      _samples->add(tmpSamGoal);
-	  if(_samples->isAnnSet()) _samples->loadAnnData();
-    }
-	else
-	{
-      _samples->clear(); 
-	  if(typeid(*_sampler) == typeid(GaussianLikeSampler)) ((GaussianLikeSampler*)_sampler)->clear();
-	}
-
-    updateSampleList();
-  }
-
-  void SamplesWidget::sampling(){
-    Sample *tmpSam;
-    QString qstr;
-    int numFree = 0;
-    int samNum = (txtAmount->text()).toInt();
-    
-    if( rbtnNew->isChecked() && _samples->getSize() > 0)
-      removeAllEx2();
-
-    
-	//
-	//
-
-    for(int i = 0; i < samNum; i++){
-      tmpSam = _sampler->nextSample();
-      tmpSam->setFree(!_ptProblem->wSpace()->collisionCheck(tmpSam));
-      if(tmpSam->isFree()){
-        numFree++;
-        _samples->add(tmpSam);
-      }
-	  else
-        delete tmpSam;
+        } else {
+            writeGUI("First create a sample");
+        }
     }
 
-    qstr = txtAmount->text() + " samples generated, " 
-      + QString().setNum(numFree) + " samples free.";
-    writeGUI( qstr.toUtf8().constData());
-    txtAmount->setText("");
-    updateSampleList();
-  }
 
-  void SamplesWidget::updateSampleList(){
-    if(cboSampleList->count() < _samples->getSize()){
-      for(int i = cboSampleList->count(); i < _samples->getSize(); i++){
-        cboSampleList->addItem( QString().setNum(i) );
-      }
-    }else{
-      for(int i = cboSampleList->count(); i > _samples->getSize(); i--){
-        cboSampleList->removeItem( i - 1 );
-      }
+    void SamplesWidget::testDistance(){
+        if (sampleList->count() > 0){
+            Sample* sample = sampleSet->getSampleAt((sampleList->currentText()).toInt());
+            vector<KthReal>* values = prob->wSpace()->distanceCheck(sample);
+            if (values->size() > 0) {
+                stringstream sstr;
+                sstr.precision(10);
+                sstr << "For sample No: " << sampleList->currentText().toUtf8().constData()
+                     << " the distance check is: " << values->at(0);
+                for (uint i = 1; i < values->size(); ++i) {
+                    sstr<< ", " << values->at(i);
+                }
+                writeGUI(sstr.str());
+            } else {
+                writeGUI("There are no obstacles to test distance with.");
+            }
+        } else {
+            writeGUI("Please, first create a sample.");
+        }
     }
-  }
 
-  void SamplesWidget::writeGUI(string text){
-    emit sendText(text);
-  }
 
-  void SamplesWidget::showSample(int index){
-    if(index >= 0 && index < _samples->getSize() )
-      _ptProblem->wSpace()->moveRobotsTo(_samples->getSampleAt(index));
-  }
+    void SamplesWidget::addSample(){
+        int dim = prob->wSpace()->getNumRobControls();
+        Sample* sample = new Sample(dim);
+        sample->setCoords(prob->getCurrentRobControls());
+        string message;
+        if (!prob->wSpace()->collisionCheck(sample,&message)) {
+            sampleSet->add(sample);
+            updateSampleList();
+        } else {
+            writeGUI("Samples not added - COLLISION configuration!\n"+message);
+        }
+    }
 
+
+    void SamplesWidget::removeSample(){
+        if (!sampleSet->removeSampleAt((sampleList->currentText()).toInt())) {
+            writeGUI("An unexpected error ocurred. Please try again");
+        }
+        updateSampleList();
+    }
+
+
+    void SamplesWidget::getSamples() {
+        bool ok;
+        int numSamples = (sampleAmount->text()).toInt(&ok,10);
+
+        if (ok) {
+            Sample *sample;
+            int numFree = 0;
+
+            if (collection == NEW && sampleSet->getSize() > 1) {
+                copySampleList();
+            }
+
+            for (uint i = 0; i < numSamples; ++i) {
+                sample = sampler->nextSample();
+                sample->setFree(!prob->wSpace()->collisionCheck(sample));
+                if (sample->isFree()) {
+                    ++numFree;
+                    sampleSet->add(sample);
+                } else {
+                    delete sample;
+                }
+            }
+
+            QString text = sampleAmount->text() + " samples were generated, "
+                    + QString::number(numFree) + " samples are free.";
+            writeGUI(text.toUtf8().constData());
+            sampleAmount->setText("");
+            updateSampleList();
+        } else {
+            writeGUI("Please, enter a valid amount of samples.");
+        }
+    }
+
+
+    void SamplesWidget::updateSampleList() {
+        if (sampleList->count() < sampleSet->getSize()) {
+            for (uint i = sampleList->count(); i < sampleSet->getSize(); ++i) {
+                sampleList->addItem(QString::number(i));
+            }
+        } else {
+            for (uint i = sampleList->count(); i > sampleSet->getSize(); --i) {
+                sampleList->removeItem(i-1);
+            }
+        }
+    }
+
+
+    void SamplesWidget::copySampleList() {
+        if (sampleSet->getSize() > 0) {
+            int dim = prob->wSpace()->getNumRobControls();
+            Sample *initSample = new Sample(dim);
+            Sample *goalSample = new Sample(dim);
+            initSample->setCoords(sampleSet->getSampleAt(0)->getCoords());
+            goalSample->setCoords(sampleSet->getSampleAt(1)->getCoords());
+            sampleSet->clear();
+            if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
+                ((GaussianLikeSampler*)sampler)->clear();
+            }
+            sampleSet->add(initSample);
+            sampleSet->add(goalSample);
+            if (sampleSet->isAnnSet()) sampleSet->loadAnnData();
+        } else {
+            sampleSet->clear();
+            if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
+                ((GaussianLikeSampler*)sampler)->clear();
+            }
+        }
+        updateSampleList();
+    }
+
+
+    void SamplesWidget::clearSampleList() {
+        sampleSet->clear();
+        if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
+            ((GaussianLikeSampler*)sampler)->clear();
+        }
+        updateSampleList();
+    }
+
+
+    void SamplesWidget::changeEngine(int index) {
+        switch (index) {
+        case SDK:
+            if (typeid(*sampler) != typeid(SDKSampler)) {
+                delete sampler;
+                sampler = new SDKSampler(prob->wSpace()->getNumRobControls(),2);
+                prob->setSampler(sampler);
+            }
+            break;
+        case HALTON:
+            if (typeid(*sampler) != typeid(HaltonSampler)) {
+                delete sampler;
+                sampler = new HaltonSampler(prob->wSpace()->getNumRobControls());
+                prob->setSampler(sampler);
+            }
+            break;
+        case RANDOM:
+            if (typeid(*sampler) != typeid(RandomSampler)) {
+                delete sampler;
+                sampler = new RandomSampler(prob->wSpace()->getNumRobControls());
+                prob->setSampler(sampler);
+            }
+            break;
+        case GAUSSIAN:
+            if (typeid(*sampler) != typeid(GaussianSampler)) {
+                delete sampler;
+                sampler = new GaussianSampler(prob->wSpace()->getNumRobControls(),
+                                               0.1,prob->wSpace());
+                prob->setSampler(sampler);
+            }
+            break;
+        case GAUSSIANLIKE:
+            if (typeid(*sampler) != typeid(GaussianLikeSampler)) {
+                delete sampler;
+                sampler = new GaussianLikeSampler(prob->wSpace()->getNumRobControls(),
+                                                   2, prob->wSpace());
+                prob->setSampler(sampler);
+            }
+            break;
+        default:
+            break;
+        }
+    }
+
+
+    void SamplesWidget::changeCollection(int index) {
+        switch (index) {
+        case CURRENT:
+            collection = CURRENT;
+            break;
+        case NEW:
+            collection = NEW;
+            break;
+        default:
+            break;
+        }
+    }
+
+
+    void SamplesWidget::writeGUI(string text){
+        emit sendText(text);
+    }
 }
-

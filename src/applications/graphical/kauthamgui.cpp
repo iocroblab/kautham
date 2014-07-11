@@ -123,15 +123,6 @@ void Application::setActions(){
 
     mainWindow->addSeparator(TOOLBAR);
 
-    // Creating the planner toolbar in the main Window. This list may change.
-    //string loc = Problem::localPlannersNames();
-    //string glob = Problem::plannersNames();
-    //mainWindow->createPlannerToolBar(loc, glob,this,SLOT(changePlanner(string,string)));
-    //mainWindow->setToogleAction(ACTIONTOOL,"&Find path","CTRL+F",":/icons/prm.xpm",mainWindow,SLOT(showPlannerToolBar()));
-    //mainWindow->addSeparator(TOOLBAR);
-    //mainWindow->addSeparator(ACTIONMENU);
-    //mainWindow->addSeparator(TOOLBAR);
-
     QIcon colors;
     colors.addFile(":/icons/colors_16x16.png");
     colors.addFile(":/icons/colors_22x22.png");
@@ -291,8 +282,13 @@ void Application::saveAsFile(){
                     mainWindow,
                     "Save as ...",
                     last_path,
-                    "All configuration files (*.xml)");
+                    "All configuration files (*.xml)");        
         if (!path.isEmpty()) {
+            uint pointIndex = path.lastIndexOf(".");
+            uint slashIndex = path.lastIndexOf("/");
+            if (pointIndex > slashIndex) path.truncate(pointIndex);
+            path.append(".xml");
+
             mainWindow->setText( "Kautham is saving the problem to the file: " );
             mainWindow->setText( path.toUtf8().constData() );
             if( _problem->saveToFile( path.toUtf8().constData() ) ) {
@@ -301,7 +297,7 @@ void Application::saveAsFile(){
                 last_path.truncate(last_path.lastIndexOf("/"));
                 settings->setValue("last_path",last_path);
             } else
-                mainWindow->setText( "Sorry but the file was not saved" );
+                mainWindow->setText( "Sorry but the file couldn't be saved" );
         }
         mainWindow->setCursor(QCursor(Qt::ArrowCursor));
     }
@@ -315,13 +311,11 @@ void Application::closeProblem(){
         mainWindow->setText("First open a problem");
         break;
     case PROBLEMLOADED:
-        if(mainWindow->getPlannerWidget()->ismoving())
-            mainWindow->getPlannerWidget()->simulatePath();//stops simulation
+        mainWindow->stopPathSimulation();
         saveTabColors();
         mainWindow->restart();
         delete _problem;
         appState = INITIAL;
-
         break;
     }
     mainWindow->setCursor(QCursor(Qt::ArrowCursor));
@@ -471,7 +465,7 @@ bool Application::problemSetup(string problemFile){
         mainWindow->addObsControlWidget(_problem,obsDOFWidgets);
     }
 
-    mainWindow->setSampleWidget(_problem->getSampleSet(), _problem->getSampler(), _problem);
+    mainWindow->setSampleWidget(_problem);
 
     if( _problem->getPlanner() != NULL ){
         mainWindow->addPlanner(_problem->getPlanner(), _problem->getSampleSet(), mainWindow);

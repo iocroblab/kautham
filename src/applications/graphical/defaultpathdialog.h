@@ -27,30 +27,28 @@
 
 
 namespace Kautham {
-/** \addtogroup Application
- *  @{
- */
+    /** \addtogroup Application
+    *  @{
+    */
 
     /*!
-    * \brief The DefaultPathDialog class allows the use
+    * \brief The DefaultPathDialog class allows the user to manage the default path list
     */
-    class DefaultPathDialog : public QObject {
+    class DefaultPathDialog : public QDialog {
         Q_OBJECT
-
     public:
         /*!
-         * \brief DefaultPathDialog Constructor
+         * \brief DefaultPathDialog Constructs the dialog
          * \param pathList Path list to fill the dialog
          * \param parent Parent of the dialog
          */
-        DefaultPathDialog(QStringList pathList, QWidget *parent = 0);
+        DefaultPathDialog(QStringList pathList, QWidget *parent = 0, Qt::WindowFlags f = 0);
 
         /*!
-         * \brief exec Executes the dialog
-         * \param pathList Path list defined by the user, NULL is the dialog was rejected by the user
-         * \return True if the dialog was accepted
+         * \brief updates Executes the dialog and lets the user to update the path list
+         * \return path list defined by the user, NULL if the dialog was rejected by the user
          */
-        bool exec(QStringList *pathList);
+        QStringList *getList();
 
     private slots:
         /*!
@@ -74,19 +72,10 @@ namespace Kautham {
         void downDirectory();
 
     private:
-        QDialog *defaultPathDialog;
-        QVBoxLayout *mainLayout;
-        QHBoxLayout *topLayout;
+        /*!
+         * \brief pathListWidget list of paths
+         */
         QListWidget *pathListWidget;
-        QFrame *buttonFrame;
-        QVBoxLayout *buttonLayout;
-        QPushButton *addButton;
-        QPushButton *removeButton;
-        QPushButton *clearButton;
-        QSpacerItem *VSpacer;
-        QPushButton *upButton;
-        QPushButton *downButton;
-        QDialogButtonBox *buttonBox;
     };
-/** @}   end of Doxygen module "Application" */
+    /** @}   end of Doxygen module "Application" */
 }
