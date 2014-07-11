@@ -25,44 +25,72 @@
 #if !defined(_DOFWIDGET_H)
 #define _DOFWIDGET_H
 
+
 #include <QtGui>
-#include <vector>
-#include <string>
 #include <problem/problem.h>
-#include <util/kthutil/kauthamdefs.h>
-
-
-using namespace std;
 
 
 namespace Kautham {
+    /** \addtogroup Application
+    *  @{
+    */
 
-/** \addtogroup Application
- *  @{
- */
-
+    /*!
+     * \brief The DOFWidget class is the class that implements the DOF's Widget.
+     *It shows the DOF values to the user
+     */
 	class DOFWidget:public QWidget{
-		Q_OBJECT
+        Q_OBJECT
+    public:
+        /*!
+         * \brief DOFWidget Constructs the widget
+         * \param robot robot where DOFs are stored
+         * \param parent parent of the widget
+         * \param f window flags of the widget
+         */
+        DOFWidget(Robot *robot, QWidget *parent = 0, Qt::WindowFlags f = 0);
+
+        /*!
+         * \brief ~DOFWidget Destructs the widget
+         */
+        ~DOFWidget();
+
+        /*!
+         * \brief setValues sets new values for DOFs
+         * \param values new values of the DOFs
+         */
+        void setValues(vector<KthReal> &values);
+
     signals:
-      void sendText(string newContent);
+        /*!
+         * \brief sendText sends a message
+         * \param text message to send
+         */
+        void sendText(string newContent);
 
-	public:
-        DOFWidget(Robot* robot);
-		~DOFWidget();
-        void setValues(vector<KthReal> &val);
-
-	private:
+    private:
+        /*!
+         * \brief writeGUI writes a message in the GUI
+         * \param text message to write
+         */
         void writeGUI(string text);
-		vector<QLabel*>   labels;
-        vector<KthReal>   values;
-        vector<KthReal>   low;
-        vector<KthReal>   high;
-	};
 
+        /*!
+         * \brief labels labels where DOF's values are shown
+         */
+        vector<QLabel*> labels;
 
+        /*!
+         * \brief lowValues lower limits of the DOFs
+         */
+        vector<KthReal> lowValues;
+
+        /*!
+         * \brief highValues higher limits of the DOFs
+         */
+        vector<KthReal> highValues;
+    };
     /** @}   end of Doxygen module "Application" */
 }
 
 #endif  //_DOFWIDGET_H
-
-

@@ -24,7 +24,6 @@
 
 #if !defined(_omplPLANNER_H)
 #define _omplPLANNER_H
-
 #if defined(KAUTHAM_USE_OMPL)
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/geometric/SimpleSetup.h>

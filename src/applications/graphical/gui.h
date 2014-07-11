@@ -77,13 +77,11 @@ namespace Kautham {
     //}
 	};
 
-
-    class PlannerWidget; //needed here because PlannerWidget has #include "gui.h"
-
 	class GUI:public QMainWindow, private Ui::kauthamMain {
 	  Q_OBJECT
-	//signals:
-	//	void tableChanged(string newContent);
+    signals:
+      void stopSimulation();
+
 	public slots:
     void                setText(string s);
     void                about();
@@ -93,9 +91,12 @@ namespace Kautham {
     void                toogleBBOXflag();
     //! Sets the directories where robot and obstacles models will be looked for
     void                setModelsDefaultPath();
+    //! Changes cursor to waiting/arrow cursor
+    void changeCursor(bool waiting);
 
     public:
     GUI(QWidget *p=0);
+    void stopPathSimulation() {emit stopSimulation();}
     void                clearText();
     bool                addViewerTab(string title, SoSeparator *root);
     void                removePropTab(string title);
@@ -128,7 +129,7 @@ namespace Kautham {
 
     bool                addConstrainedControlWidget( Robot* rob, Problem* prob);
     Kautham::DOFWidget *addDOFWidget( Robot* rob );
-    bool                setSampleWidget(SampleSet* samples, Sampler* sampler, Problem* prob);
+    bool                setSampleWidget(Problem* problem);
     bool                addPlanner(Planner *plan, SampleSet* samp, GUI* gui = NULL);
 
     bool                addInverseKinematic(InverseKinematic* ikine);

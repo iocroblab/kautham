@@ -27,16 +27,17 @@
 
 
 namespace Kautham {
-    DefaultPathDialog::DefaultPathDialog(QStringList pathList, QWidget *parent) {
-        defaultPathDialog = new QDialog(parent);
-        defaultPathDialog->setWindowTitle("Choose the directories of the models");
-        defaultPathDialog->setModal(true);
-        defaultPathDialog->setObjectName(QString::fromUtf8("defaultPathDialog"));
+    DefaultPathDialog::DefaultPathDialog(QStringList pathList, QWidget *parent,
+                                         Qt::WindowFlags f):QDialog(parent, f) {
+        setWindowTitle("Choose the directories of the models");
+        setModal(true);
+        setObjectName(QString::fromUtf8("defaultPathDialog"));
 
-        mainLayout = new QVBoxLayout(defaultPathDialog);
+        QVBoxLayout *mainLayout = new QVBoxLayout();
         mainLayout->setObjectName(QString::fromUtf8("mainLayout"));
+        setLayout(mainLayout);
 
-        topLayout = new QHBoxLayout();
+        QHBoxLayout *topLayout = new QHBoxLayout();
         topLayout->setObjectName(QString::fromUtf8("topLayout"));
         mainLayout->addLayout(topLayout);
 
@@ -45,7 +46,7 @@ namespace Kautham {
         pathListWidget->addItems(pathList);
         topLayout->addWidget(pathListWidget);
 
-        buttonFrame = new QFrame();
+        QFrame *buttonFrame = new QFrame();
         buttonFrame->setObjectName(QString::fromUtf8("buttonFrame"));
         buttonFrame->setMaximumWidth(100);
         buttonFrame->setMinimumWidth(100);
@@ -53,80 +54,84 @@ namespace Kautham {
         buttonFrame->setFrameStyle(QFrame::NoFrame);
         topLayout->addWidget(buttonFrame);
 
-        buttonLayout = new QVBoxLayout(buttonFrame);
+        QVBoxLayout *buttonLayout = new QVBoxLayout(buttonFrame);
         buttonLayout->setObjectName(QString::fromUtf8("buttonLayout"));
         buttonLayout->setMargin(0);
 
 
-        QIcon add;
-        add.addFile(":/icons/add_16x16.png");
-        add.addFile(":/icons/add_22x22.png");
-        addButton = new QPushButton(add,tr("&Add"));
-        addButton->setObjectName(QString::fromUtf8("addButton"));
-        connect(addButton,SIGNAL(clicked()),this,SLOT(addDirectory()));
-        buttonLayout->addWidget(addButton);
+        QIcon addIcon;
+        addIcon.addFile(":/icons/add_16x16.png");
+        addIcon.addFile(":/icons/add_22x22.png");
+        QPushButton *button = new QPushButton(addIcon,tr("&Add"));
+        button->setObjectName(QString::fromUtf8("addButton"));
+        connect(button,SIGNAL(clicked()),this,SLOT(addDirectory()));
+        buttonLayout->addWidget(button);
 
-        QIcon remove;
-        remove.addFile(":/icons/remove_16x16.png");
-        remove.addFile(":/icons/remove_22x22.png");
-        removeButton = new QPushButton(remove,tr("&Remove"));
-        removeButton->setObjectName(QString::fromUtf8("removeButton"));
-        connect(removeButton,SIGNAL(clicked()),this,SLOT(removeDirectory()));
-        buttonLayout->addWidget(removeButton);
+        QIcon removeIcon;
+        removeIcon.addFile(":/icons/remove_16x16.png");
+        removeIcon.addFile(":/icons/remove_22x22.png");
+        button = new QPushButton(removeIcon,tr("&Remove"));
+        button->setObjectName(QString::fromUtf8("removeButton"));
+        connect(button,SIGNAL(clicked()),this,SLOT(removeDirectory()));
+        buttonLayout->addWidget(button);
 
-        QIcon trashcan;
-        trashcan.addFile(":/icons/trashcan_16x16.png");
-        trashcan.addFile(":/icons/trashcan_22x22.png");
-        trashcan.addFile(":/icons/trashcan_32x32.png");
-        trashcan.addFile(":/icons/trashcan_48x48.png");
-        trashcan.addFile(":/icons/trashcan_64x64.png");
-        clearButton = new QPushButton(trashcan,tr("C&lear"));
-        clearButton->setObjectName(QString::fromUtf8("clearButton"));
-        connect(clearButton,SIGNAL(clicked()),pathListWidget,SLOT(clear()));
-        buttonLayout->addWidget(clearButton);
+        QIcon clearIcon;
+        clearIcon.addFile(":/icons/trashcan_16x16.png");
+        clearIcon.addFile(":/icons/trashcan_22x22.png");
+        clearIcon.addFile(":/icons/trashcan_32x32.png");
+        clearIcon.addFile(":/icons/trashcan_48x48.png");
+        clearIcon.addFile(":/icons/trashcan_64x64.png");
+        button = new QPushButton(clearIcon,tr("C&lear"));
+        button->setObjectName(QString::fromUtf8("clearButton"));
+        connect(button,SIGNAL(clicked()),pathListWidget,SLOT(clear()));
+        buttonLayout->addWidget(button);
 
-        VSpacer = new QSpacerItem(20,40,QSizePolicy::Expanding,
+        QSpacerItem *vSpacer = new QSpacerItem(20,40,QSizePolicy::Expanding,
                                         QSizePolicy::Expanding);
-        buttonLayout->addSpacerItem(VSpacer);
+        buttonLayout->addSpacerItem(vSpacer);
 
-        QIcon up;
-        up.addFile(":/icons/up_16x16.png");
-        up.addFile(":/icons/up_22x22.png");
-        upButton = new QPushButton(up,tr("&Up"));
-        addButton->setObjectName(QString::fromUtf8("upButton"));
-        connect(upButton,SIGNAL(clicked()),this,SLOT(upDirectory()));
-        buttonLayout->addWidget(upButton);
+        QIcon upIcon;
+        upIcon.addFile(":/icons/up_16x16.png");
+        upIcon.addFile(":/icons/up_22x22.png");
+        button = new QPushButton(upIcon,tr("&Up"));
+        button->setObjectName(QString::fromUtf8("upButton"));
+        connect(button,SIGNAL(clicked()),this,SLOT(upDirectory()));
+        buttonLayout->addWidget(button);
 
-        QIcon down;
-        down.addFile(":/icons/down_16x16.png");
-        down.addFile(":/icons/down_22x22.png");
-        downButton = new QPushButton(down,tr("&Down"));
-        downButton->setObjectName(QString::fromUtf8("downButton"));
-        connect(downButton,SIGNAL(clicked()),this,SLOT(downDirectory()));
-        buttonLayout->addWidget(downButton);
+        QIcon downIcon;
+        downIcon.addFile(":/icons/down_16x16.png");
+        downIcon.addFile(":/icons/down_22x22.png");
+        button = new QPushButton(downIcon,tr("&Down"));
+        button->setObjectName(QString::fromUtf8("downButton"));
+        connect(button,SIGNAL(clicked()),this,SLOT(downDirectory()));
+        buttonLayout->addWidget(button);
 
-        buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok  | QDialogButtonBox::Cancel, Qt::Horizontal);
-        connect(buttonBox, SIGNAL(accepted()), defaultPathDialog, SLOT(accept()));
-        connect(buttonBox, SIGNAL(rejected()), defaultPathDialog, SLOT(reject()));
+        QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
+                                                           QDialogButtonBox::Cancel,
+                                                           Qt::Horizontal);
+        connect(buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
+        connect(buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
         mainLayout->addWidget(buttonBox);
     }
 
-    bool DefaultPathDialog::exec(QStringList *pathList) {
-        if (defaultPathDialog->exec()) {
-            pathList->clear();
+
+    QStringList *DefaultPathDialog::getList() {
+        if (exec()) {
+            QStringList *pathList = new QStringList();
             for (uint i = 0; i < pathListWidget->count(); i ++) {
                 pathList->push_back(pathListWidget->item(i)->text());
             }
-            return true;
+            return pathList;
         } else {
-            return false;
+            return NULL;
         }
     }
+
 
     void DefaultPathDialog::addDirectory() {
         QDir workDir;
         QString dir;
-        dir = QFileDialog::getExistingDirectory(defaultPathDialog,"Choose the default models directory",
+        dir = QFileDialog::getExistingDirectory(this,"Choose the default models directory",
                                                 workDir.absolutePath(),QFileDialog::ShowDirsOnly
                                                 | QFileDialog::DontResolveSymlinks);
         if (!dir.isEmpty()) {
@@ -137,12 +142,14 @@ namespace Kautham {
         }
     }
 
+
     void DefaultPathDialog::removeDirectory() {
         QListWidgetItem *pathWidget = pathListWidget->takeItem(pathListWidget->currentRow());
         if (pathWidget != NULL) {
             delete pathWidget;
         }
     }
+
 
     void DefaultPathDialog::upDirectory() {
         int row = pathListWidget->currentRow();
@@ -151,6 +158,7 @@ namespace Kautham {
             pathListWidget->setCurrentRow(row-1);
         }
     }
+
 
     void DefaultPathDialog::downDirectory() {
         int row = pathListWidget->currentRow();

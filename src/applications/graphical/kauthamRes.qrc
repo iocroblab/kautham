@@ -1,41 +1,18 @@
 <RCC>
     <qresource prefix="/">
+	<file>kautham.html</file>
         <file>icons/tryconnect.xpm</file>
         <file>icons/connect.xpm</file>
         <file>icons/noconnect.xpm</file>
+        <file>icons/kth.png</file>
         <file>icons/logo_ioc.png</file>
         <file>icons/logo_eci.png</file>
-        <file>icons/phantom_off.xpm</file>
-        <file>icons/kth.png</file>
-        <file>icons/phantom_on.xpm</file>
-        <file>icons/populate.xpm</file>
-        <file>icons/prm.xpm</file>
-        <file>icons/rand.xpm</file>
-        <file>icons/robot.xpm</file>
-        <file>icons/vreta.xpm</file>
-        <file>icons/vrphi.xpm</file>
-        <file>icons/vrtheta.xpm</file>
-        <file>icons/vrx.xpm</file>
-        <file>icons/vry.xpm</file>
-        <file>icons/vrz.xpm</file>
-        <file>icons/vrzoom.xpm</file>
-        <file>icons/vseta.xpm</file>
-        <file>icons/vsphi.xpm</file>
-        <file>icons/vstheta.xpm</file>
-        <file>icons/vsx.xpm</file>
-        <file>icons/vsy.xpm</file>
-        <file>icons/vsz.xpm</file>
-        <file>icons/vszoom.xpm</file>
-        <file>kautham.html</file>
-        <file>icons/animate.xpm</file>
-        <file>icons/clrobot.xpm</file>
-        <file>icons/determ.xpm</file>
+        <file>icons/logo.svg</file>
         <file>icons/robot.png</file>
         <file>icons/home.png</file>
         <file>icons/obstacle.png</file>
         <file>icons/scale.png</file>
         <file>icons/link.png</file>
-        <file>icons/logo.svg</file>
         <file>icons/add_16x16.png</file>
         <file>icons/add_22x22.png</file>
         <file>icons/box_16x16.png</file>
@@ -48,6 +25,12 @@
         <file>icons/colors_32x32.png</file>
         <file>icons/colors_48x48.png</file>
         <file>icons/colors_64x64.png</file>
+	<file>icons/configure_16x16.png</file>
+        <file>icons/configure_22x22.png</file>
+        <file>icons/configure_32x32.png</file>
+	<file>icons/copy_16x16.png</file>
+        <file>icons/copy_22x22.png</file>
+        <file>icons/copy_32x32.png</file>
         <file>icons/down_16x16.png</file>
         <file>icons/down_22x22.png</file>
         <file>icons/exit_16x16.png</file>
@@ -85,14 +68,33 @@
         <file>icons/greybox_32x32.png</file>
         <file>icons/greybox_48x48.png</file>
         <file>icons/greybox_64x64.png</file>
-        <file>icons/remove_16x16.png</file>
+        <file>icons/greycolors_16x16.png</file>
+        <file>icons/greycolors_22x22.png</file>
+        <file>icons/greycolors_32x32.png</file>
+        <file>icons/greycolors_48x48.png</file>
+        <file>icons/greycolors_64x64.png</file>
+	<file>icons/left_16x16.png</file>
+        <file>icons/left_22x22.png</file>
+	<file>icons/pause_16x16.png</file>
+        <file>icons/pause_22x22.png</file>
+	<file>icons/reload_16x16.png</file>
+        <file>icons/reload_22x22.png</file>
+        <file>icons/reload_32x32.png</file>
+        <file>icons/reload_48x48.png</file>
+        <file>icons/reload_64x64.png</file>
+	<file>icons/remove_16x16.png</file>
         <file>icons/remove_22x22.png</file>
+	<file>icons/right_16x16.png</file>
+        <file>icons/right_22x22.png</file>
+	<file>icons/run_16x16.png</file>
+        <file>icons/run_22x22.png</file>
+        <file>icons/run_32x32.png</file>
+	<file>icons/up_16x16.png</file>
+        <file>icons/up_22x22.png</file>
         <file>icons/trashcan_16x16.png</file>
         <file>icons/trashcan_22x22.png</file>
         <file>icons/trashcan_32x32.png</file>
         <file>icons/trashcan_48x48.png</file>
         <file>icons/trashcan_64x64.png</file>
-        <file>icons/up_16x16.png</file>
-        <file>icons/up_22x22.png</file>
     </qresource>
 </RCC>

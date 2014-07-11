@@ -153,78 +153,111 @@ namespace Kautham {
   }
 
 
-  bool WorkSpace::collisionCheck(Sample* sample ) {
+  bool WorkSpace::collisionCheck(Sample* sample, string *message) {
+      stringstream sstr;
+      increaseCollCheckCounter();
 
-	  increaseCollCheckCounter();
-
-    vector<KthReal> tmpVec;
-    bool collision = false;
-    tmpVec.clear();
-    for(int j=0; j < getNumRobControls(); j++ )
-      tmpVec.push_back(sample->getCoords()[j]);
-
-    if(sample->getMappedConf().size() == 0){
-      for(unsigned int i=0; i< robots.size(); i++){
-        robots[i]->control2Pose(tmpVec);
-
-        //first is testing if the robots collide with the environment (obstacles)
-        for( unsigned int m = 0; m < obstacles.size(); m++){
-          if( robots[i]->collisionCheck(obstacles[m]) ){
-            collision = true;
-            break;
-          }
-          if(collision) break;
-        }
-        // second test if a robot collides with another one present in the workspace.
-        if( i > 0 ){
-          for( int k = i-1; k == 0; k--){
-            if( robots[i]->collisionCheck( robots[k] ) ){
-              collision = true;
-              break;
-            }
-          }
-          if(collision) break;
-        }
+      vector<KthReal> tmpVec;
+      bool collision = false;
+      tmpVec.clear();
+      for (int j=0; j < getNumRobControls(); j++) {
+          tmpVec.push_back(sample->getCoords()[j]);
       }
-    }else{
-      for(unsigned int i=0; i< robots.size(); i++){
-        robots[i]->Kinematics(sample->getMappedConf().at(i));
-        //first is testing if the robot collides with the environment (obstacles)
-        for( unsigned int m = 0; m < obstacles.size(); m++){
-          if( robots[i]->collisionCheck(obstacles[m]) ){
-            collision = true;
-            break;
+
+      if (sample->getMappedConf().size() == 0) {
+          for (uint i=0; i< robots.size(); i++) {
+              robots[i]->control2Pose(tmpVec);
+              //first is testing if the robots collide with the environment (obstacles)
+              for (uint m = 0; m < obstacles.size(); m++) {
+                  string str;
+                  if (robots[i]->collisionCheck(obstacles[m],&str)) {
+                      collision = true;
+                      sstr << "Robot " << i << " (" << robots[i]->getName()
+                           << ") is in collision with obstacle " << m << " ("
+                           << obstacles[m]->getName() << ")" << endl;
+                      sstr << str;
+                      break;
+                  }
+                  if (collision) break;
+              }
+              // second test if a robot collides with another one present in the workspace.
+              if (i > 0) {
+                  for (int k = i-1; k == 0; k--) {
+                      string str;
+                      if (robots[i]->collisionCheck(robots[k],&str)) {
+                          collision = true;
+                          sstr << "Robot " << i << " (" << robots[i]->getName()
+                               << ") is in collision with robot " << k << " ("
+                               << robots[k]->getName() << ")" << endl;
+                          sstr << str;
+                          break;
+                      }
+                  }
+                  if (collision) break;
+              }
+
+              // third test if a robot autocollides
+              string str;
+              if (robots[i]->autocollision(0,&str)) {
+                  collision = true;
+                  sstr << "Robot " << i << " (" << robots[i]->getName()
+                       << ") is in autocollision" << endl;
+                  sstr << str;
+                  break;
+              }
           }
-          if(collision) break;
-        }
-        // second test if the robot collides with another one present in the workspace.
-        // This validation is done with the robots validated previously.
-        if( i > 0 ){
-          for( int k = i-1; k >= 0; k--){
-            if( robots[i]->collisionCheck( robots[k] ) ){
-              collision = true;
-              break;
-            }
-          }
-          if(collision) break;
-        }
-      }
-    }
-
-    //the autoccolision procedures is called inside the collision_check with either obstacles
-    //or other robots, but if there are no obstacels and there is only a single robot we must
-    //call it here!
-    if(obstacles.size()==0 && robots.size()==1)
-        collision = robots[0]->autocollision();
-
-
-    // Here will be putted the configuration mapping 
-    sample->setMappedConf(_robConfigMap);
+      } else {
+          for (uint i=0; i< robots.size(); i++) {
+              robots[i]->Kinematics(sample->getMappedConf().at(i));
+              //first is testing if the robot collides with the environment (obstacles)
+              for (uint m = 0; m < obstacles.size(); m++) {
+                  string str;
+                  if (robots[i]->collisionCheck(obstacles[m],&str)) {
+                      collision = true;
+                      sstr << "Robot " << i << " (" << robots[i]->getName()
+                           << ") is in collision with obstacle " << m << " ("
+                           << obstacles[m]->getName() << ")" << endl;
+                      sstr << str;
+                      break;
+                  }
+                  if (collision) break;
+              }
+              // second test if the robot collides with another one present in the workspace.
+              // This validation is done with the robots validated previously.
+              if (i > 0) {
+                  for (int k = i-1; k >= 0; k--) {
+                      string str;
+                      if (robots[i]->collisionCheck(robots[k],&str)) {
+                          collision = true;
+                          sstr << "Robot " << i << " (" << robots[i]->getName()
+                               << ") is in collision with robot " << k << " ("
+                               << robots[k]->getName() << ")" << endl;
+                          sstr << str;
+                          break;
+                      }
+                  }
+                  if (collision) break;
+              }
     
-    if(collision) sample->setcolor(-1);
-      else sample->setcolor(1);
+              // third test if a robot autocollides
+              string str;
+              if (robots[i]->autocollision(0,&str)) {
+                  collision = true;
+                  sstr << "Robot " << i << " (" << robots[i]->getName()
+                       << ") is in autocollision" << endl;
+                  sstr << str;
+                  break;
+              }
+          }
+      }
 
-    return collision;
+      // Here will be putted the configuration mapping
+      sample->setMappedConf(_robConfigMap);
+
+      if (collision) sample->setcolor(-1);
+      else sample->setcolor(1);
+      if (message != NULL) *message = sstr.str();
+      return collision;
   }
 
   //! This method returns the distances between two samples smp1 and
@@ -313,8 +346,8 @@ namespace Kautham {
     _robConfigMap.clear();
     _robWeight.clear();
     for(unsigned int i = 0; i < robots.size(); i++){
-      _robConfigMap.push_back(((Robot*)robots.at(i))->getCurrentPos());
-      _robWeight.push_back(((Robot*)robots.at(i))->getRobWeight());
+      _robConfigMap.push_back(((Robot *)robots.at(i))->getCurrentPos());
+      _robWeight.push_back(((Robot *)robots.at(i))->getRobWeight());
     }
   }
       
@@ -342,7 +375,7 @@ namespace Kautham {
     }
 
     for(unsigned int i = 0; i < robots.size(); i++)
-      robots.at(i)->setProposedSolution(tmpRobPath[i]);
+      ((Robot *)robots.at(i))->setProposedSolution(tmpRobPath[i]);
 
     for(unsigned int i = 0; i < robots.size(); i++)
       tmpRobPath.at(i).clear();
@@ -360,10 +393,10 @@ namespace Kautham {
 
   void WorkSpace::setPathVisibility(bool vis){
     for(size_t i = 0; i < robots.size(); i++ )
-      robots.at(i)->setPathVisibility( vis );
+      ((Robot *)robots.at(i))->setPathVisibility( vis );
   }
 
-  bool WorkSpace::attachObstacle2RobotLink(string robot, string link, unsigned int obs ){
+  bool WorkSpace::attachObstacle2RobotLink(string robot, string link, uint obs ){
     return false;
   }
 
