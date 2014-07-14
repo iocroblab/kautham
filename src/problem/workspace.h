@@ -85,6 +85,10 @@ namespace Kautham{
       //! This method detaches an object previously attached to a Robot link.
       bool                  detachObstacleFromRobotLink(string robot, string link );
 
+      void removeRobot(int index);
+      void removeObstacle(int index);
+
+
       static void           resetCollCheckCounter();
       static unsigned int   getCollCheckCounter();
       static void           increaseCollCheckCounter();
