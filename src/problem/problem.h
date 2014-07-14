@@ -117,6 +117,8 @@ namespace Kautham {
     //bool			              createWSpace(ProbStruc *reader);
 
     bool                    createPlanner(string name, ompl::geometric::SimpleSetup *ssptr = NULL);
+    bool                    createPlannerFromFile(ifstream *xml_inputfile, ompl::geometric::SimpleSetup *ssptr = NULL);
+    bool                    createPlannerFromFile(string problemFile, ompl::geometric::SimpleSetup *ssptr = NULL);
     bool                    createPlannerFromFile(pugi::xml_document *doc, ompl::geometric::SimpleSetup *ssptr = NULL);
     bool                    createCSpace();
     bool                    createCSpaceFromFile(pugi::xml_document *doc);
@@ -151,6 +153,10 @@ namespace Kautham {
     bool                    setupFromFile(string xml_doc, vector <string> def_path = vector <string>(), bool useBBOX = false);
     bool                    setupFromFile(ifstream* xml_inputfile, string models_dir = "", bool useBBOX = false);
     bool                    setupFromFile(pugi::xml_document *doc, bool useBBOX);
+    bool addRobot2WSpace(string robFile, KthReal scale, vector<KthReal> home,
+                           vector< vector<KthReal> > limits);
+    bool addObstacle2WSpace(string robFile, KthReal scale, vector<KthReal> home,
+                           vector< vector<KthReal> > limits);
 
 
     //! This method saves the information of the problem's planner . 
@@ -159,7 +165,73 @@ namespace Kautham {
     //! problem file and adds the planner's attributes.
     bool                    saveToFile(string file_path = "");
 
-  
+    /*!
+     * \brief loads the robot controls file,
+     creates the controls, adds them to the workspace and creates the mapMatrix and
+     offMatrix of every robot. All the robots must have already been loaded.
+     * \param inputfile stream where controls are defined
+     * \return true if controls could be loaded to the workspace
+     */
+    bool setRobotControls(ifstream *inputfile);
+
+    /*!
+     * \brief loads the robot controls file,
+     creates the controls, adds them to the workspace and creates the mapMatrix and
+     offMatrix of every robot. All the robots must have already been loaded.
+     * \param cntrFile file where controls are defined
+     * \return true if controls could be loaded to the workspace
+     */
+    bool setRobotControls(string cntrFile);
+
+    /*!
+     * \brief loads the robot controls file,
+     creates the controls, adds them to the workspace and creates the mapMatrix and
+     offMatrix of every robot. All the robots must have already been loaded.
+     * \param doc document where controls are defined
+     * \return true if controls could be loaded to the workspace
+     */
+    bool setRobotControls(xml_document *doc);
+
+    /*!
+     * \brief creates the default controls, adds them to the workspace and creates the mapMatrix and
+     offMatrix of every robot. All the robots must have already been loaded.
+     * \return true if controls could be loaded to the workspace
+     */
+    bool setDefaultRobotControls();
+
+    /*!
+     * \brief loads the obstacle controls file of the problem file,
+     creates the controls, adds them to the workspace and creates the mapMatrix and
+     offMatrix of every osbtacle. All the obstacles must have already been loaded.
+     * \param inputfile stream where controls are defined
+     * \return true if controls could be loaded to the workspace
+     */
+    bool setObstacleControls(ifstream *inputfile);
+
+    /*!
+     * \brief loads the obstacle controls file of the problem file,
+     creates the controls, adds them to the workspace and creates the mapMatrix and
+     offMatrix of every osbtacle. All the obstacles must have already been loaded.
+     * \param cntrFile file where controls are defined
+     * \return true if controls could be loaded to the workspace
+     */
+    bool setObstacleControls(string cntrFile);
+
+    /*!
+     * \brief loads the obstacle controls file of the problem file,
+     creates the controls, adds them to the workspace and creates the mapMatrix and
+     offMatrix of every osbtacle. All the obstacles must have already been loaded.
+     * \param doc document where controls are defined
+     * \return true if controls could be loaded to the workspace
+     */
+    bool setObstacleControls(xml_document *doc);
+
+    /*!
+     * \brief creates fixed controls, adds them to the workspace and creates the mapMatrix and
+     offMatrix of every osbtacle. All the obstacles must have already been loaded.
+     * \return true if controls could be loaded to the workspace
+     */
+    bool setFixedObstacleControls();
 
   private:
     const static KthReal    _toRad;
@@ -183,30 +255,12 @@ namespace Kautham {
     bool addRobot2WSpace(xml_node *robot_node, bool useBBOX);
 
     /*!
-     * \brief loads the robot controls file of the problem file,
-     creates the controls, adds them to the workspace and creates the mapMatrix and
-     offMatrix of every robot. All the robots must have already been loaded.
-     * \param cntrFile file where controls are defined
-     * \return true if controls could be loaded to the workspace
-     */
-    bool setRobotControls(string cntrFile);
-
-    /*!
      * \brief loads an obstacle node of the problem file,
      creates the obstacle and adds it to the workspace
      * \param obstacle_node obstacle node with the information of the obstacle
      to add to the workspace
      */
     bool addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX);
-
-    /*!
-     * \brief loads the obstacle controls file of the problem file,
-     creates the controls, adds them to the workspace and creates the mapMatrix and
-     offMatrix of every osbtacle. All the obstacles must have already been loaded.
-     * \param cntrFile file where controls are defined
-     * \return true if controls could be loaded to the workspace
-     */
-    bool setObstacleControls(string cntrFile);
 
     /*!
      * \brief isFileOK checks if all the information required
