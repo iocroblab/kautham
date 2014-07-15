@@ -25,11 +25,9 @@
 #include "benchmark.h"
 
 
-bool Benchmark::set(xml_node *bm_node, string dir) {
+bool Benchmark::set(xml_node *bm_node, string dir, vector<string> def_path) {
     xml_node node;
     bool ok = true;
-
-
 
     if (bm_node->attribute("Name")) {
         name = bm_node->attribute("Name").as_string();
@@ -39,7 +37,7 @@ bool Benchmark::set(xml_node *bm_node, string dir) {
 
     node = bm_node->child("Problem");
     while (node && ok) {
-        ok &= add_problem(dir + node.attribute("File").as_string());
+        ok &= add_problem(dir + node.attribute("File").as_string(), def_path);
 
         node = node.next_sibling("Problem");
     }
@@ -82,12 +80,16 @@ void Benchmark::clear() {
 }
 
 
-bool Benchmark::add_problem(string prob_file) {
+bool Benchmark::add_problem(string prob_file, vector<string> def_path) {
     Problem *prob = new Problem();
     cout << "Adding problem number " << problem.size()+1 << endl;
+    string dir = prob_file.substr(0,prob_file.find_last_of("/")+1);
+    def_path.push_back(dir);
+    def_path.push_back(dir+"../../models/");
+
     if (problem.size() == 0) {
-        if (prob->setupFromFile(prob_file)) {
-            if (prob->getPlanner()->getFamily() == "ompl") {
+        if (prob->setupFromFile(prob_file,def_path)) {
+            if (prob->getPlanner()->getFamily() == Kautham::OMPLPLANNER) {
                 problem.push_back(prob);
                 bm = new ompl::tools::Benchmark(*(((omplplanner::omplPlanner*)prob->
                                                    getPlanner())->SimpleSetup()),name);
@@ -108,7 +110,7 @@ bool Benchmark::add_problem(string prob_file) {
         if (prob->createPlannerFromFile(
                     doc,((omplplanner::omplPlanner*)problem.at(0)->getPlanner())->
                     SimpleSetup())) {
-            if (prob->getPlanner()->getFamily() == "ompl") {
+            if (prob->getPlanner()->getFamily() == Kautham::OMPLPLANNER) {
                 problem.push_back(prob);
                 bm->addPlanner(((omplplanner::omplPlanner*)prob->getPlanner())->
                                SimpleSetupPtr()->getPlanner());
@@ -161,7 +163,7 @@ bool Benchmark::add_parameter(xml_node *param_node) {
 }
 
 
-void benchmark(string file) {
+void benchmark(string file, vector <string> def_path) {
     cout << "Kautham is opening the benchmarking file: " << file << endl;
     string dir = file.substr(0,file.find_last_of("/")+1);
     fstream fin;
@@ -182,7 +184,7 @@ void benchmark(string file) {
                 i++;
                 cout << "Reading benchmark number " << i << endl;
 
-                if(bm.set(&bm_node, dir)) {//benchmark could be set
+                if(bm.set(&bm_node, dir, def_path)) {//benchmark could be set
                     cout << "Running benchmark number " << i << endl;
                     bm.run();
 

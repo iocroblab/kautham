@@ -117,7 +117,7 @@ namespace Kautham {
     //bool			              createWSpace(ProbStruc *reader);
 
     bool                    createPlanner(string name, ompl::geometric::SimpleSetup *ssptr = NULL);
-    bool                    createPlannerFromFile(ifstream *xml_inputfile, ompl::geometric::SimpleSetup *ssptr = NULL);
+    bool                    createPlannerFromFile(istream *xml_inputfile, ompl::geometric::SimpleSetup *ssptr = NULL);
     bool                    createPlannerFromFile(string problemFile, ompl::geometric::SimpleSetup *ssptr = NULL);
     bool                    createPlannerFromFile(pugi::xml_document *doc, ompl::geometric::SimpleSetup *ssptr = NULL);
     bool                    createCSpace();
@@ -151,7 +151,7 @@ namespace Kautham {
     inline string           getFilePath(){return _filePath;}
     bool                    inheritSolution();
     bool                    setupFromFile(string xml_doc, vector <string> def_path = vector <string>(), bool useBBOX = false);
-    bool                    setupFromFile(ifstream* xml_inputfile, string models_dir = "", bool useBBOX = false);
+    bool                    setupFromFile(istream *xml_inputfile, vector <string> def_path = vector <string>(), bool useBBOX = false);
     bool                    setupFromFile(pugi::xml_document *doc, bool useBBOX);
     bool addRobot2WSpace(string robFile, KthReal scale, vector<KthReal> home,
                            vector< vector<KthReal> > limits);
@@ -172,7 +172,7 @@ namespace Kautham {
      * \param inputfile stream where controls are defined
      * \return true if controls could be loaded to the workspace
      */
-    bool setRobotControls(ifstream *inputfile);
+    bool setRobotControls(istream *inputfile);
 
     /*!
      * \brief loads the robot controls file,
@@ -206,7 +206,7 @@ namespace Kautham {
      * \param inputfile stream where controls are defined
      * \return true if controls could be loaded to the workspace
      */
-    bool setObstacleControls(ifstream *inputfile);
+    bool setObstacleControls(istream *inputfile);
 
     /*!
      * \brief loads the obstacle controls file of the problem file,
