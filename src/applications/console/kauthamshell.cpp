@@ -32,10 +32,10 @@
 namespace ob = ompl::base;
 
 namespace Kautham {
-    bool kauthamshell::openProblem(ifstream* inputfile, string modelsfolder) {
+    bool kauthamshell::openProblem(ifstream* inputfile, vector <string> def_path) {
         try {
             _problem = new Problem();
-            if (_problem->setupFromFile(inputfile,modelsfolder)) {
+            if (_problem->setupFromFile(inputfile,def_path)) {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
                 _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
                 return true;
@@ -47,25 +47,15 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::openProblem(string problemfilename, string modelsfolder) {
+    bool kauthamshell::openProblem(string problemfilename, vector <string> def_path) {
         try {
             std::cout << "Kautham is opening a problem file: " << problemfilename << endl;
 
             _problem = new Problem();
-            if (modelsfolder == "") {
-                if (_problem->setupFromFile(problemfilename)) {
-                    _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
-                    _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
-                    return true;
-                }
-            } else {
-                vector<string> def_path;
-                def_path.push_back(modelsfolder);
-                if (_problem->setupFromFile(problemfilename,def_path)) {
-                    _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
-                    _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
-                    return true;
-                }
+            if (_problem->setupFromFile(problemfilename,def_path)) {
+                _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
+                _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
+                return true;
             }
 
             return false;
