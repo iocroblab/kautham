@@ -360,7 +360,7 @@ bool Application::problemSetup(string problemFile){
             def_path.push_back(pathList.at(i).toStdString()+"/");
         }
     } else {
-        def_path.push_back(dir+string("/../../models/"));
+        def_path.push_back(dir+string("../../models/"));
     }
     bool useBBOX = settings->value("use_BBOX","false").toBool();
 

@@ -290,7 +290,7 @@ namespace Kautham {
   }
 
 
-  bool Problem::createPlannerFromFile(ifstream *xml_inputfile, ompl::geometric::SimpleSetup *ssptr) {
+  bool Problem::createPlannerFromFile(istream *xml_inputfile, ompl::geometric::SimpleSetup *ssptr) {
       xml_document *doc = new xml_document;
       if(doc->load( *xml_inputfile )) {
           //if the file was correctly parsed
@@ -634,12 +634,11 @@ namespace Kautham {
   }
 
 
-  bool Problem::setupFromFile(ifstream* xml_inputfile, string models_dir, bool useBBOX) {
-      _filePath = models_dir;
-      vector <string> def_path;
-      def_path.push_back(models_dir);
+  bool Problem::setupFromFile(istream* xml_inputfile, vector <string> def_path, bool useBBOX) {
+      _filePath = def_path.at(0);
       xml_document *doc = new xml_document;
-      if(doc->load( *xml_inputfile )) {
+      xml_parse_result result = doc->load( *xml_inputfile );
+      if(result) {
           //if the file was correctly parsed
           if (prepareFile(doc, def_path)) {
               //if everything seems to be OK, try to setup the problem
@@ -648,6 +647,11 @@ namespace Kautham {
               return false;
           }
       } else {
+          string message = "Problem file " + _filePath + " couldn't be parsed";
+          stringstream details;
+          details << "Error: " << result.description() << endl <<
+                     "Last successfully parsed character: " << result.offset;
+          throw KthExcp(message,details.str());
           return false;
       }
   }
@@ -912,7 +916,7 @@ namespace Kautham {
   }
 
 
-  bool Problem::setRobotControls(ifstream* inputfile) {
+  bool Problem::setRobotControls(istream *inputfile) {
       xml_document *doc = new xml_document;
       if (!doc->load(*inputfile)) return false;
       return setRobotControls(doc);
@@ -1393,7 +1397,7 @@ namespace Kautham {
   }
 
 
-  bool Problem::setObstacleControls(ifstream *inputfile) {
+  bool Problem::setObstacleControls(istream *inputfile) {
       xml_document *doc = new xml_document;
       if (!doc->load(*inputfile)) return false;
       return setObstacleControls(doc);

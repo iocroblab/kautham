@@ -51,9 +51,10 @@ public:
      * \param bm_node benchmarking node where problems to be run and the
      benchmarking parameters are defined
      * \param dir relative path where problems files will be looked for
+     * \param def_path is the set of folders where the models will be looked for
      * \return true if benchmarking setting succeed
      */
-    bool set(xml_node *bm_node, string dir);
+    bool set(xml_node *bm_node, string dir, vector<string> def_path);
 
     /*!
      * \brief runs the benchmarking previously set
@@ -120,11 +121,17 @@ private:
     string name;
 
     /*!
+     * \brief def_path is the set of folders where the models will be looked for
+     */
+    vector <string> def_path;
+
+    /*!
      * \brief adds a problem to the benchmarking
      * \param prob_file problem description file of the problem to be added
+     * \param def_path is the set of folders where the models will be looked for
      * \return true if the problem could be added
      */
-    bool add_problem(string prob_file);
+    bool add_problem(string prob_file, vector<string> def_path);
 
     /*!
      * \brief sets a request parameter
@@ -137,8 +144,9 @@ private:
 /*!
  * \brief loads a the benchmarking to be run and tries to run them
  * \param file benchmarking file where all benchmarking to be run are defined
+ * \param def_path is the set of folders where the models will be looked for
  */
-void benchmark(string file);
+void benchmark(string file, vector<string> def_path = vector<string>());
 
 
 /** @}   end of Doxygen module "Application" */

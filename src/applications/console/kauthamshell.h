@@ -38,8 +38,8 @@ namespace Kautham {
         inline ~kauthamshell(){} //! Destructor
         inline void closeProblem() {delete _problem;}
         inline bool problemOpened() {return(_problem != NULL);} //! Informs wether there is a problem opened;
-        bool openProblem(ifstream* inputfile, string modelsfolder = "");
-        bool openProblem(string problemfilename, string modelsfolder);
+        bool openProblem(ifstream* inputfile, vector<string> def_path = vector<string>());
+        bool openProblem(string problemfilename, vector<string> def_path);
         bool checkCollision(vector<KthReal> smpcoords);
         void setRobotsConfig(vector<KthReal> smpcoords);
         void setObstaclesConfig(vector<KthReal> smpcoords);
