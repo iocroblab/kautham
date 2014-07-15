@@ -40,6 +40,16 @@
 
 using namespace std;
 
+class membuf : public basic_streambuf<char>
+{
+public:
+  membuf(char* p, size_t n) {
+    setg(p, p, p + n);
+    setp(p, p + n);
+  }
+};
+
+
 int main(int argc, char* argv[]){   
 
 #ifdef KAUTHAM_USE_MPI
@@ -52,24 +62,28 @@ int main(int argc, char* argv[]){
 #endif
 
 
-  if( (argc > 1 && string(argv[1]) == "-h") ||
-      (argc != 3 && argc != 2) ||
-      (argc > 1 && string(argv[1]) != "-h" && string(argv[1]) != "-s" && string(argv[1]) != "-b")){//print help info
+  if ((argc > 1 && string(argv[1]) == "-h") ||
+      (argc < 2 || argc > 5) ||
+      ((argc == 3 || argc == 4) && string(argv[1]) != "-t" && string(argv[1]) != "-s" && string(argv[1]) != "-b") ||
+      (argc == 5 && string(argv[1]) != "-b")){//print help info
     std::cout << "\nKautham console has been called with an invalid number of parameters "
-      << "or you want to read this help. "
+      << "or you want to read this help.\n"
       << "The correct way to run this program is as follow:\n\n"
       << "If you want to benchmark OMPL planners:\n"
-      << "\t KauthamConsole -b xml_benchmarking_file\n"
-      << "where xml_benchmarking_file is a relative path of the benchamrk to be solved \n\n"
+      << "\t KauthamConsole -b xml_benchmarking_file [models_folder]\n"
+      << "where xml_benchmarking_file is a relative path of the benchmark to be solved and "
+      << "models_folder is an optional parameter to specify where the models must be looked for.\n\n"
       << "Or if you want to benchmark IOC planners:\n"
-      << "\t KauthamConsole -b xml_problem_file number_of_runs\n"
-      << "where xml_problem_file is a relative path of the problem to be solved "
-      << "and the number_of_runs is the integer number that the problem is trying to be "
-      << "solved.\n\n"
+      << "\t KauthamConsole -b xml_problem_file number_of_runs [models folder]\n"
+      << "where xml_problem_file is a relative path of the problem to be solved and "
+      << "the number_of_runs is the integer number that the problem is trying to be solved.\n\n"
+      << "Or if you want to test the kauthamshell utilities:\n"
+      << "\t KauthamConsole -t xml_problem_file [models_folder]\n\n"
       << "Or if you want to execute a single problem:\n"
-      << "\t KauthamConsole -s xml_problem_file\n\n"
+      << "\t KauthamConsole -s xml_problem_file [models_folder]\n\n"
       << "Please take care with the relative paths where robots files and "
-      << "scenes files are located relative to the problem file.\n\n";
+      << "scenes files are located, e.g.:\n"
+      << "Kauthamconsole -s ../../../../../demos/OMPL_demos/2DRR/OMPL_RRTConnect_2DRR_columns.xml\n\n";
 
     return 0;
   }
@@ -85,12 +99,16 @@ int main(int argc, char* argv[]){
       absPath.append( argv[2] );
 
       //directory containing the models
-      if(argc == 2) {
-          dir=absPath;
-          dir.erase(dir.find_last_of("/") + 1, dir.length());
-      } else {
-          dir=argv[1];
+      vector <string> def_path;
+      if (argc == 4) {
+          def_path.push_back(argv[3]);
       }
+      def_path.push_back(dir);
+      def_path.push_back(dir+"/../../models/");
+      dir = absPath.substr(0,absPath.find_last_of("/")+1);
+      def_path.push_back(dir);
+      def_path.push_back(dir+"/../../models/");
+
       try{
           kauthamshell* ksh = new kauthamshell();
 
@@ -98,7 +116,7 @@ int main(int argc, char* argv[]){
 
           ifstream inputfile;
           inputfile.open(absPath.c_str());
-          if(ksh->openProblem(&inputfile, dir.c_str())==true)
+          if(ksh->openProblem(&inputfile, def_path)==true)
               cout << "The problem file has been loaded successfully.\n";
           else{
               cout << "The problem file has not been loaded successfully."
@@ -107,10 +125,90 @@ int main(int argc, char* argv[]){
            }
 
             if(ksh->solve(std::cout)){
-                cout << "The problem has been solve successfully.\n";
+                cout << "The problem has been solved successfully.\n";
             }
             else{
-              cout << "The problem has NOT been solve successfully.\n";
+              cout << "The problem has NOT been solved successfully.\n";
+            }
+      }catch(...){
+        cout << "Something is wrong with the problem. Please run the "
+          << "problem with the Kautham2 application at less once in order "
+          << "to verify the correctness of the problem formulation.\n";
+        return 1;
+      }
+      return 0;
+  }
+  //test of kauthamshell options
+  else if(string(argv[1]) == "-t")
+  {
+
+      try{
+          kauthamshell* ksh = new kauthamshell();
+
+          //if(ksh->openProblem(absPath.c_str())==true)
+
+          //ifstream inputfile;
+          //std::filebuf* pbuf = inputfile.rdbuf();
+          //stringstream inputfile;
+          //std::streambuf* pbuf = inputfile.rdbuf();
+
+          string buffstring = "<?xml version=\"1.0\"?>"
+                  "<Problem name=\"OMPL_RRTstar_2DRR_columns\">"
+                  "    <Robot robot=\"robots/2DRR.dh\" scale=\"1.0\">"
+                  "        <InvKinematic name=\"RR2D\">"
+                  "    </Robot>"
+                  "    <Obstacle obstacle=\"obstacles/columns.iv\" scale=\"0.5\">"
+                  "        <Home TH=\"0.0\" WZ=\"1.0\" WY=\"0.0\" WX=\"0.0\" Z=\"0.0\" Y=\"50.0\" X=\"150.0\" />"
+                  "    </Obstacle>"
+                  "    <Controls robot=\"controls/2DRR_2dof.cntr\" />"
+                  "    <Planner>"
+                  "      <Parameters>"
+                  "            <Name>omplRRTStar</Name>"
+                  "            <Parameter name=\"Max Planning Time\">10.0</Parameter>"
+                  "            <Parameter name=\"Speed Factor\">1</Parameter>"
+                  "            <Parameter name=\"Range\">0.05</Parameter>"
+                  "            <Parameter name=\"Goal Bias\">0.05</Parameter>"
+                  "            <Parameter name=\"Optimize none(0)/dist(1)/clear(2)/PMD(3)\">3</Parameter>"
+                  "            <Parameter name=\"Simplify Solution\">1</Parameter>"
+                  "        </Parameters>"
+                  "        <Queries>"
+                  "            <Query>"
+                  "                <Init dim=\"2\">0.574 0.687</Init>"
+                  "                <Goal dim=\"2\">0.431 0.69</Goal>"
+                  "            </Query>"
+                  "        </Queries>"
+                  "    </Planner>"
+                  "</Problem>";
+          size_t size = buffstring.size();
+          char *buffer = new char[size];
+          for(int i=0; i<size;i++)
+              buffer[i] = buffstring[i];
+
+          membuf mb(buffer, size);
+          istream reader(&mb);
+
+          //char *buffer = new char[size];
+          //pbuf->sputn (buffer,size);
+          //char *outputbuffer = new char[size];
+          //outputbuffer = inputfile.get();
+          //pbuf->sputn(outputbuffer,size);
+          cout.write (buffer,size);
+
+          //inputfile.open(absPath.c_str());
+          //if(ksh->openProblem((ifstream*)&inputfile,"")==true)
+          if(ksh->openProblem((ifstream*)&reader)==true)
+              cout << "The problem file has been loaded successfully.\n";
+          else{
+              cout << "The problem file has not been loaded successfully."
+                   << "Please take care with the problem definition.\n";
+              throw(1);
+           }
+
+            if(ksh->solve(std::cout)){
+                cout << "The problem has been solved successfully.\n";
+            }
+            else{
+              cout << "The problem has NOT been solved successfully.\n";
             }
 
 
@@ -124,8 +222,8 @@ int main(int argc, char* argv[]){
   }
   //benchmarking
   else if(string(argv[1]) == "-b")
-  {
-    if (argc == 4) {//IOC planners benchmarking
+  { 
+    if (argc>3 && atoi(argv[3]) != 0) {//IOC planners benchmarking
       //=====================
       SoDB::init();
 
@@ -162,13 +260,30 @@ int main(int argc, char* argv[]){
 #ifdef KAUTHAM_USE_MPI 
           tryTimes /= numProcs;
 #endif
-          cout << "The problem will be tried to solve " << tryTimes << " times.\n" ;
+          cout << "The problem will be tried to be solved " << tryTimes << " times.\n" ;
           int badSol = 0;
           Problem* _problem = new Problem();
           stringstream ss;
           ss.str(soluFile);
 
-          if( _problem->setupFromFile( absPath ) ){
+          string dir = argv[0];
+          dir.erase(dir.find_last_of("/") + 1, dir.length());
+          string absPath = dir;
+          absPath.append( argv[2] );
+
+          //directory containing the models
+          vector <string> def_path;
+          if (argc == 4) {
+              def_path.push_back(argv[3]);
+          }
+          def_path.push_back(dir);
+          def_path.push_back(dir+"/../../models/");
+          dir = absPath.substr(0,absPath.find_last_of("/")+1);
+          def_path.push_back(dir);
+          def_path.push_back(dir+"/../../models/");
+
+
+          if( _problem->setupFromFile( absPath, def_path ) ){
               cout << "The problem file has been loaded successfully.\n";
               IOC::iocPlanner* _planner = (IOC::iocPlanner*)_problem->getPlanner();
               SampleSet* _samples = _problem->getSampleSet();
@@ -317,7 +432,16 @@ int main(int argc, char* argv[]){
   {//OMPL planners benchmarking
       SoDB::init();
 
-      benchmark(string(argv[2]));
+      //directory containing the models
+      vector <string> def_path;
+      if (argc == 4) {
+          def_path.push_back(argv[3]);
+      }
+      string dir = argv[0];
+      def_path.push_back(dir);
+      def_path.push_back(dir+"/../../models/");
+
+      benchmark(string(argv[2]),def_path);
 
       return (0);
   }//end ompl benchmarking
