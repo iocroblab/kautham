@@ -712,12 +712,12 @@ namespace Kautham {
               pdef_->addSolutionPath (psol);
 
               //JAN
-              cout<<"path with " << geoPath->getStateCount()<<" states"<<endl;
-              cout<<"addedSolution with cost = "<<mpath[0]->cost.v<<endl;
+              //cout<<"path with " << geoPath->getStateCount()<<" states"<<endl;
+              //cout<<"addedSolution with cost = "<<mpath[0]->cost.v<<endl;
               //print incremental cost
-              for(int i=mpath.size()-1; i>=0;i--)
-                  cout<<" "<<mpath[i]->cost.v<<endl;
-              cout<<endl;
+              //for(int i=mpath.size()-1; i>=0;i--)
+              //    cout<<" "<<mpath[i]->cost.v<<endl;
+              //cout<<endl;
 
               ob::Cost pathcost = (pdef_->getSolutionPath())->cost(opt_);
               og::PathGeometric *gP = (og::PathGeometric *)pdef_->getSolutionPath().get();

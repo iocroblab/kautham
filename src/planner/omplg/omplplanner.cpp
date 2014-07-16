@@ -1595,8 +1595,8 @@ else if(y<ypmin) ypmin=y;
                 else if(_simplify==2) {//shorten and smoot
                     ss->simplifySolution();
                 }
-                std::cout<<"Path: ";
-                ss->getSolutionPath().print(std::cout);
+                //std::cout<<"Path: ";
+                //ss->getSolutionPath().print(std::cout);
 
                 ss->getSolutionPath().interpolate();
 
