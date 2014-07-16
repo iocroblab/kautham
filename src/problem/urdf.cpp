@@ -138,6 +138,29 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         submodel->addChild(rot);
     }
 
+    if (node->child("material").child("color")) {
+        xml_node color_node = node->child("material").child("color");
+
+        double rgba[4];
+        string tmpString = color_node.attribute("rgba").as_string();
+        istringstream ss( tmpString );
+        getline(ss,tmpString,' ');
+        rgba[0] = atof(tmpString.c_str());
+        getline(ss,tmpString,' ');
+        rgba[1] = atof(tmpString.c_str());
+        getline(ss,tmpString,' ');
+        rgba[2] = atof(tmpString.c_str());
+        getline(ss,tmpString,' ');
+        rgba[3] = atof(tmpString.c_str());
+
+        SoMaterial *material = new SoMaterial;
+
+        material->diffuseColor.setValue(rgba[0],rgba[1],rgba[2]);
+        material->transparency.setValue(1.0-rgba[3]);
+
+        submodel->addChild(material);
+    }
+
     xml_node geom_node = node->child("geometry").first_child();
     string geom_type = geom_node.name();
     if (geom_type == "box") {
