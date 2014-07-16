@@ -64,55 +64,48 @@ int main(int argc, char* argv[]){
 
   if ((argc > 1 && string(argv[1]) == "-h") ||
       (argc < 2 || argc > 5) ||
-      ((argc == 3 || argc == 4) && string(argv[1]) != "-t" && string(argv[1]) != "-s" && string(argv[1]) != "-b") ||
+      (argc == 3 && string(argv[1]) != "-t" && string(argv[1]) != "-s") ||
+      (argc == 4 && string(argv[1]) != "-s" && string(argv[1]) != "-b") ||
       (argc == 5 && string(argv[1]) != "-b")){//print help info
     std::cout << "\nKautham console has been called with an invalid number of parameters "
       << "or you want to read this help.\n"
       << "The correct way to run this program is as follow:\n\n"
       << "If you want to benchmark OMPL planners:\n"
-      << "\t KauthamConsole -b xml_benchmarking_file [models_folder]\n"
+      << "\t KauthamConsole -b abs_path_xml_benchmarking_file [abs_path_models_folder]\n"
       << "where xml_benchmarking_file is a relative path of the benchmark to be solved and "
       << "models_folder is an optional parameter to specify where the models must be looked for.\n\n"
       << "Or if you want to benchmark IOC planners:\n"
-      << "\t KauthamConsole -b xml_problem_file number_of_runs [models folder]\n"
+      << "\t KauthamConsole -b abs_path_xml_problem_file number_of_runs [abs_path_models folder]\n"
       << "where xml_problem_file is a relative path of the problem to be solved and "
       << "the number_of_runs is the integer number that the problem is trying to be solved.\n\n"
       << "Or if you want to test the kauthamshell utilities:\n"
-      << "\t KauthamConsole -t xml_problem_file [models_folder]\n\n"
+      << "\t KauthamConsole -t abs_path_of_models_folder\n\n"
       << "Or if you want to execute a single problem:\n"
-      << "\t KauthamConsole -s xml_problem_file [models_folder]\n\n"
-      << "Please take care with the relative paths where robots files and "
-      << "scenes files are located, e.g.:\n"
-      << "Kauthamconsole -s ../../../../../demos/OMPL_demos/2DRR/OMPL_RRTConnect_2DRR_columns.xml\n\n";
+      << "\t KauthamConsole -s abs_path_xml_problem_file [abs_path_of_models_folder]\n\n";
 
     return 0;
   }
 
   //single problem execution (from shell)
+  //call: KauthamConsole -s abs_path_xml_problem_file [abs_path_of_models_folder]
+  //e.g. KauthamConsole -s /home/jan.rosell/kautham.git/demos/OMPL_demos/2DRR/OMPL_RRT_2DRR_columns.xml /home/jan.rosell/kautham.git/demos/models
   if(string(argv[1]) == "-s")
   {
       //=====================
       SoDB::init();
-      string dir = argv[0];
-      dir.erase(dir.find_last_of("/") + 1, dir.length());
-      string absPath = dir;
-      absPath.append( argv[2] );
+      string absPath = argv[2];
 
       //directory containing the models
       vector <string> def_path;
       if (argc == 4) {
           def_path.push_back(argv[3]);
       }
+      string dir = absPath.substr(0,absPath.find_last_of("/")+1);
       def_path.push_back(dir);
-      def_path.push_back(dir+"/../../models/");
-      dir = absPath.substr(0,absPath.find_last_of("/")+1);
-      def_path.push_back(dir);
-      def_path.push_back(dir+"/../../models/");
+      def_path.push_back(dir+"../../models/");
 
       try{
           kauthamshell* ksh = new kauthamshell();
-
-          //if(ksh->openProblem(absPath.c_str())==true)
 
           ifstream inputfile;
           inputfile.open(absPath.c_str());
@@ -139,46 +132,54 @@ int main(int argc, char* argv[]){
       return 0;
   }
   //test of kauthamshell options
+  //call: KauthamConsole -t abs_path_of_models_folder
+  //e.g. KauthamConsole -t /home/jan.rosell/kautham.git/demos/models/
   else if(string(argv[1]) == "-t")
   {
+      //=====================
+      SoDB::init();
+
+      //directory containing the models
+      vector <string> def_path;
+      def_path.push_back(argv[2]);
 
       try{
           kauthamshell* ksh = new kauthamshell();
 
-          //if(ksh->openProblem(absPath.c_str())==true)
-
-          //ifstream inputfile;
-          //std::filebuf* pbuf = inputfile.rdbuf();
-          //stringstream inputfile;
-          //std::streambuf* pbuf = inputfile.rdbuf();
-
-          string buffstring = "<?xml version=\"1.0\"?>"
-                  "<Problem name=\"OMPL_RRTstar_2DRR_columns\">"
-                  "    <Robot robot=\"robots/2DRR.dh\" scale=\"1.0\">"
-                  "        <InvKinematic name=\"RR2D\">"
-                  "    </Robot>"
-                  "    <Obstacle obstacle=\"obstacles/columns.iv\" scale=\"0.5\">"
-                  "        <Home TH=\"0.0\" WZ=\"1.0\" WY=\"0.0\" WX=\"0.0\" Z=\"0.0\" Y=\"50.0\" X=\"150.0\" />"
-                  "    </Obstacle>"
-                  "    <Controls robot=\"controls/2DRR_2dof.cntr\" />"
-                  "    <Planner>"
-                  "      <Parameters>"
-                  "            <Name>omplRRTStar</Name>"
-                  "            <Parameter name=\"Max Planning Time\">10.0</Parameter>"
-                  "            <Parameter name=\"Speed Factor\">1</Parameter>"
-                  "            <Parameter name=\"Range\">0.05</Parameter>"
-                  "            <Parameter name=\"Goal Bias\">0.05</Parameter>"
-                  "            <Parameter name=\"Optimize none(0)/dist(1)/clear(2)/PMD(3)\">3</Parameter>"
-                  "            <Parameter name=\"Simplify Solution\">1</Parameter>"
-                  "        </Parameters>"
-                  "        <Queries>"
-                  "            <Query>"
-                  "                <Init dim=\"2\">0.574 0.687</Init>"
-                  "                <Goal dim=\"2\">0.431 0.69</Goal>"
-                  "            </Query>"
-                  "        </Queries>"
-                  "    </Planner>"
-                  "</Problem>";
+          //
+          //Set the problem as a string.
+          //Do not add control file, unless it is available in the models folder
+          //If no control file is added then the default controls are defined
+          //which are 3 for the translation of the base plus the dof of each joint
+          //Then, take care of the query dimensions!
+          //
+          cout << "\n TESTING THE SETTING OF A PROBLEM WITH A STREAM - no controls defined, thus default ones are generated.\n";
+          string buffstring = "<?xml version=\"1.0\"?>\n"
+                  "<Problem name=\"OMPL_RRTstar_2DRR_columns\">\n"
+                  "    <Robot robot=\"robots/2DRR.dh\" scale=\"1.0\">\n"
+                  "        <InvKinematic name=\"RR2D\"/>\n"
+                  "    </Robot>\n"
+                  "    <Obstacle obstacle=\"obstacles/columns.iv\" scale=\"0.5\">\n"
+                  "        <Home TH=\"0.0\" WZ=\"1.0\" WY=\"0.0\" WX=\"0.0\" Z=\"0.0\" Y=\"50.0\" X=\"150.0\" />\n"
+                  "    </Obstacle>\n"
+                  "    <Planner>\n"
+                  "      <Parameters>\n"
+                  "            <Name>omplRRTStar</Name>\n"
+                  "            <Parameter name=\"Max Planning Time\">1.0</Parameter>\n"
+                  "            <Parameter name=\"Speed Factor\">1</Parameter>\n"
+                  "            <Parameter name=\"Range\">0.05</Parameter>\n"
+                  "            <Parameter name=\"Goal Bias\">0.05</Parameter>\n"
+                  "            <Parameter name=\"Optimize none(0)/dist(1)/clear(2)/PMD(3)\">3</Parameter>\n"
+                  "            <Parameter name=\"Simplify Solution\">1</Parameter>\n"
+                  "        </Parameters>\n"
+                  "        <Queries>\n"
+                  "            <Query>\n"
+                  "                <Init dim=\"5\">0.5 0.5 0.5 0.574 0.687</Init>\n"
+                  "                <Goal dim=\"5\">0.5 0.5 0.5 0.431 0.69</Goal>\n"
+                  "           </Query>\n"
+                  "        </Queries>\n"
+                  "    </Planner>\n"
+                  "</Problem>\n";
           size_t size = buffstring.size();
           char *buffer = new char[size];
           for(int i=0; i<size;i++)
@@ -186,17 +187,9 @@ int main(int argc, char* argv[]){
 
           membuf mb(buffer, size);
           istream reader(&mb);
-
-          //char *buffer = new char[size];
-          //pbuf->sputn (buffer,size);
-          //char *outputbuffer = new char[size];
-          //outputbuffer = inputfile.get();
-          //pbuf->sputn(outputbuffer,size);
           cout.write (buffer,size);
 
-          //inputfile.open(absPath.c_str());
-          //if(ksh->openProblem((ifstream*)&inputfile,"")==true)
-          if(ksh->openProblem((ifstream*)&reader)==true)
+          if(ksh->openProblem(&reader, def_path)==true)
               cout << "The problem file has been loaded successfully.\n";
           else{
               cout << "The problem file has not been loaded successfully."
@@ -204,12 +197,177 @@ int main(int argc, char* argv[]){
               throw(1);
            }
 
-            if(ksh->solve(std::cout)){
+            if(ksh->solve(std::cout))
                 cout << "The problem has been solved successfully.\n";
-            }
-            else{
+            else
               cout << "The problem has NOT been solved successfully.\n";
-            }
+
+//TESTING THE SETTING OF A PROBLEM WITH A FILE
+            cout << "\n TESTING THE SETTING OF A PROBLEM WITH A STREAM - controls defined with a control file (that exists in the models folder).\n";
+            buffstring = "<?xml version=\"1.0\"?>\n"
+                    "<Problem name=\"OMPL_RRTstar_2DRR_columns\">\n"
+                    "    <Robot robot=\"robots/2DRR.dh\" scale=\"1.0\">\n"
+                    "        <InvKinematic name=\"RR2D\"/>\n"
+                    "    </Robot>\n"
+                    "    <Obstacle obstacle=\"obstacles/columns.iv\" scale=\"0.5\">\n"
+                    "        <Home TH=\"0.0\" WZ=\"1.0\" WY=\"0.0\" WX=\"0.0\" Z=\"0.0\" Y=\"50.0\" X=\"150.0\" />\n"
+                    "    </Obstacle>\n"
+                    "    <Controls robot=\"controls/2DRR/2DRR_2dof.cntr\" />\n"
+                    "    <Planner>\n"
+                    "      <Parameters>\n"
+                    "            <Name>omplRRTStar</Name>\n"
+                    "            <Parameter name=\"Max Planning Time\">1.0</Parameter>\n"
+                    "            <Parameter name=\"Speed Factor\">1</Parameter>\n"
+                    "            <Parameter name=\"Range\">0.05</Parameter>\n"
+                    "            <Parameter name=\"Goal Bias\">0.05</Parameter>\n"
+                    "            <Parameter name=\"Optimize none(0)/dist(1)/clear(2)/PMD(3)\">3</Parameter>\n"
+                    "            <Parameter name=\"Simplify Solution\">1</Parameter>\n"
+                    "        </Parameters>\n"
+                    "        <Queries>\n"
+                    "            <Query>\n"
+                    "                <Init dim=\"2\">0.574 0.687</Init>\n"
+                    "                <Goal dim=\"2\">0.431 0.69</Goal>\n"
+                    "           </Query>\n"
+                    "        </Queries>\n"
+                    "    </Planner>\n"
+                    "</Problem>\n";
+            size_t size2 = buffstring.size();
+            char *buffer2 = new char[size2];
+            for(int i=0; i<size2;i++)
+                buffer2[i] = buffstring[i];
+
+            membuf mb2(buffer2, size2);
+            istream reader2(&mb2);
+            cout.write (buffer2,size2);
+
+            if(ksh->openProblem(&reader2, def_path)==true)
+                cout << "The problem file has been loaded successfully.\n";
+            else{
+                cout << "The problem file has not been loaded successfully."
+                     << "Please take care with the problem definition.\n";
+                throw(1);
+             }
+
+              if(ksh->solve(std::cout))
+                  cout << "The problem has been solved successfully.\n";
+              else
+                cout << "The problem has NOT been solved successfully.\n";
+
+//TESTING THE SETTING OF A NEW QUERY
+              //kauthamshell::setQuery(vector<KthReal> init, vector<KthReal> goal)
+              cout << "\n TESTING THE SETTING OF A NEW QUERY.\n";
+              vector<KthReal> init;
+              init.resize(2);
+              init[0] = 0.3;
+              init[1] = 0.3;
+              vector<KthReal> goal;
+              goal.resize(2);
+              goal[0] = 0.7;
+              goal[1] = 0.7;
+              ksh->setQuery(init, goal);
+              if(ksh->solve(std::cout))
+                  cout << "The problem has been solved successfully.\n";
+              else
+                cout << "The problem has NOT been solved successfully.\n";
+
+
+//TESTING THE SETTING OF NEW CONTROLS FROM FILE
+//bool setRobControls(istream* inputfile, vector<KthReal> init, vector<KthReal> goal);
+              cout << "\n TESTING THE CHANGE OF ROBOT CONTROLS WITH A NEW FILE.\n";
+              string new_control_file = string(argv[2])+"controls/2DRR/2DRR_2PMD.cntr";
+              ifstream inputfile;
+              inputfile.open(new_control_file.c_str());
+              init.resize(3);
+              init[0] = 0.5;
+              init[1] = 0.3574;
+              init[2] = 0.687;
+              goal.resize(3);
+              goal[0] = 0.5;
+              goal[1] = 0.431;
+              goal[2] = 0.69;
+              ksh->setRobControls(&inputfile, init, goal);
+              if(ksh->solve(std::cout))
+                  cout << "The problem has been solved successfully.\n";
+              else
+                cout << "The problem has NOT been solved successfully.\n";
+
+//TESTING THE SETTING OF NEW CONTROLS FROM STREAM
+              cout << "\n TESTING THE SETTING OF NEW CONTROLS FROM STREAM.\n";
+              buffstring = "<?xml version=\"1.0\"?>\n"
+                      "<ControlSet>\n"
+                      "  <Offset>\n"
+                      "    <DOF name=\"2D-Robot/link1\" value=\"0.5\"></DOF>\n"
+                      "    <DOF name=\"2D-Robot/link2\" value=\"0.5\"></DOF>\n"
+                      "  </Offset>\n"
+                      "  <Control name=\"PMD1\" eigValue=\"1.0\">\n"
+                      "    <DOF name=\"2D-Robot/link1\" value=\"0.70710678118654752440084436210485\"/>\n"
+                      "    <DOF name=\"2D-Robot/link2\" value=\"0.70710678118654752440084436210485\"/>\n"
+                      "  </Control>\n"
+                      "  <Control name=\"Joint1\" eigValue=\"1.0\">\n"
+                      "    <DOF name=\"2D-Robot/link1\" value=\"1.0\"/>\n"
+                      "  </Control>\n"
+                      "  <Control name=\"Joint2\" eigValue=\"1.0\">\n"
+                      "    <DOF name=\"2D-Robot/link2\" value=\"1.0\"/>\n"
+                      "  </Control>\n"
+                      "</ControlSet>\n";
+              size_t size3 = buffstring.size();
+              char *buffer3 = new char[size3];
+              for(int i=0; i<size3;i++)
+                  buffer3[i] = buffstring[i];
+
+              membuf mb3(buffer3, size3);
+              istream reader3(&mb3);
+              cout.write (buffer3,size3);
+
+              init.resize(3);
+              init[0] = 0.5;
+              init[1] = 0.3574;
+              init[2] = 0.687;
+              goal.resize(3);
+              goal[0] = 0.5;
+              goal[1] = 0.431;
+              goal[2] = 0.69;
+              ksh->setRobControls(&reader3, init, goal);
+              if(ksh->solve(std::cout))
+                  cout << "The problem has been solved successfully.\n";
+              else
+                cout << "The problem has NOT been solved successfully.\n";
+
+//TESTING THE SETTING OF NEW PLANNER FROM STREAM
+              //Comment: changes the planner. Needs the tag Problem.
+              //Does not process any query written inside the planner tag.
+              cout << "\n TESTING THE SETTING OF NEW PLANNER FROM STREAM.\n";
+              buffstring =
+                      "<Problem name=\"OMPL_PRM_2DRR_columns\">\n"
+                      " <Planner>\n"
+                      "  <Parameters>\n"
+                      "    <Name>omplPRM</Name>\n"
+                      "    <Parameter name=\"Max Planning Time\">10.0</Parameter>\n"
+                      "    <Parameter name=\"Speed Factor\">1</Parameter>\n"
+                      "    <Parameter name=\"MaxNearestNeighbors\">10</Parameter>\n"
+                      "    <Parameter name=\"DistanceThreshold\">1.0</Parameter>\n"
+                      "  </Parameters>\n"
+                      " </Planner>\n"
+                      "</Problem>\n";
+
+              size_t size4 = buffstring.size();
+              char *buffer4 = new char[size4];
+              for(int i=0; i<size4;i++)
+                  buffer4[i] = buffstring[i];
+
+              membuf mb4(buffer4, size4);
+              istream reader4(&mb4);
+              cout.write (buffer4,size4);
+
+              if(ksh->setPlanner(&reader4))
+              {
+                if(ksh->solve(std::cout))
+                    cout << "The problem has been solved successfully.\n";
+                else
+                    cout << "The problem has NOT been solved successfully.\n";
+              }
+              else
+                  cout<<"New planner could not be loaded\n";
 
 
       }catch(...){
@@ -223,37 +381,16 @@ int main(int argc, char* argv[]){
   //benchmarking
   else if(string(argv[1]) == "-b")
   { 
+    //IOC benchmarking
+    //call: KauthamConsole -b abs_path_xml_problem_file number_of_runs [abs_path_models folder]
     if (argc>3 && atoi(argv[3]) != 0) {//IOC planners benchmarking
       //=====================
       SoDB::init();
 
-      string dir = argv[0];
 
-      // If this is a windows executable, the path is unix format converted, changing  "\" for "/"
-      size_t found;
-      found = dir.find_first_of("\\");
-      while (found != string::npos){
-          dir[found]='/';
-          found = dir.find_first_of("\\",found+1);
-      }
-
-      dir.erase(dir.find_last_of("/") + 1, dir.length());
-      string absPath = dir;
-      absPath.append( argv[2] );
-
-      found = absPath.find_first_of("\\");
-      while (found != string::npos){
-          absPath[found]='/';
-          found = absPath.find_first_of("\\",found+1);
-      }
-
-      string baseName = absPath;
-      baseName.erase(0,baseName.find_last_of("/") + 1);
-      baseName.erase(baseName.find_first_of("."), baseName.length());
-
-      string soluFile = dir + baseName;
+      string soluFile = argv[2];
       soluFile.append("_solution_");
-      std::cout << "Kautham is opening a problem file: " << absPath << endl;
+      std::cout << "Kautham is opening a problem file: " << argv[2] << endl;
 
       try{
           int tryTimes = atoi( argv[3] );
@@ -266,21 +403,17 @@ int main(int argc, char* argv[]){
           stringstream ss;
           ss.str(soluFile);
 
-          string dir = argv[0];
-          dir.erase(dir.find_last_of("/") + 1, dir.length());
-          string absPath = dir;
-          absPath.append( argv[2] );
+
+          string absPath = argv[2];
 
           //directory containing the models
           vector <string> def_path;
-          if (argc == 4) {
-              def_path.push_back(argv[3]);
+          if (argc == 5) {
+              def_path.push_back(argv[4]);
           }
+          string dir = absPath.substr(0,absPath.find_last_of("/")+1);
           def_path.push_back(dir);
-          def_path.push_back(dir+"/../../models/");
-          dir = absPath.substr(0,absPath.find_last_of("/")+1);
-          def_path.push_back(dir);
-          def_path.push_back(dir+"/../../models/");
+          def_path.push_back(dir+"../../models/");
 
 
           if( _problem->setupFromFile( absPath, def_path ) ){
@@ -430,16 +563,18 @@ int main(int argc, char* argv[]){
   }//end ioc benchmarking
   else
   {//OMPL planners benchmarking
+   //call: KauthamConsole -b abs_path_xml_benchmarking_file [abs_path_models_folder]
       SoDB::init();
-
+      string absPath = argv[2];
       //directory containing the models
       vector <string> def_path;
       if (argc == 4) {
           def_path.push_back(argv[3]);
       }
-      string dir = argv[0];
+      string dir = absPath.substr(0,absPath.find_last_of("/")+1);
       def_path.push_back(dir);
-      def_path.push_back(dir+"/../../models/");
+      def_path.push_back(dir+"../../models/");
+
 
       benchmark(string(argv[2]),def_path);
 

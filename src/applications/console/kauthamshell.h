@@ -38,7 +38,7 @@ namespace Kautham {
         inline ~kauthamshell(){} //! Destructor
         inline void closeProblem() {delete _problem;}
         inline bool problemOpened() {return(_problem != NULL);} //! Informs wether there is a problem opened;
-        bool openProblem(ifstream* inputfile, vector<string> def_path = vector<string>());
+        bool openProblem(istream* inputfile, vector<string> def_path = vector<string>());
         bool openProblem(string problemfilename, vector<string> def_path);
         bool checkCollision(vector<KthReal> smpcoords);
         void setRobotsConfig(vector<KthReal> smpcoords);
@@ -48,14 +48,14 @@ namespace Kautham {
         bool setGoal(vector<KthReal> goal);
         bool setInitObs(vector<KthReal> initObs);
         void clearSampleSet();
-        bool setRobControls(ifstream* inputfile, vector<KthReal> init, vector<KthReal> goal);
+        bool setRobControls(istream* inputfile, vector<KthReal> init, vector<KthReal> goal);
         bool setRobControls(string controlsFile, vector<KthReal> init, vector<KthReal> goal);
         bool setDefaultRobControls(vector<KthReal> init, vector<KthReal> goal);
-        bool setObsControls(ifstream* inputfile, vector<KthReal> initObs);
+        bool setObsControls(istream* inputfile, vector<KthReal> initObs);
         bool setObsControls(string controlsFile, vector<KthReal> initObs);
         bool setFixedObsControls();
         bool setPlannerByName(string name);
-        bool setPlanner(ifstream* inputfile);
+        bool setPlanner(istream* inputfile);
         bool setPlanner(string problemfilename);
         bool setPlannerParameter(string parameter, string value);
         bool solve(ostream &graphVizPlannerDataFile);

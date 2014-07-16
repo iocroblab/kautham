@@ -32,7 +32,7 @@
 namespace ob = ompl::base;
 
 namespace Kautham {
-    bool kauthamshell::openProblem(ifstream* inputfile, vector <string> def_path) {
+    bool kauthamshell::openProblem(istream* inputfile, vector <string> def_path) {
         try {
             _problem = new Problem();
             if (_problem->setupFromFile(inputfile,def_path)) {
@@ -202,7 +202,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setRobControls(ifstream* inputfile, vector<KthReal> init, vector<KthReal> goal) {
+    bool kauthamshell::setRobControls(istream* inputfile, vector<KthReal> init, vector<KthReal> goal) {
         try {
             if (!_problem->setRobotControls(inputfile)) return false;
             return (setQuery(init,goal));
@@ -232,7 +232,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setObsControls(ifstream* inputfile, vector<KthReal> initObs) {
+    bool kauthamshell::setObsControls(istream* inputfile, vector<KthReal> initObs) {
         try {
             if (!_problem->setObstacleControls(inputfile)) return false;
             return (setInitObs(initObs));
@@ -261,8 +261,9 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setPlanner(ifstream* inputfile) {
+    bool kauthamshell::setPlanner(istream* inputfile) {
         try {
+            _problem->resetPlanner();
             return (_problem->createPlannerFromFile(inputfile));
         } catch (...) {
             return false;
