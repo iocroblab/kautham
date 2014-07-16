@@ -140,6 +140,7 @@ namespace Kautham {
     }
 
     void                    setHomeConf(Robot* rob, HASH_S_K* param);
+    void                    resetPlanner(){delete(_planner);_planner=NULL;}
     void                    setPlanner(Planner* plan){if(_planner==NULL)_planner = plan;}
     inline Planner*         getPlanner(){return _planner;}
     inline SampleSet*       getSampleSet(){return _cspace;}
