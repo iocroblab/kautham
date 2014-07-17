@@ -1,0 +1,4 @@
+trajectory_msgs/JointTrajectoryPoint init
+trajectory_msgs/JointTrajectoryPoint goal
+---
+bool response
