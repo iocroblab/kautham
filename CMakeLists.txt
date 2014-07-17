@@ -1,8 +1,44 @@
 project(Kautham2)
 
-cmake_minimum_required(VERSION 2.6)
-#cmake_policy(SET CMP0003 OLD)
+cmake_minimum_required(VERSION 2.4.6)
 
+
+if(COMMAND cmake_policy)
+      cmake_policy(SET CMP0003 EW)
+    endif(COMMAND cmake_policy)
+
+
+##################### ROS-catkin ####################################
+
+#find_package(catkin REQUIRED COMPONENTS
+#  roscpp
+#  std_msgs
+#  trajectory_msgs
+#  message_generation
+#)
+
+
+#include_directories(include
+#  ${catkin_INCLUDE_DIRS}
+#)
+
+#add_service_files(
+#   DIRECTORY srv
+#   FILES
+#   MoveRobot.srv
+#   Problem.srv
+#   ProblemStream.srv
+#   SetQuery.srv
+# )
+
+#generate_messages(DEPENDENCIES std_msgs trajectory_msgs)
+
+
+#catkin_package(
+#  INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+#  CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
+#)
+##################### ROS-catkin ####################################
 
 
 ########### Options ####################
@@ -10,7 +46,7 @@ option( KAUTHAM_OMPL "Use OMPL planners" ON )
 option( KAUTHAM_IOC "Use IOC planners" ON )
 #pending job
 #option( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF)
-option( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
+option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
 option( KAUTHAM_ROS "Build the ROS version" OFF )
@@ -74,12 +110,13 @@ if(KAUTHAM_DOCUMENTATION)
   install( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxygen_documentation/html DESTINATION share/kautham/doc)
 endif()
 ##############################################################################
-
-
-
-##############################################################################
+#########################################################
 # Copy Help file
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
+
+#########################################################
+
+
 
 
