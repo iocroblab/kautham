@@ -10,34 +10,34 @@ if(COMMAND cmake_policy)
 
 ##################### ROS-catkin ####################################
 
-#find_package(catkin REQUIRED COMPONENTS
-#  roscpp
-#  std_msgs
-#  trajectory_msgs
-#  message_generation
-#)
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  std_msgs
+  trajectory_msgs
+  message_generation
+)
 
 
-#include_directories(include
-#  ${catkin_INCLUDE_DIRS}
-#)
+include_directories(include
+  ${catkin_INCLUDE_DIRS}
+)
 
-#add_service_files(
-#   DIRECTORY srv
-#   FILES
-#   MoveRobot.srv
-#   Problem.srv
-#   ProblemStream.srv
-#   SetQuery.srv
-# )
+add_service_files(
+   DIRECTORY srv
+   FILES
+   MoveRobot.srv
+   Problem.srv
+   ProblemStream.srv
+   SetQuery.srv
+ )
 
-#generate_messages(DEPENDENCIES std_msgs trajectory_msgs)
+generate_messages(DEPENDENCIES std_msgs trajectory_msgs)
 
 
-#catkin_package(
-#  INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
-#  CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
-#)
+catkin_package(
+  INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+  CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
+)
 ##################### ROS-catkin ####################################
 
 
@@ -49,7 +49,7 @@ option( KAUTHAM_IOC "Use IOC planners" ON )
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
-option( KAUTHAM_ROS "Build the ROS version" OFF )
+option( KAUTHAM_ROS "Build the ROS version" ON )
 option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
 
 ########### Set flags ####################
