@@ -26,6 +26,7 @@
  
 #include <planner/omplg/omplplanner.h>
 #include "kauthamshell.h"
+#include "util/kthutil/kauthamexception.h"
 #include <iostream>
 
 
@@ -39,9 +40,19 @@ namespace Kautham {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
                 _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
                 return true;
+            } else  {
+                return false;
             }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
             return false;
-        } catch (...) {
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -56,10 +67,19 @@ namespace Kautham {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
                 _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
                 return true;
+            } else {
+                return false;
             }
-
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
             return false;
-        } catch (...) {
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -73,26 +93,65 @@ namespace Kautham {
             } else {
                 return false;
             }
-        } catch (...) {
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
 
 
-    void kauthamshell::setRobotsConfig(vector<KthReal> smpcoords) {
+    bool kauthamshell::setRobotsConfig(vector<KthReal> smpcoords) {
         try {
             Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
-            if (smp->setCoords(smpcoords)) _problem->wSpace()->moveRobotsTo(smp);
-        } catch (...) {
+            if (smp->setCoords(smpcoords)) {
+                _problem->wSpace()->moveRobotsTo(smp);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
         }
     }
 
 
-    void kauthamshell::setObstaclesConfig(vector<KthReal> smpcoords) {
+    bool kauthamshell::setObstaclesConfig(vector<KthReal> smpcoords) {
         try {
             Sample* smp = new Sample(_problem->wSpace()->getNumObsControls());
-            if (smp->setCoords(smpcoords)) _problem->wSpace()->moveObstaclesTo(smp);
-        } catch (...) {
+            if (smp->setCoords(smpcoords)) {
+                _problem->wSpace()->moveObstaclesTo(smp);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
         }
     }
 
@@ -117,7 +176,18 @@ namespace Kautham {
 
             _problem->getPlanner()->setInitSamp(samples->getSampleAt(0));
             _problem->getPlanner()->setGoalSamp(samples->getSampleAt(1));
-        } catch (...) {
+
+            return true;
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -141,7 +211,18 @@ namespace Kautham {
 
             _problem->getPlanner()->setInitSamp(samples->getSampleAt(0));
             _problem->getPlanner()->setGoalSamp(samples->getSampleAt(1));
-        } catch (...) {
+
+            return true;
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -165,7 +246,18 @@ namespace Kautham {
 
             _problem->getPlanner()->setInitSamp(samples->getSampleAt(0));
             _problem->getPlanner()->setGoalSamp(samples->getSampleAt(1));
-        } catch (...) {
+
+            return true;
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -179,13 +271,22 @@ namespace Kautham {
             _problem->wSpace()->setInitObsSample(smp);
             return (!_problem->wSpace()->collisionCheck(_problem->getSampleSet()->getSampleAt(0)) &&
                     !_problem->wSpace()->collisionCheck(_problem->getSampleSet()->getSampleAt(1)));
-        } catch (...) {
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
 
 
-    void kauthamshell::clearSampleSet() {
+    bool kauthamshell::clearSampleSet() {
         try {
             SampleSet* samples = _problem->getSampleSet();
             Sample *init = new Sample(samples->getSampleAt(0));
@@ -197,7 +298,19 @@ namespace Kautham {
 
             _problem->getPlanner()->setInitSamp(samples->getSampleAt(0));
             _problem->getPlanner()->setGoalSamp(samples->getSampleAt(1));
-        } catch (...) {
+
+            return true;
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
         }
     }
 
@@ -206,7 +319,16 @@ namespace Kautham {
         try {
             if (!_problem->setRobotControls(inputfile)) return false;
             return (setQuery(init,goal));
-        } catch (...) {
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -216,7 +338,16 @@ namespace Kautham {
         try {
             if (!_problem->setRobotControls(controlsFile)) return false;
             return (setQuery(init,goal));
-        } catch (...) {
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -226,7 +357,16 @@ namespace Kautham {
         try {
             if (!_problem->setDefaultRobotControls()) return false;
             return (setQuery(init,goal));
-        } catch (...) {
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -236,7 +376,16 @@ namespace Kautham {
         try {
             if (!_problem->setObstacleControls(inputfile)) return false;
             return (setInitObs(initObs));
-        } catch (...) {
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -246,7 +395,16 @@ namespace Kautham {
         try {
             if (!_problem->setObstacleControls(controlsFile)) return false;
             return (setInitObs(initObs));
-        } catch (...) {
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -254,8 +412,23 @@ namespace Kautham {
 
     bool kauthamshell::setPlannerByName(string name) {
         try {
-            return (_problem->createPlanner(name));
-        } catch (...) {
+            if (_problem->createPlanner(name)) {
+                _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
+                _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
+                return true;
+            } else {
+                return false;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -264,8 +437,23 @@ namespace Kautham {
     bool kauthamshell::setPlanner(istream* inputfile) {
         try {
             _problem->resetPlanner();
-            return (_problem->createPlannerFromFile(inputfile));
-        } catch (...) {
+            if (_problem->createPlannerFromFile(inputfile)) {
+                _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
+                _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
+                return true;
+            } else {
+                return false;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -273,8 +461,23 @@ namespace Kautham {
 
     bool kauthamshell::setPlanner(string problemfilename) {
         try {
-            return (_problem->createPlannerFromFile(problemfilename));
-        } catch (...) {
+            if (_problem->createPlannerFromFile(problemfilename))  {
+                _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
+                _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
+                return true;
+            } else {
+                return false;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -283,7 +486,16 @@ namespace Kautham {
     bool kauthamshell::setPlannerParameter(string parameter, string value) {
         try {
             return (_problem->getPlanner()->setParametersFromString(parameter+"|"+value));
-        } catch (...) {
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -295,7 +507,16 @@ namespace Kautham {
             vector<KthReal> coords;
             coords.resize(0);
             return (setInitObs(coords));
-        } catch (...) {
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -304,7 +525,16 @@ namespace Kautham {
     bool kauthamshell::solve() {
         try {
             return _problem->getPlanner()->solveAndInherit();
-        } catch (...) {
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -325,7 +555,16 @@ namespace Kautham {
             }
 
             return ret;
-        } catch (...) {
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
             return false;
         }
     }
@@ -352,8 +591,17 @@ namespace Kautham {
             rob->setOffMatrix(OffMatrix);
 
             return index;
-        } catch (...) {
-            return (-1);
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return -1;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return -1;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return -1;
         }
     }
 
@@ -379,28 +627,99 @@ namespace Kautham {
             obs->setOffMatrix(OffMatrix);
 
             return index;
-        } catch (...) {
-            return (-1);
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return -1;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return -1;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return -1;
         }
     }
 
 
-    void kauthamshell::removeRobot(int index) {
-        _problem->wSpace()->removeRobot(index);
+    bool kauthamshell::removeRobot(int index) {
+        try {
+            if (index < 0 && index >= _problem->wSpace()->getNumRobots()) {
+                return false;
+            } else {
+                _problem->wSpace()->removeRobot(index);
+                return true;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
+        }
     }
 
 
-    void kauthamshell::removeObstacle(int index) {
-        _problem->wSpace()->removeObstacle(index);
+    bool kauthamshell::removeObstacle(int index) {
+        try {
+            if (index < 0 && index >= _problem->wSpace()->getNumObstacles()) {
+                return false;
+            } else {
+                _problem->wSpace()->removeObstacle(index);
+                return true;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
+        }
     }
 
 
     bool kauthamshell::attachObstacle2RobotLink(string robot, string link, uint obs) {
-        return (_problem->wSpace()->attachObstacle2RobotLink(robot,link,obs));
+        try {
+            return (_problem->wSpace()->attachObstacle2RobotLink(robot,link,obs));
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
+        }
     }
 
 
-    bool kauthamshell::detachObstacleFromRobotLink(string robot, string link) {
-        return (_problem->wSpace()->detachObstacleFromRobotLink(robot,link));
+    bool kauthamshell::detachObstacleFromRobotLink(string robot, string link, uint obs) {
+        try {
+            return (_problem->wSpace()->detachObstacleFromRobotLink(robot,link,obs));
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
+        }
     }
 }

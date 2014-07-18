@@ -46,6 +46,8 @@ namespace Kautham {
 	GUI::GUI(QWidget *p) {
         setupUi(this);
         problemTree->setEnabled(true);
+        attachDialog = new AttachDialog(this);
+        deattachDialog = new DeattachDialog(this);
         QString f(":/kautham.html");
         if (QFile::exists(f)){
             QFile file(f);
@@ -97,6 +99,21 @@ namespace Kautham {
         }
     }
 
+    void GUI::attachObject() {
+        if (attachDialog->run()) {
+            setText("Object could be attached succesfully");
+        } else {
+            setText("Objectd couldn't be attached");
+        }
+    }
+
+    void GUI::deattachObject() {
+        if (deattachDialog->run()) {
+            setText("Object could be deattached succesfully");
+        } else {
+            setText("Objectd couldn't be deattached");
+        }
+    }
 
     void GUI::toogleBBOXflag() {
         QSettings settings("IOC","Kautham");
@@ -683,6 +700,8 @@ namespace Kautham {
     }
 
     bool GUI::addToProblemTree(WorkSpace *workSpace){
+        attachDialog->set(workSpace);
+        deattachDialog->set(workSpace);
         return problemTree->setTree(workSpace);
     }
 
@@ -703,7 +722,10 @@ namespace Kautham {
                 colors.addFile(":/icons/colors_48x48.png");
                 colors.addFile(":/icons/colors_64x64.png");
                 ac->setIcon(colors);
-                break;
+            } else if (ac->text() == "A&ttach Object") {
+                ac->setEnabled(true);
+            } else if (ac->text() == "&Deattach Object") {
+                ac->setEnabled(true);
             }
         }
     }
@@ -726,7 +748,10 @@ namespace Kautham {
                 greycolors.addFile(":/icons/greycolors_48x48.png");
                 greycolors.addFile(":/icons/greycolors_64x64.png");
                 ac->setIcon(greycolors);
-                break;
+            } else if (ac->text() == "A&ttach Object") {
+                ac->setDisabled(true);
+            } else if (ac->text() == "&Deattach Object") {
+                ac->setDisabled(true);
             }
         }
     }
