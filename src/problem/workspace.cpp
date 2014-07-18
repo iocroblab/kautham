@@ -184,7 +184,10 @@ namespace Kautham {
                     }
                     if (collision) break;
                 }
-                // second test if a robot collides with another one present in the workspace.
+                if (collision) break;
+
+                //second is testing if a robot collides with another one present in the workspace
+                //this validation is done with the robots validated previously
                 if (i > 0) {
                     for (int k = i-1; k == 0; k--) {
                         string str;
@@ -199,8 +202,9 @@ namespace Kautham {
                     }
                     if (collision) break;
                 }
+                if (collision) break;
 
-                // third test if a robot autocollides
+                //third is testing if a robot autocollides
                 string str;
                 if (robots[i]->autocollision(0,&str)) {
                     collision = true;
@@ -209,10 +213,36 @@ namespace Kautham {
                     sstr << str;
                     break;
                 }
+                if (collision) break;
+
+                //fourth is testing if an attached object (1-link-obstacle)
+                //collides with the environment (other obstacles)
+                list<attObj> *attachedObject = ((Robot*)robots[i])->getAttachedObject();
+                for(list<attObj>::iterator it = attachedObject->begin();
+                    it != attachedObject->end(); ++it) {
+                    for (uint m = 0; m < obstacles.size(); m++) {
+                        if (it->obs != obstacles.at(m)) {
+                            string str;
+                            if (it->obs->collisionCheck(obstacles.at(i),&str)) {
+                                collision = true;
+                                sstr << "Attached object " << it->obs->getName()
+                                     << " is in collision with obstacle " << m << " ("
+                                     << obstacles[m]->getName() << ")" << endl;
+                                sstr << str;
+                                break;
+                            }
+                            if (collision) break;
+                        }
+                        if (collision) break;
+                    }
+                    if (collision) break;
+                }
+                if (collision) break;
             }
         } else {
             for (uint i=0; i< robots.size(); i++) {
                 robots[i]->Kinematics(sample->getMappedConf().at(i));
+
                 //first is testing if the robot collides with the environment (obstacles)
                 for (uint m = 0; m < obstacles.size(); m++) {
                     string str;
@@ -226,8 +256,10 @@ namespace Kautham {
                     }
                     if (collision) break;
                 }
-                // second test if the robot collides with another one present in the workspace.
-                // This validation is done with the robots validated previously.
+                if (collision) break;
+
+                //second is testing if a robot collides with another one present in the workspace
+                //this validation is done with the robots validated previously
                 if (i > 0) {
                     for (int k = i-1; k >= 0; k--) {
                         string str;
@@ -242,8 +274,9 @@ namespace Kautham {
                     }
                     if (collision) break;
                 }
+                if (collision) break;
 
-                // third test if a robot autocollides
+                //third is testing if a robot autocollides
                 string str;
                 if (robots[i]->autocollision(0,&str)) {
                     collision = true;
@@ -252,6 +285,31 @@ namespace Kautham {
                     sstr << str;
                     break;
                 }
+                if (collision) break;
+
+                //fourth is testing if an attached object (1-link-obstacle)
+                //collides with the environment (other obstacles)
+                list<attObj> *attachedObject = ((Robot*)robots[i])->getAttachedObject();
+                for(list<attObj>::iterator it = attachedObject->begin();
+                    it != attachedObject->end(); ++it) {
+                    for (uint m = 0; m < obstacles.size(); m++) {
+                        if (it->obs != obstacles.at(m)) {
+                            string str;
+                            if (it->obs->collisionCheck(obstacles.at(i),&str)) {
+                                collision = true;
+                                sstr << "Attached object " << it->obs->getName()
+                                     << " is in collision with obstacle " << m << " ("
+                                     << obstacles[m]->getName() << ")" << endl;
+                                sstr << str;
+                                break;
+                            }
+                            if (collision) break;
+                        }
+                        if (collision) break;
+                    }
+                    if (collision) break;
+                }
+                if (collision) break;
             }
         }
 
@@ -420,11 +478,21 @@ namespace Kautham {
 
 
     bool WorkSpace::attachObstacle2RobotLink(string robot, string link, uint obs) {
+        for (int i = 0; i < robots.size(); ++i) {
+            if (((Robot*)robots.at(i))->getName() == robot) {
+                return (((Robot*)robots.at(i))->attachObject(obstacles.at(obs),link));
+            }
+        }
         return false;
     }
 
 
-    bool WorkSpace::detachObstacleFromRobotLink(string robot, string link ) {
+    bool WorkSpace::detachObstacleFromRobotLink(string robot, string link, uint obs ) {
+        for (int i = 0; i < robots.size(); ++i) {
+            if (((Robot*)robots.at(i))->getName() == robot) {
+                return (((Robot*)robots.at(i))->detachObject(obstacles.at(obs),link));
+            }
+        }
         return false;
     }
 }

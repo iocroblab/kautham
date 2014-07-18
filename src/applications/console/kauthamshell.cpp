@@ -400,7 +400,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::detachObstacleFromRobotLink(string robot, string link) {
-        return (_problem->wSpace()->detachObstacleFromRobotLink(robot,link));
+    bool kauthamshell::detachObstacleFromRobotLink(string robot, string link, uint obs) {
+        return (_problem->wSpace()->detachObstacleFromRobotLink(robot,link,obs));
     }
 }
