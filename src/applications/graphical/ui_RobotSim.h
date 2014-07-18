@@ -47,6 +47,8 @@
 #include <QtGui/QLabel>
 
 #include "problemtreewidget.h"
+#include "attachdialog.h"
+#include "deattachdialog.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -79,6 +81,8 @@ public:
     QToolBar        *planToolBar;
     QDockWidget     *outputWindow;
     QTextEdit       *textEdit;
+    AttachDialog    *attachDialog;
+    DeattachDialog    *deattachDialog;
 
     void setupUi(QMainWindow *kauthamMain)
     {
