@@ -41,13 +41,13 @@ namespace Kautham {
         bool openProblem(istream* inputfile, vector<string> def_path = vector<string>());
         bool openProblem(string problemfilename, vector<string> def_path);
         bool checkCollision(vector<KthReal> smpcoords);
-        void setRobotsConfig(vector<KthReal> smpcoords);
-        void setObstaclesConfig(vector<KthReal> smpcoords);
+        bool setRobotsConfig(vector<KthReal> smpcoords);
+        bool setObstaclesConfig(vector<KthReal> smpcoords);
         bool setQuery(vector<KthReal> init, vector<KthReal> goal);
         bool setInit(vector<KthReal> init);
         bool setGoal(vector<KthReal> goal);
         bool setInitObs(vector<KthReal> initObs);
-        void clearSampleSet();
+        bool clearSampleSet();
         bool setRobControls(istream* inputfile, vector<KthReal> init, vector<KthReal> goal);
         bool setRobControls(string controlsFile, vector<KthReal> init, vector<KthReal> goal);
         bool setDefaultRobControls(vector<KthReal> init, vector<KthReal> goal);
@@ -62,12 +62,12 @@ namespace Kautham {
         bool solve();
         int addRobot(string robFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
                          vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix);
-        void removeRobot(int index);
+        bool removeRobot(int index);
         int addObstacle(string obsFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
                          vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix);
-        void removeObstacle(int index);
+        bool removeObstacle(int index);
         bool attachObstacle2RobotLink(string robot, string link, uint obs);
-        bool detachObstacleFromRobotLink(string robot, string link);
+        bool detachObstacleFromRobotLink(string robot, string link, uint obs);
 
     private:
         Problem *_problem;
