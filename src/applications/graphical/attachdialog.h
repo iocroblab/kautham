@@ -24,6 +24,7 @@
 
 
 #include <QtGui>
+#include <problem/problem.h>
 
 
 namespace Kautham {
@@ -32,51 +33,38 @@ namespace Kautham {
     */
 
     /*!
-    * \brief The DefaultPathDialog class allows the user to manage the default path list
+    * \brief The AttachDialog class allows the user to attach objects to robot links
     */
-    class DefaultPathDialog : public QDialog {
+    class AttachDialog : public QDialog {
         Q_OBJECT
     public:
         /*!
-         * \brief DefaultPathDialog Constructs the dialog
-         * \param pathList Path list to fill the dialog
+         * \brief AttachDialog Constructs the dialog
          * \param parent Parent of the dialog
          * \param f Window flags
          */
-        DefaultPathDialog(QStringList pathList, QWidget *parent = 0, Qt::WindowFlags f = 0);
+        AttachDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
+
+        void set(WorkSpace *workSpace);
 
         /*!
-         * \brief getList Executes the dialog and lets the user to update the path list
-         * \return path list defined by the user, NULL if the dialog was rejected by the user
+         * \brief  run Executes the dialog and lets the user to attach objects to robot links
          */
-        QStringList *getList();
+        bool run();
 
     private slots:
-        /*!
-         * \brief addDirectory Opens a file dialog and if a valid folder is selected it will be added to the list
-         */
-        void addDirectory();
-
-        /*!
-         * \brief removeDirectory Removes the current selected directory from the list
-         */
-        void removeDirectory();
-
-        /*!
-         * \brief upDirectory Moves up the current selected directory in the list
-         */
-        void upDirectory();
-
-        /*!
-         * \brief downDirectory Moves down the current selected directory in the list
-         */
-        void downDirectory();
+        void changeObstacle(int index);
+        void changeRobot(int index);
+        void changeLink(int index);
 
     private:
-        /*!
-         * \brief pathListWidget list of paths
-         */
-        QListWidget *pathListWidget;
+        WorkSpace *wSpace;
+        QComboBox *obstacleBox, *robotBox, *linkBox;
+        int obs, rob, link;
+
+        void fillObstacleBox();
+        void fillRobotBox();
+        void fillLinkBox();
     };
     /** @}   end of Doxygen module "Application" */
 }

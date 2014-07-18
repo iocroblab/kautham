@@ -130,6 +130,14 @@ void Application::setActions(){
     colors.addFile(":/icons/colors_48x48.png");
     colors.addFile(":/icons/colors_64x64.png");
     mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G", colors, mainWindow, SLOT(changeActiveBackground()));
+
+    QIcon attach;
+    attach.addFile(":/icons/add_22x22.png");
+    mainWindow->setAction(ACTIONTOOL,"A&ttach Object","CTRL+T", attach, mainWindow, SLOT(attachObject()));
+
+    QIcon deattach;
+    deattach.addFile(":/icons/remove_22x22.png");
+    mainWindow->setAction(ACTIONTOOL,"&Deattach Object","CTRL+D", deattach, mainWindow, SLOT(deattachObject()));
     
 #if  defined(KAUTHAM_USE_ARMADILLO)
     if (settings->value("use_BBOX","false").toBool()) {
