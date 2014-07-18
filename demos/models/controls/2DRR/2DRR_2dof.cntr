@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="2D-Robot/link1" value="0.5" />
+		<DOF name="2D-Robot/link2" value="0.5" />
+	</Offset>
+	<Control name="2D-Robot/Joint1" eigValue="1.0">
+		<DOF name="2D-Robot/link1" value="1.0" />
+	</Control>
+	<Control name="2D-Robot/Joint2" eigValue="1.0">
+		<DOF name="2D-Robot/link2" value="1.0" />
+	</Control>
+</ControlSet>
