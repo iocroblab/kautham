@@ -67,7 +67,7 @@ namespace Kautham {
                          vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix);
         void removeObstacle(int index);
         bool attachObstacle2RobotLink(string robot, string link, uint obs);
-        bool detachObstacleFromRobotLink(string robot, string link);
+        bool detachObstacleFromRobotLink(string robot, string link, uint obs);
 
     private:
         Problem *_problem;
