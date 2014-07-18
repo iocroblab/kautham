@@ -59,6 +59,7 @@ namespace Kautham {
         bool setPlanner(string problemfilename);
         bool setPlannerParameter(string parameter, string value);
         bool solve(ostream &graphVizPlannerDataFile);
+        bool getPath(ostream &path);
         bool solve();
         int addRobot(string robFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
                          vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix);

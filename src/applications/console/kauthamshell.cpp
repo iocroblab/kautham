@@ -542,16 +542,47 @@ namespace Kautham {
 
     bool kauthamshell::solve(ostream &graphVizPlannerDataFile) {
         try {
-            bool ret = _problem->getPlanner()->solveAndInherit();
+            bool ret = false;
 
             if (_problem->getPlanner()->getFamily()=="ompl") {
-                omplplanner::omplPlanner *p = (omplplanner::omplPlanner *)_problem->getPlanner();
+                ret = _problem->getPlanner()->solveAndInherit();
+                if (ret) {
 
-                ob::PlannerDataPtr pdata;
-                pdata = ((ob::PlannerDataPtr) new ob::PlannerData(p->ss->getSpaceInformation()));
+                    omplplanner::omplPlanner *p = (omplplanner::omplPlanner *)_problem->getPlanner();
 
-                p->ss->getPlanner()->getPlannerData(*pdata);
-                pdata->printGraphviz(graphVizPlannerDataFile);
+                    ob::PlannerDataPtr pdata;
+                    pdata = ((ob::PlannerDataPtr) new ob::PlannerData(p->ss->getSpaceInformation()));
+
+                    p->ss->getPlanner()->getPlannerData(*pdata);
+                    pdata->printGraphviz(graphVizPlannerDataFile);
+                }
+            }
+
+            return ret;
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
+        }
+    }
+
+    bool kauthamshell::getPath(ostream &path) {
+        try {
+            bool ret = false;
+
+            if (_problem->getPlanner()->getFamily()=="ompl") {
+                ret = _problem->getPlanner()->solveAndInherit();
+                if (ret) {
+                    ((omplplanner::omplPlanner*)_problem->getPlanner())->SimpleSetup()->
+                            getSolutionPath().printAsMatrix(path);
+                }
             }
 
             return ret;
