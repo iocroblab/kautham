@@ -83,7 +83,7 @@ namespace Kautham{
       bool                  attachObstacle2RobotLink(string robot, string link, uint obs );
 
       //! This method detaches an object previously attached to a Robot link.
-      bool                  detachObstacleFromRobotLink(string robot, string link );
+      bool                  detachObstacleFromRobotLink(string robot, string link, uint obs );
 
       void removeRobot(int index);
       void removeObstacle(int index);

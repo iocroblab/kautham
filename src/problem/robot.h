@@ -54,7 +54,11 @@ namespace Kautham {
       Link*         link;
       mt::Transform trans;
       bool toLink( string linkName ){
-          return link->getName() == linkName;
+          if (link == NULL) {
+              return false;
+          } else {
+              return link->getName() == linkName;
+          }
       }
   };
 
@@ -154,6 +158,8 @@ namespace Kautham {
     inline void setDHApproach(APPROACH dhA){Approach = dhA;} //!< Sets the type of D-H parameters to be used
 
     inline void setLinkPathDrawn(int n){_linkPathDrawn = n;}
+
+    inline list<attObj> *getAttachedObject() {return &_attachedObject;} //!< Returns the list of the attached objects
 
     //! Returns the values that weight translations vs. rotations in SE3 distance computations.
     KthReal* getWeightSE3();
@@ -279,7 +285,7 @@ namespace Kautham {
     void moveAttachedObj();
 
     //! Dettaches the attached object.
-    bool detachObject( string linkName );
+    bool detachObject( Robot *obs, string linkName );
 
     //! This method returns the maximum value of the D_H parameters.
     KthReal maxDHParameter();
