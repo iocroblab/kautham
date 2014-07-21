@@ -719,7 +719,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::attachObstacle2RobotLink(string robot, string link, uint obs) {
+    bool kauthamshell::attachObstacle2RobotLink(uint robot, uint link, uint obs) {
         try {
             return (_problem->wSpace()->attachObstacle2RobotLink(robot,link,obs));
         } catch (const KthExcp& excp) {
@@ -737,9 +737,9 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::detachObstacleFromRobotLink(string robot, string link, uint obs) {
+    bool kauthamshell::detachObstacle(uint obs) {
         try {
-            return (_problem->wSpace()->detachObstacleFromRobotLink(robot,link,obs));
+            return (_problem->wSpace()->detachObstacle(obs));
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
             return false;
