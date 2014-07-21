@@ -44,36 +44,78 @@ namespace Kautham {
         Q_OBJECT
     public:
         /*!
-        * \brief AttachDialog Constructs the dialog
+        * \brief SelectRobotLinkDialog Constructs the dialog
         * \param parent Parent of the dialog
         * \param f Window flags
         */
         SelectRobotLinkDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
 
+        /*!
+        * \brief set Fills the dialog with information of the robots and links
+        * \param workSpace where the robots and links are
+        */
         void set(WorkSpace *workSpace);
 
+        /*!
+        * \brief getRobotLink executes the dialog
+        * \param robotIndex index of the selected robot if the user closes correctly the dialog
+        * \param linkIndex index of the selected link if the user closes correctly the dialog
+        * \return true if the user closes correctly the dialog
+        */
         bool getRobotLink(uint *robotIndex, uint* linkIndex );
 
     private slots:
+        /*!
+        * \brief changeRobot changes the index of the selected robot
+        */
         void changeRobot(int index);
+
+        /*!
+        * \brief changeLink changes the index of the selected link
+        */
         void changeLink(int index);
 
     private:
         /*!
-         * \brief workspace workspace where robots and obstacles are stored
+         * \brief wSpace where robots and obstacles are stored
          */
         WorkSpace  *wSpace;
 
-        QComboBox *robotBox, *linkBox;
-        int robot, link;
+        /*!
+        * \brief robotBox QComboBox with the robot names of the workspace
+        */
+        QComboBox *robotBox;
 
+        /*!
+        * \brief linkBox QComboBox with the link names of the workspace
+        */
+        QComboBox *linkBox;
+
+        /*!
+        * \brief robot index of selected robot
+        */
+        int robot;
+
+        /*!
+        * \brief link index of selected robot
+        */
+        int link;
+
+
+        /*!
+        * \brief fillRobotBox fill the robot QComboBox with the robots of wSpace
+        */
         void fillRobotBox();
+
+        /*!
+        * \brief fillLinktBox fill the link QComboBox with the links of the selected robot
+        */
         void fillLinkBox();
     };
 
 
     /*!
-    * \brief The AttachObjectDialog class allows the user to attach objects to robot links
+    * \brief The AttachObjectDialog class allows the user to detach and attach objects to robot links
     */
     class AttachObjectDialog : public QDialog {
         Q_OBJECT
@@ -85,10 +127,21 @@ namespace Kautham {
          */
         AttachObjectDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
 
+        /*!
+        * \brief set Fills the dialog with information of the objects, robots and links of the workspace
+        * \param workSpace where the objects, robots and links are
+        */
         void set(WorkSpace *workSpace);
 
     private slots:
+        /*!
+        * \brief attach tries to attach the selected object to the selected robot link
+        */
         void attach();
+
+        /*!
+        * \brief detach tries to detach the selected object
+        */
         void detach();
 
     signals:
@@ -114,6 +167,9 @@ namespace Kautham {
          */
         QTableWidget *attachedTable;
 
+        /*!
+        * \brief dialog lets the user select the robot link where an object will be attached to
+        */
         SelectRobotLinkDialog *dialog;
 
         /*!
