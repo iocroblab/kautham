@@ -31,7 +31,7 @@ namespace Kautham {
         wSpace = NULL;
         robot = link = 0;
 
-        setWindowTitle("Choose a to attach the object to");
+        setWindowTitle("Choose a link to attach the object to");
         setModal(true);
         setObjectName(QString::fromUtf8("SelectRobotLinkDialog"));
 
