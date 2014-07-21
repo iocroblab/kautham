@@ -35,10 +35,10 @@
 #include <Inventor/SoDB.h>
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-#include "Kautham2/Problem.h"
-#include "Kautham2/ProblemStream.h"
-#include "Kautham2/SetQuery.h"
-#include "Kautham2/MoveRobot.h"
+#include "kautham2/Problem.h"
+#include "kautham2/ProblemStream.h"
+#include "kautham2/SetQuery.h"
+#include "kautham2/MoveRobot.h"
 
 
 
@@ -50,7 +50,7 @@ ros::Publisher chatter_pub;
 
 
 
-bool srvOpenProblem(Kautham2::Problem::Request &req, Kautham2::Problem::Response &res)
+bool srvOpenProblem(kautham2::Problem::Request &req, kautham2::Problem::Response &res)
 
  {
     SoDB::init();
@@ -81,7 +81,7 @@ bool srvOpenProblem(Kautham2::Problem::Request &req, Kautham2::Problem::Response
 
  }
 
-bool srvOpenProblemStream(Kautham2::ProblemStream::Request &req, Kautham2::ProblemStream::Response &res)
+bool srvOpenProblemStream(kautham2::ProblemStream::Request &req, kautham2::ProblemStream::Response &res)
  {
     SoDB::init();
 
@@ -121,7 +121,7 @@ bool srvOpenProblemStream(Kautham2::ProblemStream::Request &req, Kautham2::Probl
      return true;
  }
 
-bool srvSetQuery(Kautham2::SetQuery::Request &req, Kautham2::SetQuery::Response &res)
+bool srvSetQuery(kautham2::SetQuery::Request &req, kautham2::SetQuery::Response &res)
 {
     Problem *_problem;
     int d = _problem->wSpace()->getNumRobControls();
@@ -164,7 +164,7 @@ bool srvSetQuery(Kautham2::SetQuery::Request &req, Kautham2::SetQuery::Response 
     }
 }
 
-bool srvMoveRobot(Kautham2::MoveRobot::Request &req, Kautham2::MoveRobot::Response &res)
+bool srvMoveRobot(kautham2::MoveRobot::Request &req, kautham2::MoveRobot::Response &res)
 {
     Problem *_problem;
     int d = _problem->wSpace()->getNumRobControls();

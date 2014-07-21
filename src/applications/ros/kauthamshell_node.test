@@ -9,9 +9,9 @@
 #include "planner/ioc/iocplanner.h"
 #include <Inventor/SoDB.h>
 #include "ros/ros.h"
-#include "Kautham2/Problem.h"
-#include "Kautham2/ProblemStream.h"
-#include "Kautham2/SetQuery.h"
+#include "kautham2/Problem.h"
+#include "kautham2/ProblemStream.h"
+#include "kautham2/SetQuery.h"
 #include "std_msgs/String.h"
 
 class kauthamshellnode {
