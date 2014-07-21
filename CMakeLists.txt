@@ -1,44 +1,14 @@
-project(Kautham2)
+project(kautham2)
 
 cmake_minimum_required(VERSION 2.4.6)
 
 
 if(COMMAND cmake_policy)
-      cmake_policy(SET CMP0003 EW)
+      cmake_policy(SET CMP0003 NEW)
     endif(COMMAND cmake_policy)
 
 
-##################### ROS-catkin ####################################
 
-#find_package(catkin REQUIRED COMPONENTS
-#  roscpp
-#  std_msgs
-#  trajectory_msgs
-#  message_generation
-#)
-
-
-#include_directories(include
-#  ${catkin_INCLUDE_DIRS}
-#)
-
-#add_service_files(
-#   DIRECTORY srv
-#   FILES
-#   MoveRobot.srv
-#   Problem.srv
-#   ProblemStream.srv
-#   SetQuery.srv
-# )
-
-#generate_messages(DEPENDENCIES std_msgs trajectory_msgs)
-
-
-#catkin_package(
-#  INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
-#  CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
-#)
-##################### ROS-catkin ####################################
 
 
 ########### Options ####################
@@ -67,6 +37,53 @@ message( STATUS "Creating the HTML based API documentation: ${KAUTHAM_DOCUMENTAT
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
 
 ##############################################################################
+
+
+##################### ROS-catkin ####################################
+
+
+if( KAUTHAM_ROS )
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  std_msgs
+  trajectory_msgs
+  message_generation
+)
+FIND_PACKAGE( Boost COMPONENTS system serialization thread REQUIRED )
+
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+
+
+
+
+
+include_directories(include
+
+  ${catkin_INCLUDE_DIRS}
+)
+ LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
+
+add_service_files(
+   DIRECTORY srv
+   FILES
+   MoveRobot.srv
+   Problem.srv
+   ProblemStream.srv
+   SetQuery.srv
+ )
+
+generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)
+
+
+catkin_package(
+  INCLUDE_DIRS         ${CMAKE_CURRENT_SOURCE_DIR}                   
+  CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
+)
+endif( KAUTHAM_ROS )
+
+
+##################### ROS-catkin ####################################
+
 
 
 # Building librarires
