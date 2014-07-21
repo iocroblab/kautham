@@ -530,6 +530,7 @@ namespace Kautham {
 */
  bool Robot::attachObject(Robot* obs, string linkName ){
      try{
+         if (obs->getNumLinks() != 1) return false;
          attObj newObj;
          newObj.obs = obs;
          newObj.link = getLinkByName( linkName );
@@ -596,13 +597,14 @@ namespace Kautham {
  /*!
   *
   */
- bool Robot::detachObject( string linkName ){
+ bool Robot::detachObject(Robot* obs, string linkName ){
      bool found = false;
      list<attObj>::iterator it = _attachedObject.begin();
      for( it = _attachedObject.begin(); it != _attachedObject.end(); ++it){
-         if((*it).toLink( linkName )){
+         if((*it).toLink( linkName ) && (*it).obs == obs ){
              _attachedObject.erase(it);
              found = true;
+             break;
          }
      }
      return found;
