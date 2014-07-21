@@ -75,6 +75,8 @@ namespace Kautham {
   */
  Robot::Robot(string robFile, KthReal robScale, LIBUSED lib, bool useBBOX) {
      //set initial values
+     robotAttachedTo = NULL;
+     linkAttachedTo = NULL;
      collisionable = true;
      _linkPathDrawn = -1;
      nTrunk = 0;
@@ -93,8 +95,8 @@ namespace Kautham {
      visModel = NULL;
      collModel = NULL;
      _graphicalPath = NULL;
-     mapMatrix=NULL;
-     offMatrix=NULL;
+     mapMatrix = NULL;
+     offMatrix = NULL;
 
      for (int i = 0; i < 7; i++) {
          for (int j = 0; j < 2; j++) {
@@ -528,12 +530,15 @@ namespace Kautham {
  * \param obs is a pointer to the obstacle to be attached.
  * \param linkName is the name of the link to which the object is to be attached.
 */
- bool Robot::attachObject(Robot* obs, string linkName ){
+ bool Robot::attachObject(Robot* obs, uint link){
      try{
-         if (obs->getNumLinks() != 1) return false;
+         if (obs == NULL) return false;
+         if (!obs->isAttachable()) return false;
+         if (link >= links.size()) return false;
+         if (collisionCheck(obs)) return false;
          attObj newObj;
          newObj.obs = obs;
-         newObj.link = getLinkByName( linkName );
+         newObj.link = links.at(link);
          mt::Transform tmpO;
          KthReal* pos = obs->getLink(0)->getElement()->getPosition();
          tmpO.setTranslation( mt::Point3(pos[0], pos[1], pos[2] ) );
@@ -541,6 +546,7 @@ namespace Kautham {
          tmpO.setRotation( mt::Rotation( pos[0], pos[1], pos[2], pos[3] ) );
          newObj.trans = newObj.link->getTransformation()->inverse() * tmpO;
          _attachedObject.push_back( newObj );
+         obs->setAttachedTo(this,newObj.link);
          return true;
      }catch(...){
          return false;
@@ -597,12 +603,13 @@ namespace Kautham {
  /*!
   *
   */
- bool Robot::detachObject(Robot* obs, string linkName ){
+ bool Robot::detachObject(Robot* obs) {
      bool found = false;
      list<attObj>::iterator it = _attachedObject.begin();
      for( it = _attachedObject.begin(); it != _attachedObject.end(); ++it){
-         if((*it).toLink( linkName ) && (*it).obs == obs ){
+         if((*it).obs == obs ){
              _attachedObject.erase(it);
+             obs->setDetached();
              found = true;
              break;
          }
@@ -1026,8 +1033,8 @@ namespace Kautham {
          // First the most distal link
          minDist = links[links.size()-1]->getElement()->getDistanceTo(rob->getLink(0)->getElement());
      if( min ){
-         for(uint i = links.size(); i > 0 ; --i) {
-             for(uint j = rob->getNumLinks(); j > 0; --j){
+         for(int i = links.size(); i > 0 ; --i) {
+             for(int j = rob->getNumLinks(); j > 0; --j){
                  tempDist = links[i-1]->getElement()->getDistanceTo(rob->getLink(j-1)->getElement());
                  if(minDist > tempDist) {
                      minDist = tempDist;
@@ -1092,7 +1099,7 @@ namespace Kautham {
                                preTrans[4], preTrans[5], preTrans[6]);
      if(links.size() > 0 ){
          // There are finding the link by the name
-         for(unsigned int i = links.size()-1; i >= 0 ; i--)
+         for(int i = links.size()-1; i >= 0 ; i--)
              if(parentName == links[i]->getName()){
                  temp->setParent(links[i]);
                  break;
@@ -1129,7 +1136,7 @@ namespace Kautham {
                                preTrans[4], preTrans[5], 0.);
      if(links.size() > 0 ){
          // There are finding the link by the name
-         for(unsigned int i = links.size()-1; i >= 0 ; i--)
+         for(int i = links.size()-1; i >= 0 ; i--)
              if(parentName == links[i]->getName()){
                  temp->setParent(links[i]);
                  break;

@@ -309,7 +309,7 @@ namespace Kautham {
                 sampleList->addItem(QString::number(i));
             }
         } else {
-            for (uint i = sampleList->count(); i > sampleSet->getSize(); --i) {
+            for (int i = sampleList->count(); i > sampleSet->getSize(); --i) {
                 sampleList->removeItem(i-1);
             }
         }
