@@ -93,6 +93,8 @@ namespace Kautham {
     void                setModelsDefaultPath();
     //! Changes cursor to waiting/arrow cursor
     void changeCursor(bool waiting);
+    void                attachObject();
+    void                deattachObject();
 
     public:
     GUI(QWidget *p=0);
