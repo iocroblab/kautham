@@ -67,8 +67,8 @@ namespace Kautham {
         int addObstacle(string obsFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
                          vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix);
         bool removeObstacle(int index);
-        bool attachObstacle2RobotLink(string robot, string link, uint obs);
-        bool detachObstacleFromRobotLink(string robot, string link, uint obs);
+        bool attachObstacle2RobotLink(uint robot, uint link, uint obs);
+        bool detachObstacle(uint obs);
 
     private:
         Problem *_problem;

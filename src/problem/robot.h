@@ -94,6 +94,8 @@ namespace Kautham {
       RobConf           _homeConf;     //!< This attribute is the Home configuration of the robot.
       RobConf           _currentConf;  //!< This attribute is the current configuration of the robot.
       bool              collisionable; //!< Set to true if the robot can have collision with other robots
+      Robot*            robotAttachedTo; //!< In case of obstacle, it is the robot where the obstacle is attached to. If it is not attached to any robot, it is equal to NULL
+      Link*             linkAttachedTo; //!< In case of obstacle, it is the link where the obstacle is attached to. If it is not attached to any link, it is equal to NULL
 
   public:
 
@@ -279,16 +281,34 @@ namespace Kautham {
     bool setPathVisibility(bool visible);
 
     //! Attachs an object to a given link, usually the end effector.
-    bool attachObject(Robot* obs, string linkName );
+    bool attachObject(Robot* obs, uint link);
 
-    //! Moves the attached object.
+    //! Moves the attached objects.
     void moveAttachedObj();
 
-    //! Dettaches the attached object.
-    bool detachObject( Robot *obs, string linkName );
+    //! Detaches the attached object.
+    bool detachObject(Robot *obs);
 
     //! This method returns the maximum value of the D_H parameters.
     KthReal maxDHParameter();
+
+    //! Return if this obstcale is attachable
+    inline bool isAttachable() {return (!isAttached() && (links.size() == 1));}
+
+    //! Return if this obstcale is attached
+    inline bool isAttached() {return ((robotAttachedTo != NULL) && (linkAttachedTo != NULL));}
+
+    //! Sets the robot and the link where the obstacle is attached to
+    inline void setAttachedTo(Robot* robot, Link* link) {robotAttachedTo = robot; linkAttachedTo = link;}
+
+    //! Sets the obstacle detached
+    inline void setDetached() {robotAttachedTo = NULL; linkAttachedTo = NULL;}
+
+    //! Returns the link where the obstacle is attached to
+    inline Robot* getRobotAttachedTo() {return robotAttachedTo;}
+
+    //! Returns the link where the obstacle is attached to
+    inline Link* getLinkAttachedTo() {return linkAttachedTo;}
 
   private:
     //! sets the Robot from a *.dh file

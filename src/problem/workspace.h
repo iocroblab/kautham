@@ -80,10 +80,10 @@ namespace Kautham{
       void                         setPathVisibility(bool vis);
 
       //! This method attaches an object object to a robot link. The obstacle is designated by its index.
-      bool                  attachObstacle2RobotLink(string robot, string link, uint obs );
+      bool                  attachObstacle2RobotLink(uint robot, uint link, uint obs);
 
       //! This method detaches an object previously attached to a Robot link.
-      bool                  detachObstacleFromRobotLink(string robot, string link, uint obs );
+      bool                  detachObstacle(uint obs);
 
       void removeRobot(int index);
       void removeObstacle(int index);

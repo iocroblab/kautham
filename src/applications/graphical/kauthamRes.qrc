@@ -73,8 +73,18 @@
         <file>icons/greycolors_32x32.png</file>
         <file>icons/greycolors_48x48.png</file>
         <file>icons/greycolors_64x64.png</file>
+        <file>icons/greymagnet_16x16.png</file>
+        <file>icons/greymagnet_22x22.png</file>
+        <file>icons/greymagnet_32x32.png</file>
+        <file>icons/greymagnet_48x48.png</file>
+        <file>icons/greymagnet_64x64.png</file>
 	<file>icons/left_16x16.png</file>
         <file>icons/left_22x22.png</file>
+        <file>icons/magnet_16x16.png</file>
+        <file>icons/magnet_22x22.png</file>
+        <file>icons/magnet_32x32.png</file>
+        <file>icons/magnet_48x48.png</file>
+        <file>icons/magnet_64x64.png</file>
 	<file>icons/pause_16x16.png</file>
         <file>icons/pause_22x22.png</file>
 	<file>icons/reload_16x16.png</file>

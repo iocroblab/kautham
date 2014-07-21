@@ -30,10 +30,9 @@ set(kautham_RESOURCES kauthamRes.qrc)
 QT4_ADD_RESOURCES(kautham_RESOURCES_RCC ${kautham_RESOURCES})
 QT4_WRAP_CPP( QT_MOC_SRC kauthamgui.h
          aboutwidget.h
-         attachdialog.h
+         attachobjectdialog.h
          constrainedcontrolwidget.h
          controlwidget.h
-         deattachdialog.h
          defaultpathdialog.h
          dofwidget.h
          gui.h
@@ -46,9 +45,8 @@ QT4_WRAP_CPP( QT_MOC_SRC kauthamgui.h
          OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
 
 set( SRC_FILES_GUI kauthamgui.cpp
-         attachdialog.cpp
+         attachobjectdialog.cpp
          constrainedcontrolwidget.cpp
-         deattachdialog.cpp
          defaultpathdialog.cpp
          dofwidget.cpp
          invkinwidget.cpp
@@ -61,10 +59,9 @@ set( SRC_FILES_GUI kauthamgui.cpp
 
 set( HDR_FILES_GUI kauthamgui.h
          aboutwidget.h
-         attachdialog.h
+         attachobjectdialog.h
          constrainedcontrolwidget.h
          controlwidget.h
-         deattachdialog.h
          defaultpathdialog.h
          dofwidget.h
          gui.h
@@ -84,5 +81,3 @@ add_dependencies(Kautham2 kautham)
 install(TARGETS Kautham2 DESTINATION bin)
 
 # END building Kautham GUI application
-
-
