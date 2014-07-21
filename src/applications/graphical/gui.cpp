@@ -46,8 +46,8 @@ namespace Kautham {
 	GUI::GUI(QWidget *p) {
         setupUi(this);
         problemTree->setEnabled(true);
-        attachDialog = new AttachDialog(this);
-        deattachDialog = new DeattachDialog(this);
+        attachObjectDialog = new AttachObjectDialog(this);
+        connect(attachObjectDialog,SIGNAL(sendText(string)),this,SLOT(setText(string)));
         QString f(":/kautham.html");
         if (QFile::exists(f)){
             QFile file(f);
@@ -100,19 +100,7 @@ namespace Kautham {
     }
 
     void GUI::attachObject() {
-        if (attachDialog->run()) {
-            setText("Object could be attached succesfully");
-        } else {
-            setText("Objectd couldn't be attached");
-        }
-    }
-
-    void GUI::deattachObject() {
-        if (deattachDialog->run()) {
-            setText("Object could be deattached succesfully");
-        } else {
-            setText("Objectd couldn't be deattached");
-        }
+        attachObjectDialog->exec();
     }
 
     void GUI::toogleBBOXflag() {
@@ -700,8 +688,7 @@ namespace Kautham {
     }
 
     bool GUI::addToProblemTree(WorkSpace *workSpace){
-        attachDialog->set(workSpace);
-        deattachDialog->set(workSpace);
+        attachObjectDialog->set(workSpace);
         return problemTree->setTree(workSpace);
     }
 
@@ -722,10 +709,15 @@ namespace Kautham {
                 colors.addFile(":/icons/colors_48x48.png");
                 colors.addFile(":/icons/colors_64x64.png");
                 ac->setIcon(colors);
-            } else if (ac->text() == "A&ttach Object") {
+            } else if (ac->text() == "At/Detach Object") {
                 ac->setEnabled(true);
-            } else if (ac->text() == "&Deattach Object") {
-                ac->setEnabled(true);
+                QIcon magnet;
+                magnet.addFile(":/icons/magnet_16x16.png");
+                magnet.addFile(":/icons/magnet_22x22.png");
+                magnet.addFile(":/icons/magnet_32x32.png");
+                magnet.addFile(":/icons/magnet_48x48.png");
+                magnet.addFile(":/icons/magnet_64x64.png");
+                ac->setIcon(magnet);
             }
         }
     }
@@ -748,11 +740,17 @@ namespace Kautham {
                 greycolors.addFile(":/icons/greycolors_48x48.png");
                 greycolors.addFile(":/icons/greycolors_64x64.png");
                 ac->setIcon(greycolors);
-            } else if (ac->text() == "A&ttach Object") {
+            } else if (ac->text() == "At/Detach Object") {
                 ac->setDisabled(true);
-            } else if (ac->text() == "&Deattach Object") {
-                ac->setDisabled(true);
+                QIcon greymagnet;
+                greymagnet.addFile(":/icons/greymagnet_16x16.png");
+                greymagnet.addFile(":/icons/greymagnet_22x22.png");
+                greymagnet.addFile(":/icons/greymagnet_32x32.png");
+                greymagnet.addFile(":/icons/greymagnet_48x48.png");
+                greymagnet.addFile(":/icons/greymagnet_64x64.png");
+                ac->setIcon(greymagnet);
             }
+
         }
     }
 

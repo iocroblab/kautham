@@ -135,11 +135,13 @@ namespace Kautham {
             tmpVec.push_back(sample->getCoords()[j]);
 
         for(unsigned int i=0; i< obstacles.size(); i++){
-            if(sample->getMappedConf().size()==0){
-                withinbounds &= obstacles[i]->control2Pose(tmpVec);
-            }
-            else{
-                obstacles[i]->Kinematics(sample->getMappedConf().at(i));
+            if (!obstacles.at(i)->isAttached()) {
+                if(sample->getMappedConf().size()==0){
+                    withinbounds &= obstacles[i]->control2Pose(tmpVec);
+                }
+                else{
+                    obstacles[i]->Kinematics(sample->getMappedConf().at(i));
+                }
             }
         }
         _lastObsSampleMovedTo = sample;
@@ -477,22 +479,17 @@ namespace Kautham {
     }
 
 
-    bool WorkSpace::attachObstacle2RobotLink(string robot, string link, uint obs) {
-        for (int i = 0; i < robots.size(); ++i) {
-            if (((Robot*)robots.at(i))->getName() == robot) {
-                return (((Robot*)robots.at(i))->attachObject(obstacles.at(obs),link));
-            }
-        }
-        return false;
+    bool WorkSpace::attachObstacle2RobotLink(uint robot, uint link, uint obs) {
+        if (robot < 0 || robot >= robots.size() ||
+                link < 0 || link >= robots.at(robot)->getNumLinks() ||
+                obs < 0 || obs >= obstacles.size()) return false;
+        return (robots.at(robot)->attachObject(obstacles.at(obs),link));
     }
 
 
-    bool WorkSpace::detachObstacleFromRobotLink(string robot, string link, uint obs ) {
-        for (int i = 0; i < robots.size(); ++i) {
-            if (((Robot*)robots.at(i))->getName() == robot) {
-                return (((Robot*)robots.at(i))->detachObject(obstacles.at(obs),link));
-            }
-        }
-        return false;
+    bool WorkSpace::detachObstacle(uint obs) {
+        if (obs < 0 || obs >= obstacles.size()) return false;
+        if (!obstacles.at(obs)->isAttached()) return false;
+        return (obstacles.at(obs)->getRobotAttachedTo()->detachObject(obstacles.at(obs)));
     }
 }

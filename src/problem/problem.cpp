@@ -1415,7 +1415,7 @@ namespace Kautham {
               xml_parse_result result = doc->load_file(cntrFile.c_str());
               if (result){
                   //Once the obstacles were added, the controls can be configured
-                  return (setObstacleControls(cntrFile));
+                  return (setObstacleControls(doc));
               } else {// the result of the file pasers is bad
                   cout << "The cntr file: " << cntrFile << " can not be read." << std::endl;
                   string message = "Obstacle controls file " + cntrFile + " couldn't be parsed";
