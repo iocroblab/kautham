@@ -35,7 +35,7 @@ endif(PUGI_XML_FOUND)
 
 
 add_subdirectory ( external )
-add_subdirectory( util )
+#add_subdirectory( util )
 
 #### Boost package ###############
 find_package( Boost COMPONENTS  system serialization thread REQUIRED )
