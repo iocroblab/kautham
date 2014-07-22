@@ -1,8 +1,11 @@
-project(Kautham2)
+project(kautham2)
 
-cmake_minimum_required(VERSION 2.6)
-#cmake_policy(SET CMP0003 OLD)
+cmake_minimum_required(VERSION 2.4.6)
 
+
+if(COMMAND cmake_policy)
+      cmake_policy(SET CMP0003 NEW)
+    endif(COMMAND cmake_policy)
 
 
 ########### Options ####################
@@ -10,7 +13,7 @@ option( KAUTHAM_OMPL "Use OMPL planners" ON )
 option( KAUTHAM_IOC "Use IOC planners" ON )
 #pending job
 #option( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF)
-option( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
+option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
 option( KAUTHAM_ROS "Build the ROS version" OFF )
@@ -32,6 +35,51 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModu
 
 ##############################################################################
 
+
+##################### ROS-catkin ####################################
+
+
+if( KAUTHAM_ROS )
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  std_msgs
+  trajectory_msgs
+  message_generation
+)
+FIND_PACKAGE( Boost COMPONENTS system serialization thread REQUIRED )
+
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+
+
+
+
+
+include_directories(include
+
+  ${catkin_INCLUDE_DIRS}
+)
+ LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
+
+add_service_files(
+   DIRECTORY srv
+   FILES
+   MoveRobot.srv
+   Problem.srv
+   ProblemStream.srv
+   SetQuery.srv
+ )
+
+generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)
+
+
+catkin_package(
+  INCLUDE_DIRS         ${CMAKE_CURRENT_SOURCE_DIR}                   
+  CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
+)
+endif( KAUTHAM_ROS )
+
+
+##################### ROS-catkin ####################################
 
 # Building librarires
 
@@ -74,12 +122,13 @@ if(KAUTHAM_DOCUMENTATION)
   install( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxygen_documentation/html DESTINATION share/kautham/doc)
 endif()
 ##############################################################################
-
-
-
-##############################################################################
+#########################################################
 # Copy Help file
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
+
+#########################################################
+
+
 
 
