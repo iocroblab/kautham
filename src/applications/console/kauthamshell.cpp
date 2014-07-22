@@ -543,8 +543,7 @@ namespace Kautham {
     bool kauthamshell::solve(ostream &graphVizPlannerDataFile) {
         try {
             bool ret = false;
-
-            if (_problem->getPlanner()->getFamily()=="ompl") {
+            if (_problem->getPlanner()->getFamily()==OMPLPLANNER) {
                 ret = _problem->getPlanner()->solveAndInherit();
                 if (ret) {
 
