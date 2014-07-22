@@ -62,6 +62,7 @@ namespace Kautham {
         connect(outputWindow, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(changeDockAreaForOutput(Qt::DockWidgetArea)));
         boolPlanVis = false;
         planToolBar = NULL;
+        menuRecentFiles = NULL;
         restart();
     }
 
