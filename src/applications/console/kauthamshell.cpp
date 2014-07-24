@@ -576,7 +576,7 @@ namespace Kautham {
         try {
             bool ret = false;
 
-            if (_problem->getPlanner()->getFamily()=="ompl") {
+            if (_problem->getPlanner()->getFamily()==OMPLPLANNER) {
                 ret = _problem->getPlanner()->solveAndInherit();
                 if (ret) {
                     ((omplplanner::omplPlanner*)_problem->getPlanner())->SimpleSetup()->
@@ -718,7 +718,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::attachObstacle2RobotLink(uint robot, uint link, uint obs) {
+    bool kauthamshell::attachObstacle2RobotLink(int robot, int link, int obs) {
         try {
             return (_problem->wSpace()->attachObstacle2RobotLink(robot,link,obs));
         } catch (const KthExcp& excp) {

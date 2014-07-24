@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Aliakbar Akbari */
+/* Author: Aliakbar Akbari, Nestor Garcia Hidalgo */
 
 
 #include <iostream>
@@ -28,17 +28,41 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include "kauthamshell.h"
-#include "problem/problem.h"
-#include "planner/ioc/kthquery.h"
-#include "planner/ioc/iocplanner.h"
+#include <ros/ros.h>
 #include <Inventor/SoDB.h>
-#include "ros/ros.h"
 #include "std_msgs/String.h"
-#include "kautham2/Problem.h"
-#include "kautham2/ProblemStream.h"
+#include "../console/kauthamshell.h"
+#include "kautham2/CloseProblem.h"
+#include "kautham2/ProblemOpened.h"
+#include "kautham2/OpenProblem.h"
+#include "kautham2/OpenProblemStream.h"
+#include "kautham2/CheckCollision.h"
+#include "kautham2/SetRobotsConfig.h"
+#include "kautham2/SetObstaclesConfig.h"
 #include "kautham2/SetQuery.h"
-#include "kautham2/MoveRobot.h"
+#include "kautham2/SetInit.h"
+#include "kautham2/SetGoal.h"
+#include "kautham2/SetInitObs.h"
+#include "kautham2/ClearSampleSet.h"
+#include "kautham2/SetRobControls.h"
+#include "kautham2/SetRobControlsStream.h"
+#include "kautham2/SetDefaultRobControls.h"
+#include "kautham2/SetObsControls.h"
+#include "kautham2/SetObsControlsStream.h"
+#include "kautham2/SetFixedObsControls.h"
+#include "kautham2/SetPlannerByName.h"
+#include "kautham2/SetPlanner.h"
+#include "kautham2/SetPlannerStream.h"
+#include "kautham2/SetPlannerParameter.h"
+#include "kautham2/Solve.h"
+#include "kautham2/GetPath.h"
+#include "kautham2/AddRobot.h"
+#include "kautham2/RemoveRobot.h"
+#include "kautham2/AddObstacle.h"
+#include "kautham2/RemoveObstacle.h"
+#include "kautham2/AttachObstacle2RobotLink.h"
+#include "kautham2/DetachObstacle.h"
+
 
 
 
@@ -47,50 +71,48 @@ using namespace Kautham;
 
 std_msgs::String my_msg;
 ros::Publisher chatter_pub;
+kauthamshell* ksh;
 
 
+bool srvCloseProblem(kautham2::CloseProblem::Request &req,
+                     kautham2::CloseProblem::Response &res) {
+    ksh->closeProblem();
 
-bool srvOpenProblem(kautham2::Problem::Request &req, kautham2::Problem::Response &res)
+    return true;
+}
 
- {
-    SoDB::init();
 
-    kauthamshell* ksh = new kauthamshell();
+bool srvProblemOpened(kautham2::ProblemOpened::Request &req,
+                      kautham2::ProblemOpened::Response &res) {
+    res.response = ksh->problemOpened();
 
+    return true;
+}
+
+
+bool srvOpenProblem(kautham2::OpenProblem::Request &req,
+                    kautham2::OpenProblem::Response &res) {
     ROS_INFO("Opening problem:: %s", req.problem.c_str());
 
-    ksh->openProblem(req.problem, req.dir);
-
-
-    if (ksh->solve(std::cout))
-    {
-        ROS_INFO("The problem file has been solved successfully.\n");
-        my_msg.data = "The problem file has been solved successfully.";
+    if (ksh->openProblem(req.problem, req.dir)) {
+        ROS_INFO("The problem file has been opened successfully.\n");
+        my_msg.data = "The problem file has been opened successfully.";
         res.response = true;
-
-    }
-    else
-    {
-        ROS_INFO("The problem file has not been solved successfully.\n");
-        my_msg.data = "The problem file has been solved successfully.";
+    } else {
+        ROS_INFO("The problem file couldn't be opened.\n");
+        my_msg.data = "The problem file couldn't be opened.";
         res.response = false;
     }
-     //   chatter_pub.publish(my_msg);
 
-     return true;
+    return true;
+}
 
- }
 
-bool srvOpenProblemStream(kautham2::ProblemStream::Request &req, kautham2::ProblemStream::Response &res)
- {
-    SoDB::init();
-
-    kauthamshell* ksh = new kauthamshell();
-
+bool srvOpenProblemStream(kautham2::OpenProblemStream::Request &req,
+                          kautham2::OpenProblemStream::Response &res) {
     string dir = req.problem;
     dir.erase(dir.find_last_of("/") + 1, dir.length());
     string absPath = dir;
-
 
     //directory containing the models
     vector <string> def_path;
@@ -101,117 +123,345 @@ bool srvOpenProblemStream(kautham2::ProblemStream::Request &req, kautham2::Probl
     def_path.push_back(dir);
     def_path.push_back(dir+"/../../models/");
 
-    ifstream input;
-    input.open(req.problem.c_str());
+    filebuf fb;
+    fb.open(req.problem.c_str(),ios::in);
+    istream is(&fb);
 
-    ksh->openProblem(&input, def_path);
-
-    if (ksh->solve(std::cout))
-    {
-        ROS_INFO("The problem file has been solved successfully.\n");
+    if (ksh->openProblem(&is,def_path)) {
+        ROS_INFO("The problem file has been opened successfully.\n");
+        my_msg.data = "The problem file has been opened successfully.";
         res.response = true;
-    }
-
-    else
-    {
-        ROS_INFO("The problem file has not been solved successfully.\n");
+    } else {
+        ROS_INFO("The problem file couldn't be opened.\n");
+        my_msg.data = "The problem file couldn't be opened.";
         res.response = false;
     }
 
-     return true;
- }
+    return true;
+}
 
-bool srvSetQuery(kautham2::SetQuery::Request &req, kautham2::SetQuery::Response &res)
-{
-    Problem *_problem;
-    int d = _problem->wSpace()->getNumRobControls();
 
-    kauthamshell* ksh = new kauthamshell();
+bool srvCheckCollision(kautham2::CheckCollision::Request &req,
+                       kautham2::CheckCollision::Response &res) {
 
-    vector < KthReal > Init;
-    Init.resize(d);
+    res.response = ksh->checkCollision(req.config);
 
-    for (unsigned i = 0; i < d; i++)
-        // Init sample from service
-            cout << "Initial sample: ";
-            for (unsigned i = 0; i < d; i++)
-            {
-                Init[i] = req.init.positions[i];
-                cout << Init[i] << " ";
+    return true;
+}
+
+
+bool srvSetRobotsConfig(kautham2::SetRobotsConfig::Request &req,
+                       kautham2::SetRobotsConfig::Response &res) {
+
+    res.response = ksh->setRobotsConfig(req.config);
+
+    return true;
+}
+
+
+bool srvSetObstaclesConfig(kautham2::SetObstaclesConfig::Request &req,
+                           kautham2::SetObstaclesConfig::Response &res) {
+
+    res.response = ksh->setObstaclesConfig(req.config);
+
+    return true;
+}
+
+
+bool srvSetQuery(kautham2::SetQuery::Request &req,
+                 kautham2::SetQuery::Response &res) {
+    res.response = ksh->setQuery(req.init,req.goal);
+
+    return true;
+}
+
+
+bool srvSetInit(kautham2::SetInit::Request &req,
+                kautham2::SetInit::Response &res) {
+    res.response = ksh->setInit(req.init);
+
+    return true;
+}
+
+
+bool srvSetGoal(kautham2::SetGoal::Request &req,
+                kautham2::SetGoal::Response &res) {
+    res.response = ksh->setGoal(req.goal);
+
+    return true;
+}
+
+
+bool srvSetInitObs(kautham2::SetInitObs::Request &req,
+                   kautham2::SetInitObs::Response &res) {
+    res.response = ksh->setInitObs(req.initObs);
+
+    return true;
+}
+
+
+bool srvClearSampleSet(kautham2::ClearSampleSet::Request &req,
+                       kautham2::ClearSampleSet::Response &res) {
+    res.response = ksh->clearSampleSet();
+
+    return true;
+}
+
+
+bool srvSetRobControls(kautham2::SetRobControls::Request &req,
+                       kautham2::SetRobControls::Response &res) {
+    res.response = ksh->setRobControls(req.controls,req.init,req.goal);
+
+    return true;
+}
+
+
+bool srvSetRobControlsStream(kautham2::SetRobControlsStream::Request &req,
+                             kautham2::SetRobControlsStream::Response &res) {
+    filebuf fb;
+    fb.open(req.controls.c_str(),ios::in);
+    istream is(&fb);
+
+    res.response = ksh->setRobControls(&is,req.init,req.goal);
+
+    return true;
+}
+
+
+bool srvSetDefaultRobControls(kautham2::SetDefaultRobControls::Request &req,
+                              kautham2::SetDefaultRobControls::Response &res) {
+    res.response = ksh->setDefaultRobControls(req.init,req.goal);
+
+    return true;
+}
+
+
+bool srvSetObsControls(kautham2::SetObsControls::Request &req,
+                       kautham2::SetObsControls::Response &res) {
+    res.response = ksh->setObsControls(req.controls,req.initObs);
+
+    return true;
+}
+
+
+bool srvSetObsControlsStream(kautham2::SetObsControlsStream::Request &req,
+                             kautham2::SetObsControlsStream::Response &res) {
+    filebuf fb;
+    fb.open(req.controls.c_str(),ios::in);
+    istream is(&fb);
+
+    res.response = ksh->setObsControls(&is,req.initObs);
+
+    return true;
+}
+
+
+bool srvSetFixedObsControls(kautham2::SetFixedObsControls::Request &req,
+                            kautham2::SetFixedObsControls::Response &res) {
+    res.response = ksh->setFixedObsControls();
+
+    return true;
+}
+
+
+bool srvSetPlannerByName(kautham2::SetPlannerByName::Request &req,
+                         kautham2::SetPlannerByName::Response &res) {
+    res.response = ksh->setPlannerByName(req.name);
+
+    return true;
+}
+
+
+bool srvSetPlanner(kautham2::SetPlanner::Request &req,
+                   kautham2::SetPlanner::Response &res) {
+    res.response = ksh->setPlanner(req.planner);
+
+    return true;
+}
+
+
+bool srvSetPlannerStream(kautham2::SetPlannerStream::Request &req,
+                         kautham2::SetPlannerStream::Response &res) {
+    filebuf fb;
+    fb.open(req.planner.c_str(),ios::in);
+    istream is(&fb);
+
+    res.response = ksh->setPlanner(&is);
+
+    return true;
+}
+
+
+bool srvSetPlannerParameter(kautham2::SetPlannerParameter::Request &req,
+                            kautham2::SetPlannerParameter::Response &res) {
+    res.response = ksh->setPlannerParameter(req.parameter,req.value);
+
+    return true;
+}
+
+
+bool srvSolve(kautham2::Solve::Request &req,
+              kautham2::Solve::Response &res) {
+    res.response = ksh->solve(std::cout);
+
+    return true;
+}
+
+
+bool srvGetPath(kautham2::GetPath::Request &req,
+                kautham2::GetPath::Response &res) {
+    ostringstream oss;
+    if (ksh->getPath(oss)) {
+        vector < vector < KthReal > > path;
+        istringstream iss(oss.str());
+        for (string str; getline(iss,str); ) {
+            vector < KthReal > conf;
+            std::istringstream strs(str);
+            int chars_to_read = strs.str().size();
+            while (chars_to_read > 0) {
+                getline(strs,str,' ');
+                if (str.size() > 0) {
+                    conf.push_back(atof(str.c_str()));
+                }
+                chars_to_read -= str.size() + 1;
             }
-            cout << endl;
-
-
-        // Goal sample from service
-        vector < KthReal > Goal;
-        Goal.resize(d);
-
-        cout << "Goal sample: ";
-        for (unsigned i = 0; i < d; i++)
-        {
-            Goal[i] = req.goal.positions[i];
-            cout << Goal[i] << " ";
+            path.push_back(conf);
         }
-        cout << endl;
+        res.response.resize(path.size());
+        for (int i = 0; i < path.size(); ++i) {
+            res.response[i].v.resize(path.at(i).size());
+            for (int j = 0; j < path.at(i).size(); ++j) {
+                res.response[i].v[j] = path.at(i).at(j);
+            }
+        }
+    }
 
-    if(ksh->setQuery(Init, Goal))
-    {
-        res.response = true;
-    }
-    else
-    {
-        res.response = false;
-    }
+    return true;
 }
 
-bool srvMoveRobot(kautham2::MoveRobot::Request &req, kautham2::MoveRobot::Response &res)
-{
-    Problem *_problem;
-    int d = _problem->wSpace()->getNumRobControls();
 
-    vector < KthReal > Move(d);
-
-
-
-    for (unsigned i = 0; i < d; i++)
-    {
-        Move[i] = req.move.positions[i];
+bool srvAddRobot(kautham2::AddRobot::Request &req,
+                            kautham2::AddRobot::Response &res) {
+    vector< vector<KthReal> > limits, mapMatrix;
+    limits.resize(req.limits.size());
+    for (int i = 0; i < limits.size(); ++i) {
+        limits[i].resize(req.limits[i].v.size());
+        for (int j = 0; j < limits[i].size(); ++j) {
+            limits[i][j] = req.limits[i].v[j];
+        }
     }
+    mapMatrix.resize(req.mapMatrix.size());
+    for (int i = 0; i < mapMatrix.size(); ++i) {
+        mapMatrix[i].resize(req.mapMatrix[i].v.size());
+        for (int j = 0; j < mapMatrix[i].size(); ++j) {
+            mapMatrix[i][j] = req.mapMatrix[i].v[j];
+        }
+    }
+    res.response = ksh->addRobot(req.robot,req.scale,req.home,
+                                 limits,mapMatrix,req.offMatrix);
 
-
-    kauthamshell* ksh = new kauthamshell();
-    ksh->setRobotsConfig(Move);
-
-    res.response = true;
-
-    ROS_INFO("Robot is moving");
-
+    return true;
 }
 
-int main (int argc, char **argv)
-{
+
+bool srvRemoveRobot(kautham2::RemoveRobot::Request &req,
+                            kautham2::RemoveRobot::Response &res) {
+    res.response = ksh->removeRobot(req.index);
+
+    return true;
+}
+
+
+bool srvAddObstacle(kautham2::AddObstacle::Request &req,
+                            kautham2::AddObstacle::Response &res) {
+    vector< vector<KthReal> > limits, mapMatrix;
+    limits.resize(req.limits.size());
+    for (int i = 0; i < limits.size(); ++i) {
+        limits[i].resize(req.limits[i].v.size());
+        for (int j = 0; j < limits[i].size(); ++j) {
+            limits[i][j] = req.limits[i].v[j];
+        }
+    }
+    mapMatrix.resize(req.mapMatrix.size());
+    for (int i = 0; i < mapMatrix.size(); ++i) {
+        mapMatrix[i].resize(req.mapMatrix[i].v.size());
+        for (int j = 0; j < mapMatrix[i].size(); ++j) {
+            mapMatrix[i][j] = req.mapMatrix[i].v[j];
+        }
+    }
+    res.response = ksh->addObstacle(req.obstacle,req.scale,req.home,
+                                 limits,mapMatrix,req.offMatrix);
+    return true;
+}
+
+
+bool srvRemoveObstacle(kautham2::RemoveObstacle::Request &req,
+                            kautham2::RemoveObstacle::Response &res) {
+    res.response = ksh->removeObstacle(req.index);
+
+    return true;
+}
+
+
+bool srvAttachObstacle2RobotLink(kautham2::AttachObstacle2RobotLink::Request &req,
+                            kautham2::AttachObstacle2RobotLink::Response &res) {
+    res.response = ksh->attachObstacle2RobotLink(req.robot,req.link,req.obs);
+
+    return true;
+}
+
+
+bool srvDetachObstacle(kautham2::DetachObstacle::Request &req,
+                            kautham2::DetachObstacle::Response &res) {
+    res.response = ksh->detachObstacle(req.obs);
+
+    return true;
+}
+
+
+int main (int argc, char **argv) {
     ros::init(argc, argv, "KauthamService");
     ros::NodeHandle n;
 
     ROS_INFO("Kautham_Service");
 
+    SoDB::init();
+    ksh = new kauthamshell();
 
-    ros::ServiceServer service1 = n.advertiseService("OpenProblem", srvOpenProblem);
-
-    ros::ServiceServer service2 = n.advertiseService("OpenProblemStream", srvOpenProblemStream);
-
-    ros::ServiceServer service3 = n.advertiseService("SetQuery", srvSetQuery);
-
-    ros::ServiceServer service4 = n.advertiseService("MoveRobot", srvMoveRobot);
-
-
+    ros::ServiceServer service00 = n.advertiseService("CloseProblem",srvCloseProblem);
+    ros::ServiceServer service01 = n.advertiseService("ProblemOpened",srvProblemOpened);
+    ros::ServiceServer service02 = n.advertiseService("OpenProblem",srvOpenProblem);
+    ros::ServiceServer service03 = n.advertiseService("OpenProblemStream",srvOpenProblemStream);
+    ros::ServiceServer service04 = n.advertiseService("CheckCollision",srvCheckCollision);
+    ros::ServiceServer service05 = n.advertiseService("SetRobotsConfig",srvSetRobotsConfig);
+    ros::ServiceServer service06 = n.advertiseService("SetObstaclesConfig",srvSetObstaclesConfig);
+    ros::ServiceServer service07 = n.advertiseService("SetQuery",srvSetQuery);
+    ros::ServiceServer service08 = n.advertiseService("SetInit",srvSetInit);
+    ros::ServiceServer service09 = n.advertiseService("SetGoal",srvSetGoal);
+    ros::ServiceServer service10 = n.advertiseService("SetInitObs",srvSetInitObs);
+    ros::ServiceServer service11 = n.advertiseService("ClearSampleSet",srvClearSampleSet);
+    ros::ServiceServer service12 = n.advertiseService("SetRobControls",srvSetRobControls);
+    ros::ServiceServer service13 = n.advertiseService("SetRobControlsStream",srvSetRobControlsStream);
+    ros::ServiceServer service14 = n.advertiseService("SetDefaultRobControls",srvSetDefaultRobControls);
+    ros::ServiceServer service15 = n.advertiseService("SetObsControls",srvSetObsControls);
+    ros::ServiceServer service16 = n.advertiseService("SetObsControlsStream",srvSetObsControlsStream);
+    ros::ServiceServer service17 = n.advertiseService("SetFixedObsControls",srvSetFixedObsControls);
+    ros::ServiceServer service18 = n.advertiseService("SetPlannerByName",srvSetPlannerByName);
+    ros::ServiceServer service19 = n.advertiseService("SetPlanner",srvSetPlanner);
+    ros::ServiceServer service20 = n.advertiseService("SetPlannerStream",srvSetPlannerStream);
+    ros::ServiceServer service21 = n.advertiseService("SetPlannerParameter",srvSetPlannerParameter);
+    ros::ServiceServer service22 = n.advertiseService("Solve",srvSolve);
+    ros::ServiceServer service23 = n.advertiseService("GetPath",srvGetPath);
+    ros::ServiceServer service24 = n.advertiseService("AddRobot",srvAddRobot);
+    ros::ServiceServer service25 = n.advertiseService("RemoveRobot",srvRemoveRobot);
+    ros::ServiceServer service26 = n.advertiseService("AddObstacle",srvAddObstacle);
+    ros::ServiceServer service27 = n.advertiseService("RemoveObstacle",srvRemoveObstacle);
+    ros::ServiceServer service28 = n.advertiseService("AttachObstacle2RobotLink",srvAttachObstacle2RobotLink);
+    ros::ServiceServer service29 = n.advertiseService("DetachObstacle",srvDetachObstacle);
 
     ros::spin();
 
-
     return 0;
-
-
 }
 
 
