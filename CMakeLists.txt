@@ -16,7 +16,7 @@ option( KAUTHAM_IOC "Use IOC planners" ON )
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
-option( KAUTHAM_ROS "Build the ROS version" OFF )
+option( KAUTHAM_ROS "Build the ROS version" ON )
 option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
 
 ########### Set flags ####################
@@ -50,24 +50,49 @@ FIND_PACKAGE( Boost COMPONENTS system serialization thread REQUIRED )
 
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
-
-
-
-
-include_directories(include
-
-  ${catkin_INCLUDE_DIRS}
-)
+include_directories(include ${catkin_INCLUDE_DIRS})
  LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
 
 add_service_files(
    DIRECTORY srv
-   FILES
-   MoveRobot.srv
-   Problem.srv
-   ProblemStream.srv
+   FILES 
+   AddObstacle.srv
+   DetachObstacle.srv
+   SetDefaultRobControls.srv
+   SetObsControlsStream.srv
    SetQuery.srv
- )
+   AddRobot.srv
+   GetPath.srv
+   SetFixedObsControls.srv
+   SetObstaclesConfig.srv
+   SetRobControls.srv
+   AttachObstacle2RobotLink.srv
+   OpenProblem.srv   
+   OpenProblemStream.srv
+   SetGoal.srv
+   SetPlannerByName.srv
+   SetRobControlsStream.srv
+   CheckCollision.srv   
+   ProblemOpened.srv
+   SetInitObs.srv
+   SetPlannerParameter.srv
+   SetRobotsConfig.srv
+   ClearSampleSet.srv    
+   RemoveObstacle.srv
+   SetInit.srv
+   SetPlanner.srv
+   Solve.srv
+   CloseProblem.srv
+   RemoveRobot.srv
+   SetObsControls.srv
+   SetPlannerStream.srv
+)
+
+add_message_files(
+   DIRECTORY msg
+   FILES 
+   fVector.msg
+)
 
 generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)
 
