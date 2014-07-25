@@ -420,44 +420,44 @@ bool srvDetachObstacle(kautham2::DetachObstacle::Request &req,
 
 
 int main (int argc, char **argv) {
-    ros::init(argc, argv, "KauthamService");
+    ros::init(argc, argv, "kautham_node");
     ros::NodeHandle n;
 
-    ROS_INFO("Kautham_Service");
+    ROS_INFO("Starting Kautham_Service");
 
     SoDB::init();
     ksh = new kauthamshell();
 
-    ros::ServiceServer service00 = n.advertiseService("CloseProblem",srvCloseProblem);
-    ros::ServiceServer service01 = n.advertiseService("ProblemOpened",srvProblemOpened);
-    ros::ServiceServer service02 = n.advertiseService("OpenProblem",srvOpenProblem);
-    ros::ServiceServer service03 = n.advertiseService("OpenProblemStream",srvOpenProblemStream);
-    ros::ServiceServer service04 = n.advertiseService("CheckCollision",srvCheckCollision);
-    ros::ServiceServer service05 = n.advertiseService("SetRobotsConfig",srvSetRobotsConfig);
-    ros::ServiceServer service06 = n.advertiseService("SetObstaclesConfig",srvSetObstaclesConfig);
-    ros::ServiceServer service07 = n.advertiseService("SetQuery",srvSetQuery);
-    ros::ServiceServer service08 = n.advertiseService("SetInit",srvSetInit);
-    ros::ServiceServer service09 = n.advertiseService("SetGoal",srvSetGoal);
-    ros::ServiceServer service10 = n.advertiseService("SetInitObs",srvSetInitObs);
-    ros::ServiceServer service11 = n.advertiseService("ClearSampleSet",srvClearSampleSet);
-    ros::ServiceServer service12 = n.advertiseService("SetRobControls",srvSetRobControls);
-    ros::ServiceServer service13 = n.advertiseService("SetRobControlsStream",srvSetRobControlsStream);
-    ros::ServiceServer service14 = n.advertiseService("SetDefaultRobControls",srvSetDefaultRobControls);
-    ros::ServiceServer service15 = n.advertiseService("SetObsControls",srvSetObsControls);
-    ros::ServiceServer service16 = n.advertiseService("SetObsControlsStream",srvSetObsControlsStream);
-    ros::ServiceServer service17 = n.advertiseService("SetFixedObsControls",srvSetFixedObsControls);
-    ros::ServiceServer service18 = n.advertiseService("SetPlannerByName",srvSetPlannerByName);
-    ros::ServiceServer service19 = n.advertiseService("SetPlanner",srvSetPlanner);
-    ros::ServiceServer service20 = n.advertiseService("SetPlannerStream",srvSetPlannerStream);
-    ros::ServiceServer service21 = n.advertiseService("SetPlannerParameter",srvSetPlannerParameter);
-    ros::ServiceServer service22 = n.advertiseService("Solve",srvSolve);
-    ros::ServiceServer service23 = n.advertiseService("GetPath",srvGetPath);
-    ros::ServiceServer service24 = n.advertiseService("AddRobot",srvAddRobot);
-    ros::ServiceServer service25 = n.advertiseService("RemoveRobot",srvRemoveRobot);
-    ros::ServiceServer service26 = n.advertiseService("AddObstacle",srvAddObstacle);
-    ros::ServiceServer service27 = n.advertiseService("RemoveObstacle",srvRemoveObstacle);
-    ros::ServiceServer service28 = n.advertiseService("AttachObstacle2RobotLink",srvAttachObstacle2RobotLink);
-    ros::ServiceServer service29 = n.advertiseService("DetachObstacle",srvDetachObstacle);
+    ros::ServiceServer service00 = n.advertiseService("kautham_node/CloseProblem",srvCloseProblem);
+    ros::ServiceServer service01 = n.advertiseService("kautham_node/ProblemOpened",srvProblemOpened);
+    ros::ServiceServer service02 = n.advertiseService("kautham_node/OpenProblem",srvOpenProblem);
+    ros::ServiceServer service03 = n.advertiseService("kautham_node/OpenProblemStream",srvOpenProblemStream);
+    ros::ServiceServer service04 = n.advertiseService("kautham_node/CheckCollision",srvCheckCollision);
+    ros::ServiceServer service05 = n.advertiseService("kautham_node/SetRobotsConfig",srvSetRobotsConfig);
+    ros::ServiceServer service06 = n.advertiseService("kautham_node/SetObstaclesConfig",srvSetObstaclesConfig);
+    ros::ServiceServer service07 = n.advertiseService("kautham_node/SetQuery",srvSetQuery);
+    ros::ServiceServer service08 = n.advertiseService("kautham_node/SetInit",srvSetInit);
+    ros::ServiceServer service09 = n.advertiseService("kautham_node/SetGoal",srvSetGoal);
+    ros::ServiceServer service10 = n.advertiseService("kautham_node/SetInitObs",srvSetInitObs);
+    ros::ServiceServer service11 = n.advertiseService("kautham_node/ClearSampleSet",srvClearSampleSet);
+    ros::ServiceServer service12 = n.advertiseService("kautham_node/SetRobControls",srvSetRobControls);
+    ros::ServiceServer service13 = n.advertiseService("kautham_node/SetRobControlsStream",srvSetRobControlsStream);
+    ros::ServiceServer service14 = n.advertiseService("kautham_node/SetDefaultRobControls",srvSetDefaultRobControls);
+    ros::ServiceServer service15 = n.advertiseService("kautham_node/SetObsControls",srvSetObsControls);
+    ros::ServiceServer service16 = n.advertiseService("kautham_node/SetObsControlsStream",srvSetObsControlsStream);
+    ros::ServiceServer service17 = n.advertiseService("kautham_node/SetFixedObsControls",srvSetFixedObsControls);
+    ros::ServiceServer service18 = n.advertiseService("kautham_node/SetPlannerByName",srvSetPlannerByName);
+    ros::ServiceServer service19 = n.advertiseService("kautham_node/SetPlanner",srvSetPlanner);
+    ros::ServiceServer service20 = n.advertiseService("kautham_node/SetPlannerStream",srvSetPlannerStream);
+    ros::ServiceServer service21 = n.advertiseService("kautham_node/SetPlannerParameter",srvSetPlannerParameter);
+    ros::ServiceServer service22 = n.advertiseService("kautham_node/Solve",srvSolve);
+    ros::ServiceServer service23 = n.advertiseService("kautham_node/GetPath",srvGetPath);
+    ros::ServiceServer service24 = n.advertiseService("kautham_node/AddRobot",srvAddRobot);
+    ros::ServiceServer service25 = n.advertiseService("kautham_node/RemoveRobot",srvRemoveRobot);
+    ros::ServiceServer service26 = n.advertiseService("kautham_node/AddObstacle",srvAddObstacle);
+    ros::ServiceServer service27 = n.advertiseService("kautham_node/RemoveObstacle",srvRemoveObstacle);
+    ros::ServiceServer service28 = n.advertiseService("kautham_node/AttachObstacle2RobotLink",srvAttachObstacle2RobotLink);
+    ros::ServiceServer service29 = n.advertiseService("kautham_node/DetachObstacle",srvDetachObstacle);
 
     ros::spin();
 
