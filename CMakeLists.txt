@@ -101,6 +101,7 @@ catkin_package(
   INCLUDE_DIRS         ${CMAKE_CURRENT_SOURCE_DIR}                   
   CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
 )
+
 endif( KAUTHAM_ROS )
 
 
@@ -149,10 +150,9 @@ endif()
 ##############################################################################
 #########################################################
 # Copy Help file
+install(DIRECTORY ${CMAKE_SOURCE_DIR} DESTINATION share/kautham2)
+##install(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
-
-#########################################################
 
 
 
