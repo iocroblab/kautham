@@ -18,4 +18,10 @@ SET( HDR_FILES console/kauthamshell.h )
 SET( SRC_FILES ros/kautham_node.cpp console/kauthamshell.cpp )
 add_executable( Kautham_node ${SRC_FILES} ${HDR_FILES} )
 TARGET_LINK_LIBRARIES( Kautham_node kautham ${catkin_LIBRARIES} ${KC_EXTRA_LIBS} ${PUGI_XML_LIBRARIES} ${BOOST_LIBRARIES} ${COIN_LIBRARY} ${EXTRA_LIBS} )
+
+#########################################################
+install(TARGETS Kautham_node
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 endif( KAUTHAM_ROS )
