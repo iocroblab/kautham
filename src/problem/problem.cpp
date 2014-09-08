@@ -1368,8 +1368,7 @@ namespace Kautham {
   }
 
 
-  bool Problem::addObstacle2WSpace(string robFile, KthReal scale, vector<KthReal> home,
-                         vector< vector<KthReal> > limits) {
+  bool Problem::addObstacle2WSpace(string robFile, KthReal scale, vector<KthReal> home) {
       Robot *obs;
 #ifndef KAUTHAM_COLLISION_PQP
       obs = new Robot(robFile,scale,INVENTOR,false);
@@ -1378,10 +1377,6 @@ namespace Kautham {
 #endif
 
       if (!obs->isArmed()) return false;
-
-      for (int i = 0; i < 3; ++i) {
-          obs->setLimits(i,limits.at(i).at(0),limits.at(i).at(1));
-      }
 
       SE3Conf tmpC;
       home[6] = home[6]*_toRad;
