@@ -85,11 +85,12 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::checkCollision(vector<KthReal> smpcoords) {
+    bool kauthamshell::checkCollision(vector<KthReal> smpcoords, bool *collisionFree) {
         try {
             Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
             if (smp->setCoords(smpcoords)) {
-                return _problem->wSpace()->collisionCheck(smp);
+                *collisionFree = _problem->wSpace()->collisionCheck(smp);
+                return true;
             } else {
                 return false;
             }
@@ -636,26 +637,10 @@ namespace Kautham {
     }
 
 
-    int kauthamshell::addObstacle(string obsFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
-                                  vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix) {
+    int kauthamshell::addObstacle(string obsFile, KthReal scale, vector<KthReal> home) {
         try {
-            if (!_problem->addObstacle2WSpace(obsFile,scale,home,limits)) return (-1);
+            if (!_problem->addObstacle2WSpace(obsFile,scale,home)) return (-1);
             int index = _problem->wSpace()->getNumObstacles()-1;
-            Robot *obs = _problem->wSpace()->getObstacle(index);
-            int numCntr = _problem->wSpace()->getNumObsControls();
-            int numDOF = 6+obs->getNumJoints();
-            KthReal **MapMatrix = new KthReal*[numDOF];
-            KthReal *OffMatrix = new KthReal[numDOF];
-            for (int i = 0; i < numDOF; ++i) {
-                OffMatrix[i] = offMatrix.at(i);
-                MapMatrix[i] = new KthReal[numCntr];
-                for (int j = 0; j < numCntr; ++j) {
-                    MapMatrix[i][j] = mapMatrix.at(i).at(j);
-                }
-            }
-            obs->setMapMatrix(MapMatrix);
-            obs->setOffMatrix(OffMatrix);
-
             return index;
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
