@@ -376,23 +376,7 @@ bool srvRemoveRobot(kautham2::RemoveRobot::Request &req,
 
 bool srvAddObstacle(kautham2::AddObstacle::Request &req,
                             kautham2::AddObstacle::Response &res) {
-    vector< vector<KthReal> > limits, mapMatrix;
-    limits.resize(req.limits.size());
-    for (int i = 0; i < limits.size(); ++i) {
-        limits[i].resize(req.limits[i].v.size());
-        for (int j = 0; j < limits[i].size(); ++j) {
-            limits[i][j] = req.limits[i].v[j];
-        }
-    }
-    mapMatrix.resize(req.mapMatrix.size());
-    for (int i = 0; i < mapMatrix.size(); ++i) {
-        mapMatrix[i].resize(req.mapMatrix[i].v.size());
-        for (int j = 0; j < mapMatrix[i].size(); ++j) {
-            mapMatrix[i][j] = req.mapMatrix[i].v[j];
-        }
-    }
-    res.response = ksh->addObstacle(req.obstacle,req.scale,req.home,
-                                 limits,mapMatrix,req.offMatrix);
+    res.response = ksh->addObstacle(req.obstacle,req.scale,req.home);
     return true;
 }
 
