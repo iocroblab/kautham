@@ -144,7 +144,9 @@ bool srvOpenProblemStream(kautham2::OpenProblemStream::Request &req,
 bool srvCheckCollision(kautham2::CheckCollision::Request &req,
                        kautham2::CheckCollision::Response &res) {
 
-    res.response = ksh->checkCollision(req.config);
+    bool collisionFree;
+    res.response = ksh->checkCollision(req.config,&collisionFree);
+    res.collisionFree = collisionFree;
 
     return true;
 }

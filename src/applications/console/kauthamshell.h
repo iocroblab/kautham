@@ -40,7 +40,7 @@ namespace Kautham {
         inline bool problemOpened() {return(_problem != NULL);} //! Informs wether there is a problem opened;
         bool openProblem(istream* inputfile, vector<string> def_path = vector<string>());
         bool openProblem(string problemfilename, vector<string> def_path);
-        bool checkCollision(vector<KthReal> smpcoords);
+        bool checkCollision(vector<KthReal> smpcoords, bool *collisionFree);
         bool setRobotsConfig(vector<KthReal> smpcoords);
         bool setObstaclesConfig(vector<KthReal> smpcoords);
         bool setQuery(vector<KthReal> init, vector<KthReal> goal);
@@ -64,8 +64,7 @@ namespace Kautham {
         int addRobot(string robFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
                          vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix);
         bool removeRobot(int index);
-        int addObstacle(string obsFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
-                         vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix);
+        int addObstacle(string obsFile, KthReal scale, vector<KthReal> home);
         bool removeObstacle(int index);
         bool attachObstacle2RobotLink(int robot, int link, int obs);
         bool detachObstacle(uint obs);

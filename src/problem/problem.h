@@ -156,8 +156,7 @@ namespace Kautham {
     bool                    setupFromFile(pugi::xml_document *doc, bool useBBOX);
     bool addRobot2WSpace(string robFile, KthReal scale, vector<KthReal> home,
                            vector< vector<KthReal> > limits);
-    bool addObstacle2WSpace(string robFile, KthReal scale, vector<KthReal> home,
-                           vector< vector<KthReal> > limits);
+    bool addObstacle2WSpace(string robFile, KthReal scale, vector<KthReal> home);
 
 
     //! This method saves the information of the problem's planner . 
