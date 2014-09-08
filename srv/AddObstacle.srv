@@ -1,8 +1,5 @@
 string obstacle
 float32 scale
 float32[] home
-fVector[] limits
-fVector[] mapMatrix
-float32[] offMatrix
 ---
 int64 response
