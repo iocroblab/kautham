@@ -89,7 +89,7 @@ namespace Kautham {
         try {
             Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
             if (smp->setCoords(smpcoords)) {
-                *collisionFree = _problem->wSpace()->collisionCheck(smp);
+                *collisionFree = !_problem->wSpace()->collisionCheck(smp);
                 return true;
             } else {
                 return false;
