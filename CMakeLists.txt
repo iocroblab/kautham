@@ -86,6 +86,7 @@ add_service_files(
    RemoveRobot.srv
    SetObsControls.srv
    SetPlannerStream.srv
+   Connect.srv
 )
 
 add_message_files(
