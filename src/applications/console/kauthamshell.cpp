@@ -35,6 +35,7 @@ namespace ob = ompl::base;
 namespace Kautham {
     bool kauthamshell::openProblem(istream* inputfile, vector <string> def_path) {
         try {
+            delete _problem;
             _problem = new Problem();
             if (_problem->setupFromFile(inputfile,def_path)) {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
@@ -61,7 +62,7 @@ namespace Kautham {
     bool kauthamshell::openProblem(string problemfilename, vector <string> def_path) {
         try {
             std::cout << "Kautham is opening a problem file: " << problemfilename << endl;
-
+            delete _problem;
             _problem = new Problem();
             if (_problem->setupFromFile(problemfilename,def_path)) {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
@@ -582,14 +583,12 @@ namespace Kautham {
                     ((omplplanner::omplPlanner*)_planner)->SimpleSetup()->setup();
 
                     ob::ScopedState<ob::CompoundStateSpace> fromState(((omplplanner::omplPlanner*)_planner)->getSpace());
-                    ((omplplanner::omplPlanner*)_planner)->
-                            smp2omplScopedState(fromSample,&fromState);
+                    ((omplplanner::omplPlanner*)_planner)->smp2omplScopedState(fromSample,&fromState);
 
                     ob::ScopedState<ob::CompoundStateSpace> toState(((omplplanner::omplPlanner*)_planner)->getSpace());
-                    ((omplplanner::omplPlanner*)_planner)->
-                            smp2omplScopedState(toSample,&toState);
+                    ((omplplanner::omplPlanner*)_planner)->smp2omplScopedState(toSample,&toState);
 
-                    bool connected = ((ob::MotionValidator *)((ob::SpaceInformation *)((omplplanner::omplPlanner*)
+                    bool connected = ((ob::MotionValidator*)((ob::SpaceInformation*)((omplplanner::omplPlanner*)
                                                                                        _planner)->
                                                               SimpleSetup()->getSpaceInformation().get())->
                                       getMotionValidator().get())->checkMotion(fromState.get(),toState.get());
