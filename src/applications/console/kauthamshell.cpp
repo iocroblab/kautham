@@ -541,6 +541,107 @@ namespace Kautham {
     }
 
 
+    bool kauthamshell::connect(vector<float> smpcoords1, vector<float> smpcoords2) {
+        try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            int dim = _problem->getDimension();
+            if (smpcoords1.size() != dim || smpcoords2.size() != dim) {
+                cout << "The samples should have dimension " << dim << endl;
+            }
+
+            Planner *_planner = _problem->getPlanner();
+            if (_planner != NULL) {
+                Sample *fromSample = new Sample(dim);
+                fromSample->setCoords(smpcoords1);
+                Sample *toSample = new Sample(dim);
+                toSample->setCoords(smpcoords2);
+
+                switch ((int)_planner->getFamily()) {
+    #if defined(KAUTHAM_USE_IOC)
+                case IOCPLANNER: {
+
+                    ((IOC::iocPlanner*)_planner)->getLocalPlanner()->setInitSamp(fromSample);
+                    ((IOC::iocPlanner*)_planner)->getLocalPlanner()->setGoalSamp(toSample);
+
+                    if (((IOC::iocPlanner*)_planner)->getLocalPlanner()->canConect()) {
+                        cout << "The samples can be connected." << endl;
+                        return true;
+                    } else {
+                        cout << "The samples can not be connected." << endl;
+                        return false;
+                    }
+                    break;
+                }
+    #endif
+    #if defined(KAUTHAM_USE_OMPL)
+                case OMPLPLANNER: {
+                    ((omplplanner::omplPlanner*)_planner)->SimpleSetup()->setup();
+
+                    ob::ScopedState<ob::CompoundStateSpace> fromState(((omplplanner::omplPlanner*)_planner)->getSpace());
+                    ((omplplanner::omplPlanner*)_planner)->
+                            smp2omplScopedState(fromSample,&fromState);
+
+                    ob::ScopedState<ob::CompoundStateSpace> toState(((omplplanner::omplPlanner*)_planner)->getSpace());
+                    ((omplplanner::omplPlanner*)_planner)->
+                            smp2omplScopedState(toSample,&toState);
+
+                    bool connected = ((ob::MotionValidator *)((ob::SpaceInformation *)((omplplanner::omplPlanner*)
+                                                                                       _planner)->
+                                                              SimpleSetup()->getSpaceInformation().get())->
+                                      getMotionValidator().get())->checkMotion(fromState.get(),toState.get());
+                    if (connected) {
+                        cout << "The samples can be connected." << endl;
+                        return true;
+                    } else {
+                        cout << "The samples can not be connected." << endl;
+                        return false;
+                    }
+                    break;
+                }
+                case OMPLCPLANNER: {
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+                }
+        #if defined(KAUTHAM_USE_ODE)
+                case ODEPLANNER: {
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+                }
+        #endif
+    #endif
+                case NOFAMILY: {
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                    break;
+                }
+                default: {
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                    break;
+                }
+                }
+                return false;
+            } else {
+                cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                return false;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
+        }
+    }
+
+
     bool kauthamshell::solve(ostream &graphVizPlannerDataFile) {
         try {
             bool ret = false;
