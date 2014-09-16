@@ -88,6 +88,11 @@ namespace Kautham {
 
     bool kauthamshell::checkCollision(vector<KthReal> smpcoords, bool *collisionFree) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
             if (smp->setCoords(smpcoords)) {
                 *collisionFree = !_problem->wSpace()->collisionCheck(smp);
@@ -112,6 +117,11 @@ namespace Kautham {
 
     bool kauthamshell::setRobotsConfig(vector<KthReal> smpcoords) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
             if (smp->setCoords(smpcoords)) {
                 _problem->wSpace()->moveRobotsTo(smp);
@@ -136,6 +146,11 @@ namespace Kautham {
 
     bool kauthamshell::setObstaclesConfig(vector<KthReal> smpcoords) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             Sample* smp = new Sample(_problem->wSpace()->getNumObsControls());
             if (smp->setCoords(smpcoords)) {
                 _problem->wSpace()->moveObstaclesTo(smp);
@@ -160,6 +175,11 @@ namespace Kautham {
 
     bool kauthamshell::setQuery(vector<KthReal> init, vector<KthReal> goal) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             int d = _problem->wSpace()->getNumRobControls();
             SampleSet* samples = _problem->getSampleSet();
             samples->clear();
@@ -197,6 +217,11 @@ namespace Kautham {
 
     bool kauthamshell::setInit(vector<KthReal> init) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             int d = _problem->wSpace()->getNumRobControls();
             SampleSet* samples = _problem->getSampleSet();
             Sample *goal = new Sample(samples->getSampleAt(1));
@@ -232,6 +257,11 @@ namespace Kautham {
 
     bool kauthamshell::setGoal(vector<KthReal> goal) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             int d = _problem->wSpace()->getNumRobControls();
             SampleSet* samples = _problem->getSampleSet();
             Sample *init = new Sample(samples->getSampleAt(0));
@@ -267,6 +297,11 @@ namespace Kautham {
 
     bool kauthamshell::setInitObs(vector<KthReal> initObs) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             int d = _problem->wSpace()->getNumObsControls();
             Sample* smp = new Sample(d);
             smp->setCoords(initObs);
@@ -290,6 +325,11 @@ namespace Kautham {
 
     bool kauthamshell::clearSampleSet() {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             SampleSet* samples = _problem->getSampleSet();
             Sample *init = new Sample(samples->getSampleAt(0));
             Sample *goal = new Sample(samples->getSampleAt(1));
@@ -319,6 +359,11 @@ namespace Kautham {
 
     bool kauthamshell::setRobControls(istream* inputfile, vector<KthReal> init, vector<KthReal> goal) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             if (!_problem->setRobotControls(inputfile)) return false;
             return (setQuery(init,goal));
         } catch (const KthExcp& excp) {
@@ -338,6 +383,11 @@ namespace Kautham {
 
     bool kauthamshell::setRobControls(string controlsFile, vector<KthReal> init, vector<KthReal> goal) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             if (!_problem->setRobotControls(controlsFile)) return false;
             return (setQuery(init,goal));
         } catch (const KthExcp& excp) {
@@ -357,6 +407,11 @@ namespace Kautham {
 
     bool kauthamshell::setDefaultRobControls(vector<KthReal> init, vector<KthReal> goal) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             if (!_problem->setDefaultRobotControls()) return false;
             return (setQuery(init,goal));
         } catch (const KthExcp& excp) {
@@ -376,6 +431,11 @@ namespace Kautham {
 
     bool kauthamshell::setObsControls(istream* inputfile, vector<KthReal> initObs) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             if (!_problem->setObstacleControls(inputfile)) return false;
             return (setInitObs(initObs));
         } catch (const KthExcp& excp) {
@@ -395,6 +455,11 @@ namespace Kautham {
 
     bool kauthamshell::setObsControls(string controlsFile, vector<KthReal> initObs) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             if (!_problem->setObstacleControls(controlsFile)) return false;
             return (setInitObs(initObs));
         } catch (const KthExcp& excp) {
@@ -414,6 +479,11 @@ namespace Kautham {
 
     bool kauthamshell::setPlannerByName(string name) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             if (_problem->createPlanner(name)) {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
                 _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
@@ -438,6 +508,11 @@ namespace Kautham {
 
     bool kauthamshell::setPlanner(istream* inputfile) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             _problem->resetPlanner();
             if (_problem->createPlannerFromFile(inputfile)) {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
@@ -463,6 +538,11 @@ namespace Kautham {
 
     bool kauthamshell::setPlanner(string problemfilename) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             if (_problem->createPlannerFromFile(problemfilename))  {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
                 _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
@@ -487,6 +567,16 @@ namespace Kautham {
 
     bool kauthamshell::setPlannerParameter(string parameter, string value) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             return (_problem->getPlanner()->setParametersFromString(parameter+"|"+value));
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
@@ -505,6 +595,16 @@ namespace Kautham {
 
     bool kauthamshell::setFixedObsControls() {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             if (!_problem->setFixedObstacleControls()) return false;
             vector<KthReal> coords;
             coords.resize(0);
@@ -526,6 +626,11 @@ namespace Kautham {
 
     bool kauthamshell::solve() {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             return _problem->getPlanner()->solveAndInherit();
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
@@ -538,6 +643,61 @@ namespace Kautham {
                  << "problem with the Kautham2 application at less once in order "
                  << "to verify the correctness of the problem formulation.\n";
             return false;
+        }
+    }
+
+
+    double kauthamshell::getLastPlanComputationTime() {
+        try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return -1.0;
+            }
+
+            Planner *_planner = _problem->getPlanner();
+            if (_planner != NULL) {
+                switch ((int)_planner->getFamily()) {
+#if defined(KAUTHAM_USE_IOC)
+                case IOCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+#endif
+#if defined(KAUTHAM_USE_OMPL)
+                case OMPLPLANNER:
+                    return ((omplplanner::omplPlanner*)_planner)->SimpleSetup()->getLastPlanComputationTime();
+                    break;
+                case OMPLCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+    #if defined(KAUTHAM_USE_ODE)
+                case ODEPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+    #endif
+#endif
+                case NOFAMILY:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                    break;
+                default:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                    break;
+                }
+                return -1.0;
+            } else {
+                cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                return -1.0;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return -1.0;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return -1.0;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return -1.0;
         }
     }
 
@@ -643,6 +803,11 @@ namespace Kautham {
 
     bool kauthamshell::solve(ostream &graphVizPlannerDataFile) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             bool ret = false;
             if (_problem->getPlanner()->getFamily()==OMPLPLANNER) {
                 ret = _problem->getPlanner()->solveAndInherit();
@@ -675,6 +840,11 @@ namespace Kautham {
 
     bool kauthamshell::getPath(ostream &path) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             bool ret = false;
 
             if (_problem->getPlanner()->getFamily()==OMPLPLANNER) {
@@ -704,6 +874,11 @@ namespace Kautham {
     int kauthamshell::addRobot(string robFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
                                   vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return -1;
+            }
+
             if (!_problem->addRobot2WSpace(robFile,scale,home,limits)) return (-1);
             int index = _problem->wSpace()->getNumRobots()-1;
             Robot *rob = _problem->wSpace()->getRobot(index);
@@ -739,6 +914,11 @@ namespace Kautham {
 
     int kauthamshell::addObstacle(string obsFile, KthReal scale, vector<KthReal> home) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return -1;
+            }
+
             if (!_problem->addObstacle2WSpace(obsFile,scale,home)) return (-1);
             int index = _problem->wSpace()->getNumObstacles()-1;
             return index;
@@ -759,6 +939,11 @@ namespace Kautham {
 
     bool kauthamshell::removeRobot(int index) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             if (index < 0 && index >= _problem->wSpace()->getNumRobots()) {
                 return false;
             } else {
@@ -782,6 +967,11 @@ namespace Kautham {
 
     bool kauthamshell::removeObstacle(int index) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             if (index < 0 && index >= _problem->wSpace()->getNumObstacles()) {
                 return false;
             } else {
@@ -805,6 +995,11 @@ namespace Kautham {
 
     bool kauthamshell::attachObstacle2RobotLink(int robot, int link, int obs) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             return (_problem->wSpace()->attachObstacle2RobotLink(robot,link,obs));
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
@@ -823,6 +1018,11 @@ namespace Kautham {
 
     bool kauthamshell::detachObstacle(uint obs) {
         try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
             return (_problem->wSpace()->detachObstacle(obs));
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
