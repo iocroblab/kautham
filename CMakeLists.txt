@@ -87,6 +87,7 @@ add_service_files(
    SetObsControls.srv
    SetPlannerStream.srv
    Connect.srv
+   GetLastPlanComputationTime.srv
 )
 
 add_message_files(
