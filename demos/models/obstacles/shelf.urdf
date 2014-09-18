@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<robot name="Shelf">
+  <link name="shelf0">
+    <visual>
+      <geometry>
+        <box size="0.3 0.3 0.01"/>
+      </geometry>
+      <material>
+        <color rgba="0.8 0.4 0.1 0.55"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="shelf1">
+    <visual>
+      <geometry>
+        <box size="0.3 0.3 0.01"/>
+      </geometry>
+      <material>
+        <color rgba="0.8 0.4 0.1 0.55"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="shelf2">
+    <visual>
+      <geometry>
+        <box size="0.3 0.3 0.01"/>
+      </geometry>
+      <material>
+        <color rgba="0.8 0.4 0.1 0.55"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="side0">
+    <visual>
+      <geometry>
+        <box size="0.01 0.3 0.6"/>
+      </geometry>
+      <material>
+        <color rgba="0.8 0.4 0.1 0.55"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="side1">
+    <visual>
+      <geometry>
+        <box size="0.01 0.3 0.6"/>
+      </geometry>
+      <material>
+        <color rgba="0.8 0.4 0.1 0.55"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="joint0" type="fixed">
+    <parent link="shelf0"/>
+    <child link="shelf1"/>
+    <origin xyz="0 0 0.3"/>
+  </joint>
+
+  <joint name="joint1" type="fixed">
+    <parent link="shelf0"/>
+    <child link="shelf2"/>
+    <origin xyz="0 0 0.6"/>
+  </joint>
+
+  <joint name="joint2" type="fixed">
+    <parent link="shelf0"/>
+    <child link="side0"/>
+    <origin xyz="0.145 0 0.3"/>
+  </joint>
+
+  <joint name="joint3" type="fixed">
+    <parent link="shelf0"/>
+    <child link="side1"/>
+    <origin xyz="-0.145 0 0.3"/>
+  </joint>
+</robot>
