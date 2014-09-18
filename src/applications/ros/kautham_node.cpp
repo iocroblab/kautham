@@ -64,8 +64,8 @@
 #include "kautham2/DetachObstacle.h"
 #include "kautham2/Connect.h"
 #include "kautham2/GetLastPlanComputationTime.h"
-
-
+#include "kautham2/GetNumEdges.h"
+#include "kautham2/GetNumVertices.h"
 
 
 using namespace std;
@@ -95,8 +95,18 @@ bool srvProblemOpened(kautham2::ProblemOpened::Request &req,
 bool srvOpenProblem(kautham2::OpenProblem::Request &req,
                     kautham2::OpenProblem::Response &res) {
     ROS_INFO("Opening problem:: %s", req.problem.c_str());
+    string dir = req.problem;
+    dir.erase(dir.find_last_of("/") + 1, dir.length());
+    string absPath = dir;
+    vector <string> def_path =req.dir;
 
-    if (ksh->openProblem(req.problem, req.dir)) {
+    def_path.push_back(dir);
+    def_path.push_back(dir+"/../../models/");
+    dir = absPath.substr(0,absPath.find_last_of("/")+1);
+    def_path.push_back(dir);
+    def_path.push_back(dir+"/../../models/");
+
+    if (ksh->openProblem(req.problem, def_path)) {
         ROS_INFO("The problem file has been opened successfully.\n");
         my_msg.data = "The problem file has been opened successfully.";
         res.response = true;
@@ -423,6 +433,21 @@ bool srvGetLastPlanComputationTime(kautham2::GetLastPlanComputationTime::Request
 }
 
 
+bool srvGetNumEdges(kautham2::GetNumEdges::Request &req,
+                            kautham2::GetNumEdges::Response &res) {
+    res.num = ksh->getNumEdges();
+
+    return true;
+}
+
+
+bool srvGetNumVertices(kautham2::GetNumVertices::Request &req,
+                            kautham2::GetNumVertices::Response &res) {
+    res.num = ksh->getNumVertices();
+
+    return true;
+}
+
 int main (int argc, char **argv) {
     ros::init(argc, argv, "kautham_node");
     ros::NodeHandle n;
@@ -463,7 +488,9 @@ int main (int argc, char **argv) {
     ros::ServiceServer service28 = n.advertiseService("kautham_node/AttachObstacle2RobotLink",srvAttachObstacle2RobotLink);
     ros::ServiceServer service29 = n.advertiseService("kautham_node/DetachObstacle",srvDetachObstacle);
     ros::ServiceServer service30 = n.advertiseService("kautham_node/Connect",srvConnect);
-    ros::ServiceServer service31 = n.advertiseService("kautham_node/GetLastPlanComputationTimet",srvGetLastPlanComputationTime);
+    ros::ServiceServer service31 = n.advertiseService("kautham_node/GetLastPlanComputationTime",srvGetLastPlanComputationTime);
+    ros::ServiceServer service32 = n.advertiseService("kautham_node/GetNumEdges",srvGetNumEdges);
+    ros::ServiceServer service33 = n.advertiseService("kautham_node/GetNumVertices",srvGetNumVertices);
 
     ros::spin();
 
