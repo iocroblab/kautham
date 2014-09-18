@@ -702,6 +702,124 @@ namespace Kautham {
     }
 
 
+    int kauthamshell::getNumEdges() {
+        try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return -1;
+            }
+
+            Planner *_planner = _problem->getPlanner();
+            if (_planner != NULL) {
+                switch ((int)_planner->getFamily()) {
+#if defined(KAUTHAM_USE_IOC)
+                case IOCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+#endif
+#if defined(KAUTHAM_USE_OMPL)
+                case OMPLPLANNER: {
+                    ob::PlannerDataPtr pdata;
+                    pdata = ((ob::PlannerDataPtr) new ob::PlannerData(((omplplanner::omplPlanner*)_planner)->ss->getSpaceInformation()));
+                    ((omplplanner::omplPlanner*)_planner)->ss->getPlanner()->getPlannerData(*pdata);
+                    return pdata->numEdges();
+                    break;
+                }
+                case OMPLCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+    #if defined(KAUTHAM_USE_ODE)
+                case ODEPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+    #endif
+#endif
+                case NOFAMILY:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                    break;
+                default:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                    break;
+                }
+                return -1;
+            } else {
+                cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                return -1;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return -1;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return -1;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return -1;
+        }
+    }
+
+
+    int kauthamshell::getNumVertices() {
+        try {
+            if (_problem == NULL || !problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return -1;
+            }
+
+            Planner *_planner = _problem->getPlanner();
+            if (_planner != NULL) {
+                switch ((int)_planner->getFamily()) {
+#if defined(KAUTHAM_USE_IOC)
+                case IOCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+#endif
+#if defined(KAUTHAM_USE_OMPL)
+                case OMPLPLANNER: {
+                    ob::PlannerDataPtr pdata;
+                    pdata = ((ob::PlannerDataPtr) new ob::PlannerData(((omplplanner::omplPlanner*)_planner)->ss->getSpaceInformation()));
+                    ((omplplanner::omplPlanner*)_planner)->ss->getPlanner()->getPlannerData(*pdata);
+                    return pdata->numVertices();
+                    break;
+                }
+                case OMPLCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+    #if defined(KAUTHAM_USE_ODE)
+                case ODEPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+    #endif
+#endif
+                case NOFAMILY:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                    break;
+                default:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                    break;
+                }
+                return -1;
+            } else {
+                cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                return -1;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return -1;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return -1;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return -1;
+        }
+    }
+
+
     bool kauthamshell::connect(vector<float> smpcoords1, vector<float> smpcoords2) {
         try {
             if (_problem == NULL || !problemOpened()) {
