@@ -88,6 +88,8 @@ add_service_files(
    SetPlannerStream.srv
    Connect.srv
    GetLastPlanComputationTime.srv
+   GetNumEdges.srv
+   GetNumVertices.srv
 )
 
 add_message_files(
