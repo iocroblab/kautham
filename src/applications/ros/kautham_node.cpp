@@ -62,6 +62,8 @@
 #include "kautham2/RemoveObstacle.h"
 #include "kautham2/AttachObstacle2RobotLink.h"
 #include "kautham2/DetachObstacle.h"
+#include "kautham2/Connect.h"
+#include "kautham2/GetLastPlanComputationTime.h"
 
 
 
@@ -405,6 +407,22 @@ bool srvDetachObstacle(kautham2::DetachObstacle::Request &req,
 }
 
 
+bool srvConnect(kautham2::Connect::Request &req,
+                            kautham2::Connect::Response &res) {
+    res.response = ksh->connect(req.sample1,req.sample2);
+
+    return true;
+}
+
+
+bool srvGetLastPlanComputationTime(kautham2::GetLastPlanComputationTime::Request &req,
+                            kautham2::GetLastPlanComputationTime::Response &res) {
+    res.time = ksh->getLastPlanComputationTime();
+
+    return true;
+}
+
+
 int main (int argc, char **argv) {
     ros::init(argc, argv, "kautham_node");
     ros::NodeHandle n;
@@ -444,6 +462,8 @@ int main (int argc, char **argv) {
     ros::ServiceServer service27 = n.advertiseService("kautham_node/RemoveObstacle",srvRemoveObstacle);
     ros::ServiceServer service28 = n.advertiseService("kautham_node/AttachObstacle2RobotLink",srvAttachObstacle2RobotLink);
     ros::ServiceServer service29 = n.advertiseService("kautham_node/DetachObstacle",srvDetachObstacle);
+    ros::ServiceServer service30 = n.advertiseService("kautham_node/Connect",srvConnect);
+    ros::ServiceServer service31 = n.advertiseService("kautham_node/GetLastPlanComputationTimet",srvGetLastPlanComputationTime);
 
     ros::spin();
 

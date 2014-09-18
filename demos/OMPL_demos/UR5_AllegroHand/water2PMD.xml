@@ -12,7 +12,7 @@
 		<Home X="0.0" Y="0.0" Z="620.5" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812"/>
 	</Obstacle>
 
-	<Controls robot="controls/water1PMD.cntr" />
+	<Controls robot="controls/water2PMD.cntr" />
 	
 	<Planner>
         	<Parameters>
@@ -23,8 +23,8 @@
         	</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="1">0.373548</Init>
-				<Goal dim="1">0.604229</Goal>
+				<Init dim="2">0.374 0.286</Init>
+				<Goal dim="2">0.604 0.500</Goal>
 			</Query>
 		</Queries>
 	</Planner>

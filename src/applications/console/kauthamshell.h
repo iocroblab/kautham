@@ -61,6 +61,8 @@ namespace Kautham {
         bool solve(ostream &graphVizPlannerDataFile);
         bool getPath(ostream &path);
         bool solve();
+        double getLastPlanComputationTime();
+        bool connect(vector<KthReal> smpcoords1, vector<KthReal> smpcoords2);
         int addRobot(string robFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
                          vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix);
         bool removeRobot(int index);
