@@ -82,7 +82,7 @@
       <Limits Hi="0" Low="0"></Limits>
       <Parent name="Palm"></Parent>
     </Joint>
- 
+
     <Joint name="Index-base" ivFile="AllegroHand/left/link_0_0.wrl">
       <DHPars alpha="0" a="0" theta="0" d="0"/>
       <PreTrans X="0" Y="-44.981" Z="14.102" WX="1.0" WY="0.0" WZ="0.0" TH="5"/>
