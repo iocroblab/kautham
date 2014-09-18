@@ -16,7 +16,7 @@
 		<Home X="40" Y="500" Z="-610" TH="90" WX="0" WY="0" WZ="1" />
 	</Obstacle>
 
-	<Controls robot="controls/shelf12PMD.cntr" />
+	<Controls robot="controls/shelfNoPMD.cntr" />
 	
 	<Planner>
         	<Parameters>
