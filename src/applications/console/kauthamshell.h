@@ -62,6 +62,8 @@ namespace Kautham {
         bool getPath(ostream &path);
         bool solve();
         double getLastPlanComputationTime();
+        int getNumEdges();
+        int getNumVertices();
         bool connect(vector<KthReal> smpcoords1, vector<KthReal> smpcoords2);
         int addRobot(string robFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
                          vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix);
