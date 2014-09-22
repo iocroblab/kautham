@@ -88,8 +88,14 @@ namespace Kautham {
     bool kauthamshell::checkCollision(vector<KthReal> smpcoords, bool *collisionFree) {
         try {
             Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
+            string msg;
             if (smp->setCoords(smpcoords)) {
-                *collisionFree = _problem->wSpace()->collisionCheck(smp);
+                *collisionFree = _problem->wSpace()->collisionCheck(smp,&msg);
+                if(msg.empty())
+                  std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;
+                else
+                  std::cout<<"Response for collision checking service is: "<<msg<<std::endl;
+
                 return true;
             } else {
                 return false;
@@ -655,7 +661,6 @@ namespace Kautham {
             return -1;
         }
     }
-
 
     bool kauthamshell::removeRobot(int index) {
         try {
