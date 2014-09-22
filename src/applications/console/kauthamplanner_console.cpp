@@ -63,7 +63,7 @@ int main(int argc, char* argv[]){
 
     if ((argc > 1 && string(argv[1]) == "-h") ||
             (argc < 3 || argc > 5) ||
-            (argc == 3 && string(argv[1]) != "-t" && string(argv[1]) != "-s") ||
+            (argc == 3 && string(argv[1]) != "-t" && string(argv[1]) != "-s" && string(argv[1]) != "-b") ||
             (argc == 4 && string(argv[1]) != "-s" && string(argv[1]) != "-b") ||
             (argc == 5 && string(argv[1]) != "-b")){//print help info
         std::cout << "\nKautham console has been called with an invalid number of parameters "
