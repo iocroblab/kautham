@@ -86,6 +86,10 @@ add_service_files(
    RemoveRobot.srv
    SetObsControls.srv
    SetPlannerStream.srv
+   Connect.srv
+   GetLastPlanComputationTime.srv
+   GetNumEdges.srv
+   GetNumVertices.srv
 )
 
 add_message_files(
