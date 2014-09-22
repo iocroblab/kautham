@@ -1,20 +1,20 @@
 Experiment experiment
-Running on jargon
-Starting at 2014-07-15T13:55:35.302799
+Running on nestor-UL30A
+Starting at 2014-09-19T18:03:57.545417
 <<<|
-Properties of the state space 'CompoundSpace3'
+Properties of the state space 'CompoundSpace6'
   - signature: 6 0 3 0 3 1 3 
   - dimension: 3
   - extent: 8.88577
   - sanity checks for state space passed
-  - probability of valid states: 0.958
-  - average length of a valid motion: 2.36758
-  - average number of samples drawn per second: sampleUniform()=12117.7 sampleUniformNear()=975.769 sampleGaussian()=2.5e+07
-Settings for the state space 'CompoundSpace3'
+  - probability of valid states: 0.971
+  - average length of a valid motion: 2.83366
+  - average number of samples drawn per second: sampleUniform()=11537.6 sampleUniformNear()=1090.79 sampleGaussian()=1.96078e+07
+Settings for the state space 'CompoundSpace6'
   - state validity check resolution: 1%
   - valid segment count factor: 1
   - state space:
-Compound state space 'CompoundSpace3' of dimension 3 [
+Compound state space 'CompoundSpace6' of dimension 3 [
 Compound state space 'ssRobot0' of dimension 3 [
 Real vector state space 'ssRobot0_Rn' of dimension 3 with bounds: 
   - min: -3.14159 -3.14159 0 
@@ -68,7 +68,7 @@ Compound state [
 RealVectorState [0.464956 1.17496 0]
 ]
 ]
-Goal state, threshold = 2.22045e-16, memory address = 0x2546060, state = 
+Goal state, threshold = 2.22045e-16, memory address = 0x2390950, state = 
 Compound state [
 Compound state [
 RealVectorState [-0.43354 1.19381 0]
@@ -88,11 +88,11 @@ Reports approximate solutions: Yes
 Can optimize solutions:        No
 Aware of the following parameters: border_fraction failed_expansion_score_factor goal_bias min_valid_path_fraction range
 |>>>
-3177196868 is the random seed
+3874805197 is the random seed
 10 seconds per run
 100 MB per run
 2 runs per planner
-2.86981 seconds spent to collect the data
+2.94346 seconds spent to collect the data
 1 enum type
 status|Unknown status|Invalid start|Invalid goal|Unrecognized goal type|Timeout|Approximate solution|Exact solution|Crash
 2 planners
@@ -134,8 +134,8 @@ status ENUM
 time REAL
 valid segment fraction REAL
 2 runs
-0; 1; 1; 61; 62; 3.61328125; 0.02112; 1; 1; -1; 2.0132808682761025; 16; 1469.3581472326453; -1; 0; 26.322095445974959; 9; 6.39273424956491; 1; 6; 0.210003; 0.60396039603960394; 
-0; 1; 1; 24; 25; 7.22265625; 0.047558999999999997; 1; 1; -1; 6.3821868682040925; 24; 477.73267443767793; -1; 0; 18.628054925672195; 9; 50.915469108156749; 1; 6; 0.08473; 0.59999999999999998; 
+0; 1; 1; 41; 42; 2.83203125; 0.093699000000000005; 1; 1; -1; 7.9416559591682354; 48; 306.27614690940584; -1; 0; 14.328674491683817; 5; 3.5901875301280959; 1; 6; 0.285244; 0.74545454545454548; 
+0; 1; 1; 14; 15; 5.828125; 0.027043999999999999; 1; 1; -1; 4.5483407644084188; 16; 665.40740608056069; -1; 0; 10.017870554590557; 3; 0.91659529512205229; 1; 6; 0.066453999999999999; 0.77777777777777779; 
 .
 geometric_KPIECE1
 15 common properties
@@ -178,6 +178,6 @@ status ENUM
 time REAL
 valid segment fraction REAL
 2 runs
-0; 1; 1; 62; 63; 9.78515625; 0.074925000000000005; 1; 1; -1; 9.9045016243839683; 24; 17.609741416404461; -1; 0; 68.309924258965651; 20; 8.6690812867993632; 1; 6; 0.16295200000000001; 0.569620253164557; 
-0; 1; 1; 12; 13; 12.34375; 0.025333999999999999; 1; 1; -1; 3.8285338777120024; 24; 520.32204620930224; -1; 0; 7.7065470322229128; 6; 13.90701945213085; 1; 6; 0.01915; 0.40000000000000002; 
+0; 1; 1; 23; 24; 6.734375; 0.048513000000000001; 1; 1; -1; 7.2303612227185656; 24; 42.911473628591729; -1; 0; 13.974368567244735; 6; 3.9965401342964273; 1; 6; 0.085974999999999996; 0.62962962962962965; 
+0; 1; 1; 25; 26; 8.359375; 0.052787000000000001; 1; 1; -1; 3.6215342260666183; 24; 1803.5547487111196; -1; 0; 26.106389558849983; 9; 3.9946303702460564; 1; 6; 0.100106; 0.47058823529411764; 
 .
