@@ -75,14 +75,14 @@
       <Parent name="Support"></Parent>
     </Joint>
 
-    <Joint name="Cylinder" ivFile="cylinder.wrl">
-      <PreTrans X="52" Y="0" Z="-15" WX="1" WY="0" WZ="0" TH="90" ></PreTrans>
+    <Joint name="Can" ivFile="can.wrl" scale="1000">
+      <PreTrans X="43.5" Y="10" Z="-15" WX="0" WY="0" WZ="1" TH="180" ></PreTrans>
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="0"></DHPars>
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0" Low="0"></Limits>
       <Parent name="Palm"></Parent>
     </Joint>
-
+ 
     <Joint name="Index-base" ivFile="AllegroHand/left/link_0_0.wrl">
       <DHPars alpha="0" a="0" theta="0" d="0"/>
       <PreTrans X="0" Y="-44.981" Z="14.102" WX="1.0" WY="0.0" WZ="0.0" TH="5"/>
@@ -231,6 +231,5 @@
       <Parent name="Thumb-last"/>
     </Joint>
   </Joints>
-
 </Robot>
 
