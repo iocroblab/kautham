@@ -23,8 +23,8 @@
         	</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="4">0.450078 0.456176 0.501175 0.53073</Init>
-				<Goal dim="4">0.550098 0.478429 0.579523 0.432368</Goal>
+				<Init dim="4">0.299 0.433 0.939 0.506</Init>
+				<Goal dim="4">0.624 0.449 0.543 0.849</Goal>
 			</Query>
 		</Queries>
 	</Planner>

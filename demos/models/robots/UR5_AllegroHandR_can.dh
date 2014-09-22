@@ -2,7 +2,7 @@
 <Robot  name="UR5_AllegroHandR" DHType="Modified" robType="Tree">
 
   <WeightSE3 rho_t="1.0" rho_r="1.0" />
-  <Joints size="31">
+  <Joints size="30">
     <Joint name="Base" ivFile="UR5/Base.wrl">
       <DHPars alpha="0.0" a="0.0" theta="0.0" d="0.0"></DHPars>
       <Description rotational="false" movable="false"  ></Description>
@@ -81,14 +81,6 @@
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0" Low="0"></Limits>
       <Parent name="Palm"></Parent>
-    </Joint>
-    
-    <Joint name="Axis" ivFile="rtx90/axis.iv" scale="2">
-      <PreTrans X="0" Y="0" Z="0" WX="0" WY="1" WZ="0" TH="0" ></PreTrans>
-      <DHPars alpha="0.0" a="0.0" theta="0.0" d="0"></DHPars>
-      <Description rotational="false" movable="false" ></Description>
-      <Limits Hi="0" Low="0"></Limits>
-      <Parent name="Can"></Parent>
     </Joint>
 
     <Joint name="Index-base" ivFile="AllegroHand/right/link_0_0.wrl">

@@ -12,7 +12,7 @@
 	<Obstacle obstacle="obstacles/box.wrl" scale="1">
 		<Home X="0" Y="500" Z="5" TH="0" WX="1" WY="0" WZ="0" />
 	</Obstacle>
-	<Controls robot="controls/box1PMD.cntr" />
+	<Controls robot="controls/box4PMD.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplRRTConnect</Name>
@@ -25,8 +25,8 @@
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="1">0</Init>
-				<Goal dim="1">1</Goal>
+				<Init dim="4">0.359 0.347 0.596 0.600</Init>
+				<Goal dim="4">0.641 0.527 0.429 0.488</Goal>
 			</Query>
 		</Queries>
 	</Planner>

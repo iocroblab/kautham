@@ -34,7 +34,7 @@
 		<DOF name="UR5_AllegroHandR/Thumb-proximal" value="0.919" />
 		<DOF name="UR5_AllegroHandR/Thumb-distal" value="0.273" />
 		<DOF name="UR5_AllegroHandR/Thumb-last" value="0.530" />
-		
+
 		<DOF name="UR5_AllegroHandL/Shoulder" value="0.459434" />
 		<DOF name="UR5_AllegroHandL/ForeArm" value="0.361079" />
 		<DOF name="UR5_AllegroHandL/UpperArm" value="0.312215" />
@@ -48,7 +48,7 @@
 		<DOF name="UR5_AllegroHandR/Wrist2" value="0.431297" />
 		<DOF name="UR5_AllegroHandR/Wrist3" value="0.334057" />
 	</Offset>
-    	<Control name="PMD0" eigValue="0.708577">
+	<Control name="PMD0" eigValue="0.708577">
 		<DOF name="UR5_AllegroHandL/Shoulder" value="0.0666686" />
 		<DOF name="UR5_AllegroHandL/ForeArm" value="0.301301" />
 		<DOF name="UR5_AllegroHandL/UpperArm" value="-0.140743" />
@@ -61,5 +61,47 @@
 		<DOF name="UR5_AllegroHandR/Wrist1" value="0.154866" />
 		<DOF name="UR5_AllegroHandR/Wrist2" value="-0.0347132" />
 		<DOF name="UR5_AllegroHandR/Wrist3" value="-0.16636" />
+	</Control>
+	<Control name="PMD1" eigValue="0.35158">
+		<DOF name="UR5_AllegroHandL/Shoulder" value="0.154467" />
+		<DOF name="UR5_AllegroHandL/ForeArm" value="0.422267" />
+		<DOF name="UR5_AllegroHandL/UpperArm" value="-0.171376" />
+		<DOF name="UR5_AllegroHandL/Wrist1" value="0.19108" />
+		<DOF name="UR5_AllegroHandL/Wrist2" value="-0.579971" />
+		<DOF name="UR5_AllegroHandL/Wrist3" value="-0.366035" />
+		<DOF name="UR5_AllegroHandR/Shoulder" value="-0.0484664" />
+		<DOF name="UR5_AllegroHandR/ForeArm" value="0.290099" />
+		<DOF name="UR5_AllegroHandR/UpperArm" value="-0.0928782" />
+		<DOF name="UR5_AllegroHandR/Wrist1" value="0.0421554" />
+		<DOF name="UR5_AllegroHandR/Wrist2" value="-0.309947" />
+		<DOF name="UR5_AllegroHandR/Wrist3" value="-0.261963" />
+	</Control>
+	<Control name="PMD2" eigValue="0.249302">
+		<DOF name="UR5_AllegroHandL/Shoulder" value="-0.0331152" />
+		<DOF name="UR5_AllegroHandL/ForeArm" value="-0.00493593" />
+		<DOF name="UR5_AllegroHandL/UpperArm" value="-0.253315" />
+		<DOF name="UR5_AllegroHandL/Wrist1" value="0.382874" />
+		<DOF name="UR5_AllegroHandL/Wrist2" value="0.0312905" />
+		<DOF name="UR5_AllegroHandL/Wrist3" value="0.134884" />
+		<DOF name="UR5_AllegroHandR/Shoulder" value="-0.0417563" />
+		<DOF name="UR5_AllegroHandR/ForeArm" value="-0.260906" />
+		<DOF name="UR5_AllegroHandR/UpperArm" value="0.364786" />
+		<DOF name="UR5_AllegroHandR/Wrist1" value="0.545224" />
+		<DOF name="UR5_AllegroHandR/Wrist2" value="0.247321" />
+		<DOF name="UR5_AllegroHandR/Wrist3" value="-0.455657" />
+	</Control>
+	<Control name="PMD3" eigValue="0.222103">
+		<DOF name="UR5_AllegroHandL/Shoulder" value="0.053711" />
+		<DOF name="UR5_AllegroHandL/ForeArm" value="0.0679252" />
+		<DOF name="UR5_AllegroHandL/UpperArm" value="0.087045" />
+		<DOF name="UR5_AllegroHandL/Wrist1" value="0.541935" />
+		<DOF name="UR5_AllegroHandL/Wrist2" value="-0.110188" />
+		<DOF name="UR5_AllegroHandL/Wrist3" value="0.747146" />
+		<DOF name="UR5_AllegroHandR/Shoulder" value="0.00834018" />
+		<DOF name="UR5_AllegroHandR/ForeArm" value="0.157909" />
+		<DOF name="UR5_AllegroHandR/UpperArm" value="-0.154653" />
+		<DOF name="UR5_AllegroHandR/Wrist1" value="-0.182817" />
+		<DOF name="UR5_AllegroHandR/Wrist2" value="-0.176117" />
+		<DOF name="UR5_AllegroHandR/Wrist3" value="0.0866068" />
 	</Control>
 </ControlSet>
