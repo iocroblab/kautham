@@ -1378,16 +1378,18 @@ namespace Kautham {
 
       if (!obs->isArmed()) return false;
 
-      SE3Conf tmpC;
+      SE3Conf* tmpC = new SE3Conf();
       home[6] = home[6]*_toRad;
       // Here is needed to convert from axis-angle to
       // quaternion internal represtantation.
       SE3Conf::fromAxisToQuaternion(home);
-      tmpC.setCoordinates(home);
+      tmpC->setCoordinates(home);
+      obs->setHomePos(tmpC);
       //cout << tmpC.print();
-
+      std::cout<<"obstacle added at: "<< obs->getHomePos()->getSE3().getPos().at(0)<<" , "
+                                      << obs->getHomePos()->getSE3().getPos().at(1)<<" , "
+                                      << obs->getHomePos()->getSE3().getPos().at(2)<<std::endl;
       _wspace->addObstacle(obs);
-
       return true;
   }
 
