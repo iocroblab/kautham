@@ -389,6 +389,7 @@ bool srvRemoveRobot(kautham2::RemoveRobot::Request &req,
 bool srvAddObstacle(kautham2::AddObstacle::Request &req,
                             kautham2::AddObstacle::Response &res) {
     res.response = ksh->addObstacle(req.obstacle,req.scale,req.home);
+
     return true;
 }
 
@@ -496,6 +497,7 @@ int main (int argc, char **argv) {
 
     return 0;
 }
+
 
 
 
