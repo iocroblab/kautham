@@ -1,0 +1,152 @@
+Info:    Beginning benchmark
+Info:    Preparing for run 0 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /tmp/buildd/ompl-0.14.2+dfsg/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 14.414175 seconds
+Info:    Preparing for run 1 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 14.028299 seconds
+Info:    Preparing for run 2 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 2.744356 seconds
+Info:    Preparing for run 3 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 9 states (3 start + 6 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 10.390206 seconds
+Info:    Preparing for run 4 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 9 states (3 start + 6 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 6.183324 seconds
+Info:    Preparing for run 5 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 5.040867 seconds
+Info:    Preparing for run 6 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 5.866931 seconds
+Info:    Preparing for run 7 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 10 states (3 start + 7 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 3.579793 seconds
+Info:    Preparing for run 8 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 9 states (3 start + 6 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 3.512840 seconds
+Info:    Preparing for run 9 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 5.318518 seconds
+Info:    Preparing for run 10 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 8 states (5 start + 3 goal)
+Info:    Path simplification took 3.601379 seconds
+Info:    Preparing for run 11 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 1.228063 seconds
+Info:    Preparing for run 12 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Info:    Path simplification took 3.203133 seconds
+Info:    Preparing for run 13 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 4.285526 seconds
+Info:    Preparing for run 14 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 3.614881 seconds
+Info:    Preparing for run 15 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (4 start + 2 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /tmp/buildd/ompl-0.14.2+dfsg/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 16.555790 seconds
+Info:    Preparing for run 16 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 11 states (3 start + 8 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 11.983779 seconds
+Info:    Preparing for run 17 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 11 states (4 start + 7 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 3.383575 seconds
+Info:    Preparing for run 18 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 3.505604 seconds
+Info:    Preparing for run 19 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 6.099727 seconds
+Info:    Preparing for run 20 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 6.686629 seconds
+Info:    Preparing for run 21 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (2 start + 4 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 4.079692 seconds
+Info:    Preparing for run 22 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 3.218809 seconds
+Info:    Preparing for run 23 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (2 start + 4 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 7.779577 seconds
+Info:    Preparing for run 24 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 10 states (3 start + 7 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /tmp/buildd/ompl-0.14.2+dfsg/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 14.018255 seconds
+Info:    Preparing for run 25 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 8 states (2 start + 6 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 10.263670 seconds
+Info:    Preparing for run 26 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 9 states (5 start + 4 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 6.793614 seconds
+Info:    Preparing for run 27 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 1.863197 seconds
+Info:    Preparing for run 28 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (2 start + 4 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 7.037977 seconds
+Info:    Preparing for run 29 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 11 states (3 start + 8 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 1.435679 seconds
+Info:    Benchmark complete
