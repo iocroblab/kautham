@@ -96,7 +96,7 @@ namespace Kautham {
             Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
             string msg;
             if (smp->setCoords(smpcoords)) {
-                *collisionFree = _problem->wSpace()->collisionCheck(smp,&msg);
+                *collisionFree = !_problem->wSpace()->collisionCheck(smp,&msg);
                 if(msg.empty())
                   std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;
                 else
