@@ -53,6 +53,13 @@ namespace Kautham {
       //collision-check
       if( theplanner->wkSpace()->collisionCheck(smp) )
           return false;
+
+      //Discards the sample.
+      //By default does nothing, i.e. the default filtersample function in class Planner
+      //returns always false
+      if(theplanner->filtersample(smp))
+              return false;
+
       return true;
     }
 
