@@ -50,7 +50,7 @@ namespace Kautham {
     virtual bool                  setParameters() = 0;
     virtual void                  moveAlongPath(unsigned int step);
     virtual bool                  solveAndInherit();
-
+    inline virtual bool filtersample(Sample* smp){return false;};
 
 
     inline string                 getIDName(){return _idName;}
