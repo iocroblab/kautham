@@ -199,7 +199,7 @@ namespace Kautham {
                 std::cout<<"Init in collision: (";
                 for(int k=0;k<init.size();k++) std::cout<<init[k]<<" ";
                 std::cout<<std::endl;
-                std::cout<<msg_init<<std::endl;;
+                std::cout<<msg_init<<std::endl;
                 return false;
             }
             samples->add(smp);
@@ -211,7 +211,7 @@ namespace Kautham {
                 std::cout<<"Goal in collision: (";
                 for(int k=0;k<goal.size();k++) std::cout<<goal[k]<<" ";
                 std::cout<<std::endl;
-                std::cout<<msg_goal<<std::endl;;
+                std::cout<<msg_goal<<std::endl;
                 return false;
             }
             samples->add(smp);
