@@ -1,0 +1,17 @@
+<Benchmark Name="cylinderPMD">
+	<Problem File="cylinder4PMD.xml" />
+	<Parameter Name="maxTime" Value="100.0" />
+	<Parameter Name="maxMem" Value="1000.0" />
+	<Parameter Name="runCount" Value="100" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="cylinderPMD.log" />
+</Benchmark>
+<Benchmark Name="shelfPMD">
+	<Problem File="shelf4PMD.xml" />
+	<Parameter Name="maxTime" Value="100.0" />
+	<Parameter Name="maxMem" Value="1000.0" />
+	<Parameter Name="runCount" Value="100" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="shelfPMD.log" />
+</Benchmark>
+
