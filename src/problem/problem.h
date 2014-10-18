@@ -65,6 +65,7 @@
 #include <planner/omplg/omplpRRTplanner.h>
 #include <planner/omplg/omplLazyRRTplanner.h>
 #include <planner/omplg/omplRRTConnectplanner.h>
+#include <planner/omplg/omplRRTConnectplannerEUROC.h>
 #include <planner/omplg/omplESTplanner.h>
 #include <planner/omplg/omplSBLplanner.h>
 #include <planner/omplg/omplKPIECEplanner.h>
