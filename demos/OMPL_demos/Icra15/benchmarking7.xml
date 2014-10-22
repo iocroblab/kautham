@@ -1,0 +1,10 @@
+<Benchmark Name="cylinderopen8PMD7">
+	<Problem File="cylinderopen8PMD7.xml" />
+	<Parameter Name="maxTime" Value="100.0" />
+	<Parameter Name="maxMem" Value="1000.0" />
+	<Parameter Name="runCount" Value="100" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="cylinderopen8PMD7.log" />
+</Benchmark>
+
+

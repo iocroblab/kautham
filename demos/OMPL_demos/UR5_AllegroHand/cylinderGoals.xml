@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<Problem name="" topology="SE3">
+	<Robot robot="robots/AllegroHandL_cylinder.dh" scale="1.0">
+    		<Home X="324.175" Y="691.977" Z="-42.8112" WX="0.196666" WY="-0.832901" WZ="-0.517299" TH="91.6138"/>
+	</Robot>
+
+	<Robot robot="robots/AllegroHandR_cylinder.dh" scale="1.0">
+    		<Home X="120.302" Y="580.093" Z="258.944" WX="-0.303995" WY="0.876308" WZ="-0.373727" TH="110.797"/>
+	</Robot>
+
+
+	<Obstacle obstacle="robots/AllegroHandL_cylinder.dh" scale="1.0">
+    		<Home X="-59.2926" Y="632.749" Z="-251.692" WX="0.660421" WY="-0.152225" WZ="-0.735304" TH="101.477"/>
+	</Obstacle>
+
+	<Obstacle obstacle="robots/AllegroHandR_cylinder.dh" scale="1.0">
+    		<Home X="104.096" Y="332.965" Z="-226.081" WX="0.310653" WY="-0.943688" WZ="-0.113789" TH="116.835"/>
+	</Obstacle>
+
+
+	<Obstacle obstacle="robots/AllegroHandL_cylinder.dh" scale="1.0">
+    		<Home X="-48.9707" Y="316.097" Z="-451.239" WX="-0.0956731" WY="-0.578846" WZ="0.809805" TH="140.013"/>
+	</Obstacle>
+
+	<Obstacle obstacle="robots/AllegroHandR_cylinder.dh" scale="1.0">
+    		<Home X="-316.207" Y="398.781" Z="-270.699" WX="-0.893134" WY="-0.432107" WZ="0.124885" TH="171.776"/>
+	</Obstacle>
+
+
+	<Obstacle obstacle="robots/AllegroHandL_cylinder.dh" scale="1.0">
+    		<Home X="201.7" Y="542.35" Z="-328.228" WX="0.54636" WY="0.750202" WZ="0.372409" TH="102.31"/>
+	</Obstacle>
+
+	<Obstacle obstacle="robots/AllegroHandR_cylinder.dh" scale="1.0">
+    		<Home X="488.682" Y="781.809" Z="-420.907" WX="0.678052" WY="-0.236075" WZ="-0.696071" TH="166.157"/>
+	</Obstacle>
+
+
+	<Obstacle obstacle="robots/AllegroHandL_cylinder.dh" scale="1.0">
+    		<Home X="300.447" Y="113.825" Z="-260.073" WX="-0.339684" WY="-0.926283" WZ="0.163139" TH="73.4616"/>
+	</Obstacle>
+
+	<Obstacle obstacle="robots/AllegroHandR_cylinder.dh" scale="1.0">
+    		<Home X="412.077" Y="232.357" Z="-15.1256" WX="-0.7825" WY="-0.161309" WZ="0.601393" TH="114.732"/>
+	</Obstacle>
+
+
+	<Obstacle obstacle="robots/AllegroHandL_cylinder.dh" scale="1.0">
+    		<Home X="-209.121" Y="189.771" Z="360.988" WX="0.536236" WY="0.839368" WZ="0.0889466" TH="181.574"/>
+	</Obstacle>
+
+	<Obstacle obstacle="robots/AllegroHandR_cylinder.dh" scale="1.0">
+    		<Home X="-240.106" Y="527.28" Z="174.377" WX="0.148576" WY="0.0946833" WZ="-0.984358" TH="156.171"/>
+	</Obstacle>
+
+
+	<Obstacle obstacle="robots/AllegroHandL_cylinder.dh" scale="1.0">
+    		<Home X="-363.181" Y="323.188" Z="-184.775" WX="0.765335" WY="-0.146114" WZ="0.626828" TH="122.86"/>
+	</Obstacle>
+
+	<Obstacle obstacle="robots/AllegroHandR_cylinder.dh" scale="1.0">
+    		<Home X="-113.136" Y="275.781" Z="70.8293" WX="-0.636128" WY="-0.286826" WZ="0.71629" TH="118.386"/>
+	</Obstacle>
+
+
+	<Obstacle obstacle="obstacles/structure.wrl" scale="1000.0">
+		<Home X="0.0" Y="0.0" Z="0.0" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812"/>
+	</Obstacle>
+
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="Cspace Drawn">0</Parameter>
+			<Parameter name="Incremental (0/1)">0</Parameter>
+			<Parameter name="Max Planning Time">10</Parameter>
+			<Parameter name="Range">10</Parameter>
+			<Parameter name="Simplify Solution">2</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="38">0 0 0 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0 0 0 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5</Init>
+				<Goal dim="38">0 0 0 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0 0 0 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
+

@@ -598,6 +598,7 @@ namespace Kautham {
          ori[3] = tmp.getRotation().at(3);
          (*it).obs->getLink(0)->getElement()->setOrientation( ori );
      }
+
  }
 
  /*!
