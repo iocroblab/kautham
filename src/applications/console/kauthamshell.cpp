@@ -206,16 +206,30 @@ namespace Kautham {
             SampleSet* samples = _problem->getSampleSet();
             samples->clear();
 
+            string msg_init, msg_goal;
+
             //init
             Sample* smp = new Sample(d);
             smp->setCoords(init);
-            if(_problem->wSpace()->collisionCheck(smp)) return false;
+            if(_problem->wSpace()->collisionCheck(smp, &msg_init)) {
+                std::cout<<"Init in collision: (";
+                for(int k=0;k<init.size();k++) std::cout<<init[k]<<" ";
+                std::cout<<std::endl;
+                std::cout<<msg_init<<std::endl;
+                return false;
+            }
             samples->add(smp);
 
             //goal
             smp = new Sample(d);
             smp->setCoords(goal);
-            if(_problem->wSpace()->collisionCheck(smp)) return false;
+            if(_problem->wSpace()->collisionCheck(smp, &msg_goal)) {
+                std::cout<<"Goal in collision: (";
+                for(int k=0;k<goal.size();k++) std::cout<<goal[k]<<" ";
+                std::cout<<std::endl;
+                std::cout<<msg_goal<<std::endl;
+                return false;
+            }
             samples->add(smp);
 
             _problem->getPlanner()->setInitSamp(samples->getSampleAt(0));
