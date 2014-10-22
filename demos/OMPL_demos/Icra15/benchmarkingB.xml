@@ -1,0 +1,12 @@
+<Benchmark Name="cylinder4PMD4">
+	<Problem File="cylinder4PMD4.xml" />
+	<Parameter Name="maxTime" Value="100.0" />
+	<Parameter Name="maxMem" Value="1000.0" />
+	<Parameter Name="runCount" Value="30" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="cylinder4PMD4.log" />
+</Benchmark>
+
+
+
+
