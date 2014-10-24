@@ -42,18 +42,26 @@ namespace Kautham {
                 _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
                 return true;
             } else  {
+                delete _problem;
+                _problem = NULL;
                 return false;
             }
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            delete _problem;
+            _problem = NULL;
             return false;
         } catch (const exception& excp) {
             cout << "Error: " << excp.what() << endl;
+            delete _problem;
+            _problem = NULL;
             return false;
         } catch(...) {
             cout << "Something is wrong with the problem. Please run the "
                  << "problem with the Kautham2 application at less once in order "
                  << "to verify the correctness of the problem formulation.\n";
+            delete _problem;
+            _problem = NULL;
             return false;
         }
     }
@@ -69,18 +77,26 @@ namespace Kautham {
                 _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
                 return true;
             } else {
+                delete _problem;
+                _problem = NULL;
                 return false;
             }
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            delete _problem;
+            _problem = NULL;
             return false;
         } catch (const exception& excp) {
             cout << "Error: " << excp.what() << endl;
+            delete _problem;
+            _problem = NULL;
             return false;
         } catch(...) {
             cout << "Something is wrong with the problem. Please run the "
                  << "problem with the Kautham2 application at less once in order "
                  << "to verify the correctness of the problem formulation.\n";
+            delete _problem;
+            _problem = NULL;
             return false;
         }
     }
