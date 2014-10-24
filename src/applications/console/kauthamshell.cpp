@@ -1159,8 +1159,13 @@ namespace Kautham {
                 cout << "The problem is not opened" << endl;
                 return false;
             }
-
-            return (_problem->wSpace()->detachObstacle(obs));
+            bool ret = _problem->wSpace()->detachObstacle(obs);
+            float x,y,z;
+            x = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[0];
+            y = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[1];
+            z = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[2];
+            std::cout<<"Object "<<obs<<" detached at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+            return (ret);
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
             return false;
