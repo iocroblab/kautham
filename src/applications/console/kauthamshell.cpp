@@ -35,7 +35,7 @@ namespace ob = ompl::base;
 namespace Kautham {
     bool kauthamshell::openProblem(istream* inputfile, vector <string> def_path) {
         try {
-            delete _problem;
+            //delete _problem;
             _problem = new Problem();
             if (_problem->setupFromFile(inputfile,def_path)) {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
