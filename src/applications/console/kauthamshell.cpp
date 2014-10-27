@@ -70,7 +70,7 @@ namespace Kautham {
     bool kauthamshell::openProblem(string problemfilename, vector <string> def_path) {
         try {
             std::cout << "Kautham is opening a problem file: " << problemfilename << endl;
-            delete _problem;
+            //delete _problem;
             _problem = new Problem();
             if (_problem->setupFromFile(problemfilename,def_path)) {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
