@@ -9,7 +9,7 @@ if( GSL_FOUND )
    include_directories( ${GSL_INCLUDE_DIR} )
    set( EXTRA_LIBS ${EXTRA_LIBS} ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES} PARENT_SCOPE)
 else( GSL_FOUND )
-   message( SEND_ERROR "GSL NOT FOUND. Hand inverse kinematics will be disabled")
+   message( STATUS "GSL NOT FOUND. Hand inverse kinematics will be disabled")
 endif( GSL_FOUND )
 
 
