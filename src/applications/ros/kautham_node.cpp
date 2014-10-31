@@ -156,9 +156,14 @@ bool srvOpenProblemStream(kautham2::OpenProblemStream::Request &req,
 bool srvCheckCollision(kautham2::CheckCollision::Request &req,
                        kautham2::CheckCollision::Response &res) {
 
+    for (int i = 0; i < req.config.size(); ++i) {
+        cout << req.config.at(i) << " ";
+    }
+    cout << endl;
+
     bool collisionFree;
     res.response = ksh->checkCollision(req.config,&collisionFree);
-    res.collisionFree = collisionFree;
+    res.collisionFree = res.response&&collisionFree;
 
     return true;
 }
