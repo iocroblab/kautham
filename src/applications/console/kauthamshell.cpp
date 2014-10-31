@@ -35,25 +35,33 @@ namespace ob = ompl::base;
 namespace Kautham {
     bool kauthamshell::openProblem(istream* inputfile, vector <string> def_path) {
         try {
-            delete _problem;
+            //delete _problem;
             _problem = new Problem();
             if (_problem->setupFromFile(inputfile,def_path)) {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
                 _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
                 return true;
             } else  {
+                delete _problem;
+                _problem = NULL;
                 return false;
             }
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            delete _problem;
+            _problem = NULL;
             return false;
         } catch (const exception& excp) {
             cout << "Error: " << excp.what() << endl;
+            delete _problem;
+            _problem = NULL;
             return false;
         } catch(...) {
             cout << "Something is wrong with the problem. Please run the "
                  << "problem with the Kautham2 application at less once in order "
                  << "to verify the correctness of the problem formulation.\n";
+            delete _problem;
+            _problem = NULL;
             return false;
         }
     }
@@ -62,25 +70,33 @@ namespace Kautham {
     bool kauthamshell::openProblem(string problemfilename, vector <string> def_path) {
         try {
             std::cout << "Kautham is opening a problem file: " << problemfilename << endl;
-            delete _problem;
+            //delete _problem;
             _problem = new Problem();
             if (_problem->setupFromFile(problemfilename,def_path)) {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
                 _problem->getPlanner()->setGoalSamp(_problem->getSampleSet()->getSampleAt(1));
                 return true;
             } else {
+                delete _problem;
+                _problem = NULL;
                 return false;
             }
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            delete _problem;
+            _problem = NULL;
             return false;
         } catch (const exception& excp) {
             cout << "Error: " << excp.what() << endl;
+            delete _problem;
+            _problem = NULL;
             return false;
         } catch(...) {
             cout << "Something is wrong with the problem. Please run the "
                  << "problem with the Kautham2 application at less once in order "
                  << "to verify the correctness of the problem formulation.\n";
+            delete _problem;
+            _problem = NULL;
             return false;
         }
     }
@@ -92,18 +108,24 @@ namespace Kautham {
                 cout << "The problem is not opened" << endl;
                 return false;
             }
-
+            if (smpcoords.size() != _problem->wSpace()->getNumRobControls()) {
+                cout << "Sample has dimension " << smpcoords.size() << " and should have dimension "
+                     << _problem->wSpace()->getNumRobControls() << endl;
+                return false;
+            }
             Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
             string msg;
             if (smp->setCoords(smpcoords)) {
                 *collisionFree = !_problem->wSpace()->collisionCheck(smp,&msg);
-                if(msg.empty())
+                if(msg.empty()) {
                   std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;
-                else
+                } else {
                   std::cout<<"Response for collision checking service is: "<<msg<<std::endl;
-                //*collisionFree = !_problem->wSpace()->collisionCheck(smp);
+                } //*collisionFree = !_problem->wSpace()->collisionCheck(smp);
                 return true;
             } else {
+                cout << "Sample has dimension " << smpcoords.size() << " and should have dimension "
+                     << _problem->wSpace()->getNumRobControls() << endl;
                 return false;
             }
         } catch (const KthExcp& excp) {
@@ -1159,8 +1181,13 @@ namespace Kautham {
                 cout << "The problem is not opened" << endl;
                 return false;
             }
-
-            return (_problem->wSpace()->detachObstacle(obs));
+            bool ret = _problem->wSpace()->detachObstacle(obs);
+            float x,y,z;
+            x = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[0];
+            y = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[1];
+            z = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[2];
+            std::cout<<"Object "<<obs<<" detached at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+            return (ret);
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
             return false;
