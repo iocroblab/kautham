@@ -35,7 +35,7 @@ namespace ob = ompl::base;
 namespace Kautham {
     bool kauthamshell::openProblem(istream* inputfile, vector <string> def_path) {
         try {
-            delete _problem;
+            //delete _problem;
             _problem = new Problem();
             if (_problem->setupFromFile(inputfile,def_path)) {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
@@ -70,7 +70,7 @@ namespace Kautham {
     bool kauthamshell::openProblem(string problemfilename, vector <string> def_path) {
         try {
             std::cout << "Kautham is opening a problem file: " << problemfilename << endl;
-            delete _problem;
+            //delete _problem;
             _problem = new Problem();
             if (_problem->setupFromFile(problemfilename,def_path)) {
                 _problem->getPlanner()->setInitSamp(_problem->getSampleSet()->getSampleAt(0));
@@ -1181,8 +1181,13 @@ namespace Kautham {
                 cout << "The problem is not opened" << endl;
                 return false;
             }
-
-            return (_problem->wSpace()->detachObstacle(obs));
+            bool ret = _problem->wSpace()->detachObstacle(obs);
+            float x,y,z;
+            x = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[0];
+            y = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[1];
+            z = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[2];
+            std::cout<<"Object "<<obs<<" detached at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+            return (ret);
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
             return false;
