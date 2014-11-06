@@ -108,18 +108,24 @@ namespace Kautham {
                 cout << "The problem is not opened" << endl;
                 return false;
             }
-
+            if (smpcoords.size() != _problem->wSpace()->getNumRobControls()) {
+                cout << "Sample has dimension " << smpcoords.size() << " and should have dimension "
+                     << _problem->wSpace()->getNumRobControls() << endl;
+                return false;
+            }
             Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
             string msg;
             if (smp->setCoords(smpcoords)) {
                 *collisionFree = !_problem->wSpace()->collisionCheck(smp,&msg);
-                if(msg.empty())
+                if(msg.empty()) {
                   std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;
-                else
+                } else {
                   std::cout<<"Response for collision checking service is: "<<msg<<std::endl;
-                //*collisionFree = !_problem->wSpace()->collisionCheck(smp);
+                } //*collisionFree = !_problem->wSpace()->collisionCheck(smp);
                 return true;
             } else {
+                cout << "Sample has dimension " << smpcoords.size() << " and should have dimension "
+                     << _problem->wSpace()->getNumRobControls() << endl;
                 return false;
             }
         } catch (const KthExcp& excp) {
