@@ -147,6 +147,34 @@ namespace Kautham {
             Sample* smp = new Sample(_problem->wSpace()->getNumRobControls());
             if (smp->setCoords(smpcoords)) {
                 _problem->wSpace()->moveRobotsTo(smp);
+
+                //EUROC
+                std::cout<<"Robot moved to: (";
+                for(int i=0; i<smpcoords.size(); i++)
+                {
+                    std::cout<<smpcoords[i]<<" ";
+                }
+                std::cout<<std::endl;
+                int s = _problem->wSpace()->getRobot(0)->getAttachedObject()->size();
+                std::cout<<"Number of attached objets = "<<s<<std::endl;
+                list<attObj>::iterator it = _problem->wSpace()->getRobot(0)->getAttachedObject()->begin();
+                for( it = _problem->wSpace()->getRobot(0)->getAttachedObject()->begin();
+                     it != _problem->wSpace()->getRobot(0)->getAttachedObject()->end();
+                     ++it)
+                {
+                    float x,y,z;
+                    string obsname = (*it).obs->getName();
+                    vector<KthReal>& vpos = (*it).obs->getCurrentPos()->getSE3().getPos();
+
+                    x = (*it).obs->getCurrentPos()->getSE3().getPos()[0];
+                    y = (*it).obs->getCurrentPos()->getSE3().getPos()[1];
+                    z = (*it).obs->getCurrentPos()->getSE3().getPos()[2];
+                    std::cout<<"Object "<<obsname<<" is at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+                }
+                //EUROC
+
+
+
                 return true;
             } else {
                 return false;
@@ -1152,8 +1180,15 @@ namespace Kautham {
                 cout << "The problem is not opened" << endl;
                 return false;
             }
-
-            return (_problem->wSpace()->attachObstacle2RobotLink(robot,link,obs));
+            bool ret = _problem->wSpace()->attachObstacle2RobotLink(robot,link,obs);
+            float x,y,z;
+            x = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[0];
+            y = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[1];
+            z = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[2];
+            std::cout<<"Object "<<obs<<" attached at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+            if(ret) std::cout<<"attachfunction returned TRUE\n";
+            else std::cout<<"attachfunction returned FALSE\n";
+            return (ret);
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
             return false;
@@ -1181,6 +1216,8 @@ namespace Kautham {
             y = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[1];
             z = _problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[2];
             std::cout<<"Object "<<obs<<" detached at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+            if(ret) std::cout<<"detachfunction returned TRUE\n";
+            else std::cout<<"detachfunction returned FALSE\n";
             return (ret);
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
