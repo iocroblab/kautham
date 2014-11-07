@@ -590,13 +590,74 @@ namespace Kautham {
          pos[0] = tmp.getTranslation().at(0);
          pos[1] = tmp.getTranslation().at(1);
          pos[2] = tmp.getTranslation().at(2);
-         (*it).obs->getLink(0)->getElement()->setPosition( pos );
+     (*it).obs->getLink(0)->getElement()->setPosition( pos );
 
          ori[0] = tmp.getRotation().at(0);
          ori[1] = tmp.getRotation().at(1);
          ori[2] = tmp.getRotation().at(2);
          ori[3] = tmp.getRotation().at(3);
-         (*it).obs->getLink(0)->getElement()->setOrientation( ori );
+      (*it).obs->getLink(0)->getElement()->setOrientation( ori );
+
+//         SE3Conf newconf;
+//         std::vector<float> newpos;
+//         newpos.push_back(pos[0]);
+//         newpos.push_back(pos[1]);
+//         newpos.push_back(pos[2]);
+//         std::vector<float> newori;
+//         newori.push_back(ori[0]);
+//         newori.push_back(ori[1]);
+//         newori.push_back(ori[2]);
+//         newori.push_back(ori[2]);
+
+//         newconf.setPos(newpos);
+//         newconf.setOrient(newori);
+//         vector<KthReal> X;
+//         X=newconf.getParams();//Transform to X1,X2,X3
+
+//         std::vector<float> controls;
+//         controls.push_back(pos[0]);
+//         controls.push_back(pos[1]);
+//         controls.push_back(pos[2]);
+//         controls.push_back(X[0]);
+//         controls.push_back(X[1]);
+//         controls.push_back(X[2]);
+
+
+//         std::cout<<"getLink(0) pos = "<<
+//         (*it).obs->getLink(0)->getElement()->getPosition()[0]<<" "<<
+//         (*it).obs->getLink(0)->getElement()->getPosition()[1]<<" "<<
+//         (*it).obs->getLink(0)->getElement()->getPosition()[2]<<std::endl;
+//         std::cout<<"current homepos = "<<
+//                    (*it).obs->getHomePos()->getSE3().getPos()[0]<<" "<<
+//                    (*it).obs->getHomePos()->getSE3().getPos()[1]<<" "<<
+//                    (*it).obs->getHomePos()->getSE3().getPos()[2]<<std::endl;
+
+//         //(*it).obs->control2Pose(controls);
+//         (*it).obs->setHomePos(&newconf);
+
+//         std::cout<<"current pos = "<<
+//                    (*it).obs->getCurrentPos()->getSE3().getPos()[0]<<" "<<
+//                    (*it).obs->getCurrentPos()->getSE3().getPos()[1]<<" "<<
+//                    (*it).obs->getCurrentPos()->getSE3().getPos()[2]<<std::endl;
+
+         //EUROC
+//         std::cout<<"updated attached object "<<(*it).obs->getName()<<" = "<<pos[0]<<","<<pos[1]<<","<<pos[2]<<std::endl;
+//         std::cout<<"Controls "<<controls[0]<<" "<<
+//                    controls[1]<<" "<<
+//                    controls[2]<<" "<<
+//                    controls[3]<<" "<<
+//                    controls[4]<<" "<<
+//                    controls[5]<<" "<<
+//                    std::endl;
+
+//         std::cout<<"new homepos "<<newconf.getPos()[0]<<" "<<
+//                    newconf.getPos()[1]<<" "<<
+//                    newconf.getPos()[2]<<" "<<
+//                    ori[0]<<" "<<
+//                    ori[1]<<" "<<
+//                    ori[2]<<" "<<
+//                    ori[3]<<" "<<
+//                    std::endl;
      }
 
  }
@@ -1064,6 +1125,17 @@ namespace Kautham {
              _homeTrans.setRotation(tempRot);
              _homeTrans.setTranslation(tempTran);
 
+             //EUROC
+             std::cout<<"setHomePos _homeTrans.setTranslation = "<<
+                        tempTran[0]<<" "<<
+                        tempTran[1]<<" "<<
+                        tempTran[2]<<std::endl;
+             std::cout<<"setHomePos _homeConf.setPosition = "<<
+                                                          _homeConf.getSE3().getPos()[0]<<" "<<
+                                                          _homeConf.getSE3().getPos()[1]<<" "<<
+                                                          _homeConf.getSE3().getPos()[2]<<std::endl;
+
+
              recalculateHomeLimits();
          }
              break;
@@ -1305,6 +1377,8 @@ namespace Kautham {
      }
 
      if(se3Enabled){
+         //EUROC
+         //std::cout<<"HERE\n";
          for(int i =0; i < 6; i++){
              for(unsigned int j= 0; j < control.size(); j++)
                  parameters[i] += mapMatrix[i][j] * (control[j]-0.5) ;
@@ -1424,6 +1498,10 @@ namespace Kautham {
                                                                  coords.at(5), coords.at(6)));
              links[0]->forceChange(NULL);
 
+             //EUROC
+             //std::cout<<"parameter2Pose - link0: "<<
+             //           coords.at(0)<<" "<<coords.at(1)<<" "<<coords.at(2)<<std::endl;
+
          }
          if(_currentConf.getRn().getDim() != 0){
              // Rn denormalization
@@ -1450,7 +1528,8 @@ namespace Kautham {
              _hasChanged = true;
          }
      }
-
+     //EUROC
+     //std::cout<<"UpdateRobot - attachedObjectSize = "<<_attachedObject.size()<<std::endl;
      if(_attachedObject.size() != 0 )
          moveAttachedObj();
  }
