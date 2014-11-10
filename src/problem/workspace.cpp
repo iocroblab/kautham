@@ -106,13 +106,9 @@ namespace Kautham {
 
         for(unsigned int i=0; i< robots.size(); i++){
             if(sample->getMappedConf().size()==0){
-                //EUROC
-                //std::cout<<"moveRobotsTo - now calling control2Pose\n";
                 withinbounds &= robots[i]->control2Pose(tmpVec);
             }
             else{
-                //EUROC
-                //std::cout<<"moveRobotsTo - now calling Kinematics\n";
                 robots[i]->Kinematics(sample->getMappedConf().at(i));
             }
         }
