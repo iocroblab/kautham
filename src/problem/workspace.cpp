@@ -229,10 +229,10 @@ namespace Kautham {
                                 collision = true;
                                 sstr << "Attached object " << it->obs->getName()
                                      << " is in collision with obstacle " << m << " ("
-                                     << obstacles[m]->getName() << ")"
-                                     << " Att. ob. pos(" << it->obs->getCurrentPos()->getSE3().getPos()[0] <<", "
-                                     << ", "<< it->obs->getHomePos()->getSE3().getPos()[1] <<", "
-                                     << ", "<< it->obs->getHomePos()->getSE3().getPos()[2] <<")"<<endl;
+                                     << obstacles[m]->getName() << ")"<<endl;
+                                     //<< " Att. ob. pos(" << it->obs->getHomePos()->getSE3().getPos()[0] <<", "
+                                     //<< ", "<< it->obs->getHomePos()->getSE3().getPos()[1] <<", "
+                                     //<< ", "<< it->obs->getHomePos()->getSE3().getPos()[2] <<")"<<endl;
                                 sstr << str;
                                 break;
                             }
