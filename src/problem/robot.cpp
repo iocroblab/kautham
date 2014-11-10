@@ -598,19 +598,19 @@ namespace Kautham {
          ori[3] = tmp.getRotation().at(3);
       (*it).obs->getLink(0)->getElement()->setOrientation( ori );
 
-//         SE3Conf newconf;
-//         std::vector<float> newpos;
-//         newpos.push_back(pos[0]);
-//         newpos.push_back(pos[1]);
-//         newpos.push_back(pos[2]);
-//         std::vector<float> newori;
-//         newori.push_back(ori[0]);
-//         newori.push_back(ori[1]);
-//         newori.push_back(ori[2]);
-//         newori.push_back(ori[2]);
+         SE3Conf newconf;
+         std::vector<float> newpos;
+         newpos.push_back(pos[0]);
+         newpos.push_back(pos[1]);
+         newpos.push_back(pos[2]);
+         std::vector<float> newori;
+         newori.push_back(ori[0]);
+         newori.push_back(ori[1]);
+         newori.push_back(ori[2]);
+         newori.push_back(ori[3]);
 
-//         newconf.setPos(newpos);
-//         newconf.setOrient(newori);
+         newconf.setPos(newpos);
+         newconf.setOrient(newori);
 //         vector<KthReal> X;
 //         X=newconf.getParams();//Transform to X1,X2,X3
 
@@ -633,7 +633,7 @@ namespace Kautham {
 //                    (*it).obs->getHomePos()->getSE3().getPos()[2]<<std::endl;
 
 //         //(*it).obs->control2Pose(controls);
-//         (*it).obs->setHomePos(&newconf);
+         (*it).obs->setHomePos(&newconf);
 
 //         std::cout<<"current pos = "<<
 //                    (*it).obs->getCurrentPos()->getSE3().getPos()[0]<<" "<<
