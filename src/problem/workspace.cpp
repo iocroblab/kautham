@@ -225,11 +225,14 @@ namespace Kautham {
                     for (uint m = 0; m < obstacles.size(); m++) {
                         if (it->obs != obstacles.at(m)) {
                             string str;
-                            if (it->obs->collisionCheck(obstacles.at(i),&str)) {
+                            if (it->obs->collisionCheck(obstacles.at(m),&str)) {
                                 collision = true;
                                 sstr << "Attached object " << it->obs->getName()
                                      << " is in collision with obstacle " << m << " ("
-                                     << obstacles[m]->getName() << ")" << endl;
+                                     << obstacles[m]->getName() << ")"
+                                     << " Att. ob. pos(" << it->obs->getCurrentPos()->getSE3().getPos()[0] <<", "
+                                     << ", "<< it->obs->getHomePos()->getSE3().getPos()[1] <<", "
+                                     << ", "<< it->obs->getHomePos()->getSE3().getPos()[2] <<")"<<endl;
                                 sstr << str;
                                 break;
                             }

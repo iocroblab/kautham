@@ -1078,17 +1078,6 @@ namespace Kautham {
              _homeTrans.setRotation(tempRot);
              _homeTrans.setTranslation(tempTran);
 
-             //EUROC
-             std::cout<<"setHomePos _homeTrans.setTranslation = "<<
-                        tempTran[0]<<" "<<
-                        tempTran[1]<<" "<<
-                        tempTran[2]<<std::endl;
-             std::cout<<"setHomePos _homeConf.setPosition = "<<
-                                                          _homeConf.getSE3().getPos()[0]<<" "<<
-                                                          _homeConf.getSE3().getPos()[1]<<" "<<
-                                                          _homeConf.getSE3().getPos()[2]<<std::endl;
-
-
              recalculateHomeLimits();
          }
              break;
