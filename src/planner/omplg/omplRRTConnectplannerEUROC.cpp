@@ -101,21 +101,33 @@ namespace Kautham {
     //! filtering of samples activated
     bool omplRRTConnectPlannerEUROC::trySolve()//reimplemented
     {
-        if(omplPlanner::trySolve())
-            return true;
+        //if filter eliminates init and goal, then do not activate the filter!!
+        if(filtersample(_init)==true || filtersample(_goal)==true)
+        {
+            //disable filtersample
+            _filtersamples = 0;
+            //solve
+            return omplPlanner::trySolve();
+        }
         else
         {
-            int ret;
-            //try again without the filtering activated
-            if(_filtersamples==1)
+            //do as programmed (with ot without filter)
+            if(omplPlanner::trySolve())
+                return true;
+            else
             {
-                std::cout<<"Retrying trySolve without sample filtering\n";
-                //disable filtersample
-                _filtersamples = 0;
-                //try again
-                ret = omplPlanner::trySolve();
-                //restore things
-                _filtersamples = 1;
+                //try again without the filtering activated
+                int ret;
+                if(_filtersamples==1)
+                {
+                    std::cout<<"Retrying trySolve without sample filtering\n";
+                    //disable filtersample
+                    _filtersamples = 0;
+                    //try again
+                    ret = omplPlanner::trySolve();
+                    //restore things
+                    _filtersamples = 1;
+                }
             }
         }
     }
