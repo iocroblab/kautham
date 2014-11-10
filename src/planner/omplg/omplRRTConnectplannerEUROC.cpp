@@ -105,6 +105,7 @@ namespace Kautham {
         if(filtersample(_init)==true || filtersample(_goal)==true)
         {
             //disable filtersample
+            std::cout<<"Disabling filtering because either init or goal do not satisfy filter restrictions\n";
             _filtersamples = 0;
             //solve
             return omplPlanner::trySolve();
