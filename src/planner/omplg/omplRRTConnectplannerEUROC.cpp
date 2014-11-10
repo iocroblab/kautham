@@ -139,6 +139,21 @@ namespace Kautham {
         if(_filtersamples == 0)
             return false;
 
+
+        //If init and goal have J2 and J4 in the same halve ranges then
+        //all samples shouuld also have this way
+        if(_init->getCoords()[3]>0.5 && _goal->getCoords()[3]>0.5 && _init->getCoords()[5]<0.5 && _goal->getCoords()[5]<0.5 )
+        {
+            if(smp->getCoords()[3]<0.5) return true;//do not match, then filter
+            else if(smp->getCoords()[5]>0.5) return true;//do not match,then filter
+        }
+        else if(_init->getCoords()[3]<0.5 && _goal->getCoords()[3]<0.5 && _init->getCoords()[5]>0.5 && _goal->getCoords()[5]>0.5 )
+        {
+            if(smp->getCoords()[3]>0.5) return true;//do not match, then filter
+            else if(smp->getCoords()[5]<0.5) return true;//do not match,then filter
+        }
+        //else continue...
+
         //Filtering activated
         //std::cout<<"Filtering\n";
 
