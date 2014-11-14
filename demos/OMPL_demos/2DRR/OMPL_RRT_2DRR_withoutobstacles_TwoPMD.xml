@@ -3,7 +3,7 @@
 	<Robot robot="robots/2DRR.dh" scale="1.0">
 		<InvKinematic name="RR2D" />
 	</Robot>
-	<Controls robot="controls/2DRR_2dof_2PMD.cntr" />
+	<Controls robot="controls/2DRR_2dof_2PMDfull.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplRRT</Name>
