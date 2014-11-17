@@ -101,6 +101,16 @@ namespace Kautham {
 		else
           return false;
 
+        it = _parameters.find("num decimals");
+        if(it != _parameters.end())
+        {
+          _decimals = it->second;
+          if(_decimals<0) _decimals = 0;
+          else if(_decimals>6) _decimals=6;
+        }
+        else
+          return false;
+
 		char *str = new char[20];
         for(int i=0; i<_wkSpace->getNumRobControls();i++)
 		{

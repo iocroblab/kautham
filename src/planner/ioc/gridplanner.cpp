@@ -215,7 +215,8 @@ namespace Kautham {
                     //text color
                     SoMaterial *text_color = new SoMaterial;
                     text_color->diffuseColor.setValue(0.2,0.2,0.2);
-                    //text stringSoText3 *cell_text = new SoText3();
+                    //text string
+                    SoText3 *cell_text = new SoText3();
                     char textpot[20];
                     ostringstream s_decimals;
                     s_decimals << _decimals;
