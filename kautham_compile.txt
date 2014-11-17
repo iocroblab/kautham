@@ -1,0 +1,42 @@
+Compiling Kautham in Ubuntu Precise 12.04 LTS
+=============================================
+
+First of all we consider that you have a Ubuntu box with the version Precise
+(12.04 lts, long term suport) [1] . After that, you mush install ROS [2]. The
+installation steps procedure came from here [3] but it could be resumed as:
+
+# Add the sources of the ros packages
+$ sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sources.list.d/ros-latest.list'
+
+# Add the debian-robotics sources
+$ sudo sh -c 'echo "deb http://sir.upc.edu/debian-robotics precise-robotics main" > /etc/apt/sources.list.d/precise-robotics.list'
+
+# Add the gpg key of the ros repo
+$ wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | sudo apt-key add -
+
+# Add the gpg key of the precise-robotics repo
+$ sudo apt-key adv --keyserver pgp.rediris.es --recv-keys 63DE76AC0B6779BF
+
+# Update the sources
+$ sudo apt-get update
+
+# Install the needed packages
+$ sudo apt-get install ros-hydro-ros-base libsoqt4-dev libcoin60-dev libompl-dev \
+  cmake python-catkin-pkg python-empy python-nose python-setuptools libgtest-dev \
+  build-essential libboost-system-dev libboost-serialization-dev libboost-thread-dev \
+  ros-hydro-catkin ros-hydro-trajectory-msgs doxygen
+
+# Loading the ros environtment
+$ source /opt/ros/hydro/setup.bash
+
+# Create the catkin-workscape
+$ mkdir -p catkin_ws/src
+$ cd catkin_ws/src
+$ catkin_init_workspace
+
+# Unpack the sources in the catkin/src directory
+$ tar xvfz kautham_teaching.tar.gz
+
+# Compiling kautham. cd to the catkin_ws directory and execute
+$ cd catkin_ws; catkin_make
+
