@@ -135,6 +135,7 @@ namespace Kautham {
 
         //!temporal storage of init config. Used when discretization steps change
         Sample *tmpSamInit;
+
         //!temporal storage of goal config. Used when discretization steps change
         Sample *tmpSamGoal;
 
@@ -146,6 +147,9 @@ namespace Kautham {
 
         //!flag to set/unset the visualization of the potential values of the cells
         int _showLabels;
+
+        //!number of decimals to be shown. The derived classes may change the defaul value using setParameters.
+        int _decimals;
 
 	    //!Function to load the boost graph data
 	    void loadGraph();	 
