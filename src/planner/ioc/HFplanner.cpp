@@ -228,11 +228,11 @@ namespace Kautham {
 					KthReal pneigh = getPotential(*avi);
 					KthReal pcurr = getPotential(vmin);
 					if(pneigh < pcurr) {
-						vmin = *avi; 
-						cellpath.push_back(vmin);
-						_path.push_back(locations[vmin]);
+                        vmin = *avi;
 					}
 				}
+                cellpath.push_back(vmin);
+                _path.push_back(locations[vmin]);
 				if(vc == vmin) {
 					//relax HF again and resume
                     computeHF(indexgoal);
