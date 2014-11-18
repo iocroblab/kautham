@@ -1,0 +1,44 @@
+Info:    Beginning benchmark
+Info:    Preparing for run 0 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 4.041079 seconds
+Info:    Preparing for run 1 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 4.145213 seconds
+Info:    Preparing for run 2 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.663983 seconds
+Info:    Preparing for run 3 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (4 start + 2 goal)
+Info:    Path simplification took 2.827662 seconds
+Info:    Preparing for run 4 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 7 states (5 start + 2 goal)
+Info:    Path simplification took 2.661305 seconds
+Info:    Preparing for run 5 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 10 states (8 start + 2 goal)
+Info:    Path simplification took 2.998256 seconds
+Info:    Preparing for run 6 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 3.743010 seconds
+Info:    Preparing for run 7 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 3.398369 seconds
+Info:    Preparing for run 8 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.906179 seconds
+Info:    Preparing for run 9 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 13 states (11 start + 2 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /home/nestor/Descargas/ompl-0.14.2-Source/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 20.345654 seconds
+Info:    Benchmark complete

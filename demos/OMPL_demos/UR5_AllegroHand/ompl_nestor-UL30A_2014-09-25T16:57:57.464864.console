@@ -1,0 +1,42 @@
+Info:    Beginning benchmark
+Info:    Preparing for run 0 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 0.199349 seconds
+Info:    Preparing for run 1 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 0.171118 seconds
+Info:    Preparing for run 2 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 0.171409 seconds
+Info:    Preparing for run 3 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 0.171864 seconds
+Info:    Preparing for run 4 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 0.170947 seconds
+Info:    Preparing for run 5 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 0.170471 seconds
+Info:    Preparing for run 6 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 0.171325 seconds
+Info:    Preparing for run 7 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 0.170769 seconds
+Info:    Preparing for run 8 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 0.170706 seconds
+Info:    Preparing for run 9 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 0.171123 seconds
+Info:    Benchmark complete

@@ -438,7 +438,7 @@ bool Application::problemSetup(string problemFile){
     mainWindow->getViewerTab("CollisionWSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
 
     //  Used to show the IV models reconstructed from the PQP triangular meshes.
-    //mainWindow->addViewerTab("PQP", ((IVWorkSpace*)_problem->wSpace())->getIvFromPQPScene());
+    mainWindow->addViewerTab("PQP", ((IVWorkSpace*)_problem->wSpace())->getIvFromPQPScene());
 
     vector <DOFWidget*> robDOFWidgets;
     robDOFWidgets.resize(_problem->wSpace()->getNumRobots());
