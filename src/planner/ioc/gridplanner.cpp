@@ -51,15 +51,17 @@ namespace Kautham {
 		_obstaclePotential = 10.0;
 		_goalPotential = 0.0;
         _showLabels = 1;
+        _decimals = 0;
 
-		//set intial values from parent class data
-		_speedFactor = 1;
-		_solved = false;
-	  
+        //set intial values from parent class data
+        _speedFactor = 1;
+        _solved = false;
+
         _guiName = "Grid Planner";
-		addParameter("Speed Factor", _speedFactor);
+        addParameter("Speed Factor", _speedFactor);
         addParameter("Max. Samples", _maxNumSamples);
         addParameter("Show labels (0/1)", _showLabels);
+        addParameter("num decimals", _decimals);
 
         //set step discretization
         _stepsDiscretization.resize(_wkSpace->getNumRobControls());
@@ -215,8 +217,11 @@ namespace Kautham {
                     text_color->diffuseColor.setValue(0.2,0.2,0.2);
                     //text string
                     SoText3 *cell_text = new SoText3();
-                    char textpot[10];
-                    sprintf(textpot,"%.0f",getPotential(*vi));
+                    char textpot[20];
+                    ostringstream s_decimals;
+                    s_decimals << _decimals;
+                    std::string s="%."+s_decimals.str()+"f";
+                    sprintf(textpot,s.c_str(),getPotential(*vi));//e.g. s.c_str()="%.2f"
                     cell_text->string.setValue(textpot);
                     //text separator
                     SoSeparator *textsep = new SoSeparator();
