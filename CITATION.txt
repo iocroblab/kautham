@@ -9,9 +9,8 @@ To cite KAUTHAM in publications, please use:
                Leopold Palomo and 
                N\'estor Garc\'{\i}a},
   title = {The Kautham Project: A teaching and research tool for robot motion planning},
-  booktitle={IEEE Int. Conf. on Emerging Technologies and Factory Automation, ETFA'14},
+  booktitle={Proc. of the IEEE Int. Conf. on Emerging Technologies and Factory Automation, ETFA'14},
   year = {2014},
-  pages = {Accepted for publication},
   url = {sir.upc.edu/kautham}
 }
 

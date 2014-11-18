@@ -1,0 +1,419 @@
+Info:    Beginning benchmark
+Info:    Preparing for run 0 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 9 states (2 start + 7 goal)
+Info:    Path simplification took 5.708524 seconds
+Info:    Preparing for run 1 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Info:    Path simplification took 5.300612 seconds
+Info:    Preparing for run 2 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.025838 seconds
+Info:    Preparing for run 3 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 8 states (3 start + 5 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /tmp/buildd/ompl-0.14.2+dfsg/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 14.861742 seconds
+Info:    Preparing for run 4 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.228359 seconds
+Info:    Preparing for run 5 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Info:    Path simplification took 6.674187 seconds
+Info:    Preparing for run 6 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.589194 seconds
+Info:    Preparing for run 7 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 8 states (4 start + 4 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /tmp/buildd/ompl-0.14.2+dfsg/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 15.696168 seconds
+Info:    Preparing for run 8 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 10 states (5 start + 5 goal)
+Info:    Path simplification took 4.665048 seconds
+Info:    Preparing for run 9 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 3.327666 seconds
+Info:    Preparing for run 10 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 2.476923 seconds
+Info:    Preparing for run 11 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 6.456480 seconds
+Info:    Preparing for run 12 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 8 states (3 start + 5 goal)
+Info:    Path simplification took 3.376658 seconds
+Info:    Preparing for run 13 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 2.568380 seconds
+Info:    Preparing for run 14 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Info:    Path simplification took 2.611333 seconds
+Info:    Preparing for run 15 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Info:    Path simplification took 2.703985 seconds
+Info:    Preparing for run 16 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 10 states (4 start + 6 goal)
+Info:    Path simplification took 2.818315 seconds
+Info:    Preparing for run 17 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 2.637594 seconds
+Info:    Preparing for run 18 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Info:    Path simplification took 2.229176 seconds
+Info:    Preparing for run 19 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 7 states (4 start + 3 goal)
+Info:    Path simplification took 2.178896 seconds
+Info:    Preparing for run 20 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.638654 seconds
+Info:    Preparing for run 21 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 11 states (6 start + 5 goal)
+Info:    Path simplification took 6.302960 seconds
+Info:    Preparing for run 22 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 3.277521 seconds
+Info:    Preparing for run 23 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 2.931405 seconds
+Info:    Preparing for run 24 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 16 states (11 start + 5 goal)
+Info:    Path simplification took 4.979151 seconds
+Info:    Preparing for run 25 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Info:    Path simplification took 4.384694 seconds
+Info:    Preparing for run 26 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /tmp/buildd/ompl-0.14.2+dfsg/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 14.453190 seconds
+Info:    Preparing for run 27 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.313086 seconds
+Info:    Preparing for run 28 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 7 states (4 start + 3 goal)
+Info:    Path simplification took 2.634906 seconds
+Info:    Preparing for run 29 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 7 states (5 start + 2 goal)
+Info:    Path simplification took 2.030252 seconds
+Info:    Preparing for run 30 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.259956 seconds
+Info:    Preparing for run 31 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.791863 seconds
+Info:    Preparing for run 32 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 9 states (5 start + 4 goal)
+Info:    Path simplification took 2.713465 seconds
+Info:    Preparing for run 33 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.262017 seconds
+Info:    Preparing for run 34 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 8 states (4 start + 4 goal)
+Info:    Path simplification took 4.004916 seconds
+Info:    Preparing for run 35 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 7 states (3 start + 4 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /tmp/buildd/ompl-0.14.2+dfsg/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 14.560630 seconds
+Info:    Preparing for run 36 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.170389 seconds
+Info:    Preparing for run 37 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.945365 seconds
+Info:    Preparing for run 38 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (4 start + 2 goal)
+Info:    Path simplification took 2.259896 seconds
+Info:    Preparing for run 39 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 3.170232 seconds
+Info:    Preparing for run 40 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 2.385176 seconds
+Info:    Preparing for run 41 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /tmp/buildd/ompl-0.14.2+dfsg/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 20.676955 seconds
+Info:    Preparing for run 42 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Info:    Path simplification took 4.254161 seconds
+Info:    Preparing for run 43 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Info:    Path simplification took 3.446160 seconds
+Info:    Preparing for run 44 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.670641 seconds
+Info:    Preparing for run 45 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 3.137178 seconds
+Info:    Preparing for run 46 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (4 start + 2 goal)
+Info:    Path simplification took 2.609895 seconds
+Info:    Preparing for run 47 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Info:    Path simplification took 2.001044 seconds
+Info:    Preparing for run 48 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.454410 seconds
+Info:    Preparing for run 49 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 13 states (4 start + 9 goal)
+Info:    Path simplification took 3.301227 seconds
+Info:    Preparing for run 50 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.568832 seconds
+Info:    Preparing for run 51 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (2 start + 4 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /tmp/buildd/ompl-0.14.2+dfsg/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 22.203020 seconds
+Info:    Preparing for run 52 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 3.380600 seconds
+Info:    Preparing for run 53 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (4 start + 2 goal)
+Info:    Path simplification took 3.167043 seconds
+Info:    Preparing for run 54 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (2 start + 4 goal)
+Info:    Path simplification took 5.321655 seconds
+Info:    Preparing for run 55 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 2.653499 seconds
+Info:    Preparing for run 56 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Info:    Path simplification took 1.796829 seconds
+Info:    Preparing for run 57 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 8 states (2 start + 6 goal)
+Info:    Path simplification took 5.914439 seconds
+Info:    Preparing for run 58 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Info:    Path simplification took 3.088842 seconds
+Info:    Preparing for run 59 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 7 states (5 start + 2 goal)
+Info:    Path simplification took 2.988058 seconds
+Info:    Preparing for run 60 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (4 start + 2 goal)
+Info:    Path simplification took 4.494785 seconds
+Info:    Preparing for run 61 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.201376 seconds
+Info:    Preparing for run 62 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Info:    Path simplification took 4.016414 seconds
+Info:    Preparing for run 63 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.997622 seconds
+Info:    Preparing for run 64 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.890946 seconds
+Info:    Preparing for run 65 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Info:    Path simplification took 2.624850 seconds
+Info:    Preparing for run 66 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.033566 seconds
+Info:    Preparing for run 67 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 7 states (4 start + 3 goal)
+Info:    Path simplification took 3.034658 seconds
+Info:    Preparing for run 68 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.561126 seconds
+Info:    Preparing for run 69 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Info:    Path simplification took 2.224943 seconds
+Info:    Preparing for run 70 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 12.538003 seconds
+Info:    Preparing for run 71 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 1.886797 seconds
+Info:    Preparing for run 72 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 3.564342 seconds
+Info:    Preparing for run 73 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 8 states (3 start + 5 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /tmp/buildd/ompl-0.14.2+dfsg/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 16.417776 seconds
+Info:    Preparing for run 74 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 2.692825 seconds
+Info:    Preparing for run 75 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Info:    Path simplification took 2.055933 seconds
+Info:    Preparing for run 76 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.180672 seconds
+Info:    Preparing for run 77 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.814225 seconds
+Info:    Preparing for run 78 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Info:    Path simplification took 2.892804 seconds
+Info:    Preparing for run 79 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 3.900039 seconds
+Info:    Preparing for run 80 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.480332 seconds
+Info:    Preparing for run 81 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 1.930763 seconds
+Info:    Preparing for run 82 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /tmp/buildd/ompl-0.14.2+dfsg/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 14.718728 seconds
+Info:    Preparing for run 83 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 3.111146 seconds
+Info:    Preparing for run 84 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.957805 seconds
+Info:    Preparing for run 85 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 3.714859 seconds
+Info:    Preparing for run 86 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.039134 seconds
+Info:    Preparing for run 87 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.949581 seconds
+Info:    Preparing for run 88 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (3 start + 2 goal)
+Info:    Path simplification took 3.425558 seconds
+Info:    Preparing for run 89 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 4 states (2 start + 2 goal)
+Info:    Path simplification took 2.768393 seconds
+Info:    Preparing for run 90 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (2 start + 4 goal)
+Info:    Path simplification took 2.424769 seconds
+Info:    Preparing for run 91 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (4 start + 2 goal)
+Info:    Path simplification took 2.492994 seconds
+Info:    Preparing for run 92 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 8 states (4 start + 4 goal)
+Info:    Path simplification took 6.227621 seconds
+Info:    Preparing for run 93 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (3 start + 3 goal)
+Info:    Path simplification took 2.014576 seconds
+Info:    Preparing for run 94 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 10 states (6 start + 4 goal)
+Info:    Path simplification took 2.707522 seconds
+Info:    Preparing for run 95 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 7 states (2 start + 5 goal)
+Info:    Path simplification took 3.063414 seconds
+Info:    Preparing for run 96 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 7 states (4 start + 3 goal)
+Info:    Path simplification took 2.806145 seconds
+Info:    Preparing for run 97 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 5.906751 seconds
+Info:    Preparing for run 98 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 6 states (2 start + 4 goal)
+Info:    Path simplification took 2.597374 seconds
+Info:    Preparing for run 99 of geometric_RRTConnect
+Info:    RRTConnect: Starting with 1 states
+Info:    RRTConnect: Created 5 states (2 start + 3 goal)
+Info:    Path simplification took 1.969904 seconds
+Info:    Benchmark complete
