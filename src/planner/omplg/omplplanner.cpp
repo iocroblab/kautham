@@ -1519,7 +1519,7 @@ else if(y<ypmin) ypmin=y;
     bool omplPlanner::trySolve()
     {
 
-/* DEBUG
+        /* DEBUG
  xm=100.0;
  xM=-100.0;
  ym=100.0;
@@ -1541,39 +1541,39 @@ else if(y<ypmin) ypmin=y;
         startompl.print();
 
         //Goal state: convert from smp to scoped state
-         ob::ScopedState<ob::CompoundStateSpace> goalompl(space);
-         smp2omplScopedState(_goal, &goalompl);
-         cout<<"goalompl:"<<endl;
-         goalompl.print();
+        ob::ScopedState<ob::CompoundStateSpace> goalompl(space);
+        smp2omplScopedState(_goal, &goalompl);
+        cout<<"goalompl:"<<endl;
+        goalompl.print();
 
-         // set the start and goal states
-         ss->setStartAndGoalStates(startompl, goalompl);
+        // set the start and goal states
+        ss->setStartAndGoalStates(startompl, goalompl);
 
-         //remove previous solutions, if any
-         if(_incremental == 0)
-         {
-             ss->clear();       
-             ss->getPlanner()->clear();
-         }
-         else
-             ss->getProblemDefinition()->clearSolutionPaths();
+        //remove previous solutions, if any
+        if(_incremental == 0)
+        {
+            ss->clear();
+            ss->getPlanner()->clear();
+        }
+        else
+            ss->getProblemDefinition()->clearSolutionPaths();
 
-         // attempt to solve the problem within _planningTime seconds of planning time
-         ss->setup();
-         ob::PlannerStatus solved = ss->solve(_planningTime);
+        // attempt to solve the problem within _planningTime seconds of planning time
+        ss->setup();
+        ob::PlannerStatus solved = ss->solve(_planningTime);
 
-         //ss->print();
+        //ss->print();
 
-         //the following line is added to restore the problem definition and its optimization objective that was lost after solve
-         //needed in drawcspace that wants to access the weights of the edges that have to be recomputed with the optimization fro rrtstar.
-         this->setParameters();
+        //the following line is added to restore the problem definition and its optimization objective that was lost after solve
+        //needed in drawcspace that wants to access the weights of the edges that have to be recomputed with the optimization fro rrtstar.
+        this->setParameters();
 
 
-         //retrieve all the states. Load the SampleSet _samples
-         Sample *smp;
-         ob::PlannerData data(ss->getSpaceInformation());
-         ss->getPlannerData(data);
-         /*
+        //retrieve all the states. Load the SampleSet _samples
+        Sample *smp;
+        ob::PlannerData data(ss->getSpaceInformation());
+        ss->getPlannerData(data);
+        /*
          for(int i=0; i<data.numVertices();i++)
          {
                 smp=new Sample(_wkSpace->getNumRobControls());
@@ -1583,64 +1583,77 @@ else if(y<ypmin) ypmin=y;
          }
          */
 
-         if (solved)
-         {
-                std::cout << "Found solution:" << std::endl;
+        if (solved==ob::PlannerStatus::EXACT_SOLUTION)
+        {
+            std::cout << "\nEXACT_SOLUTION found" << std::endl;
 
-                // print the path to screen
-                if(_simplify==1) {//smooth
-                    //ss->getPathSimplifier()->shortcutPath(ss->getSolutionPath(),0,0,0.15);
-                    ss->getPathSimplifier()->smoothBSpline(ss->getSolutionPath(),5);
-                }
-                else if(_simplify==2) {//shorten and smoot
-                    ss->simplifySolution();
-                }
-                //std::cout<<"Path: ";
-                //ss->getSolutionPath().print(std::cout);
-
-                ss->getSolutionPath().interpolate();
-
-                //std::cout<<"Path after interpolation: ";
-                //ss->getSolutionPath().interpolate(10);
-                //ss->getSolutionPath().print(std::cout);
-
-
-                //refine
-                //ss->getSolutionPath().interpolate();
-                std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
-
-                Sample *smp;
-
-                _path.clear();
-                clearSimulationPath();
-
-
-
-               //load the kautham _path variable from the ompl solution
-                for(int j=0;j<ss->getSolutionPath().getStateCount();j++){
-                   //create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
-                    smp=new Sample(_wkSpace->getNumRobControls());
-                    smp->setMappedConf(_init->getMappedConf());
-                    //convert form state to smp
-                    omplState2smp(ss->getSolutionPath().getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
-
-                    _path.push_back(smp);
-                    _samples->add(smp);
-                }
-                _solved = true;
-                drawCspace(_drawnrobot);
-                return _solved;
+            // print the path to screen
+            if(_simplify==1) {//smooth
+                //ss->getPathSimplifier()->shortcutPath(ss->getSolutionPath(),0,0,0.15);
+                ss->getPathSimplifier()->smoothBSpline(ss->getSolutionPath(),5);
             }
-            //solution not found
-            else{
-                std::cout << "No solution found" << std::endl;
-                _solved = false;
-                drawCspace(_drawnrobot);
-                return _solved;
+            else if(_simplify==2) {//shorten and smoot
+                ss->simplifySolution();
             }
-		}
+            //std::cout<<"Path: ";
+            //ss->getSolutionPath().print(std::cout);
+
+            ss->getSolutionPath().interpolate();
+
+            //std::cout<<"Path after interpolation: ";
+            //ss->getSolutionPath().interpolate(10);
+            //ss->getSolutionPath().print(std::cout);
+
+
+            //refine
+            //ss->getSolutionPath().interpolate();
+            std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
+
+            Sample *smp;
+
+            _path.clear();
+            clearSimulationPath();
+
+
+
+            //load the kautham _path variable from the ompl solution
+            for(int j=0;j<ss->getSolutionPath().getStateCount();j++){
+                //create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
+                smp=new Sample(_wkSpace->getNumRobControls());
+                smp->setMappedConf(_init->getMappedConf());
+                //convert form state to smp
+                omplState2smp(ss->getSolutionPath().getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
+
+                _path.push_back(smp);
+                _samples->add(smp);
+            }
+            _solved = true;
+            drawCspace(_drawnrobot);
+            return _solved;
+        }
+        //solution not found
+        else if (solved==ob::PlannerStatus::APPROXIMATE_SOLUTION){
+            std::cout << "APPROXIMATE_SOLUTION - No exact solution found" << std::endl;
+            _solved = false;
+            drawCspace(_drawnrobot);
+            return _solved;
+        }
+        else if (solved==ob::PlannerStatus::TIMEOUT){
+            std::cout << "TIMEOUT - No solution found" << std::endl;
+            _solved = false;
+            drawCspace(_drawnrobot);
+            return _solved;
+        }
+        else{
+            std::cout << "solve returned "<<solved<< "- No exact solution found" << std::endl;
+            _solved = false;
+            drawCspace(_drawnrobot);
+            return _solved;
+        }
     }
-}
+
+  }//close namespace ompl
+}//close namespace kautham
 
 
 #endif // KAUTHAM_USE_OMPL
