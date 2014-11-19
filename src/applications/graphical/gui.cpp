@@ -361,7 +361,7 @@ namespace Kautham {
             v.window->setViewing(FALSE);
             v.window->setSceneGraph(root);
             v.window->setBackgroundColor(SbColor(0.0f,0.0f,0.0f));
-            v.window->setPopupMenuEnabled(FALSE);
+            //v.window->setPopupMenuEnabled(FALSE);
             v.window->show();
             viewers.push_back(v);
             viewsTab->setCurrentIndex(viewsTab->count()-1);
