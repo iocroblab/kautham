@@ -452,7 +452,7 @@ namespace Kautham {
 
     void PlannerWidget::loadData(){
         if(_planner != NULL ){
-            if(_planner->getFamily()=="ioc") {
+            if(_planner->getFamily() == IOCPLANNER ) {
 #if defined(KAUTHAM_USE_IOC)
                 QString path,dir;
                 QDir workDir;
