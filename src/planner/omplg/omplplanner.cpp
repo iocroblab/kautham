@@ -1634,7 +1634,8 @@ else if(y<ypmin) ypmin=y;
         //solution not found
         else if (solved==ob::PlannerStatus::APPROXIMATE_SOLUTION){
             std::cout << "APPROXIMATE_SOLUTION - No exact solution found" << std::endl;
-            _solved = false;
+             std::cout<<"Difference = "<<ss->getProblemDefinition()->getSolutions().at(0).difference_<< std::endl;
+             _solved = false;
             drawCspace(_drawnrobot);
             return _solved;
         }
