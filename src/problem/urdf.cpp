@@ -124,6 +124,7 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         SoSFVec3f *posVec = new SoSFVec3f;
         posVec->setValue((float)origin.xyz[0],(float)origin.xyz[1],(float)origin.xyz[2]);
         SoTranslation *trans = new SoTranslation;
+        trans->ref();
         trans->translation.connectFrom(posVec);
         submodel->addChild(trans);
 
@@ -134,6 +135,7 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         rotVec->setValue(SbVec3f((float)axis[0],(float)axis[1],
                 (float)axis[2]),(float)angle);
         SoRotation *rot = new SoRotation;
+        rot->ref();
         rot->rotation.connectFrom(rotVec);
         submodel->addChild(rot);
     }
@@ -154,6 +156,7 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         rgba[3] = atof(tmpString.c_str());
 
         SoMaterial *material = new SoMaterial;
+        material->ref();
 
         material->diffuseColor.setValue(rgba[0],rgba[1],rgba[2]);
         material->transparency.setValue(1.0-rgba[3]);
@@ -165,6 +168,7 @@ void urdf_geometry::fill(xml_node *node, string dir) {
     string geom_type = geom_node.name();
     if (geom_type == "box") {
         SoCube *box = new SoCube;
+        box->ref();
         double size[3];
         string tmpString = geom_node.attribute("size").as_string();
         istringstream ss( tmpString );
@@ -182,14 +186,17 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         SoSFRotation *cyl_rotVec = new SoSFRotation;
         cyl_rotVec->setValue(SbVec3f(1.,0.,0.),(float)M_PI_2);
         SoRotation *cyl_rot = new SoRotation;
+        cyl_rot->ref();
         cyl_rot->rotation.connectFrom(cyl_rotVec);
         submodel->addChild(cyl_rot);
         SoCylinder *cylinder = new SoCylinder;
+        cylinder->ref();
         cylinder->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
         cylinder->height.setValue((float)geom_node.attribute("length").as_double()*1000.);
         submodel->addChild(cylinder);
     } else if (geom_type == "sphere") {
         SoSphere *sphere = new SoSphere;
+        sphere->ref();
         sphere->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
         submodel->addChild(sphere);
     } else if (geom_type == "mesh") {
@@ -207,6 +214,7 @@ void urdf_geometry::fill(xml_node *node, string dir) {
             SoSFVec3f *scaVec = new SoSFVec3f;
             scaVec->setValue((float)scale[0],(float)scale[1],(float)scale[2]);
             SoScale *sca = new SoScale;
+            sca->ref();
             sca->scaleFactor.connectFrom(scaVec);
             submodel->addChild(sca);
         }
@@ -224,6 +232,7 @@ void urdf_geometry::fill(xml_node *node, string dir) {
                 string message = "Inventor file " + dir + filename + " couldn't be loaded";
                 throw KthExcp(message);
             } else {
+                read->ref();
                 submodel->addChild(read);
             }
         } else {
