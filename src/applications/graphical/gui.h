@@ -86,6 +86,7 @@ namespace Kautham {
     void                setText(string s);
     void                about();
     void                changeActiveBackground();
+    void                scene2VRML();
     void                changeDockAreaForOutput(Qt::DockWidgetArea area);
     //! Enables/Disables the use of bounding boxes as collision models
     void                toogleBBOXflag();
@@ -98,6 +99,7 @@ namespace Kautham {
     public:
     GUI(QWidget *p=0);
     void stopPathSimulation() {emit stopSimulation();}
+    QString getFilePath();
     void                clearText();
     bool                addViewerTab(string title, SoSeparator *root);
     void                removePropTab(string title);
