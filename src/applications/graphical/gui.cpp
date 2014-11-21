@@ -34,6 +34,7 @@
 #include <QtGui>
 #include <sampling/sampling.h>
 #include <Inventor/nodes/SoCamera.h>
+#include <Inventor/actions/SoWriteAction.h>
 #include <pugixml.hpp>
 
 #if defined(KAUTHAM_USE_GUIBRO)
@@ -96,6 +97,82 @@ namespace Kautham {
             if (color.isValid()) {
                 window->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
             }
+        }catch(...){
+        }
+    }
+
+    QString GUI::getFilePath() {
+        QSettings settings("IOC","Kautham");
+        QDir workDir;
+        QString last_path = settings.value("last_path",workDir.absolutePath()).toString();
+        QString filePath = QFileDialog::getSaveFileName(this,
+                                                        "Save scene as ...", last_path,
+                                                        "Inventor file (*.iv)");
+        if (!filePath.isEmpty()) {
+            uint pointIndex = filePath.lastIndexOf(".");
+            uint slashIndex = filePath.lastIndexOf("/");
+            if (pointIndex > slashIndex) filePath.truncate(pointIndex);
+            filePath.append(".iv");
+        }
+
+        return filePath;
+    }
+
+    static char * buffer;
+    static size_t buffer_size = 0;
+
+    static void *buffer_realloc(void * bufptr, size_t size) {
+        buffer = (char *)realloc(bufptr, size);
+        buffer_size = size;
+        return buffer;
+    }
+
+    static SbString buffer_writeaction(SoNode * root) {
+        SoOutput out;
+        buffer = (char *)malloc(1024);
+        buffer_size = 1024;
+        out.setBuffer(buffer, buffer_size, buffer_realloc);
+
+        SoWriteAction wa(&out);
+        wa.apply(root);
+
+        SbString s(buffer);
+        free(buffer);
+        return s;
+    }
+
+    void GUI::scene2VRML(){
+        try{
+            setCursor(QCursor(Qt::WaitCursor));
+            SoSeparator* root = ((Viewer)viewers.at(viewsTab->currentIndex())).root;
+            root->ref();
+            SoDB::writelock();
+            SbString s = buffer_writeaction(root);
+            SoDB::writeunlock();
+            root->unref();
+            cout << s.getString() << endl;
+
+            /*QString filePath = getFilePath();
+            if (!filePath.isEmpty()) {
+                try {
+                    SoSeparator* root = ((Viewer)viewers.at(viewsTab->currentIndex())).root;
+                    SoWriteAction writeAction;
+                    writeAction.apply(root);
+
+                    SoOutput out;
+                    if (out.openFile(filePath.toStdString().c_str())) {
+                        out.setBinary(FALSE);
+
+
+                        out.closeFile();
+                    } else {
+
+                    }
+                } catch (const exception& excp) {
+                    cout << "Error: " << excp.what() << endl;
+                }
+            }*/
+            setCursor(QCursor(Qt::ArrowCursor));
         }catch(...){
         }
     }

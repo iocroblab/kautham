@@ -1192,9 +1192,11 @@ namespace Kautham {
              _pathSeparator->ref();
              _pathSeparator->setName("Path");
              SoMaterial*  tmpMat = new SoMaterial();
+             tmpMat->ref();
              tmpMat->diffuseColor.setValue( 0., 0., 1.);
              _pathSeparator->addChild( tmpMat );
              SoVRMLExtrusion* tmpVRML = new SoVRMLExtrusion();
+             tmpVRML->ref();
              tmpVRML->solid.setValue(true);
              float diag = diagLimits()/100.;
              //diag = diag < 2. ? 2. : diag;

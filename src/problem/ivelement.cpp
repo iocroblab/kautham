@@ -75,9 +75,13 @@ namespace Kautham {
 		scale=sc;
 
 		trans= new SoTranslation;
+        trans->ref();
 		rot = new SoRotation;
+        rot->ref();
 		sca = new SoScale();
+        sca->ref();
 		color = new SoMaterial;
+        color->ref();
 
 		posVec = new SoSFVec3f;
 		trans->translation.connectFrom(posVec);
@@ -109,38 +113,15 @@ namespace Kautham {
                 string message = "Inventor file " + ivfile + " couldn't be loaded";
                 throw KthExcp(message);
             } else {
+                read->ref();
                 ivmodel->addChild(read);
             }
         } else {
-			//ivmodel->addChild(new SoSphere());
-			static const char *str[] = { 
-				"#VRML V1.0 ascii\n",
-				"DEF pointgoal Separator {\n",
-				"  Separator {\n",
-				"    MaterialBinding { value PER_PART }\n",
-				"    Coordinate3 {\n",
-				"      point [\n",
-				"        0.0 0.0 0.0\n",
-				"      ]\n",
-				"    }\n",
-				"    DrawStyle { pointSize 5 }\n",
-				"    PointSet { }\n",
-				"   }\n",
-				"}\n",
-				NULL
-			};
-			input.setStringArray(str);
-            SoSeparator *sep = SoDB::readAll(&input);
-			sep->ref();
-			while (sep->getNumChildren() > 0)
-			{
-				ivmodel->addChild(sep->getChild(0));
-				sep->removeChild(0);
-			}
-			sep->unref();
-			
+            SoSphere *sphere = new SoSphere;
+            sphere->ref();
+            sphere->radius.setValue(1.0);
+            ivmodel->addChild(sphere);
 		}
-		ivmodel->ref();
 
         //check if collision_ivfile is a different file from ivfile
         //and if collision_ivmodel could be the minimum-volume bounding box of ivmodel
@@ -175,6 +156,7 @@ namespace Kautham {
                         string message = "Inventor file " + collision_ivfile + " couldn't be loaded";
                         throw KthExcp(message);
                     } else {
+                        read->ref();
                         collision_ivmodel->addChild(read);
                     }
                     cout << "This box was found in " << collision_ivfile << endl;
@@ -217,37 +199,16 @@ namespace Kautham {
                     string message = "Inventor file " + collision_ivfile + " couldn't be loaded";
                     throw KthExcp(message);
                 } else {
+                    read->ref();
                     collision_ivmodel->addChild(read);
                 }
             } else {
-                //collision_ivmodel->addChild(new SoSphere());
-                static const char *str[] = {
-                    "#VRML V1.0 ascii\n",
-                    "DEF pointgoal Separator {\n",
-                    "  Separator {\n",
-                    "    MaterialBinding { value PER_PART }\n",
-                    "    Coordinate3 {\n",
-                    "      point [\n",
-                    "        0.0 0.0 0.0\n",
-                    "      ]\n",
-                    "    }\n",
-                    "    DrawStyle { pointSize 5 }\n",
-                    "    PointSet { }\n",
-                    "   }\n",
-                    "}\n",
-                    NULL
-                };
+                SoSphere *sphere = new SoSphere;
+                sphere->ref();
+                sphere->radius.setValue(1.0);
                 collision_ivmodel = new SoSeparator;
                 collision_ivmodel->ref();
-                input.setStringArray(str);
-                SoSeparator *sep = SoDB::readAll(&input);
-                sep->ref();
-                while (sep->getNumChildren() > 0)
-                {
-                    collision_ivmodel->addChild(sep->getChild(0));
-                    sep->removeChild(0);
-                }
-                sep->unref();
+                collision_ivmodel->addChild(sphere);
             }
         }
     }
@@ -263,9 +224,13 @@ namespace Kautham {
         scale=sc;
 
         trans= new SoTranslation;
+        trans->ref();
         rot = new SoRotation;
+        rot->ref();
         sca = new SoScale();
+        sca->ref();
         color = new SoMaterial;
+        color->ref();
 
         posVec = new SoSFVec3f;
         trans->translation.connectFrom(posVec);
@@ -438,14 +403,16 @@ namespace Kautham {
                     BBOXmodel->ref();
 
                     //define coordinates for vertices
-                    SoCoordinate3 *myCoords = new SoCoordinate3;
-                    myCoords->point.setValues(0, 8, vertexPositions);
-                    BBOXmodel->addChild(myCoords);
+                    SoCoordinate3 *coords = new SoCoordinate3;
+                    coords->ref();
+                    coords->point.setValues(0, 8, vertexPositions);
+                    BBOXmodel->addChild(coords);
 
                     //define the IndexedFaceSet, with indices into the vertices
-                    SoIndexedFaceSet *myFaceSet = new SoIndexedFaceSet;
-                    myFaceSet->coordIndex.setValues(0, 48, indices);
-                    BBOXmodel->addChild(myFaceSet);
+                    SoIndexedFaceSet *faceSet = new SoIndexedFaceSet;
+                    faceSet->ref();
+                    faceSet->coordIndex.setValues(0, 48, indices);
+                    BBOXmodel->addChild(faceSet);
 
                     if (filename != "") {
                         //save collision_ivmodel in a new file
@@ -543,9 +510,13 @@ namespace Kautham {
 		  SoSeparator* temp = new SoSeparator;
 		  temp->ref();
 		  temp->addChild(color);
+          color->ref();
 		  temp->addChild(trans);
+          trans->ref();
 		  temp->addChild(rot);
+          rot->ref();
 		  temp->addChild(ivmodel);
+          ivmodel->ref();
 		  return temp;
 	  }else
 			return ivmodel;
@@ -556,9 +527,13 @@ namespace Kautham {
           SoSeparator* temp = new SoSeparator;
           temp->ref();
           temp->addChild(color);
+          color->ref();
           temp->addChild(trans);
+          trans->ref();
           temp->addChild(rot);
+          rot->ref();
           temp->addChild(collision_ivmodel);
+          collision_ivmodel->ref();
           return temp;
       }else
             return collision_ivmodel;

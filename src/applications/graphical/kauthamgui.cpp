@@ -167,6 +167,8 @@ void Application::setActions(){
     filefind.addFile(":/icons/box_64x64.png");
     mainWindow->setAction(ACTIONTOOL,"Default Path","",filefind, mainWindow, SLOT(setModelsDefaultPath()));
 
+    mainWindow->setAction(ACTIONTOOL,"2VRML","",filefind,mainWindow,SLOT(scene2VRML()));
+
     mainWindow->addSeparator(TOOLBAR);
 
     QIcon exit;
