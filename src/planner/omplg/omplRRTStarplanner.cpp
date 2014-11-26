@@ -319,6 +319,7 @@ namespace Kautham {
 
                             //c2 = cost of added edge from nearestmotion to rmotion
                             ob::Cost c2;
+                            ob::Cost c3;
                             if(opt_->getDescription()=="PMD alignment"){
                                 ob::State *s0;
                                 if(nearestmotion->parent==NULL) s0=NULL;
@@ -327,15 +328,17 @@ namespace Kautham {
                                 double d = si_->distance(nearestmotion->state, rmotion->state);
                                 si_->getStateSpace()->interpolate(nearestmotion->state, rmotion->state, maxDistance_ / d, xstate);
                                 c2 = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nearestmotion->state, xstate);
-
                                 //c2 = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nearestmotion->state, rmotion->state);
+                                //c3 = heuristic cost from rmotion to goal (the edge may not exist)
+                                ob::Cost c3=opt_->motionCost(xstate, mpath[0]->state); //from rmotion to goal (straight)
                             }
                             else
+                            {
                                 c2=opt_->motionCost(nearestmotion->state, rmotion->state); //from rmotion to goal (straight)
 
-                            //c3 = heuristic cost from rmotion to goal (the edge may not exist)
-                            //ob::Cost c3=opt_->motionCost(rmotion->state, mpath[0]->state); //from rmotion to goal (straight)
-                            ob::Cost c3=opt_->motionCost(xstate, mpath[0]->state); //from rmotion to goal (straight)
+                                //c3 = heuristic cost from rmotion to goal (the edge may not exist)
+                                ob::Cost c3=opt_->motionCost(rmotion->state, mpath[0]->state); //from rmotion to goal (straight)
+                            }
 
 
                             //combine costs
@@ -950,11 +953,11 @@ namespace Kautham {
         //set planner parameters: range, goalbias, delay collision checking and optimization option
         _Range = 0.05;
         _GoalBias = (planner->as<myRRTstar>())->getGoalBias();
-        _PathBias = _GoalBias;
+        _PathBias = 0.0;//_GoalBias;
         _PathSamplingRangeFactor = 10.0;
-        _NodeRejection = 0.8;
+        _NodeRejection = 0.0;//0.8;
         _DelayCC = (planner->as<myRRTstar>())->getDelayCC();
-        _opti = 0; //optimize path lenght by default
+        _opti = 1; //optimize path lenght by default
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
         addParameter("Path Bias", _PathBias);
