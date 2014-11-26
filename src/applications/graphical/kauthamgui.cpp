@@ -129,7 +129,7 @@ void Application::setActions(){
     colors.addFile(":/icons/colors_32x32.png");
     colors.addFile(":/icons/colors_48x48.png");
     colors.addFile(":/icons/colors_64x64.png");
-    mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G", colors, mainWindow, SLOT(changeActiveBackground()));
+    mainWindow->setAction(ACTIONTOOL,"Chan&ge Colour","CTRL+G",colors,mainWindow,SLOT(changeActiveBackground()));
 
     QIcon magnet;
     magnet.addFile(":/icons/magnet_16x16.png");
@@ -137,8 +137,16 @@ void Application::setActions(){
     magnet.addFile(":/icons/magnet_32x32.png");
     magnet.addFile(":/icons/magnet_48x48.png");
     magnet.addFile(":/icons/magnet_64x64.png");
-    mainWindow->setAction(ACTIONTOOL,"At/Detach Object","", magnet, mainWindow, SLOT(attachObject()));
+    mainWindow->setAction(ACTIONTOOL,"At/Detach Object","",magnet,mainWindow,SLOT(attachObject()));
     
+    QIcon image;
+    image.addFile(":/icons/image_16x16.png");
+    image.addFile(":/icons/image_22x22.png");
+    image.addFile(":/icons/image_32x32.png");
+    image.addFile(":/icons/image_48x48.png");
+    image.addFile(":/icons/image_64x64.png");
+    mainWindow->setAction(ACTIONTOOL,"Export scene","",image,mainWindow,SLOT(scene2VRML()));
+
 #if  defined(KAUTHAM_USE_ARMADILLO)
     if (settings->value("use_BBOX","false").toBool()) {
         QIcon box;
@@ -147,7 +155,7 @@ void Application::setActions(){
         box.addFile(":/icons/box_32x32.png");
         box.addFile(":/icons/box_48x48.png");
         box.addFile(":/icons/box_64x64.png");
-        mainWindow->setAction(ACTIONTOOL,"BBOX enabled","",box, mainWindow, SLOT(toogleBBOXflag()));
+        mainWindow->setAction(ACTIONTOOL,"BBOX enabled","",box,mainWindow,SLOT(toogleBBOXflag()));
     } else {
         QIcon greybox;
         greybox.addFile(":/icons/greybox_16x16.png");
@@ -158,16 +166,14 @@ void Application::setActions(){
         mainWindow->setAction(ACTIONTOOL,"BBOX disabled","",greybox, mainWindow, SLOT(toogleBBOXflag()));
     }
 #endif
-    
+
     QIcon filefind;
     filefind.addFile(":/icons/filefind_16x16.png");
     filefind.addFile(":/icons/filefind_22x22.png");
     filefind.addFile(":/icons/filefind_32x32.png");
     filefind.addFile(":/icons/filefind_48x48.png");
-    filefind.addFile(":/icons/box_64x64.png");
+    filefind.addFile(":/icons/filefind_64x64.png");
     mainWindow->setAction(ACTIONTOOL,"Default Path","",filefind, mainWindow, SLOT(setModelsDefaultPath()));
-
-    mainWindow->setAction(ACTIONTOOL,"2VRML","",filefind,mainWindow,SLOT(scene2VRML()));
 
     mainWindow->addSeparator(TOOLBAR);
 

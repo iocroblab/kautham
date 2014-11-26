@@ -35,6 +35,8 @@
 #include <sampling/sampling.h>
 #include <Inventor/nodes/SoCamera.h>
 #include <Inventor/actions/SoWriteAction.h>
+#include <Inventor/actions/SoToVRML2Action.h>
+#include <Inventor/VRMLnodes/SoVRMLNodes.h>
 #include <pugixml.hpp>
 
 #if defined(KAUTHAM_USE_GUIBRO)
@@ -141,39 +143,86 @@ namespace Kautham {
         return s;
     }
 
-    void GUI::scene2VRML(){
-        try{
-            setCursor(QCursor(Qt::WaitCursor));
-            SoSeparator* root = ((Viewer)viewers.at(viewsTab->currentIndex())).root;
-            root->ref();
-            SoDB::writelock();
-            SbString s = buffer_writeaction(root);
-            SoDB::writeunlock();
-            root->unref();
-            cout << s.getString() << endl;
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+/// To export a scene:
+/// 1. Open a problem file, for example demos/OMPL_demos/robot_urdf/R2D2.xml
+/// 2. Choose the Tab called "WSpace"
+/// 3. Click on the icon called "Export scene"
+/// 4. Save the scene to a file
+///
+/// These are the results depending on the code used:
+///
+/// if VRML is defined, then the file created has an empty scene
+///
+/// if VRML2 is defined, then everything works OK
+///
+/// if VRML and VRML2 are not defined, then the error is:
+/// SoField.cpp:2086: virtual void SoField::countWriteRefs(SoOutput*) const: Assertion «fc» has failed.
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            /*QString filePath = getFilePath();
+//#define VRML
+#define VRML2
+
+    void GUI::scene2VRML(){
+        try {
+            setCursor(QCursor(Qt::WaitCursor));
+            QString filePath = getFilePath();
             if (!filePath.isEmpty()) {
                 try {
                     SoSeparator* root = ((Viewer)viewers.at(viewsTab->currentIndex())).root;
-                    SoWriteAction writeAction;
-                    writeAction.apply(root);
+                    root->ref();
+#ifdef VRML
+                    SoToVRMLAction wrlAction;
+                    wrlAction.apply(root);
+                    SoNode *wrl2 = wrlAction.getVRMLSceneGraph();
+                    wrl2->ref();
+                    SoOutput out;
+                    if (out.openFile(filePath.toStdString().c_str())) {
+                        out.setBinary(FALSE);
+                        SoWriteAction writeAction(&out);
+                        writeAction.apply(wrl2);
+                        out.closeFile();
+                        cout << "Saved scene to " << filePath.toStdString() <<  endl;
+                    } else {
+                        cout << "File " << filePath.toStdString() << " couldn't be opened" << endl;
+                    }
+                    wrl2->unref();
+#else
+#ifdef VRML2
+                    SoToVRML2Action wrlAction;
+                    wrlAction.apply(root);
+                    SoVRMLGroup *wrl2 = wrlAction.getVRML2SceneGraph();
+                    wrl2->ref();
 
                     SoOutput out;
                     if (out.openFile(filePath.toStdString().c_str())) {
                         out.setBinary(FALSE);
-
-
+                        SoWriteAction writeAction(&out);
+                        writeAction.apply(wrl2);
                         out.closeFile();
+                        cout << "Saved scene to " << filePath.toStdString() <<  endl;
                     } else {
-
+                        cout << "File " << filePath.toStdString() << " couldn't be opened" << endl;
                     }
+                    wrl2->unref();
+#else
+                    SbString s = buffer_writeaction(root);
+                    FILE *OutF;
+                    if ((OutF = fopen(filePath.toStdString().c_str(), "w")) == NULL) {
+                        fprintf(stderr, "Error opening file %s\n", filePath.toStdString().c_str());
+                    } else {
+                        (void)fprintf(OutF, "%s\n", s.getString());
+                    }
+#endif
+#endif
+                    root->unref();
                 } catch (const exception& excp) {
                     cout << "Error: " << excp.what() << endl;
                 }
-            }*/
+            }
             setCursor(QCursor(Qt::ArrowCursor));
-        }catch(...){
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
         }
     }
 
@@ -434,6 +483,9 @@ namespace Kautham {
             v.root= root;
             v.title =title;
             v.window= new SoQtExaminerViewer(v.tab);
+            if (title != "CSpace") {
+                v.window->setFeedbackVisibility(true);
+            }
             viewsTab->addTab(v.tab,QString(title.c_str()));
             v.window->setViewing(FALSE);
             v.window->setSceneGraph(root);
@@ -796,6 +848,15 @@ namespace Kautham {
                 magnet.addFile(":/icons/magnet_48x48.png");
                 magnet.addFile(":/icons/magnet_64x64.png");
                 ac->setIcon(magnet);
+            } else if (ac->text() == "Export scene") {
+                ac->setEnabled(true);
+                QIcon image;
+                image.addFile(":/icons/image_16x16.png");
+                image.addFile(":/icons/image_22x22.png");
+                image.addFile(":/icons/image_32x32.png");
+                image.addFile(":/icons/image_48x48.png");
+                image.addFile(":/icons/image_64x64.png");
+                ac->setIcon(image);
             }
         }
     }
@@ -827,6 +888,15 @@ namespace Kautham {
                 greymagnet.addFile(":/icons/greymagnet_48x48.png");
                 greymagnet.addFile(":/icons/greymagnet_64x64.png");
                 ac->setIcon(greymagnet);
+            }  else if (ac->text() == "Export scene") {
+                ac->setDisabled(true);
+                QIcon image;
+                image.addFile(":/icons/image_16x16.png");
+                image.addFile(":/icons/image_22x22.png");
+                image.addFile(":/icons/image_32x32.png");
+                image.addFile(":/icons/image_48x48.png");
+                image.addFile(":/icons/image_64x64.png");
+                ac->setIcon(image);
             }
 
         }
