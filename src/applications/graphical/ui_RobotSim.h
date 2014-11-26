@@ -172,7 +172,7 @@ public:
         toolBar = new QToolBar(kauthamMain);
         toolBar->setObjectName(QString::fromUtf8("toolBar"));
         toolBar->setOrientation(Qt::Horizontal);
-        toolBar->setIconSize(QSize(48,48));
+        toolBar->setIconSize(QSize(22,22));
         kauthamMain->addToolBar(Qt::TopToolBarArea, toolBar);
         outputWindow = new QDockWidget(kauthamMain);
         outputWindow->setObjectName(QString::fromUtf8("outputWindow"));

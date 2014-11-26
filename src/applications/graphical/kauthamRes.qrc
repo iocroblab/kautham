@@ -78,6 +78,11 @@
         <file>icons/greymagnet_32x32.png</file>
         <file>icons/greymagnet_48x48.png</file>
         <file>icons/greymagnet_64x64.png</file>
+	<file>icons/image_16x16.png</file>
+        <file>icons/image_22x22.png</file>
+        <file>icons/image_32x32.png</file>
+        <file>icons/image_48x48.png</file>
+        <file>icons/image_64x64.png</file>
 	<file>icons/left_16x16.png</file>
         <file>icons/left_22x22.png</file>
         <file>icons/magnet_16x16.png</file>
