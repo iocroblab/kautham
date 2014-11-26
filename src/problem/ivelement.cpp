@@ -80,8 +80,8 @@ namespace Kautham {
         rot->ref();
 		sca = new SoScale();
         sca->ref();
-		color = new SoMaterial;
-        color->ref();
+        //color = new SoMaterial;
+        //color->ref();
 
 		posVec = new SoSFVec3f;
 		trans->translation.connectFrom(posVec);
@@ -229,8 +229,8 @@ namespace Kautham {
         rot->ref();
         sca = new SoScale();
         sca->ref();
-        color = new SoMaterial;
-        color->ref();
+        //color = new SoMaterial;
+        //color->ref();
 
         posVec = new SoSFVec3f;
         trans->translation.connectFrom(posVec);
@@ -509,8 +509,8 @@ namespace Kautham {
 	  if(tran){
 		  SoSeparator* temp = new SoSeparator;
 		  temp->ref();
-		  temp->addChild(color);
-          color->ref();
+          //temp->addChild(color);
+          //color->ref();
 		  temp->addChild(trans);
           trans->ref();
 		  temp->addChild(rot);
@@ -526,8 +526,8 @@ namespace Kautham {
       if(tran){
           SoSeparator* temp = new SoSeparator;
           temp->ref();
-          temp->addChild(color);
-          color->ref();
+          //temp->addChild(color);
+          //color->ref();
           temp->addChild(trans);
           trans->ref();
           temp->addChild(rot);
