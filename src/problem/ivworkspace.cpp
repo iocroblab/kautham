@@ -38,7 +38,6 @@ namespace Kautham {
 
 	SoSeparator* IVWorkSpace::getIvScene(bool bounding){
         if(scene == NULL){
-            if(robots.size() != 0){
                 scene = new SoSeparator();
 
                 for(unsigned int i=0; i<robots.size(); i++)
@@ -48,7 +47,6 @@ namespace Kautham {
                     scene->addChild((SoSeparator*)obstacles[i]->getModel());
 
                 scene->ref();
-            }
         }
 
 		if(bounding)
@@ -58,7 +56,6 @@ namespace Kautham {
 
     SoSeparator* IVWorkSpace::getCollisionIvScene(bool bounding){
         if(collisionscene == NULL){
-            if(robots.size() != 0){
                 collisionscene = new SoSeparator();
                 //scene->addChild(SoUnits::MILLIMETERS);
                 for(unsigned int i=0; i<robots.size(); i++)
@@ -68,11 +65,10 @@ namespace Kautham {
                     collisionscene->addChild((SoSeparator*)obstacles[i]->getCollisionModel());
 
                 collisionscene->ref();
-            }
         }
 
         if(bounding)
-            collisionscene->addChild(calculateBoundingBox(scene));
+            collisionscene->addChild(calculateBoundingBox(collisionscene));
         return collisionscene;
     }
 
@@ -83,6 +79,7 @@ namespace Kautham {
 
 	SoSeparator* IVWorkSpace::getIvFromPQPScene(bool bounding) {
 		SoSeparator* pqp= new SoSeparator;
+        pqp->ref();
 		for(unsigned int i=0;i<robots.size(); i++){
 			pqp->addChild((SoSeparator*)robots[i]->getModelFromColl());
 		}
@@ -185,10 +182,14 @@ namespace Kautham {
 		ls->coordIndex.setValues(0, 24, idx);
 
 		sep->addChild(lm);
+        lm->ref();
 		sep->addChild(coords);
-		sep->addChild(ds);
-		sep->addChild(ls);
-		sep->ref();
+        coords->ref();
+        sep->addChild(ds);
+        ds->ref();
+        sep->addChild(ls);
+        ls->ref();
+        sep->ref();
 		return sep;
 	}
 
