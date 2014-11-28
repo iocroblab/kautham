@@ -1,0 +1,14 @@
+<Benchmark Name="experiment">
+	<Problem File="OMPL_RRTStar_k0_bigcube-s-passage_R2.xml" />
+	<Problem File="OMPL_RRTStar_k05_bigcube-s-passage_R2.xml" />
+	<Problem File="OMPL_RRTStar_k1_bigcube-s-passage_R2.xml" />
+	<Problem File="OMPL_RRTStar_k2_bigcube-s-passage_R2.xml" />
+	<Parameter Name="maxTime" Value="3.0" />
+	<Parameter Name="maxMem" Value="4096" />
+	<Parameter Name="runCount" Value="10" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="result8.log" />
+	<Parameter Name="timeBetweenUpdates" Value="0.1" />
+</Benchmark>
+
+
