@@ -1187,7 +1187,7 @@ namespace Kautham {
              for(unsigned int i =0; i < links.size(); i++)
                  robot->addChild(((IVElement*)links[i]->getElement())->ivModel(true));
 
-             // Now is adding the three dimensional proposed path for the last link
+             // Now the three dimensional proposed path for the last link is added
              _pathSeparator = new SoSeparator();
              _pathSeparator->ref();
              _pathSeparator->setName("Path");
@@ -1220,7 +1220,7 @@ namespace Kautham {
              tmpVRML->spine.connectFrom(_graphicalPath);
              _pathSeparator->addChild(tmpVRML);
 
-             robot->addChild(_pathSeparator);
+             //robot->addChild(_pathSeparator);
              visModel = robot;
              break;
          }
@@ -1542,13 +1542,11 @@ namespace Kautham {
      try{
          if( visible ){
              visModel->addChild(_pathSeparator);
-             collModel->addChild(_pathSeparator);
              response = true;
          }else{
              sepgrid = visModel->getByName("Path");
              if( sepgrid != NULL ){
                  visModel->removeChild(sepgrid);
-                 collModel->removeChild(sepgrid);
              }
              response = false;
          }
