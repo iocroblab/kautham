@@ -2,7 +2,7 @@
 	<Problem File="OMPL_EST_2DRR_columns.xml" />
 	<Problem File="OMPL_KPIECE_2DRR_columns.xml" />
 	<Parameter Name="maxTime" Value="10.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+	<Parameter Name="maxMem" Value="1000" />
 	<Parameter Name="runCount" Value="2" />
 	<Parameter Name="displayProgress" Value="true" />
 	<Parameter Name="filename" Value="result.log" />
