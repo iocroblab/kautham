@@ -43,6 +43,11 @@
 #include <libguibro/bronchowidget.h>
 #endif
 
+//Definitions to specify scene2VRML function behaviour
+//#define VRML
+//#define VRML2
+
+
 using namespace pugi;
 
 namespace Kautham {
@@ -143,26 +148,6 @@ namespace Kautham {
         return s;
     }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-/// To export a scene:
-/// 1. Open a problem file, for example demos/OMPL_demos/robot_urdf/R2D2.xml
-/// 2. Choose the Tab called "WSpace"
-/// 3. Click on the icon called "Export scene"
-/// 4. Save the scene to a file
-///
-/// These are the results depending on the code used:
-///
-/// if VRML is defined, then the file created has an empty scene
-///
-/// if VRML2 is defined, then everything works OK
-///
-/// if VRML and VRML2 are not defined, then the error is:
-/// SoField.cpp:2086: virtual void SoField::countWriteRefs(SoOutput*) const: Assertion «fc» has failed.
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//#define VRML
-#define VRML2
-
     void GUI::scene2VRML(){
         try {
             setCursor(QCursor(Qt::WaitCursor));
@@ -206,13 +191,16 @@ namespace Kautham {
                     }
                     wrl2->unref();
 #else
-                    SbString s = buffer_writeaction(root);
-                    FILE *OutF;
-                    if ((OutF = fopen(filePath.toStdString().c_str(), "w")) == NULL) {
-                        fprintf(stderr, "Error opening file %s\n", filePath.toStdString().c_str());
+                    QFile file(filePath);
+                    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                        SbString s = buffer_writeaction(root);
+                        QTextStream out(&file);
+                        out << s.getString();
+                        setText("File was saved successfully");
                     } else {
-                        (void)fprintf(OutF, "%s\n", s.getString());
+                        setText("Sorry but the file couldn't be saved");
                     }
+                    file.close();
 #endif
 #endif
                     root->unref();
