@@ -121,22 +121,18 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         urdf_origin origin;
         origin.fill(&origin_node);
 
-        SoSFVec3f *posVec = new SoSFVec3f;
-        posVec->setValue((float)origin.xyz[0],(float)origin.xyz[1],(float)origin.xyz[2]);
         SoTranslation *trans = new SoTranslation;
         trans->ref();
-        trans->translation.connectFrom(posVec);
+        trans->translation.setValue((float)origin.xyz[0],(float)origin.xyz[1],(float)origin.xyz[2]);
         submodel->addChild(trans);
 
         mt::Unit3 axis;
         mt::Scalar angle;
         origin.transform.getRotation().getAxisAngle(axis,angle);
-        SoSFRotation *rotVec = new SoSFRotation;
-        rotVec->setValue(SbVec3f((float)axis[0],(float)axis[1],
-                (float)axis[2]),(float)angle);
         SoRotation *rot = new SoRotation;
         rot->ref();
-        rot->rotation.connectFrom(rotVec);
+        rot->rotation.setValue(SbVec3f((float)axis[0],(float)axis[1],
+                (float)axis[2]),(float)angle);
         submodel->addChild(rot);
     }
 
@@ -183,11 +179,9 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         box->depth.setValue((float)size[2]*1000);
         submodel->addChild(box);
     } else if (geom_type == "cylinder") {
-        SoSFRotation *cyl_rotVec = new SoSFRotation;
-        cyl_rotVec->setValue(SbVec3f(1.,0.,0.),(float)M_PI_2);
         SoRotation *cyl_rot = new SoRotation;
         cyl_rot->ref();
-        cyl_rot->rotation.connectFrom(cyl_rotVec);
+        cyl_rot->rotation.setValue(SbVec3f(1.,0.,0.),(float)M_PI_2);
         submodel->addChild(cyl_rot);
         SoCylinder *cylinder = new SoCylinder;
         cylinder->ref();
@@ -211,11 +205,9 @@ void urdf_geometry::fill(xml_node *node, string dir) {
             getline(ss,tmpString,' ');
             scale[2] = atof(tmpString.c_str());
 
-            SoSFVec3f *scaVec = new SoSFVec3f;
-            scaVec->setValue((float)scale[0],(float)scale[1],(float)scale[2]);
             SoScale *sca = new SoScale;
             sca->ref();
-            sca->scaleFactor.connectFrom(scaVec);
+            sca->scaleFactor.setValue((float)scale[0],(float)scale[1],(float)scale[2]);
             submodel->addChild(sca);
         }
         string filename = geom_node.attribute("filename").as_string();
