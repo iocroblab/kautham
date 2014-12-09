@@ -80,26 +80,18 @@ namespace Kautham {
         rot->ref();
 		sca = new SoScale();
         sca->ref();
-        //color = new SoMaterial;
-        //color->ref();
 
-		posVec = new SoSFVec3f;
-		trans->translation.connectFrom(posVec);
-		posVec->setValue((float)position[0],(float)position[1],(float)position[2]);
+        trans->translation.setValue(SbVec3f((float)position[0],(float)position[1],(float)position[2]));
 
-		rotVec = new SoSFRotation;
-		rotVec->setValue(SbVec3f((float)orientation[0],(float)orientation[1],
-				(float)orientation[2]),(float)orientation[3]);
-		rot->rotation.connectFrom(rotVec);
+        rot->rotation.setValue(SbRotation(SbVec3f((float)orientation[0],(float)orientation[1],
+                               (float)orientation[2]),(float)orientation[3]));
 
-		scaVec= new SoSFVec3f;
-		scaVec->setValue((float)scale,(float)scale,(float)scale);
-        sca->scaleFactor.connectFrom(scaVec);
+        sca->scaleFactor.setValue((float)scale,(float)scale,(float)scale);
 
 		SoInput input;
 		ivmodel = new SoSeparator;
 		ivmodel->ref();
-		ivmodel->addChild(sca);
+        ivmodel->addChild(sca);
 
         if(input.openFile(ivfile.c_str())) {
             SoSeparator *read;
@@ -229,21 +221,13 @@ namespace Kautham {
         rot->ref();
         sca = new SoScale();
         sca->ref();
-        //color = new SoMaterial;
-        //color->ref();
 
-        posVec = new SoSFVec3f;
-        trans->translation.connectFrom(posVec);
-        posVec->setValue((float)position[0],(float)position[1],(float)position[2]);
+        trans->translation.setValue(SbVec3f((float)position[0],(float)position[1],(float)position[2]));
 
-        rotVec = new SoSFRotation;
-        rotVec->setValue(SbVec3f((float)orientation[0],(float)orientation[1],
-                (float)orientation[2]),(float)orientation[3]);
-        rot->rotation.connectFrom(rotVec);
+        rot->rotation.setValue(SbRotation(SbVec3f((float)orientation[0],(float)orientation[1],
+                               (float)orientation[2]),(float)orientation[3]));
 
-        scaVec= new SoSFVec3f;
-        scaVec->setValue((float)scale,(float)scale,(float)scale);
-        sca->scaleFactor.connectFrom(scaVec);
+        sca->scaleFactor.setValue((float)scale,(float)scale,(float)scale);
 
         ivmodel = new SoSeparator;
         ivmodel->ref();
@@ -471,36 +455,21 @@ namespace Kautham {
     }
 
 
-	void IVElement::setColor(KthReal c[3]){
-	  color->diffuseColor.setValue((float)c[0],(float)c[1],(float)c[2]);
-	}
-
 	void IVElement::setPosition(KthReal pos[3]){
 		for(int i=0;i<3;i++)
 			position[i]=pos[i];
-      posVec->setValue((float)position[0],(float)position[1],(float)position[2]);
-	  
-    
-    //for(int i=0; i<3; i++)
-    //  cout << posVec->getValue()[i] << "\t" ;
-    //cout << endl;
+      trans->translation.setValue(SbVec3f((float)position[0],(float)position[1],(float)position[2]));
 	}
 
 	void IVElement::setOrientation(KthReal ori[4]){
 		for(int i=0;i<4;i++)
 			orientation[i]=ori[i];
-      rotVec->setValue(orientation);
-//		rotVec->setValue(SbVec3f((float)orientation[0],(float)orientation[1],
-//				(float)orientation[2]),(float)orientation[3]);
-
-    //for(int i=0; i<4; i++)
-    //  cout << (rotVec->getValue()).getValue()[i] << "\t" ;
-    //cout << endl;
+      rot->rotation.setValue(SbRotation(orientation));
 	}
 
   SbMatrix IVElement::orientationMatrix() {
 	  SbMatrix mat;
-	  SbRotation rr = rotVec->getValue();
+      SbRotation rr = rot->rotation.getValue();
 	  rr.getValue(mat);
 	  return mat.transpose();
   }
@@ -509,11 +478,9 @@ namespace Kautham {
 	  if(tran){
 		  SoSeparator* temp = new SoSeparator;
 		  temp->ref();
-          //temp->addChild(color);
-          //color->ref();
-		  temp->addChild(trans);
+          temp->addChild(trans);
           trans->ref();
-		  temp->addChild(rot);
+          temp->addChild(rot);
           rot->ref();
 		  temp->addChild(ivmodel);
           ivmodel->ref();
@@ -526,8 +493,6 @@ namespace Kautham {
       if(tran){
           SoSeparator* temp = new SoSeparator;
           temp->ref();
-          //temp->addChild(color);
-          //color->ref();
           temp->addChild(trans);
           trans->ref();
           temp->addChild(rot);
