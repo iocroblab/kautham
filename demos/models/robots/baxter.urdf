@@ -162,6 +162,15 @@
         <color rgba=".5 .1 .1 1"/>
       </material>
     </collision>
+    <collision>
+      <origin rpy="0 1.570796327 0" xyz="0.0535 0 0"/>
+      <geometry>
+        <cylinder length="0.107" radius="0.06"/>
+      </geometry>
+      <material name="darkred">
+        <color rgba=".5 .1 .1 1"/>
+      </material>
+    </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="0.06845 0.00269 -0.00529"/>
       <mass value="3.22698"/>
@@ -175,15 +184,6 @@
         <mesh filename="baxter/upper_elbow/E0.wrl" scale="1000 1000 1000"/>
       </geometry>
     </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 -0.0535"/>
-      <geometry>
-        <cylinder length="0.107" radius="0.06"/>
-      </geometry>
-      <material name="darkred">
-        <color rgba=".5 .1 .1 1"/>
-      </material>
-    </collision>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0.145"/>
       <geometry>
@@ -503,6 +503,15 @@
         <color rgba=".5 .1 .1 1"/>
       </material>
     </collision>
+    <collision>
+      <origin rpy="0 1.570796327 0" xyz="0.0535 0 0"/>
+      <geometry>
+        <cylinder length="0.107" radius="0.06"/>
+      </geometry>
+      <material name="darkred">
+        <color rgba=".5 .1 .1 1"/>
+      </material>
+    </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="0.06845 0.00269 -0.00529"/>
       <mass value="3.22698"/>
@@ -516,15 +525,6 @@
         <mesh filename="baxter/upper_elbow/E0.wrl" scale="1000 1000 1000"/>
       </geometry>
     </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 -0.0535"/>
-      <geometry>
-        <cylinder length="0.107" radius="0.06"/>
-      </geometry>
-      <material name="darkred">
-        <color rgba=".5 .1 .1 1"/>
-      </material>
-    </collision>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0.1415"/>
       <geometry>
