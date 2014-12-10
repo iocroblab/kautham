@@ -29,6 +29,7 @@
 #include <util/kthutil/kauthamexception.h>
 #if  defined(KAUTHAM_USE_ARMADILLO)
 #include <armadillo>
+#include "assimp.h"
 
 using namespace arma;
 #endif
@@ -65,6 +66,41 @@ namespace Kautham {
         }
     }
 
+
+    SoSeparator *readFile(string file) {
+        string extension = file.substr(file.find_last_of(".")+1);
+        SoSeparator *read;
+        if (extension == "iv" || extension == "wrl" || extension == "vrml") {
+            SoInput input;
+            if(input.openFile(file.c_str())) {
+
+                try {
+                    read = SoDB::readAll(&input);
+                } catch (...) {
+                    string message = "Model file " + file + " couldn't be loaded";
+                    throw KthExcp(message);
+                    return NULL;
+                }
+            } else {
+                string message = "Model file " + file + " couldn't be loaded";
+                throw KthExcp(message);
+                return NULL;
+            }
+        } else {
+            read = ivFromAssimp(file);
+        }
+
+        if (read == NULL) {
+            string message = "Model file " + file + " couldn't be loaded";
+            throw KthExcp(message);
+            return NULL;
+        } else {
+            read->ref();
+            return read;
+        }
+    }
+
+
     IVElement::IVElement(string ivfile, string collision_ivfile, KthReal sc, bool useBBOX) {
 		for(int i=0;i<3;i++){
 			position[i]= 0.0f;
@@ -83,37 +119,18 @@ namespace Kautham {
 
         trans->translation.setValue(SbVec3f((float)position[0],(float)position[1],(float)position[2]));
 
-        rot->rotation.setValue(SbRotation(SbVec3f((float)orientation[0],(float)orientation[1],
-                               (float)orientation[2]),(float)orientation[3]));
+        rot->rotation.setValue(SbVec3f((float)orientation[0],(float)orientation[1],
+                               (float)orientation[2]),(float)orientation[3]);
 
         sca->scaleFactor.setValue((float)scale,(float)scale,(float)scale);
 
-		SoInput input;
+
+
 		ivmodel = new SoSeparator;
 		ivmodel->ref();
         ivmodel->addChild(sca);
 
-        if(input.openFile(ivfile.c_str())) {
-            SoSeparator *read;
-            try {
-                read = SoDB::readAll(&input);
-            } catch (...) {
-                string message = "Inventor file " + ivfile + " couldn't be loaded";
-                throw KthExcp(message);
-            }
-            if (read == NULL) {
-                string message = "Inventor file " + ivfile + " couldn't be loaded";
-                throw KthExcp(message);
-            } else {
-                read->ref();
-                ivmodel->addChild(read);
-            }
-        } else {
-            SoSphere *sphere = new SoSphere;
-            sphere->ref();
-            sphere->radius.setValue(1.0);
-            ivmodel->addChild(sphere);
-		}
+        ivmodel->addChild(readFile(ivfile));
 
         //check if collision_ivfile is a different file from ivfile
         //and if collision_ivmodel could be the minimum-volume bounding box of ivmodel
@@ -133,35 +150,10 @@ namespace Kautham {
                 //the file exists
                 fin.close();
 
-                if(input.openFile(collision_ivfile.c_str())) {
-                    collision_ivmodel = new SoSeparator;
-                    collision_ivmodel->ref();
-                    collision_ivmodel->addChild(sca);
-                    SoSeparator *read;
-                    try {
-                        read = SoDB::readAll(&input);
-                    } catch (...) {
-                        string message = "Inventor file " + collision_ivfile + " couldn't be loaded";
-                        throw KthExcp(message);
-                    }
-                    if (read == NULL) {
-                        string message = "Inventor file " + collision_ivfile + " couldn't be loaded";
-                        throw KthExcp(message);
-                    } else {
-                        read->ref();
-                        collision_ivmodel->addChild(read);
-                    }
-                    cout << "This box was found in " << collision_ivfile << endl;
-                    cout << "Please modify problem file to include the collision ivfile" << endl;
-                } else {
-                    collision_ivmodel = BBOX(ivModel(),sc,collision_ivfile);
-                    if (collision_ivmodel == NULL) {
-                        collision_ivmodel = ivModel();
-                    } else {
-                        cout << "This box will be saved in " << collision_ivfile << endl;
-                        cout << "Please modify problem file to include this new collision ivfile" << endl;
-                    }
-                }
+                collision_ivmodel = new SoSeparator;
+                collision_ivmodel->ref();
+                collision_ivmodel->addChild(sca);
+                collision_ivmodel->addChild(readFile(collision_ivfile));
             } else {
                 //the file doesn't exist
                 fin.close();
@@ -176,32 +168,10 @@ namespace Kautham {
             }
         } else {
             //collision_ivmodel will be the model in collision_ivfile
-            if(input.openFile(collision_ivfile.c_str())) {
-                collision_ivmodel = new SoSeparator;
-                collision_ivmodel->ref();
-                collision_ivmodel->addChild(sca);
-                SoSeparator *read;
-                try {
-                    read = SoDB::readAll(&input);
-                } catch (...) {
-                    string message = "Inventor file " + collision_ivfile + " couldn't be loaded";
-                    throw KthExcp(message);
-                }
-                if (read == NULL) {
-                    string message = "Inventor file " + collision_ivfile + " couldn't be loaded";
-                    throw KthExcp(message);
-                } else {
-                    read->ref();
-                    collision_ivmodel->addChild(read);
-                }
-            } else {
-                SoSphere *sphere = new SoSphere;
-                sphere->ref();
-                sphere->radius.setValue(1.0);
-                collision_ivmodel = new SoSeparator;
-                collision_ivmodel->ref();
-                collision_ivmodel->addChild(sphere);
-            }
+            collision_ivmodel = new SoSeparator;
+            collision_ivmodel->ref();
+            collision_ivmodel->addChild(sca);
+            collision_ivmodel->addChild(readFile(collision_ivfile));
         }
     }
 
@@ -224,8 +194,8 @@ namespace Kautham {
 
         trans->translation.setValue(SbVec3f((float)position[0],(float)position[1],(float)position[2]));
 
-        rot->rotation.setValue(SbRotation(SbVec3f((float)orientation[0],(float)orientation[1],
-                               (float)orientation[2]),(float)orientation[3]));
+        rot->rotation.setValue(SbVec3f((float)orientation[0],(float)orientation[1],
+                               (float)orientation[2]),(float)orientation[3]);
 
         sca->scaleFactor.setValue((float)scale,(float)scale,(float)scale);
 
@@ -464,7 +434,7 @@ namespace Kautham {
 	void IVElement::setOrientation(KthReal ori[4]){
 		for(int i=0;i<4;i++)
 			orientation[i]=ori[i];
-      rot->rotation.setValue(SbRotation(orientation));
+        rot->rotation.setValue(SbRotation(orientation));
 	}
 
   SbMatrix IVElement::orientationMatrix() {
