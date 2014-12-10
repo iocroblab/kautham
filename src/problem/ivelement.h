@@ -53,13 +53,15 @@ namespace Kautham {
  *  @{
  */
 
+SoSeparator *readFile(string file);
+
 class IVElement : public Element {
   public:
 
       IVElement(string ivfile, string collision_ivfile, float sc, bool useBBOX);
       IVElement(SoSeparator *visual_model, SoSeparator *collision_model, float sc, bool useBBOX);
       void setColor(KthReal c[3]) {}
-    void setPosition(KthReal pos[3]);
+      void setPosition(KthReal pos[3]);
 	  void setOrientation(KthReal ori[4]);
 	  SbMatrix orientationMatrix();
 	  SoSeparator* ivModel(bool tran=false);
@@ -73,8 +75,8 @@ class IVElement : public Element {
                                          const SoPrimitiveVertex *v3);
       SoSeparator *BBOX(SoSeparator *model, float sc, string filename = "");
 	  KthReal getDistanceTo(Element* other);
-    inline SoTranslation* getTrans(){return trans;}
-    inline SoRotation* getRot(){return rot;}
+      inline SoTranslation* getTrans(){return trans;}
+      inline SoRotation* getRot(){return rot;}
 
   private:
 	  SoSeparator   *ivmodel;
