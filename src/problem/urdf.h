@@ -33,8 +33,6 @@
 #include <mt/transform.h>
 
 #include <Inventor/SoPrimitiveVertex.h>
-#include <Inventor/fields/SoSFVec3f.h>
-#include <Inventor/fields/SoSFRotation.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoRotation.h>
 #include <Inventor/nodes/SoMaterial.h>

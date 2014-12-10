@@ -65,6 +65,16 @@ else( COIN_LIBRARY_FOUND )
    message(SEND_ERROR "Kautham needs Coin library")
 endif(COIN_LIBRARY_FOUND )
 
+#### Assimp ######
+find_package( Assimp )
+if( ASSIMP_FOUND )
+   message( STATUS "assimp Package FOUND")
+set(EXTRA_LIBS ${EXTRA_LIBS} ${ASSIMP_LIBRARIES} )
+   add_definitions( -DKAUTHAM_USE_ASSIMP )
+else( ASSIMP_FOUND )
+   message( STATUS "assimp Package NOT FOUND")
+endif( ASSIMP_FOUND )
+
 find_package( Armadillo )
 if( ARMADILLO_FOUND )
    message( STATUS "armadillo Package FOUND")
