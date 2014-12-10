@@ -44,6 +44,7 @@
 #include <locale.h>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include "urdf.h"
+#include "assimp.h"
 
 /*
 #if defined(KAUTHAM_USE_GUIBRO)
@@ -114,17 +115,11 @@ namespace Kautham {
          string extension = robFile.substr(robFile.find_last_of(".")+1);
 
          if (extension == "dh") {
-             armed = setFromdhFile(robFile,useBBOX);
+             armed = setFromDhFile(robFile,useBBOX);
          } else if (extension == "urdf") {
-             armed = setFromurdfFile(robFile,useBBOX);
-         } else if (extension == "iv" || extension == "wrl") {
-             armed = setFromivFile(robFile,useBBOX);
+             armed = setFromUrdfFile(robFile,useBBOX);
          } else {
-             cout << "The Robot file: " << robFile << " has an incorrect extension. "
-                  << "Accepted file format are dh, urdf, iv or wrl" << endl;
-             string message = "Robot file " + robFile + " has an incorrect extension";
-             string details = "Robot file must have urdf, dh, iv or wrl extension";
-             throw KthExcp(message,details);
+             armed = setFromModelFile(robFile,useBBOX);
          }
 
          if (armed) {
@@ -162,7 +157,7 @@ namespace Kautham {
  }
 
 
- bool Robot::setFromdhFile(string robFile, bool useBBOX) {
+ bool Robot::setFromDhFile(string robFile, bool useBBOX) {
      //setting numeric parameter to avoid convertions problems
      char *old = setlocale(LC_NUMERIC, "C");
 
@@ -335,7 +330,7 @@ namespace Kautham {
  }
 
 
- bool Robot::setFromurdfFile(string robFile, bool useBBOX) {
+ bool Robot::setFromUrdfFile(string robFile, bool useBBOX) {
      //setting numeric parameter to avoid convertions problems
      char *old = setlocale(LC_NUMERIC, "C");
 
@@ -497,7 +492,7 @@ namespace Kautham {
  }
 
 
- bool Robot::setFromivFile(string robFile, bool useBBOX) {
+ bool Robot::setFromModelFile(string robFile, bool useBBOX) {
      char *old = setlocale(LC_NUMERIC, "C");
 
      //Robot Name
@@ -522,6 +517,7 @@ namespace Kautham {
 
      return (((Link*)links.at(0))->isArmed());
  }
+
 
 
  /*!

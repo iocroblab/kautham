@@ -312,13 +312,13 @@ namespace Kautham {
 
   private:
     //! sets the Robot from a *.dh file
-    bool setFromdhFile(string robFile, bool useBBOX);
+    bool setFromDhFile(string robFile, bool useBBOX);
 
     //! sets the Robot from a *.urdf file
-    bool setFromurdfFile(string robFile, bool useBBOX);
+    bool setFromUrdfFile(string robFile, bool useBBOX);
 
-    //! sets the Robot from a *.iv or *.wrl file
-    bool setFromivFile(string robFile, bool useBBOX);
+    //! sets the Robot from a 3D model file
+    bool setFromModelFile(string robFile, bool useBBOX);
 
     //! This method updates the absolute position and orientation of each link in the robot.
     void updateRobot();

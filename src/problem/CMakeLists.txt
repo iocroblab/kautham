@@ -4,6 +4,11 @@ include_directories( ${GDIAM_DIR} )
 
 include_directories( ${CMAKE_SOURCE_DIR}/src
                      ${mt_DIR})
+
+if( ASSIMP_FOUND )
+   include_directories( ${ASSIMP_INCLUDE_DIR})
+endif( ASSIMP_FOUND )
+
 if( ARMADILLO_FOUND )
    include_directories( ${Armadillo_INCLUDE_DIR})
 endif( ARMADILLO_FOUND )

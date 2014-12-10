@@ -32,6 +32,7 @@
 #include <mt/rotation.h>
 #include <mt/transform.h>
 #include <util/kthutil/kauthamexception.h>
+#include "ivelement.h"
 
 using namespace std;
 using namespace pugi;
@@ -210,27 +211,8 @@ void urdf_geometry::fill(xml_node *node, string dir) {
             sca->scaleFactor.setValue((float)scale[0],(float)scale[1],(float)scale[2]);
             submodel->addChild(sca);
         }
-        string filename = geom_node.attribute("filename").as_string();
-        SoInput input;
-        SoSeparator *read;
-        if (input.openFile(string(dir+filename).c_str())) {
-            try {
-                read = SoDB::readAll(&input);
-            } catch(...) {
-                string message = "Inventor file " + dir + filename + " couldn't be loaded";
-                throw KthExcp(message);
-            }
-            if (read == NULL) {
-                string message = "Inventor file " + dir + filename + " couldn't be loaded";
-                throw KthExcp(message);
-            } else {
-                read->ref();
-                submodel->addChild(read);
-            }
-        } else {
-            string message = "Inventor file " + dir + filename + " couldn't be opened";
-            throw KthExcp(message);
-        }
+        string filename = dir+geom_node.attribute("filename").as_string();
+        submodel->addChild(readFile(filename));
     }
 
     if (model == NULL) {
