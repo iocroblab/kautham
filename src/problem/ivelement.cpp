@@ -111,11 +111,8 @@ namespace Kautham {
 		scale=sc;
 
 		trans= new SoTranslation;
-        trans->ref();
 		rot = new SoRotation;
-        rot->ref();
 		sca = new SoScale();
-        sca->ref();
 
         trans->translation.setValue(SbVec3f((float)position[0],(float)position[1],(float)position[2]));
 
@@ -186,11 +183,8 @@ namespace Kautham {
         scale=sc;
 
         trans= new SoTranslation;
-        trans->ref();
         rot = new SoRotation;
-        rot->ref();
         sca = new SoScale();
-        sca->ref();
 
         trans->translation.setValue(SbVec3f((float)position[0],(float)position[1],(float)position[2]));
 
@@ -358,13 +352,11 @@ namespace Kautham {
 
                     //define coordinates for vertices
                     SoCoordinate3 *coords = new SoCoordinate3;
-                    coords->ref();
                     coords->point.setValues(0, 8, vertexPositions);
                     BBOXmodel->addChild(coords);
 
                     //define the IndexedFaceSet, with indices into the vertices
                     SoIndexedFaceSet *faceSet = new SoIndexedFaceSet;
-                    faceSet->ref();
                     faceSet->coordIndex.setValues(0, 48, indices);
                     BBOXmodel->addChild(faceSet);
 
@@ -449,11 +441,8 @@ namespace Kautham {
 		  SoSeparator* temp = new SoSeparator;
 		  temp->ref();
           temp->addChild(trans);
-          trans->ref();
           temp->addChild(rot);
-          rot->ref();
 		  temp->addChild(ivmodel);
-          ivmodel->ref();
 		  return temp;
 	  }else
 			return ivmodel;
@@ -464,11 +453,8 @@ namespace Kautham {
           SoSeparator* temp = new SoSeparator;
           temp->ref();
           temp->addChild(trans);
-          trans->ref();
           temp->addChild(rot);
-          rot->ref();
           temp->addChild(collision_ivmodel);
-          collision_ivmodel->ref();
           return temp;
       }else
             return collision_ivmodel;
