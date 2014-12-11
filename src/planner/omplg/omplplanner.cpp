@@ -912,6 +912,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
     SoSeparator *omplPlanner::getIvCspaceScene()
     {
         _sceneCspace = new SoSeparator();
+        _sceneCspace->ref();
         return Planner::getIvCspaceScene();
     }
 

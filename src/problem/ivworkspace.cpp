@@ -182,13 +182,9 @@ namespace Kautham {
 		ls->coordIndex.setValues(0, 24, idx);
 
 		sep->addChild(lm);
-        lm->ref();
 		sep->addChild(coords);
-        coords->ref();
         sep->addChild(ds);
-        ds->ref();
         sep->addChild(ls);
-        ls->ref();
         sep->ref();
 		return sep;
 	}
