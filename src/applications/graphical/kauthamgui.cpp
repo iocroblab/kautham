@@ -364,6 +364,47 @@ void Application::saveTabColors() {
 }
 
 
+int linksLoaded;
+int links2Load;
+pthread_t *loadProblem_thread;
+pthread_mutex_t *mutex;
+pthread_mutexattr_t *mutexattr;
+
+struct arg_struct {
+    Problem *problem;
+    xml_document *doc;
+    bool useBBOX;
+    KthExcp *excp;
+    bool succeed;
+};
+
+void *loadProblem(void *arguments) {
+    struct arg_struct *args = (struct arg_struct *)arguments;
+
+    args->excp = NULL;
+
+    try {
+        args->succeed = args->problem->setupFromFile(args->doc,args->useBBOX,
+                                                mutex,&linksLoaded);
+    } catch (const KthExcp& excp) {
+        args->succeed = false;
+        args->excp = new KthExcp(excp.what(),excp.more());
+    } catch (const exception& excp) {
+        args->succeed = false;
+        args->excp = new KthExcp(excp.what(),"");
+    } catch (...) {
+        args->succeed = false;
+        args->excp = new KthExcp("Unknown error","");
+    }
+
+    pthread_mutex_lock(mutex);
+    linksLoaded = links2Load+1;
+    pthread_mutex_unlock(mutex);
+
+    pthread_exit(NULL);
+}
+
+
 bool Application::problemSetup(string problemFile){
     mainWindow->setCursor(QCursor(Qt::WaitCursor));
 
@@ -380,12 +421,55 @@ bool Application::problemSetup(string problemFile){
     }
     bool useBBOX = settings->value("use_BBOX","false").toBool();
 
+
+    linksLoaded = 0;
+    links2Load = 0;
+    loadProblem_thread = NULL;
+    mutex = NULL;
+    mutexattr = NULL;
     _problem = new Problem();
     bool succeed = false;
+    QProgressDialog *progressDialog;
+    xml_document *doc = NULL;
+    struct arg_struct *arguments;
     try {
-        succeed = _problem->setupFromFile(problemFile,def_path,useBBOX);
-    }
-    catch (const KthExcp& excp) {
+        //Parse the problem file and count the number of links to load
+        doc = _problem->parseProblemFile(problemFile,def_path,&links2Load);
+
+        if (links2Load > 0 && doc != NULL) {
+            //Create the loadProblem thread
+            loadProblem_thread = new pthread_t;
+            mutex = new pthread_mutex_t;
+            mutexattr = new pthread_mutexattr_t;
+            pthread_mutexattr_init(mutexattr);
+            pthread_mutexattr_settype(mutexattr,PTHREAD_MUTEX_NORMAL);
+            pthread_mutexattr_setprotocol(mutexattr,PTHREAD_PRIO_PROTECT);
+            pthread_mutexattr_setprioceiling(mutexattr,1);
+            pthread_mutex_init(mutex,mutexattr);
+
+            progressDialog = new QProgressDialog("Loading problem ...","",0,links2Load,mainWindow);
+            progressDialog->setWindowModality(Qt::WindowModal);
+            progressDialog->setCancelButton(0);
+            progressDialog->setMinimumDuration(0);
+            progressDialog->setVisible(true);
+            progressDialog->setValue(0);
+
+            arguments = new struct arg_struct;
+            arguments->problem = _problem;
+            arguments->doc = doc;
+            arguments->useBBOX = useBBOX;
+            pthread_create(loadProblem_thread,NULL,loadProblem,(void*)arguments);
+
+            int _linksLoaded = 0;
+            while (_linksLoaded <= links2Load) {
+                pthread_mutex_lock(mutex);
+                _linksLoaded = linksLoaded;
+                pthread_mutex_unlock(mutex);
+
+                progressDialog->setValue(_linksLoaded);
+            }
+        }
+    } catch (const KthExcp& excp) {
         qDebug() << excp.what() << endl;
 
         mainWindow->setDisabled(true);
@@ -399,8 +483,7 @@ bool Application::problemSetup(string problemFile){
         msgBox.setDefaultButton(QMessageBox::Ok);
         msgBox.exec();
         mainWindow->setDisabled(false);
-    }
-    catch (const exception& excp) {
+    } catch (const exception& excp) {
         qDebug() << excp.what() << endl;
 
         mainWindow->setDisabled(true);
@@ -413,8 +496,7 @@ bool Application::problemSetup(string problemFile){
         msgBox.setDefaultButton(QMessageBox::Ok);
         msgBox.exec();
         mainWindow->setDisabled(false);
-    }
-    catch (...) {
+    } catch (...) {
         qDebug() << "Unknown error" << endl;
 
         mainWindow->setDisabled(true);
@@ -427,6 +509,37 @@ bool Application::problemSetup(string problemFile){
         msgBox.setDefaultButton(QMessageBox::Ok);
         msgBox.exec();
         mainWindow->setDisabled(false);
+    }
+
+    if (links2Load > 0 && doc != NULL) {
+        pthread_join(*loadProblem_thread,NULL);
+        succeed = arguments->succeed;
+        if (arguments->excp != NULL) {
+            qDebug() << arguments->excp->what() << endl;
+
+            mainWindow->setDisabled(true);
+            QMessageBox msgBox(mainWindow);
+            msgBox.setIcon(QMessageBox::Critical);
+            msgBox.setWindowTitle("Error encountered");
+            msgBox.setText("The problem couldn't be loaded");
+            msgBox.setInformativeText(arguments->excp->what());
+            if (arguments->excp->more() != "") {
+                msgBox.setDetailedText(arguments->excp->more());
+            }
+            msgBox.setStandardButtons(QMessageBox::Ok);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+            msgBox.exec();
+            mainWindow->setDisabled(false);
+
+            delete arguments->excp;
+        }
+
+        delete loadProblem_thread;
+        delete mutex;
+        delete mutexattr;
+        delete progressDialog;
+        delete arguments->doc;
+        delete arguments;
     }
 
     if (!succeed) {

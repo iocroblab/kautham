@@ -50,7 +50,7 @@ namespace Kautham {
 
 
   // This is the new implementation trying to avoid the old strucparse and ProbStruc.
-  bool Problem::createWSpaceFromFile(xml_document *doc, bool useBBOX) {
+  bool Problem::createWSpaceFromFile(xml_document *doc, bool useBBOX, pthread_mutex_t *mutex, int *count) {
       if(_wspace != NULL ) delete _wspace;
       _wspace = new IVWorkSpace();
 
@@ -61,7 +61,7 @@ namespace Kautham {
       //add all robots to worskpace
       for (tmpNode = doc->child("Problem").child("Robot");
            tmpNode; tmpNode = tmpNode.next_sibling("Robot")) {
-          if (!addRobot2WSpace(&tmpNode, useBBOX)) return false;
+          if (!addRobot2WSpace(&tmpNode, useBBOX, mutex, count)) return false;
       }
 
       //set robot controls
@@ -71,7 +71,7 @@ namespace Kautham {
       //add all obstacles to worskpace
       for (tmpNode = doc->child("Problem").child("Obstacle");
            tmpNode; tmpNode = tmpNode.next_sibling("Obstacle")) {
-          if (!addObstacle2WSpace(&tmpNode, useBBOX)) return false;
+          if (!addObstacle2WSpace(&tmpNode, useBBOX, mutex, count)) return false;
       }
 
       //set obstacle controls
@@ -682,9 +682,134 @@ namespace Kautham {
       }
   }
 
+  int Problem::countRobotLinks(string robFile) {
+      //open the file
+      fstream fin;
+      fin.open(robFile.c_str(),ios::in);
+      if (fin.is_open()){// The file already exists.
+          fin.close();
 
-  bool Problem::setupFromFile(xml_document *doc, bool useBBOX) {
-      if (!createWSpaceFromFile(doc, useBBOX)) return false;
+          string extension = robFile.substr(robFile.find_last_of(".")+1);
+
+          if (extension == "dh") {
+              // Opening the file with the new pugiXML library.
+              xml_document doc;
+
+              //Parse the rob file
+              xml_parse_result result = doc.load_file(robFile.c_str());
+              if (result) {
+                  //Links of the robot
+                  return doc.child("Robot").child("Joints").attribute("size").as_int();
+              } else {// the result of the file parser is bad
+                  cout << "Robot file: " << robFile << " can not be read." << endl;
+
+                  string message = "Robot file " + robFile + " couldn't be parsed";
+                  stringstream details;
+                  details << "Error: " << result.description() << endl <<
+                             "Last successfully parsed character: " << result.offset;
+                  throw KthExcp(message,details.str());
+                  return -1;
+              }
+          } else if (extension == "urdf") {
+              // Opening the file with the new pugiXML library.
+              xml_document doc;
+
+              //Parse the rob file
+              xml_parse_result result = doc.load_file(robFile.c_str());
+              if (result) {
+                  //Links of the robot
+                  xml_node tmpNode = doc.child("robot").child("link");
+                  int num_links = 0;
+
+                  while (tmpNode) {
+                      num_links += 1;
+
+                      tmpNode = tmpNode.next_sibling("link");
+                  }
+
+                  return num_links;
+              } else {// the result of the file parser is bad
+                  cout << "Robot file: " << robFile << " can not be read." << endl;
+
+                  string message = "Robot file " + robFile + " couldn't be parsed";
+                  stringstream details;
+                  details << "Error: " << result.description() << endl <<
+                             "Last successfully parsed character: " << result.offset;
+                  throw KthExcp(message,details.str());
+                  return -1;
+              }
+          } else {
+              return 1;
+          }
+      } else {// File does not exists
+          fin.close();
+          cout << "Robot file: " << robFile << "doesn't exist. Please confirm it." << endl;
+          string message = "Robot file " +robFile + " couldn't be found";
+          throw KthExcp(message);
+          return -1;
+      }
+  }
+
+  int Problem::countLinks2Load(xml_document *doc) {
+      int links2Load = 0;
+      int numLinks;
+      xml_node tmpNode;
+
+      //count all robots links
+      for (tmpNode = doc->child("Problem").child("Robot");
+           tmpNode; tmpNode = tmpNode.next_sibling("Robot")) {
+          numLinks = countRobotLinks(tmpNode.attribute("robot").as_string());
+          if (numLinks <= 0) return 0;
+          links2Load += numLinks;
+      }
+
+      //count all obstacles links
+      for (tmpNode = doc->child("Problem").child("Obstacle");
+           tmpNode; tmpNode = tmpNode.next_sibling("Obstacle")) {
+          numLinks = countRobotLinks(tmpNode.attribute("obstacle").as_string());
+          if (numLinks <= 0) return 0;
+          links2Load += numLinks;
+      }
+
+      return links2Load;
+  }
+
+  xml_document *Problem::parseProblemFile(string filename, vector <string> def_path, int *links2Load) {
+      _filePath = filename;
+      xml_document *doc = new xml_document;
+      xml_parse_result result = doc->load_file( filename.c_str());
+      if(result) {
+          //if the file was correctly parsed
+          if (prepareFile(doc, def_path)) {
+              //if everything seems to be OK
+
+              *links2Load = countLinks2Load(doc);
+              if (links2Load > 0) {
+                  return doc;
+              } else {
+                  delete doc;
+                  return NULL;
+              }
+          } else {
+              *links2Load = -1;
+              delete doc;
+              return NULL;
+          }
+      } else {
+          delete doc;
+          *links2Load = -1;
+          string message = "Problem file " + _filePath + " couldn't be parsed";
+          stringstream details;
+          details << "Error: " << result.description() << endl <<
+                     "Last successfully parsed character: " << result.offset;
+          throw KthExcp(message,details.str());
+          return NULL;
+      }
+  }
+
+
+  bool Problem::setupFromFile(xml_document *doc, bool useBBOX, pthread_mutex_t *mutex, int *count) {
+      if (!createWSpaceFromFile(doc, useBBOX, mutex, count)) return false;
 
       if (!createCSpaceFromFile(doc)) return false;
 
@@ -772,16 +897,16 @@ namespace Kautham {
   }
 
 
-  bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX) {
+  bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, pthread_mutex_t *mutex, int *count) {
       Robot *rob;
       string name;
 
 #ifndef KAUTHAM_COLLISION_PQP
       rob = new Robot(robot_node->attribute("robot").as_string(),
-                      (KthReal)robot_node->attribute("scale").as_double(),INVENTOR,useBBOX);
+                      (KthReal)robot_node->attribute("scale").as_double(),INVENTOR,useBBOX,mutex,count);
 #else
       rob = new Robot(robot_node->attribute("robot").as_string(),
-                      (KthReal)robot_node->attribute("scale").as_double(),IVPQP,useBBOX);
+                      (KthReal)robot_node->attribute("scale").as_double(),IVPQP,useBBOX,mutex,count);
 #endif
 
       if (!rob->isArmed()) return false;
@@ -1293,16 +1418,16 @@ namespace Kautham {
   }
 
 
-  bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX) {
+  bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, pthread_mutex_t *mutex, int *count) {
       Robot *obs;
       string name;
 
 #ifndef KAUTHAM_COLLISION_PQP
       obs = new Robot(obstacle_node->attribute("obstacle").as_string(),
-                      (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR,useBBOX);
+                      (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR,useBBOX, mutex, count);
 #else
       obs = new Robot(obstacle_node->attribute("obstacle").as_string(),
-                      (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP,useBBOX);
+                      (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP,useBBOX, mutex, count);
 #endif
 
       if (!obs->isArmed()) return false;
