@@ -27,9 +27,10 @@
 
 #include "ivelement.h"
 #include <util/kthutil/kauthamexception.h>
+#include "assimp.h"
 #if  defined(KAUTHAM_USE_ARMADILLO)
 #include <armadillo>
-#include "assimp.h"
+
 
 using namespace arma;
 #endif
