@@ -99,7 +99,7 @@ namespace Kautham {
 
   public:
 
-    Robot(string robFile, KthReal robScale, LIBUSED lib = IVPQP, bool useBBOX = false); //!<  Constructor
+    Robot(string robFile, KthReal robScale, LIBUSED lib = IVPQP, bool useBBOX = false, pthread_mutex_t *mutex = NULL, int *count = NULL); //!<  Constructor
 
     inline bool isArmed() {return armed;} //!< Returns true if the Robot is correctly armed
 
@@ -312,13 +312,13 @@ namespace Kautham {
 
   private:
     //! sets the Robot from a *.dh file
-    bool setFromDhFile(string robFile, bool useBBOX);
+    bool setFromDhFile(string robFile, bool useBBOX, pthread_mutex_t *mutex = NULL, int *count = NULL);
 
     //! sets the Robot from a *.urdf file
-    bool setFromUrdfFile(string robFile, bool useBBOX);
+    bool setFromUrdfFile(string robFile, bool useBBOX, pthread_mutex_t *mutex = NULL, int *count = NULL);
 
     //! sets the Robot from a 3D model file
-    bool setFromModelFile(string robFile, bool useBBOX);
+    bool setFromModelFile(string robFile, bool useBBOX, pthread_mutex_t *mutex = NULL, int *count = NULL);
 
     //! This method updates the absolute position and orientation of each link in the robot.
     void updateRobot();
