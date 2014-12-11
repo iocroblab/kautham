@@ -132,6 +132,7 @@ namespace Kautham {
 		{
 			//_sceneCspace = ((IVWorkSpace*)_wkSpace)->getIvScene();
 			_sceneCspace = new SoSeparator();
+            _sceneCspace->ref();
 		}
 		else _sceneCspace=NULL;
 		return Planner::getIvCspaceScene();
