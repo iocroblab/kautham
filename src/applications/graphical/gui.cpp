@@ -490,12 +490,12 @@ namespace Kautham {
     //removes the viewer tab. The Introduction tab viewer cannot be eliminated.
     void GUI::removeViewerTab(string title){
         vector<Viewer>::iterator it_v;
-        if( title.compare("Introduction") != 0 )
+        if( title != "Introduction")
             for(it_v = viewers.begin(); it_v != viewers.end(); it_v++)
                 if((*it_v).title == title){
                     viewsTab->removeTab(viewsTab->indexOf( it_v->tab ));
                     delete it_v->window;
-                    //it_v->root->unref();
+                    it_v->root->unref();
                     viewers.erase(it_v);
                     break;
                 }

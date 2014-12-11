@@ -113,9 +113,13 @@ urdf_geometry::urdf_geometry () {
 }
 
 void urdf_geometry::fill(xml_node *node, string dir) {
+    if (model == NULL) {
+        model = new SoSeparator;
+        model->ref();
+    }
     SoSeparator *submodel;
     submodel = new SoSeparator;
-    submodel->ref();
+    model->addChild(submodel);
 
     if (node->child("origin")) {
         xml_node origin_node = node->child("origin");
@@ -123,18 +127,16 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         origin.fill(&origin_node);
 
         SoTranslation *trans = new SoTranslation;
-        trans->ref();
-        trans->translation.setValue((float)origin.xyz[0],(float)origin.xyz[1],(float)origin.xyz[2]);
         submodel->addChild(trans);
+        trans->translation.setValue((float)origin.xyz[0],(float)origin.xyz[1],(float)origin.xyz[2]);
 
         mt::Unit3 axis;
         mt::Scalar angle;
         origin.transform.getRotation().getAxisAngle(axis,angle);
         SoRotation *rot = new SoRotation;
-        rot->ref();
+        submodel->addChild(rot);
         rot->rotation.setValue(SbVec3f((float)axis[0],(float)axis[1],
                 (float)axis[2]),(float)angle);
-        submodel->addChild(rot);
     }
 
     if (node->child("material").child("color")) {
@@ -142,7 +144,7 @@ void urdf_geometry::fill(xml_node *node, string dir) {
 
         double rgba[4];
         string tmpString = color_node.attribute("rgba").as_string();
-        istringstream ss( tmpString );
+        istringstream ss(tmpString);
         getline(ss,tmpString,' ');
         rgba[0] = atof(tmpString.c_str());
         getline(ss,tmpString,' ');
@@ -153,19 +155,16 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         rgba[3] = atof(tmpString.c_str());
 
         SoMaterial *material = new SoMaterial;
-        material->ref();
-
+        submodel->addChild(material);
         material->diffuseColor.setValue(rgba[0],rgba[1],rgba[2]);
         material->transparency.setValue(1.0-rgba[3]);
-
-        submodel->addChild(material);
     }
 
     xml_node geom_node = node->child("geometry").first_child();
     string geom_type = geom_node.name();
     if (geom_type == "box") {
         SoCube *box = new SoCube;
-        box->ref();
+        submodel->addChild(box);
         double size[3];
         string tmpString = geom_node.attribute("size").as_string();
         istringstream ss( tmpString );
@@ -178,22 +177,19 @@ void urdf_geometry::fill(xml_node *node, string dir) {
         box->width.setValue((float)size[0]*1000);
         box->height.setValue((float)size[1]*1000);
         box->depth.setValue((float)size[2]*1000);
-        submodel->addChild(box);
     } else if (geom_type == "cylinder") {
         SoRotation *cyl_rot = new SoRotation;
-        cyl_rot->ref();
-        cyl_rot->rotation.setValue(SbVec3f(1.,0.,0.),(float)M_PI_2);
         submodel->addChild(cyl_rot);
+        cyl_rot->rotation.setValue(SbVec3f(1.,0.,0.),(float)M_PI_2);
+
         SoCylinder *cylinder = new SoCylinder;
-        cylinder->ref();
+        submodel->addChild(cylinder);
         cylinder->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
         cylinder->height.setValue((float)geom_node.attribute("length").as_double()*1000.);
-        submodel->addChild(cylinder);
     } else if (geom_type == "sphere") {
         SoSphere *sphere = new SoSphere;
-        sphere->ref();
-        sphere->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
         submodel->addChild(sphere);
+        sphere->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
     } else if (geom_type == "mesh") {
         if (geom_node.attribute("scale")) {
             double scale[3];
@@ -207,19 +203,12 @@ void urdf_geometry::fill(xml_node *node, string dir) {
             scale[2] = atof(tmpString.c_str());
 
             SoScale *sca = new SoScale;
-            sca->ref();
-            sca->scaleFactor.setValue((float)scale[0],(float)scale[1],(float)scale[2]);
             submodel->addChild(sca);
+            sca->scaleFactor.setValue((float)scale[0],(float)scale[1],(float)scale[2]);
         }
         string filename = dir+geom_node.attribute("filename").as_string();
         submodel->addChild(readFile(filename));
     }
-
-    if (model == NULL) {
-        model = new SoSeparator;
-        model->ref();
-    }
-    model->addChild(submodel);
 }
 
 urdf_dynamics::urdf_dynamics () {

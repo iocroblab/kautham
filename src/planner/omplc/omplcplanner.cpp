@@ -435,6 +435,7 @@ namespace Kautham {
         if(_wkSpace->getNumRobControls()<=3)
         {
             _sceneCspace = new SoSeparator();
+            _sceneCspace->ref();
         }
         else _sceneCspace=NULL;
         return Planner::getIvCspaceScene();
