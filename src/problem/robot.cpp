@@ -74,7 +74,7 @@ namespace Kautham {
   *  \param robScale is a global scale for all the links
   *  \param lib identifies wether PQP or SOLID collision libs are used
   */
- Robot::Robot(string robFile, KthReal robScale, LIBUSED lib, bool useBBOX) {
+ Robot::Robot(string robFile, KthReal robScale, LIBUSED lib, bool useBBOX, pthread_mutex_t *mutex, int *count) {
      //set initial values
      robotAttachedTo = NULL;
      linkAttachedTo = NULL;
@@ -115,11 +115,11 @@ namespace Kautham {
          string extension = robFile.substr(robFile.find_last_of(".")+1);
 
          if (extension == "dh") {
-             armed = setFromDhFile(robFile,useBBOX);
+             armed = setFromDhFile(robFile,useBBOX,mutex,count);
          } else if (extension == "urdf") {
-             armed = setFromUrdfFile(robFile,useBBOX);
+             armed = setFromUrdfFile(robFile,useBBOX,mutex,count);
          } else {
-             armed = setFromModelFile(robFile,useBBOX);
+             armed = setFromModelFile(robFile,useBBOX,mutex,count);
          }
 
          if (armed) {
@@ -157,7 +157,7 @@ namespace Kautham {
  }
 
 
- bool Robot::setFromDhFile(string robFile, bool useBBOX) {
+ bool Robot::setFromDhFile(string robFile, bool useBBOX, pthread_mutex_t *mutex, int *count) {
      //setting numeric parameter to avoid convertions problems
      char *old = setlocale(LC_NUMERIC, "C");
 
@@ -238,77 +238,112 @@ namespace Kautham {
 
          //Loop for all the links
          for (xml_node_iterator it = linkNode.begin(); it != linkNode.end(); ++it) {
-             //Sets the Pretransfomation needed when DH parameters are not able to secify the transform between links
-             //used for instance in the definition of the transofrms between tha palm and the finger bases in the SAH hand
-             xml_node preTNode = (*it).child("PreTrans");
-             if (preTNode != NULL) {
-                 preTransP = preTrans;
-                 preTrans[0] = (KthReal)preTNode.attribute("X").as_double();
-                 preTrans[1] = (KthReal)preTNode.attribute("Y").as_double();
-                 preTrans[2] = (KthReal)preTNode.attribute("Z").as_double();
-                 preTrans[3] = (KthReal)preTNode.attribute("WX").as_double();
-                 preTrans[4] = (KthReal)preTNode.attribute("WY").as_double();
-                 preTrans[5] = (KthReal)preTNode.attribute("WZ").as_double();
-                 preTrans[6] = (KthReal)preTNode.attribute("TH").as_double() * toRad;
+             if (mutex != NULL) {
+                 pthread_mutex_lock(mutex);
              }
 
-             //Sets the limits of the joint
-             limMin = (KthReal)(*it).child("Limits").attribute("Low").as_double();
-             limMax = (KthReal)(*it).child("Limits").attribute("Hi").as_double();
-             if ((*it).child("Description").attribute("rotational").as_bool()) {
-                 limMin *= toRad;
-                 limMax *= toRad;
-             }
+             try {
+                 //Sets the Pretransfomation needed when DH parameters are not able to secify the transform between links
+                 //used for instance in the definition of the transofrms between tha palm and the finger bases in the SAH hand
+                 xml_node preTNode = (*it).child("PreTrans");
+                 if (preTNode != NULL) {
+                     preTransP = preTrans;
+                     preTrans[0] = (KthReal)preTNode.attribute("X").as_double();
+                     preTrans[1] = (KthReal)preTNode.attribute("Y").as_double();
+                     preTrans[2] = (KthReal)preTNode.attribute("Z").as_double();
+                     preTrans[3] = (KthReal)preTNode.attribute("WX").as_double();
+                     preTrans[4] = (KthReal)preTNode.attribute("WY").as_double();
+                     preTrans[5] = (KthReal)preTNode.attribute("WZ").as_double();
+                     preTrans[6] = (KthReal)preTNode.attribute("TH").as_double() * toRad;
+                 }
 
-             KthReal linkScale = 1.;
-             if ((*it).attribute("scale")) linkScale = (*it).attribute("scale").as_double();
+                 //Sets the limits of the joint
+                 limMin = (KthReal)(*it).child("Limits").attribute("Low").as_double();
+                 limMax = (KthReal)(*it).child("Limits").attribute("Hi").as_double();
+                 if ((*it).child("Description").attribute("rotational").as_bool()) {
+                     limMin *= toRad;
+                     limMax *= toRad;
+                 }
 
-             //Create the link
-             if ((*it).attribute("collision_ivFile")) {
-                 addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
-                         dir + (*it).attribute("collision_ivFile").as_string(), linkScale,
-                         (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
-                         (KthReal)(*it).child("DHPars").attribute("d").as_double(),
-                         (KthReal)(*it).child("DHPars").attribute("a").as_double(),
-                         (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
-                         (*it).child("Description").attribute("rotational").as_bool(),
-                         (*it).child("Description").attribute("movable").as_bool(),
-                         limMin, limMax,
-                         (KthReal)(*it).child("Weight").attribute("weight").as_double(),
-                         (*it).child("Parent").attribute("name").as_string(), preTransP, useBBOX);
-             } else {
-                 addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
-                         dir + (*it).attribute("ivFile").as_string(), linkScale,
-                         (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
-                         (KthReal)(*it).child("DHPars").attribute("d").as_double(),
-                         (KthReal)(*it).child("DHPars").attribute("a").as_double(),
-                         (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
-                         (*it).child("Description").attribute("rotational").as_bool(),
-                         (*it).child("Description").attribute("movable").as_bool(),
-                         limMin, limMax,
-                         (KthReal)(*it).child("Weight").attribute("weight").as_double(),
-                         (*it).child("Parent").attribute("name").as_string(), preTransP, useBBOX);
-             }
+                 KthReal linkScale = 1.;
+                 if ((*it).attribute("scale")) linkScale = (*it).attribute("scale").as_double();
 
-             if (!((Link*)links.at(i))->isArmed()) {
-                 //restoring environtment values
-                 setlocale(LC_NUMERIC,old);
+                 //Create the link
+                 if ((*it).attribute("collision_ivFile")) {
+                     addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
+                             dir + (*it).attribute("collision_ivFile").as_string(), linkScale,
+                             (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
+                             (KthReal)(*it).child("DHPars").attribute("d").as_double(),
+                             (KthReal)(*it).child("DHPars").attribute("a").as_double(),
+                             (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
+                             (*it).child("Description").attribute("rotational").as_bool(),
+                             (*it).child("Description").attribute("movable").as_bool(),
+                             limMin, limMax,
+                             (KthReal)(*it).child("Weight").attribute("weight").as_double(),
+                             (*it).child("Parent").attribute("name").as_string(), preTransP, useBBOX);
+                 } else {
+                     addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
+                             dir + (*it).attribute("ivFile").as_string(), linkScale,
+                             (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
+                             (KthReal)(*it).child("DHPars").attribute("d").as_double(),
+                             (KthReal)(*it).child("DHPars").attribute("a").as_double(),
+                             (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
+                             (*it).child("Description").attribute("rotational").as_bool(),
+                             (*it).child("Description").attribute("movable").as_bool(),
+                             limMin, limMax,
+                             (KthReal)(*it).child("Weight").attribute("weight").as_double(),
+                             (*it).child("Parent").attribute("name").as_string(), preTransP, useBBOX);
+                 }
+
+                 if (!((Link*)links.at(i))->isArmed()) {
+                     //restoring environtment values
+                     setlocale(LC_NUMERIC,old);
+                     return false;
+                 }
+
+                 //Add the weight. Defaults to 1.0
+                 if (i > 0) { //First link is ommited because it is the base.
+                     if ((*it).child("Weight")) {
+                         _weights->setRnWeigh(i-1,(KthReal)(*it).child("Weight").attribute("weight").as_double());
+                     } else {
+                         _weights->setRnWeigh(i-1,(KthReal)1.0);
+                         links[i]->setWeight(1.0); //defaulted to 1, if not added it is put to 0 in the creator!
+                     }
+                 }
+
+                 i++;
+
+                 preTransP = NULL ;//initialize for the next link
+
+                 if (count != NULL) {
+                     ++(*count);
+                 }
+             } catch (const KthExcp& excp) {
+                 if (mutex != NULL) {
+                     pthread_mutex_unlock(mutex);
+                 }
+
+                 throw excp;
+                 return false;
+             } catch (const exception& excp) {
+                 if (mutex != NULL) {
+                     pthread_mutex_unlock(mutex);
+                 }
+
+                 throw excp;
+                 return false;
+             } catch (...) {
+                 if (mutex != NULL) {
+                     pthread_mutex_unlock(mutex);
+                 }
+
+                 throw;
                  return false;
              }
 
-             //Add the weight. Defaults to 1.0
-             if (i > 0) { //First link is ommited because it is the base.
-                 if ((*it).child("Weight")) {
-                     _weights->setRnWeigh(i-1,(KthReal)(*it).child("Weight").attribute("weight").as_double());
-                 } else {
-                     _weights->setRnWeigh(i-1,(KthReal)1.0);
-                     links[i]->setWeight(1.0); //defaulted to 1, if not added it is put to 0 in the creator!
-                 }
+             if (mutex != NULL) {
+                 pthread_mutex_unlock(mutex);
              }
-
-             i++;
-
-             preTransP = NULL ;//initialize for the next link
          }
 
          //restoring environtment values
@@ -330,7 +365,7 @@ namespace Kautham {
  }
 
 
- bool Robot::setFromUrdfFile(string robFile, bool useBBOX) {
+ bool Robot::setFromUrdfFile(string robFile, bool useBBOX, pthread_mutex_t *mutex, int *count) {
      //setting numeric parameter to avoid convertions problems
      char *old = setlocale(LC_NUMERIC, "C");
 
@@ -406,70 +441,105 @@ namespace Kautham {
 
          //Loop for all the links
          for (int i = 0; i < numLinks; i++) {
-             preTransP = NULL;
-             limMin = 0;
-             limMax = 0.;
-
-             //Sets the Pretransfomation from parent's frame to joint's frame
-             if (i > 0) {
-                 preTransP = preTrans;
-                 preTrans[0] = (KthReal)robot.link[i].origin.xyz[0];//x translation
-                 preTrans[1] = (KthReal)robot.link[i].origin.xyz[1];//y translation
-                 preTrans[2] = (KthReal)robot.link[i].origin.xyz[2];//z translation
-                 preTrans[3] = (KthReal)robot.link[i].origin.r;//roll rotation
-                 preTrans[4] = (KthReal)robot.link[i].origin.p;//yaw rotation
-                 preTrans[5] = (KthReal)robot.link[i].origin.y;//pitch rotation
-                 preTrans[6] = 0.;//unused parameter
+             if (mutex != NULL) {
+                 pthread_mutex_lock(mutex);
              }
 
-             //Sets the limits of the joint
-             limMin = (KthReal)robot.link[i].limit.lower;
-             limMax = (KthReal)robot.link[i].limit.upper;
-             if (robot.link[i].type == "prismatic") {
-                 limMin *= 1000;
-                 limMax *= 1000;
-             }
+             try {
+                 preTransP = NULL;
+                 limMin = 0;
+                 limMax = 0.;
 
-             //Set ode parameters
-             ode.dynamics.damping = robot.link[i].dynamics.damping;
-             ode.dynamics.friction = robot.link[i].dynamics.friction;
-             ode.inertial.inertia.ixx = robot.link[i].inertial.inertia.ixx;
-             ode.inertial.inertia.ixy = robot.link[i].inertial.inertia.ixy;
-             ode.inertial.inertia.ixz = robot.link[i].inertial.inertia.ixz;
-             ode.inertial.inertia.iyy = robot.link[i].inertial.inertia.iyy;
-             ode.inertial.inertia.iyz = robot.link[i].inertial.inertia.iyz;
-             ode.inertial.inertia.izz = robot.link[i].inertial.inertia.izz;
-             ode.inertial.inertia.matrix = robot.link[i].inertial.inertia.matrix;
-             ode.inertial.mass = robot.link[i].inertial.mass;
-             ode.inertial.origin.xyz = robot.link[i].inertial.origin.xyz;
-             ode.inertial.origin.r = robot.link[i].inertial.origin.r;
-             ode.inertial.origin.p = robot.link[i].inertial.origin.p;
-             ode.inertial.origin.y = robot.link[i].inertial.origin.y;
-             ode.inertial.origin.transform = robot.link[i].inertial.origin.transform;
-             ode.contact_coefficients.mu = robot.link[i].contact_coefficients.mu;
-             ode.contact_coefficients.kp = robot.link[i].contact_coefficients.kp;
-             ode.contact_coefficients.kd = robot.link[i].contact_coefficients.kd;
-             ode.limit.effort = robot.link[i].limit.effort;
-             ode.limit.velocity = robot.link[i].limit.velocity;
-             ode.limit.lower = robot.link[i].limit.lower;
-             ode.limit.upper = robot.link[i].limit.upper;
+                 //Sets the Pretransfomation from parent's frame to joint's frame
+                 if (i > 0) {
+                     preTransP = preTrans;
+                     preTrans[0] = (KthReal)robot.link[i].origin.xyz[0];//x translation
+                     preTrans[1] = (KthReal)robot.link[i].origin.xyz[1];//y translation
+                     preTrans[2] = (KthReal)robot.link[i].origin.xyz[2];//z translation
+                     preTrans[3] = (KthReal)robot.link[i].origin.r;//roll rotation
+                     preTrans[4] = (KthReal)robot.link[i].origin.p;//yaw rotation
+                     preTrans[5] = (KthReal)robot.link[i].origin.y;//pitch rotation
+                     preTrans[6] = 0.;//unused parameter
+                 }
 
-             //Create the link
-             addLink(robot.link[i].name,robot.link[i].visual.model,
-                     robot.link[i].collision.model,
-                     robot.link[i].axis,robot.link[i].type == "revolute",
-                     robot.link[i].type != "fixed",limMin,
-                     limMax,robot.link[i].weight,robot.link[i].parent,preTransP,ode,useBBOX);
+                 //Sets the limits of the joint
+                 limMin = (KthReal)robot.link[i].limit.lower;
+                 limMax = (KthReal)robot.link[i].limit.upper;
+                 if (robot.link[i].type == "prismatic") {
+                     limMin *= 1000;
+                     limMax *= 1000;
+                 }
 
-             if (!((Link*)links.at(i))->isArmed()) {
-                 //restoring environtment values
-                 setlocale(LC_NUMERIC,old);
+                 //Set ode parameters
+                 ode.dynamics.damping = robot.link[i].dynamics.damping;
+                 ode.dynamics.friction = robot.link[i].dynamics.friction;
+                 ode.inertial.inertia.ixx = robot.link[i].inertial.inertia.ixx;
+                 ode.inertial.inertia.ixy = robot.link[i].inertial.inertia.ixy;
+                 ode.inertial.inertia.ixz = robot.link[i].inertial.inertia.ixz;
+                 ode.inertial.inertia.iyy = robot.link[i].inertial.inertia.iyy;
+                 ode.inertial.inertia.iyz = robot.link[i].inertial.inertia.iyz;
+                 ode.inertial.inertia.izz = robot.link[i].inertial.inertia.izz;
+                 ode.inertial.inertia.matrix = robot.link[i].inertial.inertia.matrix;
+                 ode.inertial.mass = robot.link[i].inertial.mass;
+                 ode.inertial.origin.xyz = robot.link[i].inertial.origin.xyz;
+                 ode.inertial.origin.r = robot.link[i].inertial.origin.r;
+                 ode.inertial.origin.p = robot.link[i].inertial.origin.p;
+                 ode.inertial.origin.y = robot.link[i].inertial.origin.y;
+                 ode.inertial.origin.transform = robot.link[i].inertial.origin.transform;
+                 ode.contact_coefficients.mu = robot.link[i].contact_coefficients.mu;
+                 ode.contact_coefficients.kp = robot.link[i].contact_coefficients.kp;
+                 ode.contact_coefficients.kd = robot.link[i].contact_coefficients.kd;
+                 ode.limit.effort = robot.link[i].limit.effort;
+                 ode.limit.velocity = robot.link[i].limit.velocity;
+                 ode.limit.lower = robot.link[i].limit.lower;
+                 ode.limit.upper = robot.link[i].limit.upper;
+
+                 //Create the link
+                 addLink(robot.link[i].name,robot.link[i].visual.model,
+                         robot.link[i].collision.model,
+                         robot.link[i].axis,robot.link[i].type == "revolute",
+                         robot.link[i].type != "fixed",limMin,
+                         limMax,robot.link[i].weight,robot.link[i].parent,preTransP,ode,useBBOX);
+
+                 if (!((Link*)links.at(i))->isArmed()) {
+                     //restoring environtment values
+                     setlocale(LC_NUMERIC,old);
+                     return false;
+                 }
+
+                 //Add the weight. Defaults to 1.0
+                 if (i > 0) { //First link is ommited because it is the base.
+                     _weights->setRnWeigh(i-1,(KthReal)robot.link[i].weight);
+                 }
+
+                 if (count != NULL) {
+                     ++(*count);
+                 }
+             } catch (const KthExcp& excp) {
+                 if (mutex != NULL) {
+                     pthread_mutex_unlock(mutex);
+                 }
+
+                 throw excp;
+                 return false;
+             } catch (const exception& excp) {
+                 if (mutex != NULL) {
+                     pthread_mutex_unlock(mutex);
+                 }
+
+                 throw excp;
+                 return false;
+             } catch (...) {
+                 if (mutex != NULL) {
+                     pthread_mutex_unlock(mutex);
+                 }
+
+                 throw;
                  return false;
              }
 
-             //Add the weight. Defaults to 1.0
-             if (i > 0) { //First link is ommited because it is the base.
-                 _weights->setRnWeigh(i-1,(KthReal)robot.link[i].weight);
+             if (mutex != NULL) {
+                 pthread_mutex_unlock(mutex);
              }
          }
 
@@ -492,7 +562,7 @@ namespace Kautham {
  }
 
 
- bool Robot::setFromModelFile(string robFile, bool useBBOX) {
+ bool Robot::setFromModelFile(string robFile, bool useBBOX, pthread_mutex_t *mutex, int *count) {
      char *old = setlocale(LC_NUMERIC, "C");
 
      //Robot Name
@@ -510,7 +580,41 @@ namespace Kautham {
      _weights = new RobWeight(0);
      _weights->setSE3Weight(1., 1.);
 
-     addLink("Base", robFile, robFile, 1, 0, 0, 0, 0, false, true, 0, 0, 1, "", NULL, useBBOX);
+     if (mutex != NULL) {
+         pthread_mutex_lock(mutex);
+     }
+
+     try {
+         addLink("Base", robFile, robFile, 1, 0, 0, 0, 0, false, true, 0, 0, 1, "", NULL, useBBOX);
+
+         if (count != NULL) {
+             ++(*count);
+         }
+     } catch (const KthExcp& excp) {
+         if (mutex != NULL) {
+             pthread_mutex_unlock(mutex);
+         }
+
+         throw excp;
+         return false;
+     } catch (const exception& excp) {
+         if (mutex != NULL) {
+             pthread_mutex_unlock(mutex);
+         }
+
+         throw excp;
+         return false;
+     } catch (...) {
+         if (mutex != NULL) {
+             pthread_mutex_unlock(mutex);
+         }
+
+         throw;
+         return false;
+     }
+     if (mutex != NULL) {
+         pthread_mutex_unlock(mutex);
+     }
 
      //restoring environtment values
      setlocale(LC_NUMERIC,old);

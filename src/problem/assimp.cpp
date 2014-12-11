@@ -168,8 +168,6 @@ void addNode(SoSeparator *parent, aiNode *node, aiMaterial **materials, aiMesh *
 
 
 SoSeparator* ivFromAssimp(string file) {
-    cout << "Importing from assimp" << endl;
-
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(file,
                                              aiProcess_Triangulate |
@@ -178,17 +176,11 @@ SoSeparator* ivFromAssimp(string file) {
 
     SoSeparator *root;
     if (scene) {
-        cout << "File read" << endl;
-
-        cout << "Importing to iv" << endl;
-
         root = new SoSeparator;
         root->ref();
         addNode(root,scene->mRootNode,scene->mMaterials,scene->mMeshes);
     } else {
         root = NULL;
-        cout << "File not read" << endl;
-        cout << "Error parsing: " << importer.GetErrorString() << endl;
     }
 
     return root;
