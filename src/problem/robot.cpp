@@ -74,7 +74,7 @@ namespace Kautham {
   *  \param robScale is a global scale for all the links
   *  \param lib identifies wether PQP or SOLID collision libs are used
   */
- Robot::Robot(string robFile, KthReal robScale, LIBUSED lib, bool useBBOX, pthread_mutex_t *mutex, int *count) {
+ Robot::Robot(string robFile, KthReal robScale, LIBUSED lib, bool useBBOX, progress_struct *progress) {
      //set initial values
      robotAttachedTo = NULL;
      linkAttachedTo = NULL;
@@ -115,11 +115,11 @@ namespace Kautham {
          string extension = robFile.substr(robFile.find_last_of(".")+1);
 
          if (extension == "dh") {
-             armed = setFromDhFile(robFile,useBBOX,mutex,count);
+             armed = setFromDhFile(robFile,useBBOX,progress);
          } else if (extension == "urdf") {
-             armed = setFromUrdfFile(robFile,useBBOX,mutex,count);
+             armed = setFromUrdfFile(robFile,useBBOX,progress);
          } else {
-             armed = setFromModelFile(robFile,useBBOX,mutex,count);
+             armed = setFromModelFile(robFile,useBBOX,progress);
          }
 
          if (armed) {
@@ -157,7 +157,7 @@ namespace Kautham {
  }
 
 
- bool Robot::setFromDhFile(string robFile, bool useBBOX, pthread_mutex_t *mutex, int *count) {
+ bool Robot::setFromDhFile(string robFile, bool useBBOX, progress_struct *progress) {
      //setting numeric parameter to avoid convertions problems
      char *old = setlocale(LC_NUMERIC, "C");
 
@@ -238,8 +238,12 @@ namespace Kautham {
 
          //Loop for all the links
          for (xml_node_iterator it = linkNode.begin(); it != linkNode.end(); ++it) {
-             if (mutex != NULL) {
-                 pthread_mutex_lock(mutex);
+             if (progress != NULL) {
+                 pthread_mutex_lock(progress->mutex);
+                 if (progress->abort) {
+                     pthread_mutex_unlock(progress->mutex);
+                     return false;
+                 }
              }
 
              try {
@@ -315,34 +319,34 @@ namespace Kautham {
 
                  preTransP = NULL ;//initialize for the next link
 
-                 if (count != NULL) {
-                     ++(*count);
+                 if (progress != NULL) {
+                     ++(*(progress->linksLoaded));
                  }
              } catch (const KthExcp& excp) {
-                 if (mutex != NULL) {
-                     pthread_mutex_unlock(mutex);
+                 if (progress != NULL) {
+                     pthread_mutex_unlock(progress->mutex);
                  }
 
                  throw excp;
                  return false;
              } catch (const exception& excp) {
-                 if (mutex != NULL) {
-                     pthread_mutex_unlock(mutex);
+                 if (progress != NULL) {
+                     pthread_mutex_unlock(progress->mutex);
                  }
 
                  throw excp;
                  return false;
              } catch (...) {
-                 if (mutex != NULL) {
-                     pthread_mutex_unlock(mutex);
+                 if (progress != NULL) {
+                     pthread_mutex_unlock(progress->mutex);
                  }
 
                  throw;
                  return false;
              }
 
-             if (mutex != NULL) {
-                 pthread_mutex_unlock(mutex);
+             if (progress != NULL) {
+                 pthread_mutex_unlock(progress->mutex);
              }
          }
 
@@ -365,7 +369,7 @@ namespace Kautham {
  }
 
 
- bool Robot::setFromUrdfFile(string robFile, bool useBBOX, pthread_mutex_t *mutex, int *count) {
+ bool Robot::setFromUrdfFile(string robFile, bool useBBOX, progress_struct *progress) {
      //setting numeric parameter to avoid convertions problems
      char *old = setlocale(LC_NUMERIC, "C");
 
@@ -441,8 +445,12 @@ namespace Kautham {
 
          //Loop for all the links
          for (int i = 0; i < numLinks; i++) {
-             if (mutex != NULL) {
-                 pthread_mutex_lock(mutex);
+             if (progress != NULL) {
+                 pthread_mutex_lock(progress->mutex);
+                 if (progress->abort) {
+                     pthread_mutex_unlock(progress->mutex);
+                     return false;
+                 }
              }
 
              try {
@@ -512,34 +520,34 @@ namespace Kautham {
                      _weights->setRnWeigh(i-1,(KthReal)robot.link[i].weight);
                  }
 
-                 if (count != NULL) {
-                     ++(*count);
+                 if (progress != NULL) {
+                     ++(*(progress->linksLoaded));
                  }
              } catch (const KthExcp& excp) {
-                 if (mutex != NULL) {
-                     pthread_mutex_unlock(mutex);
+                 if (progress != NULL) {
+                     pthread_mutex_unlock(progress->mutex);
                  }
 
                  throw excp;
                  return false;
              } catch (const exception& excp) {
-                 if (mutex != NULL) {
-                     pthread_mutex_unlock(mutex);
+                 if (progress != NULL) {
+                     pthread_mutex_unlock(progress->mutex);
                  }
 
                  throw excp;
                  return false;
              } catch (...) {
-                 if (mutex != NULL) {
-                     pthread_mutex_unlock(mutex);
+                 if (progress != NULL) {
+                     pthread_mutex_unlock(progress->mutex);
                  }
 
                  throw;
                  return false;
              }
 
-             if (mutex != NULL) {
-                 pthread_mutex_unlock(mutex);
+             if (progress != NULL) {
+                 pthread_mutex_unlock(progress->mutex);
              }
          }
 
@@ -562,7 +570,7 @@ namespace Kautham {
  }
 
 
- bool Robot::setFromModelFile(string robFile, bool useBBOX, pthread_mutex_t *mutex, int *count) {
+ bool Robot::setFromModelFile(string robFile, bool useBBOX, progress_struct *progress) {
      char *old = setlocale(LC_NUMERIC, "C");
 
      //Robot Name
@@ -580,40 +588,44 @@ namespace Kautham {
      _weights = new RobWeight(0);
      _weights->setSE3Weight(1., 1.);
 
-     if (mutex != NULL) {
-         pthread_mutex_lock(mutex);
+     if (progress != NULL) {
+         pthread_mutex_lock(progress->mutex);
+                 if (progress->abort) {
+                     pthread_mutex_unlock(progress->mutex);
+                     return false;
+                 }
      }
 
      try {
          addLink("Base", robFile, robFile, 1, 0, 0, 0, 0, false, true, 0, 0, 1, "", NULL, useBBOX);
 
-         if (count != NULL) {
-             ++(*count);
+         if (progress != NULL) {
+             ++(*(progress->linksLoaded));
          }
      } catch (const KthExcp& excp) {
-         if (mutex != NULL) {
-             pthread_mutex_unlock(mutex);
+         if (progress != NULL) {
+             pthread_mutex_unlock(progress->mutex);
          }
 
          throw excp;
          return false;
      } catch (const exception& excp) {
-         if (mutex != NULL) {
-             pthread_mutex_unlock(mutex);
+         if (progress != NULL) {
+             pthread_mutex_unlock(progress->mutex);
          }
 
          throw excp;
          return false;
      } catch (...) {
-         if (mutex != NULL) {
-             pthread_mutex_unlock(mutex);
+         if (progress != NULL) {
+             pthread_mutex_unlock(progress->mutex);
          }
 
          throw;
          return false;
      }
-     if (mutex != NULL) {
-         pthread_mutex_unlock(mutex);
+     if (progress != NULL) {
+         pthread_mutex_unlock(progress->mutex);
      }
 
      //restoring environtment values

@@ -50,7 +50,7 @@ namespace Kautham {
 
 
   // This is the new implementation trying to avoid the old strucparse and ProbStruc.
-  bool Problem::createWSpaceFromFile(xml_document *doc, bool useBBOX, pthread_mutex_t *mutex, int *count) {
+  bool Problem::createWSpaceFromFile(xml_document *doc, bool useBBOX, progress_struct *progress) {
       if(_wspace != NULL ) delete _wspace;
       _wspace = new IVWorkSpace();
 
@@ -61,7 +61,7 @@ namespace Kautham {
       //add all robots to worskpace
       for (tmpNode = doc->child("Problem").child("Robot");
            tmpNode; tmpNode = tmpNode.next_sibling("Robot")) {
-          if (!addRobot2WSpace(&tmpNode, useBBOX, mutex, count)) return false;
+          if (!addRobot2WSpace(&tmpNode, useBBOX, progress)) return false;
       }
 
       //set robot controls
@@ -71,7 +71,7 @@ namespace Kautham {
       //add all obstacles to worskpace
       for (tmpNode = doc->child("Problem").child("Obstacle");
            tmpNode; tmpNode = tmpNode.next_sibling("Obstacle")) {
-          if (!addObstacle2WSpace(&tmpNode, useBBOX, mutex, count)) return false;
+          if (!addObstacle2WSpace(&tmpNode, useBBOX, progress)) return false;
       }
 
       //set obstacle controls
@@ -808,8 +808,14 @@ namespace Kautham {
   }
 
 
-  bool Problem::setupFromFile(xml_document *doc, bool useBBOX, pthread_mutex_t *mutex, int *count) {
-      if (!createWSpaceFromFile(doc, useBBOX, mutex, count)) return false;
+  bool Problem::setupFromFile(xml_document *doc, bool useBBOX, progress_struct *progress) {
+      if (progress != NULL)  {
+          if (progress->abort || progress->mutex == NULL || progress->linksLoaded == NULL) {
+              return false;
+          }
+      }
+
+      if (!createWSpaceFromFile(doc, useBBOX, progress)) return false;
 
       if (!createCSpaceFromFile(doc)) return false;
 
@@ -897,16 +903,16 @@ namespace Kautham {
   }
 
 
-  bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, pthread_mutex_t *mutex, int *count) {
+  bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struct *progress) {
       Robot *rob;
       string name;
 
 #ifndef KAUTHAM_COLLISION_PQP
       rob = new Robot(robot_node->attribute("robot").as_string(),
-                      (KthReal)robot_node->attribute("scale").as_double(),INVENTOR,useBBOX,mutex,count);
+                      (KthReal)robot_node->attribute("scale").as_double(),INVENTOR,useBBOX,progress);
 #else
       rob = new Robot(robot_node->attribute("robot").as_string(),
-                      (KthReal)robot_node->attribute("scale").as_double(),IVPQP,useBBOX,mutex,count);
+                      (KthReal)robot_node->attribute("scale").as_double(),IVPQP,useBBOX,progress);
 #endif
 
       if (!rob->isArmed()) return false;
@@ -1418,16 +1424,16 @@ namespace Kautham {
   }
 
 
-  bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, pthread_mutex_t *mutex, int *count) {
+  bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, progress_struct *progress) {
       Robot *obs;
       string name;
 
 #ifndef KAUTHAM_COLLISION_PQP
       obs = new Robot(obstacle_node->attribute("obstacle").as_string(),
-                      (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR,useBBOX, mutex, count);
+                      (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR,useBBOX, progress);
 #else
       obs = new Robot(obstacle_node->attribute("obstacle").as_string(),
-                      (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP,useBBOX, mutex, count);
+                      (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP,useBBOX, progress);
 #endif
 
       if (!obs->isArmed()) return false;

@@ -112,7 +112,7 @@ namespace Kautham {
     *		mean that if a problem contain many robots all of them should be the
     *		same class.
     *		\sa WSpace Robot ChainRobot Obstacle*/
-    bool 	               createWSpaceFromFile(pugi::xml_document *doc, bool useBBOX, pthread_mutex_t *mutex = NULL, int *count = NULL);
+    bool 	               createWSpaceFromFile(pugi::xml_document *doc, bool useBBOX, progress_struct *progress = NULL);
 
     //! This method is deprecated. Please take care with the problem XML file.
     //bool			              createWSpace(ProbStruc *reader);
@@ -154,7 +154,7 @@ namespace Kautham {
     bool                    inheritSolution();
     bool                    setupFromFile(string xml_doc, vector <string> def_path = vector <string>(), bool useBBOX = false);
     bool                    setupFromFile(istream *xml_inputfile, vector <string> def_path = vector <string>(), bool useBBOX = false);
-    bool                    setupFromFile(pugi::xml_document *doc, bool useBBOX, pthread_mutex_t *mutex = NULL, int *count = NULL);
+    bool                    setupFromFile(pugi::xml_document *doc, bool useBBOX, progress_struct *progress = NULL);
     bool addRobot2WSpace(string robFile, KthReal scale, vector<KthReal> home,vector< vector<KthReal> > limits);
     bool addObstacle2WSpace(string robFile, KthReal scale, vector<KthReal> home);
 
@@ -256,7 +256,7 @@ namespace Kautham {
      * \param robot_node robot node with the information of the robot
      to add to the workspace
      */
-    bool addRobot2WSpace(xml_node *robot_node, bool useBBOX, pthread_mutex_t *mutex = NULL, int *count = NULL);
+    bool addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struct *progress = NULL);
 
     /*!
      * \brief loads an obstacle node of the problem file,
@@ -264,7 +264,7 @@ namespace Kautham {
      * \param obstacle_node obstacle node with the information of the obstacle
      to add to the workspace
      */
-    bool addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, pthread_mutex_t *mutex = NULL, int *count = NULL);
+    bool addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, progress_struct *progress = NULL);
 
     /*!
      * \brief isFileOK checks if all the information required
