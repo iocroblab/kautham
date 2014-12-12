@@ -252,7 +252,7 @@ void Application::openFile(QString problemFile) {
             closeProblem();
             appState = INITIAL;
         }
-        mainWindow->setText("Kautham is opening a problem file...");
+        mainWindow->setText("Opening a problem file...");
         QString dir = problemFile;
         dir.truncate(dir.lastIndexOf("/"));
         if (problemSetup(problemFile.toStdString())) {
@@ -268,10 +268,13 @@ void Application::openFile(QString problemFile) {
             tmp << " - ";
             tmp << problemFile.toStdString();
             mainWindow->setWindowTitle( tmp.str().c_str() );
-            mainWindow->setText("File: " + problemFile.toStdString());
-            mainWindow->setText("opened successfully.");
+            mainWindow->setText("File: " + problemFile.toStdString() + " was opened successfully.");
         } else {
-            mainWindow->setText("Kautham couldn't open the problem file...");
+            if (abort) {
+                mainWindow->setText("Problem setup was aborted.");
+            } else {
+                mainWindow->setText("The problem couldn't be opened.");
+            }
         }
     }
     mainWindow->setCursor(QCursor(Qt::ArrowCursor));
@@ -421,7 +424,7 @@ bool Application::problemSetup(string problemFile){
     struct arg_struct *arguments = NULL;
     _problem = new Problem();
     bool succeed = false;
-    bool abort = true;
+    abort = false;
     QProgressDialog *progressDialog = NULL;
     xml_document *doc = NULL;
     try {
@@ -463,12 +466,10 @@ bool Application::problemSetup(string problemFile){
             progressDialog->setMinimum(0);
             progressDialog->setMaximum(links2Load);
             progressDialog->setValue(0);
-            connect(progressDialog,SIGNAL(canceled()),this,SLOT(abortProblemSetup()));
 
             loadProblem_thread = new pthread_t;
             pthread_create(loadProblem_thread,NULL,loadProblem,(void*)arguments);
 
-            abort = false;
             int linksLoaded = 0;
             while (linksLoaded <= links2Load && !abort) {
                 QApplication::processEvents(QEventLoop::AllEvents);

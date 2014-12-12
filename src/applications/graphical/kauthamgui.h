@@ -79,6 +79,7 @@ private:
   Problem*          _problem;
   GUI*              mainWindow;
   PROBLEMSTATE      appState;
+  bool              abort;
 };
  /** @}   end of Doxygen module "Application" */
 #endif  //_APPLICATION_H
