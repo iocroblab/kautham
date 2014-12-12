@@ -202,12 +202,20 @@ void urdf_geometry::fill(xml_node *node, string dir) {
             getline(ss,tmpString,' ');
             scale[2] = atof(tmpString.c_str());
 
+            //Mesh is in meters and should be passed to milimeters
+            if (scale[0] != 0.001 || scale[1] != 0.001 || scale[2] != 0.001) {
+                SoScale *sca = new SoScale;
+                submodel->addChild(sca);
+                sca->scaleFactor.setValue((float)1000.*scale[0],(float)1000.*scale[1],(float)1000.*scale[2]);
+            }
+        } else {
+            //Mesh is in meters and should be passed to milimeters
             SoScale *sca = new SoScale;
             submodel->addChild(sca);
-            sca->scaleFactor.setValue((float)scale[0],(float)scale[1],(float)scale[2]);
+            sca->scaleFactor.setValue((float)1000.,(float)1000.,(float)1000.);
         }
         string filename = dir+geom_node.attribute("filename").as_string();
-        submodel->addChild(readFile(filename));
+        submodel->addChild(readFile(filename));        
     }
 }
 
