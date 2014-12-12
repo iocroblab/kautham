@@ -454,15 +454,28 @@ void urdf_obstacle::fill (xml_node *node, string dir) {
         tmpNode = tmpNode.next_sibling("visual");
     }
 
-    tmpNode = node->child("collision");
-    while (tmpNode) {
-        collision.fill(&tmpNode,dir);
-        tmpNode = tmpNode.next_sibling("collision");
+    tmpNode = node->child("collision_checking");
+    if (tmpNode) {
+        while (tmpNode) {
+            collision.fill(&tmpNode,dir);
+            tmpNode = tmpNode.next_sibling("collision_checking");
+        }
+    } else {
+        tmpNode = node->child("collision");
+        while (tmpNode) {
+            collision.fill(&tmpNode,dir);
+            tmpNode = tmpNode.next_sibling("collision");
+        }
     }
 
-    if (node->child("collision").child("contact_coefficients")) {
-        tmpNode = node->child("collision").child("contact_coefficients");
+    if (node->child("collision_checking").child("contact_coefficients")) {
+        tmpNode = node->child("collision_checking").child("contact_coefficients");
         contact_coefficients.fill(&tmpNode);
+    } else {
+        if (node->child("collision").child("contact_coefficients")) {
+            tmpNode = node->child("collision").child("contact_coefficients");
+            contact_coefficients.fill(&tmpNode);
+        }
     }
 
     if (node->child("inertial")) {
