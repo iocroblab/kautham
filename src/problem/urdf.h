@@ -31,6 +31,7 @@
 #include <mt/point3.h>
 #include <mt/rotation.h>
 #include <mt/transform.h>
+#include <map>
 
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/nodes/SoTranslation.h>
@@ -107,7 +108,7 @@ public:
     SoSeparator *model;//!< Robot model
 
     urdf_geometry();//!< Class constructor
-    void fill(xml_node *node, string dir);//!< Fills variables given a geometry node
+    void fill(xml_node *node, string dir, map<string, SoMaterial *> *materials);//!< Fills variables given a geometry node
 };
 
 //! Class containing joint's dynamics data
@@ -202,7 +203,7 @@ public:
     bool is_base;//!< It says if this links is the base from the robot tree structure, defaults to false
 
     urdf_link ();//!< Class constructor
-    void fill (xml_node *node, string dir);//!< Fills variables given a robot node
+    void fill (xml_node *node, string dir, map<string,SoMaterial*> *materials);//!< Fills variables given a robot node
     mt::Transform transform (double theta);//!< Returns the transform from the parent link to the child link given the value of the joint's degree of freedom, only for revolute joints
 };
 
@@ -214,6 +215,7 @@ public:
     //!< "Freeflying", "Chain" or "Tree"
     int num_links;//!< Number of links forming the robot structure
     urdf_link *link;//!< Robot's links
+    map<string,SoMaterial*> materials;//!< Materials used in the robot
 
     urdf_robot ();//!< Class constructor
     void fill (xml_node *node, string dir);//!< Fills variables given a robot node
@@ -233,6 +235,8 @@ public:
     urdf_geometry collision;
     urdf_inertial inertial;//!< Inertial propierties from the obstacle
     urdf_contact_coefficients contact_coefficients;//!< Contact coefficients of the obstacle
+    map<string,SoMaterial*> materials;//!< Materials used in the obstacle
+
 
     void fill(xml_node *node, string dir);//!< Fills variables given a link node
     void print();//!< Prints obstacle information
