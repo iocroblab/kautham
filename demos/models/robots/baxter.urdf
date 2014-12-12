@@ -12,13 +12,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
        <geometry>
-        <mesh filename="baxter/torso/base_link.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/torso/base_link.wrl"/>
        </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/torso/base_link_collision.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/torso/base_link_collision.wrl"/>
       </geometry>
     </collision>
     <inertial>
@@ -31,13 +31,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/base/PEDESTAL.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/base/PEDESTAL.wrl"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/base/pedestal_link_collision.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/base/pedestal_link_collision.wrl"/>
       </geometry>
     </collision>
     <inertial>
@@ -50,13 +50,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 .00953"/>
       <geometry>
-        <mesh filename="baxter/head/H0.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/head/H0.wrl"/>
       </geometry>
     </visual>
     <visual>
       <origin rpy="1.5708 0.179774 0" xyz="0.0868552 0 -0.00317181"/>
       <geometry>
-        <mesh filename="baxter/head/H1.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/head/H1.wrl"/>
       </geometry>
     </visual>
     <visual>
@@ -128,7 +128,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/upper_shoulder/S0.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/upper_shoulder/S0.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -150,7 +150,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/lower_shoulder/S1.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/lower_shoulder/S1.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -181,7 +181,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/upper_elbow/E0.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/upper_elbow/E0.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -203,7 +203,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/lower_elbow/E1.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/lower_elbow/E1.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -225,7 +225,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/upper_forearm/W0.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/upper_forearm/W0.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -256,7 +256,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/lower_forearm/W1.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/lower_forearm/W1.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -278,7 +278,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/wrist/W2.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/wrist/W2.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -319,7 +319,7 @@
     <visual>
       <origin rpy="0 3.14 0" xyz="0.007 0.005 0"/>
       <geometry>
-        <mesh filename="baxter/electric_gripper/electric_gripper_base.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/electric_gripper/electric_gripper_base.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -341,7 +341,7 @@
     <visual>
       <origin rpy="0 -1.57079632679 0" xyz="0.007 -0.036 -0.0135"/>
       <geometry>
-        <mesh filename="baxter/electric_gripper/fingers/extended_narrow.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/electric_gripper/fingers/extended_narrow.wrl"/>
       </geometry>
     </visual>
     <inertial>
@@ -354,7 +354,7 @@
     <visual>
       <origin rpy="0 1.57079632679 0" xyz="0.007 -0.036 0.0135"/>
       <geometry>
-        <mesh filename="baxter/electric_gripper/fingers/extended_narrow.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/electric_gripper/fingers/extended_narrow.wrl"/>
       </geometry>
     </visual>
     <inertial>
@@ -469,7 +469,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/upper_shoulder/S0.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/upper_shoulder/S0.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -491,7 +491,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/lower_shoulder/S1.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/lower_shoulder/S1.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -522,7 +522,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/upper_elbow/E0.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/upper_elbow/E0.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -544,7 +544,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/lower_elbow/E1.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/lower_elbow/E1.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -566,7 +566,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/upper_forearm/W0.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/upper_forearm/W0.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -597,7 +597,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/lower_forearm/W1.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/lower_forearm/W1.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -619,7 +619,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="baxter/wrist/W2.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/wrist/W2.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -660,7 +660,7 @@
     <visual>
       <origin rpy="0 3.14 0" xyz="0.007 0.005 0"/>
       <geometry>
-        <mesh filename="baxter/electric_gripper/electric_gripper_base.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/electric_gripper/electric_gripper_base.wrl"/>
       </geometry>
     </visual>
     <collision>
@@ -682,7 +682,7 @@
     <visual>
       <origin rpy="0 -1.57079632679 0" xyz="0.007 -0.036 -0.0135"/>
       <geometry>
-        <mesh filename="baxter/electric_gripper/fingers/extended_narrow.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/electric_gripper/fingers/extended_narrow.wrl"/>
       </geometry>
     </visual>
     <inertial>
@@ -695,7 +695,7 @@
     <visual>
       <origin rpy="0 1.57079632679 0" xyz="0.007 -0.036 0.0135"/>
       <geometry>
-        <mesh filename="baxter/electric_gripper/fingers/extended_narrow.wrl" scale="1000 1000 1000"/>
+        <mesh filename="baxter/electric_gripper/fingers/extended_narrow.wrl"/>
       </geometry>
     </visual>
     <inertial>
