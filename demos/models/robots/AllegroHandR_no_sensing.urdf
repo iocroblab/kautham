@@ -3,7 +3,7 @@
 	<link name="Palm">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/base_link_right.wrl" />
+				<mesh filename="AllegroHand/right/base_link_right.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="0 0 0" xyz="0 0 0" />
 			<material name="black">
@@ -20,7 +20,7 @@
 	<link name="link_0.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_0_0.wrl" />
+				<mesh filename="AllegroHand/right/link_0_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="0 0 0" xyz="0 0 0.0164" />
 			<material name="black" />
@@ -42,7 +42,7 @@
 	<link name="link_1.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_1_0.wrl" />
+				<mesh filename="AllegroHand/right/link_1_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 -1.5707963 0" xyz="0 0 0" />
 			<material name="black" />
@@ -64,7 +64,7 @@
 	<link name="link_2.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_2_0.wrl" />
+				<mesh filename="AllegroHand/right/link_2_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" xyz="0 0 0" />
 			<material name="black" />
@@ -86,7 +86,7 @@
 	<link name="link_3.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_3_0.wrl" />
+				<mesh filename="AllegroHand/right/link_3_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" xyz="0 0 0" />
 			<material name="black" />
@@ -108,7 +108,7 @@
 	<link name="link_3_0_tip">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_3_0_tip.wrl" />
+				<mesh filename="AllegroHand/right/link_3_0_tip.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 -1.5707963 0" xyz="0 0 -0.01" />
 			<material name="white">
@@ -129,7 +129,7 @@
 	<link name="link_4.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_0_0.wrl" />
+				<mesh filename="AllegroHand/right/link_0_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="0 0 0" xyz="0 0 0.0164" />
 			<material name="black" />
@@ -151,7 +151,7 @@
 	<link name="link_5.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_1_0.wrl" />
+				<mesh filename="AllegroHand/right/link_1_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 -1.5707963 0" xyz="0 0 0" />
 			<material name="black" />
@@ -173,7 +173,7 @@
 	<link name="link_6.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_2_0.wrl" />
+				<mesh filename="AllegroHand/right/link_2_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" xyz="0 0 0" />
 			<material name="black" />
@@ -195,7 +195,7 @@
 	<link name="link_7.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_3_0.wrl" />
+				<mesh filename="AllegroHand/right/link_3_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" xyz="0 0 0" />
 			<material name="black" />
@@ -217,7 +217,7 @@
 	<link name="link_7_0_tip">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_3_0_tip.wrl" />
+				<mesh filename="AllegroHand/right/link_3_0_tip.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 -1.5707963 0" xyz="0 0 -0.01" />
 			<material name="white">
@@ -238,7 +238,7 @@
 	<link name="link_8.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_0_0.wrl" />
+				<mesh filename="AllegroHand/right/link_0_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="0 0 0" xyz="0 0 0.0164" />
 			<material name="black" />
@@ -260,7 +260,7 @@
 	<link name="link_9.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_1_0.wrl" />
+				<mesh filename="AllegroHand/right/link_1_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 -1.5707963 0" xyz="0 0 0" />
 			<material name="black" />
@@ -282,7 +282,7 @@
 	<link name="link_10.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_2_0.wrl" />
+				<mesh filename="AllegroHand/right/link_2_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" xyz="0 0 0" />
 			<material name="black" />
@@ -304,7 +304,7 @@
 	<link name="link_11.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_3_0.wrl" />
+				<mesh filename="AllegroHand/right/link_3_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" xyz="0 0 0" />
 			<material name="black" />
@@ -326,7 +326,7 @@
 	<link name="link_11_0_tip">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_3_0_tip.wrl" />
+				<mesh filename="AllegroHand/right/link_3_0_tip.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 -1.5707963 0" xyz="0 0 -0.01" />
 			<material name="white">
@@ -347,7 +347,7 @@
 	<link name="link_12.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_12_0_right.wrl" />
+				<mesh filename="AllegroHand/right/link_12_0_right.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 0 -1.5707963" xyz="-0.02775 0 0" />
 			<material name="black">
@@ -366,12 +366,12 @@
 		<limit effort="1" lower="0.263" upper="1.396" velocity="1" />
 		<parent link="Palm" />
 		<child link="link_12.0" />
-		<origin rpy="0 -1.65806278845 -1.5707963259" xyz="-0.0182 0.019333 -0.045987" />
+		<origin rpy="0 -1.65806278845 -1.5707963259" xyz="-0.0182 0.019333 -0.045987" scale="0.001 0.001 0.001"/>
 	</joint>
 	<link name="link_13.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_13_0.wrl" />
+				<mesh filename="AllegroHand/right/link_13_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin xyz="0 0 0.016000001" />
 			<material name="black">
@@ -395,7 +395,7 @@
 	<link name="link_14.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_14_0.wrl" />
+				<mesh filename="AllegroHand/right/link_14_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963259 1.5707963259 0" xyz="0 0 0" />
 			<material name="black" />
@@ -417,7 +417,7 @@
 	<link name="link_15.0">
 		<visual>
 			<geometry>
-				<mesh filename="AllegroHand/right/link_15_0.wrl" />
+				<mesh filename="AllegroHand/right/link_15_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963259 1.5707963259 0" xyz="0 0 0" />
 			<material name="black" />
@@ -441,7 +441,7 @@
 			<geometry>
 				<mesh filename="AllegroHand/right/link_15_0_tip.wrl" />
 			</geometry>
-			<origin rpy="1.5707963259 1.5707963259 0" xyz="0 0 -0.0099999998" />
+			<origin rpy="1.5707963259 1.5707963259 0" xyz="0 0 -0.0099999998" scale="0.001 0.001 0.001"/>
 			<material name="white">
 				<color rgba=".9 .9 .9 1" />
 			</material>
