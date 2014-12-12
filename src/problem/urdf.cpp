@@ -112,7 +112,7 @@ urdf_geometry::urdf_geometry () {
     model = NULL;
 }
 
-void urdf_geometry::fill(xml_node *node, string dir) {
+void urdf_geometry::fill(xml_node *node, string dir, map<string,SoMaterial*> *materials) {
     if (model == NULL) {
         model = new SoSeparator;
         model->ref();
@@ -139,25 +139,41 @@ void urdf_geometry::fill(xml_node *node, string dir) {
                 (float)axis[2]),(float)angle);
     }
 
-    if (node->child("material").child("color")) {
-        xml_node color_node = node->child("material").child("color");
+    if (node->child("material")) {
+        string name = "";
+        if (node->child("material").attribute("name")) {
+            name = node->child("material").attribute("name").as_string();
+        }
 
-        double rgba[4];
-        string tmpString = color_node.attribute("rgba").as_string();
-        istringstream ss(tmpString);
-        getline(ss,tmpString,' ');
-        rgba[0] = atof(tmpString.c_str());
-        getline(ss,tmpString,' ');
-        rgba[1] = atof(tmpString.c_str());
-        getline(ss,tmpString,' ');
-        rgba[2] = atof(tmpString.c_str());
-        getline(ss,tmpString,' ');
-        rgba[3] = atof(tmpString.c_str());
+        map<string,SoMaterial*>::iterator it = materials->find(name);
+        if (it != materials->end()) {
+            submodel->addChild(it->second);
+        } else {
+            if (node->child("material").child("color")) {
+                xml_node color_node = node->child("material").child("color");
 
-        SoMaterial *material = new SoMaterial;
-        submodel->addChild(material);
-        material->diffuseColor.setValue(rgba[0],rgba[1],rgba[2]);
-        material->transparency.setValue(1.0-rgba[3]);
+                double rgba[4];
+                string tmpString = color_node.attribute("rgba").as_string();
+                istringstream ss(tmpString);
+                getline(ss,tmpString,' ');
+                rgba[0] = atof(tmpString.c_str());
+                getline(ss,tmpString,' ');
+                rgba[1] = atof(tmpString.c_str());
+                getline(ss,tmpString,' ');
+                rgba[2] = atof(tmpString.c_str());
+                getline(ss,tmpString,' ');
+                rgba[3] = atof(tmpString.c_str());
+
+                SoMaterial *material = new SoMaterial;
+                submodel->addChild(material);
+                material->diffuseColor.setValue(rgba[0],rgba[1],rgba[2]);
+                material->transparency.setValue(1.0-rgba[3]);
+
+                if (name != "") {
+                    materials->insert(pair<string,SoMaterial*>(name,material));
+                }
+            }
+        }
     }
 
     xml_node geom_node = node->child("geometry").first_child();
@@ -275,21 +291,29 @@ urdf_link::urdf_link () {
     weight = 1.0;
 }
 
-void urdf_link::fill (xml_node *node, string dir) {
+void urdf_link::fill (xml_node *node, string dir, map<string, SoMaterial *> *materials) {
     xml_node tmpNode;
 
     name = node->attribute("name").as_string();
 
     tmpNode = node->child("visual");
     while (tmpNode) {
-        visual.fill(&tmpNode,dir);
+        visual.fill(&tmpNode,dir,materials);
         tmpNode = tmpNode.next_sibling("visual");
     }
 
-    tmpNode = node->child("collision");
-    while (tmpNode) {
-        collision.fill(&tmpNode,dir);
-        tmpNode = tmpNode.next_sibling("collision");
+    tmpNode = node->child("collision_checking");
+    if (tmpNode) {
+        while (tmpNode) {
+            collision.fill(&tmpNode,dir,materials);
+            tmpNode = tmpNode.next_sibling("collision_checking");
+        }
+    } else {
+        tmpNode = node->child("collision");
+        while (tmpNode) {
+            collision.fill(&tmpNode,dir,materials);
+            tmpNode = tmpNode.next_sibling("collision");
+        }
     }
 
     if (node->child("collision").child("contact_coefficients")) {
@@ -366,14 +390,42 @@ void urdf_robot::fill (xml_node *node, string dir) {
 
     link = new urdf_link[num_links];
 
+    tmpNode = node->child("material");
+    while (tmpNode) {
+        if (tmpNode.attribute("name") && tmpNode.child("color")) {
+            string name = tmpNode.attribute("name").as_string();
+
+            xml_node color_node = node->child("material").child("color");
+
+            double rgba[4];
+            string tmpString = color_node.attribute("rgba").as_string();
+            istringstream ss(tmpString);
+            getline(ss,tmpString,' ');
+            rgba[0] = atof(tmpString.c_str());
+            getline(ss,tmpString,' ');
+            rgba[1] = atof(tmpString.c_str());
+            getline(ss,tmpString,' ');
+            rgba[2] = atof(tmpString.c_str());
+            getline(ss,tmpString,' ');
+            rgba[3] = atof(tmpString.c_str());
+
+            SoMaterial *material = new SoMaterial;
+            material->diffuseColor.setValue(rgba[0],rgba[1],rgba[2]);
+            material->transparency.setValue(1.0-rgba[3]);
+
+            materials.insert(pair<string,SoMaterial*>(name,material));
+
+            tmpNode = tmpNode.next_sibling("material");
+        }
+    }
+
     int i;
     tmpNode = node->child("link");
     for (i = 0; i < num_links; i++) {
-        link[i].fill(&tmpNode,dir);
+        link[i].fill(&tmpNode,dir,&materials);
 
         tmpNode = tmpNode.next_sibling("link");
     }
-
 
     if (num_links > 1) {
         //find base's index
@@ -448,22 +500,51 @@ void urdf_robot::print() {
 void urdf_obstacle::fill (xml_node *node, string dir) {
     xml_node tmpNode;
 
+    tmpNode = node->child("material");
+    while (tmpNode) {
+        if (tmpNode.attribute("name") && tmpNode.child("color")) {
+            string name = tmpNode.attribute("name").as_string();
+
+            xml_node color_node = node->child("material").child("color");
+
+            double rgba[4];
+            string tmpString = color_node.attribute("rgba").as_string();
+            istringstream ss(tmpString);
+            getline(ss,tmpString,' ');
+            rgba[0] = atof(tmpString.c_str());
+            getline(ss,tmpString,' ');
+            rgba[1] = atof(tmpString.c_str());
+            getline(ss,tmpString,' ');
+            rgba[2] = atof(tmpString.c_str());
+            getline(ss,tmpString,' ');
+            rgba[3] = atof(tmpString.c_str());
+
+            SoMaterial *material = new SoMaterial;
+            material->diffuseColor.setValue(rgba[0],rgba[1],rgba[2]);
+            material->transparency.setValue(1.0-rgba[3]);
+
+            materials.insert(pair<string,SoMaterial*>(name,material));
+
+            tmpNode = tmpNode.next_sibling("material");
+        }
+    }
+
     tmpNode = node->child("visual");
     while (tmpNode) {
-        visual.fill(&tmpNode,dir);
+        visual.fill(&tmpNode,dir,&materials);
         tmpNode = tmpNode.next_sibling("visual");
     }
 
     tmpNode = node->child("collision_checking");
     if (tmpNode) {
         while (tmpNode) {
-            collision.fill(&tmpNode,dir);
+            collision.fill(&tmpNode,dir,&materials);
             tmpNode = tmpNode.next_sibling("collision_checking");
         }
     } else {
         tmpNode = node->child("collision");
         while (tmpNode) {
-            collision.fill(&tmpNode,dir);
+            collision.fill(&tmpNode,dir,&materials);
             tmpNode = tmpNode.next_sibling("collision");
         }
     }
