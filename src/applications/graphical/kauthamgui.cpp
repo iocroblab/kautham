@@ -364,28 +364,23 @@ void Application::saveTabColors() {
 }
 
 
-int linksLoaded;
-int links2Load;
-pthread_t *loadProblem_thread;
-pthread_mutex_t *mutex;
-pthread_mutexattr_t *mutexattr;
-
 struct arg_struct {
     Problem *problem;
     xml_document *doc;
     bool useBBOX;
-    KthExcp *excp;
+    progress_struct *progress;
+    int links2Load;
     bool succeed;
+    KthExcp *excp;
 };
+
 
 void *loadProblem(void *arguments) {
     struct arg_struct *args = (struct arg_struct *)arguments;
 
-    args->excp = NULL;
-
     try {
         args->succeed = args->problem->setupFromFile(args->doc,args->useBBOX,
-                                                mutex,&linksLoaded);
+                                                args->progress);
     } catch (const KthExcp& excp) {
         args->succeed = false;
         args->excp = new KthExcp(excp.what(),excp.more());
@@ -397,9 +392,9 @@ void *loadProblem(void *arguments) {
         args->excp = new KthExcp("Unknown error","");
     }
 
-    pthread_mutex_lock(mutex);
-    linksLoaded = links2Load+1;
-    pthread_mutex_unlock(mutex);
+    pthread_mutex_lock(args->progress->mutex);
+    *(args->progress->linksLoaded) = args->links2Load+1;
+    pthread_mutex_unlock(args->progress->mutex);
 
     pthread_exit(NULL);
 }
@@ -421,52 +416,70 @@ bool Application::problemSetup(string problemFile){
     }
     bool useBBOX = settings->value("use_BBOX","false").toBool();
 
-
-    linksLoaded = 0;
-    links2Load = 0;
-    loadProblem_thread = NULL;
-    mutex = NULL;
-    mutexattr = NULL;
+    pthread_t *loadProblem_thread = NULL;
+    pthread_mutexattr_t *mutexattr = NULL;
+    struct arg_struct *arguments = NULL;
     _problem = new Problem();
     bool succeed = false;
-    QProgressDialog *progressDialog;
+    bool abort = true;
+    QProgressDialog *progressDialog = NULL;
     xml_document *doc = NULL;
-    struct arg_struct *arguments;
     try {
         //Parse the problem file and count the number of links to load
+        int links2Load = 0;
         doc = _problem->parseProblemFile(problemFile,def_path,&links2Load);
 
         if (links2Load > 0 && doc != NULL) {
-            //Create the loadProblem thread
-            loadProblem_thread = new pthread_t;
-            mutex = new pthread_mutex_t;
-            mutexattr = new pthread_mutexattr_t;
-            pthread_mutexattr_init(mutexattr);
-            pthread_mutexattr_settype(mutexattr,PTHREAD_MUTEX_NORMAL);
-            pthread_mutexattr_setprotocol(mutexattr,PTHREAD_PRIO_PROTECT);
-            pthread_mutexattr_setprioceiling(mutexattr,1);
-            pthread_mutex_init(mutex,mutexattr);
-
-            progressDialog = new QProgressDialog("Loading problem ...","",0,links2Load,mainWindow);
-            progressDialog->setWindowModality(Qt::WindowModal);
-            progressDialog->setCancelButton(0);
-            progressDialog->setMinimumDuration(0);
-            progressDialog->setVisible(true);
-            progressDialog->setValue(0);
+            //Load the problem and show the progress dialog
 
             arguments = new struct arg_struct;
             arguments->problem = _problem;
             arguments->doc = doc;
             arguments->useBBOX = useBBOX;
+            arguments->progress = new struct progress_struct;
+            arguments->succeed = false;
+            arguments->links2Load = links2Load;
+            arguments->excp = NULL;
+
+            mutexattr = new pthread_mutexattr_t;
+            pthread_mutexattr_init(mutexattr);
+            pthread_mutexattr_settype(mutexattr,PTHREAD_MUTEX_NORMAL);
+            pthread_mutexattr_setprotocol(mutexattr,PTHREAD_PRIO_PROTECT);
+            pthread_mutexattr_setprioceiling(mutexattr,1);
+
+            arguments->progress->mutex = new pthread_mutex_t;
+            pthread_mutex_init(arguments->progress->mutex,mutexattr);
+
+            arguments->progress->linksLoaded = new int;
+            *(arguments->progress->linksLoaded) = 0;
+
+            arguments->progress->abort = false;
+
+            progressDialog = new QProgressDialog(mainWindow);
+            progressDialog->setLabelText("Loading problem ...");
+            progressDialog->setWindowModality(Qt::WindowModal);
+            progressDialog->setMinimumDuration(0);
+            progressDialog->setVisible(true);
+            progressDialog->setMinimum(0);
+            progressDialog->setMaximum(links2Load);
+            progressDialog->setValue(0);
+            connect(progressDialog,SIGNAL(canceled()),this,SLOT(abortProblemSetup()));
+
+            loadProblem_thread = new pthread_t;
             pthread_create(loadProblem_thread,NULL,loadProblem,(void*)arguments);
 
-            int _linksLoaded = 0;
-            while (_linksLoaded <= links2Load) {
-                pthread_mutex_lock(mutex);
-                _linksLoaded = linksLoaded;
-                pthread_mutex_unlock(mutex);
+            abort = false;
+            int linksLoaded = 0;
+            while (linksLoaded <= links2Load && !abort) {
+                QApplication::processEvents(QEventLoop::AllEvents);
+                abort = progressDialog->wasCanceled();
 
-                progressDialog->setValue(_linksLoaded);
+                pthread_mutex_lock(arguments->progress->mutex);
+                arguments->progress->abort = abort;
+                linksLoaded = *(arguments->progress->linksLoaded);
+                pthread_mutex_unlock(arguments->progress->mutex);
+
+                progressDialog->setValue(linksLoaded);
             }
         }
     } catch (const KthExcp& excp) {
@@ -511,7 +524,12 @@ bool Application::problemSetup(string problemFile){
         mainWindow->setDisabled(false);
     }
 
-    if (links2Load > 0 && doc != NULL) {
+    if (doc != NULL) {
+        if (abort) {
+            pthread_mutex_lock(arguments->progress->mutex);
+            arguments->progress->abort = abort;
+            pthread_mutex_unlock(arguments->progress->mutex);
+        }
         pthread_join(*loadProblem_thread,NULL);
         succeed = arguments->succeed;
         if (arguments->excp != NULL) {
@@ -535,10 +553,12 @@ bool Application::problemSetup(string problemFile){
         }
 
         delete loadProblem_thread;
-        delete mutex;
         delete mutexattr;
         delete progressDialog;
         delete arguments->doc;
+        delete arguments->progress->linksLoaded;
+        delete arguments->progress->mutex;
+        delete arguments->progress;
         delete arguments;
     }
 
