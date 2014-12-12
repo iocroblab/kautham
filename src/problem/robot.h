@@ -46,6 +46,13 @@ namespace Kautham {
  *  @{
  */
 
+//! Struct progress_struct allows to inform how the problem loading is going and to abort it safely
+  struct progress_struct {
+      pthread_mutex_t *mutex;
+      int *linksLoaded;
+      bool abort;
+  };
+
 //! Struct attObj defines the transformation between an object and the robot link to which it is attached.
   struct attObj{
       attObj() {obs=NULL; link=NULL;}
@@ -99,7 +106,7 @@ namespace Kautham {
 
   public:
 
-    Robot(string robFile, KthReal robScale, LIBUSED lib = IVPQP, bool useBBOX = false, pthread_mutex_t *mutex = NULL, int *count = NULL); //!<  Constructor
+    Robot(string robFile, KthReal robScale, LIBUSED lib = IVPQP, bool useBBOX = false, progress_struct *progress = NULL); //!<  Constructor
 
     inline bool isArmed() {return armed;} //!< Returns true if the Robot is correctly armed
 
@@ -312,13 +319,13 @@ namespace Kautham {
 
   private:
     //! sets the Robot from a *.dh file
-    bool setFromDhFile(string robFile, bool useBBOX, pthread_mutex_t *mutex = NULL, int *count = NULL);
+    bool setFromDhFile(string robFile, bool useBBOX, progress_struct *progress = NULL);
 
     //! sets the Robot from a *.urdf file
-    bool setFromUrdfFile(string robFile, bool useBBOX, pthread_mutex_t *mutex = NULL, int *count = NULL);
+    bool setFromUrdfFile(string robFile, bool useBBOX, progress_struct *progress = NULL);
 
     //! sets the Robot from a 3D model file
-    bool setFromModelFile(string robFile, bool useBBOX, pthread_mutex_t *mutex = NULL, int *count = NULL);
+    bool setFromModelFile(string robFile, bool useBBOX, progress_struct *progress = NULL);
 
     //! This method updates the absolute position and orientation of each link in the robot.
     void updateRobot();
