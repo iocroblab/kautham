@@ -1245,6 +1245,10 @@ namespace Kautham {
  bool Robot::addLink(string name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis, bool rotational, bool movable,
                       KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], ode_element ode, bool useBBOX){
 
+     if (visual_model == NULL) {
+         throw KthExcp("Link " + name + " from robot " + this->name + " has no visual model");
+     }
+
      Link* temp = new Link(visual_model, collision_model, scale, Approach, libs, useBBOX);
      temp->setName(name);
      temp->setMovable(movable && (low != hi));
