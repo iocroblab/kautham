@@ -89,69 +89,63 @@
 
 using namespace std;
 
-namespace Kautham{
-  #define KthReal float
-  #define MAJOR_VERSION "2"
-  #define MINOR_VERSION "4"
+namespace Kautham {
+#define KthReal float
+#define MAJOR_VERSION "2"
+#define MINOR_VERSION "4"
 
-    enum ROBOTTYPE {
-		FREEFLY,
-		CHAIN,
-		TREE,
-		CLOSEDCHAIN
-	};
-
-    enum APPROACH {
-		DHSTANDARD,
-        DHMODIFIED,
-        URDF
+  enum ROBOTTYPE {
+      FREEFLY,
+      CHAIN,
+      TREE,
+      CLOSEDCHAIN
   };
-	
-	enum NEIGHSEARCHTYPE {
-		BRUTEFORCE,
-        ANNMETHOD
-	};
 
-	enum CONFIGTYPE {
-		SE2,
-		SE3,
-		Rn
-	};
+  enum APPROACH {
+      DHSTANDARD,
+      DHMODIFIED,
+      URDF
+  };
 
-  enum LIBUSED {
-    INVENTOR,
-    IVPQP,
-    IVSOLID
+  enum NEIGHSEARCHTYPE {
+      BRUTEFORCE,
+      ANNMETHOD
+  };
+
+  enum CONFIGTYPE {
+      SE2,
+      SE3,
+      Rn
   };
 
   enum SPACETYPE {
-    SAMPLEDSPACE,
-    CONTROLSPACE,
-    CONFIGSPACE
+      SAMPLEDSPACE,
+      CONTROLSPACE,
+      CONFIGSPACE
   };
 
   enum PROBLEMSTATE {
-	  INITIAL,
-	  PROBLEMLOADED,
-	  CSPACECREATED,
-	  PRMCALCULATED
+      INITIAL,
+      PROBLEMLOADED,
+      CSPACECREATED,
+      PRMCALCULATED
   };
 
   enum CONSTRAINEDKINEMATICS {
-    UNCONSTRAINED,
-    BRONCHOSCOPY
+      UNCONSTRAINED,
+      BRONCHOSCOPY
   };
 
   //! This enumeration has the relationship of all Inverse Kinematic models
   //! available to be used as solver of the robot inverse kinematics.
   enum INVKINECLASS {
-    NOINVKIN,
-    UNIMPLEMENTED,
-    RR2D,
-    TX90,
-    HAND,
-    TX90HAND,
-    UR5
+      NOINVKIN,
+      UNIMPLEMENTED,
+      RR2D,
+      TX90,
+      HAND,
+      TX90HAND,
+      UR5
   };
 
   enum PLANNERFAMILY {
@@ -166,24 +160,23 @@ namespace Kautham{
 #define INFINITY 1.0e40
 #endif
 
-    typedef std::map<std::string, KthReal> HASH_S_K;
-    typedef std::map<std::string, std::string> HASH_S_S;
+  typedef std::map<std::string, KthReal> HASH_S_K;
+  typedef std::map<std::string, std::string> HASH_S_S;
 
 	
-	//!	Structure  that save the object position and orientation in the WSpace.	
-	/*!	This structure save  temporarily the most important information about 
-	*		the object position and orientation in the 3D physical space regardless
-	*		If the problem is or not 3D.*/
-	struct DATA{
-		DATA(){
-			for(int i=0;i<3;i++)
-				pos[i]=ori[i]= (KthReal)0.0;
-			ori[3]= (KthReal)0.0;
-		}
-		KthReal pos[3];
-		KthReal ori[4];
-	};
+   //! Structure  that save the object position and orientation in the WSpace.
+   /*! This structure save  temporarily the most important information about
+   * the object position and orientation in the 3D physical space regardless
+   * If the problem is or not 3D.*/
+  struct DATA{
+      DATA(){
+          for(int i=0;i<3;i++)
+              pos[i]=ori[i]= (KthReal)0.0;
+          ori[3]= (KthReal)0.0;
+      }
+      KthReal pos[3];
+      KthReal ori[4];
+  };
 }
 
 #endif //_KAUTHAMDEFS_H
-

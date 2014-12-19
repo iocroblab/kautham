@@ -24,9 +24,18 @@
 
 
 #include "link.h"
-#include "ivpqpelement.h"
-#include <mt/point3.h>
 
+#if defined(KAUTHAM_USE_FCL)
+#include "ivfclelement.h"
+#else
+#if defined(KAUTHAM_USE_PQP)
+#include "ivpqpelement.h"
+#else
+#include "ivelement.h"
+#endif
+#endif
+
+#include <mt/point3.h>
 
 
 namespace Kautham {
@@ -42,20 +51,16 @@ namespace Kautham {
   *		graphical representation.
   */
   Link::Link(string ivFile, string collision_ivFile, KthReal scale,
-             APPROACH Type, LIBUSED lib, bool useBBOX){
-    libs = lib;
-    switch(libs){
-      case INVENTOR:
-        element = new IVElement(ivFile,collision_ivFile,scale,useBBOX);
-        break;
-      case IVPQP:
-        element = new IVPQPElement(ivFile,collision_ivFile,scale,useBBOX);
-        break;
-      case IVSOLID:
-        
-      default:
-        element = NULL;
-    }
+             APPROACH Type, bool useBBOX){
+#if defined(KAUTHAM_USE_FCL)
+      element = new IVFCLElement(ivFile,collision_ivFile,scale,useBBOX);
+#else
+#if defined(KAUTHAM_USE_PQP)
+      element = new IVPQPElement(ivFile,collision_ivFile,scale,useBBOX);
+#else
+      element = new IVElement(ivFile,collision_ivFile,scale,useBBOX);
+#endif
+#endif
 	  a = (KthReal)0.0;
 	  alpha = (KthReal)0.0;
 	  theta = (KthReal)0.0;
@@ -70,20 +75,19 @@ namespace Kautham {
 	  parent = NULL;
 	  childs.clear();
       this->Type = Type;
-	  //KthReal matTemp[4][4]={{1.0f,0.0f,0.0f,0.0f},{0.0f,1.0f,0.0f,0.0f},
-    // {0.0f,0.0f,1.0f,0.0f},{0.0f,0.0f,0.0f,1.0f}};
 	  
-    for(int i=0; i<4 ; i++)
-      for(int j=0 ; j<4; j++)
-        if(i == j)
-			    dhMatrix[i][j]= (KthReal)1.0;
-        else
-          dhMatrix[i][j]= (KthReal)0.0;
+      for(int i = 0; i < 4; ++i) {
+          for(int j=0 ; j<4; ++j) {
+              if (i == j) {
+                  dhMatrix[i][j]= (KthReal)1.0;
+              } else {
+                  dhMatrix[i][j]= (KthReal)0.0;
+              }
+          }
+      }
 
-
-    hasChanged = false;
-    preTransform = NULL;
-
+      hasChanged = false;
+      preTransform = NULL;
   }
 
 
@@ -96,20 +100,16 @@ namespace Kautham {
   *     \param scale is the global scale for this link and It is only used for
   *		graphical representation.
   */
-  Link::Link(SoSeparator *visual_model, SoSeparator *collision_model, float scale, APPROACH Type, LIBUSED lib, bool useBBOX){
-    libs = lib;
-    switch(libs){
-      case INVENTOR:
-        element = new IVElement(visual_model,collision_model,scale,useBBOX);
-        break;
-      case IVPQP:
-        element = new IVPQPElement(visual_model,collision_model,scale,useBBOX);
-        break;
-      case IVSOLID:
-
-      default:
-        element = NULL;
-    }
+  Link::Link(SoSeparator *visual_model, SoSeparator *collision_model, float scale, APPROACH Type, bool useBBOX){
+#if defined(KAUTHAM_USE_FCL)
+      element = new IVFCLElement(visual_model,collision_model,scale,useBBOX);
+#else
+#if defined(KAUTHAM_USE_PQP)
+      element = new IVPQPElement(visual_model,collision_model,scale,useBBOX);
+#else
+      element = new IVElement(visual_model,collision_model,scale,useBBOX);
+#endif
+#endif
       a = (KthReal)0.0;
       alpha = (KthReal)0.0;
       theta = (KthReal)0.0;
@@ -124,20 +124,19 @@ namespace Kautham {
       parent = NULL;
       childs.clear();
       this->Type = Type;
-      //KthReal matTemp[4][4]={{1.0f,0.0f,0.0f,0.0f},{0.0f,1.0f,0.0f,0.0f},
-    // {0.0f,0.0f,1.0f,0.0f},{0.0f,0.0f,0.0f,1.0f}};
 
-    for(int i=0; i<4 ; i++)
-      for(int j=0 ; j<4; j++)
-        if(i == j)
-                dhMatrix[i][j]= (KthReal)1.0;
-        else
-          dhMatrix[i][j]= (KthReal)0.0;
+      for(int i = 0; i < 4; ++i) {
+          for(int j=0 ; j<4; ++j) {
+              if (i == j) {
+                  dhMatrix[i][j]= (KthReal)1.0;
+              } else {
+                  dhMatrix[i][j]= (KthReal)0.0;
+              }
+          }
+      }
 
-
-    hasChanged = false;
-    preTransform = NULL;
-
+      hasChanged = false;
+      preTransform = NULL;
   }
 
 
@@ -381,5 +380,41 @@ namespace Kautham {
   }
 
 
-}
+  SoSeparator *Link::getModel(bool tran) {
+      if (element != NULL) {
+          return (((IVElement*)element)->ivModel(tran));
+      } else {
+          SoSeparator *sep = new SoSeparator;
+          return sep;
+      }
+  }
 
+
+  SoSeparator *Link::getCollisionModel(bool tran)  {
+      if (element != NULL) {
+          return (((IVElement*)element)->collision_ivModel(tran));
+      } else {
+          SoSeparator *sep = new SoSeparator;
+          return sep;
+      }
+  }
+
+
+  SoSeparator *Link::getModelFromColl() {
+      if (element != NULL) {
+#if defined(KAUTHAM_USE_FCL)
+          return (((IVFCLElement*)element)->getIvFromFCLModel());
+#else
+#if defined(KAUTHAM_USE_PQP)
+          return (((IVPQPElement*)element)->getIvFromPQPModel());
+#else
+          SoSeparator *sep = new SoSeparator;
+          return sep;
+#endif
+#endif
+      } else {
+          SoSeparator *sep = new SoSeparator;
+          return sep;
+      }
+  }
+}

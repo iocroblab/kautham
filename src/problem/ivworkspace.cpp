@@ -77,7 +77,7 @@ namespace Kautham {
 	
 	}
 
-	SoSeparator* IVWorkSpace::getIvFromPQPScene(bool bounding) {
+    SoSeparator* IVWorkSpace::getSceneFromColl(bool bounding) {
 		SoSeparator* pqp= new SoSeparator;
         pqp->ref();
 		for(unsigned int i=0;i<robots.size(); i++){
