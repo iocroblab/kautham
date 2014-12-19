@@ -22,7 +22,7 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
-
+#ifdef KAUTHAM_USE_FCL
 #include "ivfclelement.h"
 #include <fcl/collision_data.h>
 #include <fcl/collision.h>
@@ -196,3 +196,4 @@ bool IVFCLElement::makeFCLModel() {
     return false;
 }
 }
+#endif
