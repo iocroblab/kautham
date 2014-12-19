@@ -42,7 +42,6 @@
 #include <ompl/base/goals/GoalRegion.h>
 #include <problem/link.h>
 #include <problem/robot.h>
-#include <problem/obstacle.h>
 #include <problem/workspace.h>
 
 #define _USE_MATH_DEFINES
@@ -298,10 +297,6 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
 
             //! This function will build the kinamatic chain for Robot
             bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector<KthReal>& basePos);
-
-            //! This function will build the kinamatic chain for Obstracle
-            bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Obstacle *obstacle, double scale, int k);
-
 
             bool getTransformation(KauthamDEEnvironment::KinematicChain* chain, string robotDHType, Link* link, odinObject* obj, string robotName, vector<double>& rotAxis);
 

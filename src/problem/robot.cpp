@@ -23,7 +23,6 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 #include "robot.h"
-#include "ivsolidelement.h"
 #include <util/kthutil/kauthamdefs.h>
 #include <util/libkin/inversekinematic.h>
 #include <util/libkin/ivkintx90.h>
@@ -72,16 +71,14 @@ namespace Kautham {
  /*! Constructor for a robot.
   *  \param robFile is an xml file with extension *.dh or *.urdf
   *  \param robScale is a global scale for all the links
-  *  \param lib identifies wether PQP or SOLID collision libs are used
   */
- Robot::Robot(string robFile, KthReal robScale, LIBUSED lib, bool useBBOX, progress_struct *progress) {
+ Robot::Robot(string robFile, KthReal robScale, bool useBBOX, progress_struct *progress) {
      //set initial values
      robotAttachedTo = NULL;
      linkAttachedTo = NULL;
      collisionable = true;
      _linkPathDrawn = -1;
      nTrunk = 0;
-     libs = lib;
      scale = robScale;
      armed = false;
      se3Enabled = false;
@@ -1210,7 +1207,7 @@ namespace Kautham {
  bool Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal linkScale, KthReal theta,
                       KthReal d,KthReal a, float alpha, bool rotational,
                       bool movable, KthReal low, KthReal hi, float w, string parentName, float preTrans[], bool useBBOX){
-     Link* temp = new Link(ivFile, collision_ivFile, scale*linkScale, Approach, libs, useBBOX);
+     Link* temp = new Link(ivFile, collision_ivFile, scale*linkScale, Approach, useBBOX);
      temp->setName(name);
      temp->setMovable(movable && (low != hi));
      temp->setRotational(rotational);
@@ -1249,7 +1246,7 @@ namespace Kautham {
          throw KthExcp("Link " + name + " from robot " + this->name + " has no visual model");
      }
 
-     Link* temp = new Link(visual_model, collision_model, scale, Approach, libs, useBBOX);
+     Link* temp = new Link(visual_model, collision_model, scale, Approach, useBBOX);
      temp->setName(name);
      temp->setMovable(movable && (low != hi));
      temp->setRotational(rotational);
@@ -1294,50 +1291,46 @@ namespace Kautham {
   *
   */
  SoSeparator* Robot::getModel(){
-     if(visModel == NULL){
-         switch(libs){
-         case IVPQP:
-         case IVSOLID:
-             SoSeparator* robot = new SoSeparator();
-             robot->ref();
-             for(unsigned int i =0; i < links.size(); i++)
-                 robot->addChild(((IVElement*)links[i]->getElement())->ivModel(true));
-
-             // Now the three dimensional proposed path for the last link is added
-             _pathSeparator = new SoSeparator();
-             _pathSeparator->ref();
-             _pathSeparator->setName("Path");
-             SoMaterial*  tmpMat = new SoMaterial();
-             tmpMat->diffuseColor.setValue( 0., 0., 1.);
-             _pathSeparator->addChild( tmpMat );
-             SoVRMLExtrusion* tmpVRML = new SoVRMLExtrusion();
-             tmpVRML->solid.setValue(true);
-             float diag = diagLimits()/100.;
-             //diag = diag < 2. ? 2. : diag;
-             tmpVRML->scale.setValue( diag,diag );
-             float vertex[13][2];
-             vertex[0][0] = 0.1000;    vertex[0][1] = 0.;
-             vertex[1][0] = 0.0866;    vertex[1][1] = 0.0500;
-             vertex[2][0] = 0.0500;    vertex[2][1] = 0.0866;
-             vertex[3][0] = 0.0000;    vertex[3][1] = 0.1000;
-             vertex[4][0] = -0.0500;   vertex[4][1] = 0.0866;
-             vertex[5][0] = -0.0866;   vertex[5][1] = 0.0500;
-             vertex[6][0] = -0.1000;   vertex[6][1] = 0.0000;
-             vertex[7][0] = -0.0866;   vertex[7][1] = -0.0500;
-             vertex[8][0] = -0.0500;   vertex[8][1] = -0.0866;
-             vertex[9][0] = -0.0000;   vertex[9][1] = -0.1000;
-             vertex[10][0] = 0.0500;   vertex[10][1] = -0.0866;
-             vertex[11][0] = 0.0866;   vertex[11][1] = -0.0500;
-             vertex[12][0] = 0.1000;   vertex[12][1] = 0.;
-             tmpVRML->crossSection.setValues(0,13,vertex);
-             _graphicalPath = new SoMFVec3f();
-             tmpVRML->spine.connectFrom(_graphicalPath);
-             _pathSeparator->addChild(tmpVRML);
-
-             //robot->addChild(_pathSeparator);
-             visModel = robot;
-             break;
+     if (visModel == NULL) {
+         SoSeparator *robot = new SoSeparator();
+         robot->ref();
+         for (unsigned int i = 0; i < links.size(); ++i) {
+                 robot->addChild(links[i]->getModel(true));
          }
+
+         // Now the three dimensional proposed path for the last link is added
+         _pathSeparator = new SoSeparator();
+         _pathSeparator->ref();
+         _pathSeparator->setName("Path");
+         SoMaterial*  tmpMat = new SoMaterial();
+         tmpMat->diffuseColor.setValue( 0., 0., 1.);
+         _pathSeparator->addChild( tmpMat );
+         SoVRMLExtrusion* tmpVRML = new SoVRMLExtrusion();
+         tmpVRML->solid.setValue(true);
+         float diag = diagLimits()/100.;
+         //diag = diag < 2. ? 2. : diag;
+         tmpVRML->scale.setValue( diag,diag );
+         float vertex[13][2];
+         vertex[0][0] = 0.1000;    vertex[0][1] = 0.;
+         vertex[1][0] = 0.0866;    vertex[1][1] = 0.0500;
+         vertex[2][0] = 0.0500;    vertex[2][1] = 0.0866;
+         vertex[3][0] = 0.0000;    vertex[3][1] = 0.1000;
+         vertex[4][0] = -0.0500;   vertex[4][1] = 0.0866;
+         vertex[5][0] = -0.0866;   vertex[5][1] = 0.0500;
+         vertex[6][0] = -0.1000;   vertex[6][1] = 0.0000;
+         vertex[7][0] = -0.0866;   vertex[7][1] = -0.0500;
+         vertex[8][0] = -0.0500;   vertex[8][1] = -0.0866;
+         vertex[9][0] = -0.0000;   vertex[9][1] = -0.1000;
+         vertex[10][0] = 0.0500;   vertex[10][1] = -0.0866;
+         vertex[11][0] = 0.0866;   vertex[11][1] = -0.0500;
+         vertex[12][0] = 0.1000;   vertex[12][1] = 0.;
+         tmpVRML->crossSection.setValues(0,13,vertex);
+         _graphicalPath = new SoMFVec3f();
+         tmpVRML->spine.connectFrom(_graphicalPath);
+         _pathSeparator->addChild(tmpVRML);
+
+         //robot->addChild(_pathSeparator);
+         visModel = robot;
      }
      return visModel;
  }
@@ -1347,23 +1340,17 @@ namespace Kautham {
   *
   */
  SoSeparator* Robot::getCollisionModel(){
-     if(collModel == NULL){
-         switch(libs){
-         case IVPQP:
-         case IVSOLID:
-             SoSeparator* robot = new SoSeparator();
-             robot->ref();
-             for(unsigned int i =0; i < links.size(); i++)
-                 robot->addChild(((IVElement*)links[i]->getElement())->collision_ivModel(true));
-
-
-             collModel = robot;
-             break;
+     if (collModel == NULL) {
+         SoSeparator *robot = new SoSeparator();
+         robot->ref();
+         for (unsigned int i = 0; i < links.size(); ++i) {
+                 robot->addChild(links[i]->getCollisionModel(true));
          }
+
+         collModel = robot;
      }
      return collModel;
  }
-
 
 
  /*!
@@ -1399,23 +1386,11 @@ namespace Kautham {
  }
 
  SoSeparator* Robot::getModelFromColl(){
-     SoSeparator* root = NULL;
-     switch(libs){
-     case IVPQP:
-         root = new SoSeparator();
-         for(unsigned int i =0; i < links.size(); i++)
-             root->addChild(((IVPQPElement*)links[i]->getElement())->getIvFromPQPModel());
-         return root;
-         break;
-     case IVSOLID:
-         root = new SoSeparator();
-         for(unsigned int i =0; i < links.size(); i++)
-             root->addChild(((IVSOLIDElement*)links[i]->getElement())->getIvFromSOLIDModel());
-         return root;
-         break;
-     default:
-         return NULL;
+     SoSeparator* root = new SoSeparator;
+     for (unsigned int i = 0; i < links.size(); ++i) {
+         root->addChild(links[i]->getModelFromColl());
      }
+     return root;
  }
 
  /*!

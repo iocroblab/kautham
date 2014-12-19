@@ -49,7 +49,7 @@ namespace Kautham{
 		  //~IVWorkSpace();
           SoSeparator* getIvScene(bool bounding = false);
           SoSeparator* getCollisionIvScene(bool bounding = false);
-		  SoSeparator* getIvFromPQPScene(bool bounding = false);
+          SoSeparator* getSceneFromColl(bool bounding = false);
 		  static SoSeparator* calculateBoundingBox(SoSeparator * roots);
 	  protected:
 		  void updateScene();

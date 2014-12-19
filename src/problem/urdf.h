@@ -222,25 +222,5 @@ public:
     void print();//!< Prints robot information
 };
 
-//! Class that describes an obstacle. Obstacles are defined as a robot with a unique link and no joints
-class urdf_obstacle {
-public:
-    //! Visual properties of the link.
-    /*! This element specifies the shape of the object for visualization purposes.
-    */
-    urdf_geometry visual;
-    //! Collision properties of a link.
-    /*! Note that this can be different from the visual properties of a link, for example, simpler collision models are often used to reduce computation time.
-    */
-    urdf_geometry collision;
-    urdf_inertial inertial;//!< Inertial propierties from the obstacle
-    urdf_contact_coefficients contact_coefficients;//!< Contact coefficients of the obstacle
-    map<string,SoMaterial*> materials;//!< Materials used in the obstacle
-
-
-    void fill(xml_node *node, string dir);//!< Fills variables given a link node
-    void print();//!< Prints obstacle information
-};
-
 /** @}   end of Doxygen module "Problem" */
 }

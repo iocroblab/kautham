@@ -26,6 +26,7 @@
 #if defined(KAUTHAM_USE_ODE)
 
 #include <problem/workspace.h>
+#include <problem/ivpqpelement.h>
 #include <sampling/sampling.h>
 
 #include <boost/bind/mem_fn.hpp>
@@ -465,39 +466,6 @@ bool KauthamDEEnvironment::buildKinematicChain(KinematicChain* chain,
         return true;
     }
 
-bool KauthamDEEnvironment::buildKinematicChain(KinematicChain* chain,
-                                      Obstacle* obstacle,
-                                      double scale, int k)
-{
-    //string directory = robFileName.substr(0,robFileName.find_last_of("/")+1);
-    //xml_document robotXml;
-    //xml_parse_result parsed = robotXml.load_file(robFileName.c_str());
-    //if(parsed)
-    //{
-        //string robotName = robotXml.child("Robot").attribute("name").value();
-
-    std::string l = "";
-
-    l = static_cast<std::ostringstream*>(&(std::ostringstream() << k))->str();
-
-    chain->name = l;
-        //string robotDHType = robotXml.child("Robot").attribute("DHType").value();
-    odinObject obj;
-    obj.mass = 1;
-    //obj.name = robotName + ((*linkIterator).attribute("name").value());
-    obj.name = (chain->name);
-    //string ivFileName = directory + (*linkIterator).attribute("ivFile").value();
-    obj.fixed = false;
-    getTrimesh(((IVElement*)obstacle->getElement())->ivModel(false), &obj, scale);
-        for (int i = 0; i < 3; i++)
-        {
-            obj.position.push_back(obstacle->getElement()->getPosition()[i]);
-            obj.orientation.push_back(obstacle->getElement()->getOrientation()[i]);
-        }
-        obj.orientation.push_back((obstacle->getElement()->getOrientation()[3])*toRad);
-    chain->objects[obj.name] = obj;
-        return true;
-    }
 
 void KauthamDEEnvironment::getTrimesh(SoSeparator *ivmodel, odinObject* obj, double scale)
 {

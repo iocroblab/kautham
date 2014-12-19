@@ -32,7 +32,6 @@
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include <util/libkin/inversekinematic.h>
 #include <util/libkin/constrainedkinematic.h>
-//#include <problem/ivpqpelement.h>
 #include <list>
 
 
@@ -73,7 +72,6 @@ namespace Kautham {
   class Robot {
   private:
       ROBOTTYPE         robType; //!< The robot type FREEFLY,CHAIN, TREE, CLOSEDCHAIN
-      LIBUSED           libs; //!< Flag indicating the collision-check library used PQP or SOLID.
       string            name; //!< A descriptive name of robot
       KthReal           scale;//!< This is the global scale for all the links that compound the robot. Normally it is equal to one.
       RobWeight*        _weights; //!< Weights that affect the distance computations.
@@ -106,7 +104,7 @@ namespace Kautham {
 
   public:
 
-    Robot(string robFile, KthReal robScale, LIBUSED lib = IVPQP, bool useBBOX = false, progress_struct *progress = NULL); //!<  Constructor
+    Robot(string robFile, KthReal robScale, bool useBBOX = false, progress_struct *progress = NULL); //!<  Constructor
 
     inline bool isArmed() {return armed;} //!< Returns true if the Robot is correctly armed
 
@@ -123,8 +121,6 @@ namespace Kautham {
     inline RobConf* getCurrentPos(){return &_currentConf;} //!< Returns the current RobConf used to represent the SE3 position and Rn configuration
 
     inline RobConf* getHomePos(){ return &_homeConf;} //!< Returns the Home robot configuration
-
-    inline LIBUSED whatLibs(){return libs;}//!< Returns the type of libraries used to build the models.
 
     inline KthReal* getLimits(int member){return _spatialLimits[member];} //!< Returns the limits of the robot (needed for mobile bases).
 

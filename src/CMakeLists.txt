@@ -69,12 +69,24 @@ endif(COIN_LIBRARY_FOUND )
 find_package( Assimp )
 if( ASSIMP_FOUND )
    message( STATUS "assimp Package FOUND")
-set(EXTRA_LIBS ${EXTRA_LIBS} ${ASSIMP_LIBRARIES} )
+   set(EXTRA_LIBS ${EXTRA_LIBS} ${ASSIMP_LIBRARIES} )
    add_definitions( -DKAUTHAM_USE_ASSIMP )
 else( ASSIMP_FOUND )
    message( STATUS "assimp Package NOT FOUND")
 endif( ASSIMP_FOUND )
 
+#### fcl ######
+find_package( fcl )
+if( FCL_FOUND )
+   message( STATUS "fcl Package FOUND")
+   set(EXTRA_LIBS ${EXTRA_LIBS} ${FCL_LIBRARIES} )
+   add_definitions( -DKAUTHAM_USE_FCL )
+else( FCL_FOUND )
+   message( STATUS "fcl Package NOT FOUND. PQP will be used for collision checking")
+   add_definitions( -DKAUTHAM_USE_PQP )
+endif( FCL_FOUND )
+
+#### Armadillo ######
 find_package( Armadillo )
 if( ARMADILLO_FOUND )
    message( STATUS "armadillo Package FOUND")
@@ -119,8 +131,6 @@ add_subdirectory( sampling )
 #file( GLOB SRC_FILES problem/*.cpp )
 #file( GLOB HDR_FILES problem/*.h* external/*.h* )
 
-
-add_definitions( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
 message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
 
 add_library(kautham SHARED ${KAUTHAM_SRC} )
