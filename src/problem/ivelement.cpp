@@ -115,10 +115,9 @@ namespace Kautham {
 		rot = new SoRotation;
 		sca = new SoScale();
 
-        trans->translation.setValue(SbVec3f((float)position[0],(float)position[1],(float)position[2]));
+        trans->translation.setValue(position);
 
-        rot->rotation.setValue(SbVec3f((float)orientation[0],(float)orientation[1],
-                               (float)orientation[2]),(float)orientation[3]);
+        rot->rotation.setValue(orientation);
 
         sca->scaleFactor.setValue((float)scale,(float)scale,(float)scale);
 
@@ -187,10 +186,9 @@ namespace Kautham {
         rot = new SoRotation;
         sca = new SoScale();
 
-        trans->translation.setValue(SbVec3f((float)position[0],(float)position[1],(float)position[2]));
+        trans->translation.setValue(position);
 
-        rot->rotation.setValue(SbVec3f((float)orientation[0],(float)orientation[1],
-                               (float)orientation[2]),(float)orientation[3]);
+        rot->rotation.setValue(orientation);
 
         sca->scaleFactor.setValue((float)scale,(float)scale,(float)scale);
 
@@ -421,13 +419,13 @@ namespace Kautham {
 	void IVElement::setPosition(KthReal pos[3]){
 		for(int i=0;i<3;i++)
 			position[i]=pos[i];
-      trans->translation.setValue(SbVec3f((float)position[0],(float)position[1],(float)position[2]));
+      trans->translation.setValue(position);
 	}
 
 	void IVElement::setOrientation(KthReal ori[4]){
 		for(int i=0;i<4;i++)
 			orientation[i]=ori[i];
-        rot->rotation.setValue(SbRotation(orientation));
+        rot->rotation.setValue(orientation);
 	}
 
   SbMatrix IVElement::orientationMatrix() {

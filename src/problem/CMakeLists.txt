@@ -9,11 +9,13 @@ if( ASSIMP_FOUND )
    include_directories( ${ASSIMP_INCLUDE_DIR})
 endif( ASSIMP_FOUND )
 
+if( FCL_FOUND )
+   include_directories( ${FCL_INCLUDE_DIR})
+endif( FCL_FOUND )
+
 if( ARMADILLO_FOUND )
    include_directories( ${Armadillo_INCLUDE_DIR})
 endif( ARMADILLO_FOUND )
-
-add_definitions( -DKAUTHAM_COLLISION_PQP ) # Remove it if you don't want to create a PQP collision models.
 
 file( GLOB SRC_FILES *.cpp )
 file( GLOB HDR_FILES *.h* )

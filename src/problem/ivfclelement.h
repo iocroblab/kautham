@@ -20,16 +20,18 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
- 
- 
-#if !defined(_IVPQPELEMENT_H)
-#define _IVPQPELEMENT_H
+/* Author: Nestor Garcia Hidalgo */
+
+
+#if !defined(_IVFCLELEMENT_H)
+#define _IVFCLELEMENT_H
 
 #include "ivelement.h"
+#include <fcl/BVH/BVH_model.h>
+#include <fcl/collision_object.h>
+
 #include <util/kthutil/kauthamdefs.h>
 #include <Inventor/SoPrimitiveVertex.h>
-#include <external/pqp/PQP.h>
 #include <external/lcprng.h>
 #include <Inventor/actions/SoCallbackAction.h>
 #include <Inventor/SbLinear.h>
@@ -43,33 +45,33 @@ namespace Kautham {
  *  @{
  */
 
-  class IVPQPElement:public IVElement {
-  public:
+typedef fcl::BVHModel<fcl::OBBRSS> FCL_Model;
 
-      IVPQPElement(string visFile, string collFile, KthReal sc, bool useBBOX);
-      IVPQPElement(SoSeparator *visual_model,SoSeparator *collision_model, KthReal sc, bool useBBOX);
-	  SoSeparator* getIvFromPQPModel(bool tran = true);
-	  bool collideTo(Element* other);
-	  KthReal getDistanceTo(Element* other);
-      inline PQP_Model* pqpModel(){return pqpmodel;}
-  private:
-	  PQP_Model *pqpmodel;
-	  bool makePQPModel();
-      struct tri_info {
-          tri_info(PQP_Model* model, int cnt = 0) {
-              pqp_model = model;
-              tri_cnt = cnt;
-          }
-          PQP_Model* pqp_model;
-          int tri_cnt;
-      };
-      static void triang_CB(void *data, SoCallbackAction *action,
-                            const SoPrimitiveVertex *vertex1,
-                            const SoPrimitiveVertex *vertex2,
-                            const SoPrimitiveVertex *vertex3);
-  };
+class IVFCLElement:public IVElement {
+public:
+    IVFCLElement(string visFile, string collFile, KthReal sc, bool useBBOX);
+    IVFCLElement(SoSeparator *visual_model,SoSeparator *collision_model, KthReal sc, bool useBBOX);
+    SoSeparator* getIvFromFCLModel(bool tran = true);
+    bool collideTo(Element* other);
+    KthReal getDistanceTo(Element* other);
+    inline FCL_Model *fclModel() {return fclmodel;}
+    fcl::CollisionObject *getCollisionObject();
 
-  /** @}   end of Doxygen module "Problem" */
+private:
+    FCL_Model *fclmodel;
+    bool makeFCLModel();
+    struct tri_info {
+        vector<fcl::Vec3f> vertices;
+        vector<fcl::Triangle> triangles;
+    };
+    tri_info info;
+    static void triang_CB(void *data, SoCallbackAction *action,
+                          const SoPrimitiveVertex *vertex1,
+                          const SoPrimitiveVertex *vertex2,
+                          const SoPrimitiveVertex *vertex3);
+};
+
+/** @}   end of Doxygen module "Problem" */
 }
 
-#endif  //_IVPQPELEMENT_H
+#endif  //_IVFCLELEMENT_H
