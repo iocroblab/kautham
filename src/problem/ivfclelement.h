@@ -26,6 +26,7 @@
 #if !defined(_IVFCLELEMENT_H)
 #define _IVFCLELEMENT_H
 
+#ifdef KAUTHAM_USE_FCL
 #include "ivelement.h"
 #include <fcl/BVH/BVH_model.h>
 #include <fcl/collision_object.h>
@@ -73,5 +74,6 @@ private:
 
 /** @}   end of Doxygen module "Problem" */
 }
+#endif
 
 #endif  //_IVFCLELEMENT_H
