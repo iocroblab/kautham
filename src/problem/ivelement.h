@@ -64,8 +64,8 @@ class IVElement : public Element {
       void setPosition(KthReal pos[3]);
 	  void setOrientation(KthReal ori[4]);
 	  SbMatrix orientationMatrix();
-	  SoSeparator* ivModel(bool tran=false);
-      SoSeparator* collision_ivModel(bool tran=false);
+      SoSeparator* ivModel(bool tran = false);
+      SoSeparator* collision_ivModel(bool tran = false);
       bool collideTo(Element* other);
       static void point_CB(void *data, SoCallbackAction *action,
                            const SoPrimitiveVertex *v);

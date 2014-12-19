@@ -89,7 +89,7 @@ namespace Kautham{
       *		You can build a complete robot, if you adding progresively a each Link
 	  *		from absolute coordinates frame to final effector frame.*/
       Link(string ivFile, string collision_ivFile, float scale,
-           APPROACH Type, LIBUSED lib = IVPQP, bool useBBOX = false);
+           APPROACH Type, bool useBBOX = false);
 
       //!	Constructor.
       /*!	This constructor receive two models, visual and collision, and a global scale for the
@@ -97,7 +97,7 @@ namespace Kautham{
       *		You can build a complete robot, if you adding progresively a each Link
       *		from absolute coordinates frame to final effector frame.*/
       Link(SoSeparator *visual_model, SoSeparator *collision_model, float scale,
-           APPROACH Type, LIBUSED lib = IVPQP, bool useBBOX = false);
+           APPROACH Type, bool useBBOX = false);
 
 	  //! Function to set \f$ \alpha \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ \alpha \f$ parameter.*/
@@ -229,6 +229,9 @@ namespace Kautham{
     inline Element*     getElement(){return element;}
     inline bool         forceChange(Link* who){if(who == parent){ hasChanged = true; return true;}return false;}
     inline bool         changed(){return hasChanged;}
+    SoSeparator *getModel(bool tran);
+    SoSeparator *getCollisionModel(bool tran);
+    SoSeparator *getModelFromColl();
   private:
     //! This is the pointer to the element assigned to the link. This is the link model
     Element*            element;
@@ -295,8 +298,6 @@ namespace Kautham{
 	  //! Approach used to describe this robot.
     APPROACH          Type;
 
-    LIBUSED             libs;
-  
     //! Used to define when the Link has been moved.
     bool                hasChanged;
 

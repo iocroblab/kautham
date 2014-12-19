@@ -904,20 +904,13 @@ namespace Kautham {
 
 
   bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struct *progress) {
-      Robot *rob;
-      string name;
-
-#ifndef KAUTHAM_COLLISION_PQP
-      rob = new Robot(robot_node->attribute("robot").as_string(),
-                      (KthReal)robot_node->attribute("scale").as_double(),INVENTOR,useBBOX,progress);
-#else
-      rob = new Robot(robot_node->attribute("robot").as_string(),
-                      (KthReal)robot_node->attribute("scale").as_double(),IVPQP,useBBOX,progress);
-#endif
+      Robot *rob = new Robot(robot_node->attribute("robot").as_string(),
+                           (KthReal)robot_node->attribute("scale").as_double(),useBBOX,progress);
 
       if (!rob->isArmed()) return false;
 
       // Setup the Inverse Kinematic if it has one.
+      string name;
       if(robot_node->child("InvKinematic")){
           name = robot_node->child("InvKinematic").attribute("name").as_string();
           if( name == "RR2D" )
@@ -1020,12 +1013,7 @@ namespace Kautham {
 
   bool Problem::addRobot2WSpace(string robFile, KthReal scale, vector<KthReal> home,
                          vector< vector<KthReal> > limits) {
-      Robot *rob;
-#ifndef KAUTHAM_COLLISION_PQP
-      rob = new Robot(robFile,scale,INVENTOR,false);
-#else
-      rob = new Robot(robFile,scale,IVPQP,false);
-#endif
+      Robot *rob = new Robot(robFile,scale,false);
 
       if (!rob->isArmed()) return false;
 
@@ -1425,20 +1413,13 @@ namespace Kautham {
 
 
   bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, progress_struct *progress) {
-      Robot *obs;
-      string name;
-
-#ifndef KAUTHAM_COLLISION_PQP
-      obs = new Robot(obstacle_node->attribute("obstacle").as_string(),
-                      (KthReal)obstacle_node->attribute("scale").as_double(),INVENTOR,useBBOX, progress);
-#else
-      obs = new Robot(obstacle_node->attribute("obstacle").as_string(),
-                      (KthReal)obstacle_node->attribute("scale").as_double(),IVPQP,useBBOX, progress);
-#endif
+      Robot *obs= new Robot(obstacle_node->attribute("obstacle").as_string(),
+                      (KthReal)obstacle_node->attribute("scale").as_double(),useBBOX,progress);
 
       if (!obs->isArmed()) return false;
 
       // Setup the limits of the moveable base
+      string name;
       xml_node limits_node = obstacle_node->child("Limits");
       while (limits_node) {
           name = limits_node.attribute("name").as_string();
@@ -1503,12 +1484,7 @@ namespace Kautham {
 
 
   bool Problem::addObstacle2WSpace(string robFile, KthReal scale, vector<KthReal> home) {
-      Robot *obs;
-#ifndef KAUTHAM_COLLISION_PQP
-      obs = new Robot(robFile,scale,INVENTOR,false);
-#else
-      obs = new Robot(robFile,scale,IVPQP,false);
-#endif
+      Robot *obs = new Robot(robFile,scale,false);
 
       if (!obs->isArmed()) return false;
 

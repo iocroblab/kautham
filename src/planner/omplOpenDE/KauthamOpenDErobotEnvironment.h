@@ -43,7 +43,6 @@
 #include <ompl/base/goals/GoalRegion.h>
 #include <problem/link.h>
 #include <problem/robot.h>
-#include <problem/obstacle.h>
 #include <problem/workspace.h>
 
 #define _USE_MATH_DEFINES

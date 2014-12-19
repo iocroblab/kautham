@@ -133,7 +133,7 @@ IVPQPElement::IVPQPElement(SoSeparator *visual_model,SoSeparator *collision_mode
   bool IVPQPElement::collideTo(Element* other) {
     Element::increaseCollCheckCounter();
 	  try{
-		  PQP_CollideResult pqp_coll_result;
+          PQP_CollideResult pqp_coll_result;
 		  KthReal *pR,*pO;
 		  double posR[3];
 		  double oriR[3][3];
@@ -210,9 +210,9 @@ IVPQPElement::IVPQPElement(SoSeparator *visual_model,SoSeparator *collision_mode
   }
 
   bool IVPQPElement::makePQPModel() {
-    if(collision_ivModel() != NULL){
-		  if(this->pqpmodel == NULL){
-			  this->pqpmodel = new PQP_Model;
+    if (collision_ivModel() != NULL) {
+          if (pqpmodel == NULL) {
+              pqpmodel = new PQP_Model;
 			  SoCallbackAction triAction;
 			  tri_info info(pqpmodel,scale);
 			  pqpmodel->BeginModel();
