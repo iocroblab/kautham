@@ -45,11 +45,9 @@ namespace Kautham {
 /** \addtogroup Planner
  *  @{
  */
-
   namespace omplplanner{
-
     class omplRRTStarPlanner:public omplPlanner {
-	    public:
+    public:
         omplRRTStarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
         ~omplRRTStarPlanner();
         bool trySolve();//!< Overloaded trySolve function to include evaluation of final path cost
@@ -58,31 +56,31 @@ namespace Kautham {
 
         bool setParameters();
 
-         KthReal _Range;
-         KthReal _GoalBias;
-         KthReal _PathBias;
-         KthReal _PathSamplingRangeFactor;
-         KthReal _NodeRejection;
-         bool _DelayCC;
-         double _KneighFactor;
-         unsigned int _opti;
-         double _lengthweight;
-         double _penalizationweight;
-         double _orientationweight;
-         bool _incremental;
-         int _disablePMDControlsFromSampling;
-         ob::OptimizationObjectivePtr _optiselected;
-         ob::OptimizationObjectivePtr _lengthopti;
-         ob::OptimizationObjectivePtr _clearanceopti;
-         //ob::OptimizationObjectivePtr _pcaalignmentopti;
-         //ob::OptimizationObjectivePtr _handpmdalignmentopti;
-         //ob::OptimizationObjectivePtr _multise3pmdalignmentopti;
-         ob::OptimizationObjectivePtr _pmdalignmentopti;
-	  };
+        KthReal _Range;
+        KthReal _GoalBias;
+        KthReal _PathBias;
+        KthReal _PathSamplingRangeFactor;
+        KthReal _NodeRejection;
+        bool _DelayCC;
+        double _KneighFactor;
+        unsigned int _opti;
+        double _lengthweight;
+        double _penalizationweight;
+        double _orientationweight;
+        bool _incremental;
+        KthReal _Diffusion;
+        int _disablePMDControlsFromSampling;
+        ob::OptimizationObjectivePtr _optiselected;
+        ob::OptimizationObjectivePtr _lengthopti;
+        ob::OptimizationObjectivePtr _clearanceopti;
+        //ob::OptimizationObjectivePtr _pcaalignmentopti;
+        //ob::OptimizationObjectivePtr _handpmdalignmentopti;
+        //ob::OptimizationObjectivePtr _multise3pmdalignmentopti;
+        ob::OptimizationObjectivePtr _pmdalignmentopti;
+      };
   }
   /** @}   end of Doxygen module "Planner */
 }
 
 #endif // KAUTHAM_USE_OMPL
 #endif  //_omplRRTStarPLANNER_H
-

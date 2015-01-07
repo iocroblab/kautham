@@ -22,7 +22,7 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
- 
+
 
 #if defined(KAUTHAM_USE_OMPL)
 #include <problem/workspace.h>
@@ -39,6 +39,7 @@
 #include <ompl/base/objectives/PathLengthOptimizationObjective.h>
 #include <ompl/base/objectives/MaximizeMinClearanceObjective.h>
 #include "omplPCAalignmentOptimizationObjective.h"
+#include "omplMyOptimizationObjective.h"
 
 //for myRRTstar
 #include "ompl/base/goals/GoalSampleableRegion.h"
@@ -51,6 +52,10 @@
 
 namespace Kautham {
   namespace omplplanner{
+
+
+
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
   class myRRTstar:public og::RRTstar
@@ -74,16 +79,16 @@ namespace Kautham {
           _pathSamplingRangeFactor = 2.0;
       }
 
-      bool getOptimize(){ return _optimize;}; //!< Returns the _optimize flag
-      void setOptimize(bool s){_optimize=s;}; //!< Sets the _optimize flag
-      bool getNeighFactor(){ return _factor_k_rrg;}; //!< Returns _factor_k_rrg that modifies the number K of nearest neighbors
-      void setNeighFactor(double f){_factor_k_rrg=f;}; //!< Sets  _factor_k_rrg to modify the number K of nearest neighbors
-      double getNodeRejection(){return _nodeRejection;}; //!< Returns NodeRejection probability
-      void setNodeRejection(double v){if(v>1.0) _nodeRejection=1.0; else if(v<0.0) _nodeRejection=0.0; else  _nodeRejection=v;}; //!< Sets NodeRejection flag
-      double getPathBias(){return _pathBias;}; //!< Returns the _PAthBias
-      void setPathBias(double f){if(f>1.0) _pathBias=1.0; else if(f<0.0) _pathBias=0.0; else  _pathBias=f;}; //!< Sets _PathBias to sample near the solution path
-      double getPathSamplingRangeFactor(){return _pathSamplingRangeFactor;}; //!< Returns the factor that multiplied by the RRT range gives the radius for sampling near the path
-      void setPathSamplingRangeFactor(double f){if(f>1.0)_pathSamplingRangeFactor=f; else _pathSamplingRangeFactor=1.0;}; //!< Sets the factor that multiplied by the RRT range gives the radius for sampling near the path
+      bool getOptimize(){ return _optimize;} //!< Returns the _optimize flag
+      void setOptimize(bool s){_optimize=s;} //!< Sets the _optimize flag
+      bool getNeighFactor(){ return _factor_k_rrg;} //!< Returns _factor_k_rrg that modifies the number K of nearest neighbors
+      void setNeighFactor(double f){_factor_k_rrg=f;} //!< Sets  _factor_k_rrg to modify the number K of nearest neighbors
+      double getNodeRejection(){return _nodeRejection;} //!< Returns NodeRejection probability
+      void setNodeRejection(double v){if(v>1.0) _nodeRejection=1.0; else if(v<0.0) _nodeRejection=0.0; else  _nodeRejection=v;} //!< Sets NodeRejection flag
+      double getPathBias(){return _pathBias;} //!< Returns the _PAthBias
+      void setPathBias(double f){if(f>1.0) _pathBias=1.0; else if(f<0.0) _pathBias=0.0; else  _pathBias=f;} //!< Sets _PathBias to sample near the solution path
+      double getPathSamplingRangeFactor(){return _pathSamplingRangeFactor;} //!< Returns the factor that multiplied by the RRT range gives the radius for sampling near the path
+      void setPathSamplingRangeFactor(double f){if(f>1.0)_pathSamplingRangeFactor=f; else _pathSamplingRangeFactor=1.0;} //!< Sets the factor that multiplied by the RRT range gives the radius for sampling near the path
 
 
       /** \brief Compute distance between motions (actually distance between contained states)
@@ -329,15 +334,17 @@ namespace Kautham {
                                 si_->getStateSpace()->interpolate(nearestmotion->state, rmotion->state, maxDistance_ / d, xstate);
                                 c2 = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nearestmotion->state, xstate);
                                 //c2 = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nearestmotion->state, rmotion->state);
+
                                 //c3 = heuristic cost from rmotion to goal (the edge may not exist)
-                                ob::Cost c3=opt_->motionCost(xstate, mpath[0]->state); //from rmotion to goal (straight)
+                                c3=opt_->motionCost(xstate, mpath[0]->state); //from rmotion to goal (straight)
+
                             }
                             else
                             {
                                 c2=opt_->motionCost(nearestmotion->state, rmotion->state); //from rmotion to goal (straight)
 
                                 //c3 = heuristic cost from rmotion to goal (the edge may not exist)
-                                ob::Cost c3=opt_->motionCost(rmotion->state, mpath[0]->state); //from rmotion to goal (straight)
+                                c3=opt_->motionCost(rmotion->state, mpath[0]->state); //from rmotion to goal (straight)
                             }
 
 
@@ -500,6 +507,7 @@ namespace Kautham {
                       }
                       else
                           motion->incCost = opt_->motionCost(nmotion->state, motion->state);
+
 
                       motion->cost = opt_->combineCosts(nmotion->cost, motion->incCost);
                       // find which one we connect the new state to
@@ -936,7 +944,7 @@ namespace Kautham {
     //! Constructor
     omplRRTStarPlanner::omplRRTStarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
               omplPlanner(stype, init, goal, samples, ws, ssptr)
-	{
+    {
         _guiName = "ompl RRT Star Planner";
         _idName = "omplRRTStar";
 
@@ -958,6 +966,9 @@ namespace Kautham {
         _NodeRejection = 0.0;//0.8;
         _DelayCC = (planner->as<myRRTstar>())->getDelayCC();
         _opti = 1; //optimize path lenght by default
+        _Diffusion = 0.01;
+
+        addParameter("Diffusion", _Diffusion);//for myOptimiaztionObjective
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
         addParameter("Path Bias", _PathBias);
@@ -988,7 +999,26 @@ namespace Kautham {
 
         //////////////////////////////////////////////////////////////////////////////
         // 2) clearance optimization criteria
-        _clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
+        //_clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
+
+
+        _clearanceopti = ob::OptimizationObjectivePtr(new myOptimizationObjective(ss->getSpaceInformation(), this, false));
+        std::vector< std::vector<double> > cp(wkSpace()->getNumObstacles());
+        std::vector< std::pair<double,double> > params(wkSpace()->getNumObstacles());
+        for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
+            mt::Point3 p = wkSpace()->getObstacle(i)->getLink(0)->getTransformation()->getTranslation();
+            cp[i].resize(3);
+            cp[i][0] = p[0];
+            cp[i][1] = p[1];
+            cp[i][2] = p[2];
+
+            params[i].first = wkSpace()->getObstacle(i)->getPotentialParameters().first;
+            params[i].second = wkSpace()->getObstacle(i)->getPotentialParameters().second;
+        }
+        ((myOptimizationObjective*) _clearanceopti.get())->setControlPoints(&cp);
+        ((myOptimizationObjective*) _clearanceopti.get())->setCostParams(&params);
+
+
 
         //////////////////////////////////////////////////////////////////////////////
         // 3) pmd alignment optimization criteria
@@ -1009,30 +1039,31 @@ namespace Kautham {
         //_pcaalignmentopti2 = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective2(ss->getSpaceInformation(),dimpca));
         //_pcaalignmentopti3 = ob::OptimizationObjectivePtr(new PCAalignmentOptimizationObjective3(ss->getSpaceInformation(),dimpca));
 
-
-
-        if(_opti==0){
+        switch (_opti) {
+        case 0:
             _optiselected = _lengthopti; //dummy
             planner->as<myRRTstar>()->setOptimize(false); //Disable optimization
-        }
-        else if(_opti==1){
+            break;
+        case 1:
             _optiselected = _lengthopti; //length optimization
             planner->as<myRRTstar>()->setOptimize(true);
-        }
-        else if(_opti==2){
+            break;
+        case 2:
             _optiselected = _clearanceopti;//clearnace optimization
             planner->as<myRRTstar>()->setOptimize(true);
-        }
-        else if(_opti==3){
+            break;
+        case 3:
             _optiselected = _pmdalignmentopti; //pmd alignment optimization
             planner->as<myRRTstar>()->setOptimize(true);
-        }
-        else { //default
+            break;
+        default:
             _opti=1;
             _optiselected = _lengthopti; //length optimization
             setParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _simplify);
             planner->as<myRRTstar>()->setOptimize(true);
+            break;
         }
+
 
         pdefPtr->setOptimizationObjective(_optiselected);
 
@@ -1049,11 +1080,11 @@ namespace Kautham {
         disablePMDControlsFromSampling();
     }
 
-	//! void destructor
+    //! void destructor
     omplRRTStarPlanner::~omplRRTStarPlanner(){
-			
-	}
-	
+
+    }
+
 
     //! function to find a solution path
     bool omplRRTStarPlanner::trySolve()
@@ -1111,7 +1142,7 @@ namespace Kautham {
 
      }
 
-	//! setParameters sets the parameters of the planner
+    //! setParameters sets the parameters of the planner
     bool omplRRTStarPlanner::setParameters(){
 
       omplPlanner::setParameters();
@@ -1131,36 +1162,37 @@ namespace Kautham {
             _opti = it->second;
             ob::ProblemDefinitionPtr pdefPtr = ss->getPlanner()->getProblemDefinition();
 
-            if(_opti==0){
+            switch (_opti) {
+            case 0:
                 _optiselected = _lengthopti; //dummy
                 ss->getPlanner()->as<myRRTstar>()->setOptimize(false); //Disable optimization
-            }
-            else if(_opti==1){
+                break;
+            case 1:
                 _optiselected = _lengthopti; //length optimization
                 ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
-            }
-            else if(_opti==2){
+                break;
+            case 2:
                 _optiselected = _clearanceopti;//clearnace optimization
                 ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
-            }
-            else if(_opti==3){
+                break;
+            case 3:
                 _optiselected = _pmdalignmentopti; //pmd alignment optimization
                 ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
-            }
-            else { //default
+                break;
+            default:
                 _opti=1;
                 _optiselected = _lengthopti; //length optimization
                 setParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _simplify);
                 ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
+                break;
             }
 
             pdefPtr->setOptimizationObjective(_optiselected);
 
             ss->getPlanner()->setup();
+        } else {
+            return false;
         }
-        else
-          return false;
-
 
 
         it = _parameters.find("disablePMDControlsFromSampling");
@@ -1179,6 +1211,15 @@ namespace Kautham {
         else
           return false;
 
+        /*it = _parameters.find("Diffusion");
+        if(it != _parameters.end()){
+            _Diffusion = it->second;
+
+            if(_opti==2)
+                ((myOptimizationObjective*) _clearanceopti.get())->setDiffusion(_Diffusion);
+        }
+        else
+          return false;*/
 
         it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
@@ -1270,3 +1311,4 @@ namespace Kautham {
 
 
 #endif // KAUTHAM_USE_OMPL
+
