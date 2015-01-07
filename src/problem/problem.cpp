@@ -1477,8 +1477,8 @@ namespace Kautham {
       }
 
       if (obstacle_node->child("Potential")){
-          obs->setPotentialParameters(obstacle_node->child("Potential").attribute("strength").as_double(),
-                                           obstacle_node->child("Potential").attribute("difussion").as_double());
+          obs->setPotentialParameters(obstacle_node->child("Potential").attribute("repulse").as_double(),
+                                           obstacle_node->child("Potential").attribute("diffusion").as_double());
       }
 
       _wspace->addObstacle(obs);

@@ -68,8 +68,9 @@ namespace Kautham {
         double _penalizationweight;
         double _orientationweight;
         bool _incremental;
-        KthReal _Diffusion;
         int _disablePMDControlsFromSampling;
+        std::vector< std::pair<double,double> > _potentialParams;
+
         ob::OptimizationObjectivePtr _optiselected;
         ob::OptimizationObjectivePtr _lengthopti;
         ob::OptimizationObjectivePtr _clearanceopti;
