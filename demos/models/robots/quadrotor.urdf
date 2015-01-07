@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot name="quadrotor">
+    <link name="base">
+      <inertial>
+        <mass value="1.477"/>
+        <inertia ixx="0.01152" ixy="0.0" ixz="0.0" iyy="0.01152" iyz="0.0" izz="0.0218" />
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="freeflying/quadrotor.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+	<origin xyz="0 0 -0.07"/>
+        <geometry>
+          <box size="0.78 0.78 0.22"/>
+        </geometry>
+      </collision>
+    </link>
+</robot>

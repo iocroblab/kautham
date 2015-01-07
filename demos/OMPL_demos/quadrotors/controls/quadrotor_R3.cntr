@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="quadrotor/X1" value="0" />
+		<DOF name="quadrotor/X" value="0.5" />
+		<DOF name="quadrotor/Y" value="0.5" />
+		<DOF name="quadrotor/Z" value="0.5" />
+	</Offset>
+	<Control name="quadrotor/x" eigValue="1.0">
+		<DOF name="quadrotor/X" value="1.0" />
+	</Control>
+	<Control name="quadrotor/y" eigValue="1.0">
+		<DOF name="quadrotor/Y" value="1.0" />
+	</Control>
+	<Control name="quadrotor/z" eigValue="1.0">
+		<DOF name="quadrotor/Z" value="1.0" />
+	</Control>
+</ControlSet>
