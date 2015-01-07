@@ -101,6 +101,8 @@ namespace Kautham {
       bool              collisionable; //!< Set to true if the robot can have collision with other robots
       Robot*            robotAttachedTo; //!< In case of obstacle, it is the robot where the obstacle is attached to. If it is not attached to any robot, it is equal to NULL
       Link*             linkAttachedTo; //!< In case of obstacle, it is the link where the obstacle is attached to. If it is not attached to any link, it is equal to NULL
+      std::pair<double,double> potentialParameters; //!< Defines obstacles behaviour when potential optimization planning criteria is used
+
 
   public:
 
@@ -143,6 +145,13 @@ namespace Kautham {
     inline bool isCollisionable() const {return collisionable;} //!< returns wether the robot is collisionable
 
     inline void setCollisionable(bool collEnabled) {collisionable = collEnabled;} //!< Enables/disables collisions with other robots
+
+    inline void setPotentialParameters (double strength, double diffusive) {
+        potentialParameters.first = strength;
+        potentialParameters.second = diffusive;
+    } //!< Sets potential parameters
+
+    inline std::pair<double,double> getPotentialParameters() {return potentialParameters;} //!< Returns potential parameters
 
     inline mt::Transform& getLastLinkTransform(){ return
                                     *(((Link*)links.at(links.size()-1))->getTransformation());}
