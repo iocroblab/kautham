@@ -224,7 +224,7 @@ namespace Kautham {
 
               //JAN added these lines to subsitute the above ones
               //Motion *nmotion;//the nearest neighbor node
-              Motion* bestGoalMotion;
+
               int trials;
               int maxtrials;
               bool found;
@@ -966,9 +966,7 @@ namespace Kautham {
         _NodeRejection = 0.0;//0.8;
         _DelayCC = (planner->as<myRRTstar>())->getDelayCC();
         _opti = 1; //optimize path lenght by default
-        _Diffusion = 0.01;
 
-        addParameter("Diffusion", _Diffusion);//for myOptimiaztionObjective
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
         addParameter("Path Bias", _PathBias);
@@ -1004,7 +1002,7 @@ namespace Kautham {
 
         _clearanceopti = ob::OptimizationObjectivePtr(new myOptimizationObjective(ss->getSpaceInformation(), this, false));
         std::vector< std::vector<double> > cp(wkSpace()->getNumObstacles());
-        std::vector< std::pair<double,double> > params(wkSpace()->getNumObstacles());
+        _potentialParams.resize(wkSpace()->getNumObstacles());
         for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
             mt::Point3 p = wkSpace()->getObstacle(i)->getLink(0)->getTransformation()->getTranslation();
             cp[i].resize(3);
@@ -1012,11 +1010,16 @@ namespace Kautham {
             cp[i][1] = p[1];
             cp[i][2] = p[2];
 
-            params[i].first = wkSpace()->getObstacle(i)->getPotentialParameters().first;
-            params[i].second = wkSpace()->getObstacle(i)->getPotentialParameters().second;
+            _potentialParams[i].first = wkSpace()->getObstacle(i)->getPotentialParameters().first;
+            _potentialParams[i].second = wkSpace()->getObstacle(i)->getPotentialParameters().second;
+            stringstream repulse, diffusion;
+            repulse << "Repulse " << i;
+            diffusion << "Diffusion " << i;
+            addParameter(repulse.str(),_potentialParams[i].first);
+            addParameter(diffusion.str(),_potentialParams[i].second);
         }
         ((myOptimizationObjective*) _clearanceopti.get())->setControlPoints(&cp);
-        ((myOptimizationObjective*) _clearanceopti.get())->setCostParams(&params);
+        ((myOptimizationObjective*) _clearanceopti.get())->setCostParams(&_potentialParams);
 
 
 
@@ -1211,15 +1214,29 @@ namespace Kautham {
         else
           return false;
 
-        /*it = _parameters.find("Diffusion");
-        if(it != _parameters.end()){
-            _Diffusion = it->second;
+        for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
+            stringstream repulse, diffusion;
+            repulse << "Repulse " << i;
+            diffusion << "Diffusion " << i;
+
+            it = _parameters.find(repulse.str());
+            if (it != _parameters.end()){
+                _potentialParams[i].first = it->second;;
+            }
+            else
+              return false;
+
+            it = _parameters.find(diffusion.str());
+            if (it != _parameters.end()){
+                _potentialParams[i].second = it->second;;
+            }
+            else
+              return false;
 
             if(_opti==2)
-                ((myOptimizationObjective*) _clearanceopti.get())->setDiffusion(_Diffusion);
+                ((myOptimizationObjective*) _clearanceopti.get())->setCostParams(&_potentialParams);
         }
-        else
-          return false;*/
+
 
         it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
