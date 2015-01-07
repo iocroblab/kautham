@@ -146,8 +146,8 @@ namespace Kautham {
 
     inline void setCollisionable(bool collEnabled) {collisionable = collEnabled;} //!< Enables/disables collisions with other robots
 
-    inline void setPotentialParameters (double strength, double diffusive) {
-        potentialParameters.first = strength;
+    inline void setPotentialParameters (double repulse, double diffusive) {
+        potentialParameters.first = repulse;
         potentialParameters.second = diffusive;
     } //!< Sets potential parameters
 
