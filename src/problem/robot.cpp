@@ -77,6 +77,8 @@ namespace Kautham {
      robotAttachedTo = NULL;
      linkAttachedTo = NULL;
      collisionable = true;
+     potentialParameters.first = 0.0;
+     potentialParameters.second = 0.0;
      _linkPathDrawn = -1;
      nTrunk = 0;
      scale = robScale;

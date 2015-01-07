@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Jan Rosell, Nestor Garcia Hidalgo */
 
  
 
@@ -45,7 +45,7 @@ namespace Kautham {
       ob::StateCostIntegralObjective(si, enableMotionCostInterpolation)
   {
     pl = p;
-  };
+  }
 
   /*! void destructor
    */
@@ -61,10 +61,17 @@ namespace Kautham {
       {
           controlpoints[i].resize(cp->at(i).size());//dimension of the space
           for(int j=0;j<cp->at(i).size();j++)
-              controlpoints[i].at(j) = (cp->at(i)).at(j);
+              controlpoints[i].at(j) = cp->at(i).at(j);
       }
   }
 
+  void myOptimizationObjective::setCostParams(std::vector< std::pair<double,double> > *cp) {
+      costParams.resize(cp->size());
+      for (int i = 0; i < cp->size(); ++i) {
+          costParams[i].first = cp->at(i).first;
+          costParams[i].second = cp->at(i).second;
+      }
+  }
 
   /*! stateCost.
    *  Computes the cost of the state s
@@ -83,8 +90,7 @@ namespace Kautham {
       */
 
 
-      Sample *smp;
-      smp = new Sample(3);
+      Sample *smp = new Sample(3);
       //copy the conf of the init smp. Needed to capture the home positions.
       smp->setMappedConf(pl->initSamp()->getMappedConf());
       pl->omplState2smp(s, smp);
@@ -94,10 +100,8 @@ namespace Kautham {
 
       //std::cout<<"The state is: ("<<x<<", "<<y<<", "<<z<<")"<<std::endl;
 
-      std::vector<double> c;
-      c.resize(controlpoints.size());
-      double xdist, ydist, zdist,dist;
-      double totalcost=0.0;
+      double xdist, ydist, zdist, dist, c;
+      double totalcost = 0.0;
       double maxdist = sqrt(100.0*100.0+100.0*100.0+100.0*100.0);
 
       for(int i=0;i<controlpoints.size();i++){
@@ -105,11 +109,10 @@ namespace Kautham {
           ydist = (y-controlpoints[i].at(1));
           zdist = (z-controlpoints[i].at(2));
           dist = (xdist*xdist+ydist*ydist+zdist*zdist)/maxdist;
-          c[i] = exp(-diffusion*dist);
-          totalcost += c[i];
-
+          c = costParams.at(i).first*exp(-costParams.at(i).second*dist);
+          totalcost += c;
           //std::cout<< "Distance " << i<<" is "<<dist<<std::endl;
-          //std::cout<< "Cost " << i<<" is "<<c[i]<<std::endl;
+          //std::cout<< "Cost " << i<<" is "<<c<<std::endl;
       }
       //std::cout<< "The totalcost is:" << totalcost<<std::endl;
       return ob::Cost(totalcost);
