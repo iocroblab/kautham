@@ -342,8 +342,7 @@ namespace Kautham {
                   return false;
               }
           } else {
-              string message = "Planner name can't be empty";
-              throw KthExcp(message);
+              throw KthExcp("Planner name can't be empty");
               return false;
           }
       } else {
@@ -1475,6 +1474,11 @@ namespace Kautham {
 
       if (obstacle_node->child("Collision").attribute("enabled")){
           obs->setCollisionable(obstacle_node->child("Collision").attribute("enabled").as_bool());
+      }
+
+      if (obstacle_node->child("Potential")){
+          obs->setPotentialParameters(obstacle_node->child("Potential").attribute("strength").as_double(),
+                                           obstacle_node->child("Potential").attribute("difussion").as_double());
       }
 
       _wspace->addObstacle(obs);

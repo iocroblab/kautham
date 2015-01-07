@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Jan Rosell */
+/* Author: Jan Rosell, Nestor Garcia Hidalgo */
 
 #if !defined(_omplMyOBJECTIVE_H)
 #define _omplMyOBJECTIVE_H
@@ -46,16 +46,15 @@ namespace Kautham {
 
   private:
       std::vector< std::vector<double> > controlpoints;
-      double diffusion;
+      std::vector< std::pair<double,double> > costParams;
       omplPlanner *pl;
   public:
       myOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p, bool enableMotionCostInterpolation=false);
       ~myOptimizationObjective();
 
       void setControlPoints(std::vector< std::vector<double> > *cp);
+      void setCostParams(std::vector<std::pair<double, double> > *cp);
 
-      inline void setDiffusion(double d){diffusion = d;};
-      inline double getDiffusion(){return diffusion;};
       ob::Cost 	stateCost (const ob::State *s) const;
     };
 
