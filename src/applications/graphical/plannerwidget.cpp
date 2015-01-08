@@ -407,6 +407,148 @@ namespace Kautham {
                 stringstream sstr2;
                 ((omplplanner::omplPlanner*)_planner)->SimpleSetup()->getSolutionPath().printAsMatrix(sstr2);
                 out << endl << sstr2.str().c_str();
+
+                /*
+                //get the first subspace
+                int numrob = 0;
+                og::SimpleSetupPtr ss = ((omplplanner::omplPlanner*)_planner)->SimpleSetupPtr();
+                ob::StateSpacePtr space = ss->getStateSpace();
+                ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(numrob));
+                ob::StateSpacePtr ssRobotifirst =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
+
+                //space bounds
+                int k;
+                KthReal xmin;
+                KthReal xmax;
+                KthReal ymin;
+                KthReal ymax;
+                KthReal zmin;
+                KthReal zmax;
+
+                xmin=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().low[0];
+                xmax=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().high[0];
+                ymin=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().low[1];
+                ymax=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().high[1];
+                zmin=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().low[2];
+                zmax=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().high[2];
+                k = ssRobotifirst->as<ob::SE3StateSpace>()->getDimension();
+
+                KthReal x,y,z;
+                //load the planner data to be drawn
+                ob::PlannerDataPtr pdata;
+                pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
+                ss->getPlanner()->getPlannerData(*pdata);
+
+                if(ss->getPlanner()->getProblemDefinition()->hasOptimizationObjective())
+                    pdata->computeEdgeWeights( *ss->getPlanner()->getProblemDefinition()->getOptimizationObjective() );
+                else
+                    pdata->computeEdgeWeights();
+
+
+                //Use the projection associated to the subspace of the robot index passed as a parameter.
+                string projname = "drawprojection"; //
+                string robotnumber = static_cast<ostringstream*>( &(ostringstream() << numrob) )->str();//the string correspoding to number numrob
+                projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
+                ob::ProjectionEvaluatorPtr projToUse = space->getProjection(projname.c_str());
+
+                stringstream sstr;
+
+
+                if(_planner->isSolved())
+                {
+                    //////////////////////////////////
+                    ///PATH
+                    //////////////////////////////////
+                    sstr << "PATH:" << endl;
+
+                    //get the states of the solution path
+                    std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
+
+                    //loop for all the states of the solution path
+                    for(int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
+                    {
+                        //initial edgepoint
+                        ob::EuclideanProjection projection(k);
+                        //space->getProjection("drawprojection")->project(pathstates[i], projection);
+                        projToUse->project(pathstates[i], projection);
+                        x=projection[0];
+                        y=projection[1];
+                        z=projection[2];
+
+                        sstr << x << " " << y << " " << z << " ";
+
+                        //final edgepoint
+                        //space->getProjection("drawprojection")->project(pathstates[i+1], projection);
+                        projToUse->project(pathstates[i+1], projection);
+                        x=projection[0];
+                        y=projection[1];
+                        z=projection[2];
+
+                        sstr << x << " " << y << " " << z << endl;
+                    }
+
+                    sstr << endl;
+                }
+
+                //////////////////////////////////
+                ///VERTICES
+                //////////////////////////////////
+
+                sstr << "VERTICES:" << endl;
+                //loop for all vertices of the roadmap or tree
+                for(int i=0;i<pdata->numVertices();i++)
+                {
+                    ob::EuclideanProjection projection(k);
+                    projToUse->project(pdata->getVertex(i).getState(), projection);
+
+                    x = projection[0];
+                    y = projection[1];
+                    z = projection[2];
+
+                    sstr << x << " " << y << " " << z << endl;
+                }
+                sstr << endl;
+
+                //////////////////////////////////
+                ///EDGES
+                //////////////////////////////////
+
+                sstr << "EDGES:" << endl;
+                int numOutgoingEdges;
+                std::vector< unsigned int > outgoingVertices;
+                //loop for all nodes
+                for(int i=0;i<pdata->numVertices();i++)
+                {
+                    numOutgoingEdges = pdata->getEdges (i, outgoingVertices);
+
+                    //for each node loop for all the outgoing edges
+                    for ( int j=0; j<numOutgoingEdges; j++ )
+                    {
+                        //initial edgepoint
+                        float x1,y1,x2,y2,z1,z2;
+                        ob::EuclideanProjection projection(k);
+                        //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
+                        projToUse->project(pdata->getVertex(i).getState(), projection);
+                        x1=projection[0];
+                        y1=projection[1];
+                        z1=projection[2];
+
+                        sstr << x1 << " " << y1 << " " << z1 << " ";
+
+                        //final edgepoint
+                        //space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
+                        projToUse->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
+                        x2=projection[0];
+                        y2=projection[1];
+                        z2=projection[2];
+
+                        sstr << x2 << " " << y2 << " " << z2 << endl;
+                    }
+                }
+
+                QTextStream out(&file);
+                out << sstr.str().c_str();*/
+
                 sendText("File was saved successfully");
             } else {
                 sendText("Sorry but the file couldn't be saved");
