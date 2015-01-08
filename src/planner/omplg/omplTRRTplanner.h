@@ -40,26 +40,30 @@ namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
 using namespace std;
+
 namespace Kautham {
 /** \addtogroup Planner
  *  @{
  */
-  namespace omplplanner{
-
+  namespace omplplanner {
     class omplTRRTPlanner:public omplPlanner {
-	    public:
+    public:
         omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
         ~omplTRRTPlanner();
 
         bool setParameters();
 
-         KthReal _Range;
-         KthReal _GoalBias;
-         KthReal _maxStatesFailed;//nFail_{max}
-         KthReal _tempChangeFactor;//alpha
-         KthReal _frontierThreshold;//delta
-         KthReal _frontierNodesRatio;//rho
-	  };
+        KthReal _Range;
+        KthReal _GoalBias;
+        KthReal _maxStatesFailed;//nFail_{max}
+        KthReal _tempChangeFactor;//alpha
+        KthReal _frontierThreshold;//delta
+        KthReal _frontierNodesRatio;//rho
+        bool _incremental;
+        std::vector< std::pair<double,double> > _potentialParams;
+
+        ob::OptimizationObjectivePtr _opti;
+    };
   }
   /** @}   end of Doxygen module "Planner */
 }

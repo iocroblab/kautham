@@ -45,7 +45,6 @@ namespace Kautham {
 /** \addtogroup Planner
  *  @{
  */
-
   namespace omplplanner{
 
     class omplRRTPlanner:public omplPlanner {
