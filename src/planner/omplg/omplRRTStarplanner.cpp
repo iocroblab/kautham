@@ -1146,186 +1146,129 @@ namespace Kautham {
      }
 
     //! setParameters sets the parameters of the planner
-    bool omplRRTStarPlanner::setParameters(){
+    bool omplRRTStarPlanner::setParameters() {
+        if (!omplPlanner::setParameters()) return false;
 
-      omplPlanner::setParameters();
-      try{
-        HASH_S_K::iterator it = _parameters.find("Range");
-        if(it != _parameters.end()){
-          _Range = it->second;
-          ss->getPlanner()->as<og::RRTstar>()->setRange(_Range);
-          if(_opti==3)
-            ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setEpsilon(_Range);
-         }
-        else
-          return false;
+        try {
+            HASH_S_K::iterator it;
 
-        it = _parameters.find("Optimize none(0)/dist(1)/clear(2)/PMD(3)");
-        if(it != _parameters.end()){
+
+            it = _parameters.find("Optimize none(0)/dist(1)/clear(2)/PMD(3)");
+            if (it == _parameters.end()) return false;
             _opti = it->second;
-            ob::ProblemDefinitionPtr pdefPtr = ss->getPlanner()->getProblemDefinition();
-
             switch (_opti) {
             case 0:
                 _optiselected = _lengthopti; //dummy
-                ss->getPlanner()->as<myRRTstar>()->setOptimize(false); //Disable optimization
                 break;
             case 1:
                 _optiselected = _lengthopti; //length optimization
-                ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
                 break;
             case 2:
                 _optiselected = _clearanceopti;//clearnace optimization
-                ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
                 break;
             case 3:
                 _optiselected = _pmdalignmentopti; //pmd alignment optimization
-                ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
                 break;
             default:
-                _opti=1;
+                _opti = 1;
                 _optiselected = _lengthopti; //length optimization
                 setParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _simplify);
-                ss->getPlanner()->as<myRRTstar>()->setOptimize(true);
                 break;
             }
-
-            pdefPtr->setOptimizationObjective(_optiselected);
-
+            ss->getPlanner()->getProblemDefinition()->setOptimizationObjective(_optiselected);
+            ss->getPlanner()->as<myRRTstar>()->setOptimize(_opti != 0);
             ss->getPlanner()->setup();
-        } else {
-            return false;
-        }
 
 
-        it = _parameters.find("disablePMDControlsFromSampling");
-        if(it != _parameters.end()){
+            it = _parameters.find("disablePMDControlsFromSampling");
+            if (it == _parameters.end()) return false;
             _disablePMDControlsFromSampling = it->second;
-            if(_disablePMDControlsFromSampling==0)
-            {
-                disablePMDControlsFromSampling(true);//enable all controls
-            }
-            else
-            {
-                disablePMDControlsFromSampling(false);//disable those named PMD
-                //setParameter("disablePMDControlsFromSampling", 1); //force to 1
-            }
-        }
-        else
-          return false;
-
-        for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
-            stringstream repulse, diffusion;
-            repulse << "Repulse " << i;
-            diffusion << "Diffusion " << i;
-
-            it = _parameters.find(repulse.str());
-            if (it != _parameters.end()){
-                _potentialParams[i].first = it->second;;
-            }
-            else
-              return false;
-
-            it = _parameters.find(diffusion.str());
-            if (it != _parameters.end()){
-                _potentialParams[i].second = it->second;;
-            }
-            else
-              return false;
-
-            if(_opti==2)
-                ((myOptimizationObjective*) _clearanceopti.get())->setCostParams(&_potentialParams);
-        }
+            disablePMDControlsFromSampling(_disablePMDControlsFromSampling == 0);
 
 
-        it = _parameters.find("Goal Bias");
-        if(it != _parameters.end()){
+            it = _parameters.find("Goal Bias");
+            if (it == _parameters.end()) return false;
             _GoalBias = it->second;
             ss->getPlanner()->as<og::RRTstar>()->setGoalBias(_GoalBias);
-        }
-        else
-          return false;
 
-        it = _parameters.find("Path Bias");
-        if(it != _parameters.end()){
+
+            it = _parameters.find("Path Bias");
+            if (it == _parameters.end()) return false;
             _PathBias = it->second;
             ss->getPlanner()->as<myRRTstar>()->setPathBias(_PathBias);
-        }
-        else
-          return false;
 
-        it = _parameters.find("Path Sampling Range Factor");
-        if(it != _parameters.end()){
+
+            it = _parameters.find("Path Sampling Range Factor");
+            if (it == _parameters.end()) return false;
             _PathSamplingRangeFactor = it->second;
             ss->getPlanner()->as<myRRTstar>()->setPathSamplingRangeFactor(_PathSamplingRangeFactor);
-        }
-        else
-          return false;
 
-        it = _parameters.find("Node Rejection");
-        if(it != _parameters.end()){
+
+            it = _parameters.find("Node Rejection");
+            if (it == _parameters.end()) return false;
             _NodeRejection = it->second;
             ss->getPlanner()->as<myRRTstar>()->setNodeRejection(_NodeRejection);
-        }
-        else
-          return false;
 
-        it = _parameters.find("K-Neigh Factor");
-        if(it != _parameters.end()){
+
+            it = _parameters.find("K-Neigh Factor");
+            if (it == _parameters.end()) return false;
             _KneighFactor = it->second;
             ss->getPlanner()->as<myRRTstar>()->setNeighFactor(_KneighFactor);
-        }
-        else
-          return false;
 
-        it = _parameters.find("DelayCC (0/1)");
-        if(it != _parameters.end()){
-            if(it->second == 0) _DelayCC = false;
-            else _DelayCC = true;
+
+            it = _parameters.find("DelayCC (0/1)");
+            if (it == _parameters.end()) return false;
+            _DelayCC = (it->second != 0);
             ss->getPlanner()->as<og::RRTstar>()->setDelayCC(_DelayCC);
-        }
-        else
-          return false;
 
-        it = _parameters.find("lengthweight(0..1)");
-        if(it != _parameters.end()){
-            if(it->second >=0.0 && it->second<=1.0) _lengthweight = it->second;
-            else _lengthweight = 0.5;
 
-            if(_opti==3)
-                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(_lengthweight);
-        }
-        else
-          return false;
+            for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
+                stringstream repulse, diffusion;
+                repulse << "Repulse " << i;
+                diffusion << "Diffusion " << i;
 
-        it = _parameters.find("penalizationweight");
-        if(it != _parameters.end()){
+                it = _parameters.find(repulse.str());
+                if (it == _parameters.end()) return false;
+                _potentialParams[i].first = it->second;
+
+                it = _parameters.find(diffusion.str());
+                if (it == _parameters.end()) return false;
+                _potentialParams[i].second = it->second;
+            }
+            if (_opti == 2) ((myOptimizationObjective*) _clearanceopti.get())->setCostParams(&_potentialParams);
+
+
+            it = _parameters.find("Range");
+            if (it == _parameters.end()) return false;
+            _Range = it->second;
+            ss->getPlanner()->as<og::RRTstar>()->setRange(_Range);
+            if (_opti == 3) ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setEpsilon(_Range);
+
+
+            it = _parameters.find("lengthweight(0..1)");
+            if (it == _parameters.end()) return false;
+            _lengthweight = it->second;
+            if (_lengthweight < 0. || _lengthweight > 1.) _lengthweight = 0.5;
+            if (_opti == 3) ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setDistanceWeight(_lengthweight);
+
+
+            it = _parameters.find("penalizationweight");
+            if (it == _parameters.end()) return false;
             _penalizationweight = it->second;
+            if (_opti == 3) ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
 
-            if(_opti==3)
-                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationPenalization(_penalizationweight);
-        }
-        else
-          return false;
 
-        it = _parameters.find("orientationweight");
-        if(it != _parameters.end()){
+            it = _parameters.find("orientationweight");
+            if (it == _parameters.end()) return false;
             _orientationweight = it->second;
-
-            if(_opti==3)
-                ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(_orientationweight);
+            if (_opti == 3) ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setOrientationWeight(_orientationweight);
+        } catch(...) {
+            return false;
         }
-        else
-          return false;
-
-      }catch(...){
-        return false;
-      }
-      return true;
+        return true;
     }
   }
 }
 
 
 #endif // KAUTHAM_USE_OMPL
-

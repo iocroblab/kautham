@@ -32,6 +32,7 @@
 
 #include "omplTRRTplanner.h"
 #include "omplValidityChecker.h"
+#include "omplMyOptimizationObjective.h"
 
 
 
@@ -71,6 +72,36 @@ namespace Kautham {
         planner->as<og::TRRT>()->setRange(_Range);
         planner->as<og::TRRT>()->setGoalBias(_GoalBias);
 
+
+        _opti = ob::OptimizationObjectivePtr(new myOptimizationObjective(ss->getSpaceInformation(), this, false));
+        std::vector< std::vector<double> > cp(wkSpace()->getNumObstacles());
+        _potentialParams.resize(wkSpace()->getNumObstacles());
+        for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
+            mt::Point3 p = wkSpace()->getObstacle(i)->getLink(0)->getTransformation()->getTranslation();
+            cp[i].resize(3);
+            cp[i][0] = p[0];
+            cp[i][1] = p[1];
+            cp[i][2] = p[2];
+
+            _potentialParams[i].first = wkSpace()->getObstacle(i)->getPotentialParameters().first;
+            _potentialParams[i].second = wkSpace()->getObstacle(i)->getPotentialParameters().second;
+            stringstream repulse, diffusion;
+            repulse << "Repulse " << i;
+            diffusion << "Diffusion " << i;
+            addParameter(repulse.str(),_potentialParams[i].first);
+            addParameter(diffusion.str(),_potentialParams[i].second);
+        }
+        ((myOptimizationObjective*) _opti.get())->setControlPoints(&cp);
+        ((myOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
+
+        ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
+        pdefPtr->setOptimizationObjective(_opti);
+
+
+        planner->setProblemDefinition(pdefPtr);
+        planner->setup();
+
+
         //set the planner
         ss->setPlanner(planner);
     }
@@ -92,6 +123,28 @@ namespace Kautham {
          }
         else
           return false;
+
+        for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
+            stringstream repulse, diffusion;
+            repulse << "Repulse " << i;
+            diffusion << "Diffusion " << i;
+
+            it = _parameters.find(repulse.str());
+            if (it != _parameters.end()){
+                _potentialParams[i].first = it->second;;
+            }
+            else
+              return false;
+
+            it = _parameters.find(diffusion.str());
+            if (it != _parameters.end()){
+                _potentialParams[i].second = it->second;;
+            }
+            else
+              return false;
+
+            ((myOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
+        }
 
         it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
