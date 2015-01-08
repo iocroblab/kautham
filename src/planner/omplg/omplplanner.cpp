@@ -991,7 +991,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                 pdata->computeEdgeWeights();
 
 
-            //Use the rpojection associated to the subspace of the robot index passed as a parameter.
+            //Use the projection associated to the subspace of the robot index passed as a parameter.
             string projname = "drawprojection"; //
             string robotnumber = static_cast<ostringstream*>( &(ostringstream() << numrob) )->str();//the string correspoding to number numrob
             projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
@@ -1005,7 +1005,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                 //get the states of the solution path
                 std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
 
-                //loop for al the states of the solution path
+                //loop for all the states of the solution path
                 for(int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
                 {
                     //initial edgepoint

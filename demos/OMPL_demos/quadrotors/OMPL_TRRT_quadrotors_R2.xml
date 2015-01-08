@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTStar_quadrotor">
+	<Robot robot="robots/quadrotor.urdf" scale="0.008">
+		<Limits name="X" min="0.0" max="100.0" />
+		<Limits name="Y" min="0.0" max="100.0" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Robot>
+	<Obstacle obstacle="obstacles/unitsphere.iv" scale="5.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="15.0" X="70.0" />
+		<Potential repulse="1.0" diffusion="0.1"/>
+	</Obstacle>
+	<Obstacle obstacle="obstacles/unitsphere.iv" scale="10.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="50.0" X="50.0" />
+		<Potential repulse="1.0" diffusion="0.1"/>
+	</Obstacle>
+	<Obstacle obstacle="obstacles/unitsphere.iv" scale="4.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="20.0" X="45.0" />
+		<Potential repulse="1.0" diffusion="0.1"/>
+	</Obstacle>
+	<Obstacle obstacle="obstacles/unitsphere.iv" scale="6.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="75.0" X="25.0" />
+		<Potential repulse="1.0" diffusion="0.1"/>
+	</Obstacle>
+	<Controls robot="controls/quadrotor_R2.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplTRRT</Name>
+			<Parameter name="Max Planning Time">2.0</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">2.0</Parameter>
+			<Parameter name="DelayCC (0/1)">0</Parameter>
+			<Parameter name="Simplify Solution">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="2">0.2 0.2</Init>
+				<Goal dim="2">0.8 0.8</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
