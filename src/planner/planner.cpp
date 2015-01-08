@@ -36,18 +36,18 @@ namespace Kautham{
 
   const KthReal RAD2GRAD=180.0/M_PI;
   Planner::Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws){
-    _guiName = _idName = "";
-		_spType = stype;		
-    _init = init; 
-    _goal = goal; 
-    _samples = samples; 
-    _wkSpace = ws; 
-    _path.clear();
-    _parameters.clear();
-    _solved = false;
-    _hasCameraInformation = false;
-	_sceneCspace=NULL;
-	}
+      _guiName = _idName = "";
+      _spType = stype;
+      _init = init;
+      _goal = goal;
+      _samples = samples;
+      _wkSpace = ws;
+      _path.clear();
+      _parameters.clear();
+      _solved = false;
+      _hasCameraInformation = false;
+      _sceneCspace=NULL;
+  }
 
   Planner::~Planner(){
 

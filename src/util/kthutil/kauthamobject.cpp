@@ -64,8 +64,7 @@ namespace Kautham{
   }
 
   bool KauthamObject::setParametersFromString(const string& par){
-    if(par == "") return false;
-    string prop="", sval="";
+    if (par == "") return false;
     KthReal val = 0.0;
     HASH_S_K::iterator it;
     vector<string> tokens;
