@@ -28,6 +28,7 @@
 #include "ivelement.h"
 #include <util/kthutil/kauthamexception.h>
 #include "assimp.h"
+#include <boost/algorithm/string.hpp>
 #if  defined(KAUTHAM_USE_ARMADILLO)
 #include <armadillo>
 
@@ -71,10 +72,9 @@ namespace Kautham {
     SoSeparator *readFile(string file) {
         string extension = file.substr(file.find_last_of(".")+1);
         SoSeparator *read;
-        if (extension == "iv" || extension == "wrl" || extension == "vrml") {
+        if (extension == "iv" || extension == "wrl") {
             SoInput input;
             if(input.openFile(file.c_str())) {
-
                 try {
                     read = SoDB::readAll(&input);
                 } catch (...) {
@@ -88,7 +88,32 @@ namespace Kautham {
                 return NULL;
             }
         } else {
-            read = ivFromAssimp(file);
+            //Try to open the file with the assimp library
+            vector<string> assimpExtensions = assimpSupportedExtensions();
+            bool found = false;
+            for (unsigned i = 0; i < assimpExtensions.size(); ++i) {
+                if (boost::iequals(extension,assimpExtensions.at(i))) {
+                    found = true;
+                    i += assimpExtensions.size();
+                }
+            }
+            if (found) {
+                try {
+                    read = ivFromAssimp(file);
+                } catch (...) {
+                    string message = "Model file " + file + " couldn't be loaded";
+                    throw KthExcp(message);
+                    return NULL;
+                }
+            } else {
+                string message = "Model file " + file + " has an unknown format";
+                string details = "Supported extensions are: iv, wrl";
+                for (unsigned i = 0; i < assimpExtensions.size(); ++i) {
+                    details += ", " + assimpExtensions.at(i);
+                }
+                throw KthExcp(message,details);
+                return NULL;
+            }
         }
 
         if (read == NULL) {
