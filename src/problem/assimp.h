@@ -24,5 +24,8 @@
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <string>
+#include <vector>
 
 SoSeparator* ivFromAssimp(std::string file);
+std::vector<std::string> assimpSupportedExtensions();
+std::vector< std::pair< std::string,std::vector<std::string> > > assimpSupportedFormats();
