@@ -24,6 +24,8 @@
 
 #include "assimp.h"
 
+using namespace std;
+
 #ifdef KAUTHAM_USE_ASSIMP
 
 #include <assimp/scene.h>
@@ -40,8 +42,6 @@
 #include <Inventor/nodes/SoIndexedLineSet.h>
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
 #include <Inventor/nodes/SoMaterial.h>
-
-using namespace std;
 
 
 SoTransform *getTransform(aiMatrix4x4 matrix) {
