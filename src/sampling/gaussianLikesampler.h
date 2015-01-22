@@ -44,7 +44,7 @@ namespace Kautham{
  */
 
 
-  class GaussianLikeSampler : public Sampler {
+  class GaussianLikeSampler: public Sampler {
   public:
     //! This is the unique constructor. In order to create an Gaussian like SDK sampler
     //! is needed to provide the dimension and the maximum partition level.
@@ -52,7 +52,7 @@ namespace Kautham{
     GaussianLikeSampler(char dim, char maxLevel, WorkSpace *w);
 
     //! Destructor.
-    ~GaussianLikeSampler();
+    ~GaussianLikeSampler() {}
 
     //! Implements the virtual function. \sa Sample. For ommision, the samples
     //! will be created with their coordinates randomly into their respective cell.
@@ -61,21 +61,19 @@ namespace Kautham{
     Sample* nextSample(bool random);
 	void print();
 	//!delete samples from sampleset ss
-	inline void clear(){ss->clear();};
+	inline void clear(){ss->clear();}
 
     //! Pointer to object that generates a random number sequence.
     LCPRNG* generator;
-
 	SDKSampler *sdkgen;
 	RandomSampler *randgen;
 	HaltonSampler *haltgen;
-
 	SampleSet *ss;
 	vector<Sample*> vectfree;
-	int itfree;
+    unsigned itfree;
 	WorkSpace *ws;
-	int	_maxNeighs;
-	int	_maxSamples;
+    unsigned	_maxNeighs;
+    unsigned	_maxSamples;
   };
 
 

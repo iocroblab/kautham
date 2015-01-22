@@ -134,7 +134,7 @@ namespace Kautham {
       if(rob->getNumJoints() > 0){
           cords.resize(rob->getNumJoints());
           tmpC = new RnConf(rob->getNumJoints());
-          for(int i = 0; i < tmpC->getDim(); i++){
+          for(unsigned i = 0; i < tmpC->getDim(); i++){
               it = param->find(rob->getLink(i+1)->getName());
               if( it != param->end())
                   cords[i]= it->second;
@@ -355,7 +355,6 @@ namespace Kautham {
       if( createCSpace() ){
           xml_node queryNode = doc->child("Problem").child("Planner").child("Queries");
           xml_node::iterator it;
-          int i = 0;
           vector<string> tokens;
           string sentence = "";
           Sample* tmpSampPointer = NULL;
@@ -366,7 +365,7 @@ namespace Kautham {
           for( it = queryNode.begin(); it != queryNode.end(); ++it ){
               xml_node sampNode = it->child("InitObs");
               if (numObsCntr > 0 && sampNode) {
-                  if( _wspace->getNumObsControls() == sampNode.attribute("dim").as_int() ){
+                  if (_wspace->getNumObsControls() == sampNode.attribute("dim").as_uint(0)) {
                       sentence = sampNode.child_value();
 
                       boost::split(tokens, sentence, boost::is_any_of("| "));
@@ -380,7 +379,7 @@ namespace Kautham {
                       }
 
                       tmpSampPointer = new Sample(numObsCntr);
-                      for(char i=0; i<numObsCntr; i++)
+                      for (unsigned i=0; i<numObsCntr; i++)
                           obsCoords[i] = (KthReal)atof(tokens[i].c_str());
 
                       tmpSampPointer->setCoords(obsCoords);
@@ -397,7 +396,7 @@ namespace Kautham {
                   }
               } else {
                   tmpSampPointer = new Sample(numObsCntr);
-                  for(char i=0; i<numObsCntr; i++)
+                  for (unsigned i=0; i<numObsCntr; i++)
                       obsCoords[i] = (KthReal)0.5;
 
                   tmpSampPointer->setCoords(obsCoords);
@@ -406,7 +405,7 @@ namespace Kautham {
               }
 
               sampNode = it->child("Init");
-              if( numRobCntr == sampNode.attribute("dim").as_int() ){
+              if( numRobCntr == sampNode.attribute("dim").as_uint(0) ){
                   sentence = sampNode.child_value();
 
                   boost::split(tokens, sentence, boost::is_any_of("| "));
@@ -420,7 +419,7 @@ namespace Kautham {
                   }
 
                   tmpSampPointer = new Sample(numRobCntr);
-                  for(char i=0; i<numRobCntr; i++)
+                  for(unsigned i=0; i<numRobCntr; i++)
                       robCoords[i] = (KthReal)atof(tokens[i].c_str());
 
                   tmpSampPointer->setCoords(robCoords);
@@ -439,7 +438,7 @@ namespace Kautham {
               }
 
               sampNode = it->child("Goal");
-              if( numRobCntr == sampNode.attribute("dim").as_int() ){
+              if( numRobCntr == sampNode.attribute("dim").as_uint(0) ){
                   sentence = sampNode.child_value();
 
                   boost::split(tokens, sentence, boost::is_any_of("| "));
@@ -453,7 +452,7 @@ namespace Kautham {
                   }
 
                   tmpSampPointer = new Sample(numRobCntr);
-                  for(char i=0; i<numRobCntr; i++)
+                  for(unsigned i=0; i<numRobCntr; i++)
                       robCoords[i] = (KthReal)atof(tokens[i].c_str());
 
                   tmpSampPointer->setCoords(robCoords);
@@ -561,7 +560,7 @@ namespace Kautham {
       if (path.size() > 0) {
           string file;
           bool found;
-          int i;
+          unsigned i;
           bool end = false;
           xml_node node = parent->child(child.c_str());
           while (node && !end) {
@@ -866,7 +865,7 @@ namespace Kautham {
       vector<string> tokens;
       boost::split(tokens, param, boost::is_any_of("|"));
 
-      for(int i=0; i<tokens.size(); i=i+2){
+      for(unsigned i=0; i<tokens.size(); i=i+2){
           xml_node paramItem = paramNode.append_child();
           paramItem.set_name("Parameter");
           paramItem.append_attribute("name") = tokens[i].c_str();
@@ -1096,7 +1095,7 @@ namespace Kautham {
       _wspace->setRobControlsName(controlsName);
       _currentRobControls.clear();
       _currentRobControls.resize(_wspace->getNumRobControls());
-      for(int i = 0; i<_currentRobControls.size(); i++)
+      for(unsigned i = 0; i<_currentRobControls.size(); i++)
           _currentRobControls[i] = (KthReal)0.0;
 
       //Creating the mapping and offset Matrices between controls
@@ -1173,7 +1172,7 @@ namespace Kautham {
               offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
           }else{    // It's not a SE3 control and could have any name.
               // Find the index orden into the links vector without the first static link.
-              int ind = 0;
+              unsigned ind = 0;
               while (ind < _wspace->getRobot(i)->getNumJoints()) {
                   if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
                       offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
@@ -1253,7 +1252,7 @@ namespace Kautham {
                       mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
                   }else{  // It's not a SE3 control and could have any name.
                       // Find the index orden into the links vector without the first static link.
-                      int ind = 0;
+                      unsigned ind = 0;
                       while (ind < _wspace->getRobot(i)->getNumJoints()) {
                           if( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
                               mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
@@ -1297,8 +1296,8 @@ namespace Kautham {
 
   bool Problem::setDefaultRobotControls() {
       //get the number of really movable DOF for all the robots
-      int numRob = _wspace->getNumRobots();
-      int numControls = 0;
+      unsigned numRob = _wspace->getNumRobots();
+      unsigned numControls = 0;
       Robot *rob;
       for (uint i = 0; i < numRob; i++) {
           rob = _wspace->getRobot(i);
@@ -1323,7 +1322,7 @@ namespace Kautham {
       _wspace->setNumRobControls(numControls);
       _currentRobControls.clear();
       _currentRobControls.resize(_wspace->getNumRobControls());
-      for(int i = 0; i<_currentRobControls.size(); i++)
+      for(unsigned i = 0; i<_currentRobControls.size(); i++)
           _currentRobControls[i] = (KthReal)0.0;
 
       KthReal ***mapMatrix;
@@ -1334,7 +1333,7 @@ namespace Kautham {
       string robotName;
       string DOFname;
       bool movDOF;
-      int numDOFs;
+      unsigned numDOFs;
       Link *link;
       int c = 0;
 
@@ -1562,7 +1561,7 @@ namespace Kautham {
       _wspace->setObsControlsName(controlsName);
       _currentObsControls.clear();
       _currentObsControls.resize(_wspace->getNumObsControls());
-      for(int i = 0; i<_currentObsControls.size(); i++)
+      for(unsigned i = 0; i<_currentObsControls.size(); i++)
           _currentObsControls[i] = (KthReal)0.0;
 
       //Creating the mapping and offset Matrices between controls
@@ -1639,7 +1638,7 @@ namespace Kautham {
               offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
           }else{    // It's not a SE3 control and could have any name.
               // Find the index orden into the links vector without the first static link.
-              int ind = 0;
+              unsigned ind = 0;
               while (ind < _wspace->getObstacle(i)->getNumJoints()) {
                   if( dofName == _wspace->getObstacle(i)->getLink(ind+1)->getName()){
                       offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
@@ -1719,7 +1718,7 @@ namespace Kautham {
                       mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
                   }else{  // It's not a SE3 control and could have any name.
                       // Find the index orden into the links vector without the first static link.
-                      int ind = 0;
+                      unsigned ind = 0;
                       while (ind < _wspace->getObstacle(i)->getNumJoints()) {
                           if( dofName == _wspace->getObstacle(i)->getLink(ind+1)->getName()){
                               mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();

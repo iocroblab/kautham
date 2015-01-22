@@ -67,12 +67,11 @@ namespace Kautham{
     inline vector<Sample*>::iterator getEndIterator(){return samples.end();}
 
     //! Returns the number of contained Samples in the SampleSet.
-    inline int              getSize(){return samples.size();}
+    inline unsigned          getSize(){return samples.size();}
 
     //! Returns true if the SampleSet has been changed since the 
     //! latest neighbours searching.
     inline bool             changed(){return hasChanged;}
-    //inline void             changed(bool t){hasChanged = t;}
 
     //! This method finds and returns a set of all neighbours for the 
     //! Sample samp as a pointer to vector.  This is performed using the 
@@ -108,7 +107,7 @@ namespace Kautham{
 
     //! If the SampleSet contains SDKSamples, it could return the index 
     //! of the sample whose code is the code parameter.
-    long int findSDKOrder(unsigned long code);
+    unsigned long findSDKOrder(unsigned long code);
 
     //! Returns true if the SampleSet contains a sample whose code
     //! is the code parameter.

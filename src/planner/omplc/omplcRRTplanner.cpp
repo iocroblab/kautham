@@ -65,11 +65,6 @@ namespace Kautham {
       vector<KthReal> coordsresult;
       coordsresult.resize(3);
 
-      double du;
-      du=duration;
-      //if(duration>0) du=duration;
-      //else du = -duration;
-
       coordsresult[0] = R2state->values[0] + (*rctrl)[0] * duration * cos(R2state->values[2]*2*M_PI);
       //if(coordsresult[0]>1.0) coordsresult[0] = 1.0;
       //else if (coordsresult[0]<0.0) coordsresult[0] = 0.0;

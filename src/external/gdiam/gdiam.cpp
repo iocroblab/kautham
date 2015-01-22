@@ -182,9 +182,7 @@ public:
     gdiam_real   brute_diameter( int  a_lo, int  a_hi,
                                  int  b_lo, int  b_hi,
                                  GPointPair  & diam ) const { 
-        double  max_dist;
-        
-        max_dist = 0;
+
         for  ( int  ind = a_lo; ind <= a_hi; ind++ )
             for  ( int  jnd = b_lo; jnd <= b_hi; jnd++ )
                 diam.update_diam( arr[ ind ], arr[ jnd ] );
@@ -195,9 +193,7 @@ public:
                                  int  b_lo, int  b_hi,
                                  GPointPair  & diam,
                                  const gdiam_point  dir ) const { 
-        double  max_dist;
 
-        max_dist = 0;
         for  ( int  ind = a_lo; ind <= a_hi; ind++ )
             for  ( int  jnd = b_lo; jnd <= b_hi; jnd++ )
                 diam.update_diam( arr[ ind ], arr[ jnd ], dir );
@@ -209,9 +205,7 @@ public:
                            const gdiam_point  * b_lo, 
                            const gdiam_point  * b_hi,
                            GPointPair  & diam ) const { 
-        double  max_dist;
 
-        max_dist = 0;
         for  ( const gdiam_point  * ind = a_lo; ind <= a_hi; ind++ )
             for  ( const gdiam_point   * jnd = b_lo; jnd <= b_hi; jnd++ )
                 diam.update_diam( *ind, *jnd );
@@ -224,9 +218,7 @@ public:
                                  const gdiam_point  * b_hi,
                                  GPointPair  & diam,
                                  const gdiam_point  dir ) const { 
-        double  max_dist;
 
-        max_dist = 0;
         for  ( const gdiam_point  * ind = a_lo; ind <= a_hi; ind++ )
             for  ( const gdiam_point   * jnd = b_lo; jnd <= b_hi; jnd++ )
                 diam.update_diam( *ind, *jnd, dir );
@@ -1627,9 +1619,6 @@ void  convex_hull( vec_point_2d  & in, vec_point_2d  & out )
         assert( in[ ind ] != NULL );
     }
         
-    int  size;
-
-    size = in.size();
 
     /*
     if  ( in.size() == 24 ) {

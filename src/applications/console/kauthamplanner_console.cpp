@@ -188,7 +188,7 @@ int main(int argc, char* argv[]){
                     "</Problem>\n";
             size_t size = buffstring.size();
             char *buffer = new char[size];
-            for(int i=0; i<size;i++)
+            for(unsigned i=0; i<size;i++)
                 buffer[i] = buffstring[i];
 
             membuf mb(buffer, size);
@@ -239,7 +239,7 @@ int main(int argc, char* argv[]){
                     "</Problem>\n";
             size_t size2 = buffstring.size();
             char *buffer2 = new char[size2];
-            for(int i=0; i<size2;i++)
+            for(unsigned i=0; i<size2;i++)
                 buffer2[i] = buffstring[i];
 
             membuf mb2(buffer2, size2);
@@ -318,7 +318,7 @@ int main(int argc, char* argv[]){
                     "</ControlSet>\n";
             size_t size3 = buffstring.size();
             char *buffer3 = new char[size3];
-            for(int i=0; i<size3;i++)
+            for(unsigned i=0; i<size3;i++)
                 buffer3[i] = buffstring[i];
 
             membuf mb3(buffer3, size3);
@@ -358,7 +358,7 @@ int main(int argc, char* argv[]){
 
             size_t size4 = buffstring.size();
             char *buffer4 = new char[size4];
-            for(int i=0; i<size4;i++)
+            for(unsigned i=0; i<size4;i++)
                 buffer4[i] = buffstring[i];
 
             membuf mb4(buffer4, size4);

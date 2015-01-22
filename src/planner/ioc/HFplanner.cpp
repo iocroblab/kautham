@@ -112,7 +112,7 @@ namespace Kautham {
           return false;
 
 		char *str = new char[20];
-        for(int i=0; i<_wkSpace->getNumRobControls();i++)
+        for(unsigned i=0; i<_wkSpace->getNumRobControls();i++)
 		{
 			sprintf(str,"Discr. Steps %d",i);
 			it = _parameters.find(str);
@@ -204,18 +204,14 @@ namespace Kautham {
 			
             static int svg = -1;
 
-            if(svg == -1 || svg!=indexgoal){
+            if (svg != int(indexgoal)) {
                 //reset HF function because goal has changed
                 svg = indexgoal;
                 setRandValues();
             }
 
-			Sample* curr;
-			gridVertex vc;
+            gridVertex vc = indexinit;
 			gridVertex vmin;
-
-			curr = _init;
-            vc = indexinit;
 
 			_path.clear();
 			clearSimulationPath();
@@ -263,7 +259,7 @@ namespace Kautham {
 			if(_solved)
 			{
 				cout<<"PATH:";
-				for(int i=0;i<cellpath.size();i++)
+                for(unsigned i=0;i<cellpath.size();i++)
 				{
 					cout<<" "<<cellpath[i]<<"("<<getPotential(cellpath[i])<<"), ";
 				}

@@ -127,8 +127,6 @@ namespace Kautham {
   enum PROBLEMSTATE {
       INITIAL,
       PROBLEMLOADED,
-      CSPACECREATED,
-      PRMCALCULATED
   };
 
   enum CONSTRAINEDKINEMATICS {

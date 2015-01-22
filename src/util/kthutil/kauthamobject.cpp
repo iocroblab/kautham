@@ -70,7 +70,7 @@ namespace Kautham{
     vector<string> tokens;
     boost::split(tokens, par, boost::is_any_of("|"));
     
-    for(int i=0; i<tokens.size(); i=i+2){
+    for(unsigned i=0; i<tokens.size(); i=i+2){
       try{
         it = _parameters.find(tokens[i]);
         val = (KthReal)atof(tokens[i+1].c_str());

@@ -62,7 +62,7 @@ namespace IOC{
       inline bool             solved(){return _solved;}
       inline int              getInit(){return _init;}
       inline int              getGoal(){return _goal;}
-      inline bool             setInitGoal(int init, int goal){_init = init; _goal = goal;}
+      inline void             setInitGoal(int init, int goal){_init = init; _goal = goal;}
       inline void             setSampleStats(int generated, int connected, int edges, int checks, int wchecks){_generatedSamples = generated;
                                             _connectedSamples = connected; _generatedEdges = edges;_collCheckCalls = checks; _worldcollCheckCalls = wchecks;}
       inline void             setGeneratedSamples(int generated){ _generatedSamples = generated;}

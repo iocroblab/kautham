@@ -353,7 +353,7 @@ void Application::saveTabColors() {
     viewers.push_back("CSpace");
     SbColor color;
     settings->beginGroup("mainWindow");
-    for (int i = 0; i < viewers.size(); i++) {
+    for (unsigned i = 0; i < viewers.size(); i++) {
         if (mainWindow->getViewerTab(viewers.at(i)) != NULL) {
             settings->beginGroup(viewers.at(i).c_str());
             color = mainWindow->getViewerTab(viewers.at(i))->getBackgroundColor();
@@ -411,7 +411,7 @@ bool Application::problemSetup(string problemFile){
     std::vector <string> def_path;
     def_path.push_back(dir);
     if (pathList.size() > 0) {
-        for (uint i = 0; i < pathList.size(); i++) {
+        for (int i = 0; i < pathList.size(); i++) {
             def_path.push_back(pathList.at(i).toStdString()+"/");
         }
     } else {
@@ -542,7 +542,7 @@ bool Application::problemSetup(string problemFile){
             msgBox.setWindowTitle("Error encountered");
             msgBox.setText("The problem couldn't be loaded");
             msgBox.setInformativeText(arguments->excp->what());
-            if (arguments->excp->more() != "") {
+            if (strcmp(arguments->excp->more(),"") == 0) {
                 msgBox.setDetailedText(arguments->excp->more());
             }
             msgBox.setStandardButtons(QMessageBox::Ok);

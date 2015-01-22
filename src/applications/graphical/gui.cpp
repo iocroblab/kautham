@@ -816,7 +816,7 @@ namespace Kautham {
         propertiesTab->show();
         QList <QAction*> actions = toolBar->actions();
         QAction *ac;
-        for (uint i = 0; i < actions.size(); i++) {
+        for (int i = 0; i < actions.size(); i++) {
             ac = actions.at(i);
             if (ac->text() == "Chan&ge Colour") {
                 ac->setEnabled(true);
@@ -856,7 +856,7 @@ namespace Kautham {
         propertiesTab->hide();
         QList <QAction*> actions = toolBar->actions();
         QAction *ac;
-        for (uint i = 0; i < actions.size(); i++) {
+        for (int i = 0; i < actions.size(); i++) {
             ac = actions.at(i);
             if (ac->text() == "Chan&ge Colour") {
                 ac->setDisabled(true);

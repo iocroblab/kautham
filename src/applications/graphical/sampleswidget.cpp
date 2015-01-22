@@ -199,7 +199,7 @@ namespace Kautham {
 
 
     void SamplesWidget::changeSample(int index) {
-        if (index >= 0 && index < sampleSet->getSize()) {
+        if (index >= 0 && index < int(sampleSet->getSize())) {
             prob->wSpace()->moveRobotsTo(sampleSet->getSampleAt(index));
         }
     }
@@ -271,7 +271,7 @@ namespace Kautham {
 
     void SamplesWidget::getSamples() {
         bool ok;
-        int numSamples = (sampleAmount->text()).toInt(&ok,10);
+        unsigned numSamples = sampleAmount->text().toUInt(&ok,10);
 
         if (ok) {
             Sample *sample;
@@ -304,13 +304,13 @@ namespace Kautham {
 
 
     void SamplesWidget::updateSampleList() {
-        if (sampleList->count() < sampleSet->getSize()) {
+        if (sampleList->count() < int(sampleSet->getSize())) {
             for (uint i = sampleList->count(); i < sampleSet->getSize(); ++i) {
                 sampleList->addItem(QString::number(i));
             }
         } else {
-            for (int i = sampleList->count(); i > sampleSet->getSize(); --i) {
-                sampleList->removeItem(i-1);
+            for (uint i = sampleList->count()+1; i > (sampleSet->getSize()+1); --i) {
+                sampleList->removeItem(i);
             }
         }
     }

@@ -25,57 +25,40 @@
 
 #include "sdksampler.h"
 
-namespace Kautham{
-
-
-
-  char SDKSample::M=0;
-  float SDKSample::sizeContainer=0.0;
+namespace Kautham {
+  int SDKSample::M = 0;
+  float SDKSample::sizeContainer = 0.0;
   
-  SDKSampler::SDKSampler(char dim, char maxLevel){
-    generator = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
-    setDim(dim);
-    unsigned long int NumSamples = 0x01<<(maxLevel*dim);
-    _tMat = new TMat(dim);
-    _wMat = new WMat(dim,maxLevel);
-    SDKSample::sizeContainer = 1.0f/(0x01<<maxLevel);
-    SDKSample::M = maxLevel;
-		sdkSequence = new Sequence(dim, maxLevel);
-    sdkSequence->setT(*_tMat);
-    sdkSequence->setW(*_wMat);
-    SDKSample::gen = generator;
+  SDKSampler::SDKSampler(int dim, int maxLevel){
+      generator = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
+      setDim(dim);
+      _tMat = new TMat(dim);
+      _wMat = new WMat(dim,maxLevel);
+      SDKSample::sizeContainer = 1.0f/(0x01<<maxLevel);
+      SDKSample::M = maxLevel;
+      sdkSequence = new Sequence(dim, maxLevel);
+      sdkSequence->setT(*_tMat);
+      sdkSequence->setW(*_wMat);
+      SDKSample::gen = generator;
   }
 
   Sample* SDKSampler::nextSample() {
-    return nextSample(true);
+      return nextSample(true);
   }
 
   Sample* SDKSampler::nextSample(bool random) {
-		unsigned long newCode= sdkSequence->getSequenceCode();
-		
-    if( random )
-		  _current = new SDKSample(dimension, newCode,sdkSequence->getIndexes(newCode));
-    else
-      _current = new SDKSample(dimension, newCode,sdkSequence->getIndexes(newCode),false);
-
-    return _current;
+      return getSample(sdkSequence->getSequenceCode(),random);
   }
 
   Sample* SDKSampler::getSample(unsigned long int code, bool random ){
-    if( random )
-		  _current = new SDKSample(dimension, code,sdkSequence->getIndexes(code));
-    else
-      _current = new SDKSample(dimension, code,sdkSequence->getIndexes(code),false);
-    return (SDKSample*)_current;  
+      _current = new SDKSample(dimension,code,sdkSequence->getIndexes(code),random);
+
+      return _current;
   }
 
-   //! Destructor.
-	SDKSampler::~SDKSampler()
-	{
+  //! Destructor.
+  SDKSampler::~SDKSampler()
+  {
 
-    };
+  }
 }
-
-
-
-

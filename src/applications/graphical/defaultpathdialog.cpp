@@ -118,7 +118,7 @@ namespace Kautham {
     QStringList *DefaultPathDialog::getList() {
         if (exec()) {
             QStringList *pathList = new QStringList();
-            for (uint i = 0; i < pathListWidget->count(); i ++) {
+            for (int i = 0; i < pathListWidget->count(); i ++) {
                 pathList->push_back(pathListWidget->item(i)->text());
             }
             return pathList;

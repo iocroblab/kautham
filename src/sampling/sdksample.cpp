@@ -32,69 +32,65 @@
 using namespace std;
 
 namespace Kautham {
-
-
-
   LCPRNG* SDKSample::gen = NULL;
 
-  SDKSample::SDKSample(char d, unsigned long int code, char* indexes, bool random):Sample(d){
-    KthReal r=0.0;
-		this->code = code;
-    _coords.resize(_dim);
-    index = new char[_dim];
-    for(char j=0; j< _dim; j++){
-		  if(random)
-        r = (KthReal)gen->d_rand();
-		  else 
-        r=0.5;
-      index[j]=indexes[j];
-      _coords[j]=(indexes[j]+r)*SDKSample::sizeContainer;
-    }
-	}
-
-	SDKSample::~SDKSample() {
-    _coords.clear();
-	}
-
-	SDKSample::SDKSample(SDKSample *s):Sample(s)
-	{
-		code = s->code;
-    index = new char[_dim];
-		for(unsigned int j = 0; j < _dim; j++)
-			index[j] = s->index[j];
-	}
-
-
-
-	string SDKSample::print(bool extend) {
-    std::ostringstream s;
-    if(extend)s << "code: " << code << "\t";
-    for(int i=0; i < _dim; i++){
-      if(extend) {
-        s << " coor[" ;
-        s << i ;
-        s << "]= ";
+  SDKSample::SDKSample(unsigned d, unsigned long int code, int *indexes, bool random):Sample(d){
+      KthReal r=0.0;
+      this->code = code;
+      _coords.resize(_dim);
+      index = new int[_dim];
+      for(unsigned int j=0; j< _dim; j++){
+          if(random)
+              r = (KthReal)gen->d_rand();
+          else
+              r=0.5;
+          index[j]=indexes[j];
+          _coords[j]=(indexes[j]+r)*SDKSample::sizeContainer;
       }
-      s << _coords[i] ;
-      s << " "  ;
-		}
-    s << std::endl;
-		return s.str();	
-	}
-
-  string SDKSample::printNeighs(){
-    std::ostringstream s;
-    s << "code: " << code << "\tNeighs: ";
-    s << _neighset.size() << " Codes: ";
-    for(unsigned int i=0; i < _neighset.size(); i++){
-      //s << ((SDKSample*)_neighset[i])->getCode() << ", "  ;
-        s << _neighset[i] << ", "  ;
-		}
-    
-    s << std::endl;
-		return s.str();	
   }
 
+
+  SDKSample::~SDKSample() {
+      _coords.clear();
+  }
+
+
+  SDKSample::SDKSample(SDKSample *s):Sample(s)
+  {
+      code = s->code;
+      index = new int[_dim];
+      for(unsigned int j = 0; j < _dim; j++)
+          index[j] = s->index[j];
+  }
+
+
+  string SDKSample::print(bool extend) {
+      std::ostringstream s;
+      if(extend)s << "code: " << code << "\t";
+      for(unsigned i=0; i < _dim; i++){
+          if(extend) {
+              s << " coor[" ;
+              s << i ;
+              s << "]= ";
+          }
+          s << _coords[i] ;
+          s << " "  ;
+      }
+      s << std::endl;
+      return s.str();
+  }
+
+
+  string SDKSample::printNeighs() {
+      std::ostringstream s;
+      s << "code: " << code << "\tNeighs: ";
+      s << _neighset.size() << " Codes: ";
+      for(unsigned int i=0; i < _neighset.size(); i++){
+          //s << ((SDKSample*)_neighset[i])->getCode() << ", "  ;
+          s << _neighset[i] << ", "  ;
+      }
+
+      s << std::endl;
+      return s.str();
+  }
 }
-
-
