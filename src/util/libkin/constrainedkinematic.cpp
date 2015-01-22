@@ -32,7 +32,7 @@ namespace Kautham{
     
   void ConstrainedKinematic::setTarget(vector<KthReal> &target){
     _target.clear();
-    for(int i =0; i< target.size(); i++)
+    for(unsigned i =0; i< target.size(); i++)
       _target.push_back(target.at(i));
   }
 }

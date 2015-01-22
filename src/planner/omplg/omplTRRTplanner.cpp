@@ -76,7 +76,7 @@ namespace Kautham {
         _opti = ob::OptimizationObjectivePtr(new myOptimizationObjective(ss->getSpaceInformation(), this, false));
         std::vector< std::vector<double> > cp(wkSpace()->getNumObstacles());
         _potentialParams.resize(wkSpace()->getNumObstacles());
-        for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
+        for (unsigned i = 0; i < wkSpace()->getNumObstacles(); ++i) {
             mt::Point3 p = wkSpace()->getObstacle(i)->getLink(0)->getTransformation()->getTranslation();
             cp[i].resize(3);
             cp[i][0] = p[0];
@@ -124,7 +124,7 @@ namespace Kautham {
         else
           return false;
 
-        for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
+        for (unsigned i = 0; i < wkSpace()->getNumObstacles(); ++i) {
             stringstream repulse, diffusion;
             repulse << "Repulse " << i;
             diffusion << "Diffusion " << i;

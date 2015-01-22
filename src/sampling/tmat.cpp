@@ -35,24 +35,24 @@ namespace Kautham {
 
 
 
-TMat::TMat(int d) {
+TMat::TMat(unsigned d) {
 
 		this->d = d;
-    _tMat = new char*[d]; //The matrix Td
-    for(int i=0; i<d; i++) {
-        _tMat[i] = new char[d];
+    _tMat = new int*[d]; //The matrix Td
+    for(unsigned i=0; i<d; i++) {
+        _tMat[i] = new int[d];
     }
 	  
     createTd();
   
-    matRes = new char*[d];
-    for(char i=0; i<d; i++)
-      matRes[i] = new char[d];
-		for(char i=0;i<d;i++)
-			for(char j=0; j<d; j++)
-				matRes[i][j] = 0;
-
-	}
+    matRes = new int*[d];
+    for(unsigned i=0; i<d; i++) {
+      matRes[i] = new int[d];
+      for(unsigned j=0; j<d; j++) {
+          matRes[i][j] = 0;
+      }
+    }
+  }
 
 	TMat::~TMat() {
 	 /********************
@@ -121,15 +121,13 @@ TMat::TMat(int d) {
 	  }
   }
 
-  void TMat::insert(char **vA, char **vB, int dimA, int dimB){
-	  int dimC = dimA*dimB;
-
+  void TMat::insert(int **vA, int **vB, int dimA, int dimB){
 	  //copy of vA
-	  char **tempvA;
-	  tempvA = new char*[dimA];
+      int **tempvA;
+      tempvA = new int*[dimA];
 	  for(int i=0; i<dimA; i++)
 	  {
-		  tempvA[i] = new char[dimA];
+          tempvA[i] = new int[dimA];
 		  for(int j=0; j<dimA; j++)
 		  {
 			  tempvA[i][j] = vA[i][j];
@@ -162,10 +160,10 @@ TMat::TMat(int d) {
   }
 
   //! This method creates the base matrices of the prime numbers involved.
-  void TMat::compose(int *primefactors, int numfactors, char **vC, int dimC, int trunc){	
+  void TMat::compose(int *primefactors, int numfactors, int **vC, int dimC, int trunc){
 	  //Create the base matrices of the prime numbers involved
-	  char ***vv;
-	  vv = new char**[numfactors];
+      int ***vv;
+      vv = new int**[numfactors];
 
 	  //vectors to do the prime decomposition if necessary
 	  int *nf;
@@ -184,8 +182,8 @@ TMat::TMat(int d) {
 			  case 2:
 				  //printf("factor 2\n");
 				  //base matrix T2
-				  vv[i] = new char*[2]; 
-				  for(int j=0;j<2;j++) vv[i][j] = new char[2];
+                  vv[i] = new int*[2];
+                  for(int j=0;j<2;j++) vv[i][j] = new int[2];
 				  vv[i][0][0] = 1; vv[i][0][1] = 0; 
 				  vv[i][1][0] = 1; vv[i][1][1] = 1;
 				  break;
@@ -193,8 +191,8 @@ TMat::TMat(int d) {
 			  case 3:
 				  //printf("factor 3\n");
     			  //base matrix T3
-				  vv[i] = new char*[3]; 
-				  for(int j=0;j<3;j++) vv[i][j] = new char[3];
+                  vv[i] = new int*[3];
+                  for(int j=0;j<3;j++) vv[i][j] = new int[3];
     			  vv[i][0][0] = 1; vv[i][0][1] = 0; vv[i][0][2] = 0;
     			  vv[i][1][0] = 0; vv[i][1][1] = 1; vv[i][1][2] = 0;
     			  vv[i][2][0] = 1; vv[i][2][1] = 1; vv[i][2][2] = 1;
@@ -202,18 +200,18 @@ TMat::TMat(int d) {
 			  default:
 				  //printf("factor %d\n",primefactors[i]);
 				  prime_factorization(primefactors[i]+1, pf[i], &nf[i]);
-				  vv[i] = new char*[primefactors[i]];
-				  for(int j=0;j< (primefactors[i]);j++) vv[i][j] = new char[primefactors[i]];
+                  vv[i] = new int*[primefactors[i]];
+                  for(int j=0;j< (primefactors[i]);j++) vv[i][j] = new int[primefactors[i]];
 				  compose(pf[i], nf[i], vv[i], primefactors[i]+1, 1); //compose with trunc option
 		  }
 	  }
 
 	  //recursively insert one inside the other
-	  char **tempvC;
-	  tempvC = new char*[dimC];
+      int **tempvC;
+      tempvC = new int*[dimC];
 	  for(int i=0;i<dimC;i++) 
 	  {
-		  tempvC[i] = new char[dimC+trunc];
+          tempvC[i] = new int[dimC+trunc];
 		  for(int j=0;j<dimC;j++) 
 		  {
 			  tempvC[i][j] = 0;
@@ -294,8 +292,8 @@ TMat::TMat(int d) {
 		int resk;
     int i;
 
-    char *const w = new char[d];
-    char *const res = new char[d];
+    int *const w = new int[d];
+    int *const res = new int[d];
 
     //Convert k to a binary vector w
     for( i=0; i<d; i++){
@@ -320,24 +318,16 @@ TMat::TMat(int d) {
 
     return resk;
 	}
-
-	void TMat::multiply(const char* const k, char* const l) {
-		// Falta por implementar. Verificar posibilidad de  borrado.
-	}
-
-	void TMat::multiply(const char* const k, char* const l, const int m) {
-		// Falta por implementar. Verificar posibilidad de  borrado.
-	}
 /************************************************************
  *                             multiply
- ************************************************************
+ ************************************************************/
  /*! This function performs the multipication of T (d x d) by
  *  a binary matrix v (d x m) representing the coordinates of
  *  a sample.
  * The result is also a binary matrix that is set in matRes parameter.
  * The partion level m is passed as a parameter.
  ************************************************************/
-	char** TMat::multiply( const char *const *const v, const int m) const {
+    int** TMat::multiply( const int *const *const v, const int m) const {
 		for(int k=0;k<m;k++) {
 			for(int i=0;i<d;i++) {
 				matRes[i][k] = 0;
@@ -358,7 +348,7 @@ TMat::TMat(int d) {
 * a mod2 operation is done. Therefore the resulting vector is
 * a binary vector.
 */
-	void TMat::multiply( const char* const w, char* const res ) const {
+    void TMat::multiply( const int* const w, int* const res ) const {
 		for(int i=0; i<d; i++) {
 			res[i]=0;
 			for( int j=0; j<d; j++) {

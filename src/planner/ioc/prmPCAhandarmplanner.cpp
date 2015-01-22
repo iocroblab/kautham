@@ -130,7 +130,7 @@ using namespace std;
 
         it = _parameters.find("Max. Neighs");
 		if(it != _parameters.end()){
-          _kNeighs = (int)it->second;
+          _kNeighs = (unsigned)it->second;
 		  _samples->setANNdatastructures(_kNeighs, _maxNumSamples*2);
 	  }
         else
@@ -173,7 +173,7 @@ using namespace std;
         it = _parameters.find("Drawn Path Link");
         if(it != _parameters.end()){
           _drawnLink = it->second;
-          for(int i=0; i<_wkSpace->getNumRobots();i++)
+          for(unsigned i=0; i<_wkSpace->getNumRobots();i++)
             _wkSpace->getRobot(i)->setLinkPathDrawn(_drawnLink);
         }else
           return false;
@@ -211,20 +211,16 @@ using namespace std;
 				coordvector.clear();
 
 				//load the arm coordinates passed as a parameter
-				for(int k =0; k < _wkSpace->getRobot(0)->getTrunk(); k++)
+                for(unsigned k =0; k < _wkSpace->getRobot(0)->getTrunk(); k++)
 				{
 					coordvector.push_back(coord[k]);
 				}
 
-				//sample the hand coordinates
-				float q=0;
-                q=_wkSpace->getNumRobControls()-(_wkSpace->getRobot(0)->getTrunk());
-
-                if(numPMDs==-1 || numPMDs>(_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk()))
+                if(numPMDs==-1 || numPMDs>int(_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk()))
                         numPMDs = _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk();
-				int k;
+                unsigned k;
 				//Aqui randon Hand/////////////////////////
-				for(k = kini; k < kini+numPMDs; k++)
+                for(k = kini; int(k-kini) < numPMDs; k++)
 				{
 					//hand coords not set - sample the whole range
 					if(samplewholerange){
@@ -282,7 +278,7 @@ using namespace std;
 		else
 		{
 			//load the hand-arm coordinates passed as a parameter
-            for(int k = 0; k < _wkSpace->getNumRobControls(); k++)
+            for(unsigned k = 0; k < _wkSpace->getNumRobControls(); k++)
 			{
 				coordvector.push_back(coord[k]);
 			}
@@ -434,10 +430,7 @@ using namespace std;
 
 		//////////////////////////////////////////////////////////////////////////////
 		bool sampleincollision;
-		double deltaM;
-		Sample *tmpSample;
-        std::vector<KthReal> coord(wkSpace()->getNumRobControls());
-		vector<KthReal> coordvector;
+        double deltaM;
 		int trials = 0;
 		int maxtrials = 100;
 		int ig=0;
@@ -446,16 +439,14 @@ using namespace std;
 		_distance.clear();//clear vector distancia
 		_indexpca.clear();//clear vector indexpca
 		int countwr=0;
-		
-		int myflag=0, z=0;
-		float R=0;
+
 		callpca=0;
 		int countSamples=0;
 		//////////////////////////////////////////////////////////////////////////////
 	 
 	  	//Sample around goal up to maxsamplesingoal (in order to have as many samples as required for a first call to PCA)
 		_samples->setTypeSearch(BRUTEFORCE);
-		for(ig=0; trials<maxtrials && ig<maxsamplesingoal; ig) {
+        for(ig=0; trials<maxtrials && ig<maxsamplesingoal;) {
 		  if(getSampleInGoalRegion(_deltaI , 0.02)) 
 		  {
 			  ig++;
@@ -470,7 +461,7 @@ using namespace std;
 		int p=0;
 		int n=0;
 		int freepca=0;
-		int freerw=0;
+
 		//set the deltaM of the sphere where to sample randomly
 		deltaM = _deltaI; 
 		
@@ -507,10 +498,10 @@ using namespace std;
 						
 						///////////////////////////////////////////////////////////
 						//Procesamiento para comprobar las nuevas muestas 20x11, son libres de colisión
-                        for(int z=0; z<matPCA.n_rows ; z++)
+                        for(unsigned z=0; z<matPCA.n_rows ; z++)
 						{
                             rowvec pointpca=matPCA.row(z);//Fila de 11 elementos(6 primeros del brazo y los 5 ultimos de la mano)
-                            for(int k=0; k < _wkSpace->getNumRobControls(); k++)
+                            for(unsigned k=0; k < _wkSpace->getNumRobControls(); k++)
 								coord[k]=pointpca(0,k);//coord:variable para almacenar los 11 elementos
 							
 							//load sample coordinates
@@ -652,7 +643,7 @@ using namespace std;
 	//!Uses PCA with the samples near the goal to compute the V region for sampling
 	bool PRMPCAHandArmPlanner::getSampleRandPCA(float R)
 	{
-		int sizevd=0; //inicialización de la variable
+        unsigned sizevd=0; //inicialización de la variable
 		sizevd=_distance.size();//numero de elementos del vector de distancias
 		
 		//if not enough ssmples return
@@ -665,7 +656,7 @@ using namespace std;
         //use those samples within a distance R, and if more than 11 (_wkSpace->getNumRobControls()) are available use those
 		//that also belong to the same connected component as the goal
 		vector<Sample*> pacsamplevector;
-		for(int i=0;i<sizevd;i++)
+        for(unsigned i=0;i<sizevd;i++)
 		{
 			//consider only those of the same connected component as the goal
             if(i>=_wkSpace->getNumRobControls() && _samples->getSampleAt(i+2)->getConnectedComponent()!=goalSamp()->getConnectedComponent()) continue;
@@ -677,15 +668,15 @@ using namespace std;
 		}
         mat PCA11PMDs(pacsamplevector.size(),_wkSpace->getNumRobControls());
 		PCA11PMDs.fill(0.0);//inicilización de la matriz
-		for(int i=0;i<pacsamplevector.size();i++)
+        for(unsigned i=0;i<pacsamplevector.size();i++)
 		{
-            for(int k = 0; k <_wkSpace->getNumRobControls(); k++)
+            for(unsigned k = 0; k <_wkSpace->getNumRobControls(); k++)
 				PCA11PMDs(i,k)=pacsamplevector[i]->getCoords()[k];		
 		}
 
 		try
 		{
-            if(PCA11PMDs.n_rows>=_wkSpace->getNumRobControls())//Condición para el calculo de PCA(minimo _wkSpace->getNumRobControls(),11, elementos)
+            if (PCA11PMDs.n_rows>=_wkSpace->getNumRobControls())//Condición para el calculo de PCA(minimo _wkSpace->getNumRobControls(),11, elementos)
 			{
 				///////////////PCA Armadillo//////////////////////////////
 				mat coeff;//coeff: principal component coefficients
@@ -719,7 +710,7 @@ using namespace std;
 				//_gen->rand_init();
 				for(int i=0; i < numsamplespca; i++)
                 {
-                    for(int j=0; j<_wkSpace->getNumRobControls(); j++){
+                    for(unsigned j=0; j<_wkSpace->getNumRobControls(); j++){
 						double rr=_gen->d_rand();
                         //fprintf(fp,"%f\n",rr);
                         matrand(i,j)=-lambdapca(0,j)+(2*lambdapca(0,j)*(rr));
@@ -727,7 +718,7 @@ using namespace std;
 
                     rowvec zeta=trans((coeff*trans(matrand.row(i)))+trans(bar));
 					
-                    for(int j=0; j<_wkSpace->getNumRobControls(); j++)
+                    for(unsigned j=0; j<_wkSpace->getNumRobControls(); j++)
                         matrand(i,j)=zeta(0,j);
 					
 				}
@@ -735,10 +726,12 @@ using namespace std;
                 matPCA= matrand;
 
 				return true;
-			}
-		}
-		/////////////////////////////////
-		catch (...){return false; }
+            } else {
+                return false;
+            }
+        } catch (...) {
+            return false;
+        }
 }
 
 
@@ -749,7 +742,7 @@ using namespace std;
 		//std::map<int, SampleSet*>::iterator it;
 		cout<<"Num Sampling Goal Region PCA  = "<<_indexpca.size()<<endl;
 		cout << "PCA Sampling=> " ;
-		for ( int i=0;i<_indexpca.size(); i++ )
+        for ( unsigned i=0;i<_indexpca.size(); i++ )
 		{
 			cout<< _indexpca[i]<< "," ;
 				
@@ -876,7 +869,7 @@ using namespace std;
 				}
 
 				//Set the new sample with the arm coorinates and check for autocollision.	
-                for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
+                for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
 				_wkSpace->getRobot(0)->control2Pose(coord); 
 				autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
 			}
@@ -901,11 +894,11 @@ using namespace std;
 		{
 			//Set the coord values to -1 in order to sample within the whole hand workspace, not only around the goal
 			//when calling to getHandConfig
-            for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=-1;
+            for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=-1;
 		}
 		else{
 			vector<KthReal>& coordgoal = s->getCoords();
-            for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]= coordgoal[k];
+            for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]= coordgoal[k];
 		}
 		if(getHandConfig(coord, flag, -1))	
 		{
@@ -1062,7 +1055,7 @@ using namespace std;
 				}
 
 				//Set the new sample with the arm coorinates and check for autocollision.	
-                for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
+                for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
 				_wkSpace->getRobot(0)->control2Pose(coord); 
 				autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
 			}
@@ -1087,11 +1080,11 @@ using namespace std;
 		{
 			//Set the coord values to -1 in order to sample within the whole hand workspace, not only around the goal
 			//when calling to getHandConfig
-            for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=-1;
+            for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=-1;
 		}
 		else{
 			vector<KthReal>& coordgoal = s->getCoords();
-            for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]= coordgoal[k];
+            for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]= coordgoal[k];
 		}
 		if(getHandConfig(coord, flag, -1))	
 		{
@@ -1123,7 +1116,7 @@ using namespace std;
 					coords2[j]=v;
 				}	
 				//hand
-                for(int j = 6; j < _wkSpace->getNumRobControls() ; j++)
+                for(unsigned j = 6; j < _wkSpace->getNumRobControls() ; j++)
 				{
 					v=-1.0;
 					while(v<0.0 || v>1.0)
@@ -1339,7 +1332,7 @@ using namespace std;
 				}
 
 				//Set the new sample with the arm coorinates and check for autocollision.	
-                for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
+                for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
 				_wkSpace->getRobot(0)->control2Pose(coord); 
 				autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
 			}
@@ -1364,11 +1357,11 @@ using namespace std;
 		{
 			//Set the coord values to -1 in order to sample within the whole hand workspace, not only around the goal
 			//when calling to getHandConfig
-            for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=-1;
+            for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=-1;
 		}
 		else{
 			vector<KthReal>& coordgoal = s->getCoords();
-            for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]= coordgoal[k];
+            for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]= coordgoal[k];
 		}
 		if(getHandConfig(coord, flag, -1))	
 		{
@@ -1400,7 +1393,7 @@ using namespace std;
 					coords2[j]=v;
 				}	
 				//hand
-                for(int j = 6; j < _wkSpace->getNumRobControls() ; j++)
+                for(unsigned j = 6; j < _wkSpace->getNumRobControls() ; j++)
 				{
 					v=-1.0;
 					while(v<0.0 || v>1.0)
@@ -1427,7 +1420,6 @@ using namespace std;
 			if(tmpSample_IsCollision == true && tmpSample2_IsCollision == true )
 			{
 				Sample *midpointSample;
-				KthReal midpoint;
 				int maxmidpointtrials=10;
 				int midpointtrials=0;
 
@@ -1479,7 +1471,6 @@ using namespace std;
 		//Randomly set the coordinates of the robot joints at a autocollision-free conf
 		trials=0;
 		maxtrials=100;
-		Sample *s;
 
 		
 		//t is the interpolation parameter
@@ -1539,7 +1530,7 @@ using namespace std;
 					}
 
 					//Set the new sample with the arm coorinates and check for autocollision.	
-                    for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
+                    for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
 					_wkSpace->getRobot(0)->control2Pose(coord); 
 					autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
 				}
@@ -1560,12 +1551,12 @@ using namespace std;
 			{
 				//Set the coord values to -1 in order to sample within the whole hand workspace, not only around the goal
 				//when calling to getHandConfig
-                for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=-1;
+                for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=-1;
 			}
 			else{
 				vector<KthReal>& coordgoal = goalSamp()->getCoords();
 				vector<KthReal>& coordini = initSamp()->getCoords();
-                for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]= coordini[k] + t*(coordgoal[k]-coordini[k]);
+                for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]= coordini[k] + t*(coordgoal[k]-coordini[k]);
 			}
 			if(getHandConfig(coord, flag, -1))	
 			{
@@ -1624,14 +1615,14 @@ using namespace std;
 			for(unsigned i = 0; i < _simulationPath.size(); i++){
 				coordvector.clear();
 				//convert from controls to real coordinates
-                for(int k = 0; k < _wkSpace->getNumRobControls(); k++)
+                for(unsigned k = 0; k < _wkSpace->getNumRobControls(); k++)
 					coordvector.push_back( _simulationPath[i]->getCoords()[k] ); 
 								
 				_wkSpace->getRobot(0)->control2Pose(coordvector);
 				joints = _wkSpace->getRobot(0)->getCurrentPos();
 
 				//arm coordinates
-				int j;
+                unsigned j;
 				for(j =0; j < 6; j++)
 					fprintf(fp,"%.2f ",joints->getRn().getCoordinate(j)*180.0/PI);
 				

@@ -64,15 +64,15 @@ namespace Kautham{
 
 
 
-  bool iocPlanner::addQuery(int init, int goal ){
+  bool iocPlanner::addQuery(unsigned init, unsigned goal ){
     KthQuery tmp(init, goal);
     _queries.push_back(tmp);
       return true;
   }
 
-  int iocPlanner::findQuery(int init, int goal, int from){
+  int iocPlanner::findQuery(unsigned init, unsigned goal, unsigned from){
     if( from < _queries.size() ){
-      for(int i = from; i < _queries.size(); i++)
+      for(unsigned i = from; i < _queries.size(); i++)
         if( _queries[i].sameInitGoal(init, goal) ) return i;
     }
     return -1;
@@ -109,7 +109,7 @@ namespace Kautham{
       currQue->setTotalTime( _totalTime );
       currQue->setSmoothTime( _smoothTime );
       vector<int> solu;
-      for(int i = 0; i < _path.size(); i++)
+      for(unsigned i = 0; i < _path.size(); i++)
         solu.push_back(_samples->indexOf( _path[i] ));
       currQue->setPath( solu );
       return true;
@@ -137,7 +137,7 @@ namespace Kautham{
     vector<string> tokens;
     boost::split(tokens, param, boost::is_any_of("|"));
 
-    for(int i=0; i<tokens.size(); i=i+2){
+    for(unsigned i=0; i<tokens.size(); i=i+2){
       xml_node paramItem = paramNode.append_child();
       paramItem.set_name("Parameter");
       paramItem.append_attribute("name") = tokens[i].c_str();
@@ -198,7 +198,7 @@ namespace Kautham{
     sampNode.set_name("SampleSet");
     sampNode.append_attribute("dim") = _wkSpace->getNumRobControls();
     sampNode.append_attribute("size") = _samples->getSize();
-    for(int i = 0; i < _samples->getSize(); i++){
+    for(unsigned i = 0; i < _samples->getSize(); i++){
       xml_node sampItem = sampNode.append_child();
       sampItem.set_name("Sample");
       sampItem.append_attribute("conComp") = _samples->getSampleAt(i)->getConnectedComponent();
@@ -217,7 +217,7 @@ namespace Kautham{
     _path.clear();
 
     xml_document doc;
-    xml_parse_result result = doc.load_file(path.c_str());
+    if (!doc.load_file(path.c_str())) return false;
 
     xml_node tempNode = doc.child("Planner").child("Parameters");
     std::stringstream temp;
@@ -242,8 +242,8 @@ namespace Kautham{
 
     tempNode = doc.child("Planner").child("SampleSet");
 
-    char dim = _wkSpace->getNumRobControls();
-    if( dim != tempNode.attribute("dim").as_int()){
+    unsigned dim = _wkSpace->getNumRobControls();
+    if( dim != tempNode.attribute("dim").as_uint(0)){
       std::cout << "Dimension of samples doesn't correspond with the problem's dimension."
           << std::endl;
       return false;
@@ -263,7 +263,7 @@ namespace Kautham{
       }
 
       tmpSampPointer = new Sample(dim);
-      for(char i=0; i<dim; i++)
+      for(unsigned i=0; i<dim; i++)
         coordsVec[i] = (KthReal)atof(tokens[i].c_str());
 
       tmpSampPointer->setCoords(coordsVec);
@@ -273,7 +273,7 @@ namespace Kautham{
 
       _samples->add(tmpSampPointer);
     }
-    if(_samples->getSize() != tempNode.attribute("size").as_int()){
+    if(_samples->getSize() != tempNode.attribute("size").as_uint(0)){
       std::cout << "Something wrong with the samples. Not all samples has been loaded."
           << std::endl;
       return false;

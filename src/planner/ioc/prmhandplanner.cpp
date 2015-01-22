@@ -99,14 +99,14 @@
 			for(unsigned i = 0; i < _path.size(); i++){
 				coordvector.clear();
 				//convert from controls to real coordinates
-                for(int k = 0; k < _wkSpace->getNumRobControls(); k++)
+                for(unsigned k = 0; k < _wkSpace->getNumRobControls(); k++)
 					coordvector.push_back( _path[i]->getCoords()[k] ); 
 								
 				_wkSpace->getRobot(0)->control2Pose(coordvector);
 				joints = _wkSpace->getRobot(0)->getCurrentPos();
 
 				//arm coordinates
-				int j;
+                unsigned j;
 				for(j =0; j < 6; j++)
               fprintf(fpr,"%.2f ",joints->getRn().getCoordinate(j)*180.0/PI);
 				fprintf(fpr,"\n");
@@ -146,11 +146,11 @@
 		maxtrials=10;
 		do{
 			coordvector.clear();
-            for(int k = 0; k < _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k++)
+            for(unsigned k = 0; k < _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k++)
 			{
 				coordvector.push_back(0.0); //dummy values - not used in call to autocollision with parameter 1
 			}
-            for(int k =_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getNumRobControls(); k++)
+            for(unsigned k =_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getNumRobControls(); k++)
 			{
 				coordarm[k] = goalSamp()->getCoords()[k] + radius*(2*(KthReal)_gen->d_rand()-1);
 				coordvector.push_back(coordarm[k]);
@@ -169,13 +169,13 @@
 		do{
 			coordvector.clear();
 			//sample the hand coordinates
-            for(int k = 0; k < _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k++)
+            for(unsigned k = 0; k < _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k++)
 			{
 				coord[k] = (KthReal)_gen->d_rand();
 				coordvector.push_back(coord[k]);
 			}
 			//load the arm coordinates computed before
-            for(int k =_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getNumRobControls(); k++)
+            for(unsigned k =_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk(); k < _wkSpace->getNumRobControls(); k++)
 			{
 				coord[k]=coordarm[k];
 				coordvector.push_back(coord[k]);

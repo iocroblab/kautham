@@ -54,7 +54,7 @@ namespace Kautham {
 
 	std::string RnConf::print() {
 			std::ostringstream s;
-			for(int i=0;i < dim; i++){
+            for(unsigned i=0;i < dim; i++){
 				s << "coord[" << i << "]=" << coord[i] << ";" << std::endl ;
 			}
 			return s.str();

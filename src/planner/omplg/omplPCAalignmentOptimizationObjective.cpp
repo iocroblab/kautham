@@ -88,15 +88,12 @@ namespace Kautham {
   void PMDalignmentOptimizationObjective::setPCAdata(ob::ProjectionMatrix M)
   {
       double modul;
-      int nr = M.mat.size1();
-      int nc = M.mat.size2();
 
       for(int j=0;j<numPMD;j++)//column
       {
           modul = 0.0;
           for(int i=0;i<numDOF;i++)//row
           {
-              double kk = M.mat(i,j);
               PMD.mat(i,j) = M.mat(i,j);
               modul += M.mat(i,j)*M.mat(i,j);
           }
@@ -115,7 +112,7 @@ namespace Kautham {
    */
   ob::Cost PMDalignmentOptimizationObjective::motionCost(const ob::State *s1, const ob::State *s2) const
   {
-      motionCost(NULL,s1,s2);
+      return motionCost(NULL,s1,s2);
   }
 
   /*!
@@ -226,7 +223,7 @@ namespace Kautham {
 
           //get subspace of robot robotindex
           ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(robotindex));
-          for(int j=0; j < ssRoboti->as<ob::CompoundStateSpace>()->getSubspaceCount(); j++)
+          for(unsigned j=0; j < ssRoboti->as<ob::CompoundStateSpace>()->getSubspaceCount(); j++)
           {
              ob::StateSpacePtr ssRobotij =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(j));
              if(ssRobotij->getType()==ob::STATE_SPACE_SE3)
@@ -251,7 +248,6 @@ namespace Kautham {
                     ob::ScopedState<weigthedRealVectorStateSpace> robotiRn_s2(ssRobotij);
                     sstate1 >> robotiRn_s1;
                     sstate2 >> robotiRn_s2;
-                    int d = ssRobotij->getDimension();
                     ob::Cost costRn = motionCostRn(robotiRn_s0.get(),robotiRn_s1.get(),robotiRn_s2.get());
                     cost += weightRn * costRn.v;
                  }
@@ -261,7 +257,6 @@ namespace Kautham {
                     ob::ScopedState<weigthedRealVectorStateSpace> robotiRn_s2(ssRobotij);
                     sstate1 >> robotiRn_s1;
                     sstate2 >> robotiRn_s2;
-                    int d = ssRobotij->getDimension();
                     ob::Cost costRn = motionCostRn(NULL,robotiRn_s1.get(),robotiRn_s2.get());
                     cost += weightRn * costRn.v;
                  }
@@ -449,7 +444,7 @@ namespace Kautham {
             unsigned int numrobots = space->as<ob::CompoundStateSpace>()->getSubspaceCount();
             std::vector<double> s1_coords;
             std::vector<double> s2_coords;
-            for(int i=0; i<numrobots; i++)
+            for(unsigned i=0; i<numrobots; i++)
             {
                 //get subspace of robot i
                 ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(i));
@@ -540,7 +535,7 @@ namespace Kautham {
                 ob::ScopedState<ob::CompoundStateSpace> sstate0(space);
                 sstate0 = *s0;
                 std::vector<double> s0_coords;
-                for(int i=0; i<numrobots; i++)
+                for(unsigned i=0; i<numrobots; i++)
                 {
                     //get subspace of robot i
                     ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(i));

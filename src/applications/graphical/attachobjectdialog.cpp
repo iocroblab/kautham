@@ -107,7 +107,7 @@ namespace Kautham {
 
 
     void SelectRobotLinkDialog::changeRobot(int index) {
-        if (index < 0 || index >= wSpace->getNumRobots()) {
+        if (index < 0 || index >= int(wSpace->getNumRobots())) {
             robotBox->setCurrentIndex(robot);
         } else {
             robot = index;
@@ -117,7 +117,7 @@ namespace Kautham {
 
 
     void SelectRobotLinkDialog::changeLink(int index) {
-        if (index < 0 || index >= wSpace->getRobot(robot)->getNumLinks()) {
+        if (index < 0 || index >= int(wSpace->getRobot(robot)->getNumLinks())) {
             linkBox->setCurrentIndex(link);
         } else {
             link = index;
@@ -229,7 +229,7 @@ namespace Kautham {
         Robot *obs;
         QTableWidgetItem *item;
         int index = 0;
-        for (int i = 0; i < wSpace->getNumObstacles(); ++i) {
+        for (unsigned i = 0; i < wSpace->getNumObstacles(); ++i) {
             obs = wSpace->getObstacle(i);
             if (obs->isAttachable()) {
                 item = new QTableWidgetItem(obs->getName().c_str());

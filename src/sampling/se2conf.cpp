@@ -66,7 +66,7 @@ namespace Kautham {
 	
 	std::string SE2Conf::print() {
 		std::ostringstream s;
-		for(int i=0;i < dim; i++)
+        for(unsigned i=0;i < dim; i++)
 			s << "x = " << coord[i] << ";" << std::endl ;
 
 		return s.str();
@@ -93,7 +93,6 @@ namespace Kautham {
     if( conf == NULL ) return -1.0;
 
     KthReal dist = (KthReal) 0.0;
-    KthReal diff = (KthReal) 0.0;
     if(conf->getType() == SE2){
       if(weights.size() == 1){
         KthReal dist = (conf->getCoordinate(0)- coord.at(0)) * (conf->getCoordinate(0)- coord.at(0));

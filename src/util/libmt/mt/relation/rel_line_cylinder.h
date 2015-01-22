@@ -148,7 +148,7 @@ inline RelLineCylinder::RelLineCylinder(const Line3&     L,
 
   // Relation between cylinder axis and line
   const RelLineLine rel(L, axis);
-  const RelType     rel_type = rel.getType();
+  //const RelType     rel_type = rel.getType();
 
   // Signed distance between cylinder and line
   const Scalar dist = rel.getDistance() - radius;

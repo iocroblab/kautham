@@ -246,6 +246,8 @@ namespace Kautham {
                 subItem->setToolTip(0,"Orientation angle (radians)");
             }
         }
+
+        return item;
     }
 
 
@@ -303,8 +305,8 @@ namespace Kautham {
 
 
     void ProblemTreeWidget::clearTable() {
-        for (uint i = 0; i < infoTable->rowCount(); ++i) {
-            for (uint j = 0; j < infoTable->columnCount(); ++j) {
+        for (int i = 0; i < infoTable->rowCount(); ++i) {
+            for (int j = 0; j < infoTable->columnCount(); ++j) {
                 delete infoTable->takeItem(i,j);
                 delete infoTable->takeHorizontalHeaderItem(j);
             }

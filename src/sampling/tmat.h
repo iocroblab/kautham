@@ -44,7 +44,7 @@ namespace Kautham {
 	class  TMat{
 	public:
     //! This is a unique constructor.
-		TMat(int d=0);
+        TMat(unsigned d=0);
 		~TMat();
 
     //! This method returns a string that contains the text representation of the matrix.
@@ -52,18 +52,15 @@ namespace Kautham {
 
     //! This method multiply the matrix for a constant k.
 		int multiply(const int k);
-
-		void multiply(const char* const k, char* const l);
-		void multiply(const char* const k, char* const l, const int m);
-		void multiply( const char* const w, char* const res ) const ;
+        void multiply(const int * const w, int * const res ) const ;
 
     //! This method multiply the matrix for other matrix V that it corresponds to m level and return 
     //! the pointer to the result.
-		char** multiply(const char *const *const v, const int m) const ;
+        int **multiply(const int *const *const v, const int m) const ;
 	private:
     void prime_factorization(long int x, int *fact, int *numfactors);
-    void compose(int *primefactors, int numfactors, char **vC, int dimC, int trunc=0);
-    void insert(char **vA, char **vB, int dimA, int dimB);
+    void compose(int *primefactors, int numfactors, int **vC, int dimC, int trunc=0);
+    void insert(int **vA, int **vB, int dimA, int dimB);
 
     //! This method create the matrix properly.
     void createTd();
@@ -72,10 +69,10 @@ namespace Kautham {
 		int d;
 
     //! This is the matrix values.
-		char** _tMat;
+        int** _tMat;
 
     //! Pointer to the matrix that contains the results of any multiplication operation.
-		char** matRes;
+        int** matRes;
 	};
 
     /** @}   end of Doxygen module "Sampling" */

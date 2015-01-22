@@ -65,7 +65,7 @@ namespace Kautham {
           return false;
 
 		char *str = new char[20];
-        for(int i=0; i<_wkSpace->getNumRobControls();i++)
+        for(unsigned i=0; i<_wkSpace->getNumRobControls();i++)
 		{
 			sprintf(str,"Discr. Steps %d",i);
 			it = _parameters.find(str);
@@ -141,18 +141,14 @@ namespace Kautham {
 
 			static int svg = -1;
 			
-            if(svg == -1 || svg!=indexgoal){
+            if (svg != int(indexgoal)){
 				//recompute navigation function because goal has changed
                 svg = indexgoal;
                 computeNF1(indexgoal);
 			}
 			
-			Sample* curr;
-			gridVertex vc;
+            gridVertex vc = indexinit;
 			gridVertex vmin;
-
-			curr = _init;
-            vc = indexinit;
 
 			
 			PotentialMap pm = getpotmat();
@@ -170,7 +166,6 @@ namespace Kautham {
 			clearSimulationPath();
             boost::graph_traits<filteredGridGraph>::adjacency_iterator avi, avi_end;
 
-            int whilecount=0;
             while(vc != indexgoal)
 			{
 				_path.push_back(locations[vc]);

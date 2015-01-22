@@ -156,7 +156,7 @@ namespace Kautham {
 
                 //EUROC
                 std::cout<<"Robot moved to: (";
-                for(int i=0; i<smpcoords.size(); i++)
+                for(unsigned i=0; i<smpcoords.size(); i++)
                 {
                     std::cout<<smpcoords[i]<<" ";
                 }
@@ -170,7 +170,6 @@ namespace Kautham {
                 {
                     float x,y,z;
                     string obsname = (*it).obs->getName();
-                    vector<KthReal>& vpos = (*it).obs->getCurrentPos()->getSE3().getPos();
 
                     x = (*it).obs->getCurrentPos()->getSE3().getPos()[0];
                     y = (*it).obs->getCurrentPos()->getSE3().getPos()[1];
@@ -247,7 +246,7 @@ namespace Kautham {
             smp->setCoords(init);
             if(_problem->wSpace()->collisionCheck(smp, &msg_init)) {
                 std::cout<<"Init in collision: (";
-                for(int k=0;k<init.size();k++) std::cout<<init[k]<<" ";
+                for(unsigned k=0;k<init.size();k++) std::cout<<init[k]<<" ";
                 std::cout<<std::endl;
                 std::cout<<msg_init<<std::endl;
                 return false;
@@ -259,7 +258,7 @@ namespace Kautham {
             smp->setCoords(goal);
             if(_problem->wSpace()->collisionCheck(smp, &msg_goal)) {
                 std::cout<<"Goal in collision: (";
-                for(int k=0;k<goal.size();k++) std::cout<<goal[k]<<" ";
+                for(unsigned k=0;k<goal.size();k++) std::cout<<goal[k]<<" ";
                 std::cout<<std::endl;
                 std::cout<<msg_goal<<std::endl;
                 return false;
@@ -897,7 +896,7 @@ namespace Kautham {
                 return false;
             }
 
-            int dim = _problem->getDimension();
+            unsigned dim = _problem->getDimension();
             if (smpcoords1.size() != dim || smpcoords2.size() != dim) {
                 cout << "The samples should have dimension " << dim << endl;
             }
@@ -1124,7 +1123,7 @@ namespace Kautham {
         }
     }
 
-    bool kauthamshell::removeRobot(int index) {
+    bool kauthamshell::removeRobot(unsigned index) {
         try {
             if (_problem == NULL || !problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -1152,7 +1151,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::removeObstacle(int index) {
+    bool kauthamshell::removeObstacle(unsigned index) {
         try {
             if (_problem == NULL || !problemOpened()) {
                 cout << "The problem is not opened" << endl;

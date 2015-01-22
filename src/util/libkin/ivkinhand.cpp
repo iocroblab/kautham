@@ -3953,7 +3953,7 @@
 		for (unsigned int i=0; i<ik_results.configuration_list.size1(); i++){
 			for (unsigned int j=0; j<ik_results.configuration_list.size2(); j++)	myfile_plottraindata << setw(12) << ik_results.configuration_list(i,j)*(180/3.141592) << " ";	myfile_plottraindata << std::endl;
 		}	myfile_plottraindata << std::endl;
-		/**/
+        */
 	
 		// Close file
 		myfile_plottraindata.close();

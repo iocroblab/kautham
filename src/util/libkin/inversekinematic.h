@@ -91,10 +91,10 @@ namespace Kautham {
     InverseKinematic(Robot* const rob);
 
       //!	This method returns the type of the inverse kinematics.
-    virtual INVKINECLASS type() {}
+    virtual INVKINECLASS type() {return NOINVKIN;}
 
       //!	This method returns the name of the inverse kinematics.
-    virtual string       name() {}
+    virtual string       name() {return "";}
 
 	  //!	This method must be implemented in order to obtain a solution
 	  //! of the inverse kinematic model for a specific target.

@@ -582,7 +582,7 @@ inline void Plane3::setNormal(const Point3& sup1,
                         abs(angleCos(dir[1], dir[2])),
                         abs(angleCos(dir[2], dir[0])));
 
-  const Scalar max_cos = cos_vec.max();
+  //const Scalar max_cos = cos_vec.max();
 
   #ifdef MT_USE_BASIC_SCALAR
     util::Assert(max_cos != 1.0,

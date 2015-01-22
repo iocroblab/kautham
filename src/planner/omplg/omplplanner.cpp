@@ -73,7 +73,7 @@ namespace Kautham {
       weigthedRealVectorStateSpace::weigthedRealVectorStateSpace(unsigned int dim) : RealVectorStateSpace(dim)
       {
           //by default set all the weights to 1
-          for(int i=0; i<dim; i++)
+          for(unsigned i=0; i<dim; i++)
           {
               weights.push_back(1.0);
           }
@@ -90,7 +90,7 @@ namespace Kautham {
 
           //compute the maximum weigthed distance
           double maxweightdist=0.0;
-          for(int i=0; i<dimension_; i++)
+          for(unsigned i=0; i<dimension_; i++)
           {
               double diff = getBounds().getDifference()[i]*w[i];
               maxweightdist += diff * diff;
@@ -99,7 +99,7 @@ namespace Kautham {
           //compute the scale factor
           fitFactor = getMaximumExtent()/maxweightdist;
           //set the weights
-          for(int i=0; i<dimension_; i++)
+          for(unsigned i=0; i<dimension_; i++)
           {
               weights[i] = w[i]*fitFactor;
           }
@@ -205,7 +205,7 @@ namespace Kautham {
                 for(int i=0;i<d;i++)
                     coords[i] = rng_.uniformReal(0,1.0);
                 //those controls that are disabled for sampling are now restored to 0.5
-                for(int j=0; j < ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
+                for(unsigned j=0; j < ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
                     coords[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
                 //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
                 smp2->setCoords(coords);
@@ -284,7 +284,7 @@ if(coords[1]>yM) yM=coords[1];
                 //smp = _samplerHalton->nextSample();
 
                 //those controls that are disabled for sampling are now restored to 0.5
-                for(int j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
+                for(unsigned j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
                     smp->getCoords()[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
 
                 //compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
@@ -412,12 +412,12 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
       {
           //gets a new sample using the sampler specified by the planner
           Sample* smp = NULL;
-          int numSampler = ((omplPlanner*)kauthamPlanner_)->getSamplerUsed();
+          unsigned numSampler = ((omplPlanner*)kauthamPlanner_)->getSamplerUsed();
           if(numSampler>= _samplerVector.size()) numSampler = 0;//set default Random sampler if out of bounds value
           smp = _samplerVector[numSampler]->nextSample();
 
           //those controls that are disabled for sampling are now restored to 0.5
-          for(int j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
+          for(unsigned j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
               smp->getCoords()[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
 
 /*DEBUG
@@ -437,7 +437,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
           //return the stae in the parameter state and a bool telling if the smp is in collision or not
           ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
 
-          if(  si_->satisfiesBounds(state)==false | kauthamPlanner_->wkSpace()->collisionCheck(smp) )
+          if(  (si_->satisfiesBounds(state)==false) || (kauthamPlanner_->wkSpace()->collisionCheck(smp)) )
               return false;
           return true;
       }
@@ -455,7 +455,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                  smp = _samplerVector[numSampler]->nextSample();
 
                  //those controls that are disabled for sampling are now restored to 0.5
-                 for(int j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
+                 for(unsigned j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
                      smp->getCoords()[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
 
 
@@ -625,7 +625,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
             weights.resize(_wkSpace->getNumRobots());
 
             //loop for all robots
-            for(int i=0; i<_wkSpace->getNumRobots(); i++)
+            for(unsigned i=0; i<_wkSpace->getNumRobots(); i++)
             {
                 vector<ob::StateSpacePtr> compoundspaceRob;
                 vector< double > weightsRob;
@@ -757,7 +757,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
         space->registerDefaultProjection(peSpace);
         */
             vector<ob::ProjectionEvaluatorPtr> peSpace;
-            for(int i=0; i<_wkSpace->getNumRobots();i++)
+            for(unsigned i=0; i<_wkSpace->getNumRobots();i++)
             {
                 ob::ProjectionEvaluatorPtr projToUse = space->as<ob::CompoundStateSpace>()->getSubspace(i)->getProjection("drawprojection");
                 peSpace.push_back( (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,i,projToUse) );
@@ -820,7 +820,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
         string listcontrolsname = wkSpace()->getRobControlsName();
         vector<string*> controlname;
         string *newcontrol = new string;
-        for(int i=0; i<listcontrolsname.length();i++)
+        for(unsigned i=0; i<listcontrolsname.length();i++)
         {
             if(listcontrolsname[i]=='|')
             {
@@ -833,7 +833,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
         //add last control (since listcontrolsname does not end with a |)
         controlname.push_back(newcontrol);
 
-        for(int i=0;i<controlname.size();i++)
+        for(unsigned i=0;i<controlname.size();i++)
         {
             if(controlname[i]->find("PMD") != string::npos)
             {
@@ -865,10 +865,11 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
 
         it = _parameters.find("Cspace Drawn");
         if(it != _parameters.end()){
-            _drawnrobot = it->second;
-            if(_drawnrobot<0 || _drawnrobot >= _wkSpace->getNumRobots()) {
+            if(it->second < 0 || it->second >= _wkSpace->getNumRobots()) {
                 _drawnrobot = 0;
                 setParameter("Cspace Drawn",0);
+            } else {
+                _drawnrobot = it->second;
             }
         }
         else
@@ -1006,7 +1007,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                 std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
 
                 //loop for all the states of the solution path
-                for(int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
+                for(unsigned i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
                 {
                     //initial edgepoint
                     SoCoordinate3 *edgepoints  = new SoCoordinate3();
@@ -1123,7 +1124,7 @@ double ypmin=100.0;
             // ///////////////////////////////////////////
 
             //loop for all vertices of the roadmap or tree and create the coin3D points
-            for(int i=0;i<pdata->numVertices();i++)
+            for(unsigned i=0;i<pdata->numVertices();i++)
             {
                 if(_wkSpace->getRobot(numrob)->isSE3Enabled())
                 {
@@ -1195,7 +1196,7 @@ else if(y<ypmin) ypmin=y;
             ob::Cost edgeweight;
 
             //loop for all nodes
-            for(int i=0;i<pdata->numVertices();i++)
+            for(unsigned i=0;i<pdata->numVertices();i++)
             {
                  numOutgoingEdges = pdata->getEdges (i, outgoingVertices);
 
@@ -1369,7 +1370,7 @@ else if(y<ypmin) ypmin=y;
 
 
         //loop for all the robots
-        for(int i=0; i<_wkSpace->getNumRobots(); i++)
+        for(unsigned i=0; i<_wkSpace->getNumRobots(); i++)
         {
             int k=0; //counter of subspaces contained in subspace of robot i
 
@@ -1410,7 +1411,7 @@ else if(y<ypmin) ypmin=y;
                 ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
                 ob::ScopedState<weigthedRealVectorStateSpace> rstart(ssRobotiRn);
 
-                for(int j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
+                for(unsigned j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
                     rstart->values[j] = r.getCoordinate(j);
 
                 //cout<<"sstate[0]="<<rstart->values[0]<<"sstate[1]="<<rstart->values[1]<<endl;
@@ -1434,11 +1435,10 @@ else if(y<ypmin) ypmin=y;
     //! This member function converts an ompl ScopedState to a Kautham sample
     void omplPlanner::omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp)
     {
-        int k=0;
         vector<RobConf> rc;
 
         //loop for all the robots
-        for(int i=0; i<_wkSpace->getNumRobots(); i++)
+        for(unsigned i=0; i<_wkSpace->getNumRobots(); i++)
         {
             //RobConf to store the robots configurations read form the ompl state
             RobConf *rcj = new RobConf;
@@ -1495,7 +1495,7 @@ else if(y<ypmin) ypmin=y;
 
                  //convert to a vector of n components
                  vector<KthReal> coords;
-                 for(int j=0;j<_wkSpace->getRobot(i)->getNumJoints();j++) coords.push_back(pathscopedstateRn->values[j]);
+                 for(unsigned j=0;j<_wkSpace->getRobot(i)->getNumJoints();j++) coords.push_back(pathscopedstateRn->values[j]);
                  rcj->setRn(coords);
                  k++;//dummy
              }
@@ -1571,7 +1571,6 @@ else if(y<ypmin) ypmin=y;
 
 
         //retrieve all the states. Load the SampleSet _samples
-        Sample *smp;
         ob::PlannerData data(ss->getSpaceInformation());
         ss->getPlannerData(data);
         /*
@@ -1608,7 +1607,6 @@ else if(y<ypmin) ypmin=y;
 
             //refine
             //ss->getSolutionPath().interpolate();
-            std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
 
             Sample *smp;
 
@@ -1618,7 +1616,7 @@ else if(y<ypmin) ypmin=y;
 
 
             //load the kautham _path variable from the ompl solution
-            for(int j=0;j<ss->getSolutionPath().getStateCount();j++){
+            for(unsigned j=0;j<ss->getSolutionPath().getStateCount();j++){
                 //create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
                 smp=new Sample(_wkSpace->getNumRobControls());
                 smp->setMappedConf(_init->getMappedConf());

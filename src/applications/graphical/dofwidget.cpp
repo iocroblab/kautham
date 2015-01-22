@@ -67,7 +67,7 @@ namespace Kautham {
             lowValues[i] = 0.;
             highValues[i] = 1.;
         }
-        for (uint i = 6; i < names.size(); ++i) {
+        for (int i = 6; i < names.size(); ++i) {
             //label value will be defined in radians
             lowValues[i] = *robot->getLink(i-5)->getLimits(true);
             highValues[i] = *robot->getLink(i-5)->getLimits(false);
@@ -80,7 +80,7 @@ namespace Kautham {
         vector <KthReal> currentValues;
         currentValues.resize(names.size());
         labels.resize(names.size());
-        for (uint i = 0; i < names.size(); ++i){
+        for (int i = 0; i < names.size(); ++i){
             currentValues[i] = robot->getOffMatrix()[i];
 
             name = names.at(i);

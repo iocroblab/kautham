@@ -966,22 +966,22 @@ namespace Kautham {
 
      if(q.getDim() > getNumJoints()) return false;
 
-     int n = getNumJoints();
+     unsigned n = getNumJoints();
      if(q.getDim() < n){
          RnConf q2(n);
-         int i;
+         unsigned i;
          vector<KthReal> coords(n);
          for(i = 0; i < q.getDim(); i++) coords[i]=q.getCoordinate(i);
          for(; i < n; i++) coords[i]=0.0;
          q2.setCoordinates(coords);
 
-         for(int i = 0; i < q2.getDim(); i++)
+         for(unsigned i = 0; i < q2.getDim(); i++)
              links[i+1]->setValue(q2.getCoordinate(i));
 
          _currentConf.setRn(q2);
      }
      else{ //q.getDim() == getNumJoints()
-         for(int i = 0; i < q.getDim(); i++)
+         for(unsigned i = 0; i < q.getDim(); i++)
              links[i+1]->setValue(q.getCoordinate(i));
 
          _currentConf.setRn(q);
@@ -1021,7 +1021,7 @@ namespace Kautham {
          break;
      case Rn:
          if(q->getDim() == getNumJoints()){
-             for(int i=0; i<q->getDim(); i++)
+             for(unsigned i=0; i<q->getDim(); i++)
                  links[i+1]->setValue(q->getCoordinate(i));
 
              _currentConf.setRn(q->getCoordinates());
@@ -1129,8 +1129,8 @@ namespace Kautham {
 
      if(!collisionable || !rob->isCollisionable()) return false;
 
-     for(int i=0; i < links.size(); i++){
-         for( int j = 0; j < rob->getNumLinks(); j++ ){
+     for(unsigned i=0; i < links.size(); i++){
+         for( unsigned j = 0; j < rob->getNumLinks(); j++ ){
              if( links[i]->getElement()->collideTo(rob->getLink(j)->getElement()) ) {
                  if (message != NULL) {
                      stringstream sstr;
@@ -1359,7 +1359,6 @@ namespace Kautham {
   *
   */
  KthReal* Robot::getWeightSE3(){
-     KthReal tmp=1.;
      if( _weights != NULL )
          return _weights->getSE3Weight();
      else
@@ -1407,7 +1406,7 @@ namespace Kautham {
          for(int i = 0; i < 6; i++)
              parameters.push_back((KthReal)0.0);
      }else{
-         for(int i = 0; i < 6 + _currentConf.getRn().getDim(); i++)
+         for(unsigned i = 0; i < 6 + _currentConf.getRn().getDim(); i++)
              parameters.push_back((KthReal)0.0);
      }
 
@@ -1421,8 +1420,8 @@ namespace Kautham {
          }
      }
      if( _currentConf.getRn().getDim() != 0 ){
-         for(int i =0; i < _currentConf.getRn().getDim(); i++){
-             for(unsigned int j= 0; j < control.size(); j++) {
+         for(unsigned i =0; i < _currentConf.getRn().getDim(); i++){
+             for(unsigned j= 0; j < control.size(); j++) {
                  parameters[i+6] += mapMatrix[i+6][j] * (control[j]-0.5);
                  //cout << mapMatrix[i+6][j] << "\t" ;
              }
@@ -1497,6 +1496,8 @@ namespace Kautham {
  Conf& Robot::parameter2Conf(vector<KthReal> &values, CONFIGTYPE type){
      vector<KthReal> coords;
      switch(type){
+     case SE2:
+         break;
      case SE3:
          //  First, denormalize the SE3 configuration from 6 values in the Home frame.
          coords = deNormalizeSE3(values);
@@ -1512,6 +1513,7 @@ namespace Kautham {
              _currentConf.setRn(coords);
              return _currentConf.getRn();
          }
+         break;
      }
      throw exception();
  }
@@ -1541,7 +1543,7 @@ namespace Kautham {
          if(_currentConf.getRn().getDim() != 0){
              // Rn denormalization
              vector<KthReal> coords(_currentConf.getRn().getDim());
-             for(int i =0; i < _currentConf.getRn().getDim(); i++){
+             for(unsigned i =0; i < _currentConf.getRn().getDim(); i++){
                  links[i+1]->setParameter(values[6+i]);
                  coords[i] = ((Link*)links[i+1])->getValue();
                  //coords[i] = ((Link*)links[i+1])->parameter2Value(values[i+6]);
