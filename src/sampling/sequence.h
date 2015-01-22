@@ -57,13 +57,13 @@ namespace Kautham {
     ~Sequence(void);
 
     //! This method returns the code of the cell with grid coordinates "indexes".
-    unsigned long getCode(char *indexes);
+    unsigned long getCode(int *indexes);
 
     //! This method returns an array with the indexes of a cell with code "code".
-    char* getIndexes(unsigned long int code);
+    int* getIndexes(unsigned long int code);
 
     //! Returns the indexes corresponding to the last generated cell code of the sequence.
-    char* getIndexes(void);
+    int* getIndexes(void);
 
     //! Returns the new code in the sequence.
     unsigned long getSequenceCode();
@@ -72,22 +72,22 @@ namespace Kautham {
     unsigned long getSequenceCode(unsigned long K);
 
     //! Returns the V matrix for a cell with code "code". V is the matrix of index in binary representation.
-    char** getVMatrix(unsigned long int code);
+    int **getVMatrix(unsigned long int code);
 
     //! Returns the V matrix corresponding  to the last sample generated of the sequence.
-    char** getVMatrix(void);
+    int** getVMatrix(void);
 
     //! This method sets the W matrix.
-    inline void setW(WMat &w){_wMat = &w;};
+    inline void setW(WMat &w){_wMat = &w;}
 
     //! This method returns a pointer to the W matrix.
-    inline WMat* getW(){return _wMat;};
+    inline WMat* getW(){return _wMat;}
 
     //! This method sets the T matrix.
-    inline void setT(TMat &t){_tMat = &t;};
+    inline void setT(TMat &t){_tMat = &t;}
 
     //! This method returns a pointer to the T matrix.
-    inline TMat* getT(){return _tMat;};
+    inline TMat* getT(){return _tMat;}
   private:
     //! This is the index of the sequence.
     unsigned long int _index;
@@ -102,10 +102,10 @@ namespace Kautham {
     unsigned long _maxNumCells;
 
     //! This is the M value. This is the maximum sampling level.
-    char _maxSamplingLevel;
+    unsigned int _maxSamplingLevel;
 
     //! This is the dimension of the space to be sampled.
-    char _dim;
+    unsigned _dim;
 
     //! Pointer to T matrix.
     TMat* _tMat;
@@ -114,10 +114,10 @@ namespace Kautham {
     WMat* _wMat;
 
     //! This is the pointer to the unique V matrix used to calculate the binary values for indexes of a cell. 
-    char** _V;
+    int** _V;
 
     //! Pointer to the unique indexes matrix that contains the indexes of a cell.
-    char* _indexes;
+    int* _indexes;
   };
 
   /** @}   end of Doxygen module "Sampling" */

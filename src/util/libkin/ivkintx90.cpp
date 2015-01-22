@@ -64,7 +64,7 @@ using namespace TXrobot;
    void IvKinTx90::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
 	   //loads the target: the tcp transform
     _target.clear();
-    for(int i =0; i< target.size(); i++)
+    for(unsigned i =0; i< target.size(); i++)
       _target.push_back(target.at(i));  
 	  
 	  //completes the target with configuration parameters information

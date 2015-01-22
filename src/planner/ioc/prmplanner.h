@@ -152,7 +152,7 @@ namespace Kautham {
       //!bool to determine if the graph has been loaded
       bool _isGraphSet;
             KthReal _neighThress;
-            int     _kNeighs;
+            unsigned     _kNeighs;
             std::map<int, SampleSet*> _ccMap;
       int _labelCC;
       int _drawnLink; //!>flag to show which link path is to be drawn

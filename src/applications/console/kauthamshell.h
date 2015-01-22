@@ -67,9 +67,9 @@ namespace Kautham {
         bool connect(vector<KthReal> smpcoords1, vector<KthReal> smpcoords2);
         int addRobot(string robFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
                          vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix);
-        bool removeRobot(int index);
+        bool removeRobot(unsigned index);
         int addObstacle(string obsFile, KthReal scale, vector<KthReal> home);
-        bool removeObstacle(int index);
+        bool removeObstacle(unsigned index);
         bool attachObstacle2RobotLink(int robot, int link, int obs);
         bool detachObstacle(uint obs);
 

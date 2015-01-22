@@ -43,6 +43,7 @@ namespace Kautham{
   class WorkSpace {
   public:
       WorkSpace();
+      virtual ~WorkSpace() {}
       KthReal               distanceCheck( Conf* conf, unsigned int robot ) ;
       bool                  collisionCheck( Conf* conf, unsigned int robot ) ;
       KthReal               distanceBetweenSamples(Sample& smp1, Sample& smp2,Kautham::SPACETYPE spc);
@@ -54,8 +55,8 @@ namespace Kautham{
       void                  addObstacle(Robot* obs);
       inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;} 
       inline Robot*         getObstacle(unsigned int i){if(i < obstacles.size()) return obstacles[i]; return NULL;}
-      inline int            getNumRobots(){return robots.size();}
-      inline int            getNumObstacles(){return obstacles.size();}
+      inline unsigned       getNumRobots(){return robots.size();}
+      inline unsigned       getNumObstacles(){return obstacles.size();}
       void                  addDistanceMapFile(string distanceFile);
       inline string         getDistanceMapFile(){return distanceMapFile;}
       void                  addDimensionsFile(string dfile);
@@ -85,8 +86,8 @@ namespace Kautham{
       //! This method detaches an object previously attached to a Robot link.
       bool                  detachObstacle(uint obs);
 
-      void removeRobot(int index);
-      void removeObstacle(int index);
+      void removeRobot(unsigned index);
+      void removeObstacle(unsigned index);
 
 
       static void           resetCollCheckCounter();
@@ -96,10 +97,10 @@ namespace Kautham{
       inline Sample*        getLastObsSampleMovedTo(){return _lastObsSampleMovedTo;}
       void                  setInitObsSample(Sample* initsample);
       inline Sample*        getInitObsSample(){return _initObsSample;}
-      inline int            getNumRobControls(){return numRobControls;} //!< Returns the number of robot controls
-      inline int            getNumObsControls(){return numObsControls;} //!< Returns the number of obstacle controls
-      inline int            setNumRobControls(int numcontrols){numRobControls = numcontrols;} //!< Sets the number of robot controls
-      inline int            setNumObsControls(int numcontrols){numObsControls = numcontrols;} //!< Sets the number of obstacle controls
+      inline unsigned       getNumRobControls(){return numRobControls;} //!< Returns the number of robot controls
+      inline unsigned       getNumObsControls(){return numObsControls;} //!< Returns the number of obstacle controls
+      inline void           setNumRobControls(unsigned numcontrols){numRobControls = numcontrols;} //!< Sets the number of robot controls
+      inline void           setNumObsControls(unsigned numcontrols){numObsControls = numcontrols;} //!< Sets the number of obstacle controls
       inline string         getRobControlsName() const {return robControlsName;} //!< Returns the string containing the robot control names, separated by the vertical line character
       inline string         getObsControlsName() const {return obsControlsName;} //!< Returns the string containing the obstacle control names, separated by the vertical line character
       inline void           setRobControlsName(string controlsname){robControlsName=controlsname;} //!< Sets the string containing the robot control names, separated by the veritcal line character
@@ -121,9 +122,9 @@ namespace Kautham{
 
   private:
       bool                  armed;
-      static unsigned int   _countWorldCollCheck;
-      int                   numRobControls;  //!< This is the number of controls used to command the robots
-      int                   numObsControls;  //!< This is the number of controls used to command the obstacles
+      static unsigned       _countWorldCollCheck;
+      unsigned              numRobControls;  //!< This is the number of controls used to command the robots
+      unsigned              numObsControls;  //!< This is the number of controls used to command the obstacles
       string                robControlsName; //!< Names of the robot controls, as a string, separated with the vertical bar character.
       string                obsControlsName; //!< Names of the obstacle controls, as a string, separated with the vertical bar character. 
       Sample*               _lastRobSampleMovedTo;

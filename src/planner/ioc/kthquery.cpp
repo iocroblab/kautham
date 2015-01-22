@@ -101,7 +101,7 @@ namespace Kautham{
 
   string KthQuery::printPath(){
     stringstream ss;
-    for(int i=0; i<_path.size(); i++)
+    for(unsigned i=0; i<_path.size(); i++)
       ss << _path[i] << " ";
     string path = ss.str();
     return path.substr(0, path.length() - 1);
@@ -141,7 +141,7 @@ namespace Kautham{
   bool KthQuery::operator==(const KthQuery &other) const{
     if( _init == other._init && _goal==other._goal 
         && _path.size() == other._path.size()){
-      for(int i = 0; i < _path.size(); i++)
+      for(unsigned i = 0; i < _path.size(); i++)
         if(_path[i] != other._path[i])
           return false;
       return true;

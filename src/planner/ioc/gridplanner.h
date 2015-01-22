@@ -161,22 +161,22 @@ namespace Kautham {
 		void discretizeCspace();
 
 		//!Function to compute and collision-check the samples of the grid vertices
-		void loadgrid(vector<KthReal> &coords, int coord_i);
+        void loadgrid(vector<KthReal> &coords, unsigned coord_i);
 
 		//!Function to create the edges connecting the vertices of the grid
-		void connectgrid(vector<int> &index, int coord_i);
+        void connectgrid(vector<int> &index, unsigned coord_i);
 		
 		//!Function to filter those edges of the grid connecting collision samples
 		void  prunegrid();
 
 		//!Function to set the potential value at a given vertex
-		inline void setPotential(int i, KthReal value){potmap[i]=value;};
+        inline void setPotential(int i, KthReal value){potmap[i]=value;}
 
 		//!Function to obtain the potential value at a given vertex
-		inline KthReal getPotential(int i){return potmap[i];};
+        inline KthReal getPotential(int i){return potmap[i];}
 
 		//!Function that retruns the vector of potential values
-		inline PotentialMap getpotmat(){return potmap;};
+        inline PotentialMap getpotmat(){return potmap;}
 
 		//!Function to setup the value of _stepsDiscretization in the given axis, and recompute the grid
 		void setStepsDiscretization(int numsteps, int axis);

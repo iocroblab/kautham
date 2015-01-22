@@ -46,13 +46,10 @@ namespace Kautham{
 
 class HaltonSampler: public Sampler 
 {
-	public:
-		HaltonSampler(char dim);
-		~HaltonSampler(void);
-		Sample* nextSample();
-
-	private:
-
+public:
+    HaltonSampler(char dim);
+    ~HaltonSampler(void);
+    Sample* nextSample();
 };
 
 

@@ -161,7 +161,6 @@ namespace Kautham {
 
         // set the propagation routine for this space
         oc::SpaceInformationPtr si=ss->getSpaceInformation();
-        KinematicCarModel *p = new KinematicCarModel(space);
         ss->setStatePropagator(oc::StatePropagatorPtr(new omplcPlannerStatePropagator<KinematicCarModel>(si)));
 
         // propagation step size

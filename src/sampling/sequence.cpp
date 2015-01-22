@@ -44,23 +44,23 @@ namespace Kautham {
 
   Sequence::~Sequence(void){
     if(_V != NULL){
-			  for(int i=0;i<_dim;i++)
+              for(unsigned int i=0;i<_dim;i++)
 				  delete[] _V[i];
 			  delete[] _V;
 		  }
   }
 
-  char* Sequence::getIndexes(void){
+  int* Sequence::getIndexes(void){
 		return _indexes;
 	}
 
-  char* Sequence::getIndexes(unsigned long int code){
+  int* Sequence::getIndexes(unsigned long int code){
     if(code != _lastCode) 
       _V = getVMatrix(code);
-		if(_indexes == NULL) _indexes = new char[_dim];
-		for(int i=0; i<_dim; i++) {
+        if(_indexes == NULL) _indexes = new int[_dim];
+        for(unsigned int i=0; i<_dim; i++) {
 			_indexes[i]=0;
-			for(int j=0; j < _maxSamplingLevel; j++) {
+            for(unsigned int j=0; j < _maxSamplingLevel; j++) {
 				_indexes[i]+= _V[i][j]<<(_maxSamplingLevel-j-1);
 			}
 		}
@@ -68,12 +68,12 @@ namespace Kautham {
 	}
 
   unsigned long Sequence::getSequenceCode(unsigned long index){
-		char **v = getVMatrix(index);
-		char **tv = _tMat->multiply( v, _maxSamplingLevel );
+        int **v = getVMatrix(index);
+        int **tv = _tMat->multiply( v, _maxSamplingLevel );
 		int loop = _index / _maxNumCells;
 		unsigned long ret=0;
-    for(int i=0; i<_dim; i++){
-			for(int j=0; j<_maxSamplingLevel; j++){
+    for(unsigned int i=0; i<_dim; i++){
+            for(unsigned int j=0; j<_maxSamplingLevel; j++){
 				if(_wMat->getRow(i, j)!=-1){
 					ret += _wMat->getRow(i, j ) * tv[i][_maxSamplingLevel-j-1];
 				}
@@ -89,21 +89,21 @@ namespace Kautham {
     return getSequenceCode( _offset + _index++ );
   }
 
-  char** Sequence::getVMatrix(void){
+  int** Sequence::getVMatrix(void){
     return _V;
   }
 
-  char** Sequence::getVMatrix(unsigned long int code){
+  int** Sequence::getVMatrix(unsigned long int code){
 		long temp;
 		code = code % _maxNumCells;
 		if(_V == NULL){
-			_V = new char*[_dim];
-			for(int i=0;i<_dim;i++)
-				_V[i]= new char[_maxSamplingLevel];
+            _V = new int*[_dim];
+            for(unsigned int i=0;i<_dim;i++)
+                _V[i]= new int[_maxSamplingLevel];
 		}
 
-		for(int i=0;i<_dim;i++)
-			for( int j=0; j<_maxSamplingLevel; j++){
+        for(unsigned int i=0;i<_dim;i++)
+            for(unsigned int j=0; j<_maxSamplingLevel; j++){
 				temp = code & _wMat->getRow(i, j);
 				if(temp == 0)
 					_V[i][j] = 0;
@@ -113,15 +113,15 @@ namespace Kautham {
 		return _V;
 	}
 
-  unsigned long Sequence::getCode(char *indexes){
+  unsigned long Sequence::getCode(int *indexes){
     long temp;
     if(_V == NULL){
-			_V = new char*[_dim];
-			for(int i=0;i<_dim;i++)
-				_V[i]= new char[_maxSamplingLevel];
+            _V = new int*[_dim];
+            for(unsigned int i=0;i<_dim;i++)
+                _V[i]= new int[_maxSamplingLevel];
 		}
-    for(char i=0; i< _dim; i++){
-      for(char j=0; j<_maxSamplingLevel; j++){
+    for(unsigned i=0; i< _dim; i++){
+      for(unsigned j=0; j<_maxSamplingLevel; j++){
         temp = ((long)indexes[i]) & (0x01<<(_maxSamplingLevel-j-1));
 				if(temp == 0)
 					_V[i][j] = 0;
@@ -131,8 +131,8 @@ namespace Kautham {
     }
     
 		unsigned long ret=0;
-    for(int i=0; i<_dim; i++){
-			for(int j=0; j<_maxSamplingLevel; j++){
+    for(unsigned int i=0; i<_dim; i++){
+            for(unsigned int j=0; j<_maxSamplingLevel; j++){
 				if(_wMat->getRow(i, j)!=-1){
 					ret += _wMat->getRow(i, j ) * _V[i][j];
 				}

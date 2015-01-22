@@ -124,7 +124,7 @@ namespace Kautham{
 
   bool SampleSet::existSample(unsigned long code){
     try{
-	    long int pos = findSDKOrder(code);
+        unsigned long pos = findSDKOrder(code);
 	    if(samples.size() == 0 || samples.size() == pos)
 		    return false;
 	    else
@@ -135,8 +135,6 @@ namespace Kautham{
   }
 
   bool SampleSet::add(Sample* samp, bool orderIfCode){
-    bool ok=false;
-    unsigned long code=0;
     hasChanged = true;
 
     // Updating the ANN structure
@@ -169,8 +167,8 @@ namespace Kautham{
 			  data_pts[h][c++] = p->at(5); //qz
 			  data_pts[h][c++] = p->at(6); //qw
   			
-			  for(int m=0; m < confSmp->getRn().getDim(); m++)
-			  {
+              for (unsigned m=0; m < confSmp->getRn().getDim(); m++)
+              {
 				data_pts[h][c++] = confSmp->getRn().getCoordinates()[m];
 			  }
 		  }
@@ -372,37 +370,40 @@ namespace Kautham{
   }
 
 
-  long int SampleSet::findSDKOrder(unsigned long code) {
-	  long int inf,sup, mitad;
-    inf = 0;
-    sup = samples.size()-1;
-      
-    if(sup<0)
-		  return 0;
-	  else{
-		  if(sup==0){
-        if(code > ((SDKSample*)samples[0])->getCode() )
-				  return 1;
-        else 
-				  return 0;
-      }else{
-			  if(code > ((SDKSample*)samples[sup])->getCode() ) {
-				  return sup+1;
-			  }else
-				  while(inf != sup-1){
-            mitad = (inf+sup)/2;
-            if(code > ((SDKSample*)samples[mitad])->getCode() ) 
-						  inf = mitad;
-            else 
-						  sup = mitad;
-				  }
-		  }
-		  if(code <= ((SDKSample*)samples[inf])->getCode() ){
-			  return inf;
-		  }else{
-			  return sup;
-		  }
-    }
+  unsigned long SampleSet::findSDKOrder(unsigned long code) {
+      if (samples.size() == 0) {
+          return 0;
+      } else {
+          if (samples.size() == 1) {
+              if (code > ((SDKSample*)samples[0])->getCode()) {
+                  return 1;
+              } else {
+                  return 0;
+              }
+          } else {
+              unsigned long inf, sup, mitad;
+              inf = 0;
+              sup = samples.size()-1;
+
+              if (code > ((SDKSample*)samples[sup])->getCode()) {
+                  return sup+1;
+              } else {
+                  while (inf != (sup-1)) {
+                      mitad = (inf+sup)/2;
+                      if (code > ((SDKSample*)samples[mitad])->getCode()) {
+                          inf = mitad;
+                      } else {
+                          sup = mitad;
+                      }
+                  }
+                  if (code <= ((SDKSample*)samples[inf])->getCode()) {
+                      return inf;
+                  } else {
+                      return sup;
+                  }
+              }
+          }
+      }
   }
   
 
@@ -427,7 +428,7 @@ namespace Kautham{
         int c=0;
 
         tmpVec.clear();
-        for(int j=0; j < ws->getNumRobControls(); j++ ){
+        for(unsigned j=0; j < ws->getNumRobControls(); j++ ){
           tmpVec.push_back(samples[h]->getCoords()[j]);
         }
 
@@ -445,7 +446,7 @@ namespace Kautham{
             data_pts[h][c++] = p->at(5); //qz
             data_pts[h][c++] = p->at(6); //qw
 
-            for(int m=0; m < confSmp->getRn().getDim(); m++){
+            for(unsigned m=0; m < confSmp->getRn().getDim(); m++){
               data_pts[h][c++] = confSmp->getRn().getCoordinates()[m];
             }
 
@@ -507,7 +508,7 @@ namespace Kautham{
 
 			//add neighs
 			//d_ann contains the distances in increasing order, starting at 0 (autodistance) which is discarded (i.e. loop startsat i=1)
-			for (int i = 1; i < maxNeighs; i++) 
+            for (unsigned i = 1; i < maxNeighs; i++)
 			{
 				if(d_ann[i]<threshold)
 				{
@@ -575,7 +576,7 @@ namespace Kautham{
 			pts[c++] = p->at(5); //qz
 			pts[c++] = p->at(6); //qw
 			
-			for(int m=0; m < confSmp->getRn().getDim(); m++)
+            for(unsigned m=0; m < confSmp->getRn().getDim(); m++)
 			{
 				pts[c++] = confSmp->getRn().getCoordinates()[m];
 			}
@@ -596,7 +597,7 @@ namespace Kautham{
 		int	numIt = 1; // maximum number of nearest neighbor calls ¿?
 		
 		//query tree
-		for (int k = 0; k < maxNeighs; k++) d_ann[k] = INFINITY;
+        for (unsigned k = 0; k < maxNeighs; k++) d_ann[k] = INFINITY;
 		for (int i = 0; i < numIt; i++) 
 		{
 			MAG->NearestNeighbor(pts, d_ann, idx_ann, (void**&)result_pt);	// compute nearest neighbor using library
@@ -606,7 +607,7 @@ namespace Kautham{
 		unsigned int h = indexOf(samp);
 		if( h != samples.size() ) clearNeighs(h);
 		//cout<<"ANN sample="<< h <<" neighs = ";
-		for (int i = 0; i < maxNeighs; i++) 
+        for (unsigned i = 0; i < maxNeighs; i++)
 		{
 			if(d_ann[i]<threshold)
 			{
@@ -646,14 +647,14 @@ namespace Kautham{
 		fp = fopen("samples.txt","wt");
 		if(fp==NULL) return false;
 
-		for(int i=0; i<samples.size(); i++ ){
+        for(unsigned i=0; i<samples.size(); i++ ){
 			fprintf(fp,"%d: ", indexOf(samples.at(i)));
             fprintf(fp,"numNeighs %d: ", (int)samples.at(i)->getNeighs()->size());
-			for(int j=0;j<samples.at(i)->getNeighs()->size(); j++)
+            for(unsigned j=0;j<samples.at(i)->getNeighs()->size(); j++)
 				fprintf(fp,"%d ", samples.at(i)->getNeighs()->at(j));
 				
             fprintf(fp," distsize %d: ", (int)samples.at(i)->getNeighDistances()->size());
-			for(int j=0;j<samples.at(i)->getNeighDistances()->size(); j++)
+            for(unsigned j=0;j<samples.at(i)->getNeighDistances()->size(); j++)
 				fprintf(fp,"%.1f ", samples.at(i)->getNeighDistances()->at(j));
 
 			fprintf(fp,"\n");

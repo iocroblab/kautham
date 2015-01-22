@@ -49,12 +49,6 @@ namespace Kautham{
       _sceneCspace=NULL;
   }
 
-  Planner::~Planner(){
-
-  }
-
-
-
   bool Planner::solveAndInherit(){
     _solved = false;
     if(trySolve()){
@@ -102,8 +96,7 @@ namespace Kautham{
         //here simulationPath coincides with path
         //this function is overloaded by PRM planners that do an interpolation between paths nodes to obtain a more finner simulationPath
       if(_simulationPath.size() == 0 ){ // Then calculate the simulation path based on stepsize
-            int d =  _path[0]->getDim() ;
-            for(int i=0; i<_path.size();i++)
+            for(unsigned i=0; i<_path.size();i++)
             {
                 Sample *s=new Sample(*_path.at(i));
                 _simulationPath.push_back(s);

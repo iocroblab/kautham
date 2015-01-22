@@ -113,10 +113,12 @@ namespace Kautham {
         hboxLayout->addWidget(globalToBox);
         vboxLayout->addLayout(hboxLayout);
 
-        if(camera = true){
+        if (camera) {
             chkCamera = new QCheckBox("Move the camera.");
             chkCamera->setChecked(false);
             vboxLayout->addWidget(chkCamera);
+        } else {
+            chkCamera = NULL;
         }
 
         hboxLayout = new QHBoxLayout();
@@ -175,7 +177,7 @@ namespace Kautham {
             connect(localFromBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
             connect(localToBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
             connect(_cmbTry, SIGNAL( clicked() ), this, SLOT( tryConnect( )));
-            connect(chkCamera, SIGNAL( clicked() ), this, SLOT( chkCameraClick( )));
+            if (chkCamera) connect(chkCamera, SIGNAL( clicked() ), this, SLOT( chkCameraClick( )));
 
             globalFromBox->setValue( 0 );
             globalToBox->setValue( 1 );
@@ -644,9 +646,9 @@ namespace Kautham {
         _planner->moveAlongPath(_stepSim);
         // It moves the camera if the associated planner provides the
         // transformation information of the camera
-        if( chkCamera->isChecked() && _planner->getCameraMovement(_stepSim) != NULL ) {
+        //if( chkCamera && chkCamera->isChecked() && _planner->getCameraMovement(_stepSim) != NULL ) {
             //_gui->setActiveCameraTransform(*_planner->getCameraMovement( _stepSim ));
-        }
+        //}
 
         _stepSim += _planner->getSpeedFactor();
 
@@ -673,7 +675,7 @@ namespace Kautham {
             vector<KthReal> c = smp->getCoords();
             cout << "sample: ";
 
-            for(int i=0; i<c.size(); i++)
+            for(unsigned i=0; i<c.size(); i++)
                 cout << c[i] << ", ";
 
             cout << endl;
@@ -696,10 +698,12 @@ namespace Kautham {
 
 
     void PlannerWidget::chkCameraClick() {
-        if (chkCamera->isChecked()) {
-            _planner->wkSpace()->setPathVisibility(false);
-        } else {
-            _planner->wkSpace()->setPathVisibility(true);
+        if (chkCamera) {
+            if (chkCamera->isChecked()) {
+                _planner->wkSpace()->setPathVisibility(false);
+            } else {
+                _planner->wkSpace()->setPathVisibility(true);
+            }
         }
     }
 }

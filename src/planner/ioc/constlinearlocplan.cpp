@@ -115,14 +115,12 @@ namespace IOC{
 			double rj=0;
 			for(int index = 0; index < finalmaxsteps ; index++){
 				int dj;
-				double deltaj;
 				double newrj=0;
 				for(int j = 0; j < b ; j++)
 				{
 					dj = (index >> j) & 0x01;
 					newrj += ((double)dj /  (double)(0x01<<(j+1)) );
 				}
-				deltaj = newrj - rj;
 				
 				rj = newrj;
 

@@ -35,63 +35,59 @@
 
 
 namespace Kautham{
-
-
 /** \addtogroup Sampling
  *  @{
  */
-
   class SDKSampler : public Sampler {
   public:
-    //! This is the unique constructor. In order to create an SDK sampler
-    //! is needed to provide the dimension and the maximum partition level.
-    //! Is not possible create an SDKSampler without this information.
-    SDKSampler(char dim, char maxLevel);
+      //! This is the unique constructor. In order to create an SDK sampler
+      //! is needed to provide the dimension and the maximum partition level.
+      //! Is not possible create an SDKSampler without this information.
+      SDKSampler(int dim, int maxLevel);
 
-    //! Destructor.
-	~SDKSampler();
+      //! Destructor.
+      ~SDKSampler();
 
-    //! Implements the virtual function. \sa Sample. For ommision, the samples
-    //! will be created with their coordinates randomly into their respective cell.
-    Sample* nextSample();
+      //! Implements the virtual function. \sa Sample. For ommision, the samples
+      //! will be created with their coordinates randomly into their respective cell.
+      Sample* nextSample();
 
-    //! This is provided for convenience. In the SDK strategy, the samples 
-    //! could be created with their coordinates randomly or centered into 
-    //! their respective cells.
-    Sample* nextSample(bool random);
+      //! This is provided for convenience. In the SDK strategy, the samples
+      //! could be created with their coordinates randomly or centered into
+      //! their respective cells.
+      Sample* nextSample(bool random);
 
-    //! Overwites the Sample method in order to retrieves a known sample.
-    //! Really, this method create a new sample whose code will be the code parameter.
-    //! Take care with this method because it could create a new sample 
-    //! with the same code as an existing sample
-    Sample* getSample(unsigned long int code, bool random = true);
-    
-    //! Returns a pointer to T matrix.
-		TMat* getTMat(){return _tMat;};
+      //! Overwites the Sample method in order to retrieves a known sample.
+      //! Really, this method create a new sample whose code will be the code parameter.
+      //! Take care with this method because it could create a new sample
+      //! with the same code as an existing sample
+      Sample* getSample(unsigned long int code, bool random = true);
 
-    //! Returns a pointer to W matrix.
-		WMat* getWMat(){return _wMat;};
+      //! Returns a pointer to T matrix.
+      TMat* getTMat(){return _tMat;}
 
-    Sequence* getSeqGenerator(){return sdkSequence;};
+      //! Returns a pointer to W matrix.
+      WMat* getWMat(){return _wMat;}
+
+      Sequence* getSeqGenerator(){return sdkSequence;}
+
   private:
-
-    Sequence* sdkSequence;
+      Sequence* sdkSequence;
       //! This is the size of an M-Cell.
-    double sizeContainer;
+      double sizeContainer;
 
-    //! This is the grid partition level.
-    char M;
+      //! This is the grid partition level.
+      int M;
 
-    //! This is a static pointer to the W matrix. This is a unique object used for any sample in sampleset.
-    WMat* _wMat;
+      //! This is a static pointer to the W matrix. This is a unique object used for any sample in sampleset.
+      WMat* _wMat;
 
-    //! Pointer to T matrix.
-		TMat *_tMat;
-        //! Pointer to object that generates a random number sequence.
-    LCPRNG* generator;
+      //! Pointer to T matrix.
+      TMat *_tMat;
+
+      //! Pointer to object that generates a random number sequence.
+      LCPRNG* generator;
   };
-
   /** @}   end of Doxygen module "Sampling" */
 }
-
 #endif  //_SDKSAMPLER_H

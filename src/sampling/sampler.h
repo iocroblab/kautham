@@ -39,6 +39,7 @@ namespace Kautham{
   //! to derive this class and implement the nextSample() method.
   class Sampler {
   public:
+      virtual ~Sampler() {}
 
     //! This is the most important method of this class. 
     //! All derived classes will have it implemented.
@@ -48,17 +49,17 @@ namespace Kautham{
           
     //! Returns the last generated sample.  This is an alternative
     //! way to access to the last generated sample.
-    inline Sample* getSample(){return _current;};
+    inline Sample* getSample(){return _current;}
 
     //! Set the dimension of the samples that will be generated.
-    inline void setDim(char dim){dimension=dim;};
+    inline void setDim(char dim){dimension=dim;}
 
     //! Retrieve the dimension of the samples that will be generated.
-    inline char getDim(){return dimension;};
+    inline char getDim(){return dimension;}
   protected:
 
-    //! This is the dimension. It will be limited to 128.
-	  char dimension;
+    //! This is the dimension.
+    unsigned dimension;
 
     //! This is an internal pointer to the latest generated sample.
     Sample* _current;

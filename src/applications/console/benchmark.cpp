@@ -106,7 +106,7 @@ bool Benchmark::add_problem(string prob_file, vector<string> def_path) {
         prob->setWSpace(problem.at(0)->wSpace());
         prob->setCSpace(problem.at(0)->cSpace());
         xml_document *doc = new xml_document;
-        xml_parse_result result = doc->load_file( prob_file.c_str() );
+        if (!doc->load_file(prob_file.c_str())) return false;
         if (prob->createPlannerFromFile(
                     doc,((omplplanner::omplPlanner*)problem.at(0)->getPlanner())->
                     SimpleSetup())) {

@@ -93,7 +93,7 @@
 
         it = _parameters.find("Max. Neighs");
 		if(it != _parameters.end()){
-          _kNeighs = (int)it->second;
+          _kNeighs = (unsigned)it->second;
 		  _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
 	  }
         else
@@ -167,11 +167,11 @@
 			do{
 				coordvector.clear();
 				//sample the hand coordinates
-                if(numPMDs==-1 || numPMDs>(_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk()))
+                if(numPMDs==-1 || numPMDs>int(_wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk()))
                         numPMDs = _wkSpace->getNumRobControls()-_wkSpace->getRobot(0)->getTrunk();
-				int k;
-				int kini = _wkSpace->getRobot(0)->getTrunk();
-				for(k = kini; k < kini+numPMDs; k++)
+                unsigned k;
+                unsigned kini = _wkSpace->getRobot(0)->getTrunk();
+                for(k = kini; int(k-kini) < numPMDs; k++)
 				{
 					//hand coords not set - sample the whole range
 					if(coord[k]==-1) coord[k] = (KthReal)_gen->d_rand();
@@ -190,7 +190,7 @@
 				}
 
 				//load the arm coordinates passed as a parameter
-				for(int k =0; k < _wkSpace->getRobot(0)->getTrunk(); k++)
+                for(unsigned k =0; k < _wkSpace->getRobot(0)->getTrunk(); k++)
 				{
 					coordvector.push_back(coord[k]);
 				}
@@ -204,7 +204,7 @@
 		else
 		{
 			//load the hand-arm coordinates passed as a parameter
-            for(int k = 0; k < _wkSpace->getNumRobControls(); k++)
+            for(unsigned k = 0; k < _wkSpace->getNumRobControls(); k++)
 			{
 				coordvector.push_back(coord[k]);
 			}
@@ -429,7 +429,7 @@
       tmpSample = new Sample(_wkSpace->getNumRobControls());
 
 	  int found = 0;
-	  int n=0;
+      unsigned int n=0;
 	  int p=0;//counter of times the arm has swept all its maxsteps steps.
 	  double minRJ;
 	  double maxRJ;
@@ -554,7 +554,7 @@
 							//load arm coordinates (normalized)
 							KthReal low[6];
 							KthReal high[6];
-							for(int k=0; k < 6; k++)
+                            for(unsigned k=0; k < 6; k++)
 							{
 								//normalize
 								low[k] = *_wkSpace->getRobot(0)->getLink(k+1)->getLimits(true);
@@ -563,7 +563,7 @@
 							}
 
 							//Set the new sample with the arm coorinates and check for autocollision.	
-                            for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=-1.0;//dummmy fixed to -1 for later call to getHandConfig
+                            for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=-1.0;//dummmy fixed to -1 for later call to getHandConfig
 							_wkSpace->getRobot(0)->control2Pose(coord); 
 							autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
 						}
@@ -602,7 +602,7 @@
 							{
 								flag = true; //sample randomly around them
 								Sample *last = _samples->getSampleAt(_samples->getSize()-1);
-                                for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=last->getCoords()[k];
+                                for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=last->getCoords()[k];
 							}
 							else flag = false; //use exactly the same hand coords as the last sample
 						}
@@ -824,7 +824,7 @@
 				}
 
 				//Set the new sample with the arm coorinates and check for autocollision.	
-                for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
+                for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
 				_wkSpace->getRobot(0)->control2Pose(coord); 
 				autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
 			}
@@ -904,7 +904,7 @@
 				}
 
 				//Set the new sample with the arm coorinates and check for autocollision.	
-                for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
+                for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=goalSamp()->getCoords()[k]  ;//dummmy -  set to goal values for later call to getHandConfig
 				_wkSpace->getRobot(0)->control2Pose(coord); 
 				autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
 			}
@@ -941,7 +941,7 @@
     void PRMAUROHandArmPlanner::writeFiles(FILE *fpr, FILE *fph, RobConf* joints)
 	{
 		//write arm coordinates
-		int j;
+        unsigned j;
 		for(j =0; j < 6; j++)
       fprintf(fpr,"%.2f ",joints->getRn().getCoordinate(j)*180.0/PI);
 		fprintf(fpr,"\n");

@@ -54,7 +54,7 @@ namespace Kautham{
   class Sample {
     public:
       //! Omission Constructor. This is the simplest way to create a new generic Sample.
-      Sample(char d);
+      Sample(unsigned d);
 
       //! Copy constructor
       Sample(Sample *s);
@@ -113,7 +113,7 @@ namespace Kautham{
       void addNeigh(unsigned int  newNeigh);
 	  //! Adds a neighbor at its place folowwing an incrasing distance
 	  //! Also stores the distance at the distance vector
-      void addNeighOrdered(unsigned int  newNeigh, KthReal newDistance, int max, bool force=false);
+      void addNeighOrdered(unsigned int  newNeigh, KthReal newDistance, unsigned int max, bool force=false);
 	  //! Adds a neighbor distance
       void addNeighDistance(KthReal newNeighDistance);
 
@@ -129,12 +129,12 @@ namespace Kautham{
       string printNeighs();
 
 	    //!sets transparency. Returns incremental change in tranparency
-	    inline KthReal setTransparency(KthReal t){KthReal aux = _transparency; _transparency = t; return (aux-t);};
+        inline KthReal setTransparency(KthReal t){KthReal aux = _transparency; _transparency = t; return (aux-t);}
         //! Returns the dimension of the sample
         inline unsigned int getDim(){return _dim;}
-	    inline KthReal getTransparency(){return _transparency;};
-	    inline int getcolor(){return _color;};
-	    inline void setcolor(int c){_color = c;};
+        inline KthReal getTransparency(){return _transparency;}
+        inline int getcolor(){return _color;}
+        inline void setcolor(int c){_color = c;}
 
       //! Returns the configuration related to scene.
       inline std::vector<RobConf>& getMappedConf(){return _config;}
@@ -144,8 +144,8 @@ namespace Kautham{
       Sample* interpolate(Sample* smp, KthReal fraction);
 
 
-      inline void setwithinbounds(bool t){withinbounds=t;};
-      inline bool getwithinbounds(){return withinbounds;};
+      inline void setwithinbounds(bool t){withinbounds=t;}
+      inline bool getwithinbounds(){return withinbounds;}
 
     protected:
       //! Configuration mapping
