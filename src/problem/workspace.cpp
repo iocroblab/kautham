@@ -166,7 +166,7 @@ namespace Kautham {
         vector<KthReal> tmpVec;
         bool collision = false;
         tmpVec.clear();
-        for (int j=0; j < getNumRobControls(); j++) {
+        for (unsigned j=0; j < getNumRobControls(); j++) {
             tmpVec.push_back(sample->getCoords()[j]);
         }
 
@@ -420,7 +420,7 @@ namespace Kautham {
     }
 
 
-    void WorkSpace::removeRobot(int index) {
+    void WorkSpace::removeRobot(unsigned index) {
         if ((index >= 0) && (index < robots.size())) {
             robots.erase(robots.begin()+index);
             _robConfigMap.clear();
@@ -433,7 +433,7 @@ namespace Kautham {
     }
 
 
-    void WorkSpace::removeObstacle(int index) {
+    void WorkSpace::removeObstacle(unsigned index) {
         obstacles.erase(obstacles.begin()+index);
         _obsConfigMap.clear();
     }

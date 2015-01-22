@@ -78,7 +78,7 @@ namespace Kautham {
       mt::Transform     _homeTrans; //!< This is the Home Reference frame at time zero (used to calculate the spatial limits).
       SoSeparator*      visModel; //!< Visualitzation model for the path.
       SoSeparator*      collModel; //!< Collision model for the path.
-      int               nTrunk; //!< Number of links for the trunk in case of TREE robot
+      unsigned          nTrunk; //!< Number of links for the trunk in case of TREE robot
       InverseKinematic* _ikine; //!< Defines the inverse kinematics of the robot, if available.
       ConstrainedKinematic* _constrainKin; //!< Defines the constrained kinematics of the robot, if it has one.
       vector<RobConf>   _proposedSolution; //!< Solution path to be drawn.
@@ -130,7 +130,7 @@ namespace Kautham {
 
     inline KthReal getScale() const {return scale;} //!< Returns the scale.
 
-    inline int getTrunk() const {return nTrunk;} //!< Returns the number of links that compose the trunk of the kinematic tree.
+    inline unsigned getTrunk() const {return nTrunk;} //!< Returns the number of links that compose the trunk of the kinematic tree.
 
     inline APPROACH getDHApproach(){return Approach;} //!< Returns the typs of D-H parameters used
 

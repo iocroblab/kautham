@@ -101,8 +101,8 @@ namespace Kautham {
     //! filtering of samples activated
     bool omplRRTConnectPlannerEUROC::trySolve()//reimplemented
     {
-        //if filter eliminates init and goal, then do not activate the filter!!
-        if(filtersample(_init)==true || filtersample(_goal)==true)
+        //if filter eliminates init or goal, then do not activate the filter!!
+        if(filtersample(_init) || filtersample(_goal))
         {
             //disable filtersample
             std::cout<<"Disabling filtering because either init or goal do not satisfy filter restrictions\n";
@@ -118,16 +118,19 @@ namespace Kautham {
             else
             {
                 //try again without the filtering activated
-                int ret;
                 if(_filtersamples==1)
                 {
                     std::cout<<"Retrying trySolve without sample filtering\n";
                     //disable filtersample
                     _filtersamples = 0;
                     //try again
-                    ret = omplPlanner::trySolve();
+                    bool ret = omplPlanner::trySolve();
                     //restore things
                     _filtersamples = 1;
+
+                    return ret;
+                } else {
+                    return false;
                 }
             }
         }

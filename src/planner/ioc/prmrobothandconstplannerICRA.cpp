@@ -219,9 +219,6 @@
 
       std::vector<KthReal> coord; coord.resize(_wkSpace->getNumRobControls());
       std::vector<KthReal> coordarm; coordarm.resize(6);
-      Sample *tmpSample;
-	  vector<KthReal> coordvector;
-	  int trials, maxtrials;
 
 	
 		//Create graph with initial and goal sample
@@ -234,7 +231,6 @@
 		}
 
 		//Randomly set the coordinates of the hand joints at a autocollision-free conf
-		int i=0;
 		int found=0;
 		do{
 			if(_gen->d_rand()<0.6){//sample around goal
@@ -509,7 +505,7 @@
 			if(fph==NULL) cout<<"Cannot open handconf.txt for writting..."<<endl;
 		
 			//write to file
-			for(int i=0; i<_path.size(); i++){
+            for(unsigned i=0; i<_path.size(); i++){
 				_wkSpace->moveRobotsTo(_path[i]); //to load the config because it may be lost in computeorientation applied after interpolate in moveAlongPath
 				joints = &(_path[i]->getMappedConf().at(0));
 				writeFiles(fpr,fph,joints);
@@ -792,7 +788,7 @@
 					}
 
 					//Set the new sample with the arm coorinates and check for autocollision.	
-                    for(int k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=0.0;//dummmy
+                    for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)	coord[k]=0.0;//dummmy
 					_wkSpace->getRobot(0)->control2Pose(coord); 
 					autocol = _wkSpace->getRobot(0)->autocollision(1);//test for the trunk
 					if(autocol==true) {
@@ -820,7 +816,7 @@
 						int trialshand=0;
 						int maxtrialshand=100;
 						do{
-                            for(int k=6; k < _wkSpace->getNumRobControls(); k++)
+                            for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)
 							{
 								coord[k] = (KthReal)_gen->d_rand();
 							}
@@ -838,7 +834,7 @@
 				int trialshand=0;
 				int maxtrialshand=100;
 				do{
-                    for(int k=6; k < _wkSpace->getNumRobControls(); k++)
+                    for(unsigned k=6; k < _wkSpace->getNumRobControls(); k++)
 					{
 						coord[k] = (KthReal)_gen->d_rand();
 					}
@@ -894,7 +890,7 @@
     void PRMRobotHandConstPlannerICRA::writeFiles(FILE *fpr, FILE *fph, RobConf* joints)
 	{
 		//write arm coordinates
-		int j;
+        unsigned j;
 		for(j =0; j < 6; j++)
       fprintf(fpr,"%.2f ",joints->getRn().getCoordinate(j)*180.0/PI);
 		fprintf(fpr,"\n");

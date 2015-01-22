@@ -80,7 +80,7 @@ namespace Kautham {
       vector<KthReal> *distvect;
       distvect = theplanner->wkSpace()->distanceCheck(smp);
       KthReal dist = 0.0;
-      for(int i=0; i<distvect->size(); i++)
+      for(unsigned i=0; i<distvect->size(); i++)
           if(dist>distvect->at(i)) dist = distvect->at(i);
       return dist;
     }

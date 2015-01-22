@@ -104,10 +104,10 @@ namespace Kautham{
 	Sample *GaussianLikeSampler::setcolor(Sample *smp, vector<unsigned int> *N) 
 	{
 		KthReal transpThreshold = 0.5;//0.7;//0.3
-		int initialset = 0;//64;
+        unsigned initialset = 0;//64;
 			//Compute the transparency of smp  
 			KthReal t = 0;
-			for(int i=0; i<N->size();i++)
+            for(unsigned i=0; i<N->size();i++)
 			{
 				t += (ss->getSampleAt((*N)[i]))->getcolor();
 			}
@@ -136,7 +136,7 @@ namespace Kautham{
 					//return a pointer to the copy
 					return smpc;
 				}
-				else for(int i=0; i<N->size();i++) 
+                else for(unsigned i=0; i<N->size();i++)
 				{	
 					Sample* tmpsmp = ss->getSampleAt((*N)[i]); 
 					if(tmpsmp->getcolor()==-1) 
@@ -186,7 +186,7 @@ namespace Kautham{
 			}
 
 			//update neighs
-			for(int i=0; i<N->size();i++) 
+            for(unsigned i=0; i<N->size();i++)
 			{	
 				Sample* tmpsmp = ss->getSampleAt((*N)[i]); 
 				if(tmpsmp->getcolor()==0)

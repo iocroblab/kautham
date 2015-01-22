@@ -576,12 +576,6 @@ TXerror TXRobot::invKin(const mt::Transform& p, Vect6& q, const config& conf, Ve
     return SUCCESS;
 }
 
-TXerror invKin(const mt::Transform& p,  Vect6& q , const config& preferred, config& solution, const Vect6& qNear){
- TXerror result;
-  
- return result;
-}
-
 /// Computes inverse kinematics from Cartesian pos values
 /// (expressed in milimeters), the current configuration of the robot and the last
 /// position of a path (Vect6 (radians)

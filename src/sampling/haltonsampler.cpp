@@ -70,7 +70,7 @@ Sample* HaltonSampler::nextSample()
 	double *c = new double[dimension];
 	halton(c);
 	vector<KthReal> cf(dimension);
-	for(int i=0;i<dimension;i++) cf[i] = (KthReal)c[i];
+    for(unsigned int i=0;i<dimension;i++) cf[i] = (KthReal)c[i];
 	_current->setCoords(cf);
 	/*
 	cout<<"smp[]=";
@@ -2411,14 +2411,6 @@ void timestamp ( void )
 # define TIME_SIZE 40
 
   static char time_buffer[TIME_SIZE];
-  const struct tm *tm;
-  size_t len;
-  time_t now;
-
-  now = time ( NULL );
-  tm = localtime ( &now );
-
-  len = strftime ( time_buffer, TIME_SIZE, "%d %B %Y %I:%M:%S %p", tm );
 
   cout << time_buffer << "\n";
 
@@ -2454,17 +2446,7 @@ char *timestring ( void )
 {
 # define TIME_SIZE 40
 
-  const struct tm *tm;
-  size_t len;
-  time_t now;
-  char *s;
-
-  now = time ( NULL );
-  tm = localtime ( &now );
-
-  s = new char[TIME_SIZE];
-
-  len = strftime ( s, TIME_SIZE, "%d %B %Y %I:%M:%S %p", tm );
+  char *s = new char[TIME_SIZE];
 
   return s;
 # undef TIME_SIZE

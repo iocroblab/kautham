@@ -48,50 +48,46 @@ namespace Kautham {
   //! information in the exploration process.
   
 	class SDKSample: public Sample {
-	public:	
-    //! Unique constructor for a class. Indexes parameter is used for neighbours search.
-    SDKSample(char d, unsigned long int code, char* indexes, bool random = true); 
-	//!copy constructor
-	SDKSample(SDKSample *s);
+    public:
+        //! Unique constructor for a class. Indexes parameter is used for neighbours search.
+        SDKSample(unsigned d, unsigned long int code, int* indexes, bool random = true);
+        //!copy constructor
+        SDKSample(SDKSample *s);
 
-	~SDKSample();
+        ~SDKSample();
 
-    //! Returns the sample code.
-    inline unsigned long int getCode(){return code;}
+        //! Returns the sample code.
+        inline unsigned long int getCode(){return code;}
 
-    //! This method searchs the neighbours of the sample that belong to the vector of candidate 
-    //! samples provided that the partition level of the sample is over a given threshold.
-    void searchNeighs(std::vector<SDKSample*> *candidates, int threshold);
+        //! This method searchs the neighbours of the sample that belong to the vector of candidate
+        //! samples provided that the partition level of the sample is over a given threshold.
+        void searchNeighs(std::vector<SDKSample*> *candidates, int threshold);
 
-    //! Returns an iterator to point to neighbours vector of the sample smp. 
-    vector<SDKSample*>::iterator getNeighs(SDKSample &smp);
+        //! Returns an iterator to point to neighbours vector of the sample smp.
+        vector<SDKSample*>::iterator getNeighs(SDKSample &smp);
 
-    //! Returns a string containing the coordinates information and if extend parameter is true, 
-    //! it contains the code and the coordinates information in a explicit form.
-    string	print(bool extend=true);
+        //! Returns a string containing the coordinates information and if extend parameter is true,
+        //! it contains the code and the coordinates information in a explicit form.
+        string	print(bool extend=true);
 
-    //! Returns a string that contais the sample code and the codes of neighbour samples.
-    string  printNeighs();
-	
+        //! Returns a string that contais the sample code and the codes of neighbour samples.
+        string  printNeighs();
 
-    //! This is the size of an M-Cell.
-    static float sizeContainer;
+        //! This is the size of an M-Cell.
+        static float sizeContainer;
 
-    //! This is the grid partition level.
-    static char M;
+        //! This is the grid partition level.
+        static int M;
 
-    static LCPRNG* gen;
-	private:
-    //! Pointer to the grid indexes.
-    char* index;
+        static LCPRNG* gen;
 
-    ////! Standar vector of pointer to neighbour samples.
-    //vector<SDKSample*> neighset;
+    private:
+        //! Pointer to the grid indexes.
+        int* index;
 
-    //! This is the sample code.
-		unsigned long int code;
-    
-	};
+        //! This is the sample code.
+        unsigned long int code;
+    };
 
     /** @}   end of Doxygen module "Sampling" */
 }

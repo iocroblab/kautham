@@ -67,7 +67,7 @@ namespace Kautham {
         _stepsDiscretization.resize(_wkSpace->getNumRobControls());
 		char *str = new char[20];
 		KthReal step=0;
-        for(int i=0;i<_wkSpace->getNumRobControls();i++){
+        for(unsigned i=0;i<_wkSpace->getNumRobControls();i++){
 			_stepsDiscretization[i] = 4;
 			sprintf(str,"Discr. Steps %d",i);
 			addParameter(str, _stepsDiscretization[i]);
@@ -79,7 +79,7 @@ namespace Kautham {
 
         //set max samples
 		_maxNumSamples = 1;
-        for(int i=0; i<_wkSpace->getNumRobControls();i++){
+        for(unsigned i=0; i<_wkSpace->getNumRobControls();i++){
 			_maxNumSamples = _maxNumSamples * _stepsDiscretization[i];
 		}
 
@@ -100,7 +100,7 @@ namespace Kautham {
         indexgoal= (gridVertex)(tmpSamGoal->getCoords()[0]*_stepsDiscretization[0]);
         indexinit= (gridVertex)(tmpSamInit->getCoords()[0]*_stepsDiscretization[0]);
         int r;
-        for(int i=1; i<_wkSpace->getNumRobControls();i++)
+        for(unsigned i=1; i<_wkSpace->getNumRobControls();i++)
         {
             stepd = stepd * _stepsDiscretization[i-1];
             r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
@@ -193,7 +193,7 @@ namespace Kautham {
 				}
 				if(_solved)
 				{
-					for(int i=0;i<_path.size();i++)
+                    for(unsigned i=0;i<_path.size();i++)
 					{
 						if(_path[i]==locations[*vi])
 							cell_color->diffuseColor.setValue(0.2,0.7,0.2);
@@ -310,7 +310,7 @@ namespace Kautham {
 			_stepsDiscretization[axis] = numsteps;
 
 			_maxNumSamples = 1;
-            for(int i=0; i<_wkSpace->getNumRobControls();i++){
+            for(unsigned i=0; i<_wkSpace->getNumRobControls();i++){
 				_maxNumSamples = _maxNumSamples * _stepsDiscretization[i];
 			}
 			if(_isGraphSet) clearGraph();
@@ -323,7 +323,7 @@ namespace Kautham {
             indexgoal=(gridVertex)(tmpSamGoal->getCoords()[0]*_stepsDiscretization[0]);
             indexinit=(gridVertex)(tmpSamInit->getCoords()[0]*_stepsDiscretization[0]);
             int r;
-            for(int i=1; i<_wkSpace->getNumRobControls();i++)
+            for(unsigned i=1; i<_wkSpace->getNumRobControls();i++)
             {
                 stepd = stepd * _stepsDiscretization[i-1];
                 r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
@@ -348,7 +348,7 @@ namespace Kautham {
         drawCspace();
    }
 		
-	void  gridPlanner::loadgrid(vector<KthReal> &coords, int coord_i)
+    void  gridPlanner::loadgrid(vector<KthReal> &coords, unsigned coord_i)
 	{
 			KthReal delta = 1.0/_stepsDiscretization[coord_i];
 			KthReal offset = delta/2;
@@ -382,7 +382,7 @@ namespace Kautham {
 		}
 
 
-		void  gridPlanner::connectgrid(vector<int> &index, int coord_i)
+        void  gridPlanner::connectgrid(vector<int> &index, unsigned coord_i)
 		{
 			//for coordinate coord_i, loop for all discretization steps 
 			for(int j=0; j<_stepsDiscretization[coord_i]; j++) 
@@ -402,7 +402,7 @@ namespace Kautham {
 					//find sample label from indices
 					int smplabel = 0;
 					int coef;
-                    for(int k=0;k<_wkSpace->getNumRobControls();k++){
+                    for(unsigned k=0;k<_wkSpace->getNumRobControls();k++){
 						if(k==0) coef=1;
 						else coef = coef * _stepsDiscretization[k-1];
 						smplabel += coef*index[k];
@@ -411,7 +411,7 @@ namespace Kautham {
 					//sweep for all directions to find (Manhattan) neighbors
 					//neighbors are looked for in the positive drection of the axis
 					//i.e. incrementing the index of the current sample
-                    for(int n=0;n<_wkSpace->getNumRobControls();n++)
+                    for(unsigned n=0;n<_wkSpace->getNumRobControls();n++)
 					{
 						//find the label of the neighbor samples from indices
 						//a Manhattan neighbor (in the positive direction of an axis)
@@ -420,7 +420,7 @@ namespace Kautham {
 						int smplabelneighplus = 0;
 						bool plusneighexists = true;
 						
-                        for(int k=0;k<_wkSpace->getNumRobControls();k++)
+                        for(unsigned k=0;k<_wkSpace->getNumRobControls();k++)
 						{
 							if(k==0) coef=1;
 							else coef = coef*_stepsDiscretization[k-1];

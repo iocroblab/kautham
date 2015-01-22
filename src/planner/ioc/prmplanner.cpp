@@ -96,7 +96,7 @@ namespace Kautham {
         _samples->setWorkspacePtr(_wkSpace);
         _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
 
-      for(int i=0; i<_wkSpace->getNumRobots();i++)
+      for(unsigned i=0; i<_wkSpace->getNumRobots();i++)
         _wkSpace->getRobot(i)->setLinkPathDrawn(_drawnLink);
     }
 
@@ -137,7 +137,7 @@ namespace Kautham {
         it = _parameters.find("Drawn Path Link");
         if(it != _parameters.end()){
           _drawnLink = it->second;
-          for(int i=0; i<_wkSpace->getNumRobots();i++)
+          for(unsigned i=0; i<_wkSpace->getNumRobots();i++)
             _wkSpace->getRobot(i)->setLinkPathDrawn(_drawnLink);
         }else
           return false;
@@ -158,7 +158,7 @@ namespace Kautham {
 
         it = _parameters.find("Max. Neighs");
         if(it != _parameters.end()){
-          _kNeighs = (int)it->second;
+          _kNeighs = (unsigned)it->second;
               _samples->setANNdatastructures(_kNeighs, _maxNumSamples);
              _samples->loadAnnData();
             }else
@@ -454,7 +454,7 @@ namespace Kautham {
 
 
       _solved = false;
-      int count = 0;
+      unsigned count = 0;
       if( _isGraphSet ){  //If graph already available
         //If new configurations have been sampled the graph is rebuild
         if( _samples->changed())
@@ -631,12 +631,6 @@ namespace Kautham {
         unsigned int oldVertices = num_vertices(*g);
         unsigned int newEdges = edges.size();
         unsigned int oldEdges = num_edges(*g);
-
-        // add new vertices
-        for(std::size_t i=oldVertices; i<newVertices;i++)
-        {
-            prmVertex vd=add_vertex(*g);
-        }
 
         WeightMap weightmap = get(edge_weight, *g);
 
@@ -905,7 +899,7 @@ namespace Kautham {
       _solved = false;
       _labelCC = 0;
       _ccMap.clear();
-      for(int i=0;i<_samples->getSize();i++)
+      for(unsigned i=0;i<_samples->getSize();i++)
         _samples->getSampleAt(i)->setConnectedComponent(-1);
     }
 

@@ -72,8 +72,8 @@ namespace Kautham {
 
 
     inline vector<KthQuery>&       getQueries(){return _queries;}
-    bool                           addQuery(int init, int goal );
-    int                            findQuery(int init, int goal, int from = 0);
+    bool                           addQuery(unsigned init, unsigned goal);
+    int                            findQuery(unsigned init, unsigned goal, unsigned from = 0);
 
 
     //!  This method must be used to add samples that corresponds with the 
@@ -83,28 +83,22 @@ namespace Kautham {
 
 
     bool solveAndInherit();
-    inline LocalPlanner* getLocalPlanner(){return _locPlanner;};
+    inline LocalPlanner* getLocalPlanner(){return _locPlanner;}
 
 	protected:
     iocPlanner();
     Sampler*                      _sampler;
-    LocalPlanner* _locPlanner;
-
-
+    LocalPlanner*                 _locPlanner;
     vector<KthQuery>              _queries;
     // Stats
-    unsigned int                  _collChecks;
-    unsigned int                  _worldcollChecks;
-    unsigned int                  _triedSamples;
-    unsigned int                  _generatedEdges;
+    unsigned                      _collChecks;
+    unsigned                      _worldcollChecks;
+    unsigned                      _triedSamples;
+    unsigned                      _generatedEdges;
     KthReal                       _totalTime;
     KthReal                       _smoothTime;
-
-
 	};
  }
   /** @}   end of Doxygen module "Planner */
 }
-
 #endif  //_PLANNER_H
-

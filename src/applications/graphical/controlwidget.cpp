@@ -61,7 +61,7 @@ namespace Kautham {
         } else {
             names = QString(prob->wSpace()->getObsControlsName().c_str()).split("|");
         }
-        int dim = names.size();
+        unsigned dim = names.size();
         sliders.resize(dim);
         lineEdits.resize(dim);
         values.resize(dim);

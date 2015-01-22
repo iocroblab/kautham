@@ -39,7 +39,7 @@ namespace Kautham{
  * representation.
  */
 
-  Sample::Sample(char d){
+  Sample::Sample(unsigned d){
     _dim = d;
     _coords.resize(_dim);
     _color = 0;
@@ -67,13 +67,13 @@ namespace Kautham{
     std::ostringstream s;
     string sal="";
     if(onlyVal){
-      for(int i=0; i < _dim; i++)
+      for(unsigned i=0; i < _dim; i++)
         s << _coords[i] << " "  ;
       
       sal = s.str();
       sal = sal.substr(0, sal.length() - 1);
     }else{
-      for(int i=0; i < _dim; i++){
+      for(unsigned i=0; i < _dim; i++){
         s << " coor[" ;
         s << i ;
         s << "]= ";
@@ -102,17 +102,17 @@ namespace Kautham{
 	{
 		_dim = s->getDim();
     _coords.resize(_dim);
-		for(int i=0; i < _dim;i++)
+        for(unsigned i=0; i < _dim;i++)
       _coords[i] = s->getCoords()[i];
 		_color = s->_color;
 		_connectedComponent = s->_connectedComponent;
 		_transparency = s->_transparency;
 		
 	
-    for(int i=0; i<s->getNeighs()->size();i++)
+    for(unsigned i=0; i<s->getNeighs()->size();i++)
 			_neighset.push_back(s->getNeighs()->at(i));
 		
-		for(int i=0; i<s->neighsetdistances.size();i++)
+        for(unsigned i=0; i<s->neighsetdistances.size();i++)
       neighsetdistances.push_back(s->neighsetdistances[i]);
 		
 		_connectedComponent = s->_connectedComponent;
@@ -122,7 +122,7 @@ namespace Kautham{
     _neighset.push_back(newNeigh);
   }
 
-  void Sample::addNeighOrdered(unsigned int newNeigh, KthReal newDistance, int max, bool force){
+  void Sample::addNeighOrdered(unsigned int newNeigh, KthReal newDistance, unsigned int max, bool force){
 	 //find where to place the sample in an increasing order of distances
 	unsigned int pos=0;
   for(unsigned int i=0; i< neighsetdistances.size();i++)
@@ -133,8 +133,8 @@ namespace Kautham{
 	_neighset.insert(_neighset.begin()+pos, newNeigh);
 	neighsetdistances.insert(neighsetdistances.begin()+pos, newDistance);
 	//delete the last sample if vector list out of bounds
-    if(_neighset.size() > max){
-		if(pos==max && force==true){
+    if (_neighset.size() > max) {
+        if (pos==max && force) {
 			//if the new sample has to be included by force (flag force set to true) and it results to
 			//be the last one (the farthest) then we should delete not the last of the list but the 
 			//the last minus one, in order not to delete the new sample
@@ -230,11 +230,11 @@ namespace Kautham{
     if( _config.size() != _localConf.size() ){
       if( _config.size() != 0  ) _config.clear();
 
-      for(int i = 0; i < _localConf.size(); i++)
+      for(unsigned i = 0; i < _localConf.size(); i++)
         _config.push_back(_localConf.at(i));
 
     }else{
-      for(int i = 0; i < _localConf.size(); i++)
+      for(unsigned i = 0; i < _localConf.size(); i++)
         _config.at(i)=_localConf.at(i);
     }
   }
@@ -245,11 +245,11 @@ namespace Kautham{
     if( _config.size() != _localConf.size() ){
       if( _config.size() != 0  ) _config.clear();
 
-      for(int i = 0; i < _localConf.size(); i++)
+      for(unsigned i = 0; i < _localConf.size(); i++)
         _config.push_back(*(_localConf.at(i)));
 
     }else{
-      for(int i = 0; i < _localConf.size(); i++)
+      for(unsigned i = 0; i < _localConf.size(); i++)
         _config.at(i) = *(_localConf.at(i));
     }
   }

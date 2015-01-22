@@ -100,12 +100,12 @@ namespace Kautham {
           std::stringstream sstm;
 
           int d=0;
-          for(int i=0;i<sss.size();i++)
+          for(unsigned i=0;i<sss.size();i++)
           {
               //update robot i. Get the subspaces (SE3+Rn, or SE3 or Rn)
               std::vector< ob::StateSpacePtr> sssi = sss[i]->as<ob::CompoundStateSpace>()->getSubspaces();
 
-              for(int j=0;i<sssi.size();i++)
+              for(unsigned j=0;i<sssi.size();i++)
               {
                 //SE3 subspace
                 sstm.str("");
@@ -150,14 +150,14 @@ namespace Kautham {
           std::stringstream sstm;
 
           int d=0;//index to access the increment stored in parameter dstate
-          for(int i=0;i<sss.size();i++)
+          for(unsigned i=0;i<sss.size();i++)
           {
               //Update robot i.
               //Get the robot i subspaces (SE3+Rn, or SE3 or Rn)
               std::vector< ob::StateSpacePtr> sssi = sss[i]->as<ob::CompoundStateSpace>()->getSubspaces();
 
               //update the state of each subspace
-              for(int j=0;j<sssi.size();j++)
+              for(unsigned j=0;j<sssi.size();j++)
               {
                 //SE3 subspace
                 sstm.str("");
@@ -235,7 +235,7 @@ namespace Kautham {
                     //create the new Rn part
                     ob::ScopedState<omplplanner::weigthedRealVectorStateSpace> newscopedstatern(sssi[j]);
                     //update the Rn part
-                    for(int k=0; k< sssi[j]->as<omplplanner::weigthedRealVectorStateSpace>()->getDimension();k++)
+                    for(unsigned k=0; k< sssi[j]->as<omplplanner::weigthedRealVectorStateSpace>()->getDimension();k++)
                         newscopedstatern->values[k] = scopedstatern->values[k] + dstate[d++];
 
                     //load the global scoped state with the info of the se3 data of robot i
@@ -299,7 +299,7 @@ namespace Kautham {
         weights.resize(_wkSpace->getNumRobots());
 
         //loop for all robots
-        for(int i=0; i<_wkSpace->getNumRobots(); i++)
+        for(unsigned i=0; i<_wkSpace->getNumRobots(); i++)
         {
             vector<ob::StateSpacePtr> compoundspaceRob;
             vector< double > weightsRob;
@@ -471,8 +471,6 @@ namespace Kautham {
             SoCoordinate3 *points  = new SoCoordinate3();
             SoPointSet *pset  = new SoPointSet();
 
-            const ob::RealVectorStateSpace::StateType *pos;
-            const ob::SE3StateSpace::StateType *se3state;
             ob::ScopedState<ob::CompoundStateSpace> pathscopedstate(space);
 
             //get the SE3 subspace
@@ -492,7 +490,7 @@ namespace Kautham {
             ss->getPlanner()->getPlannerData(*pdata);
 
             //loop for all vertices of the roadmap or tree and create the coin3D points
-            for(int i=0;i<pdata->numVertices();i++)
+            for(unsigned i=0;i<pdata->numVertices();i++)
             {
                 pathscopedstate = pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>();
                 ob::ScopedState<ob::SE3StateSpace> pathscopedstatese3(ssRobotiSE3);
@@ -520,7 +518,7 @@ namespace Kautham {
             std::vector< unsigned int > outgoingVertices;
 
             //loop for all nodes
-            for(int i=0;i<pdata->numVertices();i++)
+            for(unsigned i=0;i<pdata->numVertices();i++)
             {
                  numOutgoingEdges = pdata->getEdges (i, outgoingVertices);
 
@@ -564,7 +562,7 @@ namespace Kautham {
                 std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
 
                 //loop for al the states of the solution path
-                for(int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
+                for(unsigned i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
                 {
                     //initial edgepoint
                     SoCoordinate3 *edgepoints  = new SoCoordinate3();
@@ -635,8 +633,6 @@ namespace Kautham {
         SoCoordinate3 *points  = new SoCoordinate3();
         SoPointSet *pset  = new SoPointSet();
 
-        const ob::RealVectorStateSpace::StateType *pos;
-        const omplplanner::weigthedRealVectorStateSpace::StateType *rnstate;
         ob::ScopedState<ob::CompoundStateSpace> pathscopedstate(space);
 
         //get the SE3 subspace
@@ -656,7 +652,7 @@ namespace Kautham {
         ss->getPlanner()->getPlannerData(*pdata);
 
         //loop for all vertices of the roadmap or tree and create the coin3D points
-        for(int i=0;i<pdata->numVertices();i++)
+        for(unsigned i=0;i<pdata->numVertices();i++)
         {
             pathscopedstate = pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>();
             ob::ScopedState<omplplanner::weigthedRealVectorStateSpace> pathscopedstatern(ssRobotiRn);
@@ -684,7 +680,7 @@ namespace Kautham {
         std::vector< unsigned int > outgoingVertices;
 
         //loop for all nodes
-        for(int i=0;i<pdata->numVertices();i++)
+        for(unsigned i=0;i<pdata->numVertices();i++)
         {
              numOutgoingEdges = pdata->getEdges (i, outgoingVertices);
 
@@ -728,7 +724,7 @@ namespace Kautham {
             std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
 
             //loop for al the states of the solution path
-            for(int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
+            for(unsigned i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
             {
                 //initial edgepoint
                 SoCoordinate3 *edgepoints  = new SoCoordinate3();
@@ -796,7 +792,7 @@ namespace Kautham {
         std::vector<RobConf>& smpRobotsConf = smp->getMappedConf();
 
         //loop for all the robots
-        for(int i=0; i<_wkSpace->getNumRobots(); i++)
+        for(unsigned i=0; i<_wkSpace->getNumRobots(); i++)
         {
             int k=0; //counter of subspaces contained in subspace of robot i
 
@@ -837,7 +833,7 @@ namespace Kautham {
                 ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
                 ob::ScopedState<omplplanner::weigthedRealVectorStateSpace> rstart(ssRobotiRn);
 
-                for(int j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
+                for(unsigned j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
                     rstart->values[j] = r.getCoordinate(j);
 
                 //load the global scoped state with the info of the Rn data of robot i
@@ -859,11 +855,10 @@ namespace Kautham {
     //! This member function converts an ompl ScopedState to a Kautham sample
     void omplcPlanner::omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp)
     {
-        int k=0;
         vector<RobConf> rc;
 
         //loop for all the robots
-        for(int i=0; i<_wkSpace->getNumRobots(); i++)
+        for(unsigned i=0; i<_wkSpace->getNumRobots(); i++)
         {
             //RobConf to store the robots configurations read form the ompl state
             RobConf *rcj = new RobConf;
@@ -920,7 +915,7 @@ namespace Kautham {
 
                  //convert to a vector of n components
                  vector<KthReal> coords;
-                 for(int j=0;j<_wkSpace->getRobot(i)->getNumJoints();j++) coords.push_back(pathscopedstateRn->values[j]);
+                 for(unsigned j=0;j<_wkSpace->getRobot(i)->getNumJoints();j++) coords.push_back(pathscopedstateRn->values[j]);
                  rcj->setRn(coords);
                  k++;//dummy
              }
@@ -976,7 +971,6 @@ namespace Kautham {
          ss->print();
 
         //retrieve all the states. Load the SampleSet _samples
-        Sample *smp;
         ob::PlannerData data(ss->getSpaceInformation());
         ss->getPlannerData(data);
         /*
@@ -998,9 +992,6 @@ namespace Kautham {
              ss->getSolutionPath().asGeometric().print(std::cout);
              std::cout << "Control Path solution:" << std::endl;
              ss->getSolutionPath().print(std::cout);
-
-             //retrieve the geometric path
-             std::vector< ob::State * > & pathstates = ss->getSolutionPath().asGeometric().getStates();
 
              Sample *smp;
              _path.clear();

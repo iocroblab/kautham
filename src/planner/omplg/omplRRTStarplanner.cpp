@@ -262,7 +262,7 @@ namespace Kautham {
                         double pmin = 0.5;
                         double pmax = getPathSamplingRangeFactor(); //2.0;
                         double threshold = (pmin+(pmax-pmin)*rng_.uniform01())*maxDistance_; //10*epsilon
-                        int node = (int)(rng_.uniform01() * mpath.size());
+                        unsigned node = (unsigned)(rng_.uniform01() * mpath.size());
                         if(node==mpath.size()) node = mpath.size()-1; //just in case rng_.uniform01 returned 1
 
 
@@ -777,7 +777,7 @@ namespace Kautham {
           string listcontrolsname = wkSpace()->getRobControlsName();
           vector<string*> controlname;
           string *newcontrol = new string;
-          for(int i=0; i<listcontrolsname.length();i++)
+          for(unsigned i=0; i<listcontrolsname.length();i++)
           {
               if(listcontrolsname[i]=='|')
               {
@@ -790,9 +790,8 @@ namespace Kautham {
           //add last control (since listcontrolsname does not end with a |)
           controlname.push_back(newcontrol);
 
-          std::size_t foundlabel;
           vector<int> handpmdcolumns;
-          for(int i=0;i<controlname.size();i++)
+          for(unsigned i=0;i<controlname.size();i++)
           {
               if(controlname[i]->find("PMD") != string::npos)
               {
@@ -814,14 +813,10 @@ namespace Kautham {
           ob::ProjectionMatrix PMD;
           PMD.mat = ob::ProjectionMatrix::Matrix(numDOF,numPMD);
           KthReal **mm2 = wkSpace()->getRobot(robotindex)->getMapMatrix();
-          double kk;
-          int col;
           for(int j=0;j<numPMD;j++)//columns
           {
               for(int i=0;i<numDOF;i++)//rows
               {
-                  col = handpmdcolumns[j];
-                  kk = mm2[6+i][handpmdcolumns[j]];
                   PMD.mat(i,j) = mm2[6+i][handpmdcolumns[j]];
               }
           }
@@ -839,18 +834,18 @@ namespace Kautham {
           int numPMD = 0;
           int numDOF = 3*wkSpace()->getNumRobots(); //the coupling is allowed with the x,y,z of each robot
 
-          std::map< string, vector< pair<int,int> >  > pmdMap;
-          std::map< string, vector< pair<int,int> >  >::iterator itpmdMap;
+          std::map< string, vector< pair<int, int> > > pmdMap;
+          std::map< string, vector< pair<int, int> > >::iterator itpmdMap;
 
 
-          for(int k=0;k<wkSpace()->getNumRobots(); k++)
+          for(unsigned k=0;k<wkSpace()->getNumRobots(); k++)
           {
               //find the controls that are coupled, i.e. those that have the PMD letters in their name
               string listcontrolsname = wkSpace()->getRobControlsName();
               vector<string*> controlname;
               string *newcontrol = new string;
               //split the list of controls to obtain the control names
-              for(int i=0; i<listcontrolsname.length();i++)
+              for(unsigned i=0; i<listcontrolsname.length();i++)
               {
                   if(listcontrolsname[i]=='|')
                   {
@@ -864,8 +859,7 @@ namespace Kautham {
               controlname.push_back(newcontrol);
 
               //verify those control names that have the leters PMD in their name
-              std::size_t foundlabel;
-              for(int i=0;i<controlname.size();i++)
+              for(unsigned i=0;i<controlname.size();i++)
               {
                   if(controlname[i]->find("PMD") != string::npos)
                   {
@@ -915,7 +909,7 @@ namespace Kautham {
           for (itpmdMap=pmdMap.begin(); itpmdMap!=pmdMap.end(); ++itpmdMap)//columns
           {
               int ir=0; //row counter
-              for(int j=0; j< itpmdMap->second.size(); j++) //this loops as many times as robots
+              for(unsigned j=0; j< itpmdMap->second.size(); j++) //this loops as many times as robots
               {
                   int robotindex = itpmdMap->second[j].first; //the robot
                   int pmdcolumn = itpmdMap->second[j].second; //the columns in the mapMatrix of robot robotindex
@@ -924,7 +918,6 @@ namespace Kautham {
                   //copy the first three rows of the mapMatrix of robot robotindex, that correspond to the x,y and z coordinates
                   for(int ii=0; ii< 3; ii++)
                   {
-                      double kk = mm2[ii][pmdcolumn];
                       PMD.mat(ir,ic) = mm2[ii][pmdcolumn];
                       ir++;//next row in PMD matrix
                   }
@@ -1003,7 +996,7 @@ namespace Kautham {
         _clearanceopti = ob::OptimizationObjectivePtr(new myOptimizationObjective(ss->getSpaceInformation(), this, false));
         std::vector< std::vector<double> > cp(wkSpace()->getNumObstacles());
         _potentialParams.resize(wkSpace()->getNumObstacles());
-        for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
+        for (unsigned i = 0; i < wkSpace()->getNumObstacles(); ++i) {
             mt::Point3 p = wkSpace()->getObstacle(i)->getLink(0)->getTransformation()->getTranslation();
             cp[i].resize(3);
             cp[i][0] = p[0];
@@ -1222,7 +1215,7 @@ namespace Kautham {
             ss->getPlanner()->as<og::RRTstar>()->setDelayCC(_DelayCC);
 
 
-            for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
+            for (unsigned i = 0; i < wkSpace()->getNumObstacles(); ++i) {
                 stringstream repulse, diffusion;
                 repulse << "Repulse " << i;
                 diffusion << "Diffusion " << i;

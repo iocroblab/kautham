@@ -137,7 +137,7 @@ inline RelPlaneCylinder::RelPlaneCylinder(const Plane3&    P,
 
   // Relation between cylinder axis and plane
   const RelLinePlane rel(axis, P);
-  const RelType      rel_type = rel.getType();
+  //const RelType      rel_type = rel.getType();
 
   // Angle between elements and angle type
   m_angle = rel.getAngle();
