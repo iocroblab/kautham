@@ -400,15 +400,14 @@ namespace Kautham {
             sendText(QString("Kautham is saving a planner data in a file: "+filePath).toUtf8().constData());
             QFile file(filePath);
             if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-                stringstream sstr;
+                /*stringstream sstr;
                 ((omplplanner::omplPlanner*)_planner)->SimpleSetup()->getSolutionPath().print(sstr);
                 QTextStream out(&file);
                 out << sstr.str().c_str();
                 stringstream sstr2;
                 ((omplplanner::omplPlanner*)_planner)->SimpleSetup()->getSolutionPath().printAsMatrix(sstr2);
                 out << endl << sstr2.str().c_str();
-
-                /*
+*/
                 //get the first subspace
                 int numrob = 0;
                 og::SimpleSetupPtr ss = ((omplplanner::omplPlanner*)_planner)->SimpleSetupPtr();
@@ -459,7 +458,8 @@ namespace Kautham {
                     //////////////////////////////////
                     ///PATH
                     //////////////////////////////////
-                    sstr << "PATH:" << endl;
+                    sstr << "%PATH:" << endl;
+                    sstr << "path = [ ... " << endl;
 
                     //get the states of the solution path
                     std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
@@ -475,7 +475,7 @@ namespace Kautham {
                         y=projection[1];
                         z=projection[2];
 
-                        sstr << x << " " << y << " " << z << " ";
+                        sstr << "[" << x << " " << y << " " << z << " ";
 
                         //final edgepoint
                         //space->getProjection("drawprojection")->project(pathstates[i+1], projection);
@@ -484,17 +484,19 @@ namespace Kautham {
                         y=projection[1];
                         z=projection[2];
 
-                        sstr << x << " " << y << " " << z << endl;
+                        sstr << x << " " << y << " " << z << "]; ..." << endl;
                     }
 
-                    sstr << endl;
+                    sstr << "];" << endl;
                 }
 
                 //////////////////////////////////
                 ///VERTICES
                 //////////////////////////////////
 
-                sstr << "VERTICES:" << endl;
+                sstr << "%VERTICES:" << endl;
+                sstr << "vertex = [ ... " << endl;
+
                 //loop for all vertices of the roadmap or tree
                 for(int i=0;i<pdata->numVertices();i++)
                 {
@@ -505,15 +507,17 @@ namespace Kautham {
                     y = projection[1];
                     z = projection[2];
 
-                    sstr << x << " " << y << " " << z << endl;
+                    sstr << "[" << x << " " << y << " " << z << "]; ..." << endl;
                 }
-                sstr << endl;
+                sstr << "];" << endl;
 
                 //////////////////////////////////
                 ///EDGES
                 //////////////////////////////////
 
-                sstr << "EDGES:" << endl;
+                sstr << "%EDGES:" << endl;
+                sstr << "edge = [ ... " << endl;
+
                 int numOutgoingEdges;
                 std::vector< unsigned int > outgoingVertices;
                 //loop for all nodes
@@ -533,7 +537,7 @@ namespace Kautham {
                         y1=projection[1];
                         z1=projection[2];
 
-                        sstr << x1 << " " << y1 << " " << z1 << " ";
+                        sstr << "[" << x1 << " " << y1 << " " << z1 << " ";
 
                         //final edgepoint
                         //space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
@@ -542,12 +546,14 @@ namespace Kautham {
                         y2=projection[1];
                         z2=projection[2];
 
-                        sstr << x2 << " " << y2 << " " << z2 << endl;
+                        sstr << x2 << " " << y2 << " " << z2 << "]; ..." << endl;
                     }
                 }
+                sstr << "];";
+
 
                 QTextStream out(&file);
-                out << sstr.str().c_str();*/
+                out << sstr.str().c_str();
 
                 sendText("File was saved successfully");
             } else {

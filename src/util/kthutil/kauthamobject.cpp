@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell */
 
 
- 
+
 #include "kauthamobject.h"
 #include <string>
 #include <sstream>
@@ -33,37 +33,37 @@
 
 namespace Kautham{
 
-  KthReal KauthamObject::getParameter(string key){
+KthReal KauthamObject::getParameter(string key){
     HASH_S_K::iterator it = _parameters.find(key);
     if(it != _parameters.end() )
-      return it->second;
+        return it->second;
     else
-      throw -1;
-  }
+        throw -1;
+}
 
-  string KauthamObject::getParametersAsString(){
+string KauthamObject::getParametersAsString(){
     std::stringstream par;
     string p;
     par.precision(10);
     HASH_S_K::iterator it;
-    for(it = _parameters.begin(); it != _parameters.end(); ++it) { 
-      par << it->first << "|";
-      par << it->second << "|"; 
+    for(it = _parameters.begin(); it != _parameters.end(); ++it) {
+        par << it->first << "|";
+        par << it->second << "|";
     }
     p = par.str();
     return p.substr(0,p.length()-1);
-  }
+}
 
-  bool KauthamObject::setParameter(string key, KthReal value){
+bool KauthamObject::setParameter(string key, KthReal value){
     HASH_S_K::iterator it = _parameters.find(key);
     if(it != _parameters.end() ){
-      it->second = value;
-      return true;
+        it->second = value;
+        return true;
     }
     return false;
-  }
+}
 
-  bool KauthamObject::setParametersFromString(const string& par){
+bool KauthamObject::setParametersFromString(const string& par){
     if (par == "") return false;
     KthReal val = 0.0;
     HASH_S_K::iterator it;
@@ -71,23 +71,21 @@ namespace Kautham{
     boost::split(tokens, par, boost::is_any_of("|"));
     
     for(int i=0; i<tokens.size(); i=i+2){
-      try{
-        it = _parameters.find(tokens[i]);
-        val = (KthReal)atof(tokens[i+1].c_str());
-        if(it != _parameters.end()) 
-          it->second = val;
-        else{
-          cout << "Error - parameter not found:" << tokens[i] << "\n";
-          throw -1;
-        }
-      }catch(...){
-        cout << "Error - parameter not found:" << tokens[i] << "\n";
+        try{
+            it = _parameters.find(tokens[i]);
+            val = (KthReal)atof(tokens[i+1].c_str());
+            if(it != _parameters.end())
+                it->second = val;
+            else{
+                cout << "Error - parameter not found:" << tokens[i] << "\n";
+                throw -1;
+            }
+        }catch(...){
+            cout << "Error - parameter not found:" << tokens[i] << "\n";
             throw -2;
-      }
+        }
     }
     
     return setParameters();
-  }
-      
 }
-
+}
