@@ -1359,11 +1359,10 @@ namespace Kautham {
   *
   */
  KthReal* Robot::getWeightSE3(){
-     KthReal tmp=1.;
      if( _weights != NULL )
          return _weights->getSE3Weight();
      else
-         throw exception();
+         throw runtime_error("Weights have not been initialized");
  }
 
  /*!
@@ -1373,7 +1372,7 @@ namespace Kautham {
      if( _weights != NULL )
          return _weights->getRnWeights();
      else
-         throw exception();
+         throw runtime_error("Weights have not been initialized");
  }
 
  /*!

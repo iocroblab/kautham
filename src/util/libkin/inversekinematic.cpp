@@ -89,10 +89,14 @@ namespace Kautham {
   //! configured the target as a se3.coordinates vector that includes the 
   //! position and the orientation as a quaternion.
   void InverseKinematic::setTarget(vector<KthReal> &target, const string& param){
-    if(param != "" ) setParametersFromString( param );
-    _target.clear();
-    for(size_t i =0; i< target.size(); i++)
-      _target.push_back(target.at(i));
+      try {
+          if(param != "" ) setParametersFromString( param );
+          _target.clear();
+          for(size_t i =0; i< target.size(); i++)
+              _target.push_back(target.at(i));
+      } catch(...) {
+          cout << "An error ocurred." << endl;
+      }
   }
 
   

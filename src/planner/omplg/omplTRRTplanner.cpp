@@ -73,7 +73,7 @@ namespace Kautham {
         planner->as<og::TRRT>()->setGoalBias(_GoalBias);
 
 
-        _opti = ob::OptimizationObjectivePtr(new myOptimizationObjective(ss->getSpaceInformation(), this, false));
+        _opti = ob::OptimizationObjectivePtr(new myICOptimizationObjective(ss->getSpaceInformation(), this, false));
         std::vector< std::vector<double> > cp(wkSpace()->getNumObstacles());
         _potentialParams.resize(wkSpace()->getNumObstacles());
         for (int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
@@ -91,8 +91,8 @@ namespace Kautham {
             addParameter(repulse.str(),_potentialParams[i].first);
             addParameter(diffusion.str(),_potentialParams[i].second);
         }
-        ((myOptimizationObjective*) _opti.get())->setControlPoints(&cp);
-        ((myOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
+        ((myICOptimizationObjective*) _opti.get())->setControlPoints(&cp);
+        ((myICOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
 
         ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
         pdefPtr->setOptimizationObjective(_opti);
@@ -143,7 +143,7 @@ namespace Kautham {
             else
               return false;
 
-            ((myOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
+            ((myICOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
         }
 
         it = _parameters.find("Goal Bias");
@@ -190,6 +190,13 @@ namespace Kautham {
         return false;
       }
       return true;
+    }
+
+    bool omplTRRTPlanner::trySolve() {
+        if (omplPlanner::trySolve()) {
+            ob::Cost pathcost = ss->getProblemDefinition()->getSolutionPath()->cost(_opti);
+            cout<<"Path cost = "<<pathcost.v<<endl;
+        }
     }
   }
 }
