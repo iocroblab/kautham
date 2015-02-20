@@ -83,10 +83,10 @@ bool IvKinUR5::solve(){
             cout << "  theta" << j+1 << "=" << _result[j]
                  << " (" << control[j] << ")" << endl;
         }
-        return (true);
+        return true;
     } else {
         cout << "Inverse kinematics failed" << endl;
-        return (false);
+        return false;
     }
 }
 

@@ -21,13 +21,14 @@
  \*************************************************************************/
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Authors variant changes of PCARRT: Enrique ajenjo, Ely Repiso */
 
-#if !defined(_omplTRRTPLANNER_H)
-#define _omplTRRTPLANNER_H
+#if !defined(_omplPCARRTPLANNER_H)
+#define _omplPCARRTPLANNER_H
 
 #if defined(KAUTHAM_USE_OMPL)
 #include <ompl/base/SpaceInformation.h>
-#include <ompl/geometric/planners/rrt/TRRT.h>
+#include <ompl/geometric/planners/rrt/RRT.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/config.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
@@ -45,29 +46,23 @@ namespace Kautham {
 /** \addtogroup Planner
  *  @{
  */
-  namespace omplplanner {
-    class omplTRRTPlanner:public omplPlanner {
-    public:
-        omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
-        ~omplTRRTPlanner();
+
+  namespace omplplanner{
+
+    class omplPCARRTPlanner:public omplPlanner {
+	    public:
+        omplPCARRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
+        ~omplPCARRTPlanner();
 
         bool setParameters();
-        bool trySolve();
 
-        KthReal _Range;
-        KthReal _GoalBias;
-        KthReal _maxStatesFailed;//nFail_{max}
-        KthReal _tempChangeFactor;//alpha
-        KthReal _frontierThreshold;//delta
-        KthReal _frontierNodesRatio;//rho
-        std::vector< std::pair<double,double> > _potentialParams;
-
-        ob::OptimizationObjectivePtr _opti;
-    };
+         KthReal _Range;
+         KthReal _GoalBias;
+	  };
   }
   /** @}   end of Doxygen module "Planner */
 }
 
 #endif // KAUTHAM_USE_OMPL
-#endif  //_omplTRRTPLANNER_H
+#endif  //_omplPCARRTPLANNER_H
 

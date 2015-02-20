@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_RRTStar_quadrotor">
 	<Robot robot="robots/quadrotor.urdf" scale="0.008">
-		<Limits name="X" min="0.0" max="100.0" />
-		<Limits name="Y" min="0.0" max="100.0" />
+		<Limits name="X" min="0.0" max="90.0" />
+		<Limits name="Y" min="0.0" max="90.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Robot>
 	<Obstacle obstacle="obstacles/unitsphere.iv" scale="5.0">
@@ -28,7 +28,8 @@
 	<Controls robot="controls/quadrotor_R2.cntr" />
 	<Planner>
 		<Parameters>
-			<Name>omplTRRT</Name>
+			<Name>omplRRTStar</Name>
+			<Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">2</Parameter>
 			<Parameter name="Max Planning Time">2.0</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Range">2.0</Parameter>

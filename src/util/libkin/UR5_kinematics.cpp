@@ -262,9 +262,9 @@ bool UR5_inv_kin(Transform transform, double *theta, double *theta_ref) {
         //find nearest solution next to the reference configuration
         nearest(solution_set,theta,theta_ref);
 
-        return (true);
+        return true;
     } else {
-        return (false);
+        return false;
     }
 }
 
@@ -653,9 +653,9 @@ bool in_interval(double *x, double xmin, double xmax, double tol) {
             *x = xmax;
         }
 
-        return (true);
+        return true;
     } else {
-        return (false);
+        return false;
     }
 }
 

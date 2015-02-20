@@ -67,7 +67,6 @@ namespace Kautham {
         double _lengthweight;
         double _penalizationweight;
         double _orientationweight;
-        bool _incremental;
         int _disablePMDControlsFromSampling;
         std::vector< std::pair<double,double> > _potentialParams;
 

@@ -111,7 +111,7 @@ namespace Kautham{
                   _kauthObject->setParametersFromString(strSal);
                   setTable(_kauthObject->getParametersAsString());
               }catch(...){
-                  cout << "An error has been made." << endl;
+                  cout << "An error ocurred." << endl;
               }
           }
       }
