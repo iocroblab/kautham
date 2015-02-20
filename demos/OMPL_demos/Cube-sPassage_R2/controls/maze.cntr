@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="X" value="0" />
+		<DOF name="Y" value="80" />
+	</Offset>
+	<Control name="PMD1" eigValue="10">
+		<DOF name="X" value="1" />
+		<DOF name="Y" value="0" />
+	</Control>
+	<Control name="PMD2" eigValue="1">
+		<DOF name="X" value="0" />
+		<DOF name="Y" value="1" />
+	</Control>
+</ControlSet>
+<ControlSet>
+	<Offset>
+		<DOF name="X" value="0" />
+		<DOF name="Y" value="-80" />
+	</Offset>
+	<Control name="PMD1" eigValue="10">
+		<DOF name="X" value="1" />
+		<DOF name="Y" value="0" />
+	</Control>
+	<Control name="PMD2" eigValue="1">
+		<DOF name="X" value="0" />
+		<DOF name="Y" value="1" />
+	</Control>
+</ControlSet>
+<ControlSet>
+	<Offset>
+		<DOF name="X" value="-200" />
+		<DOF name="Y" value="0" />
+	</Offset>
+	<Control name="PMD1" eigValue="10">
+		<DOF name="X" value="0" />
+		<DOF name="Y" value="1" />
+	</Control>
+	<Control name="PMD2" eigValue="1">
+		<DOF name="X" value="1" />
+		<DOF name="Y" value="0" />
+	</Control>
+</ControlSet>
+<ControlSet>
+	<Offset>
+		<DOF name="X" value="200" />
+		<DOF name="Y" value="" />
+	</Offset>
+	<Control name="PMD1" eigValue="10">
+		<DOF name="X" value="0" />
+		<DOF name="Y" value="1" />
+	</Control>
+	<Control name="PMD2" eigValue="1">
+		<DOF name="X" value="1" />
+		<DOF name="Y" value="0" />
+	</Control>
+</ControlSet>
+
+
