@@ -50,17 +50,17 @@ namespace Kautham {
   void myMWOptimizationObjective::setControlPoints(std::vector< std::vector<double> > *cp)
   {
       controlpoints.resize(cp->size());//number of control points
-      for(int i=0; i<cp->size(); i++)
+      for(unsigned int i=0; i<cp->size(); i++)
       {
           controlpoints[i].resize(cp->at(i).size());//dimension of the space
-          for(int j=0;j<cp->at(i).size();j++)
+          for(unsigned int j=0;j<cp->at(i).size();j++)
               controlpoints[i].at(j) = cp->at(i).at(j);
       }
   }
 
   void myMWOptimizationObjective::setCostParams(std::vector< std::pair<double,double> > *cp) {
       costParams.resize(cp->size());
-      for (int i = 0; i < cp->size(); ++i) {
+      for (unsigned int i = 0; i < cp->size(); ++i) {
           costParams[i].first = cp->at(i).first;
           costParams[i].second = cp->at(i).second;
       }
@@ -97,7 +97,7 @@ namespace Kautham {
       double totalcost = 0.0;
       double maxdist = 1.0;//sqrt(100.0*100.0+100.0*100.0+100.0*100.0);
 
-      for(int i=0;i<controlpoints.size();i++){
+      for(unsigned int i=0;i<controlpoints.size();i++){
           xdist = (x-controlpoints[i].at(0));
           ydist = (y-controlpoints[i].at(1));
           zdist = (z-controlpoints[i].at(2));

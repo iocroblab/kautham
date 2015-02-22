@@ -311,9 +311,13 @@ namespace Kautham {
           //Create the planner and set the parameters
           xml_node planNode = doc->child("Problem").child("Planner").child("Parameters");
           string plannerName = planNode.child("Name").child_value();
-
           if (plannerName != "") {
               if (createPlanner(plannerName,ssptr)) {
+                  if (plannerName == "omplMyPCARRT") {
+                      ((omplplanner::omplMyPCARRTPlanner*)_planner)->
+                              setPCAkdtree(doc->child("Problem").child("Planner").child("Parameters").
+                                           child("PCAkdtree").attribute("pcakdtree").as_string());
+                  }
                   xml_node::iterator it;
                   string name;
                   for (it = planNode.begin(); it != planNode.end(); ++it) {
@@ -321,11 +325,7 @@ namespace Kautham {
                       try {
                           if (name == "Parameter") {
                               name = it->attribute("name").as_string();
-                              if (plannerName == "omplMyPCARRT" && name == "PMD Set") {
-                                  ((omplplanner::omplMyPCARRTPlanner*)_planner)->setPMDset(it->child_value());
-                              } else {
-                                  _planner->setParametersFromString(name.append("|").append(it->child_value()));
-                              }
+                              _planner->setParametersFromString(name.append("|").append(it->child_value()));
                           }
                       } catch(...) {
                           std::cout << "Current planner doesn't have at least one of the parameters"
@@ -602,28 +602,29 @@ namespace Kautham {
 
   bool Problem::prepareFile (xml_document *doc, vector <string> def_path) {
       if (isFileOK(doc)) {
-          //get the relative paths where robots and obstacle files will be looked for
-          string  dir = _filePath.substr(0,_filePath.find_last_of("/")+1);
-
-          xml_node prob_node = doc->child("Problem");
+          xml_node node = doc->child("Problem");
 
           //find all the robot files and set their complete path if found
-          if (!findAllFiles(&prob_node,"Robot","robot",def_path)) return false;
+          if (!findAllFiles(&node,"Robot","robot",def_path)) return false;
 
           //find all the obstacle files and set their complete path if found
-          if (!findAllFiles(&prob_node,"Obstacle","obstacle",def_path)) return false;
+          if (!findAllFiles(&node,"Obstacle","obstacle",def_path)) return false;
 
           //find the robot controls file and set its complete path if found
-          if (!findAllFiles(&prob_node,"Controls","robot",def_path)) return false;
+          if (!findAllFiles(&node,"Controls","robot",def_path)) return false;
 
           //find the obstacle controls file and set its complete path if found
-          if (!findAllFiles(&prob_node,"Controls","obstacle",def_path)) return false;
+          if (!findAllFiles(&node,"Controls","obstacle",def_path)) return false;
 
           //find all the distancemap files and set their complete path if found
-          if (!findAllFiles(&prob_node,"DistanceMap","distanceMap",def_path)) return false;
+          if (!findAllFiles(&node,"DistanceMap","distanceMap",def_path)) return false;
 
           //find all the dimensions files and set their complete path if found
-          if (!findAllFiles(&prob_node,"DimensionsFile","filename",def_path)) return false;
+          if (!findAllFiles(&node,"DimensionsFile","filename",def_path)) return false;
+
+          node = node.child("Planner").child("Parameters");
+          //find the PCAkdatree file and set its complete path if found
+          if (!findAllFiles(&node,"PCAkdtree","pcakdtree",def_path)) return false;
 
           return true;
       }

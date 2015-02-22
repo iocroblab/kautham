@@ -196,6 +196,9 @@ namespace Kautham {
         if (omplPlanner::trySolve()) {
             ob::Cost pathcost = ss->getProblemDefinition()->getSolutionPath()->cost(_opti);
             cout<<"Path cost = "<<pathcost.v<<endl;
+            return true;
+        } else {
+            return false;
         }
     }
   }

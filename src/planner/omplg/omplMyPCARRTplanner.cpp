@@ -33,9 +33,8 @@
 #include "omplValidityChecker.h"
 #include "myPCARRT.h"
 
-
 #include <pugixml.hpp>
-#include "pcaresult.h"
+
 
 using namespace pugi;
 
@@ -77,21 +76,9 @@ PCAResult *PMDset(xml_node *node, unsigned int dim, bool isPositionPCA) {
 }
 
 
-void omplMyPCARRTPlanner::setPMDset(string filename) {
-    xml_document doc;
-    xml_parse_result result = doc.load_file(filename.c_str());
-    if (result) {
-        vector<VelocityPCAResult*> *pmdSet = new vector<VelocityPCAResult*>;
-        xml_node node = doc.child("ControlSet");
-        while (node) {
-            pmdSet->push_back(dynamic_cast<VelocityPCAResult*>(PMDset(&node,2,false)));
-            node = node.next_sibling("ControlSet");
-        }
-        pmdSet->resize(pmdSet->size());
-        (ss->getPlanner()->as<myPCARRT>())->setPMDset(pmdSet);
-    } else {
-        cout << result.description() << endl;
-    }
+void omplMyPCARRTPlanner::setPCAkdtree(string filename) {
+    PCAkdtree *tree = new PCAkdtree(filename);
+    (ss->getPlanner()->as<myPCARRT>())->setPCAkdtree(tree);
 }
 
 
