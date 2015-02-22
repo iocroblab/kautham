@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_MyPCARRT_bigcube">
+	<Robot robot="robots/bigcube.dh" scale="1.0">
+		<Limits name="X" min="0.0" max="1000.0" />
+		<Limits name="Y" min="0.0" max="1000.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="TH" min="-360.0" max="360.0" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.056" Y="0.01" X="0.01" />
+	</Robot>
+	<Controls robot="controls/bigcube_R2.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplMyPCARRT</Name>
+			<Parameter name="PMD Set">/home/users/nestor.garcia/Documents/kautham/demos/OMPL_demos/Cube-sPassage_R2/controls/PMDset.cntr</Parameter>
+			<Parameter name="Max Planning Time">1</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">1</Parameter>
+			<Parameter name="Goal Bias">0.05</Parameter>
+			<Parameter name="PMD Bias">1</Parameter>
+			<Parameter name="Alfa">0.4</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="2">0.5 0.5</Init>
+				<Goal dim="2">0 1</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
