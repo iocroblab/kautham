@@ -70,6 +70,8 @@
 #include <planner/omplg/omplSBLplanner.h>
 #include <planner/omplg/omplKPIECEplanner.h>
 #include <planner/omplg/omplKPIECEplanner.h>
+#include <planner/omplg/omplPCARRTplanner.h>
+#include <planner/omplg/omplMyPCARRTplanner.h>
 #include <planner/omplc/omplcRRTplanner.h>
 #include <planner/omplc/omplcRRTcarplanner.h>
 #include <planner/omplc/omplcRRTf16planner.h>

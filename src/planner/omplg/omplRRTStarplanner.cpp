@@ -52,11 +52,6 @@
 
 namespace Kautham {
   namespace omplplanner{
-
-
-
-
-
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
   class myRRTstar:public og::RRTstar
   {
@@ -967,6 +962,7 @@ namespace Kautham {
         addParameter("Node Rejection", _NodeRejection);
         addParameter("DelayCC (0/1)", _DelayCC);
         addParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _opti);
+        addParameter("pathLengthWeight",0.00001);
         planner->as<myRRTstar>()->setRange(_Range);
         planner->as<myRRTstar>()->setGoalBias(_GoalBias);
         planner->as<myRRTstar>()->setPathBias(_PathBias);
@@ -993,7 +989,7 @@ namespace Kautham {
         //_clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
 
 
-        _clearanceopti = ob::OptimizationObjectivePtr(new myOptimizationObjective(ss->getSpaceInformation(), this, false));
+        _clearanceopti = ob::OptimizationObjectivePtr(new myICOptimizationObjective(ss->getSpaceInformation(), this, false));
         std::vector< std::vector<double> > cp(wkSpace()->getNumObstacles());
         _potentialParams.resize(wkSpace()->getNumObstacles());
         for (unsigned i = 0; i < wkSpace()->getNumObstacles(); ++i) {
@@ -1011,8 +1007,8 @@ namespace Kautham {
             addParameter(repulse.str(),_potentialParams[i].first);
             addParameter(diffusion.str(),_potentialParams[i].second);
         }
-        ((myOptimizationObjective*) _clearanceopti.get())->setControlPoints(&cp);
-        ((myOptimizationObjective*) _clearanceopti.get())->setCostParams(&_potentialParams);
+        ((myICOptimizationObjective*) _clearanceopti.get())->setControlPoints(&cp);
+        ((myICOptimizationObjective*) _clearanceopti.get())->setCostParams(&_potentialParams);
 
 
 
@@ -1165,7 +1161,7 @@ namespace Kautham {
             default:
                 _opti = 1;
                 _optiselected = _lengthopti; //length optimization
-                setParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _simplify);
+                setParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _opti);
                 break;
             }
             ss->getPlanner()->getProblemDefinition()->setOptimizationObjective(_optiselected);
@@ -1228,8 +1224,13 @@ namespace Kautham {
                 if (it == _parameters.end()) return false;
                 _potentialParams[i].second = it->second;
             }
-            if (_opti == 2) ((myOptimizationObjective*) _clearanceopti.get())->setCostParams(&_potentialParams);
+            if (_opti == 2) ((myICOptimizationObjective*) _clearanceopti.get())->setCostParams(&_potentialParams);
 
+
+            /*it = _parameters.find("pathLengthWeight");
+            if (it == _parameters.end()) return false;
+            if (_opti == 2) ((myICOptimizationObjective*) _clearanceopti.get())->setPathLengthWeight(it->second);
+*/
 
             it = _parameters.find("Range");
             if (it == _parameters.end()) return false;

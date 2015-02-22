@@ -35,7 +35,6 @@ namespace Kautham {
 //! Class containing origin data
 class ode_origin {
 public:
-
     mt::Point3 xyz;//!< Translation in mm, defaults to zero vector
     double r;//!< Roll angle around x axis in rad
     double p;//!< Pitch angle around y axis in rad
@@ -117,6 +116,5 @@ public:
     ode_contact_coefficients contact_coefficients;//!< Contact coefficients of the link
     ode_limit limit;//!< Limits of the joint
 };
-
 /** @}   end of Doxygen module "Problem" */
 }

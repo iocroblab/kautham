@@ -56,11 +56,10 @@ namespace Kautham {
 		}
 	}
 
-  KthReal Conf::getCoordinate(unsigned int index ){
-    if(index>=0 && index<dim)
-      return this->coord[index];
+  KthReal Conf::getCoordinate(unsigned int index) {
+      if (index>=0 && index<dim) return this->coord[index];
 
-    throw new std::exception();
+      throw out_of_range("");
 	}
 
   //! Returns the distance to a configuration in the respective space metric.
