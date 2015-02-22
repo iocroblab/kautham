@@ -23,55 +23,23 @@
 /* Author: Nestor Garcia Hidalgo */
 
 #include "ompl/geometric/planners/rrt/RRT.h"
-#include "pcaresult.h"
+#include "pcakdtree.h"
 
 namespace Kautham {
 namespace omplplanner {
 class myPCARRT:public ompl::geometric::RRT {
 protected:
-    std::vector<VelocityPCAResult*> *pmdSet_;
+    PCAkdtree *tree_;
     double alfa_;
     double pmdBias_;
 
     //! New qRand
-    arma::vec new_qRand(arma::vec qr, arma::vec qn, unsigned int index);
-
-    unsigned int indexOf(arma::vec qn) {
-        //return qn[0] <= 500.;
-
-        unsigned int n = std::floor(std::min(qn[1],999.)/125.);
-        bool t = std::abs(std::abs(qn[0]-500.)-250.) > 125. &&
-                (std::abs(qn[1]-500.) < 375. ||
-                 std::abs(qn[0]-500.) > 375.);
-        if (t)  {
-            double xb = floor(qn[0]/500.+0.5)*500.;
-            double yb;
-            if (std::abs(qn[0]-500.) < 125.) {
-                yb = (n+n%2)*125.;
-            } else {
-                yb = (n+(n+1)%2)*125.;
-            }
-            t = (std::abs(qn[0]-xb) + std::abs(qn[1]-yb)) < 125.;
-        }
-        if (t) {
-            if (qn[0] > 500.) {
-                return 0;
-            } else {
-                return 1;
-            }
-        } else {
-            if (n % 2) {
-                return 2;
-            } else {
-                return 3;
-            }
-        }
-    }
+    arma::vec new_qRand(arma::vec qr, arma::vec qn);
 
 public:
     myPCARRT(const ompl::base::SpaceInformationPtr &si):RRT(si) {
         name_ = "myPCARRT";
-        pmdSet_ = NULL;
+        tree_ = NULL;
         alfa_ = 0.8;
         pmdBias_ = 0.8;
         Planner::declareParam<double>("alfa",this,&myPCARRT::setAlfa,&myPCARRT::getAlfa,"0.:.01:1.");
@@ -94,12 +62,12 @@ public:
         return pmdBias_;
     }
 
-    void setPMDset(std::vector<VelocityPCAResult*> *pmdSet) {
-        pmdSet_ = pmdSet;
+    void setPCAkdtree(PCAkdtree * tree) {
+        tree_ = tree;
     }
 
-    std::vector<VelocityPCAResult*> *getPMDset() const {
-        return pmdSet_;
+    PCAkdtree *getPCAkdtree() const {
+        return tree_;
     }
 
     ompl::base::PlannerStatus solve(const ompl::base::PlannerTerminationCondition &ptc);
