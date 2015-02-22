@@ -109,7 +109,7 @@ ob::PlannerStatus myPCARRT::solve(const ob::PlannerTerminationCondition &ptc) {
                 new_nmotion[1] = qnearse3->getY(); //obtain the y of q_near state
 
                 //calculate the new rstate
-                vec q_rand_new = new_qRand(old_q_rand,new_nmotion,indexOf(new_nmotion));
+                vec q_rand_new = new_qRand(old_q_rand,new_nmotion);
 
                 // variable change from armadillo vector (vec) to rstate
                 qrandse3->setX(q_rand_new[0]); //change the X of qrand
@@ -195,24 +195,37 @@ ob::PlannerStatus myPCARRT::solve(const ob::PlannerTerminationCondition &ptc) {
 }
 
 
-arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn, unsigned int index) {
+arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {
     arma::vec dq(qr-qn);
     dq /= norm(dq);
-    if (dot(dq,pmdSet_->at(index)->b) >= 0.) {
-        arma::vec v(pmdSet_->at(index)->b);
-        for (unsigned int i = 0; i < pmdSet_->at(index)->dim; i++) {
-            v += pmdSet_->at(index)->a[i]*dot(dq,pmdSet_->at(index)->U.col(i))*pmdSet_->at(index)->U.col(i);
+    PCAResult *pmdSet = tree_->getPMD(qn);
+    if (!pmdSet || dot(dq,pmdSet->b) >= 0.) {
+        //Compute normalized velocity
+        arma::vec Lv(tree_->getVelocityLimits());
+        arma::vec dv(pmdSet->dim);
+        for (unsigned int i = 0; i < pmdSet->dim; ++i) {
+            dv[i] = (qr[i]-qn[i])/Lv[i];
         }
-        double alfa = rng_.uniform01();
-        v = alfa*dq*maxDistance_ + (1-alfa)*v;
+        dv /= norm(dv);
+        arma::vec v(pmdSet->b);
+        for (unsigned int i = 0; i < pmdSet->dim; ++i) {
+            v += pmdSet->a[i]*dot(dv,pmdSet->U.col(i))*pmdSet->U.col(i);
+        }
+
+        //Compute real velocity
+        for (unsigned int i = 0; i < pmdSet->dim; ++i) {
+            v[i] = Lv[i]*v[i];
+        }
+
+        //Compute
+        double c = 1-sqrt(rng_.uniform01());
+        v = c*dq*maxDistance_ + (1-c)*alfa_*v;
 
         return qn + v;
 
     } else {
         return qn + dq*maxDistance_;
     }
-
-
 
     /*//double timeStep = maxDistance_/pmdSet_->avgVel;
     double timeStep = 1.;

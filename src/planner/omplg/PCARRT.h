@@ -27,7 +27,6 @@
 #include "ompl/tools/config/SelfConfig.h"
 #include <limits>
 #include <boost/numeric/ublas/matrix.hpp> // for Matrix, or eigen for matrix
-#include <eigen3/Eigen/Dense>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
   // This is a class derived form the class ompl::RRT. Its purpose is to slightly change its behavior, by using the PCA for grow the RRT
@@ -49,8 +48,8 @@ namespace Kautham {
          //definir aqui los parámetros que requiera el PCARRT, como por ejemplo el radio de vecindad del qnear para
          //calcular el pca
          double radius;
-         int kPCA; //number of neighbors to compute the PCA
-         int nDOF;
+         unsigned int kPCA; //number of neighbors to compute the PCA
+         unsigned int nDOF;
 
   public:
 
