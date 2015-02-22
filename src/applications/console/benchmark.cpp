@@ -95,12 +95,12 @@ bool Benchmark::add_problem(string prob_file, vector<string> def_path) {
                                                    getPlanner())->SimpleSetup()),name);
                 bm->addPlanner(((omplplanner::omplPlanner*)prob->getPlanner())->
                                SimpleSetupPtr()->getPlanner());
-                return (true);
+                return true;
             } else {
-                return (false);
+                return false;
             }
         } else {
-            return (false);
+            return false;
         }
     } else {
         prob->setWSpace(problem.at(0)->wSpace());
@@ -114,12 +114,12 @@ bool Benchmark::add_problem(string prob_file, vector<string> def_path) {
                 problem.push_back(prob);
                 bm->addPlanner(((omplplanner::omplPlanner*)prob->getPlanner())->
                                SimpleSetupPtr()->getPlanner());
-                return (true);
+                return true;
             } else {
-                return (false);
+                return false;
             }
         } else {
-            return (false);
+            return false;
         }
     }
 }
@@ -130,35 +130,35 @@ bool Benchmark::add_parameter(xml_node *param_node) {
         string name = param_node->attribute("Name").as_string();
         if (name == "maxTime") {
             req->maxTime = param_node->attribute("Value").as_double();
-            return (true);
+            return true;
         } else if (name == "maxMem") {
             req->maxMem = param_node->attribute("Value").as_double();
-            return (true);
+            return true;
         } else if (name == "runCount") {
             req->runCount = (uint)param_node->attribute("Value").as_int();
-            return (true);
+            return true;
         } else if (name == "timeBetweenUpdates") {
             req->timeBetweenUpdates = param_node->attribute("Value").as_double();
-            return (true);
+            return true;
         } else if (name == "displayProgress") {
             req->displayProgress = param_node->attribute("Value").as_bool();
-            return (true);
+            return true;
         } else if (name == "saveConsoleOutput") {
             req->saveConsoleOutput = param_node->attribute("Value").as_bool();
-            return (true);
+            return true;
         } else if (name == "useThreads") {
             req->useThreads = param_node->attribute("Value").as_bool();
-            return (true);
+            return true;
         } else if (name == "filename") {
             filename = param_node->attribute("Value").as_string();
-            return (true);
+            return true;
         } else {
             cout << "Incorrect name: " << name << endl;
-            return (false);
+            return false;
         }
     } else {
         cout << "No value" << endl;
-        return (false);
+        return false;
     }
 }
 

@@ -1,0 +1,223 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  Separator {
+
+    Material {
+      ambientColor 0.2 0.2 0.2
+      diffuseColor 0.2 0.2 0.2
+
+    }
+    Translation {
+      translation 500 500 -29
+
+    }
+    Cube {
+      width 1016
+      height 1016
+      depth 8
+
+    }
+  }
+  Material {
+    diffuseColor 0.80000001 0.2 0.2
+
+  }
+  Separator {
+
+    Translation {
+      translation -4 500 0
+
+    }
+    Cube {
+      width 8
+      height 1000
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 500 -4 0
+
+    }
+    Cube {
+      width 1016
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 1004 500 0
+
+    }
+    Cube {
+      width 8
+      height 1000
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 500 1004 0
+
+    }
+    Cube {
+      width 1016
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 500 500 0
+
+    }
+    Cube {
+      width 8
+      height 764
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 500 878 0
+
+    }
+    Cube {
+      width 764
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 500 122 0
+
+    }
+    Cube {
+      width 764
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 500 374 0
+
+    }
+    Cube {
+      width 764
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 500 626 0
+
+    }
+    Cube {
+      width 764
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 189 248 0
+
+    }
+    Cube {
+      width 378
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 189 500 0
+
+    }
+    Cube {
+      width 378
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 189 752 0
+
+    }
+    Cube {
+      width 378
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 811 248 0
+
+    }
+    Cube {
+      width 378
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 811 500 0
+
+    }
+    Cube {
+      width 378
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 811 752 0
+
+    }
+    Cube {
+      width 378
+      height 8
+      depth 50
+
+    }
+  }
+}
