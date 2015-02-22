@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<Position>
+	<Limits min="1.98184" max="19.1008" />
+	<Limits min="-2.88632" max="9.03411" />
+	<ControlSet>
+		<Offset>
+			<DOF value="0.565367" />
+			<DOF value="0.636676" />
+		</Offset>
+		<Control eigValue="0.856831">
+			<DOF value="0.744012" />
+			<DOF value="0.668166" />
+		</Control>
+		<Control eigValue="0.175403">
+			<DOF value="-0.668166" />
+			<DOF value="0.744012" />
+		</Control>
+	</ControlSet>
+</Position>
+<Velocity>
+	<Limits max="10.7758" />
+	<Limits max="35.305" />
+	<Tree>
+		<Root axis="0" location="0.606943">
+			<Left pmdSet="0" />
+			<Right pmdSet="1" />
+		</Root>
+	</Tree>
+	<ControlSet>
+		<Offset>
+			<DOF value="0.0993694" />
+			<DOF value="0.0176227" />
+		</Offset>
+		<Control eigValue="1.40919">
+			<DOF value="-0.000383375" />
+			<DOF value="1" />
+		</Control>
+		<Control eigValue="0.33563">
+			<DOF value="-1" />
+			<DOF value="-0.000383375" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="0.0511972" />
+			<DOF value="-0.000831796" />
+		</Offset>
+		<Control eigValue="0.971129">
+			<DOF value="0.987817" />
+			<DOF value="0.155621" />
+		</Control>
+		<Control eigValue="0.115861">
+			<DOF value="-0.155621" />
+			<DOF value="0.987817" />
+		</Control>
+	</ControlSet>
+</Velocity>

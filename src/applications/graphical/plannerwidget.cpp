@@ -418,21 +418,7 @@ namespace Kautham {
                 ob::StateSpacePtr ssRobotifirst =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
 
                 //space bounds
-                int k;
-                KthReal xmin;
-                KthReal xmax;
-                KthReal ymin;
-                KthReal ymax;
-                KthReal zmin;
-                KthReal zmax;
-
-                xmin=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().low[0];
-                xmax=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().high[0];
-                ymin=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().low[1];
-                ymax=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().high[1];
-                zmin=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().low[2];
-                zmax=ssRobotifirst->as<ob::SE3StateSpace>()->getBounds().high[2];
-                k = ssRobotifirst->as<ob::SE3StateSpace>()->getDimension();
+                int k = ssRobotifirst->as<ob::SE3StateSpace>()->getDimension();
 
                 KthReal x,y,z;
                 //load the planner data to be drawn
@@ -467,7 +453,7 @@ namespace Kautham {
                     std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
 
                     //loop for all the states of the solution path
-                    for(int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
+                    for(unsigned int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
                     {
                         //initial edgepoint
                         ob::EuclideanProjection projection(k);
@@ -500,7 +486,7 @@ namespace Kautham {
                 sstr << "vertex = [ ... " << endl;
 
                 //loop for all vertices of the roadmap or tree
-                for(int i=0;i<pdata->numVertices();i++)
+                for(unsigned int i=0;i<pdata->numVertices();i++)
                 {
                     ob::EuclideanProjection projection(k);
                     projToUse->project(pdata->getVertex(i).getState(), projection);
@@ -523,7 +509,7 @@ namespace Kautham {
                 int numOutgoingEdges;
                 std::vector< unsigned int > outgoingVertices;
                 //loop for all nodes
-                for(int i=0;i<pdata->numVertices();i++)
+                for(unsigned int i=0;i<pdata->numVertices();i++)
                 {
                     numOutgoingEdges = pdata->getEdges (i, outgoingVertices);
 

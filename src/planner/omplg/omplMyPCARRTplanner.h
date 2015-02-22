@@ -54,7 +54,7 @@ public:
     omplMyPCARRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
     ~omplMyPCARRTPlanner();
 
-    void setPMDset(string filename);
+    void setPCAkdtree(string filename);
 
     bool setParameters();
 
