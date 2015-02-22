@@ -29,8 +29,8 @@
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/OptimizationObjective.h>
-#include <ompl/base/objectives/StateCostIntegralObjective.h>
-
+#include <ompl/base/objectives/MechanicalWorkOptimizationObjective.h>
+#include <ompl/base/Cost.h>
 
 #include "omplplanner.h"
 namespace ob = ompl::base;
@@ -40,27 +40,43 @@ namespace Kautham {
 /** \addtogroup Planner
  *  @{
  */
-  namespace omplplanner{
+  namespace omplplanner {
 
-  class myOptimizationObjective:public ob::StateCostIntegralObjective {
-
+  class myMWOptimizationObjective : public ob::MechanicalWorkOptimizationObjective {
   private:
       std::vector< std::vector<double> > controlpoints;
       std::vector< std::pair<double,double> > costParams;
       omplPlanner *pl;
   public:
-      myOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p, bool enableMotionCostInterpolation=false);
-      ~myOptimizationObjective();
-
+      myMWOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p,
+                                double pathLengthWeight = 0.00001);
       void setControlPoints(std::vector< std::vector<double> > *cp);
       void setCostParams(std::vector<std::pair<double, double> > *cp);
+      void setPathLengthWeight(double weight) {pathLengthWeight_ = weight;}
+      bool isSymmetric() {return false;}
+      virtual ob::Cost 	stateCost (const ob::State *s) const;
+  };
 
-      ob::Cost 	stateCost (const ob::State *s) const;
+  class myICOptimizationObjective : public ob::MechanicalWorkOptimizationObjective {
+  private:
+      std::vector< std::vector<double> > controlpoints;
+      std::vector< std::pair<double,double> > costParams;
+      omplPlanner *pl;
+      bool interpolateMotionCost_;
+
+      ob::Cost trapezoid(ob::Cost c1, ob::Cost c2, double dist) const {
+          return ob::Cost(0.5 * dist * (c1.v + c2.v));
+      }
+  public:
+      myICOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p,
+                                bool enableMotionCostInterpolation = false);
+      void setControlPoints(std::vector< std::vector<double> > *cp);
+      void setCostParams(std::vector<std::pair<double, double> > *cp);
+      bool isSymmetric() {return ob::OptimizationObjective::isSymmetric();}
+      bool isMotionCostInterpolationEnabled() const {return interpolateMotionCost_;}
+      virtual ob::Cost 	stateCost (const ob::State *s) const;
+      virtual ob::Cost 	motionCost (const ob::State *s1, const ob::State *s2) const;
     };
-
-
-
-
   }
   /** @}   end of Doxygen module "Planner */
 }
