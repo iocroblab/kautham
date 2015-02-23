@@ -21,7 +21,7 @@
 			<Parameter name="Goal Bias">0.05</Parameter>
 			<Parameter name="PMD Bias">1</Parameter>
 			<Parameter name="Simplify Solution">0</Parameter>
-			<Parameter name="Alfa">0.4</Parameter>
+			<Parameter name="Alfa">1</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
