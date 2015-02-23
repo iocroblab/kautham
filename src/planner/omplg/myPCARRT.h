@@ -40,8 +40,8 @@ public:
     myPCARRT(const ompl::base::SpaceInformationPtr &si):RRT(si) {
         name_ = "myPCARRT";
         tree_ = NULL;
-        alfa_ = 0.8;
-        pmdBias_ = 0.8;
+        alfa_ = 1.;
+        pmdBias_ = 1.;
         Planner::declareParam<double>("alfa",this,&myPCARRT::setAlfa,&myPCARRT::getAlfa,"0.:.01:1.");
         Planner::declareParam<double>("pmdBias",this,&myPCARRT::setPMDbias,&myPCARRT::getPMDbias,"0.:.01:1.");
     }
