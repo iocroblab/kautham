@@ -199,7 +199,7 @@ arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {
     arma::vec dq(qr-qn);
     dq /= norm(dq);
     PCAResult *pmdSet = tree_->getPMD(qn);
-    if (!pmdSet || dot(dq,pmdSet->b) >= 0.) {
+    if (pmdSet && dot(dq,pmdSet->b) >= 0.) {
         //Compute normalized velocity
         arma::vec Lv(tree_->getVelocityLimits());
         arma::vec dv(pmdSet->dim);
