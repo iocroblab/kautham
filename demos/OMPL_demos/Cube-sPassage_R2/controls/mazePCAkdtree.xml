@@ -18,8 +18,8 @@
 	</ControlSet>
 </Position>
 <Velocity>
-	<Limits max="50" />
-	<Limits max="50" />
+	<Limits max="5" />
+	<Limits max="5" />
 	<Tree>
 		<Root axis="0" location="0.3">
 			<Left pmdSet="0" />
