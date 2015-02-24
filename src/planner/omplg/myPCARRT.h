@@ -30,7 +30,7 @@ namespace omplplanner {
 class myPCARRT:public ompl::geometric::RRT {
 protected:
     PCAkdtree *tree_;
-    double alfa_;
+    double timeStep_;
     double pmdBias_;
 
     //! New qRand
@@ -40,18 +40,18 @@ public:
     myPCARRT(const ompl::base::SpaceInformationPtr &si):RRT(si) {
         name_ = "myPCARRT";
         tree_ = NULL;
-        alfa_ = 1.;
+        timeStep_ = 1.;
         pmdBias_ = 1.;
-        Planner::declareParam<double>("alfa",this,&myPCARRT::setAlfa,&myPCARRT::getAlfa,"0.:.01:1.");
+        Planner::declareParam<double>("timeStep",this,&myPCARRT::setTimeStep,&myPCARRT::getTimeStep,"0.:.001:1000.");
         Planner::declareParam<double>("pmdBias",this,&myPCARRT::setPMDbias,&myPCARRT::getPMDbias,"0.:.01:1.");
     }
 
-    void setAlfa(double alfa) {
-        alfa_ = alfa;
+    void setTimeStep(double timeStep) {
+        timeStep_ = timeStep;
     }
 
-    double getAlfa() const {
-        return alfa_;
+    double getTimeStep() const {
+        return timeStep_;
     }
 
     void setPMDbias(double pmdBias) {
