@@ -195,36 +195,42 @@ ob::PlannerStatus myPCARRT::solve(const ob::PlannerTerminationCondition &ptc) {
 }
 
 
-arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {
-    arma::vec dq(qr-qn);
-    dq /= norm(dq);
+arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {   
+    //Cell PMD set
     PCAResult *pmdSet = tree_->getPMD(qn);
-    if (pmdSet && dot(dq,pmdSet->b) >= 0.) {
-        //Compute normalized velocity
-        arma::vec Lv(tree_->getVelocityLimits());
-        arma::vec dv(pmdSet->dim);
+
+    //Scaled velocity
+    arma::vec dq(qr-qn);
+    arma::vec Lv(tree_->getVelocityLimits());
+    arma::vec v(Lv.n_elem);
+    for (unsigned int i = 0; i < Lv.n_rows; ++i) {
+        v[i] = dq[i]/Lv[i];
+    }
+
+    //
+    if (pmdSet && dot(v,pmdSet->b) >= 0.) {
+        //vEps
+        arma::vec vEps(v*(maxDistance_/timeStep_/norm(v)));
+
+        //vFos
+        arma::vec vFos(pmdSet->b);
         for (unsigned int i = 0; i < pmdSet->dim; ++i) {
-            dv[i] = (qr[i]-qn[i])/Lv[i];
+            vFos += pmdSet->a[i]*timeStep_/maxDistance_*dot(vEps,pmdSet->U.col(i))*pmdSet->U.col(i);
         }
-        dv /= norm(dv);
-        arma::vec v(pmdSet->b);
+
+        //vC
+        double c = sqrt(rng_.uniform01());
+        arma::vec vC = c*vFos + (1-c)*vEps;
+
+        //Real velocity
         for (unsigned int i = 0; i < pmdSet->dim; ++i) {
-            v += pmdSet->a[i]*dot(dv,pmdSet->U.col(i))*pmdSet->U.col(i);
+            vC[i] *= Lv[i];
         }
 
-        //Compute real velocity
-        for (unsigned int i = 0; i < pmdSet->dim; ++i) {
-            v[i] = Lv[i]*v[i];
-        }
-
-        //Compute
-        double c = 1-sqrt(rng_.uniform01());
-        v = c*dq*maxDistance_ + (1-c)*alfa_*v;
-
-        return qn + v;
-
+        //New configuration
+        return qn + timeStep_*vC;
     } else {
-        return qn + dq*maxDistance_;
+        return qn + std::min(maxDistance_/norm(dq),1.)*dq;
     }
 
     /*//double timeStep = maxDistance_/pmdSet_->avgVel;
