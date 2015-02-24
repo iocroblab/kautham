@@ -59,7 +59,7 @@ public:
     bool setParameters();
 
     KthReal _Range;
-    KthReal _Alfa;
+    KthReal _TimeStep;
     KthReal _GoalBias;
     KthReal _PMDBias;
 };

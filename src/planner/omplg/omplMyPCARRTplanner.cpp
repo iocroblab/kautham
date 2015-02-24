@@ -100,8 +100,8 @@ omplMyPCARRTPlanner::omplMyPCARRTPlanner(SPACETYPE stype, Sample *init, Sample *
     //set planner parameters: range and goalbias
     _GoalBias = (planner->as<myPCARRT>())->getGoalBias();
     addParameter("Goal Bias",_GoalBias);
-    _Alfa = (planner->as<myPCARRT>())->getAlfa();
-    addParameter("Alfa",_Alfa);
+    _TimeStep = (planner->as<myPCARRT>())->getTimeStep();
+    addParameter("Time Step",_TimeStep);
     _Range = (planner->as<myPCARRT>())->getRange();
     addParameter("Range",_Range);
     _PMDBias = (planner->as<myPCARRT>())->getPMDbias();
@@ -146,13 +146,13 @@ bool omplMyPCARRTPlanner::setParameters(){
         }
 
 
-        it = _parameters.find("Alfa");
+        it = _parameters.find("Time Step");
         if (it == _parameters.end()) return false;
-        if (it->second < 0. || it->second > 1.) {
-            setParameter("Alfa",_Alfa);
+        if (it->second < 0.) {
+            setParameter("Time Step",_TimeStep);
         } else {
-            _Alfa = it->second;
-            ss->getPlanner()->as<myPCARRT>()->setAlfa(_Alfa);
+            _TimeStep = it->second;
+            ss->getPlanner()->as<myPCARRT>()->setTimeStep(_TimeStep);
         }
 
 
