@@ -30,6 +30,7 @@
 #include <armadillo> // for compute PCA
 #include "ompl/geometric/PathGeometric.h"
 #include <ompl/base/spaces/SE3StateSpace.h>
+#include <algorithm>
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
@@ -204,8 +205,9 @@ arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {
     arma::vec Lv(tree_->getVelocityLimits());
     arma::vec v(Lv.n_elem);
     for (unsigned int i = 0; i < Lv.n_rows; ++i) {
-        v[i] = dq[i]/Lv[i];
+        v[i] = dq[i]/Lv[i]/timeStep_;
     }
+    v /= std::max(1.,arma::max(v));
 
     //
     if (pmdSet && dot(v,pmdSet->b) >= 0.) {
@@ -213,9 +215,10 @@ arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {
         arma::vec vEps(v*(maxDistance_/timeStep_/norm(v)));
 
         //vFos
+        arma::vec x((v-pmdSet->b)/norm(v-pmdSet->b));
         arma::vec vFos(pmdSet->b);
         for (unsigned int i = 0; i < pmdSet->dim; ++i) {
-            vFos += pmdSet->a[i]*timeStep_/maxDistance_*dot(vEps,pmdSet->U.col(i))*pmdSet->U.col(i);
+            vFos += pmdSet->a[i]*dot(x,pmdSet->U.col(i))*pmdSet->U.col(i);
         }
 
         //vC
@@ -223,12 +226,13 @@ arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {
         arma::vec vC = c*vFos + (1-c)*vEps;
 
         //Real velocity
+        arma::vec vReal(pmdSet->dim);
         for (unsigned int i = 0; i < pmdSet->dim; ++i) {
-            vC[i] *= Lv[i];
+            vReal[i] = vC[i]*Lv[i];
         }
 
         //New configuration
-        return qn + timeStep_*vC;
+        return qn + timeStep_*vReal;
     } else {
         return qn + std::min(maxDistance_/norm(dq),1.)*dq;
     }
