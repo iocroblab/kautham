@@ -1,0 +1,188 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  Separator {
+
+    Material {
+      ambientColor 0.2 0.2 0.2
+      diffuseColor 0.2 0.2 0.2
+
+    }
+    Translation {
+      translation 500 500 -29
+
+    }
+    Cube {
+      width 1016
+      height 1016
+      depth 8
+
+    }
+  }
+  Material {
+    diffuseColor 0.80000001 0.2 0.2
+
+  }
+  Separator {
+
+    Translation {
+      translation 121 375 0
+
+    }
+    Cube {
+      width 8
+      height 514
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 625 248 0
+
+    }
+    Cube {
+      width 750
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation -4 500 0
+
+    }
+    Cube {
+      width 8
+      height 1000
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 500 -4 0
+
+    }
+    Cube {
+      width 1016
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 1004 500 0
+
+    }
+    Cube {
+      width 8
+      height 1000
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 500 1004 0
+
+    }
+    Cube {
+      width 1016
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 500 122 0
+
+    }
+    Cube {
+      width 768
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 250 394 0
+
+    }
+    Cube {
+      width 8
+      height 300
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 360.18735 863.18359 0
+      rotation 0 0 0.99999928  0.3691363
+
+    }
+    Cube {
+      width 774
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 861.87689 920.30511 0
+      rotation -0 -0 -1.0000002  0.51644188
+
+    }
+    Cube {
+      width 330
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 415.87241 743.37085 0
+      rotation 0 0 0.99999928  0.3691363
+
+    }
+    Cube {
+      width 638
+      height 8
+      depth 50
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 624.89478 686.53662 0
+      rotation 0 0 0.99999928  0.3691363
+
+    }
+    Cube {
+      width 810
+      height 8
+      depth 50
+
+    }
+  }
+}
