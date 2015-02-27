@@ -1,0 +1,48 @@
+Info:    Beginning benchmark
+Info:    Preparing for run 0 of geometric_RRT
+Info:    RRT: Starting with 1 states
+Info:    RRT: Created 5970 states
+Info:    Path simplification took 0.176384 seconds
+Info:    Preparing for run 1 of geometric_RRT
+Info:    RRT: Starting with 1 states
+Info:    RRT: Created 6428 states
+Info:    Path simplification took 0.327560 seconds
+Info:    Preparing for run 2 of geometric_RRT
+Info:    RRT: Starting with 1 states
+Info:    RRT: Created 7717 states
+Info:    Path simplification took 0.193341 seconds
+Info:    Preparing for run 3 of geometric_RRT
+Info:    RRT: Starting with 1 states
+Info:    RRT: Created 7064 states
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 0.536873 seconds
+Info:    Preparing for run 4 of geometric_RRT
+Info:    RRT: Starting with 1 states
+Info:    RRT: Created 6859 states
+Info:    Path simplification took 0.380362 seconds
+Info:    Preparing for run 5 of geometric_RRT
+Info:    RRT: Starting with 1 states
+Info:    RRT: Created 7542 states
+Warning: Solution path may slightly touch on an invalid region of the state space
+         at line 386 in /home/nestor/Descargas/ompl-0.14.2-Source/src/ompl/geometric/src/PathSimplifier.cpp
+Info:    Path simplification took 0.898024 seconds
+Info:    Preparing for run 6 of geometric_RRT
+Info:    RRT: Starting with 1 states
+Info:    RRT: Created 6123 states
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 0.425610 seconds
+Info:    Preparing for run 7 of geometric_RRT
+Info:    RRT: Starting with 1 states
+Info:    RRT: Created 6622 states
+Debug:   The solution path was slightly touching on an invalid region of the state space, but it was successfully fixed.
+Info:    Path simplification took 0.399583 seconds
+Info:    Preparing for run 8 of geometric_RRT
+Info:    RRT: Starting with 1 states
+Info:    RRT: Created 6176 states
+Info:    Path simplification took 0.327434 seconds
+Info:    Preparing for run 9 of geometric_RRT
+Info:    RRT: Starting with 1 states
+Info:    RRT: Created 6216 states
+Info:    Path simplification took 0.267696 seconds
+Info:    Preparing for run 10 of geometric_RRT
+Info:    RRT: Starting with 1 states

@@ -12,10 +12,12 @@
 	<Controls robot="controls/bigcube_R2.cntr" />
 	<Planner>
 		<Parameters>
-			<Name>omplRRT</Name>
+			<Name>omplMyPCARRT</Name>
+			<PCAkdtree pcakdtree="controls/corridorPCAkdtree.xml"/>
+			<Parameter name="Time Step">0.05</Parameter>
 			<Parameter name="Max Planning Time">7</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
-			<Parameter name="Range">7</Parameter>
+			<Parameter name="Range">0.5</Parameter>
 			<Parameter name="Goal Bias">0.05</Parameter>
 			<Parameter name="Simplify Solution">0</Parameter>
 		</Parameters>
