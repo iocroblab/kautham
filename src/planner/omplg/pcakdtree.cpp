@@ -756,7 +756,7 @@ bool PCAkdtree::load(const std::string filename) {
 
             return true;
         } else {
-            std::cout << result.description() << std::endl;
+            std::cout << filename << " " << result.description() << std::endl;
 
             return false;
         }

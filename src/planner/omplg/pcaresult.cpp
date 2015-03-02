@@ -62,9 +62,9 @@ PCAResult::PCAResult(const arma::vec barycenter,
             }
         }
     }
-    if (std::abs(arma::det(U)-1.) > 1e-6) {
-        throw std::invalid_argument("Determiant of eigenvector matrix should be 1");
-    }
+    /*if (std::abs(arma::det(U)-1.) > 1e-6) {
+        throw std::invalid_argument("Determinant of eigenvector matrix should be 1");
+    }*/
 }
 
 
