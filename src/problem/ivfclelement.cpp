@@ -22,45 +22,37 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
+
 #ifdef KAUTHAM_USE_FCL
+
 #include "ivfclelement.h"
 #include <fcl/collision_data.h>
 #include <fcl/collision.h>
 #include <fcl/distance.h>
 
-namespace Kautham {
 
-IVFCLElement::IVFCLElement(string visFile, string collFile, KthReal sc, bool useBBOX)
-    :IVElement(visFile,collFile,sc,useBBOX) {
-    fclmodel = NULL;
-    makeFCLModel();
-}
+struct tri_info {
+    vector<fcl::Vec3f> vertices;
+    vector<fcl::Triangle> triangles;
+};
 
 
-IVFCLElement::IVFCLElement(SoSeparator *visual_model,SoSeparator *collision_model, KthReal sc, bool useBBOX)
-    :IVElement(visual_model,collision_model,sc,useBBOX) {
-    fclmodel = NULL;
-    makeFCLModel();
-}
-
-
-// get triangles from inventor models
-void IVFCLElement::triang_CB(void *data, SoCallbackAction *action,
+void triang_CB(void *data, SoCallbackAction *action,
                              const SoPrimitiveVertex *vertex1,
                              const SoPrimitiveVertex *vertex2,
                              const SoPrimitiveVertex *vertex3) {
     tri_info* info = (tri_info*)data;
 
-    SbVec3f vertex[] = {vertex1->getPoint(),
-                        vertex2->getPoint(),
-                        vertex3->getPoint()};
+    const SbVec3f vertex[] = {vertex1->getPoint(),
+                              vertex2->getPoint(),
+                              vertex3->getPoint()};
+    SbVec3f point;
 
     const SbMatrix  matrix = action->getModelMatrix();
     for (int i = 0; i < 3; ++i) {
-        matrix.multVecMatrix(vertex[i],vertex[i]);
-        info->vertices.push_back(fcl::Vec3f(vertex[i][0],
-                                            vertex[i][1],
-                                            vertex[i][2]));
+        matrix.multVecMatrix(vertex[i],point);
+
+        info->vertices.push_back(fcl::Vec3f(point[0],point[1],point[2]));
     }
 
     info->triangles.push_back(fcl::Triangle(info->vertices.size()-3,
@@ -69,76 +61,22 @@ void IVFCLElement::triang_CB(void *data, SoCallbackAction *action,
 }
 
 
-SoSeparator* IVFCLElement::getIvFromFCLModel(bool tran) {
-    LCPRNG* gen = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
-    float r,g;
-    float x,y,z;
-    int npunts = 3;
+namespace Kautham {
 
-    SbVec3f *vertices = new SbVec3f[3];
-    SoSeparator *root = new SoSeparator;
-    int numTriangles = info.triangles.size();
-    SoSeparator **triangle = new SoSeparator*[numTriangles];
-    SoVertexProperty **vertexProperty = new SoVertexProperty*[numTriangles];
-    SoFaceSet **faceSet = new SoFaceSet*[numTriangles];
-
-    int k;
-    for (int i = 0; i < numTriangles; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            k = ((fcl::Triangle)info.triangles.at(i))[j];
-
-            x = ((fcl::Vec3f)info.vertices.at(k))[0];
-            y = ((fcl::Vec3f)info.vertices.at(k))[1];
-            z = ((fcl::Vec3f)info.vertices.at(k))[2];
-
-            vertices[j].setValue(x,y,z);
-        }
-
-        triangle[i] = new SoSeparator();
-        triangle[i]->ref();
-
-        vertexProperty[i] = new SoVertexProperty;
-        vertexProperty[i]->normalBinding = SoNormalBinding::PER_FACE;
-        vertexProperty[i]->vertex.setValues(0, 3, vertices);
-        r = 0.5f +((float)gen->d_rand()/2.0f);
-        g = 0.5f +((float)gen->d_rand()/2.0f);
-        vertexProperty[i]->orderedRGBA.setValue(SbColor(r,g,(float)0.0).getPackedValue());
-
-        faceSet[i] = new SoFaceSet;
-        faceSet[i]->numVertices.setValues(0, 1, &npunts);
-        faceSet[i]->vertexProperty.setValue(vertexProperty[i]);
-        triangle[i]->addChild(faceSet[i]);
-
-        triangle[i]->unrefNoDelete();
-
-        root->addChild(triangle[i]);
-    }
-    if (tran) {
-        SoSeparator* temp = new SoSeparator;
-        temp->addChild(getTrans());
-        temp->addChild(getRot());
-        temp->addChild(root);
-        return temp;
-    } else {
-        return root;
-    }
+IVFCLElement::IVFCLElement(string visFile, string collFile, KthReal sc, bool useBBOX)
+    : IVElement(visFile,collFile,sc,useBBOX) {
+    if (!makeFCLModel()) throw invalid_argument("FCL model could not be initialized");
 }
 
 
-fcl::CollisionObject *IVFCLElement::getCollisionObject() {
-    float *ori = getOrientation();
-    mt::Scalar y, p, r;
-    mt::Rotation(ori[0],ori[1],ori[2],ori[3]).getYpr(y,p,r);
-    fcl::Matrix3f mat;
-    mat.setEulerYPR(y,p,r);
+IVFCLElement::IVFCLElement(SoSeparator *visModel, SoSeparator *collModel, KthReal sc,
+                           bool useBBOX) : IVElement(visModel,collModel,sc,useBBOX) {
+    if (!makeFCLModel()) throw invalid_argument("FCL model could not be initialized");
+}
 
-    float *pos = getPosition();
-    fcl::Vec3f vect(pos[0],pos[1],pos[2]);
-    fcl::Transform3f pose(mat,vect);
 
-    const boost::shared_ptr<fcl::CollisionGeometry> geom(fclmodel);
-    fcl::CollisionObject *obj = new fcl::CollisionObject(geom,pose);
-    return obj;
+IVFCLElement::~IVFCLElement() {
+    delete FCLModel;
 }
 
 
@@ -148,9 +86,7 @@ bool IVFCLElement::collideTo(Element* other) {
         fcl::CollisionRequest request;
         fcl::CollisionResult result;
 
-        fcl::collide(getCollisionObject(),
-                     ((IVFCLElement*)other)->getCollisionObject(),
-                     request,result);
+        fcl::collide(((IVFCLElement*)other)->getFCLModel(),FCLModel,request,result);
 
         return result.isCollision();
     } catch (...) {
@@ -165,34 +101,117 @@ KthReal IVFCLElement::getDistanceTo(Element* other) {
         fcl::DistanceRequest request;
         fcl::DistanceResult result;
 
-        fcl::distance(getCollisionObject(),
-                     ((IVFCLElement*)other)->getCollisionObject(),
-                     request,result);
+        fcl::distance(((IVFCLElement*)other)->getFCLModel(),FCLModel,request,result);
 
-        return (KthReal)result.min_distance;
+        return result.min_distance;
     } catch (...) {
-        return (KthReal)0.;
+        return 0.;
     }
 }
 
 
-bool IVFCLElement::makeFCLModel() {
-    if (collision_ivModel() != NULL) {
-        if (this->fclmodel == NULL) {
-            SoCallbackAction triAction;
+SoSeparator *IVFCLElement::getIvFromFCLModel(bool tran) {
+    float r,g,b,x,y,z;
+    int k;
+    LCPRNG gen(3141592621,1,0,((unsigned int)time(NULL)&0xfffffffe)+1);
+    SbVec3f vertices[3];
+    SoSeparator *root = new SoSeparator;
+    SoSeparator *triangle;
+    SoVertexProperty *vertexProperty;
+    SoFaceSet *faceSet;
 
+    fcl::BVHModel<fcl::OBBRSS> *geom;
+    geom = (fcl::BVHModel<fcl::OBBRSS>*)FCLModel->collisionGeometry().get();
+
+    for (int i = 0; i < geom->num_tris; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            k = geom->tri_indices[i][j];
+
+            x = geom->vertices[k][0];
+            y = geom->vertices[k][1];
+            z = geom->vertices[k][2];
+
+            vertices[j].setValue(x,y,z);
+        }
+
+        vertexProperty = new SoVertexProperty;
+        vertexProperty->normalBinding = SoNormalBinding::PER_FACE;
+        vertexProperty->vertex.setValues(0,3,vertices);
+        r = gen.d_rand();
+        g = gen.d_rand();
+        b = gen.d_rand();
+        vertexProperty->orderedRGBA.setValue(SbColor(r,g,b).getPackedValue());
+
+        faceSet = new SoFaceSet;
+        faceSet->numVertices.setValue(3);
+        faceSet->vertexProperty.setValue(vertexProperty);
+
+        triangle = new SoSeparator();
+        triangle->addChild(faceSet);
+
+        root->addChild(triangle);
+    }
+
+    if (tran) {
+        SoSeparator* temp = new SoSeparator;
+        temp->addChild(getTrans());
+        temp->addChild(getRot());
+        temp->addChild(root);
+
+        return temp;
+    } else {
+        return root;
+    }
+}
+
+
+void IVFCLElement::setOrientation(float *ori) {
+    IVElement::setOrientation(ori);
+
+    mt::Scalar y,p,r;
+    mt::Rotation(ori[0],ori[1],ori[2],ori[3]).getYpr(y,p,r);
+    fcl::Matrix3f rotation;
+    rotation.setEulerYPR(y,p,r);
+
+    FCLModel->setRotation(rotation);
+}
+
+
+void IVFCLElement::setPosition(float *pos) {
+    IVElement::setPosition(pos);
+
+    fcl::Vec3f translation(pos[0],pos[1],pos[2]);
+
+    FCLModel->setTranslation(translation);
+}
+
+
+bool IVFCLElement::makeFCLModel() {
+    try {
+        if (collision_ivModel()) {
+            SoCallbackAction triAction;
+            tri_info info;
             triAction.addTriangleCallback(SoShape::getClassTypeId(),
                                           triang_CB, (void*)&info);
             triAction.apply(collision_ivModel());
 
-            fclmodel = new FCL_Model();
-            fclmodel->beginModel();
-            fclmodel->addSubModel(info.vertices, info.triangles);
-            fclmodel->endModel();
+            fcl::BVHModel<fcl::OBBRSS> *geom = new fcl::BVHModel<fcl::OBBRSS>;
+            geom->beginModel();
+            geom->addSubModel(info.vertices, info.triangles);
+            geom->endModel();
+
+            const boost::shared_ptr<fcl::CollisionGeometry> cgeom(geom);
+
+            FCLModel = new fcl::CollisionObject(cgeom);
 
             return true;
         }
+    } catch(...) {
     }
+
+    delete FCLModel;
+    FCLModel = NULL;
+
     return false;
 }
 }

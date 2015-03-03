@@ -60,8 +60,8 @@ class IVElement : public Element {
 
       IVElement(string ivfile, string collision_ivfile, float sc, bool useBBOX);
       IVElement(SoSeparator *visual_model, SoSeparator *collision_model, float sc, bool useBBOX);
-      void setPosition(KthReal pos[3]);
-	  void setOrientation(KthReal ori[4]);
+      virtual void setPosition(KthReal *pos);
+      virtual void setOrientation(KthReal *ori);
 	  SbMatrix orientationMatrix();
       SoSeparator* ivModel(bool tran = false);
       SoSeparator* collision_ivModel(bool tran = false);
