@@ -27,6 +27,7 @@
 #define _IVFCLELEMENT_H
 
 #ifdef KAUTHAM_USE_FCL
+
 #include "ivelement.h"
 #include <fcl/BVH/BVH_model.h>
 #include <fcl/collision_object.h>
@@ -46,30 +47,31 @@ namespace Kautham {
  *  @{
  */
 
-typedef fcl::BVHModel<fcl::OBBRSS> FCL_Model;
-
 class IVFCLElement:public IVElement {
 public:
     IVFCLElement(string visFile, string collFile, KthReal sc, bool useBBOX);
-    IVFCLElement(SoSeparator *visual_model,SoSeparator *collision_model, KthReal sc, bool useBBOX);
-    SoSeparator* getIvFromFCLModel(bool tran = true);
+
+    IVFCLElement(SoSeparator *visModel, SoSeparator *collModel,
+                 KthReal sc, bool useBBOX);
+
+    ~IVFCLElement();
+
     bool collideTo(Element* other);
+
     KthReal getDistanceTo(Element* other);
-    inline FCL_Model *fclModel() {return fclmodel;}
-    fcl::CollisionObject *getCollisionObject();
+
+    SoSeparator* getIvFromFCLModel(bool tran = true);
+
+    const fcl::CollisionObject *getFCLModel() {return FCLModel;}
+
+    void setPosition(KthReal *pos);
+
+    void setOrientation(KthReal *ori);
 
 private:
-    FCL_Model *fclmodel;
+    fcl::CollisionObject *FCLModel;
+
     bool makeFCLModel();
-    struct tri_info {
-        vector<fcl::Vec3f> vertices;
-        vector<fcl::Triangle> triangles;
-    };
-    tri_info info;
-    static void triang_CB(void *data, SoCallbackAction *action,
-                          const SoPrimitiveVertex *vertex1,
-                          const SoPrimitiveVertex *vertex2,
-                          const SoPrimitiveVertex *vertex3);
 };
 
 /** @}   end of Doxygen module "Problem" */

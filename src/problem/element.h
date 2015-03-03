@@ -50,7 +50,6 @@ namespace Kautham {
     virtual void          setOrientation(KthReal ori[4]) = 0;
     virtual bool          collideTo(Element* other) = 0;
     virtual KthReal       getDistanceTo(Element* other) = 0;
-    //virtual void*       getModel() = 0;
     inline KthReal*       getOrientation(){return orientation;}
     inline KthReal*       getPosition(){return position;}
     inline KthReal        getScale() const {return scale;}
