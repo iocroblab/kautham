@@ -629,7 +629,8 @@ inline void Rotation::getYpr(Scalar& yaw,
                              Scalar& roll) const
 {
   const Scalar s_pitch(Scalar(2.0) * (m_co[1] * m_co[3] - m_co[0] * m_co[2]));
-  pitch = asin(s_pitch); // belongs to [-pi/2, pi/2]
+  //pitch = asin(s_pitch); // belongs to [-pi/2, pi/2]
+  pitch = asin(std::max(std::min(double(s_pitch),1.),-1.)); // belongs to [-pi/2, pi/2]
 
   if (abs(s_pitch) == Scalar(1.0))
   {
