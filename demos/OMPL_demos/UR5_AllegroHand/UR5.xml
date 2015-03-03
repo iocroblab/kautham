@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<Problem name="" topology="SE3">
+	<Robot robot="robots/UR5.urdf" scale="1.0">
+		<Home TH="0" WZ="1" WY="0" WX="0" Z="0" Y="0" X="0" />
+	</Robot>
+	<Controls robot="controls/UR5.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplPRM</Name>
+			<Parameter name="Max Planning Time">300.0</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="MaxNearestNeighbors">10</Parameter>
+			<Parameter name="DistanceThreshold">400.0</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="6">0 0 0 0 0 0</Init>
+				<Goal dim="6">0 0 0 0 0 0</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
