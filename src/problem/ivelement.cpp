@@ -441,16 +441,17 @@ namespace Kautham {
     }
 
 
-	void IVElement::setPosition(KthReal pos[3]){
+    void IVElement::setPosition(KthReal *pos){
 		for(int i=0;i<3;i++)
 			position[i]=pos[i];
-      trans->translation.setValue(position);
+      trans->translation.setValue(pos);
 	}
 
-	void IVElement::setOrientation(KthReal ori[4]){
+    void IVElement::setOrientation(KthReal *ori){
+        //ori is quaternion and rot->rotation is axis|angle (in rad)
 		for(int i=0;i<4;i++)
 			orientation[i]=ori[i];
-        rot->rotation.setValue(orientation);
+        rot->rotation.setValue(ori);
 	}
 
   SbMatrix IVElement::orientationMatrix() {
