@@ -4,12 +4,12 @@
       <DOF name="UR5_AllegroHandL/Shoulder" value="1.0"></DOF>
     </Control>
     
-    <Control name="L/ForeArm" eigValue="1.0">
-      <DOF name="UR5_AllegroHandL/ForeArm" value="1.0"></DOF>
-    </Control>
-    
     <Control name="L/UpperArm" eigValue="1.0">
       <DOF name="UR5_AllegroHandL/UpperArm" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="L/ForeArm" eigValue="1.0">
+      <DOF name="UR5_AllegroHandL/ForeArm" value="1.0"></DOF>
     </Control>
     
     <Control name="L/Wrist1" eigValue="1.0">
@@ -28,12 +28,12 @@
       <DOF name="UR5_AllegroHandR/Shoulder" value="1.0"></DOF>
     </Control>
     
-    <Control name="R/ForeArm" eigValue="1.0">
-      <DOF name="UR5_AllegroHandR/ForeArm" value="1.0"></DOF>
-    </Control>
-    
     <Control name="R/UpperArm" eigValue="1.0">
       <DOF name="UR5_AllegroHandR/UpperArm" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="R/ForeArm" eigValue="1.0">
+      <DOF name="UR5_AllegroHandR/ForeArm" value="1.0"></DOF>
     </Control>
     
     <Control name="R/Wrist1" eigValue="1.0">
