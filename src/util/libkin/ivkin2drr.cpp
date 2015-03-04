@@ -65,14 +65,18 @@ IvKin2DRR::IvKin2DRR(Robot* const rob) : Kautham::InverseKinematic(rob){
         q1 = atan2(_tcp[1], _tcp[0]);
         l12 = _llong[0]*_llong[0];
         l22 =  _llong[1]*_llong[1];
-        q2 = acos((l12 - l22 + b2)/(2.*_llong[0]*sqrt(b2))); //(by the law of cosines)
+        double tmp = (l12 - l22 + b2)/(2.*_llong[0]*sqrt(b2));
+        if (tmp < -1. || tmp > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
+        q2 = acos(tmp); //(by the law of cosines)
         phi11 = q1 + q2;                                  //(I know you can handle addition)
         phi12 = q1 - q2;
         phi11 -= phi11 > M_PI ? 2. * M_PI : 0;
         phi12 -= phi12 > M_PI ? 2. *M_PI : 0;
         phi11 += phi11 < -M_PI ? 2. *M_PI : 0;
         phi12 += phi12 < -M_PI ? 2. *M_PI : 0;
-	      phi2 = acos((l12 + l22 - b2)/(2.*_llong[0]*_llong[1])); //(by the law of cosines)
+        tmp = (l12 + l22 - b2)/(2.*_llong[0]*_llong[1]);
+        if (tmp < -1. || tmp > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
+        phi2 = acos(tmp); //(by the law of cosines)
         phi22 = M_PI - phi2;
         phi21 = -M_PI + phi2;
       }else{

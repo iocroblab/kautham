@@ -843,16 +843,19 @@
 		//   Index
 		for (unsigned int i=0; i<3; i++)	vec(i) = fpo(i+9);	vec(3)=0;
 		vec = prod(mirot,vec);
+        if (vec(1) < -1. || vec(1) > 1.) throw std::invalid_argument("Called asin(x) with |x| > 1");
 		zcharac(6) = asin(vec(1));							// Index Beta 
 		zcharac(7) = atan2(-(vec(0)/cos(zcharac(6))),-(vec(2)/cos(zcharac(6))));		// Index Alpha 
 		//   Middle
 		for (unsigned int i=0; i<3; i++)	vec(i) = fpo(i+15);	vec(3)=0;
 		vec = prod(mirot,vec);
+        if (vec(1) < -1. || vec(1) > 1.) throw std::invalid_argument("Called asin(x) with |x| > 1");
 		zcharac(8) = asin(vec(1));							// Index Beta 
 		zcharac(9) = atan2(-(vec(0)/cos(zcharac(8))),-(vec(2)/cos(zcharac(8))));		// Index Alpha 
 		//   Ring
 		for (unsigned int i=0; i<3; i++)	vec(i) = fpo(i+21);	vec(3)=0;
 		vec = prod(mirot,vec);
+        if (vec(1) < -1. || vec(1) > 1.) throw std::invalid_argument("Called asin(x) with |x| > 1");
 		zcharac(10) = asin(vec(1));							// Index Beta 
 		zcharac(11) = atan2(-(vec(0)/cos(zcharac(10))),-(vec(2)/cos(zcharac(10))));	// Index Alpha 
 	
@@ -1030,8 +1033,9 @@
 				vdrp(0) = vdr(0);   vdrp(1) = vdr(1);   vdrp(2) = 0;
 	
 				val(j) = angle_2_vec_F(vdfp, vdrp);
-	
-				val(j) = acos( prod_esc(vdfp,vdrp)/( norm_2(vdfp)*norm_2(vdrp) ) );
+                double tmp = prod_esc(vdfp,vdrp)/( norm_2(vdfp)*norm_2(vdrp) ;
+                if (tmp < -1. || tmp > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
+                val(j) = acos( tmp );
 			}
 			
 			for (unsigned int j=0; j<3; j++) {
@@ -3881,7 +3885,9 @@
 	
 		assert( (norm_2(vec1) > 0) && (norm_2(vec2) > 0) );
 	
-		double result = acos( prod_esc(vec1,vec2)/( norm_2(vec1)*norm_2(vec2) ) );
+        double tmp = prod_esc(vec1,vec2)/( norm_2(vec1)*norm_2(vec2) );
+        if (tmp < -1. || tmp > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
+        double result = acos( tmp );
 		return result;
 	}
 	
