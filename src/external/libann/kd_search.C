@@ -114,6 +114,8 @@
 //	are maintained which are common to all the recursive calls.
 //	These are given below.
 //----------------------------------------------------------------------
+#include <stdexcept>
+
 #define PI 3.1415926535897932385
 
 int		ANNkdDim;		// dimension of space
@@ -423,6 +425,7 @@ void ANNkd_leaf::ann_search(ANNdist box_dist)
 		norm2 = *(pp) * *(pp) + *(pp+1) * *(pp+1) + *(pp+2) * *(pp+2) + *(pp+3) * *(pp+3);
 		cosTheta = dotProduct/(sqrt(norm1*norm2));
 	      }
+          if (cosTheta < -1. || cosTheta > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
 	      t = acos(cosTheta);
 	      t1 = acos(-cosTheta);
 	      if (t > t1) t = t1;

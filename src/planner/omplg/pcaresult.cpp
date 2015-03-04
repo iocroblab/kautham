@@ -47,7 +47,7 @@ PCAResult::PCAResult(const arma::vec barycenter,
             throw std::invalid_argument("Eigenvalues can not be negative");
         }
         if (a[i] > a[i-1]) {
-            throw std::invalid_argument("Eigenvalues must sorted in decreasing order");
+            throw std::invalid_argument("Eigenvalues must be sorted in decreasing order");
         }
     }
 

@@ -41,6 +41,7 @@
 
 #include "DNN/ANN.h"					// ANN declarations
 #include "DNN/multiann.h"
+#include <stdexcept>
 
 #ifndef INFINITY
 #define INFINITY 1.0e40
@@ -257,7 +258,8 @@ void *MultiANN::NearestNeighbor(  				// 1-nearest neighbor query
 	  double norm2 = x[i]*x[i] + x[i+1]*x[i+1] + x[i+2]*x[i+2] + x[i+3]*x[i+3];
 	  fd = fd/(norm1*norm2);
 	}
-	double dtheta = ANN_MIN(acos(fd), acos(-fd));
+    if (fd < -1. || fd > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
+    double dtheta = acos(fabs(fd));//the same as ANN_MIN(acos(fd), acos(-fd))
 	d += ANN_POW(scaling[i]*dtheta);
 	i = i + 3;
       }
@@ -345,7 +347,8 @@ void MultiANN::NearestNeighbor(const ANNpoint &x,      	// query point
 	  double norm2 = x[i]*x[i] + x[i+1]*x[i+1] + x[i+2]*x[i+2] + x[i+3]*x[i+3];
 	  fd = fd/(norm1*norm2);
 	}
-	double dtheta = ANN_MIN(acos(fd), acos(-fd));
+    if (fd < -1. || fd > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
+    double dtheta = acos(fabs(fd));//the same as ANN_MIN(acos(fd), acos(-fd));
 	d += ANN_POW(scaling[i]*dtheta);
 	i = i + 3;
       }
