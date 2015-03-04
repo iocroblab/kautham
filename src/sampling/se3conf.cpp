@@ -119,6 +119,7 @@ namespace Kautham {
 	}
 
 	KthReal SE3Conf::getAngle() {
+        if (coord.at(6) < -1. || coord.at(6) > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
 		return 2.*acos(coord.at(6));
 	}
 	
@@ -240,7 +241,7 @@ namespace Kautham {
       if(dist>1.0) dist=1.0; //coorect the bounds if problems with numerical errors
       else if(dist<1.0) dist=-1.0;
 
-      dist = min(acos(dist),acos(-dist));
+      dist = acos(fabs(dist));//the same as min(acos(dist),acos(-dist));
       rot = dist * rotWeight * dist * rotWeight;
       dist = trasl + rot;
       return dist;
@@ -274,7 +275,8 @@ namespace Kautham {
         for(unsigned int i = 3; i < 7; i++ )
           dist += coord.at(i) * conf.getCoordinate(i); // inner product
 
-        dist = min(acos(dist),acos(-dist));
+        if (dist < -1. || dist > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
+        dist = acos(fabs(dist));//the same as min(acos(dist),acos(-dist));
         rot = dist * weights.at(0) * dist * weights.at(0);
         dist = trasl + rot;
 
@@ -317,7 +319,8 @@ namespace Kautham {
       for(unsigned int i = 3; i < 7; i++ )
         dist += coord.at(i) * conf.getCoordinate(i); // inner product
 
-      dist = min(acos(dist),acos(-dist));
+      if (dist < -1. || dist > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
+      dist = acos(fabs(dist));//the same as min(acos(dist),acos(-dist));
       rot = dist * dist;
       dist = trasl + rot;
 
