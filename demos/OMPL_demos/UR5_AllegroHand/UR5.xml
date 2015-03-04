@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="" topology="SE3">
-	<Robot robot="robots/UR5.urdf" scale="1.0">
+	<Robot robot="robots/UR5.dh" scale="1.0">
 		<Home TH="0" WZ="1" WY="0" WX="0" Z="0" Y="0" X="0" />
 	</Robot>
 	<Controls robot="controls/UR5.cntr" />
