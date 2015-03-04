@@ -404,7 +404,7 @@ inline Scalar Quaternion::angleCos(const Quaternion& q) const
   const Scalar num(dot(q));
   const Scalar den(sqrt(length2() * q.length2()));
 
-  Scalar ang_cos(num / den);
+  Scalar ang_cos(saturate(num / den, Scalar(-1.0), Scalar(1.0)));
   return ang_cos;
 }
 
