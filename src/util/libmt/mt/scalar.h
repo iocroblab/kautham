@@ -319,7 +319,7 @@ T asinMt(const T& sin_ang,
          const T& ref_ang)
 {
   // Two possible angle values
-  T val1(asin(sin_ang));
+  T val1(asin(saturate(sin_ang, T(-1.0), T(1.0))));
   T val2(PI - val1);
 
   // Normalizes val1 and ref_ang value to the [0, 2pi) interval
@@ -338,7 +338,7 @@ T acosMt(const T& cos_ang,
          const T& ref_ang)
 {
   // Two possible angle values
-  const T val1(acos(cos_ang));
+  const T val1(acos(saturate(cos_ang, T(-1.0), T(1.0))));
   const T val2(TWO_PI - val1);
 
   // Normalizes ref_ang value to the [0, 2pi) interval
