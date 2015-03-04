@@ -531,7 +531,7 @@ inline Cylinder3 Ellipse3::getSupportCylinder() const
   }
 
   // Angle between cylinder and support plane
-  const Scalar angle = asin(min_len / max_len);
+  const Scalar angle = asin(saturate(min_len / max_len, Scalar(-1.0), Scalar(1.0)));
 
   // Cylinder axis
   const Rotation rot(min_dir, angle);

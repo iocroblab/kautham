@@ -496,7 +496,7 @@ inline Scalar Vector3::angleCos(const Vector3& v) const
             Exception("Angles with respect to the null vector are undefined."));
   #endif
 
-  Scalar ang_cos(num / den);
+  Scalar ang_cos(saturate(num / den, Scalar(-1.0), Scalar(1.0)));
   return ang_cos;
 }
 

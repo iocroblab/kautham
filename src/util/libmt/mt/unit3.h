@@ -240,7 +240,7 @@ inline bool Unit3::operator!=(const Unit3& u) const
 
 inline Scalar Unit3::angleCos(const Unit3& u) const
 {
-  Scalar ang_cos(dot(u));
+  Scalar ang_cos(saturate(dot(u), Scalar(-1.0), Scalar(1.0)));
   return ang_cos;
 }
 
