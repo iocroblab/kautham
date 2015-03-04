@@ -29,17 +29,8 @@
 #ifdef KAUTHAM_USE_FCL
 
 #include "ivelement.h"
-#include <fcl/BVH/BVH_model.h>
 #include <fcl/collision_object.h>
-
-#include <util/kthutil/kauthamdefs.h>
-#include <Inventor/SoPrimitiveVertex.h>
 #include <external/lcprng.h>
-#include <Inventor/actions/SoCallbackAction.h>
-#include <Inventor/SbLinear.h>
-#include <Inventor/nodes/SoVertexProperty.h>
-#include <Inventor/nodes/SoFaceSet.h>
-
 
 namespace Kautham {
 
@@ -72,6 +63,8 @@ private:
     fcl::CollisionObject *FCLModel;
 
     bool makeFCLModel();
+
+    static LCPRNG gen;
 };
 
 /** @}   end of Doxygen module "Problem" */
