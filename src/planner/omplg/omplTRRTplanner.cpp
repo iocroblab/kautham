@@ -22,7 +22,7 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
- 
+
 
 #if defined(KAUTHAM_USE_OMPL)
 #include <problem/workspace.h>
@@ -37,171 +37,178 @@
 
 
 namespace Kautham {
-  namespace omplplanner{
+namespace omplplanner{
 
-	//! Constructor
-    omplTRRTPlanner::omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
-              omplPlanner(stype, init, goal, samples, ws, ssptr)
-	{
-        _guiName = "ompl TRRT Planner";
-        _idName = "omplTRRT";
-
-
-        //alloc valid state sampler
-        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-        //alloc state sampler
-        space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
-
-        //create planner
-        ob::PlannerPtr planner(new og::TRRT(si));
-        //set planner parameters: range and goalbias
-        _Range=0.05;
-        _GoalBias=(planner->as<og::TRRT>())->getGoalBias();
-        _maxStatesFailed = (planner->as<og::TRRT>())->getMaxStatesFailed();
-        _tempChangeFactor = (planner->as<og::TRRT>())->getTempChangeFactor();
-        _frontierThreshold = (planner->as<og::TRRT>())->getFrontierThreshold();
-        _frontierNodesRatio = (planner->as<og::TRRT>())->getFrontierNodeRatio();
-
-        addParameter("Range", _Range);
-        addParameter("Goal Bias", _GoalBias);
-        addParameter("Max States Failed", _maxStatesFailed);
-        addParameter("T Change Factor", _tempChangeFactor);
-        addParameter("Frontier Threshold", _frontierThreshold);
-        addParameter("Frontier Nodes Ratio", _frontierNodesRatio);
-
-        planner->as<og::TRRT>()->setRange(_Range);
-        planner->as<og::TRRT>()->setGoalBias(_GoalBias);
+//! Constructor
+omplTRRTPlanner::omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
+    omplPlanner(stype, init, goal, samples, ws, ssptr)
+{
+    _guiName = "ompl TRRT Planner";
+    _idName = "omplTRRT";
 
 
-        _opti = ob::OptimizationObjectivePtr(new myICOptimizationObjective(ss->getSpaceInformation(), this, false));
-        std::vector< std::vector<double> > cp(wkSpace()->getNumObstacles());
-        _potentialParams.resize(wkSpace()->getNumObstacles());
-        for (unsigned i = 0; i < wkSpace()->getNumObstacles(); ++i) {
-            mt::Point3 p = wkSpace()->getObstacle(i)->getLink(0)->getTransformation()->getTranslation();
-            cp[i].resize(3);
-            cp[i][0] = p[0];
-            cp[i][1] = p[1];
-            cp[i][2] = p[2];
+    //alloc valid state sampler
+    si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
+    //alloc state sampler
+    space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
 
-            _potentialParams[i].first = wkSpace()->getObstacle(i)->getPotentialParameters().first;
-            _potentialParams[i].second = wkSpace()->getObstacle(i)->getPotentialParameters().second;
-            stringstream repulse, diffusion;
-            repulse << "Repulse " << i;
-            diffusion << "Diffusion " << i;
-            addParameter(repulse.str(),_potentialParams[i].first);
-            addParameter(diffusion.str(),_potentialParams[i].second);
-        }
-        ((myICOptimizationObjective*) _opti.get())->setControlPoints(&cp);
-        ((myICOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
+    //create planner
+    ob::PlannerPtr planner(new og::TRRT(si));
+    //set planner parameters: range and goalbias
+    _Range=0.05;
+    _GoalBias=(planner->as<og::TRRT>())->getGoalBias();
+    _maxStatesFailed = (planner->as<og::TRRT>())->getMaxStatesFailed();
+    _tempChangeFactor = (planner->as<og::TRRT>())->getTempChangeFactor();
+    _frontierThreshold = (planner->as<og::TRRT>())->getFrontierThreshold();
+    _frontierNodesRatio = (planner->as<og::TRRT>())->getFrontierNodeRatio();
 
-        ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
-        pdefPtr->setOptimizationObjective(_opti);
+    addParameter("Range", _Range);
+    addParameter("Goal Bias", _GoalBias);
+    addParameter("Max States Failed", _maxStatesFailed);
+    addParameter("T Change Factor", _tempChangeFactor);
+    addParameter("Frontier Threshold", _frontierThreshold);
+    addParameter("Frontier Nodes Ratio", _frontierNodesRatio);
+    addParameter("Path Length Weight",0.00001);
 
-
-        planner->setProblemDefinition(pdefPtr);
-        planner->setup();
+    planner->as<og::TRRT>()->setRange(_Range);
+    planner->as<og::TRRT>()->setGoalBias(_GoalBias);
 
 
-        //set the planner
-        ss->setPlanner(planner);
+    _opti = ob::OptimizationObjectivePtr(new myMWOptimizationObjective(ss->getSpaceInformation(), this, false));
+    std::vector< std::vector<double> > cp(wkSpace()->getNumObstacles());
+    _potentialParams.resize(wkSpace()->getNumObstacles());
+    for (unsigned i = 0; i < wkSpace()->getNumObstacles(); ++i) {
+        mt::Point3 p = wkSpace()->getObstacle(i)->getLink(0)->getTransformation()->getTranslation();
+        cp[i].resize(3);
+        cp[i][0] = p[0];
+        cp[i][1] = p[1];
+        cp[i][2] = p[2];
+
+        _potentialParams[i].first = wkSpace()->getObstacle(i)->getPotentialParameters().first;
+        _potentialParams[i].second = wkSpace()->getObstacle(i)->getPotentialParameters().second;
+        stringstream repulse, diffusion;
+        repulse << "Repulse " << i;
+        diffusion << "Diffusion " << i;
+        addParameter(repulse.str(),_potentialParams[i].first);
+        addParameter(diffusion.str(),_potentialParams[i].second);
     }
+    ((myMWOptimizationObjective*) _opti.get())->setControlPoints(&cp);
+    ((myMWOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
 
-	//! void destructor
-    omplTRRTPlanner::~omplTRRTPlanner(){
-			
-	}
-	
-	//! setParameters sets the parameters of the planner
-    bool omplTRRTPlanner::setParameters(){
+    ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
+    pdefPtr->setOptimizationObjective(_opti);
 
-      omplPlanner::setParameters();
-      try{
-        HASH_S_K::iterator it = _parameters.find("Range");
-        if(it != _parameters.end()){
-          _Range = it->second;
-          ss->getPlanner()->as<og::TRRT>()->setRange(_Range);
-         }
-        else
-          return false;
 
-        for (unsigned i = 0; i < wkSpace()->getNumObstacles(); ++i) {
+    planner->setProblemDefinition(pdefPtr);
+    planner->setup();
+
+
+    //set the planner
+    ss->setPlanner(planner);
+}
+
+//! void destructor
+omplTRRTPlanner::~omplTRRTPlanner() {
+
+}
+
+//! setParameters sets the parameters of the planner
+bool omplTRRTPlanner::setParameters() {
+    if (!omplPlanner::setParameters()) return false;
+    try {
+        HASH_S_K::iterator it;
+
+        it = _parameters.find("Range");
+        if (it != _parameters.end()) {
+            _Range = it->second;
+            ss->getPlanner()->as<og::TRRT>()->setRange(_Range);
+        } else {
+            return false;
+        }
+
+        for (unsigned int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
             stringstream repulse, diffusion;
             repulse << "Repulse " << i;
             diffusion << "Diffusion " << i;
 
             it = _parameters.find(repulse.str());
-            if (it != _parameters.end()){
+            if (it != _parameters.end()) {
                 _potentialParams[i].first = it->second;;
+            } else {
+                return false;
             }
-            else
-              return false;
 
             it = _parameters.find(diffusion.str());
-            if (it != _parameters.end()){
+            if (it != _parameters.end()) {
                 _potentialParams[i].second = it->second;;
+            } else {
+                return false;
             }
-            else
-              return false;
 
-            ((myICOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
+            ((myMWOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
         }
 
         it = _parameters.find("Goal Bias");
-        if(it != _parameters.end()){
+        if (it != _parameters.end()) {
             _GoalBias = it->second;
             ss->getPlanner()->as<og::TRRT>()->setGoalBias(_GoalBias);
-        }
-        else
-          return false;
-
-        it = _parameters.find("Max States Failed");
-        if(it != _parameters.end()){
-            _maxStatesFailed = it->second;
-            ss->getPlanner()->as<og::TRRT>()->setMaxStatesFailed(_maxStatesFailed);
-        }
-        else
-          return false;
-
-        it = _parameters.find("T Change Factor");
-        if(it != _parameters.end()){
-            _tempChangeFactor = it->second;
-            ss->getPlanner()->as<og::TRRT>()->setTempChangeFactor(_tempChangeFactor);
-        }
-        else
-          return false;
-
-        it = _parameters.find("Frontier Threshold");
-        if(it != _parameters.end()){
-            _frontierThreshold = it->second;
-            ss->getPlanner()->as<og::TRRT>()->setFrontierThreshold(_frontierThreshold);
-        }
-        else
-          return false;
-
-        it = _parameters.find("Frontier Nodes Ratio");
-        if(it != _parameters.end()){
-            _frontierNodesRatio = it->second;
-            ss->getPlanner()->as<og::TRRT>()->setFrontierNodeRatio(_frontierNodesRatio);
-        }
-        else
-          return false;
-
-      }catch(...){
-        return false;
-      }
-      return true;
-    }
-
-    bool omplTRRTPlanner::trySolve() {
-        if (omplPlanner::trySolve()) {
-            ob::Cost pathcost = ss->getProblemDefinition()->getSolutionPath()->cost(_opti);
-            cout<<"Path cost = "<<pathcost.v<<endl;
-            return true;
         } else {
             return false;
         }
+
+        it = _parameters.find("Max States Failed");
+        if (it != _parameters.end()) {
+            _maxStatesFailed = it->second;
+            ss->getPlanner()->as<og::TRRT>()->setMaxStatesFailed(_maxStatesFailed);
+        } else {
+            return false;
+        }
+
+        it = _parameters.find("T Change Factor");
+        if (it != _parameters.end()) {
+            _tempChangeFactor = it->second;
+            ss->getPlanner()->as<og::TRRT>()->setTempChangeFactor(_tempChangeFactor);
+        } else {
+            return false;
+        }
+
+        it = _parameters.find("Frontier Threshold");
+        if (it != _parameters.end()) {
+            _frontierThreshold = it->second;
+            ss->getPlanner()->as<og::TRRT>()->setFrontierThreshold(_frontierThreshold);
+        } else {
+            return false;
+        }
+
+        it = _parameters.find("Path Length Weight");
+        if (it == _parameters.end()) return false;
+        ((myMWOptimizationObjective*) _opti.get())->setPathLengthWeight(it->second);
+
+        it = _parameters.find("Frontier Nodes Ratio");
+        if (it != _parameters.end()) {
+            _frontierNodesRatio = it->second;
+            ss->getPlanner()->as<og::TRRT>()->setFrontierNodeRatio(_frontierNodesRatio);
+        } else {
+            return false;
+        }
+    } catch (...) {
+        return false;
     }
-  }
+
+    return true;
+}
+
+bool omplTRRTPlanner::trySolve() {
+    if (omplPlanner::trySolve()) {
+        ob::Cost pathcost = ss->getProblemDefinition()->getSolutionPath()->cost(_opti);
+        cout<<"Path cost = " << pathcost.v << endl;
+
+        return true;
+    } else {
+        return false;
+    }
+}
+}
 }
 
 
