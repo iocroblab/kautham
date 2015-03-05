@@ -1,13 +1,10 @@
 <?xml version="1.0"?>
-<robot name="allegro_hand_right" xmlns:xacro="http://www.ros.org/wiki/xacro">
-	<link name="Palm">
+<robot name="allegro_hand_right">
+	<link name="base_link">
 		<visual>
 			<geometry>
 				<mesh filename="AllegroHand/right/base_link_right.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
-			<material name="black">
-				<color rgba="0.2 0.2 0.2 1" />
-			</material>
 		</visual>
 		<collision>
 			<origin xyz="-0.009300 0 -0.0475" />
@@ -22,7 +19,6 @@
 				<mesh filename="AllegroHand/right/link_0_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin xyz="0 0 0.0164" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -34,7 +30,7 @@
 	<joint name="joint_0.0" type="revolute">
 		<axis xyz="0 0 1" />
 		<limit effort="1" lower="-0.47" upper="0.47" velocity="1" />
-		<parent link="Palm" />
+		<parent link="base_link" />
 		<child link="link_0.0" />
 		<origin rpy="-0.08726646255 0 0" xyz="0 0.0435 -0.001542" />
 	</joint>
@@ -44,7 +40,6 @@
 				<mesh filename="AllegroHand/right/link_1_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 -1.5707963 0" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -66,7 +61,6 @@
 				<mesh filename="AllegroHand/right/link_2_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -88,7 +82,6 @@
 				<mesh filename="AllegroHand/right/link_3_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -110,9 +103,6 @@
 				<mesh filename="AllegroHand/right/sensing_tip.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142" />
-			<material name="white">
-				<color rgba=".9 .9 .9 1" />
-			</material>
 		</visual>
 		<collision>
 			<geometry>
@@ -132,7 +122,6 @@
 				<mesh filename="AllegroHand/right/link_0_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin xyz="0 0 0.0164" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -144,7 +133,7 @@
 	<joint name="joint_4.0" type="revolute">
 		<axis xyz="0 0 1" />
 		<limit effort="1" lower="-0.47" upper="0.47" velocity="1" />
-		<parent link="Palm" />
+		<parent link="base_link" />
 		<child link="link_4.0" />
 		<origin rpy="0.0 0 0" xyz="0 0 0.0007" />
 	</joint>
@@ -154,7 +143,6 @@
 				<mesh filename="AllegroHand/right/link_1_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 -1.5707963 0" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -176,7 +164,6 @@
 				<mesh filename="AllegroHand/right/link_2_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -198,7 +185,6 @@
 				<mesh filename="AllegroHand/right/link_3_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -220,9 +206,6 @@
 				<mesh filename="AllegroHand/right/sensing_tip.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142" />
-			<material name="white">
-				<color rgba=".9 .9 .9 1" />
-			</material>
 		</visual>
 		<collision>
 			<geometry>
@@ -242,7 +225,6 @@
 				<mesh filename="AllegroHand/right/link_0_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin xyz="0 0 0.0164" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -254,7 +236,7 @@
 	<joint name="joint_8.0" type="revolute">
 		<axis xyz="0 0 1" />
 		<limit effort="1" lower="-0.47" upper="0.47" velocity="1" />
-		<parent link="Palm" />
+		<parent link="base_link" />
 		<child link="link_8.0" />
 		<origin rpy="0.08726646255 0 0" xyz="0 -0.0435 -0.001542" />
 	</joint>
@@ -264,7 +246,6 @@
 				<mesh filename="AllegroHand/right/link_1_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 -1.5707963 0" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -286,7 +267,6 @@
 				<mesh filename="AllegroHand/right/link_2_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -308,7 +288,6 @@
 				<mesh filename="AllegroHand/right/link_3_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963 -1.5707963 0" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -330,9 +309,6 @@
 				<mesh filename="AllegroHand/right/sensing_tip.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142" />
-			<material name="white">
-				<color rgba=".9 .9 .9 1" />
-			</material>
 		</visual>
 		<collision>
 			<geometry>
@@ -352,9 +328,6 @@
 				<mesh filename="AllegroHand/right/link_12_0_right.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.570796327 0 -1.570796327" xyz="-0.02775 0 0" />
-			<material name="black">
-				<color rgba=".2 .2 .2 1" />
-			</material>
 		</visual>
 		<collision>
 			<geometry>
@@ -366,7 +339,7 @@
 	<joint name="joint_12.0" type="revolute">
 		<axis xyz="-1 0 0" />
 		<limit effort="1" lower="0.263" upper="1.396" velocity="1" />
-		<parent link="Palm" />
+		<parent link="base_link" />
 		<child link="link_12.0" />
 		<origin rpy="0 -1.65806278845 -1.5707963259" xyz="-0.0182 0.019333 -0.045987" />
 	</joint>
@@ -376,9 +349,6 @@
 				<mesh filename="AllegroHand/right/link_13_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin xyz="0 0 0.016000001" />
-			<material name="black">
-				<color rgba=".2 .2 .2 1" />
-			</material>
 		</visual>
 		<collision>
 			<geometry>
@@ -400,7 +370,6 @@
 				<mesh filename="AllegroHand/right/link_14_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="-1.5707963259 1.5707963259 0" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -422,7 +391,6 @@
 				<mesh filename="AllegroHand/right/link_15_0.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963259 1.5707963259 0" />
-			<material name="black" />
 		</visual>
 		<collision>
 			<geometry>
@@ -444,9 +412,6 @@
 				<mesh filename="AllegroHand/right/sensing_tip.wrl" scale="0.001 0.001 0.001"/>
 			</geometry>
 			<origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142" />
-			<material name="white">
-				<color rgba=".9 .9 .9 1" />
-			</material>
 		</visual>
 		<collision>
 			<geometry>
