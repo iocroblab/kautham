@@ -32,6 +32,102 @@
 #include <math.h>
 
 
+#define TOL 1e-8
+
+
+struct Segment {
+    Point3 p0, p1;
+    Segment(const Point3 startPoint, const Point3 endPoint)
+        : p0(startPoint),p1(endPoint) {}
+};
+
+double distance(const Point3 p, const Segment s) {
+     Vector3 v = s.p1 - s.p0;
+     Vector3 w = p - s.p0;
+
+     double c1 = dot(w,v);
+     if (c1 <= 0.) return length(p-s.p0);
+
+     double c2 = dot(v,v);
+     if (c2 <= c1) return length(p-s.p1);
+
+     Point3 pb = s.p0 + (c1/c2)*v;
+     return length(p-pb);
+}
+
+
+double distance(Segment s1, Segment s2) {
+    Vector3 u = s1.p1 - s1.p0;
+    Vector3 v = s2.p1 - s2.p0;
+    Vector3 w = s1.p0 - s2.p0;
+    double a = dot(u,u);// always >= 0
+    double b = dot(u,v);
+    double c = dot(v,v);// always >= 0
+    double d = dot(u,w);
+    double e = dot(v,w);
+    double D = a*c - b*b;// always >= 0
+    double sc, sN, sD = D;// sc = sN / sD, default sD = D >= 0
+    double tc, tN, tD = D;// tc = tN / tD, default tD = D >= 0
+
+    // compute the line parameters of the two closest points
+    if (D < TOL) {
+        // the lines are almost parallel
+        // force using point p0 on segment s1
+        // to prevent possible division by 0.0 later
+        sN = 0.;
+        sD = 1.;
+        tN = e;
+        tD = c;
+    } else {
+        // get the closest points on the infinite lines
+        sN = b*e - c*d;
+        tN = a*e - b*d;
+        if (sN < 0.) {
+            // sc < 0 => the s=0 edge is visible
+            sN = 0.;
+            tN = e;
+            tD = c;
+        } else if (sN > sD) {
+            // sc > 1  => the s=1 edge is visible
+            sN = sD;
+            tN = e + b;
+            tD = c;
+        }
+    }
+
+    if (tN < 0.) {
+        // tc < 0 => the t=0 edge is visible
+        tN = 0.;
+        // recompute sc for this edge
+        if (-d < 0.) {
+            sN = 0.;
+        } else if (-d > a) {
+            sN = sD;
+        } else {
+            sN = -d;
+            sD = a;
+        }
+    } else if (tN > tD) {
+        // tc > 1  => the t=1 edge is visible
+        tN = tD;
+        // recompute sc for this edge
+        if ((-d + b) < 0.)
+            sN = 0.;
+        else if ((-d + b) > a)
+            sN = sD;
+        else {
+            sN = -d + b;
+            sD = a;
+        }
+    }
+    // finally do the division to get sc and tc
+    sc = (fabs(sN) < TOL ? 0. : sN/sD);
+    tc = (fabs(tN) < TOL ? 0. : tN/tD);
+
+    // get the difference of the two closest points
+    return length(w + (sc * u) - (tc * v));// =  S1(sc) - S2(tc)
+}
+
 namespace Kautham {
   namespace omplplanner{
 
@@ -71,18 +167,6 @@ namespace Kautham {
    */
   ob::Cost 	myMWOptimizationObjective::stateCost(const ob::State *s) const
   {
-
-      /*
-      for(int i=0;i<controlpoints.size();i++){
-          std::cout<<"obstacle["<<i<<"] = ( ";
-          for(int j=0;j<controlpoints[i].size();j++)
-              std::cout<<controlpoints[i].at(j)<<" ";
-          std::cout<<")"<<std::endl;
-      }
-      std::cout<<std::endl;
-      */
-
-
       Sample *smp = new Sample(3);
       //copy the conf of the init smp. Needed to capture the home positions.
       smp->setMappedConf(pl->initSamp()->getMappedConf());
@@ -147,18 +231,6 @@ namespace Kautham {
    */
   ob::Cost 	myICOptimizationObjective::stateCost(const ob::State *s) const
   {
-
-      /*
-      for(int i=0;i<controlpoints.size();i++){
-          std::cout<<"obstacle["<<i<<"] = ( ";
-          for(int j=0;j<controlpoints[i].size();j++)
-              std::cout<<controlpoints[i].at(j)<<" ";
-          std::cout<<")"<<std::endl;
-      }
-      std::cout<<std::endl;
-      */
-
-
       Sample *smp = new Sample(3);
       //copy the conf of the init smp. Needed to capture the home positions.
       smp->setMappedConf(pl->initSamp()->getMappedConf());
