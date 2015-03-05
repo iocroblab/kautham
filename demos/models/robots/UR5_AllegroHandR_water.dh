@@ -19,7 +19,7 @@
       <Parent name="Base"></Parent>
     </Joint>
     
-    <Joint name="ForeArm" ivFile="UR5/Upperarm.wrl">
+    <Joint name="UpperArm" ivFile="UR5/Upperarm.wrl">
       <DHPars  alpha="90.0" a="0" theta="180.0" d="0.0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="360.0" Low="-360.0"></Limits>
@@ -27,12 +27,12 @@
       <Parent name="Shoulder"></Parent>
     </Joint>
     
-    <Joint name="UpperArm" ivFile="UR5/Forearm.wrl">
+    <Joint name="ForeArm" ivFile="UR5/Forearm.wrl">
       <DHPars  alpha="0" a="425" theta="0" d="0"></DHPars>
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
-      <Parent name="ForeArm"></Parent>
+      <Parent name="UpperArm"></Parent>
     </Joint>
     
        <Joint name="Wrist1" ivFile="UR5/Wrist1.wrl">
@@ -40,7 +40,7 @@
       <Description rotational="true" movable="true"   ></Description>
       <Limits Hi="360.0" Low="-360.0"></Limits>
       <Weight weight="1.0"></Weight>
-      <Parent name="UpperArm"></Parent>
+      <Parent name="ForeArm"></Parent>
     </Joint>
     
     <Joint name="Wrist2" ivFile="UR5/Wrist2.wrl">
