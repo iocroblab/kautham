@@ -154,40 +154,35 @@ SoSeparator *IVFCLElement::getIvFromFCLModel(bool tran) {
 
         uint32_t colors[nTris];
         int32_t coordIndices[nTris*4];
-        int32_t materialIndices[nTris*4];
+        int32_t materialIndices[nTris];
         for (unsigned int i = 0; i < nTris; ++i) {
             for (unsigned int j = 0; j < 3; ++j) {
                 coordIndices[4*i+j] = geom->tri_indices[i][j];
-                materialIndices[4*i+j] = i;
             }
             coordIndices[4*i+3] = SO_END_FACE_INDEX;
-            materialIndices[4*i+3] = SO_END_FACE_INDEX;
+            materialIndices[i] = i;
             colors[i] = SbColor(gen.d_rand(),gen.d_rand(),gen.d_rand()).getPackedValue();
         }
 
         SoVertexProperty *vertexProperty(new SoVertexProperty);
         vertexProperty->vertex.setValues(0,nVerts,vertices);
         vertexProperty->orderedRGBA.setValues(0,nTris,colors);
-        vertexProperty->materialBinding.setValue(SoVertexProperty::PER_VERTEX_INDEXED);
+        vertexProperty->materialBinding.setValue(SoVertexProperty::PER_FACE);
 
         SoIndexedFaceSet *indexedFaceSet(new SoIndexedFaceSet());
         indexedFaceSet->coordIndex.setValues(0,nTris*4,coordIndices);
-        indexedFaceSet->materialIndex.setValues(0,nTris*4,materialIndices);
+        indexedFaceSet->materialIndex.setValues(0,nTris,materialIndices);
         indexedFaceSet->vertexProperty.setValue(vertexProperty);
 
         SoSeparator *root(new SoSeparator);
-        root->addChild(indexedFaceSet);
 
         if (tran) {
-            SoSeparator* temp = new SoSeparator;
-            temp->addChild(getTrans());
-            temp->addChild(getRot());
-            temp->addChild(root);
-
-            return temp;
-        } else {
-            return root;
+            root->addChild(getTrans());
+            root->addChild(getRot());
         }
+        root->addChild(indexedFaceSet);
+
+        return root;
     } else {
         return NULL;
     }

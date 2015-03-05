@@ -586,7 +586,7 @@ inline bool Rotation::operator!=(const Rotation& r) const
 
 inline Scalar Rotation::angleCos(const Rotation& r) const
 {
-  Scalar ang_cos(saturate(dot(r), Scalar(1.0), Scalar(-1.0)));
+  Scalar ang_cos(saturate(dot(r), Scalar(-1.0), Scalar(1.0)));
   return ang_cos;
 }
 
@@ -629,7 +629,7 @@ inline void Rotation::getYpr(Scalar& yaw,
                              Scalar& roll) const
 {
   const Scalar s_pitch(Scalar(2.0) * (m_co[1] * m_co[3] - m_co[0] * m_co[2]));
-  pitch = asin(saturate(s_pitch, Scalar(1.), Scalar(-1.))); // belongs to [-pi/2, pi/2]
+  pitch = asin(saturate(s_pitch, Scalar(-1.0), Scalar(1.0))); // belongs to [-pi/2, pi/2]
 
   if (abs(s_pitch) == Scalar(1.0))
   {
