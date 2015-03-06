@@ -30,17 +30,14 @@
 #include <ompl/base/OptimizationObjective.h>
 #include "omplMyOptimizationObjective.h"
 #include <math.h>
+#include <pugixml.hpp>
 
 
 #define TOL 1e-8
 
 
-struct Segment {
-    Point3 p0, p1;
-    Segment(const Point3 startPoint, const Point3 endPoint)
-        : p0(startPoint),p1(endPoint) {}
-};
-
+namespace Kautham {
+namespace omplplanner {
 
 double distance(const Point3 p, const Segment s) {
     Vector3 v = s.p1 - s.p0;
@@ -129,8 +126,6 @@ double distance(Segment s1, Segment s2) {
     return length(w + (sc * u) - (tc * v));// =  S1(sc) - S2(tc)
 }
 
-namespace Kautham {
-namespace omplplanner{
 
 /*! Constructor.
    *  \param si is the space information of the problem
@@ -142,24 +137,62 @@ myMWOptimizationObjective::myMWOptimizationObjective(const ob::SpaceInformationP
     ob::MechanicalWorkOptimizationObjective(si,pathLengthWeight),pl(p) {
 }
 
-void myMWOptimizationObjective::setControlPoints(std::vector< std::vector<double> > *cp)
-{
-    controlpoints.resize(cp->size());//number of control points
-    for (unsigned int i = 0; i < cp->size(); ++i) {
-        controlpoints[i].resize(cp->at(i).size());//dimension of the space
-        for (unsigned int j = 0; j < cp->at(i).size(); ++j) {
-            controlpoints[i].at(j) = cp->at(i).at(j);
+
+mt::Point3 getPoint(std::string str) {
+    mt::Point3 point;
+    std::istringstream strs(str);
+    int chars_to_read = strs.str().size();
+    unsigned int num_read = 0;
+    while (chars_to_read > 0 && num_read < 3) {
+        getline(strs,str,' ');
+        if (str.size() > 0) {
+            point[num_read] = atof(str.c_str());
+            num_read++;
         }
+        chars_to_read -= str.size() + 1;
+    }
+    if (num_read != 3 || chars_to_read != -1) throw;
+
+    return point;
+}
+
+
+bool myMWOptimizationObjective::setPotentialCost(std::string filename) {
+    try {
+        pugi::xml_document doc;
+        pugi::xml_parse_result result = doc.load_file(filename.c_str());
+        if (result) {
+            point.clear();
+            pointCost.clear();
+            segment.clear();
+            segmentCost.clear();
+            for (pugi::xml_node_iterator it = doc.child("Potential").first_child();
+                 it != doc.child("Potential").last_child(); ++it) {
+                if (std::string(it->name()) == "Point") {
+                    point.push_back(getPoint(it->attribute("p").as_string()));
+                    pointCost.push_back(std::pair<double,double>
+                                        (it->attribute("repulse").as_double(),
+                                         it->attribute("diffusion").as_double()));
+                } else if (std::string(it->name()) == "Segment") {
+                    segment.push_back(Segment(getPoint(it->attribute("p0").as_string()),
+                                              getPoint(it->attribute("p1").as_string())));
+                    segmentCost.push_back(std::pair<double,double>
+                                          (it->attribute("repulse").as_double(),
+                                           it->attribute("diffusion").as_double()));
+                }
+            }
+
+            return true;
+        } else {
+            std::cout << filename << " " << result.description() << std::endl;
+
+            return false;
+        }
+    } catch(...) {
+        return false;
     }
 }
 
-void myMWOptimizationObjective::setCostParams(std::vector< std::pair<double,double> > *cp) {
-    costParams.resize(cp->size());
-    for (unsigned int i = 0; i < cp->size(); ++i) {
-        costParams[i].first = cp->at(i).first;
-        costParams[i].second = cp->at(i).second;
-    }
-}
 
 /*! stateCost.
    *  Computes the cost of the state s
@@ -168,30 +201,37 @@ ob::Cost myMWOptimizationObjective::stateCost(const ob::State *s) const {
     Sample *smp = new Sample(3);
     //copy the conf of the init smp. Needed to capture the home positions.
     smp->setMappedConf(pl->initSamp()->getMappedConf());
-    pl->omplState2smp(s, smp);
-    double x = smp->getMappedConf()[0].getSE3().getPos().at(0);
-    double y = smp->getMappedConf()[0].getSE3().getPos().at(1);
-    double z = smp->getMappedConf()[0].getSE3().getPos().at(2);
+    pl->omplState2smp(s,smp);
+    mt::Point3 p(smp->getMappedConf()[0].getSE3().getPos().at(0),
+            smp->getMappedConf()[0].getSE3().getPos().at(1),
+            smp->getMappedConf()[0].getSE3().getPos().at(2));
+    //std::cout << "The state is: " << p << std::endl;
 
-    //std::cout<<"The state is: ("<<x<<", "<<y<<", "<<z<<")"<<std::endl;
+    double sqDist, cost;
+    double totalCost = 0.;
 
-    double xdist, ydist, zdist, dist, c;
-    double totalcost = 0.0;
-    double maxdist = 1.0;//sqrt(100.0*100.0+100.0*100.0+100.0*100.0);
-
-    for (unsigned int i = 0; i < controlpoints.size(); ++i) {
-        xdist = (x-controlpoints[i].at(0));
-        ydist = (y-controlpoints[i].at(1));
-        zdist = (z-controlpoints[i].at(2));
-        dist = (xdist*xdist+ydist*ydist+zdist*zdist)/maxdist;
-        c = costParams.at(i).first*exp(-costParams.at(i).second*dist);
-        totalcost += c;
-        //std::cout<< "Distance " << i<<" is "<<dist<<std::endl;
-        //std::cout<< "Cost " << i<<" is "<<c<<std::endl;
+    //Points cost
+    for (unsigned int i = 0; i < point.size(); ++i) {
+        sqDist = Vector3(p-point.at(i)).length2();
+        cost = std::max(-pointCost.at(i).first,0.)+pointCost.at(i).first*exp(-pointCost.at(i).second*sqDist);
+        totalCost += cost;
+        //std::cout<< "Distance " << i << " is " << sqrt(sqDist) << std::endl;
+        //std::cout<< "Cost " << i << " is " << cost << std::endl;
     }
-    //std::cout<< "The totalcost is:" << totalcost<<std::endl;
-    return ob::Cost(totalcost);
+
+    //Segments Cost
+    for (unsigned int i = 0; i < segment.size(); ++i) {
+        sqDist = pow(distance(p,segment.at(i)),2.);
+        cost = std::max(-segmentCost.at(i).first,0.)+segmentCost.at(i).first*exp(-segmentCost.at(i).second*sqDist);
+        totalCost += cost;
+        //std::cout<< "Distance " << i << " is " << sqrt(sqDist) << std::endl;
+        //std::cout<< "Cost " << i << " is " << cost << std::endl;
+    }
+
+    //std::cout<< "Totalcost is: " << totalcost << std::endl;
+    return ob::Cost(totalCost);
 }
+
 
 /*! Constructor.
    *  \param si is the space information of the problem
@@ -204,23 +244,43 @@ myICOptimizationObjective::myICOptimizationObjective(const ob::SpaceInformationP
     interpolateMotionCost_(enableMotionCostInterpolation) {
 }
 
-void myICOptimizationObjective::setControlPoints(std::vector< std::vector<double> > *cp) {
-    controlpoints.resize(cp->size());//number of control points
-    for (unsigned int i = 0; i < cp->size(); ++i) {
-        controlpoints[i].resize(cp->at(i).size());//dimension of the space
-        for (unsigned int j = 0; j < cp->at(i).size(); ++j) {
-            controlpoints[i].at(j) = cp->at(i).at(j);
+
+bool myICOptimizationObjective::setPotentialCost(std::string filename) {
+    try {
+        pugi::xml_document doc;
+        pugi::xml_parse_result result = doc.load_file(filename.c_str());
+        if (result) {
+            point.clear();
+            pointCost.clear();
+            segment.clear();
+            segmentCost.clear();
+            for (pugi::xml_node_iterator it = doc.child("Potential").first_child();
+                 it != doc.child("Potential").last_child(); ++it) {
+                if (std::string(it->name()) == "Point") {
+                    point.push_back(getPoint(it->attribute("p").as_string()));
+                    pointCost.push_back(std::pair<double,double>
+                                        (it->attribute("repulse").as_double(),
+                                         it->attribute("diffusion").as_double()));
+                } else if (std::string(it->name()) == "Segment") {
+                    segment.push_back(Segment(getPoint(it->attribute("p0").as_string()),
+                                              getPoint(it->attribute("p1").as_string())));
+                    segmentCost.push_back(std::pair<double,double>
+                                          (it->attribute("repulse").as_double(),
+                                           it->attribute("diffusion").as_double()));
+                }
+            }
+
+            return true;
+        } else {
+            std::cout << filename << " " << result.description() << std::endl;
+
+            return false;
         }
+    } catch(...) {
+        return false;
     }
 }
 
-void myICOptimizationObjective::setCostParams(std::vector< std::pair<double,double> > *cp) {
-    costParams.resize(cp->size());
-    for (unsigned i = 0; i < cp->size(); ++i) {
-        costParams[i].first = cp->at(i).first;
-        costParams[i].second = cp->at(i).second;
-    }
-}
 
 /*! stateCost.
    *  Computes the cost of the state s
@@ -229,30 +289,37 @@ ob::Cost myICOptimizationObjective::stateCost(const ob::State *s) const {
     Sample *smp = new Sample(3);
     //copy the conf of the init smp. Needed to capture the home positions.
     smp->setMappedConf(pl->initSamp()->getMappedConf());
-    pl->omplState2smp(s, smp);
-    double x = smp->getMappedConf()[0].getSE3().getPos().at(0);
-    double y = smp->getMappedConf()[0].getSE3().getPos().at(1);
-    double z = smp->getMappedConf()[0].getSE3().getPos().at(2);
+    pl->omplState2smp(s,smp);
+    mt::Point3 p(smp->getMappedConf()[0].getSE3().getPos().at(0),
+            smp->getMappedConf()[0].getSE3().getPos().at(1),
+            smp->getMappedConf()[0].getSE3().getPos().at(2));
+    //std::cout << "The state is: " << p << std::endl;
 
-    //std::cout<<"The state is: ("<<x<<", "<<y<<", "<<z<<")"<<std::endl;
+    double sqDist, cost;
+    double totalCost = 0.;
 
-    double xdist, ydist, zdist, dist, c;
-    double totalcost = 0.0;
-    double maxdist = 1.0;//sqrt(100.0*100.0+100.0*100.0+100.0*100.0);
-
-    for (unsigned i = 0; i < controlpoints.size(); ++i) {
-        xdist = (x-controlpoints[i].at(0));
-        ydist = (y-controlpoints[i].at(1));
-        zdist = (z-controlpoints[i].at(2));
-        dist = (xdist*xdist+ydist*ydist+zdist*zdist)/maxdist;
-        c = std::max(-costParams.at(i).first,0.)+costParams.at(i).first*exp(-costParams.at(i).second*dist);
-        totalcost += c;
-        //std::cout<< "Distance " << i<<" is "<<dist<<std::endl;
-        //std::cout<< "Cost " << i<<" is "<<c<<std::endl;
+    //Points cost
+    for (unsigned int i = 0; i < point.size(); ++i) {
+        sqDist = Vector3(p-point.at(i)).length2();
+        cost = std::max(-pointCost.at(i).first,0.)+pointCost.at(i).first*exp(-pointCost.at(i).second*sqDist);
+        totalCost += cost;
+        //std::cout<< "Distance " << i << " is " << sqrt(sqDist) << std::endl;
+        //std::cout<< "Cost " << i << " is " << cost << std::endl;
     }
-    //std::cout<< "The totalcost is:" << totalcost<<std::endl;
-    return ob::Cost(totalcost);
+
+    //Segments Cost
+    for (unsigned int i = 0; i < segment.size(); ++i) {
+        sqDist = pow(distance(p,segment.at(i)),2.);
+        cost = std::max(-segmentCost.at(i).first,0.)+segmentCost.at(i).first*exp(-segmentCost.at(i).second*sqDist);
+        totalCost += cost;
+        //std::cout<< "Distance " << i << " is " << sqrt(sqDist) << std::endl;
+        //std::cout<< "Cost " << i << " is " << cost << std::endl;
+    }
+
+    //std::cout<< "Total cost is: " << totalcost << std::endl;
+    return ob::Cost(totalCost);
 }
+
 
 ob::Cost myICOptimizationObjective::motionCost(const ob::State *s1, const ob::State *s2) const {
     if (interpolateMotionCost_) {
@@ -267,7 +334,7 @@ ob::Cost myICOptimizationObjective::motionCost(const ob::State *s1, const ob::St
                 si_->getStateSpace()->interpolate(s1, s2, (double) j / (double) nd, test2);
                 ob::Cost nextStateCost = stateCost(test2);
                 totalCost = ob::Cost(totalCost.v + trapezoid(prevStateCost, nextStateCost,
-                                                                   si_->distance(test1, test2)).v);
+                                                             si_->distance(test1, test2)).v);
                 std::swap(test1, test2);
                 prevStateCost = nextStateCost;
             }
@@ -276,7 +343,7 @@ ob::Cost myICOptimizationObjective::motionCost(const ob::State *s1, const ob::St
 
         // Lastly, add s2
         totalCost = ob::Cost(totalCost.v + trapezoid(prevStateCost, stateCost(s2),
-                                                           si_->distance(test1, s2)).v);
+                                                     si_->distance(test1, s2)).v);
 
         si_->freeState(test1);
 

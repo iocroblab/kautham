@@ -990,27 +990,6 @@ namespace Kautham {
 
 
         _clearanceopti = ob::OptimizationObjectivePtr(new myICOptimizationObjective(ss->getSpaceInformation(), this));
-        std::vector< std::vector<double> > cp(wkSpace()->getNumObstacles());
-        _potentialParams.resize(wkSpace()->getNumObstacles());
-        for (unsigned i = 0; i < wkSpace()->getNumObstacles(); ++i) {
-            mt::Point3 p = wkSpace()->getObstacle(i)->getLink(0)->getTransformation()->getTranslation();
-            cp[i].resize(3);
-            cp[i][0] = p[0];
-            cp[i][1] = p[1];
-            cp[i][2] = p[2];
-
-            _potentialParams[i].first = wkSpace()->getObstacle(i)->getPotentialParameters().first;
-            _potentialParams[i].second = wkSpace()->getObstacle(i)->getPotentialParameters().second;
-            stringstream repulse, diffusion;
-            repulse << "Repulse " << i;
-            diffusion << "Diffusion " << i;
-            addParameter(repulse.str(),_potentialParams[i].first);
-            addParameter(diffusion.str(),_potentialParams[i].second);
-        }
-        ((myICOptimizationObjective*) _clearanceopti.get())->setControlPoints(&cp);
-        ((myICOptimizationObjective*) _clearanceopti.get())->setCostParams(&_potentialParams);
-
-
 
         //////////////////////////////////////////////////////////////////////////////
         // 3) pmd alignment optimization criteria
@@ -1076,6 +1055,11 @@ namespace Kautham {
     omplRRTStarPlanner::~omplRRTStarPlanner(){
 
     }
+
+    bool omplRRTStarPlanner::setPotentialCost(string filename) {
+        return ((myICOptimizationObjective*) _clearanceopti.get())->setPotentialCost(filename);
+    }
+
 
 
     //! function to find a solution path
@@ -1153,7 +1137,7 @@ namespace Kautham {
                 _optiselected = _lengthopti; //length optimization
                 break;
             case 2:
-                _optiselected = _clearanceopti;//clearnace optimization
+                _optiselected = _clearanceopti;//clearance optimization
                 break;
             case 3:
                 _optiselected = _pmdalignmentopti; //pmd alignment optimization
@@ -1209,22 +1193,6 @@ namespace Kautham {
             if (it == _parameters.end()) return false;
             _DelayCC = (it->second != 0);
             ss->getPlanner()->as<og::RRTstar>()->setDelayCC(_DelayCC);
-
-
-            for (unsigned i = 0; i < wkSpace()->getNumObstacles(); ++i) {
-                stringstream repulse, diffusion;
-                repulse << "Repulse " << i;
-                diffusion << "Diffusion " << i;
-
-                it = _parameters.find(repulse.str());
-                if (it == _parameters.end()) return false;
-                _potentialParams[i].first = it->second;
-
-                it = _parameters.find(diffusion.str());
-                if (it == _parameters.end()) return false;
-                _potentialParams[i].second = it->second;
-            }
-            if (_opti == 2) ((myICOptimizationObjective*) _clearanceopti.get())->setCostParams(&_potentialParams);
 
 
             it = _parameters.find("Path Length Weight");

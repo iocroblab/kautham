@@ -75,25 +75,6 @@ omplTRRTPlanner::omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
 
 
     _opti = ob::OptimizationObjectivePtr(new myMWOptimizationObjective(ss->getSpaceInformation(), this, false));
-    std::vector< std::vector<double> > cp(wkSpace()->getNumObstacles());
-    _potentialParams.resize(wkSpace()->getNumObstacles());
-    for (unsigned i = 0; i < wkSpace()->getNumObstacles(); ++i) {
-        mt::Point3 p = wkSpace()->getObstacle(i)->getLink(0)->getTransformation()->getTranslation();
-        cp[i].resize(3);
-        cp[i][0] = p[0];
-        cp[i][1] = p[1];
-        cp[i][2] = p[2];
-
-        _potentialParams[i].first = wkSpace()->getObstacle(i)->getPotentialParameters().first;
-        _potentialParams[i].second = wkSpace()->getObstacle(i)->getPotentialParameters().second;
-        stringstream repulse, diffusion;
-        repulse << "Repulse " << i;
-        diffusion << "Diffusion " << i;
-        addParameter(repulse.str(),_potentialParams[i].first);
-        addParameter(diffusion.str(),_potentialParams[i].second);
-    }
-    ((myMWOptimizationObjective*) _opti.get())->setControlPoints(&cp);
-    ((myMWOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
 
     ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
     pdefPtr->setOptimizationObjective(_opti);
@@ -112,6 +93,12 @@ omplTRRTPlanner::~omplTRRTPlanner() {
 
 }
 
+
+bool omplTRRTPlanner::setPotentialCost(string filename) {
+    return ((myMWOptimizationObjective*) _opti.get())->setPotentialCost(filename);
+}
+
+
 //! setParameters sets the parameters of the planner
 bool omplTRRTPlanner::setParameters() {
     if (!omplPlanner::setParameters()) return false;
@@ -124,28 +111,6 @@ bool omplTRRTPlanner::setParameters() {
             ss->getPlanner()->as<og::TRRT>()->setRange(_Range);
         } else {
             return false;
-        }
-
-        for (unsigned int i = 0; i < wkSpace()->getNumObstacles(); ++i) {
-            stringstream repulse, diffusion;
-            repulse << "Repulse " << i;
-            diffusion << "Diffusion " << i;
-
-            it = _parameters.find(repulse.str());
-            if (it != _parameters.end()) {
-                _potentialParams[i].first = it->second;;
-            } else {
-                return false;
-            }
-
-            it = _parameters.find(diffusion.str());
-            if (it != _parameters.end()) {
-                _potentialParams[i].second = it->second;;
-            } else {
-                return false;
-            }
-
-            ((myMWOptimizationObjective*) _opti.get())->setCostParams(&_potentialParams);
         }
 
         it = _parameters.find("Goal Bias");
@@ -183,6 +148,7 @@ bool omplTRRTPlanner::setParameters() {
         it = _parameters.find("Path Length Weight");
         if (it == _parameters.end()) return false;
         ((myMWOptimizationObjective*) _opti.get())->setPathLengthWeight(it->second);
+
 
         it = _parameters.find("Frontier Nodes Ratio");
         if (it != _parameters.end()) {
