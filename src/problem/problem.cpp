@@ -313,11 +313,22 @@ namespace Kautham {
           string plannerName = planNode.child("Name").child_value();
           if (plannerName != "") {
               if (createPlanner(plannerName,ssptr)) {
+                  //Set especial parameters
                   if (plannerName == "omplMyPCARRT") {
                       ((omplplanner::omplMyPCARRTPlanner*)_planner)->
                               setPCAkdtree(doc->child("Problem").child("Planner").child("Parameters").
                                            child("PCAkdtree").attribute("pcakdtree").as_string());
+                  } else if (plannerName == "omplTRRT") {
+                      ((omplplanner::omplTRRTPlanner*)_planner)->
+                              setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
+                                           child("Potential").attribute("potential").as_string());
+                  } else if (plannerName == "omplRRTStar") {
+                      ((omplplanner::omplRRTStarPlanner*)_planner)->
+                              setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
+                                           child("Potential").attribute("potential").as_string());
                   }
+
+                  //Set normal parameters
                   xml_node::iterator it;
                   string name;
                   for (it = planNode.begin(); it != planNode.end(); ++it) {
@@ -625,6 +636,9 @@ namespace Kautham {
           node = node.child("Planner").child("Parameters");
           //find the PCAkdatree file and set its complete path if found
           if (!findAllFiles(&node,"PCAkdtree","pcakdtree",def_path)) return false;
+
+          //find the potential file and set its complete path if found
+          if (!findAllFiles(&node,"Potential","potential",def_path)) return false;
 
           return true;
       }
@@ -1470,11 +1484,6 @@ namespace Kautham {
 
       if (obstacle_node->child("Collision").attribute("enabled")){
           obs->setCollisionable(obstacle_node->child("Collision").attribute("enabled").as_bool());
-      }
-
-      if (obstacle_node->child("Potential")){
-          obs->setPotentialParameters(obstacle_node->child("Potential").attribute("repulse").as_double(),
-                                           obstacle_node->child("Potential").attribute("diffusion").as_double());
       }
 
       _wspace->addObstacle(obs);

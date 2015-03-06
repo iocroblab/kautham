@@ -56,6 +56,8 @@ namespace Kautham {
 
         bool setParameters();
 
+        bool setPotentialCost(string filename);
+
         KthReal _Range;
         KthReal _GoalBias;
         KthReal _PathBias;
@@ -68,7 +70,6 @@ namespace Kautham {
         double _penalizationweight;
         double _orientationweight;
         int _disablePMDControlsFromSampling;
-        std::vector< std::pair<double,double> > _potentialParams;
 
         ob::OptimizationObjectivePtr _optiselected;
         ob::OptimizationObjectivePtr _lengthopti;
