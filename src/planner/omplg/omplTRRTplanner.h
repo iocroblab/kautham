@@ -54,13 +54,14 @@ namespace Kautham {
         bool setParameters();
         bool trySolve();
 
+        bool setPotentialCost(string filename);
+
         KthReal _Range;
         KthReal _GoalBias;
         KthReal _maxStatesFailed;//nFail_{max}
         KthReal _tempChangeFactor;//alpha
         KthReal _frontierThreshold;//delta
         KthReal _frontierNodesRatio;//rho
-        std::vector< std::pair<double,double> > _potentialParams;
 
         ob::OptimizationObjectivePtr _opti;
     };
