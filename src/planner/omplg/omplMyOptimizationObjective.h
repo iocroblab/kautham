@@ -42,16 +42,23 @@ namespace Kautham {
  */
   namespace omplplanner {
 
+  struct Segment {
+      Point3 p0, p1;
+      Segment(const Point3 startPoint, const Point3 endPoint)
+          : p0(startPoint),p1(endPoint) {}
+  };
+
   class myMWOptimizationObjective : public ob::MechanicalWorkOptimizationObjective {
   private:
-      std::vector<std::vector<double> > controlpoints;
-      std::vector<std::pair<double,double> > costParams;
+      std::vector<mt::Point3> point;
+      std::vector<Segment> segment;
+      std::vector<std::pair<double,double> > pointCost;
+      std::vector<std::pair<double,double> > segmentCost;
       omplPlanner *pl;
   public:
       myMWOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p,
                                 double pathLengthWeight = 0.00001);
-      void setControlPoints(std::vector<std::vector<double> > *cp);
-      void setCostParams(std::vector<std::pair<double,double> > *cp);
+      bool setPotentialCost(std::string filename);
       void setPathLengthWeight(double weight) {pathLengthWeight_ = weight;}
       bool isSymmetric() {return false;}
       virtual ob::Cost stateCost(const ob::State *s) const;
@@ -59,8 +66,10 @@ namespace Kautham {
 
   class myICOptimizationObjective : public ob::MechanicalWorkOptimizationObjective {
   private:
-      std::vector< std::vector<double> > controlpoints;
-      std::vector< std::pair<double,double> > costParams;
+      std::vector<mt::Point3> point;
+      std::vector<Segment> segment;
+      std::vector<std::pair<double,double> > pointCost;
+      std::vector<std::pair<double,double> > segmentCost;
       omplPlanner *pl;
       double pathLengthWeight_;
       bool interpolateMotionCost_;
@@ -72,8 +81,7 @@ namespace Kautham {
       myICOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p,
                                 double pathLengthWeight = 0.00001,
                                 bool enableMotionCostInterpolation = false);
-      void setControlPoints(std::vector< std::vector<double> > *cp);
-      void setCostParams(std::vector<std::pair<double, double> > *cp);
+      bool setPotentialCost(std::string filename);
       void setPathLengthWeight(double weight) {pathLengthWeight_ = weight;}
       bool isSymmetric() {return ob::OptimizationObjective::isSymmetric();}
       bool isMotionCostInterpolationEnabled() const {return interpolateMotionCost_;}
