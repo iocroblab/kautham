@@ -1,0 +1,192 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  Separator {
+
+    Material {
+      ambientColor 1 1 1
+      diffuseColor 1 1 1
+      specularColor 1 1 1
+      emissiveColor 1 1 1
+      shininess 1
+
+    }
+    Translation {
+      translation 50 50 -1.0001
+
+    }
+    Cube {
+      width 140
+      height 140
+      depth 0.0099999998
+
+    }
+  }
+  Material {
+    diffuseColor 0.80000001 0 0
+
+  }
+  Separator {
+
+    Translation {
+      translation 0 60 0
+
+    }
+    RotationXYZ {
+      angle 1.5707964
+
+    }
+    Cylinder {
+      radius 20
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 40 80 0
+
+    }
+    RotationXYZ {
+      angle 1.5707964
+
+    }
+    Cylinder {
+      radius 7
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 50 50 0
+
+    }
+    RotationXYZ {
+      angle 1.5707964
+
+    }
+    Cylinder {
+      radius 10
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 60 20 0
+
+    }
+    RotationXYZ {
+      angle 1.5707964
+
+    }
+    Cylinder {
+      radius 8
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 80 40 0
+
+    }
+    RotationXYZ {
+      angle 1.5707964
+
+    }
+    Cylinder {
+      radius 4
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 30 15 0
+
+    }
+    Rotation {
+      rotation 0 0 -1  1.1999999
+
+    }
+    Cube {
+      width 34
+      height 2
+      depth 2
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 80 80 0
+
+    }
+    Rotation {
+      rotation 0 0 1  1.3
+
+    }
+    Cube {
+      width 43
+      height 2
+      depth 2
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation -10 50 0
+
+    }
+    Cube {
+      width 20
+      height 140
+      depth 2
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 110 50 0
+
+    }
+    Cube {
+      width 20
+      height 140
+      depth 2
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 50 -10 0
+
+    }
+    Cube {
+      width 100
+      height 20
+      depth 2
+
+    }
+  }
+  Separator {
+
+    Translation {
+      translation 50 110 0
+
+    }
+    Cube {
+      width 100
+      height 20
+      depth 2
+
+    }
+  }
+}
