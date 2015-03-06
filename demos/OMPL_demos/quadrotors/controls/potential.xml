@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<Potential>
+	<Point p="0 60 0" repulse="100" diffusion="0.0009"/>
+	<Point p="40 80 0" repulse="100" diffusion="0.00735"/>
+	<Point p="50 50 0" repulse="100" diffusion="0.0036"/>
+	<Point p="60 20 0" repulse="100" diffusion="0.00563"/>
+	<Point p="80 40 0" repulse="100" diffusion="0.0225"/>
+	<Point p="90 90 0" repulse="-100" diffusion="0.0000563"/>
+	<Segment p0="86 100 0" p1="74 59 0" repulse="80" diffusion="0.09"/>
+	<Segment p0="36 0 0" p1="24 31 0" repulse="80" diffusion="0.09"/>
+	<Segment p0="0 0 0" p1="100 0 0" repulse="35" diffusion="0.09"/>
+	<Segment p0="100 0 0" p1="100 100 0" repulse="35" diffusion="0.09"/>
+	<Segment p0="100 100 0" p1="0 100 0" repulse="35" diffusion="0.09"/>
+	<Segment p0="0 100 0" p1="0 80 0" repulse="35" diffusion="0.09"/>
+	<Segment p0="0 40 0" p1="0 0 0" repulse="35" diffusion="0.09"/>
+</Potential>
