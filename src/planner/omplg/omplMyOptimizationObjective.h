@@ -65,28 +65,34 @@ namespace Kautham {
   };
 
   class myICOptimizationObjective : public ob::MechanicalWorkOptimizationObjective {
+  public:
+      myICOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p,
+                                double kP = 1., double kI = 1., double kD = 1.);
+      bool setPotentialCost(std::string filename);
+      void setKP(double kP) {kP_ = kP;}
+      void setKI(double kI) {kI_ = kI;}
+      void setKD(double kD) {kD_ = kD;}
+      bool isSymmetric() {return ob::OptimizationObjective::isSymmetric();}
+      virtual ob::Cost stateCost(const ob::State *s) const;
+      virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
+
   private:
       std::vector<mt::Point3> point;
       std::vector<Segment> segment;
       std::vector<std::pair<double,double> > pointCost;
       std::vector<std::pair<double,double> > segmentCost;
       omplPlanner *pl;
-      double pathLengthWeight_;
-      bool interpolateMotionCost_;
+      double kP_;
+      double kI_;
+      double kD_;
 
-      ob::Cost trapezoid(ob::Cost c1, ob::Cost c2, double dist) const {
-          return ob::Cost(0.5*dist*(c1.v+c2.v));
+      ob::Cost costPID(ob::Cost c1, ob::Cost c2, double d12) const {
+          double cP(d12);
+          double cI(0.5*(c1.v+c2.v)*d12);
+          double cD(fabs(c2.v-c1.v));
+
+          return ob::Cost(kP_*cP+kI_*cI+kD_*cD);
       }
-  public:
-      myICOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p,
-                                double pathLengthWeight = 0.00001,
-                                bool enableMotionCostInterpolation = false);
-      bool setPotentialCost(std::string filename);
-      void setPathLengthWeight(double weight) {pathLengthWeight_ = weight;}
-      bool isSymmetric() {return ob::OptimizationObjective::isSymmetric();}
-      bool isMotionCostInterpolationEnabled() const {return interpolateMotionCost_;}
-      virtual ob::Cost stateCost(const ob::State *s) const;
-      virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
     };
   }
   /** @}   end of Doxygen module "Planner */
