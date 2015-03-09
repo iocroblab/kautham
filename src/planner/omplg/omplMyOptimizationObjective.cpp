@@ -206,7 +206,8 @@ ob::Cost myMWOptimizationObjective::stateCost(const ob::State *s) const {
             smp->getMappedConf()[0].getSE3().getPos().at(1),
             smp->getMappedConf()[0].getSE3().getPos().at(2));
     //std::cout << "The state is: " << p << std::endl;
-
+    delete smp;
+    
     double sqDist, cost;
     double totalCost = 0.;
 
@@ -238,10 +239,9 @@ ob::Cost myMWOptimizationObjective::stateCost(const ob::State *s) const {
    *  \param enableMotionCostInterpolation is a flag set false by default.
    */
 myICOptimizationObjective::myICOptimizationObjective(const ob::SpaceInformationPtr &si,
-                                                     omplPlanner *p, double pathLengthWeight,
-                                                     bool enableMotionCostInterpolation):
-    ob::MechanicalWorkOptimizationObjective(si),pl(p),pathLengthWeight_(pathLengthWeight),
-    interpolateMotionCost_(enableMotionCostInterpolation) {
+                                                     omplPlanner *p,
+                                                     double kP, double kI, double kD) :
+    ob::MechanicalWorkOptimizationObjective(si),pl(p),kP_(kP),kI_(kI),kD_(kD) {
 }
 
 
@@ -322,35 +322,33 @@ ob::Cost myICOptimizationObjective::stateCost(const ob::State *s) const {
 
 
 ob::Cost myICOptimizationObjective::motionCost(const ob::State *s1, const ob::State *s2) const {
-    if (interpolateMotionCost_) {
-        ob::Cost totalCost = ob::Cost(0.);
-        unsigned int nd = si_->getStateSpace()->validSegmentCount(s1, s2);
+    ob::State *test1(si_->cloneState(s1));
 
-        ob::State *test1 = si_->cloneState(s1);
-        ob::Cost prevStateCost = stateCost(test1);
-        if (nd > 1) {
-            ob::State *test2 = si_->allocState();
-            for (unsigned int j = 1; j < nd; ++j) {
-                si_->getStateSpace()->interpolate(s1, s2, (double) j / (double) nd, test2);
-                ob::Cost nextStateCost = stateCost(test2);
-                totalCost = ob::Cost(totalCost.v + trapezoid(prevStateCost, nextStateCost,
-                                                             si_->distance(test1, test2)).v);
-                std::swap(test1, test2);
-                prevStateCost = nextStateCost;
-            }
-            si_->freeState(test2);
+    ob::Cost prevStateCost(stateCost(test1));
+    ob::Cost nextStateCost;
+    ob::Cost totalCost(identityCost());
+
+    unsigned int nd = si_->getStateSpace()->validSegmentCount(s1,s2);
+    if (nd > 1) {
+        ob::State *test2(si_->allocState());
+
+        for (unsigned int j = 1; j < nd; ++j) {
+            si_->getStateSpace()->interpolate(s1,s2,double(j)/double(nd),test2);
+            nextStateCost = stateCost(test2);
+            totalCost = ob::Cost(totalCost.v + costPID(prevStateCost,nextStateCost,si_->distance(test1,test2)).v);
+            std::swap(test1,test2);
+            prevStateCost = nextStateCost;
         }
 
-        // Lastly, add s2
-        totalCost = ob::Cost(totalCost.v + trapezoid(prevStateCost, stateCost(s2),
-                                                     si_->distance(test1, s2)).v);
-
-        si_->freeState(test1);
-
-        return ob::Cost(totalCost.v + pathLengthWeight_*si_->distance(s1,s2));
-    } else {
-        return ob::Cost(trapezoid(stateCost(s1),stateCost(s2),si_->distance(s1,s2)).v + pathLengthWeight_*si_->distance(s1,s2));
+        si_->freeState(test2);
     }
+
+    // Lastly, add s2
+    totalCost = ob::Cost(totalCost.v + costPID(prevStateCost,stateCost(s2),si_->distance(test1,s2)).v);
+
+    si_->freeState(test1);
+
+    return totalCost;
 }
 }
 }
