@@ -22,7 +22,7 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
- 
+
 
 #if defined(KAUTHAM_USE_OMPL)
 #include <problem/workspace.h>
@@ -32,60 +32,60 @@
 #include "omplplanner.h"
 
 namespace Kautham {
-  namespace omplplanner{
+namespace omplplanner{
 
-    // Returns whether the given state's position overlaps the obstacles
-    bool ValidityChecker::isValid(const ob::State* state) const
-    {
-        //JAN DEBUG
-        //return true;
+// Returns whether the given state's position overlaps the obstacles
+bool ValidityChecker::isValid(const ob::State* state) const
+{
+    //JAN DEBUG
+    //return true;
 
-      //verify bounds
-      if(thesi->satisfiesBounds(state)==false)
-          return false;
-      //create sample
-      int d = theplanner->wkSpace()->getNumRobControls();
-      Sample *smp = new Sample(d);
-      //copy the conf of the init smp. Needed to capture the home positions.
-      smp->setMappedConf(theplanner->initSamp()->getMappedConf());
-      //load the RobConf of smp form the values of the ompl::state
-      ((omplPlanner*)theplanner)->omplState2smp(state,smp);
-      //collision-check
-      if( theplanner->wkSpace()->collisionCheck(smp) )
-          return false;
+    //verify bounds
+    if(thesi->satisfiesBounds(state)==false)
+        return false;
+    //create sample
+    int d = theplanner->wkSpace()->getNumRobControls();
+    Sample *smp = new Sample(d);
+    //copy the conf of the init smp. Needed to capture the home positions.
+    smp->setMappedConf(theplanner->initSamp()->getMappedConf());
+    //load the RobConf of smp form the values of the ompl::state
+    ((omplPlanner*)theplanner)->omplState2smp(state,smp);
+    //collision-check
+    if( theplanner->wkSpace()->collisionCheck(smp) )
+        return false;
 
-      //Discards the sample.
-      //By default does nothing, i.e. the default filtersample function in class Planner
-      //returns always false
-      if(theplanner->filtersample(smp))
-              return false;
+    //Discards the sample.
+    //By default does nothing, i.e. the default filtersample function in class Planner
+    //returns always false
+    if(theplanner->filtersample(smp))
+        return false;
 
-      return true;
-    }
+    return true;
+}
 
-    // Returns the distance from the given state's position to the obstacles
-    double ValidityChecker::clearance(const ob::State* state) const
-    {
-      //verify bounds
-      if(thesi->satisfiesBounds(state)==false)
-          return false;
-      //create sample
-      int d = theplanner->wkSpace()->getNumRobControls();
-      Sample *smp = new Sample(d);
-      //copy the conf of the init smp. Needed to capture the home positions.
-      smp->setMappedConf(theplanner->initSamp()->getMappedConf());
-      //load the RobConf of smp form the values of the ompl::state
-      ((omplPlanner*)theplanner)->omplState2smp(state,smp);
-      //distance-check
-      vector<KthReal> *distvect;
-      distvect = theplanner->wkSpace()->distanceCheck(smp);
-      KthReal dist = 0.0;
-      for(unsigned i=0; i<distvect->size(); i++)
-          if(dist>distvect->at(i)) dist = distvect->at(i);
-      return dist;
-    }
+// Returns the distance from the given state's position to the obstacles
+double ValidityChecker::clearance(const ob::State* state) const
+{
+    //verify bounds
+    if(thesi->satisfiesBounds(state)==false)
+        return false;
+    //create sample
+    int d = theplanner->wkSpace()->getNumRobControls();
+    Sample *smp = new Sample(d);
+    //copy the conf of the init smp. Needed to capture the home positions.
+    smp->setMappedConf(theplanner->initSamp()->getMappedConf());
+    //load the RobConf of smp form the values of the ompl::state
+    ((omplPlanner*)theplanner)->omplState2smp(state,smp);
+    //distance-check
+    vector<KthReal> *distvect;
+    distvect = theplanner->wkSpace()->distanceCheck(smp);
+    KthReal dist = 0.0;
+    for(unsigned i=0; i<distvect->size(); i++)
+        if(dist>distvect->at(i)) dist = distvect->at(i);
+    return dist;
+}
 
-  }
+}
 }
 
 
