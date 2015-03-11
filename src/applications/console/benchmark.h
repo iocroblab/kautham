@@ -24,16 +24,12 @@
 
 
 #include <iostream>
-#include <fstream>
 #include <pugixml.hpp>
-#include <planner/omplg/omplplanner.h>
 #include <ompl/tools/benchmark/Benchmark.h>
 #include <problem/problem.h>
 
-
 using namespace std;
 using namespace pugi;
-using namespace Kautham;
 
 
 /** \addtogroup Application

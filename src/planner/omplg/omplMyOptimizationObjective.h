@@ -72,6 +72,9 @@ namespace Kautham {
       void setKP(double kP) {kP_ = kP;}
       void setKI(double kI) {kI_ = kI;}
       void setKD(double kD) {kD_ = kD;}
+      double getKP() {return kP_;}
+      double getKI() {return kI_;}
+      double getKD() {return kD_;}
       bool isSymmetric() {return ob::OptimizationObjective::isSymmetric();}
       virtual ob::Cost stateCost(const ob::State *s) const;
       virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;

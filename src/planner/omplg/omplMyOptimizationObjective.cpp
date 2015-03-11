@@ -335,7 +335,7 @@ ob::Cost myICOptimizationObjective::motionCost(const ob::State *s1, const ob::St
         for (unsigned int j = 1; j < nd; ++j) {
             si_->getStateSpace()->interpolate(s1,s2,double(j)/double(nd),test2);
             nextStateCost = stateCost(test2);
-            totalCost = ob::Cost(totalCost.v + costPID(prevStateCost,nextStateCost,si_->distance(test1,test2)).v);
+            totalCost = combineCosts(totalCost,costPID(prevStateCost,nextStateCost,si_->distance(test1,test2)));
             std::swap(test1,test2);
             prevStateCost = nextStateCost;
         }
@@ -344,7 +344,7 @@ ob::Cost myICOptimizationObjective::motionCost(const ob::State *s1, const ob::St
     }
 
     // Lastly, add s2
-    totalCost = ob::Cost(totalCost.v + costPID(prevStateCost,stateCost(s2),si_->distance(test1,s2)).v);
+    totalCost = combineCosts(totalCost,costPID(prevStateCost,stateCost(s2),si_->distance(test1,s2)));
 
     si_->freeState(test1);
 
