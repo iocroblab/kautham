@@ -23,6 +23,45 @@
 /* Author: Nestor Garcia Hidalgo */
 
 #include "benchmark.h"
+#include <fstream>
+#include <sstream>
+#include <planner/omplg/omplplanner.h>
+#include <planner/omplg/omplValidityChecker.h>
+#include <algorithm>
+
+#define SSTR(x) dynamic_cast<std::ostringstream&>(std::ostringstream() << std::dec << x).str()
+
+using namespace Kautham;
+
+
+void preRunEvent(const ob::PlannerPtr &planner) {
+    // Do whatever configuration we want to the planner,
+    // including changing of problem definition (input states)
+    // via planner->getProblemDefinition()
+}
+
+
+void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProperties &run) {
+    // Do any cleanup, or set values for upcoming run (or upcoming call to the pre-run event).
+    // Adding elements to the set of collected run properties is also possible;
+    // (the added data will be recorded in the log file. For example:
+    // ob::PlannerDataPtr pdata(new ob::PlannerData(planner->getSpaceInformation()));
+    // planner->getPlannerData(*pdata);
+    // run["numEdges INTEGER"] = SSTR(pdata->numEdges());
+    // run["numVertices INTEGER"] = SSTR(pdata->numVertices());*/
+    // The format of added data is string key, string value pairs,
+    // with the convention that the last word in string key is one of
+    // REAL, INTEGER, BOOLEAN, STRING. (this will be the type of the field
+    // when the log file is processed and saved as a database).
+    // The values are always converted to string.
+    // (the added data will be recorded in the log file)
+
+    omplplanner::ValidityChecker *validityChecker = dynamic_cast<omplplanner::ValidityChecker*>
+            (planner->getSpaceInformation()->getStateValidityChecker().get());
+    if (validityChecker) {
+        run["collision checks INTEGER"] = SSTR(validityChecker->getCollisionChecks());
+    }
+}
 
 
 bool Benchmark::set(xml_node *bm_node, string dir, vector<string> def_path) {
@@ -37,7 +76,7 @@ bool Benchmark::set(xml_node *bm_node, string dir, vector<string> def_path) {
 
     node = bm_node->child("Problem");
     while (node && ok) {
-        ok &= add_problem(dir + node.attribute("File").as_string(), def_path);
+        ok &= add_problem(dir + node.attribute("File").as_string(),def_path);
 
         node = node.next_sibling("Problem");
     }
@@ -93,8 +132,11 @@ bool Benchmark::add_problem(string prob_file, vector<string> def_path) {
                 problem.push_back(prob);
                 bm = new ompl::tools::Benchmark(*(((omplplanner::omplPlanner*)prob->
                                                    getPlanner())->SimpleSetup()),name);
+                bm->setPreRunEvent(boost::bind(&preRunEvent,_1));
+                bm->setPostRunEvent(boost::bind(&postRunEvent,_1,_2));
                 bm->addPlanner(((omplplanner::omplPlanner*)prob->getPlanner())->
                                SimpleSetupPtr()->getPlanner());
+
                 return true;
             } else {
                 return false;
@@ -114,6 +156,7 @@ bool Benchmark::add_problem(string prob_file, vector<string> def_path) {
                 problem.push_back(prob);
                 bm->addPlanner(((omplplanner::omplPlanner*)prob->getPlanner())->
                                SimpleSetupPtr()->getPlanner());
+
                 return true;
             } else {
                 return false;
@@ -127,30 +170,30 @@ bool Benchmark::add_problem(string prob_file, vector<string> def_path) {
 
 bool Benchmark::add_parameter(xml_node *param_node) {
     if (param_node->attribute("Value")) {
-        string name = param_node->attribute("Name").as_string();
+        string name = param_node->attribute("Name").as_string("");
         if (name == "maxTime") {
-            req->maxTime = param_node->attribute("Value").as_double();
+            req->maxTime = min(0.,param_node->attribute("Value").as_double(5.));
             return true;
         } else if (name == "maxMem") {
-            req->maxMem = param_node->attribute("Value").as_double();
+            req->maxMem = min(0.,param_node->attribute("Value").as_double(4096.));
             return true;
         } else if (name == "runCount") {
-            req->runCount = (uint)param_node->attribute("Value").as_int();
+            req->runCount = min(1,param_node->attribute("Value").as_int(100));
             return true;
         } else if (name == "timeBetweenUpdates") {
-            req->timeBetweenUpdates = param_node->attribute("Value").as_double();
+            req->timeBetweenUpdates = min(0.,param_node->attribute("Value").as_double(0.05));
             return true;
         } else if (name == "displayProgress") {
-            req->displayProgress = param_node->attribute("Value").as_bool();
+            req->displayProgress = param_node->attribute("Value").as_bool(true);
             return true;
         } else if (name == "saveConsoleOutput") {
-            req->saveConsoleOutput = param_node->attribute("Value").as_bool();
+            req->saveConsoleOutput = param_node->attribute("Value").as_bool(true);
             return true;
         } else if (name == "useThreads") {
-            req->useThreads = param_node->attribute("Value").as_bool();
+            req->useThreads = param_node->attribute("Value").as_bool(true);
             return true;
         } else if (name == "filename") {
-            filename = param_node->attribute("Value").as_string();
+            filename = param_node->attribute("Value").as_string("");
             return true;
         } else {
             cout << "Incorrect name: " << name << endl;
@@ -168,7 +211,7 @@ void benchmark(string file, vector <string> def_path) {
     string dir = file.substr(0,file.find_last_of("/")+1);
     fstream fin;
     fin.open(file.c_str(),ios::in);
-    if(fin.is_open()){//the file already exists
+    if (fin.is_open()){//the file already exists
         fin.close();
         cout << "The file exists" << endl;
 
@@ -176,7 +219,7 @@ void benchmark(string file, vector <string> def_path) {
         if (doc.load_file(file.c_str())) {//the file was correctly parsed
             cout << "The file was correctly parsed" << endl;
 
-            int i = 0;
+            unsigned int i = 0;
             Benchmark bm;
 
             xml_node bm_node = doc.child("Benchmark");
@@ -184,7 +227,7 @@ void benchmark(string file, vector <string> def_path) {
                 i++;
                 cout << "Reading benchmark number " << i << endl;
 
-                if(bm.set(&bm_node, dir, def_path)) {//benchmark could be set
+                if (bm.set(&bm_node,dir,def_path)) {//benchmark could be set
                     cout << "Running benchmark number " << i << endl;
                     bm.run();
 
