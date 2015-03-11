@@ -159,22 +159,20 @@ public:
             double KI = optiPID->getKP();
             double KD = optiPID->getKP();
 
-            ob::OptimizationObjectivePtr optiPIDPtr(optiPID);
-
             optiPID->setKP(1.);
             optiPID->setKI(0.);
             optiPID->setKD(0.);
-            bestCostP_ = geoPath->cost(optiPIDPtr);
+            bestCostP_ = geoPath->cost(opt_);
 
             optiPID->setKP(0.);
             optiPID->setKI(1.);
             //optiPID->setKD(0.);
-            bestCostI_ = geoPath->cost(optiPIDPtr);
+            bestCostI_ = geoPath->cost(opt_);
 
             //optiPID->setKP(0.);
             optiPID->setKI(0.);
             optiPID->setKD(1.);
-            bestCostD_ = geoPath->cost(optiPIDPtr);
+            bestCostD_ = geoPath->cost(opt_);
 
             optiPID->setKP(KP);
             optiPID->setKI(KI);
