@@ -61,17 +61,25 @@ private:
     double _nodeRejection; //!< Flag to set the filter that eliminates no promising samples (akgun and Stilman, 2011)
     double _pathBias; //!< Value to bias the sampling around the solution path, once it has been found (akgun and Stilman, 2011)
     double _pathSamplingRangeFactor; //!< Factor that multiplied by the RRT range gives the radius for sampling near the path
+    ob::Cost bestCostP_;
+    ob::Cost bestCostI_;
+    ob::Cost bestCostD_;
+
 
 public:
 
-    myRRTstar(const ob::SpaceInformationPtr &si):RRTstar(si)
-    {
+    myRRTstar(const ob::SpaceInformationPtr &si) : RRTstar(si),bestCostP_(std::numeric_limits<double>::quiet_NaN()),
+        bestCostI_(std::numeric_limits<double>::quiet_NaN()),bestCostD_(std::numeric_limits<double>::quiet_NaN()) {
         setName("myRRTstar");
         _optimize = true;
         _factor_k_rrg = 1.0;
         _pathBias = 0.1;
         _nodeRejection = 1;
         _pathSamplingRangeFactor = 2.0;
+
+        addPlannerProgressProperty("best costP REAL",boost::bind(&myRRTstar::getBestCostP,this));
+        addPlannerProgressProperty("best costI REAL",boost::bind(&myRRTstar::getBestCostI,this));
+        addPlannerProgressProperty("best costD REAL",boost::bind(&myRRTstar::getBestCostD,this));
     }
 
     bool getOptimize(){ return _optimize;} //!< Returns the _optimize flag
@@ -85,6 +93,25 @@ public:
     double getPathSamplingRangeFactor(){return _pathSamplingRangeFactor;} //!< Returns the factor that multiplied by the RRT range gives the radius for sampling near the path
     void setPathSamplingRangeFactor(double f){if(f>1.0)_pathSamplingRangeFactor=f; else _pathSamplingRangeFactor=1.0;} //!< Sets the factor that multiplied by the RRT range gives the radius for sampling near the path
 
+    void clear() {
+        og::RRTstar::clear();
+        bestCostP_ = ob::Cost(std::numeric_limits<double>::quiet_NaN());
+        bestCostI_ = ob::Cost(std::numeric_limits<double>::quiet_NaN());
+        bestCostD_ = ob::Cost(std::numeric_limits<double>::quiet_NaN());
+    }
+
+
+    std::string getBestCostP() const {
+        return boost::lexical_cast<std::string>(bestCostP_);
+    }
+
+    std::string getBestCostI() const {
+        return boost::lexical_cast<std::string>(bestCostI_);
+    }
+
+    std::string getBestCostD() const {
+        return boost::lexical_cast<std::string>(bestCostD_);
+    }
 
     /** \brief Compute distance between motions (actually distance between contained states)
        * for finding nearest neighbors. If states are already connected their distance is set to infinity*/
@@ -114,6 +141,48 @@ public:
     }
 
 
+    void updateCostPID(Motion *solution) {
+        myICOptimizationObjective *optiPID = dynamic_cast<myICOptimizationObjective*>(opt_.get());
+        if (optiPID) {
+            std::vector<Motion*> mpath;
+            Motion *motion = solution;
+            while (motion) {
+                mpath.push_back(motion);
+                motion = motion->parent;
+            }
+            og::PathGeometric *geoPath = new og::PathGeometric(si_);
+            for (int i = mpath.size() - 1; i >= 0; --i) {
+                geoPath->append(mpath[i]->state);
+            }
+
+            double KP = optiPID->getKP();
+            double KI = optiPID->getKP();
+            double KD = optiPID->getKP();
+
+            ob::OptimizationObjectivePtr optiPIDPtr(optiPID);
+
+            optiPID->setKP(1.);
+            optiPID->setKI(0.);
+            optiPID->setKD(0.);
+            bestCostP_ = geoPath->cost(optiPIDPtr);
+
+            optiPID->setKP(0.);
+            optiPID->setKI(1.);
+            //optiPID->setKD(0.);
+            bestCostI_ = geoPath->cost(optiPIDPtr);
+
+            //optiPID->setKP(0.);
+            optiPID->setKI(0.);
+            optiPID->setKD(1.);
+            bestCostD_ = geoPath->cost(optiPIDPtr);
+
+            optiPID->setKP(KP);
+            optiPID->setKI(KI);
+            optiPID->setKD(KD);
+
+            delete geoPath;
+        }
+    }
 
     ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
     {
@@ -154,6 +223,13 @@ public:
         // \TODO Make this variable unnecessary, or at least have it
         // persist across solve runs
         ob::Cost bestCost    = opt_->infiniteCost();
+        if (solution){
+            bestCost_ = solution->cost;
+            OMPL_INFORM("%s: Starting with existing solution of cost %.5f", getName().c_str(), bestCost_.v);
+            updateCostPID(solution);
+        } else {
+            bestCost_ = opt_->infiniteCost();
+        }
 
         Motion *approximation  = NULL;
         double approximatedist = std::numeric_limits<double>::infinity();
@@ -182,12 +258,6 @@ public:
         unsigned int               rewireTest = 0;
         unsigned int               statesGenerated = 0;
 
-        if (solution){
-            ob::Cost pathcost = solution->cost;
-            OMPL_INFORM("%s: Starting with existing solution of cost %.5f", getName().c_str(), pathcost.v);
-            bestCost_ = pathcost;
-            //OMPL_INFORM("%s: Starting with existing solution of cost %.5f", getName().c_str(), solution->cost.v);
-        }
         OMPL_INFORM("%s: Initial k-nearest value of %u", getName().c_str(), (unsigned int)std::ceil(k_rrg * log((double)(nn_->size()+1))));
 
 
@@ -655,6 +725,7 @@ public:
                         {
                             bestCost = goalMotions_[i]->cost;
                             bestCost_ = bestCost;
+                            updateCostPID(goalMotions_[i]);
                         }
 
                         sufficientlyShort = opt_->isSatisfied(goalMotions_[i]->cost);

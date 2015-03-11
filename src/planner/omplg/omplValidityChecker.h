@@ -49,11 +49,13 @@ namespace Kautham {
 
             //! Creator
             ValidityChecker(const ob::SpaceInformationPtr& si, Planner *p) :
-                ob::StateValidityChecker(si), theplanner(p), thesi(si){};
+                ob::StateValidityChecker(si),theplanner(p),thesi(si) {}
             //! isValid returns whether the given state's position overlaps the obstacles
             bool isValid(const ob::State* state) const;
             //! clearance returns the distance from the given state's position to the obstacles
             double clearance(const ob::State* state) const;
+
+            unsigned int getCollisionChecks() {return theplanner->wkSpace()->getCollCheckCounter();}
    };
  }
 /** @}   end of Doxygen module "Planner */
