@@ -54,8 +54,21 @@ omplTRRTPlanner::omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
 
     //create planner
     ob::PlannerPtr planner(new og::TRRT(si));
+
+    _opti = ob::OptimizationObjectivePtr(new myMWOptimizationObjective(ss->getSpaceInformation(), this, false));
+
+    ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
+    pdefPtr->setOptimizationObjective(_opti);
+
+    planner->setProblemDefinition(pdefPtr);
+    planner->setup();
+
+
+    //set the planner
+    ss->setPlanner(planner);
+
     //set planner parameters: range and goalbias
-    _Range=0.05;
+    _Range=(planner->as<og::TRRT>())->getRange();
     _GoalBias=(planner->as<og::TRRT>())->getGoalBias();
     _maxStatesFailed = (planner->as<og::TRRT>())->getMaxStatesFailed();
     _tempChangeFactor = (planner->as<og::TRRT>())->getTempChangeFactor();
@@ -71,23 +84,7 @@ omplTRRTPlanner::omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
     addParameter("Path Length Weight",0.00001);
     addParameter("Min Temp",planner->as<og::TRRT>()->getMinTemperature());
     addParameter("Init Temp",planner->as<og::TRRT>()->getInitTemperature());
-
-    planner->as<og::TRRT>()->setRange(_Range);
-    planner->as<og::TRRT>()->setGoalBias(_GoalBias);
-
-
-    _opti = ob::OptimizationObjectivePtr(new myMWOptimizationObjective(ss->getSpaceInformation(), this, false));
-
-    ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
-    pdefPtr->setOptimizationObjective(_opti);
-
-
-    planner->setProblemDefinition(pdefPtr);
-    planner->setup();
-
-
-    //set the planner
-    ss->setPlanner(planner);
+    addParameter("K Constant",planner->as<og::TRRT>()->getKConstant());
 }
 
 //! void destructor
@@ -162,6 +159,12 @@ bool omplTRRTPlanner::setParameters() {
             return false;
         }
 
+        it = _parameters.find("K Constant");
+        if (it != _parameters.end()) {
+            ss->getPlanner()->as<og::TRRT>()->setKConstant(it->second);
+        } else {
+            return false;
+        }
 
         it = _parameters.find("Path Length Weight");
         if (it == _parameters.end()) return false;
@@ -183,6 +186,7 @@ bool omplTRRTPlanner::setParameters() {
 }
 
 bool omplTRRTPlanner::trySolve() {
+    //ss->getPlanner()->as<og::TRRT>()->setup();
     if (omplPlanner::trySolve()) {
         ob::Cost pathcost = ss->getProblemDefinition()->getSolutionPath()->cost(_opti);
         cout<<"Path cost = " << pathcost.v << endl;
