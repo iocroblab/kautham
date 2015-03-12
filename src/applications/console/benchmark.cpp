@@ -38,6 +38,12 @@ void preRunEvent(const ob::PlannerPtr &planner) {
     // Do whatever configuration we want to the planner,
     // including changing of problem definition (input states)
     // via planner->getProblemDefinition()
+
+    omplplanner::ValidityChecker *validityChecker = dynamic_cast<omplplanner::ValidityChecker*>
+            (planner->getSpaceInformation()->getStateValidityChecker().get());
+    if (validityChecker) {
+        validityChecker->resetCollisionChecks();
+    }
 }
 
 
@@ -172,16 +178,16 @@ bool Benchmark::add_parameter(xml_node *param_node) {
     if (param_node->attribute("Value")) {
         string name = param_node->attribute("Name").as_string("");
         if (name == "maxTime") {
-            req->maxTime = min(0.,param_node->attribute("Value").as_double(5.));
+            req->maxTime = max(0.,param_node->attribute("Value").as_double(5.));
             return true;
         } else if (name == "maxMem") {
-            req->maxMem = min(0.,param_node->attribute("Value").as_double(4096.));
+            req->maxMem = max(0.,param_node->attribute("Value").as_double(4096.));
             return true;
         } else if (name == "runCount") {
-            req->runCount = min(1,param_node->attribute("Value").as_int(100));
+            req->runCount = max(1,param_node->attribute("Value").as_int(100));
             return true;
         } else if (name == "timeBetweenUpdates") {
-            req->timeBetweenUpdates = min(0.,param_node->attribute("Value").as_double(0.05));
+            req->timeBetweenUpdates = max(0.,param_node->attribute("Value").as_double(0.05));
             return true;
         } else if (name == "displayProgress") {
             req->displayProgress = param_node->attribute("Value").as_bool(true);
