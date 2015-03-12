@@ -69,6 +69,8 @@ omplTRRTPlanner::omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
     addParameter("Frontier Threshold", _frontierThreshold);
     addParameter("Frontier Nodes Ratio", _frontierNodesRatio);
     addParameter("Path Length Weight",0.00001);
+    addParameter("Min Temp",planner->as<og::TRRT>()->getMinTemperature());
+    addParameter("Init Temp",planner->as<og::TRRT>()->getInitTemperature());
 
     planner->as<og::TRRT>()->setRange(_Range);
     planner->as<og::TRRT>()->setGoalBias(_GoalBias);
@@ -144,6 +146,22 @@ bool omplTRRTPlanner::setParameters() {
         } else {
             return false;
         }
+
+
+        it = _parameters.find("Init Temp");
+        if (it != _parameters.end()) {
+            ss->getPlanner()->as<og::TRRT>()->setInitTemperature(it->second);
+        } else {
+            return false;
+        }
+
+        it = _parameters.find("Min Temp");
+        if (it != _parameters.end()) {
+            ss->getPlanner()->as<og::TRRT>()->setMinTemperature(it->second);
+        } else {
+            return false;
+        }
+
 
         it = _parameters.find("Path Length Weight");
         if (it == _parameters.end()) return false;
