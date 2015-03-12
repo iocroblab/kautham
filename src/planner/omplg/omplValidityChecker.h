@@ -39,25 +39,29 @@ namespace Kautham {
 /** \addtogroup Planner
  *  @{
  */
-  namespace omplplanner{
+namespace omplplanner{
 
-    class ValidityChecker : public ob::StateValidityChecker
-    {
-        public:
-            Planner *theplanner;
-            ob::SpaceInformationPtr thesi;
+class ValidityChecker : public ob::StateValidityChecker {
+private:
+    Planner *theplanner;
+    ob::SpaceInformationPtr thesi;
 
-            //! Creator
-            ValidityChecker(const ob::SpaceInformationPtr& si, Planner *p) :
-                ob::StateValidityChecker(si),theplanner(p),thesi(si) {}
-            //! isValid returns whether the given state's position overlaps the obstacles
-            bool isValid(const ob::State* state) const;
-            //! clearance returns the distance from the given state's position to the obstacles
-            double clearance(const ob::State* state) const;
+public:
+    //! Creator
+    ValidityChecker(const ob::SpaceInformationPtr& si, Planner *p) :
+        ob::StateValidityChecker(si),theplanner(p),thesi(si) {}
 
-            unsigned int getCollisionChecks() {return theplanner->wkSpace()->getCollCheckCounter();}
-   };
- }
+    //! isValid returns whether the given state's position overlaps the obstacles
+    bool isValid(const ob::State* state) const;
+
+    //! clearance returns the distance from the given state's position to the obstacles
+    double clearance(const ob::State* state) const;
+
+    unsigned int getCollisionChecks() {return theplanner->wkSpace()->getCollCheckCounter();}
+
+    void resetCollisionChecks() {theplanner->wkSpace()->resetCollCheckCounter();}
+};
+}
 /** @}   end of Doxygen module "Planner */
 }
 
