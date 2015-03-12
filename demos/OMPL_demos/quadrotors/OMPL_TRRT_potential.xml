@@ -14,13 +14,11 @@
 		<Parameters>
 			<Name>omplTRRT</Name>
 			<Potential potential="controls/potential.xml"/>
-			<Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">2</Parameter>
-			<Parameter name="Max Planning Time">2.0</Parameter>
+			<Parameter name="K Constant">66.9305</Parameter>
+			<Parameter name="Max Planning Time">20</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Range">2</Parameter>
-			<Parameter name="DelayCC (0/1)">0</Parameter>
 			<Parameter name="Simplify Solution">1</Parameter>
-			<Parameter name="Path Length Weight">0.3</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
