@@ -1,11 +1,30 @@
 <Benchmark Name="experiment">
 	<Problem File="OMPL_RRTStar_potential.xml" />
-	<Parameter Name="maxTime" Value="1.3" />
+	<Parameter Name="maxTime" Value="20" />
 	<Parameter Name="maxMem" Value="2000" />
-	<Parameter Name="timeBetweenUpdates" Value="0.01" />
+	<Parameter Name="timeBetweenUpdates" Value="0.1" />
 	<Parameter Name="runCount" Value="1" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="result.log" />
+	<Parameter Name="filename" Value="resultRRTStar.log" />
+</Benchmark>
+<Benchmark Name="experiment">
+	<Problem File="OMPL_TRRT_potential.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="2000" />
+	<Parameter Name="timeBetweenUpdates" Value="0.1" />
+	<Parameter Name="runCount" Value="1" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="resultTRRT.log" />
+</Benchmark>
+<Benchmark Name="experiment">
+	<Problem File="OMPL_RRTStar_potential.xml" />
+	<Problem File="OMPL_TRRT_potential.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="2000" />
+	<Parameter Name="timeBetweenUpdates" Value="0.1" />
+	<Parameter Name="runCount" Value="1" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="resultBoth.log" />
 </Benchmark>
 
 
