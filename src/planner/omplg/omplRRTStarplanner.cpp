@@ -76,10 +76,6 @@ public:
         _pathBias = 0.1;
         _nodeRejection = 1;
         _pathSamplingRangeFactor = 2.0;
-
-        addPlannerProgressProperty("best costP REAL",boost::bind(&myRRTstar::getBestCostP,this));
-        addPlannerProgressProperty("best costI REAL",boost::bind(&myRRTstar::getBestCostI,this));
-        addPlannerProgressProperty("best costD REAL",boost::bind(&myRRTstar::getBestCostD,this));
     }
 
     bool getOptimize(){ return _optimize;} //!< Returns the _optimize flag
@@ -184,6 +180,36 @@ public:
 
     ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
     {
+        PlannerProgressProperties::iterator it;
+        if (dynamic_cast<myICOptimizationObjective*>(opt_.get())) {
+            it = plannerProgressProperties_.find("best costP REAL");
+            if (it != plannerProgressProperties_.end())
+                addPlannerProgressProperty("best costP REAL",
+                                           boost::bind(&myRRTstar::getBestCostP,this));
+
+            it = plannerProgressProperties_.find("best costI REAL");
+            if (it != plannerProgressProperties_.end())
+                addPlannerProgressProperty("best costI REAL",
+                                           boost::bind(&myRRTstar::getBestCostI,this));
+
+            it = plannerProgressProperties_.find("best costD REAL");
+            if (it != plannerProgressProperties_.end())
+                addPlannerProgressProperty("best costD REAL",
+                                           boost::bind(&myRRTstar::getBestCostD,this));
+        } else {
+            it = plannerProgressProperties_.find("best costP REAL");
+            if (it != plannerProgressProperties_.end())
+                plannerProgressProperties_.erase(it);
+
+            it = plannerProgressProperties_.find("best costI REAL");
+            if (it != plannerProgressProperties_.end())
+                plannerProgressProperties_.erase(it);
+
+            it = plannerProgressProperties_.find("best costD REAL");
+            if (it != plannerProgressProperties_.end())
+                plannerProgressProperties_.erase(it);
+        }
+
         checkValidity();
         ob::Goal                  *goal   = pdef_->getGoal().get();
         ob::GoalSampleableRegion  *goal_s = dynamic_cast<ob::GoalSampleableRegion*>(goal);
@@ -227,6 +253,9 @@ public:
             updateCostPID(solution);
         } else {
             bestCost_ = opt_->infiniteCost();
+            bestCostP_ = opt_->infiniteCost();
+            bestCostI_ = opt_->infiniteCost();
+            bestCostD_ = opt_->infiniteCost();
         }
 
         Motion *approximation  = NULL;
@@ -814,6 +843,9 @@ public:
         //JAN
         if(approximate) cout<<"approximate solution"<<endl;
         else cout<<"exact  solution"<<endl;
+
+
+
 
         return ob::PlannerStatus(addedSolution, approximate);
     }

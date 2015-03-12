@@ -67,6 +67,29 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
     if (validityChecker) {
         run["collision checks INTEGER"] = SSTR(validityChecker->getCollisionChecks());
     }
+
+    ob::ProblemDefinitionPtr pdef = planner->getProblemDefinition();
+    if (pdef->hasOptimizationObjective()) {
+        ob::OptimizationObjectivePtr opt = pdef->getOptimizationObjective();
+        if (pdef->hasSolution() && !pdef->hasApproximateSolution()) {
+            run["best cost REAL"] = SSTR(pdef->getSolutionPath()->cost(opt));
+
+            double meanCost(0.);
+            double maxCost(0.);
+            double minCost(0.);
+
+            run["mean cost REAL"] = SSTR(meanCost);
+            run["maximum cost REAL"] = SSTR(maxCost);
+            run["minimum cost REAL"] = SSTR(minCost);
+        } else {
+            run["best cost REAL"] = SSTR(opt->infiniteCost());
+            run["mean cost REAL"] = SSTR(opt->infiniteCost());
+            run["maximum cost REAL"] = SSTR(opt->infiniteCost());
+            run["minimum cost REAL"] = SSTR(opt->infiniteCost());
+        }
+    }
+
+
 }
 
 
