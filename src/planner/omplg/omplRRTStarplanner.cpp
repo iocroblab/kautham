@@ -156,8 +156,8 @@ public:
             }
 
             double KP = optiPID->getKP();
-            double KI = optiPID->getKP();
-            double KD = optiPID->getKP();
+            double KI = optiPID->getKI();
+            double KD = optiPID->getKD();
 
             optiPID->setKP(1.);
             optiPID->setKI(0.);
