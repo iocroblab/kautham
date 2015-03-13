@@ -76,6 +76,10 @@ public:
         _pathBias = 0.1;
         _nodeRejection = 1;
         _pathSamplingRangeFactor = 2.0;
+
+        addPlannerProgressProperty("best costP REAL",boost::bind(&myRRTstar::getBestCostP,this));
+        addPlannerProgressProperty("best costI REAL",boost::bind(&myRRTstar::getBestCostI,this));
+        addPlannerProgressProperty("best costD REAL",boost::bind(&myRRTstar::getBestCostD,this));
     }
 
     bool getOptimize(){ return _optimize;} //!< Returns the _optimize flag
@@ -95,7 +99,6 @@ public:
         bestCostI_ = ob::Cost(std::numeric_limits<double>::quiet_NaN());
         bestCostD_ = ob::Cost(std::numeric_limits<double>::quiet_NaN());
     }
-
 
     std::string getBestCostP() const {
         return boost::lexical_cast<std::string>(bestCostP_);
@@ -180,36 +183,10 @@ public:
 
     ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
     {
-        PlannerProgressProperties::iterator it;
-        if (dynamic_cast<myICOptimizationObjective*>(opt_.get())) {
-            it = plannerProgressProperties_.find("best costP REAL");
-            if (it != plannerProgressProperties_.end())
-                addPlannerProgressProperty("best costP REAL",
-                                           boost::bind(&myRRTstar::getBestCostP,this));
-
-            it = plannerProgressProperties_.find("best costI REAL");
-            if (it != plannerProgressProperties_.end())
-                addPlannerProgressProperty("best costI REAL",
-                                           boost::bind(&myRRTstar::getBestCostI,this));
-
-            it = plannerProgressProperties_.find("best costD REAL");
-            if (it != plannerProgressProperties_.end())
-                addPlannerProgressProperty("best costD REAL",
-                                           boost::bind(&myRRTstar::getBestCostD,this));
-        } else {
-            it = plannerProgressProperties_.find("best costP REAL");
-            if (it != plannerProgressProperties_.end())
-                plannerProgressProperties_.erase(it);
-
-            it = plannerProgressProperties_.find("best costI REAL");
-            if (it != plannerProgressProperties_.end())
-                plannerProgressProperties_.erase(it);
-
-            it = plannerProgressProperties_.find("best costD REAL");
-            if (it != plannerProgressProperties_.end())
-                plannerProgressProperties_.erase(it);
-        }
-
+        std::cout << getProblemDefinition()->hasOptimizationObjective() << " "
+                  << (getProblemDefinition()->getOptimizationObjective().get() != NULL) << " "
+                  << (opt_.get() != NULL) << " "
+                  << (dynamic_cast<myICOptimizationObjective*>(opt_.get()) != NULL) << endl;
         checkValidity();
         ob::Goal                  *goal   = pdef_->getGoal().get();
         ob::GoalSampleableRegion  *goal_s = dynamic_cast<ob::GoalSampleableRegion*>(goal);
