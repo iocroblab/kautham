@@ -69,24 +69,78 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
     }
 
     ob::ProblemDefinitionPtr pdef = planner->getProblemDefinition();
-    if (pdef->hasOptimizationObjective()) {
+    if (pdef->getOptimizationObjective().get()) {
+        cout << "OPT" << endl;
+
         ob::OptimizationObjectivePtr opt = pdef->getOptimizationObjective();
         if (pdef->hasSolution() && !pdef->hasApproximateSolution()) {
-            run["best cost REAL"] = SSTR(pdef->getSolutionPath()->cost(opt));
+            cout << "SOL" << endl;
 
+            //Get solution path
+            ob::PlannerDataPtr pdata(new ob::PlannerData(planner->getSpaceInformation()));
+            planner->getPlannerData(*pdata);
+
+            //Get start and goal
+            unsigned int v1 = pdata->getStartIndex(0);
+            double c1 = opt->stateCost(pdata->getVertex(v1).getState()).v;
+            unsigned int v2 = pdata->getGoalIndex(0);
+            double c2 = opt->stateCost(pdata->getVertex(v2).getState()).v;
+            double d = planner->getSpaceInformation()->distance(pdata->getVertex(v1).getState(),
+                                                                pdata->getVertex(v2).getState());
+            //Set K's
+            double KP = 1./3./d;
+            double KI = 1./3./(0.5*(c1+c2)*d);
+            double KD = 1./3./fabs(c2-c1);
+
+            //Set initial costs
+            double costMW(0.);
+            double costPID(0.);
             double meanCost(0.);
-            double maxCost(0.);
-            double minCost(0.);
+            double maxCost(c2);
+            double minCost(c2);
 
-            run["mean cost REAL"] = SSTR(meanCost);
+            //Iterate trough path from goal to start
+            std::vector< unsigned int > edgeList;
+            pdata->getIncomingEdges(v2,edgeList);
+            while (edgeList.size() > 0) {
+                //Get vertex parent
+                v1 = edgeList[0];
+                c1 = opt->stateCost(pdata->getVertex(v1).getState()).v;
+                d = planner->getSpaceInformation()->distance(pdata->getVertex(v1).getState(),
+                                                             pdata->getVertex(v2).getState());
+
+                //Update costs
+                costMW += max(c2-c1,0.);
+                costPID += KP*d+KI*0.5*(c1+c2)*d+KD*fabs(c2-c1);
+                maxCost = max(maxCost,c1);
+                minCost = min(minCost,c1);
+                meanCost += 0.5*(c1+c2)*d;
+
+                //Next vertex
+                swap(v1,v2);
+                swap(c1,c2);
+                pdata->getIncomingEdges(v2,edgeList);
+            }
+
+            run["best cost REAL"] = SSTR(pdef->getSolutionPath()->cost(opt));
+            run["best costMW REAL"] = SSTR(costMW);
+            run["best costPID REAL"] = SSTR(costPID);
+            run["mean cost REAL"] = SSTR(meanCost/pdef->getSolutionPath()->length());
             run["maximum cost REAL"] = SSTR(maxCost);
             run["minimum cost REAL"] = SSTR(minCost);
         } else {
+            cout << "NO SOL" << endl;
+
             run["best cost REAL"] = SSTR(opt->infiniteCost());
+            run["best costMW REAL"] = SSTR(opt->infiniteCost());
+            run["best costPID REAL"] = SSTR(opt->infiniteCost());
             run["mean cost REAL"] = SSTR(opt->infiniteCost());
             run["maximum cost REAL"] = SSTR(opt->infiniteCost());
             run["minimum cost REAL"] = SSTR(opt->infiniteCost());
+            run["best cost REAL"] = SSTR(opt->infiniteCost());
         }
+    } else {
+        cout << "NO OPT" << endl;
     }
 
 
