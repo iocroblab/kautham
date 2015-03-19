@@ -57,7 +57,7 @@ omplTRRTPlanner::omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
 
     _opti = ob::OptimizationObjectivePtr(new myMWOptimizationObjective(ss->getSpaceInformation(), this, false));
 
-    ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
+    ob::ProblemDefinitionPtr pdefPtr = ss->getProblemDefinition();
     pdefPtr->setOptimizationObjective(_opti);
 
     planner->setProblemDefinition(pdefPtr);

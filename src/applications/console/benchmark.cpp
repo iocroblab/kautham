@@ -70,12 +70,8 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
 
     ob::ProblemDefinitionPtr pdef = planner->getProblemDefinition();
     if (pdef->getOptimizationObjective().get()) {
-        cout << "OPT" << endl;
-
         ob::OptimizationObjectivePtr opt = pdef->getOptimizationObjective();
         if (pdef->hasSolution() && !pdef->hasApproximateSolution()) {
-            cout << "SOL" << endl;
-
             //Get solution path
             ob::PlannerDataPtr pdata(new ob::PlannerData(planner->getSpaceInformation()));
             planner->getPlannerData(*pdata);
@@ -129,8 +125,6 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
             run["maximum cost REAL"] = SSTR(maxCost);
             run["minimum cost REAL"] = SSTR(minCost);
         } else {
-            cout << "NO SOL" << endl;
-
             run["best cost REAL"] = SSTR(opt->infiniteCost());
             run["best costMW REAL"] = SSTR(opt->infiniteCost());
             run["best costPID REAL"] = SSTR(opt->infiniteCost());
@@ -139,11 +133,7 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
             run["minimum cost REAL"] = SSTR(opt->infiniteCost());
             run["best cost REAL"] = SSTR(opt->infiniteCost());
         }
-    } else {
-        cout << "NO OPT" << endl;
     }
-
-
 }
 
 

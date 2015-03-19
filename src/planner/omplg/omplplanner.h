@@ -175,7 +175,7 @@ namespace Kautham {
 
         int _samplerUsed;
         unsigned int _simplify;
-        unsigned int _incremental;
+        bool _incremental;
         unsigned _drawnrobot; //!< Index of the robot whose Cspace is drawn. Defaults to 0.
         vector<int> _disabledcontrols;//!< those disabled controls will not be sampled, they are fixed at 0.5
 
