@@ -886,13 +886,8 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
           return false;
 
         it = _parameters.find("Incremental (0/1)");
-        if(it != _parameters.end()){
-            if(it->second == 0) _incremental = 0;
-            else {
-                _incremental = 1;
-                //_simplify = 0;//for incremental solution the smootihng of the path is disabled to spped up the process
-                //setParameter("Simplify Solution", _simplify);
-            }
+        if (it != _parameters.end()) {
+            _incremental = (it->second == 0);
         }
         else
           return false;
@@ -1550,25 +1545,21 @@ else if(y<ypmin) ypmin=y;
         // set the start and goal states
         ss->setStartAndGoalStates(startompl, goalompl);
 
+
         //remove previous solutions, if any
-        if(_incremental == 0)
-        {
+        if (_incremental) {
+            ss->getProblemDefinition()->clearSolutionPaths();
+        } else {
             ss->clear();
             ss->getPlanner()->clear();
         }
-        else
-            ss->getProblemDefinition()->clearSolutionPaths();
 
         // attempt to solve the problem within _planningTime seconds of planning time
         ss->setup();
+
         ob::PlannerStatus solved = ss->solve(_planningTime);
 
         //ss->print();
-
-        //the following line is added to restore the problem definition and its optimization objective that was lost after solve
-        //needed in drawcspace that wants to access the weights of the edges that have to be recomputed with the optimization fro rrtstar.
-        this->setParameters();
-
 
         //retrieve all the states. Load the SampleSet _samples
         ob::PlannerData data(ss->getSpaceInformation());
