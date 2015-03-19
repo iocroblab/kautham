@@ -91,7 +91,7 @@ public:
     double getPathBias(){return _pathBias;} //!< Returns the _PAthBias
     void setPathBias(double f){if(f>1.0) _pathBias=1.0; else if(f<0.0) _pathBias=0.0; else  _pathBias=f;} //!< Sets _PathBias to sample near the solution path
     double getPathSamplingRangeFactor(){return _pathSamplingRangeFactor;} //!< Returns the factor that multiplied by the RRT range gives the radius for sampling near the path
-    void setPathSamplingRangeFactor(double f){if(f>1.0)_pathSamplingRangeFactor=f; else _pathSamplingRangeFactor=1.0;} //!< Sets the factor that multiplied by the RRT range gives the radius for sampling near the path
+    void setPathSamplingRangeFactor(double f){_pathSamplingRangeFactor = max(f,1.);} //!< Sets the factor that multiplied by the RRT range gives the radius for sampling near the path
 
     void clear() {
         og::RRTstar::clear();
@@ -183,10 +183,6 @@ public:
 
     ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
     {
-        std::cout << getProblemDefinition()->hasOptimizationObjective() << " "
-                  << (getProblemDefinition()->getOptimizationObjective().get() != NULL) << " "
-                  << (opt_.get() != NULL) << " "
-                  << (dynamic_cast<myICOptimizationObjective*>(opt_.get()) != NULL) << endl;
         checkValidity();
         ob::Goal                  *goal   = pdef_->getGoal().get();
         ob::GoalSampleableRegion  *goal_s = dynamic_cast<ob::GoalSampleableRegion*>(goal);
@@ -1060,7 +1056,8 @@ omplRRTStarPlanner::omplRRTStarPlanner(SPACETYPE stype, Sample *init, Sample *go
 
     //////////////////////////////////////////////////////////////////////////////
     //START optimization criteria:
-    ob::ProblemDefinitionPtr pdefPtr = ((ob::ProblemDefinitionPtr) new ob::ProblemDefinition(si));
+
+    ob::ProblemDefinitionPtr pdefPtr = ss->getProblemDefinition();
 
     //////////////////////////////////////////////////////////////////////////////
     // 1) Length optimization criteria
@@ -1110,17 +1107,13 @@ omplRRTStarPlanner::omplRRTStarPlanner(SPACETYPE stype, Sample *init, Sample *go
         planner->as<myRRTstar>()->setOptimize(true);
         break;
     default:
-        _opti=1;
+        _opti = 1;
         _optiselected = _lengthopti; //length optimization
-        setParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _simplify);
+        setParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)",_opti);
         planner->as<myRRTstar>()->setOptimize(true);
         break;
     }
-
-
     pdefPtr->setOptimizationObjective(_optiselected);
-
-
     planner->setProblemDefinition(pdefPtr);
     planner->setup();
 
@@ -1230,7 +1223,7 @@ bool omplRRTStarPlanner::setParameters() {
             setParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _opti);
             break;
         }
-        ss->getPlanner()->getProblemDefinition()->setOptimizationObjective(_optiselected);
+        ss->getProblemDefinition()->setOptimizationObjective(_optiselected);
         ss->getPlanner()->as<myRRTstar>()->setOptimize(_opti != 0);
         ss->getPlanner()->setup();
 
