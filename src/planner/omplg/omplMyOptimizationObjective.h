@@ -54,6 +54,8 @@ namespace Kautham {
       std::vector<Segment> segment;
       std::vector<std::pair<double,double> > pointCost;
       std::vector<std::pair<double,double> > segmentCost;
+      std::vector<double> pointRadius;
+      std::vector<double> segmentRadius;
       omplPlanner *pl;
   public:
       myMWOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p,
