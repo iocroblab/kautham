@@ -164,21 +164,26 @@ bool myMWOptimizationObjective::setPotentialCost(std::string filename) {
         if (result) {
             point.clear();
             pointCost.clear();
+            pointRadius.clear();
             segment.clear();
             segmentCost.clear();
+            segmentRadius.clear();
+
             for (pugi::xml_node_iterator it = doc.child("Potential").first_child();
                  it != doc.child("Potential").last_child(); ++it) {
                 if (std::string(it->name()) == "Point") {
-                    point.push_back(getPoint(it->attribute("p").as_string()));
+                    point.push_back(getPoint(it->attribute("p").as_string("0 0 0")));
                     pointCost.push_back(std::pair<double,double>
-                                        (it->attribute("repulse").as_double(),
-                                         it->attribute("diffusion").as_double()));
+                                        (it->attribute("repulse").as_double(0.),
+                                         it->attribute("diffusion").as_double(0.)));
+                    pointRadius.push_back(it->attribute("radius").as_double(0.));
                 } else if (std::string(it->name()) == "Segment") {
-                    segment.push_back(Segment(getPoint(it->attribute("p0").as_string()),
-                                              getPoint(it->attribute("p1").as_string())));
+                    segment.push_back(Segment(getPoint(it->attribute("p0").as_string("0 0 0")),
+                                              getPoint(it->attribute("p1").as_string("0 0 0"))));
                     segmentCost.push_back(std::pair<double,double>
-                                          (it->attribute("repulse").as_double(),
-                                           it->attribute("diffusion").as_double()));
+                                          (it->attribute("repulse").as_double(0.),
+                                           it->attribute("diffusion").as_double(0.)));
+                    segmentRadius.push_back(it->attribute("radius").as_double(0.));
                 }
             }
 
@@ -213,7 +218,7 @@ ob::Cost myMWOptimizationObjective::stateCost(const ob::State *s) const {
 
     //Points cost
     for (unsigned int i = 0; i < point.size(); ++i) {
-        sqDist = Vector3(p-point.at(i)).length2();
+        sqDist = pow(std::max(0.,Vector3(p-point.at(i)).length()-pointRadius.at(i)),2.);
         cost = std::max(-pointCost.at(i).first,0.)+pointCost.at(i).first*exp(-pointCost.at(i).second*sqDist);
         totalCost += cost;
         //std::cout<< "Distance " << i << " is " << sqrt(sqDist) << std::endl;
@@ -222,7 +227,7 @@ ob::Cost myMWOptimizationObjective::stateCost(const ob::State *s) const {
 
     //Segments Cost
     for (unsigned int i = 0; i < segment.size(); ++i) {
-        sqDist = pow(distance(p,segment.at(i)),2.);
+        sqDist = pow(std::max(0.,distance(p,segment.at(i))-segmentRadius.at(i)),2.);
         cost = std::max(-segmentCost.at(i).first,0.)+segmentCost.at(i).first*exp(-segmentCost.at(i).second*sqDist);
         totalCost += cost;
         //std::cout<< "Distance " << i << " is " << sqrt(sqDist) << std::endl;
