@@ -887,7 +887,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
 
         it = _parameters.find("Incremental (0/1)");
         if (it != _parameters.end()) {
-            _incremental = (it->second == 0);
+            _incremental = (it->second == 1);
         }
         else
           return false;
