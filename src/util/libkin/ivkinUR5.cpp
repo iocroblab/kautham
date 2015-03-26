@@ -49,27 +49,13 @@ IvKinUR5::~IvKinUR5(){
 }
 
 bool IvKinUR5::solve(){
-    bool shoulder, elbow, wrist;
-
-
-    if(_target.size() > 7 /*&& _target.size() <= 10*/){
-      //This next 3 parameters define the configuration
-
-      if(_target.at(7) == shoulder_left)  // Shoulder Lefty //antes ==1, ok
-        shoulder = true;
-      else
-        shoulder = false;
-
-      if(_target.at(8) == elbow_up)  // Elbow Positive //antes ==0, ok
-        elbow = true;
-      else
-        elbow = false;
-
-      if(_target.at(9) == wrist_in)  // Wrist Positive   //correccion antes ==1!! KO
-        wrist = true;
-      else
-        wrist = false;
+    bool shoulder(true), elbow(true), wrist(true);
+    if (_target.size() > 7){
+      shoulder = _target.at(7) == shoulder_left;
+      elbow = _target.at(8) == elbow_up;
+      wrist = _target.at(9) == wrist_in;
     }
+
     _targetTrans.setTranslation(mt::Point3(_target.at(0), _target.at(1),
                                            _target.at(2)));
     _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4),
