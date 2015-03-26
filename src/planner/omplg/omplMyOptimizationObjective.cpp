@@ -169,8 +169,8 @@ bool myMWOptimizationObjective::setPotentialCost(std::string filename) {
             segmentCost.clear();
             segmentRadius.clear();
 
-            for (pugi::xml_node_iterator it = doc.child("Potential").first_child();
-                 it != doc.child("Potential").last_child(); ++it) {
+            for (pugi::xml_node_iterator it = doc.child("Potential").begin();
+                 it != doc.child("Potential").end(); ++it) {
                 if (std::string(it->name()) == "Point") {
                     point.push_back(getPoint(it->attribute("p").as_string("0 0 0")));
                     pointCost.push_back(std::pair<double,double>
@@ -234,6 +234,8 @@ ob::Cost myMWOptimizationObjective::stateCost(const ob::State *s) const {
         //std::cout<< "Cost " << i << " is " << cost << std::endl;
     }
 
+        delete smp;
+
     //std::cout<< "Totalcost is: " << totalcost << std::endl;
     return ob::Cost(totalCost);
 }
@@ -259,8 +261,8 @@ bool myICOptimizationObjective::setPotentialCost(std::string filename) {
             pointCost.clear();
             segment.clear();
             segmentCost.clear();
-            for (pugi::xml_node_iterator it = doc.child("Potential").first_child();
-                 it != doc.child("Potential").last_child(); ++it) {
+            for (pugi::xml_node_iterator it = doc.child("Potential").begin();
+                 it != doc.child("Potential").end(); ++it) {
                 if (std::string(it->name()) == "Point") {
                     point.push_back(getPoint(it->attribute("p").as_string()));
                     pointCost.push_back(std::pair<double,double>
@@ -320,6 +322,8 @@ ob::Cost myICOptimizationObjective::stateCost(const ob::State *s) const {
         //std::cout<< "Distance " << i << " is " << sqrt(sqDist) << std::endl;
         //std::cout<< "Cost " << i << " is " << cost << std::endl;
     }
+
+    delete smp;
 
     //std::cout<< "Total cost is: " << totalcost << std::endl;
     return ob::Cost(totalCost);
