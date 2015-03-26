@@ -54,7 +54,7 @@ namespace Kautham {
     Sequence(int dim, int M, bool randOffset=false);//true);
 
     //! Simply destructor.
-    ~Sequence(void);
+    ~Sequence();
 
     //! This method returns the code of the cell with grid coordinates "indexes".
     unsigned long getCode(int *indexes);

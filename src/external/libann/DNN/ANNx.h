@@ -149,7 +149,7 @@ public:
     {  lo = annCopyPt(dd, l);  hi = annCopyPt(dd, h);  }
 
     ~ANNorthRect()			// destructor
-    {  delete lo;  delete hi;  lo = hi = NULL;  }
+    {  delete[]lo;  delete[]hi;  lo = hi = NULL;  }
 
     ANNbool inside(int dim, ANNpoint p);// is point p inside rectangle?
 };

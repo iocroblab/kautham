@@ -1033,7 +1033,7 @@
 				vdrp(0) = vdr(0);   vdrp(1) = vdr(1);   vdrp(2) = 0;
 	
 				val(j) = angle_2_vec_F(vdfp, vdrp);
-                double tmp = prod_esc(vdfp,vdrp)/( norm_2(vdfp)*norm_2(vdrp) ;
+                double tmp = prod_esc(vdfp,vdrp)/( norm_2(vdfp)*norm_2(vdrp) );
                 if (tmp < -1. || tmp > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
                 val(j) = acos( tmp );
 			}

@@ -51,6 +51,7 @@ namespace Kautham {
 
 
   SDKSample::~SDKSample() {
+      delete[] index;
       _coords.clear();
   }
 

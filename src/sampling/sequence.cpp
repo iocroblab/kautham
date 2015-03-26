@@ -42,12 +42,15 @@ namespace Kautham {
     if(randOffset)_offset= (unsigned long)(gen1->d_rand()*_maxNumCells);
   }
 
-  Sequence::~Sequence(void){
-    if(_V != NULL){
-              for(unsigned int i=0;i<_dim;i++)
-				  delete[] _V[i];
-			  delete[] _V;
-		  }
+  Sequence::~Sequence(){
+      if (_V) {
+          for(unsigned int i = 0; i < _dim; ++i)
+              delete[] _V[i];
+          delete[] _V;
+      }
+
+      delete[] _indexes;
+
   }
 
   int* Sequence::getIndexes(void){

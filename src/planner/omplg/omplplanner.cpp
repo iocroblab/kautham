@@ -136,6 +136,11 @@ KauthamStateSampler::KauthamStateSampler(const ob::StateSpace *sspace, Planner *
     // _samplerHalton = new HaltonSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
 }
 
+KauthamStateSampler::~KauthamStateSampler() {
+    delete _samplerRandom;
+    delete centersmp;
+}
+
 void KauthamStateSampler::setCenterSample(ob::State *state, double th)
 {
     if(state!=NULL)

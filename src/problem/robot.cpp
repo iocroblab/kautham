@@ -154,6 +154,18 @@ namespace Kautham {
  }
 
 
+ Robot::~Robot() {
+     delete _weights;
+     delete _ikine;
+     delete _constrainKin;
+     for (vector<Link*>::iterator it = links.begin(); it != links.end(); ++it) {
+         delete *it;
+     }
+     delete offMatrix;
+     delete mapMatrix;
+ }
+
+
  bool Robot::setFromDhFile(string robFile, bool useBBOX, progress_struct *progress) {
      //setting numeric parameter to avoid convertions problems
      char *old = setlocale(LC_NUMERIC, "C");

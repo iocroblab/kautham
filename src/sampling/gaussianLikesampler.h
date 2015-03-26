@@ -52,7 +52,13 @@ namespace Kautham{
     GaussianLikeSampler(char dim, char maxLevel, WorkSpace *w);
 
     //! Destructor.
-    ~GaussianLikeSampler() {}
+    ~GaussianLikeSampler() {
+        delete generator;
+        delete sdkgen;
+        delete randgen;
+        delete haltgen;
+        delete ss;
+    }
 
     //! Implements the virtual function. \sa Sample. For ommision, the samples
     //! will be created with their coordinates randomly into their respective cell.
