@@ -141,7 +141,7 @@ namespace Kautham {
         bool trySolve();//reimplemented
         bool setParameters();//reimplemented
         SoSeparator *getIvCspaceScene();//reimplemented
-        void drawCspace(int numrob=0);
+        void drawCspace(unsigned int robot = 0, unsigned int link = 0);
         //void drawCspaceSE3();
         //void drawCspaceRn();
         //void drawCspaceprojections();
