@@ -276,8 +276,7 @@ namespace Kautham {
                 printf("has %i vertices\n",num_vertices);
 
                 mat vector_mat(num_vertices-1,3);
-                gdiam_real *vertex;
-                vertex = new gdiam_real[3*num_vertices];
+                gdiam_real vertex[3*num_vertices];
                 for (int i = 0; i < num_vertices; i++) {
                     for (int j = 0; j < 3; j++) {
                         vertex[3*i+j] = point_vector.at(3*i+j);

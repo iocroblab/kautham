@@ -526,6 +526,8 @@ bool Application::problemSetup(string problemFile){
     }
 
     if (doc != NULL) {
+        if (!arguments || !loadProblem_thread) return false;
+
         if (abort) {
             pthread_mutex_lock(arguments->progress->mutex);
             arguments->progress->abort = abort;

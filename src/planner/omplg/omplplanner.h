@@ -113,6 +113,7 @@ namespace Kautham {
     {
       public:
         KauthamStateSampler(const ob::StateSpace *sspace, Planner *p);
+        ~KauthamStateSampler();
         void setCenterSample(ob::State *state, double th);
         virtual void sampleUniform(ob::State *state);
         virtual void sampleUniformNear(ob::State *state, const ob::State *near, const double distance);

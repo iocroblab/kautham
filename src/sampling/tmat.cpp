@@ -121,42 +121,40 @@ TMat::TMat(unsigned d) {
 	  }
   }
 
-  void TMat::insert(int **vA, int **vB, int dimA, int dimB){
-	  //copy of vA
-      int **tempvA;
-      tempvA = new int*[dimA];
-	  for(int i=0; i<dimA; i++)
-	  {
+  void TMat::insert(int **vA, int **vB, unsigned int dimA, unsigned int dimB){
+      //temporal copy of vA
+      int **tempvA(new int*[dimA]);
+      for(unsigned int i = 0; i < dimA; ++i) {
           tempvA[i] = new int[dimA];
-		  for(int j=0; j<dimA; j++)
-		  {
-			  tempvA[i][j] = vA[i][j];
-		  }
-	  }
+          for (unsigned int j = 0; j < dimA; ++j) {
+              tempvA[i][j] = vA[i][j];
+          }
+      }
 
-	  for(int i=0; i<dimA; i++)
-	  {
-		  for(int j=0;j<dimA;j++)
-		  {
-			  if(tempvA[i][j] != 0)
-			  {
-        			  for(int k=0; k<dimB; k++) {
-            				  for(int l=0; l<dimB; l++) {
-                				  vA[i*dimB + k][j*dimB + l]  = vB[k][l]; 
-            				  }
-				  }
-			  }
-			  else
-			  {
-				  for(int k=0; k<dimB; k++) {
-            				  for(int l=0; l<dimB; l++) {
-                				  vA[i*dimB + k][j*dimB + l] = 0; 
-            				  }
-				  }
-  				
-			  }	
-		  }
-	  }
+      for (unsigned int i = 0; i < dimA; ++i) {
+          for (unsigned int j = 0; j < dimA; ++j) {
+              if (tempvA[i][j] != 0) {
+                  for (unsigned int k = 0; k < dimB; ++k) {
+                      for (unsigned int l = 0; l < dimB; ++l) {
+                          vA[i*dimB + k][j*dimB + l]  = vB[k][l];
+                      }
+                  }
+              } else {
+                  for (unsigned int k = 0; k < dimB; ++k) {
+                      for (unsigned int l = 0; l < dimB; ++l) {
+                          vA[i*dimB + k][j*dimB + l] = 0;
+                      }
+                  }
+
+              }
+          }
+      }
+
+      //delete temporal copy of vA
+      for(unsigned int i = 0; i < dimA; ++i) {
+          delete tempvA[i];
+      }
+      delete tempvA;
   }
 
   //! This method creates the base matrices of the prime numbers involved.
