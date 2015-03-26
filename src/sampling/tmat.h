@@ -60,7 +60,7 @@ namespace Kautham {
 	private:
     void prime_factorization(long int x, int *fact, int *numfactors);
     void compose(int *primefactors, int numfactors, int **vC, int dimC, int trunc=0);
-    void insert(int **vA, int **vB, int dimA, int dimB);
+    void insert(int **vA, int **vB, unsigned int dimA, unsigned int dimB);
 
     //! This method create the matrix properly.
     void createTd();

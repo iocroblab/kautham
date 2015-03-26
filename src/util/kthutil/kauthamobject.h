@@ -55,6 +55,7 @@ namespace Kautham{
       bool            setParametersFromString(const string& par);
   
       inline KauthamObject(){}
+      virtual ~KauthamObject() {}
     protected:
       HASH_S_K      _parameters;
       string        _guiName;

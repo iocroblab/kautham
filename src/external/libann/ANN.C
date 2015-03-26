@@ -151,6 +151,9 @@ ANNpointArray annAllocPts(int n, int dim)	// allocate n pts in dim
     for (int i = 0; i < n; i++) {
 	pa[i] = &(p[i*dim]);
     }
+
+    delete[]p;
+
     return pa;
 }
 

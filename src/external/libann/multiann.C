@@ -347,7 +347,14 @@ void MultiANN::NearestNeighbor(const ANNpoint &x,      	// query point
 	  double norm2 = x[i]*x[i] + x[i+1]*x[i+1] + x[i+2]*x[i+2] + x[i+3]*x[i+3];
 	  fd = fd/(norm1*norm2);
 	}
-    if (fd < -1. || fd > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
+    if (fd < -1. || fd > 1.) {
+        delete []node_list;
+        delete []help_list;
+        delete []d_help;
+        delete []d1;
+
+        throw std::invalid_argument("Called acos(x) with |x| > 1");
+    }
     double dtheta = acos(fabs(fd));//the same as ANN_MIN(acos(fd), acos(-fd));
 	d += ANN_POW(scaling[i]*dtheta);
 	i = i + 3;

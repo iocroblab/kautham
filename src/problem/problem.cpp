@@ -1128,6 +1128,9 @@ namespace Kautham {
                   mapMatrix[i][j][k] = (KthReal)0.0;
               }
           }
+
+          _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
+          _wspace->getRobot(i)->setOffMatrix(offMatrix[i]);
       }
 
       //Load the Offset vector
@@ -1284,22 +1287,6 @@ namespace Kautham {
               cont++;
           }// closing if (nodeType == "Control" )
       }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
-
-      for (int i = 0; i < numRob; i++) {
-          _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
-          /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
-                      for (int k = 0; k < numControls; k++) {
-                          cout << mapMatrix[i][j][k] << " ";
-                      }
-                      cout << endl;
-                  }
-                  cout << endl;*/
-          _wspace->getRobot(i)->setOffMatrix(offMatrix[i]);
-          /*for (int j = 0; j < _wspace->getRobot(i)->getNumJoints()+6;j++) {
-                      cout << offMatrix[i][j] << endl;
-                  }
-                  cout << endl;*/
-      }
 
       return true;
   }
@@ -1589,6 +1576,9 @@ namespace Kautham {
                   mapMatrix[i][j][k] = (KthReal)0.0;
               }
           }
+
+          _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
+          _wspace->getRobot(i)->setOffMatrix(offMatrix[i]);
       }
 
       //Load the Offset vector
@@ -1746,21 +1736,6 @@ namespace Kautham {
           }// closing if (nodeType == "Control" )
       }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
 
-      for (int i = 0; i < numObs; i++) {
-          _wspace->getObstacle(i)->setMapMatrix(mapMatrix[i]);
-          /*for (int j = 0; j < _wspace->getObstacle(i)->getNumJoints()+6;j++) {
-                      for (int k = 0; k < _wspace->getNumRobControls(); k++) {
-                          cout << mapMatrix[i][j][k] << " ";
-                      }
-                      cout << endl;
-                  }
-                  cout << endl;*/
-          _wspace->getObstacle(i)->setOffMatrix(offMatrix[i]);
-          /*for (int j = 0; j < _wspace->getObstacle(i)->getNumJoints()+6;j++) {
-                      cout << offMatrix[i][j] << endl;
-                  }
-                  cout << endl;*/
-      }
       return true;
   }
 
@@ -1768,15 +1743,14 @@ namespace Kautham {
   bool Problem::setFixedObstacleControls() {
       int numObs = _wspace->getNumObstacles();
       int numDOFs;
-      KthReal **offMatrix;
-      offMatrix = new KthReal*[numObs];
+      KthReal *offMatrix;
       for (int i = 0; i < numObs; i++) {
           numDOFs = _wspace->getObstacle(i)->getNumJoints()+6;
-          offMatrix[i] = new KthReal[numDOFs];
+          offMatrix = new KthReal[numDOFs];
           for (int j = 0; j < numDOFs; j++) {
-              offMatrix[i][j] = (KthReal)0.5;
+              offMatrix[j] = 0.5;
           }
-          _wspace->getObstacle(i)->setOffMatrix(offMatrix[i]);
+          _wspace->getObstacle(i)->setOffMatrix(offMatrix);
       }
 
       return true;

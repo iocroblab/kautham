@@ -107,6 +107,8 @@ namespace Kautham {
 
     Robot(string robFile, KthReal robScale, bool useBBOX = false, progress_struct *progress = NULL); //!<  Constructor
 
+    ~Robot();
+
     inline bool isArmed() {return armed;} //!< Returns true if the Robot is correctly armed
 
     void setMapMatrix(KthReal **MapMatrix); //!< Sets the mapMatrix.
