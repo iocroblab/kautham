@@ -234,8 +234,6 @@ ob::Cost myMWOptimizationObjective::stateCost(const ob::State *s) const {
         //std::cout<< "Cost " << i << " is " << cost << std::endl;
     }
 
-        delete smp;
-
     //std::cout<< "Totalcost is: " << totalcost << std::endl;
     return ob::Cost(totalCost);
 }
@@ -301,6 +299,7 @@ ob::Cost myICOptimizationObjective::stateCost(const ob::State *s) const {
             smp->getMappedConf()[0].getSE3().getPos().at(1),
             smp->getMappedConf()[0].getSE3().getPos().at(2));
     //std::cout << "The state is: " << p << std::endl;
+    delete smp;
 
     double sqDist, cost;
     double totalCost = 0.;

@@ -53,14 +53,15 @@ namespace Kautham{
   }
 
   bool Sample::setCoords(std::vector<KthReal>& coords){
-    if(_coords.size() == _dim){
-      for(unsigned int i = 0; i < _dim; i++)
-        this->_coords[i] = coords[i];
-	  //if sample has already a config, clear it
-	  if(_config.size()!=0) _config.clear();
-      return true;
-    }else
-      return false;
+      if (coords.size() == _dim) {
+          for (unsigned int i = 0; i < _dim; ++i)
+              _coords[i] = coords[i];
+          //if sample has already a config, clear it
+          if (_config.size() != 0) _config.clear();
+          return true;
+      } else {
+          return false;
+      }
   }
 
   string Sample::print(bool onlyVal) {
