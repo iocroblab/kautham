@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTStar_bigcube">
+	<Robot robot="robots/quadrotor.urdf" scale="1">
+		<Limits name="X" min="-16000" max="20000" />
+		<Limits name="Y" min="15000" max="20500" />
+		<Limits name="Z" min="0" max="14000" />
+		<Home TH="0" WZ="1" WY="0" WX="0" Z="0" Y="0" X="0" />
+	</Robot>
+
+	<Obstacle obstacle="obstacles/powerplant.iv" scale="15">
+		<Home TH="0" WZ="1" WY="0" WX="0" Z="0" Y="0" X="0" />
+	</Obstacle>
+
+	<Controls robot="controls/quadrotor_R3.cntr" />
+
+	<Planner>
+		<Parameters>
+			<Name>omplRRTStar</Name>
+			<Potential potential="controls/factory.xml"/>
+			<Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">2</Parameter>
+			<Parameter name="Max Planning Time">20</Parameter>
+			<Parameter name="Incremental (0/1)">1</Parameter>
+			<Parameter name="Path Bias">0.1</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">400</Parameter>
+			<Parameter name="DelayCC (0/1)">0</Parameter>
+			<Parameter name="KP">9.302466774693782e-06</Parameter>
+			<Parameter name="KI">1.749029388045119e-05</Parameter>
+			<Parameter name="KD">0.329262471072515</Parameter>
+			<Parameter name="Simplify Solution">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="3">0.96 0.96 0.04</Init>
+				<Goal dim="3">0.04 0.04 0.96</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
