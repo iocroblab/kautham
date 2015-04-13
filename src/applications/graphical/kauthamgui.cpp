@@ -484,7 +484,7 @@ bool Application::problemSetup(string problemFile){
             }
         }
     } catch (const KthExcp& excp) {
-        qDebug() << excp.what() << endl;
+        qDebug() << excp.what() << endl << excp.more() << endl;
 
         mainWindow->setDisabled(true);
         QMessageBox msgBox(mainWindow);
@@ -544,7 +544,7 @@ bool Application::problemSetup(string problemFile){
             msgBox.setWindowTitle("Error encountered");
             msgBox.setText("The problem couldn't be loaded");
             msgBox.setInformativeText(arguments->excp->what());
-            if (strcmp(arguments->excp->more(),"") == 0) {
+            if (strcmp(arguments->excp->more(),"") != 0) {
                 msgBox.setDetailedText(arguments->excp->more());
             }
             msgBox.setStandardButtons(QMessageBox::Ok);
