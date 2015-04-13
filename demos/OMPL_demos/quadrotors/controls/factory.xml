@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<Potential>
+	<Segment p0="-16000 19500 3000" p1="20000 19500 3000" repulse="-10" diffusion="0.000001"/>
+	<Segment p0="-16000 19500 7000" p1="20000 19500 7000" repulse="-10" diffusion="0.000001"/>	
+	<Segment p0="-16000 19500 11000" p1="20000 19500 11000" repulse="-10" diffusion="0.000001"/>		
+	<Segment p0="-18300 19705 0" radius="2500" p1="-18300 19705 30000" repulse="1" diffusion="0.00000075"/>
+	<Segment p0="-9300 17440 0" radius="1700" p1="-9300 17440 30000" repulse="1" diffusion="0.00000075"/>
+	<Segment p0="-50 17440 0" radius="1700" p1="-50 17440 30000" repulse="1" diffusion="0.00000075"/>
+	<Segment p0="9000 17440 0" radius="1700" p1="9000 17440 30000" repulse="1" diffusion="0.00000075"/>
+	<Segment p0="18100 17440 0" radius="1700" p1="18100 17440 30000" repulse="1" diffusion="0.00000075"/>
+	<Point p="-20000 17500 15000" repulse="-1" diffusion="0.0000000007"/>
+</Potential>

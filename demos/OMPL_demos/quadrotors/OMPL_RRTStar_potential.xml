@@ -16,14 +16,14 @@
 			<Potential potential="controls/potential.xml"/>
 			<Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">2</Parameter>
 			<Parameter name="Max Planning Time">20</Parameter>
-			<Parameter name="Incremental(0/1)">1</Parameter>
+			<Parameter name="Incremental (0/1)">1</Parameter>
 			<Parameter name="Path Bias">0</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Range">2</Parameter>
 			<Parameter name="DelayCC (0/1)">0</Parameter>
-			<Parameter name="KP">0.009631591</Parameter>
-			<Parameter name="KI">0.000185393</Parameter>
-			<Parameter name="KD">0.008838841</Parameter>
+			<Parameter name="KP">0.00321053</Parameter>
+			<Parameter name="KI">0.000061798</Parameter>
+			<Parameter name="KD">0.00294628</Parameter>
 			<Parameter name="Simplify Solution">1</Parameter>
 		</Parameters>
 		<Queries>
