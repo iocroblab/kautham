@@ -919,7 +919,8 @@ SoSeparator *omplPlanner::getIvCspaceScene()
 }
 
 
-//! This routine allows to draw the 2D projection of a roadmap or tree. The one corresponding to robot number numrob is drawn.
+//! This routine allows to draw the 2D projection of a roadmap or tree.
+//! The one corresponding to robot number numrob is drawn.
 void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
     if (!_sceneCspace) return;
 
@@ -931,8 +932,8 @@ void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
 
 
     //Get the subspace
-    ob::StateSpacePtr stateSpace = ((ob::StateSpacePtr)space->as<ob::CompoundStateSpace>()->getSubspace(robot)->
-                                    as<ob::CompoundStateSpace>()->getSubspace(link));
+    ob::StateSpacePtr stateSpace(space->as<ob::CompoundStateSpace>()->getSubspace(robot)->
+                                 as<ob::CompoundStateSpace>()->getSubspace(link));
 
 
     //Set space bounds
@@ -965,23 +966,18 @@ void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
 
 
     //Use the projection associated to the subspace of the robot passed as a parameter.
-    //string projectionName = static_cast<ostringstream*>(&(ostringstream() << "drawprojection" << robot))->str();
-    //ob::ProjectionEvaluatorPtr projection = space->getProjection(projectionName.c_str());
-
-    string projname = "drawprojection"; //
-    string robotnumber = static_cast<ostringstream*>( &(ostringstream() << robot) )->str();//the string correspoding to number numrob
-    projname.append(robotnumber);
-    ob::ProjectionEvaluatorPtr projection = space->getProjection(projname.c_str());
-
+    string projectionName = "drawprojection" + static_cast<ostringstream*>
+            (&(ostringstream() << robot))->str();
+    ob::ProjectionEvaluatorPtr projection(space->getProjection(projectionName));
     ob::EuclideanProjection state(k);
 
 
     //Draw path
     if (_solved) {
         SoDrawStyle *drawStyle(new SoDrawStyle);
-        drawStyle->lineWidth = 6.;
+        drawStyle->lineWidth = 4.;
 
-        std::vector<ob::State*> &pathStates = ss->getSolutionPath().getStates();
+        std::vector<ob::State*> &pathStates(ss->getSolutionPath().getStates());
         float vertices[pathStates.size()][3];
         for (unsigned int i = 0; i < pathStates.size(); ++i) {
             projection->project(pathStates.at(i),state);
@@ -1029,7 +1025,6 @@ void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
     float vertices[pdata->numVertices()][3];
     int32_t coordIndices[3*pdata->numEdges()];
     std::vector<unsigned int> outgoingVertices;
-    ob::Cost edgeWeight;
     unsigned int p = 0;
     for (unsigned int i = 0; i < pdata->numVertices(); ++i) {
         projection->project(pdata->getVertex(i).getState(),state);
@@ -1049,7 +1044,8 @@ void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
             coordIndices[3*p+1] = *it;
             coordIndices[3*p+2] = SO_END_LINE_INDEX;
 
-            pdata->getEdgeWeight(i,*it,&edgeWeight);
+            //ob::Cost edgeWeight;
+            //pdata->getEdgeWeight(i,*it,&edgeWeight);
 
             p++;
         }

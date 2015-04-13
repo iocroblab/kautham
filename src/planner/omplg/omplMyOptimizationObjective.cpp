@@ -322,8 +322,6 @@ ob::Cost myICOptimizationObjective::stateCost(const ob::State *s) const {
         //std::cout<< "Cost " << i << " is " << cost << std::endl;
     }
 
-    delete smp;
-
     //std::cout<< "Total cost is: " << totalcost << std::endl;
     return ob::Cost(totalCost);
 }
