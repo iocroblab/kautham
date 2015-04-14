@@ -86,8 +86,8 @@ namespace Kautham {
       SoSeparator*      _pathSeparator; //!< This is the SoSeparator to visualize the solution path. It is attached to the robot model.
       int               _linkPathDrawn; //!< This is the number of the link whose path will be drawn
       list<attObj>      _attachedObject; //!< List of objects attached to the robot gripper.
-      KthReal           _spatialLimits[7][2]; //!< Limits of motions of the base of the robot, in world coordinates.
-      KthReal           _homeLimits[7][2]; //!< Limits of motions of the base of the robot, with respect to the robot reference frame.
+      KthReal           _spatialLimits[3][2]; //!< Limits of motions of the base of the robot, in world coordinates.
+      KthReal           _homeLimits[3][2]; //!< Limits of motions of the base of the robot, with respect to the robot reference frame.
       vector<Link*>     links; //!< Vector of the robot links, starting at the base and ending at the end effector.In case of Tree robots, each branch is inserted sequentially.
       bool              _autocoll; //!< Flag that indicates if the robot is auto-colliding
       bool              _hasChanged; //!< Flag that indicates if the robot has changed its configuration. To speed up some computations.
@@ -248,7 +248,7 @@ namespace Kautham {
     KthReal distanceCheck(Robot *rob, bool min = true);
 
     //! Sets the values of _spatialLimits[member]
-    bool setLimits(int member, KthReal min, KthReal max);
+    bool setLimits(unsigned int member, KthReal min, KthReal max);
 
     //! Returns a pointer to the visualitzation model
     SoSeparator* getModel();

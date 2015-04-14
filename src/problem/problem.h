@@ -71,7 +71,7 @@
 #include <planner/omplg/omplKPIECEplanner.h>
 #include <planner/omplg/omplKPIECEplanner.h>
 #include <planner/omplg/omplPCARRTplanner.h>
-#include <planner/omplg/omplMyPCARRTplanner.h>
+#include <planner/omplg/omplFOSRRTplanner.h>
 #include <planner/omplc/omplcRRTplanner.h>
 #include <planner/omplc/omplcRRTcarplanner.h>
 #include <planner/omplc/omplcRRTf16planner.h>
@@ -240,7 +240,6 @@ namespace Kautham {
     xml_document *parseProblemFile(string filename, vector <string> def_path, int *links2Load);
 
   private:
-    const static KthReal    _toRad;
     WorkSpace*              _wspace;
     SampleSet*              _cspace;
     vector<State>           _sspace;
