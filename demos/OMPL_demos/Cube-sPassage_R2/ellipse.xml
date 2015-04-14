@@ -9,8 +9,8 @@
 	<Controls robot="controls/bigcube_R2.cntr" />
 	<Planner>
 		<Parameters>
-			<Name>omplMyPCARRT</Name>
-			<PCAkdtree pcakdtree="controls/ellipsePCAkdtree.xml"/>
+			<Name>omplFOSRRT</Name>
+			<SynergyTree SynergyTree="controls/ellipseSynergyTree.xml"/>
 			<Parameter name="Max Planning Time">0.5</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Range">0.02</Parameter>

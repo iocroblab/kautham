@@ -12,8 +12,8 @@
 	<Controls robot="controls/bigcube_R2.cntr" />
 	<Planner>
 		<Parameters>
-			<Name>omplMyPCARRT</Name>
-			<PCAkdtree pcakdtree="controls/mazePCAkdtree.xml"/>
+			<Name>omplFOSRRT</Name>
+			<SynergyTree SynergyTree="controls/mazeSynergyTree.xml"/>
 			<Parameter name="Max Planning Time">10</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Range">5</Parameter>

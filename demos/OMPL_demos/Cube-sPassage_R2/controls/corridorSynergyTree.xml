@@ -24,29 +24,29 @@
 		<Root axis="1" location="0.675449">
 			<Left axis="0" location="0.261538">
 				<Left axis="1" location="0.158894">
-					<Left pmdSet="0" />
-					<Right pmdSet="1" />
+					<Left synergy="0" />
+					<Right synergy="1" />
 				</Left>
 				<Right axis="0" location="0.744769">
 					<Left axis="0" location="0.574762">
-						<Left pmdSet="2" />
+						<Left synergy="2" />
 						<Right axis="0" location="0.657143">
-							<Left pmdSet="3" />
-							<Right pmdSet="4" />
+							<Left synergy="3" />
+							<Right synergy="4" />
 						</Right>
 					</Left>
 					<Right axis="1" location="0.17983">
-						<Left pmdSet="5" />
-						<Right pmdSet="6" />
+						<Left synergy="5" />
+						<Right synergy="6" />
 					</Right>
 				</Right>
 			</Left>
 			<Right axis="0" location="0.330681">
 				<Left axis="1" location="0.821554">
-					<Left pmdSet="7" />
-					<Right pmdSet="8" />
+					<Left synergy="7" />
+					<Right synergy="8" />
 				</Left>
-				<Right pmdSet="9" />
+				<Right synergy="9" />
 			</Right>
 		</Root>
 	</Tree>

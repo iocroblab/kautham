@@ -24,14 +24,14 @@
 		<Root axis="0" location="0.521187">
 			<Left axis="0" location="0.166665">
 				<Left axis="1" location="0.427803">
-					<Left pmdSet="0" />
-					<Right pmdSet="1" />
+					<Left synergy="0" />
+					<Right synergy="1" />
 				</Left>
-				<Right pmdSet="2" />
+				<Right synergy="2" />
 			</Left>
 			<Right axis="0" location="0.811874">
-				<Left pmdSet="3" />
-				<Right pmdSet="4" />
+				<Left synergy="3" />
+				<Right synergy="4" />
 			</Right>
 		</Root>
 	</Tree>
