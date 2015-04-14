@@ -26,9 +26,10 @@
 #include "problem.h"
 #include <util/kthutil/kauthamexception.h>
 
+#define TO_RAD(x) x*(M_PI/180.0)
+
 
 namespace Kautham {
-  const KthReal Problem::_toRad = (KthReal)(M_PI/180.0);
   Problem::Problem() {
       _wspace = NULL;
       _planner = NULL;
@@ -169,18 +170,18 @@ namespace Kautham {
 
       else if (name == "PRM Hand IROS")
           _planner = new IOC::PRMHandPlannerIROS(CONTROLSPACE, sinit, sgoal,
-                                                 _cspace, _sampler, _wspace, 5, (KthReal)0.001 );
+                                                 _cspace, _sampler, _wspace, 5, 0.001 );
       else if (name == "PRM Hand ICRA")
           _planner = new IOC::PRMHandPlannerICRA(CONTROLSPACE, sinit, sgoal,
-                                                 _cspace, _sampler, _wspace, 100, 5, (KthReal)0.010, 5);
+                                                 _cspace, _sampler, _wspace, 100, 5, 0.010, 5);
 
       else if (name == "PRMAURO HandArm")
           _planner = new IOC::PRMAUROHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
-                                                    _sampler, _wspace, 10, (KthReal)0.0010, 10);
+                                                    _sampler, _wspace, 10, 0.0010, 10);
 
       else if (name == "PRM RobotHand-Const ICRA")
           _planner = new IOC::PRMRobotHandConstPlannerICRA(CONTROLSPACE, sinit, sgoal, _cspace,
-                                                           _sampler, _wspace, 3, (KthReal)50.0);
+                                                           _sampler, _wspace, 3, 50.0);
       else if (name == "MyPlanner")
           _planner = new IOC::MyPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 
@@ -199,7 +200,7 @@ namespace Kautham {
 #if defined(KAUTHAM_USE_ARMADILLO)
       else if (name == "PRMPCA HandArm")
           _planner = new IOC::PRMPCAHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
-                                                   _sampler, _wspace, 10,0, (KthReal)0.0010, 10,0.0,0.0);
+                                                   _sampler, _wspace, 10,0, 0.0010, 10,0.0,0.0);
 #endif
 #endif
 #if defined(KAUTHAM_USE_GUIBRO)
@@ -249,8 +250,8 @@ namespace Kautham {
       else if (name == "omplPCARRT")
           _planner = new omplplanner::omplPCARRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-      else if (name == "omplMyPCARRT")
-          _planner = new omplplanner::omplMyPCARRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+      else if (name == "omplFOSRRT")
+          _planner = new omplplanner::omplFOSRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
       else if (name == "omplcRRT")
           _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
@@ -314,10 +315,10 @@ namespace Kautham {
           if (plannerName != "") {
               if (createPlanner(plannerName,ssptr)) {
                   //Set especial parameters
-                  if (plannerName == "omplMyPCARRT") {
-                      ((omplplanner::omplMyPCARRTPlanner*)_planner)->
-                              setPCAkdtree(doc->child("Problem").child("Planner").child("Parameters").
-                                           child("PCAkdtree").attribute("pcakdtree").as_string());
+                  if (plannerName == "omplFOSRRT") {
+                      ((omplplanner::omplFOSRRTPlanner*)_planner)->
+                              setSynergyTree(doc->child("Problem").child("Planner").child("Parameters").
+                                           child("SynergyTree").attribute("SynergyTree").as_string());
                   } else if (plannerName == "omplTRRT") {
                       ((omplplanner::omplTRRTPlanner*)_planner)->
                               setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
@@ -387,7 +388,7 @@ namespace Kautham {
 
                       tmpSampPointer = new Sample(numObsCntr);
                       for (unsigned i=0; i<numObsCntr; i++)
-                          obsCoords[i] = (KthReal)atof(tokens[i].c_str());
+                          obsCoords[i] = atof(tokens[i].c_str());
 
                       tmpSampPointer->setCoords(obsCoords);
 
@@ -404,7 +405,7 @@ namespace Kautham {
               } else {
                   tmpSampPointer = new Sample(numObsCntr);
                   for (unsigned i=0; i<numObsCntr; i++)
-                      obsCoords[i] = (KthReal)0.5;
+                      obsCoords[i] = 0.5;
 
                   tmpSampPointer->setCoords(obsCoords);
 
@@ -427,7 +428,7 @@ namespace Kautham {
 
                   tmpSampPointer = new Sample(numRobCntr);
                   for(unsigned i=0; i<numRobCntr; i++)
-                      robCoords[i] = (KthReal)atof(tokens[i].c_str());
+                      robCoords[i] = atof(tokens[i].c_str());
 
                   tmpSampPointer->setCoords(robCoords);
                   // Adding the mapping to configuration space with the collision test.
@@ -460,7 +461,7 @@ namespace Kautham {
 
                   tmpSampPointer = new Sample(numRobCntr);
                   for(unsigned i=0; i<numRobCntr; i++)
-                      robCoords[i] = (KthReal)atof(tokens[i].c_str());
+                      robCoords[i] = atof(tokens[i].c_str());
 
                   tmpSampPointer->setCoords(robCoords);
                   // Adding the mapping to configuration space with the collision test.
@@ -505,7 +506,7 @@ namespace Kautham {
       try{
           if (val.size() !=  _currentRobControls.size()) return false;
           for(unsigned int i=0; i < val.size(); i++)
-              _currentRobControls[i] = (KthReal)val[i];
+              _currentRobControls[i] = val[i];
           return true;
       }catch(...){
           return false;
@@ -518,7 +519,7 @@ namespace Kautham {
       try{
           if (val.size() !=  _currentObsControls.size()) return false;
           for(unsigned int i=0; i < val.size(); i++)
-              _currentObsControls[i] = (KthReal)val[i];
+              _currentObsControls[i] = val[i];
           return true;
       }catch(...){
           return false;
@@ -635,7 +636,7 @@ namespace Kautham {
 
           node = node.child("Planner").child("Parameters");
           //find the PCAkdatree file and set its complete path if found
-          if (!findAllFiles(&node,"PCAkdtree","pcakdtree",def_path)) return false;
+          if (!findAllFiles(&node,"SynergyTree","SynergyTree",def_path)) return false;
 
           //find the potential file and set its complete path if found
           if (!findAllFiles(&node,"Potential","potential",def_path)) return false;
@@ -914,7 +915,7 @@ namespace Kautham {
 
   bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struct *progress) {
       Robot *rob = new Robot(robot_node->attribute("robot").as_string(),
-                           (KthReal)robot_node->attribute("scale").as_double(),useBBOX,progress);
+                           robot_node->attribute("scale").as_double(1.),useBBOX,progress);
 
       if (!rob->isArmed()) return false;
 
@@ -936,7 +937,7 @@ namespace Kautham {
               rob->setInverseKinematic( Kautham::NOINVKIN);
           else
               rob->setInverseKinematic(Kautham::UNIMPLEMENTED);
-      }else
+      } else
           rob->setInverseKinematic(Kautham::NOINVKIN);
 
       // Setup the Constrained Kinematic if it has one.
@@ -965,26 +966,14 @@ namespace Kautham {
       while (limits_node) {
           name = limits_node.attribute("name").as_string();
           if (name == "X") {
-              rob->setLimits(0, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
+              rob->setLimits(0, limits_node.attribute("min").as_double(),
+                             limits_node.attribute("max").as_double());
           } else if (name == "Y") {
-              rob->setLimits(1, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
+              rob->setLimits(1, limits_node.attribute("min").as_double(),
+                             limits_node.attribute("max").as_double());
           } else if (name == "Z") {
-              rob->setLimits(2, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
-          } else if (name == "WX") {
-              rob->setLimits(3, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
-          } else if (name == "WY") {
-              rob->setLimits(4, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
-          } else if (name == "WZ") {
-              rob->setLimits(5, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
-          } else if (name == "TH") {
-              rob->setLimits(6, (KthReal)limits_node.attribute("min").as_double() * _toRad,
-                             (KthReal)limits_node.attribute("max").as_double() * _toRad);
+              rob->setLimits(2, limits_node.attribute("min").as_double(),
+                             limits_node.attribute("max").as_double());
           }
 
           limits_node = limits_node.next_sibling("Limits");
@@ -995,13 +984,13 @@ namespace Kautham {
           // If robot hasn't a home, it will be assumed in the origin.
           SE3Conf tmpC;
           vector<KthReal> cords(7);
-          cords[0] = (KthReal)home_node.attribute("X").as_double();
-          cords[1] = (KthReal)home_node.attribute("Y").as_double();
-          cords[2] = (KthReal)home_node.attribute("Z").as_double();
-          cords[3] = (KthReal)home_node.attribute("WX").as_double();
-          cords[4] = (KthReal)home_node.attribute("WY").as_double();
-          cords[5] = (KthReal)home_node.attribute("WZ").as_double();
-          cords[6] = (KthReal)home_node.attribute("TH").as_double() * _toRad;
+          cords[0] = home_node.attribute("X").as_double();
+          cords[1] = home_node.attribute("Y").as_double();
+          cords[2] = home_node.attribute("Z").as_double();
+          cords[3] = home_node.attribute("WX").as_double();
+          cords[4] = home_node.attribute("WY").as_double();
+          cords[5] = home_node.attribute("WZ").as_double();
+          cords[6] = TO_RAD(home_node.attribute("TH").as_double());
 
           // Here is needed to convert from axis-angle to
           // quaternion internal represtantation.
@@ -1034,7 +1023,7 @@ namespace Kautham {
       }
 
       SE3Conf tmpC;
-      home[6] = home[6]*_toRad;
+      home[6] = TO_RAD(home[6]);
       // Here is needed to convert from axis-angle to
       // quaternion internal represtantation.
       SE3Conf::fromAxisToQuaternion(home);
@@ -1107,7 +1096,7 @@ namespace Kautham {
       _currentRobControls.clear();
       _currentRobControls.resize(_wspace->getNumRobControls());
       for(unsigned i = 0; i<_currentRobControls.size(); i++)
-          _currentRobControls[i] = (KthReal)0.0;
+          _currentRobControls[i] = 0.0;
 
       //Creating the mapping and offset Matrices between controls
       //and DOF parameters and initializing them.
@@ -1123,9 +1112,9 @@ namespace Kautham {
           offMatrix[i] = new KthReal[numDOFs];
           for (int j = 0; j < numDOFs; j++) {
               mapMatrix[i][j] = new KthReal[numControls];
-              offMatrix[i][j] = (KthReal)0.5;
+              offMatrix[i][j] = 0.5;
               for (int k = 0; k < numControls; k++) {
-                  mapMatrix[i][j][k] = (KthReal)0.0;
+                  mapMatrix[i][j][k] = 0.0;
               }
           }
 
@@ -1168,28 +1157,28 @@ namespace Kautham {
 
           if ( dofName == "X"){
               _wspace->getRobot(i)->setSE3(true);
-              offMatrix[i][0] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][0] = (*it).attribute("value").as_double();
           }else if ( dofName == "Y"){
               _wspace->getRobot(i)->setSE3(true);
-              offMatrix[i][1] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][1] = (*it).attribute("value").as_double();
           }else if ( dofName == "Z"){
               _wspace->getRobot(i)->setSE3(true);
-              offMatrix[i][2] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][2] = (*it).attribute("value").as_double();
           }else if ( dofName == "X1"){
               _wspace->getRobot(i)->setSE3(true);
-              offMatrix[i][3] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][3] = (*it).attribute("value").as_double();
           }else if ( dofName == "X2"){
               _wspace->getRobot(i)->setSE3(true);
-              offMatrix[i][4] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][4] = (*it).attribute("value").as_double();
           }else if ( dofName == "X3"){
               _wspace->getRobot(i)->setSE3(true);
-              offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][5] = (*it).attribute("value").as_double();
           }else{    // It's not a SE3 control and could have any name.
               // Find the index orden into the links vector without the first static link.
               unsigned ind = 0;
               while (ind < _wspace->getRobot(i)->getNumJoints()) {
                   if ( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
-                      offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
+                      offMatrix[i][6 + ind ] = (*it).attribute("value").as_double();
                       break;
                   } else {
                       ind++;
@@ -1214,7 +1203,7 @@ namespace Kautham {
               xml_node::iterator itDOF;
               KthReal eigVal = 1;
               if ((*it).attribute("eigValue")) {
-                  eigVal = (KthReal) (*it).attribute("eigValue").as_double();
+                  eigVal =  (*it).attribute("eigValue").as_double();
               }
 
               for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
@@ -1248,28 +1237,28 @@ namespace Kautham {
 
                   if ( dofName == "X"){
                       _wspace->getRobot(i)->setSE3(true);
-                      mapMatrix[i][0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][0][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else if ( dofName == "Y"){
                       _wspace->getRobot(i)->setSE3(true);
-                      mapMatrix[i][1][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][1][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else if ( dofName == "Z"){
                       _wspace->getRobot(i)->setSE3(true);
-                      mapMatrix[i][2][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][2][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else if ( dofName == "X1"){
                       _wspace->getRobot(i)->setSE3(true);
-                      mapMatrix[i][3][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][3][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else if ( dofName == "X2"){
                       _wspace->getRobot(i)->setSE3(true);
-                      mapMatrix[i][4][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][4][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else if ( dofName == "X3"){
                       _wspace->getRobot(i)->setSE3(true);
-                      mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][5][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else{  // It's not a SE3 control and could have any name.
                       // Find the index orden into the links vector without the first static link.
                       unsigned ind = 0;
                       while (ind < _wspace->getRobot(i)->getNumJoints()) {
                           if ( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
-                              mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              mapMatrix[i][6 + ind ][cont] = eigVal * itDOF->attribute("value").as_double();
                               break;
                           } else {
                               ind++;
@@ -1321,7 +1310,7 @@ namespace Kautham {
       _currentRobControls.clear();
       _currentRobControls.resize(_wspace->getNumRobControls());
       for(unsigned i = 0; i<_currentRobControls.size(); i++)
-          _currentRobControls[i] = (KthReal)0.0;
+          _currentRobControls[i] = 0.0;
 
       KthReal ***mapMatrix;
       KthReal **offMatrix;
@@ -1344,11 +1333,11 @@ namespace Kautham {
           mapMatrix[i] = new KthReal*[numDOFs];
           offMatrix[i] = new KthReal[numDOFs];
           for (uint j = 0; j < numDOFs; j++) {
-              offMatrix[i][j] = (KthReal)0.5;
+              offMatrix[i][j] = 0.5;
               mapMatrix[i][j] = new KthReal[numControls];
 
               for (uint k = 0; k < numControls; k++) {
-                  mapMatrix[i][j][k] = (KthReal)0.0;
+                  mapMatrix[i][j][k] = 0.0;
               }
 
               movDOF = false;
@@ -1394,7 +1383,7 @@ namespace Kautham {
               if (movDOF) {
                   if (controlsName != "") controlsName.append("|");
                   controlsName.append(robotName+"/"+DOFname);
-                  mapMatrix[i][j][c] = (KthReal)1.0;
+                  mapMatrix[i][j][c] = 1.0;
                   c++;
               }
           }
@@ -1410,7 +1399,7 @@ namespace Kautham {
 
   bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, progress_struct *progress) {
       Robot *obs= new Robot(obstacle_node->attribute("obstacle").as_string(),
-                      (KthReal)obstacle_node->attribute("scale").as_double(),useBBOX,progress);
+                      obstacle_node->attribute("scale").as_double(1.),useBBOX,progress);
 
       if (!obs->isArmed()) return false;
 
@@ -1420,26 +1409,14 @@ namespace Kautham {
       while (limits_node) {
           name = limits_node.attribute("name").as_string();
           if (name == "X") {
-              obs->setLimits(0, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
+              obs->setLimits(0, limits_node.attribute("min").as_double(),
+                             limits_node.attribute("max").as_double());
           } else if (name == "Y") {
-              obs->setLimits(1, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
+              obs->setLimits(1, limits_node.attribute("min").as_double(),
+                             limits_node.attribute("max").as_double());
           } else if (name == "Z") {
-              obs->setLimits(2, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
-          } else if (name == "WX") {
-              obs->setLimits(3, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
-          } else if (name == "WY") {
-              obs->setLimits(4, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
-          } else if (name == "WZ") {
-              obs->setLimits(5, (KthReal)limits_node.attribute("min").as_double(),
-                             (KthReal)limits_node.attribute("max").as_double());
-          } else if (name == "TH") {
-              obs->setLimits(6, (KthReal)limits_node.attribute("min").as_double() * _toRad,
-                             (KthReal)limits_node.attribute("max").as_double() * _toRad);
+              obs->setLimits(2, limits_node.attribute("min").as_double(),
+                             limits_node.attribute("max").as_double());
           }
 
           limits_node = limits_node.next_sibling("Limits");
@@ -1450,13 +1427,13 @@ namespace Kautham {
           // If robot hasn't a home, it will be assumed in the origin.
           SE3Conf tmpC;
           vector<KthReal> cords(7);
-          cords[0] = (KthReal)home_node.attribute("X").as_double();
-          cords[1] = (KthReal)home_node.attribute("Y").as_double();
-          cords[2] = (KthReal)home_node.attribute("Z").as_double();
-          cords[3] = (KthReal)home_node.attribute("WX").as_double();
-          cords[4] = (KthReal)home_node.attribute("WY").as_double();
-          cords[5] = (KthReal)home_node.attribute("WZ").as_double();
-          cords[6] = (KthReal)home_node.attribute("TH").as_double() * _toRad;
+          cords[0] = home_node.attribute("X").as_double();
+          cords[1] = home_node.attribute("Y").as_double();
+          cords[2] = home_node.attribute("Z").as_double();
+          cords[3] = home_node.attribute("WX").as_double();
+          cords[4] = home_node.attribute("WY").as_double();
+          cords[5] = home_node.attribute("WZ").as_double();
+          cords[6] = TO_RAD(home_node.attribute("TH").as_double());
 
           // Here is needed to convert from axis-angle to
           // quaternion internal represtantation.
@@ -1485,7 +1462,7 @@ namespace Kautham {
       if (!obs->isArmed()) return false;
 
       SE3Conf* tmpC = new SE3Conf();
-      home[6] = home[6]*_toRad;
+      home[6] = TO_RAD(home[6]);
       // Here is needed to convert from axis-angle to
       // quaternion internal represtantation.
       SE3Conf::fromAxisToQuaternion(home);
@@ -1555,7 +1532,7 @@ namespace Kautham {
       _currentObsControls.clear();
       _currentObsControls.resize(_wspace->getNumObsControls());
       for(unsigned i = 0; i<_currentObsControls.size(); i++)
-          _currentObsControls[i] = (KthReal)0.0;
+          _currentObsControls[i] = 0.0;
 
       //Creating the mapping and offset Matrices between controls
       //and DOF parameters and initializing them.
@@ -1571,9 +1548,9 @@ namespace Kautham {
           offMatrix[i] = new KthReal[numDOFs];
           for (int j = 0; j < numDOFs; j++) {
               mapMatrix[i][j] = new KthReal[numControls];
-              offMatrix[i][j] = (KthReal)0.5;
+              offMatrix[i][j] = 0.5;
               for (int k = 0; k < numControls; k++) {
-                  mapMatrix[i][j][k] = (KthReal)0.0;
+                  mapMatrix[i][j][k] = 0.0;
               }
           }
 
@@ -1616,28 +1593,28 @@ namespace Kautham {
 
           if ( dofName == "X"){
               _wspace->getObstacle(i)->setSE3(true);
-              offMatrix[i][0] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][0] = (*it).attribute("value").as_double();
           }else if ( dofName == "Y"){
               _wspace->getObstacle(i)->setSE3(true);
-              offMatrix[i][1] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][1] = (*it).attribute("value").as_double();
           }else if ( dofName == "Z"){
               _wspace->getObstacle(i)->setSE3(true);
-              offMatrix[i][2] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][2] = (*it).attribute("value").as_double();
           }else if ( dofName == "X1"){
               _wspace->getObstacle(i)->setSE3(true);
-              offMatrix[i][3] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][3] = (*it).attribute("value").as_double();
           }else if ( dofName == "X2"){
               _wspace->getObstacle(i)->setSE3(true);
-              offMatrix[i][4] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][4] = (*it).attribute("value").as_double();
           }else if ( dofName == "X3"){
               _wspace->getObstacle(i)->setSE3(true);
-              offMatrix[i][5] = (KthReal)(*it).attribute("value").as_double();
+              offMatrix[i][5] = (*it).attribute("value").as_double();
           }else{    // It's not a SE3 control and could have any name.
               // Find the index orden into the links vector without the first static link.
               unsigned ind = 0;
               while (ind < _wspace->getObstacle(i)->getNumJoints()) {
                   if ( dofName == _wspace->getObstacle(i)->getLink(ind+1)->getName()){
-                      offMatrix[i][6 + ind ] = (KthReal)(*it).attribute("value").as_double();
+                      offMatrix[i][6 + ind ] = (*it).attribute("value").as_double();
                       break;
                   } else {
                       ind++;
@@ -1662,7 +1639,7 @@ namespace Kautham {
               xml_node::iterator itDOF;
               KthReal eigVal = 1;
               if ((*it).attribute("eigValue")) {
-                  eigVal = (KthReal) (*it).attribute("eigValue").as_double();
+                  eigVal =  (*it).attribute("eigValue").as_double();
               }
 
               for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
@@ -1696,28 +1673,28 @@ namespace Kautham {
 
                   if ( dofName == "X"){
                       _wspace->getObstacle(i)->setSE3(true);
-                      mapMatrix[i][0][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][0][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else if ( dofName == "Y"){
                       _wspace->getObstacle(i)->setSE3(true);
-                      mapMatrix[i][1][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][1][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else if ( dofName == "Z"){
                       _wspace->getObstacle(i)->setSE3(true);
-                      mapMatrix[i][2][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][2][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else if ( dofName == "X1"){
                       _wspace->getObstacle(i)->setSE3(true);
-                      mapMatrix[i][3][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][3][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else if ( dofName == "X2"){
                       _wspace->getObstacle(i)->setSE3(true);
-                      mapMatrix[i][4][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][4][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else if ( dofName == "X3"){
                       _wspace->getObstacle(i)->setSE3(true);
-                      mapMatrix[i][5][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                      mapMatrix[i][5][cont] = eigVal * itDOF->attribute("value").as_double();
                   }else{  // It's not a SE3 control and could have any name.
                       // Find the index orden into the links vector without the first static link.
                       unsigned ind = 0;
                       while (ind < _wspace->getObstacle(i)->getNumJoints()) {
                           if ( dofName == _wspace->getObstacle(i)->getLink(ind+1)->getName()){
-                              mapMatrix[i][6 + ind ][cont] = eigVal * (KthReal)itDOF->attribute("value").as_double();
+                              mapMatrix[i][6 + ind ][cont] = eigVal * itDOF->attribute("value").as_double();
                               break;
                           } else {
                               ind++;
