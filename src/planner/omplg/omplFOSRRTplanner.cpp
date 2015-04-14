@@ -29,9 +29,9 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include "omplMyPCARRTplanner.h"
+#include "omplFOSRRTplanner.h"
 #include "omplValidityChecker.h"
-#include "myPCARRT.h"
+#include "FOSRRT.h"
 
 #include <pugixml.hpp>
 
@@ -40,54 +40,18 @@ using namespace pugi;
 
 namespace Kautham {
 namespace omplplanner {
-PCAResult *PMDset(xml_node *node, unsigned int dim, bool isPositionPCA) {
-    arma::vec barycenter(dim);
-    arma::vec eigenvalues(dim);
-    arma::mat eigenvectors(dim,dim);
-
-    xml_node barycenterNode = node->child("Offset").child("DOF");
-    xml_node eigenvaluesNode = node->child("Control");
-    xml_node eigenvectorsNode;
-
-    for (unsigned int i = 0; i < dim; i++) {
-        if (!barycenterNode.attribute("value")) return NULL;
-        barycenter[i] = barycenterNode.attribute("value").as_double();
-
-        if (!eigenvaluesNode.attribute("eigValue")) return NULL;
-        eigenvalues[i] = eigenvaluesNode.attribute("eigValue").as_double();
-
-        eigenvectorsNode = eigenvaluesNode.child("DOF");
-        for (unsigned int j = 0; j < dim; j++) {
-            if (!eigenvectorsNode.attribute("value")) return NULL;
-            eigenvectors.at(i,j) = eigenvectorsNode.attribute("value").as_double();
-
-            eigenvectorsNode = eigenvectorsNode.next_sibling("DOF");
-        }
-
-        barycenterNode = barycenterNode.next_sibling("DOF");
-        eigenvaluesNode = eigenvaluesNode.next_sibling("Control");
-    }
-
-    if (isPositionPCA) {
-        return new PositionPCAResult(barycenter,eigenvalues,eigenvectors);
-    } else {
-        return new VelocityPCAResult(barycenter,eigenvalues,eigenvectors);
-    }
-}
-
-
-void omplMyPCARRTPlanner::setPCAkdtree(string filename) {
-    PCAkdtree *tree = new PCAkdtree(filename);
-    (ss->getPlanner()->as<myPCARRT>())->setPCAkdtree(tree);
+void omplFOSRRTPlanner::setSynergyTree(string filename) {
+    SynergyTree *tree = new SynergyTree(filename);
+    (ss->getPlanner()->as<FOSRRT>())->setSynergyTree(tree);
 }
 
 
 //! Constructor
-omplMyPCARRTPlanner::omplMyPCARRTPlanner(SPACETYPE stype, Sample *init, Sample *goal,
+omplFOSRRTPlanner::omplFOSRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal,
                                        SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
     omplPlanner(stype,init,goal,samples,ws,ssptr) {
-    _guiName = "ompl MyPCARRT Planner";
-    _idName = "omplMyPCARRT";
+    _guiName = "ompl FOSRRT Planner";
+    _idName = "omplFOSRRT";
 
 
     //alloc valid state sampler
@@ -96,15 +60,15 @@ omplMyPCARRTPlanner::omplMyPCARRTPlanner(SPACETYPE stype, Sample *init, Sample *
     space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler,_1,(Planner*)this));
 
     //create planner
-    ob::PlannerPtr planner(new myPCARRT(si));
+    ob::PlannerPtr planner(new FOSRRT(si));
     //set planner parameters: range and goalbias
-    _GoalBias = (planner->as<myPCARRT>())->getGoalBias();
+    _GoalBias = (planner->as<FOSRRT>())->getGoalBias();
     addParameter("Goal Bias",_GoalBias);
-    _TimeStep = (planner->as<myPCARRT>())->getTimeStep();
+    _TimeStep = (planner->as<FOSRRT>())->getTimeStep();
     addParameter("Time Step",_TimeStep);
-    _Range = (planner->as<myPCARRT>())->getRange();
+    _Range = (planner->as<FOSRRT>())->getRange();
     addParameter("Range",_Range);
-    _PMDBias = (planner->as<myPCARRT>())->getPMDbias();
+    _PMDBias = (planner->as<FOSRRT>())->getPMDbias();
     addParameter("PMD Bias",_PMDBias);
 
     //set the planner
@@ -113,13 +77,13 @@ omplMyPCARRTPlanner::omplMyPCARRTPlanner(SPACETYPE stype, Sample *init, Sample *
 
 
 //! void destructor
-omplMyPCARRTPlanner::~omplMyPCARRTPlanner(){
+omplFOSRRTPlanner::~omplFOSRRTPlanner(){
 
 }
 
 
 //! setParameters sets the parameters of the planner
-bool omplMyPCARRTPlanner::setParameters(){
+bool omplFOSRRTPlanner::setParameters(){
     if (!omplPlanner::setParameters()) return false;
 
     try {
@@ -132,7 +96,7 @@ bool omplMyPCARRTPlanner::setParameters(){
             setParameter("Goal Bias",_GoalBias);
         } else {
             _GoalBias = it->second;
-            ss->getPlanner()->as<myPCARRT>()->setGoalBias(_GoalBias);
+            ss->getPlanner()->as<FOSRRT>()->setGoalBias(_GoalBias);
         }
 
 
@@ -142,7 +106,7 @@ bool omplMyPCARRTPlanner::setParameters(){
             setParameter("PMD Bias",_PMDBias);
         } else {
             _PMDBias = it->second;
-            ss->getPlanner()->as<myPCARRT>()->setPMDbias(_PMDBias);
+            ss->getPlanner()->as<FOSRRT>()->setPMDbias(_PMDBias);
         }
 
 
@@ -152,7 +116,7 @@ bool omplMyPCARRTPlanner::setParameters(){
             setParameter("Time Step",_TimeStep);
         } else {
             _TimeStep = it->second;
-            ss->getPlanner()->as<myPCARRT>()->setTimeStep(_TimeStep);
+            ss->getPlanner()->as<FOSRRT>()->setTimeStep(_TimeStep);
         }
 
 
@@ -162,7 +126,7 @@ bool omplMyPCARRTPlanner::setParameters(){
             setParameter("Range",_Range);
         } else {
             _Range = it->second;
-            ss->getPlanner()->as<myPCARRT>()->setRange(_Range);
+            ss->getPlanner()->as<FOSRRT>()->setRange(_Range);
         }
     } catch(...) {
         return false;

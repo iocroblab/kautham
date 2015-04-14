@@ -22,55 +22,50 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
-#include "ompl/geometric/planners/rrt/RRT.h"
-#include "pcakdtree.h"
+
+#if !defined(_omplFOSRRTPlanner_H)
+#define _omplFOSRRTPlanner_H
+
+#if defined(KAUTHAM_USE_OMPL)
+#include <ompl/base/SpaceInformation.h>
+#include <ompl/geometric/planners/rrt/RRT.h>
+#include <ompl/geometric/SimpleSetup.h>
+#include <ompl/config.h>
+#include <ompl/base/spaces/RealVectorStateSpace.h>
+
+#include "omplplanner.h"
+#include <problem/workspace.h>
+#include <sampling/sampling.h>
+
+
+
+namespace ob = ompl::base;
+namespace og = ompl::geometric;
+
+using namespace std;
 
 namespace Kautham {
 namespace omplplanner {
-class myPCARRT:public ompl::geometric::RRT {
-protected:
-    PCAkdtree *tree_;
-    double timeStep_;
-    double pmdBias_;
-
-    //! New qRand
-    arma::vec new_qRand(arma::vec qr, arma::vec qn);
-
+/** \addtogroup Planner
+ *  @{
+ */
+class omplFOSRRTPlanner:public omplPlanner {
 public:
-    myPCARRT(const ompl::base::SpaceInformationPtr &si):RRT(si) {
-        name_ = "myPCARRT";
-        tree_ = NULL;
-        timeStep_ = 1.;
-        pmdBias_ = 1.;
-        Planner::declareParam<double>("timeStep",this,&myPCARRT::setTimeStep,&myPCARRT::getTimeStep,"0.:.001:1000.");
-        Planner::declareParam<double>("pmdBias",this,&myPCARRT::setPMDbias,&myPCARRT::getPMDbias,"0.:.01:1.");
-    }
+    omplFOSRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
+    ~omplFOSRRTPlanner();
 
-    void setTimeStep(double timeStep) {
-        timeStep_ = timeStep;
-    }
+    void setSynergyTree(string filename);
 
-    double getTimeStep() const {
-        return timeStep_;
-    }
+    bool setParameters();
 
-    void setPMDbias(double pmdBias) {
-        pmdBias_ = pmdBias;
-    }
-
-    double getPMDbias() const {
-        return pmdBias_;
-    }
-
-    void setPCAkdtree(PCAkdtree * tree) {
-        tree_ = tree;
-    }
-
-    PCAkdtree *getPCAkdtree() const {
-        return tree_;
-    }
-
-    ompl::base::PlannerStatus solve(const ompl::base::PlannerTerminationCondition &ptc);
+    KthReal _Range;
+    KthReal _TimeStep;
+    KthReal _GoalBias;
+    KthReal _PMDBias;
 };
+/** @}   end of Doxygen module "Planner */
 }
 }
+
+#endif // KAUTHAM_USE_OMPL
+#endif  //_omplFOSRRTPlanner_H
