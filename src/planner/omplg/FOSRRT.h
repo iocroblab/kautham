@@ -22,50 +22,55 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
-
-#if !defined(_omplMyPCARRTPlanner_H)
-#define _omplMyPCARRTPlanner_H
-
-#if defined(KAUTHAM_USE_OMPL)
-#include <ompl/base/SpaceInformation.h>
-#include <ompl/geometric/planners/rrt/RRT.h>
-#include <ompl/geometric/SimpleSetup.h>
-#include <ompl/config.h>
-#include <ompl/base/spaces/RealVectorStateSpace.h>
-
-#include "omplplanner.h"
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
-
-
-
-namespace ob = ompl::base;
-namespace og = ompl::geometric;
-
-using namespace std;
+#include "ompl/geometric/planners/rrt/RRT.h"
+#include "synergy_tree.h"
 
 namespace Kautham {
 namespace omplplanner {
-/** \addtogroup Planner
- *  @{
- */
-class omplMyPCARRTPlanner:public omplPlanner {
+class FOSRRT:public ompl::geometric::RRT {
+protected:
+    SynergyTree *tree_;
+    double timeStep_;
+    double pmdBias_;
+
+    //! New qRand
+    arma::vec new_qRand(arma::vec qr, arma::vec qn);
+
 public:
-    omplMyPCARRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
-    ~omplMyPCARRTPlanner();
+    FOSRRT(const ompl::base::SpaceInformationPtr &si):RRT(si) {
+        name_ = "FOSRRT";
+        tree_ = NULL;
+        timeStep_ = 1.;
+        pmdBias_ = 1.;
+        Planner::declareParam<double>("timeStep",this,&FOSRRT::setTimeStep,&FOSRRT::getTimeStep,"0.:.001:1000.");
+        Planner::declareParam<double>("pmdBias",this,&FOSRRT::setPMDbias,&FOSRRT::getPMDbias,"0.:.01:1.");
+    }
 
-    void setPCAkdtree(string filename);
+    void setTimeStep(double timeStep) {
+        timeStep_ = timeStep;
+    }
 
-    bool setParameters();
+    double getTimeStep() const {
+        return timeStep_;
+    }
 
-    KthReal _Range;
-    KthReal _TimeStep;
-    KthReal _GoalBias;
-    KthReal _PMDBias;
+    void setPMDbias(double pmdBias) {
+        pmdBias_ = pmdBias;
+    }
+
+    double getPMDbias() const {
+        return pmdBias_;
+    }
+
+    void setSynergyTree(SynergyTree * tree) {
+        tree_ = tree;
+    }
+
+    SynergyTree *getSynergyTree() const {
+        return tree_;
+    }
+
+    ompl::base::PlannerStatus solve(const ompl::base::PlannerTerminationCondition &ptc);
 };
-/** @}   end of Doxygen module "Planner */
 }
 }
-
-#endif // KAUTHAM_USE_OMPL
-#endif  //_omplMyPCARRTPlanner_H
