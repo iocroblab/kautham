@@ -96,7 +96,7 @@ namespace Kautham {
      mapMatrix = NULL;
      offMatrix = NULL;
 
-     for (int i = 0; i < 7; i++) {
+     for (int i = 0; i < 3; i++) {
          for (int j = 0; j < 2; j++) {
              _homeLimits[i][j] = 0.;
              _spatialLimits[i][j] = 0.;
@@ -121,7 +121,7 @@ namespace Kautham {
 
          if (armed) {
              //Initialize the limits to 0.
-             for(int i=0; i<7; i++)
+             for(int i=0; i<3; i++)
                  _spatialLimits[i][0] = _spatialLimits[i][1] = (KthReal) 0.0;
 
              //Set nTrunk
@@ -781,15 +781,17 @@ namespace Kautham {
  /*!
   * Allows to change the values of the robot base limits.
   * These values are in the world frame.
-  *   \param member is an integer between 0 and 6 corresponding to three coordinates
-  *    of position and four of orientation (axis-angle)
+  *   \param member is an integer between 0 and 3 corresponding to three coordinates
+  *    of position
   */
- bool Robot::setLimits(int member, KthReal min, KthReal max){
-     if(member >= 0 && member < 7){
+ bool Robot::setLimits(unsigned int member, KthReal min, KthReal max){
+     if (member >= 0 && member < 3 && min <= max) {
          _spatialLimits[member][0] = min;
          _spatialLimits[member][1] = max;
-         // It needs to recalculate the limits in home frame.
+
+         //Recalculate the limits in home frame.
          recalculateHomeLimits();
+
          return true;
      }
      return false;
@@ -799,36 +801,21 @@ namespace Kautham {
   *
   */
  void Robot::recalculateHomeLimits(){
+     mt::Transform homeInv = _homeTrans.inverse();
      mt::Point3 Pmin_W(_spatialLimits[0][0], _spatialLimits[1][0], _spatialLimits[2][0]);
      mt::Point3 Pmax_W(_spatialLimits[0][1], _spatialLimits[1][1], _spatialLimits[2][1]);
-     mt::Point3 Pmin_H, Pmax_H;
-     mt::Transform homeInv = _homeTrans.inverse();
-     Pmin_H = homeInv*Pmin_W;
-     Pmax_H = homeInv*Pmax_W;
-     if( Pmin_H[0] == Pmax_H[0]){
-         _homeLimits[0][0] = 0;                // Sets the Xmin in home frame
-         _homeLimits[0][1] = 0;                // Sets the Xmax in home frame
-     }else{
-         _homeLimits[0][0] = Pmin_H[0];        // Sets the Xmin in home frame
-         _homeLimits[0][1] = Pmax_H[0];        // Sets the Xmax in home frame
-     }
+     mt::Point3 Pmin_H(homeInv*Pmin_W);
+     mt::Point3 Pmax_H(homeInv*Pmax_W);
 
-     if( Pmin_H[1] == Pmax_H[1]){
-         _homeLimits[1][0] = 0;                // Sets the Xmin in home frame
-         _homeLimits[1][1] = 0;                // Sets the Xmax in home frame
-     }else{
-         _homeLimits[1][0] = Pmin_H[1];        // Sets the Ymin in home frame
-         _homeLimits[1][1] = Pmax_H[1];        // Sets the Ymax in home frame
+     for (unsigned int i = 0; i < 3; ++i) {
+         if (Pmin_H[i] == Pmax_H[i]) {
+             _homeLimits[i][0] = 0.;
+             _homeLimits[i][1] = 0.;
+         } else {
+             _homeLimits[i][0] = Pmin_H[i];
+             _homeLimits[i][1] = Pmax_H[i];
+         }
      }
-
-     if( Pmin_H[2] == Pmax_H[2]){
-         _homeLimits[2][0] = 0;                // Sets the Xmin in home frame
-         _homeLimits[2][1] = 0;                // Sets the Xmax in home frame
-     }else{
-         _homeLimits[2][0] = Pmin_H[2];        // Sets the Zmin in home frame
-         _homeLimits[2][1] = Pmax_H[2];        // Sets the Zmax in home frame
-     }
-
  }
 
 
@@ -1389,10 +1376,12 @@ namespace Kautham {
   *
   */
  float Robot::diagLimits(){
+     float tmp;
      float dia = 0.;
-     for(int i = 0; i < 3; i++)
-         dia += (_homeLimits[i][1] - _homeLimits[i][0] ) *
-                 (_homeLimits[i][1] - _homeLimits[i][0] );
+     for (unsigned int i = 0; i < 3; ++i) {
+         tmp = _homeLimits[i][1]-_homeLimits[i][0];
+         dia += tmp*tmp;
+     }
      return sqrt(dia);
  }
 
