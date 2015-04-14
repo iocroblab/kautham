@@ -23,17 +23,12 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "pcakdtree.h"
+#include "synergy_tree.h"
 #include <algorithm>
 #include <cmath>
 #include <vector>
 #include <map>
 #include <pugixml.hpp>
-/*#include <qt4/QtGui/QImage>
-#include <qt4/QtGui/QColor>
-#include <qt4/QtGui/QLabel>
-#include <qt4/QtGui/QPixmap>
-#include <qt4/QtGui/QApplication>*/
 
 
 //Golden ratio
@@ -184,16 +179,16 @@ double normalize(double v, double vMax) {
 }
 
 
-PCAkdtree_node::PCAkdtree_node(const PCAkdtree_node *parentNode, PCAResult *PMD,
+SynergyTree_node::SynergyTree_node(const SynergyTree_node *parentNode, Synergy *synergy,
                                const arma::mat Mv, const arma::mat Cp,
                                const arma::mat limits, double thV,
                                double thD, double tol, double alfa) :
-    parent(parentNode),PMDv(PMD),lim(limits) {
-    std::cout << "PMDv:" << std::endl << PMDv->U << std::endl
-              << PMDv->b << std::endl << PMDv->a;
+    parent(parentNode),fos(synergy),lim(limits) {
+    std::cout << "fos:" << std::endl << fos->U << std::endl
+              << fos->b << std::endl << fos->a;
 
-    thV *= 1;
-    thD *= 1;
+    thV *= 1.;
+    thD *= 1.;
 
 
     unsigned int m = Mv.n_cols;
@@ -240,15 +235,15 @@ PCAkdtree_node::PCAkdtree_node(const PCAkdtree_node *parentNode, PCAResult *PMD,
                 std::cout << "Divide cell at x" << axis << " = " << location
                           << " (" << optiData->f << " <= " << 1 << ")" << std::endl;
 
-                //Set PMDv
-                delete PMDv;
-                PMDv = NULL;
+                //Set fos
+                delete fos;
+                fos = NULL;
 
-                //Get children PMDv
-                PCAResult *PMDvL = new VelocityPCAResult(optiData->childL->b,
+                //Get children fos
+                Synergy *fosL = new FirstOrderSynergy(optiData->childL->b,
                                                          optiData->childL->a,
                                                          optiData->childL->U);
-                PCAResult *PMDvR = new VelocityPCAResult(optiData->childR->b,
+                Synergy *fosR = new FirstOrderSynergy(optiData->childR->b,
                                                          optiData->childR->a,
                                                          optiData->childR->U);
 
@@ -290,8 +285,8 @@ PCAkdtree_node::PCAkdtree_node(const PCAkdtree_node *parentNode, PCAResult *PMD,
                 thD = std::min(thD,maxfD);
 
                 //Set children
-                childL = new PCAkdtree_node(this,PMDvL,MvL,CpL,limL,thV,thD,tol,alfa);
-                childR = new PCAkdtree_node(this,PMDvR,MvR,CpR,limR,thV,thD,tol,alfa);
+                childL = new SynergyTree_node(this,fosL,MvL,CpL,limL,thV,thD,tol,alfa);
+                childR = new SynergyTree_node(this,fosR,MvR,CpR,limR,thV,thD,tol,alfa);
 
                 divided = true;
                 break;
@@ -301,9 +296,6 @@ PCAkdtree_node::PCAkdtree_node(const PCAkdtree_node *parentNode, PCAResult *PMD,
 
     if (!divided) {
         std::cout << "Don't divide cell" << std::endl;
-
-        //Set color
-        //color = qRgb(rand()%256,rand()%256,rand()%256);
 
         //Set children
         childL = NULL;
@@ -323,21 +315,18 @@ PCAkdtree_node::PCAkdtree_node(const PCAkdtree_node *parentNode, PCAResult *PMD,
 }
 
 
-PCAkdtree_node::PCAkdtree_node(const pugi::xml_node *node, const std::vector<PCAResult*> *PMD,
-                               const PCAkdtree_node *parentNode) : parent(parentNode) {
-    if (node->attribute("pmdSet")) {
-        //Set PMDv
-        PMDv = PMD->at(node->attribute("pmdSet").as_uint());
-
-        //Set color
-        //color = qRgb(rand()%256,rand()%256,rand()%256);
+SynergyTree_node::SynergyTree_node(const pugi::xml_node *node, const std::vector<Synergy*> *Synergy,
+                               const SynergyTree_node *parentNode) : parent(parentNode) {
+    if (node->attribute("synergy")) {
+        //Set fos
+        fos = Synergy->at(node->attribute("synergy").as_uint());
 
         //Set children
         childL = NULL;
         childR = NULL;
     } else {
-        //Set PMDv
-        PMDv = NULL;
+        //Set fos
+        fos = NULL;
 
         //Set axis
         if (node->attribute("axis")) {
@@ -356,13 +345,13 @@ PCAkdtree_node::PCAkdtree_node(const pugi::xml_node *node, const std::vector<PCA
         //Set children
         pugi::xml_node tmp = node->child("Left");
         if (tmp) {
-            childL = new PCAkdtree_node(&tmp,PMD,this);
+            childL = new SynergyTree_node(&tmp,Synergy,this);
         } else {
             throw std::invalid_argument("Non-leaf XML node without children");
         }
         tmp = node->child("Right");
         if (tmp) {
-            childR = new PCAkdtree_node(&tmp,PMD,this);
+            childR = new SynergyTree_node(&tmp,Synergy,this);
         } else {
             throw std::invalid_argument("Non-leaf XML node without children");
         }
@@ -370,14 +359,14 @@ PCAkdtree_node::PCAkdtree_node(const pugi::xml_node *node, const std::vector<PCA
 }
 
 
-PCAkdtree_node::~PCAkdtree_node() {
-    delete PMDv;
+SynergyTree_node::~SynergyTree_node() {
+    delete fos;
     delete childL;
     delete childR;
 }
 
 
-std::vector<std::vector<unsigned int> > *PCAkdtree_node::sortByAxis(const arma::mat Cp,
+std::vector<std::vector<unsigned int> > *SynergyTree_node::sortByAxis(const arma::mat Cp,
                                                                     unsigned int j) {
     std::vector<std::vector<unsigned int> > *X = new std::vector<std::vector<unsigned int> >;
     std::multimap<double,unsigned int> index;
@@ -405,9 +394,9 @@ std::vector<std::vector<unsigned int> > *PCAkdtree_node::sortByAxis(const arma::
 class divisionCriteria {
 public:
     divisionCriteria(const std::vector<std::vector<unsigned int> > *sorted,
-                     const arma::mat samples, const PCAResult *PMD,
+                     const arma::mat samples, const Synergy *Synergy,
                      double thV, double thD, double alfa) :
-        indices(sorted->size()),M(samples.n_rows,samples.n_cols),father(PMD) {
+        indices(sorted->size()),M(samples.n_rows,samples.n_cols),father(Synergy) {
         unsigned int i = 0;
         for (unsigned int k = 0; k < sorted->size(); ++k) {
             if (k == 0) {
@@ -453,27 +442,30 @@ public:
             optiData->x = x;
             if (indices.at(floor(k))+1 <= 10*M.n_cols) {
                 optiData->childL = NULL;
-                optiData->childR = new VelocityPCAResult(father->b,father->a,father->U);
+                optiData->childR = new FirstOrderSynergy(father->b,father->a,father->U);
                 optiData->fV = 1.;
                 optiData->fD = 1.;
                 optiData->f = 1.;
             } else if (M.n_rows-indices.at(ceil(k)) <= 10*M.n_cols) {
-                optiData->childL = new VelocityPCAResult(father->b,father->a,father->U);
+                optiData->childL = new FirstOrderSynergy(father->b,father->a,father->U);
                 optiData->childR = NULL;
                 optiData->fV = 1.;
                 optiData->fD = 1.;
                 optiData->f = 1.;
             } else {
-                optiData->childL = PCA(M.rows(0,indices.at(floor(k))),VELOCITY,a);
-                optiData->childR = PCA(M.rows(indices.at(ceil(k)),M.n_rows-1),VELOCITY,a);
+                optiData->childL = PCA(M.rows(0,indices.at(floor(k))),FIRST,a);
+                optiData->childR = PCA(M.rows(indices.at(ceil(k)),M.n_rows-1),FIRST,a);
                 optiData->fV = std::max(arma::prod(optiData->childL->a),
                                         arma::prod(optiData->childR->a))/vFather;
-                optiData->fD = 1.-std::min(father->distance(optiData->childL),
-                                           father->distance(optiData->childR));
-                optiData->f = (cV*optiData->fV+cD*optiData->fD)/2.;
-            }
 
-            if (optiData->f < 0.) throw;
+                double dfL = father->distance(optiData->childL);
+                double dfR = father->distance(optiData->childR);
+                optiData->fD = 1.-std::min(dfL,
+                                           dfR);
+                optiData->f = (cV*optiData->fV+cD*optiData->fD)/2.;
+
+                if (optiData->f < 0.) throw;
+            }
 
             F.insert(std::pair<unsigned int,OptiData*>(x,optiData));
 
@@ -493,14 +485,14 @@ public:
         if (it == F.end()) {
             if (x == 0) {
                 optiData->childL = NULL;
-                optiData->childR = new VelocityPCAResult(father->b,father->a,father->U);
+                optiData->childR = new FirstOrderSynergy(father->b,father->a,father->U);
                 optiData->f = 1.;
                 optiData->fV = 1.;
                 optiData->fD = 1.;
 
                 return optiData;
             } else if (x == 2*indices.size()) {
-                optiData->childL = new VelocityPCAResult(father->b,father->a,father->U);
+                optiData->childL = new FirstOrderSynergy(father->b,father->a,father->U);
                 optiData->childR = NULL;
                 optiData->f = 1.;
                 optiData->fV = 1.;
@@ -514,14 +506,14 @@ public:
         }
 
         if (it->second->childL) {
-            optiData->childL = new VelocityPCAResult(it->second->childL->b,
+            optiData->childL = new FirstOrderSynergy(it->second->childL->b,
                                                      it->second->childL->a,
                                                      it->second->childL->U);
         } else {
             optiData->childL = NULL;
         }
         if (it->second->childR) {
-            optiData->childR = new VelocityPCAResult(it->second->childR->b,
+            optiData->childR = new FirstOrderSynergy(it->second->childR->b,
                                                      it->second->childR->a,
                                                      it->second->childR->U);
         } else {
@@ -537,7 +529,7 @@ public:
 private:
     std::vector<unsigned int> indices;
     arma::mat M;
-    const PCAResult *father;
+    const Synergy *father;
     std::map<unsigned int,OptiData*> F;
     double a;
     double cV;
@@ -551,11 +543,11 @@ double f(double x) {
     return DC->eval(x);
 }
 
-OptiData *PCAkdtree_node::minimize(const std::vector<std::vector<unsigned int> > *X,
+OptiData *SynergyTree_node::minimize(const std::vector<std::vector<unsigned int> > *X,
                                    const arma::mat M, double thV, double thD, double tol,
                                    double alfa) {
 
-    DC = new divisionCriteria(X,M,PMDv,thV,thD,alfa);
+    DC = new divisionCriteria(X,M,fos,thV,thD,alfa);
 
     unsigned int iter;
     double xMin, fMin;
@@ -580,57 +572,44 @@ OptiData *PCAkdtree_node::minimize(const std::vector<std::vector<unsigned int> >
 }
 
 
-PCAResult *PCAkdtree_node::getPMD(const arma::vec c) {
+Synergy *SynergyTree_node::getSynergy(const arma::vec c) {
     if (isLeaf()) {
-        return PMDv;
+        return fos;
     } else {
         if (c[axis] < location || (c[axis] == location && rand()%2)) {
-            return childL->getPMD(c);
+            return childL->getSynergy(c);
         } else {
-            return childR->getPMD(c);
+            return childR->getSynergy(c);
         }
     }
 }
 
 
-unsigned int PCAkdtree_node::getColor(const arma::vec c) {
-    if (isLeaf()) {
-        return color;
-    } else {
-        if (c[axis] < location || (c[axis] == location && rand()%2)) {
-            return childL->getColor(c);
-        } else {
-            return childR->getColor(c);
-        }
-    }
+bool SynergyTree_node::isLeaf() {
+    return fos;
 }
 
 
-bool PCAkdtree_node::isLeaf() {
-    return PMDv;
-}
-
-
-void PCAkdtree_node::xml(pugi::xml_node *node, std::vector<PCAResult*> *PMD) {
+void SynergyTree_node::xml(pugi::xml_node *node, std::vector<Synergy*> *Synergy) {
     if (isLeaf()) {
-        node->append_attribute("pmdSet").set_value(int(PMD->size()));
-        PMD->push_back(PMDv);
+        node->append_attribute("synergy").set_value(int(Synergy->size()));
+        Synergy->push_back(fos);
     } else {
         node->append_attribute("axis").set_value(axis);
         node->append_attribute("location").set_value(location);
         pugi::xml_node child = node->append_child("Left");
-        childL->xml(&child,PMD);
+        childL->xml(&child,Synergy);
         child = node->append_child("Right");
-        childR->xml(&child,PMD);
+        childR->xml(&child,Synergy);
     }
 }
 
 
-PCAkdtree::PCAkdtree(const arma::mat Mp, const arma::mat Mv, const arma::mat posLimits,
+SynergyTree::SynergyTree(const arma::mat Mp, const arma::mat Mv, const arma::mat posLimits,
                      const arma::vec velLimits, double tol, double alfa) :
-    PMDp(PCA(Mp,POSITION)),Lp(posLimits),Lv(velLimits) {
-    std::cout << "pLim: " << std::endl << Lp << "PMDp:" << std::endl
-              << PMDp->U << std::endl << PMDp->b << std::endl << PMDp->a
+    zos(PCA(Mp,ZERO)),Lp(posLimits),Lv(velLimits) {
+    std::cout << "pLim: " << std::endl << Lp << "zos:" << std::endl
+              << zos->U << std::endl << zos->b << std::endl << zos->a
               << "vLim: " << std::endl << Lv;
 
     //Check the arguments
@@ -641,16 +620,16 @@ PCAkdtree::PCAkdtree(const arma::mat Mp, const arma::mat Mv, const arma::mat pos
         throw std::invalid_argument("Wrong dimensions");
     }
 
-    //Transform position samples into PMDp base
+    //Transform position samples into zos base
     arma::mat Cp(n,m);
     for (unsigned int i = 0; i < n; ++i) {
-        arma::vec x(arma::trans(Mp.row(i))-PMDp->b);
+        arma::vec x(arma::trans(Mp.row(i))-zos->b);
         for (unsigned int j = 0; j < m; ++j) {
-            if (PMDp->a[j] == 0) {
+            if (zos->a[j] == 0) {
                 Cp(i,j) = 0.5;
             } else {
-                Cp(i,j) = std::max(std::min(arma::dot(x,PMDp->U.col(j))/
-                                            (2.*PMDp->a[j])+0.5,1.),0.);
+                Cp(i,j) = std::max(std::min(arma::dot(x,zos->U.col(j))/
+                                            (2.*zos->a[j])+0.5,1.),0.);
             }
         }
     }
@@ -661,51 +640,50 @@ PCAkdtree::PCAkdtree(const arma::mat Mp, const arma::mat Mv, const arma::mat pos
         limits(j,0) = 0.;
         limits(j,1) = 1.;
     }
-    root = new PCAkdtree_node(NULL,PCA(Mv,VELOCITY,alfa),Mv,Cp,limits,1.,1.,tol,alfa);
-
-    //plot(Cp);
+    root = new SynergyTree_node(NULL,PCA(Mv,FIRST,alfa),Mv,Cp,limits,1.,1.,tol,alfa);
 }
 
 
-PCAkdtree::PCAkdtree(const std::string filename) {
+SynergyTree::SynergyTree(const std::string filename) {
     if (!load(filename)) throw std::invalid_argument("Tree construction failed");
 }
 
 
-PCAkdtree::~PCAkdtree() {
+SynergyTree::~SynergyTree() {
     Lp.clear();
     Lv.clear();
     delete root;
-    delete PMDp;
+    delete zos;
 }
 
 
-PCAResult *PCAkdtree::getPMD(const arma::vec x) {
+Synergy *SynergyTree::getSynergy(const arma::vec x) {
     //Check parameters
-    if (x.n_elem != PMDp->dim) return NULL;
+    if (x.n_elem != zos->dim) return NULL;
 
     //Normalize sample
-    arma::vec xn(PMDp->dim);
-    for (unsigned int j = 0; j < PMDp->dim; ++j) {
-        xn[j] = normalize(x[j],Lp(j,0),Lp(j,1))-PMDp->b[j];
+    arma::vec xn(zos->dim);
+    for (unsigned int j = 0; j < zos->dim; ++j) {
+        xn[j] = normalize(x[j],Lp(j,0),Lp(j,1));
     }
 
-    //Transform sample into PMDp base
-    arma::vec c(PMDp->dim);
-    for (unsigned int j = 0; j < PMDp->dim; ++j) {
-        if (PMDp->a[j] == 0) {
+    //Transform sample into zos base
+    arma::vec c(zos->dim);
+    xn = (xn-zos->b);
+    for (unsigned int j = 0; j < zos->dim; ++j) {
+        if (zos->a[j] == 0) {
             c[j] = 0.5;
         } else {
-            c[j] = dot(xn,PMDp->U.col(j))/(2*PMDp->a[j])+0.5;
+            c[j] = dot(xn,zos->U.col(j))/(2*zos->a[j])+0.5;
             if (c[j] < 0 || c[j] > 1) return NULL;
         }
     }
 
-    return root->getPMD(c);
+    return root->getSynergy(c);
 }
 
 
-bool PCAkdtree::load(const std::string filename) {
+bool SynergyTree::load(const std::string filename) {
     try {
         pugi::xml_document doc;
         pugi::xml_parse_result result = doc.load_file(filename.c_str());
@@ -723,82 +701,86 @@ bool PCAkdtree::load(const std::string filename) {
             node = doc.child("Position").child("Limits");
             for (unsigned int i = 0; i < n; ++i) {
                 if (!node) return false;
-                Lp(i,0) = node.attribute("min").as_float(0.);
-                Lp(i,1) = node.attribute("max").as_float(0.);
+                Lp(i,0) = node.attribute("min").as_double(0.);
+                Lp(i,1) = node.attribute("max").as_double(0.);
                 node = node.next_sibling("Limits");
             }
 
-            //Read the position PMD set
+            //Read the position synergy
             node = doc.child("Position").child("ControlSet");
-            PMDp = xml2PMD(&node,POSITION);
-            if (!PMDp) return false;
+            zos = xml2synergy(&node,ZERO);
+            if (!zos) return false;
 
             //Read the velocity limits
             Lv.resize(n);
             node = doc.child("Velocity").child("Limits");
             for (unsigned int i = 0; i < n; ++i) {
                 if (!node) return false;
-                Lv[i] = node.attribute("max").as_float(0.);
+                Lv[i] = node.attribute("max").as_double(0.);
                 node = node.next_sibling("Limits");
             }
 
-            //Read the velocity PMD sets
+            //Read the velocity synergies
             node = doc.child("Velocity").child("ControlSet");
-            std::vector<PCAResult*> PMDv;
+            std::vector<Synergy*> fos;
+            Synergy *synergy;
             while (node) {
-                PMDv.push_back(xml2PMD(&node,VELOCITY));
+                synergy = xml2synergy(&node,FIRST);
+                if (!synergy) return false;
+                fos.push_back(synergy);
                 node = node.next_sibling("ControlSet");
             }
 
             //Read the kd tree
             node = doc.child("Velocity").child("Tree").child("Root");
-            root = new PCAkdtree_node(&node,&PMDv);
+            root = new SynergyTree_node(&node,&fos);
 
             return true;
         } else {
-            std::cout << filename << " " << result.description() << std::endl;
+            std::cout << result.description() << std::endl;
 
             return false;
         }
-    } catch(...) {
+    } catch(std::exception &e) {
+        std::cout << e.what() << std::endl;
         return false;
     }
 }
 
 
-bool PCAkdtree::save(const std::string filename) {
+bool SynergyTree::save(const std::string filename) {
     try {
         pugi::xml_document doc;
 
         //Write the position limits values
         pugi::xml_node node = doc.append_child("Position");
         pugi::xml_node tmp;
-        for (unsigned int i = 0; i < PMDp->dim; ++i) {
+        for (unsigned int i = 0; i < zos->dim; ++i) {
             tmp = node.append_child("Limits");
             tmp.append_attribute("min").set_value(Lp(i,0));
             tmp.append_attribute("max").set_value(Lp(i,1));
         }
 
-        //Write the position PMD set
+        //Write the position synergy
         tmp = node.append_child("ControlSet");
-        PMD2xml(&tmp,PMDp);
+        synergy2xml(&tmp,zos);
 
         //Write the velocity limits
         node = doc.append_child("Velocity");
-        for (unsigned int i = 0; i < PMDp->dim; ++i) {
+        for (unsigned int i = 0; i < zos->dim; ++i) {
             node.append_child("Limits").append_attribute("max").
                     set_value(Lv[i]);
         }
 
         //Write the kd tree
-        std::vector<PCAResult*> PMDv;
+        std::vector<Synergy*> fos;
         tmp = node.append_child("Tree").append_child("Root");
-        root->xml(&tmp,&PMDv);
+        root->xml(&tmp,&fos);
 
-        //Write the velocity PMD sets
-        for (unsigned int i = 0; i < PMDv.size(); ++i) {
+        //Write the velocity synergies
+        for (unsigned int i = 0; i < fos.size(); ++i) {
             tmp = node.append_child("ControlSet");
-            PMD2xml(&tmp,PMDv.at(i));
+            synergy2xml(&tmp,fos.at(i));
         }
 
         return doc.save_file(filename.c_str());
@@ -808,43 +790,7 @@ bool PCAkdtree::save(const std::string filename) {
 }
 
 
-/*void PCAkdtree::plot(const arma::mat Cp) {
-    if (PMDp->dim == 2) {
-        arma::vec c(2u);
-        unsigned int side = 800;
-        QImage tree(side,side,QImage::Format_RGB16);
-        for (unsigned int i = 0; i < side; ++i) {
-            c[0] = 1.-(i+0.5)/double(side);
-            for (unsigned int j = 0; j < side; ++j) {
-                c[1] = 1.-(j+0.5)/double(side);
-                tree.setPixel(i,j,root->getColor(c));
-            }
-        }
-
-        unsigned int i, j;
-        for (unsigned int k = 0; k < Cp.n_rows; ++k) {
-            c[0] = Cp(k,0);
-            c[1] = Cp(k,1);
-            i = std::max(std::min(round(double(side)*(1.-Cp(k,0))-0.5),side-1.),0.);
-            j = std::max(std::min(round(double(side)*(1.-Cp(k,1))-0.5),side-1.),0.);
-            QColor color(root->getColor(c));
-            QColor color2(255-color.red(),255-color.green(),255-color.blue());
-            tree.setPixel(i,j,color2.rgb());
-        }
-
-
-        QApplication app(0,NULL);
-        QLabel lbl;
-        lbl.setPixmap(QPixmap::fromImage(tree));
-        lbl.resize(side,side);
-        lbl.show();
-        app.exec();
-        return;
-    }
-}*/
-
-
-PCAkdtree *makePCAkdtree(const arma::mat M, const arma::vec t,
+SynergyTree *makeSynergyTree(const arma::mat M, const arma::vec t,
                          const arma::mat posLimits, const arma::vec velLimits) {
     //Check arguments
     unsigned int n = M.n_rows;
@@ -929,7 +875,7 @@ PCAkdtree *makePCAkdtree(const arma::mat M, const arma::vec t,
 
     //Create the tree
     numTotalEvals = 0;
-    PCAkdtree *tree = new PCAkdtree(Mp,Mv,pLim,vLim);
+    SynergyTree *tree = new SynergyTree(Mp,Mv,pLim,vLim);
     std::cout << "numTotalEvals: " << numTotalEvals << std::endl;
     srand(time(NULL));
     return tree;

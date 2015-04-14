@@ -23,17 +23,17 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#ifndef PCAKDTREE_H
-#define PCAKDTREE_H
+#ifndef SYNERGY_TREE_H
+#define SYNERGY_TREE_H
 
-#include "pcaresult.h"
+#include "synergy.h"
 #include <armadillo>
 
 
-//!
+//! Data structure representing an optimum cell division
 typedef struct {
-    PCAResult *childL;
-    PCAResult *childR;
+    Synergy *childL;
+    Synergy *childR;
     double fV;
     double fD;
     double f;
@@ -43,27 +43,24 @@ typedef struct {
 
 
 //! Class that represents a node of a PCA kd tree
-class PCAkdtree_node {
+class SynergyTree_node {
 private:
-    friend class PCAkdtree;
+    friend class SynergyTree;
 
     //! Constructor
-    PCAkdtree_node(const PCAkdtree_node *parentNode, PCAResult *PMD,
+    SynergyTree_node(const SynergyTree_node *parentNode, Synergy *synergy,
                    const arma::mat Mv, const arma::mat Cp, const arma::mat limits,
                    double thV, double thD, double tol, double alfa);
 
     //! Constructor
-    PCAkdtree_node(const pugi::xml_node *node, const std::vector<PCAResult*> *PMD,
-                   const PCAkdtree_node *parentNode = NULL);
+    SynergyTree_node(const pugi::xml_node *node, const std::vector<Synergy*> *synergy,
+                   const SynergyTree_node *parentNode = NULL);
 
     //! Destructor
-    ~PCAkdtree_node();
+    ~SynergyTree_node();
 
-    //! Returns the PMD set of the cell of the sample c
-    PCAResult *getPMD(const arma::vec c);
-
-    //! Returns the color of the cell of the sample c
-    unsigned int getColor(const arma::vec c);
+    //! Returns the synergy of the cell of the sample c
+    Synergy *getSynergy(const arma::vec c);
 
     //! Returns true if the node is a leaf
     bool isLeaf();
@@ -74,20 +71,20 @@ private:
                         double tol, double alfa);
 
     //! Writes node data in the specified xml node and
-    //! copies the PMD set of the cell into the given vector
-    void xml(pugi::xml_node *node, std::vector<PCAResult*> *PMDv);
+    //! copies the synergy of the cell into the given vector
+    void xml(pugi::xml_node *node, std::vector<Synergy*> *fos);
 
-    //!
+    //! Sorts the samples by the position value in the j-th component
     std::vector<std::vector<unsigned int> > *sortByAxis(const arma::mat Cp,
                                                         unsigned int j);
 
 
 
     //! Parent node
-    const PCAkdtree_node *parent;
+    const SynergyTree_node *parent;
 
-    //! Velocity PMD set of the node
-    PCAResult *PMDv;
+    //! First order synergy of the node
+    Synergy *fos;
 
     //! Direction of the division
     unsigned int axis;
@@ -99,31 +96,28 @@ private:
     arma::mat lim;
 
     //! Left child node
-    PCAkdtree_node *childL;
+    SynergyTree_node *childL;
 
     //! Right child node
-    PCAkdtree_node *childR;
-
-    //! Color of the cell
-    unsigned int color;
+    SynergyTree_node *childR;
 };
 
 
 //! Class that represents a PCA kd tree
-class PCAkdtree {
+class SynergyTree {
 public:
     //! Constructor
-    PCAkdtree(const arma::mat Mp, const arma::mat Mv, const arma::mat posLimits,
+    SynergyTree(const arma::mat Mp, const arma::mat Mv, const arma::mat posLimits,
               const arma::vec velLimits, double tol = 0.001, double alfa = 0.05);
 
     //! Constructor
-    PCAkdtree(const std::string filename);
+    SynergyTree(const std::string filename);
 
     //! Destructor
-    ~PCAkdtree();
+    ~SynergyTree();
 
-    //! Returns the PMD set of the cell of the sample c
-    PCAResult *getPMD(const arma::vec x);
+    //! Returns the first order synergy of the cell of the sample c
+    Synergy *getSynergy(const arma::vec x);
 
     //! Loads the tree structure from a file
     bool load(const std::string filename);
@@ -131,17 +125,17 @@ public:
     //! Saves the tree structure into a file
     bool save(const std::string filename);
 
-    /*//! Plots the cells of the tree and the given samples (only for 2D)
-    void plot(const arma::mat Cp = arma::mat(0,0));*/
+    //! Returns the position limits
+    arma::mat getPositionLimits() {return Lp;}
 
-    const arma::vec getVelocityLimits() {return Lv;}
-
+    //! Returns the position limits
+    arma::mat getVelocityLimits() {return Lv;}
 private:
     //! Root node of the tree
-    PCAkdtree_node *root;
+    SynergyTree_node *root;
 
-    //! Position PMD set of the tree
-    PCAResult *PMDp;
+    //! Zero order synergy of the tree
+    Synergy *zos;
 
     //! Position limits
     arma::mat Lp;
@@ -151,8 +145,8 @@ private:
 };
 
 //! Constructs a PCA kd tree
-PCAkdtree *makePCAkdtree(const arma::mat M, const arma::vec t,
+SynergyTree *makeSynergyTree(const arma::mat M, const arma::vec t,
                          const arma::mat posLimits = arma::mat(0,0),
                          const arma::vec velLimits = arma::vec(0u));
 
-#endif // PCAKDTREE_H
+#endif // SYNERGY_TREE_H

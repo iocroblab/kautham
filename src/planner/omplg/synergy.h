@@ -23,19 +23,19 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#ifndef PCARESULT_H
-#define PCARESULT_H
+#ifndef SYNERGY_H
+#define SYNERGY_H
 
 
 #include <armadillo>
 #include <pugixml.hpp>
 
-//! Types of PCA results
-enum PCAResultType {UNKNOWN, POSITION, VELOCITY};
+//! Synergy orders
+enum SynergyOrder {UNKNOWN, ZERO, FIRST};
 
 
 //! Class containing all the results from the PCA of a sample set
-class PCAResult {
+class Synergy {
 public:
     //! Dimension
     const unsigned int dim;
@@ -51,27 +51,23 @@ public:
 
 
     //! Constructor
-    PCAResult(const arma::vec barycenter, const arma::vec eigenvalues,
+    Synergy(const arma::vec barycenter, const arma::vec eigenvalues,
               const arma::mat eigenvectors);
 
     //! Destructor
-    virtual ~PCAResult();
+    virtual ~Synergy();
 
     //! Distance to point
     double distance(const arma::vec x) const;
 
-    //! Distance to another PCAResult (must be of the same type)
-    double distance(const PCAResult *x, double cTrans = 1., double cRot = 4.) const;
-
-    /*//! Distance to another PCAResult (must be of the same type)
-    double distance(const PCAResult *x, double c1 = 1., double c2 = 4.,
-                    double c3 = 8.) const;*/
+    //! Distance to another Synergy (must be of the same order)
+    double distance(const Synergy *x, double cTrans = 1., double cRot = 4.) const;
 
     //! Quality of the sample set
     double quality(unsigned int samples) const;
 
-    //! Returns PCAResult type
-    virtual PCAResultType type() const;
+    //! Returns Synergy order
+    virtual SynergyOrder order() const;
 
 protected:
     //! Distance between barycenters
@@ -79,85 +75,66 @@ protected:
 
     //! Distance between covariance matrices
     virtual double dRot(const arma::vec xa, const arma::mat Ua) const;
-
-    /*//! Distance between barycenters
-    virtual double d1(const arma::vec xb) const;
-
-    //! Distance between eigenvalues
-    virtual double d2(const arma::vec xa) const;
-
-    //! Distance between eigenvectors
-    virtual double d3(const arma::vec xU) const;*/
 };
 
 
 //! Class containing all the results from the PCA of a positions sample set
-class PositionPCAResult : public PCAResult {
+class ZeroOrderSynergy : public Synergy {
 public:
     //! Constructor
-    PositionPCAResult(const arma::vec barycenter, const arma::vec eigenvalues,
+    ZeroOrderSynergy(const arma::vec barycenter, const arma::vec eigenvalues,
                       const arma::mat eigenvectors);
 
     //! Destructor
-    ~PositionPCAResult();
+    ~ZeroOrderSynergy();
 
-    //! Returns PCAResult type
-    PCAResultType type() const;
+    //! Returns Synergy order
+    SynergyOrder order() const;
 
 protected:
     //! Distance between barycenters
     virtual double dTrans(const arma::vec xb) const;
-
-    /*//! Distance between barycenters
-    double d1(const arma::vec xb) const;*/
 };
 
 
 //! Class containing all the results from the PCA of a velocities sample set
-class VelocityPCAResult : public PCAResult {
+class FirstOrderSynergy : public Synergy {
 public:
     //! Constructor
-    VelocityPCAResult(const arma::vec barycenter, const arma::vec eigenvalues,
+    FirstOrderSynergy(const arma::vec barycenter, const arma::vec eigenvalues,
                       const arma::mat eigenvectors);
 
     //! Destructor
-    ~VelocityPCAResult();
+    ~FirstOrderSynergy();
 
-    //! Returns PCAResult type
-    PCAResultType type() const;
+    //! Returns Synergy order
+    SynergyOrder order() const;
 
 protected:
     //! Distance between barycenters
     virtual double dTrans(const arma::vec xb) const;
-
-    /*//! Distance between barycenters
-    double d1(const arma::vec xb) const;*/
 };
 
 
 //! Distance between a PMD set and a point
-double distance(const PCAResult *PMDset, const arma::vec x);
+double distance(const Synergy *synergy, const arma::vec x);
 
-//! Distance between two PMDs set (must be of the same type)
-double distance(const PCAResult *a, const PCAResult *b, double cTrans = 1.,
+//! Distance between two PMDs set (must be of the same order)
+double distance(const Synergy *a, const Synergy *b, double cTrans = 1.,
                 double cRot = 4.);
-
-/*//! Distance between two PMDs set (must be of the same type)
-double distance(const PCAResult *a, const PCAResult *b, double c1 = 1.,
-                double c2 = 4., double c3 = 8.);*/
 
 //! Computes PCA
 //! M should be [n,m]
-//! if type is POSITION, limits should be [m,2] and contain minimum and
+//! if order is ZERO, limits should be [m,2] in size and contain minimum and
 //! maximum values of x_j to normalize every variable in [0,1]
-//! if type is VELOCITY, limits should be [m,1] and contain the maximum
+//! if order is FIRST, limits should be [m,1] in size and contain the maximum
 //! absolute value of x_j to normalize every variable in [-1,1]
-PCAResult *PCA(const arma::mat M, PCAResultType type, double alfa = 0.05);
+Synergy *PCA(const arma::mat M, SynergyOrder order, double alfa = 0.05);
 
-//! Returns a PCAresult read from the given xml node
-PCAResult *xml2PMD(const pugi::xml_node *node, PCAResultType type);
+//! Returns a Synergy read from the given xml node
+Synergy *xml2synergy(const pugi::xml_node *node, SynergyOrder order);
 
-//! Writes a PCAresult into the given xml node
-void PMD2xml(pugi::xml_node *node, const PCAResult *PMDset);
+//! Writes a Synergy into the given xml node
+void synergy2xml(pugi::xml_node *node, const Synergy *synergy);
 
-#endif // PCARESULT_H
+#endif // SYNERGY_H
