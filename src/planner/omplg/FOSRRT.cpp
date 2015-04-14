@@ -22,7 +22,7 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
-#include "myPCARRT.h"
+#include "FOSRRT.h"
 #include "ompl/geometric/planners/rrt/RRT.h"
 #include "ompl/base/goals/GoalSampleableRegion.h"
 #include "ompl/tools/config/SelfConfig.h"
@@ -38,7 +38,7 @@ using namespace arma;
 
 namespace Kautham {
 namespace omplplanner {
-ob::PlannerStatus myPCARRT::solve(const ob::PlannerTerminationCondition &ptc) {
+ob::PlannerStatus FOSRRT::solve(const ob::PlannerTerminationCondition &ptc) {
     checkValidity();
     ob::Goal *goal = pdef_->getGoal().get();
     ob::GoalSampleableRegion *goal_s = dynamic_cast<ob::GoalSampleableRegion*>(goal);
@@ -196,9 +196,9 @@ ob::PlannerStatus myPCARRT::solve(const ob::PlannerTerminationCondition &ptc) {
 }
 
 
-arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {   
+arma::vec FOSRRT::new_qRand(arma::vec qr, arma::vec qn) {
     //Cell PMD set
-    PCAResult *pmdSet = tree_->getPMD(qn);
+    Synergy *synergy = tree_->getSynergy(qn);
 
     //Scaled velocity
     arma::vec dq(qr-qn);
@@ -210,15 +210,15 @@ arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {
     v /= std::max(1.,arma::max(v));
 
     //
-    if (pmdSet && dot(v,pmdSet->b) >= 0.) {
+    if (synergy && dot(v,synergy->b) >= 0.) {
         //vEps
         arma::vec vEps(v*(maxDistance_/timeStep_/norm(v)));
 
         //vFos
-        arma::vec x((v-pmdSet->b)/norm(v-pmdSet->b));
-        arma::vec vFos(pmdSet->b);
-        for (unsigned int i = 0; i < pmdSet->dim; ++i) {
-            vFos += pmdSet->a[i]*dot(x,pmdSet->U.col(i))*pmdSet->U.col(i);
+        arma::vec x((v-synergy->b)/norm(v-synergy->b));
+        arma::vec vFos(synergy->b);
+        for (unsigned int i = 0; i < synergy->dim; ++i) {
+            vFos += synergy->a[i]*dot(x,synergy->U.col(i))*synergy->U.col(i);
         }
 
         //vC
@@ -226,8 +226,8 @@ arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {
         arma::vec vC = c*vFos + (1-c)*vEps;
 
         //Real velocity
-        arma::vec vReal(pmdSet->dim);
-        for (unsigned int i = 0; i < pmdSet->dim; ++i) {
+        arma::vec vReal(synergy->dim);
+        for (unsigned int i = 0; i < synergy->dim; ++i) {
             vReal[i] = vC[i]*Lv[i];
         }
 
@@ -237,7 +237,7 @@ arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {
         return qn + std::min(maxDistance_/norm(dq),1.)*dq;
     }
 
-    /*//double timeStep = maxDistance_/pmdSet_->avgVel;
+    /*//double timeStep = maxDistance_/synergy_->avgVel;
     double timeStep = 1.;
     cout << "qr:[" << qr[0] << " " << qr[1] << "] ";
     cout << "qn:[" << qn[0] << " " << qn[1] << "] ";
@@ -245,15 +245,15 @@ arma::vec myPCARRT::new_qRand(arma::vec qr, arma::vec qn) {
 
     arma::vec x((qr-qn)/timeStep);
     cout << "v:[" << x[0] << " " << x[1] << "] ";
-    cout << "|v|:" << norm(x) << " max:" << pmdSet_->at(index)->maxVel << " ";
-    x *= std::min(pmdSet_->at(index)->maxVel/norm(x),1.);
+    cout << "|v|:" << norm(x) << " max:" << synergy_->at(index)->maxVel << " ";
+    x *= std::min(synergy_->at(index)->maxVel/norm(x),1.);
     cout << "v:[" << x[0] << " " << x[1] << "] ";
-    x = alfa_*(x-pmdSet_->at(index)->b)/pmdSet_->at(index)->a[0];
+    x = alfa_*(x-synergy_->at(index)->b)/synergy_->at(index)->a[0];
 
-    arma::vec v(pmdSet_->at(index)->b);
+    arma::vec v(synergy_->at(index)->b);
 
-    for (unsigned int i = 0; i < pmdSet_->at(index)->dim; i++) {
-        v += pmdSet_->at(index)->a[i]*dot(x,pmdSet_->at(index)->U.col(i))*pmdSet_->at(index)->U.col(i);
+    for (unsigned int i = 0; i < synergy_->at(index)->dim; i++) {
+        v += synergy_->at(index)->a[i]*dot(x,synergy_->at(index)->U.col(i))*synergy_->at(index)->U.col(i);
     }
     cout << "v':[" << v[0] << " " << v[1] << "] ";
     cout << "Dq:" << norm(v)*timeStep << " ";

@@ -23,12 +23,12 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "pcaresult.h"
+#include "synergy.h"
 #include <algorithm>
 #include <boost/math/distributions/fisher_f.hpp>
 #include <boost/math/distributions/normal.hpp>
 
-PCAResult::PCAResult(const arma::vec barycenter,
+Synergy::Synergy(const arma::vec barycenter,
                      const arma::vec eigenvalues,
                      const arma::mat eigenvectors) :
     dim(barycenter.n_elem),b(barycenter),a(eigenvalues),U(eigenvectors) {
@@ -47,7 +47,7 @@ PCAResult::PCAResult(const arma::vec barycenter,
             throw std::invalid_argument("Eigenvalues can not be negative");
         }
         if (a[i] > a[i-1]) {
-            throw std::invalid_argument("Eigenvalues must be sorted in decreasing order");
+            throw std::invalid_argument("Eigenvalues must sorted in decreasing order");
         }
     }
 
@@ -62,18 +62,15 @@ PCAResult::PCAResult(const arma::vec barycenter,
             }
         }
     }
-    /*if (std::abs(arma::det(U)-1.) > 1e-6) {
-        throw std::invalid_argument("Determinant of eigenvector matrix should be 1");
-    }*/
 }
 
 
-PCAResult::~PCAResult() {
+Synergy::~Synergy() {
 
 }
 
 
-double PCAResult::distance(const arma::vec x) const {
+double Synergy::distance(const arma::vec x) const {
     if (x.n_elem == dim) {
         arma::vec y(dim,0.);
         arma::vec z(x-b);
@@ -89,29 +86,18 @@ double PCAResult::distance(const arma::vec x) const {
 }
 
 
-double PCAResult::distance(const PCAResult *x, double cTrans, double cRot) const {
+double Synergy::distance(const Synergy *x, double cTrans, double cRot) const {
     if (cTrans >= 0. && cRot >= 0. && (cTrans+cRot) > 0. &&
-            x->dim == dim && type() != UNKNOWN && x && type() == x->type()) {
+            x->dim == dim && order() != UNKNOWN && x && order() == x->order()) {
         return (cTrans*dTrans(x->b)+cRot*dRot(x->a,x->U))/(cTrans+cRot);
     } else {
-        throw std::invalid_argument("Both PCAResult must be of the same type and weights should be positive");
+        throw std::invalid_argument("Both synergies must be of the same order and the weights should be positive");
         return -1.;
     }
 }
 
 
-/*double PCAResult::distance(const PCAResult *x, double c1, double c2, double c3) const {
-    if (c1 >= 0. && c2 >= 0. && c3 >= 0. && (c1+c2+c3) > 0. &&
-            x->dim == dim && type() != UNKNOWN && x && type() == x->type()) {
-        return (c1*d1(x->b)+c2*d2(x->a)+c3*d3(x->U))/(c1+c2+c3);
-    } else {
-        throw std::invalid_argument("PCAResult must be of the type and weights should be positive");
-        return -1.;
-    }
-}*/
-
-
-double PCAResult::quality(unsigned int samples) const {
+double Synergy::quality(unsigned int samples) const {
     if (dim == 0) return 0.;
 
     if (dim == 1) return 1.;
@@ -130,17 +116,17 @@ double PCAResult::quality(unsigned int samples) const {
 }
 
 
-PCAResultType PCAResult::type() const {
+SynergyOrder Synergy::order() const {
     return UNKNOWN;
 }
 
 
-double PCAResult::dTrans(const arma::vec xb) const {
+double Synergy::dTrans(const arma::vec xb) const {
     return 0.;
 }
 
 
-double PCAResult::dRot(const arma::vec xa, const arma::mat xU) const {
+double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
     arma::mat A(dim,dim,arma::fill::zeros);
     arma::mat xA(dim,dim,arma::fill::zeros);
     double pMax = 1.;
@@ -154,53 +140,23 @@ double PCAResult::dRot(const arma::vec xa, const arma::mat xU) const {
     double p = sqrt(arma::det(U*A*U.t()+xU*xA*xU.t()));
 
     if (pMax <= pMin || p > pMax || p < pMin) {
-        return 1.;
-
         std::cout << pMin << " " << p << " " << pMax << std::endl;
         std::cout << a << std::endl;
         std::cout << xa << std::endl;
         std::cout << U << std::endl;
         std::cout << xU << std::endl;
 
-        throw "error";
+        return 1.;
     }
 
     return (pMax/p)*(p-pMin)/(pMax-pMin);
 }
 
 
-/*double PCAResult::d1(const arma::vec xb) const {
-    return 0.;
-}
-
-
-double PCAResult::d2(const arma::vec xa) const {
-    double d(0.), tmp;
-    for (unsigned int i = 0; i < dim; i++) {
-        tmp = std::max(1.-xa[i]/a[i],1.-a[i]/xa[i]);
-        d += tmp*tmp;
-    }
-
-    return sqrt(d/double(dim));
-}
-
-
-double PCAResult::d3(const arma::vec xU) const {
-    double d(0.), tmp;
-    for (unsigned int i = 0; i < dim; i++) {
-        tmp = dot(xU.col(i),U.col(i));
-        tmp = 1.-tmp*tmp;
-        d += tmp*tmp;
-    }
-
-    return sqrt(d/double(dim));
-}*/
-
-
-PositionPCAResult::PositionPCAResult(const arma::vec barycenter,
+ZeroOrderSynergy::ZeroOrderSynergy(const arma::vec barycenter,
                                      const arma::vec eigenvalues,
                                      const arma::mat eigenvectors) :
-    PCAResult(barycenter,eigenvalues,eigenvectors) {
+    Synergy(barycenter,eigenvalues,eigenvectors) {
     //check barycenter
     for (unsigned int i = 0; i < dim; i++) {
         if (b[i] < 0. || b[i] > 1.) {
@@ -210,17 +166,17 @@ PositionPCAResult::PositionPCAResult(const arma::vec barycenter,
 }
 
 
-PositionPCAResult::~PositionPCAResult() {
+ZeroOrderSynergy::~ZeroOrderSynergy() {
 
 }
 
 
-PCAResultType PositionPCAResult::type() const {
-    return POSITION;
+SynergyOrder ZeroOrderSynergy::order() const {
+    return ZERO;
 }
 
 
-double PositionPCAResult::dTrans(const arma::vec xb) const {
+double ZeroOrderSynergy::dTrans(const arma::vec xb) const {
     double d(0.), tmp;
     for (unsigned int i = 0; i < dim; i++) {
         tmp = 1.-std::abs(1.-std::abs(xb[i]-b[i]));
@@ -231,21 +187,10 @@ double PositionPCAResult::dTrans(const arma::vec xb) const {
 }
 
 
-/*double PositionPCAResult::d1(const arma::vec xb) const {
-    double d(0.), tmp;
-    for (unsigned int i = 0; i < dim; i++) {
-        tmp = 1.-std::abs(1.-std::abs(xb[i]-b[i]));
-        d += tmp*tmp;
-    }
-
-    return sqrt(d/double(dim));
-}*/
-
-
-VelocityPCAResult::VelocityPCAResult(const arma::vec barycenter,
+FirstOrderSynergy::FirstOrderSynergy(const arma::vec barycenter,
                                      const arma::vec eigenvalues,
                                      const arma::mat eigenvectors) :
-    PCAResult(barycenter,eigenvalues,eigenvectors) {
+    Synergy(barycenter,eigenvalues,eigenvectors) {
     //check barycenter
     for (unsigned int i = 0; i < dim; i++) {
         if (b[i] < -1. || b[i] > 1.) {
@@ -255,18 +200,17 @@ VelocityPCAResult::VelocityPCAResult(const arma::vec barycenter,
 }
 
 
-VelocityPCAResult::~VelocityPCAResult() {
+FirstOrderSynergy::~FirstOrderSynergy() {
 
 }
 
 
-PCAResultType VelocityPCAResult::type() const {
-    return VELOCITY;
+SynergyOrder FirstOrderSynergy::order() const {
+    return FIRST;
 }
 
 
-double VelocityPCAResult::dTrans(const arma::vec xb) const {
-    //return norm(xb-b)/2./sqrt(double(dim));
+double FirstOrderSynergy::dTrans(const arma::vec xb) const {
     if (norm(b) == 0. || norm(xb) == 0.) {
         return norm(xb-b)/3./sqrt(double(dim));
     } else {
@@ -275,22 +219,12 @@ double VelocityPCAResult::dTrans(const arma::vec xb) const {
 }
 
 
-/*double VelocityPCAResult::d1(const arma::vec xb) const {
-    //return norm(xb-b)/2./sqrt(double(dim));
-    if (norm(b) == 0. || norm(xb) == 0.) {
-        return norm(xb-b)/3./sqrt(double(dim));
-    } else {
-        return (2.-dot(xb,b)/norm(xb)/norm(b))*norm(xb-b)/6./sqrt(double(dim));
-    }
-}*/
-
-
-double distance(const PCAResult *PMDset, const arma::vec x) {
-    return PMDset->distance(x);
+double distance(const Synergy *synergy, const arma::vec x) {
+    return synergy->distance(x);
 }
 
 
-double distance(const PCAResult *x, const PCAResult *y,
+double distance(const Synergy *x, const Synergy *y,
                 double cTran, double cRot) {
     if (x && y) {
         return x->distance(y,cTran,cRot);
@@ -301,18 +235,7 @@ double distance(const PCAResult *x, const PCAResult *y,
 }
 
 
-/*double distance(const PCAResult *x, const PCAResult *y,
-                double c1, double c2, double c3) {
-    if (x && y) {
-        return x->distance(y,c1,c2,c3);
-    } else {
-        throw std::invalid_argument("NULL pointers");
-        return -1;
-    }
-}*/
-
-
-PCAResult *PCA(const arma::mat M, PCAResultType type, double alfa) {
+Synergy *PCA(const arma::mat M, SynergyOrder order, double alfa) {
     //Check the arguments
     unsigned int n = M.n_rows;
     unsigned int m = M.n_cols;
@@ -333,27 +256,27 @@ PCAResult *PCA(const arma::mat M, PCAResultType type, double alfa) {
         double lambda = boost::math::quantile(N,(1+pow(1-alfa,1./double(m)))/2.);
         a = lambda*sqrt(a);
 
-        PCAResult *PMDset;
-        switch (type) {
-        case POSITION:
-            PMDset = new PositionPCAResult(b,a,U);
+        Synergy *synergy;
+        switch (order) {
+        case ZERO:
+            synergy = new ZeroOrderSynergy(b,a,U);
             break;
-        case VELOCITY:
-            PMDset = new VelocityPCAResult(b,a,U);
+        case FIRST:
+            synergy = new FirstOrderSynergy(b,a,U);
             break;
         default:
-            PMDset = new PCAResult(b,a,U);
+            synergy = new Synergy(b,a,U);
             break;
         }
 
-        return PMDset;
+        return synergy;
     } else {
         throw std::runtime_error("PCA failed");
     }
 }
 
 
-PCAResult *xml2PMD(const pugi::xml_node *node, PCAResultType type) {
+Synergy *xml2synergy(const pugi::xml_node *node, SynergyOrder order) {
     if (!node) return NULL;
 
     unsigned int dim = 0;
@@ -385,44 +308,43 @@ PCAResult *xml2PMD(const pugi::xml_node *node, PCAResultType type) {
 
             UNode = UNode.next_sibling("DOF");
         }
-
         bNode = bNode.next_sibling("DOF");
         aNode = aNode.next_sibling("Control");
     }
 
-    PCAResult *PMDset;
-    switch (type) {
-    case POSITION:
-        PMDset = new PositionPCAResult(b,a,U);
+    Synergy *synergy;
+    switch (order) {
+    case ZERO:
+        synergy = new ZeroOrderSynergy(b,a,U);
         break;
-    case VELOCITY:
-        PMDset = new VelocityPCAResult(b,a,U);
+    case FIRST:
+        synergy = new FirstOrderSynergy(b,a,U);
         break;
     default:
-        PMDset = new PCAResult(b,a,U);
+        synergy = new Synergy(b,a,U);
         break;
     }
 
-    return PMDset;
+    return synergy;
 }
 
 
-void PMD2xml(pugi::xml_node *node, const PCAResult *PMDset) {
-    if (!node || !PMDset) return;
+void synergy2xml(pugi::xml_node *node, const Synergy *synergy) {
+    if (!node || !synergy) return;
 
     pugi::xml_node offset = node->append_child("Offset");
     pugi::xml_node control;
     pugi::xml_node dof;
-    for (unsigned int i = 0; i < PMDset->dim; i++) {
+    for (unsigned int i = 0; i < synergy->dim; i++) {
         dof = offset.append_child("DOF");
-        dof.append_attribute("value").set_value(PMDset->b[i]);
+        dof.append_attribute("value").set_value(synergy->b[i]);
 
         control = node->append_child("Control");
-        control.append_attribute("eigValue").set_value(PMDset->a[i]);
+        control.append_attribute("eigValue").set_value(synergy->a[i]);
 
-        for (unsigned int j = 0; j < PMDset->dim; j++) {
+        for (unsigned int j = 0; j < synergy->dim; j++) {
             dof = control.append_child("DOF");
-            dof.append_attribute("value").set_value(PMDset->U(j,i));
+            dof.append_attribute("value").set_value(synergy->U(j,i));
         }
     }
 }
