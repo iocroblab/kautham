@@ -84,41 +84,24 @@ ob::PlannerStatus FOSRRT::solve(const ob::PlannerTerminationCondition &ptc) {
             dstate = rstate;
 
             if (!isGoal || si_->distance(nmotion->state,rstate) > maxDistance_) {
-                //Calculate the new q_rand.
-                // Definitions for change from planer variables (Motion,rstate) to armadillo variable (vec)
-                ob::StateSpacePtr space = getSpaceInformation()->getStateSpace(); // obtain the state space
-                ob::StateSpacePtr ssRobot0 = ((ob::StateSpacePtr)space->as<ob::CompoundStateSpace>()->getSubspace(0)); //paso 1)se extrae el subespacio correspondiente al robot 0
-                ob::StateSpacePtr ssRobot0se3 = ((ob::StateSpacePtr)ssRobot0->as<ob::CompoundStateSpace>()->getSubspace(0)); //paso 2) se extrae el componente se3
-                ob::ScopedState<ob::CompoundStateSpace> sstate_qrand(space);      // definition of scoped state (encapsulation of a state)
-                ob::ScopedState<ob::SE3StateSpace> qrandse3(ssRobot0se3); //se define un scoped state para la parte se3 del qrand
-                ob::ScopedState<ob::CompoundStateSpace> sstate_qnear(space);      //se define un scoped state para el qnear (encapsulameinto de un state)
-                ob::ScopedState<ob::SE3StateSpace> qnearse3(ssRobot0se3); //se define un scoped state para la parte se3 del qnear
+                //Get qRand and qNear
+                vec qRand, qNear;
+                omplState2armaVec(rstate,qRand);
+                omplState2armaVec(nmotion->state,qNear);
 
-                //change of rstate and nmotion->state to armadillo vectors (vec)
-                // q_rand
-                vec old_q_rand(2);
-                sstate_qrand = *rstate;          //obtain the qrand with rstate
-                sstate_qrand >> qrandse3;       //fill the scoped state qrandse3 with the content of se3 of the scoped state sstate_qrand
-                old_q_rand[0] = qrandse3->getX(); // obtain the x of q_rand state
-                old_q_rand[1] = qrandse3->getY(); // obtain the y of q_rand state
+                //cout << "qNear" << endl << qNear << endl;
+                //cout << "qRand" << endl << qRand << endl;
 
-                // q_near
-                vec new_nmotion(2);
-                sstate_qnear = *(nmotion->state); //obtain the qnear with nmotion->state
-                sstate_qnear >> qnearse3;        //fill the scoped state qnearse3 with the content of se3 del scoped state sstate_qnear
-                new_nmotion[0] = qnearse3->getX(); //obtain the x of q_near state
-                new_nmotion[1] = qnearse3->getY(); //obtain the y of q_near state
+                //Compute new qRand
+                qRand = new_qRand(qRand,qNear);
 
-                //calculate the new rstate
-                vec q_rand_new = new_qRand(old_q_rand,new_nmotion);
+                //Save new qRand
+                armaVec2omplState(qRand,rstate);
 
-                // variable change from armadillo vector (vec) to rstate
-                qrandse3->setX(q_rand_new[0]); //change the X of qrand
-                qrandse3->setY(q_rand_new[1]); //change the Y of qrand
+                omplState2armaVec(rstate,qRand);
+                //cout << "qRand*" << endl << qRand << endl;
+                //cout << endl;
 
-                sstate_qrand << qrandse3;
-                space->copyState(rstate,sstate_qrand.get());
-                //rstate = sstate_qrand.get();
             }
         } else {
             // sample random state (with goal biasing)
@@ -195,6 +178,159 @@ ob::PlannerStatus FOSRRT::solve(const ob::PlannerTerminationCondition &ptc) {
     return ob::PlannerStatus(solved,approximate);
 }
 
+void FOSRRT::omplState2armaVec(const ob::State *state, arma::vec &vector) {
+    /*It is suposed that no coupled DOF exist.
+     *Each acted DOF has a mapMatrix row with all the element equal to 0 and
+     *only one element equal to 1. The offMatrix element must be equal to 0.5*/
+
+    unsigned int nDOF = planner_->wkSpace()->getNumRobControls();
+    vector.resize(nDOF);
+    //Convert from ompl state to kautham sample
+    Sample smp(nDOF);
+    smp.setMappedConf(planner_->initSamp()->getMappedConf());
+    planner_->omplState2smp(state,&smp);
+
+    //Convert from kautham sample to armadillo vec
+    std::vector<RobConf> conf(smp.getMappedConf());
+    RobConf robConf;
+    Robot *robot;
+    bool found;
+    unsigned int k(0),j;
+    KthReal value;
+
+    for (unsigned int u = 0; u < conf.size(); ++u) {
+        robot = planner_->wkSpace()->getRobot(u);
+        robConf = conf.at(u);
+        for (unsigned int i = 0; i < robot->getNumJoints()+6; ++i) {
+            //Check if all values in i-th mapping matrix row are zero
+            j = 0;
+            found = false;
+            while (j < nDOF && !found) {
+                if (fabs(robot->getMapMatrix()[i][j]) < FLT_EPSILON) {
+                    j++;
+                } else {
+                    found = true;
+                }
+            }
+
+            if (found) {//If an element not null has been found
+                if (i < 3) {//Base translation DOF
+                    value = robConf.getSE3().getPos().at(i);
+                } else if (i < 6) {//Base rotation DOF
+                    value = robConf.getSE3().getParams().at(i-3);
+                } else {//Joint DOF
+                    value = robConf.getRn().getCoordinate(i-6);
+                }
+
+                vector[k] = value;
+                k++;
+
+                if (k >= nDOF) break;
+            }
+        }
+
+        if (k >= nDOF) break;
+    }
+}
+
+
+void FOSRRT::armaVec2omplState(const arma::vec vector, ob::State *state) {
+    /*It is suposed that no coupled DOF exist.
+     *Each acted DOF has a mapMatrix row with all the element equal to 0 and
+     *only one element equal to 1. The offMatrix element must be equal to 0.5*/
+
+    unsigned int nDOF = planner_->wkSpace()->getNumRobControls();
+    Sample smp(nDOF);
+    smp.setMappedConf(planner_->initSamp()->getMappedConf());
+    planner_->omplState2smp(state,&smp);
+
+    //Convert from armadillo vec to kautham sample
+
+    /*for (unsigned int i = 0; i < smp.getMappedConf().size(); ++i) {
+        cout << "[ ";
+        for (unsigned int j = 0; j < 3; ++j) {
+            cout << smp.getMappedConf().at(i).getSE3().getPos().at(j) << " ";
+        }
+        for (unsigned int j = 0; j < 3; ++j) {
+            cout << smp.getMappedConf().at(i).getSE3().getParams().at(j) << " ";
+        }
+        for (unsigned int j = 0; j < smp.getMappedConf().at(i).getRn().getCoordinates().size(); ++j) {
+            cout << smp.getMappedConf().at(i).getRn().getCoordinate(j) << " ";
+        }
+        cout << "]" << endl;
+    }*/
+
+    std::vector<RobConf> conf(smp.getMappedConf());
+    RobConf robConf;
+    Robot *robot;
+    bool found;
+    unsigned int k(0),j;
+    std::vector<KthReal> coords;
+    for (unsigned int u = 0; u < conf.size(); ++u) {
+        robot = planner_->wkSpace()->getRobot(u);
+        robConf = conf.at(u);
+        for (unsigned int i = 0; i < robot->getNumJoints()+6; ++i) {
+            //Check if all values in i-th mapping matrix row are zero
+            j = 0;
+            found = false;
+            while (j < nDOF && !found) {
+                if (fabs(robot->getMapMatrix()[i][j]) < FLT_EPSILON) {
+                    j++;
+                } else {
+                    found = true;
+                }
+            }
+
+            if (found) {//If an element not null has been found
+                if (i < 3) {//Base translation DOF
+                    robConf.getSE3().getCoordinates().at(i) = vector[k];
+                } else if (i < 6) {//Base rotation DOF
+                    coords.resize(6);
+
+                    coords.at(0) = robConf.getSE3().getPos().at(0);
+                    coords.at(1) = robConf.getSE3().getPos().at(1);
+                    coords.at(2) = robConf.getSE3().getPos().at(2);
+                    coords.at(3) = robConf.getSE3().getParams().at(0);
+                    coords.at(4) = robConf.getSE3().getParams().at(1);
+                    coords.at(5) = robConf.getSE3().getParams().at(2);
+
+                    coords.at(i-3) = vector[k];
+
+                    robConf.getSE3().setCoordinates(coords);
+                } else {//Joint DOF
+                    robConf.getRn().getCoordinates().at(i-6) = vector[k];
+                }
+
+                k++;
+
+                if (k >= nDOF) break;
+            }
+        }
+        conf.at(u) = robConf;
+
+        if (k >= nDOF) break;
+    }
+    smp.setMappedConf(conf);
+
+    ob::ScopedState<ob::CompoundStateSpace> sstate(getSpaceInformation()->getStateSpace());
+    planner_->smp2omplScopedState(&smp,&sstate);
+    getSpaceInformation()->getStateSpace()->copyState(state,sstate.get());
+
+    /*for (unsigned int i = 0; i < smp.getMappedConf().size(); ++i) {
+        cout << "[ ";
+        for (unsigned int j = 0; j < 3; ++j) {
+            cout << smp.getMappedConf().at(i).getSE3().getPos().at(j) << " ";
+        }
+        for (unsigned int j = 0; j < 3; ++j) {
+            cout << smp.getMappedConf().at(i).getSE3().getParams().at(j) << " ";
+        }
+        for (unsigned int j = 0; j < smp.getMappedConf().at(i).getRn().getCoordinates().size(); ++j) {
+            cout << smp.getMappedConf().at(i).getRn().getCoordinate(j) << " ";
+        }
+        cout << "]" << endl;
+    }*/
+}
+
 
 arma::vec FOSRRT::new_qRand(arma::vec qr, arma::vec qn) {
     //Cell PMD set
@@ -204,7 +340,7 @@ arma::vec FOSRRT::new_qRand(arma::vec qr, arma::vec qn) {
     arma::vec dq(qr-qn);
     arma::vec Lv(tree_->getVelocityLimits());
     arma::vec v(Lv.n_elem);
-    for (unsigned int i = 0; i < Lv.n_rows; ++i) {
+    for (unsigned int i = 0; i < Lv.n_elem; ++i) {
         v[i] = dq[i]/Lv[i]/timeStep_;
     }
     v /= std::max(1.,arma::max(v));

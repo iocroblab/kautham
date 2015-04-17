@@ -60,7 +60,7 @@ omplFOSRRTPlanner::omplFOSRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal
     space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler,_1,(Planner*)this));
 
     //create planner
-    ob::PlannerPtr planner(new FOSRRT(si));
+    ob::PlannerPtr planner(new FOSRRT(si,this));
     //set planner parameters: range and goalbias
     _GoalBias = (planner->as<FOSRRT>())->getGoalBias();
     addParameter("Goal Bias",_GoalBias);

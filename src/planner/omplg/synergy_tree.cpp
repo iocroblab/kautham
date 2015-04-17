@@ -203,6 +203,7 @@ SynergyTree_node::SynergyTree_node(const SynergyTree_node *parentNode, Synergy *
 
         if (X.at(j)->size() == 0) break;
 
+        std::cout << "Checking axis " << j << " ... ";
         optiData = minimize(X.at(j),Mv,thV,thD,tol,alfa);
         if (optiData) {//If it converged
             optiData->axis = j;
@@ -437,7 +438,7 @@ public:
 
         std::map<unsigned int,OptiData*>::iterator it = F.find(x);
         if (it == F.end()) {
-            double k = 0.5*(x-1.);
+            double k = 0.5*double(x-1);
             OptiData *optiData = new OptiData;
             optiData->x = x;
             if (indices.at(floor(k))+1 <= 10*M.n_cols) {
@@ -455,15 +456,20 @@ public:
             } else {
                 optiData->childL = PCA(M.rows(0,indices.at(floor(k))),FIRST,a);
                 optiData->childR = PCA(M.rows(indices.at(ceil(k)),M.n_rows-1),FIRST,a);
-                optiData->fV = std::max(arma::prod(optiData->childL->a),
-                                        arma::prod(optiData->childR->a))/vFather;
+
+                double vL = arma::prod(optiData->childL->a);
+                double vR = arma::prod(optiData->childR->a);
+                optiData->fV = std::max(vL,vR)/vFather;
+
+                if (isnan(vL) || isnan(vR) || isnan(vFather)) throw;
 
                 double dfL = father->distance(optiData->childL);
                 double dfR = father->distance(optiData->childR);
-                optiData->fD = 1.-std::min(dfL,
-                                           dfR);
-                optiData->f = (cV*optiData->fV+cD*optiData->fD)/2.;
+                optiData->fD = 1.-std::min(dfL,dfR);
 
+                if (isnan(dfL) || isnan(dfR)) throw;
+
+                optiData->f = (cV*optiData->fV+cD*optiData->fD)/2.;
                 if (optiData->f < 0.) throw;
             }
 
