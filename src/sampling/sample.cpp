@@ -228,15 +228,16 @@ namespace Kautham{
   }
 
   void Sample::setMappedConf(vector<RobConf>& _localConf){
-    if( _config.size() != _localConf.size() ){
-      if( _config.size() != 0  ) _config.clear();
+    if (_config.size() != _localConf.size()) {
+      if (_config.size() != 0) _config.clear();
 
-      for(unsigned i = 0; i < _localConf.size(); i++)
+      for (unsigned int i = 0; i < _localConf.size(); ++i) {
         _config.push_back(_localConf.at(i));
-
-    }else{
-      for(unsigned i = 0; i < _localConf.size(); i++)
-        _config.at(i)=_localConf.at(i);
+      }
+    } else {
+      for (unsigned int i = 0; i < _localConf.size(); ++i) {
+        _config.at(i) = _localConf.at(i);
+      }
     }
   }
 
