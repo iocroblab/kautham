@@ -107,18 +107,15 @@
   <link name="link_11.0_tip">
     <visual>
       <geometry>
-        <mesh filename="AllegroHand/left/sensing_tip.wrl" scale="0.001 0.001 0.001"/>
+        <mesh filename="AllegroHand/right/link_3_0_tip.wrl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142"/>
+      <origin rpy="1.5707963 -1.5707963 0" xyz="0 0 -0.01" />
     </visual>
     <collision>
       <material name="white">
-        <color rgba=".9 .9 .9 1"/>
-      </material>
       <geometry>
-        <box size="0.019 0.023 0.0365"/>
+        <sphere radius="0.012" />
       </geometry>
-      <origin xyz="0.0043 0 0.0125"/>
     </collision>
   </link>
   <joint name="joint_11.0_tip" type="fixed">
@@ -217,16 +214,17 @@
   <link name="link_7.0_tip">
     <visual>
       <geometry>
-        <mesh filename="AllegroHand/left/sensing_tip.wrl" scale="0.001 0.001 0.001"/>
+        <mesh filename="AllegroHand/right/link_3_0_tip.wrl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142"/>
+      <origin rpy="1.5707963 -1.5707963 0" xyz="0 0 -0.01" />
     </visual>
     <collision>
       <material name="white">
+        <color rgba=".9 .9 .9 1" />
+      </material>
       <geometry>
-        <box size="0.019 0.023 0.0365"/>
+        <sphere radius="0.012" />
       </geometry>
-      <origin xyz="0.0043 0 0.0125"/>
     </collision>
   </link>
   <joint name="joint_7.0_tip" type="fixed">
@@ -325,16 +323,15 @@
   <link name="link_3.0_tip">
     <visual>
       <geometry>
-        <mesh filename="AllegroHand/left/sensing_tip.wrl" scale="0.001 0.001 0.001"/>
+        <mesh filename="AllegroHand/right/link_3_0_tip.wrl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142"/>
+      <origin rpy="1.5707963 -1.5707963 0" xyz="0 0 -0.01" />
     </visual>
     <collision>
       <material name="white">
       <geometry>
-        <box size="0.019 0.023 0.0365"/>
+        <sphere radius="0.012" />
       </geometry>
-      <origin xyz="0.0043 0 0.0125"/>
     </collision>
   </link>
   <joint name="joint_3.0_tip" type="fixed">
@@ -433,16 +430,15 @@
   <link name="link_15.0_tip">
     <visual>
       <geometry>
-        <mesh filename="AllegroHand/left/sensing_tip.wrl" scale="0.001 0.001 0.001"/>
+        <mesh filename="AllegroHand/right/link_3_0_tip.wrl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142"/>
+      <origin rpy="1.5707963 -1.5707963 0" xyz="0 0 -0.01" />
     </visual>
     <collision>
       <material name="white">
       <geometry>
-        <box size="0.019 0.023 0.0365"/>
+        <sphere radius="0.012" />
       </geometry>
-      <origin xyz="0.0043 0 0.0125"/>
     </collision>
   </link>
   <joint name="joint_15.0_tip" type="fixed">

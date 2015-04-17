@@ -226,11 +226,6 @@
 	<mesh filename="AllegroHand/left/base_link_left.wrl" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
-<collision>
-      <geometry>
-	<mesh filename="AllegroHand/left/base_link_left.wrl" scale="0.001 0.001 0.001"/>
-      </geometry>
-</collision>
     <collision>
       <material name="black"/>
 	<origin xyz="-0.009300 0 -0.0475"/>
