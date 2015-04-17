@@ -87,9 +87,9 @@ public:
     bool getNeighFactor(){ return _factor_k_rrg;} //!< Returns _factor_k_rrg that modifies the number K of nearest neighbors
     void setNeighFactor(double f){_factor_k_rrg=f;} //!< Sets  _factor_k_rrg to modify the number K of nearest neighbors
     double getNodeRejection(){return _nodeRejection;} //!< Returns NodeRejection probability
-    void setNodeRejection(double v){if(v>1.0) _nodeRejection=1.0; else if(v<0.0) _nodeRejection=0.0; else  _nodeRejection=v;} //!< Sets NodeRejection flag
+    void setNodeRejection(double v){if (v>1.0) _nodeRejection=1.0; else if (v<0.0) _nodeRejection=0.0; else  _nodeRejection=v;} //!< Sets NodeRejection flag
     double getPathBias(){return _pathBias;} //!< Returns the _PAthBias
-    void setPathBias(double f){if(f>1.0) _pathBias=1.0; else if(f<0.0) _pathBias=0.0; else  _pathBias=f;} //!< Sets _PathBias to sample near the solution path
+    void setPathBias(double f){if (f>1.0) _pathBias=1.0; else if (f<0.0) _pathBias=0.0; else  _pathBias=f;} //!< Sets _PathBias to sample near the solution path
     double getPathSamplingRangeFactor(){return _pathSamplingRangeFactor;} //!< Returns the factor that multiplied by the RRT range gives the radius for sampling near the path
     void setPathSamplingRangeFactor(double f){_pathSamplingRangeFactor = max(f,1.);} //!< Sets the factor that multiplied by the RRT range gives the radius for sampling near the path
 
@@ -120,14 +120,14 @@ public:
         return d;
 
         /*
-          if(a->parent==b || b->parent==a) {
+          if (a->parent==b || b->parent==a) {
               return 10.0*d;
           }
           return d;
           */
         /*
           else {
-                if(d==0) {
+                if (d==0) {
                     return 10.0;
                 }
                 else {
@@ -231,17 +231,17 @@ public:
             bestCostD_ = opt_->infiniteCost();
         }
 
-        Motion *approximation  = NULL;
+        Motion *approximation = NULL;
         double approximatedist = std::numeric_limits<double>::infinity();
         bool sufficientlyShort = false;
 
-        Motion *rmotion        = new Motion(si_);
-        ob::State *rstate    = rmotion->state;
-        ob::State *xstate    = si_->allocState();
+        Motion *rmotion = new Motion(si_);
+        ob::State *rstate = rmotion->state;
+        ob::State *xstate = si_->allocState();
 
         // e+e/d.  K-nearest RRT*
         double k_rrg;
-        if(_optimize){
+        if (_optimize){
             k_rrg = boost::math::constants::e<double>() + (boost::math::constants::e<double>()/(double)si_->getStateSpace()->getDimension());
             k_rrg = _factor_k_rrg*k_rrg;
         }
@@ -297,7 +297,7 @@ public:
             if (solution == 0)
             {
                 //sample goal with a certain probability goalBias_
-                if( rng_.uniform01() < goalBias_ && goal_s->canSample() ) {
+                if ( rng_.uniform01() < goalBias_ && goal_s->canSample() ) {
                     goal_s->sampleGoal(rstate);
                 }
                 //or randomly otehrwise
@@ -328,19 +328,19 @@ public:
                     double pmax = getPathSamplingRangeFactor(); //2.0;
                     double threshold = (pmin+(pmax-pmin)*rng_.uniform01())*maxDistance_; //10*epsilon
                     unsigned node = (unsigned)(rng_.uniform01() * mpath.size());
-                    if(node==mpath.size()) node = mpath.size()-1; //just in case rng_.uniform01 returned 1
+                    if (node==mpath.size()) node = mpath.size()-1; //just in case rng_.uniform01 returned 1
 
 
                     //cout<<"node="<<node<<" trheshold="<<threshold<<endl;
 
-                    if(node==0) //the goal node (the path is stored from goal to start in mpath)
+                    if (node==0) //the goal node (the path is stored from goal to start in mpath)
                     {
                         ((KauthamStateSampler*)sampler_.get())->setCenterSample(mpath[0]->state, threshold);
                         sampler_->sampleUniform(rstate);
                         //restore
                         ((KauthamStateSampler*)sampler_.get())->setCenterSample(NULL, threshold);
                     }
-                    else if(node==mpath.size()-1)//the start node
+                    else if (node==mpath.size()-1)//the start node
                     {
                         ((KauthamStateSampler*)sampler_.get())->setCenterSample(mpath[mpath.size()-1]->state, threshold);
                         sampler_->sampleUniform(rstate);
@@ -373,11 +373,11 @@ public:
                 }
                 //or sample randomly otehrwise
                 else {
-                    if(rng_.uniform01() < getNodeRejection())
+                    if (rng_.uniform01() < getNodeRejection())
                     {
                         trials = 0;
                         maxtrials = 100;
-                        found=false;
+                        found = false;
                         do //loop until non reject or maxtrials
                         {
                             sampler_->sampleUniform(rstate);
@@ -385,15 +385,15 @@ public:
                             //Find nearest state in tree
                             Motion *nearestmotion = nn_->nearest(rmotion);
                             //c1 = cost from start to nearestmotion (path in tree)
-                            ob::Cost c1=nearestmotion->cost;
+                            ob::Cost c1 = nearestmotion->cost;
 
                             //c2 = cost of added edge from nearestmotion to rmotion
                             ob::Cost c2;
                             ob::Cost c3;
-                            if(opt_->getDescription()=="PMD alignment"){
+                            if (opt_->getDescription() == "PMD alignment"){
                                 ob::State *s0;
-                                if(nearestmotion->parent==NULL) s0=NULL;
-                                else s0=nearestmotion->parent->state;
+                                if (!nearestmotion->parent) s0 = NULL;
+                                else s0 = nearestmotion->parent->state;
 
                                 double d = si_->distance(nearestmotion->state, rmotion->state);
                                 si_->getStateSpace()->interpolate(nearestmotion->state, rmotion->state, maxDistance_ / d, xstate);
@@ -478,7 +478,7 @@ public:
                 //JAN: prune those that are too far away (more than 10 times the range.
                 //for(int i=nbh.size()-1;i>=0;i--)
                 //{
-                //    if(si_->distance(motion->state, nbh[i]->state) > 10*maxDistance_){
+                //    if (si_->distance(motion->state, nbh[i]->state) > 10*maxDistance_){
                 //        nbh.pop_back();//delete last element
                 //    }
                 //}
@@ -520,9 +520,9 @@ public:
                     for (std::size_t i = 0 ; i < nbh.size(); ++i)
                     {
 
-                        if(opt_->getDescription()=="PMD alignment"){
+                        if (opt_->getDescription()=="PMD alignment"){
                             ob::State *s0;
-                            if(nbh[i]->parent==NULL) s0=NULL;
+                            if (nbh[i]->parent==NULL) s0=NULL;
                             else s0=nbh[i]->parent->state;
                             incCosts[i] = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
                         }
@@ -564,9 +564,9 @@ public:
                 else // if not delayCC
                 {
 
-                    if(opt_->getDescription()=="PMD alignment"){
+                    if (opt_->getDescription()=="PMD alignment"){
                         ob::State *s0;
-                        if(nmotion->parent==NULL) s0=NULL;
+                        if (nmotion->parent==NULL) s0=NULL;
                         else s0=nmotion->parent->state;
                         motion->incCost = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nmotion->state, motion->state);
                     }
@@ -581,9 +581,9 @@ public:
                         if (nbh[i] != nmotion)
                         {
 
-                            if(opt_->getDescription()=="PMD alignment"){
+                            if (opt_->getDescription()=="PMD alignment"){
                                 ob::State *s0;
-                                if(nbh[i]->parent==NULL) s0=NULL;
+                                if (nbh[i]->parent==NULL) s0=NULL;
                                 else s0=nbh[i]->parent->state;
                                 incCosts[i] = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,nbh[i]->state, motion->state);
                             }
@@ -633,7 +633,7 @@ public:
                     //JAN: prune those that are too far away (more than 10 times the range.
                     //for(int i=nbh.size()-1;i>=0;i--)
                     //{
-                    //    if(si_->distance(motion->state, nbh[i]->state) > 10*maxDistance_){
+                    //    if (si_->distance(motion->state, nbh[i]->state) > 10*maxDistance_){
                     //        nbh.pop_back();//delete last element
                     //    }
                     //}
@@ -649,9 +649,9 @@ public:
                         if (symDist && symCost)
                             nbhIncCost = incCosts[i];
                         else{
-                            if(opt_->getDescription()=="PMD alignment"){
+                            if (opt_->getDescription()=="PMD alignment"){
                                 ob::State *s0;
-                                if(motion->parent==NULL) s0=NULL;
+                                if (motion->parent==NULL) s0=NULL;
                                 else s0=motion->parent->state;
                                 nbhIncCost = ((PMDalignmentOptimizationObjective*)opt_.get())->motionCost(s0,motion->state, nbh[i]->state);
                             }
@@ -739,7 +739,7 @@ public:
                             solution = goalMotions_[i];
                     }
                     //JAN
-                    //if(solution) cout<<"Solution with cost = "<<solution->cost.v<<endl;
+                    //if (solution) cout<<"Solution with cost = "<<solution->cost.v<<endl;
                 }
 
                 // Checking for approximate solution (closest state found to the goal)
@@ -814,7 +814,7 @@ public:
         OMPL_INFORM("%s: Created %u new states. Checked %u rewire options. %u goal states in tree.", getName().c_str(), statesGenerated, rewireTest, goalMotions_.size());
 
         //JAN
-        if(approximate) cout<<"approximate solution"<<endl;
+        if (approximate) cout<<"approximate solution"<<endl;
         else cout<<"exact  solution"<<endl;
 
 
@@ -836,7 +836,7 @@ public:
    */
 ob::OptimizationObjectivePtr omplRRTStarPlanner::createOptimizationObjectivePMD()
 {
-    if(wkSpace()->getNumRobots() == 1)
+    if (wkSpace()->getNumRobots() == 1)
     {
         //////////////////////////////////////////////////////////////////////////////
         // 3) single robot handPMD alignment optimization criteria
@@ -848,7 +848,7 @@ ob::OptimizationObjectivePtr omplRRTStarPlanner::createOptimizationObjectivePMD(
         string *newcontrol = new string;
         for(unsigned i=0; i<listcontrolsname.length();i++)
         {
-            if(listcontrolsname[i]=='|')
+            if (listcontrolsname[i]=='|')
             {
                 controlname.push_back(newcontrol);
                 newcontrol = new string;
@@ -862,7 +862,7 @@ ob::OptimizationObjectivePtr omplRRTStarPlanner::createOptimizationObjectivePMD(
         vector<int> handpmdcolumns;
         for(unsigned i=0;i<controlname.size();i++)
         {
-            if(controlname[i]->find("PMD") != string::npos)
+            if (controlname[i]->find("PMD") != string::npos)
             {
                 //store the columns of the matrix of controls that will contain the handpmd control
                 handpmdcolumns.push_back(i);
@@ -871,7 +871,7 @@ ob::OptimizationObjectivePtr omplRRTStarPlanner::createOptimizationObjectivePMD(
         numPMD = handpmdcolumns.size();
 
         //be careful, if no PMD control is provides return the distance optimization function
-        if(numPMD==0)
+        if (numPMD==0)
         {
             cout<<"Error configuring the PMD matrix. No PMD controls provided. Returning distance optimization objective)"<<endl;
             return ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
@@ -916,7 +916,7 @@ ob::OptimizationObjectivePtr omplRRTStarPlanner::createOptimizationObjectivePMD(
             //split the list of controls to obtain the control names
             for(unsigned i=0; i<listcontrolsname.length();i++)
             {
-                if(listcontrolsname[i]=='|')
+                if (listcontrolsname[i]=='|')
                 {
                     controlname.push_back(newcontrol);
                     newcontrol = new string;
@@ -930,11 +930,11 @@ ob::OptimizationObjectivePtr omplRRTStarPlanner::createOptimizationObjectivePMD(
             //verify those control names that have the leters PMD in their name
             for(unsigned i=0;i<controlname.size();i++)
             {
-                if(controlname[i]->find("PMD") != string::npos)
+                if (controlname[i]->find("PMD") != string::npos)
                 {
                     //if the pmd has not yet been found (the Key does not exists), create it
                     itpmdMap=pmdMap.find(*controlname[i]);
-                    if(itpmdMap == pmdMap.end())//not found
+                    if (itpmdMap == pmdMap.end())//not found
                     {
                         pair< string, vector< pair<int,int> > > pmdfound;
                         pmdfound.first = *controlname[i]; //string
@@ -957,14 +957,14 @@ ob::OptimizationObjectivePtr omplRRTStarPlanner::createOptimizationObjectivePMD(
         //check correctness
         for (itpmdMap=pmdMap.begin(); itpmdMap!=pmdMap.end(); ++itpmdMap)
         {
-            if(itpmdMap->second.size() != wkSpace()->getNumRobots())
+            if (itpmdMap->second.size() != wkSpace()->getNumRobots())
             {
                 cout<<"Error configuring the PMD matrix. The same number of coupled controls (PMDs) is required per robot (and with the same name!)"<<endl;
                 return ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
             }
         }
         //be careful, if no PMD control is provides return the distance optimization function
-        if(numPMD==0)
+        if (numPMD==0)
         {
             cout<<"Error configuring the PMD matrix. No PMD controls provided. Returning distance optimization objective)"<<endl;
             return ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(ss->getSpaceInformation()));
@@ -1143,13 +1143,13 @@ bool omplRRTStarPlanner::trySolve()
     bool ret;
     //solve
     ret = omplPlanner::trySolve();
-    if(ret)
+    if (ret)
     {
         //evaluate path
         cout<<"path with " << ((og::PathGeometric)ss->getSolutionPath()).getStateCount()<<" states"<<endl;
         ob::Cost pathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(_optiselected);
         cout<<"Path cost = "<<pathcost.v<<endl;
-        if(_opti==3)
+        if (_opti==3)
         {
             //store the values
             double ow = ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->getOrientationWeight();

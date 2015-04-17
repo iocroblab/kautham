@@ -164,7 +164,7 @@ ob::PlannerStatus PCARRT::solve(const ob::PlannerTerminationCondition &ptc)
 // Inicio: funtion solve PCARRT
 ob::PlannerStatus PCARRT::solve(const ob::PlannerTerminationCondition &ptc)
       {
-      // ININCIO solve function (copiar aqui todo el codigo de la funcion solve de la clase ompl::RRT)
+      // INICIO solve function (copiar aqui todo el codigo de la funcion solve de la clase ompl::RRT)
 
 	    checkValidity();
         ob::Goal                 *goal   = pdef_->getGoal().get();
@@ -188,10 +188,10 @@ ob::PlannerStatus PCARRT::solve(const ob::PlannerTerminationCondition &ptc)
 
 	    OMPL_INFORM("%s: Starting planning with %u states already in datastructure", getName().c_str(), nn_->size());
 
-	    Motion *solution  = NULL;
+        Motion *solution = NULL;
 	    Motion *approxsol = NULL;
 	    double  approxdif = std::numeric_limits<double>::infinity();
-	    Motion *rmotion   = new Motion(si_);
+        Motion *rmotion = new Motion(si_);
         ob::State *rstate = rmotion->state;
         ob::State *xstate = si_->allocState();
 

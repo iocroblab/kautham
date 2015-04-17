@@ -1182,27 +1182,25 @@ void omplPlanner::omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> ss
 {
     vector<RobConf> rc;
 
-    //loop for all the robots
-    for(unsigned i=0; i<_wkSpace->getNumRobots(); i++)
-    {
-        //RobConf to store the robots configurations read form the ompl state
+    //Loop for all the robots
+    for (unsigned int i = 0; i < _wkSpace->getNumRobots(); ++i) {
+        //RobConf to store the robots configurations read from the ompl state
         RobConf *rcj = new RobConf;
 
         //Get the subspace corresponding to robot i
-        ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(i));
+        ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr)space->as<ob::CompoundStateSpace>()->getSubspace(i));
 
-        //Get the SE3 subspace of robot i, if it exisits, and extract the SE3 configuration
-        int k=0; //counter of subspaces of robot i
-        if(_wkSpace->getRobot(i)->isSE3Enabled())
-        {
+        //Get the SE3 subspace of robot i, if it exists, extract the SE3 configuration
+        unsigned int k = 0; //counter of subspaces of robot i
+        if (_wkSpace->getRobot(i)->isSE3Enabled()) {
             //Get the SE3 subspace of robot i
-            ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
+            ob::StateSpacePtr ssRobotiSE3 = ((ob::StateSpacePtr)ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
 
-            //create a SE3 scoped state and load it with the data extracted from the global scoped state
+            //Create a SE3 scoped state and load it with the data extracted from the global scoped state
             ob::ScopedState<ob::SE3StateSpace> pathscopedstatese3(ssRobotiSE3);
             sstate >> pathscopedstatese3;
 
-            //convert to a vector of 7 components
+            //Convert it to a vector of 7 components
             vector<KthReal> se3coords;
             se3coords.resize(7);
             se3coords[0] = pathscopedstatese3->getX();
@@ -1212,47 +1210,49 @@ void omplPlanner::omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> ss
             se3coords[4] = pathscopedstatese3->rotation().y;
             se3coords[5] = pathscopedstatese3->rotation().z;
             se3coords[6] = pathscopedstatese3->rotation().w;
-            //create the sample
+
+            //Create the sample
             SE3Conf se3;
             se3.setCoordinates(se3coords);
             rcj->setSE3(se3);
-            k++;
-        }
-        //If the robot does not have movile SE3 dofs then the SE3 configuration of the sample is maintained
-        else
-        {
-            if(smp->getMappedConf().size()==0)
-                throw ompl::Exception("omplPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
-            else
-                rcj->setSE3(smp->getMappedConf()[i].getSE3());
-        }
 
+            k++;
+        } else {
+            //If the robot does not have mobile SE3 dofs then the SE3 configuration of the sample is maintained
+            if (smp->getMappedConf().size() == 0) {
+                throw ompl::Exception("omplPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
+            } else {
+                rcj->setSE3(smp->getMappedConf()[i].getSE3());
+            }
+        }
 
         //Get the Rn subspace of robot i, if it exisits, and extract the Rn configuration
-        if(_wkSpace->getRobot(i)->getNumJoints()>0)
-        {
+        if (_wkSpace->getRobot(i)->getNumJoints() > 0) {
             //Get the Rn subspace of robot i
-            ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
+            ob::StateSpacePtr ssRobotiRn = ((ob::StateSpacePtr)ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
 
-            //create a Rn scoped state and load it with the data extracted from the global scoped state
+            //Create a Rn scoped state and load it with the data extracted from the global scoped state
             ob::ScopedState<weigthedRealVectorStateSpace> pathscopedstateRn(ssRobotiRn);
             sstate >> pathscopedstateRn;
 
-            //convert to a vector of n components
+            //Convert it to a vector of n components
             vector<KthReal> coords;
-            for(unsigned j=0;j<_wkSpace->getRobot(i)->getNumJoints();j++) coords.push_back(pathscopedstateRn->values[j]);
+            for (unsigned int j = 0; j < _wkSpace->getRobot(i)->getNumJoints(); ++j){
+                coords.push_back(pathscopedstateRn->values[j]);
+            }
             rcj->setRn(coords);
+
             k++;//dummy
-        }
-        //If the robot does not have movile Rn dofs then the Rn configuration of the sample is maintained
-        else
-        {
-            if(smp->getMappedConf().size()==0)
+        } else {
+            //If the robot does not have mobile Rn dofs then the Rn configuration of the sample is maintained
+            if (smp->getMappedConf().size() == 0) {
                 throw ompl::Exception("omplPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
-            else
+            } else {
                 rcj->setRn(smp->getMappedConf()[i].getRn());
+            }
         }
-        //load the RobConf with the data of robot i
+
+        //Load the RobConf with the data of robot i
         rc.push_back(*rcj);
     }
     //create the sample with the RobConf
