@@ -192,10 +192,8 @@ SoSeparator *IVFCLElement::getIvFromFCLModel(bool tran) {
 void IVFCLElement::setOrientation(float *ori) {
     IVElement::setOrientation(ori);
 
-    mt::Scalar y,p,r;
-    mt::Rotation(ori[0],ori[1],ori[2],ori[3]).getYpr(y,p,r);
     fcl::Matrix3f rotation;
-    rotation.setEulerYPR(y,p,r);
+    fcl::Quaternion3f(ori[3],ori[0],ori[1],ori[2]).toRotation(rotation);
 
     FCLModel->setRotation(rotation);
 }
@@ -219,14 +217,14 @@ bool IVFCLElement::makeFCLModel() {
                                           triangleCB,(void*)&geomData);
             triAction.apply(collision_ivModel());
 
-            fcl::BVHModel<fcl::OBBRSS> *geom = new fcl::BVHModel<fcl::OBBRSS>;
-            geom->beginModel();
-            geom->addSubModel(geomData.vertices,geomData.triangles);
-            geom->endModel();
+            fcl::BVHModel<fcl::OBBRSS> *model = new fcl::BVHModel<fcl::OBBRSS>;
+            model->beginModel();
+            model->addSubModel(geomData.vertices,geomData.triangles);
+            model->endModel();
 
-            const boost::shared_ptr<fcl::CollisionGeometry> cgeom(geom);
+            const boost::shared_ptr<fcl::CollisionGeometry> geom(model);
 
-            FCLModel = new fcl::CollisionObject(cgeom);
+            FCLModel = new fcl::CollisionObject(geom);
 
             return true;
         }

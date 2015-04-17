@@ -318,7 +318,7 @@ namespace Kautham {
                   if (plannerName == "omplFOSRRT") {
                       ((omplplanner::omplFOSRRTPlanner*)_planner)->
                               setSynergyTree(doc->child("Problem").child("Planner").child("Parameters").
-                                           child("SynergyTree").attribute("SynergyTree").as_string());
+                                           child("SynergyTree").attribute("synergyTree").as_string());
                   } else if (plannerName == "omplTRRT") {
                       ((omplplanner::omplTRRTPlanner*)_planner)->
                               setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
@@ -636,7 +636,7 @@ namespace Kautham {
 
           node = node.child("Planner").child("Parameters");
           //find the PCAkdatree file and set its complete path if found
-          if (!findAllFiles(&node,"SynergyTree","SynergyTree",def_path)) return false;
+          if (!findAllFiles(&node,"SynergyTree","synergyTree",def_path)) return false;
 
           //find the potential file and set its complete path if found
           if (!findAllFiles(&node,"Potential","potential",def_path)) return false;
