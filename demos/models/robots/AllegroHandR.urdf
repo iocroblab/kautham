@@ -7,6 +7,9 @@
       </geometry>
     </visual>
     <collision>
+      <material name="black">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
       <origin xyz="-0.009300 0 -0.0475"/>
       <geometry>
         <box size="0.0408 0.1130 0.095"/>
@@ -21,6 +24,7 @@
       <origin xyz="0 0 0.0164"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0164"/>
       </geometry>
@@ -42,6 +46,7 @@
       <origin rpy="1.5707963 -1.5707963 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.054"/>
       </geometry>
@@ -63,6 +68,7 @@
       <origin rpy="-1.5707963 -1.5707963 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0384"/>
       </geometry>
@@ -84,6 +90,7 @@
       <origin rpy="-1.5707963 -1.5707963 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0267"/>
       </geometry>
@@ -105,6 +112,9 @@
       <origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142"/>
     </visual>
     <collision>
+      <material name="white">
+        <color rgba=".9 .9 .9 1"/>
+      </material>
       <geometry>
         <box size="0.019 0.023 0.0365"/>
       </geometry>
@@ -124,6 +134,7 @@
       <origin xyz="0 0 0.0164"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0164"/>
       </geometry>
@@ -145,6 +156,7 @@
       <origin rpy="1.5707963 -1.5707963 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.054"/>
       </geometry>
@@ -166,6 +178,7 @@
       <origin rpy="-1.5707963 -1.5707963 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0384"/>
       </geometry>
@@ -187,6 +200,7 @@
       <origin rpy="-1.5707963 -1.5707963 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0267"/>
       </geometry>
@@ -208,6 +222,7 @@
       <origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142"/>
     </visual>
     <collision>
+      <material name="white">
       <geometry>
         <box size="0.019 0.023 0.0365"/>
       </geometry>
@@ -227,6 +242,7 @@
       <origin xyz="0 0 0.0164"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0164"/>
       </geometry>
@@ -248,6 +264,7 @@
       <origin rpy="1.5707963 -1.5707963 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.054"/>
       </geometry>
@@ -269,6 +286,7 @@
       <origin rpy="-1.5707963 -1.5707963 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0384"/>
       </geometry>
@@ -290,6 +308,7 @@
       <origin rpy="-1.5707963 -1.5707963 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0267"/>
       </geometry>
@@ -311,6 +330,7 @@
       <origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142"/>
     </visual>
     <collision>
+      <material name="white">
       <geometry>
         <box size="0.019 0.023 0.0365"/>
       </geometry>
@@ -330,6 +350,7 @@
       <origin rpy="1.570796327 0 -1.570796327" xyz="-0.02775 0 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0358 0.034 0.0455"/>
       </geometry>
@@ -351,6 +372,7 @@
       <origin xyz="0 0 0.016000001"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0177"/>
       </geometry>
@@ -372,6 +394,7 @@
       <origin rpy="-1.5707963259 1.5707963259 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0514"/>
       </geometry>
@@ -393,6 +416,7 @@
       <origin rpy="1.5707963259 1.5707963259 0"/>
     </visual>
     <collision>
+      <material name="black">
       <geometry>
         <box size="0.0196 0.0275 0.0423"/>
       </geometry>
@@ -414,6 +438,7 @@
       <origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142"/>
     </visual>
     <collision>
+      <material name="white">
       <geometry>
         <box size="0.019 0.023 0.0365"/>
       </geometry>

@@ -10,8 +10,8 @@
 	<Planner>
 		<Parameters>
 			<Name>omplFOSRRT</Name>
-			<SynergyTree SynergyTree="controls/ellipseSynergyTree.xml"/>
-			<Parameter name="Max Planning Time">0.5</Parameter>
+			<SynergyTree synergyTree="controls/ellipseSynergyTree.xml"/>
+			<Parameter name="Max Planning Time">1</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Range">0.02</Parameter>
 			<Parameter name="Goal Bias">0.05</Parameter>
