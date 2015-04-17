@@ -29,8 +29,8 @@
 #include <boost/math/distributions/normal.hpp>
 
 Synergy::Synergy(const arma::vec barycenter,
-                     const arma::vec eigenvalues,
-                     const arma::mat eigenvectors) :
+                 const arma::vec eigenvalues,
+                 const arma::mat eigenvectors) :
     dim(barycenter.n_elem),b(barycenter),a(eigenvalues),U(eigenvectors) {
     //check dimension
     if (eigenvalues.n_elem != dim || eigenvectors.n_cols != dim ||
@@ -57,7 +57,7 @@ Synergy::Synergy(const arma::vec barycenter,
             throw std::invalid_argument("Eigenvectors must be unitary");
         }
         for (unsigned int j = i+1; j < dim; j++) {
-            if (std::abs(dot(U.col(i),U.col(j))) > 1e-6) {
+            if (std::abs(dot(U.col(i),U.col(j))) > 2e-6) {
                 throw std::invalid_argument("Eigenvector matrix should be orthogonal");
             }
         }
@@ -89,7 +89,10 @@ double Synergy::distance(const arma::vec x) const {
 double Synergy::distance(const Synergy *x, double cTrans, double cRot) const {
     if (cTrans >= 0. && cRot >= 0. && (cTrans+cRot) > 0. &&
             x->dim == dim && order() != UNKNOWN && x && order() == x->order()) {
-        return (cTrans*dTrans(x->b)+cRot*dRot(x->a,x->U))/(cTrans+cRot);
+        double d = (cTrans*dTrans(x->b)+cRot*dRot(x->a,x->U))/(cTrans+cRot);
+        if (isnan(d) || d < -DBL_EPSILON || d > 1 + DBL_EPSILON) throw;
+
+        return std::min(std::max(d,0.),1.);
     } else {
         throw std::invalid_argument("Both synergies must be of the same order and the weights should be positive");
         return -1.;
@@ -127,6 +130,7 @@ double Synergy::dTrans(const arma::vec xb) const {
 
 
 double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
+    //Compute pMax and pMin
     arma::mat A(dim,dim,arma::fill::zeros);
     arma::mat xA(dim,dim,arma::fill::zeros);
     double pMax = 1.;
@@ -137,25 +141,46 @@ double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
         pMax *= a(i)+xa(dim-i-1);
         pMin *= a(i)+xa(i);
     }
-    double p = sqrt(arma::det(U*A*U.t()+xU*xA*xU.t()));
-
-    if (pMax <= pMin || p > pMax || p < pMin) {
-        std::cout << pMin << " " << p << " " << pMax << std::endl;
-        std::cout << a << std::endl;
-        std::cout << xa << std::endl;
-        std::cout << U << std::endl;
-        std::cout << xU << std::endl;
-
-        return 1.;
+    if (fabs(pMax-pMin) < DBL_EPSILON) {//pMax == pMin
+        return 0.5;//Undefined
+    } else {//pMax != pMin
+        if (pMax < pMin) throw;//Always it must be pMax >= pMin
     }
 
-    return (pMax/p)*(p-pMin)/(pMax-pMin);
+    //Compute p
+    double p = arma::det(U*A*U.t()+xU*xA*xU.t());
+    if (fabs(p) < DBL_EPSILON) {
+        p = 0.;
+    } else {
+        if (p < 0.) {
+            throw;//Always it must be p >= 0.
+        } else {
+            p = sqrt(p);
+        }
+    }
+    if (fabs(p-pMin) < DBL_EPSILON) {//pMin == p < pMax
+        return 0.;
+    } else{
+        if (p < pMin) throw;//Always it must be p >= pMin
+    }
+
+    //Compute d
+    double d = (pMax*(p-pMin))/(p*(pMax-pMin)+DBL_EPSILON);
+    if (isnan(d) || d < -DBL_EPSILON || d > 1. + DBL_EPSILON) {
+        throw;//Always it must be 0. <= d <= 1.
+    } else if (d < 0.) {
+        d = 0.;
+    } else if (d > 1.) {
+        d = 1.;
+         }
+
+    return d;
 }
 
 
 ZeroOrderSynergy::ZeroOrderSynergy(const arma::vec barycenter,
-                                     const arma::vec eigenvalues,
-                                     const arma::mat eigenvectors) :
+                                   const arma::vec eigenvalues,
+                                   const arma::mat eigenvectors) :
     Synergy(barycenter,eigenvalues,eigenvectors) {
     //check barycenter
     for (unsigned int i = 0; i < dim; i++) {
