@@ -56,6 +56,9 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
         // Set cost for this start state
         motion->cost = opt_->stateCost(motion->state);
 
+        //!
+        motion->valid = true;
+
         // Add start motion to the tree
         nearestNeighbors_->add(motion);
     }
@@ -78,10 +81,15 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
 
     // the final solution
     Motion *solution = NULL;
+
+    //!
+    double  distsol  = -1.0;
+    /*
     // the approximate solution, returned if no final solution found
     Motion *approxSolution = NULL;
     // track the distance from goal to closest solution yet found
     double approxDifference = std::numeric_limits<double>::infinity();
+    */
 
     // distance between states - the intial state and the interpolated state (may be the same)
     double randMotionDistance;
@@ -100,7 +108,10 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
     base::State *newState;
 
     // Begin sampling --------------------------------------------------------------------------------------
-    while (!ptc()) {
+    //!
+    bool solutionFound = false;
+    while (!ptc() && !solutionFound) {
+    //while (!ptc()) {
         // I.
 
         // Sample random state (with goal biasing probability)
@@ -116,6 +127,9 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
 
         // Find closest state in the tree
         nearMotion = nearestNeighbors_->nearest(randMotion);
+
+        //!
+        assert(nearMotion != randMotion);
 
         // III.
 
@@ -145,9 +159,10 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
         // IV.
         // this stage integrates collision detections in the presence of obstacles and checks for collisions
 
-        if (!si_->checkMotion(nearMotion->state,newState)) {
+        //!
+        /*if (!si_->checkMotion(nearMotion->state,newState)) {
             continue; // try a new sample
-        }
+        }*/
 
 
         // Minimum Expansion Control
@@ -172,6 +187,9 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
         motion->parent = nearMotion; // link q_new to q_near as an edge
         motion->cost = childCost;
 
+        //!
+        nearMotion->children.push_back(motion);
+
         // Add motion to data structure
         nearestNeighbors_->add(motion);
 
@@ -180,7 +198,47 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
         // Check if this motion is the goal
         double distToGoal = 0.;
         if (goal->isSatisfied(motion->state,&distToGoal)) {
-            approxDifference = distToGoal; // the tolerated error distance btw state and goal
+            //!
+            distsol = distToGoal;
+            solution = motion;
+            solutionFound = true;
+            lastGoalMotion_ = solution;
+
+            // Check that the solution is valid:
+            // construct the solution path
+            std::vector<Motion*> mpath;
+            while (solution != NULL)
+            {
+                mpath.push_back(solution);
+                solution = solution->parent;
+            }
+
+            // Check each segment along the path for validity
+            for (int i = mpath.size() - 1 ; i >= 0 && solutionFound; --i) {
+                if (!mpath[i]->valid) {
+                    if (si_->checkMotion(mpath[i]->parent->state, mpath[i]->state)) {
+                        mpath[i]->valid = true;
+                    } else {
+                        removeMotion(mpath[i]);
+                        solutionFound = false;
+                        lastGoalMotion_ = NULL;
+                    }
+                }
+            }
+
+            if (solutionFound) {
+                // Set the solution path
+                PathGeometric *path = new PathGeometric(si_);
+                for (int i = mpath.size() - 1 ; i >= 0 ; --i) {
+                    path->append(mpath[i]->state);
+                }
+
+                pdef_->addSolutionPath(base::PathPtr(path),false, distsol);
+            }
+        }
+    }
+
+            /*approxDifference = distToGoal; // the tolerated error distance btw state and goal
             solution = motion; // set the final solution
             break;
         }
@@ -224,7 +282,7 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
 
         pdef_->addSolutionPath(base::PathPtr(path),approximate,approxDifference);
         solved = true;
-    }
+    }*/
 
     // Clean up ---------------------------------------------------------------------------------------
 
@@ -234,5 +292,31 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
 
     OMPL_INFORM("%s: Created %u states",getName().c_str(),nearestNeighbors_->size());
 
-    return base::PlannerStatus(solved,approximate);
+    //!
+    return solutionFound ? base::PlannerStatus::EXACT_SOLUTION : base::PlannerStatus::TIMEOUT;
+    //return base::PlannerStatus(solved,approximate);
+}
+
+
+void og::LazyTRRT::removeMotion(Motion *motion) {
+    nearestNeighbors_->remove(motion);
+
+    // Remove self from parent list
+    if (motion->parent) {
+        for (unsigned int i = 0; i < motion->parent->children.size(); ++i) {
+            if (motion->parent->children[i] == motion) {
+                motion->parent->children.erase(motion->parent->children.begin() + i);
+                break;
+            }
+        }
+    }
+
+    // Remove children
+    for (unsigned int i = 0; i < motion->children.size(); ++i) {
+        motion->children[i]->parent = NULL;
+        removeMotion(motion->children[i]);
+    }
+
+    if (motion->state) si_->freeState(motion->state);
+    delete motion;
 }
