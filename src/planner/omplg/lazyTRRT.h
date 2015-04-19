@@ -35,6 +35,34 @@ public:
     LazyTRRT(const base::SpaceInformationPtr &si);
 
     virtual base::PlannerStatus solve(const base::PlannerTerminationCondition &ptc);
+
+protected:
+    //!
+    class Motion : public TRRT::Motion {
+    public:
+
+        Motion() : TRRT::Motion(),parent(NULL),valid(false) {
+        }
+
+        Motion(const base::SpaceInformationPtr &si) :
+            TRRT::Motion(si),parent(NULL),valid(false) {
+        }
+
+        ~Motion() {
+        }
+
+        Motion *parent;
+
+        bool valid;
+
+        std::vector<Motion*> children;
+    };
+
+    //!
+    void removeMotion(Motion *motion);
+
+    //!
+    boost::shared_ptr< NearestNeighbors<Motion*> > nearestNeighbors_;
 };
 }
 }
