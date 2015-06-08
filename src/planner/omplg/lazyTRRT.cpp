@@ -27,15 +27,130 @@
 
 #include <ompl/base/objectives/MechanicalWorkOptimizationObjective.h>
 #include <ompl/base/goals/GoalSampleableRegion.h>
+#include <ompl/tools/config/SelfConfig.h>
+#include <ompl/tools/config/MagicConstants.h>
 
-namespace ob = ompl::base;
-namespace og = ompl::geometric;
 
-og::LazyTRRT::LazyTRRT(const base::SpaceInformationPtr &si) : TRRT(si) {
-    setName("LazyTRRT");
+ompl::geometric::LazyTRRT::LazyTRRT(const base::SpaceInformationPtr &si) : base::Planner(si,"LazyTRRT") {
+    // Standard RRT Variables
+    specs_.approximateSolutions = true;
+    specs_.directed = true;
+
+    goalBias_ = 0.05;
+    maxDistance_ = 0.0; // set in setup()
+    lastGoalMotion_ = NULL;
+
+    Planner::declareParam<double>("range",this,&LazyTRRT::setRange,&LazyTRRT::getRange,"0.:1.:10000.");
+    Planner::declareParam<double>("goal_bias",this,&LazyTRRT::setGoalBias,&LazyTRRT::getGoalBias,"0.:.05:1.");
+
+    // TRRT Specific Variables
+    frontierThreshold_ = 0.0; // set in setup()
+    kConstant_ = 0.0; // set in setup()
+    maxStatesFailed_ = 10; // threshold for when to start increasing the temperatuer
+    tempChangeFactor_ = 2.0; // how much to decrease or increase the temp each time
+    minTemperature_ = 10e-10; // lower limit of the temperature change
+    initTemperature_ = 10e-6; // where the temperature starts out
+    frontierNodeRatio_ = 0.1; // 1/10, or 1 nonfrontier for every 10 frontier
+
+    //Complete lazy collision checking by default
+    minCollThr_ = DBL_MAX-DBL_EPSILON;
+    maxCollThr_ = DBL_MAX;
+
+    Planner::declareParam<unsigned int>("max_states_failed",this,&LazyTRRT::setMaxStatesFailed,&LazyTRRT::getMaxStatesFailed,"1:1000");
+    Planner::declareParam<double>("temp_change_factor",this,&LazyTRRT::setTempChangeFactor,&LazyTRRT::getTempChangeFactor,"0.:.1:10.");
+    Planner::declareParam<double>("min_temperature",this,&LazyTRRT::setMinTemperature,&LazyTRRT::getMinTemperature);
+    Planner::declareParam<double>("init_temperature",this,&LazyTRRT::setInitTemperature,&LazyTRRT::getInitTemperature);
+    Planner::declareParam<double>("frontier_threshold",this,&LazyTRRT::setFrontierThreshold,&LazyTRRT::getFrontierThreshold);
+    Planner::declareParam<double>("frontier_nodes_ratio",this,&LazyTRRT::setFrontierNodeRatio,&LazyTRRT::getFrontierNodeRatio);
+    Planner::declareParam<double>("k_constant",this,&LazyTRRT::setKConstant,&LazyTRRT::getKConstant);
+    Planner::declareParam<double>("min_coll_thr",this,&LazyTRRT::setMinCollisionThreshold,&LazyTRRT::getMinCollisionThreshold);
+    Planner::declareParam<double>("max_coll_thr",this,&LazyTRRT::setMaxCollisionThreshold,&LazyTRRT::getMaxCollisionThreshold);
 }
 
-ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &ptc) {
+ompl::geometric::LazyTRRT::~LazyTRRT() {
+    freeMemory();
+}
+
+
+void ompl::geometric::LazyTRRT::clear() {
+    Planner::clear();
+    sampler_.reset();
+    freeMemory();
+    if (nearestNeighbors_)
+        nearestNeighbors_->clear();
+    lastGoalMotion_ = NULL;
+
+    // Clear TRRT specific variables ---------------------------------------------------------
+    numStatesFailed_ = 0;
+    temp_ = initTemperature_;
+    nonfrontierCount_ = 1;
+    frontierCount_ = 1; // init to 1 to prevent division by zero error
+}
+
+
+void ompl::geometric::LazyTRRT::setup() {
+    Planner::setup();
+    tools::SelfConfig selfConfig(si_,getName());
+
+    // Set optimization objective
+    if (pdef_->hasOptimizationObjective()) {
+        opt_ = pdef_->getOptimizationObjective();
+    } else {        
+        opt_.reset(new base::MechanicalWorkOptimizationObjective(si_));
+        OMPL_INFORM("%s: No optimization objective specified.",getName().c_str());
+        OMPL_INFORM("%s: Defaulting to optimizing path length.",getName().c_str());
+    }
+
+    // Set maximum distance a new node can be from its nearest neighbor
+    if (maxDistance_ < std::numeric_limits<double>::epsilon()) {
+        selfConfig.configurePlannerRange(maxDistance_);
+        maxDistance_ *= magic::COST_MAX_MOTION_LENGTH_AS_SPACE_EXTENT_FRACTION;
+    }
+
+    // Set the threshold that decides if a new node is a frontier node or non-frontier node
+    if (frontierThreshold_ < std::numeric_limits<double>::epsilon()) {
+        frontierThreshold_ = si_->getMaximumExtent() * 0.01;
+        OMPL_DEBUG("%s: Frontier threshold detected to be %lf",getName().c_str(),frontierThreshold_);
+    }
+
+    // Autoconfigure the K constant
+    if (kConstant_ < std::numeric_limits<double>::epsilon()) {
+        // Find the average cost of states by sampling
+        double averageCost = opt_->averageStateCost(magic::TEST_STATE_COUNT).v;
+        kConstant_ = averageCost;
+        OMPL_DEBUG("%s: K constant detected to be %lf",getName().c_str(),kConstant_);
+    }
+
+    // Create the nearest neighbor function the first time setup is run
+    if (!nearestNeighbors_) {
+        nearestNeighbors_.reset(tools::SelfConfig::getDefaultNearestNeighbors<Motion*>(si_->getStateSpace()));
+    }
+
+    // Set the distance function
+    nearestNeighbors_->setDistanceFunction(boost::bind(&LazyTRRT::distanceFunction,this,_1,_2));
+
+    // Setup TRRT specific variables ---------------------------------------------------------
+    numStatesFailed_ = 0;
+    temp_ = initTemperature_;
+    nonfrontierCount_ = 1;
+    frontierCount_ = 1; // init to 1 to prevent division by zero error
+}
+
+
+void ompl::geometric::LazyTRRT::freeMemory() {
+    // Delete all motions, states and the nearest neighbors data structure
+    if (nearestNeighbors_) {
+        std::vector<Motion*> motions;
+        nearestNeighbors_->list(motions);
+        for (unsigned int i = 0; i < motions.size(); ++i) {
+            if (motions[i]->state) si_->freeState(motions[i]->state);
+            delete motions[i];
+        }
+    }
+}
+
+
+ompl::base::PlannerStatus ompl::geometric::LazyTRRT::solve(const base::PlannerTerminationCondition &ptc) {
     // Basic error checking
     checkValidity();
 
@@ -83,7 +198,10 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
     Motion *solution = NULL;
 
     //!
-    double  distsol  = -1.0;
+    double distsol = -1.;
+    unsigned int pathChecks = 0;
+    unsigned int validMotions = 0;
+    unsigned int invalidMotions = 0;
     /*
     // the approximate solution, returned if no final solution found
     Motion *approxSolution = NULL;
@@ -111,7 +229,7 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
     //!
     bool solutionFound = false;
     while (!ptc() && !solutionFound) {
-    //while (!ptc()) {
+        //while (!ptc()) {
         // I.
 
         // Sample random state (with goal biasing probability)
@@ -157,13 +275,19 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
         }
 
         // IV.
-        // this stage integrates collision detections in the presence of obstacles and checks for collisions
+        // this stage integrates collision detections in the presence of ompl::basestacles and checks for collisions
 
         //!
-        /*if (!si_->checkMotion(nearMotion->state,newState)) {
-            continue; // try a new sample
-        }*/
-
+        if (rng_.uniform01() < (nearMotion->cost.v-minCollThr_)/(maxCollThr_-minCollThr_)) {
+            if (!si_->checkMotion(nearMotion->state,newState)) {
+                invalidMotions++;
+                continue; // try a new sample
+            } else {
+                validMotions++;
+                nearMotion->valid = true;
+            }
+        }
+        //if (!si_->checkMotion(nearMotion->state,newState)) continue; // try a new sample
 
         // Minimum Expansion Control
         // A possible side effect may appear when the tree expansion toward unexplored regions remains slow, and the
@@ -199,6 +323,7 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
         double distToGoal = 0.;
         if (goal->isSatisfied(motion->state,&distToGoal)) {
             //!
+            pathChecks++;
             distsol = distToGoal;
             solution = motion;
             solutionFound = true;
@@ -207,8 +332,7 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
             // Check that the solution is valid:
             // construct the solution path
             std::vector<Motion*> mpath;
-            while (solution != NULL)
-            {
+            while (solution) {
                 mpath.push_back(solution);
                 solution = solution->parent;
             }
@@ -216,7 +340,7 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
             // Check each segment along the path for validity
             for (int i = mpath.size() - 1 ; i >= 0 && solutionFound; --i) {
                 if (!mpath[i]->valid) {
-                    if (si_->checkMotion(mpath[i]->parent->state, mpath[i]->state)) {
+                    if (si_->checkMotion(mpath[i]->parent->state,mpath[i]->state)) {
                         mpath[i]->valid = true;
                     } else {
                         removeMotion(mpath[i]);
@@ -233,19 +357,19 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
                     path->append(mpath[i]->state);
                 }
 
-                pdef_->addSolutionPath(base::PathPtr(path),false, distsol);
+                pdef_->addSolutionPath(base::PathPtr(path),false,distsol);
             }
         }
     }
 
-            /*approxDifference = distToGoal; // the tolerated error distance btw state and goal
+    /*approxDifference = distTompl::geometricoal; // the tolerated error distance btw state and goal
             solution = motion; // set the final solution
             break;
         }
 
         // Is this the closest solution we've found so far
-        if (distToGoal < approxDifference) {
-            approxDifference = distToGoal;
+        if (distTompl::geometricoal < approxDifference) {
+            approxDifference = distTompl::geometricoal;
             approxSolution = motion;
         }
 
@@ -293,12 +417,16 @@ ob::PlannerStatus og::LazyTRRT::solve(const base::PlannerTerminationCondition &p
     OMPL_INFORM("%s: Created %u states",getName().c_str(),nearestNeighbors_->size());
 
     //!
+    OMPL_INFORM("%s: Path checked %u times",getName().c_str(),pathChecks);
+    OMPL_INFORM("%s: %u invalid motions of %u checked motions (%f)",getName().c_str(),invalidMotions,
+                validMotions+invalidMotions,double(invalidMotions)/double(std::max(1u,validMotions+invalidMotions)));
+
     return solutionFound ? base::PlannerStatus::EXACT_SOLUTION : base::PlannerStatus::TIMEOUT;
     //return base::PlannerStatus(solved,approximate);
 }
 
 
-void og::LazyTRRT::removeMotion(Motion *motion) {
+void ompl::geometric::LazyTRRT::removeMotion(Motion *motion) {
     nearestNeighbors_->remove(motion);
 
     // Remove self from parent list
@@ -319,4 +447,96 @@ void og::LazyTRRT::removeMotion(Motion *motion) {
 
     if (motion->state) si_->freeState(motion->state);
     delete motion;
+}
+
+
+void ompl::geometric::LazyTRRT::getPlannerData(base::PlannerData &data) const {
+    Planner::getPlannerData(data);
+
+    std::vector<Motion*> motions;
+    if (nearestNeighbors_) nearestNeighbors_->list(motions);
+
+    if (lastGoalMotion_) data.addGoalVertex(base::PlannerDataVertex(lastGoalMotion_->state));
+
+    for (unsigned int i = 0; i < motions.size(); ++i) {
+        if (!motions[i]->parent) {
+            data.addStartVertex(base::PlannerDataVertex(motions[i]->state));
+        } else {
+            data.addEdge(base::PlannerDataVertex(motions[i]->parent->state),
+                         base::PlannerDataVertex(motions[i]->state));
+        }
+    }
+}
+
+
+bool ompl::geometric::LazyTRRT::transitionTest(double childCost, double parentCost, double distance) {
+    // Always accept if new state has same or lower cost than old state
+    if (childCost <= parentCost) return true;
+
+    // Difference in cost
+    double costSlope = (childCost - parentCost) / distance;
+
+    // The probability of acceptance of a new configuration is defined by comparing its cost c_j
+    // relatively to the cost c_i of its parent in the tree. Based on the Metropolis criterion.
+    double transitionProbability = 1.; // if cost_slope is <= 0, prompl::baseabilty is 1
+
+    // Only return at end
+    bool result = false;
+
+    // Calculate tranision prompl::baseabilty
+    if (costSlope > 0) {
+        transitionProbability = exp(-costSlope / (kConstant_ * temp_));
+    }
+
+    // Check if we can accept it
+    if (rng_.uniform01() <= transitionProbability) {
+        if (temp_ > minTemperature_) {
+            temp_ /= tempChangeFactor_;
+
+            // Prevent temp_ from getting too small
+            if (temp_ < minTemperature_) {
+                temp_ = minTemperature_;
+            }
+        }
+
+        numStatesFailed_ = 0;
+
+        result = true;
+    } else {
+        // State has failed
+        if (numStatesFailed_ >= maxStatesFailed_) {
+            temp_ *= tempChangeFactor_;
+            numStatesFailed_ = 0;
+        } else {
+            ++numStatesFailed_;
+        }
+
+    }
+
+    return result;
+}
+
+
+bool ompl::geometric::LazyTRRT::minExpansionControl(double randMotionDistance) {
+    // Decide to accept or not
+    if (randMotionDistance > frontierThreshold_) {
+        // participates in the tree expansion
+        ++frontierCount_;
+
+        return true;
+    } else {
+        // participates in the tree refinement
+
+        // check our ratio first before accepting it
+        if (double(nonfrontierCount_) > double(frontierCount_)*frontierNodeRatio_) {
+            // Increment so that the temperature rises faster
+            ++numStatesFailed_;
+
+            // reject this node as being too much refinement
+            return false;
+        } else {
+            ++nonfrontierCount_;
+            return true;
+        }
+    }
 }
