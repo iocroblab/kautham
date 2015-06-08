@@ -1,0 +1,9 @@
+<Benchmark Name="experiment">
+  <Problem File="OMPL_RRTConnect_passage.xml"/>
+  <Parameter Name="maxTime" Value="20"/>
+  <Parameter Name="maxMem" Value="6000"/>
+  <Parameter Name="timeBetweenUpdates" Value="0.1"/>
+  <Parameter Name="runCount" Value="100"/>
+  <Parameter Name="displayProgress" Value="true"/>
+  <Parameter Name="filename" Value="result4.log"/>
+</Benchmark>

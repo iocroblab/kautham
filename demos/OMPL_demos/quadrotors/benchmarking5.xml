@@ -1,0 +1,10 @@
+<Benchmark Name="experiment">
+  <Problem File="OMPL_RRTStar_potential.xml"/>
+  <Problem File="OMPL_RRTStar_potential.xml"/>
+  <Parameter Name="maxTime" Value="2"/>
+  <Parameter Name="maxMem" Value="6000"/>
+  <Parameter Name="timeBetweenUpdates" Value="0.1"/>
+  <Parameter Name="runCount" Value="2"/>
+  <Parameter Name="displayProgress" Value="true"/>
+  <Parameter Name="filename" Value="result5.log"/>
+</Benchmark>

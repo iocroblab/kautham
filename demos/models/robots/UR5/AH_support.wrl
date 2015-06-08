@@ -1751,4 +1751,24 @@ DEF root Separator {
         -1, 88, 70, 69, -1 ]
 
   }
+  Transform {
+    translation 0 0 -21.5
+    rotation 1 0 0  1.5707964
+
+  }
+  Cylinder {
+    radius 35
+    height 11
+
+  }
+  Transform {
+    translation 0 16.5 -17
+    rotation 0 0 1  1.5707999
+
+  }
+  Cylinder {
+    radius 7.5
+    height 50
+
+  }
 }

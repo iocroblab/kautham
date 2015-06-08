@@ -113,12 +113,19 @@
     </visual>
     <collision>
       <material name="white">
-        <color rgba=".9 .9 .9 1"/>
+        <color rgba="1 1 1 1"/>
       </material>
       <geometry>
-        <box size="0.019 0.023 0.0365"/>
+        <box size="0.019 0.023 0.025" />
       </geometry>
-      <origin xyz="0.0043 0 0.0125"/>
+      <origin xyz="0.0043 0 0.0079" />
+    </collision>
+    <collision>
+      <material name="white"/>
+      <geometry>
+        <cylinder length="0.019" radius="0.0115"/>
+      </geometry>
+      <origin rpy="0 -1.5707963 0" xyz="0.0043 0 0.0204" />
     </collision>
   </link>
   <joint name="joint_3_0_tip" type="fixed">
@@ -222,11 +229,18 @@
       <origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142"/>
     </visual>
     <collision>
-      <material name="white">
+      <material name="white"/>
       <geometry>
-        <box size="0.019 0.023 0.0365"/>
+        <box size="0.019 0.023 0.025" />
       </geometry>
-      <origin xyz="0.0043 0 0.0125"/>
+      <origin xyz="0.0043 0 0.0079" />
+    </collision>
+    <collision>
+      <material name="white"/>
+      <geometry>
+        <cylinder length="0.019" radius="0.0115"/>
+      </geometry>
+      <origin rpy="0 -1.5707963 0" xyz="0.0043 0 0.0204" />
     </collision>
   </link>
   <joint name="joint_7_0_tip" type="fixed">
@@ -330,11 +344,18 @@
       <origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142"/>
     </visual>
     <collision>
-      <material name="white">
+      <material name="white"/>
       <geometry>
-        <box size="0.019 0.023 0.0365"/>
+        <box size="0.019 0.023 0.025" />
       </geometry>
-      <origin xyz="0.0043 0 0.0125"/>
+      <origin xyz="0.0043 0 0.0079" />
+    </collision>
+    <collision>
+      <material name="white"/>
+      <geometry>
+        <cylinder length="0.019" radius="0.0115"/>
+      </geometry>
+      <origin rpy="0 -1.5707963 0" xyz="0.0043 0 0.0204" />
     </collision>
   </link>
   <joint name="joint_11_0_tip" type="fixed">
@@ -438,11 +459,18 @@
       <origin rpy="1.5707963 0 1.5707963" xyz="0.0038 0 0.0142"/>
     </visual>
     <collision>
-      <material name="white">
+      <material name="white"/>
       <geometry>
-        <box size="0.019 0.023 0.0365"/>
+        <box size="0.019 0.023 0.025" />
       </geometry>
-      <origin xyz="0.0043 0 0.0125"/>
+      <origin xyz="0.0043 0 0.0079" />
+    </collision>
+    <collision>
+      <material name="white"/>
+      <geometry>
+        <cylinder length="0.019" radius="0.0115"/>
+      </geometry>
+      <origin rpy="0 -1.5707963 0" xyz="0.0043 0 0.0204" />
     </collision>
   </link>
   <joint name="joint_15_0_tip" type="fixed">

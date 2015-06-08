@@ -60,7 +60,7 @@
     </Joint>
 
     <Joint name="Support" ivFile="UR5/AH_support.wrl">
-      <DHPars alpha="0.0" a="0.0" theta="0.0" d="16.0"></DHPars>
+      <DHPars alpha="0.0" a="0.0" theta="0.0" d="25"></DHPars>
       <Description rotational="false" movable="false" ></Description>
       <Limits Hi="0" Low="0"></Limits>
       <Parent name="Wrist3"></Parent>

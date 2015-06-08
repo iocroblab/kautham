@@ -7,7 +7,7 @@
 	</Robot>
 	<Obstacle obstacle="obstacles/potential.iv" scale="1">
 		<Home TH="0" WZ="1" WY="0" WX="0" Z="0" Y="0" X="0" />
-		<Collision enabled="false"/>
+		<Collision enabled="true"/>
 	</Obstacle>
 	<Controls robot="controls/bigcube_R2.cntr" />
 	<Planner>

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<Problem name="" topology="SE3">
+	<Obstacle obstacle="obstacles/box.wrl" scale="1">
+		<Home X="209.9024" Y="490.0472" Z="6.5" WX="0" WY="0" WZ="-1" TH="102.86424" />
+	</Obstacle>	
+	<Robot robot="robots/UR5_AllegroHandL_box.urdf">
+		<Home X="-239.63021891" Y="0.0" Z="609.93808329" WX="0.377964" WY="-0.912487" WZ="-0.156558" TH="138.59" />
+	</Robot>
+	<Robot robot="robots/UR5_AllegroHandR_box.urdf">
+		<Home X="239.63021891" Y="0.0" Z="609.93808329" WX="0.377964" WY="-0.912487" WZ="0.156558" TH="221.41" />
+	</Robot>
+	<Obstacle obstacle="obstacles/structure.urdf">
+		<Home X="0.0" Y="0.0" Z="620.5" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812" />
+	</Obstacle>
+	<Controls robot="controls/NEWSYMrandomopenJosepBox.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="Cspace Drawn">0</Parameter>
+			<Parameter name="Incremental (0/1)">0</Parameter>
+			<Parameter name="Max Planning Time">10</Parameter>
+			<Parameter name="Range">1</Parameter>
+			<Parameter name="Simplify Solution">0</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="8">0.518 0.322 0.616 1 0 0 0.169 0.776</Init>
+				<Goal dim="8">0.929 0.063 0.373 0.722 0 0.588 0.427 0.553</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

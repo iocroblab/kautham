@@ -22,11 +22,11 @@
 		<DOF name="UR5_AllegroHandR/Medium-proximal" value="0.560" />
 		<DOF name="UR5_AllegroHandR/Medium-distal" value="0.590" />
 		<DOF name="UR5_AllegroHandR/Medium-last" value="0.125" />
-		<DOF name="UR5_AllegroHandR/Index-base" value="0.295" />
+		<DOF name="UR5_AllegroHandR/Index-base" value="0.315" />
 		<DOF name="UR5_AllegroHandR/Index-proximal" value="0.566" />
 		<DOF name="UR5_AllegroHandR/Index-distal" value="0.576" />
 		<DOF name="UR5_AllegroHandR/Index-last" value="0.126" />
-		<DOF name="UR5_AllegroHandR/Ring-base" value="0.705" />
+		<DOF name="UR5_AllegroHandR/Ring-base" value="0.685" />
 		<DOF name="UR5_AllegroHandR/Ring-proximal" value="0.566" />
 		<DOF name="UR5_AllegroHandR/Ring-distal" value="0.576" />
 		<DOF name="UR5_AllegroHandR/Ring-last" value="0.126" />
