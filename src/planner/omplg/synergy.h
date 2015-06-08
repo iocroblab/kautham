@@ -30,6 +30,7 @@
 #include <armadillo>
 #include <pugixml.hpp>
 
+
 //! Synergy orders
 enum SynergyOrder {UNKNOWN, ZERO, FIRST};
 
@@ -69,12 +70,18 @@ public:
     //! Returns Synergy order
     virtual SynergyOrder order() const;
 
+    //! Returns weighted dot product
+    double weightedDot(arma::vec x, arma::vec y);
+
 protected:
     //! Distance between barycenters
     virtual double dTrans(const arma::vec xb) const;
 
     //! Distance between covariance matrices
     virtual double dRot(const arma::vec xa, const arma::mat Ua) const;
+
+    //! Matrix for weighted dot product
+    arma::mat h;
 };
 
 
@@ -136,5 +143,6 @@ Synergy *xml2synergy(const pugi::xml_node *node, SynergyOrder order);
 
 //! Writes a Synergy into the given xml node
 void synergy2xml(pugi::xml_node *node, const Synergy *synergy);
+
 
 #endif // SYNERGY_H
