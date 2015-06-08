@@ -22,7 +22,7 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
- 
+
 #include "workspace.h"
 #include <vector>
 #include <typeinfo>
@@ -78,12 +78,20 @@ namespace Kautham {
     vector<KthReal>* WorkSpace::distanceCheck(Sample* sample) {
         vector<KthReal> tmpVec;
         tmpVec.clear();
-        for(unsigned int j=0; j < getNumRobControls(); j++ )
-            tmpVec.push_back(sample->getCoords()[j]);
+
+        if (sample->getMappedConf().size() == 0) {
+            for(unsigned int j=0; j < getNumRobControls(); j++ )
+                tmpVec.push_back(sample->getCoords()[j]);
+
+            for(unsigned int i=0; i< robots.size(); i++)
+                robots[i]->control2Pose(tmpVec);
+        } else {
+            for(unsigned int i=0; i< robots.size(); i++)
+                robots[i]->Kinematics(sample->getMappedConf().at(i));
+        }
 
         distVec.clear();
         for(unsigned int i=0; i< robots.size(); i++){
-            robots[i]->control2Pose(tmpVec);
             for(unsigned int m = 0; m < obstacles.size(); m++){
                 distVec.push_back(robots[i]->distanceCheck(obstacles[m]));
             }
@@ -97,25 +105,25 @@ namespace Kautham {
     *  loads the flag withinbounds of the sample. If outofbounds, one of the
     *  robots ends at the border of one or more of its limits.
     */
-    void WorkSpace::moveRobotsTo(Sample* sample) {
-        bool withinbounds=true;
+    void WorkSpace::moveRobotsTo(Sample *sample) {
+        bool withinbounds = true;
         vector<KthReal> tmpVec;
         tmpVec.clear();
-        for(unsigned int j=0; j < getNumRobControls(); j++ )
-            tmpVec.push_back(sample->getCoords()[j]);
+        for (unsigned int i = 0; i < getNumRobControls(); ++i) {
+            tmpVec.push_back(sample->getCoords().at(i));
+        }
 
-        for(unsigned int i=0; i< robots.size(); i++){
-            if(sample->getMappedConf().size()==0){
-                withinbounds &= robots[i]->control2Pose(tmpVec);
-            }
-            else{
-                robots[i]->Kinematics(sample->getMappedConf().at(i));
+        for (unsigned int i = 0; i < robots.size(); ++i) {
+            if (sample->getMappedConf().size() == 0) {
+                withinbounds &= robots.at(i)->control2Pose(tmpVec);
+            } else {
+                robots.at(i)->Kinematics(sample->getMappedConf().at(i));
             }
         }
         _lastRobSampleMovedTo = sample;
 
         //set _sample::_config if it was not set
-        if(sample->getMappedConf().size()==0) sample->setMappedConf(_robConfigMap);
+        if (sample->getMappedConf().size() == 0) sample->setMappedConf(_robConfigMap);
 
         sample->setwithinbounds(withinbounds);
     }
@@ -230,9 +238,9 @@ namespace Kautham {
                                 sstr << "Attached object " << it->obs->getName()
                                      << " is in collision with obstacle " << m << " ("
                                      << obstacles[m]->getName() << ")"<<endl;
-                                     //<< " Att. ob. pos(" << it->obs->getHomePos()->getSE3().getPos()[0] <<", "
-                                     //<< ", "<< it->obs->getHomePos()->getSE3().getPos()[1] <<", "
-                                     //<< ", "<< it->obs->getHomePos()->getSE3().getPos()[2] <<")"<<endl;
+                                //<< " Att. ob. pos(" << it->obs->getHomePos()->getSE3().getPos()[0] <<", "
+                                //<< ", "<< it->obs->getHomePos()->getSE3().getPos()[1] <<", "
+                                //<< ", "<< it->obs->getHomePos()->getSE3().getPos()[2] <<")"<<endl;
                                 sstr << str;
                                 break;
                             }
@@ -340,21 +348,21 @@ namespace Kautham {
     KthReal WorkSpace::distanceBetweenSamples(Sample& smp1, Sample& smp2,
                                               Kautham::SPACETYPE spc) {
         switch(spc){
-        case SAMPLEDSPACE:
+            case SAMPLEDSPACE:
             return smp1.getDistance(&smp2, spc);
 
-        case CONFIGSPACE:
-            if( smp1.getMappedConf().size() == 0){
-                this->moveRobotsTo(&smp1);
-                smp1.setMappedConf(getRobConfigMapping());
-            }
-            if( smp2.getMappedConf().size() == 0){
-                this->moveRobotsTo(&smp2);
-                smp2.setMappedConf(getRobConfigMapping());
-            }
+            case CONFIGSPACE:
+                if( smp1.getMappedConf().size() == 0){
+                    this->moveRobotsTo(&smp1);
+                    smp1.setMappedConf(getRobConfigMapping());
+                }
+                if( smp2.getMappedConf().size() == 0){
+                    this->moveRobotsTo(&smp2);
+                    smp2.setMappedConf(getRobConfigMapping());
+                }
             return smp1.getDistance(&smp2, _robWeight, spc);
 
-        default:
+            default:
             return (KthReal)-1.0;
         }
     }
@@ -494,5 +502,12 @@ namespace Kautham {
         if (obs < 0 || obs >= obstacles.size()) return false;
         if (!obstacles.at(obs)->isAttached()) return false;
         return (obstacles.at(obs)->getRobotAttachedTo()->detachObject(obstacles.at(obs)));
+    }
+
+    Robot *WorkSpace::getRobot(string name) {
+        for (size_t i = 0; i < robots.size(); ++i) {
+            if (robots.at(i)->getName() == name) return robots.at(i);
+        }
+        return NULL;
     }
 }
