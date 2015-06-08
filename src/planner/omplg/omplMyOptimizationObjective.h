@@ -30,77 +30,116 @@
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/OptimizationObjective.h>
 #include <ompl/base/objectives/MechanicalWorkOptimizationObjective.h>
+#include <ompl/base/objectives/StateCostIntegralObjective.h>
 #include <ompl/base/Cost.h>
 
+#include "synergy_tree.h"
 #include "omplplanner.h"
+
 namespace ob = ompl::base;
 
 
 namespace Kautham {
-/** \addtogroup Planner
- *  @{
- */
-  namespace omplplanner {
+    /** \addtogroup Planner
+     *  @{
+     */
+    namespace omplplanner {
+        struct Segment {
+            Point3 p0, p1;
+            Segment(const Point3 startPoint, const Point3 endPoint)
+                : p0(startPoint),p1(endPoint) {
 
-  struct Segment {
-      Point3 p0, p1;
-      Segment(const Point3 startPoint, const Point3 endPoint)
-          : p0(startPoint),p1(endPoint) {}
-  };
+            }
+            double radius;
+        };
+        struct RobotSegment {
+            Robot *robot;
+            Link *link;
+            Point3 p0, p1;
+            double radius;
+            Segment segment() const {
+                mt::Transform t(mt::Rotation(link->getElement()->getOrientation()[0],
+                                link->getElement()->getOrientation()[1],
+                        link->getElement()->getOrientation()[2],
+                        link->getElement()->getOrientation()[3]),
+                        mt::Point3(link->getElement()->getPosition()[0],
+                        link->getElement()->getPosition()[1],
+                        link->getElement()->getPosition()[2]));
 
-  class myMWOptimizationObjective : public ob::MechanicalWorkOptimizationObjective {
-  private:
-      std::vector<mt::Point3> point;
-      std::vector<Segment> segment;
-      std::vector<std::pair<double,double> > pointCost;
-      std::vector<std::pair<double,double> > segmentCost;
-      std::vector<double> pointRadius;
-      std::vector<double> segmentRadius;
-      omplPlanner *pl;
-  public:
-      myMWOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p,
-                                double pathLengthWeight = 0.00001);
-      bool setPotentialCost(std::string filename);
-      void setPathLengthWeight(double weight) {pathLengthWeight_ = weight;}
-      bool isSymmetric() {return false;}
-      virtual ob::Cost stateCost(const ob::State *s) const;
-  };
+                return Segment(t*p0,t*p1);
+            }
+        };
 
-  class myICOptimizationObjective : public ob::MechanicalWorkOptimizationObjective {
-  public:
-      myICOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p,
-                                double kP = 1., double kI = 1., double kD = 1.);
-      bool setPotentialCost(std::string filename);
-      void setKP(double kP) {kP_ = kP;}
-      void setKI(double kI) {kI_ = kI;}
-      void setKD(double kD) {kD_ = kD;}
-      double getKP() {return kP_;}
-      double getKI() {return kI_;}
-      double getKD() {return kD_;}
-      bool isSymmetric() {return ob::OptimizationObjective::isSymmetric();}
-      virtual ob::Cost stateCost(const ob::State *s) const;
-      virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
+        class myMWOptimizationObjective : public ob::MechanicalWorkOptimizationObjective {
+        public:
+            myMWOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p,
+                                      double pathLengthWeight = 0.00001);
+            bool setPotentialCost(std::string filename);
+            void setPathLengthWeight(double weight) {pathLengthWeight_ = weight;}
+            bool isSymmetric() {return false;}
+            virtual ob::Cost stateCost(const ob::State *s) const;
+            virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
 
-  private:
-      std::vector<mt::Point3> point;
-      std::vector<Segment> segment;
-      std::vector<std::pair<double,double> > pointCost;
-      std::vector<std::pair<double,double> > segmentCost;
-      omplPlanner *pl;
-      double kP_;
-      double kI_;
-      double kD_;
+        private:
+            std::vector<mt::Point3> point;
+            std::vector<Segment> segment;
+            std::vector<std::vector<mt::Point3> > pointSet;
+            std::vector<std::vector<Segment> > segmentSet;
+            std::vector<double> pointRadius;
+            std::vector<double> segmentRadius;
+            std::vector<std::vector<double> > pointSetRadius;
+            std::vector<std::vector<double> > segmentSetRadius;
+            std::vector<std::pair<double,double> > pointCost;
+            std::vector<std::pair<double,double> > segmentCost;
+            std::vector<std::pair<double,double> > pointSetCost;
+            std::vector<std::pair<double,double> > segmentSetCost;
+            std::vector<RobotSegment> robotSegments;
+            omplPlanner *pl;
+        };
 
-      ob::Cost costPID(ob::Cost c1, ob::Cost c2, double d12) const {
-          double cP(d12);
-          double cI(0.5*(c1.v+c2.v)*d12);
-          double cD(fabs(c2.v-c1.v));
+        class myICOptimizationObjective : public ob::StateCostIntegralObjective {
+        public:
+            myICOptimizationObjective(const ob::SpaceInformationPtr &si, omplPlanner *p,
+                                      double kP = 1., double kI = 1., double kD = 1.);
+            bool setPotentialCost(std::string filename);
+            void setKP(double kP) {kP_ = kP;}
+            void setKI(double kI) {kI_ = kI;}
+            void setKD(double kD) {kD_ = kD;}
+            double getKP() {return kP_;}
+            double getKI() {return kI_;}
+            double getKD() {return kD_;}
+            bool isSymmetric() {return ob::OptimizationObjective::isSymmetric();}
+            virtual ob::Cost stateCost(const ob::State *s) const;
+            virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
 
-          return ob::Cost(kP_*cP+kI_*cI+kD_*cD);
-      }
-    };
-  }
-  /** @}   end of Doxygen module "Planner */
+        private:
+            std::vector<mt::Point3> point;
+            std::vector<Segment> segment;
+            std::vector<std::vector<mt::Point3> > pointSet;
+            std::vector<std::vector<Segment> > segmentSet;
+            std::vector<double> pointRadius;
+            std::vector<double> segmentRadius;
+            std::vector<std::vector<double> > pointSetRadius;
+            std::vector<std::vector<double> > segmentSetRadius;
+            std::vector<std::pair<double,double> > pointCost;
+            std::vector<std::pair<double,double> > segmentCost;
+            std::vector<std::pair<double,double> > pointSetCost;
+            std::vector<std::pair<double,double> > segmentSetCost;
+            omplPlanner *pl;
+            double kP_;
+            double kI_;
+            double kD_;
+
+            ob::Cost costPID(ob::Cost c1, ob::Cost c2, double d12) const {
+                double cP(d12);
+                double cI(0.5*(c1.v+c2.v)*d12);
+                double cD(fabs(c2.v-c1.v));
+
+                return ob::Cost(kP_*cP+kI_*cI+kD_*cD);
+            }
+        };
+    }
+    /** @}   end of Doxygen module "Planner */
 }
 
 #endif // KAUTHAM_USE_OMPL
