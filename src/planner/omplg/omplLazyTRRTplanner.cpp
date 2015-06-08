@@ -65,8 +65,6 @@ namespace Kautham {
             pdefPtr->setOptimizationObjective(_opti);
 
             planner->setProblemDefinition(pdefPtr);
-            planner->setup();
-
 
             //set the planner
             ss->setPlanner(planner);
@@ -79,26 +77,31 @@ namespace Kautham {
             _frontierThreshold = (planner->as<og::LazyTRRT>())->getFrontierThreshold();
             _frontierNodesRatio = (planner->as<og::LazyTRRT>())->getFrontierNodeRatio();
 
-            addParameter("Range", _Range);
             addParameter("Goal Bias", _GoalBias);
             addParameter("Max States Failed", _maxStatesFailed);
             addParameter("T Change Factor", _tempChangeFactor);
-            addParameter("Frontier Threshold", _frontierThreshold);
             addParameter("Frontier Nodes Ratio", _frontierNodesRatio);
             addParameter("Path Length Weight",0.00001);
             addParameter("Min Temp",planner->as<og::LazyTRRT>()->getMinTemperature());
             addParameter("Init Temp",planner->as<og::LazyTRRT>()->getInitTemperature());
-            addParameter("K Constant",planner->as<og::LazyTRRT>()->getKConstant());
+            addParameter("Min Collision Threshold",planner->as<og::LazyTRRT>()->getMinCollisionThreshold());
+            addParameter("Max Collision Threshold",planner->as<og::LazyTRRT>()->getMaxCollisionThreshold());
         }
 
         //! void destructor
         omplLazyTRRTPlanner::~omplLazyTRRTPlanner() {
-
         }
 
 
         bool omplLazyTRRTPlanner::setPotentialCost(string filename) {
-            return ((myMWOptimizationObjective*) _opti.get())->setPotentialCost(filename);
+            bool result = ((myMWOptimizationObjective*) _opti.get())->setPotentialCost(filename);
+
+            ss->getPlanner()->as<og::LazyTRRT>()->setup();
+            addParameter("Range", ss->getPlanner()->as<og::LazyTRRT>()->getRange());
+            addParameter("K Constant", ss->getPlanner()->as<og::LazyTRRT>()->getKConstant());
+            addParameter("Frontier Threshold", ss->getPlanner()->as<og::LazyTRRT>()->getFrontierThreshold());
+
+            return result;
         }
 
 
@@ -182,6 +185,21 @@ namespace Kautham {
                 } else {
                     return false;
                 }
+
+                it = _parameters.find("Min Collision Threshold");
+                if (it != _parameters.end()) {
+                    ss->getPlanner()->as<og::LazyTRRT>()->setMinCollisionThreshold(it->second);
+                } else {
+                    return false;
+                }
+
+                it = _parameters.find("Max Collision Threshold");
+                if (it != _parameters.end()) {
+                    ss->getPlanner()->as<og::LazyTRRT>()->setMaxCollisionThreshold(it->second);
+                } else {
+                    return false;
+                }
+
             } catch (...) {
                 return false;
             }
@@ -189,21 +207,16 @@ namespace Kautham {
             return true;
         }
 
-        bool omplLazyTRRTPlanner::trySolve()
-        {
-            if (omplPlanner::trySolve())
-            {
+        bool omplLazyTRRTPlanner::trySolve() {
+            if (omplPlanner::trySolve()) {
                 cout<<"Path cost = " << ss->getProblemDefinition()->getSolutionPath()->cost(_opti).v << endl;
 
                 return true;
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
-        }
     }
-
+}
 
 #endif // KAUTHAM_USE_OMPL
