@@ -57,7 +57,7 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
     // run["numVertices INTEGER"] = SSTR(pdata->numVertices());*/
     // The format of added data is string key, string value pairs,
     // with the convention that the last word in string key is one of
-    // REAL, INTEGER, BOOLEAN, STRING. (this will be the type of the field
+    // REAL, INTEGER, BOOLEAN, STRING, ENUM. (this will be the type of the field
     // when the log file is processed and saved as a database).
     // The values are always converted to string.
     // (the added data will be recorded in the log file)
