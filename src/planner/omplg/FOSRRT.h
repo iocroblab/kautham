@@ -22,63 +22,69 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
+
 #include "ompl/geometric/planners/rrt/RRT.h"
 #include "synergy_tree.h"
 #include "omplplanner.h"
 
-namespace Kautham {
-namespace omplplanner {
-class FOSRRT : public ompl::geometric::RRT {
-protected:
-    SynergyTree *tree_;
-    double timeStep_;
-    double pmdBias_;
-    omplPlanner *planner_;
-    unsigned int nDOF_;
 
-    //! New qRand
-    arma::vec new_qRand(arma::vec qr, arma::vec qn);
+namespace ompl {
+    namespace geometric {
+        class FOSRRT : public ompl::geometric::RRT {
+        public:
+            FOSRRT(const ompl::base::SpaceInformationPtr &si, Kautham::omplplanner::omplPlanner *planner)
+                : RRT(si),planner_(planner),nDOF_(planner->wkSpace()->getNumRobControls()) {
+                name_ = "FOSRRT";
+                tree_ = NULL;
+                timeStep_ = 1.;
+                pmdBias_ = 1.;
+                declareParam<double>("timeStep",this,&FOSRRT::setTimeStep,&FOSRRT::getTimeStep,"0.:.001:1000.");
+                declareParam<double>("pmdBias",this,&FOSRRT::setPMDbias,&FOSRRT::getPMDbias,"0.:.01:1.");
+            }
 
-    void omplState2armaVec(const ob::State *state, arma::vec &vector);
+            void setTimeStep(double timeStep) {
+                timeStep_ = timeStep;
+            }
 
-    void armaVec2omplState(const arma::vec vector, ob::State *state);
+            double getTimeStep() const {
+                return timeStep_;
+            }
 
-public:
-    FOSRRT(const ompl::base::SpaceInformationPtr &si, omplPlanner *planner)
-        : RRT(si),planner_(planner),nDOF_(planner->wkSpace()->getNumRobControls()) {
-        name_ = "FOSRRT";
-        tree_ = NULL;
-        timeStep_ = 1.;
-        pmdBias_ = 1.;
-        declareParam<double>("timeStep",this,&FOSRRT::setTimeStep,&FOSRRT::getTimeStep,"0.:.001:1000.");
-        declareParam<double>("pmdBias",this,&FOSRRT::setPMDbias,&FOSRRT::getPMDbias,"0.:.01:1.");
+            void setPMDbias(double pmdBias) {
+                pmdBias_ = pmdBias;
+            }
+
+            double getPMDbias() const {
+                return pmdBias_;
+            }
+
+            void setSynergyTree(SynergyTree * tree) {
+                tree_ = tree;
+            }
+
+            SynergyTree *getSynergyTree() const {
+                return tree_;
+            }
+
+            ompl::base::PlannerStatus solve(const ompl::base::PlannerTerminationCondition &ptc);
+
+        protected:
+            //! New qRand
+            arma::vec new_qRand(arma::vec qr, arma::vec qn);
+
+            void omplState2armaVec(const ob::State *state, arma::vec &vector);
+
+            void armaVec2omplState(const arma::vec vector, ob::State *state);
+
+            SynergyTree *tree_;
+
+            double timeStep_;
+
+            double pmdBias_;
+
+            Kautham::omplplanner::omplPlanner *planner_;
+
+            unsigned int nDOF_;
+        };
     }
-
-    void setTimeStep(double timeStep) {
-        timeStep_ = timeStep;
-    }
-
-    double getTimeStep() const {
-        return timeStep_;
-    }
-
-    void setPMDbias(double pmdBias) {
-        pmdBias_ = pmdBias;
-    }
-
-    double getPMDbias() const {
-        return pmdBias_;
-    }
-
-    void setSynergyTree(SynergyTree * tree) {
-        tree_ = tree;
-    }
-
-    SynergyTree *getSynergyTree() const {
-        return tree_;
-    }
-
-    ompl::base::PlannerStatus solve(const ompl::base::PlannerTerminationCondition &ptc);
-};
-}
 }

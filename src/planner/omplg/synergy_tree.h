@@ -26,8 +26,8 @@
 #ifndef SYNERGY_TREE_H
 #define SYNERGY_TREE_H
 
+
 #include "synergy.h"
-#include <armadillo>
 
 
 //! Data structure representing an optimum cell division
@@ -49,12 +49,12 @@ private:
 
     //! Constructor
     SynergyTree_node(const SynergyTree_node *parentNode, Synergy *synergy,
-                   const arma::mat Mv, const arma::mat Cp, const arma::mat limits,
-                   double thV, double thD, double tol, double alfa);
+                     const arma::mat Mv, const arma::mat Cp, const arma::mat limits,
+                     double thV, double thD, double tol, double alfa);
 
     //! Constructor
     SynergyTree_node(const pugi::xml_node *node, const std::vector<Synergy*> *synergy,
-                   const SynergyTree_node *parentNode = NULL);
+                     const SynergyTree_node *parentNode = NULL);
 
     //! Destructor
     ~SynergyTree_node();
@@ -108,7 +108,7 @@ class SynergyTree {
 public:
     //! Constructor
     SynergyTree(const arma::mat Mp, const arma::mat Mv, const arma::mat posLimits,
-              const arma::vec velLimits, double tol = 0.001, double alfa = 0.05);
+                const arma::vec velLimits, double tol = 0.001, double alfa = 0.05);
 
     //! Constructor
     SynergyTree(const std::string filename);
@@ -146,7 +146,7 @@ private:
 
 //! Constructs a PCA kd tree
 SynergyTree *makeSynergyTree(const arma::mat M, const arma::vec t,
-                         const arma::mat posLimits = arma::mat(0,0),
-                         const arma::vec velLimits = arma::vec(0u));
+                             const arma::mat posLimits = arma::mat(0,0),
+                             const arma::vec velLimits = arma::vec(0u));
 
 #endif // SYNERGY_TREE_H
