@@ -26,45 +26,207 @@
 #ifndef LAZYTRRT_H
 #define LAZYTRRT_H
 
-#include "ompl/geometric/planners/rrt/TRRT.h"
+#include <ompl/geometric/planners/PlannerIncludes.h>
+#include <ompl/datastructures/NearestNeighbors.h>
+#include <ompl/base/OptimizationObjective.h>
 
 namespace ompl {
-namespace geometric {
-class LazyTRRT : public TRRT {
-public:
-    LazyTRRT(const base::SpaceInformationPtr &si);
+    namespace geometric {
+        class LazyTRRT : public base::Planner {
+        public:
+            LazyTRRT(const base::SpaceInformationPtr &si);
 
-    virtual base::PlannerStatus solve(const base::PlannerTerminationCondition &ptc);
+            ~LazyTRRT();
 
-protected:
-    //!
-    class Motion : public TRRT::Motion {
-    public:
+            virtual void getPlannerData(base::PlannerData &data) const;
 
-        Motion() : TRRT::Motion(),parent(NULL),valid(false) {
-        }
+            virtual base::PlannerStatus solve(const base::PlannerTerminationCondition &ptc);
 
-        Motion(const base::SpaceInformationPtr &si) :
-            TRRT::Motion(si),parent(NULL),valid(false) {
-        }
+            virtual void clear();
 
-        ~Motion() {
-        }
+            void setGoalBias(double goalBias) {
+                goalBias_ = goalBias;
+            }
 
-        Motion *parent;
+            double getGoalBias() const {
+                return goalBias_;
+            }
 
-        bool valid;
+            void setRange(double distance) {
+                maxDistance_ = distance;
+            }
 
-        std::vector<Motion*> children;
-    };
+            double getRange() const {
+                return maxDistance_;
+            }
 
-    //!
-    void removeMotion(Motion *motion);
+            void setMaxStatesFailed(double maxStatesFailed) {
+                maxStatesFailed_ = maxStatesFailed;
+            }
 
-    //!
-    boost::shared_ptr< NearestNeighbors<Motion*> > nearestNeighbors_;
-};
-}
+            double getMaxStatesFailed() const {
+                return maxStatesFailed_;
+            }
+
+            void setTempChangeFactor(double tempChangeFactor) {
+                tempChangeFactor_ = tempChangeFactor;
+            }
+
+            double getTempChangeFactor() const {
+                return tempChangeFactor_;
+            }
+
+            void setMinTemperature(double minTemperature) {
+                minTemperature_ = minTemperature;
+            }
+
+            double getMinTemperature() const {
+                return minTemperature_;
+            }
+
+            void setInitTemperature(double initTemperature) {
+                initTemperature_ = initTemperature;
+            }
+
+            double getInitTemperature() const {
+                return initTemperature_;
+            }
+
+            void setFrontierThreshold(double frontier_threshold) {
+                frontierThreshold_ = frontier_threshold;
+            }
+
+            double getFrontierThreshold() const {
+                return frontierThreshold_;
+            }
+
+            void setFrontierNodeRatio(double frontierNodeRatio) {
+                frontierNodeRatio_ = frontierNodeRatio;
+            }
+
+            double getFrontierNodeRatio() const {
+                return frontierNodeRatio_;
+            }
+
+            void setKConstant(double kConstant) {
+                kConstant_ = kConstant;
+            }
+
+            double getKConstant() const {
+                return kConstant_;
+            }
+
+            template<template<typename T> class NN>
+            void setNearestNeighbors() {
+                nearestNeighbors_.reset(new NN<Motion*>());
+            }
+
+            void setMinCollisionThreshold(double minCollThr) {
+                minCollThr_ = minCollThr;
+            }
+
+            double getMinCollisionThreshold() const {
+                return minCollThr_;
+            }
+
+            void setMaxCollisionThreshold(double maxCollThr) {
+                maxCollThr_ = maxCollThr;
+            }
+
+            double getMaxCollisionThreshold() const {
+                return maxCollThr_;
+            }
+
+            virtual void setup();
+
+        protected:
+            class Motion {
+            public:
+
+                Motion(): state(NULL),parent(NULL),valid(false) {
+                }
+
+                Motion(const base::SpaceInformationPtr &si) :
+                    state(si->allocState()),parent(NULL),valid(false) {
+                }
+
+                ~Motion() {
+                }
+
+                base::State *state;
+
+                Motion *parent;
+
+                std::vector<Motion*> children;
+
+                bool valid;
+
+                base::Cost cost;
+            };
+
+            void removeMotion(Motion *motion);
+
+            void freeMemory();
+
+            double distanceFunction(const Motion *a, const Motion *b) const {
+                return si_->distance(a->state,b->state);
+            }
+
+            bool transitionTest(double childCost, double parentCost, double distance);
+
+            bool minExpansionControl(double randMotionDistance);
+
+
+            base::StateSamplerPtr sampler_;
+
+            boost::shared_ptr< NearestNeighbors<Motion*> > nearestNeighbors_;
+
+            double goalBias_;
+
+            double maxDistance_;
+
+            RNG rng_;
+
+            Motion *lastGoalMotion_;
+
+            // *********************************************************************************************************
+            // TRRT-Specific Variables
+            // *********************************************************************************************************
+
+            // Transtion Test -----------------------------------------------------------------------
+
+            double temp_;
+
+            double kConstant_;
+
+            unsigned int maxStatesFailed_;
+
+            double tempChangeFactor_;
+
+            double minTemperature_;
+
+            double initTemperature_;
+
+            unsigned int numStatesFailed_;
+
+
+            // Minimum Expansion Control --------------------------------------------------------------
+
+            unsigned int nonfrontierCount_;
+
+            unsigned int frontierCount_;
+
+            double frontierThreshold_;
+
+            double frontierNodeRatio_;
+
+            ompl::base::OptimizationObjectivePtr opt_;
+
+            double minCollThr_;
+
+            double maxCollThr_;
+        };
+    }
 }
 
 #endif // LAZYTRRT_H
