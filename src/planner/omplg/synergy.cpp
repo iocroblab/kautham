@@ -62,6 +62,13 @@ Synergy::Synergy(const arma::vec barycenter,
             }
         }
     }
+
+    //compute matrix H
+    h = arma::zeros<arma::mat>(dim,dim);
+    for (unsigned int i = 0; i < dim; ++i) {
+        h(i,i) = 1.0/a(i)/a(i);
+    }
+    h = U*h*trans(U);
 }
 
 
@@ -175,6 +182,11 @@ double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
          }
 
     return d;
+}
+
+
+double Synergy::weightedDot(arma::vec x, arma::vec y) {
+    return as_scalar(trans(x)*h*y);
 }
 
 
