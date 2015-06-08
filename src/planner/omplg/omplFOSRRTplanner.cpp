@@ -42,7 +42,7 @@ namespace Kautham {
 namespace omplplanner {
 void omplFOSRRTPlanner::setSynergyTree(string filename) {
     SynergyTree *tree = new SynergyTree(filename);
-    (ss->getPlanner()->as<FOSRRT>())->setSynergyTree(tree);
+    (ss->getPlanner()->as<ompl::geometric::FOSRRT>())->setSynergyTree(tree);
 }
 
 
@@ -60,15 +60,15 @@ omplFOSRRTPlanner::omplFOSRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal
     space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler,_1,(Planner*)this));
 
     //create planner
-    ob::PlannerPtr planner(new FOSRRT(si,this));
+    ob::PlannerPtr planner(new ompl::geometric::FOSRRT(si,this));
     //set planner parameters: range and goalbias
-    _GoalBias = (planner->as<FOSRRT>())->getGoalBias();
+    _GoalBias = (planner->as<ompl::geometric::FOSRRT>())->getGoalBias();
     addParameter("Goal Bias",_GoalBias);
-    _TimeStep = (planner->as<FOSRRT>())->getTimeStep();
+    _TimeStep = (planner->as<ompl::geometric::FOSRRT>())->getTimeStep();
     addParameter("Time Step",_TimeStep);
-    _Range = (planner->as<FOSRRT>())->getRange();
+    _Range = (planner->as<ompl::geometric::FOSRRT>())->getRange();
     addParameter("Range",_Range);
-    _PMDBias = (planner->as<FOSRRT>())->getPMDbias();
+    _PMDBias = (planner->as<ompl::geometric::FOSRRT>())->getPMDbias();
     addParameter("PMD Bias",_PMDBias);
 
     //set the planner
@@ -96,7 +96,7 @@ bool omplFOSRRTPlanner::setParameters(){
             setParameter("Goal Bias",_GoalBias);
         } else {
             _GoalBias = it->second;
-            ss->getPlanner()->as<FOSRRT>()->setGoalBias(_GoalBias);
+            ss->getPlanner()->as<ompl::geometric::FOSRRT>()->setGoalBias(_GoalBias);
         }
 
 
@@ -106,7 +106,7 @@ bool omplFOSRRTPlanner::setParameters(){
             setParameter("PMD Bias",_PMDBias);
         } else {
             _PMDBias = it->second;
-            ss->getPlanner()->as<FOSRRT>()->setPMDbias(_PMDBias);
+            ss->getPlanner()->as<ompl::geometric::FOSRRT>()->setPMDbias(_PMDBias);
         }
 
 
@@ -116,7 +116,7 @@ bool omplFOSRRTPlanner::setParameters(){
             setParameter("Time Step",_TimeStep);
         } else {
             _TimeStep = it->second;
-            ss->getPlanner()->as<FOSRRT>()->setTimeStep(_TimeStep);
+            ss->getPlanner()->as<ompl::geometric::FOSRRT>()->setTimeStep(_TimeStep);
         }
 
 
@@ -126,7 +126,7 @@ bool omplFOSRRTPlanner::setParameters(){
             setParameter("Range",_Range);
         } else {
             _Range = it->second;
-            ss->getPlanner()->as<FOSRRT>()->setRange(_Range);
+            ss->getPlanner()->as<ompl::geometric::FOSRRT>()->setRange(_Range);
         }
     } catch(...) {
         return false;

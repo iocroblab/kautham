@@ -32,18 +32,16 @@
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <algorithm>
 
-namespace ob = ompl::base;
-namespace og = ompl::geometric;
+
 using namespace arma;
 
-namespace Kautham {
-namespace omplplanner {
-ob::PlannerStatus FOSRRT::solve(const ob::PlannerTerminationCondition &ptc) {
-    checkValidity();
-    ob::Goal *goal = pdef_->getGoal().get();
-    ob::GoalSampleableRegion *goal_s = dynamic_cast<ob::GoalSampleableRegion*>(goal);
 
-    while (const ob::State *st = pis_.nextStart()) {
+ompl::base::PlannerStatus ompl::geometric::FOSRRT::solve(const ompl::base::PlannerTerminationCondition &ptc) {
+    checkValidity();
+    ompl::base::Goal *goal = pdef_->getGoal().get();
+    ompl::base::GoalSampleableRegion *goal_s = dynamic_cast<ompl::base::GoalSampleableRegion*>(goal);
+
+    while (const ompl::base::State *st = pis_.nextStart()) {
         Motion *motion = new Motion(si_);
         si_->copyState(motion->state,st);
         nn_->add(motion);
@@ -51,7 +49,7 @@ ob::PlannerStatus FOSRRT::solve(const ob::PlannerTerminationCondition &ptc) {
 
     if (nn_->size() == 0) {
         OMPL_ERROR("%s: There are no valid initial states!",getName().c_str());
-        return ob::PlannerStatus::INVALID_START;
+        return ompl::base::PlannerStatus::INVALID_START;
     }
 
     if (!sampler_) sampler_ = si_->allocStateSampler();
@@ -62,12 +60,12 @@ ob::PlannerStatus FOSRRT::solve(const ob::PlannerTerminationCondition &ptc) {
     Motion *approxsol = NULL;
     double  approxdif = std::numeric_limits<double>::infinity();
     Motion *rmotion = new Motion(si_);
-    ob::State *rstate = rmotion->state;
-    ob::State *xstate = si_->allocState();
+    ompl::base::State *rstate = rmotion->state;
+    ompl::base::State *xstate = si_->allocState();
 
     while (!ptc) {
         Motion *nmotion;
-        ob::State *dstate;
+        ompl::base::State *dstate;
         if (rng_.uniform01() < pmdBias_) {
             // sample random state (with goal biasing)
             bool isGoal;
@@ -161,11 +159,11 @@ ob::PlannerStatus FOSRRT::solve(const ob::PlannerTerminationCondition &ptc) {
         }
 
         // set the solution path
-        og::PathGeometric *path = new og::PathGeometric(si_);
+        ompl::geometric::PathGeometric *path = new ompl::geometric::PathGeometric(si_);
         for (int i = mpath.size() - 1 ; i >= 0 ; --i) {
             path->append(mpath[i]->state);
         }
-        pdef_->addSolutionPath(ob::PathPtr(path),approximate,approxdif);
+        pdef_->addSolutionPath(ompl::base::PathPtr(path),approximate,approxdif);
         solved = true;
     }
 
@@ -175,10 +173,10 @@ ob::PlannerStatus FOSRRT::solve(const ob::PlannerTerminationCondition &ptc) {
 
     OMPL_INFORM("%s: Created %u states",getName().c_str(),nn_->size());
 
-    return ob::PlannerStatus(solved,approximate);
+    return ompl::base::PlannerStatus(solved,approximate);
 }
 
-void FOSRRT::omplState2armaVec(const ob::State *state, arma::vec &vector) {
+void ompl::geometric::FOSRRT::omplState2armaVec(const ompl::base::State *state, arma::vec &vector) {
     /*It is suposed that no coupled DOF exist.
      *Each acted DOF has a mapMatrix row with all the element equal to 0 and
      *only one element equal to 1. The offMatrix element must be equal to 0.5*/
@@ -234,7 +232,7 @@ void FOSRRT::omplState2armaVec(const ob::State *state, arma::vec &vector) {
 }
 
 
-void FOSRRT::armaVec2omplState(const arma::vec vector, ob::State *state) {
+void ompl::geometric::FOSRRT::armaVec2omplState(const arma::vec vector, ompl::base::State *state) {
     /*It is suposed that no coupled DOF exist.
      *Each acted DOF has a mapMatrix row with all the element equal to 0 and
      *only one element equal to 1. The offMatrix element must be equal to 0.5*/
@@ -312,7 +310,7 @@ void FOSRRT::armaVec2omplState(const arma::vec vector, ob::State *state) {
     }
     smp.setMappedConf(conf);
 
-    ob::ScopedState<ob::CompoundStateSpace> sstate(getSpaceInformation()->getStateSpace());
+    ompl::base::ScopedState<ompl::base::CompoundStateSpace> sstate(getSpaceInformation()->getStateSpace());
     planner_->smp2omplScopedState(&smp,&sstate);
     getSpaceInformation()->getStateSpace()->copyState(state,sstate.get());
 
@@ -332,7 +330,7 @@ void FOSRRT::armaVec2omplState(const arma::vec vector, ob::State *state) {
 }
 
 
-arma::vec FOSRRT::new_qRand(arma::vec qr, arma::vec qn) {
+arma::vec ompl::geometric::FOSRRT::new_qRand(arma::vec qr, arma::vec qn) {
     //Cell PMD set
     Synergy *synergy = tree_->getSynergy(qn);
 
@@ -343,7 +341,7 @@ arma::vec FOSRRT::new_qRand(arma::vec qr, arma::vec qn) {
     for (unsigned int i = 0; i < Lv.n_elem; ++i) {
         v[i] = dq[i]/Lv[i]/timeStep_;
     }
-    v /= std::max(1.,arma::max(v));
+    v /= std::max(1.,arma::max(arma::abs(v)));
 
     //
     if (synergy && dot(v,synergy->b) >= 0.) {
@@ -351,7 +349,7 @@ arma::vec FOSRRT::new_qRand(arma::vec qr, arma::vec qn) {
         arma::vec vEps(v*(maxDistance_/timeStep_/norm(v)));
 
         //vFos
-        arma::vec x((v-synergy->b)/norm(v-synergy->b));
+        arma::vec x = normalise(v-synergy->b);
         arma::vec vFos(synergy->b);
         for (unsigned int i = 0; i < synergy->dim; ++i) {
             vFos += synergy->a[i]*dot(x,synergy->U.col(i))*synergy->U.col(i);
@@ -398,7 +396,4 @@ arma::vec FOSRRT::new_qRand(arma::vec qr, arma::vec qn) {
     arma::vec dq(v*timeStep);
     dq *= std::min(maxDistance_/norm(dq),1.);
     return qn + timeStep*v;*/
-}
-
-}
 }

@@ -114,29 +114,8 @@ public:
 
     /** \brief Compute distance between motions (actually distance between contained states)
        * for finding nearest neighbors. If states are already connected their distance is set to infinity*/
-    double distanceFunction(const Motion* a, const Motion* b) const
-    {
-        double d = si_->distance(a->state, b->state);
-        return d;
-
-        /*
-          if (a->parent==b || b->parent==a) {
-              return 10.0*d;
-          }
-          return d;
-          */
-        /*
-          else {
-                if (d==0) {
-                    return 10.0;
-                }
-                else {
-                    return d;
-                }
-          }
-          */
-
-        //return (opt_->motionCost(a->state, b->state).v);
+    double distanceFunction(const Motion* a, const Motion* b) const {
+        return si_->distance(a->state, b->state);
     }
 
 
@@ -181,15 +160,10 @@ public:
         }
     }
 
-    ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
-    {
+    ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc) {
         checkValidity();
         ob::Goal                  *goal   = pdef_->getGoal().get();
         ob::GoalSampleableRegion  *goal_s = dynamic_cast<ob::GoalSampleableRegion*>(goal);
-
-        //JAN??
-        //goal_s->setThreshold(maxDistance_);
-
 
         bool symDist = si_->getStateSpace()->hasSymmetricDistance();
         bool symInterp = si_->getStateSpace()->hasSymmetricInterpolate();
@@ -241,12 +215,12 @@ public:
 
         // e+e/d.  K-nearest RRT*
         double k_rrg;
-        if (_optimize){
+        if (_optimize) {
             k_rrg = boost::math::constants::e<double>() + (boost::math::constants::e<double>()/(double)si_->getStateSpace()->getDimension());
             k_rrg = _factor_k_rrg*k_rrg;
-        }
-        else
+        } else {
             k_rrg = 0.0; //When set to zero RRTStar behavies as a standard RRT
+        }
 
         std::vector<Motion*>       nbh;
 
@@ -281,7 +255,7 @@ public:
                   sampler_->sampleUniform(rstate);
               */
 
-            //JAN: commen the next OMPL lines
+            //JAN: comment the next OMPL lines
             //if (goal_s && goalMotions_.size() < goal_s->maxSampleCount() && rng_.uniform01() < goalBias_ && goal_s->canSample())
             //    goal_s->sampleGoal(rstate);
             //else

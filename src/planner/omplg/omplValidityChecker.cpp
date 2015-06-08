@@ -79,7 +79,7 @@ double ValidityChecker::clearance(const ob::State* state) const
     //distance-check
     vector<KthReal> *distvect;
     distvect = theplanner->wkSpace()->distanceCheck(smp);
-    KthReal dist = 0.0;
+    KthReal dist = FLT_MAX;
     for(unsigned i=0; i<distvect->size(); i++)
         if(dist>distvect->at(i)) dist = distvect->at(i);
     return dist;

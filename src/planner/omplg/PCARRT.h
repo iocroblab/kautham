@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Enrique Ajenjo, Ely Repiso */
+/* Author: Nestor Garcia Hidalgo */
 
 #include "ompl/geometric/planners/rrt/RRT.h"
 #include "ompl/base/goals/GoalSampleableRegion.h"
@@ -28,43 +28,27 @@
 #include <limits>
 #include <boost/numeric/ublas/matrix.hpp> // for Matrix, or eigen for matrix
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // This is a class derived form the class ompl::RRT. Its purpose is to slightly change its behavior, by using the PCA for grow the RRT
- // !!!!! IMPORTANT: change its next definitions of the behavior of the PCARR, by its real behavior, not the behavior of the PRM description copied for follow the same way for of creation for the PCARRT class.
-  //      1) Making the ratio fo the steps grow and expand variable. It is done in the reimplementation of the solve function
-  //      2) The function expandRoadmap is changed by myexpandRoadmap. For now they are equal, but possible changes include
-  //          the distance threshold in the edges of the bounce motions and changing the number of bounce steps
-
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
 
 namespace Kautham {
-  namespace omplplanner{
+  namespace omplplanner {
+    class PCARRT : public og::RRT {
+    private:
+      double radius;
+      unsigned int kPCA; //number of neighbors to compute the PCA
+      unsigned int nDOF;
 
- class PCARRT:public og::RRT
-  {
-  private:
-         //definir aqui los parámetros que requiera el PCARRT, como por ejemplo el radio de vecindad del qnear para
-         //calcular el pca
-         double radius;
-         unsigned int kPCA; //number of neighbors to compute the PCA
-         unsigned int nDOF;
-
-  public:
-
-      PCARRT(const ob::SpaceInformationPtr &si, int n):RRT(si)
-      {
-          nDOF=2;
-          n = nDOF;
-          kPCA = 3*nDOF;//kPCA must be at least equal to nDOF.
-          radius = 1.0;
+    public:
+      PCARRT(const ob::SpaceInformationPtr &si, int n) : RRT(si) {
+        nDOF = 2;
+        n = nDOF;
+        kPCA = 3*nDOF;//kPCA must be at least equal to nDOF.
+        radius = 1.;
       }
 
       ompl::base::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc);
-
-  };
-//Final class PCARRT
-
+    };
   }
 }
