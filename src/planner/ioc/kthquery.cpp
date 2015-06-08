@@ -22,133 +22,145 @@
 
 /* Author: Alexander Perez, Jan Rosell */
 
- 
+
 
 #include "kthquery.h"
 #include <string>
 #include <sstream>
 #include <boost/algorithm/string.hpp>
 
-namespace Kautham{
+namespace Kautham {
 
- namespace IOC{
+    namespace IOC {
+        KthQuery::KthQuery() {
+            KthQuery(-1,-1);
+        }
 
-  KthQuery::KthQuery(){
-    KthQuery(-1,-1);
-  }
-
-  KthQuery::KthQuery(int init, int goal){
-    _smoothTime = _totalTime = 0.;
-    _init = init;
-    _goal = goal;
-    _path.clear();
-    _generatedSamples = 0;
-    _connectedSamples = 0;
-    _generatedEdges = 0;
-    _solved = false;
-	_collCheckCalls = 0;
-  }
-
-  string KthQuery::printInit(){
-    stringstream ss;
-    ss << _init ;
-    return ss.str();
-  }
-
-  string KthQuery::printGoal(){
-    stringstream ss;
-    ss << _goal ;
-    return ss.str();
-  }
-
-  string KthQuery::printSolved(){
-    if(_solved)
-      return "True";
-    else
-      return "False";
-  }
+        KthQuery::KthQuery(int init, int goal) {
+            _smoothTime = _totalTime = 0.;
+            _init = init;
+            _goal = goal;
+            _path.clear();
+            _generatedSamples = 0;
+            _connectedSamples = 0;
+            _generatedEdges = 0;
+            _solved = false;
+            _collCheckCalls = 0;
+        }
 
 
-  string KthQuery::printCollCheckCalls(){
-    stringstream ss;
-    ss << _collCheckCalls ;
-    return ss.str();
-  }
+        string KthQuery::printInit(){
+            stringstream ss;
+            ss << _init ;
+            return ss.str();
+        }
 
-  string KthQuery::printWorldCollCheckCalls(){
-    stringstream ss;
-    ss << _worldcollCheckCalls ;
-    return ss.str();
-  }
 
-  string KthQuery::printGeneratedEdges(){
-    stringstream ss;
-    ss << _generatedEdges ;
-    return ss.str();
-  }
+        string KthQuery::printGoal(){
+            stringstream ss;
+            ss << _goal ;
+            return ss.str();
+        }
 
-  string KthQuery::printConnectedSamples(){
-    stringstream ss;
-    ss << _connectedSamples ;
-    return ss.str();
-  }
 
-  string KthQuery::printGeneratedSamples(){
-    stringstream ss;
-    ss << _generatedSamples ;
-    return ss.str();
-  }
+        string KthQuery::printSolved(){
+            if(_solved)
+                return "True";
+            else
+                return "False";
+        }
 
-  string KthQuery::printPath(){
-    stringstream ss;
-    for(unsigned i=0; i<_path.size(); i++)
-      ss << _path[i] << " ";
-    string path = ss.str();
-    return path.substr(0, path.length() - 1);
-  }
 
-  string KthQuery::printTotalTime(){
-    stringstream ss;
-    ss << _totalTime ;
-    return ss.str();
-  }
+        string KthQuery::printCollCheckCalls(){
+            stringstream ss;
+            ss << _collCheckCalls ;
+            return ss.str();
+        }
 
-  string KthQuery::printSmoothTime(){
-    stringstream ss;
-    ss << _smoothTime ;
-    return ss.str();
-  }
-  
-  void KthQuery::setPath(string path){
-    vector<string> tokens;
-    boost::split(tokens, path, boost::is_any_of("| "));
-    for(size_t i = 0; i < tokens.size(); ++i)
-      _path.push_back( atoi(tokens[i].c_str() ) );
-  }
 
-  bool KthQuery::sameInitGoal(int init, int goal) const{
-    if( _init == init && _goal == goal )
-      return true;
-    return false;
-  }
+        string KthQuery::printWorldCollCheckCalls(){
+            stringstream ss;
+            ss << _worldcollCheckCalls ;
+            return ss.str();
+        }
 
-  bool KthQuery::sameInitGoal(const KthQuery &other) const{
-    if( _init == other._init && _goal==other._goal )
-      return true;
-    return false;
-  }
 
-  bool KthQuery::operator==(const KthQuery &other) const{
-    if( _init == other._init && _goal==other._goal 
-        && _path.size() == other._path.size()){
-      for(unsigned i = 0; i < _path.size(); i++)
-        if(_path[i] != other._path[i])
-          return false;
-      return true;
+        string KthQuery::printGeneratedEdges(){
+            stringstream ss;
+            ss << _generatedEdges ;
+            return ss.str();
+        }
+
+
+        string KthQuery::printConnectedSamples(){
+            stringstream ss;
+            ss << _connectedSamples ;
+            return ss.str();
+        }
+
+
+        string KthQuery::printGeneratedSamples(){
+            stringstream ss;
+            ss << _generatedSamples ;
+            return ss.str();
+        }
+
+
+        string KthQuery::printPath(){
+            stringstream ss;
+            for(unsigned i=0; i<_path.size(); i++)
+                ss << _path[i] << " ";
+            string path = ss.str();
+            return path.substr(0, path.length() - 1);
+        }
+
+
+        string KthQuery::printTotalTime(){
+            stringstream ss;
+            ss << _totalTime ;
+            return ss.str();
+        }
+
+
+        string KthQuery::printSmoothTime(){
+            stringstream ss;
+            ss << _smoothTime ;
+            return ss.str();
+        }
+
+
+        void KthQuery::setPath(string path){
+            vector<string> tokens;
+            boost::split(tokens, path, boost::is_any_of("| "));
+            for(size_t i = 0; i < tokens.size(); ++i)
+                _path.push_back( atoi(tokens[i].c_str() ) );
+        }
+
+
+        bool KthQuery::sameInitGoal(int init, int goal) const{
+            if( _init == init && _goal == goal )
+                return true;
+            return false;
+        }
+
+        bool KthQuery::sameInitGoal(const KthQuery &other) const{
+            if( _init == other._init && _goal==other._goal )
+                return true;
+            return false;
+        }
+
+
+        bool KthQuery::operator==(const KthQuery &other) const{
+            if( _init == other._init && _goal==other._goal
+                    && _path.size() == other._path.size()){
+                for(unsigned i = 0; i < _path.size(); i++)
+                    if(_path[i] != other._path[i])
+                        return false;
+                return true;
+            }
+            return false;
+        }
     }
-    return false;
-  }
- }
 }
 
 

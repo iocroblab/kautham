@@ -22,7 +22,7 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
- 
+
 
 #if !defined(_CONSTLINEARLOCALPLANNER_H)
 #define _CONSTLINEARLOCALPLANNER_H
@@ -33,64 +33,63 @@
 #include "linearlocplan.h"
 
 namespace Kautham {
-/** \defgroup Planner  Planning module
- *  \brief contains planners to solve the path planning problems
- *
- *   \todo  Add detailed description of Planning module
- *
- *  @{
- *
- */
+    /** \defgroup Planner  Planning module
+    *  \brief contains planners to solve the path planning problems
+    *
+    *   \todo  Add detailed description of Planning module
+    *
+    *  @{
+    *
+    */
 
-namespace IOC{
+    namespace IOC {
+        /**
+        *   \brief This is a brief description of class constLinearLocalPlanner
+        *
+        *    This is  a long descrition of class constLinearLocal planner
+        *
+        */
 
-
-/**
-*   \brief This is a brief description of class constLinearLocalPlanner
-*
-*    This is  a long descrition of class constLinearLocal planner
-*
-*/
-class ConstLinearLocalPlanner:public LinearLocalPlanner {
-    public:
-    /** descrition of constructor */
-      ConstLinearLocalPlanner(SPACETYPE stype, Sample *init, Sample *goal, WorkSpace *ws, KthReal st );
-      void setMethod(bool vandercorput = true);
-      bool canConect();
-      KthReal distance(Sample* from, Sample* to);
-	  inline void setStaringPoint(KthReal x, KthReal y, KthReal z){ ox=x; oy=y; oz=z;};
-          inline KthReal getOx(){return ox;};/**< desription of getOx()*/
-	  inline KthReal getOy(){return oy;};
-	  inline KthReal getOz(){return oz;};
-	  inline void setTypeConstraint(int t){type = t;};
-	  inline int getTypeConstraint(){return type;};
-	  KthReal computeorientation(KthReal px, KthReal py, KthReal pz, KthReal* X1, KthReal* X2, KthReal* X3, KthReal theta=1000);
-          /**
+        class ConstLinearLocalPlanner:public LinearLocalPlanner {
+        public:
+            /** descrition of constructor */
+            ConstLinearLocalPlanner(SPACETYPE stype, Sample *init, Sample *goal, WorkSpace *ws, KthReal st );
+            void setMethod(bool vandercorput = true);
+            bool canConect();
+            KthReal distance(Sample* from, Sample* to);
+            inline void setStaringPoint(KthReal x, KthReal y, KthReal z){ ox=x; oy=y; oz=z;}
+            inline KthReal getOx(){return ox;}/**< description of getOx()*/
+            inline KthReal getOy(){return oy;}
+            inline KthReal getOz(){return oz;}
+            inline void setTypeConstraint(int t){type = t;}
+            inline int getTypeConstraint(){return type;}
+            KthReal computeorientation(KthReal px, KthReal py, KthReal pz, KthReal* X1, KthReal* X2, KthReal* X3, KthReal theta=1000);
+            /**
             * Function getTheta retrives the theta angle of a sample
             *
             * \param c: the configuration, either with 6 or 7 values
             * \return The theta angle
             */
-	  KthReal getTheta(vector<KthReal> c);
-	  inline void setConstrained(bool f){constrained=f;};
-	  inline bool getConstrained(){return constrained;};
-	  bool ArmInverseKinematics(vector<KthReal> &carm, Sample *smp, bool maintainSameWrist );
-	  
-	  bool correctorientation(Sample* tmpSample, KthReal theta, Sample *smp);
+            KthReal getTheta(vector<KthReal> c);
+            inline void setConstrained(bool f){constrained=f;}
+            inline bool getConstrained(){return constrained;}
+            bool ArmInverseKinematics(vector<KthReal> &carm, Sample *smp, bool maintainSameWrist );
 
-	  void setCameraTransform(mt::Transform t){_cameraTransform = t;}
+            bool correctorientation(Sample* tmpSample, KthReal theta, Sample *smp);
 
-    private:
-     // ConstLinearLocalPlanner();
-      bool vanderMethod;
-	  KthReal ox,oy,oz; //point towards where the palm is staring
-	  int type;
-	  bool constrained;
-	  LCPRNG* _gen;
-	  mt::Transform _cameraTransform;
-    };
-}
-/** @}   end of Doxygen module "libPlanner" */
+            void setCameraTransform(mt::Transform t){_cameraTransform = t;}
+
+        private:
+            // ConstLinearLocalPlanner();
+            bool vanderMethod;
+            KthReal ox,oy,oz; //point towards where the palm is staring
+            int type;
+            bool constrained;
+            LCPRNG* _gen;
+            mt::Transform _cameraTransform;
+        };
+    }
+    /** @}   end of Doxygen module "libPlanner" */
 }
 
 #endif  //_CONSTLINEARLOCALPLANNER_H
