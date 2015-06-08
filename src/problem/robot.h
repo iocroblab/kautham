@@ -193,7 +193,7 @@ namespace Kautham {
     Link* getLink(unsigned int i);
 
     //! Retunrs the pointer to the link named linkName
-    Link* getLinkByName( string linkName );
+    Link* getLink(string name);
 
     //! Computes direct kinematics
     bool Kinematics(RobConf *robq);

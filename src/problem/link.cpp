@@ -192,28 +192,28 @@ namespace Kautham {
   *		This is possible only if the Link is armed and movable.
   */
   bool Link::setValue(KthReal q){
-    if(armed && movable){
-      if(q <= lowLimit)
-        q = lowLimit;
-      if(q >= hiLimit)
-        q= hiLimit;
-      
-      value = q;
-      q += zeroOffset;
-		  if(rotational){
-			  if(theta != q) 
-          hasChanged = true;
-        theta = q;
-      }else{
-        if(d != q) 
-          hasChanged = true;
-			  d = q	;
+      if(armed && movable){
+          if(q <= lowLimit)
+              q = lowLimit;
+          if(q >= hiLimit)
+              q= hiLimit;
+
+          value = q;
+          q += zeroOffset;
+          if(rotational){
+              if(theta != q)
+                  hasChanged = true;
+              theta = q;
+          }else{
+              if(d != q)
+                  hasChanged = true;
+              d = q	;
+          }
+
+          calculatePnO();
+          return true;
       }
-      
-		  calculatePnO();
-      return true;
-    }
-    return false;
+      return false;
   }
 
 
