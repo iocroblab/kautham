@@ -223,6 +223,12 @@ namespace Kautham {
         else if (name == "omplTRRT")
             _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
+        else if (name == "omplTRRTConnect")
+            _planner = new omplplanner::omplTRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+
+        else if (name == "omplFOSTRRTConnect")
+            _planner = new omplplanner::omplFOSTRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+
         else if (name == "omplLazyTRRT")
             _planner = new omplplanner::omplLazyTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
@@ -322,8 +328,20 @@ namespace Kautham {
                         ((omplplanner::omplFOSRRTPlanner*)_planner)->
                                 setSynergyTree(doc->child("Problem").child("Planner").child("Parameters").
                                                child("SynergyTree").attribute("synergyTree").as_string());
+                    } else if (plannerName == "omplFOSTRRTConnect") {
+                        ((omplplanner::omplFOSTRRTConnectPlanner*)_planner)->
+                                setSynergyTree(doc->child("Problem").child("Planner").child("Parameters").
+                                               child("SynergyTree").attribute("synergyTree").as_string());
                     } else if (plannerName == "omplTRRT") {
                         ((omplplanner::omplTRRTPlanner*)_planner)->
+                                setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
+                                                 child("Potential").attribute("potential").as_string());
+                    } else if (plannerName == "omplTRRTConnect") {
+                        ((omplplanner::omplTRRTConnectPlanner*)_planner)->
+                                setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
+                                                 child("Potential").attribute("potential").as_string());
+                    } else if (plannerName == "omplLazyTRRT") {
+                        ((omplplanner::omplLazyTRRTPlanner*)_planner)->
                                 setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
                                                  child("Potential").attribute("potential").as_string());
                     } else if (plannerName == "omplRRTStar") {

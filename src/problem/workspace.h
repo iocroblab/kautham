@@ -53,7 +53,8 @@ namespace Kautham{
       void                  moveObstaclesTo(Sample* sample);
       void                  addRobot(Robot* robot);
       void                  addObstacle(Robot* obs);
-      inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;} 
+      Robot *getRobot(std::string name);
+      inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;}
       inline Robot*         getObstacle(unsigned int i){if(i < obstacles.size()) return obstacles[i]; return NULL;}
       inline unsigned       getNumRobots(){return robots.size();}
       inline unsigned       getNumObstacles(){return obstacles.size();}
