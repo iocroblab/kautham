@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<Potential>
+  <PointSet repulse="1" diffusion="0.0225">
+    <Point p="120 0 0" radius="7.5"/>
+    <Point p="70 95 0" radius="9"/>
+    <Point p="70 -95 0" radius="9"/>
+    <Point p="-60 140 0" radius="15"/>
+    <Point p="-60 -140 0" radius="15"/>
+    <point p="-60 0 0" radius="18"/>
+  </PointSet>
+</Potential>
+<Robots>
+  <Robot name="2D-Robot">
+    <Link name="link1">
+      <Segment p0="0 0 0" p1="100 0 0" radius="2"/>
+    </Link>
+    <Link name="link2">
+      <Segment p0="0 0 0" p1="100 0 0" radius="2"/>
+    </Link>
+  </Robot>
+</Robots>

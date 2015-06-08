@@ -3,27 +3,6 @@
 
 DEF root Separator {
 
-  Separator {
-
-    Material {
-      ambientColor 1 1 1
-      diffuseColor 1 1 1
-      specularColor 1 1 1
-      emissiveColor 1 1 1
-      shininess 1
-
-    }
-    Translation {
-      translation 50 50 -1.0001
-
-    }
-    Cube {
-      width 140
-      height 140
-      depth 0.0099999998
-
-    }
-  }
   Material {
     diffuseColor 0.80000001 0 0
 

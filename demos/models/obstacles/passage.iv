@@ -1,0 +1,222 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  Separator {
+
+    Transform {
+      translation 0 1 0
+
+    }
+    Cube {
+      width 4
+      height 0.050000001
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 0 -1 0
+
+    }
+    Cube {
+      width 4
+      height 0.050000001
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation -2 0 0
+
+    }
+    Cube {
+      width 0.050000001
+      height 2.05
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 2 0 0
+
+    }
+    Cube {
+      width 0.050000001
+      height 2.05
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 0 0.60000002 0
+
+    }
+    Cube {
+      width 0.050000001
+      height 0.80000001
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 0 -0.60000002 0
+
+    }
+    Cube {
+      width 0.050000001
+      height 0.80000001
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation -0.40000001 0 0
+
+    }
+    Cube {
+      width 0.050000001
+      height 0.81999999
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 0.40000001 0 0
+
+    }
+    Cube {
+      width 0.050000001
+      height 0.81999999
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 0.55000001 -0.5 0
+      rotation -0 -0 -1.0000004  0.58800244
+
+    }
+    Cube {
+      width 0.38999999
+      height 0.050000001
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 0.55000001 0.5 0
+      rotation 0 0 1  0.58800203
+
+    }
+    Cube {
+      width 0.38999999
+      height 0.050000001
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation -0.55000001 -0.5 0
+      rotation 0 0 1  0.58800203
+
+    }
+    Cube {
+      width 0.38999999
+      height 0.050000001
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation -0.55000001 0.5 0
+      rotation 0 0 -1  0.58800203
+
+    }
+    Cube {
+      width 0.38999999
+      height 0.050000001
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 1.15 0.40000001 0
+      rotation -0 -0 -1.0000006  0.41822407
+
+    }
+    Cube {
+      width 0.98488575
+      height 0.050000001
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation 1.15 -0.40000001 0
+      rotation 0 0 0.99999988  0.41822407
+
+    }
+    Cube {
+      width 0.98488575
+      height 0.050000001
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation -1.15 0.40000001 0
+      rotation 0 0 0.99999988  0.41822407
+
+    }
+    Cube {
+      width 0.98488575
+      height 0.050000001
+      depth 0.050000001
+
+    }
+  }
+  Separator {
+
+    Transform {
+      translation -1.15 -0.40000001 0
+      rotation -0 -0 -1.0000006  0.41822407
+
+    }
+    Cube {
+      width 0.98488575
+      height 0.050000001
+      depth 0.050000001
+
+    }
+  }
+}

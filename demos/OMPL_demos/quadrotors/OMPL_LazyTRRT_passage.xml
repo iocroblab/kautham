@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTStar_bigcube">
+	<Robot robot="robots/bigcube.dh" scale="1">
+		<Limits name="X" min="-2" max="2" />
+		<Limits name="Y" min="-1" max="1" />
+		<Home TH="0" WZ="1" WY="0" WX="0" Z="0" Y="0" X="0" />
+	</Robot>
+	<Obstacle obstacle="obstacles/passage.iv" scale="1">
+		<Home TH="0" WZ="1" WY="0" WX="0" Z="0" Y="0" X="0" />
+		<Collision enabled="true"/>
+	</Obstacle>
+	<Controls robot="controls/bigcube_R2.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplLazyTRRT</Name>
+			<Potential potential="controls/passage.xml"/>
+			<Parameter name="K Constant">0.381441511135139</Parameter>
+			<Parameter name="Min Collision Threshold">0</Parameter>
+			<Parameter name="Max Collision Threshold">0.514658331</Parameter>
+			<Parameter name="Frontier Nodes Ratio">0.05</Parameter>
+			<Parameter name="Max States Failed">4</Parameter>
+			<Parameter name="Max Planning Time">20</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">0.1</Parameter>
+			<Parameter name="Simplify Solution">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="2">0.325 0.5</Init>
+				<Goal dim="2">0.675 0.5</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

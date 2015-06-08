@@ -22,6 +22,7 @@
 			<Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Range">400</Parameter>
 			<Parameter name="Simplify Solution">1</Parameter>
+			<Parameter name="Max States Failed">300</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>

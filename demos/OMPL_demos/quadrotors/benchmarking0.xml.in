@@ -1,0 +1,9 @@
+<Benchmark Name="experiment">
+  <Problem File="OMPL_RRTStar_factory.xml"/>
+  <Parameter Name="maxTime" Value="DDDDD"/>
+  <Parameter Name="maxMem" Value="7500"/>
+  <Parameter Name="timeBetweenUpdates" Value="1000"/>
+  <Parameter Name="runCount" Value="50"/>
+  <Parameter Name="displayProgress" Value="true"/>
+  <Parameter Name="filename" Value="result.log"/>
+</Benchmark>

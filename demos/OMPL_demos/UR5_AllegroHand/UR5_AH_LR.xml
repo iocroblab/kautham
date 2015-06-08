@@ -16,18 +16,9 @@
 
 	<Planner>
 		<Parameters>
-			<Name>omplPRM</Name>
-			<Parameter name="BounceDistanceThreshold">10</Parameter>
-			<Parameter name="BounceSteps">5</Parameter>
-			<Parameter name="Cspace Drawn">0</Parameter>
-			<Parameter name="DistanceThreshold">400</Parameter>
-			<Parameter name="Incremental (0/1)">0</Parameter>
-			<Parameter name="Max Planning Time">300</Parameter>
-			<Parameter name="MaxNearestNeighbors">10</Parameter>
-			<Parameter name="MinExpandTime">0.200000003</Parameter>
-			<Parameter name="MinGrowTime">0.400000006</Parameter>
-			<Parameter name="Sampler 0(r) 1(h) 2(sdk) 3(g) 4(gl)">0</Parameter>
-			<Parameter name="Simplify Solution">2</Parameter>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="Max Planning Time">10.0</Parameter>
+			<Parameter name="Range">10</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 		</Parameters>
 		<Queries>

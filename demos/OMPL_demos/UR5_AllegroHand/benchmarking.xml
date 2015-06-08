@@ -1,131 +1,124 @@
-<Benchmark Name="waterNoPMD">
-	<Problem File="waterNoPMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="BOX">
+	<Problem File="box0.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="waterNoPMD.log" />
+	<Parameter Name="filename" Value="box0.log" />
 </Benchmark>
-<Benchmark Name="cylinderNoPMD">
-	<Problem File="cylinderNoPMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="PMD">
+	<Problem File="boxPMD0.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="cylinderNoPMD.log" />
+	<Parameter Name="filename" Value="boxPMD0.log" />
 </Benchmark>
-<Benchmark Name="shelfNoPMD">
-	<Problem File="shelfNoPMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="GLOBAL">
+	<Problem File="boxGlobal0.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="shelfNoPMD.log" />
-</Benchmark>
-<Benchmark Name="boxNoPMD">
-	<Problem File="boxNoPMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
-	<Parameter Name="runCount" Value="100" />
-	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="boxNoPMD.log" />
+	<Parameter Name="filename" Value="boxGlobal0.log" />
 </Benchmark>
 
-<Benchmark Name="waterPMD">
-	<Problem File="water2PMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="BOX">
+	<Problem File="box1.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="waterPMD.log" />
+	<Parameter Name="filename" Value="box1.log" />
 </Benchmark>
-<Benchmark Name="cylinderPMD">
-	<Problem File="cylinder4PMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="PMD">
+	<Problem File="boxPMD1.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="cylinderPMD.log" />
+	<Parameter Name="filename" Value="boxPMD1.log" />
 </Benchmark>
-<Benchmark Name="shelfPMD">
-	<Problem File="shelf4PMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="GLOBAL">
+	<Problem File="boxGlobal1.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="shelfPMD.log" />
-</Benchmark>
-<Benchmark Name="boxPMD">
-	<Problem File="box4PMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
-	<Parameter Name="runCount" Value="100" />
-	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="boxPMD.log" />
+	<Parameter Name="filename" Value="boxGlobal1.log" />
 </Benchmark>
 
-<Benchmark Name="waterOtherPMD">
-	<Problem File="waterOtherPMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="BOX">
+	<Problem File="box2.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="waterOtherPMD.log" />
+	<Parameter Name="filename" Value="box2.log" />
 </Benchmark>
-<Benchmark Name="cylinderOtherPMD">
-	<Problem File="cylinderOtherPMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="PMD">
+	<Problem File="boxPMD2.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="cylinderOtherPMD.log" />
+	<Parameter Name="filename" Value="boxPMD2.log" />
 </Benchmark>
-<Benchmark Name="shelfOtherPMD">
-	<Problem File="shelfOtherPMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="GLOBAL">
+	<Problem File="boxGlobal2.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="shelfOtherPMD.log" />
-</Benchmark>
-<Benchmark Name="boxOtherPMD">
-	<Problem File="boxOtherPMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
-	<Parameter Name="runCount" Value="100" />
-	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="boxOtherPMD.log" />
+	<Parameter Name="filename" Value="boxGlobal2.log" />
 </Benchmark>
 
-<Benchmark Name="waterSamePMD">
-	<Problem File="waterSamePMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="BOX">
+	<Problem File="box3.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="waterSamePMD.log" />
+	<Parameter Name="filename" Value="box3.log" />
 </Benchmark>
-<Benchmark Name="cylinderSamePMD">
-	<Problem File="cylinderSamePMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="PMD">
+	<Problem File="boxPMD3.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="cylinderSamePMD.log" />
+	<Parameter Name="filename" Value="boxPMD3.log" />
 </Benchmark>
-<Benchmark Name="shelfSamePMD">
-	<Problem File="shelfSamePMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+<Benchmark Name="GLOBAL">
+	<Problem File="boxGlobal3.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="shelfSamePMD.log" />
+	<Parameter Name="filename" Value="boxGlobal3.log" />
 </Benchmark>
-<Benchmark Name="boxSamePMD">
-	<Problem File="boxSamePMD.xml" />
-	<Parameter Name="maxTime" Value="100.0" />
-	<Parameter Name="maxMem" Value="100.0" />
+
+<Benchmark Name="BOX">
+	<Problem File="box4.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
-	<Parameter Name="filename" Value="boxSamePMD.log" />
+	<Parameter Name="filename" Value="box4.log" />
+</Benchmark>
+<Benchmark Name="PMD">
+	<Problem File="boxPMD4.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
+	<Parameter Name="runCount" Value="100" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="boxPMD4.log" />
+</Benchmark>
+<Benchmark Name="GLOBAL">
+	<Problem File="boxGlobal4.xml" />
+	<Parameter Name="maxTime" Value="20" />
+	<Parameter Name="maxMem" Value="6000" />
+	<Parameter Name="runCount" Value="100" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="boxGlobal4.log" />
 </Benchmark>

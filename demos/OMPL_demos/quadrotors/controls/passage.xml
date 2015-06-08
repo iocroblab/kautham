@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<Potential>
+  <SegmentSet repulse="1" diffusion="73.469387755102034">
+    <Segment p0="-2 1 0" p1="2 1 0" radius="0"/>
+    <Segment p0="2 1 0" p1="2 -1 0" radius="0"/>
+    <Segment p0="2 -1 0" p1="-2 -1 0" radius="0"/>
+    <Segment p0="-2 -1 0" p1="-2 1 0" radius="0"/>
+    <Segment p0="0 1 0" p1="0 0.2 0" radius="0"/>
+    <Segment p0="0 -1 0" p1="0 -0.2 0" radius="0"/>
+    <Segment p0="1.6 0.2 0" p1="0.7 0.6 0" radius="0"/>
+    <Segment p0="0.7 0.6 0" p1="0.4 0.4 0" radius="0"/>
+    <Segment p0="0.4 0.4 0" p1="0.4 -0.4 0" radius="0"/>
+    <Segment p0="0.4 -0.4 0" p1="0.7 -0.6 0" radius="0"/>
+    <Segment p0="0.7 -0.6 0" p1="1.6 -0.2 0" radius="0"/>
+    <Segment p0="-1.6 0.2 0" p1="-0.7 0.6 0" radius="0"/>
+    <Segment p0="-0.7 0.6 0" p1="-0.4 0.4 0" radius="0"/>
+    <Segment p0="-0.4 0.4 0" p1="-0.4 -0.4 0" radius="0"/>
+    <Segment p0="-0.4 -0.4 0" p1="-0.7 -0.6 0" radius="0"/>
+    <Segment p0="-0.7 -0.6 0" p1="-1.6 -0.2 0" radius="0"/>
+  </SegmentSet>
+</Potential>
