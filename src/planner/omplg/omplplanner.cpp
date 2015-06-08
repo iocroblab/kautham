@@ -959,8 +959,8 @@ void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
             zmin = stateSpace->as<ob::RealVectorStateSpace>()->getBounds().low[2];
             zmax = stateSpace->as<ob::RealVectorStateSpace>()->getBounds().high[2];
         } else {
-            zmin = -FLT_EPSILON;
-            xmax =  FLT_EPSILON;
+            zmin = -FLT_MIN;
+            xmax =  FLT_MIN;
         }
     }
 
@@ -993,7 +993,7 @@ void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
 
         SoVertexProperty *vertexProperty(new SoVertexProperty);
         vertexProperty->vertex.setValues(0,pathStates.size(),vertices);
-        vertexProperty->orderedRGBA.setValue(SbColor(0.8,0.2,0.2).getPackedValue());
+        vertexProperty->orderedRGBA.setValue(SbColor(1.,0.,0.5).getPackedValue());
         vertexProperty->materialBinding.setValue(SoVertexProperty::OVERALL);
 
         SoLineSet *lineSet(new SoLineSet);
@@ -1022,10 +1022,13 @@ void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
     drawStyle->lineWidth = 1.;
     drawStyle->pointSize = 3.;
 
+    bool bidirectional = (_idName == "omplRRTConnect") || (_idName == "omplTRRTConnect") ||
+            (_idName == "omplFOSTRRTConnect");
+    int32_t materialIndices[pdata->numEdges()];
     float vertices[pdata->numVertices()][3];
     int32_t coordIndices[3*pdata->numEdges()];
     std::vector<unsigned int> outgoingVertices;
-    unsigned int p = 0;
+    unsigned int j = 0;
     for (unsigned int i = 0; i < pdata->numVertices(); ++i) {
         projection->project(pdata->getVertex(i).getState(),state);
 
@@ -1040,20 +1043,29 @@ void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
         pdata->getEdges(i,outgoingVertices);
         for (std::vector<unsigned int>::const_iterator it = outgoingVertices.begin();
              it != outgoingVertices.end(); ++it) {
-            coordIndices[3*p+0] = i;
-            coordIndices[3*p+1] = *it;
-            coordIndices[3*p+2] = SO_END_LINE_INDEX;
+            coordIndices[3*j+0] = i;
+            coordIndices[3*j+1] = *it;
+            coordIndices[3*j+2] = SO_END_LINE_INDEX;
 
             //ob::Cost edgeWeight;
             //pdata->getEdgeWeight(i,*it,&edgeWeight);
 
-            p++;
+            if (bidirectional) {
+                //Start tree vertices have tag = 1,goal tree vertices tag = 2 and the connection point tag = 0
+                if (pdata->getVertex(i).getTag() == 0) {
+                    materialIndices[j] = pdata->getVertex(*it).getTag()-1;
+                } else {
+                    materialIndices[j] = pdata->getVertex(i).getTag()-1;
+                }
+            }
+
+            j++;
         }
     }
 
     SoVertexProperty *vertexProperty(new SoVertexProperty);
     vertexProperty->vertex.setValues(0,pdata->numVertices(),vertices);
-    vertexProperty->orderedRGBA.setValue(SbColor(0.2,0.8,0.2).getPackedValue());
+    vertexProperty->orderedRGBA.setValue(SbColor(1.,1.,1.f).getPackedValue());
     vertexProperty->materialBinding.setValue(SoVertexProperty::OVERALL);
 
     SoPointSet *pointSet(new SoPointSet);
@@ -1067,12 +1079,21 @@ void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
 
     vertexProperty = new SoVertexProperty;
     vertexProperty->vertex.setValues(0,pdata->numVertices(),vertices);
-    vertexProperty->orderedRGBA.setValue(SbColor(1.,1.,1.).getPackedValue());
-    vertexProperty->materialBinding.setValue(SoVertexProperty::OVERALL);
+    if (bidirectional) {
+        uint32_t colors[2] = {SbColor(0.,1.,0.).getPackedValue(),SbColor(0.,0.5,1.).getPackedValue()};
+        vertexProperty->orderedRGBA.setValues(0,2,colors);
+        vertexProperty->materialBinding.setValue(SoVertexProperty::PER_FACE_INDEXED);
+    } else {
+        vertexProperty->orderedRGBA.setValue(SbColor(0.,1.,0.).getPackedValue());
+        vertexProperty->materialBinding.setValue(SoVertexProperty::OVERALL);
+    }
 
     SoIndexedLineSet *lineSet(new SoIndexedLineSet);
     lineSet->coordIndex.setValues(0,3*pdata->numEdges(),coordIndices);
     lineSet->vertexProperty.setValue(vertexProperty);
+    if (bidirectional) {
+        lineSet->materialIndex.setValues(0,pdata->numEdges(),materialIndices);
+    }
 
     SoSeparator *lines(new SoSeparator);
     lines->addChild(drawStyle);
