@@ -5,13 +5,13 @@
 		<Limits name="Y" min="245" max="725"/>
 		<Limits name="Z" min="6.49" max="6.51"/>
 	</Robot>	
-	<Robot robot="robots/UR5_AllegroHandL_box.dh" scale="1.0">
+	<Robot robot="robots/UR5_AllegroHandL_box.urdf">
 		<Home X="-239.63021891" Y="0.0" Z="609.93808329" WX="0.377964" WY="-0.912487" WZ="-0.156558" TH="138.59" />
 	</Robot>
-	<Robot robot="robots/UR5_AllegroHandR_box.dh" scale="1.0">
+	<Robot robot="robots/UR5_AllegroHandR_box.urdf">
 		<Home X="239.63021891" Y="0.0" Z="609.93808329" WX="0.377964" WY="-0.912487" WZ="0.156558" TH="221.41" />
 	</Robot>
-	<Obstacle obstacle="obstacles/structure.wrl" scale="1000.0">
+	<Obstacle obstacle="obstacles/structure.urdf">
 		<Home X="0.0" Y="0.0" Z="620.5" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812" />
 	</Obstacle>
 	<Controls robot="controls/tmpPMD.cntr" />
