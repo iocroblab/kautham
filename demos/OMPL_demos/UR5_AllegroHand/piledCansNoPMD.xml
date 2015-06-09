@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <Problem name="" topology="SE3">
-	<Robot robot="robots/UR5_AllegroHandL_can.dh" scale="1.0">
+	<Robot robot="robots/UR5_AllegroHandL_can.urdf">
     		<Home X="-239.63021891" Y="0.0" Z="-11.93808329" WX="0.377964" WY="-0.912487" WZ="-0.156558" TH="138.59"/>
 	</Robot>
 
-	<Robot robot="robots/UR5_AllegroHandR_can.dh" scale="1.0">
+	<Robot robot="robots/UR5_AllegroHandR_can.urdf">
     		<Home X="239.63021891" Y="0.0" Z="-11.93808329" WX="0.377964" WY="-0.912487" WZ="0.156558" TH="221.41"/>
 	</Robot>
 
-	<Obstacle obstacle="obstacles/structure.wrl" scale="1000.0">
+	<Obstacle obstacle="obstacles/structure.urdf">
 		<Home X="0.0" Y="0.0" Z="0.0" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812"/>
 	</Obstacle>
 
