@@ -156,7 +156,7 @@ bool srvOpenProblemStream(kautham2::OpenProblemStream::Request &req,
 bool srvCheckCollision(kautham2::CheckCollision::Request &req,
                        kautham2::CheckCollision::Response &res) {
 
-    for (int i = 0; i < req.config.size(); ++i) {
+    for (unsigned int i = 0; i < req.config.size(); ++i) {
         cout << req.config.at(i) << " ";
     }
     cout << endl;
@@ -347,9 +347,9 @@ bool srvGetPath(kautham2::GetPath::Request &req,
             path.push_back(conf);
         }
         res.response.resize(path.size());
-        for (int i = 0; i < path.size(); ++i) {
+        for (unsigned int i = 0; i < path.size(); ++i) {
             res.response[i].v.resize(path.at(i).size());
-            for (int j = 0; j < path.at(i).size(); ++j) {
+            for (unsigned int j = 0; j < path.at(i).size(); ++j) {
                 res.response[i].v[j] = path.at(i).at(j);
             }
         }
@@ -363,16 +363,16 @@ bool srvAddRobot(kautham2::AddRobot::Request &req,
                             kautham2::AddRobot::Response &res) {
     vector< vector<KthReal> > limits, mapMatrix;
     limits.resize(req.limits.size());
-    for (int i = 0; i < limits.size(); ++i) {
+    for (unsigned int i = 0; i < limits.size(); ++i) {
         limits[i].resize(req.limits[i].v.size());
-        for (int j = 0; j < limits[i].size(); ++j) {
+        for (unsigned int j = 0; j < limits[i].size(); ++j) {
             limits[i][j] = req.limits[i].v[j];
         }
     }
     mapMatrix.resize(req.mapMatrix.size());
-    for (int i = 0; i < mapMatrix.size(); ++i) {
+    for (unsigned int i = 0; i < mapMatrix.size(); ++i) {
         mapMatrix[i].resize(req.mapMatrix[i].v.size());
-        for (int j = 0; j < mapMatrix[i].size(); ++j) {
+        for (unsigned int j = 0; j < mapMatrix[i].size(); ++j) {
             mapMatrix[i][j] = req.mapMatrix[i].v[j];
         }
     }
