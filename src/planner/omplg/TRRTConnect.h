@@ -27,9 +27,9 @@
 #define TRRTCONNECT_H
 
 
-#include "ompl/geometric/planners/PlannerIncludes.h"
-#include "ompl/datastructures/NearestNeighbors.h"
-#include "ompl/base/OptimizationObjective.h"
+#include <ompl/geometric/planners/PlannerIncludes.h>
+#include <ompl/datastructures/NearestNeighbors.h>
+#include <ompl/base/OptimizationObjective.h>
 
 
 namespace ompl {
@@ -175,6 +175,10 @@ namespace ompl {
 
             void freeMemory();
 
+            void freeTreeMemory(TreeData tree);
+
+            void clearTree(TreeData tree);
+
             double distanceFunction(const Motion *a, const Motion *b) const {
                 return si_->distance(a->state,b->state);
             }
@@ -194,9 +198,9 @@ namespace ompl {
 
             double kConstant_;
 
-            unsigned int maxStatesSucceed_;
+            double frontierThreshold_;
 
-            unsigned int maxStatesFailed_;
+            double frontierNodeRatio_;
 
             double tempChangeFactor_;
 
@@ -204,9 +208,9 @@ namespace ompl {
 
             double initTemperature_;
 
-            double frontierThreshold_;
+            unsigned int maxStatesSucceed_;
 
-            double frontierNodeRatio_;
+            unsigned int maxStatesFailed_;
 
             TreeData tStart_;
 
