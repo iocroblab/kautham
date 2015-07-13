@@ -1,0 +1,400 @@
+Experiment box_with_no_PMD4
+Running on sonar
+Starting at 2015-06-30T11:44:12.933595
+<<<|
+Properties of the state space 'CompoundSpace25'
+  - signature: 10 0 58 0 29 1 29 0 29 1 29 
+  - dimension: 58
+  - extent: 62.9462
+  - sanity checks for state space passed
+  - probability of valid states: 0.197
+  - average length of a valid motion: 1.92572
+  - average number of samples drawn per second: sampleUniform()=1198.75 sampleUniformNear()=12.3255 sampleGaussian()=5.88235e+07
+Settings for the state space 'CompoundSpace25'
+  - state validity check resolution: 1%
+  - valid segment count factor: 1
+  - state space:
+Compound state space 'CompoundSpace25' of dimension 58 [
+Compound state space 'ssRobot0' of dimension 29 [
+Real vector state space 'ssRobot0_Rn' of dimension 29 with bounds: 
+  - min: -6.28319 -6.28319 -6.28319 -6.28319 -6.28319 -6.28319 0 0 0 -0.47 -0.196 -0.174 -0.227 0 -0.47 -0.196 -0.174 -0.227 0 -0.47 -0.196 -0.174 -0.227 0 0.263 -0.105 -0.189 -0.162 0 
+  - max: 6.28319 6.28319 6.28319 6.28319 6.28319 6.28319 0.001 0.001 0.001 0.47 1.61 1.709 1.618 0.001 0.47 1.61 1.709 1.618 0.001 0.47 1.61 1.709 1.618 0.001 1.396 1.163 1.644 1.719 0.001 
+ of weight 1
+]
+Registered projections:
+  - <default>
+Projection of dimension 29
+Cell sizes (computed defaults): [0.628319 0.628319 0.628319 0.628319 0.628319 0.628319 5e-05 5e-05 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.05665 0.0634 0.09165 0.09405 5e-05]
+  - drawprojection
+Projection of dimension 29
+Cell sizes (computed defaults): [0.628319 0.628319 0.628319 0.628319 0.628319 0.628319 5e-05 5e-05 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.05665 0.0634 0.09165 0.09405 5e-05]
+ of weight 1
+Compound state space 'ssRobot1' of dimension 29 [
+Real vector state space 'ssRobot1_Rn' of dimension 29 with bounds: 
+  - min: -6.28319 -6.28319 -6.28319 -6.28319 -6.28319 -6.28319 0 0 0 -0.47 -0.196 -0.174 -0.227 0 -0.47 -0.196 -0.174 -0.227 0 -0.47 -0.196 -0.174 -0.227 0 0.263 -0.105 -0.189 -0.162 0 
+  - max: 6.28319 6.28319 6.28319 6.28319 6.28319 6.28319 0.001 0.001 0.001 0.47 1.61 1.709 1.618 0.001 0.47 1.61 1.709 1.618 0.001 0.47 1.61 1.709 1.618 0.001 1.396 1.163 1.644 1.719 0.001 
+ of weight 1
+]
+Registered projections:
+  - <default>
+Projection of dimension 29
+Cell sizes (computed defaults): [0.628319 0.628319 0.628319 0.628319 0.628319 0.628319 5e-05 5e-05 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.05665 0.0634 0.09165 0.09405 5e-05]
+  - drawprojection
+Projection of dimension 29
+Cell sizes (computed defaults): [0.628319 0.628319 0.628319 0.628319 0.628319 0.628319 5e-05 5e-05 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.05665 0.0634 0.09165 0.09405 5e-05]
+ of weight 1
+]
+Registered projections:
+  - <default>
+Projection of dimension 29
+Cell sizes (computed defaults): [0.628319 0.628319 0.628319 0.628319 0.628319 0.628319 5e-05 5e-05 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.05665 0.0634 0.09165 0.09405 5e-05]
+  - drawprojection0
+Projection of dimension 29
+Cell sizes (computed defaults): [0.628319 0.628319 0.628319 0.628319 0.628319 0.628319 5e-05 5e-05 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.05665 0.0634 0.09165 0.09405 5e-05]
+  - drawprojection1
+Projection of dimension 29
+Cell sizes (computed defaults): [0.628319 0.628319 0.628319 0.628319 0.628319 0.628319 5e-05 5e-05 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.047 0.0903 0.09415 0.09225 5e-05 0.05665 0.0634 0.09165 0.09405 5e-05]
+
+Declared parameters:
+longest_valid_segment_fraction = 0.01
+projection.cellsize.0 = 0.62831854820251465
+projection.cellsize.1 = 0.62831854820251465
+projection.cellsize.10 = 0.090300000458955768
+projection.cellsize.11 = 0.09414999932050705
+projection.cellsize.12 = 0.092250001430511472
+projection.cellsize.13 = 5.0000000000000002e-05
+projection.cellsize.14 = 0.046999999880790712
+projection.cellsize.15 = 0.090300000458955768
+projection.cellsize.16 = 0.09414999932050705
+projection.cellsize.17 = 0.092250001430511472
+projection.cellsize.18 = 5.0000000000000002e-05
+projection.cellsize.19 = 0.046999999880790712
+projection.cellsize.2 = 0.62831854820251465
+projection.cellsize.20 = 0.090300000458955768
+projection.cellsize.21 = 0.09414999932050705
+projection.cellsize.22 = 0.092250001430511472
+projection.cellsize.23 = 5.0000000000000002e-05
+projection.cellsize.24 = 0.056650000810623172
+projection.cellsize.25 = 0.063399999216198918
+projection.cellsize.26 = 0.091650002449750897
+projection.cellsize.27 = 0.094049999117851252
+projection.cellsize.28 = 5.0000000000000002e-05
+projection.cellsize.3 = 0.62831854820251465
+projection.cellsize.4 = 0.62831854820251465
+projection.cellsize.5 = 0.62831854820251465
+projection.cellsize.6 = 5.0000000000000002e-05
+projection.cellsize.7 = 5.0000000000000002e-05
+projection.cellsize.8 = 5.0000000000000002e-05
+projection.cellsize.9 = 0.046999999880790712
+projection.cellsize_factor = 
+projection.drawprojection0.cellsize.0 = 0.62831854820251465
+projection.drawprojection0.cellsize.1 = 0.62831854820251465
+projection.drawprojection0.cellsize.10 = 0.090300000458955768
+projection.drawprojection0.cellsize.11 = 0.09414999932050705
+projection.drawprojection0.cellsize.12 = 0.092250001430511472
+projection.drawprojection0.cellsize.13 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.14 = 0.046999999880790712
+projection.drawprojection0.cellsize.15 = 0.090300000458955768
+projection.drawprojection0.cellsize.16 = 0.09414999932050705
+projection.drawprojection0.cellsize.17 = 0.092250001430511472
+projection.drawprojection0.cellsize.18 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.19 = 0.046999999880790712
+projection.drawprojection0.cellsize.2 = 0.62831854820251465
+projection.drawprojection0.cellsize.20 = 0.090300000458955768
+projection.drawprojection0.cellsize.21 = 0.09414999932050705
+projection.drawprojection0.cellsize.22 = 0.092250001430511472
+projection.drawprojection0.cellsize.23 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.24 = 0.056650000810623172
+projection.drawprojection0.cellsize.25 = 0.063399999216198918
+projection.drawprojection0.cellsize.26 = 0.091650002449750897
+projection.drawprojection0.cellsize.27 = 0.094049999117851252
+projection.drawprojection0.cellsize.28 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.3 = 0.62831854820251465
+projection.drawprojection0.cellsize.4 = 0.62831854820251465
+projection.drawprojection0.cellsize.5 = 0.62831854820251465
+projection.drawprojection0.cellsize.6 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.7 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.8 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.9 = 0.046999999880790712
+projection.drawprojection0.cellsize_factor = 
+projection.drawprojection1.cellsize.0 = 0.62831854820251465
+projection.drawprojection1.cellsize.1 = 0.62831854820251465
+projection.drawprojection1.cellsize.10 = 0.090300000458955768
+projection.drawprojection1.cellsize.11 = 0.09414999932050705
+projection.drawprojection1.cellsize.12 = 0.092250001430511472
+projection.drawprojection1.cellsize.13 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.14 = 0.046999999880790712
+projection.drawprojection1.cellsize.15 = 0.090300000458955768
+projection.drawprojection1.cellsize.16 = 0.09414999932050705
+projection.drawprojection1.cellsize.17 = 0.092250001430511472
+projection.drawprojection1.cellsize.18 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.19 = 0.046999999880790712
+projection.drawprojection1.cellsize.2 = 0.62831854820251465
+projection.drawprojection1.cellsize.20 = 0.090300000458955768
+projection.drawprojection1.cellsize.21 = 0.09414999932050705
+projection.drawprojection1.cellsize.22 = 0.092250001430511472
+projection.drawprojection1.cellsize.23 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.24 = 0.056650000810623172
+projection.drawprojection1.cellsize.25 = 0.063399999216198918
+projection.drawprojection1.cellsize.26 = 0.091650002449750897
+projection.drawprojection1.cellsize.27 = 0.094049999117851252
+projection.drawprojection1.cellsize.28 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.3 = 0.62831854820251465
+projection.drawprojection1.cellsize.4 = 0.62831854820251465
+projection.drawprojection1.cellsize.5 = 0.62831854820251465
+projection.drawprojection1.cellsize.6 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.7 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.8 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.9 = 0.046999999880790712
+projection.drawprojection1.cellsize_factor = 
+valid_segment_count_factor = 1
+Valid state sampler named kautham sampler with parameters:
+nr_attempts = 100
+Planner RRTConnect specs:
+Multithreaded:                 No
+Reports approximate solutions: No
+Can optimize solutions:        No
+Aware of the following parameters: range
+Declared parameters for planner RRTConnect:
+range = 1
+Start states:
+Compound state [
+Compound state [
+RealVectorState [-0.0502906 -1.75306 -2.37178 -0.0246806 -0.159329 -2.91567 0 0 0 0 0.392756 0.25909 0.903985 0 0 0.376502 0.292984 0.959335 0 0 0.392756 0.25909 0.903985 0 1.396 1.163 -0.189 1.719 0]
+]
+Compound state [
+RealVectorState [0.765996 -1.42953 2.3376 -2.1748 -0.527411 2.85886 0 0 0 -0.1739 0.826196 0.910608 0.00547001 0 0 0.81536 0.93697 0.00362501 0 0.1739 0.826196 0.910608 0.00547001 0 1.22152 1.06029 0.311409 0.83493 0]
+]
+]
+Goal state, threshold = 2.22045e-16, memory address = 0x70dba290, state = 
+Compound state [
+Compound state [
+RealVectorState [-0.798694 -1.45917 -1.5653 -3.91584 -1.43303 -1.49496 0 0 0 0 0.392756 0.25909 0.903985 0 0 0.376502 0.292984 0.959335 0 0 0.392756 0.25909 0.903985 0 1.396 1.163 -0.189 1.719 0]
+]
+Compound state [
+RealVectorState [0.293036 -0.716497 1.75421 -1.21788 0.92726 0.863649 0 0 0 -0.1739 0.826196 0.910608 0.00547001 0 0 0.81536 0.93697 0.00362501 0 0.1739 0.826196 0.910608 0.00547001 0 1.22152 1.06029 0.311409 0.83493 0]
+]
+]
+There are 0 solutions
+
+Properties of benchmarked planners:
+Planner RRTConnect specs:
+Multithreaded:                 No
+Reports approximate solutions: No
+Can optimize solutions:        No
+Aware of the following parameters: range
+|>>>
+1358418578 is the random seed
+100 seconds per run
+7500 MB per run
+100 runs per planner
+10099.3 seconds spent to collect the data
+1 enum type
+status|Unknown status|Invalid start|Invalid goal|Unrecognized goal type|Timeout|Approximate solution|Exact solution|Crash
+1 planners
+geometric_RRTConnect
+93 common properties
+longest_valid_segment_fraction = 0.01
+projection.cellsize.0 = 0.62831854820251465
+projection.cellsize.1 = 0.62831854820251465
+projection.cellsize.10 = 0.090300000458955768
+projection.cellsize.11 = 0.09414999932050705
+projection.cellsize.12 = 0.092250001430511472
+projection.cellsize.13 = 5.0000000000000002e-05
+projection.cellsize.14 = 0.046999999880790712
+projection.cellsize.15 = 0.090300000458955768
+projection.cellsize.16 = 0.09414999932050705
+projection.cellsize.17 = 0.092250001430511472
+projection.cellsize.18 = 5.0000000000000002e-05
+projection.cellsize.19 = 0.046999999880790712
+projection.cellsize.2 = 0.62831854820251465
+projection.cellsize.20 = 0.090300000458955768
+projection.cellsize.21 = 0.09414999932050705
+projection.cellsize.22 = 0.092250001430511472
+projection.cellsize.23 = 5.0000000000000002e-05
+projection.cellsize.24 = 0.056650000810623172
+projection.cellsize.25 = 0.063399999216198918
+projection.cellsize.26 = 0.091650002449750897
+projection.cellsize.27 = 0.094049999117851252
+projection.cellsize.28 = 5.0000000000000002e-05
+projection.cellsize.3 = 0.62831854820251465
+projection.cellsize.4 = 0.62831854820251465
+projection.cellsize.5 = 0.62831854820251465
+projection.cellsize.6 = 5.0000000000000002e-05
+projection.cellsize.7 = 5.0000000000000002e-05
+projection.cellsize.8 = 5.0000000000000002e-05
+projection.cellsize.9 = 0.046999999880790712
+projection.cellsize_factor = 
+projection.drawprojection0.cellsize.0 = 0.62831854820251465
+projection.drawprojection0.cellsize.1 = 0.62831854820251465
+projection.drawprojection0.cellsize.10 = 0.090300000458955768
+projection.drawprojection0.cellsize.11 = 0.09414999932050705
+projection.drawprojection0.cellsize.12 = 0.092250001430511472
+projection.drawprojection0.cellsize.13 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.14 = 0.046999999880790712
+projection.drawprojection0.cellsize.15 = 0.090300000458955768
+projection.drawprojection0.cellsize.16 = 0.09414999932050705
+projection.drawprojection0.cellsize.17 = 0.092250001430511472
+projection.drawprojection0.cellsize.18 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.19 = 0.046999999880790712
+projection.drawprojection0.cellsize.2 = 0.62831854820251465
+projection.drawprojection0.cellsize.20 = 0.090300000458955768
+projection.drawprojection0.cellsize.21 = 0.09414999932050705
+projection.drawprojection0.cellsize.22 = 0.092250001430511472
+projection.drawprojection0.cellsize.23 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.24 = 0.056650000810623172
+projection.drawprojection0.cellsize.25 = 0.063399999216198918
+projection.drawprojection0.cellsize.26 = 0.091650002449750897
+projection.drawprojection0.cellsize.27 = 0.094049999117851252
+projection.drawprojection0.cellsize.28 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.3 = 0.62831854820251465
+projection.drawprojection0.cellsize.4 = 0.62831854820251465
+projection.drawprojection0.cellsize.5 = 0.62831854820251465
+projection.drawprojection0.cellsize.6 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.7 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.8 = 5.0000000000000002e-05
+projection.drawprojection0.cellsize.9 = 0.046999999880790712
+projection.drawprojection0.cellsize_factor = 
+projection.drawprojection1.cellsize.0 = 0.62831854820251465
+projection.drawprojection1.cellsize.1 = 0.62831854820251465
+projection.drawprojection1.cellsize.10 = 0.090300000458955768
+projection.drawprojection1.cellsize.11 = 0.09414999932050705
+projection.drawprojection1.cellsize.12 = 0.092250001430511472
+projection.drawprojection1.cellsize.13 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.14 = 0.046999999880790712
+projection.drawprojection1.cellsize.15 = 0.090300000458955768
+projection.drawprojection1.cellsize.16 = 0.09414999932050705
+projection.drawprojection1.cellsize.17 = 0.092250001430511472
+projection.drawprojection1.cellsize.18 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.19 = 0.046999999880790712
+projection.drawprojection1.cellsize.2 = 0.62831854820251465
+projection.drawprojection1.cellsize.20 = 0.090300000458955768
+projection.drawprojection1.cellsize.21 = 0.09414999932050705
+projection.drawprojection1.cellsize.22 = 0.092250001430511472
+projection.drawprojection1.cellsize.23 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.24 = 0.056650000810623172
+projection.drawprojection1.cellsize.25 = 0.063399999216198918
+projection.drawprojection1.cellsize.26 = 0.091650002449750897
+projection.drawprojection1.cellsize.27 = 0.094049999117851252
+projection.drawprojection1.cellsize.28 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.3 = 0.62831854820251465
+projection.drawprojection1.cellsize.4 = 0.62831854820251465
+projection.drawprojection1.cellsize.5 = 0.62831854820251465
+projection.drawprojection1.cellsize.6 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.7 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.8 = 5.0000000000000002e-05
+projection.drawprojection1.cellsize.9 = 0.046999999880790712
+projection.drawprojection1.cellsize_factor = 
+range = 1
+valid_segment_count_factor = 1
+8 properties for each run
+collision checks INTEGER
+graph motions INTEGER
+graph states INTEGER
+memory REAL
+solved BOOLEAN
+status ENUM
+time REAL
+valid segment fraction REAL
+100 runs
+2; 0; 1; 0; 0; 4; 100.03376299999999; 0; 
+2; 0; 1; 0.0078125; 0; 4; 100.017628; 0; 
+2; 0; 1; 0.015625; 0; 4; 100.114998; 0; 
+2; 0; 1; 0.01953125; 0; 4; 100.09415199999999; 0; 
+2; 0; 1; 0.0234375; 0; 4; 100.094013; 0; 
+2; 0; 1; 0.02734375; 0; 4; 100.092277; 0; 
+2; 0; 1; 0.03125; 0; 4; 100.085094; 0; 
+2; 0; 1; 0.03515625; 0; 4; 100.083203; 0; 
+2; 0; 1; 0.0390625; 0; 4; 100.092511; 0; 
+2; 0; 1; 0.04296875; 0; 4; 100.09206399999999; 0; 
+2; 0; 1; 0.046875; 0; 4; 100.091346; 0; 
+2; 0; 1; 0.05078125; 0; 4; 100.08161699999999; 0; 
+2; 0; 1; 0.0546875; 0; 4; 100.081884; 0; 
+2; 0; 1; 0.05859375; 0; 4; 100.082289; 0; 
+2; 0; 1; 0.0625; 0; 4; 100.082227; 0; 
+2; 0; 1; 0.06640625; 0; 4; 100.081998; 0; 
+2; 0; 1; 0.0703125; 0; 4; 100.092187; 0; 
+2; 0; 1; 0.07421875; 0; 4; 100.08127500000001; 0; 
+2; 0; 1; 0.07421875; 0; 4; 100.082291; 0; 
+2; 0; 1; 0.078125; 0; 4; 100.091829; 0; 
+2; 0; 1; 0.08203125; 0; 4; 100.081687; 0; 
+2; 0; 1; 0.0859375; 0; 4; 100.081565; 0; 
+2; 0; 1; 0.0859375; 0; 4; 100.081626; 0; 
+2; 0; 1; 0.09375; 0; 4; 100.072513; 0; 
+2; 0; 1; 0.09375; 0; 4; 100.091494; 0; 
+2; 0; 1; 0.1015625; 0; 4; 100.102463; 0; 
+2; 0; 1; 0.1015625; 0; 4; 100.082157; 0; 
+2; 0; 1; 0.109375; 0; 4; 100.092574; 0; 
+2; 0; 1; 0.109375; 0; 4; 100.091431; 0; 
+2; 0; 1; 0.1171875; 0; 4; 100.10172; 0; 
+2; 0; 1; 0.12109375; 0; 4; 100.091866; 0; 
+2; 0; 1; 0.125; 0; 4; 100.092811; 0; 
+2; 0; 1; 0.12890625; 0; 4; 100.10270199999999; 0; 
+2; 0; 1; 0.1328125; 0; 4; 100.103612; 0; 
+2; 0; 1; 0.13671875; 0; 4; 100.09295; 0; 
+2; 0; 1; 0.140625; 0; 4; 100.09206399999999; 0; 
+2; 0; 1; 0.14453125; 0; 4; 100.092264; 0; 
+2; 0; 1; 0.1484375; 0; 4; 100.10215599999999; 0; 
+2; 0; 1; 0.15234375; 0; 4; 100.10243800000001; 0; 
+2; 0; 1; 0.15625; 0; 4; 100.102459; 0; 
+2; 0; 1; 0.16015625; 0; 4; 100.09244700000001; 0; 
+2; 0; 1; 0.1640625; 0; 4; 100.101412; 0; 
+2; 0; 1; 0.16796875; 0; 4; 100.10137400000001; 0; 
+2; 0; 1; 0.171875; 0; 4; 100.095111; 0; 
+2; 0; 1; 0.17578125; 0; 4; 100.101654; 0; 
+2; 0; 1; 0.1796875; 0; 4; 100.10237600000001; 0; 
+2; 0; 1; 0.1796875; 0; 4; 100.112055; 0; 
+2; 0; 1; 0.18359375; 0; 4; 100.10185199999999; 0; 
+2; 0; 1; 0.1875; 0; 4; 100.092812; 0; 
+2; 0; 1; 0.19140625; 0; 4; 100.087041; 0; 
+2; 0; 1; 0.1953125; 0; 4; 100.101966; 0; 
+2; 0; 1; 0.19921875; 0; 4; 100.101997; 0; 
+2; 0; 1; 0.203125; 0; 4; 100.102504; 0; 
+2; 0; 1; 0.20703125; 0; 4; 100.08461800000001; 0; 
+2; 0; 1; 0.2109375; 0; 4; 100.102294; 0; 
+2; 0; 1; 0.21484375; 0; 4; 100.098096; 0; 
+2; 0; 1; 0.21484375; 0; 4; 100.09236900000001; 0; 
+2; 0; 1; 0.22265625; 0; 4; 100.09229000000001; 0; 
+2; 0; 1; 0.22265625; 0; 4; 100.10186400000001; 0; 
+2; 0; 1; 0.23046875; 0; 4; 100.112016; 0; 
+2; 0; 1; 0.23046875; 0; 4; 100.101325; 0; 
+2; 0; 1; 0.23828125; 0; 4; 100.091764; 0; 
+2; 0; 1; 0.23828125; 0; 4; 100.09224; 0; 
+2; 0; 1; 0.24609375; 0; 4; 100.10173399999999; 0; 
+2; 0; 1; 0.25; 0; 4; 100.102204; 0; 
+2; 0; 1; 0.25390625; 0; 4; 100.102098; 0; 
+2; 0; 1; 0.2578125; 0; 4; 100.092275; 0; 
+2; 0; 1; 0.26171875; 0; 4; 100.101122; 0; 
+2; 0; 1; 0.265625; 0; 4; 100.102498; 0; 
+2; 0; 1; 0.26953125; 0; 4; 100.10217299999999; 0; 
+2; 0; 1; 0.2734375; 0; 4; 100.092551; 0; 
+2; 0; 1; 0.27734375; 0; 4; 100.102538; 0; 
+2; 0; 1; 0.28125; 0; 4; 100.10261300000001; 0; 
+2; 0; 1; 0.28515625; 0; 4; 100.102282; 0; 
+2; 0; 1; 0.2890625; 0; 4; 100.092355; 0; 
+2; 0; 1; 0.29296875; 0; 4; 100.102817; 0; 
+2; 0; 1; 0.296875; 0; 4; 100.10182399999999; 0; 
+2; 0; 1; 0.30078125; 0; 4; 100.103323; 0; 
+2; 0; 1; 0.30078125; 0; 4; 100.10166599999999; 0; 
+2; 0; 1; 0.3046875; 0; 4; 100.10149199999999; 0; 
+2; 0; 1; 0.30859375; 0; 4; 100.101693; 0; 
+2; 0; 1; 0.3125; 0; 4; 100.10207200000001; 0; 
+2; 0; 1; 0.31640625; 0; 4; 100.102338; 0; 
+2; 0; 1; 0.32421875; 0; 4; 100.09699500000001; 0; 
+2; 0; 1; 0.328125; 0; 4; 100.103066; 0; 
+2; 0; 1; 0.328125; 0; 4; 100.102434; 0; 
+2; 0; 1; 0.33203125; 0; 4; 100.091804; 0; 
+2; 0; 1; 0.33203125; 0; 4; 100.09127100000001; 0; 
+2; 0; 1; 0.33984375; 0; 4; 100.10261199999999; 0; 
+2; 0; 1; 0.33984375; 0; 4; 100.102822; 0; 
+2; 0; 1; 0.34765625; 0; 4; 100.09923999999999; 0; 
+2; 0; 1; 0.34765625; 0; 4; 100.083029; 0; 
+2; 0; 1; 0.35546875; 0; 4; 100.102649; 0; 
+2; 0; 1; 0.359375; 0; 4; 100.102462; 0; 
+2; 0; 1; 0.36328125; 0; 4; 100.10215700000001; 0; 
+2; 0; 1; 0.3671875; 0; 4; 100.091718; 0; 
+2; 0; 1; 0.37109375; 0; 4; 100.090785; 0; 
+2; 0; 1; 0.375; 0; 4; 100.102261; 0; 
+2; 0; 1; 0.37890625; 0; 4; 100.102036; 0; 
+2; 0; 1; 0.3828125; 0; 4; 100.09161; 0; 
+.
