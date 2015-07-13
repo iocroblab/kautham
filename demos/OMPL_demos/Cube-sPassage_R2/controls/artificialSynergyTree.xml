@@ -34,56 +34,56 @@
 	</Tree>
 	<ControlSet>
 		<Offset>
-			<DOF value="-0.5" />
-			<DOF value="0.5" />
+			<DOF value="-1" />
+			<DOF value="1" />
 		</Offset>
-		<Control eigValue="0.00001">
+		<Control eigValue="0.01">
 			<DOF value="1" />
 			<DOF value="0" />
 		</Control>
-		<Control eigValue="0.000001">
+		<Control eigValue="0.01">
 			<DOF value="0" />
 			<DOF value="1" />
 		</Control>
 	</ControlSet>
 	<ControlSet>
 		<Offset>
-			<DOF value="0.5" />
-			<DOF value="0.5" />
+			<DOF value="1" />
+			<DOF value="1" />
 		</Offset>
-		<Control eigValue="0.00001">
+		<Control eigValue="0.01">
 			<DOF value="0" />
 			<DOF value="1" />
 		</Control>
-		<Control eigValue="0.000001">
+		<Control eigValue="0.01">
 			<DOF value="1" />
 			<DOF value="0" />
 		</Control>
 	</ControlSet>
 	<ControlSet>
 		<Offset>
-			<DOF value="-0.5" />
-			<DOF value="-0.5" />
+			<DOF value="-1" />
+			<DOF value="-1" />
 		</Offset>
-		<Control eigValue="0.00001">
+		<Control eigValue="0.01">
 			<DOF value="0" />
 			<DOF value="1" />
 		</Control>
-		<Control eigValue="0.000001">
+		<Control eigValue="0.01">
 			<DOF value="1" />
 			<DOF value="0" />
 		</Control>
 	</ControlSet>
 	<ControlSet>
 		<Offset>
-			<DOF value="0.5" />
-			<DOF value="-0.5" />
+			<DOF value="1" />
+			<DOF value="-1" />
 		</Offset>
-		<Control eigValue="0.00001">
+		<Control eigValue="0.01">
 			<DOF value="1" />
 			<DOF value="0" />
 		</Control>
-		<Control eigValue="0.000001">
+		<Control eigValue="0.01">
 			<DOF value="0" />
 			<DOF value="1" />
 		</Control>
