@@ -179,14 +179,27 @@ double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
         d = 0.;
     } else if (d > 1.) {
         d = 1.;
-         }
+    }
 
     return d;
 }
 
 
 double Synergy::weightedDot(arma::vec x, arma::vec y) {
-    return as_scalar(trans(x)*h*y);
+    //return as_scalar(trans(x)*h*y);
+    return as_scalar(trans(x)*y);
+}
+
+arma::mat Synergy::covariance() {
+    arma::mat D(dim,dim);
+    D.zeros();
+    boost::math::normal N(0.,1.);
+    double alfa = 0.95;
+    double lambda = boost::math::quantile(N,(1+pow(1-alfa,1./double(dim)))/2.);
+    for (unsigned int i = 0; i < dim; ++i) {
+        D(i,i) = a(i)*a(i)/lambda;
+    }
+    return U*D*trans(U);
 }
 
 
@@ -295,14 +308,14 @@ Synergy *PCA(const arma::mat M, SynergyOrder order, double alfa) {
 
         Synergy *synergy;
         switch (order) {
-        case ZERO:
-            synergy = new ZeroOrderSynergy(b,a,U);
+            case ZERO:
+                synergy = new ZeroOrderSynergy(b,a,U);
             break;
-        case FIRST:
-            synergy = new FirstOrderSynergy(b,a,U);
+            case FIRST:
+                synergy = new FirstOrderSynergy(b,a,U);
             break;
-        default:
-            synergy = new Synergy(b,a,U);
+            default:
+                synergy = new Synergy(b,a,U);
             break;
         }
 
@@ -351,14 +364,14 @@ Synergy *xml2synergy(const pugi::xml_node *node, SynergyOrder order) {
 
     Synergy *synergy;
     switch (order) {
-    case ZERO:
-        synergy = new ZeroOrderSynergy(b,a,U);
+        case ZERO:
+            synergy = new ZeroOrderSynergy(b,a,U);
         break;
-    case FIRST:
-        synergy = new FirstOrderSynergy(b,a,U);
+        case FIRST:
+            synergy = new FirstOrderSynergy(b,a,U);
         break;
-    default:
-        synergy = new Synergy(b,a,U);
+        default:
+            synergy = new Synergy(b,a,U);
         break;
     }
 
