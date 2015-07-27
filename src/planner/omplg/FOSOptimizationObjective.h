@@ -37,7 +37,8 @@ namespace ompl {
     namespace base {
         class FOSOptimizationObjective : public ompl::base::OptimizationObjective {
         public:
-            FOSOptimizationObjective(Kautham::omplplanner::omplPlanner *planner, const SpaceInformationPtr &si);
+            FOSOptimizationObjective(Kautham::omplplanner::omplPlanner *planner,
+                                     const SpaceInformationPtr &si);
 
             bool setSynergyTree(std::string filename) {
                 delete tree_;
@@ -62,6 +63,8 @@ namespace ompl {
             virtual Cost stateCost(const State *s) const;
 
             virtual Cost motionCost(const State *s1, const State *s2) const;
+
+            Cost preSolveMotionCost(const State *s1, const State *s2) const;
 
         protected:
             void omplState2armaVec(const State *s, arma::vec &q) const;

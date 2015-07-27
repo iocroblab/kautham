@@ -73,6 +73,8 @@ public:
     //! Returns weighted dot product
     double weightedDot(arma::vec x, arma::vec y);
 
+    arma::mat covariance();
+
 protected:
     //! Distance between barycenters
     virtual double dTrans(const arma::vec xb) const;
