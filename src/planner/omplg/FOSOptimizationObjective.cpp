@@ -27,10 +27,12 @@
 
 
 #define MAX_COST 100.0
+#define SIGN(x) ((x>0.0)-(x<0.0))
+
 
 ompl::base::FOSOptimizationObjective::FOSOptimizationObjective
 (Kautham::omplplanner::omplPlanner *planner, const SpaceInformationPtr &si) :
-    ompl::base::OptimizationObjective(si),planner_(planner),tree_(NULL) {
+    ompl::base::OptimizationObjective(si), planner_(planner), tree_(NULL) {
     description_ = "First Order Synergy Optimization Objective";
 }
 
@@ -40,7 +42,13 @@ ompl::base::Cost ompl::base::FOSOptimizationObjective::stateCost(const State *s)
 }
 
 
-ompl::base::Cost ompl::base::FOSOptimizationObjective::motionCost(const State *s1, const State *s2) const {
+ompl::base::Cost ompl::base::FOSOptimizationObjective::motionCost(const State *s1,
+                                                                  const State *s2) const {
+    //Motion goes from s1 to s2.
+    //If the tree is rooted at q_init, s1 is q_near and s2 is q_new
+    //If the tree is rooted at q_goal, s1 is q_new and s2 is q_near
+    //Motion cost is the alignment multiplied by the motion length
+
     //Convert states to configurations
     arma::vec q1;
     omplState2armaVec(s1,q1);
@@ -51,22 +59,36 @@ ompl::base::Cost ompl::base::FOSOptimizationObjective::motionCost(const State *s
     Synergy *synergy = tree_->getSynergy(0.5*(q1+q2));
     if (!synergy) return ompl::base::Cost(MAX_COST*si_->distance(s1,s2));
 
-    //Get cost
+    //Get motion velocity
     arma::vec v = q2-q1;
     for (unsigned int i = 0; i < synergy->dim; ++i) {
-        v(i) = v(i)/tree_->getVelocityLimits()(i);
+        v(i) /= tree_->getVelocityLimits()(i);
     }
-    double cos = synergy->weightedDot(synergy->b,v) /
-            sqrt(synergy->weightedDot(synergy->b,synergy->b)*synergy->weightedDot(v,v));
 
-    return ompl::base::Cost(sqrt((1.0-cos)/(1.0+cos))*si_->distance(s1,s2));
+    //Return cost
+    return ompl::base::Cost(std::min(synergy->alignment(v),MAX_COST)*si_->distance(s1,s2));
+}
+
+
+ompl::base::Cost ompl::base::FOSOptimizationObjective::preSolveMotionCost(const State *s1,
+                                                                  const State *s2) const {
+    //s1 is q_near and s2 is q_new.
+    //Motion cost is the distance between s1 and
+    //the global zero-order box multiplied by the motion length
+
+    //Convert state to configuration
+    arma::vec q2;
+    omplState2armaVec(s2,q2);
+
+    //Return cost
+    return ompl::base::Cost(tree_->distance(q2)*si_->distance(s1,s2));
 }
 
 
 void ompl::base::FOSOptimizationObjective::omplState2armaVec(const State *s, arma::vec &q) const {
-    /*It is suposed that no coupled DOF exist.
-     *Each acted DOF has a mapMatrix row with all the elements equal to 0 and
-     *only one element equal to 1. The offMatrix element must be equal to 0.5*/
+    //It is suposed that no coupled DOF exist.
+    //Each acted DOF has a mapMatrix row with all the elements equal to 0 and
+    //only one element equal to 1. The offMatrix element must be equal to 0.5
 
     unsigned int nDOF = planner_->wkSpace()->getNumRobControls();
     q.resize(nDOF);
@@ -115,31 +137,3 @@ void ompl::base::FOSOptimizationObjective::omplState2armaVec(const State *s, arm
         if (k >= nDOF) break;
     }
 }
-
-
-/*arma::vec ompl::base::FOSOptimizationObjective::projectVelocity(const arma::vec &v,
-                                                                const Synergy *synergy) const {
-    // Compute scaled velocity
-    arma::vec Lv(tree_->getVelocityLimits());
-    arma::vec v_esc(synergy->dim);
-    for (unsigned int i = 0; i < Lv.n_elem; ++i) {
-        v_esc(i) = v(i)/Lv(i);
-    }
-    v_esc /= std::max(1.0,max(abs(v_esc)));
-
-    // Compute FOS velocity
-    arma::vec x = normalise(v_esc-synergy->b);
-    arma::vec v_FOS(synergy->b);
-    for (unsigned int i = 0; i < synergy->dim; ++i) {
-        v_FOS += synergy->a(i)*dot(x,synergy->U.col(i))*synergy->U.col(i);
-    }
-    v_FOS /= std::max(1.0,max(abs(v_FOS)));
-
-    // Compute projected velocity
-    arma::vec v_proj(synergy->dim);
-    for (unsigned int i = 0; i < synergy->dim; ++i) {
-        v_proj(i) = v_FOS(i)*Lv(i);
-    }
-
-    return v_proj;
-}*/
