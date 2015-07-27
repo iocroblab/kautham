@@ -45,7 +45,7 @@ ompl::geometric::TRRTConnect::TRRTConnect(const base::SpaceInformationPtr &si) :
     tempChangeFactor_ = 2.0; // how much to decrease or increase the temp each time
     minTemperature_ = 10e-10; // lower limit of the temperature change
     initTemperature_ = 10e-6; // where the temperature starts out
-    frontierNodeRatio_ = 0.1; // 1/10, or 1 nonfrontier for every 10 frontier
+    frontierNodeRatio_ = 0.1; // 1/10, or 1 nonFrontier for every 10 frontier
 
     Planner::declareParam<double>("range",this,&TRRTConnect::setRange,&TRRTConnect::getRange,"0.:1.:10000.");
     Planner::declareParam<unsigned int>("max_states_succeed",this,&TRRTConnect::setMaxStatesSucceed,&TRRTConnect::getMaxStatesSucceed,"0:1000");
@@ -99,14 +99,14 @@ void ompl::geometric::TRRTConnect::setup() {
     tStart_->setDistanceFunction(boost::bind(&TRRTConnect::distanceFunction,this,_1,_2));
     tStart_.numStatesFailed = 0;
     tStart_.temp = initTemperature_;
-    tStart_.nonfrontierCount = 1;
+    tStart_.nonFrontierCount = 1;
     tStart_.frontierCount = 1; // init to 1 to prevent division by zero error
 
     if (!tGoal_) tGoal_.reset(tools::SelfConfig::getDefaultNearestNeighbors<Motion*>(si_->getStateSpace()));
     tGoal_->setDistanceFunction(boost::bind(&TRRTConnect::distanceFunction,this,_1,_2));
     tGoal_.numStatesFailed = 0;
     tGoal_.temp = initTemperature_;
-    tGoal_.nonfrontierCount = 1;
+    tGoal_.nonFrontierCount = 1;
     tGoal_.frontierCount = 1; // init to 1 to prevent division by zero error
 }
 
@@ -144,13 +144,13 @@ void ompl::geometric::TRRTConnect::clear() {
     if (tStart_) tStart_->clear();
     tStart_.numStatesFailed = 0;
     tStart_.temp = initTemperature_;
-    tStart_.nonfrontierCount = 1;
+    tStart_.nonFrontierCount = 1;
     tStart_.frontierCount = 1; // init to 1 to prevent division by zero error
 
     if (tGoal_) tGoal_->clear();
     tGoal_.numStatesFailed = 0;
     tGoal_.temp = initTemperature_;
-    tGoal_.nonfrontierCount = 1;
+    tGoal_.nonFrontierCount = 1;
     tGoal_.frontierCount = 1; // init to 1 to prevent division by zero error
 
     connectionPoint_ = std::make_pair<base::State*,base::State*>(NULL,NULL);
@@ -172,6 +172,8 @@ ompl::geometric::TRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi, Mot
         si_->getStateSpace()->interpolate(nmotion->state,rmotion->state,maxDistance_/d,tgi.xstate);
         dstate = tgi.xstate;
         reach = false;
+    } else {
+
     }
 
     // Minimum Expansion Control
@@ -185,7 +187,7 @@ ompl::geometric::TRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi, Mot
                                        tgi.start ? dstate : nmotion->state);
 
     // Only add this motion to the tree if the transition test accepts it
-    if (!transitionTest(cost,d,tree)) {
+    if (!transitionTest(cost,std::min(distance,maxDistance_),tree)) {
         return TRAPPED; // give up on this one and try a new sample
     }
 
@@ -243,7 +245,7 @@ ompl::base::PlannerStatus ompl::geometric::TRRTConnect::solve(const base::Planne
 
     if (!sampler_) sampler_ = si_->allocStateSampler();
 
-    OMPL_INFORM("%s: Starting planning with %d states already in datastructure",getName().c_str(),(int)(tStart_->size() + tGoal_->size()));
+    OMPL_INFORM("%s: Starting planning with %d states already in datastructure",getName().c_str(),int(tStart_->size() + tGoal_->size()));
 
     TreeGrowingInfo tgi;
     tgi.xstate = si_->allocState();
@@ -288,11 +290,10 @@ ompl::base::PlannerStatus ompl::geometric::TRRTConnect::solve(const base::Planne
             // remember which motion was just added
             Motion *addedMotion = tgi.xmotion;
 
-            // attempt to connect trees
-
             // if reached, it means we used rstate directly, no need to copy again
             if (gs != REACHED) si_->copyState(rstate,tgi.xstate);
 
+            // attempt to connect trees
             GrowState gsc = ADVANCED;
             tgi.start = startTree;
             while (gsc == ADVANCED) {
@@ -396,11 +397,8 @@ void ompl::geometric::TRRTConnect::getPlannerData(base::PlannerData &data) const
 
 
 bool ompl::geometric::TRRTConnect::transitionTest(base::Cost cost, double distance, TreeData &tree) {
-    // Always accept if motionCost has a negative cost
-    if (cost.v < 0.0) return true;
-
     // Difference in cost
-    double slope = cost.v / std::min(distance,maxDistance_);
+    double slope = cost.v / distance;
 
     // The probability of acceptance of a new motion is defined by its cost.
     // Based on the Metropolis criterion.
@@ -446,14 +444,14 @@ bool ompl::geometric::TRRTConnect::minExpansionControl(double distance, TreeData
         // participates in the tree refinement
 
         // check our ratio first before accepting it
-        if (double(tree.nonfrontierCount) > double(tree.frontierCount)*frontierNodeRatio_) {
+        if (double(tree.nonFrontierCount) > double(tree.frontierCount)*frontierNodeRatio_) {
             // Increment so that the temperature rises faster
             ++tree.numStatesFailed;
 
             // reject this node as being too much refinement
             return false;
         } else {
-            ++tree.nonfrontierCount;
+            ++tree.nonFrontierCount;
         }
     }
 

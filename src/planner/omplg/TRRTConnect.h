@@ -154,7 +154,7 @@ namespace ompl {
 
                 unsigned int numStatesFailed;
 
-                unsigned int nonfrontierCount;
+                unsigned int nonFrontierCount;
 
                 unsigned int frontierCount;
             };
@@ -177,6 +177,27 @@ namespace ompl {
 
             double distanceFunction(const Motion *a, const Motion *b) const {
                 return si_->distance(a->state,b->state);
+            }
+
+            double startTreeDistanceFunction(const Motion *a, const Motion *b) const {
+                return 1;
+
+                base::State *s1 = si_->allocState();
+                base::State *s2 = si_->allocState();
+                si_->copyState(s1,a->state);
+                si_->copyState(s2,b->state);
+                double c = opt_->motionCost(s1,s2).v;
+                si_->freeState(s1);
+                si_->freeState(s2);
+                return c;
+
+                //return distanceFunction(a,b);
+
+                //return opt_->motionCost(a->state,b->state).v;
+            }
+
+            double goalTreeDistanceFunction(const Motion *a, const Motion *b) const {
+                return startTreeDistanceFunction(b,a);
             }
 
             void setAverageSlope(unsigned int numStates);
