@@ -65,7 +65,7 @@ ompl::base::Cost ompl::base::FOSOptimizationObjective::motionCost(const State *s
         v(i) /= tree_->getVelocityLimits()(i);
     }
 
-    //Return cost
+    //Compute cost
     return ompl::base::Cost(std::min(synergy->alignment(v),MAX_COST)*si_->distance(s1,s2));
 }
 
@@ -76,12 +76,18 @@ ompl::base::Cost ompl::base::FOSOptimizationObjective::preSolveMotionCost(const 
     //Motion cost is the distance between s1 and
     //the global zero-order box multiplied by the motion length
 
-    //Convert state to configuration
-    arma::vec q2;
-    omplState2armaVec(s2,q2);
+    //Compute cost
+    return ompl::base::Cost(boxZosDistance(s2)*si_->distance(s1,s2));
+}
 
-    //Return cost
-    return ompl::base::Cost(tree_->distance(q2)*si_->distance(s1,s2));
+
+double ompl::base::FOSOptimizationObjective::boxZosDistance(const State *s) const {
+    //Convert state to configuration
+    arma::vec q;
+    omplState2armaVec(s,q);
+
+    //Return distance
+    return tree_->distance(q);
 }
 
 

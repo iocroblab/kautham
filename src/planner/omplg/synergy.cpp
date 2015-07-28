@@ -37,7 +37,8 @@ Synergy::Synergy(const arma::vec barycenter,
                  const arma::vec eigenvalues,
                  const arma::mat eigenvectors) :
     dim(barycenter.n_elem),b(barycenter),a(eigenvalues),U(eigenvectors),
-    covInv(U*solve(diagmat(a%a),U.t())),bb(dot(b,b)),p(1-erf(bb/sqrt(2.0*as_scalar(b.t()*U*diagmat(a%a)*U.t())))) {
+    covInv(U*solve(diagmat(a%a),U.t())),bb(dot(b,b)),
+    p(1-erf(bb/sqrt(2.0*as_scalar(b.t()*U*diagmat(a%a)*U.t()*b)))) {
     //check dimension
     if (eigenvalues.n_elem != dim || eigenvectors.n_cols != dim ||
             eigenvectors.n_rows != dim) {
@@ -81,7 +82,7 @@ double Synergy::distance(const arma::vec x) const {
         //The distance between x and the synergy box is the distance between x
         //and the porjection of x in the synergy box
 
-        arma::vec y(dim,0.);
+        arma::vec y(dim,arma::fill::zeros);
         arma::vec z(x-b);
         for (unsigned int i = 0; i < dim; i++) {
             y += std::max(std::min(dot(z,U.col(i)),a[i]),-a[i])*U.col(i);
@@ -103,7 +104,8 @@ double Synergy::distance(const Synergy *x, double cTrans, double cRot) const {
 
         return std::min(std::max(d,0.),1.);
     } else {
-        throw std::invalid_argument("Both synergies must be of the same order and the weights should be positive");
+        throw std::invalid_argument("Both synergies must be of the same order "
+                                    "and the weights should be positive");
         return -1.;
     }
 }
