@@ -25,13 +25,15 @@
 
 #include "synergy.h"
 #include <algorithm>
+#include <math.h>
 #include <boost/math/distributions/fisher_f.hpp>
 #include <boost/math/distributions/normal.hpp>
 
 Synergy::Synergy(const arma::vec barycenter,
                  const arma::vec eigenvalues,
                  const arma::mat eigenvectors) :
-    dim(barycenter.n_elem),b(barycenter),a(eigenvalues),U(eigenvectors) {
+    dim(barycenter.n_elem),b(barycenter),a(eigenvalues),U(eigenvectors),
+    covInv(U*diagmat(a%a).inv()*U.t()),bb(dot(b,b)),p(1-erf(bb/sqrt(2.0*b.t()*U*diagmat(a%a)*U.t()))) {
     //check dimension
     if (eigenvalues.n_elem != dim || eigenvectors.n_cols != dim ||
             eigenvectors.n_rows != dim) {
@@ -62,13 +64,6 @@ Synergy::Synergy(const arma::vec barycenter,
             }
         }
     }
-
-    //compute matrix H
-    h = arma::zeros<arma::mat>(dim,dim);
-    for (unsigned int i = 0; i < dim; ++i) {
-        h(i,i) = 1.0/a(i)/a(i);
-    }
-    h = U*h*trans(U);
 }
 
 
@@ -79,6 +74,9 @@ Synergy::~Synergy() {
 
 double Synergy::distance(const arma::vec x) const {
     if (x.n_elem == dim) {
+        //The distance between x and the synergy box is the distance between x
+        //and the porjection of x in the synergy box
+
         arma::vec y(dim,0.);
         arma::vec z(x-b);
         for (unsigned int i = 0; i < dim; i++) {
@@ -138,13 +136,11 @@ double Synergy::dTrans(const arma::vec xb) const {
 
 double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
     //Compute pMax and pMin
-    arma::mat A(dim,dim,arma::fill::zeros);
-    arma::mat xA(dim,dim,arma::fill::zeros);
+    arma::mat A(diagmat(a%a));
+    arma::mat xA(diagmat(xai%xai);
     double pMax = 1.;
     double pMin = pow(2.,-double(dim)/2.);
     for (unsigned int i = 0; i < dim; ++i) {
-        A(i,i) = a(i)*a(i);
-        xA(i,i) = xa(i)*xa(i);
         pMax *= a(i)+xa(dim-i-1);
         pMin *= a(i)+xa(i);
     }
@@ -185,21 +181,13 @@ double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
 }
 
 
-double Synergy::weightedDot(arma::vec x, arma::vec y) {
-    //return as_scalar(trans(x)*h*y);
-    return as_scalar(trans(x)*y);
-}
-
-arma::mat Synergy::covariance() {
-    arma::mat D(dim,dim);
-    D.zeros();
-    boost::math::normal N(0.,1.);
-    double alfa = 0.95;
-    double lambda = boost::math::quantile(N,(1+pow(1-alfa,1./double(dim)))/2.);
-    for (unsigned int i = 0; i < dim; ++i) {
-        D(i,i) = a(i)*a(i)/lambda;
-    }
-    return U*D*trans(U);
+double Synergy::alignment(arma::vec x) {
+    double xb(dot(x,b));
+    if (fabs(xb) < DBL_EPSILON) return 1.0;
+    arma::vec y(x*bb/xb-b);
+    double c(p+(1-p)*SIGN(xb)*exp(-0.5*y.t()*covInv*y));
+    if (c < -1.0+DBL_EPSILON) return DBL_MAX;
+    return sqrt((1-c)/(1+c));
 }
 
 
