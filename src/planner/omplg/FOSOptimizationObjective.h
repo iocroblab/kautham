@@ -44,7 +44,8 @@ namespace ompl {
                 delete tree_;
                 try {
                     tree_ = new SynergyTree(filename);
-                } catch(...) {
+                } catch(std::exception &excp) {
+                    std::cout << excp.what() << std::endl;
                     tree_ = NULL;
                     return false;
                 }
@@ -65,6 +66,8 @@ namespace ompl {
             virtual Cost motionCost(const State *s1, const State *s2) const;
 
             Cost preSolveMotionCost(const State *s1, const State *s2) const;
+
+            double boxZosDistance(const State *s) const;
 
         protected:
             void omplState2armaVec(const State *s, arma::vec &q) const;
