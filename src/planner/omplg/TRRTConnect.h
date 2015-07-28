@@ -27,9 +27,9 @@
 #define TRRTCONNECT_H
 
 
-#include "ompl/geometric/planners/PlannerIncludes.h"
-#include "ompl/datastructures/NearestNeighbors.h"
-#include "ompl/base/OptimizationObjective.h"
+#include <ompl/geometric/planners/PlannerIncludes.h>
+#include <ompl/datastructures/NearestNeighbors.h>
+#include <ompl/base/OptimizationObjective.h>
 
 
 namespace ompl {
@@ -80,6 +80,9 @@ namespace ompl {
 
             void setMinTemperature(double minTemperature) {
                 minTemperature_ = minTemperature;
+                if (initTemperature_ < minTemperature_) initTemperature_ = minTemperature_;
+                if (tStart_.temp_ < minTemperature_) tStart_.temp_ = minTemperature_;
+                if (tGoal_.temp_ < minTemperature_) tGoal_.temp_ = minTemperature_;
             }
 
             double getMinTemperature() const {
@@ -118,6 +121,14 @@ namespace ompl {
                 return kConstant_;
             }
 
+            void setDelayCC(bool delayCC) {
+                delayCC_ = delayCC;
+            }
+
+            bool getDelayCC() const {
+                return delayCC_;
+            }
+
             template<template<typename T> class NN>
             void setNearestNeighbors() {
                 tStart_.reset(new NN<Motion*>());
@@ -146,17 +157,45 @@ namespace ompl {
                 Motion *parent;
             };
 
+            //For sorting a list of costs and getting only their sorted indices
+            struct CostIndexCompare {
+                CostIndexCompare(const std::vector<base::Cost> &costs,
+                                 const base::OptimizationObjective &opt) :
+                    costs_(costs), opt_(opt) {
+
+                }
+
+                bool operator()(unsigned i, unsigned j) {
+                    return opt_.isCostBetterThan(costs_[i],costs_[j]);
+                }
+
+                const std::vector<base::Cost> &costs_;
+
+                const base::OptimizationObjective &opt_;
+            };
+
             class TreeData : public boost::shared_ptr<NearestNeighbors<Motion*> > {
             public:
-                double temp;
+                TreeData() : stateInBoxZos(false),compareFn_(NULL) {
+                }
 
-                unsigned int numStatesSucceed;
+                double temp_;
 
-                unsigned int numStatesFailed;
+                unsigned int numStatesSucceed_;
 
-                unsigned int nonFrontierCount;
+                unsigned int numStatesFailed_;
 
-                unsigned int frontierCount;
+                unsigned int nonFrontierCount_;
+
+                unsigned int frontierCount_;
+
+                bool stateInBoxZos;
+
+                std::vector<base::Cost> costs_;
+
+                std::vector<std::size_t> sortedCostIndices_;
+
+                CostIndexCompare *compareFn_;
             };
 
             struct TreeGrowingInfo {
@@ -167,7 +206,7 @@ namespace ompl {
                 bool start;
             };
 
-            enum GrowState {
+            enum ExtendResult {
                 TRAPPED,
                 ADVANCED,
                 REACHED
@@ -175,49 +214,40 @@ namespace ompl {
 
             void freeMemory();
 
+            void freeTreeMemory(TreeData tree);
+
+            void clearTree(TreeData tree);
+
             double distanceFunction(const Motion *a, const Motion *b) const {
                 return si_->distance(a->state,b->state);
             }
 
-            double startTreeDistanceFunction(const Motion *a, const Motion *b) const {
-                return 1;
+            virtual ExtendResult extend(TreeData &tree, TreeGrowingInfo &tgi,
+                                        Motion *rmotion);
 
-                base::State *s1 = si_->allocState();
-                base::State *s2 = si_->allocState();
-                si_->copyState(s1,a->state);
-                si_->copyState(s2,b->state);
-                double c = opt_->motionCost(s1,s2).v;
-                si_->freeState(s1);
-                si_->freeState(s2);
-                return c;
+            virtual bool connect(TreeData &tree, TreeGrowingInfo &tgi, Motion *rmotion);
 
-                //return distanceFunction(a,b);
-
-                //return opt_->motionCost(a->state,b->state).v;
-            }
-
-            double goalTreeDistanceFunction(const Motion *a, const Motion *b) const {
-                return startTreeDistanceFunction(b,a);
-            }
-
-            void setAverageSlope(unsigned int numStates);
-
-            virtual GrowState growTree(TreeData &tree, TreeGrowingInfo &tgi, Motion *rmotion);
-
-            bool transitionTest(base::Cost cost, double distance, TreeData &tree);
+            bool transitionTest(base::Cost cost, double distance,
+                                TreeData &tree, bool updateTemp);
 
             bool minExpansionControl(double distance, TreeData &tree);
 
+            Motion *minCostNeighbor(TreeData &tree, TreeGrowingInfo &tgi, Motion *rmotion);
+
 
             base::StateSamplerPtr sampler_;
+
+            bool delayCC_;
+
+            double k_rrg_;
 
             double maxDistance_;
 
             double kConstant_;
 
-            unsigned int maxStatesSucceed_;
+            double frontierThreshold_;
 
-            unsigned int maxStatesFailed_;
+            double frontierNodeRatio_;
 
             double tempChangeFactor_;
 
@@ -225,9 +255,9 @@ namespace ompl {
 
             double initTemperature_;
 
-            double frontierThreshold_;
+            unsigned int maxStatesSucceed_;
 
-            double frontierNodeRatio_;
+            unsigned int maxStatesFailed_;
 
             TreeData tStart_;
 
