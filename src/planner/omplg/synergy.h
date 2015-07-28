@@ -70,10 +70,8 @@ public:
     //! Returns Synergy order
     virtual SynergyOrder order() const;
 
-    //! Returns weighted dot product
-    double weightedDot(arma::vec x, arma::vec y);
-
-    arma::mat covariance();
+    //! Returns a measure of the alignment between x and the synergies
+    double alignment(arma::vec x);
 
 protected:
     //! Distance between barycenters
@@ -82,8 +80,14 @@ protected:
     //! Distance between covariance matrices
     virtual double dRot(const arma::vec xa, const arma::mat Ua) const;
 
-    //! Matrix for weighted dot product
-    arma::mat h;
+    //! Inverse of the convariance matrix
+    const arma::mat covInv;
+
+    //! Square of the norm of b
+    const double bb;
+
+    //! Weight parameter for the alignment computation
+    const double p;
 };
 
 

@@ -796,6 +796,11 @@ bool SynergyTree::save(const std::string filename) {
 }
 
 
+double SynergyTree::distance(const arma::vec x) {
+    return zos->distance(x);
+}
+
+
 SynergyTree *makeSynergyTree(const arma::mat M, const arma::vec t,
                          const arma::mat posLimits, const arma::vec velLimits) {
     //Check arguments
