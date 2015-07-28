@@ -130,6 +130,9 @@ public:
 
     //! Returns the position limits
     arma::mat getVelocityLimits() {return Lv;}
+
+    //! Returns the distance between q and the zero-order synergy box
+    double distance(const arma::vec x);
 private:
     //! Root node of the tree
     SynergyTree_node *root;
