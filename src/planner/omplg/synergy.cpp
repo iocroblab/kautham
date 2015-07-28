@@ -29,11 +29,15 @@
 #include <boost/math/distributions/fisher_f.hpp>
 #include <boost/math/distributions/normal.hpp>
 
+
+#define SIGN(x) ((x>0.0)-(x<0.0))
+
+
 Synergy::Synergy(const arma::vec barycenter,
                  const arma::vec eigenvalues,
                  const arma::mat eigenvectors) :
     dim(barycenter.n_elem),b(barycenter),a(eigenvalues),U(eigenvectors),
-    covInv(U*diagmat(a%a).inv()*U.t()),bb(dot(b,b)),p(1-erf(bb/sqrt(2.0*b.t()*U*diagmat(a%a)*U.t()))) {
+    covInv(U*solve(diagmat(a%a),U.t())),bb(dot(b,b)),p(1-erf(bb/sqrt(2.0*as_scalar(b.t()*U*diagmat(a%a)*U.t())))) {
     //check dimension
     if (eigenvalues.n_elem != dim || eigenvectors.n_cols != dim ||
             eigenvectors.n_rows != dim) {
@@ -137,7 +141,7 @@ double Synergy::dTrans(const arma::vec xb) const {
 double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
     //Compute pMax and pMin
     arma::mat A(diagmat(a%a));
-    arma::mat xA(diagmat(xai%xai);
+    arma::mat xA(diagmat(xa%xa));
     double pMax = 1.;
     double pMin = pow(2.,-double(dim)/2.);
     for (unsigned int i = 0; i < dim; ++i) {
@@ -185,7 +189,7 @@ double Synergy::alignment(arma::vec x) {
     double xb(dot(x,b));
     if (fabs(xb) < DBL_EPSILON) return 1.0;
     arma::vec y(x*bb/xb-b);
-    double c(p+(1-p)*SIGN(xb)*exp(-0.5*y.t()*covInv*y));
+    double c(p+(1-p)*SIGN(xb)*exp(-0.5*as_scalar(y.t()*covInv*y)));
     if (c < -1.0+DBL_EPSILON) return DBL_MAX;
     return sqrt((1-c)/(1+c));
 }
