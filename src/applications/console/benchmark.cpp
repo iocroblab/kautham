@@ -77,23 +77,27 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
             planner->getPlannerData(*pdata);
 
             //Get start and goal
-            unsigned int v1 = pdata->getStartIndex(0);
-            double c1 = opt->stateCost(pdata->getVertex(v1).getState()).v;
+            unsigned int v1(pdata->getStartIndex(0));
+            double c1(opt->stateCost(pdata->getVertex(v1).getState()).v);
             unsigned int v2 = pdata->getGoalIndex(0);
-            double c2 = opt->stateCost(pdata->getVertex(v2).getState()).v;
-            double d = planner->getSpaceInformation()->distance(pdata->getVertex(v1).getState(),
-                                                                pdata->getVertex(v2).getState());
+            double c2(opt->stateCost(pdata->getVertex(v2).getState()).v);
+            double d(planner->getSpaceInformation()->distance(pdata->getVertex(v1).getState(),
+                                                                pdata->getVertex(v2).getState()));
             //Set K's
             double KP = 1./3./d;
             double KI = 1./3./(0.5*(c1+c2)*d);
             double KD = 1./3./fabs(c2-c1);
 
+            //Set length
+            double length(0.0);
+
             //Set initial costs
-            double costMW(0.);
-            double costPID(0.);
-            double meanCost(0.);
-            double maxCost(c2);
-            double minCost(c2);
+            ob::Cost cost(opt->identityCost());
+            double costMW(0.0);
+            double costPID(0.0);
+            double accStateCost(0.0);
+            double maxStateCost(c2);
+            double minStateCost(c2);
 
             //Iterate trough path from goal to start
             std::vector< unsigned int > edgeList;
@@ -106,11 +110,16 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
                                                              pdata->getVertex(v2).getState());
 
                 //Update costs
+                cost = opt->combineCosts(cost,opt->motionCost(pdata->getVertex(v1).getState(),
+                                                              pdata->getVertex(v2).getState()));
                 costMW += max(c2-c1,0.);
                 costPID += KP*d+KI*0.5*(c1+c2)*d+KD*fabs(c2-c1);
-                maxCost = max(maxCost,c1);
-                minCost = min(minCost,c1);
-                meanCost += 0.5*(c1+c2)*d;
+                accStateCost += 0.5*(c1+c2)*d;
+                maxStateCost = max(maxStateCost,c1);
+                minStateCost = min(minStateCost,c1);
+
+                //Update length
+                length += d;
 
                 //Next vertex
                 swap(v1,v2);
@@ -118,20 +127,21 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
                 pdata->getIncomingEdges(v2,edgeList);
             }
 
-            run["best cost REAL"] = SSTR(pdef->getSolutionPath()->cost(opt));
-            run["best costMW REAL"] = SSTR(costMW);
-            run["best costPID REAL"] = SSTR(costPID);
-            run["mean cost REAL"] = SSTR(meanCost/pdef->getSolutionPath()->length());
-            run["maximum cost REAL"] = SSTR(maxCost);
-            run["minimum cost REAL"] = SSTR(minCost);
+            run["path cost REAL"] = SSTR(cost.v);
+            run["path cost mean REAL"] = SSTR(cost.v/length);
+            run["MW cost REAL"] = SSTR(costMW);
+            run["PID cost REAL"] = SSTR(costPID);
+            run["state cost mean REAL"] = SSTR(accStateCost/length);
+            run["state cost max REAL"] = SSTR(maxStateCost);
+            run["state cost min REAL"] = SSTR(minStateCost);
         } else {
-            run["best cost REAL"] = SSTR(opt->infiniteCost());
-            run["best costMW REAL"] = SSTR(opt->infiniteCost());
-            run["best costPID REAL"] = SSTR(opt->infiniteCost());
-            run["mean cost REAL"] = SSTR(opt->infiniteCost());
-            run["maximum cost REAL"] = SSTR(opt->infiniteCost());
-            run["minimum cost REAL"] = SSTR(opt->infiniteCost());
-            run["best cost REAL"] = SSTR(opt->infiniteCost());
+            run["path cost REAL"] = SSTR(opt->infiniteCost());
+            run["path cost mean REAL"] = SSTR(opt->infiniteCost());
+            run["MW cost REAL"] = SSTR(opt->infiniteCost());
+            run["PID cost REAL"] = SSTR(opt->infiniteCost());
+            run["state cost mean REAL"] = SSTR(opt->infiniteCost());
+            run["state cost max REAL"] = SSTR(opt->infiniteCost());
+            run["state cost min REAL"] = SSTR(opt->infiniteCost());
         }
     }
 }
