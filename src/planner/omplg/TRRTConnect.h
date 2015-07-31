@@ -80,6 +80,9 @@ namespace ompl {
 
             void setMinTemperature(double minTemperature) {
                 minTemperature_ = minTemperature;
+                if (initTemperature_ < minTemperature_) initTemperature_ = minTemperature_;
+                if (tStart_.temp_ < minTemperature_) tStart_.temp_ = minTemperature_;
+                if (tGoal_.temp_ < minTemperature_) tGoal_.temp_ = minTemperature_;
             }
 
             double getMinTemperature() const {
@@ -118,6 +121,14 @@ namespace ompl {
                 return kConstant_;
             }
 
+            void setDelayCC(bool delayCC) {
+                delayCC_ = delayCC;
+            }
+
+            bool getDelayCC() const {
+                return delayCC_;
+            }
+
             template<template<typename T> class NN>
             void setNearestNeighbors() {
                 tStart_.reset(new NN<Motion*>());
@@ -146,28 +157,55 @@ namespace ompl {
                 Motion *parent;
             };
 
+            //For sorting a list of costs and getting only their sorted indices
+            struct CostIndexCompare {
+                CostIndexCompare(const std::vector<base::Cost> &costs,
+                                 const base::OptimizationObjective &opt) :
+                    costs_(costs), opt_(opt) {
+
+                }
+
+                bool operator()(unsigned i, unsigned j) {
+                    return opt_.isCostBetterThan(costs_[i],costs_[j]);
+                }
+
+                const std::vector<base::Cost> &costs_;
+
+                const base::OptimizationObjective &opt_;
+            };
+
             class TreeData : public boost::shared_ptr<NearestNeighbors<Motion*> > {
             public:
-                double temp;
+                TreeData() : stateInBoxZos_(false),compareFn_(NULL) {
+                }
+                bool start_;
 
-                unsigned int numStatesSucceed;
+                double temp_;
 
-                unsigned int numStatesFailed;
+                unsigned int numStatesSucceed_;
 
-                unsigned int nonfrontierCount;
+                unsigned int numStatesFailed_;
 
-                unsigned int frontierCount;
+                unsigned int nonFrontierCount_;
+
+                unsigned int frontierCount_;
+
+                bool stateInBoxZos_;
+
+                std::vector<base::Cost> costs_;
+
+                std::vector<std::size_t> sortedCostIndices_;
+
+                CostIndexCompare *compareFn_;
             };
 
             struct TreeGrowingInfo {
                 base::State *xstate;
 
                 Motion *xmotion;
-
-                bool start;
             };
 
-            enum GrowState {
+            enum ExtendResult {
                 TRAPPED,
                 ADVANCED,
                 REACHED
@@ -175,24 +213,32 @@ namespace ompl {
 
             void freeMemory();
 
-            void freeTreeMemory(TreeData tree);
+            void freeTreeMemory(TreeData &tree);
 
-            void clearTree(TreeData tree);
+            void clearTree(TreeData &tree);
 
             double distanceFunction(const Motion *a, const Motion *b) const {
                 return si_->distance(a->state,b->state);
             }
 
-            void setAverageSlope(unsigned int numStates);
+            virtual ExtendResult extend(TreeData &tree, TreeGrowingInfo &tgi,
+                                        Motion *rmotion);
 
-            virtual GrowState growTree(TreeData &tree, TreeGrowingInfo &tgi, Motion *rmotion);
+            virtual bool connect(TreeData &tree, TreeGrowingInfo &tgi, Motion *rmotion);
 
-            bool transitionTest(base::Cost cost, double distance, TreeData &tree);
+            bool transitionTest(base::Cost cost, double distance,
+                                TreeData &tree, bool updateTemp);
 
             bool minExpansionControl(double distance, TreeData &tree);
 
+            Motion *minCostNeighbor(TreeData &tree, TreeGrowingInfo &tgi, Motion *rmotion);
+
 
             base::StateSamplerPtr sampler_;
+
+            bool delayCC_;
+
+            double k_rrg_;
 
             double maxDistance_;
 

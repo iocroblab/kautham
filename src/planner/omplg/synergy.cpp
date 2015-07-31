@@ -25,13 +25,20 @@
 
 #include "synergy.h"
 #include <algorithm>
+#include <math.h>
 #include <boost/math/distributions/fisher_f.hpp>
 #include <boost/math/distributions/normal.hpp>
+
+
+#define SIGN(x) ((x>0.0)-(x<0.0))
+
 
 Synergy::Synergy(const arma::vec barycenter,
                  const arma::vec eigenvalues,
                  const arma::mat eigenvectors) :
-    dim(barycenter.n_elem),b(barycenter),a(eigenvalues),U(eigenvectors) {
+    dim(barycenter.n_elem),b(barycenter),a(eigenvalues),U(eigenvectors),
+    covInv(U*solve(diagmat(a%a),U.t())),bb(dot(b,b)),
+    prob(1-erf(bb/sqrt(2.0*as_scalar(b.t()*U*diagmat(a%a)*U.t()*b)))) {
     //check dimension
     if (eigenvalues.n_elem != dim || eigenvectors.n_cols != dim ||
             eigenvectors.n_rows != dim) {
@@ -62,13 +69,6 @@ Synergy::Synergy(const arma::vec barycenter,
             }
         }
     }
-
-    //compute matrix H
-    h = arma::zeros<arma::mat>(dim,dim);
-    for (unsigned int i = 0; i < dim; ++i) {
-        h(i,i) = 1.0/a(i)/a(i);
-    }
-    h = U*h*trans(U);
 }
 
 
@@ -79,13 +79,24 @@ Synergy::~Synergy() {
 
 double Synergy::distance(const arma::vec x) const {
     if (x.n_elem == dim) {
-        arma::vec y(dim,0.);
+        //The distance between x and the synergy box is the distance between x
+        //and the porjection of x in the synergy box
+
+        /*arma::vec y(dim,arma::fill::zeros);
         arma::vec z(x-b);
         for (unsigned int i = 0; i < dim; i++) {
             y += std::max(std::min(dot(z,U.col(i)),a[i]),-a[i])*U.col(i);
         }
 
-        return norm(z-y);
+        return norm(z-y);*/
+
+        arma::vec u(U.t()*(x-b));
+        arma::vec w(u);
+        for (unsigned int i = 0; i < dim; ++i) {
+            w[i] = std::max(std::min(w[i],a[i]),-a[i]);
+        }
+
+        return norm(w-u);
     } else {
         throw std::invalid_argument("Wrong dimension");
         return -1.;
@@ -101,7 +112,8 @@ double Synergy::distance(const Synergy *x, double cTrans, double cRot) const {
 
         return std::min(std::max(d,0.),1.);
     } else {
-        throw std::invalid_argument("Both synergies must be of the same order and the weights should be positive");
+        throw std::invalid_argument("Both synergies must be of the same order "
+                                    "and the weights should be positive");
         return -1.;
     }
 }
@@ -138,13 +150,11 @@ double Synergy::dTrans(const arma::vec xb) const {
 
 double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
     //Compute pMax and pMin
-    arma::mat A(dim,dim,arma::fill::zeros);
-    arma::mat xA(dim,dim,arma::fill::zeros);
+    arma::mat A(diagmat(a%a));
+    arma::mat xA(diagmat(xa%xa));
     double pMax = 1.;
     double pMin = pow(2.,-double(dim)/2.);
     for (unsigned int i = 0; i < dim; ++i) {
-        A(i,i) = a(i)*a(i);
-        xA(i,i) = xa(i)*xa(i);
         pMax *= a(i)+xa(dim-i-1);
         pMin *= a(i)+xa(i);
     }
@@ -179,14 +189,20 @@ double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
         d = 0.;
     } else if (d > 1.) {
         d = 1.;
-         }
+    }
 
     return d;
 }
 
 
-double Synergy::weightedDot(arma::vec x, arma::vec y) {
-    return as_scalar(trans(x)*h*y);
+double Synergy::alignment(arma::vec x) {
+    double xb(dot(x,b));
+    if (fabs(xb) < DBL_EPSILON) return 1.0;
+    arma::vec y(x*bb/xb-b);
+    double c(prob+(1-prob)*SIGN(xb)*exp(-0.5*as_scalar(y.t()*covInv*y)));
+    if (c < -1.0+DBL_EPSILON) return DBL_MAX;
+
+    return sqrt((1.0-c)/(1.0+c))*acos(xb/norm(b)/norm(x))/M_PI;
 }
 
 
@@ -295,14 +311,14 @@ Synergy *PCA(const arma::mat M, SynergyOrder order, double alfa) {
 
         Synergy *synergy;
         switch (order) {
-        case ZERO:
-            synergy = new ZeroOrderSynergy(b,a,U);
+            case ZERO:
+                synergy = new ZeroOrderSynergy(b,a,U);
             break;
-        case FIRST:
-            synergy = new FirstOrderSynergy(b,a,U);
+            case FIRST:
+                synergy = new FirstOrderSynergy(b,a,U);
             break;
-        default:
-            synergy = new Synergy(b,a,U);
+            default:
+                synergy = new Synergy(b,a,U);
             break;
         }
 
@@ -351,14 +367,14 @@ Synergy *xml2synergy(const pugi::xml_node *node, SynergyOrder order) {
 
     Synergy *synergy;
     switch (order) {
-    case ZERO:
-        synergy = new ZeroOrderSynergy(b,a,U);
+        case ZERO:
+            synergy = new ZeroOrderSynergy(b,a,U);
         break;
-    case FIRST:
-        synergy = new FirstOrderSynergy(b,a,U);
+        case FIRST:
+            synergy = new FirstOrderSynergy(b,a,U);
         break;
-    default:
-        synergy = new Synergy(b,a,U);
+        default:
+            synergy = new Synergy(b,a,U);
         break;
     }
 
