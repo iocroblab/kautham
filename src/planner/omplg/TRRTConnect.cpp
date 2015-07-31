@@ -55,7 +55,7 @@ ompl::geometric::TRRTConnect::TRRTConnect(const base::SpaceInformationPtr &si) :
 
     tStart_.start_ = true;
     tGoal_.start_ = false;
-    Planner::declareParam<double>("min_temperature",this,
+
     Planner::declareParam<bool>("delay_collision_checking",this,&TRRTConnect::setDelayCC,
                                 &TRRTConnect::getDelayCC,"0,1");
     Planner::declareParam<double>("range",this,&TRRTConnect::setRange,
@@ -123,7 +123,6 @@ void ompl::geometric::TRRTConnect::setup() {
         kConstant_ = opt_->averageStateCost(magic::TEST_STATE_COUNT).v;
     }
 
-                                (si_->getStateSpace()));
 
 
     //Create the nearest neighbor function the first time setup is run
@@ -162,6 +161,7 @@ void ompl::geometric::TRRTConnect::freeTreeMemory(TreeData &tree) {
             delete motions[i];
         }
     }
+
 }
 
 
@@ -204,7 +204,6 @@ void ompl::geometric::TRRTConnect::clear() {
 ompl::geometric::TRRTConnect::ExtendResult
 ompl::geometric::TRRTConnect::extend(TreeData &tree, TreeGrowingInfo &tgi, Motion *rmotion) {
     ++extendCount;
-    Motion *nmotion(tree->nearest(rmotion));
 
     Motion *nmotion;
     /*if (tree.stateInBoxZos_) {
@@ -353,7 +352,7 @@ bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
                                       si_->checkMotion(dstate,nmotion->state)));
         if (!validMotion) return false;
     }
-        Motion *motion(new Motion(si_));
+
     //Compute motion cost
     base::Cost cost;
     if (tree.stateInBoxZos_) {
@@ -368,6 +367,7 @@ bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
         cost = ((ompl::base::FOSOptimizationObjective*)opt_.get())->
                 preSolveMotionCost(nmotion->state,dstate);
     }
+
     //Only add this motion to the tree if the transition test accepts
     //Temperature must not be updated
     while (transitionTest(cost,d,tree,false)) {
@@ -446,7 +446,6 @@ ompl::base::PlannerStatus
 ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc) {
     //Basic error checking
     checkValidity();
-                                     (pdef_->getGoal().get()));
 
     //Goal information
     base::GoalSampleableRegion *goal(dynamic_cast<base::GoalSampleableRegion*>
@@ -715,9 +714,6 @@ bool ompl::geometric::TRRTConnect::minExpansionControl(double distance, TreeData
         //Reject this node as being too much refinement
         return false;
     }
-        //Check our ratio first before accepting it
-        if ((double(tree.frontierCount)*frontierNodeRatio_) <
-                double(tree.nonfrontierCount)) {
 
     return true;
 }
@@ -759,6 +755,7 @@ ompl::geometric::TRRTConnect::Motion *ompl::geometric::TRRTConnect::minCostNeigh
         }
         std::sort(tree.sortedCostIndices_.begin(),tree.sortedCostIndices_.begin()+nbh.size(),
                   *tree.compareFn_);
+
         //Collision check until a valid motion is found
         bool validMotion;
         double d;
@@ -767,16 +764,19 @@ ompl::geometric::TRRTConnect::Motion *ompl::geometric::TRRTConnect::minCostNeigh
              i != (tree.sortedCostIndices_.begin()+nbh.size()); ++i) {
             //Distance from near state to random state
             d = si_->distance(nbh[*i]->state,rmotion->state);
+
             //Check if random state is too far away
             if (d > maxDistance_) {
                 si_->getStateSpace()->interpolate(nbh[*i]->state,rmotion->state,
                         maxDistance_/d,tgi.xstate);
+
                 //Use the interpolated state as the new state
                 dstate = tgi.xstate;
             } else {
                 //Random state is close enough
                 dstate = rmotion->state;
             }
+
             //If we are in the start tree, we just check the motion like we normally do.
             //If we are not in the goal tree, we need to check the motion in reverse,
             //but checkMotion() assumes the first state it receives as argument is valid,
@@ -804,6 +804,7 @@ ompl::geometric::TRRTConnect::Motion *ompl::geometric::TRRTConnect::minCostNeigh
             if (nbhBest == nbh.size() || opt_->isCostBetterThan(tree.costs_[i],tree.costs_[nbhBest])) {
                 //Distance from near state to random state
                 d = si_->distance(nbh[i]->state,rmotion->state);
+
                 //Check if random state is too far away
                 if (d > maxDistance_) {
                     si_->getStateSpace()->interpolate(nbh[i]->state,rmotion->state,
@@ -815,6 +816,7 @@ ompl::geometric::TRRTConnect::Motion *ompl::geometric::TRRTConnect::minCostNeigh
                     //Random state is close enough
                     dstate = rmotion->state;
                 }
+
                 //If we are in the start tree, we just check the motion like we normally do.
                 //If we are not in the goal tree, we need to check the motion in reverse,
                 //but checkMotion() assumes the first state it receives as argument is valid,
