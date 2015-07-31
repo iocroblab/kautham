@@ -38,7 +38,7 @@ Synergy::Synergy(const arma::vec barycenter,
                  const arma::mat eigenvectors) :
     dim(barycenter.n_elem),b(barycenter),a(eigenvalues),U(eigenvectors),
     covInv(U*solve(diagmat(a%a),U.t())),bb(dot(b,b)),
-    p(1-erf(bb/sqrt(2.0*as_scalar(b.t()*U*diagmat(a%a)*U.t()*b)))) {
+    prob(1-erf(bb/sqrt(2.0*as_scalar(b.t()*U*diagmat(a%a)*U.t()*b)))) {
     //check dimension
     if (eigenvalues.n_elem != dim || eigenvectors.n_cols != dim ||
             eigenvectors.n_rows != dim) {
@@ -82,13 +82,21 @@ double Synergy::distance(const arma::vec x) const {
         //The distance between x and the synergy box is the distance between x
         //and the porjection of x in the synergy box
 
-        arma::vec y(dim,arma::fill::zeros);
+        /*arma::vec y(dim,arma::fill::zeros);
         arma::vec z(x-b);
         for (unsigned int i = 0; i < dim; i++) {
             y += std::max(std::min(dot(z,U.col(i)),a[i]),-a[i])*U.col(i);
         }
 
-        return norm(z-y);
+        return norm(z-y);*/
+
+        arma::vec u(U.t()*(x-b));
+        arma::vec w(u);
+        for (unsigned int i = 0; i < dim; ++i) {
+            w[i] = std::max(std::min(w[i],a[i]),-a[i]);
+        }
+
+        return norm(w-u);
     } else {
         throw std::invalid_argument("Wrong dimension");
         return -1.;
@@ -191,9 +199,10 @@ double Synergy::alignment(arma::vec x) {
     double xb(dot(x,b));
     if (fabs(xb) < DBL_EPSILON) return 1.0;
     arma::vec y(x*bb/xb-b);
-    double c(p+(1-p)*SIGN(xb)*exp(-0.5*as_scalar(y.t()*covInv*y)));
+    double c(prob+(1-prob)*SIGN(xb)*exp(-0.5*as_scalar(y.t()*covInv*y)));
     if (c < -1.0+DBL_EPSILON) return DBL_MAX;
-    return sqrt((1-c)/(1+c));
+
+    return sqrt((1.0-c)/(1.0+c))*acos(xb/norm(b)/norm(x))/M_PI;
 }
 
 
