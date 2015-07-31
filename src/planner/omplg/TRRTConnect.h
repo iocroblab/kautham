@@ -176,8 +176,9 @@ namespace ompl {
 
             class TreeData : public boost::shared_ptr<NearestNeighbors<Motion*> > {
             public:
-                TreeData() : stateInBoxZos(false),compareFn_(NULL) {
+                TreeData() : stateInBoxZos_(false),compareFn_(NULL) {
                 }
+                bool start_;
 
                 double temp_;
 
@@ -189,7 +190,7 @@ namespace ompl {
 
                 unsigned int frontierCount_;
 
-                bool stateInBoxZos;
+                bool stateInBoxZos_;
 
                 std::vector<base::Cost> costs_;
 
@@ -202,8 +203,6 @@ namespace ompl {
                 base::State *xstate;
 
                 Motion *xmotion;
-
-                bool start;
             };
 
             enum ExtendResult {
@@ -214,9 +213,9 @@ namespace ompl {
 
             void freeMemory();
 
-            void freeTreeMemory(TreeData tree);
+            void freeTreeMemory(TreeData &tree);
 
-            void clearTree(TreeData tree);
+            void clearTree(TreeData &tree);
 
             double distanceFunction(const Motion *a, const Motion *b) const {
                 return si_->distance(a->state,b->state);

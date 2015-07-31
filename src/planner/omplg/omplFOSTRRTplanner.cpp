@@ -23,19 +23,19 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "omplFOSTRRTConnectplanner.h"
-#include "TRRTConnect.h"
+#include "omplFOSTRRTplanner.h"
+#include "TRRT.h"
 #include "FOSOptimizationObjective.h"
 
 
 using namespace Kautham::omplplanner;
 
 
-omplFOSTRRTConnectPlanner::omplFOSTRRTConnectPlanner(SPACETYPE stype, Sample *init, Sample *goal,
+omplFOSTRRTPlanner::omplFOSTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal,
                                                SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr) :
     omplPlanner(stype,init,goal,samples,ws,ssptr) {
-    _guiName = "ompl FOSTRRTConnect Planner";
-    _idName = "omplFOSTRRTConnect";
+    _guiName = "ompl FOSTRRT Planner";
+    _idName = "omplFOSTRRT";
 
     //alloc valid state sampler
     si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler,_1,(Planner*)this));
@@ -44,8 +44,8 @@ omplFOSTRRTConnectPlanner::omplFOSTRRTConnectPlanner(SPACETYPE stype, Sample *in
     space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler,_1,(Planner*)this));
 
     //set the planner
-    //planner setup done after setting the synergy cost
-    og::TRRTConnect *planner(new og::TRRTConnect(si));
+    //planner setup done after setting the potential cost
+    og::TRRT *planner(new og::TRRT(si));
     planner->setProblemDefinition(ss->getProblemDefinition());
     ss->setPlanner(ob::PlannerPtr(planner));
 
@@ -55,7 +55,6 @@ omplFOSTRRTConnectPlanner::omplFOSTRRTConnectPlanner(SPACETYPE stype, Sample *in
 
     //set planner parameters
     //range, kConstant and frontierThreshold set after setting the potential cost
-    addParameter("Max States Succeed",planner->getMaxStatesSucceed());
     addParameter("Max States Failed",planner->getMaxStatesFailed());
     addParameter("Temp Change Factor",planner->getTempChangeFactor());
     addParameter("Frontier Node Ratio",planner->getFrontierNodeRatio());
@@ -64,14 +63,14 @@ omplFOSTRRTConnectPlanner::omplFOSTRRTConnectPlanner(SPACETYPE stype, Sample *in
 }
 
 
-omplFOSTRRTConnectPlanner::~omplFOSTRRTConnectPlanner() {
+omplFOSTRRTPlanner::~omplFOSTRRTPlanner() {
 }
 
 
-bool omplFOSTRRTConnectPlanner::setSynergyTree(string filename) {
+bool omplFOSTRRTPlanner::setSynergyTree(string filename) {
     bool result = ((ob::FOSOptimizationObjective*)opt_.get())->setSynergyTree(filename);
 
-    og::TRRTConnect *planner(ss->getPlanner()->as<og::TRRTConnect>());
+    og::TRRT *planner(ss->getPlanner()->as<og::TRRT>());
     planner->setup();
     addParameter("Range",planner->getRange());
     addParameter("K Constant",planner->getKConstant());
@@ -81,12 +80,12 @@ bool omplFOSTRRTConnectPlanner::setSynergyTree(string filename) {
 }
 
 
-bool omplFOSTRRTConnectPlanner::setParameters() {
+bool omplFOSTRRTPlanner::setParameters() {
     if (!omplPlanner::setParameters()) return false;
 
     try {
         HASH_S_K::iterator it;
-        og::TRRTConnect *planner(ss->getPlanner()->as<og::TRRTConnect>());
+        og::TRRT *planner(ss->getPlanner()->as<og::TRRT>());
 
         it = _parameters.find("Range");
         if (it == _parameters.end()) return false;
@@ -106,14 +105,6 @@ bool omplFOSTRRTConnectPlanner::setParameters() {
             planner->setFrontierThreshold(it->second);
         } else {
             it->second = planner->getFrontierThreshold();
-        }
-
-        it = _parameters.find("Max States Succeed");
-        if (it == _parameters.end()) return false;
-        if (it->second >= 0.0) {
-            planner->setMaxStatesSucceed(it->second);
-        } else {
-            it->second = planner->getMaxStatesSucceed();
         }
 
         it = _parameters.find("Max States Failed");
@@ -162,7 +153,7 @@ bool omplFOSTRRTConnectPlanner::setParameters() {
     return true;
 }
 
-bool omplFOSTRRTConnectPlanner::trySolve() {
+bool omplFOSTRRTPlanner::trySolve() {
     if (omplPlanner::trySolve()) {
         ob::Cost pathcost = ss->getProblemDefinition()->getSolutionPath()->cost(opt_);
         cout << "Path cost = " << pathcost.v << endl;

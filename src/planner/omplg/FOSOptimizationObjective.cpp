@@ -26,7 +26,7 @@
 #include "FOSOptimizationObjective.h"
 
 
-#define MAX_COST 100.0
+#define MAX_COST 1e6
 #define SIGN(x) ((x>0.0)-(x<0.0))
 
 
@@ -71,7 +71,7 @@ ompl::base::Cost ompl::base::FOSOptimizationObjective::motionCost(const State *s
 
 
 ompl::base::Cost ompl::base::FOSOptimizationObjective::preSolveMotionCost(const State *s1,
-                                                                  const State *s2) const {
+                                                                          const State *s2) const {
     //s1 is q_near and s2 is q_new.
     //Motion cost is the distance between s1 and
     //the global zero-order box multiplied by the motion length
@@ -85,6 +85,11 @@ double ompl::base::FOSOptimizationObjective::boxZosDistance(const State *s) cons
     //Convert state to configuration
     arma::vec q;
     omplState2armaVec(s,q);
+
+    arma::mat L(tree_->getPositionLimits());
+    for (unsigned int i (0); i < L.n_rows; ++i) {
+        q(i) = (q(i)-L(i,0))/(L(i,1)-L(i,0));
+    }
 
     //Return distance
     return tree_->distance(q);
@@ -128,11 +133,11 @@ void ompl::base::FOSOptimizationObjective::omplState2armaVec(const State *s, arm
 
             if (found) {//If an element different from 0 has been found
                 if (i < 3) {//Base translation DOF
-                     q(k) = robConf.getSE3().getPos().at(i);
+                    q(k) = robConf.getSE3().getPos().at(i);
                 } else if (i < 6) {//Base rotation DOF
-                     q(k) = robConf.getSE3().getParams().at(i-3);
+                    q(k) = robConf.getSE3().getParams().at(i-3);
                 } else {//Joint DOF
-                     q(k) = robConf.getRn().getCoordinate(i-6);
+                    q(k) = robConf.getRn().getCoordinate(i-6);
                 }
 
                 k++;

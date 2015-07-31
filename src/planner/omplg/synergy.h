@@ -87,7 +87,7 @@ protected:
     const double bb;
 
     //! Weight parameter for the alignment computation
-    const double p;
+    const double prob;
 };
 
 
