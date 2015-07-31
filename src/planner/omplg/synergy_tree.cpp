@@ -180,9 +180,9 @@ double normalize(double v, double vMax) {
 
 
 SynergyTree_node::SynergyTree_node(const SynergyTree_node *parentNode, Synergy *synergy,
-                               const arma::mat Mv, const arma::mat Cp,
-                               const arma::mat limits, double thV,
-                               double thD, double tol, double alfa) :
+                                   const arma::mat Mv, const arma::mat Cp,
+                                   const arma::mat limits, double thV,
+                                   double thD, double tol, double alfa) :
     parent(parentNode),fos(synergy),lim(limits) {
     std::cout << "fos:" << std::endl << fos->U << std::endl
               << fos->b << std::endl << fos->a;
@@ -242,11 +242,11 @@ SynergyTree_node::SynergyTree_node(const SynergyTree_node *parentNode, Synergy *
 
                 //Get children fos
                 Synergy *fosL = new FirstOrderSynergy(optiData->childL->b,
-                                                         optiData->childL->a,
-                                                         optiData->childL->U);
+                                                      optiData->childL->a,
+                                                      optiData->childL->U);
                 Synergy *fosR = new FirstOrderSynergy(optiData->childR->b,
-                                                         optiData->childR->a,
-                                                         optiData->childR->U);
+                                                      optiData->childR->a,
+                                                      optiData->childR->U);
 
                 //Divide matrices
                 unsigned int nL = 0, nR;
@@ -317,7 +317,7 @@ SynergyTree_node::SynergyTree_node(const SynergyTree_node *parentNode, Synergy *
 
 
 SynergyTree_node::SynergyTree_node(const pugi::xml_node *node, const std::vector<Synergy*> *Synergy,
-                               const SynergyTree_node *parentNode) : parent(parentNode) {
+                                   const SynergyTree_node *parentNode) : parent(parentNode) {
     if (node->attribute("synergy")) {
         //Set fos
         fos = Synergy->at(node->attribute("synergy").as_uint());
@@ -368,7 +368,7 @@ SynergyTree_node::~SynergyTree_node() {
 
 
 std::vector<std::vector<unsigned int> > *SynergyTree_node::sortByAxis(const arma::mat Cp,
-                                                                    unsigned int j) {
+                                                                      unsigned int j) {
     std::vector<std::vector<unsigned int> > *X = new std::vector<std::vector<unsigned int> >;
     std::multimap<double,unsigned int> index;
     for (unsigned int i = 0; i < Cp.n_rows; ++i) {
@@ -550,8 +550,8 @@ double f(double x) {
 }
 
 OptiData *SynergyTree_node::minimize(const std::vector<std::vector<unsigned int> > *X,
-                                   const arma::mat M, double thV, double thD, double tol,
-                                   double alfa) {
+                                     const arma::mat M, double thV, double thD, double tol,
+                                     double alfa) {
 
     DC = new divisionCriteria(X,M,fos,thV,thD,alfa);
 
@@ -612,7 +612,7 @@ void SynergyTree_node::xml(pugi::xml_node *node, std::vector<Synergy*> *Synergy)
 
 
 SynergyTree::SynergyTree(const arma::mat Mp, const arma::mat Mv, const arma::mat posLimits,
-                     const arma::vec velLimits, double tol, double alfa) :
+                         const arma::vec velLimits, double tol, double alfa) :
     zos(PCA(Mp,ZERO)),Lp(posLimits),Lv(velLimits) {
     std::cout << "pLim: " << std::endl << Lp << "zos:" << std::endl
               << zos->U << std::endl << zos->b << std::endl << zos->a
@@ -796,8 +796,13 @@ bool SynergyTree::save(const std::string filename) {
 }
 
 
+double SynergyTree::distance(const arma::vec x) {
+    return zos->distance(x);
+}
+
+
 SynergyTree *makeSynergyTree(const arma::mat M, const arma::vec t,
-                         const arma::mat posLimits, const arma::vec velLimits) {
+                             const arma::mat posLimits, const arma::vec velLimits) {
     //Check arguments
     unsigned int n = M.n_rows;
     unsigned int m = M.n_cols;
