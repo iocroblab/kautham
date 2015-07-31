@@ -20,7 +20,7 @@
 			<SynergyTree synergyTree="controls/UR5globalSynergyTree.xml"/>
 			<Parameter name="Cspace Drawn">0</Parameter>
 			<Parameter name="Incremental (0/1)">0</Parameter>
-			<Parameter name="Max Planning Time">30</Parameter>
+			<Parameter name="Max Planning Time">100</Parameter>
 			<Parameter name="Range">1</Parameter>
 			<Parameter name="Simplify Solution">0</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
