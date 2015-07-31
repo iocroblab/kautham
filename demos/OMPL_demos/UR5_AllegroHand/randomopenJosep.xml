@@ -12,7 +12,7 @@
 		<Home X="0.0" Y="0.0" Z="0.0" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812"/>
 	</Obstacle>
 
-	<Controls robot="controls/randomopenJosep.cntr" />
+	<Controls robot="controls/randomopenJosepOnlyArms.cntr" />
 
 	<Planner>
 		<Parameters>
