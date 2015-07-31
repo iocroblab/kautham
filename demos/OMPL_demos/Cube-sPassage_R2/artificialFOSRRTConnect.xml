@@ -9,16 +9,11 @@
 	<Controls robot="controls/bigcube_R2.cntr" />
 	<Planner>
 		<Parameters>
-			<Name>omplFOSTRRTConnect</Name>
+			<Name>omplFOSRRTConnect</Name>
 			<SynergyTree synergyTree="controls/artificialSynergyTree.xml"/>
 			<Parameter name="Max Planning Time">20</Parameter>
-			<Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Range">0.08</Parameter>
 			<Parameter name="Simplify Solution">0</Parameter>
-			<Parameter name="Max States Succeed">0</Parameter>
-			<Parameter name="Max States Failed">50</Parameter>
-			<Parameter name="Temp Change Factor">1.5</Parameter>
-			<Parameter name="Init Temp">0.3</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>

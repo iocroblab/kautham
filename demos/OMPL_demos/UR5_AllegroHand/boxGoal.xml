@@ -17,7 +17,7 @@
 	<Obstacle obstacle="obstacles/structure.urdf">
 		<Home X="0.0" Y="0.0" Z="620.5" TH="180.0" WX="0.0" WY="0.7071067812" WZ="0.7071067812" />
 	</Obstacle>
-	<Controls robot="controls/tmpPMD.cntr" />
+	<Controls robot="controls/boxGoal.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplRRTConnect</Name>
