@@ -33,6 +33,8 @@
 
 #include <boost/math/constants/constants.hpp>
 
+unsigned int extendCount, connectCount;
+
 
 ompl::geometric::TRRTConnect::TRRTConnect(const base::SpaceInformationPtr &si) :
     base::Planner(si,"TRRTConnect"),
@@ -50,6 +52,9 @@ ompl::geometric::TRRTConnect::TRRTConnect(const base::SpaceInformationPtr &si) :
 
     specs_.recognizedGoal = base::GOAL_SAMPLEABLE_REGION;
     specs_.directed = true;
+
+    tStart_.start_ = true;
+    tGoal_.start_ = false;
 
     Planner::declareParam<bool>("delay_collision_checking",this,&TRRTConnect::setDelayCC,
                                 &TRRTConnect::getDelayCC,"0,1");
@@ -146,7 +151,7 @@ void ompl::geometric::TRRTConnect::setup() {
 }
 
 
-void ompl::geometric::TRRTConnect::freeTreeMemory(TreeData tree) {
+void ompl::geometric::TRRTConnect::freeTreeMemory(TreeData &tree) {
     //Delete all motions, states and the nearest neighbors data structure
     if (tree) {
         std::vector<Motion*> motions;
@@ -156,6 +161,7 @@ void ompl::geometric::TRRTConnect::freeTreeMemory(TreeData tree) {
             delete motions[i];
         }
     }
+
 }
 
 
@@ -165,7 +171,7 @@ void ompl::geometric::TRRTConnect::freeMemory() {
 }
 
 
-void ompl::geometric::TRRTConnect::clearTree(TreeData tree) {
+void ompl::geometric::TRRTConnect::clearTree(TreeData &tree) {
     if (tree) tree->clear();
     //Clear TRRTConnect specific variables
     tree.numStatesFailed_ = 0;
@@ -177,8 +183,7 @@ void ompl::geometric::TRRTConnect::clearTree(TreeData tree) {
     //If opt_ is of type FOSOptimizationObjective, there is a global zer-order box and
     //then this parameter will be used and initially set to false
     //If opt is of another type, this parameter is set to true to avoid its use
-    //std::cout << "a" << tree.temp_ << std::endl;
-    tree.stateInBoxZos = !dynamic_cast<ompl::base::FOSOptimizationObjective*>(opt_.get());
+    tree.stateInBoxZos_ = !dynamic_cast<ompl::base::FOSOptimizationObjective*>(opt_.get());
 }
 
 
@@ -198,19 +203,21 @@ void ompl::geometric::TRRTConnect::clear() {
 
 ompl::geometric::TRRTConnect::ExtendResult
 ompl::geometric::TRRTConnect::extend(TreeData &tree, TreeGrowingInfo &tgi, Motion *rmotion) {
+    ++extendCount;
+
     Motion *nmotion;
-    if (tree.stateInBoxZos) {
+    /*if (tree.stateInBoxZos_) {
         //Among the nearest K nodes in the tree, find state with lowest cost to go
         //The returned nmotion is collision-free
         //If no collision-free motion is found, NULL is returned
         nmotion = minCostNeighbor(tree,tgi,rmotion);
         if (!nmotion) return TRAPPED;
-    } else {
+    } else {*/
         //Find nearest node in the tree
         //The returned motion has not been checked for collisions
         //It never returns NULL
         nmotion = tree->nearest(rmotion);
-    }
+    //}
 
     //State to add
     base::State *dstate;
@@ -231,16 +238,16 @@ ompl::geometric::TRRTConnect::extend(TreeData &tree, TreeGrowingInfo &tgi, Motio
     }
 
     //Check for collisions
-    if (!tree.stateInBoxZos) {
+    //if (!tree.stateInBoxZos_) {
         //If we are in the start tree, we just check the motion like we normally do.
         //If we are in the goal tree, we need to check the motion in reverse,
         //but checkMotion() assumes the first state it receives as argument is valid,
         //so we check that one first.
-        bool validMotion(tgi.start ? si_->checkMotion(nmotion->state,dstate) :
+        bool validMotion(tree.start_ ? si_->checkMotion(nmotion->state,dstate) :
                                      (si_->getStateValidityChecker()->isValid(dstate) &&
                                       si_->checkMotion(dstate,nmotion->state)));
         if (!validMotion) return TRAPPED;
-    }
+    //}
 
     //Minimum Expansion Control
     //A possible side effect may appear when the tree expansion towards
@@ -252,8 +259,8 @@ ompl::geometric::TRRTConnect::extend(TreeData &tree, TreeGrowingInfo &tgi, Motio
 
     //Compute motion cost
     base::Cost cost;
-    if (tree.stateInBoxZos) {
-        if (tgi.start) {
+    if (tree.stateInBoxZos_) {
+        if (tree.start_) {
             cost = opt_->motionCost(nmotion->state,dstate);
         } else {
             cost = opt_->motionCost(dstate,nmotion->state);
@@ -263,7 +270,6 @@ ompl::geometric::TRRTConnect::extend(TreeData &tree, TreeGrowingInfo &tgi, Motio
         //there is no need to check the conversion
         cost = ((ompl::base::FOSOptimizationObjective*)opt_.get())->
                 preSolveMotionCost(nmotion->state,dstate);
-        std::cout << cost.v << std::endl;
     }
 
     //Only add this motion to the tree if the transition test accepts it
@@ -283,11 +289,9 @@ ompl::geometric::TRRTConnect::extend(TreeData &tree, TreeGrowingInfo &tgi, Motio
     tree->add(motion);
 
     //Check if now the tree has a motion inside BoxZos
-    if (!tree.stateInBoxZos) {
-        //tree.stateInBoxZos = cost.v < DBL_EPSILON*std::min(d,maxDistance_);
-        tree.stateInBoxZos = ((ompl::base::FOSOptimizationObjective*)opt_.get())->
-                boxZosDistance(motion->state) < DBL_EPSILON;
-        if (tree.stateInBoxZos) tree.temp_ = initTemperature_;
+    if (!tree.stateInBoxZos_) {
+        tree.stateInBoxZos_ = cost.v < DBL_EPSILON*std::min(d,maxDistance_);
+        if (tree.stateInBoxZos_) tree.temp_ = initTemperature_;
     }
 
     //Update frontier nodes and non frontier nodes count
@@ -303,8 +307,10 @@ ompl::geometric::TRRTConnect::extend(TreeData &tree, TreeGrowingInfo &tgi, Motio
 
 bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
                                            Motion *rmotion) {
+    ++connectCount;
+
     Motion *nmotion;
-    if (tree.stateInBoxZos) {
+    if (tree.stateInBoxZos_) {
         //Among the nearest K nodes in the tree, find state with lowest cost to go
         //The returned nmotion is collision-free
         //If no collision-free motion is found, NULL is returned
@@ -336,12 +342,12 @@ bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
     }
 
     //Check for collisions
-    if (!tree.stateInBoxZos) {
+    if (!tree.stateInBoxZos_) {
         //If we are in the start tree, we just check the motion like we normally do.
         //If we are in the goal tree, we need to check the motion in reverse,
         //but checkMotion() assumes the first state it receives as argument is valid,
         //so we check that one first.
-        bool validMotion(tgi.start ? si_->checkMotion(nmotion->state,dstate) :
+        bool validMotion(tree.start_? si_->checkMotion(nmotion->state,dstate) :
                                      (si_->getStateValidityChecker()->isValid(dstate) &&
                                       si_->checkMotion(dstate,nmotion->state)));
         if (!validMotion) return false;
@@ -349,8 +355,8 @@ bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
 
     //Compute motion cost
     base::Cost cost;
-    if (tree.stateInBoxZos) {
-        if (tgi.start) {
+    if (tree.stateInBoxZos_) {
+        if (tree.start_) {
             cost = opt_->motionCost(nmotion->state,dstate);
         } else {
             cost = opt_->motionCost(dstate,nmotion->state);
@@ -376,11 +382,11 @@ bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
         tree->add(motion);
 
         //Check if now the tree has a motion inside BoxZos
-        if (!tree.stateInBoxZos) {
-            //tree.stateInBoxZos = cost.v < DBL_EPSILON*std::min(d,maxDistance_);
-            tree.stateInBoxZos = ((ompl::base::FOSOptimizationObjective*)opt_.get())->
+        if (!tree.stateInBoxZos_) {
+            //tree.stateInBoxZos_ = cost.v < DBL_EPSILON*std::min(d,maxDistance_);
+            tree.stateInBoxZos_ = ((ompl::base::FOSOptimizationObjective*)opt_.get())->
                     boxZosDistance(motion->state) < DBL_EPSILON;
-            if (tree.stateInBoxZos) tree.temp_ = initTemperature_;
+            if (tree.stateInBoxZos_) tree.temp_ = initTemperature_;
         }
 
         //Update frontier nodes and non frontier nodes count
@@ -412,14 +418,14 @@ bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
         //If we are in the goal tree, we need to check the motion in reverse,
         //but checkMotion() assumes the first state it receives as argument is valid,
         //so we check that one first.
-        bool validMotion(tgi.start ? si_->checkMotion(nmotion->state,dstate) :
+        bool validMotion(tree.start_ ? si_->checkMotion(nmotion->state,dstate) :
                                      (si_->getStateValidityChecker()->isValid(dstate) &&
                                       si_->checkMotion(dstate,nmotion->state)));
         if (!validMotion) return false;
 
         //Compute motion cost
-        if (tree.stateInBoxZos) {
-            if (tgi.start) {
+        if (tree.stateInBoxZos_) {
+            if (tree.start_) {
                 cost = opt_->motionCost(nmotion->state,dstate);
             } else {
                 cost = opt_->motionCost(dstate,nmotion->state);
@@ -440,7 +446,6 @@ ompl::base::PlannerStatus
 ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc) {
     //Basic error checking
     checkValidity();
-    //std::cout << "b" << tStart_.temp_ << " " << tGoal_.temp_ << std::endl;
 
     //Goal information
     base::GoalSampleableRegion *goal(dynamic_cast<base::GoalSampleableRegion*>
@@ -462,10 +467,10 @@ ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc
         tStart_->add(motion);
 
         //Check if now the tree has a motion inside BoxZos
-        if (!tStart_.stateInBoxZos) {
-            tStart_.stateInBoxZos = ((ompl::base::FOSOptimizationObjective*)opt_.get())->
+        if (!tStart_.stateInBoxZos_) {
+            tStart_.stateInBoxZos_ = ((ompl::base::FOSOptimizationObjective*)opt_.get())->
                     boxZosDistance(motion->state) < DBL_EPSILON;
-            if (tStart_.stateInBoxZos) tStart_.temp_ = initTemperature_;
+            if (tStart_.stateInBoxZos_) tStart_.temp_ = initTemperature_;
         }
 
         //Update frontier nodes and non frontier nodes count
@@ -501,20 +506,15 @@ ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc
     bool startTree(true);
     bool solved(false);
 
-    tStart_.costs_.clear();
-    tStart_.sortedCostIndices_.clear();
-
-    tGoal_.costs_.clear();
-    tGoal_.sortedCostIndices_.clear();
-
     double temp(0.0);
     unsigned int iter(0);
+    extendCount = 0;
+    connectCount = 0;
 
     //Begin sampling
     while (!ptc) {
         //Choose tree to extend
         TreeData &tree(startTree ? tStart_ : tGoal_);
-        tgi.start = startTree;
         startTree = !startTree;
         TreeData &otherTree(startTree ? tStart_ : tGoal_);
 
@@ -532,10 +532,10 @@ ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc
                 tGoal_->add(motion);
 
                 //Check if now the tree has a motion inside BoxZos
-                if (!tGoal_.stateInBoxZos) {
-                    tGoal_.stateInBoxZos = ((ompl::base::FOSOptimizationObjective*)opt_.get())->
+                if (!tGoal_.stateInBoxZos_) {
+                    tGoal_.stateInBoxZos_ = ((ompl::base::FOSOptimizationObjective*)opt_.get())->
                             boxZosDistance(motion->state) < DBL_EPSILON;
-                    if (tGoal_.stateInBoxZos) tGoal_.temp_ = initTemperature_;
+                    if (tGoal_.stateInBoxZos_) tGoal_.temp_ = initTemperature_;
                 }
 
                 //Update frontier nodes and non frontier nodes count
@@ -627,6 +627,7 @@ ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc
 
     OMPL_INFORM("%s: Average temperature %f ",getName().c_str(),temp/double(iter));
 
+    //std::cout << extendCount << " " << connectCount << " " << iter << std::endl;
     return solved ? base::PlannerStatus::EXACT_SOLUTION : base::PlannerStatus::TIMEOUT;
 }
 
@@ -676,8 +677,6 @@ bool ompl::geometric::TRRTConnect::transitionTest(base::Cost cost, double distan
 
     //Check if we can accept it
     if (rng_.uniform01() <= transitionProbability) {//State has succeed
-
-        //std::cout << "c" << tree.temp_ << " ";
         if (updateTemp) {
             ++tree.numStatesSucceed_;
 
@@ -690,10 +689,8 @@ bool ompl::geometric::TRRTConnect::transitionTest(base::Cost cost, double distan
                 tree.numStatesSucceed_ = 0;
             }
         }
-        //std::cout << tree.temp_ << std::endl;
         return true;
     } else {//State has failed
-        //std::cout << "c" << tree.temp_ << " ";
         if (updateTemp) {
             ++tree.numStatesFailed_;
 
@@ -704,7 +701,6 @@ bool ompl::geometric::TRRTConnect::transitionTest(base::Cost cost, double distan
                 tree.numStatesFailed_ = 0;
             }
         }
-        //std::cout << tree.temp_ << std::endl;
         return false;
     }
 }
@@ -725,8 +721,6 @@ bool ompl::geometric::TRRTConnect::minExpansionControl(double distance, TreeData
 
 ompl::geometric::TRRTConnect::Motion *ompl::geometric::TRRTConnect::minCostNeighbor
 (TreeData &tree, TreeGrowingInfo &tgi, Motion *rmotion) {
-    return tree->nearest(rmotion);
-
     //Find nearby neighbors of the random motion - k-nearest TRRTConenect
     unsigned int k(std::ceil(k_rrg_*log(double(tree->size()+1))));
     std::vector<Motion*> nbh;
@@ -746,7 +740,7 @@ ompl::geometric::TRRTConnect::Motion *ompl::geometric::TRRTConnect::minCostNeigh
     if (delayCC_) {
         //Calculate all costs and distances
         for (std::size_t i(0); i < nbh.size(); ++i) {
-            if (tgi.start) {
+            if (tree.start_) {
                 tree.costs_[i] = opt_->motionCost(nbh[i]->state,rmotion->state);
             } else {
                 tree.costs_[i] = opt_->motionCost(rmotion->state,nbh[i]->state);
@@ -787,7 +781,7 @@ ompl::geometric::TRRTConnect::Motion *ompl::geometric::TRRTConnect::minCostNeigh
             //If we are not in the goal tree, we need to check the motion in reverse,
             //but checkMotion() assumes the first state it receives as argument is valid,
             //so we check that one first.
-            validMotion = (tgi.start ? si_->checkMotion(nbh[*i]->state,dstate) :
+            validMotion = (tree.start_ ? si_->checkMotion(nbh[*i]->state,dstate) :
                     (si_->getStateValidityChecker()->isValid(dstate) &&
                      si_->checkMotion(dstate,nbh[*i]->state)));
             if (validMotion) {
@@ -802,7 +796,7 @@ ompl::geometric::TRRTConnect::Motion *ompl::geometric::TRRTConnect::minCostNeigh
         double d;
         base::State *dstate;
         for (std::size_t i(0); i < nbh.size(); ++i) {
-            if (tgi.start) {
+            if (tree.start_) {
                 tree.costs_[i] = opt_->motionCost(nbh[i]->state,rmotion->state);
             } else {
                 tree.costs_[i] = opt_->motionCost(rmotion->state,nbh[i]->state);
@@ -827,7 +821,7 @@ ompl::geometric::TRRTConnect::Motion *ompl::geometric::TRRTConnect::minCostNeigh
                 //If we are not in the goal tree, we need to check the motion in reverse,
                 //but checkMotion() assumes the first state it receives as argument is valid,
                 //so we check that one first.
-                validMotion = (tgi.start ? si_->checkMotion(nbh[i]->state,dstate) :
+                validMotion = (tree.start_ ? si_->checkMotion(nbh[i]->state,dstate) :
                                            (si_->getStateValidityChecker()->isValid(dstate) &&
                                             si_->checkMotion(dstate,nbh[i]->state)));
                 if (validMotion) {
