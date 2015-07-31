@@ -1,0 +1,26 @@
+<Benchmark Name="experiment">
+	<Problem File="artificialFOSTRRTConnect.xml" />
+	<Parameter Name="maxTime" Value="20.0" />
+	<Parameter Name="maxMem" Value="7000.0" />
+	<Parameter Name="runCount" Value="100" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="TRRTConnect.log" />
+</Benchmark>
+<Benchmark Name="experiment">
+	<Problem File="artificialFOSTRRT.xml" />
+	<Parameter Name="maxTime" Value="20.0" />
+	<Parameter Name="maxMem" Value="7000.0" />
+	<Parameter Name="runCount" Value="100" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="TRRT.log" />
+</Benchmark>
+<Benchmark Name="experiment">
+	<Problem File="artificialFOSRRTConnect.xml" />
+	<Parameter Name="maxTime" Value="20.0" />
+	<Parameter Name="maxMem" Value="7000.0" />
+	<Parameter Name="runCount" Value="100" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="RRTConnect.log" />
+</Benchmark>
+
+

@@ -11,14 +11,14 @@
 		<Parameters>
 			<Name>omplFOSTRRTConnect</Name>
 			<SynergyTree synergyTree="controls/ellipseSynergyTree.xml"/>
-			<Parameter name="Max Planning Time">5</Parameter>
+			<Parameter name="Max Planning Time">20</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Range">0.15</Parameter>
 			<Parameter name="Simplify Solution">0</Parameter>
-			<Parameter name="Time Step">0</Parameter>
 			<Parameter name="Max States Succeed">0</Parameter>
 			<Parameter name="Max States Failed">20</Parameter>
 			<Parameter name="Temp Change Factor">1.5</Parameter>
+			<Parameter name="Init Temp">0.8</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
