@@ -21,71 +21,54 @@
 	<Limits max="1" />
 	<Limits max="1" />
 	<Tree>
-		<Root axis="0" location="0.5">
-			<Left axis="1" location="0.5">
-				<Left synergy="0" />
-				<Right synergy="1" />
-			</Left>
-			<Right axis="1" location="0.5">
-				<Left synergy="2" />
-				<Right synergy="3" />
+		<Root axis="0" location="0.4">
+			<Left synergy="0" />			
+			<Right axis="0" location="0.6">
+				<Left synergy="1" />
+				<Right synergy="2" />
 			</Right>
 		</Root>
 	</Tree>
 	<ControlSet>
 		<Offset>
-			<DOF value="-0.5" />
-			<DOF value="0.5" />
+			<DOF value="0.2" />
+			<DOF value="1" />
 		</Offset>
-		<Control eigValue="0.00001">
+		<Control eigValue="0.1">
 			<DOF value="1" />
 			<DOF value="0" />
 		</Control>
-		<Control eigValue="0.000001">
+		<Control eigValue="0.1">
 			<DOF value="0" />
 			<DOF value="1" />
 		</Control>
 	</ControlSet>
 	<ControlSet>
 		<Offset>
-			<DOF value="0.5" />
-			<DOF value="0.5" />
+			<DOF value="0.1" />
+			<DOF value="-1" />
 		</Offset>
-		<Control eigValue="0.00001">
+		<Control eigValue="0.1">
 			<DOF value="0" />
 			<DOF value="1" />
 		</Control>
-		<Control eigValue="0.000001">
+		<Control eigValue="0.1">
 			<DOF value="1" />
 			<DOF value="0" />
 		</Control>
 	</ControlSet>
 	<ControlSet>
 		<Offset>
-			<DOF value="-0.5" />
-			<DOF value="-0.5" />
+			<DOF value="0.2" />
+			<DOF value="1" />
 		</Offset>
-		<Control eigValue="0.00001">
+		<Control eigValue="0.1">
 			<DOF value="0" />
 			<DOF value="1" />
 		</Control>
-		<Control eigValue="0.000001">
+		<Control eigValue="0.1">
 			<DOF value="1" />
 			<DOF value="0" />
-		</Control>
-	</ControlSet>
-	<ControlSet>
-		<Offset>
-			<DOF value="0.5" />
-			<DOF value="-0.5" />
-		</Offset>
-		<Control eigValue="0.00001">
-			<DOF value="1" />
-			<DOF value="0" />
-		</Control>
-		<Control eigValue="0.000001">
-			<DOF value="0" />
-			<DOF value="1" />
 		</Control>
 	</ControlSet>
 </Velocity>

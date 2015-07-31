@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_MyPCARRT_bigcube">
+	<Robot robot="robots/bigcube.dh" scale="1">
+		<Limits name="X" min="-4" max="4" />
+		<Limits name="Y" min="-3" max="3" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.056" Y="0.01" X="0.01" />
+	</Robot>
+	<Controls robot="controls/bigcube_R2.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRTStar</Name>
+			<Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">2</Parameter>
+			<Potential potential="controls/ellipseSynergyTree.xml"/>
+			<Parameter name="Max Planning Time">5</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">0.15</Parameter>
+			<Parameter name="Simplify Solution">0</Parameter>
+			<Parameter name="Time Step">0</Parameter>
+			<Parameter name="Max States Succeed">0</Parameter>
+			<Parameter name="Max States Failed">20</Parameter>
+			<Parameter name="Temp Change Factor">1.5</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="2">0.2 0.95</Init>
+				<Goal dim="2">0.95 0.5</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

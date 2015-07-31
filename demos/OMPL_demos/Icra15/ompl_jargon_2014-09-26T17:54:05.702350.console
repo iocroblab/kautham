@@ -1,8 +1,0 @@
-Info:    Beginning benchmark
-Info:    Preparing for run 0 of geometric_RRTConnect
-Info:    RRTConnect: Starting with 1 states
-Info:    RRTConnect: Created 5 states (2 start + 3 goal)
-Info:    Path simplification took 6.481376 seconds
-Info:    Preparing for run 1 of geometric_RRTConnect
-Info:    RRTConnect: Starting with 1 states
-Info:    RRTConnect: Created 5 states (2 start + 3 goal)

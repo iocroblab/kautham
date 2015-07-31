@@ -44,7 +44,7 @@ omplFOSTRRTConnectPlanner::omplFOSTRRTConnectPlanner(SPACETYPE stype, Sample *in
     space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler,_1,(Planner*)this));
 
     //set the planner
-    //planner setup done after setting the potential cost
+    //planner setup done after setting the synergy cost
     og::TRRTConnect *planner(new og::TRRTConnect(si));
     planner->setProblemDefinition(ss->getProblemDefinition());
     ss->setPlanner(ob::PlannerPtr(planner));
