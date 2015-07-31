@@ -30,15 +30,8 @@
 
 
 namespace Kautham {
-    Problem::Problem() {
-        _wspace = NULL;
-        _planner = NULL;
-        _sampler = NULL;
-        _cspace = new SampleSet();
-        _cspace->clear();
-        _currentRobControls.clear();
-        _currentObsControls.clear();
-
+    Problem::Problem() : _wspace(NULL), _planner(NULL), _sampler(NULL),
+        _cspace(new SampleSet()) {
     }
 
 
@@ -50,42 +43,42 @@ namespace Kautham {
     }
 
 
-    // This is the new implementation trying to avoid the old strucparse and ProbStruc.
-    bool Problem::createWSpaceFromFile(xml_document *doc, bool useBBOX, progress_struct *progress) {
-        if (_wspace != NULL ) delete _wspace;
+    bool Problem::createWSpaceFromFile(xml_document *doc, bool useBBOX,
+                                       progress_struct *progress) {
+        if (_wspace) delete _wspace;
         _wspace = new IVWorkSpace();
 
-        char *old = setlocale (LC_NUMERIC, "C");
+        char *old = setlocale(LC_NUMERIC, "C");
 
         xml_node tmpNode;
 
-        //add all robots to worskpace
+        //Add all robots to worskpace
         for (tmpNode = doc->child("Problem").child("Robot");
              tmpNode; tmpNode = tmpNode.next_sibling("Robot")) {
             if (!addRobot2WSpace(&tmpNode, useBBOX, progress)) return false;
         }
 
-        //set robot controls
+        //Set robot controls
         if (!setRobotControls(doc->child("Problem").child("Controls").
                               attribute("robot").as_string())) return false;
 
-        //add all obstacles to worskpace
+        //Add all obstacles to worskpace
         for (tmpNode = doc->child("Problem").child("Obstacle");
              tmpNode; tmpNode = tmpNode.next_sibling("Obstacle")) {
             if (!addObstacle2WSpace(&tmpNode, useBBOX, progress)) return false;
         }
 
-        //set obstacle controls
+        //Set obstacle controls
         if (!setObstacleControls(doc->child("Problem").child("Controls").
                                  attribute("obstacle").as_string())) return false;
 
-        //add all distance maps to worskpace
+        //Add all distance maps to worskpace
         for (tmpNode = doc->child("Problem").child("DistanceMap");
              tmpNode; tmpNode = tmpNode.next_sibling("DistanceMap")) {
             _wspace->addDistanceMapFile(tmpNode.attribute("distanceMap").as_string());
         }
 
-        //add all dimensions files to worskpace
+        //Add all dimensions files to worskpace
         for (tmpNode = doc->child("Problem").child("DimensionsFile");
              tmpNode; tmpNode = tmpNode.next_sibling("DimensionsFile")) {
             string file = tmpNode.attribute("filename").as_string();
@@ -95,6 +88,7 @@ namespace Kautham {
         }
 
         setlocale (LC_NUMERIC, old);
+
         return true;
     }
 
@@ -217,11 +211,17 @@ namespace Kautham {
         else if (name == "omplRRT")
             _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
+        else if (name == "omplFOSRRT")
+            _planner = new omplplanner::omplFOSRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+
         else if (name == "omplRRTStar")
             _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
         else if (name == "omplTRRT")
             _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+
+        else if (name == "omplFOSTRRT")
+            _planner = new omplplanner::omplFOSTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
         else if (name == "omplTRRTConnect")
             _planner = new omplplanner::omplTRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
@@ -241,6 +241,9 @@ namespace Kautham {
         else if (name == "omplRRTConnect")
             _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
+        else if (name == "omplFOSRRTConnect")
+            _planner = new omplplanner::omplFOSRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+
         else if (name == "omplRRTConnectEUROC")
             _planner = new omplplanner::omplRRTConnectPlannerEUROC(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
@@ -258,9 +261,6 @@ namespace Kautham {
 
         else if (name == "omplPCARRT")
             _planner = new omplplanner::omplPCARRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
-        else if (name == "omplFOSRRT")
-            _planner = new omplplanner::omplFOSRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
         else if (name == "omplcRRT")
             _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
@@ -326,6 +326,14 @@ namespace Kautham {
                     //Set especial parameters
                     if (plannerName == "omplFOSRRT") {
                         ((omplplanner::omplFOSRRTPlanner*)_planner)->
+                                setSynergyTree(doc->child("Problem").child("Planner").child("Parameters").
+                                               child("SynergyTree").attribute("synergyTree").as_string());
+                    } else if (plannerName == "omplFOSTRRT") {
+                        ((omplplanner::omplFOSTRRTPlanner*)_planner)->
+                                setSynergyTree(doc->child("Problem").child("Planner").child("Parameters").
+                                               child("SynergyTree").attribute("synergyTree").as_string());
+                    } else if (plannerName == "omplFOSRRTConnect") {
+                        ((omplplanner::omplFOSRRTConnectPlanner*)_planner)->
                                 setSynergyTree(doc->child("Problem").child("Planner").child("Parameters").
                                                child("SynergyTree").attribute("synergyTree").as_string());
                     } else if (plannerName == "omplFOSTRRTConnect") {
