@@ -439,7 +439,8 @@ namespace Kautham {
 
         ob::Cost myMWOptimizationObjective::motionCost(const ompl::base::State *s1,
                                                        const ompl::base::State *s2) const {
-            return ob::Cost(std::fabs(stateCost(s2).v-stateCost(s1).v) + pathLengthWeight_*si_->distance(s1,s2));
+            return ob::Cost(std::fabs(stateCost(s2).value()-stateCost(s1).value()) +
+                            pathLengthWeight_*si_->distance(s1,s2));
         }
 
 

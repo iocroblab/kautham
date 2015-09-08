@@ -189,7 +189,7 @@ bool omplTRRTPlanner::trySolve() {
     //ss->getPlanner()->as<og::TRRT>()->setup();
     if (omplPlanner::trySolve()) {
         ob::Cost pathcost = ss->getProblemDefinition()->getSolutionPath()->cost(_opti);
-        cout<<"Path cost = " << pathcost.v << endl;
+        cout<<"Path cost = " << pathcost.value() << endl;
 
         return true;
     } else {

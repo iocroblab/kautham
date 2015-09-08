@@ -90,7 +90,7 @@ bool omplFOSRRTConnectPlanner::setParameters(){
 bool omplFOSRRTConnectPlanner::trySolve() {
     if (omplPlanner::trySolve()) {
         ob::Cost pathcost = ss->getProblemDefinition()->getSolutionPath()->cost(opt_);
-        cout << "Path cost = " << pathcost.v << endl;
+        cout << "Path cost = " << pathcost.value() << endl;
 
         return true;
     } else {
