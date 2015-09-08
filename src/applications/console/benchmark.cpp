@@ -78,9 +78,9 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
 
             //Get start and goal
             unsigned int v1(pdata->getStartIndex(0));
-            double c1(opt->stateCost(pdata->getVertex(v1).getState()).v);
+            double c1(opt->stateCost(pdata->getVertex(v1).getState()).value());
             unsigned int v2 = pdata->getGoalIndex(0);
-            double c2(opt->stateCost(pdata->getVertex(v2).getState()).v);
+            double c2(opt->stateCost(pdata->getVertex(v2).getState()).value());
             double d(planner->getSpaceInformation()->distance(pdata->getVertex(v1).getState(),
                                                                 pdata->getVertex(v2).getState()));
             //Set K's
@@ -105,7 +105,7 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
             while (edgeList.size() > 0) {
                 //Get vertex parent
                 v1 = edgeList[0];
-                c1 = opt->stateCost(pdata->getVertex(v1).getState()).v;
+                c1 = opt->stateCost(pdata->getVertex(v1).getState()).value();
                 d = planner->getSpaceInformation()->distance(pdata->getVertex(v1).getState(),
                                                              pdata->getVertex(v2).getState());
 
@@ -127,8 +127,8 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
                 pdata->getIncomingEdges(v2,edgeList);
             }
 
-            run["path cost REAL"] = SSTR(cost.v);
-            run["path cost mean REAL"] = SSTR(cost.v/length);
+            run["path cost REAL"] = SSTR(cost.value());
+            run["path cost mean REAL"] = SSTR(cost.value()/length);
             run["MW cost REAL"] = SSTR(costMW);
             run["PID cost REAL"] = SSTR(costPID);
             run["state cost mean REAL"] = SSTR(accStateCost/length);

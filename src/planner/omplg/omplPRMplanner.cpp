@@ -201,6 +201,11 @@ namespace Kautham {
           maxdistancebouncemotions = m;
       }
 
+      //! Computes the distance between two milestones (this is simply the distance between the states of the milestones)
+      double distance(const Vertex a, const Vertex b) const
+      {
+          return distanceFunction(a,b);
+      }
 
       //! This functions is identical to the PRM::constructRoadmap function except that the ratio between grow and expand steps is not
       //! fixed to 2:1 but is configurable by the mingrowtime and mingrowtime class variables
@@ -319,8 +324,7 @@ namespace Kautham {
                       const ob::Cost weight = opt_->motionCost(stateProperty_[v], stateProperty_[m]);
 
                       //cout<<"d= "<<weight<<endl;
-                      const unsigned int id = maxEdgeID_++;
-                      const Graph::edge_property_type properties(weight, id);
+                      const Graph::edge_property_type properties(weight);
                       boost::add_edge(v, m, properties, g_);
                       uniteComponents(v, m);
 
@@ -337,8 +341,7 @@ namespace Kautham {
                       const ob::Cost weight = opt_->motionCost(stateProperty_[v], stateProperty_[last]);
 
                       //cout<<"d2= "<<weight<<endl;
-                      const unsigned int id = maxEdgeID_++;
-                      const Graph::edge_property_type properties(weight, id);
+                      const Graph::edge_property_type properties(weight);
                       boost::add_edge(v, last, properties, g_);
                       uniteComponents(v, last);
                   }
@@ -356,7 +359,7 @@ namespace Kautham {
   {
       if(pl->as<myPRM>()->checkSameComponent(v1,v2) == false)
       {
-        if(pl->as<myPRM>()->distanceFunction(v1,v2) < d) return true;
+        if(pl->as<myPRM>()->distance(v1,v2) < d) return true;
       }
       return false;
   }

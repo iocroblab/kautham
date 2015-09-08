@@ -209,7 +209,8 @@ namespace Kautham {
 
         bool omplLazyTRRTPlanner::trySolve() {
             if (omplPlanner::trySolve()) {
-                cout<<"Path cost = " << ss->getProblemDefinition()->getSolutionPath()->cost(_opti).v << endl;
+                cout<<"Path cost = " << ss->getProblemDefinition()->
+                      getSolutionPath()->cost(_opti).value() << endl;
 
                 return true;
             } else {

@@ -123,7 +123,7 @@ void ompl::geometric::TRRTConnect::setup() {
     //Autoconfigure the K constant
     if (kConstant_ < std::numeric_limits<double>::epsilon()) {
         //Find the average cost of states by sampling
-        kConstant_ = opt_->averageStateCost(magic::TEST_STATE_COUNT).v;
+        kConstant_ = opt_->averageStateCost(magic::TEST_STATE_COUNT).value();
     }
 
     //Create the nearest neighbor function the first time setup is run
@@ -291,7 +291,7 @@ ompl::geometric::TRRTConnect::extend(TreeData &tree, TreeGrowingInfo &tgi, Motio
 
     //Check if now the tree has a motion inside BoxZos
     if (!tree.stateInBoxZos_) {
-        tree.stateInBoxZos_ = cost.v < DBL_EPSILON*std::min(d,maxDistance_);
+        tree.stateInBoxZos_ = cost.value() < DBL_EPSILON*std::min(d,maxDistance_);
         if (tree.stateInBoxZos_) tree.temp_ = initTemperature_;
     }
 
@@ -648,7 +648,7 @@ ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc
     tStart_->list(start);
     for (unsigned int i = 0; i < start.size(); ++i) {
         if (start.at(i)->parent) {
-            costs += opt_->motionCost(start.at(i)->parent->state,start.at(i)->state).v
+            costs += opt_->motionCost(start.at(i)->parent->state,start.at(i)->state).value()
                     /si_->distance(start.at(i)->parent->state,start.at(i)->state);
         }
     }
@@ -656,7 +656,7 @@ ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc
     tGoal_->list(data);
     for (unsigned int i = 0; i < data.size(); ++i) {
         if (data.at(i)->parent) {
-            costs += opt_->motionCost(data.at(i)->state,data.at(i)->parent->state).v
+            costs += opt_->motionCost(data.at(i)->state,data.at(i)->parent->state).value()
                     /si_->distance(data.at(i)->parent->state,data.at(i)->state);
         }
     }
@@ -703,7 +703,7 @@ void ompl::geometric::TRRTConnect::getPlannerData(base::PlannerData &data) const
 bool ompl::geometric::TRRTConnect::transitionTest(base::Cost cost, double distance,
                                                   TreeData &tree, bool updateTemp) {
     //Difference in cost
-    double slope(cost.v / std::min(distance,maxDistance_));
+    double slope(cost.value() / std::min(distance,maxDistance_));
 
     //The probability of acceptance of a new motion is defined by its cost.
     //Based on the Metropolis criterion.
