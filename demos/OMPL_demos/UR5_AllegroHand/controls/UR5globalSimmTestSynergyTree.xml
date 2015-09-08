@@ -1,0 +1,400 @@
+<?xml version="1.0"?>
+<Position>
+	<Limits min="-6.28319" max="6.28319" />
+	<Limits min="-6.28319" max="6.28319" />
+	<Limits min="-6.28319" max="6.28319" />
+	<Limits min="-6.28319" max="6.28319" />
+	<Limits min="-6.28319" max="6.28319" />
+	<Limits min="-6.28319" max="6.28319" />
+	<Limits min="-6.28319" max="6.28319" />
+	<Limits min="-6.28319" max="6.28319" />
+	<Limits min="-6.28319" max="6.28319" />
+	<Limits min="-6.28319" max="6.28319" />
+	<Limits min="-6.28319" max="6.28319" />
+	<Limits min="-6.28319" max="6.28319" />
+	<ControlSet>
+		<Offset>
+			<DOF value="0.470228" />
+			<DOF value="0.501413" />
+			<DOF value="0.384853" />
+			<DOF value="0.468184" />
+			<DOF value="0.472431" />
+			<DOF value="0.372556" />
+			<DOF value="0.609349" />
+			<DOF value="0.55827" />
+			<DOF value="0.694724" />
+			<DOF value="0.591499" />
+			<DOF value="0.607146" />
+			<DOF value="0.707021" />
+		</Offset>
+		<Control eigValue="0.988053">
+			<DOF value="-0.108049" />
+			<DOF value="-0.452706" />
+			<DOF value="-0.105119" />
+			<DOF value="-0.490735" />
+			<DOF value="-0.166595" />
+			<DOF value="-0.0613078" />
+			<DOF value="-0.108049" />
+			<DOF value="-0.452706" />
+			<DOF value="-0.105119" />
+			<DOF value="-0.490735" />
+			<DOF value="-0.166595" />
+			<DOF value="-0.0613078" />
+		</Control>
+		<Control eigValue="0.41911">
+			<DOF value="0.0857951" />
+			<DOF value="0.0556543" />
+			<DOF value="-0.0931965" />
+			<DOF value="0.373738" />
+			<DOF value="0.316267" />
+			<DOF value="-0.491072" />
+			<DOF value="-0.0857951" />
+			<DOF value="-0.0556543" />
+			<DOF value="0.0931965" />
+			<DOF value="-0.373738" />
+			<DOF value="-0.316267" />
+			<DOF value="0.491072" />
+		</Control>
+		<Control eigValue="0.327667">
+			<DOF value="-0.00947836" />
+			<DOF value="0.18321" />
+			<DOF value="0.158883" />
+			<DOF value="-0.177178" />
+			<DOF value="-0.281589" />
+			<DOF value="0.574819" />
+			<DOF value="-0.00947836" />
+			<DOF value="0.18321" />
+			<DOF value="0.158883" />
+			<DOF value="-0.177178" />
+			<DOF value="-0.281589" />
+			<DOF value="0.574819" />
+		</Control>
+		<Control eigValue="0.187721">
+			<DOF value="0.310492" />
+			<DOF value="0.285606" />
+			<DOF value="0.0380296" />
+			<DOF value="-0.448651" />
+			<DOF value="-0.104331" />
+			<DOF value="-0.329249" />
+			<DOF value="-0.310492" />
+			<DOF value="-0.285606" />
+			<DOF value="-0.0380296" />
+			<DOF value="0.448651" />
+			<DOF value="0.104331" />
+			<DOF value="0.329249" />
+		</Control>
+		<Control eigValue="0.140763">
+			<DOF value="-0.23913" />
+			<DOF value="-0.449533" />
+			<DOF value="0.0712502" />
+			<DOF value="0.396888" />
+			<DOF value="0.0623134" />
+			<DOF value="0.272501" />
+			<DOF value="-0.23913" />
+			<DOF value="-0.449533" />
+			<DOF value="0.0712502" />
+			<DOF value="0.396888" />
+			<DOF value="0.0623134" />
+			<DOF value="0.272501" />
+		</Control>
+		<Control eigValue="0.138248">
+			<DOF value="0.332691" />
+			<DOF value="0.372358" />
+			<DOF value="-0.198168" />
+			<DOF value="0.118745" />
+			<DOF value="0.232838" />
+			<DOF value="0.378261" />
+			<DOF value="-0.332691" />
+			<DOF value="-0.372358" />
+			<DOF value="0.198168" />
+			<DOF value="-0.118745" />
+			<DOF value="-0.232838" />
+			<DOF value="-0.378261" />
+		</Control>
+		<Control eigValue="0.1002">
+			<DOF value="-0.492711" />
+			<DOF value="0.31405" />
+			<DOF value="-0.362649" />
+			<DOF value="-0.144419" />
+			<DOF value="0.0564697" />
+			<DOF value="-0.0552095" />
+			<DOF value="0.492711" />
+			<DOF value="-0.31405" />
+			<DOF value="0.362649" />
+			<DOF value="0.144419" />
+			<DOF value="-0.0564697" />
+			<DOF value="0.0552095" />
+		</Control>
+		<Control eigValue="0.098048">
+			<DOF value="0.185069" />
+			<DOF value="-0.0277469" />
+			<DOF value="-0.359397" />
+			<DOF value="-0.137224" />
+			<DOF value="0.475304" />
+			<DOF value="0.301777" />
+			<DOF value="0.185069" />
+			<DOF value="-0.0277469" />
+			<DOF value="-0.359397" />
+			<DOF value="-0.137224" />
+			<DOF value="0.475304" />
+			<DOF value="0.301777" />
+		</Control>
+		<Control eigValue="0.0810638">
+			<DOF value="-0.0523942" />
+			<DOF value="-0.207818" />
+			<DOF value="0.105013" />
+			<DOF value="-0.336186" />
+			<DOF value="0.571383" />
+			<DOF value="0.0594952" />
+			<DOF value="0.0523942" />
+			<DOF value="0.207818" />
+			<DOF value="-0.105013" />
+			<DOF value="0.336186" />
+			<DOF value="-0.571383" />
+			<DOF value="-0.0594952" />
+		</Control>
+		<Control eigValue="0.0684148">
+			<DOF value="-0.234967" />
+			<DOF value="0.132908" />
+			<DOF value="-0.565023" />
+			<DOF value="0.148086" />
+			<DOF value="-0.292915" />
+			<DOF value="0.012093" />
+			<DOF value="-0.234967" />
+			<DOF value="0.132908" />
+			<DOF value="-0.565023" />
+			<DOF value="0.148086" />
+			<DOF value="-0.292915" />
+			<DOF value="0.012093" />
+		</Control>
+		<Control eigValue="0.0606319">
+			<DOF value="0.584459" />
+			<DOF value="-0.202428" />
+			<DOF value="-0.101055" />
+			<DOF value="0.171777" />
+			<DOF value="-0.278134" />
+			<DOF value="0.0187852" />
+			<DOF value="0.584459" />
+			<DOF value="-0.202428" />
+			<DOF value="-0.101055" />
+			<DOF value="0.171777" />
+			<DOF value="-0.278134" />
+			<DOF value="0.0187852" />
+		</Control>
+		<Control eigValue="0.0460454">
+			<DOF value="-0.200103" />
+			<DOF value="0.36724" />
+			<DOF value="0.555027" />
+			<DOF value="0.105139" />
+			<DOF value="0.0721763" />
+			<DOF value="0.0278277" />
+			<DOF value="0.200103" />
+			<DOF value="-0.36724" />
+			<DOF value="-0.555027" />
+			<DOF value="-0.105139" />
+			<DOF value="-0.0721763" />
+			<DOF value="-0.0278277" />
+		</Control>
+	</ControlSet>
+</Position>
+<Velocity>
+	<Limits max="6.28319" />
+	<Limits max="6.28319" />
+	<Limits max="6.28319" />
+	<Limits max="6.28319" />
+	<Limits max="6.28319" />
+	<Limits max="6.28319" />
+	<Limits max="6.28319" />
+	<Limits max="6.28319" />
+	<Limits max="6.28319" />
+	<Limits max="6.28319" />
+	<Limits max="6.28319" />
+	<Limits max="6.28319" />
+	<Tree>
+		<Root synergy="0" />
+	</Tree>
+	<ControlSet>
+		<Offset>
+			<DOF value="-0.00976608" />
+			<DOF value="0.00861479" />
+			<DOF value="-0.00611758" />
+			<DOF value="0.00143927" />
+			<DOF value="0.00615642" />
+			<DOF value="0.0120724" />
+			<DOF value="0.00976608" />
+			<DOF value="-0.00861479" />
+			<DOF value="0.00611758" />
+			<DOF value="-0.00143927" />
+			<DOF value="-0.00615642" />
+			<DOF value="-0.0120724" />
+		</Offset>
+		<Control eigValue="1.02921">
+			<DOF value="-0.141984" />
+			<DOF value="-0.336816" />
+			<DOF value="0.137109" />
+			<DOF value="-0.145993" />
+			<DOF value="-0.235699" />
+			<DOF value="0.520316" />
+			<DOF value="0.141984" />
+			<DOF value="0.336816" />
+			<DOF value="-0.137109" />
+			<DOF value="0.145993" />
+			<DOF value="0.235699" />
+			<DOF value="-0.520316" />
+		</Control>
+		<Control eigValue="0.865487">
+			<DOF value="0.173545" />
+			<DOF value="0.327825" />
+			<DOF value="-0.227247" />
+			<DOF value="0.101974" />
+			<DOF value="0.335322" />
+			<DOF value="-0.433511" />
+			<DOF value="0.173545" />
+			<DOF value="0.327825" />
+			<DOF value="-0.227247" />
+			<DOF value="0.101974" />
+			<DOF value="0.335322" />
+			<DOF value="-0.433511" />
+		</Control>
+		<Control eigValue="0.824233">
+			<DOF value="-0.165457" />
+			<DOF value="-0.36738" />
+			<DOF value="0.212056" />
+			<DOF value="0.428287" />
+			<DOF value="-0.158087" />
+			<DOF value="-0.290287" />
+			<DOF value="0.165457" />
+			<DOF value="0.36738" />
+			<DOF value="-0.212056" />
+			<DOF value="-0.428287" />
+			<DOF value="0.158087" />
+			<DOF value="0.290287" />
+		</Control>
+		<Control eigValue="0.725059">
+			<DOF value="0.201781" />
+			<DOF value="0.304234" />
+			<DOF value="-0.20478" />
+			<DOF value="-0.440694" />
+			<DOF value="0.0550897" />
+			<DOF value="0.357136" />
+			<DOF value="0.201781" />
+			<DOF value="0.304234" />
+			<DOF value="-0.20478" />
+			<DOF value="-0.440694" />
+			<DOF value="0.0550897" />
+			<DOF value="0.357136" />
+		</Control>
+		<Control eigValue="0.555576">
+			<DOF value="-0.379977" />
+			<DOF value="0.264737" />
+			<DOF value="-0.365778" />
+			<DOF value="0.297292" />
+			<DOF value="-0.195005" />
+			<DOF value="0.15915" />
+			<DOF value="0.379977" />
+			<DOF value="-0.264737" />
+			<DOF value="0.365778" />
+			<DOF value="-0.297292" />
+			<DOF value="0.195005" />
+			<DOF value="-0.15915" />
+		</Control>
+		<Control eigValue="0.52604">
+			<DOF value="0.20772" />
+			<DOF value="-0.119833" />
+			<DOF value="-0.0847921" />
+			<DOF value="0.3887" />
+			<DOF value="0.43534" />
+			<DOF value="0.307724" />
+			<DOF value="-0.20772" />
+			<DOF value="0.119833" />
+			<DOF value="0.0847921" />
+			<DOF value="-0.3887" />
+			<DOF value="-0.43534" />
+			<DOF value="-0.307724" />
+		</Control>
+		<Control eigValue="0.506626">
+			<DOF value="-0.500748" />
+			<DOF value="-0.126197" />
+			<DOF value="0.00420472" />
+			<DOF value="-0.195865" />
+			<DOF value="0.434671" />
+			<DOF value="-0.0774977" />
+			<DOF value="0.500748" />
+			<DOF value="0.126197" />
+			<DOF value="-0.00420472" />
+			<DOF value="0.195865" />
+			<DOF value="-0.434671" />
+			<DOF value="0.0774977" />
+		</Control>
+		<Control eigValue="0.505001">
+			<DOF value="0.0453365" />
+			<DOF value="-0.0952855" />
+			<DOF value="-0.192274" />
+			<DOF value="0.415656" />
+			<DOF value="0.337972" />
+			<DOF value="0.40608" />
+			<DOF value="0.0453365" />
+			<DOF value="-0.0952855" />
+			<DOF value="-0.192274" />
+			<DOF value="0.415656" />
+			<DOF value="0.337972" />
+			<DOF value="0.40608" />
+		</Control>
+		<Control eigValue="0.49398">
+			<DOF value="-0.139807" />
+			<DOF value="0.263702" />
+			<DOF value="-0.360237" />
+			<DOF value="0.254185" />
+			<DOF value="-0.464157" />
+			<DOF value="0.0330466" />
+			<DOF value="-0.139807" />
+			<DOF value="0.263702" />
+			<DOF value="-0.360237" />
+			<DOF value="0.254185" />
+			<DOF value="-0.464157" />
+			<DOF value="0.0330466" />
+		</Control>
+		<Control eigValue="0.404801">
+			<DOF value="0.631053" />
+			<DOF value="-0.050542" />
+			<DOF value="0.134077" />
+			<DOF value="0.166037" />
+			<DOF value="-0.231639" />
+			<DOF value="0.00400626" />
+			<DOF value="0.631053" />
+			<DOF value="-0.050542" />
+			<DOF value="0.134077" />
+			<DOF value="0.166037" />
+			<DOF value="-0.231639" />
+			<DOF value="0.00400626" />
+		</Control>
+		<Control eigValue="0.291572">
+			<DOF value="0.119104" />
+			<DOF value="-0.388865" />
+			<DOF value="-0.543353" />
+			<DOF value="-0.131997" />
+			<DOF value="-0.0544714" />
+			<DOF value="-0.137754" />
+			<DOF value="-0.119104" />
+			<DOF value="0.388865" />
+			<DOF value="0.543353" />
+			<DOF value="0.131997" />
+			<DOF value="0.0544714" />
+			<DOF value="0.137754" />
+		</Control>
+		<Control eigValue="0.214148">
+			<DOF value="0.0966283" />
+			<DOF value="-0.467761" />
+			<DOF value="-0.470858" />
+			<DOF value="-0.174476" />
+			<DOF value="-0.0346516" />
+			<DOF value="-0.136063" />
+			<DOF value="0.0966283" />
+			<DOF value="-0.467761" />
+			<DOF value="-0.470858" />
+			<DOF value="-0.174476" />
+			<DOF value="-0.0346516" />
+			<DOF value="-0.136063" />
+		</Control>
+	</ControlSet>
+</Velocity>

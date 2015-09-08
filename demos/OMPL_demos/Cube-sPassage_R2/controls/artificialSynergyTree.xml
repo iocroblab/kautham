@@ -31,16 +31,16 @@
 	</Tree>
 	<ControlSet>
 		<Offset>
-			<DOF value="0.2" />
-			<DOF value="1" />
+			<DOF value="0" />
+			<DOF value="0" />
 		</Offset>
-		<Control eigValue="0.1">
-			<DOF value="1" />
+		<Control eigValue="0.8">
 			<DOF value="0" />
+			<DOF value="1" />
 		</Control>
-		<Control eigValue="0.1">
-			<DOF value="0" />
+		<Control eigValue="0.7">
 			<DOF value="1" />
+			<DOF value="0" />
 		</Control>
 	</ControlSet>
 	<ControlSet>

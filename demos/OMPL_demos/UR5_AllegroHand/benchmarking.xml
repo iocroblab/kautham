@@ -1,26 +1,26 @@
-<benchmark Name="experiment">
+<Benchmark Name="experiment">
 	<Problem File="bottleFOSTRRTConnect.xml" />
 	<Parameter Name="maxTime" Value="200.0" />
 	<Parameter Name="maxMem" Value="7000.0" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
 	<Parameter Name="filename" Value="TRRTConnect.log" />
-</benchmark>
-<benchmark Name="experiment">
+</Benchmark>
+<Benchmark Name="experiment">
 	<Problem File="bottleFOSTRRT.xml" />
 	<Parameter Name="maxTime" Value="200.0" />
 	<Parameter Name="maxMem" Value="7000.0" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
 	<Parameter Name="filename" Value="TRRT.log" />
-</benchmark>
-<Benchmark Name="experiment">
+</Benchmark>
+<benchmark Name="experiment">
 	<Problem File="bottleFOSRRTConnect.xml" />
 	<Parameter Name="maxTime" Value="200.0" />
 	<Parameter Name="maxMem" Value="7000.0" />
 	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
 	<Parameter Name="filename" Value="RRTConnect.log" />
-</Benchmark>
+</benchmark>
 
 

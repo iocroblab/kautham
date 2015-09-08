@@ -17,7 +17,7 @@
 	<Planner>
 		<Parameters>
 			<Name>omplFOSTRRTConnect</Name>
-			<SynergyTree synergyTree="controls/UR5globalSynergyTree.xml"/>
+			<SynergyTree synergyTree="controls/UR5globalSimmTestSynergyTree.xml"/>
 			<Parameter name="Cspace Drawn">0</Parameter>
 			<Parameter name="Incremental (0/1)">0</Parameter>
 			<Parameter name="Max Planning Time">100</Parameter>
@@ -25,9 +25,10 @@
 			<Parameter name="Simplify Solution">0</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 			<Parameter name="Max States Succeed">0</Parameter>
-			<Parameter name="Max States Failed">50</Parameter>
-			<Parameter name="Temp Change Factor">1.5</Parameter>
-			<Parameter name="Init Temp">0.3</Parameter>
+			<Parameter name="Max States Failed">40</Parameter>
+			<Parameter name="Temp Change Factor">2</Parameter>
+			<Parameter name="Init Temp">2</Parameter>
+			<Parameter name="Frontier Node Ratio">10000000</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
