@@ -17,11 +17,11 @@
 	<Planner>
 		<Parameters>
 			<Name>omplFOSRRTConnect</Name>
-			<SynergyTree synergyTree="controls/UR5globalSynergyTree.xml"/>
+			<SynergyTree synergyTree="controls/UR5globalSimmTestSynergyTree.xml"/>
 			<Parameter name="Cspace Drawn">0</Parameter>
 			<Parameter name="Incremental (0/1)">0</Parameter>
 			<Parameter name="Max Planning Time">100</Parameter>
-			<Parameter name="Range">1</Parameter>
+			<Parameter name="Range">3</Parameter>
 			<Parameter name="Simplify Solution">0</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 		</Parameters>

@@ -17,7 +17,7 @@
 	<Planner>
 		<Parameters>
 			<Name>omplFOSTRRT</Name>
-			<SynergyTree synergyTree="controls/UR5globalSynergyTree.xml"/>
+			<SynergyTree synergyTree="controls/UR5globalSimmTestSynergyTree.xml"/>
 			<Parameter name="Cspace Drawn">0</Parameter>
 			<Parameter name="Incremental (0/1)">0</Parameter>
 			<Parameter name="Max Planning Time">100</Parameter>
