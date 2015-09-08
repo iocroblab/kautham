@@ -30,8 +30,8 @@
 
 
 namespace Kautham {
-    Problem::Problem() : _wspace(NULL), _planner(NULL), _sampler(NULL),
-        _cspace(new SampleSet()) {
+    Problem::Problem() : _wspace(NULL), _cspace(new SampleSet()),
+      _sampler(NULL), _planner(NULL)  {
     }
 
 
