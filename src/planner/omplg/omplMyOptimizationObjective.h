@@ -132,8 +132,8 @@ namespace Kautham {
 
             ob::Cost costPID(ob::Cost c1, ob::Cost c2, double d12) const {
                 double cP(d12);
-                double cI(0.5*(c1.v+c2.v)*d12);
-                double cD(fabs(c2.v-c1.v));
+                double cI(0.5*(c1.value()+c2.value())*d12);
+                double cD(fabs(c2.value()-c1.value()));
 
                 return ob::Cost(kP_*cP+kI_*cI+kD_*cD);
             }
