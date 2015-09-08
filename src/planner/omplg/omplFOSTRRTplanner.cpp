@@ -156,7 +156,7 @@ bool omplFOSTRRTPlanner::setParameters() {
 bool omplFOSTRRTPlanner::trySolve() {
     if (omplPlanner::trySolve()) {
         ob::Cost pathcost = ss->getProblemDefinition()->getSolutionPath()->cost(opt_);
-        cout << "Path cost = " << pathcost.v << endl;
+        cout << "Path cost = " << pathcost.value() << endl;
 
         ompl::base::PlannerData pd(ss->getSpaceInformation());
         ss->getPlannerData(pd);
@@ -164,7 +164,7 @@ bool omplFOSTRRTPlanner::trySolve() {
         for (unsigned int i = 0; i < pd.numVertices(); ++i) {
             for (unsigned int j = 0; j < pd.numVertices(); ++j) {
                 if (pd.edgeExists(i,j)) {
-                    costs += opt_->motionCost(pd.getVertex(i).getState(),pd.getVertex(j).getState()).v
+                    costs += opt_->motionCost(pd.getVertex(i).getState(),pd.getVertex(j).getState()).value()
                             /ss->getSpaceInformation()->distance(pd.getVertex(i).getState(),pd.getVertex(j).getState());
                 }
             }

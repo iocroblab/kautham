@@ -32,6 +32,7 @@
 #include <ompl/base/objectives/StateCostIntegralObjective.h>
 #include <ompl/base/objectives/MechanicalWorkOptimizationObjective.h>
 #include <ompl/base/ProjectionEvaluator.h>
+#include <ompl/base/Path.h>
 
 
 
@@ -62,18 +63,19 @@ namespace Kautham {
       PMDalignmentOptimizationObjective(const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M);
       ~PMDalignmentOptimizationObjective();
 
+      virtual ob::Cost stateCost(const ob::State *s) const {return ob::Cost();}
       virtual ob::Cost motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const = 0;
       virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
       ob::Cost getCost(const ob::Path &path) const;
       void setPCAdata(ob::ProjectionMatrix M);
       inline double getOrientationPenalization(){return wpenalization;}
-      inline void setOrientationPenalization(double w){wpenalization=w;};
+      inline void setOrientationPenalization(double w){wpenalization=w;}
       inline double getDistanceWeight(){return wdistance;}
-      inline void setDistanceWeight(double w){wdistance=w;};
-      inline void setOrientationWeight(double w){worientation=w;};
-      inline double getOrientationWeight(){return worientation;};
-      inline double getEpsilon(){return epsilon;};
-      inline void setEpsilon(double e){epsilon=e;};
+      inline void setDistanceWeight(double w){wdistance=w;}
+      inline void setOrientationWeight(double w){worientation=w;}
+      inline double getOrientationWeight(){return worientation;}
+      inline double getEpsilon(){return epsilon;}
+      inline void setEpsilon(double e){epsilon=e;}
     };
 
   class singleRobotPMDalignmentOptimizationObjective:public PMDalignmentOptimizationObjective {

@@ -116,7 +116,7 @@ void ompl::geometric::LazyTRRT::setup() {
     // Autoconfigure the K constant
     if (kConstant_ < std::numeric_limits<double>::epsilon()) {
         // Find the average cost of states by sampling
-        double averageCost = opt_->averageStateCost(magic::TEST_STATE_COUNT).v;
+        double averageCost = opt_->averageStateCost(magic::TEST_STATE_COUNT).value();
         kConstant_ = averageCost;
         OMPL_DEBUG("%s: K constant detected to be %lf",getName().c_str(),kConstant_);
     }
@@ -278,7 +278,7 @@ ompl::base::PlannerStatus ompl::geometric::LazyTRRT::solve(const base::PlannerTe
         // this stage integrates collision detections in the presence of ompl::basestacles and checks for collisions
 
         //!
-        if (rng_.uniform01() < (nearMotion->cost.v-minCollThr_)/(maxCollThr_-minCollThr_)) {
+        if (rng_.uniform01() < (nearMotion->cost.value()-minCollThr_)/(maxCollThr_-minCollThr_)) {
             if (!si_->checkMotion(nearMotion->state,newState)) {
                 invalidMotions++;
                 continue; // try a new sample
@@ -299,7 +299,7 @@ ompl::base::PlannerStatus ompl::geometric::LazyTRRT::solve(const base::PlannerTe
         base::Cost childCost = opt_->stateCost(newState);
 
         // Only add this motion to the tree if the tranistion test accepts it
-        if (!transitionTest(childCost.v,nearMotion->cost.v,motionDistance)) {
+        if (!transitionTest(childCost.value(),nearMotion->cost.value(),motionDistance)) {
             continue; // give up on this one and try a new sample
         }
 

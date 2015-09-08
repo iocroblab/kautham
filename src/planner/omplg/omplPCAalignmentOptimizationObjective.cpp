@@ -152,7 +152,7 @@ namespace Kautham {
                   const ob::State *s2 = pathGeom->getState(i);
                   cost = this->combineCosts(cost, motionCost(s0, s1, s2));
 
-                  cout<<" "<<cost.v;
+                  cout<<" "<<cost.value();
               }
               cout<<endl;
 
@@ -233,7 +233,7 @@ namespace Kautham {
                  sstate1 >> robotise3_s1;
                  sstate2 >> robotise3_s2;
                  ob::Cost costSE3 = motionCostSE3(robotise3_s1.get(),robotise3_s2.get());
-                 cost += weightSE3 * costSE3.v;
+                 cost += weightSE3 * costSE3.value();
              }
              else
              {
@@ -249,7 +249,7 @@ namespace Kautham {
                     sstate1 >> robotiRn_s1;
                     sstate2 >> robotiRn_s2;
                     ob::Cost costRn = motionCostRn(robotiRn_s0.get(),robotiRn_s1.get(),robotiRn_s2.get());
-                    cost += weightRn * costRn.v;
+                    cost += weightRn * costRn.value();
                  }
                  else
                  {
@@ -258,7 +258,7 @@ namespace Kautham {
                     sstate1 >> robotiRn_s1;
                     sstate2 >> robotiRn_s2;
                     ob::Cost costRn = motionCostRn(NULL,robotiRn_s1.get(),robotiRn_s2.get());
-                    cost += weightRn * costRn.v;
+                    cost += weightRn * costRn.value();
                  }
               }
           }

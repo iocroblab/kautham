@@ -110,7 +110,7 @@ void ompl::geometric::TRRT::setup() {
     //Autoconfigure the K constant
     if (kConstant_ < std::numeric_limits<double>::epsilon()) {
         //Find the average cost of states by sampling
-        kConstant_ = opt_->averageStateCost(magic::TEST_STATE_COUNT).v;
+        kConstant_ = opt_->averageStateCost(magic::TEST_STATE_COUNT).value();
         OMPL_DEBUG("%s: K constant detected to be %lf",getName().c_str(),kConstant_);
     }
 
@@ -302,7 +302,7 @@ ompl::base::PlannerStatus ompl::geometric::TRRT::solve
 
         //Check if now the tree has a motion inside BoxZos
         if (!stateInBoxZos_) {
-            stateInBoxZos_ = motionCost.v < DBL_EPSILON*motionDistance;
+            stateInBoxZos_ = motionCost.value() < DBL_EPSILON*motionDistance;
             if (stateInBoxZos_) temp_ = initTemperature_;
         }
 
@@ -393,7 +393,7 @@ void ompl::geometric::TRRT::getPlannerData(base::PlannerData &data) const {
 
 bool ompl::geometric::TRRT::transitionTest(base::Cost cost, double distance) {
     //Difference in cost
-    double costSlope = cost.v / distance;
+    double costSlope = cost.value() / distance;
 
     //The probability of acceptance of a new configuration is defined by comparing
     //its motion cost. Based on the Metropolis criterion.
