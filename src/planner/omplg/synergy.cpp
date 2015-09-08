@@ -37,8 +37,11 @@ Synergy::Synergy(const arma::vec barycenter,
                  const arma::vec eigenvalues,
                  const arma::mat eigenvectors) :
     dim(barycenter.n_elem),b(barycenter),a(eigenvalues),U(eigenvectors),
-    covInv(U*solve(diagmat(a%a),U.t())),bb(dot(b,b)),
-    prob(1-erf(bb/sqrt(2.0*as_scalar(b.t()*U*diagmat(a%a)*U.t()*b)))) {
+    cov(U*diagmat(a%a)*U.t()),covInv(U*solve(diagmat(a%a),U.t())),bb(dot(b,b)),
+    prob(1-erf(bb/sqrt(DBL_EPSILON+2.0*as_scalar(b.t()*cov*b)))) {
+
+    std::cout << std::endl << "Prob " << prob << std::endl << std::endl;
+
     //check dimension
     if (eigenvalues.n_elem != dim || eigenvectors.n_cols != dim ||
             eigenvectors.n_rows != dim) {
@@ -197,13 +200,45 @@ double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
 
 double Synergy::alignment(arma::vec x) {
     double xb(dot(x,b));
-    if (fabs(xb) < DBL_EPSILON) return 1.0;
-    arma::vec y(x*bb/xb-b);
-    double c(prob+(1-prob)*SIGN(xb)*exp(-0.5*as_scalar(y.t()*covInv*y)));
+    double c1(2.0*sqrt(as_scalar(x.t()*cov*x))/norm(x)/a[0]-1.0);
+    double c0;
+    if (fabs(xb) < DBL_EPSILON) {
+        c0 = 0;
+    } else {
+        arma::vec y(x*bb/xb-b);
+       c0 = SIGN(xb)*exp(-0.5*as_scalar(y.t()*covInv*y));
+    }
+    double c(prob*c1+(1.0-prob)*c0);
     if (c < -1.0+DBL_EPSILON) return DBL_MAX;
 
-    return sqrt((1.0-c)/(1.0+c))*acos(xb/norm(b)/norm(x))/M_PI;
+    double f(prob+(1.0-prob)*(acos(xb/norm(b)/norm(x))/M_PI*2.0));
+    return sqrt((1.0-c)/(1.0+c))*f;
+    //return sqrt((1.0-c)/(1.0+c))*acos(xb/norm(b)/norm(x))/M_PI;
 }
+
+
+/*double Synergy::alignment(arma::vec x) {
+    arma::vec y(arma::zeros(dim));
+    arma::vec z;
+    double xz;
+    for (unsigned int i = 0; i < dim; ++i) {
+        z = b+a[i]*U.col(i);+
+        xz = dot(x,z);
+        if (xz > 0.0) {
+            y += (a[i]*xz/dot(z,z))*z;
+        }
+    }
+    for (unsigned int i = 0; i < dim; ++i) {
+        z = b-a[i]*U.col(i);
+        xz = dot(x,z);
+        if (xz > 0.0) {
+            y += (a[i]*xz/dot(z,z))*z;
+        }
+    }
+
+    return norm(z)/norm(x)/a[1];
+}*/
+
 
 
 ZeroOrderSynergy::ZeroOrderSynergy(const arma::vec barycenter,

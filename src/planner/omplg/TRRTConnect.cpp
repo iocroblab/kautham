@@ -83,6 +83,9 @@ ompl::geometric::TRRTConnect::TRRTConnect(const base::SpaceInformationPtr &si) :
                                   &TRRTConnect::getFrontierNodeRatio);
     Planner::declareParam<double>("k_constant",this,&TRRTConnect::setKConstant,
                                   &TRRTConnect::getKConstant);
+    
+    tStart_.root = si_->allocState();
+    tGoal_.root = si_->allocState();
 }
 
 
@@ -122,8 +125,6 @@ void ompl::geometric::TRRTConnect::setup() {
         //Find the average cost of states by sampling
         kConstant_ = opt_->averageStateCost(magic::TEST_STATE_COUNT).v;
     }
-
-
 
     //Create the nearest neighbor function the first time setup is run
     if (!tStart_) tStart_.reset(tools::SelfConfig::getDefaultNearestNeighbors<Motion*>
@@ -180,7 +181,7 @@ void ompl::geometric::TRRTConnect::clearTree(TreeData &tree) {
     tree.frontierCount_ = 0;
     tree.costs_.clear();
     tree.sortedCostIndices_.clear();
-    //If opt_ is of type FOSOptimizationObjective, there is a global zer-order box and
+    //If opt_ is of type FOSOptimizationObjective, there is a global zero-order box and
     //then this parameter will be used and initially set to false
     //If opt is of another type, this parameter is set to true to avoid its use
     tree.stateInBoxZos_ = !dynamic_cast<ompl::base::FOSOptimizationObjective*>(opt_.get());
@@ -308,7 +309,7 @@ ompl::geometric::TRRTConnect::extend(TreeData &tree, TreeGrowingInfo &tgi, Motio
 bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
                                            Motion *rmotion) {
     ++connectCount;
-
+unsigned int steps = 0;
     Motion *nmotion;
     if (tree.stateInBoxZos_) {
         //Among the nearest K nodes in the tree, find state with lowest cost to go
@@ -368,7 +369,7 @@ bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
                 preSolveMotionCost(nmotion->state,dstate);
     }
 
-    //Only add this motion to the tree if the transition test accepts
+    //Only add this motion to the tree if the transition test accepts it
     //Temperature must not be updated
     while (transitionTest(cost,d,tree,false)) {
         //Create a motion
@@ -380,6 +381,7 @@ bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
 
         //Add motion to the tree
         tree->add(motion);
+        steps++;
 
         //Check if now the tree has a motion inside BoxZos
         if (!tree.stateInBoxZos_) {
@@ -393,7 +395,10 @@ bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
         ++tree.frontierCount_;//Participates in the tree expansion
 
         //If reached
-        if (dstate == rmotion->state) return true;
+        if (dstate == rmotion->state) {
+       //     std::cout << steps << " steps" << std::endl;
+            return true;
+        }
 
         //Current near motion is the motion just added
         nmotion = motion;
@@ -438,6 +443,7 @@ bool ompl::geometric::TRRTConnect::connect(TreeData &tree, TreeGrowingInfo &tgi,
         }
     }
 
+  //  std::cout << steps << " steps" << std::endl;
     return false;
 }
 
@@ -465,6 +471,7 @@ ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc
 
         //Add motion to the tree
         tStart_->add(motion);
+        si_->copyState(tStart_.root,motion->root);
 
         //Check if now the tree has a motion inside BoxZos
         if (!tStart_.stateInBoxZos_) {
@@ -530,6 +537,7 @@ ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc
 
                 //Add motion to the tree
                 tGoal_->add(motion);
+                si_->copyState(tGoal_.root,motion->root);
 
                 //Check if now the tree has a motion inside BoxZos
                 if (!tGoal_.stateInBoxZos_) {
@@ -550,7 +558,11 @@ ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc
         }
 
         //Sample random state
-        sampler_->sampleUniform(rstate);
+        if (rng_.uniform01() < 0.05) {
+            si_->copyState(rstate,otherTree.root);
+        } else {
+            sampler_->sampleUniform(rstate);
+        }
 
         //Extend tree
         ExtendResult extendResult(extend(tree,tgi,rmotion));
@@ -565,7 +577,9 @@ ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc
             if (extendResult == ADVANCED) si_->copyState(rstate,tgi.xstate);
 
             //Attempt to connect trees
+            otherTree.temp_ *= tempChangeFactor_;
             bool connected(connect(otherTree,tgi,rmotion));
+            otherTree.temp_ /= tempChangeFactor_;
 
             Motion *startMotion(startTree ? tgi.xmotion : addedMotion);
             Motion *goalMotion(startTree ? addedMotion : tgi.xmotion);
@@ -628,6 +642,26 @@ ompl::geometric::TRRTConnect::solve(const base::PlannerTerminationCondition &ptc
     OMPL_INFORM("%s: Average temperature %f ",getName().c_str(),temp/double(iter));
 
     //std::cout << extendCount << " " << connectCount << " " << iter << std::endl;
+
+    double costs(0);
+    std::vector<Motion*> start;
+    tStart_->list(start);
+    for (unsigned int i = 0; i < start.size(); ++i) {
+        if (start.at(i)->parent) {
+            costs += opt_->motionCost(start.at(i)->parent->state,start.at(i)->state).v
+                    /si_->distance(start.at(i)->parent->state,start.at(i)->state);
+        }
+    }
+    std::vector<Motion*> data;
+    tGoal_->list(data);
+    for (unsigned int i = 0; i < data.size(); ++i) {
+        if (data.at(i)->parent) {
+            costs += opt_->motionCost(data.at(i)->state,data.at(i)->parent->state).v
+                    /si_->distance(data.at(i)->parent->state,data.at(i)->state);
+        }
+    }
+    //std::cout << "avg cost " << costs/double(start.size()+data.size()-2) << std::endl;
+
     return solved ? base::PlannerStatus::EXACT_SOLUTION : base::PlannerStatus::TIMEOUT;
 }
 

@@ -80,7 +80,10 @@ protected:
     //! Distance between covariance matrices
     virtual double dRot(const arma::vec xa, const arma::mat Ua) const;
 
-    //! Inverse of the convariance matrix
+    //! Covariance matrix
+    const arma::mat cov;
+
+    //! Inverse of the covariance matrix
     const arma::mat covInv;
 
     //! Square of the norm of b
