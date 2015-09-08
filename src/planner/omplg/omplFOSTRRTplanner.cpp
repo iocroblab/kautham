@@ -158,6 +158,20 @@ bool omplFOSTRRTPlanner::trySolve() {
         ob::Cost pathcost = ss->getProblemDefinition()->getSolutionPath()->cost(opt_);
         cout << "Path cost = " << pathcost.v << endl;
 
+        ompl::base::PlannerData pd(ss->getSpaceInformation());
+        ss->getPlannerData(pd);
+        double costs(0);
+        for (unsigned int i = 0; i < pd.numVertices(); ++i) {
+            for (unsigned int j = 0; j < pd.numVertices(); ++j) {
+                if (pd.edgeExists(i,j)) {
+                    costs += opt_->motionCost(pd.getVertex(i).getState(),pd.getVertex(j).getState()).v
+                            /ss->getSpaceInformation()->distance(pd.getVertex(i).getState(),pd.getVertex(j).getState());
+                }
+            }
+        }
+
+        cout << "avg cost " << costs/double(pd.numEdges()) << std::endl;
+
         return true;
     } else {
         return false;

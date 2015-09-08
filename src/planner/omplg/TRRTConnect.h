@@ -197,6 +197,8 @@ namespace ompl {
                 std::vector<std::size_t> sortedCostIndices_;
 
                 CostIndexCompare *compareFn_;
+
+                base::State *root;
             };
 
             struct TreeGrowingInfo {
