@@ -11,6 +11,7 @@ if(KAUTHAM_OMPL)
    add_executable( KauthamConsole ${SRC_FILES} )
    target_link_libraries( KauthamConsole kautham ${COIN_LIBRARY})
    add_dependencies(KauthamConsole kautham)
+   install(TARGETS KauthamConsole DESTINATION bin)
 endif(KAUTHAM_OMPL)
 
 
