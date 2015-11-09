@@ -149,3 +149,4 @@ target_link_libraries(kautham ${EXTRA_LIBS} ${Boost_LIBRARIES} )
 #
 # 			${EXTRA_LIBS})
 
+install(TARGETS kautham DESTINATION ${CMAKE_INSTALL_LIBDIR})
