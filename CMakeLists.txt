@@ -16,8 +16,8 @@ option( KAUTHAM_IOC "Use IOC planners" ON )
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
-option( KAUTHAM_ROS "Build the ROS version" OFF )
-option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
+option( KAUTHAM_ROS "Build the ROS version" ON )
+option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" OFF)
 
 ########### Set flags ####################
 message( STATUS "Using this flags ........")
