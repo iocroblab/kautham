@@ -27,7 +27,7 @@
 
 #include "ivelement.h"
 #include <util/kthutil/kauthamexception.h>
-#include "assimp.h"
+#include "assimpImport.h"
 #include <boost/algorithm/string.hpp>
 #if  defined(KAUTHAM_USE_ARMADILLO)
 #include <armadillo>
@@ -89,7 +89,7 @@ namespace Kautham {
             }
         } else {
             //Try to open the file with the assimp library
-            vector<string> assimpExtensions = assimpSupportedExtensions();
+            vector<string> assimpExtensions = assimpImportedExtensions();
             bool found = false;
             for (unsigned i = 0; i < assimpExtensions.size(); ++i) {
                 if (boost::iequals(extension,assimpExtensions.at(i))) {
@@ -99,7 +99,7 @@ namespace Kautham {
             }
             if (found) {
                 try {
-                    read = ivFromAssimp(file);
+                    read = importScene(file);
                 } catch (...) {
                     string message = "Model file " + file + " couldn't be loaded";
                     throw KthExcp(message);
