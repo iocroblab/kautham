@@ -43,7 +43,7 @@
 #include <locale.h>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include "urdf.h"
-#include "assimp.h"
+#include "assimpImport.h"
 
 /*
 #if defined(KAUTHAM_USE_GUIBRO)

@@ -22,10 +22,17 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
+#ifndef ASSIMP_IMPORT_H
+#define ASSIMP_IMPORT_H
+
 #include <Inventor/nodes/SoSeparator.h>
 #include <string>
 #include <vector>
 
-SoSeparator* ivFromAssimp(std::string file);
-std::vector<std::string> assimpSupportedExtensions();
-std::vector< std::pair< std::string,std::vector<std::string> > > assimpSupportedFormats();
+SoSeparator* importScene(const std::string &filename, std::string *const error = NULL);
+
+std::vector<std::string> assimpImportedExtensions();
+
+std::vector<std::pair<std::string,std::vector<std::string> > > assimpImportedFormats();
+
+#endif // ASSIMP_IMPORT_H
