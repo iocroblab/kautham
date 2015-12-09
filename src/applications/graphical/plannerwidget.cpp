@@ -21,7 +21,7 @@
  \*************************************************************************/
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
- 
+
 #include "plannerwidget.h"
 #include "gui.h"
 #include <sampling/se3conf.h>
@@ -217,28 +217,28 @@ namespace Kautham {
         if (_planner != NULL) {
             switch ((int)_planner->getFamily()) {
 #if defined(KAUTHAM_USE_IOC)
-            case IOCPLANNER:
-                tryConnectIOC();
+                case IOCPLANNER:
+                    tryConnectIOC();
                 break;
 #endif
 #if defined(KAUTHAM_USE_OMPL)
-            case OMPLPLANNER:
-                tryConnectOMPL();
+                case OMPLPLANNER:
+                    tryConnectOMPL();
                 break;
-            case OMPLCPLANNER:
-                tryConnectOMPLC();
+                case OMPLCPLANNER:
+                    tryConnectOMPLC();
                 break;
 #if defined(KAUTHAM_USE_ODE)
-            case ODEPLANNER:
-                tryConnectODE();
+                case ODEPLANNER:
+                    tryConnectODE();
                 break;
 #endif
 #endif
-            case NOFAMILY:
-                writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+                case NOFAMILY:
+                    writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
                 break;
-            default:
-                writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+                default:
+                    writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
                 break;
             }
         } else {
@@ -349,28 +349,28 @@ namespace Kautham {
         if (_planner != NULL) {
             switch ((int)_planner->getFamily()) {
 #if defined(KAUTHAM_USE_IOC)
-            case IOCPLANNER:
-                saveDataIOC();
+                case IOCPLANNER:
+                    saveDataIOC();
                 break;
 #endif
 #if defined(KAUTHAM_USE_OMPL)
-            case OMPLPLANNER:
-                saveDataOMPL();
+                case OMPLPLANNER:
+                    saveDataOMPL();
                 break;
-            case OMPLCPLANNER:
-                saveDataOMPLC();
+                case OMPLCPLANNER:
+                    saveDataOMPLC();
                 break;
 #if defined(KAUTHAM_USE_ODE)
-            case ODEPLANNER:
-                saveDataODE();
+                case ODEPLANNER:
+                    saveDataODE();
                 break;
 #endif
 #endif
-            case NOFAMILY:
-                writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+                case NOFAMILY:
+                    writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
                 break;
-            default:
-                writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
+                default:
+                    writeGUI("The planner is not configured properly!!. Something is wrong with your application.");
                 break;
             }
         } else {
@@ -402,143 +402,37 @@ namespace Kautham {
             sendText(QString("Kautham is saving a planner data in a file: "+filePath).toUtf8().constData());
             QFile file(filePath);
             if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-                /*stringstream sstr;
-                ((omplplanner::omplPlanner*)_planner)->SimpleSetup()->getSolutionPath().print(sstr);
-                QTextStream out(&file);
-                out << sstr.str().c_str();
-                stringstream sstr2;
-                ((omplplanner::omplPlanner*)_planner)->SimpleSetup()->getSolutionPath().printAsMatrix(sstr2);
-                out << endl << sstr2.str().c_str();
-*/
-                //get the first subspace
-                int numrob = 0;
-                og::SimpleSetupPtr ss = ((omplplanner::omplPlanner*)_planner)->SimpleSetupPtr();
-                ob::StateSpacePtr space = ss->getStateSpace();
-                ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(numrob));
-                ob::StateSpacePtr ssRobotifirst =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
-
-                //space bounds
-                int k = ssRobotifirst->as<ob::SE3StateSpace>()->getDimension();
-
-                KthReal x,y,z;
-                //load the planner data to be drawn
-                ob::PlannerDataPtr pdata;
-                pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
-                ss->getPlanner()->getPlannerData(*pdata);
-
-                if(ss->getPlanner()->getProblemDefinition()->hasOptimizationObjective())
-                    pdata->computeEdgeWeights( *ss->getPlanner()->getProblemDefinition()->getOptimizationObjective() );
-                else
-                    pdata->computeEdgeWeights();
-
-
-                //Use the projection associated to the subspace of the robot index passed as a parameter.
-                string projname = "drawprojection"; //
-                string robotnumber = static_cast<ostringstream*>( &(ostringstream() << numrob) )->str();//the string correspoding to number numrob
-                projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
-                ob::ProjectionEvaluatorPtr projToUse = space->getProjection(projname.c_str());
-
                 stringstream sstr;
-
-
-                if(_planner->isSolved())
-                {
-                    //////////////////////////////////
-                    ///PATH
-                    //////////////////////////////////
-                    sstr << "%PATH:" << endl;
-                    sstr << "path = [ ... " << endl;
-
-                    //get the states of the solution path
-                    std::vector< ob::State * > & pathstates = ss->getSolutionPath().getStates();
-
-                    //loop for all the states of the solution path
-                    for(unsigned int i=0; i<ss->getSolutionPath().getStateCount()-1; i++)
-                    {
-                        //initial edgepoint
-                        ob::EuclideanProjection projection(k);
-                        //space->getProjection("drawprojection")->project(pathstates[i], projection);
-                        projToUse->project(pathstates[i], projection);
-                        x=projection[0];
-                        y=projection[1];
-                        z=projection[2];
-
-                        sstr << "[" << x << " " << y << " " << z << " ";
-
-                        //final edgepoint
-                        //space->getProjection("drawprojection")->project(pathstates[i+1], projection);
-                        projToUse->project(pathstates[i+1], projection);
-                        x=projection[0];
-                        y=projection[1];
-                        z=projection[2];
-
-                        sstr << x << " " << y << " " << z << "]; ..." << endl;
-                    }
-
-                    sstr << "];" << endl;
-                }
-
-                //////////////////////////////////
-                ///VERTICES
-                //////////////////////////////////
-
-                sstr << "%VERTICES:" << endl;
-                sstr << "vertex = [ ... " << endl;
-
-                //loop for all vertices of the roadmap or tree
-                for(unsigned int i=0;i<pdata->numVertices();i++)
-                {
-                    ob::EuclideanProjection projection(k);
-                    projToUse->project(pdata->getVertex(i).getState(), projection);
-
-                    x = projection[0];
-                    y = projection[1];
-                    z = projection[2];
-
-                    sstr << "[" << x << " " << y << " " << z << "]; ..." << endl;
-                }
-                sstr << "];" << endl;
-
-                //////////////////////////////////
-                ///EDGES
-                //////////////////////////////////
-
-                sstr << "%EDGES:" << endl;
-                sstr << "edge = [ ... " << endl;
-
-                int numOutgoingEdges;
-                std::vector< unsigned int > outgoingVertices;
-                //loop for all nodes
-                for(unsigned int i=0;i<pdata->numVertices();i++)
-                {
-                    numOutgoingEdges = pdata->getEdges (i, outgoingVertices);
-
-                    //for each node loop for all the outgoing edges
-                    for ( int j=0; j<numOutgoingEdges; j++ )
-                    {
-                        //initial edgepoint
-                        float x1,y1,x2,y2,z1,z2;
-                        ob::EuclideanProjection projection(k);
-                        //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-                        projToUse->project(pdata->getVertex(i).getState(), projection);
-                        x1=projection[0];
-                        y1=projection[1];
-                        z1=projection[2];
-
-                        sstr << "[" << x1 << " " << y1 << " " << z1 << " ";
-
-                        //final edgepoint
-                        //space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                        projToUse->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                        x2=projection[0];
-                        y2=projection[1];
-                        z2=projection[2];
-
-                        sstr << x2 << " " << y2 << " " << z2 << "]; ..." << endl;
+                if (_planner->isSolved()) {
+                    Sample sample(((omplplanner::omplPlanner*)_planner)->initSamp()->getDim());
+                    sample.setMappedConf(((omplplanner::omplPlanner*)_planner)->initSamp()->getMappedConf());
+                    std::vector<ob::State*> &states(((omplplanner::omplPlanner*)_planner)->
+                                                    SimpleSetup()->getSolutionPath().getStates());
+                    for (std::vector<ob::State*>::iterator state(states.begin());
+                         state != states.end(); ++state) {
+                        ((omplplanner::omplPlanner*)_planner)->omplState2smp(*state,&sample);
+                        for (std::vector<RobConf>::iterator robConf(sample.getMappedConf().begin());
+                             robConf != sample.getMappedConf().end(); ++robConf) {
+                            for (std::vector<float>::iterator coord(robConf->getSE3().getCoordinates().begin());
+                                 coord != robConf->getSE3().getCoordinates().end(); ++coord) {
+                                sstr << *coord << " ";
+                            }
+                            for (std::vector<float>::iterator coord(robConf->getRn().getCoordinates().begin());
+                                 coord != robConf->getRn().getCoordinates().end(); ++coord) {
+                                sstr << *coord;
+                                std::vector<float>::iterator it1(coord);
+                                it1++;
+                                std::vector<RobConf>::iterator it2(robConf);
+                                it2++;
+                                if ((it1 != robConf->getRn().getCoordinates().end()) ||
+                                        (it2 != sample.getMappedConf().end())) {
+                                    sstr << " ";
+                                }
+                            }
+                        }
+                        sstr << endl;
                     }
                 }
-                sstr << "];";
-
 
                 QTextStream out(&file);
                 out << sstr.str().c_str();
@@ -639,7 +533,7 @@ namespace Kautham {
         // It moves the camera if the associated planner provides the
         // transformation information of the camera
         //if( chkCamera && chkCamera->isChecked() && _planner->getCameraMovement(_stepSim) != NULL ) {
-            //_gui->setActiveCameraTransform(*_planner->getCameraMovement( _stepSim ));
+        //_gui->setActiveCameraTransform(*_planner->getCameraMovement( _stepSim ));
         //}
 
         _stepSim += _planner->getSpeedFactor();
