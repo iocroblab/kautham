@@ -924,17 +924,14 @@ SoSeparator *omplPlanner::getIvCspaceScene()
 void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
     if (!_sceneCspace) return;
 
-
     //Delete whatever is already drawn
     while (_sceneCspace->getNumChildren() > 0) {
         _sceneCspace->removeChild(0);
     }
 
-
     //Get the subspace
     ob::StateSpacePtr stateSpace(space->as<ob::CompoundStateSpace>()->getSubspace(robot)->
                                  as<ob::CompoundStateSpace>()->getSubspace(link));
-
 
     //Set space bounds
     unsigned int k;
@@ -964,148 +961,170 @@ void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
         }
     }
 
-
     //Use the projection associated to the subspace of the robot passed as a parameter.
-    string projectionName = "drawprojection" + static_cast<ostringstream*>
-            (&(ostringstream() << robot))->str();
+    string projectionName("drawprojection" + static_cast<ostringstream*>
+                          (&(ostringstream() << robot))->str());
     ob::ProjectionEvaluatorPtr projection(space->getProjection(projectionName));
     ob::EuclideanProjection state(k);
 
+    //Load the planner data to be drawn
+    ob::PlannerDataPtr pdata(new ob::PlannerData(ss->getSpaceInformation()));
+    ss->getPlanner()->getPlannerData(*pdata);
+    if (ss->getPlanner()->getProblemDefinition()->hasOptimizationObjective()) {
+        //Compute the weight for all edges given the OptimizationObjective
+        pdata->computeEdgeWeights(*ss->getPlanner()->getProblemDefinition()->
+                                  getOptimizationObjective());
+    } else {
+        //Compute all edge weights using state space distance
+        pdata->computeEdgeWeights();
+    }
+
+    //Draw tree
+    float vertices[pdata->numVertices()][3];
+    float startVertices[pdata->numStartVertices()][3];
+    float goalVertices[pdata->numGoalVertices()][3];
+    float otherVertices[pdata->numVertices()-pdata->numStartVertices()-pdata->numGoalVertices()][3];
+    int32_t coordIndices[3*pdata->numEdges()];
+    int32_t edgeColorIndices[pdata->numEdges()];
+    unsigned int j(0), ls(0), lg(0), lo(0);
+    for (unsigned int i = 0; i < pdata->numVertices(); ++i) {
+        projection->project(pdata->getVertex(i).getState(),state);
+
+        vertices[i][0] = state[0];
+        vertices[i][1] = state[1];
+        vertices[i][2] = ((k > 2)? state[2] : 0.0);
+
+        if (pdata->isStartVertex(i)) {
+            startVertices[ls][0] = vertices[i][0];
+            startVertices[ls][1] = vertices[i][1];
+            startVertices[ls][2] = vertices[i][2];
+            ls++;
+        } else if (pdata->isGoalVertex(i)) {
+            goalVertices[lg][0] = vertices[i][0];
+            goalVertices[lg][1] = vertices[i][1];
+            goalVertices[lg][2] = vertices[i][2];
+            lg++;
+        } else {
+            otherVertices[lo][0] = vertices[i][0];
+            otherVertices[lo][1] = vertices[i][1];
+            otherVertices[lo][2] = vertices[i][2];
+            lo++;
+        }
+
+        std::vector<unsigned int> outgoingVertices;
+        pdata->getEdges(i,outgoingVertices);
+        for (std::vector<unsigned int>::const_iterator it(outgoingVertices.begin());
+             it != outgoingVertices.end(); ++it) {
+            coordIndices[3*j+0] = i;
+            coordIndices[3*j+1] = *it;
+            coordIndices[3*j+2] = SO_END_LINE_INDEX;
+
+            ob::Cost edgeWeight;
+            pdata->getEdgeWeight(i,*it,&edgeWeight);
+
+            edgeColorIndices[j] = pdata->getVertex(i).getTag();
+
+            j++;
+        }
+    }
+
+    SoDrawStyle *drawStyle(new SoDrawStyle);
+    drawStyle->lineWidth = 1;
+    drawStyle->pointSize = 3;
+
+    SoVertexProperty *vertexProperty(new SoVertexProperty);
+    vertexProperty->vertex.setValues(0,pdata->numVertices(),vertices);
+    uint32_t edgeColors[3] = {SbColor(0,1,0.8).getPackedValue(),
+                              SbColor(0,1,0.2).getPackedValue(),
+                              SbColor(0,0.6,1).getPackedValue()};
+    vertexProperty->orderedRGBA.setValues(0,3,edgeColors);
+    vertexProperty->materialBinding.setValue(SoVertexProperty::PER_FACE_INDEXED);
+
+    SoIndexedLineSet *lineSet(new SoIndexedLineSet);
+    lineSet->coordIndex.setValues(0,3*pdata->numEdges(),coordIndices);
+    lineSet->vertexProperty.setValue(vertexProperty);
+    lineSet->materialIndex.setValues(0,pdata->numEdges(),edgeColorIndices);
+
+    SoSeparator *lines(new SoSeparator);
+    lines->setName("Edges");
+    lines->addChild(drawStyle);
+    lines->addChild(lineSet);
+
+    _sceneCspace->addChild(lines);
+
+    vertexProperty = new SoVertexProperty;
+    vertexProperty->vertex.setValues(0,pdata->numVertices()-pdata->numStartVertices()-
+                                     pdata->numGoalVertices(),otherVertices);
+    vertexProperty->orderedRGBA.setValue(SbColor(1,1,1).getPackedValue());
+
+    SoPointSet *pointSet(new SoPointSet);
+    pointSet->vertexProperty.setValue(vertexProperty);
+
+    SoSeparator *points(new SoSeparator);
+    points->setName("NormalVertices");
+    points->addChild(drawStyle);
+    points->addChild(pointSet);
+
+    _sceneCspace->addChild(points);
 
     //Draw path
     if (_solved) {
         SoDrawStyle *drawStyle(new SoDrawStyle);
         drawStyle->lineWidth = 4.;
 
-        std::vector<ob::State*> &pathStates(ss->getSolutionPath().getStates());
-        float vertices[pathStates.size()][3];
-        for (unsigned int i = 0; i < pathStates.size(); ++i) {
-            projection->project(pathStates.at(i),state);
+        std::vector<ob::State*> &states(ss->getSolutionPath().getStates());
+        float vertices[states.size()][3];
+        for (unsigned int i = 0; i < states.size(); ++i) {
+            projection->project(states.at(i),state);
 
             vertices[i][0] = state[0];
             vertices[i][1] = state[1];
-            if (k > 2) {
-                vertices[i][2] = state[2];
-            } else {
-                vertices[i][2] = 0.;
-            }
+            vertices[i][2] = ((k > 2)? state[2] : 0.0);
         }
 
         SoVertexProperty *vertexProperty(new SoVertexProperty);
-        vertexProperty->vertex.setValues(0,pathStates.size(),vertices);
-        vertexProperty->orderedRGBA.setValue(SbColor(1.,0.,0.5).getPackedValue());
-        vertexProperty->materialBinding.setValue(SoVertexProperty::OVERALL);
+        vertexProperty->vertex.setValues(0,states.size(),vertices);
+        vertexProperty->orderedRGBA.setValue(SbColor(1,0,0.2).getPackedValue());
 
         SoLineSet *lineSet(new SoLineSet);
         lineSet->vertexProperty.setValue(vertexProperty);
 
         SoSeparator *path(new SoSeparator);
+        path->setName("Path");
         path->addChild(drawStyle);
         path->addChild(lineSet);
 
         _sceneCspace->addChild(path);
     }
 
+    points = new SoSeparator;
+    points->setName("SpecialVertices");
 
-    //Load the planner data to be drawn
-    ob::PlannerDataPtr pdata(new ob::PlannerData(ss->getSpaceInformation()));
-    ss->getPlanner()->getPlannerData(*pdata);
-    if (ss->getPlanner()->getProblemDefinition()->hasOptimizationObjective()) {
-        pdata->computeEdgeWeights(*ss->getPlanner()->getProblemDefinition()->getOptimizationObjective());
-    } else {
-        pdata->computeEdgeWeights();
-    }
-
-
-    //Draw tree
-    SoDrawStyle *drawStyle(new SoDrawStyle);
-    drawStyle->lineWidth = 1.;
-    drawStyle->pointSize = 3.;
-
-    bool bidirectional = (_idName == "omplRRTConnect") || (_idName == "omplTRRTConnect") ||
-            (_idName == "omplFOSTRRTConnect");
-    int32_t materialIndices[pdata->numEdges()];
-    float vertices[pdata->numVertices()][3];
-    int32_t coordIndices[3*pdata->numEdges()];
-    std::vector<unsigned int> outgoingVertices;
-    unsigned int j = 0;
-    for (unsigned int i = 0; i < pdata->numVertices(); ++i) {
-        projection->project(pdata->getVertex(i).getState(),state);
-
-        vertices[i][0] = state[0];
-        vertices[i][1] = state[1];
-        if (k > 2) {
-            vertices[i][2] = state[2];
-        } else {
-            vertices[i][2] = 0.;
-        }
-
-        pdata->getEdges(i,outgoingVertices);
-        for (std::vector<unsigned int>::const_iterator it = outgoingVertices.begin();
-             it != outgoingVertices.end(); ++it) {
-            coordIndices[3*j+0] = i;
-            coordIndices[3*j+1] = *it;
-            coordIndices[3*j+2] = SO_END_LINE_INDEX;
-
-            //ob::Cost edgeWeight;
-            //pdata->getEdgeWeight(i,*it,&edgeWeight);
-
-            if (bidirectional) {
-                //Start tree vertices have tag = 1,goal tree vertices tag = 2 and the connection point tag = 0
-                if (pdata->getVertex(i).getTag() == 0) {
-                    materialIndices[j] = pdata->getVertex(*it).getTag()-1;
-                } else {
-                    materialIndices[j] = pdata->getVertex(i).getTag()-1;
-                }
-            }
-
-            j++;
-        }
-    }
-
-    SoVertexProperty *vertexProperty(new SoVertexProperty);
-    vertexProperty->vertex.setValues(0,pdata->numVertices(),vertices);
-    vertexProperty->orderedRGBA.setValue(SbColor(1.,1.,1.f).getPackedValue());
-    vertexProperty->materialBinding.setValue(SoVertexProperty::OVERALL);
-
-    SoPointSet *pointSet(new SoPointSet);
-    pointSet->vertexProperty.setValue(vertexProperty);
-
-    SoSeparator *points(new SoSeparator);
+    drawStyle = new SoDrawStyle;
+    drawStyle->pointSize = 5;
     points->addChild(drawStyle);
+
+    vertexProperty = new SoVertexProperty;
+    vertexProperty->vertex.setValues(0,pdata->numStartVertices(),startVertices);
+    vertexProperty->orderedRGBA.setValue(SbColor(0.6,0,1).getPackedValue());
+
+    pointSet = new SoPointSet;
+    pointSet->vertexProperty.setValue(vertexProperty);
+    points->addChild(pointSet);
+
+    vertexProperty = new SoVertexProperty;
+    vertexProperty->vertex.setValues(0,pdata->numGoalVertices(),goalVertices);
+    vertexProperty->orderedRGBA.setValue(SbColor(1,1,0).getPackedValue());
+
+    pointSet = new SoPointSet;
+    pointSet->vertexProperty.setValue(vertexProperty);
     points->addChild(pointSet);
 
     _sceneCspace->addChild(points);
 
-    vertexProperty = new SoVertexProperty;
-    vertexProperty->vertex.setValues(0,pdata->numVertices(),vertices);
-    if (bidirectional) {
-        uint32_t colors[2] = {SbColor(0.,1.,0.).getPackedValue(),SbColor(0.,0.5,1.).getPackedValue()};
-        vertexProperty->orderedRGBA.setValues(0,2,colors);
-        vertexProperty->materialBinding.setValue(SoVertexProperty::PER_FACE_INDEXED);
-    } else {
-        vertexProperty->orderedRGBA.setValue(SbColor(0.,1.,0.).getPackedValue());
-        vertexProperty->materialBinding.setValue(SoVertexProperty::OVERALL);
-    }
-
-    SoIndexedLineSet *lineSet(new SoIndexedLineSet);
-    lineSet->coordIndex.setValues(0,3*pdata->numEdges(),coordIndices);
-    lineSet->vertexProperty.setValue(vertexProperty);
-    if (bidirectional) {
-        lineSet->materialIndex.setValues(0,pdata->numEdges(),materialIndices);
-    }
-
-    SoSeparator *lines(new SoSeparator);
-    lines->addChild(drawStyle);
-    lines->addChild(lineSet);
-
-    _sceneCspace->addChild(lines);
-
-
     //Draw bounds
     SoMaterial *material(new SoMaterial);
-    material->diffuseColor.setValue(0.2,0.2,0.2);
-    material->transparency.setValue(0.3);
+    material->transparency.setValue(0.8);
 
     SoTranslation *translation(new SoTranslation);
     translation->translation.setValue((xmax+xmin)/2.,(ymax+ymin)/2.,(zmax+zmin)/2.);
@@ -1116,6 +1135,7 @@ void omplPlanner::drawCspace(unsigned int robot, unsigned int link) {
     cube->depth = zmax-zmin;
 
     SoSeparator *bounds(new SoSeparator);
+    bounds->setName("Bounds");
     bounds->addChild(material);
     bounds->addChild(translation);
     bounds->addChild(cube);
