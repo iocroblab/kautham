@@ -108,13 +108,13 @@ namespace Kautham {
             r=tmpSamInit->getCoords()[i]*_stepsDiscretization[i];
             indexinit += (gridVertex)(stepd*r);
         }
-        _goal=_samples->getSampleAt(indexgoal);
-        if(_wkSpace->collisionCheck(_goal)==true)
+        setGoalSamp(_samples->getSampleAt(indexgoal));
+        if (_wkSpace->collisionCheck(_goal.at(0)))
             cout<<"Goal sample is in collision"<<endl;
         else
             cout<<"GOAL sample must be set to sample number "<< indexgoal <<endl;
-        _init=_samples->getSampleAt(indexinit);
-        if(_wkSpace->collisionCheck(_init) == true)
+        setInitSamp(_samples->getSampleAt(indexinit));
+        if (_wkSpace->collisionCheck(_init.at(0)))
             cout<<"Init sample is in collision"<<endl;
         else
             cout<<"INIT sample must be set to sample number "<< indexinit <<endl;
@@ -331,14 +331,14 @@ namespace Kautham {
                 r=tmpSamInit->getCoords()[i]*_stepsDiscretization[i];
                 indexinit += (gridVertex)(stepd*r);
             }
-            _goal=_samples->getSampleAt(indexgoal);
-            if(_wkSpace->collisionCheck(_goal)==true)
+            setGoalSamp(_samples->getSampleAt(indexgoal));
+            if(_wkSpace->collisionCheck(_goal.at(0)))
                 cout<<"Goal sample is in collision"<<endl;
             else
                 cout<<"GOAL sample must be set to sample number "<< indexgoal <<endl;
 
-            _init=_samples->getSampleAt(indexinit);
-            if(_wkSpace->collisionCheck(_init) == true)
+            setInitSamp(_samples->getSampleAt(indexinit));
+            if(_wkSpace->collisionCheck(_init.at(0)))
                 cout<<"Init sample is in collision"<<endl;
             else
                 cout<<"INIT sample must be set to sample number "<< indexinit <<endl;

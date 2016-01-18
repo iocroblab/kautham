@@ -317,8 +317,8 @@
 
  	bool PRMAUROHandArmPlanner::trySolve()
 	{
-		_wkSpace->collisionCheck(_init);
-		_wkSpace->collisionCheck(_goal);
+        _wkSpace->collisionCheck(_init.at(0));
+        _wkSpace->collisionCheck(_goal.at(0));
 
 		_neighThress = goalSamp()->getDistance(initSamp(), CONFIGSPACE) *4;//  / 4;
 //			cout<<"...._neighThress = "<<_neighThress<<endl<<flush;

@@ -92,8 +92,8 @@ namespace Kautham {
 			
 			_path.clear();
 			clearSimulationPath();
-			_path.push_back(_init);
-			_path.push_back(_goal);
+            _path.push_back(_init.at(0));
+            _path.push_back(_goal.at(0));
 			_solved = true;
 			return _solved;
 			

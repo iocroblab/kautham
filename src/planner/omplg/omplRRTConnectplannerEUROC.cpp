@@ -102,7 +102,7 @@ namespace Kautham {
     bool omplRRTConnectPlannerEUROC::trySolve()//reimplemented
     {
         //if filter eliminates init or goal, then do not activate the filter!!
-        if(filtersample(_init) || filtersample(_goal))
+        if(filtersample(_init.at(0)) || filtersample(_goal.at(0)))
         {
             //disable filtersample
             std::cout<<"Disabling filtering because either init or goal do not satisfy filter restrictions\n";
@@ -145,15 +145,12 @@ namespace Kautham {
 
         //If init and goal have J2 and J4 in the same halve ranges then
         //all samples shouuld also have this way
-        if(_init->getCoords()[3]>0.5 && _goal->getCoords()[3]>0.5 && _init->getCoords()[5]<0.5 && _goal->getCoords()[5]<0.5 )
-        {
-            if(smp->getCoords()[3]<0.5) return true;//do not match, then filter
-            else if(smp->getCoords()[5]>0.5) return true;//do not match,then filter
-        }
-        else if(_init->getCoords()[3]<0.5 && _goal->getCoords()[3]<0.5 && _init->getCoords()[5]>0.5 && _goal->getCoords()[5]>0.5 )
-        {
-            if(smp->getCoords()[3]>0.5) return true;//do not match, then filter
-            else if(smp->getCoords()[5]<0.5) return true;//do not match,then filter
+        if(_init.at(0)->getCoords()[3]>0.5 && _goal.at(0)->getCoords()[3]>0.5 &&
+                _init.at(0)->getCoords()[5]<0.5 && _goal.at(0)->getCoords()[5]<0.5) {
+            if (smp->getCoords()[3]<0.5 || smp->getCoords()[5]>0.5) return true;//do not match,then filter
+        } else if(_init.at(0)->getCoords()[3]<0.5 && _goal.at(0)->getCoords()[3]<0.5 &&
+                _init.at(0)->getCoords()[5]>0.5 && _goal.at(0)->getCoords()[5]>0.5) {
+            if (smp->getCoords()[3]>0.5 || smp->getCoords()[5]<0.5) return true;//do not match,then filter
         }
         //else continue...
 
