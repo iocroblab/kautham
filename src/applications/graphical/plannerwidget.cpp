@@ -98,6 +98,7 @@ namespace Kautham {
         tmpLabel = new QLabel(this);
         tmpLabel->setText("Init configuration is the sample:");
         globalFromBox = new QSpinBox(this);
+        globalFromBox->setEnabled(_samples->getNumStarts() == 1);
 
         hboxLayout = new QHBoxLayout();
         hboxLayout->addWidget(tmpLabel);
@@ -107,6 +108,7 @@ namespace Kautham {
         tmpLabel = new QLabel(this);
         tmpLabel->setText("Goal configuration is the sample:");
         globalToBox = new QSpinBox(this);
+        globalToBox->setEnabled(_samples->getNumGoals() == 1);
 
         hboxLayout = new QHBoxLayout();
         hboxLayout->addWidget(tmpLabel);
@@ -332,15 +334,34 @@ namespace Kautham {
 
     void PlannerWidget::getPath() {
         emit changeCursor(true);
-        moveButton->setEnabled(false);
-        if (_planner != NULL ) {
+
+        bool result (false);
+        if (_planner) {
             _planner->wkSpace()->moveObstaclesTo(_planner->wkSpace()->getInitObsSample());
-            _planner->setInitSamp(_samples->getSampleAt(globalFromBox->text().toInt()));
-            _planner->setGoalSamp(_samples->getSampleAt(globalToBox->text().toInt()));
-            bool result = _planner->solveAndInherit();
-            moveButton->setEnabled(result);
-            btnSaveData->setEnabled(result);
+
+            if (_samples->getNumStarts() == 1) {
+                _planner->setInitSamp(_samples->getSampleAt(globalFromBox->text().toInt()));
+            } else {
+                _planner->clearInitSamp();
+                for (std::size_t i(0); i < _samples->getNumStarts(); ++i) {
+                    _planner->addInitSamp(_samples->getStart(i));
+                }
+            }
+
+            if (_samples->getNumGoals() == 1) {
+                _planner->setGoalSamp(_samples->getSampleAt(globalToBox->text().toInt()));
+            } else {
+                _planner->clearGoalSamp();
+                for (std::size_t i(0); i < _samples->getNumGoals(); ++i) {
+                    _planner->addGoalSamp(_samples->getGoal(i));
+                }
+            }
+
+            result = _planner->solveAndInherit();
         }
+        moveButton->setEnabled(result);
+        btnSaveData->setEnabled(result);
+
         emit changeCursor(false);
     }
 
