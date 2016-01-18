@@ -504,8 +504,8 @@ namespace Kautham {
           {
             _samples->add(smp);
             double r=rgen->d_rand();
-            if(r < _probabilityConnectionIniGoal) connectLastSample(_init);
-            else if(r < 2*_probabilityConnectionIniGoal) connectLastSample(_goal);
+            if(r < _probabilityConnectionIniGoal) connectLastSample(_init.at(0));
+            else if(r < 2*_probabilityConnectionIniGoal) connectLastSample(_goal.at(0));
             else connectLastSample();
             if( findPath() )
             {
@@ -538,15 +538,15 @@ namespace Kautham {
     {
         _solved = false;
 
-        if(_init->getConnectedComponent() != _goal->getConnectedComponent()) return false;
+        if(_init.at(0)->getConnectedComponent() != _goal.at(0)->getConnectedComponent()) return false;
 
 
         clearSimulationPath();
         shortest_path.clear(); //path as a vector of prmvertex
         _path.clear();//path as a vector of samples
 
-        prmVertex start = _samples->indexOf(_init);
-        prmVertex  goal = _samples->indexOf(_goal);
+        prmVertex start = _samples->indexOf(_init.at(0));
+        prmVertex  goal = _samples->indexOf(_goal.at(0));
 
         //vector to store the parent information of each vertex
         vector<prmGraph::vertex_descriptor> p(num_vertices(*g));

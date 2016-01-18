@@ -52,10 +52,16 @@ namespace Kautham {
        inline virtual bool           filtersample(Sample* smp){return false;}
        inline string                 getIDName(){return _idName;}
        inline void                   setSampleSet(SampleSet* smpSet){_samples = smpSet;}
-       inline Sample*                initSamp(){return _init;}
-       inline Sample*                goalSamp(){return _goal;}
-       inline void                   setInitSamp(Sample* init){_init = init;}
-       inline void                   setGoalSamp(Sample* goal){_goal = goal;}
+       inline Sample*                initSamp(std::size_t index = 0) {return _init.at(index);}
+       inline Sample*                goalSamp(std::size_t index = 0) {return _goal.at(index);}
+       inline std::size_t            getNumInitSamp() {return _init.size();}
+       inline std::size_t            getNumGoalSamp() {return _goal.size();}
+       inline void                   setInitSamp(Sample* init) {_init.clear(); _init.push_back(init);}
+       inline void                   setGoalSamp(Sample* goal) {_goal.clear(); _goal.push_back(goal);}
+       inline void                   addInitSamp(Sample* init) {_init.push_back(init);}
+       inline void                   addGoalSamp(Sample* goal) {_goal.push_back(goal);}
+       inline void                   clearInitSamp() {_init.clear();}
+       inline void                   clearGoalSamp() {_goal.clear();}
        inline WorkSpace*             wkSpace(){return _wkSpace;}
        inline void                   setWorkSpace(WorkSpace *ws){_wkSpace = ws;}
        inline vector<Sample*>*       getPath(){if(_solved)return &_path;else return NULL;}
@@ -83,8 +89,8 @@ namespace Kautham {
        Planner();
        std::string                   _idName;
        SampleSet*                    _samples;
-       Sample*                       _init;
-       Sample*                       _goal;
+       vector<Sample*>               _init;
+       vector<Sample*>               _goal;
        vector<Sample*>               _path;
        vector<vector<vector<KthReal> > >  _StateBodies;
        vector<Sample*>               _simulationPath;
