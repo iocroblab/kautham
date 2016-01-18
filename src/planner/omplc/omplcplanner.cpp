@@ -38,6 +38,7 @@
 #include <ompl/base/PlannerStatus.h>
 #include <ompl/base/StateSpace.h>
 #include <ompl/base/spaces/SO3StateSpace.h>
+#include <ompl/base/goals/GoalStates.h>
 
 
 #include <Inventor/nodes/SoTransform.h>
@@ -938,21 +939,31 @@ namespace Kautham {
 	//! function to find a solution path
     bool omplcPlanner::trySolve()
     {
-        //Start state: convert from smp to scoped state
-        ob::ScopedState<ob::CompoundStateSpace> startompl(space);
-        smp2omplScopedState(_init, &startompl);
-        cout<<"startompl:"<<endl;
-        startompl.print();
+        //Add start states
+        ss->clearStartStates();
+        for (std::vector<Sample*>::const_iterator start(_init.begin());
+             start != _init.end(); ++start) {
+            //Start state: convert from smp to scoped state
+            ob::ScopedState<ob::CompoundStateSpace> startompl(space);
+            smp2omplScopedState(*start,&startompl);
+            cout << "startompl:" << endl;
+            startompl.print();
+            ss->addStartState(startompl);
+        }
 
-        //Goal state: convert from smp to scoped state
-        ob::ScopedState<ob::CompoundStateSpace> goalompl(space);
-        smp2omplScopedState(_goal, &goalompl);
-        cout<<"goalompl:"<<endl;
-        goalompl.print();
-
-        // set the start and goal states
-        // set a threshold to reach the goal - should it be set as a planner parameter?
-        ss->setStartAndGoalStates(startompl, goalompl, 0.01);
+        //Add goal states
+        ob::GoalStates *goalStates(new ob::GoalStates(ss->getSpaceInformation()));
+        goalStates->setThreshold(0.01);
+        for (std::vector<Sample*>::const_iterator goal(_goal.begin());
+             goal != _goal.end(); ++goal) {
+            //Goal state: convert from smp to scoped state
+            ob::ScopedState<ob::CompoundStateSpace> goalompl(space);
+            smp2omplScopedState(*goal,&goalompl);
+            cout << "goalompl:" << endl;
+            goalompl.print();
+            goalStates->addState(goalompl);
+        }
+        ss->setGoal(ob::GoalPtr(goalStates));
 
         // attempt to solve the problem within _planningTime seconds of planning time
         ss->clear();//to remove previous solutions, if any
@@ -1000,9 +1011,9 @@ namespace Kautham {
 
              //load the kautham _path variable from the ompl solution
              for(int j=0;j<l;j++){
-                 //create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
+                 //create a smp and load the RobConf of the init configuration (to have the same if the state does not change it)
                  smp=new Sample(_wkSpace->getNumRobControls());
-                 smp->setMappedConf(_init->getMappedConf());
+                 smp->setMappedConf(_init.at(0)->getMappedConf());
                  //convert form state to smp
                  omplState2smp(ss->getSolutionPath().asGeometric().getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
 

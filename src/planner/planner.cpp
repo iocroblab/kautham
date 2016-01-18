@@ -38,8 +38,8 @@ namespace Kautham{
   Planner::Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws){
       _guiName = _idName = "";
       _spType = stype;
-      _init = init;
-      _goal = goal;
+      _init.push_back(init);
+      _goal.push_back(goal);
       _samples = samples;
       _wkSpace = ws;
       _path.clear();

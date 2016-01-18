@@ -140,8 +140,8 @@
 		{
 
 			cout <<"Trying with "<<pmd<<" PMDs"<<endl;
-			createCloudInConfig(_init, pmd);
-			createCloudInConfig(_goal, pmd);
+            createCloudInConfig(_init.at(0), pmd);
+            createCloudInConfig(_goal.at(0), pmd);
 
 			for(int i=0; i <= maxsteps; i++)	{
 			//for(int i=maxsteps; i >= 0; i--)	{	

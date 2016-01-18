@@ -190,6 +190,25 @@ namespace Kautham{
     hasChanged = true;
   }
 
+  bool SampleSet::addStart(Sample *smp) {
+      if (add(smp)) {
+          starts.push_back(smp);
+          return true;
+      } else {
+          return false;
+      }
+  }
+
+
+  bool SampleSet::addGoal(Sample *smp) {
+      if (add(smp)) {
+          goals.push_back(smp);
+          return true;
+      } else {
+          return false;
+      }
+  }
+
   unsigned int SampleSet::indexOf(Sample* smp){
     for(unsigned int i=0; i < samples.size(); i++){
       if( samples.at(i) == smp)
@@ -354,18 +373,13 @@ namespace Kautham{
   }
 
   void SampleSet::clear(){
-    //Sample* tmp;
-    hasChanged = true;
-    vector<Sample*>::iterator itera;
-    for(itera = samples.begin(); itera != samples.end(); ++itera)
-      delete (*itera);
-
-//    for(unsigned int i = 0; i < samples.size(); i++){
-//      tmp = samples.at(i);
-//      delete tmp;
-//    }
+    for (vector<Sample*>::iterator smp(samples.begin()); smp != samples.end(); ++smp) {
+      delete (*smp);
+    }
     samples.clear();
-    if(setANN) setANNdatastructures();
+
+    if (setANN) setANNdatastructures();
+
     hasChanged = true;
   }
 
