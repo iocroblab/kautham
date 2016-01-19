@@ -354,7 +354,7 @@ void Application::saveTabColors() {
     SbColor color;
     settings->beginGroup("mainWindow");
     for (unsigned i = 0; i < viewers.size(); i++) {
-        if (mainWindow->getViewerTab(viewers.at(i)) != NULL) {
+        if (mainWindow->getViewerTab(viewers.at(i))) {
             settings->beginGroup(viewers.at(i).c_str());
             color = mainWindow->getViewerTab(viewers.at(i))->getBackgroundColor();
             settings->setValue("color",QColor((int)(255.0*color.getValue()[0]),

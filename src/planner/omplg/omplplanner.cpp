@@ -58,7 +58,7 @@ namespace Kautham {
         weigthedRealVectorStateSpace::weigthedRealVectorStateSpace(unsigned int dim) : RealVectorStateSpace(dim)
         {
             //by default set all the weights to 1
-            for(unsigned i=0; i<dim; i++)
+            for (unsigned i=0; i<dim; i++)
             {
                 weights.push_back(1.0);
             }
@@ -75,7 +75,7 @@ namespace Kautham {
 
             //compute the maximum weigthed distance
             double maxweightdist=0.0;
-            for(unsigned i=0; i<dimension_; i++)
+            for (unsigned i=0; i<dimension_; i++)
             {
                 double diff = getBounds().getDifference()[i]*w[i];
                 maxweightdist += diff * diff;
@@ -84,7 +84,7 @@ namespace Kautham {
             //compute the scale factor
             fitFactor = getMaximumExtent()/maxweightdist;
             //set the weights
-            for(unsigned i=0; i<dimension_; i++)
+            for (unsigned i=0; i<dimension_; i++)
             {
                 weights[i] = w[i]*fitFactor;
             }
@@ -171,10 +171,10 @@ namespace Kautham {
                 do{
                     /*
                     //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-                    for(int i=0;i<d;i++)
+                    for (int i=0;i<d;i++)
                         coords[i] = rng_.uniformReal(0,1.0);
                     //those controls that are disabled for sampling are now restored to 0.5
-                    for(int j=0; j < ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
+                    for (int j=0; j < ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
                         coords[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
 
                     //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
@@ -192,10 +192,10 @@ namespace Kautham {
                 */
 
                     //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-                    for(int i=0;i<d;i++)
+                    for (int i=0;i<d;i++)
                         coords[i] = rng_.uniformReal(0,1.0);
                     //those controls that are disabled for sampling are now restored to 0.5
-                    for(unsigned j=0; j < ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
+                    for (unsigned j=0; j < ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
                         coords[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
                     //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
                     smp2->setCoords(coords);
@@ -249,7 +249,7 @@ if(coords[1]>yM) yM=coords[1];
               //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
               int d = kauthamPlanner_->wkSpace()->getNumRobControls();
               vector<KthReal> coords(d);
-              for(int i=0;i<d;i++)
+              for (int i=0;i<d;i++)
                   coords[i] = rng_.uniformReal(0,1.0);
 
               //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
@@ -274,7 +274,7 @@ if(coords[1]>yM) yM=coords[1];
                     //smp = _samplerHalton->nextSample();
 
                     //those controls that are disabled for sampling are now restored to 0.5
-                    for(unsigned j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
+                    for (unsigned j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
                         smp->getCoords()[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
 
                     //compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
@@ -403,7 +403,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
             smp = _samplerVector[numSampler]->nextSample();
 
             //those controls that are disabled for sampling are now restored to 0.5
-            for(unsigned j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
+            for (unsigned j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
                 smp->getCoords()[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
 
             /*DEBUG
@@ -441,7 +441,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                 smp = _samplerVector[numSampler]->nextSample();
 
                 //those controls that are disabled for sampling are now restored to 0.5
-                for(unsigned j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
+                for (unsigned j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
                     smp->getCoords()[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
 
 
@@ -484,7 +484,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
       double weightSE3; //weight of the monile base
       double weightRn; //weight of the chain
       //loop for all robots
-      for(int i=0; i<p->wkSpace()->getNumRobots(); i++)
+      for (int i=0; i<p->wkSpace()->getNumRobots(); i++)
       {
           weightImportanceRobots = 1.0; //all robots weight the same
 
@@ -544,6 +544,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
             return ob::ValidStateSamplerPtr(new KauthamValidStateSampler(si, p));
         }
 
+
         //  /////////////////////////////////////////////////////////////////////////////////////////////////
         //  //! This function converts a state to a smp and tests if it is in collision or not
         //  bool isStateValid(const ob::SpaceInformation *si, const ob::State *state, Planner *p)
@@ -586,15 +587,17 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
             //set own intial values
             _planningTime = 10;
             _simplify = 2;//by default shorten and smooth
-            _incremental=0;//by default makes a clear before any new call to solve in function trysolve().
-            _drawnrobot=0; //by default we draw the cspace of robot 0.
+            _incremental = 0;//by default makes a clear before any new call to solve in function trysolve().
+            _drawnrobot = 0; //by default we draw the cspace of robot 0.
+            _drawnPath = true; //by default we show the path into the workspace
 
             //add planner parameters
-            addParameter("Incremental (0/1)", _incremental);
-            addParameter("Max Planning Time", _planningTime);
-            addParameter("Speed Factor", _speedFactor);
-            addParameter("Simplify Solution", _simplify);
-            addParameter("Cspace Drawn", _drawnrobot);
+            addParameter("Incremental (0/1)",_incremental);
+            addParameter("Max Planning Time",_planningTime);
+            addParameter("Speed Factor",_speedFactor);
+            addParameter("Simplify Solution",_simplify);
+            addParameter("Cspace Drawn",_drawnrobot);
+            addParameter("Path Drawn (0/1)",_drawnPath);
 
 
             if (ssptr == NULL) {
@@ -611,7 +614,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                 weights.resize(_wkSpace->getNumRobots());
 
                 //loop for all robots
-                for(unsigned i=0; i<_wkSpace->getNumRobots(); i++)
+                for (unsigned i=0; i<_wkSpace->getNumRobots(); i++)
                 {
                     vector<ob::StateSpacePtr> compoundspaceRob;
                     vector< double > weightsRob;
@@ -699,7 +702,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                         vector<KthReal> jointweights;
                         ob::RealVectorBounds bounds(nj);
                         double low, high;
-                        for(int j=0; j<nj;j++)
+                        for (int j=0; j<nj;j++)
                         {
                             //the limits of joint j between link j and link (j+1) are stroed in the data structure of link (j+1)
                             low = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(true);
@@ -743,7 +746,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
         space->registerDefaultProjection(peSpace);
         */
                 vector<ob::ProjectionEvaluatorPtr> peSpace;
-                for(unsigned i=0; i<_wkSpace->getNumRobots();i++)
+                for (unsigned i=0; i<_wkSpace->getNumRobots();i++)
                 {
                     ob::ProjectionEvaluatorPtr projToUse = space->as<ob::CompoundStateSpace>()->getSubspace(i)->getProjection("drawprojection");
                     peSpace.push_back( (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,i,projToUse) );
@@ -793,10 +796,12 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
             }
         }
 
+
         //! void destructor
         omplPlanner::~omplPlanner(){
 
         }
+
 
         /*!
      * disablePMDControlsFromSampling disables from sampling those controls that have the PMD in its name.
@@ -816,7 +821,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
             string listcontrolsname = wkSpace()->getRobControlsName();
             vector<string*> controlname;
             string *newcontrol = new string;
-            for(unsigned i=0; i<listcontrolsname.length();i++)
+            for (unsigned i=0; i<listcontrolsname.length();i++)
             {
                 if(listcontrolsname[i]=='|')
                 {
@@ -829,7 +834,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
             //add last control (since listcontrolsname does not end with a |)
             controlname.push_back(newcontrol);
 
-            for(unsigned i=0;i<controlname.size();i++)
+            for (unsigned i=0;i<controlname.size();i++)
             {
                 if(controlname[i]->find("PMD") != string::npos)
                 {
@@ -871,6 +876,17 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                 else
                     return false;
 
+                it = _parameters.find("Path Drawn (0/1)");
+                if (it != _parameters.end()) {
+                    if (it->second == 0.0) {
+                        _drawnPath = false;
+                    } else if (it->second == 1.0) {
+                            _drawnPath = true;
+                    } else {
+                        setParameter("Path Drawn (0/1)", _drawnPath);
+                    }
+                }
+
                 it = _parameters.find("Simplify Solution");
                 if(it != _parameters.end())
                 {
@@ -894,11 +910,22 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
             return true;
         }
 
+
         //! This function is used to verify that the low bound is below the high bound
         void omplPlanner::filterBounds(double &l, double &h, double epsilon)
         {
             if((h - l) < epsilon) h = l + epsilon;
         }
+
+
+        //! This function creates the separator for the ivscene to show the path.
+        SoSeparator *omplPlanner::getIvPathScene()
+        {
+            _scenePath = new SoSeparator();
+            _scenePath->ref();
+            return Planner::getIvPathScene();
+        }
+
 
         //! This function creates the separator for the ivscene to show the configuration space.
         SoSeparator *omplPlanner::getIvCspaceScene()
@@ -906,6 +933,204 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
             _sceneCspace = new SoSeparator();
             _sceneCspace->ref();
             return Planner::getIvCspaceScene();
+        }
+
+
+        //! This function draws the projection of the Configuration Space into the Workspace using the the position of the trunk link
+        void omplPlanner::drawPath(bool show) {
+            if (!_scenePath) return;
+
+            //Delete whatever is already drawn
+            while (_scenePath->getNumChildren() > 0) {
+                _scenePath->removeChild(0);
+            }
+
+            if (!show) return;
+
+            //Load the planner data to be drawn
+            ob::PlannerDataPtr pdata(new ob::PlannerData(ss->getSpaceInformation()));
+            ss->getPlanner()->getPlannerData(*pdata);
+            if (ss->getPlanner()->getProblemDefinition()->hasOptimizationObjective()) {
+                //Compute the weight for all edges given the OptimizationObjective
+                pdata->computeEdgeWeights(*ss->getPlanner()->getProblemDefinition()->
+                                          getOptimizationObjective());
+            } else {
+                //Compute all edge weights using state space distance
+                pdata->computeEdgeWeights();
+            }
+
+            //Draw tree
+            Sample *smp(new Sample(_wkSpace->getNumRobControls()));
+            smp->setMappedConf(_init.at(0)->getMappedConf());
+            ob::GoalStates *goalStates(dynamic_cast<ob::GoalStates*>
+                                       (ss->getProblemDefinition()->getGoal().get()));
+            float goalVertices[goalStates->getStateCount()*_wkSpace->getNumRobots()][3];
+            for (unsigned int i(0); i < goalStates->getStateCount(); ++i) {
+                omplState2smp(goalStates->getState(i)->as<ob::CompoundStateSpace::StateType>(),smp);
+                _wkSpace->moveRobotsTo(smp);
+                for (unsigned int j(0); j < _wkSpace->getNumRobots(); ++j) {
+                    mt::Point3 point(_wkSpace->getRobot(j)->
+                                     getLink(_wkSpace->getRobot(j)->getTrunk()-1)->
+                                     getTransformation()->getTranslation());
+
+                    goalVertices[j*goalStates->getStateCount()+i][0] = point[0];
+                    goalVertices[j*goalStates->getStateCount()+i][1] = point[1];
+                    goalVertices[j*goalStates->getStateCount()+i][2] = point[2];
+                }
+            }
+            float vertices[pdata->numVertices()*_wkSpace->getNumRobots()][3];
+            float startVertices[pdata->numStartVertices()*_wkSpace->getNumRobots()][3];
+            float otherVertices[(pdata->numVertices()-pdata->numStartVertices()-
+                                 goalStates->getStateCount())*_wkSpace->getNumRobots()][3];
+            int32_t coordIndices[3*pdata->numEdges()*_wkSpace->getNumRobots()];
+            int32_t edgeColorIndices[pdata->numEdges()*_wkSpace->getNumRobots()];
+            unsigned int le(0), ls(0), lo(0);
+            for (unsigned int i = 0; i < pdata->numVertices(); ++i) {
+                omplState2smp(pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>(),smp);
+                _wkSpace->moveRobotsTo(smp);
+                for (unsigned int j(0); j < _wkSpace->getNumRobots(); ++j) {
+                    mt::Point3 point(_wkSpace->getRobot(j)->
+                                     getLink(_wkSpace->getRobot(j)->getTrunk()-1)->
+                                     getTransformation()->getTranslation());
+
+                    vertices[j*pdata->numVertices()+i][0] = point[0];
+                    vertices[j*pdata->numVertices()+i][1] = point[1];
+                    vertices[j*pdata->numVertices()+i][2] = point[2];
+
+                    if (pdata->isStartVertex(i)) {
+                        startVertices[ls][0] = point[0];
+                        startVertices[ls][1] = point[1];
+                        startVertices[ls][2] = point[2];
+                        ls++;
+                    } else if (pdata->isGoalVertex(i)) {
+
+                    } else {
+                        otherVertices[lo][0] = point[0];
+                        otherVertices[lo][1] = point[1];
+                        otherVertices[lo][2] = point[2];
+                        lo++;
+                    }
+                }
+
+                std::vector<unsigned int> outgoingVertices;
+                pdata->getEdges(i,outgoingVertices);
+                for (std::vector<unsigned int>::const_iterator it(outgoingVertices.begin());
+                     it != outgoingVertices.end(); ++it) {
+                    for (unsigned int j(0); j < _wkSpace->getNumRobots(); ++j) {
+                        coordIndices[3*le+0] = j*pdata->numVertices()+i;
+                        coordIndices[3*le+1] = j*pdata->numVertices()+*it;
+                        coordIndices[3*le+2] = SO_END_LINE_INDEX;
+
+                        ob::Cost edgeWeight;
+                        pdata->getEdgeWeight(i,*it,&edgeWeight);
+
+                        edgeColorIndices[le] = pdata->getVertex(i).getTag();
+
+                        le++;
+                    }
+                }
+            }
+
+            SoDrawStyle *drawStyle(new SoDrawStyle);
+            drawStyle->lineWidth = 1;
+            drawStyle->pointSize = 3;
+
+            SoVertexProperty *vertexProperty(new SoVertexProperty);
+            vertexProperty->vertex.setValues(0,pdata->numVertices()*_wkSpace->getNumRobots(),vertices);
+            uint32_t edgeColors[3] = {SbColor(0,1,0.8).getPackedValue(),
+                                      SbColor(0,1,0.2).getPackedValue(),
+                                      SbColor(0,0.6,1).getPackedValue()};
+            vertexProperty->orderedRGBA.setValues(0,3,edgeColors);
+            vertexProperty->materialBinding.setValue(SoVertexProperty::PER_FACE_INDEXED);
+
+            SoIndexedLineSet *lineSet(new SoIndexedLineSet);
+            lineSet->coordIndex.setValues(0,3*pdata->numEdges()*_wkSpace->getNumRobots(),coordIndices);
+            lineSet->vertexProperty.setValue(vertexProperty);
+            lineSet->materialIndex.setValues(0,pdata->numEdges()*_wkSpace->getNumRobots(),edgeColorIndices);
+
+            SoSeparator *lines(new SoSeparator);
+            lines->setName("Edges");
+            lines->addChild(drawStyle);
+            lines->addChild(lineSet);
+
+            _scenePath->addChild(lines);
+
+            vertexProperty = new SoVertexProperty;
+            vertexProperty->vertex.setValues(0,(pdata->numVertices()-pdata->numStartVertices()-
+                                             goalStates->getStateCount())*_wkSpace->getNumRobots(),otherVertices);
+            vertexProperty->orderedRGBA.setValue(SbColor(1,1,1).getPackedValue());
+
+            SoPointSet *pointSet(new SoPointSet);
+            pointSet->vertexProperty.setValue(vertexProperty);
+
+            SoSeparator *points(new SoSeparator);
+            points->setName("NormalVertices");
+            points->addChild(drawStyle);
+            points->addChild(pointSet);
+
+            _scenePath->addChild(points);
+
+            //Draw path
+            if (_solved) {
+                SoDrawStyle *drawStyle(new SoDrawStyle);
+                drawStyle->lineWidth = 4.;
+
+                float vertices[_path.size()*_wkSpace->getNumRobots()][3];
+                for (unsigned int i(0); i < _path.size(); ++i) {
+                    _wkSpace->moveRobotsTo(_path.at(i));
+                    for (unsigned int j(0); j < _wkSpace->getNumRobots(); ++j) {
+                        mt::Point3 point(_wkSpace->getRobot(j)->
+                                         getLink(_wkSpace->getRobot(j)->getTrunk()-1)->
+                                         getTransformation()->getTranslation());
+
+                        vertices[j*_path.size()+i][0] = point[0];
+                        vertices[j*_path.size()+i][1] = point[1];
+                        vertices[j*_path.size()+i][2] = point[2];
+                    }
+                }
+                int32_t numVertices[_wkSpace->getNumRobots()];
+                std::fill(numVertices,numVertices+_wkSpace->getNumRobots(),_path.size());
+
+                SoVertexProperty *vertexProperty(new SoVertexProperty);
+                vertexProperty->vertex.setValues(0,_path.size()*_wkSpace->getNumRobots(),vertices);
+                vertexProperty->orderedRGBA.setValue(SbColor(1,0,0.2).getPackedValue());
+
+                SoLineSet *lineSet(new SoLineSet);
+                lineSet->vertexProperty.setValue(vertexProperty);
+                lineSet->numVertices.setValues(0,_wkSpace->getNumRobots(),numVertices);
+
+                SoSeparator *path(new SoSeparator);
+                path->setName("Path");
+                path->addChild(drawStyle);
+                path->addChild(lineSet);
+
+                _scenePath->addChild(path);
+            }
+
+            points = new SoSeparator;
+            points->setName("SpecialVertices");
+
+            drawStyle = new SoDrawStyle;
+            drawStyle->pointSize = 5;
+            points->addChild(drawStyle);
+
+            vertexProperty = new SoVertexProperty;
+            vertexProperty->vertex.setValues(0,pdata->numStartVertices()*_wkSpace->getNumRobots(),startVertices);
+            vertexProperty->orderedRGBA.setValue(SbColor(0.6,0,1).getPackedValue());
+
+            pointSet = new SoPointSet;
+            pointSet->vertexProperty.setValue(vertexProperty);
+            points->addChild(pointSet);
+
+            vertexProperty = new SoVertexProperty;
+            vertexProperty->vertex.setValues(0,goalStates->getStateCount()*_wkSpace->getNumRobots(),goalVertices);
+            vertexProperty->orderedRGBA.setValue(SbColor(1,1,0).getPackedValue());
+
+            pointSet = new SoPointSet;
+            pointSet->vertexProperty.setValue(vertexProperty);
+            points->addChild(pointSet);
+
+            _scenePath->addChild(points);
         }
 
 
@@ -970,9 +1195,20 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
             }
 
             //Draw tree
+            ob::GoalStates *goalStates(dynamic_cast<ob::GoalStates*>
+                                       (ss->getProblemDefinition()->getGoal().get()));
+            float goalVertices[goalStates->getStateCount()][3];
+            for (unsigned int i(0); i < goalStates->getStateCount(); ++i) {
+                projection->project(goalStates->getState(i),state);
+
+                goalVertices[i][0] = state[0];
+                goalVertices[i][1] = state[1];
+                goalVertices[i][2] = ((k > 2)? state[2] : 0.0);
+            }
             float vertices[pdata->numVertices()][3];
             float startVertices[pdata->numStartVertices()][3];
-            float otherVertices[pdata->numVertices()-pdata->numStartVertices()-pdata->numGoalVertices()][3];
+            float otherVertices[pdata->numVertices()-
+                    pdata->numStartVertices()-goalStates->getStateCount()][3];
             int32_t coordIndices[3*pdata->numEdges()];
             int32_t edgeColorIndices[pdata->numEdges()];
             unsigned int j(0), ls(0), lo(0);
@@ -1013,16 +1249,6 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                     j++;
                 }
             }
-            ob::GoalStates *goalStates(dynamic_cast<ob::GoalStates*>
-                                       (ss->getProblemDefinition()->getGoal().get()));
-            float goalVertices[goalStates->getStateCount()][3];
-            for (unsigned int i(0); i < goalStates->getStateCount(); ++i) {
-                projection->project(goalStates->getState(i),state);
-
-                goalVertices[i][0] = state[0];
-                goalVertices[i][1] = state[1];
-                goalVertices[i][2] = ((k > 2)? state[2] : 0.0);
-            }
 
             SoDrawStyle *drawStyle(new SoDrawStyle);
             drawStyle->lineWidth = 1;
@@ -1050,7 +1276,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
 
             vertexProperty = new SoVertexProperty;
             vertexProperty->vertex.setValues(0,pdata->numVertices()-pdata->numStartVertices()-
-                                             pdata->numGoalVertices(),otherVertices);
+                                             goalStates->getStateCount(),otherVertices);
             vertexProperty->orderedRGBA.setValue(SbColor(1,1,1).getPackedValue());
 
             SoPointSet *pointSet(new SoPointSet);
@@ -1152,7 +1378,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
 
 
             //loop for all the robots
-            for(unsigned i=0; i<_wkSpace->getNumRobots(); i++)
+            for (unsigned i=0; i<_wkSpace->getNumRobots(); i++)
             {
                 int k=0; //counter of subspaces contained in subspace of robot i
 
@@ -1193,7 +1419,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                     ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
                     ob::ScopedState<weigthedRealVectorStateSpace> rstart(ssRobotiRn);
 
-                    for(unsigned j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
+                    for (unsigned j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
                         rstart->values[j] = r.getCoordinate(j);
 
                     //cout<<"sstate[0]="<<rstart->values[0]<<"sstate[1]="<<rstart->values[1]<<endl;
@@ -1384,6 +1610,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                 break;
             }
 
+            drawPath(_drawnPath);
             drawCspace(_drawnrobot);
 
             return _solved;

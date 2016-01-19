@@ -46,7 +46,9 @@ namespace Kautham{
       _parameters.clear();
       _solved = false;
       _hasCameraInformation = false;
-      _sceneCspace=NULL;
+      _sceneCspace = NULL;
+      _scenePath = NULL;
+
   }
 
   bool Planner::solveAndInherit(){
