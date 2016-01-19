@@ -141,11 +141,10 @@ namespace Kautham {
         
         bool trySolve();//reimplemented
         bool setParameters();//reimplemented
+        SoSeparator *getIvPathScene();//reimplemented
         SoSeparator *getIvCspaceScene();//reimplemented
+        void drawPath(bool show);
         void drawCspace(unsigned int robot = 0, unsigned int link = 0);
-        //void drawCspaceSE3();
-        //void drawCspaceRn();
-        //void drawCspaceprojections();
 
         void omplState2smp(const ob::State *state, Sample* smp);
         void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
@@ -178,6 +177,7 @@ namespace Kautham {
         unsigned int _simplify;
         bool _incremental;
         unsigned _drawnrobot; //!< Index of the robot whose Cspace is drawn. Defaults to 0.
+        bool _drawnPath; //! Flag to show/hide path into workspace scene
         vector<int> _disabledcontrols;//!< those disabled controls will not be sampled, they are fixed at 0.5
 
 	    private:
