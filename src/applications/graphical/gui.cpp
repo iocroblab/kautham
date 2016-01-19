@@ -434,7 +434,7 @@ namespace Kautham {
 
 
     bool GUI::addPlanner(Planner *plan, SampleSet* samp, GUI* gui){
-        if( plan != NULL){
+        if (plan) {
             PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, plan->hasCameraMovements());
             propertiesTab->addTab(tmpPlan, QString((plan->getGuiName()).c_str()));
             connect(tmpPlan,SIGNAL(sendText(string)),this,SLOT(setText(string)));
@@ -442,12 +442,21 @@ namespace Kautham {
             connect(this,SIGNAL(stopSimulation()),tmpPlan,SLOT(stopSimulation()));
             //JAN
             indexPlannerTab = propertiesTab->indexOf(tmpPlan);
-            if(plan->getIvCspaceScene() != NULL)
-            {
-                addViewerTab("CSpace", plan->getIvCspaceScene());
+            SoSeparator *cspace(plan->getIvCspaceScene());
+            if (cspace) {
+                addViewerTab("CSpace",cspace);
+            }
+            SoSeparator *path(plan->getIvPathScene());
+            if (path) {
+                for (unsigned int i(0); i < viewers.size(); ++i) {
+                    if (viewers.at(i).title == "WSpace" ||
+                            viewers.at(i).title == "CollisionWSpace") {
+                        viewers.at(i).root->addChild(path);
+                    }
+                }
             }
             return true;
-        }else{
+        } else {
             PlannerWidget* tmpPlan = new PlannerWidget( NULL, NULL);
             propertiesTab->addTab(tmpPlan, "Planner");
             //JAN
@@ -465,7 +474,7 @@ namespace Kautham {
     bool GUI::addViewerTab(string title, SoSeparator *root){
         viewsTab->setEnabled(true);
         viewsTab->setCurrentIndex(0);
-        if(root!=NULL && title.size()!=0 ){
+        if (root && title.size()!=0) {
             Viewer v;
             v.tab = new QWidget(viewsTab);
             v.root= root;
