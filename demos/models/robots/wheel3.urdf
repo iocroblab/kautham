@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<robot name="backwheel2">
+<link name="base_link_wheel3">
+<visual>
+<geometry>
+<cylinder length="0.003" radius="0.01"/>
+</geometry>
+</visual>
+</link>
+</robot>

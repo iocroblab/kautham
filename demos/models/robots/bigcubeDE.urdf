@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot name="bigcubeDE">
+	<link name="base">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<box size="0.05 0.05 0.04" />
+			</geometry>
+			<material>
+				<color rgba="0 1 0 1" />
+			</material>
+		</visual>
+	</link>
+</robot>

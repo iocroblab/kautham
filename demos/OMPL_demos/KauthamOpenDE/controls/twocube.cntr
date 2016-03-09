@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+ <ControlSet size="2">
+    <Offset>
+      <DOF name="twocube/Shoulder" value="0.5"></DOF>
+
+    </Offset>
+
+    <Control name="Shoulder" eigValue="1.0">
+      <DOF name="twocube/Shoulder" value="1.0"></DOF>
+    </Control>
+  </ControlSet>
+ 

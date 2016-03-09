@@ -1,0 +1,9 @@
+#index vector of the bodies in ode world
+int32[] index
+#obect poses corresponding to each index
+dVector[] ObjectPose
+
+---
+bool status
+
+

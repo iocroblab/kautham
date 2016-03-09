@@ -1,0 +1,13 @@
+#Service to set the manipulation action such as push pull move etc.
+string actionType
+#index of body to push or pull
+int16 targetBody
+#applied force vector
+float64[] force
+#init and goal states
+float32[] initState
+float32[] goalState
+---
+bool status
+#fVector[] Path
+

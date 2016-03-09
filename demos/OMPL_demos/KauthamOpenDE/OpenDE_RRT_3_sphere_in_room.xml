@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTConnect_Sphere" topology="R2">
+	<Robot robot="robots/SphereBlueDE.urdf" scale="1.0">
+		<Limits name="X" min="-126.0" max="126.0" />
+		<Limits name="Y" min="-126.0" max="126.0" />
+		<Limits name="Z" min="-10.0" max="30.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-360.0" max="360.0" />
+		<Home X="-100.0" Y="69.0" Z="20.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+	</Robot>
+	<Robot robot="robots/SphereWhiteDE.urdf" scale="1.0">
+		<Limits name="X" min="-126.0" max="126.0" />
+		<Limits name="Y" min="-126.0" max="126.0" />
+		<Limits name="Z" min="-10.0" max="30.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-360.0" max="360.0" />
+		<Home X="0.0" Y="69.0" Z="20.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+	</Robot>
+	<Robot robot="robots/SphereGreenDE.urdf" scale="1.0">
+		<Limits name="X" min="-126.0" max="126.0" />
+		<Limits name="Y" min="-126.0" max="126.0" />
+		<Limits name="Z" min="-10.0" max="30.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-360.0" max="360.0" />
+		<Home X="100.0" Y="69.0" Z="20.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+	</Robot>
+	
+	<Obstacle obstacle="obstacles/cubeDE.urdf" scale="1.0">
+		<Home TH="0.0" WZ="-1.0" WY="-1.0" WX="0.0" Z="21.781" Y="-60.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/OpenDErooms.iv" scale="1.0">
+		<Home TH="0.0" WZ="-1.0" WY="-1.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/Sphere3DE.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplODERRT3RobotPlanner</Name>
+			<Parameter name="Goal Bias">0.09000000075</Parameter>
+			<Parameter name="Max Planning Time">100</Parameter>
+			<Parameter name="Max Speed motors">10</Parameter>
+			<Parameter name="PropagationStepSize">0.02000000142</Parameter>
+			<Parameter name="Speed Factor">5</Parameter>
+			<Parameter name="only final link position?">0</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="6">0.356 0.238 0.648 0.249 0.506 0.406</Init>
+				<Goal dim="6">0.200 0.700 0.800 0.700 0.500 0.700</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

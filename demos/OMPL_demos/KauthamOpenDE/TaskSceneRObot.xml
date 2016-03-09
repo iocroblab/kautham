@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_cRRTcar_table_rooms_SE2">
+	<Robot robot="robots/SphereDE.urdf" scale="0.8">
+		<Limits name="X" min="-134.0" max="134.0" />
+		<Limits name="Y" min="-134.0" max="134.0" />
+		<Limits name="Z" min="-2.0" max="40.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-360.0" max="360.0" />
+		<Home X="0.0" Y="0.0" Z="20.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+	</Robot>
+	<Obstacle obstacle="obstacles/RedCubeDE5.urdf" scale="0.6">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="10.8748" Y="-90.0" X="90.0" />
+	</Obstacle>
+	
+	<Obstacle obstacle="obstacles/RedCubeDE6.urdf" scale="0.7">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="10.8748" Y="-15.0" X="-120.0" />		
+	</Obstacle>
+	<Obstacle obstacle="obstacles/RedCubeDE7.urdf" scale="0.6">
+		<Home TH="93.0" WZ="1.0" WY="0.0" WX="0.0" Z="10.8" Y="55.0" X="-75.0" />
+	</Obstacle>
+	
+	<Obstacle obstacle="obstacles/RedCubeDE8.urdf" scale="0.7">
+		<Home TH="2.0" WZ="-1.0" WY="0.0" WX="0.0" Z="10.8" Y="-65.0" X="-35.0" />
+	</Obstacle>
+		
+	<Obstacle obstacle="obstacles/cubeWhiteDE1.urdf" scale="0.7">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="0.0" X="45.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/OpenDEroomBlue.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/OpenDEPlaneBlue.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/car.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplODEKPIECE2DPlanner</Name>
+			<Parameter name="Constraint Force Mixing">0.3000000119</Parameter>
+			<Parameter name="Control Dimensions">2</Parameter>
+			<Parameter name="Error Reduction Parameter">0.5</Parameter>
+			<Parameter name="Goal Bias">0.05</Parameter>
+			<Parameter name="Max Contacts">3</Parameter>
+			<Parameter name="Max Planning Time">30</Parameter>
+			<Parameter name="Max Speed">10</Parameter>
+			<Parameter name="Min Control Steps">5</Parameter>
+			<Parameter name="Max Control Steps">50</Parameter>
+			<Parameter name="PropagationStepSize">0.05</Parameter>
+			<Parameter name="Speed Factor">5</Parameter>
+			<Parameter name="only final link position?">0</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="3">0.333 0.065 0.5</Init>
+				<Goal dim="3">0.375 0.789 0.5</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

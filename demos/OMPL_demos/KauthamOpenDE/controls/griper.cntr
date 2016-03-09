@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		
+		<DOF name="pg70_gripper/X" value="0.500"/>
+		<DOF name="pg70_gripper/Y" value="0.500"/>
+								
+	</Offset>
+    	
+    	<Control name="X" eigValue="1">
+      		<DOF name="pg70_gripper/X" value="1"/>
+    	</Control>
+    	<Control name="Y" eigValue="1">
+      		<DOF name="pg70_gripper/Y" value="1"/>
+    	</Control>
+    	
+    	
+</ControlSet>
+
+

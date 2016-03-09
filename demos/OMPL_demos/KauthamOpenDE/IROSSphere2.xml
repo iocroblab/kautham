@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_cRRTcar_table_rooms_SE2">
+	<Robot robot="obstacles/IROS/SphereDE.urdf" scale="1.2">
+		<Limits name="X" min="-285.0" max="285.0" />
+		<Limits name="Y" min="-285.0" max="285.0" />
+		<Limits name="Z" min="-5.0" max="40.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-360.0" max="360.0" />
+		<Home X="-50.0" Y="50.0" Z="10.0" WX="0.0" WY="0.0" WZ="0.0" TH="0.0" />
+	</Robot>
+	
+
+	<Obstacle obstacle="obstacles/IROS/cubeDE1.urdf" scale="1.0">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="22" Y="25.0" X="-265.0" />
+	</Obstacle>
+
+	<Obstacle obstacle="obstacles/IROS/prism.urdf" scale="0.02">
+		<Home TH="155.0" WZ="1.0" WY="0.0" WX="0.0" Z="0" Y="-100.0" X="160.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/IROS/prism2.urdf" scale="0.03">
+		<Home TH="120.0" WZ="1.0" WY="0.0" WX="0.0" Z="0" Y="200.0" X="115.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/IROS/prism3.urdf" scale="0.02">
+		<Home TH="120.0" WZ="1.0" WY="0.0" WX="0.0" Z="0" Y="-130.0" X="-205.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/IROS/prism4.urdf" scale="0.03">
+		<Home TH="155.0" WZ="1.0" WY="0.0" WX="0.0" Z="0" Y="-230.0" X="-115.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/IROS/wall2.urdf" scale="1.0">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="12" Y="70.0" X="-40" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/IROS/wall1.urdf" scale="1.0">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="12" Y="-20.0" X="-155.0" />
+	</Obstacle>
+	
+	<Obstacle obstacle="obstacles/IROS/Plan.urdf" scale="1.0">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/sp3.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplODELTL2DPlanner</Name>
+			<Parameter name="Constraint Force Mixing">0.3000000119</Parameter>
+			<Parameter name="Control Dimensions">2</Parameter>
+			<Parameter name="Error Reduction Parameter">0.5</Parameter>
+			<Parameter name="Goal Bias">0.05</Parameter>
+			<Parameter name="Max Contacts">3</Parameter>
+			<Parameter name="Max Control Steps">50</Parameter>
+			<Parameter name="Max Planning Time">150</Parameter>
+			<Parameter name="Max Speed">10</Parameter>
+			<Parameter name="Min Control Steps">10</Parameter>
+			<Parameter name="PropagationStepSize">0.07</Parameter>
+			<Parameter name="Speed Factor">6</Parameter>
+			<Parameter name="only final link position?">0</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="3">0.218 0.820 0.38</Init>
+				<Goal dim="3">0.835 0.180 0.38</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

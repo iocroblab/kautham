@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		
+		<DOF name="kuka_lwr_pg70_gripper/link1" value="0.500"/>
+		<DOF name="kuka_lwr_pg70_gripper/link2" value="0.500"/>
+		<DOF name="kuka_lwr_pg70_gripper/link3" value="0.500"/>
+		<DOF name="kuka_lwr_pg70_gripper/link4" value="0.500"/>
+		<DOF name="kuka_lwr_pg70_gripper/link5" value="0.500"/>
+		<DOF name="kuka_lwr_pg70_gripper/link6" value="0.500"/>
+		<DOF name="kuka_lwr_pg70_gripper/link7" value="0.500"/>
+		
+	</Offset>
+    	
+    	<Control name="link1" eigValue="1">
+      		<DOF name="kuka_lwr_pg70_gripper/link1" value="1"/>
+    	</Control>
+    	<Control name="link2" eigValue="1">
+      		<DOF name="kuka_lwr_pg70_gripper/link2" value="1"/>
+    	</Control>
+    	<Control name="link3" eigValue="1">
+      		<DOF name="kuka_lwr_pg70_gripper/link3" value="1"/>
+    	</Control>
+    	<Control name="link4" eigValue="1">
+      		<DOF name="kuka_lwr_pg70_gripper/link4" value="1"/>
+    	</Control>
+    	<Control name="link5" eigValue="1">
+      		<DOF name="kuka_lwr_pg70_gripper/link5" value="1"/>
+    	</Control>
+    	<Control name="link6" eigValue="1">
+      		<DOF name="kuka_lwr_pg70_gripper/link6" value="1"/>
+    	</Control>
+    	<Control name="link7" eigValue="1">
+      		<DOF name="kuka_lwr_pg70_gripper/link7" value="1"/>
+    	</Control>
+</ControlSet>

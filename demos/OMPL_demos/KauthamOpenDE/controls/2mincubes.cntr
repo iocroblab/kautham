@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="minicubeBlueDE/X" value="0.5" />
+		<DOF name="minicubeBlueDE/Y" value="0.5" />
+		<DOF name="minicubeGreenDE/X" value="0.5" />
+		<DOF name="minicubeGreenDE/Y" value="0.5" />
+	</Offset>
+	<Control name="minicubeBlueDE/x" eigValue="1.0">
+		<DOF name="minicubeBlueDE/X" value="1.0" />
+	</Control>
+	<Control name="minicubeBlueDE/y" eigValue="1.0">
+		<DOF name="minicubeBlueDE/Y" value="1.0" />
+	</Control>
+	<Control name="minicubeGreenDE/x" eigValue="1.0">
+		<DOF name="minicubeGreenDE/X" value="1.0" />
+	</Control>
+	<Control name="minicubeGreenDE/y" eigValue="1.0">
+		<DOF name="minicubeGreenDE/Y" value="1.0" />
+	</Control>
+</ControlSet>

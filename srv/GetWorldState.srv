@@ -1,0 +1,6 @@
+
+---
+bool status
+#pose vectors of all the bodies in ode world
+fVector[] ObjectPose
+

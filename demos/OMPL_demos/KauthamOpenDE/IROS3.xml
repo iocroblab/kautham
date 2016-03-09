@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_cRRTcar_table_rooms_SE2">
+	<Robot robot="obstacles/IROS/Car.urdf" scale="1.0">
+		<Limits name="X" min="-285.0" max="285.0" />
+		<Limits name="Y" min="-285.0" max="285.0" />
+		<Limits name="Z" min="-5.0" max="40.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-360.0" max="360.0" />
+		<Home X="-50.0" Y="50.0" Z="10.0" WX="0.0" WY="0.0" WZ="-1.0" TH="90.0" />
+	</Robot>
+		
+	
+	
+	
+	<Obstacle obstacle="obstacles/IROS/Plan.urdf" scale="1.0">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/SimpleCar.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>KnowledgeOrientedRRT2DPlanner</Name>
+			<Parameter name="Constraint Force Mixing">0.3000000119</Parameter>
+			<Parameter name="Control Dimensions">2</Parameter>
+			<Parameter name="Error Reduction Parameter">0.5</Parameter>
+			<Parameter name="Goal Bias">0.05</Parameter>
+			<Parameter name="Max Contacts">3</Parameter>
+			<Parameter name="Max Control Steps">50</Parameter>
+			<Parameter name="Max Planning Time">150</Parameter>
+			<Parameter name="Max Speed">10</Parameter>
+			<Parameter name="Min Control Steps">10</Parameter>
+			<Parameter name="PropagationStepSize">0.2</Parameter>
+			<Parameter name="Speed Factor">20</Parameter>
+			<Parameter name="only final link position?">0</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="3">0.5 0.5 0.32</Init>
+				<Goal dim="3">0.5 0.6 0.32</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
