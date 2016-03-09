@@ -115,7 +115,6 @@ bool srvOpenProblem(kautham2::OpenProblem::Request &req,
         my_msg.data = "The problem file couldn't be opened.";
         res.response = false;
     }
-
     return true;
 }
 

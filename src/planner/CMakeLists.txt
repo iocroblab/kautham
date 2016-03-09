@@ -39,9 +39,35 @@ if( KAUTHAM_OMPL )
             include_directories( ${ODE_INCLUDE_DIR} )
             set ( PLANNER_EXTRA_LIBS ${PLANNER_EXTRA_LIBS} ${ODE_LIBRARY}  )
             message( STATUS "Adding subdirectory omplOpenDE")
-            file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/*.cpp )
-            file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/*.h )
-	 else( ODE_FOUND )
+            #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/*.cpp )
+            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/*.h )
+
+            file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/*.cpp omplOpenDE/goal/*.cpp omplOpenDE/environment/*.cpp omplOpenDE/environment/ConstraintAwareRobotEnvironment/*.cpp omplOpenDE/environment/SimpleRobotEnvironment/*.cpp
+                  omplOpenDE/InstantiatedKnowledge/*.cpp omplOpenDE/PhysicsBasedPlanners/*.cpp omplOpenDE/PhysicsBasedPlanners/PKP/*.cpp omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.cpp omplOpenDE/PhysicsBasedPlanners/LTL/*.cpp
+		  omplOpenDE/*.h omplOpenDE/goal/*.h omplOpenDE/environment/*.h omplOpenDE/environment/ConstraintAwareRobotEnvironment/*.h omplOpenDE/environment/SimpleRobotEnvironment/*.h omplOpenDE/InstantiatedKnowledge/*.h 
+                  omplOpenDE/PhysicsBasedPlanners/*.h omplOpenDE/PhysicsBasedPlanners/PKP/*.h omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.h omplOpenDE/PhysicsBasedPlanners/LTL/*.h)
+ 
+#	    file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/goal/*.h omplOpenDE/environment/*.h omplOpenDE/environment/CRE/*.h omplOpenDE/environment/RE/*.h omplOpenDE/InstantiatedKnowledge/*.h 			  omplOpenDE/PhysicsBasedPlanners/*.h omplOpenDE/PhysicsBasedPlanners/PKP/*.h omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.h)
+
+ 	    #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/goal/*.cpp )
+            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/goal/*.h )
+
+ 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/environment/*.cpp )
+            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/environment/*.h )
+ 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/environment/CRE/*.cpp )
+            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/environment/CRE/*.h )
+ 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/environment/RE/*.cpp )
+            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/environment/RE/*.h )				
+ 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/InstantiatedKnowledge/*.cpp )
+            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/InstantiatedKnowledge/*.h )
+ 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/*.cpp)
+            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/*.h )
+ 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/PKP/*.cpp )
+            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/PKP/*.h )
+ 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.cpp )
+            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.h )
+
+    	 else( ODE_FOUND )
 	      message( STATUS "Error: ODE LIBRARY NOT FOUND. OMPL planner with ODE will not be avaliable")
          endif(ODE_FOUND)
       endif(KAUTHAM_OPENDE)

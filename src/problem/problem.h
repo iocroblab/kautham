@@ -32,7 +32,7 @@
 #include "robot.h"
 #include "ivworkspace.h"
 #include "workspace.h"
-#include <sampling/state.h>
+//#include <sampling/state.h>
 #include <pugixml.hpp>
 #include <string>
 #include <fstream>
@@ -82,8 +82,23 @@
 #endif
 
 #if defined(KAUTHAM_USE_ODE)
-#include <planner/omplOpenDE/KauthamOpenDERRTPlanner.h>
-#include <planner/omplOpenDE/KauthamOpenDEKPIECEPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/KPIECE2DPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/KPIECECarPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/KPIECEChainPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/KPIECEFreeFlyingPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/KPIECEKUKAPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/KPIECEMultiRobotPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/RRT2DPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/RRTKUKAPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/RRTMultiRobotPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/RRTTX90Planner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/Syclop2DPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/PDST2DPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/EST2DPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/Know-PKP/KnowledgeOrientedKPIECE2DPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/Know-PKP/KnowledgeOrientedRRT2DPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/Know-PKP/KnowledgeOrientedSyclop2DPlanner.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/KauthamOpenDELTLPlanner.h>
 #endif
 
 /*#if defined(KAUTHAM_USE_GUIBRO)
@@ -245,7 +260,7 @@ namespace Kautham {
     private:
         WorkSpace*              _wspace;
         SampleSet*              _cspace;
-        vector<State>           _sspace;
+       // vector<State>           _sspace;
         CONFIGTYPE              _problemType;
         Sampler*                _sampler;
         Planner*                _planner;

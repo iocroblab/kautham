@@ -68,5 +68,13 @@ namespace Kautham{
           return false;
       }
   }
+ Sample* State::getRob()
+  {
+      return first;
+  }
+  Sample* State::getObs()
+  {
+      return second;
+  }
 
 }

@@ -13,10 +13,10 @@ option( KAUTHAM_OMPL "Use OMPL planners" ON )
 option( KAUTHAM_IOC "Use IOC planners" ON )
 #pending job
 #option( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF)
-option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
+option( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
-option( KAUTHAM_ROS "Build the ROS version" OFF )
+option( KAUTHAM_ROS "Build the ROS version" ON )
 option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
 
 ########### Set flags ####################
@@ -90,12 +90,22 @@ add_service_files(
    GetLastPlanComputationTime.srv
    GetNumEdges.srv
    GetNumVertices.srv
+   #manipulation_node services
+   OpenManipProblem.srv  
+   ManipulationAction.srv
+   SetWorldState.srv
+   GetWorldState.srv
+   GetBodyState.srv
+   SetBodyState.srv
+   SetManipQuery.srv
+
 )
 
 add_message_files(
    DIRECTORY msg
    FILES 
    fVector.msg
+   dVector.msg
 )
 
 generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)

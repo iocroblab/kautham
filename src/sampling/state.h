@@ -49,6 +49,12 @@ namespace Kautham{
       //! Copies the obstacle sample.
       bool    setObs(Sample& obssample);
 
+      //! Returns the robot sample.
+      Sample* getRob();
+
+      //! Returns the robot sample.
+      Sample* getObs();
+
   private:
 
   };

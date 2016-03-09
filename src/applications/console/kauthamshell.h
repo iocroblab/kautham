@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo, Muhayyuddin */
 
 
  
@@ -72,7 +72,13 @@ namespace Kautham {
         bool removeObstacle(unsigned index);
         bool attachObstacle2RobotLink(int robot, int link, int obs);
         bool detachObstacle(uint obs);
+        //functions for manipulation node
 
+        bool setManipQueryPrams(std::string actiontype, int targetbody, std::vector<double> force);
+        bool setBodyState(int targetBody, std::vector<double> pose);
+        std::vector<double> getBodyState(int targetBody);
+        bool setWorldState(std::vector< std::vector<double> > worldstate);
+        std::vector< std::vector<double> > getWorldState();
     private:
         Problem *_problem;
     };

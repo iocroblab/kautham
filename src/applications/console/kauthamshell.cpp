@@ -20,10 +20,10 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo, Muhayyuddin */
 
 
- 
+#include "planner/omplc/omplcplanner.h"
 #include <planner/omplg/omplplanner.h>
 #include "kauthamshell.h"
 #include "util/kthutil/kauthamexception.h"
@@ -1034,12 +1034,13 @@ namespace Kautham {
 
             bool ret = false;
 
-            if (_problem->getPlanner()->getFamily()==OMPLPLANNER) {
+           // if (_problem->getPlanner()->getFamily()==OMPLPLANNER) {
                 ret = _problem->getPlanner()->solveAndInherit();
                 if (ret) {
                     ((omplplanner::omplPlanner*)_problem->getPlanner())->SimpleSetup()->
                             getSolutionPath().printAsMatrix(path);
-                }
+                    
+                //}
             }
 
             return ret;
@@ -1236,5 +1237,125 @@ namespace Kautham {
                  << "to verify the correctness of the problem formulation.\n";
             return false;
         }
+    }
+
+
+    bool kauthamshell::setManipQueryPrams(string actiontype, int targetbody, std::vector<double> force)
+    {
+        ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                stateSpace->getEnvironment().get())->manipulationQuery->setActionType(actiontype);
+
+        ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                stateSpace->getEnvironment().get())->stateBodies_[targetbody];
+
+        ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                stateSpace->getEnvironment().get())->manipulationQuery->setforce(force);
+
+        std::vector<double> f = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                                 stateSpace->getEnvironment().get())->manipulationQuery->getforce();
+        if(actiontype=="pull"||actiontype=="Pull")
+        {
+            unsigned int robBodyIndex = _problem->wSpace()->getRobot(0)->getNumLinks()-1;
+            ((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[robBodyIndex];
+            dJointID joint;
+            joint=dJointCreateHinge(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->world_ , 0);
+            dJointAttach (joint,((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[robBodyIndex],
+                          ((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[targetbody]);
+
+        }
+        std::cout<<"Action is : "<<  ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                                      stateSpace->getEnvironment().get())->manipulationQuery->getActionType()<<" :: force is :: [" <<f[0]<<" , "<<f[1]<<" , "<<f[2]<<"] Target body is: "<<targetbody<<std::endl;
+
+        return true;
+    }
+
+    bool kauthamshell::setBodyState(int targetBody, std::vector<double> pose)
+    {
+        dBodySetPosition(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                         stateSpace->getEnvironment().get()->stateBodies_[targetBody],pose[0],pose[1],pose[2]);
+        dQuaternion q;
+
+        q[0]=pose[3];
+        q[1]=pose[4];
+        q[2]=pose[5];
+        q[3]=pose[6];
+        dBodySetQuaternion(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                           stateSpace->getEnvironment().get()->stateBodies_[targetBody],q);
+
+    }
+
+    std::vector<double> kauthamshell::getBodyState(int targetBody)
+    {
+        std::vector<double> pose(7);
+        const dReal *p = dBodyGetPosition(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                                          stateSpace->getEnvironment().get()->stateBodies_[targetBody]);
+        const dReal *q = dBodyGetQuaternion(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                                            stateSpace->getEnvironment().get()->stateBodies_[targetBody]);
+        pose[0]=p[0];
+        pose[1]=p[1];
+        pose[2]=p[2];
+
+        pose[3]=q[0];
+        pose[4]=q[1];
+        pose[5]=q[2];
+        pose[6]=q[3];
+        return pose;
+    }
+
+    bool kauthamshell::setWorldState(std::vector< std::vector<double> > worldstate)
+    {
+        dQuaternion q;
+        for(unsigned int i=0;i<worldstate.size();i++)
+        {
+            worldstate[i].resize(7);
+            dBodySetPosition(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                             stateSpace->getEnvironment().get()->stateBodies_[i],worldstate[i][0],worldstate[i][1],worldstate[i][2]);
+            q[0] = worldstate[i][3];
+            q[1] = worldstate[i][4];
+            q[2] = worldstate[i][5];
+            q[3] = worldstate[i][6];
+
+            dBodySetQuaternion(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                               stateSpace->getEnvironment().get()->stateBodies_[i],q);
+        }
+        return true;
+    }
+
+    std::vector<std::vector<double> > kauthamshell::getWorldState()
+    {
+        std::vector< std::vector<double> > worldstate;
+        unsigned int bodyCount=((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_.size();
+        worldstate.resize(bodyCount);
+        for(unsigned int i=0;i<bodyCount;i++)
+        {
+            worldstate[i].resize(7);
+            const dReal *p = dBodyGetPosition(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                                              stateSpace->getEnvironment().get()->stateBodies_[i]);
+            const dReal *q = dBodyGetQuaternion(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                                                stateSpace->getEnvironment().get()->stateBodies_[i]);
+            worldstate[i][0]=p[0];
+            worldstate[i][1]=p[1];
+            worldstate[i][2]=p[2];
+
+            worldstate[i][3]=q[0];
+            worldstate[i][4]=q[1];
+            worldstate[i][5]=q[2];
+            worldstate[i][6]=q[3];
+
+        }
+        for(unsigned int i=0;i<bodyCount;i++)
+        {
+
+            std::cout<<"state of body "<< i << " is ["<< worldstate[i][0]<<" , "
+                    << worldstate[i][1]<<" , "
+                    << worldstate[i][2]<<" , "
+                    << worldstate[i][3]<<" , "
+                    << worldstate[i][4]<<" , "
+                    << worldstate[i][5]<<" , "
+                    << worldstate[i][6]<<" ] "<<std::endl;
+
+        }
+
+        return worldstate;
     }
 }
