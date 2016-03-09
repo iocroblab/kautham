@@ -400,7 +400,6 @@ void KauthamDEPlanner::KauthamOpenDEState2Robsmp(const ob::State *state, Sample*
         {
             for(unsigned int j=0;j<_wkSpace->getRobot(i)->getNumLinks();j++)
             {
-
                 //const double *pos = states[i]->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(1)->values;
                 const double *posRob = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k);
                 const ob::SO3StateSpace::StateType &oriRob = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);

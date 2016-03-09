@@ -70,7 +70,6 @@ namespace omplcplanner{
      virtual void applyControl (const double *control) const;//!< This function apply the control by setting the forces, velocities or torques.
      virtual bool isValidCollision(dGeomID /*geom1*/, dGeomID /*geom2*/, const dContact& /*contact*/) const ;//!< This function defines the validity of the collisions.
      virtual void setupContact(dGeomID /*geom1*/, dGeomID /*geom2*/, dContact &contact) const; //!< This method set the parameters for the contact.
-
      std::vector<float> jointValue;
 
  };
@@ -94,8 +93,8 @@ public:
     ~PlanarChainStateSpace();
     virtual double distance(const ob::State *s1, const ob::State *s2) const; //!< Define the method to compute the distance.
     virtual void registerProjections(void); //!< This function register the projetions for state space.
-//    virtual void readState(ob::State *state) const;
-//    virtual void writeState(ob::State *state) const;
+    virtual void readState(ob::State *state) const;
+    virtual void writeState(ob::State *state) const;
 
 };
 

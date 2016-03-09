@@ -131,64 +131,65 @@ void PlanarChainStateSpace::registerProjections(void)
     registerDefaultProjection(ob::ProjectionEvaluatorPtr(new PlanarChainStateProjectionEvaluator(this)));
 }
 
-//void PlanarChainStateSpace::writeState(ompl::base::State *state) const
-//{
-//    std::cout<<"Writing State Function================================="<<std::endl;
-//    const StateType *s = state->as<StateType>();
-//    for (int i = (int)env_->stateBodies_.size() - 1 ; i >= 0 ; --i)
-//    {
-//        unsigned int _i4 = i * 4;
+void PlanarChainStateSpace::writeState(ob::State *state) const
+{
+    std::cout<<"Writing State Function================================="<<std::endl;
+    const StateType *s = state->as<StateType>();
+    for (int i = (int)env_->stateBodies_.size() - 1 ; i >= 0 ; --i)
+    {
+        unsigned int _i4 = i * 4;
 
-//        double *s_pos = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
-//        dBodySetPosition(env_->stateBodies_[i], s_pos[0], s_pos[1], s_pos[2]);
+        double *s_pos = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
+        dBodySetPosition(env_->stateBodies_[i], s_pos[0], s_pos[1], s_pos[2]);
 
-//        double *s_vel = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
-//        dBodySetLinearVel(env_->stateBodies_[i], s_vel[0], s_vel[1], s_vel[2]);
+        double *s_vel = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
+        dBodySetLinearVel(env_->stateBodies_[i], s_vel[0], s_vel[1], s_vel[2]);
 
-//        double *s_ang = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
-//        dBodySetAngularVel(env_->stateBodies_[i],  s_ang[0], s_ang[1], s_ang[2]);
+        double *s_ang = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
+        dBodySetAngularVel(env_->stateBodies_[i],  s_ang[0], s_ang[1], s_ang[2]);
 
-//            const ob::SO3StateSpace::StateType &s_rot = *s->as<ob::SO3StateSpace::StateType>(_i4);
-//        dQuaternion q;
-//        q[0] = s_rot.w;
-//        q[1] = s_rot.x;
-//        q[2] = s_rot.y;
-//        q[3] = s_rot.z;
-//        dBodySetQuaternion(env_->stateBodies_[i], q);
-//    }
-//}
+            const ob::SO3StateSpace::StateType &s_rot = *s->as<ob::SO3StateSpace::StateType>(_i4);
+        dQuaternion q;
+        q[0] = s_rot.w;
+        q[1] = s_rot.x;
+        q[2] = s_rot.y;
+        q[3] = s_rot.z;
+        dBodySetQuaternion(env_->stateBodies_[i], q);
+    }
 
-//void PlanarChainStateSpace::readState(ompl::base::State *state) const
-//{
-//    StateType *s = state->as<StateType>();
-//    for (int i = (int)env_->stateBodies_.size() - 1 ; i >= 0 ; --i)
-//    {
-//        unsigned int _i4 = i * 4;
+}
 
-//        const dReal *pos = dBodyGetPosition(env_->stateBodies_[i]);
-//        const dReal *vel = dBodyGetLinearVel(env_->stateBodies_[i]);
-//        const dReal *ang = dBodyGetAngularVel(env_->stateBodies_[i]);
-//        double *s_pos = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
-//        double *s_vel = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
-//        double *s_ang = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
+void PlanarChainStateSpace::readState(ob::State *state) const
+{
+    StateType *s = state->as<StateType>();
+    for (int i = (int)env_->stateBodies_.size() - 1 ; i >= 0 ; --i)
+    {
+        unsigned int _i4 = i * 4;
 
-//        for (int j = 0; j < 3; ++j)
-//        {
-//            s_pos[j] = pos[j];
-//            s_vel[j] = vel[j];
-//            s_ang[j] = ang[j];
-//        }
+        const dReal *pos = dBodyGetPosition(env_->stateBodies_[i]);
+        const dReal *vel = dBodyGetLinearVel(env_->stateBodies_[i]);
+        const dReal *ang = dBodyGetAngularVel(env_->stateBodies_[i]);
+        double *s_pos = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
+        double *s_vel = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
+        double *s_ang = s->as<ob::RealVectorStateSpace::StateType>(_i4)->values; ++_i4;
 
-//        const dReal *rot = dBodyGetQuaternion(env_->stateBodies_[i]);
-//            ob::SO3StateSpace::StateType &s_rot = *s->as<ob::SO3StateSpace::StateType>(_i4);
+        for (int j = 0; j < 3; ++j)
+        {
+            s_pos[j] = pos[j];
+            s_vel[j] = vel[j];
+            s_ang[j] = ang[j];
+        }
 
-//        s_rot.w = rot[0];
-//        s_rot.x = rot[1];
-//        s_rot.y = rot[2];
-//        s_rot.z = rot[3];
-//    }
-//    s->collision = 0;
-//}
+        const dReal *rot = dBodyGetQuaternion(env_->stateBodies_[i]);
+            ob::SO3StateSpace::StateType &s_rot = *s->as<ob::SO3StateSpace::StateType>(_i4);
+
+        s_rot.w = rot[0];
+        s_rot.x = rot[1];
+        s_rot.y = rot[2];
+        s_rot.z = rot[3];
+    }
+
+}
 /////////////////////////////////////////////////////////////////////////////////
 ///                Kuka Projection Evaluator
 /////////////////////////////////////////////////////////////////////////////////
