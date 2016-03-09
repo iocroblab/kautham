@@ -1281,7 +1281,7 @@ namespace Kautham {
         q[3]=pose[6];
         dBodySetQuaternion(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
                            stateSpace->getEnvironment().get()->stateBodies_[targetBody],q);
-
+return true;
     }
 
     std::vector<double> kauthamshell::getBodyState(int targetBody)

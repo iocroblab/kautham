@@ -33,16 +33,6 @@
 #include <iostream>
 #include <vector>
 
-
-#include <ompl/extensions/triangle/PropositionalTriangularDecomposition.h>
-#include <ompl/control/planners/ltl/PropositionalDecomposition.h>
-#include <ompl/control/planners/ltl/Automaton.h>
-#include <ompl/control/planners/ltl/ProductGraph.h>
-#include <ompl/control/planners/ltl/LTLPlanner.h>
-#include <ompl/control/planners/ltl/LTLProblemDefinition.h>
-using namespace std;
-namespace ob = ompl::base;
-namespace oc = ompl::control;
 namespace Kautham {
 namespace omplcplanner
 {
@@ -117,9 +107,6 @@ public:
     void addRigidBody(RigidBody rb, dGeomID geom);
     RigidBody getManipulationConstraints(dGeomID geom);
 };
-typedef oc::PropositionalTriangularDecomposition::Polygon Polygon;
-typedef oc::PropositionalTriangularDecomposition::Vertex Vertex;
-
 
 }
 }

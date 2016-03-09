@@ -46,7 +46,7 @@ PlanarChainEnvironment::~PlanarChainEnvironment()
 //! dimensions for Kuka robot.
 unsigned int PlanarChainEnvironment::getControlDimension(void) const
 {
-    return 2;
+    return 3;
 }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
  * which describe the control bounds,the the max and min limits for sampling the control.
@@ -54,11 +54,15 @@ unsigned int PlanarChainEnvironment::getControlDimension(void) const
 void PlanarChainEnvironment::getControlBounds(std::vector< double > &lower, std::vector< double > &upper) const
 {
 
-    for(int i=0; i < 2; i++)
-    {
-        lower[i]=-5;
-        upper[i]=5;
-    }
+
+
+        lower[0]=-1.5;
+        upper[0]=1.5;
+        lower[1]=-2.4;
+        upper[1]=2.4;
+        lower[2]=-1;
+        upper[2]=1;
+
 }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
  * that explain how the control will apply. Here the controls are applying by
@@ -72,6 +76,8 @@ void PlanarChainEnvironment::applyControl (const double *control) const
     dJointSetAMotorParam(_motor[0], dParamFMax, dInfinity);
     dJointSetAMotorParam(_motor[1], dParamVel, (control[1]));
     dJointSetAMotorParam(_motor[1], dParamFMax, dInfinity);
+    dJointSetAMotorParam(_motor[2], dParamVel, (control[2]));
+    dJointSetAMotorParam(_motor[2], dParamFMax, dInfinity);
 
 
 }
@@ -197,7 +203,7 @@ unsigned int PlanarChainStateProjectionEvaluator::getDimension(void) const
 }
 void PlanarChainStateProjectionEvaluator :: defaultCellSizes(void)
 {
-    cellSizes_.resize(2);
+    cellSizes_.resize(3);
     cellSizes_[0] = 0.5;
     cellSizes_[1] = 0.5;
     cellSizes_[2] = 0.5;

@@ -1,4 +1,4 @@
-///*************************************************************************\
+//*************************************************************************\
 //   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
 //                 Universitat Politecnica de Catalunya
 //                 BarcelonaTech

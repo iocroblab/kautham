@@ -72,7 +72,7 @@ public:
     LTLProblemSetup(oc::PropositionalTriangularDecomposition* decomp,WorkSpace* ws);
     std::vector<string> TypeOfAutomaton;
     unsigned int PropsCouunt;
-    std::vector<Polygon> Propositions;
+    //std::vector<Polygon> Propositions;
     std::vector <unsigned int> sequence;
     std::vector <unsigned int> avoidance;
 

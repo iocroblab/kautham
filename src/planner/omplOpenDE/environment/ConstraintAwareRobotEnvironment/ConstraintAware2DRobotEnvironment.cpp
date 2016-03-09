@@ -226,7 +226,7 @@ ConstraintAwaretwoDRobotStateSpace::~ConstraintAwaretwoDRobotStateSpace()
 
 double ConstraintAwaretwoDRobotStateSpace::distance(const ob::State *s1, const ob::State *s2) const
 {
-    double distance = 0.0;
+    //double distance = 0.0;
     //for (int i=0; i <= (((KauthamDEEnvironment*) env_.get())->getNumLinksFirstRobot()-1); i++)
     //for (int i=0; i <= (env_->getNumLinksFirstRobot()-1); i++)
 
@@ -255,7 +255,7 @@ ConstraintAwaretwoDControlSampler::ConstraintAwaretwoDControlSampler(const oc::C
 }
 void ConstraintAwaretwoDControlSampler::sampleNext(oc::Control *control, const oc::Control *previous)
 {
-const dReal *pos=dBodyGetPosition(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->stateBodies_[0]);
+//const dReal *pos=dBodyGetPosition(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->stateBodies_[0]);
 //std::cout<<"position of rob is : [ "<< pos[0]<<" , "<<pos[1]<<" ]"<<std::endl;
 space_->copyControl(control, previous);
 //if(pos[0]<0)

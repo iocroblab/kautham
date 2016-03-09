@@ -137,7 +137,7 @@ KauthamDELTL2DPlanner::KauthamDELTL2DPlanner(SPACETYPE stype, Sample *init, Samp
 
      oc::AutomatonPtr cosafety ;
      oc::AutomatonPtr safety;
-     for(int i=0;i<LTLProblem.TypeOfAutomaton.size();i++)
+     for(unsigned int i=0;i<LTLProblem.TypeOfAutomaton.size();i++)
      {
          if(LTLProblem.TypeOfAutomaton[i]=="DisjunctionAutomaton")
          {

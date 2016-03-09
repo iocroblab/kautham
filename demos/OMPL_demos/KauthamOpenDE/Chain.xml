@@ -24,7 +24,7 @@
 			<Parameter name="Goal Bias">0.05</Parameter>
 			<Parameter name="Max Contacts">3</Parameter>
 			<Parameter name="Max Control Steps">10</Parameter>
-			<Parameter name="Max Planning Time">10</Parameter>
+			<Parameter name="Max Planning Time">20</Parameter>
 			<Parameter name="Max Speed">10</Parameter>
 			<Parameter name="Min Control Steps">5</Parameter>
 			<Parameter name="PropagationStepSize">0.07</Parameter>
@@ -34,7 +34,7 @@
 		<Queries>
 			<Query>
 				<Init dim="3">0.176 0.32 0.5</Init>
-				<Goal dim="3">0.82 0.854 0.5</Goal>
+				<Goal dim="3">0.713 0.866 0.874</Goal>
 			</Query>
 		</Queries>
 	</Planner>

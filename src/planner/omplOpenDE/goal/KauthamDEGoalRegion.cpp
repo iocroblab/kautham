@@ -81,11 +81,11 @@ vector<KauthamDEGoalRegion::KauthamODEobject> KauthamDEGoalRegion::smp2KauthamOp
     //loop for all the robots
     vector<KauthamODEobject> kauthamob;
 
-    for(int i=0; i<=(int(wkSpace->getNumRobots())-1); i++)
+    for(unsigned int i=0; i<=(int(wkSpace->getNumRobots())-1); i++)
     {
         //wkSpace->getRobot(0)->Kinematics(goal->getMappedConf()[0]);
          wkSpace->getRobot(i)->Kinematics(goal->getMappedConf().at(0).getSE3());
-        for(int j=0; j<= (wkSpace->getRobot(i)->getNumLinks())-1;j++)
+        for(unsigned int j=0; j<= (wkSpace->getRobot(i)->getNumLinks())-1;j++)
         {
 
             KauthamODEobject odeob;
