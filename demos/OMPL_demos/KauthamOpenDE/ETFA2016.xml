@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_cRRTcar_table_rooms_SE2">
+	<Robot robot="obstacles/DEBenchmark/SphereDE.urdf" scale="1.0">
+		<Limits name="X" min="-285.0" max="285.0" />
+		<Limits name="Y" min="-185.0" max="185.0" />
+		<Limits name="Z" min="-4.0" max="40.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-360.0" max="360.0" />
+		<Home X="10.0" Y="10.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+	</Robot>
+	<Obstacle obstacle="obstacles/ETFA2016/cubeDE8IROS.urdf" scale="1.0">
+		<Home TH="45.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="32.0" X="40.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/cubeDE7IROS.urdf" scale="1.0">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="23.0" X="-162.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/cubeDE6IROS.urdf" scale="1.0">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="-135.0" X="-149.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/cubeDE5IROS.urdf" scale="1.0">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="150.0" X="-14.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/cubeDE4IROS.urdf" scale="1.0">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="-73.0" X="5.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/cubeDE3IROS.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="-72.0" X="199.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/cubeDE2IROS.urdf" scale="1.0">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="-73.0" X="130.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/cubeDEIROS.urdf" scale="1.0">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="130.0" X="162.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/wallIROS.urdf" scale="1.0">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="30.0" X="132.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/wall2IROS.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="-130.0" X="122.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/wall3IROS.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="150.0" X="82.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/wall4IROS.urdf" scale="1.0">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="30.0" X="-4.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/wall5IROS.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="-130.0" X="-11.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/Plan.urdf" scale="1.0">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/wall6IROS.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="150.0" X="-116.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/wall7IROS.urdf" scale="1.0">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="-55.0" X="-145.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/wall8IROS.urdf" scale="1.0">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="86.0" X="-147.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ETFA2016/wall9IROS.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="16.0" X="-250.0" />
+	</Obstacle>
+	<Controls robot="controls/car.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>RRT2DPlanner</Name>
+			<Parameter name="Constraint Force Mixing">0.3000000119</Parameter>
+			<Parameter name="Control Dimensions">2</Parameter>
+			<Parameter name="Error Reduction Parameter">0.5</Parameter>
+			<Parameter name="Goal Bias">0.05000000075</Parameter>
+			<Parameter name="Max Contacts">3</Parameter>
+			<Parameter name="Max Control Steps">50</Parameter>
+			<Parameter name="Max Planning Time">200</Parameter>
+			<Parameter name="Max Speed">10</Parameter>
+			<Parameter name="Min Control Steps">10</Parameter>
+			<Parameter name="PropagationStepSize">0.07999999821</Parameter>
+			<Parameter name="Speed Factor">5</Parameter>
+			<Parameter name="only final link position?">0</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="3">0.176 0.874 0.5</Init>
+				<Goal dim="3">0.854 0.115 0.5</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
