@@ -98,7 +98,7 @@
 #include <planner/omplOpenDE/PhysicsBasedPlanners/Know-PKP/KnowledgeOrientedKPIECE2DPlanner.h>
 #include <planner/omplOpenDE/PhysicsBasedPlanners/Know-PKP/KnowledgeOrientedRRT2DPlanner.h>
 #include <planner/omplOpenDE/PhysicsBasedPlanners/Know-PKP/KnowledgeOrientedSyclop2DPlanner.h>
-#include <planner/omplOpenDE/PhysicsBasedPlanners/KauthamOpenDELTLPlanner.h>
+//#include <planner/omplOpenDE/PhysicsBasedPlanners/KauthamOpenDELTLPlanner.h>
 #endif
 
 /*#if defined(KAUTHAM_USE_GUIBRO)

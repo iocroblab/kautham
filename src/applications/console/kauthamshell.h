@@ -27,7 +27,6 @@
 #if !defined(_KAUTHAMSHELL_H)
 #define _KAUTHAMSHELL_H
 #include <problem/problem.h>
-
 using namespace std;
 using namespace Kautham;
 
@@ -74,7 +73,7 @@ namespace Kautham {
         bool detachObstacle(uint obs);
         //functions for manipulation node
 
-        bool setManipQueryPrams(std::string actiontype, int targetbody, std::vector<double> force);
+        bool setManipPramsAndSolve(std::string actiontype, int targetbody, std::vector<double> force,std::vector<State> *ws);
         bool setBodyState(int targetBody, std::vector<double> pose);
         std::vector<double> getBodyState(int targetBody);
         bool setWorldState(std::vector< std::vector<double> > worldstate);

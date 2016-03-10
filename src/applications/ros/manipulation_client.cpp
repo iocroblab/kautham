@@ -36,13 +36,14 @@
 #include "kautham2/ManipulationAction.h"
 #include "kautham2/SetWorldState.h"
 
-#include"kautham2/SetManipQuery.h"
+//#include"kautham2/SetManipQuery.h"
 #include"kautham2/OpenManipProblem.h"
 #include"kautham2/GetPath.h"
 #include"kautham2/SetBodyState.h"
 #include"kautham2/GetBodyState.h"
 #include"kautham2/GetWorldState.h"
 #include"kautham2/SetWorldState.h"
+#include"kautham2/SolveManipQuery.h"
 using namespace std;
 using namespace Kautham;
 
@@ -129,42 +130,33 @@ void setManipQuery()
     open_problem_srv.request.dir[0] = model;
     open_problem_client.call(open_problem_srv);
     // activate the setquery service
-    ros::service::waitForService("manipulation_node/SetManipQuery");
-    ros::ServiceClient set_manip_query_client = node.serviceClient<kautham2::SetManipQuery>("manipulation_node/SetManipQuery");
-    kautham2::SetManipQuery set_manip_query_srv;
-    set_manip_query_srv.request.init.resize(3);
-    set_manip_query_srv.request.goal.resize(3);
+
+    ros::service::waitForService("manipulation_node/SolveManipQuery");
+    ros::ServiceClient solve_manip_query_client = node.serviceClient<kautham2::SolveManipQuery>("manipulation_node/SolveManipQuery");
+    kautham2::SolveManipQuery solve_manip_query_srv;
+    solve_manip_query_srv.request.init.resize(3);
+    solve_manip_query_srv.request.goal.resize(3);
     // Set the initial and goal vectors (kautham controls)
-    set_manip_query_srv.request.init[0] = 0.176;
-    set_manip_query_srv.request.init[1] = 0.874;
-    set_manip_query_srv.request.init[2] = 0.5;
-    set_manip_query_srv.request.goal[0] = 0.854;
-    set_manip_query_srv.request.goal[1] = 0.113;
-    set_manip_query_srv.request.goal[2] = 0.5;
+    solve_manip_query_srv.request.init[0] = 0.176;
+    solve_manip_query_srv.request.init[1] = 0.874;
+    solve_manip_query_srv.request.init[2] = 0.5;
+    solve_manip_query_srv.request.goal[0] = 0.854;
+    solve_manip_query_srv.request.goal[1] = 0.113;
+    solve_manip_query_srv.request.goal[2] = 0.5;
 
-    set_manip_query_srv.request.actionType="Pull";
+    solve_manip_query_srv.request.actionType="pull";
 
-    set_manip_query_srv.request.force.resize(3);
-    set_manip_query_srv.request.force[0] = 0.0;
-    set_manip_query_srv.request.force[1] = -5.0;
-    set_manip_query_srv.request.force[2] = 0.0;
-    set_manip_query_srv.request.targetBody=5;
+    solve_manip_query_srv.request.force.resize(3);
+    solve_manip_query_srv.request.force[0] = 0.0;
+    solve_manip_query_srv.request.force[1] = -5.0;
+    solve_manip_query_srv.request.force[2] = 0.0;
+    solve_manip_query_srv.request.targetBody=5;
 
 
     //call kautham service to set the query
-    set_manip_query_client.call(set_manip_query_srv);
-    std::cout << "SetQuery service has been performed. " << std::endl;
+    solve_manip_query_client.call(solve_manip_query_srv);
 
-    // activate the getpath service
-    //    ros::service::waitForService("/kautham_node/GetPath");
-    //    ros::ServiceClient get_path_client = node.serviceClient<kautham2::GetPath>("/kautham_node/GetPath");
-
-    //    kautham2::GetPath get_path_srv;
-    //    get_path_client.call(get_path_srv);
-    //    int sizev = get_path_srv.response.response.size() - 1;
-    //    std::cout<<")\n Kautham returned a path of "<<sizev<<" elements"<<std::endl;
-
-    ROS_DEBUG("Manipulation Query performed sucessfully !");
+    ROS_INFO("Manipulation Query performed sucessfully !");
 
 }
 
@@ -174,16 +166,14 @@ int main (int argc, char **argv)
 
     ros::init(argc, argv, "manipulation_client");
     ROS_INFO("Starting Manipulation_Client");
+
     setManipQuery();
 
-    getBodyState();
-    setBodyState();
-    std::cout<<"===================="<<std::endl;
-    getWorldState();
-    std::cout<<"===================="<<std::endl;
-    setWorldState();
-    std::cout<<"===================="<<std::endl;
-    getWorldState();
+//    getBodyState();
+//    setBodyState();
+//    getWorldState();
+//    setWorldState();
+//    getWorldState();
     ros::spin();
 
     return 0;

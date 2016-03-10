@@ -59,8 +59,8 @@
 #include "../environment/KauthamOpenDEEnvironment.h"
 //#include "KauthamOpenDERRTTX90Planner.h"
 
-#include <ompl/control/planners/ltl/LTLProblemDefinition.h>
-#include<ompl/control/planners/ltl/LTLPlanner.h>
+//#include <ompl/control/planners/ltl/LTLProblemDefinition.h>
+//#include<ompl/control/planners/ltl/LTLPlanner.h>
 
 
 #define _USE_MATH_DEFINES
@@ -107,6 +107,8 @@ public:
 
     oc::ControlSpacePtr csp;
     oc::OpenDESimpleSetup *ss;
+    oc::SimpleSetupPtr ss1;
+
     vector<State>  worldState;
    // int m;
     std::vector<Sample*> Rob;
@@ -148,9 +150,9 @@ double Smoothness;
 
     std::vector<solutionStates> sStates;
     std::vector< vector<float> >  JointAngle;
-    oc::LTLProblemDefinitionPtr pDefp;
-    oc::LTLSpaceInformationPtr ltlsi;
-    oc::LTLPlanner* ltlplanner;
+//    oc::LTLProblemDefinitionPtr pDefp;
+//    oc::LTLSpaceInformationPtr ltlsi;
+//    oc::LTLPlanner* ltlplanner;
     std::string PROBTYPE;
 
     typedef struct

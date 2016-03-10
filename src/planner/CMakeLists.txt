@@ -43,10 +43,12 @@ if( KAUTHAM_OMPL )
             #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/*.h )
 
             file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/*.cpp omplOpenDE/goal/*.cpp omplOpenDE/environment/*.cpp omplOpenDE/environment/ConstraintAwareRobotEnvironment/*.cpp omplOpenDE/environment/SimpleRobotEnvironment/*.cpp
-                  omplOpenDE/InstantiatedKnowledge/*.cpp omplOpenDE/PhysicsBasedPlanners/*.cpp omplOpenDE/PhysicsBasedPlanners/PKP/*.cpp omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.cpp omplOpenDE/PhysicsBasedPlanners/LTL/*.cpp
+                  omplOpenDE/InstantiatedKnowledge/*.cpp omplOpenDE/PhysicsBasedPlanners/*.cpp omplOpenDE/PhysicsBasedPlanners/PKP/*.cpp omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.cpp
 		  omplOpenDE/*.h omplOpenDE/goal/*.h omplOpenDE/environment/*.h omplOpenDE/environment/ConstraintAwareRobotEnvironment/*.h omplOpenDE/environment/SimpleRobotEnvironment/*.h omplOpenDE/InstantiatedKnowledge/*.h 
-                  omplOpenDE/PhysicsBasedPlanners/*.h omplOpenDE/PhysicsBasedPlanners/PKP/*.h omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.h omplOpenDE/PhysicsBasedPlanners/LTL/*.h)
- 
+                  omplOpenDE/PhysicsBasedPlanners/*.h omplOpenDE/PhysicsBasedPlanners/PKP/*.h omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.h )
+ if(OMPL_EXTENSION_TRIANGLE)
+file(GLOB SRC_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/LTL/*.cpp omplOpenDE/PhysicsBasedPlanners/LTL/*.h)
+endif()
 #	    file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/goal/*.h omplOpenDE/environment/*.h omplOpenDE/environment/CRE/*.h omplOpenDE/environment/RE/*.h omplOpenDE/InstantiatedKnowledge/*.h 			  omplOpenDE/PhysicsBasedPlanners/*.h omplOpenDE/PhysicsBasedPlanners/PKP/*.h omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.h)
 
  	    #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/goal/*.cpp )

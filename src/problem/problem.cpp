@@ -321,8 +321,8 @@ namespace Kautham {
       else if(name == "KnowledgeOrientedSyclop2DPlanner")
           _planner  = new   omplcplanner::KnowledgeOrientedSyclop2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
 
-      else if(name == "omplODELTL2DPlanner")
-          _planner  = new   omplcplanner::KauthamDELTL2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+//      else if(name == "omplODELTL2DPlanner")
+//          _planner  = new   omplcplanner::KauthamDELTL2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
 #endif
         else {
             cout<<"Planner "<< name <<" is unknow or not loaded (check the CMakeFiles.txt options)" << endl;

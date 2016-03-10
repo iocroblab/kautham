@@ -1239,35 +1239,66 @@ namespace Kautham {
         }
     }
 
-
-    bool kauthamshell::setManipQueryPrams(string actiontype, int targetbody, std::vector<double> force)
+    bool kauthamshell::setManipPramsAndSolve(string actiontype, int targetbody, std::vector<double> force, std::vector<State> *ws)
     {
-        ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
-                stateSpace->getEnvironment().get())->manipulationQuery->setActionType(actiontype);
-
-        ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
-                stateSpace->getEnvironment().get())->stateBodies_[targetbody];
-
-        ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
-                stateSpace->getEnvironment().get())->manipulationQuery->setforce(force);
-
-        std::vector<double> f = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
-                                 stateSpace->getEnvironment().get())->manipulationQuery->getforce();
-        if(actiontype=="pull"||actiontype=="Pull")
-        {
-            unsigned int robBodyIndex = _problem->wSpace()->getRobot(0)->getNumLinks()-1;
-            ((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[robBodyIndex];
+        try {
+            if (_problem == NULL || !problemOpened())
+            {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
             dJointID joint;
-            joint=dJointCreateHinge(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->world_ , 0);
-            dJointAttach (joint,((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[robBodyIndex],
-                          ((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[targetbody]);
+            ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                    stateSpace->getEnvironment().get())->manipulationQuery->setActionType(actiontype);
 
+            ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                    stateSpace->getEnvironment().get())->stateBodies_[targetbody];
+
+            ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                    stateSpace->getEnvironment().get())->manipulationQuery->setforce(force);
+
+            std::vector<double> f = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                                     stateSpace->getEnvironment().get())->manipulationQuery->getforce();
+            if(actiontype=="pull"||actiontype=="Pull")
+            {
+                unsigned int robBodyIndex = _problem->wSpace()->getRobot(0)->getNumLinks()-1;
+                ((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[robBodyIndex];
+                joint=dJointCreateHinge(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->world_ , 0);
+                dJointAttach (joint,((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[robBodyIndex],
+                              ((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[targetbody]);
+
+            }
+            std::cout<<"Action is : "<<  ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                                          stateSpace->getEnvironment().get())->manipulationQuery->getActionType()<<" :: force is :: [" <<f[0]<<" , "<<f[1]<<" , "<<f[2]<<"] Target body is: "<<targetbody<<std::endl;
+            bool solve = false;
+            solve = _problem->getPlanner()->solveAndInherit();
+            if (solve)
+            {
+                *ws = ((omplcplanner::KauthamDEPlanner*)_problem->getPlanner())->worldState;
+            }
+            std::string actiontype = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                                      stateSpace->getEnvironment().get())->manipulationQuery->getActionType();
+
+            if(actiontype=="pull"||actiontype=="Pull")
+            {
+                dJointDestroy(joint);
+            }
+
+            return solve;
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
         }
-        std::cout<<"Action is : "<<  ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
-                                      stateSpace->getEnvironment().get())->manipulationQuery->getActionType()<<" :: force is :: [" <<f[0]<<" , "<<f[1]<<" , "<<f[2]<<"] Target body is: "<<targetbody<<std::endl;
-
-        return true;
     }
+
 
     bool kauthamshell::setBodyState(int targetBody, std::vector<double> pose)
     {
@@ -1281,7 +1312,7 @@ namespace Kautham {
         q[3]=pose[6];
         dBodySetQuaternion(((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
                            stateSpace->getEnvironment().get()->stateBodies_[targetBody],q);
-return true;
+        return true;
     }
 
     std::vector<double> kauthamshell::getBodyState(int targetBody)
@@ -1358,4 +1389,8 @@ return true;
 
         return worldstate;
     }
+
+
+
+
 }

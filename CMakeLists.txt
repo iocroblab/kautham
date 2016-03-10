@@ -97,7 +97,7 @@ add_service_files(
    GetWorldState.srv
    GetBodyState.srv
    SetBodyState.srv
-   SetManipQuery.srv
+   SolveManipQuery.srv
 
 )
 
@@ -106,6 +106,7 @@ add_message_files(
    FILES 
    fVector.msg
    dVector.msg
+   odeState.msg
 )
 
 generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)

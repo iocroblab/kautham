@@ -87,17 +87,14 @@ void ConstraintAware2DRobotEnvironment::applyControl (const double *control) con
         dBodyAddForce(bodies[0],control[0],control[1],0.0);
     }
     else
-        if(manipulationQuery->getActionType()=="pull" ||manipulationQuery->getActionType()=="push")
+        if(manipulationQuery->getActionType()=="pull" || manipulationQuery->getActionType()=="Pull"
+                                                      || manipulationQuery->getActionType()=="push"
+                                                      || manipulationQuery->getActionType()=="Push")
         {
             dBodyAddForce(bodies[0],manipulationQuery->getforce().at(0),manipulationQuery->getforce().at(1),manipulationQuery->getforce().at(2));
         }
         else
             std::cout<<"Invalid Action"<<std::endl;
-
-   // std::cout<<"action Type "<<manipulationQuery->getActionType()<<" , "<<manipulationQuery->getDirection()<<std::endl;
-
-    //const dReal *pos = dBodyGetPosition(bodies[0]);
-    //std::cout<<"position "<<pos[0]<<" , "<<pos[1]<<std::endl;
 }
 
 bool ConstraintAware2DRobotEnvironment::isValidCollision(dGeomID geom1, dGeomID geom2, const dContact& /*contact*/)const

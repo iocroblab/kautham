@@ -39,6 +39,7 @@
 #include "kautham2/GetBodyState.h"
 #include "kautham2/SetWorldState.h"
 #include "kautham2/GetWorldState.h"
+#include "kautham2/SolveManipQuery.h"
 #include "ode/ode.h"
 
 using namespace std;
@@ -73,11 +74,13 @@ bool srvOpenManipProblem(kautham2::OpenManipProblem::Request &req, kautham2::Ope
     }
     return true;    return true;
 }
-bool srvSetManipQuery(kautham2::SetManipQuery::Request &req,
-                 kautham2::SetManipQuery::Response &res)
+bool srvSolveManipQuery(kautham2::SolveManipQuery::Request &req,
+                 kautham2::SolveManipQuery::Response &res)
 {
+    std::vector<State> worldstate;
     res.status = kmanip->setQuery(req.init,req.goal);
-    kmanip->setManipQueryPrams(req.actionType,req.targetBody,req.force);
+    kmanip->setManipPramsAndSolve(req.actionType,req.targetBody,req.force,&worldstate);
+    std::cout<<"Computed Path states are : " <<worldstate.size()<<std::endl;;
 
     return true;
 }
@@ -130,6 +133,48 @@ kmanip->setBodyState(req.taretBody,req.Pose);
 res.status=true;
     return true;
 }
+//bool srvSolveManipQuery(kautham2::solveManipQuery::Request &req,
+//                kautham2::solveManipQuery::Response &res) {
+//    ostringstream oss;
+//    std::vector<State> worldstate;
+//    if (kmanip->solveManipQuery(&worldstate)) {
+////        vector < vector < KthReal > > path;
+////        istringstream iss(oss.str());
+////        for (string str; getline(iss,str); ) {
+////            vector < KthReal > conf;
+////            std::istringstream strs(str);
+////            int chars_to_read = strs.str().size();
+////            while (chars_to_read > 0) {
+////                getline(strs,str,' ');
+////                if (str.size() > 0) {
+////                    conf.push_back(atof(str.c_str()));
+////                }
+////                chars_to_read -= str.size() + 1;
+//        std::cout<<"Computed Path states are : " <<worldstate.size()<<std::endl;;
+
+//    }
+//    std::cout<<"Computed Path states are : " <<worldstate.size()<<std::endl;
+
+////            std::cout<<"Computed Path is: ";
+////            for(unsigned int i=0;i<conf.size();i++)
+////            {
+////                std::cout<<conf[i]<<" , ";
+////            }
+
+////            std::cout<<std::endl;
+////            path.push_back(conf);
+
+////        res.response.resize(path.size());
+////        for (unsigned int i = 0; i < path.size(); ++i) {
+////            res.response[i].v.resize(path.at(i).size());
+////            for (unsigned int j = 0; j < path.at(i).size(); ++j) {
+////                res.response[i].v[j] = path.at(i).at(j);
+////            }
+////        }
+////    }
+
+//    return true;
+//}
 
 int main (int argc, char **argv) {
     ros::init(argc, argv, "manipulation_node");
@@ -141,12 +186,11 @@ int main (int argc, char **argv) {
     kmanip = new kauthamshell();
 
     ros::ServiceServer service1 = n.advertiseService("manipulation_node/OpenManipProblem",srvOpenManipProblem);
-    //ros::ServiceServer service2 = n.advertiseService("manipulation_node/ManipulationAction",srvManipulationAction);
-    ros::ServiceServer service3 = n.advertiseService("manipulation_node/SetManipQuery",srvSetManipQuery);
-    ros::ServiceServer service4 = n.advertiseService("manipulation_node/SetBodyState",srvSetBodyState);
-    ros::ServiceServer service5 = n.advertiseService("manipulation_node/GetBodyState",srvGetBodyState);
-    ros::ServiceServer service6 = n.advertiseService("manipulation_node/SetWorldState",srvSetWorldState);
-    ros::ServiceServer service7 = n.advertiseService("manipulation_node/GetWorldState",srvGetWorldState);
+    ros::ServiceServer service2 = n.advertiseService("manipulation_node/SolveManipQuery",srvSolveManipQuery);
+    ros::ServiceServer service3 = n.advertiseService("manipulation_node/SetBodyState",srvSetBodyState);
+    ros::ServiceServer service4 = n.advertiseService("manipulation_node/GetBodyState",srvGetBodyState);
+    ros::ServiceServer service5 = n.advertiseService("manipulation_node/SetWorldState",srvSetWorldState);
+    ros::ServiceServer service6 = n.advertiseService("manipulation_node/GetWorldState",srvGetWorldState);
 
 
 

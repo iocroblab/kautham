@@ -332,54 +332,53 @@ bool KauthamDEPlanner::trySolve(void)
         return 0;
 
     }
-    if(PROBTYPE=="LTL")
-    {
-        clock_t startTime = clock();
-        _solved = ltlplanner->as<ob::Planner>()->solve(200.0);
-        clock_t endTime = clock();
-        clock_t clockTicksTaken = endTime - startTime;
-        double timeInSeconds = clockTicksTaken / (double) CLOCKS_PER_SEC;
-        std::cout<<"Planning Time is : "<<timeInSeconds<<std::endl;
-        // pDefp->getLowerSolutionPath()->print(std::cout);
+//    if(PROBTYPE=="LTL")
+//    {
+//        clock_t startTime = clock();
+//        _solved = ltlplanner->as<ob::Planner>()->solve(200.0);
+//        clock_t endTime = clock();
+//        clock_t clockTicksTaken = endTime - startTime;
+//        double timeInSeconds = clockTicksTaken / (double) CLOCKS_PER_SEC;
+//        std::cout<<"Planning Time is : "<<timeInSeconds<<std::endl;
+//        // pDefp->getLowerSolutionPath()->print(std::cout);
 
-        const og::PathGeometric  &gPath = dynamic_cast<ompl::control::PathControl*>(pDefp->getLowerSolutionPath().get())->asGeometric();
+//        const og::PathGeometric  &gPath = dynamic_cast<ompl::control::PathControl*>(pDefp->getLowerSolutionPath().get())->asGeometric();
 
-        if (_solved)
-        {
-            _path.clear();
-            clearSimulationPath();
-            Sample *Robsmp;
-            Sample *Obssmp;
-            std::vector<double> Joint_Angle;
-            Joint_Angle.resize(_wkSpace->getRobot(0)->getNumJoints());
-            double control[2]={2.0,0.0};
-            oc::Control *c = ss->getSpaceInformation()->allocControl();
-            memcpy(c->as<oc::OpenDEControlSpace::ControlType>()->values, control, sizeof(double) * ss->getControlSpace()->getDimension());
-            std::vector<float> jangle;
-            jangle.resize(7);
-            for(unsigned int i=0;i<gPath.getStateCount()-2;i=i+2)
-            {
-                State tmpstate;
-                Robsmp=new Sample(_wkSpace->getNumRobControls());
-                //Robsmp->setMappedConf(_init->getMappedConf());
-                KauthamOpenDEState2Robsmp(gPath.getState(i), Robsmp,c,2,&Joint_Angle,jangle);
+//        if (_solved)
+//        {
+//            _path.clear();
+//            clearSimulationPath();
+//            Sample *Robsmp;
+//            Sample *Obssmp;
+//            std::vector<double> Joint_Angle;
+//            Joint_Angle.resize(_wkSpace->getRobot(0)->getNumJoints());
+//            double control[2]={2.0,0.0};
+//            oc::Control *c = ss->getSpaceInformation()->allocControl();
+//            memcpy(c->as<oc::OpenDEControlSpace::ControlType>()->values, control, sizeof(double) * ss->getControlSpace()->getDimension());
+//            std::vector<float> jangle;
+//            jangle.resize(7);
+//            for(unsigned int i=0;i<gPath.getStateCount()-2;i=i+2)
+//            {
+//                State tmpstate;
+//                Robsmp=new Sample(_wkSpace->getNumRobControls());
+//                //Robsmp->setMappedConf(_init->getMappedConf());
+//                KauthamOpenDEState2Robsmp(gPath.getState(i), Robsmp,c,2,&Joint_Angle,jangle);
 
-                tmpstate.setRob(*Robsmp);
-                if(_wkSpace->getNumObstacles()>0)
-                {
-                    Obssmp=new Sample(_wkSpace->getNumObsControls());
-                    KauthamOpenDEState2Obssmp(gPath.getState(i),Obssmp,c,2);
-                    tmpstate.setObs(*Obssmp);
-                }
-                worldState.push_back(tmpstate);
-                _path.push_back(Robsmp);
-                _samples->add(Robsmp);
-
-            }
-        }
-        // drawCspace(0);
-        return _solved;
-    }
+//                tmpstate.setRob(*Robsmp);
+//                if(_wkSpace->getNumObstacles()>0)
+//                {
+//                    Obssmp=new Sample(_wkSpace->getNumObsControls());
+//                    KauthamOpenDEState2Obssmp(gPath.getState(i),Obssmp,c,2);
+//                    tmpstate.setObs(*Obssmp);
+//                }
+//                worldState.push_back(tmpstate);
+//                _path.push_back(Robsmp);
+//                _samples->add(Robsmp);
+//            }
+//        }
+//        // drawCspace(0);
+//        return _solved;
+//    }
 
     dCloseODE();
     return 0;
@@ -1033,7 +1032,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
             numOutgoingEdges = pdata->getEdges (i, outgoingVertices);
 
             //for each node loop for all the outgoing edges
-            for (unsigned int j=0; j<numOutgoingEdges; j++ )
+            for (unsigned int j=0; j<(unsigned int) numOutgoingEdges; j++ )
             {
                 SoCoordinate3 *edgepoints  = new SoCoordinate3();
 
@@ -1292,7 +1291,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
                     x=projection[0];
                     y=projection[1];
                     //z=projection[2];
-                    //z=0;
+                    z=0;
 
                     edgepoints->point.set1Value(0,x,y,z);
 
@@ -1488,7 +1487,7 @@ else if(y<ypmin) ypmin=y;
                     x1=projection[0];
                     y1=projection[1];
                     //z1=projection[2];
-
+z1=0;
                     edgepoints->point.set1Value(0,x1,y1,z1);
 
                     //final edgepoint
