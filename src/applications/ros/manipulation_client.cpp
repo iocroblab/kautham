@@ -29,6 +29,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <vector>
 #include <ros/ros.h>
 #include <Inventor/SoDB.h>
 #include "std_msgs/String.h"
@@ -118,6 +119,22 @@ void getBodyState()
 }
 
 
+std::vector<double>contConversion(std::vector<double> pose)
+{
+    double minX, maxX, minY, maxY;
+    minX = -285.0;
+    maxX = 285.0;
+    minY = -185.0;
+    maxY = 185.0;
+    std::vector<double>cont;
+    cont.resize(3);
+    cont[0] = (pose[0] - minX)/(maxX - minX);
+    cont[1] = (pose[1] - minY)/(maxY - minY);
+    cont[2] = 0.5;
+    return cont;
+
+}
+
 void setManipQuery()
 {
     ros::NodeHandle node;
@@ -125,7 +142,7 @@ void setManipQuery()
     ros::ServiceClient open_problem_client = node.serviceClient<kautham2::OpenManipProblem>("manipulation_node/OpenManipProblem");
     kautham2::OpenManipProblem open_problem_srv;
     std::string model = "/home/muhayyuddin/catkin_ws/src/kautham/demos/models";
-    open_problem_srv.request.problem = "/home/muhayyuddin/catkin_ws/src/kautham/demos/OMPL_demos/KauthamOpenDE/BenchmarkingScene2KPIECE.xml";
+    open_problem_srv.request.problem = "/home/users/aliakbar.akbari/catkin_ws/src/kautham_project/demos/OMPL_demos/KauthamOpenDE/ETFA2016.xml";
     open_problem_srv.request.dir.resize(1);
     open_problem_srv.request.dir[0] = model;
     open_problem_client.call(open_problem_srv);
@@ -136,16 +153,40 @@ void setManipQuery()
     kautham2::SolveManipQuery solve_manip_query_srv;
     solve_manip_query_srv.request.init.resize(3);
     solve_manip_query_srv.request.goal.resize(3);
+
+
+    std::vector<double>init;
+    std::vector<double>initC;
+
+    std::vector<double>goal;
+    std::vector<double>goalC;
+
+    init.resize(2);
+    init[0]=245;
+    init[1]=20;
+
+    goal.resize(2);
+    goal[0]=199;
+    goal[1]=-29;
+
+    initC = contConversion(init);
+    goalC = contConversion(goal);
+
+    std::cout << "initC " << initC[0] << " " << initC[1] << std::endl;
+    std::cout << "goalC " << goalC[0] << " " << goalC[1] << std::endl;
+
+
     // Set the initial and goal vectors (kautham controls)
-    solve_manip_query_srv.request.init[0] = 0.176;
-    solve_manip_query_srv.request.init[1] = 0.874;
-    solve_manip_query_srv.request.init[2] = 0.5;
-    solve_manip_query_srv.request.goal[0] = 0.854;
-    solve_manip_query_srv.request.goal[1] = 0.113;
-    solve_manip_query_srv.request.goal[2] = 0.5;
+    solve_manip_query_srv.request.init[0] = initC[0];
+    solve_manip_query_srv.request.init[1] = initC[1];
+    solve_manip_query_srv.request.init[2] = initC[2];
+    solve_manip_query_srv.request.goal[0] = goalC[0];
+    solve_manip_query_srv.request.goal[1] = goalC[1];
+    solve_manip_query_srv.request.goal[2] = goalC[2];
 
-    solve_manip_query_srv.request.actionType="pull";
+    solve_manip_query_srv.request.actionType="move";
 
+    // Just for push and pull.
     solve_manip_query_srv.request.force.resize(3);
     solve_manip_query_srv.request.force[0] = 0.0;
     solve_manip_query_srv.request.force[1] = -5.0;
