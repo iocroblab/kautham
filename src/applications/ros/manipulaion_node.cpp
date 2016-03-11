@@ -77,8 +77,10 @@ bool srvSolveManipQuery(kautham2::SolveManipQuery::Request &req,
                  kautham2::SolveManipQuery::Response &res)
 {
     std::vector<State> worldstate;
-    res.status = kmanip->setQuery(req.init,req.goal);
-    kmanip->setManipPramsAndSolve(req.actionType,req.targetBody,req.force,&worldstate);
+    double power;
+     kmanip->setQuery(req.init,req.goal);
+    res.status=kmanip->setManipPramsAndSolve(req.actionType,req.targetBody,req.force,&worldstate,&power);
+    res.powerconsumed=power;
     std::cout<<"Computed Path states are : " <<worldstate.size()<<std::endl;;
 
     return true;

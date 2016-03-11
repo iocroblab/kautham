@@ -127,10 +127,10 @@ std::vector<double>contConversion(std::vector<double> pose)
     minY = -185.0;
     maxY = 185.0;
     std::vector<double>cont;
-    cont.resize(3);
+    cont.resize(2);
     cont[0] = (pose[0] - minX)/(maxX - minX);
     cont[1] = (pose[1] - minY)/(maxY - minY);
-    cont[2] = 0.5;
+   // cont[2] = 0.5;
     return cont;
 
 }
@@ -142,7 +142,8 @@ void setManipQuery()
     ros::ServiceClient open_problem_client = node.serviceClient<kautham2::OpenManipProblem>("manipulation_node/OpenManipProblem");
     kautham2::OpenManipProblem open_problem_srv;
     std::string model = "/home/muhayyuddin/catkin_ws/src/kautham/demos/models";
-    open_problem_srv.request.problem = "/home/users/aliakbar.akbari/catkin_ws/src/kautham_project/demos/OMPL_demos/KauthamOpenDE/ETFA2016.xml";
+    //open_problem_srv.request.problem = "/home/users/aliakbar.akbari/catkin_ws/src/kautham_project/demos/OMPL_demos/KauthamOpenDE/ETFA2016.xml";
+    open_problem_srv.request.problem = "/home/muhayyuddin/catkin_ws/src/kautham/demos/OMPL_demos/KauthamOpenDE/ETFA2016.xml";
     open_problem_srv.request.dir.resize(1);
     open_problem_srv.request.dir[0] = model;
     open_problem_client.call(open_problem_srv);
@@ -151,8 +152,8 @@ void setManipQuery()
     ros::service::waitForService("manipulation_node/SolveManipQuery");
     ros::ServiceClient solve_manip_query_client = node.serviceClient<kautham2::SolveManipQuery>("manipulation_node/SolveManipQuery");
     kautham2::SolveManipQuery solve_manip_query_srv;
-    solve_manip_query_srv.request.init.resize(3);
-    solve_manip_query_srv.request.goal.resize(3);
+    solve_manip_query_srv.request.init.resize(2);
+    solve_manip_query_srv.request.goal.resize(2);
 
 
     std::vector<double>init;
@@ -179,10 +180,10 @@ void setManipQuery()
     // Set the initial and goal vectors (kautham controls)
     solve_manip_query_srv.request.init[0] = initC[0];
     solve_manip_query_srv.request.init[1] = initC[1];
-    solve_manip_query_srv.request.init[2] = initC[2];
+    //solve_manip_query_srv.request.init[2] = initC[2];
     solve_manip_query_srv.request.goal[0] = goalC[0];
     solve_manip_query_srv.request.goal[1] = goalC[1];
-    solve_manip_query_srv.request.goal[2] = goalC[2];
+    //solve_manip_query_srv.request.goal[2] = goalC[2];
 
     solve_manip_query_srv.request.actionType="move";
 
@@ -196,6 +197,8 @@ void setManipQuery()
 
     //call kautham service to set the query
     solve_manip_query_client.call(solve_manip_query_srv);
+    std::cout <<"Query solved: "<< std::boolalpha<< solve_manip_query_srv.response.status<<std::endl;
+    std::cout<<"Power Consumed is " <<solve_manip_query_srv.response.powerconsumed<<std::endl;
 
     ROS_INFO("Manipulation Query performed sucessfully !");
 

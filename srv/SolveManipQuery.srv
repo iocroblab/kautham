@@ -12,6 +12,7 @@ float32[] init
 float32[] goal
 ---
 odeState[] path
+float64 powerconsumed
 bool status
 
 

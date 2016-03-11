@@ -84,8 +84,8 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     addParameter("Constraint Force Mixing", _cfm);
 
     //PROBTYPE="LTL";
-    PROBTYPE="MULTIQUERY";
-    //PROBTYPE="SINGLEQUERY";
+    //PROBTYPE="MULTIQUERY";
+    PROBTYPE="SINGLEQUERY";
 
 }
 
@@ -100,14 +100,27 @@ bool KauthamDEPlanner::trySolve(void)
 {
     dInitODE2(0);
     std::vector<query> Qu;
+
     query qq;
-    qq.action="move";
+    qq.action="pull";
     qq.pose.resize(2);
-    qq.pose[0]=171.5;
-    qq.pose[1]=-75.8;
+    qq.pose[0]=195.5;
+    qq.pose[1]=55.8;
     qq.f.resize(3);
-    qq.targetbody=0;
+    qq.f[0]=0.0;
+    qq.f[1]=5.0;
+    qq.f[2]=0.0;
+    qq.targetbody=6;
     Qu.push_back(qq);
+
+    query qq1;
+    qq1.action="move";
+    qq1.pose.resize(2);
+    qq1.pose[0]=171.5;
+    qq1.pose[1]=-75.8;
+    qq1.f.resize(3);
+    qq1.targetbody=0;
+    Qu.push_back(qq1);
 
     query qqq;
     qqq.action="pull";
@@ -121,62 +134,34 @@ bool KauthamDEPlanner::trySolve(void)
     qqq.targetbody=7;
 
     Qu.push_back(qqq);
-    if(PROBTYPE=="MULTIQUERY"||PROBTYPE=="SINGLEQUERY")
+
+    ob::RealVectorBounds vb(3);
+    ob::RealVectorBounds bounds(3);
+    vb.low[0] = _wkSpace->getRobot(0)->getLimits(0)[0];
+    vb.low[1] = _wkSpace->getRobot(0)->getLimits(1)[0];
+    vb.low[2] = _wkSpace->getRobot(0)->getLimits(2)[0];
+    vb.high[0] = _wkSpace->getRobot(0)->getLimits(0)[1];
+    vb.high[1] = _wkSpace->getRobot(0)->getLimits(1)[1];
+    vb.high[2] = _wkSpace->getRobot(0)->getLimits(2)[1];
+    ss->setVolumeBounds(vb);
+    bounds.setLow(-20);
+    bounds.setHigh(20);
+    ss->setLinearVelocityBounds(bounds);
+    bounds.setLow(-20);
+    bounds.setHigh(20);
+    ss->setAngularVelocityBounds(bounds);
+
+    if(PROBTYPE=="SINGLEQUERY")
     {
-        ob::RealVectorBounds vb(3);
-        ob::RealVectorBounds bounds(3);
-        vb.low[0] = _wkSpace->getRobot(0)->getLimits(0)[0];
-        vb.low[1] = _wkSpace->getRobot(0)->getLimits(1)[0];
-        vb.low[2] = _wkSpace->getRobot(0)->getLimits(2)[0];
-        vb.high[0] = _wkSpace->getRobot(0)->getLimits(0)[1];
-        vb.high[1] = _wkSpace->getRobot(0)->getLimits(1)[1];
-        vb.high[2] = _wkSpace->getRobot(0)->getLimits(2)[1];
-        //        vb.low[0] = -1200;
-        //        vb.low[1] = -1200;
-        //        vb.low[2] = -50;
-        //        vb.high[0] = 1200;
-        //        vb.high[1] = 1200;
-        //        vb.high[2] = 1200;
-
-        ss->setVolumeBounds(vb);
-        //stateSpace->setVolumeBounds(vb);
-        bounds.setLow(-20);
-        bounds.setHigh(20);
-        ss->setLinearVelocityBounds(bounds);
-        //stateSpace->setLinearVelocityBounds(bounds);
-        bounds.setLow(-20);
-        bounds.setHigh(20);
-        ss->setAngularVelocityBounds(bounds);
-        //stateSpace->setLinearVelocityBounds(bounds);
-
-        /////////////////////////////////////////////////////////////////
         Sample* aux=goalSamp();
         ss->setStartState(ss->getCurrentState());
         ob::ScopedState<oc::OpenDEStateSpace> starts(ss->getSpaceInformation());
         starts = ss->getCurrentState();
         ss->setGoal(ob::GoalPtr(new KauthamDEGoalSamplableRegion(ss->getSpaceInformation(),_wkSpace,_onlyend,aux)));//goalPose[0].pose[0],goalPose[0].pose[1])));
-        std::string action="pull";
-        ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setActionType(action);
-        std::vector<double> force(3);
-        force[0]=0.0;
-        force[1]=5.0;
-        force[2]=0.0;
-        ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setforce(force);
-        dJointID joint;
-        if(action=="pull")
-        {
-            joint=dJointCreateHinge(((KauthamDEEnvironment*)envPtr.get())->world_,0);
-            dJointAttach(joint ,((KauthamDEEnvironment*)envPtr.get())->stateBodies_[0],((KauthamDEEnvironment*)envPtr.get())->stateBodies_[6]);
-        }
-        //ss->setGoal(ob::GoalPtr(new KauthamDEGoalRegion(ss->getSpaceInformation(),_wkSpace,_onlyend,aux)));
-        //ss.setGoal(ob::GoalPtr(new SyclopGoal(ss->getSpaceInformation(),_wkSpace,_onlyend,115,46)));
         ss->setup();
         ss->print();
         bool solution1=false;
         _solved=solution1 = ss->solve(_planningTime);
-        if(action=="pull")
-            dJointDestroy(joint);
-
         if(solution1)
         {
 
@@ -190,193 +175,195 @@ bool KauthamDEPlanner::trySolve(void)
             sstat.control =Control0;
             sstat.duration =Duration0;
             sStates.push_back(sstat);
-            if(PROBTYPE=="MULTIQUERY")
+        }
+    }
+    if(PROBTYPE=="MULTIQUERY")
+    {
+        ss->setStartState(ss->getCurrentState());
+        ob::ScopedState<oc::OpenDEStateSpace> last(ss->getSpaceInformation());
+        //last = ss1->getSolutionPath().getStates().back();
+
+        for(unsigned int numQ=0; numQ<Qu.size();numQ++)
+        {
+            oc::OpenDESimpleSetup *ss1= new oc::OpenDESimpleSetup(stateSpacePtr);
+            ss1->setVolumeBounds(vb);
+            ss1->setAngularVelocityBounds(bounds);
+            ss1->setLinearVelocityBounds(bounds);
+            ss1->setStartState(last);
+            ss1->setGoal(ob::GoalPtr(new KauthamDEGoalRegion(ss->getSpaceInformation(),_wkSpace,_onlyend,Qu[numQ].pose[0],Qu[numQ].pose[1])));
+            ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setActionType(Qu[numQ].action);
+
+            ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setforce(Qu[numQ].f);
+            dJointID joint1;
+            if(Qu[numQ].action=="pull" || Qu[numQ].action=="Pull")
             {
-                ob::ScopedState<oc::OpenDEStateSpace> last(ss->getSpaceInformation());
-                last = ss->getSolutionPath().getStates().back();
+                joint1=dJointCreateHinge( ((KauthamDEEnvironment*)envPtr.get())->world_,0);
+                dJointAttach(joint1 ,((KauthamDEEnvironment*)envPtr.get())->stateBodies_[0],((KauthamDEEnvironment*)envPtr.get())->stateBodies_[Qu[numQ].targetbody]);
+            }
+            ss1->setup();
+            ss1->print();
+            bool sol;
+            sol=ss1->solve(_planningTime);
+            if(Qu[numQ].action=="pull" || Qu[numQ].action=="Pull")
+                dJointDestroy(joint1);
+            if(sol)
+            {
+                std::cout<<"2nd Query is solved"<<std::endl;
+                solutionStates sstat1;
+                std::vector<ob::State*> &States =ss1->getSolutionPath().getStates();
+                std::vector<oc::Control*> &Control= ss1->getSolutionPath().getControls();
+                std::vector<double> &Duration= ss1->getSolutionPath().getControlDurations();
 
-                for(unsigned int numQ=0; numQ<Qu.size();numQ++)
-                {
+                sstat1.substates =States;
+                sstat1.control =Control;
+                sstat1.duration =Duration;
+                sStates.push_back(sstat1);
 
-                    oc::OpenDESimpleSetup *ss1= new oc::OpenDESimpleSetup(stateSpacePtr);
-                    ss1->setVolumeBounds(vb);
-                    ss1->setAngularVelocityBounds(bounds);
-                    ss1->setLinearVelocityBounds(bounds);
-                    ss1->setStartState(last);
-                    ss1->setGoal(ob::GoalPtr(new KauthamDEGoalRegion(ss->getSpaceInformation(),_wkSpace,_onlyend,Qu[numQ].pose[0],Qu[numQ].pose[1])));
-                    ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setActionType(Qu[numQ].action);
-
-                    ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setforce(Qu[numQ].f);
-                    dJointID joint1;
-                    if(Qu[numQ].action=="pull" || Qu[numQ].action=="Pull")
-{
-                        joint1=dJointCreateHinge( ((KauthamDEEnvironment*)envPtr.get())->world_,0);
-                        dJointAttach(joint1 ,((KauthamDEEnvironment*)envPtr.get())->stateBodies_[0],((KauthamDEEnvironment*)envPtr.get())->stateBodies_[Qu[numQ].targetbody]);
-                    }
-                    ss1->setup();
-                    ss1->print();
-                    bool sol;
-                    sol=ss1->solve(_planningTime);
-                    if(Qu[numQ].action=="pull" || Qu[numQ].action=="Pull")
-                        dJointDestroy(joint1);
-                    if(sol)
-                    {
-                        std::cout<<"2nd Query is solved"<<std::endl;
-                        solutionStates sstat1;
-                        std::vector<ob::State*> &States =ss1->getSolutionPath().getStates();
-                        std::vector<oc::Control*> &Control= ss1->getSolutionPath().getControls();
-                        std::vector<double> &Duration= ss1->getSolutionPath().getControlDurations();
-
-                        sstat1.substates =States;
-                        sstat1.control =Control;
-                        sstat1.duration =Duration;
-                        sStates.push_back(sstat1);
-
-                        last = ss1->getSolutionPath().getStates().back();
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
+                last = ss1->getSolutionPath().getStates().back();
+            }
+            else
+            {
+                break;
             }
         }
-        if (_solved)
+    }
+
+    if (_solved)
+    {
+        _path.clear();
+        clearSimulationPath();
+        Sample *Robsmp;
+        Sample *Obssmp;
+        for(unsigned int l=0;l<sStates.size();l++)
         {
-            _path.clear();
-            clearSimulationPath();
-            Sample *Robsmp;
-            Sample *Obssmp;
-            for(unsigned int l=0;l<sStates.size();l++)
+
+            std::vector<ob::State*> &states = sStates[l].substates;
+            std::vector<oc::Control*> &control= sStates[l].control;
+            std::vector<double> &duration=sStates[l].duration;
+            std::vector<float> ang;
+            int max=_wkSpace->getRobot(0)->getNumLinks()-1;
+            if(_wkSpace->getRobot(0)->getNumJoints()>1)
             {
-
-                std::vector<ob::State*> &states = sStates[l].substates;
-                std::vector<oc::Control*> &control= sStates[l].control;
-                std::vector<double> &duration=sStates[l].duration;
-                std::vector<float> ang;
-                int max=_wkSpace->getRobot(0)->getNumLinks()-1;
-                if(_wkSpace->getRobot(0)->getNumJoints()>1)
-                {
-                    for(unsigned int i=0;i<states.size()-1;i++)
-                    {
-                        int k=0;
-                        ang.clear();
-                        std::cout<<"Angles are :";
-                        for(int j=0;j<max;j++)
-                        {
-
-                            const double *posRobB1 = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k);
-                            const ob::SO3StateSpace::StateType &oriRobB1 = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);
-
-                            const double *posRobB2 = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k+1);
-                            const ob::SO3StateSpace::StateType &oriRobB2 = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k+1);
-
-
-                            const double *posRobB11 = states[i+1]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k);
-                            const ob::SO3StateSpace::StateType &oriRobB11 = states[i+1]->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);
-
-                            const double *posRobB22 = states[i+1]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k+1);
-                            const ob::SO3StateSpace::StateType &oriRobB22 = states[i+1]->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k+1);
-
-                            mt::Transform TwB1,TwB2;
-                            mt::Transform TwB11,TwB22;
-
-                            mt::Transform Twl1l2_i;
-                            mt::Transform Twl1l2_i1;
-
-                            TwB1.setTranslation(mt::Point3(posRobB1[0],posRobB1[1],posRobB1[2]));
-                            TwB1.setRotation(mt::Rotation(oriRobB1.x,oriRobB1.y,oriRobB1.z,oriRobB1.w));
-
-                            TwB2.setTranslation(mt::Point3(posRobB2[0],posRobB2[1],posRobB2[2]));
-                            TwB2.setRotation(mt::Rotation(oriRobB2.x,oriRobB2.y,oriRobB2.z,oriRobB2.w));
-
-
-                            Twl1l2_i=TwB1.inverse()*TwB2;
-
-                            TwB11.setTranslation(mt::Point3(posRobB11[0],posRobB11[1],posRobB11[2]));
-                            TwB11.setRotation(mt::Rotation(oriRobB11.x,oriRobB11.y,oriRobB11.z,oriRobB11.w));
-
-                            TwB22.setTranslation(mt::Point3(posRobB22[0],posRobB22[1],posRobB22[2]));
-                            TwB22.setRotation(mt::Rotation(oriRobB22.x,oriRobB22.y,oriRobB22.z,oriRobB22.w));
-
-                            Twl1l2_i1=TwB11.inverse()*TwB22;
-
-                            mt::Transform T_angle;
-
-                            T_angle=Twl1l2_i.inverse()*Twl1l2_i1;
-
-                            mt::Unit3 axis;
-                            Scalar angle;
-                            T_angle.getRotation().getAxisAngle(axis,angle);
-                            ang.push_back(angle);
-                            k++;
-                            std::cout<< angle<<" , ";
-
-                        }
-                        std::cout<<std::endl;
-                        JointAngle.push_back(ang);
-
-                    }
-
-                }
-
-                //std::cout<<"Control Size is "<< control.size()<<std::endl;
-                //std::cout<<"state Size is "<< states.size()<<std::endl;
-                //std::cout<<"Duration Size is "<< duration.size()<<std::endl;
-                //int size= states.size();
-                std::vector<double> Joint_Angle;
-                Joint_Angle.resize(_wkSpace->getRobot(0)->getNumJoints());
-                //int j=0;
-                ComputeAction(states,control,duration);
-                ComputeJerkIndex(states,duration);
-                ComputePowerConsumed(states,control,duration);
-
-                std::cout<<"===============   Query Numer  "<<(l+1)<<"  =============== "<<std::endl;
-                std::cout<<"Actions is:  "<<Action<<std::endl;
-                std::cout<<"Smoothness is:  "<<Smoothness<<std::endl;
-                std::cout<<"Power Consumed is:  "<<PowerConsumed<<std::endl;
-                std::cout<<"Generated Solution states are  :  "<<states.size()<<std::endl;
-                std::cout<<"Generated Solution controls are:  "<<control.size()<<std::endl;
-                std::cout<<"Solution control durations  are:  "<<duration.size()<<std::endl;
-
-                std::vector<float> jangle;
-                jangle.resize(7);
                 for(unsigned int i=0;i<states.size()-1;i++)
                 {
-                    //std::cout<<"Duration is "<< duration[i]<<std::endl;
-                    State tmpstate;
-                    Robsmp=new Sample(_wkSpace->getNumRobControls());
-                    //Robsmp->setMappedConf(_wkSpace->getRobot(0));
-                    if(_wkSpace->getRobot(0)->getNumJoints()>1)
+                    int k=0;
+                    ang.clear();
+                    std::cout<<"Angles are :";
+                    for(int j=0;j<max;j++)
                     {
-                        for(int j=0;j<7;j++)
-                            jangle[j]=jangle[j]+JointAngle[i][j];
-                    }
-                    KauthamOpenDEState2Robsmp(states[i], Robsmp,control[0],duration[i],&Joint_Angle,jangle);
 
-                    tmpstate.setRob(*Robsmp);
-                    if(_wkSpace->getNumObstacles()>0)
-                    {
-                        Obssmp=new Sample(_wkSpace->getNumObsControls());
-                        KauthamOpenDEState2Obssmp(states[i],Obssmp,control[0],duration[0]);
-                        tmpstate.setObs(*Obssmp);
-                    }
-                    worldState.push_back(tmpstate);
-                    _path.push_back(Robsmp);
-                    _samples->add(Robsmp);
+                        const double *posRobB1 = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k);
+                        const ob::SO3StateSpace::StateType &oriRobB1 = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);
 
-                    //std::cout<<std::endl;
+                        const double *posRobB2 = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k+1);
+                        const ob::SO3StateSpace::StateType &oriRobB2 = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k+1);
+
+
+                        const double *posRobB11 = states[i+1]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k);
+                        const ob::SO3StateSpace::StateType &oriRobB11 = states[i+1]->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);
+
+                        const double *posRobB22 = states[i+1]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k+1);
+                        const ob::SO3StateSpace::StateType &oriRobB22 = states[i+1]->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k+1);
+
+                        mt::Transform TwB1,TwB2;
+                        mt::Transform TwB11,TwB22;
+
+                        mt::Transform Twl1l2_i;
+                        mt::Transform Twl1l2_i1;
+
+                        TwB1.setTranslation(mt::Point3(posRobB1[0],posRobB1[1],posRobB1[2]));
+                        TwB1.setRotation(mt::Rotation(oriRobB1.x,oriRobB1.y,oriRobB1.z,oriRobB1.w));
+
+                        TwB2.setTranslation(mt::Point3(posRobB2[0],posRobB2[1],posRobB2[2]));
+                        TwB2.setRotation(mt::Rotation(oriRobB2.x,oriRobB2.y,oriRobB2.z,oriRobB2.w));
+
+
+                        Twl1l2_i=TwB1.inverse()*TwB2;
+
+                        TwB11.setTranslation(mt::Point3(posRobB11[0],posRobB11[1],posRobB11[2]));
+                        TwB11.setRotation(mt::Rotation(oriRobB11.x,oriRobB11.y,oriRobB11.z,oriRobB11.w));
+
+                        TwB22.setTranslation(mt::Point3(posRobB22[0],posRobB22[1],posRobB22[2]));
+                        TwB22.setRotation(mt::Rotation(oriRobB22.x,oriRobB22.y,oriRobB22.z,oriRobB22.w));
+
+                        Twl1l2_i1=TwB11.inverse()*TwB22;
+
+                        mt::Transform T_angle;
+
+                        T_angle=Twl1l2_i.inverse()*Twl1l2_i1;
+
+                        mt::Unit3 axis;
+                        Scalar angle;
+                        T_angle.getRotation().getAxisAngle(axis,angle);
+                        ang.push_back(angle);
+                        k++;
+                        std::cout<< angle<<" , ";
+
+                    }
+                    std::cout<<std::endl;
+                    JointAngle.push_back(ang);
+
                 }
+
             }
-            //drawCspace(0);
 
-            return _solved;
+            //std::cout<<"Control Size is "<< control.size()<<std::endl;
+            //std::cout<<"state Size is "<< states.size()<<std::endl;
+            //std::cout<<"Duration Size is "<< duration.size()<<std::endl;
+            //int size= states.size();
+            std::vector<double> Joint_Angle;
+            Joint_Angle.resize(_wkSpace->getRobot(0)->getNumJoints());
+            //int j=0;
+            ComputeAction(states,control,duration);
+            ComputeJerkIndex(states,duration);
+            ComputePowerConsumed(states,control,duration);
+
+            std::cout<<"===============   Query Numer  "<<(l+1)<<"  =============== "<<std::endl;
+            std::cout<<"Actions is:  "<<Action<<std::endl;
+            std::cout<<"Smoothness is:  "<<Smoothness<<std::endl;
+            std::cout<<"Power Consumed is:  "<<PowerConsumed<<std::endl;
+            std::cout<<"Generated Solution states are  :  "<<states.size()<<std::endl;
+            std::cout<<"Generated Solution controls are:  "<<control.size()<<std::endl;
+            std::cout<<"Solution control durations  are:  "<<duration.size()<<std::endl;
+
+            std::vector<float> jangle;
+            jangle.resize(7);
+            for(unsigned int i=0;i<states.size()-1;i++)
+            {
+                //std::cout<<"Duration is "<< duration[i]<<std::endl;
+                State tmpstate;
+                Robsmp=new Sample(_wkSpace->getNumRobControls());
+                //Robsmp->setMappedConf(_wkSpace->getRobot(0));
+                if(_wkSpace->getRobot(0)->getNumJoints()>1)
+                {
+                    for(int j=0;j<7;j++)
+                        jangle[j]=jangle[j]+JointAngle[i][j];
+                }
+                KauthamOpenDEState2Robsmp(states[i], Robsmp,control[0],duration[i],&Joint_Angle,jangle);
+
+                tmpstate.setRob(*Robsmp);
+                if(_wkSpace->getNumObstacles()>0)
+                {
+                    Obssmp=new Sample(_wkSpace->getNumObsControls());
+                    KauthamOpenDEState2Obssmp(states[i],Obssmp,control[0],duration[0]);
+                    tmpstate.setObs(*Obssmp);
+                }
+                worldState.push_back(tmpstate);
+                _path.push_back(Robsmp);
+                _samples->add(Robsmp);
+
+                //std::cout<<std::endl;
+            }
         }
+        //drawCspace(0);
 
-        dCloseODE();
-        return 0;
-
+        return _solved;
     }
+
+    dCloseODE();
+    return 0;
+
+}
 //    if(PROBTYPE=="LTL")
 //    {
 //        clock_t startTime = clock();
@@ -425,10 +412,10 @@ bool KauthamDEPlanner::trySolve(void)
 //        return _solved;
 //    }
 
-    dCloseODE();
-    return 0;
+//dCloseODE();
+//return 0;
 
-}
+//}
 
 //! This member function converts an OpenDE State to a Kautham robot sample
 void KauthamDEPlanner::KauthamOpenDEState2Robsmp(const ob::State *state, Sample* smp, const oc::Control *control,const double duration,std::vector<double> *angle,std::vector<float> Ang)

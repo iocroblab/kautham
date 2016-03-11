@@ -101,22 +101,27 @@ void twoDRobotEnvironment::applyControl (const double *control) const
 bool twoDRobotEnvironment::isValidCollision(dGeomID geom1, dGeomID geom2, const dContact& /*contact*/)const
 {
 
-//    std::string bodyType1 = geomNames_.at(geom1);
-//    std::string bodyType2 = geomNames_.at(geom2);
+    std::string bodyType1 = geomNames_.at(geom1);
+    std::string bodyType2 = geomNames_.at(geom2);
 
-//    if((bodyType1 == "robBody" && bodyType2 == "fixed")
-//            || (bodyType1 == "fixed" && bodyType2 == "robBody"))
-//    {
-//        //std::cout<<"robBody + fixed     =    true"<<std::endl;
-//        return false;
-//    }
-//    else
-//    {
-//        //std::cout<<"Collision is Allowed"<<std::endl;
-//        return true;
+    if((bodyType1 == "robBody" && bodyType2 == "fixed")
+            || (bodyType1 == "fixed" && bodyType2 == "robBody"))
+    {
+        //std::cout<<"robBody + fixed     =    true"<<std::endl;
+        return false;
+    }
+    else
+        if((bodyType1 == "robBody" && bodyType2 == "floor")
+                || (bodyType1 == "floor" && bodyType2 == "robBody"))
+        {
+            //std::cout<<"evaluationg collision1"<<std::endl;
+            return true;
+        }
+    {
+        //std::cout<<"Collision is Allowed"<<std::endl;
+        return true;
 
-//    }
-return true;
+    }
 }
 
 /*! This is the reimplementation of the virtual function of OpenDEEnvironment. This method set the parameters for the contact
