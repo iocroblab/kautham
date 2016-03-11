@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_cRRTcar_table_rooms_SE2">
-	<Robot robot="obstacles/DEBenchmark/SphereDE.urdf" scale="1.0">
+	<Robot robot="obstacles/DEBenchmark/SphereDE.urdf" scale="1.1">
 		<Limits name="X" min="-285.0" max="285.0" />
 		<Limits name="Y" min="-185.0" max="185.0" />
 		<Limits name="Z" min="-4.0" max="40.0" />
@@ -67,17 +67,19 @@
 	<Obstacle obstacle="obstacles/ETFA2016/wall10IROS.urdf" scale="1.0">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="-119.0" X="200.0" />
 	</Obstacle>
-	<Controls robot="controls/car.cntr" />
+
+	<Controls robot="controls/sp.cntr" />
+
 	<Planner>
 		<Parameters>
-			<Name>RRT2DPlanner</Name>
+			<Name>KPIECE2DPlanner</Name>
 			<Parameter name="Constraint Force Mixing">0.3000000119</Parameter>
 			<Parameter name="Control Dimensions">2</Parameter>
 			<Parameter name="Error Reduction Parameter">0.5</Parameter>
 			<Parameter name="Goal Bias">0.05000000075</Parameter>
 			<Parameter name="Max Contacts">3</Parameter>
 			<Parameter name="Max Control Steps">50</Parameter>
-			<Parameter name="Max Planning Time">25</Parameter>
+			<Parameter name="Max Planning Time">30</Parameter>
 			<Parameter name="Max Speed">10</Parameter>
 			<Parameter name="Min Control Steps">10</Parameter>
 			<Parameter name="PropagationStepSize">0.07999999821</Parameter>
@@ -86,8 +88,10 @@
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="3">0.92 0.55 0.5</Init>
-				<Goal dim="3">0.84 0.42 0.5</Goal>
+
+				<Init dim="2">0.847 0.391</Init>
+				<Goal dim="2">0.843 0.651</Goal>
+
 			</Query>
 		</Queries>
 	</Planner>

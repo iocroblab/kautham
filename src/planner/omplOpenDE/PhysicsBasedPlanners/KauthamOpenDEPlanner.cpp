@@ -84,8 +84,8 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     addParameter("Constraint Force Mixing", _cfm);
 
     //PROBTYPE="LTL";
-    //PROBTYPE="MULTIQUERY";
-    PROBTYPE="SINGLEQUERY";
+    PROBTYPE="MULTIQUERY";
+    //PROBTYPE="SINGLEQUERY";
 
 }
 
@@ -99,7 +99,28 @@ KauthamDEPlanner::~KauthamDEPlanner(){ }
 bool KauthamDEPlanner::trySolve(void)
 {
     dInitODE2(0);
+    std::vector<query> Qu;
+    query qq;
+    qq.action="move";
+    qq.pose.resize(2);
+    qq.pose[0]=171.5;
+    qq.pose[1]=-75.8;
+    qq.f.resize(3);
+    qq.targetbody=0;
+    Qu.push_back(qq);
 
+    query qqq;
+    qqq.action="pull";
+    qqq.pose.resize(2);
+    qqq.pose[0]=247.9;
+    qqq.pose[1]=-75.8;
+    qqq.f.resize(3);
+    qqq.f[0]=7.0;
+    qqq.f[1]=0.0;
+    qqq.f[2]=0.0;
+    qqq.targetbody=7;
+
+    Qu.push_back(qqq);
     if(PROBTYPE=="MULTIQUERY"||PROBTYPE=="SINGLEQUERY")
     {
         ob::RealVectorBounds vb(3);
@@ -134,15 +155,28 @@ bool KauthamDEPlanner::trySolve(void)
         ob::ScopedState<oc::OpenDEStateSpace> starts(ss->getSpaceInformation());
         starts = ss->getCurrentState();
         ss->setGoal(ob::GoalPtr(new KauthamDEGoalSamplableRegion(ss->getSpaceInformation(),_wkSpace,_onlyend,aux)));//goalPose[0].pose[0],goalPose[0].pose[1])));
-
+        std::string action="pull";
+        ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setActionType(action);
+        std::vector<double> force(3);
+        force[0]=0.0;
+        force[1]=5.0;
+        force[2]=0.0;
+        ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setforce(force);
+        dJointID joint;
+        if(action=="pull")
+        {
+            joint=dJointCreateHinge(((KauthamDEEnvironment*)envPtr.get())->world_,0);
+            dJointAttach(joint ,((KauthamDEEnvironment*)envPtr.get())->stateBodies_[0],((KauthamDEEnvironment*)envPtr.get())->stateBodies_[6]);
+        }
         //ss->setGoal(ob::GoalPtr(new KauthamDEGoalRegion(ss->getSpaceInformation(),_wkSpace,_onlyend,aux)));
         //ss.setGoal(ob::GoalPtr(new SyclopGoal(ss->getSpaceInformation(),_wkSpace,_onlyend,115,46)));
         ss->setup();
         ss->print();
-
-
         bool solution1=false;
         _solved=solution1 = ss->solve(_planningTime);
+        if(action=="pull")
+            dJointDestroy(joint);
+
         if(solution1)
         {
 
@@ -161,7 +195,7 @@ bool KauthamDEPlanner::trySolve(void)
                 ob::ScopedState<oc::OpenDEStateSpace> last(ss->getSpaceInformation());
                 last = ss->getSolutionPath().getStates().back();
 
-                for(unsigned int numQ=0; numQ<4;numQ++)
+                for(unsigned int numQ=0; numQ<Qu.size();numQ++)
                 {
 
                     oc::OpenDESimpleSetup *ss1= new oc::OpenDESimpleSetup(stateSpacePtr);
@@ -169,11 +203,22 @@ bool KauthamDEPlanner::trySolve(void)
                     ss1->setAngularVelocityBounds(bounds);
                     ss1->setLinearVelocityBounds(bounds);
                     ss1->setStartState(last);
-                    ss1->setGoal(ob::GoalPtr(new KauthamDEGoalRegion(ss->getSpaceInformation(),_wkSpace,_onlyend,160,46)));
+                    ss1->setGoal(ob::GoalPtr(new KauthamDEGoalRegion(ss->getSpaceInformation(),_wkSpace,_onlyend,Qu[numQ].pose[0],Qu[numQ].pose[1])));
+                    ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setActionType(Qu[numQ].action);
+
+                    ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setforce(Qu[numQ].f);
+                    dJointID joint1;
+                    if(Qu[numQ].action=="pull" || Qu[numQ].action=="Pull")
+{
+                        joint1=dJointCreateHinge( ((KauthamDEEnvironment*)envPtr.get())->world_,0);
+                        dJointAttach(joint1 ,((KauthamDEEnvironment*)envPtr.get())->stateBodies_[0],((KauthamDEEnvironment*)envPtr.get())->stateBodies_[Qu[numQ].targetbody]);
+                    }
                     ss1->setup();
                     ss1->print();
                     bool sol;
-                    sol=ss1->solve(10);
+                    sol=ss1->solve(_planningTime);
+                    if(Qu[numQ].action=="pull" || Qu[numQ].action=="Pull")
+                        dJointDestroy(joint1);
                     if(sol)
                     {
                         std::cout<<"2nd Query is solved"<<std::endl;

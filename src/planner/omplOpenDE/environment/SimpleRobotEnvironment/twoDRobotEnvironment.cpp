@@ -80,8 +80,19 @@ void twoDRobotEnvironment::getControlBounds(std::vector< double > &lower, std::v
 void twoDRobotEnvironment::applyControl (const double *control) const
 {
 
+    if(manipulationQuery->getActionType()=="move" || manipulationQuery->getActionType()=="Move")
+    {
         dBodyAddForce(bodies[0],control[0],control[1],0.0);
-        const dReal *pos = dBodyGetPosition(bodies[0]);
+    }
+    else
+        if(manipulationQuery->getActionType()=="pull" || manipulationQuery->getActionType()=="Pull"
+                                                      || manipulationQuery->getActionType()=="push"
+                                                      || manipulationQuery->getActionType()=="Push")
+        {
+            dBodyAddForce(bodies[0],manipulationQuery->getforce().at(0),manipulationQuery->getforce().at(1),manipulationQuery->getforce().at(2));
+        }
+        else
+            std::cout<<"Invalid Action"<<std::endl;        const dReal *pos = dBodyGetPosition(bodies[0]);
         std::cout<<"position "<<pos[0]<<" , "<<pos[1]<<std::endl;
 
 
@@ -116,22 +127,22 @@ void twoDRobotEnvironment::setupContact(dGeomID geom1, dGeomID geom2, dContact &
     contact.surface.mode = dContactSoftERP | dContactSoftCFM;
 
 
-//    std::string geom1_body = geomNames_.at(geom1);
-//    std::string geom2_body = geomNames_.at(geom2);
-//    //std::cout<<"Bodies are: "<<geom1_body<<" : "<<geom2_body<<std::endl;
-//    if ((geom1_body == "floor" && geom2_body == "odeGround") ||
-//            (geom1_body == "odeGround" && geom2_body == "floor" ))
-//        contact.surface.mu = dInfinity;
-//    else
-//        if ((geom1_body == "floor" && geom2_body == "robBody") ||
-//                (geom1_body == "robBody" && geom2_body == "floor" ))
-//            contact.surface.mu = 0.0;
-//        else
-//            if ((geom1_body == "floor" && geom2_body == "fixed") ||
-//                    (geom1_body == "fixed" && geom2_body == "floor" ))
-//                contact.surface.mu = dInfinity;
-//            else
-                contact.surface.mu = 1.2;
+    std::string geom1_body = geomNames_.at(geom1);
+    std::string geom2_body = geomNames_.at(geom2);
+    //std::cout<<"Bodies are: "<<geom1_body<<" : "<<geom2_body<<std::endl;
+    if ((geom1_body == "floor" && geom2_body == "odeGround") ||
+            (geom1_body == "odeGround" && geom2_body == "floor" ))
+        contact.surface.mu = dInfinity;
+    else
+        if ((geom1_body == "floor" && geom2_body == "robBody") ||
+                (geom1_body == "robBody" && geom2_body == "floor" ))
+            contact.surface.mu = 0.0;
+        else
+            if ((geom1_body == "floor" && geom2_body == "fixed") ||
+                    (geom1_body == "fixed" && geom2_body == "floor" ))
+                contact.surface.mu = 5;
+            else
+                contact.surface.mu = 0.1;
     contact.surface.soft_erp = _erp;
     contact.surface.soft_cfm = _cfm;
 
