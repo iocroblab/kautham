@@ -158,7 +158,10 @@ double Smoothness;
     typedef struct
        {
        std::vector<double> pose;
-       }goalPoses;
+       std::string action;
+       std::vector<double> f;
+       unsigned int targetbody;
+       }query;
 
 
 };

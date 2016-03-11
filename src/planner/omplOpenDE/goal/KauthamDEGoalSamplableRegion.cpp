@@ -129,7 +129,7 @@ vector<KauthamODEobject> KauthamDEGoalSamplableRegion::smp2KauthamOpenDEState(Wo
      bool KauthamDEGoalSamplableRegion::isSatisfied(const ob::State *st, double *distance) const
      {
          double d2g = distanceGoal(st);
-        if(d2g<120)
+        if(d2g<20)
          std::cout<<"Distance To Goal is : "<<d2g<<std::endl;
          if (distance)
              *distance = d2g;

@@ -338,25 +338,7 @@ string KauthamDEEnvironment::InferenceProcess(string rigidbodyName,dBodyID body,
                 mt::Transform offsetTmax, offsetTmin;
                 //assume cube has size 20 by 20 so the offset from the origin
                 //of the rigid body will be fixed
-                if(mRgnDirection[tmp2] == "X")
-                {
-                    //todo: Add offset along the axis
-                }
-                else if(mRgnDirection[tmp2] == "-X")
-                {
-                    //todo: Add offset along the axis
 
-                }
-                else if(mRgnDirection[tmp2] == "Y")
-                {
-                    //todo: Add offset along the axis
-
-                }
-                else if(mRgnDirection[tmp2] == "-Y")
-                {
-                    //todo: Add offset along the axis
-
-                }
                 offsetTmax.setTranslation(mt::Point3(15.0,60.0,0.0));
                 offsetTmin.setTranslation(mt::Point3(-15.0,-60.0,0.0));
 
@@ -463,7 +445,8 @@ string KauthamDEEnvironment::InstknowledgeInference(string rigidbodyName,dBodyID
 
             }
             else
-                if(rigidbodyName == "cubeDE"||rigidbodyName == "cubeDE1" || rigidbodyName == "cubeDE2" || rigidbodyName == "cubeDE3")
+                if(rigidbodyName == "cubeDE"||rigidbodyName == "cubeDE1" || rigidbodyName == "cubeDE2" || rigidbodyName == "cubeDE3" || rigidbodyName == "cubeDE4" || rigidbodyName == "cubeDE5"
+                        || rigidbodyName == "cubeDE6" || rigidbodyName == "cubeDE7" || rigidbodyName == "cubeDE8")
                 {
                     rb.setRigidBodyType("freeManipulatable");
                     rb.setCollisionAllowed(true);

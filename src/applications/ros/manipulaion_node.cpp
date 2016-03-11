@@ -34,7 +34,6 @@
 #include "../console/kauthamshell.h"
 #include "kautham2/ManipulationAction.h"
 #include "kautham2/OpenManipProblem.h"
-#include "kautham2/SetManipQuery.h"
 #include "kautham2/SetBodyState.h"
 #include "kautham2/GetBodyState.h"
 #include "kautham2/SetWorldState.h"
