@@ -150,6 +150,7 @@ bool KauthamDEPlanner::trySolve(void)
     bounds.setLow(-20);
     bounds.setHigh(20);
     ss->setAngularVelocityBounds(bounds);
+    ob::ScopedState<oc::OpenDEStateSpace> final(ss->getSpaceInformation());
 
     if(PROBTYPE=="SINGLEQUERY")
     {
@@ -162,6 +163,8 @@ bool KauthamDEPlanner::trySolve(void)
         ss->print();
         bool solution1=false;
         _solved=solution1 = ss->solve(_planningTime);
+        final = ss->getSolutionPath().getStates().back();
+
         if(solution1)
         {
 
@@ -325,6 +328,7 @@ bool KauthamDEPlanner::trySolve(void)
             std::cout<<"Generated Solution states are  :  "<<states.size()<<std::endl;
             std::cout<<"Generated Solution controls are:  "<<control.size()<<std::endl;
             std::cout<<"Solution control durations  are:  "<<duration.size()<<std::endl;
+            std::cout<<"last rob state is " <<final->getBodyPosition(0)[0] << " " << final->getBodyPosition(0)[1] << std::endl;
 
             std::vector<float> jangle;
             jangle.resize(7);

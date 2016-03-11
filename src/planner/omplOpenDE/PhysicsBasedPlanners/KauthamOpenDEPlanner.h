@@ -107,7 +107,6 @@ public:
 
     oc::ControlSpacePtr csp;
     oc::OpenDESimpleSetup *ss;
-    oc::SimpleSetupPtr ss1;
 
     vector<State>  worldState;
    // int m;
