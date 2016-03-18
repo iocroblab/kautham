@@ -36,7 +36,7 @@ namespace omplcplanner{
  * it defines simple setup, Planner and Planning parameters.
  */
 KPIECECarPlanner::KPIECECarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
-    KPIECECarPlanner(stype, init, goal, samples, ws)
+    KauthamDEPlanner(stype, init, goal, samples, ws)
 {
     //set intial values from parent class data
     _wkSpace->moveRobotsTo(init);
