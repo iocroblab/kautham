@@ -52,6 +52,12 @@ using namespace Kautham;
 //ros::Publisher chatter_pub;
 kauthamshell* kmanip;
 
+double dist(std::vector<double>laststate, std::vector<double>goal)
+{
+    double distGoal;
+    distGoal = sqrt((pow((laststate[0] - goal[0]), 2) + (pow((laststate[1] - goal[1]), 2))));
+    return distGoal;
+}
 
 void getWorldState()
 {
@@ -130,7 +136,7 @@ std::vector<double>contConversion(std::vector<double> pose)
     cont.resize(2);
     cont[0] = (pose[0] - minX)/(maxX - minX);
     cont[1] = (pose[1] - minY)/(maxY - minY);
-   // cont[2] = 0.5;
+    // cont[2] = 0.5;
     return cont;
 
 }
@@ -142,8 +148,8 @@ void setManipQuery()
     ros::ServiceClient open_problem_client = node.serviceClient<kautham2::OpenManipProblem>("manipulation_node/OpenManipProblem");
     kautham2::OpenManipProblem open_problem_srv;
     std::string model = "/home/muhayyuddin/catkin_ws/src/kautham/demos/models";
-    //open_problem_srv.request.problem = "/home/users/aliakbar.akbari/catkin_ws/src/kautham_project/demos/OMPL_demos/KauthamOpenDE/ETFA2016.xml";
-    open_problem_srv.request.problem = "/home/muhayyuddin/catkin_ws/src/kautham/demos/OMPL_demos/KauthamOpenDE/ETFA2016.xml";
+    open_problem_srv.request.problem = "/home/users/aliakbar.akbari/catkin_ws/src/kautham/demos/OMPL_demos/KauthamOpenDE/ETFA2016.xml";
+    //open_problem_srv.request.problem = "/home/muhayyuddin/catkin_ws/src/kautham/demos/OMPL_demos/KauthamOpenDE/ETFA2016.xml";
     open_problem_srv.request.dir.resize(1);
     open_problem_srv.request.dir[0] = model;
     open_problem_client.call(open_problem_srv);
@@ -163,12 +169,12 @@ void setManipQuery()
     std::vector<double>goalC;
 
     init.resize(2);
-    init[0]=245;
-    init[1]=20;
+    init[0]=228;
+    init[1]=121;
 
     goal.resize(2);
-    goal[0]=199;
-    goal[1]=-29;
+    goal[0]=78;
+    goal[1]=-35;
 
     initC = contConversion(init);
     goalC = contConversion(goal);
@@ -199,6 +205,23 @@ void setManipQuery()
     solve_manip_query_client.call(solve_manip_query_srv);
     std::cout <<"Query solved: "<< std::boolalpha<< solve_manip_query_srv.response.status<<std::endl;
     std::cout<<"Power Consumed is " <<solve_manip_query_srv.response.powerconsumed<<std::endl;
+    std::cout<<"Last State is "<<solve_manip_query_srv.response.laststate[0]<<" "<<solve_manip_query_srv.response.laststate[1]<<std::endl;
+
+    std::vector<double>lstate;
+    lstate = solve_manip_query_srv.response.laststate;
+
+    double dis;
+    dis = dist(lstate,goal);
+    std::cout<<"Distance is "<<dis<<std::endl;
+
+    if(dis < 1.1)
+    {
+        std::cout<<"Motion query has been solved"<<std::endl;
+    }
+    else
+    {
+        std::cout<<"Motion query has not been solved"<<std::endl;
+    }
 
     ROS_INFO("Manipulation Query performed sucessfully !");
 
@@ -213,11 +236,11 @@ int main (int argc, char **argv)
 
     setManipQuery();
 
-//    getBodyState();
-//    setBodyState();
-//    getWorldState();
-//    setWorldState();
-//    getWorldState();
+    //    getBodyState();
+    //    setBodyState();
+    //    getWorldState();
+    //    setWorldState();
+    //    getWorldState();
     ros::spin();
 
     return 0;
