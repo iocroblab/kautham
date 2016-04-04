@@ -79,7 +79,7 @@
 			<Parameter name="Goal Bias">0.05000000075</Parameter>
 			<Parameter name="Max Contacts">3</Parameter>
 			<Parameter name="Max Control Steps">50</Parameter>
-			<Parameter name="Max Planning Time">30</Parameter>
+			<Parameter name="Max Planning Time">10</Parameter>
 			<Parameter name="Max Speed">10</Parameter>
 			<Parameter name="Min Control Steps">10</Parameter>
 			<Parameter name="PropagationStepSize">0.07999999821</Parameter>
