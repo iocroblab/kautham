@@ -330,6 +330,9 @@ bool KauthamDEPlanner::trySolve(void)
             std::cout<<"Solution control durations  are:  "<<duration.size()<<std::endl;
             std::cout<<"last rob state is " <<final->getBodyPosition(0)[0] << " " << final->getBodyPosition(0)[1] << std::endl;
 
+            lastState.push_back(final->getBodyPosition(0)[0]);
+            lastState.push_back(final->getBodyPosition(0)[1]);
+
             std::vector<float> jangle;
             jangle.resize(7);
             for(unsigned int i=0;i<states.size()-1;i++)
