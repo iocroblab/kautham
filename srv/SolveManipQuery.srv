@@ -10,10 +10,13 @@ float64[] force
 #init and goal states
 float32[] init
 float32[] goal
+
+
 ---
 odeState[] path
 float64 powerconsumed
 bool status
+float64[] laststate
 
 
 

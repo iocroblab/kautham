@@ -1239,7 +1239,7 @@ namespace Kautham {
         }
     }
 
-    bool kauthamshell::setManipPramsAndSolve(string actiontype, int targetbody, std::vector<double> force, std::vector<State> *ws, double *power)
+    bool kauthamshell::setManipPramsAndSolve(string actiontype, int targetbody, std::vector<double> force, std::vector<State> *ws, double *power,std::vector<double> *laststate)
     {
         try {
             if (_problem == NULL || !problemOpened())
@@ -1276,6 +1276,8 @@ namespace Kautham {
             {
                 *ws = ((omplcplanner::KauthamDEPlanner*)_problem->getPlanner())->worldState;
                 *power=((omplcplanner::KauthamDEPlanner*)_problem->getPlanner())->PowerConsumed;
+                *laststate=((omplcplanner::KauthamDEPlanner*)_problem->getPlanner())->lastState;
+
             }
             std::string actiontype = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
                                       stateSpace->getEnvironment().get())->manipulationQuery->getActionType();

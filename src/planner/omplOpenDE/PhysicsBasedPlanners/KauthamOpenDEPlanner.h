@@ -117,6 +117,7 @@ public:
    std::vector<double> JerkIndex;
 double PowerConsumed;
 double Smoothness;
+std::vector<double> lastState;
     //! The constructor will define all the necessary parameters for planning.
     KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~KauthamDEPlanner();
