@@ -52,9 +52,6 @@
 	<Obstacle obstacle="obstacles/ETFA2016/Plan.urdf" scale="1.0">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ETFA2016/wall6IROS.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="132.0" X="-78.0" />
-	</Obstacle>
 	<Obstacle obstacle="obstacles/ETFA2016/wall7IROS.urdf" scale="1.0">
 		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="15" Y="-55.0" X="-145.0" />
 	</Obstacle>
