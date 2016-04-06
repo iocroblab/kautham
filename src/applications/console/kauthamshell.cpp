@@ -1250,6 +1250,10 @@ namespace Kautham {
             dJointID joint;
             ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
                     stateSpace->getEnvironment().get())->manipulationQuery->setActionType(actiontype);
+            string action = (((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                                        stateSpace->getEnvironment().get())->manipulationQuery->getActionType());
+            if(action=="push" || action== "pull")
+             {
 
             ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
                     stateSpace->getEnvironment().get())->stateBodies_[targetbody];
@@ -1257,8 +1261,9 @@ namespace Kautham {
             ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
                     stateSpace->getEnvironment().get())->manipulationQuery->setforce(force);
 
-            std::vector<double> f = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
-                                     stateSpace->getEnvironment().get())->manipulationQuery->getforce();
+//            std::vector<double> f = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+//                                     stateSpace->getEnvironment().get())->manipulationQuery->getforce();
+            }
             if(actiontype=="pull"||actiontype=="Pull")
             {
                 unsigned int robBodyIndex = _problem->wSpace()->getRobot(0)->getNumLinks()-1;
@@ -1268,8 +1273,8 @@ namespace Kautham {
                               ((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[targetbody]);
 
             }
-            std::cout<<"Action is : "<<  ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
-                                          stateSpace->getEnvironment().get())->manipulationQuery->getActionType()<<" :: force is :: [" <<f[0]<<" , "<<f[1]<<" , "<<f[2]<<"] Target body is: "<<targetbody<<std::endl;
+//            std::cout<<"Action is : "<<  ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+//                                          stateSpace->getEnvironment().get())->manipulationQuery->getActionType()<<" :: force is :: [" <<f[0]<<" , "<<f[1]<<" , "<<f[2]<<"] Target body is: "<<targetbody<<std::endl;
             bool solve = false;
             solve = _problem->getPlanner()->solveAndInherit();
             if (solve)

@@ -126,6 +126,7 @@ bool srvGetBodyState(kautham2::GetBodyState::Request &req,
      std::cout<<"State of body " <<req.taretBody <<" is ["<< pose[0]<<" , "<< pose[1]<<" , "<< pose[2]
               <<" , "<< pose[3]<<" , "<< pose[4]<<" , "<< pose[5]<<" , "<< pose[6]<<" ]"<<std::endl;
      res.status=true;
+     res.targetBodyPose=pose;
     return true;
 }
 
