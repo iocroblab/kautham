@@ -75,7 +75,7 @@ void KUKAEnvironment::applyControl (const double *control) const
     //dReal currentA = dJointGetHingeAngle(_Joint[i]);
      dReal currentA =   dJointGetHingeParam(_Joint[i],dParamVel);
 //std::cout<<currentA<<"  ";
-    dJointSetAMotorParam(_motor[i], dParamVel, (control[i]));
+    dJointSetAMotorParam(_motor[i], dParamVel, (control[i])-currentA);
     dJointSetAMotorParam(_motor[i], dParamFMax, dInfinity);
       // dReal ang =dJointGetHingeAngle(_Joint[i]);
        // std::cout<<ang<<" , ";

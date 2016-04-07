@@ -66,7 +66,7 @@ namespace omplcplanner{
      _idName = "RRTKUKAPlanner";
      //ws->moveRobotsTo(init);
      dInitODE2(0);
-     oc::OpenDEEnvironmentPtr envPtr(new KUKAEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+      envPtr = oc::OpenDEEnvironmentPtr(new KUKAEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
      stateSpace = new KUKAStateSpace(envPtr);
      stateSpacePtr = ob::StateSpacePtr(stateSpace);
 

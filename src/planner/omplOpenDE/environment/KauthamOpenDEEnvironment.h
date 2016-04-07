@@ -1,3 +1,4 @@
+
 /*************************************************************************\
    Copyright 2014 Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
@@ -143,7 +144,7 @@ public:
     // Fill up so early Doby vector corresponding to the robot which is planned .
 
     dBodyID makePrimitive(const vector< double >& position, const vector< double >& orientation,
-                          const double mass, const vector< double >& params); //!< this function creates ODE Bodies (dBody).
+                          const double mass, const vector< double >& params, string name); //!< this function creates ODE Bodies (dBody).
 
     void makePrimitiveForComposite(const vector< double >& position, const vector< double >& orientation,
                                    const double mass, const vector< double > params, const dBodyID coreBody);
@@ -153,7 +154,8 @@ public:
                          vector<double> vertexes,
                          vector<unsigned int> indexes,
                          double mass,
-                         std::string name); //!< This function make the ODE bodies (dBody) using triangular mesh.
+                         std::string name,
+                         std::vector<double> bodydim); //!< This function make the ODE bodies (dBody) using triangular mesh.
 
     void makeGeomPrimitive(const string name, const vector<double>& position,
                            const vector<double>& orientation, const vector<double>& params);
@@ -176,9 +178,11 @@ public:
         mt::Transform preTransform;
         vector<double> vertexes;
         vector<unsigned int> indexes;
+        std::vector<double> bodydimension;
         double mass;
         vector<float> color;
         bool fixed;
+        bool mesh;
         double a;
         double d;
         double theta;
@@ -192,7 +196,14 @@ public:
         vector<float> color;
 
     }trimeshD;
-
+    typedef struct
+    {
+        dTriMeshDataID meshD;
+        std::vector<float> vertices;
+        std::vector<dTriIndex> indices;
+        int indexSize;
+    }Tmesh;
+    std::vector<Tmesh> meshID;
     typedef struct
     {
         string target1;
@@ -230,12 +241,16 @@ public:
     //the geometry that is associated with that body and the name.
     typedef struct
     {
-        string bodyType;
         string bodyName;
         dBodyID body;
         dGeomID Geom;
-    }KauthamDEBody;
-
+        dReal mass;
+        std::vector<double> dimBody;
+        std::vector<double> dimRegion;
+        std::vector<string> regionDir;
+    }bodyInfo;
+    bodyInfo bI;
+    std::vector<bodyInfo> bodyDEInfo;
     map<string, KinematicChain> chainMap; //!< map KinamaticChain
     virtual void setjointsandmotors2bodies(map<string,dBodyID> stateBodiesmap_, map<string, KinematicChain> chainMapchainMap, WorkSpace* ws);//!< this function set the joint and motor for in ODE bodies
     void getTrimesh(SoSeparator *ivmodel, odinObject* obj, double scale);//!< get the triangular mesh.
@@ -267,11 +282,11 @@ public:
     InstantiatedKnowledge *Instknowledge;
     std::map<string,dBodyID> getBody;
     std::map<dGeomID,std::string> geomname;
-
-
+    std::map<dBodyID, std::vector<double> > bodyDim;
 static const double toRad  = M_PI/180.;
 dJointID cJoint[4];
 ManipulationQuery* manipulationQuery;
+
 private:
 
     //static const double toRad  = M_PI/180.;
@@ -280,7 +295,7 @@ private:
     bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector<KthReal>& basePos);
     //! This function will build the kinamatic chain for Obstracle
     // bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Obstacle *obstacle, double scale, int k);
-    bool getTransformation(KauthamDEEnvironment::KinematicChain* chain, string robotDHType, Link* link, odinObject* obj, string robotName, vector<double>& rotAxis);
+    bool getTransformation(KauthamDEEnvironment::KinematicChain* chain, Link* link, odinObject* obj, string robotName, vector<double>& rotAxis);
     bool getMotion(KauthamDEEnvironment::KinematicChain* chain, Link* link, odinObject* obj, string robotName, vector<double>& rotAxis);
     void searchColor(SoSeparator* root, odinObject* obj);
     void searchColor(SoSeparator* root, trimeshD* obj);
@@ -290,7 +305,7 @@ private:
    // dJointID makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector<double>& params,vector<double>& maxForces);
     dJointID makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector<double>& params,vector<double>& maxForces, const double hiStop, const double LoStop,const double value);
     int sceneObjectNumber;
-    string InstknowledgeInference(string rigidbodyName, dBodyID body, dGeomID geom);
+    string InstknowledgeInference(bodyInfo bodyinfo);
     int tmp;
     int tmp2;
     std::vector<string> bodyname;
@@ -299,19 +314,26 @@ private:
     std::vector<bool> collisionflag;
     string InferenceProcess(string rigidbodyName, dBodyID body, dGeomID geom);
     void ReadManipulationKnowledge();
-
+    void getPrimitiveShapes(Link* link, odinObject* obj, bool rotflag);
 };
 class ManipulationQuery
 {
+    bool planningPhase;
+    bool isKinamaticChain;
     std::string actionType;
     std::string direction;
     unsigned int targetbody;
     std::vector<double> force;
     std::vector<double> goalPose;
+    //record the joint values for the configurations in the solution path.
+    std::vector< std::vector<double> > jointConfigurations;
+    std::vector<double> conf;
 public:
     ManipulationQuery()
     {
         actionType="move";
+        planningPhase=true;
+        isKinamaticChain=true;
     }
     inline std::string getActionType(){return actionType;}
     inline void setActionType(std::string action){ actionType=action;}
@@ -321,6 +343,33 @@ public:
     inline void setDirection(std::string direc){ direction=direc;}
     inline std::vector<double>  getforce(){return force;}
     inline void setforce(std::vector<double>  f){ force=f;}
+    inline bool getPlanningPhase(){return planningPhase;}
+    inline void setPlanningPhase(bool status){ planningPhase=status;}
+    inline bool getIsKinamaticChain(){return isKinamaticChain;}
+    inline void setIsKinamaticChain(bool status){isKinamaticChain=status;}
+inline void setconf(double ithVal)
+{
+    conf.push_back(ithVal);
+}
+inline std::vector<double> getconf()
+{
+   return conf;
+}
+ void clearconf(void)
+{
+    conf.clear();
+}
+    void addJointConfiguration(std::vector<double> config)
+    {
+        jointConfigurations.push_back(config);
+    }
+    std::vector<double> getJointConfigurationAt(unsigned int i)
+    {
+        return jointConfigurations.at(i);
+    }
+    inline std::vector<std::vector<double> > getJointConfiguraion(){return jointConfigurations;}
+    inline void setJointConfiguraion(std::vector<std::vector<double> > conf){jointConfigurations=conf;}
+
 
 };
 

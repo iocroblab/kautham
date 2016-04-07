@@ -63,6 +63,8 @@ namespace omplcplanner{
  class PlanarChainEnvironment: public KauthamDEEnvironment
  {
      public:
+     std::vector<double> *configuration;
+
      PlanarChainEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
      ~PlanarChainEnvironment(void);
      virtual unsigned int getControlDimension(void) const;//!< describe the number of parameter used to describe control input.

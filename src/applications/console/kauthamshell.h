@@ -78,6 +78,7 @@ namespace Kautham {
         std::vector<double> getBodyState(int targetBody);
         bool setWorldState(std::vector< std::vector<double> > worldstate);
         std::vector< std::vector<double> > getWorldState();
+        //bool InstKnowledgeInferenceProcess();
     private:
         Problem *_problem;
     };

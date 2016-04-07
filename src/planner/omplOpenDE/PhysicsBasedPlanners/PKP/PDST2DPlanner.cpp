@@ -73,7 +73,7 @@ PDST2DPlanner::PDST2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sample
     dInitODE2(0);
 
 
-    oc::OpenDEEnvironmentPtr envPtr(new twoDRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+     envPtr = oc::OpenDEEnvironmentPtr(new twoDRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
     stateSpace = new twoDRobotStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
 

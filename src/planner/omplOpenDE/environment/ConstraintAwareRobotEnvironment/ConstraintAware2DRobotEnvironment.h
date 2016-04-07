@@ -157,7 +157,7 @@ class ConstraintAwaretwoDControlSampler : public oc::RealVectorControlUniformSam
 {
 public:
 
-    ConstraintAwaretwoDControlSampler(const oc::ControlSpace *cm, ompl::control::OpenDEEnvironmentPtr env) ;
+    ConstraintAwaretwoDControlSampler(const oc::ControlSpace *cm) ;
     virtual void sampleNext(oc::Control *control, const oc::Control *previous);
     virtual void sampleNext(oc::Control *control, const oc::Control *previous, const ob::State* /*state*/);
 
@@ -166,8 +166,7 @@ public:
 class ConstraintAwaretwoDControlSpace : public oc::OpenDEControlSpace
 {
 public:
-    oc::OpenDEEnvironmentPtr Envp;
-    ConstraintAwaretwoDControlSpace(const ob::StateSpacePtr &m, ompl::control::OpenDEEnvironmentPtr env);
+    ConstraintAwaretwoDControlSpace(const ob::StateSpacePtr &m);
     virtual oc::ControlSamplerPtr allocControlSampler(void) const;
 
 };

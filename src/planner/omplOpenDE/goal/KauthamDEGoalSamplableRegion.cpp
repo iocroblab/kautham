@@ -41,7 +41,7 @@ vector<KauthamODEobject> KauthamDEGoalSamplableRegion::smp2KauthamOpenDEState(Wo
 
            vector<KauthamODEobject> kauthamob;
 
-           for(unsigned int i=0; i<=(int(wkSpace->getNumRobots())-1); i++)
+           for(unsigned int i=0; i<=((unsigned int)wkSpace->getNumRobots()-1); i++)
            {
                //wkSpace->getRobot(0)->Kinematics(goal->getMappedConf()[0]);
                 wkSpace->getRobot(i)->Kinematics(goal->getMappedConf().at(0).getSE3());
@@ -96,8 +96,8 @@ vector<KauthamODEobject> KauthamDEGoalSamplableRegion::smp2KauthamOpenDEState(Wo
            {
        //        const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(Kauthamodebodies.size()-1);
        //        distance = sqrt(fabs(pos[0]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0]))+(fabs(pos[1]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1]))+(fabs(pos[2]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2]));
-               const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(7);
-               const double *vel = st->as<oc::OpenDEStateSpace::StateType>()->getBodyLinearVelocity(7);
+               const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
+               const double *vel = st->as<oc::OpenDEStateSpace::StateType>()->getBodyLinearVelocity(3);
                double dx = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0] - pos[0];
                double dy = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1] - pos[1];
                double dz = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2] - pos[2];

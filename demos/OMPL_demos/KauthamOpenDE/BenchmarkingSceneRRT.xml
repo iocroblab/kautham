@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Problem name="OMPL_cRRTcar_table_rooms_SE2">
+<Problem name="Knowledge_Oriented_RRT_2D_Planning">
 	<Robot robot="obstacles/DEBenchmark/SphereDE.urdf" scale="0.7">
 		<Limits name="X" min="-130.0" max="130.0" />
 		<Limits name="Y" min="-130.0" max="130.0" />

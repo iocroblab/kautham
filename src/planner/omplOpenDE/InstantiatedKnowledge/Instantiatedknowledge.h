@@ -45,6 +45,9 @@ public:
 //compute the limit of the valid region along x-axis and y-axis. if the value of x & y
 //components of the robot is between the (x_min,y_min) and (x_max,y_max) than the region
 //is valid for collision.
+    string regionDirection;
+    string regionType;
+    std::vector<double> regionDim;
     double x_min,x_max;
     double y_min,y_max;
 
@@ -57,6 +60,13 @@ public:
     inline double getXmax(){return x_max;}
     inline double getYmin(){return y_min;}
     inline double getYmax(){return y_max;}
+    inline string getRegionType(){return regionType;}
+    inline void setRegionType(string rt){regionType=rt;}
+    inline string getRegionDirection(){return regionDirection;}
+    inline void setRegionDirection(string rD){regionDirection=rD;}
+    inline void setRegionDim(std::vector<double> rDim){regionDim=rDim;}
+    inline std::vector<double> getRegionDim(){return regionDim;}
+
 };
 
 //This class contains the properties associated with the rigid body, such as
@@ -67,19 +77,27 @@ class RigidBody
 
     //type of body can be fixed, manipulatable, or constraint oriented manipulatable body.
     std::string type;
+    double mass;
+    std::vector<double> bodyDimension;
     //contain the rectengular region in which the collision with the obstacle is allowed.
-    Region ManipulationRegion;
+    std::vector<Region> ManipulationRegions;
     //true if collision between two geometries is allowed false otherwise.
     bool collisionAllowed;
     //std::vector<Region> ManipulationRegions;
 public:
     inline void setRigidBodyType(string typ){type=typ;}
     inline string getRigidBodyType(){return type;}
-    inline Region getManipulationRegion(){return ManipulationRegion;}
+    inline std::vector<Region> getManipulationRegions(){return ManipulationRegions;}
+    inline Region getManipulationRegions(unsigned int i){return ManipulationRegions[i];}
     inline void setCollisionAllowed(bool val){collisionAllowed=val;}
     inline bool getCollisionAllowed(){return collisionAllowed;}
     void setManipulationRegion(Region region);
     bool isCollisionAllowed( double x,  double y);
+    bool isContainManipulationRegions();
+    inline void setMass(double m){mass=m;}
+    inline double getMass(){return mass;}
+    inline void setDim(std::vector<double> rbD){bodyDimension=rbD;}
+    inline std::vector<double> getDim(){return bodyDimension;}
 
 };
 
@@ -106,6 +124,8 @@ public:
     inline RigidBody getRigidBody(int index){return _rigidBody[index];}
     void addRigidBody(RigidBody rb, dGeomID geom);
     RigidBody getManipulationConstraints(dGeomID geom);
+    double isRobotInManipulationRegion(double x, double y);
+    void updateKnowledge(std::vector<dBodyID> body);
 };
 
 }

@@ -38,14 +38,14 @@ namespace omplcplanner{
 
 KauthamDEGoalRegion::KauthamDEGoalRegion(const ob::SpaceInformationPtr &si, WorkSpace *ws, bool a,Sample *goal):ob::GoalRegion(si)
 {
-    setThreshold(0.5);
+    setThreshold(1);
     //threshold_ = 1;
  Kauthamodebodies=smp2KauthamOpenDEState(ws,goal);
     onlyend=a;
 }
 KauthamDEGoalRegion::KauthamDEGoalRegion(const ob::SpaceInformationPtr &si,  WorkSpace *ws, bool a,double x, double y):ob::GoalRegion(si)
 {
-    setThreshold(0.5);
+    setThreshold(1);
     //threshold_ = 1;
     KauthamODEobject odeob;
 
@@ -81,7 +81,7 @@ vector<KauthamDEGoalRegion::KauthamODEobject> KauthamDEGoalRegion::smp2KauthamOp
     //loop for all the robots
     vector<KauthamODEobject> kauthamob;
 
-    for(unsigned int i=0; i<=(int(wkSpace->getNumRobots())-1); i++)
+    for(unsigned int i=0; i<=((unsigned int)wkSpace->getNumRobots()-1); i++)
     {
         //wkSpace->getRobot(0)->Kinematics(goal->getMappedConf()[0]);
          wkSpace->getRobot(i)->Kinematics(goal->getMappedConf().at(0).getSE3());

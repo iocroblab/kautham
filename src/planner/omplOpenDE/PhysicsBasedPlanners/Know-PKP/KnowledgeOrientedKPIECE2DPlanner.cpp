@@ -51,11 +51,10 @@ KnowledgeOrientedKPIECE2DPlanner::KnowledgeOrientedKPIECE2DPlanner(SPACETYPE sty
     //       stateSpace = new KauthamDEStateSpace(envPtr);
     //       stateSpacePtr = ob::StateSpacePtr(stateSpace);
 
-    oc::OpenDEEnvironmentPtr envPtr(new ConstraintAware2DRobotEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+     envPtr = oc::OpenDEEnvironmentPtr(new ConstraintAware2DRobotEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
     stateSpace = new ConstraintAwaretwoDRobotStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
-    //oc::ControlSpacePtr csp(new KauthamControlSpace(stateSpacePtr));
-    //oc::ControlSpacePtr csp(new KauthamControlSpace(stateSpacePtr,envPtr));
+    //oc::ControlSpacePtr csp(new ConstraintAwaretwoDControlSpace(stateSpacePtr));
     //ss = new oc::OpenDESimpleSetup(csp);
         ss = new oc::OpenDESimpleSetup(stateSpacePtr);
     oc::SpaceInformationPtr si=ss->getSpaceInformation();

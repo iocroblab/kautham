@@ -36,7 +36,7 @@ namespace omplcplanner{
  * it defines simple setup, Planner and Planning parameters.
  */
 KPIECECarPlanner::KPIECECarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
-    KPIECECarPlanner(stype, init, goal, samples, ws)
+    KauthamDEPlanner(stype, init, goal, samples, ws)
 {
     //set intial values from parent class data
     _wkSpace->moveRobotsTo(init);
@@ -45,7 +45,7 @@ KPIECECarPlanner::KPIECECarPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     _idName = "KPIECECarPlanner";
     dInitODE2(0);
 
-    oc::OpenDEEnvironmentPtr envPtr(new CarEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+    envPtr = oc::OpenDEEnvironmentPtr(new CarEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
     stateSpace = new CarStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
     oc::ControlSpacePtr csp(new CarControlSpace(stateSpacePtr));

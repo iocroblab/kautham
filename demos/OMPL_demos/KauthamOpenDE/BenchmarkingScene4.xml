@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<Problem name="OMPL_cRRTcar_table_rooms_SE2">
-	<Robot robot="obstacles/DEBenchmark/SphereDE.urdf" scale="0.7">
+<Problem name="Knowledge_Oriented_KPIECE_2D_Planning">
+	<Robot robot="obstacles/DEBenchmark/SphereDE.urdf" scale="1.1">
 		<Limits name="X" min="-130.0" max="130.0" />
 		<Limits name="Y" min="-130.0" max="130.0" />
-		<Limits name="Z" min="-5.0" max="40.0" />
+		<Limits name="Z" min="-4.0" max="40.0" />
 		<Limits name="WX" min="0.0" max="1.0" />
 		<Limits name="WY" min="0.0" max="1.0" />
 		<Limits name="WZ" min="0.0" max="1.0" />

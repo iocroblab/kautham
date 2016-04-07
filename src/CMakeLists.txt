@@ -110,6 +110,7 @@ endif( KAUTHAM_IOC )
 
 if(KAUTHAM_OPENDE)
    find_package(OpenDE REQUIRED)
+   find_package(Drawstuff REQUIRED)
    if(ODE_FOUND)
       message( STATUS "ODE Package FOUND: setting -DKAUTHAM_USE_ODE flag")
       add_definitions( -DKAUTHAM_USE_ODE )

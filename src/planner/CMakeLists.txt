@@ -32,12 +32,19 @@ if( KAUTHAM_OMPL )
       file( GLOB SRC_OMPLC_FILES omplc/*.cpp )
       file( GLOB HDR_OMPLC_FILES omplc/*.h )
       #set(KAUTHAM_SRC ${KAUTHAM_SRC} ${SRC_OMPLG_FILES} ${SRC_OMPLC_FILES} PARENT_SCOPE  )
-
-      if(KAUTHAM_OPENDE)
+if(KAUTHAM_OPENDE)
          if(ODE_FOUND)
+
+	    find_package(GLUT)
+	    find_package(OpenGL)
+
             message( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_ODE flag")
-            include_directories( ${ODE_INCLUDE_DIR} )
+            include_directories( ${OPENDE_INCLUDE} ${DRAWSTUFF_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${GLUT_INCLUDE_DIR} )
             set ( PLANNER_EXTRA_LIBS ${PLANNER_EXTRA_LIBS} ${ODE_LIBRARY}  )
+            message( STATUS "Adding subdirectory omplOpenDE")
+            message( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_ODE flag")
+            #include_directories( ${OPENDE_INCLUDE} ${DRAWSTUFF_INCLUDE_DIR} ${GLUT_INCLUDE_DIR})
+            set ( PLANNER_EXTRA_LIBS ${PLANNER_EXTRA_LIBS} ${OPENDE_LIBRARY} ${DRAWSTUFF_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
             message( STATUS "Adding subdirectory omplOpenDE")
             #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/*.cpp )
             #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/*.h )
@@ -46,28 +53,10 @@ if( KAUTHAM_OMPL )
                   omplOpenDE/InstantiatedKnowledge/*.cpp omplOpenDE/PhysicsBasedPlanners/*.cpp omplOpenDE/PhysicsBasedPlanners/PKP/*.cpp omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.cpp
 		  omplOpenDE/*.h omplOpenDE/goal/*.h omplOpenDE/environment/*.h omplOpenDE/environment/ConstraintAwareRobotEnvironment/*.h omplOpenDE/environment/SimpleRobotEnvironment/*.h omplOpenDE/InstantiatedKnowledge/*.h 
                   omplOpenDE/PhysicsBasedPlanners/*.h omplOpenDE/PhysicsBasedPlanners/PKP/*.h omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.h )
- if(OMPL_EXTENSION_TRIANGLE)
-file(GLOB SRC_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/LTL/*.cpp omplOpenDE/PhysicsBasedPlanners/LTL/*.h)
-endif()
-#	    file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/goal/*.h omplOpenDE/environment/*.h omplOpenDE/environment/CRE/*.h omplOpenDE/environment/RE/*.h omplOpenDE/InstantiatedKnowledge/*.h 			  omplOpenDE/PhysicsBasedPlanners/*.h omplOpenDE/PhysicsBasedPlanners/PKP/*.h omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.h)
 
- 	    #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/goal/*.cpp )
-            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/goal/*.h )
-
- 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/environment/*.cpp )
-            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/environment/*.h )
- 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/environment/CRE/*.cpp )
-            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/environment/CRE/*.h )
- 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/environment/RE/*.cpp )
-            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/environment/RE/*.h )				
- 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/InstantiatedKnowledge/*.cpp )
-            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/InstantiatedKnowledge/*.h )
- 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/*.cpp)
-            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/*.h )
- 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/PKP/*.cpp )
-            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/PKP/*.h )
- 	    #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.cpp )
-            #file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.h )
+            if(OMPL_EXTENSION_TRIANGLE)
+            file(GLOB SRC_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/LTL/*.cpp omplOpenDE/PhysicsBasedPlanners/LTL/*.h)
+            endif()
 
     	 else( ODE_FOUND )
 	      message( STATUS "Error: ODE LIBRARY NOT FOUND. OMPL planner with ODE will not be avaliable")
@@ -109,7 +98,7 @@ set ( EXTRA_LIBS ${EXTRA_LIBS} ${PLANNER_EXTRA_LIBS} PARENT_SCOPE )
 #endif( KAUTHAM_GUIBRO )
 
 
-#target_link_libraries( planner ${OMPL_LIBRARIES} ${ARMADILLO_LIBRARIES} ${ODE_LIBRARY})
+#target_link_libraries( planner ${OMPL_LIBRARIES} ${ARMADILLO_LIBRARIES} ${ODE_LIBRARY} )
 
 
 

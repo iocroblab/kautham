@@ -61,7 +61,7 @@
 
 //#include <ompl/control/planners/ltl/LTLProblemDefinition.h>
 //#include<ompl/control/planners/ltl/LTLPlanner.h>
-
+#include"displayOpenDE.h"
 
 #define _USE_MATH_DEFINES
 
@@ -100,31 +100,34 @@ public:
     KthReal _controlDimensions;
     KthReal _erp;
     KthReal _cfm;
+
+    int _drawnrobot; //!< Index of the robot whose Cspace is drawn. Defaults to 0.
+    double Action;
+    std::vector<double> JerkIndex;
+    double PowerConsumed;
+    double Smoothness;
+    std::string PROBTYPE;
+
     ob::StateSpacePtr stateSpacePtr; //!< state space pointer to KauthamDEStateSpace.
     oc::OpenDEEnvironmentPtr envPtr; //!< pointer to KauthamDE enviroment.
     oc::OpenDEStateSpace *stateSpace; //!< pointer to kauthamDEStatespace.
-    //oc::ControlSamplerPtr controlSamplerptr;
-
     oc::ControlSpacePtr csp;
     oc::OpenDESimpleSetup *ss;
-
     vector<State>  worldState;
-   // int m;
     std::vector<Sample*> Rob;
     std::vector<Sample*> Obs;
-    int _drawnrobot; //!< Index of the robot whose Cspace is drawn. Defaults to 0.
-    double Action;
-   std::vector<double> JerkIndex;
-double PowerConsumed;
-double Smoothness;
+    //    oc::LTLProblemDefinitionPtr pDefp;
+    //    oc::LTLSpaceInformationPtr ltlsi;
+    //    oc::LTLPlanner* ltlplanner;
+
     //! The constructor will define all the necessary parameters for planning.
     KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~KauthamDEPlanner();
     virtual bool trySolve();//!< Compute the path and returns the boolean value.
     bool setParameters();//!< set the planning parameters.
-    void KauthamOpenDEState2Robsmp(const ob::State *state, Sample* smp,const oc::Control *control, const double duration, std::vector<double> *Angle,std::vector<float> Ang);
+    void KauthamOpenDEState2Robsmp(const ob::State *state, Sample* smp,std::vector<double> configuration);
+    void KauthamOpenDEState2Robsmp(const ob::State *state, Sample* smp);
     void KauthamOpenDEState2Obssmp(const ob::State *state, Sample* smp,const oc::Control *control,const double duration);
-    //void omplScopedState2smp( const ob::ScopedState<oc::OpenDEStateSpace> sstate, Sample* smp);
     void moveAlongPath(unsigned int step);
     SoSeparator *getIvCspaceScene();//reimplemented
     void drawCspace(int numrob=0);
@@ -133,40 +136,35 @@ double Smoothness;
     void ComputePowerConsumed(const std::vector<ob::State*> &states,const std::vector<oc::Control*> &control, const std::vector<double> duration);
     bool computePath(oc::OpenDESimpleSetup *ssetup, ob::RealVectorBounds vb,ob::RealVectorBounds bounds, double x, double y,double planningTime);
     ompl::control::PathControl *RectMotion();
+    void callDrawStuffViewer(void );
 
-    typedef struct
-     {
-         KthReal objectposition[3];
-         KthReal objectorientation[4];
-     }KauthamDEobject;
-    vector<KauthamDEobject> smp2KauthamOpenDEState(WorkSpace *wkSpace,Sample *smp);
     typedef struct
     {
-    std::vector<ob::State*> substates;
-    std::vector<oc::Control*> control;
-    std::vector<double> duration;
-    }solutionStates;
-
-    std::vector<solutionStates> sStates;
-    std::vector< vector<float> >  JointAngle;
-//    oc::LTLProblemDefinitionPtr pDefp;
-//    oc::LTLSpaceInformationPtr ltlsi;
-//    oc::LTLPlanner* ltlplanner;
-    std::string PROBTYPE;
+        KthReal objectposition[3];
+        KthReal objectorientation[4];
+    }KauthamDEobject;
 
     typedef struct
-       {
-       std::vector<double> pose;
-       std::string action;
-       std::vector<double> f;
-       unsigned int targetbody;
-       }query;
+    {
+        std::vector<ob::State*> substates;
+        std::vector<oc::Control*> control;
+        std::vector<double> duration;
+    }solutionStates;
+    std::vector<solutionStates> sStates;
 
+    typedef struct
+    {
+        std::vector<double> pose;
+        std::string action;
+        std::vector<double> f;
+        unsigned int targetbody;
+    }query;
+    vector<KauthamDEobject> smp2KauthamOpenDEState(WorkSpace *wkSpace,Sample *smp);
 
 };
 
 }
- /** @}   end of Doxygen module "Planner */
+/** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_KauthamOpenDEplanner_H

@@ -45,7 +45,7 @@ KPIECE2DPlanner::KPIECE2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
     _guiName = "KPIECE 2D Planner";
     _idName = "KPIECE2DPlanner";
     dInitODE2(0);
-envPtr = oc::OpenDEEnvironmentPtr(new twoDRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+    envPtr = oc::OpenDEEnvironmentPtr(new twoDRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
     stateSpace = new twoDRobotStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
     ss = new oc::OpenDESimpleSetup(stateSpacePtr);

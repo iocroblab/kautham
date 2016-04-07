@@ -46,7 +46,7 @@ RRT2DPlanner::RRT2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSe
     _guiName = "RRT 2D Planner";
     _idName = "RRT2DPlanner";
     dInitODE2(0);
-    oc::OpenDEEnvironmentPtr envPtr(new twoDRobotEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+     envPtr = oc::OpenDEEnvironmentPtr(new twoDRobotEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
     stateSpace = new twoDRobotStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
     //oc::ControlSpacePtr controlSpacePtr(new KauthamControlSpace(stateSpacePtr));

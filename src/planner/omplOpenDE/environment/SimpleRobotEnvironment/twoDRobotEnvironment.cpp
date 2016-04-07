@@ -70,7 +70,7 @@ void twoDRobotEnvironment::getControlBounds(std::vector< double > &lower, std::v
     upper.resize(2);
     for(int i=0; i < 2; i++)
     {  lower[i] = -10;
-       upper[i] = 20;
+       upper[i] = 10;
     }
 }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
@@ -117,11 +117,19 @@ bool twoDRobotEnvironment::isValidCollision(dGeomID geom1, dGeomID geom2, const 
             //std::cout<<"evaluationg collision1"<<std::endl;
             return true;
         }
-    {
+        else
+            if((bodyType1 == "robBody" && bodyType2 == "freeManipulatable")
+                    || (bodyType1 == "freeManipulatable" && bodyType2 == "robBody"))
+            {
+                //std::cout<<"evaluationg collision1"<<std::endl;
+                return true;
+            }
+    else
+
         //std::cout<<"Collision is Allowed"<<std::endl;
         return true;
 
-    }
+
 }
 
 /*! This is the reimplementation of the virtual function of OpenDEEnvironment. This method set the parameters for the contact
@@ -147,7 +155,7 @@ void twoDRobotEnvironment::setupContact(dGeomID geom1, dGeomID geom2, dContact &
                     (geom1_body == "fixed" && geom2_body == "floor" ))
                 contact.surface.mu = 5;
             else
-                contact.surface.mu = 0.1;
+                contact.surface.mu = 1.5;
     contact.surface.soft_erp = _erp;
     contact.surface.soft_cfm = _cfm;
 

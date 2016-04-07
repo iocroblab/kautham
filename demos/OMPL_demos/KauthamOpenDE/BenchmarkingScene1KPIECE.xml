@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
-<Problem name="OMPL_cRRTcar_table_rooms_SE2">
+<Problem name="Knowledge_Oriented_KPIECE_2D_Planning">
 	<Robot robot="obstacles/DEBenchmark/SphereDE.urdf" scale="1.1">
 		<Limits name="X" min="-130.0" max="130.0" />
 		<Limits name="Y" min="-130.0" max="130.0" />
-		<Limits name="Z" min="-5.0" max="40.0" />
+		<Limits name="Z" min="-4.0" max="40.0" />
 		<Limits name="WX" min="0.0" max="1.0" />
 		<Limits name="WY" min="0.0" max="1.0" />
 		<Limits name="WZ" min="0.0" max="1.0" />
 		<Limits name="THETA" min="-360.0" max="360.0" />
 		<Home X="10.0" Y="10.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
 	</Robot>
+
 	<Obstacle obstacle="obstacles/DEBenchmark/cubeDE1.urdf" scale="1.0">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="15" Y="100.0" X="20.0" />
 	</Obstacle>
@@ -17,7 +18,7 @@
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="15" Y="60.0" X="100.0" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/DEBenchmark/cubeDE3.urdf" scale="1.0">
-		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="20" Y="-40.0" X="-90.0" />
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="15" Y="-40.0" X="-90.0" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/DEBenchmark/wall4.urdf" scale="1.0">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="12" Y="40.0" X="-45.0" />
@@ -25,13 +26,14 @@
 	<Obstacle obstacle="obstacles/DEBenchmark/wall2.urdf" scale="1.0">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="12" Y="-50.0" X="45.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/DEBenchmark/OpenDErooms.iv" scale="1.0">
+<Obstacle obstacle="obstacles/DEBenchmark/OpenDErooms.iv" scale="1.0">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="1.0" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/DEBenchmark/DEPlane.iv" scale="1.0">
+<Obstacle obstacle="obstacles/DEBenchmark/PlanDE.urdf" scale="1.0">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Controls robot="controls/car.cntr" />
+	
+	<Controls robot="controls/sp3.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>KnowledgeOrientedKPIECE2DPlanner</Name>
@@ -41,7 +43,7 @@
 			<Parameter name="Goal Bias">0.05</Parameter>
 			<Parameter name="Max Contacts">3</Parameter>
 			<Parameter name="Max Control Steps">10</Parameter>
-			<Parameter name="Max Planning Time">20</Parameter>
+			<Parameter name="Max Planning Time">60</Parameter>
 			<Parameter name="Max Speed">10</Parameter>
 			<Parameter name="Min Control Steps">5</Parameter>
 			<Parameter name="PropagationStepSize">0.07</Parameter>
@@ -50,8 +52,8 @@
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="3">0.176 0.874 0.5</Init>
-				<Goal dim="3">0.854 0.115 0.5</Goal>
+				<Init dim="3">0.176 0.874 0.3</Init>
+				<Goal dim="3">0.854 0.115 0.3</Goal>
 			</Query>
 		</Queries>
 	</Planner>

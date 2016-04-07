@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<Problem name="OMPL_cRRTcar_table_rooms_SE2">
-	<Robot robot="obstacles/DEBenchmark/SphereDE.urdf" scale="0.7">
+<Problem name="Knowledge_Oriented_KPIECE_2D_Planning">
+	<Robot robot="obstacles/DEBenchmark/SphereDE.urdf" scale="1.1">
 		<Limits name="X" min="-130.0" max="130.0" />
 		<Limits name="Y" min="-130.0" max="130.0" />
 		<Limits name="Z" min="-5.0" max="40.0" />
@@ -13,10 +13,10 @@
 	<Obstacle obstacle="obstacles/DEBenchmark/wall4.urdf" scale="1.0">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="12" Y="0.0" X="-45.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/DEBenchmark/DEPlane.iv" scale="1.0">
+	<Obstacle obstacle="obstacles/DEBenchmark/PlanDE.urdf" scale="1.0">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Controls robot="controls/car.cntr" />
+	<Controls robot="controls/sp3.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>KnowledgeOrientedKPIECE2DPlanner</Name>
@@ -26,7 +26,7 @@
 			<Parameter name="Goal Bias">0.03999999911</Parameter>
 			<Parameter name="Max Contacts">3</Parameter>
 			<Parameter name="Max Control Steps">50</Parameter>
-			<Parameter name="Max Planning Time">20</Parameter>
+			<Parameter name="Max Planning Time">60</Parameter>
 			<Parameter name="Max Speed">10</Parameter>
 			<Parameter name="Min Control Steps">10</Parameter>
 			<Parameter name="PropagationStepSize">0.02999999933</Parameter>
@@ -35,8 +35,8 @@
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="3">0.176 0.874 0.5</Init>
-				<Goal dim="3">0.862 0.617 0.5</Goal>
+				<Init dim="3">0.176 0.874 0.3</Init>
+				<Goal dim="3">0.862 0.617 0.3</Goal>
 			</Query>
 		</Queries>
 	</Planner>

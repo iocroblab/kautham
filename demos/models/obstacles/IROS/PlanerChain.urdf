@@ -27,18 +27,19 @@
    <link name="link1">
     <visual>
       <geometry>
-	<cylinder length="0.2" radius="0.02"/>
+	<box size="0.01 0.01 0.1" />
+
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.09"/>
+      <origin rpy="0 0 0" xyz="0 0 0.045"/>
       <material name="red">
         <color rgba="1 0 0 1"/>
       </material>
     </visual>
     <collision>
       <geometry>
-	<cylinder length="0.2" radius="0.02"/>
+	<box size="0.01 0.01 0.1" />
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.09"/>
+      <origin rpy="0 0 0" xyz="0 0 0.045"/>
     </collision>
     <inertial>
 	<mass value="1"/>
@@ -50,18 +51,18 @@
 <link name="link2">
     <visual>
       <geometry>
-	<cylinder length="0.2" radius="0.02"/>
+	<box size="0.01 0.01 0.1" />
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.09"/>
+      <origin rpy="0 0 0" xyz="0 0 0.045"/>
       <material name="blue">
         <color rgba="0 0 1 1"/>
       </material>
     </visual>
     <collision>
       <geometry>
-	<cylinder length="0.2" radius="0.02"/>
+	<box size="0.01 0.01 0.1" />
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.09"/>
+      <origin rpy="0 0 0" xyz="0 0 0.045"/>
     </collision>
     <inertial>
 	<mass value="1"/>
@@ -73,7 +74,7 @@
 <link name="gripper">
     <visual>
       <geometry>
-	<box size="0.02 0.06 0.02" />
+	<box size="0.002 0.006 0.002" />
       </geometry>
       <origin rpy="0 0 1.57" xyz="0 0 0.0"/>
       <material name="white">
@@ -82,9 +83,9 @@
     </visual>
     <collision>
       <geometry>
-	<cylinder length="0.2" radius="0.02"/>
+	<box size="0.002 0.006 0.002" />
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.09"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
     </collision>
     <inertial>
 	<mass value="1"/>
@@ -97,7 +98,7 @@
   <joint name="joint1" type="revolute">
     <parent link="base_link"/>
     <child link="link1"/>
-    <origin xyz="0 0 0.01"/>
+    <origin xyz="0 0 0.02"/>
     <axis xyz="0 1 0" />
     <limit effort="300" velocity="0.1" lower="-1.55" upper="1.55"/>
     <dynamics damping="50" friction="1"/>
@@ -106,7 +107,7 @@
 <joint name="joint2" type="revolute">
     <parent link="link1"/>
     <child link="link2"/>
-    <origin xyz="0 0 0.2"/>
+    <origin xyz="0 0 0.1"/>
     <axis xyz="0 1 0" />
     <limit effort="300" velocity="0.1" lower="-2.40" upper="2.40"/>
     <dynamics damping="50" friction="1"/>
@@ -115,7 +116,7 @@
 <joint name="joint3" type="revolute">
     <parent link="link2"/>
     <child link="gripper"/>
-    <origin xyz="0 0 0.2"/>
+    <origin xyz="0 0 0.1"/>
     <axis xyz="0 1 0" />
     <limit effort="300" velocity="0.1" lower="-1" upper="1"/>
     <dynamics damping="50" friction="1"/>

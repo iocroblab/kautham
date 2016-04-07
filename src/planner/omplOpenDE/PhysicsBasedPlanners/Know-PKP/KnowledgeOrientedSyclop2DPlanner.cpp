@@ -89,7 +89,7 @@ KnowledgeOrientedSyclop2DPlanner::KnowledgeOrientedSyclop2DPlanner(SPACETYPE sty
     //       stateSpace = new KauthamDEStateSpace(envPtr);
     //       stateSpacePtr = ob::StateSpacePtr(stateSpace);
 
-    oc::OpenDEEnvironmentPtr envPtr(new ConstraintAware2DRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+     envPtr = oc::OpenDEEnvironmentPtr(new ConstraintAware2DRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
     stateSpace = new ConstraintAwaretwoDRobotStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
 

@@ -36,6 +36,7 @@ namespace omplcplanner{
 PlanarChainEnvironment::PlanarChainEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm)
 {
     SetPlanningParameters();
+    //configuration->resize(_Joint.size());
 }
 //! Destructor
 PlanarChainEnvironment::~PlanarChainEnvironment()
@@ -46,22 +47,25 @@ PlanarChainEnvironment::~PlanarChainEnvironment()
 //! dimensions for Kuka robot.
 unsigned int PlanarChainEnvironment::getControlDimension(void) const
 {
-    return 3;
+    return 2;
 }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
  * which describe the control bounds,the the max and min limits for sampling the control.
  */
 void PlanarChainEnvironment::getControlBounds(std::vector< double > &lower, std::vector< double > &upper) const
 {
+//for(int i=0;i<2;i++)
+//{
+//          lower[0]=-10;
+//          upper[0]=10;
 
-
-
-        lower[0]=-1.5;
-        upper[0]=1.5;
-        lower[1]=-2.4;
-        upper[1]=2.4;
-        lower[2]=-1;
-        upper[2]=1;
+//}
+           lower[0]=-1;
+            upper[0]=1;
+            lower[1]=-1;
+            upper[1]=1;
+    //        lower[2]=-1;
+    //        upper[2]=1;
 
 }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
@@ -71,13 +75,27 @@ void PlanarChainEnvironment::getControlBounds(std::vector< double > &lower, std:
 void PlanarChainEnvironment::applyControl (const double *control) const
 {
 
+//dBodyAddForce(stateBodies_[3],control[0],control[1],0.0);
+     dReal r1=dJointGetHingeAngle(_Joint[0]);
+     dReal r2=dJointGetHingeAngle(_Joint[1]);
+     dReal r3=dJointGetHingeAngle(_Joint[2]);
+    std::cout<<"angles are : "<<" , "<<r2<<std::endl;
+    dJointSetHingeParam(_Joint[0], dParamVel, (control[0]-r1));
+    dJointSetHingeParam(_Joint[0], dParamFMax, 600);
+    dJointSetHingeParam(_Joint[1], dParamVel, (control[1]-r2));
+    dJointSetHingeParam(_Joint[1], dParamFMax, 600);
 
-    dJointSetAMotorParam(_motor[0], dParamVel, (control[0]));
-    dJointSetAMotorParam(_motor[0], dParamFMax, dInfinity);
-    dJointSetAMotorParam(_motor[1], dParamVel, (control[1]));
-    dJointSetAMotorParam(_motor[1], dParamFMax, dInfinity);
-    dJointSetAMotorParam(_motor[2], dParamVel, (control[2]));
-    dJointSetAMotorParam(_motor[2], dParamFMax, dInfinity);
+
+    if(! manipulationQuery->getPlanningPhase() && manipulationQuery->getIsKinamaticChain())
+    {
+
+        for(int i=0;i<_Joint.size();i++)
+        manipulationQuery->setconf( dJointGetHingeAngle(_Joint[i]));
+
+        manipulationQuery->addJointConfiguration(manipulationQuery->getconf());
+        manipulationQuery->clearconf();
+
+    }
 
 
 }
@@ -121,7 +139,7 @@ double PlanarChainStateSpace::distance(const ob::State *s1, const ob::State *s2)
     double dy = fabs(p1[1] - p2[1]);
     double dz = fabs(p1[1] - p2[1]);
 
-    distance = sqrt(dx * dx + dy * dy);
+    distance = sqrt(dx * dx + dy * dy + dz * dz);
 
     return distance;
 }
@@ -231,38 +249,26 @@ PlanarChainControlSampler::PlanarChainControlSampler(const oc::ControlSpace *cm)
 void PlanarChainControlSampler::sampleNext(oc::Control *control, const oc::Control *previous)
 {
     space_->copyControl(control, previous);
-    ob::RealVectorBounds b(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->getControlDimension());
-    std::vector<dJointID> J;
-    for(int i=0;i<7;i++)
+    const ob::RealVectorBounds &b = space_->as<oc::OpenDEControlSpace>()->getBounds();
+    if (rng_.uniform01() > 0.3)
     {
-        J.push_back(dBodyGetJoint(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->stateBodies_[i+1],1));
-//       dJointType type=dJointGetType(J[i]);
-
-        dReal high = dJointGetHingeParam(J[i],dParamHiStop);
-        dReal low = dJointGetHingeParam(J[i],dParamLoStop);
-        b.high[i] = high;
-        b.low[i] =  low;
-    }
-
-
-
-    for(int i=0;i<7;i++)
-    {
-        double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[i];
-        static const double DT0 = 0.5;
+        double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[0];
+        static const double DT0 = 0.05;
         v += (rng_.uniformBool() ? 1 : -1) * DT0;
-        dReal angle = dJointGetHingeAngle(J[i]);
-        angle = angle + v*0.05;
-        if (angle > b.high[i])
-            angle = b.high[i] - DT0;
-        if (angle < b.low[i])
-            angle= b.low[i] + DT0;
-
-
-//        if (v > b.high[i])
-//            v = b.high[i] - DT0;
-//        if (v < b.low[i])
-//            v = b.low[i] + DT0;
+        if (v > b.high[0])
+            v = b.high[0] - DT0;
+        if (v < b.low[0])
+            v = b.low[0] + DT0;
+    }
+    if (rng_.uniform01() > 0.3)
+    {
+        double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[1];
+        static const double DT1 = 0.05;
+        v += (rng_.uniformBool() ? 1 : -1) * DT1;
+        if (v > b.high[1])
+            v = b.high[1] - DT1;
+        if (v < b.low[1])
+            v = b.low[1] + DT1;
     }
 
 

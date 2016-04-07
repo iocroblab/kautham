@@ -143,7 +143,7 @@ void setManipQuery()
     kautham2::OpenManipProblem open_problem_srv;
     std::string model = "/home/muhayyuddin/catkin_ws/src/kautham/demos/models";
     //open_problem_srv.request.problem = "/home/users/aliakbar.akbari/catkin_ws/src/kautham_project/demos/OMPL_demos/KauthamOpenDE/ETFA2016.xml";
-    open_problem_srv.request.problem = "/home/muhayyuddin/catkin_ws/src/kautham/demos/OMPL_demos/KauthamOpenDE/ETFA2016.xml";
+    open_problem_srv.request.problem = "/home/muhayyuddin/catkin_ws/src/kautham/demos/OMPL_demos/KauthamOpenDE/PullAction.xml";
     open_problem_srv.request.dir.resize(1);
     open_problem_srv.request.dir[0] = model;
     open_problem_client.call(open_problem_srv);
@@ -178,11 +178,11 @@ void setManipQuery()
 
 
     // Set the initial and goal vectors (kautham controls)
-    solve_manip_query_srv.request.init[0] = initC[0];
-    solve_manip_query_srv.request.init[1] = initC[1];
+    solve_manip_query_srv.request.init[0] = 0.481;
+    solve_manip_query_srv.request.init[1] = 0.548;
     //solve_manip_query_srv.request.init[2] = initC[2];
-    solve_manip_query_srv.request.goal[0] = goalC[0];
-    solve_manip_query_srv.request.goal[1] = goalC[1];
+    solve_manip_query_srv.request.goal[0] = 0.11;
+    solve_manip_query_srv.request.goal[1] = 0.176;
     //solve_manip_query_srv.request.goal[2] = goalC[2];
 
     solve_manip_query_srv.request.actionType="move";
