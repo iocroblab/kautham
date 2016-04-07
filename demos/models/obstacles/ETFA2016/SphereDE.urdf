@@ -9,13 +9,20 @@
 	<visual>
 		<origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
        			<geometry>
-         			<sphere radius="0.025"/>
+         			<sphere radius="0.010"/>
        			</geometry>
        			<material>
 				<color rgba="0 1 0 1" />
 			</material>
     	
 	</visual>
+	<collision>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<sphere radius="0.010"/>
+			</geometry>
+			
+		</collision>
 	</link>
 </robot>
 

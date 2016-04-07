@@ -15,5 +15,12 @@
 				<color rgba="0 0 1 1" />
 			</material>
 		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<box size="0.03 0.04 0.02" />
+			</geometry>
+			
+		</collision>
 	</link>
 </robot>
