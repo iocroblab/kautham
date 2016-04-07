@@ -52,43 +52,43 @@ class KauthamDEGoal;
 
 namespace Kautham {
 
-#ifdef dDOUBLE
-#define dsDrawBox dsDrawBoxD
-#define dsDrawSphere dsDrawSphereD
-#define dsDrawCylinder dsDrawCylinderD
-#define dsDrawCapsule dsDrawCapsuleD
-#endif
+//#ifdef dDOUBLE
+//#define dsDrawBox dsDrawBoxD
+//#define dsDrawSphere dsDrawSphereD
+//#define dsDrawCylinder dsDrawCylinderD
+//#define dsDrawCapsule dsDrawCapsuleD
+//#endif
 namespace omplcplanner{
-static DisplayOpenDESpaces                         DISP;
-static std::vector< std::pair<double, double> > POINTS;
-static bool                                     drawTree = true;
-static void start()
-{
-    dAllocateODEDataForThread(dAllocateMaskAll);
-    static float xyz[3] = { 3.8548f,9.0843f,7.5900f} ;
-    static float hpr[3] = { -145.5f,-22.5f,0.25f } ;
+//static DisplayOpenDESpaces                         DISP;
+//static std::vector< std::pair<double, double> > POINTS;
+//static bool                                     drawTree = true;
+//static void start()
+//{
+//    dAllocateODEDataForThread(dAllocateMaskAll);
+//    static float xyz[3] = { 3.8548f,9.0843f,7.5900f} ;
+//    static float hpr[3] = { -145.5f,-22.5f,0.25f } ;
 
-    dsSetViewpoint (xyz,hpr);
-}
+//    dsSetViewpoint (xyz,hpr);
+//}
 
-static void command (int cmd)
-{
-    if ((char)cmd == 't')
-        drawTree = !drawTree;
-}
+//static void command (int cmd)
+//{
+//    if ((char)cmd == 't')
+//        drawTree = !drawTree;
+//}
 
-static void simLoop (int /*pause*/)
-{
-    DISP.displaySpaces();
-    if (drawTree)
-    {
-        glPointSize(3.0);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glBegin(GL_POINTS);
-        for (unsigned int i = 0 ; i < POINTS.size() ; ++i)
-            glVertex3d(POINTS[i].first, POINTS[i].second, 0.05);
-        glEnd();
-    }
+//static void simLoop (int /*pause*/)
+//{
+//    DISP.displaySpaces();
+//    if (drawTree)
+//    {
+//        glPointSize(3.0);
+//        glColor3f(1.0f, 0.0f, 0.0f);
+//        glBegin(GL_POINTS);
+//        for (unsigned int i = 0 ; i < POINTS.size() ; ++i)
+//            glVertex3d(POINTS[i].first, POINTS[i].second, 0.05);
+//        glEnd();
+//    }
 
     //    for (int i=0; i<dSpaceGetNumGeoms(DISP.m_spaces[0]); i++)
     //    {
@@ -128,19 +128,19 @@ static void simLoop (int /*pause*/)
     //    }
 
 
-    static ompl::time::duration d = ompl::time::seconds(0.001);
-    boost::this_thread::sleep(d);
-}
+//    static ompl::time::duration d = ompl::time::seconds(0.001);
+//    boost::this_thread::sleep(d);
+//}
 
-static void playPath(oc::OpenDESimpleSetup *ss)
-{
-    while (1)
-    {
-        ss->playSolutionPath(2);
-        static ompl::time::duration d = ompl::time::seconds(1);
-        boost::this_thread::sleep(d);
-    }
-}
+//static void playPath(oc::OpenDESimpleSetup *ss)
+//{
+//    while (1)
+//    {
+//        ss->playSolutionPath(2);
+//        static ompl::time::duration d = ompl::time::seconds(1);
+//        boost::this_thread::sleep(d);
+//    }
+//}
 
 //Igual que omplcplanner es la base per a tots els planners de control com omplcrrtplanner , etc.. KauthamOpenDEPlanner té com a objectiu servir de base per a tots els planners que derivessin i que usessin la simulació dinàmica) Sobretot ha de reimplementar el mètode trysolve basantse en la demo d'OMPL OpenDERigidBodyPlanning.
 // Like omplcplanner is the basis for all planners as omplcrrtplanner control, etc. .. KauthamOpenDEPlanner aims to serve as a basis for deriving all the planners and would use dynamic simulation) Especially should reimplement the method trysolve On the basis of the demo fill OpenDERigidBodyPlanning.
@@ -288,7 +288,7 @@ bool KauthamDEPlanner::trySolve(void)
             sstat.duration =Duration0;
             sStates.push_back(sstat);
         }
-//ss->playSolutionPath(1.0);
+//ss->playSolutionPath(0.5);
         //callDrawStuffViewer();
     }
     if(PROBTYPE=="MULTIQUERY")
@@ -363,7 +363,7 @@ bool KauthamDEPlanner::trySolve(void)
             ComputeAction(states,control,duration);
             ComputeJerkIndex(states,duration);
             ComputePowerConsumed(states,control,duration);
-final=ss->getSolutionPath().getStates().back();
+            final=ss->getSolutionPath().getStates().back();
             std::cout<<"===============   Query Numer  "<<(l+1)<<"  =============== "<<std::endl;
             std::cout<<"Actions is:  "<<Action<<std::endl;
             std::cout<<"Smoothness is:  "<<Smoothness<<std::endl;
@@ -803,60 +803,60 @@ vector<KauthamDEPlanner::KauthamDEobject> KauthamDEPlanner::smp2KauthamOpenDESta
     return kauthamob;
 
 }
-void KauthamDEPlanner::callDrawStuffViewer(void)
-{
-    dsFunctions fn;
-    fn.version = DS_VERSION;
-    fn.start = &start;
-    fn.step = &simLoop;
-    fn.command = &command;
-    fn.stop = 0;
-    fn.path_to_textures = "/home/muhayyuddin/kautham/textures";
+//void KauthamDEPlanner::callDrawStuffViewer(void)
+//{
+//    dsFunctions fn;
+//    fn.version = DS_VERSION;
+//    fn.start = &start;
+//    fn.step = &simLoop;
+//    fn.command = &command;
+//    fn.stop = 0;
+//    fn.path_to_textures = "/home/muhayyuddin/kautham/textures";
 
-    //    for(int i=0;i<((KauthamDEEnvironment*)envPtr.get())->meshID.size()-1;i++)
-    //    {
-    //         Tmesh tmesh;
-    //         tmesh.indexSize=((KauthamDEEnvironment*)envPtr.get())->meshID[i].indexSize;
-    //        tmesh.indices=((KauthamDEEnvironment*)envPtr.get())->meshID[i].indices;
-    //        tmesh.vertices=((KauthamDEEnvironment*)envPtr.get())->meshID[i].vertices;
-    //         tmesh.meshD=((KauthamDEEnvironment*)envPtr.get())->meshID[i].meshD;
-    //         DISP.tmd.push_back(tmesh);
+//    //    for(int i=0;i<((KauthamDEEnvironment*)envPtr.get())->meshID.size()-1;i++)
+//    //    {
+//    //         Tmesh tmesh;
+//    //         tmesh.indexSize=((KauthamDEEnvironment*)envPtr.get())->meshID[i].indexSize;
+//    //        tmesh.indices=((KauthamDEEnvironment*)envPtr.get())->meshID[i].indices;
+//    //        tmesh.vertices=((KauthamDEEnvironment*)envPtr.get())->meshID[i].vertices;
+//    //         tmesh.meshD=((KauthamDEEnvironment*)envPtr.get())->meshID[i].meshD;
+//    //         DISP.tmd.push_back(tmesh);
 
-    //    }
+//    //    }
 
-    DISP.addSpace( envPtr.get()->collisionSpaces_[0], 0.9, 0.9, 0.5);
-    DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],0), 0.0, 0.9, 0.0);
-    for(unsigned int i=1;i<dSpaceGetNumGeoms(envPtr.get()->collisionSpaces_[0]);i++)
-    DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],i), 0.9, 0.0, 0.0);
-   // DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],2), 0.9, 0.9, 0.0);
-   // DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],3), 0.9, 0.9, 0.9);
+//    DISP.addSpace( envPtr.get()->collisionSpaces_[0], 0.9, 0.9, 0.5);
+//    DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],0), 0.0, 0.9, 0.0);
+//    for(unsigned int i=1;i<dSpaceGetNumGeoms(envPtr.get()->collisionSpaces_[0]);i++)
+//    DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],i), 0.9, 0.0, 0.0);
+//   // DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],2), 0.9, 0.9, 0.0);
+//   // DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],3), 0.9, 0.9, 0.9);
 
 
-    if(_solved)
-    {
-        POINTS.clear();
-        ob::PlannerData pd(ss->getSpaceInformation());
-        ss->getPlannerData(pd);
-        std::vector<ob::State*> &stat = ss->getSolutionPath().getStates();
-        //for (unsigned int i = 0 ; i < pd.numVertices() ; ++i)
-        for(unsigned int i=0; i<stat.size();i++)
-        {
-            const double *pos = stat[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(wkSpace()->getRobot(0)->getNumLinks()-1);
-            //const double *pos = pd.getVertex(i).getState()->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
-            POINTS.push_back(std::make_pair(pos[0], pos[1]));
-        }
-        std::cout<<"States in Solution: "<<ss->getSolutionPath().getStates().size();
-        boost::thread *th = NULL;
-        th = new boost::thread(boost::bind(&playPath, ss));
-        dsSimulationLoop(0,NULL, 800, 600, &fn);
-        if (th)
-        {
-            th->interrupt();
-            th->join();
-        }
+//    if(_solved)
+//    {
+//        POINTS.clear();
+//        ob::PlannerData pd(ss->getSpaceInformation());
+//        ss->getPlannerData(pd);
+//        std::vector<ob::State*> &stat = ss->getSolutionPath().getStates();
+//        //for (unsigned int i = 0 ; i < pd.numVertices() ; ++i)
+//        for(unsigned int i=0; i<stat.size();i++)
+//        {
+//            const double *pos = stat[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(wkSpace()->getRobot(0)->getNumLinks()-1);
+//            //const double *pos = pd.getVertex(i).getState()->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
+//            POINTS.push_back(std::make_pair(pos[0], pos[1]));
+//        }
+//        std::cout<<"States in Solution: "<<ss->getSolutionPath().getStates().size();
+//        boost::thread *th = NULL;
+//        th = new boost::thread(boost::bind(&playPath, ss));
+//        dsSimulationLoop(0,NULL, 800, 600, &fn);
+//        if (th)
+//        {
+//            th->interrupt();
+//            th->join();
+//        }
 
-    }
-}
+//    }
+//}
 void KauthamDEPlanner::moveAlongPath(unsigned int step){
     if(_solved){
 

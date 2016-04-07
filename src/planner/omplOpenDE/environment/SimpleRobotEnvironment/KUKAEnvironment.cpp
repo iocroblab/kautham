@@ -56,8 +56,8 @@ void KUKAEnvironment::getControlBounds(std::vector< double > &lower, std::vector
 
     for(int i=0; i < 7; i++)
     {
-        lower[i]=-2.0;
-        upper[i]=3.14;
+        lower[i]=-1.0;
+        upper[i]=2.14;
     }
 }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
