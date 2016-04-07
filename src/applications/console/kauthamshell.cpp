@@ -1261,8 +1261,8 @@ namespace Kautham {
             ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
                     stateSpace->getEnvironment().get())->manipulationQuery->setforce(force);
 
-//            std::vector<double> f = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
-//                                     stateSpace->getEnvironment().get())->manipulationQuery->getforce();
+            std::vector<double> f = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
+                                     stateSpace->getEnvironment().get())->manipulationQuery->getforce();
             }
             if(actiontype=="pull"||actiontype=="Pull")
             {
@@ -1273,6 +1273,11 @@ namespace Kautham {
                               ((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[targetbody]);
 
             }
+
+
+
+
+
 //            std::cout<<"Action is : "<<  ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(_problem->getPlanner()))->
 //                                          stateSpace->getEnvironment().get())->manipulationQuery->getActionType()<<" :: force is :: [" <<f[0]<<" , "<<f[1]<<" , "<<f[2]<<"] Target body is: "<<targetbody<<std::endl;
             bool solve = false;
