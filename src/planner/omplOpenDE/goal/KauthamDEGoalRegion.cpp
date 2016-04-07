@@ -161,8 +161,8 @@ double KauthamDEGoalRegion::distanceGoal(const ob::State *st) const
 bool KauthamDEGoalRegion::isSatisfied(const ob::State *st, double *distance) const
 {
     double d2g = distanceGoal(st);
-   // if(d2g<120)
-    //std::cout<<"Distance to goal is: "<<d2g<<std::endl;
+    if(d2g<120)
+    std::cout<<"Distance to goal is: "<<d2g<<std::endl;
     if (distance)
         *distance = d2g;
     return d2g < threshold_;

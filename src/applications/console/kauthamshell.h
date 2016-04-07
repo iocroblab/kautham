@@ -73,7 +73,7 @@ namespace Kautham {
         bool detachObstacle(uint obs);
         //functions for manipulation node
 
-        bool setManipPramsAndSolve(std::string actiontype, int targetbody, std::vector<double> force,std::vector<State> *ws, double *power);
+        bool setManipPramsAndSolve(std::string actiontype, int targetbody, std::vector<double> force, std::vector<State> *ws, double *power, std::vector<double> *laststate);
         bool setBodyState(int targetBody, std::vector<double> pose);
         std::vector<double> getBodyState(int targetBody);
         bool setWorldState(std::vector< std::vector<double> > worldstate);

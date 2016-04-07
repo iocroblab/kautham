@@ -252,7 +252,7 @@ bool KauthamDEPlanner::trySolve(void)
         ob::ScopedState<oc::OpenDEStateSpace> starts(ss->getSpaceInformation());
         starts = ss->getCurrentState();
 
-        ss->setGoal(ob::GoalPtr(new KauthamDEGoalSamplableRegion (ss->getSpaceInformation(),_wkSpace,_onlyend,aux)));//goalPose[0].pose[0],goalPose[0].pose[1])));
+        ss->setGoal(ob::GoalPtr(new KauthamDEGoalRegion (ss->getSpaceInformation(),_wkSpace,_onlyend,aux)));//goalPose[0].pose[0],goalPose[0].pose[1])));
         string action="move";
         ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setActionType(action);
         std::vector<double> f(3);
@@ -363,7 +363,7 @@ bool KauthamDEPlanner::trySolve(void)
             ComputeAction(states,control,duration);
             ComputeJerkIndex(states,duration);
             ComputePowerConsumed(states,control,duration);
-
+final=ss->getSolutionPath().getStates().back();
             std::cout<<"===============   Query Numer  "<<(l+1)<<"  =============== "<<std::endl;
             std::cout<<"Actions is:  "<<Action<<std::endl;
             std::cout<<"Smoothness is:  "<<Smoothness<<std::endl;
@@ -372,6 +372,9 @@ bool KauthamDEPlanner::trySolve(void)
             std::cout<<"Generated Solution controls are:  "<<control.size()<<std::endl;
             std::cout<<"Solution control durations  are:  "<<duration.size()<<std::endl;
             std::cout<<"last rob state is " <<final->getBodyPosition(0)[0] << " " << final->getBodyPosition(0)[1] << std::endl;
+
+            lastState.push_back(final->getBodyPosition(0)[0]);
+            lastState.push_back(final->getBodyPosition(0)[1]);
 
             for(unsigned int i=0;i<states.size()-1;i++)
             {

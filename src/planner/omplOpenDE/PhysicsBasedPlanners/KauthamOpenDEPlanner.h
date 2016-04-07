@@ -116,10 +116,12 @@ public:
     vector<State>  worldState;
     std::vector<Sample*> Rob;
     std::vector<Sample*> Obs;
+
     //    oc::LTLProblemDefinitionPtr pDefp;
     //    oc::LTLSpaceInformationPtr ltlsi;
     //    oc::LTLPlanner* ltlplanner;
 
+std::vector<double> lastState;
     //! The constructor will define all the necessary parameters for planning.
     KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~KauthamDEPlanner();
