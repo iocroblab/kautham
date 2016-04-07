@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="Chain/X" value="0.5" />
+		<DOF name="Chain/Y" value="0.5" />
+        </Offset>
+    	
+    	<Control name="Chain/x" eigValue="1.0">
+		<DOF name="Chain/X" value="1.0" />
+	</Control>
+	<Control name="Chain/y" eigValue="1.0">
+		<DOF name="Chain/Y" value="1.0" />
+	</Control>
+    	
+</ControlSet>
+	
