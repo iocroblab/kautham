@@ -74,6 +74,7 @@ std::vector<double> potGoal(std::vector<double>objPos,std::vector<double>robPos,
     std::vector<double>goalPos2;
     goalPos2.resize(2);
 
+    //Movement is free along x axis.
     if(know == "x")
     {
         double posx = objPos[0] + 20; // 20 will be input for all.
@@ -109,11 +110,11 @@ std::vector<double> potGoal(std::vector<double>objPos,std::vector<double>robPos,
         }
     }
 
-
+    //Movement is free along y axis.
     if(know == "y")
     {
-        double posy = objPos[0] + 20; // 20 will be input for all.
-        double negy = objPos[0] - 20;
+        double posy = objPos[1] + 20; // 20 will be input for all.
+        double negy = objPos[1] - 20;
 
         goalPos1[0]=objPos[0];
         goalPos1[1]=posy;
@@ -341,25 +342,29 @@ int main (int argc, char **argv)
     ros::init(argc, argv, "manipulation_client");
     ROS_INFO("Starting Manipulation_Client");
 
-    setManipQuery();
+    //setManipQuery();
+
+    std::vector<double> goalPos;
 
    std::vector<double>objPos;
    objPos.resize(2);
-   objPos[0]=5;
-   objPos[1]=2;
+   objPos[0]=3;
+   objPos[1]=4;
 
    std::vector<double>robPos;
    robPos.resize(2);
-   robPos[0]=4;
-   robPos[1]=2;
+   robPos[0]=3;
+   robPos[1]=5;
 
    std::string action;
-   action = "pull";
+   action = "push";
 
    std::string know;
-   know = "x";
+   know = "y";
 
-   potGoal(objPos, robPos, action, know);
+   goalPos = potGoal(objPos, robPos, action, know);
+
+   std::cout<<" Goal Pose is "<<goalPos[0]<<" "<<goalPos[1]<<std::endl;
 
     //    getBodyState();
     //    setBodyState();
