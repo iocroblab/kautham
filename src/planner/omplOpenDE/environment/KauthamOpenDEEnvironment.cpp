@@ -207,7 +207,6 @@ bool trimesh =true;
             else
             {
 
-
                 dBodyID odebody;
                 const vector<double> position= chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].position;
                 const vector<double> orientation=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].orientation;
@@ -529,12 +528,12 @@ string KauthamDEEnvironment::InstknowledgeInference(bodyInfo bodyinfo)
                     {
                     case 1:
                         //sphere todo:
-                        bodyinfo.dimBody[0]=bodyinfo.dimBody[0]*2;
+                        bodyinfo.dimBody[0]=bodyinfo.dimBody[0]*3;
                         break;
                     case 2:
                         //cylinder todo:
-                        bodyinfo.dimBody[0]=bodyinfo.dimBody[0]*2;
-                        bodyinfo.dimBody[1]=bodyinfo.dimBody[1]*2;
+                        bodyinfo.dimBody[0]=bodyinfo.dimBody[0]*3;
+                        bodyinfo.dimBody[1]=bodyinfo.dimBody[1]*3;
                         break;
                     case 3:
                         //to make the manipulation regon around the cube with the size
@@ -1496,7 +1495,7 @@ dJointID KauthamDEEnvironment::makeJoint(const dBodyID body1, const dBodyID body
                      joint = dJointCreateHinge(bodyworld, 0);
                      dJointAttach(joint, body1, body2);
                     std::cout<<"ODE Joint Anchor is :"<<bodyDim[body2][2]/2<<std::endl;
-                     dJointSetHingeAnchor (joint, params[0], params[1], params[2]-bodyDim[body2][2]/2);
+                     dJointSetHingeAnchor (joint, params[0], params[1], (params[2]));//-bodyDim[body2][2]/2));
                      dVector3 result;
                      dJointGetHingeAnchor(joint,result);
                      rotation_Axis[0]=((params[3]>min_Threshold && params[3]<max_Threshold)? 1:0);
@@ -1611,7 +1610,7 @@ void KauthamDEEnvironment::addMotor2Joint(dJointID joint,  vector<double>& maxFo
 
     //addMotor(findBodyName(body1), findBodyName(body2), type, axisVec, maxForces, set, value, id);
   //  makeMotor(body1,body2,type,axisVec,maxForces);
-    //makeMotor(body1,body2,type,axisVec,maxForces, hiStop,LoStop,value);
+    makeMotor(body1,body2,type,axisVec,maxForces, hiStop,LoStop,value);
 
 
 }

@@ -30,7 +30,7 @@
       <geometry>
 	<box size="0.0005 0.0005 0.003" />
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.0031"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="red">
         <color rgba="1 0 0 1"/>
       </material>
@@ -40,7 +40,7 @@
 	<box size="0.0005 0.0005 0.003" />
 
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.0031"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
     </collision>
     <inertial>
 	<mass value="1"/>
@@ -53,7 +53,7 @@
       <geometry>
 	<box size="0.0005 0.0005 0.003" />
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.0062"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="blue">
         <color rgba="0 0 1 1"/>
       </material>
@@ -62,7 +62,7 @@
       <geometry>
 	<box size="0.0005 0.0005 0.003"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.0062"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
     </collision>
     <inertial>
 	<mass value="1"/>
@@ -77,7 +77,7 @@
       <geometry>
 	<box size="0.0002 0.0002 0.0007" />
       </geometry>
-      <origin rpy="0 0 1.57" xyz="0 0 0.0073"/>
+      <origin rpy="0 0 1.57" xyz="0 0 0"/>
       <material name="white">
         <color rgba="0.5 0.5 0.5 1"/>
       </material>
@@ -86,7 +86,7 @@
       <geometry>
 	<box size="0.0002 0.0002 0.0007" />
       </geometry>
-      <origin rpy="0 0 1.57" xyz="0 0 0.0083"/>
+      <origin rpy="0 0 1.57" xyz="0 0 0"/>
     </collision>
     <inertial>
 	<mass value="0.5"/>
@@ -101,7 +101,7 @@
   <joint name="joint1" type="revolute">
     <parent link="base_link"/>
     <child link="link1"/>
-    <origin xyz="0 0 0.0031"/>
+    <origin xyz="0 0 0.003"/>
     <axis xyz="1 0 0" />
     <limit effort="300" velocity="0.1" lower="-1.55" upper="1.55"/>
     <dynamics damping="50" friction="1"/>
@@ -112,7 +112,7 @@
     <child link="link2"/>
     <origin xyz="0 0 0.0062"/>
     <axis xyz="1 0 0" />
-    <limit effort="300" velocity="0.1" lower="-2.40" upper="2.40"/>
+    <limit effort="300" velocity="0.1" lower="-1.50" upper="1.50"/>
     <dynamics damping="50" friction="1"/>
   </joint>
 

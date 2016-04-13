@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="euroc" topology="SE3">
-	<Robot robot="robots/kuka_lwr_pg70_gripper.urdf" scale="1">
+	<Robot robot="robots/kuka_lwr_pg70_gripper.urdf" scale="0.01">
 		<Limits name="X" min="-2000.0" max="2000.0" />
 		<Limits name="Y" min="-2000.0" max="2000.0" />
 		<Limits name="Z" min="-200.0" max="2000.0" />

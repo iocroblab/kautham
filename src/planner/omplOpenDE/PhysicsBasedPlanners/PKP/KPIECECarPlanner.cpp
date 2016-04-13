@@ -53,10 +53,10 @@ KPIECECarPlanner::KPIECECarPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
        // ss = new oc::OpenDESimpleSetup(stateSpacePtr);
     oc::SpaceInformationPtr si=ss->getSpaceInformation();
 
-    ob::PlannerPtr planner(new oc::KPIECE1(si));
+    ob::PlannerPtr planner(new oc::RRT(si));
     //set planner parameters: range and goalbias
     addParameter("Goal Bias", _GoalBias);
-    planner->as<oc::KPIECE1>()->setGoalBias(_GoalBias);
+    planner->as<oc::RRT>()->setGoalBias(_GoalBias);
     //planner->as<oc::KPIECE1>()->setProjectionEvaluator(stateSpacePtr->getDefaultProjection());
 
     //set the planner

@@ -98,8 +98,6 @@ vector<KauthamDEGoalRegion::KauthamODEobject> KauthamDEGoalRegion::smp2KauthamOp
             odeob.objectorientation[2] = wkSpace->getRobot(i)->getLink(j)->getElement()->getOrientation()[2];
             odeob.objectorientation[3] = wkSpace->getRobot(i)->getLink(j)->getElement()->getOrientation()[3];
             kauthamob.push_back(odeob);
-
-
         }
 
     }
@@ -133,21 +131,21 @@ double KauthamDEGoalRegion::distanceGoal(const ob::State *st) const
     }
     else
     {
+        //const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(Kauthamodebodies.size()-1);
+        //distance = sqrt(fabs(pos[0]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0]))+(fabs(pos[1]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1]))+(fabs(pos[2]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2]));
         const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(Kauthamodebodies.size()-1);
-        distance = sqrt(fabs(pos[0]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0]))+(fabs(pos[1]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1]))+(fabs(pos[2]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2]));
-//        const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(Kauthamodebodies.size()-1);
-//        const double *vel = st->as<oc::OpenDEStateSpace::StateType>()->getBodyLinearVelocity(Kauthamodebodies.size()-1);
+        const double *vel = st->as<oc::OpenDEStateSpace::StateType>()->getBodyLinearVelocity(Kauthamodebodies.size()-1);
 
-//        double dx = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0] - pos[0];
-//        double dy = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1] - pos[1];
-//        double dz = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2] - pos[2];
-//        double dot = dx * vel[0] + dy * vel[1] + dz *vel[2];
-//        if(dot > 0)
-//            dot=0;
-//        else
-//            dot=sqrt(fabs(dot));
+        double dx = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0] - pos[0];
+        double dy = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1] - pos[1];
+        double dz = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2] - pos[2];
+        double dot = dx * vel[0] + dy * vel[1] + dz *vel[2];
+        if(dot > 0)
+            dot=0;
+        else
+            dot=sqrt(fabs(dot));
 
-        //distance = distance+ sqrt(dx*dx + dy*dy + dz*dz) + dot;
+        distance = distance+ sqrt(dx*dx + dy*dy + dz*dz) + dot;
 //        std::cout<<" Goal is :       [ "<<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0]<<" , "<<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1]<<" , " <<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2]<<" ]"<<std::endl;
 //        std::cout<<" Current P is :  [ "<<pos[0]<<" , "<<pos[1]<<" , " <<pos[2]<<" ]"<<std::endl;
        // std::cout<<" Velocity is :  [ "<<vel[0]<<" , "<<vel[1]<<" , " <<vel[2]<<" ]"<<std::endl;

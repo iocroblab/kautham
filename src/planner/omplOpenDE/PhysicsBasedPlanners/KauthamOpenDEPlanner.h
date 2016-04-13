@@ -138,7 +138,7 @@ std::vector<double> lastState;
     void ComputePowerConsumed(const std::vector<ob::State*> &states,const std::vector<oc::Control*> &control, const std::vector<double> duration);
     bool computePath(oc::OpenDESimpleSetup *ssetup, ob::RealVectorBounds vb,ob::RealVectorBounds bounds, double x, double y,double planningTime);
     ompl::control::PathControl *RectMotion();
-    //void callDrawStuffViewer(void );
+    void callDrawStuffViewer(void );
 
     typedef struct
     {

@@ -60,10 +60,10 @@ void PlanarChainEnvironment::getControlBounds(std::vector< double > &lower, std:
 //          upper[0]=10;
 
 //}
-           lower[0]=-1;
-            upper[0]=1;
-            lower[1]=-1;
-            upper[1]=1;
+           lower[0]=-0.5;
+            upper[0]=0.7;
+            lower[1]=-0.3;
+            upper[1]=0.7;
     //        lower[2]=-1;
     //        upper[2]=1;
 
@@ -80,10 +80,21 @@ void PlanarChainEnvironment::applyControl (const double *control) const
      dReal r2=dJointGetHingeAngle(_Joint[1]);
      dReal r3=dJointGetHingeAngle(_Joint[2]);
     std::cout<<"angles are : "<<" , "<<r2<<std::endl;
-    dJointSetHingeParam(_Joint[0], dParamVel, (control[0]-r1));
-    dJointSetHingeParam(_Joint[0], dParamFMax, 600);
-    dJointSetHingeParam(_Joint[1], dParamVel, (control[1]-r2));
-    dJointSetHingeParam(_Joint[1], dParamFMax, 600);
+
+//dJointSetAMotorParam(_motor[0],dParamVel,control[0]-r1);
+//dJointSetAMotorParam(_motor[0],dParamFMax,100);
+//dJointSetAMotorParam(_motor[1],dParamVel,control[1]-r2);
+//dJointSetAMotorParam(_motor[1],dParamFMax,100);
+//dJointSetAMotorParam(_motor[2],dParamVel,control[1]-r3);
+//dJointSetAMotorParam(_motor[2],dParamFMax,50);
+
+
+//    dJointAddHingeTorque(_Joint[0],control[0]);
+dJointSetHingeParam(_Joint[0], dParamVel, (r1-control[0]));
+dJointSetHingeParam(_Joint[0], dParamFMax, 100);
+dJointSetHingeParam(_Joint[1], dParamVel, (r2-control[1]));
+//    dJointAddHingeTorque(_Joint[1],control[1]*2);
+dJointSetHingeParam(_Joint[1], dParamFMax, 100);
 
 
     if(! manipulationQuery->getPlanningPhase() && manipulationQuery->getIsKinamaticChain())
@@ -223,9 +234,9 @@ unsigned int PlanarChainStateProjectionEvaluator::getDimension(void) const
 void PlanarChainStateProjectionEvaluator :: defaultCellSizes(void)
 {
     cellSizes_.resize(3);
-    cellSizes_[0] = 0.5;
-    cellSizes_[1] = 0.5;
-    cellSizes_[2] = 0.5;
+    cellSizes_[0] = 1;
+    cellSizes_[1] = 1;
+    cellSizes_[2] = 1;
 
 
 }

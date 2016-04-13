@@ -19,12 +19,12 @@
 			<Parameter name="Constraint Force Mixing">0.3000000119</Parameter>
 			<Parameter name="Control Dimensions">2</Parameter>
 			<Parameter name="Error Reduction Parameter">0.5</Parameter>
-			<Parameter name="Goal Bias">0.05</Parameter>
+			<Parameter name="Goal Bias">0.1</Parameter>
 			<Parameter name="Max Contacts">3</Parameter>
-			<Parameter name="Max Control Steps">10</Parameter>
+			<Parameter name="Max Control Steps">5</Parameter>
 			<Parameter name="Max Planning Time">20</Parameter>
 			<Parameter name="Max Speed">10</Parameter>
-			<Parameter name="Min Control Steps">5</Parameter>
+			<Parameter name="Min Control Steps">2</Parameter>
 			<Parameter name="PropagationStepSize">0.07</Parameter>
 			<Parameter name="Speed Factor">20</Parameter>
 			<Parameter name="only final link position?">1</Parameter>
