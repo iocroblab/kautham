@@ -41,6 +41,7 @@ namespace Kautham {
         _robWeight.clear();
         numRobControls = 0;
         numObsControls = 0;
+        _initObsSample = NULL;
     }
 
 
@@ -137,6 +138,7 @@ namespace Kautham {
    *  obstacles ends at the border of one or more of its limits.
    */
     void WorkSpace::moveObstaclesTo(Sample *sample) {
+        if (!sample) return;
 
         bool withinbounds=true;
         vector<KthReal> tmpVec;
