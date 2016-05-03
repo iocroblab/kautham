@@ -127,8 +127,15 @@ void ompl::geometric::TRRTConnect::setup() {
     }
 
     //Create the nearest neighbor function the first time setup is run
+#if OMPL_VERSION_VALUE < 1001000 // 1.1.0
+    if (!tStart_) tStart_.reset(tools::SelfConfig::getDefaultNearestNeighbors<Motion*>
+                                   (si_->getStateSpace()));
+    if (!tGoal_) tGoal_.reset(tools::SelfConfig::getDefaultNearestNeighbors<Motion*>
+                                   (si_->getStateSpace()));
+#else
     if (!tStart_) tStart_.reset(tools::SelfConfig::getDefaultNearestNeighbors<Motion*>(this));
     if (!tGoal_) tGoal_.reset(tools::SelfConfig::getDefaultNearestNeighbors<Motion*>(this));
+#endif
 
     //Set the distance function
     tStart_->setDistanceFunction(boost::bind(&TRRTConnect::distanceFunction,this,_1,_2));
