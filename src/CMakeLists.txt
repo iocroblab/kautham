@@ -87,12 +87,12 @@ else( FCL_FOUND )
 endif( FCL_FOUND )
 
 #### Armadillo ######
-find_package( Armadillo )
+find_package( Armadillo REQUIRED)
 if( ARMADILLO_FOUND )
    message( STATUS "armadillo Package FOUND")
    add_definitions( -DKAUTHAM_USE_ARMADILLO )
 else( ARMADILLO_FOUND )
-   message( STATUS "armadillo Package NOT FOUND. Planners using PCA will be disabled.")
+   message( SEND_ERROR  "armadillo Package NOT FOUND. Planners using PCA will be disabled. Kautham needs it by now")
 endif( ARMADILLO_FOUND )
 
 find_package(ompl)
