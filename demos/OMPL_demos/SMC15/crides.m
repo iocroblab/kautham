@@ -1,7 +1,7 @@
 roscore
 
 
-cd ~/catkin_ws/devel_isolated/kautham2/lib/kautham2
+cd ~/catkin_ws/devel_isolated/kautham/lib/kautham
 ./Kautham_node
 
 
