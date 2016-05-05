@@ -116,30 +116,19 @@ if(KAUTHAM_OPENDE)
    endif(ODE_FOUND)
 endif(KAUTHAM_OPENDE)
 
-
+# Adding subdirectories
 
 add_subdirectory( applications)
 add_subdirectory( planner )
 add_subdirectory( problem )
 add_subdirectory( sampling )
 
-
-message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
+#message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
 
 add_library(kautham SHARED ${KAUTHAM_SRC} )
 
 target_link_libraries(kautham ${EXTRA_LIBS} ${Boost_LIBRARIES} )
-# 			sampling
-# 			libPQP
-# 			libgdiam
-# 			${PUGI_XML_LIBRARIES}
-# 			${OMPL_LIBRARIES}
-# 			${ARMADILLO_LIBRARIES}
-# 			${ODE_LIBRARY}
-# 			libDNN
-# 			libkin
-# 			libkthutil
-#
-# 			${EXTRA_LIBS})
+
+# extra libraries should contain sampling libPQP libgdiam PUGI OMPL ARMADILLO ODE libDNN libkin libkthutil 
 
 install(TARGETS kautham DESTINATION ${CMAKE_INSTALL_LIBDIR})
