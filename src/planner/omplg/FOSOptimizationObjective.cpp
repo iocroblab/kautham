@@ -22,6 +22,7 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
+#ifdef KAUTHAM_USE_ARMADILLO
 
 #include "FOSOptimizationObjective.h"
 
@@ -148,3 +149,5 @@ void ompl::base::FOSOptimizationObjective::omplState2armaVec(const State *s, arm
         if (k >= nDOF) break;
     }
 }
+
+#endif // KAUTHAM_USE_ARMADILLO
