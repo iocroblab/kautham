@@ -46,10 +46,6 @@ find_package(catkin REQUIRED COMPONENTS
   trajectory_msgs
   message_generation
 )
-# find_package( Boost COMPONENTS system serialization thread REQUIRED )
-# 
-# include_directories(${Boost_INCLUDE_DIRS})
-
 include_directories(include ${catkin_INCLUDE_DIRS})
  link_directories(${Boost_LIBRARY_DIRS} )
 
