@@ -32,40 +32,40 @@
 #include <Inventor/SoDB.h>
 #include "std_msgs/String.h"
 #include "../console/kauthamshell.h"
-#include "kautham2/CloseProblem.h"
-#include "kautham2/ProblemOpened.h"
-#include "kautham2/OpenProblem.h"
-#include "kautham2/OpenProblemStream.h"
-#include "kautham2/CheckCollision.h"
-#include "kautham2/SetRobotsConfig.h"
-#include "kautham2/SetObstaclesConfig.h"
-#include "kautham2/SetQuery.h"
-#include "kautham2/SetInit.h"
-#include "kautham2/SetGoal.h"
-#include "kautham2/SetInitObs.h"
-#include "kautham2/ClearSampleSet.h"
-#include "kautham2/SetRobControls.h"
-#include "kautham2/SetRobControlsStream.h"
-#include "kautham2/SetDefaultRobControls.h"
-#include "kautham2/SetObsControls.h"
-#include "kautham2/SetObsControlsStream.h"
-#include "kautham2/SetFixedObsControls.h"
-#include "kautham2/SetPlannerByName.h"
-#include "kautham2/SetPlanner.h"
-#include "kautham2/SetPlannerStream.h"
-#include "kautham2/SetPlannerParameter.h"
-#include "kautham2/Solve.h"
-#include "kautham2/GetPath.h"
-#include "kautham2/AddRobot.h"
-#include "kautham2/RemoveRobot.h"
-#include "kautham2/AddObstacle.h"
-#include "kautham2/RemoveObstacle.h"
-#include "kautham2/AttachObstacle2RobotLink.h"
-#include "kautham2/DetachObstacle.h"
-#include "kautham2/Connect.h"
-#include "kautham2/GetLastPlanComputationTime.h"
-#include "kautham2/GetNumEdges.h"
-#include "kautham2/GetNumVertices.h"
+#include "kautham/CloseProblem.h"
+#include "kautham/ProblemOpened.h"
+#include "kautham/OpenProblem.h"
+#include "kautham/OpenProblemStream.h"
+#include "kautham/CheckCollision.h"
+#include "kautham/SetRobotsConfig.h"
+#include "kautham/SetObstaclesConfig.h"
+#include "kautham/SetQuery.h"
+#include "kautham/SetInit.h"
+#include "kautham/SetGoal.h"
+#include "kautham/SetInitObs.h"
+#include "kautham/ClearSampleSet.h"
+#include "kautham/SetRobControls.h"
+#include "kautham/SetRobControlsStream.h"
+#include "kautham/SetDefaultRobControls.h"
+#include "kautham/SetObsControls.h"
+#include "kautham/SetObsControlsStream.h"
+#include "kautham/SetFixedObsControls.h"
+#include "kautham/SetPlannerByName.h"
+#include "kautham/SetPlanner.h"
+#include "kautham/SetPlannerStream.h"
+#include "kautham/SetPlannerParameter.h"
+#include "kautham/Solve.h"
+#include "kautham/GetPath.h"
+#include "kautham/AddRobot.h"
+#include "kautham/RemoveRobot.h"
+#include "kautham/AddObstacle.h"
+#include "kautham/RemoveObstacle.h"
+#include "kautham/AttachObstacle2RobotLink.h"
+#include "kautham/DetachObstacle.h"
+#include "kautham/Connect.h"
+#include "kautham/GetLastPlanComputationTime.h"
+#include "kautham/GetNumEdges.h"
+#include "kautham/GetNumVertices.h"
 
 
 using namespace std;
@@ -76,24 +76,24 @@ ros::Publisher chatter_pub;
 kauthamshell* ksh;
 
 
-bool srvCloseProblem(kautham2::CloseProblem::Request &req,
-                     kautham2::CloseProblem::Response &res) {
+bool srvCloseProblem(kautham::CloseProblem::Request &req,
+                     kautham::CloseProblem::Response &res) {
     ksh->closeProblem();
 
     return true;
 }
 
 
-bool srvProblemOpened(kautham2::ProblemOpened::Request &req,
-                      kautham2::ProblemOpened::Response &res) {
+bool srvProblemOpened(kautham::ProblemOpened::Request &req,
+                      kautham::ProblemOpened::Response &res) {
     res.response = ksh->problemOpened();
 
     return true;
 }
 
 
-bool srvOpenProblem(kautham2::OpenProblem::Request &req,
-                    kautham2::OpenProblem::Response &res) {
+bool srvOpenProblem(kautham::OpenProblem::Request &req,
+                    kautham::OpenProblem::Response &res) {
     ROS_INFO("Opening problem:: %s", req.problem.c_str());
     string dir = req.problem;
     dir.erase(dir.find_last_of("/") + 1, dir.length());
@@ -120,8 +120,8 @@ bool srvOpenProblem(kautham2::OpenProblem::Request &req,
 }
 
 
-bool srvOpenProblemStream(kautham2::OpenProblemStream::Request &req,
-                          kautham2::OpenProblemStream::Response &res) {
+bool srvOpenProblemStream(kautham::OpenProblemStream::Request &req,
+                          kautham::OpenProblemStream::Response &res) {
     string dir = req.problem;
     dir.erase(dir.find_last_of("/") + 1, dir.length());
     string absPath = dir;
@@ -153,8 +153,8 @@ bool srvOpenProblemStream(kautham2::OpenProblemStream::Request &req,
 }
 
 
-bool srvCheckCollision(kautham2::CheckCollision::Request &req,
-                       kautham2::CheckCollision::Response &res) {
+bool srvCheckCollision(kautham::CheckCollision::Request &req,
+                       kautham::CheckCollision::Response &res) {
 
     for (unsigned int i = 0; i < req.config.size(); ++i) {
         cout << req.config.at(i) << " ";
@@ -169,8 +169,8 @@ bool srvCheckCollision(kautham2::CheckCollision::Request &req,
 }
 
 
-bool srvSetRobotsConfig(kautham2::SetRobotsConfig::Request &req,
-                       kautham2::SetRobotsConfig::Response &res) {
+bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
+                       kautham::SetRobotsConfig::Response &res) {
 
     res.response = ksh->setRobotsConfig(req.config);
 
@@ -178,8 +178,8 @@ bool srvSetRobotsConfig(kautham2::SetRobotsConfig::Request &req,
 }
 
 
-bool srvSetObstaclesConfig(kautham2::SetObstaclesConfig::Request &req,
-                           kautham2::SetObstaclesConfig::Response &res) {
+bool srvSetObstaclesConfig(kautham::SetObstaclesConfig::Request &req,
+                           kautham::SetObstaclesConfig::Response &res) {
 
     res.response = ksh->setObstaclesConfig(req.config);
 
@@ -187,56 +187,56 @@ bool srvSetObstaclesConfig(kautham2::SetObstaclesConfig::Request &req,
 }
 
 
-bool srvSetQuery(kautham2::SetQuery::Request &req,
-                 kautham2::SetQuery::Response &res) {
+bool srvSetQuery(kautham::SetQuery::Request &req,
+                 kautham::SetQuery::Response &res) {
     res.response = ksh->setQuery(req.init,req.goal);
 
     return true;
 }
 
 
-bool srvSetInit(kautham2::SetInit::Request &req,
-                kautham2::SetInit::Response &res) {
+bool srvSetInit(kautham::SetInit::Request &req,
+                kautham::SetInit::Response &res) {
     res.response = ksh->setInit(req.init);
 
     return true;
 }
 
 
-bool srvSetGoal(kautham2::SetGoal::Request &req,
-                kautham2::SetGoal::Response &res) {
+bool srvSetGoal(kautham::SetGoal::Request &req,
+                kautham::SetGoal::Response &res) {
     res.response = ksh->setGoal(req.goal);
 
     return true;
 }
 
 
-bool srvSetInitObs(kautham2::SetInitObs::Request &req,
-                   kautham2::SetInitObs::Response &res) {
+bool srvSetInitObs(kautham::SetInitObs::Request &req,
+                   kautham::SetInitObs::Response &res) {
     res.response = ksh->setInitObs(req.initObs);
 
     return true;
 }
 
 
-bool srvClearSampleSet(kautham2::ClearSampleSet::Request &req,
-                       kautham2::ClearSampleSet::Response &res) {
+bool srvClearSampleSet(kautham::ClearSampleSet::Request &req,
+                       kautham::ClearSampleSet::Response &res) {
     res.response = ksh->clearSampleSet();
 
     return true;
 }
 
 
-bool srvSetRobControls(kautham2::SetRobControls::Request &req,
-                       kautham2::SetRobControls::Response &res) {
+bool srvSetRobControls(kautham::SetRobControls::Request &req,
+                       kautham::SetRobControls::Response &res) {
     res.response = ksh->setRobControls(req.controls,req.init,req.goal);
 
     return true;
 }
 
 
-bool srvSetRobControlsStream(kautham2::SetRobControlsStream::Request &req,
-                             kautham2::SetRobControlsStream::Response &res) {
+bool srvSetRobControlsStream(kautham::SetRobControlsStream::Request &req,
+                             kautham::SetRobControlsStream::Response &res) {
     filebuf fb;
     fb.open(req.controls.c_str(),ios::in);
     istream is(&fb);
@@ -247,24 +247,24 @@ bool srvSetRobControlsStream(kautham2::SetRobControlsStream::Request &req,
 }
 
 
-bool srvSetDefaultRobControls(kautham2::SetDefaultRobControls::Request &req,
-                              kautham2::SetDefaultRobControls::Response &res) {
+bool srvSetDefaultRobControls(kautham::SetDefaultRobControls::Request &req,
+                              kautham::SetDefaultRobControls::Response &res) {
     res.response = ksh->setDefaultRobControls(req.init,req.goal);
 
     return true;
 }
 
 
-bool srvSetObsControls(kautham2::SetObsControls::Request &req,
-                       kautham2::SetObsControls::Response &res) {
+bool srvSetObsControls(kautham::SetObsControls::Request &req,
+                       kautham::SetObsControls::Response &res) {
     res.response = ksh->setObsControls(req.controls,req.initObs);
 
     return true;
 }
 
 
-bool srvSetObsControlsStream(kautham2::SetObsControlsStream::Request &req,
-                             kautham2::SetObsControlsStream::Response &res) {
+bool srvSetObsControlsStream(kautham::SetObsControlsStream::Request &req,
+                             kautham::SetObsControlsStream::Response &res) {
     filebuf fb;
     fb.open(req.controls.c_str(),ios::in);
     istream is(&fb);
@@ -275,32 +275,32 @@ bool srvSetObsControlsStream(kautham2::SetObsControlsStream::Request &req,
 }
 
 
-bool srvSetFixedObsControls(kautham2::SetFixedObsControls::Request &req,
-                            kautham2::SetFixedObsControls::Response &res) {
+bool srvSetFixedObsControls(kautham::SetFixedObsControls::Request &req,
+                            kautham::SetFixedObsControls::Response &res) {
     res.response = ksh->setFixedObsControls();
 
     return true;
 }
 
 
-bool srvSetPlannerByName(kautham2::SetPlannerByName::Request &req,
-                         kautham2::SetPlannerByName::Response &res) {
+bool srvSetPlannerByName(kautham::SetPlannerByName::Request &req,
+                         kautham::SetPlannerByName::Response &res) {
     res.response = ksh->setPlannerByName(req.name);
 
     return true;
 }
 
 
-bool srvSetPlanner(kautham2::SetPlanner::Request &req,
-                   kautham2::SetPlanner::Response &res) {
+bool srvSetPlanner(kautham::SetPlanner::Request &req,
+                   kautham::SetPlanner::Response &res) {
     res.response = ksh->setPlanner(req.planner);
 
     return true;
 }
 
 
-bool srvSetPlannerStream(kautham2::SetPlannerStream::Request &req,
-                         kautham2::SetPlannerStream::Response &res) {
+bool srvSetPlannerStream(kautham::SetPlannerStream::Request &req,
+                         kautham::SetPlannerStream::Response &res) {
     filebuf fb;
     fb.open(req.planner.c_str(),ios::in);
     istream is(&fb);
@@ -311,24 +311,24 @@ bool srvSetPlannerStream(kautham2::SetPlannerStream::Request &req,
 }
 
 
-bool srvSetPlannerParameter(kautham2::SetPlannerParameter::Request &req,
-                            kautham2::SetPlannerParameter::Response &res) {
+bool srvSetPlannerParameter(kautham::SetPlannerParameter::Request &req,
+                            kautham::SetPlannerParameter::Response &res) {
     res.response = ksh->setPlannerParameter(req.parameter,req.value);
 
     return true;
 }
 
 
-bool srvSolve(kautham2::Solve::Request &req,
-              kautham2::Solve::Response &res) {
+bool srvSolve(kautham::Solve::Request &req,
+              kautham::Solve::Response &res) {
     res.response = ksh->solve(std::cout);
 
     return true;
 }
 
 
-bool srvGetPath(kautham2::GetPath::Request &req,
-                kautham2::GetPath::Response &res) {
+bool srvGetPath(kautham::GetPath::Request &req,
+                kautham::GetPath::Response &res) {
     ostringstream oss;
     if (ksh->getPath(oss)) {
         vector < vector < KthReal > > path;
@@ -359,8 +359,8 @@ bool srvGetPath(kautham2::GetPath::Request &req,
 }
 
 
-bool srvAddRobot(kautham2::AddRobot::Request &req,
-                            kautham2::AddRobot::Response &res) {
+bool srvAddRobot(kautham::AddRobot::Request &req,
+                            kautham::AddRobot::Response &res) {
     vector< vector<KthReal> > limits, mapMatrix;
     limits.resize(req.limits.size());
     for (unsigned int i = 0; i < limits.size(); ++i) {
@@ -383,72 +383,72 @@ bool srvAddRobot(kautham2::AddRobot::Request &req,
 }
 
 
-bool srvRemoveRobot(kautham2::RemoveRobot::Request &req,
-                            kautham2::RemoveRobot::Response &res) {
+bool srvRemoveRobot(kautham::RemoveRobot::Request &req,
+                            kautham::RemoveRobot::Response &res) {
     res.response = ksh->removeRobot(req.index);
 
     return true;
 }
 
 
-bool srvAddObstacle(kautham2::AddObstacle::Request &req,
-                            kautham2::AddObstacle::Response &res) {
+bool srvAddObstacle(kautham::AddObstacle::Request &req,
+                            kautham::AddObstacle::Response &res) {
     res.response = ksh->addObstacle(req.obstacle,req.scale,req.home);
 
     return true;
 }
 
 
-bool srvRemoveObstacle(kautham2::RemoveObstacle::Request &req,
-                            kautham2::RemoveObstacle::Response &res) {
+bool srvRemoveObstacle(kautham::RemoveObstacle::Request &req,
+                            kautham::RemoveObstacle::Response &res) {
     res.response = ksh->removeObstacle(req.index);
 
     return true;
 }
 
 
-bool srvAttachObstacle2RobotLink(kautham2::AttachObstacle2RobotLink::Request &req,
-                            kautham2::AttachObstacle2RobotLink::Response &res) {
+bool srvAttachObstacle2RobotLink(kautham::AttachObstacle2RobotLink::Request &req,
+                            kautham::AttachObstacle2RobotLink::Response &res) {
     res.response = ksh->attachObstacle2RobotLink(req.robot,req.link,req.obs);
 
     return true;
 }
 
 
-bool srvDetachObstacle(kautham2::DetachObstacle::Request &req,
-                            kautham2::DetachObstacle::Response &res) {
+bool srvDetachObstacle(kautham::DetachObstacle::Request &req,
+                            kautham::DetachObstacle::Response &res) {
     res.response = ksh->detachObstacle(req.obs);
 
     return true;
 }
 
 
-bool srvConnect(kautham2::Connect::Request &req,
-                            kautham2::Connect::Response &res) {
+bool srvConnect(kautham::Connect::Request &req,
+                            kautham::Connect::Response &res) {
     res.response = ksh->connect(req.sample1,req.sample2);
 
     return true;
 }
 
 
-bool srvGetLastPlanComputationTime(kautham2::GetLastPlanComputationTime::Request &req,
-                            kautham2::GetLastPlanComputationTime::Response &res) {
+bool srvGetLastPlanComputationTime(kautham::GetLastPlanComputationTime::Request &req,
+                            kautham::GetLastPlanComputationTime::Response &res) {
     res.time = ksh->getLastPlanComputationTime();
 
     return true;
 }
 
 
-bool srvGetNumEdges(kautham2::GetNumEdges::Request &req,
-                            kautham2::GetNumEdges::Response &res) {
+bool srvGetNumEdges(kautham::GetNumEdges::Request &req,
+                            kautham::GetNumEdges::Response &res) {
     res.num = ksh->getNumEdges();
 
     return true;
 }
 
 
-bool srvGetNumVertices(kautham2::GetNumVertices::Request &req,
-                            kautham2::GetNumVertices::Response &res) {
+bool srvGetNumVertices(kautham::GetNumVertices::Request &req,
+                            kautham::GetNumVertices::Response &res) {
     res.num = ksh->getNumVertices();
 
     return true;
