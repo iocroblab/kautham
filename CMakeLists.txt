@@ -1,4 +1,4 @@
-project(kautham2)
+project(kautham)
 
 cmake_minimum_required(VERSION 2.4.6)
 
@@ -46,12 +46,12 @@ find_package(catkin REQUIRED COMPONENTS
   trajectory_msgs
   message_generation
 )
-FIND_PACKAGE( Boost COMPONENTS system serialization thread REQUIRED )
-
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+# find_package( Boost COMPONENTS system serialization thread REQUIRED )
+# 
+# include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(include ${catkin_INCLUDE_DIRS})
- LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
+ link_directories(${Boost_LIBRARY_DIRS} )
 
 add_service_files(
    DIRECTORY srv
@@ -144,7 +144,7 @@ if(KAUTHAM_DOCUMENTATION)
                       # custom_command for ${doxyfile} generation
                       # but I still have to figure out how...
                       MAIN_DEPENDENCY ${doxyfile} ${doxyfile_in}
-                      DEPENDS Kautham2 ${doxy_extra_files}
+                      DEPENDS Kautham ${doxy_extra_files}
                       COMMENT "Generating HTML documentation")
 
   add_custom_target( doc DEPENDS ${doxy_html_index_file} )
@@ -154,7 +154,7 @@ endif()
 ##############################################################################
 #########################################################
 # Copy Help file
-install(DIRECTORY ${CMAKE_SOURCE_DIR} DESTINATION share/kautham2)
+install(DIRECTORY ${CMAKE_SOURCE_DIR} DESTINATION share/kautham)
 ##install(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
 
 
