@@ -14,7 +14,7 @@ set ( mt_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libmt )
 add_subdirectory( util )
 
 
-INCLUDE_DIRECTORIES( include ${CMAKE_CURRENT_SOURCE_DIR} 
+include_directories( include ${CMAKE_CURRENT_SOURCE_DIR} 
                        ${kthutil_DIR}
                        ${mt_DIR}
                        ${kin_DIR}                   
@@ -122,14 +122,7 @@ add_subdirectory( applications)
 add_subdirectory( planner )
 add_subdirectory( problem )
 add_subdirectory( sampling )
-#                      ${GDIAM_DIR}
-#                      ${Armadillo_INCLUDE_DIR})
 
-#set(KAUTHAM_SRC "")
-#set(KAUTHAM_HRC "")
-
-#file( GLOB SRC_FILES problem/*.cpp )
-#file( GLOB HDR_FILES problem/*.h* external/*.h* )
 
 message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
 
