@@ -73,11 +73,11 @@ set( HDR_FILES_GUI kauthamgui.h
          sampleswidget.h
          ui_RobotSim.h)
 
-add_executable(Kautham2  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${kautham_RESOURCES_RCC} )
-target_link_libraries( Kautham2 kautham ${SOQT_LIBRARY} ${COIN_LIBRARY} ${QT_LIBRARIES})
+add_executable(kautham-gui  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${kautham_RESOURCES_RCC} )
+target_link_libraries( kautham-gui libkautham ${SOQT_LIBRARY} ${QT_LIBRARIES} ${Boost_LIBRARIES} )
 
-add_dependencies(Kautham2 kautham)
+add_dependencies(kautham-gui libkautham)
 
-install(TARGETS Kautham2 DESTINATION bin)
+install(TARGETS kautham-gui DESTINATION bin)
 
 # END building Kautham GUI application
