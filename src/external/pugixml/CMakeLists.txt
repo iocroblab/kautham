@@ -1,7 +1,3 @@
-file(GLOB SRC_FILES *.c* )
-file(GLOB HDR_FILES *.h*)
-
-
 file( GLOB SRC_FILES *.cpp )
 file( GLOB HDR_FILES *.h* )
 
