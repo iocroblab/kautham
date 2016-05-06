@@ -1,7 +1,38 @@
+#     Copyright 2016 Institute of Industrial and Control Engineering (IOC)
+#                  Universitat Politecnica de Catalunya
+#                  BarcelonaTech
+#     All Rights Reserved.
+# 
+#     This program is free software; you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation; either version 2 of the License, or
+#     (at your option) any later version.
+# 
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+# 
+#     You should have received a copy of the GNU General Public License
+#     along with this program; if not, write to the
+#     Free Software Foundation, Inc.,
+#     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+# 
+#    Author: Leopold Palomo-Avellaneda 2014-2016
+
+
+
 project(kautham)
 
 cmake_minimum_required(VERSION 2.4.6)
 
+set( KAUTHAM_VERSION 2.5.0 )
+STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} ) 
+LIST( GET KAUTHAM_VERSIONS 0 KAUTHAM_VERSION_MAJOR)
+LIST( GET KAUTHAM_VERSIONS 1 KAUTHAM_VERSION_MINOR)
+LIST( GET KAUTHAM_VERSIONS 2 KAUTHAM_VERSION_PATCH)
+
+message( "Kautham version ${VERSION} (${KAUTHAM_VERSION_MAJOR}.${KAUTHAM_VERSION_MINOR}.${KAUTHAM_VERSION_PATCH})" )
 
 if(COMMAND cmake_policy)
       cmake_policy(SET CMP0003 NEW)
@@ -33,7 +64,6 @@ message( STATUS "Creating the HTML based API documentation: ${KAUTHAM_DOCUMENTAT
 ########### Modules path and system options ###############
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
 include(GNUInstallDirs)
-add_definitions ( -Wall )
 ##############################################################################
 
 ##################### ROS-catkin ####################################
@@ -47,7 +77,6 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 include_directories(include ${catkin_INCLUDE_DIRS})
- link_directories(${Boost_LIBRARY_DIRS} )
 
 add_service_files(
    DIRECTORY srv
@@ -140,7 +169,7 @@ if(KAUTHAM_DOCUMENTATION)
                       # custom_command for ${doxyfile} generation
                       # but I still have to figure out how...
                       MAIN_DEPENDENCY ${doxyfile} ${doxyfile_in}
-                      DEPENDS Kautham ${doxy_extra_files}
+                      DEPENDS kautham ${doxy_extra_files}
                       COMMENT "Generating HTML documentation")
 
   add_custom_target( doc DEPENDS ${doxy_html_index_file} )
@@ -150,8 +179,8 @@ endif()
 ##############################################################################
 #########################################################
 # Copy Help file
-install(DIRECTORY ${CMAKE_SOURCE_DIR} DESTINATION share/kautham)
-##install(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
+#install(DIRECTORY ${CMAKE_SOURCE_DIR} DESTINATION share/kautham)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
 
 
 
