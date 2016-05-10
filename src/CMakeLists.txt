@@ -9,6 +9,20 @@ set ( kin_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin )
 set ( kthutil_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/kthutil )
 set ( mt_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libmt )
 
+
+##### pugixml ########
+find_package( PugiXML )
+if(PUGI_XML_FOUND)
+   message( STATUS "PugiXML FOUND, using it")
+   include_directories( ${PUGI_XML_INCLUDE_DIR})
+else(PUGI_XML_FOUND)
+   message(STATUS "PugiXML not found, using internal copy")
+   add_subdirectory ( external/pugixml )
+   include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/external/pugixml )
+   set(PUGI_XML_LIBRARIES libpugixml)
+endif(PUGI_XML_FOUND)
+set(EXTRA_LIBS ${EXTRA_LIBS} ${PUGI_XML_LIBRARIES} PARENT_SCOPE  )
+
 #### Boost package ###############
 find_package( Boost COMPONENTS  system serialization thread REQUIRED )
 if(Boost_FOUND)
