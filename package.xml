@@ -2,7 +2,7 @@
 <package>
   <name>kautham</name>
   <version>2.2.0</version>
-  <description>he Kautham Project is a software tool used at the Institute of Industrial
+  <description>The Kautham Project is a software tool used at the Institute of Industrial
   and Control Engineering (IOC-UPC) for teaching and research in robot motion
   planning. The tool allows to cope with problems with one or more robots,   
   being a generic robot defined as a kinematic tree with a mobile base. i.e. 
