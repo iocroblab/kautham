@@ -4,7 +4,7 @@ add_executable( kautham-rosnode ${SRC_FILES} ${HDR_FILES} )
 target_link_libraries( kautham-rosnode libkautham ${catkin_LIBRARIES} ${EXTRA_LIBS} )
 
 #########################################################
-install(TARGETS kautham-node
+install(TARGETS kautham-rosnode
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
