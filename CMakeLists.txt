@@ -76,7 +76,7 @@ find_package(catkin REQUIRED COMPONENTS
   trajectory_msgs
   message_generation
 )
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(${catkin_INCLUDE_DIRS})
 
 add_service_files(
    DIRECTORY srv
@@ -127,7 +127,7 @@ generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)
 
 
 catkin_package(
-  INCLUDE_DIRS         ${CMAKE_CURRENT_SOURCE_DIR}                   
+  INCLUDE_DIRS  ${CMAKE_SOURCE_DIR}/src
   CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
 )
 
