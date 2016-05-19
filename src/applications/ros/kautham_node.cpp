@@ -331,10 +331,10 @@ bool srvGetPath(kautham::GetPath::Request &req,
                 kautham::GetPath::Response &res) {
     ostringstream oss;
     if (ksh->getPath(oss)) {
-        vector < vector < KthReal > > path;
+        vector < vector < float > > path;
         istringstream iss(oss.str());
         for (string str; getline(iss,str); ) {
-            vector < KthReal > conf;
+            vector < float > conf;
             std::istringstream strs(str);
             int chars_to_read = strs.str().size();
             while (chars_to_read > 0) {
@@ -361,7 +361,7 @@ bool srvGetPath(kautham::GetPath::Request &req,
 
 bool srvAddRobot(kautham::AddRobot::Request &req,
                             kautham::AddRobot::Response &res) {
-    vector< vector<KthReal> > limits, mapMatrix;
+    vector< vector<float> > limits, mapMatrix;
     limits.resize(req.limits.size());
     for (unsigned int i = 0; i < limits.size(); ++i) {
         limits[i].resize(req.limits[i].v.size());
