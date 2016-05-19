@@ -127,7 +127,8 @@ generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)
 
 
 catkin_package(
-  INCLUDE_DIRS  ${CMAKE_SOURCE_DIR}/src
+  #INCLUDE_DIRS  ${CMAKE_SOURCE_DIR}/src
+  INCLUDE_DIRS  ${CMAKE_SOURCE_DIR}
   CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
 )
 
