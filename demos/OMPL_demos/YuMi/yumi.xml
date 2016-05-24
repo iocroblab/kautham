@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<Problem name="" topology="SE3">
+	<Robot robot="robots/yumi.urdf" scale="1.0" />
+        <Controls robot="controls/yumi.cntr"/>
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="Cspace Drawn">0</Parameter>
+			<Parameter name="Incremental (0/1)">0</Parameter>
+			<Parameter name="Max Planning Time">10</Parameter>
+			<Parameter name="Range">10</Parameter>
+			<Parameter name="Simplify Solution">2</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="16">0.232 0.571 0.931 0.981 0.614 0.927 0.375 0.5 0.232 0.571 0.931 0.981 0.614 0.927 0.375 0.5</Init>
+				<Goal dim="16">0.232 0.571 0.931 0.981 0.614 0.927 0.375 0.5 0.232 0.571 0.931 0.981 0.614 0.927 0.375 0.5</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
