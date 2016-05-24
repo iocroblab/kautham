@@ -1209,4 +1209,166 @@ namespace Kautham {
 
         return false;
     }
+
+    bool kauthamshell::motionPlanner(vector <float> init, vector <float> goal, string root){
+
+        bool _solved = false;
+
+        Problem *const problem = (Problem*)memPtr_;
+        Planner* _planner;
+        SampleSet* _samples;
+        unsigned int _dim;
+        //unsigned int _dim,_dimOMPL;
+
+        _planner = problem->getPlanner();
+        _samples = problem->getSampleSet();
+        _dim = _samples->getSampleAt(0)->getDim();
+        //_dimOMPL = 0;
+
+        Sample* smp = new Sample(_dim);
+        smp->setCoords(init);
+        _samples->add(smp);
+        _planner->setInitSamp(smp);
+
+        smp = new Sample(_dim);
+        smp->setCoords(goal);
+        _samples->add(smp);
+        _planner->setGoalSamp(smp);
+
+        if (_planner->solveAndInherit()){
+            _solved = true;
+
+            og::SimpleSetupPtr ss = ((Kautham::omplplanner::omplPlanner*)_planner)->SimpleSetupPtr();
+            std::vector< ob::State * >  pathstates = ss->getSolutionPath().getStates();
+            ob::State *state;
+            Sample *sample;
+
+            int d = _planner->wkSpace()->getNumRobControls();
+
+            vector < Sample* > setOfSamples;
+            setOfSamples.clear();
+
+
+            if(!pathstates.empty()){
+
+                for (uint k = 0; k< pathstates.size();k++){
+                    //create a sample
+                    sample = new Sample(d);
+                    //set a mapped configuration
+                    sample->setMappedConf(_planner->initSamp()->getMappedConf());
+
+                    //create a state from pathstates "k"
+                    state = pathstates.at(k);
+                    //convert the ompl state to kautham sample
+                    ((Kautham::omplplanner::omplPlanner*)_planner)->omplState2smp(state,sample);
+                    //adding the sample to the set of samples
+                    setOfSamples.push_back(sample);
+
+
+                }
+            }
+
+            //Taking from samples path
+            ofstream out, out1, out2, out1S, out2S ;
+            std::ostringstream sh, r1, r2;
+            //out.open(root.c_str()+"Aplicaciones/Experiments/DatosGA2H/SolutionPlan.txt");
+            out.open((root+"Aplicaciones/Experiments/DatosGA2H/SolutionPlan.txt").c_str());
+            out1.open((root+"Aplicaciones/Experiments/DatosGA2H/R1SolutionPlan.txt").c_str());
+            out2.open((root+"Aplicaciones/Experiments/DatosGA2H/R2SolutionPlan.txt").c_str());
+
+            out1S.open((root+"Aplicaciones/Experiments/DatosGA2H/R1SolutionPlanS.txt").c_str());
+            out2S.open((root+"Aplicaciones/Experiments/DatosGA2H/R2SolutionPlanS.txt").c_str());
+
+            //std::cout<<"setOfSamples size = "<<setOfSamples.size()<<std::endl;
+
+            for (uint i = 0; i < setOfSamples.size(); i++){
+
+                vector < RobConf > configuration;
+                configuration = setOfSamples.at(i)->getMappedConf();
+                for (uint r = 0; r < configuration.size(); ++r) {
+                    RobConf robotConfiguration = configuration.at(r);
+                    uint SE3Dim = robotConfiguration.getSE3().getCoordinates().size();
+                    uint RnDim = robotConfiguration.getRn().getCoordinates().size();
+
+
+                    /*for (unsigned j = 0; j <  SE3Dim; j++) {
+                        sh << robotConfiguration.getSE3().getCoordinates().at(j) << " ";
+                    }*/
+
+                    for (unsigned j = 0; j <  RnDim; j++) {
+                        if((j != 6) && (j != 7) && (j != 12) && (j != 17) && (j != 22) && (j != 27))
+                        sh << robotConfiguration.getRn().getCoordinates().at(j) << " ";
+                    }
+
+
+                    if (r == 1){
+
+                        for (unsigned j = 0; j <  SE3Dim; j++) {
+                            r1 << robotConfiguration.getSE3().getCoordinates().at(j) << " ";
+                        }
+
+                        for (unsigned j = 0; j <  RnDim; j++) {
+                            r1 << robotConfiguration.getRn().getCoordinates().at(j) << " ";
+
+                        }
+                    }
+                    else{
+                        for (unsigned j = 0; j <  SE3Dim; j++) {
+                            r2 << robotConfiguration.getSE3().getCoordinates().at(j) << " ";
+                        }
+
+                        for (unsigned j = 0; j <  RnDim; j++) {
+                            r2 << robotConfiguration.getRn().getCoordinates().at(j) << " ";
+
+                        }
+
+                    }
+                }
+                sh<<std::endl;
+
+                if(i == setOfSamples.size()-1){
+                    r1<<std::endl;
+                    r1<<1;
+                    r1<<std::endl;
+                    r1<<1;
+                    r1<<std::endl;
+
+                }
+                else{
+                    r1<<std::endl;
+                    r1<<0;
+                    r1<<std::endl;
+                    r1<<0;
+                    r1<<std::endl;
+                }
+
+                r2<<std::endl;
+                r2<<0;
+                r2<<std::endl;
+                r2<<0;
+                r2<<std::endl;
+            }
+
+            std::string s(sh.str());
+            out << s;
+            out.close();
+
+            std::string s1(r1.str());
+            out1 << s1;
+            out1S<< s1;
+            out1.close();
+            out1S.close();
+
+            std::string s2(r2.str());
+            out2 << s2;
+            out2S << s2;
+            out2.close();
+            out2S.close();
+
+
+        }
+
+        return _solved;
+
+    }
 }

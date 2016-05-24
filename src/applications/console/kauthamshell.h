@@ -71,6 +71,8 @@ namespace Kautham {
         bool removeObstacle(unsigned index);
         bool attachObstacle2RobotLink(int robot, int link, int obs);
         bool detachObstacle(unsigned int obs);
+	
+    bool motionPlanner(std::vector <float> init, std::vector <float> goal, std::string root);
 
     private:
         void *memPtr_;
