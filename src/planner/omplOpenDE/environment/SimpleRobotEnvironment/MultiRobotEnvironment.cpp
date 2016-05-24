@@ -44,16 +44,16 @@ MultiRobotEnvironment::~MultiRobotEnvironment()
 //! this is the reimplementation of the virtual function of OpenDEEnvironment, that describe the number of parameter used to describe control input.
 unsigned int MultiRobotEnvironment::getControlDimension(void) const
 {
-    return 6;
+    return 4;
 }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
 *   which describe the control bounds,the bounding box to performe sampling control.
 */
 void MultiRobotEnvironment::getControlBounds(std::vector< double > &lower, std::vector< double > &upper) const
 {
-    lower.resize(6);
-    upper.resize(6);
-    for(int i=0; i < 6; i++)
+    lower.resize(4);
+    upper.resize(4);
+    for(int i=0; i < 4; i++)
     {
         lower[i]= -10;
         upper[i]= 10;
@@ -66,7 +66,7 @@ void MultiRobotEnvironment::applyControl (const double *control) const
 {
     dBodyAddForce(bodies[0], control[0], control[1],0.0);
     dBodyAddForce(bodies[1], control[2], control[3],0.0);
-    dBodyAddForce(bodies[2], control[4], control[5],0.0);
+    //dBodyAddForce(bodies[2], control[4], control[5],0.0);
 
    /* {
     const dReal *pos = dBodyGetPosition(bodies[0]);
@@ -138,8 +138,9 @@ MultiRobotStateSpace::~MultiRobotStateSpace(){}
 
 double MultiRobotStateSpace::distance(const ob::State *s1, const ob::State *s2) const
 {
+
     double distance = 0.0;
-    for(int i=0;i<3;i++)
+    for(int i=0;i<2;i++)
     {
         const double *p1 = s1->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(i);
         const double *p2 = s2->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(i);
@@ -166,17 +167,17 @@ MultiRobotStateProjectionEvaluator::MultiRobotStateProjectionEvaluator(const ob:
 
 unsigned int MultiRobotStateProjectionEvaluator::getDimension(void) const
 {
-    return 6;
+    return 4;
 }
 void MultiRobotStateProjectionEvaluator :: defaultCellSizes(void)
 {
-    cellSizes_.resize(6);
+    cellSizes_.resize(4);
     cellSizes_[0] = 1.0;
     cellSizes_[1] = 1.0;
     cellSizes_[2] = 1.0;
     cellSizes_[3] = 1.0;
-    cellSizes_[4] = 1.0;
-    cellSizes_[5] = 1.0;
+//    cellSizes_[4] = 1.0;
+//    cellSizes_[5] = 1.0;
 //    cellSizes_[6] = 1.0;
 //    cellSizes_[7] = 1.0;
 //    cellSizes_[8] = 1.0;
@@ -195,9 +196,9 @@ void MultiRobotStateProjectionEvaluator::project(const ob::State *state, ob::Euc
     projection[3] = pos1[1];
     //projection[5] = pos1[2];
 
-    const double *pos2 = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(2);
-    projection[4] = pos2[0];
-    projection[5] = pos2[1];
+//    const double *pos2 = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(2);
+//    projection[4] = pos2[0];
+//    projection[5] = pos2[1];
     //projection[8] = pos2[2];
 
 

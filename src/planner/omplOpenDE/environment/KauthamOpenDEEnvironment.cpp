@@ -123,7 +123,7 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
     ground = dCreatePlane(_OpenDEspace,0,0,1,0);
     geomname.insert(pair<dGeomID,std::string>(ground,"odeGround"));
 
-bool trimesh =true;
+bool trimesh =false;
     for (int i=0;i < (int(wkspace->getNumRobots())); i++)
     {
         for (unsigned int j=0;j< (wkspace->getRobot(i)->getNumLinks()); j++)
@@ -784,75 +784,79 @@ bool KauthamDEEnvironment::buildKinematicChain(KinematicChain* chain,
 void KauthamDEEnvironment::getPrimitiveShapes(Link* link, odinObject *obj,bool rotflag)
 {
     obj->mesh=false;
-    SoSeparator *model = (SoSeparator*)link->getCollisionModel(false)->getChild(1);
-    for (unsigned int j = 0; j < (unsigned int) model->getNumChildren(); j++)
-    {
+       SoSeparator *model = (SoSeparator*)link->getCollisionModel(false)->getChild(1);
+       double scale = link->getElement()->getScale();
+       for (unsigned int j = 0; j < (unsigned int) model->getNumChildren(); j++)
+       {
 
-        std::cout << (model->getChild(j)->getTypeId() == SoSeparator::getClassTypeId()) << std::endl;
-        SoSeparator *subModel =  (SoSeparator*)model->getChild(j);
-        std::cout << "numChildren " << subModel->getNumChildren() << std::endl;
-        for (unsigned int i = 0; i < (unsigned int)subModel->getNumChildren(); ++i) {
-            SoNode *node = subModel->getChild(i);
+           std::cout << (model->getChild(j)->getTypeId() == SoSeparator::getClassTypeId()) << std::endl;
+           SoSeparator *subModel =  (SoSeparator*)model->getChild(j);
+           std::cout << "numChildren " << subModel->getNumChildren() << std::endl;
+           for (unsigned int i = 0; i < (unsigned int)subModel->getNumChildren(); ++i) {
+               SoNode *node = subModel->getChild(i);
 
-            if (node->getTypeId() == SoTranslation::getClassTypeId())
-            {
-                SoTranslation *trans = (SoTranslation*)node;
-                const SbVec3f pose = trans->translation.getValue();
-                std::cout<<"SoSeperator Pos is "<<pose[0]<<" , "<<pose[1]<<" , "<<pose[2]<<std::endl;
-//                obj->position.push_back(pose[0]);
-//                obj->position.push_back(pose[1]);
-//                obj->position.push_back(pose[2]);
+               if (node->getTypeId() == SoTranslation::getClassTypeId())
+               {
+                   SoTranslation *trans = (SoTranslation*)node;
+                   const SbVec3f pose = trans->translation.getValue();
+                   std::cout<<"SoSeperator Pos is "<<pose[0]*scale<<" , "<<pose[1]*scale<<" , "<<pose[2]*scale<<std::endl;
+   //                obj->position.push_back(pose[0]*scale);
+   //                obj->position.push_back(pose[1]*scale);
+   //                obj->position.push_back(pose[2]*scale);
 
-            }
-            else if (node->getTypeId() == SoRotation::getClassTypeId())
-            {
-                if(rotflag)
-                {
-                SoRotation *rot = (SoRotation*)node;
-                const SbRotation &rotation = rot->rotation.getValue();
-                std::cout<<"SoSeperator Rot is "<<rotation[0]<<" , "<<rotation[1]<<" , "<<rotation[2]<<" , "<<rotation[3]<<std::endl;
-//                obj->orientation.push_back(rotation[0]);
-//                obj->orientation.push_back(rotation[1]);
-//                obj->orientation.push_back(rotation[2]);
-//                obj->orientation.push_back(rotation[3]);
-                rotflag= false;
-                }
+               }
+               else if (node->getTypeId() == SoRotation::getClassTypeId())
+               {
+                   if(rotflag)
+                   {
+                   SoRotation *rot = (SoRotation*)node;
+                   const SbRotation &rotation = rot->rotation.getValue();
+                   std::cout<<"SoSeperator Rot is "<<rotation[0]<<" , "<<rotation[1]<<" , "<<rotation[2]<<" , "<<rotation[3]<<std::endl;
+   //                obj->orientation.push_back(rotation[0]);
+   //                obj->orientation.push_back(rotation[1]);
+   //                obj->orientation.push_back(rotation[2]);
+   //                obj->orientation.push_back(rotation[3]);
+                   rotflag= false;
+                   }
 
-            }
-            else if (node->getTypeId() == SoCube::getClassTypeId()) {
-                SoCube *cube = (SoCube*)node;
-                std::cout<<"SoSeperator Cube Size "<<cube->width.getValue()<<" , "<<cube->height.getValue()<<" , "<<cube->depth.getValue()<<std::endl;
-                obj->bodydimension.push_back(cube->width.getValue());
-                obj->bodydimension.push_back(cube->height.getValue());
-                obj->bodydimension.push_back(cube->depth.getValue());
+               }
+               else if (node->getTypeId() == SoCube::getClassTypeId()) {
+                   SoCube *cube = (SoCube*)node;
+                   std::cout<<"SoSeperator Cube Size "<<cube->width.getValue()*scale<<" , "<<cube->height.getValue()*scale<<" , "<<cube->depth.getValue()*scale<<std::endl;
+                   obj->bodydimension.push_back(cube->width.getValue()*scale);
+                   obj->bodydimension.push_back(cube->height.getValue()*scale);
+                   obj->bodydimension.push_back(cube->depth.getValue()*scale);
+               }
+               else if (node->getTypeId() == SoSphere::getClassTypeId()) {
+                   SoSphere *sphere = (SoSphere*)node;
+                   obj->bodydimension.push_back( sphere->radius.getValue()*scale);
+                   std::cout<<"SoSeperator Sphere Size "<<sphere->radius.getValue()*scale<<std::endl;
+               }
+               else if (node->getTypeId()  == SoCylinder::getClassTypeId()) {
+                   SoCylinder *cylinder = (SoCylinder*)node;
+                   obj->bodydimension.push_back( cylinder->radius.getValue()*scale);
+                   obj->bodydimension.push_back( cylinder->height.getValue()*scale);
+                   std::cout<<"link length is  "<<cylinder->height.getValue()*scale<<std::endl;
+               }
+               else if (node->getTypeId()  == SoMaterial::getClassTypeId())
+               {
+                   //SoScale *scale = (SoScale*)node;
+                   SoMaterial *color=(SoMaterial*)node;
+                   SbColor col = color->diffuseColor[0];
+                   obj->color.push_back(col[0]);
+                   obj->color.push_back(col[1]);
+                   obj->color.push_back(col[2]);
 
-            }
-            else if (node->getTypeId() == SoSphere::getClassTypeId()) {
-                SoSphere *sphere = (SoSphere*)node;
-                obj->bodydimension.push_back( sphere->radius.getValue());
-                std::cout<<"SoSeperator Sphere Size "<<sphere->radius.getValue()<<std::endl;
-            }
-            else if (node->getTypeId()  == SoCylinder::getClassTypeId()) {
-                SoCylinder *cylinder = (SoCylinder*)node;
-                obj->bodydimension.push_back( cylinder->radius.getValue());
-                obj->bodydimension.push_back( cylinder->height.getValue());
+                   std::cout<<"RGB Value is  =============="<<col[0]<<" "<<col[1]<<" "<<col[2]<<std::endl;
 
-                std::cout<<"SoSeperator Cylinder Size "<<cylinder->radius.getValue()<<std::endl;
-            }
-            else if (node->getTypeId()  == SoScale::getClassTypeId())
-            {
-                //SoScale *scale = (SoScale*)node;
+               }
+               else
+                   std::cout<<" Type "<< node->getTypeId().getName()<<std::endl;
 
-                std::cout<<"Its Mesh Type"<<std::endl;
-
-            }
-            else
-                std::cout<<" Type "<< node->getTypeId().getName()<<std::endl;
-
-        }
+           }
 
 
-    }
+       }
 }
 
 void KauthamDEEnvironment::getTrimesh(SoSeparator *ivmodel, trimeshD* obj, double scale)
@@ -1160,8 +1164,8 @@ vector<KthReal> KauthamDEEnvironment::baseGetPos(Robot* robot)
     vector<KthReal> basePos;
     vector<KthReal> tmp;
 
-    RobConf* RobC = robot->getCurrentPos();
-    //RobConf* RobC=robot->getHomePos();
+    //RobConf* RobC = robot->getCurrentPos();
+    RobConf* RobC=robot->getHomePos();
     SE3Conf SE3 = RobC->getSE3();
     tmp=SE3.getPos();
     basePos.push_back(tmp[0]);

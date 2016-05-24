@@ -803,7 +803,7 @@ void KauthamDEPlanner::callDrawStuffViewer(void)
     fn.step = &simLoop;
     fn.command = &command;
     fn.stop = 0;
-    fn.path_to_textures = "/home/muhayyuddin/kautham/textures";
+    fn.path_to_textures = "/home/muhayyuddin/catkin_ws/src/kautham/textures";
 
     DISP.addSpace( envPtr.get()->collisionSpaces_[0], 0.9, 0.9, 0.5);
 
@@ -825,7 +825,8 @@ if(((KauthamDEEnvironment*)envPtr.get())->meshID.size()>1)
 }
 
     DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],0), 0.0, 0.9, 0.0);
-    for(unsigned int i=1;i<dSpaceGetNumGeoms(envPtr.get()->collisionSpaces_[0]);i++)
+    DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],1), 0.0, 0.9, 0.0);
+    for(unsigned int i=2;i<dSpaceGetNumGeoms(envPtr.get()->collisionSpaces_[0]);i++)
     DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],i), 0.9, 0.0, 0.0);
    // DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],2), 0.9, 0.9, 0.0);
    // DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],3), 0.9, 0.9, 0.9);
