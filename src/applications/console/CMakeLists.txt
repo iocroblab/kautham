@@ -1,3 +1,4 @@
+set(KAUTHAM_SRC ${KAUTHAM_SRC} kauthamshell.cpp)
 
 set(SRC_FILES benchmark.cpp
 		kauthamplanner_console.cpp
