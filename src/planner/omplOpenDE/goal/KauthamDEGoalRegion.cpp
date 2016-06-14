@@ -112,7 +112,7 @@ double KauthamDEGoalRegion::distanceGoal(const ob::State *st) const
 
     if(!onlyend)
     {
-       // for(int i=0; i < Kauthamodebodies.size(); i++)
+        for(int i=0; i < Kauthamodebodies.size(); i++)
         {
             const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
             const double *vel = st->as<oc::OpenDEStateSpace::StateType>()->getBodyLinearVelocity(0);

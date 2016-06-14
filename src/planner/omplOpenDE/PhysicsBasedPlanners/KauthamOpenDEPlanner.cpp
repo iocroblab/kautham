@@ -949,8 +949,9 @@ if(((KauthamDEEnvironment*)envPtr.get())->meshID.size()>1)
 
 }
 
-    DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[0], 0.0, 0.9, 0.9);
-    for(unsigned int i=1;i<dSpaceGetNumGeoms(envPtr.get()->collisionSpaces_[0]);i++)
+
+    //DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[0], 0.0, 0.9, 0.9);
+    for(unsigned int i=0;i<dSpaceGetNumGeoms(envPtr.get()->collisionSpaces_[0]);i++)
 
     {
         if(i<6)
@@ -965,6 +966,7 @@ if(((KauthamDEEnvironment*)envPtr.get())->meshID.size()>1)
         else
             DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.9, 0.1, 0.1);
     }
+
    // DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],3), 0.9, 0.9, 0.9);
 
 

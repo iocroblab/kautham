@@ -142,8 +142,10 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
     //dWorldStep (bodyworld,0.5);
    // dWorldSetQuickStepNumIterations (bodyworld,20);
 
+
 if(wkspace->getRobot(0)->getNumJoints()>1 && wkspace->getRobot(0)->getName()!="SimpleCar")
     trimesh=true;
+
     for (int i=0;i < (int(wkspace->getNumRobots())); i++)
     {
         for (unsigned int j=0;j< (wkspace->getRobot(i)->getNumLinks()); j++)
@@ -844,6 +846,7 @@ bool KauthamDEEnvironment::buildKinematicChain(KinematicChain* chain,
 void KauthamDEEnvironment::getPrimitiveShapes(Link* link, odinObject *obj,bool rotflag)
 {
     obj->mesh=false;
+
     SoSeparator *model = (SoSeparator*)link->getCollisionModel(false)->getChild(1);
     double scale = link->getElement()->getScale();
     for (unsigned int j = 0; j < (unsigned int) model->getNumChildren(); j++)
@@ -915,10 +918,10 @@ void KauthamDEEnvironment::getPrimitiveShapes(Link* link, odinObject *obj,bool r
             else
                 std::cout<<" Type "<< node->getTypeId().getName()<<std::endl;
 
-        }
 
+           }
 
-    }
+       }
 }
 
 void KauthamDEEnvironment::getTrimesh(SoSeparator *ivmodel, trimeshD* obj, double scale)
@@ -1228,7 +1231,7 @@ vector<KthReal> KauthamDEEnvironment::baseGetPos(Robot* robot)
     vector<KthReal> tmp;
 
     RobConf* RobC = robot->getCurrentPos();
-    //RobConf* RobC=robot->getHomePos();
+   // RobConf* RobC=robot->getHomePos();
     SE3Conf SE3 = RobC->getSE3();
     tmp=SE3.getPos();
     basePos.push_back(tmp[0]);
