@@ -52,7 +52,7 @@ namespace omplcplanner{
 // Constructor to pass all the bodies of the scene (workspace) and reading their information (position, orientation, vertices, etc ...)
 // Once filled chainMap worldCreate method is called.
 //! Constructor
-KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm): oc::OpenDEEnvironment()
+KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm,bool isKchain): oc::OpenDEEnvironment()
 {
 
    // ReadManipulationKnowledge();
@@ -65,11 +65,10 @@ KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed,
     _maxContacts=maxContacts;
     _minControlSteps=minControlsteps;
     _maxControlSteps=maxControlsteps;
-    _propagationStepSize=0.06;
+    _propagationStepSize=0.05;
     _erp=erp;
     _cfm=cfm;
-    tmp=0;
-    tmp2=0;
+   trimesh=false;
     for (unsigned int i=0; i < wkspace->getNumRobots(); i++)
     {
 
@@ -99,6 +98,28 @@ KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed,
     }
 
     createWorld(wkspace);
+
+
+
+    if(wkspace->getRobot(0)->getName()=="SimpleCar")
+    {
+        std::vector<double> defaulttorque;
+        defaulttorque.push_back(2);//+(1.5*0.7*9.8*1));
+        defaulttorque.push_back(2);//+(1.5*0.7*9.8*1));
+        defaulttorque.push_back(2);//+(1.5*0.7*9.8*1));
+        defaulttorque.push_back(2);//+(1.5*0.7*9.8*1));
+        mkinematics= new Manipulatorkinematics(defaulttorque);
+    }
+
+
+    if(wkspace->getRobot(0)->getNumJoints()>1 && wkspace->getRobot(0)->getName()!="SimpleCar")
+    {
+        std::vector<double> defaulttorque;
+        defaulttorque.push_back(10);
+        defaulttorque.push_back(10);
+        mkinematics= new Manipulatorkinematics(2,linklength,defaulttorque);
+
+    }
     chainMap.clear();
     stateBodiesmap_.clear();
 
@@ -119,11 +140,10 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
     dWorldSetCFM (bodyworld, 1e-5);
     dWorldSetERP (bodyworld, 0.8);
     //dWorldStep (bodyworld,0.5);
-    dWorldSetQuickStepNumIterations (bodyworld,20);
-    ground = dCreatePlane(_OpenDEspace,0,0,1,0);
-    geomname.insert(pair<dGeomID,std::string>(ground,"odeGround"));
+   // dWorldSetQuickStepNumIterations (bodyworld,20);
 
-bool trimesh =true;
+if(wkspace->getRobot(0)->getNumJoints()>1 && wkspace->getRobot(0)->getName()!="SimpleCar")
+    trimesh=true;
     for (int i=0;i < (int(wkspace->getNumRobots())); i++)
     {
         for (unsigned int j=0;j< (wkspace->getRobot(i)->getNumLinks()); j++)
@@ -141,7 +161,7 @@ bool trimesh =true;
                 const vector<double> bodyDimension=  chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].bodydimension;
 
                 double mass=chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].mass;
-                std::string name = wkspace->getRobot(i)->getName();
+                std::string name = (wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName());
 
                 odebody = makePrimitive(position,orientation,mass,bodyDimension,name);
                 stateBodiesmap_.insert(pair<string,dBodyID>(((wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())),odebody));
@@ -158,19 +178,15 @@ bool trimesh =true;
                 const vector<double> vertexes=chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].vertexes;
                 const vector<unsigned int> indexes = chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].indexes;
                 const vector<double> bodyDimension=chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].bodydimension;
-
+                const vector<float> color=chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].color;
                 double mass= wkspace->getRobot(i)->getLink(j)->getOde().inertial.mass;
-                std::string name1 = (wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName());
-                std::string name = wkspace->getRobot(i)->getName();
+                std::string name = (wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName());
+                std::string name1 = wkspace->getRobot(i)->getName();
                 //double mass=chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].mass;
                 // std::string name = Instknowledge->getBody()[0].type;
                 std::cout<<"Name of Rob Part: " <<name<<std::endl;
 
-                if(mass==0)
-                {
-                    mass=2;
-                }
-                odebody = makeTriMesh(position,orientation,vertexes,indexes,mass,name,bodyDimension);
+                odebody = makeTriMesh(position,orientation,vertexes,indexes,mass,name,bodyDimension, color);
                 stateBodiesmap_.insert(pair<string,dBodyID>(((wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())),odebody));
                 bodies.push_back(odebody);
 
@@ -196,6 +212,7 @@ bool trimesh =true;
                 const vector<double> vertexes=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes;
                 const vector<double> bodyDimension=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].bodydimension;
                 double mass=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].mass;
+
                 std::string name = wkspace->getObstacle(i)->getName();
 
                 odebody = makePrimitive(position,orientation,mass,bodyDimension,name);
@@ -213,6 +230,7 @@ bool trimesh =true;
                 const vector<double> vertexes=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes;
                 const vector<unsigned int> indexes = chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].indexes;
                 const vector<double> bodyDimension=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].bodydimension;
+                const vector<float> color=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].color;
 
                 //double mass=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].mass;
                 double mass=wkspace->getObstacle(i)->getLink(j)->getOde().inertial.mass;
@@ -228,7 +246,7 @@ bool trimesh =true;
 
                 // odebody = makeTriMesh(chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].position,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].orientation,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].indexes,chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].mass);
 
-                odebody = makeTriMesh(position,orientation,vertexes,indexes,mass,name,bodyDimension);
+                odebody = makeTriMesh(position,orientation,vertexes,indexes,mass,name,bodyDimension,color);
                 stateBodiesmap_.insert(pair<string,dBodyID>(((wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())),odebody));
                 std::cout<<"Obs body name"<<((wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName()))<<std::endl;
                 bodies.push_back(odebody);
@@ -246,8 +264,8 @@ if(wkspace->getRobot(0)->getName()=="SimpleCar")
             for (int i=0; i<4; i++)
             {
                 cJoint[i] = dJointCreateHinge2 (bodyworld,0);
-                dJointAttach (cJoint[i],bodies[1],bodies[i+2]);
-                const dReal *a = dBodyGetPosition (bodies[i+2]);
+                dJointAttach (cJoint[i],bodies[0],bodies[i+1]);
+                const dReal *a = dBodyGetPosition (bodies[i+1]);
                 dJointSetHinge2Anchor (cJoint[i],a[0],a[1],a[2]);
                 dJointSetHinge2Axis1 (cJoint[i],0,0,(i<2 ? 1 : -1));
                 dJointSetHinge2Axis2 (cJoint[i],0,1,0);
@@ -262,15 +280,31 @@ if(wkspace->getRobot(0)->getName()=="SimpleCar")
                 dJointSetHinge2Param (cJoint[i],dParamSuspensionERP,0.4);
                 dJointSetHinge2Param (cJoint[i],dParamSuspensionCFM,0.8);
             }
+            feedback1= new dJointFeedback;
+            feedback2= new dJointFeedback;
+            feedback3= new dJointFeedback;
+            feedback4= new dJointFeedback;
+            dJointSetFeedback(cJoint[0],feedback1);
+            dJointSetFeedback(cJoint[1],feedback2);
+            dJointSetFeedback(cJoint[2],feedback3);
+            dJointSetFeedback(cJoint[3],feedback4);
 
 }
     /////////////////////////////////////////////////////////////////////////////
-
+if(wkspace->getRobot(0)->getNumJoints()>1 && wkspace->getRobot(0)->getName()!="SimpleCar")
+{
     setjointsandmotors2bodies(stateBodiesmap_,chainMap,wkspace);
-    stateBodies_=fillstatebodies(stateBodiesmap_,wkspace);
-//    dJointID fixedjoint = dJointCreateFixed(bodyworld, 0);
-//    dJointAttach(fixedjoint, bodies[0], 0);
-//    dJointSetFixed(fixedjoint);
+
+    feedback1= new dJointFeedback;
+    feedback2= new dJointFeedback;
+    dJointSetFeedback(motor_.at("Chainbase_link+Chainlink1"),feedback1);
+    dJointSetFeedback(motor_.at("Chainlink1+Chainlink2"),feedback2);
+    dJointID fixedjoint = dJointCreateFixed(bodyworld, 0);
+    dJointAttach(fixedjoint, bodies[0], 0);
+    dJointSetFixed(fixedjoint);
+}
+stateBodies_=fillstatebodies(stateBodiesmap_,wkspace);
+
     // ////////////////////////////////////For Debuging ////////////////////////////
     std::cout<<"Total Bodies are "<<stateBodies_.size()<<std::endl;
 
@@ -278,25 +312,21 @@ if(wkspace->getRobot(0)->getName()=="SimpleCar")
     {
         const dReal *pos=  dBodyGetPosition(stateBodies_[i]);
         const dReal *rot= dBodyGetQuaternion(stateBodies_[i]);
+        std::cout<<"Q "<<wkspace->getObstacle(0)->getLink(0)->getElement()->getOrientation()[0]<<" , "
+                   <<wkspace->getObstacle(0)->getLink(0)->getElement()->getOrientation()[1]<<" , "
+                     <<wkspace->getObstacle(0)->getLink(0)->getElement()->getOrientation()[2]<<" , "
+                       <<wkspace->getObstacle(0)->getLink(0)->getElement()->getOrientation()[3]<<std::endl;
         std::cout<<"Position of Body "<<i+1<<" is " <<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<std::endl;
         std::cout<<"Orientation of Body "<<i+1<<" is " <<rot[0]<<" "<<rot[1]<<" "<<rot[2]<<" "<<rot[3]<<std::endl;
 
 
     }
+    ground = dCreatePlane(_OpenDEspace,0,0,1,0);
+    geomname.insert(pair<dGeomID,std::string>(ground,"odeGround"));
+    GeomID.push_back(ground);
 
-//    for(unsigned int i=0;i<_motor.size();i++)
-//    {
-//        dVector3 jo1;
-//       // dJointSetAMotorAngle(_motor[i],0,1.5);
-//       dReal ang= dJointGetAMotorAngle(_motor[i],0);
-//        dJointGetAMotorAxis(_motor[i],0,jo1);
-
-//        std::cout<<"motor Axis of rotation " <<jo1[0]<<" "<<jo1[1]<<" "<<jo1[2]<<std::endl;
-//        std::cout<<"motor Axis of rotation " <<ang<<std::endl;
-
-//    }
      SetPlanningParameters();
-    /////////////////////////////////////////////////////////////////////////////////////////
+
 
 }
 void KauthamDEEnvironment::ReadManipulationKnowledge()
@@ -410,7 +440,9 @@ string KauthamDEEnvironment::InstknowledgeInference(bodyInfo bodyinfo)
     Region region;
 
     std::cout<<"The name of body is "<<bodyinfo.bodyName<<std::endl;
-    if(bodyinfo.bodyName == "SphereDE"  )
+    if(bodyinfo.bodyName == "SphereDEbase" || bodyinfo.bodyName == "Chainbase_link"
+            || bodyinfo.bodyName == "Chainlink1" || bodyinfo.bodyName == "Chainlink2" || bodyinfo.bodyName=="SimpleCarbase_link"
+            ||bodyinfo.bodyName=="SimpleCarfront_left_wheel_link"||bodyinfo.bodyName=="SimpleCarfront_right_wheel_link"||bodyinfo.bodyName=="SimpleCarback_right_wheel_link"||bodyinfo.bodyName=="SimpleCarback_left_wheel_link")
     {
         rb.setMass(bodyinfo.mass);
 
@@ -420,9 +452,16 @@ string KauthamDEEnvironment::InstknowledgeInference(bodyInfo bodyinfo)
         std::cout<<"Rob Part Added"<<std::endl;
 
     }
-
+    else if(bodyinfo.bodyName == "Chaingripper"||bodyinfo.bodyName == "Chainfinger1"||bodyinfo.bodyName == "Chainfinger2")
+    {
+        rb.setMass(bodyinfo.mass);
+        rb.setRigidBodyType("tcp");
+        rb.setCollisionAllowed(true);
+        Instknowledge->addRigidBody(rb,bodyinfo.Geom);
+        std::cout<<"Rob Part Added"<<std::endl;
+    }
     else
-        if(bodyinfo.bodyName == "cubeDECoManipulatable" )/* || rigidbodyName == "RedCubeDE1"
+        if(bodyinfo.bodyName == "cubeDECoManipulatable")/* || rigidbodyName == "RedCubeDE1"
                                                     || rigidbodyName == "RedCubeDE3"
                                                     || rigidbodyName == "RedCubeDE4")*/
         {
@@ -446,7 +485,7 @@ string KauthamDEEnvironment::InstknowledgeInference(bodyInfo bodyinfo)
                     rb.setManipulationRegion(region);
 
                 }
-                if(bodyinfo.regionDir[i]=="y" || bodyinfo.regionDir[i]=="Y")
+                //if(bodyinfo.regionDir[i]=="y" || bodyinfo.regionDir[i]=="Y")
                 {
                     region.x_min=pos[0]-bodyinfo.dimBody[0]/2;
                     region.y_min=pos[1]+bodyinfo.dimBody[1]/2;
@@ -468,7 +507,7 @@ string KauthamDEEnvironment::InstknowledgeInference(bodyInfo bodyinfo)
                     rb.setManipulationRegion(region);
 
                 }
-                if(bodyinfo.regionDir[i]=="-y" || bodyinfo.regionDir[i]=="-Y")
+                //if(bodyinfo.regionDir[i]=="-y" || bodyinfo.regionDir[i]=="-Y")
                 {
                     region.x_min=pos[0]-bodyinfo.dimBody[0]/2;
                     region.y_min=pos[1]-bodyinfo.dimBody[1]/2-bodyinfo.dimRegion[1];
@@ -528,17 +567,17 @@ string KauthamDEEnvironment::InstknowledgeInference(bodyInfo bodyinfo)
                     {
                     case 1:
                         //sphere todo:
-                        bodyinfo.dimBody[0]=bodyinfo.dimBody[0]*3;
+                        bodyinfo.dimBody[0]=bodyinfo.dimBody[0]*2;
                         break;
                     case 2:
                         //cylinder todo:
-                        bodyinfo.dimBody[0]=bodyinfo.dimBody[0]*3;
-                        bodyinfo.dimBody[1]=bodyinfo.dimBody[1]*3;
+                        bodyinfo.dimBody[0]=bodyinfo.dimBody[0]*2;
+                        bodyinfo.dimBody[1]=bodyinfo.dimBody[1]*2;
                         break;
                     case 3:
                         //to make the manipulation regon around the cube with the size
-                        double rx=bodyinfo.dimBody[0]*3;
-                        double ry=bodyinfo.dimBody[1]*3;
+                        double rx=bodyinfo.dimBody[0]*2;
+                        double ry=bodyinfo.dimBody[1]*2;
                         //bodyinfo.dimBody[2]=bodyinfo.dimBody[2]*3;
                         double x=rx/2;
                         double y=ry/2;
@@ -551,11 +590,16 @@ string KauthamDEEnvironment::InstknowledgeInference(bodyInfo bodyinfo)
                         region.setRegionType("freeR");
                         //P2[2]=P1[2]+dim[2];
                         rb.setManipulationRegion(region);
+                        //std::cout<<"Body name is: "<<bodyinfo.bodyName<<std::endl;
+//                        std::cout<<"Xmin and xMax are: "<<region.x_min<<" , "<<region.x_max<<std::endl;
+//                        std::cout<<"ymin and ymax are: "<<region.y_min<<" , "<<region.y_max<<std::endl;
                         break;
 
                     }
                     rb.setMass(bodyinfo.mass);
                     rb.setRigidBodyType("freeManipulatable");
+                    std::cout<<"Body name is: "<<bodyinfo.bodyName<<" Type is :"<< rb.getRigidBodyType()<<std::endl;
+
                     rb.setDim(bodyinfo.dimBody);
                     rb.setCollisionAllowed(true);
                     Instknowledge->addRigidBody(rb,bodyinfo.Geom);
@@ -567,7 +611,7 @@ string KauthamDEEnvironment::InstknowledgeInference(bodyInfo bodyinfo)
                     if(bodyinfo.bodyName == "RedCubeDE1"||bodyinfo.bodyName == "RedCubeDE2"||bodyinfo.bodyName == "RedCubeDE3"||bodyinfo.bodyName == "RedCubeDE4"||bodyinfo.bodyName == "RedCubeDE5"||bodyinfo.bodyName == "RedCubeDE6"||bodyinfo.bodyName == "RedCubeDE7"||bodyinfo.bodyName == "RedCubeDE8")
                     {
                         rb.setMass(bodyinfo.mass);
-                        rb.setRigidBodyType("freeManipulatable");
+                        rb.setRigidBodyType("fixed");
                         rb.setCollisionAllowed(true);
                         rb.setDim(bodyinfo.dimBody);
                         Instknowledge->addRigidBody(rb,bodyinfo.Geom);
@@ -594,12 +638,42 @@ string KauthamDEEnvironment::InstknowledgeInference(bodyInfo bodyinfo)
                                 rb.setCollisionAllowed(false);
                                 Instknowledge->addRigidBody(rb,bodyinfo.Geom);
                             }
+                            else
+                                if(bodyinfo.bodyName == "box1"||bodyinfo.bodyName == "box2"||bodyinfo.bodyName == "box3"||bodyinfo.bodyName == "box5"||bodyinfo.bodyName == "box5")
+                                {
+                                    const dReal* pose = dBodyGetPosition(bodyinfo.body);
+                                    rb.setMass(bodyinfo.mass);
+                                    rb.setRigidBodyType("freeManipulatable");
+                                    rb.setCollisionAllowed(true);
+                                    rb.setDim(bodyinfo.dimBody);
+                                    //to make the manipulation regon around the box with the size
+                                    double rx=bodyinfo.dimBody[0]*3;
+                                    double ry=bodyinfo.dimBody[1]*3;
+                                    //bodyinfo.dimBody[2]=bodyinfo.dimBody[2]*3;
+                                    double x=rx/2;
+                                    double y=ry/2;
+                                    //Points of daigonal
+                                    region.x_min=pose[0]-x;
+                                    region.y_min=pose[1]-y;
+                                    //P1[2]=pose[2];
+                                    region.x_max=region.x_min+rx;
+                                    region.y_max=region.y_min+ry;
+                                    region.setRegionType("freeR");
+                                    //P2[2]=P1[2]+dim[2];
+
+                                    rb.setManipulationRegion(region);
+                                    Instknowledge->addRigidBody(rb,bodyinfo.Geom);
+
+
+                                }
 
                         else
                         {
                             rb.setMass(bodyinfo.mass);
                             rb.setDim(bodyinfo.dimBody);
                             rb.setRigidBodyType("fixed");
+                            std::cout<<"Body name is: "<<bodyinfo.bodyName<<" Type is :"<< rb.getRigidBodyType()<<std::endl;
+
                             rb.setCollisionAllowed(false);
                             Instknowledge->addRigidBody(rb,bodyinfo.Geom);
                         }
@@ -640,32 +714,18 @@ void KauthamDEEnvironment::setjointsandmotors2bodies(map<string, dBodyID> stateB
        {
            dBodyID body1 = stateBodiesmap_[it->second.target1];
            dBodyID body2 = stateBodiesmap_[it->second.target2];
+           std::cout<<"Target is "<<it->second.target1+it->second.target2<<std::endl;
            dJointID joint = makeJoint(body1,body2,it->second.type,it->second.position, chainMap[wkspace->getRobot(0)->getName()].motors[it->first].fmax,chainMap[wkspace->getRobot(0)->getName()].joints[it->first].hiStop,chainMap[wkspace->getRobot(0)->getName()].joints[it->first].loStop,chainMap[wkspace->getRobot(0)->getName()].joints[it->first].value);
            //makeMotor(body1,body2,it->second.type,it->second.position,chainMap[wkspace->getRobot(0)->getName()].motors[it->first].fmax);
            //dJointID motorjoint = makeMotor(body1,body2,chainMap[wkspace->getRobot(0)->getName()].motors[it->first].type,chainMap[wkspace->getRobot(0)->getName()].motors[it->first].pos);
-           addMotor2Joint(joint,chainMap[wkspace->getRobot(0)->getName()].motors[it->first].fmax, it->second.value, chainMap[wkspace->getRobot(0)->getName()].joints[it->first].hiStop,chainMap[wkspace->getRobot(0)->getName()].joints[it->first].loStop);
+           dJointID motor = addMotor2Joint(joint,chainMap[wkspace->getRobot(0)->getName()].motors[it->first].fmax, it->second.value, chainMap[wkspace->getRobot(0)->getName()].joints[it->first].hiStop,chainMap[wkspace->getRobot(0)->getName()].joints[it->first].loStop);
            _Joint.push_back(joint);
+           joint_.insert(pair<std::string,dJointID>(it->second.target1+"+"+it->second.target2,joint));
+           motor_.insert(pair<std::string,dJointID>(it->second.target1+"+"+it->second.target2,motor));
+
 
        }
 
-//    for (map<string,Joint>::iterator it = chainMap[wkspace->getRobot(0)->getName()].joints.begin(); it!=chainMap[wkspace->getRobot(0)->getName()].joints.end(); ++it)
-//    {
-//        dBodyID body1 = stateBodiesmap_[it->second.target1];
-//        dBodyID body2 = stateBodiesmap_[it->second.target2];
-//        dJointID joint = makeJoint(body1,body2,it->second.type,it->second.position, chainMap[wkspace->getRobot(0)->getName()].motors[it->first].fmax,chainMap[wkspace->getRobot(0)->getName()].joints[it->first].hiStop,chainMap[wkspace->getRobot(0)->getName()].joints[it->first].loStop);
-
-//        //makeMotor(body1,body2,it->second.type,it->second.position,chainMap[wkspace->getRobot(0)->getName()].motors[it->first].fmax);
-//        // dJointID motorjoint = makeMotor(body1,body2,chainMap[wkspace->getRobot(0)->getName()].motors[it->first].type,chainMap[wkspace->getRobot(0)->getName()].motors[it->first].pos);
-//        //addMotor2Joint(joint,axis, chainMap[wkspace->getRobot(0)->getName()].motors[it->first].fmax);
-//        _Joint.push_back(joint);
-
-//    }
-    /*for(map<string,Motor>::iterator it = chainMap[wkspace->getRobot(0)->getName()].motors.begin(); it!=chainMap[wkspace->getRobot(0)->getName()].motors.end(); ++it)
-    {
-        //dBodyID body3 = stateBodiesmap_[chainMap[wkspace->getRobot(0)->getName()].joints[it->second.targetjoint].target1];
-       // dBodyID body4 = chainMap[wkspace->getRobot(0)->getName()].joints[it->second.targetjoint].target2;
-        makeMotor(stateBodiesmap_[chainMap[wkspace->getRobot(0)->getName()].joints[it->second.targetJoint].target1],stateBodiesmap_[chainMap[wkspace->getRobot(0)->getName()].joints[it->second.targetJoint].target2],0,chainMap[wkspace->getRobot(0)->getName()].joints[it->second.targetJoint].position,it->second.fmax);
-    }*/
 
 }
 
@@ -785,6 +845,7 @@ void KauthamDEEnvironment::getPrimitiveShapes(Link* link, odinObject *obj,bool r
 {
     obj->mesh=false;
     SoSeparator *model = (SoSeparator*)link->getCollisionModel(false)->getChild(1);
+    double scale = link->getElement()->getScale();
     for (unsigned int j = 0; j < (unsigned int) model->getNumChildren(); j++)
     {
 
@@ -798,10 +859,10 @@ void KauthamDEEnvironment::getPrimitiveShapes(Link* link, odinObject *obj,bool r
             {
                 SoTranslation *trans = (SoTranslation*)node;
                 const SbVec3f pose = trans->translation.getValue();
-                std::cout<<"SoSeperator Pos is "<<pose[0]<<" , "<<pose[1]<<" , "<<pose[2]<<std::endl;
-//                obj->position.push_back(pose[0]);
-//                obj->position.push_back(pose[1]);
-//                obj->position.push_back(pose[2]);
+                std::cout<<"SoSeperator Pos is "<<pose[0]*scale<<" , "<<pose[1]*scale<<" , "<<pose[2]*scale<<std::endl;
+//                obj->position.push_back(pose[0]*scale);
+//                obj->position.push_back(pose[1]*scale);
+//                obj->position.push_back(pose[2]*scale);
 
             }
             else if (node->getTypeId() == SoRotation::getClassTypeId())
@@ -821,29 +882,34 @@ void KauthamDEEnvironment::getPrimitiveShapes(Link* link, odinObject *obj,bool r
             }
             else if (node->getTypeId() == SoCube::getClassTypeId()) {
                 SoCube *cube = (SoCube*)node;
-                std::cout<<"SoSeperator Cube Size "<<cube->width.getValue()<<" , "<<cube->height.getValue()<<" , "<<cube->depth.getValue()<<std::endl;
-                obj->bodydimension.push_back(cube->width.getValue());
-                obj->bodydimension.push_back(cube->height.getValue());
-                obj->bodydimension.push_back(cube->depth.getValue());
+                std::cout<<"SoSeperator Cube Size "<<cube->width.getValue()*scale<<" , "<<cube->height.getValue()*scale<<" , "<<cube->depth.getValue()*scale<<std::endl;
+                obj->bodydimension.push_back(cube->width.getValue()*scale);
+                obj->bodydimension.push_back(cube->height.getValue()*scale);
+                obj->bodydimension.push_back(cube->depth.getValue()*scale);
 
             }
             else if (node->getTypeId() == SoSphere::getClassTypeId()) {
                 SoSphere *sphere = (SoSphere*)node;
-                obj->bodydimension.push_back( sphere->radius.getValue());
-                std::cout<<"SoSeperator Sphere Size "<<sphere->radius.getValue()<<std::endl;
+                obj->bodydimension.push_back( sphere->radius.getValue()*scale);
+                std::cout<<"SoSeperator Sphere Size "<<sphere->radius.getValue()*scale<<std::endl;
             }
             else if (node->getTypeId()  == SoCylinder::getClassTypeId()) {
                 SoCylinder *cylinder = (SoCylinder*)node;
-                obj->bodydimension.push_back( cylinder->radius.getValue());
-                obj->bodydimension.push_back( cylinder->height.getValue());
-
-                std::cout<<"SoSeperator Cylinder Size "<<cylinder->radius.getValue()<<std::endl;
+                obj->bodydimension.push_back( cylinder->radius.getValue()*scale);
+                obj->bodydimension.push_back( cylinder->height.getValue()*scale);
+                linklength.push_back(cylinder->height.getValue()*scale);
+                std::cout<<"link length is  "<<cylinder->height.getValue()*scale<<std::endl;
             }
-            else if (node->getTypeId()  == SoScale::getClassTypeId())
+            else if (node->getTypeId()  == SoMaterial::getClassTypeId())
             {
                 //SoScale *scale = (SoScale*)node;
+                SoMaterial *color=(SoMaterial*)node;
+                SbColor col = color->diffuseColor[0];
+                obj->color.push_back(col[0]);
+                obj->color.push_back(col[1]);
+                obj->color.push_back(col[2]);
 
-                std::cout<<"Its Mesh Type"<<std::endl;
+                std::cout<<"RGB Value is  =============="<<col[0]<<" "<<col[1]<<" "<<col[2]<<std::endl;
 
             }
             else
@@ -921,7 +987,7 @@ void KauthamDEEnvironment::getTrimesh(SoSeparator *ivmodel, odinObject* obj, dou
             obj->indexes.push_back(count++);
         }
     }
-    searchColor(ivmodel, obj);
+    //searchColor(ivmodel, obj);
 
 }
 
@@ -1040,6 +1106,7 @@ bool KauthamDEEnvironment::getMotion(KauthamDEEnvironment::KinematicChain* chain
     if (!link->getMovable())
     {
         obj->fixed = true;
+
         return true;
     }
     else
@@ -1259,8 +1326,8 @@ dBodyID KauthamDEEnvironment::makePrimitive(const vector<double>& position, cons
     std::vector<double> dimR;
     std::vector<string> rigionDir;
     rigionDir.push_back("x");
-    dimR.push_back(20);
-    dimR.push_back(20);
+    dimR.push_back(4);
+    dimR.push_back(4);
 
     bodyInfo kb;
     kb.bodyName=name;
@@ -1339,7 +1406,7 @@ void KauthamDEEnvironment::makeGeomTrimesh(const string name, const vector<doubl
 }
 
 dBodyID KauthamDEEnvironment::makeTriMesh(vector<double> position, vector<double> orientation,
-                                          vector<double> vertexes, vector<unsigned int> indexes, double mass, string name, std::vector<double> bodydim)
+                                          vector<double> vertexes, vector<unsigned int> indexes, double mass, string name, std::vector<double> bodydim, std::vector<float> color)
 {
     Tmesh MeSh;
     dMass buildingMass;
@@ -1366,6 +1433,7 @@ dBodyID KauthamDEEnvironment::makeTriMesh(vector<double> position, vector<double
     dGeomSetData(geometry, data);
     MeSh.indexSize=indexes.size();
     MeSh.meshD=data;
+    MeSh.color=color;
     meshID.push_back(MeSh);
     dMassSetTrimeshTotal(&buildingMass, mass, geometry);
     std::cout<<"Mass is  "<<buildingMass.mass<<std::endl;
@@ -1386,9 +1454,11 @@ dBodyID KauthamDEEnvironment::makeTriMesh(vector<double> position, vector<double
 
     std::vector<double> dimR;
     std::vector<string> rigionDir;
-    rigionDir.push_back("x");
-    dimR.push_back(20);
-    dimR.push_back(20);
+    rigionDir.push_back("y");
+    rigionDir.push_back("-y");
+
+    dimR.push_back(3);
+    dimR.push_back(3);
 
     bodyInfo kb;
     kb.bodyName=name;
@@ -1406,7 +1476,6 @@ dBodyID KauthamDEEnvironment::makeTriMesh(vector<double> position, vector<double
     //string typ=InferenceProcess(name,body,geometry);
 
     //geomname.insert(pair<dGeomID,std::string>(geometry,typ));
-    GeomID.push_back(geometry);
     return body;
 }
 /*dJointID KauthamDEEnvironment::makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector<double>& params)
@@ -1482,7 +1551,7 @@ dBodyID KauthamDEEnvironment::makeTriMesh(vector<double> position, vector<double
 dJointID KauthamDEEnvironment::makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector<double>& params,vector<double>& maxForces,const double hiStop, const double LoStop,const double value)
 {
     KthReal min_Threshold = 0.800;
-    KthReal max_Threshold = 1.199;
+    KthReal max_Threshold = 1.2;
     std::vector<int> rotation_Axis;
     rotation_Axis.resize(3);
     dJointID joint;
@@ -1495,19 +1564,19 @@ dJointID KauthamDEEnvironment::makeJoint(const dBodyID body1, const dBodyID body
                      joint = dJointCreateHinge(bodyworld, 0);
                      dJointAttach(joint, body1, body2);
                     std::cout<<"ODE Joint Anchor is :"<<bodyDim[body2][2]/2<<std::endl;
-                     dJointSetHingeAnchor (joint, params[0], params[1], (params[2]));//-bodyDim[body2][2]/2));
+                     dJointSetHingeAnchor (joint, params[0], params[1], params[2]);//-bodyDim[body2][2]/2));
                      dVector3 result;
                      dJointGetHingeAnchor(joint,result);
                      rotation_Axis[0]=((params[3]>min_Threshold && params[3]<max_Threshold)? 1:0);
                      rotation_Axis[1]=((params[4]>min_Threshold && params[4]<max_Threshold)? 1:0);
                      rotation_Axis[2]=((params[5]>min_Threshold && params[5]<max_Threshold)? 1:0);
                      //dJointSetHingeAxis (joint, rotation_Axis[0],rotation_Axis[1],rotation_Axis[2]);
-                     dJointSetHingeAxis (joint, params[3], params[4], params[5]);
+                     dJointSetHingeAxis (joint, params[3],params[4],params[5]);
                      dJointSetHingeParam (joint, dParamHiStop, hiStop);
                      dJointSetHingeParam (joint, dParamLoStop, LoStop);
 
                      std::cout<<"Joint Anchor: "<<result[0]<<" , "<< result[1]<<" , "<<result[2]<<std::endl;
-                     std::cout<<"Joint Axis of rotation : "<<params[0]<<" , "<< params[1]<<" , "<<params[2]<<std::endl;
+                     std::cout<<"*****Joint Axis of rotation : "<<params[3]<<" , "<< params[4]<<" , "<<params[5]<<std::endl;
                      std::cout<<"Joint lower and uper limits are : "<<LoStop<<" , "<< hiStop<<std::endl;
 
 
@@ -1521,62 +1590,13 @@ dJointID KauthamDEEnvironment::makeJoint(const dBodyID body1, const dBodyID body
              }
       return joint;
 
-//    const dReal *a = dBodyGetPosition(body2);
-//    dReal x = 0.0;
-//    dReal y = 0.0;
-//    dReal z = 1.0;
-//    dJointID joint;
-//    KthReal min_Threshold = 0.899;
-//    KthReal max_Threshold = 1.199;
-//    std::vector<int> rotation_Axis;
-//    rotation_Axis.resize(3);
-//    switch (type)
-//    {
-//    case 1:
-//        joint = dJointCreateHinge(bodyworld, 0);
-//        dJointAttach(joint, body1, body2);
-//        dJointSetHingeAnchor (joint,a[0],a[1],a[2]);
-//        //dJointSetHingeAnchor (joint, params[0],params[1],params[2]);
 
-//        rotation_Axis[0]=((params[3]>min_Threshold && params[3]<max_Threshold)? 1:0);
-//        rotation_Axis[1]=((params[4]>min_Threshold && params[4]<max_Threshold)? 1:0);
-//        rotation_Axis[2]=((params[5]>min_Threshold && params[5]<max_Threshold)? 1:0);
-
-//        //dJointSetHingeAxis (joint, rotation_Axis[0],rotation_Axis[1],rotation_Axis[2]);
-
-//        dJointSetHingeAxis (joint, x,y,z);
-//        dJointSetHingeParam (joint, dParamHiStop, hiStop);
-//        dJointSetHingeParam (joint, dParamLoStop, LoStop);
-
-
-//        dVector3 t;
-//        dJointGetHingeAxis(joint, t);
-//        std::cout<<"Hing Param Anchor is    : "<<params[0]<<" "<<params[1]<<" "<<params[2]<<std::endl;
-//        std::cout<<"Hing Param axis of rotation  :"<<rotation_Axis[0]<<" "<<rotation_Axis[1]<<" "<<rotation_Axis[2]<<std::endl;
-//        std::cout<<"axis of rotation t  :"<<t[0]<<" "<<t[1]<<" "<<t[2]<<std::endl;
-
-//        break;
-//    case 2:
-//        joint = dJointCreateSlider(bodyworld, 0);
-//        dJointAttach(joint, body1, body2);
-//        dJointSetSliderAxis(joint, params[0], params[1], params[2]);
-//        break;
-
-//    }
-//    vector<double> axisVec;
-//    axisVec.push_back(rotation_Axis[0]);
-//    axisVec.push_back(rotation_Axis[1]);
-//    axisVec.push_back(rotation_Axis[2]);
-//    makeMotor(body1,body2,0,axisVec,maxForces, hiStop,LoStop);
-
-//    //addMotor2Joint(joint,axisVec,maxForces);
-//    return joint;
 }
 
 
 
 
-void KauthamDEEnvironment::addMotor2Joint(dJointID joint,  vector<double>& maxForces,const double value, const double hiStop, const double LoStop)
+dJointID KauthamDEEnvironment::addMotor2Joint(dJointID joint,  vector<double>& maxForces,const double value, const double hiStop, const double LoStop)
 {
     dVector3 axis;
     dBodyID body1 = dJointGetBody(joint, 0);
@@ -1610,11 +1630,11 @@ void KauthamDEEnvironment::addMotor2Joint(dJointID joint,  vector<double>& maxFo
 
     //addMotor(findBodyName(body1), findBodyName(body2), type, axisVec, maxForces, set, value, id);
   //  makeMotor(body1,body2,type,axisVec,maxForces);
-    makeMotor(body1,body2,type,axisVec,maxForces, hiStop,LoStop,value);
+  return  makeMotor(body1,body2,type,axisVec,maxForces, hiStop,LoStop,value);
 
 
 }
-void KauthamDEEnvironment::makeMotor(dBodyID body1,dBodyID body2,const unsigned int type,
+dJointID KauthamDEEnvironment::makeMotor(dBodyID body1,dBodyID body2,const unsigned int type,
                                      const vector< double >& axes,const vector< double >& fmax, const double hiStop, const double LoStop, const double value )
 {
 
@@ -1624,6 +1644,7 @@ void KauthamDEEnvironment::makeMotor(dBodyID body1,dBodyID body2,const unsigned 
          {
              case 0:
              {
+
                  motor = dJointCreateAMotor(bodyworld, 0);
                  //motor = dJointCreateAMotor(_world, 0);
                  dJointAttach(motor, body1, body2);
@@ -1692,73 +1713,9 @@ void KauthamDEEnvironment::makeMotor(dBodyID body1,dBodyID body2,const unsigned 
 
 
 
-//    dJointID motor;
-//    int numAxes = (int)(axes.size()/3);
-
-//    switch (type)
-//    {
-//    case 0:
-//    {
-//        motor = dJointCreateAMotor(bodyworld, 0);
-//        dJointAttach(motor, body1, body2);
-//        dJointSetAMotorNumAxes(motor, numAxes);
-//        dJointSetAMotorAxis(motor, 0, 1, axes[0], axes[1], axes[2]);
-//        //dJointSetAMotorAxis(motor, 0, 1, 0.0,0.0,1.0);
-
-
-//        dJointSetAMotorParam(mm,dParamFMax,fmax);
-
-//        //dJointSetAMotorParam(motor, dParamFMax, dInfinity);
-//        dJointSetAMotorParam(motor, dParamVel, 0);
-
-//        if (numAxes > 1)
-//        {
-//            dJointSetAMotorAxis(motor, 1, 1, axes[3], axes[4], axes[5]);
-//            dJointSetAMotorParam(motor, dParamFMax2, fmax[1]);
-//            dJointSetAMotorParam(motor, dParamVel2, 0);
-//            if (numAxes > 2)
-//            {
-//                dJointSetAMotorAxis(motor, 2, 1, axes[6], axes[7], axes[8]);
-//                dJointSetAMotorParam(motor, dParamFMax3, fmax[2]);
-//                dJointSetAMotorParam(motor, dParamVel3, 0);
-//            }
-//        }
-//    }
-
-//        break;
-//    case 1:
-//    {
-//        motor = dJointCreateLMotor(bodyworld, 0);
-//        dJointAttach(motor, body1, body2);
-//        dJointSetLMotorNumAxes(motor, numAxes);
-//        dJointSetLMotorAxis(motor, 0, 1, axes[0], axes[1], axes[2]);
-//        dJointSetLMotorParam(motor, dParamFMax, fmax[0]);
-//        dJointSetLMotorParam(motor, dParamVel, 0);
-//        if (numAxes > 6)
-//        {
-//            cout << "Setting second axis\n";
-//            dJointSetLMotorAxis(motor, 1, 1, axes[3], axes[4], axes[5]);
-//            dJointSetLMotorParam(motor, dParamFMax, fmax[1]);
-//            dJointSetLMotorParam(motor, dParamVel2, 0);
-//            cout << "Second axis set\n";
-//            if (numAxes > 11)
-//            {
-//                cout << "Setting third axis\n";
-//                dJointSetLMotorAxis(motor, 2, 1, axes[6], axes[7], axes[8]);
-//                dJointSetLMotorParam(motor, dParamFMax, fmax[2]);
-//                dJointSetLMotorParam(motor, dParamVel3, 0);
-//            }
-//            cout << "Third axis set\n";
-//        }
-//    }
-//        break;
-//    default:
-//        motor = NULL;
-
-//    }
-
     _motor.push_back(motor);
 
+return motor;
 }
 
 }

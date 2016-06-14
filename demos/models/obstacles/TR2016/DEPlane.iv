@@ -6,8 +6,8 @@ Separator {
     }
 
     Cube {
-     width 998.0
-     height 998.0
+     width 298.0
+     height 298.0
      depth 2.0
     }
 }

@@ -65,7 +65,7 @@ namespace omplcplanner{
      public:
      std::vector<double> *configuration;
 
-     PlanarChainEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
+     PlanarChainEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm,bool isKchain);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
      ~PlanarChainEnvironment(void);
      virtual unsigned int getControlDimension(void) const;//!< describe the number of parameter used to describe control input.
      virtual void getControlBounds (std::vector< double > &lower, std::vector< double > &upper) const;//!< describe the control bounds, minimum and maximum control range.
@@ -95,8 +95,7 @@ public:
     ~PlanarChainStateSpace();
     virtual double distance(const ob::State *s1, const ob::State *s2) const; //!< Define the method to compute the distance.
     virtual void registerProjections(void); //!< This function register the projetions for state space.
-    virtual void readState(ob::State *state) const;
-    virtual void writeState(ob::State *state) const;
+
 
 };
 

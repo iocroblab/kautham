@@ -120,11 +120,16 @@ static void simLoop (int /*pause*/)
     boost::this_thread::sleep(d);
 }
 
-static void playPath(oc::OpenDESimpleSetup *ss)
+static void playPath(oc::OpenDESimpleSetup *ss, std::string robot)
 {
     while (1)
     {
-        ss->playSolutionPath(1.0);
+        if(robot=="SimpleCar")
+        ss->playSolutionPath(0.1);
+        else
+            ss->playSolutionPath(1);
+
+
         static ompl::time::duration d = ompl::time::seconds(1);
         boost::this_thread::sleep(d);
     }
@@ -144,7 +149,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     _maxspeed = 5;
     _onlyend = false;
     _planningTime=60;
-    _propagationStepSize=0.05;
+    _propagationStepSize=0.07;
     _maxContacts=3;
     _minControlSteps=10;
     _maxControlSteps=50;
@@ -271,15 +276,12 @@ bool KauthamDEPlanner::trySolve(void)
             std::vector<ob::State*> &States0 =ss->getSolutionPath().getStates();
             std::vector<oc::Control*> &Control0= ss->getSolutionPath().getControls();
             std::vector<double> &Duration0= ss->getSolutionPath().getControlDurations();
-
             sstat.substates =States0;
             sstat.control =Control0;
             sstat.duration =Duration0;
             sStates.push_back(sstat);
         }
-        //ss->playSolutionPath(0.5);
 
-        callDrawStuffViewer();
     }
     if(PROBTYPE=="MULTIQUERY")
     {
@@ -334,6 +336,22 @@ bool KauthamDEPlanner::trySolve(void)
 
     if (_solved)
     {
+        callDrawStuffViewer();
+
+    //ss->playSolutionPath(1.0);
+        ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setPlanningPhase(true);
+        const std::vector<Configuration> conf=((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->getJointConfiguraion();
+        const std::vector<Configuration> qdot=((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->getJointVelocities();
+        const std::vector<Configuration> torque=((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->getJointTorque();
+
+        for(unsigned int i=0;i<conf.size();i++)
+        {
+            std::cout<<"control are : [ "<<conf[i].q[0]<<" , "<<conf[i].q[1]<<" ]"<<std::endl;
+            std::cout<<"Velocity is :      [ "<<qdot[i].q[0]<<" , "<<qdot[i].q[1]<<" ]"<<std::endl;
+            std::cout<<"Torque is :        [ "<<torque[i].q[0]<<" , "<<torque[i].q[1]<<" ]"<<std::endl;
+
+
+        }
         _path.clear();
         clearSimulationPath();
         Sample *Robsmp;
@@ -343,16 +361,42 @@ bool KauthamDEPlanner::trySolve(void)
             std::vector<ob::State*> &states = sStates[l].substates;
             std::vector<oc::Control*> &control= sStates[l].control;
             std::vector<double> &duration=sStates[l].duration;
-            std::vector<float> ang;
+            std::cout<<"Propagation Step is :"<<ss->getSpaceInformation().get()->getPropagationStepSize()<<std::endl;
+            std::cout<<"control count is :"<<control.size()<<" duration is : "<<duration.size()<<std::endl;
+
+            std::cout<<"Torque size is :"<<torque.size()<<" duration size is : "<<duration.size()<<std::endl;
+for(int i=0;i<control.size();i++)
+{
+    const double* vv= control[i]->as<oc::OpenDEControlSpace::ControlType>()->values;
+    std::cout<<"velocity is  :"<<vv[0]<<" "<<vv[1]<<" Torque is : "<<vv[2]<<" "<<vv[3]<<std::endl;
+
+}
             //std::cout<<"Control Size is "<< control.size()<<std::endl;
             //std::cout<<"state Size is "<< states.size()<<std::endl;
             //std::cout<<"Duration Size is "<< duration.size()<<std::endl;
             //int size= states.size();
             std::vector<double> Joint_Angle;
             Joint_Angle.resize(_wkSpace->getRobot(0)->getNumJoints());
-            ComputeAction(states,control,duration);
-            ComputeJerkIndex(states,duration);
+            //ComputeAction(states,control,duration);
+            //ComputeJerkIndex(states,duration);
+            if(_wkSpace->getRobot(0)->getNumJoints()>1 || _wkSpace->getRobot(0)->getName()=="SimpleCar")
+            {
+                ComputePowerConsumed(control,duration);
+            }
+            else
             ComputePowerConsumed(states,control,duration);
+
+                    std::ofstream benchmarkdata ("benchmark.txt", std::ios::out | std::ios::app);
+                   if (benchmarkdata.is_open())
+                   {
+                      benchmarkdata <<"Planning Time: "<<ss->getLastPlanComputationTime()<<"\n";
+                      benchmarkdata <<"Exect Solution Found: "<<ss->haveExactSolutionPath()<<"\n";
+                      benchmarkdata <<"Total Power Consumed: "<<PowerConsumed<<"\n";
+                      benchmarkdata <<"Smoothness Index    : "<<Smoothness<<"\n";
+                   }
+               benchmarkdata <<"===================================================="<<"\n";
+               benchmarkdata <<"===================================================="<<"\n";
+               benchmarkdata.close();
             final=ss->getSolutionPath().getStates().back();
             std::cout<<"===============   Query Numer  "<<(l+1)<<"  =============== "<<std::endl;
             std::cout<<"Actions is:  "<<Action<<std::endl;
@@ -372,11 +416,11 @@ bool KauthamDEPlanner::trySolve(void)
                 State tmpstate;
                 Robsmp=new Sample(_wkSpace->getNumRobControls());
                 //Robsmp->setMappedConf(_wkSpace->getRobot(0));
-                if(_wkSpace->getRobot(0)->getNumJoints()>1)
-                {
-                KauthamOpenDEState2Robsmp(states[i], Robsmp,((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->getJointConfigurationAt(i));
-                }
-                else
+//                if(_wkSpace->getRobot(0)->getNumJoints()>1)
+//                {
+//                KauthamOpenDEState2Robsmp(states[i], Robsmp,conf.at(i));
+//                }
+//                else
                     KauthamOpenDEState2Robsmp(states[i],Robsmp);
 
                 tmpstate.setRob(*Robsmp);
@@ -393,7 +437,7 @@ bool KauthamDEPlanner::trySolve(void)
                 //std::cout<<std::endl;
             }
         }
-        drawCspace(0);
+       drawCspace(0);
 
         return _solved;
     }
@@ -456,7 +500,7 @@ bool KauthamDEPlanner::trySolve(void)
 //}
 
 //! This member function converts an OpenDE State to a Kautham robot sample
-void KauthamDEPlanner::KauthamOpenDEState2Robsmp(const ob::State *state, Sample* smp, std::vector<double> configuration)
+void KauthamDEPlanner::KauthamOpenDEState2Robsmp(const ob::State *state, Sample* smp, const Configuration configuration)
 {
     int k=0;
     vector<RobConf> rc;
@@ -496,14 +540,19 @@ void KauthamDEPlanner::KauthamOpenDEState2Robsmp(const ob::State *state, Sample*
         if(_wkSpace->getRobot(0)->getNumJoints()>1)
         {
             vector<KthReal> coords;
-            for(unsigned int j=0;j<_wkSpace->getRobot(0)->getNumJoints();j++)
+            for(unsigned int j=1;j<_wkSpace->getRobot(0)->getNumJoints();j++)
             {
-                low = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(true);//lower limit of joint
-                high = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(false);//upper limit of joint
-                double normalize = (configuration.at(i)-low)/(high-low);
+                if(_wkSpace->getRobot(0)->getNumJoints()<3)
+                {
+                low = *_wkSpace->getRobot(i)->getLink(j)->getLimits(true);//lower limit of joint
+                high = *_wkSpace->getRobot(i)->getLink(j)->getLimits(false);//upper limit of joint
+                double normalize = (configuration.q.at(j)-low)/(high-low);
                 coords.push_back(normalize);
+                }
+                else
+                    coords.push_back(0);
             }
-            std::cout<<std::endl;
+            //std::cout<<std::endl;
             rcj->setRn(coords);
         }
         rc.push_back(*rcj);
@@ -635,7 +684,7 @@ void KauthamDEPlanner::ComputeAction(const std::vector<ob::State*> &states, cons
         double force= sqrt((vv[0]*vv[0])+(vv[1]*vv[1]));
         //in Kautham distance is represented in mm, the final distance of the trajectory
         //will be converted in meters to get the correct units of action (newton*meter*second)
-        distance = distance/1000;
+        distance = distance;
         Action = Action + (force * distance * duration[i]);
     }
 }
@@ -664,27 +713,32 @@ void KauthamDEPlanner::ComputeJerkIndex(const std::vector<ob::State*> &states, c
             pos2 = states[n+2]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(robIndex);
             pos3 = states[n+3]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(robIndex);
 
-            rn  = sqrt(pos[0]*pos[0] + pos[1]*pos[1])/1000;
-            rn1 = sqrt(pos1[0]*pos1[0] + pos1[1]*pos1[1])/1000;
-            rn2 = sqrt(pos2[0]*pos2[0] + pos2[1]*pos2[1])/1000;
-            rn3 = sqrt(pos3[0]*pos3[0] + pos3[1]*pos3[1])/1000;
+            rn  = sqrt(pos[0]*pos[0] + pos[1]*pos[1]);
+            rn1 = sqrt(pos1[0]*pos1[0] + pos1[1]*pos1[1]);
+            rn2 = sqrt(pos2[0]*pos2[0] + pos2[1]*pos2[1]);
+            rn3 = sqrt(pos3[0]*pos3[0] + pos3[1]*pos3[1]);
             //4 points forward difference method to compute the 3rd derivative of position i.e. jerk
             JerkIndex.push_back((-rn + 3*rn1 - 3*rn2 + rn3)/(duration[n]*duration[n+1]*duration[n+2]));
         }
         for(unsigned int i=0;i<duration.size();i++)
         {
             //std::cout<<"Jerk Index: "<<JerkIndex[i]<<"  Smoothness: "<<Smoothness<<std::endl;
-            Smoothness = Smoothness+(duration[i]*(pow(JerkIndex[i+1],2)+pow(JerkIndex[i],2)));
+            Smoothness = fabs(Smoothness+(duration[i]*(JerkIndex[i+1]+JerkIndex[i])));
+            Smoothness = Smoothness/2;
         }
-        Smoothness = Smoothness/2;
+
     }
 }
 
 void KauthamDEPlanner::ComputePowerConsumed(const std::vector<ob::State*> &states,const std::vector<oc::Control*> &control, const std::vector<double> duration)
 {
+
+    std::ofstream Power ("PowerConsumed.txt", std::ios::out | std::ios::app);
+    std::ofstream Time ("Time.txt", std::ios::out | std::ios::app);
+
     int robIndex=0;
     PowerConsumed = 0;
-    double time = duration[states.size()-1];
+    double time = 0.0;
     for(unsigned int i=0;i<states.size()-1;i++)
     {
         const double* pos1 = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(robIndex);
@@ -693,14 +747,76 @@ void KauthamDEPlanner::ComputePowerConsumed(const std::vector<ob::State*> &state
         double distance =sqrt(pow((pos2[0]-pos1[0]),2) + pow((pos2[1]-pos1[1]),2));// +(pos2[2]-pos1[2])^2);
         double force= sqrt((vv[0]*vv[0])+(vv[1]*vv[1]));
         time=time+duration[i];
-        //in Kautham distance is represented in mm, the final distance of the trajectory
-        //will be converted in meters to get the correct units of action (newton*meter*second)
-        //std::cout<<"DISTANCE IN MM =  "<<distance<<std::endl;
-        distance = distance/1000;
-        PowerConsumed = PowerConsumed + (force * distance);
+        distance = distance;
+        PowerConsumed = PowerConsumed + (force * distance)/duration[i];
+        if (Power.is_open() && Time.is_open())
+        {
+           Power <<PowerConsumed<<" ";
+           Time <<time<<" ";
+
+        }
     }
-    PowerConsumed = PowerConsumed/time;
+    Power <<"\n===================================================="<<"\n";
+    Power <<"===================================================="<<"\n";
+    Time <<"\n===================================================="<<"\n";
+    Time <<"===================================================="<<"\n";
+    Power.close();
+    Time.close();
+    //PowerConsumed = PowerConsumed/time;
     std::cout<<"total power: "<<PowerConsumed<<std::endl;
+}
+void KauthamDEPlanner::ComputePowerConsumed(const std::vector<oc::Control*> &control,const std::vector<double> duration)
+{
+
+    std::ofstream Power ("PowerConsumed.txt", std::ios::out | std::ios::app);
+    std::ofstream Time ("Time.txt", std::ios::out | std::ios::app);
+    PowerConsumed = 0;
+    double time = 0.0;
+    if(_wkSpace->getRobot(0)->getName()=="SimpleCar")
+    {
+        for(unsigned int i=0;i<control.size();i++)
+        {
+              const double* vv= control[i]->as<oc::OpenDEControlSpace::ControlType>()->values;
+              PowerConsumed = PowerConsumed + (fabs(vv[1] * vv[2]) + fabs(vv[1]*vv[3])+ fabs(vv[1]*vv[4])+ fabs(vv[1]*vv[5]));
+              time=time+duration[i];
+
+            if (Power.is_open() && Time.is_open())
+            {
+               Power <<PowerConsumed<<" ";
+               Time <<time<<" ";
+
+            }
+        }
+    }
+    else
+    {
+    for(unsigned int i=0;i<control.size();i++)
+    {
+          const double* vv= control[i]->as<oc::OpenDEControlSpace::ControlType>()->values;
+          PowerConsumed = PowerConsumed + (fabs(vv[0] * vv[2]) + fabs(vv[1]*vv[3]));
+          time=time+duration[i];
+
+        if (Power.is_open() && Time.is_open())
+        {
+           Power <<PowerConsumed<<" ";
+           Time <<time<<" ";
+
+        }
+    }
+    }
+    Power <<"\n===================================================="<<"\n";
+    Power <<"===================================================="<<"\n";
+    Time <<"\n===================================================="<<"\n";
+    Time <<"===================================================="<<"\n";
+    Power.close();
+    Time.close();
+    //PowerConsumed = PowerConsumed/time;
+    double dd=0.0;
+    for(unsigned int i=0;i<duration.size();i++)
+        dd=dd+duration[i];
+    std::cout<<"total power: "<<PowerConsumed<<std::endl;
+    std::cout<<"total duration is: "<<dd<<" "<<"Time is: "<<time<<std::endl;
+
 }
 
 //! setParameter function set the planning parameters for the planners
@@ -726,13 +842,6 @@ bool KauthamDEPlanner::setParameters()
         }
         else
             return false;
-
-        it = _parameters.find("Max Speed motors");
-        if(it != _parameters.end())
-            _maxspeed = it->second;
-        else
-            return false;
-
         it = _parameters.find("only final link position?");
         if(it != _parameters.end())
             _onlyend = it->second;
@@ -761,6 +870,16 @@ bool KauthamDEPlanner::setParameters()
         it = _parameters.find("Constraint Force Mixing");
         if(it != _parameters.end())
             _cfm = it->second;
+        else
+            return false;
+        it = _parameters.find("kinematic chain");
+        if(it != _parameters.end())
+            _isKchain = it->second;
+        else
+            return false;
+        it = _parameters.find("Max Speed");
+        if(it != _parameters.end())
+            _maxspeed = it->second;
         else
             return false;
 
@@ -803,10 +922,10 @@ void KauthamDEPlanner::callDrawStuffViewer(void)
     fn.step = &simLoop;
     fn.command = &command;
     fn.stop = 0;
-    fn.path_to_textures = "/home/muhayyuddin/kautham/textures";
+    fn.path_to_textures = "/home/muhayyuddin/catkin_ws/src/kautham/textures";
 
     DISP.addSpace( envPtr.get()->collisionSpaces_[0], 0.9, 0.9, 0.5);
-
+    DISP.addGeoms(((KauthamDEEnvironment*)envPtr.get())->GeomID);
 if(((KauthamDEEnvironment*)envPtr.get())->meshID.size()>1)
 {
     Tmesh tmesh;
@@ -817,17 +936,35 @@ if(((KauthamDEEnvironment*)envPtr.get())->meshID.size()>1)
              tmesh.indices=((KauthamDEEnvironment*)envPtr.get())->meshID[i].indices;
              tmesh.vertices=((KauthamDEEnvironment*)envPtr.get())->meshID[i].vertices;
              tmesh.meshD=((KauthamDEEnvironment*)envPtr.get())->meshID[i].meshD;
+             //std::cout<<"color is "<<((KauthamDEEnvironment*)envPtr.get())->meshID[i].color[0]<<" "<<((KauthamDEEnvironment*)envPtr.get())->meshID[i].color[1]<<std::endl;
+
+            // DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i],
+            //                   ((KauthamDEEnvironment*)envPtr.get())->meshID[i].color[0],
+            //         ((KauthamDEEnvironment*)envPtr.get())->meshID[i].color[1],
+            //         ((KauthamDEEnvironment*)envPtr.get())->meshID[i].color[2]);
              DISP.tmd.push_back(tmesh);
 
         }
-        DISP.tmd.push_back(tmesh);
+        //DISP.tmd.push_back(tmesh);
 
 }
 
-    DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],0), 0.0, 0.9, 0.0);
+    DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[0], 0.0, 0.9, 0.9);
     for(unsigned int i=1;i<dSpaceGetNumGeoms(envPtr.get()->collisionSpaces_[0]);i++)
-    DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],i), 0.9, 0.0, 0.0);
-   // DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],2), 0.9, 0.9, 0.0);
+
+    {
+        if(i<6)
+            DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.0, 0.9, 0.9);
+
+        else if(i==6)
+            DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.9, 0.9, 0.1);
+        else if(i>6 && i<9)
+            DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.0, 0.0, 0.9);
+        else if(i==9)
+            DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.1, 0.9, 0.1);
+        else
+            DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.9, 0.1, 0.1);
+    }
    // DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],3), 0.9, 0.9, 0.9);
 
 
@@ -840,13 +977,14 @@ if(((KauthamDEEnvironment*)envPtr.get())->meshID.size()>1)
         //for (unsigned int i = 0 ; i < pd.numVertices() ; ++i)
         for(unsigned int i=0; i<stat.size();i++)
         {
-            const double *pos = stat[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(wkSpace()->getRobot(0)->getNumLinks()-1);
+            const double *pos = stat[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
             //const double *pos = pd.getVertex(i).getState()->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
             POINTS.push_back(std::make_pair(pos[0], pos[1]));
         }
         std::cout<<"States in Solution: "<<ss->getSolutionPath().getStates().size();
+        string name=_wkSpace->getRobot(0)->getName();
         boost::thread *th = NULL;
-        th = new boost::thread(boost::bind(&playPath, ss));
+        th = new boost::thread(boost::bind(&playPath, ss,name));
         dsSimulationLoop(0,NULL, 800, 600, &fn);
         if (th)
         {
@@ -954,7 +1092,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
             ymax = _wkSpace->getRobot(0)->getLimits(1)[1];
             zmax = _wkSpace->getRobot(0)->getLimits(2)[1];
             //k=stateSpace->getEnvironment()->getControlDimension();
-            k = stateSpace->getDimension();
+            k = stateSpacePtr->getDimension();
 
         }
         //        else
@@ -996,7 +1134,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
         string robotnumber = static_cast<ostringstream*>( &(ostringstream() << numrob) )->str();//the string correspoding to number numrob
         projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
         //ob::ProjectionEvaluatorPtr projToUse = stateSpace->getProjection(projname.c_str());
-        ob::ProjectionEvaluatorPtr projToUse = stateSpace->getDefaultProjection();
+        ob::ProjectionEvaluatorPtr projToUse = stateSpacePtr->getDefaultProjection();
 
         //draw path:
         if(_solved)
@@ -1035,41 +1173,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
 
                     edgepoints->point.set1Value(1,x,y,z);
                 }
-                //                else
-                //                {
-                //                    k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
-                //                    if(k<=2)
-                //                    {
-                //                        ob::EuclideanProjection projection(k);
-                //                        //space->getProjection("drawprojection")->project(pathstates[i], projection);
-                //                        projToUse->project(pathstates[i], projection);
-                //                        x=projection[0];
-                //                        y=projection[1];
-                //                        z=0.0;
-                //                        edgepoints->point.set1Value(0,x,y,z);
-                //                        //space->getProjection("drawprojection")->project(pathstates[i+1], projection);
-                //                        projToUse->project(pathstates[i+1], projection);
-                //                        x=projection[0];
-                //                        y=projection[1];
-                //                        edgepoints->point.set1Value(1,x,y,z);
-                //                    }
-                //                    else
-                //                    {
-                //                        ob::EuclideanProjection projection(k);
-                //                        //space->getProjection("drawprojection")->project(pathstates[i], projection);
-                //                        projToUse->project(pathstates[i], projection);
-                //                        x=projection[0];
-                //                        y=projection[1];
-                //                        z=projection[2];
-                //                        edgepoints->point.set1Value(0,x,y,z);
-                //                        //space->getProjection("drawprojection")->project(pathstates[i+1], projection);
-                //                        projToUse->project(pathstates[i+1], projection);
-                //                        x=projection[0];
-                //                        y=projection[1];
-                //                        z=projection[2];
-                //                        edgepoints->point.set1Value(1,x,y,z);
-                //                    }
-                //                }
+
 
                 //edge of the path
                 pathsep->addChild(edgepoints);
@@ -1109,37 +1213,10 @@ void KauthamDEPlanner::drawCspace(int numrob)
                 //z=0;
 
                 points->point.set1Value(i,x,y,z);
-                /* DEBUG
-    if(x>xpmax) xpmax=x;
-    else if(x<xpmin) xpmin=x;
-    if(y>ypmax) ypmax=y;
-    else if(y<ypmin) ypmin=y;
-    */
+
 
             }
-            //            else
-            //            {
-            //                k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
-            //                if(k<=2)
-            //                {
-            //                    ob::EuclideanProjection projection(k);
-            //                    //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-            //                    projToUse->project(pdata->getVertex(i).getState(), projection);
-            //                    x = projection[0];
-            //                    y = projection[1];
-            //                    points->point.set1Value(i,x,y,0);
-            //                }
-            //                else
-            //                {
-            //                    ob::EuclideanProjection projection(k);
-            //                    //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-            //                    projToUse->project(pdata->getVertex(i).getState(), projection);
-            //                    x = projection[0];
-            //                    y = projection[1];
-            //                    z = projection[2];
-            //                    points->point.set1Value(i,x,y,z);
-            //                }
-            //            }
+
         }
         SoDrawStyle *pstyle = new SoDrawStyle;
         pstyle->pointSize = 1;
@@ -1191,41 +1268,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
 
                     edgepoints->point.set1Value(1,x2,y2,z2);
                 }
-                //                else
-                //                {
-                //                    k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
-                //                    if(k<=2)
-                //                    {
-                //                        ob::EuclideanProjection projection(k);
-                //                        //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-                //                        projToUse->project(pdata->getVertex(i).getState(), projection);
-                //                        x1=projection[0];
-                //                        y1=projection[1];
-                //                        z=0.0;
-                //                        edgepoints->point.set1Value(0,x1,y1,z);
-                //                        //space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                //                        projToUse->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                //                        x2=projection[0];
-                //                        y2=projection[1];
-                //                        edgepoints->point.set1Value(1,x2,y2,z);
-                //                    }
-                //                    else
-                //                    {
-                //                        ob::EuclideanProjection projection(k);
-                //                        //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-                //                        projToUse->project(pdata->getVertex(i).getState(), projection);
-                //                        x1=projection[0];
-                //                        y1=projection[1];
-                //                        z1=projection[2];
-                //                        edgepoints->point.set1Value(0,x1,y1,z1);
-                //                        //space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                //                        projToUse->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                //                        x2=projection[0];
-                //                        y2=projection[1];
-                //                        z2=projection[2];
-                //                        edgepoints->point.set1Value(1,x2,y2,z2);
-                //                    }
-                //                }
+
                 //the edge
                 pdata->getEdgeWeight(i, outgoingVertices.at(j), &edgeweight);
                 SoMaterial *edge_color = new SoMaterial;
@@ -1272,52 +1315,6 @@ void KauthamDEPlanner::drawCspace(int numrob)
             floorsep->addChild(cs);
             _sceneCspace->addChild(floorsep);
         }
-        //        else
-        //        {
-        //            k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
-        //            if(k<=2)
-        //            {
-        //                cs->width = xmax-xmin;
-        //                cs->depth = (xmax-xmin)/50.0;
-        //                cs->height = ymax-ymin;
-        //                centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,-cs->depth.getValue());
-        //                cub_transf->translation.setValue(centre);
-        //                cub_transf->recenter(centre);
-        //                cub_color->diffuseColor.setValue(0.2,0.2,0.2);
-        //                //cub_color->transparency.setValue(0.98);
-        //                floorsep->addChild(cub_color);
-        //                floorsep->addChild(cub_transf);
-        //                floorsep->addChild(cs);
-        //                _sceneCspace->addChild(floorsep);
-        //            }
-        //            else
-        //            {
-        //                cs->width = xmax-xmin;
-        //                cs->depth = (zmax-zmin);
-        //                cs->height = ymax-ymin;
-        //                centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,zmin+(zmax-zmin)/2);
-        //                cub_transf->translation.setValue(centre);
-        //                cub_transf->recenter(centre);
-        //                cub_color->diffuseColor.setValue(0.2,0.2,0.2);
-        //                cub_color->transparency.setValue(0.3);//0.98
-        //                floorsep->addChild(cub_color);
-        //                floorsep->addChild(cub_transf);
-        //                floorsep->addChild(cs);
-        //                _sceneCspace->addChild(floorsep);
-        //            }
-        //         }
-
-        /* DEBUG
-            cout<<"xpmax="<<xpmax;
-            cout<<" xpmin="<<xpmin;
-            cout<<" ypmax="<<ypmax;
-            cout<<" ypmin="<<ypmin<<endl;
-            cout<<"xsmax="<<xM;
-            cout<<" xsmin="<<xm;
-            cout<<" ysmax="<<yM;
-            cout<<" ysmin="<<ym<<endl;
-    */
-
 
         ///////////////////////////////////////////////////////////////////////////////////////////
     }
@@ -1489,45 +1486,6 @@ void KauthamDEPlanner::drawCspace(int numrob)
             _sceneCspace->addChild(pathsep);
         }
 
-        /* DEBUG
-double xpmax=-1.0;
-double xpmin=100.0;
-double ypmax=-1.0;
-double ypmin=100.0;
-*/
-        //JAN - DEBUG
-        // ///////////////////////////////////////////
-        //for debug. draw streering samples for rrt
-
-        //                        SoSeparator *psep_steerpoints = new SoSeparator();
-        //                        SoCoordinate3 *steerpoints  = new SoCoordinate3();
-        //                        SoPointSet *pset_steerpoints  = new SoPointSet();
-
-        //                        SoDrawStyle *pstyle_steerpoints = new SoDrawStyle;
-        //                        SoMaterial *color_steerpoints = new SoMaterial;
-        //                        pstyle_steerpoints->pointSize = 3;
-        //                        color_steerpoints->diffuseColor.setValue(0.5,0.5,1.0);
-
-        //                        for(int i=0;i<steersamples.size();i++)
-        //                        {
-        //                            x = steersamples[i][0];
-        //                            y = steersamples[i][1];
-        //                            z = steersamples[i][2];
-        //                            steerpoints->point.set1Value(i,x,y,z);
-        //                        }
-        //                        //draw the points
-
-        //                        psep_steerpoints->addChild(color_steerpoints);
-        //                        psep_steerpoints->addChild(steerpoints);
-        //                        psep_steerpoints->addChild(pstyle_steerpoints);
-        //                        psep_steerpoints->addChild(pset_steerpoints);
-
-        //                        _sceneCspace->addChild(psep_steerpoints);
-
-        //END: for debug. draw streering samples for rrt
-        //JAN - DEBUG
-        // ///////////////////////////////////////////
-
         //loop for all vertices of the roadmap or tree and create the coin3D points
         for(unsigned int i=0;i<pdata->numVertices();i++)
         {
@@ -1550,12 +1508,7 @@ double ypmin=100.0;
                 //z=0;
 
                 points->point.set1Value(i,x,y,z);
-                /* DEBUG
-if(x>xpmax) xpmax=x;
-else if(x<xpmin) xpmin=x;
-if(y>ypmax) ypmax=y;
-else if(y<ypmin) ypmin=y;
-*/
+
 
             }
             //            else
@@ -1632,41 +1585,7 @@ z1=0;
 
                     edgepoints->point.set1Value(1,x2,y2,z2);
                 }
-                //                else
-                //                {
-                //                    k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
-                //                    if(k<=2)
-                //                    {
-                //                        ob::EuclideanProjection projection(k);
-                //                        //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-                //                        projToUse->project(pdata->getVertex(i).getState(), projection);
-                //                        x1=projection[0];
-                //                        y1=projection[1];
-                //                        z=0.0;
-                //                        edgepoints->point.set1Value(0,x1,y1,z);
-                //                        //space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                //                        projToUse->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                //                        x2=projection[0];
-                //                        y2=projection[1];
-                //                        edgepoints->point.set1Value(1,x2,y2,z);
-                //                    }
-                //                    else
-                //                    {
-                //                        ob::EuclideanProjection projection(k);
-                //                        //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-                //                        projToUse->project(pdata->getVertex(i).getState(), projection);
-                //                        x1=projection[0];
-                //                        y1=projection[1];
-                //                        z1=projection[2];
-                //                        edgepoints->point.set1Value(0,x1,y1,z1);
-                //                        //space->getProjection("drawprojection")->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                //                        projToUse->project(pdata->getVertex(outgoingVertices.at(j)).getState(), projection);
-                //                        x2=projection[0];
-                //                        y2=projection[1];
-                //                        z2=projection[2];
-                //                        edgepoints->point.set1Value(1,x2,y2,z2);
-                //                    }
-                //                }
+
                 //the edge
                 pdata->getEdgeWeight(i, outgoingVertices.at(j), &edgeweight);
                 SoMaterial *edge_color = new SoMaterial;
@@ -1713,52 +1632,6 @@ z1=0;
             floorsep->addChild(cs);
             _sceneCspace->addChild(floorsep);
         }
-        //        else
-        //        {
-        //            k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
-        //            if(k<=2)
-        //            {
-        //                cs->width = xmax-xmin;
-        //                cs->depth = (xmax-xmin)/50.0;
-        //                cs->height = ymax-ymin;
-        //                centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,-cs->depth.getValue());
-        //                cub_transf->translation.setValue(centre);
-        //                cub_transf->recenter(centre);
-        //                cub_color->diffuseColor.setValue(0.2,0.2,0.2);
-        //                //cub_color->transparency.setValue(0.98);
-        //                floorsep->addChild(cub_color);
-        //                floorsep->addChild(cub_transf);
-        //                floorsep->addChild(cs);
-        //                _sceneCspace->addChild(floorsep);
-        //            }
-        //            else
-        //            {
-        //                cs->width = xmax-xmin;
-        //                cs->depth = (zmax-zmin);
-        //                cs->height = ymax-ymin;
-        //                centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,zmin+(zmax-zmin)/2);
-        //                cub_transf->translation.setValue(centre);
-        //                cub_transf->recenter(centre);
-        //                cub_color->diffuseColor.setValue(0.2,0.2,0.2);
-        //                cub_color->transparency.setValue(0.3);//0.98
-        //                floorsep->addChild(cub_color);
-        //                floorsep->addChild(cub_transf);
-        //                floorsep->addChild(cs);
-        //                _sceneCspace->addChild(floorsep);
-        //            }
-        //         }
-
-        /* DEBUG
-        cout<<"xpmax="<<xpmax;
-        cout<<" xpmin="<<xpmin;
-        cout<<" ypmax="<<ypmax;
-        cout<<" ypmin="<<ypmin<<endl;
-        cout<<"xsmax="<<xM;
-        cout<<" xsmin="<<xm;
-        cout<<" ysmax="<<yM;
-        cout<<" ysmin="<<ym<<endl;
-*/
-
 
     }
 }

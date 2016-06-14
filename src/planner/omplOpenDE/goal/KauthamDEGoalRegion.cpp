@@ -38,14 +38,14 @@ namespace omplcplanner{
 
 KauthamDEGoalRegion::KauthamDEGoalRegion(const ob::SpaceInformationPtr &si, WorkSpace *ws, bool a,Sample *goal):ob::GoalRegion(si)
 {
-    setThreshold(1);
+    setThreshold(0.5);
     //threshold_ = 1;
  Kauthamodebodies=smp2KauthamOpenDEState(ws,goal);
     onlyend=a;
 }
 KauthamDEGoalRegion::KauthamDEGoalRegion(const ob::SpaceInformationPtr &si,  WorkSpace *ws, bool a,double x, double y):ob::GoalRegion(si)
 {
-    setThreshold(1);
+    setThreshold(0.5);
     //threshold_ = 1;
     KauthamODEobject odeob;
 
@@ -134,18 +134,28 @@ double KauthamDEGoalRegion::distanceGoal(const ob::State *st) const
         //const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(Kauthamodebodies.size()-1);
         //distance = sqrt(fabs(pos[0]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0]))+(fabs(pos[1]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1]))+(fabs(pos[2]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2]));
         const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(Kauthamodebodies.size()-1);
+        const ob::SO3StateSpace::StateType &rot = st->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(Kauthamodebodies.size()-1);
+
         const double *vel = st->as<oc::OpenDEStateSpace::StateType>()->getBodyLinearVelocity(Kauthamodebodies.size()-1);
 
-        double dx = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0] - pos[0];
-        double dy = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1] - pos[1];
-        double dz = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2] - pos[2];
+        double dx = Kauthamodebodies[Kauthamodebodies.size()-3].objectposition[0] - pos[0];
+        double dy = Kauthamodebodies[Kauthamodebodies.size()-3].objectposition[1] - pos[1];
+        double dz = Kauthamodebodies[Kauthamodebodies.size()-3].objectposition[2] - pos[2];
+        double x = Kauthamodebodies[Kauthamodebodies.size()-3].objectorientation[0];
+        double y = Kauthamodebodies[Kauthamodebodies.size()-3].objectorientation[1];
+        double z = Kauthamodebodies[Kauthamodebodies.size()-3].objectorientation[2];
+        double w = Kauthamodebodies[Kauthamodebodies.size()-3].objectorientation[3];
+        double rD=(x*rot.x + y*rot.y + z*rot.z + w*rot.w);
+
+        //std::cout<<"x, y, z, w = "<<rot.x<<" , "<<rot.y<<" , "<<rot.z<<" , "<<rot.w<<"Distance "<<rD<<std::endl;
+
         double dot = dx * vel[0] + dy * vel[1] + dz *vel[2];
         if(dot > 0)
             dot=0;
         else
             dot=sqrt(fabs(dot));
 
-        distance = distance+ sqrt(dx*dx + dy*dy + dz*dz) + dot;
+        distance = distance+ sqrt(dx*dx + dy*dy )+dot +sqrt(dz*dz+ dz*dz) + dot;//+ (1-fabs(rD));
 //        std::cout<<" Goal is :       [ "<<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0]<<" , "<<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1]<<" , " <<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2]<<" ]"<<std::endl;
 //        std::cout<<" Current P is :  [ "<<pos[0]<<" , "<<pos[1]<<" , " <<pos[2]<<" ]"<<std::endl;
        // std::cout<<" Velocity is :  [ "<<vel[0]<<" , "<<vel[1]<<" , " <<vel[2]<<" ]"<<std::endl;
@@ -159,8 +169,8 @@ double KauthamDEGoalRegion::distanceGoal(const ob::State *st) const
 bool KauthamDEGoalRegion::isSatisfied(const ob::State *st, double *distance) const
 {
     double d2g = distanceGoal(st);
-    if(d2g<120)
-    std::cout<<"Distance to goal is: "<<d2g<<std::endl;
+    //if(d2g<120)
+    //std::cout<<"Distance to goal is: "<<d2g<<std::endl;
     if (distance)
         *distance = d2g;
     return d2g < threshold_;

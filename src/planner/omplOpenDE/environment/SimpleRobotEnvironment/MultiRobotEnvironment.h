@@ -62,7 +62,7 @@ namespace omplcplanner{
  {
      public:
 
-     MultiRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
+     MultiRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm,bool isKchain);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
      ~MultiRobotEnvironment(void);
 
      virtual unsigned int getControlDimension(void) const;//!< describe the number of parameter used to describe control input.

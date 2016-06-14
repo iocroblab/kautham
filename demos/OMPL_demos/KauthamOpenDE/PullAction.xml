@@ -1,29 +1,60 @@
 <?xml version="1.0"?>
-<Problem name="OMPL_cRRTcar_table_rooms_SE2">
-	<Robot robot="obstacles/DSTest/SphereDE.urdf" scale="1.1">
-		<Limits name="X" min="-25.0" max="25.0" />
-		<Limits name="Y" min="-25.0" max="25.0" />
-		<Limits name="Z" min="-4.0" max="20.0" />
+<Problem name="Knowledge_Oriented_KPIECE_2D_Planning">
+	<Robot robot="obstacles/DEBenchmark/SphereDE.urdf" scale="0.2">
+		<Limits name="X" min="-40.0" max="40.0" />
+		<Limits name="Y" min="-40.0" max="40.0" />
+		<Limits name="Z" min="-2.0" max="20.0" />
 		<Limits name="WX" min="0.0" max="1.0" />
 		<Limits name="WY" min="0.0" max="1.0" />
 		<Limits name="WZ" min="0.0" max="1.0" />
 		<Limits name="THETA" min="-360.0" max="360.0" />
 		<Home X="10.0" Y="10.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
 	</Robot>
-	<Obstacle obstacle="obstacles/DSTest/cubeDE2.urdf" scale="1.0">
-		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0" Y="10.0" X="15.0" />
+
+	<Obstacle obstacle="obstacles/DEBenchmark/cubeDE1.urdf" scale="0.2">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="2" Y="0.0" X="19.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/DSTest/cubeDE1.urdf" scale="1.0">
-		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0" Y="-16.0" X="19.0" />
+	<Obstacle obstacle="obstacles/DEBenchmark/cubeDE2.urdf" scale="0.2">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="2" Y="0.0" X="-19.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/DEBenchmark/cubeDE3.urdf" scale="0.2">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="2" Y="0.0" X="-25.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/DEBenchmark/cubeDE4.urdf" scale="0.2">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="2" Y="0.0" X="25.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/DEBenchmark/cubeDE5.urdf" scale="0.2">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="2" Y="12.0" X="12.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/DEBenchmark/cubeDE6.urdf" scale="0.2">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="2" Y="-20.0" X="-10.0" />
 	</Obstacle>
 	
-	<Obstacle obstacle="obstacles/DSTest/cubeDE3.urdf" scale="1.0">
-		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0" Y="19.0" X="25.0" />
-	</Obstacle>
-	<Obstacle obstacle="obstacles/DSTest/wall1.urdf" scale="1.0">
-		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0" Y="0.0" X="0.0" />
+	<Obstacle obstacle="obstacles/DEBenchmark/wall4.urdf" scale="0.15">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="1" Y="0.0" X="0.0" />
 	</Obstacle>
 	
+	<Obstacle obstacle="obstacles/DEBenchmark/prism.urdf" scale="0.003">
+		<Home TH="120.0" WZ="1.0" WY="0.0" WX="0.0" Z="0" Y="-15.0" X="-15.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/DEBenchmark/prism2.urdf" scale="0.003">
+		<Home TH="120.0" WZ="1.0" WY="0.0" WX="0.0" Z="0" Y="15.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/DEBenchmark/wallb1.urdf" scale="0.3">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="1.5" Y="0.0" X="30.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/DEBenchmark/wallb2.urdf" scale="0.3">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="1.5" Y="0.0" X="-30.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/DEBenchmark/wallb3.urdf" scale="0.3">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="1.5" Y="30.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/DEBenchmark/wallb4.urdf" scale="0.3">
+		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="1.5" Y="-30.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/DEBenchmark/PlanDE.urdf" scale="0.22">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
 	
 	<Controls robot="controls/sp3.cntr" />
 	<Planner>
@@ -35,7 +66,7 @@
 			<Parameter name="Goal Bias">0.05</Parameter>
 			<Parameter name="Max Contacts">3</Parameter>
 			<Parameter name="Max Control Steps">10</Parameter>
-			<Parameter name="Max Planning Time">10</Parameter>
+			<Parameter name="Max Planning Time">60</Parameter>
 			<Parameter name="Max Speed">10</Parameter>
 			<Parameter name="Min Control Steps">5</Parameter>
 			<Parameter name="PropagationStepSize">0.07</Parameter>
@@ -44,8 +75,8 @@
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="3">0.881 0.648 0.2</Init>
-				<Goal dim="3">0.881 0.176 0.2</Goal>
+				<Init dim="3">0.449 0.678 0.161</Init>
+				<Goal dim="3">0.689 0.242 0.161</Goal>
 			</Query>
 		</Queries>
 	</Planner>

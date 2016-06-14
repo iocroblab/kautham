@@ -48,7 +48,7 @@ using namespace std;
 namespace Kautham {
 namespace omplcplanner{
 //! Constructor create the 2D robot enviroment and setup the parameters for ODE.
-twoDRobotEnvironment::twoDRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm)
+twoDRobotEnvironment::twoDRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm,bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm, isKchain)
 {
     SetPlanningParameters();
 }

@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <Problem name="euroc" topology="SE3">
-	<Robot robot="robots/kuka_lwr_pg70_gripper.urdf" scale="1.0">
-		<Limits name="X" min="-500.0" max="500.0" />
-		<Limits name="Y" min="-500.0" max="500.0" />
-		<Limits name="Z" min="-2.0" max="1200.0" />
+	<Robot robot="robots/kuka_lwr_pg70_gripper.urdf" scale="0.01">
+		<Limits name="X" min="-10.0" max="10.0" />
+		<Limits name="Y" min="-10.0" max="10.0" />
+		<Limits name="Z" min="-2.0" max="15.0" />
 		<Limits name="WX" min="0.0" max="1.0" />
 		<Limits name="WY" min="0.0" max="1.0" />
 		<Limits name="WZ" min="0.0" max="1.0" />
 		<Limits name="THETA" min="-360.0" max="360.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="1.0" Y="0.0" X="0.0" />
 	</Robot>
-	<Obstacle obstacle="obstacles/DEBenchmark/Plan.urdf" scale="1.0">
-		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	<Obstacle obstacle="obstacles/TR2016/cubeDE1.urdf" scale="0.01">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0" Y="5.0" X="5.0" />
 	</Obstacle>
 	<Controls robot="controls/euroc.cntr" />
 	<Planner>
@@ -33,7 +33,7 @@
 		<Queries>
 			<Query>
 				<Init dim="7">0.5 0.5 0.5 0.5 0.5 0.5 0.5</Init>
-				<Goal dim="7">0.326 0.061 0.5 0.5 0.5 0.5 0.5</Goal>
+				<Goal dim="7">0.540 0.188 0.100 0.107 0.257 0.567 0.500</Goal>
 			</Query>
 		</Queries>
 	</Planner>

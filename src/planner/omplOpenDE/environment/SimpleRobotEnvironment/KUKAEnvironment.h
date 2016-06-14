@@ -64,7 +64,7 @@ namespace omplcplanner{
  class KUKAEnvironment: public KauthamDEEnvironment
  {
      public:
-     KUKAEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
+     KUKAEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm,bool isKchain);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
      ~KUKAEnvironment(void);
      virtual unsigned int getControlDimension(void) const;//!< describe the number of parameter used to describe control input.
      virtual void getControlBounds (std::vector< double > &lower, std::vector< double > &upper) const;//!< describe the control bounds, minimum and maximum control range.

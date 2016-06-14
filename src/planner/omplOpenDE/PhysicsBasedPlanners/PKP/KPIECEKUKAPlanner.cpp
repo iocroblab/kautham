@@ -67,12 +67,12 @@ namespace omplcplanner{
      ws->moveRobotsTo(init);
      dInitODE2(0);
      //envPtr= oc::OpenDEEnvironmentPtr(new KauthamDEKUKAEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
-      envPtr = oc::OpenDEEnvironmentPtr(new KUKAEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+      envPtr = oc::OpenDEEnvironmentPtr(new KUKAEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
      stateSpace = new KUKAStateSpace(envPtr);
      stateSpacePtr = ob::StateSpacePtr(stateSpace);
-//     csp= oc::ControlSpacePtr(new KauthamKukaControlSpace(stateSpacePtr));
-//     ss = new oc::OpenDESimpleSetup(csp);
-    ss = new oc::OpenDESimpleSetup(stateSpacePtr);
+     csp= oc::ControlSpacePtr(new KukaControlSpace(stateSpacePtr));
+     ss = new oc::OpenDESimpleSetup(csp);
+    //ss = new oc::OpenDESimpleSetup(stateSpacePtr);
      oc::SpaceInformationPtr si=ss->getSpaceInformation();
      ob::PlannerPtr planner(new oc::KPIECE1(si));
      addParameter("Goal Bias", _GoalBias);

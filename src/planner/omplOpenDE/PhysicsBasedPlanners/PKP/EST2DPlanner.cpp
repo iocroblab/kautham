@@ -46,7 +46,7 @@ EST2DPlanner::EST2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSe
     _idName = "EST2DPlanner";
     dInitODE2(0);
 
-     envPtr = oc::OpenDEEnvironmentPtr(new twoDRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+     envPtr = oc::OpenDEEnvironmentPtr(new twoDRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
     stateSpace = new twoDRobotStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
 

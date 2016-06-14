@@ -51,7 +51,7 @@ KPIECE3DPlanner::KPIECE3DPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
     //       stateSpace = new KauthamDEStateSpace(envPtr);
     //       stateSpacePtr = ob::StateSpacePtr(stateSpace);
 
-     envPtr = oc::OpenDEEnvironmentPtr(new FreeFlyingRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+     envPtr = oc::OpenDEEnvironmentPtr(new FreeFlyingRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
     stateSpace = new freeFlyingRobotStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
 

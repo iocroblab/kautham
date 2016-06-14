@@ -51,19 +51,19 @@ public:
     virtual void project(const ob::State* s, std::vector<double>& coord) const
     {
         coord.resize(2);
-        coord[0]=s->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(0)->values[0];
-        coord[1]=s->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(0)->values[1];
-        //const double *pos = s->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
-        //coord[0] =  pos[0];
-        //coord[1] =  pos[1];
+//        coord[0]=s->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(0)->values[0];
+//        coord[1]=s->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(0)->values[1];
+        const double *pos = s->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
+        coord[0] =  pos[0];
+        coord[1] =  pos[1];
         //std::cout<<"Cord are : "<<coord[0]<<" "<<coord[1]<<std::endl;
 
     }
     virtual void sampleFullState(const ob::StateSamplerPtr& sampler, const std::vector<double>& coord, ob::State* s) const
     {
         sampler->sampleUniform(s);
-        s->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(0)->values[0] = coord[0];
-        s->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(0)->values[1] = coord[1];
+        s->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(12)->values[0] = coord[0];
+        s->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(12)->values[1] = coord[1];
 
     }
 
@@ -89,15 +89,19 @@ Syclop2DPlanner::Syclop2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
     //       stateSpace = new KauthamDEStateSpace(envPtr);
     //       stateSpacePtr = ob::StateSpacePtr(stateSpace);
 
-     envPtr = oc::OpenDEEnvironmentPtr(new twoDRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
-    stateSpace = new twoDRobotStateSpace(envPtr);
-    stateSpacePtr = ob::StateSpacePtr(stateSpace);
+    envPtr= oc::OpenDEEnvironmentPtr(new PlanarChainEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
+    //stateSpacePtr = ob::StateSpacePtr(new PlanarChainStateSpace(envPtr));
+    stateSpacePtr = ob::StateSpacePtr(new PlanarChainStateSpace(envPtr));
+    csp= oc::ControlSpacePtr(new PlanarChainControlSpace(stateSpacePtr));
+    ss = new oc::OpenDESimpleSetup(csp);
+   //ss = new oc::OpenDESimpleSetup(stateSpacePtr);
+    oc::SpaceInformationPtr si=ss->getSpaceInformation();
 
 //    oc::ControlSpacePtr csp(new KauthamControlSpace(stateSpacePtr));
 //    ss = new oc::OpenDESimpleSetup(csp);
-    ss = new oc::OpenDESimpleSetup(stateSpacePtr);
+    //ss = new oc::OpenDESimpleSetup(stateSpacePtr);
 
-    oc::SpaceInformationPtr si=ss->getSpaceInformation();
+    //oc::SpaceInformationPtr si=ss->getSpaceInformation();
 
 
     bounds.low[0] = _wkSpace->getRobot(0)->getLimits(0)[0];

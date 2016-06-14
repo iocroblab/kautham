@@ -33,7 +33,7 @@ namespace omplcplanner{
 
 
 //! Constructor create the Kuka robot enviroment and setup the parameters for ODE.
-KUKAEnvironment::KUKAEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm)
+KUKAEnvironment::KUKAEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm,bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm, isKchain)
 {
     SetPlanningParameters();
 }
@@ -56,8 +56,8 @@ void KUKAEnvironment::getControlBounds(std::vector< double > &lower, std::vector
 
     for(int i=0; i < 7; i++)
     {
-        lower[i]=-1.0;
-        upper[i]=2.14;
+        lower[i]=-5;
+        upper[i]=5;
     }
 }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
@@ -179,126 +179,27 @@ KukaControlSampler::KukaControlSampler(const oc::ControlSpace *cm) : oc::RealVec
 void KukaControlSampler::sampleNext(oc::Control *control, const oc::Control *previous)
 {
     space_->copyControl(control, previous);
-    ob::RealVectorBounds b(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->getControlDimension());
-    std::vector<dJointID> J;
-    for(int i=0;i<7;i++)
+
+
+const ob::RealVectorBounds &b = space_->as<oc::OpenDEControlSpace>()->getBounds();
+
+for(int i=0;i<7;i++)
+{
+    if (rng_.uniform01() > 0.5)
     {
-        J.push_back(dBodyGetJoint(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->stateBodies_[i+1],1));
-//       dJointType type=dJointGetType(J[i]);
 
-        dReal high = dJointGetHingeParam(J[i],dParamHiStop);
-        dReal low = dJointGetHingeParam(J[i],dParamLoStop);
-        b.high[i] = high;
-        b.low[i] =  low;
-    }
-
-//    dJointID J1 = dBodyGetJoint(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->stateBodies_[0],0);
-//    dJointID J2 = dBodyGetJoint(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->stateBodies_[0],0);
-//    dJointID J3 = dBodyGetJoint(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->stateBodies_[0],0);
-//    dJointID J4 = dBodyGetJoint(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->stateBodies_[0],0);
-//    dJointID J5 = dBodyGetJoint(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->stateBodies_[0],0);
-//    dJointID J6 = dBodyGetJoint(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->stateBodies_[0],0);
-//    dJointID J7 = dBodyGetJoint(space_->as<oc::OpenDEControlSpace>()->getEnvironment()->stateBodies_[0],0);
-
-
-//    b.high[0] = dJointGetHingeParam(J1,dParamHiStop);
-//    b.high[1] = dJointGetHingeParam(J2,dParamHiStop);
-//    b.high[2] = dJointGetHingeParam(J3,dParamHiStop);
-//    b.high[3] = dJointGetHingeParam(J4,dParamHiStop);
-//    b.high[4] = dJointGetHingeParam(J5,dParamHiStop);
-//    b.high[5] = dJointGetHingeParam(J6,dParamHiStop);
-//    b.high[6] = dJointGetHingeParam(J7,dParamHiStop);
-
-//    b.low[0] =  dJointGetHingeParam(J1,dParamLoStop);
-//    b.low[1] =  dJointGetHingeParam(J2,dParamLoStop);
-//    b.low[2] =  dJointGetHingeParam(J3,dParamLoStop);
-//    b.low[3] =  dJointGetHingeParam(J4,dParamLoStop);
-//    b.low[4] =  dJointGetHingeParam(J5,dParamLoStop);
-//    b.low[5] =  dJointGetHingeParam(J6,dParamLoStop);
-//    b.low[6] =  dJointGetHingeParam(J7,dParamLoStop);
-
-//const ob::RealVectorBounds &b = space_->as<oc::OpenDEControlSpace>()->getBounds();
-//if (rng_.uniform01() > 0.5)
-
-    for(int i=0;i<7;i++)
-    {
         double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[i];
         static const double DT0 = 0.5;
         v += (rng_.uniformBool() ? 1 : -1) * DT0;
-        dReal angle = dJointGetHingeAngle(J[i]);
-        angle = angle + v*0.05;
-        if (angle > b.high[i])
-            angle = b.high[i] - DT0;
-        if (angle < b.low[i])
-            angle= b.low[i] + DT0;
+        if (v > b.high[0])
+            v = b.high[0] - DT0;
+        if (v < b.low[0])
+            v = b.low[0] - DT0;
 
-
-//        if (v > b.high[i])
-//            v = b.high[i] - DT0;
-//        if (v < b.low[i])
-//            v = b.low[i] + DT0;
     }
 
-//if (rng_.uniform01() > 0.5)
-//{
-//    double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[1];
-//    static const double DT1 = 0.5;
-//    v += (rng_.uniformBool() ? 1 : -1) * DT1;
-//    if (v > b.high[1])
-//    v = b.high[1] - DT1;
-//    if (v < b.low[1])
-//    v = b.low[1] + DT1;
-//}
-//if (rng_.uniform01() > 0.5)
-//{
-//    double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[2];
-//    static const double DT1 = 0.5;
-//    v += (rng_.uniformBool() ? 1 : -1) * DT1;
-//    if (v > b.high[1])
-//    v = b.high[1] - DT1;
-//    if (v < b.low[1])
-//    v = b.low[1] + DT1;
-//}
-//if (rng_.uniform01() > 0.5)
-//{
-//    double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[3];
-//    static const double DT1 = 0.5;
-//    v += (rng_.uniformBool() ? 1 : -1) * DT1;
-//    if (v > b.high[1])
-//    v = b.high[1] - DT1;
-//    if (v < b.low[1])
-//    v = b.low[1] + DT1;
-//}
-//if (rng_.uniform01() > 0.5)
-//{
-//    double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[4];
-//    static const double DT1 = 0.5;
-//    v += (rng_.uniformBool() ? 1 : -1) * DT1;
-//    if (v > b.high[1])
-//    v = b.high[1] - DT1;
-//    if (v < b.low[1])
-//    v = b.low[1] + DT1;
-//}
-//if (rng_.uniform01() > 0.5)
-//{
-//    double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[5];
-//    static const double DT1 = 0.5;
-//    v += (rng_.uniformBool() ? 1 : -1) * DT1;
-//    if (v > b.high[1])
-//    v = b.high[1] - DT1;
-//    if (v < b.low[1])
-//    v = b.low[1] + DT1;
-//}
-//if (rng_.uniform01() > 0.5)
-//{
-//    double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[6];
-//    static const double DT1 = 0.5;
-//    v += (rng_.uniformBool() ? 1 : -1) * DT1;
-//    if (v > b.high[1])
-//    v = b.high[1] - DT1;
-//    if (v < b.low[1])
-//    v = b.low[1] + DT1;
-//}
+}
+
 
 }
 

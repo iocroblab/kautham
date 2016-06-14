@@ -36,10 +36,8 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
         return;
     }
     int type = dGeomGetClass (g);
-    std::cout<<"Type = "<<type<<std::endl;
     if (type == dBoxClass)
     {
-        std::cout<<"Geom is BOX "<<type<<std::endl;
         if (!pos) pos = dGeomGetPosition (g);
         if (!R) R = dGeomGetRotation (g);
 
@@ -49,7 +47,6 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
     }
     else if (type == dSphereClass)
     {
-        std::cout<<"Geom is SPHERE "<<type<<std::endl;
 
         if (!pos) pos = dGeomGetPosition (g);
         if (!R) R = dGeomGetRotation (g);
@@ -57,8 +54,6 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
     }
     else if (type == dCapsuleClass)
     {
-        std::cout<<"Geom is CAPSULE "<<type<<std::endl;
-
         if (!pos) pos = dGeomGetPosition (g);
         if (!R) R = dGeomGetRotation (g);
         dReal radius,length;
@@ -67,7 +62,6 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
     }
     else if (type == dCylinderClass)
     {
-        std::cout<<"Geom is CYLINDER "<<type<<std::endl;
 
         if (!pos) pos = dGeomGetPosition (g);
         if (!R) R = dGeomGetRotation (g);
@@ -77,7 +71,6 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
     }
     else if (type == dGeomTransformClass)
     {
-        std::cout<<"Geom is TRANSFORM "<<type<<std::endl;
         if (!pos) pos = dGeomGetPosition (g);
         if (!R) R = dGeomGetRotation (g);
 
@@ -96,7 +89,6 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
     else if (type == dTriMeshClass)
     {
         //dTriIndex* Indices = DISP.tmd[i].indices;
-        std::cout<<"Geom is MESH "<<type<<std::endl;
 
         const dReal* Pos = dGeomGetPosition(g);
         const dReal* Rot = dGeomGetRotation(g);
@@ -119,34 +111,32 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
         }
         //std::cout<<"done once"<<std::endl;
     }
-//    else
-//        if (type == dRayClass)
-//        {
-//            std::cout<<"Geom is RAY "<<type<<std::endl;
+    else
+        if (type == dRayClass)
+        {
+            dVector3 Origin, Direction;
+            dGeomRayGet(g, Origin, Direction);
 
-//            dVector3 Origin, Direction;
-//            dGeomRayGet(g, Origin, Direction);
+            dReal Length = dGeomRayGetLength(g);
 
-//            dReal Length = dGeomRayGetLength(g);
-
-//            dVector3 End;
-//            End[0] = Origin[0] + (Direction[0] * Length);
-//            End[1] = Origin[1] + (Direction[1] * Length);
-//            End[2] = Origin[2] + (Direction[2] * Length);
-//            End[3] = Origin[3] + (Direction[3] * Length);
-//            double *ori = new double[3];
-//            double *end = new double[4];
-//            ori[0]=Origin[0];
-//            ori[1]=Origin[1];
-//            ori[2]=Origin[2];
-//            end[0]=End[0];
-//            end[1]=End[1];
-//            end[2]=End[2];
-//            end[3]=End[3];
+            dVector3 End;
+            End[0] = Origin[0] + (Direction[0] * Length);
+            End[1] = Origin[1] + (Direction[1] * Length);
+            End[2] = Origin[2] + (Direction[2] * Length);
+            End[3] = Origin[3] + (Direction[3] * Length);
+            double *ori = new double[3];
+            double *end = new double[4];
+            ori[0]=Origin[0];
+            ori[1]=Origin[1];
+            ori[2]=Origin[2];
+            end[0]=End[0];
+            end[1]=End[1];
+            end[2]=End[2];
+            end[3]=End[3];
 
 
-//            dsDrawLine(ori, end);
-//        }
+            dsDrawLine(ori, end);
+        }
         else
             show_aabb = 0;
 
@@ -178,10 +168,8 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
         return;
     }
     int type = dGeomGetClass (g);
-    std::cout<<"Type = "<<type<<std::endl;
     if (type == dBoxClass)
     {
-        std::cout<<"Geom is BOX "<<type<<std::endl;
         if (!pos) pos = dGeomGetPosition (g);
         if (!R) R = dGeomGetRotation (g);
 
@@ -191,16 +179,12 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
     }
     else if (type == dSphereClass)
     {
-        std::cout<<"Geom is SPHERE "<<type<<std::endl;
-
         if (!pos) pos = dGeomGetPosition (g);
         if (!R) R = dGeomGetRotation (g);
         dsDrawSphere (pos,R,dGeomSphereGetRadius (g));
     }
     else if (type == dCapsuleClass)
     {
-        std::cout<<"Geom is CAPSULE "<<type<<std::endl;
-
         if (!pos) pos = dGeomGetPosition (g);
         if (!R) R = dGeomGetRotation (g);
         dReal radius,length;
@@ -209,7 +193,6 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
     }
     else if (type == dCylinderClass)
     {
-        std::cout<<"Geom is CYLINDER "<<type<<std::endl;
 
         if (!pos) pos = dGeomGetPosition (g);
         if (!R) R = dGeomGetRotation (g);
@@ -219,7 +202,6 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
     }
     else if (type == dGeomTransformClass)
     {
-        std::cout<<"Geom is TRANSFORM "<<type<<std::endl;
         if (!pos) pos = dGeomGetPosition (g);
         if (!R) R = dGeomGetRotation (g);
 
@@ -255,15 +237,13 @@ void DisplayOpenDESpaces::drawGeom (dGeomID g, const dReal *pos, const dReal *R,
 }
 
 
-void DisplayOpenDESpaces::displaySpace(dSpaceID space, std::vector<Tmesh> *tm)
+void DisplayOpenDESpaces::displaySpace(std::vector<dGeomID> g, std::vector<Tmesh> *tm)
 {
-    int ngeoms;
+    int ngeoms = g.size();
 
-    ngeoms = dSpaceGetNumGeoms(space);
-
-    for (int i = 0 ; i < ngeoms ; ++i)
+    for (int i = 0 ; i < ngeoms-1 ; ++i)
     {
-        dGeomID geom = dSpaceGetGeom(space, i);
+        dGeomID geom = g[i];
         std::map<dGeomID, Color>::const_iterator it = m_gcolors.find(geom);
         if (it != m_gcolors.end())
             dsSetColor(it->second.r,it->second.g,it->second.b);
@@ -275,9 +255,8 @@ void DisplayOpenDESpaces::displaySpace(dSpaceID space, std::vector<Tmesh> *tm)
         else
         drawGeom(geom, NULL, NULL, 0,tm->at(i));
 
-
     }
-
+    drawGeom(g[ngeoms-1], NULL, NULL, 0);
 }
 void DisplayOpenDESpaces::displaySpace(dSpaceID space)
 {
@@ -303,21 +282,22 @@ void DisplayOpenDESpaces::displaySpaces(std::vector<Tmesh> *tm)
 
 if(tm==NULL)
 {
-    for (unsigned int i = 0 ; i < m_spaces.size() ; ++i)
-    {
-        m_activeColor = m_colors[i];
-        displaySpace(m_spaces[i],NULL);
-    }
+
+        m_activeColor = m_colors[0];
+        displaySpace(geomID,NULL);
+
 }
 else
 {
-    for (unsigned int i = 0 ; i < m_spaces.size() ; ++i)
-    {
-        m_activeColor = m_colors[i];
-        displaySpace(m_spaces[i],tm);
-    }
+     m_activeColor = m_colors[0];
+        displaySpace(geomID,tm);
+
 }
 
+}
+void DisplayOpenDESpaces::addGeoms(std::vector<dGeomID> g)
+{
+    geomID=g;
 }
 
 void DisplayOpenDESpaces::addSpace(dSpaceID space, float r, float g, float b)
@@ -368,4 +348,5 @@ void DisplayOpenDESpaces::clear(void)
     m_spaces.clear();
     m_colors.clear();
     m_gcolors.clear();
+    geomID.clear();
 }

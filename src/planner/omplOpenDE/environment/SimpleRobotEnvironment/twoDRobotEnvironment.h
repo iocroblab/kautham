@@ -94,7 +94,7 @@ class twoDRobotEnvironment: public KauthamDEEnvironment
 public:
 
     twoDRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,
-                                KthReal maxControlsteps, KthReal erp, KthReal cfm);//!< Constructor define the 2D robot environment by calling the KauthamDEEnvironment.
+                                KthReal maxControlsteps, KthReal erp, KthReal cfm,bool isKchain);//!< Constructor define the 2D robot environment by calling the KauthamDEEnvironment.
     ~twoDRobotEnvironment(void);
     std::string robBase;
     std::string floor;

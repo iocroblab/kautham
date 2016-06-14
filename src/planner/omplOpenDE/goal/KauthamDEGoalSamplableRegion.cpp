@@ -94,31 +94,43 @@ vector<KauthamODEobject> KauthamDEGoalSamplableRegion::smp2KauthamOpenDEState(Wo
            }
            else
            {
-       //        const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(Kauthamodebodies.size()-1);
-       //        distance = sqrt(fabs(pos[0]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0]))+(fabs(pos[1]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1]))+(fabs(pos[2]-Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2]));
-               const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
-               const double *vel = st->as<oc::OpenDEStateSpace::StateType>()->getBodyLinearVelocity(3);
-               double dx = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0] - pos[0];
-               double dy = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1] - pos[1];
-               double dz = Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2] - pos[2];
-               double dot = dx * vel[0] + dy * vel[1] + dz *vel[2];
+               const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(Kauthamodebodies.size()-3);
+               const ob::SO3StateSpace::StateType &rot = st->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(Kauthamodebodies.size()-3);
+
+               const double *vel = st->as<oc::OpenDEStateSpace::StateType>()->getBodyLinearVelocity(Kauthamodebodies.size()-3);
+
+               double dx = Kauthamodebodies[Kauthamodebodies.size()-3].objectposition[0] - pos[0];
+               double dy = Kauthamodebodies[Kauthamodebodies.size()-3].objectposition[1] - pos[1];
+               //double dz = Kauthamodebodies[Kauthamodebodies.size()-3].objectposition[2] - pos[2];
+               double x = Kauthamodebodies[Kauthamodebodies.size()-3].objectorientation[0];
+               double y = Kauthamodebodies[Kauthamodebodies.size()-3].objectorientation[1];
+               double z = Kauthamodebodies[Kauthamodebodies.size()-3].objectorientation[2];
+               double w = Kauthamodebodies[Kauthamodebodies.size()-3].objectorientation[3];
+               double rD=(x*rot.x + y*rot.y + z*rot.z + w*rot.w);
+
+               //std::cout<<"x, y, z, w = "<<rot.x<<" , "<<rot.y<<" , "<<rot.z<<" , "<<rot.w<<"Distance "<<rD<<std::endl;
+
+               double dot = dx * vel[0] + dy * vel[1] ;//+ dz *vel[2];
                if(dot > 0)
                    dot=0;
                else
                    dot=sqrt(fabs(dot));
 
-               distance = distance+ sqrt(dx*dx + dy*dy + dz*dz) + dot;
-//               std::cout<<" Goal is :       [ "<<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0]<<" , "<<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1]<<" , " <<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2]<<" ]"<<std::endl;
-//               std::cout<<" Current P is :  [ "<<pos[0]<<" , "<<pos[1]<<" , " <<pos[2]<<" ]"<<std::endl;
-//               std::cout<<" Difference is : [ "<<dx<<" , "<<dy<<" , " <<dz<<" ]"<<std::endl;
+               distance = distance+ sqrt(dx*dx + dy*dy )+dot;//+ (1-fabs(rD));// + dz*dz) + dot;
+       //        std::cout<<" Goal is :       [ "<<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[0]<<" , "<<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[1]<<" , " <<Kauthamodebodies[Kauthamodebodies.size()-1].objectposition[2]<<" ]"<<std::endl;
+       //        std::cout<<" Current P is :  [ "<<pos[0]<<" , "<<pos[1]<<" , " <<pos[2]<<" ]"<<std::endl;
+              // std::cout<<" Velocity is :  [ "<<vel[0]<<" , "<<vel[1]<<" , " <<vel[2]<<" ]"<<std::endl;
+
+               //std::cout<<" Difference is : [ "<<dx<<" , "<<dy<<" , " <<dz<<" ]"<<std::endl;
 
            }
+
            return distance;
        }
 
      void KauthamDEGoalSamplableRegion::sampleGoal(ob::State *st) const
        {
-        double *v = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
+        double *v = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
         stateSampler_->sampleUniform(st);
         v[0]=st->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(0)->values[0];
         v[1]=st->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(0)->values[1];
@@ -129,8 +141,8 @@ vector<KauthamODEobject> KauthamDEGoalSamplableRegion::smp2KauthamOpenDEState(Wo
      bool KauthamDEGoalSamplableRegion::isSatisfied(const ob::State *st, double *distance) const
      {
          double d2g = distanceGoal(st);
-        if(d2g<20)
-         std::cout<<"Distance To Goal is : "<<d2g<<std::endl;
+//        if(d2g<20)
+//         std::cout<<"Distance To Goal is : "<<d2g<<std::endl;
          if (distance)
              *distance = d2g;
          return d2g < threshold_;

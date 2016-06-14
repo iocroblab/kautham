@@ -46,7 +46,7 @@ KnowledgeOrientedRRT2DPlanner::KnowledgeOrientedRRT2DPlanner(SPACETYPE stype, Sa
     _guiName = "Knowledge Oriented RRT 2D Planner";
     _idName = "KnowledgeOrientedRRT2DPlanner";
     dInitODE2(0);
-     envPtr = oc::OpenDEEnvironmentPtr(new ConstraintAware2DRobotEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+     envPtr = oc::OpenDEEnvironmentPtr(new ConstraintAware2DRobotEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
     stateSpace = new ConstraintAwaretwoDRobotStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
     //oc::ControlSpacePtr controlSpacePtr(new KauthamControlSpace(stateSpacePtr));

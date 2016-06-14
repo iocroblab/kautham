@@ -53,7 +53,11 @@ bool RigidBody::isCollisionAllowed(double x, double y)
     {
     if((x > ManipulationRegions.at(i).x_min && y > ManipulationRegions.at(i).y_min &&
         (x < ManipulationRegions.at(i).x_max && y < ManipulationRegions.at(i).y_max)))
+    {
+        //std::cout<<"Region is :"<<ManipulationRegions.at(i).x_min<<" , "<<ManipulationRegions.at(i).x_max<<" , "
+                  // <<ManipulationRegions.at(i).y_min<<" , "<<ManipulationRegions.at(i).y_max<<std::endl;
         return collisionAllowed=true;
+    }
     }
 
     return collisionAllowed=false;
@@ -83,6 +87,7 @@ RigidBody InstantiatedKnowledge::getManipulationConstraints(dGeomID geom)
 {
     return rigidBodyProperties.at(geom);
 }
+
 double InstantiatedKnowledge::isRobotInManipulationRegion(double x, double y)
 {
     for(unsigned int i=0;i<_rigidBody.size();i++)
@@ -95,6 +100,7 @@ double InstantiatedKnowledge::isRobotInManipulationRegion(double x, double y)
     }
     return -1;
 }
+
 void InstantiatedKnowledge::updateKnowledge(std::vector<dBodyID> body)
 {
     for(unsigned int i=0;i<_rigidBody.size();i++)
@@ -148,8 +154,8 @@ void InstantiatedKnowledge::updateKnowledge(std::vector<dBodyID> body)
             else
                 if(_rigidBody.at(i).getRigidBodyType()=="freeManipulatable")
                 {
-                    double rx=_rigidBody.at(i).getDim()[0]*3;
-                    double ry=_rigidBody.at(i).getDim()[1]*3;
+                    double rx=_rigidBody.at(i).getDim()[0]*2;
+                    double ry=_rigidBody.at(i).getDim()[1]*2;
                     double x=rx/2;
                     double y=ry/2;
                     //Points of daigonal

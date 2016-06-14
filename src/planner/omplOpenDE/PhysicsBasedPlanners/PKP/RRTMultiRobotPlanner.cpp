@@ -48,7 +48,7 @@ RRTMultiRobotPlanner::RRTMultiRobotPlanner(SPACETYPE stype, Sample *init, Sample
     _guiName = "RRT MultiRobot Planner";
     _idName = "RRTMultiRobotPlanner";
     dInitODE2(0);
-     envPtr = oc::OpenDEEnvironmentPtr(new MultiRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+     envPtr = oc::OpenDEEnvironmentPtr(new MultiRobotEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm,_isKchain));
     stateSpace = new MultiRobotStateSpace (envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
 

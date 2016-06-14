@@ -4,7 +4,7 @@
     <!-- Main body -->
     <link name="base_link">
         <inertial>
-            <mass value="0.2" />
+            <mass value="2" />
             <origin xyz="0 0 0" /> 
             <inertia  ixx="0.2" ixy="0.0"  ixz="0.0"  iyy="0.2"  iyz="0.0"  izz="0.2" />
         </inertial>
@@ -35,7 +35,7 @@
     </joint>
     <link name="front_left_wheel_link">
         <inertial>
-            <mass value="0.01" />
+            <mass value="1" />
             <origin xyz="0 0 0" /> 
             <inertia  ixx="0.01" ixy="0.0"  ixz="0.0"  iyy="0.01"  iyz="0.0"  izz="0.01" />
         </inertial>
@@ -65,7 +65,7 @@
     </joint>
     <link name="front_right_wheel_link">
         <inertial>
-            <mass value="0.01" />
+            <mass value="1" />
             <origin xyz="0 0 0" /> 
             <inertia  ixx="0.01" ixy="0.0"  ixz="0.0"  iyy="0.01"  iyz="0.0"  izz="0.01" />
         </inertial>
@@ -95,7 +95,7 @@
     </joint>
     <link name="back_right_wheel_link">
         <inertial>
-            <mass value="0.01" />
+            <mass value="1" />
             <origin xyz="0 0 0" /> 
             <inertia  ixx="0.01" ixy="0.0"  ixz="0.0"  iyy="0.01"  iyz="0.0"  izz="0.01" />
         </inertial>
@@ -128,7 +128,7 @@
     </joint>
     <link name="back_left_wheel_link">
         <inertial>
-            <mass value="0.01" />
+            <mass value="1" />
             <origin xyz="0 0 0" /> 
             <inertia  ixx="0.01" ixy="0.0"  ixz="0.0"  iyy="0.01"  iyz="0.0"  izz="0.01" />
         </inertial>

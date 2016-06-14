@@ -30,7 +30,7 @@
 #include <sampling/sampling.h>
 #include <boost/bind/mem_fn.hpp>
 #include "ConstraintAware2DRobotEnvironment.h"
-
+#include <math.h>
 #include <ompl/base/spaces/SE2StateSpace.h>
 #include <ompl/base/PlannerStatus.h>
 #include <ompl/base/StateSpace.h>
@@ -46,7 +46,7 @@ using namespace std;
 namespace Kautham {
 namespace omplcplanner{
 //! Constructor create the ODE table enviroment and setup the parameters for ODE.
-ConstraintAware2DRobotEnvironment::ConstraintAware2DRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm)
+ConstraintAware2DRobotEnvironment::ConstraintAware2DRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm, bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm,isKchain)
 {
      //robBase = (ws->getRobot(0)->getName())+(ws->getRobot(0)->getLink(0)->getName());
     // floor = (ws->getObstacle(ws->getNumObstacles()-1)->getName())+(ws->getObstacle(ws->getNumObstacles()-1)->getLink(0)->getName());
@@ -72,8 +72,8 @@ void ConstraintAware2DRobotEnvironment::getControlBounds(std::vector< double > &
     lower.resize(2);
     upper.resize(2);
     for(int i=0; i < 2; i++)
-    {   lower[i] = -10;
-        upper[i] = 10;
+    {   lower[i] = -5;//-(0.5*5*9.8);
+        upper[i] = 5;//(0.5*5*9.8);
     }
 }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
@@ -149,6 +149,7 @@ bool ConstraintAware2DRobotEnvironment::isValidCollision(dGeomID geom1, dGeomID 
                     || (bodyType1 == "fixed" && bodyType2 == "robBody"))
             {
                 return false;
+                std::cout<<"Fixed body"<<std::endl;
             }
             else
                return true;
@@ -187,7 +188,7 @@ void ConstraintAware2DRobotEnvironment::setupContact(dGeomID geom1, dGeomID geom
                         (geom1_body == "fixed" && geom2_body == "odeGround" ))
                     contact.surface.mu = dInfinity;
                 else
-                    contact.surface.mu = 0.7;
+                    contact.surface.mu = 1.5;
     contact.surface.soft_erp = _erp;
     contact.surface.soft_cfm = _cfm;
 
@@ -263,30 +264,54 @@ ConstraintAwaretwoDControlSampler::ConstraintAwaretwoDControlSampler(const oc::C
 
 
 }
+
+// This function check that the robot is located in Cmove or in Cinteration and sample the controls accordingly
 void ConstraintAwaretwoDControlSampler::sampleNext(oc::Control *control, const oc::Control *previous)
 {
     space_->copyControl(control, previous);
+    //body 0 is the robot body
     const dReal *pos1=dBodyGetPosition(((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->bodies[0]);
-    double mass = ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->Instknowledge->isRobotInManipulationRegion(pos1[0],pos1[2]);
+    double mass = ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
+                   getEnvironment().get())->Instknowledge->isRobotInManipulationRegion(pos1[0],pos1[2]);
     const ob::RealVectorBounds &b = space_->as<oc::OpenDEControlSpace>()->getBounds();
 
-    if(mass==-1)
+   if(mass==-1)
     {
-        double &v1 = control->as<oc::OpenDEControlSpace::ControlType>()->values[0];
-        v1=rng_.uniformReal(b.low[0],b.high[0]);
-        double &v2 = control->as<oc::OpenDEControlSpace::ControlType>()->values[1];
-        v2=rng_.uniformReal(b.low[1],b.high[1]);
-        std::cout<<"Rob is in Cmove "<<std::endl;
+        if (rng_.uniform01() > 0.5)
+        {
+
+            // std::cout<<"Rob is in Cmove "<<std::endl;
+            double &v1 = control->as<oc::OpenDEControlSpace::ControlType>()->values[0];
+            v1=rng_.uniformReal(b.low[0],b.high[0]);
+            double &v2 = control->as<oc::OpenDEControlSpace::ControlType>()->values[1];
+            v2=rng_.uniformReal(b.low[1],b.high[1]);
+            //   std::cout<<"Rob is in Cmove "<<std::endl;
+        }
     }
     else
     {
-        double &v1 = control->as<oc::OpenDEControlSpace::ControlType>()->values[0];
-        v1=rng_.uniformReal(b.low[0]+(0.5*mass*9.8),b.high[0]+(0.5*mass*9.8));
-        double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[1];
-        v=rng_.uniformReal(b.low[1]+(0.5*mass*9.8),b.high[1]+(0.5*mass*9.8));
-        std::cout<<"rob is in Cint. Target mass is "<<mass<<std::endl;
+        if (rng_.uniform01() > 0.5)
+        {
+
+
+            double &v1 = control->as<oc::OpenDEControlSpace::ControlType>()->values[0];
+            v1=rng_.uniformReal((b.low[0])-(0.5*mass*9.8),(b.high[0])+(0.5*mass*9.8)-5);
+            double &v2 = control->as<oc::OpenDEControlSpace::ControlType>()->values[1];
+            v2=rng_.uniformReal((b.low[1])-(0.5*mass*9.8),(b.high[1])+(0.5*mass*9.8)-5);
+
+            //                    double &v1 = control->as<oc::OpenDEControlSpace::ControlType>()->values[0];
+            //                    v1=rng_.uniformReal(-15,15);
+            //                    double &v2 = control->as<oc::OpenDEControlSpace::ControlType>()->values[1];
+            //                    v2=rng_.uniformReal(-15,15);
+
+            std::cout<<"Manipulation Region Position: "<<pos1[0]<<" , "<<pos1[1]<<std::endl;
+            //to update the manipulation regions
+            // ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->
+            //         Instknowledge->updateKnowledge((space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->stateBodies_);
+            //std::cout<<"rob is in Cint. Target mass is "<<mass<<std::endl;
+        }
     }
-////todo:update manipulaion regions.
+
 
 }
 

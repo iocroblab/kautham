@@ -39,7 +39,7 @@ public:
     void drawGeom (dGeomID g, const dReal *pos, const dReal *R, int show_aabb, Tmesh tm);
     void drawGeom (dGeomID g, const dReal *pos, const dReal *R, int show_aabb);
 
-    void displaySpace(dSpaceID space, std::vector<Tmesh> *tm);
+    void displaySpace(std::vector<dGeomID> g, std::vector<Tmesh> *tm);
     void displaySpaces(std::vector<Tmesh>  *tm);
     void displaySpace(dSpaceID space);
 
@@ -49,7 +49,7 @@ public:
     void setGeomColor(dGeomID geom, float r, float g, float b);
     void setCurrentTransform(dGeomID geom);
 
-
+    void addGeoms(std::vector<dGeomID> geom);
     void getTmeshdata(std::vector<Tmesh> tm);
     struct Color
     {
@@ -57,6 +57,7 @@ public:
     };
 
     std::vector<Tmesh> tmd;
+    std::vector<dGeomID> geomID;
     std::vector<dSpaceID>     m_spaces;
     std::vector<Color>        m_colors;
     std::map<dGeomID, Color>  m_gcolors;

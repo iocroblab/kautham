@@ -48,7 +48,7 @@ using namespace std;
 namespace Kautham {
 namespace omplcplanner{
 //! Constructor create the 2D robot enviroment and setup the parameters for ODE.
-CarEnvironment::CarEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm)
+CarEnvironment::CarEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm, bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm, isKchain)
 {
     SetPlanningParameters();
 }
@@ -58,7 +58,7 @@ CarEnvironment::~CarEnvironment(){}
 //! this is the reimplementation of the virtual function of OpenDEEnvironment, that describe the control dimensions.
 unsigned int CarEnvironment::getControlDimension(void) const
 {
-    return 2;
+    return 6;
 }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
  * which describe the control bounds,the the max and min limits for sampling the control.
@@ -66,13 +66,18 @@ unsigned int CarEnvironment::getControlDimension(void) const
 void CarEnvironment::getControlBounds(std::vector< double > &lower, std::vector< double > &upper) const
 {
 
-    lower.resize(2);
-    upper.resize(2);
-    lower[0] = -0.3;
-    lower[1] = -20;
+    lower.resize(6);
+    upper.resize(6);
+    lower[0] = -0.5;
+    lower[1] = -5;
 
-    upper[0] = 0.3;
-    upper[1] = 40;
+    upper[0] = 0.5;
+    upper[1] = 10;
+    for(int i=2;i<6;i++)
+    {
+        lower[i] = -5;
+        upper[i] = 5;
+    }
 
 }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
@@ -88,16 +93,22 @@ void CarEnvironment::applyControl (const double *control) const
     {
 
         dReal curturn = dJointGetHinge2Angle1 (cJoint[j]);
+        //dJointAddHinge2Torques(cJoint[j],0,speed);
         dJointSetHinge2Param(cJoint[j],dParamVel,(turn-curturn)*1.0);
-        dJointSetHinge2Param(cJoint[j],dParamFMax,dInfinity);
+        dJointSetHinge2Param(cJoint[j],dParamFMax,2);
         dJointSetHinge2Param(cJoint[j],dParamVel2,speed);
-        dJointSetHinge2Param(cJoint[j],dParamFMax2,dInfinity);
+        dJointSetHinge2Param(cJoint[j],dParamFMax2,mkinematics->getTorqueLimit().at(j));
     }
+    dJointGetFeedback(cJoint[0]);
+    dJointGetFeedback(cJoint[1]);
+    dJointGetFeedback(cJoint[2]);
+    dJointGetFeedback(cJoint[3]);
+    //std::cout<<"Torque : "<<feedback1->t2[1]<<" , "<<feedback2->t2[1]<<" , "<<feedback3->t2[1]<<" , "<<feedback4->t2[1]<<std::endl;
     //        const dReal *pos = dBodyGetPosition(bodies[0]);
     //        std::cout<<"position "<<pos[0]<<" , "<<pos[1]<<std::endl;
 }
 //! This function describe that how the robot will interact with the environment by enabling and disabling collision
-bool CarEnvironment::isValidCollision(dGeomID geom1, dGeomID geom2, const dContact& /*contact*/)const
+bool CarEnvironment::isValidCollision(dGeomID geom1, dGeomID geom2, const dContact& contact)const
 {
 
     std::string bodyType1 = geomNames_.at(geom1);
@@ -108,6 +119,11 @@ bool CarEnvironment::isValidCollision(dGeomID geom1, dGeomID geom2, const dConta
     {
         return false;
     }
+    else if((bodyType1 == "robBody" && bodyType2 == "freeManipulatable")
+           || (bodyType1 == "freeManipulatable" && bodyType2 == "robBody"))
+   {
+       return true;
+   }
     else
 
         return true;
@@ -131,13 +147,26 @@ void CarEnvironment::setupContact(dGeomID geom1, dGeomID geom2, dContact &contac
     else
         if ((geom1_body == "floor" && geom2_body == "robBody") ||
                 (geom1_body == "robBody" && geom2_body == "floor" ))
-            contact.surface.mu = 0.0;
+            contact.surface.mu = 0.4;
         else
-            if ((geom1_body == "floor" && geom2_body == "fixed") ||
-                    (geom1_body == "fixed" && geom2_body == "floor" ))
+            if ((geom1_body == "robBody" && geom2_body == "freeManipulatable") ||
+                    (geom1_body == "freeManipulatable" && geom2_body == "robBody" ))
+                contact.surface.mu = 0.0001;
+            else
+                if ((geom1_body == "robBody" && geom2_body == "odeGround") ||
+                        (geom1_body == "odeGround" && geom2_body == "robBody" ))
+                    contact.surface.mu = 5;
+        else
+            if ((geom1_body == "fixed" || geom2_body == "fixed") )
                 contact.surface.mu = dInfinity;
             else
-                contact.surface.mu = 1.2;
+                if ((geom1_body == "freeManipulatable" || geom2_body == "freeManipulatable"))
+                contact.surface.mu = 0.7;
+                else
+                    if ((geom1_body == "robBody" || geom2_body == "robBody"))
+                    contact.surface.mu = 1;
+    else
+                    contact.surface.mu=0.7;
     contact.surface.soft_erp = _erp;
     contact.surface.soft_cfm = _cfm;
 
@@ -164,8 +193,8 @@ unsigned int CarStateProjectionEvaluator::getDimension(void) const
 void CarStateProjectionEvaluator :: defaultCellSizes(void)
 {
     cellSizes_.resize(2);
-    cellSizes_[0] = 0.5;
-    cellSizes_[1] = 0.5;
+    cellSizes_[0] = 1;
+    cellSizes_[1] = 1;
 
 }
 
@@ -213,12 +242,25 @@ CarControlSampler::CarControlSampler(const oc::ControlSpace *cm) : oc::RealVecto
 
 void CarControlSampler::sampleNext(oc::Control *control, const oc::Control *previous)
 {
+
     space_->copyControl(control, previous);
+    double mass=0;
+    //todo:automatically detect the bodies related to end effector
+    //last three bodies of the robot are belong to the gripper
+    for(unsigned int i = 0; i< 5; i++)
+    {
+        const dReal *carpose = dBodyGetPosition(((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->bodies[i]);
+        mass= ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
+               getEnvironment().get())->Instknowledge->isRobotInManipulationRegion(carpose[0],carpose[1]);
+        if(mass!=-1)
+            break;
+    }
+
     const ob::RealVectorBounds &b = space_->as<oc::OpenDEControlSpace>()->getBounds();
     if (rng_.uniform01() > 0.3)
     {
         double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[0];
-        static const double DT0 = 0.05;
+        static const double DT0 = 0.5;
         v += (rng_.uniformBool() ? 1 : -1) * DT0;
         if (v > b.high[0])
             v = b.high[0] - DT0;
@@ -228,13 +270,58 @@ void CarControlSampler::sampleNext(oc::Control *control, const oc::Control *prev
     if (rng_.uniform01() > 0.3)
     {
         double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[1];
-        static const double DT1 = 0.05;
+        static const double DT1 = 0.5;
         v += (rng_.uniformBool() ? 1 : -1) * DT1;
         if (v > b.high[1])
             v = b.high[1] - DT1;
         if (v < b.low[1])
             v = b.low[1] + DT1;
     }
+
+    if(mass==-1)
+    {
+        std::vector<double> torque = ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
+        getEnvironment().get())->mkinematics->getdefaultTorqueLimit();
+        ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
+                getEnvironment().get())->mkinematics->setTorqueLimit(torque);
+
+        std::cout<<"CMove Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;
+    }
+    else
+    {
+
+        std::vector<double> torque = ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
+        getEnvironment().get())->mkinematics->getdefaultTorqueLimit();
+
+//torque=3/2(mu*m*g)*r
+        torque[0]=torque[0]+(1.5*0.7*mass*9.8*0.1);
+        torque[1]=torque[1]+(1.5*0.7*mass*9.8*0.1);
+        torque[2]=torque[2]+(1.5*0.7*mass*9.8*0.1);
+        torque[3]=torque[3]+(1.5*0.7*mass*9.8*0.1);
+        ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
+                getEnvironment().get())->mkinematics->setTorqueLimit(torque);
+        //to update the manipulation regions
+//        ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->
+//          Instknowledge->updateKnowledge(((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->bodies);
+        std::cout<<"Cinteraction Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;;
+
+    }
+    double &v1 = control->as<oc::OpenDEControlSpace::ControlType>()->values[2];
+    double &v2 = control->as<oc::OpenDEControlSpace::ControlType>()->values[3];
+    double &v3 = control->as<oc::OpenDEControlSpace::ControlType>()->values[4];
+    double &v4 = control->as<oc::OpenDEControlSpace::ControlType>()->values[5];
+    v1=((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
+        getEnvironment().get())->feedback1->t2[1];
+    v2=((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
+        getEnvironment().get())->feedback2->t2[1];
+    v3=((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
+        getEnvironment().get())->feedback3->t2[1];
+    v4=((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
+        getEnvironment().get())->feedback4->t2[1];
+
+
+
+
 }
 
 void CarControlSampler::sampleNext(oc::Control *control, const oc::Control *previous, const ob::State* /*state*/)

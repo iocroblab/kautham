@@ -36,7 +36,8 @@
 //#include "sampling/sampling.h"
 #include <ompl/control/planners/syclop/SyclopRRT.h>
 #include <ompl/control/planners/syclop/SyclopEST.h>
-
+#include "../../environment/KauthamOpenDEEnvironment.h"
+#include "../../environment/SimpleRobotEnvironment/PlanarChainEnvironment.h"
 #define _USE_MATH_DEFINES
 
 namespace ob = ompl::base;

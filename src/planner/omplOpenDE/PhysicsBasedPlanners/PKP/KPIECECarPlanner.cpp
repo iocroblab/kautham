@@ -45,7 +45,7 @@ KPIECECarPlanner::KPIECECarPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     _idName = "KPIECECarPlanner";
     dInitODE2(0);
 
-    envPtr = oc::OpenDEEnvironmentPtr(new CarEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+    envPtr = oc::OpenDEEnvironmentPtr(new CarEnvironment (ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
     stateSpace = new CarStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
     oc::ControlSpacePtr csp(new CarControlSpace(stateSpacePtr));
@@ -53,10 +53,10 @@ KPIECECarPlanner::KPIECECarPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
        // ss = new oc::OpenDESimpleSetup(stateSpacePtr);
     oc::SpaceInformationPtr si=ss->getSpaceInformation();
 
-    ob::PlannerPtr planner(new oc::RRT(si));
+    ob::PlannerPtr planner(new oc::KPIECE1(si));
     //set planner parameters: range and goalbias
     addParameter("Goal Bias", _GoalBias);
-    planner->as<oc::RRT>()->setGoalBias(_GoalBias);
+    planner->as<oc::KPIECE1>()->setGoalBias(_GoalBias);
     //planner->as<oc::KPIECE1>()->setProjectionEvaluator(stateSpacePtr->getDefaultProjection());
 
     //set the planner

@@ -65,7 +65,7 @@ namespace omplcplanner{
      _idName = "RRTTX90Planner";
      //ws->moveRobotsTo(init);
      dInitODE2(0);
-      envPtr = oc::OpenDEEnvironmentPtr(new TX90Environment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
+      envPtr = oc::OpenDEEnvironmentPtr(new TX90Environment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
      stateSpace = new TX90StateSpace(envPtr);
      stateSpacePtr = ob::StateSpacePtr(stateSpace);
 

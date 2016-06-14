@@ -83,7 +83,7 @@ class FreeFlyingRobotEnvironment: public KauthamDEEnvironment
 public:
 
     FreeFlyingRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal
-                               maxControlsteps, KthReal erp, KthReal cfm);//!< Constructor define the free flying robot environment by calling the KauthamDEEnvironment.
+                               maxControlsteps, KthReal erp, KthReal cfm,bool isKchain);//!< Constructor define the free flying robot environment by calling the KauthamDEEnvironment.
     ~FreeFlyingRobotEnvironment(void);
     std::string robBase;
     std::string floor;

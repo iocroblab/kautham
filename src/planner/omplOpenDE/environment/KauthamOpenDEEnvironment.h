@@ -105,6 +105,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
     // Class KauthamDEEnvironment
     /////////////////////////////////////////////////////////////////////////////////////////////////*/
 class ManipulationQuery;
+class Manipulatorkinematics;
 //! KauthamDEEnvironment class read the workspace and generate the dynamic environment.
 //! this class is the parent of all the enviroments (like KauthamDERobotEnvironment, KauthamDETableEnvironment,..) in which ODE will apply the control.
 class KauthamDEEnvironment: public oc::OpenDEEnvironment
@@ -115,7 +116,7 @@ public:
     // call ChainMap. (each chain has information object joints, etc ... (see documentation Odin.) Once full ChainMap called the creation of the world with createWorld.
     // every body within chainMap called as nomrobot + nomlink
 
-    KauthamDEEnvironment(WorkSpace* wkspace, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm);//!< constructor will build the KinamaticChainMap (each chain has information about objects, joints, etc)and creat the world.
+    KauthamDEEnvironment(WorkSpace* wkspace, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm, bool isKchain);//!< constructor will build the KinamaticChainMap (each chain has information about objects, joints, etc)and creat the world.
     ~KauthamDEEnvironment(void);
     // making information ChainMap scoured the bodies of workspace again and bodysode creating and filling a map with StateBodiesmap_ Bodys. This map will then by drawing
     // StateBodies_ own to fill in the order they are introduced in the first stage of the robot plan. The idea was to try to be able to distinguish between primitive and trimesh but only works trimesh
@@ -155,7 +156,8 @@ public:
                          vector<unsigned int> indexes,
                          double mass,
                          std::string name,
-                         std::vector<double> bodydim); //!< This function make the ODE bodies (dBody) using triangular mesh.
+                         std::vector<double> bodydim,
+                         std::vector<float> color); //!< This function make the ODE bodies (dBody) using triangular mesh.
 
     void makeGeomPrimitive(const string name, const vector<double>& position,
                            const vector<double>& orientation, const vector<double>& params);
@@ -201,6 +203,7 @@ public:
         dTriMeshDataID meshD;
         std::vector<float> vertices;
         std::vector<dTriIndex> indices;
+        vector<float> color;
         int indexSize;
     }Tmesh;
     std::vector<Tmesh> meshID;
@@ -282,14 +285,23 @@ public:
     InstantiatedKnowledge *Instknowledge;
     std::map<string,dBodyID> getBody;
     std::map<dGeomID,std::string> geomname;
+    std::map<std::string,dJointID> joint_;
+    std::map<std::string,dJointID> motor_;
+
     std::map<dBodyID, std::vector<double> > bodyDim;
 static const double toRad  = M_PI/180.;
 dJointID cJoint[4];
-ManipulationQuery* manipulationQuery;
-
+ManipulationQuery *manipulationQuery;
+Manipulatorkinematics *mkinematics;
+std::vector<double> linklength;
+dJointFeedback *feedback1;
+dJointFeedback *feedback2;
+dJointFeedback *feedback3;
+dJointFeedback *feedback4;
 private:
 
     //static const double toRad  = M_PI/180.;
+bool trimesh;
 
     //! This function will build the kinamatic chain for Robot
     bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector<KthReal>& basePos);
@@ -300,8 +312,8 @@ private:
     void searchColor(SoSeparator* root, odinObject* obj);
     void searchColor(SoSeparator* root, trimeshD* obj);
     vector<KthReal> baseGetPos(Robot* robot);// this function will returns the position and orientation of robot.
-    void makeMotor(dBodyID body1, dBodyID body2,const unsigned int type, const vector< double >& axes,const vector< double >& fmax,const double hiStop, const double LoStop,const double value);
-    void addMotor2Joint(dJointID joint, vector<double>& maxForces,const double value, const double hiStop, const double LoStop);
+    dJointID  makeMotor(dBodyID body1, dBodyID body2,const unsigned int type, const vector< double >& axes,const vector< double >& fmax,const double hiStop, const double LoStop,const double value);
+    dJointID addMotor2Joint(dJointID joint, vector<double>& maxForces,const double value, const double hiStop, const double LoStop);
    // dJointID makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector<double>& params,vector<double>& maxForces);
     dJointID makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector<double>& params,vector<double>& maxForces, const double hiStop, const double LoStop,const double value);
     int sceneObjectNumber;
@@ -316,24 +328,32 @@ private:
     void ReadManipulationKnowledge();
     void getPrimitiveShapes(Link* link, odinObject* obj, bool rotflag);
 };
+typedef struct
+{
+    std::vector<double> q;
+
+}Configuration;
+
 class ManipulationQuery
 {
     bool planningPhase;
-    bool isKinamaticChain;
+    bool isKinematicsChain;
     std::string actionType;
     std::string direction;
     unsigned int targetbody;
     std::vector<double> force;
     std::vector<double> goalPose;
     //record the joint values for the configurations in the solution path.
-    std::vector< std::vector<double> > jointConfigurations;
-    std::vector<double> conf;
+    std::vector<Configuration> jointConf;
+    std::vector<Configuration>  qdot;
+    std::vector<Configuration>  Torque;
+    Configuration conf;
 public:
     ManipulationQuery()
     {
         actionType="move";
         planningPhase=true;
-        isKinamaticChain=true;
+        isKinematicsChain=true;
     }
     inline std::string getActionType(){return actionType;}
     inline void setActionType(std::string action){ actionType=action;}
@@ -345,34 +365,90 @@ public:
     inline void setforce(std::vector<double>  f){ force=f;}
     inline bool getPlanningPhase(){return planningPhase;}
     inline void setPlanningPhase(bool status){ planningPhase=status;}
-    inline bool getIsKinamaticChain(){return isKinamaticChain;}
-    inline void setIsKinamaticChain(bool status){isKinamaticChain=status;}
-inline void setconf(double ithVal)
-{
-    conf.push_back(ithVal);
-}
-inline std::vector<double> getconf()
-{
-   return conf;
-}
- void clearconf(void)
-{
-    conf.clear();
-}
-    void addJointConfiguration(std::vector<double> config)
-    {
-        jointConfigurations.push_back(config);
-    }
-    std::vector<double> getJointConfigurationAt(unsigned int i)
-    {
-        return jointConfigurations.at(i);
-    }
-    inline std::vector<std::vector<double> > getJointConfiguraion(){return jointConfigurations;}
-    inline void setJointConfiguraion(std::vector<std::vector<double> > conf){jointConfigurations=conf;}
+    inline bool getIskinematicsChain(){return isKinematicsChain;}
+    inline void setIskinematicsChain(bool status){isKinematicsChain=status;}
+    inline void setconf(double ithVal){conf.q.push_back(ithVal);}
+    inline Configuration getconf(){return conf;}
+    void clearconf(void){conf.q.clear();}
+
+    void addJointConfiguration(Configuration config){jointConf.push_back(config);}
+    Configuration getJointConfigurationAt(unsigned int i){return jointConf.at(i);}
+
+    void setjointVelocity(Configuration qd){qdot.push_back(qd);}
+    Configuration getJointVelocity(unsigned int i){return qdot.at(i);}
+
+    void AddjointTorque(Configuration t){Torque.push_back(t);}
+    Configuration getJointTorque(unsigned int i){return Torque.at(i);}
+
+     std::vector<Configuration> getJointConfiguraion(){return jointConf;}
+     void setJointConfiguraion(std::vector<Configuration> conf){jointConf=conf;}
+     std::vector<Configuration> getJointVelocities(){return qdot;}
+     void setJointVelocities(std::vector<Configuration> qd){qdot=qd;}
+     std::vector<Configuration> getJointTorque(){return Torque;}
+    void setJointTorque(std::vector<Configuration> t){Torque=t;}
 
 
 };
+class Manipulatorkinematics
+{
+    double **Jacobian;
+    double **TransposedJacobian;
+    std::vector<double> link;
+    std::vector<double> torqueLimit;
+    std::vector<double> defaulTorqueLimit;
 
+public:
+    inline void setTorqueLimit(std::vector<double> tarqueB){torqueLimit=tarqueB;}
+    inline void setdefaultTorqueLimit(std::vector<double> defaultTB){defaulTorqueLimit=defaultTB;}
+    inline std::vector<double> getTorqueLimit(){return torqueLimit;}
+    inline std::vector<double> getdefaultTorqueLimit(){return defaulTorqueLimit;}
+
+    Manipulatorkinematics(const unsigned int Size, std::vector<double> linklength, std::vector<double> defaultTLimit)
+    {
+        Jacobian= new double*[Size];
+        TransposedJacobian = new double*[Size];
+        for(unsigned int i = 0; i < Size; ++i)
+        {
+            Jacobian[i] = new double[Size];
+            TransposedJacobian[i] = new double[Size];
+
+        }
+        link=linklength;
+        defaulTorqueLimit=defaultTLimit;
+    }
+    Manipulatorkinematics(std::vector<double> defaultTLimit)
+    {
+        defaulTorqueLimit=defaultTLimit;
+    }
+    std::vector<double> getEndEffectorVelocity(std::vector<double> q,std::vector<double> qdot)
+    {
+        std::vector<double> eeVelocity;
+        eeVelocity.resize(2);
+        Jacobian[0][0] =-link[0]*sin(q[0])-link[1]*sin(q[0]+q[1]);
+        Jacobian[0][1] =-link[1]*sin(q[0]+q[1]);
+        Jacobian[1][0] = link[0]*cos(q[0])+link[1]*cos(q[0]+q[1]);
+        Jacobian[1][1] = link[1]*cos(q[0]+q[1]);
+
+        eeVelocity[0]=Jacobian[0][0]*qdot[0]+Jacobian[0][1]*qdot[1];
+        eeVelocity[1]=Jacobian[1][0]*qdot[0]+Jacobian[1][1]*qdot[1];
+        return eeVelocity;
+    }
+
+   std::vector<double> getJointTorque(std::vector<double> q,std::vector<double> f)
+    {
+       std::vector<double> torque;
+       torque.resize(2);
+       TransposedJacobian[0][0] =-link[0]*sin(q[0])-link[1]*sin(q[0]+q[1]);
+       TransposedJacobian[0][1] = link[0]*cos(q[0])+link[1]*cos(q[0]+q[1]);
+       TransposedJacobian[1][0] =-link[1]*sin(q[0]+q[1]);
+       TransposedJacobian[1][1] = link[1]*cos(q[0]+q[1]);
+
+       torque[0]=TransposedJacobian[0][0]*f[0]+TransposedJacobian[0][1]*f[1];
+       torque[1]=TransposedJacobian[1][0]*f[0]+TransposedJacobian[1][1]*f[1];
+       return torque;
+    }
+
+};
 }
 /** @}   end of Doxygen module "Planner */
 }
