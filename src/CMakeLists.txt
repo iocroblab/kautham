@@ -150,4 +150,37 @@ target_link_libraries(libkautham ${EXTRA_LIBS})
 
 # extra libraries should contain sampling libPQP libgdiam PUGI OMPL ARMADILLO ODE libDNN libkin libkthutil 
 
+set(KAUTHAM_DIRNAME_lib ${CMAKE_INSTALL_LIBDIR})
+set(KAUTHAM_DIRNAME_include "${CMAKE_INSTALL_PREFIX}/include/kautham")
+
+
+# Headers install
+install(FILES ${KAUTHAM_HDRS} DESTINATION include/kautham)
+
+install(TARGETS ${KAUTHAM_TARGETS} EXPORT KAUTHAMExports
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}   
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}   
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include/fril)
+
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/kauthamConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/kauthamConfig.cmake"   
+  INSTALL_DESTINATION  ${KAUTHAM_DIRNAME_lib}/cmake/kautham
+  PATH_VARS 
+   KAUTHAM_DIRNAME_lib
+   KAUTHAM_DIRNAME_include)
+
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/kauthamConfigVersion.cmake"
+  VERSION ${KAUTHAM_VERSION}
+  COMPATIBILITY AnyNewerVersion)
+
+#install( EXPORT KAUTHAMExports
+#         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/kautham)
+
+install( FILES ${CMAKE_CURRENT_BINARY_DIR}/kauthamConfig.cmake
+       ${CMAKE_CURRENT_BINARY_DIR}/kauthamConfigVersion.cmake 
+       DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/kautham)
+   
 install(TARGETS libkautham DESTINATION ${CMAKE_INSTALL_LIBDIR})
