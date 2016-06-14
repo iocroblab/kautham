@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<robot name="Chain">
+<link name="base_link">
+
+       <visual>
+      <geometry>
+	<box size="0.05 0.04 0.05" />
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black">
+        <color rgba="0 0 0 0"/>
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+	<box size="0.05 0.04 0.05" />
+      </geometry>
+    </collision>
+    <inertial>
+	<mass value="20"/>
+	<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+  <joint name="joint1" type="revolute">
+    <parent link="base_link"/>
+    <child link="link1"/>
+    <origin xyz="0 0 0.02"/>
+    <axis xyz="0 1 0" />
+    <limit effort="300" velocity="0.1" lower="-1.55" upper="1.55"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+
+  <link name="link1">
+    <visual>
+      <geometry>
+	<cylinder length="0.2" radius="0.02"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+	<cylinder length="0.2" radius="0.02"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.09"/>
+    </collision>
+    <inertial>
+	<mass value="0.1"/>
+	<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+ <joint name="joint2" type="revolute">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin xyz="0 0 0.2"/>
+    <axis xyz="0 1 0" />
+    <limit effort="300" velocity="0.1" lower="-2.10" upper="2.10"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+
+<link name="link2">
+    <visual>
+      <geometry>
+	<cylinder length="0.2" radius="0.02"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.09"/>
+      <material name="blue">
+        <color rgba="0 0 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+	<cylinder length="0.2" radius="0.02"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.09"/>
+    </collision>
+    <inertial>
+	<mass value="0.1"/>
+	<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  
+<joint name="joint3" type="revolute">
+    <parent link="link2"/>
+    <child link="gripper"/>
+    <origin xyz="0 0 0.2"/>
+    <axis xyz="0 1 0" />
+    <limit effort="300" velocity="0.1" lower="-0.01" upper="0.01"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+
+<link name="gripper">
+    <visual>
+      <geometry>
+	<box size="0.015 0.06 0.015" />
+      </geometry>
+      <origin rpy="0 0 1.57" xyz="0 0 0.0"/>
+      <material name="white">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+	<box size="0.015 0.06 0.015" />
+      </geometry>
+      <origin rpy="0 0 1.57" xyz="0 0 0.0"/>
+    </collision>
+    <inertial>
+	<mass value="0.005"/>
+	<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+<joint name="joint4" type="revolute">
+    <parent link="gripper"/>
+    <child link="finger1"/>
+    <origin xyz=".025 0 0.022"/>
+    <axis xyz="0 1 0" />
+    <limit effort="300" velocity="0.1" lower="-0.0005" upper="0.0005"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+
+<link name="finger1">
+    <visual>
+      <geometry>
+	<box size="0.01 0.01 0.032" />
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="white">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+	<box size="0.01 0.01 0.032" />
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+	<mass value=".01"/>
+	<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  
+<joint name="joint5" type="revolute">
+    <parent link="gripper"/>
+    <child link="finger2"/>
+    <origin xyz="-0.023 0 0.022"/>
+    <axis xyz="0 1 0" />
+    <limit effort="300" velocity="0.1" lower="-0.0005" upper="0.0005"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+
+<link name="finger2">
+    <visual>
+      <geometry>
+	<box size="0.01 0.01 0.032" />
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="white">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+	<box size="0.01 0.01 0.032" />
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+	<mass value=".01"/>
+	<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+  
+  </robot>

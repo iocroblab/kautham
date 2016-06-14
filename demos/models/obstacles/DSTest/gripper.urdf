@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<robot name="gripper">
+   
+<link name="gripper">
+    <visual>
+      <geometry>
+	<box size="0.002 0.006 0.002" />
+      </geometry>
+      <origin rpy="0 0 1.57" xyz="0 0 0001"/>
+      <material name="white">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+	<box size="0.002 0.006 0.002" />
+      </geometry>
+      <origin rpy="0 0 1.57" xyz="0 0 0001"/>
+    </collision>
+    <inertial>
+	<mass value="1"/>
+	<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+
+
+<link name="finger1">
+    <visual>
+      <geometry>
+	<box size="0.002 0.002 0.006" />
+      </geometry>
+      <origin rpy="0 0 1.57" xyz="0 0 0001"/>
+      <material name="white">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+      <origin rpy="0 0 1.57" xyz="0 0 0001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+	<mass value="1"/>
+	<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  
+<joint name="joint4" type="prismatic">
+    <parent link="gripper"/>
+    <child link="finger1"/>
+    <origin xyz="0 -0.002 0.004"/>
+    <axis xyz="1 0 0" />
+    <limit effort="300" velocity="0.1" lower="0.012" upper="0.04"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+
+<link name="finger2">
+    <visual>
+      <geometry>
+	<box size="0.002 0.002 0.006" />
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="white">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+	<box size="0.002 0.002 0.006" />
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+	<mass value="1"/>
+	<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+<joint name="joint5" type="prismatic">
+    <parent link="gripper"/>
+    <child link="finger2"/>
+    <origin xyz="0 -0.002 0.004"/>
+    <axis xyz="1 0 0" />
+    <limit effort="300" velocity="0.1" lower="-0.04" upper="-0.012"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+  
+  
+  </robot>

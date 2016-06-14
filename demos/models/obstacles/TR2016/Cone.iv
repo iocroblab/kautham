@@ -1,0 +1,14 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  Material {
+    diffuseColor 0 0 1
+
+  }
+  Cone {
+ bottomRadius 2
+    height 4
+  }
+}

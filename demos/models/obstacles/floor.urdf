@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<robot name="floor">
+  <link name="base">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.00001"/>
+      <geometry>
+        <box size="2 0.01 0.00001"/>
+      </geometry>
+      <material>
+	<color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.00001"/>
+      <geometry>
+        <box size="0.01 2 0.00001"/>
+      </geometry>
+      <material>
+	<color rgba="0 1 0 1"/>
+      </material>
+    </visual>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.5025 0.5025 -0.00001"/>
+      <geometry>
+        <box size="0.995 0.995 0.00001"/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.5025 -0.5025 -0.00001"/>
+      <geometry>
+        <box size="0.995 0.995 0.00001"/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin rpy="0 0 0" xyz="-0.5025 0.5025 -0.00001"/>
+      <geometry>
+        <box size="0.995 0.995 0.00001"/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin rpy="0 0 0" xyz="-0.5025 -0.5025 -0.00001"/>
+      <geometry>
+        <box size="0.995 0.995 0.00001"/>
+      </geometry>
+    </visual>
+  </link>
+</robot>
