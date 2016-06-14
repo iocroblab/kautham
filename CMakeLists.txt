@@ -66,6 +66,8 @@ message( STATUS "Creating the HTML based API documentation: ${KAUTHAM_DOCUMENTAT
 ########### Modules path and system options ###############
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
 include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
 ##############################################################################
 
 ##################### ROS-catkin ####################################
