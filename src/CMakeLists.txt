@@ -116,7 +116,19 @@ endif()
 
 if(KAUTHAM_OPENDE)
    find_package(OpenDE REQUIRED)
-   find_package(Drawstuff REQUIRED)
+   find_package(Drawstuff) 
+   ##### drawstuff ########
+   #  DRAWSTUFF_LIBRARY     = location of drawstuff library
+   #  DRAWSTUFF_INCLUDE_DIR = include path for drawstuff
+   if(DRAWSTUFF_INCLUDE_DIR)
+        message( STATUS "Drawstuff found, using it")
+   else(DRAWSTUFF_INCLUDE_DIR)
+   	message(STATUS "DrawStuff not found, using internal copy")
+   	add_subdirectory ( ${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff)
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff/include)
+	set(DRAWSTUFF_LIBRARY drawstuff)
+   endif(DRAWSTUFF_INCLUDE_DIR)
+
    if(ODE_FOUND)
       message( STATUS "ODE Package FOUND: setting -DKAUTHAM_USE_ODE flag")
       include_directories(${ODE_INCLUDE_DIR})

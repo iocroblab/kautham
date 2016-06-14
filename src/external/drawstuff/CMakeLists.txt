@@ -4,7 +4,7 @@ project(libdrawstuff)
 # Include GNUInstallDirs to get canonical paths
 include(GNUInstallDirs)
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(libdrawstuff_SOURCES src/drawstuff.cpp src/internal.h)
 
 if(WIN32)
