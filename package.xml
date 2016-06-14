@@ -1,33 +1,49 @@
 <?xml version="1.0"?>
 <package>
-  <name>kautham2</name>
-  <version>0.0.0</version>
-  <description>The test package</description>
+  <name>kautham</name>
+  <version>3.0.0</version>
+  <description>The Kautham Project is a software tool used at the Institute of Industrial
+  and Control Engineering (IOC-UPC) for teaching and research in robot motion
+  planning. The tool allows to cope with problems with one or more robots,   
+  being a generic robot defined as a kinematic tree with a mobile base. i.e. 
+  the tool can plan and simulate from simple two degrees of freedom free-flying
+  robots to multi-robot scenarios with mobile manipulators equipped with 
+  anthropomorphic hands. The main core of planners is provided by the Open
+  Motion Planning Library (OMPL). Different basic planners can be flexibly
+  used and parameterized, allowing students to gain insight into the different
+  planning algorithms. Among the advanced features the tool allows to easily  
+  define the coupling between degrees of freedom, the dynamic simulation and  
+  the integration with task planers. It is principally being used in the      
+  research of motion planning strategies for hand-arm robotic systems.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="aliakbari101@gmail.com">aliakbari101</maintainer>
+  <maintainer email="jan.rosell@upc.edu">Jan Rosell</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
-
+  <license>GPLv2</license>
 
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/test</url> -->
-
+  <url type="website">https://sir.upc.edu/projects/kautham</url>
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
   <!-- Authors do not have to be maintianers, but could be -->
-  <!-- Example: -->
-  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
-
-
+  <author email="aperezr@gmail.com">Alexander Perez</author>
+  <author email="jan.rosell@upc.edu">Jan Rosell</author>
+  <author email="nestorgh91@gmail.com">Nestor Garcia Hidalgo</author>
+  <author email="leopold.palomo@upc.edu">Leopold Palomo-Avellaneda</author>
+  <author email="muhayyuddin.gillani@upc.edu">Muhayyuddin</author>
+  <author email="aliakbar.akbari@upc.edu">Aliakbar Akbari</author>
+  <author email="jfontanalsmartinez@gmail.com">Joan Fontanals</author>
+  <author email="andres.felipe.montano@upc.edu">Andres F. Montano</author>
+  <author email="carlos.rodriguez.p@upc.edu">Carlos Rodriguez</author>
+  
   <!-- The *_depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->
   <!-- Examples: -->

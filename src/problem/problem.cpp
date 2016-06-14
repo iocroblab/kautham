@@ -435,132 +435,122 @@ namespace Kautham {
 
 
     bool Problem::createCSpaceFromFile(xml_document *doc) {
-        if ( createCSpace() ){
-            xml_node queryNode = doc->child("Problem").child("Planner").child("Queries");
-            xml_node::iterator it;
-            vector<string> tokens;
-            string sentence = "";
-            Sample* tmpSampPointer = NULL;
-            unsigned int numRobCntr = _wspace->getNumRobControls();
-            vector<KthReal> robCoords( numRobCntr );
-            unsigned int numObsCntr = _wspace->getNumObsControls();
-            vector<KthReal> obsCoords( numObsCntr );
-            for( it = queryNode.begin(); it != queryNode.end(); ++it ){
-                xml_node sampNode = it->child("InitObs");
-                if (numObsCntr > 0 && sampNode) {
-                    if (_wspace->getNumObsControls() == sampNode.attribute("dim").as_uint(0)) {
-                        sentence = sampNode.child_value();
-
-                        boost::split(tokens, sentence, boost::is_any_of("| "));
-                        if (tokens.size() != numObsCntr){
-                            std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
-                            string message = "Error when creating CSpace: InitObs sample has an incorrect dimension";
+        if (createCSpace()) {
+            const unsigned int numRobCntr(_wspace->getNumRobControls());
+            const unsigned int numObsCntr(_wspace->getNumObsControls());
+            xml_node queries(doc->child("Problem").child("Planner").child("Queries"));
+            for (xml_node::iterator query(queries.begin());
+                 query != queries.end(); ++query) {
+                for (xml_node::iterator node(query->begin());
+                     node != query->end(); ++node) {
+                    std::string type(node->name());
+                    if (type == "InitObs" && numObsCntr > 0) {
+                        vector<string> tokens;
+                        std::string sentence(node->child_value());
+                        boost::split(tokens,sentence,boost::is_any_of(" "),
+                                     boost::token_compress_on);
+                        if (tokens.size() != numObsCntr) {
+                            std::cout << "Dimension of a sample doesn't correspond \
+                                         with the problem's dimension." << std::endl;
+                            string message("Error when creating CSpace: InitObs sample \
+                                    has an incorrect dimension");
                             stringstream details;
-                            details << "InitObs has dimension " << tokens.size() << " and should have dimension " << numObsCntr;
+                            details << "InitObs has dimension " << tokens.size()
+                                    << " and should have dimension " << numObsCntr;
                             throw KthExcp(message, details.str());
+
                             return false;
                         }
+                        std::vector<KthReal> coords;
+                        for (std::vector<std::string>::const_iterator token(tokens.begin());
+                             token != tokens.end(); ++token) {
+                            coords.push_back(boost::lexical_cast<double>(*token));
+                        }
+                        Sample *smp(new Sample(numObsCntr));
+                        smp->setCoords(coords);
+                        _wspace->setInitObsSample(smp);
+                    } else if (type == "Init") {
+                        vector<string> tokens;
+                        std::string sentence(node->child_value());
+                        boost::split(tokens,sentence,boost::is_any_of(" "),
+                                     boost::token_compress_on);
+                        if (tokens.size() != numRobCntr) {
+                            std::cout << "Dimension of a sample doesn't correspond \
+                                         with the problem's dimension." << std::endl;
+                            string message("Error when creating CSpace: Init sample \
+                                    has an incorrect dimension");
+                            stringstream details;
+                            details << "Init has dimension " << tokens.size()
+                                    << " and should have dimension " << numRobCntr;
+                            throw KthExcp(message,details.str());
 
-                        tmpSampPointer = new Sample(numObsCntr);
-                        for (unsigned i=0; i<numObsCntr; i++)
-                            obsCoords[i] = atof(tokens[i].c_str());
+                            return false;
+                        }
+                        std::vector<KthReal> coords;
+                        for (std::vector<std::string>::const_iterator token(tokens.begin());
+                             token != tokens.end(); ++token) {
+                            coords.push_back(boost::lexical_cast<double>(*token));
+                        }
+                        Sample *smp(new Sample(numRobCntr));
+                        smp->setCoords(coords);
+                        _cspace->addStart(smp);
 
-                        tmpSampPointer->setCoords(obsCoords);
+                        //Add the mapping to configuration space with the collision test.
+                        if (_wspace->collisionCheck(smp)) {
+                            cout << "Init sample is in collision." << endl;
+                        }
+                    } else if (type == "Goal") {
+                        vector<string> tokens;
+                        std::string sentence(node->child_value());
+                        boost::split(tokens,sentence,boost::is_any_of(" "),
+                                     boost::token_compress_on);
+                        if (tokens.size() != numRobCntr) {
+                            std::cout << "Dimension of a sample doesn't correspond \
+                                         with the problem's dimension." << std::endl;
+                            string message("Error when creating CSpace: Goal sample has \
+                                    an incorrect dimension");
+                            stringstream details;
+                            details << "Goal has dimension " << tokens.size()
+                                    << " and should have dimension " << numRobCntr;
+                            throw KthExcp(message,details.str());
 
-                        _wspace->setInitObsSample(tmpSampPointer);
+                            return false;
+                        }
+                        std::vector<KthReal> coords;
+                        for (std::vector<std::string>::const_iterator token(tokens.begin());
+                             token != tokens.end(); ++token) {
+                            coords.push_back(boost::lexical_cast<double>(*token));
+                        }
+                        Sample *smp(new Sample(numRobCntr));
+                        smp->setCoords(coords);
+                        _cspace->addGoal(smp);
 
-                    }else{
-                        cout << "Sample doesn't have the right dimension.\n";
-                        string message = "Error when creating CSpace: InitObs sample has an incorrect dimension";
-                        stringstream details;
-                        details << "InitObs has dimension " << sampNode.attribute("dim").as_int() << " and should have dimension " << numObsCntr;
-                        throw KthExcp(message, details.str());
-                        return false;
+                        //Add the mapping to configuration space with the collision test.
+                        if (_wspace->collisionCheck(smp)) {
+                            cout << "Goal sample is in collision" << endl;
+                        }
                     }
-                } else {
-                    tmpSampPointer = new Sample(numObsCntr);
-                    for (unsigned i=0; i<numObsCntr; i++)
-                        obsCoords[i] = 0.5;
-
-                    tmpSampPointer->setCoords(obsCoords);
-
-                    _wspace->setInitObsSample(tmpSampPointer);
-                }
-
-                sampNode = it->child("Init");
-                if( numRobCntr == sampNode.attribute("dim").as_uint(0) ){
-                    sentence = sampNode.child_value();
-
-                    boost::split(tokens, sentence, boost::is_any_of("| "));
-                    if (tokens.size() != numRobCntr){
-                        std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
-                        string message = "Error when creating CSpace: Init sample has an incorrect dimension";
-                        stringstream details;
-                        details << "Init has dimension " << tokens.size() << " and should have dimension " << numRobCntr;
-                        throw KthExcp(message, details.str());
-                        return false;
-                    }
-
-                    tmpSampPointer = new Sample(numRobCntr);
-                    for(unsigned i=0; i<numRobCntr; i++)
-                        robCoords[i] = atof(tokens[i].c_str());
-
-                    tmpSampPointer->setCoords(robCoords);
-                    // Adding the mapping to configuration space with the collision test.
-                    if (_wspace->collisionCheck(tmpSampPointer) == true)
-                        cout<<"Init sample is in collision"<<endl;
-                    _cspace->add(tmpSampPointer);
-
-                }else{
-                    cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
-                    string message = "Error when creating CSpace: Init sample has an incorrect dimension";
-                    stringstream details;
-                    details << "Init has dimension " << sampNode.attribute("dim").as_int() << " and should have dimension " << numRobCntr;
-                    throw KthExcp(message, details.str());
-                    return false;
-                }
-
-                sampNode = it->child("Goal");
-                if( numRobCntr == sampNode.attribute("dim").as_uint(0) ){
-                    sentence = sampNode.child_value();
-
-                    boost::split(tokens, sentence, boost::is_any_of("| "));
-                    if (tokens.size() != numRobCntr){
-                        std::cout << "Dimension of a samples doesn't correspond with the problem's dimension.\n";
-                        string message = "Error when creating CSpace: Goal sample has an incorrect dimension";
-                        stringstream details;
-                        details << "Goal has dimension " << tokens.size() << " and should have dimension " << numRobCntr;
-                        throw KthExcp(message, details.str());
-                        return false;
-                    }
-
-                    tmpSampPointer = new Sample(numRobCntr);
-                    for(unsigned i=0; i<numRobCntr; i++)
-                        robCoords[i] = atof(tokens[i].c_str());
-
-                    tmpSampPointer->setCoords(robCoords);
-                    // Adding the mapping to configuration space with the collision test.
-                    if (_wspace->collisionCheck(tmpSampPointer)==true)
-                        cout<<"Goal sample is in collision"<<endl;
-                    _cspace->add(tmpSampPointer);
-
-                }else{
-                    cout << "Sample doesn't have the right dimension.\n";
-                    string message = "Error when creating CSpace: Goal sample has an incorrect dimension";
-                    stringstream details;
-                    details << "Goal has dimension " << sampNode.attribute("dim").as_int() << " and should have dimension " << numRobCntr;
-                    throw KthExcp(message, details.str());
-                    return false;
                 }
             }
-            if ( _cspace->getSize() >= 2 ){
-                _cspace->getSampleAt(0)->addNeigh(1);
-                _cspace->getSampleAt(1)->addNeigh(0);
-                return true;
+
+            if (!_wspace->getInitObsSample()) {//Default values
+                Sample *smp(new Sample(numObsCntr));
+                std::vector<KthReal> coords(numObsCntr,0.5);
+                smp->setCoords(coords);
+                _wspace->setInitObsSample(smp);
             }
+
+            for (std::size_t i(0); i < _cspace->getSize(); ++i) {
+                for (std::size_t j(i+1); j < _cspace->getSize(); ++j) {
+                    _cspace->getSampleAt(i)->addNeigh(j);
+                    _cspace->getSampleAt(j)->addNeigh(i);
+                }
+            }
+
+            if (_cspace->getNumStarts() > 0 && _cspace->getNumGoals() > 0) return true;
         }
-        string message = "Error when creating CSpace";
-        throw KthExcp(message);
+        throw KthExcp("Error when creating CSpace");
+
         return false;
     }
 

@@ -116,8 +116,12 @@ void ompl::geometric::TRRT::setup() {
 
     //Create the nearest neighbor function the first time setup is run
     if (!nearestNeighbors_) {
+#if OMPL_VERSION_VALUE < 1001000 // 1.1.0
         nearestNeighbors_.reset(tools::SelfConfig::getDefaultNearestNeighbors<Motion*>
-                                (si_->getStateSpace()));
+                                         (si_->getStateSpace()));
+#else
+        nearestNeighbors_.reset(tools::SelfConfig::getDefaultNearestNeighbors<Motion*>(this));
+#endif
     }
 
     //Set the distance function

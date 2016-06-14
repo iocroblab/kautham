@@ -57,6 +57,18 @@ namespace Kautham{
     //! the samples will be inserted in code order if orderIfCode is true.
     bool                    add(Sample* samp, bool orderIfCode = false);
 
+    bool addStart(Sample *smp);
+
+    bool addGoal(Sample *smp);
+
+    inline std::size_t getNumStarts() {return starts.size();}
+
+    inline std::size_t getNumGoals() {return goals.size();}
+
+    inline Sample *getStart(std::size_t index) {return starts.at(index);}
+
+    inline Sample *getGoal(std::size_t index) {return goals.at(index);}
+
     //! Returns a pointer to the Sample at index pos.
     Sample*                 getSampleAt(unsigned int pos);
 
@@ -139,16 +151,20 @@ namespace Kautham{
 	//!loads ANN data from vector of samples
     void loadAnnData();
 
-	inline void setTypeSearch(NEIGHSEARCHTYPE t){typesearch = t;};
-	inline NEIGHSEARCHTYPE getTypeSearch(){return typesearch;};
-	inline void setWorkspacePtr(WorkSpace* wsptr){ws = wsptr;};
-	inline bool isAnnSet(){return setANN;};
+    inline void setTypeSearch(NEIGHSEARCHTYPE t){typesearch = t;}
+    inline NEIGHSEARCHTYPE getTypeSearch(){return typesearch;}
+    inline void setWorkspacePtr(WorkSpace* wsptr){ws = wsptr;}
+    inline bool isAnnSet(){return setANN;}
   inline void setMaxNeighs(unsigned int mn){maxNeighs = mn;}
   inline unsigned int getMaxNeighs(){return maxNeighs;}
 
   private:
     //! Vector of pointers to the samples.
     vector<Sample*>         samples;
+
+    std::vector<Sample*> starts;
+
+    std::vector<Sample*> goals;
 
     //! Indicates if the SampleSet has been changed since the 
     //! latest neighbours searching.

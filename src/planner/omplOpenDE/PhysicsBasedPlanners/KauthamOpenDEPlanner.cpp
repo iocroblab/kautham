@@ -142,6 +142,7 @@ static void playPath(oc::OpenDESimpleSetup *ss, std::string robot)
  */
 KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws) : Planner(stype, init, goal, samples, ws)
 {
+    _family =ODEPLANNER;
     ws->moveRobotsTo(init);
     //set intial values from parent class data
     _speedFactor = 0.5;
@@ -151,8 +152,15 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     _planningTime=60;
     _propagationStepSize=0.07;
     _maxContacts=3;
-    _minControlSteps=10;
-    _maxControlSteps=50;
+    if(_wkSpace->getRobot(0)->getNumJoints()>1 && _wkSpace->getRobot(0)->getName()!="SimpleCar")
+    {
+    _minControlSteps=1;
+    _maxControlSteps=10;
+    }
+    else{
+        _minControlSteps=10;
+        _maxControlSteps=50;
+    }
     _controlDimensions=2;
     _erp=0.5;
     _cfm=0.3;

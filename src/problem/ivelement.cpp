@@ -22,12 +22,12 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
- 
- 
+
+
 
 #include "ivelement.h"
 #include <util/kthutil/kauthamexception.h>
-#include "assimp.h"
+#include "assimpImport.h"
 #include <boost/algorithm/string.hpp>
 #if  defined(KAUTHAM_USE_ARMADILLO)
 #include <armadillo>
@@ -89,7 +89,7 @@ namespace Kautham {
             }
         } else {
             //Try to open the file with the assimp library
-            vector<string> assimpExtensions = assimpSupportedExtensions();
+            vector<string> assimpExtensions = assimpImportedExtensions();
             bool found = false;
             for (unsigned i = 0; i < assimpExtensions.size(); ++i) {
                 if (boost::iequals(extension,assimpExtensions.at(i))) {
@@ -99,7 +99,7 @@ namespace Kautham {
             }
             if (found) {
                 try {
-                    read = ivFromAssimp(file);
+                    read = importScene(file);
                 } catch (...) {
                     string message = "Model file " + file + " couldn't be loaded";
                     throw KthExcp(message);
@@ -128,17 +128,17 @@ namespace Kautham {
 
 
     IVElement::IVElement(string ivfile, string collision_ivfile, KthReal sc, bool useBBOX) {
-		for(int i=0;i<3;i++){
-			position[i]= 0.0f;
-			orientation[i]=0.0f;
-		}
-		orientation[2]=1.0f;
-		orientation[3]=0.0f;
-		scale=sc;
+        for(int i=0;i<3;i++){
+            position[i]= 0.0f;
+            orientation[i]=0.0f;
+        }
+        orientation[2]=1.0f;
+        orientation[3]=0.0f;
+        scale=sc;
 
-		trans= new SoTranslation;
-		rot = new SoRotation;
-		sca = new SoScale();
+        trans= new SoTranslation;
+        rot = new SoRotation;
+        sca = new SoScale();
 
         trans->translation.setValue(position);
 
@@ -148,8 +148,8 @@ namespace Kautham {
 
 
 
-		ivmodel = new SoSeparator;
-		ivmodel->ref();
+        ivmodel = new SoSeparator;
+        ivmodel->ref();
         ivmodel->addChild(sca);
 
         ivmodel->addChild(readFile(ivfile));
@@ -241,7 +241,7 @@ namespace Kautham {
     }
 
 
-    SoSeparator *IVElement::BBOX(SoSeparator *model, float sc, string filename) {   
+    SoSeparator *IVElement::BBOX(SoSeparator *model, float sc, string filename) {
 #if defined(KAUTHAM_USE_ARMADILLO)
         try {
             //get all vertices from all triangles in ivmodel
@@ -441,64 +441,63 @@ namespace Kautham {
 
 
     void IVElement::setPosition(KthReal *pos){
-		for(int i=0;i<3;i++)
-			position[i]=pos[i];
-      trans->translation.setValue(pos);
-	}
+        for(int i=0;i<3;i++)
+            position[i]=pos[i];
+        trans->translation.setValue(pos);
+    }
 
     void IVElement::setOrientation(KthReal *ori){
-        //ori is quaternion and rot->rotation is axis|angle (in rad)
-		for(int i=0;i<4;i++)
-			orientation[i]=ori[i];
+        for(int i=0;i<4;i++)
+            orientation[i]=ori[i];
         rot->rotation.setValue(ori);
-	}
+    }
 
-  SbMatrix IVElement::orientationMatrix() {
-	  SbMatrix mat;
-      SbRotation rr = rot->rotation.getValue();
-	  rr.getValue(mat);
-	  return mat.transpose();
-  }
+    SbMatrix IVElement::orientationMatrix() {
+        SbMatrix mat;
+        SbRotation rr = rot->rotation.getValue();
+        rr.getValue(mat);
+        return mat.transpose();
+    }
 
-  SoSeparator* IVElement::ivModel(bool tran) {
-	  if(tran){
-		  SoSeparator* temp = new SoSeparator;
-		  temp->ref();
-          temp->addChild(trans);
-          temp->addChild(rot);
-		  temp->addChild(ivmodel);
-		  return temp;
-	  }else
-			return ivmodel;
-  }
+    SoSeparator* IVElement::ivModel(bool tran) {
+        if(tran){
+            SoSeparator* temp = new SoSeparator;
+            temp->ref();
+            temp->addChild(trans);
+            temp->addChild(rot);
+            temp->addChild(ivmodel);
+            return temp;
+        }else
+            return ivmodel;
+    }
 
-  SoSeparator* IVElement::collision_ivModel(bool tran) {
-      if(tran){
-          SoSeparator* temp = new SoSeparator;
-          temp->ref();
-          temp->addChild(trans);
-          temp->addChild(rot);
-          temp->addChild(collision_ivmodel);
-          return temp;
-      }else
+    SoSeparator* IVElement::collision_ivModel(bool tran) {
+        if(tran){
+            SoSeparator* temp = new SoSeparator;
+            temp->ref();
+            temp->addChild(trans);
+            temp->addChild(rot);
+            temp->addChild(collision_ivmodel);
+            return temp;
+        }else
             return collision_ivmodel;
-  }
+    }
 
 
 
-  bool IVElement::collideTo(Element* other) {
-	  // this method only return a value;
-	  // This method has been implemented to provide a common functionalities
-	  // if the Kautham will be called without a collision checker system.
-	  return true;
-  }
+    bool IVElement::collideTo(Element* other) {
+        // this method only return a value;
+        // This method has been implemented to provide a common functionalities
+        // if the Kautham will be called without a collision checker system.
+        return true;
+    }
 
-  KthReal IVElement::getDistanceTo(Element* other) {
-	  // this method only return a value;
-	  // This method has been implemented to provide a common functionalities
-	  // if the Kautham will be called without a collision checker system.
-	  return 0.0;
-  }
+    KthReal IVElement::getDistanceTo(Element* other) {
+        // this method only return a value;
+        // This method has been implemented to provide a common functionalities
+        // if the Kautham will be called without a collision checker system.
+        return 0.0;
+    }
 
 
 }

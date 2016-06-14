@@ -107,6 +107,22 @@ namespace Kautham{
       inline void           setRobControlsName(string controlsname){robControlsName=controlsname;} //!< Sets the string containing the robot control names, separated by the veritcal line character
       inline void           setObsControlsName(string controlsname){obsControlsName=controlsname;} //!< Sets the string containing the obstacle control names, separated by the veritcal line character
 
+
+      //rc_functions
+      vector<Robot*> _mobileObstacle;
+      vector<unsigned> _forbiddenObstacles;
+      KthReal distanceCheck2Robots(Sample* sample);
+      bool collisionCheckCans(Sample* sample);
+      bool collisionCheckRemovableObstacles(Sample* sample, string *message = NULL); // collisioncheck function that not consider collisions with the removable obstacles
+      int collisionCheckCount(Sample* sample);
+      bool collisionCheckObstacles(Sample* sample, std::vector<unsigned> &ObstColl);
+      inline unsigned int obstaclesCount(){ return obstacles.size();}
+      void moveObstacleTo(size_t mobObst, vector<KthReal>& pose);
+      void moveObstacleTo(size_t mobObst, RobConf& robConf);
+      void addMobileObstacle(Robot* obs);
+      inline Robot* getMobileObstacle(unsigned int i) {return (i < _mobileObstacle.size())? _mobileObstacle[i] : NULL;}
+      inline unsigned int mobileObstaclesCount() {return _mobileObstacle.size();}
+
   protected:
       virtual void          updateScene() = 0;
       vector<Robot*>        robots;

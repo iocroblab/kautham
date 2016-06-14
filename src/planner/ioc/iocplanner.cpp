@@ -102,7 +102,7 @@ namespace Kautham{
 
       // Add the results to the Query vector.
       KthQuery* currQue = NULL;
-      addQuery( _samples->indexOf( _init ), _samples->indexOf( _goal ));
+      addQuery( _samples->indexOf( _init.at(0) ), _samples->indexOf( _goal.at(0) ));
       currQue = &(_queries.at( _queries.size() - 1 ));
       currQue->solved(_solved);
       currQue->setSampleStats(_triedSamples, _samples->getSize(), _generatedEdges, _collChecks, _worldcollChecks);

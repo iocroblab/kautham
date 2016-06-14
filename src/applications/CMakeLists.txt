@@ -12,7 +12,6 @@ endif( KAUTHAM_CONSOLE )
 
 if( KAUTHAM_ROS )
    message( STATUS "prepared to make KAUTHAM ROS" )
-   #add_subdirectory( ros )
 
 SET( HDR_FILES console/kauthamshell.h )
 SET( SRC_FILES ros/kautham_node.cpp  console/kauthamshell.cpp )
@@ -37,4 +36,5 @@ install(TARGETS Manipulation_node
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
+add_subdirectory( ros )
 endif( KAUTHAM_ROS )

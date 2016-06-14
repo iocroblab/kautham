@@ -23,56 +23,55 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo, Muhayyuddin */
 
 
- 
+
 #if !defined(_KAUTHAMSHELL_H)
 #define _KAUTHAMSHELL_H
+#include <vector>
+#include <string>
 #include <problem/problem.h>
-using namespace std;
-using namespace Kautham;
-
 namespace Kautham {
     class kauthamshell {
     public:
-        inline kauthamshell() {_problem = NULL;} //! Constructor
-        inline ~kauthamshell(){} //! Destructor
-        inline bool problemOpened() {return(_problem != NULL);} //! Informs wether there is a problem opened;
-        inline void closeProblem() { if(problemOpened()) delete _problem;}
-        bool openProblem(istream* inputfile, vector<string> def_path = vector<string>());
-        bool openProblem(string problemfilename, vector<string> def_path);
-        bool checkCollision(vector<KthReal> smpcoords, bool *collisionFree);
-        bool setRobotsConfig(vector<KthReal> smpcoords);
-        bool setObstaclesConfig(vector<KthReal> smpcoords);
-        bool setQuery(vector<KthReal> init, vector<KthReal> goal);
-        bool setInit(vector<KthReal> init);
-        bool setGoal(vector<KthReal> goal);
-        bool setInitObs(vector<KthReal> initObs);
+        kauthamshell();//! Constructor
+        ~kauthamshell(); //! Destructor
+        bool problemOpened(); //! Informs wether there is a problem opened;
+        void closeProblem();
+        bool openProblem(std::istream *inputfile, std::vector<std::string> def_path = std::vector<std::string>());
+        bool openProblem(std::string problemfilename, std::vector<std::string> def_path);
+        bool checkCollision(std::vector<float> smpcoords, bool *collisionFree);
+        bool setRobotsConfig(std::vector<float> smpcoords);
+        bool setObstaclesConfig(std::vector<float> smpcoords);
+        bool setQuery(std::vector<float> init, std::vector<float> goal);
+        bool setInit(std::vector<float> init);
+        bool setGoal(std::vector<float> goal);
+        bool setInitObs(std::vector<float> initObs);
         bool clearSampleSet();
-        bool setRobControls(istream* inputfile, vector<KthReal> init, vector<KthReal> goal);
-        bool setRobControls(string controlsFile, vector<KthReal> init, vector<KthReal> goal);
-        bool setDefaultRobControls(vector<KthReal> init, vector<KthReal> goal);
-        bool setObsControls(istream* inputfile, vector<KthReal> initObs);
-        bool setObsControls(string controlsFile, vector<KthReal> initObs);
+        bool setRobControls(std::istream* inputfile, std::vector<float> init, std::vector<float> goal);
+        bool setRobControls(std::string controlsFile, std::vector<float> init, std::vector<float> goal);
+        bool setDefaultRobControls(std::vector<float> init, std::vector<float> goal);
+        bool setObsControls(std::istream* inputfile, std::vector<float> initObs);
+        bool setObsControls(std::string controlsFile, std::vector<float> initObs);
         bool setFixedObsControls();
-        bool setPlannerByName(string name);
-        bool setPlanner(istream* inputfile);
-        bool setPlanner(string problemfilename);
-        bool setPlannerParameter(string parameter, string value);
-        bool solve(ostream &graphVizPlannerDataFile);
-        bool getPath(ostream &path);
+        bool setPlannerByName(std::string name);
+        bool setPlanner(std::istream* inputfile);
+        bool setPlanner(std::string problemfilename);
+        bool setPlannerParameter(std::string parameter, std::string value);
+        bool solve(std::ostream &graphVizPlannerDataFile);
+        bool getPath(std::ostream &path);
         bool solve();
         double getLastPlanComputationTime();
         int getNumEdges();
         int getNumVertices();
-        bool connect(vector<KthReal> smpcoords1, vector<KthReal> smpcoords2);
-        int addRobot(string robFile, KthReal scale, vector<KthReal> home, vector< vector<KthReal> > limits,
-                         vector< vector<KthReal> > mapMatrix, vector<KthReal> offMatrix);
+        bool connect(std::vector<float> smpcoords1, std::vector<float> smpcoords2);
+        int addRobot(std::string robFile, double scale, std::vector<float> home, std::vector<std::vector<float> > limits,
+                     std::vector<std::vector<float> > mapMatrix, std::vector<float> offMatrix);
         bool removeRobot(unsigned index);
-        int addObstacle(string obsFile, KthReal scale, vector<KthReal> home);
+        int addObstacle(std::string obsFile, double scale, std::vector<float> home);
         bool removeObstacle(unsigned index);
         bool attachObstacle2RobotLink(int robot, int link, int obs);
-        bool detachObstacle(uint obs);
+        bool detachObstacle(unsigned int obs);
         //functions for manipulation node
-
+        bool motionPlanner(std::vector <float> init, std::vector <float> goal, std::string root);
         bool setManipPramsAndSolve(std::string actiontype, int targetbody, std::vector<double> force, std::vector<State> *ws, double *power, std::vector<double> *laststate);
         bool setBodyState(int targetBody, std::vector<double> pose);
         std::vector<double> getBodyState(int targetBody);
@@ -80,7 +79,7 @@ namespace Kautham {
         std::vector< std::vector<double> > getWorldState();
         //bool InstKnowledgeInferenceProcess();
     private:
-        Problem *_problem;
+        void *memPtr_;
     };
 }
 #endif  //_KAUTHAMSHELL_H

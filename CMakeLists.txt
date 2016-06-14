@@ -1,7 +1,38 @@
-project(kautham2)
+#     Copyright 2016 Institute of Industrial and Control Engineering (IOC)
+#                  Universitat Politecnica de Catalunya
+#                  BarcelonaTech
+#     All Rights Reserved.
+# 
+#     This program is free software; you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation; either version 2 of the License, or
+#     (at your option) any later version.
+# 
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+# 
+#     You should have received a copy of the GNU General Public License
+#     along with this program; if not, write to the
+#     Free Software Foundation, Inc.,
+#     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+# 
+#    Author: Leopold Palomo-Avellaneda 2014-2016
+
+
+
+project(kautham)
 
 cmake_minimum_required(VERSION 2.4.6)
 
+set( KAUTHAM_VERSION 3.0.0 )
+STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} ) 
+LIST( GET KAUTHAM_VERSIONS 0 KAUTHAM_VERSION_MAJOR)
+LIST( GET KAUTHAM_VERSIONS 1 KAUTHAM_VERSION_MINOR)
+LIST( GET KAUTHAM_VERSIONS 2 KAUTHAM_VERSION_PATCH)
+
+message( "Kautham version ${VERSION} (${KAUTHAM_VERSION_MAJOR}.${KAUTHAM_VERSION_MINOR}.${KAUTHAM_VERSION_PATCH})" )
 
 if(COMMAND cmake_policy)
       cmake_policy(SET CMP0003 NEW)
@@ -17,7 +48,7 @@ option( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
 option( KAUTHAM_ROS "Build the ROS version" OFF )
-option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
+option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" OFF)
 
 ########### Set flags ####################
 message( STATUS "Using this flags ........")
@@ -30,11 +61,10 @@ message( STATUS "Using IOC planners: ${KAUTHAM_IOC}")
 message( STATUS "Using Open Dynamic Engine: ${KAUTHAM_OPENDE}")
 message( STATUS "Creating the HTML based API documentation: ${KAUTHAM_DOCUMENTATION}")
 
-########### Modules path ###############
+########### Modules path and system options ###############
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
-add_definitions ( -Wall )
+include(GNUInstallDirs)
 ##############################################################################
-
 
 ##################### ROS-catkin ####################################
 
@@ -46,12 +76,7 @@ find_package(catkin REQUIRED COMPONENTS
   trajectory_msgs
   message_generation
 )
-FIND_PACKAGE( Boost COMPONENTS system serialization thread REQUIRED )
-
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-
-include_directories(include ${catkin_INCLUDE_DIRS})
- LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
+include_directories(${catkin_INCLUDE_DIRS})
 
 add_service_files(
    DIRECTORY srv
@@ -113,7 +138,8 @@ generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)
 
 
 catkin_package(
-  INCLUDE_DIRS         ${CMAKE_CURRENT_SOURCE_DIR}                   
+  #INCLUDE_DIRS  ${CMAKE_SOURCE_DIR}/src
+  INCLUDE_DIRS  ${CMAKE_SOURCE_DIR}
   CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
 )
 
@@ -155,7 +181,7 @@ if(KAUTHAM_DOCUMENTATION)
                       # custom_command for ${doxyfile} generation
                       # but I still have to figure out how...
                       MAIN_DEPENDENCY ${doxyfile} ${doxyfile_in}
-                      DEPENDS Kautham2 ${doxy_extra_files}
+                      DEPENDS kautham ${doxy_extra_files}
                       COMMENT "Generating HTML documentation")
 
   add_custom_target( doc DEPENDS ${doxy_html_index_file} )
@@ -165,8 +191,8 @@ endif()
 ##############################################################################
 #########################################################
 # Copy Help file
-install(DIRECTORY ${CMAKE_SOURCE_DIR} DESTINATION share/kautham2)
-##install(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
+#install(DIRECTORY ${CMAKE_SOURCE_DIR} DESTINATION share/kautham)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
 
 
 

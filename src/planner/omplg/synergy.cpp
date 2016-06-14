@@ -63,11 +63,11 @@ Synergy::Synergy(const arma::vec barycenter,
 
     //check eigenvectors
     for (unsigned int i =  0; i < dim; i++) {
-        if (std::abs(1.-std::abs(norm(U.col(i)))) > 1e-6) {
+        if (fabs(1.-fabs(norm(U.col(i)))) > 1e-6) {
             throw std::invalid_argument("Eigenvectors must be unitary");
         }
         for (unsigned int j = i+1; j < dim; j++) {
-            if (std::abs(dot(U.col(i),U.col(j))) > 2e-6) {
+            if (fabs(dot(U.col(i),U.col(j))) > 2e-6) {
                 throw std::invalid_argument("Eigenvector matrix should be orthogonal");
             }
         }
@@ -267,7 +267,7 @@ SynergyOrder ZeroOrderSynergy::order() const {
 double ZeroOrderSynergy::dTrans(const arma::vec xb) const {
     double d(0.), tmp;
     for (unsigned int i = 0; i < dim; i++) {
-        tmp = 1.-std::abs(1.-std::abs(xb[i]-b[i]));
+        tmp = 1.-fabs(1.-fabs(xb[i]-b[i]));
         d += tmp*tmp;
     }
 
