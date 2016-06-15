@@ -931,7 +931,7 @@ void KauthamDEPlanner::callDrawStuffViewer(void)
     fn.step = &simLoop;
     fn.command = &command;
     fn.stop = 0;
-    fn.path_to_textures = "/home/muhayyuddin/catkin_ws/src/kautham/textures";
+    //fn.path_to_textures = "/home/muhayyuddin/catkin_ws/src/kautham/textures";
 
     DISP.addSpace( envPtr.get()->collisionSpaces_[0], 0.9, 0.9, 0.5);
     DISP.addGeoms(((KauthamDEEnvironment*)envPtr.get())->GeomID);
