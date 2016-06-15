@@ -10,6 +10,7 @@
 
 /* Author: Ioan Sucan */
 
+// copy from the omplapp and modified for the triangular mesh
 #include <ode/ode.h>
 #include <drawstuff/drawstuff.h>
 #include <vector>
