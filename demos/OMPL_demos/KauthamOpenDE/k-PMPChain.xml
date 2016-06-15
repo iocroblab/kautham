@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_cRRTcar_table_rooms_SE2">
-	<Robot robot="obstacles/IROS/PlanerChain1.urdf" scale="0.05">
+	<Robot robot="robots/OpenDERobots/PlanerChain1.urdf" scale="0.05">
 		<Limits name="X" min="-23.0" max="23.0" />
 		<Limits name="Y" min="-23.0" max="23.0" />
 		<Limits name="Z" min="-1.0" max="5.0" />

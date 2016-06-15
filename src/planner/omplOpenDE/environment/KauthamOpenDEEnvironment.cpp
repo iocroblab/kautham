@@ -104,10 +104,10 @@ KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed,
     if(wkspace->getRobot(0)->getName()=="SimpleCar")
     {
         std::vector<double> defaulttorque;
-        defaulttorque.push_back(2);//+(1.5*0.7*9.8*1));
-        defaulttorque.push_back(2);//+(1.5*0.7*9.8*1));
-        defaulttorque.push_back(2);//+(1.5*0.7*9.8*1));
-        defaulttorque.push_back(2);//+(1.5*0.7*9.8*1));
+        defaulttorque.push_back(1.5);//+(1.5*0.7*9.8*1));
+        defaulttorque.push_back(1.5);//+(1.5*0.7*9.8*1));
+        defaulttorque.push_back(1.5);//+(1.5*0.7*9.8*1));
+        defaulttorque.push_back(1.5);//+(1.5*0.7*9.8*1));
         mkinematics= new Manipulatorkinematics(defaulttorque);
     }
 
@@ -848,6 +848,8 @@ void KauthamDEEnvironment::getPrimitiveShapes(Link* link, odinObject *obj,bool r
     obj->mesh=false;
 
     SoSeparator *model = (SoSeparator*)link->getCollisionModel(false)->getChild(1);
+    //searchColor(model, obj);
+    //std::cout<<"the colors are "<<obj->color[0]<<" "<<obj->color[1]<<std::endl;
     double scale = link->getElement()->getScale();
     for (unsigned int j = 0; j < (unsigned int) model->getNumChildren(); j++)
     {
@@ -991,7 +993,6 @@ void KauthamDEEnvironment::getTrimesh(SoSeparator *ivmodel, odinObject* obj, dou
         }
     }
     //searchColor(ivmodel, obj);
-
 }
 
 void KauthamDEEnvironment::triang_CB(void* data,
@@ -1092,6 +1093,7 @@ void KauthamDEEnvironment::searchColor(SoSeparator* root, odinObject* obj)
             const SbColor col = mat->diffuseColor[0];
             for (int i = 0; i < 3; i++)
                 obj->color.push_back(col[i]);
+            cout << " Colors of somaterial " << col[0]<<" "<<col[1] << '\n';
         }
     }
     return;

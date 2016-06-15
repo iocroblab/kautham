@@ -81,9 +81,9 @@ void PlanarChainEnvironment::applyControl (const double *control) const
     //std::cout<<"velocity   : "<<v1<<" , "<<v2<<std::endl;
 
     dJointSetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamVel,(a1-control[0]));
-    dJointSetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamFMax,20);//mkinematics->getTorqueLimit().at(0));
+    dJointSetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamFMax,mkinematics->getTorqueLimit().at(0));
     dJointSetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamVel,(a2-control[1]));
-    dJointSetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamFMax,20);//mkinematics->getTorqueLimit().at(1));
+    dJointSetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamFMax,mkinematics->getTorqueLimit().at(1));
 
 //    dJointAddHingeTorque(joint_.at("Chainbase_link+Chainlink1"), control[0]);
 //    dJointAddHingeTorque(joint_.at("Chainlink1+Chainlink2"), control[1]);

@@ -10,7 +10,6 @@
 		<Limits name="THETA" min="-360.0" max="360.0" />
 		<Home X="10.0" Y="10.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
 	</Robot>
-
 	<Obstacle obstacle="obstacles/TR2016/cubeDE1.urdf" scale="0.12">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1.2" Y="0.0" X="11.0" />
 	</Obstacle>

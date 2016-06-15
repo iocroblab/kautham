@@ -150,14 +150,15 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     _maxspeed = 5;
     _onlyend = false;
     _planningTime=60;
-    _propagationStepSize=0.07;
     _maxContacts=3;
     if(_wkSpace->getRobot(0)->getNumJoints()>1 && _wkSpace->getRobot(0)->getName()!="SimpleCar")
     {
-    _minControlSteps=1;
-    _maxControlSteps=10;
+        _propagationStepSize=0.05;
+        _minControlSteps=1;
+        _maxControlSteps=10;
     }
     else{
+        _propagationStepSize=0.07;
         _minControlSteps=10;
         _maxControlSteps=50;
     }
@@ -934,49 +935,73 @@ void KauthamDEPlanner::callDrawStuffViewer(void)
 
     DISP.addSpace( envPtr.get()->collisionSpaces_[0], 0.9, 0.9, 0.5);
     DISP.addGeoms(((KauthamDEEnvironment*)envPtr.get())->GeomID);
-if(((KauthamDEEnvironment*)envPtr.get())->meshID.size()>1)
-{
-    Tmesh tmesh;
+
+    if(((KauthamDEEnvironment*)envPtr.get())->meshID.size()>1)
+    {
+        Tmesh tmesh;
         for(int i=0;i<((KauthamDEEnvironment*)envPtr.get())->meshID.size();i++)
         {
 
-             tmesh.indexSize=((KauthamDEEnvironment*)envPtr.get())->meshID[i].indexSize;
-             tmesh.indices=((KauthamDEEnvironment*)envPtr.get())->meshID[i].indices;
-             tmesh.vertices=((KauthamDEEnvironment*)envPtr.get())->meshID[i].vertices;
-             tmesh.meshD=((KauthamDEEnvironment*)envPtr.get())->meshID[i].meshD;
-             //std::cout<<"color is "<<((KauthamDEEnvironment*)envPtr.get())->meshID[i].color[0]<<" "<<((KauthamDEEnvironment*)envPtr.get())->meshID[i].color[1]<<std::endl;
+            tmesh.indexSize=((KauthamDEEnvironment*)envPtr.get())->meshID[i].indexSize;
+            tmesh.indices=((KauthamDEEnvironment*)envPtr.get())->meshID[i].indices;
+            tmesh.vertices=((KauthamDEEnvironment*)envPtr.get())->meshID[i].vertices;
+            tmesh.meshD=((KauthamDEEnvironment*)envPtr.get())->meshID[i].meshD;
 
-            // DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i],
-            //                   ((KauthamDEEnvironment*)envPtr.get())->meshID[i].color[0],
-            //         ((KauthamDEEnvironment*)envPtr.get())->meshID[i].color[1],
-            //         ((KauthamDEEnvironment*)envPtr.get())->meshID[i].color[2]);
-             DISP.tmd.push_back(tmesh);
+            DISP.tmd.push_back(tmesh);
 
         }
         //DISP.tmd.push_back(tmesh);
 
-}
-
-
-    //DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[0], 0.0, 0.9, 0.9);
-    for(unsigned int i=0;i<dSpaceGetNumGeoms(envPtr.get()->collisionSpaces_[0]);i++)
-
-    {
-        if(i<6)
-            DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.0, 0.9, 0.9);
-
-        else if(i==6)
-            DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.9, 0.9, 0.1);
-        else if(i>6 && i<9)
-            DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.0, 0.0, 0.9);
-        else if(i==9)
-            DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.1, 0.9, 0.1);
-        else
-            DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.9, 0.1, 0.1);
     }
 
-   // DISP.setGeomColor(dSpaceGetGeom(envPtr.get()->collisionSpaces_[0],3), 0.9, 0.9, 0.9);
+    //geom color temporary code
+    //todo: automatically read the color of SOMaterial and assign to the ODE Geom.
+    if(_wkSpace->getRobot(0)->getNumJoints()>1 && _wkSpace->getRobot(0)->getName()!="SimpleCar")
+    {
+        for(unsigned int i=0;i<dSpaceGetNumGeoms(envPtr.get()->collisionSpaces_[0]);i++)
 
+        {
+            if(i<6)
+                DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.0, 0.9, 0.9);
+            else if(i==6)
+                DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.9, 0.9, 0.1);
+            else if(i>6 && i<9)
+                DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.0, 0.0, 0.9);
+            else if(i==9)
+                DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.1, 0.9, 0.1);
+            else
+                DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.9, 0.1, 0.1);
+        }
+    }
+    if( _wkSpace->getRobot(0)->getName()=="SimpleCar")
+    {
+        for(unsigned int i=0;i<dSpaceGetNumGeoms(envPtr.get()->collisionSpaces_[0]);i++)
+        {
+            if(i<5)
+                DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.0, 0.9, 0.9);
+
+            else if(i>4 && i<8)
+                DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.0, 0.0, 0.9);
+            else
+                DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.9, 0.1, 0.1);
+        }
+
+    }
+    if( _wkSpace->getRobot(0)->getNumJoints()<2)
+    {
+        DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[0], 0.0, 0.9, 0.9);
+        for(unsigned int i=1;i<dSpaceGetNumGeoms(envPtr.get()->collisionSpaces_[0]);i++)
+
+        {
+            if(i<3)
+                DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.0, 0.0, 0.9);
+
+            else if(i>2 && i<5)
+                DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.9, 0.0, 0.9);
+            else
+                DISP.setGeomColor(((KauthamDEEnvironment*)envPtr.get())->GeomID[i], 0.9, 0.1, 0.1);
+        }
+    }
 
     if(_solved)
     {

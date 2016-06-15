@@ -20,7 +20,6 @@
 	<Obstacle obstacle="obstacles/car/cubeDE3.urdf" scale="0.1">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1" Y="-27" X="-10.0" />
 	</Obstacle>
-		
 	<Obstacle obstacle="obstacles/car/wall5.urdf" scale="0.07">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="1" Y="0.0" X="0.0" />
 	</Obstacle>
@@ -36,7 +35,6 @@
 	<Obstacle obstacle="obstacles/car/wall6.urdf" scale="0.09">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="2.2" Y="-15" X="-19.0" />
 	</Obstacle>
-
 	<Obstacle obstacle="obstacles/car/wallb1.urdf" scale="0.3">
 		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="1.5" Y="0.0" X="30.0" />
 	</Obstacle>
@@ -49,9 +47,6 @@
 	<Obstacle obstacle="obstacles/car/wallb4.urdf" scale="0.3">
 		<Home TH="90.0" WZ="1.0" WY="0.0" WX="0.0" Z="1.5" Y="-30.0" X="0.0" />
 	</Obstacle>
-	
-	
-	
 	<Controls robot="controls/SimpleCar.cntr" />
 	<Planner>
 		<Parameters>
