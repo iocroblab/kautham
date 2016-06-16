@@ -279,9 +279,6 @@ namespace Kautham {
       else if(name == "KPIECE3DPlanner")
           _planner  = new   omplcplanner::KPIECE3DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
 
-      else if(name == "KPIECEKUKAPlanner")
-          _planner  = new   omplcplanner::KPIECEKUKAPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
-
       else if(name == "KPIECEMultiRobotPlanner")
           _planner  = new   omplcplanner::KPIECEMultiRobotPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
 
@@ -294,14 +291,8 @@ namespace Kautham {
       else if(name == "RRT2DPlanner")
           _planner  = new   omplcplanner::RRT2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
 
-      else if(name == "RRTKUKAPlanner")
-          _planner  = new   omplcplanner::RRTKUKAPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
-
       else if(name == "RRTMultiRobotPlanner")
           _planner  = new   omplcplanner::RRTMultiRobotPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
-
-      else if(name == "RRTTX90Planner")
-          _planner  = new   omplcplanner::RRTTX90Planner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
 
       else if(name == "EST2DPlanner")
           _planner  = new   omplcplanner::EST2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);

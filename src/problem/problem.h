@@ -86,12 +86,9 @@
 #include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/KPIECECarPlanner.h>
 #include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/KPIECEChainPlanner.h>
 #include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/KPIECEFreeFlyingPlanner.h>
-#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/KPIECEKUKAPlanner.h>
 #include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/KPIECEMultiRobotPlanner.h>
 #include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/RRT2DPlanner.h>
-#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/RRTKUKAPlanner.h>
 #include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/RRTMultiRobotPlanner.h>
-#include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/RRTTX90Planner.h>
 #include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/Syclop2DPlanner.h>
 #include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/PDST2DPlanner.h>
 #include <planner/omplOpenDE/PhysicsBasedPlanners/PKP/EST2DPlanner.h>
