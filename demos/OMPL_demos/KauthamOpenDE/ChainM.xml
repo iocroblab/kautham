@@ -32,8 +32,6 @@
 	<Obstacle obstacle="obstacles/TR2016/redCube3.urdf" scale="0.15">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1.5" Y="-19.0" X="-7.0" />
 	</Obstacle>
-	
-	
 	<Controls robot="controls/chain.cntr" />
 	<Planner>
 		<Parameters>

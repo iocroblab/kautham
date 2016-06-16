@@ -38,14 +38,14 @@ namespace omplcplanner{
 
 KauthamDEGoalRegion::KauthamDEGoalRegion(const ob::SpaceInformationPtr &si, WorkSpace *ws, bool a,Sample *goal):ob::GoalRegion(si)
 {
-    setThreshold(0.5);
+    setThreshold(0.7);
     //threshold_ = 1;
  Kauthamodebodies=smp2KauthamOpenDEState(ws,goal);
     onlyend=a;
 }
 KauthamDEGoalRegion::KauthamDEGoalRegion(const ob::SpaceInformationPtr &si,  WorkSpace *ws, bool a,double x, double y):ob::GoalRegion(si)
 {
-    setThreshold(0.5);
+    setThreshold(0.7);
     //threshold_ = 1;
     KauthamODEobject odeob;
 
