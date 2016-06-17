@@ -197,10 +197,6 @@ namespace Kautham {
                                                      _sampler, _wspace, 10,0, 0.0010, 10,0.0,0.0);
 #endif
 #endif
-#if defined(KAUTHAM_USE_GUIBRO)
-        else if (name == "GUIBROgrid")
-            _planner = new GUIBRO::GUIBROgridPlanner(CONTROLSPACE, NULL, NULL, _cspace, _sampler, _wspace);
-#endif
 #if defined(KAUTHAM_USE_OMPL)
         else if (name == "omplDefault")
             _planner = new omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
@@ -211,38 +207,14 @@ namespace Kautham {
         else if (name == "omplRRT")
             _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-        else if (name == "omplFOSRRT")
-            _planner = new omplplanner::omplFOSRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
         else if (name == "omplRRTStar")
             _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
-        else if (name == "omplTRRT")
-            _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
-        else if (name == "omplFOSTRRT")
-            _planner = new omplplanner::omplFOSTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
-        else if (name == "omplTRRTConnect")
-            _planner = new omplplanner::omplTRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
-        else if (name == "omplFOSTRRTConnect")
-            _planner = new omplplanner::omplFOSTRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
-        else if (name == "omplLazyTRRT")
-            _planner = new omplplanner::omplLazyTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
         else if (name == "omplpRRT")
             _planner = new omplplanner::omplpRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-        else if (name == "omplLazyRRT")
-            _planner = new omplplanner::omplLazyRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
         else if (name == "omplRRTConnect")
             _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
-        else if (name == "omplFOSRRTConnect")
-            _planner = new omplplanner::omplFOSRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
         else if (name == "omplRRTConnectEUROC")
             _planner = new omplplanner::omplRRTConnectPlannerEUROC(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
@@ -360,40 +332,6 @@ namespace Kautham {
             string plannerName = planNode.child("Name").child_value();
             if (plannerName != "") {
                 if (createPlanner(plannerName,ssptr)) {
-                    //Set especial parameters
-                    if (plannerName == "omplFOSRRT") {
-                        ((omplplanner::omplFOSRRTPlanner*)_planner)->
-                                setSynergyTree(doc->child("Problem").child("Planner").child("Parameters").
-                                               child("SynergyTree").attribute("synergyTree").as_string());
-                    } else if (plannerName == "omplFOSTRRT") {
-                        ((omplplanner::omplFOSTRRTPlanner*)_planner)->
-                                setSynergyTree(doc->child("Problem").child("Planner").child("Parameters").
-                                               child("SynergyTree").attribute("synergyTree").as_string());
-                    } else if (plannerName == "omplFOSRRTConnect") {
-                        ((omplplanner::omplFOSRRTConnectPlanner*)_planner)->
-                                setSynergyTree(doc->child("Problem").child("Planner").child("Parameters").
-                                               child("SynergyTree").attribute("synergyTree").as_string());
-                    } else if (plannerName == "omplFOSTRRTConnect") {
-                        ((omplplanner::omplFOSTRRTConnectPlanner*)_planner)->
-                                setSynergyTree(doc->child("Problem").child("Planner").child("Parameters").
-                                               child("SynergyTree").attribute("synergyTree").as_string());
-                    } else if (plannerName == "omplTRRT") {
-                        ((omplplanner::omplTRRTPlanner*)_planner)->
-                                setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
-                                                 child("Potential").attribute("potential").as_string());
-                    } else if (plannerName == "omplTRRTConnect") {
-                        ((omplplanner::omplTRRTConnectPlanner*)_planner)->
-                                setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
-                                                 child("Potential").attribute("potential").as_string());
-                    } else if (plannerName == "omplLazyTRRT") {
-                        ((omplplanner::omplLazyTRRTPlanner*)_planner)->
-                                setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
-                                                 child("Potential").attribute("potential").as_string());
-                    } else if (plannerName == "omplRRTStar") {
-                        ((omplplanner::omplRRTStarPlanner*)_planner)->
-                                setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
-                                                 child("Potential").attribute("potential").as_string());
-                    }
 
                     //Set normal parameters
                     xml_node::iterator it;
