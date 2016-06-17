@@ -1,4 +1,4 @@
-int16 taretBody
+int16 targetBody
 ---
 bool status
 float64[] targetBodyPose

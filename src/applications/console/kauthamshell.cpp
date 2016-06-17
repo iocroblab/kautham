@@ -22,14 +22,13 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo, Muhayyuddin */
 
-
-
 #include "planner/omplc/omplcplanner.h"
 #include <planner/omplg/omplplanner.h>
 #include "kauthamshell.h"
 #include "util/kthutil/kauthamexception.h"
 #include <iostream>
 #include <problem/problem.h>
+#include <planner/omplOpenDE/PhysicsBasedPlanners/KauthamOpenDEPlanner.h>
 
 namespace ob = ompl::base;
 
@@ -101,8 +100,64 @@ namespace Kautham {
         closeProblem();
         return false;
     }
+   bool kauthamshell::setObstacle(vector<KthReal> smpcoords, int targetObs)
+    {
+        try {
+            Problem *const problem = (Problem*)memPtr_;
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+            Sample* smp = new Sample(3);
+            smp->setCoords(smpcoords);
+             problem->wSpace()->setObstacle(smp, targetObs);
 
+            return true;
 
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
+        }
+    }
+    bool kauthamshell::checkCollisionObs(vector<KthReal> smpcoords, int targetObs, int *collisionObs, bool *collisionFree) {
+        try {
+            Problem *const problem = (Problem*)memPtr_;
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            string msg;
+
+            *collisionFree = !problem->wSpace()->collisionCheckObs(smpcoords,targetObs,collisionObs,&msg);
+            if(msg.empty()) {
+                std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;
+            } else {
+                std::cout<<"Response for collision checking service is: "<<msg<<std::endl;
+            }
+            return true;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
+        }
+    }
     bool kauthamshell::checkCollision(vector<float> smpcoords, bool *collisionFree) {
         Sample *smp = NULL;
         try {

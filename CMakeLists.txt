@@ -123,7 +123,8 @@ add_service_files(
    GetBodyState.srv
    SetBodyState.srv
    SolveManipQuery.srv
-
+   CheckCollisionObs.srv   
+   SetObstacle.srv
 )
 
 add_message_files(
