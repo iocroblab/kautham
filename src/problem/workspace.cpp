@@ -170,6 +170,58 @@ namespace Kautham {
         _initObsSample = initsample;
     }
 
+    bool WorkSpace::setObstacle(Sample* smp, int targetObs)
+    {
+        vector<KthReal> tmpVec;
+        tmpVec.clear();
+        for(unsigned int j=0; j < 3; j++ )
+            tmpVec.push_back(smp->getCoords()[j]);
+        for (unsigned int i = 0; i < tmpVec.size(); ++i) {
+            cout << tmpVec.at(i) << " ";
+        } cout <<endl;
+        //      obstacles[targetObs]->parameter2Pose(tmpVec);
+
+        KthReal s[2];
+        s[0]=tmpVec[0];
+        s[1]=tmpVec[1];
+        s[2]=tmpVec[2];
+        obstacles[targetObs]->getLink(0)->getElement()->setPosition(s);
+
+        cout << "Obstacle Position "<< obstacles[targetObs]->getName() <<  " is (" << obstacles[targetObs]->getLink(0)->getElement()->getPosition()[0]
+             << " " << obstacles[targetObs]->getLink(0)->getElement()->getPosition()[1]<< ")"<< endl;
+        return true;
+    }
+
+    bool WorkSpace::collisionCheckObs(vector<float> smp, int targetObs, int *collisionObs, string *message) {
+
+        KthReal s[2];
+        s[0]=smp[0];
+        s[1]=smp[1];
+        s[2]=smp[2];
+        obstacles[targetObs]->getLink(0)->getElement()->setPosition(s);
+
+        stringstream sstr;
+        bool collision = false;
+
+        for (uint m = 0; m < obstacles.size(); m++) {
+            string str;
+            if(m!=targetObs){
+                if (obstacles[targetObs]->collisionCheck(obstacles[m],&str)) {
+                    collision = true;
+                    *collisionObs=m;
+                    sstr << "Obstacle "<< obstacles[targetObs]->getName() <<  " (" << obstacles[targetObs]->getLink(0)->getElement()->getPosition()[0]
+                         << " " << obstacles[targetObs]->getLink(0)->getElement()->getPosition()[1]<< ") is in collision with obstacle " << m << " ("
+                         << obstacles[m]->getName() << ")" << endl;
+                    sstr << str;
+                    break;
+                }
+                if (collision) break;
+            }
+            if (collision) break;
+        }
+        if (message != NULL) *message = sstr.str();
+        return collision;
+    }
 
     bool WorkSpace::collisionCheck(Sample* sample, string *message) {
         stringstream sstr;
