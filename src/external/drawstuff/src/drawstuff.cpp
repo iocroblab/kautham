@@ -52,8 +52,15 @@ manage openGL state changes better
 #include <GL/glu.h>
 #endif
 
+//string part
+#include <string>
+
 #include "drawstuff/drawstuff.h"
 #include "internal.h"
+#include "ground.h"
+#include "checkered.h"
+#include "sky.h"
+#include "wood.h"
 
 //***************************************************************************
 // misc
@@ -184,44 +191,89 @@ static int readNumber (char *filename, FILE *f)
 
 Image::Image (char *filename)
 {
-  FILE *f = fopen (filename,"rb");
-  if (!f) dsError ("Can't open image file `%s'",filename);
-
-  // read in header
-  if (fgetc(f) != 'P' || fgetc(f) != '6')
-    dsError ("image file \"%s\" is not a binary PPM (no P6 header)",filename);
-  skipWhiteSpace (filename,f);
-
-  // read in image parameters
-  image_width = readNumber (filename,f);
-  skipWhiteSpace (filename,f);
-  image_height = readNumber (filename,f);
-  skipWhiteSpace (filename,f);
-  int max_value = readNumber (filename,f);
-
-  // check values
-  if (image_width < 1 || image_height < 1)
-    dsError ("bad image file \"%s\"",filename);
-  if (max_value != 255)
-    dsError ("image file \"%s\" must have color range of 255",filename);
-
-  // read either nothing, LF (10), or CR,LF (13,10)
-  int c = fgetc(f);
-  if (c == 10) {
-    // LF
+  std::string file(filename);
+  size_t length;
+  
+  if(file.find("wood.ppm")){
+     length = strlen((char*)wood_image_data);
+     image_width = 256;
+     image_height = 256;
+     image_data = new byte [length];
+     memcpy(image_data,wood_image_data,length);
   }
-  else if (c == 13) {
-    // CR
-    c = fgetc(f);
-    if (c != 10) ungetc (c,f);
-  }
-  else ungetc (c,f);
+  else 
+     if(file.find("sky.ppm")){
+        length = strlen((char*)sky_image_data);
+        image_data = new byte [length];
+        memcpy(image_data,sky_image_data,length);
+        image_width = 128;
+        image_height = 128;
+//         if(image_width*image_height*3 != length)
+//            dsError ("Size are not equal: \"%i\" != \"%i %i \" x 3 ",length,image_width,image_height);
+     }
+     else
+         if(file.find("ground.ppm")){
+            length = strlen((char*)ground_image_data);
+            image_data = new byte [length];
+            memcpy(image_data,ground_image_data,length);
+            image_width = 256;
+            image_height = 256;
+//             if(image_width*image_height*3 != length)
+//                dsError ("Size are not equal: \"%i\" != \"%i %i \" x 3 ",length,image_width,image_height);
+         }
+        else{
+           if(file.find("checkered.ppm")){
+              length = strlen((char*)checkered_image_data);
+              image_data = new byte [length];
+              memcpy(image_data,checkered_image_data,length);
+              image_width = 57;
+              image_height = 57;
+//               if(image_width*image_height*3 != length)
+//                  dsError ("Size are not equal: \"%i\" != \"%i %i \" x 3 ",length,image_width,image_height);
+            }
+            else
+            {
+               FILE *f = fopen (filename,"rb");
+               if (!f) dsError ("Can't open image file `%s'",filename);
 
-  // read in rest of data
-  image_data = new byte [image_width*image_height*3];
-  if (fread (image_data,image_width*image_height*3,1,f) != 1)
-    dsError ("Can not read data from image file `%s'",filename);
-  fclose (f);
+               // read in header
+               if (fgetc(f) != 'P' || fgetc(f) != '6')
+                  dsError ("image file \"%s\" is not a binary PPM (no P6 header)",filename);
+               skipWhiteSpace (filename,f);
+
+               // read in image parameters
+               image_width = readNumber (filename,f);
+               skipWhiteSpace (filename,f);
+               image_height = readNumber (filename,f);
+               skipWhiteSpace (filename,f);
+               int max_value = readNumber (filename,f);
+
+               // check values
+               if (image_width < 1 || image_height < 1)
+                  dsError ("bad image file \"%s\"",filename);
+               if (max_value != 255)
+                  dsError ("image file \"%s\" must have color range of 255",filename);
+
+               // read either nothing, LF (10), or CR,LF (13,10)
+               int c = fgetc(f);
+               if (c == 10) {
+                  // LF
+               }
+               else if (c == 13) {
+                  // CR
+                  c = fgetc(f);
+                  if (c != 10) ungetc (c,f);
+               }
+               else ungetc (c,f);
+
+               // read in rest of data
+               image_data = new byte [image_width*image_height*3];
+               if (fread (image_data,image_width*image_height*3,1,f) != 1)
+                  dsError ("Can not read data from image file `%s'",filename);
+               fclose (f);
+             
+             }  
+       }
 }
 
 
