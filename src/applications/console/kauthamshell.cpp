@@ -22,6 +22,8 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo, Muhayyuddin */
 
+
+
 #include "planner/omplc/omplcplanner.h"
 #include <planner/omplg/omplplanner.h>
 #include "kauthamshell.h"
@@ -100,7 +102,7 @@ namespace Kautham {
         closeProblem();
         return false;
     }
-   bool kauthamshell::setObstacle(vector<KthReal> smpcoords, int targetObs)
+    bool kauthamshell::setObstacle(vector<KthReal> smpcoords, int targetObs)
     {
         try {
             Problem *const problem = (Problem*)memPtr_;
@@ -110,6 +112,7 @@ namespace Kautham {
             }
             Sample* smp = new Sample(3);
             smp->setCoords(smpcoords);
+
              problem->wSpace()->setObstacle(smp, targetObs);
 
             return true;
@@ -127,6 +130,7 @@ namespace Kautham {
             return false;
         }
     }
+
     bool kauthamshell::checkCollisionObs(vector<KthReal> smpcoords, int targetObs, int *collisionObs, bool *collisionFree) {
         try {
             Problem *const problem = (Problem*)memPtr_;
@@ -158,6 +162,7 @@ namespace Kautham {
             return false;
         }
     }
+
     bool kauthamshell::checkCollision(vector<float> smpcoords, bool *collisionFree) {
         Sample *smp = NULL;
         try {
@@ -1427,92 +1432,93 @@ namespace Kautham {
         return _solved;
 
     }
-#if defined(KAUTHAM_USE_ODE)
+
     bool kauthamshell::setManipPramsAndSolve(string actiontype, int targetbody, std::vector<double> force,
-                                               std::vector<std::pair<std::vector<float>, std::vector<float> > > *ws,
-                                                double *power,std::vector<double> *laststate)
-       {
-            // std::vector<std::pair<std::vector<double>,std::vector<double> > >
-           try {
-               if (!problemOpened())
-               {
-                   cout << "The problem is not opened" << endl;
-                   return false;
-               }
-               Problem *const problem = (Problem*)memPtr_;
-               dJointID joint;
-               ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
-                       stateSpace->getEnvironment().get())->manipulationQuery->setActionType(actiontype);
-               string action = (((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
-                                           stateSpace->getEnvironment().get())->manipulationQuery->getActionType());
-               if(action=="push" || action== "pull")
-                {
+                                            std::vector<std::pair<std::vector<float>, std::vector<float> > > *ws,
+                                             double *power,std::vector<double> *laststate)
+    {
+         // std::vector<std::pair<std::vector<double>,std::vector<double> > >
+        try {
+            if (!problemOpened())
+            {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+            Problem *const problem = (Problem*)memPtr_;
+            dJointID joint;
+            ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
+                    stateSpace->getEnvironment().get())->manipulationQuery->setActionType(actiontype);
+            string action = (((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
+                                        stateSpace->getEnvironment().get())->manipulationQuery->getActionType());
+            if(action=="push" || action== "pull")
+             {
 
-               ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
-                       stateSpace->getEnvironment().get())->stateBodies_[targetbody];
+            ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
+                    stateSpace->getEnvironment().get())->stateBodies_[targetbody];
 
-               ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
-                       stateSpace->getEnvironment().get())->manipulationQuery->setforce(force);
+            ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
+                    stateSpace->getEnvironment().get())->manipulationQuery->setforce(force);
 
-               std::vector<double> f = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
-                                        stateSpace->getEnvironment().get())->manipulationQuery->getforce();
-               }
-               if(actiontype=="pull"||actiontype=="Pull")
-               {
-                   unsigned int robBodyIndex = problem->wSpace()->getRobot(0)->getNumLinks()-1;
-                   ((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[robBodyIndex];
-                   joint=dJointCreateHinge(((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->stateSpace->getEnvironment().get()->world_ , 0);
-                   dJointAttach (joint,((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[robBodyIndex],
-                                 ((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[targetbody]);
+            std::vector<double> f = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
+                                     stateSpace->getEnvironment().get())->manipulationQuery->getforce();
+            }
+            if(actiontype=="pull"||actiontype=="Pull")
+            {
+                unsigned int robBodyIndex = problem->wSpace()->getRobot(0)->getNumLinks()-1;
+                ((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[robBodyIndex];
+                joint=dJointCreateHinge(((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->stateSpace->getEnvironment().get()->world_ , 0);
+                dJointAttach (joint,((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[robBodyIndex],
+                              ((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->stateSpace->getEnvironment().get()->stateBodies_[targetbody]);
 
-               }
-
-
+            }
 
 
 
-   //            std::cout<<"Action is : "<<  ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
-   //                                          stateSpace->getEnvironment().get())->manipulationQuery->getActionType()<<" :: force is :: [" <<f[0]<<" , "<<f[1]<<" , "<<f[2]<<"] Target body is: "<<targetbody<<std::endl;
-               bool solve = false;
-               solve = problem->getPlanner()->solveAndInherit();
-               if (solve)
-               {
-                   //*ws = ((omplcplanner::KauthamDEPlanner*)problem->getPlanner())->worldState;
-                   std::vector<State> worldState = ((omplcplanner::KauthamDEPlanner*)problem->getPlanner())->worldState;
 
-                   for (std::vector<State>::iterator state = worldState.begin();
-                        state != worldState.end(); ++state) {
-                       std::pair<std::vector<float>,std::vector<float> > st;
-                       st = std::make_pair(state->getRob()->getCoords(),state->getObs()->getCoords());
-                       ws->push_back(st);
-                   }
 
-                   *power=((omplcplanner::KauthamDEPlanner*)problem->getPlanner())->PowerConsumed;
-                   *laststate=((omplcplanner::KauthamDEPlanner*)problem->getPlanner())->lastState;
+//            std::cout<<"Action is : "<<  ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
+//                                          stateSpace->getEnvironment().get())->manipulationQuery->getActionType()<<" :: force is :: [" <<f[0]<<" , "<<f[1]<<" , "<<f[2]<<"] Target body is: "<<targetbody<<std::endl;
+            bool solve = false;
+            solve = problem->getPlanner()->solveAndInherit();
+            if (solve)
+            {
+                //*ws = ((omplcplanner::KauthamDEPlanner*)problem->getPlanner())->worldState;
+                std::vector<State> worldState = ((omplcplanner::KauthamDEPlanner*)problem->getPlanner())->worldState;
 
-               }
-               std::string actiontype = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
-                                         stateSpace->getEnvironment().get())->manipulationQuery->getActionType();
+                for (std::vector<State>::iterator state = worldState.begin();
+                     state != worldState.end(); ++state) {
+                    std::pair<std::vector<float>,std::vector<float> > st;
+                    st = std::make_pair(state->getRob()->getCoords(),state->getObs()->getCoords());
+                    ws->push_back(st);
+                }
 
-               if(actiontype=="pull"||actiontype=="Pull")
-               {
-                   dJointDestroy(joint);
-               }
+                *power=((omplcplanner::KauthamDEPlanner*)problem->getPlanner())->PowerConsumed;
+                *laststate=((omplcplanner::KauthamDEPlanner*)problem->getPlanner())->lastState;
 
-               return solve;
-           } catch (const KthExcp& excp) {
-               cout << "Error: " << excp.what() << endl << excp.more() << endl;
-               return false;
-           } catch (const exception& excp) {
-               cout << "Error: " << excp.what() << endl;
-               return false;
-           } catch(...) {
-               cout << "Something is wrong with the problem. Please run the "
-                    << "problem with the Kautham2 application at less once in order "
-                    << "to verify the correctness of the problem formulation.\n";
-               return false;
-           }
-       }
+            }
+            std::string actiontype = ((omplcplanner::KauthamDEEnvironment*)((omplcplanner::KauthamDEPlanner*)(problem->getPlanner()))->
+                                      stateSpace->getEnvironment().get())->manipulationQuery->getActionType();
+
+            if(actiontype=="pull"||actiontype=="Pull")
+            {
+                dJointDestroy(joint);
+            }
+
+            return solve;
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            return false;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+            return false;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+            return false;
+        }
+    }
+
 
     bool kauthamshell::setBodyState(int targetBody, std::vector<double> pose)
     {
@@ -1608,7 +1614,6 @@ namespace Kautham {
         return worldstate;
     }
 
-#endif
 
 
 

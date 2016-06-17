@@ -39,7 +39,7 @@
 #include <ompl/base/objectives/PathLengthOptimizationObjective.h>
 #include <ompl/base/objectives/MaximizeMinClearanceObjective.h>
 #include "omplPCAalignmentOptimizationObjective.h"
-
+#include "omplMyOptimizationObjective.h"
 
 //for myRRTstar
 #include "ompl/base/goals/GoalSampleableRegion.h"
@@ -61,16 +61,25 @@ namespace Kautham {
             double _nodeRejection; //!< Flag to set the filter that eliminates no promising samples (akgun and Stilman, 2011)
             double _pathBias; //!< Value to bias the sampling around the solution path, once it has been found (akgun and Stilman, 2011)
             double _pathSamplingRangeFactor; //!< Factor that multiplied by the RRT range gives the radius for sampling near the path
+            ob::Cost bestCostP_;
+            ob::Cost bestCostI_;
+            ob::Cost bestCostD_;
+
 
         public:
 
-            myRRTstar(const ob::SpaceInformationPtr &si) : RRTstar(si) {
+            myRRTstar(const ob::SpaceInformationPtr &si) : RRTstar(si),bestCostP_(std::numeric_limits<double>::quiet_NaN()),
+                bestCostI_(std::numeric_limits<double>::quiet_NaN()),bestCostD_(std::numeric_limits<double>::quiet_NaN()) {
                 setName("myRRTstar");
                 _optimize = true;
                 _factor_k_rrg = 1.0;
                 _pathBias = 0.1;
                 _nodeRejection = 1;
                 _pathSamplingRangeFactor = 2.0;
+
+                addPlannerProgressProperty("best costP REAL",boost::bind(&myRRTstar::getBestCostP,this));
+                addPlannerProgressProperty("best costI REAL",boost::bind(&myRRTstar::getBestCostI,this));
+                addPlannerProgressProperty("best costD REAL",boost::bind(&myRRTstar::getBestCostD,this));
             }
 
             bool getOptimize(){ return _optimize;} //!< Returns the _optimize flag
@@ -86,6 +95,21 @@ namespace Kautham {
 
             void clear() {
                 og::RRTstar::clear();
+                bestCostP_ = ob::Cost(std::numeric_limits<double>::quiet_NaN());
+                bestCostI_ = ob::Cost(std::numeric_limits<double>::quiet_NaN());
+                bestCostD_ = ob::Cost(std::numeric_limits<double>::quiet_NaN());
+            }
+
+            std::string getBestCostP() const {
+                return boost::lexical_cast<std::string>(bestCostP_);
+            }
+
+            std::string getBestCostI() const {
+                return boost::lexical_cast<std::string>(bestCostI_);
+            }
+
+            std::string getBestCostD() const {
+                return boost::lexical_cast<std::string>(bestCostD_);
             }
 
             /** \brief Compute distance between motions (actually distance between contained states)
@@ -94,6 +118,47 @@ namespace Kautham {
                 return si_->distance(a->state, b->state);
             }
 
+
+            void updateCostPID(Motion *solution) {
+                myICOptimizationObjective *optiPID = dynamic_cast<myICOptimizationObjective*>(opt_.get());
+                if (optiPID) {
+                    std::vector<Motion*> mpath;
+                    Motion *motion = solution;
+                    while (motion) {
+                        mpath.push_back(motion);
+                        motion = motion->parent;
+                    }
+                    og::PathGeometric *geoPath = new og::PathGeometric(si_);
+                    for (int i = mpath.size() - 1; i >= 0; --i) {
+                        geoPath->append(mpath[i]->state);
+                    }
+
+                    double KP = optiPID->getKP();
+                    double KI = optiPID->getKI();
+                    double KD = optiPID->getKD();
+
+                    optiPID->setKP(1.);
+                    optiPID->setKI(0.);
+                    optiPID->setKD(0.);
+                    bestCostP_ = geoPath->cost(opt_);
+
+                    optiPID->setKP(0.);
+                    optiPID->setKI(1.);
+                    //optiPID->setKD(0.);
+                    bestCostI_ = geoPath->cost(opt_);
+
+                    //optiPID->setKP(0.);
+                    optiPID->setKI(0.);
+                    optiPID->setKD(1.);
+                    bestCostD_ = geoPath->cost(opt_);
+
+                    optiPID->setKP(KP);
+                    optiPID->setKI(KI);
+                    optiPID->setKD(KD);
+
+                    delete geoPath;
+                }
+            }
 
             ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc) {
                 checkValidity();
@@ -133,8 +198,12 @@ namespace Kautham {
                     bestCost_ = solution->cost;
                     OMPL_INFORM("%s: Starting with existing solution of cost %.5f",
                                 getName().c_str(), bestCost_.value());
+                    updateCostPID(solution);
                 } else {
                     bestCost_ = opt_->infiniteCost();
+                    bestCostP_ = opt_->infiniteCost();
+                    bestCostI_ = opt_->infiniteCost();
+                    bestCostD_ = opt_->infiniteCost();
                 }
 
                 Motion *approximation = NULL;
@@ -624,6 +693,7 @@ namespace Kautham {
                                 {
                                     bestCost = goalMotions_[i]->cost;
                                     bestCost_ = bestCost;
+                                    updateCostPID(goalMotions_[i]);
                                 }
 
                                 sufficientlyShort = opt_->isSatisfied(goalMotions_[i]->cost);
@@ -937,6 +1007,9 @@ namespace Kautham {
             addParameter("DelayCC (0/1)", _DelayCC);
             addParameter("Optimize none(0)/dist(1)/clear(2)/PMD(3)", _opti);
             addParameter("Path Length Weight",0.00001);
+            addParameter("KP",1.);
+            addParameter("KI",1.);
+            addParameter("KD",1.);
 
             planner->as<myRRTstar>()->setRange(_Range);
             planner->as<myRRTstar>()->setGoalBias(_GoalBias);
@@ -962,7 +1035,10 @@ namespace Kautham {
 
             //////////////////////////////////////////////////////////////////////////////
             // 2) clearance optimization criteria
-            _clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
+            //_clearanceopti = ob::OptimizationObjectivePtr(new ob::MaximizeMinClearanceObjective(ss->getSpaceInformation()));
+
+
+            _clearanceopti = ob::OptimizationObjectivePtr(new myICOptimizationObjective(ss->getSpaceInformation(),this));
 
             //////////////////////////////////////////////////////////////////////////////
             // 3) pmd alignment optimization criteria
@@ -1024,6 +1100,12 @@ namespace Kautham {
         omplRRTStarPlanner::~omplRRTStarPlanner(){
 
         }
+
+        bool omplRRTStarPlanner::setPotentialCost(string filename) {
+            return ((myICOptimizationObjective*) _clearanceopti.get())->setPotentialCost(filename);
+        }
+
+
 
         //! function to find a solution path
         bool omplRRTStarPlanner::trySolve()
@@ -1157,6 +1239,20 @@ namespace Kautham {
                 if (it == _parameters.end()) return false;
                 _DelayCC = (it->second != 0);
                 ss->getPlanner()->as<og::RRTstar>()->setDelayCC(_DelayCC);
+
+
+                it = _parameters.find("KP");
+                if (it == _parameters.end()) return false;
+                if (_opti == 2) ((myICOptimizationObjective*) _clearanceopti.get())->setKP(it->second);
+
+                it = _parameters.find("KI");
+                if (it == _parameters.end()) return false;
+                if (_opti == 2) ((myICOptimizationObjective*) _clearanceopti.get())->setKI(it->second);
+
+                it = _parameters.find("KD");
+                if (it == _parameters.end()) return false;
+                if (_opti == 2) ((myICOptimizationObjective*) _clearanceopti.get())->setKD(it->second);
+
 
                 it = _parameters.find("Range");
                 if (it == _parameters.end()) return false;

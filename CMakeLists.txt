@@ -125,6 +125,7 @@ add_service_files(
    SolveManipQuery.srv
    CheckCollisionObs.srv   
    SetObstacle.srv
+
 )
 
 add_message_files(

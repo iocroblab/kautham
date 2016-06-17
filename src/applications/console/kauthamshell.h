@@ -71,7 +71,6 @@ namespace Kautham {
         bool removeObstacle(unsigned index);
         bool attachObstacle2RobotLink(int robot, int link, int obs);
         bool detachObstacle(unsigned int obs);
-#if defined(KAUTHAM_USE_ODE)
         //functions for manipulation node
         bool motionPlanner(std::vector <float> init, std::vector <float> goal, std::string root);
         bool setManipPramsAndSolve(std::string actiontype, int targetbody, std::vector<double> force,
@@ -80,8 +79,7 @@ namespace Kautham {
         std::vector<double> getBodyState(int targetBody);
         bool setWorldState(std::vector< std::vector<double> > worldstate);
         std::vector< std::vector<double> > getWorldState();
-#endif
-
+        //bool InstKnowledgeInferenceProcess();
     private:
         void *memPtr_;
     };
