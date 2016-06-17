@@ -7,4 +7,3 @@ target_link_libraries( kautham-rosnode libkautham ${catkin_LIBRARIES} ${PUGI_XML
 install(TARGETS kautham-rosnode
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-

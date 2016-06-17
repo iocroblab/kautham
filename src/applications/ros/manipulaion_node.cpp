@@ -32,13 +32,16 @@
 #include <Inventor/SoDB.h>
 #include "std_msgs/String.h"
 #include "../console/kauthamshell.h"
-#include "kautham2/ManipulationAction.h"
-#include "kautham2/OpenManipProblem.h"
-#include "kautham2/SetBodyState.h"
-#include "kautham2/GetBodyState.h"
-#include "kautham2/SetWorldState.h"
-#include "kautham2/GetWorldState.h"
-#include "kautham2/SolveManipQuery.h"
+#include "kautham/ManipulationAction.h"
+#include "kautham/OpenManipProblem.h"
+#include "kautham/SetBodyState.h"
+#include "kautham/GetBodyState.h"
+#include "kautham/SetWorldState.h"
+#include "kautham/GetWorldState.h"
+#include "kautham/SolveManipQuery.h"
+#include "kautham/CheckCollision.h"
+#include "kautham/CheckCollisionObs.h"
+#include "kautham/SetObstacle.h"
 #include "ode/ode.h"
 
 using namespace std;
@@ -48,7 +51,7 @@ std_msgs::String manip_msg;
 //ros::Publisher chatter_pub;
 kauthamshell* kmanip;
 
-bool srvOpenManipProblem(kautham2::OpenManipProblem::Request &req, kautham2::OpenManipProblem::Response &res)
+bool srvOpenManipProblem(kautham::OpenManipProblem::Request &req, kautham::OpenManipProblem::Response &res)
 {
     ROS_INFO("Opening problem:: %s", req.problem.c_str());
     string dir = req.problem;
@@ -73,24 +76,25 @@ bool srvOpenManipProblem(kautham2::OpenManipProblem::Request &req, kautham2::Ope
     }
     return true;    return true;
 }
-bool srvSolveManipQuery(kautham2::SolveManipQuery::Request &req,
-                 kautham2::SolveManipQuery::Response &res)
+bool srvSolveManipQuery(kautham::SolveManipQuery::Request &req,
+                 kautham::SolveManipQuery::Response &res)
 {
-    std::vector<State> worldstate;
+    //std::vector<State> worldstate;
+    std::vector<std::pair<std::vector<float>, std::vector<float> > > worldstate;
     double power;
     std::vector<double> laststate;
      kmanip->setQuery(req.init,req.goal);
     res.status=kmanip->setManipPramsAndSolve(req.actionType,req.targetBody,req.force,&worldstate,&power,&laststate);
     res.powerconsumed=power;
-    res.laststate=laststate;
+    //res.laststate=laststate;
     std::cout<<"Computed Path states are : " <<worldstate.size()<<std::endl;;
 
     return true;
 }
 
 
-bool srvSetWorldState(kautham2::SetWorldState::Request &req,
-             kautham2::SetWorldState::Response &res)
+bool srvSetWorldState(kautham::SetWorldState::Request &req,
+             kautham::SetWorldState::Response &res)
 {
     std::vector<std::vector<double> > wstate;
    wstate.resize( req.ObjectPose.size());
@@ -111,34 +115,34 @@ bool srvSetWorldState(kautham2::SetWorldState::Request &req,
 kmanip->setWorldState(wstate);
 return true;
 }
-bool srvGetWorldState(kautham2::GetWorldState::Request &req,
-             kautham2::GetWorldState::Response &res)
+bool srvGetWorldState(kautham::GetWorldState::Request &req,
+             kautham::GetWorldState::Response &res)
 {
 kmanip->getWorldState();
 return true;
 }
 
-bool srvGetBodyState(kautham2::GetBodyState::Request &req,
-             kautham2::GetBodyState::Response &res)
+bool srvGetBodyState(kautham::GetBodyState::Request &req,
+             kautham::GetBodyState::Response &res)
 {
 
-     std::vector<double> pose = kmanip->getBodyState(req.taretBody);
-     std::cout<<"State of body " <<req.taretBody <<" is ["<< pose[0]<<" , "<< pose[1]<<" , "<< pose[2]
+     std::vector<double> pose = kmanip->getBodyState(req.targetBody);
+     std::cout<<"State of body " <<req.targetBody <<" is ["<< pose[0]<<" , "<< pose[1]<<" , "<< pose[2]
               <<" , "<< pose[3]<<" , "<< pose[4]<<" , "<< pose[5]<<" , "<< pose[6]<<" ]"<<std::endl;
      res.status=true;
      res.targetBodyPose=pose;
     return true;
 }
 
-bool srvSetBodyState(kautham2::SetBodyState::Request &req,
-             kautham2::SetBodyState::Response &res)
+bool srvSetBodyState(kautham::SetBodyState::Request &req,
+             kautham::SetBodyState::Response &res)
 {
-kmanip->setBodyState(req.taretBody,req.Pose);
+kmanip->setBodyState(req.targetBody,req.Pose);
 res.status=true;
     return true;
 }
-//bool srvSolveManipQuery(kautham2::solveManipQuery::Request &req,
-//                kautham2::solveManipQuery::Response &res) {
+//bool srvSolveManipQuery(kautham::solveManipQuery::Request &req,
+//                kautham::solveManipQuery::Response &res) {
 //    ostringstream oss;
 //    std::vector<State> worldstate;
 //    if (kmanip->solveManipQuery(&worldstate)) {
@@ -180,6 +184,52 @@ res.status=true;
 //    return true;
 //}
 
+bool srvCheckCollision(kautham::CheckCollision::Request &req,
+                       kautham::CheckCollision::Response &res) {
+
+    for (unsigned int i = 0; i < req.config.size(); ++i) {
+        cout << req.config.at(i) << " ";
+    }
+    cout << endl;
+
+    bool collisionFree;
+    res.response = kmanip->checkCollision(req.config,&collisionFree);
+    res.collisionFree = res.response&&collisionFree;
+
+    return true;
+}
+
+bool srvSetObstacle(kautham::SetObstacle::Request &req,
+                    kautham::SetObstacle::Response &res) {
+
+    for (unsigned int i = 0; i < req.config.size(); ++i) {
+        cout << req.config.at(i) << " ";
+    }
+    cout << endl;
+
+    res.response = kmanip->setObstacle(req.config,req.targetObs);
+
+    return true;
+}
+
+bool srvCheckCollisionObs(kautham::CheckCollisionObs::Request &req,
+                          kautham::CheckCollisionObs::Response &res) {
+
+    for (unsigned int i = 0; i < req.config.size(); ++i) {
+        cout << req.config.at(i) << " ";
+    }
+    cout << endl;
+
+    bool collisionFree;
+    int collisionObs;
+    res.response = kmanip->checkCollisionObs(req.config,req.targetObs,&collisionObs,&collisionFree);
+    res.collisionFree = res.response&&collisionFree;
+    res.collisionObject = collisionObs;
+
+    std::cout<<"CollisionObject is " <<collisionObs<<std::endl;
+
+    return true;
+}
 int main (int argc, char **argv) {
     ros::init(argc, argv, "manipulation_node");
     ros::NodeHandle n;
@@ -195,6 +245,9 @@ int main (int argc, char **argv) {
     ros::ServiceServer service4 = n.advertiseService("manipulation_node/GetBodyState",srvGetBodyState);
     ros::ServiceServer service5 = n.advertiseService("manipulation_node/SetWorldState",srvSetWorldState);
     ros::ServiceServer service6 = n.advertiseService("manipulation_node/GetWorldState",srvGetWorldState);
+    ros::ServiceServer service7 = n.advertiseService("manipulation_node/CheckCollision",srvCheckCollision);
+    ros::ServiceServer service8 = n.advertiseService("manipulation_node/CheckCollisionObs",srvCheckCollisionObs);
+    ros::ServiceServer service9 = n.advertiseService("manipulation_node/SetObs",srvSetObstacle);
 
 
 
@@ -202,7 +255,6 @@ int main (int argc, char **argv) {
 
     return 0;
 }
-
 
 
 
