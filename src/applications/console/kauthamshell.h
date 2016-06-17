@@ -28,7 +28,6 @@
 #define _KAUTHAMSHELL_H
 #include <vector>
 #include <string>
-#include <problem/problem.h>
 namespace Kautham {
     class kauthamshell {
     public:
@@ -38,6 +37,8 @@ namespace Kautham {
         void closeProblem();
         bool openProblem(std::istream *inputfile, std::vector<std::string> def_path = std::vector<std::string>());
         bool openProblem(std::string problemfilename, std::vector<std::string> def_path);
+        bool setObstacle(std::vector<float> smpcoords, int targetObs);
+        bool checkCollisionObs(std::vector<float> smpcoords, int targetObs, int *collisionObs, bool *collisionFree);
         bool checkCollision(std::vector<float> smpcoords, bool *collisionFree);
         bool setRobotsConfig(std::vector<float> smpcoords);
         bool setObstaclesConfig(std::vector<float> smpcoords);
@@ -70,14 +71,17 @@ namespace Kautham {
         bool removeObstacle(unsigned index);
         bool attachObstacle2RobotLink(int robot, int link, int obs);
         bool detachObstacle(unsigned int obs);
+#if defined(KAUTHAM_USE_ODE)
         //functions for manipulation node
         bool motionPlanner(std::vector <float> init, std::vector <float> goal, std::string root);
-        bool setManipPramsAndSolve(std::string actiontype, int targetbody, std::vector<double> force, std::vector<State> *ws, double *power, std::vector<double> *laststate);
+        bool setManipPramsAndSolve(std::string actiontype, int targetbody, std::vector<double> force,
+                                   std::vector<std::pair<std::vector<float>, std::vector<float> > > *ws, double *power, std::vector<double> *laststate);
         bool setBodyState(int targetBody, std::vector<double> pose);
         std::vector<double> getBodyState(int targetBody);
         bool setWorldState(std::vector< std::vector<double> > worldstate);
         std::vector< std::vector<double> > getWorldState();
-        //bool InstKnowledgeInferenceProcess();
+#endif
+
     private:
         void *memPtr_;
     };
