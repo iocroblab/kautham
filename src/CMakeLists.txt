@@ -139,7 +139,7 @@ add_subdirectory( sampling )
 
 #message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
 
-add_library(libkautham SHARED ${KAUTHAM_SRC} )
+add_library(libkautham SHARED ${KAUTHAM_SRC} ${CMAKE_CURRENT_SOURCE_DIR}/applications/console/kauthamshell.cpp)
 set_target_properties( libkautham PROPERTIES
   SOVERSION "${KAUTHAM_VERSION_MAJOR}.${KAUTHAM_VERSION_MINOR}"
   VERSION "${KAUTHAM_VERSION}"
