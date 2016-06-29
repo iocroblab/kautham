@@ -1271,13 +1271,13 @@ namespace Kautham {
             //Taking from samples path
             ofstream out, out1, out2, out1S, out2S ;
             std::ostringstream sh, r1, r2;
-            //out.open(root.c_str()+"Aplicaciones/Experiments/DatosGA2H/SolutionPlan.txt");
-            out.open((root+"Aplicaciones/Experiments/DatosGA2H/SolutionPlan.txt").c_str());
-            out1.open((root+"Aplicaciones/Experiments/DatosGA2H/R1SolutionPlan.txt").c_str());
-            out2.open((root+"Aplicaciones/Experiments/DatosGA2H/R2SolutionPlan.txt").c_str());
+            //out.open(root.c_str()+"Experiments/DatosGA2H/SolutionPlan.txt");
+            out.open((root+"Experiments/DatosGA2H/SolutionPlan.txt").c_str());
+            out1.open((root+"Experiments/DatosGA2H/R1SolutionPlan.txt").c_str());
+            out2.open((root+"Experiments/DatosGA2H/R2SolutionPlan.txt").c_str());
 
-            out1S.open((root+"Aplicaciones/Experiments/DatosGA2H/R1SolutionPlanS.txt").c_str());
-            out2S.open((root+"Aplicaciones/Experiments/DatosGA2H/R2SolutionPlanS.txt").c_str());
+            out1S.open((root+"Experiments/DatosGA2H/R1SolutionPlanS.txt").c_str());
+            out2S.open((root+"Experiments/DatosGA2H/R2SolutionPlanS.txt").c_str());
 
             //std::cout<<"setOfSamples size = "<<setOfSamples.size()<<std::endl;
 
