@@ -26,6 +26,8 @@ project(kautham)
 
 cmake_minimum_required(VERSION 2.4.6)
 
+add_definitions(-std=c++11 -Wall -Wextra -Wpedantic )#-Werror)
+
 set( KAUTHAM_VERSION 3.0.0 )
 STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} ) 
 LIST( GET KAUTHAM_VERSIONS 0 KAUTHAM_VERSION_MAJOR)
@@ -47,7 +49,7 @@ option( KAUTHAM_IOC "Use IOC planners" ON )
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
-option( KAUTHAM_ROS "Build the ROS version" ON )
+option( KAUTHAM_ROS "Build the ROS version" OFF )
 option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" OFF)
 
 ########### Set flags ####################
