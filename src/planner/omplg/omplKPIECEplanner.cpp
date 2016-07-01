@@ -44,12 +44,6 @@ namespace Kautham {
         _guiName = "ompl KPIECE Planner";
         _idName = "omplKPIECE";
 
-
-        //alloc valid state sampler
-        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-        //alloc state sampler
-        space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
-
         //create planner
         ob::PlannerPtr planner(new og::KPIECE1(si));
         //set planner parameters: range and goalbias

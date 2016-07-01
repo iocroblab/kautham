@@ -44,11 +44,6 @@ namespace Kautham {
         _guiName = "ompl RRTConnect Planner";
         _idName = "omplRRTConnect";
 
-        //alloc valid state sampler
-        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-        //alloc state sampler
-        space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
-
         //create planner
         ob::PlannerPtr planner(new og::RRTConnect(si));
 

@@ -50,141 +50,140 @@ namespace ob = ompl::base;
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup Planner
+    /** \addtogroup Planner
  *  @{
  */
-  namespace omplplanner{
+    namespace omplplanner{
 
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //AUXILIAR Functions
-    ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p);
-    ob::ValidStateSamplerPtr allocValidStateSampler(const ob::SpaceInformation *si, Planner *p);
-    bool isStateValid(const ob::SpaceInformation *si, const ob::State *state, Planner *p);
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //AUXILIAR Functions
+        ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p);
+        ob::ValidStateSamplerPtr allocValidStateSampler(const ob::SpaceInformation *si, Planner *p);
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // Class weigthedRealVectorStateSpace
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    //! This class represents a RealVectorStateSpace with a weighted distance. It is used to describe the state space of
-    //! the kinematic chains where different weights are set to the joints.
-    class weigthedRealVectorStateSpace:public ob::RealVectorStateSpace
-    {
-      public:
-        weigthedRealVectorStateSpace(unsigned int dim=0);
-        ~weigthedRealVectorStateSpace(void);
-        void setWeights(vector<KthReal> w);
-        double distance(const ob::State *state1, const ob::State *state2) const;
-      protected:
-        vector<KthReal> weights;
-    };
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // Class weigthedRealVectorStateSpace
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //! This class represents a RealVectorStateSpace with a weighted distance. It is used to describe the state space of
+        //! the kinematic chains where different weights are set to the joints.
+        class weigthedRealVectorStateSpace:public ob::RealVectorStateSpace
+        {
+        public:
+            weigthedRealVectorStateSpace(unsigned int dim=0);
+            ~weigthedRealVectorStateSpace(void);
+            void setWeights(vector<KthReal> w);
+            double distance(const ob::State *state1, const ob::State *state2) const;
+        protected:
+            vector<KthReal> weights;
+        };
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // Class KauthamValidStateSampler
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    //! This class represents a valid state sampler based on the sampling of the Kautham control space and
-    //! its conversion to samples. Does a collision-check to verify validity.
-    class KauthamValidStateSampler : public ob::ValidStateSampler
-    {
-      public:
-        KauthamValidStateSampler(const ob::SpaceInformation *si, Planner *p);
-        //virtual bool sample(ob::State *state, string samplername="Random");
-        virtual bool sample(ob::State *state);
-        virtual bool sampleNear(ob::State *state, const ob::State *near, const double distance);
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // Class KauthamValidStateSampler
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //! This class represents a valid state sampler based on the sampling of the Kautham control space and
+        //! its conversion to samples. Does a collision-check to verify validity.
+        class KauthamValidStateSampler : public ob::ValidStateSampler
+        {
+        public:
+            KauthamValidStateSampler(const ob::SpaceInformation *si, Planner *p);
+            //virtual bool sample(ob::State *state, string samplername="Random");
+            virtual bool sample(ob::State *state);
+            virtual bool sampleNear(ob::State *state, const ob::State *near, const double distance);
 
-      protected:
-        ompl::RNG rng_; //random generator
-        Planner *kauthamPlanner_; //pointer to planner in order to have access to the workspace
-        const ob::SpaceInformation *si_;
-        vector<Sampler*> _samplerVector;
-        SDKSampler* _samplerSDK;
-        HaltonSampler* _samplerHalton;
-        GaussianLikeSampler* _samplerGaussianLike;
-        GaussianSampler* _samplerGaussian;
-        RandomSampler* _samplerRandom;
-    };
-
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // Class KauthamStateSampler
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    //! This class represents a  state sampler based on the sampling of the Kautham control space and
-    //! its conversion to samples.
-    class KauthamStateSampler : public ob::CompoundStateSampler
-    {
-      public:
-        KauthamStateSampler(const ob::StateSpace *sspace, Planner *p);
-        ~KauthamStateSampler();
-        void setCenterSample(ob::State *state, double th);
-        virtual void sampleUniform(ob::State *state);
-        virtual void sampleUniformNear(ob::State *state, const ob::State *near, const double distance);
-
-        RandomSampler* _samplerRandom;
-        //HaltonSampler* _samplerHalton;
-
-      protected:
-        ompl::RNG rng_; //!< random generator
-        Planner *kauthamPlanner_; //!< pointer to planner in order to have access to the workspace
-        Sample *centersmp;
-        double threshold;
-    };
+        protected:
+            ompl::RNG rng_; //random generator
+            Planner *kauthamPlanner_; //pointer to planner in order to have access to the workspace
+            const ob::SpaceInformation *si_;
+            vector<Sampler*> _samplerVector;
+            SDKSampler* _samplerSDK;
+            HaltonSampler* _samplerHalton;
+            GaussianLikeSampler* _samplerGaussianLike;
+            GaussianSampler* _samplerGaussian;
+            RandomSampler* _samplerRandom;
+        };
 
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // Class KauthamStateSampler
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //! This class represents a  state sampler based on the sampling of the Kautham control space and
+        //! its conversion to samples.
+        class KauthamStateSampler : public ob::CompoundStateSampler
+        {
+        public:
+            KauthamStateSampler(const ob::StateSpace *sspace, Planner *p);
+            ~KauthamStateSampler();
+            void setCenterSample(ob::State *state, double th);
+            virtual void sampleUniform(ob::State *state);
+            virtual void sampleUniformNear(ob::State *state, const ob::State *near, const double distance);
 
-    ////////////////////////////////////////////////////////////////////////////////////////
-    //Class omplPlanner
-    ////////////////////////////////////////////////////////////////////////////////////////
-    class omplPlanner:public Planner {
-	    public:
-        //Add public data and functions
-        omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
-        ~omplPlanner();
-        
-        bool trySolve();//reimplemented
-        bool setParameters();//reimplemented
-        SoSeparator *getIvPathScene();//reimplemented
-        SoSeparator *getIvCspaceScene();//reimplemented
-        void drawPath(bool show);
-        void drawCspace(unsigned int robot = 0, unsigned int link = 0);
+            RandomSampler* _samplerRandom;
+            //HaltonSampler* _samplerHalton;
 
-        void omplState2smp(const ob::State *state, Sample* smp);
-        void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
-        void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
-        inline ob::StateSpacePtr getSpace(){return space;}
-        void filterBounds(double &l, double &h, double epsilon);
+        protected:
+            ompl::RNG rng_; //!< random generator
+            Planner *kauthamPlanner_; //!< pointer to planner in order to have access to the workspace
+            Sample *centersmp;
+            double threshold;
+        };
 
-        inline void setSamplerUsed(int su){_samplerUsed=su;}
-        inline int getSamplerUsed(){return _samplerUsed;}
 
-        void disablePMDControlsFromSampling(bool enableall=false);
-        inline vector<int> *getDisabledControls(){return &_disabledcontrols;}
 
-        og::SimpleSetupPtr ss;
+        ////////////////////////////////////////////////////////////////////////////////////////
+        //Class omplPlanner
+        ////////////////////////////////////////////////////////////////////////////////////////
+        class omplPlanner:public Planner {
+        public:
+            //Add public data and functions
+            omplPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
+            ~omplPlanner();
 
-        //! Returns the simple setup pointer
-        inline og::SimpleSetupPtr SimpleSetupPtr() {return ss;}
+            bool trySolve();//reimplemented
+            bool setParameters();//reimplemented
+            SoSeparator *getIvPathScene();//reimplemented
+            SoSeparator *getIvCspaceScene();//reimplemented
+            void drawPath(bool show);
+            void drawCspace(unsigned int robot = 0, unsigned int link = 0);
 
-        //! Returns a pointer to the simple setup
-        inline og::SimpleSetup *SimpleSetup() {return ss.get();}
+            void omplState2smp(const ob::State *state, Sample* smp);
+            void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
+            void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
+            inline ob::StateSpacePtr getSpace(){return space;}
+            void filterBounds(double &l, double &h, double epsilon);
 
-		protected:
-		//Add protected data and functions
-        KthReal _planningTime;
-        //og::SimpleSetupPtr ss;
-        ob::StateSpacePtr space;
-        ob::SpaceInformationPtr si;
+            inline void setSamplerUsed(int su){_samplerUsed=su;}
+            inline int getSamplerUsed(){return _samplerUsed;}
 
-        int _samplerUsed;
-        unsigned int _simplify;
-        bool _incremental;
-        unsigned _drawnrobot; //!< Index of the robot whose Cspace is drawn. Defaults to 0.
-        bool _drawnPath; //! Flag to show/hide path into workspace scene
-        vector<int> _disabledcontrols;//!< those disabled controls will not be sampled, they are fixed at 0.5
+            void disablePMDControlsFromSampling(bool enableall=false);
+            inline vector<int> *getDisabledControls(){return &_disabledcontrols;}
 
-	    private:
-		//Add private data and functions
-	  };
-  }
-  /** @}   end of Doxygen module "Planner */
+            og::SimpleSetupPtr ss;
+
+            //! Returns the simple setup pointer
+            inline og::SimpleSetupPtr SimpleSetupPtr() {return ss;}
+
+            //! Returns a pointer to the simple setup
+            inline og::SimpleSetup *SimpleSetup() {return ss.get();}
+
+        protected:
+            //Add protected data and functions
+            KthReal _planningTime;
+            //og::SimpleSetupPtr ss;
+            ob::StateSpacePtr space;
+            ob::SpaceInformationPtr si;
+
+            int _samplerUsed;
+            unsigned int _simplify;
+            bool _incremental;
+            unsigned _drawnrobot; //!< Index of the robot whose Cspace is drawn. Defaults to 0.
+            bool _drawnPath; //! Flag to show/hide path into workspace scene
+            vector<int> _disabledcontrols;//!< those disabled controls will not be sampled, they are fixed at 0.5
+
+        private:
+            //Add private data and functions
+        };
+    }
+    /** @}   end of Doxygen module "Planner */
 }
 #endif // KAUTHAM_USE_OMPL
 #endif  //_omplPLANNER_H
