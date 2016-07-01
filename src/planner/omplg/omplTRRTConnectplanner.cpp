@@ -37,12 +37,6 @@ omplTRRTConnectPlanner::omplTRRTConnectPlanner(SPACETYPE stype, Sample *init, Sa
     _guiName = "ompl TRRTConnect Planner";
     _idName = "omplTRRTConnect";
 
-    //alloc valid state sampler
-    si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler,_1,(Planner*)this));
-
-    //alloc state sampler
-    space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler,_1,(Planner*)this));
-
     //set the planner
     //planner setup done after setting the potential cost
     og::TRRTConnect *planner(new og::TRRTConnect(si));

@@ -46,12 +46,6 @@ omplTRRTPlanner::omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
     _guiName = "ompl TRRT Planner";
     _idName = "omplTRRT";
 
-
-    //alloc valid state sampler
-    si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-    //alloc state sampler
-    space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
-
     //create planner
     ob::PlannerPtr planner(new og::TRRT(si));
 
