@@ -97,8 +97,6 @@ namespace Kautham {
             const double *s1 = static_cast<const StateType*>(state1)->values;
             const double *s2 = static_cast<const StateType*>(state2)->values;
 
-            //JAN DEBUG
-            //for (unsigned int i = 0 ; i < 3; ++i)
             for (unsigned int i = 0 ; i < dimension_ ; ++i)
             {
                 double diff = ((*s1++) - (*s2++))*weights[i];
@@ -169,28 +167,6 @@ namespace Kautham {
                 vector<KthReal> coords(d);
                 double fraction;
                 do{
-                    /*
-                    //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-                    for (int i=0;i<d;i++)
-                        coords[i] = rng_.uniformReal(0,1.0);
-                    //those controls that are disabled for sampling are now restored to 0.5
-                    for (int j=0; j < ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
-                        coords[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
-
-                    //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
-                    smp->setCoords(coords);
-                    kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
-                    withinbounds = smp->getwithinbounds();
-                    //if within bounds then check if its within the given distance threshold
-                    if(withinbounds)
-                    {
-                        dist = kauthamPlanner_->wkSpace()->distanceBetweenSamples(*smp,*centersmp,CONFIGSPACE);
-                        if(dist < threshold)
-                            found = true;
-                    }
-                    trials ++;
-                */
-
                     //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
                     for (int i=0;i<d;i++)
                         coords[i] = rng_.uniformReal(0,1.0);
@@ -217,16 +193,7 @@ namespace Kautham {
                     else found = true;
                     trials ++;
                 }while(found==false && trials <maxtrials);
-                /*DEBUG
-if(coords[0]<xm) xm=coords[0];
-if(coords[0]>xM) xM=coords[0];
-if(coords[1]<ym) ym=coords[1];
-if(coords[1]>yM) yM=coords[1];
-*/
 
-                //if(withinbounds){
-                //    countwithinbounds++;
-                //}
 
                 if(trials==maxtrials)
                 {
@@ -245,25 +212,7 @@ if(coords[1]>yM) yM=coords[1];
             //sample the whole workspace
             else
             {
-                /*
-              //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
-              int d = kauthamPlanner_->wkSpace()->getNumRobControls();
-              vector<KthReal> coords(d);
-              for (int i=0;i<d;i++)
-                  coords[i] = rng_.uniformReal(0,1.0);
 
-              //load the obtained coords to a sample, and compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
-              Sample *smp = new Sample(d);
-              smp->setCoords(coords);
-              kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
-
-              //convert from sample to scoped state
-              ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplPlanner*)kauthamPlanner_)->getSpace() );
-              ((omplPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
-
-              //return in parameter state
-             ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
-              */
 
                 bool withinbounds=false;
                 int trials=0;
@@ -283,13 +232,6 @@ if(coords[1]>yM) yM=coords[1];
                     trials++;
                 }while(withinbounds==false && trials<100);
 
-
-                /*DEBUG
- if(smp->getCoords()[0]<xm) xm=smp->getCoords()[0];
- if(smp->getCoords()[0]>xM) xM=smp->getCoords()[0];
- if(smp->getCoords()[1]<ym) ym=smp->getCoords()[1];
-if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
-*/
 
                 //If trials==100 is because we have not been able to find a sample within limits
                 //In this case the config is set to the border in the moveRobotsTo function.
@@ -359,9 +301,6 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                 ((omplPlanner*)kauthamPlanner_)->getSpace()->copyState(state, near);
             }
 
-
-            //throw ompl::Exception("KauthamValidStateSampler::sampleNear", "not implemented");
-            //return false;
         }
 
 
@@ -406,13 +345,6 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
             for (unsigned j=0; j<((omplPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++)
                 smp->getCoords()[ ((omplPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
 
-            /*DEBUG
-   if(smp->getCoords()[0]<xm) xm=smp->getCoords()[0];
-   if(smp->getCoords()[0]>xM) xM=smp->getCoords()[0];
-   if(smp->getCoords()[1]<ym) ym=smp->getCoords()[1];
-   if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
-
-   */
             //computes the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsto function.
             kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
 
@@ -472,69 +404,6 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
         ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p)
         {
             return ob::StateSamplerPtr(new KauthamStateSampler(mysspace, p));
-
-            /*
-      //Create sampler
-      ob::StateSamplerPtr globalSampler(new ob::CompoundStateSampler(mysspace));
-      //weights defined for when sampling near a state
-      //they are now all set to 1.0. To be explored later...
-      double weightImportanceRobots; //weight of robot i
-      double weightSO3; //rotational weight
-      double weightR3; //translational weight
-      double weightSE3; //weight of the monile base
-      double weightRn; //weight of the chain
-      //loop for all robots
-      for (int i=0; i<p->wkSpace()->getNumRobots(); i++)
-      {
-          weightImportanceRobots = 1.0; //all robots weight the same
-
-          //Create sampler for robot i
-          //ssRoboti is the subspace corresponding to robot i
-          ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) mysspace->as<ob::CompoundStateSpace>()->getSubspace(i));
-          ob::StateSamplerPtr samplerRoboti(new ob::CompoundStateSampler(ssRoboti.get()));
-
-          int numsubspace=0;
-          //If SE3 workspace exisits
-          if(p->wkSpace()->getRobot(i)->isSE3Enabled())
-          {
-              //ssRoboti_sub is the subspace corresponding to the SE3 part of robot i
-              ob::StateSpacePtr ssRoboti_sub_SE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(numsubspace));
-              numsubspace++;
-              //the sampler is a compound sampler
-              ob::StateSamplerPtr samplerRoboti_SE3(new ob::CompoundStateSampler(ssRoboti_sub_SE3.get()));
-              //ssRoboti_sub_R3 is the R3 subspace of robot i
-              ob::StateSpacePtr ssRoboti_sub_R3  = ((ob::StateSpacePtr) ssRoboti_sub_SE3->as<ob::SE3StateSpace>()->getSubspace(0));
-              //add the sampler of the R3 part
-              weightR3=1.0;
-              ob::StateSamplerPtr samplerRoboti_R3(new ob::RealVectorStateSampler(ssRoboti_sub_R3.get()));
-              ((ob::CompoundStateSampler*) samplerRoboti_SE3.get())->addSampler(samplerRoboti_R3, weightR3);
-              //ssRoboti_sub_SO3 is the SO3 subspace of robot i
-              ob::StateSpacePtr ssRoboti_sub_SO3 = ((ob::StateSpacePtr) ssRoboti_sub_SE3->as<ob::SE3StateSpace>()->getSubspace(1));
-              //add the sampler of the SO3 part
-              weightSO3=1.0;
-              ob::StateSamplerPtr samplerRoboti_SO3(new ob::SO3StateSampler(ssRoboti_sub_SO3.get()));
-              ((ob::CompoundStateSampler*) samplerRoboti_SE3.get())->addSampler(samplerRoboti_SO3, weightSO3);
-              //add the compound sampler of the SE3 part
-              weightSE3 = 1.0;
-              ((ob::CompoundStateSampler*) samplerRoboti.get())->addSampler(samplerRoboti_SE3, weightSE3);
-          }
-          //If Rn state space exisits
-          if(p->wkSpace()->getRobot(i)->getNumJoints()>0)
-          {
-              //ssRoboti_sub is the subspace corresponding to the Rn part of robot i
-              ob::StateSpacePtr ssRoboti_sub_Rn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(numsubspace));
-              //add the sampler of the Rn part
-              weightRn = 1.0;
-              ob::StateSamplerPtr samplerRoboti_Rn(new ob::RealVectorStateSampler(ssRoboti_sub_Rn.get()));
-              ((ob::CompoundStateSampler*) samplerRoboti.get())->addSampler(samplerRoboti_Rn, weightRn);
-          }
-          //add the sampler of robot i to global sampler
-          ((ob::CompoundStateSampler*) globalSampler.get())->addSampler(samplerRoboti, weightImportanceRobots);
-      }
-
-      return globalSampler;
-*/
-
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -543,30 +412,6 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
         {
             return ob::ValidStateSamplerPtr(new KauthamValidStateSampler(si, p));
         }
-
-
-        //  /////////////////////////////////////////////////////////////////////////////////////////////////
-        //  //! This function converts a state to a smp and tests if it is in collision or not
-        //  bool isStateValid(const ob::SpaceInformation *si, const ob::State *state, Planner *p)
-        //  {
-        //      //verify bounds
-        //      if(si->satisfiesBounds(state)==false)
-        //          return false;
-        //      //create sample
-        //      int d = p->wkSpace()->getNumRobControls();
-        //      Sample *smp = new Sample(d);
-        //      //copy the conf of the init smp. Needed to capture the home positions.
-        //      smp->setMappedConf(p->initSamp()->getMappedConf());
-        //      //load the RobConf of smp form the values of the ompl::state
-        //      ((omplPlanner*)p)->omplState2smp(state,smp);
-        //      //collision-check
-        //      if( p->wkSpace()->collisionCheck(smp) )
-        //          return false;
-        //      return true;
-        //  }
-
-
-
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         // omplPlanner functions
@@ -602,7 +447,7 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
 
             if (ssptr == NULL) {
                 //Construct the state space we are planning in. It is a compound state space composed of a compound state space for each robot
-                //Each robot has a compound state space composed of a (oprional) SE3 state space and a (optional) Rn state space
+                //Each robot has a compound state space composed of a (optional) SE3 state space and a (optional) Rn state space
                 vector<ob::StateSpacePtr> spaceRn;
                 vector<ob::StateSpacePtr> spaceSE3;
                 vector<ob::StateSpacePtr> spaceRob;
@@ -737,14 +582,6 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                 //the state space for the set of robots. All the robots have the same weight.
                 space = ((ob::StateSpacePtr) new ob::CompoundStateSpace(spaceRob,weights));
 
-                /*
-        ob::ProjectionEvaluatorPtr peSpace;
-        ob::ProjectionEvaluatorPtr projToUse = space->as<ob::CompoundStateSpace>()->getSubspace(0)->getProjection("drawprojection");
-        peSpace = (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,0,projToUse);
-        peSpace->setup();
-        space->registerProjection("drawprojection",peSpace);
-        space->registerDefaultProjection(peSpace);
-        */
                 vector<ob::ProjectionEvaluatorPtr> peSpace;
                 for (unsigned i=0; i<_wkSpace->getNumRobots();i++)
                 {
@@ -789,6 +626,11 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                     goalStates->addState(goalompl);
                 }
                 ss->setGoal(ob::GoalPtr(goalStates));
+
+                //alloc valid state sampler
+                si->setValidStateSamplerAllocator(boost::bind(&allocValidStateSampler, _1, (Planner*)this));
+                //alloc state sampler
+                space->setStateSamplerAllocator(boost::bind(&allocStateSampler, _1, (Planner*)this));
             } else {
                 ss = (og::SimpleSetupPtr)ssptr;
                 si = ss->getSpaceInformation();
@@ -842,8 +684,6 @@ if(smp->getCoords()[1]>yM) yM=smp->getCoords()[1];
                     //JAN DEBUG: commented next line
                     _disabledcontrols.push_back(i);
                 }
-                //JAN DEBUG - added next line: add the non PMD controls to be disabled
-                //else _disabledcontrols.push_back(i);
             }
         }
 

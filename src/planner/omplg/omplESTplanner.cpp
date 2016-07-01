@@ -44,11 +44,6 @@ namespace Kautham {
         _guiName = "ompl EST Planner";
         _idName = "omplEST";
 
-        //alloc valid state sampler
-        si->setValidStateSamplerAllocator(boost::bind(&allocValidStateSampler, _1, (Planner*)this));
-        //alloc state sampler
-        space->setStateSamplerAllocator(boost::bind(&allocStateSampler, _1, (Planner*)this));
-
         //create planner
         ob::PlannerPtr planner(new og::EST(si));
         //set planner parameters: range and goalbias

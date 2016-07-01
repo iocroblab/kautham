@@ -38,12 +38,6 @@ omplFOSRRTConnectPlanner::omplFOSRRTConnectPlanner(SPACETYPE stype, Sample *init
     _guiName = "ompl FOSRRTConnect Planner";
     _idName = "omplFOSRRTConnect";
 
-    //alloc valid state sampler
-    si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-
-    //alloc state sampler
-    space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
-
     //set planner
     ob::PlannerPtr planner(new og::RRTConnect(si));
     ss->setPlanner(planner);
