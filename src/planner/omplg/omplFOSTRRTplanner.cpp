@@ -37,12 +37,6 @@ omplFOSTRRTPlanner::omplFOSTRRTPlanner(SPACETYPE stype, Sample *init, Sample *go
     _guiName = "ompl FOSTRRT Planner";
     _idName = "omplFOSTRRT";
 
-    //alloc valid state sampler
-    si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler,_1,(Planner*)this));
-
-    //alloc state sampler
-    space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler,_1,(Planner*)this));
-
     //set the planner
     //planner setup done after setting the potential cost
     og::TRRT *planner(new og::TRRT(si));

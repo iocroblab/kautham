@@ -45,12 +45,6 @@ namespace Kautham {
         _guiName = "ompl RRT Planner";
         _idName = "omplRRT";
 
-
-        //alloc valid state sampler
-        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-        //alloc state sampler
-        space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
-
         //create planner
         ob::PlannerPtr planner(new og::RRT(si));
         //set planner parameters: range and goalbias

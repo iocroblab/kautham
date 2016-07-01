@@ -980,12 +980,6 @@ namespace Kautham {
             _guiName = "ompl RRT Star Planner";
             _idName = "omplRRTStar";
 
-
-            //alloc valid state sampler
-            si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-            //alloc state sampler
-            space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
-
             //create planner
             ob::PlannerPtr planner(new myRRTstar(si));
             //ob::PlannerPtr planner(new og::RRTstar(si));

@@ -47,12 +47,6 @@ namespace Kautham {
         _guiName = "ompl SBL Planner";
         _idName = "omplSBL";
 
-
-        //alloc valid state sampler
-        si->setValidStateSamplerAllocator(boost::bind(&omplplanner::allocValidStateSampler, _1, (Planner*)this));
-        //alloc state sampler
-        space->setStateSamplerAllocator(boost::bind(&omplplanner::allocStateSampler, _1, (Planner*)this));
-
         //create planner
         ob::PlannerPtr planner(new og::SBL(si));
         //set planner parameters: range and goalbias
