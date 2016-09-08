@@ -56,8 +56,6 @@ namespace Kautham {
 
         bool setParameters();
 
-        bool setPotentialCost(string filename);
-
         KthReal _Range;
         KthReal _GoalBias;
         KthReal _PathBias;
