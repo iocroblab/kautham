@@ -216,9 +216,6 @@ namespace Kautham {
         else if (name == "omplRRTConnect")
             _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
-        else if (name == "omplRRTConnectEUROC")
-            _planner = new omplplanner::omplRRTConnectPlannerEUROC(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
         else if (name == "omplEST")
             _planner = new omplplanner::omplESTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
@@ -230,9 +227,6 @@ namespace Kautham {
 
         else if (name == "omplBKPIECE")
             _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
-        else if (name == "omplPCARRT")
-            _planner = new omplplanner::omplPCARRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
         else if (name == "omplcRRT")
             _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);

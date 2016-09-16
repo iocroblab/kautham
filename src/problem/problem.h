@@ -63,8 +63,6 @@
 #include <planner/omplg/omplpRRTplanner.h>
 #include <planner/omplg/omplRRTConnectplanner.h>
 #include <planner/omplg/omplRRTStarplanner.h>
-#include <planner/omplg/omplRRTConnectplannerEUROC.h>
-#include <planner/omplg/omplPCARRTplanner.h>
 #include <planner/omplg/omplESTplanner.h>
 #include <planner/omplg/omplSBLplanner.h>
 #include <planner/omplg/omplKPIECEplanner.h>
