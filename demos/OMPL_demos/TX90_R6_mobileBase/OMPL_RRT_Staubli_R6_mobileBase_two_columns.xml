@@ -18,8 +18,7 @@
 		<Parameters>
 			<Name>omplRRT</Name>
 			<Parameter name="Max Planning Time">10.0</Parameter>
-			<Parameter name="Range">10</Parameter>
-			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">0.5</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
 		</Parameters>
 		<Queries>

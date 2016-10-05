@@ -1,13 +1,5 @@
 <?xml version="1.0"?>
 <ControlSet>
-	<Offset>
-		<DOF name="ele/X" value="0.5" />
-		<DOF name="ele/Y" value="0.5" />
-		<DOF name="ele/Z" value="0.25" />
-		<DOF name="ele/X1" value="0.5" />
-		<DOF name="ele/X2" value="0.5" />
-		<DOF name="ele/X3" value="0.5" />
-	</Offset>
 	<Control name="ele/x" eigValue="1.0">
 		<DOF name="ele/X" value="1.0" />
 	</Control>

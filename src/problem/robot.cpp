@@ -1447,6 +1447,7 @@ namespace Kautham {
                 for(unsigned int j= 0; j < control.size(); j++)
                     parameters[i] += mapMatrix[i][j] * (control[j]-0.5) ;
                 parameters[i] += offMatrix[i];
+                if(parameters[i]<0.0 || parameters[i]>1.0) retvalue = false;
             }
         }
         if( _currentConf.getRn().getDim() != 0 ){
