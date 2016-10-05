@@ -10,7 +10,7 @@
 		<Limits name="TH" min="-360.0" max="360.0" />
 	</Robot>
 	<Obstacle obstacle="obstacles/hole.iv" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="70.0" Y="0.0" X="0.0" />
 	</Obstacle>
 	<Controls robot="controls/ele_SE3.cntr" />
 	<Planner>
