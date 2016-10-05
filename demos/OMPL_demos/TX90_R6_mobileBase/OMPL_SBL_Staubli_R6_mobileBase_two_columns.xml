@@ -19,7 +19,7 @@
 			<Name>omplSBL</Name>
 			<Parameter name="Max Planning Time">300.0</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
-			<Parameter name="Range">400.0</Parameter>
+			<Parameter name="Range">0.5</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
