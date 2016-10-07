@@ -178,7 +178,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
                      vector<RobConf> rc;
                      RobConf *rcj = new RobConf;
                      smp=new Sample(_wkSpace->getNumRobControls());
-                     smp->setMappedConf(_init->getMappedConf());
+                     smp->setMappedConf(_init.at(0)->getMappedConf());
                      vector<KthReal> se3Robcoords;
                      se3Robcoords.resize(7);
 
