@@ -293,7 +293,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
 
            private:
 
-            static const double toRad  = M_PI/180.;
+            constexpr static double toRad  = M_PI/180.;
 
             //! This function will build the kinamatic chain for Robot
             bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector<KthReal>& basePos);
