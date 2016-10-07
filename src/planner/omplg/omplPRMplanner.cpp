@@ -350,6 +350,81 @@ namespace Kautham {
           }
       }
 
+ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
+            {
+                checkValidity();
+                ob::GoalSampleableRegion *goal = dynamic_cast<ob::GoalSampleableRegion*>(pdef_->getGoal().get());
+
+                if (!goal)
+                {
+                    OMPL_ERROR("%s: Unknown type of goal", getName().c_str());
+                    return ob::PlannerStatus::UNRECOGNIZED_GOAL_TYPE;
+                }
+
+                // Add the valid start states as milestones
+                while (const ob::State *st = pis_.nextStart())
+                    startM_.push_back(addMilestone(si_->cloneState(st)));
+
+                if (startM_.size() == 0)
+                {
+                    OMPL_ERROR("%s: There are no valid initial states!", getName().c_str());
+                    return ob::PlannerStatus::INVALID_START;
+                }
+
+                if (!goal->couldSample())
+                {
+                    OMPL_ERROR("%s: Insufficient states in sampleable goal region", getName().c_str());
+                    return ob::PlannerStatus::INVALID_GOAL;
+                }
+
+                // Ensure there is at least one valid goal state
+                if (goal->maxSampleCount() > goalM_.size() || goalM_.empty())
+                {
+                    const ob::State *st = goalM_.empty() ? pis_.nextGoal(ptc) : pis_.nextGoal();
+                    if (st)
+                        goalM_.push_back(addMilestone(si_->cloneState(st)));
+
+                    if (goalM_.empty())
+                    {
+                        OMPL_ERROR("%s: Unable to find any valid goal states", getName().c_str());
+                        return ob::PlannerStatus::INVALID_GOAL;
+                    }
+                }
+
+                unsigned long int nrStartStates = boost::num_vertices(g_);
+                OMPL_INFORM("%s: Starting planning with %lu states already in datastructure", getName().c_str(), nrStartStates);
+
+                // Reset addedNewSolution_ member and create solution checking thread
+                addedNewSolution_ = false;
+                ob::PathPtr sol;
+
+
+                boost::thread slnThread(boost::bind(&myPRM::checkForSolution, this, ptc, boost::ref(sol)));
+
+                // construct new planner termination condition that fires when the given ptc is true, or a solution is found
+                ob::PlannerTerminationCondition ptcOrSolutionFound =
+                        ob::plannerOrTerminationCondition(ptc, ob::PlannerTerminationCondition(boost::bind(&myPRM::addedNewSolution, this)));
+
+                constructRoadmap(ptcOrSolutionFound);
+
+                // Ensure slnThread is ceased before exiting solve
+                slnThread.join();
+
+                OMPL_INFORM("%s: Created %u states", getName().c_str(), boost::num_vertices(g_) - nrStartStates);
+
+                if (sol)
+                {
+                    ob::PlannerSolution psol(sol);
+                    psol.setPlannerName(getName());
+                    // if the solution was optimized, we mark it as such
+                    psol.setOptimized(opt_, bestCost_, addedNewSolution());
+                    pdef_->addSolutionPath(psol);
+                }
+
+                return sol ? ob::PlannerStatus::EXACT_SOLUTION : ob::PlannerStatus::TIMEOUT;
+            }
+
+
   };
 
 
