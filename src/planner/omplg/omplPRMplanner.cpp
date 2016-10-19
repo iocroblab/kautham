@@ -207,6 +207,47 @@ namespace Kautham {
           return distanceFunction(a,b);
       }
 
+
+      //! Reimplemented in order that data stores too the isolated milestones
+      void getPlannerData(ob::PlannerData &data) const
+      {
+          Planner::getPlannerData(data);
+
+          // Explicitly add start and goal states:
+          for (size_t i = 0; i < startM_.size(); ++i)
+              data.addStartVertex(ob::PlannerDataVertex(stateProperty_[startM_[i]], const_cast<myPRM*>(this)->disjointSets_.find_set(startM_[i])));
+
+          for (size_t i = 0; i < goalM_.size(); ++i)
+              data.addGoalVertex(ob::PlannerDataVertex(stateProperty_[goalM_[i]], const_cast<myPRM*>(this)->disjointSets_.find_set(goalM_[i])));
+
+          // Adding edges
+          foreach_fwd(const Edge e, boost::edges(g_))
+          {
+              const Vertex v1 = boost::source(e, g_);
+              const Vertex v2 = boost::target(e, g_);
+              data.addEdge(ob::PlannerDataVertex(stateProperty_[v1]),
+                           ob::PlannerDataVertex(stateProperty_[v2]));
+
+              // Add the reverse edge, since we're constructing an undirected roadmap
+              data.addEdge(ob::PlannerDataVertex(stateProperty_[v2]),
+                           ob::PlannerDataVertex(stateProperty_[v1]));
+
+              // Add tags for the newly added vertices
+              data.tagState(stateProperty_[v1], const_cast<myPRM*>(this)->disjointSets_.find_set(v1));
+              data.tagState(stateProperty_[v2], const_cast<myPRM*>(this)->disjointSets_.find_set(v2));
+          }
+
+          // Adding vertices
+          foreach_fwd(const Vertex v1, boost::vertices(g_))
+          {
+              data.addVertex(ob::PlannerDataVertex(stateProperty_[v1]));
+
+              // Add tags for the newly added vertices
+              data.tagState(stateProperty_[v1], const_cast<myPRM*>(this)->disjointSets_.find_set(v1));
+          }
+      }
+
+
       //! This functions is identical to the PRM::constructRoadmap function except that the ratio between grow and expand steps is not
       //! fixed to 2:1 but is configurable by the mingrowtime and mingrowtime class variables
       void constructRoadmap(const ob::PlannerTerminationCondition &ptc)
