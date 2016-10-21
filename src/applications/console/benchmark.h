@@ -125,9 +125,10 @@ private:
      * \brief adds a problem to the benchmarking
      * \param prob_file problem description file of the problem to be added
      * \param def_path is the set of folders where the models will be looked for
+     * \param planner_alias is an optional name for the planner
      * \return true if the problem could be added
      */
-    bool add_problem(string prob_file, vector<string> def_path);
+    bool add_problem(string prob_file, vector<string> def_path, string planner_alias = string());
 
     /*!
      * \brief sets a request parameter
