@@ -82,7 +82,8 @@ bool Benchmark::set(xml_node *bm_node, string dir, vector<string> def_path) {
 
     node = bm_node->child("Problem");
     while (node && ok) {
-        ok &= add_problem(dir + node.attribute("File").as_string(),def_path);
+        ok &= add_problem(dir + node.attribute("File").as_string(),def_path,
+                          node.attribute("PlannerAlias").as_string());
 
         node = node.next_sibling("Problem");
     }
@@ -125,7 +126,7 @@ void Benchmark::clear() {
 }
 
 
-bool Benchmark::add_problem(string prob_file, vector<string> def_path) {
+bool Benchmark::add_problem(string prob_file, vector<string> def_path, string planner_alias) {
     Problem *prob = new Problem();
     cout << "Adding problem number " << problem.size()+1 << endl;
     string dir = prob_file.substr(0,prob_file.find_last_of("/")+1);
@@ -140,6 +141,10 @@ bool Benchmark::add_problem(string prob_file, vector<string> def_path) {
                                                    getPlanner())->SimpleSetup()),name);
                 bm->setPreRunEvent(boost::bind(&preRunEvent,_1));
                 bm->setPostRunEvent(boost::bind(&postRunEvent,_1,_2));
+                if (!planner_alias.empty()) {
+                    ((omplplanner::omplPlanner*)prob->getPlanner())->
+                        SimpleSetupPtr()->getPlanner()->setName(planner_alias);
+                }
                 bm->addPlanner(((omplplanner::omplPlanner*)prob->getPlanner())->
                                SimpleSetupPtr()->getPlanner());
 
@@ -160,6 +165,10 @@ bool Benchmark::add_problem(string prob_file, vector<string> def_path) {
                     SimpleSetup())) {
             if (prob->getPlanner()->getFamily() == Kautham::OMPLPLANNER) {
                 problem.push_back(prob);
+                if (!planner_alias.empty()) {
+                    ((omplplanner::omplPlanner*)prob->getPlanner())->
+                        SimpleSetupPtr()->getPlanner()->setName(planner_alias);
+                }
                 bm->addPlanner(((omplplanner::omplPlanner*)prob->getPlanner())->
                                SimpleSetupPtr()->getPlanner());
 
