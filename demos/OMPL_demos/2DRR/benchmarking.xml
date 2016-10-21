@@ -1,6 +1,6 @@
 <Benchmark Name="experiment">
-	<Problem File="OMPL_EST_2DRR_columns.xml" />
-	<Problem File="OMPL_KPIECE_2DRR_columns.xml" />
+	<Problem File="OMPL_EST_2DRR_columns.xml" PlannerAlias="EST_2DDR" />
+	<Problem File="OMPL_KPIECE_2DRR_columns.xml" PlannerAlias="KPIECE_2DDR" />
 	<Parameter Name="maxTime" Value="10.0" />
 	<Parameter Name="maxMem" Value="1000" />
 	<Parameter Name="runCount" Value="2" />
