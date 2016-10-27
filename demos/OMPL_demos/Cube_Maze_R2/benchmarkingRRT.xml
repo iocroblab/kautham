@@ -1,13 +1,13 @@
 <Benchmark Name="experiment">
-	<Problem File="OMPL_RRT_bigcube-maze2D_R2_002_005.xml" />
-	<Problem File="OMPL_RRT_bigcube-maze2D_R2_005_005.xml" />
-	<Problem File="OMPL_RRT_bigcube-maze2D_R2_010_005.xml" />
-	<Problem File="OMPL_RRT_bigcube-maze2D_R2_002_010.xml" />
-	<Problem File="OMPL_RRT_bigcube-maze2D_R2_005_010.xml" />
-	<Problem File="OMPL_RRT_bigcube-maze2D_R2_010_010.xml" />
-	<Problem File="OMPL_RRT_bigcube-maze2D_R2_002_050.xml" />
-	<Problem File="OMPL_RRT_bigcube-maze2D_R2_005_050.xml" />
-	<Problem File="OMPL_RRT_bigcube-maze2D_R2_010_050.xml" />
+	<Problem File="OMPL_RRT_bigcube-maze2D_R2_002_005.xml" PlannerAlias="RRT_002_005" />
+	<Problem File="OMPL_RRT_bigcube-maze2D_R2_005_005.xml" PlannerAlias="RRT_005_005" />
+	<Problem File="OMPL_RRT_bigcube-maze2D_R2_010_005.xml" PlannerAlias="RRT_010_005" />
+	<Problem File="OMPL_RRT_bigcube-maze2D_R2_002_010.xml" PlannerAlias="RRT_002_010" />
+	<Problem File="OMPL_RRT_bigcube-maze2D_R2_005_010.xml" PlannerAlias="RRT_005_010" />
+	<Problem File="OMPL_RRT_bigcube-maze2D_R2_010_010.xml" PlannerAlias="RRT_010_010" />
+	<Problem File="OMPL_RRT_bigcube-maze2D_R2_002_050.xml" PlannerAlias="RRT_002_050" />
+	<Problem File="OMPL_RRT_bigcube-maze2D_R2_005_050.xml" PlannerAlias="RRT_005_050" />
+	<Problem File="OMPL_RRT_bigcube-maze2D_R2_010_050.xml" PlannerAlias="RRT_010_050" />
 	<Parameter Name="maxTime" Value="1.5" />
 	<Parameter Name="maxMem" Value="8000" />
 	<Parameter Name="runCount" Value="10" />

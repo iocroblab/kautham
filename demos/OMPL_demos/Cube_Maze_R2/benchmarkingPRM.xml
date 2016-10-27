@@ -1,10 +1,10 @@
 <Benchmark Name="experiment">
-	<Problem File="OMPL_PRM_bigcube-maze2D_R2_r005.xml" />
-	<Problem File="OMPL_PRM_bigcube-maze2D_R2_r015.xml" />
-	<Problem File="OMPL_PRM_bigcube-maze2D_R2_r050.xml" />
-	<Problem File="OMPL_PRM_bigcube-maze2D_R2_h005.xml" />
-	<Problem File="OMPL_PRM_bigcube-maze2D_R2_h015.xml" />
-	<Problem File="OMPL_PRM_bigcube-maze2D_R2_h050.xml" />
+	<Problem File="OMPL_PRM_bigcube-maze2D_R2_r005.xml" PlannerAlias="PRM_r005" />
+	<Problem File="OMPL_PRM_bigcube-maze2D_R2_r015.xml" PlannerAlias="PRM_r015" />
+	<Problem File="OMPL_PRM_bigcube-maze2D_R2_r050.xml" PlannerAlias="PRM_r050" />
+	<Problem File="OMPL_PRM_bigcube-maze2D_R2_h005.xml" PlannerAlias="PRM_h005" />
+	<Problem File="OMPL_PRM_bigcube-maze2D_R2_h015.xml" PlannerAlias="PRM_h015" />
+	<Problem File="OMPL_PRM_bigcube-maze2D_R2_h050.xml" PlannerAlias="PRM_h050" />
 	<Parameter Name="maxTime" Value="1.5" />
 	<Parameter Name="maxMem" Value="8000" />
 	<Parameter Name="runCount" Value="10" />
