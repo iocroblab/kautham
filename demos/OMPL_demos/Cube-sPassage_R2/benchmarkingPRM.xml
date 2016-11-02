@@ -1,0 +1,10 @@
+<Benchmark Name="experiment">
+	<Problem File="OMPL_PRM_bigcube-s-passage_R2.xml" PlannerAlias="PRMr"/>
+	<Problem File="OMPL_PRMgaussian_bigcube-s-passage_R2.xml" PlannerAlias="PRMg"/>
+	<Parameter Name="maxTime" Value="1.5" />
+	<Parameter Name="maxMem" Value="1000.0" />
+	<Parameter Name="runCount" Value="10" />
+	<Parameter Name="filename" Value="resultPRM.log" />
+</Benchmark>
+
+
