@@ -1116,26 +1116,17 @@ namespace Kautham {
                 maxLinksTested = links.size();
 
             for(int i=0; i< maxLinksTested; i++){
-                //Collision detection with the Palm are avoided
-                /*if(links[i]->getName() == "Palm" || links[i]->getName() == "Palm_izq" || links[i]->getName() == "Palm_der") {
-         //cout <<"Palm detected - skipping collisions"<<endl;
-         continue;
-       }*/
-
-                //Collision detection with the Palm are avoided
-                if(links[i]->numChilds() > 1) {
-                    //cout <<"Palm detected - skipping collisions"<<endl;
-                    continue;
-                }
-
                 for(int j=i+2; j < maxLinksTested; j++){
-                    if(links[i]->getElement()->collideTo(links[j]->getElement())){
-                        stringstream sstr;
-                        sstr <<"Collision between links " << i << " (" << links[i]->getName()
-                            << ") and " << j << " (" << links[j]->getName() << ")" << endl;
-                        if (message != NULL) *message = sstr.str();
-                        _autocoll = true;
-                        return _autocoll;
+                    //collision-cheeck between a link and its children is skipped
+                    if (links[j]->getParent() != links[i]) {
+                        if(links[i]->getElement()->collideTo(links[j]->getElement())){
+                            stringstream sstr;
+                            sstr <<"Collision between links " << i << " (" << links[i]->getName()
+                                << ") and " << j << " (" << links[j]->getName() << ")" << endl;
+                            if (message != NULL) *message = sstr.str();
+                            _autocoll = true;
+                            return _autocoll;
+                        }
                     }
                 }
             }
