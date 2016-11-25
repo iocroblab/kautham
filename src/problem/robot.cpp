@@ -1117,7 +1117,7 @@ namespace Kautham {
 
             for(int i=0; i< maxLinksTested; i++){
                 for(int j=i+2; j < maxLinksTested; j++){
-                    //collision-cheeck between a link and its children is skipped
+                    //Collision-cheeck between a link and its children is skipped
                     if (links[j]->getParent() != links[i]) {
                         if(links[i]->getElement()->collideTo(links[j]->getElement())){
                             stringstream sstr;
