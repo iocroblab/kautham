@@ -289,7 +289,7 @@ public:
     std::map<std::string,dJointID> motor_;
 
     std::map<dBodyID, std::vector<double> > bodyDim;
-static const double toRad  = M_PI/180.;
+static constexpr double toRad  = M_PI/180.;
 dJointID cJoint[4];
 ManipulationQuery *manipulationQuery;
 Manipulatorkinematics *mkinematics;

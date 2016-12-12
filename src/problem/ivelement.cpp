@@ -286,7 +286,7 @@ namespace Kautham {
                 }
 
                 //check vertices' coplanarity
-                float vertex_rank = (float)rank(vector_mat);
+                float vertex_rank = (float)arma::rank(vector_mat);
 
                 printf("with rank %i\n",(int)vertex_rank);
                 if (vertex_rank < 3 || !valid_num_triangles(num_triangles,num_vertices)) {

@@ -24,13 +24,15 @@
 
 
 
-#include "planner/omplc/omplcplanner.h"
+#include <planner/omplc/omplcplanner.h>
 #include <planner/omplg/omplplanner.h>
 #include "kauthamshell.h"
 #include "util/kthutil/kauthamexception.h"
 #include <iostream>
 #include <problem/problem.h>
 #include <planner/omplOpenDE/PhysicsBasedPlanners/KauthamOpenDEPlanner.h>
+#include <ode/ode.h>
+#include <planner/omplOpenDE/environment/KauthamOpenDEEnvironment.h>
 
 namespace ob = ompl::base;
 
@@ -140,7 +142,6 @@ namespace Kautham {
             }
 
             string msg;
-
             *collisionFree = !problem->wSpace()->collisionCheckObs(smpcoords,targetObs,collisionObs,&msg);
             if(msg.empty()) {
                 std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;

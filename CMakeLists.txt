@@ -26,6 +26,8 @@ project(kautham)
 
 cmake_minimum_required(VERSION 2.4.6)
 
+add_definitions(-std=c++11)
+
 set( KAUTHAM_VERSION 3.0.0 )
 STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} ) 
 LIST( GET KAUTHAM_VERSIONS 0 KAUTHAM_VERSION_MAJOR)
