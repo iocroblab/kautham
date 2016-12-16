@@ -60,6 +60,7 @@
 #if defined(KAUTHAM_USE_OMPL)
 #include <planner/omplg/omplPRMplanner.h>
 #include <planner/omplg/omplRRTplanner.h>
+#include <planner/omplg/omplLazyRRTplanner.h>
 #include <planner/omplg/omplpRRTplanner.h>
 #include <planner/omplg/omplRRTConnectplanner.h>
 #include <planner/omplg/omplRRTStarplanner.h>

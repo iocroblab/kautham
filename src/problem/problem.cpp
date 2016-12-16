@@ -213,6 +213,9 @@ namespace Kautham {
         else if (name == "omplpRRT")
             _planner = new omplplanner::omplpRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
+        else if (name == "omplLazyRRT")
+            _planner = new omplplanner::omplLazyRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+
         else if (name == "omplRRTConnect")
             _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
 
