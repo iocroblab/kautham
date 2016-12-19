@@ -222,7 +222,7 @@ bool IVFCLElement::makeFCLModel() {
             model->addSubModel(geomData.vertices,geomData.triangles);
             model->endModel();
 
-            const boost::shared_ptr<fcl::CollisionGeometry> geom(model);
+            const std::shared_ptr<fcl::CollisionGeometry> geom(model);
 
             FCLModel = new fcl::CollisionObject(geom);
 
