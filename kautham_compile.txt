@@ -2,14 +2,11 @@ Compiling Kautham in Ubuntu Trusty 14.04 LTS
 =============================================
 
 First of all we consider that you have a Ubuntu box with the version Trusty
-(14.04 lts, long term suport) [1] . After that, you must add some repositories
+(14.04 lts, long term suport) [1]. After that, you must add some repositories
 to have all the needed built dependencies. Steps procedure could be resumed as:
 
 # Add the sources of the ros packages
 $ sudo add-apt-repository ppa:deb-rob/ros-trusty
-
-# Add the gpg key of the precise-robotics repo
-$ sudo apt-key adv --keyserver pgp.rediris.es --recv-keys 63DE76AC0B6779BF
 
 # Update the sources
 $ sudo apt-get update
@@ -18,6 +15,7 @@ $ sudo apt-get update
 $ sudo apt-get build-dep kautham
 
 # Clone the Kautham from github
+$ mkdir -p catkin_ws/src
 $ cd catkin_ws/src
 $ git clone https://github.com/iocroblab/kautham.git
 $ cd ..
