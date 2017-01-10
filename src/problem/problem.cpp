@@ -1573,8 +1573,8 @@ namespace Kautham {
                 }
             }
 
-            _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
-            _wspace->getRobot(i)->setOffMatrix(offMatrix[i]);
+            _wspace->getObstacle(i)->setMapMatrix(mapMatrix[i]);
+            _wspace->getObstacle(i)->setOffMatrix(offMatrix[i]);
         }
 
         //Load the Offset vector
