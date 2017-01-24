@@ -31,7 +31,7 @@
 #include <QMessageBox>
 #include <sstream>
 #include <problem/ivworkspace.h>
-#include <util/kthutil/kauthamdefs.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
 #include <util/kthutil/kauthamexception.h>
 #include "kauthamgui.h"
 #include "dofwidget.h"

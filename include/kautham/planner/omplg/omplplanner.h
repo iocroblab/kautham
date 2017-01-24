@@ -41,10 +41,10 @@ namespace oc = ompl::control;
 namespace ob = ompl::base;
 
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 #include "omplValidityChecker.h"
-#include <planner/planner.h>
+#include <kautham/planner/planner.h>
 
 
 using namespace std;

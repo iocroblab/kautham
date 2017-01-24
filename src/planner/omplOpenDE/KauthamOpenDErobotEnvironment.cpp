@@ -26,8 +26,8 @@
 #if defined(KAUTHAM_USE_OMPL)
 #if defined(KAUTHAM_USE_ODE)
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 
 #include <boost/bind/mem_fn.hpp>
 

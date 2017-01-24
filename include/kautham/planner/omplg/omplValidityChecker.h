@@ -28,7 +28,7 @@
 #if defined(KAUTHAM_USE_OMPL)
 
 #include <ompl/base/SpaceInformation.h>
-#include <planner/planner.h>
+#include <kautham/planner/planner.h>
 
 namespace ob = ompl::base;
 

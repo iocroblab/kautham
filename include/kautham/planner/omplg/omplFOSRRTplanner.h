@@ -34,8 +34,8 @@
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 
 #include "omplplanner.h"
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 
 
 

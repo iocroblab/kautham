@@ -32,10 +32,10 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <problem/robot.h>
 #include "ui_RobotSim.h"
-#include <planner/planner.h>
+#include <kautham/planner/planner.h>
 #include <problem/problem.h>
-#include <sampling/sampling.h>
-#include <util/libkin/inversekinematic.h>
+#include <kautham/sampling/sampling.h>
+#include <kautham/kautham/kautham/util/libkin/inversekinematic.h>
 #include "controlwidget.h"
 #include "plannerwidget.h"
 #include "defaultpathdialog.h"

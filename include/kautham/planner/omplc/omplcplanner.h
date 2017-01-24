@@ -42,9 +42,9 @@ namespace og = ompl::geometric;
 namespace oc = ompl::control;
 
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
-#include <planner/planner.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
+#include <kautham/planner/planner.h>
 
 
 using namespace std;

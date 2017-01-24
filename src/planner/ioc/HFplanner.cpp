@@ -23,8 +23,8 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
  
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 #include "localplanner.h"
 #include "HFplanner.h"
 

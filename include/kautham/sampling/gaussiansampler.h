@@ -32,7 +32,7 @@
 
 
 
-#include <problem/workspace.h>
+#include <kautham/problem/workspace.h>
 
 namespace Kautham{
 

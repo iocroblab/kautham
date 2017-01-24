@@ -32,7 +32,7 @@
 #include <problem/robot.h>
 #include <problem/problem.h>
 #include <util/libkin/constrainedkinematic.h>
-#include <util/kthutil/kauthamdefs.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
 
 
 using namespace std;

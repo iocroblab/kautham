@@ -27,8 +27,8 @@
 #if !defined(_CONSTLINEARLOCALPLANNER_H)
 #define _CONSTLINEARLOCALPLANNER_H
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 #include "localplanner.h"
 #include "linearlocplan.h"
 

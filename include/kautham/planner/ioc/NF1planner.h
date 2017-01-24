@@ -31,10 +31,10 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 #include "localplanner.h"
-#include <planner/planner.h>
+#include <kautham/planner/planner.h>
 #include "gridplanner.h"
 
 using namespace std;

@@ -17,7 +17,7 @@
  ***************************************************************************/
 
 
-#include "constrainedkinematic.h"
+#include <kautham/util/libkin/constrainedkinematic.h>
 
 namespace Kautham{
 

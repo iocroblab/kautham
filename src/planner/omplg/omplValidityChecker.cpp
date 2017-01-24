@@ -25,8 +25,8 @@
 
 
 #if defined(KAUTHAM_USE_OMPL)
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 
 #include "omplValidityChecker.h"
 #include "omplplanner.h"

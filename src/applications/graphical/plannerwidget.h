@@ -26,7 +26,7 @@
 #define _PLANNERWIDGET_H
 
 #include "kauthamwidget.h"
-#include <planner/planner.h>
+#include <kautham/planner/planner.h>
 #include <QtGui>
 
 namespace Kautham{

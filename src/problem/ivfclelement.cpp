@@ -26,7 +26,7 @@
 #ifdef KAUTHAM_USE_FCL
 
 #include "ivfclelement.h"
-#include <util/kthutil/kauthamdefs.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
 #include <map>
 
 #include <fcl/collision.h>

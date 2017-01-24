@@ -30,8 +30,8 @@
 #include <ompl/config.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 
 #include <boost/bind/mem_fn.hpp>
 

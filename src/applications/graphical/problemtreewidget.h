@@ -24,7 +24,7 @@
 
 
 #include <QtGui>
-#include <problem/workspace.h>
+#include <kautham/problem/workspace.h>
 
 
 #if !defined(_PROBLEMTREEWIDGET_H)

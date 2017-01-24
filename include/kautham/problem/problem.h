@@ -26,8 +26,8 @@
 #if !defined(_PROBLEM_H)
 #define _PROBLEM_H
 
-#include <planner/planner.h>
-#include <sampling/sampling.h>
+#include <kautham/planner/planner.h>
+#include <kautham/sampling/sampling.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include "robot.h"
 #include "ivworkspace.h"

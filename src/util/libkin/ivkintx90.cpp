@@ -24,8 +24,8 @@
 /* Author: Alexander Perez, Jan Rosell and Nestor Garcia Hidalgo */
  
  
-#include "ivkintx90.h"
-#include <problem/robot.h>
+#include <kautham/util/libkin/ivkintx90.h>
+#include <kautham/problem/robot.h>
 
 
 using namespace TXrobot;

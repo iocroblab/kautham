@@ -23,8 +23,8 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "ivkinUR5.h"
-#include "UR5_kinematics.h"
+#include <kautham/util/libkin/ivkinUR5.h>
+#include <kautham/util/libkin/UR5_kinematics.h>
 
 IvKinUR5::IvKinUR5(Robot* const rob): Kautham::InverseKinematic(rob){
     _target.resize(7);  // This contains the pos and quaternion as a vector

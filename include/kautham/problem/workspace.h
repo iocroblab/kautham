@@ -26,11 +26,13 @@
 #if !defined(_WORKSPACE_H)
 #define _WORKSPACE_H
 
+#include <kautham/sampling/robconf.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
+#include <kautham/sampling/sample.h>
+#include <kautham/problem/robot.h>
+
 #include <vector>
-#include <sampling/robconf.h>
-#include <util/kthutil/kauthamdefs.h>
-#include <sampling/sample.h>
-#include "robot.h"
+
 
 using namespace std;
 

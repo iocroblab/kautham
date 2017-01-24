@@ -23,8 +23,9 @@
 /* Author: Alexander Perez, Jan Rosell */
 
  
-#include "ivkinhand.h"
-#include <problem/robot.h>
+#include <kautham/util/libkin/ivkinhand.h>
+#include <kautham/util/libkin/func_mat.h>
+#include <kautham/problem/robot.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
@@ -36,8 +37,6 @@
 #include <cmath>
 #include <cassert>
 #include <time.h>
-
-#include "func_mat.h"
 
 
 #define N_VDC_CONFIG 25         // Decoupled joints and virtual fingertips
