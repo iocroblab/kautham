@@ -26,8 +26,8 @@
 #if !defined(_MYPLANNER_H)
 #define _MYPLANNER_H
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 #include "localplanner.h"
 #include "iocplanner.h"
 

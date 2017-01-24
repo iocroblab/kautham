@@ -4,11 +4,11 @@ include_directories( ${CMAKE_SOURCE_DIR}/include)
 set(mt_DIR ${CMAKE_SOURCE_DIR}/src/util/libmt)
 message (STATUS "Adding libmt directory ${mt_DIR}")
 include_directories( ${mt_DIR} )
+include_directories( ${CMAKE_SOURCE_DIR}/src )  # for external
 
 set ( kin_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin )
 set ( kthutil_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/kthutil )
 set ( mt_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libmt )
-
 
 ##### pugixml ########
 find_package( PugiXML )

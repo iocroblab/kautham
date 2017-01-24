@@ -32,7 +32,7 @@
 #include "constrainedcontrolwidget.h"
 #include "invkinwidget.h"
 #include <QtGui>
-#include <sampling/sampling.h>
+#include <kautham/sampling/sampling.h>
 #include <Inventor/nodes/SoCamera.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/actions/SoToVRML2Action.h>

@@ -23,10 +23,10 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
-#include "localplanner.h"
-#include "mygridplanner.h"
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
+#include <kautham/planner/ioc/localplanner.h>
+#include <kautham/planner/ioc/mygridplanner.h>
 
 
 namespace Kautham {

@@ -26,14 +26,14 @@
 #if !defined(_iocPLANNER_H)
 #define _iocPLANNER_H
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 #include <cmath>
 #include <string>
 #include "localplanner.h"
 #include <mt/transform.h>
 #include "kthquery.h"
-#include <planner/planner.h>
+#include <kautham/planner/planner.h>
 
 using namespace std;
 

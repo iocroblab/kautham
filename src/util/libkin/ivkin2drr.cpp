@@ -24,8 +24,8 @@
 
  
  
-#include "ivkin2drr.h"
-#include <problem/robot.h>
+#include <kautham/util/libkin/ivkin2drr.h>
+#include <kautham/problem/robot.h>
 
   
 IvKin2DRR::IvKin2DRR(Robot* const rob) : Kautham::InverseKinematic(rob){

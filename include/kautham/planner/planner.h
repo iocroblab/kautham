@@ -27,8 +27,8 @@
 #if !defined(_PLANNER_H)
 #define _PLANNER_H
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 #include <util/kthutil/kauthamdefs.h>
 #include <cmath>
 #include <string>

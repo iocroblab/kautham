@@ -42,7 +42,7 @@
 #include <ompl/base/goals/GoalRegion.h>
 #include <problem/link.h>
 #include <problem/robot.h>
-#include <problem/workspace.h>
+#include <kautham/problem/workspace.h>
 
 #define _USE_MATH_DEFINES
 
@@ -74,8 +74,8 @@
 #include <problem/ivelement.h>
 #include "KauthamOpenDEEnvironment.h"
 #include <ompl/base/ProjectionEvaluator.h>
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 #include "planner/planner.h"
 
 namespace ob = ompl::base;

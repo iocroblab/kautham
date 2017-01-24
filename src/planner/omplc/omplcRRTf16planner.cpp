@@ -23,8 +23,8 @@
 /* Author: Alexander Perez, Jan Rosell */
 
 #if defined(KAUTHAM_USE_OMPL)
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 
 #include <boost/bind/mem_fn.hpp>
 #include <ompl/base/spaces/SE2StateSpace.h>

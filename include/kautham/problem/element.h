@@ -27,8 +27,8 @@
 #if !defined(_ELEMENT_H)
 #define _ELEMENT_H
 
-#include <util/kthutil/kauthamdefs.h>
-#include "odeelement.h"
+#include <kautham/util/kthutil/kauthamdefs.h>
+#include <kautham/problem/odeelement.h>
 
 namespace Kautham {
 /** \defgroup Problem  Problem  module

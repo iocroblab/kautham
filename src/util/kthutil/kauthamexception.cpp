@@ -23,7 +23,7 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "kauthamexception.h"
+#include <kautham/util/kthutil/kauthamexception.h>
 
 
 namespace Kautham {

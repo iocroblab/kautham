@@ -25,7 +25,7 @@
 #include "plannerwidget.h"
 #include "gui.h"
 #include <sampling/se3conf.h>
-#include <sampling/robconf.h>
+#include <kautham/sampling/robconf.h>
 
 #if defined(KAUTHAM_USE_IOC)
 #include <planner/ioc/iocplanner.h>

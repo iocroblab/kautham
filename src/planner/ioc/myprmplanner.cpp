@@ -23,8 +23,8 @@
 /* Author: Alexander Perez, Jan Rosell */
  
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 #include "localplanner.h"
 #include "myprmplanner.h"
 

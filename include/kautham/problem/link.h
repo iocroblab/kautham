@@ -28,9 +28,9 @@
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/SbLinear.h>
-#include "element.h"
+#include <kautham/problem/element.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
 #include <mt/mt.h>
-#include <util/kthutil/kauthamdefs.h>
 #include <string>
 
 
@@ -240,7 +240,7 @@ namespace Kautham{
     Link*               parent;
   	
 	  //!	Vector of pointers to every Link child. It's useful with TREE type robots.
-    vector<Link*>       childs;
+    std::vector<Link*>       childs;
   	
 	  //!	\f$ \alpha \f$ parameter for D-H description.
     KthReal             alpha;

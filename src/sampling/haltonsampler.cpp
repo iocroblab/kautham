@@ -26,7 +26,7 @@
 /* Author: Alexander Perez, Jan Rosell */
 
  
-#include "haltonsampler.h"
+#include <haltonsampler.h>
 #include "sample.h"
 # include <ctime>
 # include <cmath>

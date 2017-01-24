@@ -26,7 +26,7 @@
 #define _INVKINWIDGET_H
 
 #include "kauthamwidget.h"
-#include <util/libkin/inversekinematic.h>
+#include <kautham/kautham/kautham/util/libkin/inversekinematic.h>
 #include <QtGui>
 
 

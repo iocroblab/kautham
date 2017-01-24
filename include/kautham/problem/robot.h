@@ -28,10 +28,10 @@
 
 #include "link.h"
 #include <mt/transform.h>
-#include <sampling/robconf.h>
+#include <kautham/sampling/robconf.h>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
-#include <util/libkin/inversekinematic.h>
-#include <util/libkin/constrainedkinematic.h>
+#include <kautham/util/libkin/inversekinematic.h>
+#include <kautham/util/libkin/constrainedkinematic.h>
 #include <list>
 
 
@@ -81,14 +81,14 @@ namespace Kautham {
       unsigned          nTrunk; //!< Number of links for the trunk in case of TREE robot
       InverseKinematic* _ikine; //!< Defines the inverse kinematics of the robot, if available.
       ConstrainedKinematic* _constrainKin; //!< Defines the constrained kinematics of the robot, if it has one.
-      vector<RobConf>   _proposedSolution; //!< Solution path to be drawn.
+      std::vector<RobConf>   _proposedSolution; //!< Solution path to be drawn.
       SoMFVec3f*        _graphicalPath; //!< This corresponds to translational part of the link origin selected while following the path to be drawn.
       SoSeparator*      _pathSeparator; //!< This is the SoSeparator to visualize the solution path. It is attached to the robot model.
       int               _linkPathDrawn; //!< This is the number of the link whose path will be drawn
       list<attObj>      _attachedObject; //!< List of objects attached to the robot gripper.
       KthReal           _spatialLimits[3][2]; //!< Limits of motions of the base of the robot, in world coordinates.
       KthReal           _homeLimits[3][2]; //!< Limits of motions of the base of the robot, with respect to the robot reference frame.
-      vector<Link*>     links; //!< Vector of the robot links, starting at the base and ending at the end effector.In case of Tree robots, each branch is inserted sequentially.
+      std::vector<Link*>     links; //!< Vector of the robot links, starting at the base and ending at the end effector.In case of Tree robots, each branch is inserted sequentially.
       bool              _autocoll; //!< Flag that indicates if the robot is auto-colliding
       bool              _hasChanged; //!< Flag that indicates if the robot has changed its configuration. To speed up some computations.
       KthReal           *offMatrix; //!< Offset vector. If copuling is generated with PCA it contains the baricenter coordinates, otherwise 0.5.
@@ -157,7 +157,7 @@ namespace Kautham {
 
     inline mt::Transform& getHomeTransform(){return *(links[0]->getTransformation());} //!< Retruns the transform of the robot base wrt the world
 
-    inline vector<RobConf>& getProposedSolution(){return _proposedSolution;} //!< Returns the Proposed Solution as a vector of RobConf; for visualization purposes.
+    inline std::vector<RobConf>& getProposedSolution(){return _proposedSolution;} //!< Returns the Proposed Solution as a vector of RobConf; for visualization purposes.
 
     inline void setName(string nam){name = nam;} //!< Sets the robot name.
 
@@ -173,7 +173,7 @@ namespace Kautham {
     KthReal* getWeightSE3();
 
     //!< Returns the values that weights the motions of each link in Rn distance computations.
-    vector<KthReal>& getWeightRn();
+    std::vector<KthReal>& getWeightRn();
 
     //! Test for autocollision
     bool autocollision(int t = 0, string *message = NULL);
@@ -211,10 +211,10 @@ namespace Kautham {
     bool Kinematics(Conf *q);
 
     //! Computes inverse kinematics
-    RobConf& InverseKinematics(vector<KthReal> &target);
+    RobConf& InverseKinematics(std::vector<KthReal> &target);
 
     //! Computes inverse kinematics
-    RobConf& InverseKinematics(vector<KthReal> &target, vector<KthReal> masterconf,
+    RobConf& InverseKinematics(std::vector<KthReal> &target, std::vector<KthReal> masterconf,
                                bool maintainSameWrist);
 
     //! Sets the inverse kinematics to be used
@@ -236,7 +236,7 @@ namespace Kautham {
     ConstrainedKinematic* getCkine(){return _constrainKin;}
 
     //! Computes direct constrrained kinematics
-    RobConf& ConstrainedKinematics(vector<KthReal> &target);
+    RobConf& ConstrainedKinematics(std::vector<KthReal> &target);
 
     //! Sets the home position of the robot
     void setHomePos(Conf* qh);
@@ -260,16 +260,16 @@ namespace Kautham {
     SoSeparator* getModelFromColl();
 
     //! Maps from control values to configurations.
-    bool control2Pose(vector<KthReal> &values);
+    bool control2Pose(std::vector<KthReal> &values);
 
     //! Maps from control values to parameters (normalized configurations).
-    bool control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters);
+    bool control2Parameters(std::vector<KthReal> &control, std::vector<KthReal> &parameters);
 
     //! Loads the robot configuration _currentConf from the normalized values of the configuration (parameters)
-    void parameter2Pose(vector<KthReal> &values);
+    void parameter2Pose(std::vector<KthReal> &values);
 
     //! Depending on the type specified, retruns the SE3 config or the Rn configuration from the normalized values of the configuration (parameters)
-    Conf& parameter2Conf(vector<KthReal> &values, CONFIGTYPE type);
+    Conf& parameter2Conf(std::vector<KthReal> &values, CONFIGTYPE type);
 
     //! Retunrs the weights of the robot used in the computation of the distances
     RobWeight* getRobWeight(){return _weights;}
@@ -278,7 +278,7 @@ namespace Kautham {
     string getDOFNames();
 
     //! Sets a solution path to be visualized (corresponding to the origin of a given selected link of the robot)
-    bool setProposedSolution(vector<RobConf*>& path);
+    bool setProposedSolution(std::vector<RobConf*>& path);
 
     //! Deletes the solution path to be visualized.
     bool cleanProposedSolution();
@@ -333,7 +333,7 @@ namespace Kautham {
     void recalculateHomeLimits();
 
     //! Denormalizes the SE3 unit representation and returns the positon and the rotation (quaternion) in a single vector.
-    vector<KthReal>  deNormalizeSE3(vector<KthReal> &values);
+    std::vector<KthReal>  deNormalizeSE3(std::vector<KthReal> &values);
 
     //! Returns the diagonal of the cube defined by the home-limits of the robot
     float diagLimits();

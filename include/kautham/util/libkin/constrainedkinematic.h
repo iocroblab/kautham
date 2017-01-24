@@ -27,11 +27,11 @@
 #define _CONSTRAINEDKINEMATIC_H
 
 
-#include <util/kthutil/kauthamdefs.h>
-#include <util/kthutil/kauthamobject.h>
-#include <sampling/robconf.h>
-#include <sampling/se3conf.h>
-#include <sampling/rnconf.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
+#include <kautham/util/kthutil/kauthamobject.h>
+#include <kautham/sampling/robconf.h>
+#include <kautham/sampling/se3conf.h>
+#include <kautham/sampling/rnconf.h>
 
 
 namespace Kautham{
@@ -55,7 +55,7 @@ namespace Kautham{
     virtual bool		  setParameters()=0;
 
 	  //!	This method allow to setup the target.
-    void              setTarget(vector<KthReal> &target);
+    void              setTarget(std::vector<KthReal> &target);
     inline SE3Conf&   getSE3(){return _robConf.getSE3();}
     inline RnConf&    getRn(){return _robConf.getRn();}
     inline RobConf&   getRobConf(){return _robConf;}
@@ -68,7 +68,7 @@ namespace Kautham{
     RobConf         _robConf;
 
 	  //! This vector contains the target to be solved.
-    vector<KthReal> _target;      //!< This is a generic way to set up the target.
+    std::vector<KthReal> _target;      //!< This is a generic way to set up the target.
 
   };
   /** @}   end of Doxygen module "Util */

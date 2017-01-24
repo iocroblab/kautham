@@ -26,12 +26,14 @@
 #if !defined(_SAMPLE_H)
 #define _SAMPLE_H
 
+#include <kautham/util/kthutil/kauthamdefs.h>
+#include <kautham/sampling/robweight.h>
+#include <kautham/sampling/robconf.h>
+
+#include <boost/function.hpp>
+
 #include <cstdio>
 #include <vector>
-#include <boost/function.hpp>
-#include <util/kthutil/kauthamdefs.h>
-#include "robweight.h"
-#include "robconf.h"
 
 
 using namespace std;

@@ -38,8 +38,8 @@
 //#include "omplcplanner.h"
 
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 
 #include <ompl/extensions/opende/OpenDESimpleSetup.h>
 #include <ompl/extensions/opende/OpenDEControlSpace.h>

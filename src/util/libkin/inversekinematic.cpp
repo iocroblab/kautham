@@ -22,7 +22,7 @@
 
 /* Author: Josep-Arnau Claret Robert */
 
-#include "inversekinematic.h" 
+#include <kautham/util/libkin/inversekinematic.h>
 
 namespace Kautham {
 

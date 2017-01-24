@@ -26,10 +26,10 @@
 #if !defined(_MYPRMPLANNER_H)
 #define _MYPRMPLANNER_H
 
-#include <problem/workspace.h>
-#include <sampling/sampling.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
 #include "localplanner.h"
-#include <planner/planner.h>
+#include <kautham/planner/planner.h>
 #include "prmplanner.h"
 
 using namespace std;

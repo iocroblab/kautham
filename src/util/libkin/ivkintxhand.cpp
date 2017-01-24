@@ -23,7 +23,7 @@
 
 /* Author: Alexander Perez, Jan Rosell */
 
-#include "ivkintxhand.h"
+#include <kautham/util/libkin/ivkintxhand.h>
 
 
   

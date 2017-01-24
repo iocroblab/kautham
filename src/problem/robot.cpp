@@ -23,12 +23,12 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 #include "robot.h"
-#include <util/kthutil/kauthamdefs.h>
-#include <util/libkin/inversekinematic.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
+#include <kautham/kautham/kautham/util/libkin/inversekinematic.h>
 #include <util/libkin/ivkintx90.h>
 #include <util/libkin/ivkintxhand.h>
 #include <util/libkin/ivkinhand.h>
-#include <util/libkin/ivkin2drr.h>
+#include <kautham/util/libkin/ivkin2drr.h>
 #include <util/libkin/ivkinUR5.h>
 #include <util/libkin/constrainedkinematic.h>
 #include <problem/ivpqpelement.h>

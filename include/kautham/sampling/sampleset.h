@@ -28,11 +28,13 @@
 #define _SAMPLESET_H
 
 #include <vector>
-#include "sample.h"
 
-#include <problem/workspace.h>
 #include <external/libann/DNN/ANN.h>
 #include <external/libann/DNN/multiann.h>
+
+#include <kautham/sampling/sample.h>
+#include <kautham/problem/workspace.h>
+
 
 using namespace std;
 

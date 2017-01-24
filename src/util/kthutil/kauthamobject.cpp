@@ -24,7 +24,7 @@
 
 
 
-#include "kauthamobject.h"
+#include <kautham/util/kthutil/kauthamobject.h>
 #include <string>
 #include <sstream>
 #include <cstdio>
