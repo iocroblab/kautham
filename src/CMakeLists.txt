@@ -1,6 +1,6 @@
 #### Adding subdirectories
 
-include_directories( ${CMAKE_SOURCE_DIR}/src)
+include_directories( ${CMAKE_SOURCE_DIR}/include)
 set(mt_DIR ${CMAKE_SOURCE_DIR}/src/util/libmt)
 message (STATUS "Adding libmt directory ${mt_DIR}")
 include_directories( ${mt_DIR} )
@@ -43,10 +43,10 @@ endif(Boost_FOUND)
 
 add_subdirectory( util )
 
-include_directories( include ${CMAKE_CURRENT_SOURCE_DIR} 
-                       ${kthutil_DIR}
-                       ${mt_DIR}
-                       ${kin_DIR})                   
+include_directories( ${CMAKE_SOURCE_DIR}/include)
+#                       ${kthutil_DIR}
+#                       ${mt_DIR}
+#                       ${kin_DIR})                   
 
 add_subdirectory ( external )
 
