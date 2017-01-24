@@ -2,4 +2,8 @@ The Kautham project is allocated here:
 
 git clone ssh://ris.upc.es/gitroot/kautham.git 
 
+Kautham demos are located here:
+
+git clone ssh://ris.upc.es/gitroot/kautham-demos.git
+
 
