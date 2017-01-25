@@ -22,7 +22,7 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
-#include "FOSRRT.h"
+#include <kautham/planner/omplg/FOSRRT.h>
 #include "ompl/geometric/planners/rrt/RRT.h"
 #include "ompl/base/goals/GoalSampleableRegion.h"
 #include "ompl/tools/config/SelfConfig.h"

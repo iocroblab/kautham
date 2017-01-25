@@ -26,7 +26,7 @@
 #include <sstream>
 #include <iostream>
 #include <cmath>
-#include "sample.h"
+#include <kautham/sampling/sample.h>
 
 using namespace std;
 

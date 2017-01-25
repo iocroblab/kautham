@@ -28,15 +28,20 @@
 #if !defined(_APPLICATION_H)
 #define _APPLICATION_H
 
+
+#include <string>
+
 #include <QtCore>
-#include <problem/problem.h>
-#include "gui.h"
-#include <Inventor/Qt/SoQt.h>
 #include <QtGui>
 #include <QFile>
 #include <QObject>
+
+#include <Inventor/Qt/SoQt.h>
+
+#include <kautham/problem/problem.h>
 #include <kautham/util/kthutil/kauthamdefs.h>
-#include <string>
+#include "gui.h"
+
 
 using namespace std;
 using namespace Kautham;

@@ -23,8 +23,9 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
-#include "problem.h"
-#include <util/kthutil/kauthamexception.h>
+#include <kautham/problem/problem.h>
+#include <kautham/util/kthutil/kauthamexception.h>
+
 
 #define TO_RAD(x) x*(M_PI/180.0)
 

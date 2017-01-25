@@ -22,17 +22,20 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
-#include "urdf.h"
 
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <stdlib.h>
+
 #include <mt/point3.h>
 #include <mt/rotation.h>
 #include <mt/transform.h>
-#include <util/kthutil/kauthamexception.h>
-#include "ivelement.h"
+
+#include <kautham/problem/urdf.h>
+#include <kautham/util/kthutil/kauthamexception.h>
+#include <kautham/problem/ivelement.h>
+
 
 using namespace std;
 using namespace pugi;

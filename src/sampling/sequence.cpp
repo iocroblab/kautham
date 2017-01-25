@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell */
 
  
-#include "sequence.h"
+#include <kautham/sampling/sequence.h>
 #include <external/lcprng.h>
 
 namespace Kautham {

@@ -43,7 +43,7 @@ namespace ob = ompl::base;
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include "omplValidityChecker.h"
+#include <kautham/planner/omplg/omplValidityChecker.h>
 #include <kautham/planner/planner.h>
 
 

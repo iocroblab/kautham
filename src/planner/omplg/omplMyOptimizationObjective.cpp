@@ -28,7 +28,7 @@
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/OptimizationObjective.h>
-#include "omplMyOptimizationObjective.h"
+#include <kautham/planner/omplg/omplMyOptimizationObjective.h>
 #include <math.h>
 #include <pugixml.hpp>
 

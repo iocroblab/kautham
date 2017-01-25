@@ -37,7 +37,7 @@
   #include <gsl/gsl_linalg.h>
   #include <gsl/gsl_blas.h>
 
-  #include "func_mat.h"
+  #include <kautham/util/libkin/func_mat.h>
 
 
   using namespace boost::numeric::ublas;

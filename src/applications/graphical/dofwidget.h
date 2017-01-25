@@ -27,7 +27,8 @@
 
 
 #include <QtGui>
-#include <problem/problem.h>
+
+#include <kautham/problem/problem.h>
 
 
 namespace Kautham {

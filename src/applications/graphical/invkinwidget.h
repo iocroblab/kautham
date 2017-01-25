@@ -25,9 +25,11 @@
 #if !defined(_INVKINWIDGET_H)
 #define _INVKINWIDGET_H
 
-#include "kauthamwidget.h"
-#include <kautham/kautham/kautham/util/libkin/inversekinematic.h>
+
 #include <QtGui>
+
+#include "kauthamwidget.h"
+#include <kautham/util/libkin/inversekinematic.h>
 
 
 using namespace std;

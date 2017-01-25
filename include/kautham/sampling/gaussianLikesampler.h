@@ -26,13 +26,13 @@
 #if !defined(_SDKGAUSSIANSAMPLER_H)
 #define _SDKGAUSSIANSAMPLER_H
 
-#include "sampler.h"
-#include "sdksampler.h"
+#include <kautham/sampling/sampler.h>
+#include <kautham/sampling/sdksampler.h>
 #include <external/lcprng.h>
-//#include "sdksample.h"
-#include "haltonsampler.h"
-#include "randomsampler.h"
-#include "sampleset.h"
+//#include <kautham/sampling/sdksample.h>
+#include <kautham/sampling/haltonsampler.h>
+#include <kautham/sampling/randomsampler.h>
+#include <kautham/sampling/sampleset.h>
 #include <kautham/problem/workspace.h>
 
 

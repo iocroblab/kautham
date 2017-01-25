@@ -28,8 +28,7 @@
 
 #include <sstream>
 #include <fstream>
-#include "element.h"
-#include <external/gdiam/gdiam.hpp>
+
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/fields/SoSFVec3f.h>
 #include <Inventor/fields/SoSFRotation.h>
@@ -44,7 +43,10 @@
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/SbLinear.h>
-#include <util/kthutil/kauthamdefs.h>
+
+#include <external/gdiam/gdiam.hpp>
+#include <kautham/problem/element.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
 
 
 namespace Kautham {

@@ -29,7 +29,7 @@
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include "localplanner.h"
+#include <kautham/planner/ioc/localplanner.h>
 
 
 namespace Kautham {

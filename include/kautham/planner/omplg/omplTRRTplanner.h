@@ -27,12 +27,12 @@
 
 #if defined(KAUTHAM_USE_OMPL)
 #include <ompl/base/SpaceInformation.h>
-#include "TRRT.h"
+#include <kautham/planner/omplg/TRRT.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/config.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 
-#include "omplplanner.h"
+#include <kautham/planner/omplg/omplplanner.h>
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
 

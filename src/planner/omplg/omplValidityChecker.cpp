@@ -28,8 +28,8 @@
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
 
-#include "omplValidityChecker.h"
-#include "omplplanner.h"
+#include <kautham/planner/omplg/omplValidityChecker.h>
+#include <kautham/planner/omplg/omplplanner.h>
 
 namespace Kautham {
 namespace omplplanner{

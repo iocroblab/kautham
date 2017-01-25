@@ -28,7 +28,7 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include "omplplanner.h"
+#include <kautham/planner/omplg/omplplanner.h>
 
 
 #include <Inventor/nodes/SoTranslation.h>

@@ -22,7 +22,7 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
-#include "sample.h"
+#include <kautham/sampling/sample.h>
 
 
 namespace Kautham{

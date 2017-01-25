@@ -29,8 +29,8 @@
 #include <kautham/sampling/sampling.h>
 #include <boost/bind/mem_fn.hpp>
 
-#include "omplRRTConnectplannerEUROC.h"
-#include "omplValidityChecker.h"
+#include <kautham/planner/omplg/omplRRTConnectplannerEUROC.h>
+#include <kautham/planner/omplg/omplValidityChecker.h>
 
 
 

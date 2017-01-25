@@ -32,7 +32,7 @@
 #include <ompl/config.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 
-#include "omplplanner.h"
+#include <kautham/planner/omplg/omplplanner.h>
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
 

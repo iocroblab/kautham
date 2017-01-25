@@ -27,7 +27,7 @@
 #if !defined(_RNCONF_H)
 #define _RNCONF_H
 
-#include "conf.h"
+#include <kautham/sampling/conf.h>
 #include <string>
 #include <sstream>
 #include <iostream>

@@ -29,8 +29,8 @@
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include "localplanner.h"
-#include "linearlocplan.h"
+#include <kautham/planner/ioc/localplanner.h>
+#include <kautham/planner/ioc/linearlocplan.h>
 
 namespace Kautham {
     /** \defgroup Planner  Planning module

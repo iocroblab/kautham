@@ -28,7 +28,7 @@
 
 #ifdef KAUTHAM_USE_FCL
 
-#include "ivelement.h"
+#include <kautham/problem/ivelement.h>
 #include <fcl/collision_object.h>
 #include <external/lcprng.h>
 

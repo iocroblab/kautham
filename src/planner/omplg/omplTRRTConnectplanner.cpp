@@ -23,9 +23,9 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "omplTRRTConnectplanner.h"
-#include "TRRTConnect.h"
-#include "omplMyOptimizationObjective.h"
+#include <kautham/planner/omplg/omplTRRTConnectplanner.h>
+#include <kautham/planner/omplg/TRRTConnect.h>
+#include <kautham/planner/omplg/omplMyOptimizationObjective.h>
 
 
 using namespace Kautham::omplplanner;

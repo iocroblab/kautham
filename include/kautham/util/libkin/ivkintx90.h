@@ -28,8 +28,8 @@
 #if !defined(_IVKINTX90_H)
 #define _IVKINTX90_H
 
-#include "inversekinematic.h"
-#include "txrobot.h"
+#include <kautham/util/libkin/inversekinematic.h>
+#include <kautham/util/libkin/txrobot.h>
 
 
 /** \addtogroup libKin

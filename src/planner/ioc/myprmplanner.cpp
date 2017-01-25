@@ -25,8 +25,8 @@
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include "localplanner.h"
-#include "myprmplanner.h"
+#include <kautham/planner/ioc/localplanner.h>
+#include <kautham/planner/ioc/myprmplanner.h>
 
 
 namespace Kautham {

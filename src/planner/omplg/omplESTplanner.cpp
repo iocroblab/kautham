@@ -29,8 +29,8 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include "omplESTplanner.h"
-#include "omplValidityChecker.h"
+#include <kautham/planner/omplg/omplESTplanner.h>
+#include <kautham/planner/omplg/omplValidityChecker.h>
 
 
 

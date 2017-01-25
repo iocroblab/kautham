@@ -23,8 +23,8 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "TRRTConnect.h"
-#include "FOSOptimizationObjective.h"
+#include <kautham/planner/omplg/TRRTConnect.h>
+#include <kautham/planner/omplg/FOSOptimizationObjective.h>
 
 #include <ompl/base/objectives/MechanicalWorkOptimizationObjective.h>
 #include <ompl/base/goals/GoalSampleableRegion.h>

@@ -26,7 +26,7 @@
 #if !defined(_IVKINHAND_H)
 #define _IVKINHAND_H
 
-#include "inversekinematic.h"
+#include <kautham/util/libkin/inversekinematic.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>

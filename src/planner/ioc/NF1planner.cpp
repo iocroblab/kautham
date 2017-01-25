@@ -26,8 +26,8 @@
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include "localplanner.h"
-#include "NF1planner.h"
+#include <kautham/planner/ioc/localplanner.h>
+#include <kautham/planner/ioc/NF1planner.h>
 
 
 namespace Kautham {

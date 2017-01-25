@@ -33,8 +33,8 @@
 #include <ompl/base/ProjectionEvaluator.h>
 #include <ompl/base/spaces/RealVectorStateProjections.h>
 
-#include "omplSBLplanner.h"
-#include "omplValidityChecker.h"
+#include <kautham/planner/omplg/omplSBLplanner.h>
+#include <kautham/planner/omplg/omplValidityChecker.h>
 
 
 namespace Kautham {

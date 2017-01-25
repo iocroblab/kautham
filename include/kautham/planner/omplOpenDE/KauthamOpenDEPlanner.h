@@ -35,7 +35,7 @@
 #include <ompl/config.h>
 
 #include <ompl/base/spaces/RealVectorStateSpace.h>
-//#include "omplcplanner.h"
+//#include <kautham/planner/omplc/omplcplanner.h>
 
 
 #include <kautham/problem/workspace.h>
@@ -52,13 +52,13 @@
 #include <iostream>
 
 #include <ode/ode.h>
-#include "KauthamOpenDEauxiliarclasses.h"
-//#include "omplcplanner.h"
+#include <kautham/planner/omplOpenDE/KauthamOpenDEauxiliarclasses.h>
+//#include <kautham/planner/omplc/omplcplanner.h>
 #include "planner/planner.h"
 
-#include "KauthamOpenDEEnvironment.h"
+#include <kautham/planner/omplOpenDE/KauthamOpenDEEnvironment.h>
 
-#include "KauthamOpenDEtableEnvironment.h"
+#include <kautham/planner/omplOpenDE/KauthamOpenDEtableEnvironment.h>
 
 
 #define _USE_MATH_DEFINES

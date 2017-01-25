@@ -29,8 +29,8 @@
 #ifdef KAUTHAM_USE_ARMADILLO
 
 #include <ompl/base/OptimizationObjective.h>
-#include "synergy_tree.h"
-#include "omplplanner.h"
+#include <kautham/planner/omplg/synergy_tree.h>
+#include <kautham/planner/omplg/omplplanner.h>
 
 
 namespace ompl {

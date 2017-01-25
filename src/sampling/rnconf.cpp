@@ -24,7 +24,7 @@
 
  
  
-#include "rnconf.h"
+#include <kautham/sampling/rnconf.h>
 #include <stdexcept>
 
 using namespace std;

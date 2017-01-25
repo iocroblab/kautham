@@ -26,12 +26,12 @@
 #if !defined(_SDKSAMPLER_H)
 #define _SDKSAMPLER_H
 
-#include "sampler.h"
-#include "sequence.h"
+#include <kautham/sampling/sampler.h>
+#include <kautham/sampling/sequence.h>
 #include <external/lcprng.h>
-#include "sdksample.h"
-#include "wmat.h"
-#include "tmat.h"
+#include <kautham/sampling/sdksample.h>
+#include <kautham/sampling/wmat.h>
+#include <kautham/sampling/tmat.h>
 
 
 namespace Kautham{

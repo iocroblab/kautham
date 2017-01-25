@@ -35,10 +35,10 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include "omplLazyTRRTplanner.h"
-#include "omplValidityChecker.h"
-#include "omplMyOptimizationObjective.h"
-#include "lazyTRRT.h"
+#include <kautham/planner/omplg/omplLazyTRRTplanner.h>
+#include <kautham/planner/omplg/omplValidityChecker.h>
+#include <kautham/planner/omplg/omplMyOptimizationObjective.h>
+#include <kautham/planner/omplg/lazyTRRT.h>
 
 
 namespace Kautham {

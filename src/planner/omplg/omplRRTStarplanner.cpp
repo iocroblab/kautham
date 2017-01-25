@@ -31,15 +31,15 @@
 #include <boost/bind/mem_fn.hpp>
 #include <iostream>
 
-#include "omplRRTStarplanner.h"
-#include "omplValidityChecker.h"
+#include <kautham/planner/omplg/omplRRTStarplanner.h>
+#include <kautham/planner/omplg/omplValidityChecker.h>
 
 
 #include <ompl/base/OptimizationObjective.h>
 #include <ompl/base/objectives/PathLengthOptimizationObjective.h>
 #include <ompl/base/objectives/MaximizeMinClearanceObjective.h>
-#include "omplPCAalignmentOptimizationObjective.h"
-#include "omplMyOptimizationObjective.h"
+#include <kautham/planner/omplg/omplPCAalignmentOptimizationObjective.h>
+#include <kautham/planner/omplg/omplMyOptimizationObjective.h>
 
 //for myRRTstar
 #include "ompl/base/goals/GoalSampleableRegion.h"

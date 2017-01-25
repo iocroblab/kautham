@@ -26,7 +26,7 @@
 #if !defined(_ROBOT_H)
 #define _ROBOT_H
 
-#include "link.h"
+#include <kautham/problem/link.h>
 #include <mt/transform.h>
 #include <kautham/sampling/robconf.h>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>

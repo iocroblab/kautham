@@ -26,9 +26,9 @@
 #if !defined(_GAUSSIANSAMPLER_H)
 #define _GAUSSIANSAMPLER_H
 
-#include "sampler.h"
+#include <kautham/sampling/sampler.h>
 #include <external/lcprng.h>
-#include "randomsampler.h"
+#include <kautham/sampling/randomsampler.h>
 
 
 

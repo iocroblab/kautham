@@ -28,8 +28,8 @@
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include "localplanner.h"
-#include "iocplanner.h"
+#include <kautham/planner/ioc/localplanner.h>
+#include <kautham/planner/ioc/iocplanner.h>
 
 using namespace std;
 

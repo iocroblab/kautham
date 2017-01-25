@@ -29,8 +29,8 @@
 #define _KauthamOpenDEKPIECEplanner_H
 #define dDOUBLE
 
-#include "KauthamOpenDEPlanner.h"
-#include "KauthamOpenDEtableEnvironment.h"
+#include <kautham/planner/omplOpenDE/KauthamOpenDEPlanner.h>
+#include <kautham/planner/omplOpenDE/KauthamOpenDEtableEnvironment.h>
 #include "planner/omplc/omplcplanner.h"
 #include "sampling/sampling.h"
 #include <ompl/control/planners/kpiece/KPIECE1.h>

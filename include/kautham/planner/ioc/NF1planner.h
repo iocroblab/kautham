@@ -33,9 +33,9 @@
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include "localplanner.h"
+#include <kautham/planner/ioc/localplanner.h>
 #include <kautham/planner/planner.h>
-#include "gridplanner.h"
+#include <kautham/planner/ioc/gridplanner.h>
 
 using namespace std;
 

@@ -24,11 +24,11 @@
 
  
 
-#include <problem/ivworkspace.h>
+#include <kautham/problem/ivworkspace.h>
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include "localplanner.h"
-#include "gridplanner.h"
+#include <kautham/planner/ioc/localplanner.h>
+#include <kautham/planner/ioc/gridplanner.h>
 
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoText3.h>

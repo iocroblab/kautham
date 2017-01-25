@@ -26,14 +26,16 @@
 #if !defined(_IVWORKSPACE_H)
 #define _IVWORKSPACE_H
 
-#include "workspace.h"
-#include <util/kthutil/kauthamdefs.h>
+
 #include <Inventor/engines/SoComputeBoundingBox.h>
 #include <Inventor/engines/SoCompose.h>
 #include <Inventor/engines/SoConcatenate.h>
 #include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/nodes/SoIndexedLineSet.h>
 #include <Inventor/nodes/SoTransform.h>
+
+#include <kautham/problem/workspace.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
 
 
 namespace Kautham{

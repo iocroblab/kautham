@@ -27,7 +27,7 @@
 #if !defined(_IVKINTXHAND_H)
 #define _IVKINTXHAND_H
 
-#include "inversekinematic.h"
+#include <kautham/util/libkin/inversekinematic.h>
 
 /** \addtogroup libKin
  *  @{

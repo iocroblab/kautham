@@ -23,7 +23,7 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "lazyTRRT.h"
+#include <kautham/planner/omplg/lazyTRRT.h>
 
 #include <ompl/base/objectives/MechanicalWorkOptimizationObjective.h>
 #include <ompl/base/goals/GoalSampleableRegion.h>

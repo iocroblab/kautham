@@ -26,7 +26,7 @@
 #ifndef KTHQUERY_H
 #define KTHQUERY_H
 
-#include <util/kthutil/kauthamdefs.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
 #include <vector>
 #include <string>
 #include <sstream>

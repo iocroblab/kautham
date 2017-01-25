@@ -27,8 +27,8 @@
 #if !defined(_SEQUENCE_H)
 #define _SEQUENCE_H
 
-#include "wmat.h"
-#include "tmat.h"
+#include <kautham/sampling/wmat.h>
+#include <kautham/sampling/tmat.h>
 
 namespace Kautham {
 

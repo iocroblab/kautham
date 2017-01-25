@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
  
-#include "sdksample.h"
+#include <kautham/sampling/sdksample.h>
 #include <external/lcprng.h>
 #include <sstream>
 #include <iostream>

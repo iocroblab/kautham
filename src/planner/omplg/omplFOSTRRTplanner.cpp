@@ -23,9 +23,9 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "omplFOSTRRTplanner.h"
-#include "TRRT.h"
-#include "FOSOptimizationObjective.h"
+#include <kautham/planner/omplg/omplFOSTRRTplanner.h>
+#include <kautham/planner/omplg/TRRT.h>
+#include <kautham/planner/omplg/FOSOptimizationObjective.h>
 
 
 using namespace Kautham::omplplanner;

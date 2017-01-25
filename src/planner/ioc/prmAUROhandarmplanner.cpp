@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "prmAUROhandarmplanner.h"
+#include <kautham/planner/ioc/prmAUROhandarmplanner.h>
 #include <iostream>
 #include <fstream>
 

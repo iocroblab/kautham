@@ -24,7 +24,7 @@
 
  
 
-#include "wmat.h"
+#include <kautham/sampling/wmat.h>
 #include <sstream>
 
 using namespace std;

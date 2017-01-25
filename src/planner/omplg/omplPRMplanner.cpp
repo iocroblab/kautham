@@ -49,9 +49,9 @@
 #define foreach_fwd BOOST_FOREACH
 #define foreach_reverse BOOST_REVERSE_FOREACH
 
-#include "omplPRMplanner.h"
-#include "omplValidityChecker.h"
-//#include "omplplanner.h"
+#include <kautham/planner/omplg/omplPRMplanner.h>
+#include <kautham/planner/omplg/omplValidityChecker.h>
+//#include <kautham/planner/omplg/omplplanner.h>
 
 
 namespace Kautham {

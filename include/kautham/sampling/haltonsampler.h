@@ -31,7 +31,7 @@
 #if !defined(_HALTONSAMPLER_H)
 #define _HALTONSAMPLER_H
 
-#include "sampler.h"
+#include <kautham/sampling/sampler.h>
 #include <vector>
 #include <string>
 

@@ -27,9 +27,9 @@
 #if !defined(_ROBCONF_H)
 #define _ROBCONF_H
 
-#include "se3conf.h"
-#include "rnconf.h"
-#include "robweight.h"
+#include <kautham/sampling/se3conf.h>
+#include <kautham/sampling/rnconf.h>
+#include <kautham/sampling/robweight.h>
 
 namespace Kautham{
 

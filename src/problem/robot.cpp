@@ -22,28 +22,33 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
-#include "robot.h"
-#include <kautham/util/kthutil/kauthamdefs.h>
-#include <kautham/kautham/kautham/util/libkin/inversekinematic.h>
-#include <util/libkin/ivkintx90.h>
-#include <util/libkin/ivkintxhand.h>
-#include <util/libkin/ivkinhand.h>
-#include <kautham/util/libkin/ivkin2drr.h>
-#include <util/libkin/ivkinUR5.h>
-#include <util/libkin/constrainedkinematic.h>
-#include <problem/ivpqpelement.h>
-#include <util/kthutil/kauthamexception.h>
-#include <mt/point3.h>
-#include <mt/rotation.h>
 #include <cstdlib>
 #include <cstdio>
 #include <fstream>
 #include <string>
+
 //to solve local convertions problems
 #include <locale.h>
+
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
-#include "urdf.h"
-#include "assimpImport.h"
+
+#include <mt/point3.h>
+#include <mt/rotation.h>
+
+#include <kautham/problem/urdf.h>
+#include <kautham/problem/assimpImport.h>
+#include <kautham/problem/robot.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
+#include <kautham/util/libkin/inversekinematic.h>
+#include <kautham/util/libkin/ivkintx90.h>
+#include <kautham/util/libkin/ivkintxhand.h>
+#include <kautham/util/libkin/ivkinhand.h>
+#include <kautham/util/libkin/ivkin2drr.h>
+#include <kautham/util/libkin/ivkinUR5.h>
+#include <kautham/util/libkin/constrainedkinematic.h>
+#include <kautham/problem/ivpqpelement.h>
+#include <kautham/util/kthutil/kauthamexception.h>
+
 
 /*
 #if defined(KAUTHAM_USE_GUIBRO)

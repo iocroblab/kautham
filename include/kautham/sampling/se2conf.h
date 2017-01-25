@@ -26,7 +26,7 @@
 #if !defined(_SE2CONF_H)
 #define _SE2CONF_H
 
-#include "conf.h"
+#include <kautham/sampling/conf.h>
 #include <string>
 #include <sstream>
 #include <iostream>

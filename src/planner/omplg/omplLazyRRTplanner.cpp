@@ -29,8 +29,8 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include "omplLazyRRTplanner.h"
-#include "omplValidityChecker.h"
+#include <kautham/planner/omplg/omplLazyRRTplanner.h>
+#include <kautham/planner/omplg/omplValidityChecker.h>
 
 
 

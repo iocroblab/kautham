@@ -22,7 +22,7 @@
 
 /* Author: Alexander Perez, Jan Rosell */
 
-#include "robweight.h"
+#include <kautham/sampling/robweight.h>
 
 namespace Kautham{
 

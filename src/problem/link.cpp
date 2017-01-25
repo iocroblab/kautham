@@ -23,15 +23,15 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
-#include "link.h"
+#include <kautham/problem/link.h>
 
 #if defined(KAUTHAM_USE_FCL)
-#include "ivfclelement.h"
+#include <kautham/problem/ivfclelement.h>
 #else
 #if defined(KAUTHAM_USE_PQP)
-#include "ivpqpelement.h"
+#include <kautham/problem/ivpqpelement.h>
 #else
-#include "ivelement.h"
+#include <kautham/problem/ivelement.h>
 #endif
 #endif
 

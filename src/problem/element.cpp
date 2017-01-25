@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell */
 
 
-    #include "element.h"
+    #include <kautham/problem/element.h>
 
 
     namespace Kautham {

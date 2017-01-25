@@ -27,7 +27,7 @@
 #define _OMPLFOSTRRTCONNECTPLANNER_H
 
 
-#include "omplplanner.h"
+#include <kautham/planner/omplg/omplplanner.h>
 
 
 /** \addtogroup Planner

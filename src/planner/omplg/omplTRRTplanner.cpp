@@ -30,9 +30,9 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include "omplTRRTplanner.h"
-#include "omplValidityChecker.h"
-#include "omplMyOptimizationObjective.h"
+#include <kautham/planner/omplg/omplTRRTplanner.h>
+#include <kautham/planner/omplg/omplValidityChecker.h>
+#include <kautham/planner/omplg/omplMyOptimizationObjective.h>
 
 
 

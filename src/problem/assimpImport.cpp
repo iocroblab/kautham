@@ -23,7 +23,7 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "assimpImport.h"
+#include <kautham/problem/assimpImport.h>
 
 #ifdef KAUTHAM_USE_ASSIMP
 #include <assimp/scene.h>

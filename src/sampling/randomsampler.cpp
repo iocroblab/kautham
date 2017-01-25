@@ -23,8 +23,8 @@
 /* Author: Alexander Perez, Jan Rosell */
 
 
-#include "randomsampler.h"
-#include "randomsample.h"
+#include <kautham/sampling/randomsampler.h>
+#include <kautham/sampling/randomsample.h>
 #include <vector>
 
 namespace Kautham{

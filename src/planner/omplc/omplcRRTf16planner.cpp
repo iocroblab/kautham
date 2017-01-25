@@ -29,7 +29,7 @@
 #include <boost/bind/mem_fn.hpp>
 #include <ompl/base/spaces/SE2StateSpace.h>
 
-#include "omplcRRTf16planner.h"
+#include <kautham/planner/omplc/omplcRRTf16planner.h>
 
 
 

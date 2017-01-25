@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
-#include "prmhandplanner.h"
+#include <kautham/planner/ioc/prmhandplanner.h>
 
 #if !defined(_PRMROBOTHANDCONSTPLANNERICRA_H)
 #define _PRMROBOTHANDCONSTPLANNERICRA_H

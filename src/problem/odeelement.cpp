@@ -23,7 +23,7 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "odeelement.h"
+#include <kautham/problem/odeelement.h>
 
 
 using namespace std;

@@ -23,7 +23,7 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "state.h"
+#include <kautham/sampling/state.h>
 
 
 namespace Kautham{

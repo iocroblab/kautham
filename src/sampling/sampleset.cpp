@@ -24,9 +24,9 @@
 
 
 #include <stdio.h>
-#include "sampleset.h"
-#include "sample.h"
-#include "sdksample.h"
+#include <kautham/sampling/sampleset.h>
+#include <kautham/sampling/sample.h>
+#include <kautham/sampling/sdksample.h>
 #include <external/libann/DNN/multiann.h>
 #include <cmath>
 //#include <crtdbg.h>

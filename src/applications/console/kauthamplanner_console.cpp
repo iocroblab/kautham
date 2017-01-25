@@ -27,17 +27,20 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include "kauthamshell.h"
-#include <problem/problem.h>
-#include "benchmark.h"
-#include <planner/ioc/kthquery.h>
-#include <planner/ioc/iocplanner.h>
+
 #include <Inventor/SoDB.h>
-#include "util/kthutil/kauthamexception.h"
 
 #ifdef KAUTHAM_USE_MPI
 #include <mpi.h>
 #endif
+
+#include <kautham/applications/console/kauthamshell.h>
+#include <kautham/problem/problem.h>
+#include <kautham/applications/console/benchmark.h>
+#include <kautham/planner/ioc/kthquery.h>
+#include <kautham/planner/ioc/iocplanner.h>
+#include <kautham/util/kthutil/kauthamexception.h>
+
 
 using namespace std;
 

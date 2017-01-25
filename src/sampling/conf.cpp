@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell */
 
  
-#include "conf.h"
+#include <kautham/sampling/conf.h>
 #include <stdexcept>
 
 using namespace std;

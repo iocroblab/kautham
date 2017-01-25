@@ -26,7 +26,7 @@
 #if defined(KAUTHAM_USE_OMPL)
 #if defined(KAUTHAM_USE_ODE)
 
-#include "KauthamOpenDERRTPlanner.h"
+#include <kautham/planner/omplOpenDE/KauthamOpenDERRTPlanner.h>
 #include <sampling/state.h>
 namespace Kautham {
 
