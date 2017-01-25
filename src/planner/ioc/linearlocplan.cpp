@@ -26,7 +26,7 @@
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include "linearlocplan.h"
+#include <kautham/planner/ioc/linearlocplan.h>
 
 
 namespace Kautham {

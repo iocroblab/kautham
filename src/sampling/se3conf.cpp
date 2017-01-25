@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell */
 
 
-#include "se3conf.h"
+#include <kautham/sampling/se3conf.h>
 #include <cmath>
 
 #if !defined(M_PI)

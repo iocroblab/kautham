@@ -33,8 +33,8 @@
 #include <ompl/base/objectives/StateCostIntegralObjective.h>
 #include <ompl/base/Cost.h>
 
-#include "synergy_tree.h"
-#include "omplplanner.h"
+#include <kautham/planner/omplg/synergy_tree.h>
+#include <kautham/planner/omplg/omplplanner.h>
 
 namespace ob = ompl::base;
 

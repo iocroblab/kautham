@@ -38,7 +38,7 @@ namespace ob = ompl::base;
 namespace oc = ompl::control;
 
 
-#include "omplcplanner.h"
+#include <kautham/planner/omplc/omplcplanner.h>
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>

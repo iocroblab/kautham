@@ -30,8 +30,8 @@
 #include <ompl/base/OptimizationObjective.h>
 #include <ompl/base/ProjectionEvaluator.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
-#include "omplPCAalignmentOptimizationObjective.h"
-#include "omplplanner.h" //for the definition of weightedRealVectorStateSpace class
+#include <kautham/planner/omplg/omplPCAalignmentOptimizationObjective.h>
+#include <kautham/planner/omplg/omplplanner.h> //for the definition of weightedRealVectorStateSpace class
 
 
 #include <boost/numeric/ublas/matrix.hpp>

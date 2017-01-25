@@ -23,21 +23,22 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
+#include <sstream>
   
-#include <Inventor/Qt/SoQt.h>
 #include <QFile>
 #include <QSettings>
 #include <QString>
 #include <QMessageBox>
-#include <sstream>
-#include <problem/ivworkspace.h>
-#include <kautham/util/kthutil/kauthamdefs.h>
-#include <util/kthutil/kauthamexception.h>
-#include "kauthamgui.h"
-#include "dofwidget.h"
 #include <QApplication>
 #include <QWidget>
+
 #include <Inventor/Qt/SoQt.h>
+
+#include <kautham/problem/ivworkspace.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
+#include <kautham/util/kthutil/kauthamexception.h>
+#include "kauthamgui.h"
+#include "dofwidget.h"
 
 
 #define MAXRECENTFILES 5

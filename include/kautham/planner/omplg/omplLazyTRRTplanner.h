@@ -27,7 +27,7 @@
 
 #if defined(KAUTHAM_USE_OMPL)
 
-#include "omplplanner.h"
+#include <kautham/planner/omplg/omplplanner.h>
 
 
 namespace ob = ompl::base;

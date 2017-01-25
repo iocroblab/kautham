@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell */
 
 
-#include "prmhandplanner.h"
+#include <kautham/planner/ioc/prmhandplanner.h>
 
 #if !defined(_PRMHANDPLANNERIROS_H)
 #define _PRMHANDPLANNERIROS_H

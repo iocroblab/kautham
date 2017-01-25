@@ -26,7 +26,7 @@
 //FIXME: this planner is done for a single TREE robot (associtated to wkSpace->robots[0])
 
 
-#include "prmhandplannerIROS.h"
+#include <kautham/planner/ioc/prmhandplannerIROS.h>
  
  namespace Kautham {
 

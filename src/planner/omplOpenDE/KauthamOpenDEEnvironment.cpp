@@ -31,7 +31,7 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include "KauthamOpenDEEnvironment.h"
+#include <kautham/planner/omplOpenDE/KauthamOpenDEEnvironment.h>
 
 #include <ompl/base/spaces/SE2StateSpace.h>
 #include <ompl/base/PlannerStatus.h>

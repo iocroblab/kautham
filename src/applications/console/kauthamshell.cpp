@@ -23,12 +23,13 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
-
-#include <planner/omplg/omplplanner.h>
-#include "kauthamshell.h"
-#include "util/kthutil/kauthamexception.h"
 #include <iostream>
-#include <problem/problem.h>
+
+#include <kautham/planner/omplg/omplplanner.h>
+#include <kautham/applications/console/kauthamshell.h>
+#include <kautham/util/kthutil/kauthamexception.h>
+#include <kautham/problem/problem.h>
+
 
 namespace ob = ompl::base;
 

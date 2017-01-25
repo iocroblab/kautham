@@ -22,7 +22,7 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
-#include "prmhandplanner.h"
+#include <kautham/planner/ioc/prmhandplanner.h>
 
 #if !defined(_PRMHANDPLANNERICRA_H)
 #define _PRMHANDPLANNERICRA_H

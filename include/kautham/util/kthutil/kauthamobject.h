@@ -27,7 +27,7 @@
 #if !defined(_KAUTHAMOBJECT_H)
 #define _KAUTHAMOBJECT_H
 
-#include "kauthamdefs.h"
+#include <kautham/util/kthutil/kauthamdefs.h>
 
 using namespace std;
 using namespace Kautham;

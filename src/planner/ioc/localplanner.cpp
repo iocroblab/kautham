@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell */
 
  
-#include "localplanner.h"
+#include <kautham/planner/ioc/localplanner.h>
 
 namespace Kautham {
 

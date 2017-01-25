@@ -25,7 +25,7 @@
 #include <string>
 #include <sstream>
 #include <boost/algorithm/string.hpp>
-#include "planner.h"
+#include <kautham/planner/planner.h>
 #include <pugixml.hpp>
 #include <iostream>
 #include <fstream>

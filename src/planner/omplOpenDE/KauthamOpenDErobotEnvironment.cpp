@@ -31,7 +31,7 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include "KauthamOpenDErobotEnvironment.h"
+#include <kautham/planner/omplOpenDE/KauthamOpenDErobotEnvironment.h>
 
 
 

@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
-#include "workspace.h"
+#include <kautham/problem/workspace.h>
 #include <vector>
 #include <typeinfo>
 

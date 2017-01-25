@@ -22,7 +22,7 @@
 
 /* Author: Alexander Perez, Jan Rosell */
 
-#include "robconf.h"
+#include <kautham/sampling/robconf.h>
 
 namespace Kautham{
 

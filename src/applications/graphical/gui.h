@@ -25,17 +25,21 @@
 #if !defined(_GUI_H)
 #define _GUI_H
 
-#include <QtGui>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+
 #include <vector>
 #include <string>
+
+#include <QtGui>
+
+#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
-#include <problem/robot.h>
+
 #include "ui_RobotSim.h"
 #include <kautham/planner/planner.h>
-#include <problem/problem.h>
+#include <kautham/problem/problem.h>
 #include <kautham/sampling/sampling.h>
-#include <kautham/kautham/kautham/util/libkin/inversekinematic.h>
+#include <kautham/util/libkin/inversekinematic.h>
+#include <kautham/problem/robot.h>
 #include "controlwidget.h"
 #include "plannerwidget.h"
 #include "defaultpathdialog.h"

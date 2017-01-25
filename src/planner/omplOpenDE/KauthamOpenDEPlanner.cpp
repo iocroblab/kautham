@@ -25,7 +25,7 @@
 #if defined(KAUTHAM_USE_OMPL)
 #if defined(KAUTHAM_USE_ODE)
 
-#include"KauthamOpenDEPlanner.h"
+#include<kautham/planner/omplOpenDE/KauthamOpenDEPlanner.h>
 #include "planner/omplg/omplplanner.h"
 #include "planner/omplc/omplcplanner.h"
 #include <sampling/state.h>

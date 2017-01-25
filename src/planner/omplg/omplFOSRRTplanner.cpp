@@ -29,9 +29,9 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include "omplFOSRRTplanner.h"
-#include "omplValidityChecker.h"
-#include "FOSRRT.h"
+#include <kautham/planner/omplg/omplFOSRRTplanner.h>
+#include <kautham/planner/omplg/omplValidityChecker.h>
+#include <kautham/planner/omplg/FOSRRT.h>
 
 #include <pugixml.hpp>
 

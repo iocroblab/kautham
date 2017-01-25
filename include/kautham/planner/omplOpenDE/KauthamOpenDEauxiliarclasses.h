@@ -39,8 +39,8 @@
 #include <iostream>
 
 #include <ode/ode.h>
-//#include "omplcplanner.h"
-#include "KauthamOpenDEEnvironment.h"
+//#include <kautham/planner/omplc/omplcplanner.h>
+#include <kautham/planner/omplOpenDE/KauthamOpenDEEnvironment.h>
 #include <sampling/sample.h>
 
 

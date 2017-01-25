@@ -25,7 +25,7 @@
 
 #if !defined(_SAMPLER_H)
 #define _SAMPLER_H
-#include "sample.h"
+#include <kautham/sampling/sample.h>
 
 //using namespace std;
 namespace Kautham{

@@ -32,8 +32,8 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/astar_search.hpp>
-#include "localplanner.h"
-#include "iocplanner.h"
+#include <kautham/planner/ioc/localplanner.h>
+#include <kautham/planner/ioc/iocplanner.h>
 
 
 using namespace std;

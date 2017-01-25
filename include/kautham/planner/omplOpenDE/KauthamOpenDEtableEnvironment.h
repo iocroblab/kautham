@@ -72,7 +72,7 @@
 #include <problem/link.h>
 #include <problem/robot.h>
 #include <problem/ivelement.h>
-#include "KauthamOpenDEEnvironment.h"
+#include <kautham/planner/omplOpenDE/KauthamOpenDEEnvironment.h>
 #include <ompl/base/ProjectionEvaluator.h>
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>

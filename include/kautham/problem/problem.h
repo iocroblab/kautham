@@ -26,59 +26,63 @@
 #if !defined(_PROBLEM_H)
 #define _PROBLEM_H
 
-#include <kautham/planner/planner.h>
-#include <kautham/sampling/sampling.h>
-#include <ompl/geometric/SimpleSetup.h>
-#include "robot.h"
-#include "ivworkspace.h"
-#include "workspace.h"
-#include <sampling/state.h>
-#include <pugixml.hpp>
+
 #include <string>
 #include <fstream>
 #include <iostream>
+
 #include <boost/algorithm/string.hpp>
 
 //solving convertions problems
 #include <locale.h>
 
+#include <pugixml.hpp>
+
+#include <ompl/geometric/SimpleSetup.h>
+
+#include <kautham/planner/planner.h>
+#include <kautham/sampling/sampling.h>
+#include <kautham/problem/robot.h>
+#include <kautham/problem/ivworkspace.h>
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/state.h>
 
 #if defined(KAUTHAM_USE_IOC)
-#include <planner/ioc/myplanner.h>
-#include <planner/ioc/prmplanner.h>
-#include <planner/ioc/prmhandplannerICRA.h>
-#include <planner/ioc/prmAUROhandarmplanner.h>
-#include <planner/ioc/prmPCAhandarmplanner.h>
-#include <planner/ioc/prmrobothandconstplannerICRA.h>
-#include <planner/ioc/prmhandplannerIROS.h>
-#include <planner/ioc/myprmplanner.h>
-#include <planner/ioc/mygridplanner.h>
-#include <planner/ioc/NF1planner.h>
-#include <planner/ioc/HFplanner.h>
+#include <kautham/planner/ioc/myplanner.h>
+#include <kautham/planner/ioc/prmplanner.h>
+#include <kautham/planner/ioc/prmhandplannerICRA.h>
+#include <kautham/planner/ioc/prmAUROhandarmplanner.h>
+#include <kautham/planner/ioc/prmPCAhandarmplanner.h>
+#include <kautham/planner/ioc/prmrobothandconstplannerICRA.h>
+#include <kautham/planner/ioc/prmhandplannerIROS.h>
+#include <kautham/planner/ioc/myprmplanner.h>
+#include <kautham/planner/ioc/mygridplanner.h>
+#include <kautham/planner/ioc/NF1planner.h>
+#include <kautham/planner/ioc/HFplanner.h>
 #endif
 
 #if defined(KAUTHAM_USE_OMPL)
-#include <planner/omplg/omplPRMplanner.h>
-#include <planner/omplg/omplRRTplanner.h>
-#include <planner/omplg/omplLazyRRTplanner.h>
-#include <planner/omplg/omplpRRTplanner.h>
-#include <planner/omplg/omplRRTConnectplanner.h>
-#include <planner/omplg/omplRRTStarplanner.h>
-#include <planner/omplg/omplTRRTplanner.h>
-#include <planner/omplg/omplTRRTConnectplanner.h>
-#include <planner/omplg/omplLazyTRRTplanner.h>
-#include <planner/omplg/omplRRTConnectplannerEUROC.h>
-#include <planner/omplg/omplFOSRRTplanner.h>
-#include <planner/omplg/omplFOSRRTConnectplanner.h>
-#include <planner/omplg/omplFOSTRRTplanner.h>
-#include <planner/omplg/omplFOSTRRTConnectplanner.h>
-#include <planner/omplg/omplPCARRTplanner.h>
-#include <planner/omplg/omplESTplanner.h>
-#include <planner/omplg/omplSBLplanner.h>
-#include <planner/omplg/omplKPIECEplanner.h>
-#include <planner/omplc/omplcRRTplanner.h>
-#include <planner/omplc/omplcRRTcarplanner.h>
-#include <planner/omplc/omplcRRTf16planner.h>
+#include <kautham/planner/omplg/omplPRMplanner.h>
+#include <kautham/planner/omplg/omplRRTplanner.h>
+#include <kautham/planner/omplg/omplLazyRRTplanner.h>
+#include <kautham/planner/omplg/omplpRRTplanner.h>
+#include <kautham/planner/omplg/omplRRTConnectplanner.h>
+#include <kautham/planner/omplg/omplRRTStarplanner.h>
+#include <kautham/planner/omplg/omplTRRTplanner.h>
+#include <kautham/planner/omplg/omplTRRTConnectplanner.h>
+#include <kautham/planner/omplg/omplLazyTRRTplanner.h>
+#include <kautham/planner/omplg/omplRRTConnectplannerEUROC.h>
+#include <kautham/planner/omplg/omplFOSRRTplanner.h>
+#include <kautham/planner/omplg/omplFOSRRTConnectplanner.h>
+#include <kautham/planner/omplg/omplFOSTRRTplanner.h>
+#include <kautham/planner/omplg/omplFOSTRRTConnectplanner.h>
+#include <kautham/planner/omplg/omplPCARRTplanner.h>
+#include <kautham/planner/omplg/omplESTplanner.h>
+#include <kautham/planner/omplg/omplSBLplanner.h>
+#include <kautham/planner/omplg/omplKPIECEplanner.h>
+#include <kautham/planner/omplc/omplcRRTplanner.h>
+#include <kautham/planner/omplc/omplcRRTcarplanner.h>
+#include <kautham/planner/omplc/omplcRRTf16planner.h>
 #endif
 
 #if defined(KAUTHAM_USE_ODE)

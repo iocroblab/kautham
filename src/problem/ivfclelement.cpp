@@ -25,7 +25,7 @@
 
 #ifdef KAUTHAM_USE_FCL
 
-#include "ivfclelement.h"
+#include <kautham/problem/ivfclelement.h>
 #include <kautham/util/kthutil/kauthamdefs.h>
 #include <map>
 

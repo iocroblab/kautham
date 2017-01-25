@@ -24,8 +24,8 @@
 
 
 #include "ompl/geometric/planners/rrt/RRT.h"
-#include "synergy_tree.h"
-#include "omplplanner.h"
+#include <kautham/planner/omplg/synergy_tree.h>
+#include <kautham/planner/omplg/omplplanner.h>
 
 
 namespace ompl {

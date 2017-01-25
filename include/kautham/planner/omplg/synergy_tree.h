@@ -27,7 +27,7 @@
 #define SYNERGY_TREE_H
 
 
-#include "synergy.h"
+#include <kautham/planner/omplg/synergy.h>
 
 
 //! Data structure representing an optimum cell division

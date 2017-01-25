@@ -30,9 +30,9 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include "omplPCARRTplanner.h"
-#include "omplValidityChecker.h"
-#include "PCARRT.h"
+#include <kautham/planner/omplg/omplPCARRTplanner.h>
+#include <kautham/planner/omplg/omplValidityChecker.h>
+#include <kautham/planner/omplg/PCARRT.h>
 
 
 namespace Kautham {

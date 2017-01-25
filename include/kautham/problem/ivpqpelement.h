@@ -26,15 +26,18 @@
 #if !defined(_IVPQPELEMENT_H)
 #define _IVPQPELEMENT_H
 
-#include "ivelement.h"
-#include <util/kthutil/kauthamdefs.h>
+
 #include <Inventor/SoPrimitiveVertex.h>
-#include <external/pqp/PQP.h>
-#include <external/lcprng.h>
 #include <Inventor/actions/SoCallbackAction.h>
 #include <Inventor/SbLinear.h>
 #include <Inventor/nodes/SoVertexProperty.h>
 #include <Inventor/nodes/SoFaceSet.h>
+
+#include <external/pqp/PQP.h>
+#include <external/lcprng.h>
+
+#include <kautham/problem/ivelement.h>
+#include <kautham/util/kthutil/kauthamdefs.h>
 
 
 namespace Kautham {

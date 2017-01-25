@@ -25,7 +25,7 @@
 
 #if defined(KAUTHAM_USE_OMPL)
 #if defined(KAUTHAM_USE_ODE)
-#include "KauthamOpenDEauxiliarclasses.h"
+#include <kautham/planner/omplOpenDE/KauthamOpenDEauxiliarclasses.h>
 
 class KauthamODEobject;
 

@@ -30,9 +30,9 @@
 #include <kautham/sampling/sampling.h>
 #include <cmath>
 #include <string>
-#include "localplanner.h"
+#include <kautham/planner/ioc/localplanner.h>
 #include <mt/transform.h>
-#include "kthquery.h"
+#include <kautham/planner/ioc/kthquery.h>
 #include <kautham/planner/planner.h>
 
 using namespace std;

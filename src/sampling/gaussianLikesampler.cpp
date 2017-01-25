@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell */
 
 
-#include "gaussianLikesampler.h"
+#include <kautham/sampling/gaussianLikesampler.h>
 #include <iostream>
 #include <fstream>
 //#include <stdio.h>

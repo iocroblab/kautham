@@ -24,7 +24,7 @@
 
  
 
-#include "ivpqpelement.h"
+#include <kautham/problem/ivpqpelement.h>
 
 	
 namespace Kautham {

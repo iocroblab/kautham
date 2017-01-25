@@ -74,7 +74,7 @@
 #include <problem/link.h>
 #include <problem/robot.h>
 #include <problem/ivelement.h>
-#include "KauthamOpenDEEnvironment.h"
+#include <kautham/planner/omplOpenDE/KauthamOpenDEEnvironment.h>
 
 
 
@@ -94,7 +94,7 @@ namespace oc = ompl::control;
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-//#include "planner.h"
+//#include <kautham/planner/planner.h>
 
 
 using namespace std;

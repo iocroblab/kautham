@@ -25,7 +25,7 @@
 #if !defined(_PRMHANDPLANNERARMHAND_H)
 #define _PRMHANDPLANNERARMHAND_H
 
-#include "prmhandplanner.h"
+#include <kautham/planner/ioc/prmhandplanner.h>
 
 
 #if defined(KAUTHAM_USE_ARMADILLO)

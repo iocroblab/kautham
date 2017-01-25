@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell */
 
 
-#include "sdksampler.h"
+#include <kautham/sampling/sdksampler.h>
 
 namespace Kautham {
   int SDKSample::M = 0;

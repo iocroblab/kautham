@@ -25,13 +25,17 @@
 #if !defined(_CONSTRAINEDCONTROLWIDGET_H)
 #define _CONSTRAINEDCONTROLWIDGET_H
 
-#include <QtGui>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+
 #include <vector>
 #include <string>
-#include <problem/robot.h>
-#include <problem/problem.h>
-#include <util/libkin/constrainedkinematic.h>
+
+#include <QtGui>
+
+#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+
+#include <kautham/problem/robot.h>
+#include <kautham/problem/problem.h>
+#include <kautham/util/libkin/constrainedkinematic.h>
 #include <kautham/util/kthutil/kauthamdefs.h>
 
 

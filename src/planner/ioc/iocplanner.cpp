@@ -27,8 +27,8 @@
 #include <string>
 #include <sstream>
 #include <boost/algorithm/string.hpp>
-#include "iocplanner.h"
-#include "linearlocplan.h"
+#include <kautham/planner/ioc/iocplanner.h>
+#include <kautham/planner/ioc/linearlocplan.h>
 #include <pugixml.hpp>
 #include <iostream>
 #include <fstream>

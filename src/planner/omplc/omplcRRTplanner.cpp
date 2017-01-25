@@ -31,7 +31,7 @@
 #include <boost/bind/mem_fn.hpp>
 #include <ompl/base/spaces/SE2StateSpace.h>
 
-#include "omplcRRTplanner.h"
+#include <kautham/planner/omplc/omplcRRTplanner.h>
 
 
 

@@ -23,7 +23,7 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "synergy.h"
+#include <kautham/planner/omplg/synergy.h>
 #include <algorithm>
 #include <math.h>
 #include <boost/math/distributions/fisher_f.hpp>

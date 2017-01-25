@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "prmhandplannerICRA.h"
+#include <kautham/planner/ioc/prmhandplannerICRA.h>
  
  namespace Kautham {
 

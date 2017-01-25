@@ -25,16 +25,18 @@
 
 //FIXME: this planner is done for a single TREE robot (associtated to wkSpace->robots[0])
 
+
 #include <stdio.h>
 #include <time.h>
+
 #include <Inventor/fields/SoSFVec3f.h>
 #include <Inventor/fields/SoSFRotation.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoRotation.h>
-#include <problem/ivpqpelement.h>
 
-#include "prmrobothandconstplannerICRA.h"
-#include "constlinearlocplan.h"
+#include <kautham/problem/ivpqpelement.h>
+#include <kautham/planner/ioc/prmrobothandconstplannerICRA.h>
+#include <kautham/planner/ioc/constlinearlocplan.h>
 
  
  namespace Kautham {

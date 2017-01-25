@@ -24,7 +24,7 @@
 
 #ifdef KAUTHAM_USE_ARMADILLO
 
-#include "FOSOptimizationObjective.h"
+#include <kautham/planner/omplg/FOSOptimizationObjective.h>
 
 
 #define MAX_COST 1e6

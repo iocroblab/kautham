@@ -23,7 +23,7 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
  
-#include "ivworkspace.h"
+#include <kautham/problem/ivworkspace.h>
 
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/nodes/SoDrawStyle.h>

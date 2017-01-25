@@ -25,21 +25,8 @@
 
 #if defined(KAUTHAM_USE_OMPL)
 
-#include <kautham/problem/workspace.h>
-#include <kautham/sampling/sampling.h>
 
 #include <boost/bind/mem_fn.hpp>
-
-#include "omplcplanner.h"
-#include <planner/omplg/omplplanner.h>
-
-
-#include <ompl/base/spaces/SE2StateSpace.h>
-#include <ompl/base/PlannerStatus.h>
-#include <ompl/base/StateSpace.h>
-#include <ompl/base/spaces/SO3StateSpace.h>
-#include <ompl/base/goals/GoalStates.h>
-
 
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoCoordinate3.h>
@@ -48,6 +35,17 @@
 #include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoMaterial.h>
+
+#include <ompl/base/spaces/SE2StateSpace.h>
+#include <ompl/base/PlannerStatus.h>
+#include <ompl/base/StateSpace.h>
+#include <ompl/base/spaces/SO3StateSpace.h>
+#include <ompl/base/goals/GoalStates.h>
+
+#include <kautham/problem/workspace.h>
+#include <kautham/sampling/sampling.h>
+#include <kautham/planner/omplc/omplcplanner.h>
+#include <kautham/planner/omplg/omplplanner.h>
 
 
 namespace Kautham {

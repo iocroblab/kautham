@@ -26,7 +26,7 @@
 #if !defined(_IVKINUR5_H)
 #define _IVKINUR5_H
 
-#include "inversekinematic.h"
+#include <kautham/util/libkin/inversekinematic.h>
 
 
 /** \addtogroup libKin

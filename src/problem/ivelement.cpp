@@ -23,14 +23,15 @@
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
-
-
-#include "ivelement.h"
-#include <util/kthutil/kauthamexception.h>
-#include "assimpImport.h"
 #include <boost/algorithm/string.hpp>
+
 #if  defined(KAUTHAM_USE_ARMADILLO)
 #include <armadillo>
+
+
+#include <kautham/problem/ivelement.h>
+#include <kautham/util/kthutil/kauthamexception.h>
+#include <kautham/problem/assimpImport.h>
 
 
 using namespace arma;

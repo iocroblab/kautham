@@ -23,7 +23,7 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include "synergy_tree.h"
+#include <kautham/planner/omplg/synergy_tree.h>
 #include <algorithm>
 #include <cmath>
 #include <vector>

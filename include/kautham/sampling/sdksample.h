@@ -29,9 +29,9 @@
 
 #include <string>
 #include <vector>
-#include "wmat.h"
+#include <kautham/sampling/wmat.h>
 #include <external/lcprng.h>			//class for linear congruential generators
-#include "sample.h"
+#include <kautham/sampling/sample.h>
 
 using namespace std;
 

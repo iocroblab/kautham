@@ -37,7 +37,7 @@ namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
 
-#include "omplplanner.h"
+#include <kautham/planner/omplg/omplplanner.h>
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>

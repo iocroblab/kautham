@@ -28,7 +28,7 @@
 
 #include <stdio.h>
 #include <time.h>
-#include "prmPCAhandarmplanner.h"
+#include <kautham/planner/ioc/prmPCAhandarmplanner.h>
 #include <boost/random.hpp>
 
 ///////////////Armadillo////////

@@ -22,14 +22,16 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
+
 #include "plannerwidget.h"
 #include "gui.h"
-#include <sampling/se3conf.h>
+#include <kautham/sampling/se3conf.h>
 #include <kautham/sampling/robconf.h>
 
 #if defined(KAUTHAM_USE_IOC)
-#include <planner/ioc/iocplanner.h>
+#include <kautham/planner/ioc/iocplanner.h>
 #endif
+
 
 namespace Kautham {
     PlannerWidget::PlannerWidget(Planner* plan, SampleSet* samp, bool camera):KauthamWidget(plan){

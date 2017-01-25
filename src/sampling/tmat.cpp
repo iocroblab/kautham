@@ -24,7 +24,7 @@
 
  
 
-#include "tmat.h"
+#include <kautham/sampling/tmat.h>
 #include <string>
 #include <sstream>
 #include <math.h>
