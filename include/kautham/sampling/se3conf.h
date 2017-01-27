@@ -26,12 +26,16 @@
 #if !defined(_SE3CONF_H)
 #define _SE3CONF_H
 
-#include <kautham/sampling/se2conf.h>
+
 #include <string>
 #include <sstream>
 #include <iostream>
+
 #include <mt/mt.h>
+
 #include <external/lcprng.h>
+
+#include <kautham/sampling/se2conf.h>
 
 
 using namespace std;

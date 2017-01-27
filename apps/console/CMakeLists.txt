@@ -1,10 +1,6 @@
-set(KAUTHAM_SRC ${KAUTHAM_SRC} kauthamshell.cpp)
-
 set(SRC_FILES benchmark.cpp
-		kauthamplanner_console.cpp
-		kauthamshell.cpp)
+              kauthamplanner_console.cpp)
 
-include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${mt_DIR}
                     ${OMPL_INCLUDE_DIRS})
 if(KAUTHAM_OMPL)

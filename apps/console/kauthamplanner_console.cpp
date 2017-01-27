@@ -34,12 +34,14 @@
 #include <mpi.h>
 #endif
 
-#include <kautham/applications/console/kauthamshell.h>
+#include <kautham/kauthamshell.h>
+
 #include <kautham/problem/problem.h>
-#include <kautham/applications/console/benchmark.h>
 #include <kautham/planner/ioc/kthquery.h>
 #include <kautham/planner/ioc/iocplanner.h>
 #include <kautham/util/kthutil/kauthamexception.h>
+
+#include "benchmark.h"
 
 
 using namespace std;

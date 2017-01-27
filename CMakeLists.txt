@@ -139,11 +139,58 @@ catkin_package(
 endif( KAUTHAM_ROS )
 
 
+##################### Qt-Creator ####################################
+
+FILE(GLOB_RECURSE LibFiles ${CMAKE_SOURCE_DIR}/include/*.h)
+add_custom_target(headers SOURCES ${LibFiles})
+
+
+#### Boost package ###############
+find_package( Boost COMPONENTS  system serialization thread REQUIRED )
+if(Boost_FOUND)
+  message(STATUS "Boost library found at first attempt.")
+else(Boost_FOUND)
+  set( BOOST_ROOT $ENV{BOOSTDIR})
+        message(STATUS "Boost library NOT found at first attempt. Setting BOOST_ROOT to" $ENV{BOOSTDIR})
+        find_package( Boost COMPONENTS  system serialization thread REQUIRED )
+        if(Boost_FOUND)
+                message(STATUS "Boost library found in " ${BOOST_ROOT})
+                include_directories(${Boost_INCLUDE_DIRS})
+                set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
+                link_directories( ${Boost_LIBRARY_DIRS} )
+        else(Boost_FOUND)
+                message(STATUS "Boost library not found. Boost-dependent headers will NOT be available")
+        endif(Boost_FOUND)
+endif(Boost_FOUND)
+
+#### Coin3D package ###############
+# graphics library
+find_package( Coin REQUIRED )
+if( COIN_LIBRARY_FOUND )
+   message( STATUS "Using Coin library")
+   add_definitions( -DCOIN_DLL )
+   include_directories( ${COIN_INCLUDE_DIR} )
+    set(EXTRA_LIBS ${EXTRA_LIBS} ${COIN_LIBRARY})
+else( COIN_LIBRARY_FOUND )
+   message(SEND_ERROR "Kautham needs Coin library")
+endif(COIN_LIBRARY_FOUND )
+
+#### MT ###############
+set(mt_DIR ${CMAKE_SOURCE_DIR}/include/kautham/util/libmt)
+message (STATUS "Adding libmt directory ${mt_DIR}")
+include_directories( ${mt_DIR} )
+
+
 ##################### ROS-catkin ####################################
+
+include_directories( ${CMAKE_SOURCE_DIR}/include)
+include_directories( ${CMAKE_SOURCE_DIR}/src )  # for external
 
 # Building librarires
 
 add_subdirectory ( src )
+add_subdirectory ( apps )
+
 
 ##############################################################################
 # Documentation

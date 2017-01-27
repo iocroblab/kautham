@@ -1,14 +1,8 @@
 #### Adding subdirectories
 
-include_directories( ${CMAKE_SOURCE_DIR}/include)
-set(mt_DIR ${CMAKE_SOURCE_DIR}/src/util/libmt)
-message (STATUS "Adding libmt directory ${mt_DIR}")
-include_directories( ${mt_DIR} )
-include_directories( ${CMAKE_SOURCE_DIR}/src )  # for external
-
 set ( kin_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin )
 set ( kthutil_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/kthutil )
-set ( mt_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libmt )
+
 
 ##### pugixml ########
 find_package( PugiXML )
@@ -23,31 +17,7 @@ else(PUGI_XML_FOUND)
 endif(PUGI_XML_FOUND)
 set(EXTRA_LIBS ${EXTRA_LIBS} ${PUGI_XML_LIBRARIES} PARENT_SCOPE  )
 
-#### Boost package ###############
-find_package( Boost COMPONENTS  system serialization thread REQUIRED )
-if(Boost_FOUND)
-  message(STATUS "Boost library found at first attempt.")
-else(Boost_FOUND)
-  set( BOOST_ROOT $ENV{BOOSTDIR})
-        message(STATUS "Boost library NOT found at first attempt. Setting BOOST_ROOT to" $ENV{BOOSTDIR})
-        find_package( Boost COMPONENTS  system serialization thread REQUIRED )
-        if(Boost_FOUND)
-                message(STATUS "Boost library found in " ${BOOST_ROOT})
-                include_directories(${Boost_INCLUDE_DIRS})
-                set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
-                link_directories( ${Boost_LIBRARY_DIRS} )
-        else(Boost_FOUND)
-                message(STATUS "Boost library not found. Boost-dependent headers will NOT be available")
-        endif(Boost_FOUND)
-endif(Boost_FOUND)
-
 add_subdirectory( util )
-
-include_directories( ${CMAKE_SOURCE_DIR}/include)
-#                       ${kthutil_DIR}
-#                       ${mt_DIR}
-#                       ${kin_DIR})                   
-
 add_subdirectory ( external )
 
 #### Coin3D package ###############
@@ -132,14 +102,13 @@ endif( KAUTHAM_IOC )
 
 # Adding subdirectories
 
-add_subdirectory( applications)
 add_subdirectory( planner )
 add_subdirectory( problem )
 add_subdirectory( sampling )
 
 #message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
 
-add_library(libkautham SHARED ${KAUTHAM_SRC} ${CMAKE_CURRENT_SOURCE_DIR}/applications/console/kauthamshell.cpp)
+add_library(libkautham SHARED ${KAUTHAM_SRC} ${CMAKE_CURRENT_SOURCE_DIR}/kauthamshell.cpp)
 set_target_properties( libkautham PROPERTIES
   SOVERSION "${KAUTHAM_VERSION_MAJOR}.${KAUTHAM_VERSION_MINOR}"
   VERSION "${KAUTHAM_VERSION}"

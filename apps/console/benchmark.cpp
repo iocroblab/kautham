@@ -30,7 +30,7 @@
 #include <kautham/planner/omplg/omplplanner.h>
 #include <kautham/planner/omplg/omplValidityChecker.h>
 
-#include <kautham/applications/console/benchmark.h>
+#include "benchmark.h"
 
 
 #define SSTR(x) dynamic_cast<std::ostringstream&>(std::ostringstream() << std::dec << x).str()

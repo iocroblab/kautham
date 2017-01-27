@@ -1,7 +1,3 @@
-include_directories( ${COIN_INCLUDE_DIR} )
-include_directories(${CMAKE_SOURCE_DIR}/src)
-include_directories(${mt_DIR})
-
 ##############################################################################
 # START Required packages for GUI
 find_package( Qt4 REQUIRED QtCore QtGui QtXml )
