@@ -25,8 +25,8 @@
 
 #include <iostream>
 
+#include <kautham/kauthamshell.h>
 #include <kautham/planner/omplg/omplplanner.h>
-#include <kautham/applications/console/kauthamshell.h>
 #include <kautham/util/kthutil/kauthamexception.h>
 #include <kautham/problem/problem.h>
 

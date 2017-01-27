@@ -1,5 +1,6 @@
 ##############################################################################
 # START building Kautham applications
+
 if( KAUTHAM_GUI )
    message( STATUS "making KAUTHAM GUI" )
    add_subdirectory( graphical )
