@@ -28,44 +28,48 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <std_msgs/String.h>
+
 #include <ros/ros.h>
+
 #include <Inventor/SoDB.h>
-#include "std_msgs/String.h"
-#include "../console/kauthamshell.h"
-#include "kautham/CloseProblem.h"
-#include "kautham/ProblemOpened.h"
-#include "kautham/OpenProblem.h"
-#include "kautham/OpenProblemStream.h"
-#include "kautham/CheckCollision.h"
-#include "kautham/SetRobotsConfig.h"
-#include "kautham/SetObstaclesConfig.h"
-#include "kautham/SetQuery.h"
-#include "kautham/SetInit.h"
-#include "kautham/SetGoal.h"
-#include "kautham/SetInitObs.h"
-#include "kautham/ClearSampleSet.h"
-#include "kautham/SetRobControls.h"
-#include "kautham/SetRobControlsStream.h"
-#include "kautham/SetDefaultRobControls.h"
-#include "kautham/SetObsControls.h"
-#include "kautham/SetObsControlsStream.h"
-#include "kautham/SetFixedObsControls.h"
-#include "kautham/SetPlannerByName.h"
-#include "kautham/SetPlanner.h"
-#include "kautham/SetPlannerStream.h"
-#include "kautham/SetPlannerParameter.h"
-#include "kautham/Solve.h"
-#include "kautham/GetPath.h"
-#include "kautham/AddRobot.h"
-#include "kautham/RemoveRobot.h"
-#include "kautham/AddObstacle.h"
-#include "kautham/RemoveObstacle.h"
-#include "kautham/AttachObstacle2RobotLink.h"
-#include "kautham/DetachObstacle.h"
-#include "kautham/Connect.h"
-#include "kautham/GetLastPlanComputationTime.h"
-#include "kautham/GetNumEdges.h"
-#include "kautham/GetNumVertices.h"
+
+#include <kautham/kauthamshell.h>
+
+#include <kautham/CloseProblem.h>
+#include <kautham/ProblemOpened.h>
+#include <kautham/OpenProblem.h>
+#include <kautham/OpenProblemStream.h>
+#include <kautham/CheckCollision.h>
+#include <kautham/SetRobotsConfig.h>
+#include <kautham/SetObstaclesConfig.h>
+#include <kautham/SetQuery.h>
+#include <kautham/SetInit.h>
+#include <kautham/SetGoal.h>
+#include <kautham/SetInitObs.h>
+#include <kautham/ClearSampleSet.h>
+#include <kautham/SetRobControls.h>
+#include <kautham/SetRobControlsStream.h>
+#include <kautham/SetDefaultRobControls.h>
+#include <kautham/SetObsControls.h>
+#include <kautham/SetObsControlsStream.h>
+#include <kautham/SetFixedObsControls.h>
+#include <kautham/SetPlannerByName.h>
+#include <kautham/SetPlanner.h>
+#include <kautham/SetPlannerStream.h>
+#include <kautham/SetPlannerParameter.h>
+#include <kautham/Solve.h>
+#include <kautham/GetPath.h>
+#include <kautham/AddRobot.h>
+#include <kautham/RemoveRobot.h>
+#include <kautham/AddObstacle.h>
+#include <kautham/RemoveObstacle.h>
+#include <kautham/AttachObstacle2RobotLink.h>
+#include <kautham/DetachObstacle.h>
+#include <kautham/Connect.h>
+#include <kautham/GetLastPlanComputationTime.h>
+#include <kautham/GetNumEdges.h>
+#include <kautham/GetNumVertices.h>
 
 
 using namespace std;

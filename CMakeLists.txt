@@ -37,8 +37,8 @@ LIST( GET KAUTHAM_VERSIONS 2 KAUTHAM_VERSION_PATCH)
 message( "Kautham version ${VERSION} (${KAUTHAM_VERSION_MAJOR}.${KAUTHAM_VERSION_MINOR}.${KAUTHAM_VERSION_PATCH})" )
 
 if(COMMAND cmake_policy)
-      cmake_policy(SET CMP0003 NEW)
-    endif(COMMAND cmake_policy)
+    cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
 
 ########### Options ####################
@@ -74,74 +74,74 @@ include(CMakePackageConfigHelpers)
 
 
 if( KAUTHAM_ROS )
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-  trajectory_msgs
-  message_generation
-)
-include_directories(${catkin_INCLUDE_DIRS})
 
-add_service_files(
-   DIRECTORY srv
-   FILES 
-   AddObstacle.srv
-   DetachObstacle.srv
-   SetDefaultRobControls.srv
-   SetObsControlsStream.srv
-   SetQuery.srv
-   AddRobot.srv
-   GetPath.srv
-   SetFixedObsControls.srv
-   SetObstaclesConfig.srv
-   SetRobControls.srv
-   AttachObstacle2RobotLink.srv
-   OpenProblem.srv   
-   OpenProblemStream.srv
-   SetGoal.srv
-   SetPlannerByName.srv
-   SetRobControlsStream.srv
-   CheckCollision.srv   
-   ProblemOpened.srv
-   SetInitObs.srv
-   SetPlannerParameter.srv
-   SetRobotsConfig.srv
-   ClearSampleSet.srv    
-   RemoveObstacle.srv
-   SetInit.srv
-   SetPlanner.srv
-   Solve.srv
-   CloseProblem.srv
-   RemoveRobot.srv
-   SetObsControls.srv
-   SetPlannerStream.srv
-   Connect.srv
-   GetLastPlanComputationTime.srv
-   GetNumEdges.srv
-   GetNumVertices.srv
-)
+    find_package(catkin REQUIRED COMPONENTS
+      roscpp
+      std_msgs
+      trajectory_msgs
+      message_generation
+    )
+    include_directories(${catkin_INCLUDE_DIRS} include)
 
-add_message_files(
-   DIRECTORY msg
-   FILES 
-   fVector.msg
-)
+    add_service_files(
+       DIRECTORY apps/ros/srv
+       FILES
+       AddObstacle.srv
+       DetachObstacle.srv
+       SetDefaultRobControls.srv
+       SetObsControlsStream.srv
+       SetQuery.srv
+       AddRobot.srv
+       GetPath.srv
+       SetFixedObsControls.srv
+       SetObstaclesConfig.srv
+       SetRobControls.srv
+       AttachObstacle2RobotLink.srv
+       OpenProblem.srv
+       OpenProblemStream.srv
+       SetGoal.srv
+       SetPlannerByName.srv
+       SetRobControlsStream.srv
+       CheckCollision.srv
+       ProblemOpened.srv
+       SetInitObs.srv
+       SetPlannerParameter.srv
+       SetRobotsConfig.srv
+       ClearSampleSet.srv
+       RemoveObstacle.srv
+       SetInit.srv
+       SetPlanner.srv
+       Solve.srv
+       CloseProblem.srv
+       RemoveRobot.srv
+       SetObsControls.srv
+       SetPlannerStream.srv
+       Connect.srv
+       GetLastPlanComputationTime.srv
+       GetNumEdges.srv
+       GetNumVertices.srv
+    )
 
-generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)
+    add_message_files(
+       DIRECTORY apps/ros/msg
+       FILES
+       fVector.msg
+    )
 
+    generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)
 
-catkin_package(
-  #INCLUDE_DIRS  ${CMAKE_SOURCE_DIR}/src
-  INCLUDE_DIRS  ${CMAKE_SOURCE_DIR}
-  CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
-)
+    catkin_package(
+      INCLUDE_DIRS include
+      LIBRARIES kautham
+      CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
+    )
 
 endif( KAUTHAM_ROS )
 
 
 ##################### Qt-Creator ####################################
 
-FILE(GLOB_RECURSE LibFiles ${CMAKE_SOURCE_DIR}/include/*.h)
+FILE(GLOB_RECURSE LibFiles include/*.h src/external/*.h src/external/gdiam/*.h src/external/pqp/*.h src/external/pugixml/*.h)
 add_custom_target(headers SOURCES ${LibFiles})
 
 
@@ -176,15 +176,15 @@ else( COIN_LIBRARY_FOUND )
 endif(COIN_LIBRARY_FOUND )
 
 #### MT ###############
-set(mt_DIR ${CMAKE_SOURCE_DIR}/include/kautham/util/libmt)
+set(mt_DIR include/kautham/util/libmt)
 message (STATUS "Adding libmt directory ${mt_DIR}")
 include_directories( ${mt_DIR} )
 
 
 ##################### ROS-catkin ####################################
 
-include_directories( ${CMAKE_SOURCE_DIR}/include)
-include_directories( ${CMAKE_SOURCE_DIR}/src )  # for external
+include_directories( include )
+include_directories( src )  # for external
 
 # Building librarires
 
@@ -231,10 +231,5 @@ endif()
 ##############################################################################
 #########################################################
 # Copy Help file
-#install(DIRECTORY ${CMAKE_SOURCE_DIR} DESTINATION share/kautham)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/demos DESTINATION share/kautham)
-
-
-
-
-
+#install(DIRECTORY . DESTINATION share/kautham)
+install(DIRECTORY demos DESTINATION share/kautham)

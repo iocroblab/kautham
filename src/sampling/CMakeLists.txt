@@ -1,6 +1,6 @@
 # libSampling
 
-include_directories( ${mt_DIR} ${CMAKE_SOURCE_DIR}/src )
+include_directories( ${mt_DIR} .. )
 
 #link_directories( ${CMAKE_SOURCE_DIR}/libann ${CMAKE_SOURCE_DIR}/libproblem )
 

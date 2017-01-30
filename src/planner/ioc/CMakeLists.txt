@@ -1,11 +1,10 @@
 # this file makes the libiocplanner library.
-include_directories( ${CMAKE_SOURCE_DIR}/src
-                     ${mt_DIR})
+include_directories( ${mt_DIR} )
 			
 file( GLOB SRC_IOC_FILES *.cpp )
 file( GLOB HDR_IOC_FILES *.h )
 
-set(KAUTHAM_SRC ${KAUTHAM_SRC} ${SRC_IOC_FILES} PARENT_SCOPE )
+set( KAUTHAM_SRC ${KAUTHAM_SRC} ${SRC_IOC_FILES} PARENT_SCOPE )
 
 if( ARMADILLO_FOUND )
     message( STATUS "armadillo Package FOUND. Adding armadillo library.")

@@ -2,7 +2,7 @@
 
 include_directories( ${GDIAM_DIR} )
 
-include_directories( ${CMAKE_SOURCE_DIR}/src
+include_directories( ..
                      ${mt_DIR})
 
 if( ASSIMP_FOUND )
