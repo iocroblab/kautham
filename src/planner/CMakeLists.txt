@@ -1,6 +1,5 @@
 # this file makes the libplanner library.
-include_directories( ${CMAKE_SOURCE_DIR}/src
-                     ${mt_DIR})
+include_directories( ${mt_DIR})
 
 file( GLOB SRC_FILES *.cpp )
 file( GLOB HDR_FILES *.h )

@@ -18,7 +18,7 @@ endif(PUGI_XML_FOUND)
 set(EXTRA_LIBS ${EXTRA_LIBS} ${PUGI_XML_LIBRARIES} PARENT_SCOPE  )
 
 add_subdirectory( util )
-add_subdirectory ( external )
+add_subdirectory( external )
 
 #### Coin3D package ###############
 # graphics library
