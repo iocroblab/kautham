@@ -27,7 +27,6 @@
 #include <kautham/problem/ivworkspace.h>
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include <kautham/planner/ioc/localplanner.h>
 #include <kautham/planner/ioc/gridplanner.h>
 
 #include <Inventor/nodes/SoCube.h>
@@ -74,7 +73,6 @@ namespace Kautham {
 			step+=_stepsDiscretization[i];
 		}
 
-        _locPlanner->setStepSize(1/step);
 
 
         //set max samples
@@ -519,8 +517,7 @@ namespace Kautham {
     void gridPlanner::clearGraph()
 	{
   		weights.clear();
-	    edges.clear();
-		_samples->clearNeighs();
+        edges.clear();
 	    if(_isGraphSet){
 		    locations.clear();
 		    delete g;

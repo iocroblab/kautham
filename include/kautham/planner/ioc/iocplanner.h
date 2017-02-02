@@ -30,7 +30,6 @@
 #include <kautham/sampling/sampling.h>
 #include <cmath>
 #include <string>
-#include <kautham/planner/ioc/localplanner.h>
 #include <mt/transform.h>
 #include <kautham/planner/ioc/kthquery.h>
 #include <kautham/planner/planner.h>
@@ -67,28 +66,14 @@ namespace Kautham {
     //! example see /libplanner/output_file_model.kps
     virtual bool                  loadData(string path);
 
-    inline void                   setSampler(Sampler* smp){_sampler = smp;}
-    inline Sampler*               getSampler(){return _sampler;}
-
-
     inline vector<KthQuery>&       getQueries(){return _queries;}
     bool                           addQuery(unsigned init, unsigned goal);
     int                            findQuery(unsigned init, unsigned goal, unsigned from = 0);
 
-
-    //!  This method must be used to add samples that corresponds with the 
-    //! zero crossing point in case the planner will provide a path to be 
-    //! teleoperated and it must have the possibility to crossing singular points.
-    void                           addZeroCrossingToPath();
-
-
     bool solveAndInherit();
-    inline LocalPlanner* getLocalPlanner(){return _locPlanner;}
 
 	protected:
     iocPlanner();
-    Sampler*                      _sampler;
-    LocalPlanner*                 _locPlanner;
     vector<KthQuery>              _queries;
     // Stats
     unsigned                      _collChecks;

@@ -49,13 +49,6 @@
 
 #if defined(KAUTHAM_USE_IOC)
 #include <kautham/planner/ioc/myplanner.h>
-#include <kautham/planner/ioc/prmplanner.h>
-#include <kautham/planner/ioc/prmhandplannerICRA.h>
-#include <kautham/planner/ioc/prmAUROhandarmplanner.h>
-#include <kautham/planner/ioc/prmPCAhandarmplanner.h>
-#include <kautham/planner/ioc/prmrobothandconstplannerICRA.h>
-#include <kautham/planner/ioc/prmhandplannerIROS.h>
-#include <kautham/planner/ioc/myprmplanner.h>
 #include <kautham/planner/ioc/mygridplanner.h>
 #include <kautham/planner/ioc/NF1planner.h>
 #include <kautham/planner/ioc/HFplanner.h>

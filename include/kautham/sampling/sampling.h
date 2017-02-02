@@ -29,7 +29,6 @@
 #include <kautham/sampling/sdksample.h>
 #include <kautham/sampling/randomsample.h>
 #include <kautham/sampling/sdksampler.h>
-#include <kautham/sampling/gaussianLikesampler.h>
 #include <kautham/sampling/gaussiansampler.h>
 #include <kautham/sampling/randomsampler.h>
 #include <kautham/sampling/haltonsampler.h>

@@ -101,7 +101,7 @@ namespace Kautham{
 
 	  //! Function to set \f$ \alpha \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ \alpha \f$ parameter.*/
-    inline void         setAlpha(KthReal alp){if(!armed)alpha = a;}
+    inline void         setAlpha(KthReal alp){if(!armed)alpha = alp;}
 
 	  //! Function to set \f$ a \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ a \f$ parameter.*/

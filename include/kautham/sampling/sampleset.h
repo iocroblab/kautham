@@ -29,9 +29,6 @@
 
 #include <vector>
 
-#include <external/libann/DNN/ANN.h>
-#include <external/libann/DNN/multiann.h>
-
 #include <kautham/sampling/sample.h>
 #include <kautham/problem/workspace.h>
 
@@ -87,36 +84,7 @@ namespace Kautham{
     //! latest neighbours searching.
     inline bool             changed(){return hasChanged;}
 
-    //! This method finds and returns a set of all neighbours for the 
-    //! Sample samp as a pointer to vector.  This is performed using the 
-    //! Brute Force algorithm
-	vector<unsigned int>*   findBFNeighs(Sample* samp, KthReal thresshold, unsigned int num);
 
-    //! This method finds the neighbours for all contained samples in the SampleSet.
-    //! This is performed using the 
-    //! Brute Force algorithm
-    void findBFNeighs(KthReal thresshold, unsigned int num);
- 
-	//! This method finds the neighbours for the contained samples in the SampleSet that do not yet have an
-	//! assigned connectedcomponent.
-    //! This is performed using the 
-    //! Brute Force algorithm
-	void	updateBFNeighs(KthReal thresshold, unsigned int num);
-   
-	//! This method finds the neighbours for all contained samples in the SampleSet.
-    //! This is performed using the Brute Force algorithm
-    void findAnnNeighs(KthReal thresshold);
-
-    //! This method finds and returns a set of all neighbours for the 
-    //! Sample samp as a pointer to vector.  This is performed using the  
-    //! Approximate Nearest Neighborhood algorithm and its derivatives. 
-    vector<unsigned int>*   findAnnNeighs(Sample* samp, KthReal thresshold);
-
-	//! This method finds the neighbours for all contained samples in the SampleSet.
-	vector<unsigned int>* findNeighs(Sample* samp, KthReal threshold, unsigned int num);
-	//! This method finds and returns a set of all neighbours for the 
-    //! Sample samp as a pointer to vector.
-	void findNeighs(KthReal threshold, unsigned int num);
 
 
     //! If the SampleSet contains SDKSamples, it could return the index 
@@ -134,11 +102,7 @@ namespace Kautham{
     //! Return the index of a known sample smp.
     unsigned int            indexOf(Sample* smp);
 
-    //! Clears the neighbours of the sample placed at the index i.
-    void                    clearNeighs(unsigned int i);
 
-    //! Clears the neigbours of all the samples contained in the SampleSet.
-    void                    clearNeighs();
 
   //! Removes and deletes all samples contained in the SampleSet.
   void                    clear();
@@ -146,19 +110,10 @@ namespace Kautham{
   //! Only removes the pointer stored into the vector. Take care with the memory.
   inline void             clean(){samples.clear();}
 
-	//!creates kdtree structures for ANN search
-	void setANNdatastructures(int maxneighs=0, int maxSamples=0);
-	//!delete ANN data
-	void resetANNdatastructures();
-	//!loads ANN data from vector of samples
-    void loadAnnData();
 
-    inline void setTypeSearch(NEIGHSEARCHTYPE t){typesearch = t;}
-    inline NEIGHSEARCHTYPE getTypeSearch(){return typesearch;}
-    inline void setWorkspacePtr(WorkSpace* wsptr){ws = wsptr;}
-    inline bool isAnnSet(){return setANN;}
-  inline void setMaxNeighs(unsigned int mn){maxNeighs = mn;}
-  inline unsigned int getMaxNeighs(){return maxNeighs;}
+  inline void setWorkspacePtr(WorkSpace* wsptr){ws = wsptr;}
+
+
 
   private:
     //! Vector of pointers to the samples.
@@ -172,17 +127,6 @@ namespace Kautham{
     //! latest neighbours searching.
     bool                    hasChanged;
 
-	//!flag to indicate the kind of search: Brute force or ANN
-	NEIGHSEARCHTYPE typesearch;
-	bool setANN;
-	//!maximum number of samples of the cspace (to reserve memory for data_pts)
-	unsigned int maxSamples;
-	//!maximum number neighs per sample
-	unsigned int maxNeighs;
-	//!ANN search structure
-	MultiANN *MAG; 
-	//!array of points for the ANN search for neighs
-	ANNpointArray	data_pts;	
 	//!pointer to workSpace
 	WorkSpace *ws;
 	

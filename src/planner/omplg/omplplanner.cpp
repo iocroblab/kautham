@@ -321,13 +321,11 @@ namespace Kautham {
             _samplerHalton = new HaltonSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
             _samplerSDK = new SDKSampler(kauthamPlanner_->wkSpace()->getNumRobControls(), level);
             _samplerGaussian = new GaussianSampler(kauthamPlanner_->wkSpace()->getNumRobControls(), sigma, kauthamPlanner_->wkSpace());
-            _samplerGaussianLike = new GaussianLikeSampler(kauthamPlanner_->wkSpace()->getNumRobControls(), level, kauthamPlanner_->wkSpace());
 
             _samplerVector.push_back(_samplerRandom);
             _samplerVector.push_back(_samplerHalton);
             _samplerVector.push_back(_samplerSDK);
             _samplerVector.push_back(_samplerGaussian);
-            _samplerVector.push_back(_samplerGaussianLike);
         }
 
 
