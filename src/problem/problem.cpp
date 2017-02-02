@@ -160,28 +160,8 @@ namespace Kautham {
         if (name == "dummy") //Dummy if to start.
             cout<<"planer name is dummy?"<<endl;
 #if defined(KAUTHAM_USE_IOC)
-        else if (name == "PRM")
-            _planner = new IOC::PRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
-
-        else if (name == "PRM Hand IROS")
-            _planner = new IOC::PRMHandPlannerIROS(CONTROLSPACE, sinit, sgoal,
-                                                   _cspace, _sampler, _wspace, 5, 0.001 );
-        else if (name == "PRM Hand ICRA")
-            _planner = new IOC::PRMHandPlannerICRA(CONTROLSPACE, sinit, sgoal,
-                                                   _cspace, _sampler, _wspace, 100, 5, 0.010, 5);
-
-        else if (name == "PRMAURO HandArm")
-            _planner = new IOC::PRMAUROHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
-                                                      _sampler, _wspace, 10, 0.0010, 10);
-
-        else if (name == "PRM RobotHand-Const ICRA")
-            _planner = new IOC::PRMRobotHandConstPlannerICRA(CONTROLSPACE, sinit, sgoal, _cspace,
-                                                             _sampler, _wspace, 3, 50.0);
         else if (name == "MyPlanner")
             _planner = new IOC::MyPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
-
-        else if (name == "MyPRMPlanner")
-            _planner = new IOC::MyPRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 
         else if (name == "MyGridPlanner")
             _planner = new IOC::MyGridPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
@@ -191,17 +171,8 @@ namespace Kautham {
 
         else if (name == "HFPlanner")
             _planner = new IOC::HFPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
+#endif
 
-#if defined(KAUTHAM_USE_ARMADILLO)
-        else if (name == "PRMPCA HandArm")
-            _planner = new IOC::PRMPCAHandArmPlanner(CONTROLSPACE, sinit, sgoal, _cspace,
-                                                     _sampler, _wspace, 10,0, 0.0010, 10,0.0,0.0);
-#endif
-#endif
-#if defined(KAUTHAM_USE_GUIBRO)
-        else if (name == "GUIBROgrid")
-            _planner = new GUIBRO::GUIBROgridPlanner(CONTROLSPACE, NULL, NULL, _cspace, _sampler, _wspace);
-#endif
 #if defined(KAUTHAM_USE_OMPL)
         else if (name == "omplDefault")
             _planner = new omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);

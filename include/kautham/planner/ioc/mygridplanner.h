@@ -29,7 +29,6 @@
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include <kautham/planner/ioc/localplanner.h>
 #include <kautham/planner/planner.h>
 #include <kautham/planner/ioc/gridplanner.h>
 

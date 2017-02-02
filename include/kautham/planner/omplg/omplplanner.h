@@ -97,7 +97,6 @@ namespace Kautham {
             vector<Sampler*> _samplerVector;
             SDKSampler* _samplerSDK;
             HaltonSampler* _samplerHalton;
-            GaussianLikeSampler* _samplerGaussianLike;
             GaussianSampler* _samplerGaussian;
             RandomSampler* _samplerRandom;
         };

@@ -28,7 +28,6 @@
 #include <sstream>
 #include <boost/algorithm/string.hpp>
 #include <kautham/planner/ioc/iocplanner.h>
-#include <kautham/planner/ioc/linearlocplan.h>
 #include <pugixml.hpp>
 #include <iostream>
 #include <fstream>
@@ -46,15 +45,12 @@ namespace Kautham{
   {
       _family = IOCPLANNER;
     _guiName = _idName = "";
-      _sampler = sampler;
 
     _triedSamples = _generatedEdges = _collChecks = 0;
     _maxNumSamples = 1000;
     _totalTime = _smoothTime = 0. ;
 
 
-    KthReal ssize = 0.05;//dummy
-    _locPlanner = new LinearLocalPlanner(CONTROLSPACE, NULL,NULL, _wkSpace, ssize);
 	}
 
   iocPlanner::~iocPlanner(){
@@ -94,7 +90,6 @@ namespace Kautham{
             _totalTime = (KthReal)(finaltime - entertime)/CLOCKS_PER_SEC ;
         }
 
-      addZeroCrossingToPath();
       moveAlongPath(0);
       _wkSpace->inheritSolution(_simulationPath);
       _worldcollChecks = WorkSpace::getCollCheckCounter();
@@ -310,7 +305,6 @@ namespace Kautham{
         for(size_t j=0; j< getQueries()[i].getPath().size(); ++j)
           _path.push_back( _samples->getSampleAt(getQueries()[i].getPath()[j]) );
 
-        addZeroCrossingToPath();
         moveAlongPath(0);
         _wkSpace->inheritSolution(_simulationPath);
 
@@ -324,88 +318,7 @@ namespace Kautham{
 
   void iocPlanner::saveData(){};
 
-  void iocPlanner::addZeroCrossingToPath(){
-    // This method only takes into account the Rn part of 
-    //  the MappenConfiguration associated to each sample 
-    // into the _path vector. In this method, I copy in a new
-    // vector all the content of the path and I add the zero
-    // crossing samples as needed
 
-    vector<Sample*>  newPath;// = new vector<Sample*>();
-    size_t confDim = 0;
-    for(size_t i = 0; i < _path[0]->getMappedConf().size(); ++i)
-      confDim += _path[0]->getMappedConf().at(i).getRn().getDim();
-
-    bool*    signs = new bool[ confDim ]; // This vector is used to follow the change of signs.
-    KthReal* advance = new KthReal[ confDim ];
-    bool     tmpsigns = false;               // Is the coordinate sign positive?
-    char     needInter = 0;
-    
-    Sample *tmpSamp;
-    size_t cummul = 0;
-    for(size_t i = 0; i < _path[0]->getMappedConf().size(); ++i ){
-      for(size_t k = 0; k < _path[0]->getMappedConf().at(i).getRn().getDim(); k++ ){
-        signs[cummul] = _path[0]->getMappedConf().at(i).getRn().getCoordinate( k ) >= 0 ? true : false;
-        cummul++;
-      }
-    }
-
-    // Initialized the copy
-    newPath.push_back( _path.at(0) );
-
-    for(size_t k = 0; k < confDim; k++)
-      advance[k] = 0.;
-      
-    needInter = 0;
-    for(size_t i = 1; i < _path.size(); i++){
-      cummul = 0;
-      for(size_t j = 0; j < _path[i]->getMappedConf().size(); ++j){
-        for(size_t k = 0; k < _path[i]->getMappedConf().at(j).getRn().getDim(); k++ ){
-          tmpsigns = _path[i]->getMappedConf().at(j).getRn().getCoordinate( k ) >= 0 ? true : false;
-
-          if( tmpsigns != signs[cummul] ){ // then needs additional interpolation to include the zero crossing point.
-            advance[cummul] = - _path[i-1]->getMappedConf().at(j).getRn().getCoordinate( k );
-            advance[cummul] /= _path[i]->getMappedConf().at(j).getRn().getCoordinate( k ) - 
-                               _path[i-1]->getMappedConf().at(j).getRn().getCoordinate( k );
-
-            if( advance[cummul] > 0. && advance[cummul] < 1.0 ) needInter ++;
-            if( advance[cummul] == 1. ) advance[cummul] = 0. ;
-            signs[cummul] = tmpsigns;
-          }else
-            advance[cummul] = 0.;
-
-          ++cummul;
-        } 
-      }
-
-      while( needInter > 0 ){
-        size_t min = 0;
-        KthReal tmpVal = 100000.;
-
-        for(size_t k = 0; k < confDim; k++){
-          if( advance[k] != 0. ){
-            min = advance[k] < tmpVal ? k: min;
-            tmpVal = advance[min];
-          }
-        }
-        advance[min] = 0.;
-        tmpSamp = _path.at(i-1)->interpolate( _path.at(i), tmpVal );
-        _samples->add( tmpSamp );
-        newPath.push_back( tmpSamp );
-        --needInter;
-      }
-
-      newPath.push_back( _path.at(i) );
-    }
-
-    _path.clear();
-
-    for( size_t i = 0; i < newPath.size(); ++i)
-      _path.push_back( newPath.at(i) );
-  
-    delete[] advance;
-    delete[] signs;
-  }
  }
 }
 

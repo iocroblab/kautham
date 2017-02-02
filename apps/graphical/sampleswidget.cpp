@@ -165,7 +165,6 @@ namespace Kautham {
         comboBox->insertItem(HALTON,"Halton");
         comboBox->insertItem(RANDOM,"Random");
         comboBox->insertItem(GAUSSIAN,"Gaussian");
-        comboBox->insertItem(GAUSSIANLIKE,"Gaussian-like");
         if (typeid(*sampler) == typeid(SDKSampler)) {
             comboBox->setCurrentIndex(SDK);
         } else if (typeid(*sampler) == typeid(HaltonSampler)) {
@@ -174,8 +173,6 @@ namespace Kautham {
             comboBox->setCurrentIndex(RANDOM);
         } else if (typeid(*sampler) == typeid(GaussianSampler)) {
             comboBox->setCurrentIndex(GAUSSIAN);
-        } else if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
-            comboBox->setCurrentIndex(GAUSSIANLIKE);
         }
         connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(changeEngine(int)));
         vBoxLayout->addWidget(comboBox);
@@ -324,17 +321,11 @@ namespace Kautham {
             initSample->setCoords(sampleSet->getSampleAt(0)->getCoords());
             goalSample->setCoords(sampleSet->getSampleAt(1)->getCoords());
             sampleSet->clear();
-            if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
-                ((GaussianLikeSampler*)sampler)->clear();
-            }
             sampleSet->add(initSample);
             sampleSet->add(goalSample);
-            if (sampleSet->isAnnSet()) sampleSet->loadAnnData();
+
         } else {
             sampleSet->clear();
-            if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
-                ((GaussianLikeSampler*)sampler)->clear();
-            }
         }
         updateSampleList();
     }
@@ -342,9 +333,7 @@ namespace Kautham {
 
     void SamplesWidget::clearSampleList() {
         sampleSet->clear();
-        if (typeid(*sampler) == typeid(GaussianLikeSampler)) {
-            ((GaussianLikeSampler*)sampler)->clear();
-        }
+
         updateSampleList();
     }
 
@@ -380,14 +369,7 @@ namespace Kautham {
                 prob->setSampler(sampler);
             }
             break;
-        case GAUSSIANLIKE:
-            if (typeid(*sampler) != typeid(GaussianLikeSampler)) {
-                delete sampler;
-                sampler = new GaussianLikeSampler(prob->wSpace()->getNumRobControls(),
-                                                   2, prob->wSpace());
-                prob->setSampler(sampler);
-            }
-            break;
+
         default:
             break;
         }

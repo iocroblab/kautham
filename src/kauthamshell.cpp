@@ -890,16 +890,7 @@ namespace Kautham {
                 switch ((int)planner->getFamily()) {
 #if defined(KAUTHAM_USE_IOC)
                     case IOCPLANNER: {
-
-                        ((IOC::iocPlanner*)planner)->getLocalPlanner()->setInitSamp(fromSample);
-                        ((IOC::iocPlanner*)planner)->getLocalPlanner()->setGoalSamp(toSample);
-
-                        if (((IOC::iocPlanner*)planner)->getLocalPlanner()->canConect()) {
-                            cout << "The samples can be connected." << endl;
-                            return true;
-                        } else {
-                            cout << "The samples can not be connected." << endl;
-                        }
+                        cout << "Not implemented for IOC planners" << endl;
                         break;
                     }
 #endif
