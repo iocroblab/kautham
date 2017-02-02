@@ -58,7 +58,6 @@ namespace Kautham {
 
         _guiName = "Grid Planner";
         addParameter("Speed Factor", _speedFactor);
-        addParameter("Max. Samples", _maxNumSamples);
         addParameter("Show labels (0/1)", _showLabels);
         addParameter("num decimals", _decimals);
 

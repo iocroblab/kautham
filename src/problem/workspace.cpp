@@ -63,19 +63,6 @@ namespace Kautham {
     }
 
 
-    void WorkSpace::addDistanceMapFile(string distanceFile) {
-        distanceMapFile = distanceFile;
-    }
-
-
-    void WorkSpace::addDimensionsFile(string dFile) {
-        dimensionsFile = dFile;
-    }
-
-
-    void WorkSpace::addDirCase(string dirc) {
-        dirCase = dirc;
-    }
 
 
     vector<KthReal>* WorkSpace::distanceCheck(Sample* sample) {

@@ -60,18 +60,6 @@ namespace Kautham{
       inline Robot*         getObstacle(unsigned int i){if(i < obstacles.size()) return obstacles[i]; return NULL;}
       inline unsigned       getNumRobots(){return robots.size();}
       inline unsigned       getNumObstacles(){return obstacles.size();}
-      void                  addDistanceMapFile(string distanceFile);
-      inline string         getDistanceMapFile(){return distanceMapFile;}
-      void                  addDimensionsFile(string dfile);
-      inline string         getDimensionsFile(){return dimensionsFile;}
-      void                  addDirCase(string dirc);
-      inline string         getDirCase(){return dirCase;}
-      //void addNeighborhoodMapFile(string neighFile);
-      //inline string getNeighborhoodMapFile(){return neighborhoodMapFile;};
-
-      //      //! This method returns true if the all robots in the scene only accepts SE3 data;
-      //      //! This method is deprecated. Maybe it never has been used.
-      //      bool                  isSE3();
 
       //! This vector contains a pointers to the RobConf of each robot in the
       //! WorkSpace
@@ -134,9 +122,6 @@ namespace Kautham{
       vector<RobConf*>      _robConfigMap;
       vector<RobConf*>      _obsConfigMap;
       vector<RobWeight*>    _robWeight;
-      string                distanceMapFile;
-      string                dimensionsFile;
-      string                dirCase;
       //string neighborhoodMapFile;
 
   private:
