@@ -73,21 +73,6 @@ namespace Kautham {
         if (!setObstacleControls(doc->child("Problem").child("Controls").
                                  attribute("obstacle").as_string())) return false;
 
-        //Add all distance maps to worskpace
-        for (tmpNode = doc->child("Problem").child("DistanceMap");
-             tmpNode; tmpNode = tmpNode.next_sibling("DistanceMap")) {
-            _wspace->addDistanceMapFile(tmpNode.attribute("distanceMap").as_string());
-        }
-
-        //Add all dimensions files to worskpace
-        for (tmpNode = doc->child("Problem").child("DimensionsFile");
-             tmpNode; tmpNode = tmpNode.next_sibling("DimensionsFile")) {
-            string file = tmpNode.attribute("filename").as_string();
-            _wspace->addDimensionsFile(file);
-            string dir = file.substr(0,file.find_last_of("/")+1);
-            _wspace->addDirCase(dir);
-        }
-
         setlocale (LC_NUMERIC, old);
 
         return true;
@@ -618,12 +603,6 @@ namespace Kautham {
 
             //find the obstacle controls file and set its complete path if found
             if (!findAllFiles(&node,"Controls","obstacle",def_path)) return false;
-
-            //find all the distancemap files and set their complete path if found
-            if (!findAllFiles(&node,"DistanceMap","distanceMap",def_path)) return false;
-
-            //find all the dimensions files and set their complete path if found
-            if (!findAllFiles(&node,"DimensionsFile","filename",def_path)) return false;
 
             node = node.child("Planner").child("Parameters");
             //find the PCAkdatree file and set its complete path if found

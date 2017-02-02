@@ -43,14 +43,11 @@ namespace Kautham{
   iocPlanner::iocPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
       Planner(stype, init, goal, samples, ws)
   {
-      _family = IOCPLANNER;
-    _guiName = _idName = "";
+        _family = IOCPLANNER;
+         _guiName = _idName = "";
 
-    _triedSamples = _generatedEdges = _collChecks = 0;
-    _maxNumSamples = 1000;
-    _totalTime = _smoothTime = 0. ;
-
-
+        _triedSamples = _generatedEdges = _collChecks = 0;
+        _totalTime = _smoothTime = 0. ;
 	}
 
   iocPlanner::~iocPlanner(){
