@@ -27,7 +27,7 @@
 #define SYNERGY_TREE_H
 
 
-#include <kautham/planner/omplg/synergy.h>
+#include "synergy.h"
 
 
 //! Data structure representing an optimum cell division
@@ -107,23 +107,25 @@ private:
 class SynergyTree {
 public:
     //! Constructor
-    SynergyTree(const arma::mat Mp, const arma::mat Mv, const arma::mat posLimits,
-                const arma::vec velLimits, double tol = 0.001, double alfa = 0.05);
+    SynergyTree(const arma::mat &Mp, const arma::mat &Mv, const arma::mat &posLimits,
+                const arma::vec &velLimits, double tol = 0.001, double alfa = 0.05);
 
     //! Constructor
-    SynergyTree(const std::string filename);
+    SynergyTree(const std::string &filename);
 
     //! Destructor
-    ~SynergyTree();
+    virtual ~SynergyTree();
 
     //! Returns the first order synergy of the cell of the sample c
-    Synergy *getSynergy(const arma::vec x);
+    const Synergy *getSynergy(const arma::vec &x, bool clamp = false) const;
+
+    const Synergy *getZOS() const {return  zos;}
 
     //! Loads the tree structure from a file
-    bool load(const std::string filename);
+    bool load(const std::string &filename);
 
     //! Saves the tree structure into a file
-    bool save(const std::string filename);
+    bool save(const std::string &filename);
 
     //! Returns the position limits
     arma::mat getPositionLimits() {return Lp;}
@@ -132,8 +134,13 @@ public:
     arma::mat getVelocityLimits() {return Lv;}
 
     //! Returns the distance between q and the zero-order synergy box
-    double distance(const arma::vec x);
-private:
+    double distance(const arma::vec &x);
+
+    virtual arma::vec vectorField(const arma::vec &x) const;
+
+protected:
+    SynergyTree() {}
+
     //! Root node of the tree
     SynergyTree_node *root;
 
@@ -148,8 +155,8 @@ private:
 };
 
 //! Constructs a PCA kd tree
-SynergyTree *makeSynergyTree(const arma::mat M, const arma::vec t,
-                             const arma::mat posLimits = arma::mat(0,0),
-                             const arma::vec velLimits = arma::vec(0u));
+SynergyTree *makeSynergyTree(const arma::mat &M, const arma::vec &t,
+                             const arma::mat posLimits = arma::mat(),
+                             const arma::vec velLimits = arma::vec());
 
 #endif // SYNERGY_TREE_H

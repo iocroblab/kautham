@@ -138,8 +138,8 @@ void ompl::geometric::TRRTConnect::setup() {
 #endif
 
     //Set the distance function
-    tStart_->setDistanceFunction(boost::bind(&TRRTConnect::distanceFunction,this,_1,_2));
-    tGoal_->setDistanceFunction(boost::bind(&TRRTConnect::distanceFunction,this,_1,_2));
+    tStart_->setDistanceFunction(std::bind(&TRRTConnect::distanceFunction,this,std::placeholders::_1,std::placeholders::_2));
+    tGoal_->setDistanceFunction(std::bind(&TRRTConnect::distanceFunction,this,std::placeholders::_1,std::placeholders::_2));
 
     //Setup TRRTConnect specific variables
     clearTree(tStart_);

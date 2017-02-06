@@ -57,7 +57,7 @@ ompl::base::Cost ompl::base::FOSOptimizationObjective::motionCost(const State *s
     omplState2armaVec(s2,q2);
 
     //Get synergy
-    Synergy *synergy = tree_->getSynergy(0.5*(q1+q2));
+    const Synergy *synergy = tree_->getSynergy(0.5*(q1+q2));
     if (!synergy) return ompl::base::Cost(MAX_COST*si_->distance(s1,s2));
 
     //Get motion velocity

@@ -29,7 +29,7 @@
 #include <vector>
 #include <map>
 #include <pugixml.hpp>
-
+#include <assert.h>
 
 //Golden ratio
 #define CGOLD 0.3819660
@@ -611,8 +611,8 @@ void SynergyTree_node::xml(pugi::xml_node *node, std::vector<Synergy*> *Synergy)
 }
 
 
-SynergyTree::SynergyTree(const arma::mat Mp, const arma::mat Mv, const arma::mat posLimits,
-                         const arma::vec velLimits, double tol, double alfa) :
+SynergyTree::SynergyTree(const arma::mat &Mp, const arma::mat &Mv, const arma::mat &posLimits,
+                         const arma::vec &velLimits, double tol, double alfa) :
     zos(PCA(Mp,ZERO)),Lp(posLimits),Lv(velLimits) {
     std::cout << "pLim: " << std::endl << Lp << "zos:" << std::endl
               << zos->U << std::endl << zos->b << std::endl << zos->a
@@ -650,8 +650,8 @@ SynergyTree::SynergyTree(const arma::mat Mp, const arma::mat Mv, const arma::mat
 }
 
 
-SynergyTree::SynergyTree(const std::string filename) {
-    if (!load(filename)) throw std::invalid_argument("Tree construction failed");
+SynergyTree::SynergyTree(const std::string &filename) {
+    if (!load(filename)) throw std::invalid_argument("Synergytree construction failed");
 }
 
 
@@ -663,7 +663,7 @@ SynergyTree::~SynergyTree() {
 }
 
 
-Synergy *SynergyTree::getSynergy(const arma::vec x) {
+const Synergy *SynergyTree::getSynergy(const arma::vec &x, bool clamp) const {
     //Check parameters
     if (x.n_elem != zos->dim) return NULL;
 
@@ -681,7 +681,13 @@ Synergy *SynergyTree::getSynergy(const arma::vec x) {
             c[j] = 0.5;
         } else {
             c[j] = dot(xn,zos->U.col(j))/(2*zos->a[j])+0.5;
-            if (c[j] < 0 || c[j] > 1) return NULL;
+            if (c[j] < 0 || c[j] > 1) {
+                if (clamp) {
+                    c[j] = std::min(std::max(c[j],0.),1.);
+                } else {
+                    return NULL;
+                }
+            }
         }
     }
 
@@ -689,7 +695,7 @@ Synergy *SynergyTree::getSynergy(const arma::vec x) {
 }
 
 
-bool SynergyTree::load(const std::string filename) {
+bool SynergyTree::load(const std::string &filename) {
     try {
         pugi::xml_document doc;
         pugi::xml_parse_result result = doc.load_file(filename.c_str());
@@ -754,7 +760,7 @@ bool SynergyTree::load(const std::string filename) {
 }
 
 
-bool SynergyTree::save(const std::string filename) {
+bool SynergyTree::save(const std::string &filename) {
     try {
         pugi::xml_document doc;
 
@@ -796,12 +802,26 @@ bool SynergyTree::save(const std::string filename) {
 }
 
 
-double SynergyTree::distance(const arma::vec x) {
+double SynergyTree::distance(const arma::vec &x) {
     return zos->distance(x);
 }
 
 
-SynergyTree *makeSynergyTree(const arma::mat M, const arma::vec t,
+arma::vec SynergyTree::vectorField(const arma::vec &x) const {
+    const Synergy *s = getSynergy(x,true);
+    assert(s);
+    const unsigned int n = s->getReducedDimension();
+    arma::vec vf = s->b/*+s->U.cols(0,n-1)*(s->a.subvec(0,n-1)%arma::randn(n))*/;
+
+    if (arma::norm(vf) > std::numeric_limits<double>::epsilon()) {
+        return arma::normalise(vf);
+    } else {
+        return arma::zeros(s->dim);
+    }
+}
+
+
+SynergyTree *makeSynergyTree(const arma::mat &M, const arma::vec &t,
                              const arma::mat posLimits, const arma::vec velLimits) {
     //Check arguments
     unsigned int n = M.n_rows;

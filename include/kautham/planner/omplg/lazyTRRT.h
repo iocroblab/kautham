@@ -179,7 +179,7 @@ namespace ompl {
 
             base::StateSamplerPtr sampler_;
 
-            boost::shared_ptr< NearestNeighbors<Motion*> > nearestNeighbors_;
+            std::shared_ptr< NearestNeighbors<Motion*> > nearestNeighbors_;
 
             double goalBias_;
 

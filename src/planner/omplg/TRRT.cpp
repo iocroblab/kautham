@@ -125,7 +125,7 @@ void ompl::geometric::TRRT::setup() {
     }
 
     //Set the distance function
-    nearestNeighbors_->setDistanceFunction(boost::bind(&TRRT::distanceFunction,this,_1,_2));
+    nearestNeighbors_->setDistanceFunction(std::bind(&TRRT::distanceFunction,this,std::placeholders::_1,std::placeholders::_2));
 
     //Setup TRRT specific variables --------------------------------------------------------
     numStatesFailed_ = 0;
