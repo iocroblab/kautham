@@ -20,45 +20,39 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Nestor Garcia Hidalgo */
 
-#if !defined(_omplESTPLANNER_H)
-#define _omplESTPLANNER_H
+#if !defined(_omplFOSRRTSTARPLANNER_H)
+#define _omplFOSRRTSTARPLANNER_H
 
 #if defined(KAUTHAM_USE_OMPL)
-#include <ompl/base/SpaceInformation.h>
-#include <ompl/geometric/planners/est/ProjEST.h>
-#include <ompl/geometric/SimpleSetup.h>
-#include <ompl/config.h>
-#include <ompl/base/spaces/RealVectorStateSpace.h>
 
-#include <kautham/planner/omplg/omplplanner.h>
-#include <kautham/problem/workspace.h>
-#include <kautham/sampling/sampling.h>
-
-namespace ob = ompl::base;
-namespace og = ompl::geometric;
-using namespace std;
+#include "omplplanner.h"
+#include <kautham/planner/omplg/synergy_tree.h>
 
 namespace Kautham {
 /** \addtogroup Planner
  *  @{
  */
   namespace omplplanner{
+    class omplFOSRRTStarPlanner:public omplPlanner {
+    public:
+        omplFOSRRTStarPlanner(SPACETYPE stype, Sample *init, Sample *goal,
+                              SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr,
+                              const std::string &synergyTreeFilename);
 
-    class omplESTPlanner:public omplPlanner {
-        public:
-        omplESTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
-        ~omplESTPlanner();
+        ~omplFOSRRTStarPlanner();
+
+        bool trySolve();//!< Overloaded trySolve function to include evaluation of final path cost
 
         bool setParameters();
 
-         KthReal _Range;
-         KthReal _GoalBias;
-      };
+    protected:
+        SynergyTree *st_;
+    };
   }
   /** @}   end of Doxygen module "Planner */
 }
 
 #endif // KAUTHAM_USE_OMPL
-#endif  //_omplESTPLANNER_H
+#endif  //_omplFOSRRTStarPlanner_H

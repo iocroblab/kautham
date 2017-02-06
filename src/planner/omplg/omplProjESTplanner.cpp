@@ -29,7 +29,7 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include <kautham/planner/omplg/omplESTplanner.h>
+#include <kautham/planner/omplg/omplProjESTplanner.h>
 #include <kautham/planner/omplg/omplValidityChecker.h>
 
 
@@ -38,13 +38,14 @@ namespace Kautham {
   namespace omplplanner{
 
     //! Constructor
-    omplESTPlanner::omplESTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
+    omplProjESTPlanner::omplProjESTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
               omplPlanner(stype, init, goal, samples, ws, ssptr)
     {
-        _guiName = "ompl EST Planner";
-        _idName = "omplEST";
+        _guiName = "ompl ProjEST Planner";
+        _idName = "omplProjEST";
 
         //create planner
+#if OMPL_VERSION_VALUE >= 1002000
         ob::PlannerPtr planner(new og::ProjEST(si));
         //set planner parameters: range and goalbias
         _Range=0.05;
@@ -54,24 +55,39 @@ namespace Kautham {
         planner->as<og::ProjEST>()->setRange(_Range);
         planner->as<og::ProjEST>()->setGoalBias(_GoalBias);
         planner->as<og::ProjEST>()->setProjectionEvaluator(space->getDefaultProjection());
+#else
+        ob::PlannerPtr planner(new og::EST(si));
+        //set planner parameters: range and goalbias
+        _Range=0.05;
+        _GoalBias=(planner->as<og::EST>())->getGoalBias();
+        addParameter("Range", _Range);
+        addParameter("Goal Bias", _GoalBias);
+        planner->as<og::EST>()->setRange(_Range);
+        planner->as<og::EST>()->setGoalBias(_GoalBias);
+        planner->as<og::EST>()->setProjectionEvaluator(space->getDefaultProjection());
+#endif
         //set the planner
         ss->setPlanner(planner);
     }
 
     //! void destructor
-    omplESTPlanner::~omplESTPlanner(){
+    omplProjESTPlanner::~omplProjESTPlanner(){
 
     }
 
     //! setParameters sets the parameters of the planner
-    bool omplESTPlanner::setParameters(){
+    bool omplProjESTPlanner::setParameters(){
 
       omplPlanner::setParameters();
       try{
         HASH_S_K::iterator it = _parameters.find("Range");
         if(it != _parameters.end()){
           _Range = it->second;
+#if OMPL_VERSION_VALUE >= 1002000
           ss->getPlanner()->as<og::ProjEST>()->setRange(_Range);
+#else
+          ss->getPlanner()->as<og::EST>()->setRange(_Range);
+#endif
          }
         else
           return false;
@@ -79,7 +95,11 @@ namespace Kautham {
         it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
             _GoalBias = it->second;
+#if OMPL_VERSION_VALUE >= 1002000
             ss->getPlanner()->as<og::ProjEST>()->setGoalBias(_GoalBias);
+#else
+            ss->getPlanner()->as<og::EST>()->setGoalBias(_GoalBias);
+#endif
         }
         else
           return false;

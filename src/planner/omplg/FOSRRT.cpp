@@ -332,7 +332,7 @@ void ompl::geometric::FOSRRT::armaVec2omplState(const arma::vec vector, ompl::ba
 
 arma::vec ompl::geometric::FOSRRT::new_qRand(arma::vec qr, arma::vec qn) {
     //Cell PMD set
-    Synergy *synergy = tree_->getSynergy(qn);
+    const Synergy *synergy = tree_->getSynergy(qn);
 
     //Scaled velocity
     arma::vec dq(qr-qn);
