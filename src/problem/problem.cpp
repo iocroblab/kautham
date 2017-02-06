@@ -130,7 +130,8 @@ namespace Kautham {
     }
 
 
-    bool Problem::createPlanner( string name, ompl::geometric::SimpleSetup *ssptr ) {
+    bool Problem::createPlanner( string name, ompl::geometric::SimpleSetup *ssptr,
+                                 std::string synergyTreeFilename ) {
         if (_planner != NULL )
             delete _planner;
 
@@ -160,64 +161,79 @@ namespace Kautham {
 
 #if defined(KAUTHAM_USE_OMPL)
         else if (name == "omplDefault")
-            _planner = new omplplanner::omplPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplPRM")
-            _planner = new omplplanner::omplPRMPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplPRMPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplRRT")
-            _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplFOSRRT")
-            _planner = new omplplanner::omplFOSRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplFOSRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplRRTStar")
-            _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplTRRT")
-            _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplFOSTRRT")
-            _planner = new omplplanner::omplFOSTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplFOSTRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplTRRTConnect")
-            _planner = new omplplanner::omplTRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplTRRTConnectPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplFOSTRRTConnect")
-            _planner = new omplplanner::omplFOSTRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplFOSTRRTConnectPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplLazyTRRT")
-            _planner = new omplplanner::omplLazyTRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplLazyTRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplpRRT")
-            _planner = new omplplanner::omplpRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplpRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplLazyRRT")
-            _planner = new omplplanner::omplLazyRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplLazyRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplRRTConnect")
-            _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplRRTConnectPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
+
+        else if (name == "omplFOSVFRRT")
+            _planner = new omplplanner::omplFOSVFRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr,synergyTreeFilename);
+
+        else if (name == "omplMyFOSVFRRT")
+            _planner = new omplplanner::omplMyFOSVFRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr,synergyTreeFilename);
+
+        else if (name == "omplFOSBKPIECE1")
+            _planner = new omplplanner::omplFOSBKPIECE1Planner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr,synergyTreeFilename);
+
+        else if (name == "omplFOSLBKPIECE1")
+            _planner = new omplplanner::omplFOSLBKPIECE1Planner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr,synergyTreeFilename);
+
+        else if (name == "omplFOSKPIECE1")
+            _planner = new omplplanner::omplFOSKPIECE1Planner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr,synergyTreeFilename);
+
+        else if (name == "omplFOSRRTStar")
+            _planner = new omplplanner::omplFOSRRTStarPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr,synergyTreeFilename);
 
         else if (name == "omplFOSRRTConnect")
-            _planner = new omplplanner::omplFOSRRTConnectPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplFOSRRTConnectPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplRRTConnectEUROC")
-            _planner = new omplplanner::omplRRTConnectPlannerEUROC(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplRRTConnectPlannerEUROC(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
-        else if (name == "omplEST")
-            _planner = new omplplanner::omplESTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+        else if (name == "omplProjEST")
+            _planner = new omplplanner::omplProjESTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplSBL")
-            _planner = new omplplanner::omplSBLPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplSBLPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplKPIECE")
-            _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
-
-        else if (name == "omplBKPIECE")
-            _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplPCARRT")
-            _planner = new omplplanner::omplPCARRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, ssptr);
+            _planner = new omplplanner::omplPCARRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
         else if (name == "omplcRRT")
             _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
@@ -279,7 +295,9 @@ namespace Kautham {
             xml_node planNode = doc->child("Problem").child("Planner").child("Parameters");
             string plannerName = planNode.child("Name").child_value();
             if (plannerName != "") {
-                if (createPlanner(plannerName,ssptr)) {
+                if (createPlanner(plannerName,ssptr,
+                                  doc->child("Problem").child("Planner").child("Parameters").
+                                  child("SynergyTree").attribute("synergyTree").as_string())) {
                     //Set especial parameters
                     if (plannerName == "omplFOSRRT") {
                         ((omplplanner::omplFOSRRTPlanner*)_planner)->
@@ -764,7 +782,7 @@ namespace Kautham {
                 //if everything seems to be OK
 
                 *links2Load = countLinks2Load(doc);
-                if (links2Load > 0) {
+                if (*links2Load > 0) {
                     return doc;
                 } else {
                     delete doc;

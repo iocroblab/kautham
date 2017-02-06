@@ -157,7 +157,7 @@ namespace Kautham {
         ss = ((oc::SimpleSetupPtr) new oc::SimpleSetup(spacec));
 
         // set state validity checking for this space
-        ss->setStateValidityChecker(boost::bind(&omplcplanner::isStateValid, ss->getSpaceInformation().get(), _1, (Planner*)this));
+        ss->setStateValidityChecker(std::bind(&omplcplanner::isStateValid, ss->getSpaceInformation().get(), std::placeholders::_1, (Planner*)this));
 
         // set the propagation routine for this space
         oc::SpaceInformationPtr si=ss->getSpaceInformation();

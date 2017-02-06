@@ -174,7 +174,7 @@ namespace ompl {
                 const base::OptimizationObjective &opt_;
             };
 
-            class TreeData : public boost::shared_ptr<NearestNeighbors<Motion*> > {
+            class TreeData : public std::shared_ptr<NearestNeighbors<Motion*> > {
             public:
                 TreeData() : stateInBoxZos_(false),compareFn_(NULL) {
                 }

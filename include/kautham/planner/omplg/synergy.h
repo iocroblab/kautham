@@ -71,8 +71,9 @@ public:
     virtual SynergyOrder order() const;
 
     //! Returns a measure of the alignment between x and the synergies
-    double alignment(arma::vec x);
+    double alignment(arma::vec x) const;
 
+    unsigned int getReducedDimension() const {return nr;}
 protected:
     //! Distance between barycenters
     virtual double dTrans(const arma::vec xb) const;
@@ -91,6 +92,8 @@ protected:
 
     //! Weight parameter for the alignment computation
     const double prob;
+
+    unsigned int nr;
 };
 
 
