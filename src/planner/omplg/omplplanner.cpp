@@ -600,7 +600,7 @@ namespace Kautham {
                 si=ss->getSpaceInformation();
                 //set validity checker
                 si->setStateValidityChecker(ob::StateValidityCheckerPtr(new ValidityChecker(si,  (Planner*)this)));
-                //ss->setStateValidityChecker(boost::bind(&omplplanner::isStateValid, si.get(),_1, (Planner*)this));
+                //ss->setStateValidityChecker(std::bind(&omplplanner::isStateValid, si.get(),std::placeholders::_1, (Planner*)this));
 
                 //Add start states
                 ss->clearStartStates();
@@ -628,9 +628,9 @@ namespace Kautham {
                 ss->setGoal(ob::GoalPtr(goalStates));
 
                 //alloc valid state sampler
-                si->setValidStateSamplerAllocator(boost::bind(&allocValidStateSampler, _1, (Planner*)this));
+                si->setValidStateSamplerAllocator(std::bind(&allocValidStateSampler, std::placeholders::_1, (Planner*)this));
                 //alloc state sampler
-                space->setStateSamplerAllocator(boost::bind(&allocStateSampler, _1, (Planner*)this));
+                space->setStateSamplerAllocator(std::bind(&allocStateSampler, std::placeholders::_1, (Planner*)this));
             } else {
                 ss = (og::SimpleSetupPtr)ssptr;
                 si = ss->getSpaceInformation();

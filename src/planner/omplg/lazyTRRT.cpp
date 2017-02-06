@@ -131,7 +131,7 @@ void ompl::geometric::LazyTRRT::setup() {
     }
 
     // Set the distance function
-    nearestNeighbors_->setDistanceFunction(boost::bind(&LazyTRRT::distanceFunction,this,_1,_2));
+    nearestNeighbors_->setDistanceFunction(std::bind(&LazyTRRT::distanceFunction,this,std::placeholders::_1,std::placeholders::_2));
 
     // Setup TRRT specific variables ---------------------------------------------------------
     numStatesFailed_ = 0;

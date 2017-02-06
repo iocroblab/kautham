@@ -77,9 +77,9 @@ namespace Kautham {
                 _nodeRejection = 1;
                 _pathSamplingRangeFactor = 2.0;
 
-                addPlannerProgressProperty("best costP REAL",boost::bind(&myRRTstar::getBestCostP,this));
-                addPlannerProgressProperty("best costI REAL",boost::bind(&myRRTstar::getBestCostI,this));
-                addPlannerProgressProperty("best costD REAL",boost::bind(&myRRTstar::getBestCostD,this));
+                addPlannerProgressProperty("best costP REAL",std::bind(&myRRTstar::getBestCostP,this));
+                addPlannerProgressProperty("best costI REAL",std::bind(&myRRTstar::getBestCostI,this));
+                addPlannerProgressProperty("best costD REAL",std::bind(&myRRTstar::getBestCostD,this));
             }
 
             bool getOptimize(){ return _optimize;} //!< Returns the _optimize flag
@@ -441,9 +441,9 @@ namespace Kautham {
 
                         // This sounds crazy but for asymmetric distance functions this is necessary
                         // For this case, it has to be FROM every other point TO our new point
-                        // NOTE THE ORDER OF THE boost::bind PARAMETERS
+                        // NOTE THE ORDER OF THE std::bind PARAMETERS
                         if (!symDist)
-                            nn_->setDistanceFunction(boost::bind(&myRRTstar::distanceFunction, this, _1, _2));
+                            nn_->setDistanceFunction(std::bind(&myRRTstar::distanceFunction, this, std::placeholders::_1, std::placeholders::_2));
 
                         // Find nearby neighbors of the new motion - k-nearest RRT*
                         unsigned int k = std::ceil(k_rrg * log((double)(nn_->size()+1)));
@@ -595,10 +595,10 @@ namespace Kautham {
                         //
                         // This sounds crazy but for asymmetric distance functions this is necessary
                         // For this case, it has to be FROM our new point TO each other point
-                        // NOTE THE ORDER OF THE boost::bind PARAMETERS
+                        // NOTE THE ORDER OF THE std::bind PARAMETERS
                         if (!symDist)
                         {
-                            nn_->setDistanceFunction(boost::bind(&myRRTstar::distanceFunction, this, _2, _1));
+                            nn_->setDistanceFunction(std::bind(&myRRTstar::distanceFunction, this, std::placeholders::_2, std::placeholders::_1));
                             nn_->nearestK(motion, k, nbh);
                             //JAN: prune those that are too far away (more than 10 times the range.
                             //for(int i=nbh.size()-1;i>=0;i--)

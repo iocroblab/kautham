@@ -440,11 +440,11 @@ ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
                 ob::PathPtr sol;
 
 
-                boost::thread slnThread(boost::bind(&myPRM::checkForSolution, this, ptc, boost::ref(sol)));
+                boost::thread slnThread(std::bind(&myPRM::checkForSolution, this, ptc, boost::ref(sol)));
 
                 // construct new planner termination condition that fires when the given ptc is true, or a solution is found
                 ob::PlannerTerminationCondition ptcOrSolutionFound =
-                        ob::plannerOrTerminationCondition(ptc, ob::PlannerTerminationCondition(boost::bind(&myPRM::addedNewSolution, this)));
+                        ob::plannerOrTerminationCondition(ptc, ob::PlannerTerminationCondition(std::bind(&myPRM::addedNewSolution, this)));
 
                 constructRoadmap(ptcOrSolutionFound);
 
@@ -505,7 +505,7 @@ ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
         //set the connectionFilter_
         double _distanceThreshold = 0.1 * mymagic::DISTANCE_THRESHOLD_FACTOR;//default value
         addParameter("DistanceThreshold", _distanceThreshold);
-        planner->as<myPRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, planner));
+        planner->as<myPRM>()->setConnectionFilter(std::bind(&omplplanner::connectionDistanceFilter, std::placeholders::_1,std::placeholders::_2, _distanceThreshold, planner));
 
         //set the distance threshold for expand motions. Can be set if kauthamsampler is used
         _BounceDistanceThreshold = _distanceThreshold;
@@ -588,7 +588,7 @@ ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
         it = _parameters.find("DistanceThreshold");
         if(it != _parameters.end()){
             _distanceThreshold = it->second;
-            ss->getPlanner()->as<myPRM>()->setConnectionFilter(boost::bind(&omplplanner::connectionDistanceFilter, _1,_2, _distanceThreshold, ss->getPlanner()));
+            ss->getPlanner()->as<myPRM>()->setConnectionFilter(std::bind(&omplplanner::connectionDistanceFilter, std::placeholders::_1,std::placeholders::_2, _distanceThreshold, ss->getPlanner()));
          }
         else
           return false;

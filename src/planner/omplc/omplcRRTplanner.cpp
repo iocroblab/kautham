@@ -125,10 +125,10 @@ namespace Kautham {
         spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
 
         ss = ((oc::SimpleSetupPtr) new oc::SimpleSetup(spacec));
-        ss->setStateValidityChecker(boost::bind(&omplcplanner::isStateValid, ss->getSpaceInformation().get(), _1, (Planner*)this));
+        ss->setStateValidityChecker(std::bind(&omplcplanner::isStateValid, ss->getSpaceInformation().get(), std::placeholders::_1, (Planner*)this));
 
         // set the state propagation routine
-        ss->setStatePropagator(boost::bind(&propagate, _1, _2, _3, _4));
+        ss->setStatePropagator(std::bind(&propagate, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
         oc::SpaceInformationPtr si=ss->getSpaceInformation();
 
 

@@ -45,15 +45,15 @@ namespace Kautham {
         _idName = "omplEST";
 
         //create planner
-        ob::PlannerPtr planner(new og::EST(si));
+        ob::PlannerPtr planner(new og::ProjEST(si));
         //set planner parameters: range and goalbias
         _Range=0.05;
-        _GoalBias=(planner->as<og::EST>())->getGoalBias();
+        _GoalBias=(planner->as<og::ProjEST>())->getGoalBias();
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
-        planner->as<og::EST>()->setRange(_Range);
-        planner->as<og::EST>()->setGoalBias(_GoalBias);
-        planner->as<og::EST>()->setProjectionEvaluator(space->getDefaultProjection());
+        planner->as<og::ProjEST>()->setRange(_Range);
+        planner->as<og::ProjEST>()->setGoalBias(_GoalBias);
+        planner->as<og::ProjEST>()->setProjectionEvaluator(space->getDefaultProjection());
         //set the planner
         ss->setPlanner(planner);
     }
@@ -71,7 +71,7 @@ namespace Kautham {
         HASH_S_K::iterator it = _parameters.find("Range");
         if(it != _parameters.end()){
           _Range = it->second;
-          ss->getPlanner()->as<og::EST>()->setRange(_Range);
+          ss->getPlanner()->as<og::ProjEST>()->setRange(_Range);
          }
         else
           return false;
@@ -79,7 +79,7 @@ namespace Kautham {
         it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
             _GoalBias = it->second;
-            ss->getPlanner()->as<og::EST>()->setGoalBias(_GoalBias);
+            ss->getPlanner()->as<og::ProjEST>()->setGoalBias(_GoalBias);
         }
         else
           return false;
