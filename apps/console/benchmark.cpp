@@ -220,8 +220,8 @@ bool Benchmark::add_problem(string prob_file, vector<string> def_path, string pl
                 problem.push_back(prob);
                 bm = new ompl::tools::Benchmark(*(((omplplanner::omplPlanner*)prob->
                                                    getPlanner())->SimpleSetup()),name);
-                bm->setPreRunEvent(boost::bind(&preRunEvent,_1));
-                bm->setPostRunEvent(boost::bind(&postRunEvent,_1,_2));
+                bm->setPreRunEvent(std::bind(&preRunEvent,std::placeholders::_1));
+                bm->setPostRunEvent(std::bind(&postRunEvent,std::placeholders::_1,std::placeholders::_2));
                 if (!planner_alias.empty()) {
                     ((omplplanner::omplPlanner*)prob->getPlanner())->
                         SimpleSetupPtr()->getPlanner()->setName(planner_alias);
