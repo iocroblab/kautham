@@ -72,18 +72,12 @@
 #include <kautham/planner/omplg/omplTRRTConnectplanner.h>
 #include <kautham/planner/omplg/omplLazyTRRTplanner.h>
 #include <kautham/planner/omplg/omplRRTConnectplannerEUROC.h>
-#include <kautham/planner/omplg/omplFOSVFRRTplanner.h>
-#include <kautham/planner/omplg/omplMyFOSVFRRTplanner.h>
-#include <kautham/planner/omplg/omplFOSKPIECE1planner.h>
-#include <kautham/planner/omplg/omplFOSBKPIECE1planner.h>
-#include <kautham/planner/omplg/omplFOSLBKPIECE1planner.h>
-#include <kautham/planner/omplg/omplFOSRRTStarplanner.h>
 #include <kautham/planner/omplg/omplFOSRRTplanner.h>
 #include <kautham/planner/omplg/omplFOSRRTConnectplanner.h>
 #include <kautham/planner/omplg/omplFOSTRRTplanner.h>
 #include <kautham/planner/omplg/omplFOSTRRTConnectplanner.h>
 #include <kautham/planner/omplg/omplPCARRTplanner.h>
-#include <kautham/planner/omplg/omplProjESTplanner.h>
+#include <kautham/planner/omplg/omplESTplanner.h>
 #include <kautham/planner/omplg/omplSBLplanner.h>
 #include <kautham/planner/omplg/omplKPIECEplanner.h>
 #include <kautham/planner/omplc/omplcRRTplanner.h>
@@ -132,7 +126,7 @@ namespace Kautham {
         //! This method is deprecated. Please take care with the problem XML file.
         //bool			              createWSpace(ProbStruc *reader);
 
-        bool                    createPlanner(string name, ompl::geometric::SimpleSetup *ssptr = NULL, string synergyTreeFilename = "");
+        bool                    createPlanner(string name, ompl::geometric::SimpleSetup *ssptr = NULL);
         bool                    createPlannerFromFile(istream *xml_inputfile, ompl::geometric::SimpleSetup *ssptr = NULL);
         bool                    createPlannerFromFile(string problemFile, ompl::geometric::SimpleSetup *ssptr = NULL);
         bool                    createPlannerFromFile(pugi::xml_document *doc, ompl::geometric::SimpleSetup *ssptr = NULL);

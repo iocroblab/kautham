@@ -72,6 +72,15 @@ Synergy::Synergy(const arma::vec barycenter,
             }
         }
     }
+
+    nr = 0;
+    double accum = 0.;
+    double total = arma::sum(a);
+    while (accum < 0.95*total) {
+        accum += a[nr];
+        nr++;
+    }
+    std::cout << "Reduced number of FOS synergies " << nr << std::endl;
 }
 
 
@@ -146,7 +155,7 @@ SynergyOrder Synergy::order() const {
 }
 
 
-double Synergy::dTrans(const arma::vec xb) const {
+double Synergy::dTrans(const arma::vec /*xb*/) const {
     return 0.;
 }
 
@@ -198,7 +207,7 @@ double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
 }
 
 
-double Synergy::alignment(arma::vec x) {
+double Synergy::alignment(arma::vec x) const {
     double xb(dot(x,b));
     double c1(2.0*sqrt(as_scalar(x.t()*cov*x))/norm(x)/a[0]-1.0);
     double c0;
