@@ -1145,7 +1145,7 @@ namespace Kautham {
   * This method verifies if this robot collides with the robot rob passed as a parameter.
   * The method returns true when the two robots collide, otherwise returns false.
   */
-    bool Robot::collisionCheck(Robot *rob, string *message) {
+    bool Robot::collisionCheck(Robot *rob, string *message, std::pair<int, int> *link_element) {
         //if( _autocoll || rob->autocollision() ) return true;
 
         if(!collisionable || !rob->isCollisionable()) return false;
@@ -1154,6 +1154,12 @@ namespace Kautham {
             for( unsigned j = 0; j < rob->getNumLinks(); j++ ){
                 if( links[i]->getElement()->collideTo(rob->getLink(j)->getElement()) ) {
                     if (message != NULL) {
+
+                        if(link_element !=NULL){
+                            link_element->first = i;
+                            link_element->second = j;
+                        }
+
                         stringstream sstr;
                         sstr << "Collision between links " << i << " (" << links[i]->getName()
                              << ") and " << j << " (" << rob->getLink(j)->getName() << ")" << endl;
