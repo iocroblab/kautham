@@ -103,8 +103,9 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::checkCollision(vector<float> smpcoords, bool *collisionFree) {
+    bool kauthamshell::checkCollision(vector<float> smpcoords, bool *collisionFree, std::pair< std::pair<int, int> , std::pair<int,int> > *colliding_elements) {
         Sample *smp = NULL;
+
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -120,7 +121,7 @@ namespace Kautham {
             smp = new Sample(problem->wSpace()->getNumRobControls());
             string msg;
             if (smp->setCoords(smpcoords)) {
-                *collisionFree = !problem->wSpace()->collisionCheck(smp,&msg);
+                *collisionFree = !problem->wSpace()->collisionCheck(smp,&msg,colliding_elements);
                 if(msg.empty()) {
                     std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;
                 } else {
