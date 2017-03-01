@@ -158,9 +158,12 @@ namespace Kautham {
     }
 
 
-    bool WorkSpace::collisionCheck(Sample* sample, string *message) {
+    bool WorkSpace::collisionCheck(Sample* sample, string *message, std::pair< std::pair<int, int> , std::pair<int,int> > *colliding_elements) {
         stringstream sstr;
         increaseCollCheckCounter();
+
+        std::pair<int, int> robot_Obst; //It will storaged the index of the robot and obstacles in collision
+        std::pair<int, int> robot_links; //It will storaged the index of the robot's link/obstacle's element in collision
 
         vector<KthReal> tmpVec;
         bool collision = false;
@@ -175,8 +178,12 @@ namespace Kautham {
                 //first is testing if the robots collide with the environment (obstacles)
                 for (uint m = 0; m < obstacles.size(); m++) {
                     string str;
-                    if (robots[i]->collisionCheck(obstacles[m],&str)) {
+                    if (robots[i]->collisionCheck(obstacles[m],&str,&robot_links)) {
                         collision = true;
+
+                        robot_Obst.first = i;
+                        robot_Obst.second = m;
+
                         sstr << "Robot " << i << " (" << robots[i]->getName()
                              << ") is in collision with obstacle " << m << " ("
                              << obstacles[m]->getName() << ")" << endl;
@@ -192,8 +199,12 @@ namespace Kautham {
                 if (i > 0) {
                     for (int k = i-1; k == 0; k--) {
                         string str;
-                        if (robots[i]->collisionCheck(robots[k],&str)) {
+                        if (robots[i]->collisionCheck(robots[k],&str,&robot_links)) {
                             collision = true;
+
+                            robot_Obst.first = i;
+                            robot_Obst.second = k;
+
                             sstr << "Robot " << i << " (" << robots[i]->getName()
                                  << ") is in collision with robot " << k << " ("
                                  << robots[k]->getName() << ")" << endl;
@@ -224,8 +235,12 @@ namespace Kautham {
                     for (uint m = 0; m < obstacles.size(); m++) {
                         if (it->obs != obstacles.at(m)) {
                             string str;
-                            if (it->obs->collisionCheck(obstacles.at(m),&str)) {
+                            if (it->obs->collisionCheck(obstacles.at(m),&str, &robot_links)) {
                                 collision = true;
+
+                                robot_Obst.first = i;
+                                robot_Obst.second = m;
+
                                 sstr << "Attached object " << it->obs->getName()
                                      << " is in collision with obstacle " << m << " ("
                                      << obstacles[m]->getName() << ")"<<endl;
@@ -250,8 +265,12 @@ namespace Kautham {
                 //first is testing if the robot collides with the environment (obstacles)
                 for (uint m = 0; m < obstacles.size(); m++) {
                     string str;
-                    if (robots[i]->collisionCheck(obstacles[m],&str)) {
+                    if (robots[i]->collisionCheck(obstacles[m],&str,&robot_links)) {
                         collision = true;
+
+                        robot_Obst.first = i;
+                        robot_Obst.second = m;
+
                         sstr << "Robot " << i << " (" << robots[i]->getName()
                              << ") is in collision with obstacle " << m << " ("
                              << obstacles[m]->getName() << ")" << endl;
@@ -267,8 +286,12 @@ namespace Kautham {
                 if (i > 0) {
                     for (int k = i-1; k >= 0; k--) {
                         string str;
-                        if (robots[i]->collisionCheck(robots[k],&str)) {
+                        if (robots[i]->collisionCheck(robots[k],&str, &robot_links)) {
                             collision = true;
+
+                            robot_Obst.first = i;
+                            robot_Obst.second = k;
+
                             sstr << "Robot " << i << " (" << robots[i]->getName()
                                  << ") is in collision with robot " << k << " ("
                                  << robots[k]->getName() << ")" << endl;
@@ -299,8 +322,12 @@ namespace Kautham {
                     for (uint m = 0; m < obstacles.size(); m++) {
                         if (it->obs != obstacles.at(m)) {
                             string str;
-                            if (it->obs->collisionCheck(obstacles.at(m),&str)) {
+                            if (it->obs->collisionCheck(obstacles.at(i),&str,&robot_links)) {
                                 collision = true;
+
+                                robot_Obst.first = i;
+                                robot_Obst.second = m;
+
                                 sstr << "Attached object " << it->obs->getName()
                                      << " is in collision with obstacle " << m << " ("
                                      << obstacles[m]->getName() << ")" << endl;
@@ -315,6 +342,12 @@ namespace Kautham {
                 }
                 if (collision) break;
             }
+        }
+
+        //here will be storaged the elements that are in collision
+        if(colliding_elements != NULL){
+            colliding_elements->first = robot_Obst;
+            colliding_elements->second = robot_links;
         }
 
         // Here will be putted the configuration mapping
