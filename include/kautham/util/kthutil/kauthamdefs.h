@@ -30,49 +30,54 @@
 
 
 /**
-* \mainpage THE KAUTHAM PROJECT
-*  A robot simulation toolkit for motion planning
+* \mainpage
+* # THE KAUTHAM PROJECT: A robot simulation toolkit for motion planning #
 *
 * \section Abstract
-* The Kautham Project is a software tool used at the Institute of Industrial and
-* Control Engineering (IOC-UPC) for teaching and research in robot motion planning.
+* The [Kautham Project] (http://sir.upc.edu/kautham) is a software tool developped at the [Service and Industrial Robotics]
+* (http://robotics.upc.edu) (SIR) group of the [Institute of Industrial and
+* Control Engineering](http://ioc.upc.edu) (IOC) of the [Universitat Politècnica de Catalunya] (
+* http://www.upc.edu (UPC), for teaching and research in robot motion planning.
 * The tool allows to cope with problems with one or more robots, being a generic
-* robot defined as a kinematic tree with a mobile base. i.e. the tool can plan
+* robot defined as a kinematic tree with a mobile base, i.e. the tool can plan
 * and simulate from simple two degrees of freedom free-flying robots to multi-robot
 * scenarios with mobile manipulators equipped with anthropomorphic hands.
-* The main core of planners is provided by the Open Motion Planning Library (OMPL).
+* The main core of planners is provided by the Open Motion Planning Library ([OMPL](http://ompl.kavrakilab.org)).
 * Different basic planners can be flexibly used and parameterized, allowing
 * students to gain insight into the different planning algorithms. Among the
 * advanced features the tool allows to easily define the coupling between degrees of
 * freedom, the dynamic simulation and the integration with task planers. It is
-* principally being used in the research of motion planning strategies for hand-arm
+* principally being used in the research of motion planning strategies for dexterous dual arm
 * robotic systems.
 *
-* \section Features
-* -# Uses OMPL suite of planners (geometric and control based)
-* -# Uses PQP collision detection library
-* -# Uses Coin3D for visualization
-* -# Uses ODE physics engine
-* -# Robot models are defined using urdf or DH parameters coded in an XML file
+* \section Main Features
+* -# Uses [OMPL](http://ompl.kavrakilab.org) suite of planners (geometric and control based)
+* -# Uses [PQP](http://gamma.cs.unc.edu/SSV/) or [FCL](http://gamma.cs.unc.edu/FCL/fcl_docs/webpage/generated/index.html) for collision detection
+* -# Uses [Coin3D] (http://www.coin3d.org/) for visualization
+* -# Uses [ODE](http://www.ode.org/) physics engine
+* -# Robot models are defined using [urdf](http://wiki.ros.org/urdf/XML/model) (or [DH](https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters)
+*     parameters coded in an XML file, deprecated)
 * -# Describes robots as kinematic trees with a mobile base (SE3xRn configuration space)
-* -# Geometry is described in VRML files
+* -# Geometry is described in [VRML](https://en.wikipedia.org/wiki/VRML) files (if the [ASSIMP](http://www.assimp.org/) package
+*    is available, many other formats like [DAE](https://www.khronos.org/collada/) or [STL](https://en.wikipedia.org/wiki/STL_%28file_format%29) are also supported).
 * -# Allows multi-robot systems
 * -# Allows the coupling of degrees of freedom
-* -# Can be encapsuled as a ROS node
+* -# Can be encapsuled as a [ROS](http://www.ros.org/) node
 
 * \section Credits
+* Service and Industrial Robotics ([SIR](http://robotics.upc.edu))\n
+* Institute of Industrial and Control Engineering ([IOC](http://ioc.upc.edu))\n
+* Universitat Polirecnica de Catalunya ([UPC](http://www.upc.edu))\n
+* [Barcelona](http://meet.barcelona.cat/en/), Spain\n
 *
-* Institute of Industrial and Control Engineering (IOC)\n
-* Universitat Polirecnica de Catalunya (UPC) - BarcelonaTECH\n
-* Barcelona, Spain\n
-* <A HREF="http://www.ioc.upc.edu"> www.ioc.upc.edu</A>\n
-*
-* In collaboration with  the Escuela Colombiana
-* de Ingenieria "Julio Garavito" placed in Bogota D.C.
+* Version 1.0 developed in collaboration with  the [Escuela Colombiana
+* de Ingenieria "Julio Garavito"](http://www.escuelaing.edu.co/es/) placed in Bogota D.C.
 * Colombia
 *
-* \section Webpage
-* <A HREF="http://sir.upc.edu/kautham"> sir.upc.edu/kautham</A>\n
+* \subsection Webpage
+* <A HREF="http://sir.upc.edu/kautham"> sir.upc.edu/kautham</A>
+* \subsection Contact
+* Prof. [Jan Rosell](http://ioc.upc.edu/ca/personal/jan.rosell/) (email: <mailto:jan.rosell@upc.edu>)
 */
 
 
