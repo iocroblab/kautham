@@ -75,7 +75,6 @@
 #include <kautham/planner/omplg/omplFOSRRTConnectplanner.h>
 #include <kautham/planner/omplg/omplFOSTRRTplanner.h>
 #include <kautham/planner/omplg/omplFOSTRRTConnectplanner.h>
-#include <kautham/planner/omplg/omplPCARRTplanner.h>
 #include <kautham/planner/omplg/omplProjESTplanner.h>
 #include <kautham/planner/omplg/omplSBLplanner.h>
 #include <kautham/planner/omplg/omplKPIECEplanner.h>
