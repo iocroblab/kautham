@@ -242,7 +242,7 @@ namespace Kautham {
     void setHomePos(Conf* qh);
 
     //! Verifies collision with an obstacke or with another robot
-    bool collisionCheck(Robot *obs, string *message = NULL);
+    bool collisionCheck(Robot *obs, string *message = NULL, std::pair<int, int> *link_element = NULL);
 
     //! Verifies distance with an obstacle or with another robot
     KthReal distanceCheck(Robot *rob, bool min = true);

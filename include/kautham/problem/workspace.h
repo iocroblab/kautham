@@ -50,7 +50,7 @@ namespace Kautham{
       bool                  collisionCheck( Conf* conf, unsigned int robot ) ;
       KthReal               distanceBetweenSamples(Sample& smp1, Sample& smp2,Kautham::SPACETYPE spc);
       vector<KthReal>*      distanceCheck(Sample* sample) ;
-      bool                  collisionCheck(Sample* sample , string *message = NULL) ;
+      bool                  collisionCheck(Sample* sample , string *message = NULL, std::pair<std::pair<int, int>, std::pair<int, int> > *colliding_elements = NULL);
       void                  moveRobotsTo(Sample* sample);
       void                  moveObstaclesTo(Sample* sample);
       void                  addRobot(Robot* robot);
