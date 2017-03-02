@@ -31,7 +31,6 @@
 
 /**
 * \mainpage
-* # THE KAUTHAM PROJECT: A robot simulation toolkit for motion planning #
 *
 * \section Abstract
 * The [Kautham Project] (http://sir.upc.edu/kautham) is a software tool developped at the [Service and Industrial Robotics]
@@ -78,6 +77,22 @@
 * <A HREF="http://sir.upc.edu/kautham"> sir.upc.edu/kautham</A>
 * \subsection Contact
 * Prof. [Jan Rosell](http://ioc.upc.edu/ca/personal/jan.rosell/) (email: <mailto:jan.rosell@upc.edu>)
+*
+*
+* \page page1 A documentation page
+*  \tableofcontents
+*  Leading text.
+*  \section sec An example section
+*  This page contains the subsections \ref subsection1 and \ref subsection2.
+*  For more info see page \ref page2.
+*  \subsection subsection1 The first subsection
+*  Text.
+*  \subsection subsection2 The second subsection
+*  More text.
+*
+* \page page2 Another page
+*  Even more info.
+*
 */
 
 
