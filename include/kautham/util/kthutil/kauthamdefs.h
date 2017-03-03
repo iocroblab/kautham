@@ -49,7 +49,7 @@
 * principally being used in the research of motion planning strategies for dexterous dual arm
 * robotic systems.
 *
-* \section Main Features
+* \section section1 Main Features
 * -# Uses [OMPL](http://ompl.kavrakilab.org) suite of planners (geometric and control based)
 * -# Uses [PQP](http://gamma.cs.unc.edu/SSV/) or [FCL](http://gamma.cs.unc.edu/FCL/fcl_docs/webpage/generated/index.html) for collision detection
 * -# Uses [Coin3D] (http://www.coin3d.org/) for visualization
@@ -63,35 +63,54 @@
 * -# Allows the coupling of degrees of freedom
 * -# Can be encapsuled as a [ROS](http://www.ros.org/) node
 
-* \section Credits
+* \section section2 Credits
 * Service and Industrial Robotics ([SIR](http://robotics.upc.edu))\n
 * Institute of Industrial and Control Engineering ([IOC](http://ioc.upc.edu))\n
 * Universitat Polirecnica de Catalunya ([UPC](http://www.upc.edu))\n
 * [Barcelona](http://meet.barcelona.cat/en/), Spain\n
 *
-* Version 1.0 developed in collaboration with  the [Escuela Colombiana
+* Version 1.0 was developed in collaboration with  the [Escuela Colombiana
 * de Ingenieria "Julio Garavito"](http://www.escuelaing.edu.co/es/) placed in Bogota D.C.
 * Colombia
 *
-* \subsection Webpage
-* <A HREF="http://sir.upc.edu/kautham"> sir.upc.edu/kautham</A>
-* \subsection Contact
-* Prof. [Jan Rosell](http://ioc.upc.edu/ca/personal/jan.rosell/) (email: <mailto:jan.rosell@upc.edu>)
+* <b>Contact:</b> Prof. [Jan Rosell](http://ioc.upc.edu/ca/personal/jan.rosell/) (email: <mailto:jan.rosell@upc.edu>)
 *
+* \section section3 External Documentation
 *
-* \page page1 A documentation page
-*  \tableofcontents
-*  Leading text.
-*  \section sec An example section
-*  This page contains the subsections \ref subsection1 and \ref subsection2.
-*  For more info see page \ref page2.
-*  \subsection subsection1 The first subsection
-*  Text.
-*  \subsection subsection2 The second subsection
-*  More text.
+* <b>Webpage:</b> <A HREF="http://sir.upc.edu/kautham"> sir.upc.edu/kautham</A>
 *
-* \page page2 Another page
-*  Even more info.
+* <b>Paper:</b> [The Kautham Project: A teaching and research tool for robot motion planning (pdf)](https://ioc.upc.edu/ca/personal/jan.rosell/publications/papers/the-kautham-project-a-teaching-and-research-tool-for-robot-motion-planning/@@download/file/PID3287499.pdf)
+*
+* \section Examples
+*       \image html simple_examples.png "Simple examples: 2D free-flying robots"
+*       \image html simple_examples2.png "Simple examples: 3D free-flying robot / 2-link manipulator"
+*       \image html complex_examples.png "Complex examples: Multiple robots / dual-arm robots / hand-arm systems / virtual bronchoscopes"
+*
+* \page page1 Basic Features
+*  \section sec11 Problem description
+*       \image html problem_description.png "Problem description"
+*  \section sec12 Modelling robots and obstacles
+*       \image html urdf.png "URDF robot description"
+*       \image html XYZcontrols.png "Control file for a free-flying robot with three translational d.o.f."
+*       \image html KUKAcontrols.png "Control file for a Kuka robot"
+*  \section sec13 Planners
+*       \image html addParameters.png "Setting planner parameters from code"
+*       \image html parametersGUI.png "GUI: Planner parameters"
+*  \section sec14 Visualization
+*       \image html visualizationWorkspace.png "Workspace visualization: visual and collision models"
+*       \image html visualizationCspace.png "Visualization of 2D Cspaces"
+*       \image html visualizationCspace2.png "Visualization of 2D projections of high dimensional Cspaces"
+*
+* \page page2 Advanced features
+*  \section sec21 Coupling between degrees of freedom
+*       \image html PMD1controls.png "Control file describing one of the coupled motions of the SAH hand"
+*       \image html PMD1handmotion.png  "Hand motion along the corresponding coupled motion"
+*  \section sec22 Constrained motion planning
+*       \image html constrainedMotionPlanning.png "Motion planning for a car-like robot"
+*  \section sec23 Dynamic simulation
+*  \section sec24 Integration with task planning
+*  \section sec25 Benchmarking
+*       \image html benchmarking.png "A benchmarking file"
 *
 */
 
