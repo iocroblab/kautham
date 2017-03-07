@@ -22,7 +22,7 @@
  \*************************************************************************/
 
 /* Author: Alexander Perez, Jan Rosell */
-/** \addtogroup libKin
+/** \addtogroup IK
  *  @{
  */
 
@@ -40,7 +40,7 @@ using namespace boost::numeric::ublas;
 matrix<double> inv(const matrix<double>& mat);
 matrix<double> pinv(const matrix<double>& A);
 
-/** @}   end of Doxygen module "Util */
+/** @}   end of Doxygen module */
 #endif  // KAUTHAM_USE_GSL
 
 #endif   // FUNC_MATH_H //

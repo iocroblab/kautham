@@ -30,7 +30,7 @@
 #include <kautham/planner/omplg/omplplanner.h>
 
 
-/** \addtogroup Planner
+/** \addtogroup GeometricPlanners
  * @{
 */
 namespace Kautham {
@@ -53,6 +53,6 @@ namespace Kautham {
         };
     }
 }
-/** @}   end of Doxygen module "Planner */
+/** @}   end of Doxygen module */
 
 #endif  // _OMPLFOSTRRTPLANNER_H

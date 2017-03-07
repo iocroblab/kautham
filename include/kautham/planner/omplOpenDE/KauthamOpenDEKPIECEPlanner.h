@@ -43,7 +43,7 @@ namespace oc = ompl::control;
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup Planner
+/** \addtogroup group4 Physics-based Planners
  *  @{
  */
 

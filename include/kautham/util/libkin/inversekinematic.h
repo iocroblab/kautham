@@ -35,7 +35,11 @@
 
 
 namespace Kautham {
-/** \addtogroup libKin
+/** \defgroup  IK Inverse Kinematics
+ *  \brief Contains classes to solve the inverse kinematics of some robots
+ *
+ *   \todo Add detailed description of Kinematics module
+ *
  *  @{
  */
   class Robot;
@@ -134,6 +138,6 @@ namespace Kautham {
 
   };
 
-  /** @}   end of Doxygen module "Util */
+  /** @}   end of Doxygen module */
 }
 #endif  //_INVERSEKINEMATIC_H

@@ -50,7 +50,11 @@ namespace ob = ompl::base;
 using namespace std;
 
 namespace Kautham {
-    /** \addtogroup Planner
+/** \defgroup GeometricPlanners Geometric Planners
+ *  \brief Contains classes to implement sampling-based geometric planners
+ *
+ *   \todo Add detailed description of Geometric Planners module
+ *
  *  @{
  */
     namespace omplplanner{
@@ -182,7 +186,7 @@ namespace Kautham {
             //Add private data and functions
         };
     }
-    /** @}   end of Doxygen module "Planner */
+    /** @}   end of Doxygen module */
 }
 #endif // KAUTHAM_USE_OMPL
 #endif  //_omplPLANNER_H

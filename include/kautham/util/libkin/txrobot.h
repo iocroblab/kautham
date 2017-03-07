@@ -45,7 +45,7 @@ typedef ublas::vector<mt::Scalar> Vect6;
 
 /////////////////////////////// NAMESPACE SCOPE //////////////////////////////
 
-/** \addtogroup libKin
+/** \addtogroup IK
  *  @{
  */
 namespace TXrobot
@@ -184,5 +184,5 @@ inline std::ostream& operator<<(std::ostream& os, const config& c)
 
 
 } // TXrobot
-/** @}   end of Doxygen module "Util */
+/** @}   end of Doxygen module */
 #endif // TXROBOT_H

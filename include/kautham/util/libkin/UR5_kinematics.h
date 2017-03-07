@@ -82,7 +82,7 @@
 #define INF 1.0/0.0
 
 
-/** \addtogroup libKin
+/** \addtogroup IK
  *  @{
  */
 
@@ -280,4 +280,4 @@ double saturate(double theta);
  */
 void print_transform(mt::Transform transform);
 
-/** @}   end of Doxygen module "libKin" */
+/** @}   end of Doxygen module */

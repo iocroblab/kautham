@@ -29,7 +29,7 @@
 #include <kautham/util/libkin/inversekinematic.h>
 
 
-/** \addtogroup libKin
+/** \addtogroup IK
  *  @{
  */
 
@@ -73,6 +73,6 @@ private:
     double          _result[6];
 };
 
-/** @}   end of Doxygen module "Util */
+/** @}   end of Doxygen module */
 #endif  //_IVKINUR5_H
 

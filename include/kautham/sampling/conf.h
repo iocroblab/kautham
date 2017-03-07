@@ -39,7 +39,7 @@ namespace Kautham {
 
 
 /** \defgroup Sampling Sampling module
- *  \brief contains classes to sample the configuration space
+ *  \brief Contains classes to sample the configuration space
  *
  *   \todo Add detailed description of Sampling module
  *

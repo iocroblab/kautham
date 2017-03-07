@@ -37,7 +37,7 @@
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup Planner
+/** \addtogroup GeometricPlanners
  *  @{
  */
 
@@ -106,6 +106,6 @@ namespace Kautham {
        SoSeparator*                  _sceneCspace;
        SoSeparator*                  _scenePath;
    };
-   /** @}   end of Doxygen module "Planner */
+   /** @}   end of Doxygen module */
 }
 #endif  //_PLANNER_H
