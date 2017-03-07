@@ -33,6 +33,11 @@ STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} )
 LIST( GET KAUTHAM_VERSIONS 0 KAUTHAM_VERSION_MAJOR)
 LIST( GET KAUTHAM_VERSIONS 1 KAUTHAM_VERSION_MINOR)
 LIST( GET KAUTHAM_VERSIONS 2 KAUTHAM_VERSION_PATCH)
+# configure a header file to pass some of the CMake settings to the source code
+ configure_file (
+   "${PROJECT_SOURCE_DIR}/kauthamConfig.h.in"
+  "${PROJECT_SOURCE_DIR}/include/kautham/kauthamConfig.h"
+  )
 
 message( "Kautham version ${VERSION} (${KAUTHAM_VERSION_MAJOR}.${KAUTHAM_VERSION_MINOR}.${KAUTHAM_VERSION_PATCH})" )
 

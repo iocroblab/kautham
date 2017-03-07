@@ -40,6 +40,10 @@
 #include "kauthamgui.h"
 #include "dofwidget.h"
 
+//The following config header file contains the version number of kautham and is automatically generated from the
+//CMakeList.txt file using the configure file option
+#include <kautham/kauthamConfig.h>
+
 
 #define MAXRECENTFILES 5
 
@@ -266,6 +270,8 @@ void Application::openFile(QString problemFile) {
             tmp << MAJOR_VERSION;
             tmp << ".";
             tmp << MINOR_VERSION;
+            tmp << " - ";
+            tmp << PATCH_VERSION;
             tmp << " - ";
             tmp << problemFile.toStdString();
             mainWindow->setWindowTitle( tmp.str().c_str() );
