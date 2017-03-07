@@ -31,7 +31,7 @@
 #include <kautham/planner/omplg/synergy_tree.h>
 
 namespace Kautham {
-/** \addtogroup Planner
+/** \addtogroup GeometricPlanners
  *  @{
  */
   namespace omplplanner{
@@ -51,7 +51,7 @@ namespace Kautham {
         SynergyTree *st_;
     };
   }
-  /** @}   end of Doxygen module "Planner */
+  /** @}   end of Doxygen module */
 }
 
 #endif // KAUTHAM_USE_OMPL

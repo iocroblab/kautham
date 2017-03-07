@@ -32,7 +32,7 @@
 #include <kautham/util/libkin/txrobot.h>
 
 
-/** \addtogroup libKin
+/** \addtogroup IK
  *  @{
  */
   class IvKinTx90:public Kautham::InverseKinematic{
@@ -58,5 +58,5 @@
     mt::Transform     _rHomeOffset; //!< This is an offset from Modeled Home to Real Home
   };
 
-  /** @}   end of Doxygen module "Util */
+  /** @}   end of Doxygen module */
 #endif  //_IVKINTX90_H

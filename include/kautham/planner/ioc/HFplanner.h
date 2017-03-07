@@ -39,7 +39,7 @@
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup Planner
+/** \addtogroup GridPlanners
  *  @{
  */
   namespace IOC{

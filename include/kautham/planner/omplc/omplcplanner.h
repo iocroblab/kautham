@@ -51,10 +51,13 @@ using namespace std;
 
 
 namespace Kautham {
-/** \addtogroup Planner
+/** \defgroup ControlPlanners Control-based Planners
+ *  \brief Contains classes to implement sampling-based planners based on controls
+ *
+ *   \todo Add detailed description of Control-based Planners module
+ *
  *  @{
  */
-
 
   namespace omplcplanner{
 
@@ -219,7 +222,7 @@ namespace Kautham {
 		//Add private data and functions
 	  };
   }
-  /** @}   end of Doxygen module "Planner */
+  /** @}   end of Doxygen module */
 }
 
 #endif // KAUTHAM_USE_OMPL

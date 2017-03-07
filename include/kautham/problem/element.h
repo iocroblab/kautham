@@ -31,8 +31,8 @@
 #include <kautham/problem/odeelement.h>
 
 namespace Kautham {
-/** \defgroup Problem  Problem  module
- *  \brief contains classes to define the setup: robots and obstacles.
+/** \defgroup Problem  Problem  Definition
+ *  \brief Contains classes to define the problem setup: robots and obstacles.
  *
  *   \todo Add detailed description of Problem Definition module
  *

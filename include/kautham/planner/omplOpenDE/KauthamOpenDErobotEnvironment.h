@@ -102,7 +102,7 @@ using namespace std;
 
 namespace Kautham
 {
-/** \addtogroup Planner
+/** \addtogroup group4 Physics-based Planners
  *  @{
  */
 namespace omplcplanner

@@ -36,7 +36,7 @@ using namespace std;
 
 
 namespace Kautham {
-/** \addtogroup Planner
+/** \addtogroup GeometricPlanners
  *  @{
  */
 namespace omplplanner{
@@ -62,7 +62,7 @@ public:
     void resetCollisionChecks() {theplanner->wkSpace()->resetCollCheckCounter();}
 };
 }
-/** @}   end of Doxygen module "Planner */
+/** @}   end of Doxygen module */
 }
 
 

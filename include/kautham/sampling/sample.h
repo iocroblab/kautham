@@ -38,13 +38,6 @@
 
 using namespace std;
 
-/*! \namespace Kautham
-*   This is the libSampling  namespace provided to grouping the classes
-*   who drives the sampling process.  This group has as a template the 
-*   Sampler and Sample abstract classes  in order to provide the way to 
-*   interact with the rest of the planning system.
-*
-*/
 
 namespace Kautham{
 

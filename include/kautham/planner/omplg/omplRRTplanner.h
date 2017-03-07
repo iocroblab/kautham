@@ -42,7 +42,7 @@ namespace og = ompl::geometric;
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup Planner
+/** \addtogroup GeometricPlanners
  *  @{
  */
   namespace omplplanner{
@@ -58,7 +58,7 @@ namespace Kautham {
          KthReal _GoalBias;
 	  };
   }
-  /** @}   end of Doxygen module "Planner */
+  /** @}   end of Doxygen module */
 }
 
 #endif // KAUTHAM_USE_OMPL

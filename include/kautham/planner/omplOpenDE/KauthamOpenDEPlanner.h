@@ -70,7 +70,11 @@ namespace oc = ompl::control;
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup Planner
+/** \defgroup group4 Physics-based Planners
+ *  \brief Contains classes to implement sampling-based planners based on dynamic simulation
+ *
+ *   \todo Add detailed description of Physics-based Planners module
+ *
  *  @{
  */
 namespace omplcplanner{

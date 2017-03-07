@@ -37,7 +37,11 @@
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup Planner
+/** \defgroup GridPlanners  Grid Planners
+ *  \brief Contains classes to implement potential field planners based on grids
+ *
+ *   \todo Add detailed description of Grid Planners module
+ *
  *  @{
  */
 

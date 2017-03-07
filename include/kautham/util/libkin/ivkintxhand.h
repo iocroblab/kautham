@@ -29,7 +29,7 @@
 
 #include <kautham/util/libkin/inversekinematic.h>
 
-/** \addtogroup libKin
+/** \addtogroup IK
  *  @{
  */
 
@@ -45,5 +45,5 @@
     IvKinTxHand();
   };
 
-  /** @}   end of Doxygen module "Util */
+  /** @}   end of Doxygen module */
 #endif  //_IVKINTXHAND_H

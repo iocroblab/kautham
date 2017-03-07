@@ -47,7 +47,7 @@ namespace oc = ompl::control;
 using namespace std;
 
 namespace Kautham {
-/** \addtogroup Planner
+/** \addtogroup ControlPlanners
  *  @{
  */
 
@@ -68,7 +68,7 @@ namespace Kautham {
          int _onlyForward;
 	  };
   }
-  /** @}   end of Doxygen module "Planner */
+  /** @}   end of Doxygen module */
 }
 
 #endif // KAUTHAM_USE_OMPL

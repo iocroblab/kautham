@@ -29,10 +29,6 @@
 
 namespace Kautham {
 
-/** \addtogroup libKthutil
- *  @{
- */
-
 
 /*!
  * \brief The KthExcp class implements exceptions inside Kautham
@@ -74,4 +70,3 @@ namespace Kautham {
   };
 }
 
-/** @}   end of Doxygen module "libKthutil" */

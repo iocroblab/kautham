@@ -46,7 +46,7 @@ using namespace std;
 
 namespace Kautham {
 namespace omplplanner {
-/** \addtogroup Planner
+/** \addtogroup GeometricPlanners
  *  @{
  */
 class omplFOSRRTPlanner:public omplPlanner {
@@ -63,7 +63,7 @@ public:
     KthReal _GoalBias;
     KthReal _PMDBias;
 };
-/** @}   end of Doxygen module "Planner */
+/** @}   end of Doxygen module */
 }
 }
 
