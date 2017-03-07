@@ -39,6 +39,10 @@
 #include <Inventor/VRMLnodes/SoVRMLNodes.h>
 #include <pugixml.hpp>
 
+//The following config header file contains the version number of kautham and is automatically generated from the
+//CMakeList.txt file using the configure file option
+#include <kautham/kauthamConfig.h>
+
 #if defined(KAUTHAM_USE_GUIBRO)
 #include <libguibro/bronchowidget.h>
 #endif
@@ -804,6 +808,8 @@ namespace Kautham {
         tmp << MAJOR_VERSION;
         tmp << ".";
         tmp << MINOR_VERSION;
+        tmp << ".";
+        tmp << PATCH_VERSION;
         tmp << " - Institute of Industrial and Control Engineering";
         tmp << " - Technical University of Catalonia";
         setWindowTitle( tmp.str().c_str() );
