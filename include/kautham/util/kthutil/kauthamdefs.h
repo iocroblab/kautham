@@ -33,6 +33,7 @@
 * \mainpage
 *
 * \section Abstract
+*
 * The [Kautham Project] (http://sir.upc.edu/kautham) is a software tool developped at the [Service and Industrial Robotics]
 * (http://robotics.upc.edu) (SIR) group of the [Institute of Industrial and
 * Control Engineering](http://ioc.upc.edu) (IOC) of the [Universitat Politècnica de Catalunya] (
