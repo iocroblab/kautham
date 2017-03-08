@@ -33,6 +33,13 @@
 #include <QtGui/QTextBrowser>
 #include <QtGui/QDialog>
 
+//The following config header file contains the version number of kautham and is automatically generated from the
+//CMakeList.txt file using the configure file option
+#include <kautham/kauthamConfig.h>
+
+#include <string>
+#include <sstream>      // std::ostringstream
+
 namespace Kautham {
 
 /** \defgroup Application
@@ -54,13 +61,13 @@ public:
         if (Form->objectName().isEmpty())
             Form->setObjectName(QString::fromUtf8("Form"));
         Form->resize(671, 502);
-        Form->setMaximumSize(QSize(671, 502));
-        Form->setMinimumSize(QSize(671,502));
+        Form->setMaximumSize(QSize(701, 552));
+        Form->setMinimumSize(QSize(701,552));
         QIcon icon(QString::fromUtf8(":/icons/logo.svg"));
         Form->setWindowIcon(icon);
         textBrowser = new QTextBrowser(Form);
         textBrowser->setObjectName(QString::fromUtf8("textBrowser"));
-        textBrowser->setGeometry(QRect(0, 0, 671, 501));
+        textBrowser->setGeometry(QRect(0, 0, 701, 552));
         textBrowser->setOpenLinks(false);
 
         retranslateUi(Form);
@@ -71,35 +78,33 @@ public:
     void retranslateUi(QWidget *Form)
     {
         Form->setWindowTitle(QApplication::translate("Form", "The Kautham Project", 0, QApplication::UnicodeUTF8));
-        textBrowser->setHtml(QApplication::translate("Form", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/icons/logo_ioc.png\" /></p>\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;\"></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-"
-                        "indent:0px;\"><span style=\" font-size:10pt;\">Institute of Industrial and Control Engineering</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Technical University of Catalunya</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Barcelona, Spain</span></p>\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;\"></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Copyright (C) 2007 - 2010 by Alexander P\303\251rez and Jan Rosell</span></p>\n"
-"<p align=\"center\" style=\" margi"
-                        "n-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">alexander.perez@upc.edu and jan.rosell@upc.edu</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">                                                                            </span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:10pt; font-weight:600;\">This is a motion planning tool to be used into</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\"> academic environment and it's provided without </span></p>\n"
-"<p align=\"center\" "
-                        "style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\"> any warranty by the authors.</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">                                                                            </span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Alexander P\303\251rez is also with the</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Escuela Colombiana de Ingenier\303\255a &quot;Julio Garavito&quot;</span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin"
-                        "-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> placed in Bogot\303\241 D.C. Colombia. </span></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> alexander.perez@escuelaing.edu.co</span></p>\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/icons/logo_eci.png\" /></p></body></html>", 0, QApplication::UnicodeUTF8));
+
+        std::ostringstream otext;
+        otext << "<!DOCTYPE html><html><body><h2>The Kautham Project - "<<std::endl<<"Version "<< MAJOR_VERSION <<"."<< MINOR_VERSION <<"."<< PATCH_VERSION <<"</h2><br>"<<std::endl;
+
+        std::string text2 = "<b>The Kautham Project</b> is a software tool developped at the <b>Service and Industrial Robotics group</b>\
+                (SIR, http://robotics.upc.edu)  of the <b>Institute of Industrial and \
+                Control Engineering</b> (IOC, http://ioc.upc.edu) of the <b>Universitat Politècnica de Catalunya</b> (UPC, http://www.upc.edu), \
+                for teaching and research in robot motion planning.\
+                <br><br>The tool allows to cope with problems with one or more robots, being a generic\
+                robot defined as a kinematic tree with a mobile base, i.e. the tool can plan\
+                and simulate from simple two degrees of freedom free-flying robots to multi-robot\
+                scenarios with mobile manipulators equipped with anthropomorphic hands.\
+                <br><br>The main core of planners is provided by the Open Motion Planning Library (OMPL, http://ompl.kavrakilab.org).\
+                Different basic planners can be flexibly used and parameterized, allowing\
+                students to gain insight into the different planning algorithms. Among the\
+                advanced features the tool allows to easily define the coupling between degrees of\
+                freedom, the dynamic simulation and the integration with task planers. It is\
+                principally being used in the research of motion planning strategies for dexterous dual arm\
+                robotic systems. \
+                <br><br><b>Webpage</b> = http://sir.upc.edu/kautham\
+                <br><b>Contact</b> = Prof. Jan Rosell (jan.rosell@upc.edu)</body></html>\
+                <br><br><img src=\":/icons/logo_ioc.png\" width=\"605\" \">";
+
+        std::string text = otext.str()+text2;
+
+        textBrowser->setHtml(QApplication::translate("Form", text.c_str(), 0, QApplication::UnicodeUTF8));
+
     } // retranslateUi
 
 };

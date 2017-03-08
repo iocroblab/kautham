@@ -38,7 +38,7 @@ PROJECT_NAME           = "The Kautham Project"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         =
+PROJECT_NUMBER         = @KAUTHAM_VERSION_MAJOR@.@KAUTHAM_VERSION_MINOR@.@KAUTHAM_VERSION_PATCH@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -445,7 +445,7 @@ EXTRACT_STATIC         = NO
 # for Java sources.
 # The default value is: YES.
 
-EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_LOCAL_CLASSES  = NO
 
 # This flag is only useful for Objective-C code. When set to YES local methods,
 # which are defined in the implementation section but not in the interface are
