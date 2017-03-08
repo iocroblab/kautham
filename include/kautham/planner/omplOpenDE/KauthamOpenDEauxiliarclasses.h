@@ -58,7 +58,7 @@ using namespace std;
 
 namespace Kautham {
 
-/** \addtogroup group4 Physics-based Planners
+/** \addtogroup PhysicsBasedPlanners Physics-based Planners
  *  @{
  */
     namespace omplcplanner{
