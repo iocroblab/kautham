@@ -227,9 +227,11 @@
 /** \defgroup GridPlanners  Grid Planners
  *  \brief Contains classes to implement potential field planners based on grids
  *
- *   \todo Add detailed description of Grid Planners module
+ *   The Grid Planners module contains classes to partition the configuration space into a grid and to compute
+ *   different types of potential functions. The current available planners are:
+ *      - Planer based on the navigation function NF1.
+ *      - Planner based on harnomnic functions.
  *
- *  @{
  */
 
 /** \defgroup ControlPlanners Control-based Planners
@@ -237,7 +239,6 @@
  *
  *   \todo Add detailed description of Control-based Planners module
  *
- *  @{
  */
 
 /** \defgroup GeometricPlanners Geometric Planners
@@ -245,7 +246,6 @@
  *
  *   \todo Add detailed description of Geometric Planners module
  *
- *  @{
  */
 
 /** \defgroup group4 Physics-based Planners
@@ -253,7 +253,6 @@
  *
  *   \todo Add detailed description of Physics-based Planners module
  *
- *  @{
  */
 
 /** \defgroup Problem  Problem  Definition
@@ -261,7 +260,6 @@
  *
  *   \todo Add detailed description of Problem Definition module
  *
- *  @{
  */
 
 /** \defgroup Sampling Sampling module
@@ -269,7 +267,6 @@
  *
  *   \todo Add detailed description of Sampling module
  *
- *  @{
  */
 
 /** \defgroup  IK Inverse Kinematics
@@ -277,5 +274,4 @@
  *
  *   \todo Add detailed description of Kinematics module
  *
- *  @{
  */
