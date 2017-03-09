@@ -51,11 +51,7 @@ using namespace std;
 
 
 namespace Kautham {
-/** \defgroup ControlPlanners Control-based Planners
- *  \brief Contains classes to implement sampling-based planners based on controls
- *
- *   \todo Add detailed description of Control-based Planners module
- *
+/** \addtogroup ControlPlanners
  *  @{
  */
 

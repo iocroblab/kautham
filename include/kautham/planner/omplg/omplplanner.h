@@ -50,11 +50,7 @@ namespace ob = ompl::base;
 using namespace std;
 
 namespace Kautham {
-/** \defgroup GeometricPlanners Geometric Planners
- *  \brief Contains classes to implement sampling-based geometric planners
- *
- *   \todo Add detailed description of Geometric Planners module
- *
+/** \addtogroup GeometricPlanners
  *  @{
  */
     namespace omplplanner{
