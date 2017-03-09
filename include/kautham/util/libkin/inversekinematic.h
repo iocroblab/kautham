@@ -35,11 +35,7 @@
 
 
 namespace Kautham {
-/** \defgroup  IK Inverse Kinematics
- *  \brief Contains classes to solve the inverse kinematics of some robots
- *
- *   \todo Add detailed description of Kinematics module
- *
+/** \addtogroup IK
  *  @{
  */
   class Robot;
