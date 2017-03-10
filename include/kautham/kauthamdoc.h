@@ -145,7 +145,7 @@
 *  \tableofcontents
 *  \section sec21 Coupling between degrees of freedom
 * The configuration space corresponding to <i>m</i> robots is \f${\cal C}   = {\cal C}_1 \times \cdots \times {\cal C}_i \times \cdots \times {\cal C}_m \f$,
-* where in the general case \f${\cal C}_i=SE3\times \mathds{R}^{n_i}\f$.
+* where in the general case \f${\cal C}_i=SE3\times {R}^{n_i}\f$.
 * Configurations in \f$\cal C\f$ are represented by vectors of dimension \f$d=\sum_{i=1}^m (6+n_i)\f$,
 * with each component normalized in the range \f$[0,1]\f$, i.e.:
 *    \f[
@@ -222,34 +222,68 @@
 *      \image html benchmarking_results.png
 *   Or it can be uploaded to [plannerarena.org] (http://plannerarena.org).
 *
+*   \page page3 The Graphical User Interface
+*      \image html getting_started.png
+*      \image html getting_started_2.png
+*      \image html getting_started_3.png
+*
 */
 
 /** \defgroup GridPlanners  Grid Planners
- *  \brief Contains classes to implement potential field planners based on grids
+ *  \brief Contains classes that implement potential field planners based on grids.
  *
  *   The Grid Planners module contains classes to partition the configuration space into a grid and to compute
  *   different types of potential functions. The current available planners are:
- *      - Planer based on the navigation function NF1.
- *      - Planner based on harnomnic functions.
+ *      - %Planner based on the navigation function NF1 [(Latombe, 1991)](http://link.springer.com/book/10.1007%2F978-1-4615-4022-9).
+ *      - %Planner based on harmonic functions [(Connolly and Groupen, 1993)] (https://www.researchgate.net/publication/227763642_The_application_of_harmonic_functions_to_robotics).
  *
  */
 
 /** \defgroup ControlPlanners Control-based Planners
- *  \brief Contains classes to implement sampling-based planners based on controls
+ *  \brief Contains classes that implement sampling-based planners based on controls
  *
- *   \todo Add detailed description of Control-based Planners module
+ *   The  Control-based Planners module contains planners for systems subject to differential constraints, and that
+ *  rely on state propagation rather than simple interpolation to generate motions. They are based on the
+ *  [control-based planners provided by the OMPL library] (http://ompl.kavrakilab.org/planners.html#control_planners).
  *
+ *   \todo list of geometric planners provided
  */
 
 /** \defgroup GeometricPlanners Geometric Planners
- *  \brief Contains classes to implement sampling-based geometric planners
+ *  \brief Contains classes that implement sampling-based geometric planners.
  *
- *   \todo Add detailed description of Geometric Planners module
+ *   The  Geometric Planners module contains planners that only accounts for the geometric and kinematic constraints of the system.
+ *   and are based on the [geometric planners provided by the OMPL library] (http://ompl.kavrakilab.org/planners.html#geometric_planners).
+ *
+ *   Any planner provided by OMPL can be incorporated by writting the wrapping class that calls it and that sets the parameters to be tuned by the user
+ *   (see the template class omplNEWplanner.
+ *
+ *   The following planners from OMPL are currently available:
+ *      - RTT
+ *      - RRTConnect
+ *      - RRT*
+ *      - KPIECE
+ *      - BKPIECE
+ *      - SBL
+ *      - EST
+ *      - PRM
+ *
+ *   The following variants of OMPL have been incorporated:
+ *      - TRRT
+ *      - lazyTRRT
+ *
+ *   The following planners are also included:
+ *      - FOSRRT
+ *      - FOSKPIECE
+ *      - FOSBKPIECE
+ *      - FOSLBKPIECE
+ *
+ *  \todo Complete brief description of planners and ref to papers
  *
  */
 
 /** \defgroup group4 Physics-based Planners
- *  \brief Contains classes to implement sampling-based planners based on dynamic simulation
+ *  \brief Contains classes that implement sampling-based planners based on dynamic simulation
  *
  *   \todo Add detailed description of Physics-based Planners module
  *
