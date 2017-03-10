@@ -26,7 +26,7 @@
 #if defined(KAUTHAM_USE_ODE)
 
 #include <kautham/problem/workspace.h>
-#include <problem/ivpqpelement.h>
+#include <kautham/problem/ivpqpelement.h>
 #include <kautham/sampling/sampling.h>
 
 #include <boost/bind/mem_fn.hpp>

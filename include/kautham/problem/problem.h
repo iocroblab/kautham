@@ -83,8 +83,8 @@
 #endif
 
 #if defined(KAUTHAM_USE_ODE)
-#include <planner/omplOpenDE/KauthamOpenDERRTPlanner.h>
-#include <planner/omplOpenDE/KauthamOpenDEKPIECEPlanner.h>
+#include <kautham/planner/omplOpenDE/KauthamOpenDERRTPlanner.h>
+#include <kautham/planner/omplOpenDE/KauthamOpenDEKPIECEPlanner.h>
 #endif
 
 /*#if defined(KAUTHAM_USE_GUIBRO)

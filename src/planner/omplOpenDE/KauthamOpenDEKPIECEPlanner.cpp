@@ -27,7 +27,7 @@
 #if defined(KAUTHAM_USE_ODE)
 
 #include <kautham/planner/omplOpenDE/KauthamOpenDEKPIECEPlanner.h>
-#include <sampling/state.h>
+#include <kautham/sampling/state.h>
 namespace Kautham {
 
 namespace omplcplanner{

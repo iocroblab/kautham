@@ -40,8 +40,8 @@
 #include <ompl/extensions/opende/OpenDEStatePropagator.h>
 #include <ompl/extensions/opende/OpenDEStateValidityChecker.h>
 #include <ompl/base/goals/GoalRegion.h>
-#include <problem/link.h>
-#include <problem/robot.h>
+#include <kautham/problem/link.h>
+#include <kautham/problem/robot.h>
 #include <kautham/problem/workspace.h>
 
 #define _USE_MATH_DEFINES
@@ -69,14 +69,14 @@
 #include <vector>
 #include <cmath>
 //#include <libmt/mt/mt.h>
-#include <problem/link.h>
-#include <problem/robot.h>
-#include <problem/ivelement.h>
+#include <kautham/problem/link.h>
+#include <kautham/problem/robot.h>
+#include <kautham/problem/ivelement.h>
 #include <kautham/planner/omplOpenDE/KauthamOpenDEEnvironment.h>
 #include <ompl/base/ProjectionEvaluator.h>
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
-#include "planner/planner.h"
+#include <kautham/planner/planner.h>
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
