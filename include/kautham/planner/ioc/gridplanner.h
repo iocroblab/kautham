@@ -32,7 +32,7 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
-#include <kautham/planner/ioc/iocplanner.h>
+#include <kautham/planner/planner.h>
 
 using namespace std;
 
@@ -90,7 +90,7 @@ namespace Kautham {
 	//!associated to the vertices, and a subgraph that contains only those free.
 	//!Its derived classes must implement the trysolve function to implement any grid-based 
 	//!planning method .
-    class gridPlanner:public iocPlanner {
+    class gridPlanner:public Planner {
 	    public:
 		//!Constructor
         gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 

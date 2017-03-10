@@ -146,9 +146,6 @@ namespace Kautham {
         if (name == "dummy") //Dummy if to start.
             cout<<"planer name is dummy?"<<endl;
 #if defined(KAUTHAM_USE_IOC)
-        else if (name == "MyPlanner")
-            _planner = new IOC::MyPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
-
         else if (name == "MyGridPlanner")
             _planner = new IOC::MyGridPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
 

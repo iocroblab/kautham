@@ -44,7 +44,7 @@ namespace Kautham {
   namespace IOC{
 
     gridPlanner::gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
-              iocPlanner(stype, init, goal, samples, sampler, ws)
+              Planner(stype, init, goal, samples, ws)
 	{
 		//set intial values
 		_obstaclePotential = 10.0;
