@@ -41,7 +41,7 @@
 #include <ode/ode.h>
 //#include <kautham/planner/omplc/omplcplanner.h>
 #include <kautham/planner/omplOpenDE/KauthamOpenDEEnvironment.h>
-#include <sampling/sample.h>
+#include <kautham/sampling/sample.h>
 
 
 #define _USE_MATH_DEFINES

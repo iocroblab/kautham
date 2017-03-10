@@ -54,7 +54,7 @@
 #include <ode/ode.h>
 #include <kautham/planner/omplOpenDE/KauthamOpenDEauxiliarclasses.h>
 //#include <kautham/planner/omplc/omplcplanner.h>
-#include "planner/planner.h"
+#include <kautham/planner/planner.h>
 
 #include <kautham/planner/omplOpenDE/KauthamOpenDEEnvironment.h>
 

@@ -26,9 +26,9 @@
 #if defined(KAUTHAM_USE_ODE)
 
 #include<kautham/planner/omplOpenDE/KauthamOpenDEPlanner.h>
-#include "planner/omplg/omplplanner.h"
-#include "planner/omplc/omplcplanner.h"
-#include <sampling/state.h>
+#include <kautham/planner/omplg/omplplanner.h>
+#include <kautham/planner/omplc/omplcplanner.h>
+#include <kautham/sampling/state.h>
 
 
 class KauthamDEGoal;
