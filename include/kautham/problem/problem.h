@@ -48,7 +48,6 @@
 #include <kautham/sampling/state.h>
 
 #if defined(KAUTHAM_USE_IOC)
-#include <kautham/planner/ioc/myplanner.h>
 #include <kautham/planner/ioc/mygridplanner.h>
 #include <kautham/planner/ioc/NF1planner.h>
 #include <kautham/planner/ioc/HFplanner.h>

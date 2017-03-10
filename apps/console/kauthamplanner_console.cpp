@@ -30,15 +30,8 @@
 
 #include <Inventor/SoDB.h>
 
-#ifdef KAUTHAM_USE_MPI
-#include <mpi.h>
-#endif
-
 #include <kautham/kauthamshell.h>
-
 #include <kautham/problem/problem.h>
-#include <kautham/planner/ioc/kthquery.h>
-#include <kautham/planner/ioc/iocplanner.h>
 #include <kautham/util/kthutil/kauthamexception.h>
 
 #include "benchmark.h"
@@ -56,18 +49,9 @@ public:
 
 
 int main(int argc, char* argv[]){
-#ifdef KAUTHAM_USE_MPI
-    // Initializing MPI
-    int numProcs, myId;
-    MPI_Status stat;
-    MPI_Init(&argc,&argv); // all MPI programs start with MPI_Init; all 'N' processes exist thereafter //
-    MPI_Comm_size(MPI_COMM_WORLD,&numProcs); // find out how big the SPMD world is //
-    MPI_Comm_rank(MPI_COMM_WORLD,&myId); // and this processes' rank is //
-#endif
-
 
     if ((argc > 1 && string(argv[1]) == "-h") ||
-            (argc < 3 || argc > 5) ||
+            (argc < 3 || argc > 4) ||
             (argc == 3 && string(argv[1]) != "-t" && string(argv[1]) != "-s" && string(argv[1]) != "-b") ||
             (argc == 4 && string(argv[1]) != "-s" && string(argv[1]) != "-b") ||
             (argc == 5 && string(argv[1]) != "-b")){//print help info
@@ -78,15 +62,10 @@ int main(int argc, char* argv[]){
                   << "\t KauthamConsole -b abs_path_xml_benchmarking_file [abs_path_models_folder]\n"
                   << "where xml_benchmarking_file is a relative path of the benchmark to be solved and "
                   << "models_folder is an optional parameter to specify where the models must be looked for.\n\n"
-                  << "Or if you want to benchmark IOC planners:\n"
-                  << "\t KauthamConsole -b abs_path_xml_problem_file number_of_runs [abs_path_models folder]\n"
-                  << "where xml_problem_file is a relative path of the problem to be solved and "
-                  << "the number_of_runs is the integer number that the problem is trying to be solved.\n\n"
                   << "Or if you want to test the kauthamshell utilities:\n"
                   << "\t KauthamConsole -t abs_path_of_models_folder\n\n"
                   << "Or if you want to execute a single problem:\n"
                   << "\t KauthamConsole -s abs_path_xml_problem_file [abs_path_of_models_folder]\n\n";
-
         return 0;
     }
 
@@ -396,200 +375,7 @@ int main(int argc, char* argv[]){
     //benchmarking
     else if(string(argv[1]) == "-b")
     {
-        //IOC benchmarking
-        //call: KauthamConsole -b abs_path_xml_problem_file number_of_runs [abs_path_models folder]
-        if (argc>3 && atoi(argv[3]) != 0) {//IOC planners benchmarking
-            //=====================
-            SoDB::init();
-
-
-            string soluFile = argv[2];
-            soluFile.append("_solution_");
-            std::cout << "Kautham is opening a problem file: " << argv[2] << endl;
-
-            try{
-                int tryTimes = atoi( argv[3] );
-#ifdef KAUTHAM_USE_MPI 
-                tryTimes /= numProcs;
-#endif
-                cout << "The problem will be tried to be solved " << tryTimes << " times.\n" ;
-                int badSol = 0;
-                Problem* _problem = new Problem();
-                stringstream ss;
-                ss.str(soluFile);
-
-
-                string absPath = argv[2];
-
-                //directory containing the models
-                vector <string> def_path;
-                if (argc == 5) {
-                    def_path.push_back(argv[4]);
-                }
-                string dir = absPath.substr(0,absPath.find_last_of("/")+1);
-                def_path.push_back(dir);
-                def_path.push_back(dir+"../../models/");
-
-
-                if( _problem->setupFromFile( absPath, def_path ) ){
-                    cout << "The problem file has been loaded successfully.\n";
-                    IOC::iocPlanner* _planner = (IOC::iocPlanner*)_problem->getPlanner();
-                    SampleSet* _samples = _problem->getSampleSet();
-                    unsigned int d =  _samples->getSampleAt(0)->getDim();
-                    //vector<KthReal> init(d), goal(d);
-                    vector<KthReal> init( _samples->getSampleAt(0)->getCoords());
-                    vector<KthReal> goal( _samples->getSampleAt(1)->getCoords());
-                    KthReal times[2]={0., 0.};
-                    int sampCount[3]={0, 0, 0};
-                    unsigned int checks=0;
-                    unsigned int worldchecks=0;
-                    for(int i = 0; i < tryTimes; i++){
-                        _samples->clear();
-                        Sample* smp = new Sample(d);
-                        smp->setCoords( init );
-                        _problem->wSpace()->collisionCheck( smp);
-                        _samples->add( smp );
-                        smp = new Sample(d);
-                        smp->setCoords( goal );
-                        _problem->wSpace()->collisionCheck( smp);
-                        _samples->add( smp );
-                        _planner->setInitSamp( _samples->getSampleAt(0) );
-                        _planner->setGoalSamp( _samples->getSampleAt(1) );
-
-                        if(_planner->solveAndInherit()){
-                            IOC::KthQuery& tmp = _planner->getQueries().at( _planner->getQueries().size() - 1 );
-                            times[0] += tmp.getTotalTime();
-                            times[1] += tmp.getSmoothTime();
-                            sampCount[0] += tmp.getGeneratedSamples();
-                            sampCount[1] += tmp.getConnectedSamples();
-                            sampCount[2] += tmp.getPath().size();
-                            worldchecks += tmp.getWorldCollCheckCalls();
-                            checks += tmp.getCollCheckCalls();
-                            //ss << i << ".kps";
-                            //_planner->saveData( soluFile.c_str() );
-                        }else{
-                            cout << "The problem has not been solve successfully.\n";
-                            badSol++;
-                            /*
-          KthQuery& tmp = _planner->getQueries().at( _planner->getQueries().size() - 1 );
-          times[0] += tmp.getTotalTime();
-          times[1] += tmp.getSmoothTime();
-          sampCount[0] += tmp.getGeneratedSamples();
-          sampCount[1] += tmp.getConnectedSamples();
-          sampCount[2] += tmp.getPath().size();
-          checks += tmp.getCollCheckCalls();
-*/
-#ifndef KAUTHAM_USE_MPI
-                            //if( badSol >= tryTimes / 5 )
-                            //  throw(1);
-#endif
-                        }
-                    }
-
-#ifdef KAUTHAM_USE_MPI
-                    // Now use the REDUCE MPI function to collect the data from the other active process.
-                    // Reducing: buff2 will contain the sum of all buff
-                    KthReal allTimes[2]={0., 0.};
-                    int allSampCount[3]={0, 0, 0};
-                    int allBadSol = 0;
-                    if( typeid( KthReal ) == typeid( float ) )
-                        MPI_Reduce(times, allTimes, 2, MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
-                    else
-                        MPI_Reduce(times, allTimes, 2, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-
-                    MPI_Reduce(sampCount, allSampCount, 3, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-                    MPI_Reduce(&badSol, &allBadSol, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-
-                    //  Now it saves the data to a file in the root process or the unique one
-                    //  if it doesn't use the MPI parallelization
-                    //
-                    if( myId == 0 ){ // it means the root process
-                        // unifying the data between some parallel process and unique one.
-                        tryTimes *= numProcs;
-                        badSol = allBadSol;
-                        for( int i = 0; i < 2; i++ ){
-                            times[i] = allTimes[i];
-                            sampCount[i] = allSampCount[i];
-                        }
-                        sampCount[2] = allSampCount[2];
-#endif
-                        //ofstream outputFile("stats.kth", ios::out|ios::trunc);
-                        ofstream outputFile("stats.kth", ios::out|ios::app);
-
-                        if( outputFile.is_open() ){
-                            /*
-          outputFile << "Problem solved:\t"     << absPath                << endl;
-          outputFile << "TryTimes: \t"          << tryTimes               << endl;
-          outputFile << "BadSolved: \t"         << badSol                 << endl;
-          outputFile << "Total time: \t"        << times[0]/tryTimes      << endl;
-          outputFile << "Smooth time: \t"       << times[1]/tryTimes      << endl;
-          outputFile << "Tried samples: \t"     << sampCount[0]/(float) tryTimes  << endl;
-          outputFile << "Connected samples: \t" << sampCount[1]/(float) tryTimes  << endl;
-          outputFile << "Nodes in solution path: \t"   << sampCount[2]/(float) tryTimes  << endl;
-          outputFile << "Collision-check calls: \t"   << checks/tryTimes << endl;
-          */
-                            outputFile << "Problem solved:\t"     << absPath                << endl;
-                            outputFile << "NumExecutions SuccesRate Time Samples PRMnodes PathNodes WorldCollChecks TotalPQPCollChecks" << endl;
-                            outputFile << tryTimes  << "\t";
-                            //outputFile << badSol  << "\t";
-                            outputFile << 100.0*(float)(tryTimes-badSol)/tryTimes  << "\t";
-                            if(badSol!=tryTimes)
-                            {
-                                outputFile << times[0]/(float) (tryTimes-badSol)  << "\t";
-                                outputFile << sampCount[0]/(float) (tryTimes-badSol)  << "\t";
-                                outputFile << sampCount[1]/(float) (tryTimes-badSol)  << "\t";
-                                outputFile << sampCount[2]/(float) (tryTimes-badSol)  << "\t";
-                                outputFile << worldchecks/(float) (tryTimes-badSol)  <<  "\t";
-                                outputFile << checks/(float) (tryTimes-badSol)  << endl;
-                            }
-                            else outputFile << endl;
-                        }else           //there were any problems with the copying process
-                            throw(1);
-
-                        outputFile.close();
-
-#ifdef KAUTHAM_USE_MPI
-                    }
-#endif
-
-                }else{
-                    cout << "The problem file has not been loaded successfully. "
-                         << "Please take care with the problem definition.\n";
-                    throw(1);
-                }
-                delete _problem;
-            } catch (const KthExcp& excp) {
-                cout << "Error: " << excp.what() << endl << excp.more() << endl;
-#ifdef KAUTHAM_USE_MPI
-                MPI_Finalize();
-#endif
-                return 1;
-            } catch (const exception& excp) {
-                cout << "Error: " << excp.what() << endl;
-#ifdef KAUTHAM_USE_MPI
-                MPI_Finalize();
-#endif
-                return 1;
-            } catch(...) {
-                cout << "Something is wrong with the problem. Please run the "
-                     << "problem with the Kautham2 application at less once in order "
-                     << "to verify the correctness of the problem formulation.\n";
-#ifdef KAUTHAM_USE_MPI
-                MPI_Finalize();
-#endif
-                return 1;
-            }
-
-#ifdef KAUTHAM_USE_MPI
-            // Ending MPI
-            MPI_Finalize();
-#endif
-
-
-            return 0;
-        }//end ioc benchmarking
-        else
-        {//OMPL planners benchmarking
+      //OMPL planners benchmarking
             //call: KauthamConsole -b abs_path_xml_benchmarking_file [abs_path_models_folder]
             SoDB::init();
             string absPath = argv[2];
@@ -618,6 +404,5 @@ int main(int argc, char* argv[]){
             }
 
             return (0);
-        }//end ompl benchmarking
     }//End benchmarking.
 }
