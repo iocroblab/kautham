@@ -61,7 +61,7 @@ namespace Kautham {
         planner->as<og::KPIECE1>()->setMinValidPathFraction(_minValidPathFraction);
         planner->as<og::KPIECE1>()->setFailedExpansionCellScoreFactor(_failedExpansionScoreFactor);
         planner->as<og::KPIECE1>()->setProjectionEvaluator(space->getDefaultProjection());
-        addParameter("Cell Size",ss->getPlanner()->as<og::KPIECE1>()->getProjectionEvaluator()->getCellSizes().at(0));
+        addParameter("Cell Size",planner->as<og::KPIECE1>()->getProjectionEvaluator()->getCellSizes().at(0));
 
         //set the planner
         ss->setPlanner(planner);
