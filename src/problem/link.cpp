@@ -323,7 +323,7 @@ namespace Kautham {
   }
 
   //! This member function set low and hi limits to articular variable. 
-  //! If limits represents angles, there are in radians otherwise there are in milimeters.
+  //! If limits represents angles, they are in radians. Otherwise there are in meters.
   void Link::setLimits(KthReal low, KthReal hi){
 	  if(!armed){
 		  this->lowLimit = low;

@@ -62,7 +62,7 @@ void urdf_origin::fill (xml_node *node) {
         tmpDouble[1] = atof(tmpString.c_str());
         getline(ss,tmpString,' ');
         tmpDouble[2] = atof(tmpString.c_str());
-        xyz = 1000. * mt::Point3(tmpDouble[0],tmpDouble[1],tmpDouble[2]);
+        xyz = mt::Point3(tmpDouble[0],tmpDouble[1],tmpDouble[2]);
     }
     if (node->attribute("rpy").as_string()) {
         tmpString = node->attribute("rpy").as_string();
@@ -193,9 +193,9 @@ void urdf_geometry::fill(xml_node *node, string dir, map<string,SoMaterial*> *ma
         size[1] = atof(tmpString.c_str());
         getline(ss,tmpString,' ');
         size[2] = atof(tmpString.c_str());
-        box->width.setValue((float)size[0]*1000);
-        box->height.setValue((float)size[1]*1000);
-        box->depth.setValue((float)size[2]*1000);
+        box->width.setValue((float)size[0]);
+        box->height.setValue((float)size[1]);
+        box->depth.setValue((float)size[2]);
     } else if (geom_type == "cylinder") {
         SoRotation *cyl_rot = new SoRotation;
         submodel->addChild(cyl_rot);
@@ -203,12 +203,12 @@ void urdf_geometry::fill(xml_node *node, string dir, map<string,SoMaterial*> *ma
 
         SoCylinder *cylinder = new SoCylinder;
         submodel->addChild(cylinder);
-        cylinder->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
-        cylinder->height.setValue((float)geom_node.attribute("length").as_double()*1000.);
+        cylinder->radius.setValue((float)geom_node.attribute("radius").as_double());
+        cylinder->height.setValue((float)geom_node.attribute("length").as_double());
     } else if (geom_type == "sphere") {
         SoSphere *sphere = new SoSphere;
         submodel->addChild(sphere);
-        sphere->radius.setValue((float)geom_node.attribute("radius").as_double()*1000.);
+        sphere->radius.setValue((float)geom_node.attribute("radius").as_double());
     } else if (geom_type == "mesh") {
         if (geom_node.attribute("scale")) {
             double scale[3];
@@ -220,18 +220,6 @@ void urdf_geometry::fill(xml_node *node, string dir, map<string,SoMaterial*> *ma
             scale[1] = atof(tmpString.c_str());
             getline(ss,tmpString,' ');
             scale[2] = atof(tmpString.c_str());
-
-            //Mesh is in meters and should be passed to milimeters
-            if (scale[0] != 0.001 || scale[1] != 0.001 || scale[2] != 0.001) {
-                SoScale *sca = new SoScale;
-                submodel->addChild(sca);
-                sca->scaleFactor.setValue((float)1000.*scale[0],(float)1000.*scale[1],(float)1000.*scale[2]);
-            }
-        } else {
-            //Mesh is in meters and should be passed to milimeters
-            SoScale *sca = new SoScale;
-            submodel->addChild(sca);
-            sca->scaleFactor.setValue((float)1000.,(float)1000.,(float)1000.);
         }
         string filename = dir+geom_node.attribute("filename").as_string();
         submodel->addChild(readFile(filename));        

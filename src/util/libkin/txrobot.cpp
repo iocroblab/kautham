@@ -577,7 +577,7 @@ TXerror TXRobot::invKin(const mt::Transform& p, Vect6& q, const config& conf, Ve
 }
 
 /// Computes inverse kinematics from Cartesian pos values
-/// (expressed in milimeters), the current configuration of the robot and the last
+/// (expressed in meters), the current configuration of the robot and the last
 /// position of a path (Vect6 (radians)
 /// The result goes to Vect6 (radians). The function returns an error code.
 TXerror TXRobot::invKin(const mt::Transform& p, Vect6& qNew, const Vect6& qOld, const config& conf)
@@ -665,7 +665,7 @@ TXerror TXRobot::setClosestAngle(mt::Scalar &q, const mt::Scalar &qAnt)
 
 
 /// Computes inverse kinematics from Cartesian pos values
-/// (expressed in milimeters), and after it crashes your program
+/// (expressed in meters), and after it crashes your program
 // TXerror TXRobot::invKin(const mt::Transform& p,  Vect6& q , int  foo,  const config& conf)
 // {
 //    TXerror result=  invKin(p, q, conf);
