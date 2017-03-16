@@ -55,7 +55,8 @@ namespace Kautham {
 
          KthReal _Range;
          KthReal _GoalBias;
-         KthReal _minValidPathFraction;
+         //KthReal _minValidPathFraction;
+         KthReal _maxNumSteps;
          KthReal _failedExpansionScoreFactor;
 
       };

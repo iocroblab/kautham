@@ -42,14 +42,23 @@
 namespace Kautham {
   namespace omplplanner{
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //! This is a class derived form the class ompl::geometric::KPIECE. Its purpose is to reimplement the solve function to slightly change its behavior, by:
+    //!      1) Allowing to grow several steps in the same direction (cpontrolled by a new parameter called numMaxSteps)
+    //!      2) Limiting the growing towards the goal to maxNumSteps*maxDistance_
+    //!      3) Not allowing to grow in directions such that the dot product between consecutive motions be negative
+    //!         (it is implemented using distances)
     class myKPIECE1:public og::KPIECE1
     {
+        private:
+            int maxNumSteps;
 
         public:
         myKPIECE1( ob::SpaceInformationPtr &si) : KPIECE1(si)
         {
 
         }
+        void setMaxNumSteps(unsigned int t) {maxNumSteps = t;};
+
         ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
         {
             checkValidity();
@@ -84,8 +93,6 @@ namespace Kautham {
             ob::State *xstate = si_->allocState();
             ob::State *firststate = si_->allocState();
 
-            int maxsteps = 1+rng_.uniform01()*4;//do at most 10 steps in a given direction
-
             while (ptc == false)
             {
                 disc_.countIteration();
@@ -96,80 +103,91 @@ namespace Kautham {
                 disc_.selectMotion(existing, ecell);
                 assert(existing);
 
-                /* sample random state (with goal biasing) */
-                /* try not to move backwards */
-                for(int h=0;h<5;h++)
-                {
-                    if (goal_s && rng_.uniform01() < goalBias_ && goal_s->canSample())
-                    {
-                        goal_s->sampleGoal(xstate);
-                        /* find state to add */
+                /* Specification of number of steps moves and sense */
+                int maxsteps = 1+rng_.uniform01()*maxNumSteps;
+                int sense = 1; //to change the sens of motion if needed.
 
-                        double d = si_->distance(existing->state, xstate);
-                        if (d > maxsteps*maxDistance_)
-                        {
-                            si_->getStateSpace()->interpolate(existing->state, xstate, maxsteps*maxDistance_ / d, xstate);
-                            si_->getStateSpace()->interpolate(existing->state, xstate, 1.0/maxsteps, firststate);
-                            if(existing->parent!=nullptr)
-                            {
-                                double dparent = si_->distance(existing->parent->state, firststate);
-                                if(dparent>maxDistance_) break;
-                            }
-                        }
-                        else break;
-                    }
-                    else
+                /* sample random state (with goal biasing) */
+                if (goal_s && rng_.uniform01() < goalBias_ && goal_s->canSample())
+                {
+                    /* sample goal */
+                    goal_s->sampleGoal(xstate);
+                    sense = 1;
+                    /* find state to add. At most at a distance maxsteps*maxDistance_ from the state being expanded */
+                    double d = si_->distance(existing->state, xstate);
+                    if (d > maxsteps*maxDistance_)
                     {
-                        sampler_->sampleUniformNear(xstate, existing->state, maxsteps*maxDistance_);
+                        /* xstate is the new state towards to grow in maxsteps steps */
+                        si_->getStateSpace()->interpolate(existing->state, xstate, maxsteps*maxDistance_ / d, xstate);
+                        /* firststate is the first state towards xstate */
                         si_->getStateSpace()->interpolate(existing->state, xstate, 1.0/maxsteps, firststate);
                         if(existing->parent!=nullptr)
                         {
+                            /* if firststate is closer to the parent than to existing->state it means we must move in the reverse direction */
                             double dparent = si_->distance(existing->parent->state, firststate);
-                            if(dparent>maxDistance_) break;
+                            if(dparent>maxDistance_) sense = 1;
+                            else sense = -1;
                         }
                     }
                 }
+                else
+                {
+                    /* sample a state close to exisiting->state */
+                    sampler_->sampleUniformNear(xstate, existing->state, maxsteps*maxDistance_);
+                    si_->getStateSpace()->interpolate(existing->state, xstate, 1.0/maxsteps, firststate);
+                    if(existing->parent!=nullptr)
+                    {
+                        double dparent = si_->distance(existing->parent->state, firststate);
+                        if(dparent>maxDistance_) sense = 1;
+                        else sense = -1;
+                    }
+                }
 
+            //Start Old code from OMPL::KPIECE1:
                 //std::pair<ob::State *, double> fail(xstate, 0.0);
                 //bool keep = si_->checkMotion(existing->state, xstate, fail);
                 //if (!keep && fail.second > minValidPathFraction_)
                 //    keep = true;
                 //if (keep)
 
+                //if (si_->checkMotion(existing->state, xstate))
+                //{
+                //    /* create a motion */
+                //    auto *motion = new Motion(si_);
+                //    si_->copyState(motion->state, xstate);
+                //    motion->parent = existing;
 
-//                if (si_->checkMotion(existing->state, xstate))
-//                {
-//                    /* create a motion */
-//                    auto *motion = new Motion(si_);
-//                    si_->copyState(motion->state, xstate);
-//                    motion->parent = existing;
+                //    double dist = 0.0;
+                //    bool solv = goal->isSatisfied(motion->state, &dist);
+                //    projectionEvaluator_->computeCoordinates(motion->state, xcoord);
+                //    disc_.addMotion(motion, xcoord, dist);  // this will also update the discretization heaps as needed, so no
+                //                                                 // call to updateCell() is needed
 
-//                    double dist = 0.0;
-//                    bool solv = goal->isSatisfied(motion->state, &dist);
-//                    projectionEvaluator_->computeCoordinates(motion->state, xcoord);
-//                    disc_.addMotion(motion, xcoord, dist);  // this will also update the discretization heaps as needed, so no
-//                                                                 // call to updateCell() is needed
+                //    if (solv)
+                //    {
+                //        approxdif = dist;
+                //        solution = motion;
+                //        break;
+                //    }
+                //    if (dist < approxdif)
+                //    {
+                //        approxdif = dist;
+                //        approxsol = motion;
+                //    }
 
-//                    if (solv)
-//                    {
-//                        approxdif = dist;
-//                        solution = motion;
-//                        break;
-//                    }
-//                    if (dist < approxdif)
-//                    {
-//                        approxdif = dist;
-//                        approxsol = motion;
-//                    }
+                //}
 
-//                }
+              //End Old code from OMPL::KPIECE1:
 
                 Motion *m1=existing;
                 ob::State *s1 = existing->state;
                 ob::State *s2 = si_->allocState();
+
+                //Loop to grow towards xstate in maxsteps
                 for(int i=1; i<= maxsteps; i++)
                 {
-                    si_->getStateSpace()->interpolate(existing->state, xstate, (double)i/maxsteps, s2);
+                    //interpolate
+                    si_->getStateSpace()->interpolate(existing->state, xstate, (double)sense*i/maxsteps, s2);
 
                     if (si_->checkMotion(s1, s2))
                     {
@@ -208,8 +226,7 @@ namespace Kautham {
                 }
                 si_->freeState(s2);
 
-
-                 disc_.updateCell(ecell);
+                disc_.updateCell(ecell);
             }
 
             bool solved = false;
@@ -264,20 +281,22 @@ namespace Kautham {
         ob::PlannerPtr planner(new myKPIECE1(si));
         //set planner parameters: range and goalbias
         _Range=0.05;
-        _GoalBias=(planner->as<og::KPIECE1>())->getGoalBias();
-        _minValidPathFraction=(planner->as<og::KPIECE1>())->getMinValidPathFraction();
-        _failedExpansionScoreFactor=(planner->as<og::KPIECE1>())->getFailedExpansionCellScoreFactor();
+        _GoalBias=(planner->as<myKPIECE1>())->getGoalBias();
+        _maxNumSteps = 4;
+        //_minValidPathFraction=(planner->as<og::KPIECE1>())->getMinValidPathFraction();
+        _failedExpansionScoreFactor=(planner->as<myKPIECE1>())->getFailedExpansionCellScoreFactor();
 
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
-        addParameter("minValidPathFraction", _minValidPathFraction);
+        //addParameter("minValidPathFraction", _minValidPathFraction);
+        addParameter("maxNumSteps", _maxNumSteps);
         addParameter("failedExpansionScoreFactor",_failedExpansionScoreFactor);
-        planner->as<og::KPIECE1>()->setRange(_Range);
-        planner->as<og::KPIECE1>()->setGoalBias(_GoalBias);
-        planner->as<og::KPIECE1>()->setMinValidPathFraction(_minValidPathFraction);
-        planner->as<og::KPIECE1>()->setFailedExpansionCellScoreFactor(_failedExpansionScoreFactor);
-        planner->as<og::KPIECE1>()->setProjectionEvaluator(space->getDefaultProjection());
-        addParameter("Cell Size",planner->as<og::KPIECE1>()->getProjectionEvaluator()->getCellSizes().at(0));
+        planner->as<myKPIECE1>()->setRange(_Range);
+        planner->as<myKPIECE1>()->setGoalBias(_GoalBias);
+        //planner->as<og::KPIECE1>()->setMinValidPathFraction(_minValidPathFraction);
+        planner->as<myKPIECE1>()->setFailedExpansionCellScoreFactor(_failedExpansionScoreFactor);
+        planner->as<myKPIECE1>()->setProjectionEvaluator(space->getDefaultProjection());
+        addParameter("Cell Size",planner->as<myKPIECE1>()->getProjectionEvaluator()->getCellSizes().at(0));
 
         //set the planner
         ss->setPlanner(planner);
@@ -296,7 +315,7 @@ namespace Kautham {
         HASH_S_K::iterator it = _parameters.find("Range");
         if(it != _parameters.end()){
           _Range = it->second;
-          ss->getPlanner()->as<og::KPIECE1>()->setRange(_Range);
+          ss->getPlanner()->as<myKPIECE1>()->setRange(_Range);
          }
         else
           return false;
@@ -304,15 +323,22 @@ namespace Kautham {
         it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
             _GoalBias = it->second;
-            ss->getPlanner()->as<og::KPIECE1>()->setGoalBias(_GoalBias);
+            ss->getPlanner()->as<myKPIECE1>()->setGoalBias(_GoalBias);
         }
         else
           return false;
 
-        it = _parameters.find("minValidPathFraction");
+//        it = _parameters.find("minValidPathFraction");
+//        if(it != _parameters.end()){
+//            _minValidPathFraction = it->second;
+//            ss->getPlanner()->as<og::KPIECE1>()->setMinValidPathFraction (_minValidPathFraction);
+//        }
+//        else
+//          return false;
+
+        it = _parameters.find("maxNumSteps");
         if(it != _parameters.end()){
-            _minValidPathFraction = it->second;
-            ss->getPlanner()->as<og::KPIECE1>()->setMinValidPathFraction (_minValidPathFraction);
+            ss->getPlanner()->as<myKPIECE1>()->setMaxNumSteps(it->second);
         }
         else
           return false;
@@ -320,7 +346,7 @@ namespace Kautham {
         it = _parameters.find("failedExpansionScoreFactor");
         if(it != _parameters.end()){
             _failedExpansionScoreFactor = it->second;
-            ss->getPlanner()->as<og::KPIECE1>()->setFailedExpansionCellScoreFactor(_failedExpansionScoreFactor);
+            ss->getPlanner()->as<myKPIECE1>()->setFailedExpansionCellScoreFactor(_failedExpansionScoreFactor);
         }
         else
           return false;
@@ -329,10 +355,10 @@ namespace Kautham {
         it = _parameters.find("Cell Size");
         if (it == _parameters.end()) return false;
         if (it->second < 0.) {
-            it->second = ss->getPlanner()->as<og::KPIECE1>()->getProjectionEvaluator()->getCellSizes().at(0);
+            it->second = ss->getPlanner()->as<myKPIECE1>()->getProjectionEvaluator()->getCellSizes().at(0);
         } else {
-            std::vector<double> sizes(ss->getPlanner()->as<og::KPIECE1>()->getProjectionEvaluator()->getDimension(),it->second);
-            ss->getPlanner()->as<og::KPIECE1>()->getProjectionEvaluator()->setCellSizes(sizes);
+            std::vector<double> sizes(ss->getPlanner()->as<myKPIECE1>()->getProjectionEvaluator()->getDimension(),it->second);
+            ss->getPlanner()->as<myKPIECE1>()->getProjectionEvaluator()->setCellSizes(sizes);
         }
 
       }catch(...){
