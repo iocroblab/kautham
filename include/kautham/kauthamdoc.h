@@ -246,7 +246,7 @@
  *  rely on state propagation rather than simple interpolation to generate motions. They are based on the
  *  [control-based planners provided by the OMPL library] (http://ompl.kavrakilab.org/planners.html#control_planners).
  *
- *   \todo list of geometric planners provided
+ *   \todo list of control planners provided
  */
 
 /** \defgroup GeometricPlanners Geometric Planners
@@ -255,22 +255,26 @@
  *   The  Geometric Planners module contains planners that only accounts for the geometric and kinematic constraints of the system.
  *   and are based on the [geometric planners provided by the OMPL library] (http://ompl.kavrakilab.org/planners.html#geometric_planners).
  *
- *   Any planner provided by OMPL can be incorporated by writting the wrapping class that calls it and that sets the parameters to be tuned by the user
- *   (see the template class omplNEWplanner.
+ *   Some classes are simple wrappers of the OMPL class planners. Any planner provided by OMPL can be incorporated by writting
+ *   the wrapping class that calls it and that sets the parameters to be tuned by the user (see the template class omplNEWplanner).
+ *
+ *   Other classes are minor variants of the OMPL class planners.
+ *
+ *   Some other classes implement more advanced planners based on synergies (coupled motions) with the aim to plan motions for
+ *   for dual-arm robotic systems with human-like appearance.
  *
  *   The following planners from OMPL are currently available:
  *      - RTT
  *      - RRTConnect
- *      - RRT*
- *      - KPIECE
- *      - BKPIECE
  *      - SBL
  *      - EST
- *      - PRM
  *
- *   The following variants of OMPL have been incorporated:
- *      - TRRT
- *      - lazyTRRT
+ *   The following variants of OMPL have been incorporated by deriving from the corresponding ompl classes:
+ *      - PRM: it includes the possibility tochange the ratio between explore and expand steps of the construction phase of the roadmap.
+ *      - RRT*: it allows to optimize for different functions, and to filter nodes and to bias towards the first solution in order to improve the efficient in high dimensions.
+ *      - KPIECE: it allows motoions composed of severla steps limits the growing towards the goal to a fixed value; it also disallows moving backwards.
+ *      - TRRT:
+ *      - lazyTRRT:
  *
  *   The following planners are also included:
  *      - FOSRRT
@@ -278,8 +282,8 @@
  *      - FOSBKPIECE
  *      - FOSLBKPIECE
  *
- *  \todo Complete brief description of planners and ref to papers
  *
+ *   \todo Add detailed description of FOS planners
  */
 
 /** \defgroup group4 Physics-based Planners
