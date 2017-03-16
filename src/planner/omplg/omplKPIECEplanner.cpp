@@ -82,8 +82,9 @@ namespace Kautham {
             Motion *approxsol = nullptr;
             double approxdif = std::numeric_limits<double>::infinity();
             ob::State *xstate = si_->allocState();
+            ob::State *firststate = si_->allocState();
 
-            int maxsteps = 10;//do at most maxsteps in a given direction
+            int maxsteps = 1+rng_.uniform01()*4;//do at most 10 steps in a given direction
 
             while (ptc == false)
             {
@@ -96,18 +97,38 @@ namespace Kautham {
                 assert(existing);
 
                 /* sample random state (with goal biasing) */
-                if (goal_s && rng_.uniform01() < goalBias_ && goal_s->canSample())
+                /* try not to move backwards */
+                for(int h=0;h<5;h++)
                 {
-                    goal_s->sampleGoal(xstate);
-                    /* find state to add */
-                    double d = si_->distance(existing->state, xstate);
-                    if (d > maxsteps*maxDistance_)
+                    if (goal_s && rng_.uniform01() < goalBias_ && goal_s->canSample())
                     {
-                        si_->getStateSpace()->interpolate(existing->state, xstate, maxsteps*maxDistance_ / d, xstate);
+                        goal_s->sampleGoal(xstate);
+                        /* find state to add */
+
+                        double d = si_->distance(existing->state, xstate);
+                        if (d > maxsteps*maxDistance_)
+                        {
+                            si_->getStateSpace()->interpolate(existing->state, xstate, maxsteps*maxDistance_ / d, xstate);
+                            si_->getStateSpace()->interpolate(existing->state, xstate, 1.0/maxsteps, firststate);
+                            if(existing->parent!=nullptr)
+                            {
+                                double dparent = si_->distance(existing->parent->state, firststate);
+                                if(dparent>maxDistance_) break;
+                            }
+                        }
+                        else break;
+                    }
+                    else
+                    {
+                        sampler_->sampleUniformNear(xstate, existing->state, maxsteps*maxDistance_);
+                        si_->getStateSpace()->interpolate(existing->state, xstate, 1.0/maxsteps, firststate);
+                        if(existing->parent!=nullptr)
+                        {
+                            double dparent = si_->distance(existing->parent->state, firststate);
+                            if(dparent>maxDistance_) break;
+                        }
                     }
                 }
-                else
-                    sampler_->sampleUniformNear(xstate, existing->state, maxsteps*maxDistance_);
 
                 //std::pair<ob::State *, double> fail(xstate, 0.0);
                 //bool keep = si_->checkMotion(existing->state, xstate, fail);
@@ -145,10 +166,10 @@ namespace Kautham {
 
                 Motion *m1=existing;
                 ob::State *s1 = existing->state;
-                ob::State *s2 = si_->allocState();;
-                for(int i=1; i< (1+rng_.uniform01()*maxsteps); i++)
+                ob::State *s2 = si_->allocState();
+                for(int i=1; i<= maxsteps; i++)
                 {
-                    si_->getStateSpace()->interpolate(existing->state, xstate, i*0.25, s2);
+                    si_->getStateSpace()->interpolate(existing->state, xstate, (double)i/maxsteps, s2);
 
                     if (si_->checkMotion(s1, s2))
                     {
@@ -185,6 +206,7 @@ namespace Kautham {
                         break;
                     }
                 }
+                si_->freeState(s2);
 
 
                  disc_.updateCell(ecell);
