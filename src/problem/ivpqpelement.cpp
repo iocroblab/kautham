@@ -196,7 +196,7 @@ IVPQPElement::IVPQPElement(SoSeparator *visual_model,SoSeparator *collision_mode
 		  }
 
 		  PQP_REAL rel_err = 0.1; //?
-		  PQP_REAL abs_err = 1000;//make big - rel_error interests us (?)
+          PQP_REAL abs_err = 1000;//make big to nullify its effect - rel_error interests us (?)
 		  int qsize = 20;
 		  PQP_Distance(&pqp_dist_result,
 			  oriR, posR, pqpModel(),

@@ -134,19 +134,19 @@ public:
     TXerror fwdKin(const Vect6& j, mt::Transform &Pos);
 
 /// Computes inverse kinematics from Cartesian pos values
-/// (expressed in milimeters) and a configuration. The result goes to 
+/// (expressed in meters) and a configuration. The result goes to
 /// Vect6 (radians). The function returns an error code.
     TXerror invKin(const mt::Transform& p, Vect6&, const config& conf = TXrobot::config(), Vect6 qant=ublas::zero_vector<mt::Scalar>(6));
 
 
 /// Computes inverse kinematics from Cartesian pos values
-/// (expressed in milimeters), the current configuration of the robot and the last
+/// (expressed in meters), the current configuration of the robot and the last
 /// position of a path (Vect6 (radians)
 /// The result goes to Vect6 (radians). The function returns an error code.
     TXerror invKin(const mt::Transform& p,  Vect6& , const Vect6&, const config& conf = TXrobot::config());
 
 /// Computes inverse kinematics from Cartesian pos values
-/// (expressed in milimeters), and after crash your program
+/// (expressed in meters), and after crash your program
     TXerror invKin(const mt::Transform& p,  Vect6& , int foo, const config& conf = TXrobot::config());
 
 //! This method computes the inverse kinematic with the preferred configuration but if it does not

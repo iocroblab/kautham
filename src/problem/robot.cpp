@@ -455,10 +455,6 @@ namespace Kautham {
                     //Sets the limits of the joint
                     limMin = (KthReal)robot.link[i].limit.lower;
                     limMax = (KthReal)robot.link[i].limit.upper;
-                    if (robot.link[i].type == "prismatic") {
-                        limMin *= 1000;
-                        limMax *= 1000;
-                    }
 
                     //Set ode parameters
                     ode.dynamics.damping = robot.link[i].dynamics.damping;

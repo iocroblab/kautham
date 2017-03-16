@@ -58,7 +58,7 @@ namespace Kautham {
         lowValues.resize(names.size());
         highValues.resize(names.size());
         for (uint i = 0; i < 3; ++i) {
-            //label value will be defined in milimeters
+            //label value will be defined in meters
             lowValues[i] = robot->getLimits(i)[0];
             highValues[i] = robot->getLimits(i)[1];
         }
@@ -108,9 +108,9 @@ namespace Kautham {
             label = new QLabel();
             label->setObjectName(name+"Value");
             if (i < 3) {
-                label->setToolTip("milimeters");
+                label->setToolTip("meters");
             } else if (i > 5) {
-                label->setToolTip(robot->getLink(i-6)->getRotational()?"radians":"milimeters");
+                label->setToolTip(robot->getLink(i-6)->getRotational()?"radians":"meters");
             }
             label->setIndent(9);
             frameLayout->addWidget(label);

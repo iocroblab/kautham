@@ -229,7 +229,7 @@ namespace Kautham {
             text.append(QString::number(coord.at(i)));
             subItem = new QTreeWidgetItem(item);
             subItem->setText(0,text);
-            subItem->setToolTip(0,"Position (milimeters)");
+            subItem->setToolTip(0,"Position (meters)");
         }
 
         coord.clear();
@@ -335,7 +335,7 @@ namespace Kautham {
                 text.append(QString::number(high));
                 text.append("]");
                 item = new QTableWidgetItem(text);
-                item->setToolTip("milimeters");
+                item->setToolTip("meters");
             }
             item->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
             item->setFlags(Qt::ItemIsEnabled);
@@ -354,7 +354,7 @@ namespace Kautham {
             text.append(QString::number(*link->getLimits(false)));
             text.append("]");
             item = new QTableWidgetItem(text);
-            item->setToolTip(link->getRotational()?"radians":"milimeters");
+            item->setToolTip(link->getRotational()?"radians":"meters");
         } else {
             text = "Fixed";
             item = new QTableWidgetItem(text);
