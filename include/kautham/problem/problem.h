@@ -87,11 +87,6 @@
 #include <kautham/planner/omplOpenDE/KauthamOpenDEKPIECEPlanner.h>
 #endif
 
-/*#if defined(KAUTHAM_USE_GUIBRO)
-#include <libguibro/consbronchoscopykin.h>
-#include <libguibro/guibrogridplanner.h>
-#endif // KAUTHAM_USE_GUIBRO
-*/
 #if !defined(M_PI)
 #define M_PI 3.1415926535897932384626433832795
 #endif
