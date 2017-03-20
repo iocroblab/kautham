@@ -93,8 +93,7 @@ namespace Kautham {
     class gridPlanner:public Planner {
 	    public:
 		//!Constructor
-        gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws);
+        gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
         ~gridPlanner();
         
 		//!Abstract class to be implemented by the derived classes with planning methods based on grids

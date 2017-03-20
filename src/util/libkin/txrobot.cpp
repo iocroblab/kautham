@@ -682,6 +682,7 @@ TXerror TXRobot::invKin(const mt::Transform& p,  Vect6& q , const config& prefer
  std::vector<candidate> candiSet;
  config tmpConfig;
 
+ (void)preferred;//not used now
  //result = invKin(p,q,preferred);
  //if(result == SUCCESS ){
  //   solution.set(preferred.sh, preferred.el, preferred.wr);

@@ -453,7 +453,7 @@ namespace Kautham {
 
 
     void WorkSpace::removeRobot(unsigned index) {
-        if ((index >= 0) && (index < robots.size())) {
+        if (index < robots.size()) {
             robots.erase(robots.begin()+index);
             _robConfigMap.clear();
             _robWeight.clear();
@@ -515,15 +515,15 @@ namespace Kautham {
 
 
     bool WorkSpace::attachObstacle2RobotLink(uint robot, uint link, uint obs) {
-        if (robot < 0 || robot >= robots.size() ||
-                link < 0 || link >= robots.at(robot)->getNumLinks() ||
-                obs < 0 || obs >= obstacles.size()) return false;
+        if (robot >= robots.size() ||
+                link >= robots.at(robot)->getNumLinks() ||
+                obs >= obstacles.size()) return false;
         return (robots.at(robot)->attachObject(obstacles.at(obs),link));
     }
 
 
     bool WorkSpace::detachObstacle(uint obs) {
-        if (obs < 0 || obs >= obstacles.size()) return false;
+        if (obs >= obstacles.size()) return false;
         if (!obstacles.at(obs)->isAttached()) return false;
         return (obstacles.at(obs)->getRobotAttachedTo()->detachObject(obstacles.at(obs)));
     }

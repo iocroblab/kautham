@@ -165,6 +165,9 @@ bool IvKinUR5::setParameters(){
 }
 
 void IvKinUR5::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
+    (void)masterconf;//unused
+    (void)maintainSameWrist;//unused
+
     //loads the target: the tcp transform
     _target.clear();
     for(unsigned i =0; i< target.size(); i++)

@@ -41,8 +41,7 @@ namespace Kautham {
   namespace IOC{
     class MyGridPlanner:public gridPlanner {
 	    public:
-        MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws);
+        MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
         ~MyGridPlanner();
         
 		bool trySolve();

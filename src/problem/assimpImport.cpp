@@ -73,7 +73,7 @@ SoTexture2 *getTexture(const aiTexture *const texture) {
         ///size mWidth containing the compressed texture data
         return NULL;
     } else {//Uncompressed texture
-        unsigned char pixels[texture->mWidth*texture->mHeight*4];
+        unsigned char *pixels = new unsigned char[texture->mWidth*texture->mHeight*4];
         for (std::size_t i(0); i < texture->mWidth; ++i) {
             for (std::size_t j(0); j < texture->mHeight; ++j) {
                 pixels[4*(texture->mHeight*i+j)+0] = texture->pcData[texture->mHeight*i+j].r;
@@ -262,7 +262,7 @@ SoIndexedShape *getShape(const aiMesh *const mesh) {
     SoVertexProperty *vertexProperty(new SoVertexProperty);
 
     //Set vertices
-    float vertices[mesh->mNumVertices][3];
+    SbVec3f *vertices = new SbVec3f[mesh->mNumVertices];
     for (std::size_t i(0); i < mesh->mNumVertices; ++i) {
         vertices[i][0] = mesh->mVertices[i].x;
         vertices[i][1] = mesh->mVertices[i].y;
@@ -272,7 +272,7 @@ SoIndexedShape *getShape(const aiMesh *const mesh) {
 
     if (mesh->HasNormals()) {
         //Set normals
-        float normals[mesh->mNumVertices][3];
+        SbVec3f *normals = new SbVec3f[mesh->mNumVertices];
         for (std::size_t i(0); i < mesh->mNumVertices; ++i) {
             normals[i][0] = mesh->mNormals[i].x;
             normals[i][1] = mesh->mNormals[i].y;
@@ -313,14 +313,14 @@ SoIndexedShape *getShape(const aiMesh *const mesh) {
 
         //Set texture coordinates
         if (mesh->mNumUVComponents[0] == 2) {
-            float texCoords[mesh->mNumVertices][2];
+            SbVec2f *texCoords = new SbVec2f[mesh->mNumVertices];
             for (std::size_t i(0); i < mesh->mNumVertices; ++i) {
                 texCoords[i][0] = mesh->mTextureCoords[0][i].x;
                 texCoords[i][1] = mesh->mTextureCoords[0][i].y;
             }
             vertexProperty->texCoord.setValues(0,mesh->mNumVertices,texCoords);
         } else if (mesh->mNumUVComponents[0] == 3) {
-            float texCoords3[mesh->mNumVertices][3];
+            SbVec3f *texCoords3 = new SbVec3f[mesh->mNumVertices];
             for (std::size_t i(0); i < mesh->mNumVertices; ++i) {
                 texCoords3[i][0] = mesh->mTextureCoords[0][i].x;
                 texCoords3[i][1] = mesh->mTextureCoords[0][i].y;
@@ -356,7 +356,7 @@ SoIndexedShape *getShape(const aiMesh *const mesh) {
     }
 
     //Set faces
-    int indices[mesh->mNumFaces*(numIndices+1)];
+    int *indices = new int[mesh->mNumFaces*(numIndices+1)];
     for (std::size_t i(0); i < mesh->mNumFaces; ++i) {
         for (std::size_t j(0); j < numIndices; ++j) {
             indices[i*(numIndices+1)+j] = mesh->mFaces[i].mIndices[j];

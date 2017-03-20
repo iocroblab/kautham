@@ -93,6 +93,9 @@ namespace Kautham {
    //! sets the dimension of the dstate.
    void KinematicRobotModel::operator()(const ob::State *state, const oc::Control *control, std::valarray<double> &dstate) const
    {
+          (void)state;//unused here
+          (void)control;//unused here
+
           //compute the dimension of the compound statespace
           //loop for all the robots
           std::vector< ob::StateSpacePtr> sss = space_->as<ob::CompoundStateSpace>()->getSubspaces();

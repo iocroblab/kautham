@@ -32,8 +32,8 @@ namespace Kautham {
 
   namespace IOC{
 	//! Constructor
-    HFPlanner::HFPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
-              gridPlanner(stype, init, goal, samples, sampler, ws)
+    HFPlanner::HFPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+              gridPlanner(stype, init, goal, samples, ws)
 	{
 		//set intial values
 	  

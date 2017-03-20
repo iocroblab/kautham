@@ -641,6 +641,11 @@ void halham_write ( int dim_num, int n, int step, int seed[], int leap[],
   int j;
   char *s;
 
+  (void)step; //unused now
+  (void)seed; //unused now
+  (void)leap; //unused now
+  (void)base; //unused now
+
  fp=fopen(file_out_name,"wt");
 	if(fp==NULL){
 		printf("Cannot open %s\n",file_out_name);

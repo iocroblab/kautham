@@ -79,6 +79,7 @@ namespace Kautham {
     }
 
     void ConstrainedControlWidget::sliderChanged(int value){
+        (void) value;//unused
         QString tmp;
         for(unsigned int i=0; i<sliders.size(); i++){
             values[i]=(KthReal)((QSlider*)sliders[i])->value()/1000.0;

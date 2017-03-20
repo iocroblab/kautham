@@ -43,7 +43,7 @@ namespace Kautham {
 //! Namespace IOC contains the planners developed at the IOC
   namespace IOC{
 
-    gridPlanner::gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
+    gridPlanner::gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
               Planner(stype, init, goal, samples, ws)
 	{
 		//set intial values

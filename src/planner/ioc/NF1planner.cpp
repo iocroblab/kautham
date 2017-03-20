@@ -32,8 +32,8 @@
 namespace Kautham {
   namespace IOC{
 	//! Constructor
-    NF1Planner::NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
-              gridPlanner(stype, init, goal, samples, sampler, ws)
+    NF1Planner::NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+              gridPlanner(stype, init, goal, samples, ws)
 	{
 		//set intial values
 	  

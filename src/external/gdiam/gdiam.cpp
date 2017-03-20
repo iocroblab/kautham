@@ -70,7 +70,9 @@ public:
     int  size() const {
         return  (int)( p_pnt_right - p_pnt_left );
     }
-    const gdiam_point  getCenter() const {
+
+    //const gdiam_point  getCenter() const {
+    gdiam_point  getCenter() const {
         return   (gdiam_point)center;
     }
     int  nodes_number() const {
@@ -226,7 +228,8 @@ public:
         return  diam.distance;
     }
 
-    const gdiam_point  getPoint( int  ind ) const {
+    //const gdiam_point  getPoint( int  ind ) const {
+    gdiam_point  getPoint( int  ind ) const {
         return  arr[ ind ];
     }
 
@@ -296,7 +299,9 @@ public:
             printf( "bb: %g   %g\n",
                     bb.min_coord( dim ), bb.max_coord( dim ) );
             printf( "left: %p, right: %p\n",
-                    node->p_pnt_left, node->p_pnt_right );
+                    (void*)node->p_pnt_left, (void*)node->p_pnt_right );
+            //printf( "left: %p, right: %p\n",
+            //        node->p_pnt_left, node->p_pnt_right );
             assert( left_size > 0 );
         }
         if  ( left_size >= (node->p_pnt_right - node->p_pnt_left + 1 ) ) {
@@ -374,6 +379,7 @@ public:
     void  init( GFSPTreeNode  * _left, GFSPTreeNode  * _right,
                 gdiam_point  proj_dir, gdiam_real dist )
     {
+        (void)dist;//unused
         left = _left;
         right = _right;
 
@@ -914,6 +920,7 @@ void  GTreeDiamAlg::addPairHeap( g_heap_pairs_p  & heap,
                                  gdiam_point  proj,
                                  GFSPPair  & father )
 {
+    (void)father;//unused
     const gdiam_point  p( *(left->ptr_pnt_left()) );
     const gdiam_point  q( *(right->ptr_pnt_left()) );
 
@@ -1471,7 +1478,8 @@ point2d_ptr  get_min_point( vec_point_2d  & in,
 }
 
 
-const void  dump( vec_point_2d   & vec ) 
+//const void  dump( vec_point_2d   & vec )
+void  dump( vec_point_2d   & vec )
 {
     for  ( int  ind = 0; ind < (int)vec.size(); ind++ ) {
         printf( "-- %11d (%-11g, %-11g)\n",                
@@ -2262,6 +2270,7 @@ gdiam_bbox   gdiam_mvbb_optimize( gdiam_point  * start, int  size,
 gdiam_bbox   gdiam_approx_mvbb( gdiam_point  * start, int  size,
                                 gdiam_real  eps ) 
 {
+    (void)eps;//unused
     gdiam_bbox  bb, bb2;
 
     bb = gdiam_approx_const_mvbb( start, size, 0.0, NULL );

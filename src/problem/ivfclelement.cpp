@@ -145,16 +145,16 @@ SoSeparator *IVFCLElement::getIvFromFCLModel(bool tran) {
     unsigned int nTris = geom->num_tris;
 
     if (nVerts > 2 && nTris > 0) {
-        float vertices[nVerts][3];
+        SbVec3f *vertices = new SbVec3f[nVerts];
         for (unsigned int i = 0; i < nVerts; ++i) {
             for (unsigned int j = 0; j < 3; ++j) {
                 vertices[i][j] = geom->vertices[i][j];
             }
         }
 
-        uint32_t colors[nTris];
-        int32_t coordIndices[nTris*4];
-        int32_t materialIndices[nTris];
+        uint32_t *colors = new uint32_t[nTris];
+        int32_t *coordIndices = new int32_t[nTris*4];
+        int32_t *materialIndices = new int32_t[nTris];
         for (unsigned int i = 0; i < nTris; ++i) {
             for (unsigned int j = 0; j < 3; ++j) {
                 coordIndices[4*i+j] = geom->tri_indices[i][j];

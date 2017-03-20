@@ -151,7 +151,7 @@ namespace Kautham {
                                     *(((Link*)links.at(links.size()-1))->getTransformation());}
 
     inline mt::Transform& getLinkTransform(unsigned int numLink){
-                                    if(numLink<0 || numLink>=links.size()) numLink = links.size()-1;
+                                    if(numLink>=links.size()) numLink = links.size()-1;
                                     return
                                         *(((Link*)links.at(numLink))->getTransformation());} //!< R
 

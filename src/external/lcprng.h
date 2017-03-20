@@ -111,17 +111,17 @@ public:
 		return _seed_;
 	}
 
-	unsigned int const get_mult()
+    unsigned int get_mult()
 	{
 		return _multiplier;
 	}
 
-	unsigned int const get_mod()
+    unsigned int get_mod()
 	{
 		return _modulus;
 	}
 
-	unsigned int const get_inc()
+    unsigned int get_inc()
 	{
 		return _increment;
 	}
