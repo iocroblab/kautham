@@ -74,12 +74,6 @@ set ( EXTRA_LIBS ${EXTRA_LIBS} ${PLANNER_EXTRA_LIBS} PARENT_SCOPE )
 # endif(UNIX)
 #
 
-#if( KAUTHAM_GUIBRO )
-#    message( STATUS "Use GUIBRO: setting -DKAUTHAM_USE_GUIBRO flag")
-#    add_definitions( -DKAUTHAM_USE_GUIBRO )
-#endif( KAUTHAM_GUIBRO )
-
-
 #target_link_libraries( planner ${OMPL_LIBRARIES} ${ARMADILLO_LIBRARIES} ${ODE_LIBRARY})
 
 

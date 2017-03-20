@@ -49,8 +49,6 @@ endif(COMMAND cmake_policy)
 ########### Options ####################
 option( KAUTHAM_OMPL "Use OMPL planners" ON )
 option( KAUTHAM_IOC "Use IOC planners" ON )
-#pending job
-#option( KAUTHAM_GUIBRO "Use Guibro planner (virtual bronchoscopies)" OFF)
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
@@ -64,7 +62,6 @@ message( STATUS "Building the console version: ${KAUTHAM_CONSOLE}")
 message( STATUS "Building the ROS version: ${KAUTHAM_ROS}")
 message( STATUS "Using OMPL planners: ${KAUTHAM_OMPL}")
 message( STATUS "Using IOC planners: ${KAUTHAM_IOC}")
-#message( STATUS "Using Guibro planner (virtual bronchoscopies) ${KAUTHAM_GUIBRO}")
 message( STATUS "Using Open Dynamic Engine: ${KAUTHAM_OPENDE}")
 message( STATUS "Creating the HTML based API documentation: ${KAUTHAM_DOCUMENTATION}")
 

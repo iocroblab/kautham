@@ -50,12 +50,6 @@
 #include <kautham/util/kthutil/kauthamexception.h>
 
 
-/*
-#if defined(KAUTHAM_USE_GUIBRO)
-#include <libguibro/consbronchoscopykin.h>
-#endif
-*/
-
 using namespace std;
 using namespace Kautham;
 using namespace pugi;
@@ -859,12 +853,8 @@ namespace Kautham {
         switch(type){
             case Kautham::UNCONSTRAINED:
                 _constrainKin = NULL;
-            break;
-#if defined(KAUTHAM_USE_GUIBRO)
-            case Kautham::BRONCHOSCOPY:
-                _constrainKin = new GUIBRO::ConsBronchoscopyKin(this);
-            break;
-#endif
+                break;
+
             default:
                 cout << "The Constrained Kinematic model has not be configured properly.\n" <<
                         "See the ConsBronchoscopyKin of the Robot class to call the constructor. " << endl;

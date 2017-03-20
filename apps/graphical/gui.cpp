@@ -43,9 +43,6 @@
 //CMakeList.txt file using the configure file option
 #include <kautham/kauthamConfig.h>
 
-#if defined(KAUTHAM_USE_GUIBRO)
-#include <libguibro/bronchowidget.h>
-#endif
 
 //Definitions to specify scene2VRML function behaviour
 //#define VRML

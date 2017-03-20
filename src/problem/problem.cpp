@@ -927,18 +927,7 @@ namespace Kautham {
             name = robot_node->child("ConstrainedKinematic").attribute("name").as_string();
 
             rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
-#if defined(KAUTHAM_USE_GUIBRO)
-            if ( name == "BRONCHOSCOPY" ){
-                rob->setConstrainedKinematic( Kautham::BRONCHOSCOPY );
-                double amin = robot_node->child("ConstrainedKinematic").attribute("amin").as_double();
-                double amax = robot_node->child("ConstrainedKinematic").attribute("amax").as_double();
-                double bmin = robot_node->child("ConstrainedKinematic").attribute("bmin").as_double();
-                double bmax = robot_node->child("ConstrainedKinematic").attribute("bmax").as_double();
-                ((GUIBRO::ConsBronchoscopyKin*)rob->getCkine())->setAngleLimits(bmin*M_PI/180.0, bmax*M_PI/180.0, amin*M_PI/180.0, amax*M_PI/180.0);
-            }
-            else
-                rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
-#endif
+
         }else{
             rob->setConstrainedKinematic( Kautham::UNCONSTRAINED );
         }
