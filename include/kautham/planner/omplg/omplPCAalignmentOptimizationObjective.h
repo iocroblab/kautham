@@ -63,7 +63,7 @@ namespace Kautham {
       PMDalignmentOptimizationObjective(const ob::SpaceInformationPtr &si, ob::ProjectionMatrix M);
       ~PMDalignmentOptimizationObjective();
 
-      virtual ob::Cost stateCost(const ob::State *s) const {return ob::Cost();}
+      virtual ob::Cost stateCost(const ob::State *s) const {(void)s; return ob::Cost();}
       virtual ob::Cost motionCost(const ob::State *s0, const ob::State *s1, const ob::State *s2) const = 0;
       virtual ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const;
       ob::Cost getCost(const ob::Path &path) const;

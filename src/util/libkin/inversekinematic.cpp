@@ -101,16 +101,20 @@ namespace Kautham {
 
   
   void InverseKinematic::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
+
 	   //loads the target: the tcp transform
     _target.clear();
     for(size_t i =0; i< target.size(); i++)
       _target.push_back(target.at(i));  
 	  
 	  //masterconf not used -  maintainSameWrist not used
+    (void)masterconf;
+    (void)maintainSameWrist;
 	  //the derived classes may use it to complete the target with configuration parameters
   }
 
   RobLayout& InverseKinematic::getRobLayout(vector<KthReal> &target){
+      (void)target;//unused
     return _robLay;
   }
 

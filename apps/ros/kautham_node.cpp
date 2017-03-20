@@ -82,6 +82,8 @@ kauthamshell* ksh;
 
 bool srvCloseProblem(kautham::CloseProblem::Request &req,
                      kautham::CloseProblem::Response &res) {
+    (void) req;//unused
+    (void) res;//unused
     ksh->closeProblem();
 
     return true;
@@ -90,6 +92,7 @@ bool srvCloseProblem(kautham::CloseProblem::Request &req,
 
 bool srvProblemOpened(kautham::ProblemOpened::Request &req,
                       kautham::ProblemOpened::Response &res) {
+    (void) req;//unused
     res.response = ksh->problemOpened();
 
     return true;
@@ -225,6 +228,7 @@ bool srvSetInitObs(kautham::SetInitObs::Request &req,
 
 bool srvClearSampleSet(kautham::ClearSampleSet::Request &req,
                        kautham::ClearSampleSet::Response &res) {
+    (void) req;//unused
     res.response = ksh->clearSampleSet();
 
     return true;
@@ -281,6 +285,7 @@ bool srvSetObsControlsStream(kautham::SetObsControlsStream::Request &req,
 
 bool srvSetFixedObsControls(kautham::SetFixedObsControls::Request &req,
                             kautham::SetFixedObsControls::Response &res) {
+    (void) req;//unused
     res.response = ksh->setFixedObsControls();
 
     return true;
@@ -325,6 +330,7 @@ bool srvSetPlannerParameter(kautham::SetPlannerParameter::Request &req,
 
 bool srvSolve(kautham::Solve::Request &req,
               kautham::Solve::Response &res) {
+    (void) req;//unused
     res.response = ksh->solve(std::cout);
 
     return true;
@@ -333,6 +339,7 @@ bool srvSolve(kautham::Solve::Request &req,
 
 bool srvGetPath(kautham::GetPath::Request &req,
                 kautham::GetPath::Response &res) {
+    (void) req;//unused
     ostringstream oss;
     if (ksh->getPath(oss)) {
         vector < vector < float > > path;
@@ -437,6 +444,7 @@ bool srvConnect(kautham::Connect::Request &req,
 
 bool srvGetLastPlanComputationTime(kautham::GetLastPlanComputationTime::Request &req,
                             kautham::GetLastPlanComputationTime::Response &res) {
+    (void) req;//unused
     res.time = ksh->getLastPlanComputationTime();
 
     return true;
@@ -445,6 +453,7 @@ bool srvGetLastPlanComputationTime(kautham::GetLastPlanComputationTime::Request 
 
 bool srvGetNumEdges(kautham::GetNumEdges::Request &req,
                             kautham::GetNumEdges::Response &res) {
+    (void) req;//unused
     res.num = ksh->getNumEdges();
 
     return true;
@@ -453,6 +462,7 @@ bool srvGetNumEdges(kautham::GetNumEdges::Request &req,
 
 bool srvGetNumVertices(kautham::GetNumVertices::Request &req,
                             kautham::GetNumVertices::Response &res) {
+    (void) req;//unused
     res.num = ksh->getNumVertices();
 
     return true;

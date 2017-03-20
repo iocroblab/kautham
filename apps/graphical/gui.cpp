@@ -55,7 +55,8 @@
 using namespace pugi;
 
 namespace Kautham {
-	GUI::GUI(QWidget *p) {
+    //GUI::GUI(QWidget *p) {
+    GUI::GUI() {
         setupUi(this);
         problemTree->setEnabled(true);
         attachObjectDialog = new AttachObjectDialog(this);
@@ -355,38 +356,6 @@ namespace Kautham {
         return (PlannerWidget*)propertiesTab->widget(indexPlannerTab);
     }
 
-
-
-    //widged used for virtual bronchsocopy application
-    bool GUI::addExternalWidget1( Robot* rob, Problem* prob, GUI* gui ){
-#if defined(KAUTHAM_USE_GUIBRO)
-        if(prob->getPlanner()->getIDName() == "GUIBRO Grid Planner")
-        {
-            if( rob != NULL){
-                GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( rob, prob, gui  );
-                propertiesTab->addTab(tmpControl, "bronchoCtrl-" + QString((rob->getName()).c_str()));
-                return true;
-            }else{
-                GUIBRO::bronchoWidget* tmpControl = new GUIBRO::bronchoWidget( NULL, NULL, NULL);
-                propertiesTab->addTab(tmpControl, "bronchoControlTest");
-                return true;
-            }
-        }
-        return false;
-#endif
-        return false;
-    }
-
-    //widged not used
-    bool GUI::addExternalWidget2( Robot* rob, Problem* prob, GUI* gui ){
-        return false;
-    }
-
-    //widged not used
-    bool GUI::addExternalWidget3( Robot* rob, Problem* prob, GUI *gui ){
-        return false;
-    }
-
     bool GUI::addConstrainedControlWidget( Robot* rob, Problem* prob){
         if( rob != NULL){
             ConstrainedControlWidget* tmpControl = new ConstrainedControlWidget( rob, prob);
@@ -437,7 +406,7 @@ namespace Kautham {
 
 
 
-    bool GUI::addPlanner(Planner *plan, SampleSet* samp, GUI* gui){
+    bool GUI::addPlanner(Planner *plan, SampleSet* samp){
         if (plan) {
             PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, plan->hasCameraMovements());
             propertiesTab->addTab(tmpPlan, QString((plan->getGuiName()).c_str()));

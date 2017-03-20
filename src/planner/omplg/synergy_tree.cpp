@@ -810,7 +810,7 @@ double SynergyTree::distance(const arma::vec &x) {
 arma::vec SynergyTree::vectorField(const arma::vec &x) const {
     const Synergy *s = getSynergy(x,true);
     assert(s);
-    const unsigned int n = s->getReducedDimension();
+    //const unsigned int n = s->getReducedDimension();
     arma::vec vf = s->b/*+s->U.cols(0,n-1)*(s->a.subvec(0,n-1)%arma::randn(n))*/;
 
     if (arma::norm(vf) > std::numeric_limits<double>::epsilon()) {

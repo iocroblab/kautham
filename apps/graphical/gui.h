@@ -101,7 +101,8 @@ namespace Kautham {
     void                attachObject();
 
     public:
-    GUI(QWidget *p=0);
+    //GUI(QWidget *p=0);
+    GUI();
     void stopPathSimulation() {emit stopSimulation();}
     QString getFilePath();
     void                clearText();
@@ -129,15 +130,10 @@ namespace Kautham {
     bool                addRobControlWidget(Problem* prob, vector<Kautham::DOFWidget *> robDOFWidgets);
     bool                addObsControlWidget(Problem* prob, vector<Kautham::DOFWidget *> obsDOFWidgets);
 
-    bool                addExternalWidget1( Robot* rob, Problem* prob, GUI* gui = NULL);
-    bool                addExternalWidget2( Robot* rob, Problem* prob, GUI* gui = NULL);
-    bool                addExternalWidget3( Robot* rob, Problem* prob, GUI* gui = NULL);
-
-
     bool                addConstrainedControlWidget( Robot* rob, Problem* prob);
     Kautham::DOFWidget *addDOFWidget( Robot* rob );
     bool                setSampleWidget(Problem* problem);
-    bool                addPlanner(Planner *plan, SampleSet* samp, GUI* gui = NULL);
+    bool                addPlanner(Planner *plan, SampleSet* samp);
 
     bool                addInverseKinematic(InverseKinematic* ikine);
     bool                addWidgetToTab(QWidget* widget, QString name);

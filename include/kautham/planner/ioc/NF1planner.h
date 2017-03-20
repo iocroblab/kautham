@@ -67,8 +67,7 @@ namespace Kautham {
 
     class NF1Planner:public gridPlanner {
 	    public:
-        NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, 
-          WorkSpace *ws);
+        NF1Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
         ~NF1Planner();
         
 		bool trySolve();

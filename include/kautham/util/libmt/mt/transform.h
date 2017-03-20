@@ -28,6 +28,7 @@
 #include <iostream>
 
 // MT LIBRARY HEADERS
+#include <mt/empty.h>
 #include <mt/matrix3x3.h>
 #include <mt/rotation.h>
 #include <mt/scalar.h>
@@ -104,6 +105,9 @@ public:
 
   /// Applies transform to input point.
   Point3 operator()(const Point3& p) const;
+
+  /// Does nothing.
+  Empty operator()(const Empty& e) const;
 
   bool operator==(const Transform& t) const;
 
@@ -210,6 +214,11 @@ inline Transform& Transform::operator*=(const Transform& t)
 inline Point3 Transform::operator()(const Point3& p) const
 {
   return Point3(m_rotation(p) + m_translation);
+}
+
+inline Empty Transform::operator()(const Empty& e) const
+{
+  return e;
 }
 
 

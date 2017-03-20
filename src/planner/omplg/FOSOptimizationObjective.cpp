@@ -39,6 +39,7 @@ ompl::base::FOSOptimizationObjective::FOSOptimizationObjective
 
 
 ompl::base::Cost ompl::base::FOSOptimizationObjective::stateCost(const State *s) const {
+    (void) s;//unused
     return ompl::base::Cost(0.05);
 }
 

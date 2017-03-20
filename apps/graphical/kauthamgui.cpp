@@ -600,15 +600,6 @@ bool Application::problemSetup(string problemFile){
 
         robDOFWidgets[i] = mainWindow->addDOFWidget(_problem->wSpace()->getRobot(i));
 
-        //Add widget for external applications
-        //widget 1 used for virtual bronchoscopy apllication
-        mainWindow->addExternalWidget1(_problem->wSpace()->getRobot(i), _problem, mainWindow);
-        //widget 2 not used
-        mainWindow->addExternalWidget2(_problem->wSpace()->getRobot(i), _problem, mainWindow);
-        //widget 3 not used
-        mainWindow->addExternalWidget3(_problem->wSpace()->getRobot(i), _problem, mainWindow);
-
-
         if(_problem->wSpace()->getRobot(i)->getIkine() != NULL)
             mainWindow->addInverseKinematic(_problem->wSpace()->getRobot(i)->getIkine());
     }
@@ -627,7 +618,7 @@ bool Application::problemSetup(string problemFile){
     mainWindow->setSampleWidget(_problem);
 
     if( _problem->getPlanner() != NULL ){
-        mainWindow->addPlanner(_problem->getPlanner(), _problem->getSampleSet(), mainWindow);
+        mainWindow->addPlanner(_problem->getPlanner(), _problem->getSampleSet());
         color = settings->value("mainWindow/CSpace/color",QColor("black")).value<QColor>();
         if (mainWindow->getViewerTab("CSpace") != NULL) {
             mainWindow->getViewerTab("CSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));
@@ -641,6 +632,7 @@ bool Application::problemSetup(string problemFile){
 
 int main(int argc, char* argv[]){       
 
+    (void)argc;//unused
     try {
         QWidget *app = SoQt::init(argv[0]);//argc, argv,argv[0]);
         app->setVisible(false);

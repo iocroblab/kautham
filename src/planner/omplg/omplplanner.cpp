@@ -802,7 +802,8 @@ namespace Kautham {
             smp->setMappedConf(_init.at(0)->getMappedConf());
             ob::GoalStates *goalStates(dynamic_cast<ob::GoalStates*>
                                        (ss->getProblemDefinition()->getGoal().get()));
-            float goalVertices[goalStates->getStateCount()*_wkSpace->getNumRobots()][3];
+            SbVec3f *goalVertices = new SbVec3f[goalStates->getStateCount()*_wkSpace->getNumRobots()];
+
             for (unsigned int i(0); i < goalStates->getStateCount(); ++i) {
                 omplState2smp(goalStates->getState(i)->as<ob::CompoundStateSpace::StateType>(),smp);
                 _wkSpace->moveRobotsTo(smp);
@@ -816,12 +817,15 @@ namespace Kautham {
                     goalVertices[j*goalStates->getStateCount()+i][2] = point[2];
                 }
             }
-            float vertices[pdata->numVertices()*_wkSpace->getNumRobots()][3];
-            float startVertices[pdata->numStartVertices()*_wkSpace->getNumRobots()][3];
-            float otherVertices[(pdata->numVertices()-pdata->numStartVertices()-
-                                 goalStates->getStateCount())*_wkSpace->getNumRobots()][3];
-            int32_t coordIndices[3*pdata->numEdges()*_wkSpace->getNumRobots()];
-            int32_t edgeColorIndices[pdata->numEdges()*_wkSpace->getNumRobots()];
+            SbVec3f *vertices = new SbVec3f[pdata->numVertices()*_wkSpace->getNumRobots()];
+            SbVec3f *startVertices = new SbVec3f[pdata->numStartVertices()*_wkSpace->getNumRobots()];
+            SbVec3f *otherVertices = new SbVec3f[(pdata->numVertices()-pdata->numStartVertices()-
+                                                  goalStates->getStateCount())*_wkSpace->getNumRobots()];
+
+            int32_t *coordIndices = new int32_t[3*pdata->numEdges()*_wkSpace->getNumRobots()];
+            int32_t *edgeColorIndices = new int32_t[pdata->numEdges()*_wkSpace->getNumRobots()];
+
+
             unsigned int le(0), ls(0), lo(0);
             for (unsigned int i = 0; i < pdata->numVertices(); ++i) {
                 omplState2smp(pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>(),smp);
@@ -913,7 +917,7 @@ namespace Kautham {
                 SoDrawStyle *drawStyle(new SoDrawStyle);
                 drawStyle->lineWidth = 4.;
 
-                float vertices[_path.size()*_wkSpace->getNumRobots()][3];
+                SbVec3f *vertices = new SbVec3f[_path.size()*_wkSpace->getNumRobots()];
                 for (unsigned int i(0); i < _path.size(); ++i) {
                     _wkSpace->moveRobotsTo(_path.at(i));
                     for (unsigned int j(0); j < _wkSpace->getNumRobots(); ++j) {
@@ -926,7 +930,7 @@ namespace Kautham {
                         vertices[j*_path.size()+i][2] = point[2];
                     }
                 }
-                int32_t numVertices[_wkSpace->getNumRobots()];
+                int32_t *numVertices = new int32_t[_wkSpace->getNumRobots()];
                 std::fill(numVertices,numVertices+_wkSpace->getNumRobots(),_path.size());
 
                 SoVertexProperty *vertexProperty(new SoVertexProperty);
@@ -1035,7 +1039,7 @@ namespace Kautham {
             //Draw tree
             ob::GoalStates *goalStates(dynamic_cast<ob::GoalStates*>
                                        (ss->getProblemDefinition()->getGoal().get()));
-            float goalVertices[goalStates->getStateCount()][3];
+            SbVec3f *goalVertices = new SbVec3f[goalStates->getStateCount()];
             for (unsigned int i(0); i < goalStates->getStateCount(); ++i) {
                 projection->project(goalStates->getState(i),state);
 
@@ -1043,12 +1047,12 @@ namespace Kautham {
                 goalVertices[i][1] = state[1];
                 goalVertices[i][2] = ((k > 2)? state[2] : 0.0);
             }
-            float vertices[pdata->numVertices()][3];
-            float startVertices[pdata->numStartVertices()][3];
-            float otherVertices[pdata->numVertices()-
-                    pdata->numStartVertices()-goalStates->getStateCount()][3];
-            int32_t coordIndices[3*pdata->numEdges()];
-            int32_t edgeColorIndices[pdata->numEdges()];
+            SbVec3f *vertices = new SbVec3f[pdata->numVertices()];
+            SbVec3f *startVertices = new SbVec3f[pdata->numStartVertices()];
+            SbVec3f *otherVertices = new SbVec3f[pdata->numVertices()-
+                    pdata->numStartVertices()-goalStates->getStateCount()];
+            int32_t *coordIndices = new int32_t[3*pdata->numEdges()];
+            int32_t *edgeColorIndices = new int32_t[pdata->numEdges()];
             unsigned int j(0), ls(0), lo(0);
             for (unsigned int i = 0; i < pdata->numVertices(); ++i) {
                 projection->project(pdata->getVertex(i).getState(),state);
@@ -1133,7 +1137,7 @@ namespace Kautham {
                 drawStyle->lineWidth = 4.;
 
                 std::vector<ob::State*> &states(ss->getSolutionPath().getStates());
-                float vertices[states.size()][3];
+                SbVec3f *vertices = new SbVec3f[states.size()];
                 for (unsigned int i = 0; i < states.size(); ++i) {
                     projection->project(states.at(i),state);
 

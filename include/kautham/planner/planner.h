@@ -49,7 +49,7 @@ namespace Kautham {
        virtual bool                  setParameters() = 0;
        virtual void                  moveAlongPath(unsigned int step);
        virtual bool                  solveAndInherit();
-       inline virtual bool           filtersample(Sample* smp){return false;}
+       inline virtual bool           filtersample(Sample* smp){(void)smp; return false;}
        inline string                 getIDName(){return _idName;}
        inline void                   setSampleSet(SampleSet* smpSet){_samples = smpSet;}
        inline Sample*                initSamp(std::size_t index = 0) {return _init.at(index);}

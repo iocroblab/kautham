@@ -32,8 +32,8 @@ namespace Kautham {
 
   namespace IOC{
 	//! Constructor
-    MyGridPlanner::MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, Sampler *sampler, WorkSpace *ws):
-              gridPlanner(stype, init, goal, samples, sampler, ws)
+    MyGridPlanner::MyGridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+              gridPlanner(stype, init, goal, samples, ws)
 	{
 		//set intial values
 		_firstParameter = 10;

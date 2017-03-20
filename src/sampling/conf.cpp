@@ -57,7 +57,7 @@ namespace Kautham {
 	}
 
   KthReal Conf::getCoordinate(unsigned int index) {
-      if (index>=0 && index<dim) return this->coord[index];
+      if (index<dim) return this->coord[index];
 
       throw out_of_range("");
 	}

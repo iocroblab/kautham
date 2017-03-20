@@ -818,7 +818,7 @@ namespace Kautham {
   *    of position
   */
     bool Robot::setLimits(unsigned int member, KthReal min, KthReal max){
-        if (member >= 0 && member < 3 && min <= max) {
+        if (member < 3 && min <= max) {
             _spatialLimits[member][0] = min;
             _spatialLimits[member][1] = max;
 

@@ -147,13 +147,13 @@ namespace Kautham {
             cout<<"planer name is dummy?"<<endl;
 #if defined(KAUTHAM_USE_IOC)
         else if (name == "MyGridPlanner")
-            _planner = new IOC::MyGridPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
+            _planner = new IOC::MyGridPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
         else if (name == "NF1Planner")
-            _planner = new IOC::NF1Planner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
+            _planner = new IOC::NF1Planner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
         else if (name == "HFPlanner")
-            _planner = new IOC::HFPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _sampler, _wspace);
+            _planner = new IOC::HFPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 #endif
 
 #if defined(KAUTHAM_USE_OMPL)

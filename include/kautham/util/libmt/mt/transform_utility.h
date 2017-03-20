@@ -99,7 +99,7 @@ Ellipse3 apply(const Transform& t,
 inline Empty apply(const Transform& t,
                    const Empty&     e)
 {
-  return e;
+  return t(e);
 }
 
 

@@ -185,7 +185,7 @@ namespace Kautham {
       //! during bounce motions
       void usingKauthamSampler(bool f)
       {
-          useKauthamSampler = true;
+          useKauthamSampler = f;
       }
 
 
