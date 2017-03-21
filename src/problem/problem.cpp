@@ -239,11 +239,48 @@ namespace Kautham {
             _planner = new omplcplanner::omplcRRTcarPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 #endif
 #if defined(KAUTHAM_USE_ODE)
-        else if (name == "omplODERRTPlanner")
-            _planner  = new   omplcplanner::KauthamDERRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
 
-        else if (name == "omplODEKPIECEPlanner")
-            _planner  = new   omplcplanner::KauthamDEKPIECEPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+      else if(name == "KPIECE2DPlanner")
+          _planner  = new   omplcplanner::KPIECE2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if(name == "KPIECE3DPlanner")
+          _planner  = new   omplcplanner::KPIECE3DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if(name == "KPIECEMultiRobotPlanner")
+          _planner  = new   omplcplanner::KPIECEMultiRobotPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if (name == "KPIECECarPlanner")
+          _planner = new omplcplanner::KPIECECarPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if (name == "KPIECEChainPlanner")
+          _planner = new omplcplanner::KPIECEChainPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if(name == "RRT2DPlanner")
+          _planner  = new   omplcplanner::RRT2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if(name == "RRTMultiRobotPlanner")
+          _planner  = new   omplcplanner::RRTMultiRobotPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if(name == "EST2DPlanner")
+          _planner  = new   omplcplanner::EST2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if(name == "PDST2DPlanner")
+          _planner  = new   omplcplanner::PDST2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if(name == "Syclop2DPlanner")
+          _planner  = new   omplcplanner::Syclop2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if(name == "KnowledgeOrientedKPIECE2DPlanner")
+          _planner  = new   omplcplanner::KnowledgeOrientedKPIECE2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if(name == "KnowledgeOrientedRRT2DPlanner")
+          _planner  = new   omplcplanner::KnowledgeOrientedRRT2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+      else if(name == "KnowledgeOrientedSyclop2DPlanner")
+          _planner  = new   omplcplanner::KnowledgeOrientedSyclop2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
+
+//      else if(name == "omplODELTL2DPlanner")
+//          _planner  = new   omplcplanner::KauthamDELTL2DPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
 #endif
         else {
             cout<<"Planner "<< name <<" is unknow or not loaded (check the CMakeFiles.txt options)" << endl;
