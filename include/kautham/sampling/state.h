@@ -22,6 +22,11 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
+
+
+#if !defined(_STATE_H)
+#define _STATE_H
+
 #include <kautham/sampling/sample.h>
 
 
@@ -56,3 +61,5 @@ namespace Kautham{
 /** @}   end of Doxygen module "Sampling" */
 
 }
+
+#endif  //_STATE_H

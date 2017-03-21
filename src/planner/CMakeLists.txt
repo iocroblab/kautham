@@ -34,12 +34,28 @@ if( KAUTHAM_OMPL )
 
       if(KAUTHAM_OPENDE)
          if(ODE_FOUND)
+
+            find_package(GLUT)
+            find_package(OpenGL)
+
             message( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_ODE flag")
-            include_directories( ${ODE_INCLUDE_DIR} )
+            add_definitions(-DKAUTHAM_USE_ODE)
+            include_directories( ${OPENDE_INCLUDE} ${DRAWSTUFF_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${GLUT_INCLUDE_DIR} )
             set ( PLANNER_EXTRA_LIBS ${PLANNER_EXTRA_LIBS} ${ODE_LIBRARY}  )
+            set ( PLANNER_EXTRA_LIBS ${PLANNER_EXTRA_LIBS} ${OPENDE_LIBRARY} ${DRAWSTUFF_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
             message( STATUS "Adding subdirectory omplOpenDE")
-            file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/*.cpp )
-            file( GLOB HDR_OMPLOPENDE_FILES omplOpenDE/*.h )
+            file( GLOB_RECURSE SRC_OMPLOPENDE_FILES omplOpenDE/*.cpp )
+            file( GLOB_RECURSE HDR_OMPLOPENDE_FILES omplOpenDE/*.h )
+
+            #file( GLOB SRC_OMPLOPENDE_FILES omplOpenDE/*.cpp omplOpenDE/goal/*.cpp omplOpenDE/environment/*.cpp omplOpenDE/environment/ConstraintAwareRobotEnvironment/*.cpp omplOpenDE/environment/SimpleRobotEnvironment/*.cpp
+            #      omplOpenDE/InstantiatedKnowledge/*.cpp omplOpenDE/PhysicsBasedPlanners/*.cpp omplOpenDE/PhysicsBasedPlanners/PKP/*.cpp omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.cpp
+            #      omplOpenDE/*.h omplOpenDE/goal/*.h omplOpenDE/environment/*.h omplOpenDE/environment/ConstraintAwareRobotEnvironment/*.h omplOpenDE/environment/SimpleRobotEnvironment/*.h omplOpenDE/InstantiatedKnowledge/*.h
+            #      omplOpenDE/PhysicsBasedPlanners/*.h omplOpenDE/PhysicsBasedPlanners/PKP/*.h omplOpenDE/PhysicsBasedPlanners/Know-PKP/*.h )
+
+            #if(OMPL_EXTENSION_TRIANGLE)
+            #file(GLOB SRC_OMPLOPENDE_FILES omplOpenDE/PhysicsBasedPlanners/LTL/*.cpp omplOpenDE/PhysicsBasedPlanners/LTL/*.h)
+            #endif()
+
 	 else( ODE_FOUND )
 	      message( STATUS "Error: ODE LIBRARY NOT FOUND. OMPL planner with ODE will not be avaliable")
          endif(ODE_FOUND)
