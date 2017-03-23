@@ -27,9 +27,6 @@
 #include <kautham/util/kthutil/kauthamexception.h>
 
 
-#define TO_RAD(x) x*(M_PI/180.0)
-
-
 namespace Kautham {
     Problem::Problem() : _wspace(NULL), _cspace(new SampleSet()),
       _sampler(NULL), _planner(NULL)  {
@@ -998,7 +995,7 @@ namespace Kautham {
             cords[3] = home_node.attribute("WX").as_double();
             cords[4] = home_node.attribute("WY").as_double();
             cords[5] = home_node.attribute("WZ").as_double();
-            cords[6] = TO_RAD(home_node.attribute("TH").as_double());
+            cords[6] = home_node.attribute("TH").as_double();
 
             // Here is needed to convert from axis-angle to
             // quaternion internal represtantation.
@@ -1031,7 +1028,6 @@ namespace Kautham {
         }
 
         SE3Conf tmpC;
-        home[6] = TO_RAD(home[6]);
         // Here is needed to convert from axis-angle to
         // quaternion internal represtantation.
         SE3Conf::fromAxisToQuaternion(home);
@@ -1441,7 +1437,7 @@ namespace Kautham {
             cords[3] = home_node.attribute("WX").as_double();
             cords[4] = home_node.attribute("WY").as_double();
             cords[5] = home_node.attribute("WZ").as_double();
-            cords[6] = TO_RAD(home_node.attribute("TH").as_double());
+            cords[6] = home_node.attribute("TH").as_double();
 
             // Here is needed to convert from axis-angle to
             // quaternion internal represtantation.
@@ -1470,7 +1466,6 @@ namespace Kautham {
         if (!obs->isArmed()) return false;
 
         SE3Conf* tmpC = new SE3Conf();
-        home[6] = TO_RAD(home[6]);
         // Here is needed to convert from axis-angle to
         // quaternion internal represtantation.
         SE3Conf::fromAxisToQuaternion(home);

@@ -80,7 +80,7 @@ namespace Kautham{
 				std::vector<KthReal>& joints = _wkSpace->getRobot(0)->getCurrentPos()->getRn().getCoordinates();
         KthReal value=0;
         for(size_t j=0; j< joints.size(); j++){
-          value = joints.at(j)* RAD2GRAD;
+          value = joints.at(j);
           _theFile << value << " ";
         }
         _theFile << std::endl;

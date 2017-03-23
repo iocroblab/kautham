@@ -193,7 +193,6 @@ namespace Kautham {
         //setting numeric parameter to avoid convertions problems
         char *old = setlocale(LC_NUMERIC, "C");
 
-        const KthReal toRad = M_PI/180.;
         string dir = robFile.substr(0,robFile.find_last_of("/")+1);
         string tmpString = "";
 
@@ -290,16 +289,12 @@ namespace Kautham {
                         preTrans[3] = (KthReal)preTNode.attribute("WX").as_double();
                         preTrans[4] = (KthReal)preTNode.attribute("WY").as_double();
                         preTrans[5] = (KthReal)preTNode.attribute("WZ").as_double();
-                        preTrans[6] = (KthReal)preTNode.attribute("TH").as_double() * toRad;
+                        preTrans[6] = (KthReal)preTNode.attribute("TH").as_double();
                     }
 
                     //Sets the limits of the joint
                     limMin = (KthReal)(*it).child("Limits").attribute("Low").as_double();
                     limMax = (KthReal)(*it).child("Limits").attribute("Hi").as_double();
-                    if ((*it).child("Description").attribute("rotational").as_bool()) {
-                        limMin *= toRad;
-                        limMax *= toRad;
-                    }
 
                     KthReal linkScale = 1.;
                     if ((*it).attribute("scale")) linkScale = (*it).attribute("scale").as_double();
@@ -308,10 +303,10 @@ namespace Kautham {
                     if ((*it).attribute("collision_ivFile")) {
                         addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
                                 dir + (*it).attribute("collision_ivFile").as_string(), linkScale,
-                                (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
+                                (KthReal)(*it).child("DHPars").attribute("theta").as_double(),
                                 (KthReal)(*it).child("DHPars").attribute("d").as_double(),
                                 (KthReal)(*it).child("DHPars").attribute("a").as_double(),
-                                (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
+                                (KthReal)(*it).child("DHPars").attribute("alpha").as_double(),
                                 (*it).child("Description").attribute("rotational").as_bool(),
                                 (*it).child("Description").attribute("movable").as_bool(),
                                 limMin, limMax,
@@ -320,10 +315,10 @@ namespace Kautham {
                     } else {
                         addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
                                 dir + (*it).attribute("ivFile").as_string(), linkScale,
-                                (KthReal)(*it).child("DHPars").attribute("theta").as_double() * toRad,
+                                (KthReal)(*it).child("DHPars").attribute("theta").as_double(),
                                 (KthReal)(*it).child("DHPars").attribute("d").as_double(),
                                 (KthReal)(*it).child("DHPars").attribute("a").as_double(),
-                                (KthReal)(*it).child("DHPars").attribute("alpha").as_double() * toRad,
+                                (KthReal)(*it).child("DHPars").attribute("alpha").as_double(),
                                 (*it).child("Description").attribute("rotational").as_bool(),
                                 (*it).child("Description").attribute("movable").as_bool(),
                                 limMin, limMax,

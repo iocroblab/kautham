@@ -142,9 +142,7 @@ bool IvKinUR5::setParameters(){
           return false;
 
         _targetTrans.setTranslation(mt::Point3(_eulPos.at(0), _eulPos.at(1), _eulPos.at(2)));
-        _targetTrans.setRotation(mt::Rotation(mt::degToRad(_eulPos.at(5)),
-                                 mt::degToRad(_eulPos.at(4)),
-                                 mt::degToRad(_eulPos.at(3))));
+        _targetTrans.setRotation(mt::Rotation(_eulPos.at(5), _eulPos.at(4), _eulPos.at(3)));
 
         for( int i = 0; i < 3; i++)
           _target.at(i) = _targetTrans.getTranslation().at(i);
