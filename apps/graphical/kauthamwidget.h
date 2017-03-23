@@ -46,7 +46,7 @@ namespace Kautham{
 	  signals:
 		  void            sendText(string newContent);
 	  private slots:
-          void            tableChanged(int row);
+          void            tableChanged(int row, int col);
 	  public:
 		  KauthamWidget(KauthamObject* kObj);
 
