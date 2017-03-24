@@ -68,12 +68,12 @@ TXRobot::TXRobot(TXtype &robot){
             exit(0);break;
 
          case TX90:
-            a1 = 50;
-            a2 = 425;
-            a3 = 50;
-            a4 = 425;
+            a1 = 0.05;
+            a2 = 0.425;
+            a3 = 0.05;
+            a4 = 0.425;
             a5 = 0.0;
-            a6 = 100;   //Distance from wrist center to tool
+            a6 = 0.1;   //Distance from wrist center to tool
 	//		a6= 0.0;
 
 			aJ5 = a6;
