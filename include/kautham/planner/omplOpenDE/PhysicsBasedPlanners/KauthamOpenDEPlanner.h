@@ -127,7 +127,6 @@ std::vector<double> lastState;
     ~KauthamDEPlanner();
     virtual bool trySolve();//!< Compute the path and returns the boolean value.
     bool setParameters();//!< set the planning parameters.
-    void KauthamOpenDEState2Robsmp(const ob::State *state, Sample* smp, const Configuration configuration);
     void KauthamOpenDEState2Robsmp(const ob::State *state, Sample* smp);
     void KauthamOpenDEState2Obssmp(const ob::State *state, Sample* smp,const oc::Control *control,const double duration);
     void moveAlongPath(unsigned int step);
@@ -138,6 +137,8 @@ std::vector<double> lastState;
     void ComputePowerConsumed(const std::vector<ob::State*> &states,const std::vector<oc::Control*> &control, const std::vector<double> duration);
     void ComputePowerConsumed(const std::vector<ompl::control::Control *> &control, const std::vector<double> duration);
     bool computePath(oc::OpenDESimpleSetup *ssetup, ob::RealVectorBounds vb,ob::RealVectorBounds bounds, double x, double y,double planningTime);
+    bool setKauthamOpenDEState(Sample *smp);
+    std::vector<float> ComputeRn(const ob::State *state);
     ompl::control::PathControl *RectMotion();
     void callDrawStuffViewer(void );
 

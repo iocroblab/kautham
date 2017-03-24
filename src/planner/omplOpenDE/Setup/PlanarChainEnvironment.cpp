@@ -81,9 +81,9 @@ void PlanarChainEnvironment::applyControl (const double *control) const
     //std::cout<<"velocity   : "<<v1<<" , "<<v2<<std::endl;
 
     dJointSetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamVel,(a1-control[0]));
-    dJointSetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamFMax,mkinematics->getTorqueLimit().at(0));
+    dJointSetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamFMax,7);
     dJointSetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamVel,(a2-control[1]));
-    dJointSetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamFMax,mkinematics->getTorqueLimit().at(1));
+    dJointSetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamFMax,7);
 
 //    dJointAddHingeTorque(joint_.at("Chainbase_link+Chainlink1"), control[0]);
 //    dJointAddHingeTorque(joint_.at("Chainlink1+Chainlink2"), control[1]);
@@ -272,8 +272,8 @@ unsigned int PlanarChainStateProjectionEvaluator::getDimension(void) const
 void PlanarChainStateProjectionEvaluator :: defaultCellSizes(void)
 {
     cellSizes_.resize(2);
-    cellSizes_[0] = 0.2;
-    cellSizes_[1] = 0.2;
+    cellSizes_[0] = 0.1;
+    cellSizes_[1] = 0.1;
     //cellSizes_[2] = 1;
 }
 
@@ -341,7 +341,7 @@ void PlanarChainControlSampler::sampleNext(oc::Control *control, const oc::Contr
         ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
                 getEnvironment().get())->mkinematics->setTorqueLimit(torque);
 
-        std::cout<<"CMove Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;
+        //std::cout<<"CMove Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;
     }
     else
     {
@@ -380,7 +380,7 @@ void PlanarChainControlSampler::sampleNext(oc::Control *control, const oc::Contr
         //to update the manipulation regions
 //        ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->
 //          Instknowledge->updateKnowledge(((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->bodies);
-        std::cout<<"Cinteraction Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;;
+        //std::cout<<"Cinteraction Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;;
 
     }
     double &v1 = control->as<oc::OpenDEControlSpace::ControlType>()->values[2];

@@ -166,10 +166,8 @@ if(wkspace->getRobot(0)->getNumJoints()>1 && wkspace->getRobot(0)->getName()!="S
                 const vector<double> orientation=chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].orientation;
                 //const vector<double> vertexes=  chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].vertexes;
                 const vector<double> bodyDimension=  chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].bodydimension;
-
                 double mass=chainMap[wkspace->getRobot(i)->getName()].objects[(wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())].mass;
                 std::string name = (wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName());
-
                 odebody = makePrimitive(position,orientation,mass,bodyDimension,name);
                 stateBodiesmap_.insert(pair<string,dBodyID>(((wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())),odebody));
                 bodies.push_back(odebody);
@@ -195,6 +193,7 @@ if(wkspace->getRobot(0)->getNumJoints()>1 && wkspace->getRobot(0)->getName()!="S
 
                 odebody = makeTriMesh(position,orientation,vertexes,indexes,mass,name,bodyDimension, color);
                 stateBodiesmap_.insert(pair<string,dBodyID>(((wkspace->getRobot(i)->getName())+(wkspace->getRobot(i)->getLink(j)->getName())),odebody));
+                dBodySetGravityMode (odebody,0);
                 bodies.push_back(odebody);
 
                 //bodymap.insert(pair<string,dBodyID>(wkspace->getRobot(i)->getName(),odebody));
@@ -1210,7 +1209,7 @@ bool KauthamDEEnvironment::getTransformation(KauthamDEEnvironment::KinematicChai
     obj->position.push_back(pos[2]);
 
     //joint axis of rotation in world frame
-    mt::Point3 Xrot = link->getAxis()*rotMatrix;
+    mt::Point3 Xrot = rotMatrix*link->getAxis();
     rotAxis.push_back(Xrot[0]);
     rotAxis.push_back(Xrot[1]);
     rotAxis.push_back(Xrot[2]);
