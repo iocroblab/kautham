@@ -216,8 +216,8 @@ unsigned int ConstraintAwaretwoDRobotStateProjectionEvaluator::getDimension(void
 void ConstraintAwaretwoDRobotStateProjectionEvaluator :: defaultCellSizes(void)
 {
     cellSizes_.resize(2);
-    cellSizes_[0] = 1.0;
-    cellSizes_[1] = 1.0;
+    cellSizes_[0] = 0.1;
+    cellSizes_[1] = 0.1;
 
 }
 
@@ -239,17 +239,12 @@ ConstraintAwaretwoDRobotStateSpace::~ConstraintAwaretwoDRobotStateSpace()
 
 double ConstraintAwaretwoDRobotStateSpace::distance(const ob::State *s1, const ob::State *s2) const
 {
-    //double distance = 0.0;
-    //for (int i=0; i <= (((KauthamDEEnvironment*) env_.get())->getNumLinksFirstRobot()-1); i++)
-    //for (int i=0; i <= (env_->getNumLinksFirstRobot()-1); i++)
-
         const double *p1 = s1->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
         const double *p2 = s2->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
         double dx = fabs(p1[0] - p2[0]);
         double dy = fabs(p1[1] - p2[1]);
-        //double dz = fabs(p1[1] - p2[1]);
 
-    return sqrt(dx * dx + dy * dy );//+dz*dz);;
+    return sqrt(dx * dx + dy * dy );
 
 }
 void ConstraintAwaretwoDRobotStateSpace::registerProjections(void)
@@ -262,8 +257,6 @@ void ConstraintAwaretwoDRobotStateSpace::registerProjections(void)
 ///////////////////////////////////////////////////////////////////
 ConstraintAwaretwoDControlSampler::ConstraintAwaretwoDControlSampler(const oc::ControlSpace *cm) : oc::RealVectorControlUniformSampler(cm)
 {
-    //for (int i=0; i <= (((KauthamDEEnvironment*) env_.get())->getNumLinksFirstRobot()-1); i++)
-
 
 }
 
@@ -306,7 +299,7 @@ void ConstraintAwaretwoDControlSampler::sampleNext(oc::Control *control, const o
             //                    double &v2 = control->as<oc::OpenDEControlSpace::ControlType>()->values[1];
             //                    v2=rng_.uniformReal(-15,15);
 
-            std::cout<<"Manipulation Region Position: "<<pos1[0]<<" , "<<pos1[1]<<std::endl;
+            //std::cout<<"Manipulation Region Position: "<<pos1[0]<<" , "<<pos1[1]<<std::endl;
             //to update the manipulation regions
             // ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->
             //         Instknowledge->updateKnowledge((space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->stateBodies_);

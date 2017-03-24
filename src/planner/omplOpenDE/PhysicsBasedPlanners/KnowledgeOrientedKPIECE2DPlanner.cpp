@@ -54,15 +54,15 @@ KnowledgeOrientedKPIECE2DPlanner::KnowledgeOrientedKPIECE2DPlanner(SPACETYPE sty
      envPtr = oc::OpenDEEnvironmentPtr(new ConstraintAware2DRobotEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
     stateSpace = new ConstraintAwaretwoDRobotStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
-    oc::ControlSpacePtr csp(new ConstraintAwaretwoDControlSpace(stateSpacePtr));
-    ss = new oc::OpenDESimpleSetup(csp);
-       // ss = new oc::OpenDESimpleSetup(stateSpacePtr);
+    //oc::ControlSpacePtr csp(new ConstraintAwaretwoDControlSpace(stateSpacePtr));
+    //ss = new oc::OpenDESimpleSetup(csp);
+     ss = new oc::OpenDESimpleSetup(stateSpacePtr);
     oc::SpaceInformationPtr si=ss->getSpaceInformation();
 
-    ob::PlannerPtr planner(new oc::RRT(si));
+    ob::PlannerPtr planner(new oc::KPIECE1(si));
     //set planner parameters: range and goalbias
     addParameter("Goal Bias", _GoalBias);
-    planner->as<oc::RRT>()->setGoalBias(_GoalBias);
+    planner->as<oc::KPIECE1>()->setGoalBias(_GoalBias);
     //planner->as<oc::KPIECE1>()->setProjectionEvaluator(stateSpacePtr->getDefaultProjection());
 
     //set the planner
@@ -81,7 +81,7 @@ bool KnowledgeOrientedKPIECE2DPlanner::setParameters()
         HASH_S_K::iterator it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
             _GoalBias = it->second;
-            ss->getPlanner()->as<oc::RRT>()->setGoalBias(_GoalBias);
+            ss->getPlanner()->as<oc::KPIECE1>()->setGoalBias(_GoalBias);
         }
         else
             return false;
