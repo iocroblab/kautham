@@ -788,6 +788,7 @@ namespace Kautham {
             //Load the planner data to be drawn
             ob::PlannerDataPtr pdata(new ob::PlannerData(ss->getSpaceInformation()));
             ss->getPlanner()->getPlannerData(*pdata);
+
             if (ss->getPlanner()->getProblemDefinition()->hasOptimizationObjective()) {
                 //Compute the weight for all edges given the OptimizationObjective
                 pdata->computeEdgeWeights(*ss->getPlanner()->getProblemDefinition()->
@@ -802,6 +803,14 @@ namespace Kautham {
             smp->setMappedConf(_init.at(0)->getMappedConf());
             ob::GoalStates *goalStates(dynamic_cast<ob::GoalStates*>
                                        (ss->getProblemDefinition()->getGoal().get()));
+
+            //nothing to draw
+            if (pdata->numVertices() < (pdata->numStartVertices()+goalStates->getStateCount())) {
+                std::cout<<"omplPlanner::drawPath - nothing to draw"<<std::endl;
+                return;
+            }
+
+
             SbVec3f *goalVertices = new SbVec3f[goalStates->getStateCount()*_wkSpace->getNumRobots()];
 
             for (unsigned int i(0); i < goalStates->getStateCount(); ++i) {
@@ -1027,6 +1036,7 @@ namespace Kautham {
             //Load the planner data to be drawn
             ob::PlannerDataPtr pdata(new ob::PlannerData(ss->getSpaceInformation()));
             ss->getPlanner()->getPlannerData(*pdata);
+
             if (ss->getPlanner()->getProblemDefinition()->hasOptimizationObjective()) {
                 //Compute the weight for all edges given the OptimizationObjective
                 pdata->computeEdgeWeights(*ss->getPlanner()->getProblemDefinition()->
@@ -1039,6 +1049,12 @@ namespace Kautham {
             //Draw tree
             ob::GoalStates *goalStates(dynamic_cast<ob::GoalStates*>
                                        (ss->getProblemDefinition()->getGoal().get()));
+            //nothing to draw
+            if (pdata->numVertices() < (pdata->numStartVertices()+goalStates->getStateCount())) {
+                std::cout<<"omplPlanner::drawCspace - no tree to draw"<<std::endl;
+                return;
+            }
+
             SbVec3f *goalVertices = new SbVec3f[goalStates->getStateCount()];
             for (unsigned int i(0); i < goalStates->getStateCount(); ++i) {
                 projection->project(goalStates->getState(i),state);

@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<Position>
+	<Limits min="-1" max="1" />
+	<Limits min="-1" max="1" />
+	<ControlSet>
+		<Offset>
+			<DOF value="0.5" />
+			<DOF value="0.5" />
+		</Offset>
+		<Control eigValue="1">
+			<DOF value="1" />
+			<DOF value="0" />
+		</Control>
+		<Control eigValue="1">
+			<DOF value="0" />
+			<DOF value="1" />
+		</Control>
+	</ControlSet>
+</Position>
+<Velocity>
+	<Limits max="1" />
+	<Limits max="1" />
+	<Tree>
+		<Root axis="0" location="0.4">
+			<Left synergy="0" />			
+			<Right axis="0" location="0.6">
+				<Left synergy="1" />
+				<Right synergy="2" />
+			</Right>
+		</Root>
+	</Tree>
+	<ControlSet>
+		<Offset>
+			<DOF value="0" />
+			<DOF value="0" />
+		</Offset>
+		<Control eigValue="0.8">
+			<DOF value="0" />
+			<DOF value="1" />
+		</Control>
+		<Control eigValue="0.7">
+			<DOF value="1" />
+			<DOF value="0" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="0.1" />
+			<DOF value="-1" />
+		</Offset>
+		<Control eigValue="0.1">
+			<DOF value="0" />
+			<DOF value="1" />
+		</Control>
+		<Control eigValue="0.1">
+			<DOF value="1" />
+			<DOF value="0" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="0.2" />
+			<DOF value="1" />
+		</Offset>
+		<Control eigValue="0.1">
+			<DOF value="0" />
+			<DOF value="1" />
+		</Control>
+		<Control eigValue="0.1">
+			<DOF value="1" />
+			<DOF value="0" />
+		</Control>
+	</ControlSet>
+</Velocity>
