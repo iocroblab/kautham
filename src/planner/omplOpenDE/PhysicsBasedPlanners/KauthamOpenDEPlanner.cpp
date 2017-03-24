@@ -124,7 +124,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     _family =ODEPLANNER;
     ws->moveRobotsTo(init);
     //set intial values from parent class data
-    _speedFactor = 0.5;
+    _speedFactor = 3;
     _solved = false;
     _maxspeed = 5;
     _onlyend = false;
@@ -428,26 +428,27 @@ std::vector<float> KauthamDEPlanner::ComputeRn(const ob::State *state)
         if(Jtype==dJointTypeHinge)
         {
             dReal q=dJointGetHingeAngle(((KauthamDEEnvironment*)envPtr.get())->_Joint[j]);
-
             coords.push_back(-q);
-            // std::cout<<q<<" ";
+             //std::cout<<q<<" ";
 
         }
         else if(Jtype==dJointTypeSlider)
         {
 
             dReal q=dJointGetSliderPosition(((KauthamDEEnvironment*)envPtr.get())->_Joint[j]);
-            coords.push_back(-q);
+            coords.push_back(q);
 
         }
         k++;
     }
-
-    //std::cout<<coords.size()<<std::endl;
+coords[0]=coords[0];
+coords[1]=coords[3];
+coords[2]=0;coords[3]=0;coords[4]=0;
+//std::cout<<coords.size()<<std::endl;
     //std::cout<<std::endl;
-    for(unsigned int i=0;i<coords.size();i++)
-        std::cout<<coords[i]<<"  ,  ";
-    std::cout<<std::endl;
+//    for(unsigned int i=0;i<coords.size();i++)
+//        std::cout<<coords[i]<<"  ,  ";
+//    std::cout<<std::endl;
 
     return coords;
 }
