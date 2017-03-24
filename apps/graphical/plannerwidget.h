@@ -68,6 +68,7 @@ namespace Kautham{
         void saveDataOMPLC();
         void saveDataODE();
         QString getFilePath();
+        bool setTable(string s);//reimplemented
 
         PlannerWidget();
         QHBoxLayout *hboxLayout;
