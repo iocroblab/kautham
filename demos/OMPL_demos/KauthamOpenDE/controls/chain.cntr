@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		
+		<DOF name="Chain/link1" value="0.500"/>
+		<DOF name="Chain/link2" value="0.500"/>
+		<DOF name="Chain/gripper" value="0.500"/>
+      		
+	</Offset>
+    	
+    	<Control name="link1" eigValue="1">
+      		<DOF name="Chain/link1" value="1"/>
+    	</Control>
+    	    	<Control name="link2" eigValue="1">
+      		<DOF name="Chain/link2" value="1"/>
+    	</Control>
+    	<Control name="gripper" eigValue="1">
+      		<DOF name="Chain/gripper" value="1"/>
+    	</Control>
+    	
+</ControlSet>
