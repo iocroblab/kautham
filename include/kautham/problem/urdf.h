@@ -213,7 +213,7 @@ public:
     string name;//!< Name of the robot
     string type;//!< Type of the robot, where type can be one of the following:
     //!< "Freeflying", "Chain" or "Tree"
-    int num_links;//!< Number of links forming the robot structure
+    unsigned int num_links;//!< Number of links forming the robot structure
     urdf_link *link;//!< Robot's links
     map<string,SoMaterial*> materials;//!< Materials used in the robot
 

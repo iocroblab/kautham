@@ -71,7 +71,6 @@ namespace Kautham {
 //! Class robot implements a kinematic tree with a free-flying base
   class Robot {
   private:
-      ROBOTTYPE         robType; //!< The robot type FREEFLY,CHAIN, TREE, CLOSEDCHAIN
       string            name; //!< A descriptive name of robot
       KthReal           scale;//!< This is the global scale for all the links that compound the robot. Normally it is equal to one.
       RobWeight*        _weights; //!< Weights that affect the distance computations.
@@ -127,8 +126,6 @@ namespace Kautham {
 
     inline KthReal* getLimits(int member){return _spatialLimits[member];} //!< Returns the limits of the robot (needed for mobile bases).
 
-    inline ROBOTTYPE getRobotType(){return robType;} //!< Returns the robot type.
-
     inline KthReal getScale() const {return scale;} //!< Returns the scale.
 
     inline unsigned getTrunk() const {return nTrunk;} //!< Returns the number of links that compose the trunk of the kinematic tree.
@@ -176,7 +173,7 @@ namespace Kautham {
     std::vector<KthReal>& getWeightRn();
 
     //! Test for autocollision
-    bool autocollision(int t = 0, string *message = NULL);
+    bool autocollision();
 
     //! Add link to the robot
     bool addLink(string name, string ivFile, string collision_ivFile, KthReal linkScale,
@@ -259,7 +256,7 @@ namespace Kautham {
     //! Returns a pointer to visualize the model used for collisions
     SoSeparator* getModelFromColl();
 
-    //! Maps from control values to configurations.
+    //! Maps from couol values to configurations.
     bool control2Pose(std::vector<KthReal> &values);
 
     //! Maps from control values to parameters (normalized configurations).

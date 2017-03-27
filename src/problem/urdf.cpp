@@ -422,52 +422,12 @@ void urdf_robot::fill (xml_node *node, string dir) {
         }
     }
 
-    int i;
+    unsigned int i;
     tmpNode = node->child("link");
     for (i = 0; i < num_links; i++) {
         link[i].fill(&tmpNode,dir,&materials);
 
         tmpNode = tmpNode.next_sibling("link");
-    }
-
-    if (num_links > 1) {
-        //find base's index
-        i = 0;
-        while (!link[i].is_base){
-            i++;
-        }
-
-        //count links in the kinematic chain from the base
-        int links = 1;
-        bool end = false;
-        int j;
-        bool child_found;
-        while (!end && links <= num_links) {
-            child_found = false;
-            j = 0;
-            while (!child_found && j < num_links) {
-                if (link[i].name == link [j].parent) {
-                    child_found = true;
-                } else {
-                    j++;
-                }
-            }
-            if (child_found) {
-                i = j;
-                links++;
-            } else {
-                end = true;
-            }
-        }
-
-        //determine robot's type
-        if (links == num_links) {
-            type = "Chain";
-        } else {
-            type = "Tree";
-        }
-    } else {
-        type = "Freeflying";
     }
 }
 
