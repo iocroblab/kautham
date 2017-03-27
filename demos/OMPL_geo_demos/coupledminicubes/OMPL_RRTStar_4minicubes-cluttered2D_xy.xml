@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTStar_4minicubes-cluttered2D">
+	<Robot robot="robots/minicube.dh" scale="3.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.07" max="0.07" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.07" Y="0.01" X="0.01" />
+	</Robot>
+	<Robot robot="robots/minicubeGreen.dh" scale="3.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.07" max="0.07" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.07" Y="0.01" X="0.01" />
+	</Robot>
+	<Robot robot="robots/minicubeWhite.dh" scale="3.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.07" max="0.07" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.07" Y="0.01" X="0.01" />
+	</Robot>
+	<Robot robot="robots/minicubeRed.dh" scale="3.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.07" max="0.07" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.07" Y="0.01" X="0.01" />
+	</Robot>
+	<Obstacle obstacle="obstacles/cluttered2D.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/walls.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/floor.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/4minicubes-coupling_xy.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRTStar</Name>
+			<Parameter name="Max Planning Time">5.0</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">0.1</Parameter>
+			<Parameter name="Node Rejection">1</Parameter>
+			<Parameter name="DelayCC (0/1)">0</Parameter>
+			<Parameter name="Optimize none(0)/dist(1)/clear(2)/PMD(3)">3</Parameter>
+			<Parameter name="Simplify Solution">1</Parameter>
+			<Parameter name="lengthweight(0..1)">1</Parameter>
+			<Parameter name="orientationweight">100</Parameter>
+			<Parameter name="penalizationweight">10</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init>0.5 0.5 0.1 0.1 0.1 0.15 0.1 0.2 0.1 0.25</Init>
+				<Goal>0.5 0.5 0.9 0.95 0.9 0.85 0.9 0.8 0.9 0.75</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

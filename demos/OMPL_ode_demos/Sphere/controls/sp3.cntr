@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="SphereDE/X" value="0.5" />
+		<DOF name="SphereDE/Y" value="0.5" />
+		<DOF name="SphereDE/Z" value="0.5" />
+        </Offset>
+	<Control name="SphereDE/x" eigValue="1.0">
+		<DOF name="SphereDE/X" value="1.0" />
+	</Control>
+	<Control name="SphereDE/y" eigValue="1.0">
+		<DOF name="SphereDE/Y" value="1.0" />
+	</Control>
+	<Control name="SphereDE/z" eigValue="1.0">
+		<DOF name="SphereDE/Z" value="1.0" />
+	</Control>
+</ControlSet>

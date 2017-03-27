@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Problem name="NF1_minicube_maze2D">
+	<Robot robot="robots/minicube.dh" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.056" Y="0.01" X="0.01" />
+	</Robot>
+	<Obstacle obstacle="obstacles/maze2D.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/walls.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/minicube_R2.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>NF1Planner</Name>
+			<Parameter name="Discr. Steps 0">40</Parameter>
+			<Parameter name="Discr. Steps 1">40</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init>0.05 0.7</Init>
+				<Goal>0.3 0.5</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

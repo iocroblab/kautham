@@ -434,12 +434,12 @@ namespace Kautham {
     //! This function sets the SoSeparator to draw a 2D configuration space
     SoSeparator *omplcPlanner::getIvCspaceScene()
     {
-        if(_wkSpace->getNumRobControls()<=3)
-        {
+        //if(_wkSpace->getNumRobControls()<=3)
+        //{
             _sceneCspace = new SoSeparator();
             _sceneCspace->ref();
-        }
-        else _sceneCspace=NULL;
+        //}
+        //else _sceneCspace=NULL;
         return Planner::getIvCspaceScene();
     }
 
@@ -450,13 +450,13 @@ namespace Kautham {
     {
         if(_sceneCspace==NULL) return;
 
-        if(_wkSpace->getNumRobControls()<=3)
-        {
+        //if(_wkSpace->getNumRobControls()<=3)
+        //{
             if(_wkSpace->getRobot(0)->isSE3Enabled())
                 drawCspaceSE3();
             else
                 drawCspaceRn();
-        }
+        //}
     }
 
     //! This routine allows to draw the roadmap or tree for a sigle robot with 2 translational dof
@@ -484,8 +484,10 @@ namespace Kautham {
             KthReal xmax=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().high[0];
             KthReal ymin=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().low[1];
             KthReal ymax=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().high[1];
+            KthReal zmin=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().low[2];
+            KthReal zmax=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().high[2];
 
-            KthReal x,y;
+            KthReal x,y,z;
             //load the planner data to be drawn
             ob::PlannerDataPtr pdata;
             pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
@@ -499,8 +501,9 @@ namespace Kautham {
                 pathscopedstate >> pathscopedstatese3;
                 x = pathscopedstatese3->getX();
                 y = pathscopedstatese3->getY();
+                z = pathscopedstatese3->getZ();
 
-                points->point.set1Value(i,x,y,0);
+                points->point.set1Value(i,x,y,z);
             }
             SoDrawStyle *pstyle = new SoDrawStyle;
             pstyle->pointSize = 2;
@@ -530,21 +533,22 @@ namespace Kautham {
                     SoCoordinate3 *edgepoints  = new SoCoordinate3();
 
                     //initial edgepoint
-                    float x1,y1,x2,y2,z;
+                    float x1,y1,z1,x2,y2,z2;
                     pathscopedstate = pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>();
                     ob::ScopedState<ob::SE3StateSpace> pathscopedstatese3(ssRobotiSE3);
                     pathscopedstate >> pathscopedstatese3;
                     x1 = pathscopedstatese3->getX();
                     y1 = pathscopedstatese3->getY();
-                    z=0.0;
-                    edgepoints->point.set1Value(0,x1,y1,z);
+                    z1 = pathscopedstatese3->getZ();
+                    edgepoints->point.set1Value(0,x1,y1,z1);
 
                     //final edgepoint
                     pathscopedstate = pdata->getVertex(outgoingVertices.at(j)).getState()->as<ob::CompoundStateSpace::StateType>();
                      pathscopedstate >> pathscopedstatese3;
                     x2 = pathscopedstatese3->getX();
                     y2 = pathscopedstatese3->getY();
-                    edgepoints->point.set1Value(1,x2,y2,z);
+                    z2 = pathscopedstatese3->getZ();
+                    edgepoints->point.set1Value(1,x2,y2,z2);
 
                     //the edge
                     lsep->addChild(edgepoints);
@@ -573,14 +577,16 @@ namespace Kautham {
                     pathscopedstate >> pathscopedstatese3;
                     x = pathscopedstatese3->getX();
                     y = pathscopedstatese3->getY();
-                    edgepoints->point.set1Value(0,x,y,0);
+                    z = pathscopedstatese3->getZ();
+                    edgepoints->point.set1Value(0,x,y,z);
 
                     //final edgepoint
                     pathscopedstate = pathstates[i+1]->as<ob::CompoundStateSpace::StateType>();
                     pathscopedstate >> pathscopedstatese3;
                     x = pathscopedstatese3->getX();
                     y = pathscopedstatese3->getY();
-                    edgepoints->point.set1Value(1,x,y,0);
+                    z = pathscopedstatese3->getZ();
+                    edgepoints->point.set1Value(1,x,y,z);
 
                     //edge of the path
                     pathsep->addChild(edgepoints);
@@ -602,17 +608,20 @@ namespace Kautham {
             SoSeparator *floorsep = new SoSeparator();
             SoCube *cs = new SoCube();
             cs->width = xmax-xmin;
-            cs->depth = (xmax-xmin)/50.0;
             cs->height = ymax-ymin;
+            if(zmax==zmin) cs->depth = (xmax-xmin)/50.0;
+            else cs->depth = zmax-zmin;
 
             SoTransform *cub_transf = new SoTransform;
             SbVec3f centre;
-            centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2,-cs->depth.getValue());
+            centre.setValue(xmin+(xmax-xmin)/2,ymin+(ymax-ymin)/2, zmin+(zmax-zmin)/2);
             cub_transf->translation.setValue(centre);
             cub_transf->recenter(centre);
 
             SoMaterial *cub_color = new SoMaterial;
-            cub_color->diffuseColor.setValue(0.2,0.2,0.2);
+            cub_color->transparency.setValue(0.8);
+            //cub_color->diffuseColor.setValue(0.2,0.2,0.2);
+
 
             floorsep->addChild(cub_color);
             floorsep->addChild(cub_transf);

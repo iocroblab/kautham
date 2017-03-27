@@ -46,7 +46,7 @@ namespace Kautham{
 	  signals:
 		  void            sendText(string newContent);
 	  private slots:
-          void            tableChanged(int row);
+          void            tableChanged(int row, int col);
 	  public:
 		  KauthamWidget(KauthamObject* kObj);
 
@@ -54,15 +54,15 @@ namespace Kautham{
       *   s string has properties
       *   and values in secuential mode, separated by |
       */
-		  bool            setTable(string s);
+        virtual  bool            setTable(string s);
       inline void     hideTable(){table->setVisible(false);}
     protected:
 			void            writeGUI(string text);
+            QTableWidget*   table;
 
 	  private:
 		  
-		  QGridLayout*    gridLayout;
-		  QTableWidget*   table;
+          QGridLayout*    gridLayout;
 		  KauthamObject*  _kauthObject;
 
     protected:

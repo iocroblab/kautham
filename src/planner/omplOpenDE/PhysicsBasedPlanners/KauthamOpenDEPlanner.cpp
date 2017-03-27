@@ -94,31 +94,6 @@ static void simLoop (int /*pause*/)
             glVertex3d(POINTS[i].first, POINTS[i].second, 0.05);
         glEnd();
     }
-
-//        for (int i=0; i<dSpaceGetNumGeoms(DISP.m_spaces[0])-1; i++)
-//        {
-//          dGeomID geom=dSpaceGetGeom(DISP.m_spaces[0],i);
-//          int type = dGeomGetClass (geom);
-//         // std::cout<<"Number of Geom is: "<<i <<" : TYPE is  "<<type<<std::endl;
-
-//          if(type==dTriMeshClass || type==dRayClass)
-//          {
-//              std::cout<<"Type is ====  "<<type<<std::endl;
-//            DISP.drawGeom(geom,0,NULL,NULL,DISP.tmd[i]);
-//          }
-//          else
-//          {
-//              std::cout<<"Type is not Mesh ====  "<<type<<std::endl;
-
-//             DISP.drawGeom(geom,NULL,NULL,0);
-
-//          }
-//        }
-
-
-
-    //static ompl::time::duration d = ompl::time::seconds(0.001);
-    //boost::this_thread::sleep(d);
     boost::this_thread::sleep(boost::posix_time::milliseconds(1));
 
 }
@@ -149,7 +124,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     _family =ODEPLANNER;
     ws->moveRobotsTo(init);
     //set intial values from parent class data
-    _speedFactor = 0.5;
+    _speedFactor = 3;
     _solved = false;
     _maxspeed = 5;
     _onlyend = false;
@@ -157,14 +132,14 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     _maxContacts=3;
     if(_wkSpace->getRobot(0)->getNumJoints()>1 && _wkSpace->getRobot(0)->getName()!="SimpleCar")
     {
-        _propagationStepSize=0.05;
+        _propagationStepSize=0.02;
         _minControlSteps=1;
-        _maxControlSteps=10;
+        _maxControlSteps=30;
     }
     else{
-        _propagationStepSize=0.07;
-        _minControlSteps=10;
-        _maxControlSteps=50;
+        _propagationStepSize=0.05;
+        _minControlSteps=1;
+        _maxControlSteps=80;
     }
     _controlDimensions=2;
     _erp=0.5;
@@ -198,41 +173,6 @@ bool KauthamDEPlanner::trySolve(void)
 {
 
     dInitODE2(0);
-    std::vector<query> Qu;
-
-    query qq;
-    qq.action="pull";
-    qq.pose.resize(2);
-    qq.pose[0]=195.5;
-    qq.pose[1]=55.8;
-    qq.f.resize(3);
-    qq.f[0]=0.0;
-    qq.f[1]=5.0;
-    qq.f[2]=0.0;
-    qq.targetbody=6;
-    Qu.push_back(qq);
-
-    query qq1;
-    qq1.action="move";
-    qq1.pose.resize(2);
-    qq1.pose[0]=171.5;
-    qq1.pose[1]=-75.8;
-    qq1.f.resize(3);
-    qq1.targetbody=0;
-    Qu.push_back(qq1);
-
-    query qqq;
-    qqq.action="pull";
-    qqq.pose.resize(2);
-    qqq.pose[0]=247.9;
-    qqq.pose[1]=-75.8;
-    qqq.f.resize(3);
-    qqq.f[0]=7.0;
-    qqq.f[1]=0.0;
-    qqq.f[2]=0.0;
-    qqq.targetbody=7;
-
-    Qu.push_back(qqq);
 
     ob::RealVectorBounds vb(3);
     ob::RealVectorBounds bounds(3);
@@ -296,75 +236,11 @@ bool KauthamDEPlanner::trySolve(void)
         }
 
     }
-    if(PROBTYPE=="MULTIQUERY")
-    {
-        ss->setStartState(ss->getCurrentState());
-        ob::ScopedState<oc::OpenDEStateSpace> last(ss->getSpaceInformation());
-        //last = ss1->getSolutionPath().getStates().back();
-
-        for(unsigned int numQ=0; numQ<Qu.size();numQ++)
-        {
-            oc::OpenDESimpleSetup *ss1= new oc::OpenDESimpleSetup(stateSpacePtr);
-            ss1->setVolumeBounds(vb);
-            ss1->setAngularVelocityBounds(bounds);
-            ss1->setLinearVelocityBounds(bounds);
-            ss1->setStartState(last);
-            ss1->setGoal(ob::GoalPtr(new KauthamDEGoalRegion(ss->getSpaceInformation(),_wkSpace,_onlyend,Qu[numQ].pose[0],Qu[numQ].pose[1])));
-            ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setActionType(Qu[numQ].action);
-
-            ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setforce(Qu[numQ].f);
-            dJointID joint1;
-            if(Qu[numQ].action=="pull" || Qu[numQ].action=="Pull")
-            {
-                joint1=dJointCreateHinge( ((KauthamDEEnvironment*)envPtr.get())->world_,0);
-                dJointAttach(joint1 ,((KauthamDEEnvironment*)envPtr.get())->stateBodies_[0],((KauthamDEEnvironment*)envPtr.get())->stateBodies_[Qu[numQ].targetbody]);
-            }
-            ss1->setup();
-            ss1->print();
-            bool sol;
-            sol=ss1->solve(_planningTime);
-            if(Qu[numQ].action=="pull" || Qu[numQ].action=="Pull")
-                dJointDestroy(joint1);
-            if(sol)
-            {
-                std::cout<<"2nd Query is solved"<<std::endl;
-                solutionStates sstat1;
-                std::vector<ob::State*> &States =ss1->getSolutionPath().getStates();
-                std::vector<oc::Control*> &Control= ss1->getSolutionPath().getControls();
-                std::vector<double> &Duration= ss1->getSolutionPath().getControlDurations();
-
-                sstat1.substates =States;
-                sstat1.control =Control;
-                sstat1.duration =Duration;
-                sStates.push_back(sstat1);
-
-                last = ss1->getSolutionPath().getStates().back();
-            }
-            else
-            {
-                break;
-            }
-        }
-    }
 
     if (_solved)
     {
         callDrawStuffViewer();
 
-    //ss->playSolutionPath(1.0);
-        ((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->setPlanningPhase(true);
-        const std::vector<Configuration> conf=((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->getJointConfiguraion();
-        const std::vector<Configuration> qdot=((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->getJointVelocities();
-        const std::vector<Configuration> torque=((KauthamDEEnvironment*)envPtr.get())->manipulationQuery->getJointTorque();
-
-        for(unsigned int i=0;i<conf.size();i++)
-        {
-            std::cout<<"control are : [ "<<conf[i].q[0]<<" , "<<conf[i].q[1]<<" ]"<<std::endl;
-            std::cout<<"Velocity is :      [ "<<qdot[i].q[0]<<" , "<<qdot[i].q[1]<<" ]"<<std::endl;
-            std::cout<<"Torque is :        [ "<<torque[i].q[0]<<" , "<<torque[i].q[1]<<" ]"<<std::endl;
-
-
-        }
         _path.clear();
         clearSimulationPath();
         Sample *Robsmp;
@@ -377,39 +253,9 @@ bool KauthamDEPlanner::trySolve(void)
             std::cout<<"Propagation Step is :"<<ss->getSpaceInformation().get()->getPropagationStepSize()<<std::endl;
             std::cout<<"control count is :"<<control.size()<<" duration is : "<<duration.size()<<std::endl;
 
-            std::cout<<"Torque size is :"<<torque.size()<<" duration size is : "<<duration.size()<<std::endl;
-for(unsigned int i=0;i<control.size();i++)
-{
-    const double* vv= control[i]->as<oc::OpenDEControlSpace::ControlType>()->values;
-    std::cout<<"velocity is  :"<<vv[0]<<" "<<vv[1]<<" Torque is : "<<vv[2]<<" "<<vv[3]<<std::endl;
-
-}
-            //std::cout<<"Control Size is "<< control.size()<<std::endl;
-            //std::cout<<"state Size is "<< states.size()<<std::endl;
-            //std::cout<<"Duration Size is "<< duration.size()<<std::endl;
-            //int size= states.size();
             std::vector<double> Joint_Angle;
             Joint_Angle.resize(_wkSpace->getRobot(0)->getNumJoints());
-            //ComputeAction(states,control,duration);
-            //ComputeJerkIndex(states,duration);
-            if(_wkSpace->getRobot(0)->getNumJoints()>1 || _wkSpace->getRobot(0)->getName()=="SimpleCar")
-            {
-                ComputePowerConsumed(control,duration);
-            }
-            else
-            ComputePowerConsumed(states,control,duration);
 
-                    std::ofstream benchmarkdata ("benchmark.txt", std::ios::out | std::ios::app);
-                   if (benchmarkdata.is_open())
-                   {
-                      benchmarkdata <<"Planning Time: "<<ss->getLastPlanComputationTime()<<"\n";
-                      benchmarkdata <<"Exect Solution Found: "<<ss->haveExactSolutionPath()<<"\n";
-                      benchmarkdata <<"Total Power Consumed: "<<PowerConsumed<<"\n";
-                      benchmarkdata <<"Smoothness Index    : "<<Smoothness<<"\n";
-                   }
-               benchmarkdata <<"===================================================="<<"\n";
-               benchmarkdata <<"===================================================="<<"\n";
-               benchmarkdata.close();
             final=ss->getSolutionPath().getStates().back();
             std::cout<<"===============   Query Numer  "<<(l+1)<<"  =============== "<<std::endl;
             std::cout<<"Actions is:  "<<Action<<std::endl;
@@ -428,12 +274,7 @@ for(unsigned int i=0;i<control.size();i++)
                 //std::cout<<"Duration is "<< duration[i]<<std::endl;
                 State tmpstate;
                 Robsmp=new Sample(_wkSpace->getNumRobControls());
-                //Robsmp->setMappedConf(_wkSpace->getRobot(0));
-//                if(_wkSpace->getRobot(0)->getNumJoints()>1)
-//                {
-//                KauthamOpenDEState2Robsmp(states[i], Robsmp,conf.at(i));
-//                }
-//                else
+
                     KauthamOpenDEState2Robsmp(states[i],Robsmp);
 
                 tmpstate.setRob(*Robsmp);
@@ -459,158 +300,70 @@ for(unsigned int i=0;i<control.size();i++)
     return 0;
 
 }
-//    if(PROBTYPE=="LTL")
-//    {
-//        clock_t startTime = clock();
-//        _solved = ltlplanner->as<ob::Planner>()->solve(200.0);
-//        clock_t endTime = clock();
-//        clock_t clockTicksTaken = endTime - startTime;
-//        double timeInSeconds = clockTicksTaken / (double) CLOCKS_PER_SEC;
-//        std::cout<<"Planning Time is : "<<timeInSeconds<<std::endl;
-//        // pDefp->getLowerSolutionPath()->print(std::cout);
-
-//        const og::PathGeometric  &gPath = dynamic_cast<ompl::control::PathControl*>(pDefp->getLowerSolutionPath().get())->asGeometric();
-
-//        if (_solved)
-//        {
-//            _path.clear();
-//            clearSimulationPath();
-//            Sample *Robsmp;
-//            Sample *Obssmp;
-//            std::vector<double> Joint_Angle;
-//            Joint_Angle.resize(_wkSpace->getRobot(0)->getNumJoints());
-//            double control[2]={2.0,0.0};
-//            oc::Control *c = ss->getSpaceInformation()->allocControl();
-//            memcpy(c->as<oc::OpenDEControlSpace::ControlType>()->values, control, sizeof(double) * ss->getControlSpace()->getDimension());
-//            std::vector<float> jangle;
-//            jangle.resize(7);
-//            for(unsigned int i=0;i<gPath.getStateCount()-2;i=i+2)
-//            {
-//                State tmpstate;
-//                Robsmp=new Sample(_wkSpace->getNumRobControls());
-//                //Robsmp->setMappedConf(_init->getMappedConf());
-//                KauthamOpenDEState2Robsmp(gPath.getState(i), Robsmp,c,2,&Joint_Angle,jangle);
-
-//                tmpstate.setRob(*Robsmp);
-//                if(_wkSpace->getNumObstacles()>0)
-//                {
-//                    Obssmp=new Sample(_wkSpace->getNumObsControls());
-//                    KauthamOpenDEState2Obssmp(gPath.getState(i),Obssmp,c,2);
-//                    tmpstate.setObs(*Obssmp);
-//                }
-//                worldState.push_back(tmpstate);
-//                _path.push_back(Robsmp);
-//                _samples->add(Robsmp);
-//            }
-//        }
-//        // drawCspace(0);
-//        return _solved;
-//    }
-
-//dCloseODE();
-//return 0;
-
-//}
-
 //! This member function converts an OpenDE State to a Kautham robot sample
-void KauthamDEPlanner::KauthamOpenDEState2Robsmp(const ob::State *state, Sample* smp, const Configuration configuration)
-{
-    int k=0;
-    vector<RobConf> rc;
-    double low;
-    double high;
-    for(unsigned int i=0; i<_wkSpace->getNumRobots(); i++)
-    {
-        RobConf *rcj = new RobConf;
-        if(_wkSpace->getRobot(0)->getNumLinks()<2)
-        {
-            for(unsigned int j=0;j<_wkSpace->getRobot(i)->getNumLinks();j++)
-            {
-                //const double *pos = states[i]->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(1)->values;
-                const double *posRob = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k);
-                const ob::SO3StateSpace::StateType &oriRob = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);
-                //RobConf to store the robots configurations read form the ompl state
-                //convert to a vector of 7 components
-                vector<KthReal> se3coords;
-                se3coords.resize(7);
-                se3coords[0] = posRob[0];
-                se3coords[1] = posRob[1];
-                se3coords[2] = posRob[2];
-                se3coords[3] = oriRob.x;
-                se3coords[4] = oriRob.y;
-                se3coords[5] = oriRob.z;
-                se3coords[6] = oriRob.w;
-
-                //create the sample
-                SE3Conf se3;
-                se3.setCoordinates(se3coords);
-                rcj->setSE3(se3);
-                k++;
-                //std::cout<<"Position of Robot "<< i <<" Link "<<j<<" = ["<<se3coords[0]<<" , "<<se3coords[1]<<" , "<<se3coords[2]<< " ]  ["<<se3coords[3]<<" , "<<se3coords[4]<<" , "<<se3coords[5]<< " , "<<se3coords[6]<<" ] "<<std::endl;
-            }
-        }
-
-        if(_wkSpace->getRobot(0)->getNumJoints()>1)
-        {
-            vector<KthReal> coords;
-            for(unsigned int j=1;j<_wkSpace->getRobot(0)->getNumJoints();j++)
-            {
-                if(_wkSpace->getRobot(0)->getNumJoints()<3)
-                {
-                low = *_wkSpace->getRobot(i)->getLink(j)->getLimits(true);//lower limit of joint
-                high = *_wkSpace->getRobot(i)->getLink(j)->getLimits(false);//upper limit of joint
-                double normalize = (configuration.q.at(j)-low)/(high-low);
-                coords.push_back(normalize);
-                }
-                else
-                    coords.push_back(0);
-            }
-            //std::cout<<std::endl;
-            rcj->setRn(coords);
-        }
-        rc.push_back(*rcj);
-
-    }
-    smp->setMappedConf(rc);
-}
 void KauthamDEPlanner::KauthamOpenDEState2Robsmp(const ob::State *state, Sample* smp)
 {
     int k=0;
-    vector<RobConf> rc;
-    for(unsigned int i=0; i<_wkSpace->getNumRobots(); i++)
-    {
+       vector<RobConf> rc;
+       SE3Conf basepose;
+       const double *basep = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
+       const ob::SO3StateSpace::StateType &baseori = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(0);
+       //const double *vb=state->as<oc::OpenDEStateSpace::StateType>()->getBodyLinearVelocity(0);
+       //const double *wb=state->as<oc::OpenDEStateSpace::StateType>()->getBodyAngularVelocity(0);
+       std::vector<float> tmp1(3);
+       std::vector<float> tmp2(4);
+       tmp1[0] = basep[0];
+       tmp1[1] = basep[1];
+       tmp1[2] = basep[2];
+       tmp2[0] = baseori.x;
+       tmp2[1] = baseori.y;
+       tmp2[2] = baseori.z;
+       tmp2[3] = baseori.w;
+       basepose.setPos(tmp1);
+       basepose.setOrient(tmp2);
+       for(unsigned int i=0; i<_wkSpace->getNumRobots(); i++)
+       {
+           RobConf *rcj = new RobConf;
+           if(!_onlyend)
+           {
+               for(unsigned int j=0;j<_wkSpace->getRobot(i)->getNumLinks();j++)
+               {
+                   //const double *pos = states[i]->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(1)->values;
+                   const double *posRob = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k);
+                   const ob::SO3StateSpace::StateType &oriRob = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);
+                   //RobConf to store the robots configurations read form the ompl state
+                   //convert to a vector of 7 components
+                   vector<KthReal> se3coords;
+                   se3coords.resize(7);
+                   se3coords[0] = posRob[0];
+                   se3coords[1] = posRob[1];
+                   se3coords[2] = posRob[2];
+                   se3coords[3] = oriRob.x;
+                   se3coords[4] = oriRob.y;
+                   se3coords[5] = oriRob.z;
+                   se3coords[6] = oriRob.w;
 
-            for(unsigned int j=0;j<_wkSpace->getRobot(i)->getNumLinks();j++)
-            {
-                //const double *pos = states[i]->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(1)->values;
-                const double *posRob = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k);
-                const ob::SO3StateSpace::StateType &oriRob = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);
-                //RobConf to store the robots configurations read form the ompl state
-                RobConf *rcj = new RobConf;
-                //convert to a vector of 7 components
-                vector<KthReal> se3coords;
-                se3coords.resize(7);
-                se3coords[0] = posRob[0];
-                se3coords[1] = posRob[1];
-                se3coords[2] = posRob[2];
-                se3coords[3] = oriRob.x;
-                se3coords[4] = oriRob.y;
-                se3coords[5] = oriRob.z;
-                se3coords[6] = oriRob.w;
+                   //create the sample
+                   SE3Conf se3;
+                   se3.setCoordinates(se3coords);
+                   rcj->setSE3(se3);
+                   rc.push_back(*rcj);
+                   k++;
+                   //std::cout<<"Position of Robot "<< i <<" Link "<<j<<" = ["<<se3coords[0]<<" , "<<se3coords[1]<<" , "<<se3coords[2]<< " ]  ["<<se3coords[3]<<" , "<<se3coords[4]<<" , "<<se3coords[5]<< " , "<<se3coords[6]<<" ] "<<std::endl;
+               }
+           }
+           else
 
-                //create the sample
-                SE3Conf se3;
-                se3.setCoordinates(se3coords);
-                rcj->setSE3(se3);
-                rc.push_back(*rcj);
-                k++;
-                //std::cout<<"Position of Robot "<< i <<" Link "<<j<<" = ["<<se3coords[0]<<" , "<<se3coords[1]<<" , "<<se3coords[2]<< " ]  ["<<se3coords[3]<<" , "<<se3coords[4]<<" , "<<se3coords[5]<< " , "<<se3coords[6]<<" ] "<<std::endl;
-            }
-        }
-    smp->setMappedConf(rc);
+           {
+               rcj->setSE3(basepose);
 
-
-}
+                   std::vector<KthReal> coords=ComputeRn(state);
+                   rcj->setRn(coords);
+                   rc.push_back(*rcj);
+           }
+       }
+       smp->setMappedConf(rc);
+   }
 
 //! This member function converts an OpenDE State to a Kautham obstacle sample
 void KauthamDEPlanner::KauthamOpenDEState2Obssmp(const ob::State *state, Sample* smp,const oc::Control *control,const double duration)
@@ -650,6 +403,54 @@ void KauthamDEPlanner::KauthamOpenDEState2Obssmp(const ob::State *state, Sample*
 
     }
     smp->setMappedConf(rc);
+}
+
+//Compute Rn function computes the ODE state to kautham Rn sample
+std::vector<float> KauthamDEPlanner::ComputeRn(const ob::State *state)
+{
+    unsigned int k=0;
+    vector<float> coords;
+    //std::cout<<"Joint Size :  "<<((KauthamDEEnvironment*)envPtr.get())->_Joint.size()<<std::endl;
+    for(unsigned int j=0;j<((KauthamDEEnvironment*)envPtr.get())->_Joint.size();j++)
+    {
+        const double *posRob1 = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k);
+        const ob::SO3StateSpace::StateType &oriRob1 = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);
+        const double *posRob2 = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k+1);
+        const ob::SO3StateSpace::StateType &oriRob2 = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k+1);
+
+        dBodySetPosition(envPtr.get()->stateBodies_[k],posRob1[0],posRob1[1],posRob1[2]);
+        dQuaternion qt1={oriRob1.w,oriRob1.x,oriRob1.y,oriRob1.z};
+        dBodySetQuaternion(envPtr.get()->stateBodies_[k],qt1);
+        dBodySetPosition(envPtr.get()->stateBodies_[k+1],posRob2[0],posRob2[1],posRob2[2]);
+        dQuaternion qt2={oriRob2.w,oriRob2.x,oriRob2.y,oriRob2.z};
+        dBodySetQuaternion(envPtr.get()->stateBodies_[k+1],qt2);
+        dJointType Jtype =dJointGetType(((KauthamDEEnvironment*)envPtr.get())->_Joint[j]);
+        if(Jtype==dJointTypeHinge)
+        {
+            dReal q=dJointGetHingeAngle(((KauthamDEEnvironment*)envPtr.get())->_Joint[j]);
+            coords.push_back(-q);
+             //std::cout<<q<<" ";
+
+        }
+        else if(Jtype==dJointTypeSlider)
+        {
+
+            dReal q=dJointGetSliderPosition(((KauthamDEEnvironment*)envPtr.get())->_Joint[j]);
+            coords.push_back(q);
+
+        }
+        k++;
+    }
+coords[0]=coords[0];
+coords[1]=coords[3];
+coords[2]=0;coords[3]=0;coords[4]=0;
+//std::cout<<coords.size()<<std::endl;
+    //std::cout<<std::endl;
+//    for(unsigned int i=0;i<coords.size();i++)
+//        std::cout<<coords[i]<<"  ,  ";
+//    std::cout<<std::endl;
+
+    return coords;
 }
 //computePath fuunction will take the goal position and planning time
 // as arguments and return the result of ompl solve function abter solving the qury

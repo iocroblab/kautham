@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="SimpleCar/X" value="0.5" />
+		<DOF name="SimpleCar/Y" value="0.5" />
+		<DOF name="SimpleCar/Z" value="0.5" />
+        </Offset>
+	<Control name="SimpleCar/x" eigValue="1.0">
+		<DOF name="SimpleCar/X" value="1.0" />
+	</Control>
+	<Control name="SimpleCar/y" eigValue="1.0">
+		<DOF name="SimpleCar/Y" value="1.0" />
+	</Control>
+	<Control name="SimpleCar/z" eigValue="1.0">
+		<DOF name="SimpleCar/Z" value="1.0" />
+	</Control>
+</ControlSet>

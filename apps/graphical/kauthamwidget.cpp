@@ -97,7 +97,8 @@ namespace Kautham{
 	}
 
 
-  void KauthamWidget::tableChanged(int row){
+  void KauthamWidget::tableChanged(int row, int col){
+      (void) col;//unused
       QString sal;
       QTableWidgetItem *item;
       if(_kauthObject != NULL ){

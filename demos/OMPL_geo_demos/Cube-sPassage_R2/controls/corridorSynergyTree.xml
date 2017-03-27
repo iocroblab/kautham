@@ -1,0 +1,193 @@
+<?xml version="1.0"?>
+<Position>
+	<Limits min="27.6968" max="957.726" />
+	<Limits min="46.6472" max="919.825" />
+	<ControlSet>
+		<Offset>
+			<DOF value="0.414946" />
+			<DOF value="0.43257" />
+		</Offset>
+		<Control eigValue="0.747237">
+			<DOF value="-0.210466" />
+			<DOF value="0.977601" />
+		</Control>
+		<Control eigValue="0.672222">
+			<DOF value="-0.977601" />
+			<DOF value="-0.210466" />
+		</Control>
+	</ControlSet>
+</Position>
+<Velocity>
+	<Limits max="2769.6" />
+	<Limits max="1749.4" />
+	<Tree>
+		<Root axis="1" location="0.675449">
+			<Left axis="0" location="0.261538">
+				<Left axis="1" location="0.158894">
+					<Left synergy="0" />
+					<Right synergy="1" />
+				</Left>
+				<Right axis="0" location="0.744769">
+					<Left axis="0" location="0.574762">
+						<Left synergy="2" />
+						<Right axis="0" location="0.657143">
+							<Left synergy="3" />
+							<Right synergy="4" />
+						</Right>
+					</Left>
+					<Right axis="1" location="0.17983">
+						<Left synergy="5" />
+						<Right synergy="6" />
+					</Right>
+				</Right>
+			</Left>
+			<Right axis="0" location="0.330681">
+				<Left axis="1" location="0.821554">
+					<Left synergy="7" />
+					<Right synergy="8" />
+				</Left>
+				<Right synergy="9" />
+			</Right>
+		</Root>
+	</Tree>
+	<ControlSet>
+		<Offset>
+			<DOF value="-0.0372083" />
+			<DOF value="0.331167" />
+		</Offset>
+		<Control eigValue="0.350645">
+			<DOF value="0.675502" />
+			<DOF value="0.737358" />
+		</Control>
+		<Control eigValue="0.274794">
+			<DOF value="-0.737358" />
+			<DOF value="0.675502" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="0.308596" />
+			<DOF value="0.0141662" />
+		</Offset>
+		<Control eigValue="0.441211">
+			<DOF value="0.996735" />
+			<DOF value="-0.0807434" />
+		</Control>
+		<Control eigValue="0.218528">
+			<DOF value="0.0807434" />
+			<DOF value="0.996735" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="-0.292633" />
+			<DOF value="0.0359847" />
+		</Offset>
+		<Control eigValue="0.405357">
+			<DOF value="-0.728456" />
+			<DOF value="-0.685093" />
+		</Control>
+		<Control eigValue="0.204551">
+			<DOF value="0.685093" />
+			<DOF value="-0.728456" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="0.0551325" />
+			<DOF value="0.373808" />
+		</Offset>
+		<Control eigValue="0.233897">
+			<DOF value="0.0636637" />
+			<DOF value="-0.997971" />
+		</Control>
+		<Control eigValue="0.179467">
+			<DOF value="0.997971" />
+			<DOF value="0.0636637" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="0.257584" />
+			<DOF value="0.169582" />
+		</Offset>
+		<Control eigValue="0.273739">
+			<DOF value="-0.882297" />
+			<DOF value="-0.470693" />
+		</Control>
+		<Control eigValue="0.192653">
+			<DOF value="0.470693" />
+			<DOF value="-0.882297" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="-0.105689" />
+			<DOF value="0.241515" />
+		</Offset>
+		<Control eigValue="0.269314">
+			<DOF value="-0.864943" />
+			<DOF value="-0.50187" />
+		</Control>
+		<Control eigValue="0.235588">
+			<DOF value="0.50187" />
+			<DOF value="-0.864943" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="-0.312803" />
+			<DOF value="-0.16376" />
+		</Offset>
+		<Control eigValue="0.295378">
+			<DOF value="-0.416685" />
+			<DOF value="-0.909051" />
+		</Control>
+		<Control eigValue="0.21573">
+			<DOF value="0.909051" />
+			<DOF value="-0.416685" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="0.335234" />
+			<DOF value="-0.0417759" />
+		</Offset>
+		<Control eigValue="0.289187">
+			<DOF value="-0.988423" />
+			<DOF value="-0.151724" />
+		</Control>
+		<Control eigValue="0.174307">
+			<DOF value="0.151724" />
+			<DOF value="-0.988423" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="0.105637" />
+			<DOF value="-0.301034" />
+		</Offset>
+		<Control eigValue="0.361449">
+			<DOF value="0.106548" />
+			<DOF value="0.994308" />
+		</Control>
+		<Control eigValue="0.168578">
+			<DOF value="-0.994308" />
+			<DOF value="0.106548" />
+		</Control>
+	</ControlSet>
+	<ControlSet>
+		<Offset>
+			<DOF value="-0.0352954" />
+			<DOF value="-0.162187" />
+		</Offset>
+		<Control eigValue="0.836325">
+			<DOF value="-0.0246702" />
+			<DOF value="0.999696" />
+		</Control>
+		<Control eigValue="0.209737">
+			<DOF value="-0.999696" />
+			<DOF value="-0.0246702" />
+		</Control>
+	</ControlSet>
+</Velocity>

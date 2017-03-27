@@ -1,6 +1,11 @@
 ##############################################################################
 # START building Kautham applications
 
+if( KAUTHAM_IOC )
+   message( STATUS "Use IOC planners: setting -DKAUTHAM_USE_IOC flag")
+   add_definitions( -DKAUTHAM_USE_IOC )
+endif( KAUTHAM_IOC )
+
 if( KAUTHAM_GUI )
    message( STATUS "making KAUTHAM GUI" )
    add_subdirectory( graphical )
@@ -15,3 +20,4 @@ if( KAUTHAM_ROS )
    message( STATUS "prepared to make KAUTHAM ROS" )
    add_subdirectory( ros )
 endif( KAUTHAM_ROS )
+
