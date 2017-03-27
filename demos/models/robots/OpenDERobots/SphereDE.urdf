@@ -21,9 +21,6 @@
             <geometry>
          	<sphere radius="0.010"/>
             </geometry>
-		<material>
-		 	<color rgba="0 1 0 1" />
-	      </material>
         </collision>
 	</link>
 </robot>
