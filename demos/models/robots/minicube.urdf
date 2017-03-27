@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<robot name="minicube">
+  <link name="base">
+    <visual>
+      <material name="black">
+         <color rgba="1.0 0.09 0.09 1"/>
+      </material>
+      <geometry>
+         <box size="0.01 0.01 0.01" />
+      </geometry>
+    </visual>
+  </link>
+</robot>

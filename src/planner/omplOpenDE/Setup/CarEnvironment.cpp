@@ -286,7 +286,7 @@ void CarControlSampler::sampleNext(oc::Control *control, const oc::Control *prev
         ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
                 getEnvironment().get())->mkinematics->setTorqueLimit(torque);
 
-        std::cout<<"CMove Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;
+        //std::cout<<"CMove Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;
     }
     else
     {
@@ -304,7 +304,7 @@ void CarControlSampler::sampleNext(oc::Control *control, const oc::Control *prev
         //to update the manipulation regions
 //        ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->
 //          Instknowledge->updateKnowledge(((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->bodies);
-        std::cout<<"Cinteraction Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;;
+        //std::cout<<"Cinteraction Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;;
 
     }
     double &v1 = control->as<oc::OpenDEControlSpace::ControlType>()->values[2];

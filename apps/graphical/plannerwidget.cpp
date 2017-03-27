@@ -28,9 +28,9 @@
 #include <kautham/sampling/se3conf.h>
 #include <kautham/sampling/robconf.h>
 
-#if defined(KAUTHAM_USE_IOC)
-#include <kautham/planner/ioc/iocplanner.h>
-#endif
+//#if defined(KAUTHAM_USE_IOC)
+//#include <kautham/planner/ioc/iocplanner.h>
+//#endif
 
 
 namespace Kautham {
@@ -183,13 +183,58 @@ namespace Kautham {
             connect(_cmbTry, SIGNAL( clicked() ), this, SLOT( tryConnect( )));
             if (chkCamera) connect(chkCamera, SIGNAL( clicked() ), this, SLOT( chkCameraClick( )));
 
-            globalFromBox->setValue( 0 );
-            globalToBox->setValue( 1 );
+            globalFromBox->setMaximum(_samples->getSize()-1);
+            globalToBox->setMaximum(_samples->getSize()-1);
+            localFromBox->setMaximum(_samples->getSize()-1);
+            localToBox->setMaximum(_samples->getSize()-1);
+            globalFromBox->setValue( _planner->findIndex(_planner->initSamp()) );
+            globalToBox->setValue( _planner->findIndex(_planner->goalSamp()) );
             localFromBox->setValue( 0 );
             localToBox->setValue( 1 );
-
         }
     }
+
+
+    bool PlannerWidget::setTable(string s){
+        if (s.size()!=0) {
+            disconnect(table, SIGNAL(cellChanged(int, int)), this, SLOT(tableChanged(int, int)));
+            table->setSortingEnabled(true);
+            QStringList cont = QString(s.c_str()).split("|");
+            QStringList h,v;
+            QStringList::const_iterator iterator;
+            QTableWidgetItem *item;
+            for (iterator = cont.constBegin(); iterator != cont.constEnd();
+                 ++iterator){
+                h << (*iterator).toUtf8().constData();
+                ++iterator;
+                v << (*iterator).toUtf8().constData();
+            }
+            table->setRowCount(v.size());
+            int i=0;
+            for(iterator = v.constBegin(); iterator != v.constEnd(); ++iterator){
+                item = new QTableWidgetItem((*iterator).toUtf8().constData());
+                table->setItem(i,1,item);
+                item= new QTableWidgetItem(h.at(i));
+                table->setItem(i,0,item);
+                //table->setVerticalHeaderItem(i,item);
+                i++;
+            }
+            //table->sortItems(0); Bug found when having items with smallcaps and bigcaps
+            connect(table, SIGNAL(cellChanged(int, int)), this, SLOT(tableChanged(int, int)));
+            #if defined(KAUTHAM_USE_IOC)
+                globalFromBox->setMaximum(_samples->getSize()-1);
+                globalToBox->setMaximum(_samples->getSize()-1);
+                localFromBox->setMaximum(_samples->getSize()-1);
+                localToBox->setMaximum(_samples->getSize()-1);
+                globalFromBox->setValue( _planner->findIndex(_planner->initSamp()) );
+                globalToBox->setValue( _planner->findIndex(_planner->goalSamp()) );
+            #endif
+            return true;
+        }
+        connect(table, SIGNAL(cellChanged(int, int)), this, SLOT(tableChanged(int, int)));
+        return false;
+   }
+
 
 
     PlannerWidget::~PlannerWidget() {
@@ -253,22 +298,7 @@ namespace Kautham {
 
     void PlannerWidget::tryConnectIOC() {
 #if defined(KAUTHAM_USE_IOC)
-        Sample *fromSample = _samples->getSampleAt(localFromBox->text().toInt());
-        Sample *toSample = _samples->getSampleAt(localToBox->text().toInt());
-        ((IOC::iocPlanner*)_planner)->getLocalPlanner()->setInitSamp(fromSample);
-        ((IOC::iocPlanner*)_planner)->getLocalPlanner()->setGoalSamp(toSample);
-
-        KthReal distance = ((IOC::iocPlanner*)_planner)->getLocalPlanner()->
-                distance(fromSample,toSample);
-
-        writeGUI("Distance:  "+QString::number(distance).toStdString());
-        if (((IOC::iocPlanner*)_planner)->getLocalPlanner()->canConect()) {
-            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/connect.xpm")));
-            writeGUI("The samples can be connected.");
-        } else {
-            connectLabel->setPixmap(QPixmap(QString::fromUtf8(":/icons/noconnect.xpm")));
-            writeGUI("The samples can NOT be connected.");
-        }
+        writeGUI("Sorry: Nothing implemented yet for ioc planners");
 #endif
     }
 
@@ -329,7 +359,7 @@ namespace Kautham {
 
     void PlannerWidget::tryConnectODE() {
 #if defined(KAUTHAM_USE_OMPL) && defined(KAUTHAM_USE_ODE)
-        writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
+        writeGUI("Sorry: Nothing implemented yet for ode planners");
 #endif
     }
 
@@ -404,16 +434,7 @@ namespace Kautham {
 
     void PlannerWidget::saveDataIOC() {
 #if defined(KAUTHAM_USE_IOC)
-        emit changeCursor(true);
-        QString filePath = getFilePath();
-        if (!filePath.isEmpty()) {
-            sendText(QString("Kautham is saving a planner data in a file: " + filePath).toUtf8().constData() );
-            QString dir = filePath;
-            dir.truncate(dir.lastIndexOf("/"));
-            ((IOC::iocPlanner*)_planner)->saveData(filePath.toUtf8().constData());
-        }
-        setTable(_planner->getParametersAsString());
-        emit changeCursor(false);
+        writeGUI("Sorry: Nothing implemented yet for ioc planners");
 #endif
     }
 
@@ -504,29 +525,7 @@ namespace Kautham {
 
 
     void PlannerWidget::loadData(){
-        if(_planner != NULL ){
-            if(_planner->getFamily() == IOCPLANNER ) {
-#if defined(KAUTHAM_USE_IOC)
-                QString path,dir;
-                QDir workDir;
-                emit changeCursor(true);
-                path = QFileDialog::getOpenFileName( this->parentWidget(),
-                                                     "Load a file...", workDir.absolutePath(),
-                                                     "Kautham Planner Solution (*.kps)");
-                if(!path.isEmpty()){
-                    sendText(QString("The solution file in " + path + " is being loaded.").toUtf8().constData() );
-                    dir = path;
-                    dir.truncate(dir.lastIndexOf("/"));
-                    ((IOC::iocPlanner*)_planner)->loadData(path.toUtf8().constData());
-                    if( _planner->isSolved() ) moveButton->setEnabled(true);
-                }
-                emit changeCursor(false);
-                setTable(_planner->getParametersAsString());
-#endif
-            }
-        } else {
-            writeGUI("Sorry: Nothing implemented yet for non-ioc planners");
-        }
+            writeGUI("Sorry: loadData not yet implemented");
     }
 
 

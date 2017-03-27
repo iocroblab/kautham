@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTconnect_bigcube-s-passage">
+	<Robot robot="robots/bigcube.dh" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+                <Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.056" Y="0.01" X="0.01" />
+	</Robot>
+	<Obstacle obstacle="obstacles/s-passage.iv" scale="1.0">
+                <Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/walls.iv" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/bigcube_R2.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="Max Planning Time">1.0</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">0.05</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="2">0.173245 0.337357</Init>
+				<Goal dim="2">0.787398 0.697769</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
