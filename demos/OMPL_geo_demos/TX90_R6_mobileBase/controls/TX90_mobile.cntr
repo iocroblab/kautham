@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+ <ControlSet size="8">
+    <Offset>
+      <DOF name="TX90_mobile/X" value="0.5"></DOF>
+      <DOF name="TX90_mobile/Y" value="0.5"></DOF>
+      <DOF name="TX90_mobile/Z" value="0"></DOF>
+      <DOF name="TX90_mobile/X1" value="0"></DOF>
+      <DOF name="TX90_mobile/Shoulder" value="0.5"></DOF>
+      <DOF name="TX90_mobile/ForeArm" value="0.5"></DOF>
+      <DOF name="TX90_mobile/Elbow" value="0.5"></DOF>
+      <DOF name="TX90_mobile/Arm" value="0.5"></DOF>
+      <DOF name="TX90_mobile/Wrist" value="0.5"></DOF>
+      <DOF name="TX90_mobile/Tcp" value="0.5"></DOF>		
+    </Offset>
+    
+    <Control name="X" eigValue="1.0">
+      <DOF name="TX90_mobile/X" value="1.0"></DOF>
+    </Control>
+
+    <Control name="Y" eigValue="1.0">
+      <DOF name="TX90_mobile/Y" value="1.0"></DOF>
+    </Control>
+      
+    <Control name="Shoulder" eigValue="1.0">
+      <DOF name="TX90_mobile/Shoulder" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="ForeArm" eigValue="1.0">
+      <DOF name="TX90_mobile/ForeArm" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Elbow" eigValue="1.0">
+      <DOF name="TX90_mobile/Elbow" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Arm" eigValue="1.0">
+      <DOF name="TX90_mobile/Arm" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Wrist" eigValue="1.0">
+      <DOF name="TX90_mobile/Wrist" value="1.0"></DOF>
+    </Control>
+    
+    <Control name="Tcp" eigValue="1.0">
+      <DOF name="TX90_mobile/Tcp" value="1.0"></DOF>
+    </Control>
+  </ControlSet>
