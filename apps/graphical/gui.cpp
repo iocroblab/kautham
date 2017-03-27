@@ -25,6 +25,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include "gui.h"
 #include "aboutwidget.h"
+#include "plannerparameters.h"
 #include "dofwidget.h"
 #include "sampleswidget.h"
 #include "plannerwidget.h"
@@ -69,6 +70,7 @@ namespace Kautham {
             }
         }
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
+        connect(actionPlannersParameters, SIGNAL(triggered()), this, SLOT(plannersparameters()));
         connect(outputWindow, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(changeDockAreaForOutput(Qt::DockWidgetArea)));
         boolPlanVis = false;
         planToolBar = NULL;
@@ -79,6 +81,16 @@ namespace Kautham {
     void GUI::about(){
         setDisabled(true);
         AboutWidget tmp(this);
+        tmp.setModal(true);
+        tmp.setVisible(true);
+        tmp.exec();
+        setDisabled(false);
+    }
+
+
+    void GUI::plannersparameters(){
+        setDisabled(true);
+        PlannerParametersWidget tmp(this);
         tmp.setModal(true);
         tmp.setVisible(true);
         tmp.exec();
