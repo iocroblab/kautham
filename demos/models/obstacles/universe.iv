@@ -1,0 +1,107 @@
+#Inventor V2.1 ascii
+
+Separator {
+
+        Separator{
+        Translation {
+                translation	-1000 -1000 -1000
+                #translation	0 0 0
+        }
+	Separator{
+		Material {
+            diffuseColor        1.0 0.0 0.0
+		}
+		Translation {
+                        translation	1000 1000 1000
+		}
+		Sphere {
+                        radius 200
+		}
+	}
+
+	Separator{
+		Material {
+            diffuseColor        0.0 0.0 1.0
+		}
+		Translation {
+                        translation	300 1200 300
+		}
+		Sphere {
+                        radius 220
+		}
+	}
+    
+    
+	Separator{
+		Material {
+            diffuseColor        1.0 1.0 1.0
+		}
+		Translation {
+                        translation	1000 700 500
+		}
+		Sphere {
+                        radius 180
+		}
+	}
+    
+	Separator{
+		Material {
+            diffuseColor        1.0 1.0 1.0
+		}
+		Translation {
+                        translation	900 1500 700
+		}
+		Sphere {
+                        radius 250
+		}
+	}
+	
+	Separator{
+		Material {
+            diffuseColor        1.0 1.0 1.0
+		}
+		Translation {
+                        translation	1700 1600 1500
+		}
+		Sphere {
+                        radius 150
+		}
+	}
+	Separator{
+		Material {
+            diffuseColor        0.0 1.0 0.0
+		}
+		Translation {
+                        translation	300 400 700
+		}
+		Sphere {
+                        radius 180
+		}
+        }
+        Separator{
+            Material {
+                diffuseColor        0.0 1.0 0.0
+            }
+            Translation {
+                translation	1700 1300 800
+            }
+            Sphere {
+                radius 180
+            }
+          }
+        }
+        Separator{
+                     Material {
+                             diffuseColor 1.0 0.0 0.0
+                             transparency 0.8
+                     }
+                     Translation {
+                             translation 0.0 0.0 0.0
+                     }
+                     Cube {
+                             width 4000.0
+                             height 4000.0
+                             depth 4000.0
+                     }
+            }
+}

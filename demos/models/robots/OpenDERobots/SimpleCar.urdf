@@ -13,10 +13,9 @@
             <geometry>
                 <box size="0.019 0.006 0.025" />
             </geometry>
-       			<material>
-				<color rgba="0 0 1 1" />
-			</material>
- 
+	    <material>
+		<color rgba="0 0 1 1" />
+	    </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -44,10 +43,9 @@
             <geometry>
                 <cylinder radius="0.002" length="0.0013" />
             </geometry>
-       			<material>
-				<color rgba="0 0 0 0" />
-			</material>
- 
+	    <material>
+		<color rgba="0 0 1 1" />
+	    </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -74,10 +72,9 @@
             <geometry>
                 <cylinder radius="0.002" length="0.0013" />
             </geometry>
-       			<material>
-				<color rgba="0 0 0 0" />
-			</material>
- 
+	    <material>
+		<color rgba="0 0 1 1" />
+	    </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -104,10 +101,9 @@
             <geometry>
                 <cylinder radius="0.002" length="0.0013" />
             </geometry>
-       			<material>
-				<color rgba="0 0 0 0" />
-			</material>
- 
+	    <material>
+		<color rgba="0 0 1 1" />
+	    </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -116,8 +112,6 @@
             </geometry>
         </collision>
     </link>
-  
-
     
   	<!-- the back left wheel -->
     <joint name="back_left_wheel_joint" type="continuous" >
@@ -137,10 +131,9 @@
             <geometry>
                 <cylinder radius="0.002" length="0.0013" />
             </geometry>
-       			<material>
-				<color rgba="0 0 0 0" />
-			</material>
- 
+	    <material>
+		<color rgba="0 0 1 1" />
+	    </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
