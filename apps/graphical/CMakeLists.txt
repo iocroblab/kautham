@@ -26,6 +26,7 @@ set(kautham_RESOURCES kauthamRes.qrc)
 QT4_ADD_RESOURCES(kautham_RESOURCES_RCC ${kautham_RESOURCES})
 QT4_WRAP_CPP( QT_MOC_SRC kauthamgui.h
          aboutwidget.h
+         plannerparameters.h
          attachobjectdialog.h
          constrainedcontrolwidget.h
          controlwidget.h
@@ -55,6 +56,7 @@ set( SRC_FILES_GUI kauthamgui.cpp
 
 set( HDR_FILES_GUI kauthamgui.h
          aboutwidget.h
+         plannerparameters.h
          attachobjectdialog.h
          constrainedcontrolwidget.h
          controlwidget.h
