@@ -125,22 +125,18 @@ namespace Kautham {
 
                 //Set nTrunk
                 if (links.size() > 0) {
-                    if (robType == TREE) {
-                        Link *link = links.at(0);//starting from the base
-                        nTrunk = 1;
-                        bool trunk_end = false;
-                        while (!trunk_end && nTrunk <= links.size()) {
-                            if (link->numChilds() > 1) {
-                                //trunk's end was found
-                                trunk_end = true;
-                            } else {
-                                //load next link
-                                link = link->getChild(0);
-                                nTrunk++;
-                            }
+                    Link *link = links.at(0);//starting from the base
+                    nTrunk = 1;
+                    bool trunk_end = false;
+                    while (!trunk_end && nTrunk <= links.size()) {
+                        if (link->numChilds() > 1) {
+                            //trunk's end was found
+                            trunk_end = true;
+                        } else {
+                            //load next link
+                            link = link->getChild(0);
+                            nTrunk++;
                         }
-                    } else {
-                        nTrunk = links.size();
                     }
                 }
             }
@@ -205,27 +201,6 @@ namespace Kautham {
         if (result) {
             //Robot Name
             name = doc.child("Robot").attribute("name").as_string();
-
-            //Robot type
-            tmpString = doc.child("Robot").attribute("robType").as_string();
-            if (tmpString == "Tree") {
-                robType = TREE;
-            } else if (tmpString == "Chain") {
-                robType = CHAIN;
-            } else  if (tmpString == "Freeflying") {
-                robType = FREEFLY;
-            } else {
-                cout << "Error in Robot file: " << robFile <<
-                        "Robottype must be set to either Chain, Tree or Freeflying" << endl;
-
-                //restoring environtment values
-                setlocale(LC_NUMERIC,old);
-
-                string message = "Incorrect robot type " + tmpString + " in robot from file " + robFile;
-                string details = "Robottype must be set to either Chain, Tree or Freeflying";
-                throw KthExcp(message,details);
-                return false;
-            }
 
             //Type of convention used to define the robot, in case of Chain or Tree
             if (tmpString != "Freeflying") {
@@ -425,30 +400,7 @@ namespace Kautham {
             //Robot Name
             name = robot.name;
 
-            //Robot type
-            if (robot.type == "Tree") {
-                robType = TREE;
-            } else if (robot.type == "Chain") {
-                robType = CHAIN;
-            } else  if (robot.type == "Freeflying") {
-                robType = FREEFLY;
-            } else {
-                cout << "Error in Robot file: " << robFile <<
-                        "Robottype must be set to either Chain, Tree or Freeflying" << endl;
-
-                //restoring environtment values
-                setlocale(LC_NUMERIC,old);
-
-                string message = "Incorrect robot type " + robot.type + " in robot from file " + robFile;
-                string details = "Robottype must be set to either Chain, Tree or Freeflying";
-                throw KthExcp(message,details);
-                return false;
-            }
-
-            //Type of convention used to define the robot, in case of Chain or Tree
-            if (robType != FREEFLY) {
-                Approach = URDF;
-            }
+            Approach = URDF;
 
             //Links of the robot
             int numLinks = robot.num_links;
@@ -613,9 +565,6 @@ namespace Kautham {
         //Robot Name
         int pos = robFile.find_last_of("/")+1;
         name = robFile.substr(pos,robFile.find_last_of(".")-pos);
-
-        //Robot type
-        robType = FREEFLY;
 
         // Initialization of the RnConf part of the RobConf for each
         // special poses, the initial, the goal, the Home and the current poses.
@@ -1096,29 +1045,18 @@ namespace Kautham {
     /*!
   *
   */
-    bool Robot::autocollision(int t, string *message){
+    bool Robot::autocollision(){
         //parameter t is used to only test the autocollision of the trunk part of a TREE robot
         //it is set to 0 in robot.h
 
         if(_hasChanged ){
             _autocoll = false;
 
-            int maxLinksTested;
-            //Restricted test to trunk in case of TREE robots
-            if(robType==TREE && t==1)
-                maxLinksTested = nTrunk;
-            else
-                maxLinksTested = links.size();
-
-            for(int i=0; i< maxLinksTested; i++){
-                for(int j=i+2; j < maxLinksTested; j++){
+            for(int i=0; i< links.size(); i++){
+                for(int j=i+2; j < links.size(); j++){
                     //collision-cheeck between a link and its children is skipped
                     if (links[j]->getParent() != links[i]) {
                         if(links[i]->getElement()->collideTo(links[j]->getElement())){
-                            stringstream sstr;
-                            sstr <<"Collision between links " << i << " (" << links[i]->getName()
-                                << ") and " << j << " (" << links[j]->getName() << ")" << endl;
-                            if (message != NULL) *message = sstr.str();
                             _autocoll = true;
                             return _autocoll;
                         }
@@ -1423,14 +1361,7 @@ namespace Kautham {
   */
     bool Robot::control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters){
         bool retvalue = true;
-        parameters.clear();
-        if(robType == FREEFLY ){
-            for(int i = 0; i < 6; i++)
-                parameters.push_back((KthReal)0.0);
-        }else{
-            for(unsigned i = 0; i < 6 + _currentConf.getRn().getDim(); i++)
-                parameters.push_back((KthReal)0.0);
-        }
+        parameters = std::vector<KthReal>(6 + _currentConf.getRn().getDim(),0.0);
 
         if(se3Enabled){
             //EUROC
