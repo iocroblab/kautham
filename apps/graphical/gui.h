@@ -89,6 +89,7 @@ namespace Kautham {
 	public slots:
     void                setText(string s);
     void                about();
+    void                plannersparameters();
     void                changeActiveBackground();
     void                scene2VRML();
     void                changeDockAreaForOutput(Qt::DockWidgetArea area);

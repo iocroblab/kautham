@@ -56,6 +56,7 @@ class Ui_kauthamMain
 public:
     QAction         *actionNew;
     QAction         *actionAbout;
+    QAction         *actionPlannersParameters;
     QWidget         *centralwidget;
     QWidget         *probTab;
     QWidget         *introTab;
@@ -102,6 +103,8 @@ public:
         actionNew->setObjectName(QString::fromUtf8("actionNew"));
         actionAbout = new QAction(kauthamMain);
         actionAbout->setObjectName(QString::fromUtf8("actionAbout"));
+        actionPlannersParameters = new QAction(kauthamMain);
+        actionPlannersParameters->setObjectName(QString::fromUtf8("actionPlannersParameters"));
         centralwidget = new QWidget(kauthamMain);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout_2 = new QGridLayout(centralwidget);
@@ -208,6 +211,7 @@ public:
         menubar->addAction(menuHelp->menuAction());
         menuHelp->addSeparator();
         menuHelp->addAction(actionAbout);
+        menuHelp->addAction(actionPlannersParameters);
         retranslateUi(kauthamMain);
         propertiesTab->setCurrentIndex(0);
         viewsTab->setCurrentIndex(0);
@@ -220,6 +224,7 @@ public:
         kauthamMain->setWindowTitle(QApplication::translate("kauthamMain", "Kautham 2.0 - Institute of Industrial and Control Engineering - Technical University of Catalonia", 0, QApplication::UnicodeUTF8));
         actionNew->setText(QApplication::translate("kauthamMain", "New...", 0, QApplication::UnicodeUTF8));
         actionAbout->setText(QApplication::translate("kauthamMain", "About...", 0, QApplication::UnicodeUTF8));
+        actionPlannersParameters->setText(QApplication::translate("kauthamMain", "Planner Parameters...", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_ACCESSIBILITY
         propertiesTab->setAccessibleName(QApplication::translate("kauthamMain", "l", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_ACCESSIBILITY
