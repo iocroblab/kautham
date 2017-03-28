@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<robot name="structure">
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <mesh filename="structure.wrl"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 -0.63 0" rpy="1.570796327 0 0"/>
+      <geometry>
+        <cylinder radius="0.045" length="1.26"/>
+      </geometry>
+      <material name="grey">
+        <color rgba="0.8 0.83 0.94 1"/>
+      </material>
+    </collision>
+    <collision>
+      <origin xyz="0 0.0006 0" rpy="1.570796327 0 1.570796327" />
+      <geometry>
+        <cylinder radius="0.045" length="0.3994"/>
+      </geometry>
+      <material name="grey"/>
+    </collision>
+    <collision>
+      <origin xyz="-0.2147 0.0153 0" rpy="1.570796327 0 -0.785398" />
+      <geometry>
+        <cylinder radius="0.0744" length="0.0632"/>
+      </geometry>
+      <material name="grey"/>
+    </collision>
+    <collision>
+      <origin xyz="0.2147 0.0153 0" rpy="1.570796327 0 0.785398" />
+      <geometry>
+        <cylinder radius="0.0744" length="0.0632"/>
+      </geometry>
+      <material name="grey"/>
+    </collision>
+    <collision>
+      <origin xyz="0 -0.93720454 0.37"/>
+      <geometry>
+        <box size="0.8 0.64559096 0.83"/>
+      </geometry>
+      <material name="grey"/>
+    </collision>
+  </link>
+</robot>
