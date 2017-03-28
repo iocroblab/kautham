@@ -137,7 +137,6 @@ namespace Kautham {
                             nTrunk++;
                         }
                     }
-                    std::cout << "trunk is " << nTrunk << std::endl;
                 }
             }
         } else {// File does not exists

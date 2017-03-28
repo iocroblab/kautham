@@ -158,8 +158,6 @@ namespace Kautham {
 
     inline void setName(string nam){name = nam;} //!< Sets the robot name.
 
-    inline void setRobotType(ROBOTTYPE rob){robType = rob;} //!< Sets the robot type.
-
     inline void setDHApproach(APPROACH dhA){Approach = dhA;} //!< Sets the type of D-H parameters to be used
 
     inline void setLinkPathDrawn(int n){_linkPathDrawn = n;}
@@ -173,7 +171,7 @@ namespace Kautham {
     std::vector<KthReal>& getWeightRn();
 
     //! Test for autocollision
-    bool autocollision();
+    bool autocollision(string *message = NULL);
 
     //! Add link to the robot
     bool addLink(string name, string ivFile, string collision_ivFile, KthReal linkScale,
