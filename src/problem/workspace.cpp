@@ -218,7 +218,7 @@ namespace Kautham {
 
                 //third is testing if a robot autocollides
                 string str;
-                if (robots[i]->autocollision(0,&str)) {
+                if (robots[i]->autocollision(&str)) {
                     collision = true;
                     sstr << "Robot " << i << " (" << robots[i]->getName()
                          << ") is in autocollision" << endl;
@@ -305,7 +305,7 @@ namespace Kautham {
 
                 //third is testing if a robot autocollides
                 string str;
-                if (robots[i]->autocollision(0,&str)) {
+                if (robots[i]->autocollision(&str)) {
                     collision = true;
                     sstr << "Robot " << i << " (" << robots[i]->getName()
                          << ") is in autocollision" << endl;
@@ -696,7 +696,7 @@ namespace Kautham {
 
                 string str;
 
-                if (robots[i]->autocollision(0,&str)){
+                if (robots[i]->autocollision(&str)){
                     collision = true;
                     sstr << "Robot " << i << " (" << robots[i]->getName()
                          << ") is in autocollision" << endl;
@@ -796,7 +796,7 @@ namespace Kautham {
                 //third is testing if a robot autocollides
 
                 string str;
-                if (robots[i]->autocollision(0,&str)){
+                if (robots[i]->autocollision(&str)){
                     collision = true;
                     sstr << "Robot " << i << " (" << robots[i]->getName()
                          << ") is in autocollision" << endl;
