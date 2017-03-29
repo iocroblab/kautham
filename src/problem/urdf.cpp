@@ -196,6 +196,7 @@ void urdf_geometry::fill(xml_node *node, string dir, map<string,SoMaterial*> *ma
         box->width.setValue((float)size[0]);
         box->height.setValue((float)size[1]);
         box->depth.setValue((float)size[2]);
+
     } else if (geom_type == "cylinder") {
         SoRotation *cyl_rot = new SoRotation;
         submodel->addChild(cyl_rot);
@@ -220,6 +221,13 @@ void urdf_geometry::fill(xml_node *node, string dir, map<string,SoMaterial*> *ma
             scale[1] = atof(tmpString.c_str());
             getline(ss,tmpString,' ');
             scale[2] = atof(tmpString.c_str());
+            SoScale *sca = new SoScale;
+            submodel->addChild(sca);
+            sca->scaleFactor.setValue((float)scale[0],(float)scale[1],(float)scale[2]);
+        } else {
+            SoScale *sca = new SoScale;
+            submodel->addChild(sca);
+            sca->scaleFactor.setValue((float)1.,(float)1.,(float)1.);
         }
         string filename = dir+geom_node.attribute("filename").as_string();
         submodel->addChild(readFile(filename));        
