@@ -105,6 +105,10 @@ namespace Kautham {
                 it->second = planner->getRange();
             } else {
                 planner->setRange(it->second);
+                if (it->second <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
+                    space->setLongestValidSegmentFraction(it->second/_validSegmentCount/space->getMaximumExtent());
+                    space->setup();
+                }
             }
 
             it = _parameters.find("Goal Bias");

@@ -63,6 +63,10 @@ omplTRRTPlanner::omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
 
     //set planner parameters: range and goalbias
     _Range=(planner->as<og::TRRT>())->getRange();
+    if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
+        space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
+        space->setup();
+    }
     _GoalBias=(planner->as<og::TRRT>())->getGoalBias();
     _maxStatesFailed = (planner->as<og::TRRT>())->getMaxStatesFailed();
     _tempChangeFactor = (planner->as<og::TRRT>())->getTempChangeFactor();
@@ -102,6 +106,10 @@ bool omplTRRTPlanner::setParameters() {
         if (it != _parameters.end()) {
             _Range = it->second;
             ss->getPlanner()->as<og::TRRT>()->setRange(_Range);
+            if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
+                space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
+                space->setup();
+            }
         } else {
             return false;
         }

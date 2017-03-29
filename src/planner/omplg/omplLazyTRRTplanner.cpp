@@ -109,6 +109,10 @@ namespace Kautham {
                 if (it != _parameters.end()) {
                     _Range = it->second;
                     ss->getPlanner()->as<og::LazyTRRT>()->setRange(_Range);
+                    if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
+                        space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
+                        space->setup();
+                    }
                 } else {
                     return false;
                 }

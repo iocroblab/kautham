@@ -53,6 +53,10 @@ namespace Kautham {
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
         planner->as<og::RRT>()->setRange(_Range);
+        if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
+            space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
+            space->setup();
+        }
         planner->as<og::RRT>()->setGoalBias(_GoalBias);
 
         //set the planner
@@ -73,6 +77,10 @@ namespace Kautham {
         if(it != _parameters.end()){
           _Range = it->second;
           ss->getPlanner()->as<og::RRT>()->setRange(_Range);
+          if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
+              space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
+              space->setup();
+          }
          }
         else
           return false;

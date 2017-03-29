@@ -45,7 +45,6 @@ namespace Kautham {
         _idName = "omplProjEST";
 
         //create planner
-#if OMPL_VERSION_VALUE >= 1002000
         ob::PlannerPtr planner(new og::ProjEST(si));
         //set planner parameters: range and goalbias
         _Range=0.05;
@@ -53,19 +52,12 @@ namespace Kautham {
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
         planner->as<og::ProjEST>()->setRange(_Range);
+        if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
+            space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
+            space->setup();
+        }
         planner->as<og::ProjEST>()->setGoalBias(_GoalBias);
         planner->as<og::ProjEST>()->setProjectionEvaluator(space->getDefaultProjection());
-#else
-        ob::PlannerPtr planner(new og::EST(si));
-        //set planner parameters: range and goalbias
-        _Range=0.05;
-        _GoalBias=(planner->as<og::EST>())->getGoalBias();
-        addParameter("Range", _Range);
-        addParameter("Goal Bias", _GoalBias);
-        planner->as<og::EST>()->setRange(_Range);
-        planner->as<og::EST>()->setGoalBias(_GoalBias);
-        planner->as<og::EST>()->setProjectionEvaluator(space->getDefaultProjection());
-#endif
         //set the planner
         ss->setPlanner(planner);
     }
@@ -83,11 +75,11 @@ namespace Kautham {
         HASH_S_K::iterator it = _parameters.find("Range");
         if(it != _parameters.end()){
           _Range = it->second;
-#if OMPL_VERSION_VALUE >= 1002000
           ss->getPlanner()->as<og::ProjEST>()->setRange(_Range);
-#else
-          ss->getPlanner()->as<og::EST>()->setRange(_Range);
-#endif
+          if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
+              space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
+              space->setup();
+          }
          }
         else
           return false;
@@ -95,11 +87,7 @@ namespace Kautham {
         it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
             _GoalBias = it->second;
-#if OMPL_VERSION_VALUE >= 1002000
             ss->getPlanner()->as<og::ProjEST>()->setGoalBias(_GoalBias);
-#else
-            ss->getPlanner()->as<og::EST>()->setGoalBias(_GoalBias);
-#endif
         }
         else
           return false;

@@ -426,6 +426,7 @@ namespace Kautham {
             _idName = "ompl Planner";
 
             _samplerUsed = 0;
+            _validSegmentCount = 10;
 
             //set own intial values
             _planningTime = 10;
@@ -634,6 +635,7 @@ namespace Kautham {
                 si = ss->getSpaceInformation();
                 space = ss->getStateSpace();
             }
+            space->setup();
         }
 
 
