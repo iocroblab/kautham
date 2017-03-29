@@ -17,13 +17,9 @@
 	<Planner>
 		<Parameters>
 			<Name>omplRRTConnect</Name>
-			<Parameter name="Cspace Drawn">0</Parameter>
-			<Parameter name="Incremental (0/1)">0</Parameter>
 			<Parameter name="Max Planning Time">10</Parameter>
-			<Parameter name="Path Drawn (0/1)">1</Parameter>
-			<Parameter name="Range">1</Parameter>
-			<Parameter name="Simplify Solution">2</Parameter>
-			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">0.4</Parameter>
+			<Parameter name="Speed Factor">20</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>

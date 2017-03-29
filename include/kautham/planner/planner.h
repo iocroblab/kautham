@@ -85,8 +85,7 @@ namespace Kautham {
        virtual inline SoSeparator*    getIvCspaceScene(){return _sceneCspace;}//_sceneCspace is initiallized to NULL
        inline long int                getMaxNumSamples(){return _maxNumSamples;}
        inline PLANNERFAMILY           getFamily(){return _family;}
-       inline int                     findIndex(Sample *s){std::cout<<"samples SIZE = "<<_samples->getSize()<<std::endl;
-                                                           std::cout<<"samples INDEX = "<<_samples->indexOf(s)<<std::endl; return _samples->indexOf(s);}
+       inline int                     findIndex(Sample *s){return _samples->indexOf(s);}
 
    protected:
        Planner();
