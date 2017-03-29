@@ -426,7 +426,7 @@ namespace Kautham {
             _idName = "ompl Planner";
 
             _samplerUsed = 0;
-            _validSegmentCount = 10;
+            _validSegmentCount = 5;//number of samples per range step
 
             //set own intial values
             _planningTime = 10;
