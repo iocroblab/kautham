@@ -55,6 +55,10 @@ namespace Kautham {
         addParameter("Goal Bias", _GoalBias);
         addParameter("Thread Count", _ThreadCount);
         planner->as<og::pRRT>()->setRange(_Range);
+        if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
+            space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
+            space->setup();
+        }
         planner->as<og::pRRT>()->setGoalBias(_GoalBias);
         planner->as<og::pRRT>()->setThreadCount(_ThreadCount);
 
@@ -76,6 +80,10 @@ namespace Kautham {
         if(it != _parameters.end()){
           _Range = it->second;
           ss->getPlanner()->as<og::pRRT>()->setRange(_Range);
+          if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
+              space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
+              space->setup();
+          }
          }
         else
           return false;

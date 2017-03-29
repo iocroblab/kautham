@@ -171,6 +171,8 @@ namespace Kautham {
             ob::StateSpacePtr space;
             ob::SpaceInformationPtr si;
 
+
+            unsigned int _validSegmentCount;
             int _samplerUsed;
             unsigned int _simplify;
             bool _incremental;

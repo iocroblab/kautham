@@ -87,6 +87,10 @@ bool omplTRRTConnectPlanner::setParameters() {
         if (it == _parameters.end()) return false;
         if (it->second >= 0.0) {
             planner->setRange(it->second);
+            if (it->second <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
+                space->setLongestValidSegmentFraction(it->second/_validSegmentCount/space->getMaximumExtent());
+                space->setup();
+            }
         } else {
             it->second = planner->getRange();
         }
