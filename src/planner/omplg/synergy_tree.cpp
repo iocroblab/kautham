@@ -461,13 +461,13 @@ public:
                 double vR = arma::prod(optiData->childR->a);
                 optiData->fV = std::max(vL,vR)/vFather;
 
-                if (isnan(vL) || isnan(vR) || isnan(vFather)) throw;
+                if (std::isnan(vL) || std::isnan(vR) || std::isnan(vFather)) throw;
 
                 double dfL = father->distance(optiData->childL);
                 double dfR = father->distance(optiData->childR);
                 optiData->fD = 1.-std::min(dfL,dfR);
 
-                if (isnan(dfL) || isnan(dfR)) throw;
+                if (std::isnan(dfL) || std::isnan(dfR)) throw;
 
                 optiData->f = (cV*optiData->fV+cD*optiData->fD)/2.;
                 if (optiData->f < 0.) throw;

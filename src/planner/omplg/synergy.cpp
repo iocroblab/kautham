@@ -120,7 +120,7 @@ double Synergy::distance(const Synergy *x, double cTrans, double cRot) const {
     if (cTrans >= 0. && cRot >= 0. && (cTrans+cRot) > 0. &&
             x->dim == dim && order() != UNKNOWN && x && order() == x->order()) {
         double d = (cTrans*dTrans(x->b)+cRot*dRot(x->a,x->U))/(cTrans+cRot);
-        if (isnan(d) || d < -DBL_EPSILON || d > 1 + DBL_EPSILON) throw;
+        if (std::isnan(d) || d < -DBL_EPSILON || d > 1 + DBL_EPSILON) throw;
 
         return std::min(std::max(d,0.),1.);
     } else {
@@ -195,7 +195,7 @@ double Synergy::dRot(const arma::vec xa, const arma::mat xU) const {
 
     //Compute d
     double d = (pMax*(p-pMin))/(p*(pMax-pMin)+DBL_EPSILON);
-    if (isnan(d) || d < -DBL_EPSILON || d > 1. + DBL_EPSILON) {
+    if (std::isnan(d) || d < -DBL_EPSILON || d > 1. + DBL_EPSILON) {
         throw;//Always it must be 0. <= d <= 1.
     } else if (d < 0.) {
         d = 0.;
