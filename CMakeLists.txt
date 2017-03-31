@@ -18,7 +18,7 @@
 #     Free Software Foundation, Inc.,
 #     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # 
-#    Author: Leopold Palomo-Avellaneda 2014-2016
+#    Author: Leopold Palomo-Avellaneda 2014-2017
 
 
 
@@ -52,7 +52,7 @@ option( KAUTHAM_IOC "Use IOC planners" ON )
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
-option( KAUTHAM_ROS "Build the ROS version" ON )
+option( KAUTHAM_ROS "Build the ROS version" OFF )
 option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
 
 ########### Set flags ####################
