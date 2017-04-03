@@ -33,10 +33,12 @@
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
+#ifndef Q_MOC_RUN
 #include <kautham/problem/robot.h>
 #include <kautham/problem/problem.h>
 #include <kautham/util/libkin/constrainedkinematic.h>
 #include <kautham/util/kthutil/kauthamdefs.h>
+#endif
 
 
 using namespace std;
