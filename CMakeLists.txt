@@ -196,5 +196,5 @@ add_subdirectory ( doc )
 
 #########################################################
 # Copy Help file
-#install(DIRECTORY . DESTINATION share/kautham)
+install(DIRECTORY include/kautham DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(DIRECTORY demos DESTINATION share/kautham)
