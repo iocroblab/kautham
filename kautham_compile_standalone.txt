@@ -1,0 +1,21 @@
+Compiling Kautham in Ubuntu Xenial 16.04.2 LTS
+==============================================
+
+
+First of all we consider that you have a Ubuntu box with the version Xenial
+(16.04.2 lts, long term suport) [1]. 
+
+$ sudo add-apt-repository ppa:deb-rob/ros-xenial
+
+$ sudo apt-get update
+
+$ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libode-dev libfcl-dev libarmadillo-dev libpugixml-dev freeglut3-dev libompl-dev
+
+
+The Kautham team. November 2017
+
+
+--------------
+[1] http://releases.ubuntu.com/16.04/
+[2] http://www.ros.org
+[3] http://wiki.ros.org/hydro/Installation/Ubuntu
