@@ -2,5 +2,5 @@
 // The version number of Kautham has to be set in the CMakeList.txt file.
 #define MAJOR_VERSION 3
 #define MINOR_VERSION 1
-#define PATCH_VERSION 0
+#define PATCH_VERSION 1
 
