@@ -1,12 +1,37 @@
 Compiling Kautham
 =================
 
+Kautham has been tested in GNU/Linux distributions (Ubuntu and Debian) with success.
+The needed dependencies are easily installable from any GNU/Linux distribution.
+ 
+In the first steps of the development it was tested in Ms/Windows. Also, we have
+tried to build in in Mac OS/X. However, sadly in this two platforms the main problem 
+are the dependencies (Coin and SoQt). We have not found any technical problem
+to avoid to build it there, it's a manpower problem. We hope that this could be 
+changed in the future.
 
-Ubuntu Xenial 16.04 LTS
------------------------
+Installing the dependencies
+---------------------------
+
+* Debian Jessie
+
+
+Using an standard version of Debian Jessie [1].
+
+$ sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 63DE76AC0B6779BF
+
+$ sudo sh -c 'echo "deb http://sir.upc.edu/debian-robotics jessie-robotics main" > /etc/apt/sources.list.d/debian-robotics.list'
+
+$ sudo apt-get update
+
+$ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libode-dev libfcl-dev libarmadillo-dev libpugixml-dev freeglut3-dev libompl-dev
+
+
+
+* Ubuntu Xenial 16.04 LTS
 
 First of all we consider that you have a Ubuntu box with the version Xenial
-(16.04 lts, long term suport) [1]. 
+(16.04 lts, long term suport) [2]. 
 
 $ sudo add-apt-repository ppa:deb-rob/ros-xenial
 
@@ -15,11 +40,10 @@ $ sudo apt-get update
 $ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libode-dev libfcl-dev libarmadillo-dev libpugixml-dev freeglut3-dev libompl-dev
 
 
-Ubuntu Trusty 14.04 LTS                     
------------------------
+* Ubuntu Trusty 14.04 LTS                     
 
 First of all we consider that you have a Ubuntu box with the version Trusty
-(14.04 lts, long term suport) [2].
+(14.04 lts, long term suport) [3].
 
 $ sudo add-apt-repository ppa:deb-rob/ros-trusty
 
@@ -28,9 +52,40 @@ $ sudo apt-get update
 $ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libode-dev libfcl
 
 
-The Kautham team. November 2017
+Building
+--------
+
+From the obtained sources (tar.gz of cloned using git):
+
+$ mkdir build
+
+$ cd build
+
+We build without build documentation and disabling the ROS part. Set the install
+path where do you prefer. Here we install it in a folder called system inside the
+home directory of the user that build it.
+
+$ cmake -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=OFF -DCMAKE_INSTALL_PREFIX=~/system ..
+
+$ make
+
+$ make install
+
+
+Running Kautham
+---------------
+
+To run Kautham build in the previous section do:
+
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/system/lib
+
+$ ~/system/bin/kautham-gui
+
+
+The Kautham team. April 2017
 
 
 --------------
-[1] http://releases.ubuntu.com/16.04/
+[1] https://www.debian.org/releases/jessie/
+[2] http://releases.ubuntu.com/16.04/
 [2] http://releases.ubuntu.com/14.04/
