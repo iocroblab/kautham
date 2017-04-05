@@ -24,7 +24,9 @@ $ sudo sh -c 'echo "deb http://sir.upc.edu/debian-robotics jessie-robotics main"
 
 $ sudo apt-get update
 
-$ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libode-dev libfcl-dev libarmadillo-dev libpugixml-dev freeglut3-dev libompl-dev
+$ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev \
+libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev \
+libode-dev libfcl-dev libarmadillo-dev libpugixml-dev freeglut3-dev libompl-dev
 
 
 
@@ -37,7 +39,10 @@ $ sudo add-apt-repository ppa:deb-rob/ros-xenial
 
 $ sudo apt-get update
 
-$ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libode-dev libfcl-dev libarmadillo-dev libpugixml-dev freeglut3-dev libompl-dev
+$ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev \
+libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev \
+libode-dev libfcl-dev libarmadillo-dev libpugixml-dev freeglut3-dev libompl-dev
+
 
 
 * Ubuntu Trusty 14.04 LTS                     
@@ -49,7 +54,9 @@ $ sudo add-apt-repository ppa:deb-rob/ros-trusty
 
 $ sudo apt-get update
 
-$ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libode-dev libfcl
+$ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev \
+libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev \
+libode-dev libfcl-dev libarmadillo-dev libpugixml-dev freeglut3-dev libompl-dev
 
 
 Building
