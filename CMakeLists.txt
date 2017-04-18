@@ -18,7 +18,7 @@
 #     Free Software Foundation, Inc.,
 #     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # 
-#    Author: Leopold Palomo-Avellaneda 2014-2016
+#    Author: Leopold Palomo-Avellaneda 2014-2017
 
 
 
@@ -28,7 +28,7 @@ cmake_minimum_required(VERSION 2.4.6)
 
 add_definitions(-std=c++11 -Wall -Wextra -Wpedantic )#-Werror)
 
-set( KAUTHAM_VERSION 3.1.0 )
+set( KAUTHAM_VERSION 3.1.1 )
 STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} ) 
 LIST( GET KAUTHAM_VERSIONS 0 KAUTHAM_VERSION_MAJOR)
 LIST( GET KAUTHAM_VERSIONS 1 KAUTHAM_VERSION_MINOR)
@@ -52,7 +52,7 @@ option( KAUTHAM_IOC "Use IOC planners" ON )
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
-option( KAUTHAM_ROS "Build the ROS version" ON )
+option( KAUTHAM_ROS "Build the ROS version" OFF )
 option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
 
 ########### Set flags ####################
@@ -192,46 +192,9 @@ include_directories( src )  # for external
 
 add_subdirectory ( src )
 add_subdirectory ( apps )
+add_subdirectory ( doc )
 
-
-##############################################################################
-# Documentation
-# Tip from
-# http://mementocodex.wordpress.com/2013/01/19/how-to-generate-code-documentation-with-doxygen-and-cmake-a-slightly-improved-approach/
-
-if(KAUTHAM_DOCUMENTATION)
-  find_package(Doxygen)
-  if(NOT DOXYGEN_FOUND)
-    message(FATAL_ERROR
-      "Doxygen is needed to build the documentation.")
-  endif()
-
-  set( doxyfile_in          ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in     )
-  set( doxyfile             ${PROJECT_BINARY_DIR}/Doxyfile              )
-  set( doxy_html_index_file ${CMAKE_CURRENT_BINARY_DIR}/html/index.html )
-  set( doxy_output_root     ${CMAKE_CURRENT_BINARY_DIR}                 ) #  Pasted into Doxyfile.in
-  set( doxy_input           ${PROJECT_SOURCE_DIR}/src                   ) #  Pasted into Doxyfile.in
-#  set( doxy_extra_files     ${CMAKE_CURRENT_SOURCE_DIR}/mainpage.dox    ) #  Pasted into Doxyfile.in
-
-  configure_file( ${doxyfile_in} ${doxyfile} @ONLY )
-
-  add_custom_command( OUTPUT ${doxy_html_index_file}
-                      COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
-                      # The following should be ${doxyfile} only but it
-                      # will break the dependency.
-                      # The optimal solution would be creating a
-                      # custom_command for ${doxyfile} generation
-                      # but I still have to figure out how...
-                      MAIN_DEPENDENCY ${doxyfile} ${doxyfile_in}
-                      DEPENDS kautham ${doxy_extra_files}
-                      COMMENT "Generating HTML documentation")
-
-  add_custom_target( doc DEPENDS ${doxy_html_index_file} )
-
-  install( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxygen_documentation/html DESTINATION share/kautham/doc)
-endif()
-##############################################################################
 #########################################################
 # Copy Help file
-#install(DIRECTORY . DESTINATION share/kautham)
+install(DIRECTORY include/kautham DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(DIRECTORY demos DESTINATION share/kautham)
