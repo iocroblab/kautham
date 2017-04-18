@@ -27,9 +27,9 @@
 
 
 #include <QtGui>
-
+#ifndef Q_MOC_RUN
 #include <kautham/problem/problem.h>
-
+#endif
 
 namespace Kautham {
     /** \addtogroup Application

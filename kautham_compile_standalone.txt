@@ -1,0 +1,85 @@
+=================
+Compiling Kautham
+=================
+
+The Kautham has been tested in GNU/Linux distributions (Ubuntu and Debian).
+The needed dependencies are easily installable from any GNU/Linux distribution.
+
+The current version of Kautham has not been tested in Windows and Mac OS/X. It
+is possible to build it in both platforms, but it will be necessary to build some
+of its dependencies (mainly Coin and SoQt). It is left as future work. 
+
+
+Installing the dependencies
+===========================
+
+
+Debian Jessie
+-------------
+
+$ sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 63DE76AC0B6779BF
+
+$ sudo sh -c 'echo "deb http://sir.upc.edu/debian-robotics jessie-robotics main" > /etc/apt/sources.list.d/debian-robotics.list'
+
+$ sudo apt-get update
+
+$ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev \
+libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev \
+libode-dev libfcl-dev libarmadillo-dev libpugixml-dev freeglut3-dev libompl-dev
+
+
+Ubuntu Xenial 16.04 LTS
+-----------------------
+
+$ sudo add-apt-repository ppa:deb-rob/ros-xenial
+
+$ sudo apt-get update
+
+$ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev \
+libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev \
+libode-dev libfcl-dev libarmadillo-dev libpugixml-dev freeglut3-dev libompl-dev
+
+
+Ubuntu Trusty 14.04 LTS                     
+-----------------------
+
+$ sudo add-apt-repository ppa:deb-rob/ros-trusty
+
+$ sudo apt-get update
+
+$ sudo apt-get install build-essential cmake libsoqt4-dev libcoin80-dev \
+libassimp-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev \
+libode-dev libfcl-dev libarmadillo-dev libpugixml-dev freeglut3-dev libompl-dev
+
+
+
+Building
+========
+
+From the folder of the obtained sources (tar.gz or cloned from a git repository):
+
+$ mkdir build
+
+$ cd build
+
+In order to build it without documentation (doxygen generation) and without using ROS,
+the next example is shown, where the installation path is set to '~/system':
+
+$ cmake -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=OFF -DCMAKE_INSTALL_PREFIX=~/system ..
+
+$ make
+
+$ make install
+
+
+
+Running Kautham
+===============
+
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/system/lib
+
+$ ~/system/bin/kautham-gui
+
+
+
+The Kautham team. April 2017

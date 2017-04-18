@@ -38,9 +38,11 @@
 
 #include <Inventor/Qt/SoQt.h>
 
+#ifndef Q_MOC_RUN
 #include <kautham/problem/problem.h>
 #include <kautham/util/kthutil/kauthamdefs.h>
 #include "gui.h"
+#endif
 
 
 using namespace std;

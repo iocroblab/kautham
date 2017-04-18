@@ -34,6 +34,7 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
 
+#ifndef Q_MOC_RUN
 #include "ui_RobotSim.h"
 #include <kautham/planner/planner.h>
 #include <kautham/problem/problem.h>
@@ -43,7 +44,7 @@
 #include "controlwidget.h"
 #include "plannerwidget.h"
 #include "defaultpathdialog.h"
-
+#endif
 
 using namespace std;
 
