@@ -45,6 +45,7 @@
 #include <kautham/util/libkin/ivkinhand.h>
 #include <kautham/util/libkin/ivkin2drr.h>
 #include <kautham/util/libkin/ivkinUR5.h>
+#include <kautham/util/libkin/ivkinyumi.h>
 #include <kautham/util/libkin/constrainedkinematic.h>
 #include <kautham/problem/ivpqpelement.h>
 #include <kautham/util/kthutil/kauthamexception.h>
@@ -846,6 +847,10 @@ namespace Kautham {
             break;
             case Kautham::UR5:
                 _ikine = new IvKinUR5(this);
+            break;
+            case Kautham::YUMI:
+                _ikine = new IvKinYumi(this);
+                cout << "Created object IvKinYumi. " << endl;
             break;
             case Kautham::NOINVKIN:
                 _ikine = NULL;
