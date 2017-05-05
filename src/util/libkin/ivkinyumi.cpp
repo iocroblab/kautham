@@ -88,6 +88,12 @@ bool IvKinYumi::solve(){
   std::vector< std::vector<double> > yumiIkSolutions;
   yumiIkSolutions = YumiKinSolver.AnalyticalIKSolver(desiredPose, redundantJoint);
 
+  std::cout << "Yumi IK solutions:" << yumiIkSolutions.size() << "\n";
+//  for (unsigned int i=0; i<yumiIkSolutions.size(); ++1){
+
+
+//  }
+
 //  // Solve IK
 //  if (UR5_inv_kin(_targetTrans, shoulder, wrist, elbow, _result)) {
 //      double control [6];
