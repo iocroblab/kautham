@@ -23,14 +23,20 @@
 
 /* Author: Josep-Arnau Claret Robert */
 
+#include <vector>
+
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Geometry>
 
 #include <kautham/util/libkin/ivkinyumi.h>
 #include <kautham/problem/robot.h>
 
+#include <kautham/util/libkin/YumiKinematics.h>
+
 
 IvKinYumi::IvKinYumi(Robot* const rob): Kautham::InverseKinematic(rob){
 
-  _target.resize(7);  // This contains the pose and quaternion as a vector
+  _target.resize(8);  // This contains the pose and quaternion as a vector
   _eulPos.resize(6);
   _robConf.setRn(7);
 
@@ -57,8 +63,30 @@ bool IvKinYumi::solve(){
   _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
 
   // Set redundant joint
-  double redundant_joint = 0.0;
-  if (_target.size() > 7)   redundant_joint = _target.at(7);
+  double redundantJoint = 0.0;
+  if (_target.size() > 7)   redundantJoint = _target.at(7);
+
+  std::cout << "Yumi IK values:";
+  std::cout << "_targetTrans:" << _targetTrans.getTranslation().at(0) << " "
+                               << _targetTrans.getTranslation().at(1) << " "
+                               << _targetTrans.getTranslation().at(2) << "\n";
+  std::cout << "redundant_joint:" << redundantJoint << "\n";
+
+
+  // Convert to Eigen
+  Eigen::Matrix4f desiredPose(Eigen::Matrix4f::Zero());
+  // Position
+  for (unsigned int i=0; i<3; ++i)  desiredPose(i,3) = _targetTrans.getTranslation().at(i);
+  desiredPose(3,3) = 1.0;
+  // Orientation
+  mt::Matrix3x3 rot = _targetTrans.getRotation().getMatrix();
+  for (unsigned int i=0; i<3; ++i)
+      for (unsigned int j=0; j<3; ++j)
+          desiredPose(i,j) = rot[i][j];
+
+  YumiKinematics YumiKinSolver;
+  std::vector< std::vector<double> > yumiIkSolutions;
+  yumiIkSolutions = YumiKinSolver.AnalyticalIKSolver(desiredPose, redundantJoint);
 
 //  // Solve IK
 //  if (UR5_inv_kin(_targetTrans, shoulder, wrist, elbow, _result)) {
