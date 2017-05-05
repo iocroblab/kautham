@@ -949,6 +949,8 @@ namespace Kautham {
                 rob->setInverseKinematic( Kautham::TX90HAND );
             else if ( name == "UR5")
                 rob->setInverseKinematic( Kautham::UR5 );
+            else if ( name == "YUMI")
+                rob->setInverseKinematic( Kautham::YUMI );
             else if ( name == "")
                 rob->setInverseKinematic( Kautham::NOINVKIN);
             else
