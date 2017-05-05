@@ -850,7 +850,6 @@ namespace Kautham {
             break;
             case Kautham::YUMI:
                 _ikine = new IvKinYumi(this);
-                cout << "Created object IvKinYumi. " << endl;
             break;
             case Kautham::NOINVKIN:
                 _ikine = NULL;
