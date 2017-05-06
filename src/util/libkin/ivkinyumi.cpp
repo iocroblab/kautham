@@ -66,11 +66,11 @@ bool IvKinYumi::solve(){
   double redundantJoint = 0.0;
   if (_target.size() > 7)   redundantJoint = _target.at(7);
 
-  std::cout << "Yumi IK values:";
-  std::cout << "_targetTrans:" << _targetTrans.getTranslation().at(0) << " "
-                               << _targetTrans.getTranslation().at(1) << " "
-                               << _targetTrans.getTranslation().at(2) << "\n";
-  std::cout << "redundant_joint:" << redundantJoint << "\n";
+//  std::cout << "Yumi IK values:";
+//  std::cout << "_targetTrans p: " << _targetTrans.getTranslation().at(0) << " "
+//                                  << _targetTrans.getTranslation().at(1) << " "
+//                                  << _targetTrans.getTranslation().at(2) << "\n";
+//  std::cout << "redundant_joint: " << redundantJoint << "\n";
 
 
   // Convert to Eigen
@@ -88,14 +88,31 @@ bool IvKinYumi::solve(){
   std::vector< std::vector<double> > yumiIkSolutions;
   yumiIkSolutions = YumiKinSolver.AnalyticalIKSolver(desiredPose, redundantJoint);
 
-  std::cout << "Yumi IK solutions:" << yumiIkSolutions.size() << "\n";
-//  for (unsigned int i=0; i<yumiIkSolutions.size(); ++1){
+//  std::cout << "Yumi IK solutions: " << yumiIkSolutions.size() << "\n";
+
+  // Solve IK
+  if (yumiIkSolutions.size() > 0) {
+
+    // Select a solution
+    std::vector<double> ikSolution = yumiIkSolutions[0];
+
+    std::cout << "Yumi IK solution: ";
+    for (unsigned int i=0; i<ikSolution.size(); ++i)  std::cout << ikSolution[i] << " ";
+    std::cout << std::endl;
+
+    bool solutionOK = true;
+    for (unsigned int i=0; solutionOK && (i<ikSolution.size()); ++i){
+      // f != f will be true if f is NaN
+      solutionOK = !(ikSolution[i] != ikSolution[i]);
+    }
+    if (!solutionOK){
+      cout << "Inverse kinematics solution has a NaN value" << endl;
+      return false;
+    }
+
+    // Store the selection solution
 
 
-//  }
-
-//  // Solve IK
-//  if (UR5_inv_kin(_targetTrans, shoulder, wrist, elbow, _result)) {
 //      double control [6];
 //      UR5_controls(control,_result);
 //      cout << "Joint values are:" << endl;
@@ -104,12 +121,12 @@ bool IvKinYumi::solve(){
 //               << " (" << control[j] << ")" << endl;
 //      }
 //      return true;
-//  } else {
-//      cout << "Inverse kinematics failed" << endl;
-//      return false;
-//  }
 
-  return false; // TEST TEST TEST
+      return false; // TEST TEST TEST
+  } else {
+    cout << "Inverse kinematics failed" << endl;
+    return false;
+  }
 }
 
 bool IvKinYumi::setParameters(){
