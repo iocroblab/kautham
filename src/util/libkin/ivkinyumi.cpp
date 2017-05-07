@@ -28,10 +28,9 @@
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Geometry>
 
-#include <kautham/util/libkin/ivkinyumi.h>
 #include <kautham/problem/robot.h>
-
-#include <kautham/util/libkin/YumiKinematics.h>
+#include <kautham/util/libkin/ivkinyumi.h>
+#include "YumiKinematics.h"
 
 
 IvKinYumi::IvKinYumi(Robot* const rob): Kautham::InverseKinematic(rob){
@@ -84,11 +83,15 @@ bool IvKinYumi::solve(){
       for (unsigned int j=0; j<3; ++j)
           desiredPose(i,j) = rot[i][j];
 
-  YumiKinematics YumiKinSolver;
-  std::vector< std::vector<double> > yumiIkSolutions;
-  yumiIkSolutions = YumiKinSolver.AnalyticalIKSolver(desiredPose, redundantJoint);
+  // Desired pose
+  std::cout << "yumi desired pose: " << std::endl;
+  std::cout << desiredPose << std::endl;
 
-//  std::cout << "Yumi IK solutions: " << yumiIkSolutions.size() << "\n";
+  YumiKinematics* YumiKinSolver;
+  std::vector< std::vector<double> > yumiIkSolutions;
+  yumiIkSolutions = YumiKinSolver->AnalyticalIKSolver(desiredPose, redundantJoint);
+
+  std::cout << "Yumi IK solutions: " << yumiIkSolutions.size() << "\n";
 
   // Solve IK
   if (yumiIkSolutions.size() > 0) {
@@ -102,31 +105,29 @@ bool IvKinYumi::solve(){
 
     bool solutionOK = true;
     for (unsigned int i=0; solutionOK && (i<ikSolution.size()); ++i){
-      // f != f will be true if f is NaN
+      // f != f will be true if f is NaN or -NaN
       solutionOK = !(ikSolution[i] != ikSolution[i]);
     }
-    if (!solutionOK){
-      cout << "Inverse kinematics solution has a NaN value" << endl;
-      return false;
-    }
+//    if (!solutionOK){
+//      cout << "Inverse kinematics solution has a NaN value" << endl;
+//      return false;
+//    }
 
     // Store the selection solution
+    std::vector<KthReal> tmp(7);
+    for (unsigned int i = 0; i<7; ++i)  tmp.at(i) = ikSolution[i];
+    for (unsigned int i = 0; i<7; ++i)  tmp.at(i) = 0.0;    // TEST TEST TEST TEST
+    _robConf.setRn(tmp);
 
+    return true;
 
-//      double control [6];
-//      UR5_controls(control,_result);
-//      cout << "Joint values are:" << endl;
-//      for (int j = 0; j < 6; j++) {
-//          cout << "  theta" << j+1 << "=" << _result[j]
-//               << " (" << control[j] << ")" << endl;
-//      }
-//      return true;
-
-      return false; // TEST TEST TEST
+    return false;   // TODO TODO TODO TODO
   } else {
     cout << "Inverse kinematics failed" << endl;
     return false;
   }
+
+  return false;   // TODO TODO TODO TODO
 }
 
 bool IvKinYumi::setParameters(){
