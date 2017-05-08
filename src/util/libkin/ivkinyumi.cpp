@@ -72,12 +72,12 @@ bool IvKinYumi::solve(){
 //  std::cout << "redundant_joint: " << redundantJoint << "\n";
 
 
-  // Convert to Eigen
-  Eigen::Matrix4f desiredPose(Eigen::Matrix4f::Zero());
-  // Position
+  // Desired pose
+  //  Convert to Eigen
+  Eigen::Matrix4f desiredPose(Eigen::Matrix4f::Identity());
+  //   Position
   for (unsigned int i=0; i<3; ++i)  desiredPose(i,3) = _targetTrans.getTranslation().at(i);
-  desiredPose(3,3) = 1.0;
-  // Orientation
+  //   Orientation
   mt::Matrix3x3 rot = _targetTrans.getRotation().getMatrix();
   for (unsigned int i=0; i<3; ++i)
       for (unsigned int j=0; j<3; ++j)
@@ -87,9 +87,22 @@ bool IvKinYumi::solve(){
   std::cout << "yumi desired pose: " << std::endl;
   std::cout << desiredPose << std::endl;
 
+  // Transform to right arm reference
+  Eigen::Matrix4f bodyToRightArm(Eigen::Matrix4f::Identity());
+  //  Orientation
+  Eigen::Vector3f axis(-0.9781, -0.5716, -2.3180);  // roll, pitch, yaw
+  Eigen::AngleAxisf angAxis(axis.norm(), axis.normalized());
+  bodyToRightArm.block(0,0,3,3) = angAxis.matrix();
+  //  Position
+  bodyToRightArm(0,3) = 0.05355;
+  bodyToRightArm(1,3) = -0.0725;
+  bodyToRightArm(2,3) = 0.41492;
+
+  Eigen::Matrix4f desiredPoseInArm(bodyToRightArm.inverse() * desiredPose);
+
   YumiKinematics* YumiKinSolver;
   std::vector< std::vector<double> > yumiIkSolutions;
-  yumiIkSolutions = YumiKinSolver->AnalyticalIKSolver(desiredPose, redundantJoint);
+  yumiIkSolutions = YumiKinSolver->AnalyticalIKSolver(desiredPoseInArm, redundantJoint);
 
   std::cout << "Yumi IK solutions: " << yumiIkSolutions.size() << "\n";
 
