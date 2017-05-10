@@ -36,6 +36,7 @@
 IvKinYumi::IvKinYumi(Robot* const rob): Kautham::InverseKinematic(rob){
 
   _target.resize(8);  // This contains the pose and quaternion as a vector
+  _target[6] = 1.0; // w component of the quaternion
   _eulPos.resize(6);
   _robConf.setRn(7);
 
@@ -57,6 +58,12 @@ IvKinYumi::~IvKinYumi(){
 
 bool IvKinYumi::solve(){
 
+  std::cout << "Yumi IK ----------------------------------------------------------" << std::endl;
+
+  std::cout << "_target: " << _target.at(0) << " " << _target.at(1) << " " << _target.at(2) << " "
+                           << _target.at(3) << " " << _target.at(4) << " " << _target.at(5) << " "
+                           << _target.at(6) << " " << _target.at(7) << " " << std::endl;
+
   // Set target pose
   _targetTrans.setTranslation(mt::Point3(_target.at(0), _target.at(1), _target.at(2)));
   _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
@@ -65,44 +72,65 @@ bool IvKinYumi::solve(){
   double redundantJoint = 0.0;
   if (_target.size() > 7)   redundantJoint = _target.at(7);
 
-//  std::cout << "Yumi IK values:";
-//  std::cout << "_targetTrans p: " << _targetTrans.getTranslation().at(0) << " "
-//                                  << _targetTrans.getTranslation().at(1) << " "
-//                                  << _targetTrans.getTranslation().at(2) << "\n";
-//  std::cout << "redundant_joint: " << redundantJoint << "\n";
+
+  std::cout << "_targetTrans p: " << _targetTrans.getTranslation().at(0) << " "
+                                  << _targetTrans.getTranslation().at(1) << " "
+                                  << _targetTrans.getTranslation().at(2) << "\n";
+  std::cout << "_targetTrans rot:\n";
+  std::cout << "  " << _targetTrans.getRotation().getMatrix()[0][0] << " " << _targetTrans.getRotation().getMatrix()[0][1] << " " << _targetTrans.getRotation().getMatrix()[0][2] << std::endl;
+  std::cout << "  " << _targetTrans.getRotation().getMatrix()[1][0] << " " << _targetTrans.getRotation().getMatrix()[1][1] << " " << _targetTrans.getRotation().getMatrix()[1][2] << std::endl;
+  std::cout << "  " << _targetTrans.getRotation().getMatrix()[2][0] << " " << _targetTrans.getRotation().getMatrix()[2][1] << " " << _targetTrans.getRotation().getMatrix()[2][2] << std::endl;
+  std::cout << "redundant_joint: " << redundantJoint << "\n";
 
 
   // Desired pose
   //  Convert to Eigen
-  Eigen::Matrix4f desiredPose(Eigen::Matrix4f::Identity());
+  Eigen::Matrix4f desiredPoseInRobotRef(Eigen::Matrix4f::Identity());
   //   Position
-  for (unsigned int i=0; i<3; ++i)  desiredPose(i,3) = _targetTrans.getTranslation().at(i);
+  for (unsigned int i=0; i<3; ++i)  desiredPoseInRobotRef(i,3) = _targetTrans.getTranslation().at(i);
   //   Orientation
-  mt::Matrix3x3 rot = _targetTrans.getRotation().getMatrix();
+  mt::Matrix3x3 tmp_rot = _targetTrans.getRotation().getMatrix();
   for (unsigned int i=0; i<3; ++i)
       for (unsigned int j=0; j<3; ++j)
-          desiredPose(i,j) = rot[i][j];
+          desiredPoseInRobotRef(i,j) = tmp_rot[i][j];
 
-  // Desired pose
   std::cout << "yumi desired pose: " << std::endl;
-  std::cout << desiredPose << std::endl;
+  std::cout << desiredPoseInRobotRef << std::endl;
 
   // Transform to right arm reference
-  Eigen::Matrix4f bodyToRightArm(Eigen::Matrix4f::Identity());
-  //  Orientation
-  Eigen::Vector3f axis(-0.9781, -0.5716, -2.3180);  // roll, pitch, yaw
-  Eigen::AngleAxisf angAxis(axis.norm(), axis.normalized());
-  bodyToRightArm.block(0,0,3,3) = angAxis.matrix();
-  //  Position
-  bodyToRightArm(0,3) = 0.05355;
-  bodyToRightArm(1,3) = -0.0725;
-  bodyToRightArm(2,3) = 0.41492;
+  Eigen::Matrix4f bodyToRightArmTF(Eigen::Matrix4f::Identity());
+  //   Position
+  bodyToRightArmTF(0,3) = 0.05355;
+  bodyToRightArmTF(1,3) = -0.0725;
+  bodyToRightArmTF(2,3) = 0.41492;
+  //   Orientation
+  tmp_rot = mt::Rotation(-2.3180,-0.5716,-0.9781).getMatrix();
+  for (unsigned int i=0; i<3; ++i)  for (unsigned int j=0; j<3; ++j)    bodyToRightArmTF(i,j) = tmp_rot[i][j];
 
-  Eigen::Matrix4f desiredPoseInArm(bodyToRightArm.inverse() * desiredPose);
+//  std::cout << "Link1:\n pos:" << bodyToRightArmTF(0,3) << " " << bodyToRightArmTF(1,3) << " " << bodyToRightArmTF(2,3) << std::endl;
+//  std::cout << " rot: " << std::endl;
+//  std::cout << bodyToRightArmTF(0,0) << " " << bodyToRightArmTF(0,1) << " " << bodyToRightArmTF(0,2) << std::endl;
+//  std::cout << bodyToRightArmTF(1,0) << " " << bodyToRightArmTF(1,1) << " " << bodyToRightArmTF(1,2) << std::endl;
+//  std::cout << bodyToRightArmTF(2,0) << " " << bodyToRightArmTF(2,1) << " " << bodyToRightArmTF(2,2) << std::endl;
+
+
+  Eigen::Matrix4f desiredPoseInArmRef( bodyToRightArmTF.inverse() * desiredPoseInRobotRef );
+
+//  std::cout << "desiredPoseInArmRef:\n pos:" << desiredPoseInArmRef(0,3) << " " << desiredPoseInArmRef(1,3) << " " << desiredPoseInArmRef(2,3) << std::endl;
+//  std::cout << " rot: " << std::endl;
+//  std::cout << desiredPoseInArmRef(0,0) << " " << desiredPoseInArmRef(0,1) << " " << desiredPoseInArmRef(0,2) << std::endl;
+//  std::cout << desiredPoseInArmRef(1,0) << " " << desiredPoseInArmRef(1,1) << " " << desiredPoseInArmRef(1,2) << std::endl;
+//  std::cout << desiredPoseInArmRef(2,0) << " " << desiredPoseInArmRef(2,1) << " " << desiredPoseInArmRef(2,2) << std::endl;
+
+
+  desiredPoseInArmRef = desiredPoseInRobotRef;  // TEST TEST TEST TEST
+
+  // Set position in mm for yumi ik algorithm
+  for (unsigned int i=0;i<3;++i)    desiredPoseInArmRef(i,3) *= 1000;
 
   YumiKinematics* YumiKinSolver;
   std::vector< std::vector<double> > yumiIkSolutions;
-  yumiIkSolutions = YumiKinSolver->AnalyticalIKSolver(desiredPoseInArm, redundantJoint);
+  yumiIkSolutions = YumiKinSolver->AnalyticalIKSolver(desiredPoseInArmRef, redundantJoint);
 
   std::cout << "Yumi IK solutions: " << yumiIkSolutions.size() << "\n";
 
@@ -121,26 +149,26 @@ bool IvKinYumi::solve(){
       // f != f will be true if f is NaN or -NaN
       solutionOK = !(ikSolution[i] != ikSolution[i]);
     }
-//    if (!solutionOK){
-//      cout << "Inverse kinematics solution has a NaN value" << endl;
-//      return false;
-//    }
+    if (!solutionOK){
+      cout << "Inverse kinematics solution has a NaN value" << endl;
+      return false;
+    }
+
+    // Do the forward kinematics for verification
 
     // Store the selection solution
     std::vector<KthReal> tmp(7);
     for (unsigned int i = 0; i<7; ++i)  tmp.at(i) = ikSolution[i];
-    for (unsigned int i = 0; i<7; ++i)  tmp.at(i) = 0.0;    // TEST TEST TEST TEST
+//    for (unsigned int i = 0; i<7; ++i)  tmp.at(i) = 0.0;    // TEST TEST TEST TEST
     _robConf.setRn(tmp);
 
     return true;
 
-    return false;   // TODO TODO TODO TODO
+//    return false;   // TODO TODO TODO TODO
   } else {
     cout << "Inverse kinematics failed" << endl;
     return false;
   }
-
-  return false;   // TODO TODO TODO TODO
 }
 
 bool IvKinYumi::setParameters(){
@@ -198,6 +226,10 @@ bool IvKinYumi::setParameters(){
 
       // Set redundant joint
       if(_target.size() > 7)    _target.at(7) = _redundantJoint;
+
+      std::cout << "--> _target: ";
+      for (unsigned int i=0; i<_target.size(); ++i) std::cout << _target.at(i) << " ";
+      std::cout << std::endl;
 
     }catch(...){
       return false;
