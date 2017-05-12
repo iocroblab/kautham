@@ -90,9 +90,7 @@ bool IvKinYumi::solve(){
   for (unsigned int i=0; i<3; ++i)  desiredPoseInRobotRef(i,3) = _targetTrans.getTranslation().at(i);
   //   Orientation
   mt::Matrix3x3 tmp_rot = _targetTrans.getRotation().getMatrix();
-  for (unsigned int i=0; i<3; ++i)
-      for (unsigned int j=0; j<3; ++j)
-          desiredPoseInRobotRef(i,j) = tmp_rot[i][j];
+  for (unsigned int i=0; i<3; ++i)  for (unsigned int j=0; j<3; ++j)    desiredPoseInRobotRef(i,j) = tmp_rot[i][j];
 
   std::cout << "yumi desired pose: " << std::endl;
   std::cout << desiredPoseInRobotRef << std::endl;
@@ -155,6 +153,17 @@ bool IvKinYumi::solve(){
     }
 
     // Do the forward kinematics for verification
+    Eigen::VectorXf eig_sol(ikSolution.size());
+    for (unsigned int i=0; i<ikSolution.size(); ++i)    eig_sol(i) = ikSolution[i];
+    Eigen::Matrix4f verif_pose = YumiKinSolver->ForwardKinematics(eig_sol);
+    for (unsigned int i=0; i<3; ++i)    verif_pose(i,3) /= 1000.0;
+    std::cout << "verif_pose:\n pos:" << verif_pose(0,3) << " " << verif_pose(1,3) << " " << verif_pose(2,3) << std::endl;
+    std::cout << " rot: " << std::endl;
+    std::cout << verif_pose(0,0) << " " << verif_pose(0,1) << " " << verif_pose(0,2) << std::endl;
+    std::cout << verif_pose(1,0) << " " << verif_pose(1,1) << " " << verif_pose(1,2) << std::endl;
+    std::cout << verif_pose(2,0) << " " << verif_pose(2,1) << " " << verif_pose(2,2) << std::endl;
+
+
 
     // Store the selection solution
     std::vector<KthReal> tmp(7);
