@@ -121,41 +121,113 @@ bool IvKinYumi::solve(){
 //  std::cout << desiredPoseInArmRef(2,0) << " " << desiredPoseInArmRef(2,1) << " " << desiredPoseInArmRef(2,2) << std::endl;
 
 
-  desiredPoseInArmRef = desiredPoseInRobotRef;  // TEST TEST TEST TEST
+  desiredPoseInArmRef = desiredPoseInRobotRef;  // TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
 
   // Set position in mm for yumi ik algorithm
   for (unsigned int i=0;i<3;++i)    desiredPoseInArmRef(i,3) *= 1000;
 
-  YumiKinematics* YumiKinSolver;
-  std::vector< std::vector<double> > yumiIkSolutions;
-  yumiIkSolutions = YumiKinSolver->AnalyticalIKSolver(desiredPoseInArmRef, redundantJoint);
+  // Redundant configuration needs to be denormalized TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
+  double denormalized_redundantJoint = redundantJoint;  // TEST TEST TEST TEST TEST
+//  double denormalized_redundantJoint = XXXX + XXXX * redundantJoint;    // TODO TODO TODO TODO TODO TODO TODO
 
-  std::cout << "Yumi IK solutions: " << yumiIkSolutions.size() << "\n";
+  // Declare solver
+  YumiKinematics* YumiKinSolver;
+
+  // Get all possible 16 analitic ik configurations
+  std::vector< std::vector<double> > yumiAnalyticalIkSolutions = YumiKinSolver->AnalyticalIKSolver(desiredPoseInArmRef, denormalized_redundantJoint);
+
+  //std::cout << "Yumi IK solutions: " << yumiAnalyticalIkSolutions.size() << std::endl; // PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
 
   // Solve IK
-  if (yumiIkSolutions.size() > 0) {
+  if (yumiAnalyticalIkSolutions.size() > 0) {
 
-    // Select a solution
-    std::vector<double> ikSolution = yumiIkSolutions[0];
+    // Select the configuration with the closest TCP to the desired configuration
+    bool non_nan_config = false;    // There is at least one config without a NaN value
+    double min_err = 1000000000;    // Super-high value
+    Eigen::VectorXf minAnalyticalIkSolution(yumiAnalyticalIkSolutions[0].size());
+    for(unsigned int i=0; i<yumiAnalyticalIkSolutions.size(); i++)
+    {
+        Eigen::VectorXf ikAnalyticalSolution(yumiAnalyticalIkSolutions[i].size());
 
-    std::cout << "Yumi IK solution: ";
-    for (unsigned int i=0; i<ikSolution.size(); ++i)  std::cout << ikSolution[i] << " ";
-    std::cout << std::endl;
+        for(unsigned int j=0; j<yumiAnalyticalIkSolutions[i].size(); j++)    ikAnalyticalSolution(j) = yumiAnalyticalIkSolutions[i][j];
 
-    bool solutionOK = true;
-    for (unsigned int i=0; solutionOK && (i<ikSolution.size()); ++i){
-      // f != f will be true if f is NaN or -NaN
-      solutionOK = !(ikSolution[i] != ikSolution[i]);
+        std::cout << "yumiAnalyticalIkSolutions[i] = "; // PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
+        for(unsigned int j=0; j<ikAnalyticalSolution.size(); j++)   std::cout << ikAnalyticalSolution(j) << " ";
+        std::cout << std::endl;
+
+        // Look for NaN values
+        bool solutionOK = true;
+        for (unsigned int i=0; solutionOK && (i<ikAnalyticalSolution.size()); ++i){
+          // f != f will be true if f is NaN or -NaN
+          solutionOK = !(ikAnalyticalSolution[i] != ikAnalyticalSolution[i]);
+        }
+
+        if (solutionOK){    // If solution has no NaN
+            non_nan_config = true;
+
+            // Desired pose
+            Eigen::Vector3f pd(desiredPoseInArmRef(0,3), desiredPoseInArmRef(1,3), desiredPoseInArmRef(2,3));
+            Eigen::Matrix3f Rd;
+            Rd << desiredPoseInArmRef(0,0), desiredPoseInArmRef(0,1), desiredPoseInArmRef(0,2),
+                  desiredPoseInArmRef(1,0), desiredPoseInArmRef(1,1), desiredPoseInArmRef(1,2),
+                  desiredPoseInArmRef(2,0), desiredPoseInArmRef(2,1), desiredPoseInArmRef(2,2);
+            Eigen::Quaternionf uqd(Rd);
+
+            // Pose of the analitical solution
+            Eigen::Matrix4f currentPose = YumiKinSolver->ForwardKinematics(ikAnalyticalSolution);
+
+            Eigen::Vector3f pe(currentPose(0,3), currentPose(1,3), currentPose(2,3));
+            Eigen::Matrix3f Re;
+            Re << currentPose(0,0), currentPose(0,1), currentPose(0,2),
+                  currentPose(1,0), currentPose(1,1), currentPose(1,2),
+                  currentPose(2,0), currentPose(2,1), currentPose(2,2);
+            Eigen::Quaternionf uqe(Re);
+
+            // Error
+            //  Position
+            Eigen::Vector3f errorP(pd-pe);
+
+            //  Orientation
+            Eigen::Vector3f u1(uqd.x(),uqd.y(),uqd.z());
+            Eigen::Vector3f u2(uqe.x(),uqe.y(),uqe.z());
+            Eigen::Matrix3f m;
+            m <<        0, -uqd.z(),  uqd.y(),
+                    uqd.z(),        0, -uqd.x(),
+                    -uqd.y(),  uqd.x(),        0;
+            Eigen::Vector3f errorO(uqe.w()*u1-uqd.w()*u2-m*u2);
+
+            //  Total
+            double e = (errorO.squaredNorm()+errorP.squaredNorm())/2.0;
+
+            // Keep minimum error solution
+            if (e < min_err){
+                min_err = e;
+                minAnalyticalIkSolution = ikAnalyticalSolution;
+            }
+        } // if (solutionOK)
     }
-    if (!solutionOK){
-      cout << "Inverse kinematics solution has a NaN value" << endl;
+
+    // If all analytic configurations have NaN values there is no solution for the IK problem
+    if (!non_nan_config){
+      std::cout << "Inverse kinematics solution has a NaN value" << std::endl;
       return false;
     }
 
-    // Do the forward kinematics for verification
-    Eigen::VectorXf eig_sol(ikSolution.size());
-    for (unsigned int i=0; i<ikSolution.size(); ++i)    eig_sol(i) = ikSolution[i];
-    Eigen::Matrix4f verif_pose = YumiKinSolver->ForwardKinematics(eig_sol);
+    // The configuration to feed the numerical solver is ok - PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
+    std::cout << "Yumi IK analytical solution: ";
+    for (unsigned int i=0; i<minAnalyticalIkSolution.size(); ++i)  std::cout << minAnalyticalIkSolution[i] << " ";
+    std::cout << std::endl;
+
+    // Solve the ik using a numerical approach starting with the minimum error configuration
+    Eigen::VectorXf ikSolution(YumiKinSolver->NumericalIKSolver(desiredPoseInArmRef, minAnalyticalIkSolution, 0.001, 10000));
+
+    // The final configuration - PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
+    std::cout << "Yumi IK analytical solution: ";
+    for (unsigned int i=0; i<ikSolution.size(); ++i)  std::cout << ikSolution[i] << " ";
+    std::cout << std::endl;
+
+    // Do the forward kinematics for verification - PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
+    Eigen::Matrix4f verif_pose = YumiKinSolver->ForwardKinematics(ikSolution);
     for (unsigned int i=0; i<3; ++i)    verif_pose(i,3) /= 1000.0;
     std::cout << "verif_pose:\n pos:" << verif_pose(0,3) << " " << verif_pose(1,3) << " " << verif_pose(2,3) << std::endl;
     std::cout << " rot: " << std::endl;
@@ -164,16 +236,12 @@ bool IvKinYumi::solve(){
     std::cout << verif_pose(2,0) << " " << verif_pose(2,1) << " " << verif_pose(2,2) << std::endl;
 
 
-
     // Store the selection solution
     std::vector<KthReal> tmp(7);
     for (unsigned int i = 0; i<7; ++i)  tmp.at(i) = ikSolution[i];
-//    for (unsigned int i = 0; i<7; ++i)  tmp.at(i) = 0.0;    // TEST TEST TEST TEST
     _robConf.setRn(tmp);
 
     return true;
-
-//    return false;   // TODO TODO TODO TODO
   } else {
     cout << "Inverse kinematics failed" << endl;
     return false;

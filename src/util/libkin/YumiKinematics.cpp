@@ -291,60 +291,55 @@ Eigen::MatrixXf YumiKinematics::Jacobian(Eigen::VectorXf Q)
 }
 
 
-Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desire_Pose, Eigen::Matrix4f current_Pose, Eigen::VectorXf qini, double threshold, double e)
+Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, Eigen::VectorXf qIni, double threshold, double e)
 {
-    Eigen::MatrixXf J;
-    Eigen::VectorXf q;
-    Eigen::VectorXf error(6);
-    q = qini;
-    Eigen::Vector3f pd (desire_Pose(0,3),desire_Pose(1,3) ,desire_Pose(2,3));
-    Eigen::Matrix3f Rd;
-    Rd << desire_Pose(0,0), desire_Pose(0,1), desire_Pose(0,2),
-            desire_Pose(1,0), desire_Pose(1,1), desire_Pose(1,2),
-            desire_Pose(2,0), desire_Pose(2,1), desire_Pose(2,2);
+    // Initial configuration
+    Eigen::VectorXf q(qIni);
 
+    // Desired pose
+    Eigen::Vector3f pd(desiredPose(0,3), desiredPose(1,3), desiredPose(2,3));
+    Eigen::Matrix3f Rd;
+    Rd << desiredPose(0,0), desiredPose(0,1), desiredPose(0,2),
+          desiredPose(1,0), desiredPose(1,1), desiredPose(1,2),
+          desiredPose(2,0), desiredPose(2,1), desiredPose(2,2);
     Eigen::Quaternionf uqd(Rd);
 
-    //Euler Angles conversion
-    Eigen::Vector3f rd;
-    rd(0) = atan2(Rd(3,1),Rd(3,2));
-    rd(1) = acos(Rd(3,3));
-    rd(2) = -atan2(Rd(1,3),Rd(2,3));
-    unsigned int t=0;
     while (e>=threshold)
     {
-        Eigen::Vector3f pe (current_Pose(0,3),current_Pose(1,3) ,current_Pose(2,3));
+        Eigen::Matrix4f current_Pose = ForwardKinematics(q);
+
+        Eigen::Vector3f pe(current_Pose(0,3), current_Pose(1,3), current_Pose(2,3));
         Eigen::Matrix3f Re;
         Re << current_Pose(0,0), current_Pose(0,1), current_Pose(0,2),
-                current_Pose(1,0), current_Pose(1,1), current_Pose(1,2),
-                current_Pose(2,0), current_Pose(2,1), current_Pose(2,2);
+              current_Pose(1,0), current_Pose(1,1), current_Pose(1,2),
+              current_Pose(2,0), current_Pose(2,1), current_Pose(2,2);
         Eigen::Quaternionf uqe(Re);
-        //Euler Angles conversion
-        Eigen::Vector3f re;
-        re(0) = atan2(Re(3,1),Re(3,2));
-        re(1) = acos(Re(3,3));
-        re(2) = -atan2(Re(1,3),Re(2,3));
 
+        // Error
+        //  Position
+        Eigen::Vector3f errorP(pd-pe);
+
+        //  Orientation
         Eigen::Vector3f u1(uqd.x(),uqd.y(),uqd.z());
         Eigen::Vector3f u2(uqe.x(),uqe.y(),uqe.z());
         Eigen::Matrix3f m;
-        m<< 0,-uqd.z(),uqd.y(),
-                uqd.z(),0,-uqd.x(),
-                -uqd.y(),uqd.x(),0;
+        m <<        0, -uqd.z(),  uqd.y(),
+              uqd.z(),        0, -uqd.x(),
+             -uqd.y(),  uqd.x(),        0;
+        Eigen::Vector3f errorO(uqe.w()*u1-uqd.w()*u2-m*u2);
 
-        Eigen::Vector3f errorP;
-        errorP=pd-pe;
-        Eigen::Vector3f errorO;
-        errorO=uqe.w()*u1-uqd.w()*u2-m*u2;
+        //  Total
+        Eigen::VectorXf error(6);
         error(0)=errorP(0); error(1)=errorP(1); error(2)=errorP(2);
         error(3)=errorO(0); error(4)=errorO(1); error(5)=errorO(2);
-        e = (errorO.squaredNorm()+errorP.squaredNorm())/2;
-        J=Jacobian(q);
-        Eigen::MatrixXf pJ;
-        pJ= pseudoInverse(J);
-        q=q+pJ*0.1*error;
-        //t=t+1
+
+        Eigen::MatrixXf J=Jacobian(q);
+        q = q + 1.2 * pseudoInverse(J) * error;
+
+        // Error for algorithm convergence
+        e = (errorO.squaredNorm()+errorP.squaredNorm())/2.0;
     }
+
     return q;
 }
 
