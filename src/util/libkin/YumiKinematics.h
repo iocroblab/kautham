@@ -47,7 +47,7 @@ public:
     std::vector< std::vector<double> > ComputeTheta1(Eigen::Matrix4f Pose, double theta2, double theta3, double theta4,int byn);
     std::vector<double>  ComputeRotation(Eigen::Matrix4f Pose, double theta1, double theta2, double theta3, double theta4,int byn);
     Eigen::MatrixXf  Jacobian(Eigen::VectorXf Q);
-    Eigen::VectorXf NumericalIKSolver(Eigen::Matrix4f desire_Pose, Eigen::Matrix4f current_Pose, Eigen::VectorXf qini, double threshold, double e);
+    Eigen::VectorXf NumericalIKSolver(Eigen::Matrix4f desiredPose, Eigen::VectorXf qIni, double threshold, double e);
     template<typename _Matrix_Type_>  _Matrix_Type_ pseudoInverse(const _Matrix_Type_ &a, double epsilon = std::numeric_limits<double>::epsilon())
     {
         Eigen::JacobiSVD< _Matrix_Type_ > svd(a ,Eigen::ComputeThinU | Eigen::ComputeThinV);
