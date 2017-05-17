@@ -126,9 +126,9 @@ bool IvKinYumi::solve(){
   // Set position in mm for yumi ik algorithm
   for (unsigned int i=0;i<3;++i)    desiredPoseInArmRef(i,3) *= 1000;
 
-  // Redundant configuration needs to be denormalized TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
+  // Redundant configuration needs to be denormalized
   double denormalized_redundantJoint = redundantJoint;  // TEST TEST TEST TEST TEST
-//  double denormalized_redundantJoint = XXXX + XXXX * redundantJoint;    // TODO TODO TODO TODO TODO TODO TODO
+//  double denormalized_redundantJoint = -2.94088 + redundantJoint * 5.88176;    // TODO TODO TODO TODO TODO TODO TODO
 
   // Declare solver
   YumiKinematics* YumiKinSolver;
@@ -192,8 +192,8 @@ bool IvKinYumi::solve(){
             Eigen::Vector3f u2(uqe.x(),uqe.y(),uqe.z());
             Eigen::Matrix3f m;
             m <<        0, -uqd.z(),  uqd.y(),
-                    uqd.z(),        0, -uqd.x(),
-                    -uqd.y(),  uqd.x(),        0;
+                  uqd.z(),        0, -uqd.x(),
+                 -uqd.y(),  uqd.x(),        0;
             Eigen::Vector3f errorO(uqe.w()*u1-uqd.w()*u2-m*u2);
 
             //  Total
@@ -225,6 +225,15 @@ bool IvKinYumi::solve(){
     std::cout << "Yumi IK analytical solution: ";
     for (unsigned int i=0; i<ikSolution.size(); ++i)  std::cout << ikSolution[i] << " ";
     std::cout << std::endl;
+
+    // Normalize configuration
+    ikSolution(0) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
+    ikSolution(1) = ( ikSolution(0) - (-2.50455) )/( 0.759218 - (-2.50455) );
+    ikSolution(2) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
+    ikSolution(3) = ( ikSolution(0) - (-2.15548) )/(  1.39626 - (-2.15548) );
+    ikSolution(4) = ( ikSolution(0) - (-5.06145) )/(  5.06145 - (-5.06145) );
+    ikSolution(5) = ( ikSolution(0) - (-1.53589) )/(  2.40855 - (-1.53589) );
+    ikSolution(6) = ( ikSolution(0) -  (-3.9968) )/(   3.9968 -  (-3.9968) );
 
     // Do the forward kinematics for verification - PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
     Eigen::Matrix4f verif_pose = YumiKinSolver->ForwardKinematics(ikSolution);
