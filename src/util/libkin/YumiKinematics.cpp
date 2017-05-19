@@ -304,10 +304,14 @@ Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, E
           desiredPose(2,0), desiredPose(2,1), desiredPose(2,2);
     Eigen::Quaternionf uqd(Rd);
 
-    while (e>=threshold)
+    unsigned int n_it = 0;
+    while ( (e>=threshold) && (n_it<10000) )
     {
+        std::cout << "q_ini: " << q.transpose() << std::endl;
+
         Eigen::Matrix4f current_Pose = ForwardKinematics(q);
 
+        // Current pose
         Eigen::Vector3f pe(current_Pose(0,3), current_Pose(1,3), current_Pose(2,3));
         Eigen::Matrix3f Re;
         Re << current_Pose(0,0), current_Pose(0,1), current_Pose(0,2),
@@ -320,13 +324,13 @@ Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, E
         Eigen::Vector3f errorP(pd-pe);
 
         //  Orientation
-        Eigen::Vector3f u1(uqd.x(),uqd.y(),uqd.z());
-        Eigen::Vector3f u2(uqe.x(),uqe.y(),uqe.z());
+        Eigen::Vector3f ud(uqd.x(),uqd.y(),uqd.z());
+        Eigen::Vector3f ue(uqe.x(),uqe.y(),uqe.z());
         Eigen::Matrix3f m;
         m <<        0, -uqd.z(),  uqd.y(),
               uqd.z(),        0, -uqd.x(),
              -uqd.y(),  uqd.x(),        0;
-        Eigen::Vector3f errorO(uqe.w()*u1-uqd.w()*u2-m*u2);
+        Eigen::Vector3f errorO(uqe.w()*ud-uqd.w()*ue-m*ue);
 
         //  Total
         Eigen::VectorXf error(6);
@@ -334,10 +338,44 @@ Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, E
         error(3)=errorO(0); error(4)=errorO(1); error(5)=errorO(2);
 
         Eigen::MatrixXf J=Jacobian(q);
-        q = q + 1.2 * pseudoInverse(J) * error;
+        q = q + 0.2 * pseudoInverse(J) * error;
+//        q = q + 1.2 * pseudoInverse(J,0.001) * error;
+
+        std::cout << "q:     " << q.transpose() << std::endl;
+
+        // Saturate joint values
+        // This is real Yumi convention
+        if      ( q(0) < -2.94088 )     q(0) = -2.94088;
+        else if ( q(0) >  2.94088 )     q(0) =  2.94088;
+
+        if      ( q(1) < -2.50455 )     q(1) = -2.50455;
+        else if ( q(1) > 0.759218 )     q(1) = 0.759218;
+
+        if      ( q(2) < -2.94088 )     q(2) = -2.94088;
+        else if ( q(2) >  2.94088 )     q(2) =  2.94088;
+
+        if      ( q(3) < -2.15548 )     q(3) = -2.15548;
+        else if ( q(3) >  1.39626 )     q(3) =  1.39626;
+
+        if      ( q(4) < -5.06145 )     q(4) = -5.06145;
+        else if ( q(4) >  5.06145 )     q(4) =  5.06145;
+
+        if      ( q(5) < -1.53589 )     q(5) = -1.53589;
+        else if ( q(5) >  2.40855 )     q(5) =  2.40855;
+
+        if      ( q(6) <  -3.9968 )     q(6) =  -3.9968;
+        else if ( q(6) >   3.9968 )     q(6) =   3.9968;
+
+        std::cout << "q_sat: " << q.transpose() << std::endl;
 
         // Error for algorithm convergence
-        e = (errorO.squaredNorm()+errorP.squaredNorm())/2.0;
+//        e = (std::sqrt(errorO.squaredNorm())+std::sqrt(errorP.squaredNorm()))/2.0;
+        e = std::sqrt(error.squaredNorm());
+
+        ++n_it;
+        std::cout << "yumi ik - n_it / e = ( ep, eo ): "
+                  << n_it << " / "
+                  << e << " = ( " << std::sqrt(errorP.squaredNorm()) << ", " << std::sqrt(errorO.squaredNorm()) << ")" << std::endl;
     }
 
     return q;
