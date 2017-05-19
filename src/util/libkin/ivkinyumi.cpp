@@ -151,6 +151,29 @@ bool IvKinYumi::solve(){
 
         for(unsigned int j=0; j<yumiAnalyticalIkSolutions[i].size(); j++)    ikAnalyticalSolution(j) = yumiAnalyticalIkSolutions[i][j];
 
+//        // Saturate joint values
+//        // This is real Yumi convention
+//        if      (ikAnalyticalSolution(0) < -2.94088)    ikAnalyticalSolution(0) = -2.94088;
+//        else if (ikAnalyticalSolution(0) >  2.94088)    ikAnalyticalSolution(0) =  2.94088;
+
+//        if      (ikAnalyticalSolution(1) < -2.50455)    ikAnalyticalSolution(1) = -2.50455;
+//        else if (ikAnalyticalSolution(1) > 0.759218)    ikAnalyticalSolution(1) = 0.759218;
+
+//        if      (ikAnalyticalSolution(2) < -2.94088)    ikAnalyticalSolution(2) = -2.94088;
+//        else if (ikAnalyticalSolution(2) >  2.94088)    ikAnalyticalSolution(2) =  2.94088;
+
+//        if      (ikAnalyticalSolution(3) < -2.15548)    ikAnalyticalSolution(3) = -2.15548;
+//        else if (ikAnalyticalSolution(3) >  1.39626)    ikAnalyticalSolution(3) =  1.39626;
+
+//        if      (ikAnalyticalSolution(4) < -5.06145)    ikAnalyticalSolution(4) = -5.06145;
+//        else if (ikAnalyticalSolution(4) >  5.06145)    ikAnalyticalSolution(4) =  5.06145;
+
+//        if      (ikAnalyticalSolution(5) < -1.53589)    ikAnalyticalSolution(5) = -1.53589;
+//        else if (ikAnalyticalSolution(5) >  2.40855)    ikAnalyticalSolution(5) =  2.40855;
+
+//        if      (ikAnalyticalSolution(6) <  -3.9968)    ikAnalyticalSolution(6) =  -3.9968;
+//        else if (ikAnalyticalSolution(6) >   3.9968)    ikAnalyticalSolution(6) =   3.9968;
+
         std::cout << "yumiAnalyticalIkSolutions[i] = "; // PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
         for(unsigned int j=0; j<ikAnalyticalSolution.size(); j++)   std::cout << ikAnalyticalSolution(j) << " ";
         std::cout << std::endl;
@@ -217,6 +240,45 @@ bool IvKinYumi::solve(){
     std::cout << "Yumi IK analytical solution: ";
     for (unsigned int i=0; i<minAnalyticalIkSolution.size(); ++i)  std::cout << minAnalyticalIkSolution[i] << " ";
     std::cout << std::endl;
+
+    // TEST POSE
+    Eigen::VectorXf test_q(Eigen::VectorXf::Zero(7));
+    test_q << 2.1, 0.3, -1.5, 0.0, -1.1, 1.9, 3.0;
+    Eigen::Matrix4f test_pose = YumiKinSolver->ForwardKinematics(test_q);
+    test_q << 0.3, 0.5, 0.0, 1.1, 0.0, -0.1, 0.0;
+    Eigen::VectorXf test_ikSolution(YumiKinSolver->NumericalIKSolver(test_pose, test_q, 0.01, 10000));
+    return false;
+
+
+    // Set angles between -pi and pi
+    for (unsigned int i=0; i<minAnalyticalIkSolution.size(); ++i){
+        while (minAnalyticalIkSolution(i) < -PI)     minAnalyticalIkSolution(i) += 2.0*PI;
+        while (minAnalyticalIkSolution(i) >  PI)     minAnalyticalIkSolution(i) -= 2.0*PI;
+    }
+
+    // Saturate joint values
+    // This is real Yumi convention
+    if      (minAnalyticalIkSolution(0) < -2.94088)    minAnalyticalIkSolution(0) = -2.94088;
+    else if (minAnalyticalIkSolution(0) >  2.94088)    minAnalyticalIkSolution(0) =  2.94088;
+
+    if      (minAnalyticalIkSolution(1) < -2.50455)    minAnalyticalIkSolution(1) = -2.50455;
+    else if (minAnalyticalIkSolution(1) > 0.759218)    minAnalyticalIkSolution(1) = 0.759218;
+
+    if      (minAnalyticalIkSolution(2) < -2.94088)    minAnalyticalIkSolution(2) = -2.94088;
+    else if (minAnalyticalIkSolution(2) >  2.94088)    minAnalyticalIkSolution(2) =  2.94088;
+
+    if      (minAnalyticalIkSolution(3) < -2.15548)    minAnalyticalIkSolution(3) = -2.15548;
+    else if (minAnalyticalIkSolution(3) >  1.39626)    minAnalyticalIkSolution(3) =  1.39626;
+
+    if      (minAnalyticalIkSolution(4) < -5.06145)    minAnalyticalIkSolution(4) = -5.06145;
+    else if (minAnalyticalIkSolution(4) >  5.06145)    minAnalyticalIkSolution(4) =  5.06145;
+
+    if      (minAnalyticalIkSolution(5) < -1.53589)    minAnalyticalIkSolution(5) = -1.53589;
+    else if (minAnalyticalIkSolution(5) >  2.40855)    minAnalyticalIkSolution(5) =  2.40855;
+
+    if      (minAnalyticalIkSolution(6) <  -3.9968)    minAnalyticalIkSolution(6) =  -3.9968;
+    else if (minAnalyticalIkSolution(6) >   3.9968)    minAnalyticalIkSolution(6) =   3.9968;
+
 
     // Solve the ik using a numerical approach starting with the minimum error configuration
     Eigen::VectorXf ikSolution(YumiKinSolver->NumericalIKSolver(desiredPoseInArmRef, minAnalyticalIkSolution, 0.001, 10000));
