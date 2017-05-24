@@ -25,6 +25,9 @@
  
 #include "controlwidget.h"
 
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Geometry>
+
 
 using namespace std;
 
@@ -216,6 +219,17 @@ namespace Kautham {
 
 
     void ControlWidget::updateControls(){
+
+
+//        std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::endl;
+        Link* tmp_link_7 = prob->wSpace()->getRobot(0)->getLink(7);
+
+        Eigen::VectorXf q(7);
+        for (unsigned int i=1; i<8; ++i)    q(i-1) = prob->wSpace()->getRobot(0)->getLink(i)->getValue();
+        std::cout << "AAAAAAA q = " << q.transpose() << std::endl;
+
+
+
         Sample *sample;
         if (isRobWidget) {
             sample = prob->wSpace()->getLastRobSampleMovedTo();
