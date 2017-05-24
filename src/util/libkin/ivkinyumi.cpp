@@ -380,8 +380,9 @@ bool IvKinYumi::solve(){
         std::cout << "DIRECT KINEMATICS" << std::endl;
 
         Eigen::VectorXf dkConfig(7);
-        dkConfig << M_PI/6.0, -M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
+//        dkConfig << M_PI/6.0, -M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
 //        dkConfig << 0.0, 0.0, 0.0, -M_PI/2.0, 0.0, 0.0, 0.0;
+        dkConfig << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
         std::cout << ">> q = " << dkConfig.transpose() << std::endl;
         for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(dkConfig(i-1));
         Eigen::VectorXf dkYumiConfig;
@@ -400,6 +401,7 @@ bool IvKinYumi::solve(){
             for (unsigned int j=0; j<3; ++j)    std::cout << dkYumiPose.getRotation().getMatrix()[i][j] << "  ";
             std::cout << dkYumiPose.getTranslation()[i] << std::endl;
         }
+        std::cout << "det = " << std::log(dkYumiPose.getRotation().getMatrix().determinant()) << std::endl;
         dkYumiConfig = dkConfig;
         dkYumiConfig(3) = dkYumiConfig(3) + M_PI/2.0;
         dkPose = YumiKinSolver->ForwardKinematics(dkYumiConfig);
@@ -419,6 +421,7 @@ bool IvKinYumi::solve(){
             for (unsigned int j=0; j<3; ++j)    std::cout << dkYumiPose.getRotation().getMatrix()[i][j] << "  ";
             std::cout << dkYumiPose.getTranslation()[i] << std::endl;
         }
+        std::cout << "det = " << std::log(dkYumiPose.getRotation().getMatrix().determinant()) << std::endl;
         dkYumiConfig = dkConfig;
         dkYumiConfig(3) = dkYumiConfig(3) + M_PI/2.0;
         dkPose = YumiKinSolver->ForwardKinematics(dkYumiConfig);
