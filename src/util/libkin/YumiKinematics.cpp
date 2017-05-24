@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 \*************************************************************************/
 
-/* Author: Isiah Zaplana, Aliakbar Akbari, Muhayyudin */
+/* Author: Isiah Zaplana, Aliakbar Akbari, Muhayyudin, Josep-Arnau Claret */
 
 
 #if defined(KAUTHAM_USE_OMPL)
@@ -238,16 +238,25 @@ std::vector<double>  YumiKinematics::ComputeRotation(Eigen::Matrix4f Pose, doubl
 
 Eigen::MatrixXf YumiKinematics::Jacobian(Eigen::VectorXf Q)
 {
-    Eigen::Matrix4f A1,A2,A3,A4,A5,A6,A7;
     Eigen::VectorXf q(Q.size());
     q(0)=Q(0); q(1)=Q(1); q(2)=Q(2); q(3)=Q(3); q(4)=Q(4); q(5)=Q(5); q(6)=Q(6);
-    A1 << cos(q(0)), -sin(q(0)), 0, 0, sin(q(0)), cos(q(0)), 0, 0, 0, 0, 1, 166, 0, 0, 0, 1;
-    A2 << cos(q(1)), -sin(q(1)), 0, 30, 0, 0, -1, 0, sin(q(1)), cos(q(1)), 0, 0, 0, 0, 0, 1;
-    A3 << cos(q(2)), -sin(q(2)), 0, -30, 0, 0, 1, 0.2515e3, -sin(q(2)), -cos(q(2)), 0, 0, 0, 0, 0, 1;
-    A4 << cos(q(3)), -sin(q(3)), 0, 40.5, 0, 0, -1, 0, sin(q(3)), cos(q(3)), 0, 0, 0, 0, 0, 1;
-    A5 << cos(q(4)), -sin(q(4)), 0, -40.5, 0, 0, 1, 265, -sin(q(4)), -cos(q(4)), 0, 0, 0, 0, 0, 1;
-    A6 << cos(q(5)), -sin(q(5)), 0, 27, 0, 0, -1, 0, sin(q(5)), cos(q(5)), 0, 0, 0, 0, 0, 1;
-    A7 << cos(q(6)), -sin(q(6)), 0, -27, 0, 0, 1, 36, -sin(q(6)), -cos(q(6)), 0, 0, 0, 0, 0, 1;
+
+    Eigen::Matrix4f A1,A2,A3,A4,A5,A6,A7;
+//    A1 << cos(q(0)), -sin(q(0)), 0, 0, sin(q(0)), cos(q(0)), 0, 0, 0, 0, 1, 166, 0, 0, 0, 1;
+//    A2 << cos(q(1)), -sin(q(1)), 0, 30, 0, 0, -1, 0, sin(q(1)), cos(q(1)), 0, 0, 0, 0, 0, 1;
+//    A3 << cos(q(2)), -sin(q(2)), 0, -30, 0, 0, 1, 0.2515e3, -sin(q(2)), -cos(q(2)), 0, 0, 0, 0, 0, 1;
+//    A4 << cos(q(3)), -sin(q(3)), 0, 40.5, 0, 0, -1, 0, sin(q(3)), cos(q(3)), 0, 0, 0, 0, 0, 1;
+//    A5 << cos(q(4)), -sin(q(4)), 0, -40.5, 0, 0, 1, 265, -sin(q(4)), -cos(q(4)), 0, 0, 0, 0, 0, 1;
+//    A6 << cos(q(5)), -sin(q(5)), 0, 27, 0, 0, -1, 0, sin(q(5)), cos(q(5)), 0, 0, 0, 0, 0, 1;
+//    A7 << cos(q(6)), -sin(q(6)), 0, -27, 0, 0, 1, 36, -sin(q(6)), -cos(q(6)), 0, 0, 0, 0, 0, 1;
+
+    A1 << cos(q(0)), -sin(q(0)), 0, 0,         sin(q(0)), cos(q(0)), 0, 0,          0, 0, 1, 0,                         0, 0, 0, 1;
+    A2 << cos(q(1)), -sin(q(1)), 0, 30,        0, 0, -1, 0,                         sin(q(1)), cos(q(1)), 0, 100,       0, 0, 0, 1;
+    A3 << cos(q(2)), -sin(q(2)), 0, -30,       0, 0, 1, 172.83,                     -sin(q(2)), -cos(q(2)), 0, 0,     0, 0, 0, 1;
+    A4 << -sin(q(3)), -cos(q(3)), 0, -40.5,    0, 0, -1, 0,                        cos(q(3)), -sin(q(3)), 0, 78.73,    0, 0, 0, 1;
+    A5 << 0, 0, 1, 164.61,                     -cos(q(4)), sin(q(4)), 0, -40.5,    -sin(q(4)), -cos(q(4)), 0, 0,       0, 0, 0, 1;
+    A6 << cos(q(5)), -sin(q(5)), 0, -27,     0, 0, -1, 0,                          sin(q(5)), cos(q(5)), 0, 100.39,   0, 0, 0, 1;
+    A7 << cos(q(6)), -sin(q(6)), 0, 27,      0, 0, 1, 29,                          -sin(q(6)), -cos(q(6)), 0, 0,       0, 0, 0, 1;
 
     Eigen::Matrix4f T1 = A1;
     Eigen::Matrix4f T2 = T1*A2;
@@ -305,9 +314,9 @@ Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, E
     Eigen::Quaternionf uqd(Rd);
 
     unsigned int n_it = 0;
-    while ( (e>=threshold) && (n_it<10000) )
+    while ( (e>=threshold) && (n_it<10) )
     {
-        std::cout << "q_ini: " << q.transpose() << std::endl;
+//        std::cout << "q_ini: " << q.transpose() << std::endl;
 
         Eigen::Matrix4f current_Pose = ForwardKinematics(q);
 
@@ -345,26 +354,26 @@ Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, E
 
         // Saturate joint values
         // This is real Yumi convention
-        if      ( q(0) < -2.94088 )     q(0) = -2.94088;
-        else if ( q(0) >  2.94088 )     q(0) =  2.94088;
+        if      ( q(0) < -2.94088 )                 q(0) = -2.94088;
+        else if ( q(0) >  2.94088 )                 q(0) =  2.94088;
 
-        if      ( q(1) < -2.50455 )     q(1) = -2.50455;
-        else if ( q(1) > 0.759218 )     q(1) = 0.759218;
+        if      ( q(1) < -2.50455 )                 q(1) = -2.50455;
+        else if ( q(1) > 0.759218 )                 q(1) = 0.759218;
 
-        if      ( q(2) < -2.94088 )     q(2) = -2.94088;
-        else if ( q(2) >  2.94088 )     q(2) =  2.94088;
+        if      ( q(2) < -2.94088 )                 q(2) = -2.94088;
+        else if ( q(2) >  2.94088 )                 q(2) =  2.94088;
 
-        if      ( q(3) < -2.15548 )     q(3) = -2.15548;
-        else if ( q(3) >  1.39626 )     q(3) =  1.39626;
+        if      ( q(3) < -2.15548 )                 q(3) = -2.15548;
+        else if ( q(3) >  1.39626 )                 q(3) =  1.39626;
 
-        if      ( q(4) < -5.06145 )     q(4) = -5.06145;
-        else if ( q(4) >  5.06145 )     q(4) =  5.06145;
+        if      ( q(4) < -5.06145 - M_PI/2.0 )      q(4) = -5.06145 - M_PI/2.0;
+        else if ( q(4) >  5.06145 - M_PI/2.0 )      q(4) =  5.06145 - M_PI/2.0;
 
-        if      ( q(5) < -1.53589 )     q(5) = -1.53589;
-        else if ( q(5) >  2.40855 )     q(5) =  2.40855;
+        if      ( q(5) < -1.53589 )                 q(5) = -1.53589;
+        else if ( q(5) >  2.40855 )                 q(5) =  2.40855;
 
-        if      ( q(6) <  -3.9968 )     q(6) =  -3.9968;
-        else if ( q(6) >   3.9968 )     q(6) =   3.9968;
+        if      ( q(6) <  -3.9968 )                 q(6) =  -3.9968;
+        else if ( q(6) >   3.9968 )                 q(6) =   3.9968;
 
         std::cout << "q_sat: " << q.transpose() << std::endl;
 
@@ -383,16 +392,27 @@ Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, E
 
 Eigen::Matrix4f YumiKinematics::ForwardKinematics(Eigen::VectorXf Q)
 {
-    Eigen::Matrix4f A1,A2,A3,A4,A5,A6,A7;
     Eigen::VectorXf q(Q.size());
     q(0)=Q(0); q(1)=Q(1); q(2)=Q(2); q(3)=Q(3); q(4)=Q(4); q(5)=Q(5); q(6)=Q(6);
-    A1 << cos(q(0)), -sin(q(0)), 0, 0, sin(q(0)), cos(q(0)), 0, 0, 0, 0, 1, 166, 0, 0, 0, 1;
-    A2 << cos(q(1)), -sin(q(1)), 0, 30, 0, 0, -1, 0, sin(q(1)), cos(q(1)), 0, 0, 0, 0, 0, 1;
-    A3 << cos(q(2)), -sin(q(2)), 0, -30, 0, 0, 1, 0.2515e3, -sin(q(2)), -cos(q(2)), 0, 0, 0, 0, 0, 1;
-    A4 << cos(q(3)), -sin(q(3)), 0, 40.5, 0, 0, -1, 0, sin(q(3)), cos(q(3)), 0, 0, 0, 0, 0, 1;
-    A5 << cos(q(4)), -sin(q(4)), 0, -40.5, 0, 0, 1, 265, -sin(q(4)), -cos(q(4)), 0, 0, 0, 0, 0, 1;
-    A6 << cos(q(5)), -sin(q(5)), 0, 27, 0, 0, -1, 0, sin(q(5)), cos(q(5)), 0, 0, 0, 0, 0, 1;
-    A7 << cos(q(6)), -sin(q(6)), 0, -27, 0, 0, 1, 36, -sin(q(6)), -cos(q(6)), 0, 0, 0, 0, 0, 1;
+
+    Eigen::Matrix4f A1,A2,A3,A4,A5,A6,A7;
+
+//    A1 << cos(q(0)), -sin(q(0)), 0, 0, sin(q(0)), cos(q(0)), 0, 0, 0, 0, 1, 166, 0, 0, 0, 1;
+//    A2 << cos(q(1)), -sin(q(1)), 0, 30, 0, 0, -1, 0, sin(q(1)), cos(q(1)), 0, 0, 0, 0, 0, 1;
+//    A3 << cos(q(2)), -sin(q(2)), 0, -30, 0, 0, 1, 0.2515e3, -sin(q(2)), -cos(q(2)), 0, 0, 0, 0, 0, 1;
+//    A4 << cos(q(3)), -sin(q(3)), 0, 40.5, 0, 0, -1, 0, sin(q(3)), cos(q(3)), 0, 0, 0, 0, 0, 1;
+//    A5 << cos(q(4)), -sin(q(4)), 0, -40.5, 0, 0, 1, 265, -sin(q(4)), -cos(q(4)), 0, 0, 0, 0, 0, 1;
+//    A6 << cos(q(5)), -sin(q(5)), 0, 27, 0, 0, -1, 0, sin(q(5)), cos(q(5)), 0, 0, 0, 0, 0, 1;
+//    A7 << cos(q(6)), -sin(q(6)), 0, -27, 0, 0, 1, 36, -sin(q(6)), -cos(q(6)), 0, 0, 0, 0, 0, 1;
+
+    A1 << cos(q(0)), -sin(q(0)), 0, 0,       sin(q(0)), cos(q(0)), 0, 0,        0, 0, 1, 0,                        0, 0, 0, 1;
+    A2 << cos(q(1)), -sin(q(1)), 0, 30,      0, 0, -1, 0,                       sin(q(1)), cos(q(1)), 0, 100,      0, 0, 0, 1;
+    A3 << cos(q(2)), -sin(q(2)), 0, -30,     0, 0, 1, 172.83,                   -sin(q(2)), -cos(q(2)), 0, 0,      0, 0, 0, 1;
+    A4 << -sin(q(3)), -cos(q(3)), 0, -40.5,  0, 0, -1, 0,                       cos(q(3)), -sin(q(3)), 0, 78.73,   0, 0, 0, 1;
+    A5 << 0, 0, 1, 164.61,                   -cos(q(4)), sin(q(4)), 0, -40.5,   -sin(q(4)), -cos(q(4)), 0, 0,      0, 0, 0, 1;
+    A6 << cos(q(5)), -sin(q(5)), 0, -27,     0, 0, -1, 0,                       sin(q(5)), cos(q(5)), 0, 100.39,   0, 0, 0, 1;
+    A7 << cos(q(6)), -sin(q(6)), 0, 27,      0, 0, 1, 29,                       -sin(q(6)), -cos(q(6)), 0, 0,      0, 0, 0, 1;
+
     Eigen::Matrix4f T1 = A1;
     Eigen::Matrix4f T2 = T1*A2;
     Eigen::Matrix4f T3 = T2*A3;
@@ -400,6 +420,16 @@ Eigen::Matrix4f YumiKinematics::ForwardKinematics(Eigen::VectorXf Q)
     Eigen::Matrix4f T5 = T4*A5;
     Eigen::Matrix4f T6 = T5*A6;
     Eigen::Matrix4f T7 = T6*A7;
+
+//    std::cout << "Partial TFs" << std::endl;
+//    std::cout << "T1\n" << T1 << std::endl;
+//    std::cout << "T2\n" << T2 << std::endl;
+//    std::cout << "T3\n" << T3 << std::endl;
+//    std::cout << "T4\n" << T4 << std::endl;
+//    std::cout << "T5\n" << T5 << std::endl;
+//    std::cout << "T6\n" << T6 << std::endl;
+//    std::cout << "T7\n" << T7 << std::endl;
+
     return T7;
 }
 
