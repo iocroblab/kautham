@@ -848,8 +848,11 @@ namespace Kautham {
             case Kautham::UR5:
                 _ikine = new IvKinUR5(this);
             break;
-            case Kautham::YUMI:
-                _ikine = new IvKinYumi(this);
+            case Kautham::YUMI_RIGHT:
+                _ikine = new IvKinYumi(this,0);
+            break;
+            case Kautham::YUMI_LEFT:
+                _ikine = new IvKinYumi(this,1);
             break;
             case Kautham::NOINVKIN:
                 _ikine = NULL;

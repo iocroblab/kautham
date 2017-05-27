@@ -41,20 +41,31 @@ class YumiKinematics
 {
 public:
     YumiKinematics();
-    std::vector< std::vector<double> > AnalyticalIKSolver(Eigen::Matrix4f Pose, double theta3);
-    std::vector< std::vector<double> > ComputeTheta4(Eigen::Matrix4f Pose, double theta3, int byn);
-    std::vector< std::vector<double> > ComputeTheta2(Eigen::Matrix4f Pose, double theta3, double theta4,int byn);
-    std::vector< std::vector<double> > ComputeTheta1(Eigen::Matrix4f Pose, double theta2, double theta3, double theta4,int byn);
-    std::vector<double>  ComputeRotation(Eigen::Matrix4f Pose, double theta1, double theta2, double theta3, double theta4,int byn);
-    Eigen::MatrixXf  Jacobian(Eigen::VectorXf Q);
-    Eigen::VectorXf NumericalIKSolver(Eigen::Matrix4f desiredPose, Eigen::VectorXf qIni, double threshold, double e);
-    template<typename _Matrix_Type_>  _Matrix_Type_ pseudoInverse(const _Matrix_Type_ &a, double epsilon = std::numeric_limits<double>::epsilon())
+
+    std::vector< std::vector<float> > AnalyticalIKSolver(const Eigen::Matrix4f Pose, const float theta3);
+
+    std::vector< std::vector<float> > ComputeTheta4(const Eigen::Matrix4f Pose, const float theta3, const unsigned int byn);
+
+    std::vector< std::vector<float> > ComputeTheta2(const Eigen::Matrix4f Pose, const float theta3, const float theta4, const unsigned int byn);
+
+    std::vector< std::vector<float> > ComputeTheta1(const Eigen::Matrix4f Pose, const float theta2, const float theta3, const float theta4, const unsigned int byn);
+
+    std::vector<float>  ComputeRotation(const Eigen::Matrix4f Pose, const float theta1, const float theta2, const float theta3, const float theta4, const unsigned int byn);
+
+    Eigen::MatrixXf  Jacobian(const Eigen::VectorXf Q);
+
+    bool NumericalIKSolver(Eigen::Matrix4f desiredPose, Eigen::VectorXf qIni, float threshold, float &max_iterations, Eigen::VectorXf &qResult);
+
+    template<typename _Matrix_Type_>  _Matrix_Type_ pseudoInverse(const _Matrix_Type_ &a, float epsilon = std::numeric_limits<float>::epsilon())
     {
         Eigen::JacobiSVD< _Matrix_Type_ > svd(a ,Eigen::ComputeThinU | Eigen::ComputeThinV);
-        double tolerance = epsilon * std::max(a.cols(), a.rows()) *svd.singularValues().array().abs()(0);
+        float tolerance = epsilon * std::max(a.cols(), a.rows()) *svd.singularValues().array().abs()(0);
         return svd.matrixV() * (svd.singularValues().array().abs() > tolerance).select(svd.singularValues().array().inverse(), 0).matrix().asDiagonal() * svd.matrixU().adjoint();
     }
-    Eigen::Matrix4f ForwardKinematics(Eigen::VectorXf Q);
+
+    Eigen::Matrix4f ForwardKinematics(const Eigen::VectorXf Q);
+
+    void setJointsInLimits(Eigen::VectorXf& q);
 };
 
 #endif

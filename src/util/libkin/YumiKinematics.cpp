@@ -36,11 +36,11 @@
 #include "YumiKinematics.h"
 
 
-std::vector< std::vector<double> > YumiKinematics::AnalyticalIKSolver(Eigen::Matrix4f Pose, double theta3)
+std::vector< std::vector<float> > YumiKinematics::AnalyticalIKSolver(const Eigen::Matrix4f Pose, const float theta3)
 {
-    std::vector< std::vector<double> > SolutionSet1;
-    std::vector< std::vector<double> > SolutionSet2;
-    std::vector< std::vector<double> > Solutions;
+    std::vector< std::vector<float> > SolutionSet1;
+    std::vector< std::vector<float> > SolutionSet2;
+    std::vector< std::vector<float> > Solutions;
     //  std::cout<<"Computing Theta4"<<std::endl;
     SolutionSet1 = ComputeTheta4(Pose, theta3,  0);
     //   std::cout<<"Computing Theta4"<<std::endl;
@@ -56,15 +56,16 @@ std::vector< std::vector<double> > YumiKinematics::AnalyticalIKSolver(Eigen::Mat
     return Solutions;
 }
 
-std::vector< std::vector<double> > YumiKinematics::ComputeTheta4(Eigen::Matrix4f Pose, double theta3, int byn)
+std::vector< std::vector<float> > YumiKinematics::ComputeTheta4(const Eigen::Matrix4f Pose, const float theta3, const unsigned int byn)
 {
-    std::vector< std::vector<double> > SolutionSet1;
-    std::vector< std::vector<double> > SolutionSet2;
-    std::vector< std::vector<double> > Solutions;
-    double theta4;
-    double a=130014.5;
-    double b=-41836.5;
-    double c= Pose(0,3)*Pose(0,3)+Pose(1,3)*Pose(1,3)+(Pose(2,3)-166)*(Pose(2,3)-166)-136757.75;
+    std::vector< std::vector<float> > SolutionSet1;
+    std::vector< std::vector<float> > SolutionSet2;
+    std::vector< std::vector<float> > Solutions;
+    float theta4;
+    float a=130014.5;
+    float b=-41836.5;
+//    float c= Pose(0,3)*Pose(0,3)+Pose(1,3)*Pose(1,3)+(Pose(2,3)-166)*(Pose(2,3)-166)-136757.75;
+    float c= 1000.0*Pose(0,3)*1000.0*Pose(0,3)+1000.0*Pose(1,3)*1000.0*Pose(1,3)+(1000.0*Pose(2,3)-166)*(1000.0*Pose(2,3)-166)-136757.75;    // To mm
     if(byn==0)
     {
         theta4= atan2(c,sqrt(a*a+b*b-c*c))-atan2(a,b);
@@ -101,15 +102,17 @@ std::vector< std::vector<double> > YumiKinematics::ComputeTheta4(Eigen::Matrix4f
 
 }
 
-std::vector< std::vector<double> > YumiKinematics::ComputeTheta2(Eigen::Matrix4f Pose, double theta3, double theta4,int byn)
+std::vector< std::vector<float> > YumiKinematics::ComputeTheta2(const Eigen::Matrix4f Pose, const float theta3, const float theta4, const unsigned int byn)
 {
-    std::vector< std::vector<double> > SolutionSet1;
-    std::vector< std::vector<double> > SolutionSet2;
-    std::vector< std::vector<double> > Solutions;
-    double theta2;
-    double a=251.5+265*cos(theta4)-40.5*sin(theta4);
-    double b=40.5*cos(theta3)-40.5*cos(theta3)*cos(theta4)-265*cos(theta3)*sin(theta4);
-    double c=Pose(2,3)-166;
+    std::vector< std::vector<float> > SolutionSet1;
+    std::vector< std::vector<float> > SolutionSet2;
+    std::vector< std::vector<float> > Solutions;
+    float theta2;
+    float a=251.5+265*cos(theta4)-40.5*sin(theta4);
+    float b=40.5*cos(theta3)-40.5*cos(theta3)*cos(theta4)-265*cos(theta3)*sin(theta4);
+//    float c=Pose(2,3)-166;
+    float c=1000.0*Pose(2,3)-166;  // To mm
+
 
     //  std::cout<<"Computing Theta2 a "<<a<<std::endl;
     //  std::cout<<"Computing Theta2 b "<<b<<std::endl;
@@ -141,18 +144,18 @@ std::vector< std::vector<double> > YumiKinematics::ComputeTheta2(Eigen::Matrix4f
     return Solutions;
 }
 
-std::vector< std::vector<double> > YumiKinematics::ComputeTheta1(Eigen::Matrix4f Pose, double theta2, double theta3, double theta4,int byn)
+std::vector< std::vector<float> > YumiKinematics::ComputeTheta1(const Eigen::Matrix4f Pose, const float theta2, const float theta3, const float theta4, const unsigned int byn)
 {
-    std::vector<double> Solution1;
-    std::vector<double> Solution2;
-    std::vector< std::vector<double> > Solutions;
-    double theta1;
-    double a=40.5*cos(theta2)*cos(theta3)-251.5*sin(theta2)-265*cos(theta4)*sin(theta2)+40.5*sin(theta2)*sin(theta4)-40.5*cos(theta2)*
+    std::vector<float> Solution1;
+    std::vector<float> Solution2;
+    std::vector< std::vector<float> > Solutions;
+    float theta1;
+    float a=40.5*cos(theta2)*cos(theta3)-251.5*sin(theta2)-265*cos(theta4)*sin(theta2)+40.5*sin(theta2)*sin(theta4)-40.5*cos(theta2)*
             cos(theta3)*cos(theta4)-265*cos(theta2)*cos(theta3)*sin(theta4);
-    double b=265*sin(theta3)*sin(theta4)-40.5*sin(theta3)+40.5*sin(theta3)*cos(theta4);
+    float b=265*sin(theta3)*sin(theta4)-40.5*sin(theta3)+40.5*sin(theta3)*cos(theta4);
     //   std::cout<<"value of theta1"<<" /// " <<a<<" /// "<<b<<std::endl;
 
-    double c=Pose(0,3);
+    float c=Pose(0,3)*1000.0;  // In mm
     if(byn==0)
     {
         theta1=atan2(c,sqrt(a*a+b*b-c*c))-atan2(a,b);
@@ -181,12 +184,12 @@ std::vector< std::vector<double> > YumiKinematics::ComputeTheta1(Eigen::Matrix4f
     return Solutions;
 }
 
-std::vector<double>  YumiKinematics::ComputeRotation(Eigen::Matrix4f Pose, double theta1, double theta2, double theta3, double theta4,int byn)
+std::vector<float>  YumiKinematics::ComputeRotation(const Eigen::Matrix4f Pose, const float theta1, const float theta2, const float theta3, const float theta4, const unsigned int byn)
 {
     //  std::cout<<"Entered in Rot function"<<std::endl;
     //  std::cout<<"Theta1 theta2 theta3 "<<theta1<<theta2<<theta3<<theta4<<std::endl;
 
-    std::vector<double> q;
+    std::vector<float> q;
     Eigen::Matrix3f M;
     Eigen::Matrix3f R;
     Eigen::Matrix3f Rpos;
@@ -216,17 +219,17 @@ std::vector<double>  YumiKinematics::ComputeRotation(Eigen::Matrix4f Pose, doubl
     //  std::cout<<M<<std::endl;
     if(byn==0)
     {
-        double theta6 = atan2(sqrt(M(0,2)*M(0,2)+M(2,2)*M(2,2)),M(1,2));
-        double theta7 = atan2(M(2,2)/sin(theta6),-(M(0,2))/sin(theta6));
-        double theta5 = atan2(M(1,1)/sin(theta6),M(1,0)/sin(theta6));
+        float theta6 = atan2(sqrt(M(0,2)*M(0,2)+M(2,2)*M(2,2)),M(1,2));
+        float theta7 = atan2(M(2,2)/sin(theta6),-(M(0,2))/sin(theta6));
+        float theta5 = atan2(M(1,1)/sin(theta6),M(1,0)/sin(theta6));
         q.push_back(theta1); q.push_back(theta2); q.push_back(theta3); q.push_back(theta4);
         q.push_back(theta5); q.push_back(theta6); q.push_back(theta7);
     }
     if(byn==1)
     {
-        double theta6 = atan2(-sqrt(M(2,2)*M(2,2)+M(0,2)*M(0,2)),M(1,2));
-        double theta7 = atan2(M(2,2)/sin(theta6),-(M(0,2))/sin(theta6));
-        double theta5 = atan2(M(1,1)/sin(theta6),M(1,0)/sin(theta6));
+        float theta6 = atan2(-sqrt(M(2,2)*M(2,2)+M(0,2)*M(0,2)),M(1,2));
+        float theta7 = atan2(M(2,2)/sin(theta6),-(M(0,2))/sin(theta6));
+        float theta5 = atan2(M(1,1)/sin(theta6),M(1,0)/sin(theta6));
         //   std::cout<<"Theta6 theta7 theta5 "<<theta6<<theta7<<theta5<<std::endl;
         q.push_back(theta1); q.push_back(theta2); q.push_back(theta3); q.push_back(theta4);
         q.push_back(theta5); q.push_back(theta6); q.push_back(theta7);
@@ -236,10 +239,9 @@ std::vector<double>  YumiKinematics::ComputeRotation(Eigen::Matrix4f Pose, doubl
 
 }
 
-Eigen::MatrixXf YumiKinematics::Jacobian(Eigen::VectorXf Q)
+Eigen::MatrixXf YumiKinematics::Jacobian(const Eigen::VectorXf Q)
 {
-    Eigen::VectorXf q(Q.size());
-    q(0)=Q(0); q(1)=Q(1); q(2)=Q(2); q(3)=Q(3); q(4)=Q(4); q(5)=Q(5); q(6)=Q(6);
+    Eigen::VectorXf q(Q);
 
     Eigen::Matrix4f A1,A2,A3,A4,A5,A6,A7;
 //    A1 << cos(q(0)), -sin(q(0)), 0, 0, sin(q(0)), cos(q(0)), 0, 0, 0, 0, 1, 166, 0, 0, 0, 1;
@@ -265,6 +267,17 @@ Eigen::MatrixXf YumiKinematics::Jacobian(Eigen::VectorXf Q)
     Eigen::Matrix4f T5 = T4*A5;
     Eigen::Matrix4f T6 = T5*A6;
     Eigen::Matrix4f T7 = T6*A7;
+
+    // Set in metres
+    for (unsigned int i=0; i<3; ++i){
+        T1(i,3) /= 1000.0;
+        T2(i,3) /= 1000.0;
+        T3(i,3) /= 1000.0;
+        T4(i,3) /= 1000.0;
+        T5(i,3) /= 1000.0;
+        T6(i,3) /= 1000.0;
+        T7(i,3) /= 1000.0;
+    }
 
     Eigen::Vector3f o1(T1(0,3),T1(1,3),T1(2,3));
     Eigen::Vector3f z1(T1(0,2),T1(1,2),T1(2,2));
@@ -300,7 +313,9 @@ Eigen::MatrixXf YumiKinematics::Jacobian(Eigen::VectorXf Q)
 }
 
 
-Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, Eigen::VectorXf qIni, double threshold, double e)
+bool YumiKinematics::NumericalIKSolver(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf qIni,
+                                       const float threshold, float& max_iterations,
+                                       Eigen::VectorXf& qResult)
 {
     // Initial configuration
     Eigen::VectorXf q(qIni);
@@ -312,11 +327,15 @@ Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, E
           desiredPose(1,0), desiredPose(1,1), desiredPose(1,2),
           desiredPose(2,0), desiredPose(2,1), desiredPose(2,2);
     Eigen::Quaternionf uqd(Rd);
-//    std::cout << "-- > IK Desired Pose:" << std::endl << desiredPose << std::endl;
+    std::cout << "-- > IK Desired Pose:" << std::endl << desiredPose << std::endl;
 
+    float e = 10000000000000000000.0;
+    float past_e = 0;
     unsigned int n_it = 0;
-    while ( (e>=threshold) && (n_it<100) )
+    while ( (e > threshold) && (n_it < max_iterations) && (fabs(past_e - e) > threshold)  )
     {
+        past_e = e;
+
 //        std::cout << "q_ini: " << q.transpose() << std::endl;
 
         Eigen::Matrix4f current_Pose = ForwardKinematics(q);
@@ -345,54 +364,35 @@ Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, E
 
         //  Total
         Eigen::VectorXf error(6);
-        error(0)=errorP(0); error(1)=errorP(1); error(2)=errorP(2);
-        error(3)=errorO(0); error(4)=errorO(1); error(5)=errorO(2);
+        error << errorP(0), errorP(1), errorP(2), errorO(0), errorO(1), errorO(2);
 
-        Eigen::MatrixXf J=Jacobian(q);
-        q = q + 0.2 * pseudoInverse(J) * error;
-//        q = q + 1.2 * pseudoInverse(J,0.001) * error;
+//        q = q + 0.2 * pseudoInverse(Jacobian(q)) * error;
+        q = q + 1.2 * pseudoInverse(Jacobian(q)) * error;
 
 //        std::cout << "q:     " << q.transpose() << std::endl;
-
-        // Saturate joint values
-        // This is real Yumi convention
-        if      ( q(0) < -2.94088 )                 q(0) = -2.94088;
-        else if ( q(0) >  2.94088 )                 q(0) =  2.94088;
-
-        if      ( q(1) < -2.50455 )                 q(1) = -2.50455;
-        else if ( q(1) > 0.759218 )                 q(1) = 0.759218;
-
-        if      ( q(2) < -2.94088 )                 q(2) = -2.94088;
-        else if ( q(2) >  2.94088 )                 q(2) =  2.94088;
-
-        if      ( q(3) < -2.15548 )                 q(3) = -2.15548;
-        else if ( q(3) >  1.39626 )                 q(3) =  1.39626;
-
-        if      ( q(4) < -5.06145 - M_PI/2.0 )      q(4) = -5.06145 - M_PI/2.0;
-        else if ( q(4) >  5.06145 - M_PI/2.0 )      q(4) =  5.06145 - M_PI/2.0;
-
-        if      ( q(5) < -1.53589 )                 q(5) = -1.53589;
-        else if ( q(5) >  2.40855 )                 q(5) =  2.40855;
-
-        if      ( q(6) <  -3.9968 )                 q(6) =  -3.9968;
-        else if ( q(6) >   3.9968 )                 q(6) =   3.9968;
-
+        setJointsInLimits(q);
 //        std::cout << "q_sat: " << q.transpose() << std::endl;
 
         // Error for algorithm convergence
 //        e = (std::sqrt(errorO.squaredNorm())+std::sqrt(errorP.squaredNorm()))/2.0;
-        e = std::sqrt(error.squaredNorm());
+//        e = std::sqrt(error.squaredNorm());
+        // 0.001 m ~= 1º --> 0.001 m ~= 0.01745329444 rad
+        e = ( std::sqrt(errorO.squaredNorm())+17.45329444*std::sqrt(errorP.squaredNorm()) )/2.0;
 
         ++n_it;
         std::cout << n_it << " - yumi ik - e = ( ep, eo ): "
                   << e << " = ( " << std::sqrt(errorP.squaredNorm()) << ", " << std::sqrt(errorO.squaredNorm()) << ")" << std::endl;
     }
-//    std::cout << "-- > IK Final Pose:" << std::endl << this->ForwardKinematics(q) << std::endl;
+    qResult = q;
+    max_iterations = n_it;
 
-    return q;
+    std::cout << "-- > IK Final Pose:" << std::endl << this->ForwardKinematics(qResult) << std::endl;
+
+    if ( e < threshold )    return true;
+    else                    return false;
 }
 
-Eigen::Matrix4f YumiKinematics::ForwardKinematics(Eigen::VectorXf Q)
+Eigen::Matrix4f YumiKinematics::ForwardKinematics(const Eigen::VectorXf Q)
 {
     Eigen::VectorXf q(Q.size());
     q(0)=Q(0); q(1)=Q(1); q(2)=Q(2); q(3)=Q(3); q(4)=Q(4); q(5)=Q(5); q(6)=Q(6);
@@ -432,9 +432,41 @@ Eigen::Matrix4f YumiKinematics::ForwardKinematics(Eigen::VectorXf Q)
 //    std::cout << "T6\n" << T6 << std::endl;
 //    std::cout << "T7\n" << T7 << std::endl;
 
+
+    // Return in metres
+    for (unsigned int i=0; i<3; ++i)    T7(i,3) /= 1000.0;
+
     return T7;
 }
 
+
+void YumiKinematics::setJointsInLimits(Eigen::VectorXf& q){
+
+    if      ( q(0) < -2.94088 )     q(0) = -2.94088;
+    else if ( q(0) >  2.94088 )     q(0) =  2.94088;
+
+    if      ( q(1) < -2.50455 )     q(1) = -2.50455;
+    else if ( q(1) > 0.759218 )     q(1) = 0.759218;
+
+    if      ( q(2) < -2.94088 )     q(2) = -2.94088;
+    else if ( q(2) >  2.94088 )     q(2) =  2.94088;
+
+    if      ( q(3) < -2.15548 )     q(3) = -2.15548;
+    else if ( q(3) >  1.39626 )     q(3) =  1.39626;
+
+//    if      ( q(4) < -5.06145 )     q(4) = -5.06145;
+//    else if ( q(4) >  5.06145 )     q(4) =  5.06145;
+    if      ( q(4) < -5.06145 + M_PI/2.0 )      q(4) = -5.06145 + M_PI/2.0;
+    else if ( q(4) >  5.06145 + M_PI/2.0 )      q(4) =  5.06145 + M_PI/2.0;
+
+    if      ( q(5) < -1.53589 )     q(5) = -1.53589;
+    else if ( q(5) >  2.40855 )     q(5) =  2.40855;
+
+    if      ( q(6) <  -3.9968 )     q(6) =  -3.9968;
+    else if ( q(6) >   3.9968 )     q(6) =   3.9968;
+
+    return;
+}
 
 #endif
 #endif
