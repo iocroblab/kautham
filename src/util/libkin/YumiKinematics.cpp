@@ -250,13 +250,13 @@ Eigen::MatrixXf YumiKinematics::Jacobian(Eigen::VectorXf Q)
 //    A6 << cos(q(5)), -sin(q(5)), 0, 27, 0, 0, -1, 0, sin(q(5)), cos(q(5)), 0, 0, 0, 0, 0, 1;
 //    A7 << cos(q(6)), -sin(q(6)), 0, -27, 0, 0, 1, 36, -sin(q(6)), -cos(q(6)), 0, 0, 0, 0, 0, 1;
 
-    A1 << cos(q(0)), -sin(q(0)), 0, 0,         sin(q(0)), cos(q(0)), 0, 0,          0, 0, 1, 0,                         0, 0, 0, 1;
-    A2 << cos(q(1)), -sin(q(1)), 0, 30,        0, 0, -1, 0,                         sin(q(1)), cos(q(1)), 0, 100,       0, 0, 0, 1;
-    A3 << cos(q(2)), -sin(q(2)), 0, -30,       0, 0, 1, 172.83,                     -sin(q(2)), -cos(q(2)), 0, 0,     0, 0, 0, 1;
-    A4 << -sin(q(3)), -cos(q(3)), 0, -40.5,    0, 0, -1, 0,                        cos(q(3)), -sin(q(3)), 0, 78.73,    0, 0, 0, 1;
-    A5 << 0, 0, 1, 164.61,                     -cos(q(4)), sin(q(4)), 0, -40.5,    -sin(q(4)), -cos(q(4)), 0, 0,       0, 0, 0, 1;
-    A6 << cos(q(5)), -sin(q(5)), 0, -27,     0, 0, -1, 0,                          sin(q(5)), cos(q(5)), 0, 100.39,   0, 0, 0, 1;
-    A7 << cos(q(6)), -sin(q(6)), 0, 27,      0, 0, 1, 29,                          -sin(q(6)), -cos(q(6)), 0, 0,       0, 0, 0, 1;
+    A1 << cos(q(0)), -sin(q(0)), 0, 0,       sin(q(0)), cos(q(0)), 0, 0,        0, 0, 1, 0,                        0, 0, 0, 1;
+    A2 << cos(q(1)), -sin(q(1)), 0, 30,      0, 0, -1, 0,                       sin(q(1)), cos(q(1)), 0, 100,      0, 0, 0, 1;
+    A3 << cos(q(2)), -sin(q(2)), 0, -30,     0, 0, 1, 172.83,                   -sin(q(2)), -cos(q(2)), 0, 0,      0, 0, 0, 1;
+    A4 << -sin(q(3)), -cos(q(3)), 0, -41.88, 0, 0, -1, 0,                       cos(q(3)), -sin(q(3)), 0, 78.73,   0, 0, 0, 1;
+    A5 << 0, 0, 1, 164.61,                   -cos(q(4)), sin(q(4)), 0, -40.5,   -sin(q(4)), -cos(q(4)), 0, 0,      0, 0, 0, 1;
+    A6 << cos(q(5)), -sin(q(5)), 0, -27,     0, 0, -1, 0,                       sin(q(5)), cos(q(5)), 0, 100.39,   0, 0, 0, 1;
+    A7 << cos(q(6)), -sin(q(6)), 0, 27,      0, 0, 1, 29,                       -sin(q(6)), -cos(q(6)), 0, 0,      0, 0, 0, 1;
 
     Eigen::Matrix4f T1 = A1;
     Eigen::Matrix4f T2 = T1*A2;
@@ -295,7 +295,7 @@ Eigen::MatrixXf YumiKinematics::Jacobian(Eigen::VectorXf Q)
     J(2,0) = J1(2); J(2,1) = J2(2); J(2,2) = J3(2); J(2,3) = J4(2); J(2,4) = J5(2); J(2,5) = J6(2); J(2,6) = J7(2);
     J(3,0) = z1(0); J(3,1) = z2(0); J(3,2) = z3(0); J(3,3) = z4(0); J(3,4) = z5(0); J(3,5) = z6(0); J(3,6) = z7(0);
     J(4,0) = z1(1); J(4,1) = z2(1); J(4,2) = z3(1); J(4,3) = z4(1); J(4,4) = z5(1); J(4,5) = z6(1); J(4,6) = z7(1);
-    J(5,0) = z1(2);J (5,1) = z2(2); J(5,2) = z3(2); J(5,3) = z4(2); J(5,4) = z5(2); J(5,5) = z6(2); J(5,6) = z7(2);
+    J(5,0) = z1(2); J(5,1) = z2(2); J(5,2) = z3(2); J(5,3) = z4(2); J(5,4) = z5(2); J(5,5) = z6(2); J(5,6) = z7(2);
     return J;
 }
 
@@ -312,13 +312,15 @@ Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, E
           desiredPose(1,0), desiredPose(1,1), desiredPose(1,2),
           desiredPose(2,0), desiredPose(2,1), desiredPose(2,2);
     Eigen::Quaternionf uqd(Rd);
+//    std::cout << "-- > IK Desired Pose:" << std::endl << desiredPose << std::endl;
 
     unsigned int n_it = 0;
-    while ( (e>=threshold) && (n_it<10) )
+    while ( (e>=threshold) && (n_it<100) )
     {
 //        std::cout << "q_ini: " << q.transpose() << std::endl;
 
         Eigen::Matrix4f current_Pose = ForwardKinematics(q);
+//        std::cout << "-- > IK Current_Pose:" << std::endl << current_Pose << std::endl;
 
         // Current pose
         Eigen::Vector3f pe(current_Pose(0,3), current_Pose(1,3), current_Pose(2,3));
@@ -350,7 +352,7 @@ Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, E
         q = q + 0.2 * pseudoInverse(J) * error;
 //        q = q + 1.2 * pseudoInverse(J,0.001) * error;
 
-        std::cout << "q:     " << q.transpose() << std::endl;
+//        std::cout << "q:     " << q.transpose() << std::endl;
 
         // Saturate joint values
         // This is real Yumi convention
@@ -375,17 +377,17 @@ Eigen::VectorXf YumiKinematics::NumericalIKSolver(Eigen::Matrix4f desiredPose, E
         if      ( q(6) <  -3.9968 )                 q(6) =  -3.9968;
         else if ( q(6) >   3.9968 )                 q(6) =   3.9968;
 
-        std::cout << "q_sat: " << q.transpose() << std::endl;
+//        std::cout << "q_sat: " << q.transpose() << std::endl;
 
         // Error for algorithm convergence
 //        e = (std::sqrt(errorO.squaredNorm())+std::sqrt(errorP.squaredNorm()))/2.0;
         e = std::sqrt(error.squaredNorm());
 
         ++n_it;
-        std::cout << "yumi ik - n_it / e = ( ep, eo ): "
-                  << n_it << " / "
+        std::cout << n_it << " - yumi ik - e = ( ep, eo ): "
                   << e << " = ( " << std::sqrt(errorP.squaredNorm()) << ", " << std::sqrt(errorO.squaredNorm()) << ")" << std::endl;
     }
+//    std::cout << "-- > IK Final Pose:" << std::endl << this->ForwardKinematics(q) << std::endl;
 
     return q;
 }
