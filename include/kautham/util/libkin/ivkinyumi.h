@@ -36,18 +36,20 @@
 
 class IvKinYumi:public Kautham::InverseKinematic{
 public:
-    IvKinYumi(Robot* const rob);
+    IvKinYumi(Robot* const rob, const bool use_left_arm);
     ~IvKinYumi();
-    INVKINECLASS type() {return YUMI;}
-    string       name() {return "YUMI";}
+    INVKINECLASS type() {   return _use_left_arm ? YUMI_LEFT : YUMI_RIGHT;  }
+    string       name() {   return _use_left_arm ? "YUMI LEFT ARM" : "YUMI RIGHT ARM";  }
     bool solve();
     bool setParameters();
     void setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);
+    bool arm_is_right(){    return !_use_left_arm;  }
 private:
     IvKinYumi();
     vector<KthReal> _eulPos;
     double          _redundantJoint;
     double          _result[6];
+    bool            _use_left_arm;
 };
 
 /** @}   end of Doxygen module */
