@@ -377,7 +377,7 @@ bool IvKinYumi::solve(){
 
     {
         // Direct Kinematics --------------------------------------------------------
-        std::cout << "DIRECT KINEMATICS" << std::endl;
+        std::cout << "DIRECT KINEMATICS +++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
 
         Eigen::VectorXf dkConfig(7);
 //        dkConfig << M_PI/6.0, -M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
@@ -429,53 +429,96 @@ bool IvKinYumi::solve(){
 
 
         // Inverse Kinematics --------------------------------------------------------
-        std::cout << "INVERSE KINEMATICS" << std::endl;
+        std::cout << "INVERSE KINEMATICS ++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+        Eigen::VectorXf init_q(7);
+        Eigen::Matrix4f eigIkTestPose(Eigen::Matrix4f::Identity());
+        Eigen::VectorXf test_ikSolution, ikKauthamSolution;
+        mt::Transform* ikPose = new mt::Transform;
+        mt::Transform* ikTestPose = new mt::Transform;
 
-        dkConfig << M_PI/6.0, -M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
+
+        // To right arm reference ---------------------------------------
+        dkConfig << M_PI/6.0, +M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
         // Compute test pose
         for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(dkConfig(i-1));
-        mt::Transform* ikTestPose = new mt::Transform;
         ikTestPose = _robot->getLink(7)->getTransformation();
-        std::cout << "IK Test Pose:" << std::endl;
+        std::cout << "IK RightTest Pose: -------------------------------" << std::endl;
         for (unsigned int i=0; i<3; ++i){
             for (unsigned int j=0; j<3; ++j)    std::cout << ikTestPose->getRotation().getMatrix()[i][j] << "  ";
             std::cout << ikTestPose->getTranslation()[i] << std::endl;
         }
 
-        // To right arm reference
         mt::Transform* ikRightTestPose = new mt::Transform;
-        *ikRightTestPose = dkYumiRightShoulderPose->inverse() * (*dkYumiRightTCPPose);
-
+        *ikRightTestPose = dkYumiRightShoulderPose->inverse() * (*ikTestPose);
+//        std::cout << "IK Test ikRightTestPose:" << std::endl;
+//        for (unsigned int i=0; i<3; ++i){
+//            for (unsigned int j=0; j<3; ++j)    std::cout << ikRightTestPose->getRotation().getMatrix()[i][j] << "  ";
+//            std::cout << ikRightTestPose->getTranslation()[i] << std::endl;
+//        }
 
         // Translate to eigen
-        Eigen::Matrix4f eigIkTestPose(Eigen::Matrix4f::Identity());
+        eigIkTestPose = Eigen::Matrix4f::Identity();
         for (unsigned int i=0; i<3; ++i){
             for (unsigned int j=0; j<3; ++j)    eigIkTestPose(i,j) = ikRightTestPose->getRotation().getMatrix()[i][j];
-            eigIkTestPose(i,3) =  ikRightTestPose->getTranslation()[i];
+            eigIkTestPose(i,3) =  ikRightTestPose->getTranslation()[i]*1000;    // to mm
         }
 
-        Eigen::VectorXf init_q(7);
         init_q << 0.3, 0.5, 0.0, 1.1, 0.0, -0.1, 0.0;
         init_q = dkConfig;
-        init_q(3) = dkConfig(3) - M_PI/2.0;
-        Eigen::VectorXf test_ikSolution(YumiKinSolver->NumericalIKSolver(eigIkTestPose, init_q, 0.01, 10000));
+        init_q(3) = dkConfig(3) + M_PI/2.0;
+        test_ikSolution = YumiKinSolver->NumericalIKSolver(eigIkTestPose, init_q, 0.001, 10000);
 
-        Eigen::VectorXf ikKauthamSolution(test_ikSolution);
+        ikKauthamSolution = test_ikSolution;
         ikKauthamSolution(3) = test_ikSolution(3) - M_PI/2.0;
         for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(ikKauthamSolution(i-1));
-        mt::Transform* ikPose = new mt::Transform;
-        _robot->getLink(7)->getTransformation();
-        std::cout << "IK Pose:" << std::endl;
+        ikPose = _robot->getLink(7)->getTransformation();
+        std::cout << "IK Right Arm Final Pose:" << std::endl;
         for (unsigned int i=0; i<3; ++i){
             for (unsigned int j=0; j<3; ++j)    std::cout << ikPose->getRotation().getMatrix()[i][j] << "  ";
             std::cout << ikPose->getTranslation()[i] << std::endl;
         }
 
 
-//        // To left arm reference
-//        mt::Transform* ikLeftTestPose = new mt::Transform;
-//        ikLeftTestPose = dkYumiLeftShoulderPose->inverse() * (*dkYumiLeftTCPPose);
+        // To left arm reference ---------------------------------------
+        dkConfig << M_PI/6.0, +M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
+        // Compute test pose
+        for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(dkConfig(i-1));
+        ikTestPose = _robot->getLink(7)->getTransformation();
+        std::cout << "IK Left Test Pose: -------------------------------" << std::endl;
+        for (unsigned int i=0; i<3; ++i){
+            for (unsigned int j=0; j<3; ++j)    std::cout << ikTestPose->getRotation().getMatrix()[i][j] << "  ";
+            std::cout << ikTestPose->getTranslation()[i] << std::endl;
+        }
 
+        mt::Transform* ikLeftTestPose = new mt::Transform;
+        *ikLeftTestPose = dkYumiLeftShoulderPose->inverse() * (*ikTestPose);
+//        std::cout << "IK Test ikLeftTestPose:" << std::endl;
+//        for (unsigned int i=0; i<3; ++i){
+//            for (unsigned int j=0; j<3; ++j)    std::cout << ikLeftTestPose->getRotation().getMatrix()[i][j] << "  ";
+//            std::cout << ikLeftTestPose->getTranslation()[i] << std::endl;
+//        }
+
+        // Translate to eigen
+        eigIkTestPose = Eigen::Matrix4f::Identity();
+        for (unsigned int i=0; i<3; ++i){
+            for (unsigned int j=0; j<3; ++j)    eigIkTestPose(i,j) = ikLeftTestPose->getRotation().getMatrix()[i][j];
+            eigIkTestPose(i,3) =  ikLeftTestPose->getTranslation()[i]*1000;    // to mm
+        }
+
+        init_q << 0.3, 0.5, 0.0, 1.1, 0.0, -0.1, 0.0;
+        init_q = dkConfig;
+        init_q(3) = dkConfig(3) + M_PI/2.0;
+        test_ikSolution = YumiKinSolver->NumericalIKSolver(eigIkTestPose, init_q, 0.001, 10000);
+
+        ikKauthamSolution = test_ikSolution;
+        ikKauthamSolution(3) = test_ikSolution(3) - M_PI/2.0;
+        for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(ikKauthamSolution(i-1));
+        ikPose = _robot->getLink(7)->getTransformation();
+        std::cout << "IK Left Arm Final Pose:" << std::endl;
+        for (unsigned int i=0; i<3; ++i){
+            for (unsigned int j=0; j<3; ++j)    std::cout << ikPose->getRotation().getMatrix()[i][j] << "  ";
+            std::cout << ikPose->getTranslation()[i] << std::endl;
+        }
     }
 
 
