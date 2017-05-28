@@ -330,7 +330,9 @@ bool YumiKinematics::NumericalIKSolver(const Eigen::Matrix4f desiredPose, const 
     std::cout << "-- > IK Desired Pose:" << std::endl << desiredPose << std::endl;
 
     // Initial pose
-    std::cout << "-- > IK Initial Pose:" << std::endl << ForwardKinematics(qIni) << std::endl;
+    Eigen::VectorXf qIniPlot(qIni);
+    qIniPlot(3) = qIniPlot(3) + M_PI/2.0;
+    std::cout << "-- > IK Initial Pose:" << std::endl << ForwardKinematics(qIniPlot) << std::endl;
 
     float e = 10000000000000000000.0;
     float past_e = 0;
