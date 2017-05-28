@@ -105,44 +105,30 @@ bool IvKinYumi::solve(){
 
     {
         // Shoulder pose in Yumi Frame
-        mt::Transform* yumiShoulderPose_YumiFrame = new mt::Transform;
+        mt::Transform* shoulder_YumiFrame = new mt::Transform;
         for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(0.0);
-        yumiShoulderPose_YumiFrame = _robot->getLink(1)->getTransformation();
-        plot_pose(yumiShoulderPose_YumiFrame,"yumiShoulderPose_YumiFrame");
-
-        // Yumi arm TCP pose to Gripper Pose TF
-        mt::Transform* yumiArmTCPToGripperTF = new mt::Transform;
-        for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(0.0);
-        *yumiArmTCPToGripperTF = _robot->getLink(7)->getTransformation()->inverse() * _robot->getLastLinkTransform();
-        plot_pose(yumiArmTCPToGripperTF,"yumiArmTCPToGripperTF");
+        shoulder_YumiFrame = _robot->getLink(1)->getTransformation();
+        plot_pose(shoulder_YumiFrame,"yumiShoulderPose_YumiFrame");
 
 
         std::cout << "INVERSE KINEMATICS ++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
 
-        //  Desired gripper pose in Yumi frame
-        mt::Transform* desired_YumiGripperPose_YumiFrame = new mt::Transform;
-        *desired_YumiGripperPose_YumiFrame = _targetTrans;
-        plot_pose(desired_YumiGripperPose_YumiFrame,"desired_YumiGripperPose_YumiFrame");
+        //  Desired TCP pose in Yumi frame
+        mt::Transform desired_TCP_YumiFrame = _targetTrans;
+        plot_pose(&desired_TCP_YumiFrame,"desired_TCP_YumiFrame");
 
         //  TEST
         bool test = true;
         Eigen::VectorXf q_test(7);
         if (test){
             q_test << M_PI/6.0, -M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
-            for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(q_test(i-1));
-            _targetTrans =  _robot->getLastLinkTransform();
+            for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(q_test(i-1));
+            desired_TCP_YumiFrame = *_robot->getLink(7)->getTransformation();
         }
 
-        //  Desired TCP pose in Yumi frame
-        mt::Transform* desired_YumiTCPPose_YumiFrame = new mt::Transform;
-        *desired_YumiTCPPose_YumiFrame = _targetTrans * yumiArmTCPToGripperTF->inverse();
-
-        plot_pose(desired_YumiTCPPose_YumiFrame,"desired_YumiTCPPose_YumiFrame");
-
         // Desired TCP pose in shoulder frame
-        mt::Transform* desired_YumiTCPPose_ShoulderFrame = new mt::Transform;
-        *desired_YumiTCPPose_ShoulderFrame = yumiShoulderPose_YumiFrame->inverse() * (*desired_YumiTCPPose_YumiFrame);
-//        plot_pose(desired_YumiTCPPose_ShoulderFrame,"desired_YumiTCPPose_ShoulderFrame");
+        mt::Transform desired_TCP_ShoulderFrame = shoulder_YumiFrame->inverse() * desired_TCP_YumiFrame;
+//        plot_pose(&desired_TCP_ShoulderFrame,"desired_TCP_ShoulderFrame");
 
 
         // Solve inverse kinematics -------------------------------
@@ -153,24 +139,23 @@ bool IvKinYumi::solve(){
         if (test){
             init_q = q_test;
         }
-        init_q(3) = init_q(3) + M_PI/2.0;
 
         //  Numerical IK
         float max_iterations = 100;
         Eigen::VectorXf ikSolution(7);
-        YumiKinematics* YumiKinSolver;
-        bool ik_solved = YumiKinSolver->NumericalIKSolver(mt_to_Eigen_pose(desired_YumiTCPPose_ShoulderFrame),
+        YumiKinematics* yumiKinSolver;
+        bool ik_solved = yumiKinSolver->NumericalIKSolver(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame),
                                                           init_q, 0.0001, max_iterations,
                                                           ikSolution);
 
-        // Final gripper pose
+        // Final TCP pose
         ikSolution(3) = ikSolution(3) - M_PI/2.0;
         for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(ikSolution(i-1));
-        mt::Transform* ikResult_YumiGripperPose_YumiFrame = new mt::Transform;
-        ikResult_YumiGripperPose_YumiFrame = _robot->getLink(7)->getTransformation();
-        plot_pose(ikResult_YumiGripperPose_YumiFrame,"ikResult_YumiGripperPose_YumiFrame");
+        mt::Transform ikResult_TCP_YumiFrame = *_robot->getLink(7)->getTransformation();
+        plot_pose(&ikResult_TCP_YumiFrame,"ikResult_YumiGripperPose_YumiFrame");
+
         mt::Scalar y, p, r;
-        ikResult_YumiGripperPose_YumiFrame->getRotation().getYpr(y, p, r);
+        ikResult_TCP_YumiFrame.getRotation().getYpr(y, p, r);
         std::cout << "ypr " << y << " " << p << " " << r << std::endl;
 
         // Store the selection solution to kautham
