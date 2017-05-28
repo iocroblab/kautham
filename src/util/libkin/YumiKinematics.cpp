@@ -329,6 +329,9 @@ bool YumiKinematics::NumericalIKSolver(const Eigen::Matrix4f desiredPose, const 
     Eigen::Quaternionf uqd(Rd);
     std::cout << "-- > IK Desired Pose:" << std::endl << desiredPose << std::endl;
 
+    // Initial pose
+    std::cout << "-- > IK Initial Pose:" << std::endl << ForwardKinematics(qIni) << std::endl;
+
     float e = 10000000000000000000.0;
     float past_e = 0;
     unsigned int n_it = 0;
@@ -380,12 +383,14 @@ bool YumiKinematics::NumericalIKSolver(const Eigen::Matrix4f desiredPose, const 
         e = ( std::sqrt(errorO.squaredNorm())+17.45329444*std::sqrt(errorP.squaredNorm()) )/2.0;
 
         ++n_it;
-        std::cout << n_it << " - yumi ik - e = ( ep, eo ): "
-                  << e << " = ( " << std::sqrt(errorP.squaredNorm()) << ", " << std::sqrt(errorO.squaredNorm()) << ")" << std::endl;
+//        std::cout << n_it << " - yumi ik - e = ( ep, eo ): "
+//                  << e << " = ( " << std::sqrt(errorP.squaredNorm()) << ", " << std::sqrt(errorO.squaredNorm()) << ")" << std::endl;
     }
     qResult = q;
     max_iterations = n_it;
 
+    std::cout << "-- > IK " << ((e < threshold) ? "" : "NOT ") << "SOLVED in " << n_it << " iterations"
+              << " : e = " << e << ((e < threshold) ? " < " : " > ") << threshold << std::endl;
     std::cout << "-- > IK Final Pose:" << std::endl << this->ForwardKinematics(qResult) << std::endl;
 
     if ( e < threshold )    return true;
