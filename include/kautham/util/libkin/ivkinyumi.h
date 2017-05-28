@@ -43,7 +43,7 @@ public:
     bool solve();
     bool setParameters();
     void setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);
-    bool arm_is_right(){    return !_use_left_arm;  }
+    bool arm_is_left(){    return _use_left_arm;  }
 private:
     IvKinYumi();
     vector<KthReal> _eulPos;

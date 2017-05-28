@@ -54,7 +54,7 @@ public:
 
     Eigen::MatrixXf  Jacobian(const Eigen::VectorXf Q);
 
-    bool NumericalIKSolver(Eigen::Matrix4f desiredPose, Eigen::VectorXf qIni, float threshold, float &max_iterations, Eigen::VectorXf &qResult);
+    bool NumericalIKSolver(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf qIni, const float threshold, float &max_iterations, Eigen::VectorXf &qResult);
 
     template<typename _Matrix_Type_>  _Matrix_Type_ pseudoInverse(const _Matrix_Type_ &a, float epsilon = std::numeric_limits<float>::epsilon())
     {
