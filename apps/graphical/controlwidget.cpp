@@ -221,12 +221,23 @@ namespace Kautham {
     void ControlWidget::updateControls(){
 
 
-//        std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::endl;
-        Link* tmp_link_7 = prob->wSpace()->getRobot(0)->getLink(7);
+//        //  Auxiliar lambda function for pose ploting
+//        auto plot_pose = [](const mt::Transform* pose, const char* pose_name) {
+//            std::cout << "-- " << pose_name << " ------------------------" << std::endl;
+//            for (unsigned int i=0; i<3; ++i){
+//                for (unsigned int j=0; j<3; ++j)    std::cout << std::setw(12) << pose->getRotation().getMatrix()[i][j] << "  ";
+//                std::cout << "     " << std::setw(12) << pose->getTranslation()[i] << std::endl;
+//            }
+//        };
 
-        Eigen::VectorXf q(7);
-        for (unsigned int i=1; i<8; ++i)    q(i-1) = prob->wSpace()->getRobot(0)->getLink(i)->getValue();
-        std::cout << "AAAAAAA q = " << q.transpose() << std::endl;
+////        std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::endl;
+//        Link* tmp_link_7 = prob->wSpace()->getRobot(0)->getLink(7);
+//        plot_pose(&prob->wSpace()->getRobot(0)->getLastLinkTransform(), "Right arm TCP tf");
+//        plot_pose(&prob->wSpace()->getRobot(1)->getLastLinkTransform(), "Left arm TCP tf");
+
+//        Eigen::VectorXf q(7);
+//        for (unsigned int i=1; i<8; ++i)    q(i-1) = prob->wSpace()->getRobot(0)->getLink(i)->getValue();
+//        std::cout << "updateControls q = " << q.transpose() << std::endl;
 
 
 

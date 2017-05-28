@@ -72,6 +72,7 @@ bool IvKinYumi::solve(){
         }
     };
 
+    //  Auxiliar lambda function to convert pose from mt to eigen
     auto mt_to_Eigen_pose = [](const mt::Transform* pose) {
         Eigen::Matrix4f eigenPose;
         for (unsigned int i=0; i<3; ++i){
@@ -102,10 +103,6 @@ bool IvKinYumi::solve(){
     std::cout << "Redundat joint = " << redundantJoint << std::endl;
 
 
-    // Declare solver
-    YumiKinematics* YumiKinSolver;
-
-
     {
         // Shoulder pose in Yumi Frame
         mt::Transform* yumiShoulderPose_YumiFrame = new mt::Transform;
@@ -120,42 +117,48 @@ bool IvKinYumi::solve(){
         plot_pose(yumiArmTCPToGripperTF,"yumiArmTCPToGripperTF");
 
 
-        // Inverse Kinematics --------------------------------------------------------
         std::cout << "INVERSE KINEMATICS ++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-
-        // Desired pose --------------------------------------------------------------
 
         //  Desired gripper pose in Yumi frame
         mt::Transform* desired_YumiGripperPose_YumiFrame = new mt::Transform;
         *desired_YumiGripperPose_YumiFrame = _targetTrans;
         plot_pose(desired_YumiGripperPose_YumiFrame,"desired_YumiGripperPose_YumiFrame");
 
+        //  TEST
+        bool test = true;
+        Eigen::VectorXf q_test(7);
+        if (test){
+            q_test << M_PI/6.0, -M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
+            for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(q_test(i-1));
+            _targetTrans =  _robot->getLastLinkTransform();
+        }
+
         //  Desired TCP pose in Yumi frame
         mt::Transform* desired_YumiTCPPose_YumiFrame = new mt::Transform;
         *desired_YumiTCPPose_YumiFrame = _targetTrans * yumiArmTCPToGripperTF->inverse();
-
-        //  TEST
-        Eigen::VectorXf q_test(7);
-        q_test << M_PI/6.0, -M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
-        for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(q_test(i-1));
-        desired_YumiTCPPose_YumiFrame = _robot->getLink(7)->getTransformation();
 
         plot_pose(desired_YumiTCPPose_YumiFrame,"desired_YumiTCPPose_YumiFrame");
 
         // Desired TCP pose in shoulder frame
         mt::Transform* desired_YumiTCPPose_ShoulderFrame = new mt::Transform;
         *desired_YumiTCPPose_ShoulderFrame = yumiShoulderPose_YumiFrame->inverse() * (*desired_YumiTCPPose_YumiFrame);
-        std::cout << "IK Test desiredYumiTCPPose_ShoulderFrame:" << std::endl;
 //        plot_pose(desired_YumiTCPPose_ShoulderFrame,"desired_YumiTCPPose_ShoulderFrame");
 
 
         // Solve inverse kinematics -------------------------------
+
         //  Generate an initial configuration
         Eigen::VectorXf init_q(7);
-        init_q << 0.0, 0.0, 0.0, -M_PI/2, 0.0, -0.0, 0.0;
-        //  Use numerical method
+        init_q << 0.0, 0.0, 0.0, M_PI/2, 0.0, -0.0, 0.0;
+        if (test){
+            init_q = q_test;
+        }
+        init_q(3) = init_q(3) + M_PI/2.0;
+
+        //  Numerical IK
         float max_iterations = 100;
         Eigen::VectorXf ikSolution(7);
+        YumiKinematics* YumiKinSolver;
         bool ik_solved = YumiKinSolver->NumericalIKSolver(mt_to_Eigen_pose(desired_YumiTCPPose_ShoulderFrame),
                                                           init_q, 0.0001, max_iterations,
                                                           ikSolution);
@@ -171,17 +174,17 @@ bool IvKinYumi::solve(){
         std::cout << "ypr " << y << " " << p << " " << r << std::endl;
 
         // Store the selection solution to kautham
-        std::vector<KthReal> tmpik(7);
-        tmpik.at(0) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
-        tmpik.at(1) = ( ikSolution(1) - (-2.50455) )/( 0.759218 - (-2.50455) );
-        tmpik.at(2) = ( ikSolution(2) - (-2.94088) )/(  2.94088 - (-2.94088) );
-        tmpik.at(3) = ( ikSolution(3) - (-2.15548) )/(  1.39626 - (-2.15548) );
-        tmpik.at(4) = ( ikSolution(4) - (-5.06145) )/(  5.06145 - (-5.06145) );
-        tmpik.at(5) = ( ikSolution(5) - (-1.53589) )/(  2.40855 - (-1.53589) );
-        tmpik.at(6) = ( ikSolution(6) -  (-3.9968) )/(   3.9968 -  (-3.9968) );
-        //      for (unsigned int i = 0; i<7; ++i)  tmpik.at(i) = test_ikSolution[i];
-        for (unsigned int i = 0; i<7; ++i)  tmpik.at(i) = 0.5;
-        _robConf.setRn(tmpik);
+        std::vector<KthReal> qn(7);
+        qn.at(0) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
+        qn.at(1) = ( ikSolution(1) - (-2.50455) )/( 0.759218 - (-2.50455) );
+        qn.at(2) = ( ikSolution(2) - (-2.94088) )/(  2.94088 - (-2.94088) );
+        qn.at(3) = ( ikSolution(3) - (-2.15548) )/(  1.39626 - (-2.15548) );
+        qn.at(4) = ( ikSolution(4) - (-5.06145) )/(  5.06145 - (-5.06145) );
+        qn.at(5) = ( ikSolution(5) - (-1.53589) )/(  2.40855 - (-1.53589) );
+        qn.at(6) = ( ikSolution(6) -  (-3.9968) )/(   3.9968 -  (-3.9968) );
+        for (unsigned int i = 0; i<7; ++i)  qn.at(i) = ikSolution[i];
+//        for (unsigned int i = 0; i<7; ++i)  tmpik.at(i) = 0.5;
+        _robConf.setRn(qn);
 
         return ik_solved;
     }
@@ -196,6 +199,9 @@ bool IvKinYumi::solve(){
 
 
 
+
+    // Declare solver
+    YumiKinematics* YumiKinSolver;
 
     // Body to shoulder transformations
 
