@@ -66,6 +66,8 @@ public:
     Eigen::Matrix4f ForwardKinematics(const Eigen::VectorXf Q);
 
     void setJointsInLimits(Eigen::VectorXf& q);
+
+    bool solveIK(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf q_initial_num_IK, Eigen::VectorXf& qResult);
 };
 
 #endif

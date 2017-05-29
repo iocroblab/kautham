@@ -319,6 +319,8 @@ bool YumiKinematics::NumericalIKSolver(const Eigen::Matrix4f desiredPose, const 
 {
     // Initial configuration
     Eigen::VectorXf q(qIni);
+    std::cout << " IK Num --> IK Initial q: " << q.transpose() << std::endl;
+    std::cout << " IK Num --> IK Initial Pose:" << std::endl << ForwardKinematics(q) << std::endl;
 
     // Desired pose
     Eigen::Vector3f pd(desiredPose(0,3), desiredPose(1,3), desiredPose(2,3));
@@ -327,31 +329,33 @@ bool YumiKinematics::NumericalIKSolver(const Eigen::Matrix4f desiredPose, const 
           desiredPose(1,0), desiredPose(1,1), desiredPose(1,2),
           desiredPose(2,0), desiredPose(2,1), desiredPose(2,2);
     Eigen::Quaternionf uqd(Rd);
-    std::cout << "-- > IK Desired Pose:" << std::endl << desiredPose << std::endl;
+    std::cout << " IK Num --> IK Desired Pose:" << std::endl << desiredPose << std::endl;
 
-    // Initial pose
-    Eigen::VectorXf qIniPlot(qIni);
-    qIniPlot(3) = qIniPlot(3) + M_PI/2.0;
-    std::cout << "-- > IK Initial Pose:" << std::endl << ForwardKinematics(qIniPlot) << std::endl;
-
+    Eigen::VectorXf past_q(q);
+    bool q_changed = true;
     float e = 10000000000000000000.0;
     float past_e = 0;
     unsigned int n_it = 0;
-    while ( (e > threshold) && (n_it < max_iterations) && (fabs(past_e - e) > threshold)  )
-    {
+    while ( (e > threshold) &&
+            (n_it < max_iterations) &&
+//            (fabs(past_e - e) > threshold) &&
+            q_changed
+          ){
+        // Save past values
+        past_q = q;
         past_e = e;
 
-//        std::cout << "q_ini: " << q.transpose() << std::endl;
+//        std::cout << "   IK Num --> Loop: q_ini: " << q.transpose() << std::endl;
 
-        Eigen::Matrix4f current_Pose = ForwardKinematics(q);
-//        std::cout << "-- > IK Current_Pose:" << std::endl << current_Pose << std::endl;
+        Eigen::Matrix4f currentPose = ForwardKinematics(q);
+//        std::cout << "   IK Num --> Loop: IK Current_Pose:" << std::endl << current_Pose << std::endl;
 
         // Current pose
-        Eigen::Vector3f pe(current_Pose(0,3), current_Pose(1,3), current_Pose(2,3));
+        Eigen::Vector3f pe(currentPose(0,3), currentPose(1,3), currentPose(2,3));
         Eigen::Matrix3f Re;
-        Re << current_Pose(0,0), current_Pose(0,1), current_Pose(0,2),
-              current_Pose(1,0), current_Pose(1,1), current_Pose(1,2),
-              current_Pose(2,0), current_Pose(2,1), current_Pose(2,2);
+        Re << currentPose(0,0), currentPose(0,1), currentPose(0,2),
+              currentPose(1,0), currentPose(1,1), currentPose(1,2),
+              currentPose(2,0), currentPose(2,1), currentPose(2,2);
         Eigen::Quaternionf uqe(Re);
 
         // Error
@@ -371,29 +375,37 @@ bool YumiKinematics::NumericalIKSolver(const Eigen::Matrix4f desiredPose, const 
         Eigen::VectorXf error(6);
         error << errorP(0), errorP(1), errorP(2), errorO(0), errorO(1), errorO(2);
 
-//        q = q + 0.2 * pseudoInverse(Jacobian(q)) * error;
-        q = q + 1.2 * pseudoInverse(Jacobian(q)) * error;
+        q = q + 0.6 * pseudoInverse(Jacobian(q)) * error;
+//        q = q + 1.2 * pseudoInverse(Jacobian(q)) * error;
 
-//        std::cout << "q:     " << q.transpose() << std::endl;
-        setJointsInLimits(q);
-//        std::cout << "q_sat: " << q.transpose() << std::endl;
+//        std::cout << "   IK Num --> Loop: q:     " << q.transpose() << std::endl;
+//        setJointsInLimits(q);
+//        std::cout << "   IK Num --> Loop: q_sat: " << q.transpose() << std::endl;
 
         // Error for algorithm convergence
 //        e = (std::sqrt(errorO.squaredNorm())+std::sqrt(errorP.squaredNorm()))/2.0;
 //        e = std::sqrt(error.squaredNorm());
-        // 0.001 m ~= 1º --> 0.001 m ~= 0.01745329444 rad
-        e = ( std::sqrt(errorO.squaredNorm())+17.45329444*std::sqrt(errorP.squaredNorm()) )/2.0;
+        e = ( (1.0/17.45329444)*std::sqrt(errorO.squaredNorm()) + std::sqrt(errorP.squaredNorm()) )/2.0;    // 0.001 m ~= 1º --> 0.001 m ~= 0.01745329444 rad
+
+//        std::cout << n_it << "   IK Num --> Loop: e = " << e << std::endl;
+
+        // Check if q changed
+        q_changed = false;
+        for (unsigned int i=0; !q_changed && (i<7); ++i){
+            if ( fabs(q(i) - past_q(i)) > 0.0001 )    q_changed = true;
+        }
 
         ++n_it;
-//        std::cout << n_it << " - yumi ik - e = ( ep, eo ): "
-//                  << e << " = ( " << std::sqrt(errorP.squaredNorm()) << ", " << std::sqrt(errorO.squaredNorm()) << ")" << std::endl;
     }
-    qResult = q;
     max_iterations = n_it;
 
-    std::cout << "-- > IK " << ((e < threshold) ? "" : "NOT ") << "SOLVED in " << n_it << " iterations"
+    std::cout << " IK Num --> IK numerical " << ((e < threshold) ? "" : "NOT ") << "SOLVED in " << n_it << " iterations"
               << " : e = " << e << ((e < threshold) ? " < " : " > ") << threshold << std::endl;
-    std::cout << "-- > IK Final Pose:" << std::endl << this->ForwardKinematics(qResult) << std::endl;
+
+    std::cout << " IK Num --> IK Final q: " << q.transpose() << std::endl;
+    std::cout << " IK Num --> IK Final Pose:" << std::endl << ForwardKinematics(q) << std::endl;
+
+    qResult = q;
 
     if ( e < threshold )    return true;
     else                    return false;
@@ -474,6 +486,30 @@ void YumiKinematics::setJointsInLimits(Eigen::VectorXf& q){
 
     return;
 }
+
+
+bool YumiKinematics::solveIK(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf q_initial_num_IK, Eigen::VectorXf& qResult)
+{
+    Eigen::VectorXf q_initial(q_initial_num_IK);
+    q_initial(3) = q_initial(3) + M_PI/2.0;
+
+    bool ik_solved = false;
+    if ( q_initial_num_IK.size() == 7 ){
+        // Use numerical IK
+        float max_iterations = 1000;
+        ik_solved = this->NumericalIKSolver(desiredPose, q_initial, 0.001, max_iterations, qResult);
+    }
+//    else {
+//        // Use analytical and numerical IK
+
+
+//    }
+
+    qResult(3) = qResult(3) - M_PI/2.0;
+
+    return ik_solved;
+}
+
 
 #endif
 #endif
