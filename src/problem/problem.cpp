@@ -226,9 +226,6 @@ namespace Kautham {
         else if (name == "omplKPIECE")
             _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
-        else if (name == "omplcRRT")
-            _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
-
         else if (name == "omplcRRTf16")
             _planner = new omplcplanner::omplcRRTf16Planner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
