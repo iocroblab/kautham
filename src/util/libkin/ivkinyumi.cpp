@@ -74,7 +74,7 @@ bool IvKinYumi::solve(){
 
     //  Auxiliar lambda function to convert pose from mt to eigen
     auto mt_to_Eigen_pose = [](const mt::Transform* pose) {
-        Eigen::Matrix4f eigenPose;
+        Eigen::Matrix4f eigenPose(Eigen::Matrix4f::Identity());
         for (unsigned int i=0; i<3; ++i){
             for (unsigned int j=0; j<3; ++j)    eigenPose(i,j) = pose->getRotation().getMatrix()[i][j];
             eigenPose(i,3) =  pose->getTranslation()[i];
@@ -106,29 +106,45 @@ bool IvKinYumi::solve(){
     {
         // Shoulder pose in Yumi Frame
         mt::Transform* shoulder_YumiFrame = new mt::Transform;
-        for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(0.0);
-        shoulder_YumiFrame = _robot->getLink(1)->getTransformation();
-        plot_pose(shoulder_YumiFrame,"yumiShoulderPose_YumiFrame");
+        if (arm_is_left()){
+            shoulder_YumiFrame->setRotation(mt::Rotation(2.3180,-0.5716,0.9781));
+            shoulder_YumiFrame->setTranslation(mt::Point3(0.05355, 0.0725, 0.41492));
+        }
+        else{
+            shoulder_YumiFrame->setRotation(mt::Rotation(-2.3180,-0.5682,-0.9781));
+            shoulder_YumiFrame->setTranslation(mt::Point3(0.05355, -0.0725, 0.41492));
+        }
+//        plot_pose(shoulder_YumiFrame,"yumiShoulderPose_YumiFrame");
 
 
         std::cout << "INVERSE KINEMATICS ++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
 
         //  Desired TCP pose in Yumi frame
         mt::Transform desired_TCP_YumiFrame = _targetTrans;
-        plot_pose(&desired_TCP_YumiFrame,"desired_TCP_YumiFrame");
-
         //  TEST
         bool test = true;
+//        test = false;
         Eigen::VectorXf q_test(7);
         if (test){
-            q_test << M_PI/6.0, -M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
+            q_test << M_PI/6.0, -M_PI/6.0, M_PI/4.0, -M_PI/5.0, 0.0, M_PI/6.0, -M_PI/3.0;
+            std::cout << " q_test: " << q_test.transpose() << std::endl;
+
             for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(q_test(i-1));
             desired_TCP_YumiFrame = *_robot->getLink(7)->getTransformation();
+
+            // Test DK
+            YumiKinematics* yumiKinSolver;
+            Eigen::VectorXf q_dkTest(q_test);
+            q_dkTest(3) = q_dkTest(3) + M_PI/2.0;
+            Eigen::Matrix4f dk_test_pose(mt_to_Eigen_pose(shoulder_YumiFrame) * yumiKinSolver->ForwardKinematics(q_dkTest));
+            std::cout << "dk_test_pose desired_TCP_YumiFrame" << std::endl << dk_test_pose << std::endl;
+            // Test DK
         }
+        plot_pose(&desired_TCP_YumiFrame,"desired_TCP_YumiFrame");
 
         // Desired TCP pose in shoulder frame
         mt::Transform desired_TCP_ShoulderFrame = shoulder_YumiFrame->inverse() * desired_TCP_YumiFrame;
-//        plot_pose(&desired_TCP_ShoulderFrame,"desired_TCP_ShoulderFrame");
+        plot_pose(&desired_TCP_ShoulderFrame,"desired_TCP_ShoulderFrame");
 
 
         // Solve inverse kinematics -------------------------------
@@ -138,25 +154,32 @@ bool IvKinYumi::solve(){
         init_q << 0.0, 0.0, 0.0, M_PI/2, 0.0, -0.0, 0.0;
         if (test){
             init_q = q_test;
+            init_q(2) = init_q(2) + M_PI/8;
+            std::cout << " init_q: " << init_q.transpose() << std::endl;
         }
 
-        //  Numerical IK
-        float max_iterations = 100;
         Eigen::VectorXf ikSolution(7);
         YumiKinematics* yumiKinSolver;
-        bool ik_solved = yumiKinSolver->NumericalIKSolver(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame),
-                                                          init_q, 0.0001, max_iterations,
-                                                          ikSolution);
+        bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, ikSolution);
 
         // Final TCP pose
-        ikSolution(3) = ikSolution(3) - M_PI/2.0;
         for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(ikSolution(i-1));
         mt::Transform ikResult_TCP_YumiFrame = *_robot->getLink(7)->getTransformation();
-        plot_pose(&ikResult_TCP_YumiFrame,"ikResult_YumiGripperPose_YumiFrame");
+        plot_pose(&ikResult_TCP_YumiFrame,"ikResult_TCP_YumiFrame");
 
         mt::Scalar y, p, r;
         ikResult_TCP_YumiFrame.getRotation().getYpr(y, p, r);
         std::cout << "ypr " << y << " " << p << " " << r << std::endl;
+
+        // TEST
+        // Shoulder pose in Yumi Frame
+        Eigen::VectorXf ikTestConfig(ikSolution);
+        ikTestConfig(3) = ikTestConfig(3) + M_PI/2.0;
+        Eigen::Matrix4f ikResult_TCP_YumiFrame_2(mt_to_Eigen_pose(shoulder_YumiFrame) * yumiKinSolver->ForwardKinematics(ikTestConfig));
+//        std::cout << "yumiKinSolver->ForwardKinematics(ikTestConfig)" << std::endl << yumiKinSolver->ForwardKinematics(ikTestConfig) << std::endl;
+        std::cout << "ikResult_TCP_YumiFrame_2" << std::endl << ikResult_TCP_YumiFrame_2 << std::endl;
+        // TEST
+
 
         // Store the selection solution to kautham
         std::vector<KthReal> qn(7);
