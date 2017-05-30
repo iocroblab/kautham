@@ -27,6 +27,7 @@
 #if !defined(_YumiKinematics_H)
 #define _YumiKinematics_H
 
+#include <stdlib.h>     /* srand, rand */
 #include <istream>
 #include <vector>
 
@@ -40,7 +41,10 @@
 class YumiKinematics
 {
 public:
-    YumiKinematics();
+    YumiKinematics(){
+        /* initialize random seed: */
+        srand (time(NULL));
+    }
 
     std::vector< std::vector<float> > AnalyticalIKSolver(const Eigen::Matrix4f Pose, const float theta3);
 
@@ -67,7 +71,11 @@ public:
 
     void setJointsInLimits(Eigen::VectorXf& q);
 
-    bool solveIK(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf q_initial_num_IK, Eigen::VectorXf& qResult);
+    bool solveIK(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf q_initial_num_IK, const unsigned int alg_type, Eigen::VectorXf& qResult);
+
+    Eigen::VectorXf generateRandomConfiguration();
+
+    bool configuration_is_valid(const Eigen::VectorXf q);
 };
 
 #endif
