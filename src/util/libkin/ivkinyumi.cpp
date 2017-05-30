@@ -83,19 +83,18 @@ bool IvKinYumi::solve(){
     };
 
 
-
     std::cout << "Yumi IK ----------------------------------------------------------" << std::endl;
 
     std::cout << "Yumi arm is " << (this->arm_is_left() ? "left" : "right") << std::endl;
 
-    std::cout << "_target: " << _target.at(0) << " " << _target.at(1) << " " << _target.at(2) << " "
+    std::cout << "_target (pos / quat): " << _target.at(0) << " " << _target.at(1) << " " << _target.at(2) << " "
               << _target.at(3) << " " << _target.at(4) << " " << _target.at(5) << " "
               << _target.at(6) << " " << _target.at(7) << " " << std::endl;
 
     // Set target pose
     _targetTrans.setTranslation(mt::Point3(_target.at(0), _target.at(1), _target.at(2)));
     _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
-    plot_pose(&_targetTrans,"_targetTrans");
+    plot_pose(&_targetTrans,"_target TF");
 
     // Set redundant joint
     double redundantJoint = 0.0;
@@ -103,78 +102,75 @@ bool IvKinYumi::solve(){
     std::cout << "Redundat joint = " << redundantJoint << std::endl;
 
 
-    {
-        // Shoulder pose in Yumi Frame
-        mt::Transform* shoulder_YumiFrame = new mt::Transform;
-        if (arm_is_left()){
-            shoulder_YumiFrame->setRotation(mt::Rotation(2.3180,-0.5716,0.9781));
-            shoulder_YumiFrame->setTranslation(mt::Point3(0.05355, 0.0725, 0.41492));
-        }
-        else{
-            shoulder_YumiFrame->setRotation(mt::Rotation(-2.3180,-0.5682,-0.9781));
-            shoulder_YumiFrame->setTranslation(mt::Point3(0.05355, -0.0725, 0.41492));
-        }
+    // Shoulder pose in Yumi Frame
+    mt::Transform* shoulder_YumiFrame = new mt::Transform;
+    if (arm_is_left()){
+        shoulder_YumiFrame->setRotation(mt::Rotation(2.3180,-0.5716,0.9781));
+        shoulder_YumiFrame->setTranslation(mt::Point3(0.05355, 0.0725, 0.41492));
+    }
+    else{
+        shoulder_YumiFrame->setRotation(mt::Rotation(-2.3180,-0.5682,-0.9781));
+        shoulder_YumiFrame->setTranslation(mt::Point3(0.05355, -0.0725, 0.41492));
+    }
 //        plot_pose(shoulder_YumiFrame,"yumiShoulderPose_YumiFrame");
 
 
-        std::cout << "INVERSE KINEMATICS ++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+    std::cout << "INVERSE KINEMATICS ++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
 
-        //  Desired TCP pose in Yumi frame
-        mt::Transform desired_TCP_YumiFrame = _targetTrans;
-        //  TEST
-        bool test = true;
-        test = false;
-        Eigen::VectorXf q_test(7);
-        if (test){
-            q_test << M_PI/6.0, -M_PI/6.0, M_PI/4.0, -M_PI/5.0, 0.0, M_PI/6.0, -M_PI/3.0;
-            std::cout << " q_test: " << q_test.transpose() << std::endl;
+    //  Desired TCP pose in Yumi frame
+    mt::Transform desired_TCP_YumiFrame = _targetTrans;
+    //  TEST
+    bool test = true;
+    test = false;
+    Eigen::VectorXf q_test(7);
+    if (test){
+        q_test << M_PI/6.0, -M_PI/6.0, M_PI/4.0, -M_PI/5.0, 0.0, M_PI/6.0, -M_PI/3.0;
+        std::cout << " q_test: " << q_test.transpose() << std::endl;
 
-            for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(q_test(i-1));
-            desired_TCP_YumiFrame = *_robot->getLink(7)->getTransformation();
+        for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(q_test(i-1));
+        desired_TCP_YumiFrame = *_robot->getLink(7)->getTransformation();
 
-            // Test DK
-            YumiKinematics* yumiKinSolver;
-            Eigen::VectorXf q_dkTest(q_test);
-            q_dkTest(3) = q_dkTest(3) + M_PI/2.0;
-            Eigen::Matrix4f dk_test_pose(mt_to_Eigen_pose(shoulder_YumiFrame) * yumiKinSolver->ForwardKinematics(q_dkTest));
-            std::cout << "dk_test_pose desired_TCP_YumiFrame" << std::endl << dk_test_pose << std::endl;
-            // Test DK
-        }
+        // Test DK
+        YumiKinematics* yumiKinSolver;
+        Eigen::VectorXf q_dkTest(q_test);
+        Eigen::Matrix4f dk_test_pose(mt_to_Eigen_pose(shoulder_YumiFrame) * yumiKinSolver->ForwardKinematics(q_dkTest));
+        std::cout << "dk_test_pose desired_TCP_YumiFrame" << std::endl << dk_test_pose << std::endl;
+        // Test DK
+    }
 //        plot_pose(&desired_TCP_YumiFrame,"desired_TCP_YumiFrame");
 
-        // Desired TCP pose in shoulder frame
-        mt::Transform desired_TCP_ShoulderFrame = shoulder_YumiFrame->inverse() * desired_TCP_YumiFrame;
+    // Desired TCP pose in shoulder frame
+    mt::Transform desired_TCP_ShoulderFrame = shoulder_YumiFrame->inverse() * desired_TCP_YumiFrame;
 //        plot_pose(&desired_TCP_ShoulderFrame,"desired_TCP_ShoulderFrame");
 
 
-        // Solve inverse kinematics -------------------------------
+    // Solve inverse kinematics -------------------------------
 
-        //  Generate an initial configuration
-        Eigen::VectorXf init_q(7);
-        init_q << 0.0, 0.0, 0.0, M_PI/2, 0.0, -0.0, 0.0;
-        if (test){
-            init_q = q_test;
-            init_q(2) = init_q(2) + M_PI/8;
-            std::cout << " init_q: " << init_q.transpose() << std::endl;
-        }
+    //  Generate an initial configuration
+    Eigen::VectorXf init_q(7);
+    init_q << 0.0, 0.0, 0.0, M_PI/2, 0.0, -0.0, 0.0;
+    if (test){
+        init_q = q_test;
+        init_q(2) = init_q(2) + M_PI/8;
+        std::cout << " init_q: " << init_q.transpose() << std::endl;
+    }
 
-        Eigen::VectorXf ikSolution(7);
-        YumiKinematics* yumiKinSolver;
-        bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 1, ikSolution);
+    Eigen::VectorXf ikSolution(7);
+    YumiKinematics* yumiKinSolver;
+    bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 2, redundantJoint, ikSolution);
 
-        // Final TCP pose
-        for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(ikSolution(i-1));
-        mt::Transform ikResult_TCP_YumiFrame = *_robot->getLink(7)->getTransformation();
-        plot_pose(&ikResult_TCP_YumiFrame,"ikResult_TCP_YumiFrame");
+    // Final TCP pose
+    for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(ikSolution(i-1));
+    mt::Transform ikResult_TCP_YumiFrame = *_robot->getLink(7)->getTransformation();
+    plot_pose(&ikResult_TCP_YumiFrame,"ikResult_TCP_YumiFrame");
 
-        mt::Scalar y, p, r;
-        ikResult_TCP_YumiFrame.getRotation().getYpr(y, p, r);
-        std::cout << "ypr " << y << " " << p << " " << r << std::endl;
+    mt::Scalar y, p, r;
+    ikResult_TCP_YumiFrame.getRotation().getYpr(y, p, r);
+    std::cout << "ypr " << y << " " << p << " " << r << std::endl;
 
 //        // TEST
 //        // Shoulder pose in Yumi Frame
 //        Eigen::VectorXf ikTestConfig(ikSolution);
-//        ikTestConfig(3) = ikTestConfig(3) + M_PI/2.0;
 //        std::cout << "ikSolution = " << ikSolution.transpose() << std::endl;
 ////        Eigen::Matrix4f ikResult_TCP_YumiFrame_2(mt_to_Eigen_pose(shoulder_YumiFrame) * yumiKinSolver->ForwardKinematics(ikTestConfig));
 //        std::cout << "yumiKinSolver->ForwardKinematics(ikTestConfig)" << std::endl << yumiKinSolver->ForwardKinematics(ikTestConfig) << std::endl;
@@ -182,419 +178,22 @@ bool IvKinYumi::solve(){
 //        // TEST
 
 
-        // Store the selection solution to kautham
-        std::vector<KthReal> qn(7);
-        qn.at(0) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
-        qn.at(1) = ( ikSolution(1) - (-2.50455) )/( 0.759218 - (-2.50455) );
-        qn.at(2) = ( ikSolution(2) - (-2.94088) )/(  2.94088 - (-2.94088) );
-        qn.at(3) = ( ikSolution(3) - (-2.15548) )/(  1.39626 - (-2.15548) );
-        qn.at(4) = ( ikSolution(4) - (-5.06145) )/(  5.06145 - (-5.06145) );
-        qn.at(5) = ( ikSolution(5) - (-1.53589) )/(  2.40855 - (-1.53589) );
-        qn.at(6) = ( ikSolution(6) -  (-3.9968) )/(   3.9968 -  (-3.9968) );
-        for (unsigned int i = 0; i<7; ++i)  qn.at(i) = ikSolution[i];
+    // Store the selection solution to kautham
+    std::vector<KthReal> qn(7);
+    qn.at(0) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
+    qn.at(1) = ( ikSolution(1) - (-2.50455) )/( 0.759218 - (-2.50455) );
+    qn.at(2) = ( ikSolution(2) - (-2.94088) )/(  2.94088 - (-2.94088) );
+    qn.at(3) = ( ikSolution(3) - (-2.15548) )/(  1.39626 - (-2.15548) );
+    qn.at(4) = ( ikSolution(4) - (-5.06145) )/(  5.06145 - (-5.06145) );
+    qn.at(5) = ( ikSolution(5) - (-1.53589) )/(  2.40855 - (-1.53589) );
+    qn.at(6) = ( ikSolution(6) -  (-3.9968) )/(   3.9968 -  (-3.9968) );
+    for (unsigned int i = 0; i<7; ++i)  qn.at(i) = ikSolution[i];
 //        for (unsigned int i = 0; i<7; ++i)  tmpik.at(i) = 0.5;
-        _robConf.setRn(qn);
+    _robConf.setRn(qn);
 
-        return ik_solved;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    // Declare solver
-    YumiKinematics* YumiKinSolver;
-
-    // Body to shoulder transformations
-
-    //  Right Arm
-    mt::Transform* dkYumiRightShoulderPose = new mt::Transform;
-    dkYumiRightShoulderPose->setRotation(mt::Rotation(-2.3180,-0.5682,-0.9781));
-    dkYumiRightShoulderPose->setTranslation(mt::Point3(0.05355, -0.0725, 0.41492));
-
-    mt::Transform* yumiArmTCPToGripperTF = new mt::Transform;
-    *yumiArmTCPToGripperTF = _robot->getLink(7)->getTransformation()->inverse() * _robot->getLastLinkTransform();
-
-    //  Left Arm
-    mt::Transform* dkYumiLeftShoulderPose = new mt::Transform;
-    dkYumiLeftShoulderPose->setRotation(mt::Rotation(2.3180,-0.5716,0.9781));
-    dkYumiLeftShoulderPose->setTranslation(mt::Point3(0.05355, 0.0725, 0.41492));
-
-    *yumiArmTCPToGripperTF = _robot->getLink(7)->getTransformation()->inverse() * _robot->getLastLinkTransform();
-
-
-
-    //  // Direct Kinematics --------------------------------------------------------
-    //  std::cout << "DIRECT KINEMATICS TEST +++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-
-    //  Eigen::VectorXf dkConfig(7);
-    //  //        dkConfig << M_PI/6.0, -M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
-    //  //        dkConfig << 0.0, 0.0, 0.0, -M_PI/2.0, 0.0, 0.0, 0.0;
-    //  dkConfig << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
-    //  std::cout << ">> q = " << dkConfig.transpose() << std::endl;
-    //  for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(dkConfig(i-1));
-    //  Eigen::VectorXf dkYumiConfig;
-    //  Eigen::Matrix4f dkPose;
-    //  mt::Transform dkYumiPose;
-
-
-    //  mt::Transform* dkYumiRightTCPPose = new mt::Transform;
-    //  dkYumiRightTCPPose = _robot->getLink(7)->getTransformation();
-    //  dkYumiPose = dkYumiRightShoulderPose->inverse() * (*dkYumiRightTCPPose);
-    //  std::cout << "Kautham RIGHT dkYumiPoseTCP:" << std::endl;
-    //  for (unsigned int i=0; i<3; ++i){
-    //      for (unsigned int j=0; j<3; ++j)    std::cout << dkYumiPose.getRotation().getMatrix()[i][j] << "  ";
-    //      std::cout << dkYumiPose.getTranslation()[i] << std::endl;
-    //  }
-    //  std::cout << "det = " << std::log(dkYumiPose.getRotation().getMatrix().determinant()) << std::endl;
-    //  dkYumiConfig = dkConfig;
-    //  dkYumiConfig(3) = dkYumiConfig(3) + M_PI/2.0;
-    //  dkPose = YumiKinSolver->ForwardKinematics(dkYumiConfig);
-    //  std::cout << "IK dkPose:" << std::endl << dkPose << std::endl;
-
-
-    //  mt::Transform* dkYumiLeftTCPPose = new mt::Transform;
-    //  dkYumiLeftTCPPose = _robot->getLink(7)->getTransformation();
-    //  dkYumiPose = dkYumiLeftShoulderPose->inverse() * (*dkYumiLeftTCPPose);
-    //  std::cout << "Kautham LEFT dkYumiPoseTCP:" << std::endl;
-    //  for (unsigned int i=0; i<3; ++i){
-    //      for (unsigned int j=0; j<3; ++j)    std::cout << dkYumiPose.getRotation().getMatrix()[i][j] << "  ";
-    //      std::cout << dkYumiPose.getTranslation()[i] << std::endl;
-    //  }
-    //  std::cout << "det = " << std::log(dkYumiPose.getRotation().getMatrix().determinant()) << std::endl;
-    //  dkYumiConfig = dkConfig;
-    //  dkYumiConfig(3) = dkYumiConfig(3) + M_PI/2.0;
-    //  dkPose = YumiKinSolver->ForwardKinematics(dkYumiConfig);
-    //  std::cout << "IK dkPose:" << std::endl << dkPose << std::endl;
-
-    // Inverse Kinematics --------------------------------------------------------
-    std::cout << "INVERSE KINEMATICS ++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-    Eigen::VectorXf init_q(7);
-    Eigen::Matrix4f eigIkTestPose(Eigen::Matrix4f::Identity());
-    Eigen::VectorXf test_ikSolution, ikKauthamSolution;
-    mt::Transform* ikPose = new mt::Transform;
-    mt::Transform* ikTestPose = new mt::Transform;
-    bool ik_solved = false;
-    float max_iterations = 0;
-
-    Eigen::VectorXf dkConfig(7);
-    dkConfig << M_PI/6.0, +M_PI/6.0, 0.0, -M_PI/5.0, 0.0, M_PI/6.0, 0.0;
-    init_q << 0.0, 0.0, 0.0, -M_PI/2, 0.0, -0.0, 0.0;
-
-    // To right arm reference ---------------------------------------
-    // Compute test pose
-    for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(dkConfig(i-1));
-    ikTestPose = _robot->getLink(7)->getTransformation();
-    std::cout << "IK RightTest Pose: -------------------------------" << std::endl;
-    for (unsigned int i=0; i<3; ++i){
-        for (unsigned int j=0; j<3; ++j)    std::cout << ikTestPose->getRotation().getMatrix()[i][j] << "  ";
-        std::cout << ikTestPose->getTranslation()[i] << std::endl;
-    }
-    *ikTestPose = _targetTrans * yumiArmTCPToGripperTF->inverse();
-    std::cout << "IK RightTest Pose: -------------------------------" << std::endl;
-    for (unsigned int i=0; i<3; ++i){
-        for (unsigned int j=0; j<3; ++j)    std::cout << ikTestPose->getRotation().getMatrix()[i][j] << "  ";
-        std::cout << ikTestPose->getTranslation()[i] << std::endl;
-    }
-
-    mt::Transform* ikRightTestPose = new mt::Transform;
-    *ikRightTestPose = dkYumiRightShoulderPose->inverse() * (*ikTestPose);
-    //        std::cout << "IK Test ikRightTestPose:" << std::endl;
-    //        for (unsigned int i=0; i<3; ++i){
-    //            for (unsigned int j=0; j<3; ++j)    std::cout << ikRightTestPose->getRotation().getMatrix()[i][j] << "  ";
-    //            std::cout << ikRightTestPose->getTranslation()[i] << std::endl;
-    //        }
-
-    // Translate to eigen
-    eigIkTestPose = Eigen::Matrix4f::Identity();
-    for (unsigned int i=0; i<3; ++i){
-        for (unsigned int j=0; j<3; ++j)    eigIkTestPose(i,j) = ikRightTestPose->getRotation().getMatrix()[i][j];
-        eigIkTestPose(i,3) =  ikRightTestPose->getTranslation()[i];
-    }
-
-    //        init_q = dkConfig;
-    //      init_q(3) = dkConfig(3) + M_PI/2.0;
-    max_iterations = 100;
-    ik_solved = YumiKinSolver->NumericalIKSolver(eigIkTestPose, init_q, 0.0001, max_iterations, test_ikSolution);
-
-    ikKauthamSolution = test_ikSolution;
-    ikKauthamSolution(3) = test_ikSolution(3) - M_PI/2.0;
-    for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(ikKauthamSolution(i-1));
-    ikPose = _robot->getLink(7)->getTransformation();
-    std::cout << "IK Right Arm Final Pose:" << std::endl;
-    for (unsigned int i=0; i<3; ++i){
-        for (unsigned int j=0; j<3; ++j)    std::cout << ikPose->getRotation().getMatrix()[i][j] << "  ";
-        std::cout << ikPose->getTranslation()[i] << std::endl;
-    }
-
-    // Store the selection solution
-    std::vector<KthReal> tmpik(7);
-    tmpik.at(0) = ( test_ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
-    tmpik.at(1) = ( test_ikSolution(1) - (-2.50455) )/( 0.759218 - (-2.50455) );
-    tmpik.at(2) = ( test_ikSolution(2) - (-2.94088) )/(  2.94088 - (-2.94088) );
-    tmpik.at(3) = ( test_ikSolution(3) - (-2.15548) )/(  1.39626 - (-2.15548) );
-    tmpik.at(4) = ( test_ikSolution(4) - (-5.06145) )/(  5.06145 - (-5.06145) );
-    tmpik.at(5) = ( test_ikSolution(5) - (-1.53589) )/(  2.40855 - (-1.53589) );
-    tmpik.at(6) = ( test_ikSolution(6) -  (-3.9968) )/(   3.9968 -  (-3.9968) );
-    //      for (unsigned int i = 0; i<7; ++i)  tmpik.at(i) = test_ikSolution[i];
-    for (unsigned int i = 0; i<7; ++i)  tmpik.at(i) = 0.5;
-    _robConf.setRn(tmpik);
+    if (!ik_solved)     cout << "Inverse kinematics failed" << endl;
 
     return ik_solved;
-
-
-    // To left arm reference ---------------------------------------
-    // Compute test pose
-    for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(dkConfig(i-1));
-    ikTestPose = _robot->getLink(7)->getTransformation();
-    std::cout << "IK Left Test Pose: -------------------------------" << std::endl;
-    for (unsigned int i=0; i<3; ++i){
-        for (unsigned int j=0; j<3; ++j)    std::cout << ikTestPose->getRotation().getMatrix()[i][j] << "  ";
-        std::cout << ikTestPose->getTranslation()[i] << std::endl;
-    }
-    *ikTestPose = _targetTrans;
-    std::cout << "IK Left Test Pose: -------------------------------" << std::endl;
-    for (unsigned int i=0; i<3; ++i){
-        for (unsigned int j=0; j<3; ++j)    std::cout << ikTestPose->getRotation().getMatrix()[i][j] << "  ";
-        std::cout << ikTestPose->getTranslation()[i] << std::endl;
-    }
-
-    mt::Transform* ikLeftTestPose = new mt::Transform;
-    *ikLeftTestPose = dkYumiLeftShoulderPose->inverse() * (*ikTestPose);
-    //        std::cout << "IK Test ikLeftTestPose:" << std::endl;
-    //        for (unsigned int i=0; i<3; ++i){
-    //            for (unsigned int j=0; j<3; ++j)    std::cout << ikLeftTestPose->getRotation().getMatrix()[i][j] << "  ";
-    //            std::cout << ikLeftTestPose->getTranslation()[i] << std::endl;
-    //        }
-
-    // Translate to eigen
-    eigIkTestPose = Eigen::Matrix4f::Identity();
-    for (unsigned int i=0; i<3; ++i){
-        for (unsigned int j=0; j<3; ++j)    eigIkTestPose(i,j) = ikLeftTestPose->getRotation().getMatrix()[i][j];
-        eigIkTestPose(i,3) =  ikLeftTestPose->getTranslation()[i];
-    }
-
-    //        init_q = dkConfig;
-    init_q(3) = dkConfig(3) + M_PI/2.0;
-    max_iterations = 30;
-    ik_solved = YumiKinSolver->NumericalIKSolver(eigIkTestPose, init_q, 0.0001, max_iterations, test_ikSolution);
-
-    ikKauthamSolution = test_ikSolution;
-    ikKauthamSolution(3) = test_ikSolution(3) - M_PI/2.0;
-    for (unsigned int i=1; i<8; ++i)      _robot->getLink(i)->setValue(ikKauthamSolution(i-1));
-    ikPose = _robot->getLink(7)->getTransformation();
-    std::cout << "IK Left Arm Final Pose:" << std::endl;
-    for (unsigned int i=0; i<3; ++i){
-        for (unsigned int j=0; j<3; ++j)    std::cout << ikPose->getRotation().getMatrix()[i][j] << "  ";
-        std::cout << ikPose->getTranslation()[i] << std::endl;
-    }
-
-
-    return false;
-
-
-
-    // Solve IK
-
-    // Get all possible 16 analitic ik configurations
-    Eigen::Matrix4f desiredPoseInArmRef;
-    std::vector< std::vector<float> > yumiAnalyticalIkSolutions = YumiKinSolver->AnalyticalIKSolver(desiredPoseInArmRef, redundantJoint);
-    //std::cout << "Yumi IK solutions: " << yumiAnalyticalIkSolutions.size() << std::endl; // PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
-
-    if (yumiAnalyticalIkSolutions.size() > 0) {
-
-        // Select the configuration with the closest TCP to the desired configuration
-        bool non_nan_config = false;    // There is at least one config without a NaN value
-        double min_err = 1000000000;    // Super-high value
-        Eigen::VectorXf minAnalyticalIkSolution(yumiAnalyticalIkSolutions[0].size());
-        for(unsigned int i=0; i<yumiAnalyticalIkSolutions.size(); i++)
-        {
-            Eigen::VectorXf ikAnalyticalSolution(yumiAnalyticalIkSolutions[i].size());
-
-            for(unsigned int j=0; j<yumiAnalyticalIkSolutions[i].size(); j++)    ikAnalyticalSolution(j) = yumiAnalyticalIkSolutions[i][j];
-
-            //        // Saturate joint values
-            //        // This is real Yumi convention
-            //        if      (ikAnalyticalSolution(0) < -2.94088)    ikAnalyticalSolution(0) = -2.94088;
-            //        else if (ikAnalyticalSolution(0) >  2.94088)    ikAnalyticalSolution(0) =  2.94088;
-
-            //        if      (ikAnalyticalSolution(1) < -2.50455)    ikAnalyticalSolution(1) = -2.50455;
-            //        else if (ikAnalyticalSolution(1) > 0.759218)    ikAnalyticalSolution(1) = 0.759218;
-
-            //        if      (ikAnalyticalSolution(2) < -2.94088)    ikAnalyticalSolution(2) = -2.94088;
-            //        else if (ikAnalyticalSolution(2) >  2.94088)    ikAnalyticalSolution(2) =  2.94088;
-
-            //        if      (ikAnalyticalSolution(3) < -2.15548)    ikAnalyticalSolution(3) = -2.15548;
-            //        else if (ikAnalyticalSolution(3) >  1.39626)    ikAnalyticalSolution(3) =  1.39626;
-
-            //        if      (ikAnalyticalSolution(4) < -5.06145)    ikAnalyticalSolution(4) = -5.06145;
-            //        else if (ikAnalyticalSolution(4) >  5.06145)    ikAnalyticalSolution(4) =  5.06145;
-
-            //        if      (ikAnalyticalSolution(5) < -1.53589)    ikAnalyticalSolution(5) = -1.53589;
-            //        else if (ikAnalyticalSolution(5) >  2.40855)    ikAnalyticalSolution(5) =  2.40855;
-
-            //        if      (ikAnalyticalSolution(6) <  -3.9968)    ikAnalyticalSolution(6) =  -3.9968;
-            //        else if (ikAnalyticalSolution(6) >   3.9968)    ikAnalyticalSolution(6) =   3.9968;
-
-            //        std::cout << "yumiAnalyticalIkSolutions[i] = "; // PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
-            //        for(unsigned int j=0; j<ikAnalyticalSolution.size(); j++)   std::cout << ikAnalyticalSolution(j) << " ";
-            //        std::cout << std::endl;
-
-            // Look for NaN values
-            bool solutionOK = true;
-            for (unsigned int i=0; solutionOK && (i<ikAnalyticalSolution.size()); ++i){
-                // f != f will be true if f is NaN or -NaN
-                solutionOK = !(ikAnalyticalSolution[i] != ikAnalyticalSolution[i]);
-            }
-
-            if (solutionOK){    // If solution has no NaN
-                non_nan_config = true;
-
-                // Desired pose
-                Eigen::Vector3f pd(desiredPoseInArmRef(0,3), desiredPoseInArmRef(1,3), desiredPoseInArmRef(2,3));
-                Eigen::Matrix3f Rd;
-                Rd << desiredPoseInArmRef(0,0), desiredPoseInArmRef(0,1), desiredPoseInArmRef(0,2),
-                        desiredPoseInArmRef(1,0), desiredPoseInArmRef(1,1), desiredPoseInArmRef(1,2),
-                        desiredPoseInArmRef(2,0), desiredPoseInArmRef(2,1), desiredPoseInArmRef(2,2);
-                Eigen::Quaternionf uqd(Rd);
-
-                // Pose of the analitical solution
-                Eigen::Matrix4f currentPose = YumiKinSolver->ForwardKinematics(ikAnalyticalSolution);
-
-                Eigen::Vector3f pe(currentPose(0,3), currentPose(1,3), currentPose(2,3));
-                Eigen::Matrix3f Re;
-                Re << currentPose(0,0), currentPose(0,1), currentPose(0,2),
-                        currentPose(1,0), currentPose(1,1), currentPose(1,2),
-                        currentPose(2,0), currentPose(2,1), currentPose(2,2);
-                Eigen::Quaternionf uqe(Re);
-
-                // Error
-                //  Position
-                Eigen::Vector3f errorP(pd-pe);
-
-                //  Orientation
-                Eigen::Vector3f u1(uqd.x(),uqd.y(),uqd.z());
-                Eigen::Vector3f u2(uqe.x(),uqe.y(),uqe.z());
-                Eigen::Matrix3f m;
-                m <<        0, -uqd.z(),  uqd.y(),
-                        uqd.z(),        0, -uqd.x(),
-                        -uqd.y(),  uqd.x(),        0;
-                Eigen::Vector3f errorO(uqe.w()*u1-uqd.w()*u2-m*u2);
-
-                //  Total
-                double e = (errorO.squaredNorm()+errorP.squaredNorm())/2.0;
-
-                // Keep minimum error solution
-                if (e < min_err){
-                    min_err = e;
-                    minAnalyticalIkSolution = ikAnalyticalSolution;
-                }
-            } // if (solutionOK)
-        }
-
-        // If all analytic configurations have NaN values there is no solution for the IK problem
-        if (!non_nan_config){
-            std::cout << "Inverse kinematics solution has a NaN value" << std::endl;
-            return false;
-        }
-
-        // The configuration to feed the numerical solver is ok - PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
-        std::cout << "Yumi IK analytical solution: ";
-        for (unsigned int i=0; i<minAnalyticalIkSolution.size(); ++i)  std::cout << minAnalyticalIkSolution[i] << " ";
-        std::cout << std::endl;
-
-        // TEST POSE
-        Eigen::VectorXf test_q(Eigen::VectorXf::Zero(7));
-        test_q << 2.1, 0.3, -1.5, 0.0, -1.1, 1.9, 3.0;
-        Eigen::Matrix4f test_pose = YumiKinSolver->ForwardKinematics(test_q);
-        test_q << 0.3, 0.5, 0.0, 1.1, 0.0, -0.1, 0.0;
-        Eigen::VectorXf test_ikSolution(7);
-        max_iterations = 100;
-        bool ik_solved = YumiKinSolver->NumericalIKSolver(test_pose, test_q, 0.01, max_iterations, test_ikSolution);
-        return false;
-
-
-        // Set angles between -pi and pi
-        for (unsigned int i=0; i<minAnalyticalIkSolution.size(); ++i){
-            while (minAnalyticalIkSolution(i) < -PI)     minAnalyticalIkSolution(i) += 2.0*PI;
-            while (minAnalyticalIkSolution(i) >  PI)     minAnalyticalIkSolution(i) -= 2.0*PI;
-        }
-
-        // Saturate joint values
-        // This is real Yumi convention
-        if      (minAnalyticalIkSolution(0) < -2.94088)    minAnalyticalIkSolution(0) = -2.94088;
-        else if (minAnalyticalIkSolution(0) >  2.94088)    minAnalyticalIkSolution(0) =  2.94088;
-
-        if      (minAnalyticalIkSolution(1) < -2.50455)    minAnalyticalIkSolution(1) = -2.50455;
-        else if (minAnalyticalIkSolution(1) > 0.759218)    minAnalyticalIkSolution(1) = 0.759218;
-
-        if      (minAnalyticalIkSolution(2) < -2.94088)    minAnalyticalIkSolution(2) = -2.94088;
-        else if (minAnalyticalIkSolution(2) >  2.94088)    minAnalyticalIkSolution(2) =  2.94088;
-
-        if      (minAnalyticalIkSolution(3) < -2.15548)    minAnalyticalIkSolution(3) = -2.15548;
-        else if (minAnalyticalIkSolution(3) >  1.39626)    minAnalyticalIkSolution(3) =  1.39626;
-
-        if      (minAnalyticalIkSolution(4) < -5.06145)    minAnalyticalIkSolution(4) = -5.06145;
-        else if (minAnalyticalIkSolution(4) >  5.06145)    minAnalyticalIkSolution(4) =  5.06145;
-
-        if      (minAnalyticalIkSolution(5) < -1.53589)    minAnalyticalIkSolution(5) = -1.53589;
-        else if (minAnalyticalIkSolution(5) >  2.40855)    minAnalyticalIkSolution(5) =  2.40855;
-
-        if      (minAnalyticalIkSolution(6) <  -3.9968)    minAnalyticalIkSolution(6) =  -3.9968;
-        else if (minAnalyticalIkSolution(6) >   3.9968)    minAnalyticalIkSolution(6) =   3.9968;
-
-
-        // Solve the ik using a numerical approach starting with the minimum error configuration
-        Eigen::VectorXf ikSolution(7);
-        max_iterations = 100;
-        ik_solved = YumiKinSolver->NumericalIKSolver(desiredPoseInArmRef, minAnalyticalIkSolution, 0.001, max_iterations, ikSolution);
-
-        // The final configuration - PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
-        std::cout << "Yumi IK analytical solution: ";
-        for (unsigned int i=0; i<ikSolution.size(); ++i)  std::cout << ikSolution[i] << " ";
-        std::cout << std::endl;
-
-
-
-
-
-
-        // Normalize configuration
-        ikSolution(0) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
-        ikSolution(1) = ( ikSolution(0) - (-2.50455) )/( 0.759218 - (-2.50455) );
-        ikSolution(2) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
-        ikSolution(3) = ( ikSolution(0) - (-2.15548) )/(  1.39626 - (-2.15548) );
-        ikSolution(4) = ( ikSolution(0) - (-5.06145) )/(  5.06145 - (-5.06145) );
-        ikSolution(5) = ( ikSolution(0) - (-1.53589) )/(  2.40855 - (-1.53589) );
-        ikSolution(6) = ( ikSolution(0) -  (-3.9968) )/(   3.9968 -  (-3.9968) );
-
-        // Do the forward kinematics for verification - PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT PLOT
-        Eigen::Matrix4f verif_pose = YumiKinSolver->ForwardKinematics(ikSolution);
-        for (unsigned int i=0; i<3; ++i)    verif_pose(i,3) /= 1000.0;
-        std::cout << "verif_pose:\n pos:" << verif_pose(0,3) << " " << verif_pose(1,3) << " " << verif_pose(2,3) << std::endl;
-        std::cout << " rot: " << std::endl;
-        std::cout << verif_pose(0,0) << " " << verif_pose(0,1) << " " << verif_pose(0,2) << std::endl;
-        std::cout << verif_pose(1,0) << " " << verif_pose(1,1) << " " << verif_pose(1,2) << std::endl;
-        std::cout << verif_pose(2,0) << " " << verif_pose(2,1) << " " << verif_pose(2,2) << std::endl;
-
-
-        // Store the selection solution
-        std::vector<KthReal> tmp(7);
-        for (unsigned int i = 0; i<7; ++i)  tmp.at(i) = ikSolution[i];
-        _robConf.setRn(tmp);
-
-        return true;
-    } else {
-        cout << "Inverse kinematics failed" << endl;
-        return false;
-    }
 }
 
 bool IvKinYumi::setParameters(){
