@@ -112,7 +112,7 @@ bool IvKinYumi::solve(){
         shoulder_YumiFrame->setRotation(mt::Rotation(-2.3180,-0.5682,-0.9781));
         shoulder_YumiFrame->setTranslation(mt::Point3(0.05355, -0.0725, 0.41492));
     }
-//        plot_pose(shoulder_YumiFrame,"yumiShoulderPose_YumiFrame");
+//    plot_pose(shoulder_YumiFrame,"yumiShoulderPose_YumiFrame");
 
 
     std::cout << "INVERSE KINEMATICS ++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
@@ -137,11 +137,11 @@ bool IvKinYumi::solve(){
         std::cout << "dk_test_pose desired_TCP_YumiFrame" << std::endl << dk_test_pose << std::endl;
         // Test DK
     }
-//        plot_pose(&desired_TCP_YumiFrame,"desired_TCP_YumiFrame");
+//    plot_pose(&desired_TCP_YumiFrame,"desired_TCP_YumiFrame");
 
     // Desired TCP pose in shoulder frame
     mt::Transform desired_TCP_ShoulderFrame = shoulder_YumiFrame->inverse() * desired_TCP_YumiFrame;
-//        plot_pose(&desired_TCP_ShoulderFrame,"desired_TCP_ShoulderFrame");
+    plot_pose(&desired_TCP_ShoulderFrame,"desired_TCP_ShoulderFrame");
 
 
     // Solve inverse kinematics -------------------------------
@@ -168,14 +168,14 @@ bool IvKinYumi::solve(){
     ikResult_TCP_YumiFrame.getRotation().getYpr(y, p, r);
     std::cout << "ypr " << y << " " << p << " " << r << std::endl;
 
-//        // TEST
-//        // Shoulder pose in Yumi Frame
-//        Eigen::VectorXf ikTestConfig(ikSolution);
-//        std::cout << "ikSolution = " << ikSolution.transpose() << std::endl;
+//    // TEST
+//    // Shoulder pose in Yumi Frame
+//    Eigen::VectorXf ikTestConfig(ikSolution);
+//    std::cout << "ikSolution = " << ikSolution.transpose() << std::endl;
 ////        Eigen::Matrix4f ikResult_TCP_YumiFrame_2(mt_to_Eigen_pose(shoulder_YumiFrame) * yumiKinSolver->ForwardKinematics(ikTestConfig));
-//        std::cout << "yumiKinSolver->ForwardKinematics(ikTestConfig)" << std::endl << yumiKinSolver->ForwardKinematics(ikTestConfig) << std::endl;
-//        std::cout << "ikResult_TCP_YumiFrame_2" << std::endl << ikResult_TCP_YumiFrame_2 << std::endl;
-//        // TEST
+//    std::cout << "yumiKinSolver->ForwardKinematics(ikTestConfig)" << std::endl << yumiKinSolver->ForwardKinematics(ikTestConfig) << std::endl;
+//    std::cout << "ikResult_TCP_YumiFrame_2" << std::endl << ikResult_TCP_YumiFrame_2 << std::endl;
+//    // TEST
 
 
     // Store the selection solution to kautham
@@ -188,7 +188,6 @@ bool IvKinYumi::solve(){
     qn.at(5) = ( ikSolution(5) - (-1.53589) )/(  2.40855 - (-1.53589) );
     qn.at(6) = ( ikSolution(6) -  (-3.9968) )/(   3.9968 -  (-3.9968) );
     for (unsigned int i = 0; i<7; ++i)  qn.at(i) = ikSolution[i];
-//        for (unsigned int i = 0; i<7; ++i)  tmpik.at(i) = 0.5;
     _robConf.setRn(qn);
 
     if (!ik_solved)     cout << "Inverse kinematics failed" << endl;
