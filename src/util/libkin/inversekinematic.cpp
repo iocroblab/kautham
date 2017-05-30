@@ -28,7 +28,7 @@ namespace Kautham {
 
   InverseKinematic::InverseKinematic(Robot* const rob){
     _robot = rob;
-	}
+    }
 
   /*KthReal InverseKinematic::getParameter(string key){
     HASH_S_K::iterator it = _parameters.find(key);
