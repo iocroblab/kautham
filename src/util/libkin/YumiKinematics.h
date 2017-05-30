@@ -71,11 +71,11 @@ public:
 
     void setJointsInLimits(Eigen::VectorXf& q);
 
-    bool solveIK(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf q_initial_num_IK, const unsigned int alg_type, Eigen::VectorXf& qResult);
+    bool solveIK(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf q_initial_num_IK, const unsigned int alg_type, const float redundantJoint, Eigen::VectorXf& qResult);
 
     Eigen::VectorXf generateRandomConfiguration();
 
-    bool configuration_is_valid(const Eigen::VectorXf q);
+    bool configurationInLimits(const Eigen::VectorXf q);
 };
 
 #endif
