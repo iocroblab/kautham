@@ -428,6 +428,18 @@ using namespace TXrobot;
       _robConf.setRn(tmp);
       return true;
     }
+
+    // TEST TEST TEST TEST TEST TEST TEST TEST
+    for (unsigned int i=0; i<6; ++i)    _robot->getLink(i+1)->setValue(0.0);
+    mt::Transform* tmp_pose = new mt::Transform;
+    *tmp_pose = _robot->getLastLinkTransform();
+    std::cout << "tmp_pose: "<<std::endl;
+    for (unsigned int i=0; i<3; ++i)    std::cout << tmp_pose->getTranslation()[i] << " "; std::cout << std::endl;
+    for (unsigned int i=0; i<3; ++i)
+        for (unsigned int j=0; j<3; ++j)
+            std::cout << tmp_pose->getRotation().getMatrix()[i][j] << " ";  std::cout << std::endl;
+    std::cout << log(tmp_pose->getRotation().getMatrix().determinant()) << std::endl;
+
     return false;
   }
 
