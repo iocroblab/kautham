@@ -13,6 +13,17 @@ else( GSL_FOUND )
 endif( GSL_FOUND )
 
 
+## YumiIK
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+#set(YumiIK_SOURCES YumiKinematics.cpp)
+#add_library(YumiIK SHARED ${YumiIK_SOURCES})
+
+#install(TARGETS YumiIK ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+##install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "*.h")
+
+
+
 file(GLOB SRC_FILES *.c* )
 file(GLOB HDR_FILES *.h*)
 

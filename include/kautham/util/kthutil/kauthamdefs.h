@@ -96,7 +96,9 @@ namespace Kautham {
       TX90,
       HAND,
       TX90HAND,
-      UR5
+      UR5,
+      YUMI_RIGHT,
+      YUMI_LEFT
   };
 
   enum PLANNERFAMILY {
