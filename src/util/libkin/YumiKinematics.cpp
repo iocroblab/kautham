@@ -466,11 +466,11 @@ void YumiKinematics::setJointsInLimits(Eigen::VectorXf& q){
     if      ( q(2) < -2.94088+tol )     q(2) = -2.94088+tol;
     else if ( q(2) >  2.94088-tol )     q(2) =  2.94088-tol;
 
-    if      ( q(3) < -2.15548 + M_PI/2.0+tol )     q(3) = -2.15548+tol;
-    else if ( q(3) >  1.39626 + M_PI/2.0-tol )     q(3) =  1.39626-tol;
+    if      ( q(3) < -2.15548 + M_PI/2.0+tol )     q(3) = -2.15548 + M_PI/2.0+tol;
+    else if ( q(3) >  1.39626 + M_PI/2.0-tol )     q(3) =  1.39626 + M_PI/2.0-tol;
 
-    if      ( q(4) < -5.06145+tol )     q(4) = -5.06145 + M_PI/2.0+tol;
-    else if ( q(4) >  5.06145-tol )     q(4) =  5.06145 + M_PI/2.0-tol;
+    if      ( q(4) < -5.06145+tol )     q(4) = -5.06145+tol;
+    else if ( q(4) >  5.06145-tol )     q(4) =  5.06145-tol;
 
     if      ( q(5) < -1.53589+tol )     q(5) = -1.53589+tol;
     else if ( q(5) >  2.40855-tol )     q(5) =  2.40855-tol;
