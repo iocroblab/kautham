@@ -22,8 +22,8 @@
 
 /* Author: Isiah Zaplana, Aliakbar Akbari, Muhayyudin */
 
-#if defined(KAUTHAM_USE_OMPL)
-#if defined(KAUTHAM_USE_ODE)
+#define VERBOSE_ON
+
 #if !defined(_YumiKinematics_H)
 #define _YumiKinematics_H
 
@@ -79,5 +79,4 @@ public:
 };
 
 #endif
-#endif
-#endif
+
