@@ -28,9 +28,6 @@
 //  2017
 
 
-#if defined(KAUTHAM_USE_OMPL)
-#if defined(KAUTHAM_USE_ODE)
-
 #include <stdlib.h>     /* srand, rand */
 #include <iostream>
 #include <math.h>
@@ -447,8 +444,10 @@ bool YumiKinematics::NumericalIKSolver(const Eigen::Matrix4f desiredPose, const 
     }
     max_iterations = n_it;
 
+#ifdef VERBOSE_ON
     std::cout << "   IK Num --> IK numerical " << ((e < threshold) ? "" : "NOT ") << "SOLVED in " << n_it << " iterations"
               << " : e = " << e << ((e < threshold) ? " < " : " > ") << threshold << std::endl;
+#endif
 
 //    std::cout << "   IK Num --> IK Final q: " << q.transpose() << std::endl;
 //    std::cout << "   IK Num --> IK Final Pose:" << std::endl << ForwardKinematics(q) << std::endl;
@@ -562,7 +561,9 @@ bool YumiKinematics::solveIK(const Eigen::Matrix4f desiredPose,
 
     else if (alg_type == IK_NUMERICAL_RND_INITIAL_QS){
         // Generate 'n_max_init_q' random initial configurations
+#ifdef VERBOSE_ON
         std::cout << " Numerical IK using multiple random initial configurations:" << std::endl;
+#endif
 
         unsigned int i =0;
         unsigned int n_max_init_q = 10;
@@ -574,15 +575,18 @@ bool YumiKinematics::solveIK(const Eigen::Matrix4f desiredPose,
             if (this->solveIK(desiredPose, q_initial, IK_NUMERICAL_INITIAL_Q, redundantJoint, qResult, use_joint_saturation))
                 ik_solved = this->configurationInLimits(qResult);
         }
+
+#ifdef VERBOSE_ON
         if (ik_solved)  std::cout << " IK SOLVED after " << i << " initial configurations: configuration is within limits." << std::endl;
         else            std::cout << " IK NOT SOLVED after " << i << " initial configurations: no configuration within limits." << std::endl;
+#endif
     }
 
     else if (alg_type == IK_ANALYTICAL_Q){
         // Use analytical IK to feed the numerical IK
-
+#ifdef VERBOSE_ON
         std::cout << " Analytical IK to feed the numerical IK:" << std::endl;
-
+#endif
         std::vector< std::vector<float> > yumiAnalyticalIkSolutions = this->AnalyticalIKSolver(desiredPose, redundantJoint);
 
         if (yumiAnalyticalIkSolutions.size() > 0) {
@@ -655,18 +659,23 @@ bool YumiKinematics::solveIK(const Eigen::Matrix4f desiredPose,
 
             // If all analytic configurations have NaN values there is no solution for the IK problem
             if (!at_least_one_non_NaN_config){
+#ifdef VERBOSE_ON
                 std::cout << "Inverse kinematics solution has a NaN value" << std::endl;
+#endif
                 return false;
             }
 
             // Use the initial configuration from the analytical Ik to feed the numerical solver
             ik_solved = this->solveIK(desiredPose, minAnalyticalIkSolution, IK_NUMERICAL_INITIAL_Q, redundantJoint, qResult, use_joint_saturation);
             bool config_in_limits = configurationInLimits(qResult);
+
+#ifdef VERBOSE_ON
             if   (ik_solved){
                 if (config_in_limits)   std::cout << " IK SOLVED using the analytical IK" << std::endl;
                 else                    std::cout << " IK NOT SOLVED: The analytical IK converges but the final configuration is not in limits. The numerical Ik with multiple initial random configurations will be executed." << std::endl;
             }
             else                        std::cout << " IK NOT SOLVED using the analytical IK. The numerical Ik with multiple initial random configurations will be executed." << std::endl;
+#endif
 
             // If Ik not solved, use multiple random initial configurations
             if ( !ik_solved || !config_in_limits )      ik_solved = this->solveIK(desiredPose, minAnalyticalIkSolution, IK_NUMERICAL_RND_INITIAL_QS, redundantJoint, qResult, use_joint_saturation);
@@ -723,6 +732,3 @@ bool YumiKinematics::configurationInLimits(const Eigen::VectorXf q){
     return true;
 }
 
-
-#endif
-#endif
