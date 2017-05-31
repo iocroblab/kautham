@@ -58,7 +58,7 @@ public:
 
     Eigen::MatrixXf  Jacobian(const Eigen::VectorXf Q);
 
-    bool NumericalIKSolver(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf qIni, const float threshold, float &max_iterations, Eigen::VectorXf &qResult);
+    bool NumericalIKSolver(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf qIni, const float threshold, float &max_iterations, Eigen::VectorXf &qResult, const bool use_joint_saturation);
 
     template<typename _Matrix_Type_>  _Matrix_Type_ pseudoInverse(const _Matrix_Type_ &a, float epsilon = std::numeric_limits<float>::epsilon())
     {
@@ -71,7 +71,7 @@ public:
 
     void setJointsInLimits(Eigen::VectorXf& q);
 
-    bool solveIK(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf q_initial_num_IK, const unsigned int alg_type, const float redundantJoint, Eigen::VectorXf& qResult);
+    bool solveIK(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf q_initial_num_IK, const unsigned int alg_type, const float redundantJoint, Eigen::VectorXf& qResult, const bool use_joint_saturation = false);
 
     Eigen::VectorXf generateRandomConfiguration();
 

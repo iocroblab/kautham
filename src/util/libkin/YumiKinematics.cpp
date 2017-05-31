@@ -60,11 +60,16 @@ std::vector< std::vector<float> > YumiKinematics::AnalyticalIKSolver(const Eigen
     //    std::cout<<"computed Theta4"<<std::endl;
 
 
-    for(unsigned int i=0;i<SolutionSet1.size();i++)
+    for(unsigned int i=0;i<SolutionSet1.size();i++){
+        SolutionSet1[i][3] = SolutionSet1[i][3] - M_PI/2.0;   // Remove the offset from the inner IK kin model to the Kautham library kin model
         Solutions.push_back(SolutionSet1[i]);
+    }
 
-    for(unsigned int i=0;i<SolutionSet2.size();i++)
+    for(unsigned int i=0;i<SolutionSet2.size();i++){
+        SolutionSet2[i][3] = SolutionSet2[i][3] - M_PI/2.0;   // Remove the offset from the inner IK kin model to the Kautham library kin model
         Solutions.push_back(SolutionSet2[i]);
+    }
+
     return Solutions;
 }
 
@@ -80,9 +85,9 @@ std::vector< std::vector<float> > YumiKinematics::ComputeTheta4(const Eigen::Mat
 ////    float c= Pose(0,3)*Pose(0,3)+Pose(1,3)*Pose(1,3)+(Pose(2,3)-166)*(Pose(2,3)-166)-136757.75;
 //    float c= 1000.0*Pose(0,3)*1000.0*Pose(0,3)+1000.0*Pose(1,3)*1000.0*Pose(1,3)+(1000.0*Pose(2,3)-166)*(1000.0*Pose(2,3)-166)-136757.75;    // To mm
 
-    float a=130014.5;   // TODO
-    float b=-41836.5;   // TODO
-    float c= 1000.0*Pose(0,3)*1000.0*Pose(0,3)+1000.0*Pose(1,3)*1000.0*Pose(1,3)+(1000.0*Pose(2,3)-100)*(1000.0*Pose(2,3)-100)-136757.75;    // TODO
+    float a=125410.0;   // TODO
+    float b=41819.0;   // TODO
+    float c= 1000.0*Pose(0,3)*1000.0*Pose(0,3)+1000.0*Pose(1,3)*1000.0*Pose(1,3)+(1000.0*Pose(2,3)-100)*(1000.0*Pose(2,3)-100)-132210.0;    // TODO
 
     if(byn==0)
     {
@@ -343,12 +348,16 @@ Eigen::MatrixXf YumiKinematics::Jacobian(const Eigen::VectorXf Q)
 
 bool YumiKinematics::NumericalIKSolver(const Eigen::Matrix4f desiredPose, const Eigen::VectorXf qIni,
                                        const float threshold, float& max_iterations,
-                                       Eigen::VectorXf& qResult)
+                                       Eigen::VectorXf& qResult,
+                                       const bool use_joint_saturation)
 {
-    // Initial configuration
-    Eigen::VectorXf q(qIni);
-//    std::cout << "   IK Num --> IK Initial q: " << q.transpose() << std::endl;
-//    std::cout << "   IK Num --> IK Initial Pose:" << std::endl << this->ForwardKinematics(q) << std::endl;
+    //  Auxiliar lambda function for error norm computation
+    auto computeNormError = [](const Eigen::VectorXf errorP, const Eigen::VectorXf errorO) {
+//        return (std::sqrt(errorO.squaredNorm())+std::sqrt(errorP.squaredNorm()))/2.0;
+//        return std::sqrt( errorP(0)*errorP(0)+errorP(1)*errorP(1)+errorP(2)*errorP(2) + errorO(0)*errorO(0)+errorO(1)*errorO(1)+errorO(2)*errorO(2) );
+        return ( (1.0/17.45329444)*std::sqrt(errorO.squaredNorm()) + std::sqrt(errorP.squaredNorm()) )/2.0;    // 0.001 m ~= 1º (0.01745329444 rad)
+    };
+
 
     // Desired pose
     Eigen::Vector3f pd(desiredPose(0,3), desiredPose(1,3), desiredPose(2,3));
@@ -359,55 +368,82 @@ bool YumiKinematics::NumericalIKSolver(const Eigen::Matrix4f desiredPose, const 
     Eigen::Quaternionf uqd(Rd);
 //    std::cout << "   IK Num --> IK Desired Pose:" << std::endl << desiredPose << std::endl;
 
-    Eigen::VectorXf past_q(q);
-    float e = 10000000.0;   // Such a big number!!!!
-    float past_e = e + 1.0;
+    // Initial configuration
+    Eigen::VectorXf q(qIni), past_q(qIni);
+//    std::cout << "   IK Num --> IK Initial q: " << q.transpose() << std::endl;
+//    std::cout << "   IK Num --> IK Initial Pose:" << std::endl << this->ForwardKinematics(q) << std::endl;
+
+    Eigen::Matrix4f currentPose = this->ForwardKinematics(q);
+    Eigen::Vector3f pe;
+    pe << currentPose(0,3), currentPose(1,3), currentPose(2,3);
+    Eigen::Matrix3f Re;
+    Re << currentPose(0,0), currentPose(0,1), currentPose(0,2),
+          currentPose(1,0), currentPose(1,1), currentPose(1,2),
+          currentPose(2,0), currentPose(2,1), currentPose(2,2);
+    Eigen::Quaternionf uqe(Re);
+
+    // Error pose
+    Eigen::Vector3f errorP(pd-pe);
+    Eigen::Vector3f ud(uqd.x(),uqd.y(),uqd.z());
+    Eigen::Vector3f ue(uqe.x(),uqe.y(),uqe.z());
+    Eigen::Matrix3f m;
+    m <<        0, -uqd.z(),  uqd.y(),
+          uqd.z(),        0, -uqd.x(),
+         -uqd.y(),  uqd.x(),        0;
+    Eigen::Vector3f errorO(uqe.w()*ud-uqd.w()*ue-m*ue);
+
+    Eigen::VectorXf error(6);
+    error << errorP(0), errorP(1), errorP(2), errorO(0), errorO(1), errorO(2);
+
+    float past_e = 100000;
+    float e = computeNormError(errorP, errorO);
+
+
+    // Loop
     unsigned int n_it = 0;
-    while ( (e > threshold) && (n_it < max_iterations) && ( fabs(past_e - e) > threshold) ){
-        // Save past values
-        past_q = q;
-        past_e = e;
+    while ( (e > threshold)
+            && (n_it < max_iterations)
+            && ( fabs(past_e - e) > threshold/5.0 )
+            ){
 
 //        std::cout << "     IK Num --> Loop: q_ini: " << q.transpose() << std::endl;
 
-        Eigen::Matrix4f currentPose = this->ForwardKinematics(q);
-//        std::cout << "     IK Num --> Loop: IK Current_Pose:" << std::endl << current_Pose << std::endl;
+        past_q = q;
+        Eigen::MatrixXf J(this->Jacobian(q));
+        Eigen::MatrixXf pinvJ(this->pseudoInverse(J));
+        q = q + 0.5 * pinvJ * error;
+        if (use_joint_saturation)   this->setJointsInLimits(q);
 
-        // Current pose
-        Eigen::Vector3f pe(currentPose(0,3), currentPose(1,3), currentPose(2,3));
-        Eigen::Matrix3f Re;
-        Re << currentPose(0,0), currentPose(0,1), currentPose(0,2),
-              currentPose(1,0), currentPose(1,1), currentPose(1,2),
-              currentPose(2,0), currentPose(2,1), currentPose(2,2);
-        Eigen::Quaternionf uqe(Re);
+        // Next pose -------------------
+        Eigen::Matrix4f nextPose = this->ForwardKinematics(q);
+//        std::cout << "     IK Num --> Loop: IK nextPose:" << std::endl << nextPose << std::endl;
 
-        // Error pose
-        Eigen::Vector3f errorP(pd-pe);
+        pe << nextPose(0,3), nextPose(1,3), nextPose(2,3);
+        Re << nextPose(0,0), nextPose(0,1), nextPose(0,2),
+              nextPose(1,0), nextPose(1,1), nextPose(1,2),
+              nextPose(2,0), nextPose(2,1), nextPose(2,2);
+        uqe = Eigen::Quaternionf(Re);
 
-        Eigen::Vector3f ud(uqd.x(),uqd.y(),uqd.z());
-        Eigen::Vector3f ue(uqe.x(),uqe.y(),uqe.z());
-        Eigen::Matrix3f m;
+        // Error pose ---------------------
+        errorP = pd-pe;
+
+        ud << uqd.x(),uqd.y(),uqd.z();
+        ue << uqe.x(),uqe.y(),uqe.z();
         m <<        0, -uqd.z(),  uqd.y(),
               uqd.z(),        0, -uqd.x(),
              -uqd.y(),  uqd.x(),        0;
-        Eigen::Vector3f errorO(uqe.w()*ud-uqd.w()*ue-m*ue);
+        errorO = uqe.w()*ud-uqd.w()*ue-m*ue;
 
         //  Error vector
-        Eigen::VectorXf error(6);
         error << errorP(0), errorP(1), errorP(2), errorO(0), errorO(1), errorO(2);
 
         // Norm error computation
-//        e = (std::sqrt(errorO.squaredNorm())+std::sqrt(errorP.squaredNorm()))/2.0;
-//        e = std::sqrt(error.squaredNorm());
-        e = ( (1.0/17.45329444)*std::sqrt(errorO.squaredNorm()) + std::sqrt(errorP.squaredNorm()) )/2.0;    // 0.001 m ~= 1º (0.01745329444 rad)
-
-        Eigen::MatrixXf J(this->Jacobian(q));
-        q = q + 1.2 * this->pseudoInverse(J) * error;
-        this->setJointsInLimits(q);
-
-//        std::cout << n_it << "     IK Num --> Loop: e = " << e << std::endl;
+        past_e = e;
+        e = computeNormError(errorP, errorO);
 
         ++n_it;
+
+//        std::cout << n_it << "     IK Num --> Loop: e = " << e << std::endl;
     }
     max_iterations = n_it;
 
@@ -510,7 +546,8 @@ bool YumiKinematics::solveIK(const Eigen::Matrix4f desiredPose,
                              const Eigen::VectorXf q_initial_num_IK,
                              const unsigned int alg_type,
                              const float redundantJoint,
-                             Eigen::VectorXf& qResult)
+                             Eigen::VectorXf& qResult,
+                             const bool use_joint_saturation)
 {
     bool ik_solved = false;
 
@@ -519,7 +556,7 @@ bool YumiKinematics::solveIK(const Eigen::Matrix4f desiredPose,
 
         if ( q_initial_num_IK.size() == 7 ){
             float max_iterations = 50;
-            ik_solved = this->NumericalIKSolver(desiredPose, q_initial_num_IK, 0.001, max_iterations, qResult);
+            ik_solved = this->NumericalIKSolver(desiredPose, q_initial_num_IK, 0.001, max_iterations, qResult, use_joint_saturation);
         }
     }
 
@@ -528,13 +565,13 @@ bool YumiKinematics::solveIK(const Eigen::Matrix4f desiredPose,
         std::cout << " Numerical IK using multiple random initial configurations:" << std::endl;
 
         unsigned int i =0;
-        unsigned int n_max_init_q = 1000;
+        unsigned int n_max_init_q = 10;
         for (i=0; !ik_solved && i<n_max_init_q; ++i){
 
             // Initial configuration
             Eigen::VectorXf q_initial(this->generateRandomConfiguration());     // In IK convention
 
-            if (this->solveIK(desiredPose, q_initial, IK_NUMERICAL_INITIAL_Q, redundantJoint, qResult))
+            if (this->solveIK(desiredPose, q_initial, IK_NUMERICAL_INITIAL_Q, redundantJoint, qResult, use_joint_saturation))
                 ik_solved = this->configurationInLimits(qResult);
         }
         if (ik_solved)  std::cout << " IK SOLVED after " << i << " initial configurations: configuration is within limits." << std::endl;
@@ -623,16 +660,20 @@ bool YumiKinematics::solveIK(const Eigen::Matrix4f desiredPose,
             }
 
             // Use the initial configuration from the analytical Ik to feed the numerical solver
-            ik_solved = this->solveIK(desiredPose, minAnalyticalIkSolution, IK_NUMERICAL_INITIAL_Q, redundantJoint, qResult);
-            if (ik_solved)  std::cout << " IK SOLVED using the analytical IK" << std::endl;
-            else            std::cout << " IK NOT SOLVED using the analytical IK. The numerical Ik with multiple initial configurations will be executed." << std::endl;
+            ik_solved = this->solveIK(desiredPose, minAnalyticalIkSolution, IK_NUMERICAL_INITIAL_Q, redundantJoint, qResult, use_joint_saturation);
+            bool config_in_limits = configurationInLimits(qResult);
+            if   (ik_solved){
+                if (config_in_limits)   std::cout << " IK SOLVED using the analytical IK" << std::endl;
+                else                    std::cout << " IK NOT SOLVED: The analytical IK converges but the final configuration is not in limits. The numerical Ik with multiple initial random configurations will be executed." << std::endl;
+            }
+            else                        std::cout << " IK NOT SOLVED using the analytical IK. The numerical Ik with multiple initial random configurations will be executed." << std::endl;
 
             // If Ik not solved, use multiple random initial configurations
-            if (!ik_solved)  ik_solved = this->solveIK(desiredPose, minAnalyticalIkSolution, IK_NUMERICAL_RND_INITIAL_QS, redundantJoint, qResult);
+            if ( !ik_solved || !config_in_limits )      ik_solved = this->solveIK(desiredPose, minAnalyticalIkSolution, IK_NUMERICAL_RND_INITIAL_QS, redundantJoint, qResult, use_joint_saturation);
         }
     }
 
-    else    this->solveIK(desiredPose, q_initial_num_IK, IK_NUMERICAL_RND_INITIAL_QS, redundantJoint, qResult);
+    else    this->solveIK(desiredPose, q_initial_num_IK, IK_NUMERICAL_RND_INITIAL_QS, redundantJoint, qResult, use_joint_saturation);
 
     return ik_solved;
 }
