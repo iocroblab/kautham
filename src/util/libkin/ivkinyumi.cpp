@@ -96,6 +96,11 @@ bool IvKinYumi::solve(){
     _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
     plot_pose(&_targetTrans,"_target TF");
 
+//    // Set target pose      // TEST
+//    _targetTrans.setTranslation(mt::Point3(0.5, -0.2, 0.4));    // TEST
+//    _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
+//    plot_pose(&_targetTrans,"_target TF");
+
     // Set redundant joint
     double redundantJoint = 0.0;
     if (_target.size() > 7)   redundantJoint = -2.94088 + 5.88176 * _target.at(7);    // Denormalize
@@ -141,7 +146,7 @@ bool IvKinYumi::solve(){
 
     // Desired TCP pose in shoulder frame
     mt::Transform desired_TCP_ShoulderFrame = shoulder_YumiFrame->inverse() * desired_TCP_YumiFrame;
-    plot_pose(&desired_TCP_ShoulderFrame,"desired_TCP_ShoulderFrame");
+//    plot_pose(&desired_TCP_ShoulderFrame,"desired_TCP_ShoulderFrame");
 
 
     // Solve inverse kinematics -------------------------------
@@ -157,7 +162,7 @@ bool IvKinYumi::solve(){
 
     Eigen::VectorXf ikSolution(7);
     YumiKinematics* yumiKinSolver;
-    bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 2, redundantJoint, ikSolution);
+    bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 2, redundantJoint, ikSolution, false);
 
     // Final TCP pose
     for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(ikSolution(i-1));
