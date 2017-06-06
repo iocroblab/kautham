@@ -162,7 +162,7 @@ bool IvKinYumi::solve(){
 
     Eigen::VectorXf ikSolution(7);
     YumiKinematics* yumiKinSolver;
-    bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 2, redundantJoint, ikSolution, false);
+    bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 1, redundantJoint, ikSolution, false);
 
     // Final TCP pose
     for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(ikSolution(i-1));
