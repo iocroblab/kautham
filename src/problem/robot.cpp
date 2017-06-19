@@ -46,6 +46,7 @@
 #include <kautham/util/libkin/ivkin2drr.h>
 #include <kautham/util/libkin/ivkinUR5.h>
 #include <kautham/util/libkin/ivkinyumi.h>
+#include <kautham/util/libkin/ivkinkukalwr.h>
 #include <kautham/util/libkin/constrainedkinematic.h>
 #include <kautham/problem/ivpqpelement.h>
 #include <kautham/util/kthutil/kauthamexception.h>
@@ -853,6 +854,9 @@ namespace Kautham {
             break;
             case Kautham::YUMI_LEFT:
                 _ikine = new IvKinYumi(this,1);
+            break;
+            case Kautham::KUKA_LWR:
+                _ikine = new IvKinKukaLWR(this);
             break;
             case Kautham::NOINVKIN:
                 _ikine = NULL;
