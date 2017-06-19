@@ -30,20 +30,16 @@
 #include <eigen3/Eigen/Geometry>
 
 #include <kautham/problem/robot.h>
-#include <kautham/util/libkin/ivkinyumi.h>
-#include "YumiKinematics.h"
+#include <kautham/util/libkin/ivkinkukalwr.h>
+//#include "YumiKinematics.h"
 
 
-IvKinYumi::IvKinYumi(Robot* const rob, const bool use_left_arm): Kautham::InverseKinematic(rob){
+IvKinKukaLWR::IvKinKukaLWR(Robot* const rob): Kautham::InverseKinematic(rob){
 
   _target.resize(8);  // This contains the pose and quaternion as a vector
   _target[6] = 1.0; // w component of the quaternion
   _eulPos.resize(6);
   _robConf.setRn(7);
-
-  _redundantJoint = 0.0;
-
-  _use_left_arm = use_left_arm;
 
   addParameter("Px", _eulPos.at(0));
   addParameter("Py", _eulPos.at(1));
@@ -51,15 +47,13 @@ IvKinYumi::IvKinYumi(Robot* const rob, const bool use_left_arm): Kautham::Invers
   addParameter("Rx", _eulPos.at(3));
   addParameter("Ry", _eulPos.at(4));
   addParameter("Rz", _eulPos.at(5));
-
-  addParameter("Redundant joint", _redundantJoint);
 }
 
-IvKinYumi::~IvKinYumi(){
+IvKinKukaLWR::~IvKinKukaLWR(){
 
 }
 
-bool IvKinYumi::solve(){
+bool IvKinKukaLWR::solve(){
 
     // AUXILIARY FUNCTIONS
 
@@ -83,13 +77,11 @@ bool IvKinYumi::solve(){
     };
 
 
-    std::cout << "Yumi IK ----------------------------------------------------------" << std::endl;
-
-    std::cout << "Yumi arm is " << (this->arm_is_left() ? "left" : "right") << std::endl;
+    std::cout << "KUKA LWR IK ----------------------------------------------------------" << std::endl;
 
     std::cout << "_target (pos / quat): " << _target.at(0) << " " << _target.at(1) << " " << _target.at(2) << " "
-              << _target.at(3) << " " << _target.at(4) << " " << _target.at(5) << " "
-              << _target.at(6) << " " << _target.at(7) << " " << std::endl;
+              << _target.at(3) << " "     << _target.at(4) << " " << _target.at(5) << " "
+              << _target.at(6) << " "     << _target.at(7) << " " << std::endl;
 
     // Set target pose
     _targetTrans.setTranslation(mt::Point3(_target.at(0), _target.at(1), _target.at(2)));
@@ -101,29 +93,12 @@ bool IvKinYumi::solve(){
 //    _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
 //    plot_pose(&_targetTrans,"_target TF");
 
-    // Set redundant joint
-    double redundantJoint = 0.0;
-    if (_target.size() > 7)   redundantJoint = -2.94088 + 5.88176 * _target.at(7);    // Denormalize
-    std::cout << "Redundat joint = " << redundantJoint << std::endl;
-
-
-    // Shoulder pose in Yumi Frame
-    mt::Transform* shoulder_YumiFrame = new mt::Transform;
-    if (arm_is_left()){
-        shoulder_YumiFrame->setRotation(mt::Rotation(2.3180,-0.5716,0.9781));
-        shoulder_YumiFrame->setTranslation(mt::Point3(0.05355, 0.0725, 0.41492));
-    }
-    else{
-        shoulder_YumiFrame->setRotation(mt::Rotation(-2.3180,-0.5682,-0.9781));
-        shoulder_YumiFrame->setTranslation(mt::Point3(0.05355, -0.0725, 0.41492));
-    }
-//    plot_pose(shoulder_YumiFrame,"yumiShoulderPose_YumiFrame");
 
 
     std::cout << "INVERSE KINEMATICS ++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
 
-    //  Desired TCP pose in Yumi frame
-    mt::Transform desired_TCP_YumiFrame = _targetTrans;
+    //  Desired TCP pose
+    mt::Transform desired_TCP = _targetTrans;
     //  TEST
     bool test = true;
     test = false;
@@ -133,20 +108,17 @@ bool IvKinYumi::solve(){
         std::cout << " q_test: " << q_test.transpose() << std::endl;
 
         for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(q_test(i-1));
-        desired_TCP_YumiFrame = *_robot->getLink(7)->getTransformation();
+        desired_TCP = *_robot->getLink(7)->getTransformation();
 
         // Test DK
-        YumiKinematics* yumiKinSolver;
-        Eigen::VectorXf q_dkTest(q_test);
-        Eigen::Matrix4f dk_test_pose(mt_to_Eigen_pose(shoulder_YumiFrame) * yumiKinSolver->ForwardKinematics(q_dkTest));
-        std::cout << "dk_test_pose desired_TCP_YumiFrame" << std::endl << dk_test_pose << std::endl;
+//        YumiKinematics* yumiKinSolver;
+//        Eigen::VectorXf q_dkTest(q_test);
+//        Eigen::Matrix4f dk_test_pose(mt_to_Eigen_pose(shoulder_YumiFrame) * yumiKinSolver->ForwardKinematics(q_dkTest));
+//        std::cout << "dk_test_pose desired_TCP_YumiFrame" << std::endl << dk_test_pose << std::endl;
         // Test DK
     }
-//    plot_pose(&desired_TCP_YumiFrame,"desired_TCP_YumiFrame");
+//    plot_pose(&desired_TCP_,"desired_TCP");
 
-    // Desired TCP pose in shoulder frame
-    mt::Transform desired_TCP_ShoulderFrame = shoulder_YumiFrame->inverse() * desired_TCP_YumiFrame;
-//    plot_pose(&desired_TCP_ShoulderFrame,"desired_TCP_ShoulderFrame");
 
 
     // Solve inverse kinematics -------------------------------
@@ -161,37 +133,30 @@ bool IvKinYumi::solve(){
     }
 
     Eigen::VectorXf ikSolution(7);
-    YumiKinematics* yumiKinSolver;
-    bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 2, redundantJoint, ikSolution, false);
+//    YumiKinematics* yumiKinSolver;
+//    bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 2, redundantJoint, ikSolution, false);
+    bool ik_solved = false;
 
     // Final TCP pose
     for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(ikSolution(i-1));
-    mt::Transform ikResult_TCP_YumiFrame = *_robot->getLink(7)->getTransformation();
-    plot_pose(&ikResult_TCP_YumiFrame,"ikResult_TCP_YumiFrame");
+    mt::Transform ikResult_TCP = *_robot->getLink(7)->getTransformation();
+    plot_pose(&ikResult_TCP,"ikResult_TCP");
 
     mt::Scalar y, p, r;
-    ikResult_TCP_YumiFrame.getRotation().getYpr(y, p, r);
+    ikResult_TCP.getRotation().getYpr(y, p, r);
     std::cout << "ypr " << y << " " << p << " " << r << std::endl;
 
 //    // TEST
-//    // Shoulder pose in Yumi Frame
 //    Eigen::VectorXf ikTestConfig(ikSolution);
 //    std::cout << "ikSolution = " << ikSolution.transpose() << std::endl;
-////        Eigen::Matrix4f ikResult_TCP_YumiFrame_2(mt_to_Eigen_pose(shoulder_YumiFrame) * yumiKinSolver->ForwardKinematics(ikTestConfig));
+////        Eigen::Matrix4f ikResult_TCP_2(yumiKinSolver->ForwardKinematics(ikTestConfig));
 //    std::cout << "yumiKinSolver->ForwardKinematics(ikTestConfig)" << std::endl << yumiKinSolver->ForwardKinematics(ikTestConfig) << std::endl;
-//    std::cout << "ikResult_TCP_YumiFrame_2" << std::endl << ikResult_TCP_YumiFrame_2 << std::endl;
+//    std::cout << "ikResult_TCP_2" << std::endl << ikResult_TCP_2 << std::endl;
 //    // TEST
 
 
     // Store the selection solution to kautham
     std::vector<KthReal> qn(7);
-//    qn.at(0) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
-//    qn.at(1) = ( ikSolution(1) - (-2.50455) )/( 0.759218 - (-2.50455) );
-//    qn.at(2) = ( ikSolution(2) - (-2.94088) )/(  2.94088 - (-2.94088) );
-//    qn.at(3) = ( ikSolution(3) - (-2.15548) )/(  1.39626 - (-2.15548) );
-//    qn.at(4) = ( ikSolution(4) - (-5.06145) )/(  5.06145 - (-5.06145) );
-//    qn.at(5) = ( ikSolution(5) - (-1.53589) )/(  2.40855 - (-1.53589) );
-//    qn.at(6) = ( ikSolution(6) -  (-3.9968) )/(   3.9968 -  (-3.9968) );
     for (unsigned int i = 0; i<7; ++i)  qn.at(i) = ikSolution[i];
     _robConf.setRn(qn);
 
@@ -200,7 +165,8 @@ bool IvKinYumi::solve(){
     return ik_solved;
 }
 
-bool IvKinYumi::setParameters(){
+
+bool IvKinKukaLWR::setParameters(){
   try{
 
       // Get parameters
@@ -240,21 +206,12 @@ bool IvKinYumi::setParameters(){
       else
         return false;
 
-      it = _parameters.find("Redundant joint" );
-      if(it != _parameters.end()){
-          _redundantJoint = it->second;
-      }else
-        return false;
-
       // Set target position
       _targetTrans.setTranslation(mt::Point3(_eulPos.at(0), _eulPos.at(1), _eulPos.at(2)));
       _targetTrans.setRotation(mt::Rotation(_eulPos.at(5), _eulPos.at(4), _eulPos.at(3)));
 
       for( int i = 0; i < 3; i++)   _target.at(i) = _targetTrans.getTranslation().at(i);
       for( int i = 3; i < 7; i++)   _target.at(i) = _targetTrans.getRotation().at(i-3);
-
-      // Set redundant joint
-      if(_target.size() > 7)    _target.at(7) = _redundantJoint;
 
       std::cout << "--> _target: ";
       for (unsigned int i=0; i<_target.size(); ++i) std::cout << _target.at(i) << " ";
@@ -266,7 +223,7 @@ bool IvKinYumi::setParameters(){
     return true;
 }
 
-void IvKinYumi::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
+void IvKinKukaLWR::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
   (void)masterconf;//unused
   (void)maintainSameWrist;//unused
 
