@@ -47,6 +47,7 @@ public:
 private:
     IvKinKukaLWR();
     vector<KthReal> _eulPos;
+    double          _redundantJoint;
     double          _result[6];
     bool            _use_left_arm;
 };
