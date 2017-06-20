@@ -61,7 +61,8 @@ namespace Kautham {
 
          KthReal _GoalBias;
          double _propagationStepSize;
-         unsigned int _duration;
+         unsigned int _durationMax;
+         unsigned int _durationMin;
          double _controlBound_Tras;
          double _controlBound_Rot;
          double _length;
