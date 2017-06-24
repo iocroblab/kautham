@@ -90,10 +90,10 @@ bool IvKinKukaLWR::solve(){
     _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
     plot_pose(&_targetTrans,"_target TF");
 
-//    // Set target pose      // TEST
-//    _targetTrans.setTranslation(mt::Point3(0.5, -0.2, 0.4));    // TEST
-//    _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
-//    plot_pose(&_targetTrans,"_target TF");
+    // Set target pose      // TEST
+    _targetTrans.setTranslation(mt::Point3(0.1, 0.0, 0.6));    // TEST
+    _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
+    plot_pose(&_targetTrans,"_target TF");
 
     // Set redundant joint
     double redundantJoint = 0.0;
@@ -107,7 +107,7 @@ bool IvKinKukaLWR::solve(){
     mt::Transform desired_TCP = _targetTrans;
     //  TEST
     bool test = true;
-//    test = false;
+    test = false;
     Eigen::VectorXf q_test(7);
     if (test){
         q_test << M_PI/6.0, -M_PI/6.0, M_PI/4.0, -M_PI/5.0, 0.0, M_PI/6.0, -M_PI/3.0;
@@ -117,7 +117,7 @@ bool IvKinKukaLWR::solve(){
         for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(q_test(i-1));
         desired_TCP = *_robot->getLink(7)->getTransformation();
     }
-//    plot_pose(&desired_TCP_,"desired_TCP");
+    plot_pose(&desired_TCP,"desired_TCP");
 
 
 
@@ -135,121 +135,137 @@ bool IvKinKukaLWR::solve(){
 
     //  Solver for position +++++++++
 
-    //   Compute q(3)'s
-    float a_3 = ( px*px + py*py + (pz-310.0)*(pz-310.0) - 312100.0 )/312000.0;
-    std::vector<float> q3s;
-    float tmp = sqrt(1.0 - a_3*a_3);
-    q3s.push_back( atan2(+tmp, a_3) );
-    q3s.push_back( atan2(-tmp, a_3) );
+    //   q(2) is the redundant joint - q3 in the paper notation
 
-    //   Compute q(0)'s
-    float s2 = sin(redundantJoint);
-    std::vector<float> q0s;
-    for (unsigned int i=0; i<2; ++i){
-        // For each q(3)
-        float s3 = sin(q3s[i]);
-        float tmp = sqrt( px*px + py*py - 390.0*390.0*s2*s2*s3*s3 );
-        float atanxy = atan2(py, px);
-        q0s.push_back( atan2(390.0*s2*s3, +tmp) - atanxy );
-        q0s.push_back( atan2(390.0*s2*s3, -tmp) - atanxy );
-    }
+    //   Compute q(3)'s - q4 in the paper notation
+    float a_4 = ( px*px + py*py + (pz-310.0)*(pz-310.0) - 312100.0 )/312000.0;
+    std::vector<float> q4s;
+    float tmp = sqrt(1.0 - a_4*a_4);
+    q4s.push_back( atan2(+tmp, a_4) );
+    q4s.push_back( atan2(-tmp, a_4) );
+    std::cout << "q4s " << q4s.size() << std::endl;
 
-    //   Compute q(1)'s
-    float c2 = cos(redundantJoint);
+    //   Compute q(0)'s - q1 in the paper notation
+    float s3 = sin(redundantJoint);
     std::vector<float> q1s;
-    for (unsigned int i=0; i<2; ++i){
+    for (unsigned int i=0; i<q4s.size(); ++i){
         // For each q(3)
-        float s3 = sin(q3s[i]);
-        float c3 = cos(q3s[i]);
-        float a_4 = ( 390.0*c3 + 400.0 );
-        float b_4 = - 390.0*c2*s3;
-        float c_4 = pz - 310.0;
-        float tmp = sqrt( a_4*a_4 + b_4*b_4 + c_4*c_4 );
-        float atanab = atan2(a_4, b_4);
-        q1s.push_back( atan2(c_4, +tmp) - atanab );
-        q1s.push_back( atan2(c_4, -tmp) - atanab );
+        float s4 = sin(q4s[i]);
+        float tmp = sqrt( px*px + py*py - 390.0*390.0*s3*s3*s4*s4 );
+        float atanxy = atan2(py, px);
+        q1s.push_back( atan2(390.0*s3*s4, +tmp) - atanxy );
+        q1s.push_back( atan2(390.0*s3*s4, -tmp) - atanxy );
     }
+    std::cout << "q1s " << q1s.size() << std::endl;
+
+    //   Compute q(1)'s - q2 in the paper notation
+    float c3 = cos(redundantJoint);
+    std::vector<float> q2s;
+    for (unsigned int i=0; i<q4s.size(); ++i){
+        // For each q(3)
+        float s4 = sin(q4s[i]);
+        float c4 = cos(q4s[i]);
+        float a_2 = ( 390.0*c4 + 400.0 );
+        float b_2 = - 390.0*c3*s4;
+        float c_2 = pz - 310.0;
+        float tmp = sqrt( a_2*a_2 + b_2*b_2 - c_2*c_2 );
+        float atanab = atan2(a_2, b_2);
+        q2s.push_back( atan2(c_2, +tmp) - atanab );
+        q2s.push_back( atan2(c_2, -tmp) - atanab );
+    }
+    std::cout << "q2s " << q2s.size() << std::endl;
 
     // Store 'wrist' configurations in a list
-    std::vector< std::vector<float> > q0123s;
-    for (unsigned int i=0; i<4; ++i){
+    std::vector< std::vector<float> > q1234s;
+    for (unsigned int i=0; i<q1s.size(); ++i){
         std::vector<float> qArm(4);
-        qArm[0] = q0s[i];
-        for (unsigned int i=0; i<4; ++i){
-            qArm[1] = q1s[i];
+        qArm[0] = q1s[i];
+        for (unsigned int j=0; j<q2s.size(); ++j){
+            qArm[1] = q2s[j];
             qArm[2] = redundantJoint;
-            for (unsigned int i=0; i<2; ++i){
-                qArm[3] = q3s[i];
-                q0123s.push_back(qArm);
+            for (unsigned int k=0; k<q4s.size(); ++k){
+                qArm[3] = q4s[k];
+                q1234s.push_back(qArm);
             }
         }
     }
 
+    // Test position results
+    std::cout << "Testing IK positions : " << q1234s.size() << std::endl;
+    for (unsigned int i=0; i<q1234s.size(); ++i){
+        Eigen::VectorXf tmp_cfg(7);
+        for (unsigned int j=0; j<4; ++j)    tmp_cfg(j) = q1234s[i][j];
+        for (unsigned int j=4; j<7; ++j)    tmp_cfg(j) = 0.0;
+        // DK
+        for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(tmp_cfg(i-1));
+        mt::Transform TCP_TF = *_robot->getLink(7)->getTransformation();
+        plot_pose(&TCP_TF,"TCP_TF");
+    }
 
+
+    // TODO TODO TODO TODO - Only one solution from rotation - double-cover
     //  Solver for rotation +++++++++
     mt::Rotation R = _targetTrans.getRotation();
 
-    std::vector< std::vector<float> > q456s;
-    for (unsigned int i=0; i<q0123s.size(); ++i){
-        std::vector<float> qArm(q0123s[i]);
+    std::vector< std::vector<float> > q567s;
+    for (unsigned int i=0; i<q1234s.size(); ++i){
+        std::vector<float> qArm(q1234s[i]);
         for (unsigned int j=0; j<4; ++j)    _robot->getLink(j)->setValue(qArm[j]);
 
         //   Compute wrist rotation matrix
-        mt::Rotation R0 = _robot->getLink(0)->getTransformation()->getRotation();
         mt::Rotation R1 = _robot->getLink(1)->getTransformation()->getRotation();
         mt::Rotation R2 = _robot->getLink(2)->getTransformation()->getRotation();
         mt::Rotation R3 = _robot->getLink(3)->getTransformation()->getRotation();
+        mt::Rotation R4 = _robot->getLink(4)->getTransformation()->getRotation();
 
-        mt::Rotation R456 = R3.inverse() * R2.inverse() * R1.inverse() * R0.inverse() * R;
+        mt::Rotation R567 = R4.inverse() * R3.inverse() * R2.inverse() * R1.inverse() * R;
 
-//        float m11 = R456.getMatrix()[0][0];
-//        float m12 = R456.getMatrix()[0][1];
-        float m13 = R456.getMatrix()[0][2];
-        float m21 = R456.getMatrix()[1][0];
-        float m22 = R456.getMatrix()[1][1];
-        float m23 = R456.getMatrix()[1][2];
-//        float m31 = R456.getMatrix()[2][0];
-//        float m32 = R456.getMatrix()[2][1];
-        float m33 = R456.getMatrix()[2][2];
-
-        float tmp = sqrt( m13*m13 + m33*m33 );
+//        float m11 = R567.getMatrix()[0][0];
+//        float m12 = R567.getMatrix()[0][1];
+        float m13 = R567.getMatrix()[0][2];
+        float m21 = R567.getMatrix()[1][0];
+        float m22 = R567.getMatrix()[1][1];
+        float m23 = R567.getMatrix()[1][2];
+//        float m31 = R567.getMatrix()[2][0];
+//        float m32 = R567.getMatrix()[2][1];
+        float m33 = R567.getMatrix()[2][2];
 
         // First set
-        float q5_1 = atan2( +tmp, m23 );
-        float s5_1 = sin(q5_1);
-        float q4_1 = atan2(  m33/s5_1, -m13/s5_1 );
-        float q6_1 = atan2( -m22/s5_1,  m21/s5_1 );
+        float q6_1 = atan2( +sqrt( m13*m13 + m33*m33 ), m23 );
+        float s6_1 = sin(q6_1);
+        float q5_1 = atan2(  m33/s6_1, -m13/s6_1 );
+        float q7_1 = atan2( -m22/s6_1,  m21/s6_1 );
         std::vector<float> qWrist_1;
-        qWrist_1.push_back(q4_1);
         qWrist_1.push_back(q5_1);
         qWrist_1.push_back(q6_1);
-        q456s.push_back(qWrist_1);
+        qWrist_1.push_back(q7_1);
+        q567s.push_back(qWrist_1);
 
-        // Second set
-        float q5_2 = atan2( -tmp, m23 );
-        float s5_2 = sin(q5_2);
-        float q4_2 = atan2(  m33/s5_2, -m13/s5_2 );
-        float q6_2 = atan2( -m22/s5_2,  m21/s5_2 );
-        std::vector<float> qWrist_2;
-        qWrist_2.push_back(q4_2);
-        qWrist_2.push_back(q5_2);
-        qWrist_2.push_back(q6_2);
-        q456s.push_back(qWrist_2);
+//        // Second set
+//        float q6_2 = atan2( -sqrt( m13*m13 + m33*m33 ), m23 );
+//        float s6_2 = sin(q6_2);
+//        float q5_2 = atan2(  m33/s6_2, -m13/s6_2 );
+//        float q7_2 = atan2( -m22/s6_2,  m21/s6_2 );
+//        std::vector<float> qWrist_2;
+//        qWrist_2.push_back(q5_2);
+//        qWrist_2.push_back(q6_2);
+//        qWrist_2.push_back(q7_2);
+//        q567s.push_back(qWrist_2);
     }
 
 
     // Join the position and orientation set of joints
     std::vector< std::vector<float> > solutionSet;
-    for (unsigned int i=0; i<q0123s.size(); ++i){
-        for (unsigned int j=0; j<q456s.size(); ++j){
+    for (unsigned int i=0; i<q1234s.size(); ++i){
+        for (unsigned int j=0; j<q567s.size(); ++j){
             std::vector<float> config(7);
-            config[0] = q0123s[i][0];
-            config[1] = q0123s[i][1];
-            config[2] = q0123s[i][2];
-            config[3] = q0123s[i][3];
-            config[4] =  q456s[j][0];
-            config[5] =  q456s[j][1];
-            config[6] =  q456s[j][2];
+            config[0] = q1234s[i][0];
+            config[1] = q1234s[i][1];
+            config[2] = q1234s[i][2];
+            config[3] = q1234s[i][3];
+            config[4] =  q567s[j][0];
+            config[5] =  q567s[j][1];
+            config[6] =  q567s[j][2];
             solutionSet.push_back(config);
         }
     }
