@@ -111,6 +111,7 @@ bool IvKinKukaLWR::solve(){
     Eigen::VectorXf q_test(7);
     if (test){
         q_test << M_PI/6.0, -M_PI/6.0, M_PI/4.0, -M_PI/5.0, 0.0, M_PI/6.0, -M_PI/3.0;
+        q_test << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
         std::cout << " q_test: " << q_test.transpose() << std::endl;
 
         for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(q_test(i-1));
@@ -270,6 +271,27 @@ bool IvKinKukaLWR::solve(){
 //    bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 2, redundantJoint, ikSolution, false);
     bool ik_solved = false;
 
+
+
+    //    // Testing joint limits
+    //    for (unsigned int i=1; i<8; ++i){
+    //        float* low_lims = _robot->getLink(i)->getLimits(1);
+    //        float* high_lims = _robot->getLink(i)->getLimits(0);
+    //        std::cout << "lim " << i << " " << *low_lims << " " << *high_lims << std::endl;
+    //    }
+
+    // Testing
+    ikSolution(0) = 0.0;
+    ikSolution(1) = M_PI/4.0;   // OK
+    ikSolution(2) = 0.0;
+    ikSolution(3) = 0.0;
+    ikSolution(4) = 0.0;
+    ikSolution(5) = 0.0;
+    ikSolution(6) = 0.0;
+//    for (unsigned int i=0; i<7; ++i)    ikSolution(i) = 0.5;
+
+
+
     // Final TCP pose
     for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(ikSolution(i-1));
     mt::Transform ikResult_TCP = *_robot->getLink(7)->getTransformation();
@@ -279,13 +301,8 @@ bool IvKinKukaLWR::solve(){
     ikResult_TCP.getRotation().getYpr(y, p, r);
     std::cout << "ypr " << y << " " << p << " " << r << std::endl;
 
-//    // TEST
-//    Eigen::VectorXf ikTestConfig(ikSolution);
-//    std::cout << "ikSolution = " << ikSolution.transpose() << std::endl;
-////        Eigen::Matrix4f ikResult_TCP_2(yumiKinSolver->ForwardKinematics(ikTestConfig));
-//    std::cout << "yumiKinSolver->ForwardKinematics(ikTestConfig)" << std::endl << yumiKinSolver->ForwardKinematics(ikTestConfig) << std::endl;
-//    std::cout << "ikResult_TCP_2" << std::endl << ikResult_TCP_2 << std::endl;
-//    // TEST
+
+
 
 
     // Store the selection solution to kautham
@@ -365,6 +382,7 @@ bool IvKinKukaLWR::setParameters(){
     return true;
 }
 
+
 void IvKinKukaLWR::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
   (void)masterconf;//unused
   (void)maintainSameWrist;//unused
@@ -372,4 +390,55 @@ void IvKinKukaLWR::setTarget(vector<KthReal> &target, vector<KthReal> masterconf
   //loads the target: the tcp transform
   _target.clear();
   for(unsigned i =0; i< target.size(); i++)     _target.push_back(target.at(i));
+}
+
+
+void IvKinKukaLWR::setJointInLimit(const unsigned i, float &value){
+
+    if      ( value < this->getLimit(i,0) )   value = this->getLimit(i,0);
+    else if ( value > this->getLimit(i,1) )   value = this->getLimit(i,1);
+
+    return;
+}
+
+
+void IvKinKukaLWR::setJointsInLimits(Eigen::VectorXf &joints){
+    for (unsigned int i=0; i<7; ++i)    this->setJointInLimit(i, joints(i));
+}
+
+
+float IvKinKukaLWR::normalizeJoint(const unsigned i, const float value){
+    return ( value - this->getLimit(i,0) )/( this->getLimit(i,1) - this->getLimit(i,0) );
+}
+
+Eigen::VectorXf IvKinKukaLWR::normalizeJoints(const Eigen::VectorXf joints){
+
+    Eigen::VectorXf normalized_jnts(7);
+
+    for (unsigned int i=0; i<7; ++i)
+        normalized_jnts(i) = this->normalizeJoint(i, joints(i));
+
+    return normalized_jnts;
+}
+
+
+float IvKinKukaLWR::denormalizeJoint(const unsigned i, const float normalized_value){
+    return ( this->getLimit(i,0) + normalized_value*( this->getLimit(i,1) - this->getLimit(i,0) ) );
+}
+
+Eigen::VectorXf IvKinKukaLWR::denormalizeJoints(const Eigen::VectorXf normalized_joints){
+
+    Eigen::VectorXf jnts(7);
+
+    for (unsigned int i=0; i<7; ++i)
+        jnts(i) = this->denormalizeJoint(i, normalized_joints(i));
+
+    return jnts;
+}
+
+
+float IvKinKukaLWR::getLimit(const unsigned int i, bool high_limit){
+
+    if  ( !high_limit )     return *(_robot->getLink(i+1)->getLimits(1));
+    else                    return *(_robot->getLink(i+1)->getLimits(0));
 }
