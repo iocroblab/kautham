@@ -27,6 +27,10 @@
 #if !defined(_IVKINKUKALWR_H)
 #define _IVKINKUKALWR_H
 
+
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Geometry>
+
 #include <kautham/util/libkin/inversekinematic.h>
 
 
@@ -50,6 +54,14 @@ private:
     double          _redundantJoint;
     double          _result[6];
     bool            _use_left_arm;
+
+    void setJointInLimit(const unsigned i, float &value);
+    void setJointsInLimits(Eigen::VectorXf &joints);
+    float normalizeJoint(const unsigned i, const float value);
+    Eigen::VectorXf normalizeJoints(const Eigen::VectorXf joints);
+    float denormalizeJoint(const unsigned i, const float normalized_value);
+    Eigen::VectorXf denormalizeJoints(const Eigen::VectorXf normalized_joints);
+    float getLimit(const unsigned int i, bool high_limit);
 };
 
 /** @}   end of Doxygen module */
