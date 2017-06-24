@@ -138,7 +138,7 @@ bool IvKinKukaLWR::solve(){
     //   q(2) is the redundant joint - q3 in the paper notation
 
     //   Compute q(3)'s - q4 in the paper notation
-    float a_4 = ( px*px + py*py + (pz-310.0)*(pz-310.0) - 312100.0 )/312000.0;
+    float a_4 = ( px*px + py*py + (pz-0.310)*(pz-0.310) - 0.312100 )/0.312000;
     std::vector<float> q4s;
     float tmp = sqrt(1.0 - a_4*a_4);
     q4s.push_back( atan2(+tmp, a_4) );
@@ -151,10 +151,10 @@ bool IvKinKukaLWR::solve(){
     for (unsigned int i=0; i<q4s.size(); ++i){
         // For each q(3)
         float s4 = sin(q4s[i]);
-        float tmp = sqrt( px*px + py*py - 390.0*390.0*s3*s3*s4*s4 );
+        float tmp = sqrt( px*px + py*py - 0.390*0.390*s3*s3*s4*s4 );
         float atanxy = atan2(py, px);
-        q1s.push_back( atan2(390.0*s3*s4, +tmp) - atanxy );
-        q1s.push_back( atan2(390.0*s3*s4, -tmp) - atanxy );
+        q1s.push_back( atan2(0.390*s3*s4, +tmp) - atanxy );
+        q1s.push_back( atan2(0.390*s3*s4, -tmp) - atanxy );
     }
     std::cout << "q1s " << q1s.size() << std::endl;
 
@@ -165,9 +165,9 @@ bool IvKinKukaLWR::solve(){
         // For each q(3)
         float s4 = sin(q4s[i]);
         float c4 = cos(q4s[i]);
-        float a_2 = ( 390.0*c4 + 400.0 );
-        float b_2 = - 390.0*c3*s4;
-        float c_2 = pz - 310.0;
+        float a_2 = ( 0.390*c4 + 0.400 );
+        float b_2 = - 0.390*c3*s4;
+        float c_2 = pz - 0.310;
         float tmp = sqrt( a_2*a_2 + b_2*b_2 - c_2*c_2 );
         float atanab = atan2(a_2, b_2);
         q2s.push_back( atan2(c_2, +tmp) - atanab );
@@ -203,7 +203,6 @@ bool IvKinKukaLWR::solve(){
     }
 
 
-    // TODO TODO TODO TODO - Only one solution from rotation - double-cover
     //  Solver for rotation +++++++++
     mt::Rotation R = _targetTrans.getRotation();
 
@@ -241,7 +240,7 @@ bool IvKinKukaLWR::solve(){
         qWrist_1.push_back(q7_1);
         q567s.push_back(qWrist_1);
 
-//        // Second set
+//        // Second set - Double cover, thus, the same as the first set
 //        float q6_2 = atan2( -sqrt( m13*m13 + m33*m33 ), m23 );
 //        float s6_2 = sin(q6_2);
 //        float q5_2 = atan2(  m33/s6_2, -m13/s6_2 );
