@@ -88,16 +88,20 @@ bool IvKinKukaLWR::solve(){
     // Set target pose
     _targetTrans.setTranslation(mt::Point3(_target.at(0), _target.at(1), _target.at(2)));
     _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
-    plot_pose(&_targetTrans,"_target TF");
-
-    // Set target pose      // TEST
-    _targetTrans.setTranslation(mt::Point3(0.1, 0.0, 0.6));    // TEST
-    _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
-    plot_pose(&_targetTrans,"_target TF");
+//    plot_pose(&_targetTrans,"_target TF");
 
     // Set redundant joint
     double redundantJoint = 0.0;
     if (_target.size() > 7)   redundantJoint = -2.96705972839 + _target.at(7)*(2.96705972839 + 2.96705972839);
+//    std::cout << "Redundat joint = " << redundantJoint << std::endl;
+
+
+
+    // Set target pose    // TEST TEST TEST TEST
+    _targetTrans.setTranslation(mt::Point3(0.0, 0.0, 0.878));
+    _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6) ));
+    plot_pose(&_targetTrans,"_target TF");
+    redundantJoint = 0.0;
     std::cout << "Redundat joint = " << redundantJoint << std::endl;
 
 
@@ -137,11 +141,15 @@ bool IvKinKukaLWR::solve(){
     float px = desired_Wrist_TF.getTranslation()[0];
     float py = desired_Wrist_TF.getTranslation()[1];
     float pz = desired_Wrist_TF.getTranslation()[2];
+    std::cout << "px py pz =  " << px << " " << py << " " << pz << std::endl;
 
 
     //  Solver for position +++++++++
 
     //   q(2) is the redundant joint - q3 in the paper notation
+    float s3 = sin(redundantJoint);
+    float c3 = cos(redundantJoint);
+    std::cout << "q3s = " << redundantJoint << std::endl;
 
     //   Compute q(3)'s - q4 in the paper notation
     float a_4 = ( px*px + py*py + (pz-0.310)*(pz-0.310) - 0.312100 )/0.312000;
@@ -150,9 +158,9 @@ bool IvKinKukaLWR::solve(){
     q4s.push_back( atan2(+tmp, a_4) );
     q4s.push_back( atan2(-tmp, a_4) );
 //    std::cout << "q4s " << q4s.size() << std::endl;
+    std::cout << "q4s = ";    for (unsigned int i=0; i<q4s.size(); ++i)   std::cout << q4s[i] << " "; std::cout << std::endl;
 
     //   Compute q(0)'s - q1 in the paper notation
-    float s3 = sin(redundantJoint);
     std::vector<float> q1s;
     for (unsigned int i=0; i<q4s.size(); ++i){
         // For each q(3)
@@ -163,16 +171,16 @@ bool IvKinKukaLWR::solve(){
         q1s.push_back( atan2(0.390*s3*s4, -tmp) - atanyx );
     }
 //    std::cout << "q1s " << q1s.size() << std::endl;
+    std::cout << "q1s = ";    for (unsigned int i=0; i<q1s.size(); ++i)   std::cout << q1s[i] << " "; std::cout << std::endl;
 
     //   Compute q(1)'s - q2 in the paper notation
-    float c3 = cos(redundantJoint);
     std::vector<float> q2s;
     for (unsigned int i=0; i<q4s.size(); ++i){
         // For each q(3)
         float s4 = sin(q4s[i]);
         float c4 = cos(q4s[i]);
         float a_2 = ( 0.390*c4 + 0.400 );
-        float b_2 = - 0.390*c3*s4;
+        float b_2 = -0.390*c3*s4;
         float c_2 = pz - 0.310;
         float tmp = sqrt( a_2*a_2 + b_2*b_2 - c_2*c_2 );
         float atanab = atan2(a_2, b_2);
@@ -180,6 +188,7 @@ bool IvKinKukaLWR::solve(){
         q2s.push_back( atan2(c_2, -tmp) - atanab );
     }
 //    std::cout << "q2s " << q2s.size() << std::endl;
+    std::cout << "q2s = ";    for (unsigned int i=0; i<q2s.size(); ++i)   std::cout << q2s[i] << " "; std::cout << std::endl;
 
     // Store 'wrist' configurations in a list
     std::vector< std::vector<float> > q1234s;
@@ -213,6 +222,12 @@ bool IvKinKukaLWR::solve(){
         for (unsigned int j=0; j<4; ++j)    tmp_cfg(j) = q1234s[i][j];
         for (unsigned int j=4; j<7; ++j)    tmp_cfg(j) = 0.0;
 
+        // Setting positions to Kautham convention:
+        //  q_KAUTHAM(1) = q_ISIAH(1) - PI/2
+        //  q_KAUTHAM(i) = q_ISIAH(i)         i \in {0, 2, 3, 4, 5, 6}
+        tmp_cfg(1) = tmp_cfg(1) - M_PI/2.0;
+
+
         // Ploting each position configuration
         std::cout << "pos cfg " << i << ":  ";
         for (unsigned int j=0; j<7; ++j)    std::cout << tmp_cfg(j) << " ";
@@ -231,6 +246,7 @@ bool IvKinKukaLWR::solve(){
     std::vector< std::vector<float> > q567s;
     for (unsigned int i=0; i<q1234s.size(); ++i){
         std::vector<float> qArm(q1234s[i]);
+        qArm[1] = qArm[1] - M_PI/2.0;   // To Kautham convention
         for (unsigned int j=0; j<4; ++j)    _robot->getLink(j)->setValue(qArm[j]);
 
         //   Compute wrist rotation matrix
@@ -251,7 +267,7 @@ bool IvKinKukaLWR::solve(){
 //        float m32 = R567.getMatrix()[2][1];
         float m33 = R567.getMatrix()[2][2];
 
-        // First set
+        // First set - Double cover, thus, the same as the second set
         float q6_1 = atan2( +sqrt( m13*m13 + m33*m33 ), m23 );
         float s6_1 = sin(q6_1);
         float q5_1 = atan2(  m33/s6_1, -m13/s6_1 );
@@ -261,37 +277,32 @@ bool IvKinKukaLWR::solve(){
         qWrist_1.push_back(q6_1);
         qWrist_1.push_back(q7_1);
         q567s.push_back(qWrist_1);
-
-//        // Second set - Double cover, thus, the same as the first set
-//        float q6_2 = atan2( -sqrt( m13*m13 + m33*m33 ), m23 );
-//        float s6_2 = sin(q6_2);
-//        float q5_2 = atan2(  m33/s6_2, -m13/s6_2 );
-//        float q7_2 = atan2( -m22/s6_2,  m21/s6_2 );
-//        std::vector<float> qWrist_2;
-//        qWrist_2.push_back(q5_2);
-//        qWrist_2.push_back(q6_2);
-//        qWrist_2.push_back(q7_2);
-//        q567s.push_back(qWrist_2);
     }
 
 
     // Join the position and orientation set of joints
-//    std::cout << "q1234s / q567s " << q1234s.size() << " " << q567s.size() << std::endl;
+    std::cout << "q1234s / q567s " << q1234s.size() << " " << q567s.size() << std::endl;
     std::vector< std::vector<float> > solutionSet;
     for (unsigned int i=0; i<q1234s.size(); ++i){
-        for (unsigned int j=0; j<q567s.size(); ++j){
-            std::vector<float> config(7);
-            config[0] = q1234s[i][0];
-            config[1] = q1234s[i][1];
-            config[2] = q1234s[i][2];
-            config[3] = q1234s[i][3];
-            config[4] =  q567s[j][0];
-            config[5] =  q567s[j][1];
-            config[6] =  q567s[j][2];
-            solutionSet.push_back(config);
-        }
+        std::vector<float> config(7);
+        config[0] = q1234s[i][0];
+        config[1] = q1234s[i][1];
+        config[2] = q1234s[i][2];
+        config[3] = q1234s[i][3];
+        config[4] =  q567s[i][0];
+        config[5] =  q567s[i][1];
+        config[6] =  q567s[i][2];
+
+        // To kautham convention
+        config[1] = config[1] - M_PI/2.0;
+
+        solutionSet.push_back(config);
     }
     std::cout << "Solutions obtained: " << solutionSet.size() << std::endl;
+    for (unsigned int i=0; i<solutionSet.size(); ++i){
+        for (unsigned int j=0; j<7; ++j)    std::cout << solutionSet[i][j] << " ";
+        std::cout << std::endl;
+    }
 
 
 
@@ -324,7 +335,7 @@ bool IvKinKukaLWR::solve(){
 //    ikSolution(1) = M_PI/4.0;   // OK
     ikSolution(1) = 0.0;   // OK
     ikSolution(2) = 0.0;
-    ikSolution(3) = 0.0;
+    ikSolution(3) = M_PI/2.0;
     ikSolution(4) = 0.0;
     ikSolution(5) = 0.0;
     ikSolution(6) = 0.0;
