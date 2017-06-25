@@ -97,7 +97,7 @@ bool IvKinKukaLWR::solve(){
 
     // Set redundant joint
     double redundantJoint = 0.0;
-    if (_target.size() > 7)   redundantJoint = _target.at(7);
+    if (_target.size() > 7)   redundantJoint = -2.96705972839 + _target.at(7)*(2.96705972839 + 2.96705972839);
     std::cout << "Redundat joint = " << redundantJoint << std::endl;
 
 
@@ -120,17 +120,23 @@ bool IvKinKukaLWR::solve(){
     plot_pose(&desired_TCP,"desired_TCP");
 
 
+    mt::Transform last_link;
+    last_link.setTranslation(mt::Point3(0.0, 0.0, 0.078));
+
 
     // Solve inverse kinematics ---------------------------------------
+
+    mt::Transform desired_Wrist_TF = desired_TCP * last_link.inverse();
+    plot_pose(&desired_Wrist_TF,"Wrist_TF");
 
     //  From:
     //  "Analisis cinemático de robots manipuladores redundantes: aaplicacion a los robots Kuka LWR 4+ y ABB Yumi"
     //    Isiah Zaplana, Josep-Arnau Claret y Luis Basañez
     //  2017
 
-    float px = desired_TCP.getTranslation()[0];
-    float py = desired_TCP.getTranslation()[1];
-    float pz = desired_TCP.getTranslation()[2];
+    float px = desired_Wrist_TF.getTranslation()[0];
+    float py = desired_Wrist_TF.getTranslation()[1];
+    float pz = desired_Wrist_TF.getTranslation()[2];
 
 
     //  Solver for position +++++++++
@@ -143,7 +149,7 @@ bool IvKinKukaLWR::solve(){
     float tmp = sqrt(1.0 - a_4*a_4);
     q4s.push_back( atan2(+tmp, a_4) );
     q4s.push_back( atan2(-tmp, a_4) );
-    std::cout << "q4s " << q4s.size() << std::endl;
+//    std::cout << "q4s " << q4s.size() << std::endl;
 
     //   Compute q(0)'s - q1 in the paper notation
     float s3 = sin(redundantJoint);
@@ -152,11 +158,11 @@ bool IvKinKukaLWR::solve(){
         // For each q(3)
         float s4 = sin(q4s[i]);
         float tmp = sqrt( px*px + py*py - 0.390*0.390*s3*s3*s4*s4 );
-        float atanxy = atan2(py, px);
-        q1s.push_back( atan2(0.390*s3*s4, +tmp) - atanxy );
-        q1s.push_back( atan2(0.390*s3*s4, -tmp) - atanxy );
+        float atanyx = atan2(py, px);
+        q1s.push_back( atan2(0.390*s3*s4, +tmp) - atanyx );
+        q1s.push_back( atan2(0.390*s3*s4, -tmp) - atanyx );
     }
-    std::cout << "q1s " << q1s.size() << std::endl;
+//    std::cout << "q1s " << q1s.size() << std::endl;
 
     //   Compute q(1)'s - q2 in the paper notation
     float c3 = cos(redundantJoint);
@@ -173,21 +179,31 @@ bool IvKinKukaLWR::solve(){
         q2s.push_back( atan2(c_2, +tmp) - atanab );
         q2s.push_back( atan2(c_2, -tmp) - atanab );
     }
-    std::cout << "q2s " << q2s.size() << std::endl;
+//    std::cout << "q2s " << q2s.size() << std::endl;
 
     // Store 'wrist' configurations in a list
     std::vector< std::vector<float> > q1234s;
-    for (unsigned int i=0; i<q1s.size(); ++i){
+    for (unsigned int i=0; i<q4s.size(); ++i){
         std::vector<float> qArm(4);
-        qArm[0] = q1s[i];
-        for (unsigned int j=0; j<q2s.size(); ++j){
-            qArm[1] = q2s[j];
-            qArm[2] = redundantJoint;
-            for (unsigned int k=0; k<q4s.size(); ++k){
-                qArm[3] = q4s[k];
-                q1234s.push_back(qArm);
-            }
-        }
+        qArm[2] = redundantJoint;
+        qArm[3] = q4s[i];
+
+        // Four combinations per each q4
+        qArm[0] = q1s[2*i];
+        qArm[1] = q2s[2*i];
+        q1234s.push_back(qArm);
+
+        qArm[0] = q1s[2*i];
+        qArm[1] = q2s[2*i+1];
+        q1234s.push_back(qArm);
+
+        qArm[0] = q1s[2*i+1];
+        qArm[1] = q2s[2*i];
+        q1234s.push_back(qArm);
+
+        qArm[0] = q1s[2*i+1];
+        qArm[1] = q2s[2*i+1];
+        q1234s.push_back(qArm);
     }
 
     // Test position results
@@ -196,6 +212,12 @@ bool IvKinKukaLWR::solve(){
         Eigen::VectorXf tmp_cfg(7);
         for (unsigned int j=0; j<4; ++j)    tmp_cfg(j) = q1234s[i][j];
         for (unsigned int j=4; j<7; ++j)    tmp_cfg(j) = 0.0;
+
+        // Ploting each position configuration
+        std::cout << "pos cfg " << i << ":  ";
+        for (unsigned int j=0; j<7; ++j)    std::cout << tmp_cfg(j) << " ";
+        std::cout << std::endl;
+
         // DK
         for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(tmp_cfg(i-1));
         mt::Transform TCP_TF = *_robot->getLink(7)->getTransformation();
@@ -204,7 +226,7 @@ bool IvKinKukaLWR::solve(){
 
 
     //  Solver for rotation +++++++++
-    mt::Rotation R = _targetTrans.getRotation();
+    mt::Rotation R = desired_Wrist_TF.getRotation();
 
     std::vector< std::vector<float> > q567s;
     for (unsigned int i=0; i<q1234s.size(); ++i){
@@ -254,6 +276,7 @@ bool IvKinKukaLWR::solve(){
 
 
     // Join the position and orientation set of joints
+//    std::cout << "q1234s / q567s " << q1234s.size() << " " << q567s.size() << std::endl;
     std::vector< std::vector<float> > solutionSet;
     for (unsigned int i=0; i<q1234s.size(); ++i){
         for (unsigned int j=0; j<q567s.size(); ++j){
@@ -268,6 +291,7 @@ bool IvKinKukaLWR::solve(){
             solutionSet.push_back(config);
         }
     }
+    std::cout << "Solutions obtained: " << solutionSet.size() << std::endl;
 
 
 
@@ -297,13 +321,15 @@ bool IvKinKukaLWR::solve(){
 
     // Testing
     ikSolution(0) = 0.0;
-    ikSolution(1) = M_PI/4.0;   // OK
+//    ikSolution(1) = M_PI/4.0;   // OK
+    ikSolution(1) = 0.0;   // OK
     ikSolution(2) = 0.0;
     ikSolution(3) = 0.0;
     ikSolution(4) = 0.0;
     ikSolution(5) = 0.0;
     ikSolution(6) = 0.0;
 //    for (unsigned int i=0; i<7; ++i)    ikSolution(i) = 0.5;
+    std::cout << " ikSolution: " << ikSolution.transpose() << std::endl;
 
 
 
