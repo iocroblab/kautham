@@ -154,21 +154,15 @@ bool IvKinKukaLWR::solve(){
     for (unsigned int i=0; i<2; ++i){
 
         // For each q(3)
-        float s4, c4;
-        if (i < 2){
-            s4 = sin(q4s[0]);
-            c4 = cos(q4s[0]);
-        }
-        else{
-            s4 = sin(q4s[1]);
-            c4 = cos(q4s[1]);
-        }
+        float s4;
+        if (i < 2)      s4 = sin(q4s[0]);
+        else            s4 = sin(q4s[1]);
 
         // Compute q1
         float tmp = sqrt( px*px + py*py - 0.390*0.390*s3*s3*s4*s4 );
-        float atanyx = atan2(py, -px);
-        q1s.push_back( atan2(0.390*s3*s4, +tmp) - atanyx );
-        q1s.push_back( atan2(0.390*s3*s4, -tmp) - atanyx );
+        float atan_yx = atan2(py, -px);
+        q1s.push_back( atan2(0.390*s3*s4, +tmp) - atan_yx );
+        q1s.push_back( atan2(0.390*s3*s4, -tmp) - atan_yx );
     }
     std::cout << "q1s = ";    for (unsigned int i=0; i<q1s.size(); ++i)   std::cout << q1s[i] << " "; std::cout << std::endl;
 
@@ -191,12 +185,12 @@ bool IvKinKukaLWR::solve(){
         }
 
         // Compute q2
-        float a_2 = ( 0.390*c4 + 0.400 );
+        float a_2 = 0.390*c4 + 0.400;
         float b_2 = 0.390*c3*s4;
         float c_2 = px*c1 + py*s1;
         float tmp = sqrt( a_2*a_2 + b_2*b_2 - c_2*c_2 );
-        float atanab = atan2(a_2, b_2);
-        q2s.push_back( atan2(c_2, -tmp) - atanab );
+        float atan_ab = atan2(a_2, b_2);
+        q2s.push_back( atan2(c_2, -tmp) - atan_ab );
     }
     std::cout << "q2s = ";    for (unsigned int i=0; i<q2s.size(); ++i)   std::cout << q2s[i] << " "; std::cout << std::endl;
 
@@ -263,16 +257,16 @@ bool IvKinKukaLWR::solve(){
         mt::Rotation R4 = _robot->getLink(4)->getTransformation()->getRotation();
 
         mt::Rotation R567 = R4.inverse() * R3.inverse() * R2.inverse() * R1.inverse() * R;
-
-//        float m11 = R567.getMatrix()[0][0];
-//        float m12 = R567.getMatrix()[0][1];
-        float m13 = R567.getMatrix()[0][2];
-        float m21 = R567.getMatrix()[1][0];
-        float m22 = R567.getMatrix()[1][1];
-        float m23 = R567.getMatrix()[1][2];
-//        float m31 = R567.getMatrix()[2][0];
-//        float m32 = R567.getMatrix()[2][1];
-        float m33 = R567.getMatrix()[2][2];
+        mt::Matrix3x3 R567_rotmat = R567.getMatrix();
+//        float m11 = R567_rotmat[0][0];
+//        float m12 = R567_rotmat[0][1];
+        float m13 = R567_rotmat[0][2];
+        float m21 = R567_rotmat[1][0];
+        float m22 = R567_rotmat[1][1];
+        float m23 = R567_rotmat[1][2];
+//        float m31 = R567_rotmat[2][0];
+//        float m32 = R567_rotmat[2][1];
+        float m33 = R567_rotmat[2][2];
 
         float tmp = sqrt( m13*m13 + m33*m33 );
 
@@ -307,7 +301,7 @@ bool IvKinKukaLWR::solve(){
 
     // Join the position and orientation set of joints
     std::cout << "q1234s / q567s " << q1234s.size() << " " << q567s.size() << std::endl;
-    std::vector< std::vector<float> > solutionSet;
+    std::vector< std::vector<float> > rawConfigSet;
     for (unsigned int i=0; i<4; ++i){
 
         std::vector<float> config(7);
@@ -321,13 +315,13 @@ bool IvKinKukaLWR::solve(){
         config[4] =  q567s[2*i][0];
         config[5] =  q567s[2*i][1];
         config[6] =  q567s[2*i][2];
-        solutionSet.push_back(config);
+        rawConfigSet.push_back(config);
 
         // Second orientation cover
         config[4] =  q567s[2*i+1][0];
         config[5] =  q567s[2*i+1][1];
         config[6] =  q567s[2*i+1][2];
-        solutionSet.push_back(config);
+        rawConfigSet.push_back(config);
     }
 //    std::cout << "Solutions obtained: " << solutionSet.size() << std::endl;
 //    for (unsigned int i=0; i<solutionSet.size(); ++i){
@@ -336,10 +330,10 @@ bool IvKinKukaLWR::solve(){
 //    }
 
     // Test IK results
-    std::cout << "Testing IK positions : " << solutionSet.size() << std::endl;
-    for (unsigned int i=0; i<solutionSet.size(); ++i){
+    std::cout << "Testing IK positions : " << rawConfigSet.size() << std::endl;
+    for (unsigned int i=0; i<rawConfigSet.size(); ++i){
         Eigen::VectorXf tmp_cfg(7);
-        for (unsigned int j=0; j<7; ++j)    tmp_cfg(j) = solutionSet[i][j];
+        for (unsigned int j=0; j<7; ++j)    tmp_cfg(j) = rawConfigSet[i][j];
 
         // Ploting each position configuration
         std::cout << "pos cfg " << i << ":  ";
@@ -349,56 +343,67 @@ bool IvKinKukaLWR::solve(){
         // DK
         for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(tmp_cfg(i-1));
         mt::Transform TCP_TF = *_robot->getLink(7)->getTransformation();
-//        plot_pose(&TCP_TF,"TCP_TF");
+        plot_pose(&TCP_TF,"TCP_TF");
+    }
+
+    // For each obtained solution, keep only that are not within limits
+    std::vector< std::vector<float> > solutionSet;
+    for (unsigned int i=0; i<solutionSet.size(); ++i){
+
+        std::vector<float> cfg(rawConfigSet[i]);
+
+        for (unsigned int j=0; j<7; ++j){
+            float joint_value = cfg[j];
+
+            float new_value = joint_value;
+            this->setJointInLimit(j, new_value);
+
+            float threshold = 0.001;
+            if ( fabs( new_value - joint_value ) > threshold )      break;
+        }
+
+        solutionSet.push_back(cfg);
     }
 
 
-
-    //  Generate an initial configuration
-    Eigen::VectorXf init_q(7);
-    init_q << 0.0, 0.0, 0.0, 0.0, 0.0, -0.0, 0.0;
-    if (test){
-        init_q = q_test;
-        std::cout << " init_q: " << init_q.transpose() << std::endl;
-    }
-
-    Eigen::VectorXf ikSolution(7);
     bool ik_solved = false;
+    Eigen::VectorXf ikSolution(7);
+    if ( solutionSet.size() == 0 )  ik_solved = false;
+    else{
+        // Pick the first configuration in the list
+        for (unsigned int j=0; j<7; ++j)    ikSolution[j] = solutionSet[0][j];
+        ik_solved = true;
+    }
 
-
-
-    //    // Testing joint limits
-    //    for (unsigned int i=1; i<8; ++i){
-    //        float* low_lims = _robot->getLink(i)->getLimits(1);
-    //        float* high_lims = _robot->getLink(i)->getLimits(0);
-    //        std::cout << "lim " << i << " " << *low_lims << " " << *high_lims << std::endl;
-    //    }
-
-    // Testing
-    ikSolution(0) = 0.0;
-//    ikSolution(1) = M_PI/4.0;   // OK
-    ikSolution(1) = 0.0;   // OK
+    // TEST TEST TEST TEST TEST TEST
+    ikSolution(0) = M_PI/2.0;
+//    ikSolution(1) = M_PI/4.0;
+    ikSolution(1) = 0.0;
     ikSolution(2) = 0.0;
-    ikSolution(3) = M_PI/2.0;
+    ikSolution(3) = 0.0;
     ikSolution(4) = 0.0;
     ikSolution(5) = 0.0;
     ikSolution(6) = 0.0;
 //    for (unsigned int i=0; i<7; ++i)    ikSolution(i) = 0.5;
+
+
+    // PLOT results -----------------------------------------------------------------------
     std::cout << " ikSolution: " << ikSolution.transpose() << std::endl;
 
-
-
-    // Final TCP pose
+    // Final robot poses
     for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(ikSolution(i-1));
+
+    for (unsigned int i=0; i<7; ++i){
+        mt::Transform ikpartial_TCP = *_robot->getLink(i)->getTransformation();
+        plot_pose(&ikpartial_TCP,"partial_TF");
+    }
+
     mt::Transform ikResult_TCP = *_robot->getLink(7)->getTransformation();
     plot_pose(&ikResult_TCP,"ikResult_TCP");
 
     mt::Scalar y, p, r;
     ikResult_TCP.getRotation().getYpr(y, p, r);
     std::cout << "ypr " << y << " " << p << " " << r << std::endl;
-
-
-
 
 
     // Store the selection solution to kautham
