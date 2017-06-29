@@ -68,6 +68,16 @@ bool IvKinKukaLWR::solve(){
         }
     };
 
+    //  Auxiliar lambda function for pose ploting
+    auto plot_rot = [](const mt::Rotation* rot, const char* rot_name) {
+        std::cout << "-- " << rot_name << " ------------------------" << std::endl;
+        mt::Matrix3x3 rot_mat = rot->getMatrix();
+        for (unsigned int i=0; i<3; ++i){
+            for (unsigned int j=0; j<3; ++j)    std::cout << std::setw(12) << rot_mat[i][j] << "  ";
+            std::cout << std::endl;
+        }
+    };
+
     //  Auxiliar lambda function to convert pose from mt to eigen
     auto mt_to_Eigen_pose = [](const mt::Transform* pose) {
         Eigen::Matrix4f eigenPose(Eigen::Matrix4f::Identity());
@@ -213,28 +223,33 @@ bool IvKinKukaLWR::solve(){
         q1234s.push_back(qArm);
     }
 
-//    // Test position results
-//    std::cout << "Testing IK positions : " << q1234s.size() << std::endl;
-//    for (unsigned int i=0; i<q1234s.size(); ++i){
-//        Eigen::VectorXf tmp_cfg(7);
-//        for (unsigned int j=0; j<4; ++j)    tmp_cfg(j) = q1234s[i][j];
-//        for (unsigned int j=4; j<7; ++j)    tmp_cfg(j) = 0.0;
-
-//        // Setting positions to Kautham convention:
-//        //  q_KAUTHAM(1) = q_ISIAH(1) - PI/2
-//        //  q_KAUTHAM(i) = q_ISIAH(i)         i \in {0, 2, 3, 4, 5, 6}
-//        tmp_cfg(1) = tmp_cfg(1) - M_PI/2.0;
+    // Test position results
+    std::cout << "Testing IK positions : " << q1234s.size() << std::endl;
+    for (unsigned int i=0; i<q1234s.size(); ++i){
+        Eigen::VectorXf tmp_cfg(7);
+        for (unsigned int j=0; j<4; ++j)    tmp_cfg(j) = q1234s[i][j];
+        for (unsigned int j=4; j<7; ++j)    tmp_cfg(j) = 0.0;
 
 //        // Ploting each position configuration
 //        std::cout << "pos cfg " << i << ":  ";
 //        for (unsigned int j=0; j<7; ++j)    std::cout << tmp_cfg(j) << " ";
 //        std::cout << std::endl;
 
-//        // DK
-//        for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(tmp_cfg(i-1));
-//        mt::Transform Wrist_TF = *_robot->getLink(7)->getTransformation();
-//        plot_pose(&Wrist_TF,"Wrist_TF");
-//    }
+        // Setting positions to Kautham convention:
+        //  q_KAUTHAM(1) = q_ISIAH(1) - PI/2
+        //  q_KAUTHAM(i) = q_ISIAH(i)         i \in {0, 2, 3, 4, 5, 6}
+        tmp_cfg(1) = tmp_cfg(1) - M_PI/2.0;
+
+        // Ploting each position configuration
+        std::cout << "pos cfg " << i << ":  ";
+        for (unsigned int j=0; j<7; ++j)    std::cout << tmp_cfg(j) << " ";
+        std::cout << std::endl;
+
+        // DK
+        for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(tmp_cfg(i-1));
+        mt::Transform Wrist_TF = *_robot->getLink(7)->getTransformation();
+        plot_pose(&Wrist_TF,"Wrist_TF");
+    }
 
 
     //  Solver for rotation +++++++++
@@ -244,19 +259,26 @@ bool IvKinKukaLWR::solve(){
     for (unsigned int i=0; i<4; ++i){
 
         //   Compute wrist rotation matrix
-        std::vector<float> qArm(4);
+        std::vector<float> qArm(7);
         qArm[0] = q1234s[i][0];
         qArm[1] = q1234s[i][1] - M_PI/2.0;   // To Kautham convention
         qArm[2] = q1234s[i][2];
         qArm[3] = q1234s[i][3];
-        for (unsigned int j=1; j<5; ++j)    _robot->getLink(j)->setValue(qArm[j-1]);
+        qArm[4] = 0.0;
+        qArm[5] = 0.0;
+        qArm[6] = 0.0;
 
+        for (unsigned int j=1; j<5; ++j)    _robot->getLink(j)->setValue(qArm[j-1]);
         mt::Rotation R1 = _robot->getLink(1)->getTransformation()->getRotation();
         mt::Rotation R2 = _robot->getLink(2)->getTransformation()->getRotation();
         mt::Rotation R3 = _robot->getLink(3)->getTransformation()->getRotation();
         mt::Rotation R4 = _robot->getLink(4)->getTransformation()->getRotation();
+        mt::Rotation invR1234 = R4.inverse() * R3.inverse() * R2.inverse() * R1.inverse();
 
-        mt::Rotation R567 = R4.inverse() * R3.inverse() * R2.inverse() * R1.inverse() * R;
+        plot_rot(&invR1234,"invR1234");
+
+        mt::Rotation R567 = invR1234 * R;
+        plot_rot(&R567,"R567");
         mt::Matrix3x3 R567_rotmat = R567.getMatrix();
 //        float m11 = R567_rotmat[0][0];
 //        float m12 = R567_rotmat[0][1];
@@ -376,14 +398,20 @@ bool IvKinKukaLWR::solve(){
     }
 
     // TEST TEST TEST TEST TEST TEST
-    ikSolution(0) = M_PI/2.0;
-//    ikSolution(1) = M_PI/4.0;
-    ikSolution(1) = 0.0;
-    ikSolution(2) = 0.0;
-    ikSolution(3) = 0.0;
-    ikSolution(4) = 0.0;
-    ikSolution(5) = 0.0;
-    ikSolution(6) = 0.0;
+//    ikSolution(0) = M_PI/2.0;
+//    ikSolution(1) = 0.0;
+//    ikSolution(2) = 0.0;
+//    ikSolution(3) = 0.0;
+//    ikSolution(4) = 0.0;
+//    ikSolution(5) = 0.0;
+//    ikSolution(6) = 0.0;
+    ikSolution(0) = 1.34;
+    ikSolution(1) = -0.56;
+    ikSolution(2) = 1.28;
+    ikSolution(3) = 0.28;
+    ikSolution(4) = -1.13;
+    ikSolution(5) = 1.94;
+    ikSolution(6) = 2.1;
 //    for (unsigned int i=0; i<7; ++i)    ikSolution(i) = 0.5;
 
 
