@@ -25,6 +25,7 @@
 // This library follows the work in:
 //  "Analisis cinemático de robots manipuladores redundantes: aaplicacion a los robots Kuka LWR 4+ y ABB Yumi"
 //    Isiah Zaplana, Josep-Arnau Claret y Luis Basañez
+//    Revista Iberoamericana de Automática e Informática Industrial RIAI
 //  2017
 
 

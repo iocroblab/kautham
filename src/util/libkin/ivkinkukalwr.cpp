@@ -31,7 +31,6 @@
 
 #include <kautham/problem/robot.h>
 #include <kautham/util/libkin/ivkinkukalwr.h>
-//#include "YumiKinematics.h"
 
 
 IvKinKukaLWR::IvKinKukaLWR(Robot* const rob): Kautham::InverseKinematic(rob){
@@ -78,16 +77,6 @@ bool IvKinKukaLWR::solve(){
         }
     };
 
-    //  Auxiliar lambda function to convert pose from mt to eigen
-    auto mt_to_Eigen_pose = [](const mt::Transform* pose) {
-        Eigen::Matrix4f eigenPose(Eigen::Matrix4f::Identity());
-        for (unsigned int i=0; i<3; ++i){
-            for (unsigned int j=0; j<3; ++j)    eigenPose(i,j) = pose->getRotation().getMatrix()[i][j];
-            eigenPose(i,3) =  pose->getTranslation()[i];
-        }
-        return eigenPose;
-    };
-
 
     std::cout << "KUKA LWR IK ----------------------------------------------------------" << std::endl;
 
@@ -114,7 +103,16 @@ bool IvKinKukaLWR::solve(){
 //    std::cout << "Redundat joint = " << redundantJoint << std::endl;
 
 
+
+
+
     std::cout << "INVERSE KINEMATICS ++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+
+    //  From:
+    //  "Analisis cinemático de robots manipuladores redundantes: aaplicacion a los robots Kuka LWR 4+ y ABB Yumi"
+    //    Isiah Zaplana, Josep-Arnau Claret y Luis Basañez
+    //    Revista Iberoamericana de Automática e Informática Industrial RIAI
+    //  2017
 
     //  Desired TCP pose
     mt::Transform desired_TCP = _targetTrans;
@@ -129,11 +127,6 @@ bool IvKinKukaLWR::solve(){
 
     mt::Transform desired_Wrist_TF = desired_TCP * last_link.inverse();
 //    plot_pose(&desired_Wrist_TF,"Wrist_TF");
-
-    //  From:
-    //  "Analisis cinemático de robots manipuladores redundantes: aaplicacion a los robots Kuka LWR 4+ y ABB Yumi"
-    //    Isiah Zaplana, Josep-Arnau Claret y Luis Basañez
-    //  2017
 
     float px = desired_Wrist_TF.getTranslation()[0];
     float py = desired_Wrist_TF.getTranslation()[1];
@@ -354,10 +347,10 @@ bool IvKinKukaLWR::solve(){
 //    }
 
     // Test IK results
-    std::cout << "Testing IK positions : " << rawConfigSet.size() << std::endl;
-    for (unsigned int i=0; i<rawConfigSet.size(); ++i){
-        Eigen::VectorXf tmp_cfg(7);
-        for (unsigned int j=0; j<7; ++j)    tmp_cfg(j) = rawConfigSet[i][j];
+//    std::cout << "Testing IK positions : " << rawConfigSet.size() << std::endl;
+//    for (unsigned int i=0; i<rawConfigSet.size(); ++i){
+//        Eigen::VectorXf tmp_cfg(7);
+//        for (unsigned int j=0; j<7; ++j)    tmp_cfg(j) = rawConfigSet[i][j];
 
 //        // Ploting each position configuration
 //        std::cout << "pos cfg " << i << ":  ";
@@ -372,13 +365,11 @@ bool IvKinKukaLWR::solve(){
 //        mt::Scalar y, p, r;
 //        TCP_TF.getRotation().getYpr(y, p, r);
 //        std::cout << "ypr " << y << " " << p << " " << r << std::endl;
-    }
+//    }
 
-    // For each obtained solution, keep only that are not within limits
+    // For each obtained solution, keep only that are not within limits and that do not have NaN values
     std::vector< std::vector<float> > solutionSet;
     for (unsigned int i=0; i<rawConfigSet.size(); ++i){
-
-//        std::cout << "Testing cfg " << i << " / " << rawConfigSet.size() << std::endl;
 
         std::vector<float> cfg(rawConfigSet[i]);
 
@@ -386,18 +377,19 @@ bool IvKinKukaLWR::solve(){
 
         for (unsigned int j=0; !joint_value_changed && j<7; ++j){
             float joint_value = cfg[j];
+            if ( joint_value != joint_value )      joint_value_changed = true;
+            else{
+                float new_value = joint_value;
+                this->setJointInLimit(j, new_value);
 
-            float new_value = joint_value;
-            this->setJointInLimit(j, new_value);
-
-            float threshold = 0.001;
-            if ( fabs( new_value - joint_value ) > threshold )      joint_value_changed = true;
+                float threshold = 0.001;
+                if ( fabs( new_value - joint_value ) > threshold )      joint_value_changed = true;
+            }
         }
 
         if (!joint_value_changed)   solutionSet.push_back(cfg);
     }
-//    std::cout << "solutionSet: " << solutionSet.size() << std::endl;
-
+    std::cout << solutionSet.size() << " solutions found!" << std::endl;
 
     bool ik_solved = false;
     Eigen::VectorXf ikSolution(7);
@@ -413,6 +405,9 @@ bool IvKinKukaLWR::solve(){
 
         ik_solved = true;
     }
+
+    std::cout << "End INVERSE KINEMATICS ++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+
 
 //    // TEST TEST TEST TEST TEST TEST
 ////    ikSolution(0) = M_PI/2.0;
@@ -448,14 +443,26 @@ bool IvKinKukaLWR::solve(){
 //    std::cout << "ypr " << y << " " << p << " " << r << std::endl;
 
 
+    if (!ik_solved){
+        cout << "Inverse kinematics failed:" << endl;
+        cout << "Try another value for the redundant joint and set the desired pose within the reachable workspace." << endl;
+
+        std::vector<KthReal> qn(7);
+        for (unsigned int i = 0; i<7; ++i){
+            _robot->getLink(i+1)->setValue(0.0);
+            qn.at(i) = 0.0;
+        }
+        _robConf.setRn(qn);
+
+        return false;
+    }
+
     // Store the selection solution to kautham
     std::vector<KthReal> qn(7);
     for (unsigned int i = 0; i<7; ++i)  qn.at(i) = ikSolution[i];
     _robConf.setRn(qn);
 
-    if (!ik_solved)     cout << "Inverse kinematics failed" << endl;
-
-    return ik_solved;
+    return true;
 }
 
 
