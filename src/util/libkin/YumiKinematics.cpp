@@ -25,6 +25,7 @@
 // This library follows the work in:
 //  "Analisis cinemático de robots manipuladores redundantes: aaplicacion a los robots Kuka LWR 4+ y ABB Yumi"
 //    Isiah Zaplana, Josep-Arnau Claret y Luis Basañez
+//    Revista Iberoamericana de Automática e Informática Industrial RIAI
 //  2017
 
 
@@ -77,14 +78,19 @@ std::vector< std::vector<float> > YumiKinematics::ComputeTheta4(const Eigen::Mat
     std::vector< std::vector<float> > Solutions;
     float theta4;
 
+    // Original
+//    float a=130014.5;
+//    float b=-41836.5;
+//    float c= Pose(0,3)*Pose(0,3)+Pose(1,3)*Pose(1,3)+(Pose(2,3)-166)*(Pose(2,3)-166)-136757.75;
+
 //    float a=130014.5;
 //    float b=-41836.5;
 ////    float c= Pose(0,3)*Pose(0,3)+Pose(1,3)*Pose(1,3)+(Pose(2,3)-166)*(Pose(2,3)-166)-136757.75;
 //    float c= 1000.0*Pose(0,3)*1000.0*Pose(0,3)+1000.0*Pose(1,3)*1000.0*Pose(1,3)+(1000.0*Pose(2,3)-166)*(1000.0*Pose(2,3)-166)-136757.75;    // To mm
 
-    float a=125410.0;   // TODO
-    float b=41819.0;   // TODO
-    float c= 1000.0*Pose(0,3)*1000.0*Pose(0,3)+1000.0*Pose(1,3)*1000.0*Pose(1,3)+(1000.0*Pose(2,3)-100)*(1000.0*Pose(2,3)-100)-132210.0;    // TODO
+    float a = 125518.22;   // TODO
+    float b = 41112.36;   // TODO
+    float c = 1000.0*Pose(0,3)*1000.0*Pose(0,3)+1000.0*Pose(1,3)*1000.0*Pose(1,3)+(1000.0*Pose(2,3)-100)*(1000.0*Pose(2,3)-100)-132098.93;    // TODO
 
     if(byn==0)
     {
@@ -128,13 +134,19 @@ std::vector< std::vector<float> > YumiKinematics::ComputeTheta2(const Eigen::Mat
     std::vector< std::vector<float> > SolutionSet2;
     std::vector< std::vector<float> > Solutions;
     float theta2;
+
+    // Original
+//    float a=251.5+265*cos(theta4)-40.5*sin(theta4);
+//    float b=40.5*cos(theta3)-40.5*cos(theta3)*cos(theta4)-265*cos(theta3)*sin(theta4);
+//    float c=Pose(2,3)-166;
+
 //    float a=251.5+265*cos(theta4)-40.5*sin(theta4);
 //    float b=40.5*cos(theta3)-40.5*cos(theta3)*cos(theta4)-265*cos(theta3)*sin(theta4);
 ////    float c=Pose(2,3)-166;
 //    float c=1000.0*Pose(2,3)-166;  // To mm
 
-    float a=251.56+256.0*cos(theta4)-40.5*sin(theta4);
-    float b=40.5*cos(theta3)-40.5*cos(theta3)*cos(theta4)-256.0*cos(theta3)*sin(theta4);
+    float a=251.56+256.0*cos(theta4)+40.5*sin(theta4);
+    float b=-40.5*cos(theta3)+40.5*cos(theta3)*cos(theta4)-256.0*cos(theta3)*sin(theta4);
     float c=1000.0*Pose(2,3)-100;  // To mm
 
 
@@ -174,13 +186,19 @@ std::vector< std::vector<float> > YumiKinematics::ComputeTheta1(const Eigen::Mat
     std::vector<float> Solution2;
     std::vector< std::vector<float> > Solutions;
     float theta1;
+
+    // Original
 //    float a=40.5*cos(theta2)*cos(theta3)-251.5*sin(theta2)-265*cos(theta4)*sin(theta2)+40.5*sin(theta2)*sin(theta4)-40.5*cos(theta2)*
 //            cos(theta3)*cos(theta4)-265*cos(theta2)*cos(theta3)*sin(theta4);
 //    float b=265*sin(theta3)*sin(theta4)-40.5*sin(theta3)+40.5*sin(theta3)*cos(theta4);
 
-    float a=40.5*cos(theta2)*cos(theta3)-251.56*sin(theta2)-256.0*cos(theta4)*sin(theta2)+40.5*sin(theta2)*sin(theta4)-40.5*cos(theta2)*
+//    float a=40.5*cos(theta2)*cos(theta3)-251.5*sin(theta2)-265*cos(theta4)*sin(theta2)+40.5*sin(theta2)*sin(theta4)-40.5*cos(theta2)*
+//            cos(theta3)*cos(theta4)-265*cos(theta2)*cos(theta3)*sin(theta4);
+//    float b=265*sin(theta3)*sin(theta4)-40.5*sin(theta3)+40.5*sin(theta3)*cos(theta4);
+
+    float a=-40.5*cos(theta2)*cos(theta3)-251.56*sin(theta2)-256.0*cos(theta4)*sin(theta2)-40.5*sin(theta2)*sin(theta4)+40.5*cos(theta2)*
             cos(theta3)*cos(theta4)-256.0*cos(theta2)*cos(theta3)*sin(theta4);
-    float b=256.0*sin(theta3)*sin(theta4)-40.5*sin(theta3)+40.5*sin(theta3)*cos(theta4);
+    float b=256.0*sin(theta3)*sin(theta4)+40.5*sin(theta3)-40.5*sin(theta3)*cos(theta4);
 
     //   std::cout<<"value of theta1"<<" /// " <<a<<" /// "<<b<<std::endl;
 
@@ -679,6 +697,9 @@ bool YumiKinematics::solveIK(const Eigen::Matrix4f desiredPose,
 
             // If Ik not solved, use multiple random initial configurations
             if ( !ik_solved || !config_in_limits )      ik_solved = this->solveIK(desiredPose, minAnalyticalIkSolution, IK_NUMERICAL_RND_INITIAL_QS, redundantJoint, qResult, use_joint_saturation);
+
+            // Analytical IK Test
+            for (unsigned int i=0; i<7; ++i)    qResult(i) = validSolutions[0](i);
         }
     }
 

@@ -162,7 +162,7 @@ bool IvKinYumi::solve(){
 
     Eigen::VectorXf ikSolution(7);
     YumiKinematics* yumiKinSolver;
-    bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 1, redundantJoint, ikSolution, false);
+    bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 2, redundantJoint, ikSolution, false);
 
     // Final TCP pose
     for (unsigned int i=1; i<8; ++i)    _robot->getLink(i)->setValue(ikSolution(i-1));
@@ -185,13 +185,13 @@ bool IvKinYumi::solve(){
 
     // Store the selection solution to kautham
     std::vector<KthReal> qn(7);
-    qn.at(0) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
-    qn.at(1) = ( ikSolution(1) - (-2.50455) )/( 0.759218 - (-2.50455) );
-    qn.at(2) = ( ikSolution(2) - (-2.94088) )/(  2.94088 - (-2.94088) );
-    qn.at(3) = ( ikSolution(3) - (-2.15548) )/(  1.39626 - (-2.15548) );
-    qn.at(4) = ( ikSolution(4) - (-5.06145) )/(  5.06145 - (-5.06145) );
-    qn.at(5) = ( ikSolution(5) - (-1.53589) )/(  2.40855 - (-1.53589) );
-    qn.at(6) = ( ikSolution(6) -  (-3.9968) )/(   3.9968 -  (-3.9968) );
+//    qn.at(0) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
+//    qn.at(1) = ( ikSolution(1) - (-2.50455) )/( 0.759218 - (-2.50455) );
+//    qn.at(2) = ( ikSolution(2) - (-2.94088) )/(  2.94088 - (-2.94088) );
+//    qn.at(3) = ( ikSolution(3) - (-2.15548) )/(  1.39626 - (-2.15548) );
+//    qn.at(4) = ( ikSolution(4) - (-5.06145) )/(  5.06145 - (-5.06145) );
+//    qn.at(5) = ( ikSolution(5) - (-1.53589) )/(  2.40855 - (-1.53589) );
+//    qn.at(6) = ( ikSolution(6) -  (-3.9968) )/(   3.9968 -  (-3.9968) );
     for (unsigned int i = 0; i<7; ++i)  qn.at(i) = ikSolution[i];
     _robConf.setRn(qn);
 

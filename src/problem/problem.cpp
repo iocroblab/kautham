@@ -950,6 +950,8 @@ namespace Kautham {
                 rob->setInverseKinematic( Kautham::YUMI_RIGHT );
             else if ( name == "YUMI_LEFT")
                 rob->setInverseKinematic( Kautham::YUMI_LEFT );
+            else if ( name == "KUKA_LWR")
+                rob->setInverseKinematic( Kautham::KUKA_LWR );
             else if ( name == "")
                 rob->setInverseKinematic( Kautham::NOINVKIN);
             else
