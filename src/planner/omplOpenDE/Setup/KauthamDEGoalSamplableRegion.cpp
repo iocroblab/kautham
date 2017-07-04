@@ -96,7 +96,7 @@ vector<KauthamODEobject> KauthamDEGoalSamplableRegion::smp2KauthamOpenDEState(Wo
            else
            {
                const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(Kauthamodebodies.size()-3);
-               const ob::SO3StateSpace::StateType &rot = st->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(Kauthamodebodies.size()-3);
+               //const ob::SO3StateSpace::StateType &rot = st->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(Kauthamodebodies.size()-3);
 
                const double *vel = st->as<oc::OpenDEStateSpace::StateType>()->getBodyLinearVelocity(Kauthamodebodies.size()-3);
 

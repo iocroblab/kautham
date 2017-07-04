@@ -430,7 +430,7 @@ void urdf_robot::fill (xml_node *node, string dir) {
 void urdf_robot::print() {
     cout << "robot: " << name << endl;
     cout << "number of links: " << num_links << endl;
-    for (int i = 0; i < num_links; i++) {
+    for (unsigned int i = 0; i < num_links; ++i) {
         cout << endl;
         cout << "link: " << link[i].name << endl;
         cout << "inertial:" << endl;
