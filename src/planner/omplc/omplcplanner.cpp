@@ -283,8 +283,10 @@ namespace Kautham {
 
         //set own intial values
         _planningTime = 10;
+        _incremental = 0;//by default makes a clear before any new call to solve in function trysolve().
 
         //add planner parameters
+        addParameter("Incremental (0/1)",_incremental);
         addParameter("Max Planning Time", _planningTime);
         addParameter("Speed Factor", _speedFactor);
 
@@ -423,6 +425,13 @@ namespace Kautham {
             _planningTime = it->second;
         else
           return false;
+
+        it = _parameters.find("Incremental (0/1)");
+        if (it != _parameters.end()) {
+            _incremental = (it->second == 1);
+        }
+        else
+            return false;
 
       }catch(...){
         return false;
@@ -975,9 +984,17 @@ namespace Kautham {
         }
         ss->setGoal(ob::GoalPtr(goalStates));
 
+        //Remove previous solutions, if any
+        if (_incremental) {
+            ss->getProblemDefinition()->clearSolutionPaths();
+        } else {
+            ss->clear();
+            ss->getPlanner()->clear();
+        }
+        //ss->clear();//to remove previous solutions, if any
+        //ss->getPlanner()->clear();
+
         // attempt to solve the problem within _planningTime seconds of planning time
-        ss->clear();//to remove previous solutions, if any
-        ss->getPlanner()->clear();
         ob::PlannerStatus solved = ss->solve(_planningTime);
         //UNKNOWN = 0,
         //INVALID_START,

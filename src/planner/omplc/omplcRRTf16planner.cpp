@@ -181,11 +181,15 @@ namespace Kautham {
 
         // propagation step size
         _propagationStepSize = 0.01;
-        _duration = 1;
         addParameter("PropagationStepSize", _propagationStepSize);
-        addParameter("Duration", _duration);
         static_cast<omplcPlannerStatePropagator<KinematicF16Model>*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
-        si->setPropagationStepSize(_propagationStepSize*_duration);
+        si->setPropagationStepSize(_propagationStepSize);
+        // propagation duration
+        _durationMin = 1;
+        _durationMax = 10;
+        addParameter("MinDuration", _durationMin);
+        addParameter("MaxDuration", _durationMax);
+        si->setMinMaxControlDuration(_durationMin, _durationMax);
 
         //Length
         _length = 0.2;
@@ -235,10 +239,18 @@ namespace Kautham {
       else
          return false;
 
-     it = _parameters.find("Duration");
+     it = _parameters.find("MinDuration");
      if(it != _parameters.end()){
-         _duration = it->second;
-         ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize*_duration);
+         _durationMin = it->second;
+         ss->getSpaceInformation()->setMinMaxControlDuration(_durationMin, _durationMax);
+      }
+      else
+         return false;
+
+     it = _parameters.find("MaxDuration");
+     if(it != _parameters.end()){
+         _durationMax = it->second;
+         ss->getSpaceInformation()->setMinMaxControlDuration(_durationMin, _durationMax);
       }
       else
          return false;
@@ -247,7 +259,7 @@ namespace Kautham {
        if(it != _parameters.end()){
            _propagationStepSize = it->second;
            static_cast<omplcPlannerStatePropagator<KinematicF16Model>*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
-           ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize*_duration);
+           ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize);
         }
         else
            return false;
