@@ -236,8 +236,8 @@ double PlanarChainStateSpace::distance(const ob::State *s1, const ob::State *s2)
 
     const double *p1 = s1->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
     const double *p2 = s2->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
-    const ob::SO3StateSpace::StateType &rot1 = s1->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(3);
-    const ob::SO3StateSpace::StateType &rot2 = s2->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(3);
+    //const ob::SO3StateSpace::StateType &rot1 = s1->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(3);
+    //const ob::SO3StateSpace::StateType &rot2 = s2->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(3);
 
     double dx = fabs(p1[0] - p2[0]);
     double dy = fabs(p1[1] - p2[1]);
