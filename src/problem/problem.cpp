@@ -226,9 +226,6 @@ namespace Kautham {
         else if (name == "omplKPIECE")
             _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
-        else if (name == "omplcRRT")
-            _planner = new omplcplanner::omplcRRTPlanner(CONTROLSPACE, sinit, sgoal, _cspace,_wspace);
-
         else if (name == "omplcRRTf16")
             _planner = new omplcplanner::omplcRRTf16Planner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace);
 
@@ -949,6 +946,12 @@ namespace Kautham {
                 rob->setInverseKinematic( Kautham::TX90HAND );
             else if ( name == "UR5")
                 rob->setInverseKinematic( Kautham::UR5 );
+            else if ( name == "YUMI_RIGHT")
+                rob->setInverseKinematic( Kautham::YUMI_RIGHT );
+            else if ( name == "YUMI_LEFT")
+                rob->setInverseKinematic( Kautham::YUMI_LEFT );
+            else if ( name == "KUKA_LWR")
+                rob->setInverseKinematic( Kautham::KUKA_LWR );
             else if ( name == "")
                 rob->setInverseKinematic( Kautham::NOINVKIN);
             else

@@ -127,6 +127,11 @@ set_target_properties( libkautham PROPERTIES
   VERSION "${KAUTHAM_VERSION}"
   OUTPUT_NAME kautham)
   
+# YumiIK
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/util/libkin/)
+#add_library(YumiIK SHARED ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin/YumiKinematics.cpp)
+#set(EXTRA_LIBS ${EXTRA_LIBS} YumiIK)
+
 
 target_link_libraries(libkautham ${EXTRA_LIBS})
 

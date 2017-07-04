@@ -15,9 +15,10 @@
 			<LocalPlanner stepSize="1">Linear</LocalPlanner>
 			<Parameter name="Max Planning Time">1.0</Parameter>
 			<Parameter name="Speed Factor">5</Parameter>
-			<Parameter name="PropagationStepSize">0.04</Parameter>
-			<Parameter name="Duration">10</Parameter>
-			<Parameter name="ControlBound_Tras">2.5</Parameter>
+                        <Parameter name="PropagationStepSize">0.04</Parameter>
+                        <Parameter name="MinDuration">1</Parameter>
+                        <Parameter name="MaxDuration">10</Parameter>
+                        <Parameter name="ControlBound_Tras">10</Parameter>
 			<Parameter name="ControlBound_Rot">0.6</Parameter>
 			<Parameter name="Length">5</Parameter>
 		</Parameters>

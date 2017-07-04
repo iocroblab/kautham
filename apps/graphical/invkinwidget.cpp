@@ -51,8 +51,20 @@ namespace Kautham{
   void InvKinWidget::getSolution(){
     if(_invKin->solve())
     {
-      _invKin->getRobot().Kinematics(_invKin->getRobConf());
+      //_invKin->getRobot().Kinematics(_invKin->getRobConf());
+      RobConf rc = _invKin->getRobConf();
+      _invKin->getRobot().Kinematics(rc);
+
        writeGUI("Inverse Kinematic: Solution found");
+
+       uint n=rc.second.getDim();
+       stringstream sstr;
+       sstr<< "RnConf = ";
+       for(uint i=0; i<n;i++)
+       {
+           sstr<<  rc.second.getCoordinate(i) << ", ";
+       }
+       writeGUI(sstr.str());
   }
     else
       writeGUI("Inverse Kinematic has not a solution.");

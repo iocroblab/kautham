@@ -214,6 +214,8 @@ namespace Kautham {
         ob::StateSpacePtr space;
         oc::ControlSpacePtr spacec;
 
+        bool _incremental;
+
 	    private:
 		//Add private data and functions
 	  };
