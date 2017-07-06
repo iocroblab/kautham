@@ -69,7 +69,7 @@ public:
 private:
     IvKinUR5();
     vector<KthReal> _eulPos;
-    UR5config          _UR5Conf;
+    UR5config       _UR5Conf;
     double          _result[6];
 };
 
