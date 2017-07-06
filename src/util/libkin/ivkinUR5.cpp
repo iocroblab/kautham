@@ -51,15 +51,17 @@ IvKinUR5::~IvKinUR5(){
 bool IvKinUR5::solve(){
     bool shoulder(true), elbow(true), wrist(true);
     if (_target.size() > 7){
-      shoulder = _target.at(7) == shoulder_left;
-      elbow = _target.at(8) == elbow_up;
-      wrist = _target.at(9) == wrist_in;
+      shoulder =  _target.at(7) == shoulder_left;
+      elbow =     _target.at(8) == elbow_up;
+      wrist =     _target.at(9) == wrist_in;
     }
 
-    _targetTrans.setTranslation(mt::Point3(_target.at(0), _target.at(1),
-                                           _target.at(2)));
-    _targetTrans.setRotation(mt::Rotation(_target.at(3), _target.at(4),
-                                          _target.at(5), _target.at(6) ));
+    std::cout << "UR5 target pos = " << _target.at(0) << " " << _target.at(1) << " " << _target.at(2) << std::endl;
+    std::cout << "UR5 target q   = " << _target.at(6) << " | " << _target.at(3) << " " << _target.at(4) << " " << _target.at(5) << std::endl;
+    std::cout << "shoulder / elbow / wrist = " << shoulder << " / " << elbow << " / " << wrist << std::endl;
+
+    _targetTrans.setTranslation( mt::Point3(_target.at(0), _target.at(1), _target.at(2)) );
+    _targetTrans.setRotation( mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6)) );
 
     if (UR5_inv_kin(_targetTrans, shoulder, wrist, elbow, _result)) {
         double control [6];
@@ -69,6 +71,14 @@ bool IvKinUR5::solve(){
             cout << "  theta" << j+1 << "=" << _result[j]
                  << " (" << control[j] << ")" << endl;
         }
+
+        std::vector<KthReal> qn(6);
+        for (unsigned int i = 0; i<6; ++i){
+//            _robot->getLink(i+1)->setValue(_result[i]);
+            qn.at(i) = _result[i];
+        }
+        _robConf.setRn(qn);
+
         return true;
     } else {
         cout << "Inverse kinematics failed" << endl;
