@@ -22,8 +22,8 @@
 
 /* Author: Alexander Perez, Jan Rosell */
 
-#if !defined(_omplcRRTcarPLANNER_H)
-#define _omplcRRTcarPLANNER_H
+#if !defined(_omplcRRTdualdrivePLANNER_H)
+#define _omplcRRTdualdrivePLANNER_H
 
 
 #if defined(KAUTHAM_USE_OMPL)
@@ -52,10 +52,10 @@ namespace Kautham {
  */
 
   namespace omplcplanner{
-    class omplcRRTcarPlanner:public omplcPlanner {
+    class omplcRRTdualdrivePlanner:public omplcPlanner {
 	    public:
-        omplcRRTcarPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, oc::SimpleSetup *ssptr);
-        ~omplcRRTcarPlanner();
+        omplcRRTdualdrivePlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, oc::SimpleSetup *ssptr);
+        ~omplcRRTdualdrivePlanner();
 
         bool setParameters();
 
@@ -63,15 +63,16 @@ namespace Kautham {
          double _propagationStepSize;
          unsigned int _durationMax;
          unsigned int _durationMin;
-         double _controlBound_Tras;
-         double _controlBound_Rot;
+         double _controlBound;
+
          int _onlyForward;
-         double _carLength;
+         double _dualdriveRadius;
+         double _dualdriveDistance;
 	  };
   }
   /** @}   end of Doxygen module */
 }
 
 #endif // KAUTHAM_USE_OMPL
-#endif  //_omplcRRTcarPLANNER_H
+#endif  //_omplcRRTdualdrivePLANNER_H
 

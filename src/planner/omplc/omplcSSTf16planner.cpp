@@ -29,7 +29,7 @@
 #include <boost/bind/mem_fn.hpp>
 #include <ompl/base/spaces/SE2StateSpace.h>
 
-#include <kautham/planner/omplc/omplcRRTf16planner.h>
+#include <kautham/planner/omplc/omplcSSTf16planner.h>
 
 
 
@@ -140,15 +140,14 @@ namespace Kautham {
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // omplcRRTf16Planner functions
+  // omplcSSTf16Planner functions
   /////////////////////////////////////////////////////////////////////////////////////////////////
 	//! Constructor
-    omplcRRTf16Planner::omplcRRTf16Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, oc::SimpleSetup *ssptr):
+    omplcSSTf16Planner::omplcSSTf16Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, oc::SimpleSetup *ssptr):
               omplcPlanner(stype, init, goal, samples, ws, ssptr)
 	{
-        _guiName = "ompl cRRT Planner";
-        _idName = "omplcRRTf16";
-
+        _guiName = "ompl cSST Planner";
+        _idName = "omplcSSTf16";
 
         // set the bounds for the control space
         _controlBound_Tras = 30;
@@ -156,11 +155,12 @@ namespace Kautham {
         addParameter("ControlBound_Tras", _controlBound_Tras);
         addParameter("ControlBound_Rot", _controlBound_Rot);
 
-
         if (ss.get() == NULL) {
+
             // create a control space
             int numcontrols = 4;
             spacec = ((oc::ControlSpacePtr) new oc::RealVectorControlSpace(space, numcontrols));
+
             ob::RealVectorBounds cbounds(numcontrols);
             cbounds.setLow(0, 0.0);
             cbounds.setHigh(0, _controlBound_Tras);
@@ -202,6 +202,7 @@ namespace Kautham {
 
 
 
+
         // set state validity checking for this space
         ss->setStateValidityChecker(std::bind(&omplcplanner::isStateValid, ss->getSpaceInformation().get(), std::placeholders::_1, (Planner*)this));
 
@@ -227,15 +228,26 @@ namespace Kautham {
         static_cast<omplcPlannerStatePropagator<KinematicF16Model>*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setLength(_length);
 
         // create a planner for the defined space
-        ob::PlannerPtr planner(new oc::RRT(si));
+        ob::PlannerPtr planner(new oc::SST(si));
 
-        //set RRT Ggoal Bias
-        _GoalBias=(planner->as<oc::RRT>())->getGoalBias();
+        //set SST Ggoal Bias
+        _GoalBias=(planner->as<oc::SST>())->getGoalBias();
         addParameter("Goal Bias", _GoalBias);
-        planner->as<oc::RRT>()->setGoalBias(_GoalBias);
+        planner->as<oc::SST>()->setGoalBias(_GoalBias);
+
+        //set SST Selection Radius
+        _SelectionRadius=(planner->as<oc::SST>())->getSelectionRadius();
+        addParameter("Selection Radius", _SelectionRadius);
+        planner->as<oc::SST>()->setSelectionRadius(_SelectionRadius);
+
+        //set SST Pruning Radius
+        _PruningRadius=(planner->as<oc::SST>())->getPruningRadius();
+        addParameter("Pruning Radius", _PruningRadius);
+        planner->as<oc::SST>()->setPruningRadius(_PruningRadius);
+
 
         //permit intermediate states
-        planner->as<oc::RRT>()->setIntermediateStates(true);
+        // planner->as<oc::SST>()->setIntermediateStates(true);
 
         //set the planner
         ss->setPlanner(planner);
@@ -245,19 +257,35 @@ namespace Kautham {
     }
 
 	//! void destructor
-    omplcRRTf16Planner::~omplcRRTf16Planner(){
+    omplcSSTf16Planner::~omplcSSTf16Planner(){
 			
 	}
 	
 	//! setParameters sets the parameters of the planner
-    bool omplcRRTf16Planner::setParameters(){
+    bool omplcSSTf16Planner::setParameters(){
 
       omplcPlanner::setParameters();
       try{
         HASH_S_K::iterator it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
             _GoalBias = it->second;
-            ss->getPlanner()->as<oc::RRT>()->setGoalBias(_GoalBias);
+            ss->getPlanner()->as<oc::SST>()->setGoalBias(_GoalBias);
+        }
+        else
+          return false;
+
+        it = _parameters.find("SelectionRadius");
+        if(it != _parameters.end()){
+            _SelectionRadius = it->second;
+            ss->getPlanner()->as<oc::SST>()->setSelectionRadius(_SelectionRadius);
+        }
+        else
+          return false;
+
+        it = _parameters.find("PruningRadius");
+        if(it != _parameters.end()){
+            _PruningRadius = it->second;
+            ss->getPlanner()->as<oc::SST>()->setPruningRadius(_PruningRadius);
         }
         else
           return false;
@@ -295,6 +323,7 @@ namespace Kautham {
         else
            return false;
 
+
        if (spacec.get() != NULL) {
            it = _parameters.find("ControlBound_Tras");
            if(it != _parameters.end()){
@@ -330,7 +359,6 @@ namespace Kautham {
            else
                return false;
        }
-
 
 
       }catch(...){
