@@ -41,6 +41,7 @@ namespace ob = ompl::base;
 namespace og = ompl::geometric;
 namespace oc = ompl::control;
 
+#include <ompl/base/goals/GoalStates.h>
 
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
@@ -183,7 +184,7 @@ namespace Kautham {
     //! This class is the base class for all the kautham planners that use the ompl::control planners.
     class omplcPlanner:public Planner {
 	    public:
-        omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
+        omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, oc::SimpleSetup *ssptr);
         ~omplcPlanner();
         
 		bool trySolve();
@@ -213,6 +214,7 @@ namespace Kautham {
         oc::SimpleSetupPtr ss;
         ob::StateSpacePtr space;
         oc::ControlSpacePtr spacec;
+
 
         bool _incremental;
 

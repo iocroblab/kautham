@@ -166,13 +166,19 @@ bool Benchmark::set(xml_node *bm_node, string dir, vector<string> def_path) {
         ok &= add_problem(dir + node.attribute("File").as_string(),def_path,
                                   node.attribute("PlannerAlias").as_string());
 
+        std::cout<<"problem = "<<(dir + node.attribute("File").as_string())<<std::endl;
+
         node = node.next_sibling("Problem");
+        if(ok) std::cout<<"add problem ok=1"<<std::endl;
+        else std::cout<<"add problem ok=0"<<std::endl;
     }
 
     req = new ompl::tools::Benchmark::Request;
     node = bm_node->child("Parameter");
     while (node && ok) {
         ok &= add_parameter(&node);
+        if(ok) std::cout<<"add Parameter ok=1"<<std::endl;
+        else std::cout<<"add Parameter ok=0"<<std::endl;
 
         node = node.next_sibling("Parameter");
     }
@@ -230,30 +236,75 @@ bool Benchmark::add_problem(string prob_file, vector<string> def_path, string pl
                                SimpleSetupPtr()->getPlanner());
 
                 return true;
-            } else {
+            } else if (prob->getPlanner()->getFamily() == Kautham::OMPLCPLANNER) {
+                    std::cout<<"2"<<std::endl;
+                    problem.push_back(prob);
+                    bm = new ompl::tools::Benchmark(*(((omplcplanner::omplcPlanner*)prob->
+                                                       getPlanner())->SimpleSetup()),name);
+                    bm->setPreRunEvent(std::bind(&preRunEvent,std::placeholders::_1));
+                    bm->setPostRunEvent(std::bind(&postRunEvent,std::placeholders::_1,std::placeholders::_2));
+                    if (!planner_alias.empty()) {
+                        ((omplcplanner::omplcPlanner*)prob->getPlanner())->
+                            SimpleSetupPtr()->getPlanner()->setName(planner_alias);
+                    }
+                    bm->addPlanner(((omplcplanner::omplcPlanner*)prob->getPlanner())->
+                                   SimpleSetupPtr()->getPlanner());
+
+                    return true;
+                } else {
+                std::cout<<"Can only benchmark OMPLPLANNER and OMPLCPLANNER families. Sorry..."<<std::endl;
                 return false;
             }
         } else {
+            std::cout<<"4"<<std::endl;
             return false;
         }
     } else {
+        std::cout<<"5"<<std::endl;
         prob->setWSpace(problem.at(0)->wSpace());
         prob->setCSpace(problem.at(0)->cSpace());
         xml_document *doc = new xml_document;
         if (!doc->load_file(prob_file.c_str())) return false;
-        if (prob->createPlannerFromFile(
-                    doc,((omplplanner::omplPlanner*)problem.at(0)->getPlanner())->
-                    SimpleSetup())) {
-            if (prob->getPlanner()->getFamily() == Kautham::OMPLPLANNER) {
-                problem.push_back(prob);
-                if (!planner_alias.empty()) {
-                    ((omplplanner::omplPlanner*)prob->getPlanner())->
-                        SimpleSetupPtr()->getPlanner()->setName(planner_alias);
-                }
-                bm->addPlanner(((omplplanner::omplPlanner*)prob->getPlanner())->
-                               SimpleSetupPtr()->getPlanner());
+        std::cout<<"6"<<std::endl;
+        if (problem.at(0)->getPlanner()->getFamily() == Kautham::OMPLPLANNER) {
+            if (prob->createPlannerFromFile(
+                        doc,((omplplanner::omplPlanner*)problem.at(0)->getPlanner())->
+                        SimpleSetup())) {
+                if (prob->getPlanner()->getFamily() == Kautham::OMPLPLANNER) {
+                    problem.push_back(prob);
+                    if (!planner_alias.empty()) {
+                        ((omplplanner::omplPlanner*)prob->getPlanner())->
+                                SimpleSetupPtr()->getPlanner()->setName(planner_alias);
+                    }
+                    bm->addPlanner(((omplplanner::omplPlanner*)prob->getPlanner())->
+                                   SimpleSetupPtr()->getPlanner());
 
-                return true;
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+         } else if (problem.at(0)->getPlanner()->getFamily() == Kautham::OMPLCPLANNER) {
+            std::cout<<"7"<<std::endl;
+            if (prob->createPlannerFromFile(
+                        doc,((omplcplanner::omplcPlanner*)problem.at(0)->getPlanner())->
+                        SimpleSetup())) {
+                std::cout<<"8"<<std::endl;
+                if (prob->getPlanner()->getFamily() == Kautham::OMPLCPLANNER) {
+                    problem.push_back(prob);
+                    if (!planner_alias.empty()) {
+                        ((omplcplanner::omplcPlanner*)prob->getPlanner())->
+                                SimpleSetupPtr()->getPlanner()->setName(planner_alias);
+                    }
+                    bm->addPlanner(((omplcplanner::omplcPlanner*)prob->getPlanner())->
+                                   SimpleSetupPtr()->getPlanner());
+
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }

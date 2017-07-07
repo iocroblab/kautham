@@ -79,6 +79,10 @@
 #include <kautham/planner/omplg/omplKPIECEplanner.h>
 #include <kautham/planner/omplc/omplcRRTcarplanner.h>
 #include <kautham/planner/omplc/omplcRRTf16planner.h>
+#include <kautham/planner/omplc/omplcRRTdualdriveplanner.h>
+#include <kautham/planner/omplc/omplcSSTcarplanner.h>
+#include <kautham/planner/omplc/omplcSSTf16planner.h>
+#include <kautham/planner/omplc/omplcSSTdualdriveplanner.h>
 #endif
 
 #if defined(KAUTHAM_USE_ODE)
@@ -129,10 +133,21 @@ namespace Kautham {
         //! This method is deprecated. Please take care with the problem XML file.
         //bool			              createWSpace(ProbStruc *reader);
 
-        bool                    createPlanner(string name, ompl::geometric::SimpleSetup *ssptr = NULL, string synergyTreeFilename = "");
-        bool                    createPlannerFromFile(istream *xml_inputfile, ompl::geometric::SimpleSetup *ssptr = NULL);
-        bool                    createPlannerFromFile(string problemFile, ompl::geometric::SimpleSetup *ssptr = NULL);
-        bool                    createPlannerFromFile(pugi::xml_document *doc, ompl::geometric::SimpleSetup *ssptr = NULL);
+        bool                    createPlanner(string name, string synergyTreeFilename = "");
+        bool                    createPlannerFromFile(istream *xml_inputfile);
+        bool                    createPlannerFromFile(string problemFile);
+        bool                    createPlannerFromFile(pugi::xml_document *doc);
+
+        bool                    createPlanner(string name, ompl::geometric::SimpleSetup *ssptr, string synergyTreeFilename = "");
+        bool                    createPlannerFromFile(istream *xml_inputfile, ompl::geometric::SimpleSetup *ssptr);
+        bool                    createPlannerFromFile(string problemFile, ompl::geometric::SimpleSetup *ssptr);
+        bool                    createPlannerFromFile(pugi::xml_document *doc, ompl::geometric::SimpleSetup *ssptr);
+
+        bool                    createPlanner(string name, ompl::control::SimpleSetup *ssptr);
+        bool                    createPlannerFromFile(istream *xml_inputfile, ompl::control::SimpleSetup *ssptr);
+        bool                    createPlannerFromFile(string problemFile, ompl::control::SimpleSetup *ssptr);
+        bool                    createPlannerFromFile(pugi::xml_document *doc, ompl::control::SimpleSetup *ssptr);
+
         bool                    createCSpace();
         bool                    createCSpaceFromFile(pugi::xml_document *doc);
         bool                    tryToSolve();

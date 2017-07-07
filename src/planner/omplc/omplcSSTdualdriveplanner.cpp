@@ -29,7 +29,7 @@
 #include <boost/bind/mem_fn.hpp>
 #include <ompl/base/spaces/SE2StateSpace.h>
 
-#include <kautham/planner/omplc/omplcRRTf16planner.h>
+#include <kautham/planner/omplc/omplcSSTdualdriveplanner.h>
 
 
 
@@ -38,18 +38,18 @@ namespace Kautham {
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Class KinematicF16Model
+  // Class KinematicDualDriveModel
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //! This class derives from KinematicRobotModel and reimplements the operator() function that
-  //! defines the qdot = f(q, u) equations of a f16 plane
-  class KinematicF16Model : public KinematicRobotModel
+  //! defines the qdot = f(q, u) equations of a dualdrive
+  class KinematicDualDriveModel : public KinematicRobotModel
   {
   public:
 
       /// Constructor
-      KinematicF16Model(const ob::StateSpacePtr space) : KinematicRobotModel(space)
+      KinematicDualDriveModel(const ob::StateSpacePtr space) : KinematicRobotModel(space)
       {
-          param_.resize(1);
+          param_.resize(2);
       }
 
       /// implement the function describing the robot motion: qdot = f(q, u)
@@ -79,97 +79,94 @@ namespace Kautham {
                            pathscopedstatese3->rotation().z,
                            pathscopedstatese3->rotation().w);
 
-          //translation
-          mt::Vector3 advance(u[0], 0.0, 0.0);//advance in the x-direction of the plane
-          mt::Vector3 v = ori(advance);
-          dstate[0] = v[0];
-          dstate[1] = v[1];
-          dstate[2] = v[2];
 
           //computes dstate, the se3 incremental motion
-
-          //rotation: axis-angle
-          mt::Unit3 axisx(1.0, 0.0, 0.0);
-          double ax = u[0] * tan(u[1]) / l;
-          mt::Rotation rx(axisx,ax);
-
-          mt::Unit3 axisy(0.0, 1.0, 0.0);
-          double ay = u[0] * tan(u[2]) / l;
-          mt::Rotation ry(axisy,ay);
-
-          mt::Unit3 axisz(0.0, 0.0, 1.0);
-          double az = u[0] * tan(u[3]) / l;
-          mt::Rotation rz(axisz,az);
-
-
-
-          mt::Rotation rot = rx*ry*rz;
+          //translation
+          //mt::Vector3 advance(0.0,u[0], 0.0);//we move along the y axis when angle is zero
+          double v = R * (u[0] + u[1])/2;
+          mt::Vector3 advance(v, 0.0, 0.0);//we move along the x axis when angle is zero
+          mt::Vector3 v2 = ori(advance);
+          dstate[0] = v2[0];
+          dstate[1] = v2[1];
+          dstate[2] = v2[2];
+          /*
           mt::Unit3 axis;
           float theta;
-          rot.getAxisAngle(axis, theta);
-
-          //compostion
-          dstate[3] = axis[0];
-          dstate[4] = axis[1];
-          dstate[5] = axis[2];
-
-          if(theta>M_PI)
-          {
-              theta -= 2*M_PI;
-          }
-          dstate[6] = theta;
+          ori.getAxisAngle(axis, theta);
+          //correct theta since axis may be (0,0,1) or (0,0,-1)!
+          //this assures that theta is a rotation along the positive z-axis:
+          theta = axis[2]*theta;
+          dstate[0] = u[0] * cos(theta+M_PI/2);//the +M_PI/2 is to move along the y axis when angle is zero
+          dstate[1] = u[0] * sin(theta+M_PI/2);
+          dstate[2] = 0;
+          */
 
 
+          //rotation: axis-angle
+          dstate[3] = 0.0; //rotation along the z-axis
+          dstate[4] = 0.0;
+          dstate[5] = 1.0;
+          //
+         
+         dstate[6] = R *(u[0] - u[1])/(2*D);
+      }
+      	   
+
+      /// Sets the dualdrive raduis
+      void setDualDriveRadius(double r)
+      {
+          setParameter(0, r);
+          R = r;
       }
 
-      /// Sets the plane length
-      void setLength(double d)
+      /// Gets the dualdrive radius
+      double getDualDriveRadius()
+      {
+          return getParameter(0);
+      }
+      /// Sets the dualdrive distance
+      void setDualDriveDistance(double d)
       {
           setParameter(0, d);
-          l = d;
+          D = d;
       }
 
-      /// Gets the plane length
-      double getLength()
+      /// Gets the dualdrive distance
+      double getDualDriveDistance()
       {
           return getParameter(0);
       }
    private:
-      double l;
+      double R;
+      double D;
   };
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // omplcRRTf16Planner functions
+  // omplcSSTdualdrivePlanner functions
   /////////////////////////////////////////////////////////////////////////////////////////////////
 	//! Constructor
-    omplcRRTf16Planner::omplcRRTf16Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, oc::SimpleSetup *ssptr):
+    omplcSSTdualdrivePlanner::omplcSSTdualdrivePlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, oc::SimpleSetup *ssptr):
               omplcPlanner(stype, init, goal, samples, ws, ssptr)
 	{
-        _guiName = "ompl cRRT Planner";
-        _idName = "omplcRRTf16";
-
+        _guiName = "ompl cSST Planner";
+        _idName = "omplcSSTdualdrive";
 
         // set the bounds for the control space
-        _controlBound_Tras = 30;
-        _controlBound_Rot = 0.3;
-        addParameter("ControlBound_Tras", _controlBound_Tras);
-        addParameter("ControlBound_Rot", _controlBound_Rot);
-
+        _controlBound = 10;
+        _onlyForward = 0;
+        addParameter("ControlBound", _controlBound);
+        addParameter("OnlyForward (0/1)", _onlyForward);
 
         if (ss.get() == NULL) {
             // create a control space
-            int numcontrols = 4;
+            int numcontrols = 2;
             spacec = ((oc::ControlSpacePtr) new oc::RealVectorControlSpace(space, numcontrols));
-            ob::RealVectorBounds cbounds(numcontrols);
-            cbounds.setLow(0, 0.0);
-            cbounds.setHigh(0, _controlBound_Tras);
-            cbounds.setLow(1, -_controlBound_Rot);
-            cbounds.setHigh(1, _controlBound_Rot);
-            cbounds.setLow(2, -_controlBound_Rot);
-            cbounds.setHigh(2, _controlBound_Rot);
-            cbounds.setLow(3, -_controlBound_Rot);
-            cbounds.setHigh(3, _controlBound_Rot);
+            ob::RealVectorBounds cbounds(2);
+            cbounds.setLow(0, - _controlBound * (1 - _onlyForward));
+            cbounds.setHigh(0, _controlBound);
+            cbounds.setLow(1, - _controlBound * (1 - _onlyForward));
+            cbounds.setHigh(1, _controlBound);
             spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
             // define a simple setup class
             ss = ((oc::SimpleSetupPtr) new oc::SimpleSetup(spacec));
@@ -201,18 +198,17 @@ namespace Kautham {
         }
 
 
-
         // set state validity checking for this space
         ss->setStateValidityChecker(std::bind(&omplcplanner::isStateValid, ss->getSpaceInformation().get(), std::placeholders::_1, (Planner*)this));
 
         // set the propagation routine for this space
         oc::SpaceInformationPtr si=ss->getSpaceInformation();
-        ss->setStatePropagator(oc::StatePropagatorPtr(new omplcPlannerStatePropagator<KinematicF16Model>(si)));
+        ss->setStatePropagator(oc::StatePropagatorPtr(new omplcPlannerStatePropagator<KinematicDualDriveModel>(si)));
 
         // propagation step size
         _propagationStepSize = 0.01;
         addParameter("PropagationStepSize", _propagationStepSize);
-        static_cast<omplcPlannerStatePropagator<KinematicF16Model>*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
+        static_cast<omplcPlannerStatePropagator<KinematicDualDriveModel>*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
         si->setPropagationStepSize(_propagationStepSize);
         // propagation duration
         _durationMin = 1;
@@ -221,21 +217,33 @@ namespace Kautham {
         addParameter("MaxDuration", _durationMax);
         si->setMinMaxControlDuration(_durationMin, _durationMax);
 
-        //Length
-        _length = 0.2;
-        addParameter("Length", _length);
-        static_cast<omplcPlannerStatePropagator<KinematicF16Model>*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setLength(_length);
+        //dualdriveRadius
+        _dualdriveRadius = 0.2;
+        addParameter("DualDriveRadius", _dualdriveRadius);
+        static_cast<omplcPlannerStatePropagator<KinematicDualDriveModel>*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setDualDriveRadius(_dualdriveRadius);
+
+        //dualdriveDistance
+        _dualdriveDistance = 0.2;
+        addParameter("DualDriveDistance", _dualdriveDistance);
+        static_cast<omplcPlannerStatePropagator<KinematicDualDriveModel>*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setDualDriveDistance(_dualdriveDistance);
 
         // create a planner for the defined space
-        ob::PlannerPtr planner(new oc::RRT(si));
+        ob::PlannerPtr planner(new oc::SST(si));
 
-        //set RRT Ggoal Bias
-        _GoalBias=(planner->as<oc::RRT>())->getGoalBias();
+        //set SST Ggoal Bias
+        _GoalBias=(planner->as<oc::SST>())->getGoalBias();
         addParameter("Goal Bias", _GoalBias);
-        planner->as<oc::RRT>()->setGoalBias(_GoalBias);
+        planner->as<oc::SST>()->setGoalBias(_GoalBias);
 
-        //permit intermediate states
-        planner->as<oc::RRT>()->setIntermediateStates(true);
+        //set SST Selection Radius
+        _SelectionRadius=(planner->as<oc::SST>())->getSelectionRadius();
+        addParameter("SelectionRadius", _SelectionRadius);
+        planner->as<oc::SST>()->setSelectionRadius(_SelectionRadius);
+
+        //set SST Pruning Radius
+        _PruningRadius=(planner->as<oc::SST>())->getPruningRadius();
+        addParameter("PruningRadius", _PruningRadius);
+        planner->as<oc::SST>()->setPruningRadius(_PruningRadius);
 
         //set the planner
         ss->setPlanner(planner);
@@ -245,27 +253,51 @@ namespace Kautham {
     }
 
 	//! void destructor
-    omplcRRTf16Planner::~omplcRRTf16Planner(){
+    omplcSSTdualdrivePlanner::~omplcSSTdualdrivePlanner(){
 			
 	}
 	
 	//! setParameters sets the parameters of the planner
-    bool omplcRRTf16Planner::setParameters(){
+    bool omplcSSTdualdrivePlanner::setParameters(){
 
       omplcPlanner::setParameters();
       try{
         HASH_S_K::iterator it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
             _GoalBias = it->second;
-            ss->getPlanner()->as<oc::RRT>()->setGoalBias(_GoalBias);
+            ss->getPlanner()->as<oc::SST>()->setGoalBias(_GoalBias);
         }
         else
           return false;
 
-     it = _parameters.find("Length");
+        it = _parameters.find("SelectionRadius");
+        if(it != _parameters.end()){
+            _SelectionRadius = it->second;
+            ss->getPlanner()->as<oc::SST>()->setSelectionRadius(_SelectionRadius);
+        }
+        else
+          return false;
+
+        it = _parameters.find("PruningRadius");
+        if(it != _parameters.end()){
+            _PruningRadius = it->second;
+            ss->getPlanner()->as<oc::SST>()->setPruningRadius(_PruningRadius);
+        }
+        else
+          return false;
+
+     it = _parameters.find("DualDriveRadius");
      if(it != _parameters.end()){
-          _length = it->second;
-          static_cast<omplcPlannerStatePropagator<KinematicF16Model>*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setLength(_length);
+          _dualdriveRadius = it->second;
+          static_cast<omplcPlannerStatePropagator<KinematicDualDriveModel>*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setDualDriveRadius(_dualdriveRadius);
+      }
+      else
+         return false;
+
+    it = _parameters.find("DualDriveDistance");
+     if(it != _parameters.end()){
+          _dualdriveDistance = it->second;
+          static_cast<omplcPlannerStatePropagator<KinematicDualDriveModel>*>(ss->getStatePropagator().get())->getIntegrator()->getOde()->setDualDriveDistance(_dualdriveDistance);
       }
       else
          return false;
@@ -289,56 +321,49 @@ namespace Kautham {
        it = _parameters.find("PropagationStepSize");
        if(it != _parameters.end()){
            _propagationStepSize = it->second;
-           static_cast<omplcPlannerStatePropagator<KinematicF16Model>*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
+           static_cast<omplcPlannerStatePropagator<KinematicDualDriveModel>*>(ss->getStatePropagator().get())->setIntegrationTimeStep(_propagationStepSize);
            ss->getSpaceInformation()->setPropagationStepSize(_propagationStepSize);
         }
         else
            return false;
 
+
+
        if (spacec.get() != NULL) {
-           it = _parameters.find("ControlBound_Tras");
+           it = _parameters.find("ControlBound");
            if(it != _parameters.end()){
-               _controlBound_Tras = it->second;
-               ob::RealVectorBounds cbounds(4);
-               cbounds.setLow(0, 0.0);
-               cbounds.setHigh(0, _controlBound_Tras);
-               cbounds.setLow(1, -_controlBound_Rot);
-               cbounds.setHigh(1, _controlBound_Rot);
-               cbounds.setLow(2, -_controlBound_Rot);
-               cbounds.setHigh(2, _controlBound_Rot);
-               cbounds.setLow(3, -_controlBound_Rot);
-               cbounds.setHigh(3, _controlBound_Rot);
+               _controlBound = it->second;
+               ob::RealVectorBounds cbounds(2);
+               cbounds.setLow(0, - _controlBound * (1 - _onlyForward));
+               cbounds.setHigh(0, _controlBound);
+               cbounds.setLow(1, -_controlBound * (1 - _onlyForward));
+               cbounds.setHigh(1, _controlBound);
                spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
            }
            else
                return false;
 
-           it = _parameters.find("ControlBound_Rot");
+           it = _parameters.find("OnlyForward (0/1)");
            if(it != _parameters.end()){
-               _controlBound_Rot = it->second;
-               ob::RealVectorBounds cbounds(4);
-               cbounds.setLow(0, 0.0);
-               cbounds.setHigh(0, _controlBound_Tras);
-               cbounds.setLow(1, -_controlBound_Rot);
-               cbounds.setHigh(1, _controlBound_Rot);
-               cbounds.setLow(2, -_controlBound_Rot);
-               cbounds.setHigh(2, _controlBound_Rot);
-               cbounds.setLow(3, -_controlBound_Rot);
-               cbounds.setHigh(3, _controlBound_Rot);
+               if(it->second != 0) _onlyForward=1;
+               else _onlyForward=0;
+               ob::RealVectorBounds cbounds(2);
+               cbounds.setLow(0, - _controlBound * (1 - _onlyForward));
+               cbounds.setHigh(0, _controlBound);
+               cbounds.setLow(1, -_controlBound * (1 - _onlyForward));
+               cbounds.setHigh(1, _controlBound);
                spacec->as<oc::RealVectorControlSpace>()->setBounds(cbounds);
            }
            else
                return false;
        }
 
-
-
-      }catch(...){
-        return false;
-      }
-      return true;
+    }catch(...){
+      return false;
     }
+    return true;
   }
+}
 }
 
 #endif // KAUTHAM_USE_OMPL

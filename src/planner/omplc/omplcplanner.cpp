@@ -271,7 +271,7 @@ namespace Kautham {
    /////////////////////////////////////////////////////////////////////////////////////////////////
 
     //! Constructor
-    omplcPlanner::omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
+    omplcPlanner::omplcPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, oc::SimpleSetup *ssptr):
               Planner(stype, init, goal, samples, ws)
     {
         _family = OMPLCPLANNER;
@@ -290,111 +290,122 @@ namespace Kautham {
         addParameter("Max Planning Time", _planningTime);
         addParameter("Speed Factor", _speedFactor);
 
-        //Construct the state space we are planning in. It is a compound state space composed of a compound state space for each robot
-        //Each robot has a compound state space composed of a (oprional) SE3 state space and a (optional) Rn state space
-        vector<ob::StateSpacePtr> spaceRn;
-        vector<ob::StateSpacePtr> spaceSE3;
-        vector<ob::StateSpacePtr> spaceRob;
-        vector< double > weights;
 
-        spaceRn.resize(_wkSpace->getNumRobots());
-        spaceSE3.resize(_wkSpace->getNumRobots());
-        spaceRob.resize(_wkSpace->getNumRobots());
-        weights.resize(_wkSpace->getNumRobots());
+        if (ssptr == NULL) {
+            //Construct the state space we are planning in. It is a compound state space composed of a compound state space for each robot
+            //Each robot has a compound state space composed of a (oprional) SE3 state space and a (optional) Rn state space
+            vector<ob::StateSpacePtr> spaceRn;
+            vector<ob::StateSpacePtr> spaceSE3;
+            vector<ob::StateSpacePtr> spaceRob;
+            vector< double > weights;
 
-        //loop for all robots
-        for(unsigned i=0; i<_wkSpace->getNumRobots(); i++)
-        {
-            vector<ob::StateSpacePtr> compoundspaceRob;
-            vector< double > weightsRob;
-            std::stringstream sstm;
+            spaceRn.resize(_wkSpace->getNumRobots());
+            spaceSE3.resize(_wkSpace->getNumRobots());
+            spaceRob.resize(_wkSpace->getNumRobots());
+            weights.resize(_wkSpace->getNumRobots());
 
-            //create state space SE3 for the mobile base, if necessary
-            if(_wkSpace->getRobot(i)->isSE3Enabled())
+            //loop for all robots
+            for(unsigned i=0; i<_wkSpace->getNumRobots(); i++)
             {
-                //create the SE3 state space
-                spaceSE3[i] = ((ob::StateSpacePtr) new ob::SE3StateSpace());
-                sstm.str("");
-                sstm << "ssRobot" << i<<"_SE3";
-                spaceSE3[i]->setName(sstm.str());
+                vector<ob::StateSpacePtr> compoundspaceRob;
+                vector< double > weightsRob;
+                std::stringstream sstm;
 
-                //set the bounds. If the bounds are equal or its difference is below a given epsilon value (0.001) then
-                //set the higher bound to the lower bound plus this eplsion
-                ob::RealVectorBounds bounds(3);
-
-                //x-direction
-                double low = _wkSpace->getRobot(i)->getLimits(0)[0];
-                double high = _wkSpace->getRobot(i)->getLimits(0)[1];
-                filterBounds(low, high, 0.001);
-                bounds.setLow(0, low);
-                bounds.setHigh(0, high);
-
-                //y-direction
-                low = _wkSpace->getRobot(i)->getLimits(1)[0];
-                high = _wkSpace->getRobot(i)->getLimits(1)[1];
-                filterBounds(low, high, 0.001);
-                bounds.setLow(1, low);
-                bounds.setHigh(1, high);
-
-                //z-direction
-                low = _wkSpace->getRobot(i)->getLimits(2)[0];
-                high = _wkSpace->getRobot(i)->getLimits(2)[1];
-                filterBounds(low, high, 0.001);
-                bounds.setLow(2, low);
-                bounds.setHigh(2, high);
-
-                spaceSE3[i]->as<ob::SE3StateSpace>()->setBounds(bounds);
-
-                //sets the weights between translation and rotation
-                spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(0,_wkSpace->getRobot(i)->getWeightSE3()[0]);//translational weight
-                spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(1,_wkSpace->getRobot(i)->getWeightSE3()[1]);//rotational weight
-
-                //load to the compound state space of robot i
-                compoundspaceRob.push_back(spaceSE3[i]);
-                weightsRob.push_back(1);
-            }
-
-            //create the Rn state space for the kinematic chain, if necessary
-            int nj = _wkSpace->getRobot(i)->getNumJoints();
-            if(nj>0)
-            {
-                //create the Rn state space
-                spaceRn[i] = ((ob::StateSpacePtr) new omplplanner::weigthedRealVectorStateSpace(nj));
-                sstm.str("");
-                sstm << "ssRobot" << i<<"_Rn";
-                spaceRn[i]->setName(sstm.str());
-
-                // set the bounds and the weights
-                vector<KthReal> jointweights;
-                ob::RealVectorBounds bounds(nj);
-                double low, high;
-                for(int j=0; j<nj;j++)
+                //create state space SE3 for the mobile base, if necessary
+                if(_wkSpace->getRobot(i)->isSE3Enabled())
                 {
-                    //the limits of joint j between link j and link (j+1) are stroed in the data structure of link (j+1)
-                    low = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(true);
-                    high = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(false);
-                    filterBounds(low, high, 0.001);
-                    bounds.setLow(j, low);
-                    bounds.setHigh(j, high);
-                    //the weights
-                    jointweights.push_back(_wkSpace->getRobot(i)->getLink(j+1)->getWeight());
-                }
-                spaceRn[i]->as<omplplanner::weigthedRealVectorStateSpace>()->setBounds(bounds);
-                spaceRn[i]->as<omplplanner::weigthedRealVectorStateSpace>()->setWeights(jointweights);
+                    //create the SE3 state space
+                    spaceSE3[i] = ((ob::StateSpacePtr) new ob::SE3StateSpace());
+                    sstm.str("");
+                    sstm << "ssRobot" << i<<"_SE3";
+                    spaceSE3[i]->setName(sstm.str());
 
-                //load to the compound state space of robot i
-                compoundspaceRob.push_back(spaceRn[i]);
-                weightsRob.push_back(1);
+                    //set the bounds. If the bounds are equal or its difference is below a given epsilon value (0.001) then
+                    //set the higher bound to the lower bound plus this eplsion
+                    ob::RealVectorBounds bounds(3);
+
+                    //x-direction
+                    double low = _wkSpace->getRobot(i)->getLimits(0)[0];
+                    double high = _wkSpace->getRobot(i)->getLimits(0)[1];
+                    filterBounds(low, high, 0.001);
+                    bounds.setLow(0, low);
+                    bounds.setHigh(0, high);
+
+                    //y-direction
+                    low = _wkSpace->getRobot(i)->getLimits(1)[0];
+                    high = _wkSpace->getRobot(i)->getLimits(1)[1];
+                    filterBounds(low, high, 0.001);
+                    bounds.setLow(1, low);
+                    bounds.setHigh(1, high);
+
+                    //z-direction
+                    low = _wkSpace->getRobot(i)->getLimits(2)[0];
+                    high = _wkSpace->getRobot(i)->getLimits(2)[1];
+                    filterBounds(low, high, 0.001);
+                    bounds.setLow(2, low);
+                    bounds.setHigh(2, high);
+
+                    spaceSE3[i]->as<ob::SE3StateSpace>()->setBounds(bounds);
+
+                    //sets the weights between translation and rotation
+                    spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(0,_wkSpace->getRobot(i)->getWeightSE3()[0]);//translational weight
+                    spaceSE3[i]->as<ob::SE3StateSpace>()->setSubspaceWeight(1,_wkSpace->getRobot(i)->getWeightSE3()[1]);//rotational weight
+
+                    //load to the compound state space of robot i
+                    compoundspaceRob.push_back(spaceSE3[i]);
+                    weightsRob.push_back(1);
+                }
+
+                //create the Rn state space for the kinematic chain, if necessary
+                int nj = _wkSpace->getRobot(i)->getNumJoints();
+                if(nj>0)
+                {
+                    //create the Rn state space
+                    spaceRn[i] = ((ob::StateSpacePtr) new omplplanner::weigthedRealVectorStateSpace(nj));
+                    sstm.str("");
+                    sstm << "ssRobot" << i<<"_Rn";
+                    spaceRn[i]->setName(sstm.str());
+
+                    // set the bounds and the weights
+                    vector<KthReal> jointweights;
+                    ob::RealVectorBounds bounds(nj);
+                    double low, high;
+                    for(int j=0; j<nj;j++)
+                    {
+                        //the limits of joint j between link j and link (j+1) are stroed in the data structure of link (j+1)
+                        low = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(true);
+                        high = *_wkSpace->getRobot(i)->getLink(j+1)->getLimits(false);
+                        filterBounds(low, high, 0.001);
+                        bounds.setLow(j, low);
+                        bounds.setHigh(j, high);
+                        //the weights
+                        jointweights.push_back(_wkSpace->getRobot(i)->getLink(j+1)->getWeight());
+                    }
+                    spaceRn[i]->as<omplplanner::weigthedRealVectorStateSpace>()->setBounds(bounds);
+                    spaceRn[i]->as<omplplanner::weigthedRealVectorStateSpace>()->setWeights(jointweights);
+
+                    //load to the compound state space of robot i
+                    compoundspaceRob.push_back(spaceRn[i]);
+                    weightsRob.push_back(1);
+                }
+                //the compound state space for robot i is (SE3xRn), and either SE3 or Rn may be missing
+                spaceRob[i] = ((ob::StateSpacePtr) new ob::CompoundStateSpace(compoundspaceRob,weightsRob));
+                weights[i] = 1;
+                sstm.str("");
+                sstm << "ssRobot" << i;
+                spaceRob[i]->setName(sstm.str());
             }
-            //the compound state space for robot i is (SE3xRn), and either SE3 or Rn may be missing
-            spaceRob[i] = ((ob::StateSpacePtr) new ob::CompoundStateSpace(compoundspaceRob,weightsRob));
-            weights[i] = 1;
-            sstm.str("");
-            sstm << "ssRobot" << i;
-            spaceRob[i]->setName(sstm.str());
+            //the state space for the set of robots. All the robots have the same weight.
+            space = ((ob::StateSpacePtr) new ob::CompoundStateSpace(spaceRob,weights));
+            ss = (oc::SimpleSetupPtr)ssptr;
+
+
         }
-        //the state space for the set of robots. All the robots have the same weight.
-        space = ((ob::StateSpacePtr) new ob::CompoundStateSpace(spaceRob,weights));
+        else {
+            ss = (oc::SimpleSetupPtr)ssptr;
+            space = ss->getStateSpace();
+        }
+        space->setup();
 
         //The classes derived from this omplplanner class will create a planner,
         //the simplesetup and call the setStateValididyChecker function
