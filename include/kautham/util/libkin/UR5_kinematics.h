@@ -37,21 +37,21 @@
 //modified DH a values
 #define a0 0.0
 #define a1 0.0
-#define a2 425.0
-#define a3 392.25
+#define a2 0.4250   // 425.0
+#define a3 0.39225  // 392.25
 #define a4 0.0
 #define a5 0.0
 
 //modified DH d values
-#define d1 89.159
+#define d1 0.089159 // 89.159
 #define d2 0.0
 #define d3 0.0
-#define d4 109.15
-#define d5 94.65
-#define d6 82.3
+#define d4 0.10915  // 109.15
+#define d5 0.09465  // 94.65
+#define d6 0.0823   // 82.3
 
 //joint offset values
-#define offset1 -3.0/4.0*PI
+#define offset1 0.0 // -3.0/4.0*PI
 #define offset2 PI
 #define offset3 0.0
 #define offset4 0.0
@@ -78,7 +78,7 @@
 #define TOL 0.01
 
 //other constant values
-#define MAX_DIST 30.8 // MAX_DIST > distance(high,low) = 4*sqrt(6)*PI
+#define MAX_DIST 0.0308 //30.8 // MAX_DIST > distance(high,low) = 4*sqrt(6)*PI
 #define INF 1.0/0.0
 
 

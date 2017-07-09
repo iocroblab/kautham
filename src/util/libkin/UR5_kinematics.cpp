@@ -77,6 +77,11 @@ Transform UR5_dir_kin(double *theta) {
     double a[] = {a0, a1, a2, a3, a4, a5};
     double d[] = {d1, d2, d3, d4, d5, d6};
 
+    std::cout << "dk theta: ";
+    for (unsigned int i=0; i<6; ++i)    std::cout << theta[i] << " ";
+    std::cout << std::endl;
+
+
     Transform transform;
 
     for (int i = 0; i < 6; i++) {
@@ -91,6 +96,18 @@ int UR5_inv_kin(Transform transform, bool shoulder_positive, bool wrist_positive
                 bool elbow_positive, double *theta, double *theta_ref) {
 
     double theta_tmp[6];
+
+    mt::Point3 pos = transform.getTranslation();
+    std::cout << "UR5: pos = " <<pos[0]<<" " <<pos[1]<<" " <<pos[2]<<" " <<std::endl;
+    std::cout << "UR5: shoulder_positive / wrist_positive / elbow_positive = "
+              << shoulder_positive<<" / "<< wrist_positive<<" / "<< elbow_positive<< std::endl;
+//    std::cout << "UR5: errs = " << UR5_NO_ERROR << " "
+//                                << UR5_JOINT_1  << " "
+//                                << UR5_JOINT_2  << " "
+//                                << UR5_JOINT_3  << " "
+//                                << UR5_JOINT_4  << " "
+//                                << UR5_JOINT_5  << " "
+//                                << UR5_JOINT_6 << std::endl;
 
     //if no reference was specified, set the default values
     if (theta_ref == NULL) {
@@ -128,6 +145,7 @@ int UR5_inv_kin(Transform transform, bool shoulder_positive, bool wrist_positive
         //theta1 has no solution
         return (UR5_JOINT_1);
     }
+    std::cout << "theta_tmp[0] = " << theta_tmp[0] << std::endl;
 
     double s1 = sin(theta_tmp[0]+offset1);
     double c1 = cos(theta_tmp[0]+offset1);
