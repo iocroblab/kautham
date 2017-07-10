@@ -26,6 +26,8 @@
 #if !defined(_IVKINUR5_H)
 #define _IVKINUR5_H
 
+
+#include <kautham/problem/robot.h>
 #include <kautham/util/libkin/inversekinematic.h>
 
 

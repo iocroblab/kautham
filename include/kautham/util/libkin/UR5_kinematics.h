@@ -51,7 +51,7 @@
 #define d6 0.0823   // 82.3
 
 //joint offset values
-#define offset1 0.0 // -3.0/4.0*PI
+#define offset1 -3.0/4.0*PI
 #define offset2 PI
 #define offset3 0.0
 #define offset4 0.0
@@ -78,7 +78,7 @@
 #define TOL 0.01
 
 //other constant values
-#define MAX_DIST 0.0308 //30.8 // MAX_DIST > distance(high,low) = 4*sqrt(6)*PI
+#define MAX_DIST 30.8 // MAX_DIST > distance(high,low) = 4*sqrt(6)*PI
 #define INF 1.0/0.0
 
 

@@ -77,7 +77,7 @@ Transform UR5_dir_kin(double *theta) {
     double a[] = {a0, a1, a2, a3, a4, a5};
     double d[] = {d1, d2, d3, d4, d5, d6};
 
-    std::cout << "dk theta: ";
+//    std::cout << "dk theta: ";
     for (unsigned int i=0; i<6; ++i)    std::cout << theta[i] << " ";
     std::cout << std::endl;
 
