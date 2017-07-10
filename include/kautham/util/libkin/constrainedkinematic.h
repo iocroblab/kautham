@@ -26,9 +26,9 @@
 #if !defined(_CONSTRAINEDKINEMATIC_H)
 #define _CONSTRAINEDKINEMATIC_H
 
-
 #include <kautham/util/kthutil/kauthamdefs.h>
 #include <kautham/util/kthutil/kauthamobject.h>
+
 #include <kautham/sampling/robconf.h>
 #include <kautham/sampling/se3conf.h>
 #include <kautham/sampling/rnconf.h>
