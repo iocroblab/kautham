@@ -156,6 +156,12 @@ mt::Transform DH_transform(double alpha, double a, double theta, double d);
 mt::Transform UR5_dir_kin(double *theta);
 
 /*!
+ * \brief UR5_dir_kin solves the UR5 direct kinematics for the specified joint values and
+ *returns the TCP transform of the i-th frame
+ */
+mt::Transform UR5_dir_kin(double *theta, const unsigned int joint);
+
+/*!
  * \brief UR5_inv_kin solves the UR5 inverse kinematics for the specified configuration,
  *and only if a solutyion was found, puts the result in theta and returns joint values
  *will be the nearest ones next to the reference if no reference is specified,
