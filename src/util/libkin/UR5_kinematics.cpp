@@ -77,14 +77,22 @@ Transform UR5_dir_kin(double *theta) {
     double a[] = {a0, a1, a2, a3, a4, a5};
     double d[] = {d1, d2, d3, d4, d5, d6};
 
-//    std::cout << "dk theta: ";
-    for (unsigned int i=0; i<6; ++i)    std::cout << theta[i] << " ";
-    std::cout << std::endl;
+    Transform transform;
+    for (int i = 0; i < 6; i++) {
+        transform *= DH_transform(alpha[i],a[i],theta[i]+offset[i],d[i]);
+    }
 
+    return(transform);
+}
+
+Transform UR5_dir_kin(double *theta, const unsigned int joint) {
+    double offset[] = {offset1, offset2, offset3, offset4, offset5, offset6};
+    double alpha[] = {alpha0, alpha1, alpha2, alpha3, alpha4, alpha5};
+    double a[] = {a0, a1, a2, a3, a4, a5};
+    double d[] = {d1, d2, d3, d4, d5, d6};
 
     Transform transform;
-
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < joint+1; i++) {
         transform *= DH_transform(alpha[i],a[i],theta[i]+offset[i],d[i]);
     }
 
