@@ -51,7 +51,7 @@
 #define d6 0.0823   // 82.3
 
 //joint offset values
-#define offset1 0.0 //-3.0/4.0*PI
+#define offset1 PI
 #define offset2 PI
 #define offset3 0.0
 #define offset4 0.0
