@@ -55,14 +55,22 @@ IvKinUR5::~IvKinUR5(){
 }
 
 bool IvKinUR5::solve(){
+
     auto plotTF = [](mt::Transform tf, const char* tf_name) {
         mt::Vector3 pos = tf.getTranslation();
+        mt::Rotation rot = tf.getRotation();
+        mt::Matrix3x3 rot_mat = rot.getMatrix();
         mt::Scalar y, p, r;
-        tf.getRotation().getYpr(y,p,r);
-        mt::Quaternion q = tf.getRotation();
+        rot.getYpr(y,p,r);
+        mt::Quaternion q = rot;
         std::cout << "-- " << tf_name << " ------------------------" << std::endl;
         std::cout << "DK: pos = " <<pos[0]<<" " <<pos[1]<<" " <<pos[2]<<" " <<std::endl;
-        std::cout << "DK: rpy = " <<r<<" " <<p<<" " <<y<<" " <<std::endl;
+//        std::cout << "DK: rot = " << std::endl;
+//        for (unsigned int i=0; i<3; ++i){
+//            for (unsigned int j=0; j<3; ++j)    std::cout << std::setw(12) << rot_mat[i][j] << " ";
+//            std::cout << std::endl;
+//        }
+//        std::cout << "DK: rpy = " <<r<<" " <<p<<" " <<y<<" " <<std::endl;
         std::cout << "DK: q   = " <<q[0]<<" " <<q[1]<<" " <<q[2]<<" | " <<q[3]<<" " <<std::endl;
     };
 
@@ -74,25 +82,11 @@ bool IvKinUR5::solve(){
     }
 
 
-
     // Offset transformation between the kinematic model in UR5_Kinematics and the kautham model such that:
     //  T_kautham = T_{UR5_Kinematics} * T_offset
-//    mt::Transform offsetTF_0;
-//    offsetTF_0.setTranslation(mt::Vector3(0.0, 0.0, 0.0));
-//    offsetTF_0.setRotation(mt::Rotation(mt::Quaternion(0.0, 0.0, -0.92388, 0.382683)));
-
-//    mt::Transform offsetTF_F;
-//    offsetTF_F.setTranslation(mt::Vector3(0.0, -0.3006, 0.0));
-//    offsetTF_F.setRotation(mt::Rotation(mt::Quaternion(0.0, 0.707107, -0.707107, 0.0)));
-
-    // Offset transformation between the kinematic model in UR5_Kinematics and the kautham model such that:
-    //  T_kautham = T_{UR5_Kinematics} * T_offset
-//    mt::Transform offsetTF;
-//    offsetTF.setTranslation(mt::Vector3(0.0, 0.0, -0.0823));
-//    offsetTF.setRotation(mt::Rotation(mt::Quaternion(0.707107, 0.0, 0.0, 0.707107)));
     mt::Transform offsetTF;
-    offsetTF.setTranslation(mt::Vector3(0.0, -0.3006, 0.0));
-    offsetTF.setRotation(mt::Rotation(mt::Quaternion(0.0, -0.707107, 0.707107, 0.0)));
+    offsetTF.setTranslation(mt::Vector3(0.0, 0.0822999, 0.0));
+    offsetTF.setRotation(mt::Rotation(mt::Quaternion(0.707107, 0.0, 0.0, -0.707107)));
 
 
     // DK test
@@ -107,64 +101,57 @@ bool IvKinUR5::solve(){
 //        theta_test[4] = -M_PI/2.0;
 //        theta_test[5] = 0.0;
 
-//        theta_test[0] = 0.1;
-//        theta_test[1] = -2.3;
-//        theta_test[2] = 1.29;
-//        theta_test[3] = -5.89;
-//        theta_test[4] = -1.77;
-//        theta_test[5] = 0.67;
+        theta_test[0] = 0.1;
+        theta_test[1] = -2.3;
+        theta_test[2] = 1.29;
+        theta_test[3] = -5.89;
+        theta_test[4] = -1.77;
+        theta_test[5] = 0.67;
 
-        theta_test[0] = M_PI/2.0;
-        theta_test[1] = 0.0;
-        theta_test[2] = 0.0;
-        theta_test[3] = -M_PI/2.0;
-        theta_test[4] = 0.0;
-        theta_test[5] = 0.0;
+        theta_test[0] = -0.211;
+        theta_test[1] = -0.3;
+        theta_test[2] = -2.29;
+        theta_test[3] = 1.89;
+        theta_test[4] = 0.37;
+        theta_test[5] = -5.67;
+
+//        theta_test[0] = M_PI/2.0;
+//        theta_test[1] = 0.0;
+//        theta_test[2] = 0.0;
+//        theta_test[3] = -M_PI/2.0;
+//        theta_test[4] = 0.0;
+//        theta_test[5] = 0.0;
 
 //        for (unsigned int i=0; i<6; ++i)    theta_test[i] = 0.0;
 //        theta_test[1] = -M_PI/2.0;
 //        theta_test[3] = -M_PI/2.0;
 
         for (unsigned int i=0; i<6; ++i)    lb_theta_test[i] = theta_test[i];
-        lb_theta_test[0] -= -3.0/4.0*PI;
-        lb_theta_test[1] -= PI;
-//        lb_theta_test[4] -= PI;
+        lb_theta_test[0] -= PI;
 
         std::cout << "DK: theta = "; for (unsigned int i=0; i<6; ++i)    std::cout << theta_test[i] << " "; std::cout << std::endl;
         double controls_test[6];
         UR5_controls(controls_test, lb_theta_test);
         std::cout << "DK: controls = "; for (unsigned int i=0; i<6; ++i)    std::cout << controls_test[i] << " "; std::cout << std::endl;
 
-        std::cout << "lib tfs" << std::endl;
-        for (unsigned int i=0; i<6; ++i){
-            mt::Transform libTF = UR5_dir_kin(lb_theta_test, i);
-            plotTF(libTF, "libTF");
-        }
+//        std::cout << "lib tfs +++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+//        for (unsigned int i=0; i<6; ++i){
+//            mt::Transform libTF = UR5_dir_kin(lb_theta_test, i);
+//            std::cout << i << std::endl;
+//            plotTF(libTF, "libTF");
+//        }
 
-        std::cout << "kth tfs" << std::endl;
-        for (unsigned int i=0; i<6; ++i){
-            mt::Transform kthTF = _robot->getLinkTransform(i+1);
-            plotTF(kthTF, "kthTF");
-        }
+//        std::cout << "kth tfs +++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+//        for (unsigned int i=0; i<6; ++i){
+//            mt::Transform kthTF = _robot->getLinkTransform(i+1);
+//            std::cout << i << std::endl;
+//            plotTF(kthTF, "kthTF");
+//        }
 
         for (unsigned int i = 0; i<6; ++i)  _robot->getLink(i+1)->setValue(theta_test[i]);
-        mt::Transform dkTF = _robot->getLastLinkTransform();
-        plotTF(dkTF, "Kth dkTF");
 
-        mt::Transform ur5_tcp = UR5_dir_kin(lb_theta_test);
-        plotTF(ur5_tcp, "Lb dkTF");
-
-//        mt::Transform offsetTestTF_0 = UR5_dir_kin(theta_test, 0) * (_robot->getLinkTransform(1)).inverse();
-//        plotTF(offsetTestTF_0, "offsetTestTF_0");
-
-//        mt::Transform offsetTestTF_F = dkTF.inverse() * offsetTF_0.inverse() * UR5_dir_kin(theta_test);
-//        plotTF(offsetTestTF_F, "offsetTestTF_F");
-
-        mt::Transform offsetTestTF = dkTF.inverse() * ur5_tcp;
-        plotTF(offsetTestTF, "offsetTestTF");
-
-        mt::Transform ur5_Kth_tcp = ur5_tcp;
-        plotTF(ur5_Kth_tcp, "ur5_Kth_tcp");
+//        mt::Transform offsetTestTF = dkTF.inverse() * ur5_tcp;
+//        plotTF(offsetTestTF, "offsetTestTF");
 
         mt::Transform lbTF = UR5_dir_kin(lb_theta_test);
         plotTF(lbTF, "lbTF");
@@ -172,6 +159,23 @@ bool IvKinUR5::solve(){
         mt::Transform corrLbTF = _robot->getLastLinkTransform() * offsetTF;
         plotTF(corrLbTF, "corrLbTF");
     }
+
+
+
+    // Test IK ------------------------------------------------------------------
+    {
+        mt::Transform ikTF = UR5_dir_kin(lb_theta_test);
+
+        double q_ik[6];
+        int ik_err_code = UR5_inv_kin(ikTF, shoulder, wrist, elbow, q_ik);
+
+        mt::Transform ikTF2 = UR5_dir_kin(q_ik);
+
+        plotTF(ikTF, "ikTF");
+        plotTF(ikTF2, "ikTF2");
+    }
+
+
 
     std::cout << " +++++++++++++++++++++++++++++++++++++++++++++++ " <<std::endl;
     std::cout << "UR5 target pos = " << _target.at(0) << " " << _target.at(1) << " " << _target.at(2) << std::endl;
@@ -181,7 +185,7 @@ bool IvKinUR5::solve(){
     _targetTrans.setTranslation( mt::Point3(_target.at(0), _target.at(1), _target.at(2)) );
     _targetTrans.setRotation( mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6)) );
 
-    mt::Transform ikTF = _targetTrans * offsetTF.inverse();
+        mt::Transform ikTF = _targetTrans * offsetTF.inverse();
     ikTF = _targetTrans;
     plotTF(ikTF, "ikTF");
 
