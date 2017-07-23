@@ -33,7 +33,7 @@
 
 
 IvKinUR5::IvKinUR5(Robot* const rob): Kautham::InverseKinematic(rob){
-    _target.resize(7);  // This contains the pos and quaternion as a vector
+    _target.resize(10);  // This contains the pos and quaternion as a vector
     _eulPos.resize(6);
     _robConf.setRn(6);
     _robLay.resize(3);
@@ -74,11 +74,14 @@ bool IvKinUR5::solve(){
         std::cout << "DK: q   = " <<q[0]<<" " <<q[1]<<" " <<q[2]<<" | " <<q[3]<<" " <<std::endl;
     };
 
+
+    std::cout << "+++++++++++++++++++++++ SOLVING IK +++++++++++++++++++++++" << std::endl;
+
     bool shoulder(true), elbow(true), wrist(true);
     if (_target.size() > 7){
-      shoulder =  _target.at(7) == shoulder_left;
-      elbow =     _target.at(8) == elbow_up;
-      wrist =     _target.at(9) == wrist_in;
+        shoulder = ! _target.at(7) == shoulder_left;
+        elbow =    ! _target.at(8) == elbow_up;
+        wrist =    ! _target.at(9) == wrist_in;
     }
 
 
@@ -91,8 +94,9 @@ bool IvKinUR5::solve(){
 
     // DK test
     double theta_test[6];
-    double lb_theta_test[6];
-    if (true){
+    if (false){
+
+        // Test configurations
 
 //        theta_test[0] = 0.0;
 //        theta_test[1] = -M_PI/2.0;
@@ -122,21 +126,23 @@ bool IvKinUR5::solve(){
 //        theta_test[4] = 0.0;
 //        theta_test[5] = 0.0;
 
+        // Vertical
 //        for (unsigned int i=0; i<6; ++i)    theta_test[i] = 0.0;
 //        theta_test[1] = -M_PI/2.0;
 //        theta_test[3] = -M_PI/2.0;
 
-        for (unsigned int i=0; i<6; ++i)    lb_theta_test[i] = theta_test[i];
-        lb_theta_test[0] -= PI;
-
         std::cout << "DK: theta = "; for (unsigned int i=0; i<6; ++i)    std::cout << theta_test[i] << " "; std::cout << std::endl;
-        double controls_test[6];
-        UR5_controls(controls_test, lb_theta_test);
-        std::cout << "DK: controls = "; for (unsigned int i=0; i<6; ++i)    std::cout << controls_test[i] << " "; std::cout << std::endl;
+
+        // Set joints to robot
+        for (unsigned int i = 0; i<6; ++i)  _robot->getLink(i+1)->setValue(theta_test[i]);
+
+        // Direct kinematics ------------------------------------------------------------------
+        mt::Transform kthDKTF = _robot->getLastLinkTransform();
+        plotTF(kthDKTF, "kthDKTF");
 
 //        std::cout << "lib tfs +++++++++++++++++++++++++++++++++++++++++++" << std::endl;
 //        for (unsigned int i=0; i<6; ++i){
-//            mt::Transform libTF = UR5_dir_kin(lb_theta_test, i);
+//            mt::Transform libTF = UR5_dir_kin(theta_test, i);
 //            std::cout << i << std::endl;
 //            plotTF(libTF, "libTF");
 //        }
@@ -148,23 +154,15 @@ bool IvKinUR5::solve(){
 //            plotTF(kthTF, "kthTF");
 //        }
 
-        for (unsigned int i = 0; i<6; ++i)  _robot->getLink(i+1)->setValue(theta_test[i]);
-
-//        mt::Transform offsetTestTF = dkTF.inverse() * ur5_tcp;
-//        plotTF(offsetTestTF, "offsetTestTF");
-
-        mt::Transform lbTF = UR5_dir_kin(lb_theta_test);
-        plotTF(lbTF, "lbTF");
-
+        // 'lbTF' and 'corrLbTF' have to be equal
+        mt::Transform lbTF = UR5_dir_kin(theta_test);
         mt::Transform corrLbTF = _robot->getLastLinkTransform() * offsetTF;
+        plotTF(lbTF, "lbTF");
         plotTF(corrLbTF, "corrLbTF");
-    }
 
 
-
-    // Test IK ------------------------------------------------------------------
-    {
-        mt::Transform ikTF = UR5_dir_kin(lb_theta_test);
+        // Test IK ------------------------------------------------------------------
+        mt::Transform ikTF = UR5_dir_kin(theta_test);
 
         double q_ik[6];
         int ik_err_code = UR5_inv_kin(ikTF, shoulder, wrist, elbow, q_ik);
@@ -177,54 +175,35 @@ bool IvKinUR5::solve(){
 
 
 
-    std::cout << " +++++++++++++++++++++++++++++++++++++++++++++++ " <<std::endl;
-    std::cout << "UR5 target pos = " << _target.at(0) << " " << _target.at(1) << " " << _target.at(2) << std::endl;
-    std::cout << "UR5 target q   = " << _target.at(3) << " " << _target.at(4) << " " << _target.at(5) << " | " << _target.at(6) << std::endl;
-    std::cout << "shoulder / elbow / wrist = " << shoulder << " / " << elbow << " / " << wrist << std::endl;
+    std::cout << "_target ----------------------------------------- " <<std::endl;
+    std::cout << "_target: UR5 target pos = " << _target.at(0) << " " << _target.at(1) << " " << _target.at(2) << std::endl;
+    std::cout << "_target: UR5 target q   = " << _target.at(3) << " " << _target.at(4) << " " << _target.at(5) << " | " << _target.at(6) << std::endl;
+    std::cout << "_target: shoulder / elbow / wrist = " << shoulder << " / " << elbow << " / " << wrist << std::endl;
 
     _targetTrans.setTranslation( mt::Point3(_target.at(0), _target.at(1), _target.at(2)) );
     _targetTrans.setRotation( mt::Rotation(_target.at(3), _target.at(4), _target.at(5), _target.at(6)) );
+    plotTF(_targetTrans, "_targetTrans");
 
-        mt::Transform ikTF = _targetTrans * offsetTF.inverse();
-    ikTF = _targetTrans;
-    plotTF(ikTF, "ikTF");
+    int ik_err_code = UR5_inv_kin(_targetTrans * offsetTF, shoulder, wrist, elbow, _result);
+    if ( ik_err_code == UR5_NO_ERROR ) {
 
-    int ik_err_code = 0;
-//    ik_err_code = UR5_inv_kin(ikTF, shoulder, wrist, elbow, _result);
-//    std::cout << "ik_err_code = " << ik_err_code << std::endl;
-//    if ( ik_err_code == UR5_NO_ERROR ) {
-//        double control [6];
-//        UR5_controls(control,_result);
-//        cout << "Joint values are:" << endl;
-//        for (int j = 0; j < 6; j++) {
-//            cout << "  theta" << j+1 << " = " << _result[j]
-//                 << " (" << control[j] << ")" << endl;
-//        }
+        double control[6];
+        UR5_controls(control,_result);
+        cout << "Joint values are:" << endl;
+        for (int j = 0; j < 6; j++) {
+            cout << "  theta" << j+1 << " = " << _result[j]
+                 << " (" << control[j] << ")" << endl;
+        }
 
-//        std::vector<KthReal> qn(6);
-//        for (unsigned int i = 0; i<6; ++i){
-//            _robot->getLink(i+1)->setValue(_result[i]);
-//            qn.at(i) = _result[i];
-//        }
-//        _robConf.setRn(qn);
-
-//        mt::Transform ikTF = _robot->getLastLinkTransform();
-//        plotTF(ikTF, "ikTF");
-
-//        return true;
-
-
-
-    if ( true ) {
         std::vector<KthReal> qn(6);
         for (unsigned int i = 0; i<6; ++i){
-            _robot->getLink(i+1)->setValue(theta_test[i]);
-            qn.at(i) = theta_test[i];
+            _robot->getLink(i+1)->setValue(_result[i]);
+            qn.at(i) = _result[i];
         }
         _robConf.setRn(qn);
 
-        mt::Transform ikTF = _robot->getLastLinkTransform();
-        plotTF(ikTF, "ikTF");
+        mt::Transform result_ikTF = _robot->getLastLinkTransform();
+        plotTF(result_ikTF, "result_ikTF");
 
         return true;
     } else {
@@ -236,67 +215,47 @@ bool IvKinUR5::solve(){
 bool IvKinUR5::setParameters(){
     try{
         HASH_S_K::iterator it = _parameters.find("Px");
-        if(it != _parameters.end())
-          _eulPos.at(0) = it->second;
-        else
-          return false;
+        if(it != _parameters.end())     _eulPos.at(0) = it->second;
+        else                            return false;
 
         it = _parameters.find("Py");
-        if(it != _parameters.end())
-          _eulPos.at(1) = it->second;
-        else
-          return false;
+        if(it != _parameters.end())     _eulPos.at(1) = it->second;
+        else                            return false;
 
         it = _parameters.find("Pz");
-        if(it != _parameters.end())
-          _eulPos.at(2) = it->second;
-        else
-          return false;
+        if(it != _parameters.end())     _eulPos.at(2) = it->second;
+        else                            return false;
 
         it = _parameters.find("Rx");
-        if(it != _parameters.end())
-          _eulPos.at(3) = it->second;
-        else
-          return false;
+        if(it != _parameters.end())     _eulPos.at(3) = it->second;
+        else                            return false;
 
         it = _parameters.find("Ry");
-        if(it != _parameters.end())
-          _eulPos.at(4) = it->second;
-        else
-          return false;
+        if(it != _parameters.end())     _eulPos.at(4) = it->second;
+        else                            return false;
 
         it = _parameters.find("Rz");
-        if(it != _parameters.end())
-          _eulPos.at(5) = it->second;
-        else
-          return false;
+        if(it != _parameters.end())     _eulPos.at(5) = it->second;
+        else                            return false;
 
         it = _parameters.find("Shoulder Lefty?" );
         if(it != _parameters.end()){
-          if(it->second == 1)
-            _UR5Conf.sh = shoulder_left;
-          else
-            _UR5Conf.sh = shoulder_right;
-        }else
-          return false;
+          if(it->second == 1)   _UR5Conf.sh = shoulder_left;
+          else                  _UR5Conf.sh = shoulder_right;
+        }else                   return false;
 
         it = _parameters.find("Elbow Positive?" );
         if(it != _parameters.end()){
-          if(it->second == 1)
-            _UR5Conf.el = elbow_up;
-          else
-            _UR5Conf.el = elbow_down;
-        }else
-          return false;
+          if(it->second == 1)   _UR5Conf.el = elbow_up;
+          else                  _UR5Conf.el = elbow_down;
+        }else                   return false;
 
         it = _parameters.find("Wrist Positive?" );
         if(it != _parameters.end()){
-          if(it->second == 1)
-            _UR5Conf.wr = wrist_in;
-          else
-            _UR5Conf.wr = wrist_out;
-        }else
-          return false;
+          if(it->second == 1)   _UR5Conf.wr = wrist_in;
+          else                  _UR5Conf.wr = wrist_out;
+        }else                   return false;
+
 
         _targetTrans.setTranslation(mt::Point3(_eulPos.at(0), _eulPos.at(1), _eulPos.at(2)));
         _targetTrans.setRotation(mt::Rotation(_eulPos.at(5), _eulPos.at(4), _eulPos.at(3)));
@@ -308,9 +267,9 @@ bool IvKinUR5::setParameters(){
           _target.at(i) = _targetTrans.getRotation().at(i-3);
 
         if(_target.size() > 7){
-      _target.at(7) = _UR5Conf.sh == shoulder_right ? 1. : 0. ;
-      _target.at(8) = _UR5Conf.el == elbow_up ? 1. : 0. ;
-      _target.at(9) = _UR5Conf.wr == wrist_in ? 1. : 0. ;
+          _target.at(7) = _UR5Conf.sh == shoulder_right ? 1. : 0. ;
+          _target.at(8) = _UR5Conf.el == elbow_up ? 1. : 0. ;
+          _target.at(9) = _UR5Conf.wr == wrist_in ? 1. : 0. ;
         }
 
       }catch(...){

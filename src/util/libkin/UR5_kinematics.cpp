@@ -106,9 +106,11 @@ int UR5_inv_kin(Transform transform, bool shoulder_positive, bool wrist_positive
     double theta_tmp[6];
 
     mt::Point3 pos = transform.getTranslation();
-    std::cout << "UR5: pos = " <<pos[0]<<" " <<pos[1]<<" " <<pos[2]<<" " <<std::endl;
-    std::cout << "UR5: shoulder_positive / wrist_positive / elbow_positive = "
-              << shoulder_positive<<" / "<< wrist_positive<<" / "<< elbow_positive<< std::endl;
+//    std::cout << " UR5 IK library ------------------------------- " <<std::endl;
+//    std::cout << " Solving IK ....." <<std::endl;
+//    std::cout << "UR5: pos = " <<pos[0]<<" " <<pos[1]<<" " <<pos[2]<<" " <<std::endl;
+//    std::cout << "UR5: shoulder_positive / wrist_positive / elbow_positive = "
+//              << shoulder_positive<<" / "<< wrist_positive<<" / "<< elbow_positive<< std::endl;
 //    std::cout << "UR5: errs = " << UR5_NO_ERROR << " "
 //                                << UR5_JOINT_1  << " "
 //                                << UR5_JOINT_2  << " "
@@ -153,7 +155,6 @@ int UR5_inv_kin(Transform transform, bool shoulder_positive, bool wrist_positive
         //theta1 has no solution
         return (UR5_JOINT_1);
     }
-    std::cout << "theta_tmp[0] = " << theta_tmp[0] << std::endl;
 
     double s1 = sin(theta_tmp[0]+offset1);
     double c1 = cos(theta_tmp[0]+offset1);
