@@ -26,13 +26,17 @@
 #if !defined(_ROBOT_H)
 #define _ROBOT_H
 
+
+#include <list>
+
 #include <kautham/problem/link.h>
 #include <mt/transform.h>
+
 #include <kautham/sampling/robconf.h>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
+
 #include <kautham/util/libkin/inversekinematic.h>
 #include <kautham/util/libkin/constrainedkinematic.h>
-#include <list>
 
 
 using namespace std;

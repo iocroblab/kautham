@@ -26,6 +26,8 @@
 #if !defined(_IVKINUR5_H)
 #define _IVKINUR5_H
 
+
+#include <kautham/problem/robot.h>
 #include <kautham/util/libkin/inversekinematic.h>
 
 
@@ -69,7 +71,7 @@ public:
 private:
     IvKinUR5();
     vector<KthReal> _eulPos;
-    UR5config          _UR5Conf;
+    UR5config       _UR5Conf;
     double          _result[6];
 };
 
