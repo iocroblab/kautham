@@ -88,13 +88,14 @@ bool IvKinUR5::solve(){
     // Offset transformation between the kinematic model in UR5_Kinematics and the kautham model such that:
     //  T_kautham = T_{UR5_Kinematics} * T_offset
     mt::Transform offsetTF;
-    offsetTF.setTranslation(mt::Vector3(0.0, 0.0822999, 0.0));
+//    offsetTF.setTranslation(mt::Vector3(0.0, 0.0822999, 0.0));
+    offsetTF.setTranslation(mt::Vector3(0.0, 0.0, 0.0));
     offsetTF.setRotation(mt::Rotation(mt::Quaternion(0.707107, 0.0, 0.0, -0.707107)));
 
 
     // DK test
     double theta_test[6];
-    if (false){
+    if (true){
 
         // Test configurations
 
