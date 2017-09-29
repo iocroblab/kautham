@@ -55,10 +55,10 @@ unsigned int PlanarChainEnvironment::getControlDimension(void) const
 void PlanarChainEnvironment::getControlBounds(std::vector< double > &lower, std::vector< double > &upper) const
 {
 
-           lower[0]=-5;
-            upper[0]=5;
-            lower[1]=-5;
-            upper[1]=5;
+           lower[0]=-1;
+            upper[0]=1;
+            lower[1]=-1;
+            upper[1]=1;
             lower[2]=-10;
              upper[2]=10;
              lower[3]=-10;
@@ -80,9 +80,9 @@ void PlanarChainEnvironment::applyControl (const double *control) const
     // dReal v2=dJointGetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamVel);
     //std::cout<<"velocity   : "<<v1<<" , "<<v2<<std::endl;
 
-    dJointSetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamVel,(a1-control[0]));
+    dJointSetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamVel,control[0]);
     dJointSetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamFMax,7);
-    dJointSetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamVel,(a2-control[1]));
+    dJointSetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamVel,control[1]);
     dJointSetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamFMax,7);
 
 //    dJointAddHingeTorque(joint_.at("Chainbase_link+Chainlink1"), control[0]);
@@ -272,8 +272,8 @@ unsigned int PlanarChainStateProjectionEvaluator::getDimension(void) const
 void PlanarChainStateProjectionEvaluator :: defaultCellSizes(void)
 {
     cellSizes_.resize(2);
-    cellSizes_[0] = 0.1;
-    cellSizes_[1] = 0.1;
+    cellSizes_[0] = 0.01;
+    cellSizes_[1] = 0.01;
     //cellSizes_[2] = 1;
 }
 
