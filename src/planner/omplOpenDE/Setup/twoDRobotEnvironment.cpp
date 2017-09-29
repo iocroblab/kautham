@@ -69,8 +69,8 @@ namespace Kautham {
             lower.resize(2);
             upper.resize(2);
             for(int i=0; i < 2; i++)
-            {  lower[i] = -10;
-                upper[i] = 10;
+            {  lower[i] = -2;
+                upper[i] = 2;
             }
         }
         /*! this is the reimplementation of the virtual function of OpenDEEnvironment
@@ -181,8 +181,8 @@ namespace Kautham {
         void twoDRobotStateProjectionEvaluator :: defaultCellSizes(void)
         {
             cellSizes_.resize(2);
-            cellSizes_[0] = 0.5;
-            cellSizes_[1] = 0.5;
+            cellSizes_[0] = 0.01;
+            cellSizes_[1] = 0.01;
             //cellSizes_[2] = 1.0;
 
         }
