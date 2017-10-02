@@ -1,47 +1,37 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_cRRTcar_table_rooms_SE2">
-	<Robot robot="robots/OpenDERobots/SimpleCar.urdf" scale="0.2">
-		<Limits name="X" min="-32.0" max="32.0" />
-		<Limits name="Y" min="-32.0" max="32.0" />
-		<Limits name="Z" min="-1.0" max="11.0" />
-		<Home X="-50.0" Y="50.0" Z="10.0" WX="0.0" WY="0.0" WZ="1.0" TH="1.5707963268" />
+	<Robot robot="robots/OpenDERobots/SimpleCar.urdf" scale="20">
+		<Limits name="X" min="-5.0" max="5.0" />
+		<Limits name="Y" min="-5.0" max="5.0" />
+		<Limits name="Z" min="-1.0" max="4.0" />
+		<Home X="0.0" Y="0.0" Z="1.0" WX="0.0" WY="0.0" WZ="1.0" TH="1.5707963268" />
 	</Robot>
-	
-	<Obstacle obstacle="obstacles/cubeDE1.urdf" scale="0.1">
-		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1" Y="-19.0" X="-10.0" />
+	<Obstacle obstacle="obstacles/cubeDE1.urdf" scale="0.5">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1" Y="3.0" X="2.3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/cubeDE2.urdf" scale="0.1">
-		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1" Y="-23.0" X="-10.0" />
+	<Obstacle obstacle="obstacles/cubeDE2.urdf" scale="0.5">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1" Y="3.5" X="2.3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/cubeDE3.urdf" scale="0.1">
-		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1" Y="-27" X="-10.0" />
+	<Obstacle obstacle="obstacles/cubeDE3.urdf" scale="0.5">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1" Y="4" X="2.3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wall5.urdf" scale="0.07">
+	<Obstacle obstacle="obstacles/wall5.urdf" scale="1">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="1" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wall1.urdf" scale="0.05">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="2" Y="-4.0" X="24.0" />
+		<Obstacle obstacle="obstacles/wall6.urdf" scale="1">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="1" Y="2.4" X="3.3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wall2.urdf" scale="0.05">
-		<Home TH="2.0943951024" WZ="1.0" WY="0.0" WX="0.0" Z="2" Y="12.0" X="-15.0" />
+	<Obstacle obstacle="obstacles/wallb1.urdf" scale="1">
+		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="4.8" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wall3.urdf" scale="0.05">
-		<Home TH="2.0943951024" WZ="1.0" WY="0.0" WX="0.0" Z="2" Y="10.0" X="15.0" />
+	<Obstacle obstacle="obstacles/wallb2.urdf" scale="1">
+		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="-4.8" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wall6.urdf" scale="0.09">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="2.2" Y="-15" X="-19.0" />
+	<Obstacle obstacle="obstacles/wallb3.urdf" scale="1">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="4.8" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb1.urdf" scale="0.3">
-		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="1.5" Y="0.0" X="30.0" />
-	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb2.urdf" scale="0.3">
-		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="1.5" Y="0.0" X="-30.0" />
-	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb3.urdf" scale="0.3">
-		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="1.5" Y="30.0" X="0.0" />
-	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb4.urdf" scale="0.3">
-		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="1.5" Y="-30.0" X="0.0" />
+	<Obstacle obstacle="obstacles/wallb4.urdf" scale="1">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="-4.8" X="0.0" />
 	</Obstacle>
 	<Controls robot="controls/SimpleCar.cntr" />
 	<Planner>
@@ -51,9 +41,9 @@
 			<Parameter name="Control Dimensions">2</Parameter>
 			<Parameter name="Error Reduction Parameter">0.5</Parameter>
 			<Parameter name="Goal Bias">0.05</Parameter>
-			<Parameter name="Max Contacts">3</Parameter>
+			<Parameter name="Max Contacts">5</Parameter>
 			<Parameter name="Max Control Steps">50</Parameter>
-			<Parameter name="Max Planning Time">80</Parameter>
+			<Parameter name="Max Planning Time">120</Parameter>
 			<Parameter name="Max Speed">10</Parameter>
 			<Parameter name="Min Control Steps">5</Parameter>
 			<Parameter name="PropagationStepSize">0.05</Parameter>
@@ -62,8 +52,8 @@
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="3">0.130 0.188 0.356</Init>
-				<Goal dim="3">0.851 0.847 0.356</Goal>
+				<Init dim="3">0.851 0.847 0.333</Init>
+				<Goal dim="3">0.130 0.188 0.333</Goal>
 			</Query>
 		</Queries>
 	</Planner>
