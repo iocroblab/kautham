@@ -645,8 +645,8 @@ namespace Kautham {
                                         Instknowledge->addRigidBody(rb,bodyinfo.Geom);
                                     }
                                     else
-                                        if(bodyinfo.bodyName == "box1"||bodyinfo.bodyName == "box2"||bodyinfo.bodyName == "box3"||bodyinfo.bodyName == "box5"||bodyinfo.bodyName == "box5")
-                                        {
+                                        if(bodyinfo.bodyName == "box2"||bodyinfo.bodyName == "box3"||bodyinfo.bodyName == "box4"||bodyinfo.bodyName == "box5")
+                                        { //bodyinfo.bodyName == "box1"||
                                             const dReal* pose = dBodyGetPosition(bodyinfo.body);
                                             rb.setMass(bodyinfo.mass);
                                             rb.setRigidBodyType("freeManipulatable");

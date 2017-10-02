@@ -103,7 +103,7 @@ static void playPath(oc::OpenDESimpleSetup *ss, std::string robot)
     while (1)
     {
         if(robot=="SimpleCar")
-        ss->playSolutionPath(0.1);
+        ss->playSolutionPath(1);
         else
             ss->playSolutionPath(1);
 
@@ -129,7 +129,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     _maxspeed = 5;
     _onlyend = false;
     _planningTime=60;
-    _maxContacts=3;
+    _maxContacts=5;
     if(_wkSpace->getRobot(0)->getNumJoints()>1 && _wkSpace->getRobot(0)->getName()!="SimpleCar")
     {
         _propagationStepSize=0.02;
@@ -139,7 +139,7 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     else{
         _propagationStepSize=0.05;
         _minControlSteps=1;
-        _maxControlSteps=80;
+        _maxControlSteps=30;
     }
     _controlDimensions=2;
     _erp=0.5;

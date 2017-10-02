@@ -71,9 +71,9 @@ namespace omplcplanner{
     // envPtr= oc::OpenDEEnvironment(new PlanarChainEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
      envPtr= oc::OpenDEEnvironmentPtr(new PlanarChainEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
      stateSpacePtr = ob::StateSpacePtr(new PlanarChainStateSpace(envPtr));
-     //csp= oc::ControlSpacePtr(new PlanarChainControlSpace(stateSpacePtr));
-     //ss = new oc::OpenDESimpleSetup(csp);
-    ss = new oc::OpenDESimpleSetup(stateSpacePtr);
+     csp= oc::ControlSpacePtr(new PlanarChainControlSpace(stateSpacePtr));
+     ss = new oc::OpenDESimpleSetup(csp);
+    //ss = new oc::OpenDESimpleSetup(stateSpacePtr);
      oc::SpaceInformationPtr si=ss->getSpaceInformation();
      ob::PlannerPtr planner(new oc::KPIECE1(si));
      addParameter("Goal Bias", _GoalBias);
