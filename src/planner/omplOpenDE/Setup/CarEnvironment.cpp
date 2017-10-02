@@ -91,13 +91,13 @@ void CarEnvironment::applyControl (const double *control) const
     dReal speed = control[1];
     for (int j = 0; j < 4; j++)
     {
-
-        dReal curturn = dJointGetHinge2Angle1 (cJoint[j]);
+       dReal curturn = dJointGetHinge2Angle1 (cJoint[j]);
         //dJointAddHinge2Torques(cJoint[j],0,speed);
         dJointSetHinge2Param(cJoint[j],dParamVel,(turn-curturn)*1.0);
         dJointSetHinge2Param(cJoint[j],dParamFMax,2);
+
         dJointSetHinge2Param(cJoint[j],dParamVel2,speed);
-        dJointSetHinge2Param(cJoint[j],dParamFMax2,mkinematics->getTorqueLimit().at(j));
+        dJointSetHinge2Param(cJoint[j],dParamFMax2,50);//mkinematics->getTorqueLimit().at(j));
     }
     dJointGetFeedback(cJoint[0]);
     dJointGetFeedback(cJoint[1]);
@@ -159,15 +159,15 @@ void CarEnvironment::setupContact(dGeomID geom1, dGeomID geom2, dContact &contac
                     contact.surface.mu = 5;
         else
             if ((geom1_body == "fixed" || geom2_body == "fixed") )
-                contact.surface.mu = dInfinity;
+                contact.surface.mu = 0.1;
             else
                 if ((geom1_body == "freeManipulatable" || geom2_body == "freeManipulatable"))
-                contact.surface.mu = 0.7;
+                contact.surface.mu = 0.1;
                 else
                     if ((geom1_body == "robBody" || geom2_body == "robBody"))
                     contact.surface.mu = 1;
     else
-                    contact.surface.mu=0.7;
+                    contact.surface.mu=0.1;
     contact.surface.soft_erp = _erp;
     contact.surface.soft_cfm = _cfm;
 
@@ -194,8 +194,8 @@ unsigned int CarStateProjectionEvaluator::getDimension(void) const
 void CarStateProjectionEvaluator :: defaultCellSizes(void)
 {
     cellSizes_.resize(2);
-    cellSizes_[0] = 1;
-    cellSizes_[1] = 1;
+    cellSizes_[0] = 0.1;
+    cellSizes_[1] = 0.1;
 
 }
 

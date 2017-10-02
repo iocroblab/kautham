@@ -139,6 +139,11 @@ bool PlanarChainEnvironment::isValidCollision(dGeomID geom1, dGeomID geom2, cons
    {
        return false;
    }
+    else if((bodyType1 == "fixed" && bodyType2 == "freeManipulatable")
+           || (bodyType1 == "freeManipulatable" && bodyType2 == "fixed"))
+   {
+       return false;
+   }
     else if((bodyType1 == "tcp" && bodyType2 == "freeManipulatable")
            || (bodyType1 == "freeManipulatable" && bodyType2 == "tcp"))
    {
@@ -204,16 +209,16 @@ void PlanarChainEnvironment::setupContact(dGeomID geom1, dGeomID geom2, dContact
         else
             if ((geom1_body == "odeGround" && geom2_body == "robBody") ||
                     (geom1_body == "robBody" && geom2_body == "odeGround" ))
-                contact.surface.mu = 0.02;
+                contact.surface.mu = 0.1;
             else
                 if ((geom1_body == "fixed" && geom2_body == "odeGround") ||
                         (geom1_body == "odeGround" && geom2_body == "fixed" ))
                     contact.surface.mu = 1;
                 else
                     if ((geom1_body == "freeManipulatable" || geom2_body == "freeManipulatable"))
-                    contact.surface.mu = 0.07;
+                    contact.surface.mu = 0.1;
         else
-                        contact.surface.mu=0.07;
+                        contact.surface.mu=0.1;
         contact.surface.soft_erp = _erp;
         contact.surface.soft_cfm = _cfm;
 
