@@ -30,10 +30,9 @@
 namespace Kautham {
 namespace omplcplanner{
 
-//! Constructor create the ODE 3Robot enviroment and setup the parameters for ODE.
+//! Constructor create the ODE Multi Robot enviroment and setup the parameters for ODE.
 MultiRobotEnvironment::MultiRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm,bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm, isKchain)
 {
-    //potser he de fer lo de setKinematic aquí o en el applyControl;
     SetPlanningParameters();
 }
 MultiRobotEnvironment::~MultiRobotEnvironment()
