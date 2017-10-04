@@ -71,8 +71,8 @@ void PlanarChainEnvironment::getControlBounds(std::vector< double > &lower, std:
  */
 void PlanarChainEnvironment::applyControl (const double *control) const
 {
-    dReal a1=dJointGetHingeAngle(joint_.at("Chainbase_link+Chainlink1"));
-    dReal a2=dJointGetHingeAngle(joint_.at("Chainbase_link+Chainlink1"));
+    //dReal a1=dJointGetHingeAngle(joint_.at("Chainbase_link+Chainlink1"));
+    //dReal a2=dJointGetHingeAngle(joint_.at("Chainbase_link+Chainlink1"));
 
     //dReal v1=dJointGetHingeAngleRate(joint_.at("Chainbase_link+Chainlink1"));
     //dReal v2=dJointGetHingeAngleRate(joint_.at("Chainbase_link+Chainlink1"));

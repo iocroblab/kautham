@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Joan Fontanals Martinez, Muhayyuddin */
+/* Author: Muhayyuddin */
 
 #if defined(KAUTHAM_USE_OMPL)
 #if defined(KAUTHAM_USE_ODE)

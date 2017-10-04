@@ -86,7 +86,7 @@ using namespace std;
 
 namespace Kautham
 {
-/** \addtogroup Planner
+/** \addtogroup Environment
  *  @{
  */
 namespace omplcplanner
@@ -107,7 +107,7 @@ Complete and ODE must apply the control ( have to apply forces to the bodies or 
 class ManipulationQuery;
 class Manipulatorkinematics;
 //! KauthamDEEnvironment class read the workspace and generate the dynamic environment.
-//! this class is the parent of all the enviroments (like KauthamDERobotEnvironment, KauthamDETableEnvironment,..) in which ODE will apply the control.
+//! this class is the parent of all the enviroments (like CarEnviornment, twoDRobotEnvironment,..) in which ODE will apply the control.
 class KauthamDEEnvironment: public oc::OpenDEEnvironment
 {
 public:
@@ -450,7 +450,7 @@ public:
 
 };
 }
-/** @}   end of Doxygen module "Planner */
+/** @}   end of Doxygen module "Environment */
 }
 
 

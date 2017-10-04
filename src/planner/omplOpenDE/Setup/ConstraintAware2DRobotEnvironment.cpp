@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Joan Fontanals Martinez, Muhayyuddin */
+/* Author: Muhayyuddin */
 
 
 #if defined(KAUTHAM_USE_OMPL)
@@ -46,7 +46,7 @@
 using namespace std;
 namespace Kautham {
 namespace omplcplanner{
-//! Constructor create the ODE table enviroment and setup the parameters for ODE.
+//! Constructor create the ConstraintAware robot enviroment and setup the parameters for ODE.
 ConstraintAware2DRobotEnvironment::ConstraintAware2DRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm, bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm,isKchain)
 {
      //robBase = (ws->getRobot(0)->getName())+(ws->getRobot(0)->getLink(0)->getName());

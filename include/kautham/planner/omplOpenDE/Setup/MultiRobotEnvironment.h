@@ -52,13 +52,15 @@ namespace oc = ompl::control;
 using namespace std;
 namespace Kautham {
 
-/** \addtogroup Planner
+/** \addtogroup Environment
  *  @{
  */
 namespace omplcplanner{
 
-//! This class define the pure virtual methods of KauthamDEEnvironment and define how the control will be applied on the bodies.
- class MultiRobotEnvironment: public KauthamDEEnvironment
+//!This class defines the pure virtual and virtual function of OpenDeEnviroment class for the MultiRobotEnvironment. It defines the control dimension for the robot,
+//!control bounds, how the control will applied to the robot (such as in term of forces or velocities), how the robot will interact with
+//!the environment (by defining isValidCollision), and the contact dynamics.
+class MultiRobotEnvironment: public KauthamDEEnvironment
  {
      public:
 
@@ -75,7 +77,7 @@ namespace omplcplanner{
 ////////////////////////////////////////////////////////////////////////////////
 ///                      KauthaDE 3Robot StateSpace
 /////////////////////////////////////////////////////////////////////////////////
-/*! The KauthamDEStateSpace intherits from KauthamDEStateSpace and just defines the method distance and the registerprojections.
+/*! The MultiRobotStateSpace intherits from KauthamDEStateSpace and just defines the method distance and the registerprojections.
  *  An OpenDEStateSpace inherits from a CompoundStateSpace where each body has three RealVectorSstateSpace representing the
  *  position,linear and angular velocity and then a SO3 that represents the orientation
  */
@@ -108,10 +110,10 @@ public:
 };
 
 }
-/** @}   end of Doxygen module "Planner */
+/** @}   end of Doxygen module "Environment */
 
 }
 
-#endif  //_KauthamOpenDE3RobotEnvironment_H
+#endif  //MultiRobotEnvironment_H
 #endif //KAUTHAM_USE_ODE
 #endif // KAUTHAM_USE_OMPL

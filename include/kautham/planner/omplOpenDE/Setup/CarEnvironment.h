@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Joan Fontanals Martinez, Muhayyuddin */
+/* Author: Muhayyuddin */
 
 #if defined(KAUTHAM_USE_OMPL)
 #if defined(KAUTHAM_USE_ODE)
@@ -65,12 +65,12 @@ namespace oc = ompl::control;
 using namespace std;
 namespace Kautham
 {
-/** \addtogroup Planner
+/** \addtogroup Environment
  *  @{
  */
 namespace omplcplanner
 {
-//!This class defines the pure virtual and virtual function of OpenDeEnviroment class for the 2DRobotEnvironment. It defines the control dimension for the robot,
+//!This class defines the pure virtual and virtual function of OpenDeEnviroment class for the CarEnvironment. It defines the control dimension for the robot,
 //!control bounds, how the control will applied to the robot (such as in term of forces or velocities), how the robot will interact with
 //!the environment (by defining isValidCollision), and the contact dynamics.
 class CarEnvironment: public KauthamDEEnvironment
@@ -90,10 +90,10 @@ public:
 
 };
 /////////////////////////////////////////////////////////////////////////////////
-///                        2D Robot State Space
+///                        Car State Space
 /////////////////////////////////////////////////////////////////////////////////
 
-/*! The KauthamDEStateSpace intherits from OpenDEStateSpace and just defines the method distance and the registerprojections.
+/*! The CarStateSpace intherits from OpenDEStateSpace and defines the distance function and the registerprojections.
  * An OpenDEStateSpace inherits from a CompoundStateSpace where each body has three RealVectorSstateSpace representing the
  * position,linear and angular velocity and then a SO3 that represents the orientation
  */
@@ -106,7 +106,7 @@ public:
     virtual void registerProjections(void); //!< This function register the projetions for state space.
 };
 /////////////////////////////////////////////////////////////////////////////////
-///                   2D Robot Projection Evaluator
+///                   Car Projection Evaluator
 /////////////////////////////////////////////////////////////////////////////////
 /*! this class define how the state will be projected. this class inherit from the
  * ProjectionEvaluator and define the virtual functions.
@@ -120,7 +120,8 @@ public:
     virtual void defaultCellSizes(void);//!< This function set the default dimension of the cell for projection.
     virtual void project(const ob::State *state, ob::EuclideanProjection &projection) const;//!< This function calculate the projections
 };
-
+/*! Car control sampler will defines that hwo the control will be sampled.
+ */
 class CarControlSampler : public oc::RealVectorControlUniformSampler
 {
 public:
@@ -130,7 +131,8 @@ public:
     virtual void sampleNext(oc::Control *control, const oc::Control *previous, const ob::State* /*state*/);
 
 };
-
+/*! Car control space will define the pointer to the defined control sampler
+ */
 class CarControlSpace : public oc::OpenDEControlSpace
 {
 public:
@@ -140,9 +142,9 @@ public:
 };
 
 }
-/** @}   end of Doxygen module "Planner */
+/** @}   end of Doxygen module "Environment */
 }
-#endif  //2DRobotEnvironment_H
+#endif  //CarEnvironment_H
 #endif //KAUTHAM_USE_ODE
 #endif // KAUTHAM_USE_OMPL
 

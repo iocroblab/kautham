@@ -52,12 +52,12 @@ namespace oc = ompl::control;
 using namespace std;
 namespace Kautham {
 
-/** \addtogroup Planner
+/** \addtogroup Environment
  *  @{
  */
 namespace omplcplanner{
 
-//!This class defines the pure virtual and virtual function of OpenDEEnviroment class for the Kuka robot environment. It defines the control dimension for the robot,
+//!This class defines the pure virtual and virtual function of OpenDEEnviroment class for the PlanarChainEnvironment. It defines the control dimension for the robot,
 //!control bounds, how the control will applied to the robot (such as in term of forces or velocities), how the robot will interact with
 //!the environment (by defining isValidCollision), and the contact dynamics.
  class PlanarChainEnvironment: public KauthamDEEnvironment
@@ -76,10 +76,10 @@ namespace omplcplanner{
 
  };
 ////////////////////////////////////////////////////////////////////////////////
-///                      Kuka State Space
+///                      Planar State Space
 /////////////////////////////////////////////////////////////////////////////////
 
-/*! The KukaStateSpace intherits from KauthamDEStateSpace and defines the methods distance and the registerprojections.
+/*! The PlanarChainStateSpace intherits from KauthamDEStateSpace and defines the methods distance and the registerprojections.
  *  An OpenDEStateSpace inherits from a CompoundStateSpace where each body has three RealVectorSstateSpace representing the
  *  position,linear and angular velocity and then a SO3 that represents the orientation
  */
@@ -100,7 +100,7 @@ public:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-///                Kuka Projection Evaluator
+///                Planar chain Projection Evaluator
 /////////////////////////////////////////////////////////////////////////////////
 /*! this class define how the state will be projected. this class inherit from the
  *  ProjectionEvaluator and define the virtual functions.
@@ -134,11 +134,11 @@ public:
 };
 
 }
-/** @}   end of Doxygen module "Planner */
+/** @}   end of Doxygen module "Environment */
 
 }
 
-#endif  //_KauthamOpenDE3RobotEnvironment_H
+#endif  //PlanarChainEnvironment_H
 #endif //KAUTHAM_USE_ODE
 #endif // KAUTHAM_USE_OMPL
 

@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Joan Fontanals Martinez, Muhayyuddin */
+/* Author: Muhayyuddin */
 
 
 #if defined(KAUTHAM_USE_OMPL)
@@ -49,22 +49,6 @@
 #include <math.h>
 #include <fstream>
 #include <iostream>
-#include <Inventor/fields/SoSFVec3f.h>
-#include <Inventor/fields/SoSFRotation.h>
-#include <Inventor/nodes/SoTranslation.h>
-#include <Inventor/nodes/SoRotation.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoScale.h>
-#include <Inventor/nodes/SoSphere.h>
-#include <Inventor/SbLinear.h>
-#include <Inventor/SoPrimitiveVertex.h>
-#include <Inventor/actions/SoCallbackAction.h>
-#include <Inventor/SbLinear.h>
-#include <Inventor/nodes/SoVertexProperty.h>
-#include <Inventor/nodes/SoFaceSet.h>
-#include <Inventor/actions/SoSearchAction.h>
-#include <Inventor/VRMLnodes/SoVRMLMaterial.h>
 #include <vector>
 #include <cmath>
 #include <kautham/problem/link.h>
@@ -84,7 +68,7 @@ using namespace std;
 
 namespace Kautham
 {
-/** \addtogroup Planner
+/** \addtogroup Environment
  *  @{
  */
 namespace omplcplanner
@@ -92,15 +76,9 @@ namespace omplcplanner
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ///                  Class KauthamDEEnvironment
 /////////////////////////////////////////////////////////////////////////////////////////////////
-
-//Aquesta classe està feta per definir els mètodes virtuals purs de OPENDEENVIRONMENT i que defineixen la manera com es fa el control dels cossos.
-//No sé fins a quin punt es 100% correcte però en aquest cas a la taula el control actua sobre la velocitat lineal del cos de la taula.
-
-// This class is meant to define the pure virtual methods OPENDEENVIRONMENT and define how it is controlling bodies.
-// I do not know how far you are 100% correct but in this case the control board acts on the linear velocity of the body of the table.
-
-//! This class define the pure virtual methods of OpenDEEnviroment 
-//! and define how the control will be applied on the bodies.
+//!This class defines the pure virtual and virtual function of OpenDeEnviroment class for the ConstraintAware2DEnvironment. It defines the control dimension for the robot,
+//!control bounds, how the control will applied to the robot (such as in term of forces or velocities), how the robot will interact with
+//!the environment (by defining isValidCollision), and the contact dynamics.
 class ConstraintAware2DRobotEnvironment: public KauthamDEEnvironment
 {
 public:
@@ -122,7 +100,7 @@ public:
 ///                        2D Robot State Space
 /////////////////////////////////////////////////////////////////////////////////
 
-/*! The KauthamDEStateSpace intherits from OpenDEStateSpace and just defines the method distance and the registerprojections.
+/*! The ConstraintAwaretwoDRobotStateSpace intherits from OpenDEStateSpace and just defines the method distance and the registerprojections.
  * An OpenDEStateSpace inherits from a CompoundStateSpace where each body has three RealVectorSstateSpace representing the
  * position,linear and angular velocity and then a SO3 that represents the orientation
  */
@@ -170,7 +148,7 @@ public:
 }
 /** @}   end of Doxygen module "Planner */
 }
-#endif  //_KauthamOpenDEtableEnvironment_H
+#endif  //ConstraintAware2DRobotEnvironment_H
 #endif //KAUTHAM_USE_ODE
 #endif // KAUTHAM_USE_OMPL
 

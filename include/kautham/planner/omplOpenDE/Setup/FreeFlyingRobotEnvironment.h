@@ -66,7 +66,7 @@ namespace oc = ompl::control;
 using namespace std;
 namespace Kautham
 {
-/** \addtogroup Planner
+/** \addtogroup Environment
  *  @{
  */
 namespace omplcplanner
@@ -75,7 +75,7 @@ namespace omplcplanner
 ///                  Class KauthamDEEnvironment
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-//!This class defines the pure virtual and virtual function of OpenDeEnviroment class for the 2DRobotEnvironment. It defines the control dimension for the robot,
+//!This class defines the pure virtual and virtual function of OpenDeEnviroment class for the FreeFlyingRobotEnvironment. It defines the control dimension for the robot,
 //!control bounds, how the control will applied to the robot (such as in term of forces or velocities), how the robot will interact with
 //!the environment (by defining isValidCollision), and the contact dynamics.
 class FreeFlyingRobotEnvironment: public KauthamDEEnvironment
@@ -98,7 +98,7 @@ public:
 ///                       Free Flying Robot State Space
 /////////////////////////////////////////////////////////////////////////////////
 
-/*! The KauthamDEStateSpace intherits from OpenDEStateSpace and just defines the method distance and the registerprojections.
+/*! The freeFlyingRobotStateSpace intherits from OpenDEStateSpace and just defines the method distance and the registerprojections.
  * An OpenDEStateSpace inherits from a CompoundStateSpace where each body has three RealVectorSstateSpace representing the
  * position,linear and angular velocity and then a SO3 that represents the orientation
  */
@@ -147,7 +147,7 @@ public:
 
 
 }
-/** @}   end of Doxygen module "Planner */
+/** @}   end of Doxygen module "Environment */
 }
 #endif //_FreeFlyingRobotEnvironment_H
 #endif //KAUTHAM_USE_ODE
