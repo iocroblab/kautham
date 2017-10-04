@@ -52,7 +52,7 @@ namespace omplcplanner{
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Class KauthamOpenDEPlanner
 /////////////////////////////////////////////////////////////////////////////////////////////////
-//! This class implement the KPIECE Planner (provied by the ompl) to plan in dynamic enviroment.
+//! This class implement the PDST Planner (provied by the ompl) to plan in dynamic enviroment.
 class PDST2DPlanner: public KauthamDEPlanner
 {
 public:
@@ -69,7 +69,7 @@ public:
  /** @}   end of Doxygen module "Planner */
 }
 
-#endif  //_KauthamOpenDEKPIECEplanner_H
+#endif  //_KauthamOpenDEPDSTplanner_H
 #endif //KAUTHAM_USE_ODE
 #endif // KAUTHAM_USE_OMPL
 

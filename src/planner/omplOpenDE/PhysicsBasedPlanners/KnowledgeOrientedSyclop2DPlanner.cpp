@@ -140,7 +140,7 @@ KnowledgeOrientedSyclop2DPlanner::KnowledgeOrientedSyclop2DPlanner(SPACETYPE sty
 KnowledgeOrientedSyclop2DPlanner::~KnowledgeOrientedSyclop2DPlanner(){
 
 }
-//! this function set the necessary parameters for KAPIECE Planner.
+//! this function set the necessary parameters for SyCLoP Planner.
 bool KnowledgeOrientedSyclop2DPlanner::setParameters()
 {
     KauthamDEPlanner::setParameters();

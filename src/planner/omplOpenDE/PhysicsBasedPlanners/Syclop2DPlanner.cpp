@@ -142,7 +142,7 @@ Syclop2DPlanner::Syclop2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
 Syclop2DPlanner::~Syclop2DPlanner(){
 
 }
-//! this function set the necessary parameters for KAPIECE Planner.
+//! this function set the necessary parameters for SyCLoP Planner.
 bool Syclop2DPlanner::setParameters()
 {
     KauthamDEPlanner::setParameters();

@@ -102,7 +102,7 @@ PDST2DPlanner::PDST2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sample
 PDST2DPlanner::~PDST2DPlanner(){
 
 }
-//! this function set the necessary parameters for KAPIECE Planner.
+//! this function set the necessary parameters for PDST Planner.
 bool PDST2DPlanner::setParameters()
 {
     KauthamDEPlanner::setParameters();

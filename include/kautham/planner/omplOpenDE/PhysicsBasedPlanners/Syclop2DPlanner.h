@@ -56,7 +56,7 @@ namespace omplcplanner{
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Class KauthamOpenDEPlanner
 /////////////////////////////////////////////////////////////////////////////////////////////////
-//! This class implement the KPIECE Planner (provied by the ompl) to plan in dynamic enviroment.
+//! This class implement the SyCLoP Planner (provied by the ompl) to plan in dynamic enviroment.
 class Syclop2DPlanner: public KauthamDEPlanner
 {
 public:
@@ -80,7 +80,7 @@ public:
  /** @}   end of Doxygen module "Planner */
 }
 
-#endif  //_KauthamOpenDEKPIECEplanner_H
+#endif  //_KauthamOpenDESyCLoPplanner_H
 #endif //KAUTHAM_USE_ODE
 #endif // KAUTHAM_USE_OMPL
 

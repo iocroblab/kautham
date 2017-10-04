@@ -54,7 +54,7 @@ namespace omplcplanner{
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Class KauthamOpenDEPlanner
 /////////////////////////////////////////////////////////////////////////////////////////////////
-//! This class implement the KPIECE Planner (provied by the ompl) to plan in dynamic enviroment.
+//! This class implement the Syclop Planner (provied by the ompl) to plan in dynamic enviroment.
 class KnowledgeOrientedSyclop2DPlanner: public KauthamDEPlanner
 {
 public:

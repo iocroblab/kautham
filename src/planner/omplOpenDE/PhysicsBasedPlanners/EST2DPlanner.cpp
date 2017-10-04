@@ -72,7 +72,7 @@ EST2DPlanner::EST2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSe
 EST2DPlanner::~EST2DPlanner(){
 
 }
-//! this function set the necessary parameters for KAPIECE Planner.
+//! this function set the necessary parameters for EST Planner.
 bool EST2DPlanner::setParameters()
 {
     KauthamDEPlanner::setParameters();
