@@ -15,7 +15,8 @@ else(PUGI_XML_FOUND)
    include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/external/pugixml )
    set(PUGI_XML_LIBRARIES libpugixml)
 endif(PUGI_XML_FOUND)
-set(EXTRA_LIBS ${EXTRA_LIBS} ${PUGI_XML_LIBRARIES} PARENT_SCOPE  )
+# Assign to EXTRA_LIBS or the internal or system pugixml lib.
+set(EXTRA_LIBS ${EXTRA_LIBS} ${PUGI_XML_LIBRARIES})
 
 add_subdirectory( util )
 add_subdirectory( external )
