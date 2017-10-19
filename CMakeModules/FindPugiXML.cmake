@@ -9,7 +9,7 @@
 #
 #  PUGI_XML_FOUND  - true if pugixml was found.
 #  PUGI_XML_INCLUDE_DIRS  - header location
-#  PUGI_XML_LIBRARY  - library to link against
+#  PUGI_XML_LIBRARIES  - library to link against
 #
 
 #PUGI_XML
@@ -42,5 +42,5 @@ else (PUGI_XML_FOUND)
     message (STATUS "No PugiXML found")
 endif(PUGI_XML_FOUND)
 
-mark_as_advanced (PUGI_XML_LIBRARY PUGI_XML_INCLUDE_DIR)
+mark_as_advanced (PUGI_XML_INCLUDE_DIRS PUGI_XML_LIBRARIES)
 
