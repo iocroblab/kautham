@@ -237,7 +237,6 @@ namespace Kautham {
                             string str;
                             if (it->obs->collisionCheck(obstacles.at(m),&str, &robot_links)) {
                                 collision = true;
-
                                 robot_Obst.first = i;
                                 robot_Obst.second = m;
 
@@ -322,9 +321,8 @@ namespace Kautham {
                     for (uint m = 0; m < obstacles.size(); m++) {
                         if (it->obs != obstacles.at(m)) {
                             string str;
-                            if (it->obs->collisionCheck(obstacles.at(i),&str,&robot_links)) {
+                            if (it->obs->collisionCheck(obstacles.at(m),&str, &robot_links)) {
                                 collision = true;
-
                                 robot_Obst.first = i;
                                 robot_Obst.second = m;
 
