@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Problem>
+	<Robot robot="robots/bigcube.dh" scale="1">
+		<Limits name="X" min="-1" max="1" />
+		<Limits name="Y" min="-1" max="1" />
+		<Limits name="Z" min="-0.001" max="0.001" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0" Y="0" X="0" />
+	</Robot>
+	<Controls robot="controls/bigcube_R2.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplFOSVFRRT</Name>
+			<SynergyTree synergyTree="controls/artificialSynergyTree.xml"/>
+			<Parameter name="Max Planning Time">5</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">0.1</Parameter>
+			<Parameter name="Goal Bias">0.05</Parameter>
+			<Parameter name="Simplify Solution">0</Parameter>
+	                <Parameter name="Exploration">0.5</Parameter>
+                        <Parameter name="Initial Lambda">100</Parameter>
+                        <Parameter name="Use Original Extend (0/1)">0</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="2">0.15 0.85</Init>
+				<Goal dim="2">0.85 0.85</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
