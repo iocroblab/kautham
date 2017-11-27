@@ -43,7 +43,6 @@
 #include <ompl/base/ProblemDefinition.h>
 #include <ompl/base/goals/GoalStates.h>
 #include <ompl/base/goals/GoalState.h>
-#include <kautham/planner/omplg/OptimalPathSimplifier.h>
 
 namespace Kautham {
     //! Namespace omplplanner contains the planners based on the OMPL::geometric library
