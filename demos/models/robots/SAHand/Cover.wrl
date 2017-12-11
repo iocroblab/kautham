@@ -1,0 +1,27 @@
+#Inventor V2.1 ascii
+
+
+Separator {
+
+  VRMLTransform {
+    translation 0 0 0
+    rotation 0 0 1  0
+    scaleOrientation 0 0 1  0
+    center 0 0 0
+
+  }
+  VRMLMaterial {
+    diffuseColor 1 0.69999999 0.40000001
+    transparency 0.30000001
+
+  }
+  VRMLCylinder {
+    radius 48
+    height 30
+    side TRUE
+    top TRUE
+    bottom TRUE
+
+  }
+}
+

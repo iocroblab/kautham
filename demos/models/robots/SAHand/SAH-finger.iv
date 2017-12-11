@@ -1,0 +1,73 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  File {
+    name "SAH-finger-base.iv"
+
+  }
+  Separator {
+
+    DEF aVis_Joint0TF MatrixTransform {
+      matrix 1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0 1
+
+    }
+  }
+  Separator {
+
+    DEF aVis_Joint1TF MatrixTransform {
+      matrix 1 0 -0 0
+        -0 -1.1920929e-007 -1.0000001 0
+        0 1.0000001 -1.1920929e-007 0
+        0 0 0 1
+
+    }
+    File {
+      name "SAH-finger-phaprox.iv"
+
+    }
+  }
+  Separator {
+
+    DEF aVis_Joint2TF MatrixTransform {
+      matrix 1 0 0 0
+        0 -1.1920929e-007 -1.0000001 0
+        0 1.0000001 -1.1920929e-007 0
+        0.067800008 0 0 1
+
+    }
+    File {
+      name "SAH-finger-phamed.iv"
+
+    }
+  }
+  Separator {
+
+    DEF aVis_Joint3TF MatrixTransform {
+      matrix 0 0 1 0
+        1 0 0 0
+        0 1 0 0
+        0.097800009 0 0 1
+
+    }
+    File {
+      name "SAH-finger-phadist.iv"
+
+    }
+  }
+  Separator {
+
+    DEF aVis_Joint4TF MatrixTransform {
+      matrix -1.1920929e-007 0 1.0000001 0
+        0 -1.0000002 0 0
+        1.0000001 0 -1.1920929e-007 0
+        0.12730001 0 0 1
+
+    }
+  }
+}
+

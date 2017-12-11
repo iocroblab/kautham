@@ -1,0 +1,27 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  Separator {
+
+    Transform {
+      translation 0.70000005 0 0
+      rotation 0 0 1  1.570796
+      scaleFactor 1 1 1
+      scaleOrientation 0 0 1  0
+      center 0 0 0
+
+    }
+    Material {
+      diffuseColor 1 0.30000001 0.30000001
+
+    }
+    Cylinder {
+      radius 0.001
+      height 1.4000001
+
+    }
+  }
+}
+
