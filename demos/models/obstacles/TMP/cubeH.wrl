@@ -1,0 +1,452 @@
+#VRML V2.0 utf8
+Transform {
+translation -8.93 -7.616 0
+scale 1 1 2.21
+children [DEF GRP_Group1 Group {
+children [
+Shape {
+appearance DEF COL__1 Appearance {
+material Material { diffuseColor 0.902 0.902 0.902 }
+}
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+17.789 0.048 0,
+17.843 15.148 0,
+17.843 15.148 48.345,
+17.789 0.048 48.345,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+}
+}
+Shape {
+appearance DEF TEX_Carrera_Marble Appearance {
+material Material {}
+texture ImageTexture {
+url ["Carrera_Marble.jpg"]
+}
+}
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+17.789 0.048 48.345,
+17.843 15.148 48.345,
+17.843 15.148 0,
+17.789 0.048 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+4.996 3.686,
+5.416 3.686,
+5.416 2.343,
+4.996 2.343,
+]
+}
+}
+}
+Shape {
+appearance USE COL__1
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0.106 15.212 48.345,
+0.052 0.112 48.345,
+17.789 0.048 48.345,
+17.843 15.148 48.345,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+}
+}
+Shape {
+appearance USE TEX_Carrera_Marble
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+17.843 15.148 48.345,
+17.789 0.048 48.345,
+0.052 0.112 48.345,
+0.106 15.212 48.345,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+11.171 5.416,
+11.171 4.996,
+10.678 4.996,
+10.678 5.416,
+]
+}
+}
+}
+Shape {
+appearance USE COL__1
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0.052 0.112 0,
+17.789 0.048 0,
+17.789 0.048 48.345,
+0.052 0.112 48.345,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+}
+}
+Shape {
+appearance USE TEX_Carrera_Marble
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0.052 0.112 48.345,
+17.789 0.048 48.345,
+17.789 0.048 0,
+0.052 0.112 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+10.678 3.686,
+11.171 3.686,
+11.171 2.343,
+10.678 2.343,
+]
+}
+}
+}
+Shape {
+appearance USE COL__1
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0.052 0.112 0,
+0.106 15.212 0,
+17.843 15.148 0,
+17.789 0.048 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+}
+}
+Shape {
+appearance USE TEX_Carrera_Marble
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+17.789 0.048 0,
+17.843 15.148 0,
+0.106 15.212 0,
+0.052 0.112 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-11.171 4.996,
+-11.171 5.416,
+-10.678 5.416,
+-10.678 4.996,
+]
+}
+}
+}
+Shape {
+appearance USE COL__1
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+17.843 15.148 0,
+0.106 15.212 0,
+0.106 15.212 48.345,
+17.843 15.148 48.345,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+}
+}
+Shape {
+appearance USE TEX_Carrera_Marble
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+17.843 15.148 48.345,
+0.106 15.212 48.345,
+0.106 15.212 0,
+17.843 15.148 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-11.171 3.686,
+-10.678 3.686,
+-10.678 2.343,
+-11.171 2.343,
+]
+}
+}
+}
+Shape {
+appearance USE COL__1
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0.106 15.212 0,
+0.052 0.112 0,
+0.052 0.112 48.345,
+0.106 15.212 48.345,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+}
+}
+Shape {
+appearance USE TEX_Carrera_Marble
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0.106 15.212 48.345,
+0.052 0.112 48.345,
+0.052 0.112 0,
+0.106 15.212 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-5.416 3.686,
+-4.996 3.686,
+-4.996 2.343,
+-5.416 2.343,
+]
+}
+}
+}
+Shape {
+appearance DEF COL_ForegroundColor Appearance {
+material Material { diffuseColor 0 0 0
+}
+}
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 17.843 15.148 48.345,
+0.106 15.212 48.345,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 17.843 15.148 0,
+17.843 15.148 48.345,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 17.789 0.048 0,
+17.843 15.148 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 17.789 0.048 0,
+17.789 0.048 48.345,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0.052 0.112 0,
+17.789 0.048 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0.052 0.112 0,
+0.052 0.112 48.345,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0.106 15.212 0,
+0.052 0.112 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 17.843 15.148 0,
+0.106 15.212 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0.106 15.212 0,
+0.106 15.212 48.345,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0.106 15.212 48.345,
+0.052 0.112 48.345,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0.052 0.112 48.345,
+17.789 0.048 48.345,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 17.789 0.048 48.345,
+17.843 15.148 48.345,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+]
+}
+]
+}
