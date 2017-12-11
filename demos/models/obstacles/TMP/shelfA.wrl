@@ -1,0 +1,1507 @@
+#VRML V2.0 utf8
+Transform {
+translation -20 -42.394 -0
+scale 1 1 1
+children [DEF GRP_Group1 Group {
+children [
+Transform {
+translation 0 -0 0
+scale 1 0.57 1
+children [DEF CMP_Component_12 Group {
+children [
+Group {
+children [DEF CMP_book_shelf Group {
+children [
+Transform {
+translation 0 0 -0
+scale 1 1 0.603
+children [DEF CMP_side Group {
+children [
+Shape {
+appearance DEF TEX_Wood_Bamboo Appearance {
+material Material {}
+texture ImageTexture {
+url ["Wood_Bamboo.jpg"]
+}
+}
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 0 0,
+40 0 88.195,
+0 0 88.195,
+0 0 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+1.667 0,
+1.667 3.675,
+0 3.675,
+0 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 0 0,
+0 0 88.195,
+40 0 88.195,
+40 0 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0,
+0 3.675,
+1.667 3.675,
+1.667 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 0 0,
+0 0 88.195,
+0 2.75 88.195,
+0 2.75 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0,
+0 3.675,
+-0.115 3.675,
+-0.115 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 2.75 0,
+0 2.75 88.195,
+0 0 88.195,
+0 0 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-0.115 0,
+-0.115 3.675,
+0 3.675,
+0 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 2.75 88.195,
+40 2.75 0,
+0 2.75 0,
+0 2.75 88.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-1.667 3.675,
+-1.667 0,
+0 0,
+0 3.675,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 2.75 88.195,
+0 2.75 0,
+40 2.75 0,
+40 2.75 88.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 3.675,
+0 0,
+-1.667 0,
+-1.667 3.675,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 0 0,
+0 0 0,
+0 2.75 0,
+40 2.75 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-1.667 0,
+0 0,
+0 0.115,
+-1.667 0.115,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 2.75 0,
+0 2.75 0,
+0 0 0,
+40 0 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-1.667 0.115,
+0 0.115,
+0 0,
+-1.667 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 0 88.195,
+40 0 0,
+40 2.75 0,
+40 2.75 88.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 3.675,
+0 0,
+0.115 0,
+0.115 3.675,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 2.75 88.195,
+40 2.75 0,
+40 0 0,
+40 0 88.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0.115 3.675,
+0.115 0,
+0 0,
+0 3.675,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 0 88.195,
+40 0 88.195,
+40 2.75 88.195,
+0 2.75 88.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0,
+1.667 0,
+1.667 0.115,
+0 0.115,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 2.75 88.195,
+40 2.75 88.195,
+40 0 88.195,
+0 0 88.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0.115,
+1.667 0.115,
+1.667 0,
+0 0,
+]
+}
+}
+}
+Shape {
+appearance DEF COL_ForegroundColor Appearance {
+material Material { diffuseColor 0 0 0
+}
+}
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 40 0 88.195,
+40 0 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 88.195,
+40 0 88.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 0,
+0 0 88.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 0,
+40 0 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 0,
+0 2.75 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 2.75 0,
+40 2.75 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 2.75 0,
+0 2.75 88.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 2.75 88.195,
+40 2.75 88.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 88.195,
+0 2.75 88.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 40 2.75 88.195,
+40 2.75 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 40 0 88.195,
+40 2.75 88.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 40 0 0,
+40 2.75 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+]
+}
+]
+}
+Transform {
+translation 0 2.75 0
+scale 1 1 1
+children [DEF CMP_botom Group {
+children [
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 143.25 0,
+0 0 0,
+0 0 2,
+0 143.25 2,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-5.969 0,
+0 0,
+0 0.083,
+-5.969 0.083,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 143.25 2,
+0 0 2,
+0 0 0,
+0 143.25 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-5.969 0.083,
+0 0.083,
+0 0,
+-5.969 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 143.25 2,
+0 143.25 2,
+0 0 2,
+40 0 2,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+1.667 5.969,
+0 5.969,
+0 0,
+1.667 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 143.25 0,
+0 143.25 0,
+0 143.25 2,
+40 143.25 2,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-1.667 0,
+0 0,
+0 0.083,
+-1.667 0.083,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 143.25 2,
+0 143.25 2,
+0 143.25 0,
+40 143.25 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-1.667 0.083,
+0 0.083,
+0 0,
+-1.667 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 0 2,
+0 0 2,
+0 143.25 2,
+40 143.25 2,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+1.667 0,
+0 0,
+0 5.969,
+1.667 5.969,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 0 0,
+40 0 0,
+40 0 2,
+0 0 2,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0,
+1.667 0,
+1.667 0.083,
+0 0.083,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 0 2,
+40 0 2,
+40 0 0,
+0 0 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0.083,
+1.667 0.083,
+1.667 0,
+0 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 0 0,
+40 143.25 0,
+40 143.25 2,
+40 0 2,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0,
+5.969 0,
+5.969 0.083,
+0 0.083,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+40 0 2,
+40 143.25 2,
+40 143.25 0,
+40 0 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0.083,
+5.969 0.083,
+5.969 0,
+0 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 143.25 0,
+40 143.25 0,
+40 0 0,
+0 0 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 5.969,
+-1.667 5.969,
+-1.667 0,
+0 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 0 0,
+40 0 0,
+40 143.25 0,
+0 143.25 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0,
+-1.667 0,
+-1.667 5.969,
+0 5.969,
+]
+}
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 0,
+0 143.25 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 0,
+0 0 2,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 0,
+40 0 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 40 0 0,
+40 0 2,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 40 0 0,
+40 143.25 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 40 143.25 0,
+40 143.25 2,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 40 143.25 0,
+0 143.25 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 143.25 0,
+0 143.25 2,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 2,
+0 143.25 2,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 2,
+40 0 2,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 40 0 2,
+40 143.25 2,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 40 143.25 2,
+0 143.25 2,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+]
+}
+]
+}
+Transform {
+translation 0 146 -0
+scale 1 1 0.603
+children [USE CMP_side
+]
+}
+Transform {
+translation 0.28 2.75 2
+scale 0.86 1 0.58
+children [DEF CMP_back Group {
+children [
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 143.25 0,
+0 143.25 86.195,
+2 143.25 86.195,
+2 143.25 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0,
+0 3.591,
+-0.083 3.591,
+-0.083 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+2 143.25 0,
+2 143.25 86.195,
+0 143.25 86.195,
+0 143.25 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-0.083 0,
+-0.083 3.591,
+0 3.591,
+0 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+2 143.25 0,
+2 143.25 86.195,
+2 0 86.195,
+2 0 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+5.969 0,
+5.969 3.591,
+0 3.591,
+0 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+2 0 0,
+2 0 86.195,
+2 143.25 86.195,
+2 143.25 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0,
+0 3.591,
+5.969 3.591,
+5.969 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 0 86.195,
+0 0 0,
+2 0 0,
+2 0 86.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 3.591,
+0 0,
+0.083 0,
+0.083 3.591,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 143.25 86.195,
+0 143.25 0,
+0 0 0,
+0 0 86.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-5.969 3.591,
+-5.969 0,
+0 0,
+0 3.591,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 0 86.195,
+0 0 0,
+0 143.25 0,
+0 143.25 86.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 3.591,
+0 0,
+-5.969 0,
+-5.969 3.591,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+2 0 86.195,
+2 0 0,
+0 0 0,
+0 0 86.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0.083 3.591,
+0.083 0,
+0 0,
+0 3.591,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 0 0,
+0 143.25 0,
+2 143.25 0,
+2 0 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 0,
+0 5.969,
+-0.083 5.969,
+-0.083 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+2 0 0,
+2 143.25 0,
+0 143.25 0,
+0 0 0,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+-0.083 0,
+-0.083 5.969,
+0 5.969,
+0 0,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+0 143.25 86.195,
+0 0 86.195,
+2 0 86.195,
+2 143.25 86.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0 5.969,
+0 0,
+0.083 0,
+0.083 5.969,
+]
+}
+}
+}
+Shape {
+appearance USE TEX_Wood_Bamboo
+geometry IndexedFaceSet {
+solid TRUE
+coord Coordinate {
+point [
+2 143.25 86.195,
+2 0 86.195,
+0 0 86.195,
+0 143.25 86.195,
+]
+}
+coordIndex [
+0
+1
+2
+3
+-1
+]
+texCoord TextureCoordinate {
+point [
+0.083 5.969,
+0.083 0,
+0 0,
+0 5.969,
+]
+}
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 143.25 0,
+0 143.25 86.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 143.25 0,
+2 143.25 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 0,
+0 143.25 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 0,
+2 0 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 86.195,
+0 0 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 0 86.195,
+2 0 86.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 143.25 86.195,
+0 0 86.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 0 143.25 86.195,
+2 143.25 86.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 2 143.25 86.195,
+2 0 86.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 2 143.25 0,
+2 143.25 86.195,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 2 0 0,
+2 143.25 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+Shape {
+appearance USE COL_ForegroundColor
+geometry IndexedLineSet {
+coord Coordinate {
+point [ 2 0 86.195,
+2 0 0,
+]
+}
+coordIndex [ 0 1 -1]
+}
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}

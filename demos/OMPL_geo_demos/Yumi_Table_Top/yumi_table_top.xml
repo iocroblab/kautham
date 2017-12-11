@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<Problem name="" topology="SE3">
+
+    
+    
+    <Robot robot="robots/yumi_right_arm.urdf" >
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="0.0" />
+          <InvKinematic name="YUMI_RIGHT" />
+	</Robot>
+
+        <Robot robot="robots/yumi_left_arm.urdf"  >
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="0.0" />
+          <InvKinematic name="YUMI_LEFT" />
+        </Robot>
+	
+        <Obstacle obstacle="robots/yumi_body.urdf"   >
+            <Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="0.0" />
+        </Obstacle>
+    
+    
+    
+    
+    
+    
+	<Obstacle obstacle="obstacles/TMP/table.dae" scale="0.0036">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="-0.208" Y="-0.5" X="0.2" />
+	</Obstacle>
+
+
+        <Obstacle obstacle="obstacles/TMP/cubeI.wrl" scale="0.00172">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.276" Y="-0.18" X="0.609" />
+	</Obstacle>
+
+        <Obstacle obstacle="obstacles/TMP/cubeA.wrl" scale="0.00140">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.32" Y="-0.3" X="0.65" />
+	</Obstacle>
+
+        <Obstacle obstacle="obstacles/TMP/cube-big.wrl" scale="0.004">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.285" Y="0.0" X="0.6" />
+	</Obstacle>
+        
+        <Obstacle obstacle="obstacles/TMP/cubeB.wrl" scale="0.00140">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.32" Y="-0.18" X="0.65" />
+	</Obstacle>
+        
+        <Obstacle obstacle="obstacles/TMP/cubeC.wrl" scale="0.00160">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.38" Y="0.4" X="0.58" />
+	</Obstacle>
+        
+        <Obstacle obstacle="obstacles/TMP/cubeG.wrl" scale="0.00160">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.276" Y="-0.18" X="0.45" />
+	</Obstacle>
+        
+        <Obstacle obstacle="obstacles/TMP/cubeE.wrl" scale="0.00172">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.276" Y="-0.29" X="0.47" />
+	</Obstacle>
+        
+        <Obstacle obstacle="obstacles/TMP/cubeF.wrl" scale="0.00172">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.276" Y="0.34" X="0.69" />
+	</Obstacle>
+        
+        <Obstacle obstacle="obstacles/TMP/tray.wrl" scale="0.0015">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.272" Y="0.21" X="0.650" />
+	</Obstacle>
+        
+        <Obstacle obstacle="obstacles/TMP/shelfA.wrl" scale="0.0032">
+		<Home TH="3.14" WZ="1.0" WY="0.0" WX="0.0" Z="0.3" Y="-0.245" X="0.7" />
+	</Obstacle>
+        
+        <Obstacle obstacle="obstacles/TMP/shelfB.wrl" scale="0.0025">
+		<Home TH="3.14" WZ="1.0" WY="0.0" WX="0.0" Z="0.345" Y="0.2" X="0.75" />
+	</Obstacle>
+        
+        <Obstacle obstacle="obstacles/TMP/box.urdf" scale="1.0">
+		<Home TH="3.14" WZ="1.0" WY="0.0" WX="0.0" Z="0.335" Y="0.4" X="0.56" />
+	</Obstacle>
+        
+        
+        <Controls robot="controls/yumi_by_parts.cntr"/>
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="Cspace Drawn">1</Parameter>
+			<Parameter name="Incremental (0/1)">0</Parameter>
+			<Parameter name="Max Planning Time">5</Parameter>
+			<Parameter name="Range">0.09</Parameter>
+			<Parameter name="Simplify Solution">2</Parameter>
+			<Parameter name="Speed Factor">10</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="16">0.5 0.5 0.5 0.5 0.5 0.5 0.5 1.0 0.5 0.5 0.5 0.5 0.5 0.5 0.5 1.0</Init>
+				<Goal dim="16">0.5 0.5 0.5 0.5 0.5 0.5 0.5 1.0 0.861 0.460 0.409 0.300 0.241 0.764 0.274 1.0</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

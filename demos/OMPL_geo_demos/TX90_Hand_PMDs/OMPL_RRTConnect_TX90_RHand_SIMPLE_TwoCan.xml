@@ -17,7 +17,10 @@
 	<Obstacle obstacle="obstacles/can.wrl" scale="1.0">
 		<Home TH="1.5707963268" WZ="0.0" WY="0.0" WX="1.0" Z="0.56" Y="1.18" X="-0.35" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/sceneRevistaICRA09.iv" scale="0.001">
+	<Obstacle obstacle="obstacles/transparenttable.iv" scale="0.001">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/irontable.iv" scale="0.001">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
 	<Controls robot="controls/TX90_6dof_RHand_5PMD.cntr" />
