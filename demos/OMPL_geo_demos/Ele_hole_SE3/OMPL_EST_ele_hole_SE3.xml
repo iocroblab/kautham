@@ -4,6 +4,7 @@
 		<Limits name="X" min="-140.0" max="140.0" />
 		<Limits name="Y" min="-140.0" max="140.0" />
 		<Limits name="Z" min="-140.0" max="140.0" />
+		<WeightSE3 rho_t="1.0" rho_r="500.0" />
 	</Robot>
 	<Obstacle obstacle="obstacles/hole.iv" scale="1.3">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
