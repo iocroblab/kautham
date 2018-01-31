@@ -52,7 +52,7 @@ option( KAUTHAM_IOC "Use IOC planners" ON )
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
-option( KAUTHAM_ROS "Build the ROS version" OFF )
+option( KAUTHAM_ROS "Build the ROS version" ON )
 option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
 
 ########### Set flags ####################
@@ -122,6 +122,7 @@ if( KAUTHAM_ROS )
        GetLastPlanComputationTime.srv
        GetNumEdges.srv
        GetNumVertices.srv
+       ObsPos.srv
     )
 
     add_message_files(
