@@ -70,6 +70,7 @@
 #include <kautham/GetLastPlanComputationTime.h>
 #include <kautham/GetNumEdges.h>
 #include <kautham/GetNumVertices.h>
+#include <kautham/ObsPos.h>
 
 
 using namespace std;
@@ -171,6 +172,18 @@ bool srvCheckCollision(kautham::CheckCollision::Request &req,
     bool collisionFree;
     res.response = ksh->checkCollision(req.config,&collisionFree);
     res.collisionFree = res.response&&collisionFree;
+
+    return true;
+}
+
+bool srvCheckCollisionObs(kautham::CheckCollision::Request &req,
+                                kautham::CheckCollision::Response &res) {
+
+    int ObstColl;
+    std::string msg;
+    res.response = ksh->checkCollisionObs(req.index, &ObstColl, &msg);
+    res.collObj = ObstColl;
+    res.msg = msg;
 
     return true;
 }
@@ -468,6 +481,22 @@ bool srvGetNumVertices(kautham::GetNumVertices::Request &req,
     return true;
 }
 
+bool srvSetObstaclPos(kautham::ObsPos::Request &req,
+                            kautham::ObsPos::Response &res) {
+
+    res.response = ksh->setObstaclePos(req.index, req.setPos);
+
+    return true;
+}
+
+bool srvGetObstaclPos(kautham::ObsPos::Request &req,
+                            kautham::ObsPos::Response &res) {
+    (void) req;//unused
+    res.getPos = ksh->getObstaclePos(req.index);
+
+    return true;
+}
+
 int main (int argc, char **argv) {
     ros::init(argc, argv, "kautham_node");
     ros::NodeHandle n;
@@ -511,6 +540,9 @@ int main (int argc, char **argv) {
     ros::ServiceServer service31 = n.advertiseService("kautham_node/GetLastPlanComputationTime",srvGetLastPlanComputationTime);
     ros::ServiceServer service32 = n.advertiseService("kautham_node/GetNumEdges",srvGetNumEdges);
     ros::ServiceServer service33 = n.advertiseService("kautham_node/GetNumVertices",srvGetNumVertices);
+    ros::ServiceServer service34 = n.advertiseService("kautham_node/SetObstaclePos",srvSetObstaclPos);
+    ros::ServiceServer service35 = n.advertiseService("kautham_node/GetObstaclePos", srvGetObstaclPos);
+    ros::ServiceServer service36 = n.advertiseService("kautham_node/CheckCollisionObs",srvCheckCollisionObs);
 
     ros::spin();
 
