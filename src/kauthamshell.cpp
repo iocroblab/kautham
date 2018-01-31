@@ -148,6 +148,42 @@ namespace Kautham {
         return false;
     }
 
+    bool kauthamshell::checkCollisionObs(int index, int *collObs, std::string *msg) {
+        Sample *smp = NULL;
+
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+
+
+            bool collisionFree;
+                collisionFree = !problem->wSpace()->collisionCheckObs(index, collObs, msg);
+                if(!collisionFree) {
+                    std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;
+                    return collisionFree;
+                } else {
+                    std::cout<<"Response for collision checking service is: "<<msg<<std::endl;
+                }
+                return collisionFree;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        delete smp;
+        return false;
+    }
+
 
     bool kauthamshell::setRobotsConfig(vector<float> smpcoords) {
         try {
@@ -1363,5 +1399,91 @@ namespace Kautham {
 
         return _solved;
 
+    }
+
+    bool kauthamshell::setObstaclePos(int index, std::vector<float> pos){
+
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+            float  coord[3];
+            float ort[4];
+
+            coord[0] = pos[0];
+            coord[1] = pos[1];
+            coord[2] = pos[2];
+            ort[0] = pos[3];
+            ort[1] = pos[4];
+            ort[2] = pos[5];
+            ort[3] = pos[6];
+
+            problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->setPosition(coord);
+            problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->setOrientation(ort);
+
+            return true;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return false;
+    }
+
+    std::vector<float> kauthamshell::getObstaclePos(int index){
+
+        std::vector<float> pos;
+        pos.clear();
+
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return pos;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+
+            float coord[3];
+            float ort[4];
+
+            coord[0] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[0];
+            coord[1] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[1];
+            coord[2] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[2];
+
+            ort[0] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[0];
+            ort[1] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[1];
+            ort[2] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[2];
+            ort[3] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[3];
+
+            pos.push_back(coord[0]);
+            pos.push_back(coord[1]);
+            pos.push_back(coord[2]);
+            pos.push_back(ort[0]);
+            pos.push_back(ort[1]);
+            pos.push_back(ort[2]);
+            pos.push_back(ort[3]);
+
+            return pos;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return pos;
     }
 }

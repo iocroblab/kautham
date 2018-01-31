@@ -883,6 +883,34 @@ namespace Kautham {
         return collision;
     }
 
+    bool WorkSpace::collisionCheckObs(int targetObs, int *collisionObs, string *message) {
+
+        stringstream sstr;
+        bool collision = false;
+         *collisionObs = -1;
+
+        for (uint m = 0; m < obstacles.size(); m++) {
+            string str;
+            if(m!=targetObs){
+                if (obstacles[targetObs]->collisionCheck(obstacles[m],&str)) {
+                    collision = true;
+                    *collisionObs=m;
+                    sstr << "Obstacle "<< obstacles[targetObs]->getName() <<  " (" << obstacles[targetObs]->getLink(0)->getElement()->getPosition()[0]
+                         << " " << obstacles[targetObs]->getLink(0)->getElement()->getPosition()[1]<< ") is in collision with obstacle " << m << " ("
+                         << obstacles[m]->getName() << ")" << endl;
+                    sstr << str;
+                    break;
+                }
+                if (collision) break;
+            }
+            if (collision) break;
+        }
+
+        if (message != NULL) *message = sstr.str();
+
+        return collision;
+    }
+
 
     void WorkSpace::moveObstacleTo(size_t mobObst, vector<KthReal>& pmd){
         // The parameter pmd is the same type of data the user will be send to
