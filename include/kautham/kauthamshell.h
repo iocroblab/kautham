@@ -77,6 +77,7 @@ namespace Kautham {
 
     bool setObstaclePos(int index, std::vector<float> pos);
     std::vector<float> getObstaclePos(int index);
+    bool findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution);
 
     private:
         void *memPtr_;
