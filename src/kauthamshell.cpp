@@ -29,6 +29,7 @@
 #include <kautham/planner/omplg/omplplanner.h>
 #include <kautham/util/kthutil/kauthamexception.h>
 #include <kautham/problem/problem.h>
+#include <kautham/util/libkin/ivkinyumi.h>
 
 
 namespace ob = ompl::base;
@@ -1486,4 +1487,34 @@ namespace Kautham {
 
         return pos;
     }
+
+    bool kauthamshell::findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution){
+        bool ret = false;
+        try {
+            Problem *const problem = (Problem*)memPtr_;
+
+            if(problem->getPlanner()->wkSpace()->getRobot(robIndx)->getName() == "Yumi") {
+                IvKinYumi *const IK = new IvKinYumi(problem->getPlanner()->wkSpace()->getRobot(robIndx), armType);
+                IK->setTarget(pos, conf, maintSameWrist);
+                ret = IK->solve();
+                if(ret)
+                    *solution = problem->getPlanner()->wkSpace()->getRobot(robIndx)->getCurrentPos()->getRn().getCoordinates();
+            }
+            else {
+                std::cout<<"The inverse kinematic for the "<<problem->getPlanner()->wkSpace()->getRobot(robIndx)->getName()<<" has not been defined"<<std::endl;
+            }
+            return ret;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+         return ret;
+    }
+
 }
