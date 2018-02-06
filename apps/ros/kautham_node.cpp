@@ -177,20 +177,20 @@ bool srvCheckCollision(kautham::CheckCollision::Request &req,
     return true;
 }
 
-//bool srvCheckCollisionRob(kautham::CheckCollision::Request &req,
-//                                kautham::CheckCollision::Response &res) {
+bool srvCheckCollisionRob(kautham::CheckCollision::Request &req,
+                                kautham::CheckCollision::Response &res) {
 
-//    for (unsigned int i = 0; i < req.config.size(); ++i) {
-//        cout << req.config.at(i) << " ";
-//    }
-//    cout << endl;
+    for (unsigned int i = 0; i < req.config.size(); ++i) {
+        cout << req.config.at(i) << " ";
+    }
+    cout << endl;
 
-//    std::vector<unsigned> ObstColl;
-//    res.response = ksh->checkCollisionObstacles(req.config,&ObstColl);
-//    res.collObjs = ObstColl;
+    std::vector<unsigned> ObstColl;
+    res.response = ksh->checkCollisionRob(req.config,&ObstColl);
+    res.collObjs = ObstColl;
 
-//    return true;
-//}
+    return true;
+}
 
 bool srvCheckCollisionObs(kautham::CheckCollision::Request &req,
                                 kautham::CheckCollision::Response &res) {
@@ -569,6 +569,10 @@ int main (int argc, char **argv) {
     ros::ServiceServer service34 = n.advertiseService("kautham_node/SetObstaclePos",srvSetObstaclPos);
     ros::ServiceServer service35 = n.advertiseService("kautham_node/GetObstaclePos", srvGetObstaclPos);
     ros::ServiceServer service36 = n.advertiseService("kautham_node/CheckCollisionObs",srvCheckCollisionObs);
+    ros::ServiceServer service37 = n.advertiseService("kautham_node/CheckCollisionRob",srvCheckCollisionRob);
+    ros::ServiceServer service38 = n.advertiseService("kautham_node/FindIK",srvFindIK);
+
+
 
     ros::spin();
 

@@ -40,6 +40,7 @@ namespace Kautham {
         bool openProblem(std::istream *inputfile, std::vector<std::string> def_path = std::vector<std::string>());
         bool openProblem(std::string problemfilename, std::vector<std::string> def_path);
         bool checkCollisionObs(int index, std::vector<unsigned> *collObs, std::string *msg);
+        bool checkCollisionRob(std::vector<float> smpcoords, std::vector<unsigned> *ObstColl);
         bool checkCollision(std::vector<float> smpcoords, bool *collisionFree, std::pair<std::pair<int, int>, std::pair<int, int> > *colliding_elements = NULL);
         bool setRobotsConfig(std::vector<float> smpcoords);
         bool setObstaclesConfig(std::vector<float> smpcoords);
