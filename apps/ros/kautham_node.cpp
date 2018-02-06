@@ -179,10 +179,10 @@ bool srvCheckCollision(kautham::CheckCollision::Request &req,
 bool srvCheckCollisionObs(kautham::CheckCollision::Request &req,
                                 kautham::CheckCollision::Response &res) {
 
-    int ObstColl;
+    std::vector<unsigned> ObstColl;
     std::string msg;
     res.response = ksh->checkCollisionObs(req.index, &ObstColl, &msg);
-    res.collObj = ObstColl;
+    res.collObjs = ObstColl;
     res.msg = msg;
 
     return true;

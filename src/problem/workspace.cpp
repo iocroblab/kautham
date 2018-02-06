@@ -883,27 +883,26 @@ namespace Kautham {
         return collision;
     }
 
-    bool WorkSpace::collisionCheckObs(int targetObs, int *collisionObs, string *message) {
+    bool WorkSpace::collisionCheckObs(int targetObs, std::vector<unsigned> *collisionObs, string *message) {
 
         stringstream sstr;
         bool collision = false;
-         *collisionObs = -1;
 
         for (uint m = 0; m < obstacles.size(); m++) {
             string str;
             if(m!=targetObs){
                 if (obstacles[targetObs]->collisionCheck(obstacles[m],&str)) {
                     collision = true;
-                    *collisionObs=m;
+                    collisionObs->push_back(m);
                     sstr << "Obstacle "<< obstacles[targetObs]->getName() <<  " (" << obstacles[targetObs]->getLink(0)->getElement()->getPosition()[0]
                          << " " << obstacles[targetObs]->getLink(0)->getElement()->getPosition()[1]<< ") is in collision with obstacle " << m << " ("
                          << obstacles[m]->getName() << ")" << endl;
                     sstr << str;
-                    break;
+          //          break;
                 }
-                if (collision) break;
+      //          if (collision) break;
             }
-            if (collision) break;
+   //         if (collision) break;
         }
 
         if (message != NULL) *message = sstr.str();

@@ -106,7 +106,7 @@ namespace Kautham{
       bool collisionCheckRemovableObstacles(Sample* sample, string *message = NULL); // collisioncheck function that not consider collisions with the removable obstacles
       int collisionCheckCount(Sample* sample);
       bool collisionCheckObstacles(Sample* sample, std::vector<unsigned> &ObstColl);
-      bool collisionCheckObs(int targetObs, int *collisionObs, string *message);
+      bool collisionCheckObs(int targetObs, std::vector<unsigned> *collisionObs, string *message);
       inline unsigned int obstaclesCount(){ return obstacles.size();}
       void moveObstacleTo(size_t mobObst, vector<KthReal>& pose);
       void moveObstacleTo(size_t mobObst, RobConf& robConf);
