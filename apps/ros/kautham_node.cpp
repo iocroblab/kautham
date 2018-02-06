@@ -71,6 +71,7 @@
 #include <kautham/GetNumEdges.h>
 #include <kautham/GetNumVertices.h>
 #include <kautham/ObsPos.h>
+#include <kautham/FindIK.h>
 
 
 using namespace std;
@@ -176,6 +177,21 @@ bool srvCheckCollision(kautham::CheckCollision::Request &req,
     return true;
 }
 
+//bool srvCheckCollisionRob(kautham::CheckCollision::Request &req,
+//                                kautham::CheckCollision::Response &res) {
+
+//    for (unsigned int i = 0; i < req.config.size(); ++i) {
+//        cout << req.config.at(i) << " ";
+//    }
+//    cout << endl;
+
+//    std::vector<unsigned> ObstColl;
+//    res.response = ksh->checkCollisionObstacles(req.config,&ObstColl);
+//    res.collObjs = ObstColl;
+
+//    return true;
+//}
+
 bool srvCheckCollisionObs(kautham::CheckCollision::Request &req,
                                 kautham::CheckCollision::Response &res) {
 
@@ -184,16 +200,26 @@ bool srvCheckCollisionObs(kautham::CheckCollision::Request &req,
     res.response = ksh->checkCollisionObs(req.index, &ObstColl, &msg);
     res.collObjs = ObstColl;
     res.msg = msg;
+//    res.collObj = colObj.first.second;
 
     return true;
 }
-
 
 bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
                        kautham::SetRobotsConfig::Response &res) {
 
     res.response = ksh->setRobotsConfig(req.config);
 
+    return true;
+}
+
+
+bool srvFindIK(kautham::FindIK::Request &req,
+                       kautham::FindIK::Response &res) {
+
+    std::vector <float> solution;
+    res.response = ksh->findIK(req.robIndx, req.armType, req.pos, req.conf, req.maintSameWrist, &solution);
+    res.conf = solution;
     return true;
 }
 

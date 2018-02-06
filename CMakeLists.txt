@@ -123,6 +123,7 @@ if( KAUTHAM_ROS )
        GetNumEdges.srv
        GetNumVertices.srv
        ObsPos.srv
+       FindIK.srv
     )
 
     add_message_files(
