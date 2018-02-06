@@ -149,7 +149,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::checkCollisionObs(int index, int *collObs, std::string *msg) {
+    bool kauthamshell::checkCollisionObs(int index, std::vector<unsigned> *collObs, std::string *msg) {
         Sample *smp = NULL;
 
         try {
