@@ -1546,7 +1546,7 @@ namespace Kautham {
                 IK->setTarget(pos, conf, maintSameWrist);
                 ret = IK->solve();
                 if(ret)
-                    *solution = problem->getPlanner()->wkSpace()->getRobot(robIndx)->getCurrentPos()->getRn().getCoordinates();
+                    *solution = IK->getRn().getCoordinates();
             }
             else {
                 std::cout<<"The inverse kinematic for the "<<problem->getPlanner()->wkSpace()->getRobot(robIndx)->getName()<<" has not been defined"<<std::endl;
