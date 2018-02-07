@@ -1541,7 +1541,7 @@ namespace Kautham {
         try {
             Problem *const problem = (Problem*)memPtr_;
 
-            if(problem->getPlanner()->wkSpace()->getRobot(robIndx)->getName() == "Yumi") {
+            if(problem->getPlanner()->wkSpace()->getRobot(robIndx)->getName() == "yumi") {
                 IvKinYumi *const IK = new IvKinYumi(problem->getPlanner()->wkSpace()->getRobot(robIndx), armType);
                 IK->setTarget(pos, conf, maintSameWrist);
                 ret = IK->solve();
