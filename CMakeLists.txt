@@ -53,7 +53,8 @@ option( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
 option( KAUTHAM_ROS "Build the ROS version" OFF )
-option( KAUTHAM_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
+option( KAUTHAM_DOCUMENTATION_API "Create and install the HTML based API documentation (requires Doxygen)" ON)
+option( KAUTHAM_DOCUMENTATION_WEB "Create WEB Documentation (requires Sphinx)" ON)
 
 ########### Set flags ####################
 message( STATUS "Using this flags ........")
