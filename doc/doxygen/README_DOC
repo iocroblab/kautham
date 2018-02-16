@@ -1,0 +1,25 @@
+INSTRUCTIONS TO DOCUMENT THE CODE
+
+1) Documenting classes:
+
+2) Grouping classes in modules:
+
+3) Include images in the Related Pages of the Doxygen documentation:
+
+    \image html XYZcontrols.png
+
+The size of the image can be modified in mystylesheet.css file:
+
+  div.image img[src="XYZcontrols.png"]{ width:16cm; }
+  
+  
+  ------------------------
+  To generate the documentation run the cmake of the project with the flag KAUTHAM_DOCUMENTATION to ON.
+  
+  This generates the Doxyfile in the build directory.
+  
+  From that directory execute: 
+      >doxygen Doxyfile
+      
+  The subfolder doxygen_documentation is created with the generated documention.
+  ------------------------
