@@ -3,9 +3,9 @@ Documentation
 
 `Doxygen documentation <https://sir.upc.edu/projects/kautham/doxygen_documentation/html/index.html>`_
 
-`An slides used to explain the Kautham Project <files/slides THE KAUTHAM PROJECT.pdf>`_
+`Slides used to explain the Kautham Project <files/slides THE KAUTHAM PROJECT.pdf>`_
 
-`An slides explaining OMPL integration <files/slides OMPL-KAUTHAM integration.pdf>`_
+`Slides explaining OMPL integration <files/slides OMPL-KAUTHAM integration.pdf>`_
 
 `Paper of Kautham <https://ioc.upc.edu/ca/personal/jan.rosell/publications/papers/the-kautham-project-a-teaching-and-research-tool-for-robot-motion-planning/@@download/file/PID3287499.pdf>`_
 
