@@ -33,11 +33,11 @@ STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} )
 LIST( GET KAUTHAM_VERSIONS 0 KAUTHAM_VERSION_MAJOR)
 LIST( GET KAUTHAM_VERSIONS 1 KAUTHAM_VERSION_MINOR)
 LIST( GET KAUTHAM_VERSIONS 2 KAUTHAM_VERSION_PATCH)
-# configure a header file to pass some of the CMake settings to the source code
- configure_file (
-   "${PROJECT_SOURCE_DIR}/kauthamConfig.h.in"
-  "${PROJECT_SOURCE_DIR}/include/kautham/kauthamConfig.h"
-  )
+# # configure a header file to pass some of the CMake settings to the source code
+#  configure_file (
+#    "${PROJECT_SOURCE_DIR}/kauthamConfig.h.in"
+#   "${PROJECT_SOURCE_DIR}/include/kautham/kauthamConfig.h"
+#   )
 
 message( "Kautham version ${VERSION} (${KAUTHAM_VERSION_MAJOR}.${KAUTHAM_VERSION_MINOR}.${KAUTHAM_VERSION_PATCH})" )
 
@@ -189,15 +189,18 @@ include_directories( ${mt_DIR} )
 ##################### ROS-catkin ####################################
 
 include_directories( include )
+include_directories( ${CMAKE_BINARY_DIR}/include/)
+
 include_directories( src )  # for external
 
-# Building librarires
 
+# Building librarires
+add_subdirectory ( include )
 add_subdirectory ( src )
 add_subdirectory ( apps )
 add_subdirectory ( doc )
 
 #########################################################
 # Copy Help file
-install(DIRECTORY include/kautham DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+# install(DIRECTORY include/kautham DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(DIRECTORY demos DESTINATION share/kautham)
