@@ -7,7 +7,7 @@ Documentation
 
 `An slides explaining OMPL integration <files/slides OMPL-KAUTHAM integration.pdf>`_
 
-`Paper of Kautham <https://ioc.upc.edu/ca/personal/jan.rosell/publications/papers/the-kautham-project-a-teaching-and-research-tool-for-robot-motion-planning/@@download/file/PID3287499.pdf`>_
+`Paper of Kautham <https://ioc.upc.edu/ca/personal/jan.rosell/publications/papers/the-kautham-project-a-teaching-and-research-tool-for-robot-motion-planning/@@download/file/PID3287499.pdf>`_
 
 **Examples of input files**
 
