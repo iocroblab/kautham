@@ -29,7 +29,7 @@
 #include <vector>
 #include <string>
 
-#include <QtGui>
+#include <QtWidgets>
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>

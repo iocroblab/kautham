@@ -27,7 +27,7 @@
 #define _CONTROLWIDGET_H
 
 
-#include <QtGui>
+#include <QtWidgets>
 #ifndef Q_MOC_RUN
 #include <kautham/problem/problem.h>
 #include "dofwidget.h"

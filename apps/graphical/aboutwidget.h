@@ -26,12 +26,12 @@
 #define ABOUTWIDGET_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QHeaderView>
-#include <QtGui/QTextBrowser>
-#include <QtGui/QDialog>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QTextBrowser>
+#include <QtWidgets/QDialog>
 
 //The following config header file contains the version number of kautham and is automatically generated from the
 //CMakeList.txt file using the configure file option
@@ -77,7 +77,7 @@ public:
 
     void retranslateUi(QWidget *Form)
     {
-        Form->setWindowTitle(QApplication::translate("Form", "The Kautham Project", 0, QApplication::UnicodeUTF8));
+        Form->setWindowTitle(QApplication::translate("Form", "The Kautham Project", 0));
 
         std::ostringstream otext;
         otext << "<!DOCTYPE html><html><body><h2>The Kautham Project - "<<std::endl<<"Version "<< MAJOR_VERSION <<"."<< MINOR_VERSION <<"."<< PATCH_VERSION <<"</h2><br>"<<std::endl;
@@ -103,7 +103,7 @@ public:
 
         std::string text = otext.str()+text2;
 
-        textBrowser->setHtml(QApplication::translate("Form", text.c_str(), 0, QApplication::UnicodeUTF8));
+        textBrowser->setHtml(QApplication::translate("Form", text.c_str(), 0));
 
     } // retranslateUi
 

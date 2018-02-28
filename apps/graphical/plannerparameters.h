@@ -26,12 +26,12 @@
 #define PLANNERPARAMETERSWIDGET_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QHeaderView>
-#include <QtGui/QTextBrowser>
-#include <QtGui/QDialog>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QTextBrowser>
+#include <QtWidgets/QDialog>
 
 //The following config header file contains the version number of kautham and is automatically generated from the
 //CMakeList.txt file using the configure file option
@@ -70,7 +70,7 @@ public:
         textBrowser->setGeometry(QRect(0, 0, 650, 400));
         textBrowser->setOpenLinks(false);
 
-        Form->setWindowTitle(QApplication::translate("Form", "Planners Parameters", 0, QApplication::UnicodeUTF8));
+        Form->setWindowTitle(QApplication::translate("Form", "Planners Parameters", 0));
         std::string text = "<b>General Planners Parameters</b>\
                 <br><br><em>Cspace Drawn:</em>If multi-robot problem, draws the cspace of the robot indicated (counting from 0).\
                 <br><em>Incremental (0/1):</em> If set continues the growing of the planner data structure.\
@@ -115,7 +115,7 @@ public:
 
 
 
-        textBrowser->setHtml(QApplication::translate("Form", text.c_str(), 0, QApplication::UnicodeUTF8));
+        textBrowser->setHtml(QApplication::translate("Form", text.c_str(), 0));
         QMetaObject::connectSlotsByName(Form);
     } // setupUi
 
