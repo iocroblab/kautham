@@ -23,7 +23,7 @@
 /* Author: Nestor Garcia Hidalgo */
 
 
-#include <QtGui>
+#include <QtWidgets>
 
 
 namespace Kautham {

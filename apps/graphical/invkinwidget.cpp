@@ -37,7 +37,7 @@ namespace Kautham{
 
     vboxLayout->addWidget(btnSolve);
  
-    btnSolve->setText(QApplication::translate("Form", "Get solution", 0, QApplication::UnicodeUTF8));
+    btnSolve->setText(QApplication::translate("Form", "Get solution", 0));
 
     if(_invKin != NULL)
       connect(btnSolve, SIGNAL( clicked() ), this, SLOT( getSolution() ) );

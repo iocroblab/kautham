@@ -32,7 +32,7 @@
 #include "controlwidget.h"
 #include "constrainedcontrolwidget.h"
 #include "invkinwidget.h"
-#include <QtGui>
+#include <QtWidgets>
 #include <kautham/sampling/sampling.h>
 #include <Inventor/nodes/SoCamera.h>
 #include <Inventor/actions/SoWriteAction.h>
@@ -844,7 +844,7 @@ namespace Kautham {
 
     void GUI::showInitialAppearance() {
         viewsTab->addTab(introTab, QApplication::translate
-                         ("kauthamMain","Introduction",0,QApplication::UnicodeUTF8));
+                         ("kauthamMain","Introduction",0));
         DOFsTab->hide();
         propertiesTab->hide();
         QList <QAction*> actions = toolBar->actions();

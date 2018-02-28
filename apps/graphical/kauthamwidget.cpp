@@ -48,10 +48,10 @@ namespace Kautham{
           table->setColumnCount(2);
 
       QTableWidgetItem *__colItem = new QTableWidgetItem();
-      __colItem->setText(QApplication::translate("Form", "Property", 0, QApplication::UnicodeUTF8));
+      __colItem->setText(QApplication::translate("Form", "Property", 0));
       table->setHorizontalHeaderItem(0, __colItem);
       __colItem = new QTableWidgetItem();
-      __colItem->setText(QApplication::translate("Form", "Value", 0, QApplication::UnicodeUTF8));
+      __colItem->setText(QApplication::translate("Form", "Value", 0));
       table->setHorizontalHeaderItem(1, __colItem);
       table->verticalHeader()->hide();
 

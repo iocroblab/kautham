@@ -157,15 +157,15 @@ namespace Kautham {
 
         vboxLayout->addLayout(hboxLayout2);
 
-        btnGetPath->setText(QApplication::translate("Form", "Get Path", 0, QApplication::UnicodeUTF8));
-        btnSaveData->setText(QApplication::translate("Form", "Save Data", 0, QApplication::UnicodeUTF8));
-        btnLoadData->setText(QApplication::translate("Form", "Load Data", 0, QApplication::UnicodeUTF8));
-        moveButton->setText(QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8));
+        btnGetPath->setText(QApplication::translate("Form", "Get Path", 0));
+        btnSaveData->setText(QApplication::translate("Form", "Save Data", 0));
+        btnLoadData->setText(QApplication::translate("Form", "Load Data", 0));
+        moveButton->setText(QApplication::translate("Form", "Start Move ", 0));
 
-        groupBox->setTitle(QApplication::translate("Form", "Local Planner", 0, QApplication::UnicodeUTF8));
-        labelGB->setText(QApplication::translate("Form", "From:", 0, QApplication::UnicodeUTF8));
-        label_2GB->setText(QApplication::translate("Form", "To:", 0, QApplication::UnicodeUTF8));
-        _cmbTry->setText(QApplication::translate("Form", "Try Connect", 0, QApplication::UnicodeUTF8));
+        groupBox->setTitle(QApplication::translate("Form", "Local Planner", 0));
+        labelGB->setText(QApplication::translate("Form", "From:", 0));
+        label_2GB->setText(QApplication::translate("Form", "To:", 0));
+        _cmbTry->setText(QApplication::translate("Form", "Try Connect", 0));
         connectLabel->setText(QString());
 
         _plannerTimer = new QTimer( this );
@@ -530,7 +530,7 @@ namespace Kautham {
 
 
     void PlannerWidget::simulatePath() {
-        if (moveButton->text() == QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8)){
+        if (moveButton->text() == QApplication::translate("Form", "Start Move ", 0)){
             startSimulation();
         } else {
             stopSimulation();
@@ -540,13 +540,13 @@ namespace Kautham {
 
     void PlannerWidget::startSimulation() {
         _plannerTimer->start(200);
-        moveButton->setText(QApplication::translate("Form", "Stop Move ", 0, QApplication::UnicodeUTF8));
+        moveButton->setText(QApplication::translate("Form", "Stop Move ", 0));
         _ismoving = true;
     }
 
     void PlannerWidget::stopSimulation() {
         _plannerTimer->stop();
-        moveButton->setText(QApplication::translate("Form", "Start Move ", 0, QApplication::UnicodeUTF8));
+        moveButton->setText(QApplication::translate("Form", "Start Move ", 0));
         _ismoving = false;
     }
 

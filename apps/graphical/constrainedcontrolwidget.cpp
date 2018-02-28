@@ -21,7 +21,7 @@
  \*************************************************************************/
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
-#include <QtGui>
+#include <QtWidgets>
 #include "constrainedcontrolwidget.h"
 #include <QString>
 

@@ -27,24 +27,24 @@
 #define UI_ROBOTSIM_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QDockWidget>
-#include <QtGui/QGridLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMenu>
-#include <QtGui/QMenuBar>
-#include <QtGui/QSplitter>
-#include <QtGui/QStatusBar>
-#include <QtGui/QTabWidget>
-#include <QtGui/QTextBrowser>
-#include <QtGui/QTextEdit>
-#include <QtGui/QToolBar>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QWidget>
-#include <QtGui/QLabel>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QSplitter>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTabWidget>
+#include <QtWidgets/QTextBrowser>
+#include <QtWidgets/QTextEdit>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QLabel>
 
 #include "problemtreewidget.h"
 #include "attachobjectdialog.h"
@@ -221,27 +221,27 @@ public:
 
     void retranslateUi(QMainWindow *kauthamMain)
     {
-        kauthamMain->setWindowTitle(QApplication::translate("kauthamMain", "Kautham 2.0 - Institute of Industrial and Control Engineering - Technical University of Catalonia", 0, QApplication::UnicodeUTF8));
-        actionNew->setText(QApplication::translate("kauthamMain", "New...", 0, QApplication::UnicodeUTF8));
-        actionAbout->setText(QApplication::translate("kauthamMain", "About...", 0, QApplication::UnicodeUTF8));
-        actionPlannersParameters->setText(QApplication::translate("kauthamMain", "Planner Parameters...", 0, QApplication::UnicodeUTF8));
+        kauthamMain->setWindowTitle(QApplication::translate("kauthamMain", "Kautham 2.0 - Institute of Industrial and Control Engineering - Technical University of Catalonia", 0));
+        actionNew->setText(QApplication::translate("kauthamMain", "New...", 0));
+        actionAbout->setText(QApplication::translate("kauthamMain", "About...", 0));
+        actionPlannersParameters->setText(QApplication::translate("kauthamMain", "Planner Parameters...", 0));
 #ifndef QT_NO_ACCESSIBILITY
-        propertiesTab->setAccessibleName(QApplication::translate("kauthamMain", "l", 0, QApplication::UnicodeUTF8));
+        propertiesTab->setAccessibleName(QApplication::translate("kauthamMain", "l", 0));
 #endif // QT_NO_ACCESSIBILITY
-        propertiesTab->setTabText(propertiesTab->indexOf(probTab), QApplication::translate("kauthamMain", "Problem", 0, QApplication::UnicodeUTF8));
+        propertiesTab->setTabText(propertiesTab->indexOf(probTab), QApplication::translate("kauthamMain", "Problem", 0));
         textBrowser->setHtml(QApplication::translate("kauthamMain", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p></body></html>", 0, QApplication::UnicodeUTF8));
-        viewsTab->setTabText(viewsTab->indexOf(introTab), QApplication::translate("kauthamMain", "Introduction", 0, QApplication::UnicodeUTF8));
-        menuActions->setTitle(QApplication::translate("kauthamMain", "&Actions", 0, QApplication::UnicodeUTF8));
-        menuFile->setTitle(QApplication::translate("kauthamMain", "&File", 0, QApplication::UnicodeUTF8));
-        menuHelp->setTitle(QApplication::translate("kauthamMain", "&Help", 0, QApplication::UnicodeUTF8));
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p></body></html>", 0));
+        viewsTab->setTabText(viewsTab->indexOf(introTab), QApplication::translate("kauthamMain", "Introduction", 0));
+        menuActions->setTitle(QApplication::translate("kauthamMain", "&Actions", 0));
+        menuFile->setTitle(QApplication::translate("kauthamMain", "&File", 0));
+        menuHelp->setTitle(QApplication::translate("kauthamMain", "&Help", 0));
 #ifndef QT_NO_TOOLTIP
-        outputWindow->setToolTip(QApplication::translate("kauthamMain", "Output Window", 0, QApplication::UnicodeUTF8));
+        outputWindow->setToolTip(QApplication::translate("kauthamMain", "Output Window", 0));
 #endif // QT_NO_TOOLTIP
-        outputWindow->setWindowTitle(QApplication::translate("kauthamMain", "Output", 0, QApplication::UnicodeUTF8));
+        outputWindow->setWindowTitle(QApplication::translate("kauthamMain", "Output", 0));
     } // retranslateUi
 
 };

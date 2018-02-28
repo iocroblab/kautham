@@ -32,7 +32,7 @@
 #include <string>
 
 #include <QtCore>
-#include <QtGui>
+#include <QtWidgets>
 #include <QFile>
 #include <QObject>
 

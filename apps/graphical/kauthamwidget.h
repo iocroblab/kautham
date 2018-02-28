@@ -22,7 +22,7 @@
 
 /* Author: Alexander Perez, Jan Rosell */
  
-#include <QtGui>
+#include <QtWidgets>
 
 
 #if !defined(_KAUTHAMWIDGET_H)

@@ -1,17 +1,24 @@
 ##############################################################################
 # START Required packages for GUI
-find_package( Qt4 REQUIRED QtCore QtGui QtXml )
-if( QT4_FOUND )
-   include(${QT_USE_FILE})
+find_package( Qt5Core COMPONENTS Core Widgets Xml)
+# REQUIRED QtCore QtGui QtXml )
+if( QT5_FOUND )
+#   qt5_use_modules(
+#   include(${QT_USE_FILE})
    add_definitions( ${QT_DEFINITIONS} )
-endif( QT4_FOUND )
+endif( QT5_FOUND )
 
 ##############################################################################
-find_package( SoQt4 REQUIRED )
+find_package( SoQt REQUIRED )
 if( SOQT_LIBRARY_FOUND )
    add_definitions( -DSOQT_DLL -DCOIN_DLL )
    include_directories( ${SOQT_INCLUDE_DIR} )
 endif( SOQT_LIBRARY_FOUND )
+
+#if (BZIP2_FOUND)
+#  include_directories(${BZIP_INCLUDE_DIRS})
+#  target_link_libraries (helloworld ${BZIP2_LIBRARIES})
+
 # END Required packages for GUI
 ##############################################################################
 
@@ -23,8 +30,8 @@ endif(KAUTHAM_OMPL)
 file( GLOB RES_FILES *.rc )
 set(kautham_RESOURCES kauthamRes.qrc)
 
-QT4_ADD_RESOURCES(kautham_RESOURCES_RCC ${kautham_RESOURCES})
-QT4_WRAP_CPP( QT_MOC_SRC kauthamgui.h
+QT5_ADD_RESOURCES(kautham_RESOURCES_RCC ${kautham_RESOURCES})
+QT5_WRAP_CPP( QT_MOC_SRC kauthamgui.h
          aboutwidget.h
          plannerparameters.h
          attachobjectdialog.h
@@ -72,7 +79,7 @@ set( HDR_FILES_GUI kauthamgui.h
          ui_RobotSim.h)
 
 add_executable(kautham-gui  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${kautham_RESOURCES_RCC} )
-target_link_libraries( kautham-gui libkautham ${SOQT_LIBRARY} ${QT_LIBRARIES} ${Boost_LIBRARIES} ${PUGI_XML_LIBRARIES})
+target_link_libraries( kautham-gui libkautham ${SOQT_LIBRARY} Qt5::Widgets ${Boost_LIBRARIES} ${PUGI_XML_LIBRARIES})
 
 add_dependencies(kautham-gui libkautham)
 
