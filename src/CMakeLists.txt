@@ -23,15 +23,14 @@ add_subdirectory( external )
 
 #### Coin3D package ###############
 # graphics library
-find_package( Coin REQUIRED )
-if( COIN_LIBRARY_FOUND )
-   message( STATUS "Using Coin library")
-   add_definitions( -DCOIN_DLL )
-   include_directories( ${COIN_INCLUDE_DIR} )
-    set(EXTRA_LIBS ${EXTRA_LIBS} ${COIN_LIBRARY})
-else( COIN_LIBRARY_FOUND )
+find_package(Coin REQUIRED CONFIG)
+if(Coin_FOUND)
+  set(EXTRA_LIBS ${EXTRA_LIBS} ${Coin_LIBRARIES})
+  include_directories(${Coin_INCLUDE_DIR})
+  add_definitions(${Coin_DEFINES})
+else( Coin_FOUND )
    message(SEND_ERROR "Kautham needs Coin library")
-endif(COIN_LIBRARY_FOUND )
+endif(Coin_FOUND )
 
 #### Assimp ######
 find_package( Assimp )
