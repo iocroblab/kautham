@@ -1,24 +1,21 @@
 ##############################################################################
 # START Required packages for GUI
-find_package( Qt5Core COMPONENTS Core Widgets Xml)
-# REQUIRED QtCore QtGui QtXml )
-if( QT5_FOUND )
-#   qt5_use_modules(
-#   include(${QT_USE_FILE})
-   add_definitions( ${QT_DEFINITIONS} )
-endif( QT5_FOUND )
+find_package(Qt5 COMPONENTS Core Gui OpenGL Widgets Xml REQUIRED)
+if(Qt5_FOUND)
+   message(STATUS "Qt5 found")
+   set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES})
+   include_directories( ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
+endif( Qt5_FOUND )
+
+
 
 ##############################################################################
-find_package( SoQt REQUIRED )
-if( SOQT_LIBRARY_FOUND )
-   add_definitions( -DSOQT_DLL -DCOIN_DLL )
-   include_directories( ${SOQT_INCLUDE_DIR} )
-endif( SOQT_LIBRARY_FOUND )
+find_package( SoQt REQUIRED CONFIG)
 
-#if (BZIP2_FOUND)
-#  include_directories(${BZIP_INCLUDE_DIRS})
-#  target_link_libraries (helloworld ${BZIP2_LIBRARIES})
-
+if( SoQt_FOUND )
+   add_definitions( ${SoQt_DEFINITIONS})
+   include_directories( ${SoQt_INCLUDE_DIRS} )
+endif( SoQt_FOUND )
 # END Required packages for GUI
 ##############################################################################
 
@@ -79,7 +76,7 @@ set( HDR_FILES_GUI kauthamgui.h
          ui_RobotSim.h)
 
 add_executable(kautham-gui  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${kautham_RESOURCES_RCC} )
-target_link_libraries( kautham-gui libkautham ${SOQT_LIBRARY} Qt5::Widgets ${Boost_LIBRARIES} ${PUGI_XML_LIBRARIES})
+target_link_libraries( kautham-gui libkautham ${SoQt_LIBRARIES} ${OPENGL_LIBRARIES} ${QT_LIBRARIES} ${Boost_LIBRARIES} ${PUGI_XML_LIBRARIES})
 
 add_dependencies(kautham-gui libkautham)
 
