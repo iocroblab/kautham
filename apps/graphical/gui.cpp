@@ -32,7 +32,6 @@
 #include "controlwidget.h"
 #include "constrainedcontrolwidget.h"
 #include "invkinwidget.h"
-#include <QtWidgets>
 #include <kautham/sampling/sampling.h>
 #include <Inventor/nodes/SoCamera.h>
 #include <Inventor/actions/SoWriteAction.h>
