@@ -165,18 +165,6 @@ else(Boost_FOUND)
         endif(Boost_FOUND)
 endif(Boost_FOUND)
 
-#### Coin3D package ###############
-# graphics library
-find_package( Coin REQUIRED )
-if( COIN_LIBRARY_FOUND )
-   message( STATUS "Using Coin library")
-   add_definitions( -DCOIN_DLL )
-   include_directories( ${COIN_INCLUDE_DIR} )
-    set(EXTRA_LIBS ${EXTRA_LIBS} ${COIN_LIBRARY})
-else( COIN_LIBRARY_FOUND )
-   message(SEND_ERROR "Kautham needs Coin library")
-endif(COIN_LIBRARY_FOUND )
-
 #### MT ###############
 set(mt_DIR include/kautham/util/libmt)
 message (STATUS "Adding libmt directory ${mt_DIR}")
