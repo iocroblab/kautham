@@ -39,6 +39,8 @@ namespace Kautham {
         void closeProblem();
         bool openProblem(std::istream *inputfile, std::vector<std::string> def_path = std::vector<std::string>());
         bool openProblem(std::string problemfilename, std::vector<std::string> def_path);
+        bool checkCollisionObs(int index, std::vector<unsigned> *collObs, std::string *msg);
+        bool checkCollisionRob(std::vector<float> smpcoords, std::vector<unsigned> *ObstColl);
         bool checkCollision(std::vector<float> smpcoords, bool *collisionFree, std::pair<std::pair<int, int>, std::pair<int, int> > *colliding_elements = NULL);
         bool setRobotsConfig(std::vector<float> smpcoords);
         bool setObstaclesConfig(std::vector<float> smpcoords);
@@ -73,6 +75,10 @@ namespace Kautham {
         bool detachObstacle(unsigned int obs);
 	
     bool motionPlanner(std::vector <float> init, std::vector <float> goal, std::string root);
+
+    bool setObstaclePos(int index, std::vector<float> pos);
+    std::vector<float> getObstaclePos(int index);
+    bool findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution);
 
     private:
         void *memPtr_;

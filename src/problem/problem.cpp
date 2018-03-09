@@ -1272,6 +1272,20 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
 
     if (!rob->isArmed()) return false;
 
+    //Set the SE3 weights for the distance computations, in case of mobile base
+    if (robot_node->child("WeightSE3")) {
+        KthReal tra = 1.;
+        KthReal rot = 1.;
+        xml_node tmp = robot_node->child("WeightSE3");
+        if( tmp.attribute("rho_t") )
+            tra = (KthReal) tmp.attribute("rho_t").as_double();
+        if( tmp.attribute("rho_r") )
+            rot = (KthReal) tmp.attribute("rho_r").as_double();
+        rob->getRobWeight()->setSE3Weight(tra,rot);
+    } else {
+        rob->getRobWeight()->setSE3Weight(1., 1.);
+    }
+
     // Setup the Inverse Kinematic if it has one.
     string name;
     if (robot_node->child("InvKinematic")){

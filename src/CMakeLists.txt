@@ -66,6 +66,7 @@ else( ARMADILLO_FOUND )
    message( SEND_ERROR  "armadillo Package NOT FOUND. Planners using PCA will be disabled. Kautham needs it by now")
 endif( ARMADILLO_FOUND )
 
+#### ompl ######
 find_package(ompl)
 if( OMPL_FOUND )
    message( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_OMPL flag")

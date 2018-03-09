@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTConnect_Staubli_R6_mobileBase_two_columns">
+	<Robot robot="robots/TX90_mobile.dh" scale="1.0">
+		<Limits name="X" min="-400.0" max="1200.0" />
+		<Limits name="Y" min="-200.0" max="1000.0" />
+		<Limits name="Z" min="0.0" max="1000.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-360.0" max="360.0" />
+		<Home TH="180.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="400.0" X="-300.0" />
+	</Robot>
+	<Obstacle obstacle="obstacles/columns.iv" scale="18.0">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="0.0" X="250.0" />
+	</Obstacle>
+	<Controls robot="controls/TX90_mobile.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="Max Planning Time">10.0</Parameter>
+			<Parameter name="Range">10</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="8">0.151946 0.646867 0.649383 0.62646 0.75775 0.693967 0.274099 0.284429</Init>
+				<Goal dim="8">0.793659 0.910077 0.110102 0.49633 0.877893 0.732432 0.258037 0.759923</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

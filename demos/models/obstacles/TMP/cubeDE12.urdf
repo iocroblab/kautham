@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<robot name="cubeDE12">
+	<link name="base">
+	<inertial>
+        	 <origin xyz="0 0 0" rpy="0 0 0"/>
+        	 <mass value="1.0"/>
+        	 <inertia ixx="0.000683333"  ixy="0"  ixz="0" iyy="0.000683333" iyz="0" izz="0.000683333" />
+       </inertial>
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+                        <mesh filename="cubeI.dae" scale="0.001 0.001 0.001" />
+			</geometry>
+			<material>
+				<color rgba="0 0.5 1 1" />
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<material>
+				<color rgba="0 0.5 1 1" />
+			</material>
+			<geometry>
+				<box size="0.027 0.02 0.02" />
+			</geometry>
+			
+		</collision>
+		
+	</link>
+</robot>

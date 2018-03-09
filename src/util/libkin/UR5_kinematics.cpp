@@ -92,7 +92,7 @@ Transform UR5_dir_kin(double *theta, const unsigned int joint) {
     double d[] = {d1, d2, d3, d4, d5, d6};
 
     Transform transform;
-    for (int i = 0; i < joint+1; i++) {
+    for (unsigned int i = 0; i < joint+1; i++) {
         transform *= DH_transform(alpha[i],a[i],theta[i]+offset[i],d[i]);
     }
 

@@ -781,9 +781,7 @@ namespace Kautham {
             if (!_scenePath) return;
 
             //Delete whatever is already drawn
-            while (_scenePath->getNumChildren() > 0) {
-                _scenePath->removeChild(0);
-            }
+            _scenePath->removeAllChildren();
 
             if (!show) return;
 
@@ -806,15 +804,14 @@ namespace Kautham {
             ob::GoalStates *goalStates(dynamic_cast<ob::GoalStates*>
                                        (ss->getProblemDefinition()->getGoal().get()));
 
-            //nothing to draw
-            if (pdata->numVertices() < (pdata->numStartVertices()+goalStates->getStateCount())) {
+            //Nothing to draw
+            if (pdata->numVertices() < (pdata->numStartVertices()+pdata->numGoalVertices())) {
                 std::cout<<"omplPlanner::drawPath - nothing to draw"<<std::endl;
                 return;
             }
 
 
             SbVec3f *goalVertices = new SbVec3f[goalStates->getStateCount()*_wkSpace->getNumRobots()];
-
             for (unsigned int i(0); i < goalStates->getStateCount(); ++i) {
                 omplState2smp(goalStates->getState(i)->as<ob::CompoundStateSpace::StateType>(),smp);
                 _wkSpace->moveRobotsTo(smp);
@@ -831,7 +828,7 @@ namespace Kautham {
             SbVec3f *vertices = new SbVec3f[pdata->numVertices()*_wkSpace->getNumRobots()];
             SbVec3f *startVertices = new SbVec3f[pdata->numStartVertices()*_wkSpace->getNumRobots()];
             SbVec3f *otherVertices = new SbVec3f[(pdata->numVertices()-pdata->numStartVertices()-
-                                                  goalStates->getStateCount())*_wkSpace->getNumRobots()];
+                                                  pdata->numGoalVertices())*_wkSpace->getNumRobots()];
 
             int32_t *coordIndices = new int32_t[3*pdata->numEdges()*_wkSpace->getNumRobots()];
             int32_t *edgeColorIndices = new int32_t[pdata->numEdges()*_wkSpace->getNumRobots()];
@@ -910,7 +907,7 @@ namespace Kautham {
 
             vertexProperty = new SoVertexProperty;
             vertexProperty->vertex.setValues(0,(pdata->numVertices()-pdata->numStartVertices()-
-                                             goalStates->getStateCount())*_wkSpace->getNumRobots(),otherVertices);
+                                             pdata->numGoalVertices())*_wkSpace->getNumRobots(),otherVertices);
             vertexProperty->orderedRGBA.setValue(SbColor(1,1,1).getPackedValue());
 
             SoPointSet *pointSet(new SoPointSet);
@@ -993,9 +990,7 @@ namespace Kautham {
             if (!_sceneCspace) return;
 
             //Delete whatever is already drawn
-            while (_sceneCspace->getNumChildren() > 0) {
-                _sceneCspace->removeChild(0);
-            }
+            _sceneCspace->removeAllChildren();
 
             //Get the subspace
             ob::StateSpacePtr stateSpace(space->as<ob::CompoundStateSpace>()->getSubspace(robot)->
@@ -1051,8 +1046,8 @@ namespace Kautham {
             //Draw tree
             ob::GoalStates *goalStates(dynamic_cast<ob::GoalStates*>
                                        (ss->getProblemDefinition()->getGoal().get()));
-            //nothing to draw
-            if (pdata->numVertices() < (pdata->numStartVertices()+goalStates->getStateCount())) {
+            //Nothing to draw
+            if (pdata->numVertices() < (pdata->numStartVertices()+pdata->numGoalVertices())) {
                 std::cout<<"omplPlanner::drawCspace - no tree to draw"<<std::endl;
                 return;
             }
@@ -1068,7 +1063,7 @@ namespace Kautham {
             SbVec3f *vertices = new SbVec3f[pdata->numVertices()];
             SbVec3f *startVertices = new SbVec3f[pdata->numStartVertices()];
             SbVec3f *otherVertices = new SbVec3f[pdata->numVertices()-
-                    pdata->numStartVertices()-goalStates->getStateCount()];
+                    pdata->numStartVertices()-pdata->numGoalVertices()];
             int32_t *coordIndices = new int32_t[3*pdata->numEdges()];
             int32_t *edgeColorIndices = new int32_t[pdata->numEdges()];
             unsigned int j(0), ls(0), lo(0);
@@ -1136,7 +1131,7 @@ namespace Kautham {
 
             vertexProperty = new SoVertexProperty;
             vertexProperty->vertex.setValues(0,pdata->numVertices()-pdata->numStartVertices()-
-                                             goalStates->getStateCount(),otherVertices);
+                                             pdata->numGoalVertices(),otherVertices);
             vertexProperty->orderedRGBA.setValue(SbColor(1,1,1).getPackedValue());
 
             SoPointSet *pointSet(new SoPointSet);
@@ -1448,7 +1443,7 @@ namespace Kautham {
                         smp->setMappedConf(_init.at(0)->getMappedConf());
 
                         //convert form state to smp
-                        omplState2smp(ss->getSolutionPath().getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
+                        omplState2smp(ss->getSolutionPath().getState(j)->as<ob::CompoundStateSpace::StateType>(),smp);
 
                         _path.push_back(smp);
                         _samples->add(smp);

@@ -16,6 +16,15 @@ if( SoQt_FOUND )
    add_definitions( ${SoQt_DEFINITIONS})
    include_directories( ${SoQt_INCLUDE_DIRS} )
 endif( SoQt_FOUND )
+#### Armadillo ######
+find_package( Armadillo REQUIRED)
+if( ARMADILLO_FOUND )
+   message( STATUS "armadillo Package FOUND")
+   add_definitions( -DKAUTHAM_USE_ARMADILLO )
+else( ARMADILLO_FOUND )
+   message( SEND_ERROR  "armadillo Package NOT FOUND. Bounding box button will not appear in the GUI.")
+endif( ARMADILLO_FOUND )
+
 # END Required packages for GUI
 ##############################################################################
 
