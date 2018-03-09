@@ -70,6 +70,8 @@
 #include <kautham/GetLastPlanComputationTime.h>
 #include <kautham/GetNumEdges.h>
 #include <kautham/GetNumVertices.h>
+#include <kautham/ObsPos.h>
+#include <kautham/FindIK.h>
 
 
 using namespace std;
@@ -175,12 +177,49 @@ bool srvCheckCollision(kautham::CheckCollision::Request &req,
     return true;
 }
 
+bool srvCheckCollisionRob(kautham::CheckCollision::Request &req,
+                                kautham::CheckCollision::Response &res) {
+
+    for (unsigned int i = 0; i < req.config.size(); ++i) {
+        cout << req.config.at(i) << " ";
+    }
+    cout << endl;
+
+    std::vector<unsigned> ObstColl;
+    res.response = ksh->checkCollisionRob(req.config,&ObstColl);
+    res.collObjs = ObstColl;
+
+    return true;
+}
+
+bool srvCheckCollisionObs(kautham::CheckCollision::Request &req,
+                                kautham::CheckCollision::Response &res) {
+
+    std::vector<unsigned> ObstColl;
+    std::string msg;
+    res.response = ksh->checkCollisionObs(req.index, &ObstColl, &msg);
+    res.collObjs = ObstColl;
+    res.msg = msg;
+//    res.collObj = colObj.first.second;
+
+    return true;
+}
 
 bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
                        kautham::SetRobotsConfig::Response &res) {
 
     res.response = ksh->setRobotsConfig(req.config);
 
+    return true;
+}
+
+
+bool srvFindIK(kautham::FindIK::Request &req,
+                       kautham::FindIK::Response &res) {
+
+    std::vector <float> solution;
+    res.response = ksh->findIK(req.robIndx, req.armType, req.pos, req.conf, req.maintSameWrist, &solution);
+    res.conf = solution;
     return true;
 }
 
@@ -468,6 +507,22 @@ bool srvGetNumVertices(kautham::GetNumVertices::Request &req,
     return true;
 }
 
+bool srvSetObstaclPos(kautham::ObsPos::Request &req,
+                            kautham::ObsPos::Response &res) {
+
+    res.response = ksh->setObstaclePos(req.index, req.setPos);
+
+    return true;
+}
+
+bool srvGetObstaclPos(kautham::ObsPos::Request &req,
+                            kautham::ObsPos::Response &res) {
+    (void) req;//unused
+    res.getPos = ksh->getObstaclePos(req.index);
+
+    return true;
+}
+
 int main (int argc, char **argv) {
     ros::init(argc, argv, "kautham_node");
     ros::NodeHandle n;
@@ -511,6 +566,13 @@ int main (int argc, char **argv) {
     ros::ServiceServer service31 = n.advertiseService("kautham_node/GetLastPlanComputationTime",srvGetLastPlanComputationTime);
     ros::ServiceServer service32 = n.advertiseService("kautham_node/GetNumEdges",srvGetNumEdges);
     ros::ServiceServer service33 = n.advertiseService("kautham_node/GetNumVertices",srvGetNumVertices);
+    ros::ServiceServer service34 = n.advertiseService("kautham_node/SetObstaclePos",srvSetObstaclPos);
+    ros::ServiceServer service35 = n.advertiseService("kautham_node/GetObstaclePos", srvGetObstaclPos);
+    ros::ServiceServer service36 = n.advertiseService("kautham_node/CheckCollisionObs",srvCheckCollisionObs);
+    ros::ServiceServer service37 = n.advertiseService("kautham_node/CheckCollisionRob",srvCheckCollisionRob);
+    ros::ServiceServer service38 = n.advertiseService("kautham_node/FindIK",srvFindIK);
+
+
 
     ros::spin();
 

@@ -136,7 +136,7 @@ bool IvKinYumi::solve(){
         desired_TCP_YumiFrame = *_robot->getLink(7)->getTransformation();
 
         // Test DK
-        YumiKinematics* yumiKinSolver;
+        YumiKinematics* yumiKinSolver = new YumiKinematics();
         Eigen::VectorXf q_dkTest(q_test);
         Eigen::Matrix4f dk_test_pose(mt_to_Eigen_pose(shoulder_YumiFrame) * yumiKinSolver->ForwardKinematics(q_dkTest));
         std::cout << "dk_test_pose desired_TCP_YumiFrame" << std::endl << dk_test_pose << std::endl;
@@ -161,7 +161,7 @@ bool IvKinYumi::solve(){
     }
 
     Eigen::VectorXf ikSolution(7);
-    YumiKinematics* yumiKinSolver;
+    YumiKinematics* yumiKinSolver = new YumiKinematics();
     bool ik_solved = yumiKinSolver->solveIK(mt_to_Eigen_pose(&desired_TCP_ShoulderFrame), init_q, 2, redundantJoint, ikSolution, false);
 
     // Final TCP pose

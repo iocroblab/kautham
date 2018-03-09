@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTCONNECT_TX90_RHAND_SIMPLE_TWOCAN">
+	<Robot robot="robots/TX90_RHand.dh" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.0" max="1.0" />
+		<Limits name="WX" min="0.0" max="1.0" />
+		<Limits name="WY" min="0.0" max="1.0" />
+		<Limits name="WZ" min="0.0" max="1.0" />
+		<Limits name="THETA" min="-3.1415926536" max="3.1415926536" />
+		<Home TH="3.1415926536" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.2301" X="-0.2005" />
+		<InvKinematic name="TX90" />
+	</Robot>
+	<Obstacle obstacle="obstacles/cangoal.wrl" scale="1.0">
+		<Home TH="1.5707963268" WZ="0.0" WY="0.0" WX="1.0" Z="0.56" Y="1.1" X="-0.47" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/can.wrl" scale="1.0">
+		<Home TH="1.5707963268" WZ="0.0" WY="0.0" WX="1.0" Z="0.56" Y="1.18" X="-0.35" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/transparenttable.iv" scale="0.001">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/irontable.iv" scale="0.001">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/TX90_6dof_RHand_5PMD.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="Max Planning Time">300.0</Parameter>
+			<Parameter name="Range">0.1</Parameter>
+			<Parameter name="Speed Factor">10</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="11">0.373 0.359 0.969 0.332 0.6 0.837 1.0 0.5 0 0.698 0.881</Init>
+				<Goal dim="11">0.271 0.597 0.81 0.477 0.304 0.688 0.285 0.589 0.302 0.892 0.529</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

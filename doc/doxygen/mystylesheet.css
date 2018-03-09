@@ -1,0 +1,47 @@
+body {
+        background-color: #CCC;
+        color: black;
+        margin: 0;
+}
+
+h1 { font-size:1.5em; }
+h2 { font-size:1.2em; }
+
+div.image img[src="simple_examples.png"]{ width:16cm; }
+div.image img[src="simple_examples2.png"]{ width:15cm; }
+div.image img[src="complex_examples.png"]{ width:15cm; }
+div.image img[src="visualizationWorkspace.png"]{ width:15cm; }
+div.image img[src="visualizationCspace.png"]{ width:15cm; }
+div.image img[src="visualizationCspace2.png"]{ width:15cm; }
+div.image img[src="TX90-mobilebase.png"]{ width:12cm; }
+div.image img[src="addParameters.png"]{ width:12cm; }
+div.image img[src="urdf_dynamic_info.png"]{ width:15cm; }
+div.image img[src="ode_planning.png"]{ width:15cm; }
+div.image img[src="benchmarking_launch.png"]{ width:12cm; }
+div.image img[src="benchmarking_results.png"]{ width:12cm; }
+div.image img[src="getting_started.png"]{ width:25cm; }
+div.image img[src="getting_started_2.png"]{ width:25cm; }
+div.image img[src="getting_started_3.png"]{ width:25cm; }
+
+
+div.contents {
+        margin-bottom: 10px;
+        padding: 12px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 960px;
+        background-color: white;
+        border-radius: 8px;
+}
+
+#titlearea {
+        background-color: #ABC;
+}
+
+hr.footer {
+        display: none;
+}
+
+.footer {
+        background-color: #AAA;
+}

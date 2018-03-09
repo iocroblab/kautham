@@ -222,19 +222,6 @@ namespace Kautham {
             _currentConf.setRn( numLinks - 1 );
 
             _weights = new RobWeight( numLinks - 1 );
-            //Set the SE3 weights for the distance computations, in case of mobile base
-            if (doc.child("Robot").child("WeightSE3")) {
-                KthReal tra = 1.;
-                KthReal rot = 1.;
-                xml_node tmp = doc.child("Robot").child("WeightSE3");
-                if( tmp.attribute("rho_t") )
-                    tra = (KthReal) tmp.attribute("rho_t").as_double();
-                if( tmp.attribute("rho_r") )
-                    rot = (KthReal) tmp.attribute("rho_r").as_double();
-                _weights->setSE3Weight(tra,rot);
-            } else {
-                _weights->setSE3Weight(1., 1.);
-            }
 
             xml_node linkNode = doc.child("Robot").child("Joints");
             KthReal* preTransP = NULL;
@@ -407,19 +394,6 @@ namespace Kautham {
             _currentConf.setRn(numLinks - 1);
 
             _weights = new RobWeight(numLinks - 1);
-            //Set the SE3 weights for the distance computations, in case of mobile base
-            if (doc.child("robot").child("WeightSE3")) {
-                KthReal tra = 1.;
-                KthReal rot = 1.;
-                xml_node tmp = doc.child("robot").child("WeightSE3");
-                if( tmp.attribute("rho_t") )
-                    tra = (KthReal) tmp.attribute("rho_t").as_double();
-                if( tmp.attribute("rho_r") )
-                    rot = (KthReal) tmp.attribute("rho_r").as_double();
-                _weights->setSE3Weight( tra, rot );
-            } else {
-                _weights->setSE3Weight(1., 1.);
-            }
 
             KthReal* preTransP;
             KthReal preTrans[7]= {0., 0., 0., 0., 0., 0., 0.};
@@ -564,7 +538,6 @@ namespace Kautham {
         _currentConf.setRn(0);
 
         _weights = new RobWeight(0);
-        _weights->setSE3Weight(1., 1.);
 
         if (progress != NULL) {
             pthread_mutex_lock(progress->mutex);

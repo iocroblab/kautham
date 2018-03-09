@@ -79,9 +79,9 @@ bool IvKinUR5::solve(){
 
     bool shoulder(true), elbow(true), wrist(true);
     if (_target.size() > 7){
-        shoulder = ! _target.at(7) == shoulder_left;
-        elbow =    ! _target.at(8) == elbow_up;
-        wrist =    ! _target.at(9) == wrist_in;
+        shoulder = ! (_target.at(7) == shoulder_left);
+        elbow =    ! (_target.at(8) == elbow_up);
+        wrist =    ! (_target.at(9) == wrist_in);
     }
 
 
@@ -167,6 +167,7 @@ bool IvKinUR5::solve(){
 
         double q_ik[6];
         int ik_err_code = UR5_inv_kin(ikTF, shoulder, wrist, elbow, q_ik);
+        std::cout << "ik_err_code = "<<ik_err_code;
 
         mt::Transform ikTF2 = UR5_dir_kin(q_ik);
 
