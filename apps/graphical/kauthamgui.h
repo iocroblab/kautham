@@ -31,7 +31,6 @@
 
 #include <string>
 
-#include <QtCore>
 #include <QtWidgets>
 #include <QFile>
 #include <QObject>
