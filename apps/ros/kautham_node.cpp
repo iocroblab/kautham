@@ -178,18 +178,31 @@ bool srvCheckCollision(kautham::CheckCollision::Request &req,
 }
 
 bool srvCheckCollisionRob(kautham::CheckCollision::Request &req,
-                                kautham::CheckCollision::Response &res) {
+                          kautham::CheckCollision::Response &res) {
+
+    //    for (unsigned int i = 0; i < req.config.size(); ++i) {
+    //        cout << req.config.at(i) << " ";
+    //    }
+    //    cout << endl;
+
+    //    std::vector<unsigned> ObstColl;
+    //    res.response = ksh->checkCollisionRob(req.config,&ObstColl);
+    //    res.collObjs = ObstColl;
+
+    //    return true;
+
 
     for (unsigned int i = 0; i < req.config.size(); ++i) {
         cout << req.config.at(i) << " ";
     }
     cout << endl;
-
-    std::vector<unsigned> ObstColl;
-    res.response = ksh->checkCollisionRob(req.config,&ObstColl);
-    res.collObjs = ObstColl;
-
+    std::pair< std::pair<int, int> , std::pair<int,int> > colliding_elements;
+    bool collisionFree;
+    res.response = ksh->checkCollision(req.config,&collisionFree, &colliding_elements);
+    res.collisionFree = res.response&&collisionFree;
+    res.collObj = colliding_elements.first.second;
     return true;
+
 }
 
 bool srvCheckCollisionObs(kautham::CheckCollision::Request &req,
