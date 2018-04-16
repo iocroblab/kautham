@@ -280,7 +280,6 @@ bool KauthamDEPlanner::trySolve(void)
                    pathD <<ps[0] << " ";
                    pathD <<ps[1] << " ";
                    pathD <<duration[i]<<std::endl;
-                   pathD.close();
 
 
                 //==============================================
@@ -302,6 +301,8 @@ bool KauthamDEPlanner::trySolve(void)
 
                 //std::cout<<std::endl;
             }
+            pathD.close();
+
         }
        drawCspace(0);
 
