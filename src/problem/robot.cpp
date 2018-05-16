@@ -428,6 +428,11 @@ namespace Kautham {
                     }
 
                     //Sets the limits of the joint
+                    if (robot.link[i].type == "continuous") {
+                        robot.link[i].type = "revolute";
+                        robot.link[i].limit.lower = -2*M_PI;
+                        robot.link[i].limit.upper = +2*M_PI;
+                    }
                     limMin = (KthReal)robot.link[i].limit.lower;
                     limMax = (KthReal)robot.link[i].limit.upper;
 

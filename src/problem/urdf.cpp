@@ -412,10 +412,10 @@ void urdf_robot::fill (xml_node *node, string dir) {
             material->diffuseColor.setValue(rgba[0],rgba[1],rgba[2]);
             material->transparency.setValue(1.0-rgba[3]);
 
-            materials.insert(pair<string,SoMaterial*>(name,material));
-
-            tmpNode = tmpNode.next_sibling("material");
+            materials.insert(pair<string,SoMaterial*>(name,material));            
         }
+
+        tmpNode = tmpNode.next_sibling("material");
     }
 
     unsigned int i;

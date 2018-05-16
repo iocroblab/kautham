@@ -1431,7 +1431,7 @@ namespace Kautham {
                         break;
                     }
 
-                    ss->getSolutionPath().interpolate();
+                    //ss->getSolutionPath().interpolate();
 
                     _path.clear();
                     clearSimulationPath();
