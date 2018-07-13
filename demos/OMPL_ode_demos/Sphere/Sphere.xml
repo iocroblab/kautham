@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<Problem name="Knowledge_Oriented_KPIECE_2D_Planning">
+	<Robot robot="robots/OpenDERobots/SphereDE.urdf" scale="25">
+		<Limits name="X" min="-5.0" max="5.0" />
+		<Limits name="Y" min="-5.0" max="5.0" />
+		<Limits name="Z" min="-1" max="2.0" />
+		<Home X="10.0" Y="10.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
+	</Robot>
+	<Obstacle obstacle="obstacles/cubeDE1.urdf" scale="1">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.5" Y="0.3" X="0.3" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/cubeDE2.urdf" scale="1">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.5" Y="0.0" X="1.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/cubeDE3.urdf" scale="1">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.5" Y="-0.3" X="-0.3" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/cubeDE4.urdf" scale="1">
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.5" Y="0.0" X="-1.0" />
+	</Obstacle>
+	
+	<Obstacle obstacle="obstacles/wallb1.urdf" scale="1">
+		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="4.8" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/wallb2.urdf" scale="1">
+		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="-4.8" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/wallb3.urdf" scale="1">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="4.8" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/wallb4.urdf" scale="1">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="-4.8" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/sp3.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>KnowledgeOrientedKPIECE2DPlanner</Name>
+			<Parameter name="Constraint Force Mixing">0.3000000119</Parameter>
+			<Parameter name="Control Dimensions">2</Parameter>
+			<Parameter name="Error Reduction Parameter">0.5</Parameter>
+			<Parameter name="Goal Bias">0.6</Parameter>
+			<Parameter name="Max Contacts">3</Parameter>
+			<Parameter name="Max Control Steps">30</Parameter>
+			<Parameter name="Max Planning Time">150</Parameter>
+			<Parameter name="Max Speed">10</Parameter>
+			<Parameter name="Min Control Steps">2</Parameter>
+			<Parameter name="PropagationStepSize">0.02999999933</Parameter>
+			<Parameter name="Speed Factor">4</Parameter>
+			<Parameter name="only final link position?">0</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init dim="3">0.544 0.433 0.4</Init>
+				<Goal dim="3">0.426 0.578 0.4</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
