@@ -258,20 +258,31 @@ bool KauthamDEPlanner::trySolve(void)
 
             final=ss->getSolutionPath().getStates().back();
             std::cout<<"===============   Query Numer  "<<(l+1)<<"  =============== "<<std::endl;
-            std::cout<<"Actions is:  "<<Action<<std::endl;
-            std::cout<<"Smoothness is:  "<<Smoothness<<std::endl;
-            std::cout<<"Power Consumed is:  "<<PowerConsumed<<std::endl;
+            //std::cout<<"Actions is:  "<<Action<<std::endl;
+            //std::cout<<"Smoothness is:  "<<Smoothness<<std::endl;
+            //std::cout<<"Power Consumed is:  "<<PowerConsumed<<std::endl;
             std::cout<<"Generated Solution states are  :  "<<states.size()<<std::endl;
             std::cout<<"Generated Solution controls are:  "<<control.size()<<std::endl;
             std::cout<<"Solution control durations  are:  "<<duration.size()<<std::endl;
-            std::cout<<"last rob state is " <<final->getBodyPosition(0)[0] << " " << final->getBodyPosition(0)[1] << std::endl;
+            //std::cout<<"last rob state is " <<final->getBodyPosition(0)[0] << " " << final->getBodyPosition(0)[1] << std::endl;
 
             lastState.push_back(final->getBodyPosition(0)[0]);
             lastState.push_back(final->getBodyPosition(0)[1]);
-
+            std::ofstream pathD ("Path.txt", std::ios::out | std::ios::app);
             for(unsigned int i=0;i<states.size()-1;i++)
             {
                 //std::cout<<"Duration is "<< duration[i]<<std::endl;
+
+                //==============================================
+                //Temperarly changes
+                const double *ps = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
+
+                   pathD <<ps[0] << " ";
+                   pathD <<ps[1] << " ";
+                   pathD <<duration[i]<<std::endl;
+
+
+                //==============================================
                 State tmpstate;
                 Robsmp=new Sample(_wkSpace->getNumRobControls());
 
@@ -290,6 +301,8 @@ bool KauthamDEPlanner::trySolve(void)
 
                 //std::cout<<std::endl;
             }
+            pathD.close();
+
         }
        drawCspace(0);
 
