@@ -147,7 +147,7 @@ public:
     double velocity;//!< Enforces the maximum joint velocity, defaults to zero
 
     urdf_limit ();//!< Class constructor
-    void fill (xml_node *node);//!< Fills variables given a limit node
+    void fill(const xml_node &limits_node, const xml_node &soft_node);//!< Fills variables given a limit and sfety_controller nodes
 };
 
 //! Class that describes a link

@@ -149,6 +149,41 @@ namespace Kautham {
         return false;
     }
 
+    double kauthamshell::cumDistCheck(std::vector<float> smpcoords) {
+        Sample *smp = NULL;
+        double value;
+
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+            if (smpcoords.size() != problem->wSpace()->getNumRobControls()) {
+                cout << "Sample has dimension " << smpcoords.size() << " and should have dimension "
+                     << problem->wSpace()->getNumRobControls() << endl;
+                return false;
+            }
+            smp = new Sample(problem->wSpace()->getNumRobControls());
+
+            value = problem->wSpace()->cumDistanceCheck(smp);
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        delete smp;
+
+        return value;
+    }
+
+
     bool kauthamshell::checkCollisionRob(std::vector<float> smpcoords, std::vector<unsigned> *ObstColl) {
         Sample *smp = NULL;
 
@@ -210,14 +245,14 @@ namespace Kautham {
 
 
             bool collisionFree;
-                collisionFree = !problem->wSpace()->collisionCheckObs(index, collObs, msg);
-                if(!collisionFree) {
-                    std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;
-                    return collisionFree;
-                } else {
-                    std::cout<<"Response for collision checking service is: "<<msg<<std::endl;
-                }
+            collisionFree = !problem->wSpace()->collisionCheckObs(index, collObs, msg);
+            if(!collisionFree) {
+                std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;
                 return collisionFree;
+            } else {
+                std::cout<<"Response for collision checking service is: "<<msg<<std::endl;
+            }
+            return collisionFree;
 
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
@@ -263,9 +298,9 @@ namespace Kautham {
                     float x,y,z;
                     string obsname = (*it).obs->getName();
 
-                    x = (*it).obs->getCurrentPos()->getSE3().getPos()[0];
-                    y = (*it).obs->getCurrentPos()->getSE3().getPos()[1];
-                    z = (*it).obs->getCurrentPos()->getSE3().getPos()[2];
+                    x = (*it).obs->getLink(0)->getElement()->getPosition()[0];
+                    y = (*it).obs->getLink(0)->getElement()->getPosition()[1];
+                    z = (*it).obs->getLink(0)->getElement()->getPosition()[2];
                     std::cout<<"Object "<<obsname<<" is at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
                 }
                 //EUROC
@@ -797,28 +832,28 @@ namespace Kautham {
             if (planner) {
                 switch ((int)planner->getFamily()) {
 #if defined(KAUTHAM_USE_IOC)
-                    case IOCPLANNER:
-                        cout << "This function is not implemeted yet for this planner family" << endl;
+                case IOCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
                     break;
 #endif
 #if defined(KAUTHAM_USE_OMPL)
-                    case OMPLPLANNER:
+                case OMPLPLANNER:
                     return ((omplplanner::omplPlanner*)planner)->SimpleSetup()->getLastPlanComputationTime();
                     break;
-                    case OMPLCPLANNER:
-                        cout << "This function is not implemeted yet for this planner family" << endl;
+                case OMPLCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
                     break;
 #if defined(KAUTHAM_USE_ODE)
-                    case ODEPLANNER:
-                        cout << "This function is not implemeted yet for this planner family" << endl;
+                case ODEPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
                     break;
 #endif
 #endif
-                    case NOFAMILY:
-                        cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                case NOFAMILY:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
                     break;
-                    default:
-                        cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                default:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
                     break;
                 }
             } else {
@@ -850,32 +885,32 @@ namespace Kautham {
             if (planner) {
                 switch ((int)planner->getFamily()) {
 #if defined(KAUTHAM_USE_IOC)
-                    case IOCPLANNER:
-                        cout << "This function is not implemeted yet for this planner family" << endl;
+                case IOCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
                     break;
 #endif
 #if defined(KAUTHAM_USE_OMPL)
-                    case OMPLPLANNER: {
-                        ob::PlannerDataPtr pdata;
-                        pdata = ((ob::PlannerDataPtr) new ob::PlannerData(((omplplanner::omplPlanner*)planner)->ss->getSpaceInformation()));
-                        ((omplplanner::omplPlanner*)planner)->ss->getPlanner()->getPlannerData(*pdata);
-                        return pdata->numEdges();
-                        break;
-                    }
-                    case OMPLCPLANNER:
-                        cout << "This function is not implemeted yet for this planner family" << endl;
+                case OMPLPLANNER: {
+                    ob::PlannerDataPtr pdata;
+                    pdata = ((ob::PlannerDataPtr) new ob::PlannerData(((omplplanner::omplPlanner*)planner)->ss->getSpaceInformation()));
+                    ((omplplanner::omplPlanner*)planner)->ss->getPlanner()->getPlannerData(*pdata);
+                    return pdata->numEdges();
+                    break;
+                }
+                case OMPLCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
                     break;
 #if defined(KAUTHAM_USE_ODE)
-                    case ODEPLANNER:
-                        cout << "This function is not implemeted yet for this planner family" << endl;
+                case ODEPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
                     break;
 #endif
 #endif
-                    case NOFAMILY:
-                        cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                case NOFAMILY:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
                     break;
-                    default:
-                        cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                default:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
                     break;
                 }
             } else {
@@ -907,32 +942,32 @@ namespace Kautham {
             if (planner) {
                 switch ((int)planner->getFamily()) {
 #if defined(KAUTHAM_USE_IOC)
-                    case IOCPLANNER:
-                        cout << "This function is not implemeted yet for this planner family" << endl;
+                case IOCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
                     break;
 #endif
 #if defined(KAUTHAM_USE_OMPL)
-                    case OMPLPLANNER: {
-                        ob::PlannerDataPtr pdata;
-                        pdata = ((ob::PlannerDataPtr) new ob::PlannerData(((omplplanner::omplPlanner*)planner)->ss->getSpaceInformation()));
-                        ((omplplanner::omplPlanner*)planner)->ss->getPlanner()->getPlannerData(*pdata);
-                        return pdata->numVertices();
-                        break;
-                    }
-                    case OMPLCPLANNER:
-                        cout << "This function is not implemeted yet for this planner family" << endl;
+                case OMPLPLANNER: {
+                    ob::PlannerDataPtr pdata;
+                    pdata = ((ob::PlannerDataPtr) new ob::PlannerData(((omplplanner::omplPlanner*)planner)->ss->getSpaceInformation()));
+                    ((omplplanner::omplPlanner*)planner)->ss->getPlanner()->getPlannerData(*pdata);
+                    return pdata->numVertices();
+                    break;
+                }
+                case OMPLCPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
                     break;
 #if defined(KAUTHAM_USE_ODE)
-                    case ODEPLANNER:
-                        cout << "This function is not implemeted yet for this planner family" << endl;
+                case ODEPLANNER:
+                    cout << "This function is not implemeted yet for this planner family" << endl;
                     break;
 #endif
 #endif
-                    case NOFAMILY:
-                        cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                case NOFAMILY:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
                     break;
-                    default:
-                        cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                default:
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
                     break;
                 }
             } else {
@@ -975,52 +1010,52 @@ namespace Kautham {
 
                 switch ((int)planner->getFamily()) {
 #if defined(KAUTHAM_USE_IOC)
-                    case IOCPLANNER: {
-                        cout << "Not implemented for IOC planners" << endl;
-                        break;
-                    }
+                case IOCPLANNER: {
+                    cout << "Not implemented for IOC planners" << endl;
+                    break;
+                }
 #endif
 #if defined(KAUTHAM_USE_OMPL)
-                    case OMPLPLANNER: {
-                        ((omplplanner::omplPlanner*)planner)->SimpleSetup()->setup();
+                case OMPLPLANNER: {
+                    ((omplplanner::omplPlanner*)planner)->SimpleSetup()->setup();
 
-                        ob::ScopedState<ob::CompoundStateSpace> fromState(((omplplanner::omplPlanner*)planner)->getSpace());
-                        ((omplplanner::omplPlanner*)planner)->smp2omplScopedState(fromSample,&fromState);
+                    ob::ScopedState<ob::CompoundStateSpace> fromState(((omplplanner::omplPlanner*)planner)->getSpace());
+                    ((omplplanner::omplPlanner*)planner)->smp2omplScopedState(fromSample,&fromState);
 
-                        ob::ScopedState<ob::CompoundStateSpace> toState(((omplplanner::omplPlanner*)planner)->getSpace());
-                        ((omplplanner::omplPlanner*)planner)->smp2omplScopedState(toSample,&toState);
+                    ob::ScopedState<ob::CompoundStateSpace> toState(((omplplanner::omplPlanner*)planner)->getSpace());
+                    ((omplplanner::omplPlanner*)planner)->smp2omplScopedState(toSample,&toState);
 
-                        bool connected = ((ob::MotionValidator*)((ob::SpaceInformation*)((omplplanner::omplPlanner*)
-                                                                                         planner)->
-                                                                 SimpleSetup()->getSpaceInformation().get())->
-                                          getMotionValidator().get())->checkMotion(fromState.get(),toState.get());
-                        if (connected) {
-                            cout << "The samples can be connected." << endl;
-                            return true;
-                        } else {
-                            cout << "The samples can not be connected." << endl;
-                        }
-                        break;
+                    bool connected = ((ob::MotionValidator*)((ob::SpaceInformation*)((omplplanner::omplPlanner*)
+                                                                                     planner)->
+                                                             SimpleSetup()->getSpaceInformation().get())->
+                                      getMotionValidator().get())->checkMotion(fromState.get(),toState.get());
+                    if (connected) {
+                        cout << "The samples can be connected." << endl;
+                        return true;
+                    } else {
+                        cout << "The samples can not be connected." << endl;
                     }
-                    case OMPLCPLANNER: {
-                        cout << "This function is not implemeted yet for this planner family" << endl;
-                        break;
-                    }
+                    break;
+                }
+                case OMPLCPLANNER: {
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+                }
 #if defined(KAUTHAM_USE_ODE)
-                    case ODEPLANNER: {
-                        cout << "This function is not implemeted yet for this planner family" << endl;
-                        break;
-                    }
+                case ODEPLANNER: {
+                    cout << "This function is not implemeted yet for this planner family" << endl;
+                    break;
+                }
 #endif
 #endif
-                    case NOFAMILY: {
-                        cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
-                        break;
-                    }
-                    default: {
-                        cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
-                        break;
-                    }
+                case NOFAMILY: {
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                    break;
+                }
+                default: {
+                    cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
+                    break;
+                }
                 }
             } else {
                 cout << "The planner is not configured properly!!. Something is wrong with your application." << endl;
@@ -1228,11 +1263,24 @@ namespace Kautham {
             }
 
             Problem *const problem = (Problem*)memPtr_;
-            bool ret = problem->wSpace()->attachObstacle2RobotLink(robot,link,obs);
+
+            std::cout << "Attaching obstacle " << obs << " (" << problem->wSpace()->getObstacle(obs)->getName()
+                      << ") to link " << link << " (" << problem->wSpace()->getRobot(robot)->getLink(link)->getName()
+                      << ") of robot " << robot << " (" << problem->wSpace()->getRobot(robot)->getName()
+                      << ")." << std::endl;
+
             float x,y,z;
-            x = problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[0];
-            y = problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[1];
-            z = problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[2];
+            x = problem->wSpace()->getObstacle(obs)->getLink(0)->getElement()->getPosition()[0];
+            y = problem->wSpace()->getObstacle(obs)->getLink(0)->getElement()->getPosition()[1];
+            z = problem->wSpace()->getObstacle(obs)->getLink(0)->getElement()->getPosition()[2];
+            std::cout<<"Object "<<obs<<" at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+
+
+
+            bool ret = problem->wSpace()->attachObstacle2RobotLink(robot,link,obs);
+            x = problem->wSpace()->getObstacle(obs)->getLink(0)->getElement()->getPosition()[0];
+            y = problem->wSpace()->getObstacle(obs)->getLink(0)->getElement()->getPosition()[1];
+            z = problem->wSpace()->getObstacle(obs)->getLink(0)->getElement()->getPosition()[2];
             std::cout<<"Object "<<obs<<" attached at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
             if (ret) {
                 std::cout<<"attachfunction returned TRUE\n";
@@ -1264,9 +1312,9 @@ namespace Kautham {
             Problem *const problem = (Problem*)memPtr_;
             bool ret = problem->wSpace()->detachObstacle(obs);
             float x,y,z;
-            x = problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[0];
-            y = problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[1];
-            z = problem->wSpace()->getObstacle(obs)->getCurrentPos()->getSE3().getPos()[2];
+            x = problem->wSpace()->getObstacle(obs)->getLink(0)->getElement()->getPosition()[0];
+            y = problem->wSpace()->getObstacle(obs)->getLink(0)->getElement()->getPosition()[1];
+            z = problem->wSpace()->getObstacle(obs)->getLink(0)->getElement()->getPosition()[2];
             std::cout<<"Object "<<obs<<" detached at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
 
             if (ret) {
@@ -1275,6 +1323,60 @@ namespace Kautham {
                 std::cout<<"detachfunction returned FALSE\n";
             }
             return (ret);
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return false;
+    }
+
+
+    bool kauthamshell::setInterpolatePath(bool interpolate) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+
+            if (problem->getPlanner()->getFamily() == OMPLPLANNER) {
+                ((omplplanner::omplPlanner*)problem->getPlanner())->setInterpolate(interpolate);
+                    return true;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return false;
+    }
+
+    bool kauthamshell::getInterpolatePath(bool &interpolate) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+
+            if (problem->getPlanner()->getFamily() == OMPLPLANNER) {
+                interpolate = ((omplplanner::omplPlanner*)problem->getPlanner())->getInterpolate();
+
+                return true;
+            }
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
         } catch (const exception& excp) {
@@ -1375,7 +1477,7 @@ namespace Kautham {
 
                     for (unsigned j = 0; j <  RnDim; j++) {
                         if((j != 6) && (j != 7) && (j != 12) && (j != 17) && (j != 22) && (j != 27))
-                        sh << robotConfiguration.getRn().getCoordinates().at(j) << " ";
+                            sh << robotConfiguration.getRn().getCoordinates().at(j) << " ";
                     }
 
 
@@ -1473,6 +1575,12 @@ namespace Kautham {
             problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->setPosition(coord);
             problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->setOrientation(ort);
 
+            float x,y,z;
+            x = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[0];
+            y = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[1];
+            z = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[2];
+            std::cout<<"Object "<<index<<" at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+
             return true;
 
         } catch (const KthExcp& excp) {
@@ -1562,7 +1670,7 @@ namespace Kautham {
                  << "problem with the Kautham2 application at less once in order "
                  << "to verify the correctness of the problem formulation.\n";
         }
-         return ret;
+        return ret;
     }
 
 }

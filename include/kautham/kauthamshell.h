@@ -61,6 +61,8 @@ namespace Kautham {
         bool setPlannerParameter(std::string parameter, std::string value);
         bool solve(std::ostream &graphVizPlannerDataFile);
         bool getPath(std::ostream &path);
+        bool setInterpolatePath(bool interpolate);
+        bool getInterpolatePath(bool &interpolate);
         bool solve();
         double getLastPlanComputationTime();
         int getNumEdges();
@@ -73,6 +75,7 @@ namespace Kautham {
         bool removeObstacle(unsigned index);
         bool attachObstacle2RobotLink(int robot, int link, int obs);
         bool detachObstacle(unsigned int obs);
+        double cumDistCheck(std::vector<float> smpcoords);
 	
     bool motionPlanner(std::vector <float> init, std::vector <float> goal, std::string root);
 

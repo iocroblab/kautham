@@ -273,15 +273,17 @@ urdf_limit::urdf_limit () {
     velocity = 0.;
 }
 
-void urdf_limit::fill (xml_node *node) {
-    if (node->attribute("lower")) {
-        lower = node->attribute("lower").as_double();
+void urdf_limit::fill (const xml_node &limits_node, const xml_node &soft_node) {
+    if (soft_node) {
+        lower = soft_node.attribute("soft_lower_limit").as_double();
+        upper = soft_node.attribute("soft_upper_limit").as_double();
+    } else {
+        lower = limits_node.attribute("lower").as_double();
+        upper = limits_node.attribute("upper").as_double();
     }
-    if (node->attribute("upper")) {
-        upper = node->attribute("upper").as_double();
-    }
-    effort = node->attribute("effort").as_double();
-    velocity = node->attribute("velocity").as_double();
+
+    effort = limits_node.attribute("effort").as_double();
+    velocity = limits_node.attribute("velocity").as_double();
 }
 
 urdf_link::urdf_link () {
@@ -358,8 +360,7 @@ void urdf_link::fill (xml_node *node, string dir, map<string, SoMaterial *> *mat
             tmpNode = node->child("dynamics");
             dynamics.fill(&tmpNode);
         }
-        tmpNode = node->child("limit");
-        limit.fill(&tmpNode);
+        limit.fill(node->child("limit"),node->child("safety_controller"));
     } else {
         //link is robot's base
         //origin, parent, axis, dynamics and limit need to be filled in another way
