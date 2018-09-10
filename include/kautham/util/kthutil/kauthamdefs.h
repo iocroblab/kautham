@@ -39,7 +39,10 @@
 #include <vector>
 #include <map>
 
-
+#ifdef KAUTHAM_USE_OMPL
+#include <ompl/config.h>
+#include <Eigen/Core>
+#endif //KAUTHAM_USE_OMPL
 
 using namespace std;
 
@@ -117,6 +120,15 @@ namespace Kautham {
   typedef std::map<std::string, KthReal> HASH_S_K;
   typedef std::map<std::string, std::string> HASH_S_S;
 
+#ifdef KAUTHAM_USE_OMPL
+#if OMPL_VERSION_VALUE >= 1004000 //1.4.0
+  typedef Eigen::VectorXd Vector;
+  typedef Eigen::Ref<Eigen::VectorXd> VectorRef;
+#else
+  typedef ompl::base::EuclideanProjection Vector;
+  typedef ompl::base::EuclideanProjection &VectorRef;
+#endif //OMPL_VERSION_VALUE
+#endif //KAUTHAM_USE_OMPL
 	
    //! Structure  that save the object position and orientation in the WSpace.
    /*! This structure save  temporarily the most important information about
