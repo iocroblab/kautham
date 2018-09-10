@@ -503,7 +503,7 @@ void KUKAStateProjectionEvaluator :: defaultCellSizes(void)
     cellSizes_[2] = 0.001;
 }
 
-void KUKAStateProjectionEvaluator::project(const ob::State *state, ob::EuclideanProjection &projection) const
+void KUKAStateProjectionEvaluator::project(const ob::State *state, Kautham::VectorRef projection) const
 {
 
     const double *pos = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(8);

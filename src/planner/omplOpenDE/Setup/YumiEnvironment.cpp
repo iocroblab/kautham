@@ -566,7 +566,7 @@ void YumiStateProjectionEvaluator :: defaultCellSizes(void)
     }
 }
 
-void YumiStateProjectionEvaluator::project(const ob::State *state, ob::EuclideanProjection &projection) const
+void YumiStateProjectionEvaluator::project(const ob::State *state, Kautham::VectorRef projection) const
 {
 
     std::vector<unsigned int> index;
