@@ -132,7 +132,7 @@ namespace Kautham {
         }
 
         void omplFOSBKPIECE1Planner::Projection::project(const ompl::base::State *state,
-                                                         ompl::base::EuclideanProjection &projection) const {
+                                                         Kautham::VectorRef projection) const {
             arma::vec q;
             omplState2armaVec(state,q);
 
@@ -145,8 +145,7 @@ namespace Kautham {
                 c[i] = std::min(std::max(c[i],0.),1.);
             }
 
-            if (projection.size() != getDimension()) projection.resize(getDimension(),false);
-            for (unsigned int i = 0; i < projection.size(); ++i) {
+            for (unsigned int i = 0; i < getDimension(); ++i) {
                 projection(i) = c[i];
             }
         }

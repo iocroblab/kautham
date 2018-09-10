@@ -249,14 +249,24 @@ void ompl::geometric::FOSLBKPIECE1::setup() {
     dGoal_.setDimension(projectionEvaluator_->getDimension());
     if (projectionEvaluator_->hasBounds()) {
         Discretization<Motion>::Coord low, high;
-        ompl::base::EuclideanProjection tmp(projectionEvaluator_->getDimension());
+        Kautham::Vector tmp(projectionEvaluator_->getDimension());
 
+#if OMPL_VERSION_VALUE >= 1004000 //1.4.0
+        std::copy(projectionEvaluator_->getBounds().low.begin(),
+                  projectionEvaluator_->getBounds().low.end(),tmp.data());
+#else
         std::copy(projectionEvaluator_->getBounds().low.begin(),
                   projectionEvaluator_->getBounds().low.end(),tmp.begin());
+#endif
         projectionEvaluator_->computeCoordinates(tmp,low);
 
+#if OMPL_VERSION_VALUE >= 1004000 //1.4.0
+        std::copy(projectionEvaluator_->getBounds().high.begin(),
+                  projectionEvaluator_->getBounds().high.end(),tmp.data());
+#else
         std::copy(projectionEvaluator_->getBounds().high.begin(),
                   projectionEvaluator_->getBounds().high.end(),tmp.begin());
+#endif
         projectionEvaluator_->computeCoordinates(tmp,high);
 
         dStart_.setBounds(low,high);
