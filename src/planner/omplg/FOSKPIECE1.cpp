@@ -243,27 +243,25 @@ void ompl::geometric::FOSKPIECE1::setup() {
     disc_.setDimension(projectionEvaluator_->getDimension());
     if (projectionEvaluator_->hasBounds()) {
         Discretization<Motion>::Coord low, high;
-        ompl::base::EuclideanProjection tmp(projectionEvaluator_->getDimension());
+        Kautham::Vector tmp(projectionEvaluator_->getDimension());
 
+#if OMPL_VERSION_VALUE >= 1004000 //1.4.0
+        std::copy(projectionEvaluator_->getBounds().low.begin(),
+                  projectionEvaluator_->getBounds().low.end(),tmp.data());
+#else
         std::copy(projectionEvaluator_->getBounds().low.begin(),
                   projectionEvaluator_->getBounds().low.end(),tmp.begin());
+#endif
         projectionEvaluator_->computeCoordinates(tmp,low);
-        //        std::cout << "Low Coord: ";
-        //        std::copy(low.begin(),low.end(),std::ostream_iterator<int>(std::cout, " "));
-        //        std::cout << std::endl;
-        //        std::cout << "Low Proj: ";
-        //        std::copy(tmp.begin(),tmp.end(),std::ostream_iterator<int>(std::cout, " "));
-        //        std::cout << std::endl;
 
+#if OMPL_VERSION_VALUE >= 1004000 //1.4.0
+        std::copy(projectionEvaluator_->getBounds().high.begin(),
+                  projectionEvaluator_->getBounds().high.end(),tmp.data());
+#else
         std::copy(projectionEvaluator_->getBounds().high.begin(),
                   projectionEvaluator_->getBounds().high.end(),tmp.begin());
+#endif
         projectionEvaluator_->computeCoordinates(tmp,high);
-        //        std::cout << "High Coord: ";
-        //        std::copy(high.begin(),high.end(),std::ostream_iterator<int>(std::cout, " "));
-        //        std::cout << std::endl;
-        //        std::cout << "High Proj: ";
-        //        std::copy(tmp.begin(),tmp.end(),std::ostream_iterator<int>(std::cout, " "));
-        //        std::cout << std::endl;
 
         disc_.setBounds(low,high);
     }
