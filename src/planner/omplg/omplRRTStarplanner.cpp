@@ -189,7 +189,11 @@ namespace Kautham {
 
                 OMPL_INFORM("%s: Starting with %u states", getName().c_str(), nn_->size());
 
+#if OMPL_VERSION_VALUE >= 1004000 //1.4.0
+                Motion *solution       = bestGoalMotion_;
+#else
                 Motion *solution       = lastGoalMotion_;
+#endif
 
                 // \TODO Make this variable unnecessary, or at least have it
                 // persist across solve runs
@@ -728,7 +732,11 @@ namespace Kautham {
                 if (approximate)
                     solution = approximation;
                 else
+#if OMPL_VERSION_VALUE >= 1004000 //1.4.0
+                    bestGoalMotion_ = solution;
+#else
                     lastGoalMotion_ = solution;
+#endif
 
                 if (solution != 0)
                 {
