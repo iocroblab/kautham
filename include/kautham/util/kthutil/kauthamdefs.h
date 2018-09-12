@@ -41,7 +41,11 @@
 
 #ifdef KAUTHAM_USE_OMPL
 #include <ompl/config.h>
+#if OMPL_VERSION_VALUE >= 1004000 //1.4.0
 #include <Eigen/Core>
+#else
+#include <ompl/base/ProjectionEvaluator.h>
+#endif //OMPL_VERSION_VALUE
 #endif //KAUTHAM_USE_OMPL
 
 using namespace std;
