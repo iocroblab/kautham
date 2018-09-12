@@ -34,6 +34,8 @@
 #include <ompl/base/ProjectionEvaluator.h>
 #include <ompl/base/Path.h>
 #include <kautham/util/kthutil/kauthamdefs.h>
+#include <Eigen/Core>
+
 
 namespace ob = ompl::base;
 
