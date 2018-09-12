@@ -18,12 +18,8 @@ if( KAUTHAM_OMPL )
     #### OMPL package ###############
 
    if( OMPL_FOUND )
-      message( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_OMPL flag")
-      message( STATUS "OMPL lib is: " ${OMPL_LIBRARIES})
-      message( STATUS "OMPL include is: " ${OMPL_INCLUDE_DIRS})
       include_directories( OMPL_INCLUDE_DIRS )
       set ( PLANNER_EXTRA_LIBS ${OMPL_LIBRARIES} )
-      message( STATUS "OMPL VERSION is: " ${OMPL_VERSION})
       message( STATUS "Adding OMPL subdirectories")
 
       file( GLOB SRC_OMPLG_FILES omplg/*.cpp )
@@ -38,7 +34,6 @@ if( KAUTHAM_OMPL )
             find_package(GLUT)
             find_package(OpenGL)
 
-            message( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_ODE flag")
             add_definitions(-DKAUTHAM_USE_ODE)
             include_directories( ${OPENDE_INCLUDE} ${DRAWSTUFF_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${GLUT_INCLUDE_DIR} )
             set ( PLANNER_EXTRA_LIBS ${PLANNER_EXTRA_LIBS} ${ODE_LIBRARY}  )
