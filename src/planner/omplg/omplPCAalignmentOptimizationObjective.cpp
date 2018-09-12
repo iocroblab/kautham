@@ -62,8 +62,14 @@ namespace Kautham {
           worientation = 1.0;
           epsilon = 0.1;
 
+#if OMPL_VERSION_VALUE >= 1004000 //1.4.0
           numDOF = M.mat.rows();//rows
           numPMD = M.mat.cols();//columns
+#else
+          numDOF = M.mat.size1();//rows
+          numPMD = M.mat.size2();//columns
+#endif
+
           lambda.resize(numPMD);
           PMD.mat.resize(numDOF,numPMD);
           setPCAdata(M);
