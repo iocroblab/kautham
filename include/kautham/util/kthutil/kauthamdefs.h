@@ -44,7 +44,9 @@
 #if OMPL_VERSION_VALUE >= 1004000 //1.4.0
 #include <Eigen/Core>
 #else
+#ifndef Q_MOC_RUN //moc problems
 #include <ompl/base/ProjectionEvaluator.h>
+#endif
 #endif //OMPL_VERSION_VALUE
 #endif //KAUTHAM_USE_OMPL
 
