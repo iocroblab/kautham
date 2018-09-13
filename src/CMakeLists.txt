@@ -151,12 +151,6 @@ set(KAUTHAM_DIRNAME_include "${CMAKE_INSTALL_PREFIX}/include/kautham")
 # Headers install
 install(FILES ${KAUTHAM_HDRS} DESTINATION include/kautham)
 
-install(TARGETS ${KAUTHAM_TARGETS} EXPORT KAUTHAMExports
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}   
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}   
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include/kautham)
-
 configure_package_config_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/kauthamConfig.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/kauthamConfig.cmake"   
@@ -169,9 +163,6 @@ write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/kauthamConfigVersion.cmake"
   VERSION ${KAUTHAM_VERSION}
   COMPATIBILITY AnyNewerVersion)
-
-#install( EXPORT KAUTHAMExports
-#         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/kautham)
 
 install( FILES ${CMAKE_CURRENT_BINARY_DIR}/kauthamConfig.cmake
        ${CMAKE_CURRENT_BINARY_DIR}/kauthamConfigVersion.cmake 
