@@ -199,7 +199,7 @@ void CarStateProjectionEvaluator :: defaultCellSizes(void)
 
 }
 
-void CarStateProjectionEvaluator::project(const ob::State *state, ob::EuclideanProjection &projection) const
+void CarStateProjectionEvaluator::project(const ob::State *state, Kautham::VectorRef projection) const
 {
 
     const dReal *pos = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
