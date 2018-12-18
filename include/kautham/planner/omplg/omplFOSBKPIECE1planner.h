@@ -59,8 +59,7 @@ namespace Kautham {
 
                 virtual void defaultCellSizes();
 
-                virtual void project(const ompl::base::State *state,
-                                     ompl::base::EuclideanProjection &projection) const;
+                virtual void project(const ob::State *state, Kautham::VectorRef projection) const;
 
             protected:
                 void omplState2armaVec(const ompl::base::State *s, arma::vec &q) const;

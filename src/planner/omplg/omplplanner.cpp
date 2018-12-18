@@ -1029,7 +1029,7 @@ namespace Kautham {
             string projectionName("drawprojection" + static_cast<ostringstream*>
                                   (&(ostringstream() << robot))->str());
             ob::ProjectionEvaluatorPtr projection(space->getProjection(projectionName));
-            ob::EuclideanProjection state(k);
+            Kautham::Vector state(k);
 
             //Load the planner data to be drawn
             ob::PlannerDataPtr pdata(new ob::PlannerData(ss->getSpaceInformation()));
