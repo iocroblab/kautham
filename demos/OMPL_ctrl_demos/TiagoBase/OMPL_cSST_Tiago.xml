@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<Problem name="Tiago_Base_SST">
+        <Robot robot="robots/tiago/tiago_base_wheels.urdf" scale="1.0">
+                <Limits name="X" min="-5.0" max="5.0" />
+                <Limits name="Y" min="-5.0" max="5.0" />
+                <Limits name="Z" min="0.0985" max="0.0985" />
+                <Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0985" Y="0.0" X="0.0" />
+        </Robot>
+
+        <Obstacle obstacle="obstacles/ode-objects/table.urdf" scale="1.0">
+            <Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.76" Y="0.0" X="1.0" />
+        </Obstacle>
+
+        <Controls robot="controls/tiago_edit.cntr"/>
+	<Planner>
+		<Parameters>
+			<Name>omplcSSTdualdrive</Name>
+                        <Parameter name="Max Planning Time">10.0</Parameter>
+			<Parameter name="Speed Factor">10</Parameter>
+                        <Parameter name="PropagationStepSize">0.01</Parameter>
+			<Parameter name="Duration">10</Parameter>
+                        <Parameter name="ControlBound">10</Parameter>
+			
+			<Parameter name="OnlyForward (0/1)">1</Parameter>
+			<Parameter name="DualDriveRadius">0.0985</Parameter>
+			<Parameter name="DualDriveDistance">0.4044</Parameter>
+			<Parameter name="SelectionRadius">0.5</Parameter>
+			<Parameter name="PruningRadius">0.05</Parameter>
+		</Parameters>
+		<Queries>
+                        <Query>
+                                <!-- <Init dim="3">0.45 0.5 0.25</Init>-->
+                                <!-- <Goal dim="3">0.8 0.5 0.75</Goal> -->
+                                <Init dim="3">0.4 0.5 0.5</Init>
+                                <Goal dim="3">0.8 0.5 0.25</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
