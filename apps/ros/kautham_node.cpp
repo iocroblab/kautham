@@ -603,8 +603,8 @@ int main (int argc, char **argv) {
     ros::ServiceServer service36 = n.advertiseService("kautham_node/CheckCollisionObs",srvCheckCollisionObs);
     ros::ServiceServer service37 = n.advertiseService("kautham_node/CheckCollisionRob",srvCheckCollisionRob);
     ros::ServiceServer service38 = n.advertiseService("kautham_node/FindIK",srvFindIK);
-    ros::ServiceServer service39 = n.advertiseService("kautham_node/SetRobPos",srvSetRobPos);
-    ros::ServiceServer service40 = n.advertiseService("kautham_node/GetRobPos",srvGetRobPos);
+    ros::ServiceServer service39 = n.advertiseService("kautham_node/SetRobotPos",srvSetRobPos);
+    ros::ServiceServer service40 = n.advertiseService("kautham_node/GetRobotPos",srvGetRobPos);
 
 
 
