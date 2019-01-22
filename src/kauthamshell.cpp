@@ -1673,4 +1673,81 @@ namespace Kautham {
         return ret;
     }
 
+    bool kauthamshell::setRobPos(unsigned int index, std::vector<float> pos) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+            Problem *const problem = (Problem*)memPtr_;
+
+            SE3Conf newconf;
+            std::vector<float> newpos;
+            newpos.push_back(pos.at(0));
+            newpos.push_back(pos.at(1));
+            newpos.push_back(pos.at(2));
+            std::vector<float> newori;
+            newori.push_back(pos.at(3));
+            newori.push_back(pos.at(4));
+            newori.push_back(pos.at(5));
+            newori.push_back(pos.at(6));
+
+            newconf.setPos(newpos);
+            newconf.setOrient(newori);
+
+            problem->getPlanner()->wkSpace()->getRobot(index)->setHomePos(&newconf);
+
+            std::vector<float> coord = problem->getPlanner()->wkSpace()->getRobot(index)->getHomePos()->getSE3().getPos();
+            std::cout<<"Robot "<<index<<" at position ("<<coord.at(0)<<", "
+                    <<coord.at(1)<<", "<<coord.at(2)<<")"<<std::endl;
+            return true;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return false;
+
+    }
+
+    bool kauthamshell::getRobPos(unsigned int index, std::vector<float> &pos) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+            Problem *const problem = (Problem*)memPtr_;
+            SE3Conf conf = problem->getPlanner()->wkSpace()->getRobot(index)->getHomePos()->getSE3();
+            std::cout<<"Robot "<<index<<" at position ("<<conf.getPos().at(0)<<", "
+                    <<conf.getPos().at(1)<<", "<<conf.getPos().at(2)<<")"<<std::endl;
+
+            pos.push_back(conf.getPos().at(0));
+            pos.push_back(conf.getPos().at(1));
+            pos.push_back(conf.getPos().at(2));
+            pos.push_back(conf.getOrient().at(0));
+            pos.push_back(conf.getOrient().at(1));
+            pos.push_back(conf.getOrient().at(2));
+            pos.push_back(conf.getOrient().at(3));
+            return true;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return false;
+
+    }
+
 }

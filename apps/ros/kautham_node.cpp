@@ -536,6 +536,25 @@ bool srvGetObstaclPos(kautham::ObsPos::Request &req,
     return true;
 }
 
+bool srvSetRobPos(kautham::ObsPos::Request &req,
+                            kautham::ObsPos::Response &res) {
+    res.response = ksh->setRobPos(req.index, req.setPos);
+
+    return true;
+}
+
+bool srvGetRobPos(kautham::ObsPos::Request &req,
+                            kautham::ObsPos::Response &res) {
+    std::vector<float> robPos;
+    res.response = ksh->getRobPos(req.index, robPos);
+    if(res.response) {
+        res.getPos = robPos;
+    }
+
+    return true;
+}
+
+
 int main (int argc, char **argv) {
     ros::init(argc, argv, "kautham_node");
     ros::NodeHandle n;
@@ -584,6 +603,9 @@ int main (int argc, char **argv) {
     ros::ServiceServer service36 = n.advertiseService("kautham_node/CheckCollisionObs",srvCheckCollisionObs);
     ros::ServiceServer service37 = n.advertiseService("kautham_node/CheckCollisionRob",srvCheckCollisionRob);
     ros::ServiceServer service38 = n.advertiseService("kautham_node/FindIK",srvFindIK);
+    ros::ServiceServer service39 = n.advertiseService("kautham_node/SetRobPos",srvSetRobPos);
+    ros::ServiceServer service40 = n.advertiseService("kautham_node/GetRobPos",srvGetRobPos);
+
 
 
 
