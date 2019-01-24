@@ -69,8 +69,13 @@ endif( ARMADILLO_FOUND )
 #### ompl ######
 find_package(ompl)
 if( OMPL_FOUND )
-   message( STATUS "OMPL Package FOUND: setting -DKAUTHAM_USE_OMPL flag")
-   message( STATUS "OMPL lib is: " ${OMPL_LIBRARIES})
+   if(OMPL_VERSION  VERSION_LESS 1.3.0)
+	message(ERROR "OMPL Package FOUND version ${OMPL_VERSION} and Kautham need at least 1.3")
+   else(OMPL_VERSION  VERSION_LESS 1.3.0)
+	message( STATUS "OMPL Package FOUND version ${OMPL_VERSION} : setting -DKAUTHAM_USE_OMPL flag")
+	message( STATUS "OMPL lib is: " ${OMPL_LIBRARIES})
+   endif(OMPL_VERSION  VERSION_LESS 1.3.0)
+
    message( STATUS "OMPL include is: " ${OMPL_INCLUDE_DIRS})
    include_directories(${OMPL_INCLUDE_DIRS})
    set(EXTRA_LIBS ${EXTRA_LIBS} ${OMPL_LIBRARIES})
@@ -145,12 +150,6 @@ set(KAUTHAM_DIRNAME_include "${CMAKE_INSTALL_PREFIX}/include/kautham")
 # Headers install
 install(FILES ${KAUTHAM_HDRS} DESTINATION include/kautham)
 
-install(TARGETS ${KAUTHAM_TARGETS} EXPORT KAUTHAMExports
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}   
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}   
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include/kautham)
-
 configure_package_config_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/kauthamConfig.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/kauthamConfig.cmake"   
@@ -163,9 +162,6 @@ write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/kauthamConfigVersion.cmake"
   VERSION ${KAUTHAM_VERSION}
   COMPATIBILITY AnyNewerVersion)
-
-#install( EXPORT KAUTHAMExports
-#         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/kautham)
 
 install( FILES ${CMAKE_CURRENT_BINARY_DIR}/kauthamConfig.cmake
        ${CMAKE_CURRENT_BINARY_DIR}/kauthamConfigVersion.cmake 

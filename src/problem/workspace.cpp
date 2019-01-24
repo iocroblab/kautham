@@ -90,6 +90,61 @@ namespace Kautham {
     }
 
 
+    double WorkSpace::cumDistanceCheck(Sample *sample) {
+        if (sample->getMappedConf().size() == 0) {
+            vector<KthReal> tmpVec;
+            for (unsigned int i = 0; i < getNumRobControls(); ++i)
+                tmpVec.push_back(sample->getCoords()[i]);
+
+            for (unsigned int i = 0; i < robots.size(); ++i)
+                robots[i]->control2Pose(tmpVec);
+        } else {
+            for (unsigned int i = 0; i < robots.size(); ++i)
+                robots[i]->Kinematics(sample->getMappedConf().at(i));
+        }
+
+        double cumDist = 0, dist;
+        for (unsigned int i = 0; i < robots.size(); ++i) {
+            Robot *robot = robots[i];
+
+            for (unsigned int k = 0; k < robot->getNumLinks(); ++k) {
+                Link *link = robot->getLink(k);
+
+                for (unsigned int l = k+1; l < robot->getNumLinks(); ++l) {
+                    Link *otherLink = robot->getLink(l);
+
+                    if (link->getParent() == otherLink || otherLink->getParent() == link) continue;
+
+                    dist = link->getElement()->getDistanceTo(otherLink->getElement());
+                    if (dist < 0) cumDist += -dist;
+                }
+
+                for (unsigned int j = i+1; j < robots.size(); ++j) {
+                    Robot *otherRobot = robots[j];
+
+                    for (unsigned int l = 0; l < otherRobot->getNumLinks(); ++l) {
+                        Link *otherLink = otherRobot->getLink(l);
+
+                        dist = link->getElement()->getDistanceTo(otherLink->getElement());
+                        if (dist < 0) cumDist += -dist;
+                    }
+                }
+
+                for (auto obstacle : obstacles) {
+                    for (unsigned int l = 0; l < obstacle->getNumLinks(); ++l) {
+                        Link *otherLink = obstacle->getLink(l);
+
+                        dist = link->getElement()->getDistanceTo(otherLink->getElement());
+                        if (dist < 0) cumDist += -dist;
+                    }
+                }
+            }
+        }
+        return cumDist;
+    }
+
+
+
     /*!
     * Moves the robots to the configuration specified by the sample
     *  loads the flag withinbounds of the sample. If outofbounds, one of the

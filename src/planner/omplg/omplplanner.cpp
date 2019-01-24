@@ -431,6 +431,7 @@ namespace Kautham {
             //set own intial values
             _planningTime = 10;
             _simplify = 2;//by default shorten and smooth
+            _interpolate = true;//by default interpolate the computed path
             _incremental = 0;//by default makes a clear before any new call to solve in function trysolve().
             _drawnrobot = 0; //by default we draw the cspace of robot 0.
             _drawnPath = true; //by default we show the path into the workspace
@@ -1028,7 +1029,7 @@ namespace Kautham {
             string projectionName("drawprojection" + static_cast<ostringstream*>
                                   (&(ostringstream() << robot))->str());
             ob::ProjectionEvaluatorPtr projection(space->getProjection(projectionName));
-            ob::EuclideanProjection state(k);
+            Kautham::Vector state(k);
 
             //Load the planner data to be drawn
             ob::PlannerDataPtr pdata(new ob::PlannerData(ss->getSpaceInformation()));
@@ -1431,7 +1432,8 @@ namespace Kautham {
                         break;
                     }
 
-                    ss->getSolutionPath().interpolate();
+                    if (_interpolate)
+                        ss->getSolutionPath().interpolate();
 
                     _path.clear();
                     clearSimulationPath();

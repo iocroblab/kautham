@@ -282,7 +282,7 @@ void PlanarChainStateProjectionEvaluator :: defaultCellSizes(void)
     //cellSizes_[2] = 1;
 }
 
-void PlanarChainStateProjectionEvaluator::project(const ob::State *state, ob::EuclideanProjection &projection) const
+void PlanarChainStateProjectionEvaluator::project(const ob::State *state, Kautham::VectorRef projection) const
 {
 
     const double *pos = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
