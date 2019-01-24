@@ -69,8 +69,8 @@ namespace Kautham {
             lower.resize(2);
             upper.resize(2);
             for(int i=0; i < 2; i++)
-            {  lower[i] = -2;
-                upper[i] = 2;
+            {  lower[i] = -20;
+                upper[i] = 20;
             }
         }
         /*! this is the reimplementation of the virtual function of OpenDEEnvironment
@@ -148,13 +148,13 @@ namespace Kautham {
             else
                 if ((geom1_body == "floor" && geom2_body == "robBody") ||
                         (geom1_body == "robBody" && geom2_body == "floor" ))
-                    contact.surface.mu = 0.0;
+                    contact.surface.mu = 0.5;
                 else
                     if ((geom1_body == "floor" && geom2_body == "fixed") ||
                             (geom1_body == "fixed" && geom2_body == "floor" ))
-                        contact.surface.mu = 5;
+                        contact.surface.mu = 0.7;
                     else
-                        contact.surface.mu = 1.5;
+                        contact.surface.mu = 0.01;
             contact.surface.soft_erp = _erp;
             contact.surface.soft_cfm = _cfm;
 
@@ -187,7 +187,7 @@ namespace Kautham {
 
         }
 
-        void twoDRobotStateProjectionEvaluator::project(const ob::State *state, ob::EuclideanProjection &projection) const
+        void twoDRobotStateProjectionEvaluator::project(const ob::State *state, Kautham::VectorRef projection) const
         {
 
             const dReal *pos = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);

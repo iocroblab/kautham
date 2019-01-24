@@ -258,20 +258,31 @@ bool KauthamDEPlanner::trySolve(void)
 
             final=ss->getSolutionPath().getStates().back();
             std::cout<<"===============   Query Numer  "<<(l+1)<<"  =============== "<<std::endl;
-            std::cout<<"Actions is:  "<<Action<<std::endl;
-            std::cout<<"Smoothness is:  "<<Smoothness<<std::endl;
-            std::cout<<"Power Consumed is:  "<<PowerConsumed<<std::endl;
+            //std::cout<<"Actions is:  "<<Action<<std::endl;
+            //std::cout<<"Smoothness is:  "<<Smoothness<<std::endl;
+            //std::cout<<"Power Consumed is:  "<<PowerConsumed<<std::endl;
             std::cout<<"Generated Solution states are  :  "<<states.size()<<std::endl;
             std::cout<<"Generated Solution controls are:  "<<control.size()<<std::endl;
             std::cout<<"Solution control durations  are:  "<<duration.size()<<std::endl;
-            std::cout<<"last rob state is " <<final->getBodyPosition(0)[0] << " " << final->getBodyPosition(0)[1] << std::endl;
+            //std::cout<<"last rob state is " <<final->getBodyPosition(0)[0] << " " << final->getBodyPosition(0)[1] << std::endl;
 
             lastState.push_back(final->getBodyPosition(0)[0]);
             lastState.push_back(final->getBodyPosition(0)[1]);
-
+            std::ofstream pathD ("Path.txt", std::ios::out | std::ios::app);
             for(unsigned int i=0;i<states.size()-1;i++)
             {
                 //std::cout<<"Duration is "<< duration[i]<<std::endl;
+
+                //==============================================
+                //Temperarly changes
+                const double *ps = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
+
+                   pathD <<ps[0] << " ";
+                   pathD <<ps[1] << " ";
+                   pathD <<duration[i]<<std::endl;
+
+
+                //==============================================
                 State tmpstate;
                 Robsmp=new Sample(_wkSpace->getNumRobControls());
 
@@ -290,6 +301,8 @@ bool KauthamDEPlanner::trySolve(void)
 
                 //std::cout<<std::endl;
             }
+            pathD.close();
+
         }
        drawCspace(0);
 
@@ -996,7 +1009,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
                 SoCoordinate3 *edgepoints  = new SoCoordinate3();
                 //if(_wkSpace->getRobot(numrob)->isSE3Enabled())
                 {
-                    ob::EuclideanProjection projection(3);
+                    Kautham::Vector projection(3);
                     //space->getProjection("drawprojection")->project(pathstates[i], projection);
                     projToUse->project(pathstates[i], projection);
                     x=projection[0];
@@ -1039,8 +1052,8 @@ void KauthamDEPlanner::drawCspace(int numrob)
         {
             //if(_wkSpace->getRobot(numrob)->isSE3Enabled())
             {
-                ob::EuclideanProjection projection(k);
-                //&(projection) = new ob::EuclideanProjection;
+                Kautham::Vector projection(k);
+                //&(projection) = new Kautham::Vector;
                 //try
                 //{
                 //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
@@ -1093,7 +1106,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
                 float x1,y1,x2,y2,z1,z2;
                 //if(_wkSpace->getRobot(numrob)->isSE3Enabled())
                 {
-                    ob::EuclideanProjection projection(k);
+                    Kautham::Vector projection(k);
                     //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                     projToUse->project(pdata->getVertex(i).getState(), projection);
                     x1=projection[0];
@@ -1258,7 +1271,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
                 SoCoordinate3 *edgepoints  = new SoCoordinate3();
                 //if(_wkSpace->getRobot(numrob)->isSE3Enabled())
                 {
-                    ob::EuclideanProjection projection(2);
+                    Kautham::Vector projection(2);
                     //space->getProjection("drawprojection")->project(pathstates[i], projection);
                     projToUse->project(pathstates[i], projection);
                     x=projection[0];
@@ -1283,7 +1296,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
                 //                    k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
                 //                    if(k<=2)
                 //                    {
-                //                        ob::EuclideanProjection projection(k);
+                //                        Kautham::Vector projection(k);
                 //                        //space->getProjection("drawprojection")->project(pathstates[i], projection);
                 //                        projToUse->project(pathstates[i], projection);
                 //                        x=projection[0];
@@ -1298,7 +1311,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
                 //                    }
                 //                    else
                 //                    {
-                //                        ob::EuclideanProjection projection(k);
+                //                        Kautham::Vector projection(k);
                 //                        //space->getProjection("drawprojection")->project(pathstates[i], projection);
                 //                        projToUse->project(pathstates[i], projection);
                 //                        x=projection[0];
@@ -1334,8 +1347,8 @@ void KauthamDEPlanner::drawCspace(int numrob)
         {
             //if(_wkSpace->getRobot(numrob)->isSE3Enabled())
             {
-                ob::EuclideanProjection projection(k);
-                //&(projection) = new ob::EuclideanProjection;
+                Kautham::Vector projection(k);
+                //&(projection) = new Kautham::Vector;
                 //try
                 //{
                 //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
@@ -1359,7 +1372,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
             //                k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
             //                if(k<=2)
             //                {
-            //                    ob::EuclideanProjection projection(k);
+            //                    Kautham::Vector projection(k);
             //                    //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
             //                    projToUse->project(pdata->getVertex(i).getState(), projection);
             //                    x = projection[0];
@@ -1368,7 +1381,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
             //                }
             //                else
             //                {
-            //                    ob::EuclideanProjection projection(k);
+            //                    Kautham::Vector projection(k);
             //                    //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
             //                    projToUse->project(pdata->getVertex(i).getState(), projection);
             //                    x = projection[0];
@@ -1410,7 +1423,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
                 float x1,y1,x2,y2,z1,z2;
                 //if(_wkSpace->getRobot(numrob)->isSE3Enabled())
                 {
-                    ob::EuclideanProjection projection(k);
+                    Kautham::Vector projection(k);
                     //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
                     projToUse->project(pdata->getVertex(i).getState(), projection);
                     x1=projection[0];

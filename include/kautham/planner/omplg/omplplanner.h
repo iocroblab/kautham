@@ -153,6 +153,9 @@ namespace Kautham {
             inline void setSamplerUsed(int su){_samplerUsed=su;}
             inline int getSamplerUsed(){return _samplerUsed;}
 
+            inline bool getInterpolate() { return _interpolate;}
+            inline void setInterpolate(bool interpolate) {_interpolate = interpolate;}
+
             void disablePMDControlsFromSampling(bool enableall=false);
             inline vector<int> *getDisabledControls(){return &_disabledcontrols;}
 
@@ -175,6 +178,7 @@ namespace Kautham {
             unsigned int _validSegmentCount;
             int _samplerUsed;
             unsigned int _simplify;
+            bool _interpolate;
             bool _incremental;
             unsigned _drawnrobot; //!< Index of the robot whose Cspace is drawn. Defaults to 0.
             bool _drawnPath; //! Flag to show/hide path into workspace scene

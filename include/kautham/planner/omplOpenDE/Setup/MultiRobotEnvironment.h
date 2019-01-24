@@ -106,7 +106,7 @@ public:
     MultiRobotStateProjectionEvaluator(const ob::StateSpace *space); //!< Constructor
     virtual unsigned int getDimension(void) const; //!< This function returns the dimension of the projection.
     virtual void defaultCellSizes(void);//!< This function set the default dimension of the cell for projection.
-    virtual void project(const ob::State *state, ob::EuclideanProjection &projection) const;//!< This function calculate the projections
+    virtual void project(const ob::State *state, Kautham::VectorRef projection) const override;//!< This function calculate the projections
 };
 
 }

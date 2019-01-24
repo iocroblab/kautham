@@ -186,7 +186,7 @@ void MultiRobotStateProjectionEvaluator :: defaultCellSizes(void)
 //    cellSizes_[8] = 1.0;
 }
 
-void MultiRobotStateProjectionEvaluator::project(const ob::State *state, ob::EuclideanProjection &projection) const
+void MultiRobotStateProjectionEvaluator::project(const ob::State *state, Kautham::VectorRef projection) const
 {
 
     const double *pos = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);

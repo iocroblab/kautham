@@ -50,7 +50,7 @@ public:
         return 2;
     }
 
-    virtual void project(const ob::State *state, ob::EuclideanProjection &projection) const
+    virtual void project(const ob::State *state, Kautham::VectorRef projection) const override
     {
         const dReal *pos = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
 
