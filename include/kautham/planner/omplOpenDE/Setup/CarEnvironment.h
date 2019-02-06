@@ -22,8 +22,8 @@
 
 /* Author: Muhayyuddin */
 
-if defined(KAUTHAM_USE_OMPL)
-if defined(KAUTHAM_USE_ODE)
+#if defined(KAUTHAM_USE_OMPL)
+#if defined(KAUTHAM_USE_ODE)
 #if !defined(_CarEnvironment_H)
 #define _CarEnvironment_H
 #define dDOUBLE
