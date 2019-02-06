@@ -58,7 +58,8 @@ void CarEnvironment::getControlBounds(std::vector< double > &lower, std::vector<
     upper.resize(2);
     lower[0] = -0.5;
     lower[1] = -5;
-
+    upper[0] = 0.5;
+    upper[1] = 10;
 }
 /*! This is the reimplementation of the virtual function of OpenDEEnvironment
  * that explain how the control will apply. Here the controls are applying by setting the velocities.
@@ -143,7 +144,9 @@ void CarEnvironment::setupContact(dGeomID geom1, dGeomID geom2, dContact &contac
     contact.surface.soft_erp = _erp;
     contact.surface.soft_cfm = _cfm;
 }
-
+/*! CarStateProjectionEvaluator is inherited from the ProjecttionEvaluator class of OMPL. It reimplement the virtual dunctions
+ * such as getDimension, defaultCellSizes and project
+ */
 CarStateProjectionEvaluator::CarStateProjectionEvaluator(const ob::StateSpace *space) : ob::ProjectionEvaluator(space)
 {}
 
