@@ -35,15 +35,6 @@
 #include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoMaterial.h>
-
-#include <ompl/tools/benchmark/Benchmark.h>
-#include <ompl/control/planners/est/EST.h>
-#include <ompl/control/planners/rrt/RRT.h>
-#include <ompl/control/planners/syclop/SyclopRRT.h>
-#include <ompl/control/planners/syclop/SyclopEST.h>
-
-#include <ompl/control/planners/kpiece/KPIECE1.h>
-#include <ompl/control/planners/syclop/GridDecomposition.h>
 #include <ctime>
 
 #include <boost/thread.hpp>
@@ -106,16 +97,11 @@ static void playPath(oc::OpenDESimpleSetup *ss, std::string robot)
         ss->playSolutionPath(0.1);
         else
             ss->playSolutionPath(1);
-
-        //static ompl::time::duration d = ompl::time::seconds(1);
-        //boost::this_thread::sleep(d);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1));
 
     }
 }
 
-//Igual que omplcplanner es la base per a tots els planners de control com omplcrrtplanner , etc.. KauthamOpenDEPlanner té com a objectiu servir de base per a tots els planners que derivessin i que usessin la simulació dinàmica) Sobretot ha de reimplementar el mètode trysolve basantse en la demo d'OMPL OpenDERigidBodyPlanning.
-// Like omplcplanner is the basis for all planners as omplcrrtplanner control, etc. .. KauthamOpenDEPlanner aims to serve as a basis for deriving all the planners and would use dynamic simulation) Especially should reimplement the method trysolve On the basis of the demo fill OpenDERigidBodyPlanning.
 /*! Constructor define all the necessary parameters for planning in dynamic enviroment.
  *  It define the pointer to the dynamic enviroment and pointer to the start space.
  */
@@ -257,10 +243,6 @@ bool KauthamDEPlanner::trySolve(void)
             Joint_Angle.resize(_wkSpace->getRobot(0)->getNumJoints());
 
             final=ss->getSolutionPath().getStates().back();
-            std::cout<<"===============   Query Numer  "<<(l+1)<<"  =============== "<<std::endl;
-            //std::cout<<"Actions is:  "<<Action<<std::endl;
-            //std::cout<<"Smoothness is:  "<<Smoothness<<std::endl;
-            //std::cout<<"Power Consumed is:  "<<PowerConsumed<<std::endl;
             std::cout<<"Generated Solution states are  :  "<<states.size()<<std::endl;
             std::cout<<"Generated Solution controls are:  "<<control.size()<<std::endl;
             std::cout<<"Solution control durations  are:  "<<duration.size()<<std::endl;
@@ -271,8 +253,6 @@ bool KauthamDEPlanner::trySolve(void)
             std::ofstream pathD ("Path.txt", std::ios::out | std::ios::app);
             for(unsigned int i=0;i<states.size()-1;i++)
             {
-                //std::cout<<"Duration is "<< duration[i]<<std::endl;
-
                 //==============================================
                 //Temperarly changes
                 const double *ps = states[i]->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
@@ -299,7 +279,6 @@ bool KauthamDEPlanner::trySolve(void)
                 _path.push_back(Robsmp);
                 _samples->add(Robsmp);
 
-                //std::cout<<std::endl;
             }
             pathD.close();
 
@@ -321,8 +300,6 @@ void KauthamDEPlanner::KauthamOpenDEState2Robsmp(const ob::State *state, Sample*
        SE3Conf basepose;
        const double *basep = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
        const ob::SO3StateSpace::StateType &baseori = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(0);
-       //const double *vb=state->as<oc::OpenDEStateSpace::StateType>()->getBodyLinearVelocity(0);
-       //const double *wb=state->as<oc::OpenDEStateSpace::StateType>()->getBodyAngularVelocity(0);
        std::vector<float> tmp1(3);
        std::vector<float> tmp2(4);
        tmp1[0] = basep[0];
@@ -392,7 +369,6 @@ void KauthamDEPlanner::KauthamOpenDEState2Obssmp(const ob::State *state, Sample*
     vector<RobConf> rc;
     for(unsigned int i=0; i<_wkSpace->getNumObstacles(); i++)
     {
-        //const double *pos = states[i]->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(1)->values;
         const double *posObs = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(k);
         const ob::SO3StateSpace::StateType &oriObs = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);
         RobConf *rcj = new RobConf;
@@ -457,12 +433,6 @@ std::vector<float> KauthamDEPlanner::ComputeRn(const ob::State *state)
 coords[0]=coords[0];
 coords[1]=coords[3];
 coords[2]=0;coords[3]=0;coords[4]=0;
-//std::cout<<coords.size()<<std::endl;
-    //std::cout<<std::endl;
-//    for(unsigned int i=0;i<coords.size();i++)
-//        std::cout<<coords[i]<<"  ,  ";
-//    std::cout<<std::endl;
-
     return coords;
 }
 //computePath fuunction will take the goal position and planning time
@@ -586,10 +556,6 @@ void KauthamDEPlanner::ComputePowerConsumed(const std::vector<ob::State*> &state
 
         }
     }
-    Power <<"\n===================================================="<<"\n";
-    Power <<"===================================================="<<"\n";
-    Time <<"\n===================================================="<<"\n";
-    Time <<"===================================================="<<"\n";
     Power.close();
     Time.close();
     //PowerConsumed = PowerConsumed/time;
@@ -640,13 +606,6 @@ void KauthamDEPlanner::ComputePowerConsumed(const std::vector<oc::Control*> &con
     Time <<"===================================================="<<"\n";
     Power.close();
     Time.close();
-    //PowerConsumed = PowerConsumed/time;
-    double dd=0.0;
-    for(unsigned int i=0;i<duration.size();i++)
-        dd=dd+duration[i];
-    std::cout<<"total power: "<<PowerConsumed<<std::endl;
-    std::cout<<"total duration is: "<<dd<<" "<<"Time is: "<<time<<std::endl;
-
 }
 
 //! setParameter function set the planning parameters for the planners
@@ -732,7 +691,6 @@ vector<KauthamDEPlanner::KauthamDEobject> KauthamDEPlanner::smp2KauthamOpenDESta
             odeob.objectposition[0] = wkSpace->getRobot(i)->getLink(j)->getElement()->getPosition()[0];
             odeob.objectposition[1] = wkSpace->getRobot(i)->getLink(j)->getElement()->getPosition()[1];
             odeob.objectposition[2] = wkSpace->getRobot(i)->getLink(j)->getElement()->getPosition()[2];
-            //Kauthamodebodies.insert(pair<int,KauthamODEobject>(i,*(wkSpace->getRobot(i)->getLink(j)->getElement()->getPosition()));
             odeob.objectorientation[0] = wkSpace->getRobot(i)->getLink(j)->getElement()->getOrientation()[0];
             odeob.objectorientation[1] = wkSpace->getRobot(i)->getLink(j)->getElement()->getOrientation()[1];
             odeob.objectorientation[2] = wkSpace->getRobot(i)->getLink(j)->getElement()->getOrientation()[2];
@@ -926,10 +884,6 @@ void KauthamDEPlanner::drawCspace(int numrob)
         SoCoordinate3 *points  = new SoCoordinate3();
         SoPointSet *pset  = new SoPointSet();
 
-        //get the first subspace
-        //        ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(numrob));
-        //        ob::StateSpacePtr ssRobotifirst =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
-
         //space bounds
         int k;
         KthReal xmin;
@@ -951,27 +905,6 @@ void KauthamDEPlanner::drawCspace(int numrob)
             k = stateSpacePtr->getDimension();
 
         }
-        //        else
-        //        {
-        //            k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
-        //            if(k<=2)
-        //            {
-        //                xmin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[0];
-        //                xmax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[0];
-        //                ymin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[1];
-        //                ymax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[1];
-        //            }
-        //            else
-        //            {
-        //                xmin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[0];
-        //                xmax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[0];
-        //                ymin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[1];
-        //                ymax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[1];
-        //                zmin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[2];
-        //                zmax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[2];
-        //            }
-        //        }
-
 
         KthReal x,y,z;
         //load the planner data to be drawn
@@ -1213,27 +1146,6 @@ void KauthamDEPlanner::drawCspace(int numrob)
             k = stateSpace->getDimension();
 
         }
-        //        else
-        //        {
-        //            k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
-        //            if(k<=2)
-        //            {
-        //                xmin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[0];
-        //                xmax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[0];
-        //                ymin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[1];
-        //                ymax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[1];
-        //            }
-        //            else
-        //            {
-        //                xmin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[0];
-        //                xmax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[0];
-        //                ymin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[1];
-        //                ymax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[1];
-        //                zmin=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().low[2];
-        //                zmax=ssRobotifirst->as<ob::RealVectorStateSpace>()->getBounds().high[2];
-        //            }
-        //        }
-
 
         KthReal x,y,z;
         //load the planner data to be drawn
@@ -1291,41 +1203,6 @@ void KauthamDEPlanner::drawCspace(int numrob)
 
                     edgepoints->point.set1Value(1,x,y,z);
                 }
-                //                else
-                //                {
-                //                    k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
-                //                    if(k<=2)
-                //                    {
-                //                        Kautham::Vector projection(k);
-                //                        //space->getProjection("drawprojection")->project(pathstates[i], projection);
-                //                        projToUse->project(pathstates[i], projection);
-                //                        x=projection[0];
-                //                        y=projection[1];
-                //                        z=0.0;
-                //                        edgepoints->point.set1Value(0,x,y,z);
-                //                        //space->getProjection("drawprojection")->project(pathstates[i+1], projection);
-                //                        projToUse->project(pathstates[i+1], projection);
-                //                        x=projection[0];
-                //                        y=projection[1];
-                //                        edgepoints->point.set1Value(1,x,y,z);
-                //                    }
-                //                    else
-                //                    {
-                //                        Kautham::Vector projection(k);
-                //                        //space->getProjection("drawprojection")->project(pathstates[i], projection);
-                //                        projToUse->project(pathstates[i], projection);
-                //                        x=projection[0];
-                //                        y=projection[1];
-                //                        z=projection[2];
-                //                        edgepoints->point.set1Value(0,x,y,z);
-                //                        //space->getProjection("drawprojection")->project(pathstates[i+1], projection);
-                //                        projToUse->project(pathstates[i+1], projection);
-                //                        x=projection[0];
-                //                        y=projection[1];
-                //                        z=projection[2];
-                //                        edgepoints->point.set1Value(1,x,y,z);
-                //                    }
-                //                }
 
                 //edge of the path
                 pathsep->addChild(edgepoints);
@@ -1367,29 +1244,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
 
 
             }
-            //            else
-            //            {
-            //                k = ssRobotifirst->as<ob::RealVectorStateSpace>()->getDimension();
-            //                if(k<=2)
-            //                {
-            //                    Kautham::Vector projection(k);
-            //                    //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-            //                    projToUse->project(pdata->getVertex(i).getState(), projection);
-            //                    x = projection[0];
-            //                    y = projection[1];
-            //                    points->point.set1Value(i,x,y,0);
-            //                }
-            //                else
-            //                {
-            //                    Kautham::Vector projection(k);
-            //                    //space->getProjection("drawprojection")->project(pdata->getVertex(i).getState(), projection);
-            //                    projToUse->project(pdata->getVertex(i).getState(), projection);
-            //                    x = projection[0];
-            //                    y = projection[1];
-            //                    z = projection[2];
-            //                    points->point.set1Value(i,x,y,z);
-            //                }
-            //            }
+
         }
         SoDrawStyle *pstyle = new SoDrawStyle;
         pstyle->pointSize = 1;
