@@ -27,6 +27,7 @@
 #if defined(KAUTHAM_USE_ODE)
 
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/RRT2DPlanner.h>
+#include <ompl/control/planners/rrt/RRT.h>
 
 namespace Kautham {
 
@@ -49,14 +50,11 @@ RRT2DPlanner::RRT2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSe
      envPtr = oc::OpenDEEnvironmentPtr(new twoDRobotEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
     stateSpace = new twoDRobotStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
-    //oc::ControlSpacePtr controlSpacePtr(new KauthamControlSpace(stateSpacePtr));
-    //ss = new oc::OpenDESimpleSetup(controlSpacePtr);
     ss = new oc::OpenDESimpleSetup(stateSpacePtr);
     oc::SpaceInformationPtr si=ss->getSpaceInformation();
     ob::PlannerPtr planner(new oc::RRT(si));
     addParameter("Goal Bias", _GoalBias);
     planner->as<oc::RRT>()->setGoalBias(_GoalBias);
-    // planner->as<oc::RRT>()->setIntermediateStates(true);
     //set the planner
     ss->setPlanner(planner);
 

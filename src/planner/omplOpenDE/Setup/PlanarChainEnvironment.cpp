@@ -54,15 +54,10 @@ unsigned int PlanarChainEnvironment::getControlDimension(void) const
  */
 void PlanarChainEnvironment::getControlBounds(std::vector< double > &lower, std::vector< double > &upper) const
 {
-
-           lower[0]=-1;
-            upper[0]=1;
-            lower[1]=-1;
-            upper[1]=1;
-            lower[2]=-10;
-             upper[2]=10;
-             lower[3]=-10;
-             upper[3]=10;
+           lower[0] = -1;
+           lower[1] = -1;
+           upper[0] = 1;
+           upper[1] = 1;
 
   }
 /*! this is the reimplementation of the virtual function of OpenDEEnvironment
@@ -71,54 +66,11 @@ void PlanarChainEnvironment::getControlBounds(std::vector< double > &lower, std:
  */
 void PlanarChainEnvironment::applyControl (const double *control) const
 {
-    //dReal a1=dJointGetHingeAngle(joint_.at("Chainbase_link+Chainlink1"));
-    //dReal a2=dJointGetHingeAngle(joint_.at("Chainbase_link+Chainlink1"));
-
-    //dReal v1=dJointGetHingeAngleRate(joint_.at("Chainbase_link+Chainlink1"));
-    //dReal v2=dJointGetHingeAngleRate(joint_.at("Chainbase_link+Chainlink1"));
-    // dReal v1=dJointGetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamVel);
-    // dReal v2=dJointGetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamVel);
-    //std::cout<<"velocity   : "<<v1<<" , "<<v2<<std::endl;
 
     dJointSetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamVel,control[0]);
     dJointSetAMotorParam(motor_.at("Chainbase_link+Chainlink1"),dParamFMax,7);
     dJointSetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamVel,control[1]);
     dJointSetAMotorParam(motor_.at("Chainlink1+Chainlink2"),dParamFMax,7);
-
-//    dJointAddHingeTorque(joint_.at("Chainbase_link+Chainlink1"), control[0]);
-//    dJointAddHingeTorque(joint_.at("Chainlink1+Chainlink2"), control[1]);
-
-    //dJointSetHingeParam(joint_.at("Chainbase_link+Chainlink1"), dParamVel, (v1-control[0]));
-    //dJointSetHingeParam(joint_.at("Chainbase_link+Chainlink1"), dParamFMax, mkinematics->getTorqueLimit().at(0));
-    //dJointSetHingeParam(joint_.at("Chainlink1+Chainlink2"), dParamVel, (v2-control[1]));
-    //dJointSetHingeParam(joint_.at("Chainlink1+Chainlink2"), dParamFMax, mkinematics->getTorqueLimit().at(1));
-    //feedback1=dJointGetFeedback(joint_.at("Chainbase_link+Chainlink1"));
-    //feedback2=dJointGetFeedback(joint_.at("Chainlink1+Chainlink2"));
-
-    //std::cout<<"applied Torqe Limit is "<<mkinematics->getTorqueLimit().at(0)<<" "<<mkinematics->getTorqueLimit().at(1)<<std::endl;
-    //std::cout<<"Current Trque is "<< feedback1->t2[2]<<" "<< feedback2->t2[2]<<std::endl;
-
-    if(! manipulationQuery->getPlanningPhase() && manipulationQuery->getIskinematicsChain())
-    {
-
-//        manipulationQuery->setconf(dJointGetHingeAngle(joint_.at("Chainbase_link+Chainlink1")));
-//        manipulationQuery->setconf(dJointGetHingeAngle(joint_.at("Chainlink1+Chainlink2")));
-//        manipulationQuery->addJointConfiguration(manipulationQuery->getconf());
-//        //std::cout<<"Joint Conf : "<<manipulationQuery->getconf().q.at(0)<<" , "<<manipulationQuery->getconf().q.at(1)<<std::endl;
-//        manipulationQuery->clearconf();
-//        manipulationQuery->setconf(feedback1->t2[2]);
-//        manipulationQuery->setconf(feedback2->t2[2]);
-//        manipulationQuery->AddjointTorque(manipulationQuery->getconf());
-//        //std::cout<<"Torque     : "<<manipulationQuery->getconf().q.at(0)<<" , "<<manipulationQuery->getconf().q.at(1)<<std::endl;
-//        manipulationQuery->clearconf();
-//        manipulationQuery->setconf(control[0]);
-//        manipulationQuery->setconf(control[1]);
-//        manipulationQuery->setjointVelocity(manipulationQuery->getconf());
-        //std::cout<<"velocity   : "<<manipulationQuery->getconf().q.at(0)<<" , "<<manipulationQuery->getconf().q.at(1)<<std::endl;
-        manipulationQuery->clearconf();
-
-    }
-
 
 }
 //! This function describe that how the robot will interact with the environment return true if the collision between
@@ -225,108 +177,98 @@ void PlanarChainEnvironment::setupContact(dGeomID geom1, dGeomID geom2, dContact
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-///                      Kuka State Space
+///                      Plannar State Space
 /////////////////////////////////////////////////////////////////////////////////
+
+
+/*! The PlanarChainStateSpace class is inherited from OpenDEStateSpace. It mainly reimplement the distance function and
+ * register the projects for the state space.
+ */
 PlanarChainStateSpace::PlanarChainStateSpace(const oc::OpenDEEnvironmentPtr &env) : oc::OpenDEStateSpace(env)
 {
 
 
 }
 PlanarChainStateSpace::~PlanarChainStateSpace(){}
-
+/*! Distance function describe that how the distance will be measured between two states in the PlanarChainStateSpace.
+ * It measures simple cartesian distance of the first link of the gripper.
+ */
 double PlanarChainStateSpace::distance(const ob::State *s1, const ob::State *s2) const
 {
     double distance = 0.0;
-
-
-    const double *p1 = s1->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
+    const double *p1 = s1->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3); // body representing gripper first link
     const double *p2 = s2->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
-    //const ob::SO3StateSpace::StateType &rot1 = s1->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(3);
-    //const ob::SO3StateSpace::StateType &rot2 = s2->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(3);
-
     double dx = fabs(p1[0] - p2[0]);
     double dy = fabs(p1[1] - p2[1]);
-    //double dz = fabs(p1[1] - p2[1]);
-
-//    double w = fabs(rot1.w*rot2.w);
-//    double x = fabs(rot1.x*rot2.x);
-//    double y = fabs(rot1.y*rot2.y);
-//    double z = fabs(rot1.z*rot2.z);
-    distance = sqrt(dx * dx + dy * dy);//+fabs(w+x+y+z);// + dz * dz);
-
+    distance = sqrt(dx * dx + dy * dy);
     return distance;
 }
-
+/*! Register the projections by setting the pointer to the CarStateProjectionEvaluator
+ */
 void PlanarChainStateSpace::registerProjections(void)
 {
     registerDefaultProjection(ob::ProjectionEvaluatorPtr(new PlanarChainStateProjectionEvaluator(this)));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-///                Kuka Projection Evaluator
+///                Planar Projection Evaluator
 /////////////////////////////////////////////////////////////////////////////////
+
+/*! PlanarChainStateProjectionEvaluator is inherited from the ProjecttionEvaluator class of OMPL. It reimplement the virtual dunctions
+ * such as getDimension, defaultCellSizes and project
+ */
 PlanarChainStateProjectionEvaluator::PlanarChainStateProjectionEvaluator(const ob::StateSpace *space) : ob::ProjectionEvaluator(space)
-{
+{}
 
-}
-
+/*! This function specify the dimensions of the projected space. In case of car, the state is project in 2D space. So
+ * the dimensions of the projected space will be two.
+ */
 unsigned int PlanarChainStateProjectionEvaluator::getDimension(void) const
 {
     return 2;
 }
+
+/*! This function specify the cell size of the project space in meters.
+ */
 void PlanarChainStateProjectionEvaluator :: defaultCellSizes(void)
 {
     cellSizes_.resize(2);
     cellSizes_[0] = 0.01;
     cellSizes_[1] = 0.01;
-    //cellSizes_[2] = 1;
 }
 
+/*! This function describes how the state will be projected. In case of Planar chain, the position of the gripper
+ *  is projected into 2D space x-axis and y-axis.
+ */
 void PlanarChainStateProjectionEvaluator::project(const ob::State *state, Kautham::VectorRef projection) const
 {
-
     const double *pos = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
     projection[0] = pos[0];
     projection[1] = pos[1];
-   // projection[2] = pos[2];
-
 }
 ///////////////////////////////////////////////////////////////////
+
+/*! PlanarChainControlSampler class inherit from the RealVectorControlUniformSampler. It mainly reimplement the
+ * sampleNext function that define how the control will be sampled.
+ */
 PlanarChainControlSampler::PlanarChainControlSampler(const oc::ControlSpace *cm) : oc::RealVectorControlUniformSampler(cm)
-{
-
-}
-
+{}
+/*! sampleNext function define the way the control will be sampled. It takes the previous control value and randomly
+ * increase or decrease control value (velocity) by a factor DetlaT (DT).
+ */
 void PlanarChainControlSampler::sampleNext(oc::Control *control, const oc::Control *previous)
 {
     space_->copyControl(control, previous);
-    double mass=0;
-    //todo:automatically detect the bodies related to end effector
-    //last three bodies of the robot are belong to the gripper
-    for(unsigned int i = 3; i< 6; i++)
-    {
-        const dReal *gripperbodypose = dBodyGetPosition(((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->bodies[i]);
-        mass= ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
-               getEnvironment().get())->Instknowledge->isRobotInManipulationRegion(gripperbodypose[0],gripperbodypose[1]);
-        if(mass!=-1)
-            break;
-    }
-    std::vector<double> q;
-    q.push_back(dJointGetHingeAngle(((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
-                                     getEnvironment().get())->joint_.at("Chainbase_link+Chainlink1")));
-    q.push_back(dJointGetHingeAngle(((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
-                                     getEnvironment().get())->joint_.at("Chainlink1+Chainlink2")));
     const ob::RealVectorBounds &b = space_->as<oc::OpenDEControlSpace>()->getBounds();
-    if(mass==-1)
-    {
+
     if (rng_.uniform01() > 0.3)
     {
         double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[0];
         static const double DT0 = 0.5;
         v += (rng_.uniformBool() ? 1 : -1) * DT0;
-        if (v > b.high[0] )//|| q[0]>1.3)
+        if (v > b.high[0] )
             v = b.high[0] - DT0;
-        if (v < b.low[0]  )//|| q[0]<-1.3)
+        if (v < b.low[0]  )
             v = b.low[0] + DT0;
     }
     if (rng_.uniform01() > 0.3)
@@ -334,66 +276,12 @@ void PlanarChainControlSampler::sampleNext(oc::Control *control, const oc::Contr
         double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[1];
         static const double DT1 = 0.5;
         v += (rng_.uniformBool() ? 1 : -1) * DT1;
-        if (v > b.high[1] )//|| q[1]>1.3)
+        if (v > b.high[1] )
             v = b.high[1] - DT1;
-        if (v < b.low[1] )//|| q[1]<-1.3)
+        if (v < b.low[1] )
             v = b.low[1] + DT1;
     }
 
-
-        std::vector<double> torque = ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
-        getEnvironment().get())->mkinematics->getdefaultTorqueLimit();
-        ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
-                getEnvironment().get())->mkinematics->setTorqueLimit(torque);
-
-        //std::cout<<"CMove Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;
-    }
-    else
-    {
-        std::vector<double> f;
-        f.push_back(0.07*mass*9.8);
-        f.push_back(0.07*mass*9.8);
-        std::vector<double> tq=  ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
-                                      getEnvironment().get())->mkinematics->getJointTorque(q,f);
-        std::vector<double> torque = ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
-        getEnvironment().get())->mkinematics->getdefaultTorqueLimit();
-        if (rng_.uniform01() > 0.3)
-        {
-            double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[0];
-            static const double DT0 = 0.5;
-            v += (rng_.uniformBool() ? 1 : -1) * DT0;
-            if (v > b.high[0]+tq[0])//|| q[0]>1.3)
-                v = b.high[0] - DT0;
-            if (v < b.low[0]-tq[0]  )//|| q[0]<-1.3)
-                v = b.low[0] - DT0;
-        }
-        if (rng_.uniform01() > 0.3)
-        {
-            double &v = control->as<oc::OpenDEControlSpace::ControlType>()->values[1];
-            static const double DT1 = 0.5;
-            v += (rng_.uniformBool() ? 1 : -1) * DT1;
-            if (v > b.high[1]+tq[1] )//|| q[1]>1.3)
-                v = b.high[1] - DT1;
-            if (v < b.low[1]-tq[1] )//|| q[1]<-1.3)
-                v = b.low[1] + DT1;
-        }
-
-//        torque[0]=torque[0]+fabs(tq[0]);
-//        torque[1]=torque[1]+fabs(tq[1]);
-//        ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
-//                getEnvironment().get())->mkinematics->setTorqueLimit(torque);
-        //to update the manipulation regions
-//        ((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->
-//          Instknowledge->updateKnowledge(((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->getEnvironment().get())->bodies);
-        //std::cout<<"Cinteraction Torque "<<torque[0]<<" , "<<torque[1]<<std::endl;;
-
-    }
-    double &v1 = control->as<oc::OpenDEControlSpace::ControlType>()->values[2];
-    double &v2 = control->as<oc::OpenDEControlSpace::ControlType>()->values[3];
-    v1=dBodyGetAngularVel(((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
-        getEnvironment().get())->bodies[1])[2];
-    v2=dBodyGetAngularVel(((KauthamDEEnvironment*)space_->as<oc::OpenDEControlSpace>()->
-        getEnvironment().get())->bodies[2])[2];
 }
 
 void PlanarChainControlSampler::sampleNext(oc::Control *control, const oc::Control *previous, const ob::State* /*state*/)
@@ -402,7 +290,9 @@ void PlanarChainControlSampler::sampleNext(oc::Control *control, const oc::Contr
 sampleNext(control, previous);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
+/*! PlanarChainControlSpace class inherit from the OpenDEControlSpace. It mainly reimplement the
+ * allocControlSampler function by setting the pointer to the PlanarChainControlSampler.
+ */
 PlanarChainControlSpace::PlanarChainControlSpace(const ob::StateSpacePtr &m) : oc::OpenDEControlSpace(m)
 {
 }

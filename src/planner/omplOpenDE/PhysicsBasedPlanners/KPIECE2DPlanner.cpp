@@ -41,7 +41,6 @@ KPIECE2DPlanner::KPIECE2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
 {
     //set intial values from parent class data
     _wkSpace->moveRobotsTo(init);
-
     _guiName = "KPIECE 2D Planner";
     _idName = "KPIECE2DPlanner";
     dInitODE2(0);
@@ -56,15 +55,12 @@ KPIECE2DPlanner::KPIECE2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
     addParameter("Goal Bias", _GoalBias);
     planner->as<oc::KPIECE1>()->setGoalBias(_GoalBias);
     //planner->as<oc::KPIECE1>()->setProjectionEvaluator(stateSpacePtr->getDefaultProjection());
-
     //set the planner
     ss->setPlanner(planner);
 
 }
 //! void destructor
-KPIECE2DPlanner::~KPIECE2DPlanner(){
-
-}
+KPIECE2DPlanner::~KPIECE2DPlanner(){}
 //! this function set the necessary parameters for KAPIECE Planner.
 bool KPIECE2DPlanner::setParameters()
 {
