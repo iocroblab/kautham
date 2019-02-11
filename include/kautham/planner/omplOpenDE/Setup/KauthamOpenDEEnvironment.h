@@ -24,8 +24,8 @@
 /* Author: Joan Fontanals Martinez, Muhayyuddin */
 
 
-#if defined(KAUTHAM_USE_OMPL)
-#if defined(KAUTHAM_USE_ODE)
+//#if defined(KAUTHAM_USE_OMPL)
+//#if defined(KAUTHAM_USE_ODE)
 #if !defined(_KauthamOpenDEEnvironment_H)
 #define _KauthamOpenDEEnvironment_H
 #include <ompl/base/SpaceInformation.h>
@@ -91,29 +91,21 @@ namespace Kautham
  */
 namespace omplcplanner
 {
-/************************************************* **************************
- * / * OpenDEEnvironment is a class that recycles much of the code Odin Alfredo especially
-     the part where you build and Bodys geometries ODE . ODIN was the possibility of building the world
-from XML files or from the GUI Odin , we have taken the part of the code that creates bodies TRIMESH
-from XML . As has already been commissioned Kautham read the files we made small changes to the code so removing information
-the workspace that he has already previously extracted XML files . *
-This class must derive classes for each environment we want to create where to set the Bounds of the control and how
-Complete and ODE must apply the control ( have to apply forces to the bodies or even engines , or should give speeds ? Need bodies defined as Kinematics ? Etc ...
- ************************************************** *************************/
-/*
-     /////////////////////////////////////////////////////////////////////////////////////////////////
-    // Class KauthamDEEnvironment
-    /////////////////////////////////////////////////////////////////////////////////////////////////*/
 class ManipulationQuery;
 class Manipulatorkinematics;
-//! KauthamDEEnvironment class read the workspace and generate the dynamic environment.
-//! this class is the parent of all the enviroments (like CarEnviornment, twoDRobotEnvironment,..) in which ODE will apply the control.
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Class KauthamDEEnvironment
+  /////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+//! KauthamDEEnvironment class read the workspace of kautham and generates the dynamic environment.
+//! This class is the parent of all the enviroments (like CarEnviornment, twoDRobotEnvironment,..) in which ODE will apply the control.
 class KauthamDEEnvironment: public oc::OpenDEEnvironment
 {
 public:
 
     // Called for each Link of robots and obstacles for every body function and fill buildkinematicChain map that KinematicChain
-    // call ChainMap. (each chain has information object joints, etc ... (see documentation Odin.) Once full ChainMap called the creation of the world with createWorld.
+    // call ChainMap. (each chain has information object joints. Once full ChainMap called the creation of the world with createWorld.
     // every body within chainMap called as nomrobot + nomlink
 
     KauthamDEEnvironment(WorkSpace* wkspace, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm, bool isKchain);//!< constructor will build the KinamaticChainMap (each chain has information about objects, joints, etc)and creat the world.
@@ -127,7 +119,7 @@ public:
     void destroyWorld(); //!< This function destory the world.
     virtual void SetPlanningParameters(); //!< setup the necessary planning parameter for OpenDE.
 
-     // PROVIENEN Odin
+    // PROVIENEN Odin
     // All these methods come from ODIN and aim to pass a data structure organized in the way Kautham
     // move to have the structures as demanded by the ODE dBody bodies and their geometries . To do this the structures that are used,
     // Used the Alfredo Odin and in this case call odinobjects .
@@ -252,6 +244,7 @@ public:
         std::vector<double> dimRegion;
         std::vector<string> regionDir;
     }bodyInfo;
+
     bodyInfo bI;
     std::vector<bodyInfo> bodyDEInfo;
     map<string, KinematicChain> chainMap; //!< map KinamaticChain
@@ -265,12 +258,12 @@ public:
     int _NumLinksFirstRobot; //!< define number of links of robot.
     KthReal _maxspeed;       //!< Define max. speed of motor.
     KthReal _propagationStepSize; //!< Define the step size of the world.
-    KthReal _maxContacts;
-    KthReal _minControlSteps;
-    KthReal _maxControlSteps;
-    KthReal _erp;
-    KthReal _cfm;
-    std::vector<dGeomID> GeomID;
+    KthReal _maxContacts;//!< Define the number of contact to consider for ODE when two bodies are in contact.
+    KthReal _minControlSteps;//!< Define the minimum number of time a control will be applied
+    KthReal _maxControlSteps;//!< Define the max number of time a control will be applies.
+    KthReal _erp;//!< Represents the value f error reduction parameter for ODE.
+    KthReal _cfm;//!< Represents constraint force mixing for ODE.
+    std::vector<dGeomID> GeomID; //!< vector of ODE GeomIDs in the world.
 
     unsigned int getNumLinksFirstRobot(){return _NumLinksFirstRobot;}; //!< returns number of links of first robot
 
@@ -279,29 +272,30 @@ public:
     vector<dBodyID> fillstatebodies(map<string,dBodyID> stateBodiesmap_, WorkSpace *wkspace);//!< this function return the vector of ODE bodies in such a way that, robot will be the first body.
 
     dGeomID ground;
-    std::vector<dJointID> _Joint;
-    std::vector<dJointID> _motor;
+    std::vector<dJointID> _Joint;//!< ODE joints vector.
+    std::vector<dJointID> _motor;//!< ODE motors vector.
 
-    InstantiatedKnowledge *Instknowledge;
-    std::map<string,dBodyID> getBody;
-    std::map<dGeomID,std::string> geomname;
-    std::map<std::string,dJointID> joint_;
-    std::map<std::string,dJointID> motor_;
+    InstantiatedKnowledge *Instknowledge;//!< Instantiated knowledge instance.
+    std::map<string,dBodyID> getBody; //!< map to obtaine the ODE bodies depending on their names.
+    std::map<dGeomID,std::string> geomname; //!< map of ODE geometries and names.
+    std::map<std::string,dJointID> joint_; //!< map of joints and connected bodies
+    std::map<std::string,dJointID> motor_;//!< map of motors and connected bodies
 
     std::map<dBodyID, std::vector<double> > bodyDim;
-static constexpr double toRad  = M_PI/180.;
-dJointID cJoint[4];
-ManipulationQuery *manipulationQuery;
-Manipulatorkinematics *mkinematics;
-std::vector<double> linklength;
-dJointFeedback *feedback1;
-dJointFeedback *feedback2;
-dJointFeedback *feedback3;
-dJointFeedback *feedback4;
+    static constexpr double toRad  = M_PI/180.;
+    dJointID cJoint[4];
+    ManipulationQuery *manipulationQuery;
+    Manipulatorkinematics *mkinematics;
+    std::vector<double> linklength;
+    dJointFeedback *feedback1;
+    dJointFeedback *feedback2;
+    dJointFeedback *feedback3;
+    dJointFeedback *feedback4;
+
 private:
 
     //static const double toRad  = M_PI/180.;
-bool trimesh;
+    bool trimesh;
 
     //! This function will build the kinamatic chain for Robot
     bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector<KthReal>& basePos);
@@ -314,7 +308,7 @@ bool trimesh;
     vector<KthReal> baseGetPos(Robot* robot);// this function will returns the position and orientation of robot.
     dJointID  makeMotor(dBodyID body1, dBodyID body2,const unsigned int type, const vector< double >& axes,const vector< double >& fmax,const double hiStop, const double LoStop,const double value);
     dJointID addMotor2Joint(dJointID joint, vector<double>& maxForces,const double value, const double hiStop, const double LoStop);
-   // dJointID makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector<double>& params,vector<double>& maxForces);
+    // dJointID makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector<double>& params,vector<double>& maxForces);
     dJointID makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector<double>& params,vector<double>& maxForces, const double hiStop, const double LoStop,const double value);
     int sceneObjectNumber;
     string InstknowledgeInference(bodyInfo bodyinfo);
@@ -325,7 +319,6 @@ bool trimesh;
     std::vector<string> mRgnDirection;
     std::vector<bool> collisionflag;
     string InferenceProcess(string rigidbodyName, dBodyID body, dGeomID geom);
-    void ReadManipulationKnowledge();
     void getPrimitiveShapes(Link* link, odinObject* obj, bool rotflag);
 };
 typedef struct
@@ -380,11 +373,11 @@ public:
     void AddjointTorque(Configuration t){Torque.push_back(t);}
     Configuration getJointTorque(unsigned int i){return Torque.at(i);}
 
-     std::vector<Configuration> getJointConfiguraion(){return jointConf;}
-     void setJointConfiguraion(std::vector<Configuration> conf){jointConf=conf;}
-     std::vector<Configuration> getJointVelocities(){return qdot;}
-     void setJointVelocities(std::vector<Configuration> qd){qdot=qd;}
-     std::vector<Configuration> getJointTorque(){return Torque;}
+    std::vector<Configuration> getJointConfiguraion(){return jointConf;}
+    void setJointConfiguraion(std::vector<Configuration> conf){jointConf=conf;}
+    std::vector<Configuration> getJointVelocities(){return qdot;}
+    void setJointVelocities(std::vector<Configuration> qd){qdot=qd;}
+    std::vector<Configuration> getJointTorque(){return Torque;}
     void setJointTorque(std::vector<Configuration> t){Torque=t;}
 
 
@@ -434,18 +427,18 @@ public:
         return eeVelocity;
     }
 
-   std::vector<double> getJointTorque(std::vector<double> q,std::vector<double> f)
+    std::vector<double> getJointTorque(std::vector<double> q,std::vector<double> f)
     {
-       std::vector<double> torque;
-       torque.resize(2);
-       TransposedJacobian[0][0] =-link[0]*sin(q[0])-link[1]*sin(q[0]+q[1]);
-       TransposedJacobian[0][1] = link[0]*cos(q[0])+link[1]*cos(q[0]+q[1]);
-       TransposedJacobian[1][0] =-link[1]*sin(q[0]+q[1]);
-       TransposedJacobian[1][1] = link[1]*cos(q[0]+q[1]);
+        std::vector<double> torque;
+        torque.resize(2);
+        TransposedJacobian[0][0] =-link[0]*sin(q[0])-link[1]*sin(q[0]+q[1]);
+        TransposedJacobian[0][1] = link[0]*cos(q[0])+link[1]*cos(q[0]+q[1]);
+        TransposedJacobian[1][0] =-link[1]*sin(q[0]+q[1]);
+        TransposedJacobian[1][1] = link[1]*cos(q[0]+q[1]);
 
-       torque[0]=TransposedJacobian[0][0]*f[0]+TransposedJacobian[0][1]*f[1];
-       torque[1]=TransposedJacobian[1][0]*f[0]+TransposedJacobian[1][1]*f[1];
-       return torque;
+        torque[0]=TransposedJacobian[0][0]*f[0]+TransposedJacobian[0][1]*f[1];
+        torque[1]=TransposedJacobian[1][0]*f[0]+TransposedJacobian[1][1]*f[1];
+        return torque;
     }
 
 };
@@ -455,7 +448,7 @@ public:
 
 
 #endif  //_KauthamOpenDEEnvironment_H
-#endif //KAUTHAM_USE_ODE
-#endif // KAUTHAM_USE_OMPL
+//#endif //KAUTHAM_USE_ODE
+//#endif // KAUTHAM_USE_OMPL
 
 
