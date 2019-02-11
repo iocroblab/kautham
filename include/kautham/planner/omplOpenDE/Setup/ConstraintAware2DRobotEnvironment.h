@@ -27,38 +27,8 @@
 #if defined(KAUTHAM_USE_ODE)
 #if !defined(_ConstraintAware2DRobotEnvironment_H)
 #define _ConstraintAware2DRobotEnvironment_H
-#include <ompl/base/SpaceInformation.h>
-#include <ompl/geometric/SimpleSetup.h>
-#include <ompl/control/SimpleSetup.h>
-#include <ompl/config.h>
-#define dDOUBLE
-#include <ode/ode.h>
-#include <ompl/extensions/opende/OpenDEEnvironment.h>
-#include <ompl/extensions/opende/OpenDEControlSpace.h>
-#include <ompl/extensions/opende/OpenDEStateSpace.h>
-#include <ompl/extensions/opende/OpenDESimpleSetup.h>
-#include <ompl/extensions/opende/OpenDEStatePropagator.h>
-#include <ompl/extensions/opende/OpenDEStateValidityChecker.h>
-#include <ompl/base/goals/GoalRegion.h>
-#include <kautham/problem/link.h>
-#include <kautham/problem/robot.h>
-#include <kautham/problem/workspace.h>
-
-#define _USE_MATH_DEFINES
-
-#include <math.h>
-#include <fstream>
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <kautham/problem/link.h>
-#include <kautham/problem/robot.h>
-#include <kautham/problem/ivelement.h>
 #include <kautham/planner/omplOpenDE/Setup/KauthamOpenDEEnvironment.h>
-#include <ompl/base/ProjectionEvaluator.h>
-#include <kautham/problem/workspace.h>
-#include <kautham/sampling/sampling.h>
-#include <kautham/planner/planner.h>
+
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 namespace oc = ompl::control;
