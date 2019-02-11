@@ -45,7 +45,6 @@ if( KAUTHAM_OMPL )
             set (SRC_OMPLOPENDE_FILES 
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/InstantiatedKnowledge/Instantiatedknowledge.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/displayOpenDE.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/EST2DPlanner.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/KauthamOpenDEPlanner.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/KnowledgeOrientedKPIECE2DPlanner.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/KnowledgeOrientedRRT2DPlanner.cpp
@@ -53,25 +52,15 @@ if( KAUTHAM_OMPL )
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/KPIECE2DPlanner.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/KPIECECarPlanner.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/KPIECEChainPlanner.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/KPIECEFreeFlyingPlanner.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/KPIECEMultiRobotPlanner.cpp
-            #${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/KPIECETiagoPlanner.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/PDST2DPlanner.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/RRT2DPlanner.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/RRTMultiRobotPlanner.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/PhysicsBasedPlanners/Syclop2DPlanner.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/CarEnvironment.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/ConstraintAware2DRobotEnvironment.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/FreeFlyingRobotEnvironment.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/KauthamDEGoalRegion.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/KauthamDEGoalSamplableRegion.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/KauthamOpenDEEnvironment.cpp
-            #${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/KUKAEnvironment.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/MultiRobotEnvironment.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/PlanarChainEnvironment.cpp
-            #${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/TiagoEnvironment.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/twoDRobotEnvironment.cpp
-            #${CMAKE_CURRENT_SOURCE_DIR}/omplOpenDE/Setup/YumiEnvironment.cpp
             )
           
             
