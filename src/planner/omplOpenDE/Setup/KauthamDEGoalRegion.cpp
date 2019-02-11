@@ -40,8 +40,7 @@ namespace omplcplanner{
 KauthamDEGoalRegion::KauthamDEGoalRegion(const ob::SpaceInformationPtr &si, WorkSpace *ws, bool a,Sample *goal):ob::GoalRegion(si)
 {
     setThreshold(0.05);
-    //threshold_ = 1;
- Kauthamodebodies=smp2KauthamOpenDEState(ws,goal);
+    Kauthamodebodies=smp2KauthamOpenDEState(ws,goal);
     onlyend=a;
 }
 KauthamDEGoalRegion::KauthamDEGoalRegion(const ob::SpaceInformationPtr &si,  WorkSpace *ws, bool a,double x, double y):ob::GoalRegion(si)
@@ -69,23 +68,12 @@ KauthamDEGoalRegion::~KauthamDEGoalRegion()
 vector<KauthamDEGoalRegion::KauthamODEobject> KauthamDEGoalRegion::smp2KauthamOpenDEState(WorkSpace *wkSpace,Sample *goal)
 {
 
-    //Extract the mapped configuration of the sample. It is a vector with as many components as robots.
-    //each component has the RobConf of the robot (the SE3 and the Rn configurations)
-
-    //std::vector<RobConf>* smpRobotsConf(new std::vector<RobConf>);
-
-
-    //std::vector<RobConf>& smpRConf = smp->getMappedConf();
-
-    //smpRobotsConf=&smpRConf;
-    //vector<KauthamODEobject> y(new vector<KauthamODEobject>);
-    //loop for all the robots
     vector<KauthamODEobject> kauthamob;
 
     for(unsigned int i=0; i<((unsigned int)wkSpace->getNumRobots()); i++)
     {
         //wkSpace->getRobot(0)->Kinematics(goal->getMappedConf()[0]);
-         wkSpace->getRobot(i)->Kinematics(goal->getMappedConf().at(0).getSE3());
+        wkSpace->getRobot(i)->Kinematics(goal->getMappedConf().at(0).getSE3());
         for(unsigned int j=0; j< (wkSpace->getRobot(i)->getNumLinks());j++)
         {
 
@@ -93,7 +81,6 @@ vector<KauthamDEGoalRegion::KauthamODEobject> KauthamDEGoalRegion::smp2KauthamOp
             odeob.objectposition[0] = wkSpace->getRobot(i)->getLink(j)->getElement()->getPosition()[0];
             odeob.objectposition[1] = wkSpace->getRobot(i)->getLink(j)->getElement()->getPosition()[1];
             odeob.objectposition[2] = wkSpace->getRobot(i)->getLink(j)->getElement()->getPosition()[2];
-            //Kauthamodebodies.insert(pair<int,KauthamODEobject>(i,*(wkSpace->getRobot(i)->getLink(j)->getElement()->getPosition()));
             odeob.objectorientation[0] = wkSpace->getRobot(i)->getLink(j)->getElement()->getOrientation()[0];
             odeob.objectorientation[1] = wkSpace->getRobot(i)->getLink(j)->getElement()->getOrientation()[1];
             odeob.objectorientation[2] = wkSpace->getRobot(i)->getLink(j)->getElement()->getOrientation()[2];
@@ -132,9 +119,7 @@ double KauthamDEGoalRegion::distanceGoal(const ob::State *st) const
     }
     else
     {
-        //const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(Kauthamodebodies.size()-1);
         const double *pos = st->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
-        //const ob::SO3StateSpace::StateType &rot = st->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(Kauthamodebodies.size()-1);
         double dx = Kauthamodebodies[3].objectposition[0] - pos[0];
         double dy = Kauthamodebodies[3].objectposition[1] - pos[1];
 
@@ -147,8 +132,6 @@ double KauthamDEGoalRegion::distanceGoal(const ob::State *st) const
 bool KauthamDEGoalRegion::isSatisfied(const ob::State *st, double *distance) const
 {
     double d2g = distanceGoal(st);
-    //if(d2g<120)
-    //std::cout<<"Distance to goal is: "<<d2g<<std::endl;
     if (distance)
         *distance = d2g;
     return d2g < threshold_;
