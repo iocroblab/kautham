@@ -39,7 +39,6 @@ namespace omplcplanner{
 KnowledgeOrientedKPIECE2DPlanner::KnowledgeOrientedKPIECE2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
     KauthamDEPlanner(stype, init, goal, samples, ws)
 {
-    //set intial values from parent class data
     _wkSpace->moveRobotsTo(init);
 
     _guiName = "Knowledge Oriented KPIECE 2D Planner";
