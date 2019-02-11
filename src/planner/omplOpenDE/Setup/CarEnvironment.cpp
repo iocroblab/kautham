@@ -191,7 +191,7 @@ CarStateSpace::~CarStateSpace()
 }
 
 /*! Distance function describe that how the distance will be measured between two states of the CarStateSpace.
- * It measure simple cartesian distance in 2D space.
+ * It measures simple cartesian distance in 2D space.
  */
 double CarStateSpace::distance(const ob::State *s1, const ob::State *s2) const
 {

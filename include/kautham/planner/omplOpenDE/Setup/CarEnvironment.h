@@ -31,9 +31,6 @@
 
 
 #include <iostream>
-#include <vector>
-#include <ode/ode.h>
-
 #include <ompl/base/ProjectionEvaluator.h>
 #include <kautham/planner/omplOpenDE/Setup/KauthamOpenDEEnvironment.h>
 
