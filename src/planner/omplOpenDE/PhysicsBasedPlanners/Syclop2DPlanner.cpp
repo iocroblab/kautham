@@ -30,17 +30,13 @@
 #include <ompl/base/spaces/SE2StateSpace.h>
 #include <ompl/control/planners/syclop/GridDecomposition.h>
 #include <ompl/control/SimpleSetup.h>
-
-#include <ompl/control/SpaceInformation.h>
-#include <ompl/base/goals/GoalState.h>
-#include <ompl/base/spaces/SE2StateSpace.h>
-#include <ompl/control/spaces/RealVectorControlSpace.h>
-
+#include <kautham/planner/omplOpenDE/Setup/PlanarChainEnvironment.h>
 namespace Kautham {
 
 namespace omplcplanner{
 enum MotionModel { Motion_2D, Motion_3D };
 
+//!This class provide the decomposition of the workspace for SyCLoP planner.
 class MyDecomposition : public oc::GridDecomposition
 {
 public:
@@ -51,13 +47,9 @@ public:
     virtual void project(const ob::State* s, std::vector<double>& coord) const
     {
         coord.resize(2);
-//        coord[0]=s->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(0)->values[0];
-//        coord[1]=s->as<ob::CompoundState>()->as<ob::RealVectorStateSpace::StateType>(0)->values[1];
         const double *pos = s->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(3);
         coord[0] =  pos[0];
         coord[1] =  pos[1];
-        //std::cout<<"Cord are : "<<coord[0]<<" "<<coord[1]<<std::endl;
-
     }
     virtual void sampleFullState(const ob::StateSamplerPtr& sampler, const std::vector<double>& coord, ob::State* s) const
     {
@@ -84,56 +76,23 @@ Syclop2DPlanner::Syclop2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
     bounds.resize(2);
     dInitODE2(0);
 
-
-    //       oc::OpenDEEnvironmentPtr envPtr(new KauthamDEtableEnvironment(ws,_maxspeed));
-    //       stateSpace = new KauthamDEStateSpace(envPtr);
-    //       stateSpacePtr = ob::StateSpacePtr(stateSpace);
-
     envPtr= oc::OpenDEEnvironmentPtr(new PlanarChainEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
     //stateSpacePtr = ob::StateSpacePtr(new PlanarChainStateSpace(envPtr));
     stateSpacePtr = ob::StateSpacePtr(new PlanarChainStateSpace(envPtr));
     csp= oc::ControlSpacePtr(new PlanarChainControlSpace(stateSpacePtr));
     ss = new oc::OpenDESimpleSetup(csp);
-   //ss = new oc::OpenDESimpleSetup(stateSpacePtr);
     oc::SpaceInformationPtr si=ss->getSpaceInformation();
-
-//    oc::ControlSpacePtr csp(new KauthamControlSpace(stateSpacePtr));
-//    ss = new oc::OpenDESimpleSetup(csp);
-    //ss = new oc::OpenDESimpleSetup(stateSpacePtr);
-
-    //oc::SpaceInformationPtr si=ss->getSpaceInformation();
-
 
     bounds.low[0] = _wkSpace->getRobot(0)->getLimits(0)[0];
     bounds.low[1] = _wkSpace->getRobot(0)->getLimits(1)[0];
     bounds.high[0] = _wkSpace->getRobot(0)->getLimits(0)[1];
     bounds.high[1] = _wkSpace->getRobot(0)->getLimits(1)[1];
-//    // Create a 10x10 grid decomposition for Syclop
-//    control::DecompositionPtr decomp(new SyclopDecomposition (10, bounds));
-
-//    control::SyclopRRT *srrt = new control::SyclopRRT(si, decomp);
+    // Create a 10x10 grid decomposition for Syclop
     oc::DecompositionPtr decomp(new MyDecomposition(10,bounds));
-
-    //oc::DecompositionPtr allocDecomposition(stateSpacePtr, Motion_2D, stateSpacePtr);
     ob::PlannerPtr planner(new oc::SyclopRRT(si,decomp));
-    //set planner parameters: range and goalbias
 
-//    _NumFreeVolumeSamples=(planner->as<oc::SyclopRRT>())->getNumFreeVolumeSamples();
-//    _getProbShortestPathLead=(planner->as<oc::SyclopRRT>())->getProbShortestPathLead();
-//    _getProbAddingToAvailableRegions=(planner->as<oc::SyclopRRT>())->getProbAddingToAvailableRegions();
-//    _getNumRegionExpansions=(planner->as<oc::SyclopRRT>())->getNumRegionExpansions ();
-//    _getNumTreeExpansions=(planner->as<oc::SyclopRRT>())->getNumTreeExpansions();
-//    _getProbAbandonLeadEarly= (planner->as<oc::SyclopRRT>())->getProbAbandonLeadEarly();
-
-//   planner->as<oc::SyclopRRT>()->setNumFreeVolumeSamples(_NumFreeVolumeSamples);
-//   planner->as<oc::SyclopRRT>()->setProbShortestPathLead(_getProbShortestPathLead);
-//   planner->as<oc::SyclopRRT>()->setProbAddingToAvailableRegions(_getProbAddingToAvailableRegions);
-//   planner->as<oc::SyclopRRT>()->setNumRegionExpansions(_getNumRegionExpansions);
-//   planner->as<oc::SyclopRRT>()->setNumTreeExpansions(_getNumTreeExpansions);
-//   planner->as<oc::SyclopRRT>()->setProbAbandonLeadEarly(_getProbAbandonLeadEarly);
     //set the planner
 
-    // set the problem we are trying to solve for the planner
     ss->setPlanner(planner);
 
 

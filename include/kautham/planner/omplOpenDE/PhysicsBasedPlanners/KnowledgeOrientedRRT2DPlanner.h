@@ -33,7 +33,6 @@
 #include <kautham/planner/omplOpenDE/Setup/ConstraintAware2DRobotEnvironment.h>
 #include <kautham/planner/omplc/omplcplanner.h>
 #include <kautham/sampling/sampling.h>
-//#include <ompl/geometric/planners/rrt/RRTConnect.h>
 
 #define _USE_MATH_DEFINES
 

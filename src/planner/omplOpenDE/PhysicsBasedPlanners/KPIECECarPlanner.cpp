@@ -22,16 +22,11 @@
 
 /* Author: Muhayyuddin */
 
-
 #if defined(KAUTHAM_USE_OMPL)
 #if defined(KAUTHAM_USE_ODE)
-
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KPIECECarPlanner.h>
-
 namespace Kautham {
-
 namespace omplcplanner{
-
 
 /*! Constructor create the dynamic environment, and setup all the parameters for planning.
  * it defines simple setup, Planner and Planning parameters.
@@ -50,16 +45,12 @@ KPIECECarPlanner::KPIECECarPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     stateSpace = new CarStateSpace(envPtr);
     stateSpacePtr = ob::StateSpacePtr(stateSpace);
     oc::ControlSpacePtr csp(new CarControlSpace(stateSpacePtr));
-        ss = new oc::OpenDESimpleSetup(csp);
-       // ss = new oc::OpenDESimpleSetup(stateSpacePtr);
+    ss = new oc::OpenDESimpleSetup(csp);
     oc::SpaceInformationPtr si=ss->getSpaceInformation();
 
     ob::PlannerPtr planner(new oc::KPIECE1(si));
-    //set planner parameters: range and goalbias
     addParameter("Goal Bias", _GoalBias);
     planner->as<oc::KPIECE1>()->setGoalBias(_GoalBias);
-    //planner->as<oc::KPIECE1>()->setProjectionEvaluator(stateSpacePtr->getDefaultProjection());
-
     //set the planner
     ss->setPlanner(planner);
 

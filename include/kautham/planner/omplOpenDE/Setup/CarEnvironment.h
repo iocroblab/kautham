@@ -29,33 +29,9 @@
 #define dDOUBLE
 #define _USE_MATH_DEFINES
 
-#include <math.h>
-#include <fstream>
+
 #include <iostream>
-#include <vector>
-#include <cmath>
-#include <ode/ode.h>
-#include <ompl/config.h>
-#include <kautham/problem/link.h>
-#include <kautham/problem/robot.h>
-#include <kautham/problem/workspace.h>
-#include <ompl/base/SpaceInformation.h>
-#include <ompl/geometric/SimpleSetup.h>
-#include <ompl/control/SimpleSetup.h>
-#include <ompl/extensions/opende/OpenDEEnvironment.h>
-#include <ompl/extensions/opende/OpenDEControlSpace.h>
-#include <ompl/extensions/opende/OpenDEStateSpace.h>
-#include <ompl/extensions/opende/OpenDESimpleSetup.h>
-#include <ompl/extensions/opende/OpenDEStatePropagator.h>
-#include <ompl/extensions/opende/OpenDEStateValidityChecker.h>
-#include <ompl/base/goals/GoalRegion.h>
-#include <kautham/problem/link.h>
-#include <kautham/problem/robot.h>
-#include <kautham/problem/ivelement.h>
 #include <ompl/base/ProjectionEvaluator.h>
-#include <kautham/problem/workspace.h>
-#include <kautham/sampling/sampling.h>
-#include <kautham/planner/planner.h>
 #include <kautham/planner/omplOpenDE/Setup/KauthamOpenDEEnvironment.h>
 
 namespace ob = ompl::base;
@@ -115,7 +91,6 @@ class CarStateProjectionEvaluator: public ob::ProjectionEvaluator
 {
 public:
     CarStateProjectionEvaluator(const ob::StateSpace *space); //!< Constructor
-    CarStateProjectionEvaluator(const ob::StateSpace *space, WorkSpace *_wkSpace); //!< Constructor
     virtual unsigned int getDimension(void) const; //!< This function returns the dimension of the projection.
     virtual void defaultCellSizes(void);//!< This function set the default dimension of the cell for projection.
     virtual void project(const ob::State *state, Kautham::VectorRef projection) const override;//!< This function calculate the projections
@@ -127,7 +102,7 @@ class CarControlSampler : public oc::RealVectorControlUniformSampler
 public:
 
     CarControlSampler(const oc::ControlSpace *cm) ;
-    virtual void sampleNext(oc::Control *control, const oc::Control *previous);
+    virtual void sampleNext(oc::Control *control, const oc::Control *previous);//!< This function define the way of sampling controls.
     virtual void sampleNext(oc::Control *control, const oc::Control *previous, const ob::State* /*state*/);
 
 };
@@ -137,7 +112,7 @@ class CarControlSpace : public oc::OpenDEControlSpace
 {
 public:
     CarControlSpace(const ob::StateSpacePtr &m);
-    virtual oc::ControlSamplerPtr allocControlSampler(void) const;
+    virtual oc::ControlSamplerPtr allocControlSampler(void) const;//!< This function set the pointer to the CarControlSampler.
 
 };
 

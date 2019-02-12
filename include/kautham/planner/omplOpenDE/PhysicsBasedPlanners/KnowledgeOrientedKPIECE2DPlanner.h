@@ -31,8 +31,6 @@
 
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KauthamOpenDEPlanner.h>
 #include <kautham/planner/omplOpenDE/Setup/ConstraintAware2DRobotEnvironment.h>
-#include <kautham/planner/omplc/omplcplanner.h>
-//#include "sampling/sampling.h"
 #include <ompl/control/planners/kpiece/KPIECE1.h>
 #define _USE_MATH_DEFINES
 
@@ -60,13 +58,11 @@ public:
     KnowledgeOrientedKPIECE2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~KnowledgeOrientedKPIECE2DPlanner();
     bool setParameters();//!< this function set the planning parameters for KPIECE.
-
-    KthReal _Range;
-    KthReal _GoalBias;
+    KthReal _GoalBias;//!< define the goal bias for KPIECE.
 };
 
 }
- /** @}   end of Doxygen module "Planner */
+/** @}   end of Doxygen module "Planner */
 }
 
 #endif  //_KauthamOpenDEKPIECEplanner_H
