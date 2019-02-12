@@ -22,25 +22,18 @@
 
 /* Author: Joan Fontanals Martinez, Muhayyuddin */
 
-#if defined(KAUTHAM_USE_OMPL)
-#if defined(KAUTHAM_USE_ODE)
+//#if defined(KAUTHAM_USE_OMPL)
+//#if defined(KAUTHAM_USE_ODE)
 
 #if !defined(_KauthamDEGoalRegion_H)
 #define _KauthamDEGoalRegion_H
 #define dDOUBLE
-#include <ompl/extensions/opende/OpenDESimpleSetup.h>
-#include <ompl/extensions/opende/OpenDEControlSpace.h>
-#include <ompl/extensions/opende/OpenDEStateSpace.h>
-#include <ompl/extensions/opende/OpenDESimpleSetup.h>
-#include <ompl/extensions/opende/OpenDEStatePropagator.h>
-#include <ompl/extensions/opende/OpenDEStateValidityChecker.h>
 #include <ompl/base/goals/GoalRegion.h>
 #include <ompl/config.h>
 #include <iostream>
 #include <kautham/problem/workspace.h>
 
 #include <ode/ode.h>
-//#include "omplcplanner.h"
 #include <kautham/planner/omplOpenDE/Setup/KauthamOpenDEEnvironment.h>
 #include <kautham/sampling/sample.h>
 
@@ -59,12 +52,6 @@ namespace Kautham {
  *  @{
  */
 namespace omplcplanner{
-//typedef struct
-// {
-//     KthReal objectposition[3];
-//     KthReal objectorientation[4];
-// }KauthamDEobject;
-
 
 /*The KauthamDEGoal is mainly used to set as a derived class from a GoalRegion the operation distance which the planner is going to check in order to decide wether the goal has been reached or not.
 In order to check the position and orientation of the objects at the goal configuration we define a method called smp2KauthamOpenDEState .
@@ -77,33 +64,30 @@ class KauthamDEGoalRegion : public ob::GoalRegion
 {
 public:
     KauthamDEGoalRegion(const ob::SpaceInformationPtr &si, WorkSpace* ws, bool a,Sample *goal);
-        KauthamDEGoalRegion(const ob::SpaceInformationPtr &si,  WorkSpace *ws, bool a, double x, double y);
+    KauthamDEGoalRegion(const ob::SpaceInformationPtr &si,  WorkSpace *ws, bool a, double x, double y);
     ~KauthamDEGoalRegion();
     virtual double distanceGoal(const ob::State *st) const; //!< This function compute the distance from the goal.
-  
+
 /*! This structure keeps the position and orientation of each element of the robot once the configuration has been moved GOAL.
- *   This information can be used to compute the distance of any configuration.
+ *This information can be used to compute the distance of any configuration.
  */
-   typedef struct
+    typedef struct
     {
         KthReal objectposition[3];
         KthReal objectorientation[4];
     }KauthamODEobject;
-    //En aquesta estructura es guarda la posició i la orientació de cada element del robot una vegada aquest s'ha mogut a la configuració de 		goal.
-    //Així aquesta informació la puc utilitzar a la hora de calcular la distancia de qualsevol configuració a la configuració del GOAL.   
     vector<KauthamODEobject> smp2KauthamOpenDEState(WorkSpace* w,Sample *goal);//!< This function check the position and orientation of the objects at the goal configuration.
     vector<KauthamODEobject> Kauthamodebodies; //!<  Kauthamodebodies is a vector KauthamODEobject which keeps information on all the elements that make up the kinematic chain of the robot.
-    //Kauthamodebodies es un vector de KauthamODEobject on es guarda la informació de tots els elements que formen la cadena cinemàtica del robot. 
     bool onlyend; //!< It is meant to adapt to the possibility that the planner GOAL involves only the TCP.
     virtual bool isSatisfied(const ob::State *st, double *distance) const;
     virtual bool isSatisfied(const ob::State *st) const;
 };
 
 }
-     /** @}   end of Doxygen module "Planner */
+/** @}   end of Doxygen module "Planner */
 
 }
 
 #endif  //_KauthamDEGoalRegion_H
-#endif //KAUTHAM_USE_ODE
-#endif // KAUTHAM_USE_OMPL
+//#endif //KAUTHAM_USE_ODE
+//#endif // KAUTHAM_USE_OMPL

@@ -22,24 +22,14 @@
 
 /* Author: Muhayyuddin */
 
-#if defined(KAUTHAM_USE_OMPL)
-#if defined(KAUTHAM_USE_ODE)
+//#if defined(KAUTHAM_USE_OMPL)
+//#if defined(KAUTHAM_USE_ODE)
 
 #if !defined(_PlanarChainEnvironment_H)
 #define _PlanarChainEnvironment_H
 #define dDOUBLE
-#include <ompl/extensions/opende/OpenDESimpleSetup.h>
-#include <ompl/extensions/opende/OpenDEControlSpace.h>
-#include <ompl/extensions/opende/OpenDEStateSpace.h>
-#include <ompl/extensions/opende/OpenDESimpleSetup.h>
-#include <ompl/extensions/opende/OpenDEStatePropagator.h>
-#include <ompl/extensions/opende/OpenDEStateValidityChecker.h>
-#include <ompl/base/goals/GoalRegion.h>
-#include <ompl/config.h>
-#include <iostream>
-#include <ode/ode.h>
-#include <kautham/sampling/sample.h>
 
+#include <iostream>
 #include<kautham/planner/omplOpenDE/Setup/KauthamOpenDEEnvironment.h>
 
 #define _USE_MATH_DEFINES
@@ -57,24 +47,24 @@ namespace Kautham {
  */
 namespace omplcplanner{
 
-//!This class defines the pure virtual and virtual function of OpenDEEnviroment class for the PlanarChainEnvironment. It defines the control dimension for the robot,
-//!control bounds, how the control will applied to the robot (such as in term of forces or velocities), how the robot will interact with
-//!the environment (by defining isValidCollision), and the contact dynamics.
- class PlanarChainEnvironment: public KauthamDEEnvironment
- {
-     public:
-     std::vector<double> *configuration;
+//!This class defines the pure virtual and virtual function of OpenDEEnviroment class for the PlanarChainEnvironment.
+//!defines the control dimension for the robot,control bounds, how the control will applied to the robot (such as in
+//!terms of forces or velocities), how the robot will interact with the environment (by defining isValidCollision),
+//!and the contact dynamics.
+class PlanarChainEnvironment: public KauthamDEEnvironment
+{
+public:
+    std::vector<double> *configuration;
 
-     PlanarChainEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm,bool isKchain);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
-     ~PlanarChainEnvironment(void);
-     virtual unsigned int getControlDimension(void) const;//!< describe the number of parameter used to describe control input.
-     virtual void getControlBounds (std::vector< double > &lower, std::vector< double > &upper) const;//!< describe the control bounds, minimum and maximum control range.
-     virtual void applyControl (const double *control) const;//!< This function apply the control by setting the forces, velocities or torques.
-     virtual bool isValidCollision(dGeomID /*geom1*/, dGeomID /*geom2*/, const dContact& /*contact*/) const ;//!< This function defines the validity of the collisions.
-     virtual void setupContact(dGeomID /*geom1*/, dGeomID /*geom2*/, dContact &contact) const; //!< This method set the parameters for the contact.
-     std::vector<float> jointValue;
+    PlanarChainEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm,bool isKchain);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
+    ~PlanarChainEnvironment(void);
+    virtual unsigned int getControlDimension(void) const;//!< describe the number of parameter used to describe control input.
+    virtual void getControlBounds (std::vector< double > &lower, std::vector< double > &upper) const;//!< describe the control bounds, minimum and maximum control range.
+    virtual void applyControl (const double *control) const;//!< This function apply the control by setting the forces, velocities or torques.
+    virtual bool isValidCollision(dGeomID /*geom1*/, dGeomID /*geom2*/, const dContact& /*contact*/) const ;//!< This function defines the validity of the collisions.
+    virtual void setupContact(dGeomID /*geom1*/, dGeomID /*geom2*/, dContact &contact) const; //!< This method set the parameters for the contact.
 
- };
+};
 ////////////////////////////////////////////////////////////////////////////////
 ///                      Planar State Space
 /////////////////////////////////////////////////////////////////////////////////
@@ -86,17 +76,11 @@ namespace omplcplanner{
 class PlanarChainStateSpace : public oc::OpenDEStateSpace
 {
 
-   // oc::OpenDEEnvironmentPtr envp;
-
 public:
-    std::vector<dJointID> jointValue;
-
     PlanarChainStateSpace(const oc::OpenDEEnvironmentPtr &env);//!< Constructor
     ~PlanarChainStateSpace();
     virtual double distance(const ob::State *s1, const ob::State *s2) const; //!< Define the method to compute the distance.
     virtual void registerProjections(void); //!< This function register the projetions for state space.
-
-
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -113,17 +97,19 @@ public:
     virtual void defaultCellSizes(void);//!< This function set the default dimension of the cell for projection.
     virtual void project(const ob::State *state, Kautham::VectorRef projection) const override;//!< This function defines that how the state will be projected
 };
-
+/*! PlanarChainControlSampler wil define the way the control will be applied
+ */
 class PlanarChainControlSampler : public oc::RealVectorControlUniformSampler
 {
 public:
 
     PlanarChainControlSampler( const oc::ControlSpace *cm);
-    virtual void sampleNext(oc::Control *control, const oc::Control *previous);
+    virtual void sampleNext(oc::Control *control, const oc::Control *previous);//!< This function define the way of sampling controls.
     virtual void sampleNext(oc::Control *control, const oc::Control *previous, const ob::State* /*state*/);
 
 };
-
+/*! Car control space will define the pointer to the defined control sampler
+ */
 class PlanarChainControlSpace : public oc::OpenDEControlSpace
 {
 public:
@@ -139,6 +125,5 @@ public:
 }
 
 #endif  //PlanarChainEnvironment_H
-#endif //KAUTHAM_USE_ODE
-#endif // KAUTHAM_USE_OMPL
-
+//#endif //KAUTHAM_USE_ODE
+//#endif // KAUTHAM_USE_OMPL

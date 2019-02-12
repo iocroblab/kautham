@@ -89,13 +89,8 @@
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KPIECE2DPlanner.h>
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KPIECECarPlanner.h>
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KPIECEChainPlanner.h>
-#include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KPIECEFreeFlyingPlanner.h>
-#include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KPIECEMultiRobotPlanner.h>
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/RRT2DPlanner.h>
-#include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/RRTMultiRobotPlanner.h>
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/Syclop2DPlanner.h>
-#include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/PDST2DPlanner.h>
-#include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/EST2DPlanner.h>
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KnowledgeOrientedKPIECE2DPlanner.h>
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KnowledgeOrientedRRT2DPlanner.h>
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KnowledgeOrientedSyclop2DPlanner.h>

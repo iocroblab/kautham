@@ -23,10 +23,10 @@
 /// @cond IGNORE
 typedef struct
 {
-  dTriMeshDataID meshD;
-  std::vector<float> vertices;
-  std::vector<dTriIndex> indices;
-  int indexSize;
+    dTriMeshDataID meshD;
+    std::vector<float> vertices;
+    std::vector<dTriIndex> indices;
+    int indexSize;
 }Tmesh;
 class DisplayOpenDESpaces
 {

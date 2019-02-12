@@ -31,13 +31,8 @@
 
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KauthamOpenDEPlanner.h>
 #include <kautham/planner/omplOpenDE/Setup/twoDRobotEnvironment.h>
-//#include "KauthamOpenDETestEnvironment.h"
-#include <kautham/planner/omplc/omplcplanner.h>
-//#include <kautham/sampling/sampling.h>
 #include <ompl/control/planners/syclop/SyclopRRT.h>
 #include <ompl/control/planners/syclop/SyclopEST.h>
-#include <kautham/planner/omplOpenDE/Setup/KauthamOpenDEEnvironment.h>
-#include <kautham/planner/omplOpenDE/Setup/PlanarChainEnvironment.h>
 #define _USE_MATH_DEFINES
 
 namespace ob = ompl::base;
@@ -64,15 +59,7 @@ public:
     Syclop2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~Syclop2DPlanner();
     bool setParameters();//!< this function set the planning parameters for KPIECE.
-
-    KthReal _Range;
     KthReal _GoalBias;
-    int _NumFreeVolumeSamples;
-    KthReal _getProbShortestPathLead;
-    KthReal _getProbAddingToAvailableRegions;
-    int _getNumRegionExpansions;
-    KthReal _getProbAbandonLeadEarly;
-    int _getNumTreeExpansions;
 
 };
 

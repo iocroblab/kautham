@@ -28,7 +28,6 @@
 #if !defined(_KauthamOpenDEplanner_H)
 #define _KauthamOpenDEplanner_H
 #define dDOUBLE
-#include <ompl/control/planners/rrt/RRT.h>
 #include <ompl/control/SimpleSetup.h>
 #include <ompl/control/spaces/RealVectorControlSpace.h>
 #include <ompl/control/SpaceInformation.h>
@@ -37,7 +36,6 @@
 #include <ompl/control/Control.h>
 
 #include <ompl/base/spaces/RealVectorStateSpace.h>
-//#include "omplcplanner.h"
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
 
@@ -57,10 +55,7 @@
 #include <kautham/planner/planner.h>
 #include <kautham/sampling/state.h>
 #include <kautham/planner/omplOpenDE/Setup/KauthamOpenDEEnvironment.h>
-//#include "KauthamOpenDERRTTX90Planner.h"
 
-//#include <ompl/control/planners/ltl/LTLProblemDefinition.h>
-//#include<ompl/control/planners/ltl/LTLPlanner.h>
 #include"displayOpenDE.h"
 
 #define _USE_MATH_DEFINES
@@ -94,34 +89,31 @@ public:
     KthReal _maxspeed; //!< describe the max. speed of motors.
     bool _onlyend; //!< describe that only TCP will move of complete robot.
     KthReal _planningTime; //!< describe the max. planning time.
-    KthReal _maxContacts;
-    KthReal _minControlSteps;
-    KthReal _maxControlSteps;
-    KthReal _controlDimensions;
-    KthReal _erp;
-    KthReal _cfm;
+    KthReal _maxContacts; //!< describe the max. No of contactes to be considered in ODE when two bodies are in contact.
+    KthReal _minControlSteps;//!< Define the minimum number of time a control will be applied
+    KthReal _maxControlSteps;//!< Define the max number of time a control will be applies.
+    KthReal _controlDimensions;//!< specify the number of control dimension.
+    KthReal _erp;//!< Represents the value f error reduction parameter for ODE.
+    KthReal _cfm;//!< Represents constraint force mixing for ODE.
     bool _isKchain;
     int _drawnrobot; //!< Index of the robot whose Cspace is drawn. Defaults to 0.
     double Action;
-    std::vector<double> JerkIndex;
-    double PowerConsumed;
-    double Smoothness;
-    std::string PROBTYPE;
+    std::vector<double> JerkIndex;//!< vector of jerk computed by doing post processing over the path.
+    double PowerConsumed;//!< describes the power consumed while moving along the path.
+    double Smoothness;//!< describe the smoothness of the path
+    std::string PROBTYPE;//!< represents type of problem, single query of multiple query problem.
+
 
     ob::StateSpacePtr stateSpacePtr; //!< state space pointer to KauthamDEStateSpace.
     oc::OpenDEEnvironmentPtr envPtr; //!< pointer to KauthamDE enviroment.
     oc::OpenDEStateSpace *stateSpace; //!< pointer to kauthamDEStatespace.
-    oc::ControlSpacePtr csp;
-    oc::OpenDESimpleSetup *ss;
+    oc::ControlSpacePtr csp;//!< pointer to ControlSpace.
+    oc::OpenDESimpleSetup *ss;//!< pointer to Simple Setup.
     vector<State>  worldState;
     std::vector<Sample*> Rob;
     std::vector<Sample*> Obs;
 
-    //    oc::LTLProblemDefinitionPtr pDefp;
-    //    oc::LTLSpaceInformationPtr ltlsi;
-    //    oc::LTLPlanner* ltlplanner;
-
-std::vector<double> lastState;
+    std::vector<double> lastState;
     //! The constructor will define all the necessary parameters for planning.
     KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~KauthamDEPlanner();

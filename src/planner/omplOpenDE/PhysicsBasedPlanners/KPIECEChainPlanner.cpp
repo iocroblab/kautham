@@ -30,22 +30,7 @@
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
 
-
-#include <boost/bind/mem_fn.hpp>
-
 #include <kautham/planner/omplOpenDE/PhysicsBasedPlanners/KPIECEChainPlanner.h>
-
-#include <ompl/base/spaces/SE2StateSpace.h>
-#include <ompl/base/PlannerStatus.h>
-#include <ompl/base/StateSpace.h>
-#include <ompl/base/spaces/SO3StateSpace.h>
-
-
-#include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodes/SoCoordinate3.h>
-#include <Inventor/nodes/SoCube.h>
-#include <Inventor/nodes/SoPointSet.h>
-#include <Inventor/nodes/SoLineSet.h>
 
 using namespace std;
 
@@ -53,55 +38,46 @@ namespace Kautham {
 
 namespace omplcplanner{
 
+//! void destructor
+KPIECEChainPlanner::~KPIECEChainPlanner(){}
 
+KPIECEChainPlanner::KPIECEChainPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws) : KauthamDEPlanner(stype, init, goal, samples, ws)
+{
 
-  //! void destructor
-  KPIECEChainPlanner::~KPIECEChainPlanner(){
+    _guiName = "KPIECE Chain Planner";
+    _idName = "KPIECEChainPlanner";
+    ws->moveRobotsTo(init);
+    dInitODE2(0);
+    envPtr= oc::OpenDEEnvironmentPtr(new PlanarChainEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
+    stateSpacePtr = ob::StateSpacePtr(new PlanarChainStateSpace(envPtr));
+    ss = new oc::OpenDESimpleSetup(stateSpacePtr);
+    oc::SpaceInformationPtr si=ss->getSpaceInformation();
+    ob::PlannerPtr planner(new oc::KPIECE1(si));
+    addParameter("Goal Bias", _GoalBias);
 
-  }
+    planner->as<oc::KPIECE1>()->setGoalBias( _GoalBias);
+    //set the planner
+    ss->setPlanner(planner);
+}
+//! this function set the necessary parameters for KAPIECE Planner.
+bool KPIECEChainPlanner::setParameters()
+{
+    KauthamDEPlanner::setParameters();
+    try{
+        HASH_S_K::iterator it = _parameters.find("Goal Bias");
+        if(it != _parameters.end()){
+            _GoalBias = it->second;
+            ss->getPlanner()->as<oc::KPIECE1>()->setGoalBias(_GoalBias);
+        }
+        else
+            return false;
 
-   KPIECEChainPlanner::KPIECEChainPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws) : KauthamDEPlanner(stype, init, goal, samples, ws)
-   {
+    }catch(...){
+        return false;
+    }
+    return true;
 
-
-     _guiName = "KPIECE Chain Planner";
-     _idName = "KPIECEChainPlanner";
-     ws->moveRobotsTo(init);
-     dInitODE2(0);
-    // envPtr= oc::OpenDEEnvironment(new PlanarChainEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm));
-     envPtr= oc::OpenDEEnvironmentPtr(new PlanarChainEnvironment(ws,_maxspeed,_maxContacts,_minControlSteps,_maxControlSteps, _erp, _cfm, _isKchain));
-     stateSpacePtr = ob::StateSpacePtr(new PlanarChainStateSpace(envPtr));
-     csp= oc::ControlSpacePtr(new PlanarChainControlSpace(stateSpacePtr));
-     ss = new oc::OpenDESimpleSetup(csp);
-    //ss = new oc::OpenDESimpleSetup(stateSpacePtr);
-     oc::SpaceInformationPtr si=ss->getSpaceInformation();
-     ob::PlannerPtr planner(new oc::KPIECE1(si));
-     addParameter("Goal Bias", _GoalBias);
-
-     planner->as<oc::KPIECE1>()->setGoalBias( _GoalBias);
-     //set the planner
-     ss->setPlanner(planner);
-     //std::cout<<"total bodies are "<<envPtr->stateBodies_.size()<<std::endl;
-
-   }
- bool KPIECEChainPlanner::setParameters()
- {
-     KauthamDEPlanner::setParameters();
-     try{
-         HASH_S_K::iterator it = _parameters.find("Goal Bias");
-         if(it != _parameters.end()){
-             _GoalBias = it->second;
-             ss->getPlanner()->as<oc::KPIECE1>()->setGoalBias(_GoalBias);
-         }
-         else
-           return false;
-
-     }catch(...){
-       return false;
-     }
-     return true;
-
- }
+}
 
 }
 }
