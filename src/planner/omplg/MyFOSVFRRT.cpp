@@ -26,6 +26,7 @@
 #include <kautham/planner/omplg/MyFOSVFRRT.h>
 #include <ompl/base/goals/GoalSampleableRegion.h>
 
+#include <cfloat>
 
 #define LAMBDA_MIN 1.e-3
 #define LAMBDA_MAX 1.e+5

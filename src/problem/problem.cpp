@@ -25,7 +25,7 @@
 
 #include <kautham/problem/problem.h>
 #include <kautham/util/kthutil/kauthamexception.h>
-
+#include <boost/lexical_cast.hpp>
 
 namespace Kautham {
 Problem::Problem() : _wspace(NULL), _cspace(new SampleSet()),

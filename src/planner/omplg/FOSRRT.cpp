@@ -31,7 +31,7 @@
 #include "ompl/geometric/PathGeometric.h"
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <algorithm>
-
+#include <cfloat>
 
 using namespace arma;
 

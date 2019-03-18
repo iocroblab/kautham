@@ -27,6 +27,7 @@
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/OptimizationObjective.h>
 
+#include <cfloat>
 
 namespace ompl {
     namespace base {

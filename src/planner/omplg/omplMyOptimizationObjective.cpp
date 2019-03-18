@@ -31,6 +31,7 @@
 #include <kautham/planner/omplg/omplMyOptimizationObjective.h>
 #include <math.h>
 #include <pugixml.hpp>
+#include <cfloat>
 
 
 #define TOL 1e-8
