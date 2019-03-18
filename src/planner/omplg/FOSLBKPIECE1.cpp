@@ -28,6 +28,7 @@
 #include <ompl/tools/config/SelfConfig.h>
 #include <cassert>
 
+#include <cfloat>
 
 #define LAMBDA_MIN 1.e-3
 #define LAMBDA_MAX 1.e+5

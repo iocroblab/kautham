@@ -35,6 +35,7 @@
 
 #include <ompl/base/spaces/RealVectorStateProjections.h>
 #include <boost/bind/mem_fn.hpp>
+#include <cfloat>
 
 
 namespace Kautham {

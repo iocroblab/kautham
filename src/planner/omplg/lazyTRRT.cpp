@@ -29,6 +29,7 @@
 #include <ompl/base/goals/GoalSampleableRegion.h>
 #include <ompl/tools/config/SelfConfig.h>
 #include <ompl/tools/config/MagicConstants.h>
+#include <cfloat>
 
 
 ompl::geometric::LazyTRRT::LazyTRRT(const base::SpaceInformationPtr &si) : base::Planner(si,"LazyTRRT") {

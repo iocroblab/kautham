@@ -7,6 +7,7 @@
 #include <ompl/tools/config/MagicConstants.h>
 
 #include <limits>
+#include <cfloat>
 
 
 ompl::geometric::TRRT::TRRT(const base::SpaceInformationPtr &si) :

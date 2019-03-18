@@ -30,6 +30,7 @@
 #include <kautham/planner/omplg/omplValidityChecker.h>
 #include <kautham/planner/omplg/FOSKPIECE1.h>
 #include <kautham/planner/omplg/FOSUpstreamCriterionOptimizationObjective.h>
+#include <cfloat>
 
 
 namespace Kautham {

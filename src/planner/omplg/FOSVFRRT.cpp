@@ -26,6 +26,7 @@
 #include <kautham/planner/omplg/FOSVFRRT.h>
 #include <ompl/base/goals/GoalSampleableRegion.h>
 
+#include <cfloat>
 
 namespace ompl
 {

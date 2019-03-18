@@ -26,6 +26,7 @@
 
 #include <kautham/planner/omplg/FOSOptimizationObjective.h>
 
+#include <cfloat>
 
 #define MAX_COST 1e6
 #define SIGN(x) ((x>0.0)-(x<0.0))

@@ -30,6 +30,7 @@
 
 #include <kautham/planner/omplg/omplValidityChecker.h>
 #include <kautham/planner/omplg/omplplanner.h>
+#include <cfloat>
 
 namespace Kautham {
 namespace omplplanner{
