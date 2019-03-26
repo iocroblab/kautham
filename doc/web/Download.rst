@@ -3,7 +3,7 @@ Download
 
 Kautham can be downloaded its public version from `here <http://github.com/iocroblab/kautham>`_ 
 
-The latest version is 3.2.2 available from November 27, 2017.
+The latest version is 4.0.0 available from February 28, 2019.
 
 Installation
 ------------
