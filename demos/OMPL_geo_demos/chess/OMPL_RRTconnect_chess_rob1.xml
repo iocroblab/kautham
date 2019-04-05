@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTconnect_chess_rob1">
+	<Robot robot="robots/ur3_robotniq.urdf" scale="1.0">
+            <Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Robot>
+        <Obstacle obstacle="robots/ur3_robotniq.urdf" scale="1.0">
+            <Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.70" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/chess/chessboard.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.005" Y="0.0" X="0.35" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/chess/pawnB1.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.0" X="0.525" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/chess/pawnW1.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.0" X="0.175" />
+	</Obstacle>
+	<Controls robot="controls/ur3_robotniq.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="Max Planning Time">1.0</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="Range">0.02</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init>0.5 0.5 0.5 0.5 0.5 0.5</Init>
+				<Goal>0.49 0.49 0.49 0.49 0.49 0.49</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

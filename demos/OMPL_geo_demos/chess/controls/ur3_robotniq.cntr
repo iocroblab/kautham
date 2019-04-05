@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<ControlSet>
+  <Offset>
+    <DOF name="ur3_robotniq/shoulder_link" value="0.5"/>
+    <DOF name="ur3_robotniq/upper_arm_link" value="0.5"/>
+    <DOF name="ur3_robotniq/forearm_link" value="0.5"/>
+    <DOF name="ur3_robotniq/wrist_1_link" value="0.5"/>
+    <DOF name="ur3_robotniq/wrist_2_link" value="0.5"/>
+    <DOF name="ur3_robotniq/wrist_3_link" value="0.5"/>
+    <!-- <DOF name="ur3_robotniq/finger1" value="0.5"/>-->
+    <!-- <DOF name="ur3_robotniq/finger2" value="0.5"/>-->
+  </Offset>
+
+  <Control name="shoulder_pan_joint" eigValue="1.0">
+    <DOF name="ur3_robotniq/shoulder_link" value="1.0" />
+  </Control>  
+  <Control name="shoulder_lift_joint" eigValue="1.0">
+    <DOF name="ur3_robotniq/upper_arm_link" value="1.0" />
+  </Control>
+  <Control name="elbow_joint" eigValue="1.0">
+    <DOF name="ur3_robotniq/forearm_link" value="1.0" />
+  </Control>  
+  <Control name="wrist_1_joint" eigValue="1.0">
+    <DOF name="ur3_robotniq/wrist_1_link" value="1.0" />
+  </Control>
+  <Control name="wrist_2_joint" eigValue="1.0">
+    <DOF name="ur3_robotniq/wrist_2_link" value="1.0" />
+  </Control>  
+  <Control name="wrist_3_joint" eigValue="1.0">
+    <DOF name="ur3_robotniq/wrist_3_link" value="1.0" />
+  </Control>
+  <!--<Control name="gripper" eigValue="1.0">
+    <DOF name="ur3_robotniq/finger1" value="1.0"/>
+    <DOF name="ur3_robotniq/finger2" value="1.0"/>
+  </Control>-->
+</ControlSet>
