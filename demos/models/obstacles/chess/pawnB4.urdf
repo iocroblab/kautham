@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot name="cheassboard">
+  <link name="base">
+   <visual>
+     <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+        <mesh filename="visual/pawnB4.dae" scale="0.6 0.6 0.8"/>
+      </geometry>
+   </visual>
+   <collision>
+     <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+   	  <box size="0.03 0.03 0.04" />
+       </geometry>
+    </collision>
+  </link>
+</robot>
