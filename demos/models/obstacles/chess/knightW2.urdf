@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<robot name="cheassboard">
+<robot name="knightW2">
   <link name="base">
    <visual>
      <origin xyz="0 0 0" rpy="0 0 0" />
        <geometry>
-        <mesh filename="visual/knightW21.dae" scale="0.6 0.6 1.2"/>
+        <mesh filename="visual/knightW2.dae" scale="0.6 0.6 1.2"/>
       </geometry>
    </visual>
    <collision>
