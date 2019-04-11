@@ -450,7 +450,8 @@
     <parent link="gripper_base"/>
     <child link="gripper_left_driver"/>
     <axis xyz="1 0 0"/>
-    <limit effort="176" lower="0.0" upper="0.715584844444" velocity="1.91986177778"/>
+    <limit effort="60" lower="0.0" upper="0.872664444444" velocity="1.91986177778"/>
+    <!-- <limit effort="176" lower="0.0" upper="0.715584844444" velocity="1.91986177778"/>-->
     <mimic joint="gripper_right_driver_joint" multiplier="1"/>
   </joint>
   <link name="gripper_left_driver">
