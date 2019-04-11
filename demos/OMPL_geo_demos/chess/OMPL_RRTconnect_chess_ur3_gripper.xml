@@ -1,109 +1,109 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_RRTconnect_chess_rob1">
 	<Obstacle obstacle="obstacles/chess/chessboard.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.005" Y="0.0" X="0.0" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnB1.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.175" X="-0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="-0.175" X="-0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnB2.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.125" X="-0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="-0.125" X="-0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnB3.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.075" X="-0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="-0.075" X="-0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnB4.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.025" X="-0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="-0.025" X="-0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnB5.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.025" X="-0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.025" X="-0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnB6.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.075" X="-0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.075" X="-0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnB7.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.125" X="-0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.125" X="-0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnB8.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.175" X="-0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.175" X="-0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/towerB1.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="-0.175" X="-0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.175" X="-0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/towerB2.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.175" X="-0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.175" X="-0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/horseB1.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="-0.125" X="-0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.125" X="-0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/horseB2.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.125" X="-0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.125" X="-0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/knightB1.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="-0.075" X="-0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.075" X="-0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/knightB2.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.075" X="-0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.075" X="-0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/queenB.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.05" Y="-0.025" X="-0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="-0.025" X="-0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/kingB.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.05" Y="0.025" X="-0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.025" X="-0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnW1.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.175" X="0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="-0.175" X="0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnW2.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.125" X="0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="-0.125" X="0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnW3.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.075" X="0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="-0.075" X="0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnW4.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.025" X="0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="-0.025" X="0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnW5.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.025" X="0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.025" X="0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnW6.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.075" X="0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.075" X="0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnW7.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.125" X="0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.125" X="0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnW8.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.175" X="0.125" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.175" X="0.125" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/towerW1.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="-0.175" X="0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.175" X="0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/towerW2.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.175" X="0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.175" X="0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/horseW1.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="-0.125" X="0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.125" X="0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/horseW2.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.125" X="0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.125" X="0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/knightW1.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="-0.075" X="0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="-0.075" X="0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/knightW2.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.075" X="0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.075" X="0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/queenW.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.05" Y="-0.025" X="0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="-0.025" X="0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/kingW.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.05" Y="0.025" X="0.175" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.025" X="0.175" />
 	</Obstacle>
 	<Robot robot="robots/ur3_robotniq.urdf" scale="1.0">
-		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="-0.37" />
+		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.0" X="-0.37" />
 	</Robot>
 	<Obstacle obstacle="robots/ur3_robotniq.urdf" scale="1.0">
-		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.37" />
+		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.0" X="0.37" />
 	</Obstacle>
 	<Controls robot="controls/ur3_robotniq.cntr" />
 	<Planner>
