@@ -45,5 +45,19 @@
     <DOF name="ur3_robotniq/gripper_left_follower" value="1.0"/>
     <DOF name="ur3_robotniq/gripper_left_spring_link" value="1.0"/>
   </Control>
+  <Control name="gripper_right_driver" eigValue="1.0">
+    <DOF name="ur3_robotniq/gripper_right_driver" value="5.0"/>
+  </Control>
+  <Control name="gripper_right_coupler" eigValue="1.0">
+    <DOF name="ur3_robotniq/gripper_right_coupler" value="1.0"/>
+  </Control>
+
+  <Control name="gripper_right_follower" eigValue="1.0">
+    <DOF name="ur3_robotniq/gripper_right_follower" value="1.0"/>
+  </Control>
+
+  <Control name="gripper_right_spring_link" eigValue="1.0">
+    <DOF name="ur3_robotniq/gripper_right_spring_link" value="1.0"/>
+  </Control>
 
 </ControlSet>
