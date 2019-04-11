@@ -113,7 +113,7 @@
         <Obstacle obstacle="robots/ur3_robotniq.urdf" scale="1.0">
             <Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.35" />
 	</Obstacle>
-	<Controls robot="controls/ur3_robotniq.cntr" />
+	<Controls robot="controls/ur3.cntr" />
 	
         
         <Planner>
