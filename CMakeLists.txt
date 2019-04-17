@@ -137,7 +137,7 @@ if( KAUTHAM_ROS )
 
     catkin_package(
       INCLUDE_DIRS include
-      LIBRARIES libkautham
+      #LIBRARIES libkautham
       CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
     )
 
