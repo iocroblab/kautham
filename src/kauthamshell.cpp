@@ -104,6 +104,56 @@ namespace Kautham {
     }
 
 
+    
+    
+    bool kauthamshell::checkCollision(vector<float> smpcoords, bool *collisionFree, std::string *msg, std::pair< std::pair<int, int> , std::pair<int,int> > *colliding_elements) {
+        Sample *smp = NULL;
+
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+            if (smpcoords.size() != problem->wSpace()->getNumRobControls()) {
+                cout << "Sample has dimension " << smpcoords.size() << " and should have dimension "
+                     << problem->wSpace()->getNumRobControls() << endl;
+                return false;
+            }
+            smp = new Sample(problem->wSpace()->getNumRobControls());
+            
+            if (smp->setCoords(smpcoords)) {
+                *collisionFree = !problem->wSpace()->collisionCheck(smp,msg,colliding_elements);
+                if(msg->empty()) {
+                    std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;
+                } else {
+                    std::cout<<"Response for collision checking service is: "<<*msg<<std::endl;
+                }
+
+                delete smp;
+                return true;
+            } else {
+                cout << "Sample has dimension " << smpcoords.size() << " and should have dimension "
+                     << problem->wSpace()->getNumRobControls() << endl;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        delete smp;
+        return false;
+    }
+    
+    
+    
+    
     bool kauthamshell::checkCollision(vector<float> smpcoords, bool *collisionFree, std::pair< std::pair<int, int> , std::pair<int,int> > *colliding_elements) {
         Sample *smp = NULL;
 

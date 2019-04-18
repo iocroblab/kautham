@@ -198,9 +198,12 @@ bool srvCheckCollisionRob(kautham::CheckCollision::Request &req,
     cout << endl;
     std::pair< std::pair<int, int> , std::pair<int,int> > colliding_elements;
     bool collisionFree;
-    res.response = ksh->checkCollision(req.config,&collisionFree, &colliding_elements);
+    string msg;
+    res.response = ksh->checkCollision(req.config,&collisionFree, &msg, &colliding_elements);
+    //res.response = ksh->checkCollision(req.config,&collisionFree, &colliding_elements);
     res.collisionFree = res.response&&collisionFree;
     res.collObj = colliding_elements.first.second;
+    res.msg = msg;
     return true;
 
 }

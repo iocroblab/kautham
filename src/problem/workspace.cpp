@@ -407,7 +407,10 @@ namespace Kautham {
         sample->setMappedConf(_robConfigMap);
 
         if (collision) sample->setcolor(-1);
-        else sample->setcolor(1);
+        else {
+            sample->setcolor(1);
+            sstr << "Collision free";
+        }
         if (message != NULL) *message = sstr.str();
         return collision;
     }

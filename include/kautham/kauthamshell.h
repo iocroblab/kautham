@@ -42,6 +42,7 @@ namespace Kautham {
         bool checkCollisionObs(int index, std::vector<unsigned> *collObs, std::string *msg);
         bool checkCollisionRob(std::vector<float> smpcoords, std::vector<unsigned> *ObstColl);
         bool checkCollision(std::vector<float> smpcoords, bool *collisionFree, std::pair<std::pair<int, int>, std::pair<int, int> > *colliding_elements = NULL);
+        bool checkCollision(std::vector<float> smpcoords, bool *collisionFree, std::string *msg, std::pair<std::pair<int, int>, std::pair<int, int> > *colliding_elements = NULL);
         bool setRobotsConfig(std::vector<float> smpcoords);
         bool setObstaclesConfig(std::vector<float> smpcoords);
         bool setQuery(std::vector<float> init, std::vector<float> goal);
