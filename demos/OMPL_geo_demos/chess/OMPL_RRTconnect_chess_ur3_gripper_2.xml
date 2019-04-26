@@ -46,10 +46,10 @@
 		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.03" Y="0.075" X="0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/queenB.urdf" scale="1.0">
-		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="-0.025" X="0.175" />
+		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.025" X="0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/kingB.urdf" scale="1.0">
-		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.025" X="0.175" />
+		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="-0.025" X="0.175" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnW1.urdf" scale="1.0">
 		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="-0.175" X="-0.125" />
