@@ -573,7 +573,8 @@ namespace Kautham {
     bool WorkSpace::attachObstacle2RobotLink(uint robot, uint link, uint obs) {
         if (robot >= robots.size() ||
                 link >= robots.at(robot)->getNumLinks() ||
-                obs >= obstacles.size()) return false;
+                obs >= obstacles.size())
+            return false;
         return (robots.at(robot)->attachObject(obstacles.at(obs),link));
     }
 

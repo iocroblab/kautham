@@ -601,9 +601,18 @@ namespace Kautham {
     bool Robot::attachObject(Robot* obs, uint link){
         try{
             if (obs == NULL) return false;
-            if (!obs->isAttachable()) return false;
-            if (link >= links.size()) return false;
-            if (collisionCheck(obs)) return false;
+            if (!obs->isAttachable()) {
+                std::cout<<"Robot::attachObject failed: obs not attachable"<<std::endl;
+                return false;
+            }
+            if (link >= links.size()) {
+                std::cout<<"Robot::attachObject failed: link out of limits"<<std::endl;
+                return false;
+            }
+            if (collisionCheck(obs)) {
+                std::cout<<"Robot::attachObject failed: in collision"<<std::endl;
+                return false;
+            }
             attObj newObj;
             newObj.obs = obs;
             newObj.link = links.at(link);
