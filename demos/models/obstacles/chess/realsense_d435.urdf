@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot name="realsense">
+  <link name="base">
+   <visual name="base">
+     <origin xyz="0 0 0.0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.15 0.15 0.08" />
+      </geometry>
+   </visual>
+   <visual name="holder">
+     <origin xyz="0.0 0.0 0.2" rpy="0 0 0" />
+       <geometry>
+        <cylinder radius="0.004" length="0.4"/>
+      </geometry> 
+   </visual>
+   <visual name="body">
+     <origin xyz="0 0.02 0.4" rpy="-0.7 3.14 0" />
+      <geometry>
+        <mesh filename="visual/d435.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+   </visual>
+   <collision name="base">
+     <origin xyz="0 0 0.0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.15 0.15 0.08" />
+      </geometry>
+   </collision>
+   <collision name="holder">
+     <origin xyz="0.0 0.0 0.2" rpy="0 0 0" />
+       <geometry>
+        <cylinder radius="0.005" length="0.4"/>
+      </geometry> 
+   </collision>
+   <collision name="body">
+     <origin xyz="0 0.02 0.4" rpy="-0.7 3.14 0" />
+      <geometry>
+        <box size="0.10 0.025 0.025" />
+      </geometry>
+   </collision>
+  </link>
+</robot>
