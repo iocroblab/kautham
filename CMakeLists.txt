@@ -2,22 +2,22 @@
 #                  Universitat Politecnica de Catalunya
 #                  BarcelonaTech
 #     All Rights Reserved.
-# 
+#
 #     This program is free software; you can redistribute it and/or modify
 #     it under the terms of the GNU General Public License as published by
 #     the Free Software Foundation; either version 2 of the License, or
 #     (at your option) any later version.
-# 
+#
 #     This program is distributed in the hope that it will be useful,
 #     but WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #     GNU General Public License for more details.
-# 
+#
 #     You should have received a copy of the GNU General Public License
 #     along with this program; if not, write to the
 #     Free Software Foundation, Inc.,
 #     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-# 
+#
 #    Author: Leopold Palomo-Avellaneda 2014-2017
 
 
@@ -29,7 +29,7 @@ cmake_minimum_required(VERSION 2.4.6)
 add_definitions(-std=c++11 -Wall -Wextra -Wpedantic )#-Werror)
 
 set( KAUTHAM_VERSION 4.0.0 )
-STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} ) 
+STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} )
 LIST( GET KAUTHAM_VERSIONS 0 KAUTHAM_VERSION_MAJOR)
 LIST( GET KAUTHAM_VERSIONS 1 KAUTHAM_VERSION_MINOR)
 LIST( GET KAUTHAM_VERSIONS 2 KAUTHAM_VERSION_PATCH)
@@ -137,7 +137,7 @@ if( KAUTHAM_ROS )
 
     catkin_package(
       INCLUDE_DIRS include
-      LIBRARIES kautham
+      #LIBRARIES libkautham
       CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
     )
 
