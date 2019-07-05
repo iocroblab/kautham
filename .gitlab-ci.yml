@@ -1,0 +1,33 @@
+stages:
+  - debian-stretch
+  - ubuntu-bionic-melodic
+  
+debian-stretch:
+  stage: debian-stretch
+  
+  image: debian-ioc-devel
+  before_script:
+  - apt-get -q update
+  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends libompl-dev cmake libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev libroscpp-dev libtrajectory-msgs-dev ros-message-generation python-all python3-rospy
+  
+  script:
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=ON ..
+    - make -j2
+
+ubuntu-bionic-melodic:
+  stage: ubuntu-bionic-melodic
+  
+  image: ros
+  before_script:
+  - apt-get -q update
+  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends cmake libboost-system-dev libboost-serialization-dev libboost-thread-dev software-properties-common
+  - add-apt-repository -y ppa:deb-rob/ros-bionic
+  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends libompl-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev libsoqt520-dev libcoin-dev
+  
+  script:
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=ON ..
+    - make -j2
