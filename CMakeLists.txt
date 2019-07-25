@@ -1,4 +1,4 @@
-#     Copyright 2016 Institute of Industrial and Control Engineering (IOC)
+#     Copyright 2019 Institute of Industrial and Control Engineering (IOC)
 #                  Universitat Politecnica de Catalunya
 #                  BarcelonaTech
 #     All Rights Reserved.
@@ -18,7 +18,7 @@
 #     Free Software Foundation, Inc.,
 #     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-#    Author: Leopold Palomo-Avellaneda 2014-2017
+#    Author: Leopold Palomo-Avellaneda 2014-2019
 
 
 
