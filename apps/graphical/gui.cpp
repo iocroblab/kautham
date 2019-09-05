@@ -702,6 +702,7 @@ namespace Kautham {
                     return false;
                 } else {
                     menuRecentFiles->addAction(ac);
+                    break;
                 }
             default:
                 return false;
