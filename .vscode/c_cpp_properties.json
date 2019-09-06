@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/jan/catkin/catkin_wsKauthamMaster/devel/include/**",
+                "/home/jan/catkin/catkin_wsPlanning/devel/include/**",
+                "/opt/ros/melodic/include/**",
+                "/home/jan/catkin/catkin_wsKauthamMaster/src/kautham/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
