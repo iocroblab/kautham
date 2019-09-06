@@ -112,5 +112,180 @@ namespace Kautham{
     }
   }
 
+
+void Planner::moveAlongPathLoad(unsigned int step, std::string address)
+{
+    bool stopAll = false; //to stop main while loop
+    bool stop = false; //to stop nested while loops
+    std::string action; //action being processed, either transit or transfer
+    int attachedObj; //index of object being attached
+    int robIndex; //index of robot to where the object is attached
+    int linkIndex; //index of robot link to where the object is attached
+    unsigned int requested_line_number = 1;
+    std::ifstream path;
+    std::vector<Sample*> _path2;
+    _path2.clear();
+    std::string Rline;
+    float value;
+
+    unsigned int line_number = 1; //to loop along the file
+    unsigned int line_number2 = 1; //to loop along the configurations while processing an action
+
+
+    path.open (address);
+    if (path.is_open())
+    {
+      std::cout<< " File successfully opened ! "<<std::endl;
+    }
+    else
+    {
+      std::cout << "Error opening file : " <<address<<std::endl;
+      exit(1);
+    }
+
+    while(  std::getline(path, Rline) && !stopAll )
+    {
+        clearSimulationPath();
+
+        std::cout << " Rline requested is : " << requested_line_number << " "<< Rline<< std::endl;
+
+        if (line_number == requested_line_number)
+        {
+            std::vector <std::string> streamCheck;
+            streamCheck.clear();
+            std::string check;
+            std::stringstream  RlineStreamCheck(Rline);
+
+            while(RlineStreamCheck >> check)
+            {
+                streamCheck.push_back(check);
+            }
+
+            if(streamCheck[0] == "transit")
+            {
+                if(stopAll)
+                    break;
+
+                action = streamCheck[0];
+
+                while( std::getline(path, Rline) && !stop)
+                {
+                    //std::cout << " Rline number is : " << line_number2 << std::endl;
+
+                    if(Rline == "end")
+                    { 
+                        stop = true;
+                        stopAll = true;
+                        requested_line_number = line_number2+line_number+1;
+                        std::cout << " Rline number is : " << requested_line_number << std::endl;
+                        break;
+                    }
+
+                    Sample *Robsmp;
+                    vector<RobConf> Robrc;
+                    std::vector<float>   Rn;
+
+                    Robsmp=new Sample(_wkSpace->getNumRobControls());
+
+                    RobConf *Robrcj = new RobConf;
+
+                    std::stringstream  RlineStream(Rline);
+
+
+                    while(RlineStream >> value)
+                    {
+                        Rn.push_back(value);
+                    }
+                    Robrcj->setSE3(initSamp()->getMappedConf()[0].getSE3());
+                    Robrcj->setRn(Rn);
+                    Robrc.push_back(*Robrcj);
+                    Robsmp->setMappedConf(Robrc);
+
+                    _path2.push_back(Robsmp);
+                    line_number2++;
+                }
+            }
+
+            else if(streamCheck[0] == "transfer")
+            {
+                if(stopAll)
+                    break;
+
+                action = streamCheck[0];
+                robIndex = atoi(streamCheck[1].c_str());
+                linkIndex = atoi(streamCheck[2].c_str());
+                attachedObj = atoi(streamCheck[3].c_str());
+
+                _wkSpace->attachObstacle2RobotLink(robIndex,linkIndex,attachedObj);
+
+                while( std::getline(path, Rline) && !stop)
+                {
+                    //std::cout << " Rline number is : " << line_number2 << std::endl;
+
+                    if(Rline == "end")
+                    { 
+                        stop = true;
+                        stopAll = true;
+                        requested_line_number = line_number2+line_number+1;
+                        std::cout << " Rline number is : " << requested_line_number << std::endl;
+                        break;
+                    }
+
+                    Sample *Robsmp;
+                    vector<RobConf> Robrc;
+                    std::vector<float>   Rn;
+
+                    Robsmp=new Sample(_wkSpace->getNumRobControls());
+
+                    RobConf *Robrcj = new RobConf;
+
+                    std::stringstream  RlineStream(Rline);
+
+
+                    while(RlineStream >> value)
+                    {
+                        Rn.push_back(value);
+                    }
+                    Robrcj->setSE3(initSamp()->getMappedConf()[0].getSE3());
+                    Robrcj->setRn(Rn);
+                    Robrc.push_back(*Robrcj);
+                    Robsmp->setMappedConf(Robrc);
+
+                    _path2.push_back(Robsmp);
+                    line_number2++;
+                }
+            }
+            else
+            {
+                clearSimulationPath();
+                std::cout << " Plan successfully executed !"<<std::endl;
+                requested_line_number = 1;
+            }
+        }
+        line_number++;
+    }
+
+
+    for(unsigned i=0; i<_path2.size();i++)
+    {
+        Sample *s=new Sample(*_path2.at(i));
+        _simulationPath.push_back(s);
+    }
+    step = step % _simulationPath.size();
+    _wkSpace->moveRobotsTo(_simulationPath[step]);
+
+    std::cout<<step<<" SIMULATION FROM PATH "<<_simulationPath.size() <<" "<<action <<endl;
+
+    if(step==_simulationPath.size()-1)
+    {
+        if(action=="transfer")
+            _wkSpace->detachObstacle(attachedObj);
+
+        stop=false;
+        stopAll=false;
+        stopC=1;
+    }
+}
+
 }
 

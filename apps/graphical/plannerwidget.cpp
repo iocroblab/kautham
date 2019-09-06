@@ -159,7 +159,7 @@ namespace Kautham {
 
         btnGetPath->setText(QApplication::translate("Form", "Get Path", 0));
         btnSaveData->setText(QApplication::translate("Form", "Save Data", 0));
-        btnLoadData->setText(QApplication::translate("Form", "Load Data", 0));
+        btnLoadData->setText(QApplication::translate("Form", "Load TaskFile", 0));
         moveButton->setText(QApplication::translate("Form", "Start Move ", 0));
 
         groupBox->setTitle(QApplication::translate("Form", "Local Planner", 0));
@@ -169,13 +169,15 @@ namespace Kautham {
         connectLabel->setText(QString());
 
         _plannerTimer = new QTimer( this );
+        _plannerTimerLoad = new QTimer( this );
 
         if(_planner != NULL ){
             connect(btnGetPath, SIGNAL( clicked() ), this, SLOT( getPath() ) );
             connect(btnSaveData, SIGNAL( clicked() ), this, SLOT( saveData() ) );
-            connect(btnLoadData, SIGNAL( clicked() ), this, SLOT( loadData() ) );
+            connect(btnLoadData, SIGNAL( clicked() ), this, SLOT( simulatePathLoad() ) );
             connect(moveButton, SIGNAL( clicked() ), this, SLOT( simulatePath() ) );
             connect(_plannerTimer, SIGNAL(timeout()), this, SLOT(moveAlongPath()) );
+            connect(_plannerTimerLoad, SIGNAL(timeout()), this, SLOT(moveAlongPathLoad()) );
             connect(globalFromBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
             connect(globalToBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
             connect(localFromBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
@@ -252,6 +254,7 @@ namespace Kautham {
         delete globalToBox;
         delete tmpLabel;
         delete _plannerTimer;
+        delete _plannerTimerLoad;
         delete label;
         delete localFromBox;
         delete label_2;
@@ -523,12 +526,7 @@ namespace Kautham {
         return filePath;
     }
 
-
-    void PlannerWidget::loadData(){
-            writeGUI("Sorry: loadData not yet implemented");
-    }
-
-
+ 
     void PlannerWidget::simulatePath() {
         if (moveButton->text() == QApplication::translate("Form", "Start Move ", 0)){
             startSimulation();
@@ -550,8 +548,69 @@ namespace Kautham {
         _ismoving = false;
     }
 
+
+    void PlannerWidget::simulatePathLoad() {
+
+        emit changeCursor(false);
+        if (btnLoadData->text() == QApplication::translate("Form", "Load TaskFile", 0)){
+            startSimulationLoad();
+        } else {
+            stopSimulationLoad();
+        }
+
+    }
+
+    void PlannerWidget::startSimulationLoad() {
+        _plannerTimerLoad->start(200);
+        btnLoadData->setText(QApplication::translate("Form", "Stop", 0));
+        _ismoving = true;
+
+    }
+
+    void PlannerWidget::stopSimulationLoad() {
+        _plannerTimerLoad->stop();
+        btnLoadData->setText(QApplication::translate("Form", "Load TaskFile", 0));
+        _ismoving = false;
+    }
+
     void PlannerWidget::moveAlongPath(){
         _planner->moveAlongPath(_stepSim);
+        // It moves the camera if the associated planner provides the
+        // transformation information of the camera
+        //if( chkCamera && chkCamera->isChecked() && _planner->getCameraMovement(_stepSim) != NULL ) {
+        //_gui->setActiveCameraTransform(*_planner->getCameraMovement( _stepSim ));
+        //}
+
+        _stepSim += _planner->getSpeedFactor();
+
+    }
+
+    
+    void PlannerWidget::moveAlongPathLoad(){
+        if(_planner->stopC==1)
+        {
+            _planner->stopC=0;
+            _planner->clearSimulationPath();
+            _stepSim=0;
+
+            startSimulationLoad();
+        }
+        
+        QString last_path, path;
+        QDir workDir;
+        QString fileName;
+        QSettings settings("IOC","Kautham");
+        last_path = settings.value("last_path",workDir.absolutePath()).toString();
+        path = QFileDialog::getOpenFileName(
+                    this->parentWidget(),
+                    "Choose a task file to open (*.txt)",
+                    last_path,
+                    "All task files (*.txt)");
+        if (!path.isEmpty()) {
+            fileName = path.toUtf8().constData();
+        }
+        std::string pathF=fileName.toStdString();
+        _planner->moveAlongPathLoad(_stepSim, pathF);
         // It moves the camera if the associated planner provides the
         // transformation information of the camera
         //if( chkCamera && chkCamera->isChecked() && _planner->getCameraMovement(_stepSim) != NULL ) {
