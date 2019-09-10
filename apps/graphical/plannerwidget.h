@@ -91,6 +91,7 @@ namespace Kautham{
         SampleSet *_samples;
         QTimer *_plannerTimer;
         QTimer *_plannerTimerLoad;
+        std::string pathF;
         uint _stepSim;
         bool _ismoving;
 

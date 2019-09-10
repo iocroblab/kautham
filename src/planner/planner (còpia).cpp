@@ -191,7 +191,7 @@ void Planner::moveAlongPathLoad(unsigned int step, std::ifstream &path)
     {
         stop = false;
 
-        std::cout << " Rline requested is: " << requested_line_number << " "<< "line number "<<line_number<< " " << Rline << std::endl;
+        std::cout << " Rline requested is: " << requested_line_number << " "<< "line number "<<line_number<< Rline << std::endl;
 
         //a new action to be analyzed
         //line_numnber is the pointer to the line being analyzed (it is the counter of the main while loop)
@@ -228,7 +228,7 @@ void Planner::moveAlongPathLoad(unsigned int step, std::ifstream &path)
                 //line_number2 is the counter of the configurations of the path (it is the counter of the secondary while loop)
                 while( std::getline(path, Rline) && !stop)
                 {
-                    //std::cout << " Rline number is : " << line_number2 << std::endl;
+                    std::cout << " Rline number is : " << line_number2 << std::endl;
                     //the while loop breakes when a "end" line is encountered
                     //then the next line to be analyzed (variable requested_line_number) is updated
                     if(Rline == "end")
@@ -326,7 +326,7 @@ void Planner::moveAlongPathLoad(unsigned int step, std::ifstream &path)
     step = step % _simulationPath.size();
     _wkSpace->moveRobotsTo(_simulationPath[step]);
 
-    std::cout<<step<<" SIMULATION FROM PATH "<<_simulationPath.size() <<" "<<action << "next requested: "<< requested_line_number << endl;
+    std::cout<<step<<" SIMULATION FROM PATH "<<_simulationPath.size() <<" "<<action <<endl;
 
     //if(stop) std::cout<<"stop = true"<<std::endl; else std::cout<<"stop = false"<<std::endl;
     //if(stopAll) std::cout<<"stopAll = true"<<std::endl; else std::cout<<"stopAll = false"<<std::endl;
