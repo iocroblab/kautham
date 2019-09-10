@@ -48,7 +48,8 @@ namespace Kautham {
        virtual bool                  trySolve()=0;
        virtual bool                  setParameters() = 0;
        virtual void                  moveAlongPath(unsigned int step);
-       virtual void                  moveAlongPathLoad(unsigned int step, std::string address);
+       virtual void                  loadSampleFromLine(Sample *Robsmp,std::stringstream  &RlineStream);
+       virtual void                  moveAlongPathLoad(unsigned int step, std::ifstream &path);
        virtual bool                  solveAndInherit();
        inline virtual bool           filtersample(Sample* smp){(void)smp; return false;}
        inline string                 getIDName(){return _idName;}
@@ -88,6 +89,9 @@ namespace Kautham {
        inline PLANNERFAMILY           getFamily(){return _family;}
        inline int                     findIndex(Sample *s){return _samples->indexOf(s);}
        int stopC=0;
+       bool stopAll = false; //to stop main while loop
+       bool stop = false; //to stop nested while loops
+       unsigned int requested_line_number = 1;
 
    protected:
        Planner();

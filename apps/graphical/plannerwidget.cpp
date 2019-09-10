@@ -587,30 +587,72 @@ namespace Kautham {
 
     
     void PlannerWidget::moveAlongPathLoad(){
-        if(_planner->stopC==1)
+        
+        std::cout<<"entering  PlannerWidget::moveAlongPathLoad"<<std::endl;
+        std::ifstream taskfile;
+        /*if(_planner->stopC==1)
         {
             _planner->stopC=0;
             _planner->clearSimulationPath();
             _stepSim=0;
 
             startSimulationLoad();
+            pathF.clear();
+        }
+        */
+        if(_planner->stop==true)
+        {
+            _planner->stop=false;
+            _planner->clearSimulationPath();
+            _stepSim=0;
+
+            //startSimulationLoad();
+            //pathF.clear();
+        }
+        if(_planner->stopAll==true)
+        {
+            _planner->stopAll=false;
+            _planner->clearSimulationPath();
+            _stepSim=0;
+
+            //startSimulationLoad(); //changes text in button to ask again for a file to be loaded
+            pathF.clear(); //clears task file to be loaded so as to ask it again
         }
         
-        QString last_path, path;
-        QDir workDir;
-        QString fileName;
-        QSettings settings("IOC","Kautham");
-        last_path = settings.value("last_path",workDir.absolutePath()).toString();
-        path = QFileDialog::getOpenFileName(
+        if(pathF.empty())
+        {
+            QString last_path, path;
+            QDir workDir;
+            QString fileName;
+            QSettings settings("IOC","Kautham");
+            last_path = settings.value("last_path",workDir.absolutePath()).toString();
+            path = QFileDialog::getOpenFileName(
                     this->parentWidget(),
                     "Choose a task file to open (*.txt)",
                     last_path,
                     "All task files (*.txt)");
-        if (!path.isEmpty()) {
-            fileName = path.toUtf8().constData();
+            if (!path.isEmpty()) {
+                fileName = path.toUtf8().constData();
+            }
+            pathF=fileName.toStdString();
+            
+            taskfile.open (pathF);
+            if (taskfile.is_open())
+            {
+                std::cout<< " File "<<pathF<<" successfully opened ! "<<std::endl;
+            }
+            else
+            {   
+                std::cout << "Error opening file: " <<pathF<<std::endl;
+            }   
         }
-        std::string pathF=fileName.toStdString();
-        _planner->moveAlongPathLoad(_stepSim, pathF);
+        if(pathF.empty())
+        {
+            std::cout<<"Task file to be loaded is empty..."<<std::endl;
+            return;
+        }
+
+        _planner->moveAlongPathLoad(_stepSim, taskfile);
         // It moves the camera if the associated planner provides the
         // transformation information of the camera
         //if( chkCamera && chkCamera->isChecked() && _planner->getCameraMovement(_stepSim) != NULL ) {
@@ -618,7 +660,6 @@ namespace Kautham {
         //}
 
         _stepSim += _planner->getSpeedFactor();
-
     }
 
     void PlannerWidget::showSample(int index){
