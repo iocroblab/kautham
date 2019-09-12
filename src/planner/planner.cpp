@@ -185,9 +185,11 @@ void Planner::moveAlongPathLoad(unsigned int step, std::ifstream &path)
     unsigned int line_number2 = 1; //to loop along the configurations while processing an action
 
     //if(stop) std::cout<<"stop = true"<<std::endl; else std::cout<<"stop = false"<<std::endl;
-    //if(stopAll) std::cout<<"stopAll = true"<<std::endl; else std::cout<<"stopAll = false"<<std::endl;
+    if(stopAll) std::cout<<"stopAll = true"<<std::endl; else std::cout<<"stopAll = false"<<std::endl;
 
     while(  std::getline(path, Rline) && !stopAll )
+    //std::getline(path, Rline);
+    //while( !stopAll )
     {
         stop = false;
 
@@ -197,7 +199,7 @@ void Planner::moveAlongPathLoad(unsigned int step, std::ifstream &path)
         //line_numnber is the pointer to the line being analyzed (it is the counter of the main while loop)
         if (line_number != requested_line_number){
           line_number++;
-          break;
+          continue;
         }
         else
         {
@@ -212,6 +214,10 @@ void Planner::moveAlongPathLoad(unsigned int step, std::ifstream &path)
             {
                 streamCheck.push_back(check);
             }
+
+
+      std::cout << " ------ streamCheck[0] = "<<streamCheck[0]<<std::endl;
+      std::cout << " line_number "<<line_number<<" requested_line_number: "<<requested_line_number<<" Rline = "<<Rline<<std::endl;
 
             //analyze the first sting streamCheck[0]
             if(streamCheck[0] == "transit")
@@ -308,7 +314,7 @@ void Planner::moveAlongPathLoad(unsigned int step, std::ifstream &path)
             else //TO BE REVISED
             {
                 clearSimulationPath();
-                std::cout << " Plan successfully executed !"<<std::endl;
+                std::cout << " !!!! streamCheck[0] = "<<streamCheck[0]<<" Plan successfully executed !"<<std::endl;
                 requested_line_number = 1;
                 stopAll = true;
             }
