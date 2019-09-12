@@ -600,7 +600,8 @@ namespace Kautham {
             pathF.clear();
         }
         */
-        if(_planner->stop==true)
+        
+        /*if(_planner->stop==true)
         {
             _planner->stop=false;
             _planner->clearSimulationPath();
@@ -609,6 +610,10 @@ namespace Kautham {
             //startSimulationLoad();
             //pathF.clear();
         }
+        */
+
+       std::cout<<"pathF = "<<pathF;
+       if(_planner->stopAll) std::cout<<"stopAll = true"<<std::endl; else std::cout<<"stopAll = false"<<std::endl;
         if(_planner->stopAll==true)
         {
             _planner->stopAll=false;
