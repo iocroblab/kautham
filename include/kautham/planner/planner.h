@@ -40,6 +40,13 @@ namespace Kautham {
 /** \addtogroup GeometricPlanners
  *  @{
  */
+   struct attachData{
+       uint step;
+       string action;
+       uint objnumber;
+       uint robnumber;
+       uint linknumber;
+   };
 
    class Planner: public KauthamObject{
    public:
@@ -48,8 +55,6 @@ namespace Kautham {
        virtual bool                  trySolve()=0;
        virtual bool                  setParameters() = 0;
        virtual void                  moveAlongPath(unsigned int step);
-       virtual void                  loadSampleFromLine(Sample *Robsmp,std::stringstream  &RlineStream);
-       virtual void                  moveAlongPathLoad(unsigned int step, std::ifstream &path);
        virtual bool                  solveAndInherit();
        inline virtual bool           filtersample(Sample* smp){(void)smp; return false;}
        inline string                 getIDName(){return _idName;}
@@ -88,10 +93,9 @@ namespace Kautham {
        inline long int                getMaxNumSamples(){return _maxNumSamples;}
        inline PLANNERFAMILY           getFamily(){return _family;}
        inline int                     findIndex(Sample *s){return _samples->indexOf(s);}
-       int stopC=0;
-       bool stopAll = false; //to stop main while loop
-       bool stop = false; //to stop nested while loops
-       unsigned int requested_line_number = 1;
+       void                           loadExternalPath(vector<Sample*> &p);  
+       void                           clearAttachData();
+       void                           loadAttachData(int s, string a, int o, int r, int l);
 
    protected:
        Planner();
@@ -100,6 +104,7 @@ namespace Kautham {
        vector<Sample*>               _init;
        vector<Sample*>               _goal;
        vector<Sample*>               _path;
+       vector<attachData>            _attachdetach;
        vector<vector<vector<KthReal> > >  _StateBodies;
        vector<Sample*>               _simulationPath;
        vector<mt::Transform>         _cameraPath;
@@ -112,6 +117,7 @@ namespace Kautham {
        PLANNERFAMILY                 _family;
        SoSeparator*                  _sceneCspace;
        SoSeparator*                  _scenePath;
+       int                           _simStep=0;
    };
    /** @}   end of Doxygen module */
 }

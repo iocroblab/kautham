@@ -169,15 +169,13 @@ namespace Kautham {
         connectLabel->setText(QString());
 
         _plannerTimer = new QTimer( this );
-        _plannerTimerLoad = new QTimer( this );
 
         if(_planner != NULL ){
             connect(btnGetPath, SIGNAL( clicked() ), this, SLOT( getPath() ) );
             connect(btnSaveData, SIGNAL( clicked() ), this, SLOT( saveData() ) );
-            connect(btnLoadData, SIGNAL( clicked() ), this, SLOT( simulatePathLoad() ) );
+            connect(btnLoadData, SIGNAL( clicked() ), this, SLOT( taskmotionPathLoad() ) );
             connect(moveButton, SIGNAL( clicked() ), this, SLOT( simulatePath() ) );
             connect(_plannerTimer, SIGNAL(timeout()), this, SLOT(moveAlongPath()) );
-            connect(_plannerTimerLoad, SIGNAL(timeout()), this, SLOT(moveAlongPathLoad()) );
             connect(globalFromBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
             connect(globalToBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
             connect(localFromBox, SIGNAL( valueChanged( int )), this, SLOT( showSample( int )));
@@ -254,7 +252,6 @@ namespace Kautham {
         delete globalToBox;
         delete tmpLabel;
         delete _plannerTimer;
-        delete _plannerTimerLoad;
         delete label;
         delete localFromBox;
         delete label_2;
@@ -549,29 +546,6 @@ namespace Kautham {
     }
 
 
-    void PlannerWidget::simulatePathLoad() {
-
-        emit changeCursor(false);
-        if (btnLoadData->text() == QApplication::translate("Form", "Load TaskFile", 0)){
-            startSimulationLoad();
-        } else {
-            stopSimulationLoad();
-        }
-
-    }
-
-    void PlannerWidget::startSimulationLoad() {
-        _plannerTimerLoad->start(200);
-        btnLoadData->setText(QApplication::translate("Form", "Stop", 0));
-        _ismoving = true;
-
-    }
-
-    void PlannerWidget::stopSimulationLoad() {
-        _plannerTimerLoad->stop();
-        btnLoadData->setText(QApplication::translate("Form", "Load TaskFile", 0));
-        _ismoving = false;
-    }
 
     void PlannerWidget::moveAlongPath(){
         _planner->moveAlongPath(_stepSim);
@@ -585,87 +559,194 @@ namespace Kautham {
 
     }
 
-    
-    void PlannerWidget::moveAlongPathLoad(){
-        
-        std::cout<<"entering  PlannerWidget::moveAlongPathLoad"<<std::endl;
-        std::ifstream taskfile;
-        /*if(_planner->stopC==1)
-        {
-            _planner->stopC=0;
-            _planner->clearSimulationPath();
-            _stepSim=0;
 
-            startSimulationLoad();
-            pathF.clear();
-        }
-        */
-        
-        /*if(_planner->stop==true)
+    void PlannerWidget::loadSampleFromLine(Sample *Robsmp,std::stringstream  &confstream)
+    {
+        //Load the configurations of the robots written in each line
+        //loop for all the robots
+        vector<RobConf> Robrc; //mapped configuration of the set of robots
+        for (uint j = 0; j < _planner->wkSpace()->getNumRobots(); ++j) 
         {
-            _planner->stop=false;
-            _planner->clearSimulationPath();
-            _stepSim=0;
-
-            //startSimulationLoad();
-            //pathF.clear();
-        }
-        */
-
-       std::cout<<"pathF = "<<pathF;
-       if(_planner->stopAll) std::cout<<"stopAll = true"<<std::endl; else std::cout<<"stopAll = false"<<std::endl;
-        if(_planner->stopAll==true)
-        {
-            _planner->stopAll=false;
-            _planner->clearSimulationPath();
-            _stepSim=0;
-
-            //startSimulationLoad(); //changes text in button to ask again for a file to be loaded
-            pathF.clear(); //clears task file to be loaded so as to ask it again
-        }
-        
-        if(pathF.empty())
-        {
-            QString last_path, path;
-            QDir workDir;
-            QString fileName;
-            QSettings settings("IOC","Kautham");
-            last_path = settings.value("last_path",workDir.absolutePath()).toString();
-            path = QFileDialog::getOpenFileName(
-                    this->parentWidget(),
-                    "Choose a task file to open (*.txt)",
-                    last_path,
-                    "All task files (*.txt)");
-            if (!path.isEmpty()) {
-                fileName = path.toUtf8().constData();
-            }
-            pathF=fileName.toStdString();
-            
-            taskfile.open (pathF);
-            if (taskfile.is_open())
+            //std::cout << " robot "<< j << std::endl;
+            RobConf *Robrcj = new RobConf; //Configuration for robot j
+            vector<KthReal> se3coords; //SE3 part
+            se3coords.resize(7);
+            std::vector<KthReal> Rn; //Rn part
+            //Mapped configuration: load the SE3 part, if ther is any
+            if (_planner->wkSpace()->getRobot(j)->isSE3Enabled()) 
             {
-                std::cout<< " File "<<pathF<<" successfully opened ! "<<std::endl;
+            //std::cout << " se3 part ";
+            //read the next 7 values
+            for(int k=0; k<7; k++)
+                confstream >> se3coords[k];
+            //for(int k=0; k<7; k++)
+            //  std::cout << " "<< se3coords[k];
+            //std::cout << std::endl;
             }
-            else
-            {   
-                std::cout << "Error opening file: " <<pathF<<std::endl;
-            }   
+            else{
+                //If the robot does not have mobile SE3 dofs then the SE3 configuration of the init sample is maintained
+                Robrcj->setSE3(_planner->initSamp()->getMappedConf()[0].getSE3());
+            }
+            SE3Conf se3;
+            se3.setCoordinates(se3coords);
+            Robrcj->setSE3(se3);
+                      
+            //Mapped configuration: load the Rn part, if ther is any
+            if (_planner->wkSpace()->getRobot(j)->getNumJoints() > 0) 
+            {
+            //std::cout << " rn part: ";
+            Rn.resize(_planner->wkSpace()->getRobot(j)->getNumJoints());
+            //read the next n values
+            for(uint k=0; k<_planner->wkSpace()->getRobot(j)->getNumJoints(); k++)
+                confstream >> Rn[k];
+
+            Robrcj->setRn(Rn);
+            //for(int k=0; k<_planner->wkSpace()->getRobot(j)->getNumJoints(); k++)
+            //  std::cout << " "<< Rn[k];
+            //std::cout << std::endl;
+            }
+            else {
+            //If the robot does not have mobile Rn dofs then the Rn is set to dim=0
+            Robrcj->setRn(0);
+            }
+
+            //load the configuration of robot j to the configuration vector
+            Robrc.push_back(*Robrcj);
         }
-        if(pathF.empty())
+
+        //Set the mapped configuration of the sample
+        //(its control values are kept to zero)               
+        Robsmp->setMappedConf(Robrc);    
+    }      
+
+    //This functions reads a tas-motion planning xml file and fills the paths to be followed
+    //composed of the concatenation of transit and transfer paths,
+    //and the vector of with the attachements/detachements to be done at the begining/ending
+    //of each transfer.
+    void PlannerWidget::taskmotionPathLoad(){
+        std::ifstream xml_taskfile;
+        xml_document *doc = new xml_document;
+        std::vector<Sample*> _path2;
+
+        //open xml file with the task plan
+        QString last_path, path;
+        QDir workDir;
+        QString fileName;
+        QSettings settings("IOC","Kautham");
+        last_path = settings.value("last_path",workDir.absolutePath()).toString();
+        path = QFileDialog::getOpenFileName(
+                this->parentWidget(),
+                "Choose a task file to open (*.xml)",
+                last_path,
+                "All task files (*.xml)");
+        xml_taskfile.open(path.toStdString());
+        xml_parse_result result = doc->load( xml_taskfile );
+
+        //parse the file
+        if (result) {
+            //if the file was correctly parsed
+            _planner->clearAttachData();
+            _path2.clear();
+            xml_node taskNode = doc->child("Task");
+            string name;
+            //Loop inside the task node for transit and transfer nodes
+            for (xml_node::iterator it_task = taskNode.begin(); it_task != taskNode.end(); ++it_task) {
+                name = it_task->name();
+                try {
+                    if (name == "Transit") {
+                        std::cout<<"....Transit..."<<std::endl;
+                        string transitconf;
+                        //loop inside the transit node for all the configurations of the path
+                        for (xml_node::iterator it_transit = it_task->begin(); it_transit != it_task->end(); ++it_transit) {
+                            //transitconf = it->child("Conf").child_value();
+                            name = it_transit->name();
+                            try {
+                                if (name == "Conf") {
+                                    transitconf = it_transit->child_value();
+                                    std::cout<<"TRANSIT:"<<transitconf<<endl;
+                                    //Create the sample
+                                    Sample *Robsmp; //sample
+                                    Robsmp=new Sample(_planner->wkSpace()->getNumRobControls());
+                                    //fill the sample
+                                    std::stringstream transitconfstream(transitconf);
+                                    loadSampleFromLine(Robsmp, transitconfstream);
+                                    //add the sample to the path
+                                    _path2.push_back(Robsmp);
+                                }
+                            } catch(...) {
+                                std::cout << "ERROR: Current transit tag does not have any configuration!!" << std::endl;
+                                //return false; //changed, let it continue -
+                            }
+                        }
+                    }
+                    else if (name == "Transfer") {
+                        //Read the attributes with the object to be transferred and the robot and link where it is attached to
+                        //<Transfer object="1" robot="0" link="0">
+                        string objectname = it_task->attribute("object").as_string();
+                        string robotname = it_task->attribute("robot").as_string();
+                        string linkname = it_task->attribute("link").as_string();
+                        std::cout<< "....Transfer...object "<<objectname<<" attached to link "<<linkname<<" of robot "<<robotname<< std::endl;
+                        string transferconf;
+                        
+                        //load the step of the path where transfer starts and an attach is required
+                        _planner->loadAttachData(_path2.size(),"attach",stoi(objectname),stoi(robotname),stoi(linkname));
+
+                        //loop inside the transfer node for all the configurations of the path
+                        for (xml_node::iterator it_transfer = it_task->begin(); it_transfer != it_task->end(); ++it_transfer) {
+                            //transitconf = it->child("Conf").child_value();
+                            name = it_transfer->name();
+                            try {
+                                if (name == "Conf") {
+                                    transferconf = it_transfer->child_value();
+                                    std::cout<<"TRANSFER:"<<transferconf<<endl;
+                                    //Create the sample
+                                    Sample *Robsmp; //sample
+                                    Robsmp=new Sample(_planner->wkSpace()->getNumRobControls());
+                                    //fill the sample
+                                    std::stringstream transferconfstream(transferconf);
+                                    loadSampleFromLine(Robsmp, transferconfstream);
+                                    //add the sample to the path
+                                    _path2.push_back(Robsmp);
+                                }
+                            } catch(...) {
+                                std::cout << "ERROR: Current transfer tag does not have any configuration!!" << std::endl;
+                                //return false; //changed, let it continue -
+                            }
+                        }
+                        //load the step of the path where transfer ends and a dettach is required
+                        _planner->loadAttachData(_path2.size()-1,"detach",stoi(objectname),stoi(robotname),stoi(linkname));
+                    }                
+                } catch(...) {
+                    std::cout << "ERROR: Current task tag does not have any transit or transfer !!" << std::endl;
+                        //return false; //changed, let it continue -
+                }
+            }
+        } else {
+            string message = "Problem file " + path.toStdString() + " couldn't be parsed";
+            stringstream details;
+            details << "Error: " << result.description() << endl <<
+                       "Last successfully parsed character: " << result.offset;
+            //throw KthExcp(message,details.str());
+            std::cout<<"TRANSIT:"<<message<<endl;;
+        }
+        
+        for(unsigned i=0; i<_path2.size();i++)
         {
-            std::cout<<"Task file to be loaded is empty..."<<std::endl;
-            return;
+            cout << "PATH: ";
+            if (_path2.at(i)->getMappedConf().size()!=0) {
+                SE3Conf &s = _path2.at(i)->getMappedConf()[0].getSE3();
+                cout << s.getPos().at(0) << " ";
+                cout << s.getPos().at(1) << " ";
+                cout << s.getPos().at(2) << endl;
+            }
         }
+        _planner-> loadExternalPath(_path2); //, _visitStep);
+        
+        moveButton->setEnabled(true);
+        btnSaveData->setEnabled(true);
 
-        _planner->moveAlongPathLoad(_stepSim, taskfile);
-        // It moves the camera if the associated planner provides the
-        // transformation information of the camera
-        //if( chkCamera && chkCamera->isChecked() && _planner->getCameraMovement(_stepSim) != NULL ) {
-        //_gui->setActiveCameraTransform(*_planner->getCameraMovement( _stepSim ));
-        //}
-
-        _stepSim += _planner->getSpeedFactor();
     }
+
 
     void PlannerWidget::showSample(int index){
         int max;
