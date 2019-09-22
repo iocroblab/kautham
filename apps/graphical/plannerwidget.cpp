@@ -619,11 +619,12 @@ namespace Kautham {
         Robsmp->setMappedConf(Robrc);    
     }      
 
-    //This functions reads a tas-motion planning xml file and fills the paths to be followed
-    //composed of the concatenation of transit and transfer paths,
-    //and the vector of with the attachements/detachements to be done at the begining/ending
-    //of each transfer.
-    void PlannerWidget::taskmotionPathLoad(){
+
+    bool PlannerWidget::taskmotionPathLoad(){
+        //This functions reads a taskmotion.xml planning file and fills the paths to be followed
+        //composed of the concatenation of transit and transfer paths,
+        //and the vector with the attachements/detachements to be done at the begining/ending
+        //of each transfer.
         std::ifstream xml_taskfile;
         xml_document *doc = new xml_document;
         std::vector<Sample*> _path2;
@@ -658,7 +659,6 @@ namespace Kautham {
                         string transitconf;
                         //loop inside the transit node for all the configurations of the path
                         for (xml_node::iterator it_transit = it_task->begin(); it_transit != it_task->end(); ++it_transit) {
-                            //transitconf = it->child("Conf").child_value();
                             name = it_transit->name();
                             try {
                                 if (name == "Conf") {
@@ -675,7 +675,7 @@ namespace Kautham {
                                 }
                             } catch(...) {
                                 std::cout << "ERROR: Current transit tag does not have any configuration!!" << std::endl;
-                                //return false; //changed, let it continue -
+                                return false;
                             }
                         }
                     }
@@ -693,7 +693,6 @@ namespace Kautham {
 
                         //loop inside the transfer node for all the configurations of the path
                         for (xml_node::iterator it_transfer = it_task->begin(); it_transfer != it_task->end(); ++it_transfer) {
-                            //transitconf = it->child("Conf").child_value();
                             name = it_transfer->name();
                             try {
                                 if (name == "Conf") {
@@ -710,7 +709,7 @@ namespace Kautham {
                                 }
                             } catch(...) {
                                 std::cout << "ERROR: Current transfer tag does not have any configuration!!" << std::endl;
-                                //return false; //changed, let it continue -
+                                return false;
                             }
                         }
                         //load the step of the path where transfer ends and a dettach is required
@@ -718,7 +717,7 @@ namespace Kautham {
                     }                
                 } catch(...) {
                     std::cout << "ERROR: Current task tag does not have any transit or transfer !!" << std::endl;
-                        //return false; //changed, let it continue -
+                    return false;
                 }
             }
         } else {
@@ -727,7 +726,9 @@ namespace Kautham {
             details << "Error: " << result.description() << endl <<
                        "Last successfully parsed character: " << result.offset;
             //throw KthExcp(message,details.str());
-            std::cout<<"TRANSIT:"<<message<<endl;;
+            std::cout<<"TRANSIT:"<<message<<endl;
+
+            return false;
         }
         
         for(unsigned i=0; i<_path2.size();i++)
@@ -745,6 +746,7 @@ namespace Kautham {
         moveButton->setEnabled(true);
         btnSaveData->setEnabled(true);
 
+        return true;
     }
 
 

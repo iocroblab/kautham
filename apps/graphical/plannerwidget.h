@@ -55,7 +55,7 @@ namespace Kautham{
         void tryConnect();
         void chkCameraClick();
         void simulatePath();
-        void taskmotionPathLoad();
+        bool taskmotionPathLoad();
 
     private:
         //void stopSimulation();
