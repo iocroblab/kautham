@@ -1014,10 +1014,15 @@ namespace Kautham {
             addParameter("KD",1.);
 
             planner->as<myRRTstar>()->setRange(_Range);
+            //set the longest valid segment (i.e. segment without need to be collision-checked) as a fraction of
+            //the maximum extend of the space (set to e.g. the diagonal of a R^n cubic space)
+            space->setLongestValidSegmentFraction(0.01);
+            //correct if necessary to allow that the (_Range/_validSegmentCount) be the longest valid segment,
+            //so as to allow _validSegmentCount collisionchecks within a range step.
             if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
                 space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
-                space->setup();
             }
+            space->setup();//needed to update the setting of the longest valid segment
             planner->as<myRRTstar>()->setGoalBias(_GoalBias);
             planner->as<myRRTstar>()->setPathBias(_PathBias);
             planner->as<myRRTstar>()->setPathSamplingRangeFactor(_PathSamplingRangeFactor);
@@ -1264,10 +1269,15 @@ namespace Kautham {
                 if (it == _parameters.end()) return false;
                 _Range = it->second;
                 ss->getPlanner()->as<og::RRTstar>()->setRange(_Range);
+                //set the longest valid segment (i.e. segment without need to be collision-checked) as a fraction of
+                //the maximum extend of the space (set to e.g. the diagonal of a R^n cubic space)
+                space->setLongestValidSegmentFraction(0.01);
+                //correct if necessary to allow that the (_Range/_validSegmentCount) be the longest valid segment,
+                //so as to allow _validSegmentCount collisionchecks within a range step.
                 if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
                     space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
-                    space->setup();
                 }
+                space->setup();//needed to update the setting of the longest valid segment
                 if (_opti == 3) ((PMDalignmentOptimizationObjective*)_pmdalignmentopti.get())->setEpsilon(_Range);
 
 

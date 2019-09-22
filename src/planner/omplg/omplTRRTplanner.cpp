@@ -63,10 +63,16 @@ omplTRRTPlanner::omplTRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, Sa
 
     //set planner parameters: range and goalbias
     _Range=(planner->as<og::TRRT>())->getRange();
+    //set the longest valid segment (i.e. segment without need to be collision-checked) as a fraction of
+    //the maximum extend of the space (set to e.g. the diagonal of a R^n cubic space)
+    space->setLongestValidSegmentFraction(0.01);
+    //correct if necessary to allow that the (_Range/_validSegmentCount) be the longest valid segment,
+    //so as to allow _validSegmentCount collisionchecks within a range step.
     if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
         space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
-        space->setup();
     }
+    space->setup();//needed to update the setting of the longest valid segment
+
     _GoalBias=(planner->as<og::TRRT>())->getGoalBias();
     _maxStatesFailed = (planner->as<og::TRRT>())->getMaxStatesFailed();
     _tempChangeFactor = (planner->as<og::TRRT>())->getTempChangeFactor();
@@ -106,10 +112,15 @@ bool omplTRRTPlanner::setParameters() {
         if (it != _parameters.end()) {
             _Range = it->second;
             ss->getPlanner()->as<og::TRRT>()->setRange(_Range);
+            //set the longest valid segment (i.e. segment without need to be collision-checked) as a fraction of
+            //the maximum extend of the space (set to e.g. the diagonal of a R^n cubic space)
+            space->setLongestValidSegmentFraction(0.01);
+            //correct if necessary to allow that the (_Range/_validSegmentCount) be the longest valid segment,
+            //so as to allow _validSegmentCount collisionchecks within a range step.
             if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
                 space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
-                space->setup();
             }
+            space->setup();//needed to update the setting of the longest valid segment
         } else {
             return false;
         }
