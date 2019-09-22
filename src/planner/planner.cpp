@@ -94,10 +94,17 @@ namespace Kautham{
 
   
   void Planner::moveAlongPath(unsigned int step){
+    //Moves to the next step in the simulated path.
+    //The path may be computed by the trySolve function to answer a motion planning query or
+    //it may come from a taskmotion.xml file.
+    //In this latter case the path is a sequence of transit and transfer subpaths and an attach operation
+      //is needed before the transfer part starts and a detach once it is over.
+      //the info of the steps where this attach/detach operation are to be done (and the info on the
+      //object, the robot, and the link involved is stored in the _attachdetach struct.
     if(_solved){
         //here simulationPath coincides with path
         //this function is overloaded by PRM planners that do an interpolation between paths nodes to obtain a more finner simulationPath
-        //TO BE REVISED: prior comment seems to be deprecated...
+        //TO BE REVISED: prior comment seems to be deprecated...(2019-09)
       if(_simulationPath.size() == 0 ){ // Then calculate the simulation path based on stepsize
             for(unsigned i=0; i<_path.size();i++)
             {
@@ -184,31 +191,27 @@ namespace Kautham{
   
   void Planner::loadAttachData(int s, string a, int o, int r, int l)
   {
+      //loads the attach/detach info read from the taskmotion.xml file
     attachData d;
-    d.step = s;
-    d.action = a;
-    d.objnumber = o;
-    d.robnumber = r;
-    d.linknumber = l;
+    d.step = s; //step of the path where the attach/detach is taking place
+    d.action = a; //string determining whether it is an attach or a detach
+    d.objnumber = o; //object ot be attached/detached
+    d.robnumber = r; //robot to which the object is being attached to/detached from
+    d.linknumber = l; //link of the robot to which the object is being attached to/detached from
     _attachdetach.push_back(d);
   }
 
   void Planner::loadExternalPath(vector<Sample*> &p)
   {
+      //loads the _path vector from the path read from a taskmotion.xml file
+      //that is parsed in plannerwidget.cpp
       _solved = true;
       _path.clear();
-      
-      //cout << "COPYING PATH: "<<endl;
+
       for(unsigned i=0; i<p.size();i++)
       {
          Sample *s=new Sample(*p.at(i));
          _path.push_back(s);
-         //if (_path.at(i)->getMappedConf().size()!=0) {
-         //   SE3Conf &s = _path.at(i)->getMappedConf()[0].getSE3();
-         //   cout << s.getPos().at(0) << " ";
-         //   cout << s.getPos().at(1) << " ";
-         //   cout << s.getPos().at(2) << endl;
-         //}
       }
   }
 
