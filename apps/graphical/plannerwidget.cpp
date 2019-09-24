@@ -548,7 +548,7 @@ namespace Kautham {
 
 
     void PlannerWidget::moveAlongPath(){
-        _planner->moveAlongPath(_stepSim);
+        _stepSim = _planner->moveAlongPath(_stepSim);
         // It moves the camera if the associated planner provides the
         // transformation information of the camera
         //if( chkCamera && chkCamera->isChecked() && _planner->getCameraMovement(_stepSim) != NULL ) {

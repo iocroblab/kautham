@@ -93,7 +93,7 @@ namespace Kautham{
   }
 
   
-  void Planner::moveAlongPath(unsigned int step){
+  uint Planner::moveAlongPath(unsigned int step){
     //Moves to the next step in the simulated path.
     //The path may be computed by the trySolve function to answer a motion planning query or
     //it may come from a taskmotion.xml file.
@@ -114,7 +114,12 @@ namespace Kautham{
       }
       if( _simulationPath.size() >= 2 )
       {
-        step = step % _simulationPath.size();
+        //step = step % _simulationPath.size();
+        //sets the step within simulated path bounds (to be returned by the function)
+        if(step>=_simulationPath.size()){
+            step = 0;
+        }
+
         //verify if an attach/dettach has to be done
         if(_attachdetach.size())
         {
@@ -129,6 +134,16 @@ namespace Kautham{
             }
             */
             //cout<<"step = "<<step<<" prevStep = "<<_simStep<<endl;
+
+
+            //move the obstacles to their home poses at the beginning of the simulation
+            //(needed because the robot will be transferring some objects during the simulation of the taskmotion path)
+            if(step==0)
+            {
+                for(uint i=0; _wkSpace->getNumObstacles(); i++)
+                  _wkSpace->getObstacle(i)->Kinematics(_wkSpace->getObstacle(i)->getHomePos());
+            }
+
             uint previousStep;
             uint currentStep;
             for(uint i=0; i<_attachdetach.size();i++)
@@ -181,6 +196,7 @@ namespace Kautham{
       }else
         std::cout << "The problem is wrong solved. The solution path has less than two elements." << std::endl;
     }
+    return step;
   }
 
 
