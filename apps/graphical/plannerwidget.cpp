@@ -746,6 +746,8 @@ namespace Kautham {
         moveButton->setEnabled(true);
         btnSaveData->setEnabled(true);
 
+        _stepSim = 0; //to start simulation from the begining
+
         return true;
     }
 
