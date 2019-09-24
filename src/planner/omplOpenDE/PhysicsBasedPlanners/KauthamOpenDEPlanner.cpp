@@ -808,7 +808,7 @@ void KauthamDEPlanner::callDrawStuffViewer(void)
 
     }
 }
-void KauthamDEPlanner::moveAlongPath(unsigned int step){
+uint KauthamDEPlanner::moveAlongPath(unsigned int step){
     if(_solved){
 
         if(_simulationPath.size() == 0 ){ // Then calculate the simulation path based on stepsize
@@ -831,6 +831,7 @@ void KauthamDEPlanner::moveAlongPath(unsigned int step){
         }else
             std::cout << "The problem is wrong solved. The solution path has less than two elements." << std::endl;
     }
+    return step;
 }
 
 oc::PathControl* KauthamDEPlanner::RectMotion()
