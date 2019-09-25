@@ -139,9 +139,36 @@ namespace Kautham{
             //move the obstacles to their home poses at the beginning of the simulation
             //(needed because the robot will be transferring some objects during the simulation of the taskmotion path)
             if(step==0)
-            {
-                for(uint i=0; _wkSpace->getNumObstacles(); i++)
+            { 
+cout<<"step==0 .....................................k"<<endl;
+
+//quan es fa un dettach d'un objecte es posa la HomePos a la posicio!!
+//es a dir que la HomePos no es inamovible des de la carrega del problema!!!!
+                for(uint i=0; i<_wkSpace->getNumObstacles(); i++)
+                {
+                  cout<<"i = "<<i<<endl;
+                  RobConf *c = _wkSpace->getObstacle(i)->getHomePos();
+                  vector<float> ph = c->getSE3().getPos();
+                  cout<<"HOME POS"<<endl;
+                  cout<<"x = "<<ph[0]<<endl;
+                  cout<<"y = "<<ph[1]<<endl;
+                  cout<<"z = "<<ph[2]<<endl;
+                  c = _wkSpace->getObstacle(i)->getCurrentPos();
+                  vector<float> pc = c->getSE3().getPos();
+                  cout<<"CURRENT POS"<<endl;
+                  cout<<"x = "<<pc[0]<<endl;
+                  cout<<"y = "<<pc[1]<<endl;
+                  cout<<"z = "<<pc[2]<<endl;
+
                   _wkSpace->getObstacle(i)->Kinematics(_wkSpace->getObstacle(i)->getHomePos());
+                  
+                  c = _wkSpace->getObstacle(i)->getCurrentPos();
+                  vector<float> pm = c->getSE3().getPos();
+                  cout<<"MODIFIED POS"<<endl;
+                  cout<<"x = "<<pm[0]<<endl;
+                  cout<<"y = "<<pm[1]<<endl;
+                  cout<<"z = "<<pm[2]<<endl;
+                }
             }
 
             uint previousStep;
