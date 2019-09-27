@@ -91,42 +91,6 @@ namespace Kautham{
       std::cout << "The problem is not solved yet" << std::endl;
     }
   }
-
-
-  /*
-  void Planner::storeInitialObjectPoses(){
-    //store the initial pose of objects that need to be recovered when a simulation restarts, since
-    //if a taskmpotion plan may move them...
-    _obstaclePoses.clear();
-    _obstaclePoses.resize(_wkSpace->getNumObstacles());
-    for(uint i=0; i<_wkSpace->getNumObstacles(); i++)
-    {
-      RobConf *c = _wkSpace->getObstacle(i)->getHomePos();
-      _obstaclePoses[i] = new RobConf;
-      _obstaclePoses[i]->setSE3(c->getSE3());
-      _obstaclePoses[i]->setRn(c->getRn());
-    }
-  }
-  
-  bool Planner::restoreInitialObjectPoses(){
-    //restore the initial pose of objects 
-    if( _obstaclePoses.size()==_wkSpace->getNumObstacles())
-    {
-      for(uint i=0; i<_wkSpace->getNumObstacles(); i++)
-      {      
-         _wkSpace->getObstacle(i)->Kinematics( _obstaclePoses[i]);
-      }
-      return true;
-    }
-    else
-    {
-      cout<<"ERROR in restoring Initial Object Poses. Sizes mismatch"<<endl;
-      return false;
-    }
-  }
-  */
-
-
   
   uint Planner::moveAlongPath(unsigned int step){
     //Moves to the next step in the simulated path.
@@ -155,6 +119,8 @@ namespace Kautham{
             step = 0;
         }
 
+        cout<<"step = "<<step<<endl;
+
         //verify if an attach/dettach has to be done
         if(_attachdetach.size())
         {
@@ -175,7 +141,10 @@ namespace Kautham{
             //(needed because the robot will be transferring some objects during the simulation of the taskmotion path)
             if(step==0)
             { 
-              cout<<"step=0 ...Restoring Object poses...."<<endl;
+              cout<<"\n...Restarting the task-motion plan...."<<endl;
+              cout<<"...Restoring Object poses...."<<endl;
+              //The initial obejct poses were stored when opening the problem in Problem::createWSpaceFromFile()
+              //now they are retreived
               wkSpace()->restoreInitialObjectPoses();
             }
 
@@ -210,10 +179,12 @@ namespace Kautham{
                 //cout<<"step modified to "<<step<<" action = "<<_attachdetach[i].action<<endl;
                 if(_attachdetach[i].action.compare("attach") == 0)
                 {
+                  cout<<"...attaching obstacle "<<_attachdetach[i].objnumber<<endl;
                   _wkSpace->attachObstacle2RobotLink(_attachdetach[i].robnumber,_attachdetach[i].linknumber,_attachdetach[i].objnumber);
                 }
                 else if(_attachdetach[i].action.compare("detach") == 0)
                 {
+                  cout<<"...detaching obstacle "<<_attachdetach[i].objnumber<<endl;
                   _wkSpace->detachObstacle(_attachdetach[i].objnumber);
                 }
                 else{

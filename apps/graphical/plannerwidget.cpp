@@ -742,8 +742,6 @@ namespace Kautham {
             }
         }
         _planner->loadExternalPath(_path2);
-        //_planner->storeInitialObjectPoses();
-        //storeInitialObjectPoses is done in Problem::createWSpaceFromFile
         
         moveButton->setEnabled(true);
         btnSaveData->setEnabled(true);
