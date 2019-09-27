@@ -92,6 +92,41 @@ namespace Kautham{
     }
   }
 
+
+  /*
+  void Planner::storeInitialObjectPoses(){
+    //store the initial pose of objects that need to be recovered when a simulation restarts, since
+    //if a taskmpotion plan may move them...
+    _obstaclePoses.clear();
+    _obstaclePoses.resize(_wkSpace->getNumObstacles());
+    for(uint i=0; i<_wkSpace->getNumObstacles(); i++)
+    {
+      RobConf *c = _wkSpace->getObstacle(i)->getHomePos();
+      _obstaclePoses[i] = new RobConf;
+      _obstaclePoses[i]->setSE3(c->getSE3());
+      _obstaclePoses[i]->setRn(c->getRn());
+    }
+  }
+  
+  bool Planner::restoreInitialObjectPoses(){
+    //restore the initial pose of objects 
+    if( _obstaclePoses.size()==_wkSpace->getNumObstacles())
+    {
+      for(uint i=0; i<_wkSpace->getNumObstacles(); i++)
+      {      
+         _wkSpace->getObstacle(i)->Kinematics( _obstaclePoses[i]);
+      }
+      return true;
+    }
+    else
+    {
+      cout<<"ERROR in restoring Initial Object Poses. Sizes mismatch"<<endl;
+      return false;
+    }
+  }
+  */
+
+
   
   uint Planner::moveAlongPath(unsigned int step){
     //Moves to the next step in the simulated path.
@@ -106,11 +141,11 @@ namespace Kautham{
         //this function is overloaded by PRM planners that do an interpolation between paths nodes to obtain a more finner simulationPath
         //TO BE REVISED: prior comment seems to be deprecated...(2019-09)
       if(_simulationPath.size() == 0 ){ // Then calculate the simulation path based on stepsize
-            for(unsigned i=0; i<_path.size();i++)
-            {
-                Sample *s=new Sample(*_path.at(i));
-                _simulationPath.push_back(s);
-             }
+        for(unsigned i=0; i<_path.size();i++)
+        {
+          Sample *s=new Sample(*_path.at(i));
+          _simulationPath.push_back(s);
+        }
       }
       if( _simulationPath.size() >= 2 )
       {
@@ -140,35 +175,8 @@ namespace Kautham{
             //(needed because the robot will be transferring some objects during the simulation of the taskmotion path)
             if(step==0)
             { 
-cout<<"step==0 .....................................k"<<endl;
-
-//quan es fa un dettach d'un objecte es posa la HomePos a la posicio!!
-//es a dir que la HomePos no es inamovible des de la carrega del problema!!!!
-                for(uint i=0; i<_wkSpace->getNumObstacles(); i++)
-                {
-                  cout<<"i = "<<i<<endl;
-                  RobConf *c = _wkSpace->getObstacle(i)->getHomePos();
-                  vector<float> ph = c->getSE3().getPos();
-                  cout<<"HOME POS"<<endl;
-                  cout<<"x = "<<ph[0]<<endl;
-                  cout<<"y = "<<ph[1]<<endl;
-                  cout<<"z = "<<ph[2]<<endl;
-                  c = _wkSpace->getObstacle(i)->getCurrentPos();
-                  vector<float> pc = c->getSE3().getPos();
-                  cout<<"CURRENT POS"<<endl;
-                  cout<<"x = "<<pc[0]<<endl;
-                  cout<<"y = "<<pc[1]<<endl;
-                  cout<<"z = "<<pc[2]<<endl;
-
-                  _wkSpace->getObstacle(i)->Kinematics(_wkSpace->getObstacle(i)->getHomePos());
-                  
-                  c = _wkSpace->getObstacle(i)->getCurrentPos();
-                  vector<float> pm = c->getSE3().getPos();
-                  cout<<"MODIFIED POS"<<endl;
-                  cout<<"x = "<<pm[0]<<endl;
-                  cout<<"y = "<<pm[1]<<endl;
-                  cout<<"z = "<<pm[2]<<endl;
-                }
+              cout<<"step=0 ...Restoring Object poses...."<<endl;
+              wkSpace()->restoreInitialObjectPoses();
             }
 
             uint previousStep;

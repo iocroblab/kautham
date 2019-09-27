@@ -741,12 +741,15 @@ namespace Kautham {
                 cout << s.getPos().at(2) << endl;
             }
         }
-        _planner-> loadExternalPath(_path2); //, _visitStep);
+        _planner->loadExternalPath(_path2);
+        //_planner->storeInitialObjectPoses();
+        //storeInitialObjectPoses is done in Problem::createWSpaceFromFile
         
         moveButton->setEnabled(true);
         btnSaveData->setEnabled(true);
 
         _stepSim = 0; //to start simulation from the begining
+        _planner->clearSimulationPath();
 
         return true;
     }
