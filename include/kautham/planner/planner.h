@@ -97,8 +97,6 @@ namespace Kautham {
        void                           loadExternalPath(vector<Sample*> &p);  
        void                           clearAttachData();
        void                           loadAttachData(int s, string a, int o, int r, int l);
-       //void                           storeInitialObjectPoses();
-       //bool                           restoreInitialObjectPoses();
 
    protected:
        Planner();
@@ -121,7 +119,6 @@ namespace Kautham {
        SoSeparator*                  _sceneCspace;
        SoSeparator*                  _scenePath;
        int                           _simStep=0;
-       //vector<RobConf*>              _obstaclePoses;
    };
    /** @}   end of Doxygen module */
 }
