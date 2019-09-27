@@ -65,6 +65,7 @@ bool Problem::createWSpaceFromFile(xml_document *doc, bool useBBOX,
          tmpNode; tmpNode = tmpNode.next_sibling("Obstacle")) {
         if (!addObstacle2WSpace(&tmpNode, useBBOX, progress)) return false;
     }
+    _wspace->storeInitialObjectPoses();
 
     //Set obstacle controls
     if (!setObstacleControls(doc->child("Problem").child("Controls").
