@@ -97,7 +97,10 @@ namespace Kautham{
       inline string         getObsControlsName() const {return obsControlsName;} //!< Returns the string containing the obstacle control names, separated by the vertical line character
       inline void           setRobControlsName(string controlsname){robControlsName=controlsname;} //!< Sets the string containing the robot control names, separated by the veritcal line character
       inline void           setObsControlsName(string controlsname){obsControlsName=controlsname;} //!< Sets the string containing the obstacle control names, separated by the veritcal line character
+      
 
+       void                 storeInitialObjectPoses();
+       bool                 restoreInitialObjectPoses();
 
       //rc_functions
       vector<Robot*> _mobileObstacle;
@@ -125,6 +128,7 @@ namespace Kautham{
       vector<RobConf*>      _obsConfigMap;
       vector<RobWeight*>    _robWeight;
       //string neighborhoodMapFile;
+      vector<RobConf*>      _obstaclePoses;
 
   private:
       bool                  armed;

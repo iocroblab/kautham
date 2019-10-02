@@ -91,25 +91,150 @@ namespace Kautham{
       std::cout << "The problem is not solved yet" << std::endl;
     }
   }
-
   
-  void Planner::moveAlongPath(unsigned int step){
+  uint Planner::moveAlongPath(unsigned int step){
+    //Moves to the next step in the simulated path.
+    //The path may be computed by the trySolve function to answer a motion planning query or
+    //it may come from a taskmotion.xml file.
+    //In this latter case the path is a sequence of transit and transfer subpaths and an attach operation
+      //is needed before the transfer part starts and a detach once it is over.
+      //the info of the steps where this attach/detach operation are to be done (and the info on the
+      //object, the robot, and the link involved is stored in the _attachdetach struct.
     if(_solved){
         //here simulationPath coincides with path
         //this function is overloaded by PRM planners that do an interpolation between paths nodes to obtain a more finner simulationPath
+        //TO BE REVISED: prior comment seems to be deprecated...(2019-09)
       if(_simulationPath.size() == 0 ){ // Then calculate the simulation path based on stepsize
-            for(unsigned i=0; i<_path.size();i++)
-            {
-                Sample *s=new Sample(*_path.at(i));
-                _simulationPath.push_back(s);
-             }
+        for(unsigned i=0; i<_path.size();i++)
+        {
+          Sample *s=new Sample(*_path.at(i));
+          _simulationPath.push_back(s);
+        }
       }
-      if( _simulationPath.size() >= 2 ){
-        step = step % _simulationPath.size();
-        _wkSpace->moveRobotsTo(_simulationPath[step]);
+      if( _simulationPath.size() >= 2 )
+      {
+        //step = step % _simulationPath.size();
+        //sets the step within simulated path bounds (to be returned by the function)
+        if(step>=_simulationPath.size()){
+            step = 0;
+        }
+
+        cout<<"step = "<<step<<endl;
+
+        //verify if an attach/dettach has to be done
+        if(_attachdetach.size())
+        {
+           /*
+            for(uint i=0; i<_attachdetach.size();i++)
+            {
+              cout<<"step = "<<_attachdetach[i].step;
+              cout<<" action = "<<_attachdetach[i].action;
+              cout<<" robnumber = "<<_attachdetach[i].robnumber;
+              cout<<" linknumber = "<<_attachdetach[i].linknumber;
+              cout<<" objnumber = "<<_attachdetach[i].objnumber<<endl;
+            }
+            */
+            //cout<<"step = "<<step<<" prevStep = "<<_simStep<<endl;
+
+
+            //move the obstacles to their home poses at the beginning of the simulation
+            //(needed because the robot will be transferring some objects during the simulation of the taskmotion path)
+            if(step==0)
+            { 
+              cout<<"\n...Restarting the task-motion plan...."<<endl;
+              cout<<"...Restoring Object poses...."<<endl;
+              //The initial obejct poses were stored when opening the problem in Problem::createWSpaceFromFile()
+              //now they are retreived
+              wkSpace()->restoreInitialObjectPoses();
+            }
+
+            uint previousStep;
+            uint currentStep;
+            for(uint i=0; i<_attachdetach.size();i++)
+            {
+              //if an attach/detach is in between the last sim step (_simStep) and the current one (step) 
+              //then the current one has to be changed to the attach/detach step
+              //and the attach/detach action be performed
+              
+              //cout<<"_attachdetach["<<i<<"] "<<_attachdetach[i].step<<endl;
+              //set limits for comparison
+              if(_simStep<step)
+              {
+                //normal case
+                previousStep = _simStep;
+                currentStep = step;
+              }
+              else
+              {
+                //correction when restared
+                previousStep = _simStep;
+                currentStep = step + _simulationPath.size() -1;
+              }
+              //compare
+              if(_attachdetach[i].step <= currentStep  && _attachdetach[i].step > previousStep)
+              {
+                //move robot and attach/detach
+                step =_attachdetach[i].step;
+                _wkSpace->moveRobotsTo(_simulationPath[step]);
+                //cout<<"step modified to "<<step<<" action = "<<_attachdetach[i].action<<endl;
+                if(_attachdetach[i].action.compare("attach") == 0)
+                {
+                  cout<<"...attaching obstacle "<<_attachdetach[i].objnumber<<endl;
+                  _wkSpace->attachObstacle2RobotLink(_attachdetach[i].robnumber,_attachdetach[i].linknumber,_attachdetach[i].objnumber);
+                }
+                else if(_attachdetach[i].action.compare("detach") == 0)
+                {
+                  cout<<"...detaching obstacle "<<_attachdetach[i].objnumber<<endl;
+                  _wkSpace->detachObstacle(_attachdetach[i].objnumber);
+                }
+                else{
+                  cout<<"ERROR: _attachdetach.action is neither attach nor detach";
+                }
+                break;
+              }
+              else //move robot - do not attach/detach
+                _wkSpace->moveRobotsTo(_simulationPath[step]);
+            }
+        }
+        else 
+          _wkSpace->moveRobotsTo(_simulationPath[step]);
+        _simStep = step;//store the last simulated step
       }else
         std::cout << "The problem is wrong solved. The solution path has less than two elements." << std::endl;
     }
+    return step;
+  }
+
+
+  void Planner::clearAttachData()
+  {
+    _attachdetach.clear();
+  }
+  
+  void Planner::loadAttachData(int s, string a, int o, int r, int l)
+  {
+      //loads the attach/detach info read from the taskmotion.xml file
+    attachData d;
+    d.step = s; //step of the path where the attach/detach is taking place
+    d.action = a; //string determining whether it is an attach or a detach
+    d.objnumber = o; //object ot be attached/detached
+    d.robnumber = r; //robot to which the object is being attached to/detached from
+    d.linknumber = l; //link of the robot to which the object is being attached to/detached from
+    _attachdetach.push_back(d);
+  }
+
+  void Planner::loadExternalPath(vector<Sample*> &p)
+  {
+      //loads the _path vector from the path read from a taskmotion.xml file
+      //that is parsed in plannerwidget.cpp
+      _solved = true;
+      _path.clear();
+
+      for(unsigned i=0; i<p.size();i++)
+      {
+         Sample *s=new Sample(*p.at(i));
+         _path.push_back(s);
+      }
   }
 
 }

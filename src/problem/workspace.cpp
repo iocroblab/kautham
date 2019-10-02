@@ -47,6 +47,40 @@ namespace Kautham {
 
     unsigned int WorkSpace::_countWorldCollCheck = 0;
 
+    /*!
+    * Stores the initial poses of objects 
+    */
+    void WorkSpace::storeInitialObjectPoses(){
+        //
+        _obstaclePoses.clear();
+        _obstaclePoses.resize(getNumObstacles());
+        for(uint i=0; i<getNumObstacles(); i++)
+        {
+        RobConf *c = getObstacle(i)->getHomePos();
+        _obstaclePoses[i] = new RobConf;
+        _obstaclePoses[i]->setSE3(c->getSE3());
+        _obstaclePoses[i]->setRn(c->getRn());
+        }
+    }
+  
+    /*!
+    * Retores the initial poses of objects 
+    */
+    bool WorkSpace::restoreInitialObjectPoses(){
+        if( _obstaclePoses.size()==getNumObstacles())
+        {
+        for(uint i=0; i<getNumObstacles(); i++)
+        {      
+             getObstacle(i)->Kinematics( _obstaclePoses[i]);
+        }
+        return true;
+        }
+        else
+        {
+        cout<<"ERROR in restoring Initial Object Poses. Sizes mismatch"<<endl;
+        return false;
+     }
+    }
 
     void WorkSpace::resetCollCheckCounter() {
         _countWorldCollCheck = 0;

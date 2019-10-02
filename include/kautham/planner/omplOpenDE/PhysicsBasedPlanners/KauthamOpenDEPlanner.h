@@ -121,7 +121,7 @@ public:
     bool setParameters();//!< set the planning parameters.
     void KauthamOpenDEState2Robsmp(const ob::State *state, Sample* smp);
     void KauthamOpenDEState2Obssmp(const ob::State *state, Sample* smp,const oc::Control *control,const double duration);
-    void moveAlongPath(unsigned int step);
+    uint moveAlongPath(unsigned int step);
     SoSeparator *getIvCspaceScene();//reimplemented
     void drawCspace(int numrob=0);
     void ComputeAction(const std::vector<ob::State*> &states, const std::vector<oc::Control*> &control, const std::vector<double> duration);

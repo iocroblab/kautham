@@ -55,10 +55,15 @@ namespace Kautham {
         addParameter("Goal Bias", _GoalBias);
         addParameter("Thread Count", _ThreadCount);
         planner->as<og::pRRT>()->setRange(_Range);
+        //set the longest valid segment (i.e. segment without need to be collision-checked) as a fraction of
+        //the maximum extend of the space (set to e.g. the diagonal of a R^n cubic space)
+        space->setLongestValidSegmentFraction(0.01);
+        //correct if necessary to allow that the (_Range/_validSegmentCount) be the longest valid segment,
+        //so as to allow _validSegmentCount collisionchecks within a range step.
         if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
             space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
-            space->setup();
         }
+        space->setup();//needed to update the setting of the longest valid segment
         planner->as<og::pRRT>()->setGoalBias(_GoalBias);
         planner->as<og::pRRT>()->setThreadCount(_ThreadCount);
 
@@ -80,10 +85,15 @@ namespace Kautham {
         if(it != _parameters.end()){
           _Range = it->second;
           ss->getPlanner()->as<og::pRRT>()->setRange(_Range);
+          //set the longest valid segment (i.e. segment without need to be collision-checked) as a fraction of
+          //the maximum extend of the space (set to e.g. the diagonal of a R^n cubic space)
+          space->setLongestValidSegmentFraction(0.01);
+          //correct if necessary to allow that the (_Range/_validSegmentCount) be the longest valid segment,
+          //so as to allow _validSegmentCount collisionchecks within a range step.
           if (_Range <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
               space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
-              space->setup();
           }
+          space->setup();//needed to update the setting of the longest valid segment
          }
         else
           return false;

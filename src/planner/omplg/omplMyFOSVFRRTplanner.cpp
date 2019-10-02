@@ -105,10 +105,15 @@ namespace Kautham {
                 it->second = planner->getRange();
             } else {
                 planner->setRange(it->second);
+                //set the longest valid segment (i.e. segment without need to be collision-checked) as a fraction of
+                //the maximum extend of the space (set to e.g. the diagonal of a R^n cubic space)
+                space->setLongestValidSegmentFraction(0.01);
+                //correct if necessary to allow that the (_Range/_validSegmentCount) be the longest valid segment,
+                //so as to allow _validSegmentCount collisionchecks within a range step.
                 if (it->second <= ( _validSegmentCount-1)*space->getLongestValidSegmentLength()) {
                     space->setLongestValidSegmentFraction(it->second/_validSegmentCount/space->getMaximumExtent());
-                    space->setup();
                 }
+                space->setup();//needed to update the setting of the longest valid segment
             }
 
             it = _parameters.find("Goal Bias");

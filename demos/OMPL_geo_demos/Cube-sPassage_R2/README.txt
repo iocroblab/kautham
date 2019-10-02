@@ -12,10 +12,6 @@ To launch the benchmarkings:
     
 4) View the results:
 
-   a) Generate the plots in pdf:
-
-       > ompl_benchmark_statistics -d resultPRM.db -p resultPRM.pdf
- 
-   b) upload the database file at plannerarena.org
+   Upload the database file at plannerarena.org
 
 

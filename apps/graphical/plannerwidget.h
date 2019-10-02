@@ -46,19 +46,20 @@ namespace Kautham{
 
     public slots:
         void stopSimulation();
-        void startSimulation();
 
     private slots:
         void getPath();
         void saveData();
-        void loadData();
         void moveAlongPath();
         void showSample(int index);
         void tryConnect();
         void chkCameraClick();
         void simulatePath();
+        bool taskmotionPathLoad();
 
     private:
+        //void stopSimulation();
+        void startSimulation();
         void tryConnectIOC();
         void tryConnectOMPL();
         void tryConnectOMPLC();
@@ -69,6 +70,7 @@ namespace Kautham{
         void saveDataODE();
         QString getFilePath();
         bool setTable(string s);//reimplemented
+        void loadSampleFromLine(Sample *Robsmp,std::stringstream  &confstream);
 
         PlannerWidget();
         QHBoxLayout *hboxLayout;
