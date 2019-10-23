@@ -42,21 +42,21 @@ Kautham has a package built for Ubuntu (Trusty 14.04 LTS or Xenial 16.04 LTS or 
 
 If you have an Ubuntu Bionic, follow these steps to add some sources and install the Kautham package: ::
 
-    $ sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 63DE76AC0B6779BF
+
     $ sudo add-apt-repository ppa:deb-rob/ros-bionic
     $ sudo apt-get update
     $ sudo apt-get install kautham kautham-ros-osrf kautham-demos-osrf
 
 If you have an Ubuntu Xenial, follow these steps to add some sources and install the Kautham package: ::
 
-    $ sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 63DE76AC0B6779BF
+
     $ sudo add-apt-repository ppa:deb-rob/ros-xenial
     $ sudo apt-get update
     $ sudo apt-get install kautham
 
 If you have an Ubuntu Trusty, follow these steps to add some sources and install the Kautham package: ::
 
-    $ sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 63DE76AC0B6779BF
+
     $ sudo add-apt-repository ppa:deb-rob/ros-trusty
     $ sudo apt-get update
     $ sudo apt-get install kautham

@@ -1648,16 +1648,21 @@ namespace Kautham {
 
     std::vector<float> kauthamshell::getObstaclePos(int index){
 
+        Problem *const problem = (Problem*)memPtr_;
         std::vector<float> pos;
         pos.clear();
+
+        if(index >= problem->getPlanner()->wkSpace()->getNumObstacles())
+        {
+            cout << "Error: index (" << index << ") exceeds the number of obstacles " << problem->getPlanner()->wkSpace()->getNumObstacles() << endl;
+            return pos;
+        } 
 
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
                 return pos;
             }
-
-            Problem *const problem = (Problem*)memPtr_;
 
             float coord[3];
             float ort[4];
