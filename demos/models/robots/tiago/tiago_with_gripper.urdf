@@ -141,7 +141,7 @@
       <material name="LightGrey"/>
     </collision>
   </link>
-  <joint name="torso_lift_joint" type="fixed">
+  <joint name="torso_lift_joint" type="prismatic">
     <origin xyz="0.0 0.0 0.772"/>
     <parent link="torso_fixed_link"/>
     <child link="torso_lift_link"/>
@@ -398,7 +398,7 @@
   </link>
 
 
-  <joint name="arm_6_joint" type="fixed">
+  <joint name="arm_6_joint" type="revolute">
     <parent link="arm_5_link"/>
     <child link="arm_6_link"/>
     <origin rpy="0.0 -1.57079632679 -1.57079632679" xyz="0 0 0.15"/>
@@ -429,7 +429,7 @@
       </geometry>
     </collision>
   </link>
-  <joint name="arm_7_joint" type="fixed">
+  <joint name="arm_7_joint" type="revolute">
     <parent link="arm_6_link"/>
     <child link="arm_7_link"/>
     <origin rpy="1.57079632679 0.0 1.57079632679" xyz="0.066 0 0"/>
