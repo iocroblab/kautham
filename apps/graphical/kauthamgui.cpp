@@ -633,6 +633,7 @@ bool Application::problemSetup(string problemFile){
 int main(int argc, char* argv[]){       
 
     (void)argc;//unused
+    QApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
     try {
         QWidget *app = SoQt::init(argv[0]);//argc, argv,argv[0]);
         app->setVisible(false);
