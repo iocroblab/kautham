@@ -525,7 +525,7 @@ namespace Kautham {
 
  
     void PlannerWidget::simulatePath() {
-        if (moveButton->text() == QApplication::translate("Form", "Start Move ", 0)){
+        if (!_ismoving){
             startSimulation();
         } else {
             stopSimulation();
