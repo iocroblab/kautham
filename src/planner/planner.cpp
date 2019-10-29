@@ -121,6 +121,44 @@ namespace Kautham{
 
         cout<<"step = "<<step<<endl;
 
+
+
+std::cout<<"_simulationPath.size() = "<<_simulationPath.size()<<" step = "<<step<<std::endl;
+std::cout<< "**************************************** "<<_simulationPath.at(step)->getMappedConf().size()<<std::endl;
+std::cout<<_simulationPath.at(step)->getCoords().size()<<" coords = ";
+for(int i=0; i<_simulationPath.at(step)->getCoords().size();i++)
+  std::cout<<" "<<_simulationPath.at(step)->getCoords()[i];
+std::cout<<std::endl;
+for(int k=0; k<_simulationPath.at(step)->getMappedConf().size(); k++) {
+  std::cout<<"k = "<<k<<std::endl;
+  std::cout<<"_wkSpace->getRobot(k)->isSE3Enabled() = "<<_wkSpace->getRobot(k)->isSE3Enabled()<<std::endl;
+  std::cout<<"_wkSpace->getRobot(k)->getNumJoints() = "<<_wkSpace->getRobot(k)->getNumJoints()<<std::endl;
+  if(_wkSpace->getRobot(k)->isSE3Enabled())
+  {
+    SE3Conf &s_se3 = _simulationPath.at(step)->getMappedConf()[k].getSE3();
+    cout << s_se3.getPos().at(0) << " ";
+    cout << s_se3.getPos().at(1) << " ";
+    cout << s_se3.getPos().at(2) << " ";
+    cout << s_se3.getPos().at(3) << " ";
+    cout << s_se3.getPos().at(4) << " ";
+    cout << s_se3.getPos().at(5) << " ";
+    cout << s_se3.getPos().at(6) << endl;
+  }
+  if(_wkSpace->getRobot(k)->getNumJoints()>0)
+  {
+    RnConf &s_rn = _simulationPath.at(step)->getMappedConf()[k].getRn();
+    std::cout<<"s_rn.coord.size = "<<s_rn.getCoordinates().size()<<std::endl;
+    for(int j=0;j<s_rn.getCoordinates().size(); j++)
+      std::cout<<" "<<s_rn.getCoordinates()[j];
+    std::cout<<std::endl;
+  }
+  cout << endl;
+}
+
+
+
+
+
         //verify if an attach/dettach has to be done
         if(_attachdetach.size())
         {

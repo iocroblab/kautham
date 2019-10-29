@@ -448,34 +448,47 @@ namespace Kautham {
             if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
                 stringstream sstr;
                 if (_planner->isSolved()) {
+                    sstr<<"<Task name='"<<((omplplanner::omplPlanner*)_planner)->getIDName()<<"'>"<<std::endl;
+                    sstr <<"<Transit>"<<std::endl;
                     Sample sample(((omplplanner::omplPlanner*)_planner)->initSamp()->getDim());
                     sample.setMappedConf(((omplplanner::omplPlanner*)_planner)->initSamp()->getMappedConf());
                     std::vector<ob::State*> &states(((omplplanner::omplPlanner*)_planner)->
                                                     SimpleSetup()->getSolutionPath().getStates());
                     for (std::vector<ob::State*>::iterator state(states.begin());
                          state != states.end(); ++state) {
+                        sstr << "<Conf> ";
                         ((omplplanner::omplPlanner*)_planner)->omplState2smp(*state,&sample);
+                        uint k=0;
                         for (std::vector<RobConf>::iterator robConf(sample.getMappedConf().begin());
-                             robConf != sample.getMappedConf().end(); ++robConf) {
-                            for (std::vector<float>::iterator coord(robConf->getSE3().getCoordinates().begin());
-                                 coord != robConf->getSE3().getCoordinates().end(); ++coord) {
-                                sstr << *coord << " ";
-                            }
-                            for (std::vector<float>::iterator coord(robConf->getRn().getCoordinates().begin());
-                                 coord != robConf->getRn().getCoordinates().end(); ++coord) {
-                                sstr << *coord;
-                                std::vector<float>::iterator it1(coord);
-                                it1++;
-                                std::vector<RobConf>::iterator it2(robConf);
-                                it2++;
-                                if ((it1 != robConf->getRn().getCoordinates().end()) ||
-                                        (it2 != sample.getMappedConf().end())) {
-                                    sstr << " ";
+                            robConf != sample.getMappedConf().end(); ++robConf) {
+                            if(_wkSpace->getRobot(k)->isSE3Enabled())
+                            {
+                                for (std::vector<float>::iterator coord(robConf->getSE3().getCoordinates().begin());
+                                    coord != robConf->getSE3().getCoordinates().end(); ++coord) {
+                                    sstr << *coord << " ";
                                 }
                             }
+                            if(_wkSpace->getRobot(k)->getNumJoints()>0)
+                            {
+                                for (std::vector<float>::iterator coord(robConf->getRn().getCoordinates().begin());
+                                     coord != robConf->getRn().getCoordinates().end(); ++coord) {
+                                    sstr << *coord;
+                                    std::vector<float>::iterator it1(coord);
+                                    it1++;
+                                    std::vector<RobConf>::iterator it2(robConf);
+                                    it2++;
+                                    if ((it1 != robConf->getRn().getCoordinates().end()) ||
+                                            (it2 != sample.getMappedConf().end())) {
+                                        sstr << " ";
+                                    }
+                                }
+                            }
+                            k++;
                         }
-                        sstr << endl;
+                        sstr << "</Conf>"<< endl;
                     }
+                    sstr <<"</Transit>"<<std::endl;
+                    sstr <<"</Task>"<<std::endl;
                 }
 
                 QTextStream out(&file);
@@ -512,12 +525,12 @@ namespace Kautham {
         QString last_path = settings.value("last_path",workDir.absolutePath()).toString();
         QString filePath = QFileDialog::getSaveFileName(this->parentWidget(),
                                                         "Save planner data as...", last_path,
-                                                        "Kautham Planner Solution (*.kps)");
+                                                        "Kautham Planner Solution (*.xml)");
         if (!filePath.isEmpty()) {
             uint pointIndex = filePath.lastIndexOf(".");
             uint slashIndex = filePath.lastIndexOf("/");
             if (pointIndex > slashIndex) filePath.truncate(pointIndex);
-            filePath.append(".kps");
+            filePath.append(".xml");
         }
 
         return filePath;
@@ -642,7 +655,6 @@ namespace Kautham {
                 "All task files (*.xml)");
         xml_taskfile.open(path.toStdString());
         xml_parse_result result = doc->load( xml_taskfile );
-
         //parse the file
         if (result) {
             //if the file was correctly parsed
@@ -653,6 +665,7 @@ namespace Kautham {
             //Loop inside the task node for transit and transfer nodes
             for (xml_node::iterator it_task = taskNode.begin(); it_task != taskNode.end(); ++it_task) {
                 name = it_task->name();
+                std::cout<<"....NAME = "<<name<<std::endl;
                 try {
                     if (name == "Transit") {
                         std::cout<<"....Transit..."<<std::endl;
@@ -730,7 +743,7 @@ namespace Kautham {
 
             return false;
         }
-        
+        /*
         for(unsigned i=0; i<_path2.size();i++)
         {
             cout << "PATH: ";
@@ -741,6 +754,7 @@ namespace Kautham {
                 cout << s.getPos().at(2) << endl;
             }
         }
+        */
         _planner->loadExternalPath(_path2);
         
         moveButton->setEnabled(true);
@@ -748,7 +762,7 @@ namespace Kautham {
 
         _stepSim = 0; //to start simulation from the begining
         _planner->clearSimulationPath();
-
+        _planner->setSolved( true );
         return true;
     }
 
