@@ -810,7 +810,11 @@ namespace Kautham {
         QList <QAction*> actions = toolBar->actions();
         QAction *ac;
         for (int i = 0; i < actions.size(); i++) {
+
             ac = actions.at(i);
+
+            //std::cout << "text = " << ac->text().toStdString() << std::endl;
+
             if (ac->text() == "Chan&ge Colour") {
                 ac->setEnabled(true);
                 QIcon colors;
@@ -820,7 +824,7 @@ namespace Kautham {
                 colors.addFile(":/icons/colors_48x48.png");
                 colors.addFile(":/icons/colors_64x64.png");
                 ac->setIcon(colors);
-            } else if (ac->text() == "At/Detach Object") {
+            } else if (ac->text() == "&At/Detach Object") {
                 ac->setEnabled(true);
                 QIcon magnet;
                 magnet.addFile(":/icons/magnet_16x16.png");
@@ -829,7 +833,7 @@ namespace Kautham {
                 magnet.addFile(":/icons/magnet_48x48.png");
                 magnet.addFile(":/icons/magnet_64x64.png");
                 ac->setIcon(magnet);
-            } else if (ac->text() == "Export scene") {
+            } else if (ac->text() == "&Export scene") {
                 ac->setEnabled(true);
                 QIcon image;
                 image.addFile(":/icons/image_16x16.png");
@@ -860,7 +864,7 @@ namespace Kautham {
                 greycolors.addFile(":/icons/greycolors_48x48.png");
                 greycolors.addFile(":/icons/greycolors_64x64.png");
                 ac->setIcon(greycolors);
-            } else if (ac->text() == "At/Detach Object") {
+            } else if (ac->text() == "&At/Detach Object") {
                 ac->setDisabled(true);
                 QIcon greymagnet;
                 greymagnet.addFile(":/icons/greymagnet_16x16.png");
@@ -869,7 +873,7 @@ namespace Kautham {
                 greymagnet.addFile(":/icons/greymagnet_48x48.png");
                 greymagnet.addFile(":/icons/greymagnet_64x64.png");
                 ac->setIcon(greymagnet);
-            }  else if (ac->text() == "Export scene") {
+            }  else if (ac->text() == "&Export scene") {
                 ac->setDisabled(true);
                 QIcon image;
                 image.addFile(":/icons/image_16x16.png");

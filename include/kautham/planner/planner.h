@@ -98,6 +98,7 @@ namespace Kautham {
        void                           loadExternalPath(vector<Sample*> &p);  
        void                           clearAttachData();
        void                           loadAttachData(int s, string a, int o, int r, int l);
+       inline vector<attachData>&     getAttachData(){return _attachdetach;};
 
    protected:
        Planner();

@@ -440,6 +440,7 @@ namespace Kautham {
 
     void PlannerWidget::saveDataOMPL() {
 #if defined(KAUTHAM_USE_OMPL)
+        bool transit;
         emit changeCursor(true);
         QString filePath = getFilePath();
         if (!filePath.isEmpty()) {
@@ -449,7 +450,47 @@ namespace Kautham {
                 stringstream sstr;
                 if (_planner->isSolved()) {
                     sstr<<"<Task name='"<<((omplplanner::omplPlanner*)_planner)->getIDName()<<"'>"<<std::endl;
-                    sstr <<"<Transit>"<<std::endl;
+
+                    //verify if an object is attached to set transfer instead of transit
+                    for(int irob=0;  irob<_planner->wkSpace()->getNumRobots(); irob++)
+                    {
+                        int ilink;
+                        int iobj;
+                        if(_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()!=0)
+                        {
+                            std::string obsname = _planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().obs->getName();
+                            for(int k=0;k<_planner->wkSpace()->getNumObstacles();k++)
+                            {
+                                if(_planner->wkSpace()->getObstacle(k)->getName() == obsname)
+                                {
+                                    iobj = k;
+                                    break;
+                                }
+                            }
+                            std::string linkname =_planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().link->getName();
+                            for(int k=0;k<_planner->wkSpace()->getRobot(irob)->getNumLinks();k++)
+                            {
+                                if(_planner->wkSpace()->getRobot(irob)->getLink(k)->getName() == linkname)
+                                {
+                                    ilink = k;
+                                    break;
+                                }
+                            }
+                            _planner->loadAttachData(0,"attach",iobj,irob,ilink);
+                        }
+                    }
+                    if(_planner->getAttachData().size()==0){
+                        transit=true;
+                        sstr <<"<Transit>"<<std::endl;
+                    }
+                    else{
+                        //<Transfer object="1" robot="0" link="0">
+                        transit=false;
+                        sstr << "<Transfer object=\""<<_planner->getAttachData()[0].objnumber <<"\" ";
+                        sstr << "robot=\""<< _planner->getAttachData()[0].robnumber<<"\" ";
+                        sstr << "link=\""<< _planner->getAttachData()[0].linknumber<< "\">"<<std::endl;
+                    }
+
                     Sample sample(((omplplanner::omplPlanner*)_planner)->initSamp()->getDim());
                     sample.setMappedConf(((omplplanner::omplPlanner*)_planner)->initSamp()->getMappedConf());
                     std::vector<ob::State*> &states(((omplplanner::omplPlanner*)_planner)->
@@ -461,14 +502,14 @@ namespace Kautham {
                         uint k=0;
                         for (std::vector<RobConf>::iterator robConf(sample.getMappedConf().begin());
                             robConf != sample.getMappedConf().end(); ++robConf) {
-                            if(_wkSpace->getRobot(k)->isSE3Enabled())
+                            if(_planner->wkSpace()->getRobot(k)->isSE3Enabled())
                             {
                                 for (std::vector<float>::iterator coord(robConf->getSE3().getCoordinates().begin());
                                     coord != robConf->getSE3().getCoordinates().end(); ++coord) {
                                     sstr << *coord << " ";
                                 }
                             }
-                            if(_wkSpace->getRobot(k)->getNumJoints()>0)
+                            if(_planner->wkSpace()->getRobot(k)->getNumJoints()>0)
                             {
                                 for (std::vector<float>::iterator coord(robConf->getRn().getCoordinates().begin());
                                      coord != robConf->getRn().getCoordinates().end(); ++coord) {
@@ -487,7 +528,8 @@ namespace Kautham {
                         }
                         sstr << "</Conf>"<< endl;
                     }
-                    sstr <<"</Transit>"<<std::endl;
+                    if(transit) sstr <<"</Transit>"<<std::endl;
+                    else sstr <<"</Transfer>"<<std::endl;
                     sstr <<"</Task>"<<std::endl;
                 }
 
@@ -536,7 +578,7 @@ namespace Kautham {
         return filePath;
     }
 
- 
+
     void PlannerWidget::simulatePath() {
         if (!_ismoving){
             startSimulation();
@@ -578,7 +620,7 @@ namespace Kautham {
         //Load the configurations of the robots written in each line
         //loop for all the robots
         vector<RobConf> Robrc; //mapped configuration of the set of robots
-        for (uint j = 0; j < _planner->wkSpace()->getNumRobots(); ++j) 
+        for (uint j = 0; j < _planner->wkSpace()->getNumRobots(); ++j)
         {
             //std::cout << " robot "<< j << std::endl;
             RobConf *Robrcj = new RobConf; //Configuration for robot j
@@ -586,26 +628,35 @@ namespace Kautham {
             se3coords.resize(7);
             std::vector<KthReal> Rn; //Rn part
             //Mapped configuration: load the SE3 part, if ther is any
-            if (_planner->wkSpace()->getRobot(j)->isSE3Enabled()) 
+            if (_planner->wkSpace()->getRobot(j)->isSE3Enabled())
             {
-            //std::cout << " se3 part ";
-            //read the next 7 values
-            for(int k=0; k<7; k++)
+              //std::cout << " se3 part ";
+              //read the next 7 values
+              for(int k=0; k<7; k++)
                 confstream >> se3coords[k];
-            //for(int k=0; k<7; k++)
-            //  std::cout << " "<< se3coords[k];
-            //std::cout << std::endl;
+              //for(int k=0; k<7; k++)
+                //std::cout << " "<< se3coords[k];
+              //std::cout << std::endl;
+              SE3Conf se3;
+              se3.setCoordinates(se3coords);
+              Robrcj->setSE3(se3);
             }
             else{
                 //If the robot does not have mobile SE3 dofs then the SE3 configuration of the init sample is maintained
                 Robrcj->setSE3(_planner->initSamp()->getMappedConf()[0].getSE3());
+                //SE3Conf &s_se3 =_planner->initSamp()->getMappedConf()[0].getSE3();
+                //std::cout << " se3 part FROM INIT SAMPLE";
+                //cout << s_se3.getPos().at(0) << " ";
+                //cout << s_se3.getPos().at(1) << " ";
+                //cout << s_se3.getPos().at(2) << " ";
+                //cout << s_se3.getOrient().at(0) << " ";
+                //cout << s_se3.getOrient().at(1) << " ";
+                //cout << s_se3.getOrient().at(2) << " ";
+                //cout << s_se3.getOrient().at(3) << endl;
             }
-            SE3Conf se3;
-            se3.setCoordinates(se3coords);
-            Robrcj->setSE3(se3);
-                      
+
             //Mapped configuration: load the Rn part, if ther is any
-            if (_planner->wkSpace()->getRobot(j)->getNumJoints() > 0) 
+            if (_planner->wkSpace()->getRobot(j)->getNumJoints() > 0)
             {
             //std::cout << " rn part: ";
             Rn.resize(_planner->wkSpace()->getRobot(j)->getNumJoints());
@@ -628,9 +679,9 @@ namespace Kautham {
         }
 
         //Set the mapped configuration of the sample
-        //(its control values are kept to zero)               
-        Robsmp->setMappedConf(Robrc);    
-    }      
+        //(its control values are kept to zero)
+        Robsmp->setMappedConf(Robrc);
+    }
 
 
     bool PlannerWidget::taskmotionPathLoad(){
@@ -700,7 +751,7 @@ namespace Kautham {
                         string linkname = it_task->attribute("link").as_string();
                         std::cout<< "....Transfer...object "<<objectname<<" attached to link "<<linkname<<" of robot "<<robotname<< std::endl;
                         string transferconf;
-                        
+
                         //load the step of the path where transfer starts and an attach is required
                         _planner->loadAttachData(_path2.size(),"attach",stoi(objectname),stoi(robotname),stoi(linkname));
 
@@ -727,7 +778,7 @@ namespace Kautham {
                         }
                         //load the step of the path where transfer ends and a dettach is required
                         _planner->loadAttachData(_path2.size()-1,"detach",stoi(objectname),stoi(robotname),stoi(linkname));
-                    }                
+                    }
                 } catch(...) {
                     std::cout << "ERROR: Current task tag does not have any transit or transfer !!" << std::endl;
                     return false;
@@ -756,7 +807,7 @@ namespace Kautham {
         }
         */
         _planner->loadExternalPath(_path2);
-        
+
         moveButton->setEnabled(true);
         btnSaveData->setEnabled(true);
 
