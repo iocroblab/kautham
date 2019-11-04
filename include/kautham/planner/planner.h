@@ -77,6 +77,7 @@ namespace Kautham {
        inline void                   setSpeedFactor(int sf){_speedFactor = sf;}
        void                          clearSimulationPath();
        inline bool                   isSolved(){return _solved;}
+       inline void                   setSolved(bool s){_solved=s;}
        inline vector<Sample*>*       getSimulationPath(){if(_solved)return &_simulationPath;else return NULL;}
        inline void                   setCameraMovements(bool c){_hasCameraInformation = c;}
        inline bool                   hasCameraMovements(){return _hasCameraInformation;}
@@ -97,6 +98,7 @@ namespace Kautham {
        void                           loadExternalPath(vector<Sample*> &p);  
        void                           clearAttachData();
        void                           loadAttachData(int s, string a, int o, int r, int l);
+       inline vector<attachData>&     getAttachData(){return _attachdetach;};
 
    protected:
        Planner();

@@ -5,8 +5,8 @@
 	<Problem File="OMPL_PRMgaussian_bigcube-s-passage_R2.xml" PlannerAlias="PRMgau"/>
 	<Problem File="OMPL_PRMgaussianlike_bigcube-s-passage_R2.xml" PlannerAlias="PRMgl"/>
 	<Parameter Name="maxTime" Value="10.0" />
-	<Parameter Name="maxMem" Value="1000.0" />
-	<Parameter Name="runCount" Value="10" />
+	<Parameter Name="maxMem" Value="8000.0" />
+	<Parameter Name="runCount" Value="100" />
 	<Parameter Name="displayProgress" Value="true" />
 	<Parameter Name="filename" Value="resultPRM.log" />
 </Benchmark>

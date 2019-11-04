@@ -1,0 +1,14 @@
+<Benchmark Name="experiment">
+	<Problem File="OMPL_PRM_bigcube-maze2D_R2_r.xml" PlannerAlias="PRMrnd"/>
+	<Problem File="OMPL_PRM_bigcube-maze2D_R2_h.xml" PlannerAlias="PRMhal"/>
+	<Problem File="OMPL_PRM_bigcube-maze2D_R2_sdk.xml" PlannerAlias="PRMsdk"/>
+	<Problem File="OMPL_PRM_bigcube-maze2D_R2_g.xml" PlannerAlias="PRMgau"/>
+	<Problem File="OMPL_PRM_bigcube-maze2D_R2_gl.xml" PlannerAlias="PRMgl"/>
+	<Parameter Name="maxTime" Value="10.0" />
+	<Parameter Name="maxMem" Value="8000.0" />
+	<Parameter Name="runCount" Value="100" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="resultPRM.log" />
+</Benchmark>
+
+
