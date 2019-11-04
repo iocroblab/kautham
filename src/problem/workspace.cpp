@@ -69,17 +69,22 @@ namespace Kautham {
     bool WorkSpace::restoreInitialObjectPoses(){
         if( _obstaclePoses.size()==getNumObstacles())
         {
-        for(uint i=0; i<getNumObstacles(); i++)
-        {      
-             getObstacle(i)->Kinematics( _obstaclePoses[i]);
-        }
-        return true;
+            for(uint i=0; i<getNumObstacles(); i++)
+            {      
+                getObstacle(i)->Kinematics( _obstaclePoses[i]);
+                if(getObstacle(i)->isAttached())
+                {
+                    getObstacle(i)->getRobotAttachedTo()->detachObject(getObstacle(i));
+                    getObstacle(i)->setDetached();
+                }
+            }
+            return true;
         }
         else
         {
-        cout<<"ERROR in restoring Initial Object Poses. Sizes mismatch"<<endl;
-        return false;
-     }
+            cout<<"ERROR in restoring Initial Object Poses. Sizes mismatch"<<endl;
+            return false;
+        }
     }
 
     void WorkSpace::resetCollCheckCounter() {
