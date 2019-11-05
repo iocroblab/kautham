@@ -34,11 +34,12 @@
 
 
 namespace Kautham {
-    PlannerWidget::PlannerWidget(Planner* plan, SampleSet* samp, bool camera):KauthamWidget(plan){
+    PlannerWidget::PlannerWidget(Planner* plan, SampleSet* samp, GUI *g, bool camera):KauthamWidget(plan){
         _samples = samp;
         _planner = plan;
         _stepSim = 0;
         _ismoving = false;
+        _thegui = g;
 
         QGroupBox *groupBox = new QGroupBox(this);
         groupBox->setObjectName(QString::fromUtf8("groupBox"));
@@ -454,6 +455,8 @@ namespace Kautham {
                     //verify if an object is attached to set transfer instead of transit
                     for(int irob=0;  irob<_planner->wkSpace()->getNumRobots(); irob++)
                     {
+                        //cout<<"robot "<<irob<<endl;
+                        //cout<<"_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size() = "<<_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()<<endl;
                         int ilink;
                         int iobj;
                         if(_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()!=0)
@@ -814,6 +817,9 @@ namespace Kautham {
         _stepSim = 0; //to start simulation from the begining
         _planner->clearSimulationPath();
         _planner->setSolved( true );
+        //Initialize the scene just incase the user has attached an object with the GUI...
+        _planner->wkSpace()->restoreInitialObjectPoses();
+        _thegui->setAttachObjectDialog(_planner->wkSpace());
         return true;
     }
 

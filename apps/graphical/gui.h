@@ -53,6 +53,7 @@ namespace Kautham {
 /** \addtogroup Application
  *  @{
  */
+  class PlannerWidget;
 
 	enum WHERETYPE{
 		TOOLBAR,
@@ -156,6 +157,9 @@ namespace Kautham {
 
     //! Shows the Introduction Tab and hides the Properties and DOF tabs
     void showInitialAppearance();
+
+    //! reset attach object dialog box
+    void setAttachObjectDialog(WorkSpace *workSpace);
 
     int			 		indexRobControlsTab;
     int			 		indexObsControlsTab;

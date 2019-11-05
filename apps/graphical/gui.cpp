@@ -416,7 +416,7 @@ namespace Kautham {
 
     bool GUI::addPlanner(Planner *plan, SampleSet* samp){
         if (plan) {
-            PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, plan->hasCameraMovements());
+            PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, this, plan->hasCameraMovements());
             propertiesTab->addTab(tmpPlan, QString((plan->getGuiName()).c_str()));
             connect(tmpPlan,SIGNAL(sendText(string)),this,SLOT(setText(string)));
             connect(tmpPlan,SIGNAL(changeCursor(bool)),this,SLOT(changeCursor(bool)));
@@ -438,7 +438,7 @@ namespace Kautham {
             }
             return true;
         } else {
-            PlannerWidget* tmpPlan = new PlannerWidget( NULL, NULL);
+            PlannerWidget* tmpPlan = new PlannerWidget( NULL, NULL, this);
             propertiesTab->addTab(tmpPlan, "Planner");
             //JAN
             indexPlannerTab = propertiesTab->indexOf(tmpPlan);
@@ -801,6 +801,10 @@ namespace Kautham {
     bool GUI::addToProblemTree(WorkSpace *workSpace){
         attachObjectDialog->set(workSpace);
         return problemTree->setTree(workSpace);
+    }
+
+    void GUI::setAttachObjectDialog(WorkSpace *workSpace){
+        attachObjectDialog->set(workSpace);
     }
 
     void GUI::showProblemAppearance() {

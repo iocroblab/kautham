@@ -154,16 +154,7 @@ namespace Kautham{
         //}
 
 
-        //move the obstacles to their home poses at the beginning of the simulation
-        //(needed because the robot will be transferring some objects during the simulation of the taskmotion path)
-        if(step==0)
-        {
-          cout<<"\n...Restarting the task-motion plan...."<<endl;
-          cout<<"...Restoring Object poses...."<<endl;
-          //The initial obejct poses were stored when opening the problem in Problem::createWSpaceFromFile()
-          //now they are retreived
-          wkSpace()->restoreInitialObjectPoses();
-        }
+
 
         //verify if an attach/dettach has to be done
         if(_attachdetach.size())
@@ -179,7 +170,17 @@ namespace Kautham{
             }
             */
             //cout<<"step = "<<step<<" prevStep = "<<_simStep<<endl;
-
+        //move the obstacles to their home poses at the beginning of the simulation
+        //(needed because the robot will be transferring some objects during the simulation of the taskmotion path)
+            if(step==0)
+            {
+              cout<<"\n...Restarting the task-motion plan...."<<endl;
+              cout<<"...Restoring Object poses...."<<endl;
+              //The initial obejct poses were stored when opening the problem in Problem::createWSpaceFromFile()
+              //now they are retreived
+              wkSpace()->restoreInitialObjectPoses();
+            }
+            
             int previousStep;
             int currentStep;
             int attachdetachstep;
@@ -194,7 +195,7 @@ namespace Kautham{
               //cout<<"_simStep="<<_simStep <<" step="<<step<<endl;
               
               //set limits for comparison
-              if(_simStep<step)
+              if(_simStep<(int)step)
               {
                 //normal case
                 //cout<<"normal case"<<endl;

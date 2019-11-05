@@ -25,6 +25,8 @@
 #if !defined(_PLANNERWIDGET_H)
 #define _PLANNERWIDGET_H
 
+
+#include "gui.h"
 #include "kauthamwidget.h"
 #include <kautham/planner/planner.h>
 #include <QtWidgets>
@@ -34,11 +36,13 @@ namespace Kautham{
 /** \addtogroup Application
  *  @{
  */
+    
+    class GUI;
 
 	class PlannerWidget: public KauthamWidget{
 		Q_OBJECT
     public:
-        PlannerWidget(Planner* plan, SampleSet* samp, bool camera = false);
+        PlannerWidget(Planner* plan, SampleSet* samp, GUI *g, bool camera = false);
         ~PlannerWidget();
 
     signals:
@@ -87,6 +91,7 @@ namespace Kautham{
         QTimer *_plannerTimer;
         uint _stepSim;
         bool _ismoving;
+        GUI *_thegui;
 
         // Added to provide access to the local Planner
         QLabel      *label;
