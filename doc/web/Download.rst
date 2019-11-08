@@ -45,7 +45,8 @@ If you have an Ubuntu Bionic, follow these steps to add some sources and install
 
     $ sudo add-apt-repository ppa:deb-rob/ros-bionic
     $ sudo apt-get update
-    $ sudo apt-get install kautham kautham-ros-osrf kautham-demos-osrf
+    $ sudo apt-get install kautham kautham-tools kautham-ros-osrf kautham-demos-osrf
+    $ sudo apt-get upgrade
 
 If you have an Ubuntu Xenial, follow these steps to add some sources and install the Kautham package: ::
 
