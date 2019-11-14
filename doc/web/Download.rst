@@ -38,15 +38,19 @@ Then in both cases you need to install it: ::
 Ubuntu package
 ^^^^^^^^^^^^^^^^
 
-Kautham has a package built for Ubuntu (Trusty 14.04 LTS or Xenial 16.04 LTS or Bionic 18.04 LTS) that is located in the debian-robotics repository at `launchpad <https://launchpad.net/~deb-rob/>`_).
+Kautham has a package built for **Ubuntu Bionic 18.04 LTS** that is located in the debian-robotics repository at `launchpad <https://launchpad.net/~deb-rob/>`_).
 
-If you have an Ubuntu Bionic, follow these steps to add some sources and install the Kautham package: ::
+Follow these steps to add some sources and install the Kautham package: ::
 
 
     $ sudo add-apt-repository ppa:deb-rob/ros-bionic
     $ sudo apt-get update
-    $ sudo apt-get install kautham kautham-ros-osrf kautham-demos-osrf
+    $ sudo apt-get install kautham kautham-tools kautham-ros-osrf kautham-demos-osrf
+    $ sudo apt-get upgrade
 
+    
+Also there are packages built for Ubuntu Trusty 14.04 LTS and Xenial 16.04 LTS  but for OLDER versions of Kautham.
+    
 If you have an Ubuntu Xenial, follow these steps to add some sources and install the Kautham package: ::
 
 
