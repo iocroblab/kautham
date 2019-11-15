@@ -1419,6 +1419,7 @@ namespace Kautham {
             //Attempt to solve the problem within _planningTime seconds of planning time
             ss->setup();
 
+            ob::PlannerDataPtr pdata(new ob::PlannerData(ss->getSpaceInformation()));
             ob::PlannerStatus::StatusType solved(ss->solve(_planningTime));
             switch (solved) {
                 case ob::PlannerStatus::EXACT_SOLUTION:
@@ -1456,6 +1457,21 @@ namespace Kautham {
                 case ob::PlannerStatus::APPROXIMATE_SOLUTION:
                     std::cout << "APPROXIMATE_SOLUTION - No exact solution found" << std::endl;
                     std::cout << "Difference = " <<ss->getProblemDefinition()->getSolutions().at(0).difference_ << std::endl;
+
+                    //load the kautham data
+
+                    /*pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
+                    */
+
+                    ss->getPlanner()->getPlannerData(*pdata);
+                    for (unsigned int i = 0; i < pdata->numVertices(); ++i) {
+                        smp = new Sample(_wkSpace->getNumRobControls());
+                        smp->setMappedConf(_init.at(0)->getMappedConf());
+                        omplState2smp(pdata->getVertex(i).getState()->as<ob::CompoundStateSpace::StateType>(),smp);
+
+                        _path.push_back(smp);
+                        _samples->add(smp);
+                    }
                     _solved = false;
                 break;
                 case ob::PlannerStatus::TIMEOUT:
