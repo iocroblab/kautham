@@ -1,0 +1,12 @@
+<Benchmark Name="experiment">
+	<Problem File="OMPL_RRT_bigcube-s-passage_R2.xml" PlannerAlias="RRT"/>
+	<Problem File="OMPL_RRTStar_bigcube-s-passage_R2.xml" PlannerAlias="RRTstar" />
+	<Parameter Name="maxTime" Value="3.0" />
+	<Parameter Name="maxMem" Value="4096" />
+	<Parameter Name="runCount" Value="10" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="resultRRTstar.log" />
+	<Parameter Name="timeBetweenUpdates" Value="0.1" />
+</Benchmark>
+
+
