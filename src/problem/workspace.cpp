@@ -62,6 +62,33 @@ namespace Kautham {
         _obstaclePoses[i]->setRn(c->getRn());
         }
     }
+
+    /*!
+    * Stores current object SE3 poses as new initial poses
+    */
+    void WorkSpace::storeNewInitialObjectPoses(){
+        //
+        _obstaclePoses.clear();
+        _obstaclePoses.resize(getNumObstacles());
+        for(uint i=0; i<getNumObstacles(); i++)
+        {
+        RobConf *c = getObstacle(i)->getHomePos();
+        _obstaclePoses[i] = new RobConf;
+        vector<KthReal> coords(7);
+        coords[0] = getObstacle(i)->getLink(0)->getElement()->getPosition()[0];
+        coords[1] = getObstacle(i)->getLink(0)->getElement()->getPosition()[1];
+        coords[2] = getObstacle(i)->getLink(0)->getElement()->getPosition()[2];
+        coords[3] = getObstacle(i)->getLink(0)->getElement()->getOrientation()[0];
+        coords[4] = getObstacle(i)->getLink(0)->getElement()->getOrientation()[1];
+        coords[5] = getObstacle(i)->getLink(0)->getElement()->getOrientation()[2];
+        coords[6] = getObstacle(i)->getLink(0)->getElement()->getOrientation()[3];
+        // Here is needed to convert from axis-angle to
+        // quaternion internal represtantation.
+        SE3Conf::fromAxisToQuaternion(coords);
+        _obstaclePoses[i]->setSE3(coords);
+        _obstaclePoses[i]->setRn(c->getRn());
+        }
+    }
   
     /*!
     * Retores the initial poses of objects 

@@ -416,6 +416,7 @@ bool Application::problemSetup(string problemFile){
     string dir = problemFile.substr(0,problemFile.find_last_of("/")+1);
     QStringList pathList = settings->value("models_directories",QStringList()).toStringList();
     std::vector <string> def_path;
+    def_path.push_back("");
     def_path.push_back(dir);
     if (pathList.size() > 0) {
         for (int i = 0; i < pathList.size(); i++) {
@@ -618,7 +619,7 @@ bool Application::problemSetup(string problemFile){
     mainWindow->setSampleWidget(_problem);
 
     if( _problem->getPlanner() != NULL ){
-        mainWindow->addPlanner(_problem->getPlanner(), _problem->getSampleSet());
+        mainWindow->addPlanner(_problem);
         color = settings->value("mainWindow/CSpace/color",QColor("black")).value<QColor>();
         if (mainWindow->getViewerTab("CSpace") != NULL) {
             mainWindow->getViewerTab("CSpace")->setBackgroundColor(SbColor(color.redF(),color.greenF(),color.blueF()));

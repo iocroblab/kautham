@@ -136,7 +136,7 @@ namespace Kautham {
     bool                addConstrainedControlWidget( Robot* rob, Problem* prob);
     Kautham::DOFWidget *addDOFWidget( Robot* rob );
     bool                setSampleWidget(Problem* problem);
-    bool                addPlanner(Planner *plan, SampleSet* samp);
+    bool                addPlanner(Problem *pr);
 
     bool                addInverseKinematic(InverseKinematic* ikine);
     bool                addWidgetToTab(QWidget* widget, QString name);

@@ -919,7 +919,6 @@ bool Problem::findAllFiles(xml_node *parent, string child, string attribute,
         while (node && !end) {
             //load file
             file = node.attribute(attribute.c_str()).as_string();
-
             //look for the file
             found = false;
             i = 0;
@@ -1125,6 +1124,7 @@ int Problem::countLinks2Load(xml_document *doc) {
 
 xml_document *Problem::parseProblemFile(string filename, vector <string> def_path, int *links2Load) {
     _filePath = filename;
+    defPath = def_path;
     xml_document *doc = new xml_document;
     xml_parse_result result = doc->load_file( filename.c_str());
     if (result) {
@@ -1417,7 +1417,7 @@ bool Problem::setRobotControls(string cntrFile) {
                 return false;
             }
         } else { // File does not exists.
-            cout << "The control file: " << cntrFile << "doesn't exist. Please confirm it." << endl;
+            cout << "The control file: " << cntrFile << " doesn't exist. Please confirm it." << endl;
             string message = "Robot controls file " + cntrFile + " couldn't be found";
             throw KthExcp(message);
             return false;
