@@ -94,6 +94,7 @@ if( KAUTHAM_ROS )
        SetFixedObsControls.srv
        SetObstaclesConfig.srv
        SetRobControls.srv
+       SetRobControlsNoQuery.srv
        AttachObstacle2RobotLink.srv
        OpenProblem.srv
        OpenProblemStream.srv

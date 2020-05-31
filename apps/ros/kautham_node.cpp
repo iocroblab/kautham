@@ -49,6 +49,7 @@
 #include <kautham/SetInitObs.h>
 #include <kautham/ClearSampleSet.h>
 #include <kautham/SetRobControls.h>
+#include <kautham/SetRobControlsNoQuery.h>
 #include <kautham/SetRobControlsStream.h>
 #include <kautham/SetDefaultRobControls.h>
 #include <kautham/SetObsControls.h>
@@ -288,6 +289,15 @@ bool srvClearSampleSet(kautham::ClearSampleSet::Request &req,
 
     return true;
 }
+
+
+bool srvSetRobControlsNoQuery(kautham::SetRobControlsNoQuery::Request &req,
+                       kautham::SetRobControlsNoQuery::Response &res) {
+    res.response = ksh->setRobControlsNoQuery(req.controls);
+
+    return true;
+}
+
 
 
 bool srvSetRobControls(kautham::SetRobControls::Request &req,
@@ -580,6 +590,7 @@ int main (int argc, char **argv) {
     ros::ServiceServer service10 = n.advertiseService("kautham_node/SetInitObs",srvSetInitObs);
     ros::ServiceServer service11 = n.advertiseService("kautham_node/ClearSampleSet",srvClearSampleSet);
     ros::ServiceServer service12 = n.advertiseService("kautham_node/SetRobControls",srvSetRobControls);
+    ros::ServiceServer service12b = n.advertiseService("kautham_node/SetRobControlsNoQuery",srvSetRobControlsNoQuery);
     ros::ServiceServer service13 = n.advertiseService("kautham_node/SetRobControlsStream",srvSetRobControlsStream);
     ros::ServiceServer service14 = n.advertiseService("kautham_node/SetDefaultRobControls",srvSetDefaultRobControls);
     ros::ServiceServer service15 = n.advertiseService("kautham_node/SetObsControls",srvSetObsControls);
@@ -608,9 +619,6 @@ int main (int argc, char **argv) {
     ros::ServiceServer service38 = n.advertiseService("kautham_node/FindIK",srvFindIK);
     ros::ServiceServer service39 = n.advertiseService("kautham_node/SetRobotPos",srvSetRobPos);
     ros::ServiceServer service40 = n.advertiseService("kautham_node/GetRobotPos",srvGetRobPos);
-
-
-
 
     ros::spin();
 
