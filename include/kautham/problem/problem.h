@@ -270,6 +270,17 @@ namespace Kautham {
         bool findAllFiles(xml_node *parent, string child, string attribute,
                           vector<string> path);
 
+        /*!
+     * \brief Looks for the file filename in the specified set of paths. If file is found, its absolute
+     path will be completed
+     * \param filename is the file to be found
+     * \param path vector of paths where the file will be recursively looked for until
+     the file is found
+     * \return true if and only if the file was found
+     */
+        bool findFile(string &filename, vector<string> path);
+
+
         //! Parses a problem file
         xml_document *parseProblemFile(string filename, vector <string> def_path, int *links2Load);
 

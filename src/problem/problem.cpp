@@ -907,6 +907,44 @@ bool Problem::isFileOK (xml_document *doc) {
     return true;
 }
 
+//looks for all filename in all directories given in the path.
+//returns the filename completed if found (path+filename)
+bool Problem::findFile(string &filename, vector<string> path) {
+    if (path.size() > 0) {
+        bool found;
+        unsigned i;
+        //look for the file
+        found = false;
+        i = 0;
+        while (!found && i < path.size()) {
+                if (exists(path.at(i)+filename)) {
+                    filename = path.at(i)+filename;
+                    found = true;
+                }
+                else {
+                    i++;
+                }
+        }
+
+        if (!found) {
+            string message = "File " + filename + " couldn't be found";
+            stringstream details;
+            details << "The file was looked for in the following directories:" << endl;
+            for (uint i = 0; i < path.size(); i++) {
+                 details << "\t" << path.at(i) << endl;
+            }
+            details << "\nPease, consider updating the Default Path List if necessary";
+            throw KthExcp(message, details.str());
+        }
+
+        return (found);
+    } else {
+        throw KthExcp("No directories where files must be looked for were specified");
+        return false;
+    }
+}
+
+
 
 bool Problem::findAllFiles(xml_node *parent, string child, string attribute,
                            vector<string> path) {
@@ -987,7 +1025,11 @@ bool Problem::prepareFile (xml_document *doc, vector <string> def_path) {
 
 bool Problem::setupFromFile(istream* xml_inputfile, vector <string> def_path, bool useBBOX) {
     _filePath = def_path.at(0);
+    defPath = def_path;
     xml_document *doc = new xml_document;
+    //cout << "!!def_path size"<<def_path.size()<< endl;
+    //for(uint i=0; i<def_path.size();i++)
+    //    cout << "def_path("<<i<<") " << def_path.at(i) << endl;
     xml_parse_result result = doc->load( *xml_inputfile );
     if (result) {
         //if the file was correctly parsed
@@ -1010,6 +1052,7 @@ bool Problem::setupFromFile(istream* xml_inputfile, vector <string> def_path, bo
 
 bool Problem::setupFromFile(string xml_doc, vector <string> def_path, bool useBBOX) {
     _filePath = xml_doc;
+    defPath = def_path;
     xml_document *doc = new xml_document;
     xml_parse_result result = doc->load_file( xml_doc.c_str());
     if (result) {

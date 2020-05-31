@@ -37,6 +37,7 @@ namespace ob = ompl::base;
 namespace Kautham {
     kauthamshell::kauthamshell() {
         memPtr_ = NULL;
+
     }
 
     kauthamshell::~kauthamshell(){
@@ -626,10 +627,21 @@ namespace Kautham {
                 cout << "The problem is not opened" << endl;
                 return false;
             }
-
             Problem *const problem = (Problem*)memPtr_;
-            if (!problem->setRobotControls(controlsFile)) return false;
-            return (setQuery(init,goal));
+            //cout << "\nsetRobControls - control file "<<controlsFile<< endl;
+            //cout << "defPath size"<<problem->defPath.size()<< endl;
+            //for(uint i=0; i<problem->defPath.size();i++)
+            //    cout << "problem->defPath("<<i<<") " << problem->defPath.at(i) << endl;
+            if(problem->findFile(controlsFile,problem->defPath))
+            {
+                cout << "setRobControls - Setting control file: "<<controlsFile<< endl;
+                if (!problem->setRobotControls(controlsFile)) return false;
+                return (setQuery(init,goal));
+            }
+            else {
+                cout << "setRobControls - Failed to find control file: "<<controlsFile<< endl;
+                return false;
+            }
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
         } catch (const exception& excp) {
@@ -639,7 +651,6 @@ namespace Kautham {
                  << "problem with the Kautham2 application at less once in order "
                  << "to verify the correctness of the problem formulation.\n";
         }
-
         return false;
     }
 
