@@ -1472,6 +1472,9 @@ bool Problem::setRobotControls(string cntrFile) {
 
 
 bool Problem::setRobotControls(xml_document *doc) {
+    //set se3Enabled flag to false - will be set to true if SE3 controls exist
+    _wspace->getRobot(0)->setSE3(false);
+
     int numControls = 0;
     string controlsName = "";
     xml_node tmpNode = doc->child("ControlSet").child("Control");
@@ -1666,7 +1669,6 @@ bool Problem::setRobotControls(xml_document *doc) {
             cont++;
         }// closing if (nodeType == "Control" )
     }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
-
     return true;
 }
 
