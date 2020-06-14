@@ -4,13 +4,13 @@ import rospkg
 import sys
 from std_msgs.msg import String, Time
 from geometry_msgs.msg import Pose
-from ktmpb.msg import fVector
-from ktmpb.srv import *
+from kautham.msg import fVector
+from kautham.srv import * 
 import random
 rospack =rospkg.RosPack()
-kauthamGetPath_check= False
 #Function that wraps the call to the kautham service that opens a problem
-def OpenProblem(modelFolder, problemFile):
+def kOpenProblem(modelFolder, problemFile):
+    print(modelFolder)
     rospy.wait_for_service("/kautham_node/OpenProblem")
     kthopenproblem_srv = OpenProblem()
     kthopenproblem_srv.problem = problemFile
@@ -27,9 +27,8 @@ def OpenProblem(modelFolder, problemFile):
         rospy.logerr( "problem file: %s", kthopenproblem_srv.problem)
 
 #Function that wraps the call to the kautham service that solves a problem
-def GetPath (printpath=0):
+def kGetPath (printpath=0):
     #define server and client
-    global kauthamGetPath_check
     rospy.wait_for_service("/kautham_node/GetPath")
     getpath_srv=GetPath()
     getpath_client=rospy.ServiceProxy("/kautham_node/GetPath", GetPath)
@@ -39,7 +38,6 @@ def GetPath (printpath=0):
     #listen response
     if len(getpath_srv.response) is 0:
         print ("No path found")
-        kauthamGetPath_check= False
         return False
     else:
         print ("Path Found")
@@ -51,11 +49,10 @@ def GetPath (printpath=0):
                     path[i,j]=getpath_srv.response[i].v[j]
                     print(path[i,j], end=" ")
                 print()
-        kauthamGetPath_check=True
         return path
     
 # Function that wraps the call to the kautham service that closes a problem
-def CloseProblem():
+def kCloseProblem():
     rospy.wait_for_service("/kautham_node/CloseProblem")
     kthcloseproblrm_srv = CloseProblem()
     kthcloseproblrm_client = rospy.ServiceProxy("/kautham_node/CloseProblem", CloseProblem)
@@ -63,7 +60,7 @@ def CloseProblem():
     print( "Kautham Problem closed")
 
 # Function that wraps the call to the kautham service that gets the computational time spent solving a query
-def GetPlannerComputationTime():
+def kGetPlannerComputationTime():
     #define server client
     rospy.wait_for_service("/kautham_node/GetLastPlanComputationTime")
     getlastplancomputationtime_srv=GetLastPlanComputationTime()
@@ -74,7 +71,7 @@ def GetPlannerComputationTime():
     return getlastplancomputationtime_srv.time
 
 # Function that wraps the call to the kautham service that checks for collision
-def IsCollisionFree (controls,index):
+def kIsCollisionFree (controls,index):
     rospy.wait_for_service("/kautham_node/CheckCollision")
     checkcollision_srv= CheckCollision()
     checkcollision_client=rospy.ServiceProxy("/kautham_node/CheckCollision",CheckCollision)
@@ -84,7 +81,7 @@ def IsCollisionFree (controls,index):
     return r.collisionFree
 
 # Function that wraps the call to the kautham service that sets the planner parameters
-def SetPlannerParameter(parametername, paramatervalue):
+def kSetPlannerParameter(parametername, paramatervalue):
     rospy.wait_for_service("/kautham_node/SetPlannerParameter")
     setplannerparameter_srv= CheckCollision()
     setplannerparameter_client=rospy.ServiceProxy("/kautham_node/SetPlannerParameter",SetPlannerParameter)
@@ -95,7 +92,7 @@ def SetPlannerParameter(parametername, paramatervalue):
     return r.response
 
 #Function that wraps the call to the kautham service that sets a planner to solve the opened problem
-def SetPlannerByName(plannername):
+def kSetPlannerByName(plannername):
     rospy.wait_for_service("/kautham_node/SetPlannerByName")
     setplannerbyname_srv = SetPlannerByName()
     setplannerbyname_client= rospy.ServiceProxy("/kautham_node/SetPlannerByName",SetPlannerByName)
@@ -104,7 +101,7 @@ def SetPlannerByName(plannername):
     return r.response
 
 # Function that wraps the call to the kautham service that sets a new query to be solved
-def SetQuery(init,goal):
+def kSetQuery(init,goal):
     rospy.wait_for_service("/kautham_node/SetQuery")
     setquery_srv=SetQuery()
     setquery_client=rospy.ServiceProxy("/kautham_node/SetQuery",SetQuery)
@@ -118,7 +115,7 @@ def SetQuery(init,goal):
     return r.response
 
 # Function that wraps the call to the kautham service that moves the robot
-def MoveRobot(controls):
+def kMoveRobot(controls):
     #set robot config
     #define derver and client
     rospy.wait_for_service("/kautham_node/SetRobotsConfig")
@@ -133,7 +130,7 @@ def MoveRobot(controls):
     return r.response
 
 # Function that wraps the call to the kautham service that attaches an object to a given link
-def AttachObject(robotnumber, linknumber, objectnumber):
+def kAttachObject(robotnumber, linknumber, objectnumber):
     rospy.wait_for_service("/kautham_node/AttachObstacle2RobotLink")
     attachobstacle2robotlink_srv = AttachObstacle2RobotLink()
     attachobstacle2robotlink_client= rospy.ServiceProxy("/kautham_node/AttachObstacle2RobotLink",AttachObstacle2RobotLink)
@@ -150,7 +147,7 @@ def AttachObject(robotnumber, linknumber, objectnumber):
     return r.response
 
 # Function that wraps the call to the kautham service that dettaches an attached object
-def DetachObject(objectnumber):
+def kDetachObject(objectnumber):
     rospy.wait_for_service("/kautham_node/DetachObstacle")
     detachobstacle_srv= DetachObstacle()
     detachobstacle_client= rospy.ServiceProxy("/kautham_node/DetachObstacle",DetachObstacle)
@@ -161,7 +158,7 @@ def DetachObject(objectnumber):
     return r.response
 
 #Function that wraps the call to the kautham service that gets the pose of an obstacle
-def ObstaclePos(indexobs):
+def kObstaclePos(indexobs):
     rospy.wait_for_service("/kautham_node/GetObstaclePos")
     kauthamobstaclepos_srv = ObsPos()
     kauthamobstaclepos_srv.index= indexobs
@@ -176,7 +173,7 @@ def ObstaclePos(indexobs):
     return (r.getPos)
 
 #Function that wraps the call to the kautham service that sets the position of obstcle
-def SetObstaclePos(index,pose):
+def kSetObstaclePos(index,pose):
     rospy.wait_for_service("/kautham_node/SetObstaclePos")
     kauthamobstaclepos_srv = ObsPos()
     kauthamobstaclepos_srv.index= index
@@ -190,7 +187,7 @@ def SetObstaclePos(index,pose):
     return (r.response)
 
 #Function that wraps the call to the kautham service that gets the pose of an obstacle
-def GetRobotPos(indexobs):
+def kGetRobotPos(indexobs):
     rospy.wait_for_service("/kautham_node/GetRobotPos")
     kauthamrobotpos_srv = ObsPos()
     kauthamrobotpos_srv.index= indexobs
@@ -205,7 +202,7 @@ def GetRobotPos(indexobs):
     return (r.getPos)
 
 #Function that wraps the call to the kautham service that sets the position of Robot
-def SetRobotPos(index,pose):
+def kSetRobotPos(index,pose):
     rospy.wait_for_service("/kautham_node/SetRobotPos")
     kauthamrobotspos_srv = ObsPos()
     kauthamrobotspos_srv.index= index
@@ -219,7 +216,7 @@ def SetRobotPos(index,pose):
     return (r.response)
 
 #Function that wraps the call to the kautham service that sets the control file for the robot and sets the query to kautham
-def SetRobControls(controls, init, goal):
+def kSetRobControls(controls, init, goal):
     rospy.wait_for_service("/kautham_node/SetRobControls")
     kauthamsetrobcontrols_srv= SetRobControls()
     kauthamsetrobcontrols_srv.controls=controls
@@ -234,7 +231,7 @@ def SetRobControls(controls, init, goal):
     return (r.response)
 
 #Function that wraps the call to the kautham service that sets the control file for the robot
-def SetRobControlsNoQuery(controls):
+def kSetRobControlsNoQuery(controls):
     rospy.wait_for_service("/kautham_node/SetRobControlsNoQuery")
     kauthamsetrobcontrolsnoquery_srv= SetRobControlsNoQuery()
     kauthamsetrobcontrolsnoquery_srv.controls=controls
@@ -247,7 +244,7 @@ def SetRobControlsNoQuery(controls):
     return (r.response)
 
 #Function that wraps the call to the kautham service that gets the pose of an obstacle
-def RemoveObstacle(indexobs):
+def kRemoveObstacle(indexobs):
     rospy.wait_for_service("/kautham_node/RemoveObstaclePos")
     kauthamremoveobstacle_srv= RemoveObstacle()
     kauthamremoveobstacle_srv.index= indexobs
@@ -260,7 +257,7 @@ def RemoveObstacle(indexobs):
     return r.response
 
 #Function that wraps the call to the kautham service that gets the Inverse Kinematics
-def FindIK (pos, robIndex, armType, maintSameWrist,conf):
+def kFindIK (pos, robIndex, armType, maintSameWrist,conf):
     rospy.wait_for_service("/kautham_node/FindIK")
     kauthamfindik_srv= FindIK()
     kauthamfindik_srv.pos= pos
