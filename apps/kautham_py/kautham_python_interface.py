@@ -23,7 +23,7 @@ def kOpenProblem(modelFolder, problemFile):
         rospy.loginfo( "Kautham Problem opened correctly" )
     else:
         rospy.logerr( "ERROR Opening Kautham Problem" )
-        rospy.logerr( "models folder: %s", kthopenproblem_srv.dir[0] )
+        rospy.logerr( "models folpder: %s", kthopenproblem_srv.dir[0] )
         rospy.logerr( "problem file: %s", kthopenproblem_srv.problem)
 
 #Function that wraps the call to the kautham service that solves a problem
