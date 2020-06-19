@@ -10,7 +10,7 @@ debian-buster:
   - apt-get -q update
   - apt-get -q -y install --no-install-recommends dirmngr gnupg
   - echo "deb http://debrob.upc.edu/debian-robotics buster-robotics main" > /etc/apt/sources.list.d/debian-robotics.list
-  - apt-key adv --keyserver sks-keyservers.net --recv-keys 63DE76AC0B6779BF
+  - apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-keys 63DE76AC0B6779BF
   - apt-get -q update
   - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev cmake libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev libroscpp-dev libtrajectory-msgs-dev ros-message-generation python-all python3-rospy
   
