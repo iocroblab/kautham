@@ -1823,7 +1823,7 @@ namespace Kautham {
                 return false;
             }
             Problem *const problem = (Problem*)memPtr_;
-            SE3Conf conf = problem->getPlanner()->wkSpace()->getRobot(index)->getHomePos()->getSE3();
+            SE3Conf conf = problem->getPlanner()->wkSpace()->getRobot(index)->getCurrentPos()->getSE3();
             std::cout<<"Robot "<<index<<" at position ("<<conf.getPos().at(0)<<", "
                     <<conf.getPos().at(1)<<", "<<conf.getPos().at(2)<<")"<<std::endl;
 
