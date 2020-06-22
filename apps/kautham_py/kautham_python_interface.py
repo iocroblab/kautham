@@ -201,6 +201,21 @@ def kGetRobotPos(indexobs):
         return False
     return (r.getPos)
 
+#Function that wraps the call to the kautham service that gets the home pose of an obstacle
+def kGetRobotHomePos(indexobs):
+    rospy.wait_for_service("/kautham_node/GetRobotHomePos")
+    kauthamrobothomepos_srv = ObsPos()
+    kauthamrobothomepos_srv.index= indexobs
+    kauthamrobothomepos_srv.setPos =( 20 ,70, 40, 0, 0, 0, 1 )#Dummy for python error fix
+    kauthamrobothomepos_client = rospy.ServiceProxy("/kautham_node/GetRobotHomePos",ObsPos)
+    r=kauthamrobothomepos_client(kauthamrobothomepos_srv.index,kauthamrobothomepos_srv.setPos)
+    if len(r.getPos)>0:
+        print("Robot home position = ", r.getPos)
+    else:
+        print("No position returned")
+        return False
+    return (r.getPos)
+
 #Function that wraps the call to the kautham service that sets the position of Robot
 def kSetRobotPos(index,pose):
     rospy.wait_for_service("/kautham_node/SetRobotPos")
