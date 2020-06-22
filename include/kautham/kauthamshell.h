@@ -86,6 +86,7 @@ namespace Kautham {
     bool findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution);
     bool setRobPos(unsigned int index, std::vector<float> pos);
     bool getRobPos(unsigned int index, std::vector<float> &pos);
+    bool getRobHomePos(unsigned int index, std::vector<float> &pos);
 
     private:
         void *memPtr_;
