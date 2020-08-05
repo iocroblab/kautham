@@ -52,6 +52,7 @@ namespace Kautham {
         bool clearSampleSet();
         bool setRobControls(std::istream* inputfile, std::vector<float> init, std::vector<float> goal);
         bool setRobControls(std::string controlsFile, std::vector<float> init, std::vector<float> goal);
+        bool setRobControlsNoQuery(std::string inputfile);
         bool setDefaultRobControls(std::vector<float> init, std::vector<float> goal);
         bool setObsControls(std::istream* inputfile, std::vector<float> initObs);
         bool setObsControls(std::string controlsFile, std::vector<float> initObs);
@@ -85,6 +86,7 @@ namespace Kautham {
     bool findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution);
     bool setRobPos(unsigned int index, std::vector<float> pos);
     bool getRobPos(unsigned int index, std::vector<float> &pos);
+    bool getRobHomePos(unsigned int index, std::vector<float> &pos);
 
     private:
         void *memPtr_;

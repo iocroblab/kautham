@@ -37,6 +37,7 @@ namespace ob = ompl::base;
 namespace Kautham {
     kauthamshell::kauthamshell() {
         memPtr_ = NULL;
+
     }
 
     kauthamshell::~kauthamshell(){
@@ -620,26 +621,70 @@ namespace Kautham {
     }
 
 
+    bool kauthamshell::setRobControlsNoQuery(string controlsFile) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+            Problem *const problem = (Problem*)memPtr_;
+            //cout << "\nsetRobControls - control file "<<controlsFile<< endl;
+            //cout << "defPath size"<<problem->defPath.size()<< endl;
+            //for(uint i=0; i<problem->defPath.size();i++)
+            //    cout << "problem->defPath("<<i<<") " << problem->defPath.at(i) << endl;
+            if(problem->findFile(controlsFile,problem->defPath))
+            {
+                cout << "setRobControlsNoquery - Setting control file: "<<controlsFile<< endl;
+                if (!problem->setRobotControls(controlsFile)) return false;
+                return true;
+            }
+            else {
+                cout << "setRobControlsNoquery - Failed to find control file: "<<controlsFile<< endl;
+                return false;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "setRobControlsNoquery: Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+        return false;
+    }
+
+
     bool kauthamshell::setRobControls(string controlsFile, vector<float> init, vector<float> goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
                 return false;
             }
-
             Problem *const problem = (Problem*)memPtr_;
-            if (!problem->setRobotControls(controlsFile)) return false;
-            return (setQuery(init,goal));
+            //cout << "\nsetRobControls - control file "<<controlsFile<< endl;
+            //cout << "defPath size"<<problem->defPath.size()<< endl;
+            //for(uint i=0; i<problem->defPath.size();i++)
+            //    cout << "problem->defPath("<<i<<") " << problem->defPath.at(i) << endl;
+            if(problem->findFile(controlsFile,problem->defPath))
+            {
+                cout << "setRobControls - Setting control file: "<<controlsFile<< endl;
+                if (!problem->setRobotControls(controlsFile)) return false;
+                return (setQuery(init,goal));
+            }
+            else {
+                cout << "setRobControls - Failed to find control file: "<<controlsFile<< endl;
+                return false;
+            }
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
         } catch (const exception& excp) {
             cout << "Error: " << excp.what() << endl;
         } catch(...) {
-            cout << "Something is wrong with the problem. Please run the "
+            cout << "setRobControls: Something is wrong with the problem. Please run the "
                  << "problem with the Kautham2 application at less once in order "
                  << "to verify the correctness of the problem formulation.\n";
         }
-
         return false;
     }
 
@@ -1778,7 +1823,7 @@ namespace Kautham {
                 return false;
             }
             Problem *const problem = (Problem*)memPtr_;
-            SE3Conf conf = problem->getPlanner()->wkSpace()->getRobot(index)->getHomePos()->getSE3();
+            SE3Conf conf = problem->getPlanner()->wkSpace()->getRobot(index)->getCurrentPos()->getSE3();
             std::cout<<"Robot "<<index<<" at position ("<<conf.getPos().at(0)<<", "
                     <<conf.getPos().at(1)<<", "<<conf.getPos().at(2)<<")"<<std::endl;
 
@@ -1804,5 +1849,40 @@ namespace Kautham {
         return false;
 
     }
+
+    bool kauthamshell::getRobHomePos(unsigned int index, std::vector<float> &pos) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+            Problem *const problem = (Problem*)memPtr_;
+            SE3Conf conf = problem->getPlanner()->wkSpace()->getRobot(index)->getHomePos()->getSE3();
+            std::cout<<"Robot "<<index<<" at position ("<<conf.getPos().at(0)<<", "
+                    <<conf.getPos().at(1)<<", "<<conf.getPos().at(2)<<")"<<std::endl;
+
+            pos.push_back(conf.getPos().at(0));
+            pos.push_back(conf.getPos().at(1));
+            pos.push_back(conf.getPos().at(2));
+            pos.push_back(conf.getOrient().at(0));
+            pos.push_back(conf.getOrient().at(1));
+            pos.push_back(conf.getOrient().at(2));
+            pos.push_back(conf.getOrient().at(3));
+            return true;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                << "problem with the Kautham2 application at less once in order "
+                << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return false;
+
+    }
+
 
 }

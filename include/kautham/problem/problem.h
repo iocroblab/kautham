@@ -255,9 +255,37 @@ namespace Kautham {
      */
         bool setFixedObstacleControls();
 
+        /*!
+     * \brief finds all the files defined in the atribute called \param attribute
+     of the nodes called \param child that children of the \param parent node.
+     Files will be looked for in the specified paths. If file is found, its absolute
+     path will be completed
+     * \param parent node that contains the files to be found
+     * \param child name of the children nodes that contains the files to be found
+     * \param attribute name of the atribute that contains the file to be found
+     * \param path vector of paths where the file will be recursively looked for until
+     the file is found
+     * \return true if and only if all the files were found
+     */
+        bool findAllFiles(xml_node *parent, string child, string attribute,
+                          vector<string> path);
+
+        /*!
+     * \brief Looks for the file filename in the specified set of paths. If file is found, its absolute
+     path will be completed
+     * \param filename is the file to be found
+     * \param path vector of paths where the file will be recursively looked for until
+     the file is found
+     * \return true if and only if the file was found
+     */
+        bool findFile(string &filename, vector<string> path);
+
 
         //! Parses a problem file
         xml_document *parseProblemFile(string filename, vector <string> def_path, int *links2Load);
+
+        //! Default path where to look for files - filled in Application::problemSetup
+        vector <string> defPath;
 
     private:
         WorkSpace*              _wspace;
@@ -311,20 +339,7 @@ namespace Kautham {
      */
         bool prepareFile (xml_document *doc, vector<string> def_path);
 
-        /*!
-     * \brief finds all the files defined in the atribute called \param attribute
-     of the nodes called \param child that children of the \param parent node.
-     Files will be looked for in the specified paths. If file is found, its absolute
-     path will be completed
-     * \param parent node that contains the files to be found
-     * \param child name of the children nodes that contains the files to be found
-     * \param attribute name of the atribute that contains the file to be found
-     * \param path vector of paths where the file will be recursively looked for until
-     the file is found
-     * \return true if and only if all the files were found
-     */
-        bool findAllFiles(xml_node *parent, string child, string attribute,
-                          vector<string> path);
+
 
         //! Counts the number of links of a robot
         int countRobotLinks(string robFile);

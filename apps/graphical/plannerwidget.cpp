@@ -34,9 +34,10 @@
 
 
 namespace Kautham {
-    PlannerWidget::PlannerWidget(Planner* plan, SampleSet* samp, GUI *g, bool camera):KauthamWidget(plan){
-        _samples = samp;
-        _planner = plan;
+    PlannerWidget::PlannerWidget(Problem* pr, GUI *g, bool camera):KauthamWidget(pr->getPlanner()){
+        _samples = pr->getSampleSet();
+        _planner =  pr->getPlanner();
+        _problem = pr;
         _stepSim = 0;
         _ismoving = false;
         _thegui = g;
@@ -721,8 +722,59 @@ namespace Kautham {
                 name = it_task->name();
                 std::cout<<"....NAME = "<<name<<std::endl;
                 try {
-                    if (name == "Transit") {
-                        std::cout<<"....Transit..."<<std::endl;
+                    /*
+                     <Initialstate>
+                        <Object object= "1"> -90.0, 80.0, 35.0, 0.0, -1.0, -1.0, 0.0 </Object>
+                     </Initialstate>
+                    */
+                    if (name == "Initialstate") {
+                        std::cout<<"....Initialstate..."<<std::endl;
+                        string namesinitial;
+                        //loop inside the Initial node for all the robots configurations oan doblatcles configurations
+                        for (xml_node::iterator it_initstate = it_task->begin(); it_initstate != it_task->end(); ++it_initstate) {
+                            namesinitial = it_initstate->name();
+                            //std::cout<<"....name namesinitial..."<<namesinitial<<std::endl;
+                            try {
+                                    if (namesinitial == "Object") {
+                                         string objectname = it_initstate->attribute("object").as_string();
+                                         int objnum = stoi(objectname);
+                                         string objpose = it_initstate->child_value();
+                                         std::stringstream objposestream(objpose);
+                                         float pos[3];
+                                         float ori[4];
+                                         int k=0;
+                                         for(; k<3; k++) objposestream >> pos[k];
+                                         for(int j=0; k<7; j++,k++) objposestream >> ori[j];
+                                         std::cout<<"  Object: "<<objnum<<" "<<" POS: "<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<" "<<ori[0]<<" "<<ori[1]<<" "<<ori[2]<<" "<<ori[3]<<std::endl;
+                                         _problem->getPlanner()->wkSpace()->getObstacle(objnum)->getLink(0)->getElement()->setPosition(pos);
+                                         _problem->getPlanner()->wkSpace()->getObstacle(objnum)->getLink(0)->getElement()->setOrientation(ori);
+                                         _problem->getPlanner()->wkSpace()->storeNewInitialObjectPoses();
+                                     }
+                                    /* ROBOT TAG not needed
+                                    else if (namesinitial == "Object") {
+
+                                    }
+                                    */
+                              } catch(...) {
+                                      std::cout << "ERROR: Initialstates tag does not have any Object child!!" << std::endl;
+                                      return false;
+                              }
+                        }
+                    }
+                    //<Transit control_file="controls/table_R2.cntr">
+                    else if (name == "Transit") {
+                        /* PREPARED TO READ ATTRIBUTE CONTROL FILE - not needed though...
+                        //find the robot controls file and set its complete path if found
+                        if (!_problem->findAllFiles(&taskNode,"Transit","control_file",_problem->defPath)) {
+                            std::cout << "ERROR: control file of Transit tag not found" << std::endl;
+                            return false;
+                        }
+                        //read the control file name
+                        string controlfilename = it_task->attribute("control_file").as_string();
+                        _problem->setRobotControls(controlfilename);
+                        std::cout<<"....Transit...with contol file: "<<controlfilename<<std::endl;
+                        */
+
                         string transitconf;
                         //loop inside the transit node for all the configurations of the path
                         for (xml_node::iterator it_transit = it_task->begin(); it_transit != it_task->end(); ++it_transit) {
@@ -752,7 +804,20 @@ namespace Kautham {
                         string objectname = it_task->attribute("object").as_string();
                         string robotname = it_task->attribute("robot").as_string();
                         string linkname = it_task->attribute("link").as_string();
+
+                        /* PREPARED TO READ ATTRIBUTE CONTROL FILE - not needed though...
+                        //find the robot controls file and set its complete path if found
+                        if (!_problem->findAllFiles(&taskNode,"Transfer","control_file",_problem->defPath)) {
+                            std::cout << "ERROR: control file of Transfer tag not found" << std::endl;
+                            return false;
+                        }
+                        //read the control file name
+                        string controlfilename = it_task->attribute("control_file").as_string();
+                        _problem->setRobotControls(controlfilename);
+                        std::cout<< "....Transfer...with contol file: "<<controlfilename<<std::endl;
+                        */
                         std::cout<< "....Transfer...object "<<objectname<<" attached to link "<<linkname<<" of robot "<<robotname<< std::endl;
+
                         string transferconf;
 
                         //load the step of the path where transfer starts and an attach is required
@@ -783,7 +848,7 @@ namespace Kautham {
                         _planner->loadAttachData(_path2.size()-1,"detach",stoi(objectname),stoi(robotname),stoi(linkname));
                     }
                 } catch(...) {
-                    std::cout << "ERROR: Current task tag does not have any transit or transfer !!" << std::endl;
+                    std::cout << "ERROR: Current task tag does not have any transit or transfer or initialstate child!!" << std::endl;
                     return false;
                 }
             }

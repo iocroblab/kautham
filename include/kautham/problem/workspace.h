@@ -100,6 +100,7 @@ namespace Kautham{
       
 
        void                 storeInitialObjectPoses();
+       void                 storeNewInitialObjectPoses();
        bool                 restoreInitialObjectPoses();
 
       //rc_functions

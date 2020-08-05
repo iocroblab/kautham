@@ -907,6 +907,44 @@ bool Problem::isFileOK (xml_document *doc) {
     return true;
 }
 
+//looks for all filename in all directories given in the path.
+//returns the filename completed if found (path+filename)
+bool Problem::findFile(string &filename, vector<string> path) {
+    if (path.size() > 0) {
+        bool found;
+        unsigned i;
+        //look for the file
+        found = false;
+        i = 0;
+        while (!found && i < path.size()) {
+                if (exists(path.at(i)+filename)) {
+                    filename = path.at(i)+filename;
+                    found = true;
+                }
+                else {
+                    i++;
+                }
+        }
+
+        if (!found) {
+            string message = "File " + filename + " couldn't be found";
+            stringstream details;
+            details << "The file was looked for in the following directories:" << endl;
+            for (uint i = 0; i < path.size(); i++) {
+                 details << "\t" << path.at(i) << endl;
+            }
+            details << "\nPease, consider updating the Default Path List if necessary";
+            throw KthExcp(message, details.str());
+        }
+
+        return (found);
+    } else {
+        throw KthExcp("No directories where files must be looked for were specified");
+        return false;
+    }
+}
+
+
 
 bool Problem::findAllFiles(xml_node *parent, string child, string attribute,
                            vector<string> path) {
@@ -919,7 +957,6 @@ bool Problem::findAllFiles(xml_node *parent, string child, string attribute,
         while (node && !end) {
             //load file
             file = node.attribute(attribute.c_str()).as_string();
-
             //look for the file
             found = false;
             i = 0;
@@ -988,7 +1025,11 @@ bool Problem::prepareFile (xml_document *doc, vector <string> def_path) {
 
 bool Problem::setupFromFile(istream* xml_inputfile, vector <string> def_path, bool useBBOX) {
     _filePath = def_path.at(0);
+    defPath = def_path;
     xml_document *doc = new xml_document;
+    //cout << "!!def_path size"<<def_path.size()<< endl;
+    //for(uint i=0; i<def_path.size();i++)
+    //    cout << "def_path("<<i<<") " << def_path.at(i) << endl;
     xml_parse_result result = doc->load( *xml_inputfile );
     if (result) {
         //if the file was correctly parsed
@@ -1011,6 +1052,7 @@ bool Problem::setupFromFile(istream* xml_inputfile, vector <string> def_path, bo
 
 bool Problem::setupFromFile(string xml_doc, vector <string> def_path, bool useBBOX) {
     _filePath = xml_doc;
+    defPath = def_path;
     xml_document *doc = new xml_document;
     xml_parse_result result = doc->load_file( xml_doc.c_str());
     if (result) {
@@ -1125,6 +1167,7 @@ int Problem::countLinks2Load(xml_document *doc) {
 
 xml_document *Problem::parseProblemFile(string filename, vector <string> def_path, int *links2Load) {
     _filePath = filename;
+    defPath = def_path;
     xml_document *doc = new xml_document;
     xml_parse_result result = doc->load_file( filename.c_str());
     if (result) {
@@ -1417,7 +1460,7 @@ bool Problem::setRobotControls(string cntrFile) {
                 return false;
             }
         } else { // File does not exists.
-            cout << "The control file: " << cntrFile << "doesn't exist. Please confirm it." << endl;
+            cout << "The control file: " << cntrFile << " doesn't exist. Please confirm it." << endl;
             string message = "Robot controls file " + cntrFile + " couldn't be found";
             throw KthExcp(message);
             return false;
@@ -1429,6 +1472,9 @@ bool Problem::setRobotControls(string cntrFile) {
 
 
 bool Problem::setRobotControls(xml_document *doc) {
+    //set se3Enabled flag to false - will be set to true if SE3 controls exist
+    _wspace->getRobot(0)->setSE3(false);
+
     int numControls = 0;
     string controlsName = "";
     xml_node tmpNode = doc->child("ControlSet").child("Control");
@@ -1623,7 +1669,6 @@ bool Problem::setRobotControls(xml_document *doc) {
             cont++;
         }// closing if (nodeType == "Control" )
     }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
-
     return true;
 }
 

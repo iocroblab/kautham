@@ -42,7 +42,7 @@ namespace Kautham{
 	class PlannerWidget: public KauthamWidget{
 		Q_OBJECT
     public:
-        PlannerWidget(Planner* plan, SampleSet* samp, GUI *g, bool camera = false);
+        PlannerWidget(Problem* pr, GUI *g, bool camera = false);
         ~PlannerWidget();
 
     signals:
@@ -86,6 +86,7 @@ namespace Kautham{
         QPushButton *btnLoadData;
         QSpinBox *globalFromBox, *globalToBox;
         QLabel *tmpLabel;
+        Problem *_problem;
         Planner *_planner;
         SampleSet *_samples;
         QTimer *_plannerTimer;

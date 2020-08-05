@@ -413,10 +413,10 @@ namespace Kautham {
     }
 
 
-
-    bool GUI::addPlanner(Planner *plan, SampleSet* samp){
+    bool GUI::addPlanner(Problem *pr){
+        Planner *plan = pr->getPlanner();
         if (plan) {
-            PlannerWidget* tmpPlan = new PlannerWidget( plan, samp, this, plan->hasCameraMovements());
+            PlannerWidget* tmpPlan = new PlannerWidget( pr, this, plan->hasCameraMovements());
             propertiesTab->addTab(tmpPlan, QString((plan->getGuiName()).c_str()));
             connect(tmpPlan,SIGNAL(sendText(string)),this,SLOT(setText(string)));
             connect(tmpPlan,SIGNAL(changeCursor(bool)),this,SLOT(changeCursor(bool)));
@@ -438,7 +438,7 @@ namespace Kautham {
             }
             return true;
         } else {
-            PlannerWidget* tmpPlan = new PlannerWidget( NULL, NULL, this);
+            PlannerWidget* tmpPlan = new PlannerWidget( NULL, this);
             propertiesTab->addTab(tmpPlan, "Planner");
             //JAN
             indexPlannerTab = propertiesTab->indexOf(tmpPlan);

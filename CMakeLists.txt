@@ -78,6 +78,8 @@ if( KAUTHAM_ROS )
       std_msgs
       trajectory_msgs
       message_generation
+      roslib
+      rospy
     )
     include_directories(${catkin_INCLUDE_DIRS} include)
 
@@ -94,6 +96,7 @@ if( KAUTHAM_ROS )
        SetFixedObsControls.srv
        SetObstaclesConfig.srv
        SetRobControls.srv
+       SetRobControlsNoQuery.srv
        AttachObstacle2RobotLink.srv
        OpenProblem.srv
        OpenProblemStream.srv
@@ -126,10 +129,9 @@ if( KAUTHAM_ROS )
        DIRECTORY apps/ros/msg
        FILES
        fVector.msg
-    )
-
+        )
+    catkin_python_setup()
     generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)
-
     catkin_package(
       INCLUDE_DIRS include
       #LIBRARIES libkautham
@@ -137,7 +139,7 @@ if( KAUTHAM_ROS )
     )
 
 endif( KAUTHAM_ROS )
-
+include_directories(${catkin_INCLUDE_DIRS})
 
 ##################### Qt-Creator ####################################
 
