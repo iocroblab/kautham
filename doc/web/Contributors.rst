@@ -8,27 +8,29 @@ Package Manager
 	Leopold Palomo-Avellaneda <leopold.palomo@upc.edu> [1]
 
 Contributors
-	Alexander Perez [1] [2]
+	Alexander Pérez (*)
 	
-	Nestor Garcia Hidalgo [1]
+	Néstor García Hidalgo 
 	
-	Muhayyuddin [1]
+	Muhayyuddin 
 	
-	Aliakbar Akbari [1]
+	Aliakbar Akbari 
 	
-	Joan Fontanals [1]
+	Joan Fontanals
 	
-	Andres F. Montano [1]
+	Andrés F. Montano
 	
-	Carlos Rodriguez [1]
+	Carlos Rodriguez 
 	
-	Josep Arnau Claret [1]
+	Josep Arnau Claret 
+	
+	Siddhant Saoji 
 	
 
-[1] Institute of Industrial and Control Engineering / Technical University of Catalonia 
+Institute of Industrial and Control Engineering / Technical University of Catalonia 
 
 .. image:: images/logo_ioc.png
 
-[2] Escuela Colombiana de Ingenieria Julio Garavito
+(*) A. Pérez is also with Escuela Colombiana de Ingenieria Julio Garavito
 
 .. image:: images/logo_eci.png

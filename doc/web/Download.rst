@@ -3,7 +3,7 @@ Download
 
 Kautham can be downloaded its public version from `here <http://github.com/iocroblab/kautham>`_
 
-The latest version is 4.0.5 available from September 30th, 2019.
+The latest version is 4.0.7 available from August 6th, 2020.
 
 Installation
 ------------
@@ -49,22 +49,6 @@ Follow these steps to add some sources and install the Kautham package: ::
     $ sudo apt-get upgrade
 
     
-Also there are packages built for Ubuntu Trusty 14.04 LTS and Xenial 16.04 LTS  but for OLDER versions of Kautham.
-    
-If you have an Ubuntu Xenial, follow these steps to add some sources and install the Kautham package: ::
-
-
-    $ sudo add-apt-repository ppa:deb-rob/ros-xenial
-    $ sudo apt-get update
-    $ sudo apt-get install kautham
-
-If you have an Ubuntu Trusty, follow these steps to add some sources and install the Kautham package: ::
-
-
-    $ sudo add-apt-repository ppa:deb-rob/ros-trusty
-    $ sudo apt-get update
-    $ sudo apt-get install kautham
-
 
 ROS stuff
 ^^^^^^^^^^^
@@ -82,19 +66,24 @@ Install packages that Kautham depends on. First add the required ppa sources (se
     $ sudo apt-get install libompl-dev cmake libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev  libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev   freeglut3-dev libsoqt520-dev libcoin-dev libroscpp-dev libtrajectory-msgs-dev  ros-message-generation
 
 
-Dowload the Kautham source code from `github <https://github.com/iocroblab/kautham>`_ at e.g. ~/kautham
+Download the Kautham source code from `github <https://github.com/iocroblab/kautham>`_ at e.g. ~/kautham
 
-Build the package. From the Kautham folder: ::
+Build the package by following these steps from the kautham folder: 
+
+::
 
     $ mkdir build
     $ cd build
     $ cmake ..
     $ make
 
-There are three apps: kautham-gui, kautham-console and kautham-ros.
+There are three apps, and you can activate/deactivate their building modifying the corresponding flags in the *CMakeLists.txt* file.
 
-You can activate/deactivate their building modifying the corresponing flags in the CMakeLists.txt file; by default kautham-gui and kautham-console are ON and kautham-ros is OFF.
+- *kautham-gui*: By default the build flag is **ON**.
+- *kautham-console*: By default the build flag is **ON**.
+- *kautham-ros*: By default the build flag is **OFF**.
 
-If kautham-ros is OFF the executable files are located at the kautham/build/apps folder.
 
-If kautham-ros is ON the executables are located at kautham/build/devel/lib/kautham, since catkin is used for the building.
+If kautham-ros is OFF the executable files are located at the **kautham/build/apps** folder.
+
+If kautham-ros is ON the executables are located at **kautham/build/devel/lib/kautham**, since catkin is used for the building.

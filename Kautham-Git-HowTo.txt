@@ -96,6 +96,9 @@ INSTRUCTIONS TO UPDATE GITHUB REPO WITH THE LAST TAGGED GITIOC MASTER BRANCH
 
 
  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+To generate the Doxygen documentation see the file doc/doxygen/README_DOC
  
  
  

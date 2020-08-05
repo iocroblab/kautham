@@ -14,12 +14,27 @@ The size of the image can be modified in mystylesheet.css file:
   
   
   ------------------------
-  To generate the documentation run the cmake of the project with the flag KAUTHAM_DOCUMENTATION to ON.
+  To generate the Doxygen documentation set the flag KAUTHAM_DOCUMENTATION_API to ON.
+  To generate the webpage documentation set the flag KAUTHAM_DOCUMENTATION_WEB to ON.
+  Then run cmake:
   
-  This generates the Doxyfile in the build directory.
-  
-  From that directory execute: 
-      >doxygen Doxyfile
+  1) From the kautham folder do
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ make
+    
+    
+  2) The webpage is generated in the folder build/doc/web
+     Copy the contents of this folder to home/groups/robotics/www/sir/projects/kautham/
+    
+  3) A Doxyfile file is generated in the build/doc/doxygen directory, that allows to create the documentation:
+     $ cd doc/doxygen
+     $ doxygen Doxyfile
       
-  The subfolder doxygen_documentation is created with the generated documention.
+  4) The subfolder build/doc/kautham-api is created with the generated documentation (within a subfolder called html)
+  
+  5) copy the subfolder html to home/groups/robotics/www/sir/projects/kautham/doxygen_documentation 
+  
   ------------------------
+  
