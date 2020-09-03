@@ -14,16 +14,4 @@ The main core of planners is provided by the `Open Motion Planning Library OMPL 
 
 It is principally being used in the research of motion planning strategies for hand-arm robotic systems.
 
-.. image:: images/kth.png
-
-
-.. toctree::
-    :maxdepth: 2
-    
-    Features
-    Snapshots
-    Videos
-    Documentation
-    Download
-    Contributing
-    Contributors
+More info:  `Kautham webpage <https://sir.upc.edu/projects/kautham/>`_
