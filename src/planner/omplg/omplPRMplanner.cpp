@@ -500,7 +500,7 @@ ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
         addParameter("MinGrowTime", _MinGrowTime);
         addParameter("MinExpandTime", _MinExpandTime);
 
-        addParameter("Sampler 0(r) 1(h) 2(sdk) 3(g) 4(gl)", _samplerUsed);//defaulted to 0 (Random)
+        addParameter("Sampler 0(r) 1(h) 2(sdk) 3(g)", _samplerUsed);//defaulted to 0 (Random)
 
         //set the connectionFilter_
         double _distanceThreshold = 0.1 * mymagic::DISTANCE_THRESHOLD_FACTOR;//default value
@@ -593,7 +593,7 @@ ob::PlannerStatus solve(const ob::PlannerTerminationCondition &ptc)
         else
           return false;
 
-        it = _parameters.find("Sampler 0(r) 1(h) 2(sdk) 3(g) 4(gl)");
+        it = _parameters.find("Sampler 0(r) 1(h) 2(sdk) 3(g)");
         if(it != _parameters.end()){
             setSamplerUsed(it->second);
          }

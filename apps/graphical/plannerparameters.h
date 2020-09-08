@@ -86,7 +86,7 @@ public:
                 <br><em>MaxNearestNeighbors:</em> Maximum number of neighbors to try connections with the sampled new configuration.\
                 <br><em>MinExpandTime:</em> Time slot devoted to the expand phase.\
                 <br><em>MinGrowTime:</em>  Time slot devoted to the growing phase.\
-                <br><em>Sampler 0(r), 1(h) 2(sdk) 3(g) 4(gl):</em> Sampling source to be chosen among random, halton, sdk - deterministic-, gaussian, gaussian-like (deterministic based on sdk)\
+                <br><em>Sampler 0(r), 1(h) 2(sdk) 3(g):</em> Sampling source to be chosen among random, halton, sdk - deterministic-, gaussian\
                 <br><br>\
                 <b>RRT</b>\
                 <br><br><em>Goal Bias: </em> The fraction of time the goal is picked as the state to expand towards.\
