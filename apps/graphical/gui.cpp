@@ -37,6 +37,9 @@
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/actions/SoToVRML2Action.h>
 #include <Inventor/VRMLnodes/SoVRMLNodes.h>
+#include <Inventor/actions/SoGLRenderAction.h>
+#include <Inventor/SbViewportRegion.h>
+#include <Inventor/SoSceneManager.h>
 #include <pugixml.hpp>
 
 //The following config header file contains the version number of kautham and is automatically generated from the
@@ -468,6 +471,7 @@ namespace Kautham {
             v.window->setViewing(FALSE);
             v.window->setSceneGraph(root);
             v.window->setBackgroundColor(SbColor(0.0f,0.0f,0.0f));
+            v.window->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
             //v.window->setPopupMenuEnabled(FALSE);
             v.window->show();
             viewers.push_back(v);
