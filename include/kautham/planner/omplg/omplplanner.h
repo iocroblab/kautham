@@ -140,8 +140,10 @@ namespace Kautham {
             bool trySolve();//reimplemented
             bool setParameters();//reimplemented
             SoSeparator *getIvPathScene();//reimplemented
+            SoSeparator *getIvPathAndDataScene();//reimplemented
             SoSeparator *getIvCspaceScene();//reimplemented
             void drawPath(bool show);
+            void drawPathAndData(bool show);
             void drawCspace(unsigned int robot = 0, unsigned int link = 0);
 
             void omplState2smp(const ob::State *state, Sample* smp);

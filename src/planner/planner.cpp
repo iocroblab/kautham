@@ -48,6 +48,7 @@ namespace Kautham{
       _hasCameraInformation = false;
       _sceneCspace = NULL;
       _scenePath = NULL;
+      _scenePathAndData = NULL;
 
   }
 

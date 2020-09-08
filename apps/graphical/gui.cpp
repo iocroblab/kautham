@@ -430,12 +430,21 @@ namespace Kautham {
             if (cspace) {
                 addViewerTab("CSpace",cspace);
             }
+            //draw path in Wspace tab
             SoSeparator *path(plan->getIvPathScene());
             if (path) {
                 for (unsigned int i(0); i < viewers.size(); ++i) {
-                    if (viewers.at(i).title == "WSpace" ||
-                            viewers.at(i).title == "CollisionWSpace") {
+                    if (viewers.at(i).title == "WSpace") {
                         viewers.at(i).root->addChild(path);
+                    }
+                }
+            }
+            //draw path and planner data in Collision tab
+            SoSeparator *pathanddata(plan->getIvPathAndDataScene());
+            if (pathanddata) {
+                for (unsigned int i(0); i < viewers.size(); ++i) {
+                    if (viewers.at(i).title == "CollisionWSpace") {
+                        viewers.at(i).root->addChild(pathanddata);
                     }
                 }
             }

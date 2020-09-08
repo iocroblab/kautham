@@ -91,6 +91,7 @@ namespace Kautham {
        }
        void                           exportSimulationPath();
        virtual inline SoSeparator*    getIvPathScene(){return _scenePath;}//_sceneCspace is initiallized to NULL
+       virtual inline SoSeparator*    getIvPathAndDataScene(){return _scenePathAndData;}//_sceneCspace is initiallized to NULL
        virtual inline SoSeparator*    getIvCspaceScene(){return _sceneCspace;}//_sceneCspace is initiallized to NULL
        inline long int                getMaxNumSamples(){return _maxNumSamples;}
        inline PLANNERFAMILY           getFamily(){return _family;}
@@ -120,6 +121,7 @@ namespace Kautham {
        PLANNERFAMILY                 _family;
        SoSeparator*                  _sceneCspace;
        SoSeparator*                  _scenePath;
+       SoSeparator*                  _scenePathAndData;
        int                           _simStep=0;
    };
    /** @}   end of Doxygen module */

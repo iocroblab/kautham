@@ -768,6 +768,14 @@ namespace Kautham {
             return Planner::getIvPathScene();
         }
 
+        //! This function creates the separator for the ivscene to show the path.
+        SoSeparator *omplPlanner::getIvPathAndDataScene()
+        {
+            _scenePathAndData = new SoSeparator();
+            _scenePathAndData->ref();
+            return Planner::getIvPathAndDataScene();
+        }
+
 
         //! This function creates the separator for the ivscene to show the configuration space.
         SoSeparator *omplPlanner::getIvCspaceScene()
@@ -778,12 +786,59 @@ namespace Kautham {
         }
 
 
-        //! This function draws the projection of the Configuration Space into the Workspace using the the position of the trunk link
+        //! This function draws the path into the Workspace using the the position of the trunk link
         void omplPlanner::drawPath(bool show) {
             if (!_scenePath) return;
 
             //Delete whatever is already drawn
             _scenePath->removeAllChildren();
+
+            if (!show) return;
+
+            //Draw path
+            if (_solved) {
+                SoDrawStyle *drawStyle(new SoDrawStyle);
+                drawStyle->lineWidth = 4.;
+
+                SbVec3f *vertices = new SbVec3f[_path.size()*_wkSpace->getNumRobots()];
+                for (unsigned int i(0); i < _path.size(); ++i) {
+                    _wkSpace->moveRobotsTo(_path.at(i));
+                    for (unsigned int j(0); j < _wkSpace->getNumRobots(); ++j) {
+                        mt::Point3 point(_wkSpace->getRobot(j)->
+                                         getLink(_wkSpace->getRobot(j)->getTrunk()-1)->
+                                         getTransformation()->getTranslation());
+
+                        vertices[j*_path.size()+i][0] = point[0];
+                        vertices[j*_path.size()+i][1] = point[1];
+                        vertices[j*_path.size()+i][2] = point[2];
+                    }
+                }
+                int32_t *numVertices = new int32_t[_wkSpace->getNumRobots()];
+                std::fill(numVertices,numVertices+_wkSpace->getNumRobots(),_path.size());
+
+                SoVertexProperty *vertexProperty(new SoVertexProperty);
+                vertexProperty->vertex.setValues(0,_path.size()*_wkSpace->getNumRobots(),vertices);
+                vertexProperty->orderedRGBA.setValue(SbColor(1,0,0.2).getPackedValue());
+
+                SoLineSet *lineSet(new SoLineSet);
+                lineSet->vertexProperty.setValue(vertexProperty);
+                lineSet->numVertices.setValues(0,_wkSpace->getNumRobots(),numVertices);
+
+                SoSeparator *path(new SoSeparator);
+                path->setName("Path");
+                path->addChild(drawStyle);
+                path->addChild(lineSet);
+
+                _scenePath->addChild(path);
+            }
+        }
+
+        //! This function draws the projection of the Configuration Space into the Workspace using the the position of the trunk link
+        void omplPlanner::drawPathAndData(bool show) {
+            if (!_scenePathAndData) return;
+
+            //Delete whatever is already drawn
+            _scenePathAndData->removeAllChildren();
 
             if (!show) return;
 
@@ -905,7 +960,7 @@ namespace Kautham {
             lines->addChild(drawStyle);
             lines->addChild(lineSet);
 
-            _scenePath->addChild(lines);
+            _scenePathAndData->addChild(lines);
 
             vertexProperty = new SoVertexProperty;
             vertexProperty->vertex.setValues(0,(pdata->numVertices()-pdata->numStartVertices()-
@@ -920,7 +975,7 @@ namespace Kautham {
             points->addChild(drawStyle);
             points->addChild(pointSet);
 
-            _scenePath->addChild(points);
+            _scenePathAndData->addChild(points);
 
             //Draw path
             if (_solved) {
@@ -956,7 +1011,7 @@ namespace Kautham {
                 path->addChild(drawStyle);
                 path->addChild(lineSet);
 
-                _scenePath->addChild(path);
+                _scenePathAndData->addChild(path);
             }
 
             points = new SoSeparator;
@@ -982,7 +1037,7 @@ namespace Kautham {
             pointSet->vertexProperty.setValue(vertexProperty);
             points->addChild(pointSet);
 
-            _scenePath->addChild(points);
+            _scenePathAndData->addChild(points);
         }
 
 
@@ -1485,6 +1540,7 @@ namespace Kautham {
             }
 
             drawPath(_drawnPath);
+            drawPathAndData(_drawnPath);
             drawCspace(_drawnrobot);
 
             return _solved;

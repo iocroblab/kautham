@@ -454,7 +454,7 @@ namespace Kautham {
                     sstr<<"<Task name='"<<((omplplanner::omplPlanner*)_planner)->getIDName()<<"'>"<<std::endl;
 
                     //verify if an object is attached to set transfer instead of transit
-                    for(int irob=0;  irob<_planner->wkSpace()->getNumRobots(); irob++)
+                    for(unsigned int irob=0;  irob<_planner->wkSpace()->getNumRobots(); irob++)
                     {
                         //cout<<"robot "<<irob<<endl;
                         //cout<<"_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size() = "<<_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()<<endl;
@@ -463,7 +463,7 @@ namespace Kautham {
                         if(_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()!=0)
                         {
                             std::string obsname = _planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().obs->getName();
-                            for(int k=0;k<_planner->wkSpace()->getNumObstacles();k++)
+                            for(unsigned int k=0;k<_planner->wkSpace()->getNumObstacles();k++)
                             {
                                 if(_planner->wkSpace()->getObstacle(k)->getName() == obsname)
                                 {
@@ -472,7 +472,7 @@ namespace Kautham {
                                 }
                             }
                             std::string linkname =_planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().link->getName();
-                            for(int k=0;k<_planner->wkSpace()->getRobot(irob)->getNumLinks();k++)
+                            for(unsigned int k=0;k<_planner->wkSpace()->getRobot(irob)->getNumLinks();k++)
                             {
                                 if(_planner->wkSpace()->getRobot(irob)->getLink(k)->getName() == linkname)
                                 {
