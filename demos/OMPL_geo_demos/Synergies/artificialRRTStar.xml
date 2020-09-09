@@ -6,6 +6,9 @@
 		<Limits name="Z" min="-0.001" max="0.001" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0" Y="0" X="0" />
 	</Robot>
+	<Obstacle obstacle="obstacles/floor0.iv" scale="2.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="-0.02" Y="0.0" X="0.0" />
+	</Obstacle>
 	<Controls robot="controls/bigcube_R2.cntr" />
 	<Planner>
 		<Parameters>
@@ -20,8 +23,8 @@
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="2">0.15 0.85</Init>
-				<Goal dim="2">0.85 0.85</Goal>
+				<Init>0.15 0.85</Init>
+				<Goal>0.85 0.85</Goal>
 			</Query>
 		</Queries>
 	</Planner>

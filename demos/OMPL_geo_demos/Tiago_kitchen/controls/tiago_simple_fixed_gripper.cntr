@@ -6,8 +6,7 @@
 		<DOF name="tiago/wheel_left_link" value="0.500"/>
 		<DOF name="tiago/torso_lift_link" value="0.500"/>
 		<DOF name="tiago/head_1_link" value="0.500"/>
-		<DOF name="tiago/head_2_link" value="0.500"/>
-		<DOF name="tiago/torso_lift_link" value="0.500"/>        
+		<DOF name="tiago/head_2_link" value="0.500"/>       
 		<DOF name="tiago/arm_1_link" value="0.500"/>
 		<DOF name="tiago/arm_2_link" value="0.500"/>
 	  	<DOF name="tiago/arm_3_link" value="0.5" />

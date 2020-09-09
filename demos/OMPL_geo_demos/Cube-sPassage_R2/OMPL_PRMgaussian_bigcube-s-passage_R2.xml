@@ -16,18 +16,18 @@
 	<Planner>
 		<Parameters>
                         <Name>omplPRM</Name>
-			<Parameter name="Max Planning Time">0.0010</Parameter>
+			<Parameter name="Max Planning Time">1.0</Parameter>
 			<Parameter name="Speed Factor">1</Parameter>
-			<Parameter name="DistanceThreshold">0.0010</Parameter>
+			<Parameter name="DistanceThreshold">0.2</Parameter>
 			<Parameter name="MinGrowTime">0.2</Parameter>
 			<Parameter name="MinExpandTime">0.0</Parameter>
 			<Parameter name="BounceDistanceThreshold">0.0</Parameter>
-			<Parameter name="Sampler 0(r) 1(h) 2(sdk) 3(g) 4(gl)">3</Parameter>
+			<Parameter name="Sampler 0(r) 1(h) 2(sdk) 3(g)">3</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="2">0.173245 0.337357</Init>
-				<Goal dim="2">0.787398 0.697769</Goal>
+				<Init>0.173245 0.337357</Init>
+				<Goal>0.787398 0.697769</Goal>
 			</Query>
 		</Queries>
 	</Planner>

@@ -22,7 +22,7 @@
 			<Parameter name="MinExpandTime">0.05</Parameter>
 			<Parameter name="DistanceThreshold">0.20</Parameter>
 			<Parameter name="BounceDistanceThreshold">0.20</Parameter>
-			<Parameter name="Sampler 0(r) 1(h) 2(sdk) 3(g) 4(gl)">0</Parameter>
+			<Parameter name="Sampler 0(r) 1(h) 2(sdk) 3(g)">0</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>

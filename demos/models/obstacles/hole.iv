@@ -45,16 +45,4 @@ Separator {
      depth 130.0
     }
   }
-  Separator {
-    Material {
-            diffuseColor        0.7 0.7 0.7
-            transparency 0.5
-    }
-
-    Cube {
-     width 300.0
-     height 300.0
-     depth 300.0
-    }
-  }
 }

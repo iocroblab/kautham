@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Problem name="" topology="SE3">
+<Problem name="cylinderNoPMD_RRTconnect">
 	<Robot robot="robots/UR5_AllegroHandL_cylinder.urdf">
     		<Home X="-0.23963021891" Y="0.0" Z="0.60993808329" WX="0.377964" WY="-0.912487" WZ="-0.156558" TH="2.41885181"/>
 	</Robot>
@@ -19,12 +19,12 @@
 			<Name>omplRRTConnect</Name>
 			<Parameter name="Max Planning Time">10</Parameter>
 			<Parameter name="Range">0.4</Parameter>
-			<Parameter name="Speed Factor">20</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="12">0.440 0.346 0.362 0.550 0.570 0.533 0.577 0.415 0.647 0.694 0.405 0.327</Init>
-				<Goal dim="12">0.438 0.344 0.309 0.500 0.583 0.700 0.565 0.382 0.710 0.793 0.362 0.245</Goal>
+				<Init>0.440 0.346 0.362 0.550 0.570 0.533 0.577 0.415 0.647 0.694 0.405 0.327</Init>
+				<Goal>0.438 0.344 0.309 0.500 0.583 0.700 0.565 0.382 0.710 0.793 0.362 0.245</Goal>
 			</Query>
 		</Queries>
 	</Planner>
