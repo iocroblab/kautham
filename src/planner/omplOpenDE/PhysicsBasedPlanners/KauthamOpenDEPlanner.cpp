@@ -130,9 +130,9 @@ KauthamDEPlanner::KauthamDEPlanner(SPACETYPE stype, Sample *init, Sample *goal, 
     _controlDimensions=2;
     _erp=0.5;
     _cfm=0.3;
+    addParameter("_Max Planning Time", _planningTime);
+    addParameter("_Speed Factor", _speedFactor);
     addParameter("PropagationStepSize", _propagationStepSize);
-    addParameter("Max Planning Time", _planningTime);
-    addParameter("Speed Factor", _speedFactor);
     addParameter("Max Speed", _maxspeed);
     addParameter("only final link position?", _onlyend);
     addParameter("Min Control Steps", _minControlSteps);
@@ -612,13 +612,13 @@ void KauthamDEPlanner::ComputePowerConsumed(const std::vector<oc::Control*> &con
 bool KauthamDEPlanner::setParameters()
 {
     try{
-        HASH_S_K::iterator it = _parameters.find("Speed Factor");
+        HASH_S_K::iterator it = _parameters.find("_Speed Factor");
         if(it != _parameters.end())
             _speedFactor = it->second;
         else
             return false;
 
-        it = _parameters.find("Max Planning Time");
+        it = _parameters.find("_Max Planning Time");
         if(it != _parameters.end())
             _planningTime = it->second;
         else

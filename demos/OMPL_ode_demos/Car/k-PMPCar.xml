@@ -37,23 +37,23 @@
 	<Planner>
 		<Parameters>
 			<Name>KPIECECarPlanner</Name>
+			<Parameter name="_Max Planning Time">120</Parameter>
+			<Parameter name="_Speed Factor">3</Parameter>
 			<Parameter name="Constraint Force Mixing">0.3000000119</Parameter>
 			<Parameter name="Control Dimensions">2</Parameter>
 			<Parameter name="Error Reduction Parameter">0.5</Parameter>
 			<Parameter name="Goal Bias">0.05</Parameter>
 			<Parameter name="Max Contacts">5</Parameter>
 			<Parameter name="Max Control Steps">50</Parameter>
-			<Parameter name="Max Planning Time">120</Parameter>
 			<Parameter name="Max Speed">10</Parameter>
 			<Parameter name="Min Control Steps">5</Parameter>
 			<Parameter name="PropagationStepSize">0.05</Parameter>
-			<Parameter name="Speed Factor">3</Parameter>
 			<Parameter name="only final link position?">0</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="3">0.851 0.847 0.333</Init>
-				<Goal dim="3">0.130 0.188 0.333</Goal>
+				<Init>0.851 0.847 0.333</Init>
+				<Goal>0.130 0.188 0.333</Goal>
 			</Query>
 		</Queries>
 	</Planner>

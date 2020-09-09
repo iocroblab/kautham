@@ -25,8 +25,8 @@
 	<Planner>
 		<Parameters>
 			<Name>omplRRTStar</Name>
-			<Parameter name="Max Planning Time">5.0</Parameter>
-			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="_Max Planning Time">5.0</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
 			<Parameter name="Range">0.1</Parameter>
 			<Parameter name="Node Rejection">1</Parameter>
 			<Parameter name="DelayCC (0/1)">0</Parameter>

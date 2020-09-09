@@ -63,7 +63,7 @@ namespace Kautham {
 		char *str = new char[20];
         for(unsigned i=0; i<_wkSpace->getNumRobControls();i++)
 		{
-			sprintf(str,"Discr. Steps %d",i);
+            sprintf(str,"_Discr. Steps %d",i);
 			it = _parameters.find(str);
 			if(it != _parameters.end())
 			{

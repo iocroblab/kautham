@@ -29,23 +29,23 @@
 	<Planner>
 		<Parameters>
 			<Name>KPIECEChainPlanner</Name>
+			<Parameter name="_Max Planning Time">90</Parameter>
+			<Parameter name="_Speed Factor">4</Parameter>
 			<Parameter name="Constraint Force Mixing">0.3000000119</Parameter>
 			<Parameter name="Control Dimensions">2</Parameter>
 			<Parameter name="Error Reduction Parameter">0.5</Parameter>
 			<Parameter name="Goal Bias">0.05</Parameter>
 			<Parameter name="Max Contacts">3</Parameter>
 			<Parameter name="Max Control Steps">30</Parameter>
-			<Parameter name="Max Planning Time">90</Parameter>
 			<Parameter name="Max Speed">10</Parameter>
 			<Parameter name="Min Control Steps">1</Parameter>
 			<Parameter name="PropagationStepSize">0.02</Parameter>
-			<Parameter name="Speed Factor">4</Parameter>
 			<Parameter name="only final link position?">1</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="3">0.5 0.5 0.5</Init>
-				<Goal dim="3">0.513 0.194 0.134</Goal>
+				<Init>0.5 0.5 0.5</Init>
+				<Goal>0.513 0.194 0.134</Goal>
 			</Query>
 		</Queries>
 	</Planner>

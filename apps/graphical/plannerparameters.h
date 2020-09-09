@@ -72,12 +72,12 @@ public:
 
         Form->setWindowTitle(QApplication::translate("Form", "Planners Parameters", 0));
         std::string text = "<b>General Planners Parameters</b>\
-                <br><br><em>Cspace Drawn:</em>If multi-robot problem, draws the cspace of the robot indicated (counting from 0).\
-                <br><em>Incremental (0/1):</em> If set continues the growing of the planner data structure.\
-                <br><em>Path Drawn (0/1):</em> If set draws the planner data in the workspace (it has effect after computing the solution)\
-                <br><em>Max Planning Time: </em>Maximum allowed time in seconds to find a solution.\
-                <br><em>Simplify Solution: </em> (0) Raw solution, (1) Smoothed solution using Bsplines, (2) Simplified solution\
-                <br><em>Speed Factor:</em> Speeds the animation of the solution (integer value)\
+                <br><br><em>_Cspace Drawn:</em>If multi-robot problem, draws the cspace of the robot indicated (counting from 0).\
+                <br><em>_Incremental (0/1):</em> If set continues the growing of the planner data structure.\
+                <br><em>_Path Drawn (0/1):</em> If set draws the planner data in the workspace (it has effect after computing the solution)\
+                <br><em>_Max Planning Time: </em>Maximum allowed time in seconds to find a solution.\
+                <br><em>_Simplify Solution: </em> (0) Raw solution, (1) Smoothed solution using Bsplines, (2) Simplified solution\
+                <br><em>_Speed Factor:</em> Speeds the animation of the solution (integer value)\
                 <br><br>\
                 <b>PRM</b>\
                 <br><br><em>BounceDistanceThreshold:</em> Maximum advance distance in the random bounce walk during the expand phase.\

@@ -57,9 +57,9 @@ namespace Kautham {
         _solved = false;
 
         _guiName = "Grid Planner";
-        addParameter("Speed Factor", _speedFactor);
-        addParameter("Show labels (0/1)", _showLabels);
-        addParameter("num decimals", _decimals);
+        addParameter("_Speed Factor", _speedFactor);
+        addParameter("_Show labels (0/1)", _showLabels);
+        addParameter("_num decimals", _decimals);
 
         //set step discretization
         _stepsDiscretization.resize(_wkSpace->getNumRobControls());
@@ -67,7 +67,7 @@ namespace Kautham {
 		KthReal step=0;
         for(unsigned i=0;i<_wkSpace->getNumRobControls();i++){
 			_stepsDiscretization[i] = 4;
-			sprintf(str,"Discr. Steps %d",i);
+            sprintf(str,"_Discr. Steps %d",i);
 			addParameter(str, _stepsDiscretization[i]);
 			step+=_stepsDiscretization[i];
 		}

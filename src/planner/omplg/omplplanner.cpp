@@ -438,12 +438,12 @@ namespace Kautham {
             _drawnPath = true; //by default we show the path into the workspace
 
             //add planner parameters
-            addParameter("Incremental (0/1)",_incremental);
-            addParameter("Max Planning Time",_planningTime);
-            addParameter("Speed Factor",_speedFactor);
-            addParameter("Simplify Solution",_simplify);
-            addParameter("Cspace Drawn",_drawnrobot);
-            addParameter("Path Drawn (0/1)",_drawnPath);
+            addParameter("_Incremental (0/1)",_incremental);
+            addParameter("_Max Planning Time",_planningTime);
+            addParameter("_Speed Factor",_speedFactor);
+            addParameter("_Simplify Solution",_simplify);
+            addParameter("_Cspace Drawn",_drawnrobot);
+            addParameter("_Path Drawn (0/1)",_drawnPath);
 
 
             if (ssptr == NULL) {
@@ -693,24 +693,24 @@ namespace Kautham {
         //! This function setParameters sets the parameters of the planner
         bool omplPlanner::setParameters(){
             try{
-                HASH_S_K::iterator it = _parameters.find("Speed Factor");
+                HASH_S_K::iterator it = _parameters.find("_Speed Factor");
                 if(it != _parameters.end())
                     _speedFactor = it->second;
                 else
                     return false;
 
-                it = _parameters.find("Max Planning Time");
+                it = _parameters.find("_Max Planning Time");
                 if(it != _parameters.end())
                     _planningTime = it->second;
                 else
                     return false;
 
 
-                it = _parameters.find("Cspace Drawn");
+                it = _parameters.find("_Cspace Drawn");
                 if(it != _parameters.end()){
                     if(it->second < 0 || it->second >= _wkSpace->getNumRobots()) {
                         _drawnrobot = 0;
-                        setParameter("Cspace Drawn",0);
+                        setParameter("_Cspace Drawn",0);
                     } else {
                         _drawnrobot = it->second;
                     }
@@ -718,18 +718,18 @@ namespace Kautham {
                 else
                     return false;
 
-                it = _parameters.find("Path Drawn (0/1)");
+                it = _parameters.find("_Path Drawn (0/1)");
                 if (it != _parameters.end()) {
                     if (it->second == 0.0) {
                         _drawnPath = false;
                     } else if (it->second == 1.0) {
                             _drawnPath = true;
                     } else {
-                        setParameter("Path Drawn (0/1)", _drawnPath);
+                        setParameter("_Path Drawn (0/1)", _drawnPath);
                     }
                 }
 
-                it = _parameters.find("Simplify Solution");
+                it = _parameters.find("_Simplify Solution");
                 if(it != _parameters.end())
                 {
                     if(it->second==0) _simplify=0;
@@ -739,7 +739,7 @@ namespace Kautham {
                 else
                     return false;
 
-                it = _parameters.find("Incremental (0/1)");
+                it = _parameters.find("_Incremental (0/1)");
                 if (it != _parameters.end()) {
                     _incremental = (it->second == 1);
                 }

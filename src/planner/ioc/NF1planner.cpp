@@ -51,13 +51,13 @@ namespace Kautham {
 	//! setParameters sets the parameters of the planner
     bool NF1Planner::setParameters(){
       try{
-        HASH_S_K::iterator it = _parameters.find("Speed Factor");
+        HASH_S_K::iterator it = _parameters.find("_Speed Factor");
         if(it != _parameters.end())
           _speedFactor = it->second;
         else
           return false;
 
-        it = _parameters.find("Show labels (0/1)");
+        it = _parameters.find("_Show labels (0/1)");
         if(it != _parameters.end())
           _showLabels = it->second;
         else
@@ -66,7 +66,7 @@ namespace Kautham {
 		char *str = new char[20];
         for(unsigned i=0; i<_wkSpace->getNumRobControls();i++)
 		{
-			sprintf(str,"Discr. Steps %d",i);
+            sprintf(str,"_Discr. Steps %d",i);
 			it = _parameters.find(str);
 			if(it != _parameters.end())
 			{

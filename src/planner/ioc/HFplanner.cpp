@@ -60,18 +60,42 @@ namespace Kautham {
 	//! setParameters sets the parameters of the planner
     bool HFPlanner::setParameters(){
       try{
-        HASH_S_K::iterator it = _parameters.find("Speed Factor");
+        HASH_S_K::iterator it = _parameters.find("_Speed Factor");
         if(it != _parameters.end())
           _speedFactor = it->second;
         else
           return false;
 
-
-        it = _parameters.find("Show labels (0/1)");
+        it = _parameters.find("_Show labels (0/1)");
         if(it != _parameters.end())
           _showLabels = it->second;
         else
           return false;
+
+        it = _parameters.find("_num decimals");
+        if(it != _parameters.end())
+        {
+          _decimals = it->second;
+          if(_decimals<0) _decimals = 0;
+          else if(_decimals>6) _decimals=6;
+        }
+        else
+          return false;
+
+        char *str = new char[20];
+        for(unsigned i=0; i<_wkSpace->getNumRobControls();i++)
+        {
+            sprintf(str,"_Discr. Steps %d",i);
+            it = _parameters.find(str);
+            if(it != _parameters.end())
+            {
+                setStepsDiscretization(it->second,i);
+                setRandValues();
+                computeHF(indexgoal);
+            }
+            else
+                return false;
+        }
 
 		it = _parameters.find("Goal potential");
 		if(it != _parameters.end())
@@ -99,32 +123,6 @@ namespace Kautham {
           _hfiter = it->second;
 		else
           return false;
-
-        it = _parameters.find("num decimals");
-        if(it != _parameters.end())
-        {
-          _decimals = it->second;
-          if(_decimals<0) _decimals = 0;
-          else if(_decimals>6) _decimals=6;
-        }
-        else
-          return false;
-
-		char *str = new char[20];
-        for(unsigned i=0; i<_wkSpace->getNumRobControls();i++)
-		{
-			sprintf(str,"Discr. Steps %d",i);
-			it = _parameters.find(str);
-			if(it != _parameters.end())
-			{
-                setStepsDiscretization(it->second,i);
-                setRandValues();
-                computeHF(indexgoal);
-			}
-			else
-				return false;
-		}
-
 
       }catch(...){
         return false;

@@ -73,12 +73,12 @@
     <Planner>
 	<Parameters>
 		<Name>omplRRTConnect</Name>
-		<Parameter name="Cspace Drawn">1</Parameter>
-                <Parameter name="Incremental (0/1)">0</Parameter>
-		<Parameter name="Max Planning Time">5</Parameter>
+		<Parameter name="_Cspace Drawn">1</Parameter>
+                <Parameter name="_Incremental (0/1)">0</Parameter>
+		<Parameter name="_Max Planning Time">5</Parameter>
+		<Parameter name="_Simplify Solution">2</Parameter>
+		<Parameter name="_Speed Factor">10</Parameter>
 		<Parameter name="Range">0.09</Parameter>
-		<Parameter name="Simplify Solution">2</Parameter>
-		<Parameter name="Speed Factor">10</Parameter>
         </Parameters>
 	<Queries>
 		<Query>

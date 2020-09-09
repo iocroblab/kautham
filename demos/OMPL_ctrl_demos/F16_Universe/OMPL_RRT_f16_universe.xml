@@ -13,8 +13,8 @@
 		<Parameters>
 			<Name>omplcRRTf16</Name>
 			<LocalPlanner stepSize="1">Linear</LocalPlanner>
-			<Parameter name="Max Planning Time">1.0</Parameter>
-			<Parameter name="Speed Factor">5</Parameter>
+			<Parameter name="_Max Planning Time">1.0</Parameter>
+			<Parameter name="_Speed Factor">5</Parameter>
                         <Parameter name="PropagationStepSize">0.04</Parameter>
                         <Parameter name="MinDuration">1</Parameter>
                         <Parameter name="MaxDuration">10</Parameter>
@@ -24,8 +24,8 @@
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="6">0.5 0.4 0.8 0.0 0.0 0.0</Init>
-				<Goal dim="6">0.2 0.2 0.2 0.0 0.0 0.75</Goal>
+				<Init>0.5 0.4 0.8 0.0 0.0 0.0</Init>
+				<Goal>0.2 0.2 0.2 0.0 0.0 0.75</Goal>
 			</Query>
 		</Queries>
 	</Planner>

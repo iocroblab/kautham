@@ -35,23 +35,23 @@
 	<Planner>
 		<Parameters>
 			<Name>KnowledgeOrientedKPIECE2DPlanner</Name>
+			<Parameter name="_Max Planning Time">150</Parameter>
+			<Parameter name="_Speed Factor">4</Parameter>
 			<Parameter name="Constraint Force Mixing">0.3000000119</Parameter>
 			<Parameter name="Control Dimensions">2</Parameter>
 			<Parameter name="Error Reduction Parameter">0.5</Parameter>
 			<Parameter name="Goal Bias">0.6</Parameter>
 			<Parameter name="Max Contacts">3</Parameter>
 			<Parameter name="Max Control Steps">30</Parameter>
-			<Parameter name="Max Planning Time">150</Parameter>
 			<Parameter name="Max Speed">10</Parameter>
 			<Parameter name="Min Control Steps">2</Parameter>
 			<Parameter name="PropagationStepSize">0.02999999933</Parameter>
-			<Parameter name="Speed Factor">4</Parameter>
 			<Parameter name="only final link position?">0</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init dim="3">0.544 0.433 0.4</Init>
-				<Goal dim="3">0.426 0.578 0.4</Goal>
+				<Init>0.544 0.433 0.4</Init>
+				<Goal>0.426 0.578 0.4</Goal>
 			</Query>
 		</Queries>
 	</Planner>

@@ -15,9 +15,9 @@
 	<Planner>
 		<Parameters>
 			<Name>NF1Planner</Name>
-			<Parameter name="Discr. Steps 0">40</Parameter>
-			<Parameter name="Discr. Steps 1">40</Parameter>
-			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="_Discr. Steps 0">40</Parameter>
+			<Parameter name="_Discr. Steps 1">40</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
