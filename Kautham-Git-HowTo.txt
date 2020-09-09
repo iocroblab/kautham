@@ -88,7 +88,7 @@ From a given branch (e.g. master), apply a change introduced by the commit e43a6
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INSTRUCTIONS TO UPDATE GITHUB REPO WITH THE LAST TAGGED GITIOC MASTER BRANCH
-(master)$ git remote add https://github.com/iocroblab/kautham.git 
+(master)$ git remote add github https://github.com/iocroblab/kautham.git 
 (master)$ git fetch
 (master)$ git pull
 (master)$ git push github master
