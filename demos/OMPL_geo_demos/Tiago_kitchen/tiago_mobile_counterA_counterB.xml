@@ -31,7 +31,7 @@
 	<Planner>
 		<Parameters>
 			<Name>omplRRTConnect</Name>
-			<Parameter name="_Max Planning Time">70</Parameter>
+			<Parameter name="_Max Planning Time">10</Parameter>
 			<Parameter name="_Speed Factor">2</Parameter>
 			<Parameter name="Range">0.1</Parameter>
 		</Parameters>

@@ -32,7 +32,7 @@
 			<Name>omplRRTConnect</Name>
 			<Parameter name="_Max Planning Time">3</Parameter>
 			<Parameter name="_Speed Factor">10</Parameter>
-			<Parameter name="Goal Bias">0.07</Parameter>
+			<Parameter name="Range">0.05</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
