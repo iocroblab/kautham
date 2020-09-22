@@ -805,7 +805,7 @@ namespace Kautham {
                     _wkSpace->moveRobotsTo(_path.at(i));
                     for (unsigned int j(0); j < _wkSpace->getNumRobots(); ++j) {
                         mt::Point3 point(_wkSpace->getRobot(j)->
-                                         getLink(_wkSpace->getRobot(j)->getTrunk()-1)->
+                                         getLink(_wkSpace->getRobot(j)->getTrunk())->
                                          getTransformation()->getTranslation());
 
                         vertices[j*_path.size()+i][0] = point[0];
@@ -874,7 +874,7 @@ namespace Kautham {
                 _wkSpace->moveRobotsTo(smp);
                 for (unsigned int j(0); j < _wkSpace->getNumRobots(); ++j) {
                     mt::Point3 point(_wkSpace->getRobot(j)->
-                                     getLink(_wkSpace->getRobot(j)->getTrunk()-1)->
+                                     getLink(_wkSpace->getRobot(j)->getTrunk())->
                                      getTransformation()->getTranslation());
 
                     goalVertices[j*goalStates->getStateCount()+i][0] = point[0];
@@ -897,7 +897,7 @@ namespace Kautham {
                 _wkSpace->moveRobotsTo(smp);
                 for (unsigned int j(0); j < _wkSpace->getNumRobots(); ++j) {
                     mt::Point3 point(_wkSpace->getRobot(j)->
-                                     getLink(_wkSpace->getRobot(j)->getTrunk()-1)->
+                                     getLink(_wkSpace->getRobot(j)->getTrunk())->
                                      getTransformation()->getTranslation());
 
                     vertices[j*pdata->numVertices()+i][0] = point[0];
@@ -987,7 +987,7 @@ namespace Kautham {
                     _wkSpace->moveRobotsTo(_path.at(i));
                     for (unsigned int j(0); j < _wkSpace->getNumRobots(); ++j) {
                         mt::Point3 point(_wkSpace->getRobot(j)->
-                                         getLink(_wkSpace->getRobot(j)->getTrunk()-1)->
+                                         getLink(_wkSpace->getRobot(j)->getTrunk())->
                                          getTransformation()->getTranslation());
 
                         vertices[j*_path.size()+i][0] = point[0];

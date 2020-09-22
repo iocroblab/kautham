@@ -127,9 +127,12 @@ namespace Kautham {
                 //Set nTrunk
                 if (links.size() > 0) {
                     Link *link = links.at(0);//starting from the base
-                    nTrunk = 1;
+                    nTrunk = 0;
                     bool trunk_end = false;
-                    while (!trunk_end && nTrunk < links.size()) {
+                    //int i=0;
+                    while (!trunk_end && nTrunk < links.size()-1) {
+                        //std::cout<<"-------------"<< i <<": "<< link->getName()<<" numchildren = "<< link->numChilds()<<std::endl;
+                        //i++;
                         if (link->numChilds() > 1) {
                             //trunk's end was found
                             trunk_end = true;
@@ -1593,6 +1596,23 @@ namespace Kautham {
         }catch(...){ }
 
         return response;
+    }
+
+    /*!
+  * Sets the link whose motion is to be visualized if a solution path is found.
+  * Set to nTrunk variable.
+  */
+    void Robot::setViewLink(string name)
+    {
+        int i=0;
+        while (i < links.size()) {
+            if(links.at(i)->getName() == name)
+            {
+                nTrunk = i;
+            }
+            //cout<<i<<": "<< links.at(i)->getName() <<" ========= ViewLink set to  "<< name <<" ========= nTrunk set to  "<< nTrunk << endl;
+            i++;
+        }
     }
 
 }

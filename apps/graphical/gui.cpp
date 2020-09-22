@@ -454,6 +454,16 @@ namespace Kautham {
             propertiesTab->addTab(tmpPlan, "Planner");
             //JAN
             indexPlannerTab = propertiesTab->indexOf(tmpPlan);
+
+            //draw path and planner data in Collision tab
+            SoSeparator *pathanddata(plan->getIvPathAndDataScene());
+            if (pathanddata) {
+                for (unsigned int i(0); i < viewers.size(); ++i) {
+                    if (viewers.at(i).title == "CollisionWSpace") {
+                        viewers.at(i).root->addChild(pathanddata);
+                    }
+                }
+            }
             return true;
         }
         return false;

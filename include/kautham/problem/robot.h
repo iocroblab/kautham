@@ -81,7 +81,7 @@ namespace Kautham {
       mt::Transform     _homeTrans; //!< This is the Home Reference frame at time zero (used to calculate the spatial limits).
       SoSeparator*      visModel; //!< Visualitzation model for the path.
       SoSeparator*      collModel; //!< Collision model for the path.
-      unsigned          nTrunk; //!< Number of links for the trunk in case of TREE robot
+      unsigned          nTrunk; //!< Number of links for the trunk in case of TREE robot - stores the link to be visaulized if path found (overwritten by ViewLink parameter)
       InverseKinematic* _ikine; //!< Defines the inverse kinematics of the robot, if available.
       ConstrainedKinematic* _constrainKin; //!< Defines the constrained kinematics of the robot, if it has one.
       std::vector<RobConf>   _proposedSolution; //!< Solution path to be drawn.
@@ -297,6 +297,9 @@ namespace Kautham {
     //! This method returns the maximum value of the D_H parameters.
     KthReal maxDHParameter();
 
+    //! Sets the link whose motion is to be visualized if a solution path is found. Set to nTrunk variable.
+    void setViewLink(string name);
+
     //! Return if this obstcale is attachable
     inline bool isAttachable() {return (!isAttached() && (links.size() == 1));}
 
@@ -314,6 +317,7 @@ namespace Kautham {
 
     //! Returns the link where the obstacle is attached to
     inline Link* getLinkAttachedTo() {return linkAttachedTo;}
+
 
   private:
     //! sets the Robot from a *.dh file

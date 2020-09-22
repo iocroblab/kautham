@@ -1315,6 +1315,12 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
         rob->getRobWeight()->setSE3Weight(1., 1.);
     }
 
+    //Set the SE3 weights for the distance computations, in case of mobile base
+    if (robot_node->child("ViewLink")) {
+        string name = robot_node->child("ViewLink").attribute("name").as_string();
+        rob->setViewLink( name );
+    }
+
     // Setup the Inverse Kinematic if it has one.
     string name;
     if (robot_node->child("InvKinematic")){
