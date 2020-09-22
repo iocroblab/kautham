@@ -4,6 +4,7 @@
             <Limits name="X" min="-3.0" max="3.0" />
             <Limits name="Y" min="-3.0" max="3.0" />
             <Limits name="Z" min="0.0985" max="0.0986" />
+            <ViewLink name="gripper_left_finger_link"/>
 	</Robot>
 	<Obstacle obstacle="obstacles/kitchen/kitchenfloor.iv" scale="1">
 		<Home TH="0" WZ="0.0" WY="0.0" WX="0.0" Z="-0.001" Y="0" X="0" />
@@ -29,7 +30,7 @@
 		<Parameters>
 			<Name>omplRRTConnect</Name>
 			<Parameter name="_Max Planning Time">30</Parameter>
-			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="_Speed Factor">2</Parameter>
 			<Parameter name="Range">0.2</Parameter>
 		</Parameters>
 		<Queries>
