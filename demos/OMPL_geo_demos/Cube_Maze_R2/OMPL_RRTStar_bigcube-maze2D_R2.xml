@@ -16,8 +16,9 @@
 	<Planner>
 		<Parameters>
 			<Name>omplRRTStar</Name>
-			<Parameter name="_Max Planning Time">3.0</Parameter>
+			<Parameter name="_Max Planning Time">1.0</Parameter>
 			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="_Simplify Solution">0</Parameter>
 			<Parameter name="Range">0.02</Parameter>
 		</Parameters>
 		<Queries>

@@ -62,7 +62,7 @@ namespace Kautham {
             addParameter("Range",planner->getRange());
             addParameter("Goal Bias",planner->getGoalBias());
             addParameter("Use K-Nearest (0/1)",planner->getKNearest());
-            addParameter("K-Neigh Factor",planner->getRewireFactor());
+            addParameter("Rewire Factor",planner->getRewireFactor());
             addParameter("Delay CC (0/1)",planner->getDelayCC());
             addParameter("Pruning (0/1)",planner->getTreePruning());
             addParameter("Prune Threshold",planner->getPruneThreshold());
@@ -138,7 +138,7 @@ namespace Kautham {
                     planner->setKNearest(it->second);
                 }
 
-                it = _parameters.find("K-Neigh Factor");
+                it = _parameters.find("Rewire Factor");
                 if (it == _parameters.end()) return false;
                 if (it->second <= 0.) {
                     it->second = planner->getRewireFactor();

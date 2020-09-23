@@ -6,7 +6,7 @@
 	<Parameter Name="maxTime" Value="10.0" />
 	<Parameter Name="maxMem" Value="8000.0" />
 	<Parameter Name="runCount" Value="10" />
-	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="displayProgress" Value="false" />
 	<Parameter Name="filename" Value="resultPRM.log" />
 </Benchmark>
 
