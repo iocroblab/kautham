@@ -168,6 +168,9 @@ bool Problem::createPlanner( string name, std::string synergyTreeFilename ) {
     else if (name == "omplRRTStar")
         _planner = new omplplanner::omplRRTStarPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
 
+    else if (name == "omplRRTStarPMD")
+        _planner = new omplplanner::omplRRTStarPMDPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
+
     else if (name == "omplTRRT")
         _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
 
@@ -562,11 +565,12 @@ bool Problem::createPlannerFromFile(xml_document *doc) {
                     ((omplplanner::omplLazyTRRTPlanner*)_planner)->
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
                                              child("Potential").attribute("potential").as_string());
-                } else if (plannerName == "omplRRTStar") {
-                    ((omplplanner::omplRRTStarPlanner*)_planner)->
+                }else if (plannerName == "omplRRTStarPMD") {
+                    ((omplplanner::omplRRTStarPMDPlanner*)_planner)->
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
                                              child("Potential").attribute("potential").as_string());
                 }
+
 
                 //Set normal parameters
                 xml_node::iterator it;
@@ -636,11 +640,12 @@ bool Problem::createPlannerFromFile(xml_document *doc, ompl::geometric::SimpleSe
                     ((omplplanner::omplLazyTRRTPlanner*)_planner)->
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
                                              child("Potential").attribute("potential").as_string());
-                } else if (plannerName == "omplRRTStar") {
-                    ((omplplanner::omplRRTStarPlanner*)_planner)->
+                }else if (plannerName == "omplRRTStarPMD") {
+                    ((omplplanner::omplRRTStarPMDPlanner*)_planner)->
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
                                              child("Potential").attribute("potential").as_string());
                 }
+
 
                 //Set normal parameters
                 xml_node::iterator it;

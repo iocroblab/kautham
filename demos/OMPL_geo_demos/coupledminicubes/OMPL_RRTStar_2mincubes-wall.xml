@@ -21,7 +21,7 @@
         <Controls robot="controls/2minicubes-nocoupling.cntr" />
 	<Planner>
 		<Parameters>
-			<Name>omplRRTStar</Name>
+			<Name>omplRRTStarPMD</Name>
 			<Parameter name="_Max Planning Time">5.0</Parameter>
 			<Parameter name="_Speed Factor">1</Parameter>
 			<Parameter name="Range">0.1</Parameter>

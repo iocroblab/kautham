@@ -60,6 +60,7 @@
 #include <kautham/planner/omplg/omplpRRTplanner.h>
 #include <kautham/planner/omplg/omplRRTConnectplanner.h>
 #include <kautham/planner/omplg/omplRRTStarplanner.h>
+#include <kautham/planner/omplg/omplRRTStarPMDplanner.h>
 #include <kautham/planner/omplg/omplTRRTplanner.h>
 #include <kautham/planner/omplg/omplTRRTConnectplanner.h>
 #include <kautham/planner/omplg/omplLazyTRRTplanner.h>
