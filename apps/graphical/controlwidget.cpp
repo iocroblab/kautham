@@ -167,6 +167,9 @@ namespace Kautham {
                     DOFWids.at(i)->setValues(params);
                 }
             }
+            stringstream sstr;
+            sstr << "Sample: " << sample->print(true);
+            writeGUI(sstr.str());
         }
     }
 
@@ -250,7 +253,11 @@ namespace Kautham {
 
         if (sample != NULL){
             setValues(sample->getCoords());
-        }
+        } 
+
+        stringstream sstr;
+        sstr << "Sample: " << sample->print(true);
+        writeGUI(sstr.str());
     }
 
 

@@ -907,13 +907,10 @@ namespace Kautham {
             Sample *smp =  _samples->getSampleAt(index);
             _planner->wkSpace()->moveRobotsTo(smp );
 
-            vector<KthReal> c = smp->getCoords();
-            cout << "sample: ";
 
-            for(unsigned i=0; i<c.size(); i++)
-                cout << c[i] << ", ";
-
-            cout << endl;
+            stringstream sstr;
+            sstr << "Sample: " << smp->print(true);
+            writeGUI(sstr.str());
 
             if (smp->getMappedConf().size()!=0) {
                 SE3Conf &s = smp->getMappedConf()[0].getSE3();
