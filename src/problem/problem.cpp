@@ -56,10 +56,6 @@ bool Problem::createWSpaceFromFile(xml_document *doc, bool useBBOX,
         if (!addRobot2WSpace(&tmpNode, useBBOX, progress)) return false;
     }
 
-    //Set robot controls
-    if (!setRobotControls(doc->child("Problem").child("Controls").
-                          attribute("robot").as_string())) return false;
-
     //Add all obstacles to worskpace
     for (tmpNode = doc->child("Problem").child("Obstacle");
          tmpNode; tmpNode = tmpNode.next_sibling("Obstacle")) {
@@ -67,9 +63,22 @@ bool Problem::createWSpaceFromFile(xml_document *doc, bool useBBOX,
     }
     _wspace->storeInitialObjectPoses();
 
+    //Set robot controls
+    /* This way gives problems since it does not enter to setObstacleControls...
+     * Now with the code below it enters setObstacleControls; but needs to be checked...
+     *
+    if (!setRobotControls(doc->child("Problem").child("Controls").
+                          attribute("robot").as_string())) return false;
     //Set obstacle controls
     if (!setObstacleControls(doc->child("Problem").child("Controls").
                              attribute("obstacle").as_string())) return false;
+    */
+    //Set controls
+    for (tmpNode = doc->child("Problem").child("Controls");
+         tmpNode; tmpNode = tmpNode.next_sibling("Controls")) {
+        if (!setRobotControls(tmpNode.attribute("robot").as_string())) return false;
+        if (!setObstacleControls(tmpNode.attribute("obstacle").as_string())) return false;
+    }
 
     setlocale (LC_NUMERIC, old);
 
