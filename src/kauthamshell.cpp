@@ -1656,25 +1656,25 @@ namespace Kautham {
             }
 
             Problem *const problem = (Problem*)memPtr_;
-            float  coord[3];
-            float ort[4];
-
-            coord[0] = pos[0];
-            coord[1] = pos[1];
-            coord[2] = pos[2];
-            ort[0] = pos[3];
-            ort[1] = pos[4];
-            ort[2] = pos[5];
-            ort[3] = pos[6];
-
-            problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->setPosition(coord);
-            problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->setOrientation(ort);
+            
+             // Here is needed to convert from axis-angle to
+            // quaternion internal represtantation.
+            SE3Conf tmpC;
+            SE3Conf::fromAxisToQuaternion(pos);
+            tmpC.setCoordinates(pos);
+            problem->getPlanner()->wkSpace()->getObstacle(index)->setHomePos(&tmpC);
 
             float x,y,z;
             x = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[0];
             y = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[1];
             z = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[2];
             std::cout<<"Object "<<index<<" at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+            float qx,qy,qz,qth;
+            qx = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[0];
+            qy = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[1];
+            qz = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[2];
+            qth = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[3];
+            std::cout<<"Object "<<index<<" at quaternion ("<<qx<<","<<qy<<","<<qz<<","<<qth<<")"<<std::endl;
 
             return true;
 
