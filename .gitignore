@@ -2,6 +2,5 @@
 CMakeLists.txt.user
 *~
 build*
-src/kautham_py/__pycache__/kautham_py.cpython-36.pyc
-src/kautham_py/__pycache__/kautham_python_interface.cpython-36.pyc
-apps/kautham_py/__pycache__/kautham_python_interface.cpython-36.pyc
+apps/kautham_py/__pycache__
+
