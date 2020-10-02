@@ -83,7 +83,7 @@ def kIsCollisionFree (controls,index):
 # Function that wraps the call to the kautham service that sets the planner parameters
 def kSetPlannerParameter(parametername, paramatervalue):
     rospy.wait_for_service("/kautham_node/SetPlannerParameter")
-    setplannerparameter_srv= CheckCollision()
+    setplannerparameter_srv= SetPlannerParameter()
     setplannerparameter_client=rospy.ServiceProxy("/kautham_node/SetPlannerParameter",SetPlannerParameter)
     
     setplannerparameter_srv.parameter= parametername
