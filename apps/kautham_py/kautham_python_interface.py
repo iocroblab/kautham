@@ -47,7 +47,7 @@ def kGetPath (printpath=0):
             for i in range(len(getpath_srv.response)):
                 for j in range(len(getpath_srv.response[i].v)):
                     path[i,j]=getpath_srv.response[i].v[j]
-                    print(path[i,j], end=" ")
+                    print(round(path[i,j],3), end=" ")
                 print()
         return path
     
