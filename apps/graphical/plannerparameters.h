@@ -72,40 +72,36 @@ public:
 
         Form->setWindowTitle(QApplication::translate("Form", "Planners Parameters", 0));
         std::string text = "<b>General Planners Parameters</b>\
-                <br><br><em>_Cspace Drawn:</em>If multi-robot problem, draws the cspace of the robot indicated (counting from 0).\
-                <br><em>_Incremental (0/1):</em> If set continues the growing of the planner data structure.\
-                <br><em>_Path Drawn (0/1):</em> If set draws the planner data in the workspace (it has effect after computing the solution)\
-                <br><em>_Max Planning Time: </em>Maximum allowed time in seconds to find a solution.\
-                <br><em>_Simplify Solution: </em> (0) Raw solution, (1) Smoothed solution using Bsplines, (2) Simplified solution\
-                <br><em>_Speed Factor:</em> Speeds the animation of the solution (integer value)\
+                <br><br><em>_Cspace Drawn:</em> If multi-robot problem, draws the cspace of the robot indicated (counting from 0).\
+                <br>Default value is 0.\
+                <br><br><em>_Incremental (0/1):</em> If set continues the growing of the planner data structure.\
+                <br> Default value is 0.\
+                <br><br><em>_Path Drawn (0/1):</em> If set draws the planner data in the workspace (it has effect after computing the solution).\
+                <br> Default value is 1.\
+                <br><br><em>_Max Planning Time: </em>Maximum allowed time in seconds to find a solution.\
+                <br> Default value is 10.\
+                <br><br><em>_Simplify Solution: </em> (0) Raw solution, (1) Smoothed solution using Bsplines, (2) Simplified solution.\
+                <br> Default value is 2.\
+                <br><br><em>_Speed Factor:</em> Speeds the animation of the solution (integer value).\
+                <br> Default value is 1.\
                 <br><br>\
                 <b>PRM</b>\
                 <br><br><em>BounceDistanceThreshold:</em> Maximum advance distance in the random bounce walk during the expand phase.\
-                <br><em>BounceSteps:</em> Maximum number of steps of the random bounce walk during the expand phase.\
-                <br><em>DistanceThreshold:</em> Maximum distance to search for neighbors nodes to connect the sampled new configuration.\
-                <br><em>MaxNearestNeighbors:</em> Maximum number of neighbors to try connections with the sampled new configuration.\
-                <br><em>MinExpandTime:</em> Time slot devoted to the expand phase.\
-                <br><em>MinGrowTime:</em>  Time slot devoted to the growing phase.\
-                <br><em>Sampler 0(r), 1(h) 2(sdk) 3(g):</em> Sampling source to be chosen among random, halton, sdk - deterministic-, gaussian\
+                <br><br><em>BounceSteps:</em> Maximum number of steps of the random bounce walk during the expand phase.\
+                <br><br><em>DistanceThreshold:</em> Maximum distance to search for neighbors nodes to connect the sampled new configuration.\
+                <br><br><em>MaxNearestNeighbors:</em> Maximum number of neighbors to try connections with the sampled new configuration.\
+                <br><br><em>MinExpandTime:</em> Time slot devoted to the expand phase.\
+                <br><br><em>MinGrowTime:</em>  Time slot devoted to the growing phase.\
+                <br><br><em>Sampler 0(r), 1(h) 2(sdk) 3(g):</em> Sampling source to be chosen among random, halton, sdk - deterministic-, gaussian\
                 <br><br>\
                 <b>RRT</b>\
                 <br><br><em>Goal Bias: </em> The fraction of time the goal is picked as the state to expand towards.\
-                <br><em>Range:</em> The maximum length of a motion to be added to a tree.\
+                <br><br><em>Range:</em> The maximum length of a motion to be added to a tree.\
                 <br><br>\
                 <b>RRT Connect</b>\
                 <br><br><em>Range:</em> The maximum length of a motion to be added to a tree.\
                 <br><br>\
-          <br><br><em> To be continued...</em>\
                 <b>RRT Star</b>\
-                <br><br><em>DelayCC (0/1): </em>\
-                <br><em>Goal Bias:</em> \
-                <br><em>K-Neigh Factor:</em> \
-                <br><em>KD:</em> \
-                <br><em>KI:</em> \
-                <br><em>KP:</em> \
-                <br><em>Node Rejection:</em> \
-                <br><em>Optimize (0)none/dist(1)/clear(2)/PMD(3):</em> \
-                <br><em>Range:</em> The maximum length of a motion to be added to a tree.\
                 <br><br>\
                 <b>SBL</b>\
                 <br><br>\
