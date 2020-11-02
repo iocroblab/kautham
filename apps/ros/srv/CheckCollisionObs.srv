@@ -1,4 +1,4 @@
-float32[] config
+int64 index
 ---
 bool response
 bool collisionFree

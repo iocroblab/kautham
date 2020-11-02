@@ -41,6 +41,7 @@
 #include <kautham/OpenProblem.h>
 #include <kautham/OpenProblemStream.h>
 #include <kautham/CheckCollision.h>
+#include <kautham/CheckCollisionObs.h>
 #include <kautham/SetRobotsConfig.h>
 #include <kautham/SetObstaclesConfig.h>
 #include <kautham/SetQuery.h>
@@ -209,8 +210,8 @@ bool srvCheckCollisionRob(kautham::CheckCollision::Request &req,
 
 }
 
-bool srvCheckCollisionObs(kautham::CheckCollision::Request &req,
-                                kautham::CheckCollision::Response &res) {
+bool srvCheckCollisionObs(kautham::CheckCollisionObs::Request &req,
+                                kautham::CheckCollisionObs::Response &res) {
 
     std::vector<unsigned> ObstColl;
     std::string msg;

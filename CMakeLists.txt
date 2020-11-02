@@ -104,6 +104,7 @@ if( KAUTHAM_ROS )
        SetPlannerByName.srv
        SetRobControlsStream.srv
        CheckCollision.srv
+       CheckCollisionObs.srv
        ProblemOpened.srv
        SetInitObs.srv
        SetPlannerParameter.srv
