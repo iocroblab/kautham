@@ -107,9 +107,11 @@
 	</Obstacle>
 	<Robot robot="robots/ur3_robotniq_A.urdf" scale="1.0">
 		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="-0.04" Y="0.0" X="0.37" />
+                <ViewLink name="tool0"/>
 	</Robot>
 	<Robot robot="robots/ur3_robotniq_B.urdf" scale="1.0">
 		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="-0.04" Y="0.0" X="-0.37" />
+                <ViewLink name="tool0"/>
 	</Robot>
 	<Controls robot="controls/ur3_robotniq_2.cntr" />
 	<Planner>
