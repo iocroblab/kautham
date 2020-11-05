@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <launch>        
-    <arg name="basetf" default="0.0 0.0 0.0  0.0 0.0 0.0 world base_link"/>
+    <!--arg name="basetf" default="0.0 0.0 0.0  0.0 0.0 0.0 world base_link"/-->
     <!-- Define the chess_frame where chess objects and cameras are referenced -->
-    <node pkg="tf2_ros" type="static_transform_publisher" name="chess_frame_broadcaster" args="$(arg basetf)" />
+    <!--node pkg="tf2_ros" type="static_transform_publisher" name="chess_frame_broadcaster" args="$(arg basetf)" /-->
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kautham)/apps/ros/config/kautham.rviz"/> 
-    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" required="true"/>
+    <node ns="robot0" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+    <node ns="robot0" name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" required="true"/>
+    <node ns="robot1" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+    <node ns="robot1" name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" required="true"/>
 </launch>

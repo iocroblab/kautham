@@ -80,6 +80,9 @@ if( KAUTHAM_ROS )
       message_generation
       roslib
       rospy
+      geometry_msgs 
+      tf2 
+      tf2_ros
     )
     include_directories(${catkin_INCLUDE_DIRS} include)
 
@@ -137,7 +140,7 @@ if( KAUTHAM_ROS )
     catkin_package(
       INCLUDE_DIRS include
       #LIBRARIES libkautham
-      CATKIN_DEPENDS roscpp trajectory_msgs std_msgs
+      CATKIN_DEPENDS roscpp trajectory_msgs std_msgs  geometry_msgs tf2 tf2_ros 
     )
 
 endif( KAUTHAM_ROS )

@@ -25,13 +25,16 @@
 #include <ros/ros.h>
 #include <kautham/kauthamshell.h>
 #include <kautham/LoadRobots.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Transform.h>
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
-
+#include <sstream>
+#include <string>
 using namespace Kautham;
 
 std::vector<std::string> rfilename;
-std::vector<tf2::Transform> rtransform;
+std::vector<geometry_msgs::TransformStamped> rtransform;
 int numrobots = 0;
 bool loaded = false;
 bool receivedcall = false;
@@ -43,11 +46,11 @@ bool srvLoadRobots(kautham::LoadRobots::Request &req,
     if(!loaded)
     {
         numrobots = req.robotsfiles.size();
-        rfiles.resize(numrobots);
+        rfilename.resize(numrobots);
         for(int i=0; numrobots;i++)
         {
-            rfiles[i] = req.robotsfiles[i];
-            rtransform[i] =
+            rfilename[i] = req.robotsfiles[i];
+            rtransform[i] = req.robottransforms[i];
         }
         return true;
     }
@@ -60,11 +63,34 @@ bool srvLoadRobots(kautham::LoadRobots::Request &req,
 
 int main (int argc, char **argv) {
     ros::init(argc, argv, "kautham_node_vis");
-    ros::NodeHandle n;
+    ros::NodeHandle nh;
 
     ROS_INFO("Starting Kautham ROS Viewer");
 
-    ros::ServiceServer service00 = n.advertiseService("kautham_node_vis/LoadRobots",srvLoadRobots);
+    ros::ServiceServer service00 = nh.advertiseService("kautham_node_vis/LoadRobots",srvLoadRobots);
+
+    //Test
+    numrobots = 2;
+    rfilename.resize(2);
+    rfilename[0] = "robots/ur3_robotniq_A.urdf";
+    rfilename[1] = "robots/ur3_robotniq_B.urdf";
+    rtransform.resize(2);
+    rtransform[0].transform.translation.x = 0.5;
+    rtransform[0].transform.translation.y = 0.0;
+    rtransform[0].transform.translation.z = 0.0;
+    rtransform[0].transform.rotation.x = 0.0;
+    rtransform[0].transform.rotation.y = 0.0;
+    rtransform[0].transform.rotation.z = 0.0;
+    rtransform[0].transform.rotation.w = 1.0;
+    rtransform[1].transform.translation.x = -0.5;
+    rtransform[1].transform.translation.y = 0.0;
+    rtransform[1].transform.translation.z = 0.0;
+    rtransform[1].transform.rotation.x = 0.0;
+    rtransform[1].transform.rotation.y = 0.0;
+    rtransform[1].transform.rotation.z = 0.0;
+    rtransform[1].transform.rotation.w = 1.0;
+    receivedcall = true;
+    //end test data
 
     ros::Rate rate(2.0);
     while (nh.ok())
@@ -77,12 +103,14 @@ int main (int argc, char **argv) {
                 //std::string name = "\"\\$(find kautham)/demos/models/robots/ur3_robotniq_A.urdf\"";
                 std::string rname = "\"\\$(find kautham)/demos/models/"+rfilename[i]+"\"";
 
+
+                std::stringstream my_robot_name;
+                my_robot_name << "/robot"<<i;
                 std::stringstream my_robot_description;
                 my_robot_description << "/robot"<<i<<"/robot_description";
-                std::string launchstr = "roslaunch kautham load_robot_description.launch" +
-                    " robot_description:=" + my_robot_description.str() +
-                    " robot_filename:=" + rname;
-                std::cout<<launchstr.c_str()<<std::endl;
+                std::string launchstr = "roslaunch kautham load_robot_description.launch rname:="
+                        + my_robot_name.str() + " rfilename:=" + rname;
+                std::cout<<launchstr<<std::endl;
                 system(launchstr.c_str());
     
                 //Modify the robot_description to include the correct paths for the geometries
@@ -98,34 +126,28 @@ int main (int argc, char **argv) {
                 ros::param::set(my_robot_description.str(), str);
                 //check:
                 //std::string s;
-                //ros::param::get("robot_description",s);
+                //ros::param::get(my_robot_description.str(),s);
                 //std::cout<<"robot = "<<s<<std::endl;
     
 //TO DO: pose of robot to be read from kautham
                 //Fill a geometry_msgs::TransformStamped with the grasp info
-                transformStamped.header.stamp = ros::Time::now();
-                transformStamped.header.frame_id = "world";
-                transformStamped.child_frame_id = "/robot0/base_link";
-                transformStamped.transform.translation.x = grasp01.getOrigin().getX();
-                transformStamped.transform.translation.y = grasp01.getOrigin().getY();
-                transformStamped.transform.translation.z = grasp01.getOrigin().getZ();
-                transformStamped.transform.rotation.x = grasp01.getRotation().getX();
-                transformStamped.transform.rotation.y = grasp01.getRotation().getY();
-                transformStamped.transform.rotation.z = grasp01.getRotation().getZ();
-                transformStamped.transform.rotation.w = grasp01.getRotation().getW();
+
+                rtransform[i].header.stamp = ros::Time::now();
+                rtransform[i].header.frame_id = "world";
+                std::stringstream my_child_frame_id;
+                my_child_frame_id  << "/robot"<<i<<"/base_link";
+                //rtransform[i].child_frame_id = my_child_frame_id.str();
+                rtransform[i].child_frame_id = "base_link";
 
                 //Define a broadcaster and sendTransform
                 static tf2_ros::StaticTransformBroadcaster br;
-                br.sendTransform(transformStamped);
+                br.sendTransform(rtransform[i]);
+            }
+            std::string viewerlaunchstr = "roslaunch kautham viewer.launch";
+            std::cout<<viewerlaunchstr.c_str()<<std::endl;
+            system(viewerlaunchstr.c_str());
 
-                //Modify the pose of the robot according to the kautham file
-                std::string tf = "\"0.3 0.0 0.0  0.0 0.0 0.0 world base_link\"";
-                std::string viewerlaunchstr = "roslaunch kautham viewer.launch basetf:="+tf;
-                std::cout<<viewerlaunchstr.c_str()<<std::endl;
-                system(viewerlaunchstr.c_str());
-
-                loaded = true;
-             }
+            loaded = true;
         }
         //Wait until it's time for another iteration
         rate.sleep();

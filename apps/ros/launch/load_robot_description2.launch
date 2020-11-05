@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- send robot urdf to param server -->
+  <group ns="robot0">
+    <param name="robot_description" textfile="$(find kautham)/demos/models/robots/ur3_robotniq_A.urdf" />
+  </group>
+</launch>
