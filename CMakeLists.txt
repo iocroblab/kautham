@@ -124,6 +124,7 @@ if( KAUTHAM_ROS )
        GetNumVertices.srv
        ObsPos.srv
        FindIK.srv
+       LoadRobots.srv
     )
 
     add_message_files(

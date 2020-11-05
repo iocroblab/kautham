@@ -17,6 +17,7 @@
     <visual>
       <geometry>
         <mesh filename="UR3/visual/base.dae"/>
+        <!--mesh filename="package://kautham/demos/models/robots/UR3/visual/base.dae"/-->
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
