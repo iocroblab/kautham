@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch> 
-  <arg name="robot_filename" />
+  <arg paramname="robot_description" />
+  <arg filename="robot_filename" />
   <!-- send robot urdf to param server -->
-  <param name="robot_description" textfile="$(arg robot_filename)" />
+  <param name="$(robot_description)" textfile="$(arg robot_filename)" />
 </launch>
