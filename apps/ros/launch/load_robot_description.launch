@@ -6,4 +6,5 @@
   <group ns="$(arg rname)">
     <param name="robot_description" textfile="$(arg rfilename)" />
   </group>
+  <!--param name="$(arg rname)" textfile="$(arg rfilename)" /-->
 </launch>

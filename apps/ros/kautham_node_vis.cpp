@@ -97,17 +97,17 @@ int main (int argc, char **argv) {
     {
         if(!loaded && receivedcall)
         {
+            std::string viewerlaunchstr = "roslaunch kautham viewer.launch";
             for(int i=0; i<numrobots; i++)
             {
                 //Launch the load_robot_description.launch that loads the robot_descrition
                 //std::string name = "\"\\$(find kautham)/demos/models/robots/ur3_robotniq_A.urdf\"";
                 std::string rname = "\"\\$(find kautham)/demos/models/"+rfilename[i]+"\"";
 
-
                 std::stringstream my_robot_name;
-                my_robot_name << "/robot"<<i;
+                my_robot_name << "robot"<<i;
                 std::stringstream my_robot_description;
-                my_robot_description << "/robot"<<i<<"/robot_description";
+                my_robot_description << "robot"<<i<<"/robot_description";
                 std::string launchstr = "roslaunch kautham load_robot_description.launch rname:="
                         + my_robot_name.str() + " rfilename:=" + rname;
                 std::cout<<launchstr<<std::endl;
@@ -123,27 +123,66 @@ int main (int argc, char **argv) {
                      index != std::string::npos && substr1.length();
                      index = str.find(substr1, index + substr2.length() ) )
                         str.replace(index, substr1.length(), substr2);
+
+                substr1 = "<joint name=\"";
+                substr2 = "<joint name=\""+my_robot_name.str()+"_";
+                for (size_t index = str.find(substr1, 0);
+                     index != std::string::npos && substr1.length();
+                     index = str.find(substr1, index + substr2.length() ) )
+                        str.replace(index, substr1.length(), substr2);
+
+                substr1 = "<mimic joint=\"";
+                substr2 = "<mimic joint=\""+my_robot_name.str()+"_";
+                for (size_t index = str.find(substr1, 0);
+                     index != std::string::npos && substr1.length();
+                     index = str.find(substr1, index + substr2.length() ) )
+                        str.replace(index, substr1.length(), substr2);
+
+                substr1 = "<child link=\"";
+                substr2 = "<child link=\""+my_robot_name.str()+"_";
+                for (size_t index = str.find(substr1, 0);
+                     index != std::string::npos && substr1.length();
+                     index = str.find(substr1, index + substr2.length() ) )
+                        str.replace(index, substr1.length(), substr2);
+
+                substr1 = "<parent link=\"";
+                substr2 = "<parent link=\""+my_robot_name.str()+"_";
+                for (size_t index = str.find(substr1, 0);
+                     index != std::string::npos && substr1.length();
+                     index = str.find(substr1, index + substr2.length() ) )
+                        str.replace(index, substr1.length(), substr2);
+
+                substr1 = "<link name=\"";
+                substr2 = "<link name=\""+my_robot_name.str()+"_";
+                for (size_t index = str.find(substr1, 0);
+                     index != std::string::npos && substr1.length();
+                     index = str.find(substr1, index + substr2.length() ) )
+                        str.replace(index, substr1.length(), substr2);
+
                 ros::param::set(my_robot_description.str(), str);
                 //check:
                 //std::string s;
                 //ros::param::get(my_robot_description.str(),s);
                 //std::cout<<"robot = "<<s<<std::endl;
-    
-//TO DO: pose of robot to be read from kautham
-                //Fill a geometry_msgs::TransformStamped with the grasp info
 
+                //Pose of robot base
                 rtransform[i].header.stamp = ros::Time::now();
                 rtransform[i].header.frame_id = "world";
                 std::stringstream my_child_frame_id;
-                my_child_frame_id  << "/robot"<<i<<"/base_link";
-                //rtransform[i].child_frame_id = my_child_frame_id.str();
-                rtransform[i].child_frame_id = "base_link";
+                my_child_frame_id  << "robot"<<i<<"_base_link";
+                rtransform[i].child_frame_id = my_child_frame_id.str();
+                //rtransform[i].child_frame_id = "base_link";
 
                 //Define a broadcaster and sendTransform
                 static tf2_ros::StaticTransformBroadcaster br;
                 br.sendTransform(rtransform[i]);
+
+                std::stringstream rlabel;
+                rlabel << "rname"<<i;
+                std::stringstream rbool;
+                rbool << "r"<<i;
+                viewerlaunchstr = viewerlaunchstr + " " + rbool.str() + ":=true " + rlabel.str() +":=" + my_robot_name.str();
             }
-            std::string viewerlaunchstr = "roslaunch kautham viewer.launch";
             std::cout<<viewerlaunchstr.c_str()<<std::endl;
             system(viewerlaunchstr.c_str());
 
