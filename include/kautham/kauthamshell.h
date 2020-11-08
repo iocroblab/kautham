@@ -88,6 +88,9 @@ namespace Kautham {
     bool getRobPos(unsigned int index, std::vector<float> &pos);
     bool getRobHomePos(unsigned int index, std::vector<float> &pos);
 
+    int getNumRobots();
+    bool getRobotFileNames(std::vector<std::string> &rnames);
+
     private:
         void *memPtr_;
     };

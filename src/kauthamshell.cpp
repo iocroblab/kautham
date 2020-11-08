@@ -1885,4 +1885,60 @@ namespace Kautham {
     }
 
 
+    int kauthamshell::getNumRobots() {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+            return (problem->getPlanner()->wkSpace()->getNumRobots());
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+    }
+
+
+    bool kauthamshell::getRobotFileNames(std::vector<std::string> &rnames) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+
+            problem->getRobotFileNames(rnames);
+            /*
+            std::cout<<"-------rnames: robot filename.size = "<<rnames.size()<<std::endl;
+            for(int i=0; i<rnames.size(); i++)
+            {
+                std::cout<<"---------robot filename "<<i<<": "<<rnames[i]<<std::endl;
+            }
+            */
+
+            return true;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return true;
+    }
+
+
 }

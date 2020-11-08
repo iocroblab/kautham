@@ -5,9 +5,11 @@ file(GLOB HDR_FILES *.h*)
 
 add_executable( kautham-rosnode kautham_node.cpp )
 target_link_libraries( kautham-rosnode libkautham ${catkin_LIBRARIES} ${PUGI_XML_LIBRARIES} )
+add_dependencies(kautham-rosnode ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 add_executable( kautham-rosnode-vis kautham_node_vis.cpp )
 target_link_libraries( kautham-rosnode-vis libkautham ${catkin_LIBRARIES} ${PUGI_XML_LIBRARIES} )
+add_dependencies(kautham-rosnode-vis ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 #########################################################
 install(TARGETS kautham-rosnode kautham-rosnode-vis

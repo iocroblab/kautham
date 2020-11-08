@@ -378,3 +378,14 @@ def kFindIK (pos, robIndex, armType, maintSameWrist,conf):
     else:
         print("Obstacle NOT removed")
     return r.response
+
+
+# Function that wraps the call to the kautham service that visualizes the scene
+def kVisualizeScene ():
+    print("Waiting for /kautham_node/VisualizeScene")
+    rospy.wait_for_service("/kautham_node/VisualizeScene")
+    visualizationscene_srv= VisualizeScene()
+    visualizationscene_client=rospy.ServiceProxy("/kautham_node/VisualizeScene",VisualizeScene)
+    print("Calling /kautham_node/VisualizeScene")
+    r = visualizationscene_client()
+    return True

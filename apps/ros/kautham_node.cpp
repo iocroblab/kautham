@@ -74,7 +74,8 @@
 #include <kautham/GetNumVertices.h>
 #include <kautham/ObsPos.h>
 #include <kautham/FindIK.h>
-
+#include <kautham/LoadRobots.h>
+#include <kautham/VisualizeScene.h>
 
 using namespace std;
 using namespace Kautham;
@@ -82,6 +83,50 @@ using namespace Kautham;
 std_msgs::String my_msg;
 ros::Publisher chatter_pub;
 kauthamshell* ksh;
+
+//Calls the srvLoadRobots service from the kautham_node_vis
+//that will visualize the scene.
+bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
+                       kautham::VisualizeScene::Response &resp) {
+    ros::NodeHandle n;
+    ros::service::waitForService("/kautham_node_vis/LoadRobots");
+
+    kautham::LoadRobots kthloadrobots_srv;
+    std::vector<std::string> robotfilenames;
+    int numrobots = ksh->getNumRobots();
+    ksh->getRobotFileNames(robotfilenames);
+
+    kthloadrobots_srv.request.robotsfiles.resize(numrobots);
+    kthloadrobots_srv.request.robottransforms.resize(numrobots);
+
+    ROS_INFO("Kautham srvVisualizeScene");
+    ROS_INFO("numrobots = %d",numrobots);
+    std::vector< std::vector<float> > poses;
+    poses.resize(numrobots);
+    for(int i=0; i<numrobots; i++)
+    {
+        ROS_INFO("robotfilenames[%d] = %s",i,robotfilenames[i].c_str());
+        kthloadrobots_srv.request.robotsfiles[i] = robotfilenames[i].c_str();
+        ksh->getRobPos(i, poses[i]);
+        kthloadrobots_srv.request.robottransforms[i].transform.translation.x = poses[i][0];
+        kthloadrobots_srv.request.robottransforms[i].transform.translation.y = poses[i][1];
+        kthloadrobots_srv.request.robottransforms[i].transform.translation.z = poses[i][2];
+        kthloadrobots_srv.request.robottransforms[i].transform.rotation.x = poses[i][3];
+        kthloadrobots_srv.request.robottransforms[i].transform.rotation.y = poses[i][4];
+        kthloadrobots_srv.request.robottransforms[i].transform.rotation.z = poses[i][5];
+        kthloadrobots_srv.request.robottransforms[i].transform.rotation.w = poses[i][6];
+    }
+
+    ros::ServiceClient kthloadrobots_client = n.serviceClient<kautham::LoadRobots>("/kautham_node_vis/LoadRobots");
+    ROS_INFO( "CALLING Kautham LoadRobots");
+    kthloadrobots_client.call(kthloadrobots_srv);
+
+    if (kthloadrobots_srv.response.response == true) {
+        ROS_INFO( "Kautham LoadRobots correctly loaded the robots" );
+    } else {
+        ROS_ERROR( "ERROR Kautham LoadRobots could not loaded the robots" );
+    }
+}
 
 
 bool srvCloseProblem(kautham::CloseProblem::Request &req,
@@ -632,6 +677,7 @@ int main (int argc, char **argv) {
     ros::ServiceServer service39 = n.advertiseService("kautham_node/SetRobotPos",srvSetRobPos);
     ros::ServiceServer service40 = n.advertiseService("kautham_node/GetRobotPos",srvGetRobPos);
     ros::ServiceServer service41 = n.advertiseService("kautham_node/GetRobotHomePos",srvGetRobHomePos);
+    ros::ServiceServer service42 = n.advertiseService("kautham_node/VisualizeScene",srvVisualizeScene);
 
     ros::spin();
 

@@ -128,6 +128,7 @@ if( KAUTHAM_ROS )
        ObsPos.srv
        FindIK.srv
        LoadRobots.srv
+       VisualizeScene.srv
     )
 
     add_message_files(

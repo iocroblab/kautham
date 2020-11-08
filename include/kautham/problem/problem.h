@@ -282,6 +282,10 @@ namespace Kautham {
         bool findFile(string &filename, vector<string> path);
 
 
+        void findRobotFilesNames(xml_node *parent);
+        void getRobotFileNames(vector<string> &rnames);
+
+
         //! Parses a problem file
         xml_document *parseProblemFile(string filename, vector <string> def_path, int *links2Load);
 
@@ -298,6 +302,7 @@ namespace Kautham {
         vector<KthReal>         _currentRobControls;
         vector<KthReal>         _currentObsControls;
         string                  _filePath;
+        vector<string>          _robotfilenames;
 
 
         /*!
