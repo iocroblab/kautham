@@ -1016,16 +1016,39 @@ void Problem::findRobotFilesNames(xml_node *parent) {
    }
 }
 
+
+//Returns the obstacles file names in the problem file
+void Problem::findObstaclesFilesNames(xml_node *parent) {
+   xml_node node = parent->child("Obstacle");
+   while (node) {
+      _obstaclesfilenames.push_back(node.attribute("obstacle").as_string());
+      node = node.next_sibling("Obstacle");
+   }
+}
+
 void Problem::getRobotFileNames(vector<string> &rnames)
 {
     rnames.clear();
     //std::cout<<"**********robot filename.size = "<<_robotfilenames.size()<<std::endl;
-    for(int i=0; i<_robotfilenames.size(); i++)
+    for(unsigned int i=0; i<_robotfilenames.size(); i++)
     {
         //std::cout<<"**********robot filename "<<i<<": "<<_robotfilenames[i]<<std::endl;
         rnames.push_back(_robotfilenames[i]);
     }
 }
+
+
+void Problem::getObstaclesFileNames(vector<string> &onames)
+{
+    onames.clear();
+    //std::cout<<"**********obstacle filename.size = "<<_obstaclesfilenames.size()<<std::endl;
+    for(unsigned int i=0; i<_obstaclesfilenames.size(); i++)
+    {
+        //std::cout<<"**********obstacles filename "<<i<<": "<<_obstaclesfilenames[i]<<std::endl;
+        onames.push_back(_obstaclesfilenames[i]);
+    }
+}
+
 
 bool Problem::prepareFile (xml_document *doc, vector <string> def_path) {
     if (isFileOK(doc)) {
@@ -1038,6 +1061,8 @@ bool Problem::prepareFile (xml_document *doc, vector <string> def_path) {
 
         //find all the obstacle files and set their complete path if found
         if (!findAllFiles(&node,"Obstacle","obstacle",def_path)) return false;
+        //store the names of the obstacles files in _obstaclesfilenames vector
+        findObstaclesFilesNames(&node);
 
         //find the robot controls file and set its complete path if found
         if (!findAllFiles(&node,"Controls","robot",def_path)) return false;

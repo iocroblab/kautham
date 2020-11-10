@@ -1691,22 +1691,22 @@ namespace Kautham {
         return false;
     }
 
-    std::vector<float> kauthamshell::getObstaclePos(int index){
+    bool kauthamshell::getObstaclePos(int index, std::vector<float> &pos){
 
         Problem *const problem = (Problem*)memPtr_;
-        std::vector<float> pos;
+
         pos.clear();
 
-        if(index >= problem->getPlanner()->wkSpace()->getNumObstacles())
+        if(index >= (int)problem->getPlanner()->wkSpace()->getNumObstacles())
         {
             cout << "Error: index (" << index << ") exceeds the number of obstacles " << problem->getPlanner()->wkSpace()->getNumObstacles() << endl;
-            return pos;
+            return true;
         } 
 
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
-                return pos;
+                return false;
             }
 
             float coord[3];
@@ -1729,7 +1729,7 @@ namespace Kautham {
             pos.push_back(ort[2]);
             pos.push_back(ort[3]);
 
-            return pos;
+            return true;
 
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
@@ -1741,7 +1741,7 @@ namespace Kautham {
                  << "to verify the correctness of the problem formulation.\n";
         }
 
-        return pos;
+        return false;
     }
 
     bool kauthamshell::findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution){
@@ -1907,6 +1907,28 @@ namespace Kautham {
     }
 
 
+    int kauthamshell::getNumObstacles() {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+            return (problem->getPlanner()->wkSpace()->getNumObstacles());
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+    }
+
+
     bool kauthamshell::getRobotFileNames(std::vector<std::string> &rnames) {
         try {
             if (!problemOpened()) {
@@ -1922,6 +1944,40 @@ namespace Kautham {
             for(int i=0; i<rnames.size(); i++)
             {
                 std::cout<<"---------robot filename "<<i<<": "<<rnames[i]<<std::endl;
+            }
+            */
+
+            return true;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return true;
+    }
+
+
+    bool kauthamshell::getObstaclesFileNames(std::vector<std::string> &onames) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+
+            problem->getObstaclesFileNames(onames);
+            /*
+            std::cout<<"-------onames: obstacle filename.size = "<<onames.size()<<std::endl;
+            for(int i=0; i<onames.size(); i++)
+            {
+                std::cout<<"---------obstacle filename "<<i<<": "<<onames[i]<<std::endl;
             }
             */
 

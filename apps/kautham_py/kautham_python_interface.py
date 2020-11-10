@@ -217,7 +217,7 @@ def kDetachObject(objectnumber):
     return r.response
 
 #Function that wraps the call to the kautham service that gets the pose of an obstacle
-def kObstaclePos(indexobs):
+def kGetObstaclePos(indexobs):
     rospy.wait_for_service("/kautham_node/GetObstaclePos")
     kauthamobstaclepos_srv = ObsPos()
     kauthamobstaclepos_srv.index= indexobs

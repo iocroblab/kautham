@@ -82,14 +82,16 @@ namespace Kautham {
     bool motionPlanner(std::vector <float> init, std::vector <float> goal, std::string root);
 
     bool setObstaclePos(int index, std::vector<float> pos);
-    std::vector<float> getObstaclePos(int index);
+    bool getObstaclePos(int index, std::vector<float> &pos);
     bool findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution);
     bool setRobPos(unsigned int index, std::vector<float> pos);
     bool getRobPos(unsigned int index, std::vector<float> &pos);
     bool getRobHomePos(unsigned int index, std::vector<float> &pos);
 
     int getNumRobots();
+    int getNumObstacles();
     bool getRobotFileNames(std::vector<std::string> &rnames);
+    bool getObstaclesFileNames(std::vector<std::string> &onames);
 
     private:
         void *memPtr_;

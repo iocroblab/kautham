@@ -81,6 +81,7 @@ if( KAUTHAM_ROS )
       roslib
       rospy
       geometry_msgs 
+      visualization_msgs
       tf2 
       tf2_ros
     )
@@ -129,6 +130,7 @@ if( KAUTHAM_ROS )
        FindIK.srv
        LoadRobots.srv
        VisualizeScene.srv
+       LoadObstacles.srv
     )
 
     add_message_files(
@@ -137,11 +139,11 @@ if( KAUTHAM_ROS )
        fVector.msg
         )
     catkin_python_setup()
-    generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs)
+    generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs  visualization_msgs )
     catkin_package(
       INCLUDE_DIRS include
       #LIBRARIES libkautham
-      CATKIN_DEPENDS roscpp trajectory_msgs std_msgs  geometry_msgs tf2 tf2_ros 
+      CATKIN_DEPENDS roscpp visualization_msgs trajectory_msgs std_msgs  geometry_msgs tf2 tf2_ros 
     )
 
 endif( KAUTHAM_ROS )
