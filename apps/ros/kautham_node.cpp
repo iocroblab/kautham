@@ -82,8 +82,9 @@ using namespace std;
 using namespace Kautham;
 
 std_msgs::String my_msg;
-ros::Publisher chatter_pub;
 kauthamshell* ksh;
+//visualization_msgs::MarkerArray kthmarkers;
+//bool publishobstacles = false;
 
 //Calls the srvLoadRobots service from the kautham_node_vis
 //that will visualize the scene.
@@ -97,56 +98,29 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     std::vector<std::string> obstaclesfilenames;
     int numobstacles = ksh->getNumObstacles();
     ksh->getObstaclesFileNames(obstaclesfilenames);
-    //for(int i=0; i<numobstacles; i++) {
-    //    ROS_INFO("filename[%d] %s", i, obstaclesfilenames[i].c_str());
-    //}
-    visualization_msgs::MarkerArray kthmarkers;
-    visualization_msgs::Marker marker;
+
+    kthloadobstacles_srv.request.obstaclesfiles.resize(numobstacles);
+    kthloadobstacles_srv.request.obstacletransforms.resize(numobstacles);
+
+    ROS_INFO("Kautham srvVisualizeScene");
+    ROS_INFO("numobstacles = %d",numobstacles);
     std::vector< std::vector<float> > poses;
     poses.clear();
     poses.resize(numobstacles);
-
-    for(int i=0; i<numobstacles; i++) {
+    for(int i=0; i<numobstacles; i++)
+    {
+        ROS_INFO("obstaclesfilenames[%d] = %s",i,obstaclesfilenames[i].c_str());
+        kthloadobstacles_srv.request.obstaclesfiles[i] = obstaclesfilenames[i].c_str();
         ksh->getObstaclePos(i, poses[i]);
-        marker.header.frame_id = "/world";
-        marker.header.stamp = ros::Time();
-        //marker.ns = req.objects.markers[i].ns;
-        marker.id = i;
-        marker.mesh_resource = obstaclesfilenames[i].c_str();
-
-        marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-        marker.action = visualization_msgs::Marker::ADD;
-        marker.pose.position.x = poses[i][0];
-        marker.pose.position.y = poses[i][1];
-        marker.pose.position.z = poses[i][2];
-        marker.pose.orientation.x = poses[i][3];
-        marker.pose.orientation.y = poses[i][4];
-        marker.pose.orientation.z = poses[i][5];
-        marker.pose.orientation.w = poses[i][6];
-/*
-        marker.scale.x = req.objects.markers[i].scale.x;
-        marker.scale.y = req.objects.markers[i].scale.y;
-        marker.scale.z = req.objects.markers[i].scale.z;
-        marker.color.a = 1.0; // Don't forget to set the alpha!
-        marker.color.r = req.objects.markers[i].color.r;
-        marker.color.g = req.objects.markers[i].color.g;
-        marker.color.b = req.objects.markers[i].color.b;
-        marker.mesh_use_embedded_materials = req.objects.markers[i].mesh_use_embedded_materials;//if true the r,g,b peviously defined are overriden
-*/
-        ROS_DEBUG("OBJECT: [%d]", marker.id);
-        ROS_INFO("mesh_resource: %s", marker.mesh_resource.c_str());
-        ROS_INFO("X value is: [%f]", marker.pose.position.x);
-        ROS_INFO("Y value is: [%f]", marker.pose.position.y);
-        ROS_INFO("Z value is: [%f]", marker.pose.position.z);
-        ROS_INFO("ORI X value is: [%f]", marker.pose.orientation.x);
-        ROS_INFO("ORI Y value is: [%f]", marker.pose.orientation.y);
-        ROS_INFO("ORI Z value is: [%f]", marker.pose.orientation.z);
-        ROS_INFO("ORI W value is: [%f]", marker.pose.orientation.w);
-
-        kthmarkers.markers.push_back(marker);
+        kthloadobstacles_srv.request.obstacletransforms[i].transform.translation.x = poses[i][0];
+        kthloadobstacles_srv.request.obstacletransforms[i].transform.translation.y = poses[i][1];
+        kthloadobstacles_srv.request.obstacletransforms[i].transform.translation.z = poses[i][2];
+        kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.x = poses[i][3];
+        kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.y = poses[i][4];
+        kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.z = poses[i][5];
+        kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.w = poses[i][6];
     }
 
-    kthloadobstacles_srv.request.obstacles = kthmarkers;
     ros::ServiceClient kthloadobstacles_client = n.serviceClient<kautham::LoadObstacles>("/kautham_node_vis/LoadObstacles");
     ROS_INFO( "CALLING Kautham LoadObstacles");
     kthloadobstacles_client.call(kthloadobstacles_srv);
@@ -156,7 +130,6 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     } else {
         ROS_ERROR( "ERROR Kautham LoadObstacles could not loaded the obstacles" );
     }
-
 
     //Now call the LoadRobots to load the robots and visualize them in rviz
     ros::service::waitForService("/kautham_node_vis/LoadRobots");
@@ -754,8 +727,29 @@ int main (int argc, char **argv) {
     ros::ServiceServer service41 = n.advertiseService("kautham_node/GetRobotHomePos",srvGetRobHomePos);
     ros::ServiceServer service42 = n.advertiseService("kautham_node/VisualizeScene",srvVisualizeScene);
 
-    ros::spin();
+    //The node advertises the marker poses
+    //ros::Publisher vis_pub = n.advertise<visualization_msgs::MarkerArray>( "visualization_marker_array", 1 );
 
+    ros::spin();
+    /*
+    ros::Rate rate(2.0);
+    while (n.ok())
+    {
+        ROS_INFO("looping kautham node -----------------------");
+        ros::spinOnce();
+        //publish joint values
+
+        //publish obstacles
+        if(publishobstacles)
+        {
+             vis_pub.publish( kthmarkers );
+             ROS_INFO("publishing kthobstacles....................");
+        }
+
+        //Wait until it's time for another iteration
+        rate.sleep();
+    }
+    */
     return 0;
 }
 

@@ -1,3 +1,4 @@
-visualization_msgs/MarkerArray obstacles
+string[] obstaclesfiles
+geometry_msgs/TransformStamped[] obstacletransforms
 ---
 bool response

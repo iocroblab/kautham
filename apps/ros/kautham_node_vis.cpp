@@ -37,9 +37,12 @@
 using namespace Kautham;
 
 std::vector<std::string> rfilename;
+std::vector<std::string> ofilename;
 std::vector<geometry_msgs::TransformStamped> rtransform;
+std::vector<geometry_msgs::TransformStamped> otransform;
 visualization_msgs::MarkerArray kthobstacles;
 int numrobots = 0;
+int numobstacles = 0;
 bool robotsloaded = false;
 bool receivedrobotscall = false;
 bool obstaclesloaded = false;
@@ -84,57 +87,28 @@ bool srvLoadObstacles(kautham::LoadObstacles::Request &req,
 {
     ROS_INFO( "STARTING Kautham LoadObjects");
     ROS_INFO( "********************************");
-
-    unsigned int i;
     receivedobstaclesscall = true; //flag to control that the service has been called
     if(!obstaclesloaded) //load data if the data has not yet been loaded
     {
-        i = 0;
-        visualization_msgs::Marker marker;
-
-        //PIECES SETUP
-        ROS_DEBUG("LOADING OBJECTS");
-        ROS_DEBUG("%d OBJECTs",(int)req.obstacles.markers.size());
-
-        for(i=0; i<req.obstacles.markers.size(); i++) {
-            marker.header.frame_id = req.obstacles.markers[i].header.frame_id;
-            marker.header.stamp = ros::Time();
-            marker.ns = req.obstacles.markers[i].ns;
-            marker.id = req.obstacles.markers[i].id;
-            marker.mesh_resource = req.obstacles.markers[i].mesh_resource;
-
-            marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-            marker.action = visualization_msgs::Marker::ADD;
-            marker.pose = req.obstacles.markers[i].pose;
-
-            marker.scale.x = req.obstacles.markers[i].scale.x;
-            marker.scale.y = req.obstacles.markers[i].scale.y;
-            marker.scale.z = req.obstacles.markers[i].scale.z;
-            marker.color.a = 1.0; // Don't forget to set the alpha!
-            marker.color.r = req.obstacles.markers[i].color.r;
-            marker.color.g = req.obstacles.markers[i].color.g;
-            marker.color.b = req.obstacles.markers[i].color.b;
-            marker.mesh_use_embedded_materials = req.obstacles.markers[i].mesh_use_embedded_materials;//if true the r,g,b peviously defined are overriden
-
-            ROS_DEBUG("OBJECT: [%d]", marker.id);
-            ROS_INFO("mesh_resource: %s", marker.mesh_resource.c_str());
-            ROS_INFO("X value is: [%f]", marker.pose.position.x);
-            ROS_INFO("Y value is: [%f]", marker.pose.position.y);
-            ROS_INFO("Z value is: [%f]", marker.pose.position.z);
-            ROS_INFO("ORI X value is: [%f]", marker.pose.orientation.x);
-            ROS_INFO("ORI Y value is: [%f]", marker.pose.orientation.y);
-            ROS_INFO("ORI Z value is: [%f]", marker.pose.orientation.z);
-            ROS_INFO("ORI W value is: [%f]", marker.pose.orientation.w);
-
-            kthobstacles.markers.push_back(marker);
+        numobstacles = req.obstaclesfiles.size();
+        ROS_INFO("---numobstacles = %d",numobstacles);
+        ofilename.resize(numobstacles);
+        otransform.resize(numobstacles);
+        for(int i=0; i<numobstacles;i++)
+        {
+            ROS_INFO("---obstaclesfilenames[%d] = %s",i,req.obstaclesfiles[i].c_str());
+            ofilename[i] = req.obstaclesfiles[i];
+            otransform[i] = req.obstacletransforms[i];
+            ROS_INFO("---otransform[%d] = (%f,%f,%f)",i,otransform[i].transform.translation.x,
+                     otransform[i].transform.translation.y,
+                     otransform[i].transform.translation.z);
         }
         res.response = true;
-        obstaclesloaded = true;
         return true;
     }
     else
     {
-        ROS_WARN("The objects have already been loaded. This service is only called once");
+        ROS_WARN("The obstacles have already been loaded. This service is only called once");
         res.response = false;
         return false;
     }
@@ -260,6 +234,117 @@ bool loadRobots()
     return robotsloaded;
 }
 
+
+bool loadObstacles()
+{
+    if(!obstaclesloaded && receivedobstaclesscall)
+    {
+        //Loop for all obstacles
+        for(int i=0; i<numobstacles; i++)
+        {
+            //(1) Launch the load_robot_description.launch that loads the robot_descrition within the robot namespace
+            // obstacles will be visualized as robot using robot_description within their own namespace
+            // recall that obstacles are defines as robots in theire urdf files...
+
+            //Fill the string that will allow to obtain the complete robot filename
+            //std::string rname = "\"\\$(find kautham)/demos/models/"+rfilename[i]+"\"";
+            std::string oname = "\"" + ofilename[i] +"\"";
+            //Fill the obstacle namespace. Obstacles namespaces are: obstacle0, obstacle1, etc...
+            std::stringstream obstacle_namespace;
+            obstacle_namespace << "obstacle"<<i;
+            //Fill the launch command
+            std::string launchstr = "roslaunch kautham load_robot_description.launch rname:="
+                    + obstacle_namespace.str() + " ofilename:=" + oname;
+            std::cout<<launchstr<<std::endl;
+            //Launch
+            system(launchstr.c_str());
+
+            //(2) Modify the robot_description to include:
+            // - names of links and joints that start with the robot namespace label, i.e. "obstacleX_"
+            // - the correct paths for the geometries. Here it is assumed that the models are in the
+            //   standard kautham directory, i.e. in: "package://kautham/demos/models/robots/"
+
+            //Load the robot description string
+            std::stringstream my_obstacle_description;
+            my_obstacle_description << "obstacle"<<i<<"/robot_description";
+            std::string str;
+            ros::param::get(my_obstacle_description.str(), str);
+
+            //Substitute the file paths
+            std::string substr1 = "filename=\"";
+            std::string substr2 = "filename=\"package://kautham/demos/models/obstacles/";
+            for (size_t index = str.find(substr1, 0);
+                 index != std::string::npos && substr1.length();
+                 index = str.find(substr1, index + substr2.length() ) )
+                    str.replace(index, substr1.length(), substr2);
+
+            //Substitute the joint names
+            substr1 = "<joint name=\"";
+            substr2 = "<joint name=\""+obstacle_namespace.str()+"_";
+            for (size_t index = str.find(substr1, 0);
+                 index != std::string::npos && substr1.length();
+                 index = str.find(substr1, index + substr2.length() ) )
+                    str.replace(index, substr1.length(), substr2);
+
+            //Substitute the mimic joint names
+            substr1 = "<mimic joint=\"";
+            substr2 = "<mimic joint=\""+obstacle_namespace.str()+"_";
+            for (size_t index = str.find(substr1, 0);
+                 index != std::string::npos && substr1.length();
+                 index = str.find(substr1, index + substr2.length() ) )
+                    str.replace(index, substr1.length(), substr2);
+
+            //Substitute the link names
+            substr1 = "<link name=\"";
+            substr2 = "<link name=\""+obstacle_namespace.str()+"_";
+            for (size_t index = str.find(substr1, 0);
+                 index != std::string::npos && substr1.length();
+                 index = str.find(substr1, index + substr2.length() ) )
+                    str.replace(index, substr1.length(), substr2);
+
+            //Substitute the child link names
+            substr1 = "<child link=\"";
+            substr2 = "<child link=\""+obstacle_namespace.str()+"_";
+            for (size_t index = str.find(substr1, 0);
+                 index != std::string::npos && substr1.length();
+                 index = str.find(substr1, index + substr2.length() ) )
+                    str.replace(index, substr1.length(), substr2);
+
+            //Substitute the parent link names
+            substr1 = "<parent link=\"";
+            substr2 = "<parent link=\""+obstacle_namespace.str()+"_";
+            for (size_t index = str.find(substr1, 0);
+                 index != std::string::npos && substr1.length();
+                 index = str.find(substr1, index + substr2.length() ) )
+                    str.replace(index, substr1.length(), substr2);
+
+            //Set the corrected robot descrition
+            ros::param::set(my_obstacle_description.str(), str);
+
+            //Check the corrected robot description:
+            //std::string s;
+            //ros::param::get(my_robot_description.str(),s);
+            //std::cout<<"robot = "<<s<<std::endl;
+
+            //(3) Broadcast transfporms where to place the robots.
+            //It is assumed that the link of the robot base is called "base".
+            otransform[i].header.stamp = ros::Time::now();
+            otransform[i].header.frame_id = "world";
+            std::stringstream my_child_frame_id;
+            my_child_frame_id  << "obstacle"<<i<<"_base";
+            otransform[i].child_frame_id = my_child_frame_id.str();
+
+            //Define a broadcaster and sendTransform
+            static tf2_ros::StaticTransformBroadcaster br;
+            br.sendTransform(otransform[i]);
+
+        }
+
+        obstaclesloaded = true;
+    }
+    return obstaclesloaded;
+}
+
 int main (int argc, char **argv) {
     ros::init(argc, argv, "kautham_node_vis");
     ros::NodeHandle nh;
@@ -271,7 +356,7 @@ int main (int argc, char **argv) {
     ros::ServiceServer service01 = nh.advertiseService("kautham_node_vis/LoadObstacles",srvLoadObstacles);
 
     //The node advertises the marker poses
-    ros::Publisher vis_pub = nh.advertise<visualization_msgs::MarkerArray>( "visualization_marker_array", 1 );
+    //ros::Publisher vis_pub = nh.advertise<visualization_msgs::MarkerArray>( "visualization_marker_array", 1 );
 
 
     //Test the node without using info passed by the service
@@ -302,19 +387,21 @@ int main (int argc, char **argv) {
     ros::Rate rate(2.0);
     while (nh.ok())
     {
-
-        if(obstaclesloaded) ROS_INFO("obstaclesloaded ....................");
-        else ROS_INFO("NOT obstaclesloaded +++++++++++++++++++++");
+        ROS_INFO("looping node_viz +++++++++++++++++++++");
+        //if(obstaclesloaded) ROS_INFO("obstaclesloaded ....................");
+        //else ROS_INFO("NOT obstaclesloaded +++++++++++++++++++++");
         ros::spinOnce();
         //If the data has been received through a call to the load service and it has not yet been loaded then proceed
         loadRobots();
+        loadObstacles();
 
         //load environment
-        if(obstaclesloaded)
+        /*if(obstaclesloaded)
         {
              vis_pub.publish( kthobstacles );
              ROS_INFO("publishing kthobstacles....................");
         }
+        */
 
         //Wait until it's time for another iteration
         rate.sleep();
