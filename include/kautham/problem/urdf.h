@@ -27,6 +27,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 #include <stdlib.h>
 #include <mt/point3.h>
 #include <mt/rotation.h>
@@ -220,6 +221,7 @@ public:
     urdf_robot ();//!< Class constructor
     void fill (xml_node *node, string dir);//!< Fills variables given a robot node
     void print();//!< Prints robot information
+    void getJointNames(vector<string> &jnames);//!< Gets the joint names
 };
 
 /** @}   end of Doxygen module "Problem" */

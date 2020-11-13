@@ -456,4 +456,13 @@ void urdf_robot::print() {
              << link[i].limit.effort << " velocity=" << link[i].limit.velocity << endl;
     }
 }
+
+void urdf_robot::getJointNames(std::vector<std::string> &jnames) {
+    //print();
+    jnames.resize(num_links-1);
+    for (unsigned int i = 0; i < jnames.size(); ++i) {
+        jnames[i] = link[i+1].joint; //joint i is stored in link i+1 data structure
+    }
+}
+
 }

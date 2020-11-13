@@ -92,6 +92,7 @@ namespace Kautham {
     int getNumObstacles();
     bool getRobotFileNames(std::vector<std::string> &rnames);
     bool getObstaclesFileNames(std::vector<std::string> &onames);
+    bool getRobotJointNames(int r, std::vector<std::string> &jnames);
 
     private:
         void *memPtr_;

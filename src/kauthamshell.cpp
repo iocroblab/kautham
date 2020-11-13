@@ -1997,4 +1997,36 @@ namespace Kautham {
     }
 
 
+    bool kauthamshell::getRobotJointNames(int r, std::vector<std::string> &jnames) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+            //std::cout<<"getRobotJointNames ************************"<<std::endl;
+            problem->getPlanner()->wkSpace()->getRobot(r)->getJointNames(jnames);
+            /*
+            std::cout<<"-------jnames: jnames.size = "<<jnames.size()<<std::endl;
+            for(unsigned int i=0; i<jnames.size(); i++)
+            {
+                std::cout<<"---------joint name "<<i<<": "<<jnames[i]<<std::endl;
+            }
+            */
+
+            return true;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return true;
+    }
 }

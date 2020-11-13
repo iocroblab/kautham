@@ -104,7 +104,7 @@ namespace Kautham {
       bool              collisionable; //!< Set to true if the robot can have collision with other robots
       Robot*            robotAttachedTo; //!< In case of obstacle, it is the robot where the obstacle is attached to. If it is not attached to any robot, it is equal to NULL
       Link*             linkAttachedTo; //!< In case of obstacle, it is the link where the obstacle is attached to. If it is not attached to any link, it is equal to NULL
-
+      std::vector<std::string> _jointnames; //!< This is the vector of joint names as read from the urdf file
 
   public:
 
@@ -300,6 +300,9 @@ namespace Kautham {
     //! Sets the link whose motion is to be visualized if a solution path is found. Set to nTrunk variable.
     void setViewLink(string name);
 
+    //! Gets the vector of joint names
+    bool getJointNames(std::vector<std::string> &jnames);
+
     //! Return if this obstcale is attachable
     inline bool isAttachable() {return (!isAttached() && (links.size() == 1));}
 
@@ -317,7 +320,6 @@ namespace Kautham {
 
     //! Returns the link where the obstacle is attached to
     inline Link* getLinkAttachedTo() {return linkAttachedTo;}
-
 
   private:
     //! sets the Robot from a *.dh file

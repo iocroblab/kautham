@@ -5,7 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Status1
-        - /MarkerArray1
       Splitter Ratio: 0.36775362491607666
     Tree Height: 497
   - Class: rviz/Selection
@@ -57,6 +56,10 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        obstacle0_base:
+          Value: true
+        obstacle1_base:
+          Value: true
         robot0_base_link:
           Value: true
         robot0_coupler_link:
@@ -150,6 +153,10 @@ Visualization Manager:
       Show Names: true
       Tree:
         world:
+          obstacle0_base:
+            {}
+          obstacle1_base:
+            {}
           robot0_base_link:
             robot0_shoulder_link:
               robot0_upper_arm_link:
@@ -319,7 +326,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-      Name: RobotModel
+      Name: robot0
       Robot Description: robot0/robot_description
       TF Prefix: ""
       Update Interval: 0
@@ -440,20 +447,54 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-      Name: RobotModel
+      Name: robot1
       Robot Description: robot1/robot_description
       TF Prefix: ""
       Update Interval: 0
       Value: true
       Visual Enabled: true
-    - Class: rviz/MarkerArray
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
       Enabled: true
-      Marker Topic: /visualization_marker_array
-      Name: MarkerArray
-      Namespaces:
-        {}
-      Queue Size: 100
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        obstacle0_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: Object0
+      Robot Description: obstacle0/robot_description
+      TF Prefix: ""
+      Update Interval: 0
       Value: true
+      Visual Enabled: true
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        obstacle1_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: Object1
+      Robot Description: obstacle1/robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -497,10 +538,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5903981924057007
+      Pitch: 0.6253981590270996
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.5203996896743774
+      Yaw: 2.1503992080688477
     Saved: ~
 Window Geometry:
   Displays:

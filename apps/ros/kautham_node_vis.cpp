@@ -47,6 +47,9 @@ bool robotsloaded = false;
 bool receivedrobotscall = false;
 bool obstaclesloaded = false;
 bool receivedobstaclesscall = false;
+bool gui=false;
+
+tf2_ros::StaticTransformBroadcaster *br;
 
 //This service is to be called only once to load the rots info: filenames and pose
 bool srvLoadRobots(kautham::LoadRobots::Request &req,
@@ -57,6 +60,7 @@ bool srvLoadRobots(kautham::LoadRobots::Request &req,
     receivedrobotscall = true; //flag to control that the service has been called
     if(!robotsloaded) //load data if the data has not yet been loaded
     {
+        gui = req.gui;
         numrobots = req.robotsfiles.size();
         ROS_INFO("---numrobots = %d",numrobots);
         rfilename.resize(numrobots);
@@ -96,12 +100,12 @@ bool srvLoadObstacles(kautham::LoadObstacles::Request &req,
         otransform.resize(numobstacles);
         for(int i=0; i<numobstacles;i++)
         {
-            ROS_INFO("---obstaclesfilenames[%d] = %s",i,req.obstaclesfiles[i].c_str());
+            //ROS_INFO("---!!!!!!!!obstaclesfilenames[%d] = %s",i,req.obstaclesfiles[i].c_str());
             ofilename[i] = req.obstaclesfiles[i];
             otransform[i] = req.obstacletransforms[i];
-            ROS_INFO("---otransform[%d] = (%f,%f,%f)",i,otransform[i].transform.translation.x,
-                     otransform[i].transform.translation.y,
-                     otransform[i].transform.translation.z);
+            //ROS_INFO("---otransform[%d] = (%f,%f,%f)",i,otransform[i].transform.translation.x,
+            //         otransform[i].transform.translation.y,
+            //         otransform[i].transform.translation.z);
         }
         res.response = true;
         return true;
@@ -119,6 +123,7 @@ bool loadRobots()
 {
     if(!robotsloaded && receivedrobotscall)
     {
+        ROS_INFO("loadRobots!!!!!!!!");
         //Start fillilng the launch command for the viewer.launch file
         std::string viewerlaunchstr = "roslaunch kautham viewer.launch";
         //Loop for all robots
@@ -214,16 +219,19 @@ bool loadRobots()
             my_child_frame_id  << "robot"<<i<<"_base_link";
             rtransform[i].child_frame_id = my_child_frame_id.str();
 
-            //Define a broadcaster and sendTransform
-            static tf2_ros::StaticTransformBroadcaster br;
-            br.sendTransform(rtransform[i]);
+            //Use the broadcaster to sendTransform
+            br->sendTransform(rtransform[i]);
 
             //(4) Complete the string to launch the viewer.launch file:
             std::stringstream rlabel;
             rlabel << "rname"<<i;
             std::stringstream rbool;
             rbool << "r"<<i;
-            viewerlaunchstr = viewerlaunchstr + " " + rbool.str() + ":=true " + rlabel.str() +":=" + robot_namespace.str();
+            std::stringstream guibool;
+            if(gui) guibool << "true";
+            else guibool << "false";
+            viewerlaunchstr = viewerlaunchstr + " " + rbool.str() + ":=true " + rlabel.str() +
+                              ":=" + robot_namespace.str() + " gui:=" + guibool.str();
         }
         //Launch the viewer.launch file
         std::cout<<viewerlaunchstr.c_str()<<std::endl;
@@ -239,9 +247,11 @@ bool loadObstacles()
 {
     if(!obstaclesloaded && receivedobstaclesscall)
     {
+        ROS_INFO("loadObstacles!!!!!!!!");
         //Loop for all obstacles
         for(int i=0; i<numobstacles; i++)
         {
+            ROS_INFO("obstacle %d", i);
             //(1) Launch the load_robot_description.launch that loads the robot_descrition within the robot namespace
             // obstacles will be visualized as robot using robot_description within their own namespace
             // recall that obstacles are defines as robots in theire urdf files...
@@ -254,7 +264,7 @@ bool loadObstacles()
             obstacle_namespace << "obstacle"<<i;
             //Fill the launch command
             std::string launchstr = "roslaunch kautham load_robot_description.launch rname:="
-                    + obstacle_namespace.str() + " ofilename:=" + oname;
+                    + obstacle_namespace.str() + " rfilename:=" + oname;
             std::cout<<launchstr<<std::endl;
             //Launch
             system(launchstr.c_str());
@@ -262,7 +272,7 @@ bool loadObstacles()
             //(2) Modify the robot_description to include:
             // - names of links and joints that start with the robot namespace label, i.e. "obstacleX_"
             // - the correct paths for the geometries. Here it is assumed that the models are in the
-            //   standard kautham directory, i.e. in: "package://kautham/demos/models/robots/"
+            //   standard kautham directory, i.e. in: "package://kautham/demos/models/obstacles/"
 
             //Load the robot description string
             std::stringstream my_obstacle_description;
@@ -271,8 +281,15 @@ bool loadObstacles()
             ros::param::get(my_obstacle_description.str(), str);
 
             //Substitute the file paths
+            //First extract from the ofilename[i] the path, i.e. from the begining till the last "/" character
+            std::size_t found = ofilename[i].find_last_of("/");
             std::string substr1 = "filename=\"";
-            std::string substr2 = "filename=\"package://kautham/demos/models/obstacles/";
+            std::string substr2 = std::string("filename=\"file://")+ofilename[i].substr(0,found+1);
+            //std::cout<<"fname="<<ofilename[i]<<std::endl;
+            //std::cout<<"found="<<found<<std::endl;
+            //std::cout<<"fpath="<<substr2<<std::endl;
+            //std::string substr2 = "filename=\"file:///home/jan/catkin/catkin_wsTAMP/src/kautham/demos/models/obstacles/chess/";
+            //std::string substr2 = "filename=\"package://kautham/demos/models/obstacles/chess/";
             for (size_t index = str.find(substr1, 0);
                  index != std::string::npos && substr1.length();
                  index = str.find(substr1, index + substr2.length() ) )
@@ -322,11 +339,11 @@ bool loadObstacles()
             ros::param::set(my_obstacle_description.str(), str);
 
             //Check the corrected robot description:
-            //std::string s;
-            //ros::param::get(my_robot_description.str(),s);
-            //std::cout<<"robot = "<<s<<std::endl;
+            std::string s;
+            ros::param::get(my_obstacle_description.str(),s);
+            std::cout<<"robot = "<<s<<std::endl;
 
-            //(3) Broadcast transfporms where to place the robots.
+            //(3) Broadcast transforms where to place the robots.
             //It is assumed that the link of the robot base is called "base".
             otransform[i].header.stamp = ros::Time::now();
             otransform[i].header.frame_id = "world";
@@ -334,10 +351,11 @@ bool loadObstacles()
             my_child_frame_id  << "obstacle"<<i<<"_base";
             otransform[i].child_frame_id = my_child_frame_id.str();
 
-            //Define a broadcaster and sendTransform
-            static tf2_ros::StaticTransformBroadcaster br;
-            br.sendTransform(otransform[i]);
-
+            //Use the broadcaster to sendTransform
+            br->sendTransform(otransform[i]);
+            //ROS_INFO("---otransform[%d] = (%f,%f,%f)",i,otransform[i].transform.translation.x,
+            //         otransform[i].transform.translation.y,
+            //         otransform[i].transform.translation.z);
         }
 
         obstaclesloaded = true;
@@ -351,58 +369,20 @@ int main (int argc, char **argv) {
 
     ROS_INFO("Starting Kautham ROS Viewer");
 
-    //Load services
+    br = new tf2_ros::StaticTransformBroadcaster();
+
+    //Define Load services
     ros::ServiceServer service00 = nh.advertiseService("kautham_node_vis/LoadRobots",srvLoadRobots);
     ros::ServiceServer service01 = nh.advertiseService("kautham_node_vis/LoadObstacles",srvLoadObstacles);
-
-    //The node advertises the marker poses
-    //ros::Publisher vis_pub = nh.advertise<visualization_msgs::MarkerArray>( "visualization_marker_array", 1 );
-
-
-    //Test the node without using info passed by the service
-    /*
-    numrobots = 2;
-    rfilename.resize(2);
-    rfilename[0] = "robots/ur3_robotniq_A.urdf";
-    rfilename[1] = "robots/ur3_robotniq_B.urdf";
-    rtransform.resize(2);
-    rtransform[0].transform.translation.x = 0.5;
-    rtransform[0].transform.translation.y = 0.0;
-    rtransform[0].transform.translation.z = 0.0;
-    rtransform[0].transform.rotation.x = 0.0;
-    rtransform[0].transform.rotation.y = 0.0;
-    rtransform[0].transform.rotation.z = 0.0;
-    rtransform[0].transform.rotation.w = 1.0;
-    rtransform[1].transform.translation.x = -0.5;
-    rtransform[1].transform.translation.y = 0.0;
-    rtransform[1].transform.translation.z = 0.0;
-    rtransform[1].transform.rotation.x = 0.0;
-    rtransform[1].transform.rotation.y = 0.0;
-    rtransform[1].transform.rotation.z = 0.0;
-    rtransform[1].transform.rotation.w = 1.0;
-    receivedrobotscall = true;
-    */
-    //end test data
 
     ros::Rate rate(2.0);
     while (nh.ok())
     {
-        ROS_INFO("looping node_viz +++++++++++++++++++++");
-        //if(obstaclesloaded) ROS_INFO("obstaclesloaded ....................");
-        //else ROS_INFO("NOT obstaclesloaded +++++++++++++++++++++");
+        //ROS_INFO("looping node_viz +++++++++++++++++++++");
         ros::spinOnce();
         //If the data has been received through a call to the load service and it has not yet been loaded then proceed
         loadRobots();
         loadObstacles();
-
-        //load environment
-        /*if(obstaclesloaded)
-        {
-             vis_pub.publish( kthobstacles );
-             ROS_INFO("publishing kthobstacles....................");
-        }
-        */
-
         //Wait until it's time for another iteration
         rate.sleep();
     }

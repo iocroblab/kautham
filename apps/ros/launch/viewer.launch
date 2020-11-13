@@ -1,28 +1,30 @@
 <?xml version="1.0"?>
 <launch>
+    <!--This launch file is prepared to open rviz and visualize up to four robots-->
     <arg name="r0" default="false"/>
     <arg name="r1" default="false"/>
     <arg name="r2" default="false"/>
     <arg name="r3" default="false"/>
-    <arg name="rname0" />
-    <arg name="rname2" />
-    <arg name="rname3" />
-    <arg name="rname4" />
+    <arg name="rname0"/>
+    <arg name="rname2"/>
+    <arg name="rname3"/>
+    <arg name="rname4"/>
+    <arg name="gui" default="false"/>
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kautham)/apps/ros/config/kautham.rviz" required="true"/>
     <group if="$(arg r1)" ns="$(arg rname0)">
-        <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+        <node if="$(arg gui)" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
     </group>
     <group if="$(arg r1)" ns="$(arg rname1)">
-        <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+        <node if="$(arg gui)" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
     </group>
     <group if="$(arg r2)" ns="$(arg rname2)">
-        <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+        <node if="$(arg gui)" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
     </group>
     <group if="$(arg r3)" ns="$(arg rname3)">
-        <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+        <node if="$(arg gui)" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
     </group>
 </launch>

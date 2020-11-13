@@ -383,6 +383,8 @@ namespace Kautham {
 
             robot.fill(&tmpNode,dir); //fill robot information
 
+            robot.getJointNames(_jointnames);//loads the vector of joint names (required for the rosnode to visualize in rviz)
+
             //Robot Name
             name = robot.name;
 
@@ -1604,7 +1606,7 @@ namespace Kautham {
   */
     void Robot::setViewLink(string name)
     {
-        int i=0;
+        unsigned int i=0;
         while (i < links.size()) {
             if(links.at(i)->getName() == name)
             {
@@ -1615,6 +1617,19 @@ namespace Kautham {
         }
     }
 
+ /*!
+  * Gets the joint names
+  */
+    bool Robot::getJointNames(std::vector<std::string> &jnames)
+    {
+        //std::cout<<" ----------- getJointNames with _jointnames.size() = "<<_jointnames.size()<<std::endl;
+        jnames.resize(_jointnames.size());
+        for(unsigned int i=0; i<_jointnames.size(); i++)
+        {
+            //std::cout<<" _jointnames["<<i<<"] = "<<_jointnames[i]<<std::endl;
+            jnames[i]=_jointnames[i];
+        }
+    }
 }
 
 

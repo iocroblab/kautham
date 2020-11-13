@@ -1,4 +1,5 @@
 string[] robotsfiles
 geometry_msgs/TransformStamped[] robottransforms
+bool gui
 ---
 bool response

@@ -78,13 +78,18 @@
 #include <kautham/LoadObstacles.h>
 #include <kautham/VisualizeScene.h>
 
+#include <sensor_msgs/JointState.h>
+
 using namespace std;
 using namespace Kautham;
 
 std_msgs::String my_msg;
 kauthamshell* ksh;
-//visualization_msgs::MarkerArray kthmarkers;
-//bool publishobstacles = false;
+bool visualizescene = false;
+bool guisliders = false;
+int numrobots=0;
+std::vector<ros::Publisher*> joints_publishers;
+std::vector<sensor_msgs::JointState> joint_state_robot;
 
 //Calls the srvLoadRobots service from the kautham_node_vis
 //that will visualize the scene.
@@ -129,18 +134,22 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         ROS_INFO( "Kautham LoadObstacles correctly loaded the obstacles" );
     } else {
         ROS_ERROR( "ERROR Kautham LoadObstacles could not loaded the obstacles" );
+        return false;
     }
 
+    //-----------------------------------------------------------------
     //Now call the LoadRobots to load the robots and visualize them in rviz
     ros::service::waitForService("/kautham_node_vis/LoadRobots");
 
     kautham::LoadRobots kthloadrobots_srv;
     std::vector<std::string> robotfilenames;
-    int numrobots = ksh->getNumRobots();
+    numrobots = ksh->getNumRobots();
     ksh->getRobotFileNames(robotfilenames);
 
     kthloadrobots_srv.request.robotsfiles.resize(numrobots);
     kthloadrobots_srv.request.robottransforms.resize(numrobots);
+    guisliders = req.guisliders;
+    kthloadrobots_srv.request.gui = req.guisliders;
 
     ROS_INFO("Kautham srvVisualizeScene");
     ROS_INFO("numrobots = %d",numrobots);
@@ -169,9 +178,35 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         ROS_INFO( "Kautham LoadRobots correctly loaded the robots" );
     } else {
         ROS_ERROR( "ERROR Kautham LoadRobots could not loaded the robots" );
+        return false;
     }
 
+    //Create the publishers to publish the joints of each robot
+    joints_publishers.resize(numrobots);
+    joint_state_robot.resize(numrobots);
+    for(int i=0; i<numrobots;i++)
+    {
+        std::stringstream topicname;
+        topicname << "/robot"<<i<<"/joint_states";
+        //std::cout<<topicname.str()<<std::endl;
+        joints_publishers[i] = new ros::Publisher(n.advertise<sensor_msgs::JointState>(topicname.str().c_str(), 1));
 
+        std::vector<std::string> jointnames;
+        ksh->getRobotJointNames(i,jointnames);
+        joint_state_robot[i].name.resize(jointnames.size());
+        joint_state_robot[i].position.resize(jointnames.size());
+        //change the names of the joints accoridng to the namespace (add prefix robotX_)
+        for(unsigned int j=0; j<jointnames.size();j++)
+        {
+            std::stringstream jointnameprefix;
+            jointnameprefix << "robot"<<i<<"_";
+            std::cout<<jointnameprefix.str()+jointnames[j]<<std::endl;
+            joint_state_robot[i].name[j] = jointnameprefix.str()+jointnames[j];
+            joint_state_robot[i].position[j] = 0;
+        }
+    }
+    visualizescene = true;
+    return true;
 }
 
 
@@ -727,29 +762,27 @@ int main (int argc, char **argv) {
     ros::ServiceServer service41 = n.advertiseService("kautham_node/GetRobotHomePos",srvGetRobHomePos);
     ros::ServiceServer service42 = n.advertiseService("kautham_node/VisualizeScene",srvVisualizeScene);
 
-    //The node advertises the marker poses
-    //ros::Publisher vis_pub = n.advertise<visualization_msgs::MarkerArray>( "visualization_marker_array", 1 );
+    //ros::spin();
 
-    ros::spin();
-    /*
     ros::Rate rate(2.0);
     while (n.ok())
     {
-        ROS_INFO("looping kautham node -----------------------");
+        //ROS_INFO("looping kautham node -----------------------");
         ros::spinOnce();
-        //publish joint values
-
-        //publish obstacles
-        if(publishobstacles)
+        //publish joint values if rviz is shown and joint_state_publisher_gui is not running
+        if(visualizescene && !guisliders)
         {
-             vis_pub.publish( kthmarkers );
-             ROS_INFO("publishing kthobstacles....................");
+            for(int i=0; i<numrobots; i++)
+            {
+                joint_state_robot[i].header.stamp = ros::Time::now();
+                joints_publishers[i]->publish(joint_state_robot[i]);
+            }
         }
 
         //Wait until it's time for another iteration
         rate.sleep();
     }
-    */
+
     return 0;
 }
 

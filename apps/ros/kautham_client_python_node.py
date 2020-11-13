@@ -92,7 +92,8 @@ def main():
     # taskfile.close()
     # print("Results saved in ", taskfile)
     
-    kautham.kVisualizeScene()
+    use_joint_state_publisher_gui = True
+    kautham.kVisualizeScene(use_joint_state_publisher_gui)
     
     input("Press Enter to Finalize...")
 
