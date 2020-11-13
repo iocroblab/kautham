@@ -29,6 +29,9 @@
 #include <sstream>
 #include <iostream>
 #include <std_msgs/String.h>
+#include <sensor_msgs/JointState.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <geometry_msgs/TransformStamped.h>
 
 #include <ros/ros.h>
 
@@ -77,8 +80,8 @@
 #include <kautham/LoadRobots.h>
 #include <kautham/LoadObstacles.h>
 #include <kautham/VisualizeScene.h>
+#include <kautham/robconf.h>
 
-#include <sensor_msgs/JointState.h>
 
 using namespace std;
 using namespace Kautham;
@@ -352,9 +355,58 @@ bool srvCheckCollisionObs(kautham::CheckCollisionObs::Request &req,
 bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
                        kautham::SetRobotsConfig::Response &res) {
 
-    res.response = ksh->setRobotsConfig(req.config);
+    tf2_ros::StaticTransformBroadcaster br;
+    geometry_msgs::TransformStamped rtransform;
 
-    return true;
+    std::vector<RobConf> config;
+    res.response = ksh->setRobotsConfig(req.controls, config);
+    res.config.resize(config.size());
+    for(int i=0; i<config.size();i++)
+    {
+        //fill the response
+        res.config[i].base.position.x = config[i].first.getPos().at(0);
+        res.config[i].base.position.y = config[i].first.getPos().at(1);
+        res.config[i].base.position.z = config[i].first.getPos().at(2);
+        res.config[i].base.orientation.x = config[i].first.getOrient().at(0);
+        res.config[i].base.orientation.y = config[i].first.getOrient().at(1);
+        res.config[i].base.orientation.z = config[i].first.getOrient().at(2);
+        res.config[i].base.orientation.w = config[i].first.getOrient().at(3);
+        res.config[i].joints = config[i].second.getCoordinates();
+        //update the broadcasted transforms for the base
+        /*
+        rtransform.header.stamp = ros::Time::now();
+        rtransform.header.frame_id = "world";
+        std::stringstream my_child_frame_id;
+        my_child_frame_id  << "robot"<<i<<"_base_link";
+        rtransform.child_frame_id = my_child_frame_id.str();
+        rtransform.transform.translation.x = config[i].first.getPos().at(0);
+        rtransform.transform.translation.y = config[i].first.getPos().at(1);
+        rtransform.transform.translation.z = config[i].first.getPos().at(2);
+        rtransform.transform.rotation.x = config[i].first.getOrient().at(0);
+        rtransform.transform.rotation.y = config[i].first.getOrient().at(1);
+        rtransform.transform.rotation.z = config[i].first.getOrient().at(2);
+        rtransform.transform.rotation.w = config[i].first.getOrient().at(3);
+        br.sendTransform(rtransform);
+        */
+        //fill the joint values to be published
+        if(visualizescene && !guisliders)
+           for(unsigned int j=0; j<joint_state_robot[i].position.size();j++)
+              joint_state_robot[i].position[j] = config[i].second.getCoordinates().at(j);
+        /*
+        std::cout<<"ROBOT "<<i<<std::endl;
+        std::cout<<"x = "<<res.config[i].base.position.x<<std::endl;
+        std::cout<<"y = "<<res.config[i].base.position.y<<std::endl;
+        std::cout<<"z = "<<res.config[i].base.position.z<<std::endl;
+        std::cout<<"qx = "<<res.config[i].base.orientation.x<<std::endl;
+        std::cout<<"qy = "<<res.config[i].base.orientation.y<<std::endl;
+        std::cout<<"qz = "<<res.config[i].base.orientation.y<<std::endl;
+        std::cout<<"qw = "<<res.config[i].base.orientation.w<<std::endl;
+        std::cout<<"q = (";
+        for(unsigned int j=0; j<joint_state_robot[i].position.size();j++)
+            std::cout<<res.config[i].joints[j]<<" ";
+        std::cout<<std::endl;
+        */
+    }
 }
 
 

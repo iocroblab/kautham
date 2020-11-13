@@ -179,14 +179,14 @@ def kMoveRobot(controls):
     #define derver and client
     rospy.wait_for_service("/kautham_node/SetRobotsConfig")
     setrobotconfig_srv= SetRobotsConfig()
-    setrobotconfig_cleint=rospy.ServiceProxy("/kautham_node/SetRobotsConfig",SetRobotsConfig)
-    setrobotconfig_srv.config=controls
-    r=setrobotconfig_cleint(setrobotconfig_srv.config)
+    setrobotconfig_client=rospy.ServiceProxy("/kautham_node/SetRobotsConfig",SetRobotsConfig)
+    setrobotconfig_srv.controls=controls
+    r=setrobotconfig_client(setrobotconfig_srv.controls)
     if r.response:
-        print("Robot Moved correctly")
+        print("Robot(s) Moved correctly")
     else:
         print("ERROR failed moveRobot")
-    return r.response
+    return r.config
 
 # Function that wraps the call to the kautham service that attaches an object to a given link
 def kAttachObject(robotnumber, linknumber, objectnumber):

@@ -40,7 +40,7 @@ std::vector<std::string> rfilename;
 std::vector<std::string> ofilename;
 std::vector<geometry_msgs::TransformStamped> rtransform;
 std::vector<geometry_msgs::TransformStamped> otransform;
-visualization_msgs::MarkerArray kthobstacles;
+
 int numrobots = 0;
 int numobstacles = 0;
 bool robotsloaded = false;
@@ -49,7 +49,8 @@ bool obstaclesloaded = false;
 bool receivedobstaclesscall = false;
 bool gui=false;
 
-tf2_ros::StaticTransformBroadcaster *br;
+std::shared_ptr<tf2_ros::StaticTransformBroadcaster> br;
+//tf2_ros::StaticTransformBroadcaster *br;
 
 //This service is to be called only once to load the rots info: filenames and pose
 bool srvLoadRobots(kautham::LoadRobots::Request &req,
@@ -89,7 +90,7 @@ bool srvLoadRobots(kautham::LoadRobots::Request &req,
 bool srvLoadObstacles(kautham::LoadObstacles::Request &req,
                     kautham::LoadObstacles::Response &res)
 {
-    ROS_INFO( "STARTING Kautham LoadObjects");
+    ROS_INFO( "STARTING Kautham LoadObstacles");
     ROS_INFO( "********************************");
     receivedobstaclesscall = true; //flag to control that the service has been called
     if(!obstaclesloaded) //load data if the data has not yet been loaded
@@ -369,7 +370,8 @@ int main (int argc, char **argv) {
 
     ROS_INFO("Starting Kautham ROS Viewer");
 
-    br = new tf2_ros::StaticTransformBroadcaster();
+    br.reset(new tf2_ros::StaticTransformBroadcaster);
+    //br = new tf2_ros::StaticTransformBroadcaster();
 
     //Define Load services
     ros::ServiceServer service00 = nh.advertiseService("kautham_node_vis/LoadRobots",srvLoadRobots);
@@ -383,6 +385,17 @@ int main (int argc, char **argv) {
         //If the data has been received through a call to the load service and it has not yet been loaded then proceed
         loadRobots();
         loadObstacles();
+
+        /*
+        for(int i=0; i<numrobots; i++){
+            rtransform[i].transform.translation.x += 0.01;
+            std::cout<<"ppppppppppppppppppp    %f"<<rtransform[i].transform.translation.x<<std::endl;
+            br->sendTransform(rtransform[i]);
+        }
+        for(int i=0; i<numobstacles; i++)
+            br->sendTransform(otransform[i]);
+        */
+
         //Wait until it's time for another iteration
         rate.sleep();
     }

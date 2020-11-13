@@ -459,9 +459,9 @@ void urdf_robot::print() {
 
 void urdf_robot::getJointNames(std::vector<std::string> &jnames) {
     //print();
-    jnames.resize(num_links-1);
-    for (unsigned int i = 0; i < jnames.size(); ++i) {
-        jnames[i] = link[i+1].joint; //joint i is stored in link i+1 data structure
+    for (unsigned int i = 0; i < num_links-1; ++i) {
+        if(link[i+1].type != "fixed")
+            jnames.push_back(link[i+1].joint); //joint i is stored in link i+1 data structure
     }
 }
 

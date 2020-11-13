@@ -91,9 +91,13 @@ def main():
     # taskfile.write("</Task>")
     # taskfile.close()
     # print("Results saved in ", taskfile)
-    
-    use_joint_state_publisher_gui = True
+
+    use_joint_state_publisher_gui = False
     kautham.kVisualizeScene(use_joint_state_publisher_gui)
+
+    controls = (0.1,0.2,0.3,0.4,0.5,0.6,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5)
+    kautham.kMoveRobot(controls)
+
     
     input("Press Enter to Finalize...")
 

@@ -137,6 +137,7 @@ if( KAUTHAM_ROS )
        DIRECTORY apps/ros/msg
        FILES
        fVector.msg
+       robconf.msg
         )
     catkin_python_setup()
     generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs  visualization_msgs )

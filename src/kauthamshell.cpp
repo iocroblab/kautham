@@ -319,6 +319,35 @@ namespace Kautham {
         return false;
     }
 
+    //Sets the robot configuration according to the given sample coordinates (control)
+    //The configuration is returned in the config parameter
+    bool kauthamshell::setRobotsConfig(vector<float> smpcoords, std::vector<RobConf> &config) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+            Sample *smp = new Sample(problem->wSpace()->getNumRobControls());
+            if (smp->setCoords(smpcoords)) {
+                problem->wSpace()->moveRobotsTo(smp);
+                config = smp->getMappedConf();
+
+                return true;
+            }
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return false;
+    }
 
     bool kauthamshell::setRobotsConfig(vector<float> smpcoords) {
         try {
@@ -333,6 +362,7 @@ namespace Kautham {
                 problem->wSpace()->moveRobotsTo(smp);
 
                 //EUROC
+                /*
                 std::cout<<"Robot moved to: (";
                 for(unsigned i=0; i<smpcoords.size(); i++)
                 {
@@ -354,6 +384,7 @@ namespace Kautham {
                     z = (*it).obs->getLink(0)->getElement()->getPosition()[2];
                     std::cout<<"Object "<<obsname<<" is at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
                 }
+                */
                 //EUROC
 
                 return true;
