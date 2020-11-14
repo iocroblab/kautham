@@ -102,6 +102,7 @@ int numobstacles = 0;
 //that will visualize the scene.
 bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
                        kautham::VisualizeScene::Response &resp) {
+
     ros::NodeHandle n;
 
     //Now call the LoadObjects to load the MarkerArray to visualize them in rviz
@@ -243,6 +244,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         }
     }
     visualizescene = true;
+    resp.response=true;
     return true;
 }
 
@@ -389,13 +391,10 @@ bool srvCheckCollisionObs(kautham::CheckCollisionObs::Request &req,
 bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
                        kautham::SetRobotsConfig::Response &res) {
 
-    //tf2_ros::StaticTransformBroadcaster br;
-    //geometry_msgs::TransformStamped rtransform;
-
     std::vector<RobConf> config;
     res.response = ksh->setRobotsConfig(req.controls, config);
     res.config.resize(config.size());
-    for(int i=0; i<config.size();i++)
+    for(unsigned int i=0; i<config.size();i++)
     {
         //fill the response
         res.config[i].base.position.x = config[i].first.getPos().at(0);
@@ -420,7 +419,6 @@ bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
         rtransform[i].transform.rotation.y = config[i].first.getOrient().at(1);
         rtransform[i].transform.rotation.z = config[i].first.getOrient().at(2);
         rtransform[i].transform.rotation.w = config[i].first.getOrient().at(3);
-        //br->sendTransform(rtransform);
 
         //fill the joint values to be published
         if(visualizescene && !guisliders)
@@ -750,6 +748,19 @@ bool srvSetObstaclPos(kautham::ObsPos::Request &req,
                             kautham::ObsPos::Response &res) {
 
     res.response = ksh->setObstaclePos(req.index, req.setPos);
+
+    otransform[req.index].header.stamp = ros::Time::now();
+    otransform[req.index].header.frame_id = "world";
+    std::stringstream my_child_frame_id;
+    my_child_frame_id  << "obstacle"<<req.index<<"_base";
+    otransform[req.index].child_frame_id = my_child_frame_id.str();
+    otransform[req.index].transform.translation.x = req.setPos.at(0);
+    otransform[req.index].transform.translation.y = req.setPos.at(1);
+    otransform[req.index].transform.translation.z = req.setPos.at(2);
+    otransform[req.index].transform.rotation.x = req.setPos.at(3);
+    otransform[req.index].transform.rotation.y = req.setPos.at(4);
+    otransform[req.index].transform.rotation.z = req.setPos.at(5);
+    otransform[req.index].transform.rotation.w = req.setPos.at(6);
 
     return true;
 }

@@ -98,6 +98,10 @@ def main():
     controls = (0.1,0.2,0.3,0.4,0.5,0.6,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5)
     kautham.kMoveRobot(controls)
 
+
+    poseobject = (0.025,0.025,0.02,0,0,0,1)
+    kautham.kSetObstaclePos(1,poseobject)
+
     
     input("Press Enter to Finalize...")
 
