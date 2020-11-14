@@ -38,8 +38,8 @@ using namespace Kautham;
 
 std::vector<std::string> rfilename;
 std::vector<std::string> ofilename;
-std::vector<geometry_msgs::TransformStamped> rtransform;
-std::vector<geometry_msgs::TransformStamped> otransform;
+//std::vector<geometry_msgs::TransformStamped> rtransform;
+//std::vector<geometry_msgs::TransformStamped> otransform;
 
 int numrobots = 0;
 int numobstacles = 0;
@@ -49,7 +49,7 @@ bool obstaclesloaded = false;
 bool receivedobstaclesscall = false;
 bool gui=false;
 
-std::shared_ptr<tf2_ros::StaticTransformBroadcaster> br;
+//std::shared_ptr<tf2_ros::StaticTransformBroadcaster> br;
 //tf2_ros::StaticTransformBroadcaster *br;
 
 //This service is to be called only once to load the rots info: filenames and pose
@@ -65,15 +65,17 @@ bool srvLoadRobots(kautham::LoadRobots::Request &req,
         numrobots = req.robotsfiles.size();
         ROS_INFO("---numrobots = %d",numrobots);
         rfilename.resize(numrobots);
-        rtransform.resize(numrobots);
+        //rtransform.resize(numrobots);
         for(int i=0; i<numrobots;i++)
         {
             ROS_INFO("---robotfilenames[%d] = %s",i,req.robotsfiles[i].c_str());
             rfilename[i] = req.robotsfiles[i];
+            /*
             rtransform[i] = req.robottransforms[i];
             ROS_INFO("---rtransform[%d] = (%f,%f,%f)",i,rtransform[i].transform.translation.x,
                      rtransform[i].transform.translation.y,
                      rtransform[i].transform.translation.z);
+                     */
         }
         res.response = true;
         return true;
@@ -98,12 +100,12 @@ bool srvLoadObstacles(kautham::LoadObstacles::Request &req,
         numobstacles = req.obstaclesfiles.size();
         ROS_INFO("---numobstacles = %d",numobstacles);
         ofilename.resize(numobstacles);
-        otransform.resize(numobstacles);
+        //otransform.resize(numobstacles);
         for(int i=0; i<numobstacles;i++)
         {
             //ROS_INFO("---!!!!!!!!obstaclesfilenames[%d] = %s",i,req.obstaclesfiles[i].c_str());
             ofilename[i] = req.obstaclesfiles[i];
-            otransform[i] = req.obstacletransforms[i];
+            //otransform[i] = req.obstacletransforms[i];
             //ROS_INFO("---otransform[%d] = (%f,%f,%f)",i,otransform[i].transform.translation.x,
             //         otransform[i].transform.translation.y,
             //         otransform[i].transform.translation.z);
@@ -214,14 +216,14 @@ bool loadRobots()
 
             //(3) Broadcast transfporms where to place the robots.
             //It is assumed that the link of the robot base is called "base_link".
-            rtransform[i].header.stamp = ros::Time::now();
-            rtransform[i].header.frame_id = "world";
-            std::stringstream my_child_frame_id;
-            my_child_frame_id  << "robot"<<i<<"_base_link";
-            rtransform[i].child_frame_id = my_child_frame_id.str();
+            //rtransform[i].header.stamp = ros::Time::now();
+            //rtransform[i].header.frame_id = "world";
+            //std::stringstream my_child_frame_id;
+            //my_child_frame_id  << "robot"<<i<<"_base_link";
+            //rtransform[i].child_frame_id = my_child_frame_id.str();
 
             //Use the broadcaster to sendTransform
-            br->sendTransform(rtransform[i]);
+            //br->sendTransform(rtransform[i]);
 
             //(4) Complete the string to launch the viewer.launch file:
             std::stringstream rlabel;
@@ -346,14 +348,14 @@ bool loadObstacles()
 
             //(3) Broadcast transforms where to place the robots.
             //It is assumed that the link of the robot base is called "base".
-            otransform[i].header.stamp = ros::Time::now();
-            otransform[i].header.frame_id = "world";
-            std::stringstream my_child_frame_id;
-            my_child_frame_id  << "obstacle"<<i<<"_base";
-            otransform[i].child_frame_id = my_child_frame_id.str();
+            //otransform[i].header.stamp = ros::Time::now();
+            //otransform[i].header.frame_id = "world";
+            //std::stringstream my_child_frame_id;
+            //my_child_frame_id  << "obstacle"<<i<<"_base";
+            //otransform[i].child_frame_id = my_child_frame_id.str();
 
             //Use the broadcaster to sendTransform
-            br->sendTransform(otransform[i]);
+            //br->sendTransform(otransform[i]);
             //ROS_INFO("---otransform[%d] = (%f,%f,%f)",i,otransform[i].transform.translation.x,
             //         otransform[i].transform.translation.y,
             //         otransform[i].transform.translation.z);
@@ -370,7 +372,7 @@ int main (int argc, char **argv) {
 
     ROS_INFO("Starting Kautham ROS Viewer");
 
-    br.reset(new tf2_ros::StaticTransformBroadcaster);
+    //br.reset(new tf2_ros::StaticTransformBroadcaster);
     //br = new tf2_ros::StaticTransformBroadcaster();
 
     //Define Load services

@@ -90,9 +90,13 @@ std_msgs::String my_msg;
 kauthamshell* ksh;
 bool visualizescene = false;
 bool guisliders = false;
-int numrobots=0;
 std::vector<ros::Publisher*> joints_publishers;
 std::vector<sensor_msgs::JointState> joint_state_robot;
+std::shared_ptr<tf2_ros::StaticTransformBroadcaster> br;
+std::vector<geometry_msgs::TransformStamped> rtransform;
+std::vector<geometry_msgs::TransformStamped> otransform;
+int numrobots = 0;
+int numobstacles = 0;
 
 //Calls the srvLoadRobots service from the kautham_node_vis
 //that will visualize the scene.
@@ -104,7 +108,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     ros::service::waitForService("/kautham_node_vis/LoadObstacles");
     kautham::LoadObstacles kthloadobstacles_srv;
     std::vector<std::string> obstaclesfilenames;
-    int numobstacles = ksh->getNumObstacles();
+    numobstacles = ksh->getNumObstacles();
     ksh->getObstaclesFileNames(obstaclesfilenames);
 
     kthloadobstacles_srv.request.obstaclesfiles.resize(numobstacles);
@@ -115,6 +119,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     std::vector< std::vector<float> > poses;
     poses.clear();
     poses.resize(numobstacles);
+    otransform.resize(numobstacles);
     for(int i=0; i<numobstacles; i++)
     {
         ROS_INFO("obstaclesfilenames[%d] = %s",i,obstaclesfilenames[i].c_str());
@@ -127,6 +132,20 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.y = poses[i][4];
         kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.z = poses[i][5];
         kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.w = poses[i][6];
+
+        //It is assumed that the link of the robot base is called "base".
+        otransform[i].header.stamp = ros::Time::now();
+        otransform[i].header.frame_id = "world";
+        std::stringstream my_child_frame_id;
+        my_child_frame_id  << "obstacle"<<i<<"_base";
+        otransform[i].child_frame_id = my_child_frame_id.str();
+        otransform[i].transform.translation.x = poses[i][0];
+        otransform[i].transform.translation.y = poses[i][1];
+        otransform[i].transform.translation.z = poses[i][2];
+        otransform[i].transform.rotation.x = poses[i][3];
+        otransform[i].transform.rotation.y = poses[i][4];
+        otransform[i].transform.rotation.z = poses[i][5];
+        otransform[i].transform.rotation.w = poses[i][6];
     }
 
     ros::ServiceClient kthloadobstacles_client = n.serviceClient<kautham::LoadObstacles>("/kautham_node_vis/LoadObstacles");
@@ -159,6 +178,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     //std::vector< std::vector<float> > poses;
     poses.clear();
     poses.resize(numrobots);
+    rtransform.resize(numobstacles);
     for(int i=0; i<numrobots; i++)
     {
         ROS_INFO("robotfilenames[%d] = %s",i,robotfilenames[i].c_str());
@@ -171,6 +191,20 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         kthloadrobots_srv.request.robottransforms[i].transform.rotation.y = poses[i][4];
         kthloadrobots_srv.request.robottransforms[i].transform.rotation.z = poses[i][5];
         kthloadrobots_srv.request.robottransforms[i].transform.rotation.w = poses[i][6];
+
+        //It is assumed that the link of the robot base is called "base_link".
+        rtransform[i].header.stamp = ros::Time::now();
+        rtransform[i].header.frame_id = "world";
+        std::stringstream my_child_frame_id;
+        my_child_frame_id  << "robot"<<i<<"_base_link";
+        rtransform[i].child_frame_id = my_child_frame_id.str();
+        rtransform[i].transform.translation.x = poses[i][0];
+        rtransform[i].transform.translation.y = poses[i][1];
+        rtransform[i].transform.translation.z = poses[i][2];
+        rtransform[i].transform.rotation.x = poses[i][3];
+        rtransform[i].transform.rotation.y = poses[i][4];
+        rtransform[i].transform.rotation.z = poses[i][5];
+        rtransform[i].transform.rotation.w = poses[i][6];
     }
 
     ros::ServiceClient kthloadrobots_client = n.serviceClient<kautham::LoadRobots>("/kautham_node_vis/LoadRobots");
@@ -355,8 +389,8 @@ bool srvCheckCollisionObs(kautham::CheckCollisionObs::Request &req,
 bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
                        kautham::SetRobotsConfig::Response &res) {
 
-    tf2_ros::StaticTransformBroadcaster br;
-    geometry_msgs::TransformStamped rtransform;
+    //tf2_ros::StaticTransformBroadcaster br;
+    //geometry_msgs::TransformStamped rtransform;
 
     std::vector<RobConf> config;
     res.response = ksh->setRobotsConfig(req.controls, config);
@@ -373,21 +407,21 @@ bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
         res.config[i].base.orientation.w = config[i].first.getOrient().at(3);
         res.config[i].joints = config[i].second.getCoordinates();
         //update the broadcasted transforms for the base
-        /*
-        rtransform.header.stamp = ros::Time::now();
-        rtransform.header.frame_id = "world";
+
+        rtransform[i].header.stamp = ros::Time::now();
+        rtransform[i].header.frame_id = "world";
         std::stringstream my_child_frame_id;
         my_child_frame_id  << "robot"<<i<<"_base_link";
-        rtransform.child_frame_id = my_child_frame_id.str();
-        rtransform.transform.translation.x = config[i].first.getPos().at(0);
-        rtransform.transform.translation.y = config[i].first.getPos().at(1);
-        rtransform.transform.translation.z = config[i].first.getPos().at(2);
-        rtransform.transform.rotation.x = config[i].first.getOrient().at(0);
-        rtransform.transform.rotation.y = config[i].first.getOrient().at(1);
-        rtransform.transform.rotation.z = config[i].first.getOrient().at(2);
-        rtransform.transform.rotation.w = config[i].first.getOrient().at(3);
-        br.sendTransform(rtransform);
-        */
+        rtransform[i].child_frame_id = my_child_frame_id.str();
+        rtransform[i].transform.translation.x = config[i].first.getPos().at(0);
+        rtransform[i].transform.translation.y = config[i].first.getPos().at(1);
+        rtransform[i].transform.translation.z = config[i].first.getPos().at(2);
+        rtransform[i].transform.rotation.x = config[i].first.getOrient().at(0);
+        rtransform[i].transform.rotation.y = config[i].first.getOrient().at(1);
+        rtransform[i].transform.rotation.z = config[i].first.getOrient().at(2);
+        rtransform[i].transform.rotation.w = config[i].first.getOrient().at(3);
+        //br->sendTransform(rtransform);
+
         //fill the joint values to be published
         if(visualizescene && !guisliders)
            for(unsigned int j=0; j<joint_state_robot[i].position.size();j++)
@@ -814,6 +848,7 @@ int main (int argc, char **argv) {
     ros::ServiceServer service41 = n.advertiseService("kautham_node/GetRobotHomePos",srvGetRobHomePos);
     ros::ServiceServer service42 = n.advertiseService("kautham_node/VisualizeScene",srvVisualizeScene);
 
+    br.reset(new tf2_ros::StaticTransformBroadcaster);
     //ros::spin();
 
     ros::Rate rate(2.0);
@@ -822,13 +857,25 @@ int main (int argc, char **argv) {
         //ROS_INFO("looping kautham node -----------------------");
         ros::spinOnce();
         //publish joint values if rviz is shown and joint_state_publisher_gui is not running
-        if(visualizescene && !guisliders)
+        if(visualizescene)
         {
+            if(!guisliders)
+            {
+                for(int i=0; i<numrobots; i++)
+                {
+                    joint_state_robot[i].header.stamp = ros::Time::now();
+                    joints_publishers[i]->publish(joint_state_robot[i]);
+                }
+            }
             for(int i=0; i<numrobots; i++)
             {
-                joint_state_robot[i].header.stamp = ros::Time::now();
-                joints_publishers[i]->publish(joint_state_robot[i]);
+                //test
+                //rtransform[i].transform.translation.x += 0.01;
+                //std::cout<<"ppppppppppppppppppp    %f"<<rtransform[i].transform.translation.x<<std::endl;
+                br->sendTransform(rtransform[i]);
             }
+            for(int i=0; i<numobstacles; i++)
+                br->sendTransform(otransform[i]);
         }
 
         //Wait until it's time for another iteration
