@@ -21,7 +21,8 @@
     </inertial>
     <visual>
       <geometry>
-          <mesh filename="tiago/meshes/base/base.dae"/> 
+          <!--mesh filename="tiago/meshes/base/base.stl"/--> 
+        <mesh filename="tiago/meshes/base/base_collision.dae"/>
       </geometry>
       <material name="White"/>
     </visual>
@@ -41,7 +42,8 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="tiago/meshes/wheels/wheel.dae"/>
+        <!--mesh filename="tiago/meshes/wheels/wheel.stl"/-->
+        <cylinder length="0.04" radius="0.0985"/>
       </geometry>
       <material name="DarkGrey"/>
     </visual>
@@ -70,7 +72,8 @@
     <visual>
       <origin rpy="-3.14 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/wheels/wheel.dae"/>
+        <!--mesh filename="tiago/meshes/wheels/wheel.stl"/-->
+        <cylinder length="0.04" radius="0.0985"/>
       </geometry>
       <material name="DarkGrey"/>
     </visual>
@@ -95,8 +98,12 @@
       <inertia ixx="0.38341100000" ixy="0.00036400000" ixz="-0.02438900000" iyy="0.40577300000" iyz="-0.00078200000" izz="0.07699800000"/>
     </inertial>
     <visual>
+      <!--geometry>
+        <mesh filename="tiago/meshes/torso/torso_fix.stl" scale="1 1 1"/>
+      </geometry-->
+      <origin xyz="0.085 0.0 0.02"/>
       <geometry>
-        <mesh filename="tiago/meshes/torso/torso_fix.dae" scale="1 1 1"/>
+        <box size="0.4 0.25 0.04"/>
       </geometry>
       <material name="LightGrey"/>
     </visual>
@@ -129,7 +136,8 @@
     <!-- Lifting body -->
     <visual>
       <geometry>
-        <mesh filename="tiago/meshes/torso/torso_lift_with_arm.dae" scale="1 1 1"/>
+        <!--mesh filename="tiago/meshes/torso/torso_lift_with_arm.stl" scale="1 1 1"/-->
+        <mesh filename="tiago/meshes/torso/torso_lift_collision.dae" scale="1 1 1"/>
       </geometry>
       <material name="White"/>
     </visual>
@@ -160,7 +168,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/head/head_1.dae" scale="1 1 1"/>
+        <!--mesh filename="tiago/meshes/head/head_1.stl" scale="1 1 1"/-->
+        <mesh filename="tiago/meshes/head/head_1_collision.dae" scale="1 1 1"/>
       </geometry>
       <material name="White"/>
     </visual>
@@ -193,7 +202,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/head/head_2.dae" scale="1 1 1"/>
+        <!--mesh filename="tiago/meshes/head/head_2.stl" scale="1 1 1"/-->
+        <mesh filename="tiago/meshes/head/head_2_collision.dae" scale="1 1 1"/>
       </geometry>
       <material name="White"/>
     </visual>
@@ -229,7 +239,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_1.dae" scale="1 1 1"/>
+        <!--mesh filename="tiago/meshes/arm/arm_1.stl" scale="1 1 1"/-->
+        <mesh filename="tiago/meshes/arm/arm_1_collision.dae" scale="1 1 1"/>
       </geometry>
       <material name="White"/>
     </visual>
@@ -260,7 +271,8 @@
       <!-- <origin xyz="0 0 0" rpy="${180 * deg_to_rad} ${0 * deg_to_rad} ${-90 * deg_to_rad}" /> -->
       <origin rpy="0.0 0.0 0.0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_2.dae" scale="1 1 1"/>
+        <!--mesh filename="tiago/meshes/arm/arm_2.stl" scale="1 1 1"/-->
+        <mesh filename="tiago/meshes/arm/arm_2_collision.dae" scale="1 1 1"/>
       </geometry>
       <material name="DarkGrey"/>
     </visual>
@@ -290,7 +302,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_3.dae" scale="1 1 1"/>
+        <!--mesh filename="tiago/meshes/arm/arm_3.stl" scale="1 1 1"/-->
+        <mesh filename="tiago/meshes/arm/arm_3_collision.dae" scale="1 1 1"/>
       </geometry>
       <material name="DarkGrey"/>
     </visual>
@@ -322,7 +335,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_4.dae" scale="1 1 1"/>
+        <!--mesh filename="tiago/meshes/arm/arm_4.stl" scale="1 1 1"/-->
+        <mesh filename="tiago/meshes/arm/arm_4_collision.dae" scale="1 1 1"/>
       </geometry>
       <material name="DarkGrey"/>
     </visual>
@@ -355,7 +369,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_5.dae" scale="1 1 1"/>
+        <!--mesh filename="tiago/meshes/arm/arm_5.stl" scale="1 1 1"/-->
+        <mesh filename="tiago/meshes/arm/arm_5_collision.dae" scale="1 1 1"/>
       </geometry>
       <material name="LightGrey"/>
     </visual>
@@ -384,7 +399,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_6.dae" scale="1 1 1"/>
+        <!--mesh filename="tiago/meshes/arm/arm_6.stl" scale="1 1 1"/-->
+        <mesh filename="tiago/meshes/arm/arm_6_collision.dae" scale="1 1 1"/>
       </geometry>
       <material name="LightGrey"/>
     </visual>

@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Status1
+        - /TF1
       Splitter Ratio: 0.36775362491607666
     Tree Height: 497
   - Class: rviz/Selection
@@ -60,7 +61,39 @@ Visualization Manager:
           Value: true
         obstacle1_base:
           Value: true
+        robot0_arm_1_link:
+          Value: true
+        robot0_arm_2_link:
+          Value: true
+        robot0_arm_3_link:
+          Value: true
+        robot0_arm_4_link:
+          Value: true
+        robot0_arm_5_link:
+          Value: true
+        robot0_arm_6_link:
+          Value: true
+        robot0_arm_7_link:
+          Value: true
         robot0_base_link:
+          Value: true
+        robot0_gripper_left_finger_link:
+          Value: true
+        robot0_gripper_link:
+          Value: true
+        robot0_gripper_right_finger_link:
+          Value: true
+        robot0_head_1_link:
+          Value: true
+        robot0_head_2_link:
+          Value: true
+        robot0_torso_fixed_link:
+          Value: true
+        robot0_torso_lift_link:
+          Value: true
+        robot0_wheel_left_link:
+          Value: true
+        robot0_wheel_right_link:
           Value: true
         world:
           Value: true
@@ -68,7 +101,7 @@ Visualization Manager:
       Name: TF
       Show Arrows: false
       Show Axes: true
-      Show Names: true
+      Show Names: false
       Tree:
         world:
           obstacle0_base:
@@ -76,7 +109,27 @@ Visualization Manager:
           obstacle1_base:
             {}
           robot0_base_link:
-            {}
+            robot0_torso_fixed_link:
+              robot0_torso_lift_link:
+                robot0_arm_1_link:
+                  robot0_arm_2_link:
+                    robot0_arm_3_link:
+                      robot0_arm_4_link:
+                        robot0_arm_5_link:
+                          robot0_arm_6_link:
+                            robot0_arm_7_link:
+                              robot0_gripper_link:
+                                robot0_gripper_left_finger_link:
+                                  {}
+                                robot0_gripper_right_finger_link:
+                                  {}
+                robot0_head_1_link:
+                  robot0_head_2_link:
+                    {}
+            robot0_wheel_left_link:
+              {}
+            robot0_wheel_right_link:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -185,8 +238,7 @@ Visualization Manager:
       Collision Enabled: false
       Enabled: true
       Links:
-        All Links Enabled:
-          {}
+        All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
@@ -195,6 +247,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
       Name: Object0
       Robot Description: obstacle0/robot_description
       TF Prefix: ""
@@ -250,25 +303,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.487414836883545
+      Distance: 3.3693971633911133
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.44382530450820923
-        Y: -0.44123727083206177
-        Z: -0.310547798871994
+        X: 0.5405294895172119
+        Y: 0.16468866169452667
+        Z: 0.6986957788467407
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6253981590270996
+      Pitch: 0.2603984475135803
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.1503992080688477
+      Yaw: 4.510391712188721
     Saved: ~
 Window Geometry:
   Displays:
