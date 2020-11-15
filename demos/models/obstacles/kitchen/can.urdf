@@ -11,9 +11,9 @@
 		<geometry>
        			 <mesh filename="can/cokecan.dae" scale="0.0254 0.0254 0.0254"/>
       		</geometry>
-		<material>
-			<color rgba="0 0 1 1" />
-		</material>
+		<!--material>
+                    <color rgba="0 0 1 1" />
+		</material-->
 		</visual>
   	 <collision>
 		<origin xyz="0.0 0.0 -0.00255" rpy="0 0 0"/>

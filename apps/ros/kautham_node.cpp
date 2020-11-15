@@ -134,11 +134,11 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.z = poses[i][5];
         kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.w = poses[i][6];
 
-        //It is assumed that the link of the robot base is called "base_link".
+        //It is assumed that the link of the obstacle base is called "base".
         otransform[i].header.stamp = ros::Time::now();
         otransform[i].header.frame_id = "world";
         std::stringstream my_child_frame_id;
-        my_child_frame_id  << "obstacle"<<i<<"_base_link";
+        my_child_frame_id  << "obstacle"<<i<<"_base";
         otransform[i].child_frame_id = my_child_frame_id.str();
         otransform[i].transform.translation.x = poses[i][0];
         otransform[i].transform.translation.y = poses[i][1];
@@ -207,6 +207,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         rtransform[i].transform.rotation.z = poses[i][5];
         rtransform[i].transform.rotation.w = poses[i][6];
     }
+    kthloadrobots_srv.request.rvizfile = req.rvizfile;
 
     ros::ServiceClient kthloadrobots_client = n.serviceClient<kautham::LoadRobots>("/kautham_node_vis/LoadRobots");
     ROS_INFO( "CALLING Kautham LoadRobots");
@@ -752,7 +753,7 @@ bool srvSetObstaclPos(kautham::ObsPos::Request &req,
     otransform[req.index].header.stamp = ros::Time::now();
     otransform[req.index].header.frame_id = "world";
     std::stringstream my_child_frame_id;
-    my_child_frame_id  << "obstacle"<<req.index<<"_base_link";
+    my_child_frame_id  << "obstacle"<<req.index<<"_base";
     otransform[req.index].child_frame_id = my_child_frame_id.str();
     otransform[req.index].transform.translation.x = req.setPos.at(0);
     otransform[req.index].transform.translation.y = req.setPos.at(1);

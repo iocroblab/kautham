@@ -10,8 +10,9 @@
     <arg name="rname3"/>
     <arg name="rname4"/>
     <arg name="gui" default="false"/>
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kautham)/apps/ros/config/kautham.rviz" required="true"/>
-    <group if="$(arg r1)" ns="$(arg rname0)">
+    <arg name="rvizconfig" default="$(find kautham)/apps/ros/config/kautham.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true"/>
+    <group if="$(arg r0)" ns="$(arg rname0)">
         <node if="$(arg gui)" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
     </group>

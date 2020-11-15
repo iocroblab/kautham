@@ -44,6 +44,7 @@ def main():
     #Get data from config file
     #Get data for Problem files
     kauthamproblem = config_root.find('Problemfiles').find('kautham').get('name')
+    rvizconfigfile = config_root.find('Problemfiles').find('rviz').get('name')
     DIRECTORY =config_root.find('Problemfiles').find('directory').get('name')
     print("Using kautham problem",kauthamproblem)
 
@@ -93,7 +94,7 @@ def main():
     # print("Results saved in ", taskfile)
 
     use_joint_state_publisher_gui = False
-    kautham.kVisualizeScene(use_joint_state_publisher_gui)
+    kautham.kVisualizeScene(use_joint_state_publisher_gui, rvizconfigfile)
 
     controls = (0.1,0.2,0.3,0.4,0.5,0.6,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5)
     kautham.kMoveRobot(controls)

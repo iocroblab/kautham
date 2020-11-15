@@ -3,5 +3,6 @@
     <Problemfiles>
         <kautham name="OMPL_RRTconnect_chess_ur3_gripper_2_simple.xml" />
         <directory name="/demos/OMPL_geo_demos/chess/"/>
+        <rviz name="config/kautham_chess.rviz" />
     </Problemfiles>
 </Config>

@@ -46,6 +46,7 @@ bool receivedrobotscall = false;
 bool obstaclesloaded = false;
 bool receivedobstaclesscall = false;
 bool gui=false;
+std::string rvizfile;
 
 
 //This service is to be called only once to load the rots info: filenames and pose
@@ -68,6 +69,7 @@ bool srvLoadRobots(kautham::LoadRobots::Request &req,
             rfilename[i] = req.robotsfiles[i];
         }
         res.response = true;
+        rvizfile = req.rvizfile;
         return true;
     }
     else
@@ -145,8 +147,15 @@ bool loadRobots()
             ros::param::get(my_robot_description.str(), str);
 
             //Substitute the file paths
+            //First extract from the rfilename[i] the path, i.e. from the begining till the last "/" character
+            std::size_t found = rfilename[i].find_last_of("/");
             std::string substr1 = "filename=\"";
-            std::string substr2 = "filename=\"package://kautham/demos/models/robots/";
+            std::string substr2 = std::string("filename=\"file://")+rfilename[i].substr(0,found+1);
+            //std::cout<<"fname="<<ofilename[i]<<std::endl;
+            //std::cout<<"found="<<found<<std::endl;
+            //std::cout<<"fpath="<<substr2<<std::endl;
+            //std::string substr2 = "filename=\"file:///home/jan/catkin/catkin_wsTAMP/src/kautham/demos/models/obstacles/chess/";
+            //std::string substr2 = "filename=\"package://kautham/demos/models/obstacles/chess/";
             for (size_t index = str.find(substr1, 0);
                  index != std::string::npos && substr1.length();
                  index = str.find(substr1, index + substr2.length() ) )
@@ -196,9 +205,9 @@ bool loadRobots()
             ros::param::set(my_robot_description.str(), str);
 
             //Check the corrected robot description:
-            //std::string s;
-            //ros::param::get(my_robot_description.str(),s);
-            //std::cout<<"robot = "<<s<<std::endl;
+            std::string s;
+            ros::param::get(my_robot_description.str(),s);
+            std::cout<<"robot = "<<s<<std::endl;
 
             //(3) Complete the string to launch the viewer.launch file:
             std::stringstream rlabel;
@@ -208,8 +217,9 @@ bool loadRobots()
             std::stringstream guibool;
             if(gui) guibool << "true";
             else guibool << "false";
+            std:cout<<"***** RVIZ CONFIG FILE *** "<<rvizfile<<std::endl;
             viewerlaunchstr = viewerlaunchstr + " " + rbool.str() + ":=true " + rlabel.str() +
-                              ":=" + robot_namespace.str() + " gui:=" + guibool.str();
+                              ":=" + robot_namespace.str() + " gui:=" + guibool.str() + " rvizconfig:=" + rvizfile;
         }
         //Launch the viewer.launch file
         std::cout<<viewerlaunchstr.c_str()<<std::endl;
@@ -317,9 +327,9 @@ bool loadObstacles()
             ros::param::set(my_obstacle_description.str(), str);
 
             //Check the corrected robot description:
-            //std::string s;
-            //ros::param::get(my_obstacle_description.str(),s);
-            //std::cout<<"robot = "<<s<<std::endl;
+            std::string s;
+            ros::param::get(my_obstacle_description.str(),s);
+            std::cout<<"robot = "<<s<<std::endl;
         }
 
         obstaclesloaded = true;

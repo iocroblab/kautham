@@ -17,12 +17,11 @@
   <link name="base_link">
     <inertial>
       <mass value="28.26649"/>
-      <inertia ixx="0.46
-        5" ixy="0.002" ixz="-0.001" iyy="0.483" iyz="0" izz="0.55093970"/>
+      <inertia ixx="0.465" ixy="0.002" ixz="-0.001" iyy="0.483" iyz="0" izz="0.55093970"/>
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="tiago/meshes/base/base.stl"/>
+          <mesh filename="tiago/meshes/base/base.dae"/> 
       </geometry>
       <material name="White"/>
     </visual>
@@ -42,7 +41,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="tiago/meshes/wheels/wheel.stl"/>
+        <mesh filename="tiago/meshes/wheels/wheel.dae"/>
       </geometry>
       <material name="DarkGrey"/>
     </visual>
@@ -71,7 +70,7 @@
     <visual>
       <origin rpy="-3.14 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/wheels/wheel.stl"/>
+        <mesh filename="tiago/meshes/wheels/wheel.dae"/>
       </geometry>
       <material name="DarkGrey"/>
     </visual>
@@ -97,7 +96,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="tiago/meshes/torso/torso_fix.stl" scale="1 1 1"/>
+        <mesh filename="tiago/meshes/torso/torso_fix.dae" scale="1 1 1"/>
       </geometry>
       <material name="LightGrey"/>
     </visual>
@@ -130,7 +129,7 @@
     <!-- Lifting body -->
     <visual>
       <geometry>
-        <mesh filename="tiago/meshes/torso/torso_lift_with_arm.stl" scale="1 1 1"/>
+        <mesh filename="tiago/meshes/torso/torso_lift_with_arm.dae" scale="1 1 1"/>
       </geometry>
       <material name="White"/>
     </visual>
@@ -161,7 +160,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/head/head_1.stl" scale="1 1 1"/>
+        <mesh filename="tiago/meshes/head/head_1.dae" scale="1 1 1"/>
       </geometry>
       <material name="White"/>
     </visual>
@@ -194,7 +193,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/head/head_2.stl" scale="1 1 1"/>
+        <mesh filename="tiago/meshes/head/head_2.dae" scale="1 1 1"/>
       </geometry>
       <material name="White"/>
     </visual>
@@ -230,7 +229,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_1.stl" scale="1 1 1"/>
+        <mesh filename="tiago/meshes/arm/arm_1.dae" scale="1 1 1"/>
       </geometry>
       <material name="White"/>
     </visual>
@@ -261,7 +260,7 @@
       <!-- <origin xyz="0 0 0" rpy="${180 * deg_to_rad} ${0 * deg_to_rad} ${-90 * deg_to_rad}" /> -->
       <origin rpy="0.0 0.0 0.0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_2.stl" scale="1 1 1"/>
+        <mesh filename="tiago/meshes/arm/arm_2.dae" scale="1 1 1"/>
       </geometry>
       <material name="DarkGrey"/>
     </visual>
@@ -291,7 +290,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_3.stl" scale="1 1 1"/>
+        <mesh filename="tiago/meshes/arm/arm_3.dae" scale="1 1 1"/>
       </geometry>
       <material name="DarkGrey"/>
     </visual>
@@ -323,7 +322,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_4.stl" scale="1 1 1"/>
+        <mesh filename="tiago/meshes/arm/arm_4.dae" scale="1 1 1"/>
       </geometry>
       <material name="DarkGrey"/>
     </visual>
@@ -356,7 +355,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_5.stl" scale="1 1 1"/>
+        <mesh filename="tiago/meshes/arm/arm_5.dae" scale="1 1 1"/>
       </geometry>
       <material name="LightGrey"/>
     </visual>
@@ -385,7 +384,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/arm/arm_6.stl" scale="1 1 1"/>
+        <mesh filename="tiago/meshes/arm/arm_6.dae" scale="1 1 1"/>
       </geometry>
       <material name="LightGrey"/>
     </visual>
@@ -463,14 +462,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/gripper/gripper_link.stl"/>
+        <mesh filename="tiago/meshes/gripper/gripper_link.dae"/>
       </geometry>
       <material name="White"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/gripper/gripper_link_collision.stl"/>
+        <mesh filename="tiago/meshes/gripper/gripper_link_collision.dae"/>
       </geometry>
     </collision>
   </link>
@@ -484,7 +483,7 @@
     <visual>
       <origin rpy="0 0 3.1415" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/gripper/gripper_finger_link.stl" scale="-1 -1 1"/>
+        <mesh filename="tiago/meshes/gripper/gripper_finger_link.dae" scale="-1 -1 1"/>
       </geometry>
       <material name="White"/>
     </visual>
@@ -515,7 +514,7 @@
     <visual>
       <origin rpy="0 0 3.1415" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="tiago/meshes/gripper/gripper_finger_link.stl"/>
+        <mesh filename="tiago/meshes/gripper/gripper_finger_link.dae"/>
       </geometry>
       <material name="White"/>
     </visual>

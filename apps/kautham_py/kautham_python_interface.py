@@ -381,12 +381,13 @@ def kFindIK (pos, robIndex, armType, maintSameWrist,conf):
 
 
 # Function that wraps the call to the kautham service that visualizes the scene
-def kVisualizeScene (guisliders):
+def kVisualizeScene (guisliders, rvizfile):
     print("Waiting for /kautham_node/VisualizeScene")
     rospy.wait_for_service("/kautham_node/VisualizeScene")
     visualizationscene_srv= VisualizeScene()
     visualizationscene_srv.guisliders = guisliders
+    visualizationscene_srv.rvizfile = rvizfile
     visualizationscene_client=rospy.ServiceProxy("/kautham_node/VisualizeScene",VisualizeScene)
     print("Calling /kautham_node/VisualizeScene")
-    r = visualizationscene_client(visualizationscene_srv.guisliders)
+    r = visualizationscene_client(visualizationscene_srv.guisliders, visualizationscene_srv.rvizfile)
     return True

@@ -1,5 +1,6 @@
 string[] robotsfiles
 geometry_msgs/TransformStamped[] robottransforms
 bool gui
+string rvizfile
 ---
 bool response
