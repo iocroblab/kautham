@@ -134,11 +134,11 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.z = poses[i][5];
         kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.w = poses[i][6];
 
-        //It is assumed that the link of the robot base is called "base".
+        //It is assumed that the link of the robot base is called "base_link".
         otransform[i].header.stamp = ros::Time::now();
         otransform[i].header.frame_id = "world";
         std::stringstream my_child_frame_id;
-        my_child_frame_id  << "obstacle"<<i<<"_base";
+        my_child_frame_id  << "obstacle"<<i<<"_base_link";
         otransform[i].child_frame_id = my_child_frame_id.str();
         otransform[i].transform.translation.x = poses[i][0];
         otransform[i].transform.translation.y = poses[i][1];
@@ -238,7 +238,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         {
             std::stringstream jointnameprefix;
             jointnameprefix << "robot"<<i<<"_";
-            std::cout<<jointnameprefix.str()+jointnames[j]<<std::endl;
+            //std::cout<<jointnameprefix.str()+jointnames[j]<<std::endl;
             joint_state_robot[i].name[j] = jointnameprefix.str()+jointnames[j];
             joint_state_robot[i].position[j] = 0;
         }
@@ -752,7 +752,7 @@ bool srvSetObstaclPos(kautham::ObsPos::Request &req,
     otransform[req.index].header.stamp = ros::Time::now();
     otransform[req.index].header.frame_id = "world";
     std::stringstream my_child_frame_id;
-    my_child_frame_id  << "obstacle"<<req.index<<"_base";
+    my_child_frame_id  << "obstacle"<<req.index<<"_base_link";
     otransform[req.index].child_frame_id = my_child_frame_id.str();
     otransform[req.index].transform.translation.x = req.setPos.at(0);
     otransform[req.index].transform.translation.y = req.setPos.at(1);
@@ -880,9 +880,6 @@ int main (int argc, char **argv) {
             }
             for(int i=0; i<numrobots; i++)
             {
-                //test
-                //rtransform[i].transform.translation.x += 0.01;
-                //std::cout<<"ppppppppppppppppppp    %f"<<rtransform[i].transform.translation.x<<std::endl;
                 br->sendTransform(rtransform[i]);
             }
             for(int i=0; i<numobstacles; i++)

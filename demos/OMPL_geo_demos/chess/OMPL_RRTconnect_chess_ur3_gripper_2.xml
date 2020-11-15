@@ -6,7 +6,6 @@
 	<Obstacle obstacle="obstacles/chess/pawnB1.urdf" scale="1.0">
 		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.175" X="0.125" />
 	</Obstacle>
-        <!--
 	<Obstacle obstacle="obstacles/chess/pawnB2.urdf" scale="1.0">
 		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.125" X="0.125" />
 	</Obstacle>
@@ -106,7 +105,6 @@
 	<Obstacle obstacle="obstacles/chess/realsense_d435.urdf" scale="1.0">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="-0.29" X="0.0" />
 	</Obstacle>
-        -->
 	<Robot robot="robots/ur3_robotniq_A.urdf" scale="1.0">
 		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="-0.04" Y="0.0" X="0.37" />
                 <ViewLink name="tool0"/>

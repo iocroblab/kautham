@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Config>        
     <Problemfiles>
-        <kautham name="OMPL_RRTconnect_chess_ur3_gripper_2.xml" />
+        <kautham name="OMPL_RRTconnect_chess_ur3_gripper_2_simple.xml" />
         <directory name="/demos/OMPL_geo_demos/chess/"/>
     </Problemfiles>
 </Config>
