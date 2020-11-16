@@ -7,9 +7,11 @@
         	 <inertia ixx="0.000683333"  ixy="0"  ixz="0" iyy="0.000683333" iyz="0" izz="0.000683333" />
        </inertial>
 	<visual>
-		<origin xyz="0.0 0.0 -0.00255" rpy="0 0 0" />
+                <origin xyz="0.0 0.0 -0.00255" rpy="0 0 0" />
+                <!--origin xyz="0.0 0.0 0.055" rpy="0 0 0" /-->
 		<geometry>
-       			 <mesh filename="can/cokecan.dae" scale="0.0254 0.0254 0.0254"/>
+                         <mesh filename="can/cokecan2.dae" scale="0.0254 0.0254 0.0254"/>
+                         <!--cylinder length="0.11" radius="0.035"/-->
       		</geometry>
 		<!--material>
                     <color rgba="0 0 1 1" />

@@ -435,10 +435,12 @@ bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
         std::cout<<"qz = "<<res.config[i].base.orientation.y<<std::endl;
         std::cout<<"qw = "<<res.config[i].base.orientation.w<<std::endl;
         std::cout<<"q = (";
-        for(unsigned int j=0; j<joint_state_robot[i].position.size();j++)
-            std::cout<<res.config[i].joints[j]<<" ";
-        std::cout<<std::endl;
         */
+        //std::cout<<"ROBOT "<<i<<std::endl;
+        //for(unsigned int j=0; j<joint_state_robot[i].position.size();j++)
+        //    std::cout<<res.config[i].joints[j]<<" ";
+        //std::cout<<std::endl;
+        //std::cout<<"ROBOT "<<i<<std::endl;
     }
 }
 

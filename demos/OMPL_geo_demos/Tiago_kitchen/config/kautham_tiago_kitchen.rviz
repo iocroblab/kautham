@@ -5,8 +5,8 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Status1
-        - /TF1
-      Splitter Ratio: 0.36775362491607666
+        - /TF1/Frames1
+      Splitter Ratio: 0.5355450510978699
     Tree Height: 497
   - Class: rviz/Selection
     Name: Selection
@@ -57,44 +57,46 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        grasp01:
+          Value: true
         obstacle0_base:
           Value: true
         obstacle1_base:
           Value: true
         robot0_arm_1_link:
-          Value: true
+          Value: false
         robot0_arm_2_link:
-          Value: true
+          Value: false
         robot0_arm_3_link:
-          Value: true
+          Value: false
         robot0_arm_4_link:
-          Value: true
+          Value: false
         robot0_arm_5_link:
-          Value: true
+          Value: false
         robot0_arm_6_link:
-          Value: true
+          Value: false
         robot0_arm_7_link:
           Value: true
         robot0_base_link:
-          Value: true
+          Value: false
         robot0_gripper_left_finger_link:
-          Value: true
+          Value: false
         robot0_gripper_link:
-          Value: true
+          Value: false
         robot0_gripper_right_finger_link:
-          Value: true
+          Value: false
         robot0_head_1_link:
-          Value: true
+          Value: false
         robot0_head_2_link:
           Value: true
         robot0_torso_fixed_link:
-          Value: true
+          Value: false
         robot0_torso_lift_link:
-          Value: true
+          Value: false
         robot0_wheel_left_link:
-          Value: true
+          Value: false
         robot0_wheel_right_link:
-          Value: true
+          Value: false
         world:
           Value: true
       Marker Scale: 1
@@ -105,7 +107,8 @@ Visualization Manager:
       Tree:
         world:
           obstacle0_base:
-            {}
+            grasp01:
+              {}
           obstacle1_base:
             {}
           robot0_base_link:
@@ -303,25 +306,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.3693971633911133
+      Distance: 1.4552974700927734
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.5405294895172119
-        Y: 0.16468866169452667
-        Z: 0.6986957788467407
+        X: 0.7121120691299438
+        Y: 0.27433305978775024
+        Z: 0.905329704284668
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.2603984475135803
+      Pitch: 0.5353981852531433
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.510391712188721
+      Yaw: 5.3803887367248535
     Saved: ~
 Window Geometry:
   Displays:

@@ -205,9 +205,9 @@ bool loadRobots()
             ros::param::set(my_robot_description.str(), str);
 
             //Check the corrected robot description:
-            std::string s;
-            ros::param::get(my_robot_description.str(),s);
-            std::cout<<"robot = "<<s<<std::endl;
+            //std::string s;
+            //ros::param::get(my_robot_description.str(),s);
+            //std::cout<<"robot = "<<s<<std::endl;
 
             //(3) Complete the string to launch the viewer.launch file:
             std::stringstream rlabel;

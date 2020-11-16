@@ -97,9 +97,11 @@ def main():
     use_joint_state_publisher_gui = False
     kautham.kVisualizeScene(use_joint_state_publisher_gui, rvizconfigfile)
 
-    controls = (0.459, 0.023, 0.628, 0.688, 0.820, 0.083, 0.974, 0.553, 1.000)
-    kautham.kMoveRobot(controls)
-
+    #tiago_counter_A_topgrasp_simple.xml demo:
+    controls_sample_0 = (0.459, 0.023, 0.628, 0.688, 0.820, 0.083, 0.974, 0.553, 1.000) #home config
+    controls_sample_1 = (0.846, 0.944, 0.861, 0.786, 0.594, 0.226, 0.85, 0.429, 1.000) #top grasp
+    controls_sample_2 = (0.194, 0.511, 0.599, 0.369, 0.758, 0.594, 0.500, 0.417, 1.000) #lateral grasp
+    kautham.kMoveRobot(controls_sample_2)
 
     #poseobject = (0.025,0.025,0.02,0,0,0,1)
     #kautham.kSetObstaclePos(1,poseobject)
