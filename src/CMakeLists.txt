@@ -66,22 +66,6 @@ else( ARMADILLO_FOUND )
    message( SEND_ERROR  "armadillo Package NOT FOUND. Planners using PCA will be disabled. Kautham needs it by now")
 endif( ARMADILLO_FOUND )
 
-#### ompl ######
-find_package(ompl)
-if( OMPL_FOUND )
-   if(OMPL_VERSION  VERSION_LESS 1.3.0)
-	message(ERROR "OMPL Package FOUND version ${OMPL_VERSION} and Kautham need at least 1.3")
-   else(OMPL_VERSION  VERSION_LESS 1.3.0)
-	message( STATUS "OMPL Package FOUND version ${OMPL_VERSION} : setting -DKAUTHAM_USE_OMPL flag")
-	message( STATUS "OMPL lib is: " ${OMPL_LIBRARIES})
-   endif(OMPL_VERSION  VERSION_LESS 1.3.0)
-
-   message( STATUS "OMPL include is: " ${OMPL_INCLUDE_DIRS})
-   include_directories(${OMPL_INCLUDE_DIRS})
-   set(EXTRA_LIBS ${EXTRA_LIBS} ${OMPL_LIBRARIES})
-   add_definitions( -DKAUTHAM_USE_OMPL )
-endif()
-
 find_package(Pthreads)
 if(PTHREADS_FOUND)
    message( STATUS "Pthreads Package FOUND:")
@@ -137,7 +121,6 @@ set_target_properties( libkautham PROPERTIES
 #include_directories(${CMAKE_CURRENT_SOURCE_DIR}/util/libkin/)
 #add_library(YumiIK SHARED ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin/YumiKinematics.cpp)
 #set(EXTRA_LIBS ${EXTRA_LIBS} YumiIK)
-
 
 target_link_libraries(libkautham ${EXTRA_LIBS})
 
