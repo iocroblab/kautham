@@ -39,12 +39,12 @@
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
 
-#include <ompl/extensions/opende/OpenDESimpleSetup.h>
-#include <ompl/extensions/opende/OpenDEControlSpace.h>
-#include <ompl/extensions/opende/OpenDEStateSpace.h>
-#include <ompl/extensions/opende/OpenDESimpleSetup.h>
-#include <ompl/extensions/opende/OpenDEStatePropagator.h>
-#include <ompl/extensions/opende/OpenDEStateValidityChecker.h>
+#include <ompl/extensions/ode/OpenDESimpleSetup.h>
+#include <ompl/extensions/ode/OpenDEControlSpace.h>
+#include <ompl/extensions/ode/OpenDEStateSpace.h>
+#include <ompl/extensions/ode/OpenDESimpleSetup.h>
+#include <ompl/extensions/ode/OpenDEStatePropagator.h>
+#include <ompl/extensions/ode/OpenDEStateValidityChecker.h>
 #include <ompl/base/goals/GoalRegion.h>
 #include <ompl/config.h>
 #include <iostream>
