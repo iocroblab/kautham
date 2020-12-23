@@ -336,9 +336,6 @@ bool Benchmark::add_parameter(xml_node *param_node) {
         } else if (name == "saveConsoleOutput") {
             req->saveConsoleOutput = param_node->attribute("Value").as_bool(true);
             return true;
-        } else if (name == "useThreads") {
-            req->useThreads = param_node->attribute("Value").as_bool(true);
-            return true;
         } else if (name == "filename") {
             filename = param_node->attribute("Value").as_string("");
             return true;
