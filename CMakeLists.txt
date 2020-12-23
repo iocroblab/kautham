@@ -47,7 +47,7 @@ endif(COMMAND cmake_policy)
 ########### Options ####################
 option( KAUTHAM_OMPL "Use OMPL planners" ON )
 option( KAUTHAM_IOC "Use IOC planners" ON )
-option( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
+option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
 option( KAUTHAM_ROS "Build the ROS version" ON )
