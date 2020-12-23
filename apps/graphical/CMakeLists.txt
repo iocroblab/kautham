@@ -85,7 +85,8 @@ set( HDR_FILES_GUI kauthamgui.h
          ui_RobotSim.h)
 
 add_executable(kautham-gui  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${kautham_RESOURCES_RCC} )
-target_link_libraries( kautham-gui libkautham ${SoQt_LIBRARIES} ${OPENGL_LIBRARIES} ${QT_LIBRARIES} ${Boost_LIBRARIES} ${PUGI_XML_LIBRARIES})
+#target_link_libraries( kautham-gui libkautham ${SoQt_LIBRARIES} ${OPENGL_LIBRARIES} ${QT_LIBRARIES} ${Boost_LIBRARIES} ${PUGI_XML_LIBRARIES})
+target_link_libraries( kautham-gui ${QT_LIBRARIES} ${SoQt_LIBRARIES} ${Boost_LIBRARIES} libkautham )
 
 add_dependencies(kautham-gui libkautham)
 
