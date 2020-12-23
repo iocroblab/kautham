@@ -24,9 +24,12 @@
 
 project(kautham)
 
-cmake_minimum_required(VERSION 2.4.6)
+cmake_minimum_required(VERSION 3.1.3)
 
-add_definitions(-std=c++11 -Wall -Wextra -Wpedantic -fPIC)#-Werror)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_definitions(-Wall -Wextra -Wpedantic -fPIC)#-Werror)
 
 set( KAUTHAM_VERSION 4.1.1 )
 STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} )
@@ -182,6 +185,27 @@ include_directories( ${mt_DIR} )
 ### Eigen3 ############
 find_package(Eigen3 REQUIRED NO_MODULE)
 include_directories(${EIGEN3_INCLUDE_DIR})
+
+#### ompl ######
+# since noetic, ros provides ompl library version.
+# but we prefer the Debian version
+set(CMAKE_FIND_ROOT_PATH /usr/share;${CMAKE_FIND_ROOT_PATH})
+find_package(ompl 1.5) 
+
+if( OMPL_FOUND )
+   if(OMPL_VERSION  VERSION_LESS 1.3.0)
+        message(ERROR "OMPL Package FOUND version ${OMPL_VERSION} and Kautham need at least 1.3")
+   else(OMPL_VERSION  VERSION_LESS 1.3.0)
+        message( STATUS "OMPL Package FOUND version ${OMPL_VERSION} : setting -DKAUTHAM_USE_OMPL flag")
+        message( STATUS "OMPL lib is: " ${OMPL_LIBRARIES})
+   endif(OMPL_VERSION  VERSION_LESS 1.3.0)
+
+   message( STATUS "OMPL include is: " ${OMPL_INCLUDE_DIRS})
+   include_directories(${OMPL_INCLUDE_DIRS})
+   set(EXTRA_LIBS ${EXTRA_LIBS} ${OMPL_LIBRARIES})
+   add_definitions( -DKAUTHAM_USE_OMPL )
+endif()
+
 
 ##################### ROS-catkin ####################################
 
