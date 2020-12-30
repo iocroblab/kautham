@@ -32,6 +32,8 @@
 
 #include <kautham/planner/omplg/omplRRTplanner.h>
 #include <kautham/planner/omplg/omplValidityChecker.h>
+#include <kautham/planner/omplg/FOSUpstreamCriterionOptimizationObjective.h>
+#include <kautham/planner/omplg/vectorField.h>
 
 
 
@@ -39,13 +41,23 @@ namespace Kautham {
   namespace omplplanner{
 
 	//! Constructor
-    omplRRTPlanner::omplRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
+    omplRRTPlanner::omplRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples,
+                                   WorkSpace *ws, og::SimpleSetup *ssptr,
+                                   const std::string &synergyTreeFilename):
               omplPlanner(stype, init, goal, samples, ws, ssptr)
 	{
         _guiName = "ompl RRT Planner";
         _idName = "omplRRT";
 
         //create planner
+        if (!synergyTreeFilename.empty()) {
+            st_ =  new SynergyTree(synergyTreeFilename);
+            ss->getProblemDefinition()->setOptimizationObjective
+                    (ob::OptimizationObjectivePtr(new ob::FOSUpstreamCriterionOptimizationObjective(si,this,st_)));
+        }
+        else st_=NULL;
+
+
         ob::PlannerPtr planner(new og::RRT(si));
         //set planner parameters: range and goalbias
         _Range=0.05;
@@ -72,7 +84,30 @@ namespace Kautham {
     omplRRTPlanner::~omplRRTPlanner(){
 			
 	}
-	
+    //! function to find a solution path
+    bool omplRRTPlanner::trySolve()
+    {
+        if (omplPlanner::trySolve()) {
+            //evaluate path
+            cout << "path with " << ((og::PathGeometric)ss->getSolutionPath()).getStateCount() << " states" << endl;
+            if(st_!=NULL)
+            {
+                ob::Cost pathcost = ((og::PathGeometric)ss->getSolutionPath()).cost(ss->getProblemDefinition()->getOptimizationObjective());
+                cout << "Path cost = " << pathcost.value() << endl;
+             }
+             else
+            {
+                cout << "Path cost not evaluated. No synergyTree was defined in the problem file"  << endl;
+            }
+
+            return true;
+        } else {
+            cout<<"No solution found"<<endl;
+
+            return true;
+        }
+    }
+
 	//! setParameters sets the parameters of the planner
     bool omplRRTPlanner::setParameters(){
 

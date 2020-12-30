@@ -169,7 +169,7 @@ bool Problem::createPlanner( string name, std::string synergyTreeFilename ) {
         _planner = new omplplanner::omplPRMPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
 
     else if (name == "omplRRT")
-        _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
+        _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL,synergyTreeFilename);
 
     else if (name == "omplFOSRRT")
         _planner = new omplplanner::omplFOSRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
@@ -329,7 +329,7 @@ bool Problem::createPlanner( string name, ompl::geometric::SimpleSetup *ssptr,
         _planner = new omplplanner::omplPRMPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
     else if (name == "omplRRT")
-        _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
+        _planner = new omplplanner::omplRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr,synergyTreeFilename);
 
     else if (name == "omplFOSRRT")
         _planner = new omplplanner::omplFOSRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);

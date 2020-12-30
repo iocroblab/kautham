@@ -35,6 +35,7 @@
 #include <kautham/planner/omplg/omplplanner.h>
 #include <kautham/problem/workspace.h>
 #include <kautham/sampling/sampling.h>
+#include <kautham/planner/omplg/synergy_tree.h>
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
@@ -49,13 +50,18 @@ namespace Kautham {
 
     class omplRRTPlanner:public omplPlanner {
 	    public:
-        omplRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
+        omplRRTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws,
+                       og::SimpleSetup *ssptr,
+                       const std::string &synergyTreeFilename);
         ~omplRRTPlanner();
 
+        virtual bool trySolve();//!< Overloaded trySolve function to include evaluation of final path cost
         bool setParameters();
 
          KthReal _Range;
          KthReal _GoalBias;
+    protected:
+        SynergyTree *st_;
 	  };
   }
   /** @}   end of Doxygen module */
