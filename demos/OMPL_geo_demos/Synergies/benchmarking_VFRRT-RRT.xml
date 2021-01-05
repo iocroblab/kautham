@@ -1,0 +1,11 @@
+<Benchmark Name="experiment">
+	<Problem File="artificialVFRRT.xml" PlannerAlias="VFRRT"/>
+	<Problem File="artificialRRT.xml" PlannerAlias="PRM"/>
+	<Parameter Name="maxTime" Value="10.0" />
+	<Parameter Name="maxMem" Value="8000.0" />
+	<Parameter Name="runCount" Value="10" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="result.log" />
+</Benchmark>
+
+
