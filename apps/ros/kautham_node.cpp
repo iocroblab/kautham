@@ -406,25 +406,30 @@ bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
         res.config[i].base.orientation.z = config[i].first.getOrient().at(2);
         res.config[i].base.orientation.w = config[i].first.getOrient().at(3);
         res.config[i].joints = config[i].second.getCoordinates();
-        //update the broadcasted transforms for the base
 
-        rtransform[i].header.stamp = ros::Time::now();
-        rtransform[i].header.frame_id = "world";
-        std::stringstream my_child_frame_id;
-        my_child_frame_id  << "robot"<<i<<"_base_link";
-        rtransform[i].child_frame_id = my_child_frame_id.str();
-        rtransform[i].transform.translation.x = config[i].first.getPos().at(0);
-        rtransform[i].transform.translation.y = config[i].first.getPos().at(1);
-        rtransform[i].transform.translation.z = config[i].first.getPos().at(2);
-        rtransform[i].transform.rotation.x = config[i].first.getOrient().at(0);
-        rtransform[i].transform.rotation.y = config[i].first.getOrient().at(1);
-        rtransform[i].transform.rotation.z = config[i].first.getOrient().at(2);
-        rtransform[i].transform.rotation.w = config[i].first.getOrient().at(3);
+        if(visualizescene)
+        {
+            //update the broadcasted transforms for the base
+            rtransform[i].header.stamp = ros::Time::now();
+            rtransform[i].header.frame_id = "world";
+            std::stringstream my_child_frame_id;
+            my_child_frame_id  << "robot"<<i<<"_base_link";
+            rtransform[i].child_frame_id = my_child_frame_id.str();
+            rtransform[i].transform.translation.x = config[i].first.getPos().at(0);
+            rtransform[i].transform.translation.y = config[i].first.getPos().at(1);
+            rtransform[i].transform.translation.z = config[i].first.getPos().at(2);
+            rtransform[i].transform.rotation.x = config[i].first.getOrient().at(0);
+            rtransform[i].transform.rotation.y = config[i].first.getOrient().at(1);
+            rtransform[i].transform.rotation.z = config[i].first.getOrient().at(2);
+            rtransform[i].transform.rotation.w = config[i].first.getOrient().at(3);
 
-        //fill the joint values to be published
-        if(visualizescene && !guisliders)
-           for(unsigned int j=0; j<joint_state_robot[i].position.size();j++)
-              joint_state_robot[i].position[j] = config[i].second.getCoordinates().at(j);
+            //fill the joint values to be published
+            if(!guisliders)
+            {
+                for(unsigned int j=0; j<joint_state_robot[i].position.size();j++)
+                    joint_state_robot[i].position[j] = config[i].second.getCoordinates().at(j);
+            }
+        }
         /*
         std::cout<<"ROBOT "<<i<<std::endl;
         std::cout<<"x = "<<res.config[i].base.position.x<<std::endl;
@@ -749,22 +754,23 @@ bool srvGetNumVertices(kautham::GetNumVertices::Request &req,
 
 bool srvSetObstaclPos(kautham::ObsPos::Request &req,
                             kautham::ObsPos::Response &res) {
-
     res.response = ksh->setObstaclePos(req.index, req.setPos);
 
-    otransform[req.index].header.stamp = ros::Time::now();
-    otransform[req.index].header.frame_id = "world";
-    std::stringstream my_child_frame_id;
-    my_child_frame_id  << "obstacle"<<req.index<<"_base";
-    otransform[req.index].child_frame_id = my_child_frame_id.str();
-    otransform[req.index].transform.translation.x = req.setPos.at(0);
-    otransform[req.index].transform.translation.y = req.setPos.at(1);
-    otransform[req.index].transform.translation.z = req.setPos.at(2);
-    otransform[req.index].transform.rotation.x = req.setPos.at(3);
-    otransform[req.index].transform.rotation.y = req.setPos.at(4);
-    otransform[req.index].transform.rotation.z = req.setPos.at(5);
-    otransform[req.index].transform.rotation.w = req.setPos.at(6);
-
+    if(visualizescene)
+    {
+        otransform[req.index].header.stamp = ros::Time::now();
+        otransform[req.index].header.frame_id = "world";
+        std::stringstream my_child_frame_id;
+        my_child_frame_id  << "obstacle"<<req.index<<"_base";
+        otransform[req.index].child_frame_id = my_child_frame_id.str();
+        otransform[req.index].transform.translation.x = req.setPos.at(0);
+        otransform[req.index].transform.translation.y = req.setPos.at(1);
+        otransform[req.index].transform.translation.z = req.setPos.at(2);
+        otransform[req.index].transform.rotation.x = req.setPos.at(3);
+        otransform[req.index].transform.rotation.y = req.setPos.at(4);
+        otransform[req.index].transform.rotation.z = req.setPos.at(5);
+        otransform[req.index].transform.rotation.w = req.setPos.at(6);
+    }
     return true;
 }
 
