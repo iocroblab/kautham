@@ -78,6 +78,7 @@
 #include <kautham/planner/omplg/omplProjESTplanner.h>
 #include <kautham/planner/omplg/omplSBLplanner.h>
 #include <kautham/planner/omplg/omplKPIECEplanner.h>
+#include <kautham/planner/omplg/omplTSRRT.h>
 #include <kautham/planner/omplc/omplcRRTcarplanner.h>
 #include <kautham/planner/omplc/omplcRRTf16planner.h>
 #include <kautham/planner/omplc/omplcRRTdualdriveplanner.h>
