@@ -183,6 +183,9 @@ bool Problem::createPlanner( string name, std::string synergyTreeFilename ) {
     else if (name == "omplTRRT")
         _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
 
+    else if (name == "omplTSRRT")
+        _planner = new omplplanner::omplTSRRT(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
+
     else if (name == "omplFOSTRRT")
         _planner = new omplplanner::omplFOSTRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
 
@@ -237,7 +240,6 @@ bool Problem::createPlanner( string name, std::string synergyTreeFilename ) {
     else if (name == "omplKPIECE")
         _planner = new omplplanner::omplKPIECEPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace, NULL);
 
-
     else if (name == "omplcRRTf16")
         _planner = new omplcplanner::omplcRRTf16Planner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, NULL);
 
@@ -256,6 +258,8 @@ bool Problem::createPlanner( string name, std::string synergyTreeFilename ) {
 
     else if (name == "omplcSSTdualdrive")
         _planner = new omplcplanner::omplcSSTdualdrivePlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, NULL);
+
+
 #endif
 
 #if defined(KAUTHAM_USE_ODE)
@@ -339,6 +343,9 @@ bool Problem::createPlanner( string name, ompl::geometric::SimpleSetup *ssptr,
 
     else if (name == "omplTRRT")
         _planner = new omplplanner::omplTRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
+
+    else if (name == "omplTSRRT")
+        _planner = new omplplanner::omplTSRRT(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
     else if (name == "omplFOSTRRT")
         _planner = new omplplanner::omplFOSTRRTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
@@ -498,11 +505,6 @@ bool Problem::createPlannerFromFile(istream *xml_inputfile, ompl::control::Simpl
 }
 
 
-
-
-
-
-
 bool Problem::createPlannerFromFile(string problemFile) {
     xml_document *doc = new xml_document;
     if (doc->load( problemFile.c_str() )) {
@@ -532,8 +534,6 @@ bool Problem::createPlannerFromFile(string problemFile, ompl::control::SimpleSet
         return false;
     }
 }
-
-
 
 
 bool Problem::createPlannerFromFile(xml_document *doc) {
@@ -566,6 +566,12 @@ bool Problem::createPlannerFromFile(xml_document *doc) {
                     ((omplplanner::omplTRRTPlanner*)_planner)->
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
                                              child("Potential").attribute("potential").as_string());
+
+                } else if (plannerName == "omplTSRRT") {
+                    ((omplplanner::omplTSRRT*)_planner)->
+                            setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
+                                             child("Potential").attribute("potential").as_string());
+
                 } else if (plannerName == "omplTRRTConnect") {
                     ((omplplanner::omplTRRTConnectPlanner*)_planner)->
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
@@ -641,6 +647,12 @@ bool Problem::createPlannerFromFile(xml_document *doc, ompl::geometric::SimpleSe
                     ((omplplanner::omplTRRTPlanner*)_planner)->
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
                                              child("Potential").attribute("potential").as_string());
+
+                } else if (plannerName == "omplTSRRT") {
+                    ((omplplanner::omplTSRRT*)_planner)->
+                            setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
+                                             child("Potential").attribute("potential").as_string());
+
                 } else if (plannerName == "omplTRRTConnect") {
                     ((omplplanner::omplTRRTConnectPlanner*)_planner)->
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").

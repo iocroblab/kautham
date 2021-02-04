@@ -25,6 +25,12 @@
 #if !defined(_omplPLANNER_H)
 #define _omplPLANNER_H
 #if defined(KAUTHAM_USE_OMPL)
+
+#include "ompl/geometric/planners/rrt/TSRRT.h"
+#include "ompl/base/goals/GoalSampleableRegion.h"
+#include "ompl/tools/config/SelfConfig.h"
+#include <limits>
+
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/control/SimpleSetup.h>
@@ -36,6 +42,7 @@
 #include <ompl/base/ProjectionEvaluator.h>
 #include <ompl/base/spaces/RealVectorStateProjections.h>
 #include <ompl/util/Exception.h>
+
 namespace og = ompl::geometric;
 namespace oc = ompl::control;
 namespace ob = ompl::base;
@@ -175,6 +182,7 @@ namespace Kautham {
             //og::SimpleSetupPtr ss;
             ob::StateSpacePtr space;
             ob::SpaceInformationPtr si;
+            og::TaskSpaceConfigPtr task_space;
 
 
             unsigned int _validSegmentCount;

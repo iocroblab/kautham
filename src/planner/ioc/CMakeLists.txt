@@ -1,4 +1,9 @@
 # this file makes the libiocplanner library.
+set(SRC_FILES gridplanner.cpp
+              HFplanner.cpp
+              mygridplanner.cpp
+              NF1planner.cpp)
+
 include_directories( ${mt_DIR} )
 			
 file( GLOB SRC_IOC_FILES *.cpp )
