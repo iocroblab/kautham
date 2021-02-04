@@ -312,9 +312,9 @@ def kSetRobControlsNoQuery(controls):
     kauthamsetrobcontrolsnoquery_client = rospy.ServiceProxy("/kautham_node/SetRobControlsNoQuery", SetRobControlsNoQuery())
     r=kauthamsetrobcontrolsnoquery_client(kauthamsetrobcontrolsnoquery_srv.controls)
     if r.response:
-        print("Controls and query Set")
+        print("Controls set ok")
     else:
-        print("Set Controls and query failed")
+        print("Set Controls failed")
     return (r.response)
 
 
