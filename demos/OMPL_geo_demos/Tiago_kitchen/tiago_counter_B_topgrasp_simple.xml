@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<Problem name="Tiago fixed in kitchen at counter A">
+	<Robot robot="robots/tiago/tiago_with_gripper.urdf" scale="1.0">
+            <Limits name="X" min="-3.0" max="3.0" />
+            <Limits name="Y" min="-3.0" max="3.0" />
+            <Limits name="Z" min="0.0985" max="0.0986" />
+            <ViewLink name="gripper_left_finger_link"/>
+	</Robot>
+        <!--Red can -->
+	<Obstacle obstacle="obstacles/kitchen/can.urdf" scale="1">
+		<Home TH="0" WZ="0.0" WY="0.0" WX="1.0" Z="0.9071908593177795" Y="0.314" X="-0.91" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/kitchen/kitchen.urdf" scale="1">
+		<Home TH="0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="0" X="0" />
+	</Obstacle>
+        <!-- Controls to move only the torso and arm keeping the base and head fixed -->
+	<Controls robot="controls/tiago_simple_only_arm_gripper_counterB.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="_Max Planning Time">30</Parameter>
+			<Parameter name="_Speed Factor">2</Parameter>
+			<Parameter name="Range">0.2</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init>0.459 0.023 0.628 0.688 0.820 0.083 0.974 0.553 1.000</Init>
+				<Goal>0.9529073749269759 0.18226223890263202 0.29051166121023314 0.3210678172682361 0.6136052550889736 0.6659838689936045 0.24475875034713368 0.1262136031217134 1.0</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
