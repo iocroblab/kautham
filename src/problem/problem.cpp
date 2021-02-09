@@ -567,11 +567,6 @@ bool Problem::createPlannerFromFile(xml_document *doc) {
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
                                              child("Potential").attribute("potential").as_string());
 
-                } else if (plannerName == "omplTSRRT") {
-                    ((omplplanner::omplTSRRT*)_planner)->
-                            setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
-                                             child("Potential").attribute("potential").as_string());
-
                 } else if (plannerName == "omplTRRTConnect") {
                     ((omplplanner::omplTRRTConnectPlanner*)_planner)->
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
@@ -585,7 +580,6 @@ bool Problem::createPlannerFromFile(xml_document *doc) {
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
                                              child("Potential").attribute("potential").as_string());
                 }
-
 
                 //Set normal parameters
                 xml_node::iterator it;
@@ -645,11 +639,6 @@ bool Problem::createPlannerFromFile(xml_document *doc, ompl::geometric::SimpleSe
                                            child("SynergyTree").attribute("synergyTree").as_string());
                 } else if (plannerName == "omplTRRT") {
                     ((omplplanner::omplTRRTPlanner*)_planner)->
-                            setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
-                                             child("Potential").attribute("potential").as_string());
-
-                } else if (plannerName == "omplTSRRT") {
-                    ((omplplanner::omplTSRRT*)_planner)->
                             setPotentialCost(doc->child("Problem").child("Planner").child("Parameters").
                                              child("Potential").attribute("potential").as_string());
 
