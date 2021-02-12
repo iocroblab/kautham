@@ -160,9 +160,11 @@ add_custom_target(headers SOURCES ${LibFiles})
 
 
 #### Boost package ###############
+set(Boost_USE_MULTITHREADED      ON)
 find_package( Boost COMPONENTS  system serialization thread REQUIRED )
 if(Boost_FOUND)
   message(STATUS "Boost library found at first attempt.")
+  message(STATUS "Using Boost linking against ${Boost_LIBRARIES}") 
   set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
 else(Boost_FOUND)
   set( BOOST_ROOT $ENV{BOOSTDIR})
