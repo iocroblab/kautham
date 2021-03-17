@@ -44,7 +44,7 @@ namespace Kautham {
    struct attachData{
        uint step;
        string action;
-       uint objnumber;
+       string objname;
        uint robnumber;
        uint linknumber;
    };
@@ -98,7 +98,7 @@ namespace Kautham {
        inline int                     findIndex(Sample *s){return _samples->indexOf(s);}
        void                           loadExternalPath(vector<Sample*> &p);  
        void                           clearAttachData();
-       void                           loadAttachData(int s, string a, int o, int r, int l);
+       void                           loadAttachData(int s, string a, string o, int r, int l);
        inline vector<attachData>&     getAttachData(){return _attachdetach;};
 
    protected:

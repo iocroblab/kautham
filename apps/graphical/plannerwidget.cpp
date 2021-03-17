@@ -462,15 +462,8 @@ namespace Kautham {
                         int iobj;
                         if(_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()!=0)
                         {
-                            std::string obsname = _planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().obs->getName();
-                            for(unsigned int k=0;k<_planner->wkSpace()->getNumObstacles();k++)
-                            {
-                                if(_planner->wkSpace()->getObstacle(k)->getName() == obsname)
-                                {
-                                    iobj = k;
-                                    break;
-                                }
-                            }
+                            std::string obsname = _planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().obs->getName();                         
+
                             std::string linkname =_planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().link->getName();
                             for(unsigned int k=0;k<_planner->wkSpace()->getRobot(irob)->getNumLinks();k++)
                             {
@@ -480,7 +473,7 @@ namespace Kautham {
                                     break;
                                 }
                             }
-                            _planner->loadAttachData(0,"attach",iobj,irob,ilink);
+                            _planner->loadAttachData(0,"attach",obsname,irob,ilink);
                         }
                     }
                     if(_planner->getAttachData().size()==0){
@@ -490,7 +483,7 @@ namespace Kautham {
                     else{
                         //<Transfer object="1" robot="0" link="0">
                         transit=false;
-                        sstr << "<Transfer object=\""<<_planner->getAttachData()[0].objnumber <<"\" ";
+                        sstr << "<Transfer object=\""<<_planner->getAttachData()[0].objname <<"\" ";
                         sstr << "robot=\""<< _planner->getAttachData()[0].robnumber<<"\" ";
                         sstr << "link=\""<< _planner->getAttachData()[0].linknumber<< "\">"<<std::endl;
                     }
@@ -737,7 +730,6 @@ namespace Kautham {
                             try {
                                     if (namesinitial == "Object") {
                                          string objectname = it_initstate->attribute("object").as_string();
-                                         int objnum = stoi(objectname);
                                          string objpose = it_initstate->child_value();
                                          std::stringstream objposestream(objpose);
                                          float pos[3];
@@ -745,9 +737,9 @@ namespace Kautham {
                                          int k=0;
                                          for(; k<3; k++) objposestream >> pos[k];
                                          for(int j=0; k<7; j++,k++) objposestream >> ori[j];
-                                         std::cout<<"  Object: "<<objnum<<" "<<" POS: "<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<" "<<ori[0]<<" "<<ori[1]<<" "<<ori[2]<<" "<<ori[3]<<std::endl;
-                                         _problem->getPlanner()->wkSpace()->getObstacle(objnum)->getLink(0)->getElement()->setPosition(pos);
-                                         _problem->getPlanner()->wkSpace()->getObstacle(objnum)->getLink(0)->getElement()->setOrientation(ori);
+                                         std::cout<<"  Object: "<<objectname<<" "<<" POS: "<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<" "<<ori[0]<<" "<<ori[1]<<" "<<ori[2]<<" "<<ori[3]<<std::endl;
+                                         _problem->getPlanner()->wkSpace()->getObstacle(objectname)->getLink(0)->getElement()->setPosition(pos);
+                                         _problem->getPlanner()->wkSpace()->getObstacle(objectname)->getLink(0)->getElement()->setOrientation(ori);
                                          _problem->getPlanner()->wkSpace()->storeNewInitialObjectPoses();
                                      }
                                     /* ROBOT TAG not needed
@@ -821,7 +813,7 @@ namespace Kautham {
                         string transferconf;
 
                         //load the step of the path where transfer starts and an attach is required
-                        _planner->loadAttachData(_path2.size(),"attach",stoi(objectname),stoi(robotname),stoi(linkname));
+                        _planner->loadAttachData(_path2.size(),"attach",objectname,stoi(robotname),stoi(linkname));
 
                         //loop inside the transfer node for all the configurations of the path
                         for (xml_node::iterator it_transfer = it_task->begin(); it_transfer != it_task->end(); ++it_transfer) {
@@ -845,7 +837,7 @@ namespace Kautham {
                             }
                         }
                         //load the step of the path where transfer ends and a dettach is required
-                        _planner->loadAttachData(_path2.size()-1,"detach",stoi(objectname),stoi(robotname),stoi(linkname));
+                        _planner->loadAttachData(_path2.size()-1,"detach",objectname,stoi(robotname),stoi(linkname));
                     }
                 } catch(...) {
                     std::cout << "ERROR: Current task tag does not have any transit or transfer or initialstate child!!" << std::endl;

@@ -2000,8 +2000,10 @@ bool Problem::setObstacleControls(xml_document *doc) {
     KthReal **offMatrix;
     mapMatrix = new KthReal**[numObs];
     offMatrix = new KthReal*[numObs];
-    for (int i = 0; i < numObs; i++) {
-        numDOFs = _wspace->getObstacle(i)->getNumJoints()+6;
+    map<string, Robot*>::iterator mapit;
+    int i;
+    for(i=0, mapit = _wspace->getFirstObstacle(); mapit != _wspace->getLastObstacle(); mapit++, i++){
+        numDOFs = mapit->second->getNumJoints()+6;
         mapMatrix[i] = new KthReal*[numDOFs];
         offMatrix[i] = new KthReal[numDOFs];
         for (int j = 0; j < numDOFs; j++) {
@@ -2012,8 +2014,8 @@ bool Problem::setObstacleControls(xml_document *doc) {
             }
         }
 
-        _wspace->getObstacle(i)->setMapMatrix(mapMatrix[i]);
-        _wspace->getObstacle(i)->setOffMatrix(offMatrix[i]);
+        mapit->second->setMapMatrix(mapMatrix[i]);
+        mapit->second->setOffMatrix(offMatrix[i]);
     }
 
     //Load the Offset vector
@@ -2033,6 +2035,7 @@ bool Problem::setObstacleControls(xml_document *doc) {
         obstacleName = tmpstr.substr(0,found);
 
         //Find the obstacle index into the obstacles vector
+        /*
         int i = 0;
         bool obstacle_found = false;
         while (!obstacle_found && i < numObs) {
@@ -2048,37 +2051,43 @@ bool Problem::setObstacleControls(xml_document *doc) {
             throw KthExcp(message);
             return false;
         }
+        */
+        if (_wspace->getObstacle(obstacleName)==NULL) {
+            string message = "Error when creating obstacle controls: Osbtacle " + obstacleName + " couldn't be found";
+            throw KthExcp(message);
+            return false;
+        }
 
         if ( dofName == "X"){
-            _wspace->getObstacle(i)->setSE3(true);
+            _wspace->getObstacle(obstacleName)->setSE3(true);
             offMatrix[i][0] = (*it).attribute("value").as_double();
         }else if ( dofName == "Y"){
-            _wspace->getObstacle(i)->setSE3(true);
+            _wspace->getObstacle(obstacleName)->setSE3(true);
             offMatrix[i][1] = (*it).attribute("value").as_double();
         }else if ( dofName == "Z"){
-            _wspace->getObstacle(i)->setSE3(true);
+            _wspace->getObstacle(obstacleName)->setSE3(true);
             offMatrix[i][2] = (*it).attribute("value").as_double();
         }else if ( dofName == "X1"){
-            _wspace->getObstacle(i)->setSE3(true);
+            _wspace->getObstacle(obstacleName)->setSE3(true);
             offMatrix[i][3] = (*it).attribute("value").as_double();
         }else if ( dofName == "X2"){
-            _wspace->getObstacle(i)->setSE3(true);
+            _wspace->getObstacle(obstacleName)->setSE3(true);
             offMatrix[i][4] = (*it).attribute("value").as_double();
         }else if ( dofName == "X3"){
-            _wspace->getObstacle(i)->setSE3(true);
+            _wspace->getObstacle(obstacleName)->setSE3(true);
             offMatrix[i][5] = (*it).attribute("value").as_double();
         }else{    // It's not a SE3 control and could have any name.
             // Find the index orden into the links vector without the first static link.
             unsigned ind = 0;
-            while (ind < _wspace->getObstacle(i)->getNumJoints()) {
-                if ( dofName == _wspace->getObstacle(i)->getLink(ind+1)->getName()){
+            while (ind < _wspace->getObstacle(obstacleName)->getNumJoints()) {
+                if ( dofName == _wspace->getObstacle(obstacleName)->getLink(ind+1)->getName()){
                     offMatrix[i][6 + ind ] = (*it).attribute("value").as_double();
                     break;
                 } else {
                     ind++;
                 }
             }
-            if (ind >= _wspace->getObstacle(i)->getNumJoints()) {
+            if (ind >= _wspace->getObstacle(obstacleName)->getNumJoints()) {
                 string message = "Error when creating obstacle controls: DOF " + dofName +
                         " couldn't be found in obstacle " + obstacleName;
                 throw KthExcp(message);
@@ -2113,6 +2122,7 @@ bool Problem::setObstacleControls(xml_document *doc) {
                 obstacleName = tmpstr.substr(0,found);
 
                 //Find the obstacle index into the obstacles vector
+                /*
                 int i = 0;
                 bool obstacle_found = false;
                 while (!obstacle_found && i < numObs) {
@@ -2128,37 +2138,42 @@ bool Problem::setObstacleControls(xml_document *doc) {
                     throw KthExcp(message);
                     return false;
                 }
-
+                */
+                if (_wspace->getObstacle(obstacleName)==NULL) {
+                    string message = "Error when creating obstacle controls: Osbtacle " + obstacleName + " couldn't be found";
+                    throw KthExcp(message);
+                    return false;
+                }
                 if ( dofName == "X"){
-                    _wspace->getObstacle(i)->setSE3(true);
+                    _wspace->getObstacle(obstacleName)->setSE3(true);
                     mapMatrix[i][0][cont] = eigVal * itDOF->attribute("value").as_double();
                 }else if ( dofName == "Y"){
-                    _wspace->getObstacle(i)->setSE3(true);
+                    _wspace->getObstacle(obstacleName)->setSE3(true);
                     mapMatrix[i][1][cont] = eigVal * itDOF->attribute("value").as_double();
                 }else if ( dofName == "Z"){
-                    _wspace->getObstacle(i)->setSE3(true);
+                    _wspace->getObstacle(obstacleName)->setSE3(true);
                     mapMatrix[i][2][cont] = eigVal * itDOF->attribute("value").as_double();
                 }else if ( dofName == "X1"){
-                    _wspace->getObstacle(i)->setSE3(true);
+                    _wspace->getObstacle(obstacleName)->setSE3(true);
                     mapMatrix[i][3][cont] = eigVal * itDOF->attribute("value").as_double();
                 }else if ( dofName == "X2"){
-                    _wspace->getObstacle(i)->setSE3(true);
+                    _wspace->getObstacle(obstacleName)->setSE3(true);
                     mapMatrix[i][4][cont] = eigVal * itDOF->attribute("value").as_double();
                 }else if ( dofName == "X3"){
-                    _wspace->getObstacle(i)->setSE3(true);
+                    _wspace->getObstacle(obstacleName)->setSE3(true);
                     mapMatrix[i][5][cont] = eigVal * itDOF->attribute("value").as_double();
                 }else{  // It's not a SE3 control and could have any name.
                     // Find the index orden into the links vector without the first static link.
                     unsigned ind = 0;
-                    while (ind < _wspace->getObstacle(i)->getNumJoints()) {
-                        if ( dofName == _wspace->getObstacle(i)->getLink(ind+1)->getName()){
+                    while (ind < _wspace->getObstacle(obstacleName)->getNumJoints()) {
+                        if ( dofName == _wspace->getObstacle(obstacleName)->getLink(ind+1)->getName()){
                             mapMatrix[i][6 + ind ][cont] = eigVal * itDOF->attribute("value").as_double();
                             break;
                         } else {
                             ind++;
                         }
                     }
-                    if (ind >= _wspace->getObstacle(i)->getNumJoints()) {
+                    if (ind >= _wspace->getObstacle(obstacleName)->getNumJoints()) {
                         string message = "Error when creating obstacle controls: DOF " + dofName +
                                 " couldn't be found in obstacle " + obstacleName;
                         throw KthExcp(message);
@@ -2179,13 +2194,16 @@ bool Problem::setFixedObstacleControls() {
     int numObs = _wspace->getNumObstacles();
     int numDOFs;
     KthReal *offMatrix;
-    for (int i = 0; i < numObs; i++) {
-        numDOFs = _wspace->getObstacle(i)->getNumJoints()+6;
+    map<string, Robot*>::iterator mapit;
+    int i;
+    for(i=0, mapit = _wspace->getFirstObstacle(); mapit != _wspace->getLastObstacle(); mapit++, i++){
+        numDOFs = mapit->second->getNumJoints()+6;
+
         offMatrix = new KthReal[numDOFs];
         for (int j = 0; j < numDOFs; j++) {
             offMatrix[j] = 0.5;
         }
-        _wspace->getObstacle(i)->setOffMatrix(offMatrix);
+        mapit->second->setOffMatrix(offMatrix);
     }
 
     return true;

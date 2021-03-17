@@ -40,8 +40,8 @@ namespace Kautham {
         void closeProblem();
         bool openProblem(std::istream *inputfile, std::vector<std::string> def_path = std::vector<std::string>());
         bool openProblem(std::string problemfilename, std::vector<std::string> def_path);
-        bool checkCollisionObs(int index, std::vector<unsigned> *collObs, std::string *msg);
-        bool checkCollisionRob(std::vector<float> smpcoords, std::vector<unsigned> *ObstColl);
+        bool checkCollisionObs(string obsname, std::vector<string> *collObs, std::string *msg);
+        bool checkCollisionRob(std::vector<float> smpcoords, std::vector<string> *ObstColl);
         bool checkCollision(std::vector<float> smpcoords, bool *collisionFree, std::pair<std::pair<int, int>, std::pair<int, int> > *colliding_elements = NULL);
         bool checkCollision(std::vector<float> smpcoords, bool *collisionFree, std::string *msg, std::pair<std::pair<int, int>, std::pair<int, int> > *colliding_elements = NULL);
         bool setRobotsConfig(std::vector<float> smpcoords);
@@ -76,15 +76,15 @@ namespace Kautham {
                      std::vector<std::vector<float> > mapMatrix, std::vector<float> offMatrix);
         bool removeRobot(unsigned index);
         int addObstacle(std::string obsFile, double scale, std::vector<float> home);
-        bool removeObstacle(unsigned index);
-        bool attachObstacle2RobotLink(int robot, int link, int obs);
-        bool detachObstacle(unsigned int obs);
+        bool removeObstacle(string obsname);
+        bool attachObstacle2RobotLink(int robot, int link, std::string obs);
+        bool detachObstacle(std::string obs);
         double cumDistCheck(std::vector<float> smpcoords);
 	
     bool motionPlanner(std::vector <float> init, std::vector <float> goal, std::string root);
 
-    bool setObstaclePos(int index, std::vector<float> pos);
-    bool getObstaclePos(int index, std::vector<float> &pos);
+    bool setObstaclePos(string obsname, std::vector<float> pos);
+    bool getObstaclePos(string obsname, std::vector<float> &pos);
     bool findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution);
     bool setRobPos(unsigned int index, std::vector<float> pos);
     bool getRobPos(unsigned int index, std::vector<float> &pos);

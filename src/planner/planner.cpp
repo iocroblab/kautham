@@ -221,13 +221,13 @@ namespace Kautham{
                 //cout<<"step modified to "<<step<<" action = "<<_attachdetach[i].action<<endl;
                 if(_attachdetach[i].action.compare("attach") == 0)
                 {
-                  cout<<"...attaching obstacle "<<_attachdetach[i].objnumber<<endl;
-                  _wkSpace->attachObstacle2RobotLink(_attachdetach[i].robnumber,_attachdetach[i].linknumber,_attachdetach[i].objnumber);
+                  cout<<"...attaching obstacle "<<_attachdetach[i].objname<<endl;
+                  _wkSpace->attachObstacle2RobotLink(_attachdetach[i].robnumber,_attachdetach[i].linknumber,_attachdetach[i].objname);
                 }
                 else if(_attachdetach[i].action.compare("detach") == 0)
                 {
-                  cout<<"...detaching obstacle "<<_attachdetach[i].objnumber<<endl;
-                  _wkSpace->detachObstacle(_attachdetach[i].objnumber);
+                  cout<<"...detaching obstacle "<<_attachdetach[i].objname<<endl;
+                  _wkSpace->detachObstacle(_attachdetach[i].objname);
                 }
                 else{
                   cout<<"ERROR: _attachdetach.action is neither attach nor detach";
@@ -253,13 +253,13 @@ namespace Kautham{
     _attachdetach.clear();
   }
 
-  void Planner::loadAttachData(int s, string a, int o, int r, int l)
+  void Planner::loadAttachData(int s, string a, string o, int r, int l)
   {
       //loads the attach/detach info read from the taskmotion.xml file
     attachData d;
     d.step = s; //step of the path where the attach/detach is taking place
     d.action = a; //string determining whether it is an attach or a detach
-    d.objnumber = o; //object ot be attached/detached
+    d.objname = o; //object ot be attached/detached
     d.robnumber = r; //robot to which the object is being attached to/detached from
     d.linknumber = l; //link of the robot to which the object is being attached to/detached from
     _attachdetach.push_back(d);

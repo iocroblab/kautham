@@ -609,8 +609,11 @@ bool Application::problemSetup(string problemFile){
     if (_problem->wSpace()->getNumObsControls() > 0) {
         vector <DOFWidget*> obsDOFWidgets;
         obsDOFWidgets.resize(_problem->wSpace()->getNumObstacles());
-        for(uint i = 0; i < _problem->wSpace()->getNumObstacles(); i++) {
-            obsDOFWidgets[i] = mainWindow->addDOFWidget(_problem->wSpace()->getObstacle(i));
+
+        map<string, Robot*>::iterator mapit;
+        uint i;
+        for(i=0,mapit = _problem->wSpace()->getFirstObstacle(); mapit != _problem->wSpace()->getLastObstacle(); mapit++,i++){
+            obsDOFWidgets[i] = mainWindow->addDOFWidget(mapit->second);
         }
 
         mainWindow->addObsControlWidget(_problem,obsDOFWidgets);

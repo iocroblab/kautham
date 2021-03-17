@@ -174,9 +174,9 @@ namespace Kautham {
         SelectRobotLinkDialog *dialog;
 
         /*!
-         * \brief obsMap map between table items and indexes of objects
+         * \brief obsMap map between table items and names of objects
          */
-        QMap <QTableWidgetItem *, uint> obsMap;
+        QMap <QTableWidgetItem *, string> obsMap;
 
 
 

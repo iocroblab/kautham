@@ -58,7 +58,10 @@ namespace Kautham{
       void                  addObstacle(Robot* obs);
       Robot *getRobot(std::string name);
       inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;}
-      inline Robot*         getObstacle(unsigned int i){if(i < obstacles.size()) return obstacles[i]; return NULL;}
+      inline Robot*         getObstacle(string obstaclename){map<string, Robot*>::iterator it = obstacles.find(obstaclename);
+                                                             if(it!=obstacles.end()) return it->second; else return NULL;}
+      inline map<string, Robot*>::iterator getFirstObstacle(){return obstacles.begin();}
+      inline map<string, Robot*>::iterator getLastObstacle(){return obstacles.end();}
       inline unsigned       getNumRobots(){return robots.size();}
       inline unsigned       getNumObstacles(){return obstacles.size();}
 
@@ -73,13 +76,13 @@ namespace Kautham{
       void                         setPathVisibility(bool vis);
 
       //! This method attaches an object object to a robot link. The obstacle is designated by its index.
-      bool                  attachObstacle2RobotLink(uint robot, uint link, uint obs);
+      bool                  attachObstacle2RobotLink(uint robot, uint link, string obsname);
 
       //! This method detaches an object previously attached to a Robot link.
-      bool                  detachObstacle(uint obs);
+      bool                  detachObstacle(string obsname);
 
       void removeRobot(unsigned index);
-      void removeObstacle(unsigned index);
+      void removeObstacle(string obsname);
 
 
       static void           resetCollCheckCounter();
@@ -105,13 +108,13 @@ namespace Kautham{
 
       //rc_functions
       vector<Robot*> _mobileObstacle;
-      vector<unsigned> _forbiddenObstacles;
+      vector<string> _forbiddenObstacles;
       KthReal distanceCheck2Robots(Sample* sample);
       bool collisionCheckCans(Sample* sample);
       bool collisionCheckRemovableObstacles(Sample* sample, string *message = NULL); // collisioncheck function that not consider collisions with the removable obstacles
       int collisionCheckCount(Sample* sample);
-      bool collisionCheckObstacles(Sample* sample, std::vector<unsigned> &ObstColl);
-      bool collisionCheckObs(int targetObs, std::vector<unsigned> *collisionObs, string *message);
+      bool collisionCheckObstacles(Sample* sample, std::vector<string> &ObstColl);
+      bool collisionCheckObs(string targetObsName, std::vector<string> *collisionObs, string *message);
       inline unsigned int obstaclesCount(){ return obstacles.size();}
       void moveObstacleTo(size_t mobObst, vector<KthReal>& pose);
       void moveObstacleTo(size_t mobObst, RobConf& robConf);
@@ -122,7 +125,7 @@ namespace Kautham{
   protected:
       virtual void          updateScene() = 0;
       vector<Robot*>        robots;
-      vector<Robot*>        obstacles;
+      map<string, Robot*> obstacles;
       vector<KthReal>       distVec;
       //! This attribute groups the configurations of the robots
       vector<RobConf*>      _robConfigMap;

@@ -229,14 +229,16 @@ namespace Kautham {
         Robot *obs;
         QTableWidgetItem *item;
         int index = 0;
-        for (unsigned i = 0; i < wSpace->getNumObstacles(); ++i) {
-            obs = wSpace->getObstacle(i);
+        map<string, Robot*>::iterator mapit;
+        uint i;
+        for(i=0,mapit = wSpace->getFirstObstacle(); mapit != wSpace->getLastObstacle(); mapit++,i++){
+            obs = mapit->second;
             if (obs->isAttachable()) {
                 item = new QTableWidgetItem(obs->getName().c_str());
                 item->setFlags(item->flags() ^ Qt::ItemIsEditable);
                 attachableTable->insertRow(index);
                 attachableTable->setItem(index,0,item);
-                obsMap.insert(item,i);
+                obsMap.insert(item, mapit->first);
                 index++;
             }
         }
@@ -257,10 +259,10 @@ namespace Kautham {
         QTableWidgetItem *item = attachableTable->item(index,0);
         if (item != NULL) {
             if (obsMap.contains(item)) {
-                uint obs = obsMap.value(item);
+                string obsname = obsMap.value(item);
                 uint robot, link;
                 if (dialog->getRobotLink(&robot,&link)) {
-                    if (wSpace->attachObstacle2RobotLink(robot,link,obs)) {
+                    if (wSpace->attachObstacle2RobotLink(robot,link,obsname)) {
                         index = attachableTable->currentRow();
                         item = attachableTable->takeItem(index,0);
                         attachableTable->removeRow(index);
@@ -294,8 +296,8 @@ namespace Kautham {
         QTableWidgetItem *item = attachedTable->item(index,0);
         if (item != NULL) {
             if (obsMap.contains(item)) {
-                uint obs = obsMap.value(item);
-                if (wSpace->detachObstacle(obs)) {
+                string obsname = obsMap.value(item);
+                if (wSpace->detachObstacle(obsname)) {
                     item = attachedTable->takeItem(index,0);
                     delete attachedTable->takeItem(index,1);
                     delete attachedTable->takeItem(index,2);

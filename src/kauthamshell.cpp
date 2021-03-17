@@ -235,7 +235,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::checkCollisionRob(std::vector<float> smpcoords, std::vector<unsigned> *ObstColl) {
+    bool kauthamshell::checkCollisionRob(std::vector<float> smpcoords, std::vector<string> *ObstColl) {
         Sample *smp = NULL;
 
         try {
@@ -283,7 +283,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::checkCollisionObs(int index, std::vector<unsigned> *collObs, std::string *msg) {
+    bool kauthamshell::checkCollisionObs(string obsname, std::vector<string> *collObs, std::string *msg) {
         Sample *smp = NULL;
 
         try {
@@ -296,7 +296,7 @@ namespace Kautham {
 
 
             bool collisionFree;
-            collisionFree = !problem->wSpace()->collisionCheckObs(index, collObs, msg);
+            collisionFree = !problem->wSpace()->collisionCheckObs(obsname, collObs, msg);
             if(!collisionFree) {
                 std::cout<<"Response for collision checking service is: Collision Free"<<std::endl;
                 return collisionFree;
@@ -1355,7 +1355,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::removeObstacle(unsigned index) {
+    bool kauthamshell::removeObstacle(string obsname) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -1363,8 +1363,15 @@ namespace Kautham {
             }
 
             Problem *const problem = (Problem*)memPtr_;
-            if (index < problem->wSpace()->getNumObstacles()) {
-                problem->wSpace()->removeObstacle(index);
+
+
+            if(problem->getPlanner()->wkSpace()->getObstacle(obsname)==NULL)
+            {
+                cout << "Error in removeObstacle:" << obsname << " is not in the set of obstacles " << problem->getPlanner()->wkSpace()->getNumObstacles() << endl;
+                return true;
+            }
+            else {
+                problem->wSpace()->removeObstacle(obsname);
                 return true;
             }
         } catch (const KthExcp& excp) {
@@ -1381,7 +1388,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::attachObstacle2RobotLink(int robot, int link, int obs) {
+    bool kauthamshell::attachObstacle2RobotLink(int robot, int link, std::string obs) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -1428,14 +1435,21 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::detachObstacle(unsigned int obs) {
+    bool kauthamshell::detachObstacle(string obs) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
                 return false;
             }
 
+
             Problem *const problem = (Problem*)memPtr_;
+
+            if(problem->wSpace()->getObstacle(obs)==NULL){
+                cout << "Error: trying to detach a nonexisting object - " << obs << endl;
+                return false;
+            }
+
             bool ret = problem->wSpace()->detachObstacle(obs);
             float x,y,z;
             x = problem->wSpace()->getObstacle(obs)->getLink(0)->getElement()->getPosition()[0];
@@ -1678,7 +1692,7 @@ namespace Kautham {
 
     }
 
-    bool kauthamshell::setObstaclePos(int index, std::vector<float> pos){
+    bool kauthamshell::setObstaclePos(string obsname, std::vector<float> pos){
 
         try {
             if (!problemOpened()) {
@@ -1687,25 +1701,30 @@ namespace Kautham {
             }
 
             Problem *const problem = (Problem*)memPtr_;
-            
+
+            if(problem->getPlanner()->wkSpace()->getObstacle(obsname)==NULL)
+            {
+                cout << "Error in setObstaclePos:" << obsname << " is not in the set of obstacles " << problem->getPlanner()->wkSpace()->getNumObstacles() << endl;
+                return true;
+            }
              // Here is needed to convert from axis-angle to
             // quaternion internal represtantation.
             SE3Conf tmpC;
             SE3Conf::fromAxisToQuaternion(pos);
             tmpC.setCoordinates(pos);
-            problem->getPlanner()->wkSpace()->getObstacle(index)->setHomePos(&tmpC);
+            problem->getPlanner()->wkSpace()->getObstacle(obsname)->setHomePos(&tmpC);
 
             float x,y,z;
-            x = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[0];
-            y = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[1];
-            z = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[2];
-            std::cout<<"Object "<<index<<" at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+            x = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getPosition()[0];
+            y = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getPosition()[1];
+            z = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getPosition()[2];
+            std::cout<<"Object "<<obsname<<" at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
             float qx,qy,qz,qth;
-            qx = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[0];
-            qy = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[1];
-            qz = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[2];
-            qth = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[3];
-            std::cout<<"Object "<<index<<" at quaternion ("<<qx<<","<<qy<<","<<qz<<","<<qth<<")"<<std::endl;
+            qx = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getOrientation()[0];
+            qy = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getOrientation()[1];
+            qz = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getOrientation()[2];
+            qth = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getOrientation()[3];
+            std::cout<<"Object "<<obsname<<" at quaternion ("<<qx<<","<<qy<<","<<qz<<","<<qth<<")"<<std::endl;
 
             return true;
 
@@ -1722,15 +1741,15 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::getObstaclePos(int index, std::vector<float> &pos){
+    bool kauthamshell::getObstaclePos(string obsname, std::vector<float> &pos){
 
         Problem *const problem = (Problem*)memPtr_;
 
         pos.clear();
 
-        if(index >= (int)problem->getPlanner()->wkSpace()->getNumObstacles())
+        if(problem->getPlanner()->wkSpace()->getObstacle(obsname)==NULL)
         {
-            cout << "Error: index (" << index << ") exceeds the number of obstacles " << problem->getPlanner()->wkSpace()->getNumObstacles() << endl;
+            cout << "Error in getObstaclePos:" << obsname << " is not in the set of obstacles " << problem->getPlanner()->wkSpace()->getNumObstacles() << endl;
             return true;
         } 
 
@@ -1743,14 +1762,14 @@ namespace Kautham {
             float coord[3];
             float ort[4];
 
-            coord[0] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[0];
-            coord[1] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[1];
-            coord[2] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getPosition()[2];
+            coord[0] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getPosition()[0];
+            coord[1] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getPosition()[1];
+            coord[2] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getPosition()[2];
 
-            ort[0] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[0];
-            ort[1] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[1];
-            ort[2] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[2];
-            ort[3] = problem->getPlanner()->wkSpace()->getObstacle(index)->getLink(0)->getElement()->getOrientation()[3];
+            ort[0] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getOrientation()[0];
+            ort[1] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getOrientation()[1];
+            ort[2] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getOrientation()[2];
+            ort[3] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getOrientation()[3];
 
             pos.push_back(coord[0]);
             pos.push_back(coord[1]);
