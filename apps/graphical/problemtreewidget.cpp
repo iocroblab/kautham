@@ -74,8 +74,9 @@ namespace Kautham {
             }
         }
         //obstacles
-        for (uint i = 0; i < workspace->getNumObstacles(); i++) {
-            if (addRobot2Tree(workspace->getObstacle(i),true) == NULL) {
+        map<string, Robot*>::iterator mapit;
+        for(mapit = workspace->getFirstObstacle(); mapit != workspace->getLastObstacle(); mapit++){
+            if (addRobot2Tree(mapit->second,true) == NULL) {
                 problemTree->clear();
                 return false;
             }
@@ -126,15 +127,8 @@ namespace Kautham {
                             }
 
                             if (!found) {//it is an obstacle link
-                                i = 0;
-                                while (!found && i < workspace->getNumObstacles()) {
-                                    robot = workspace->getObstacle(i);
-                                    if (robot->getName() == robotName) {
-                                        found = true;
-                                    } else {
-                                        ++i;
-                                    }
-                                }
+                                if(workspace->getObstacle(robotName) != NULL)
+                                    found = true;
                             }
 
                             if (found) {

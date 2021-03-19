@@ -162,8 +162,10 @@ namespace Kautham {
                 }
             } else {
                 prob->wSpace()->moveObstaclesTo(sample);
-                for (uint i = 0; i < DOFWids.size(); ++i) {
-                    prob->wSpace()->getObstacle(i)->control2Parameters(values,params);
+                map<string, Robot*>::iterator mapit;
+                uint i;
+                for(i=0,mapit = prob->wSpace()->getFirstObstacle(); mapit != prob->wSpace()->getLastObstacle(); mapit++,i++){
+                    mapit->second->control2Parameters(values,params);
                     DOFWids.at(i)->setValues(params);
                 }
             }
@@ -209,8 +211,10 @@ namespace Kautham {
                 }
             } else {
                 prob->wSpace()->moveObstaclesTo(sample);
-                for (uint i = 0; i < DOFWids.size(); ++i) {
-                    prob->wSpace()->getObstacle(i)->control2Parameters(values,params);
+                map<string, Robot*>::iterator mapit;
+                uint i;
+                for(i=0,mapit = prob->wSpace()->getFirstObstacle(); mapit != prob->wSpace()->getLastObstacle(); mapit++,i++){
+                    mapit->second->control2Parameters(values,params);
                     DOFWids.at(i)->setValues(params);
                 }
             }
@@ -288,8 +292,10 @@ namespace Kautham {
             }
         } else {
             prob->wSpace()->moveObstaclesTo(sample);
-            for (uint i = 0; i < DOFWids.size(); ++i) {
-                prob->wSpace()->getObstacle(i)->control2Parameters(values,params);
+            map<string, Robot*>::iterator mapit;
+            uint i;
+            for(i=0,mapit = prob->wSpace()->getFirstObstacle(); mapit != prob->wSpace()->getLastObstacle(); mapit++,i++){
+                mapit->second->control2Parameters(values,params);
                 ((DOFWidget *)DOFWids.at(i))->setValues(params);
             }
         }
