@@ -189,16 +189,16 @@ def kMoveRobot(controls):
     return r.config
 
 # Function that wraps the call to the kautham service that attaches an object to a given link
-def kAttachObject(robotnumber, linknumber, objectnumber):
+def kAttachObject(robotnumber, linknumber, obsname):
     rospy.wait_for_service("/kautham_node/AttachObstacle2RobotLink")
     attachobstacle2robotlink_srv = AttachObstacle2RobotLink()
     attachobstacle2robotlink_client= rospy.ServiceProxy("/kautham_node/AttachObstacle2RobotLink",AttachObstacle2RobotLink)
     attachobstacle2robotlink_srv.robot = robotnumber
     attachobstacle2robotlink_srv.link = linknumber
-    attachobstacle2robotlink_srv.obs = objectnumber
+    attachobstacle2robotlink_srv.obs = obsname
     r=attachobstacle2robotlink_client(attachobstacle2robotlink_srv.robot,attachobstacle2robotlink_srv.link,attachobstacle2robotlink_srv.obs)
     print("Attached object",end=" ")
-    print(objectnumber,end=" ")
+    print(objectname,end=" ")
     print("to link",end=" ")
     print(linknumber,end=" ")
     print("of robot",end=" ")
@@ -206,21 +206,21 @@ def kAttachObject(robotnumber, linknumber, objectnumber):
     return r.response
 
 # Function that wraps the call to the kautham service that dettaches an attached object
-def kDetachObject(objectnumber):
+def kDetachObject(obsname):
     rospy.wait_for_service("/kautham_node/DetachObstacle")
     detachobstacle_srv= DetachObstacle()
     detachobstacle_client= rospy.ServiceProxy("/kautham_node/DetachObstacle",DetachObstacle)
-    detachobstacle_srv.obs=objectnumber
+    detachobstacle_srv.obs=obsname
     r= detachobstacle_client(detachobstacle_srv.obs)
     print ("Detached object",end=" ")
-    print(objectnumber)
+    print(objectname)
     return r.response
 
 #Function that wraps the call to the kautham service that gets the pose of an obstacle
-def kGetObstaclePos(indexobs):
+def kGetObstaclePos(obsname):
     rospy.wait_for_service("/kautham_node/GetObstaclePos")
     kauthamobstaclepos_srv = ObsPos()
-    kauthamobstaclepos_srv.index= indexobs
+    kauthamobstaclepos_srv.obsname= obsname
     kauthamobstaclepos_srv.setPos =( 20 ,70, 40, 0, 0, 0, 1 )#Dummy for python error fix
     kauthamobstaclepos_client = rospy.ServiceProxy("/kautham_node/GetObstaclePos",ObsPos)
     r=kauthamobstaclepos_client(kauthamobstaclepos_srv.index,kauthamobstaclepos_srv.setPos)
@@ -232,10 +232,10 @@ def kGetObstaclePos(indexobs):
     return (r.getPos)
 
 #Function that wraps the call to the kautham service that sets the position of obstcle
-def kSetObstaclePos(index,pose):
+def kSetObstaclePos(obsname,pose):
     rospy.wait_for_service("/kautham_node/SetObstaclePos")
     kauthamobstaclepos_srv = ObsPos()
-    kauthamobstaclepos_srv.index= index
+    kauthamobstaclepos_srv.obsname= obsname
     kauthamobstaclepos_srv.setPos=pose
     kauthamobstaclepos_client = rospy.ServiceProxy("/kautham_node/SetObstaclePos",ObsPos)
     r=kauthamobstaclepos_client(kauthamobstaclepos_srv.index,kauthamobstaclepos_srv.setPos)
@@ -333,10 +333,10 @@ def kSetDefaultRobControls(init, goal):
     return (r.response)
 
 #Function that wraps the call to the kautham service that removes an obstacle
-def kRemoveObstacle(indexobs):
+def kRemoveObstacle(obsname):
     rospy.wait_for_service("/kautham_node/RemoveObstacle")
     kauthamremoveobstacle_srv = RemoveObstacle()
-    kauthamremoveobstacle_srv.index = indexobs
+    kauthamremoveobstacle_srv.obsname = obsname
     kauthamremoveobstacle_client = rospy.ServiceProxy("/kautham_node/RemoveObstacle",RemoveObstacle)
     r=kauthamremoveobstacle_client(kauthamremoveobstacle_srv.index)
     if r.response:
@@ -347,10 +347,10 @@ def kRemoveObstacle(indexobs):
 
 
 #Function that wraps the call to the kautham service that adds of an obstacle
-def kAddObstacle(indexobs, scale, home):
+def kAddObstacle(obsname, scale, home):
     rospy.wait_for_service("/kautham_node/AddObstacle")
     kauthamaddobstacle_srv= AddObstacle()
-    kauthamaddobstacle_srv.index = indexobs
+    kauthamaddobstacle_srv.obsname = obsname
     kauthamaddobstacle_srv.scale = scale
     kauthamaddobstacle_srv.home = home
     kauthamaddobstacle_client = rospy.ServiceProxy("/kautham_node/AddObstacle",AddObstacle)

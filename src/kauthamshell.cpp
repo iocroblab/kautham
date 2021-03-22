@@ -1863,7 +1863,6 @@ namespace Kautham {
         }
 
         return false;
-
     }
 
     bool kauthamshell::getRobPos(unsigned int index, std::vector<float> &pos) {
@@ -1978,6 +1977,11 @@ namespace Kautham {
         }
     }
 
+    map<string, Robot*> kauthamshell::getObstaclesMap()
+    {
+        Problem *const problem = (Problem*)memPtr_;
+        return problem->wSpace()->getObstaclesMap();
+    }
 
     bool kauthamshell::getRobotFileNames(std::vector<std::string> &rnames) {
         try {

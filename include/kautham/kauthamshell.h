@@ -30,6 +30,7 @@
 #include <vector>
 #include <string>
 #include <kautham/sampling/robconf.h>
+#include <kautham/problem/robot.h>
 
 namespace Kautham {
     class kauthamshell {
@@ -85,6 +86,7 @@ namespace Kautham {
 
     bool setObstaclePos(string obsname, std::vector<float> pos);
     bool getObstaclePos(string obsname, std::vector<float> &pos);
+    map<string, Robot*> getObstaclesMap();
     bool findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution);
     bool setRobPos(unsigned int index, std::vector<float> pos);
     bool getRobPos(unsigned int index, std::vector<float> &pos);

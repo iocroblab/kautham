@@ -76,6 +76,7 @@
 #include <kautham/GetNumEdges.h>
 #include <kautham/GetNumVertices.h>
 #include <kautham/ObsPos.h>
+#include <kautham/RobPos.h>
 #include <kautham/FindIK.h>
 #include <kautham/LoadRobots.h>
 #include <kautham/LoadObstacles.h>
@@ -94,7 +95,7 @@ std::vector<ros::Publisher*> joints_publishers;
 std::vector<sensor_msgs::JointState> joint_state_robot;
 std::shared_ptr<tf2_ros::StaticTransformBroadcaster> br;
 std::vector<geometry_msgs::TransformStamped> rtransform;
-std::vector<geometry_msgs::TransformStamped> otransform;
+std::map<std::string, geometry_msgs::TransformStamped> otransform;
 int numrobots = 0;
 int numobstacles = 0;
 
@@ -120,12 +121,13 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     std::vector< std::vector<float> > poses;
     poses.clear();
     poses.resize(numobstacles);
-    otransform.resize(numobstacles);
-    for(int i=0; i<numobstacles; i++)
+
+    uint i=0;
+    for (std::pair<std::string, Robot*> element : ksh->getObstaclesMap() )
     {
         ROS_INFO("obstaclesfilenames[%d] = %s",i,obstaclesfilenames[i].c_str());
         kthloadobstacles_srv.request.obstaclesfiles[i] = obstaclesfilenames[i].c_str();
-        ksh->getObstaclePos(i, poses[i]);
+        ksh->getObstaclePos(element.first, poses[i]);
         kthloadobstacles_srv.request.obstacletransforms[i].transform.translation.x = poses[i][0];
         kthloadobstacles_srv.request.obstacletransforms[i].transform.translation.y = poses[i][1];
         kthloadobstacles_srv.request.obstacletransforms[i].transform.translation.z = poses[i][2];
@@ -135,6 +137,21 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         kthloadobstacles_srv.request.obstacletransforms[i].transform.rotation.w = poses[i][6];
 
         //It is assumed that the link of the obstacle base is called "base".
+        geometry_msgs::TransformStamped ot;
+        ot.header.stamp = ros::Time::now();
+        ot.header.frame_id = "world";
+        std::stringstream my_child_frame_id;
+        my_child_frame_id  << "obstacle"<<i<<"_base";
+        ot.child_frame_id = my_child_frame_id.str();
+        ot.transform.translation.x = poses[i][0];
+        ot.transform.translation.y = poses[i][1];
+        ot.transform.translation.z = poses[i][2];
+        ot.transform.rotation.x = poses[i][3];
+        ot.transform.rotation.y = poses[i][4];
+        ot.transform.rotation.z = poses[i][5];
+        ot.transform.rotation.w = poses[i][6];
+        otransform.insert(std::pair<string,geometry_msgs::TransformStamped>(element.first, ot));
+        /*
         otransform[i].header.stamp = ros::Time::now();
         otransform[i].header.frame_id = "world";
         std::stringstream my_child_frame_id;
@@ -147,6 +164,8 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         otransform[i].transform.rotation.y = poses[i][4];
         otransform[i].transform.rotation.z = poses[i][5];
         otransform[i].transform.rotation.w = poses[i][6];
+        */
+        i++;
     }
 
     ros::ServiceClient kthloadobstacles_client = n.serviceClient<kautham::LoadObstacles>("/kautham_node_vis/LoadObstacles");
@@ -379,9 +398,9 @@ bool srvCheckCollisionRob(kautham::CheckCollision::Request &req,
 bool srvCheckCollisionObs(kautham::CheckCollisionObs::Request &req,
                                 kautham::CheckCollisionObs::Response &res) {
 
-    std::vector<unsigned> ObstColl;
+    std::vector<string> ObstColl;
     std::string msg;
-    res.response = ksh->checkCollisionObs(req.index, &ObstColl, &msg);
+    res.response = ksh->checkCollisionObs(req.obsname, &ObstColl, &msg);
     res.collObjs = ObstColl;
     res.msg = msg;
 //    res.collObj = colObj.first.second;
@@ -688,7 +707,7 @@ bool srvRemoveRobot(kautham::RemoveRobot::Request &req,
 
 bool srvAddObstacle(kautham::AddObstacle::Request &req,
                             kautham::AddObstacle::Response &res) {
-    res.response = ksh->addObstacle(req.obstacle,req.scale,req.home);
+    res.response = ksh->addObstacle(req.obsname,req.scale,req.home);
 
     return true;
 }
@@ -696,7 +715,7 @@ bool srvAddObstacle(kautham::AddObstacle::Request &req,
 
 bool srvRemoveObstacle(kautham::RemoveObstacle::Request &req,
                             kautham::RemoveObstacle::Response &res) {
-    res.response = ksh->removeObstacle(req.index);
+    res.response = ksh->removeObstacle(req.obsname);
 
     return true;
 }
@@ -712,7 +731,7 @@ bool srvAttachObstacle2RobotLink(kautham::AttachObstacle2RobotLink::Request &req
 
 bool srvDetachObstacle(kautham::DetachObstacle::Request &req,
                             kautham::DetachObstacle::Response &res) {
-    res.response = ksh->detachObstacle(req.obs);
+    res.response = ksh->detachObstacle(req.obsname);
 
     return true;
 }
@@ -754,22 +773,23 @@ bool srvGetNumVertices(kautham::GetNumVertices::Request &req,
 
 bool srvSetObstaclPos(kautham::ObsPos::Request &req,
                             kautham::ObsPos::Response &res) {
-    res.response = ksh->setObstaclePos(req.index, req.setPos);
+    res.response = ksh->setObstaclePos(req.obsname, req.setPos);
 
     if(visualizescene)
     {
-        otransform[req.index].header.stamp = ros::Time::now();
-        otransform[req.index].header.frame_id = "world";
+        std::map<std::string, geometry_msgs::TransformStamped>::iterator it = otransform.find(req.obsname);
+        it->second.header.stamp = ros::Time::now();
+        it->second.header.frame_id = "world";
         std::stringstream my_child_frame_id;
-        my_child_frame_id  << "obstacle"<<req.index<<"_base";
-        otransform[req.index].child_frame_id = my_child_frame_id.str();
-        otransform[req.index].transform.translation.x = req.setPos.at(0);
-        otransform[req.index].transform.translation.y = req.setPos.at(1);
-        otransform[req.index].transform.translation.z = req.setPos.at(2);
-        otransform[req.index].transform.rotation.x = req.setPos.at(3);
-        otransform[req.index].transform.rotation.y = req.setPos.at(4);
-        otransform[req.index].transform.rotation.z = req.setPos.at(5);
-        otransform[req.index].transform.rotation.w = req.setPos.at(6);
+        my_child_frame_id  << req.obsname<<"_base";
+        it->second.child_frame_id = my_child_frame_id.str();
+        it->second.transform.translation.x = req.setPos.at(0);
+        it->second.transform.translation.y = req.setPos.at(1);
+        it->second.transform.translation.z = req.setPos.at(2);
+        it->second.transform.rotation.x = req.setPos.at(3);
+        it->second.transform.rotation.y = req.setPos.at(4);
+        it->second.transform.rotation.z = req.setPos.at(5);
+        it->second.transform.rotation.w = req.setPos.at(6);
     }
     return true;
 }
@@ -777,22 +797,22 @@ bool srvSetObstaclPos(kautham::ObsPos::Request &req,
 bool srvGetObstaclPos(kautham::ObsPos::Request &req,
                             kautham::ObsPos::Response &res) {
     std::vector<float> obsPos;
-    res.response = ksh->getObstaclePos(req.index, obsPos);
+    res.response = ksh->getObstaclePos(req.obsname, obsPos);
     if(res.response) {
         res.getPos = obsPos;
     }
     return true;
 }
 
-bool srvSetRobPos(kautham::ObsPos::Request &req,
-                            kautham::ObsPos::Response &res) {
+bool srvSetRobPos(kautham::RobPos::Request &req,
+                            kautham::RobPos::Response &res) {
     res.response = ksh->setRobPos(req.index, req.setPos);
 
     return true;
 }
 
-bool srvGetRobPos(kautham::ObsPos::Request &req,
-                            kautham::ObsPos::Response &res) {
+bool srvGetRobPos(kautham::RobPos::Request &req,
+                            kautham::RobPos::Response &res) {
     std::vector<float> robPos;
     res.response = ksh->getRobPos(req.index, robPos);
     if(res.response) {
@@ -802,8 +822,8 @@ bool srvGetRobPos(kautham::ObsPos::Request &req,
     return true;
 }
 
-bool srvGetRobHomePos(kautham::ObsPos::Request &req,
-                            kautham::ObsPos::Response &res) {
+bool srvGetRobHomePos(kautham::RobPos::Request &req,
+                            kautham::RobPos::Response &res) {
     std::vector<float> robPos;
     res.response = ksh->getRobHomePos(req.index, robPos);
     if(res.response) {
@@ -891,8 +911,9 @@ int main (int argc, char **argv) {
             {
                 br->sendTransform(rtransform[i]);
             }
-            for(int i=0; i<numobstacles; i++)
-                br->sendTransform(otransform[i]);
+            //loop for obstacles
+            for(std::pair<std::string, geometry_msgs::TransformStamped> element : otransform)
+                br->sendTransform(element.second);
         }
 
         //Wait until it's time for another iteration

@@ -1,4 +1,4 @@
-string obstacle
+string obsname
 float32 scale
 float32[] home
 ---

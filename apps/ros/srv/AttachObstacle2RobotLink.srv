@@ -1,5 +1,5 @@
 int64 robot
 int64 link
-int64 obs
+string obs
 ---
 bool response
