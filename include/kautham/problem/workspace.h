@@ -59,7 +59,7 @@ namespace Kautham{
       Robot *getRobot(std::string name);
       inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;}
       inline Robot*         getObstacle(string obstaclename){map<string, Robot*>::iterator it = obstacles.find(obstaclename);
-                                                             if(it!=obstacles.end()) return it->second; else return NULL;}
+                                                             if(it!=obstacles.end()) {cout<<"FOUND "<<obstaclename<<endl;return it->second;} else return NULL;}
       inline map<string, Robot*>::iterator getFirstObstacle(){return obstacles.begin();}
       inline map<string, Robot*>::iterator getLastObstacle(){return obstacles.end();}
       inline unsigned       getNumRobots(){return robots.size();}

@@ -103,7 +103,7 @@ def main():
     controls_sample_2 = (0.194, 0.511, 0.599, 0.369, 0.758, 0.594, 0.500, 0.417, 1.000) #lateral grasp
     controls_sample_3 =  (0.9529073749269759, 0.18226223890263202, 0.29051166121023314, 0.3210678172682361, 0.6136052550889736, 0.6659838689936045, 0.24475875034713368, 0.1262136031217134, 1.0)
 
-    kautham.kMoveRobot(controls_sample_3)
+    kautham.kMoveRobot(controls_sample_2)
 
     #poseobject = (0.025,0.025,0.02,0,0,0,1)
     #kautham.kSetObstaclePos(1,poseobject)

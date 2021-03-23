@@ -223,7 +223,7 @@ def kGetObstaclePos(obsname):
     kauthamobstaclepos_srv.obsname= obsname
     kauthamobstaclepos_srv.setPos =( 20 ,70, 40, 0, 0, 0, 1 )#Dummy for python error fix
     kauthamobstaclepos_client = rospy.ServiceProxy("/kautham_node/GetObstaclePos",ObsPos)
-    r=kauthamobstaclepos_client(kauthamobstaclepos_srv.index,kauthamobstaclepos_srv.setPos)
+    r=kauthamobstaclepos_client(kauthamobstaclepos_srv.obsname,kauthamobstaclepos_srv.setPos)
     if len(r.getPos)>0:
         print("obstacle position = ", r.getPos)
     else:
@@ -238,7 +238,7 @@ def kSetObstaclePos(obsname,pose):
     kauthamobstaclepos_srv.obsname= obsname
     kauthamobstaclepos_srv.setPos=pose
     kauthamobstaclepos_client = rospy.ServiceProxy("/kautham_node/SetObstaclePos",ObsPos)
-    r=kauthamobstaclepos_client(kauthamobstaclepos_srv.index,kauthamobstaclepos_srv.setPos)
+    r=kauthamobstaclepos_client(kauthamobstaclepos_srv.obsname,kauthamobstaclepos_srv.setPos)
     if r.response:
         print("Obstacle Set")
     else:

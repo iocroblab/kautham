@@ -114,6 +114,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     ksh->getObstaclesFileNames(obstaclesfilenames);
 
     kthloadobstacles_srv.request.obstaclesfiles.resize(numobstacles);
+    kthloadobstacles_srv.request.obstaclesnames.resize(numobstacles);
     kthloadobstacles_srv.request.obstacletransforms.resize(numobstacles);
 
     ROS_INFO("Kautham srvVisualizeScene");
@@ -127,6 +128,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     {
         ROS_INFO("obstaclesfilenames[%d] = %s",i,obstaclesfilenames[i].c_str());
         kthloadobstacles_srv.request.obstaclesfiles[i] = obstaclesfilenames[i].c_str();
+        kthloadobstacles_srv.request.obstaclesnames[i] = element.first;
         ksh->getObstaclePos(element.first, poses[i]);
         kthloadobstacles_srv.request.obstacletransforms[i].transform.translation.x = poses[i][0];
         kthloadobstacles_srv.request.obstacletransforms[i].transform.translation.y = poses[i][1];
@@ -141,7 +143,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         ot.header.stamp = ros::Time::now();
         ot.header.frame_id = "world";
         std::stringstream my_child_frame_id;
-        my_child_frame_id  << "obstacle"<<i<<"_base";
+        my_child_frame_id  << "obstacle_"<<element.first<<"_base";
         ot.child_frame_id = my_child_frame_id.str();
         ot.transform.translation.x = poses[i][0];
         ot.transform.translation.y = poses[i][1];
@@ -151,6 +153,14 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         ot.transform.rotation.z = poses[i][5];
         ot.transform.rotation.w = poses[i][6];
         otransform.insert(std::pair<string,geometry_msgs::TransformStamped>(element.first, ot));
+        
+        ROS_INFO( "pose[0] = %f",poses[i][0]);
+        ROS_INFO( "pose[1] = %f",poses[i][1]);
+        ROS_INFO( "pose[2] = %f",poses[i][2]);
+        ROS_INFO( "pose[3] = %f",poses[i][3]);
+        ROS_INFO( "pose[4] = %f",poses[i][4]);
+        ROS_INFO( "pose[5] = %f",poses[i][5]);
+        ROS_INFO( "pose[6] = %f",poses[i][6]);
         /*
         otransform[i].header.stamp = ros::Time::now();
         otransform[i].header.frame_id = "world";
@@ -781,7 +791,7 @@ bool srvSetObstaclPos(kautham::ObsPos::Request &req,
         it->second.header.stamp = ros::Time::now();
         it->second.header.frame_id = "world";
         std::stringstream my_child_frame_id;
-        my_child_frame_id  << req.obsname<<"_base";
+        my_child_frame_id  << "obstacle_"<<req.obsname<<"_base";
         it->second.child_frame_id = my_child_frame_id.str();
         it->second.transform.translation.x = req.setPos.at(0);
         it->second.transform.translation.y = req.setPos.at(1);

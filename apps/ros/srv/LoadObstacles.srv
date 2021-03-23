@@ -1,4 +1,5 @@
 string[] obstaclesfiles
+string[] obstaclesnames
 geometry_msgs/TransformStamped[] obstacletransforms
 ---
 bool response

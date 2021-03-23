@@ -1743,6 +1743,7 @@ namespace Kautham {
 
     bool kauthamshell::getObstaclePos(string obsname, std::vector<float> &pos){
 
+        cout << "************Getting Pose of obstacle "<<obsname<<endl;
         Problem *const problem = (Problem*)memPtr_;
 
         pos.clear();

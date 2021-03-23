@@ -102,7 +102,7 @@ def main():
 
 
     poseobject = (0.025,0.025,0.02,0,0,0,1)
-    kautham.kSetObstaclePos(1,poseobject)
+    kautham.kSetObstaclePos("pawnB1",poseobject)
 
     
     input("Press Enter to Finalize...")

@@ -38,6 +38,7 @@ using namespace Kautham;
 
 std::vector<std::string> rfilename;
 std::vector<std::string> ofilename;
+std::vector<std::string> oname;
 
 int numrobots = 0;
 int numobstacles = 0;
@@ -92,11 +93,13 @@ bool srvLoadObstacles(kautham::LoadObstacles::Request &req,
         numobstacles = req.obstaclesfiles.size();
         ROS_INFO("---numobstacles = %d",numobstacles);
         ofilename.resize(numobstacles);
+        oname.resize(numobstacles);
         //otransform.resize(numobstacles);
         for(int i=0; i<numobstacles;i++)
         {
             //ROS_INFO("---!!!!!!!!obstaclesfilenames[%d] = %s",i,req.obstaclesfiles[i].c_str());
             ofilename[i] = req.obstaclesfiles[i];
+            oname[i] = req.obstaclesnames[i];
         }
         res.response = true;
         return true;
@@ -246,13 +249,13 @@ bool loadObstacles()
 
             //Fill the string that will allow to obtain the complete robot filename
             //std::string rname = "\"\\$(find kautham)/demos/models/"+rfilename[i]+"\"";
-            std::string oname = "\"" + ofilename[i] +"\"";
+            std::string obsfilename = "\"" + ofilename[i] +"\"";
             //Fill the obstacle namespace. Obstacles namespaces are: obstacle0, obstacle1, etc...
             std::stringstream obstacle_namespace;
-            obstacle_namespace << "obstacle"<<i;
+            obstacle_namespace << "obstacle_"<<oname[i];
             //Fill the launch command
             std::string launchstr = "roslaunch kautham load_robot_description.launch rname:="
-                    + obstacle_namespace.str() + " rfilename:=" + oname;
+                    + obstacle_namespace.str() + " rfilename:=" + obsfilename;
             std::cout<<launchstr<<std::endl;
             //Launch
             system(launchstr.c_str());
@@ -264,7 +267,7 @@ bool loadObstacles()
 
             //Load the robot description string
             std::stringstream my_obstacle_description;
-            my_obstacle_description << "obstacle"<<i<<"/robot_description";
+            my_obstacle_description << "obstacle_"<<oname[i]<<"/robot_description";
             std::string str;
             ros::param::get(my_obstacle_description.str(), str);
 
