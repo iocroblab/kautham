@@ -198,7 +198,7 @@ def kAttachObject(robotnumber, linknumber, obsname):
     attachobstacle2robotlink_srv.obs = obsname
     r=attachobstacle2robotlink_client(attachobstacle2robotlink_srv.robot,attachobstacle2robotlink_srv.link,attachobstacle2robotlink_srv.obs)
     print("Attached object",end=" ")
-    print(objectname,end=" ")
+    print(obsname,end=" ")
     print("to link",end=" ")
     print(linknumber,end=" ")
     print("of robot",end=" ")
