@@ -610,10 +610,10 @@ bool Application::problemSetup(string problemFile){
         vector <DOFWidget*> obsDOFWidgets;
         obsDOFWidgets.resize(_problem->wSpace()->getNumObstacles());
 
-        map<string, Robot*>::iterator mapit;
-        uint i;
-        for(i=0,mapit = _problem->wSpace()->getFirstObstacle(); mapit != _problem->wSpace()->getLastObstacle(); mapit++,i++){
-            obsDOFWidgets[i] = mainWindow->addDOFWidget(mapit->second);
+        uint i=0;
+        for (std::pair<std::string, Robot*> element : _problem->wSpace()->getObstaclesMap() ){
+            obsDOFWidgets[i] = mainWindow->addDOFWidget(element.second);
+            i++;
         }
 
         mainWindow->addObsControlWidget(_problem,obsDOFWidgets);

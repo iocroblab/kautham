@@ -154,6 +154,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         ot.transform.rotation.w = poses[i][6];
         otransform.insert(std::pair<string,geometry_msgs::TransformStamped>(element.first, ot));
         
+        /*
         ROS_INFO( "pose[0] = %f",poses[i][0]);
         ROS_INFO( "pose[1] = %f",poses[i][1]);
         ROS_INFO( "pose[2] = %f",poses[i][2]);
@@ -161,20 +162,8 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         ROS_INFO( "pose[4] = %f",poses[i][4]);
         ROS_INFO( "pose[5] = %f",poses[i][5]);
         ROS_INFO( "pose[6] = %f",poses[i][6]);
-        /*
-        otransform[i].header.stamp = ros::Time::now();
-        otransform[i].header.frame_id = "world";
-        std::stringstream my_child_frame_id;
-        my_child_frame_id  << "obstacle"<<i<<"_base";
-        otransform[i].child_frame_id = my_child_frame_id.str();
-        otransform[i].transform.translation.x = poses[i][0];
-        otransform[i].transform.translation.y = poses[i][1];
-        otransform[i].transform.translation.z = poses[i][2];
-        otransform[i].transform.rotation.x = poses[i][3];
-        otransform[i].transform.rotation.y = poses[i][4];
-        otransform[i].transform.rotation.z = poses[i][5];
-        otransform[i].transform.rotation.w = poses[i][6];
         */
+
         i++;
     }
 

@@ -43,8 +43,8 @@ namespace Kautham {
                 for(unsigned int i=0; i<robots.size(); i++)
                     scene->addChild((SoSeparator*)robots[i]->getModel());
 
-                for(map<string, Robot*>::iterator it = obstacles.begin(); it != obstacles.end(); it++)
-                         scene->addChild((SoSeparator*)it->second->getModel());
+                for (std::pair<std::string, Robot*> element : obstacles )
+                         scene->addChild((SoSeparator*)element.second->getModel());
 
                 scene->ref();
         }
@@ -61,8 +61,8 @@ namespace Kautham {
                 for(unsigned int i=0; i<robots.size(); i++)
                     collisionscene->addChild((SoSeparator*)robots[i]->getCollisionModel());
 
-                for (map<string, Robot*>::iterator it = obstacles.begin(); it != obstacles.end(); it++)
-                     collisionscene->addChild((SoSeparator*)it->second->getCollisionModel());
+                for (std::pair<std::string, Robot*> element : obstacles )
+                     collisionscene->addChild((SoSeparator*)element.second->getCollisionModel());
 
                 collisionscene->ref();
         }
@@ -83,8 +83,9 @@ namespace Kautham {
 		for(unsigned int i=0;i<robots.size(); i++){
 			pqp->addChild((SoSeparator*)robots[i]->getModelFromColl());
 		}
-        for(map<string, Robot*>::iterator it = obstacles.begin(); it != obstacles.end(); it++){
-             pqp->addChild((SoSeparator*)it->second->getModelFromColl());
+
+        for (std::pair<std::string, Robot*> element : obstacles ){
+             pqp->addChild((SoSeparator*)element.second->getModelFromColl());
         }
 
     if(bounding)

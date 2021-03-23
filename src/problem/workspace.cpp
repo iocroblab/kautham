@@ -54,11 +54,10 @@ namespace Kautham {
         //
         _obstaclePoses.clear();
         _obstaclePoses.resize(getNumObstacles());
-        map<string, Robot*>::iterator mapit;
-        uint i;
-        for(i=0, mapit = obstacles.begin(); mapit != obstacles.end(); mapit++,i++)
+        uint i=0;
+        for (std::pair<std::string, Robot*> element : obstacles )
         {
-            RobConf *c = mapit->second->getHomePos();
+            RobConf *c = element.second->getHomePos();
             _obstaclePoses[i] = new RobConf;
             _obstaclePoses[i]->setSE3(c->getSE3());
             _obstaclePoses[i]->setRn(c->getRn());
@@ -73,24 +72,25 @@ namespace Kautham {
         _obstaclePoses.clear();
         _obstaclePoses.resize(getNumObstacles());
         map<string, Robot*>::iterator mapit;
-        uint i;
-        for(i=0, mapit = obstacles.begin(); mapit != obstacles.end(); mapit++,i++)
+        uint i=0;
+        for (std::pair<std::string, Robot*> element : obstacles )
         {
-            RobConf *c = mapit->second->getHomePos();
+            RobConf *c = element.second->getHomePos();
             _obstaclePoses[i] = new RobConf;
             vector<KthReal> coords(7);
-            coords[0] = mapit->second->getLink(0)->getElement()->getPosition()[0];
-            coords[1] = mapit->second->getLink(0)->getElement()->getPosition()[1];
-            coords[2] = mapit->second->getLink(0)->getElement()->getPosition()[2];
-            coords[3] = mapit->second->getLink(0)->getElement()->getOrientation()[0];
-            coords[4] = mapit->second->getLink(0)->getElement()->getOrientation()[1];
-            coords[5] = mapit->second->getLink(0)->getElement()->getOrientation()[2];
-            coords[6] = mapit->second->getLink(0)->getElement()->getOrientation()[3];
+            coords[0] = element.second->getLink(0)->getElement()->getPosition()[0];
+            coords[1] = element.second->getLink(0)->getElement()->getPosition()[1];
+            coords[2] = element.second->getLink(0)->getElement()->getPosition()[2];
+            coords[3] = element.second->getLink(0)->getElement()->getOrientation()[0];
+            coords[4] = element.second->getLink(0)->getElement()->getOrientation()[1];
+            coords[5] = element.second->getLink(0)->getElement()->getOrientation()[2];
+            coords[6] = element.second->getLink(0)->getElement()->getOrientation()[3];
             // Here is needed to convert from axis-angle to
             // quaternion internal represtantation.
             SE3Conf::fromAxisToQuaternion(coords);
             _obstaclePoses[i]->setSE3(coords);
             _obstaclePoses[i]->setRn(c->getRn());
+            i++;
         }
     }
   
@@ -100,16 +100,16 @@ namespace Kautham {
     bool WorkSpace::restoreInitialObjectPoses(){
         if( _obstaclePoses.size()==getNumObstacles())
         {
-            map<string, Robot*>::iterator mapit;
-            uint i;
-            for(i=0, mapit = obstacles.begin(); mapit != obstacles.end(); mapit++,i++)
+            uint i=0;
+            for (std::pair<std::string, Robot*> element : obstacles )
             {      
-                mapit->second->Kinematics( _obstaclePoses[i]);
-                if(mapit->second->isAttached())
+                element.second->Kinematics( _obstaclePoses[i]);
+                if(element.second->isAttached())
                 {
-                    mapit->second->getRobotAttachedTo()->detachObject(mapit->second);
-                    mapit->second->setDetached();
+                    element.second->getRobotAttachedTo()->detachObject(element.second);
+                    element.second->setDetached();
                 }
+                i++;
             }
             return true;
         }
@@ -154,9 +154,9 @@ namespace Kautham {
 
         distVec.clear();
         for(unsigned int i=0; i< robots.size(); i++){
-            map<string, Robot*>::iterator mapit;
-            for(mapit = obstacles.begin(); mapit != obstacles.end(); mapit++){
-                distVec.push_back(robots[i]->distanceCheck(mapit->second));
+            for (std::pair<std::string, Robot*> element : obstacles )
+            {
+                distVec.push_back(robots[i]->distanceCheck(element.second));
             }
         }
         return &distVec;
@@ -202,10 +202,9 @@ namespace Kautham {
                         if (dist < 0) cumDist += -dist;
                     }
                 }
-                map<string, Robot*>::iterator mapit;
-                for(mapit = obstacles.begin(); mapit != obstacles.end(); mapit++) {
-                    for (unsigned int l = 0; l < mapit->second->getNumLinks(); ++l) {
-                        Link *otherLink = mapit->second->getLink(l);
+                for (std::pair<std::string, Robot*> element : obstacles ){
+                    for (unsigned int l = 0; l < element.second->getNumLinks(); ++l) {
+                        Link *otherLink = element.second->getLink(l);
 
                         dist = link->getElement()->getDistanceTo(otherLink->getElement());
                         if (dist < 0) cumDist += -dist;
@@ -262,16 +261,17 @@ namespace Kautham {
             tmpVec.push_back(sample->getCoords()[j]);
 
         map<string, Robot*>::iterator mapit;
-        int i;
-        for(i=0,mapit = obstacles.begin(); mapit != obstacles.end(); mapit++,i++){
-            if (!mapit->second->isAttached()) {
+        int i=0;
+        for (std::pair<std::string, Robot*> element : obstacles ){
+            if (!element.second->isAttached()) {
                 if(sample->getMappedConf().size()==0){
-                    withinbounds &= mapit->second->control2Pose(tmpVec);
+                    withinbounds &= element.second->control2Pose(tmpVec);
                 }
                 else{
-                    mapit->second->Kinematics(sample->getMappedConf().at(i));
+                    element.second->Kinematics(sample->getMappedConf().at(i));
                 }
             }
+            i++;
         }
         _lastObsSampleMovedTo = sample;
 
@@ -306,11 +306,11 @@ namespace Kautham {
             for (uint i=0; i< robots.size(); i++) {
                 robots[i]->control2Pose(tmpVec);
                 //first is testing if the robots collide with the environment (obstacles)
-                map<string, Robot*>::iterator mapit;
-                uint m;
-                for(m=0,mapit = obstacles.begin(); mapit != obstacles.end(); mapit++,m++){
+
+                uint m=0;
+                for (std::pair<std::string, Robot*> element : obstacles ){
                     string str;
-                    if (robots[i]->collisionCheck(mapit->second,&str,&robot_links)) {
+                    if (robots[i]->collisionCheck(element.second,&str,&robot_links)) {
                         collision = true;
 
                         robot_Obst.first = i;
@@ -318,11 +318,12 @@ namespace Kautham {
 
                         sstr << "Robot " << i << " (" << robots[i]->getName()
                              << ") is in collision with obstacle " << m << " ("
-                             << mapit->first << ")" << endl;
+                             << element.first << ")" << endl;
                         sstr << str;
                         break;
                     }
                     if (collision) break;
+                    m++;
                 }
                 if (collision) break;
 
@@ -364,19 +365,18 @@ namespace Kautham {
                 list<attObj> *attachedObject = ((Robot*)robots[i])->getAttachedObject();
                 for(list<attObj>::iterator it = attachedObject->begin();
                     it != attachedObject->end(); ++it) {
-                    map<string, Robot*>::iterator mapit;
-                    uint m;
-                    for(m=0,mapit = obstacles.begin(); mapit != obstacles.end(); mapit++,m++){
-                        if (it->obs != mapit->second) {
+                    uint m=0;
+                    for (std::pair<std::string, Robot*> element : obstacles ){
+                        if (it->obs != element.second) {
                             string str;
-                            if (it->obs->collisionCheck(mapit->second,&str, &robot_links)) {
+                            if (it->obs->collisionCheck(element.second,&str, &robot_links)) {
                                 collision = true;
                                 robot_Obst.first = i;
                                 robot_Obst.second = m;
 
                                 sstr << "Attached object " << it->obs->getName()
                                      << " is in collision with obstacle " << m << " ("
-                                     << mapit->first << ")"<<endl;
+                                     << element.first << ")"<<endl;
                                 //<< " Att. ob. pos(" << it->obs->getHomePos()->getSE3().getPos()[0] <<", "
                                 //<< ", "<< it->obs->getHomePos()->getSE3().getPos()[1] <<", "
                                 //<< ", "<< it->obs->getHomePos()->getSE3().getPos()[2] <<")"<<endl;
@@ -386,6 +386,7 @@ namespace Kautham {
                             if (collision) break;
                         }
                         if (collision) break;
+                        m++;
                     }
                     if (collision) break;
                 }
@@ -604,6 +605,7 @@ namespace Kautham {
             }
         }
     }
+
 
 
     void WorkSpace::removeObstacle(string obsname) {

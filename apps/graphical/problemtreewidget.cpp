@@ -74,9 +74,8 @@ namespace Kautham {
             }
         }
         //obstacles
-        map<string, Robot*>::iterator mapit;
-        for(mapit = workspace->getFirstObstacle(); mapit != workspace->getLastObstacle(); mapit++){
-            if (addRobot2Tree(mapit->second,true) == NULL) {
+        for (std::pair<std::string, Robot*> element : workspace->getObstaclesMap() ){
+            if (addRobot2Tree(element.second,true) == NULL) {
                 problemTree->clear();
                 return false;
             }

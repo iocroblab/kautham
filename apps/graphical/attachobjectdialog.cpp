@@ -229,16 +229,14 @@ namespace Kautham {
         Robot *obs;
         QTableWidgetItem *item;
         int index = 0;
-        map<string, Robot*>::iterator mapit;
-        uint i;
-        for(i=0,mapit = wSpace->getFirstObstacle(); mapit != wSpace->getLastObstacle(); mapit++,i++){
-            obs = mapit->second;
+        for (std::pair<std::string, Robot*> element : wSpace->getObstaclesMap() ){
+            obs = element.second;
             if (obs->isAttachable()) {
                 item = new QTableWidgetItem(obs->getName().c_str());
                 item->setFlags(item->flags() ^ Qt::ItemIsEditable);
                 attachableTable->insertRow(index);
                 attachableTable->setItem(index,0,item);
-                obsMap.insert(item, mapit->first);
+                obsMap.insert(item, element.first);
                 index++;
             }
         }

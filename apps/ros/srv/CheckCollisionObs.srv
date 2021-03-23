@@ -1,7 +1,0 @@
-string obsname
----
-bool response
-bool collisionFree
-string msg
-string collObj
-string[] collObjs

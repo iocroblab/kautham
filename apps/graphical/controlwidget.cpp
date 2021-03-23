@@ -162,11 +162,11 @@ namespace Kautham {
                 }
             } else {
                 prob->wSpace()->moveObstaclesTo(sample);
-                map<string, Robot*>::iterator mapit;
-                uint i;
-                for(i=0,mapit = prob->wSpace()->getFirstObstacle(); mapit != prob->wSpace()->getLastObstacle(); mapit++,i++){
-                    mapit->second->control2Parameters(values,params);
+                uint i=0;
+                for (std::pair<std::string, Robot*> element : prob->wSpace()->getObstaclesMap() ){
+                    element.second->control2Parameters(values,params);
                     DOFWids.at(i)->setValues(params);
+                    i++;
                 }
             }
             stringstream sstr;
@@ -211,11 +211,11 @@ namespace Kautham {
                 }
             } else {
                 prob->wSpace()->moveObstaclesTo(sample);
-                map<string, Robot*>::iterator mapit;
-                uint i;
-                for(i=0,mapit = prob->wSpace()->getFirstObstacle(); mapit != prob->wSpace()->getLastObstacle(); mapit++,i++){
-                    mapit->second->control2Parameters(values,params);
+                uint i=0;
+                for (std::pair<std::string, Robot*> element : prob->wSpace()->getObstaclesMap() ){
+                    element.second->control2Parameters(values,params);
                     DOFWids.at(i)->setValues(params);
+                    i++;
                 }
             }
         } else {
@@ -292,11 +292,11 @@ namespace Kautham {
             }
         } else {
             prob->wSpace()->moveObstaclesTo(sample);
-            map<string, Robot*>::iterator mapit;
-            uint i;
-            for(i=0,mapit = prob->wSpace()->getFirstObstacle(); mapit != prob->wSpace()->getLastObstacle(); mapit++,i++){
-                mapit->second->control2Parameters(values,params);
+            uint i=0;
+            for (std::pair<std::string, Robot*> element : prob->wSpace()->getObstaclesMap() ){
+                element.second->control2Parameters(values,params);
                 ((DOFWidget *)DOFWids.at(i))->setValues(params);
+                i++;
             }
         }
     }

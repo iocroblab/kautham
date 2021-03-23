@@ -2000,10 +2000,10 @@ bool Problem::setObstacleControls(xml_document *doc) {
     KthReal **offMatrix;
     mapMatrix = new KthReal**[numObs];
     offMatrix = new KthReal*[numObs];
-    map<string, Robot*>::iterator mapit;
-    int i;
-    for(i=0, mapit = _wspace->getFirstObstacle(); mapit != _wspace->getLastObstacle(); mapit++, i++){
-        numDOFs = mapit->second->getNumJoints()+6;
+
+    int i=0;
+    for (std::pair<std::string, Robot*> element : _wspace->getObstaclesMap() ){
+        numDOFs = element.second->getNumJoints()+6;
         mapMatrix[i] = new KthReal*[numDOFs];
         offMatrix[i] = new KthReal[numDOFs];
         for (int j = 0; j < numDOFs; j++) {
@@ -2012,10 +2012,11 @@ bool Problem::setObstacleControls(xml_document *doc) {
             for (int k = 0; k < numControls; k++) {
                 mapMatrix[i][j][k] = 0.0;
             }
+            i++;
         }
 
-        mapit->second->setMapMatrix(mapMatrix[i]);
-        mapit->second->setOffMatrix(offMatrix[i]);
+        element.second->setMapMatrix(mapMatrix[i]);
+        element.second->setOffMatrix(offMatrix[i]);
     }
 
     //Load the Offset vector
@@ -2194,16 +2195,16 @@ bool Problem::setFixedObstacleControls() {
     int numObs = _wspace->getNumObstacles();
     int numDOFs;
     KthReal *offMatrix;
-    map<string, Robot*>::iterator mapit;
-    int i;
-    for(i=0, mapit = _wspace->getFirstObstacle(); mapit != _wspace->getLastObstacle(); mapit++, i++){
-        numDOFs = mapit->second->getNumJoints()+6;
+    int i=0;
+    for (std::pair<std::string, Robot*> element : _wspace->getObstaclesMap() ){
+        numDOFs = element.second->getNumJoints()+6;
 
         offMatrix = new KthReal[numDOFs];
         for (int j = 0; j < numDOFs; j++) {
             offMatrix[j] = 0.5;
         }
-        mapit->second->setOffMatrix(offMatrix);
+        element.second->setOffMatrix(offMatrix);
+        i++;
     }
 
     return true;
