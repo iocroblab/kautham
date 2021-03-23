@@ -44,7 +44,6 @@
 #include <kautham/OpenProblem.h>
 #include <kautham/OpenProblemStream.h>
 #include <kautham/CheckCollision.h>
-#include <kautham/CheckCollisionObs.h>
 #include <kautham/SetRobotsConfig.h>
 #include <kautham/SetObstaclesConfig.h>
 #include <kautham/SetQuery.h>
@@ -394,18 +393,6 @@ bool srvCheckCollisionRob(kautham::CheckCollision::Request &req,
 
 }
 
-bool srvCheckCollisionObs(kautham::CheckCollisionObs::Request &req,
-                                kautham::CheckCollisionObs::Response &res) {
-
-    std::vector<string> ObstColl;
-    std::string msg;
-    res.response = ksh->checkCollisionObs(req.obsname, &ObstColl, &msg);
-    res.collObjs = ObstColl;
-    res.msg = msg;
-//    res.collObj = colObj.first.second;
-
-    return true;
-}
 
 bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
                        kautham::SetRobotsConfig::Response &res) {
@@ -879,7 +866,6 @@ int main (int argc, char **argv) {
     ros::ServiceServer service33 = n.advertiseService("kautham_node/GetNumVertices",srvGetNumVertices);
     ros::ServiceServer service34 = n.advertiseService("kautham_node/SetObstaclePos",srvSetObstaclPos);
     ros::ServiceServer service35 = n.advertiseService("kautham_node/GetObstaclePos", srvGetObstaclPos);
-    ros::ServiceServer service36 = n.advertiseService("kautham_node/CheckCollisionObs",srvCheckCollisionObs);
     ros::ServiceServer service37 = n.advertiseService("kautham_node/CheckCollisionRob",srvCheckCollisionRob);
     ros::ServiceServer service38 = n.advertiseService("kautham_node/FindIK",srvFindIK);
     ros::ServiceServer service39 = n.advertiseService("kautham_node/SetRobotPos",srvSetRobPos);
