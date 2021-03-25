@@ -4,8 +4,8 @@ import rospkg
 import sys
 from std_msgs.msg import String, Time
 from geometry_msgs.msg import Pose
-from ktmpb.msg import fVector
-from ktmpb.srv import *
+#from ktmpb.msg import fVector
+#from ktmpb.srv import *
 rospack =rospkg.RosPack()
 import xml.etree.ElementTree as ET 
 from collections import defaultdict
