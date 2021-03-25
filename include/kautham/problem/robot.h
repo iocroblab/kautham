@@ -322,14 +322,8 @@ namespace Kautham {
     inline Link* getLinkAttachedTo() {return linkAttachedTo;}
 
   private:
-    //! sets the Robot from a *.dh file
-    bool setFromDhFile(string robFile, bool useBBOX, progress_struct *progress = NULL);
-
     //! sets the Robot from a *.urdf file
     bool setFromUrdfFile(string robFile, bool useBBOX, progress_struct *progress = NULL);
-
-    //! sets the Robot from a 3D model file
-    bool setFromModelFile(string robFile, bool useBBOX, progress_struct *progress = NULL);
 
     //! This method updates the absolute position and orientation of each link in the robot.
     void updateRobot();

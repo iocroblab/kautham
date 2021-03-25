@@ -112,11 +112,16 @@ namespace Kautham {
             string extension = robFile.substr(robFile.find_last_of(".")+1);
 
             if (extension == "dh") {
-                armed = setFromDhFile(robFile,useBBOX,progress);
+                cout << "Robot .dh extension no longer supported. Convert it to urdf format" << endl;
+                string message = ".dh extension no longer suported. Convert it to urdf format";
+                throw KthExcp(message);
+                //armed = setFromDhFile(robFile,useBBOX,progress);
             } else if (extension == "urdf") {
                 armed = setFromUrdfFile(robFile,useBBOX,progress);
             } else {
-                armed = setFromModelFile(robFile,useBBOX,progress);
+                cout << "Extension iv or wrl extension no longer supported. Wrap the robot/obstacle as a urdf file." << endl;
+                string message = ".dh extension no longer suported. Convert it to urdf format";
+                throw KthExcp(message);
             }
 
             if (armed) {
@@ -187,183 +192,6 @@ namespace Kautham {
 
         return true;
     }
-
-
-    bool Robot::setFromDhFile(string robFile, bool useBBOX, progress_struct *progress) {
-        //setting numeric parameter to avoid convertions problems
-        char *old = setlocale(LC_NUMERIC, "C");
-
-        string dir = robFile.substr(0,robFile.find_last_of("/")+1);
-        string tmpString = "";
-
-        // Opening the file with the new pugiXML library.
-        xml_document doc;
-
-        //Parse the rob file
-        xml_parse_result result = doc.load_file(robFile.c_str());
-        if (result) {
-            //Robot Name
-            name = doc.child("Robot").attribute("name").as_string();
-
-            //Type of convention used to define the robot, in case of Chain or Tree
-            if (tmpString != "Freeflying") {
-                tmpString = doc.child("Robot").attribute("DHType").as_string();
-                if (tmpString == "Standard") {
-                    Approach = DHSTANDARD;
-                } else {
-                    Approach = DHMODIFIED;
-                }
-            }
-
-
-            //Links of the robot
-            int numLinks = doc.child("Robot").child("Joints").attribute("size").as_int();
-
-            // Initialization of the RnConf part of the RobConf for each
-            // special poses, the initial, the goal, the Home and the current poses.
-            _homeConf.setRn( numLinks - 1 );
-            _currentConf.setRn( numLinks - 1 );
-
-            _weights = new RobWeight( numLinks - 1 );
-
-            xml_node linkNode = doc.child("Robot").child("Joints");
-            KthReal* preTransP = NULL;
-            KthReal preTrans[7] = {0., 0., 0., 0., 0., 0., 0.};
-            int i = 0;
-            KthReal limMin = 0.;
-            KthReal limMax = 0.;
-
-            //Loop for all the links
-            for (xml_node_iterator it = linkNode.begin(); it != linkNode.end(); ++it) {
-                if (progress != NULL) {
-                    pthread_mutex_lock(progress->mutex);
-                    if (progress->abort) {
-                        pthread_mutex_unlock(progress->mutex);
-                        return false;
-                    }
-                }
-
-                try {
-                    //Sets the Pretransfomation needed when DH parameters are not able to secify the transform between links
-                    //used for instance in the definition of the transofrms between tha palm and the finger bases in the SAH hand
-                    xml_node preTNode = (*it).child("PreTrans");
-                    if (preTNode != NULL) {
-                        preTransP = preTrans;
-                        preTrans[0] = (KthReal)preTNode.attribute("X").as_double();
-                        preTrans[1] = (KthReal)preTNode.attribute("Y").as_double();
-                        preTrans[2] = (KthReal)preTNode.attribute("Z").as_double();
-                        preTrans[3] = (KthReal)preTNode.attribute("WX").as_double();
-                        preTrans[4] = (KthReal)preTNode.attribute("WY").as_double();
-                        preTrans[5] = (KthReal)preTNode.attribute("WZ").as_double();
-                        preTrans[6] = (KthReal)preTNode.attribute("TH").as_double();
-                    }
-
-                    //Sets the limits of the joint
-                    limMin = (KthReal)(*it).child("Limits").attribute("Low").as_double();
-                    limMax = (KthReal)(*it).child("Limits").attribute("Hi").as_double();
-
-                    KthReal linkScale = 1.;
-                    if ((*it).attribute("scale")) linkScale = (*it).attribute("scale").as_double();
-
-                    //Create the link
-                    if ((*it).attribute("collision_ivFile")) {
-                        addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
-                                dir + (*it).attribute("collision_ivFile").as_string(), linkScale,
-                                (KthReal)(*it).child("DHPars").attribute("theta").as_double(),
-                                (KthReal)(*it).child("DHPars").attribute("d").as_double(),
-                                (KthReal)(*it).child("DHPars").attribute("a").as_double(),
-                                (KthReal)(*it).child("DHPars").attribute("alpha").as_double(),
-                                (*it).child("Description").attribute("rotational").as_bool(),
-                                (*it).child("Description").attribute("movable").as_bool(),
-                                limMin, limMax,
-                                (KthReal)(*it).child("Weight").attribute("weight").as_double(),
-                                (*it).child("Parent").attribute("name").as_string(), preTransP, useBBOX);
-                    } else {
-                        addLink((*it).attribute("name").as_string(), dir + (*it).attribute("ivFile").as_string(),
-                                dir + (*it).attribute("ivFile").as_string(), linkScale,
-                                (KthReal)(*it).child("DHPars").attribute("theta").as_double(),
-                                (KthReal)(*it).child("DHPars").attribute("d").as_double(),
-                                (KthReal)(*it).child("DHPars").attribute("a").as_double(),
-                                (KthReal)(*it).child("DHPars").attribute("alpha").as_double(),
-                                (*it).child("Description").attribute("rotational").as_bool(),
-                                (*it).child("Description").attribute("movable").as_bool(),
-                                limMin, limMax,
-                                (KthReal)(*it).child("Weight").attribute("weight").as_double(),
-                                (*it).child("Parent").attribute("name").as_string(), preTransP, useBBOX);
-                    }
-
-                    if (!((Link*)links.at(i))->isArmed()) {
-                        //restoring environtment values
-                        setlocale(LC_NUMERIC,old);
-                        return false;
-                    }
-
-                    //Add the weight. Defaults to 1.0
-                    if (i > 0) { //First link is ommited because it is the base.
-                        if ((*it).child("Weight")) {
-                            _weights->setRnWeigh(i-1,(KthReal)(*it).child("Weight").attribute("weight").as_double());
-                        } else {
-                            _weights->setRnWeigh(i-1,(KthReal)1.0);
-                            links[i]->setWeight(1.0); //defaulted to 1, if not added it is put to 0 in the creator!
-                        }
-                    }
-
-                    i++;
-
-                    preTransP = NULL ;//initialize for the next link
-
-                    if (progress != NULL) {
-                        ++(*(progress->linksLoaded));
-                    }
-                } catch (const KthExcp& excp) {
-                    if (progress != NULL) {
-                        pthread_mutex_unlock(progress->mutex);
-                    }
-
-                    throw excp;
-                    return false;
-                } catch (const exception& excp) {
-                    if (progress != NULL) {
-                        pthread_mutex_unlock(progress->mutex);
-                    }
-
-                    throw excp;
-                    return false;
-                } catch (...) {
-                    if (progress != NULL) {
-                        pthread_mutex_unlock(progress->mutex);
-                    }
-
-                    throw;
-                    return false;
-                }
-
-                if (progress != NULL) {
-                    pthread_mutex_unlock(progress->mutex);
-                }
-            }
-
-            //restoring environtment values
-            setlocale(LC_NUMERIC,old);
-            return true;
-        } else {// the result of the file parser is bad
-            cout << "Robot file: " << robFile << " can not be read." << endl;
-
-            //restoring environtment values
-            setlocale(LC_NUMERIC,old);
-
-            unsigned int line, position;
-            getLinePosition(robFile,result.offset,line,position);
-            string message = "Robot file " + robFile + " couldn't be parsed";
-            stringstream details;
-            details << "Error: " << result.description() << endl <<
-                       "Last successfully parsed character: " << result.offset
-                    << "(line: " <<  line << ", position: " << position << ")";
-            throw KthExcp(message,details.str());
-            return false;
-        }
-    }
-
 
     bool Robot::setFromUrdfFile(string robFile, bool useBBOX, progress_struct *progress) {
         //setting numeric parameter to avoid convertions problems
@@ -533,68 +361,6 @@ namespace Kautham {
             return false;
         }
     }
-
-
-    bool Robot::setFromModelFile(string robFile, bool useBBOX, progress_struct *progress) {
-        char *old = setlocale(LC_NUMERIC, "C");
-
-        //Robot Name
-        int pos = robFile.find_last_of("/")+1;
-        name = robFile.substr(pos,robFile.find_last_of(".")-pos);
-
-        // Initialization of the RnConf part of the RobConf for each
-        // special poses, the initial, the goal, the Home and the current poses.
-        _homeConf.setRn(0);
-        _currentConf.setRn(0);
-
-        _weights = new RobWeight(0);
-
-        if (progress != NULL) {
-            pthread_mutex_lock(progress->mutex);
-            if (progress->abort) {
-                pthread_mutex_unlock(progress->mutex);
-                return false;
-            }
-        }
-
-        try {
-            addLink("Base", robFile, robFile, 1, 0, 0, 0, 0, false, true, 0, 0, 1, "", NULL, useBBOX);
-
-            if (progress != NULL) {
-                ++(*(progress->linksLoaded));
-            }
-        } catch (const KthExcp& excp) {
-            if (progress != NULL) {
-                pthread_mutex_unlock(progress->mutex);
-            }
-
-            throw excp;
-            return false;
-        } catch (const exception& excp) {
-            if (progress != NULL) {
-                pthread_mutex_unlock(progress->mutex);
-            }
-
-            throw excp;
-            return false;
-        } catch (...) {
-            if (progress != NULL) {
-                pthread_mutex_unlock(progress->mutex);
-            }
-
-            throw;
-            return false;
-        }
-        if (progress != NULL) {
-            pthread_mutex_unlock(progress->mutex);
-        }
-
-        //restoring environtment values
-        setlocale(LC_NUMERIC,old);
-
-        return (((Link*)links.at(0))->isArmed());
-    }
-
 
 
     /*!
