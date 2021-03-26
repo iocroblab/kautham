@@ -2,7 +2,7 @@
 
 Separator {
     Material {
-            diffuseColor        0.0 0.0 1.0
+            diffuseColor        0.2 0.2 0.2
     }
 
     Cube {
@@ -10,5 +10,5 @@ Separator {
      height 0.01
      depth 0.01
     }
-	
+
 }
