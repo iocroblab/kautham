@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<ControlSet>
+        <Offset>
+		<DOF name="TX90/link_1" value="0.5" />
+		<DOF name="TX90/link_2" value="0.5" />
+		<DOF name="TX90/link_3" value="0.5" />
+		<DOF name="TX90/link_4" value="0.5" />
+		<DOF name="TX90/link_5" value="0.5" />
+		<DOF name="TX90/link_6" value="0.5" />
+	</Offset>
+	<Control name="Shoulder" eigValue="1.0">
+		<DOF name="TX90/link_1" value="1.0" />
+	</Control>
+	<Control name="ForeArm" eigValue="1.0">
+		<DOF name="TX90/link_2" value="1.0" />
+	</Control>
+	<Control name="Elbow" eigValue="1.0">
+		<DOF name="TX90/link_3" value="1.0" />
+	</Control>
+	<Control name="Arm" eigValue="1.0">
+		<DOF name="TX90/link_4" value="1.0" />
+	</Control>
+	<Control name="Wrist" eigValue="1.0">
+		<DOF name="TX90/link_5" value="1.0" />
+	</Control>
+	<Control name="Tcp" eigValue="1.0">
+		<DOF name="TX90/link_6" value="1.0" />
+	</Control>
+</ControlSet>

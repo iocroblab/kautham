@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<ControlSet>
+        <Offset>
+		<DOF name="TX90_robotniq/link_1" value="0.5" />
+		<DOF name="TX90_robotniq/link_2" value="0.5" />
+		<DOF name="TX90_robotniq/link_3" value="0.5" />
+		<DOF name="TX90_robotniq/link_4" value="0.5" />
+		<DOF name="TX90_robotniq/link_5" value="0.5" />
+		<DOF name="TX90_robotniq/link_6" value="0.5" />
+                <DOF name="TX90_robotniq/gripper_right_driver" value="0.505"/>
+                <DOF name="TX90_robotniq/gripper_right_follower" value="0.418"/>
+                <DOF name="TX90_robotniq/gripper_right_spring_link" value="0.558"/>
+                <DOF name="TX90_robotniq/gripper_left_driver" value="0.505"/>
+                <DOF name="TX90_robotniq/gripper_left_follower" value="0.418"/>
+                <DOF name="TX90_robotniq/gripper_left_spring_link" value="0.558"/>
+	</Offset>
+	<Control name="Shoulder" eigValue="1.0">
+		<DOF name="TX90_robotniq/link_1" value="1.0" />
+	</Control>
+	<Control name="ForeArm" eigValue="1.0">
+		<DOF name="TX90_robotniq/link_2" value="1.0" />
+	</Control>
+	<Control name="Elbow" eigValue="1.0">
+		<DOF name="TX90_robotniq/link_3" value="1.0" />
+	</Control>
+	<Control name="Arm" eigValue="1.0">
+		<DOF name="TX90_robotniq/link_4" value="1.0" />
+	</Control>
+	<Control name="Wrist" eigValue="1.0">
+		<DOF name="TX90_robotniq/link_5" value="1.0" />
+	</Control>
+	<Control name="Tcp" eigValue="1.0">
+		<DOF name="TX90_robotniq/link_6" value="1.0" />
+	</Control>
+        <Control name="gripper" eigValue="1.0">
+            <DOF name="TX90_robotniq/gripper_right_driver" value="0.853"/>
+            <DOF name="TX90_robotniq/gripper_right_follower" value="-0.099"/>
+            <DOF name="TX90_robotniq/gripper_right_spring_link" value="0.124"/>
+            <DOF name="TX90_robotniq/gripper_left_driver" value="0.853"/>
+            <DOF name="TX90_robotniq/gripper_left_follower" value="-0.099"/>
+            <DOF name="TX90_robotniq/gripper_left_spring_link" value="0.124"/>
+        </Control>
+</ControlSet>

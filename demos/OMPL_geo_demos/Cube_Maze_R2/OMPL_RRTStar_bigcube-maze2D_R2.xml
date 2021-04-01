@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_RRTStar_bigcube-maze2D">
-	<Robot robot="robots/bigcube.dh" scale="1.0">
+	<Robot robot="robots/freeflying/bigcube.urdf" scale="1.0">
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.056" max="0.056" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.056" Y="0.01" X="0.01" />
 	</Robot>
-	<Obstacle obstacle="obstacles/maze2D.iv" scale="1.0">
+	<Obstacle obstacle="obstacles/2D-environments/maze2D.urdf" scale="1.0">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/walls.iv" scale="1.0">
+	<Obstacle obstacle="obstacles/2D-environments/walls.urdf" scale="1.0">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
 	<Controls robot="controls/bigcube_R2.cntr" />

@@ -3,27 +3,23 @@
 	<link name="base">
 	<inertial>
         	 <origin xyz="0 0 0" rpy="0 0 0"/>
-        	 <mass value="0.04"/>
+        	 <mass value="0.2"/>
         	 <inertia ixx="0.000683333"  ixy="0"  ixz="0" iyy="0.000683333" iyz="0" izz="0.000683333" />
        </inertial>
-	<visual>
-		<origin xyz="0 0 0" rpy="0 0 0" />
-		<geometry>
-			<box size="0.0555 0.0555 0.17" />
-		</geometry>
-		<material>
-			<color rgba="0 1 0 1" />
-		</material>
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<box size="0.25 0.25 0.8" />
+			</geometry>
+			<material>
+				<color rgba="0 0 1 1" />
+			</material>
 		</visual>
   	 <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-			<box size="0.0555 0.0555 0.17" />
+				<box size="0.25 0.25 0.8" />
             </geometry>
-	    <material>
-			<color rgba="0 1 0 1" />
-	    </material>
         </collision>
 	</link>
 </robot>
-

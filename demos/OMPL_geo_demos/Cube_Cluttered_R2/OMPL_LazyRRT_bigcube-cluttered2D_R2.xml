@@ -1,29 +1,34 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_LazyRRT_bigcube-cluttered2D">
-	<Robot robot="robots/bigcube.dh" scale="1.0">
+	<Robot robot="robots/freeflying/bigcube.urdf" scale="1.0">
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.056" max="0.056" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.056" Y="0.01" X="0.01" />
 	</Robot>
-	<Obstacle obstacle="obstacles/cluttered2D.iv" scale="1.0">
+	<Obstacle obstacle="obstacles/2D-environments/cluttered2D.urdf" scale="1.0">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/walls.iv" scale="1.0">
+	<Obstacle obstacle="obstacles/2D-environments/walls.urdf" scale="1.0">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
 	<Controls robot="controls/bigcube_R2.cntr" />
 	<Planner>
 		<Parameters>
 			<Name>omplLazyRRT</Name>
-			<Parameter name="_Max Planning Time">10.0</Parameter>
+			<Parameter name="Goal Bias">0.05000000075</Parameter>
+			<Parameter name="Range">0.01999999955</Parameter>
+			<Parameter name="_Cspace Drawn">0</Parameter>
+			<Parameter name="_Incremental (0/1)">0</Parameter>
+			<Parameter name="_Max Planning Time">10</Parameter>
+			<Parameter name="_Path Drawn (0/1)">1</Parameter>
+			<Parameter name="_Simplify Solution">2</Parameter>
 			<Parameter name="_Speed Factor">1</Parameter>
-			<Parameter name="Range">0.02</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init>0.1 0.1</Init>
-				<Goal>0.7 0.7</Goal>
+				<Init dim="2">0.1 0.1</Init>
+				<Goal dim="2">0.7 0.7</Goal>
 			</Query>
 		</Queries>
 	</Planner>

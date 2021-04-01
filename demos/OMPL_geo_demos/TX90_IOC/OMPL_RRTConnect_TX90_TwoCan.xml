@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTCONNECT_TX90_RHAND_SIMPLE_TWOCAN">
+	<Robot robot="robots/tx90.urdf" scale="1.0">
+		<Home TH="3.1415926536" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.2301" X="-0.2005" />
+		<InvKinematic name="TX90" />
+	</Robot>
+	<Obstacle obstacle="obstacles/ioc_lab1/cangoal.urdf" scale="1.0">
+		<Home TH="1.5707963268" WZ="0.0" WY="0.0" WX="1.0" Z="0.56" Y="1.1" X="-0.47" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ioc_lab1/can.urdf" scale="1.0">
+		<Home TH="1.5707963268" WZ="0.0" WY="0.0" WX="1.0" Z="0.56" Y="1.18" X="-0.35" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ioc_lab1/transparenttable.urdf" scale="0.001">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ioc_lab1/irontable.urdf" scale="0.001">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/TX90_6dof.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="Range">0.1</Parameter>
+			<Parameter name="Speed Factor">1</Parameter>
+			<Parameter name="_Max Planning Time">10.0</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init>0.373 0.359 0.969 0.332 0.6 0.837</Init>
+				<Goal>0.29 0.575 0.842 0.492 0.304 0.665</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

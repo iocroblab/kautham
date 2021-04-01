@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<Robot name="ele" robType="Freeflying">
-	<Joints size="1">
-		<Joint name="Base" ivFile="freeflying/ele.iv">
-			<Description movable="true" />
-		</Joint>
-	</Joints>
-</Robot>

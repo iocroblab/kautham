@@ -1,0 +1,16 @@
+#Inventor V2.1 ascii
+
+
+DEF root Separator {
+
+  Material {
+    ambientColor 1 0.8 0.8
+    diffuseColor 1 0.8 0.8
+  }
+  Cube {
+    width 0.40000001
+    height 0.40000001
+    depth 0.1
+  }
+}
+

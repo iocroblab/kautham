@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_RRTConnect_f16_universe">
-	<Robot robot="robots/f16.dh" scale="0.3">
+	<Robot robot="robots/freeflying/f16.urdf" scale="0.3">
 		<Limits name="X" min="-20.0" max="20.0" />
 		<Limits name="Y" min="-20.0" max="20.0" />
 		<Limits name="Z" min="-20.0" max="20.0" />
 	</Robot>
-	<Obstacle obstacle="obstacles/universe.iv" scale="0.01">
+	<Obstacle obstacle="obstacles/3D-environments/universe.urdf" scale="0.01">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
 	<Controls robot="controls/f16_SE3.cntr" />

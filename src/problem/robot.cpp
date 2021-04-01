@@ -119,8 +119,8 @@ namespace Kautham {
             } else if (extension == "urdf") {
                 armed = setFromUrdfFile(robFile,useBBOX,progress);
             } else {
-                cout << "Extension iv or wrl extension no longer supported. Wrap the robot/obstacle as a urdf file." << endl;
-                string message = ".dh extension no longer suported. Convert it to urdf format";
+                cout << "iv or wrl extension no longer supported. Wrap the robot/obstacle as a urdf file." << endl;
+                string message = "iv or wrl extension no longer supported. Wrap the robot/obstacle as a urdf file.";
                 throw KthExcp(message);
             }
 

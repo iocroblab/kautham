@@ -249,7 +249,7 @@
   <link name="Cylinder">
     <visual>
       <geometry>
-	<mesh filename="cylinder.wrl" scale="0.001 0.001 0.001"/>
+	<mesh filename="AllegroHand/objects/cylinder.wrl" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
   </link>

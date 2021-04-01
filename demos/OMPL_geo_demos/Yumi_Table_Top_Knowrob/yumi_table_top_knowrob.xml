@@ -16,59 +16,59 @@
     </Obstacle>
     
            
-    <Obstacle obstacle="obstacles/TMP/table.dae" scale="0.0037">
+    <Obstacle obstacle="obstacles/TMP/table.urdf" scale="0.0037">
 	<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="-0.49" Y="-0.49" X="0.0" />
     </Obstacle>
         
-    <Obstacle obstacle="obstacles/fixtures/Wooden_Plate.dae" scale="1.0">
+    <Obstacle obstacle="obstacles/fixtures/Wooden_Plate.urdf" scale="1.0">
         <Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.015" Y="0.0" X="0.41" />
     </Obstacle>
     
-     <Obstacle obstacle="obstacles/plane/Window.stl" scale="1.0">
+     <Obstacle obstacle="obstacles/plane/Window.urdf" scale="1.0">
 	<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="-0.42" X="0.5" />
      </Obstacle>
  	
-     <Obstacle obstacle="obstacles/plane/Chassis.stl" scale="1.0">
+     <Obstacle obstacle="obstacles/plane/Chassis.urdf" scale="1.0">
 	<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.05" Y="-0.32" X="0.5" />
     </Obstacle>
     
-    <Obstacle obstacle="obstacles/plane/BottomWing.stl" scale="1.0">
+    <Obstacle obstacle="obstacles/plane/BottomWing.urdf" scale="1.0">
 	<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="-0.32" X="0.3" />
     </Obstacle>
     
-    <Obstacle obstacle="obstacles/plane/FrontWheel.stl" scale="1.0">
+    <Obstacle obstacle="obstacles/plane/FrontWheel.urdf" scale="1.0">
 	<Home TH="1.57075" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="-0.4" X="0.35" />
     </Obstacle>
     
-    <Obstacle obstacle="obstacles/plane/MotorGrill.stl" scale="1.0">
+    <Obstacle obstacle="obstacles/plane/MotorGrill.urdf" scale="1.0">
 	<Home TH="3.1415" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="-0.46" X="0.35" />
     </Obstacle>
     
-    <Obstacle obstacle="obstacles/plane/Propeller.stl" scale="1.0">
+    <Obstacle obstacle="obstacles/plane/Propeller.urdf" scale="1.0">
 	<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="-0.43" X="0.2" />
     </Obstacle>
     
-    <Obstacle obstacle="obstacles/plane/RearWheelLeft.stl" scale="1.0">
+    <Obstacle obstacle="obstacles/plane/RearWheelLeft.urdf" scale="1.0">
 	<Home TH="-1.57075" WZ="0.0" WY="1.0" WX="0.0" Z="0.0" Y="-0.3" X="0.12" />
     </Obstacle>
     
-    <Obstacle obstacle="obstacles/plane/RearWheelRight.stl" scale="1.0">
+    <Obstacle obstacle="obstacles/plane/RearWheelRight.urdf" scale="1.0">
 	<Home TH="-1.57075" WZ="0.0" WY="1.0" WX="0.0" Z="0.0" Y="-0.35" X="0.12" />
     </Obstacle>
     
-    <Obstacle obstacle="obstacles/plane/RearWing.stl" scale="1.0">
+    <Obstacle obstacle="obstacles/plane/RearWing.urdf" scale="1.0">
 	<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.01" Y="0.3" X="0.2" />
     </Obstacle>
     
-    <Obstacle obstacle="obstacles/plane/TopWing.stl" scale="1.0">
+    <Obstacle obstacle="obstacles/plane/TopWing.urdf" scale="1.0">
 	<Home TH="1.57075" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.45" X="0.2" />
     </Obstacle>
     
-    <Obstacle obstacle="obstacles/plane/UnderBody.stl" scale="1.0">
+    <Obstacle obstacle="obstacles/plane/UnderBody.urdf" scale="1.0">
 	<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.01" Y="0.4" X="0.4" />
     </Obstacle>
     
-    <Obstacle obstacle="obstacles/plane/UpperBody.stl" scale="1.0">
+    <Obstacle obstacle="obstacles/plane/UpperBody.urdf" scale="1.0">
 	<Home TH="1.57075" WZ="1.0" WY="0.0" WX="0.0" Z="0.01" Y="0.4" X="0.5" />
     </Obstacle>
     

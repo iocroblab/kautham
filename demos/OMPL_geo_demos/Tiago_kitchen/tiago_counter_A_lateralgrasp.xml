@@ -20,7 +20,7 @@
 	<Obstacle obstacle="obstacles/kitchen/glass.urdf" scale="1">
 		<Home TH="0" WZ="0.0" WY="0.0" WX="0.0" Z="0.90" Y="0.4" X="1.3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/kitchen/kitchenfloor.iv" scale="1">
+	<Obstacle obstacle="obstacles/kitchen/kitchenfloor.urdf" scale="1">
 		<Home TH="0" WZ="0.0" WY="0.0" WX="0.0" Z="-0.001" Y="0" X="0" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/kitchen/kitchen.urdf" scale="1">

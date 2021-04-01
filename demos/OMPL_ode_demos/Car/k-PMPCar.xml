@@ -6,31 +6,31 @@
 		<Limits name="Z" min="-1.0" max="4.0" />
 		<Home X="0.0" Y="0.0" Z="1.0" WX="0.0" WY="0.0" WZ="1.0" TH="1.5707963268" />
 	</Robot>
-	<Obstacle obstacle="obstacles/cubeDE1.urdf" scale="0.5">
+	<Obstacle obstacle="obstacles/ode-objects/cubeDE1.urdf" scale="0.5">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1" Y="3.0" X="2.3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/cubeDE2.urdf" scale="0.5">
+	<Obstacle obstacle="obstacles/ode-objects/cubeDE2.urdf" scale="0.5">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1" Y="3.5" X="2.3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/cubeDE3.urdf" scale="0.5">
+	<Obstacle obstacle="obstacles/ode-objects/cubeDE3.urdf" scale="0.5">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="1" Y="4" X="2.3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wall5.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wall5.urdf" scale="1">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="1" Y="0.0" X="0.0" />
 	</Obstacle>
-		<Obstacle obstacle="obstacles/wall6.urdf" scale="1">
+		<Obstacle obstacle="obstacles/ode-objects/wall6.urdf" scale="1">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="1" Y="2.4" X="3.3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb1.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wallb1.urdf" scale="1">
 		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="4.8" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb2.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wallb2.urdf" scale="1">
 		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="-4.8" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb3.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wallb3.urdf" scale="1">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="4.8" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb4.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wallb4.urdf" scale="1">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="-4.8" X="0.0" />
 	</Obstacle>
 	<Controls robot="controls/SimpleCar.cntr" />

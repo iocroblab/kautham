@@ -6,37 +6,37 @@
 		<Limits name="Z" min="-1" max="2.0" />
 		<Home X="10.0" Y="10.0" Z="0.0" WX="0.0" WY="0.0" WZ="1.0" TH="0.0" />
 	</Robot>
-	<Obstacle obstacle="obstacles/cubeDE1.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/cubeDE1.urdf" scale="1">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.5" Y="0.0" X="3.3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/cubeDE2.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/cubeDE2.urdf" scale="1">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.5" Y="0.0" X="4.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/cubeDE3.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/cubeDE3.urdf" scale="1">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.5" Y="0.0" X="-3.3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/cubeDE4.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/cubeDE4.urdf" scale="1">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.5" Y="0.0" X="-4.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wall4.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wall4.urdf" scale="1">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.5" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wall5.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wall5.urdf" scale="1">
 		<Home TH="0.7853981634" WZ="1.0" WY="0.0" WX="0.0" Z="0.7" Y="2.5" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wall6.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wall6.urdf" scale="1">
 		<Home TH="0.7853981634" WZ="1.0" WY="0.0" WX="0.0" Z="0.7" Y="-2.5" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb1.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wallb1.urdf" scale="1">
 		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="4.8" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb2.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wallb2.urdf" scale="1">
 		<Home TH="1.5707963268" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="-4.8" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb3.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wallb3.urdf" scale="1">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="4.8" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/wallb4.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ode-objects/wallb4.urdf" scale="1">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.25" Y="-4.8" X="0.0" />
 	</Obstacle>
 	<Controls robot="controls/sp3.cntr" />

@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_PRM_Staubli_R6_mobileBase_two_columns">
-	<Robot robot="robots/TX90_mobile.dh" scale="1.0">
+	<Robot robot="robots/tx90_mobile.urdf" scale="1.0">
 		<Limits name="X" min="-0.4" max="1.2" />
 		<Limits name="Y" min="-0.2" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
 		<Home TH="3.1415926536" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.4" X="-0.3"/>
 		<WeightSE3 rho_t="10.0" rho_r="1.0" />
+                <ViewLink name="link_6"/>
 	</Robot>
-	<Obstacle obstacle="obstacles/columns.iv" scale="0.018">
+	<Obstacle obstacle="obstacles/3D-environments/columns.urdf" scale="0.018">
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="0.0" X="0.25" />
 	</Obstacle>
 	<Controls robot="controls/TX90_mobile.cntr" />

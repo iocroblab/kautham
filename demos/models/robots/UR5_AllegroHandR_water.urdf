@@ -249,7 +249,7 @@
   <link name="Can">
     <visual>
       <geometry>
-	<mesh filename="can.wrl"/>
+	<mesh filename="AllegroHand/objects/can.wrl"/>
       </geometry>
     </visual>
   </link>
