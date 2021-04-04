@@ -213,7 +213,7 @@ def kDetachObject(obsname):
     detachobstacle_srv.obs=obsname
     r= detachobstacle_client(detachobstacle_srv.obs)
     print ("Detached object",end=" ")
-    print(objectname)
+    print(obsname)
     return r.response
 
 #Function that wraps the call to the kautham service that gets the pose of an obstacle
