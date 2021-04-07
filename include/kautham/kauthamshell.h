@@ -41,10 +41,7 @@ namespace Kautham {
         void closeProblem();
         bool openProblem(std::istream *inputfile, std::vector<std::string> def_path = std::vector<std::string>());
         bool openProblem(std::string problemfilename, std::vector<std::string> def_path);
-        bool checkCollisionObs(string obsname, std::vector<string> *collObs, std::string *msg);
-        bool checkCollisionRob(std::vector<float> smpcoords, std::vector<string> *ObstColl);
-        bool checkCollision(std::vector<float> smpcoords, bool *collisionFree, std::pair<std::pair<int, int>, std::pair<int, int> > *colliding_elements = NULL);
-        bool checkCollision(std::vector<float> smpcoords, bool *collisionFree, std::string *msg, std::pair<std::pair<int, int>, std::pair<int, int> > *colliding_elements = NULL);
+        bool checkCollision(std::vector<float> smpcoords, bool *collisionFree, std::string *msg, std::pair<std::pair<int, string>, std::pair<int, int> > *colliding_elements = NULL);
         bool setRobotsConfig(std::vector<float> smpcoords);
         bool setRobotsConfig(std::vector<float> smpcoords, std::vector<RobConf> &config);
         bool setObstaclesConfig(std::vector<float> smpcoords);
@@ -81,7 +78,7 @@ namespace Kautham {
         bool attachObstacle2RobotLink(int robot, int link, std::string obs);
         bool detachObstacle(std::string obs);
         double cumDistCheck(std::vector<float> smpcoords);
-	
+
     bool motionPlanner(std::vector <float> init, std::vector <float> goal, std::string root);
 
     bool setObstaclePos(string obsname, std::vector<float> pos);

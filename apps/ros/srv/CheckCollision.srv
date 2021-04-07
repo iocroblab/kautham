@@ -3,5 +3,5 @@ float32[] config
 bool response
 bool collisionFree
 string msg
-int64 collObj
-uint32[] collObjs
+uint32 collidingRob
+string collidedObs

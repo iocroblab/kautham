@@ -152,7 +152,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         ot.transform.rotation.z = poses[i][5];
         ot.transform.rotation.w = poses[i][6];
         otransform.insert(std::pair<string,geometry_msgs::TransformStamped>(element.first, ot));
-        
+
         /*
         ROS_INFO( "pose[0] = %f",poses[i][0]);
         ROS_INFO( "pose[1] = %f",poses[i][1]);
@@ -350,47 +350,20 @@ bool srvOpenProblemStream(kautham::OpenProblemStream::Request &req,
 bool srvCheckCollision(kautham::CheckCollision::Request &req,
                        kautham::CheckCollision::Response &res) {
 
-    for (unsigned int i = 0; i < req.config.size(); ++i) {
-        cout << req.config.at(i) << " ";
-    }
-    cout << endl;
 
-    bool collisionFree;
-    res.response = ksh->checkCollision(req.config,&collisionFree);
-    res.collisionFree = res.response&&collisionFree;
-
-    return true;
-}
-
-bool srvCheckCollisionRob(kautham::CheckCollision::Request &req,
-                          kautham::CheckCollision::Response &res) {
-
-    //    for (unsigned int i = 0; i < req.config.size(); ++i) {
-    //        cout << req.config.at(i) << " ";
-    //    }
-    //    cout << endl;
-
-    //    std::vector<unsigned> ObstColl;
-    //    res.response = ksh->checkCollisionRob(req.config,&ObstColl);
-    //    res.collObjs = ObstColl;
-
-    //    return true;
-
-
-    for (unsigned int i = 0; i < req.config.size(); ++i) {
-        cout << req.config.at(i) << " ";
-    }
-    cout << endl;
-    std::pair< std::pair<int, int> , std::pair<int,int> > colliding_elements;
-    bool collisionFree;
-    string msg;
-    res.response = ksh->checkCollision(req.config,&collisionFree, &msg, &colliding_elements);
-    //res.response = ksh->checkCollision(req.config,&collisionFree, &colliding_elements);
-    res.collisionFree = res.response&&collisionFree;
-    res.collObj = colliding_elements.first.second;
-    res.msg = msg;
-    return true;
-
+  for (unsigned int i = 0; i < req.config.size(); ++i) {
+    cout << req.config.at(i) << " ";
+  }
+  cout << endl;
+  std::pair< std::pair<int, string> , std::pair<int,int> > colliding_elements;
+  bool collisionFree;
+  string msg;
+  res.response = ksh->checkCollision(req.config,&collisionFree, &msg, &colliding_elements);
+  res.collisionFree = res.response&&collisionFree;
+  res.collidingRob = colliding_elements.first.first;
+  res.collidedObs = colliding_elements.first.second;
+  res.msg = msg;
+  return true;
 }
 
 
@@ -866,7 +839,6 @@ int main (int argc, char **argv) {
     ros::ServiceServer service33 = n.advertiseService("kautham_node/GetNumVertices",srvGetNumVertices);
     ros::ServiceServer service34 = n.advertiseService("kautham_node/SetObstaclePos",srvSetObstaclPos);
     ros::ServiceServer service35 = n.advertiseService("kautham_node/GetObstaclePos", srvGetObstaclPos);
-    ros::ServiceServer service37 = n.advertiseService("kautham_node/CheckCollisionRob",srvCheckCollisionRob);
     ros::ServiceServer service38 = n.advertiseService("kautham_node/FindIK",srvFindIK);
     ros::ServiceServer service39 = n.advertiseService("kautham_node/SetRobotPos",srvSetRobPos);
     ros::ServiceServer service40 = n.advertiseService("kautham_node/GetRobotPos",srvGetRobPos);
@@ -907,10 +879,3 @@ int main (int argc, char **argv) {
 
     return 0;
 }
-
-
-
-
-
-
-

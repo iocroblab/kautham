@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import rospy
-import rospkg 
+import rospkg
 import sys
 from std_msgs.msg import String, Time
 from geometry_msgs.msg import Pose
 from kautham.msg import fVector
-from kautham.srv import * 
+from kautham.srv import *
 import random
 rospack =rospkg.RosPack()
 #Function that wraps the call to the kautham service that opens a problem
@@ -50,7 +50,7 @@ def kGetPath (printpath=0):
                     print(round(path[i,j],3), end=" ")
                 print()
         return path
-    
+
 # Function that wraps the call to the kautham service that closes a problem
 def kCloseProblem():
     rospy.wait_for_service("/kautham_node/CloseProblem")
@@ -97,7 +97,8 @@ def kIsCollisionFree (controls):
     checkcollision_srv= CheckCollision()
     checkcollision_client=rospy.ServiceProxy("/kautham_node/CheckCollision",CheckCollision)
     checkcollision_srv.config= controls
-    r= checkcollision_client(checkcollision_srv.config,checkcollision_srv.index)
+    r= checkcollision_client(checkcollision_srv.config)
+    print("kIsCollisionFree msg: ", r.msg)
     return r.collisionFree
 
 # Function that wraps the call to the kautham service that test for a rectilinear-free connection between samples
@@ -105,7 +106,7 @@ def kConnect(sample1, sample2):
     rospy.wait_for_service("/kautham_node/Connect")
     connect_srv= Connect()
     connect_client=rospy.ServiceProxy("/kautham_node/Connect",Connect)
-    
+
     connect_srv.sample1= sample1
     connect_srv.sample2= sample2
     r= connect_client(connect_srv.sample1, connect_srv.sample2)
@@ -116,7 +117,7 @@ def kSetPlannerParameter(parametername, paramatervalue):
     rospy.wait_for_service("/kautham_node/SetPlannerParameter")
     setplannerparameter_srv= SetPlannerParameter()
     setplannerparameter_client=rospy.ServiceProxy("/kautham_node/SetPlannerParameter",SetPlannerParameter)
-    
+
     setplannerparameter_srv.parameter= parametername
     setplannerparameter_srv.value= paramatervalue
     r= setplannerparameter_client(setplannerparameter_srv.parameter, setplannerparameter_srv.value)
@@ -139,7 +140,7 @@ def kSetQuery(init,goal):
     #load the query request
     setquery_srv.init = init
     setquery_srv.goal = goal
-    #call the query service 
+    #call the query service
     r= setquery_client(setquery_srv.init, setquery_srv.goal)
     if r.response is False:
         print("Query has not been set")
@@ -153,7 +154,7 @@ def kSetInit(init):
     setinit_client=rospy.ServiceProxy("/kautham_node/SetInit",SetInit)
     #load the query request
     setinit_srv.init = init
-    #call the query service 
+    #call the query service
     r= setinit_client(setinit_srv.init)
     if r.response is False:
         print("Init has not been set")
@@ -167,7 +168,7 @@ def kSetGoal(goal):
     setgoal_client=rospy.ServiceProxy("/kautham_node/SetGoal",SetGoal)
     #load the query request
     setinit_srv.goal = goal
-    #call the query service 
+    #call the query service
     r= setgoal_client(setgoal_srv.goal)
     if r.response is False:
         print("Goal has not been set")

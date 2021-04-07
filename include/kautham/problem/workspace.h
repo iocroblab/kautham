@@ -22,7 +22,7 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
- 
+
 #if !defined(_WORKSPACE_H)
 #define _WORKSPACE_H
 
@@ -51,7 +51,7 @@ namespace Kautham{
       KthReal               distanceBetweenSamples(Sample& smp1, Sample& smp2,Kautham::SPACETYPE spc);
       vector<KthReal>      *distanceCheck(Sample* sample) ;
       double                cumDistanceCheck(Sample *sample);
-      bool                  collisionCheck(Sample* sample , string *message = NULL, std::pair<std::pair<int, int>, std::pair<int, int> > *colliding_elements = NULL);
+      bool                  collisionCheck(Sample* sample , string *message = NULL, std::pair<std::pair<int, string>, std::pair<int, int> > *colliding_elements = NULL);
       void                  moveRobotsTo(Sample* sample);
       void                  moveObstaclesTo(Sample* sample);
       void                  addRobot(Robot* robot);
@@ -104,22 +104,6 @@ namespace Kautham{
        void                 storeNewInitialObjectPoses();
        bool                 restoreInitialObjectPoses();
 
-      //rc_functions
-      vector<Robot*> _mobileObstacle;
-      vector<string> _forbiddenObstacles;
-      KthReal distanceCheck2Robots(Sample* sample);
-      bool collisionCheckCans(Sample* sample);
-      bool collisionCheckRemovableObstacles(Sample* sample, string *message = NULL); // collisioncheck function that not consider collisions with the removable obstacles
-      int collisionCheckCount(Sample* sample);
-      bool collisionCheckObstacles(Sample* sample, std::vector<string> &ObstColl);
-      bool collisionCheckObs(string targetObsName, std::vector<string> *collisionObs, string *message);
-      inline unsigned int obstaclesCount(){ return obstacles.size();}
-      void moveObstacleTo(size_t mobObst, vector<KthReal>& pose);
-      void moveObstacleTo(size_t mobObst, RobConf& robConf);
-      void addMobileObstacle(Robot* obs);
-      inline Robot* getMobileObstacle(unsigned int i) {return (i < _mobileObstacle.size())? _mobileObstacle[i] : NULL;}
-      inline unsigned int mobileObstaclesCount() {return _mobileObstacle.size();}
-
   protected:
       virtual void          updateScene() = 0;
       vector<Robot*>        robots;
@@ -138,7 +122,7 @@ namespace Kautham{
       unsigned              numRobControls;  //!< This is the number of controls used to command the robots
       unsigned              numObsControls;  //!< This is the number of controls used to command the obstacles
       string                robControlsName; //!< Names of the robot controls, as a string, separated with the vertical bar character.
-      string                obsControlsName; //!< Names of the obstacle controls, as a string, separated with the vertical bar character. 
+      string                obsControlsName; //!< Names of the obstacle controls, as a string, separated with the vertical bar character.
       Sample*               _lastRobSampleMovedTo;
       Sample*               _lastObsSampleMovedTo;
       Sample*               _initObsSample;
@@ -148,4 +132,3 @@ namespace Kautham{
 }
 
 #endif  //_WORKSPACE_H
-
