@@ -64,21 +64,13 @@ bool Problem::createWSpaceFromFile(xml_document *doc, bool useBBOX,
     _wspace->storeInitialObjectPoses();
 
     //Set robot controls
-    /* This way gives problems since it does not enter to setObstacleControls...
-     * Now with the code below it enters setObstacleControls; but needs to be checked...
-     *
+    //cout<<"robot control file = "<<doc->child("Problem").child("Controls").attribute("robot").as_string()<<endl;
     if (!setRobotControls(doc->child("Problem").child("Controls").
                           attribute("robot").as_string())) return false;
     //Set obstacle controls
+    //cout<<"obstacle control file = "<<doc->child("Problem").child("Controls").attribute("obstacle").as_string()<<endl;
     if (!setObstacleControls(doc->child("Problem").child("Controls").
                              attribute("obstacle").as_string())) return false;
-    */
-    //Set controls
-    for (tmpNode = doc->child("Problem").child("Controls");
-         tmpNode; tmpNode = tmpNode.next_sibling("Controls")) {
-        if (!setRobotControls(tmpNode.attribute("robot").as_string())) return false;
-        if (!setObstacleControls(tmpNode.attribute("obstacle").as_string())) return false;
-    }
 
     setlocale (LC_NUMERIC, old);
 
@@ -730,15 +722,18 @@ bool Problem::createPlannerFromFile(xml_document *doc, ompl::control::SimpleSetu
 
 
 bool Problem::createCSpaceFromFile(xml_document *doc) {
+
     if (createCSpace()) {
         const unsigned int numRobCntr(_wspace->getNumRobControls());
         const unsigned int numObsCntr(_wspace->getNumObsControls());
+        //printf("numRobCntr = %d   numObsCntr = %d\n",numRobCntr, numObsCntr);
         xml_node queries(doc->child("Problem").child("Planner").child("Queries"));
         for (xml_node::iterator query(queries.begin());
              query != queries.end(); ++query) {
             for (xml_node::iterator node(query->begin());
                  node != query->end(); ++node) {
                 std::string type(node->name());
+
                 if (type == "InitObs" && numObsCntr > 0) {
                     vector<string> tokens;
                     std::string sentence(node->child_value());
@@ -753,7 +748,6 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                                      details << "InitObs has dimension " << tokens.size()
                                   << " and should have dimension " << numObsCntr;
                         throw KthExcp(message, details.str());
-
                         return false;
                     }
                     std::vector<KthReal> coords;
@@ -827,7 +821,6 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                 }
             }
         }
-
         if (!_wspace->getInitObsSample()) {//Default values
             Sample *smp(new Sample(numObsCntr));
             std::vector<KthReal> coords(numObsCntr,0.5);
@@ -1269,9 +1262,7 @@ bool Problem::setupFromFile(xml_document *doc, bool useBBOX, progress_struct *pr
     }
 
     if (!createWSpaceFromFile(doc, useBBOX, progress)) return false;
-
     if (!createCSpaceFromFile(doc)) return false;
-
     if (!createPlannerFromFile(doc)) return false;
 
     return true;
@@ -1765,6 +1756,10 @@ bool Problem::setDefaultRobotControls() {
             }
         }
     }
+
+
+ printf("JAN setDefaultRobotControls  %d\n",numControls);
+
     _wspace->setNumRobControls(numControls);
     _currentRobControls.clear();
     _currentRobControls.resize(_wspace->getNumRobControls());
@@ -1995,14 +1990,18 @@ bool Problem::setObstacleControls(xml_document *doc) {
     //Creating the mapping and offset Matrices between controls
     //and DOF parameters and initializing them.
     int numObs = _wspace->getNumObstacles();
+
     int numDOFs;
     KthReal ***mapMatrix;
     KthReal **offMatrix;
     mapMatrix = new KthReal**[numObs];
     offMatrix = new KthReal*[numObs];
 
+    std::map< std::string, int > name_index;
     int i=0;
     for (std::pair<std::string, Robot*> element : _wspace->getObstaclesMap() ){
+        name_index.insert(std::pair<std::string, int >(element.first,i));
+        //printf("...............obstacleName = %s i = %d\n",element.first.c_str(), i);
         numDOFs = element.second->getNumJoints()+6;
         mapMatrix[i] = new KthReal*[numDOFs];
         offMatrix[i] = new KthReal[numDOFs];
@@ -2012,11 +2011,10 @@ bool Problem::setObstacleControls(xml_document *doc) {
             for (int k = 0; k < numControls; k++) {
                 mapMatrix[i][j][k] = 0.0;
             }
-            i++;
         }
-
         element.second->setMapMatrix(mapMatrix[i]);
         element.second->setOffMatrix(offMatrix[i]);
+        i++;
     }
 
     //Load the Offset vector
@@ -2059,6 +2057,9 @@ bool Problem::setObstacleControls(xml_document *doc) {
             return false;
         }
 
+        map<std::string, int>::iterator itindex = name_index.find(obstacleName);
+        int i = itindex->second;
+//printf("JAN - kkkkkkkkkkkkkkkkkk obstacleName = %s dofName = %s   i = %d\n",obstacleName.c_str(), dofName.c_str(),i);
         if ( dofName == "X"){
             _wspace->getObstacle(obstacleName)->setSE3(true);
             offMatrix[i][0] = (*it).attribute("value").as_double();
@@ -2145,6 +2146,10 @@ bool Problem::setObstacleControls(xml_document *doc) {
                     throw KthExcp(message);
                     return false;
                 }
+
+                map<std::string, int>::iterator itindex = name_index.find(obstacleName);
+                int i = itindex->second;
+//printf("JAN - kkkkkkkkkkkkkkkkkk obstacleName = %s dofName = %s   i = %d\n",obstacleName.c_str(), dofName.c_str(),i);
                 if ( dofName == "X"){
                     _wspace->getObstacle(obstacleName)->setSE3(true);
                     mapMatrix[i][0][cont] = eigVal * itDOF->attribute("value").as_double();

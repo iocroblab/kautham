@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="smallbox/X" value="0.5" />
+		<DOF name="smallbox/Y" value="0.5" />
+        <DOF name="smallbox/X1" value="0.0" />
+        <DOF name="smallbox/X2" value="0.0" />
+        <DOF name="smallbox/X3" value="0.25" />
+		<DOF name="bigbox/X" value="0.5" />
+		<DOF name="bigbox/Y" value="0.5" />
+        <DOF name="bigbox/X1" value="0.0" />
+        <DOF name="bigbox/X2" value="0.0" />
+        <DOF name="bigbox/X3" value="0.25" />
+	</Offset>
+	<Control name="bigbox/x" eigValue="1.0">
+		<DOF name="bigbox/X" value="1.0" />
+	</Control>
+	<Control name="bigbox/y" eigValue="1.0">
+		<DOF name="bigbox/Y" value="1.0" />
+	</Control>
+	<Control name="smallbox/x" eigValue="1.0">
+		<DOF name="smallbox/X" value="1.0" />
+	</Control>
+	<Control name="smallbox/y" eigValue="1.0">
+		<DOF name="smallbox/Y" value="1.0" />
+	</Control>
+</ControlSet>

@@ -257,10 +257,13 @@ namespace Kautham {
         bool withinbounds=true;
         vector<KthReal> tmpVec;
         tmpVec.clear();
-        for(unsigned int j=0; j < getNumObsControls(); j++ )
+        for(unsigned int j=0; j < getNumObsControls(); j++ ){
             tmpVec.push_back(sample->getCoords()[j]);
+            printf("%f ",tmpVec[j]);
+        }
+        printf("\n");
+        printf("JAN Trying to move obstacles now\n");
 
-        map<string, Robot*>::iterator mapit;
         int i=0;
         for (std::pair<std::string, Robot*> element : obstacles ){
             if (!element.second->isAttached()) {
@@ -276,8 +279,10 @@ namespace Kautham {
         _lastObsSampleMovedTo = sample;
 
         //set _sample::_config if it was not set
-        if(sample->getMappedConf().size()==0) sample->setMappedConf(_obsConfigMap);
-
+        if(sample->getMappedConf().size()==0) {
+            //printf("setting Mapped conf x=%f y=%d\n", _obsConfigMap[0]->getRn().getCoordinate(0),_obsConfigMap[0]->getRn().getCoordinate(0));
+            sample->setMappedConf(_obsConfigMap);
+        }
         sample->setwithinbounds(withinbounds);
     }
 
@@ -591,6 +596,13 @@ namespace Kautham {
     void WorkSpace::addObstacle(Robot *obs) {
         obstacles.insert(std::pair<string,Robot*>(obs->getName(), obs));
         _obsConfigMap.clear();
+    //JAN-JAN
+
+        for (std::pair<std::string, Robot*> element : obstacles ){
+            _obsConfigMap.push_back(element.second->getCurrentPos());
+        }
+
+    //JAN-JAN
     }
 
 
@@ -614,6 +626,13 @@ namespace Kautham {
             obstacles.erase(mapit);
             _obsConfigMap.clear();
         }
+        //JAN-JAN
+
+        for (std::pair<std::string, Robot*> element : obstacles ){
+            _obsConfigMap.push_back(element.second->getCurrentPos());
+        }
+
+        //JAN-JAN
     }
 
 

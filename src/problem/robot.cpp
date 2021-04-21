@@ -1130,18 +1130,23 @@ namespace Kautham {
         if(se3Enabled){
             //EUROC
             //std::cout<<"HERE\n";
+std::cout<<"JAN ------------------ HERE obstacle = "<< getName()<<endl;
             for(int i =0; i < 6; i++){
-                for(unsigned int j= 0; j < control.size(); j++)
+                for(unsigned int j= 0; j < control.size(); j++){
                     parameters[i] += mapMatrix[i][j] * (control[j]-0.5) ;
+                    cout << mapMatrix[i][j] << "\t" ;
+                }
                 parameters[i] += offMatrix[i];
+                cout << offMatrix[i];
                 if(parameters[i]<0.0 || parameters[i]>1.0) retvalue = false;
+                cout << endl;
             }
         }
         if( _currentConf.getRn().getDim() != 0 ){
             for(unsigned i =0; i < _currentConf.getRn().getDim(); i++){
                 for(unsigned j= 0; j < control.size(); j++) {
                     parameters[i+6] += mapMatrix[i+6][j] * (control[j]-0.5);
-                    //cout << mapMatrix[i+6][j] << "\t" ;
+                    cout << mapMatrix[i+6][j] << "\t" ;
                 }
                 //cout << offMatrix[i+6];
                 parameters[i+6] += offMatrix[i+6];
@@ -1150,6 +1155,7 @@ namespace Kautham {
                 //cout << endl;
             }
         }
+        std::cout<<"JAN ------retvalue = "<<_currentConf.getRn().getDim()<< endl;
         return retvalue;
     }
 
@@ -1164,6 +1170,7 @@ namespace Kautham {
         bool retvalue;
         vector<KthReal> vecTmp;
         _hasChanged = true;
+
         retvalue = control2Parameters(values,vecTmp);
         parameter2Pose(vecTmp);
         return retvalue;
