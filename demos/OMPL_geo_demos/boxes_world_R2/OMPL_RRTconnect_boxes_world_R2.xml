@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTConnect_boxes_world">
+
+  <Robot robot="robots/freeflying/bigcube.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.056" Y="0.0" X="0.0" />
+	</Robot>
+
+  <Obstacle obstacle="obstacles/2D-environments/plain.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+
+	<Obstacle obstacle="obstacles/2D-environments/walls.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  <Obstacle obstacle="obstacles/boxes/plainbox_1.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  <Obstacle obstacle="obstacles/boxes/plainbox_2.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  <Obstacle obstacle="obstacles/boxes/plainbox_3.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  <Obstacle obstacle="obstacles/boxes/plainbox_4.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Controls robot="controls/bigcube_R2.cntr" obstacle="controls/boxes.cntr"/>
+
+  <Obstacle obstacle="obstacles/boxes/plainbox_5.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  <Obstacle obstacle="obstacles/boxes/plainbox_6.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  <Obstacle obstacle="obstacles/boxes/plainbox_7.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  <Obstacle obstacle="obstacles/boxes/plainbox_8.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  <Obstacle obstacle="obstacles/boxes/plainbox_9.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  <Obstacle obstacle="obstacles/boxes/plainbox_10.urdf" scale="1.0">
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="_Max Planning Time">1.0</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="Range">0.05</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<InitObs>0.2 0.2 0.2 0.4 0.2 0.6 0.2 0.8 0.8 0.2 0.8 0.4 0.8 0.6 0.8 0.8 0.4 0.4 0.6 0.6</InitObs>
+  			<Init>0.6 0.1</Init>
+				<Goal>0.85 0.85</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
