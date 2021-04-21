@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<Config>        
-    <Problemfiles>
-        <kautham name="OMPL_RRTconnect_table_rooms_R2_ab.xml" />
-        <directory name="/demos/OMPL_geo_demos/Table_Rooms_R2/"/>
-    </Problemfiles>
-</Config>

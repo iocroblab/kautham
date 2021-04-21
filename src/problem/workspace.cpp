@@ -240,7 +240,11 @@ namespace Kautham {
         _lastRobSampleMovedTo = sample;
 
         //set _sample::_config if it was not set
-        if (sample->getMappedConf().size() == 0) sample->setMappedConf(_robConfigMap);
+        if (sample->getMappedConf().size() == 0) {
+          //cout<<"setting _robConfigMap"<<endl;
+          //printf("setting Mapped conf x=%f y=%f\n", _robConfigMap[0]->getSE3().getPos()[0],_robConfigMap[0]->getSE3().getPos()[1]);
+          sample->setMappedConf(_robConfigMap);
+        }
 
         sample->setwithinbounds(withinbounds);
     }
@@ -259,10 +263,10 @@ namespace Kautham {
         tmpVec.clear();
         for(unsigned int j=0; j < getNumObsControls(); j++ ){
             tmpVec.push_back(sample->getCoords()[j]);
-            printf("%f ",tmpVec[j]);
+            //printf("%f ",tmpVec[j]);
         }
-        printf("\n");
-        printf("JAN Trying to move obstacles now\n");
+        //printf("\n");
+        //printf("JAN Trying to move obstacles now\n");
 
         int i=0;
         for (std::pair<std::string, Robot*> element : obstacles ){
@@ -280,8 +284,11 @@ namespace Kautham {
 
         //set _sample::_config if it was not set
         if(sample->getMappedConf().size()==0) {
-            //printf("setting Mapped conf x=%f y=%d\n", _obsConfigMap[0]->getRn().getCoordinate(0),_obsConfigMap[0]->getRn().getCoordinate(0));
-            sample->setMappedConf(_obsConfigMap);
+          //cout<<"setting _obsConfigMap"<<endl;
+          //cout<<"_obsConfigMap.size() = "<<_obsConfigMap.size()<<endl;
+          //for(int i=0;i<_obsConfigMap.size();i++)
+          //  printf("setting Mapped conf x=%f y=%f\n", _obsConfigMap[i]->getSE3().getPos()[0],_obsConfigMap[i]->getSE3().getPos()[1]);
+          sample->setMappedConf(_obsConfigMap);
         }
         sample->setwithinbounds(withinbounds);
     }
@@ -596,13 +603,9 @@ namespace Kautham {
     void WorkSpace::addObstacle(Robot *obs) {
         obstacles.insert(std::pair<string,Robot*>(obs->getName(), obs));
         _obsConfigMap.clear();
-    //JAN-JAN
-
         for (std::pair<std::string, Robot*> element : obstacles ){
             _obsConfigMap.push_back(element.second->getCurrentPos());
         }
-
-    //JAN-JAN
     }
 
 
@@ -626,13 +629,9 @@ namespace Kautham {
             obstacles.erase(mapit);
             _obsConfigMap.clear();
         }
-        //JAN-JAN
-
         for (std::pair<std::string, Robot*> element : obstacles ){
             _obsConfigMap.push_back(element.second->getCurrentPos());
         }
-
-        //JAN-JAN
     }
 
 

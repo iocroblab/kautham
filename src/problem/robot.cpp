@@ -1130,23 +1130,23 @@ namespace Kautham {
         if(se3Enabled){
             //EUROC
             //std::cout<<"HERE\n";
-std::cout<<"JAN ------------------ HERE obstacle = "<< getName()<<endl;
             for(int i =0; i < 6; i++){
                 for(unsigned int j= 0; j < control.size(); j++){
                     parameters[i] += mapMatrix[i][j] * (control[j]-0.5) ;
-                    cout << mapMatrix[i][j] << "\t" ;
+                    //cout << mapMatrix[i][j] << "\t" ;
                 }
                 parameters[i] += offMatrix[i];
-                cout << offMatrix[i];
+                //cout << offMatrix[i] << "\t";
+                //cout << "p "<<parameters[i];
                 if(parameters[i]<0.0 || parameters[i]>1.0) retvalue = false;
-                cout << endl;
+                //cout << endl;
             }
         }
         if( _currentConf.getRn().getDim() != 0 ){
             for(unsigned i =0; i < _currentConf.getRn().getDim(); i++){
                 for(unsigned j= 0; j < control.size(); j++) {
                     parameters[i+6] += mapMatrix[i+6][j] * (control[j]-0.5);
-                    cout << mapMatrix[i+6][j] << "\t" ;
+                    //cout << mapMatrix[i+6][j] << "\t" ;
                 }
                 //cout << offMatrix[i+6];
                 parameters[i+6] += offMatrix[i+6];
@@ -1155,7 +1155,6 @@ std::cout<<"JAN ------------------ HERE obstacle = "<< getName()<<endl;
                 //cout << endl;
             }
         }
-        std::cout<<"JAN ------retvalue = "<<_currentConf.getRn().getDim()<< endl;
         return retvalue;
     }
 
@@ -1252,8 +1251,11 @@ std::cout<<"JAN ------------------ HERE obstacle = "<< getName()<<endl;
         if( armed /*&& numControls == values.size() */){
             _hasChanged = true;
             if(se3Enabled){
+
                 // SE3 Denormalization in the wold frame
                 vector<KthReal> coords = deNormalizeSE3(values);
+                //cout<<"values = "<<values[0]<<" "<<values[1]<<endl;
+                //cout<<"coords = "<<coords[0]<<" "<<coords[1]<<endl;
                 _currentConf.setSE3(coords);
                 links[0]->getTransformation()->setTranslation(Point3(coords.at(0),coords.at(1), coords.at(2)));
                 links[0]->getTransformation()->setRotation(Rotation(coords.at(3), coords.at(4),

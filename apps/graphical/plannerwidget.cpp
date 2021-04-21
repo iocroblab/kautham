@@ -371,7 +371,8 @@ namespace Kautham {
 
         bool result (false);
         if (_planner) {
-            _planner->wkSpace()->moveObstaclesTo(_planner->wkSpace()->getInitObsSample());
+            //do not initialize the obstacles poses, they shall be changed to hve different problem instances...
+            //_planner->wkSpace()->moveObstaclesTo(_planner->wkSpace()->getInitObsSample());
 
             if (_samples->getNumStarts() == 1) {
                 _planner->setInitSamp(_samples->getSampleAt(globalFromBox->text().toInt()));

@@ -1757,9 +1757,6 @@ bool Problem::setDefaultRobotControls() {
         }
     }
 
-
- printf("JAN setDefaultRobotControls  %d\n",numControls);
-
     _wspace->setNumRobControls(numControls);
     _currentRobControls.clear();
     _currentRobControls.resize(_wspace->getNumRobControls());
@@ -2059,7 +2056,7 @@ bool Problem::setObstacleControls(xml_document *doc) {
 
         map<std::string, int>::iterator itindex = name_index.find(obstacleName);
         int i = itindex->second;
-//printf("JAN - kkkkkkkkkkkkkkkkkk obstacleName = %s dofName = %s   i = %d\n",obstacleName.c_str(), dofName.c_str(),i);
+        //printf("JAN - kkkkkkkkkkkkkkkkkk obstacleName = %s dofName = %s   i = %d\n",obstacleName.c_str(), dofName.c_str(),i);
         if ( dofName == "X"){
             _wspace->getObstacle(obstacleName)->setSE3(true);
             offMatrix[i][0] = (*it).attribute("value").as_double();
@@ -2149,7 +2146,7 @@ bool Problem::setObstacleControls(xml_document *doc) {
 
                 map<std::string, int>::iterator itindex = name_index.find(obstacleName);
                 int i = itindex->second;
-//printf("JAN - kkkkkkkkkkkkkkkkkk obstacleName = %s dofName = %s   i = %d\n",obstacleName.c_str(), dofName.c_str(),i);
+                //printf("JAN - kkkkkkkkkkkkkkkkkk obstacleName = %s dofName = %s   i = %d\n",obstacleName.c_str(), dofName.c_str(),i);
                 if ( dofName == "X"){
                     _wspace->getObstacle(obstacleName)->setSE3(true);
                     mapMatrix[i][0][cont] = eigVal * itDOF->attribute("value").as_double();
