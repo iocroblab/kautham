@@ -81,6 +81,7 @@
 #include <kautham/LoadObstacles.h>
 #include <kautham/VisualizeScene.h>
 #include <kautham/robconf.h>
+#include <kautham/GetObstaclesNames.h>
 
 
 using namespace std;
@@ -282,6 +283,16 @@ bool srvProblemOpened(kautham::ProblemOpened::Request &req,
     (void) req;//unused
     res.response = ksh->problemOpened();
 
+    return true;
+}
+
+
+bool srvGetObstaclesNames(kautham::GetObstaclesNames::Request &req,
+                      kautham::GetObstaclesNames::Response &res) {
+    (void) req;//unused
+    std::vector<std::string> obsnames;
+    ksh->getObstaclesNames(obsnames);
+    res.obsnames = obsnames;
     return true;
 }
 
@@ -844,6 +855,7 @@ int main (int argc, char **argv) {
     ros::ServiceServer service40 = n.advertiseService("kautham_node/GetRobotPos",srvGetRobPos);
     ros::ServiceServer service41 = n.advertiseService("kautham_node/GetRobotHomePos",srvGetRobHomePos);
     ros::ServiceServer service42 = n.advertiseService("kautham_node/VisualizeScene",srvVisualizeScene);
+    ros::ServiceServer service43 = n.advertiseService("kautham_node/GetObstaclesNames",srvGetObstaclesNames);
 
     br.reset(new tf2_ros::StaticTransformBroadcaster);
     //ros::spin();
