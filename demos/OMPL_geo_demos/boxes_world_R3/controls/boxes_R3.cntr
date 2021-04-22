@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<Offset>
+		<DOF name="plainbox_1/X" value="0.5" />
+		<DOF name="plainbox_1/Y" value="0.5" />
+		<DOF name="plainbox_1/Z" value="0.5" />
+		<DOF name="plainbox_2/X" value="0.5" />
+		<DOF name="plainbox_2/Y" value="0.5" />
+		<DOF name="plainbox_2/Z" value="0.5" />
+		<DOF name="plainbox_3/X" value="0.5" />
+		<DOF name="plainbox_3/Y" value="0.5" />
+		<DOF name="plainbox_3/Z" value="0.5" />
+		<DOF name="plainbox_4/X" value="0.5" />
+		<DOF name="plainbox_4/Y" value="0.5" />
+		<DOF name="plainbox_4/Z" value="0.5" />
+		<DOF name="plainbox_5/X" value="0.5" />
+		<DOF name="plainbox_5/Y" value="0.5" />
+		<DOF name="plainbox_5/Z" value="0.5" />
+		<DOF name="plainbox_6/X" value="0.5" />
+		<DOF name="plainbox_6/Y" value="0.5" />
+		<DOF name="plainbox_6/Z" value="0.5" />
+		<DOF name="plainbox_7/X" value="0.5" />
+		<DOF name="plainbox_7/Y" value="0.5" />
+		<DOF name="plainbox_7/Z" value="0.5" />
+		<DOF name="plainbox_8/X" value="0.5" />
+		<DOF name="plainbox_8/Y" value="0.5" />
+		<DOF name="plainbox_8/Z" value="0.5" />
+		<DOF name="plainbox_9/X" value="0.5" />
+		<DOF name="plainbox_9/Y" value="0.5" />
+		<DOF name="plainbox_9/Z" value="0.5" />
+		<DOF name="plainbox_10/X" value="0.5" />
+		<DOF name="plainbox_10/Y" value="0.5" />
+		<DOF name="plainbox_10/Z" value="0.5" />
+	</Offset>
+	<Control name="plainbox_1/x" eigValue="1.0">
+		<DOF name="plainbox_1/X" value="1.0" />
+	</Control>
+	<Control name="plainbox_1/y" eigValue="1.0">
+		<DOF name="plainbox_1/Y" value="1.0" />
+	</Control>
+	<Control name="plainbox_1/z" eigValue="1.0">
+		<DOF name="plainbox_1/Z" value="1.0" />
+	</Control>
+	<Control name="plainbox_2/x" eigValue="1.0">
+		<DOF name="plainbox_2/X" value="1.0" />
+	</Control>
+	<Control name="plainbox_2/y" eigValue="1.0">
+		<DOF name="plainbox_2/Y" value="1.0" />
+	</Control>
+	<Control name="plainbox_2/z" eigValue="1.0">
+		<DOF name="plainbox_2/Z" value="1.0" />
+	</Control>
+	<Control name="plainbox_3/x" eigValue="1.0">
+		<DOF name="plainbox_3/X" value="1.0" />
+	</Control>
+	<Control name="plainbox_3/y" eigValue="1.0">
+		<DOF name="plainbox_3/Y" value="1.0" />
+	</Control>
+	<Control name="plainbox_3/z" eigValue="1.0">
+		<DOF name="plainbox_3/Z" value="1.0" />
+	</Control>
+	<Control name="plainbox_4/x" eigValue="1.0">
+		<DOF name="plainbox_4/X" value="1.0" />
+	</Control>
+	<Control name="plainbox_4/y" eigValue="1.0">
+		<DOF name="plainbox_4/Y" value="1.0" />
+	</Control>
+	<Control name="plainbox_4/z" eigValue="1.0">
+		<DOF name="plainbox_4/Z" value="1.0" />
+	</Control>
+	<Control name="plainbox_5/x" eigValue="1.0">
+		<DOF name="plainbox_5/X" value="1.0" />
+	</Control>
+	<Control name="plainbox_5/y" eigValue="1.0">
+		<DOF name="plainbox_5/Y" value="1.0" />
+	</Control>
+	<Control name="plainbox_5/z" eigValue="1.0">
+		<DOF name="plainbox_5/Z" value="1.0" />
+	</Control>
+	<Control name="plainbox_6/x" eigValue="1.0">
+		<DOF name="plainbox_6/X" value="1.0" />
+	</Control>
+	<Control name="plainbox_6/y" eigValue="1.0">
+		<DOF name="plainbox_6/Y" value="1.0" />
+	</Control>
+	<Control name="plainbox_6/z" eigValue="1.0">
+		<DOF name="plainbox_6/Z" value="1.0" />
+	</Control>
+	<Control name="plainbox_7/x" eigValue="1.0">
+		<DOF name="plainbox_7/X" value="1.0" />
+	</Control>
+	<Control name="plainbox_7/y" eigValue="1.0">
+		<DOF name="plainbox_7/Y" value="1.0" />
+	</Control>
+	<Control name="plainbox_7/z" eigValue="1.0">
+		<DOF name="plainbox_7/Z" value="1.0" />
+	</Control>
+	<Control name="plainbox_8/x" eigValue="1.0">
+		<DOF name="plainbox_8/X" value="1.0" />
+	</Control>
+	<Control name="plainbox_8/y" eigValue="1.0">
+		<DOF name="plainbox_8/Y" value="1.0" />
+	</Control>
+	<Control name="plainbox_8/z" eigValue="1.0">
+		<DOF name="plainbox_8/Z" value="1.0" />
+	</Control>
+	<Control name="plainbox_9/x" eigValue="1.0">
+		<DOF name="plainbox_9/X" value="1.0" />
+	</Control>
+	<Control name="plainbox_9/y" eigValue="1.0">
+		<DOF name="plainbox_9/Y" value="1.0" />
+	</Control>
+	<Control name="plainbox_9/z" eigValue="1.0">
+		<DOF name="plainbox_9/Z" value="1.0" />
+	</Control>
+	<Control name="plainbox_10/x" eigValue="1.0">
+		<DOF name="plainbox_10/X" value="1.0" />
+	</Control>
+	<Control name="plainbox_10/y" eigValue="1.0">
+		<DOF name="plainbox_10/Y" value="1.0" />
+	</Control>
+	<Control name="plainbox_10/z" eigValue="1.0">
+		<DOF name="plainbox_10/Z" value="1.0" />
+	</Control>
+</ControlSet>
