@@ -716,9 +716,9 @@ namespace Kautham {
                 name = it_task->name();
                 std::cout<<"....NAME = "<<name<<std::endl;
                 try {
-                    /*
+                    /* the orientation in quaternion
                      <Initialstate>
-                        <Object object= "1"> -90.0, 80.0, 35.0, 0.0, -1.0, -1.0, 0.0 </Object>
+                        <Object object= "objname"> -90.0 80.0 35.0 0.0 -1.0 -1.0 0.0 </Object>
                      </Initialstate>
                     */
                     if (name == "Initialstate") {
@@ -738,6 +738,7 @@ namespace Kautham {
                                          int k=0;
                                          for(; k<3; k++) objposestream >> pos[k];
                                          for(int j=0; k<7; j++,k++) objposestream >> ori[j];
+                                         SE3Conf::fromAxisToQuaternion(ori);
                                          std::cout<<"  Object: "<<objectname<<" "<<" POS: "<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<" "<<ori[0]<<" "<<ori[1]<<" "<<ori[2]<<" "<<ori[3]<<std::endl;
                                          _problem->getPlanner()->wkSpace()->getObstacle(objectname)->getLink(0)->getElement()->setPosition(pos);
                                          _problem->getPlanner()->wkSpace()->getObstacle(objectname)->getLink(0)->getElement()->setOrientation(ori);

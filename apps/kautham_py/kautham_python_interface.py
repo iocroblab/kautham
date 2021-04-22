@@ -43,12 +43,12 @@ def kGetPath (printpath=0):
         print ("Path Found")
         path = { (i,j):0 for i in range(len(getpath_srv.response)) for j in range(len(getpath_srv.response[0].v)) }
         #path=[[0]*7]*(len(getpath_srv.response))
-        if printpath:
-            for i in range(len(getpath_srv.response)):
-                for j in range(len(getpath_srv.response[i].v)):
-                    path[i,j]=getpath_srv.response[i].v[j]
-                    print(round(path[i,j],3), end=" ")
-                print()
+
+        for i in range(len(getpath_srv.response)):
+            for j in range(len(getpath_srv.response[i].v)):
+                path[i,j]=getpath_srv.response[i].v[j]
+                if printpath: print(round(path[i,j],3), end=" ")
+            if printpath: print()
         return path
 
 # Function that wraps the call to the kautham service that closes a problem
@@ -217,6 +217,14 @@ def kDetachObject(obsname):
     print(obsname)
     return r.response
 
+#Function that wraps the call to the kautham service that sets a planner to solve the opened problem
+def kGetObstaclesNames():
+    rospy.wait_for_service("/kautham_node/GetObstaclesNames")
+    getobstaclesnames_srv = GetObstaclesNames()
+    getobstaclesnames_client= rospy.ServiceProxy("/kautham_node/GetObstaclesNames",GetObstaclesNames)
+    r=getobstaclesnames_client()
+    return r.obsnames
+
 #Function that wraps the call to the kautham service that gets the pose of an obstacle
 def kGetObstaclePos(obsname):
     rospy.wait_for_service("/kautham_node/GetObstaclePos")
@@ -244,6 +252,19 @@ def kSetObstaclePos(obsname,pose):
         print("Obstacle Set")
     else:
         print("Set obstacle failed")
+    return (r.response)
+
+ #Function that wraps the call to the kautham service that sets the controls of the obstacles
+def kSetObstaclesConfig(config):
+    rospy.wait_for_service("/kautham_node/SetObstaclesConfig")
+    kauthamobstaclesconfig_srv = SetObstaclesConfig()
+    kauthamobstaclesconfig_srv.config= config
+    kauthamobstaclesconfig_client = rospy.ServiceProxy("/kautham_node/SetObstaclesConfig",SetObstaclesConfig)
+    r=kauthamobstaclesconfig_client(kauthamobstaclesconfig_srv.config)
+    if r.response:
+        print("Obstacles configurations set")
+    else:
+        print("Set obstacles configurations failed")
     return (r.response)
 
 #Function that wraps the call to the kautham service that gets the pose of a robot
@@ -282,7 +303,7 @@ def kSetRobotPos(index,pose):
     kauthamrobotspos_srv = ObsPos()
     kauthamrobotspos_srv.index= index
     kauthamrobotspos_srv.setPos=pose
-    kauthamrobotspos_client = rospy.ServiceProxy("/kautham_node/SetRobotPos",ObsPos())
+    kauthamrobotspos_client = rospy.ServiceProxy("/kautham_node/SetRobotPos",ObsPos)
     r=kauthamrobotspos_client(kauthamrobotspos_srv.index,kauthamrobotspos_srv.setPos)
     if r.response:
         print("Robot Pos Set")
@@ -297,7 +318,7 @@ def kSetRobControls(controls, init, goal):
     kauthamsetrobcontrols_srv.controls = controls
     kauthamsetrobcontrols_srv.init = init
     kauthamsetrobcontrols_srv.goal = goal
-    kauthamsetrobcontrols_client = rospy.ServiceProxy("/kautham_node/SetRobControls", SetRobControls())
+    kauthamsetrobcontrols_client = rospy.ServiceProxy("/kautham_node/SetRobControls", SetRobControls)
     r=kauthamsetrobcontrols_client(kauthamsetrobcontrols_srv.controls,kauthamsetrobcontrols_srv.init,kauthamsetrobcontrols_srv.goal)
     if r.response:
         print("Controls Set")
@@ -310,7 +331,7 @@ def kSetRobControlsNoQuery(controls):
     rospy.wait_for_service("/kautham_node/SetRobControlsNoQuery")
     kauthamsetrobcontrolsnoquery_srv= SetRobControlsNoQuery()
     kauthamsetrobcontrolsnoquery_srv.controls=controls
-    kauthamsetrobcontrolsnoquery_client = rospy.ServiceProxy("/kautham_node/SetRobControlsNoQuery", SetRobControlsNoQuery())
+    kauthamsetrobcontrolsnoquery_client = rospy.ServiceProxy("/kautham_node/SetRobControlsNoQuery", SetRobControlsNoQuery)
     r=kauthamsetrobcontrolsnoquery_client(kauthamsetrobcontrolsnoquery_srv.controls)
     if r.response:
         print("Controls set ok")
@@ -325,7 +346,7 @@ def kSetDefaultRobControls(init, goal):
     kauthamsetdefaultrobcontrols_srv= SetDefaultRobControls()
     kauthamsetdefaultrobcontrols_srv.init = init
     kauthamsetdefaultrobcontrols_srv.goal = goal
-    kauthamsetdefaultrobcontrols_client = rospy.ServiceProxy("/kautham_node/SetDefaultRobControls", SetDefaultRobControls())
+    kauthamsetdefaultrobcontrols_client = rospy.ServiceProxy("/kautham_node/SetDefaultRobControls", SetDefaultRobControls)
     r=kauthamsetdefaultrobcontrols_client(kauthamsetdefaultrobcontrols_srv.init,kauthamsetdefaultrobcontrols_srv.goal)
     if r.response:
         print("Default Controls Set")

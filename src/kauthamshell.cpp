@@ -1561,6 +1561,7 @@ namespace Kautham {
 
     }
 
+    //Sets obstacle pose with orientation defined as axis-angle
     bool kauthamshell::setObstaclePos(string obsname, std::vector<float> pos){
 
         try {
@@ -1610,6 +1611,7 @@ namespace Kautham {
         return false;
     }
 
+    //Gets obstacle pose with orientation defined as axisAn
     bool kauthamshell::getObstaclePos(string obsname, std::vector<float> &pos){
 
         cout << "************Getting Pose of obstacle "<<obsname<<endl;
@@ -1630,7 +1632,8 @@ namespace Kautham {
             }
 
             float coord[3];
-            float ort[4];
+            vector<KthReal> ort;
+            ort.resize(4);
 
             coord[0] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getPosition()[0];
             coord[1] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getPosition()[1];
@@ -1641,13 +1644,17 @@ namespace Kautham {
             ort[2] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getOrientation()[2];
             ort[3] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getOrientation()[3];
 
+            SE3Conf se3;
+            se3.setOrient(ort);
+            vector<KthReal> axisAn = se3.getAxisAngle();
+
             pos.push_back(coord[0]);
             pos.push_back(coord[1]);
             pos.push_back(coord[2]);
-            pos.push_back(ort[0]);
-            pos.push_back(ort[1]);
-            pos.push_back(ort[2]);
-            pos.push_back(ort[3]);
+            pos.push_back(axisAn[0]);
+            pos.push_back(axisAn[1]);
+            pos.push_back(axisAn[2]);
+            pos.push_back(axisAn[3]);
 
             return true;
 
@@ -1904,6 +1911,36 @@ namespace Kautham {
                 std::cout<<"---------obstacle filename "<<i<<": "<<onames[i]<<std::endl;
             }
             */
+
+            return true;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return true;
+    }
+
+
+    bool kauthamshell::getObstaclesNames(std::vector<std::string> &obsnames) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            obsnames.clear();
+            Problem *const problem = (Problem*)memPtr_;
+            for (std::pair<std::string, Robot*> element : problem->getPlanner()->wkSpace()->getObstaclesMap())
+            {
+              obsnames.push_back(element.first);
+            }
 
             return true;
 

@@ -85,9 +85,8 @@ namespace Kautham {
             coords[4] = element.second->getLink(0)->getElement()->getOrientation()[1];
             coords[5] = element.second->getLink(0)->getElement()->getOrientation()[2];
             coords[6] = element.second->getLink(0)->getElement()->getOrientation()[3];
-            // Here is needed to convert from axis-angle to
             // quaternion internal represtantation.
-            SE3Conf::fromAxisToQuaternion(coords);
+
             _obstaclePoses[i]->setSE3(coords);
             _obstaclePoses[i]->setRn(c->getRn());
             i++;

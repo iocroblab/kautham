@@ -50,7 +50,7 @@ option( KAUTHAM_IOC "Use IOC planners" ON )
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
-option( KAUTHAM_ROS "Build the ROS version" OFF )
+option( KAUTHAM_ROS "Build the ROS version" ON )
 option( KAUTHAM_DOCUMENTATION_API "Create and install the HTML based API documentation (requires Doxygen)" OFF)
 option( KAUTHAM_DOCUMENTATION_WEB "Create WEB Documentation (requires Sphinx)" OFF)
 
@@ -83,9 +83,9 @@ if( KAUTHAM_ROS )
       message_generation
       roslib
       rospy
-      geometry_msgs 
+      geometry_msgs
       visualization_msgs
-      tf2 
+      tf2
       tf2_ros
     )
     include_directories(${catkin_INCLUDE_DIRS} include)
@@ -134,6 +134,7 @@ if( KAUTHAM_ROS )
        LoadRobots.srv
        VisualizeScene.srv
        LoadObstacles.srv
+       GetObstaclesNames.srv
     )
 
     add_message_files(
@@ -147,7 +148,7 @@ if( KAUTHAM_ROS )
     catkin_package(
       INCLUDE_DIRS include
       #LIBRARIES libkautham
-      CATKIN_DEPENDS roscpp visualization_msgs trajectory_msgs std_msgs  geometry_msgs tf2 tf2_ros 
+      CATKIN_DEPENDS roscpp visualization_msgs trajectory_msgs std_msgs  geometry_msgs tf2 tf2_ros
     )
 
 endif( KAUTHAM_ROS )
@@ -164,7 +165,7 @@ set(Boost_USE_MULTITHREADED      ON)
 find_package( Boost COMPONENTS  system serialization thread REQUIRED )
 if(Boost_FOUND)
   message(STATUS "Boost library found at first attempt.")
-  message(STATUS "Using Boost linking against ${Boost_LIBRARIES}") 
+  message(STATUS "Using Boost linking against ${Boost_LIBRARIES}")
   set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
 else(Boost_FOUND)
   set( BOOST_ROOT $ENV{BOOSTDIR})
@@ -193,7 +194,7 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 # since noetic, ros provides ompl library version.
 # but we prefer the Debian version
 set(CMAKE_FIND_ROOT_PATH /usr/share;${CMAKE_FIND_ROOT_PATH})
-find_package(ompl 1.5) 
+find_package(ompl 1.5)
 
 if( OMPL_FOUND )
    if(OMPL_VERSION  VERSION_LESS 1.3.0)
