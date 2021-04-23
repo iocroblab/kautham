@@ -41,10 +41,11 @@ def kGetPath (printpath=0):
         return False
     else:
         print ("Path Found")
-        path = { (i,j):0 for i in range(len(getpath_srv.response)) for j in range(len(getpath_srv.response[0].v)) }
-        #path=[[0]*7]*(len(getpath_srv.response))
+        length = len(getpath_srv.response)-1 #getPath returns the last element empty so it is not considered
+        path = { (i,j):0 for i in range(length) for j in range(len(getpath_srv.response[0].v)) }
 
-        for i in range(len(getpath_srv.response)):
+        for i in range(length):
+            if printpath: print(i,"- len",len(getpath_srv.response[i].v))
             for j in range(len(getpath_srv.response[i].v)):
                 path[i,j]=getpath_srv.response[i].v[j]
                 if printpath: print(round(path[i,j],3), end=" ")
