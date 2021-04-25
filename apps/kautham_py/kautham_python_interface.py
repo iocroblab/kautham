@@ -26,6 +26,21 @@ def kOpenProblem(modelFolder, problemFile):
         rospy.logerr( "models folpder: %s", kthopenproblem_srv.dir[0] )
         rospy.logerr( "problem file: %s", kthopenproblem_srv.problem)
 
+
+
+#Function that wraps the call to the kautham service that solves a problem
+def kPathDofNames():
+    #define server and client
+    rospy.wait_for_service("/kautham_node/PathDofNames")
+    pathdofnames_srv=PathDofNames()
+    pathdofnames_client=rospy.ServiceProxy("/kautham_node/PathDofNames", PathDofNames)
+    print("4call to kPathDofNames ")
+    #Call the pathdofnames service
+    pathdofnames_srv= pathdofnames_client()
+
+    return pathdofnames_srv.dofnames
+
+
 #Function that wraps the call to the kautham service that solves a problem
 def kGetPath (printpath=0):
     #define server and client

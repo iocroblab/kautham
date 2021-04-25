@@ -82,6 +82,7 @@
 #include <kautham/VisualizeScene.h>
 #include <kautham/robconf.h>
 #include <kautham/GetObstaclesNames.h>
+#include <kautham/PathDofNames.h>
 
 
 using namespace std;
@@ -610,6 +611,29 @@ bool srvSolve(kautham::Solve::Request &req,
 }
 
 
+bool srvPathDofNames(kautham::PathDofNames::Request &req,
+              kautham::PathDofNames::Response &res) {
+    (void) req;//unused
+
+    std::vector< std::vector<std::string> > jnames;
+    jnames.resize( ksh->getNumRobots() );
+    unsigned int k=0;
+    for(unsigned int i = 0; i < ksh->getNumRobots(); i++) {
+      ksh->getRobotJointNames(i,jnames[i]);
+      res.dofnames.push_back("x");
+      res.dofnames.push_back("y");
+      res.dofnames.push_back("z");
+      res.dofnames.push_back("qx");
+      res.dofnames.push_back("qy");
+      res.dofnames.push_back("qz");
+      res.dofnames.push_back("qw");
+      for(unsigned int j=0;j<jnames[i].size();j++)
+        res.dofnames.push_back(jnames[i][j]);
+    }
+    return true;
+}
+
+
 bool srvGetPath(kautham::GetPath::Request &req,
                 kautham::GetPath::Response &res) {
     (void) req;//unused
@@ -856,6 +880,7 @@ int main (int argc, char **argv) {
     ros::ServiceServer service41 = n.advertiseService("kautham_node/GetRobotHomePos",srvGetRobHomePos);
     ros::ServiceServer service42 = n.advertiseService("kautham_node/VisualizeScene",srvVisualizeScene);
     ros::ServiceServer service43 = n.advertiseService("kautham_node/GetObstaclesNames",srvGetObstaclesNames);
+    ros::ServiceServer service44 = n.advertiseService("kautham_node/PathDofNames",srvPathDofNames);
 
     br.reset(new tf2_ros::StaticTransformBroadcaster);
     //ros::spin();

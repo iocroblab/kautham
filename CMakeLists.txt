@@ -135,6 +135,7 @@ if( KAUTHAM_ROS )
        VisualizeScene.srv
        LoadObstacles.srv
        GetObstaclesNames.srv
+       PathDofNames.srv
     )
 
     add_message_files(
