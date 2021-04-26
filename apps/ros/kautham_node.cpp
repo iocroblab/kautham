@@ -610,7 +610,9 @@ bool srvSolve(kautham::Solve::Request &req,
     return true;
 }
 
-
+//this service returns the names of the dof in the path returned by GetPath
+//e.g. for the Tiago we have that each configuration of the path has 23 values according to:
+//dofnames =  ['x', 'y', 'z', 'qx', 'qy', 'qz', 'qw', 'wheel_right_joint', 'wheel_left_joint', 'torso_fixed_joint', 'torso_lift_joint', 'head_1_joint', 'head_2_joint', 'arm_1_joint', 'arm_2_joint', 'arm_3_joint', 'arm_4_joint', 'arm_5_joint', 'arm_6_joint', 'arm_7_joint', 'gripper_joint', 'gripper_right_finger_joint', 'gripper_left_finger_joint']
 bool srvPathDofNames(kautham::PathDofNames::Request &req,
               kautham::PathDofNames::Response &res) {
     (void) req;//unused
@@ -633,7 +635,7 @@ bool srvPathDofNames(kautham::PathDofNames::Request &req,
     return true;
 }
 
-
+//See srvPathDofNames to know the contents of the configuration values of a path
 bool srvGetPath(kautham::GetPath::Request &req,
                 kautham::GetPath::Response &res) {
     (void) req;//unused
