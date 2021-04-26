@@ -3,7 +3,7 @@ Download
 
 Kautham can be downloaded its public version from `here <http://github.com/iocroblab/kautham>`_
 
-The latest version is 4.0.7 available from August 6th, 2020.
+The latest version is 4.3.3 available from April 26th, 2021.
 
 Installation
 ------------
@@ -38,17 +38,18 @@ Then in both cases you need to install it: ::
 Ubuntu package
 ^^^^^^^^^^^^^^^^
 
-Kautham has a package built for **Ubuntu Bionic 18.04 LTS** that is located in the debian-robotics repository at `launchpad <https://launchpad.net/~deb-rob/>`_).
+Kautham has a package built for **Ubuntu Focal 20.04 LTS** that is located in the debian-robotics repository at `launchpad <https://launchpad.net/~deb-rob/>`_).
 
 Follow these steps to add some sources and install the Kautham package: ::
 
 
-    $ sudo add-apt-repository ppa:deb-rob/ros-bionic
+    $ sudo add-apt-repository ppa:deb-rob/focal-robotics
     $ sudo apt-get update
     $ sudo apt-get install kautham kautham-tools kautham-ros-osrf kautham-demos-osrf
     $ sudo apt-get upgrade
 
-    
+
+
 
 ROS stuff
 ^^^^^^^^^^^
@@ -68,7 +69,7 @@ Install packages that Kautham depends on. First add the required ppa sources (se
 
 Download the Kautham source code from `github <https://github.com/iocroblab/kautham>`_ at e.g. ~/kautham
 
-Build the package by following these steps from the kautham folder: 
+Build the package by following these steps from the kautham folder:
 
 ::
 
