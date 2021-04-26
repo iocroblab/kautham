@@ -97,12 +97,17 @@ def main():
     use_joint_state_publisher_gui = False
     kautham.kVisualizeScene(use_joint_state_publisher_gui, rvizconfigfile)
 
-    controls = (0.1,0.2,0.3,0.4,0.5,0.6,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5)
+    print("Moving to the goal configuration")
+    controls = (0.662338, 0.271613, 0.760218, 0.722817, 0.738732, 0.659155, 0.676090, 0.643239, 0.213521, 0.770563, 0.245352, 0.261268, 0.500000, 0.600000)
     kautham.kMoveRobot(controls)
 
 
-    poseobject = (0.025,0.025,0.02,0,0,0,1)
+    poseobject = (0.025,0.025,0.02,0,0,1,0)#in axis-angle
     kautham.kSetObstaclePos("pawnB1",poseobject)
+    
+    
+    #poseobject = (0.0,0.0,0.0,0,0,1,0)
+    #kautham.kSetObstaclePos("chessboard",poseobject)
 
     
     input("Press Enter to Finalize...")

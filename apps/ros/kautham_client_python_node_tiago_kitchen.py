@@ -105,8 +105,8 @@ def main():
 
     kautham.kMoveRobot(controls_sample_2)
 
-    #poseobject = (0.025,0.025,0.02,0,0,0,1)
-    #kautham.kSetObstaclePos(1,poseobject)
+    #poseobject = (0.025,0.025,0.02,0,0,1,0)
+    #kautham.kSetObstaclePos(1,poseobject)#in axis-angle
 
     
     input("Press Enter to Finalize...")

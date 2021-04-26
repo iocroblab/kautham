@@ -131,6 +131,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         kthloadobstacles_srv.request.obstaclesfiles[i] = obstaclesfilenames[i].c_str();
         kthloadobstacles_srv.request.obstaclesnames[i] = element.first;
         ksh->getObstaclePos(element.first, poses[i]);
+        SE3Conf::fromAxisToQuaternion(poses[i]);
         kthloadobstacles_srv.request.obstacletransforms[i].transform.translation.x = poses[i][0];
         kthloadobstacles_srv.request.obstacletransforms[i].transform.translation.y = poses[i][1];
         kthloadobstacles_srv.request.obstacletransforms[i].transform.translation.z = poses[i][2];
@@ -258,9 +259,9 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
         {
             std::stringstream jointnameprefix;
             jointnameprefix << "robot"<<i<<"_";
-            //std::cout<<jointnameprefix.str()+jointnames[j]<<std::endl;
             joint_state_robot[i].name[j] = jointnameprefix.str()+jointnames[j];
-            joint_state_robot[i].position[j] = 0;
+            joint_state_robot[i].position[j] = 0.0;
+            //std::cout<<jointnameprefix.str()+jointnames[j]<<" position="<<joint_state_robot[i].position[j]<<std::endl;
         }
     }
     visualizescene = true;
@@ -767,7 +768,7 @@ bool srvGetNumVertices(kautham::GetNumVertices::Request &req,
     return true;
 }
 
-bool srvSetObstaclPos(kautham::ObsPos::Request &req,
+bool srvSetObstaclePos(kautham::ObsPos::Request &req,
                             kautham::ObsPos::Response &res) {
     res.response = ksh->setObstaclePos(req.obsname, req.setPos);
 
@@ -779,18 +780,28 @@ bool srvSetObstaclPos(kautham::ObsPos::Request &req,
         std::stringstream my_child_frame_id;
         my_child_frame_id  << "obstacle_"<<req.obsname<<"_base";
         it->second.child_frame_id = my_child_frame_id.str();
-        it->second.transform.translation.x = req.setPos.at(0);
-        it->second.transform.translation.y = req.setPos.at(1);
-        it->second.transform.translation.z = req.setPos.at(2);
-        it->second.transform.rotation.x = req.setPos.at(3);
-        it->second.transform.rotation.y = req.setPos.at(4);
-        it->second.transform.rotation.z = req.setPos.at(5);
-        it->second.transform.rotation.w = req.setPos.at(6);
+        std::vector<float> pose;
+        pose.resize(7);
+        pose[0] = req.setPos.at(0);
+        pose[1] = req.setPos.at(1);
+        pose[2] = req.setPos.at(2);
+        pose[3] = req.setPos.at(3);
+        pose[4] = req.setPos.at(4);
+        pose[5] = req.setPos.at(5);
+        pose[6] = req.setPos.at(6);
+        SE3Conf::fromAxisToQuaternion(pose);
+        it->second.transform.translation.x = pose[0];
+        it->second.transform.translation.y = pose[1];
+        it->second.transform.translation.z = pose[2];
+        it->second.transform.rotation.x = pose[3];
+        it->second.transform.rotation.y = pose[4];
+        it->second.transform.rotation.z = pose[5];
+        it->second.transform.rotation.w = pose[6];
     }
     return true;
 }
 
-bool srvGetObstaclPos(kautham::ObsPos::Request &req,
+bool srvGetObstaclePos(kautham::ObsPos::Request &req,
                             kautham::ObsPos::Response &res) {
     std::vector<float> obsPos;
     res.response = ksh->getObstaclePos(req.obsname, obsPos);
@@ -874,8 +885,8 @@ int main (int argc, char **argv) {
     ros::ServiceServer service31 = n.advertiseService("kautham_node/GetLastPlanComputationTime",srvGetLastPlanComputationTime);
     ros::ServiceServer service32 = n.advertiseService("kautham_node/GetNumEdges",srvGetNumEdges);
     ros::ServiceServer service33 = n.advertiseService("kautham_node/GetNumVertices",srvGetNumVertices);
-    ros::ServiceServer service34 = n.advertiseService("kautham_node/SetObstaclePos",srvSetObstaclPos);
-    ros::ServiceServer service35 = n.advertiseService("kautham_node/GetObstaclePos", srvGetObstaclPos);
+    ros::ServiceServer service34 = n.advertiseService("kautham_node/SetObstaclePos",srvSetObstaclePos);
+    ros::ServiceServer service35 = n.advertiseService("kautham_node/GetObstaclePos", srvGetObstaclePos);
     ros::ServiceServer service38 = n.advertiseService("kautham_node/FindIK",srvFindIK);
     ros::ServiceServer service39 = n.advertiseService("kautham_node/SetRobotPos",srvSetRobPos);
     ros::ServiceServer service40 = n.advertiseService("kautham_node/GetRobotPos",srvGetRobPos);

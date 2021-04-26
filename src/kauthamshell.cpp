@@ -1577,11 +1577,12 @@ namespace Kautham {
                 cout << "Error in setObstaclePos:" << obsname << " is not in the set of obstacles " << problem->getPlanner()->wkSpace()->getNumObstacles() << endl;
                 return true;
             }
-             // Here is needed to convert from axis-angle to
-            // quaternion internal represtantation.
+
+            // Convert from axis-angle to quaternion internal represtantation
             SE3Conf tmpC;
             SE3Conf::fromAxisToQuaternion(pos);
             tmpC.setCoordinates(pos);
+
             problem->getPlanner()->wkSpace()->getObstacle(obsname)->setHomePos(&tmpC);
 
             float x,y,z;
@@ -1611,7 +1612,7 @@ namespace Kautham {
         return false;
     }
 
-    //Gets obstacle pose with orientation defined as axisAn
+    //Gets obstacle pose with orientation defined as axisAn (format="axis-angle") or by default as quaternion (format="quaternion")
     bool kauthamshell::getObstaclePos(string obsname, std::vector<float> &pos){
 
         cout << "************Getting Pose of obstacle "<<obsname<<endl;
