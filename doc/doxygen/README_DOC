@@ -29,10 +29,6 @@ The size of the image can be modified in mystylesheet.css file:
 
   3) The subfolder build/doc/kautham-api is created with the generated documentation (within a subfolder called html)
 
-  4) Copy the subfolder html:
-
-    a) to the git project kautham-web in the folder doc/source/doxygen_documentation/ and commit and push the changes, so as to have the lates doxygen documentation when rebuilding the kautham webpage.
-
-    b) to home/groups/robotics/www/sir/projects/kautham/doxygen_documentation
+  4) Copy the subfolder html to home/groups/robotics/www/sir/projects/kautham/doxygen_documentation
 
   ------------------------
