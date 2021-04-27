@@ -46,81 +46,78 @@ namespace Kautham {
     gridPlanner::gridPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws):
               Planner(stype, init, goal, samples, ws)
 	{
+    _family = IOCPLANNER;
 		//set intial values
 		_obstaclePotential = 10.0;
 		_goalPotential = 0.0;
-        _showLabels = 1;
-        _decimals = 0;
+    _showLabels = 1;
+    _decimals = 0;
 
-        //set intial values from parent class data
-        _speedFactor = 1;
-        _solved = false;
+    //set intial values from parent class data
+    _speedFactor = 1;
+    _solved = false;
 
-        _guiName = "Grid Planner";
-        addParameter("_Speed Factor", _speedFactor);
-        addParameter("_Show labels (0/1)", _showLabels);
-        addParameter("_num decimals", _decimals);
+    _guiName = "Grid Planner";
+    addParameter("_Speed Factor", _speedFactor);
+    addParameter("_Show labels (0/1)", _showLabels);
+    addParameter("_num decimals", _decimals);
 
-        //set step discretization
-        _stepsDiscretization.resize(_wkSpace->getNumRobControls());
+    //set step discretization
+    _stepsDiscretization.resize(_wkSpace->getNumRobControls());
 		char *str = new char[20];
 		KthReal step=0;
-        for(unsigned i=0;i<_wkSpace->getNumRobControls();i++){
+    for(unsigned i=0;i<_wkSpace->getNumRobControls();i++){
 			_stepsDiscretization[i] = 4;
-            sprintf(str,"_Discr. Steps %d",i);
+      sprintf(str,"_Discr. Steps %d",i);
 			addParameter(str, _stepsDiscretization[i]);
 			step+=_stepsDiscretization[i];
 		}
 
-
-
-        //set max samples
+    //set max samples
 		_maxNumSamples = 1;
-        for(unsigned i=0; i<_wkSpace->getNumRobControls();i++){
+    for(unsigned i=0; i<_wkSpace->getNumRobControls();i++){
 			_maxNumSamples = _maxNumSamples * _stepsDiscretization[i];
 		}
 
 
-        //store the init and goal config
-        tmpSamInit = new Sample(_wkSpace->getNumRobControls());
-        tmpSamGoal = new Sample(_wkSpace->getNumRobControls());
-        tmpSamGoal->setCoords(goalSamp()->getCoords());
-        tmpSamInit->setCoords(initSamp()->getCoords());
-        tmpSamGoal->setFree(goalSamp()->getcolor());
-        tmpSamInit->setFree(initSamp()->getcolor());
-
-        _samples->clear();
+    //store the init and goal config
+    tmpSamInit = new Sample(_wkSpace->getNumRobControls());
+    tmpSamGoal = new Sample(_wkSpace->getNumRobControls());
+    tmpSamGoal->setCoords(goalSamp()->getCoords());
+    tmpSamInit->setCoords(initSamp()->getCoords());
+    tmpSamGoal->setFree(goalSamp()->getcolor());
+    tmpSamInit->setFree(initSamp()->getcolor());
+    _samples->clear();
 		discretizeCspace();
 
-        //recompute the init and goal to coincide with a cell of the grid
-        int stepd=1;
-        indexgoal= (gridVertex)(tmpSamGoal->getCoords()[0]*_stepsDiscretization[0]);
-        indexinit= (gridVertex)(tmpSamInit->getCoords()[0]*_stepsDiscretization[0]);
-        int r;
-        for(unsigned i=1; i<_wkSpace->getNumRobControls();i++)
-        {
-            stepd = stepd * _stepsDiscretization[i-1];
-            r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
-            indexgoal += (gridVertex)(stepd*r);
-            r=tmpSamInit->getCoords()[i]*_stepsDiscretization[i];
-            indexinit += (gridVertex)(stepd*r);
-        }
-        setGoalSamp(_samples->getSampleAt(indexgoal));
-        if (_wkSpace->collisionCheck(_goal.at(0)))
-            cout<<"Goal sample is in collision"<<endl;
-        else{
-            cout<<"GOAL sample must be set to sample number "<< indexgoal <<endl;
-            setGoalSamp(_samples->getSampleAt(indexgoal));
-        }
-        setInitSamp(_samples->getSampleAt(indexinit));
-        if (_wkSpace->collisionCheck(_init.at(0)))
-            cout<<"Init sample is in collision"<<endl;
-        else{
-            cout<<"INIT sample must be set to sample number "<< indexinit <<endl;
-            setInitSamp(_samples->getSampleAt(indexinit));
-        }
-
+    //recompute the init and goal to coincide with a cell of the grid
+    int stepd=1;
+    indexgoal= (gridVertex)(tmpSamGoal->getCoords()[0]*_stepsDiscretization[0]);
+    indexinit= (gridVertex)(tmpSamInit->getCoords()[0]*_stepsDiscretization[0]);
+    int r;
+    for(unsigned i=1; i<_wkSpace->getNumRobControls();i++)
+    {
+        stepd = stepd * _stepsDiscretization[i-1];
+        r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
+        indexgoal += (gridVertex)(stepd*r);
+        r=tmpSamInit->getCoords()[i]*_stepsDiscretization[i];
+        indexinit += (gridVertex)(stepd*r);
     }
+    setGoalSamp(_samples->getSampleAt(indexgoal));
+    if (_wkSpace->collisionCheck(_goal.at(0)))
+        cout<<"Goal sample is in collision"<<endl;
+    else{
+        cout<<"GOAL sample must be set to sample number "<< indexgoal <<endl;
+        setGoalSamp(_samples->getSampleAt(indexgoal));
+    }
+    setInitSamp(_samples->getSampleAt(indexinit));
+    if (_wkSpace->collisionCheck(_init.at(0)))
+            cout<<"Init sample is in collision"<<endl;
+    else{
+       cout<<"INIT sample must be set to sample number "<< indexinit <<endl;
+       setInitSamp(_samples->getSampleAt(indexinit));
+    }
+  }
 
 	gridPlanner::~gridPlanner(){
 			
@@ -129,7 +126,7 @@ namespace Kautham {
 
 	SoSeparator *gridPlanner::getIvCspaceScene()
 	{
-        if(_wkSpace->getNumRobControls()==2)
+    if(_wkSpace->getNumRobControls()==2)
 		{
 			//_sceneCspace = ((IVWorkSpace*)_wkSpace)->getIvScene();
 			_sceneCspace = new SoSeparator();
@@ -137,14 +134,13 @@ namespace Kautham {
 		}
 		else _sceneCspace=NULL;
 		return Planner::getIvCspaceScene();
-		
 	}
 
 
 	void gridPlanner::drawCspace()
 	{
 		if(_sceneCspace==NULL) return;
-        if(_wkSpace->getNumRobControls()==2)
+    if(_wkSpace->getNumRobControls()==2)
 		{
 			//first delete whatever is already drawn
 			while (_sceneCspace->getNumChildren() > 0)
@@ -205,8 +201,8 @@ namespace Kautham {
 				cellsep->addChild(cell_transf);
 				cellsep->addChild(cellcube);
 
-                if(_showLabels)
-                {
+        if(_showLabels)
+        {
                     //Add text to the cells wiht the potential value
                     //text position
                     SoTransform *text_transf = new SoTransform;
@@ -232,7 +228,7 @@ namespace Kautham {
                     textsep->addChild(text_color);
                     textsep->addChild(cell_text);
                     cellsep->addChild(textsep);
-                }
+        }
 				gsep->addChild(cellsep);
 			}
 			_sceneCspace->addChild(gsep);
@@ -303,57 +299,58 @@ namespace Kautham {
 
 
 
-	void gridPlanner::setStepsDiscretization(int numsteps, int axis)
+  void gridPlanner::setStepsDiscretization(int numsteps, int axis)
 	{
 		//changes the discretization in a given axis
-		if(_stepsDiscretization[axis]!=numsteps)
+    //if(_stepsDiscretization[axis]!=numsteps)
 		{
 			_stepsDiscretization[axis] = numsteps;
 
 			_maxNumSamples = 1;
-            for(unsigned i=0; i<_wkSpace->getNumRobControls();i++){
+      for(unsigned i=0; i<_wkSpace->getNumRobControls();i++){
 				_maxNumSamples = _maxNumSamples * _stepsDiscretization[i];
 			}
 			if(_isGraphSet) clearGraph();
 
-           _samples->clear();
+      _samples->clear();
 			discretizeCspace();
 
-            //recompute the init and goal to coincide with a cell of the grid
-            int stepd=1;
-            indexgoal=(gridVertex)(tmpSamGoal->getCoords()[0]*_stepsDiscretization[0]);
-            indexinit=(gridVertex)(tmpSamInit->getCoords()[0]*_stepsDiscretization[0]);
-            int r;
-            for(unsigned i=1; i<_wkSpace->getNumRobControls();i++)
-            {
-                stepd = stepd * _stepsDiscretization[i-1];
-                r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
-                indexgoal += (gridVertex)(stepd*r);
-                r=tmpSamInit->getCoords()[i]*_stepsDiscretization[i];
-                indexinit += (gridVertex)(stepd*r);
-            }
-            setGoalSamp(_samples->getSampleAt(indexgoal));
-            if(_wkSpace->collisionCheck(_goal.at(0)))
-                cout<<"Goal sample is in collision"<<endl;
-            else{
-                cout<<"GOAL sample must be set to sample number "<< indexgoal <<endl;
-                setGoalSamp(_samples->getSampleAt(indexgoal));
-            }
+     //recompute the init and goal to coincide with a cell of the grid
+     int stepd=1;
+     indexgoal=(gridVertex)(tmpSamGoal->getCoords()[0]*_stepsDiscretization[0]);
+     indexinit=(gridVertex)(tmpSamInit->getCoords()[0]*_stepsDiscretization[0]);
+     int r;
+     for(unsigned i=1; i<_wkSpace->getNumRobControls();i++)
+     {
+         stepd = stepd * _stepsDiscretization[i-1];
+         r=tmpSamGoal->getCoords()[i]*_stepsDiscretization[i];
+         indexgoal += (gridVertex)(stepd*r);
+         r=tmpSamInit->getCoords()[i]*_stepsDiscretization[i];
+         indexinit += (gridVertex)(stepd*r);
 
-            setInitSamp(_samples->getSampleAt(indexinit));
-            if(_wkSpace->collisionCheck(_init.at(0)))
-                cout<<"Init sample is in collision"<<endl;
-            else{
-                cout<<"INIT sample must be set to sample number "<< indexinit <<endl;
-                setInitSamp(_samples->getSampleAt(indexinit));
-            }
+         //cout<<"Init sample index = "<<indexinit<<endl;
+         //cout<<"Goal sample index = "<<indexgoal<<endl;
+      }
+      setGoalSamp(_samples->getSampleAt(indexgoal));
+      if(_wkSpace->collisionCheck(_goal.at(0)))
+           cout<<"Goal sample is in collision"<<endl;
+      else{
+           cout<<"GOAL sample must be set to sample number "<< indexgoal <<endl;
+           setGoalSamp(_samples->getSampleAt(indexgoal));
+      }
 
-        }
-
-        drawCspace();
+      setInitSamp(_samples->getSampleAt(indexinit));
+      if(_wkSpace->collisionCheck(_init.at(0)))
+          cout<<"Init sample is in collision"<<endl;
+      else{
+           cout<<"INIT sample must be set to sample number "<< indexinit <<endl;
+           setInitSamp(_samples->getSampleAt(indexinit));
+      }
+    }
+    drawCspace();
    }
 		
-    void  gridPlanner::loadgrid(vector<KthReal> &coords, unsigned coord_i)
+  void  gridPlanner::loadgrid(vector<KthReal> &coords, unsigned coord_i)
 	{
 			KthReal delta = 1.0/_stepsDiscretization[coord_i];
 			KthReal offset = delta/2;
@@ -373,7 +370,7 @@ namespace Kautham {
 				//and the sample created and collision-checked
 				else
 				{
-                    Sample *smp = new Sample(_wkSpace->getNumRobControls());
+          Sample *smp = new Sample(_wkSpace->getNumRobControls());
 					smp->setCoords(coords);
 					_wkSpace->collisionCheck(smp);
 					_samples->add(smp);
@@ -387,7 +384,7 @@ namespace Kautham {
 		}
 
 
-        void  gridPlanner::connectgrid(vector<int> &index, unsigned coord_i)
+    void  gridPlanner::connectgrid(vector<int> &index, unsigned coord_i)
 		{
 			//for coordinate coord_i, loop for all discretization steps 
 			for(int j=0; j<_stepsDiscretization[coord_i]; j++) 
@@ -425,7 +422,7 @@ namespace Kautham {
 						int smplabelneighplus = 0;
 						bool plusneighexists = true;
 						
-                        for(unsigned k=0;k<_wkSpace->getNumRobControls();k++)
+            for(unsigned k=0;k<_wkSpace->getNumRobControls();k++)
 						{
 							if(k==0) coef=1;
 							else coef = coef*_stepsDiscretization[k-1];
@@ -459,8 +456,6 @@ namespace Kautham {
 					}
 				}
 			}
-
-
 		}
 
 
@@ -477,10 +472,10 @@ namespace Kautham {
 		void  gridPlanner::discretizeCspace()
 		{
 			//create graph vertices, i.e. sample and collision-check at grid cell centers
-            vector<KthReal> coords(_wkSpace->getNumRobControls());
-            loadgrid(coords, _wkSpace->getNumRobControls()-1);
-            //connect neighbor grid cells
-            vector<int> index(_wkSpace->getNumRobControls());
+      vector<KthReal> coords(_wkSpace->getNumRobControls());
+      loadgrid(coords, _wkSpace->getNumRobControls()-1);
+      //connect neighbor grid cells
+      vector<int> index(_wkSpace->getNumRobControls());
 			connectgrid(index, 0);
 			//create grid as graph (alse sets initial potential values)
 			loadGraph();
@@ -521,17 +516,17 @@ namespace Kautham {
 		}
 
 
-    void gridPlanner::clearGraph()
+  void gridPlanner::clearGraph()
 	{
   		weights.clear();
-        edges.clear();
+      edges.clear();
 	    if(_isGraphSet){
 		    locations.clear();
 		    delete g;
 		    delete fg;
 	    }
 	    _isGraphSet = false;
-		_solved = false;
+      _solved = false;
     }
 
     void gridPlanner::setRandValues()
@@ -548,9 +543,9 @@ namespace Kautham {
   }
 
   
-    void gridPlanner::loadGraph()
+  void gridPlanner::loadGraph()
 	{
-	    int maxNodes = this->_samples->getSize();
+    int maxNodes = this->_samples->getSize();
 		unsigned int num_edges = edges.size(); 
       
 		// create graph with maxNodes nodes
@@ -577,12 +572,11 @@ namespace Kautham {
 		//if the cell is free, or to value 10 if it is in collsion
 		potmap = get(potential_value_t(), *g);
 		
-        setRandValues();
+    setRandValues();
 
 		_isGraphSet = true;
 	}
-
-  }
+ }
 }
 
 

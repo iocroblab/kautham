@@ -128,21 +128,22 @@ namespace Kautham{
         //for(int i=0; i<_simulationPath.at(step)->getCoords().size();i++)
         //  std::cout<<" "<<_simulationPath.at(step)->getCoords()[i];
         //std::cout<<std::endl;
-        //for(int k=0; k<_simulationPath.at(step)->getMappedConf().size(); k++) {
-        // std::cout<<"k = "<<k<<std::endl;
-        // std::cout<<"_wkSpace->getRobot(k)->isSE3Enabled() = "<<_wkSpace->getRobot(k)->isSE3Enabled()<<std::endl;
-        // std::cout<<"_wkSpace->getRobot(k)->getNumJoints() = "<<_wkSpace->getRobot(k)->getNumJoints()<<std::endl;
-        // if(_wkSpace->getRobot(k)->isSE3Enabled())
-        // {
-        //   SE3Conf &s_se3 = _simulationPath.at(step)->getMappedConf()[k].getSE3();
-        //   cout << s_se3.getPos().at(0) << " ";
-        //   cout << s_se3.getPos().at(1) << " ";
-        //   cout << s_se3.getPos().at(2) << " ";
-        //   cout << s_se3.getOrient().at(0) << " ";
-        //    cout << s_se3.getOrient().at(1) << " ";
-        //   cout << s_se3.getOrient().at(2) << " ";
-        //    cout << s_se3.getOrient().at(3) << endl;
-        // }
+        for(int k=0; k<_simulationPath.at(step)->getMappedConf().size(); k++) {
+         //std::cout<<"k = "<<k<<std::endl;
+         //std::cout<<"_wkSpace->getRobot(k)->isSE3Enabled() = "<<_wkSpace->getRobot(k)->isSE3Enabled()<<std::endl;
+         //std::cout<<"_wkSpace->getRobot(k)->getNumJoints() = "<<_wkSpace->getRobot(k)->getNumJoints()<<std::endl;
+         if(_wkSpace->getRobot(k)->isSE3Enabled())
+         {
+           SE3Conf &s_se3 = _simulationPath.at(step)->getMappedConf()[k].getSE3();
+           cout << s_se3.getPos().at(0) << " ";
+           cout << s_se3.getPos().at(1) << " ";
+           //cout << s_se3.getPos().at(2) << " ";
+           //cout << s_se3.getOrient().at(0) << " ";
+           //cout << s_se3.getOrient().at(1) << " ";
+           //cout << s_se3.getOrient().at(2) << " ";
+           //cout << s_se3.getOrient().at(3) << endl;
+         }
+
         //  if(_wkSpace->getRobot(k)->getNumJoints()>0)
         //  {
         //    RnConf &s_rn = _simulationPath.at(step)->getMappedConf()[k].getRn();
@@ -151,8 +152,8 @@ namespace Kautham{
         //      std::cout<<" "<<s_rn.getCoordinates()[j];
         //    std::cout<<std::endl;
         //  }
-        //  cout << endl;
-        //}
+          cout << endl;
+        }
 
 
 
