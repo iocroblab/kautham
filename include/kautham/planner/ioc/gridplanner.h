@@ -99,7 +99,22 @@ namespace Kautham {
 		//!Abstract class to be implemented by the derived classes with planning methods based on grids
 		bool trySolve() = 0;
 
-		protected:
+    //!Function to setup the value of _stepsDiscretization in the given axis, and recompute the grid
+    void setStepsDiscretization(int numsteps, int axis);
+
+    //!set random values to alla the cells of the grid
+    void setRandValues();
+
+    //!Function that retruns the vector of potential values
+    inline PotentialMap getpotmat(){return potmap;}
+
+    //!temporal storage of init config. Used when discretization steps change
+    Sample *tmpSamInit;
+
+    //!temporal storage of goal config. Used when discretization steps change
+    Sample *tmpSamGoal;
+
+    protected:
 
 		//!Boost graph representing the whole grid
 		gridGraph *g;
@@ -125,66 +140,52 @@ namespace Kautham {
 		//!Vector of edges used in the construction of the grid
 		vector<gridEdge*> edges;
 
-        //!Vector of edge weights used in the construction of the grid
-        vector<cost> weights;
+    //!Vector of edge weights used in the construction of the grid
+    vector<cost> weights;
 
 		//!Bool to determine if the graph has been loaded
-        bool _isGraphSet;
+    bool _isGraphSet;
 
-        //!temporal storage of init config. Used when discretization steps change
-        Sample *tmpSamInit;
+    //!index of init cell in the current discretization of the cspace
+    gridVertex indexinit;
 
-        //!temporal storage of goal config. Used when discretization steps change
-        Sample *tmpSamGoal;
+    //!index of goal cell in the current discretization of the cspace
+    gridVertex indexgoal;
 
-        //!index of init cell in the current discretization of the cspace
-        gridVertex indexinit;
+    //!flag to set/unset the visualization of the potential values of the cells
+    int _showLabels;
 
-        //!index of goal cell in the current discretization of the cspace
-        gridVertex indexgoal;
+    //!number of decimals to be shown. The derived classes may change the defaul value using setParameters.
+    int _decimals;
 
-        //!flag to set/unset the visualization of the potential values of the cells
-        int _showLabels;
-
-        //!number of decimals to be shown. The derived classes may change the defaul value using setParameters.
-        int _decimals;
-
-	    //!Function to load the boost graph data
-	    void loadGraph();	 
+    //!Function to load the boost graph data
+     void loadGraph();
 
 		//!Function to delete the graphs
-	    void clearGraph();
+    void clearGraph();
 
 		//!Function to construct the grid graphs
 		void discretizeCspace();
 
 		//!Function to compute and collision-check the samples of the grid vertices
-        void loadgrid(vector<KthReal> &coords, unsigned coord_i);
+    void loadgrid(vector<KthReal> &coords, unsigned coord_i);
 
 		//!Function to create the edges connecting the vertices of the grid
-        void connectgrid(vector<int> &index, unsigned coord_i);
+    void connectgrid(vector<int> &index, unsigned coord_i);
 		
 		//!Function to filter those edges of the grid connecting collision samples
 		void  prunegrid();
 
 		//!Function to set the potential value at a given vertex
-        inline void setPotential(int i, KthReal value){potmap[i]=value;}
+    inline void setPotential(int i, KthReal value){potmap[i]=value;}
 
 		//!Function to obtain the potential value at a given vertex
-        inline KthReal getPotential(int i){return potmap[i];}
-
-		//!Function that retruns the vector of potential values
-        inline PotentialMap getpotmat(){return potmap;}
-
-		//!Function to setup the value of _stepsDiscretization in the given axis, and recompute the grid
-		void setStepsDiscretization(int numsteps, int axis);
-
-        //!set random values to alla the cells of the grid
-        void setRandValues();
+    inline KthReal getPotential(int i){return potmap[i];}
 
 		//!function that returns the pointer to the cspace separator in the case of 2D
 		SoSeparator *getIvCspaceScene();//reimplemented
-		//!Function that draws the cspace (loads the cspace separator)
+
+    //!Function that draws the cspace (loads the cspace separator)
 		void drawCspace();
 	  };
    }

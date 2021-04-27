@@ -1112,14 +1112,42 @@ namespace Kautham {
             }
 
             Problem *const problem = (Problem*)memPtr_;
+            //cout<<"getPath getPath getPath getPath getPath getPath"<<endl;
+            //cout<<"problem->getPlanner()->getFamily() = "<<problem->getPlanner()->getFamily()<<endl;
             if (problem->getPlanner()->getFamily()==OMPLPLANNER) {
+                //cout<<"OMPLPLANNER"<<endl;
                 if (problem->getPlanner()->solveAndInherit()) {
                     ((omplplanner::omplPlanner*)problem->getPlanner())->SimpleSetup()->
                             getSolutionPath().printAsMatrix(path);
-
+                    //cout<<((ostringstream&)path).str()<<endl;
                     return true;
                 }
             }
+            else {
+              if (problem->getPlanner()->getFamily()==IOCPLANNER) {
+                cout<<"IOCPLANNER"<<endl;
+                if (problem->getPlanner()->solveAndInherit()) {
+                  //in planner.h: vector<Sample*>* getPath();
+                  //in sample.h: std::vector<KthReal>& getCoords();
+                  vector<Sample*>* p = problem->getPlanner()->getPath();
+                  //cout<<"p->size() = "<<p->size()<<endl;
+                  for(unsigned int i=0; i<p->size(); i++)
+                  {
+                    std::vector<KthReal> c;
+                    c = p->at(i)->getCoords();
+                    for(unsigned int j=0; j<c.size();j++)
+                      path<<c.at(j)<<" ";
+                    path<<endl;
+                  }
+                  //cout<<((ostringstream&)path).str()<<endl;
+
+                  return true;
+                }
+              }
+              else{
+                 cout<<"ERROR in getPath. Function only prepared for IOCPLANNER or OMPLPLANNER planners"<<endl;
+              }
+          }
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
         } catch (const exception& excp) {

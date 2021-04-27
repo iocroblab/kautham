@@ -37,7 +37,7 @@ namespace Kautham {
 	{
 		//set intial values
 	  
-        _guiName = _idName =  "HFPlanner";
+    _guiName = _idName =  "HFPlanner";
 		removeParameter("Max. Samples");
 		removeParameter("Step Size");
       
@@ -48,9 +48,8 @@ namespace Kautham {
 		_dirichlet=0;
 		addParameter("(1)dirichlet (0)neumann", _dirichlet);
 		_goalPotential=-1000;
-        addParameter("Goal potential", _goalPotential);
-
-    }
+    addParameter("Goal potential", _goalPotential);
+  }
 
 	//! void destructor
 	HFPlanner::~HFPlanner(){
@@ -58,7 +57,7 @@ namespace Kautham {
 	}
 	
 	//! setParameters sets the parameters of the planner
-    bool HFPlanner::setParameters(){
+  bool HFPlanner::setParameters(){
       try{
         HASH_S_K::iterator it = _parameters.find("_Speed Factor");
         if(it != _parameters.end())
@@ -97,50 +96,49 @@ namespace Kautham {
                 return false;
         }
 
-		it = _parameters.find("Goal potential");
-		if(it != _parameters.end())
+        it = _parameters.find("Goal potential");
+        if(it != _parameters.end())
           _goalPotential = it->second;
-		else
+        else
           return false;
 		
-		it = _parameters.find("(1)dirichlet (0)neumann");
+        it = _parameters.find("(1)dirichlet (0)neumann");
         if(it != _parameters.end()){
           _dirichlet = it->second;
           //reset HF values
           setRandValues();
         }
-		else
+        else
           return false;
 
-		it = _parameters.find("main iter");
-		if(it != _parameters.end())
+        it = _parameters.find("main iter");
+        if(it != _parameters.end())
           _mainiter = it->second;
-		else
+        else
           return false;
 
-		it = _parameters.find("HF relax iter");
-		if(it != _parameters.end())
+        it = _parameters.find("HF relax iter");
+        if(it != _parameters.end())
           _hfiter = it->second;
-		else
+        else
           return false;
 
-      }catch(...){
+    }catch(...){
         return false;
-      }
-      return true;
     }
-
-	
+    return true;
+  }
 
 	void HFPlanner::computeHF(gridVertex  vgoal)
 	{           
 		//initialize potential to -1 and goal to 0
 		setPotential(vgoal, _goalPotential);
 		//relax potential
-        int numneighs = _wkSpace->getNumRobControls()*2;
-        boost::graph_traits<gridGraph>::vertex_iterator vi, vend;
-        boost::graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
-		for(int i=0; i<_hfiter; i++)
+    int numneighs = _wkSpace->getNumRobControls()*2;
+    boost::graph_traits<gridGraph>::vertex_iterator vi, vend;
+    boost::graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
+
+    for(int i=0; i<_hfiter; i++)
 		{
 			for(tie(vi,vend)=vertices(*g); vi!=vend; ++vi)
 			{
@@ -187,6 +185,15 @@ namespace Kautham {
 	//! function to find a solution path
 		bool HFPlanner::trySolve()
 		{
+      tmpSamGoal->setCoords(goalSamp()->getCoords());
+      tmpSamInit->setCoords(initSamp()->getCoords());
+      for(unsigned i=0; i<_wkSpace->getNumRobControls();i++)
+      {
+          setStepsDiscretization(_stepsDiscretization[i],i);
+      }
+      setRandValues();
+      computeHF(indexgoal);
+
 			//verify init and goal samples
 			if(goalSamp()->isFree()==false || initSamp()->isFree()==false) 
 			{
@@ -196,34 +203,34 @@ namespace Kautham {
 			}
 
 			//set init and goal vertices
-            indexgoal = _samples->indexOf(goalSamp());
-            indexinit = _samples->indexOf(initSamp());
-			
-            static int svg = -1;
+      indexgoal = _samples->indexOf(goalSamp());
+      indexinit = _samples->indexOf(initSamp());
 
-            if (svg != int(indexgoal)) {
-                //reset HF function because goal has changed
-                svg = indexgoal;
-                setRandValues();
-            }
+      static int svg = -1;
 
-            gridVertex vc = indexinit;
+      if (svg != int(indexgoal)) {
+         //reset HF function because goal has changed
+         svg = indexgoal;
+         setRandValues();
+      }
+
+      gridVertex vc = indexinit;
 			gridVertex vmin;
 
 			_path.clear();
 			clearSimulationPath();
-            boost::graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
+      boost::graph_traits<gridGraph>::adjacency_iterator avi, avi_end;
 
 			//relax HF
-            computeHF(indexgoal);
+      computeHF(indexgoal);
 			int count = 0;
 			int countmax = _mainiter;
 
 			std::vector<int> cellpath;
-            cellpath.push_back(indexinit);
-            _path.push_back(locations[indexinit]);
+      cellpath.push_back(indexinit);
+      _path.push_back(locations[indexinit]);
 
-            while(vc != indexgoal && count < countmax)
+      while(vc != indexgoal && count < countmax)
 			{
 				vmin = vc;
 				for(tie(avi,avi_end)=adjacent_vertices(vc, *g); avi!=avi_end; ++avi)
@@ -234,14 +241,14 @@ namespace Kautham {
                         vmin = *avi;
 					}
 				}
-                cellpath.push_back(vmin);
-                _path.push_back(locations[vmin]);
+        cellpath.push_back(vmin);
+        _path.push_back(locations[vmin]);
 				if(vc == vmin) {
 					//relax HF again and resume
-                    computeHF(indexgoal);
+          computeHF(indexgoal);
 					_path.clear();
 					cellpath.clear();
-                    vc = indexinit;
+          vc = indexinit;
 					count++;
 				}
 				else vc = vmin;
@@ -266,7 +273,7 @@ namespace Kautham {
 			drawCspace();
 			return _solved;
 		}
-      }
+  }
 }
 
 
