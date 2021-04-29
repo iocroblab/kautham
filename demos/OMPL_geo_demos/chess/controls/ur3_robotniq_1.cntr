@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<ControlSet>
+  <Offset>
+    <DOF name="ur3_robotniq_A/shoulder_link" value="0.5"/>
+    <DOF name="ur3_robotniq_A/upper_arm_link" value="0.5"/>
+    <DOF name="ur3_robotniq_A/forearm_link" value="0.5"/>
+    <DOF name="ur3_robotniq_A/wrist_1_link" value="0.5"/>
+    <DOF name="ur3_robotniq_A/wrist_2_link" value="0.5"/>
+    <DOF name="ur3_robotniq_A/wrist_3_link" value="0.5"/>
+    <DOF name="ur3_robotniq_A/gripper_right_driver" value="0.505"/>
+    <DOF name="ur3_robotniq_A/gripper_right_follower" value="0.418"/>
+    <DOF name="ur3_robotniq_A/gripper_right_spring_link" value="0.558"/>
+    <DOF name="ur3_robotniq_A/gripper_left_driver" value="0.505"/>
+    <DOF name="ur3_robotniq_A/gripper_left_follower" value="0.418"/>
+    <DOF name="ur3_robotniq_A/gripper_left_spring_link" value="0.558"/>
+  </Offset>
+
+  <Control name="shoulder_pan_joint_A" eigValue="1.0">
+    <DOF name="ur3_robotniq_A/shoulder_link" value="1.0" />
+  </Control>  
+  <Control name="shoulder_lift_joint_A" eigValue="1.0">
+    <DOF name="ur3_robotniq_A/upper_arm_link" value="1.0" />
+  </Control>
+  <Control name="elbow_joint_A" eigValue="1.0">
+    <DOF name="ur3_robotniq_A/forearm_link" value="1.0" />
+  </Control>  
+  <Control name="wrist_1_joint_A" eigValue="1.0">
+    <DOF name="ur3_robotniq_A/wrist_1_link" value="1.0" />
+  </Control>
+  <Control name="wrist_2_joint_A" eigValue="1.0">
+    <DOF name="ur3_robotniq_A/wrist_2_link" value="1.0" />
+  </Control>  
+  <Control name="wrist_3_joint_A" eigValue="1.0">
+    <DOF name="ur3_robotniq_A/wrist_3_link" value="1.0" />
+  </Control>
+  <Control name="gripper_A" eigValue="1.0">
+    <DOF name="ur3_robotniq_A/gripper_right_driver" value="0.853"/>
+    <DOF name="ur3_robotniq_A/gripper_right_follower" value="-0.099"/>
+    <DOF name="ur3_robotniq_A/gripper_right_spring_link" value="0.124"/>
+    <DOF name="ur3_robotniq_A/gripper_left_driver" value="0.853"/>
+    <DOF name="ur3_robotniq_A/gripper_left_follower" value="-0.099"/>
+    <DOF name="ur3_robotniq_A/gripper_left_spring_link" value="0.124"/>
+  </Control>
+</ControlSet>
