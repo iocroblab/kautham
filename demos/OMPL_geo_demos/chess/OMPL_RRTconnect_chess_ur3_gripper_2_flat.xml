@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<Problem name="OMPL_RRTconnect_chess_rob1">
-        <Obstacle obstacle="obstacles/chess/chessboard.urdf" scale="1.0">
-		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="-0.02" Y="0.0" X="0.0" />
+<Problem name="OMPL_RRTconnect_chess_ur3_gripper_2_flat">
+        <Obstacle obstacle="obstacles/chess/flat_chessboard.urdf" scale="1.0">
+		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="-0.002" Y="0.0" X="0.0" />
         </Obstacle>
 	<Obstacle obstacle="obstacles/chess/pawnB1.urdf" scale="1.0">
 		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.175" X="0.125" />
@@ -99,18 +99,16 @@
 	<Obstacle obstacle="obstacles/chess/kingW.urdf" scale="1.0">
 		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.04" Y="0.025" X="-0.175" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/chess/realsense_d435_1.urdf" scale="1.0">
-		<Home TH="3.1415" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.29" X="0.0" />
-	</Obstacle>
-	<Obstacle obstacle="obstacles/chess/realsense_d435_2.urdf" scale="1.0">
-		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="-0.29" X="0.0" />
+	<Obstacle obstacle="obstacles/chess/flat_realsense_d435.urdf" scale="1.0">
+		<!--Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.005" Y="-0.29" X="0.0" /-->
+		<Home TH="3.1415" WZ="1.0" WY="0.0" WX="0.0" Z="0.005" Y="0.29" X="0.0" />
 	</Obstacle>
 	<Robot robot="robots/ur3_robotniq_A.urdf" scale="1.0">
-		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="-0.04" Y="0.0" X="0.37" />
+		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="-0.004" Y="0.0" X="0.37" />
                 <ViewLink name="tool0"/>
 	</Robot>
 	<Robot robot="robots/ur3_robotniq_B.urdf" scale="1.0">
-		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="-0.04" Y="0.0" X="-0.37" />
+		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="-0.004" Y="0.0" X="-0.37" />
                 <ViewLink name="tool0"/>
 	</Robot>
 	<Controls robot="controls/ur3_robotniq_2.cntr" />
