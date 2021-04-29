@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Problem name="OMPL_RRTconnect_chess_ur3_gripper_2_flat">
+<Problem name="OMPL_RRTconnect_chess_ur3_gripper_1_flat">
         <Obstacle obstacle="obstacles/chess/flat_chessboard.urdf" scale="1.0">
 		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="-0.002" Y="0.0" X="0.0" />
         </Obstacle>
