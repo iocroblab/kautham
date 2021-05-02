@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot name="flat_support">
+  <link name="base">
+   <visual>
+     <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+        <mesh filename="visual/flat_support.dae" scale="13 14 0.075"/>
+      </geometry>
+   </visual>  
+   <collision>
+     <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+           <box size="0.6 0.7 0.004" /> <!--made shorter so as not to collide with base!-->
+       </geometry>
+    </collision>
+  </link>
+</robot>
