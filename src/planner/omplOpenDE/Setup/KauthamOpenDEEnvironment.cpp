@@ -85,13 +85,12 @@ KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed,
         chain->motors.clear();
 
     }
-    for (unsigned int i=0; i < wkspace->getNumObstacles(); i++)
+
+    for (std::pair<std::string, Robot*> element : wkspace->getObstaclesMap())
     {
-
-
-        basePos = baseGetPos(wkspace->getObstacle(i));
-        buildKinematicChain(chain, wkspace->getObstacle(i),SCALE,basePos);
-        //buildKinematicChain(chain, wkspace->getObstacle(i),SCALE,i);
+        basePos = baseGetPos(wkspace->getObstacle(element.first));
+        buildKinematicChain(chain, wkspace->getObstacle(element.first),SCALE,basePos);
+        //buildKinematicChain(chain, wkspace->getObstacle(element.first),SCALE,i);
         chainMap.insert(pair<string,KinematicChain>(chain->name,*chain));
 
         chain->objects.clear();
@@ -179,48 +178,43 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
         }
 
     }
-    for (int i=0;i < (int(wkspace->getNumObstacles()));i++)
+    for (std::pair<std::string, Robot*> element : wkspace->getObstaclesMap())
     {
-        for (unsigned int j=0;j < (wkspace->getObstacle(i)->getNumLinks()); j++)
+        for (unsigned int j=0;j < (wkspace->getObstacle(element.first)->getNumLinks()); j++)
         {
             if(! trimesh)
             {
 
                 dBodyID odebody;
-                const vector<double> position= chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].position;
-                const vector<double> orientation=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].orientation;
-                const vector<double> vertexes=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes;
-                const vector<double> bodyDimension=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].bodydimension;
-                double mass=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].mass;
+                const vector<double> position= chainMap[element.first].objects[(element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())].position;
+                const vector<double> orientation=chainMap[element.first].objects[(element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())].orientation;
+                const vector<double> vertexes=chainMap[element.first].objects[(element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())].vertexes;
+                const vector<double> bodyDimension=chainMap[element.first].objects[(element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())].bodydimension;
+                double mass=chainMap[element.first].objects[(element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())].mass;
 
-                std::string name = wkspace->getObstacle(i)->getName();
-
-                odebody = makePrimitive(position,orientation,mass,bodyDimension,name);
-                stateBodiesmap_.insert(pair<string,dBodyID>(((wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())),odebody));
+                odebody = makePrimitive(position,orientation,mass,bodyDimension,element.first);
+                stateBodiesmap_.insert(pair<string,dBodyID>(((element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())),odebody));
                 bodies.push_back(odebody);
-                getBody.insert(pair<string,dBodyID>(wkspace->getObstacle(i)->getName(),odebody));
-
+                getBody.insert(pair<string,dBodyID>(element.first,odebody));
             }
             else
             {
-
                 dBodyID odebody;
-                const vector<double> position= chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].position;
-                const vector<double> orientation=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].orientation;
-                const vector<double> vertexes=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].vertexes;
-                const vector<unsigned int> indexes = chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].indexes;
-                const vector<double> bodyDimension=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].bodydimension;
-                const vector<float> color=chainMap[wkspace->getObstacle(i)->getName()].objects[(wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())].color;
-                double mass=wkspace->getObstacle(i)->getLink(j)->getOde().inertial.mass;
-                std::string name = wkspace->getObstacle(i)->getName();
+                const vector<double> position= chainMap[element.first].objects[(element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())].position;
+                const vector<double> orientation=chainMap[element.first].objects[(element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())].orientation;
+                const vector<double> vertexes=chainMap[element.first].objects[(element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())].vertexes;
+                const vector<unsigned int> indexes = chainMap[element.first].objects[(element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())].indexes;
+                const vector<double> bodyDimension=chainMap[element.first].objects[(element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())].bodydimension;
+                const vector<float> color=chainMap[element.first].objects[(element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())].color;
+                double mass=wkspace->getObstacle(element.first)->getLink(j)->getOde().inertial.mass;
+
                 if(mass==0)
                     mass=1;
-                odebody = makeTriMesh(position,orientation,vertexes,indexes,mass,name,bodyDimension,color);
-                stateBodiesmap_.insert(pair<string,dBodyID>(((wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName())),odebody));
-                std::cout<<"Obs body name"<<((wkspace->getObstacle(i)->getName())+(wkspace->getObstacle(i)->getLink(j)->getName()))<<std::endl;
+                odebody = makeTriMesh(position,orientation,vertexes,indexes,mass,element.first,bodyDimension,color);
+                stateBodiesmap_.insert(pair<string,dBodyID>(((element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName())),odebody));
+                std::cout<<"Obs body name"<<((element.first)+(wkspace->getObstacle(element.first)->getLink(j)->getName()))<<std::endl;
                 bodies.push_back(odebody);
-                getBody.insert(pair<string,dBodyID>(wkspace->getObstacle(i)->getName(),odebody));
-
+                getBody.insert(pair<string,dBodyID>(element.first,odebody));
             }
         }
     }
@@ -277,10 +271,12 @@ void KauthamDEEnvironment::createWorld(WorkSpace *wkspace)
     {
         const dReal *pos=  dBodyGetPosition(stateBodies_[i]);
         const dReal *rot= dBodyGetQuaternion(stateBodies_[i]);
-        std::cout<<"Q "<<wkspace->getObstacle(0)->getLink(0)->getElement()->getOrientation()[0]<<" , "
+        /*
+         std::cout<<"Q "<<wkspace->getObstacle(0)->getLink(0)->getElement()->getOrientation()[0]<<" , "
                 <<wkspace->getObstacle(0)->getLink(0)->getElement()->getOrientation()[1]<<" , "
                <<wkspace->getObstacle(0)->getLink(0)->getElement()->getOrientation()[2]<<" , "
               <<wkspace->getObstacle(0)->getLink(0)->getElement()->getOrientation()[3]<<std::endl;
+        */
         std::cout<<"Position of Body "<<i+1<<" is " <<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<std::endl;
         std::cout<<"Orientation of Body "<<i+1<<" is " <<rot[0]<<" "<<rot[1]<<" "<<rot[2]<<" "<<rot[3]<<std::endl;
 
@@ -573,12 +569,12 @@ vector<dBodyID> KauthamDEEnvironment::fillstatebodies(map<string,dBodyID> stateB
                 bodies.push_back(stateBodiesmap_[(wkspace->getRobot(i)->getName()) + (wkspace->getRobot(i)->getLink(0)->getName())]);
                 std::cout<<(wkspace->getRobot(i)->getName()) + (wkspace->getRobot(i)->getLink(0)->getName())<<std::endl;
             }
-            for (unsigned int i=0; i < wkspace->getNumObstacles(); i++)
+            for (std::pair<std::string, Robot*> element : wkspace->getObstaclesMap())
             {
-                for (unsigned int j=0; j < (wkspace->getObstacle(i)->getNumLinks()); j++ )
+                for (unsigned int j=0; j < (wkspace->getObstacle(element.first)->getNumLinks()); j++ )
                 {
-                    bodies.push_back(stateBodiesmap_[wkspace->getObstacle(i)->getName()+wkspace->getObstacle(i)->getLink(j)->getName()]);
-                    std::cout<<wkspace->getObstacle(i)->getName()+wkspace->getObstacle(i)->getLink(j)->getName()<<std::endl;
+                    bodies.push_back(stateBodiesmap_[element.first+wkspace->getObstacle(element.first)->getLink(j)->getName()]);
+                    std::cout<<element.first+wkspace->getObstacle(element.first)->getLink(j)->getName()<<std::endl;
                 }
             }
 
@@ -592,11 +588,11 @@ vector<dBodyID> KauthamDEEnvironment::fillstatebodies(map<string,dBodyID> stateB
                     bodies.push_back(stateBodiesmap_[(wkspace->getRobot(i)->getName()) + (wkspace->getRobot(i)->getLink(j)->getName())]);
                 }
             }
-            for (unsigned int i=0; i < wkspace->getNumObstacles(); i++)
+            for (std::pair<std::string, Robot*> element : wkspace->getObstaclesMap())
             {
-                for (unsigned int j=0; j < wkspace->getObstacle(i)->getNumLinks(); j++ )
+                for (unsigned int j=0; j < wkspace->getObstacle(element.first)->getNumLinks(); j++ )
                 {
-                    bodies.push_back(stateBodiesmap_[wkspace->getObstacle(i)->getName()+wkspace->getObstacle(i)->getLink(j)->getName()]);
+                    bodies.push_back(stateBodiesmap_[element.first+wkspace->getObstacle(element.first)->getLink(j)->getName()]);
                 }
             }
         }
