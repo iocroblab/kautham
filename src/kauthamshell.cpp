@@ -1133,11 +1133,22 @@ namespace Kautham {
                   //cout<<"p->size() = "<<p->size()<<endl;
                   for(unsigned int i=0; i<p->size(); i++)
                   {
-                    std::vector<KthReal> c;
-                    c = p->at(i)->getCoords();
-                    for(unsigned int j=0; j<c.size();j++)
-                      path<<c.at(j)<<" ";
-                    path<<endl;
+                    std::vector<RobConf> rc = p->at(i)->getMappedConf();
+                    for(unsigned int j=0; j<rc.size();j++)
+                    {
+                      path<<rc[j].getSE3().getPos()[0]<<" ";
+                      path<<rc[j].getSE3().getPos()[1]<<" ";
+                      path<<rc[j].getSE3().getPos()[2]<<" ";
+                      path<<rc[j].getSE3().getOrient()[0]<<" ";
+                      path<<rc[j].getSE3().getOrient()[1]<<" ";
+                      path<<rc[j].getSE3().getOrient()[2]<<" ";
+                      path<<rc[j].getSE3().getOrient()[3]<<" ";
+                      for(unsigned int k=0; k<rc[j].getRn().getCoordinates().size();k++)
+                      {
+                        path<<rc[j].getRn().getCoordinates()[k]<<" ";
+                      }
+                      path<<endl;
+                     }
                   }
                   //cout<<((ostringstream&)path).str()<<endl;
 
