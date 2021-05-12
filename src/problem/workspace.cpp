@@ -51,16 +51,17 @@ namespace Kautham {
     * Stores the initial poses of objects
     */
     void WorkSpace::storeInitialObjectPoses(){
-        //
         _obstaclePoses.clear();
         _obstaclePoses.resize(getNumObstacles());
         uint i=0;
         for (std::pair<std::string, Robot*> element : obstacles )
         {
             RobConf *c = element.second->getHomePos();
+
             _obstaclePoses[i] = new RobConf;
             _obstaclePoses[i]->setSE3(c->getSE3());
             _obstaclePoses[i]->setRn(c->getRn());
+            i++;
         }
     }
 
@@ -86,7 +87,6 @@ namespace Kautham {
             coords[5] = element.second->getLink(0)->getElement()->getOrientation()[2];
             coords[6] = element.second->getLink(0)->getElement()->getOrientation()[3];
             // quaternion internal represtantation.
-
             _obstaclePoses[i]->setSE3(coords);
             _obstaclePoses[i]->setRn(c->getRn());
             i++;
@@ -110,6 +110,10 @@ namespace Kautham {
                 }
                 i++;
             }
+
+            //If the obstacles have controls defined in the kautham problem file, then move the obstacles to the initial values of these controls
+            setInitObsSample(_initObsSample);
+
             return true;
         }
         else
