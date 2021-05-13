@@ -1115,11 +1115,11 @@ namespace Kautham {
             //cout<<"getPath getPath getPath getPath getPath getPath"<<endl;
             //cout<<"problem->getPlanner()->getFamily() = "<<problem->getPlanner()->getFamily()<<endl;
             if (problem->getPlanner()->getFamily()==OMPLPLANNER) {
-                //cout<<"OMPLPLANNER"<<endl;
+                cout<<"OMPLPLANNER"<<endl;
                 if (problem->getPlanner()->solveAndInherit()) {
                     ((omplplanner::omplPlanner*)problem->getPlanner())->SimpleSetup()->
                             getSolutionPath().printAsMatrix(path);
-                    //cout<<((ostringstream&)path).str()<<endl;
+                    cout<<((ostringstream&)path).str()<<endl;
                     return true;
                 }
             }

@@ -28,7 +28,7 @@ def kOpenProblem(modelFolder, problemFile):
 
 
 
-#Function that wraps the call to the kautham service that solves a problem
+#Function that wraps the call to the kautham service returns Dof names
 def kPathDofNames():
     #define server and client
     rospy.wait_for_service("/kautham_node/PathDofNames")
@@ -56,7 +56,7 @@ def kGetPath (printpath=0):
         return False
     else:
         print ("Path Found")
-        length = len(getpath_srv.response)-1 #getPath returns the last element empty so it is not considered
+        length = len(getpath_srv.response)
         path = { (i,j):0 for i in range(length) for j in range(len(getpath_srv.response[0].v)) }
 
         for i in range(length):

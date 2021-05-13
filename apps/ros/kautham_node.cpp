@@ -199,7 +199,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     //std::vector< std::vector<float> > poses;
     poses.clear();
     poses.resize(numrobots);
-    rtransform.resize(numobstacles);
+    rtransform.resize(numrobots);
     for(int i=0; i<numrobots; i++)
     {
         ROS_INFO("robotfilenames[%d] = %s",i,robotfilenames[i].c_str());
@@ -655,7 +655,7 @@ bool srvGetPath(kautham::GetPath::Request &req,
                 }
                 chars_to_read -= str.size() + 1;
             }
-            path.push_back(conf);
+            if(conf.size()) path.push_back(conf);
         }
         res.response.resize(path.size());
         for (unsigned int i = 0; i < path.size(); ++i) {
@@ -663,6 +663,48 @@ bool srvGetPath(kautham::GetPath::Request &req,
             for (unsigned int j = 0; j < path.at(i).size(); ++j) {
                 res.response[i].v[j] = path.at(i).at(j);
             }
+        }
+        if(visualizescene)
+        {
+            ros::Rate rate(2.0);
+            //std::cout<<"START visualizescene"<<std::endl;
+            for(unsigned int i=0; i<path.size();i++)
+            {
+              std::cout<<"path step "<<i<<std::endl;
+              for(unsigned int j=0; j<ksh->getNumRobots();j++)
+              {
+                //update the broadcasted transforms for the base
+                rtransform[j].header.stamp = ros::Time::now();
+                rtransform[j].header.frame_id = "world";
+                std::stringstream my_child_frame_id;
+                my_child_frame_id  << "robot"<<j<<"_base_link";
+                rtransform[j].child_frame_id = my_child_frame_id.str();
+                int numdof = 7+joint_state_robot[j].position.size();
+                rtransform[j].transform.translation.x = path.at(i).at(j*numdof+0);
+                rtransform[j].transform.translation.y = path.at(i).at(j*numdof+1);
+                rtransform[j].transform.translation.z = path.at(i).at(j*numdof+2);
+                rtransform[j].transform.rotation.x = path.at(i).at(j*numdof+3);
+                rtransform[j].transform.rotation.y = path.at(i).at(j*numdof+4);
+                rtransform[j].transform.rotation.z = path.at(i).at(j*numdof+5);
+                rtransform[j].transform.rotation.w = path.at(i).at(j*numdof+6);
+
+                //publish robot transform
+                ros::spinOnce();
+                br->sendTransform(rtransform[j]);
+
+                //fill the joint values to be published
+                for(unsigned int k=0; k<joint_state_robot[j].position.size();k++)
+                {
+                  joint_state_robot[j].position[k] = path.at(i).at(j*numdof+7+k);
+                }
+                //publish robot joints
+                joint_state_robot[j].header.stamp = ros::Time::now();
+                joints_publishers[j]->publish(joint_state_robot[j]);
+               }
+               //Wait until it's time for another iteration
+               rate.sleep();
+            }
+            //std::cout<<"END visualizescene "<<std::endl;
         }
     }
 
