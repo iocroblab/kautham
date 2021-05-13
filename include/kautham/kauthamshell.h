@@ -95,6 +95,7 @@ namespace Kautham {
     bool getObstaclesFileNames(std::vector<std::string> &onames);
     bool getObstaclesNames(std::vector<std::string> &obsnames);
     bool getRobotJointNames(int r, std::vector<std::string> &jnames);
+    bool getRobotIsSE3enabled(int r);
 
     private:
         void *memPtr_;

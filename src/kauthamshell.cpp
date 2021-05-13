@@ -2030,4 +2030,30 @@ namespace Kautham {
 
         return true;
     }
+
+
+    bool kauthamshell::getRobotIsSE3enabled(int r) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+            return problem->getPlanner()->wkSpace()->getRobot(r)->isSE3Enabled();
+
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return true;
+    }
+
 }

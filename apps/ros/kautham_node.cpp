@@ -622,14 +622,17 @@ bool srvPathDofNames(kautham::PathDofNames::Request &req,
     jnames.resize( ksh->getNumRobots() );
     unsigned int k=0;
     for(unsigned int i = 0; i < ksh->getNumRobots(); i++) {
+      if(ksh->getRobotIsSE3enabled(i))
+      {
+        res.dofnames.push_back("x");
+        res.dofnames.push_back("y");
+        res.dofnames.push_back("z");
+        res.dofnames.push_back("qx");
+        res.dofnames.push_back("qy");
+        res.dofnames.push_back("qz");
+        res.dofnames.push_back("qw");
+      }
       ksh->getRobotJointNames(i,jnames[i]);
-      res.dofnames.push_back("x");
-      res.dofnames.push_back("y");
-      res.dofnames.push_back("z");
-      res.dofnames.push_back("qx");
-      res.dofnames.push_back("qy");
-      res.dofnames.push_back("qz");
-      res.dofnames.push_back("qw");
       for(unsigned int j=0;j<jnames[i].size();j++)
         res.dofnames.push_back(jnames[i][j]);
     }
@@ -671,35 +674,42 @@ bool srvGetPath(kautham::GetPath::Request &req,
             for(unsigned int i=0; i<path.size();i++)
             {
               std::cout<<"path step "<<i<<std::endl;
+              int indexdof=0;
               for(unsigned int j=0; j<ksh->getNumRobots();j++)
               {
-                //update the broadcasted transforms for the base
-                rtransform[j].header.stamp = ros::Time::now();
-                rtransform[j].header.frame_id = "world";
-                std::stringstream my_child_frame_id;
-                my_child_frame_id  << "robot"<<j<<"_base_link";
-                rtransform[j].child_frame_id = my_child_frame_id.str();
-                int numdof = 7+joint_state_robot[j].position.size();
-                rtransform[j].transform.translation.x = path.at(i).at(j*numdof+0);
-                rtransform[j].transform.translation.y = path.at(i).at(j*numdof+1);
-                rtransform[j].transform.translation.z = path.at(i).at(j*numdof+2);
-                rtransform[j].transform.rotation.x = path.at(i).at(j*numdof+3);
-                rtransform[j].transform.rotation.y = path.at(i).at(j*numdof+4);
-                rtransform[j].transform.rotation.z = path.at(i).at(j*numdof+5);
-                rtransform[j].transform.rotation.w = path.at(i).at(j*numdof+6);
-
-                //publish robot transform
                 ros::spinOnce();
-                br->sendTransform(rtransform[j]);
 
-                //fill the joint values to be published
-                for(unsigned int k=0; k<joint_state_robot[j].position.size();k++)
+                //SE3 part
+                if(ksh->getRobotIsSE3enabled(j))
                 {
-                  joint_state_robot[j].position[k] = path.at(i).at(j*numdof+7+k);
+                  //update the broadcasted transforms for the base
+                  rtransform[j].header.stamp = ros::Time::now();
+                  rtransform[j].header.frame_id = "world";
+                  std::stringstream my_child_frame_id;
+                  my_child_frame_id  << "robot"<<j<<"_base_link";
+                  rtransform[j].child_frame_id = my_child_frame_id.str();
+                  rtransform[j].transform.translation.x = path.at(i).at(indexdof++);
+                  rtransform[j].transform.translation.y = path.at(i).at(indexdof++);
+                  rtransform[j].transform.translation.z = path.at(i).at(indexdof++);
+                  rtransform[j].transform.rotation.x = path.at(i).at(indexdof++);
+                  rtransform[j].transform.rotation.y = path.at(i).at(indexdof++);
+                  rtransform[j].transform.rotation.z = path.at(i).at(indexdof++);
+                  rtransform[j].transform.rotation.w = path.at(i).at(indexdof++);
+                  //publish robot transform
+                  br->sendTransform(rtransform[j]);
                 }
-                //publish robot joints
-                joint_state_robot[j].header.stamp = ros::Time::now();
-                joints_publishers[j]->publish(joint_state_robot[j]);
+                //Rn part
+                if(joint_state_robot[j].position.size())
+                {
+                  //fill the joint values to be published
+                  for(unsigned int k=0; k<joint_state_robot[j].position.size();k++)
+                  {
+                    joint_state_robot[j].position[k] = path.at(i).at(indexdof++);
+                  }
+                  //publish robot joints
+                  joint_state_robot[j].header.stamp = ros::Time::now();
+                  joints_publishers[j]->publish(joint_state_robot[j]);
+                 }
                }
                //Wait until it's time for another iteration
                rate.sleep();
