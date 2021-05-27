@@ -286,10 +286,10 @@ def kSetObstaclesConfig(config):
 #Function that wraps the call to the kautham service that gets the pose of a robot
 def kGetRobotPos(indexrob):
     rospy.wait_for_service("/kautham_node/GetRobotPos")
-    kauthamrobotpos_srv = ObsPos()
+    kauthamrobotpos_srv = RobPos()
     kauthamrobotpos_srv.index= indexrob
     kauthamrobotpos_srv.setPos =( 20 ,70, 40, 0, 0, 0, 1 )#Dummy for python error fix
-    kauthamrobotpos_client = rospy.ServiceProxy("/kautham_node/GetRobotPos",ObsPos)
+    kauthamrobotpos_client = rospy.ServiceProxy("/kautham_node/GetRobotPos",RobPos)
     r=kauthamrobotpos_client(kauthamrobotpos_srv.index,kauthamrobotpos_srv.setPos)
     if len(r.getPos)>0:
         print("Robot position = ", r.getPos)
@@ -301,10 +301,10 @@ def kGetRobotPos(indexrob):
 #Function that wraps the call to the kautham service that gets the home pose of an obstacle
 def kGetRobotHomePos(indexobs):
     rospy.wait_for_service("/kautham_node/GetRobotHomePos")
-    kauthamrobothomepos_srv = ObsPos()
+    kauthamrobothomepos_srv = RobPos()
     kauthamrobothomepos_srv.index= indexobs
     kauthamrobothomepos_srv.setPos =( 20 ,70, 40, 0, 0, 0, 1 )#Dummy for python error fix
-    kauthamrobothomepos_client = rospy.ServiceProxy("/kautham_node/GetRobotHomePos",ObsPos)
+    kauthamrobothomepos_client = rospy.ServiceProxy("/kautham_node/GetRobotHomePos",RobPos)
     r=kauthamrobothomepos_client(kauthamrobothomepos_srv.index,kauthamrobothomepos_srv.setPos)
     if len(r.getPos)>0:
         print("Robot home position = ", r.getPos)
@@ -316,10 +316,10 @@ def kGetRobotHomePos(indexobs):
 #Function that wraps the call to the kautham service that sets the position of Robot
 def kSetRobotPos(index,pose):
     rospy.wait_for_service("/kautham_node/SetRobotPos")
-    kauthamrobotspos_srv = ObsPos()
+    kauthamrobotspos_srv = RobPos()
     kauthamrobotspos_srv.index= index
     kauthamrobotspos_srv.setPos=pose
-    kauthamrobotspos_client = rospy.ServiceProxy("/kautham_node/SetRobotPos",ObsPos)
+    kauthamrobotspos_client = rospy.ServiceProxy("/kautham_node/SetRobotPos",RobPos)
     r=kauthamrobotspos_client(kauthamrobotspos_srv.index,kauthamrobotspos_srv.setPos)
     if r.response:
         print("Robot Pos Set")
