@@ -4,6 +4,21 @@
 
      <!-- Define the grasp frames w.r.t the objects -->
      <node pkg="tf2_ros" type="static_transform_publisher" name="grasp01_broadcaster" args="-0.185 0.0 0.1 3.14 -1.57 0 obstacle_can_base grasp01" />
+     
+     
+     <node pkg="tf2_ros" type="static_transform_publisher" name="TWR_broadcaster" args="0.61800003  0.61199999  0.09855  0.0  0.0 -0.72896861 0.68454712 world TWR" />
+     <node pkg="tf2_ros" type="static_transform_publisher" name="TWO_broadcaster" args="1.1  0.0  0.91  0  0  0  1  world TWO" />
+     <node pkg="tf2_ros" type="static_transform_publisher" name="TRO_broadcaster2" args="0.58052734 0.51947663 0.81145  0.0  0.0  0.72896861  0.68454712  TWR TRO2" />
+     <node pkg="tf2_ros" type="static_transform_publisher" name="TRG_broadcaster2" args="0.59214358  0.33484168  0.91145 0.51545865  -0.48404791 -0.51545865 -0.48404791  TWR TRG2" />
+     
+     <node pkg="tf2_ros" type="static_transform_publisher" name="TOG_broadcaster" args="-0.252 0.0 0.1 1.5706 0.000 3.1416 TWO  TOG" />
+
+     
+     <!--param name="publish_frequency" value="100"/>
+     <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" >
+        <remap from="/robot_description" to="/robot0/robot_description" />
+     </node-->
+
 
      <node name="kautham_node" pkg="kautham" type="kautham-rosnode" output="screen"  />
      <!--node name="kautham_node" pkg="kautham" type="kautham-rosnode" launch-prefix="xterm -e" /-->
