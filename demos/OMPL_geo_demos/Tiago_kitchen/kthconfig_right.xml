@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Config>        
+    <Problemfiles>
+        <kautham name="tiago_counter_A_lateralgrasp_right.xml" />
+        <directory name="/demos/OMPL_geo_demos/Tiago_kitchen/"/>
+        <rviz name="config/kautham_tiago_kitchen.rviz" />
+    </Problemfiles>
+</Config>

@@ -9,7 +9,7 @@
 	<visual>
 		<origin xyz="0 0 0.127" rpy="0 0 0" />
 		<geometry>
-       			 <mesh filename="Glass.stl" scale="0.0254 0.0254 0.0254"/>
+       			 <mesh filename="Glass.dae" scale="0.0254 0.0254 0.0254"/>
       		</geometry>
 		<material>
 			<color rgba="1 1 1 1" />
@@ -18,7 +18,7 @@
   	 <collision>
 		<origin xyz="0 0 0.127" rpy="0 0 0" />
             <geometry>
-       			 <mesh filename="Glass.stl" scale="0.0254 0.0254 0.0254"/>
+       			 <mesh filename="Glass.dae" scale="0.0254 0.0254 0.0254"/>
             </geometry>
 	    <material>
 			<color rgba="1 1 1 1" />

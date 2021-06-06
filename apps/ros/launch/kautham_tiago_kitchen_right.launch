@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+     <arg name="kthconfigfile" default="/demos/OMPL_geo_demos/Tiago_kitchen/kthconfig_right.xml" />
+
+     <!-- Define the grasp frames w.r.t the objects -->-     
+     <!--node pkg="tf2_ros" type="static_transform_publisher" name="grasp01_broadcaster" args="-0.185 0.0 0.1 3.14 -1.57 0 obstacle_can_base grasp01" /-->
+     <node pkg="tf2_ros" type="static_transform_publisher" name="lateralgrasp_broadcaster" args="-0.146 0.018 0.109 0.716 -0.064 -0.020 0.695 obstacle_can_base lateralgrasp" />
+
+
+     <!--param name="publish_frequency" value="100"/>  THIS FAILS??
+     <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" >
+        <remap from="/robot0/robot_description" to="/robot_description" />
+     </node-->
+
+     <node name="kautham_node" pkg="kautham" type="kautham-rosnode" output="screen"  />
+     <!--node name="kautham_node" pkg="kautham" type="kautham-rosnode" launch-prefix="xterm -e" /-->
+     <node name="kautham_rosnode_vis" pkg="kautham" type="kautham-rosnode-vis"  output="screen"  />
+    
+     <node name="kautham_python_node" pkg="kautham" type="kautham_client_python_node_tiago_kitchen.py"  args=" $(arg kthconfigfile)" output="screen" required="true"/>
+</launch>
+
