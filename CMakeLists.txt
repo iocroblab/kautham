@@ -45,6 +45,7 @@ endif(COMMAND cmake_policy)
 
 
 ########### Options ####################
+option( KAUTHAM_FCL "Use FCL" ON )
 option( KAUTHAM_OMPL "Use OMPL planners" ON )
 option( KAUTHAM_IOC "Use IOC planners" ON )
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
@@ -61,6 +62,7 @@ message( STATUS "Building the ROS version: ${KAUTHAM_ROS}")
 message( STATUS "Using OMPL planners: ${KAUTHAM_OMPL}")
 message( STATUS "Using IOC planners: ${KAUTHAM_IOC}")
 message( STATUS "Using Open Dynamic Engine: ${KAUTHAM_OPENDE}")
+message( STATUS "Using FCL: ${KAUTHAM_FCL}")
 message( STATUS "Creating the HTML based API documentation: ${KAUTHAM_DOCUMENTATION}")
 
 ########### Modules path and system options ###############
