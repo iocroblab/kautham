@@ -4,7 +4,10 @@
 
      <!-- Define the grasp frames w.r.t the objects -->-     
      <!--node pkg="tf2_ros" type="static_transform_publisher" name="grasp01_broadcaster" args="-0.185 0.0 0.1 3.14 -1.57 0 obstacle_can_base grasp01" /-->
-     <node pkg="tf2_ros" type="static_transform_publisher" name="lateralgrasp_broadcaster" args="-0.146 0.018 0.109 0.716 -0.064 -0.020 0.695 obstacle_can_base lateralgrasp" />
+     <node pkg="tf2_ros" type="static_transform_publisher" name="lateralgrasp1_broadcaster" args="-0.146 0.018 0.109 0.716 -0.064 -0.020 0.695 obstacle_can_base lateralgrasp1" />
+     
+      <node pkg="tf2_ros" type="static_transform_publisher" name="lateralgrasp2_broadcaster" args="-0.1434 -0.0330 0.1090 0.7162 0.0613 0.1010 0.6879 obstacle_can_base lateralgrasp2" /><!--g1 rotated +20 degrees in z_object frame-->
+      <node pkg="tf2_ros" type="static_transform_publisher" name="lateralgrasp3_broadcaster" args="-0.1310 0.0668 0.1090 0.6939 -0.1873 -0.1404 0.6809 obstacle_can_base lateralgrasp3" /><!--g1 rotated +20 degrees in z_object frame-->
 
 
      <!--param name="publish_frequency" value="100"/>  THIS FAILS??
