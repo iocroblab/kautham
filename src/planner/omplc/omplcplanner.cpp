@@ -647,6 +647,8 @@ namespace Kautham {
             floorsep->addChild(cub_transf);
             floorsep->addChild(cs);
             _sceneCspace->addChild(floorsep);
+            //free planner data strucure
+            pdata->clear();
     }
 
 
@@ -808,6 +810,8 @@ namespace Kautham {
         floorsep->addChild(cub_transf);
         floorsep->addChild(cs);
         _sceneCspace->addChild(floorsep);
+        //free planner data strucure
+        pdata->clear();
     }
 
 
