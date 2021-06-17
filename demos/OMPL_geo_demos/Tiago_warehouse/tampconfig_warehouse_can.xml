@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<Config>
+    <Problemfiles>
+        <pddldomain name="ff-domains/manipulationdomain.pddl" />
+        <pddlproblem name="ff-domains/manipulation_problem_warehouse_can" />
+        <kautham name="tiago_warehouse_counterABC.xml" />
+        <directory name="/demos/OMPL_geo_demos/Tiago_warehouse/" />
+        <graspit name="" /> 
+    </Problemfiles>
+    <States>
+        <!-- You can set a different instance of the problem by modifying the intial object poses-->
+        <!-- The Graspcontrols will be to be changed accordingly the new intial object poses-->
+        <!-- (be careful: if the objects change their initial room then also the pddl problem file has to be set accordingly) -->
+        <Initial>
+            <Object name="REDCAN" kthname="can">3.7875 5.1225 0.78 1 0.0 0.0 0 </Object> <!-- orientation in axis-angle (vx,vy,vz,theta) like in the kautham problem files-->
+            <Robot name="TIAGO" controlfile="controls/tiago_simple_only_mobile.cntr">0.56 0.46 1</Robot>
+        </Initial>
+    </States>
+    <Actions>
+        <Pick robot="TIAGO" object="REDCAN" region="COUNTERB">
+            <Rob> 0 </Rob> <!-- Index of the robot according to the order in the kautham problem file-->
+            <Obj> can </Obj> <!-- Name of the object according to the urdf file included in the kautham problem file-->
+            <Link> 14 </Link> <!-- Index of the robot link -->
+            <Cont>controls/tiago_warehouse_arm_torso_gripper_counterB.cntr</Cont>
+            <Regioncontrols>0.474 0.05 0.08 0.657 0.891 0.131 0.5 0.5 0.5</Regioncontrols>
+            <!--Graspcontrols grasp="lateralgrasp"> 0.194 0.511 0.599 0.369 0.758 0.594 0.500 0.417 1.000</Graspcontrols>
+            <Graspcontrols grasp="topgrasp"> 0.846 0.944 0.861 0.786 0.594 0.226 0.850 0.429 1.000</Graspcontrols-->
+            <Pose>3.7875 5.1225 0.78 1 0.0 0.0 0</Pose> <!--Orientation in quaternions qx qy qz qw -->
+            <!--Grasptransf grasp="lateralgrasp">-0.185 0.0 0.1 -0.707 0 -0.707 0</Grasptransf--><!--Orientation in quaternions qx qy qz qw --><!-- -0.185 0.0 0.1 3.14 -1.57 0-->
+
+            <Grasptransf grasp="lateralgrasp1">-0.146 0.018 0.109 0.716 -0.064 -0.020 0.695</Grasptransf><!--Orientation in quaternions qx qy qz qw-->
+            <Grasptransf grasp="lateralgrasp2">-0.1434 -0.0330 0.1090 0.7162 0.0613 0.1010 0.6879</Grasptransf><!--g1 rotated +20 degrees in z_object frame-->
+            <Grasptransf grasp="lateralgrasp3">-0.1310 0.0668 0.1090 0.6939 -0.1873 -0.1404 0.6809</Grasptransf><!--g1 rotated -20 degrees in z_object frame-->
+            <!-- Generate grasps 2 and from by rotating g1, using MATLAB with the robotics toolbox from P. Corke
+             q=UnitQuaternion(0.695,[0.716 -0.064 -0.020])
+             s=SE3.rpy(q.torpy)
+             s.t=[-0.146, 0.018, 0.109]'
+             s2=SE3.Rz(-20*pi/180)*s
+             g2=[s2.t',s2.UnitQuaternion.v,s2.UnitQuaternion.s]
+             s3=SE3.Rz(-20*pi/180)*s
+             g3=[s3.t',s3.UnitQuaternion.v,s3.UnitQuaternion.s]
+            -->
+        </Pick>
+        <Place robot="TIAGO" object="REDCAN" region="COUNTERC">
+            <Rob> 0 </Rob>
+            <Obj> can </Obj>
+            <Cont>controls/tiago_warehouse_arm_torso_gripper_counterC.cntr</Cont>
+            <Regioncontrols>0.474 0.05 0.08 0.657 0.891 0.131 0.5 0.5 0.5</Regioncontrols>
+            <!--Graspcontrols grasp= "lateralgrasp">0.210 0.045 0.599 0.369 0.906 0.594 0.500 0.417 1.000</Graspcontrols-->
+            <Poseregion>4.2875 4.4875 4.8225 5.0225 0.78 1 0.0 0.0 0</Poseregion>
+            <Pose>4.3875 4.9225 0.78 1 0.0 0.0 0</Pose>
+        </Place>
+        <Move robot="TIAGO" region_from="COUNTERB" region_to="COUNTERC">
+            <Rob> 0 </Rob>
+            <Cont>controls/tiago_simple_only_mobile.cntr</Cont>
+            <InitControls>0.467 0.449 0</InitControls>
+            <GoalControls>0.765 0.346 0.250</GoalControls>
+        </Move>
+         <Move robot="TIAGO" region_from="COUNTERA" region_to="COUNTERB">
+            <Rob> 0 </Rob>
+            <Cont>controls/tiago_simple_only_mobile.cntr</Cont>
+            <InitControls>0.722 0.555 0.75</InitControls>
+            <GoalControls>0.467 0.449 0</GoalControls>
+        </Move>
+    </Actions>
+</Config>

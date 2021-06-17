@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot name="pawnB1">
+  <link name="base">
+   <visual>
+     <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+        <mesh filename="visual/p201.dae" scale="1 1 1"/>
+      </geometry>
+   </visual>
+   <collision>
+     <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+   	  <box size="0.03 0.03 0.04" />
+       </geometry>
+    </collision>
+  </link>
+</robot>

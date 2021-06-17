@@ -106,7 +106,7 @@ bool srvLoadObstacles(kautham::LoadObstacles::Request &req,
     }
     else
     {
-        ROS_WARN("The obstacles have already been loaded. This service is only called once");
+        ROS_WARN("The obstacles have already been loaded. This service is onkthloadobstacles_srvly called once");
         res.response = false;
         return false;
     }
@@ -127,7 +127,7 @@ bool loadRobots()
 
             //Fill the string that will allow to obtain the complete robot filename
             //std::string rname = "\"\\$(find kautham)/demos/models/"+rfilename[i]+"\"";
-            std::string rname = "\"" + rfilename[i] +"\"";
+            std::string rname = "\"" + rfilename[i] +"\"";kthloadobstacles_srv
             //Fill the robot namespace. Robot namespaces are: robot0, robot1, etc...
             std::stringstream robot_namespace;
             robot_namespace << "robot"<<i;
@@ -172,7 +172,7 @@ bool loadRobots()
                  index = str.find(substr1, index + substr2.length() ) )
                     str.replace(index, substr1.length(), substr2);
 
-            //Substitute the mimic joint names
+            //Substitute the mimic joint nameskthloadobstacles_srv
             substr1 = "<mimic joint=\"";
             substr2 = "<mimic joint=\""+robot_namespace.str()+"_";
             for (size_t index = str.find(substr1, 0);

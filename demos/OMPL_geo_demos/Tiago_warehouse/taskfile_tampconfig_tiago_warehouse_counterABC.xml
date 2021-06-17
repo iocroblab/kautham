@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<Task name= "tiago_warehouse_counterABC.xml" >
+	<Initialstate>
+		<Object object="pawnW1"> 4.2875 5.7225 0.78 0.0 0.0 1.0 0.0  </Object>
+		<Object object="pawnW2"> 4.0875 5.7225 0.78 0.0 0.0 1.0 0.0  </Object>
+		<Object object="pawnB1"> 3.7875 5.3225 0.78 0.0 0.0 1.0 0.0  </Object>
+	</Initialstate>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute ='TaskPlanTree'>
+	<BehaviourTree ID = 'TaskPlanTree'>
+		<Sequence name = 'root_sequence'>
+			<SubTree ID='PICK1'/>
+			<SubTree ID='MOVE2'/>
+			<SubTree ID='PLACE3'/>
+			<SubTree ID='MOVE4'/>
+			<SubTree ID='PICK5'/>
+			<SubTree ID='MOVE6'/>
+			<SubTree ID='MOVE7'/>
+			<SubTree ID='PLACE8'/>
+			<SubTree ID='MOVE9'/>
+			<SubTree ID='PICK10'/>
+			<SubTree ID='MOVE11'/>
+			<SubTree ID='PLACE12'/>
+		</Sequence>
+	</BehaviourTree>
+</root>

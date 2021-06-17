@@ -1,0 +1,30 @@
+(define (problem manip_picklist)
+
+(:domain manipulation)
+
+(:objects 
+    counterA counterB counterC - location
+    pawnW1 pawnW2 pawnB1 - obstacle
+    Tiago - robot
+)
+
+(:init
+    (at Tiago counterA)
+    (in pawnW1 counterA)
+    (in pawnW2 counterA)
+    (in pawnB1 counterB)
+    (handEmpty)
+)
+
+(:goal
+
+   (and 
+   (in pawnW1 counterC)
+   (in pawnW2 counterC)
+   (in pawnB1 counterC)
+   )
+
+)
+)
+
+
