@@ -103,6 +103,8 @@ namespace Kautham {
             }
         }
 
+        //store the filename
+        _filename = robFile.c_str();
         //open the file
         fstream fin;
         fin.open(robFile.c_str(),ios::in);
