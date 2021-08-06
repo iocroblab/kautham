@@ -110,9 +110,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     //Now call the LoadObjects to load the MarkerArray to visualize them in rviz
     ros::service::waitForService("/kautham_node_vis/LoadObstacles");
     kautham::LoadObstacles kthloadobstacles_srv;
-    std::vector<std::string> obstaclesfilenames;
     numobstacles = ksh->getNumObstacles();
-    ksh->getObstaclesFileNames(obstaclesfilenames);
 
     kthloadobstacles_srv.request.obstaclesfiles.resize(numobstacles);
     kthloadobstacles_srv.request.obstaclesnames.resize(numobstacles);
@@ -127,8 +125,8 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     uint i=0;
     for (std::pair<std::string, Robot*> element : ksh->getObstaclesMap() )
     {
-        ROS_INFO("obstaclesfilenames[%d] = %s",i,obstaclesfilenames[i].c_str());
-        kthloadobstacles_srv.request.obstaclesfiles[i] = obstaclesfilenames[i].c_str();
+        ROS_INFO("NAME = %s obstaclesfilenames[%d] = %s",element.first,i,element.second->getFileName());
+        kthloadobstacles_srv.request.obstaclesfiles[i] = element.second->getFileName();
         kthloadobstacles_srv.request.obstaclesnames[i] = element.first;
         ksh->getObstaclePos(element.first, poses[i]);
         SE3Conf::fromAxisToQuaternion(poses[i]);

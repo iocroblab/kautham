@@ -284,9 +284,7 @@ namespace Kautham {
 
 
         void findRobotFilesNames(xml_node *parent);
-        void findObstaclesFilesNames(xml_node *parent);
         void getRobotFileNames(vector<string> &rnames);
-        void getObstaclesFileNames(vector<string> &onames);
 
 
         //! Parses a problem file

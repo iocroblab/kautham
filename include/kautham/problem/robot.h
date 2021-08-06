@@ -76,6 +76,7 @@ namespace Kautham {
   class Robot {
   private:
       string            name; //!< A descriptive name of robot
+      string            _filename; //!< The urdf absolute name of the file
       KthReal           scale;//!< This is the global scale for all the links that compound the robot. Normally it is equal to one.
       RobWeight*        _weights; //!< Weights that affect the distance computations.
       mt::Transform     _homeTrans; //!< This is the Home Reference frame at time zero (used to calculate the spatial limits).
@@ -106,11 +107,14 @@ namespace Kautham {
       Link*             linkAttachedTo; //!< In case of obstacle, it is the link where the obstacle is attached to. If it is not attached to any link, it is equal to NULL
       std::vector<std::string> _jointnames; //!< This is the vector of joint names as read from the urdf file
 
+
   public:
 
     Robot(string robFile, KthReal robScale, bool useBBOX = false, progress_struct *progress = NULL); //!<  Constructor
 
     ~Robot();
+
+    inline string getFileName() {return _filename;} //!< Returns the name of the urdf file
 
     inline bool isArmed() {return armed;} //!< Returns true if the Robot is correctly armed
 

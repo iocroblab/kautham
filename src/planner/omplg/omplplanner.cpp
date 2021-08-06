@@ -1038,6 +1038,9 @@ namespace Kautham {
             points->addChild(pointSet);
 
             _scenePathAndData->addChild(points);
+
+            //free planner data strucure
+            pdata->clear();
         }
 
 
@@ -1275,6 +1278,10 @@ namespace Kautham {
             bounds->addChild(cube);
 
             _sceneCspace->addChild(bounds);
+
+
+            //free planner data strucure
+            pdata->clear();
         }
 
         //! This function converts a Kautham sample to an ompl scoped state.
@@ -1438,6 +1445,7 @@ namespace Kautham {
 
         //! function to find a solution path
         bool omplPlanner::trySolve() {
+
             //Add start states
             ss->clearStartStates();
             for (std::vector<Sample*>::const_iterator start(_init.begin());
@@ -1470,6 +1478,8 @@ namespace Kautham {
                 ss->clear();
                 ss->getPlanner()->clear();
             }
+
+
 
             //Attempt to solve the problem within _planningTime seconds of planning time
             ss->setup();
@@ -1542,6 +1552,9 @@ namespace Kautham {
             drawPath(_drawnPath);
             drawPathAndData(_drawnPath);
             drawCspace(_drawnrobot);
+
+            //free planner data strucure
+            pdata->clear();
 
             return _solved;
         }
