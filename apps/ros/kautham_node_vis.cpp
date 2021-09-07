@@ -127,7 +127,7 @@ bool loadRobots()
 
             //Fill the string that will allow to obtain the complete robot filename
             //std::string rname = "\"\\$(find kautham)/demos/models/"+rfilename[i]+"\"";
-            std::string rname = "\"" + rfilename[i] +"\"";kthloadobstacles_srv
+            std::string rname = "\"" + rfilename[i] +"\"";
             //Fill the robot namespace. Robot namespaces are: robot0, robot1, etc...
             std::stringstream robot_namespace;
             robot_namespace << "robot"<<i;
