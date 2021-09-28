@@ -29,7 +29,7 @@
 #ifdef KAUTHAM_USE_FCL
 
 #include <kautham/problem/ivelement.h>
-#include <fcl/collision_object.h>
+#include <fcl/narrowphase/collision_object.h>
 #include <external/lcprng.h>
 
 namespace Kautham {
@@ -53,14 +53,14 @@ public:
 
     SoSeparator* getIvFromFCLModel(bool tran = true);
 
-    const fcl::CollisionObject *getFCLModel() {return FCLModel;}
+    const fcl::CollisionObjectd *getFCLModel() {return FCLModel;}
 
     void setPosition(KthReal *pos);
 
     void setOrientation(KthReal *ori);
 
 private:
-    fcl::CollisionObject *FCLModel;
+    fcl::CollisionObjectd *FCLModel;
 
     bool makeFCLModel();
 
