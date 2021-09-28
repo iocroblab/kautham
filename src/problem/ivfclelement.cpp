@@ -29,9 +29,9 @@
 #include <kautham/util/kthutil/kauthamdefs.h>
 #include <map>
 
-#include <fcl/collision.h>
-#include <fcl/distance.h>
-#include <fcl/BVH/BVH_model.h>
+#include <fcl/narrowphase/collision_object.h>
+#include <fcl/narrowphase/distance.h>
+#include <fcl/geometry/bvh/BVH_model.h>
 
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/SbColor.h>
@@ -40,29 +40,29 @@
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 
 struct GeomData {
-    vector<fcl::Vec3f> vertices;
+    vector<fcl::Vector3d> vertices;
     vector<fcl::Triangle> triangles;
     unsigned int addVertex(const float *point) {
-        fcl::Vec3f vertex(point[0],point[1],point[2]);
-        map<fcl::Vec3f,unsigned int>::const_iterator it = verticesMap.find(vertex);
+        fcl::Vector3d vertex(point[0],point[1],point[2]);
+        map<fcl::Vector3d,unsigned int>::const_iterator it = verticesMap.find(vertex);
         if (it != verticesMap.end()) {
             return it->second;
         } else {
             unsigned int index = vertices.size();
             vertices.push_back(vertex);
-            verticesMap.insert(pair<fcl::Vec3f,unsigned int>(vertex,index));
+            verticesMap.insert(pair<fcl::Vector3d,unsigned int>(vertex,index));
             return index;
         }
     }
 private:
     struct cmpVertex {
-        bool operator()(const fcl::Vec3f& a, const fcl::Vec3f& b) const {
+        bool operator()(const fcl::Vector3d& a, const fcl::Vector3d& b) const {
             return (a[0] < b[0]) ||
                    (a[1] < b[1] && a[0] == b[0]) ||
                    (a[2] < b[2] && a[1] == b[1] && a[0] == b[0]);
         }
     };
-    map<fcl::Vec3f,unsigned int,cmpVertex> verticesMap;
+    map<fcl::Vector3d,unsigned int,cmpVertex> verticesMap;
 };
 
 void triangleCB(void *data, SoCallbackAction *action,
@@ -111,8 +111,8 @@ IVFCLElement::~IVFCLElement() {
 bool IVFCLElement::collideTo(Element* other) {
     Element::increaseCollCheckCounter();
     try {
-        fcl::CollisionRequest request;
-        fcl::CollisionResult result;
+        fcl::CollisionRequestd request;
+        fcl::CollisionResultd result;
 
         fcl::collide(((IVFCLElement*)other)->getFCLModel(),FCLModel,request,result);
 
@@ -126,8 +126,8 @@ bool IVFCLElement::collideTo(Element* other) {
 KthReal IVFCLElement::getDistanceTo(Element* other) {
     Element::increaseCollCheckCounter();
     try {
-        fcl::DistanceRequest request;
-        fcl::DistanceResult result;
+        fcl::DistanceRequestd request;
+        fcl::DistanceResultd result;
 
         fcl::distance(((IVFCLElement*)other)->getFCLModel(),FCLModel,request,result);
 
@@ -139,8 +139,8 @@ KthReal IVFCLElement::getDistanceTo(Element* other) {
 
 
 SoSeparator *IVFCLElement::getIvFromFCLModel(bool tran) {
-    fcl::BVHModel<fcl::OBBRSS> *geom;
-    geom = (fcl::BVHModel<fcl::OBBRSS>*)FCLModel->collisionGeometry().get();
+    fcl::BVHModel<fcl::OBBRSSd> *geom;
+    geom = (fcl::BVHModel<fcl::OBBRSSd>*)FCLModel->collisionGeometry().get();
     unsigned int nVerts = geom->num_vertices;
     unsigned int nTris = geom->num_tris;
 
@@ -192,8 +192,8 @@ SoSeparator *IVFCLElement::getIvFromFCLModel(bool tran) {
 void IVFCLElement::setOrientation(float *ori) {
     IVElement::setOrientation(ori);
 
-    fcl::Matrix3f rotation;
-    fcl::Quaternion3f(ori[3],ori[0],ori[1],ori[2]).toRotation(rotation);
+    fcl::Matrix3d rotation;
+    rotation = fcl::Quaterniond(ori[3],ori[0],ori[1],ori[2]).toRotationMatrix();
 
     FCLModel->setRotation(rotation);
 }
@@ -202,7 +202,7 @@ void IVFCLElement::setOrientation(float *ori) {
 void IVFCLElement::setPosition(float *pos) {
     IVElement::setPosition(pos);
 
-    fcl::Vec3f translation(pos[0],pos[1],pos[2]);
+    fcl::Vector3d translation(pos[0],pos[1],pos[2]);
 
     FCLModel->setTranslation(translation);
 }
@@ -217,14 +217,14 @@ bool IVFCLElement::makeFCLModel() {
                                           triangleCB,(void*)&geomData);
             triAction.apply(collision_ivModel());
 
-            fcl::BVHModel<fcl::OBBRSS> *model = new fcl::BVHModel<fcl::OBBRSS>;
+            fcl::BVHModel<fcl::OBBRSSd> *model = new fcl::BVHModel<fcl::OBBRSSd>;
             model->beginModel();
             model->addSubModel(geomData.vertices,geomData.triangles);
             model->endModel();
 
-            const std::shared_ptr<fcl::CollisionGeometry> geom(model);
+            const std::shared_ptr<fcl::CollisionGeometryd> geom(model);
 
-            FCLModel = new fcl::CollisionObject(geom);
+            FCLModel = new fcl::CollisionObjectd(geom);
 
             return true;
         }
