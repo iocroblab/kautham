@@ -1,0 +1,143 @@
+<Config>
+    <Problemfiles>
+        <pddldomain name="ff-domains/manipulationdomain.pddl" />
+        <pddlproblem name="ff-domains/manipulation_problem_picklist" />
+        <kautham name="tiago_warehouse_counterABC.xml" />
+        <directory name="/demos/OMPL_geo_demos/Tiago_warehouse/" />
+        <graspit name="" /> 
+    </Problemfiles>
+    <States>
+        <Initial>
+            <Object kthname="pawnW1" name="pawnW1">4.2875 5.7225 0.78 0 0 1 0</Object> 
+            <Object kthname="pawnW2" name="pawnW2">4.0875 5.7225 0.78 0 0 1 0</Object> 
+            <Object kthname="pawnB1" name="pawnB1">3.7875 5.3225 0.78 0 0 1 0</Object> 
+            <Robot controlfile="controls/tiago_simple_only_mobile.cntr" name="TIAGO">0.722 0.582 0.75</Robot>
+        </Initial>
+    </States>
+    <Actions>
+        <Pick object="PAWNW1" region="COUNTERA" robot="TIAGO">
+            <Rob> 0 </Rob> 
+            <Obj> pawnW1 </Obj> 
+            <Link> 14 </Link> 
+            <Cont>controls/tiago_warehouse_arm_torso_gripper_counterA.cntr</Cont>
+            <Regioncontrols>0.574 0.05 0.08 0.657 0.891 0.131 0.984 0.5 0.5</Regioncontrols>
+            <Pose>4.2875 5.7225 0.78 0 0 1 0</Pose>
+            <Grasptransf grasp="lateralgrasp1">-0.146 0.018 0.109 0.716 -0.064 -0.020 0.695</Grasptransf><!--Orientation in quaternions qx qy qz qw-->
+            <Grasptransf grasp="lateralgrasp2">-0.1434 -0.0330 0.1090 0.7162 0.0613 0.1010 0.6879</Grasptransf><!--g1 rotated +20 degrees in z_object frame-->
+            <Grasptransf grasp="lateralgrasp3">-0.1310 0.0668 0.1090 0.6939 -0.1873 -0.1404 0.6809</Grasptransf><!--g1 rotated -20 degrees in z_object frame-->
+           <!-- <Grasptransf grasp="topgrasp">0.0 0.0 0.231 0.5491774 0.4461044 -0.5153571 0.4835309</Grasptransf>--><!--Orientation in quaternions qx qy qz qw --><!--0.0 0.0 0.231 -0.118116 1.4994432 1.587768-->
+        </Pick>
+        <Pick object="PAWNW1" region="COUNTERB" robot="TIAGO">
+            <Rob> 0 </Rob> 
+            <Obj> pawnW1 </Obj> 
+            <Link> 14 </Link> 
+            <Cont>controls/tiago_warehouse_arm_torso_gripper_counterB.cntr</Cont>
+            <Regioncontrols>0.574 0.05 0.08 0.657 0.891 0.131 0.984 0.5 0.5</Regioncontrols>
+            <Pose>3.7875 5.3225 0.78 0 0 1 0</Pose>
+            <Grasptransf grasp="lateralgrasp1">-0.146 0.018 0.109 0.716 -0.064 -0.020 0.695</Grasptransf><!--Orientation in quaternions qx qy qz qw-->
+            <Grasptransf grasp="lateralgrasp2">-0.1434 -0.0330 0.1090 0.7162 0.0613 0.1010 0.6879</Grasptransf><!--g1 rotated +20 degrees in z_object frame-->
+            <Grasptransf grasp="lateralgrasp3">-0.1310 0.0668 0.1090 0.6939 -0.1873 -0.1404 0.6809</Grasptransf><!--g1 rotated -20 degrees in z_object frame-->
+        </Pick>
+        <Pick object="PAWNW2" region="COUNTERA" robot="TIAGO">
+            <Rob> 0 </Rob> 
+            <Obj> pawnW2 </Obj> 
+            <Link> 14 </Link> 
+            <Cont>controls/tiago_warehouse_arm_torso_gripper_counterA.cntr</Cont>
+            <Regioncontrols>0.574 0.05 0.08 0.657 0.891 0.131 0.984 0.5 0.5</Regioncontrols>
+            <Pose>4.0875 5.7225 0.78 0 0 1 0</Pose>
+            <Grasptransf grasp="lateralgrasp1">-0.146 0.018 0.109 0.716 -0.064 -0.020 0.695</Grasptransf><!--Orientation in quaternions qx qy qz qw-->
+            <Grasptransf grasp="lateralgrasp2">-0.1434 -0.0330 0.1090 0.7162 0.0613 0.1010 0.6879</Grasptransf><!--g1 rotated +20 degrees in z_object frame-->
+            <Grasptransf grasp="lateralgrasp3">-0.1310 0.0668 0.1090 0.6939 -0.1873 -0.1404 0.6809</Grasptransf><!--g1 rotated -20 degrees in z_object frame-->
+        </Pick>
+        <Pick object="PAWNW2" region="COUNTERB" robot="TIAGO">
+            <Rob> 0 </Rob> 
+            <Obj> pawnW2 </Obj> 
+            <Link> 14 </Link> 
+            <Cont>controls/tiago_warehouse_arm_torso_gripper_counterB.cntr</Cont>
+            <Regioncontrols>0.574 0.05 0.08 0.657 0.891 0.131 0.984 0.5 0.5</Regioncontrols>
+            <Pose>3.7875 5.3225 0.78 0 0 1 0</Pose>
+            <Grasptransf grasp="lateralgrasp1">-0.146 0.018 0.109 0.716 -0.064 -0.020 0.695</Grasptransf><!--Orientation in quaternions qx qy qz qw-->
+            <Grasptransf grasp="lateralgrasp2">-0.1434 -0.0330 0.1090 0.7162 0.0613 0.1010 0.6879</Grasptransf><!--g1 rotated +20 degrees in z_object frame-->
+            <Grasptransf grasp="lateralgrasp3">-0.1310 0.0668 0.1090 0.6939 -0.1873 -0.1404 0.6809</Grasptransf><!--g1 rotated -20 degrees in z_object frame-->
+        </Pick>
+        <Pick object="PAWNB1" region="COUNTERA" robot="TIAGO">
+            <Rob> 0 </Rob> 
+            <Obj> pawnB1 </Obj> 
+            <Link> 14 </Link> 
+            <Cont>controls/tiago_warehouse_arm_torso_gripper_counterA.cntr</Cont>
+            <Regioncontrols>0.574 0.05 0.08 0.657 0.891 0.131 0.984 0.5 0.5</Regioncontrols>
+            <Pose>4.2875 5.7225 0.78 0 0 1 0</Pose>
+            <Grasptransf grasp="lateralgrasp1">-0.146 0.018 0.109 0.716 -0.064 -0.020 0.695</Grasptransf><!--Orientation in quaternions qx qy qz qw-->
+            <Grasptransf grasp="lateralgrasp2">-0.1434 -0.0330 0.1090 0.7162 0.0613 0.1010 0.6879</Grasptransf><!--g1 rotated +20 degrees in z_object frame-->
+            <Grasptransf grasp="lateralgrasp3">-0.1310 0.0668 0.1090 0.6939 -0.1873 -0.1404 0.6809</Grasptransf><!--g1 rotated -20 degrees in z_object frame-->
+        </Pick>
+        <Pick object="PAWNB1" region="COUNTERB" robot="TIAGO">
+            <Rob> 0 </Rob> 
+            <Obj> pawnB1 </Obj> 
+            <Link> 14 </Link> 
+            <Cont>controls/tiago_warehouse_arm_torso_gripper_counterB.cntr</Cont>
+            <Regioncontrols>0.574 0.05 0.08 0.657 0.891 0.131 0.984 0.5 0.5</Regioncontrols>
+            <Pose>3.7875 5.3225 0.78 0 0 1 0</Pose>
+            <Grasptransf grasp="lateralgrasp1">-0.146 0.018 0.109 0.716 -0.064 -0.020 0.695</Grasptransf><!--Orientation in quaternions qx qy qz qw-->
+            <Grasptransf grasp="lateralgrasp2">-0.1434 -0.0330 0.1090 0.7162 0.0613 0.1010 0.6879</Grasptransf><!--g1 rotated +20 degrees in z_object frame-->
+            <Grasptransf grasp="lateralgrasp3">-0.1310 0.0668 0.1090 0.6939 -0.1873 -0.1404 0.6809</Grasptransf><!--g1 rotated -20 degrees in z_object frame-->
+        </Pick>
+        <Place object="PAWNW1" region="COUNTERC" robot="TIAGO">
+            <Rob> 0 </Rob>
+            <Obj> pawnW1 </Obj>
+            <Cont>controls/tiago_warehouse_arm_torso_gripper_counterC.cntr</Cont>
+            <Regioncontrols>0.574 0.05 0.08 0.657 0.891 0.131 0.984 0.5 0.5</Regioncontrols>
+            <Poseregion>0.70 0.80 0.365 0.38 0.259 1 0.588 0.889 0.675 0.774 0.893 0.329 0.523 1</Poseregion>
+        </Place>
+        <Place object="PAWNW2" region="COUNTERC" robot="TIAGO">
+            <Rob> 0 </Rob>
+            <Obj> pawnW2 </Obj>
+            <Cont>controls/tiago_warehouse_arm_torso_gripper_counterC.cntr</Cont>
+            <Regioncontrols>0.574 0.05 0.08 0.657 0.891 0.131 0.984 0.5 0.5</Regioncontrols>
+            <Poseregion>0.70 0.80 0.365 0.38 0.259 1 0.588 0.889 0.675 0.774 0.893 0.329 0.523 1</Poseregion>
+        </Place>
+        <Place object="PAWNB1" region="COUNTERC" robot="TIAGO">
+            <Rob> 0 </Rob>
+            <Obj> pawnB1 </Obj>
+            <Cont>controls/tiago_warehouse_arm_torso_gripper_counterC.cntr</Cont>
+            <Regioncontrols>0.574 0.05 0.08 0.657 0.891 0.131 0.984 0.5 0.5</Regioncontrols>
+            <Poseregion>0.70 0.80 0.365 0.38 0.259 1 0.588 0.889 0.675 0.774 0.893 0.329 0.523 1</Poseregion>
+        </Place>
+        <Move region_from="COUNTERA" region_to="COUNTERB" robot="TIAGO">
+            <Rob> 0 </Rob>
+            <Cont>controls/tiago_simple_only_mobile.cntr</Cont>
+            <InitControls>0.722 0.582 0.75</InitControls>
+            <GoalControls>0.506 0.464 1</GoalControls>
+        </Move>
+        <Move region_from="COUNTERA" region_to="COUNTERC" robot="TIAGO">
+            <Rob> 0 </Rob>
+            <Cont>controls/tiago_simple_only_mobile.cntr</Cont>
+            <InitControls>0.722 0.582 0.75</InitControls>
+            <GoalControls>0.722 0.369 0.25</GoalControls>
+        </Move>
+        <Move region_from="COUNTERB" region_to="COUNTERA" robot="TIAGO">
+            <Rob> 0 </Rob>
+            <Cont>controls/tiago_simple_only_mobile.cntr</Cont>
+            <InitControls>0.506 0.464 1</InitControls>
+            <GoalControls>0.722 0.582 0.75</GoalControls>
+        </Move>
+        <Move region_from="COUNTERB" region_to="COUNTERC" robot="TIAGO">
+            <Rob> 0 </Rob>
+            <Cont>controls/tiago_simple_only_mobile.cntr</Cont>
+            <InitControls>0.506 0.464 1</InitControls>
+            <GoalControls>0.722 0.369 0.25</GoalControls>
+        </Move>
+        <Move region_from="COUNTERC" region_to="COUNTERA" robot="TIAGO">
+            <Rob> 0 </Rob>
+            <Cont>controls/tiago_simple_only_mobile.cntr</Cont>
+            <InitControls>0.722 0.369 0.25</InitControls>
+            <GoalControls>0.722 0.582 0.75</GoalControls>
+        </Move>
+        <Move region_from="COUNTERC" region_to="COUNTERB" robot="TIAGO">
+            <Rob> 0 </Rob>
+            <Cont>controls/tiago_simple_only_mobile.cntr</Cont>
+            <InitControls>0.722 0.369 0.25</InitControls>
+            <GoalControls>0.506 0.464 1</GoalControls>
+        </Move>
+    </Actions>
+</Config>

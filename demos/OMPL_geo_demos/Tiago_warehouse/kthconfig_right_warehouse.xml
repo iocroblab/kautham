@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Config>        
+    <Problemfiles>
+        <kautham name="tiago_warehouse_counterABC.xml" />
+        <directory name="/demos/OMPL_geo_demos/Tiago_warehouse/"/>
+        <rviz name="config/kautham_tiago_warehouse.rviz" />
+    </Problemfiles>
+</Config>

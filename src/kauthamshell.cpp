@@ -1934,40 +1934,6 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::getObstaclesFileNames(std::vector<std::string> &onames) {
-        try {
-            if (!problemOpened()) {
-                cout << "The problem is not opened" << endl;
-                return false;
-            }
-
-            Problem *const problem = (Problem*)memPtr_;
-
-            problem->getObstaclesFileNames(onames);
-            /*
-            std::cout<<"-------onames: obstacle filename.size = "<<onames.size()<<std::endl;
-            for(int i=0; i<onames.size(); i++)
-            {
-                std::cout<<"---------obstacle filename "<<i<<": "<<onames[i]<<std::endl;
-            }
-            */
-
-            return true;
-
-        } catch (const KthExcp& excp) {
-            cout << "Error: " << excp.what() << endl << excp.more() << endl;
-        } catch (const exception& excp) {
-            cout << "Error: " << excp.what() << endl;
-        } catch(...) {
-            cout << "Something is wrong with the problem. Please run the "
-                 << "problem with the Kautham2 application at less once in order "
-                 << "to verify the correctness of the problem formulation.\n";
-        }
-
-        return true;
-    }
-
-
     bool kauthamshell::getObstaclesNames(std::vector<std::string> &obsnames) {
         try {
             if (!problemOpened()) {
