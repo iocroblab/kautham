@@ -158,8 +158,11 @@ namespace Kautham {
     //!number of decimals to be shown. The derived classes may change the defaul value using setParameters.
     int _decimals;
 
+    //!flag to determine if the potential field should be computed from scratch or not. Used in HF planner
+    bool _incremental;
+
     //!Function to load the boost graph data
-     void loadGraph();
+    void loadGraph();
 
 		//!Function to delete the graphs
     void clearGraph();

@@ -52,6 +52,7 @@ namespace Kautham {
 		_goalPotential = 0.0;
     _showLabels = 1;
     _decimals = 0;
+    _incremental = 0;//by default makes a clear before any new call to solve in function trysolve().
 
     //set intial values from parent class data
     _speedFactor = 1;

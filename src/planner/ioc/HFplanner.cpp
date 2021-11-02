@@ -45,6 +45,8 @@ namespace Kautham {
 		_mainiter=10;
 		addParameter("HF relax iter", _hfiter);
 		addParameter("main iter", _mainiter);
+    _incremental=0;
+    addParameter("_incremental (0/1)", _incremental);
 		_dirichlet=0;
 		addParameter("(1)dirichlet (0)neumann", _dirichlet);
 		_goalPotential=-1000;
@@ -68,6 +70,12 @@ namespace Kautham {
         it = _parameters.find("_Show labels (0/1)");
         if(it != _parameters.end())
           _showLabels = it->second;
+        else
+          return false;
+
+        it = _parameters.find("_incremental (0/1)");
+        if(it != _parameters.end())
+          _incremental = it->second;
         else
           return false;
 
@@ -187,11 +195,16 @@ namespace Kautham {
 		{
       tmpSamGoal->setCoords(goalSamp()->getCoords());
       tmpSamInit->setCoords(initSamp()->getCoords());
-      for(unsigned i=0; i<_wkSpace->getNumRobControls();i++)
+
+
+      if(!_incremental)
       {
-          setStepsDiscretization(_stepsDiscretization[i],i);
+        for(unsigned i=0; i<_wkSpace->getNumRobControls();i++)
+        {
+            setStepsDiscretization(_stepsDiscretization[i],i);
+        }
+        setRandValues();
       }
-      setRandValues();
       computeHF(indexgoal);
 
 			//verify init and goal samples
