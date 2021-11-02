@@ -128,6 +128,12 @@ namespace Kautham {
 		bool NF1Planner::trySolve()
 		{
 			//cout << "MyGridPlanner::trySolve - now a simple rectilinear connection without collision checking..."<<endl<<flush;
+      for(unsigned i=0; i<_wkSpace->getNumRobControls();i++)
+      {
+          setStepsDiscretization(_stepsDiscretization[i],i);
+      }
+      setRandValues();
+      computeNF1(indexgoal);
 
 			if(goalSamp()->isFree()==false || initSamp()->isFree()==false) 
 			{
