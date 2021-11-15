@@ -220,7 +220,7 @@ bool loadRobots()
             std::stringstream guibool;
             if(gui) guibool << "true";
             else guibool << "false";
-            std:cout<<"***** RVIZ CONFIG FILE *** "<<rvizfile<<std::endl;
+            std::cout<<"***** RVIZ CONFIG FILE *** "<<rvizfile<<std::endl;
             viewerlaunchstr = viewerlaunchstr + " " + rbool.str() + ":=true " + rlabel.str() +
                               ":=" + robot_namespace.str() + " gui:=" + guibool.str() + " rvizconfig:=" + rvizfile;
         }
