@@ -382,7 +382,7 @@ bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
                        kautham::SetRobotsConfig::Response &res) {
 
     std::vector<RobConf> config;
-    res.response = ksh->setRobotsConfig(req.controls, config);
+    bool setRC = ksh->setRobotsConfig(req.controls, config);
     res.config.resize(config.size());
     for(unsigned int i=0; i<config.size();i++)
     {
@@ -419,7 +419,6 @@ bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
                     joint_state_robot[i].position[j] = config[i].second.getCoordinates().at(j);
             }
         }
-        /*
         std::cout<<"ROBOT "<<i<<std::endl;
         std::cout<<"x = "<<res.config[i].base.position.x<<std::endl;
         std::cout<<"y = "<<res.config[i].base.position.y<<std::endl;
@@ -429,13 +428,15 @@ bool srvSetRobotsConfig(kautham::SetRobotsConfig::Request &req,
         std::cout<<"qz = "<<res.config[i].base.orientation.y<<std::endl;
         std::cout<<"qw = "<<res.config[i].base.orientation.w<<std::endl;
         std::cout<<"q = (";
-        */
         //std::cout<<"ROBOT "<<i<<std::endl;
         //for(unsigned int j=0; j<joint_state_robot[i].position.size();j++)
         //    std::cout<<res.config[i].joints[j]<<" ";
         //std::cout<<std::endl;
         //std::cout<<"ROBOT "<<i<<std::endl;
     }
+    res.response = setRC;
+    return setRC;
+
 }
 
 
