@@ -125,7 +125,7 @@ bool srvVisualizeScene(kautham::VisualizeScene::Request &req,
     uint i=0;
     for (std::pair<std::string, Robot*> element : ksh->getObstaclesMap() )
     {
-        ROS_INFO("NAME = %s obstaclesfilenames[%d] = %s",element.first,i,element.second->getFileName());
+        ROS_INFO("NAME = %s obstaclesfilenames[%d] = %s",element.first.c_str(),i,element.second->getFileName().c_str());
         kthloadobstacles_srv.request.obstaclesfiles[i] = element.second->getFileName();
         kthloadobstacles_srv.request.obstaclesnames[i] = element.first;
         ksh->getObstaclePos(element.first, poses[i]);
