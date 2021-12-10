@@ -1397,7 +1397,7 @@ namespace Kautham {
  /*!
   * Gets the joint names
   */
-    bool Robot::getJointNames(std::vector<std::string> &jnames)
+    void Robot::getJointNames(std::vector<std::string> &jnames)
     {
         //std::cout<<" ----------- getJointNames with _jointnames.size() = "<<_jointnames.size()<<std::endl;
         jnames.resize(_jointnames.size());
@@ -1408,5 +1408,3 @@ namespace Kautham {
         }
     }
 }
-
-

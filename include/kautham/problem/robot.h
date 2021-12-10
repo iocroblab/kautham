@@ -40,7 +40,7 @@
 
 
 using namespace std;
-	
+
 //class InverseKinematic;
 
 namespace Kautham {
@@ -305,7 +305,7 @@ namespace Kautham {
     void setViewLink(string name);
 
     //! Gets the vector of joint names
-    bool getJointNames(std::vector<std::string> &jnames);
+    void getJointNames(std::vector<std::string> &jnames);
 
     //! Return if this obstcale is attachable
     inline bool isAttachable() {return (!isAttached() && (links.size() == 1));}
@@ -346,4 +346,3 @@ namespace Kautham {
 }
 
 #endif  //_ROBOT_H
-
