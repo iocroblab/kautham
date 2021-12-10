@@ -44,6 +44,12 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
+      FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
 ########### Options ####################
 option( KAUTHAM_FCL "Use FCL" ON )
 option( KAUTHAM_OMPL "Use OMPL planners" ON )
