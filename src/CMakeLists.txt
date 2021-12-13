@@ -130,7 +130,7 @@ target_link_libraries(libkautham ${EXTRA_LIBS})
 # extra libraries should contain sampling libPQP libgdiam PUGI OMPL ARMADILLO ODE libDNN libkin libkthutil 
 
 set(KAUTHAM_DIRNAME_lib ${CMAKE_INSTALL_LIBDIR})
-set(KAUTHAM_DIRNAME_include "${CMAKE_INSTALL_PREFIX}/include/kautham")
+set(KAUTHAM_DIRNAME_include "${CMAKE_INSTALL_PREFIX}/include")
 
 
 # Headers install
