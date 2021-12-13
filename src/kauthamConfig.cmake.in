@@ -3,7 +3,6 @@
 #  KAUTHAM_INCLUDE_DIRS - include directories for Kautham Lib
 #  KAUTHAM_LIBRARIES    - libraries to link against Kautham Libs
 #  KAUTHAM_LIBRARIES_STATIC - static version of the library
-#  KAUTHAM_DEFINITIONS - definitions to use with the Kautham Lib
 
 
 @PACKAGE_INIT@
@@ -12,5 +11,4 @@ SET_AND_CHECK(KAUTHAM_INCLUDE_DIR @KAUTHAM_DIRNAME_include@ )
 
 SET(KAUTHAM_INCLUDE_DIRS ${KAUTHAM_INCLUDE_DIR} )
 SET(KAUTHAM_LIBRARIES kautham)
-SET(KAUTHAM_DEFINITIONS @KAUTHAM_DEFS@ )
 
