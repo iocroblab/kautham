@@ -5,18 +5,14 @@ set ( kthutil_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/kthutil )
 
 
 ##### pugixml ########
-find_package( PugiXML )
+find_package( PugiXML)
 if(PUGI_XML_FOUND)
    message( STATUS "PugiXML FOUND, using it")
    include_directories( ${PUGI_XML_INCLUDE_DIR})
+   set(EXTRA_LIBS ${EXTRA_LIBS} ${PUGI_XML_LIBRARIES})
 else(PUGI_XML_FOUND)
-   message(STATUS "PugiXML not found, using internal copy")
-   add_subdirectory ( external/pugixml )
-   include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/external/pugixml )
-   set(PUGI_XML_LIBRARIES libpugixml)
+   message(FATAL_ERROR "PugiXML not found. Please install it")
 endif(PUGI_XML_FOUND)
-# Assign to EXTRA_LIBS or the internal or system pugixml lib.
-set(EXTRA_LIBS ${EXTRA_LIBS} ${PUGI_XML_LIBRARIES})
 
 add_subdirectory( util )
 add_subdirectory( external )
