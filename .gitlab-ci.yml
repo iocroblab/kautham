@@ -8,7 +8,7 @@ debian-bullseye:
   image: bullseye-robotics
   before_script:
   - apt-get -q update
-  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev cmake libroslib-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev libroscpp-dev libtrajectory-msgs-dev ros-message-generation python-all python3-rospy libvisualization-msgs-dev
+  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev cmake libroslib-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev libroscpp-dev libtrajectory-msgs-dev ros-message-generation python-all python3-rospy libvisualization-msgs-dev ros-geometry-msgs libgeometry-msgs-dev
   
   script:
     - mkdir build
