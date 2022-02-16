@@ -1,16 +1,12 @@
 stages:
-  - debian-buster
-  - ubuntu-bionic-melodic
+  - debian-bullseye
+  - ubuntu-focal-noetic
   
-debian-buster:
-  stage: debian-buster
+debian-bullseye:
+  stage: debian-bullseye
   
-  image: debian
+  image: bullseye-robotics
   before_script:
-  - apt-get -q update
-  - apt-get -q -y install --no-install-recommends dirmngr gnupg
-  - echo "deb http://debrob.upc.edu/debian-robotics buster-robotics main" > /etc/apt/sources.list.d/debian-robotics.list
-  - apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-keys 63DE76AC0B6779BF
   - apt-get -q update
   - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev cmake libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev libroscpp-dev libtrajectory-msgs-dev ros-message-generation python-all python3-rospy
   
@@ -20,8 +16,8 @@ debian-buster:
     - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=ON ..
     - make -j2
 
-ubuntu-bionic-melodic:
-  stage: ubuntu-bionic-melodic
+ubuntu-focal-noetic:
+  stage: ubuntu-focal-noetic
   
   image: ros
   before_script:
