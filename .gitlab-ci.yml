@@ -21,9 +21,10 @@ ubuntu-focal-noetic:
   
   image: ros
   before_script:
-  - add-apt-repository -y ppa:deb-rob/focal-robotics
-  - apt-get -q update
-  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends libompl-dev cmake libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev libroscpp-dev libtrajectory-msgs-dev ros-message-generation python3-all python3-rospy libroslib-dev libvisualization-msgs-dev libtf2-dev libtf2-ros-dev libgeometry-msgs-dev ros-geometry-msgs libsensor-msgs-dev
+   - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends cmake software-properties-common
+   - add-apt-repository -y ppa:deb-rob/focal-robotics
+   - apt-get -q update
+   - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends libompl-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev libroscpp-dev libtrajectory-msgs-dev ros-message-generation python3-all python3-rospy libroslib-dev libvisualization-msgs-dev libtf2-dev libtf2-ros-dev libgeometry-msgs-dev ros-geometry-msgs libsensor-msgs-dev
   
   script:
     - mkdir build
