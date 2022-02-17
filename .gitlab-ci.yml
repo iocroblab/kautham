@@ -19,15 +19,16 @@ debian-bullseye:
 ubuntu-focal-noetic:
   stage: ubuntu-focal-noetic
   
-  image: ros
+  image: osrf/ros:noetic-desktop-full
   before_script:
     - apt-get -q update
     - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends cmake software-properties-common
     - add-apt-repository -y ppa:deb-rob/focal-robotics
     - apt-get -q update
-    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends libompl-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev libroscpp-dev libtrajectory-msgs-dev ros-message-generation python3-all python3-rospy libroslib-dev libvisualization-msgs-dev libtf2-dev libtf2-ros-dev libgeometry-msgs-dev ros-geometry-msgs libsensor-msgs-dev
-  
+    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends libompl-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev libsoqt520-dev libcoin-dev
+
   script:
+    - source /opt/ros/noetic/setup.bash
     - mkdir build
     - cd build
     - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=ON ..
