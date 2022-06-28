@@ -590,7 +590,7 @@ namespace Kautham {
                     peSpace.push_back( (ob::ProjectionEvaluatorPtr) new ob::SubspaceProjectionEvaluator(&*space,i,projToUse) );
                     peSpace[i]->setup();
                     string projname = "drawprojection"; //
-                    string robotnumber = static_cast<ostringstream*>( &(ostringstream() << i) )->str();//the string correspoding to number i
+                    string robotnumber = (std::ostringstream() << i).str();  //the string correspoding to number i
                     projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
                     space->registerProjection(projname.c_str(),peSpace[i]);
                 }
@@ -1085,8 +1085,7 @@ namespace Kautham {
             }
 
             //Use the projection associated to the subspace of the robot passed as a parameter.
-            string projectionName("drawprojection" + static_cast<ostringstream*>
-                                  (&(ostringstream() << robot))->str());
+            string projectionName("drawprojection" + (std::ostringstream() << robot).str());
             ob::ProjectionEvaluatorPtr projection(space->getProjection(projectionName));
             Kautham::Vector state(k);
 

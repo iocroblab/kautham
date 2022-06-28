@@ -921,7 +921,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
 
         //Use the projection associated to the subspace of the robot index passed as a parameter.
         string projname = "drawprojection"; //
-        string robotnumber = static_cast<ostringstream*>( &(ostringstream() << numrob) )->str();//the string correspoding to number numrob
+        string robotnumber = (std::ostringstream() << numrob).str();  //the string correspoding to number numrob
         projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
         //ob::ProjectionEvaluatorPtr projToUse = stateSpace->getProjection(projname.c_str());
         ob::ProjectionEvaluatorPtr projToUse = stateSpacePtr->getDefaultProjection();
@@ -1162,7 +1162,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
 
         //Use the projection associated to the subspace of the robot index passed as a parameter.
         string projname = "drawprojection"; //
-        string robotnumber = static_cast<ostringstream*>( &(ostringstream() << numrob) )->str();//the string correspoding to number numrob
+        string robotnumber = (std::ostringstream() << numrob).str();  //the string correspoding to number numrob
         projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
         //ob::ProjectionEvaluatorPtr projToUse = stateSpace->getProjection(projname.c_str());
         ob::ProjectionEvaluatorPtr projToUse = stateSpace->getDefaultProjection();

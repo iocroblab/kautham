@@ -41,7 +41,7 @@ std::string toString(const bool value) {
 
 template<typename T>
 std::string toString(const T &value) {
-    return static_cast<std::ostringstream&>((std::ostringstream() << std::dec << value)).str();
+    return (std::ostringstream() << std::dec << value).str();
 }
 
 
