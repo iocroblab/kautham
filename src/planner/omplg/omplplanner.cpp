@@ -1088,7 +1088,12 @@ namespace Kautham {
             string projectionName("drawprojection" + static_cast<ostringstream*>
                                   (&(ostringstream() << robot))->str());
             ob::ProjectionEvaluatorPtr projection(space->getProjection(projectionName));
-            Kautham::Vector state(k);
+            
+            //see https://ompl.kavrakilab.org/RealVectorStateProjections_8cpp_source.html
+            //the function void ompl::base::RealVectorIdentityProjectionEvaluator::project(const State *state,Eigen::Ref<Eigen::VectorXd> projection) const
+            //does not allow to resize the projection vector, so it has to be of the correct size, which is (see line 215) copySize_ = getDimension() * sizeof(double);
+            //Here the projection is called state:
+            Kautham::Vector state(projection->getDimension()*sizeof(double));
 
             //Load the planner data to be drawn
             ob::PlannerDataPtr pdata(new ob::PlannerData(ss->getSpaceInformation()));
@@ -1115,11 +1120,12 @@ namespace Kautham {
             SbVec3f *goalVertices = new SbVec3f[goalStates->getStateCount()];
             for (unsigned int i(0); i < goalStates->getStateCount(); ++i) {
                 projection->project(goalStates->getState(i),state);
-
+                
                 goalVertices[i][0] = state[0];
                 goalVertices[i][1] = state[1];
                 goalVertices[i][2] = ((k > 2)? state[2] : 0.0);
             }
+            
             SbVec3f *vertices = new SbVec3f[pdata->numVertices()];
             SbVec3f *startVertices = new SbVec3f[pdata->numStartVertices()];
             SbVec3f *otherVertices = new SbVec3f[pdata->numVertices()-
