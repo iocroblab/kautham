@@ -156,7 +156,7 @@ namespace Kautham {
 
     double kauthamshell::cumDistCheck(std::vector<float> smpcoords) {
         Sample *smp = NULL;
-        double value;
+        double value=0.;
 
         try {
             if (!problemOpened()) {
@@ -1855,7 +1855,7 @@ namespace Kautham {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
-                return false;
+                return 0;
             }
 
             Problem *const problem = (Problem*)memPtr_;
@@ -1870,6 +1870,7 @@ namespace Kautham {
                  << "problem with the Kautham2 application at less once in order "
                  << "to verify the correctness of the problem formulation.\n";
         }
+        return 0;
     }
 
 
@@ -1877,7 +1878,7 @@ namespace Kautham {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
-                return false;
+                return 0;
             }
 
             Problem *const problem = (Problem*)memPtr_;
@@ -1892,6 +1893,7 @@ namespace Kautham {
                  << "problem with the Kautham2 application at less once in order "
                  << "to verify the correctness of the problem formulation.\n";
         }
+        return 0;
     }
 
     map<string, Robot*> kauthamshell::getObstaclesMap()
