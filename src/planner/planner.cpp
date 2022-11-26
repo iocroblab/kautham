@@ -128,7 +128,7 @@ namespace Kautham{
         //for(int i=0; i<_simulationPath.at(step)->getCoords().size();i++)
         //  std::cout<<" "<<_simulationPath.at(step)->getCoords()[i];
         //std::cout<<std::endl;
-        for(int k=0; k<_simulationPath.at(step)->getMappedConf().size(); k++) {
+        for(uint k=0; k<_simulationPath.at(step)->getMappedConf().size(); k++) {
          //std::cout<<"k = "<<k<<std::endl;
          //std::cout<<"_wkSpace->getRobot(k)->isSE3Enabled() = "<<_wkSpace->getRobot(k)->isSE3Enabled()<<std::endl;
          //std::cout<<"_wkSpace->getRobot(k)->getNumJoints() = "<<_wkSpace->getRobot(k)->getNumJoints()<<std::endl;
@@ -182,7 +182,7 @@ namespace Kautham{
               //now they are retreived
               wkSpace()->restoreInitialObjectPoses();
             }
-            
+
             int previousStep;
             int currentStep;
             int attachdetachstep;
@@ -195,7 +195,7 @@ namespace Kautham{
 
               //cout<<"_attachdetach["<<i<<"] "<<attachdetachstep<<" action="<<_attachdetach[i].action<<endl;
               //cout<<"_simStep="<<_simStep <<" step="<<step<<endl;
-              
+
               //set limits for comparison
               if(_simStep<(int)step)
               {
