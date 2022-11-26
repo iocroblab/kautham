@@ -68,6 +68,7 @@ bool brent(double ax, double bx, double cx, double (*f)(double),
     double xm,tol1,tol2,r,q,p,etemp,d,u,fu;
 
     //Main program loop
+    d=0.;
     while (it < maxIt && !found) {
         xm = 0.5*(a+b);
         tol1 = tol*std::abs(x)+ZEPS;
@@ -849,7 +850,7 @@ SynergyTree *makeSynergyTree(const arma::mat &M, const arma::vec &t,
     //Compute normalized position and velocities samples
     arma::mat Mp(n,m);
     arma::mat Mv(n,m);
-    unsigned int k;
+    unsigned int k=0;
     for (unsigned int j = 0; j < m; ++j) {
         k = 0;
         for (unsigned int i = 0; i < n; ++i) {
