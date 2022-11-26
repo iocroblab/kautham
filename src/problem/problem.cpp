@@ -499,7 +499,7 @@ bool Problem::createPlannerFromFile(istream *xml_inputfile, ompl::control::Simpl
 
 bool Problem::createPlannerFromFile(string problemFile) {
     xml_document *doc = new xml_document;
-    if (doc->load( problemFile.c_str() )) {
+    if (doc->load_string( problemFile.c_str() )) {
         //if the file was correctly parsed
         return createPlannerFromFile(doc);
     } else {
@@ -509,7 +509,7 @@ bool Problem::createPlannerFromFile(string problemFile) {
 
 bool Problem::createPlannerFromFile(string problemFile, ompl::geometric::SimpleSetup *ssptr) {
     xml_document *doc = new xml_document;
-    if (doc->load( problemFile.c_str() )) {
+    if (doc->load_string( problemFile.c_str() )) {
         //if the file was correctly parsed
         return createPlannerFromFile(doc,ssptr);
     } else {
@@ -519,7 +519,7 @@ bool Problem::createPlannerFromFile(string problemFile, ompl::geometric::SimpleS
 
 bool Problem::createPlannerFromFile(string problemFile, ompl::control::SimpleSetup *ssptr) {
     xml_document *doc = new xml_document;
-    if (doc->load( problemFile.c_str() )) {
+    if (doc->load_string( problemFile.c_str() )) {
         //if the file was correctly parsed
         return createPlannerFromFile(doc,ssptr);
     } else {
@@ -2173,7 +2173,7 @@ bool Problem::setObstacleControls(xml_document *doc) {
 
 
 bool Problem::setFixedObstacleControls() {
-    int numObs = _wspace->getNumObstacles();
+    //int numObs = _wspace->getNumObstacles();
     int numDOFs;
     KthReal *offMatrix;
     int i=0;
