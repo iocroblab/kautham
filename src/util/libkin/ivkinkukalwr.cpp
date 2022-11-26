@@ -68,6 +68,7 @@ bool IvKinKukaLWR::solve(){
     };
 
     //  Auxiliar lambda function for pose ploting
+    /*
     auto plot_rot = [](const mt::Rotation* rot, const char* rot_name) {
         std::cout << "-- " << rot_name << " ------------------------" << std::endl;
         mt::Matrix3x3 rot_mat = rot->getMatrix();
@@ -76,6 +77,7 @@ bool IvKinKukaLWR::solve(){
             std::cout << std::endl;
         }
     };
+    */
 
 
     std::cout << "KUKA LWR IK ----------------------------------------------------------" << std::endl;
