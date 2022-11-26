@@ -48,7 +48,7 @@ namespace Kautham {
             Point3 p0, p1;
             Segment(const Point3 startPoint, const Point3 endPoint)
                 : p0(startPoint),p1(endPoint) {
-
+                radius=0;
             }
             double radius;
         };
@@ -144,4 +144,3 @@ namespace Kautham {
 
 #endif // KAUTHAM_USE_OMPL
 #endif  //_omplMyOBJECTIVE_H
-
