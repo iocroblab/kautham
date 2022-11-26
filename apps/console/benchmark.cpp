@@ -33,7 +33,6 @@
 #include "benchmark.h"
 
 
-#define SSTR(x) dynamic_cast<std::ostringstream&>(std::ostringstream() << std::dec << x).str()
 
 using namespace Kautham;
 
@@ -57,8 +56,8 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
     // (the added data will be recorded in the log file. For example:
     // ob::PlannerDataPtr pdata(new ob::PlannerData(planner->getSpaceInformation()));
     // planner->getPlannerData(*pdata);
-    // run["numEdges INTEGER"] = SSTR(pdata->numEdges());
-    // run["numVertices INTEGER"] = SSTR(pdata->numVertices());*/
+    // run["numEdges INTEGER"] = std::to_string(pdata->numEdges());
+    // run["numVertices INTEGER"] = std::to_string(pdata->numVertices());*/
     // The format of added data is string key, string value pairs,
     // with the convention that the last word in string key is one of
     // REAL, INTEGER, BOOLEAN, STRING, ENUM. (this will be the type of the field
@@ -69,7 +68,7 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
     omplplanner::ValidityChecker *validityChecker = dynamic_cast<omplplanner::ValidityChecker*>
             (planner->getSpaceInformation()->getStateValidityChecker().get());
     if (validityChecker) {
-        run["collision checks INTEGER"] = SSTR(validityChecker->getCollisionChecks());
+        run["collision checks INTEGER"] = std::to_string(validityChecker->getCollisionChecks());
     }
 
     ob::ProblemDefinitionPtr pdef = planner->getProblemDefinition();
@@ -131,21 +130,21 @@ void postRunEvent(const ob::PlannerPtr &planner, ompl::tools::Benchmark::RunProp
                 pdata->getIncomingEdges(v2,edgeList);
             }
 
-            run["path cost REAL"] = SSTR(cost.value());
-            run["path cost mean REAL"] = SSTR(cost.value()/length);
-            run["MW cost REAL"] = SSTR(costMW);
-            run["PID cost REAL"] = SSTR(costPID);
-            run["state cost mean REAL"] = SSTR(accStateCost/length);
-            run["state cost max REAL"] = SSTR(maxStateCost);
-            run["state cost min REAL"] = SSTR(minStateCost);
+            run["path cost REAL"] = std::to_string(cost.value());
+            run["path cost mean REAL"] = std::to_string(cost.value()/length);
+            run["MW cost REAL"] = std::to_string(costMW);
+            run["PID cost REAL"] = std::to_string(costPID);
+            run["state cost mean REAL"] = std::to_string(accStateCost/length);
+            run["state cost max REAL"] = std::to_string(maxStateCost);
+            run["state cost min REAL"] = std::to_string(minStateCost);
         } else {
-            run["path cost REAL"] = SSTR(opt->infiniteCost());
-            run["path cost mean REAL"] = SSTR(opt->infiniteCost());
-            run["MW cost REAL"] = SSTR(opt->infiniteCost());
-            run["PID cost REAL"] = SSTR(opt->infiniteCost());
-            run["state cost mean REAL"] = SSTR(opt->infiniteCost());
-            run["state cost max REAL"] = SSTR(opt->infiniteCost());
-            run["state cost min REAL"] = SSTR(opt->infiniteCost());
+            run["path cost REAL"] = std::to_string(opt->infiniteCost().value());
+            run["path cost mean REAL"] = std::to_string(opt->infiniteCost().value());
+            run["MW cost REAL"] = std::to_string(opt->infiniteCost().value());
+            run["PID cost REAL"] = std::to_string(opt->infiniteCost().value());
+            run["state cost mean REAL"] = std::to_string(opt->infiniteCost().value());
+            run["state cost max REAL"] = std::to_string(opt->infiniteCost().value());
+            run["state cost min REAL"] = std::to_string(opt->infiniteCost().value());
         }
     }
 }
