@@ -460,10 +460,10 @@ namespace Kautham {
                         //cout<<"robot "<<irob<<endl;
                         //cout<<"_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size() = "<<_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()<<endl;
                         int ilink;
-                        int iobj;
+                        //int iobj;
                         if(_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()!=0)
                         {
-                            std::string obsname = _planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().obs->getName();                         
+                            std::string obsname = _planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().obs->getName();
 
                             std::string linkname =_planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().link->getName();
                             for(unsigned int k=0;k<_planner->wkSpace()->getRobot(irob)->getNumLinks();k++)
