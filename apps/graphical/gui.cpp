@@ -456,6 +456,8 @@ namespace Kautham {
             indexPlannerTab = propertiesTab->indexOf(tmpPlan);
 
             //draw path and planner data in Collision tab
+            //commented nonsense code (2022)
+            /*
             SoSeparator *pathanddata(plan->getIvPathAndDataScene());
             if (pathanddata) {
                 for (unsigned int i(0); i < viewers.size(); ++i) {
@@ -465,6 +467,7 @@ namespace Kautham {
                 }
             }
             return true;
+            */
         }
         return false;
     }
