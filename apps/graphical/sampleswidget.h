@@ -21,7 +21,7 @@
  \*************************************************************************/
 
 /* Author: Nestor Garcia Hidalgo */
- 
+
 
 #if !defined(_SAMPLESWIDGET_H)
 #define _SAMPLESWIDGET_H
@@ -69,7 +69,7 @@ namespace Kautham{
          * \param parent parent widget
          * \param f window's flags
          */
-        SamplesWidget(Problem *problem, QWidget *parent = 0, Qt::WindowFlags f = 0);
+        SamplesWidget(Problem *problem, QWidget *parent = 0, Qt::WindowFlags f = {});
 
     signals:
         /*!
@@ -180,4 +180,3 @@ namespace Kautham{
 
 
 #endif // _SAMPLESWIDGET_H
-
