@@ -43,7 +43,7 @@ namespace Kautham {
          * \param parent Parent of the dialog
          * \param f Window flags
          */
-        DefaultPathDialog(QStringList pathList, QWidget *parent = 0, Qt::WindowFlags f = 0);
+        DefaultPathDialog(QStringList pathList, QWidget *parent = 0, Qt::WindowFlags f = {});
 
         /*!
          * \brief getList Executes the dialog and lets the user to update the path list

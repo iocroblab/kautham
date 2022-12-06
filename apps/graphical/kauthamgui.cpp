@@ -24,7 +24,7 @@
 
 
 #include <sstream>
-  
+
 #include <QFile>
 #include <QSettings>
 #include <QString>
@@ -95,7 +95,7 @@ void Application::setActions(){
     fileopen.addFile(":/icons/fileopen_48x48.png");
     fileopen.addFile(":/icons/fileopen_64x64.png");
     mainWindow->setAction(FILETOOL,"&Open","CTRL+O",fileopen,this,SLOT(openFile()));
-    
+
     QIcon filesave;
     filesave.addFile(":/icons/filesave_16x16.png");
     filesave.addFile(":/icons/filesave_22x22.png");
@@ -103,7 +103,7 @@ void Application::setActions(){
     filesave.addFile(":/icons/filesave_48x48.png");
     filesave.addFile(":/icons/filesave_64x64.png");
     mainWindow->setAction(FILETOOL,"&Save","CTRL+S",filesave,this,SLOT(saveFile()));
-    
+
     QIcon filesaveas;
     filesaveas.addFile(":/icons/filesaveas_16x16.png");
     filesaveas.addFile(":/icons/filesaveas_22x22.png");
@@ -111,13 +111,13 @@ void Application::setActions(){
     filesaveas.addFile(":/icons/filesaveas_48x48.png");
     filesaveas.addFile(":/icons/filesaveas_64x64.png");
     mainWindow->setAction(FILETOOL,"Save &as","CTRL+A",filesaveas,this,SLOT(saveAsFile()));
-    
+
     mainWindow->addSeparator(FILETOOL);
-    
+
     setRecentFilesAction();
-    
+
     mainWindow->addSeparator(FILEMENU);
-    
+
     QIcon fileclose;
     fileclose.addFile(":/icons/fileclose_16x16.png");
     fileclose.addFile(":/icons/fileclose_22x22.png");
@@ -143,7 +143,7 @@ void Application::setActions(){
     magnet.addFile(":/icons/magnet_48x48.png");
     magnet.addFile(":/icons/magnet_64x64.png");
     mainWindow->setAction(ACTIONTOOL,"At/Detach Object","",magnet,mainWindow,SLOT(attachObject()));
-    
+
     QIcon image;
     image.addFile(":/icons/image_16x16.png");
     image.addFile(":/icons/image_22x22.png");
@@ -308,7 +308,7 @@ void Application::saveAsFile(){
                     mainWindow,
                     "Save as ...",
                     last_path,
-                    "All configuration files (*.xml)");        
+                    "All configuration files (*.xml)");
         if (!path.isEmpty()) {
             uint pointIndex = path.lastIndexOf(".");
             uint slashIndex = path.lastIndexOf("/");
@@ -492,7 +492,7 @@ bool Application::problemSetup(string problemFile){
             }
         }
     } catch (const KthExcp& excp) {
-        qDebug() << excp.what() << endl << excp.more() << endl;
+        qDebug() << excp.what() << Qt::endl << excp.more() << Qt::endl;
 
         mainWindow->setDisabled(true);
         QMessageBox msgBox(mainWindow);
@@ -506,7 +506,7 @@ bool Application::problemSetup(string problemFile){
         msgBox.exec();
         mainWindow->setDisabled(false);
     } catch (const exception& excp) {
-        qDebug() << excp.what() << endl;
+        qDebug() << excp.what() << Qt::endl;
 
         mainWindow->setDisabled(true);
         QMessageBox msgBox(mainWindow);
@@ -519,7 +519,7 @@ bool Application::problemSetup(string problemFile){
         msgBox.exec();
         mainWindow->setDisabled(false);
     } catch (...) {
-        qDebug() << "Unknown error" << endl;
+        qDebug() << "Unknown error" << Qt::endl;
 
         mainWindow->setDisabled(true);
         QMessageBox msgBox(mainWindow);
@@ -544,7 +544,7 @@ bool Application::problemSetup(string problemFile){
         pthread_join(*loadProblem_thread,NULL);
         succeed = arguments->succeed;
         if (arguments->excp != NULL) {
-            qDebug() << arguments->excp->what() << endl;
+            qDebug() << arguments->excp->what() << Qt::endl;
 
             mainWindow->setDisabled(true);
             QMessageBox msgBox(mainWindow);
@@ -634,7 +634,7 @@ bool Application::problemSetup(string problemFile){
     return true;
 }
 
-int main(int argc, char* argv[]){       
+int main(int argc, char* argv[]){
 
     (void)argc;//unused
     QApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
@@ -644,11 +644,8 @@ int main(int argc, char* argv[]){
         Application kauthApp;
         SoQt::mainLoop();
     } catch(...) {
-        qDebug() << "Unexpected error in Kautham execution" << endl;
+        qDebug() << "Unexpected error in Kautham execution" << Qt::endl;
     }
 
     return 0;
 }
-
-
-

@@ -21,8 +21,8 @@
  \*************************************************************************/
 
 /* Author: Nestor Garcia Hidalgo */
- 
- 
+
+
 #if !defined(_CONTROLWIDGET_H)
 #define _CONTROLWIDGET_H
 
@@ -55,7 +55,7 @@ namespace Kautham {
          */
         ControlWidget(Problem *problem, vector<DOFWidget *> DOFWidgets,
                       bool isRobotControlWidget, QWidget *parent = 0,
-                      Qt::WindowFlags f = 0);
+                      Qt::WindowFlags f = {});
 
         /*!
          * \brief ~ControlWidget Destructs the widget
@@ -136,5 +136,3 @@ namespace Kautham {
 }
 
 #endif  //_CONTROLWIDGET_H
-
-

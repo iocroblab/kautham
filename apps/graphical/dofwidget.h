@@ -21,7 +21,7 @@
  \*************************************************************************/
 
 /* Author: Nestor Garcia Hidalgo */
- 
+
 #if !defined(_DOFWIDGET_H)
 #define _DOFWIDGET_H
 
@@ -49,7 +49,7 @@ namespace Kautham {
          * \param parent parent of the widget
          * \param f window flags of the widget
          */
-        DOFWidget(Robot *robot, QWidget *parent = 0, Qt::WindowFlags f = 0);
+        DOFWidget(Robot *robot, QWidget *parent = 0, Qt::WindowFlags f = {});
 
         /*!
          * \brief ~DOFWidget Destructs the widget

@@ -49,7 +49,7 @@ namespace Kautham {
         * \param parent Parent of the dialog
         * \param f Window flags
         */
-        SelectRobotLinkDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
+        SelectRobotLinkDialog(QWidget *parent = 0, Qt::WindowFlags f = {});
 
         /*!
         * \brief set Fills the dialog with information of the robots and links
@@ -126,7 +126,7 @@ namespace Kautham {
          * \param parent Parent of the dialog
          * \param f Window flags
          */
-        AttachObjectDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
+        AttachObjectDialog(QWidget *parent = 0, Qt::WindowFlags f = {});
 
         /*!
         * \brief set Fills the dialog with information of the objects, robots and links of the workspace
