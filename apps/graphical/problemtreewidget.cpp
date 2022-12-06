@@ -113,7 +113,7 @@ namespace Kautham {
                         if (parentLink == NULL) {//base link
                             //find robot
                             string robotName = parentItem->parent()->text(0).toStdString();
-                            Robot *robot;
+                            Robot *robot=NULL;
                             uint i = 0;
                             bool found = false;
                             while (!found && i < workspace->getNumRobots()) {
@@ -130,7 +130,7 @@ namespace Kautham {
                                     found = true;
                             }
 
-                            if (found) {
+                            if (found && robot!=NULL) {
                                 //limits
                                 addBaseDOFs2Table(robot);
                             }
