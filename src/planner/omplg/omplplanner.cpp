@@ -1080,7 +1080,7 @@ namespace Kautham {
                     zmax = stateSpace->as<ob::RealVectorStateSpace>()->getBounds().high[2];
                 } else {
                     zmin = -FLT_MIN;
-                    xmax =  FLT_MIN;
+                    zmax =  FLT_MIN;
                 }
             }
 
