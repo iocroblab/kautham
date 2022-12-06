@@ -459,7 +459,7 @@ namespace Kautham {
                     {
                         //cout<<"robot "<<irob<<endl;
                         //cout<<"_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size() = "<<_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()<<endl;
-                        int ilink;
+                        int ilink=0;
                         //int iobj;
                         if(_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()!=0)
                         {
