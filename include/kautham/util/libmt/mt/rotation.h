@@ -470,7 +470,7 @@ public:
 Scalar angleCos(const Rotation& r1,
                 const Rotation& r2);
 
-/// Angle between unit quaternions in the range [0, pi] expressed in 
+/// Angle between unit quaternions in the range [0, pi] expressed in
 /// radians.
 Scalar angle(const Rotation& r1,
              const Rotation& r2);
@@ -638,7 +638,7 @@ inline void Rotation::getYpr(Scalar& yaw,
     const Scalar r_13(s * (m_co[0] * m_co[2] + m_co[1] * m_co[3]));
     const Scalar r_23(s * (m_co[1] * m_co[2] - m_co[0] * m_co[3]));
 
-
+    roll=0;//arbtrarily set to zero
     if (s_pitch == Scalar(1.0))
     {
       // Pitch = pi/2
