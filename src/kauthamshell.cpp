@@ -37,7 +37,7 @@ namespace ob = ompl::base;
 namespace Kautham {
     kauthamshell::kauthamshell() {
         memPtr_ = NULL;
-
+        SoDB::init();
     }
 
     kauthamshell::~kauthamshell(){
