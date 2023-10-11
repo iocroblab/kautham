@@ -619,7 +619,6 @@ bool srvPathDofNames(kautham::PathDofNames::Request &req,
 
     std::vector< std::vector<std::string> > jnames;
     jnames.resize( ksh->getNumRobots() );
-    unsigned int k=0;
     for(unsigned int i = 0; i < ksh->getNumRobots(); i++) {
       if(ksh->getRobotIsSE3enabled(i))
       {
