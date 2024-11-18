@@ -63,6 +63,7 @@ namespace Kautham {
         bool setPlannerParameter(std::string parameter, std::string value);
         bool solve(std::ostream &graphVizPlannerDataFile);
         bool getPath(std::ostream &path);
+        bool computeTrajecotry(std::ostream &path, double max_deviation, std::ostream &traj);
         bool setInterpolatePath(bool interpolate);
         bool getInterpolatePath(bool &interpolate);
         bool solve();

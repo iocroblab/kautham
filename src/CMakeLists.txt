@@ -2,6 +2,7 @@
 
 set ( kin_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin )
 set ( kthutil_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/kthutil )
+set ( libttg_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libttg )
 
 
 ##### pugixml ########

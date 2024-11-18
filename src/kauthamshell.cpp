@@ -30,6 +30,7 @@
 #include <kautham/util/kthutil/kauthamexception.h>
 #include <kautham/problem/problem.h>
 #include <kautham/util/libkin/ivkinyumi.h>
+#include <kautham/util/libttg/Trajectory.hpp>
 
 
 namespace ob = ompl::base;
@@ -1172,6 +1173,58 @@ namespace Kautham {
         return false;
     }
 
+    bool kauthamshell::computeTrajecotry(std::ostream &path, double max_deviation, std::ostream &traj) {
+        
+        // 1) Prepare the input:
+
+        // Use dynamic_cast only if you're sure path is an ostringstream, or better avoid dynamic_cast here.
+        std::ostringstream *oss = dynamic_cast<std::ostringstream*>(&path);
+        if (!oss) {
+            std::cerr << "Error: Failed to cast to std::ostringstream." << std::endl;
+            return false;
+        }
+
+        // List to store the waypoints (as Eigen::VectorXd)
+        std::list<Eigen::VectorXd> waypoints;
+
+        // Create an istringstream from the string in ostringstream
+        std::istringstream iss(oss->str());
+
+        // Each line represents a configuration, which is a space-separated list of floats.
+        for (std::string str; std::getline(iss,str); ) {
+            std::istringstream strs(str);
+
+            // Temporary vector to store numbers before creating an Eigen::VectorXd
+            std::vector<double> tempValues;
+            std::string value;
+
+            // Read space-separated values from the stream and store them in the tempValues vector
+            while (strs >> value) {
+                tempValues.push_back(std::stod(value));  // Convert string to double and store it
+            }
+
+            if (!tempValues.empty()) {
+                // Create Eigen::VectorXd of the appropriate size and populate it
+                Eigen::VectorXd conf(tempValues.size());
+                for (size_t i = 0; i < tempValues.size(); ++i) {
+                    conf(i) = tempValues[i];
+                }
+
+                // Add the filled Eigen vector to the waypoints list
+                waypoints.push_back(conf);
+            }
+        }
+
+        Eigen::VectorXd maxVelocity(1);
+        Eigen::VectorXd maxAcceleration(1);
+
+
+        // 2) Compute the trajectory:
+        Trajectory trajectory(Path(waypoints, 0.1), maxVelocity, maxAcceleration);
+
+        // 3) Build the output:
+
+    }
 
     int kauthamshell::addRobot(string robFile, double scale, vector<float> home, vector<vector<float> > limits,
                                vector<vector<float> > mapMatrix, vector<float> offMatrix) {
