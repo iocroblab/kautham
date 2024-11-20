@@ -26,8 +26,6 @@
 #if !defined(_IVFCLELEMENT_H)
 #define _IVFCLELEMENT_H
 
-#ifdef KAUTHAM_USE_FCL
-
 #include <kautham/problem/ivelement.h>
 #include <fcl/narrowphase/collision_object.h>
 #include <external/lcprng.h>
@@ -47,9 +45,9 @@ public:
 
     ~IVFCLElement();
 
-    bool collideTo(Element* other);
+    bool collideTo(Element* other) const override ;
 
-    KthReal getDistanceTo(Element* other);
+    KthReal getDistanceTo(Element* other) const override ;
 
     SoSeparator* getIvFromFCLModel(bool tran = true);
 
@@ -69,6 +67,5 @@ private:
 
 /** @}   end of Doxygen module "Problem" */
 }
-#endif
 
 #endif  //_IVFCLELEMENT_H

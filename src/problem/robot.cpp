@@ -48,7 +48,6 @@
 #include <kautham/util/libkin/ivkinyumi.h>
 #include <kautham/util/libkin/ivkinkukalwr.h>
 #include <kautham/util/libkin/constrainedkinematic.h>
-#include <kautham/problem/ivpqpelement.h>
 #include <kautham/util/kthutil/kauthamexception.h>
 
 

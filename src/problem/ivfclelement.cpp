@@ -22,9 +22,6 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
-
-#ifdef KAUTHAM_USE_FCL
-
 #include <kautham/problem/ivfclelement.h>
 #include <kautham/util/kthutil/kauthamdefs.h>
 #include <map>
@@ -108,7 +105,7 @@ IVFCLElement::~IVFCLElement() {
 }
 
 
-bool IVFCLElement::collideTo(Element* other) {
+bool IVFCLElement::collideTo(Element* other) const   {
     Element::increaseCollCheckCounter();
     try {
         fcl::CollisionRequestd request;
@@ -123,7 +120,7 @@ bool IVFCLElement::collideTo(Element* other) {
 }
 
 
-KthReal IVFCLElement::getDistanceTo(Element* other) {
+KthReal IVFCLElement::getDistanceTo(Element* other) const   {
     Element::increaseCollCheckCounter();
     try {
         fcl::DistanceRequestd request;
@@ -237,4 +234,4 @@ bool IVFCLElement::makeFCLModel() {
     return false;
 }
 }
-#endif
+

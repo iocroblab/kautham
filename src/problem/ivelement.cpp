@@ -484,24 +484,5 @@ namespace Kautham {
             return collision_ivmodel;
     }
 
-
-
-    bool IVElement::collideTo(Element* other) {
-        // this method only return a value;
-        // This method has been implemented to provide a common functionalities
-        // if the Kautham will be called without a collision checker system.
-        (void) other;//unused
-        return true;
-    }
-
-    KthReal IVElement::getDistanceTo(Element* other) {
-        // this method only return a value;
-        // This method has been implemented to provide a common functionalities
-        // if the Kautham will be called without a collision checker system.
-        (void) other;//unused
-        return 0.0;
-    }
-
-
 }
 

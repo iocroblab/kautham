@@ -28,11 +28,7 @@
 #if defined(KAUTHAM_USE_FCL)
 #include <kautham/problem/ivfclelement.h>
 #else
-#if defined(KAUTHAM_USE_PQP)
-#include <kautham/problem/ivpqpelement.h>
-#else
 #include <kautham/problem/ivelement.h>
-#endif
 #endif
 
 #include <mt/point3.h>
@@ -54,12 +50,6 @@ namespace Kautham {
              APPROACH Type, bool useBBOX){
 #if defined(KAUTHAM_USE_FCL)
       element = new IVFCLElement(ivFile,collision_ivFile,scale,useBBOX);
-#else
-#if defined(KAUTHAM_USE_PQP)
-      element = new IVPQPElement(ivFile,collision_ivFile,scale,useBBOX);
-#else
-      element = new IVElement(ivFile,collision_ivFile,scale,useBBOX);
-#endif
 #endif
 	  a = (KthReal)0.0;
 	  alpha = (KthReal)0.0;
@@ -103,13 +93,8 @@ namespace Kautham {
   Link::Link(SoSeparator *visual_model, SoSeparator *collision_model, float scale, APPROACH Type, bool useBBOX){
 #if defined(KAUTHAM_USE_FCL)
       element = new IVFCLElement(visual_model,collision_model,scale,useBBOX);
-#else
-#if defined(KAUTHAM_USE_PQP)
-      element = new IVPQPElement(visual_model,collision_model,scale,useBBOX);
-#else
-      element = new IVElement(visual_model,collision_model,scale,useBBOX);
 #endif
-#endif
+
       a = (KthReal)0.0;
       alpha = (KthReal)0.0;
       theta = (KthReal)0.0;
@@ -401,20 +386,10 @@ namespace Kautham {
 
 
   SoSeparator *Link::getModelFromColl() {
-      if (element != NULL) {
-#if defined(KAUTHAM_USE_FCL)
+    if (element != NULL) {
+    #if defined(KAUTHAM_USE_FCL)
           return (((IVFCLElement*)element)->getIvFromFCLModel());
-#else
-#if defined(KAUTHAM_USE_PQP)
-          return (((IVPQPElement*)element)->getIvFromPQPModel());
-#else
-          SoSeparator *sep = new SoSeparator;
-          return sep;
-#endif
-#endif
-      } else {
-          SoSeparator *sep = new SoSeparator;
-          return sep;
-      }
-  }
+    #endif
+    }
+    }
 }

@@ -45,8 +45,8 @@ namespace Kautham {
 
     //! Sets the orientation. Remember that orientation is a quaternion
     virtual void          setOrientation(KthReal ori[4]) = 0;
-    virtual bool          collideTo(Element* other) = 0;
-    virtual KthReal       getDistanceTo(Element* other) = 0;
+    virtual bool          collideTo(Element* other) const = 0;
+    virtual KthReal       getDistanceTo(Element* other) const = 0;
     inline KthReal*       getOrientation(){return orientation;}
     inline KthReal*       getPosition(){return position;}
     inline KthReal        getScale() const {return scale;}
