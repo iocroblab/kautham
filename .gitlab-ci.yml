@@ -1,12 +1,14 @@
 stages:
   - debian-bullseye
-  - ubuntu-focal-noetic
   - debian-bookworm
+  - ubuntu-focal-noetic
+  - ubuntu-jammy
+  
   
 debian-bullseye:
   stage: debian-bullseye
   
-  image: bullseye-robotics
+  image: bullseye
   before_script:
   - apt-get -q update
   - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev cmake libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev libroscpp-dev libtrajectory-msgs-dev ros-message-generation python3-all python3-rospy libroslib-dev libvisualization-msgs-dev libtf2-dev libtf2-ros-dev libgeometry-msgs-dev ros-geometry-msgs libsensor-msgs-dev
@@ -16,6 +18,21 @@ debian-bullseye:
     - cd build
     - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=ON ..
     - make -j2
+
+debian-bookworm:
+  stage: debian-bookworm
+  
+  image: bookworm
+  before_script:
+  - apt-get -q update
+  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev cmake libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev libtrajectory-msgs-dev python3-all
+   
+  script:
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=OFF ..
+    - make -j2
+
 
 ubuntu-focal-noetic:
   stage: ubuntu-focal-noetic
@@ -35,16 +52,20 @@ ubuntu-focal-noetic:
     - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=ON ..
     - make -j2
 
-debian-bookworm:
-  stage: debian-bookworm
+ubuntu-jammy-noetic:
+  stage: ubuntu-jammy
   
-  image: bookworm
+  image: jammy
   before_script:
-  - apt-get -q update
-  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev cmake libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev libtrajectory-msgs-dev python3-all
-   
+    - apt-get -q update
+    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends cmake software-properties-common
+    - add-apt-repository -y ppa:deb-rob/jammy-robotics
+    - apt-get -q update
+    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends libompl-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev libsoqt520-dev libcoin-dev
+
   script:
     - mkdir build
     - cd build
     - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=OFF ..
     - make -j2
+
