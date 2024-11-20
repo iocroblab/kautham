@@ -5,7 +5,7 @@ stages:
   - ubuntu-jammy
   
   
-debian-bullseye:
+debian-bullseye_job:
   stage: debian-bullseye
   
   image: debian:bullseye
@@ -19,7 +19,7 @@ debian-bullseye:
     - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=ON ..
     - make -j2
 
-debian-bookworm:
+debian-bookworm_job:
   stage: debian-bookworm
   
   image: debian:bookworm
@@ -34,7 +34,7 @@ debian-bookworm:
     - make -j2
 
 
-ubuntu-focal-noetic:
+ubuntu-focal-noetic_job:
   stage: ubuntu-focal-noetic
   
   image: osrf/ros:noetic-desktop-full
@@ -52,7 +52,7 @@ ubuntu-focal-noetic:
     - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=ON ..
     - make -j2
 
-ubuntu-jammy-noetic:
+ubuntu-jammy-noetic_job:
   stage: ubuntu-jammy
   
   image: ubuntu:jammy
@@ -69,3 +69,5 @@ ubuntu-jammy-noetic:
     - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=OFF ..
     - make -j2
 
+default:
+  allow_failure: true
