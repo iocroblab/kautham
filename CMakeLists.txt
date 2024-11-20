@@ -31,7 +31,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_definitions(-Wall -Wextra -Wpedantic -fPIC)#-Werror)
 
-set( KAUTHAM_VERSION 4.4.4 )
+set( KAUTHAM_VERSION 5.0.1 )
 STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} )
 LIST( GET KAUTHAM_VERSIONS 0 KAUTHAM_VERSION_MAJOR)
 LIST( GET KAUTHAM_VERSIONS 1 KAUTHAM_VERSION_MINOR)
@@ -51,7 +51,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 ########### Options ####################
-option( KAUTHAM_FCL "Use FCL" ON )
 option( KAUTHAM_OMPL "Use OMPL planners" ON )
 option( KAUTHAM_IOC "Use IOC planners" ON )
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
@@ -68,7 +67,7 @@ message( STATUS "Building the ROS version: ${KAUTHAM_ROS}")
 message( STATUS "Using OMPL planners: ${KAUTHAM_OMPL}")
 message( STATUS "Using IOC planners: ${KAUTHAM_IOC}")
 message( STATUS "Using Open Dynamic Engine: ${KAUTHAM_OPENDE}")
-message( STATUS "Using FCL: ${KAUTHAM_FCL}")
+message( STATUS "Using FCL: Kautham is using FCL as default collision detection engine")
 message( STATUS "Creating the HTML based API documentation: ${KAUTHAM_DOCUMENTATION}")
 
 ########### Modules path and system options ###############
@@ -168,6 +167,9 @@ FILE(GLOB_RECURSE LibFiles include/*.h src/external/*.h src/external/gdiam/*.h s
 add_custom_target(headers SOURCES ${LibFiles})
 
 
+set(ALL_INCLUDE_DIRS "")
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
 #### Boost package ###############
 set(Boost_USE_MULTITHREADED      ON)
 find_package( Boost COMPONENTS  system serialization thread REQUIRED )
@@ -181,7 +183,7 @@ else(Boost_FOUND)
         find_package( Boost COMPONENTS  system serialization thread REQUIRED )
         if(Boost_FOUND)
                 message(STATUS "Boost library found in " ${BOOST_ROOT})
-                include_directories(${Boost_INCLUDE_DIRS})
+                list(APPEND ALL_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
                 set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
                 link_directories( ${Boost_LIBRARY_DIRS} )
         else(Boost_FOUND)
@@ -196,7 +198,8 @@ include_directories( ${mt_DIR} )
 
 ### Eigen3 ############
 find_package(Eigen3 REQUIRED NO_MODULE)
-include_directories(${EIGEN3_INCLUDE_DIR})
+
+list(APPEND ALL_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
 
 #### ompl ######
 # since noetic, ros provides ompl library version.
@@ -213,7 +216,7 @@ if( OMPL_FOUND )
    endif(OMPL_VERSION  VERSION_LESS 1.3.0)
 
    message( STATUS "OMPL include is: " ${OMPL_INCLUDE_DIRS})
-   include_directories(${OMPL_INCLUDE_DIRS})
+   #list(APPEND ALL_INCLUDE_DIRS ${OMPL_INCLUDE_DIRS})
    set(EXTRA_LIBS ${EXTRA_LIBS} ${OMPL_LIBRARIES})
    add_definitions( -DKAUTHAM_USE_OMPL )
 endif()
@@ -221,15 +224,14 @@ endif()
 
 ##################### ROS-catkin ####################################
 
-include_directories( include )
-include_directories( ${CMAKE_BINARY_DIR}/include/)
-
-include_directories( src )  # for external
-
+#include_directories( include )
+#include_directories( ${CMAKE_BINARY_DIR}/include/)
 
 # Building librarires
+
 add_subdirectory ( include )
 add_subdirectory ( src )
+
 add_subdirectory ( apps )
 add_subdirectory ( doc )
 
