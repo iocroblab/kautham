@@ -27,6 +27,8 @@
 #include <kautham/util/kthutil/kauthamexception.h>
 #include <boost/lexical_cast.hpp>
 
+#include <ompl/geometric/SimpleSetup.h>
+
 namespace Kautham {
 Problem::Problem() : _wspace(NULL), _cspace(new SampleSet()),
     _sampler(NULL), _planner(NULL)  {
