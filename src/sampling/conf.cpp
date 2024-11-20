@@ -24,6 +24,7 @@
 
  
 #include <kautham/sampling/conf.h>
+#include <external/lcprng.h>
 #include <stdexcept>
 
 using namespace std;

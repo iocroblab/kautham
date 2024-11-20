@@ -30,10 +30,10 @@
 #include <string>
 #include <vector>
 #include <kautham/sampling/wmat.h>
-#include <external/lcprng.h>			//class for linear congruential generators
 #include <kautham/sampling/sample.h>
 
 using namespace std;
+class LCPRNG;
 
 namespace Kautham {
 

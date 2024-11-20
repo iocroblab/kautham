@@ -24,6 +24,7 @@
 
 
 #include <kautham/sampling/sdksampler.h>
+#include <external/lcprng.h>			//class for linear congruential generators
 
 namespace Kautham {
   int SDKSample::M = 0;

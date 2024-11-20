@@ -33,7 +33,7 @@
 
 #include <mt/mt.h>
 
-#include <external/lcprng.h>
+//#include <external/lcprng.h>
 
 #include <kautham/sampling/se2conf.h>
 
