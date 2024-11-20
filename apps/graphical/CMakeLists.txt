@@ -25,6 +25,10 @@ else( ARMADILLO_FOUND )
    message( SEND_ERROR  "armadillo Package NOT FOUND. Bounding box button will not appear in the GUI.")
 endif( ARMADILLO_FOUND )
 
+
+### Eigen3 ############
+find_package(Eigen3 REQUIRED NO_MODULE)
+
 # END Required packages for GUI
 ##############################################################################
 
@@ -85,8 +89,8 @@ set( HDR_FILES_GUI kauthamgui.h
          ui_RobotSim.h)
 
 add_executable(kautham-gui  ${SRC_FILES_GUI} ${HDR_FILES_GUI} ${QT_MOC_SRC} ${kautham_RESOURCES_RCC} )
-#target_link_libraries( kautham-gui libkautham ${SoQt_LIBRARIES} ${OPENGL_LIBRARIES} ${QT_LIBRARIES} ${Boost_LIBRARIES} ${PUGI_XML_LIBRARIES})
-target_link_libraries( kautham-gui ${QT_LIBRARIES} ${SoQt_LIBRARIES} ${Boost_LIBRARIES} libkautham )
+target_include_directories(kautham-gui PRIVATE ${CMAKE_SOURCE_DIR}/include ${EIGEN3_INCLUDE_DIR}   $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>/include  ) 
+target_link_libraries( kautham-gui libkautham ${SoQt_LIBRARIES} ${OPENGL_LIBRARIES} ${QT_LIBRARIES} ${Boost_LIBRARIES} ${PUGI_XML_LIBRARIES} ${OMPL_LIBRARIES})
 
 add_dependencies(kautham-gui libkautham)
 
