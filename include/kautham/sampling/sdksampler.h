@@ -28,11 +28,11 @@
 
 #include <kautham/sampling/sampler.h>
 #include <kautham/sampling/sequence.h>
-#include <external/lcprng.h>
 #include <kautham/sampling/sdksample.h>
 #include <kautham/sampling/wmat.h>
 #include <kautham/sampling/tmat.h>
 
+class LCPRNG;
 
 namespace Kautham{
 /** \addtogroup Sampling

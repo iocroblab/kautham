@@ -34,6 +34,8 @@
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoScale.h>
 
+#include <external/lcprng.h>
+
 using namespace boost;
 
 namespace Kautham {

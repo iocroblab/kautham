@@ -29,8 +29,8 @@
 
 #include <string>
 #include <kautham/sampling/sample.h>
-#include <external/lcprng.h>
 
+class LCPRNG;
 namespace Kautham{
 
 

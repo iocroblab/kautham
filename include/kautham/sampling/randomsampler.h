@@ -28,7 +28,8 @@
 #define _RANDOMSAMPLER_H
 
 #include <kautham/sampling/sampler.h>
-#include <external/lcprng.h>
+
+class LCPRNG;
 
 namespace Kautham{
 

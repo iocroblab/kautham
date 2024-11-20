@@ -25,6 +25,7 @@
 
 #include <kautham/sampling/gaussiansampler.h>
 #include <kautham/sampling/randomsample.h>
+#include <external/lcprng.h>
 #include <vector>
 
 namespace Kautham{
