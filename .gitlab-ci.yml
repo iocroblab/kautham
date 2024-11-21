@@ -28,25 +28,6 @@ debian-bookworm_job:
     - cd build
     - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=OFF ..
     - make -j2
-  
-
-ubuntu-focal_job:
-  stage: build-test
-  
-  image: ubuntu:focal
-  before_script:
-    - apt-get -q update
-    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends cmake software-properties-common
-    - add-apt-repository -y ppa:deb-rob/focal-robotics
-    - apt-get -q update
-    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev libboost-filesystem-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev libsoqt520-dev libcoin-dev python3-all
-
-  script:
-    - mkdir build
-    - cd build
-    - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=OFF ..
-    - make -j2
-  
 
 ubuntu-jammy_job:
   stage: build-test
@@ -65,3 +46,21 @@ ubuntu-jammy_job:
     - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=OFF ..
     - make -j2
   
+
+ubuntu-noble_job:
+  stage: build-test
+  
+  image: ubuntu:noble
+  before_script:
+    - apt-get -q update
+    - env DEBIAN_FRONTEND=noninteractive TZ="Europe/Paris" apt install -yq tzdata
+    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends cmake software-properties-common gpg-agent
+    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev libboost-filesystem-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev libsoqt520-dev libcoin-dev python3-all
+
+  script:
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKAUTHAM_DOCUMENTATION=OFF -DKAUTHAM_ROS=OFF ..
+    - make -j2
+  
+
