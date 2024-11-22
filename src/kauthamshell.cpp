@@ -1173,6 +1173,93 @@ namespace Kautham {
         return false;
     }
 
+    bool kauthamshell::getPath(std::vector<std::vector<float>> &path) {
+        try {
+            if (!problemOpened()) {
+                std::cout << "The problem is not opened" << std::endl;
+                return false;
+            }
+
+            Problem* const problem = static_cast<Problem*>(memPtr_);
+            auto plannerFamily = problem->getPlanner()->getFamily();
+
+            if (plannerFamily == OMPLPLANNER) {
+                std::cout << "OMPLPLANNER" << std::endl;
+                if (problem->getPlanner()->solveAndInherit()) {
+                    auto omplPlanner = static_cast<omplplanner::omplPlanner*>(problem->getPlanner());
+                    auto solutionPath = omplPlanner->SimpleSetup()->getSolutionPath();
+
+                    // Clear and populate the path vector
+                    path.clear();
+                    for (const auto& state : solutionPath.getStates()) {
+                        std::vector<float> stateData;
+
+                        // Cast to RealVectorStateSpace::StateType and use indexing
+                        auto* realVectorState = state->as<ompl::base::RealVectorStateSpace::StateType>();
+                        double* values = realVectorState->values; // Pointer to the data
+
+                        // Loop over dimensions and copy the values into stateData
+                        unsigned int dimension = omplPlanner->SimpleSetup()->getStateSpace()->getDimension();
+                        for (unsigned int i = 0; i < dimension; ++i) {
+                            stateData.push_back(static_cast<float>(values[i]));
+                        }
+
+                        // Add the state to the path
+                        path.push_back(stateData);
+                    }
+                    return true;
+                }
+            }
+
+            else if (plannerFamily == IOCPLANNER) {
+                std::cout << "IOCPLANNER" << std::endl;
+                if (problem->getPlanner()->solveAndInherit()) {
+                    auto samples = problem->getPlanner()->getPath();
+                    
+                    // Clear and populate the path vector
+                    path.clear();
+                    for (auto& sample : *samples) {
+                        auto mappedConfs = sample->getMappedConf();
+                        for (auto& conf : mappedConfs) {
+                            std::vector<float> stateData;
+
+                            // Append SE3 position
+                            auto pos = conf.getSE3().getPos();
+                            stateData.insert(stateData.end(), pos.begin(), pos.end());
+
+                            // Append SE3 orientation
+                            auto orient = conf.getSE3().getOrient();
+                            stateData.insert(stateData.end(), orient.begin(), orient.end());
+
+                            // Append Rn coordinates
+                            auto coordinates = conf.getRn().getCoordinates();
+                            stateData.insert(stateData.end(), coordinates.begin(), coordinates.end());
+
+                            // Add this state to the path
+                            path.push_back(stateData);
+                        }
+                    }
+                    return true;
+                }
+            } 
+            else {
+                std::cout << "ERROR in getPath: Unsupported planner family." << std::endl;
+            }
+        } 
+        catch (const KthExcp& excp) {
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
+        } 
+        catch (const std::exception& excp) {
+            std::cout << "Error: " << excp.what() << std::endl;
+        } 
+        catch (...) {
+            std::cout << "An unexpected error occurred. Verify the problem formulation with Kautham2." << std::endl;
+        }
+
+        return false;
+    }
+
+
     bool kauthamshell::computeTrajecotry(std::ostream &path, double max_deviation, std::ostream &traj) {
         
         // 1) Prepare the input:
