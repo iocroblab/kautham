@@ -193,9 +193,9 @@ filesystem REQUIRED )
 endif(Boost_FOUND)
 
 #### MT ###############
-set(mt_DIR include/kautham/util/libmt)
-message (STATUS "Adding libmt directory ${mt_DIR}")
-include_directories( ${mt_DIR} )
+#set(mt_DIR include/kautham/util/libmt)
+#message (STATUS "Adding libmt directory ${mt_DIR}")
+#include_directories( ${mt_DIR} )
 
 ### Eigen3 ############
 find_package(Eigen3 REQUIRED NO_MODULE)

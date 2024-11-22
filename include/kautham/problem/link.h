@@ -30,7 +30,7 @@
 #include <Inventor/SbLinear.h>
 #include <kautham/problem/element.h>
 #include <kautham/util/kthutil/kauthamdefs.h>
-#include <mt/mt.h>
+#include <kautham/mt/mt.h>
 #include <string>
 
 

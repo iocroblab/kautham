@@ -31,7 +31,7 @@
 #include <sstream>
 #include <iostream>
 
-#include <mt/mt.h>
+#include <kautham/mt/mt.h>
 
 //#include <external/lcprng.h>
 

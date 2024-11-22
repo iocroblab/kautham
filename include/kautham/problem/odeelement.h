@@ -22,8 +22,8 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
-#include <mt/point3.h>
-#include <mt/transform.h>
+#include <kautham/mt/point3.h>
+#include <kautham/mt/transform.h>
 
 using namespace std;
 

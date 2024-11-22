@@ -29,9 +29,9 @@
 #include <string>
 #include <vector>
 #include <stdlib.h>
-#include <mt/point3.h>
-#include <mt/rotation.h>
-#include <mt/transform.h>
+#include <kautham/mt/point3.h>
+#include <kautham/mt/rotation.h>
+#include <kautham/mt/transform.h>
 #include <map>
 
 #include <Inventor/SoPrimitiveVertex.h>

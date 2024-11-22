@@ -31,7 +31,7 @@
 #include <kautham/problem/ivelement.h>
 #endif
 
-#include <mt/point3.h>
+#include <kautham/mt/point3.h>
 
 
 namespace Kautham {

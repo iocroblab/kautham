@@ -26,8 +26,8 @@
 /////////////////////////////// PREPROCESSOR DIRECTIVES //////////////////////
 
 // MT LIBRARY HEADERS
-#include <mt/matrix3x3.h>
-#include <mt/rotation.h>
+#include <kautham/mt/matrix3x3.h>
+#include <kautham/mt/rotation.h>
 #include <cmath>
 
 

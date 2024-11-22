@@ -32,8 +32,8 @@
 
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 
-#include <mt/point3.h>
-#include <mt/rotation.h>
+#include <kautham/mt/point3.h>
+#include <kautham/mt/rotation.h>
 
 #include <kautham/problem/urdf.h>
 #include <kautham/problem/assimpImport.h>

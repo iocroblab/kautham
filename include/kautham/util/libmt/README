@@ -24,7 +24,7 @@ The mt library was designed to be self-contained and without external
 dependencies, except for the STL library. However, there is one header,
 namely mt/mt_variant.h, that wraps the 3D element classes in the MtVariant
 data structure, that depends on boost::variant.
-This header is NOT included with #include <mt/mt.h>, since it is rarely
+This header is NOT included with #include <kautham/mt/mt.h>, since it is rarely
 used. So if you are planning on using the MtVariant class, please make sure
 to have boost::variant installed on your system
 (http://www.boost.org/doc/html/variant.html).
