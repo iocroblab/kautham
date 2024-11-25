@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<robot name="lab_chair">
+	<link name="base">
+        <inertial>
+        	<origin xyz="0 0 0" rpy="0 0 0"/>
+        	<mass value="0.05"/>
+            <inertia ixx="0.000683333"  ixy="0"  ixz="0" iyy="0.000683333" iyz="0" izz="0.000683333" />
+        </inertial>
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="ioclab_files/chair.dae" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="ioclab_files/chair.dae" scale="1 1 1"/>
+            </geometry>
+        </collision>
+	</link>
+</robot>
