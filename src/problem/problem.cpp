@@ -1833,6 +1833,11 @@ bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, progress
     Robot *obs= new Robot(obstacle_node->attribute("obstacle").as_string(),
                           obstacle_node->attribute("scale").as_double(1.),useBBOX,progress);
 
+    xml_node kautham_name_node = obstacle_node->child("KauthamName");
+    if (kautham_name_node) {
+        obs->setName(kautham_name_node.attribute("name").as_string());
+    }
+
     if (!obs->isArmed()) return false;
 
     // Setup the limits of the moveable base
