@@ -1344,27 +1344,29 @@ namespace Kautham {
             traj_time_from_start.clear();
 
             double duration = trajectory.getDuration();
-
             std::vector<double> joint_positions(dof);
             std::vector<double> joint_velocities(dof);
 
-            for(double t = 0.0; t < duration; t += (1.0/freq)) {
+            auto update_trajectory = [&](double time) {
                 for (size_t q = 0; q < dof; q++) {
-                    joint_positions[q] = trajectory.getPosition(t)[q];
-                    joint_velocities[q] = trajectory.getVelocity(t)[q];
+                    joint_positions[q] = trajectory.getPosition(time)[q];
+                    joint_velocities[q] = trajectory.getVelocity(time)[q];
                 }
                 traj_positions.push_back(joint_positions);
                 traj_velocities.push_back(joint_velocities);
-                traj_time_from_start.push_back(t);
+                traj_time_from_start.push_back(time);
+            };
+
+            double last_time = 0;
+            for (double t = 0.0; t < duration; t += (1.0 / freq)) {
+                update_trajectory(t);
+                last_time = t;
             }
-            // Add the last point:
-            for (size_t q = 0; q < dof; q++) {
-                joint_positions[q] = trajectory.getPosition(duration)[q];
-                joint_velocities[q] = trajectory.getVelocity(duration)[q];
+
+            // Add the last point if not reached due to the FOR condition:
+            if (std::abs(last_time - duration) > 1e-6) {
+                update_trajectory(duration);
             }
-            traj_positions.push_back(joint_positions);
-            traj_velocities.push_back(joint_velocities);
-            traj_time_from_start.push_back(duration);
 
             return true;
         } else {
@@ -1372,6 +1374,25 @@ namespace Kautham {
             return false;
         }
     }
+
+
+    bool kauthamshell::getTrajecotry(std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq,
+                                        std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start)
+    {
+        std::vector<std::vector<double>> path;
+        if (kauthamshell::getPath(path)) {
+            std::cout << "kauthamshell::getTrajecotry -> Path successfully computed." << std::endl;
+            
+            if (kauthamshell::computeTrajecotry(path, ratio_velocity, ratio_acceleration, max_path_deviation, freq, traj_positions, traj_velocities, traj_time_from_start)) {
+                std::cout << "kauthamshell::getTrajecotry -> Trajectory successfully computed." << std::endl;
+                return true;
+            }
+            std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the trajectory." << std::endl;
+        }
+        std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the path." << std::endl;
+        return false;
+    }
+
 
     int kauthamshell::addRobot(string robFile, double scale, vector<float> home, vector<vector<float> > limits,
                                vector<vector<float> > mapMatrix, vector<float> offMatrix) {

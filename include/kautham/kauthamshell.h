@@ -65,6 +65,7 @@ namespace Kautham {
         bool getPath(std::ostream &path);
         bool getPath(std::vector<std::vector<double>> &path);
         bool computeTrajecotry(std::vector<std::vector<double>> &path, std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq, std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start);
+        bool getTrajecotry(std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq, std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start);
         bool setInterpolatePath(bool interpolate);
         bool getInterpolatePath(bool &interpolate);
         bool solve();
