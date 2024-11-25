@@ -1173,7 +1173,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::getPath(std::vector<std::vector<float>> &path) {
+    bool kauthamshell::getPath(std::vector<std::vector<double>> &path) {
         try {
             if (!problemOpened()) {
                 std::cout << "The problem is not opened" << std::endl;
@@ -1188,30 +1188,20 @@ namespace Kautham {
                 if (problem->getPlanner()->solveAndInherit()) {
                     auto omplPlanner = static_cast<omplplanner::omplPlanner*>(problem->getPlanner());
                     auto solutionPath = omplPlanner->SimpleSetup()->getSolutionPath();
+                    const ompl::base::SpaceInformationPtr &si = solutionPath.getSpaceInformation();
 
-                    // Clear and populate the path vector
+                    const ompl::base::StateSpace *space(si->getStateSpace().get());
+                    std::vector<double> state_data;
                     path.clear();
-                    for (const auto& state : solutionPath.getStates()) {
-                        std::vector<float> stateData;
-
-                        // Cast to RealVectorStateSpace::StateType and use indexing
-                        auto* realVectorState = state->as<ompl::base::RealVectorStateSpace::StateType>();
-                        double* values = realVectorState->values; // Pointer to the data
-
-                        // Loop over dimensions and copy the values into stateData
-                        unsigned int dimension = omplPlanner->SimpleSetup()->getStateSpace()->getDimension();
-                        for (unsigned int i = 0; i < dimension; ++i) {
-                            stateData.push_back(static_cast<float>(values[i]));
-                        }
-
-                        // Add the state to the path
-                        path.push_back(stateData);
+                    for (const auto* state : solutionPath.getStates()) {
+                        space->copyToReals(state_data, state);
+                        path.push_back(state_data);
                     }
                     return true;
                 }
             }
 
-            else if (plannerFamily == IOCPLANNER) {
+            else if (plannerFamily == IOCPLANNER) { // Not tested!
                 std::cout << "IOCPLANNER" << std::endl;
                 if (problem->getPlanner()->solveAndInherit()) {
                     auto samples = problem->getPlanner()->getPath();
@@ -1221,7 +1211,7 @@ namespace Kautham {
                     for (auto& sample : *samples) {
                         auto mappedConfs = sample->getMappedConf();
                         for (auto& conf : mappedConfs) {
-                            std::vector<float> stateData;
+                            std::vector<double> stateData;
 
                             // Append SE3 position
                             auto pos = conf.getSE3().getPos();
@@ -1260,57 +1250,127 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::computeTrajecotry(std::ostream &path, double max_deviation, std::ostream &traj) {
+    bool kauthamshell::computeTrajecotry(std::vector<std::vector<double>> &path, std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq, 
+                                            std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start)
+    {
         
-        // 1) Prepare the input:
-
-        // Use dynamic_cast only if you're sure path is an ostringstream, or better avoid dynamic_cast here.
-        std::ostringstream *oss = dynamic_cast<std::ostringstream*>(&path);
-        if (!oss) {
-            std::cerr << "Error: Failed to cast to std::ostringstream." << std::endl;
+        // 1) INITIAL CHECKS:
+        
+        // Ensure path is not empty
+        if (path.empty()) {
+            std::cerr << "Error: Path is empty." << std::endl;
             return false;
         }
+
+        // Get degrees of freedom (dof) from the first waypoint
+        size_t dof = path[0].size();
+
+        // Ensure all waypoints in the path have the same size
+        for (const auto& waypoint : path) {
+            if (waypoint.size() != dof) {
+                std::cerr << "Error: All waypoints must have the same number of dimensions." << std::endl;
+                return false;
+            }
+        }
+
+        // Check if ratio_velocity and ratio_acceleration have the correct size
+        if (ratio_velocity.size() != dof) {
+            std::cerr << "Error: ratio_velocity size (" << ratio_velocity.size()
+                    << ") does not match the degrees of freedom (" << dof << ")." << std::endl;
+            return false;
+        }
+
+        if (ratio_acceleration.size() != dof) {
+            std::cerr << "Error: ratio_acceleration size (" << ratio_acceleration.size()
+                    << ") does not match the degrees of freedom (" << dof << ")." << std::endl;
+            return false;
+        }
+
+        // Inside custom function:
+        auto isInRange = [](const std::vector<double>& ratios) {
+            for (double val : ratios) {
+                if (val < 0.0 || val > 1.0) return false;
+            }
+            return true;
+        };
+
+        // Verify that ratio_velocity and ratio_acceleration are in [0, 1]
+        if (!isInRange(ratio_velocity)) {
+            std::cerr << "Error: ratio_velocity contains values outside the range [0, 1]." << std::endl;
+            return false;
+        }
+
+        if (!isInRange(ratio_acceleration)) {
+            std::cerr << "Error: ratio_acceleration contains values outside the range [0, 1]." << std::endl;
+            return false;
+        }
+
+        // 2) PREPARE THE INPUT:
 
         // List to store the waypoints (as Eigen::VectorXd)
         std::list<Eigen::VectorXd> waypoints;
 
-        // Create an istringstream from the string in ostringstream
-        std::istringstream iss(oss->str());
-
-        // Each line represents a configuration, which is a space-separated list of floats.
-        for (std::string str; std::getline(iss,str); ) {
-            std::istringstream strs(str);
-
-            // Temporary vector to store numbers before creating an Eigen::VectorXd
-            std::vector<double> tempValues;
-            std::string value;
-
-            // Read space-separated values from the stream and store them in the tempValues vector
-            while (strs >> value) {
-                tempValues.push_back(std::stod(value));  // Convert string to double and store it
-            }
-
-            if (!tempValues.empty()) {
-                // Create Eigen::VectorXd of the appropriate size and populate it
-                Eigen::VectorXd conf(tempValues.size());
-                for (size_t i = 0; i < tempValues.size(); ++i) {
-                    conf(i) = tempValues[i];
-                }
-
-                // Add the filled Eigen vector to the waypoints list
-                waypoints.push_back(conf);
-            }
+        Eigen::VectorXd tmp_waypoint;
+        for (const auto &waypoint : path) {
+            // Convert each std::vector<double> to Eigen::VectorXd:
+            tmp_waypoint = Eigen::VectorXd::Map(waypoint.data(), waypoint.size());
+            waypoints.push_back(tmp_waypoint);
         }
 
-        Eigen::VectorXd maxVelocity(1);
-        Eigen::VectorXd maxAcceleration(1);
+        // PROVISIONAL -> ToDo: Read from URDF!
+        const double globalMaxVelocity = 1.0;
+        const double globalMaxAcceleration = 1.0;
 
+        // Convert ratio inputs to maxVelocity and maxAcceleration
+        Eigen::VectorXd maxVelocity(ratio_velocity.size());
+        Eigen::VectorXd maxAcceleration(ratio_acceleration.size());
 
-        // 2) Compute the trajectory:
-        Trajectory trajectory(Path(waypoints, 0.1), maxVelocity, maxAcceleration);
+        for (size_t i = 0; i < ratio_velocity.size(); ++i) {
+            maxVelocity[i] = ratio_velocity[i] * globalMaxVelocity;
+        }
 
-        // 3) Build the output:
+        for (size_t i = 0; i < ratio_acceleration.size(); ++i) {
+            maxAcceleration[i] = ratio_acceleration[i] * globalMaxAcceleration;
+        }
 
+        // 3) COMPUTE THE TRAJECTORY:
+        Trajectory trajectory(Path(waypoints, max_path_deviation), maxVelocity, maxAcceleration);
+
+        // 4) BUILD THE OUTPUT:
+        if(trajectory.isValid()) {
+
+            traj_positions.clear();
+            traj_velocities.clear();
+            traj_time_from_start.clear();
+
+            double duration = trajectory.getDuration();
+
+            std::vector<double> joint_positions(dof);
+            std::vector<double> joint_velocities(dof);
+
+            for(double t = 0.0; t < duration; t += (1.0/freq)) {
+                for (size_t q = 0; q < dof; q++) {
+                    joint_positions[q] = trajectory.getPosition(t)[q];
+                    joint_velocities[q] = trajectory.getVelocity(t)[q];
+                }
+                traj_positions.push_back(joint_positions);
+                traj_velocities.push_back(joint_velocities);
+                traj_time_from_start.push_back(t);
+            }
+            // Add the last point:
+            for (size_t q = 0; q < dof; q++) {
+                joint_positions[q] = trajectory.getPosition(duration)[q];
+                joint_velocities[q] = trajectory.getVelocity(duration)[q];
+            }
+            traj_positions.push_back(joint_positions);
+            traj_velocities.push_back(joint_velocities);
+            traj_time_from_start.push_back(duration);
+
+            return true;
+        } else {
+            std::cerr << "Error: Cannot compute a valid trajectory." << std::endl;
+            return false;
+        }
     }
 
     int kauthamshell::addRobot(string robFile, double scale, vector<float> home, vector<vector<float> > limits,
