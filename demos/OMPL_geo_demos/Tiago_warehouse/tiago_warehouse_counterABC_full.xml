@@ -7,117 +7,117 @@
 		<Home TH="0" WX="0.0" WY="0.0" WZ="1.0" X="5.0" Y="3.0" Z="0.0985" />
 		<ViewLink name="base_link" />
 	</Robot>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_layout.urdf" scale="1">
-		<Home TH="3.1415927" WX="0.0" WY="0.7071068" WZ="0.7071068" X="0" Y="0" Z="-0.001" />
-		<ObRob name="lab_layout" />
+	<Obstacle obstacle="obstacles/ioclab/ioclab_layout.urdf" scale="0.01">
+		<Home TH="3.1415927" WX="0.0" WY="0.7071068" WZ="0.7071068" X="6" Y="0" Z="-0.001" />
+		<KauthamName name="lab_layout" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_desk_1.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_desk.urdf" scale="1">
 		<Home TH="0" WX="0.0" WY="0.0" WZ="0.0" X="1.835" Y="1.4" Z="0" />
-		<ObRob name="desk_1" />
+		<KauthamName name="desk_1" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_desk_2.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_desk.urdf" scale="1">
 		<Home TH="0" WX="0.0" WY="0.0" WZ="0.0" X="3.435" Y="1.4" Z="0" />
-		<ObRob name="desk_2" />
+		<KauthamName name="desk_2" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_desk_3.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_desk.urdf" scale="1">
 		<Home TH="3.1415927" WX="0.0" WY="0.0" WZ="1" X="3.185" Y="10.1" Z="0" />
-		<ObRob name="desk_3" />
+		<KauthamName name="desk_3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_desk_4.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_desk.urdf" scale="1">
 		<Home TH="3.1415927" WX="0.0" WY="0.0" WZ="1" X="4.785" Y="10.1" Z="0" />
-		<ObRob name="desk_4" />
+		<KauthamName name="desk_4" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_chair_1.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_chair.urdf" scale="1">
 		<Home TH="1.5707" WX="0.0" WY="0.0" WZ="1.0" X="2.635" Y="1.2" Z="0" />
-		<ObRob name="chair_1" />
+		<KauthamName name="chair_1" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_chair_2.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_chair.urdf" scale="1">
 		<Home TH="1.5707" WX="0.0" WY="0.0" WZ="-1.0" X="3.95" Y="7.9" Z="0" />
-		<ObRob name="chair_2" />
+		<KauthamName name="chair_2" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_chair_3.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_chair.urdf" scale="1">
 		<Home TH="1.5707" WX="0.0" WY="0.0" WZ="1.0" X="4.235" Y="1.2" Z="0" />
-		<ObRob name="chair_3" />
+		<KauthamName name="chair_3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_chair_4.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_chair.urdf" scale="1">
 		<Home TH="1.5707" WX="0.0" WY="0.0" WZ="-1.0" X="2.635" Y="10.3" Z="0" />
-		<ObRob name="chair_4" />
+		<KauthamName name="chair_4" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_chair_5.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_chair.urdf" scale="1">
 		<Home TH="1.5707" WX="0.0" WY="0.0" WZ="-1.0" X="4.235" Y="10.3" Z="0" />
-		<ObRob name="chair_5" />
+		<KauthamName name="chair_5" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/ioclab/ioclab_wood_desk.urdf" scale="1">
 		<Home TH="1.5707" WX="1" WY="0.0" WZ="0" X="3.25" Y="7.1" Z="0" />
-		<ObRob name="wood_desk" />
+		<KauthamName name="wood_desk" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_steel_cupboard_1.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_steel_cupboard.urdf" scale="1">
 		<Home TH="3.1415927" WX="0" WY="-0.7071968" WZ="0.7071968" X="0.435" Y="0.97" Z="1.95" />
-		<ObRob name="steel_shelf_1" />
+		<KauthamName name="steel_shelf_1" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_steel_cupboard_2.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_steel_cupboard.urdf" scale="1">
 		<Home TH="3.1415927" WX="0" WY="-0.7071968" WZ="0.7071968" X="0.435" Y="1.87" Z="1.95" />
-		<ObRob name="steel_shelf_2" />
+		<KauthamName name="steel_shelf_2" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_895_765_1.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_895_765.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="6.03" Y="1.305" Z="0" />
-		<ObRob name="small_table_1" />
+		<KauthamName name="small_table_1" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_1195_765_1.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_1195_765.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="6.03" Y="0.2" Z="0" />
-		<ObRob name="big_table_1" />
+		<KauthamName name="big_table_1" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_895_765_2.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_895_765.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="5.78" Y="9.3" Z="0" />
-		<ObRob name="small_table_2" />
+		<KauthamName name="small_table_2" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_1195_765_2.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_1195_765.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="5.78" Y="10.195" Z="0" />
-		<ObRob name="big_table_2" />
+		<KauthamName name="big_table_2" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_1195_765_3.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_1195_765.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="5.68" Y="7.1" Z="0" />
-		<ObRob name="big_table_3" />
+		<KauthamName name="big_table_3" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_1195_765_4.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_1195_765.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="4.685" Y="4.825" Z="0" />
-		<ObRob name="big_table_4" />
+		<KauthamName name="big_table_4" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_895_765_3.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_895_765.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="5.735" Y="5.435" Z="0" />
-		<ObRob name="small_table_3" />
+		<KauthamName name="small_table_3" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/kitchen/can.urdf" scale="1">
 		<Home TH="0" WX="1" WY="0.0" WZ="0.0" X="3.7875" Y="5.1225" Z="0.78" />
-		<ObRob name="can" />
+		<KauthamName name="can" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_woodenshelf_1.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_woodenshelf.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="0.32" Y="4.87" Z="0" />
-		<ObRob name="wood_shelf_1" />
+		<KauthamName name="wood_shelf_1" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ioclab/ioclab_woodenshelf_2.urdf" scale="1">
+	<Obstacle obstacle="obstacles/ioclab/ioclab_woodenshelf.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="0.32" Y="5.67" Z="0" />
-		<ObRob name="wood_shelf_2" />
+		<KauthamName name="wood_shelf_2" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/chessboard.urdf" scale="2.0">
 		<Home TH="1.5707963" WX="0.0" WY="0.0" WZ="1.0" X="4.1875" Y="5.4225" Z="0.73" />
-		<ObRob name="chessboard" />
+		<KauthamName name="chessboard" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess_2/pawnB1.urdf" scale="1.0">
 		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="3.7875" Y="5.3225" Z="0.78" />
-		<ObRob name="pawnb1" />
+		<KauthamName name="pawnb1" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess_2/pawnB2.urdf" scale="1.0">
 		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="3.7875" Y="5.0225" Z="0.78" />
-		<ObRob name="pawnb2" />
+		<KauthamName name="pawnb2" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess_2/pawnW1.urdf" scale="1.0">
 		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="4.2875" Y="5.7225" Z="0.78" />
-		<ObRob name="pawnw1" />
+		<KauthamName name="pawnw1" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess_2/pawnW2.urdf" scale="1.0">
 		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="4.0875" Y="5.7225" Z="0.78" />
-		<ObRob name="pawnw2" />
+		<KauthamName name="pawnw2" />
 	</Obstacle>
 	<Controls robot="controls/tiago_warehouse_arm_torso_gripper_counterB.cntr" />
 	<Planner>
