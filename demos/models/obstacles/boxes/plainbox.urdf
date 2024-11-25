@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="plainbox_7">
+<robot name="plainbox">
   <link name="base">
    <visual>
      <origin xyz="0 0 0" rpy="0 0 0" />
