@@ -206,7 +206,7 @@ list(APPEND ALL_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
 # since noetic, ros provides ompl library version.
 # but we prefer the Debian version
 set(CMAKE_FIND_ROOT_PATH /usr/share;${CMAKE_FIND_ROOT_PATH})
-find_package(ompl 1.5)
+find_package(ompl 1.5 REQUIRED)
 
 if( OMPL_FOUND )
    if(OMPL_VERSION  VERSION_LESS 1.3.0)
