@@ -107,6 +107,7 @@ namespace Kautham {
       IOCPLANNER,
       OMPLPLANNER,
       OMPLCPLANNER,
+      OMPLCONSTRPLANNER,
       ODEPLANNER
   };
 

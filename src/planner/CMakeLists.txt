@@ -26,6 +26,9 @@ if( KAUTHAM_OMPL )
       file( GLOB HDR_OMPLG_FILES omplg/*.h )
       file( GLOB SRC_OMPLC_FILES omplc/*.cpp )
       file( GLOB HDR_OMPLC_FILES omplc/*.h )
+      # GLOB_RECURSE instead of GLOB to include files insite omplconstr/contraints/*
+      file( GLOB_RECURSE SRC_OMPLCONSTR_FILES omplconstr/*.cpp )
+      file( GLOB_RECURSE HDR_OMPLCONSTR_FILES omplconstr/*.hpp )
       #set(KAUTHAM_SRC ${KAUTHAM_SRC} ${SRC_OMPLG_FILES} ${SRC_OMPLC_FILES} PARENT_SCOPE  )
 
       if(KAUTHAM_OPENDE)
@@ -89,6 +92,7 @@ set(KAUTHAM_SRC ${KAUTHAM_SRC}
                ${SRC_OMPLOPENDE_FILES}
                ${SRC_OMPLG_FILES}
                ${SRC_OMPLC_FILES}
+               ${SRC_OMPLCONSTR_FILES}
                PARENT_SCOPE )
 
 set ( EXTRA_LIBS ${EXTRA_LIBS} ${PLANNER_EXTRA_LIBS} PARENT_SCOPE )

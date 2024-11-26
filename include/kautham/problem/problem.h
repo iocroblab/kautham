@@ -85,6 +85,7 @@
 #include <kautham/planner/omplc/omplcSSTcarplanner.h>
 #include <kautham/planner/omplc/omplcSSTf16planner.h>
 #include <kautham/planner/omplc/omplcSSTdualdriveplanner.h>
+#include <kautham/planner/omplconstr/omplconstrplanner.hpp>
 #endif
 
 #if defined(KAUTHAM_USE_ODE)

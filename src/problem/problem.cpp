@@ -252,7 +252,9 @@ bool Problem::createPlanner( string name, std::string synergyTreeFilename ) {
 
     else if (name == "omplcSSTdualdrive")
         _planner = new omplcplanner::omplcSSTdualdrivePlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, NULL);
-
+    
+    else if (name == "omplconstr")
+        _planner = new omplconstrplanner::omplConstraintPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, NULL);
 
 #endif
 
