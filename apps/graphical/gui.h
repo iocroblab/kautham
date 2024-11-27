@@ -168,6 +168,8 @@ namespace Kautham {
   private:
     vector<Viewer>      viewers;
     bool                boolPlanVis;
+    // Function to create a grid of 10x10
+    SoSeparator *     getGrid(); //
 	};
 
     /** @}   end of Doxygen module "Application" */
