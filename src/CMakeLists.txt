@@ -7,7 +7,7 @@
 message(STATUS "We have this includes now ###################: ${ALL_INCLUDE_DIRS}")
 list(APPEND ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 ##### pugixml ########
-find_package( PugiXML)
+find_package( PugiXML REQUIRED)
 if(PUGI_XML_FOUND)
    message( STATUS "PugiXML FOUND, using it")
    list(APPEND ALL_INCLUDE_DIRS ${PUGI_XML_INCLUDE_DIR})
@@ -18,7 +18,7 @@ endif(PUGI_XML_FOUND)
 
 #### Coin3D package ###############
 # graphics library
-find_package(Coin REQUIRED CONFIG)
+find_package(Coin REQUIRED)
 if(Coin_FOUND)
   set(EXTRA_LIBS ${EXTRA_LIBS} ${Coin_LIBRARIES})
   list(APPEND ALL_INCLUDE_DIRS ${Coin_INCLUDE_DIR})
