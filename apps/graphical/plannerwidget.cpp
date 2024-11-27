@@ -776,7 +776,7 @@ namespace Kautham {
                             try {
                                 if (name == "Conf") {
                                     transitconf = it_transit->child_value();
-                                    std::cout<<"TRANSIT:"<<transitconf<<endl;
+                                    //std::cout<<"TRANSIT:"<<transitconf<<endl;
                                     //Create the sample
                                     Sample *Robsmp; //sample
                                     Robsmp=new Sample(_planner->wkSpace()->getNumRobControls());
@@ -823,7 +823,7 @@ namespace Kautham {
                             try {
                                 if (name == "Conf") {
                                     transferconf = it_transfer->child_value();
-                                    std::cout<<"TRANSFER:"<<transferconf<<endl;
+                                    //std::cout<<"TRANSFER:"<<transferconf<<endl;
                                     //Create the sample
                                     Sample *Robsmp; //sample
                                     Robsmp=new Sample(_planner->wkSpace()->getNumRobControls());
@@ -840,6 +840,68 @@ namespace Kautham {
                         }
                         //load the step of the path where transfer ends and a dettach is required
                         _planner->loadAttachData(_path2.size()-1,"detach",objectname,stoi(robotname),stoi(linkname));
+                    }
+                    else if (name == "MultiTransfer") {
+                        //Read the attributes with the object to be transferred and the robot and link where it is attached to
+                        //<MultiTransfer numobjects="2" object1="can" object2="tray" robot="0" link="0">
+                        int numobjects = it_task->attribute("numobjects").as_int();
+                        std::vector<string> objectnames;
+                        std::string baseName = "object";
+                        for(int i=0; i<numobjects; i++){
+                            std::string objectName = baseName + std::to_string(i+1);
+                            objectnames.push_back(it_task->attribute(objectName.c_str()).as_string());
+                            std::cout<< "!!!!!!!!!!!!!!!!!!!!!!!!!!....MultiTransfer...object "<<objectnames[i]<< std::endl;
+                        }
+                        string robotname = it_task->attribute("robot").as_string();
+                        string linkname = it_task->attribute("link").as_string();
+
+                        /* PREPARED TO READ ATTRIBUTE CONTROL FILE - not needed though...
+                        //find the robot controls file and set its complete path if found
+                        if (!_problem->findAllFiles(&taskNode,"Transfer","control_file",_problem->defPath)) {
+                            std::cout << "ERROR: control file of Transfer tag not found" << std::endl;
+                            return false;
+                        }
+                        //read the control file name
+                        string controlfilename = it_task->attribute("control_file").as_string();
+                        _problem->setRobotControls(controlfilename);
+                        std::cout<< "....Transfer...with contol file: "<<controlfilename<<std::endl;
+                        */
+                        for(int i=0; i<numobjects; i++){
+                            std::cout<< "....Transfer...object "<<objectnames[i]<<" attached to link "<<linkname<<" of robot "<<robotname<< std::endl;
+                        }
+                        string transferconf;
+
+                        //load the step of the path where transfer starts and an attach is required
+                        for(int i=0; i<numobjects; i++){
+                            _planner->loadAttachData(_path2.size(),"attach",objectnames[i],stoi(robotname),stoi(linkname));
+                        }
+
+
+                        //loop inside the transfer node for all the configurations of the path
+                        for (xml_node::iterator it_transfer = it_task->begin(); it_transfer != it_task->end(); ++it_transfer) {
+                            name = it_transfer->name();
+                            try {
+                                if (name == "Conf") {
+                                    transferconf = it_transfer->child_value();
+                                    //std::cout<<"MULTITRANSFER:"<<transferconf<<endl;
+                                    //Create the sample
+                                    Sample *Robsmp; //sample
+                                    Robsmp=new Sample(_planner->wkSpace()->getNumRobControls());
+                                    //fill the sample
+                                    std::stringstream transferconfstream(transferconf);
+                                    loadSampleFromLine(Robsmp, transferconfstream);
+                                    //add the sample to the path
+                                    _path2.push_back(Robsmp);
+                                }
+                            } catch(...) {
+                                std::cout << "ERROR: Current transfer tag does not have any configuration!!" << std::endl;
+                                return false;
+                            }
+                        }
+                        //load the step of the path where transfer ends and a dettach is required
+                        for(int i=0; i<numobjects; i++){
+                            _planner->loadAttachData(_path2.size()-1,"detach",objectnames[i],stoi(robotname),stoi(linkname));
+                        }
                     }
                 } catch(...) {
                     std::cout << "ERROR: Current task tag does not have any transit or transfer or initialstate child!!" << std::endl;
