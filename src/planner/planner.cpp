@@ -120,7 +120,7 @@ namespace Kautham{
             step = 0;
         }
 
-        cout<<"step = "<<step<<endl;
+        //cout<<"step = "<<step<<endl;
 
         //std::cout<<"_simulationPath.size() = "<<_simulationPath.size()<<" step = "<<step<<std::endl;
         //std::cout<< "**************************************** "<<_simulationPath.at(step)->getMappedConf().size()<<std::endl;
@@ -135,8 +135,8 @@ namespace Kautham{
          if(_wkSpace->getRobot(k)->isSE3Enabled())
          {
            SE3Conf &s_se3 = _simulationPath.at(step)->getMappedConf()[k].getSE3();
-           cout << s_se3.getPos().at(0) << " ";
-           cout << s_se3.getPos().at(1) << " ";
+           //cout << s_se3.getPos().at(0) << " ";
+           //cout << s_se3.getPos().at(1) << " ";
            //cout << s_se3.getPos().at(2) << " ";
            //cout << s_se3.getOrient().at(0) << " ";
            //cout << s_se3.getOrient().at(1) << " ";
@@ -152,7 +152,7 @@ namespace Kautham{
         //      std::cout<<" "<<s_rn.getCoordinates()[j];
         //    std::cout<<std::endl;
         //  }
-          cout << endl;
+          //cout << endl;
         }
 
 
