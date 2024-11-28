@@ -1363,29 +1363,43 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
 
     if (!rob->isArmed()) return false;
 
-    xml_node constraint = robot_node->child("Constraint");
+    xml_node constraint_node = robot_node->child("Constraint");
     // Iterate over Constraint elements inside the Robot (if exists):
-    while (constraint) {
-        if (verifyConstraintXMLNodeFormat(constraint)) {
-            const char *id = constraint.attribute("id").as_string();
-            const char *type = constraint.attribute("type").as_string();
+    while (constraint_node) {
+        if (verifyConstraintXMLNodeFormat(constraint_node)) {
+            std::string id(constraint_node.attribute("id").as_string());
+            std::string type(constraint_node.attribute("type").as_string());
 
-            std::cout << "Constraint ID: " << (id ? id : "Unknown") << std::endl;
-            std::cout << "Constraint Type: " << (type ? type : "Unknown") << std::endl;
-            
-            for (pugi::xml_node joint_node = constraint.child("Joint"); joint_node; joint_node = joint_node.next_sibling("Joint")) {
-                int joint = joint_node.attribute("index").as_int();
+            // Create a vector to store the joints for the current constraint
+            std::vector<std::pair<std::string, uint>> joints;
+
+            for (pugi::xml_node joint_node = constraint_node.child("Joint"); joint_node; joint_node = joint_node.next_sibling("Joint")) {
+                uint joint = joint_node.attribute("index").as_int();
                 std::string joint_name = joint_node.attribute("name").as_string();
-                std::cout << "\tJoint " << joint << ": " << joint_name << std::endl;
+
+                // Add the joint data to the vector
+                joints.push_back(std::make_pair(joint_name, joint));
             }
 
-            std::cout << std::endl;
+            // Store the constraint data (id, type, and joints vector) into the constraints vector
+            rob->addConstraint(std::make_tuple(id, type, joints));
 
             // Move to the next Constraint (if exists):
-            constraint = constraint.next_sibling("Constraint");
+            constraint_node = constraint_node.next_sibling("Constraint");
         } else {
-            return false;
+            return false;  // Invalid constraint format
         }
+    }
+
+    // Debug: print the constraints data
+    for (const auto& constr : rob->getConstraints()) {
+        std::cout << "Added to robot (" << rob->getName() << ") the constraint with identifier: " << std::get<0>(constr) << std::endl;
+        std::cout << "\tType: " << std::get<1>(constr) << std::endl;
+        std::cout << "\tApplied to joints (the order matters): " << std::endl;
+        for (const auto& joint : std::get<2>(constr)) {
+            std::cout << "\t\tJoint: " << joint.first << " (Index: " << joint.second << ")" << std::endl;
+        }
+        std::cout << std::endl;
     }
 
     //Set the SE3 weights for the distance computations, in case of mobile base

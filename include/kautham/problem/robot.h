@@ -107,6 +107,9 @@ namespace Kautham {
       Link*             linkAttachedTo; //!< In case of obstacle, it is the link where the obstacle is attached to. If it is not attached to any link, it is equal to NULL
       std::vector<std::string> _jointnames; //!< This is the vector of joint names as read from the urdf file
 
+      //!< (id, type, []<name,index> )
+      using ConstraintType = std::tuple<std::string, std::string, std::vector<std::pair<std::string,uint>>>;
+      std::vector<ConstraintType> constraints_;
 
   public:
 
@@ -324,6 +327,10 @@ namespace Kautham {
 
     //! Returns the link where the obstacle is attached to
     inline Link* getLinkAttachedTo() {return linkAttachedTo;}
+
+    inline void addConstraint(ConstraintType added_constraint) {constraints_.push_back(added_constraint);}
+
+    inline std::vector<ConstraintType> getConstraints() {return constraints_;}
 
   private:
     //! sets the Robot from a *.urdf file
