@@ -1329,12 +1329,64 @@ bool Problem::inheritSolution(){
     return false;
 }
 
+bool Problem::verifyConstraintXMLNodeFormat(pugi::xml_node& constraint) {
+
+    // Ensure that the required attributes are present
+    if (!constraint.attribute("id") || !constraint.attribute("type")) {
+        std::cerr << "Missing 'id' or 'type' attribute in Constraint!" << std::endl;
+        return false;
+    }
+
+    // Check for the required child elements (<Joint>) and their attributes are present
+    int joint_count = 0;
+    for (pugi::xml_node joint_node = constraint.child("Joint"); joint_node; joint_node = joint_node.next_sibling("Joint")) {
+        // Check if 'index' and 'name' attributes of <Joint> are present
+        if (!joint_node.attribute("index") || !joint_node.attribute("name")) {
+            std::cerr << "Joint missing 'index' or 'name' attribute!" << std::endl;
+            return false;
+        }
+        joint_count++;
+    }
+
+    // Ensure that there is at least one joint in the Constraint
+    if (joint_count == 0) {
+        std::cerr << "No joints found in Constraint!" << std::endl;
+        return false;
+    }
+
+    return true;
+}
 
 bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struct *progress) {
     Robot *rob = new Robot(robot_node->attribute("robot").as_string(),
                            robot_node->attribute("scale").as_double(1.),useBBOX,progress);
 
     if (!rob->isArmed()) return false;
+
+    xml_node constraint = robot_node->child("Constraint");
+    // Iterate over Constraint elements inside the Robot (if exists):
+    while (constraint) {
+        if (verifyConstraintXMLNodeFormat(constraint)) {
+            const char *id = constraint.attribute("id").as_string();
+            const char *type = constraint.attribute("type").as_string();
+
+            std::cout << "Constraint ID: " << (id ? id : "Unknown") << std::endl;
+            std::cout << "Constraint Type: " << (type ? type : "Unknown") << std::endl;
+            
+            for (pugi::xml_node joint_node = constraint.child("Joint"); joint_node; joint_node = joint_node.next_sibling("Joint")) {
+                int joint = joint_node.attribute("index").as_int();
+                std::string joint_name = joint_node.attribute("name").as_string();
+                std::cout << "\tJoint " << joint << ": " << joint_name << std::endl;
+            }
+
+            std::cout << std::endl;
+
+            // Move to the next Constraint (if exists):
+            constraint = constraint.next_sibling("Constraint");
+        } else {
+            return false;
+        }
+    }
 
     //Set the SE3 weights for the distance computations, in case of mobile base
     if (robot_node->child("WeightSE3")) {

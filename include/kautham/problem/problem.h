@@ -356,6 +356,8 @@ namespace Kautham {
 
         //! Counts the number of links to load in a problem
         int countLinks2Load(xml_document *doc);
+
+      bool verifyConstraintXMLNodeFormat(pugi::xml_node& constraint);
     };
 
     /** @}   end of Doxygen module "Problem" */

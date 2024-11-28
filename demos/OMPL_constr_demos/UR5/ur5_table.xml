@@ -3,6 +3,16 @@
 
 	<Robot robot="robots/UR5/ur5.urdf" scale="1.0">
 		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.01" Y="0.0" X="0.0" />
+		<Constraint id="right" type="orientation_ur5">
+			<Joint index="0" name="shoulder" />
+			<Joint index="1" name="elbow" />
+			<Joint index="2" name="wrist" />
+		</Constraint>
+		<Constraint id="left" type="orientation_ur5">
+			<Joint index="6" name="shoulder" />
+			<Joint index="7" name="elbow" />
+			<Joint index="8" name="wrist" />
+		</Constraint>
 	</Robot>
 
 	<Obstacle obstacle="obstacles/ode-objects/table.urdf" scale="1.0">
