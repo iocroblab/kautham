@@ -161,16 +161,16 @@ namespace Kautham{
         //verify if an attach/dettach has to be done
         if(_attachdetach.size())
         {
-           /*
+           
             for(uint i=0; i<_attachdetach.size();i++)
             {
               cout<<"step = "<<_attachdetach[i].step;
               cout<<" action = "<<_attachdetach[i].action;
               cout<<" robnumber = "<<_attachdetach[i].robnumber;
               cout<<" linknumber = "<<_attachdetach[i].linknumber;
-              cout<<" objnumber = "<<_attachdetach[i].objnumber<<endl;
+              cout<<" objname = "<<_attachdetach[i].objname<<endl;
             }
-            */
+            
             //cout<<"step = "<<step<<" prevStep = "<<_simStep<<endl;
         //move the obstacles to their home poses at the beginning of the simulation
         //(needed because the robot will be transferring some objects during the simulation of the taskmotion path)
@@ -233,7 +233,7 @@ namespace Kautham{
                 else{
                   cout<<"ERROR: _attachdetach.action is neither attach nor detach";
                 }
-                break;
+                //break;//break removed to allow multi-attach!! 20241128
               }
               else //move robot - do not attach/detach
                 _wkSpace->moveRobotsTo(_simulationPath[step]);
