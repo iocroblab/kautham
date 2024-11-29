@@ -107,9 +107,8 @@ namespace Kautham {
       Link*             linkAttachedTo; //!< In case of obstacle, it is the link where the obstacle is attached to. If it is not attached to any link, it is equal to NULL
       std::vector<std::string> _jointnames; //!< This is the vector of joint names as read from the urdf file
 
-      //!< (id, type, []<name,index> )
-      using ConstraintType = std::tuple<std::string, std::string, std::vector<std::pair<std::string,uint>>>;
-      std::vector<ConstraintType> constraints_;
+      using ConstraintType = std::tuple<std::string, std::string, std::vector<std::string>>;
+      std::vector<ConstraintType> constraints_; //!< (id, type, [names])
 
   public:
 

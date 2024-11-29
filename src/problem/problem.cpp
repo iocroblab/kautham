@@ -1340,9 +1340,9 @@ bool Problem::verifyConstraintXMLNodeFormat(pugi::xml_node& constraint) {
     // Check for the required child elements (<Joint>) and their attributes are present
     int joint_count = 0;
     for (pugi::xml_node joint_node = constraint.child("Joint"); joint_node; joint_node = joint_node.next_sibling("Joint")) {
-        // Check if 'index' and 'name' attributes of <Joint> are present
-        if (!joint_node.attribute("index") || !joint_node.attribute("name")) {
-            std::cerr << "Joint missing 'index' or 'name' attribute!" << std::endl;
+        // Check if 'name' attribute of <Joint> is present
+        if (!joint_node.attribute("name")) {
+            std::cerr << "Joint missing 'name' attribute!" << std::endl;
             return false;
         }
         joint_count++;
@@ -1367,22 +1367,16 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
     // Iterate over Constraint elements inside the Robot (if exists):
     while (constraint_node) {
         if (verifyConstraintXMLNodeFormat(constraint_node)) {
-            std::string id(constraint_node.attribute("id").as_string());
-            std::string type(constraint_node.attribute("type").as_string());
-
-            // Create a vector to store the joints for the current constraint
-            std::vector<std::pair<std::string, uint>> joints;
-
+            std::vector<std::string> joints;
             for (pugi::xml_node joint_node = constraint_node.child("Joint"); joint_node; joint_node = joint_node.next_sibling("Joint")) {
-                uint joint = joint_node.attribute("index").as_int();
-                std::string joint_name = joint_node.attribute("name").as_string();
-
-                // Add the joint data to the vector
-                joints.push_back(std::make_pair(joint_name, joint));
+                joints.push_back(joint_node.attribute("name").as_string());
             }
 
-            // Store the constraint data (id, type, and joints vector) into the constraints vector
-            rob->addConstraint(std::make_tuple(id, type, joints));
+            rob->addConstraint(std::make_tuple(
+                                            constraint_node.attribute("id").as_string(), 
+                                            constraint_node.attribute("type").as_string(),
+                                            joints)
+            );
 
             // Move to the next Constraint (if exists):
             constraint_node = constraint_node.next_sibling("Constraint");
@@ -1397,7 +1391,7 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
         std::cout << "\tType: " << std::get<1>(constr) << std::endl;
         std::cout << "\tApplied to joints (the order matters): " << std::endl;
         for (const auto& joint : std::get<2>(constr)) {
-            std::cout << "\t\tJoint: " << joint.first << " (Index: " << joint.second << ")" << std::endl;
+            std::cout << "\t\tJoint: " << joint << std::endl;
         }
         std::cout << std::endl;
     }
