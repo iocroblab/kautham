@@ -215,8 +215,8 @@ namespace Kautham {
                 this->si_ = std::make_shared<ompl::base::SpaceInformation>(this->space_);
 
                 // Set validity checker:
-                auto my_ValidityChecker = std::make_shared<Kautham::omplconstrplanner::ValidityChecker>(si_,  (Planner*)this);
-                si_->setStateValidityChecker(ob::StateValidityCheckerPtr(my_ValidityChecker));
+                // auto my_ValidityChecker = std::make_shared<Kautham::omplconstrplanner::ValidityChecker>(si_,  (Planner*)this);
+                // si_->setStateValidityChecker(ob::StateValidityCheckerPtr(my_ValidityChecker));
 
                 this->si_->setup(); // Finalize the SpaceInformation setup
 
@@ -541,13 +541,17 @@ namespace Kautham {
                 const unsigned int num_dof = current_rob->getNumJoints();
                 if (num_dof > 0) {
                     vector<KthReal> coords;
+                    coords.resize(num_dof);
+
+                    // Create all the possible index (fill with values 0 to num_dof - 1):
+                    std::vector<uint> unconstr_indexes(num_dof);
+                    std::iota(unconstr_indexes.begin(), unconstr_indexes.end(), 0);
 
                     // Get the OMPL Rn configuration(s) of the robot:
                     std::shared_ptr<ompl::base::StateSpace> ssRobotiRn;
 
                     // First the constraints:
                     std::vector<std::pair<std::string,uint>> constr_joints;
-                    std::string joint_name;
                     auto constraints = current_rob->getConstraints();
 
                     for (const auto& constr : constraints) {
@@ -556,19 +560,52 @@ namespace Kautham {
                         rob_subspace_index++;
 
                         // Create a RnConstr scoped state and load it with the data extracted from the global scoped state
-                        ob::ScopedState<ob::ProjectedStateSpace> pathscopedstateRn(ssRobotiRn);
+                        ob::ScopedState<ob::ProjectedStateSpace> pathscopedstateRnConstr(ssRobotiRn);
+                        sstate >> pathscopedstateRnConstr;
+
+                        // pathscopedstateRnConstr.print(std::cout);
+
+                        // Convert it to a vector of n-constr components:
+                        constr_joints = std::get<2>(constr);
+                        size_t q = 0;
+                        for (unsigned int n = 0; n < num_dof; n++) {
+                            for (const auto& [_, index] : constr_joints) {
+                                if (n == index) {
+                                    coords[n] = pathscopedstateRnConstr[q];
+                                    unconstr_indexes.erase(
+                                        std::remove(unconstr_indexes.begin(), unconstr_indexes.end(), index),
+                                        unconstr_indexes.end()
+                                    );
+                                    // std::cout << "n = index = " << n << " = " << pathscopedstateRnConstr[q] << std::endl;
+                                    q++;
+                                }
+                            }
+                        }
+                    }
+
+                    // Then the remaining unconstrained Rn :
+                    if (unconstr_indexes.size() > 0) {
+                        ssRobotiRn = ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index);
+                        // std::cout << "Unconstrained Rn space name: " << ssRobotiRn->getName() << std::endl;
+                        rob_subspace_index++;
+
+                        ob::ScopedState<ob::RealVectorStateSpace> pathscopedstateRn(ssRobotiRn);
                         sstate >> pathscopedstateRn;
 
                         // pathscopedstateRn.print(std::cout);
 
-                        //Convert it to a vector of n components
-                        for (unsigned int j = 0; j < num_dof; ++j){
-                            coords.push_back(pathscopedstateRn[j]);
+                        // Convert it to a vector of n-unconstr components:
+                        for (unsigned int n = 0; n < num_dof; n++) {
+                            for (unsigned int u = 0; u < unconstr_indexes.size(); u++) {
+                                if (n == unconstr_indexes[u]) {
+                                    coords[n] = pathscopedstateRn[u];
+                                    // std::cout << "n = u = " << unconstr_indexes[u] << " = " << pathscopedstateRn[u] << std::endl;
+                                }
+                            }
                         }
                     }
+
                     rcj->setRn(coords);
-
-
 
                 } else {
                     //If the robot does not have mobile Rn dofs then the Rn configuration of the sample is maintained
