@@ -242,8 +242,9 @@ namespace Kautham {
                     startompl.print();
                     this->pdef_->addStartState(startompl);
                     // S'HA DE FER GENERIC:
-                    if (this->constraint_map_.find("arm_right") != this->constraint_map_.end()) {
-                        auto my_constraint = std::dynamic_pointer_cast<OrientationConstraint>(this->constraint_map_["arm_right"]);
+                    std::string constr_id_name = "arm_ur5";
+                    if (this->constraint_map_.find(constr_id_name) != this->constraint_map_.end()) {
+                        auto my_constraint = std::dynamic_pointer_cast<OrientationConstraint>(this->constraint_map_[constr_id_name]);
                         my_constraint->OrientationConstraint::setJointConfigAsTargetOrientation(startompl.reals());
                         my_constraint->OrientationConstraint::printTargetOrientation();
                     }
