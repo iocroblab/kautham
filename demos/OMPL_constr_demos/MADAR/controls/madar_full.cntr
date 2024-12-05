@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<ControlSet>
+	<!-- ################## -->
+	<!-- DEGREES OF FREEDOM -->
+	<!-- ################## -->
+	<Offset>
+		<!-- BEGIN: BASE -->
+		<DOF name="madar_full/X" value="0.5" />
+		<DOF name="madar_full/Y" value="0.5" />
+		<DOF name="madar_full/Z" value="0.0" />
+        <DOF name="madar_full/X1" value="0.0"/>
+        <DOF name="madar_full/X2" value="0.0"/>
+        <DOF name="madar_full/X3" value="0.0"/>
+		<!-- END: BASE -->
+
+		<!-- BEGIN: ARM RIGHT -->
+
+		<!-- END: ARM RIGHT -->
+
+		<!-- BEGIN: ARM LEFT -->
+
+		<!-- END: ARM LEFT -->
+
+		<!-- BEGIN: HAND RIGHT -->
+
+		<!-- END: HAND RIGHT -->
+
+		<!-- BEGIN: HAND LEFT -->
+
+		<!-- END: HAND LEFT -->		
+
+	</Offset>
+
+
+
+	<!-- ########### -->
+	<!-- CONTROLLERS -->
+	<!-- ########### -->
+
+	<!-- BEGIN: BASE -->
+	<!-- <Control name="madar_base/x" eigValue="1.0">
+		<DOF name="madar_full/X" value="1.0" />
+	</Control>
+	<Control name="madar_base/y" eigValue="1.0">
+		<DOF name="madar_full/Y" value="1.0" />
+	</Control>
+	<Control name="madar_base/Rz" eigValue="1.0">
+		<DOF name="madar_full/X3" value="1.0" />
+	</Control> -->
+	<!-- END: BASE -->
+
+	<!-- BEGIN: ARM RIGHT -->
+	<Control name="arm_right/shoulder" eigValue="1.0">
+		<DOF name="madar_full/right_shoulder_link" value="1.0"/>
+	</Control>
+	<Control name="arm_right/upper_arm" eigValue="1.0">
+		<DOF name="madar_full/right_upper_arm_link" value="1.0"/>
+	</Control> 
+	<Control name="arm_right/fore_arm" eigValue="1.0">
+		<DOF name="madar_full/right_fore_arm_link" value="1.0"/>
+	</Control> 
+	<Control name="arm_right/wrist1" eigValue="1.0">
+		<DOF name="madar_full/right_wrist_1_link" value="1.0"/>
+	</Control>
+	<Control name="arm_right/wrist2" eigValue="1.0">
+		<DOF name="madar_full/right_wrist_2_link" value="1.0"/>
+	</Control>
+	<Control name="arm_right/wrist3" eigValue="1.0">
+		<DOF name="madar_full/right_wrist_3_link" value="1.0"/>
+	</Control>
+	<!-- END: ARM RIGHT -->
+
+	<!-- BEGIN: ARM LEFT -->
+	<Control name="arm_left/shoulder" eigValue="1.0">
+		<DOF name="madar_full/left_shoulder_link" value="1.0"/>
+	</Control>
+	<Control name="arm_left/upper_arm" eigValue="1.0">
+		<DOF name="madar_full/left_upper_arm_link" value="1.0"/>
+	</Control> 
+	<Control name="arm_left/fore_arm" eigValue="1.0">
+		<DOF name="madar_full/left_fore_arm_link" value="1.0"/>
+	</Control> 
+	<Control name="arm_left/wrist1" eigValue="1.0">
+		<DOF name="madar_full/left_wrist_1_link" value="1.0"/>
+	</Control>
+	<Control name="arm_left/wrist2" eigValue="1.0">
+		<DOF name="madar_full/left_wrist_2_link" value="1.0"/>
+	</Control>
+	<Control name="arm_left/wrist3" eigValue="1.0">
+		<DOF name="madar_full/left_wrist_3_link" value="1.0"/>
+	</Control>
+	<!-- END: ARM LEFT -->
+
+	<!-- BEGIN: HAND RIGHT -->
+
+	<!-- END: HAND RIGHT -->
+
+	<!-- BEGIN: HAND LEFT -->
+
+	<!-- END: HAND LEFT -->	
+</ControlSet>
