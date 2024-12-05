@@ -1367,15 +1367,19 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
     // Iterate over Constraint elements inside the Robot (if exists):
     while (constraint_node) {
         if (verifyConstraintXMLNodeFormat(constraint_node)) {
-            std::vector<std::string> joints;
+            std::vector<std::pair<std::string, uint>> joints;
             for (pugi::xml_node joint_node = constraint_node.child("Joint"); joint_node; joint_node = joint_node.next_sibling("Joint")) {
-                joints.push_back(joint_node.attribute("name").as_string());
+                std::string joint_name = joint_node.attribute("name").as_string();
+                uint link_index;
+                rob->getLinkIndexByName(joint_name, link_index);
+                joints.push_back(std::make_pair(joint_name, link_index-1));
             }
 
             rob->addConstraint(std::make_tuple(
                                             constraint_node.attribute("id").as_string(), 
                                             constraint_node.attribute("type").as_string(),
-                                            joints)
+                                            joints,
+                                            false)
             );
 
             // Move to the next Constraint (if exists):
@@ -1391,7 +1395,7 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
         std::cout << "\tType: " << std::get<1>(constr) << std::endl;
         std::cout << "\tApplied to joints (the order matters): " << std::endl;
         for (const auto& joint : std::get<2>(constr)) {
-            std::cout << "\t\tJoint: " << joint << std::endl;
+            std::cout << "\t\tJoint[" << joint.second << "]: " << joint.first << std::endl;
         }
         std::cout << std::endl;
     }

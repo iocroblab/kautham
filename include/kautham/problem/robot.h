@@ -107,8 +107,9 @@ namespace Kautham {
       Link*             linkAttachedTo; //!< In case of obstacle, it is the link where the obstacle is attached to. If it is not attached to any link, it is equal to NULL
       std::vector<std::string> _jointnames; //!< This is the vector of joint names as read from the urdf file
 
-      using ConstraintType = std::tuple<std::string, std::string, std::vector<std::string>>;
-      std::vector<ConstraintType> constraints_; //!< (id, type, [names])
+      using ConstraintType =  std::tuple<std::string, std::string, std::vector<std::pair<std::string, uint>>, bool>;
+      std::vector<ConstraintType> constraints_; //!< (id, type, [<name, index>], enabled)
+      std::vector<std::string> unconstrained_joint_names_;
 
   public:
 
@@ -199,6 +200,9 @@ namespace Kautham {
 
     //! Retunrs the pointer to the link named linkName
     Link* getLink(string name);
+
+    //! Give the index where the link named linkName is insite links vector. Returns false if the _link_name doesn't exists.
+    bool getLinkIndexByName(std::string _link_name, uint& _link_index);
 
     //! Computes direct kinematics
     bool Kinematics(RobConf *robq);
@@ -330,6 +334,12 @@ namespace Kautham {
     inline void addConstraint(ConstraintType added_constraint) {constraints_.push_back(added_constraint);}
 
     inline std::vector<ConstraintType> getConstraints() {return constraints_;}
+
+    inline void addUnconstrainedJointName(std::string _unconstrained_joint_name) {unconstrained_joint_names_.push_back(_unconstrained_joint_name);}
+
+    inline void setUnconstrainedJointNames(std::vector<std::string> _unconstrained_joint_names) {unconstrained_joint_names_ = _unconstrained_joint_names;}
+
+    inline std::vector<std::string> getUnconstrainedJointNames() {return unconstrained_joint_names_;}
 
   private:
     //! sets the Robot from a *.urdf file

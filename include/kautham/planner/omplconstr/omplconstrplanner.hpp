@@ -30,6 +30,8 @@
 #include <kautham/planner/planner.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/base/spaces/constraint/ProjectedStateSpace.h>
+#include <ompl/base/ProblemDefinition.h>
+#include <ompl/base/Planner.h>
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
@@ -53,17 +55,20 @@ namespace Kautham {
                 
                 ~omplConstraintPlanner();
 
-                // Declare SimpleSetup for geometric planning
-                std::shared_ptr<ompl::geometric::SimpleSetup> simple_setup_;
+                std::shared_ptr<ompl::base::Planner> ompl_planner_;
+
+                std::shared_ptr<ompl::base::ProblemDefinition> pdef_;
+
+                std::map<std::string, std::shared_ptr<ob::Constraint>> constraint_map_;
 
                 // Override the pure virtual functions from Planner
                 virtual bool setParameters() override;  // Implemented in cpp
                 virtual bool trySolve() override;       // Implemented in cpp
 
                 void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
-                void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::ProjectedStateSpace> *sstate);
 
-                void omplState22smp(const ob::State *state, Sample* smp);
+                void setToDo(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
+
                 void omplState2smp(const ob::State *state, Sample* smp);
                 void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
 
@@ -74,10 +79,6 @@ namespace Kautham {
                 std::shared_ptr<ompl::base::StateSpace> space_;
 
                 std::shared_ptr<ompl::base::SpaceInformation> si_;
-
-
-                // Shared pointer to StateSpace
-                std::shared_ptr<ompl::base::RealVectorStateSpace> state_space_;
 
                 // Declare a shared pointer to ProjectedStateSpace
                 std::shared_ptr<ompl::base::ProjectedStateSpace> constrained_state_space_;

@@ -48,7 +48,7 @@ namespace Kautham {
             //copy the conf of the init smp. Needed to capture the home positions.
             smp->setMappedConf(theplanner->initSamp()->getMappedConf());
             //load the RobConf of smp form the values of the ompl::state
-            ((omplConstraintPlanner*)theplanner)->omplConstraintPlanner::omplState22smp(state,smp);
+            ((omplConstraintPlanner*)theplanner)->omplConstraintPlanner::omplState2smp(state,smp);
             //collision-check
             if( theplanner->wkSpace()->collisionCheck(smp) ) {
                 return false;
@@ -75,7 +75,7 @@ namespace Kautham {
             //copy the conf of the init smp. Needed to capture the home positions.
             smp->setMappedConf(theplanner->initSamp()->getMappedConf());
             //load the RobConf of smp form the values of the ompl::state
-            ((omplConstraintPlanner*)theplanner)->omplConstraintPlanner::omplState22smp(state,smp);
+            ((omplConstraintPlanner*)theplanner)->omplConstraintPlanner::omplState2smp(state,smp);
             //distance-check
             vector<KthReal> *distvect;
             distvect = theplanner->wkSpace()->distanceCheck(smp);

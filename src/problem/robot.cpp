@@ -491,6 +491,19 @@ namespace Kautham {
         return NULL;
     }
 
+    /*!
+  *
+  */
+    bool Robot::getLinkIndexByName(std::string _link_name, uint& _link_index) {
+        for (size_t i = 0; i < links.size(); ++i) {
+            if (links.at(i)->getName() == _link_name) {
+                _link_index = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /*!
   *
