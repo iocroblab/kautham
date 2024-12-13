@@ -1,14 +1,19 @@
 # - Config file for the Kautham package
-# It defines the following variables
-#  KAUTHAM_INCLUDE_DIRS - include directories for Kautham Lib
-#  KAUTHAM_LIBRARIES    - libraries to link against Kautham Libs
+# Defines the following variables:
+#  KAUTHAM_INCLUDE_DIRS - include directories for Kautham
+#  KAUTHAM_LIBRARIES    - libraries to link against Kautham
 #  KAUTHAM_LIBRARIES_STATIC - static version of the library
-
 
 @PACKAGE_INIT@
 
-SET_AND_CHECK(KAUTHAM_INCLUDE_DIR @KAUTHAM_DIRNAME_include@ )
+# Set include directories
+set(KAUTHAM_INCLUDE_DIR "@KAUTHAM_DIRNAME_include@")
+set(KAUTHAM_INCLUDE_DIRS ${KAUTHAM_INCLUDE_DIR})
 
-SET(KAUTHAM_INCLUDE_DIRS ${KAUTHAM_INCLUDE_DIR} )
-SET(KAUTHAM_LIBRARIES kautham)
+# Define library targets
+set(KAUTHAM_LIBRARIES kautham)
+set(KAUTHAM_LIBRARIES_STATIC kautham_static) # If static library exists
+
+# Include target exports
+include("${CMAKE_CURRENT_LIST_DIR}/kauthamTargets.cmake")
 

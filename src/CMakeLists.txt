@@ -105,6 +105,7 @@ add_subdirectory( external )
 #message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
 
 add_library(libkautham SHARED ${KAUTHAM_SRC} ${CMAKE_CURRENT_SOURCE_DIR}/kauthamshell.cpp)
+add_library(Kautham::kautham ALIAS libkautham)
 
 # Set include directories for the library
 target_include_directories(libkautham
@@ -117,6 +118,12 @@ target_include_directories(libkautham
 )
 # compile features 
 target_compile_features(libkautham PUBLIC cxx_std_17)
+
+# Export symbols
+# set_target_properties(libkautham PROPERTIES
+#     CXX_VISIBILITY_PRESET hidden
+#     VISIBILITY_INLINES_HIDDEN YES
+# )
 
 # Add linker flags 
 target_link_options(libkautham PUBLIC "-Wl,--no-undefined")
@@ -143,6 +150,7 @@ set(KAUTHAM_DIRNAME_include "${CMAKE_INSTALL_PREFIX}/include")
 # Headers install
 install(FILES ${KAUTHAM_HDRS} DESTINATION include/kautham)
 
+# Add version and configuration file generation
 configure_package_config_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/kauthamConfig.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/kauthamConfig.cmake"   
@@ -153,11 +161,27 @@ configure_package_config_file(
 
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/kauthamConfigVersion.cmake"
-  VERSION ${KAUTHAM_VERSION}
+  VERSION ${KAUTHAM_VERSION_MAJOR}
   COMPATIBILITY AnyNewerVersion)
 
+   
+# Install the library
+install(TARGETS libkautham drawstuff
+    EXPORT kauthamTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include
+)
+
+# Export the targets file
+install(EXPORT kauthamTargets
+    FILE kauthamTargets.cmake
+    NAMESPACE Kautham::
+    DESTINATION lib/cmake/kautham
+)
+
+# Install the Config and Version files
 install( FILES ${CMAKE_CURRENT_BINARY_DIR}/kauthamConfig.cmake
        ${CMAKE_CURRENT_BINARY_DIR}/kauthamConfigVersion.cmake 
        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/kautham)
-   
-install(TARGETS libkautham DESTINATION ${CMAKE_INSTALL_LIBDIR})
