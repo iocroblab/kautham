@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
-<package>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>kautham</name>
-  <version>4.4.1</version>
+  <version>5.0.1</version>
   <description>The Kautham Project is a software tool used at the Institute of Industrial
   and Control Engineering (IOC-UPC) for teaching and research in robot motion
   planning. The tool allows to cope with problems with one or more robots,   
@@ -45,44 +46,15 @@
   <author email="carlos.rodriguez.p@upc.edu">Carlos Rodriguez</author>
   <author email="josep.arnau.claret@upc.edu">Josep Arnau Claret</author>
   
-  <!-- The *_depend tags are used to specify dependencies -->
-  <!-- Dependencies can be catkin packages or system dependencies -->
-  <!-- Examples: -->
-  <!-- Use build_depend for packages you need at compile time: -->
-  <!--   <build_depend>message_generation</build_depend> -->
-  <!-- Use buildtool_depend for build tool packages: -->
-  <!--   <buildtool_depend>catkin</buildtool_depend> -->
-  <!-- Use run_depend for packages you need at runtime: -->
-  <!--   <run_depend>message_runtime</run_depend> -->
-  <!-- Use test_depend for packages you need only for testing: -->
-  <!--   <test_depend>gtest</test_depend> -->
-  <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>trajectory_msgs</build_depend>
-  <build_depend>message_generation</build_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>trajectory_msgs</run_depend>
-  <run_depend>message_generation</run_depend>
-  <run_depend>rospy</run_depend>
+  <buildtool_depend>cmake</buildtool_depend>
 
-  <build_depend>geometry_msgs</build_depend> 
-  <build_depend>visualization_msgs</build_depend> 
-  <build_depend>tf2</build_depend>
-  <build_depend>tf2_ros</build_depend>
-  <run_depend>geometry_msgs</run_depend> 
-  <run_depend>visualization_msgs</run_depend> 
-  <run_depend>tf2</run_depend>
-  <run_depend>tf2_ros</run_depend>
+  <depend>boost</depend>
+  <depend>coin3</depend>
+  <depend>soqt</depend>
 
-  <!-- The export tag contains other, unspecified, tags -->
   <export>
-    <!-- You can specify that this package is a metapackage here: -->
-    <!-- <metapackage/> -->
-
-    <!-- Other tools can request additional information be placed here -->
-
+    <build_type>cmake</build_type>
   </export>
+
 </package>
 
