@@ -226,6 +226,12 @@ namespace Kautham {
         bool setDefaultRobotControls();
 
         /*!
+     * \brief From all degrees of freedom of all robots, returns which joints are controlled.
+     * \return Vector with flag to true if that joint is controlled, false if not.
+     */
+         std::vector<bool> getWhichAreControlledJoints();
+
+        /*!
      * \brief loads the obstacle controls file of the problem file,
      creates the controls, adds them to the workspace and creates the mapMatrix and
      offMatrix of every osbtacle. All the obstacles must have already been loaded.

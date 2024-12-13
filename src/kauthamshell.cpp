@@ -1173,7 +1173,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::getPath(std::vector<std::vector<double>> &path) {
+    bool kauthamshell::getPath(std::vector<std::vector<double>> &path, bool _only_controlled) {
         try {
             if (!problemOpened()) {
                 std::cout << "The problem is not opened" << std::endl;
@@ -1182,6 +1182,19 @@ namespace Kautham {
 
             Problem* const problem = static_cast<Problem*>(memPtr_);
             auto plannerFamily = problem->getPlanner()->getFamily();
+
+            std::vector<bool> requested_joints;
+            if (_only_controlled) {
+                requested_joints = problem->getWhichAreControlledJoints();
+            } else {
+                // Set all to true to return all the joints:
+                int totalDOF = 0;
+                for (unsigned int rob = 0; rob < problem->wSpace()->getNumRobots(); ++rob) {
+                    totalDOF += problem->wSpace()->getRobot(rob)->getNumJoints();
+                }
+                requested_joints.resize(totalDOF);
+                std::fill(requested_joints.begin(), requested_joints.end(), true);
+            }
 
             if (plannerFamily == OMPLPLANNER) {
                 std::cout << "OMPLPLANNER" << std::endl;
@@ -1192,10 +1205,17 @@ namespace Kautham {
 
                     const ompl::base::StateSpace *space(si->getStateSpace().get());
                     std::vector<double> state_data;
+                    std::vector<double> requested_data;
                     path.clear();
                     for (const auto* state : solutionPath.getStates()) {
                         space->copyToReals(state_data, state);
-                        path.push_back(state_data);
+                        requested_data.clear();
+                        for (uint s = 0; s < state_data.size(); s++) {
+                            if (requested_joints[s]) {
+                                requested_data.push_back(state_data[s]);
+                            }
+                        }
+                        path.push_back(requested_data);
                     }
                     return true;
                 }
@@ -1377,10 +1397,11 @@ namespace Kautham {
 
 
     bool kauthamshell::getTrajecotry(std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq,
-                                        std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start)
+                                        std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start,
+                                        bool _only_controlled)
     {
         std::vector<std::vector<double>> path;
-        if (kauthamshell::getPath(path)) {
+        if (kauthamshell::getPath(path, _only_controlled)) {
             std::cout << "kauthamshell::getTrajecotry -> Path successfully computed." << std::endl;
             
             if (kauthamshell::computeTrajecotry(path, ratio_velocity, ratio_acceleration, max_path_deviation, freq, traj_positions, traj_velocities, traj_time_from_start)) {

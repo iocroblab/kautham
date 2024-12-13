@@ -1895,6 +1895,27 @@ bool Problem::setDefaultRobotControls() {
 }
 
 
+std::vector<bool> Problem::getWhichAreControlledJoints() {
+    std::vector<bool> is_controlled_joint;
+    int numCntr = this->_wspace->getNumRobControls();
+    for (unsigned int rob = 0; rob < this->_wspace->getNumRobots(); ++rob) {
+        auto current_rob = this->_wspace->getRobot(rob);
+        KthReal **map_matrix = current_rob->getMapMatrix();
+        int numDOF = current_rob->getNumJoints();
+        for (int i = 0; i < numDOF; ++i) {
+            bool has_control = false; // Assume no control initially
+            for (int j = 0; j < numCntr; ++j) {
+                if (abs(map_matrix[i+6][j]) > 0 ) { // +6 -> Only applied to joints (Rn)
+                    has_control = true; // Mark control as found
+                }
+            }
+            is_controlled_joint.push_back(has_control); // Add result for this DOF
+        }
+    }
+    return is_controlled_joint;
+}
+
+
 bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, progress_struct *progress) {
     Robot *obs= new Robot(obstacle_node->attribute("obstacle").as_string(),
                           obstacle_node->attribute("scale").as_double(1.),useBBOX,progress);
