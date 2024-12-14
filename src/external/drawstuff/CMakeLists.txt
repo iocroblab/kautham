@@ -18,14 +18,9 @@ if(APPLE)
 endif()
 if(UNIX)
    set(libdrawstuff_SOURCES ${libdrawstuff_SOURCES} src/x11.cpp)
-#   set(libdrawstuff_LIBADD "$(X11_LIBS)")
 endif()
 
-add_library(drawstuff SHARED ${libdrawstuff_SOURCES})
+add_library(drawstuff ${libdrawstuff_SOURCES})
 set_target_properties(drawstuff PROPERTIES 
 	COMPILE_FLAGS -DDEFAULT_PATH_TO_TEXTURES='"${CMAKE_SOURCE_DIR}/textures/"')
 
-
-install(TARGETS drawstuff ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-#install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "*.h")

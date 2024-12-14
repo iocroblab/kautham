@@ -1,9 +1,5 @@
 #### Adding subdirectories
 
-#set ( kin_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin )
-#set ( kthutil_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/kthutil )
-#set ( libttg_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libttg )
-
 message(STATUS "We have this includes now ###################: ${ALL_INCLUDE_DIRS}")
 list(APPEND ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 ##### pugixml ########
@@ -18,6 +14,10 @@ endif(PUGI_XML_FOUND)
 
 #### Coin3D package ###############
 # graphics library
+if(POLICY CMP0072)
+  cmake_policy(SET CMP0072 NEW)
+endif()
+
 find_package(Coin REQUIRED)
 if(Coin_FOUND)
   set(EXTRA_LIBS ${EXTRA_LIBS} ${Coin_LIBRARIES})
@@ -74,10 +74,17 @@ if(KAUTHAM_OPENDE)
    if(DRAWSTUFF_INCLUDE_DIR)
         message( STATUS "Drawstuff found, using it")
    else(DRAWSTUFF_INCLUDE_DIR)
-        message(STATUS "DrawStuff not found, using internal copy")
-        add_subdirectory ( ${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff)
-        list(APPEND ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff/include)
-        set(DRAWSTUFF_LIBRARY drawstuff)
+         message(STATUS "DrawStuff not found, using internal copy")
+         find_package(X11)
+         if(X11_FOUND)
+            message(STATUS "DrawStuff will be built and linked against X11")
+            add_subdirectory ( ${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff)
+            list(APPEND ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff/include)
+            set(DRAWSTUFF_LIBRARY drawstuff)
+            set(EXTRA_LIBS ${EXTRA_LIBS} ${X11_LIBRARIES})
+         else(X11_FOUND)
+            message(STATUS "DrawStuff cannot be built or used")
+         endif(X11_FOUND)
    endif(DRAWSTUFF_INCLUDE_DIR)
 
    if(ODE_FOUND)
@@ -119,12 +126,6 @@ target_include_directories(libkautham
 # compile features 
 target_compile_features(libkautham PUBLIC cxx_std_17)
 
-# Export symbols
-# set_target_properties(libkautham PROPERTIES
-#     CXX_VISIBILITY_PRESET hidden
-#     VISIBILITY_INLINES_HIDDEN YES
-# )
-
 # Add linker flags 
 target_link_options(libkautham PUBLIC "-Wl,--no-undefined")
 set_target_properties( libkautham PROPERTIES
@@ -132,20 +133,17 @@ set_target_properties( libkautham PROPERTIES
   VERSION "${KAUTHAM_VERSION}"
   OUTPUT_NAME kautham)
   
-# YumiIK
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/util/libkin/)
-#add_library(YumiIK SHARED ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin/YumiKinematics.cpp)
-#set(EXTRA_LIBS ${EXTRA_LIBS} YumiIK)
-
 message(STATUS "Internal libraries: ${EXTRA_LIBS}")
 
 target_link_libraries(libkautham PRIVATE ${EXTRA_LIBS})
 
 # extra libraries should contain sampling libPQP libgdiam PUGI OMPL ARMADILLO ODE libDNN libkin libkthutil 
 
-set(KAUTHAM_DIRNAME_lib ${CMAKE_INSTALL_LIBDIR})
+set(KAUTHAM_DIRNAME_lib "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 set(KAUTHAM_DIRNAME_include "${CMAKE_INSTALL_PREFIX}/include")
 
+message(STATUS "KAUTHAM_DIRNAME_lib: ${KAUTHAM_DIRNAME_lib}")
+message(STATUS "KAUTHAM_DIRNAME_include: ${KAUTHAM_DIRNAME_include}")
 
 # Headers install
 install(FILES ${KAUTHAM_HDRS} DESTINATION include/kautham)
@@ -157,7 +155,9 @@ configure_package_config_file(
   INSTALL_DESTINATION  ${KAUTHAM_DIRNAME_lib}/cmake/kautham
   PATH_VARS 
    KAUTHAM_DIRNAME_lib
-   KAUTHAM_DIRNAME_include)
+   KAUTHAM_DIRNAME_include
+  NO_SET_AND_CHECK_MACRO
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO )
 
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/kauthamConfigVersion.cmake"
@@ -166,7 +166,7 @@ write_basic_package_version_file(
 
    
 # Install the library
-install(TARGETS libkautham drawstuff
+install(TARGETS libkautham
     EXPORT kauthamTargets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -178,7 +178,7 @@ install(TARGETS libkautham drawstuff
 install(EXPORT kauthamTargets
     FILE kauthamTargets.cmake
     NAMESPACE Kautham::
-    DESTINATION lib/cmake/kautham
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/kautham
 )
 
 # Install the Config and Version files

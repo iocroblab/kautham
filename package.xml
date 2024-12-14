@@ -17,12 +17,9 @@
   the integration with task planers. It is principally being used in the      
   research of motion planning strategies for hand-arm robotic systems.</description>
 
-  <!-- One maintainer tag required, multiple allowed, one person per tag --> 
-  <!-- Example:  -->
-  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+
   <maintainer email="jan.rosell@upc.edu">Jan Rosell</maintainer>
-
-
+  
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
@@ -45,12 +42,14 @@
   <author email="andres.felipe.montano@upc.edu">Andres F. Montano</author>
   <author email="carlos.rodriguez.p@upc.edu">Carlos Rodriguez</author>
   <author email="josep.arnau.claret@upc.edu">Josep Arnau Claret</author>
+  <author email="pol.ramon@upc.edu">Pol Ramon</author>
   
   <buildtool_depend>cmake</buildtool_depend>
 
   <depend>boost</depend>
   <depend>coin3</depend>
   <depend>soqt</depend>
+  
 
   <export>
     <build_type>cmake</build_type>

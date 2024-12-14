@@ -10,10 +10,13 @@
 set(KAUTHAM_INCLUDE_DIR "@KAUTHAM_DIRNAME_include@")
 set(KAUTHAM_INCLUDE_DIRS ${KAUTHAM_INCLUDE_DIR})
 
-# Define library targets
-set(KAUTHAM_LIBRARIES kautham)
-set(KAUTHAM_LIBRARIES_STATIC kautham_static) # If static library exists
+# Define library full paths
+set(KAUTHAM_LIBRARY "@KAUTHAM_DIRNAME_lib@/libkautham${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(KAUTHAM_LIBRARY_STATIC "@KAUTHAM_DIRNAME_lib@/libkautham${CMAKE_STATIC_LIBRARY_SUFFIX}")
+
+# Set library variables
+set(KAUTHAM_LIBRARIES ${KAUTHAM_LIBRARY})
+set(KAUTHAM_LIBRARIES_STATIC ${KAUTHAM_LIBRARY_STATIC})
 
 # Include target exports
 include("${CMAKE_CURRENT_LIST_DIR}/kauthamTargets.cmake")
-

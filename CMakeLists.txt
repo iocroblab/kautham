@@ -18,7 +18,7 @@
 #     Free Software Foundation, Inc.,
 #     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-#    Author: Leopold Palomo-Avellaneda 2014-2019
+#    Author: Leopold Palomo-Avellaneda 2014-2024
 
 
 cmake_minimum_required(VERSION 3.5)
@@ -76,90 +76,6 @@ include(CMakePackageConfigHelpers)
 
 ##############################################################################
 
-##################### ROS-catkin ####################################
-
-
-if( KAUTHAM_ROS )
-
-    find_package(catkin REQUIRED COMPONENTS
-      roscpp
-      std_msgs
-      trajectory_msgs
-      message_generation
-      roslib
-      rospy
-      geometry_msgs
-      visualization_msgs
-      tf2
-      tf2_ros
-    )
-    include_directories(${catkin_INCLUDE_DIRS} include)
-
-    add_service_files(
-       DIRECTORY apps/ros/srv
-       FILES
-       AddObstacle.srv
-       DetachObstacle.srv
-       SetDefaultRobControls.srv
-       SetObsControlsStream.srv
-       SetQuery.srv
-       AddRobot.srv
-       GetPath.srv
-       SetFixedObsControls.srv
-       SetObstaclesConfig.srv
-       SetRobControls.srv
-       SetRobControlsNoQuery.srv
-       AttachObstacle2RobotLink.srv
-       OpenProblem.srv
-       OpenProblemStream.srv
-       SetGoal.srv
-       SetPlannerByName.srv
-       SetRobControlsStream.srv
-       CheckCollision.srv
-       ProblemOpened.srv
-       SetInitObs.srv
-       SetPlannerParameter.srv
-       SetRobotsConfig.srv
-       ClearSampleSet.srv
-       RemoveObstacle.srv
-       SetInit.srv
-       SetPlanner.srv
-       Solve.srv
-       CloseProblem.srv
-       RemoveRobot.srv
-       SetObsControls.srv
-       SetPlannerStream.srv
-       Connect.srv
-       GetLastPlanComputationTime.srv
-       GetNumEdges.srv
-       GetNumVertices.srv
-       ObsPos.srv
-       RobPos.srv
-       FindIK.srv
-       LoadRobots.srv
-       VisualizeScene.srv
-       LoadObstacles.srv
-       GetObstaclesNames.srv
-       PathDofNames.srv
-    )
-
-    add_message_files(
-       DIRECTORY apps/ros/msg
-       FILES
-       fVector.msg
-       robconf.msg
-        )
-    catkin_python_setup()
-    generate_messages(DEPENDENCIES roscpp std_msgs trajectory_msgs  visualization_msgs )
-    catkin_package(
-      INCLUDE_DIRS include
-      #LIBRARIES libkautham
-      CATKIN_DEPENDS roscpp visualization_msgs trajectory_msgs std_msgs  geometry_msgs tf2 tf2_ros
-    )
-
-endif( KAUTHAM_ROS )
-include_directories(${catkin_INCLUDE_DIRS})
-
 ##################### Qt-Creator ####################################
 
 FILE(GLOB_RECURSE LibFiles include/*.h src/external/*.h src/external/gdiam/*.h src/external/pqp/*.h src/external/pugixml/*.h)
@@ -179,8 +95,7 @@ if(Boost_FOUND)
 else(Boost_FOUND)
   set( BOOST_ROOT $ENV{BOOSTDIR})
         message(STATUS "Boost library NOT found at first attempt. Setting BOOST_ROOT to" $ENV{BOOSTDIR})
-        find_package( Boost COMPONENTS system serialization thread
-filesystem REQUIRED )
+        find_package( Boost COMPONENTS system serialization thread filesystem REQUIRED )
         if(Boost_FOUND)
                 message(STATUS "Boost library found in " ${BOOST_ROOT})
                 list(APPEND ALL_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
@@ -190,11 +105,6 @@ filesystem REQUIRED )
                 message(STATUS "Boost library not found. Boost-dependent headers will NOT be available")
         endif(Boost_FOUND)
 endif(Boost_FOUND)
-
-#### MT ###############
-#set(mt_DIR include/kautham/util/libmt)
-#message (STATUS "Adding libmt directory ${mt_DIR}")
-#include_directories( ${mt_DIR} )
 
 ### Eigen3 ############
 find_package(Eigen3 REQUIRED NO_MODULE)
@@ -216,16 +126,9 @@ if( OMPL_FOUND )
    endif(OMPL_VERSION  VERSION_LESS 1.3.0)
 
    message( STATUS "OMPL include is: " ${OMPL_INCLUDE_DIRS})
-   #list(APPEND ALL_INCLUDE_DIRS ${OMPL_INCLUDE_DIRS})
    set(EXTRA_LIBS ${EXTRA_LIBS} ${OMPL_LIBRARIES})
    add_definitions( -DKAUTHAM_USE_OMPL )
 endif()
-
-
-##################### ROS-catkin ####################################
-
-#include_directories( include )
-#include_directories( ${CMAKE_BINARY_DIR}/include/)
 
 # Building librarires
 
