@@ -145,6 +145,24 @@ set(KAUTHAM_DIRNAME_include "${CMAKE_INSTALL_PREFIX}/include")
 message(STATUS "KAUTHAM_DIRNAME_lib: ${KAUTHAM_DIRNAME_lib}")
 message(STATUS "KAUTHAM_DIRNAME_include: ${KAUTHAM_DIRNAME_include}")
 
+if(KAUTHAM_PYTHON)
+   # Set up pybind11
+   find_package(pybind11 REQUIRED)
+   find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+  
+   add_library(pykautham MODULE pykautham/kautham_wrapper.cpp)
+   target_link_libraries(pykautham PRIVATE pybind11::module Python3::Python libkautham  )
+
+   target_include_directories(pykautham PRIVATE ${Python3_INCLUDE_DIRS})
+
+   # Set the appropriate Python version
+   set_target_properties(pykautham PROPERTIES
+      PREFIX ""
+      SUFFIX ".so"
+   )
+endif(KAUTHAM_PYTHON)
+
+
 # Headers install
 install(FILES ${KAUTHAM_HDRS} DESTINATION include/kautham)
 
