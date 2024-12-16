@@ -147,12 +147,19 @@ message(STATUS "KAUTHAM_DIRNAME_include: ${KAUTHAM_DIRNAME_include}")
 
 if(KAUTHAM_PYTHON)
    # Set up pybind11
+   message(STATUS "Finding pybind11 stuff ....")
    find_package(pybind11 REQUIRED)
    find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
   
-   add_library(pykautham MODULE pykautham/kautham_wrapper.cpp)
+   add_library(pykautham MODULE pykautham/pykautham_module.cpp
+                                 pykautham/kauthamshell_bindings.cpp
+                                 # pykautham/robconf_bindings.cpp
+                                 # pykautham/se3conf_bindings.cpp
+                                 # pykautham/conf_bindings.cpp
+                                 pykautham/rnconf_bindings.cpp
+                                 pykautham/robweight_bindings.cpp
+   )
    target_link_libraries(pykautham PRIVATE pybind11::module Python3::Python libkautham  )
-
    target_include_directories(pykautham PRIVATE ${Python3_INCLUDE_DIRS})
 
    # Set the appropriate Python version
