@@ -1409,6 +1409,7 @@ namespace Kautham {
                 return true;
             }
             std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the trajectory." << std::endl;
+            return false;
         }
         std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the path." << std::endl;
         return false;
