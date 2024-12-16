@@ -945,7 +945,7 @@ bool Problem::findFile(string &filename, vector<string> path) {
             for (uint i = 0; i < path.size(); i++) {
                  details << "\t" << path.at(i) << endl;
             }
-            details << "\nPease, consider updating the Default Path List if necessary";
+            details << "\nPlease, consider updating the Default Path List if necessary";
             throw KthExcp(message, details.str());
         }
 
@@ -993,7 +993,7 @@ bool Problem::findAllFiles(xml_node *parent, string child, string attribute,
                 for (uint i = 0; i < path.size(); i++) {
                     details << "\t" << path.at(i) << endl;
                 }
-                details << "\nPease, consider updating the Default Path List if necessary";
+                details << "\nPlease, consider updating the Default Path List if necessary";
                 throw KthExcp(message, details.str());
             }
         }
