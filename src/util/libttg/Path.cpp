@@ -51,10 +51,10 @@ using namespace Eigen;
 class LinearPathSegment : public PathSegment
 {
 public:
-	LinearPathSegment(const Eigen::VectorXd &start, const Eigen::VectorXd &end) :
-		start(start),
-		end(end),
-		PathSegment((end-start).norm())
+	LinearPathSegment(const Eigen::VectorXd &_start, const Eigen::VectorXd &_end) :
+		PathSegment((_end-_start).norm()),
+		start(_start),
+		end(_end)
 	{
 	}
 
@@ -111,8 +111,8 @@ public:
 			return;
 		}
 
-		const double startDistance = (start - intersection).norm();
-		const double endDistance = (end - intersection).norm();
+		// const double startDistance = (start - intersection).norm();
+		// const double endDistance = (end - intersection).norm();
 
 		double distance = std::min((start - intersection).norm(), (end - intersection).norm());
 		const double angle = acos(startDirection.dot(endDirection));
