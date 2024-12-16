@@ -69,6 +69,7 @@ message( STATUS "Using IOC planners: ${KAUTHAM_IOC}")
 message( STATUS "Using Open Dynamic Engine: ${KAUTHAM_OPENDE}")
 message( STATUS "Using FCL: Kautham is using FCL as default collision detection engine")
 message( STATUS "Creating the HTML based API documentation: ${KAUTHAM_DOCUMENTATION}")
+message( STATUS "Creating the Python bindings PyKautham")
 
 ########### Modules path and system options ###############
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
