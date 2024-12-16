@@ -390,6 +390,9 @@ namespace Kautham {
     #if defined(KAUTHAM_USE_FCL)
           return (((IVFCLElement*)element)->getIvFromFCLModel());
     #endif
-    }
+    }else {
+          SoSeparator *sep = new SoSeparator;
+          return sep;
+      }
     }
 }
