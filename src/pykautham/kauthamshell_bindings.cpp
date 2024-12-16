@@ -3,21 +3,18 @@
 #include <pybind11/stl_bind.h>  // For complex STL bindings
 #include <pybind11/functional.h> // For binding lambdas and callbacks
 #include <sstream>  // For std::istream and std::ostream
-#include <kautham/kauthamshell.h> // Assuming the class is declared in this header
-#include <kautham/sampling/robconf.h>
+#include "kauthamshell_bindings.h"
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(pykautham, m) {
-    m.doc() = "Python bindings for the kautham library";
-
-    py::class_<Kautham::kauthamshell>(m, "Kauthamshell")
+void register_kauthamshell(pybind11::module &m){
+     // class kauthamshell
+     py::class_<Kautham::kauthamshell>(m, "Kauthamshell")
         .def(py::init<>())
         .def("problemOpened", &Kautham::kauthamshell::problemOpened)
         .def("closeProblem", &Kautham::kauthamshell::closeProblem)
         .def("openProblem", py::overload_cast<std::istream*, std::vector<std::string>>(&Kautham::kauthamshell::openProblem))
         .def("openProblem", py::overload_cast<std::string, std::vector<std::string>>(&Kautham::kauthamshell::openProblem))
-        // ... other methods ...
 
         // Example of handling a method with complex arguments and return types
         .def("checkCollision", [](Kautham::kauthamshell& self, const std::vector<float>& smpcoords) {
