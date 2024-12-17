@@ -1089,12 +1089,24 @@ bool Problem::setupFromFile(istream* xml_inputfile, vector <string> def_path, bo
 
 bool Problem::setupFromFile(string xml_doc, vector <string> def_path, bool useBBOX) {
     _filePath = xml_doc;
+    std::cout << "Kautham is opening a problem file:\n\t" << _filePath << std::endl;
+    std::string control_directory = _filePath;
+    control_directory.erase(control_directory.find_last_of("/") + 1, control_directory.length());
+    std::cout << "Kautham will search the problem control folder in:\n\t" << control_directory << std::endl;
+    std::cout << "Kautham will search robots and obstacles models in:\n";
+    for (const auto& path : def_path) {
+        std::cout << "\t" << path << std::endl;
+    }
+    std::cout << std::endl;
+
     defPath = def_path;
+    defPath.push_back(control_directory);
+
     xml_document *doc = new xml_document;
     xml_parse_result result = doc->load_file( xml_doc.c_str());
     if (result) {
         //if the file was correctly parsed
-        if (prepareFile(doc, def_path)) {
+        if (prepareFile(doc, defPath)) {
             //if everything seems to be OK, try to setup the problem
             return setupFromFile(doc, useBBOX);
         } else {

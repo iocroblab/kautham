@@ -82,7 +82,6 @@ namespace Kautham {
 
     bool kauthamshell::openProblem(string problemfilename, vector <string> def_path) {
         try {
-            std::cout << "Kautham is opening a problem file: " << problemfilename << endl;
             if (problemOpened()) closeProblem();
             Problem *const problem = new Problem();
             memPtr_ = problem;
