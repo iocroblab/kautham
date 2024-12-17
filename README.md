@@ -17,5 +17,5 @@ It is principally being used in the research of motion planning strategies for h
 More info:  `Kautham webpage <https://sir.upc.edu/projects/kautham/>`_
 
 
-[![Pipeline Status](https://gitioc.upc.edu/%{project_path}/badges/%{default_branch}/pipeline.svg)](https://gitioc.upc.edu/%{project_path}/-/commits/%{default_branch})
+[![Pipeline Status](https://gitioc.upc.edu/%{project_path}/badges/include-fix/pipeline.svg)](https://gitioc.upc.edu/%{project_path}/-/commits/include-fix)
 
