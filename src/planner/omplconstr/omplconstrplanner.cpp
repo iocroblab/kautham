@@ -257,6 +257,9 @@ namespace Kautham {
                     std::cout << "goalomplconstr:" << std::endl;
                     goalompl.print();
                     goalStates->addState(goalompl);
+                    // auto debug = std::make_shared<OrientationConstraint>(6,3,0.1);
+                    // debug->OrientationConstraint::setJointConfigAsTargetOrientation(goalompl.reals());
+                    // debug->OrientationConstraint::printTargetOrientation();
                 }
                 this->pdef_->setGoal(ob::GoalPtr(goalStates));
 

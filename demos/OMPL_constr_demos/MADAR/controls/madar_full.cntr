@@ -5,20 +5,30 @@
 	<!-- ################## -->
 	<Offset>
 		<!-- BEGIN: BASE -->
-		<DOF name="madar_full/X" value="0.5" />
+		<!-- <DOF name="madar_full/X" value="0.5" />
 		<DOF name="madar_full/Y" value="0.5" />
 		<DOF name="madar_full/Z" value="0.0" />
         <DOF name="madar_full/X1" value="0.0"/>
         <DOF name="madar_full/X2" value="0.0"/>
-        <DOF name="madar_full/X3" value="0.0"/>
+        <DOF name="madar_full/X3" value="0.0"/> -->
 		<!-- END: BASE -->
 
 		<!-- BEGIN: ARM RIGHT -->
-
+		<DOF name="madar_full/right_shoulder_link" value="0.5" />
+		<DOF name="madar_full/right_upper_arm_link" value="0.5" />
+		<DOF name="madar_full/right_fore_arm_link" value="0.5" />
+		<DOF name="madar_full/right_wrist_1_link" value="0.5" />
+		<DOF name="madar_full/right_wrist_2_link" value="0.5" />
+		<DOF name="madar_full/right_wrist_3_link" value="0.5" />
 		<!-- END: ARM RIGHT -->
 
 		<!-- BEGIN: ARM LEFT -->
-
+		<DOF name="madar_full/left_shoulder_link" value="0.5" />
+		<DOF name="madar_full/left_upper_arm_link" value="0.5" />
+		<DOF name="madar_full/left_fore_arm_link" value="0.5" />
+		<DOF name="madar_full/left_wrist_1_link" value="0.5" />
+		<DOF name="madar_full/left_wrist_2_link" value="0.5" />
+		<DOF name="madar_full/left_wrist_3_link" value="0.5" />
 		<!-- END: ARM LEFT -->
 
 		<!-- BEGIN: HAND RIGHT -->
