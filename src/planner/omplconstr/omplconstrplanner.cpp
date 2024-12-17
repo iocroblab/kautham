@@ -171,8 +171,6 @@ namespace Kautham {
                                                             }), unconstrained_joint_names.end());
                         }
 
-                        std::cout << "----------" << std::endl;
-                        
                         // Create the Rn space with the unconstrained joints:
                         if (unconstrained_joint_names.size() > 0) {
                             current_rob->setUnconstrainedJointNames(unconstrained_joint_names);
@@ -215,8 +213,8 @@ namespace Kautham {
                 this->si_ = std::make_shared<ompl::base::SpaceInformation>(this->space_);
 
                 // Set validity checker:
-                // auto my_ValidityChecker = std::make_shared<Kautham::omplconstrplanner::ValidityChecker>(si_,  (Planner*)this);
-                // si_->setStateValidityChecker(ob::StateValidityCheckerPtr(my_ValidityChecker));
+                auto my_ValidityChecker = std::make_shared<Kautham::omplconstrplanner::ValidityChecker>(this->si_,  (Planner*)this);
+                this->si_->setStateValidityChecker(ob::StateValidityCheckerPtr(my_ValidityChecker));
 
                 this->si_->setup(); // Finalize the SpaceInformation setup
 
