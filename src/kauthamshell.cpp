@@ -1195,7 +1195,7 @@ namespace Kautham {
                 std::fill(requested_joints.begin(), requested_joints.end(), true);
             }
 
-            if (plannerFamily == OMPLPLANNER) {
+            if (plannerFamily == OMPLPLANNER || plannerFamily == OMPLCONSTRPLANNER) {
                 std::cout << "OMPLPLANNER" << std::endl;
                 if (problem->getPlanner()->solveAndInherit()) {
                     auto omplPlanner = static_cast<omplplanner::omplPlanner*>(problem->getPlanner());
