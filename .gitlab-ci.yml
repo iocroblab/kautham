@@ -7,7 +7,7 @@ debian-bullseye_job:
   image: debian:bullseye
   before_script:
   - apt-get -q update
-  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev cmake libboost-filesystem-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev libsoqt520-dev libcoin-dev python3-all python3-pybind11 pybind11-dev
+  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev cmake libboost-filesystem-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev libsoqt520-dev libcoin-dev python3-all python3-pybind11 pybind11-dev python3-dev
    
   script:
     - mkdir build
@@ -21,7 +21,7 @@ debian-bookworm_job:
   image: debian:bookworm
   before_script:
   - apt-get -q update
-  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev cmake libboost-filesystem-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev python3-all python3-pybind11 pybind11-dev
+  - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev cmake libboost-filesystem-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev catkin libsoqt520-dev libcoin-dev python3-all python3-pybind11 pybind11-dev  python3-dev
    
   script:
     - mkdir build
@@ -38,7 +38,7 @@ ubuntu-jammy_job:
     - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends cmake software-properties-common gpg-agent
     - add-apt-repository -y ppa:deb-rob/jammy-robotics
     - apt-get -q update
-    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev libboost-filesystem-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev libsoqt520-dev libcoin-dev python3-all python3-pybind11 pybind11-dev
+    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev libboost-filesystem-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev libsoqt520-dev libcoin-dev python3-all python3-pybind11 pybind11-dev python3-dev
 
   script:
     - mkdir build
@@ -55,7 +55,7 @@ ubuntu-noble_job:
     - apt-get -q update
     - env DEBIAN_FRONTEND=noninteractive TZ="Europe/Paris" apt install -yq tzdata
     - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends cmake software-properties-common gpg-agent
-    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev libboost-filesystem-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev libsoqt520-dev libcoin-dev python3-all python3-pybind11 pybind11-dev
+    - env DEBIAN_FRONTEND=noninteractive apt-get -q -y install --no-install-recommends build-essential libompl-dev libboost-filesystem-dev libboost-system-dev libboost-serialization-dev libboost-thread-dev libfcl-dev libassimp-dev libarmadillo-dev libode-dev libpugixml-dev libeigen3-dev freeglut3-dev libsoqt520-dev libcoin-dev python3-all python3-pybind11 pybind11-dev python3-dev
 
   script:
     - mkdir build
