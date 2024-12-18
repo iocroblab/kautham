@@ -78,9 +78,9 @@ double ValidityChecker::clearance(const ob::State* state) const
     //load the RobConf of smp form the values of the ompl::state
     ((omplPlanner*)theplanner)->omplState2smp(state,smp);
     //distance-check
-    vector<KthReal> *distvect;
+    vector<double> *distvect;
     distvect = theplanner->wkSpace()->distanceCheck(smp);
-    KthReal dist = FLT_MAX;
+    double dist = FLT_MAX;
     for(unsigned i=0; i<distvect->size(); i++)
         if(dist>distvect->at(i)) dist = distvect->at(i);
     return dist;

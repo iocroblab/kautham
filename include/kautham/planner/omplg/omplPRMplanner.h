@@ -59,12 +59,12 @@ namespace Kautham {
 
          bool setParameters();
 
-         KthReal _MaxNearestNeighbors;
-         KthReal _distanceThreshold;
-         KthReal _MinGrowTime;
-         KthReal _MinExpandTime;
-         KthReal _BounceDistanceThreshold;
-         KthReal _BounceSteps;
+         double _MaxNearestNeighbors;
+         double _distanceThreshold;
+         double _MinGrowTime;
+         double _MinExpandTime;
+         double _BounceDistanceThreshold;
+         double _BounceSteps;
 	  };
   }
   /** @}   end of Doxygen module */

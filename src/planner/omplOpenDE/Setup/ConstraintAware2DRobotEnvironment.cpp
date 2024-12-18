@@ -31,7 +31,7 @@ using namespace std;
 namespace Kautham {
 namespace omplcplanner{
 //! Constructor create the ConstraintAware robot enviroment and setup the parameters for ODE.
-ConstraintAware2DRobotEnvironment::ConstraintAware2DRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm, bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm,isKchain)
+ConstraintAware2DRobotEnvironment::ConstraintAware2DRobotEnvironment(WorkSpace* ws, double maxspeed, double maxContacts, double minControlSteps,double maxControlSteps, double erp, double cfm, bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm,isKchain)
 {
     SetPlanningParameters();
 }

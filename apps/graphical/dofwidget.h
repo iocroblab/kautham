@@ -60,7 +60,7 @@ namespace Kautham {
          * \brief setValues sets new values for DOFs
          * \param values new values of the DOFs
          */
-        void setValues(vector<KthReal> &values);
+        void setValues(vector<double> &values);
 
     signals:
         /*!
@@ -84,12 +84,12 @@ namespace Kautham {
         /*!
          * \brief lowValues lower limits of the DOFs
          */
-        vector<KthReal> lowValues;
+        vector<double> lowValues;
 
         /*!
          * \brief highValues higher limits of the DOFs
          */
-        vector<KthReal> highValues;
+        vector<double> highValues;
     };
     /** @}   end of Doxygen module "Application" */
 }

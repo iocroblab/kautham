@@ -62,8 +62,8 @@ class IVElement : public Element {
 
       IVElement(string ivfile, string collision_ivfile, double sc, bool useBBOX);
       IVElement(SoSeparator *visual_model, SoSeparator *collision_model, double sc, bool useBBOX);
-      virtual void setPosition(KthReal *pos);
-      virtual void setOrientation(KthReal *ori);
+      virtual void setPosition(double *pos);
+      virtual void setOrientation(double *ori);
 	    SbMatrix orientationMatrix();
       SoSeparator* ivModel(bool tran = false);
       SoSeparator* collision_ivModel(bool tran = false);
@@ -78,7 +78,7 @@ class IVElement : public Element {
       SoSeparator *BBOX(SoSeparator *model, double sc, string filename = "");
 
       // Virtual functions that mst be implemented in derived classes
-	    virtual KthReal getDistanceTo(Element* other) const = 0;
+	    virtual double getDistanceTo(Element* other) const = 0;
       virtual bool collideTo(Element* other) const = 0;
       
       inline SoTranslation* getTrans(){return trans;}

@@ -38,10 +38,10 @@ namespace Kautham {
 
 class IVFCLElement:public IVElement {
 public:
-    IVFCLElement(string visFile, string collFile, KthReal sc, bool useBBOX);
+    IVFCLElement(string visFile, string collFile, double sc, bool useBBOX);
 
     IVFCLElement(SoSeparator *visModel, SoSeparator *collModel,
-                 KthReal sc, bool useBBOX);
+                 double sc, bool useBBOX);
 
     ~IVFCLElement();
 

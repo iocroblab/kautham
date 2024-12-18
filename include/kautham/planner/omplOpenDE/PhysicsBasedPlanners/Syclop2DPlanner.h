@@ -59,7 +59,7 @@ public:
     Syclop2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~Syclop2DPlanner();
     bool setParameters();//!< this function set the planning parameters for KPIECE.
-    KthReal _GoalBias;
+    double _GoalBias;
 
 };
 

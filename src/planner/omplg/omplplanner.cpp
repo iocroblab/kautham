@@ -70,7 +70,7 @@ namespace Kautham {
 
 
         //! This function sets the values of the weights. The values passed as a parameter are scaled in order not to change the maximim extend of the space
-        void weigthedRealVectorStateSpace::setWeights(vector<KthReal> w)
+        void weigthedRealVectorStateSpace::setWeights(vector<double> w)
         {
             double fitFactor;
 
@@ -164,8 +164,8 @@ namespace Kautham {
                 double dist;
 
                 bool withinbounds=false;
-                vector<KthReal> deltacoords(d);
-                vector<KthReal> coords(d);
+                vector<double> deltacoords(d);
+                vector<double> coords(d);
                 double fraction;
                 do{
                     //sample the kautham control space. Controls are defined in the input xml files. Eeach control value lies in the [0,1] interval
@@ -316,7 +316,7 @@ namespace Kautham {
             si_ = si;
             //be careful these values should be set somehow!
             int level = 3;
-            KthReal sigma = 0.1;
+            double sigma = 0.1;
 
             _samplerRandom = new RandomSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
             _samplerHalton = new HaltonSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
@@ -545,7 +545,7 @@ namespace Kautham {
                         spaceRn[i]->registerDefaultProjection(peRn);
 
                         // set the bounds and the weights
-                        vector<KthReal> jointweights;
+                        vector<double> jointweights;
                         ob::RealVectorBounds bounds(nj);
                         double low, high;
                         for (int j=0; j<nj;j++)
@@ -1058,7 +1058,7 @@ namespace Kautham {
 
             //Set space bounds
             unsigned int k;
-            KthReal xmin, xmax, ymin, ymax, zmin, zmax;
+            double xmin, xmax, ymin, ymax, zmin, zmax;
             if (_wkSpace->getRobot(robot)->isSE3Enabled()) {
                 k = stateSpace->as<ob::SE3StateSpace>()->getDimension();
 
@@ -1315,8 +1315,8 @@ namespace Kautham {
                 {
                     //get the kautham SE3 configuration
                     SE3Conf c = smpRobotsConf.at(i).getSE3();
-                    vector<KthReal>& pp = c.getPos();
-                    vector<KthReal>& aa = c.getAxisAngle();
+                    vector<double>& pp = c.getPos();
+                    vector<double>& aa = c.getAxisAngle();
 
                     //set the ompl SE3 configuration
                     ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
@@ -1388,7 +1388,7 @@ namespace Kautham {
                     sstate >> pathscopedstatese3;
 
                     //Convert it to a vector of 7 components
-                    vector<KthReal> se3coords;
+                    vector<double> se3coords;
                     se3coords.resize(7);
                     se3coords[0] = pathscopedstatese3->getX();
                     se3coords[1] = pathscopedstatese3->getY();
@@ -1423,7 +1423,7 @@ namespace Kautham {
                     sstate >> pathscopedstateRn;
 
                     //Convert it to a vector of n components
-                    vector<KthReal> coords;
+                    vector<double> coords;
                     for (unsigned int j = 0; j < _wkSpace->getRobot(i)->getNumJoints(); ++j){
                         coords.push_back(pathscopedstateRn->values[j]);
                     }

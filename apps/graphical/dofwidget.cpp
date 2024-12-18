@@ -77,7 +77,7 @@ namespace Kautham {
         QFrame *frame;
         QVBoxLayout *frameLayout;
         QLabel *label;
-        vector <KthReal> currentValues;
+        vector <double> currentValues;
         currentValues.resize(names.size());
         labels.resize(names.size());
         for (int i = 0; i < names.size(); ++i){
@@ -130,7 +130,7 @@ namespace Kautham {
     }
 
 
-    void DOFWidget::setValues(vector<KthReal> &values) {
+    void DOFWidget::setValues(vector<double> &values) {
         if (values.size() == labels.size()) {
             double value;
             for (uint i = 0; i < values.size(); ++i) {

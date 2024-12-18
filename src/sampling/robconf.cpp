@@ -33,12 +33,12 @@ namespace Kautham{
   }
 
   bool RobConf::setSE3(){
-    vector<KthReal> coords(6,(KthReal)0.0);
+    vector<double> coords(6,(double)0.0);
 
     return setSE3(coords);
   }
 
-  bool RobConf::setSE3(vector<KthReal>& coords){
+  bool RobConf::setSE3(vector<double>& coords){
     try{
       first.setCoordinates(coords);
        return true;
@@ -63,7 +63,7 @@ namespace Kautham{
     return true;
   }
 
-  bool RobConf::setRn(vector<KthReal>& coords){
+  bool RobConf::setRn(vector<double>& coords){
     try{
       if(second.getDim() != coords.size())
         second.reDim((unsigned int)coords.size());
@@ -89,8 +89,8 @@ namespace Kautham{
 
   }
 
-  KthReal RobConf::getDistance2(RobConf& robc){
-    KthReal dist = (KthReal)0.0;
+  double RobConf::getDistance2(RobConf& robc){
+    double dist = (double)0.0;
       dist += getSE3().getDistance2(robc.getSE3());
 
       dist += getRn().getDistance2(robc.getRn());
@@ -98,8 +98,8 @@ namespace Kautham{
     return dist;
   }
 
-  KthReal RobConf::getDistance2(RobConf& robc, RobWeight& robw){
-    KthReal dist = (KthReal)0.0;
+  double RobConf::getDistance2(RobConf& robc, RobWeight& robw){
+    double dist = (double)0.0;
 
     dist += getSE3().getDistance2( robc.getSE3(), robw.getSE3Weight()[0],
                                   robw.getSE3Weight()[1] );
@@ -110,7 +110,7 @@ namespace Kautham{
   }
 
 
-  RobConf RobConf::interpolate(RobConf& rbc, KthReal fraction){
+  RobConf RobConf::interpolate(RobConf& rbc, double fraction){
     RobConf tmpRobConf;
     try{
       SE3Conf tmpS = getSE3().interpolate(rbc.getSE3(), fraction );

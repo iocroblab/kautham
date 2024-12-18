@@ -41,15 +41,15 @@ namespace Kautham {
       //! Used for dynamic simulation.
       ode_element         ode;
 
-    virtual void          setPosition(KthReal pos[3]) = 0;
+    virtual void          setPosition(double pos[3]) = 0;
 
     //! Sets the orientation. Remember that orientation is a quaternion
-    virtual void          setOrientation(KthReal ori[4]) = 0;
+    virtual void          setOrientation(double ori[4]) = 0;
     virtual bool          collideTo(Element* other) const = 0;
-    virtual KthReal       getDistanceTo(Element* other) const = 0;
-    inline KthReal*       getOrientation(){return orientation;}
-    inline KthReal*       getPosition(){return position;}
-    inline KthReal        getScale() const {return scale;}
+    virtual double       getDistanceTo(Element* other) const = 0;
+    inline double*       getOrientation(){return orientation;}
+    inline double*       getPosition(){return position;}
+    inline double        getScale() const {return scale;}
     static void           resetCollCheckCounter();
     static unsigned int   getCollCheckCounter();
     static void           increaseCollCheckCounter();

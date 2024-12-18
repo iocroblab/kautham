@@ -60,15 +60,15 @@ namespace Kautham {
 			return s.str();
 	}
 	
-  KthReal RnConf::getDistance2(Conf* conf){
+  double RnConf::getDistance2(Conf* conf){
     return getDistance2(*((RnConf*) conf));
   }
 
 //! Returns the squared distance to a configuration in the respective space metric.
-  KthReal RnConf::getDistance2(RnConf& conf){
+  double RnConf::getDistance2(RnConf& conf){
 //    if( conf == NULL ) return -1.0;
     if(conf.getType() == Rn && conf.getDim() == this->dim){
-      KthReal dist = (KthReal) 0.0;
+      double dist = (double) 0.0;
       for(unsigned int i = 0; i < coord.size(); i++ )
         //pow((coord.at(i) - conf.getCoordinate(i)),2);
         dist += ( coord.at(i) - conf.getCoordinate(i)) * (coord.at(i) - conf.getCoordinate(i));
@@ -78,16 +78,16 @@ namespace Kautham {
     return -1;
   }
 
-  KthReal RnConf::getDistance2(Conf* conf, std::vector<KthReal>& weights){
+  double RnConf::getDistance2(Conf* conf, std::vector<double>& weights){
     return getDistance2(*(RnConf*)conf, weights);
   }
 
   //! Returns the weighted squared distance to a configuration in the respective space metric.
-  KthReal RnConf::getDistance2(RnConf& conf, std::vector<KthReal>& weights){
+  double RnConf::getDistance2(RnConf& conf, std::vector<double>& weights){
 //    if( conf == NULL ) return -1.0;
     if(conf.getType() == Rn){
-      KthReal dist = (KthReal) 0.0;
-      KthReal diff = (KthReal) 0.0;
+      double dist = (double) 0.0;
+      double diff = (double) 0.0;
       if(weights.size() == 1){
         // Using the same weight for each coordinate component
         for(unsigned int i = 0; i < coord.size(); i++ ){
@@ -107,11 +107,11 @@ namespace Kautham {
     return -1;
   }
 
-  RnConf RnConf::interpolate(RnConf& rn, KthReal fraction){
+  RnConf RnConf::interpolate(RnConf& rn, double fraction){
     RnConf tmpC(rn.getDim());
 
     // Interpolation in space.
-    vector<KthReal>& other = rn.getCoordinates();
+    vector<double>& other = rn.getCoordinates();
     for(unsigned int i = 0; i < coord.size(); i++)
       tmpC.coord.at(i) = coord.at(i) + fraction*(other.at(i) - coord.at(i));
    

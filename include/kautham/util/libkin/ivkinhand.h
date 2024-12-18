@@ -94,25 +94,25 @@
 
   private:
     IvKinHand();
-	  vector<KthReal> _indexi; //fingertip (xyz)
-	  vector<KthReal> _indexg; //point at fingertip+delta*n
-	  vector<KthReal> _middlei; //fingertip (xyz)
-	  vector<KthReal> _middleg; //point at fingertip+delta*n
-	  vector<KthReal> _ringi; //fingertip (xyz)
-	  vector<KthReal> _ringg; //point at fingertip+delta*n
-	  vector<KthReal> _thumbi; //fingertip (xyz)
-	  vector<KthReal> _thumbg; //point at fingertip+delta*n
+	  vector<double> _indexi; //fingertip (xyz)
+	  vector<double> _indexg; //point at fingertip+delta*n
+	  vector<double> _middlei; //fingertip (xyz)
+	  vector<double> _middleg; //point at fingertip+delta*n
+	  vector<double> _ringi; //fingertip (xyz)
+	  vector<double> _ringg; //point at fingertip+delta*n
+	  vector<double> _thumbi; //fingertip (xyz)
+	  vector<double> _thumbg; //point at fingertip+delta*n
 
 #if defined(KAUTHAM_USE_GSL) && defined(NDEBUG)
 
-// 	std::vector<KthReal> _indexi; //fingertip (xyz)
-// 	KthReal _middlei[3];
-// 	KthReal _ringi[3];
-// 	KthReal _thumbi[3];
-// 	KthReal _indexg[3];//point at fingertip+delta*n
-// 	KthReal _middleg[3];
-// 	KthReal _ringg[3];
-// 	KthReal _thumbg[3];
+// 	std::vector<double> _indexi; //fingertip (xyz)
+// 	double _middlei[3];
+// 	double _ringi[3];
+// 	double _thumbi[3];
+// 	double _indexg[3];//point at fingertip+delta*n
+// 	double _middleg[3];
+// 	double _ringg[3];
+// 	double _thumbg[3];
 
 
 	void Kt2IKSInData(void);						// Set values in vector des_fing_posor so it can be passed to sahand_iksolver

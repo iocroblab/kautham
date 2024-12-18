@@ -93,7 +93,7 @@ namespace Kautham {
          * \brief setValues sets new values for the controls
          * \param coords new values of the controls
          */
-        void setValues(vector <KthReal> coords);
+        void setValues(vector <double> coords);
 
         /*!
          * \brief writeGUI writes a message in the GUI
@@ -120,7 +120,7 @@ namespace Kautham {
         /*!
          * \brief values values of the controls
          */
-        vector<KthReal> values;
+        vector<double> values;
 
         /*!
          * \brief prob problem where the robots/obstacles are stored

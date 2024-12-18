@@ -128,7 +128,7 @@ namespace Kautham {
     }
 
 
-    IVElement::IVElement(string ivfile, string collision_ivfile, KthReal sc, bool useBBOX) {
+    IVElement::IVElement(string ivfile, string collision_ivfile, double sc, bool useBBOX) {
         for(int i=0;i<3;i++){
             position[i]= 0.0f;
             orientation[i]=0.0f;
@@ -448,7 +448,7 @@ namespace Kautham {
 
     }
 
-    void IVElement::setOrientation(KthReal *ori){
+    void IVElement::setOrientation(double *ori){
         for(int i=0;i<4;i++){
             orientation[i]=ori[i];
         }

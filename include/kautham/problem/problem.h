@@ -148,8 +148,8 @@ namespace Kautham {
         bool                    createCSpace();
         bool                    createCSpaceFromFile(pugi::xml_document *doc);
         bool                    tryToSolve();
-        bool                    setCurrentRobControls(vector<KthReal> &val);
-        bool                    setCurrentObsControls(vector<KthReal> &val);
+        bool                    setCurrentRobControls(vector<double> &val);
+        bool                    setCurrentObsControls(vector<double> &val);
         //! Returns WSpace
         WorkSpace*		        wSpace();
         //! Returns CSpace
@@ -172,15 +172,15 @@ namespace Kautham {
         inline Sampler*         getSampler(){return _sampler;}
         inline void             setSampler(Sampler* smp){_sampler = smp;}
         inline int              getDimension(){return _wspace->getNumRobControls();}
-        inline vector<KthReal>& getCurrentRobControls(){return _currentRobControls;}
-        inline vector<KthReal>& getCurrentObsControls(){return _currentObsControls;}
+        inline vector<double>& getCurrentRobControls(){return _currentRobControls;}
+        inline vector<double>& getCurrentObsControls(){return _currentObsControls;}
         inline string           getFilePath(){return _filePath;}
         bool                    inheritSolution();
         bool                    setupFromFile(string xml_doc, vector <string> def_path = vector <string>(), bool useBBOX = false);
         bool                    setupFromFile(istream *xml_inputfile, vector <string> def_path = vector <string>(), bool useBBOX = false);
         bool                    setupFromFile(pugi::xml_document *doc, bool useBBOX, progress_struct *progress = NULL);
-        bool addRobot2WSpace(string robFile, KthReal scale, vector<KthReal> home,vector< vector<KthReal> > limits);
-        bool addObstacle2WSpace(string robFile, KthReal scale, vector<KthReal> home);
+        bool addRobot2WSpace(string robFile, double scale, vector<double> home,vector< vector<double> > limits);
+        bool addObstacle2WSpace(string robFile, double scale, vector<double> home);
 
 
         //! This method saves the information of the problem's planner .
@@ -306,8 +306,8 @@ namespace Kautham {
         CONFIGTYPE              _problemType;
         Sampler*                _sampler;
         Planner*                _planner;
-        vector<KthReal>         _currentRobControls;
-        vector<KthReal>         _currentObsControls;
+        vector<double>         _currentRobControls;
+        vector<double>         _currentObsControls;
         string                  _filePath;
         vector<string>          _robotfilenames;
         vector<string>          _obstaclesfilenames;

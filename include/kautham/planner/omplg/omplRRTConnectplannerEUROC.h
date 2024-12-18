@@ -60,7 +60,7 @@ namespace Kautham {
         bool filtersample(Sample* smp);
         bool trySolve();//reimplemented
 
-         KthReal _Range;
+         double _Range;
 	  };
   }
   /** @}   end of Doxygen module */

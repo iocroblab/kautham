@@ -34,7 +34,7 @@ using namespace pugi;
 
 namespace Kautham{
 
-  const KthReal RAD2GRAD=180.0/M_PI;
+  const double RAD2GRAD=180.0/M_PI;
   Planner::Planner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws){
       _guiName = _idName = "";
       _spType = stype;
@@ -78,8 +78,8 @@ namespace Kautham{
 
       for(size_t i = 0; i < getSimulationPath()->size(); i++){
         _wkSpace->moveRobotsTo(getSimulationPath()->at(i));
-				std::vector<KthReal>& joints = _wkSpace->getRobot(0)->getCurrentPos()->getRn().getCoordinates();
-        KthReal value=0;
+				std::vector<double>& joints = _wkSpace->getRobot(0)->getCurrentPos()->getRn().getCoordinates();
+        double value=0;
         for(size_t j=0; j< joints.size(); j++){
           value = joints.at(j);
           _theFile << value << " ";

@@ -59,10 +59,10 @@ namespace Kautham{
 
       //! Sets the coordinates from the array parameter coords. It create the own copy 
       //! of this values.
-      bool setCoords(std::vector<KthReal>& coords);
+      bool setCoords(std::vector<double>& coords);
 
       //! Returns the pointer to the internal coordinates.
-      inline std::vector<KthReal>& getCoords() {return _coords;}
+      inline std::vector<double>& getCoords() {return _coords;}
 
       //! Return a true if the sample is free, otherwise returns false. 
       //! If the color is equal to 1 it is free, but the color must be
@@ -88,8 +88,8 @@ namespace Kautham{
 	  inline void setConnectedComponent(int c){_connectedComponent = c;}
 
       //! Returns the distance to the smp Sample parameter. 
-      KthReal getDistance(Sample* smp, Kautham::SPACETYPE spc);
-      KthReal getDistance(Sample* smp, std::vector<RobWeight*> &weights, Kautham::SPACETYPE spc);
+      double getDistance(Sample* smp, Kautham::SPACETYPE spc);
+      double getDistance(Sample* smp, std::vector<RobWeight*> &weights, Kautham::SPACETYPE spc);
 
       //! Returns a pointer to a vector that contains the indexes of all  
       //! sample neighbours in the container of the SampleSet.
@@ -97,7 +97,7 @@ namespace Kautham{
 
       //! Returns a pointer to a vector that contains the distances of all  
       //! sample neighbours.
-      inline vector<KthReal>* getNeighDistances(){ return &neighsetdistances; }
+      inline vector<double>* getNeighDistances(){ return &neighsetdistances; }
 
       //! Sets the vector that contains the index of all sample neighbours.
       //! This vector in not created here, only is set from the parameter
@@ -108,9 +108,9 @@ namespace Kautham{
       void addNeigh(unsigned int  newNeigh);
 	  //! Adds a neighbor at its place folowwing an incrasing distance
 	  //! Also stores the distance at the distance vector
-      void addNeighOrdered(unsigned int  newNeigh, KthReal newDistance, unsigned int max, bool force=false);
+      void addNeighOrdered(unsigned int  newNeigh, double newDistance, unsigned int max, bool force=false);
 	  //! Adds a neighbor distance
-      void addNeighDistance(KthReal newNeighDistance);
+      void addNeighDistance(double newNeighDistance);
 
       //! Returns a string that contains the coordinates in the format:
       //! coord[0] = value coord[1] = value ... coord[dimSample-1] = value 
@@ -124,10 +124,10 @@ namespace Kautham{
       string printNeighs();
 
 	    //!sets transparency. Returns incremental change in tranparency
-        inline KthReal setTransparency(KthReal t){KthReal aux = _transparency; _transparency = t; return (aux-t);}
+        inline double setTransparency(double t){double aux = _transparency; _transparency = t; return (aux-t);}
         //! Returns the dimension of the sample
         inline unsigned int getDim(){return _dim;}
-        inline KthReal getTransparency(){return _transparency;}
+        inline double getTransparency(){return _transparency;}
         inline int getcolor(){return _color;}
         inline void setcolor(int c){_color = c;}
 
@@ -136,7 +136,7 @@ namespace Kautham{
       void setMappedConf(vector<RobConf>& _localConf);
       void setMappedConf(vector<RobConf*>& _localConf);
 
-      Sample* interpolate(Sample* smp, KthReal fraction);
+      Sample* interpolate(Sample* smp, double fraction);
 
 
       inline void setwithinbounds(bool t){withinbounds=t;}
@@ -149,19 +149,19 @@ namespace Kautham{
       unsigned int _dim;
 
       //! This is the coordinates array. It must be created and set in the constructor.
-      std::vector<KthReal> _coords;
+      std::vector<double> _coords;
 
       //! This is the neighbour set.
       std::vector<unsigned int> _neighset;
 
       //! This is the ditances to the neighbours.
-      vector<KthReal> neighsetdistances; 
+      vector<double> neighsetdistances; 
       //! This is the sample color used in two way, first it shows if the sample has 
       //! been collision checked and second, it shows if the samples is free or not.
       int _color;
 
 	  //!Transparency (mean of color neighbors)
-	  KthReal _transparency;
+	  double _transparency;
 
 	  //! Label of the connected component for its use in PRM planners
 	  int _connectedComponent;

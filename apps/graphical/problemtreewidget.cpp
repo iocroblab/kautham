@@ -196,7 +196,7 @@ namespace Kautham {
     }
 
 
-    QTreeWidgetItem *ProblemTreeWidget::addScale2Tree(KthReal scale, QTreeWidgetItem *parentItem) {
+    QTreeWidgetItem *ProblemTreeWidget::addScale2Tree(double scale, QTreeWidgetItem *parentItem) {
         QTreeWidgetItem *item = new QTreeWidgetItem(parentItem);
         item->setIcon(0,scaleIcon);
         item->setText(0,QString::number(scale));
@@ -212,7 +212,7 @@ namespace Kautham {
         item->setToolTip(0,"Home configuration");
 
         QTreeWidgetItem *subItem;
-        vector <KthReal> coord;
+        vector <double> coord;
 
         QString text;
         coord = homeConf.getPos();

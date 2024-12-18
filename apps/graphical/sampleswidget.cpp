@@ -225,7 +225,7 @@ namespace Kautham {
     void SamplesWidget::testDistance(){
         if (sampleList->count() > 0){
             Sample* sample = sampleSet->getSampleAt((sampleList->currentText()).toInt());
-            vector<KthReal>* values = prob->wSpace()->distanceCheck(sample);
+            vector<double>* values = prob->wSpace()->distanceCheck(sample);
             if (values->size() > 0) {
                 stringstream sstr;
                 sstr.precision(10);

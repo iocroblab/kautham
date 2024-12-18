@@ -78,10 +78,10 @@ namespace Kautham {
         public:
             weigthedRealVectorStateSpace(unsigned int dim=0);
             ~weigthedRealVectorStateSpace(void);
-            void setWeights(vector<KthReal> w);
+            void setWeights(vector<double> w);
             double distance(const ob::State *state1, const ob::State *state2) const;
         protected:
-            vector<KthReal> weights;
+            vector<double> weights;
         };
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -178,7 +178,7 @@ namespace Kautham {
 
         protected:
             //Add protected data and functions
-            KthReal _planningTime;
+            double _planningTime;
             //og::SimpleSetupPtr ss;
             ob::StateSpacePtr space;
             ob::SpaceInformationPtr si;

@@ -177,8 +177,8 @@ namespace Kautham {
 				vmin = vc;
 				for(tie(avi,avi_end)=adjacent_vertices(vc, *fg); avi!=avi_end; ++avi)
 				{
-					KthReal pneigh = pm[*avi];
-					KthReal pcurr = pm[vmin];
+					double pneigh = pm[*avi];
+					double pcurr = pm[vmin];
 					if(pneigh < pcurr) vmin = *avi; 
 					//if(pm[*avi] < pm[vmin]) vmin = *avi; 
                 }

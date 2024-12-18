@@ -45,8 +45,8 @@ namespace Kautham {
 	//Typedefs
 	//!The location associated to a vertex of the graph will be a sample pointer
     typedef Sample* location;
-	//!The cost of an edge of the graph will be a KthReal
-    typedef KthReal cost;
+	//!The cost of an edge of the graph will be a double
+    typedef double cost;
 	//!Edge of a graph represented as a pair of ints (the vertices)
     typedef std::pair<int, int> gridEdge;
 	 
@@ -56,9 +56,9 @@ namespace Kautham {
 	};
 	//!Graph representing the grid, defined as an adjacency_list with 
 	//!a potential value associated to the vertices and a cost associated
-	//!to the edges (both defined as KthReals)
+	//!to the edges (both defined as doubles)
     typedef boost::adjacency_list<boost::listS, boost::vecS, 
-		boost::undirectedS, boost::property<potential_value_t, KthReal>, 
+		boost::undirectedS, boost::property<potential_value_t, double>, 
 		boost::property<boost::edge_weight_t, cost> > gridGraph;
 
     typedef gridGraph::vertex_descriptor gridVertex;
@@ -132,10 +132,10 @@ namespace Kautham {
 		vector<int> _stepsDiscretization;
 
 		//!Potential value of the obstacles
-		KthReal _obstaclePotential;
+		double _obstaclePotential;
 
 		//!Potential value of the goal cell
-		KthReal _goalPotential;
+		double _goalPotential;
 
 		//!Vector of edges used in the construction of the grid
 		vector<gridEdge*> edges;
@@ -171,7 +171,7 @@ namespace Kautham {
 		void discretizeCspace();
 
 		//!Function to compute and collision-check the samples of the grid vertices
-    void loadgrid(vector<KthReal> &coords, unsigned coord_i);
+    void loadgrid(vector<double> &coords, unsigned coord_i);
 
 		//!Function to create the edges connecting the vertices of the grid
     void connectgrid(vector<int> &index, unsigned coord_i);
@@ -180,10 +180,10 @@ namespace Kautham {
 		void  prunegrid();
 
 		//!Function to set the potential value at a given vertex
-    inline void setPotential(int i, KthReal value){potmap[i]=value;}
+    inline void setPotential(int i, double value){potmap[i]=value;}
 
 		//!Function to obtain the potential value at a given vertex
-    inline KthReal getPotential(int i){return potmap[i];}
+    inline double getPotential(int i){return potmap[i];}
 
 		//!function that returns the pointer to the cspace separator in the case of 2D
 		SoSeparator *getIvCspaceScene();//reimplemented

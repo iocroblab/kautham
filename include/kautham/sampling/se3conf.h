@@ -55,47 +55,47 @@ namespace Kautham {
 		SE3Conf();
 		//~SE3Conf();
     bool              setCoordinates(SE2Conf* conf);
-    bool              setCoordinates(std::vector<KthReal>& coordinates);
+    bool              setCoordinates(std::vector<double>& coordinates);
 
-    KthReal           getDistance2(Conf* conf);
-    KthReal           getDistance2(SE3Conf& conf);
+    double           getDistance2(Conf* conf);
+    double           getDistance2(SE3Conf& conf);
 
     //! Redefininig this method in order to include the rotational weight instead of
     //! the same weight for each coordinate component.
-    KthReal           getDistance2( Conf* conf, KthReal& transWeight, KthReal& rotWeight );
-    KthReal           getDistance2( SE3Conf& conf, KthReal& transWeight, KthReal& rotWeight );
-    inline KthReal    getDistance( Conf* conf, KthReal& transWeight, KthReal& rotWeight ){
+    double           getDistance2( Conf* conf, double& transWeight, double& rotWeight );
+    double           getDistance2( SE3Conf& conf, double& transWeight, double& rotWeight );
+    inline double    getDistance( Conf* conf, double& transWeight, double& rotWeight ){
                           return sqrt(getDistance2(conf, transWeight, rotWeight));}
-    KthReal           getDistance2( Conf* conf, std::vector<KthReal>& weights );
-    KthReal           getDistance2( SE3Conf& conf, std::vector<KthReal>& weights );
+    double           getDistance2( Conf* conf, std::vector<double>& weights );
+    double           getDistance2( SE3Conf& conf, std::vector<double>& weights );
     string            print();
-    void              setPos(vector<KthReal>& pos);
-	vector<KthReal>&  getPos();
-    void              setOrient(vector<KthReal>& ori);
-    vector<KthReal>&  getOrient();
-    bool              setAngle(KthReal angle);
-    KthReal           getAngle();
-    bool              setAxis(vector<KthReal>& axis);
-	vector<KthReal>&  getAxisAngle();
-    bool              setAxisAngle(vector<KthReal>& axis, KthReal angle);
+    void              setPos(vector<double>& pos);
+	vector<double>&  getPos();
+    void              setOrient(vector<double>& ori);
+    vector<double>&  getOrient();
+    bool              setAngle(double angle);
+    double           getAngle();
+    bool              setAxis(vector<double>& axis);
+	vector<double>&  getAxisAngle();
+    bool              setAxisAngle(vector<double>& axis, double angle);
     
     //! Returns the interpolated configuration based on coordinates.
-    SE3Conf     interpolate(SE3Conf& se3, KthReal fraction);
+    SE3Conf     interpolate(SE3Conf& se3, double fraction);
 
     //! Returns the sampled parameters.
-    vector<KthReal> getParams();
+    vector<double> getParams();
 
     //! Changes the representation of the rotational part of the configuration
     //! from axis-angle to Quaternion. This methos is useful because the XML
     //! files provide de most understandable axis-angle format.
-    static void fromAxisToQuaternion(vector<KthReal> &values);
+    static void fromAxisToQuaternion(vector<double> &values);
 
-    static void fromAxisToQuaternion(KthReal values[]);
+    static void fromAxisToQuaternion(double values[]);
   private:
     void normalizeQ();
-    vector<KthReal>  _pos;
-    vector<KthReal>  _ori;
-    vector<KthReal>  _axisAn;
+    vector<double>  _pos;
+    vector<double>  _ori;
+    vector<double>  _axisAn;
 	};
 
     /** @}   end of Doxygen module "Sampling" */

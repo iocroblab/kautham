@@ -46,22 +46,22 @@ namespace Kautham {
   *		\param scale is the global scale for this link and It is only used for 
   *		graphical representation.
   */
-  Link::Link(string ivFile, string collision_ivFile, KthReal scale,
+  Link::Link(string ivFile, string collision_ivFile, double scale,
              APPROACH Type, bool useBBOX){
 #if defined(KAUTHAM_USE_FCL)
       element = new IVFCLElement(ivFile,collision_ivFile,scale,useBBOX);
 #endif
-	  a = (KthReal)0.0;
-	  alpha = (KthReal)0.0;
-	  theta = (KthReal)0.0;
-	  d = (KthReal)0.0;
+	  a = (double)0.0;
+	  alpha = (double)0.0;
+	  theta = (double)0.0;
+	  d = (double)0.0;
 	  movable = true;
 	  rotational = true;
 	  armed = false;
-	  lowLimit = (KthReal)-M_PI;
-	  hiLimit = (KthReal)M_PI;
-	  value = (KthReal)0.0;
-      zeroOffset = (KthReal)0.0;
+	  lowLimit = (double)-M_PI;
+	  hiLimit = (double)M_PI;
+	  value = (double)0.0;
+      zeroOffset = (double)0.0;
 	  parent = NULL;
 	  childs.clear();
       this->Type = Type;
@@ -69,9 +69,9 @@ namespace Kautham {
       for(int i = 0; i < 4; ++i) {
           for(int j=0 ; j<4; ++j) {
               if (i == j) {
-                  dhMatrix[i][j]= (KthReal)1.0;
+                  dhMatrix[i][j]= (double)1.0;
               } else {
-                  dhMatrix[i][j]= (KthReal)0.0;
+                  dhMatrix[i][j]= (double)0.0;
               }
           }
       }
@@ -95,17 +95,17 @@ namespace Kautham {
       element = new IVFCLElement(visual_model,collision_model,scale,useBBOX);
 #endif
 
-      a = (KthReal)0.0;
-      alpha = (KthReal)0.0;
-      theta = (KthReal)0.0;
-      d = (KthReal)0.0;
+      a = (double)0.0;
+      alpha = (double)0.0;
+      theta = (double)0.0;
+      d = (double)0.0;
       movable = true;
       rotational = true;
       armed = false;
-      lowLimit = (KthReal)-M_PI;
-      hiLimit = (KthReal)M_PI;
-      value = (KthReal)0.0;
-      zeroOffset = (KthReal)0.0;
+      lowLimit = (double)-M_PI;
+      hiLimit = (double)M_PI;
+      value = (double)0.0;
+      zeroOffset = (double)0.0;
       parent = NULL;
       childs.clear();
       this->Type = Type;
@@ -113,9 +113,9 @@ namespace Kautham {
       for(int i = 0; i < 4; ++i) {
           for(int j=0 ; j<4; ++j) {
               if (i == j) {
-                  dhMatrix[i][j]= (KthReal)1.0;
+                  dhMatrix[i][j]= (double)1.0;
               } else {
-                  dhMatrix[i][j]= (KthReal)0.0;
+                  dhMatrix[i][j]= (double)0.0;
               }
           }
       }
@@ -176,7 +176,7 @@ namespace Kautham {
   *		transformation of the  previous link (prior) and the D-H parameters.
   *		This is possible only if the Link is armed and movable.
   */
-  bool Link::setValue(KthReal q){
+  bool Link::setValue(double q){
       if(armed && movable){
           if(q <= lowLimit)
               q = lowLimit;
@@ -202,13 +202,13 @@ namespace Kautham {
   }
 
 
-  bool Link::setParameter(KthReal p){
+  bool Link::setParameter(double p){
     if(armed && movable){
-      if(p < (KthReal)0.0) p=0;
-	  else if(p > (KthReal) 1.0) p=1;
+      if(p < (double)0.0) p=0;
+	  else if(p > (double) 1.0) p=1;
       return setValue( parameter2Value(p) );
 
-      //if(p >= (KthReal)0.0 && p<= (KthReal) 1.0)
+      //if(p >= (double)0.0 && p<= (double) 1.0)
       //  return setValue( parameter2Value(p) );
       return false;
     }
@@ -218,7 +218,7 @@ namespace Kautham {
   void Link::calculatePnO(){
 	  //SbVec3f transTemp,  scaleTemp;
 	  //SbRotation rotTemp, scaoriTemp;
-	  KthReal tranv[3], rotv[4];
+	  double tranv[3], rotv[4];
 
     if(hasChanged){ 
       switch (Type) {
@@ -296,7 +296,7 @@ namespace Kautham {
 
   //!	This function set all D-H parameters. Angles are in degrees.  
   //! The theta parameter of D-H is the zeroOffset to home position.
-  void Link::setDHPars(KthReal theta, KthReal d, KthReal a, KthReal alpha){
+  void Link::setDHPars(double theta, double d, double a, double alpha){
 	  this->theta = theta;
 	  this->d = d;
 	  this->a = a;
@@ -309,14 +309,14 @@ namespace Kautham {
 
   //! This member function set low and hi limits to articular variable. 
   //! If limits represents angles, they are in radians. Otherwise there are in meters.
-  void Link::setLimits(KthReal low, KthReal hi){
+  void Link::setLimits(double low, double hi){
 	  if(!armed){
 		  this->lowLimit = low;
 		  this->hiLimit = hi;
 	  }
   }
 
-  KthReal* Link::getLimits(bool low){
+  double* Link::getLimits(bool low){
     if(low)
       return &lowLimit;
     else
@@ -345,8 +345,8 @@ namespace Kautham {
     return false;
   }
 
-  bool Link::setPreTransform(KthReal x, KthReal y, KthReal z,
-                             KthReal wx, KthReal wy, KthReal wz, KthReal angle){
+  bool Link::setPreTransform(double x, double y, double z,
+                             double wx, double wy, double wz, double angle){
       if (Type != URDF) {
           if(preTransform == NULL){
               mt::Point3 tempTran(x,y,z);

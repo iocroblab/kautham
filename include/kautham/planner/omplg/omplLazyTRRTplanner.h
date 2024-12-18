@@ -51,12 +51,12 @@ namespace Kautham {
 
             bool setPotentialCost(string filename);
 
-            KthReal _Range;
-            KthReal _GoalBias;
-            KthReal _maxStatesFailed;//nFail_{max}
-            KthReal _tempChangeFactor;//alpha
-            KthReal _frontierThreshold;//delta
-            KthReal _frontierNodesRatio;//rho
+            double _Range;
+            double _GoalBias;
+            double _maxStatesFailed;//nFail_{max}
+            double _tempChangeFactor;//alpha
+            double _frontierThreshold;//delta
+            double _frontierNodesRatio;//rho
 
             ob::OptimizationObjectivePtr _opti;
         };

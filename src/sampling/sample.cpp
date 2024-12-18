@@ -52,7 +52,7 @@ namespace Kautham{
     _config.clear();
   }
 
-  bool Sample::setCoords(std::vector<KthReal>& coords){
+  bool Sample::setCoords(std::vector<double>& coords){
       if (coords.size() == _dim) {
           for (unsigned int i = 0; i < _dim; ++i)
               _coords[i] = coords[i];
@@ -123,7 +123,7 @@ namespace Kautham{
     _neighset.push_back(newNeigh);
   }
 
-  void Sample::addNeighOrdered(unsigned int newNeigh, KthReal newDistance, unsigned int max, bool force){
+  void Sample::addNeighOrdered(unsigned int newNeigh, double newDistance, unsigned int max, bool force){
 	 //find where to place the sample in an increasing order of distances
 	unsigned int pos=0;
   for(unsigned int i=0; i< neighsetdistances.size();i++)
@@ -151,7 +151,7 @@ namespace Kautham{
 	
   }
   
-  void Sample::addNeighDistance(KthReal newNeighDistance){
+  void Sample::addNeighDistance(double newNeighDistance){
 	  neighsetdistances.push_back(newNeighDistance);
   }
 
@@ -167,11 +167,11 @@ namespace Kautham{
   //! the sample to configuration mapping.
   //! \$ dist = \left( \sum^{m}_{i=1} \left(dist(RobConf_{1i},
   //! RobConf_{2i}) \right)^{2} \right)^{frac{1}{2}}\$
-  KthReal Sample::getDistance(Sample* smp, Kautham::SPACETYPE spc){
+  double Sample::getDistance(Sample* smp, Kautham::SPACETYPE spc){
     if( smp == NULL ) return -1.0;
     // Each sample has a vector<RobConf> who has a SE3 and a Rn configuration
     // inside.
-    KthReal dist=0.0;
+    double dist=0.0;
 
     try{
 		  if( spc == Kautham::CONFIGSPACE && _config.size() > 0   ){
@@ -184,7 +184,7 @@ namespace Kautham{
 			      dist += b.getDistance2(smp->getMappedConf().at(i).getRn());
 		    }
 		  }else{
-		    vector<KthReal>& other = smp->getCoords();
+		    vector<double>& other = smp->getCoords();
 		    for(unsigned int i = 0; i < _coords.size(); i++)
 			    dist += (_coords.at(i) - other.at(i))*(_coords.at(i) - other.at(i));
 		  }
@@ -194,13 +194,13 @@ namespace Kautham{
     return -1.;
   }
 
-  KthReal Sample::getDistance(Sample* smp, std::vector<RobWeight*> &weights,
+  double Sample::getDistance(Sample* smp, std::vector<RobWeight*> &weights,
                               Kautham::SPACETYPE spc){
     try{
       if( smp == NULL ) return -1.0;
       // Each sample has a vector<RobConf> who has a SE3 and a Rn configuration
       // inside.
-      KthReal dist=0.0;
+      double dist=0.0;
   	
 		  if( spc == Kautham::CONFIGSPACE && _config.size() > 0   ){
 
@@ -217,7 +217,7 @@ namespace Kautham{
 									       weights.at(i)->getRnWeights());
 		    }
 		  }else{
-		    vector<KthReal>& other = smp->getCoords();
+		    vector<double>& other = smp->getCoords();
 		    for(unsigned int i = 0; i < _coords.size(); i++)
 			  dist += (_coords.at(i) - other.at(i))*(_coords.at(i) - other.at(i));
 		  }
@@ -260,13 +260,13 @@ namespace Kautham{
   //! Retunrs an interpolated sample as a fraction of the distance to smp.
   //! Aditional, if the sample has a mapped configuration, it returns the 
   //! interpolated configuration in the same proportion as the fraction.
-  Sample* Sample::interpolate(Sample* smp, KthReal fraction){
+  Sample* Sample::interpolate(Sample* smp, double fraction){
     Sample *tmp = new Sample(smp->getDim());
     //Sample tmp(smp->getDim());
 
 	
     // Interpolation in sample space.
-    vector<KthReal>& other = smp->getCoords();
+    vector<double>& other = smp->getCoords();
     for(unsigned int i = 0; i < _coords.size(); i++)
         tmp->_coords.at(i) = _coords.at(i) + fraction*(other.at(i) - _coords.at(i));
 

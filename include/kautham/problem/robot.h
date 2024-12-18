@@ -77,7 +77,7 @@ namespace Kautham {
   private:
       string            name; //!< A descriptive name of robot
       string            _filename; //!< The urdf absolute name of the file
-      KthReal           scale;//!< This is the global scale for all the links that compound the robot. Normally it is equal to one.
+      double           scale;//!< This is the global scale for all the links that compound the robot. Normally it is equal to one.
       RobWeight*        _weights; //!< Weights that affect the distance computations.
       mt::Transform     _homeTrans; //!< This is the Home Reference frame at time zero (used to calculate the spatial limits).
       SoSeparator*      visModel; //!< Visualitzation model for the path.
@@ -90,13 +90,13 @@ namespace Kautham {
       SoSeparator*      _pathSeparator; //!< This is the SoSeparator to visualize the solution path. It is attached to the robot model.
       int               _linkPathDrawn; //!< This is the number of the link whose path will be drawn
       list<attObj>      _attachedObject; //!< List of objects attached to the robot gripper.
-      KthReal           _spatialLimits[3][2]; //!< Limits of motions of the base of the robot, in world coordinates.
-      KthReal           _homeLimits[3][2]; //!< Limits of motions of the base of the robot, with respect to the robot reference frame.
+      double           _spatialLimits[3][2]; //!< Limits of motions of the base of the robot, in world coordinates.
+      double           _homeLimits[3][2]; //!< Limits of motions of the base of the robot, with respect to the robot reference frame.
       std::vector<Link*>     links; //!< Vector of the robot links, starting at the base and ending at the end effector.In case of Tree robots, each branch is inserted sequentially.
       bool              _autocoll; //!< Flag that indicates if the robot is auto-colliding
       bool              _hasChanged; //!< Flag that indicates if the robot has changed its configuration. To speed up some computations.
-      KthReal           *offMatrix; //!< Offset vector. If copuling is generated with PCA it contains the baricenter coordinates, otherwise 0.5.
-      KthReal           **mapMatrix; //!< Matrix to compute the robot configuration from the controls. If copuling is generated with PCA it contains the scaled eignevectors.
+      double           *offMatrix; //!< Offset vector. If copuling is generated with PCA it contains the baricenter coordinates, otherwise 0.5.
+      double           **mapMatrix; //!< Matrix to compute the robot configuration from the controls. If copuling is generated with PCA it contains the scaled eignevectors.
       APPROACH          Approach;//!< It identifies the robot description method (D-H Standard/D-H Modified/urdf).
       bool              se3Enabled; //!< This attribute is true if the robot has a mobile base.
       bool              armed;//!< Flag that shows if the Robot is complete or still is under construction.
@@ -113,7 +113,7 @@ namespace Kautham {
 
   public:
 
-    Robot(string robFile, KthReal robScale, bool useBBOX = false, progress_struct *progress = NULL); //!<  Constructor
+    Robot(string robFile, double robScale, bool useBBOX = false, progress_struct *progress = NULL); //!<  Constructor
 
     ~Robot();
 
@@ -121,13 +121,13 @@ namespace Kautham {
 
     inline bool isArmed() {return armed;} //!< Returns true if the Robot is correctly armed
 
-    void setMapMatrix(KthReal **MapMatrix); //!< Sets the mapMatrix.
+    void setMapMatrix(double **MapMatrix); //!< Sets the mapMatrix.
 
-    void setOffMatrix(KthReal *OffMatrix); //!< Sets the offMatrix.
+    void setOffMatrix(double *OffMatrix); //!< Sets the offMatrix.
 
-    inline KthReal** getMapMatrix() const {return mapMatrix;} //!< Returns the mapMatrix.
+    inline double** getMapMatrix() const {return mapMatrix;} //!< Returns the mapMatrix.
 
-    inline KthReal* getOffMatrix() const {return offMatrix;} //!< Returns the offMatrix.
+    inline double* getOffMatrix() const {return offMatrix;} //!< Returns the offMatrix.
 
     inline string getName() const {return name;} //!< Returns the robot name.
 
@@ -135,9 +135,9 @@ namespace Kautham {
 
     inline RobConf* getHomePos(){ return &_homeConf;} //!< Returns the Home robot configuration
 
-    inline KthReal* getLimits(int member){return _spatialLimits[member];} //!< Returns the limits of the robot (needed for mobile bases).
+    inline double* getLimits(int member){return _spatialLimits[member];} //!< Returns the limits of the robot (needed for mobile bases).
 
-    inline KthReal getScale() const {return scale;} //!< Returns the scale.
+    inline double getScale() const {return scale;} //!< Returns the scale.
 
     inline unsigned getTrunk() const {return nTrunk;} //!< Returns the number of links that compose the trunk of the kinematic tree.
 
@@ -176,24 +176,24 @@ namespace Kautham {
     inline list<attObj> *getAttachedObject() {return &_attachedObject;} //!< Returns the list of the attached objects
 
     //! Returns the values that weight translations vs. rotations in SE3 distance computations.
-    KthReal* getWeightSE3();
+    double* getWeightSE3();
 
     //!< Returns the values that weights the motions of each link in Rn distance computations.
-    std::vector<KthReal>& getWeightRn();
+    std::vector<double>& getWeightRn();
 
     //! Test for autocollision
     bool autocollision(string *message = NULL);
 
     //! Add link to the robot
-    bool addLink(string name, string ivFile, string collision_ivFile, KthReal linkScale,
-                 KthReal theta, KthReal d, KthReal a, KthReal alpha,
-                 bool rotational, bool movable, KthReal low, KthReal hi, KthReal w, string parentName,
-                 KthReal preTrans[] = NULL, bool useBBOX = false);
+    bool addLink(string name, string ivFile, string collision_ivFile, double linkScale,
+                 double theta, double d, double a, double alpha,
+                 bool rotational, bool movable, double low, double hi, double w, string parentName,
+                 double preTrans[] = NULL, bool useBBOX = false);
 
     //! Add link to the robot
     bool addLink(string name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis,
-                 bool rotational, bool movable, KthReal low, KthReal hi, KthReal w, string parentName,
-                 KthReal preTrans[], ode_element ode, bool useBBOX = false);
+                 bool rotational, bool movable, double low, double hi, double w, string parentName,
+                 double preTrans[], ode_element ode, bool useBBOX = false);
 
     //! Returns the pointer to link number i
     Link* getLink(unsigned int i);
@@ -220,17 +220,17 @@ namespace Kautham {
     bool Kinematics(Conf *q);
 
     //! Computes inverse kinematics
-    RobConf& InverseKinematics(std::vector<KthReal> &target);
+    RobConf& InverseKinematics(std::vector<double> &target);
 
     //! Computes inverse kinematics
-    RobConf& InverseKinematics(std::vector<KthReal> &target, std::vector<KthReal> masterconf,
+    RobConf& InverseKinematics(std::vector<double> &target, std::vector<double> masterconf,
                                bool maintainSameWrist);
 
     //! Sets the inverse kinematics to be used
     bool setInverseKinematic(INVKINECLASS type);
 
     //! Sets parameters inverse kinematics
-    bool setInverseKinematicParameter(string name, KthReal value);
+    bool setInverseKinematicParameter(string name, double value);
 
     //! Returns the inverse kinematics used
     InverseKinematic* getIkine(){return _ikine;}
@@ -239,13 +239,13 @@ namespace Kautham {
     bool setConstrainedKinematic(CONSTRAINEDKINEMATICS type);
 
     //! Sets parameters constrained kinematics
-    bool setConstrainedKinematicParameter(string name, KthReal value);
+    bool setConstrainedKinematicParameter(string name, double value);
 
     //! Returns the constrained kinematics used
     ConstrainedKinematic* getCkine(){return _constrainKin;}
 
     //! Computes direct constrrained kinematics
-    RobConf& ConstrainedKinematics(std::vector<KthReal> &target);
+    RobConf& ConstrainedKinematics(std::vector<double> &target);
 
     //! Sets the home position of the robot
     void setHomePos(Conf* qh);
@@ -254,10 +254,10 @@ namespace Kautham {
     bool collisionCheck(Robot *obs, string *message = NULL, std::pair<int, int> *link_element = NULL);
 
     //! Verifies distance with an obstacle or with another robot
-    KthReal distanceCheck(Robot *rob, bool min = true);
+    double distanceCheck(Robot *rob, bool min = true);
 
     //! Sets the values of _spatialLimits[member]
-    bool setLimits(unsigned int member, KthReal min, KthReal max);
+    bool setLimits(unsigned int member, double min, double max);
 
     //! Returns a pointer to the visualitzation model
     SoSeparator* getModel();
@@ -269,16 +269,16 @@ namespace Kautham {
     SoSeparator* getModelFromColl();
 
     //! Maps from couol values to configurations.
-    bool control2Pose(std::vector<KthReal> &values);
+    bool control2Pose(std::vector<double> &values);
 
     //! Maps from control values to parameters (normalized configurations).
-    bool control2Parameters(std::vector<KthReal> &control, std::vector<KthReal> &parameters);
+    bool control2Parameters(std::vector<double> &control, std::vector<double> &parameters);
 
     //! Loads the robot configuration _currentConf from the normalized values of the configuration (parameters)
-    void parameter2Pose(std::vector<KthReal> &values);
+    void parameter2Pose(std::vector<double> &values);
 
     //! Depending on the type specified, retruns the SE3 config or the Rn configuration from the normalized values of the configuration (parameters)
-    Conf& parameter2Conf(std::vector<KthReal> &values, CONFIGTYPE type);
+    Conf& parameter2Conf(std::vector<double> &values, CONFIGTYPE type);
 
     //! Retunrs the weights of the robot used in the computation of the distances
     RobWeight* getRobWeight(){return _weights;}
@@ -305,7 +305,7 @@ namespace Kautham {
     bool detachObject(Robot *obs);
 
     //! This method returns the maximum value of the D_H parameters.
-    KthReal maxDHParameter();
+    double maxDHParameter();
 
     //! Sets the link whose motion is to be visualized if a solution path is found. Set to nTrunk variable.
     void setViewLink(string name);
@@ -352,7 +352,7 @@ namespace Kautham {
     void recalculateHomeLimits();
 
     //! Denormalizes the SE3 unit representation and returns the positon and the rotation (quaternion) in a single vector.
-    std::vector<KthReal>  deNormalizeSE3(std::vector<KthReal> &values);
+    std::vector<double>  deNormalizeSE3(std::vector<double> &values);
 
     //! Returns the diagonal of the cube defined by the home-limits of the robot
     float diagLimits();

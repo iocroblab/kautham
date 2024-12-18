@@ -184,7 +184,7 @@ bool IvKinYumi::solve(){
 
 
     // Store the selection solution to kautham
-    std::vector<KthReal> qn(7);
+    std::vector<double> qn(7);
 //    qn.at(0) = ( ikSolution(0) - (-2.94088) )/(  2.94088 - (-2.94088) );
 //    qn.at(1) = ( ikSolution(1) - (-2.50455) )/( 0.759218 - (-2.50455) );
 //    qn.at(2) = ( ikSolution(2) - (-2.94088) )/(  2.94088 - (-2.94088) );
@@ -266,7 +266,7 @@ bool IvKinYumi::setParameters(){
     return true;
 }
 
-void IvKinYumi::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
+void IvKinYumi::setTarget(vector<double> &target, vector<double> masterconf, bool maintainSameWrist){
   (void)masterconf;//unused
   (void)maintainSameWrist;//unused
 

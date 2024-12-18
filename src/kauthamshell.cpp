@@ -775,7 +775,7 @@ namespace Kautham {
 
             Problem *const problem = (Problem*)memPtr_;
             if (!problem->setFixedObstacleControls()) return false;
-            vector<KthReal> coords;
+            vector<double> coords;
             coords.resize(0);
             return (setInitObs(coords));
         } catch (const KthExcp& excp) {
@@ -1128,7 +1128,7 @@ namespace Kautham {
                 cout<<"IOCPLANNER"<<endl;
                 if (problem->getPlanner()->solveAndInherit()) {
                   //in planner.h: vector<Sample*>* getPath();
-                  //in sample.h: std::vector<KthReal>& getCoords();
+                  //in sample.h: std::vector<double>& getCoords();
                   vector<Sample*>* p = problem->getPlanner()->getPath();
                   //cout<<"p->size() = "<<p->size()<<endl;
                   for(unsigned int i=0; i<p->size(); i++)
@@ -1429,11 +1429,11 @@ namespace Kautham {
             Robot *rob = problem->wSpace()->getRobot(index);
             int numCntr = problem->wSpace()->getNumRobControls();
             int numDOF = 6+rob->getNumJoints();
-            KthReal **MapMatrix = new KthReal*[numDOF];
-            KthReal *OffMatrix = new KthReal[numDOF];
+            double **MapMatrix = new double*[numDOF];
+            double *OffMatrix = new double[numDOF];
             for (int i = 0; i < numDOF; ++i) {
                 OffMatrix[i] = offMatrix.at(i);
-                MapMatrix[i] = new KthReal[numCntr];
+                MapMatrix[i] = new double[numCntr];
                 for (int j = 0; j < numCntr; ++j) {
                     MapMatrix[i][j] = mapMatrix.at(i).at(j);
                 }
@@ -1914,7 +1914,7 @@ namespace Kautham {
             }
 
             double coord[3];
-            vector<KthReal> ort;
+            vector<double> ort;
             ort.resize(4);
 
             coord[0] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getPosition()[0];
@@ -1928,7 +1928,7 @@ namespace Kautham {
 
             SE3Conf se3;
             se3.setOrient(ort);
-            vector<KthReal> axisAn = se3.getAxisAngle();
+            vector<double> axisAn = se3.getAxisAngle();
 
             pos.push_back(coord[0]);
             pos.push_back(coord[1]);

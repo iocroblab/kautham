@@ -45,18 +45,18 @@ namespace Kautham {
 
 		SE2Conf();
 		~SE2Conf();
-    bool    setCoordinates(std::vector<KthReal> coordinates);
-    KthReal getDistance2(Conf* conf);
-    KthReal getDistance2(Conf* conf, std::vector<KthReal>& weights);
+    bool    setCoordinates(std::vector<double> coordinates);
+    double getDistance2(Conf* conf);
+    double getDistance2(Conf* conf, std::vector<double>& weights);
 
     //! Returns the interpolated configuration based on coordinates.
-    SE2Conf     interpolate(SE2Conf& se2, KthReal fraction);
+    SE2Conf     interpolate(SE2Conf& se2, double fraction);
 		std::string print();
-    void		setPos(KthReal pos[3]);
-		KthReal*	getPos();
+    void		setPos(double pos[3]);
+		double*	getPos();
 
-		void		  setAngle(KthReal angle);
-		KthReal		getAngle();
+		void		  setAngle(double angle);
+		double		getAngle();
 	};
 
     /** @}   end of Doxygen module "Sampling" */

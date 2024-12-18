@@ -53,11 +53,11 @@ namespace Kautham {
 
         bool setParameters();
 
-         KthReal _Range;
-         KthReal _GoalBias;
-         //KthReal _minValidPathFraction;
-         KthReal _maxNumSteps;
-         KthReal _failedExpansionScoreFactor;
+         double _Range;
+         double _GoalBias;
+         //double _minValidPathFraction;
+         double _maxNumSteps;
+         double _failedExpansionScoreFactor;
 
       };
   }

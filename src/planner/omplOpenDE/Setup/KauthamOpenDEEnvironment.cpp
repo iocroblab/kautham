@@ -55,7 +55,7 @@ namespace omplcplanner{
 //! torques. Then this chainMap is used to create the ODE world. Moreover constructor also create the instantiated
 //! knowledge instance to define the manipulation constraints for the objects.
 
-KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm,bool isKchain): oc::OpenDEEnvironment()
+KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, double maxspeed, double maxContacts, double minControlsteps,double maxControlsteps, double erp, double cfm,bool isKchain): oc::OpenDEEnvironment()
 {
 
     (void) isKchain; //unused
@@ -63,7 +63,7 @@ KauthamDEEnvironment::KauthamDEEnvironment(WorkSpace *wkspace, KthReal maxspeed,
     manipulationQuery=new ManipulationQuery();
     Instknowledge= new InstantiatedKnowledge();
     KinematicChain* chain(new KinematicChain);
-    vector<KthReal> basePos;
+    vector<double> basePos;
     _NumLinksFirstRobot=wkspace->getRobot(0)->getNumLinks();
     _maxspeed=maxspeed;
     _maxContacts=maxContacts;
@@ -603,7 +603,7 @@ vector<dBodyID> KauthamDEEnvironment::fillstatebodies(map<string,dBodyID> stateB
 bool KauthamDEEnvironment::buildKinematicChain(KinematicChain* chain,
                                                Robot *robot,
                                                double scale,
-                                               vector< KthReal >& basePos)
+                                               vector< double >& basePos)
 {
     chain->name = robot->getName();
     chain->dhType = robot->getDHApproach();
@@ -980,10 +980,10 @@ bool KauthamDEEnvironment::getTransformation(KauthamDEEnvironment::KinematicChai
     return true;
 }
 //!baseGetPos function obtain the base pose of the robot and the objects for ODE world.
-vector<KthReal> KauthamDEEnvironment::baseGetPos(Robot* robot)
+vector<double> KauthamDEEnvironment::baseGetPos(Robot* robot)
 {
-    vector<KthReal> basePos;
-    vector<KthReal> tmp;
+    vector<double> basePos;
+    vector<double> tmp;
 
     RobConf* RobC = robot->getCurrentPos();
     // RobConf* RobC=robot->getHomePos();
@@ -1229,8 +1229,8 @@ dJointID KauthamDEEnvironment::makeJoint(const dBodyID body1, const dBodyID body
     (void) maxForces; //unused
     (void) value; //unused
 
-    KthReal min_Threshold = 0.800;
-    KthReal max_Threshold = 1.2;
+    double min_Threshold = 0.800;
+    double max_Threshold = 1.2;
     std::vector<int> rotation_Axis;
     rotation_Axis.resize(3);
     dJointID joint;

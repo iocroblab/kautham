@@ -69,8 +69,8 @@ Sample* HaltonSampler::nextSample()
 	halton_DIM_NUM = (int)dimension;
 	double *c = new double[dimension];
 	halton(c);
-	vector<KthReal> cf(dimension);
-    for(unsigned int i=0;i<dimension;i++) cf[i] = (KthReal)c[i];
+	vector<double> cf(dimension);
+    for(unsigned int i=0;i<dimension;i++) cf[i] = (double)c[i];
 	_current->setCoords(cf);
 	/*
 	cout<<"smp[]=";

@@ -74,7 +74,7 @@ namespace Kautham {
 
 
             private:
-                KthReal _planningTime;
+                double _planningTime;
 
                 std::shared_ptr<ompl::base::StateSpace> space_;
 

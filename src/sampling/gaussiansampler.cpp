@@ -32,7 +32,7 @@ namespace Kautham{
 
 
 
-  GaussianSampler::GaussianSampler(char dim, KthReal s, WorkSpace *w){
+  GaussianSampler::GaussianSampler(char dim, double s, WorkSpace *w){
 	ws = w;
     genRand = new LCPRNG(3141592621, 1, 0, ((unsigned int)time(NULL) & 0xfffffffe) + 1);//LCPRNG(15485341);//15485341 is a big prime number
     setDim(dim);
@@ -55,15 +55,15 @@ namespace Kautham{
     	    int dim = (int)getDim();
 		Sample *firstSample = randgen->nextSample();
 		Sample *secondSample = new Sample(dim);
-		std::vector<KthReal> *firstcoords;
+		std::vector<double> *firstcoords;
 		
 		
 		firstcoords = &(firstSample->getCoords());
 		
-		std::vector<KthReal> secondcoords(dim);
+		std::vector<double> secondcoords(dim);
 
 
-		KthReal v=-1.0;
+		double v=-1.0;
 		for(int j = 0; j < dim ; j++)
 		{
 			v=-1.0;

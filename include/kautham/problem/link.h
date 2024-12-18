@@ -101,19 +101,19 @@ namespace Kautham{
 
 	  //! Function to set \f$ \alpha \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ \alpha \f$ parameter.*/
-    inline void         setAlpha(KthReal alp){if(!armed)alpha = alp;}
+    inline void         setAlpha(double alp){if(!armed)alpha = alp;}
 
 	  //! Function to set \f$ a \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ a \f$ parameter.*/
-    inline void         setA(KthReal a){if(!armed)this->a = a;}
+    inline void         setA(double a){if(!armed)this->a = a;}
   	
 	  //! Function to set \f$ \theta \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ \theta \f$ parameter.*/
-    inline void         setTheta(KthReal th){if(!armed)theta = th;}
+    inline void         setTheta(double th){if(!armed)theta = th;}
 
 	  //! Function to set \f$ d \f$ parameter.
 	  /*!	This function set Denavit - Hartemberg \f$ d \f$ parameter.*/
-    inline void         setD(KthReal d){if(!armed)this->d = d;}
+    inline void         setD(double d){if(!armed)this->d = d;}
 
       //! Function to set \f$ axis \f$ parameter.
       /*!	This function sets \f$ axis \f$ parameter.*/
@@ -122,22 +122,22 @@ namespace Kautham{
 	  //! Function to get \f$ d \f$ parameter.
 	  /*!	This function get the current value from Denavit - Hartemberg \f$ d \f$ 
 	  *		parameter.	*/
-    inline KthReal      getD() const {return d;}
+    inline double      getD() const {return d;}
 
 	  //! Function to get \f$ \theta \f$ parameter.
 	  /*!	This function get the current value from Denavit - Hartemberg \f$ \theta \f$ 
 	  *		parameter.*/
-    inline KthReal      getTheta() const {return theta;}
+    inline double      getTheta() const {return theta;}
 
 	  //! Function to get \f$ a \f$ parameter.
 	  /*!	This function get the current value from Denavit - Hartemberg \f$ a \f$ 
 	  *		parameter.	*/
-    inline KthReal      getA() const {return a;}
+    inline double      getA() const {return a;}
 
 	  //! Function to get \f$ \alpha \f$ parameter.
 	  /*!	This function get the current value from Denavit - Hartemberg \f$ \alpha \f$ 
 	  *		parameter.	*/
-    inline KthReal      getAlpha() const {return alpha;}
+    inline double      getAlpha() const {return alpha;}
 
       //! Function to get \f$ axis \f$ parameter.
       /*!	This function gets the current value from \f$ axis \f$
@@ -182,11 +182,11 @@ namespace Kautham{
 	  *		orientation.*/
     inline mt::Transform* getTransformation(){return &absoluteTransform;}
 
-	KthReal             getdhMatrix(int i,int j){return dhMatrix[i][j];}
+	double             getdhMatrix(int i,int j){return dhMatrix[i][j];}
       	
-    inline KthReal      getValue(){return value;}
-    bool                setValue(KthReal q);
-    bool                setParameter(KthReal p);
+    inline double      getValue(){return value;}
+    bool                setValue(double q);
+    bool                setParameter(double p);
     void                setArmed();
   	
 	  //!	It member function used to calculate new position and orientation.
@@ -200,7 +200,7 @@ namespace Kautham{
 
     inline              string getName() const {return name;}
   		
-    void                setDHPars(KthReal theta, KthReal d, KthReal a, KthReal alpha);
+    void                setDHPars(double theta, double d, double a, double alpha);
   	
 	  //!	This member function return the parent pointer to previous Link.
     inline Link*        getParent(){if(armed)return parent;else return NULL;}
@@ -210,21 +210,21 @@ namespace Kautham{
     inline unsigned int numChilds(){return (unsigned int)childs.size();}
     //!	This member function returns the specified child
     inline Link*        getChild(unsigned i){if (i < childs.size()) {return childs.at(i);} else {return NULL;}}
-    bool                setPreTransform(KthReal x, KthReal y, KthReal z,
-                                        KthReal wx, KthReal wy, KthReal wz,
-                                        KthReal angle);
-    inline bool         setPreTransform(KthReal posori[7]){
+    bool                setPreTransform(double x, double y, double z,
+                                        double wx, double wy, double wz,
+                                        double angle);
+    inline bool         setPreTransform(double posori[7]){
       return setPreTransform( posori[0], posori[1],posori[2], posori[3],
                               posori[4], posori[5], posori[6]);
     }
   	
-    void                setLimits(KthReal low, KthReal hi);
-    KthReal*            getLimits(bool low=true);
-    inline KthReal      getWeight() const {return weight;}
-    inline void         setWeight(KthReal w){weight = w;}
-    inline KthReal      parameter2Value(KthReal &param) const { return param*(hiLimit - lowLimit) + lowLimit;}
-    inline KthReal      value2Parameter(KthReal &value) const { return (value - lowLimit)/(hiLimit - lowLimit);}
-    inline KthReal      getZeroOffset() const {return zeroOffset;}
+    void                setLimits(double low, double hi);
+    double*            getLimits(bool low=true);
+    inline double      getWeight() const {return weight;}
+    inline void         setWeight(double w){weight = w;}
+    inline double      parameter2Value(double &param) const { return param*(hiLimit - lowLimit) + lowLimit;}
+    inline double      value2Parameter(double &value) const { return (value - lowLimit)/(hiLimit - lowLimit);}
+    inline double      getZeroOffset() const {return zeroOffset;}
 
     inline Element*     getElement(){return element;}
     inline bool         forceChange(Link* who){if(who == parent){ hasChanged = true; return true;}return false;}
@@ -243,16 +243,16 @@ namespace Kautham{
     std::vector<Link*>       childs;
   	
 	  //!	\f$ \alpha \f$ parameter for D-H description.
-    KthReal             alpha;
+    double             alpha;
   	
 	  //!	\f$ a \f$ parameter for D-H description.
-    KthReal             a;
+    double             a;
   	
       //!	\f$ \theta \f$ parameter for D-H and URDF description.
-    KthReal             theta;
+    double             theta;
   	
       //!	\f$ d \f$ parameter for D-H and URDF description.
-    KthReal             d;
+    double             d;
 
       //!	\f$ axis \f$ parameter for URDF description.
     Unit3               axis;
@@ -268,26 +268,26 @@ namespace Kautham{
     bool                armed;
   	
 	  //! It is the low limit for movable Link. In rotational Links normaly is - \f$ \pi \f$
-    KthReal             lowLimit;
+    double             lowLimit;
   	
 	  //! It is the hi limit for moveable Link. In rotational Links normaly is \f$ \pi \f$
-    KthReal             hiLimit;
+    double             hiLimit;
   	
       //! It is the weight to compute weighted distances between configurations, defaults to 1;
-    KthReal             weight;
+    double             weight;
   	
 	  //! Value beetwen Low Limit and Hi Limit.
-    KthReal             value;
+    double             value;
   	
 	  //! Value beetwen 0 and 1 corresponding to a value between low and hi limit 
 	  //!	and used to set the home position.
-    KthReal             zeroOffset;
+    double             zeroOffset;
 
 	  //!	This matrix is the absolute transformation for the Link.
     mt::Transform       absoluteTransform;
   	
 	  //!	Current Denavit - Hartemberg matrix.
-    KthReal             dhMatrix[4][4];
+    double             dhMatrix[4][4];
 
       //! This could be store an additional transformation between the link before and the dhMatrix
     mt::Transform*      preTransform;

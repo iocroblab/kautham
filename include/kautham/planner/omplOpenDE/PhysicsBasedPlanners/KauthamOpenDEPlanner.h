@@ -85,16 +85,16 @@ class KauthamDEPlanner: public Planner
 
 public:
 
-    KthReal _propagationStepSize; //!< Define the step size of the world.
-    KthReal _maxspeed; //!< describe the max. speed of motors.
+    double _propagationStepSize; //!< Define the step size of the world.
+    double _maxspeed; //!< describe the max. speed of motors.
     bool _onlyend; //!< describe that only TCP will move of complete robot.
-    KthReal _planningTime; //!< describe the max. planning time.
-    KthReal _maxContacts; //!< describe the max. No of contactes to be considered in ODE when two bodies are in contact.
-    KthReal _minControlSteps;//!< Define the minimum number of time a control will be applied
-    KthReal _maxControlSteps;//!< Define the max number of time a control will be applies.
-    KthReal _controlDimensions;//!< specify the number of control dimension.
-    KthReal _erp;//!< Represents the value f error reduction parameter for ODE.
-    KthReal _cfm;//!< Represents constraint force mixing for ODE.
+    double _planningTime; //!< describe the max. planning time.
+    double _maxContacts; //!< describe the max. No of contactes to be considered in ODE when two bodies are in contact.
+    double _minControlSteps;//!< Define the minimum number of time a control will be applied
+    double _maxControlSteps;//!< Define the max number of time a control will be applies.
+    double _controlDimensions;//!< specify the number of control dimension.
+    double _erp;//!< Represents the value f error reduction parameter for ODE.
+    double _cfm;//!< Represents constraint force mixing for ODE.
     bool _isKchain;
     int _drawnrobot; //!< Index of the robot whose Cspace is drawn. Defaults to 0.
     double Action;
@@ -136,8 +136,8 @@ public:
 
     typedef struct
     {
-        KthReal objectposition[3];
-        KthReal objectorientation[4];
+        double objectposition[3];
+        double objectorientation[4];
     }KauthamDEobject;
 
     typedef struct

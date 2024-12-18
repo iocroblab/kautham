@@ -53,7 +53,7 @@ class ConstraintAware2DRobotEnvironment: public KauthamDEEnvironment
 {
 public:
 
-    ConstraintAware2DRobotEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm,bool isKchain);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
+    ConstraintAware2DRobotEnvironment(WorkSpace* ws, double maxspeed, double maxContacts, double minControlsteps,double maxControlsteps, double erp, double cfm,bool isKchain);//!< Constructor define the robot environment(i.e. table environment ) by calling the KauthamDEEnvironment.
     ~ConstraintAware2DRobotEnvironment(void);
     std::string robBase;
     std::string floor;

@@ -52,7 +52,7 @@ namespace Kautham{
     bool    setSE3();
 
     //! It initializes the SE3Conf with the coords contents.
-    bool    setSE3(vector<KthReal>& coords);
+    bool    setSE3(vector<double>& coords);
 
     //! It copies the se3 coordinates.
     bool    setSE3(SE3Conf& se3);
@@ -63,19 +63,19 @@ namespace Kautham{
     bool    setRn(unsigned int);
 
     //! It initializes the RnConf with the coords contents.
-    bool    setRn(vector<KthReal>& coords);
+    bool    setRn(vector<double>& coords);
 
     //! It copies the rn coordinates.
     bool    setRn(RnConf& rn);
 
-    inline KthReal getDistance(RobConf& robc){return sqrt(getDistance2(robc));}
-    inline KthReal getDistance(RobConf& robc, RobWeight& robw){return sqrt(getDistance2(robc,robw));}
+    inline double getDistance(RobConf& robc){return sqrt(getDistance2(robc));}
+    inline double getDistance(RobConf& robc, RobWeight& robw){return sqrt(getDistance2(robc,robw));}
 
-    KthReal getDistance2(RobConf& robc);
-    KthReal getDistance2(RobConf& robc, RobWeight& robw);
+    double getDistance2(RobConf& robc);
+    double getDistance2(RobConf& robc, RobWeight& robw);
 
     //! Returns the interpolated configuration based on its configurations.
-    RobConf interpolate(RobConf& rbc, KthReal fraction);
+    RobConf interpolate(RobConf& rbc, double fraction);
 
   private:
 

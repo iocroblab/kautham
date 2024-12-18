@@ -43,8 +43,8 @@
     string          name() {return "TX90";}
     bool            solve();
     bool            setParameters();
-    RobLayout&      getRobLayout(vector<KthReal> &target);
-    void            setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);
+    RobLayout&      getRobLayout(vector<double> &target);
+    void            setTarget(vector<double> &target, vector<double> masterconf, bool maintainSameWrist);
     bool            solve(mt::Transform& tcp, const TXrobot::config& conf = TXrobot::config(), TXrobot::config* solution = NULL, Vect6* qNear = NULL );
     bool            solve(mt::Transform& tcp, const Vect6 &current);
     inline void     setConfiguration(const TXrobot::config& conf = TXrobot::config());
@@ -54,7 +54,7 @@
     TXrobot::TXerror  _error;
     TXrobot::config   _txConf;
     Vect6*            _result;
-    vector<KthReal>   _eulPos;
+    vector<double>   _eulPos;
     mt::Transform     _rHomeOffset; //!< This is an offset from Modeled Home to Real Home
   };
 

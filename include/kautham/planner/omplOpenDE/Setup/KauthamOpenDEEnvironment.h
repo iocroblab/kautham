@@ -107,7 +107,7 @@ public:
     // call ChainMap. (each chain has information object joints. Once full ChainMap called the creation of the world with createWorld.
     // every body within chainMap called as nomrobot + nomlink
 
-    KauthamDEEnvironment(WorkSpace* wkspace, KthReal maxspeed, KthReal maxContacts, KthReal minControlsteps,KthReal maxControlsteps, KthReal erp, KthReal cfm, bool isKchain);//!< constructor will build the KinamaticChainMap (each chain has information about objects, joints, etc)and creat the world.
+    KauthamDEEnvironment(WorkSpace* wkspace, double maxspeed, double maxContacts, double minControlsteps,double maxControlsteps, double erp, double cfm, bool isKchain);//!< constructor will build the KinamaticChainMap (each chain has information about objects, joints, etc)and creat the world.
     ~KauthamDEEnvironment(void);
     // making information ChainMap scoured the bodies of workspace again and bodysode creating and filling a map with StateBodiesmap_ Bodys. This map will then by drawing
     // StateBodies_ own to fill in the order they are introduced in the first stage of the robot plan. The idea was to try to be able to distinguish between primitive and trimesh but only works trimesh
@@ -255,13 +255,13 @@ public:
     dWorldID bodyworld;     //!< Define the ODE world.
     map<string, dBodyID> stateBodiesmap_;//!< stateBodiesmap_  Map ODE bodies , it contains the same information as ODE bodies has but in the form of chainMap.
     int _NumLinksFirstRobot; //!< define number of links of robot.
-    KthReal _maxspeed;       //!< Define max. speed of motor.
-    KthReal _propagationStepSize; //!< Define the step size of the world.
-    KthReal _maxContacts;//!< Define the number of contact to consider for ODE when two bodies are in contact.
-    KthReal _minControlSteps;//!< Define the minimum number of time a control will be applied
-    KthReal _maxControlSteps;//!< Define the max number of time a control will be applies.
-    KthReal _erp;//!< Represents the value f error reduction parameter for ODE.
-    KthReal _cfm;//!< Represents constraint force mixing for ODE.
+    double _maxspeed;       //!< Define max. speed of motor.
+    double _propagationStepSize; //!< Define the step size of the world.
+    double _maxContacts;//!< Define the number of contact to consider for ODE when two bodies are in contact.
+    double _minControlSteps;//!< Define the minimum number of time a control will be applied
+    double _maxControlSteps;//!< Define the max number of time a control will be applies.
+    double _erp;//!< Represents the value f error reduction parameter for ODE.
+    double _cfm;//!< Represents constraint force mixing for ODE.
     std::vector<dGeomID> GeomID; //!< vector of ODE GeomIDs in the world.
 
     unsigned int getNumLinksFirstRobot(){return _NumLinksFirstRobot;}; //!< returns number of links of first robot
@@ -297,14 +297,14 @@ private:
     bool trimesh;
 
     //! This function will build the kinamatic chain for Robot
-    bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector<KthReal>& basePos);
+    bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Robot *robot, double scale, vector<double>& basePos);
     //! This function will build the kinamatic chain for Obstracle
     // bool buildKinematicChain(KauthamDEEnvironment::KinematicChain* chain, Obstacle *obstacle, double scale, int k);
     bool getTransformation(KauthamDEEnvironment::KinematicChain* chain, Link* link, odinObject* obj, string robotName, vector<double>& rotAxis);
     bool getMotion(KauthamDEEnvironment::KinematicChain* chain, Link* link, odinObject* obj, string robotName, vector<double>& rotAxis);
     void searchColor(SoSeparator* root, odinObject* obj);
     void searchColor(SoSeparator* root, trimeshD* obj);
-    vector<KthReal> baseGetPos(Robot* robot);// this function will returns the position and orientation of robot.
+    vector<double> baseGetPos(Robot* robot);// this function will returns the position and orientation of robot.
     dJointID  makeMotor(dBodyID body1, dBodyID body2,const unsigned int type, const vector< double >& axes,const vector< double >& fmax,const double hiStop, const double LoStop,const double value);
     dJointID addMotor2Joint(dJointID joint, vector<double>& maxForces,const double value, const double hiStop, const double LoStop);
     // dJointID makeJoint(const dBodyID body1, const dBodyID body2,const unsigned int type, const vector<double>& params,vector<double>& maxForces);

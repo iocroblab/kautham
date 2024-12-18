@@ -46,7 +46,7 @@ namespace Kautham {
     coord.clear();
   }
 	
-  bool Conf::setCoordinates(std::vector<KthReal>& coordinates) {
+  bool Conf::setCoordinates(std::vector<double>& coordinates) {
     if(coordinates.size() == dim ){
       for(unsigned int i=0;i<dim;i++)
 				this->coord[i]=coordinates[i];
@@ -57,19 +57,19 @@ namespace Kautham {
 		}
 	}
 
-  KthReal Conf::getCoordinate(unsigned int index) {
+  double Conf::getCoordinate(unsigned int index) {
       if (index<dim) return this->coord[index];
 
       throw out_of_range("");
 	}
 
   //! Returns the distance to a configuration in the respective space metric.
-  KthReal Conf::getDistance(Conf* conf){
+  double Conf::getDistance(Conf* conf){
     return sqrt(getDistance2(conf));
   }
 
   //! Returns the weighted distance to a configuration in the respective space metric.
-  KthReal Conf::getDistance(Conf* conf, std::vector<KthReal>& weights){
+  double Conf::getDistance(Conf* conf, std::vector<double>& weights){
     return sqrt(getDistance2(conf, weights));
   }
 

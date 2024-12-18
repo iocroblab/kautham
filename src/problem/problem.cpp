@@ -92,7 +92,7 @@ SampleSet* Problem::cSpace() {
 
 void Problem::setHomeConf(Robot* rob, HASH_S_K* param) {
     Conf* tmpC = new SE3Conf();
-    vector<KthReal> cords(7);
+    vector<double> cords(7);
     string search[]={"X", "Y", "Z", "WX", "WY", "WZ", "TH"};
     HASH_S_K::iterator it;
 
@@ -754,7 +754,7 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                         throw KthExcp(message, details.str());
                         return false;
                     }
-                    std::vector<KthReal> coords;
+                    std::vector<double> coords;
                     for (std::vector<std::string>::const_iterator token(tokens.begin());
                          token != tokens.end(); ++token) {
                         coords.push_back(boost::lexical_cast<double>(*token));
@@ -779,7 +779,7 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
 
                         return false;
                     }
-                    std::vector<KthReal> coords;
+                    std::vector<double> coords;
                     for (std::vector<std::string>::const_iterator token(tokens.begin());
                          token != tokens.end(); ++token) {
                         coords.push_back(boost::lexical_cast<double>(*token));
@@ -809,7 +809,7 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
 
                         return false;
                     }
-                    std::vector<KthReal> coords;
+                    std::vector<double> coords;
                     for (std::vector<std::string>::const_iterator token(tokens.begin());
                          token != tokens.end(); ++token) {
                         coords.push_back(boost::lexical_cast<double>(*token));
@@ -827,7 +827,7 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
         }
         if (!_wspace->getInitObsSample()) {//Default values
             Sample *smp(new Sample(numObsCntr));
-            std::vector<KthReal> coords(numObsCntr,0.5);
+            std::vector<double> coords(numObsCntr,0.5);
             smp->setCoords(coords);
             _wspace->setInitObsSample(smp);
         }
@@ -859,7 +859,7 @@ bool Problem::createCSpace() {
 }
 
 
-bool Problem::setCurrentRobControls(vector<KthReal> &val) {
+bool Problem::setCurrentRobControls(vector<double> &val) {
     try{
         if (val.size() !=  _currentRobControls.size()) return false;
         for(unsigned int i=0; i < val.size(); i++)
@@ -872,7 +872,7 @@ bool Problem::setCurrentRobControls(vector<KthReal> &val) {
 }
 
 
-bool Problem::setCurrentObsControls(vector<KthReal> &val) {
+bool Problem::setCurrentObsControls(vector<double> &val) {
     try{
         if (val.size() !=  _currentObsControls.size()) return false;
         for(unsigned int i=0; i < val.size(); i++)
@@ -1414,13 +1414,13 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
 
     //Set the SE3 weights for the distance computations, in case of mobile base
     if (robot_node->child("WeightSE3")) {
-        KthReal tra = 1.;
-        KthReal rot = 1.;
+        double tra = 1.;
+        double rot = 1.;
         xml_node tmp = robot_node->child("WeightSE3");
         if( tmp.attribute("rho_t") )
-            tra = (KthReal) tmp.attribute("rho_t").as_double();
+            tra = (double) tmp.attribute("rho_t").as_double();
         if( tmp.attribute("rho_r") )
-            rot = (KthReal) tmp.attribute("rho_r").as_double();
+            rot = (double) tmp.attribute("rho_r").as_double();
         rob->getRobWeight()->setSE3Weight(tra,rot);
     } else {
         rob->getRobWeight()->setSE3Weight(1., 1.);
@@ -1491,7 +1491,7 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
     if (home_node) {
         // If robot hasn't a home, it will be assumed in the origin.
         SE3Conf tmpC;
-        vector<KthReal> cords(7);
+        vector<double> cords(7);
         cords[0] = home_node.attribute("X").as_double();
         cords[1] = home_node.attribute("Y").as_double();
         cords[2] = home_node.attribute("Z").as_double();
@@ -1517,8 +1517,8 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
 }
 
 
-bool Problem::addRobot2WSpace(string robFile, KthReal scale, vector<KthReal> home,
-                              vector< vector<KthReal> > limits) {
+bool Problem::addRobot2WSpace(string robFile, double scale, vector<double> home,
+                              vector< vector<double> > limits) {
     Robot *rob = new Robot(robFile,scale,false);
 
     if (!rob->isArmed()) return false;
@@ -1611,17 +1611,17 @@ bool Problem::setRobotControls(xml_document *doc) {
     //Creating the mapping and offset Matrices between controls
     //and DOF parameters and initializing them.
     int numRob = _wspace->getNumRobots();
-    KthReal ***mapMatrix;
-    KthReal **offMatrix;
-    mapMatrix = new KthReal**[numRob];
-    offMatrix = new KthReal*[numRob];
+    double ***mapMatrix;
+    double **offMatrix;
+    mapMatrix = new double**[numRob];
+    offMatrix = new double*[numRob];
     int numDOFs;
     for (int i = 0; i < numRob; i++) {
         numDOFs = _wspace->getRobot(i)->getNumJoints()+6;
-        mapMatrix[i] = new KthReal*[numDOFs];
-        offMatrix[i] = new KthReal[numDOFs];
+        mapMatrix[i] = new double*[numDOFs];
+        offMatrix[i] = new double[numDOFs];
         for (int j = 0; j < numDOFs; j++) {
-            mapMatrix[i][j] = new KthReal[numControls];
+            mapMatrix[i][j] = new double[numControls];
             offMatrix[i][j] = 0.5;
             for (int k = 0; k < numControls; k++) {
                 mapMatrix[i][j][k] = 0.0;
@@ -1711,7 +1711,7 @@ bool Problem::setRobotControls(xml_document *doc) {
         nodeType = it->name();
         if ( nodeType == "Control" ){
             xml_node::iterator itDOF;
-            KthReal eigVal = 1;
+            double eigVal = 1;
             if ((*it).attribute("eigValue")) {
                 eigVal =  (*it).attribute("eigValue").as_double();
             }
@@ -1822,10 +1822,10 @@ bool Problem::setDefaultRobotControls() {
     for(unsigned i = 0; i<_currentRobControls.size(); i++)
         _currentRobControls[i] = 0.0;
 
-    KthReal ***mapMatrix;
-    KthReal **offMatrix;
-    mapMatrix = new KthReal**[numRob];
-    offMatrix = new KthReal*[numRob];
+    double ***mapMatrix;
+    double **offMatrix;
+    mapMatrix = new double**[numRob];
+    offMatrix = new double*[numRob];
     string controlsName;
     string robotName;
     string DOFname;
@@ -1840,11 +1840,11 @@ bool Problem::setDefaultRobotControls() {
         robotName = rob->getName();
         rob->setSE3(true);//At least X1, X2 and X3 are movable
         numDOFs = 6 + rob->getNumJoints();
-        mapMatrix[i] = new KthReal*[numDOFs];
-        offMatrix[i] = new KthReal[numDOFs];
+        mapMatrix[i] = new double*[numDOFs];
+        offMatrix[i] = new double[numDOFs];
         for (uint j = 0; j < numDOFs; j++) {
             offMatrix[i][j] = 0.5;
-            mapMatrix[i][j] = new KthReal[numControls];
+            mapMatrix[i][j] = new double[numControls];
 
             for (uint k = 0; k < numControls; k++) {
                 mapMatrix[i][j][k] = 0.0;
@@ -1912,7 +1912,7 @@ std::vector<bool> Problem::getWhichAreControlledJoints() {
     int numCntr = this->_wspace->getNumRobControls();
     for (unsigned int rob = 0; rob < this->_wspace->getNumRobots(); ++rob) {
         auto current_rob = this->_wspace->getRobot(rob);
-        KthReal **map_matrix = current_rob->getMapMatrix();
+        double **map_matrix = current_rob->getMapMatrix();
         int numDOF = current_rob->getNumJoints();
         for (int i = 0; i < numDOF; ++i) {
             bool has_control = false; // Assume no control initially
@@ -1962,7 +1962,7 @@ bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, progress
     if (home_node) {
         // If robot hasn't a home, it will be assumed in the origin.
         SE3Conf tmpC;
-        vector<KthReal> cords(7);
+        vector<double> cords(7);
         cords[0] = home_node.attribute("X").as_double();
         cords[1] = home_node.attribute("Y").as_double();
         cords[2] = home_node.attribute("Z").as_double();
@@ -1992,7 +1992,7 @@ bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, progress
 }
 
 
-bool Problem::addObstacle2WSpace(string robFile, KthReal scale, vector<KthReal> home) {
+bool Problem::addObstacle2WSpace(string robFile, double scale, vector<double> home) {
     Robot *obs = new Robot(robFile,scale,false);
 
     if (!obs->isArmed()) return false;
@@ -2074,10 +2074,10 @@ bool Problem::setObstacleControls(xml_document *doc) {
     int numObs = _wspace->getNumObstacles();
 
     int numDOFs;
-    KthReal ***mapMatrix;
-    KthReal **offMatrix;
-    mapMatrix = new KthReal**[numObs];
-    offMatrix = new KthReal*[numObs];
+    double ***mapMatrix;
+    double **offMatrix;
+    mapMatrix = new double**[numObs];
+    offMatrix = new double*[numObs];
 
     std::map< std::string, int > name_index;
     int i=0;
@@ -2085,10 +2085,10 @@ bool Problem::setObstacleControls(xml_document *doc) {
         name_index.insert(std::pair<std::string, int >(element.first,i));
         //printf("...............obstacleName = %s i = %d\n",element.first.c_str(), i);
         numDOFs = element.second->getNumJoints()+6;
-        mapMatrix[i] = new KthReal*[numDOFs];
-        offMatrix[i] = new KthReal[numDOFs];
+        mapMatrix[i] = new double*[numDOFs];
+        offMatrix[i] = new double[numDOFs];
         for (int j = 0; j < numDOFs; j++) {
-            mapMatrix[i][j] = new KthReal[numControls];
+            mapMatrix[i][j] = new double[numControls];
             offMatrix[i][j] = 0.5;
             for (int k = 0; k < numControls; k++) {
                 mapMatrix[i][j][k] = 0.0;
@@ -2188,7 +2188,7 @@ bool Problem::setObstacleControls(xml_document *doc) {
         nodeType = it->name();
         if ( nodeType == "Control" ){
             xml_node::iterator itDOF;
-            KthReal eigVal = 1;
+            double eigVal = 1;
             if ((*it).attribute("eigValue")) {
                 eigVal =  (*it).attribute("eigValue").as_double();
             }
@@ -2281,12 +2281,12 @@ bool Problem::setObstacleControls(xml_document *doc) {
 bool Problem::setFixedObstacleControls() {
     //int numObs = _wspace->getNumObstacles();
     int numDOFs;
-    KthReal *offMatrix;
+    double *offMatrix;
     int i=0;
     for (std::pair<std::string, Robot*> element : _wspace->getObstaclesMap() ){
         numDOFs = element.second->getNumJoints()+6;
 
-        offMatrix = new KthReal[numDOFs];
+        offMatrix = new double[numDOFs];
         for (int j = 0; j < numDOFs; j++) {
             offMatrix[j] = 0.5;
         }

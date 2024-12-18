@@ -323,7 +323,7 @@ void KauthamDEPlanner::KauthamOpenDEState2Robsmp(const ob::State *state, Sample*
                    const ob::SO3StateSpace::StateType &oriRob = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);
                    //RobConf to store the robots configurations read form the ompl state
                    //convert to a vector of 7 components
-                   vector<KthReal> se3coords;
+                   vector<double> se3coords;
                    se3coords.resize(7);
                    se3coords[0] = posRob[0];
                    se3coords[1] = posRob[1];
@@ -347,7 +347,7 @@ void KauthamDEPlanner::KauthamOpenDEState2Robsmp(const ob::State *state, Sample*
            {
                rcj->setSE3(basepose);
 
-                   std::vector<KthReal> coords=ComputeRn(state);
+                   std::vector<double> coords=ComputeRn(state);
                    rcj->setRn(coords);
                    rc.push_back(*rcj);
            }
@@ -373,7 +373,7 @@ void KauthamDEPlanner::KauthamOpenDEState2Obssmp(const ob::State *state, Sample*
         const ob::SO3StateSpace::StateType &oriObs = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(k);
         RobConf *rcj = new RobConf;
         //convert to a vector of 7 components
-        vector<KthReal> se3coords;
+        vector<double> se3coords;
         se3coords.resize(7);
         se3coords[0] = posObs[0];
         se3coords[1] = posObs[1];
@@ -880,12 +880,12 @@ void KauthamDEPlanner::drawCspace(int numrob)
 
     //space bounds
     int k;
-    KthReal xmin;
-    KthReal xmax;
-    KthReal ymin;
-    KthReal ymax;
-    KthReal zmin;
-    KthReal zmax;
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    double zmin;
+    double zmax;
     
 
     if(_wkSpace->getRobot(0)->getNumLinks()>1)
@@ -911,7 +911,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
 
         }
 
-        KthReal x,y,z;
+        double x,y,z;
         //load the planner data to be drawn
         ob::PlannerDataPtr pdata;
         pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
@@ -1142,7 +1142,7 @@ void KauthamDEPlanner::drawCspace(int numrob)
 
         }
 
-        KthReal x,y,z;
+        double x,y,z;
         //load the planner data to be drawn
         ob::PlannerDataPtr pdata;
         pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));

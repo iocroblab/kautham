@@ -61,14 +61,14 @@
 //    delete _tx;
 //  }
 
-//   void IvKinTx90::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
+//   void IvKinTx90::setTarget(vector<double> &target, vector<double> masterconf, bool maintainSameWrist){
 //	   //loads the target: the tcp transform
 //    _target.clear();
 //    for(unsigned i =0; i< target.size(); i++)
 //      _target.push_back(target.at(i));
 	  
 //	  //completes the target with configuration parameters information
-//	KthReal ifRig = 425*sin(masterconf[1])
+//	double ifRig = 425*sin(masterconf[1])
 //                          + 425*sin(masterconf[1] + masterconf[2])
 //                          + 50;
 //    if(ifRig >= 0.) //Shoulder Lefty
@@ -95,9 +95,9 @@
 	
 // }
 
-//  RobLayout& IvKinTx90::getRobLayout(vector<KthReal> &target){
+//  RobLayout& IvKinTx90::getRobLayout(vector<double> &target){
 //    //completes the target with configuration parameters information
-//	  KthReal ifRig = 425*sin(target[1])
+//	  double ifRig = 425*sin(target[1])
 //                          + 425*sin(target[1] + target[2])
 //                          + 50;
 //    _robLay[0] = ifRig >= 0. ? false : true ;
@@ -113,7 +113,7 @@
 //  bool IvKinTx90::solve(mt::Transform& tcp, const Vect6 &current){
 //    config conf;
 
-//    KthReal ifRig = 425*sin(current[1])
+//    double ifRig = 425*sin(current[1])
 //                          + 425*sin(current[1] + current[2])
 //                          + 50;
 //    if(ifRig >= 0.) //Shoulder Lefty
@@ -160,7 +160,7 @@
 //    //  tmpError = _tx->invKin(targetInHome, results ,_txConf, *solution, *qNear);
 
 //    if( tmpError == TXrobot::SUCCESS){
-//      std::vector<KthReal> tmp(6);
+//      std::vector<double> tmp(6);
 //      for(int i = 0; i < 6; i++ )
 //        tmp.at(i) = results[i];
 
@@ -321,14 +321,14 @@ using namespace TXrobot;
     delete _tx;
   }
 
-   void IvKinTx90::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
+   void IvKinTx90::setTarget(vector<double> &target, vector<double> masterconf, bool maintainSameWrist){
        //loads the target: the tcp transform
     _target.clear();
     for(unsigned i =0; i< target.size(); i++)
       _target.push_back(target.at(i));
 
       //completes the target with configuration parameters information
-    KthReal ifRig = 0.425*sin(masterconf[1])
+    double ifRig = 0.425*sin(masterconf[1])
                           + 0.425*sin(masterconf[1] + masterconf[2])
                           + 0.050;
     if(ifRig >= 0.) //Shoulder Lefty
@@ -355,9 +355,9 @@ using namespace TXrobot;
 
  }
 
-  RobLayout& IvKinTx90::getRobLayout(vector<KthReal> &target){
+  RobLayout& IvKinTx90::getRobLayout(vector<double> &target){
     //completes the target with configuration parameters information
-      KthReal ifRig = 0.425*sin(target[1])
+      double ifRig = 0.425*sin(target[1])
                           + 0.425*sin(target[1] + target[2])
                           + 0.050;
     _robLay[0] = ifRig >= 0. ? false : true ;
@@ -373,7 +373,7 @@ using namespace TXrobot;
   bool IvKinTx90::solve(mt::Transform& tcp, const Vect6 &current){
     config conf;
 
-    KthReal ifRig = 0.425*sin(current[1])
+    double ifRig = 0.425*sin(current[1])
                           + 0.425*sin(current[1] + current[2])
                           + 0.050;
     if(ifRig >= 0.) //Shoulder Lefty
@@ -420,7 +420,7 @@ using namespace TXrobot;
     //  tmpError = _tx->invKin(targetInHome, results ,_txConf, *solution, *qNear);
 
     if( tmpError == TXrobot::SUCCESS){
-      std::vector<KthReal> tmp(6);
+      std::vector<double> tmp(6);
       for(int i = 0; i < 6; i++ )
         tmp.at(i) = results[i];
 

@@ -12,7 +12,7 @@ void register_se3conf(pybind11::module &m) {
 
         // Setters and getters
         .def("set_coordinates", 
-            py::overload_cast<std::vector<Kautham::KthReal>&>(&Kautham::SE3Conf::setCoordinates), 
+            py::overload_cast<std::vector<Kautham::double>&>(&Kautham::SE3Conf::setCoordinates), 
             py::arg("coordinates"))
         .def("get_pos", &Kautham::SE3Conf::getPos)
         .def("set_pos", &Kautham::SE3Conf::setPos, py::arg("pos"))
@@ -26,7 +26,7 @@ void register_se3conf(pybind11::module &m) {
             py::overload_cast<const Kautham::Conf*>(&Kautham::SE3Conf::getDistance2, &Kautham::SE3Conf::getDistance2),
             py::arg("conf"))
         .def("get_distance2_weighted", 
-            py::overload_cast<const Kautham::Conf*, Kautham::KthReal, Kautham::KthReal>(&Kautham::SE3Conf::getDistance2),
+            py::overload_cast<const Kautham::Conf*, Kautham::double, Kautham::double>(&Kautham::SE3Conf::getDistance2),
             py::arg("conf"), py::arg("trans_weight"), py::arg("rot_weight"))
 
         // Utility methods

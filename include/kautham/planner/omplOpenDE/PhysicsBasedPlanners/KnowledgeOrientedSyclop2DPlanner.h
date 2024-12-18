@@ -63,13 +63,13 @@ public:
     ~KnowledgeOrientedSyclop2DPlanner();
     bool setParameters();//!< this function set the planning parameters for KPIECE.
 
-    KthReal _Range;
-    KthReal _GoalBias;
+    double _Range;
+    double _GoalBias;
     int _NumFreeVolumeSamples;
-    KthReal _getProbShortestPathLead;
-    KthReal _getProbAddingToAvailableRegions;
+    double _getProbShortestPathLead;
+    double _getProbAddingToAvailableRegions;
     int _getNumRegionExpansions;
-    KthReal _getProbAbandonLeadEarly;
+    double _getProbAbandonLeadEarly;
     int _getNumTreeExpansions;
 
 };

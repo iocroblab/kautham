@@ -57,7 +57,7 @@ IvKin2DRR::IvKin2DRR(Robot* const rob) : Kautham::InverseKinematic(rob){
       _targetTrans.setTranslation(mt::Point3(_tcp[0],_tcp[1], 0.));
       _targetTrans.setRotation(mt::Rotation(0., 0., 0., 1. ));
       
-      KthReal b2, q1, l12, l22, q2, phi11, phi12, phi2, phi22, phi21;
+      double b2, q1, l12, l22, q2, phi11, phi12, phi2, phi22, phi21;
       b2= q1= l12= l22= q2= phi11= phi12= phi2= phi22= phi21= 0.;
 
       b2= _tcp[0]*_tcp[0] + _tcp[1]*_tcp[1]; //  by the Pythagorean theorem
@@ -85,7 +85,7 @@ IvKin2DRR::IvKin2DRR(Robot* const rob) : Kautham::InverseKinematic(rob){
         //_robLefty = !_robLefty;
       }
 
-      vector<KthReal> q;
+      vector<double> q;
       if( _robLefty ){
         q.push_back( phi11 );
         q.push_back( phi21 );
@@ -129,7 +129,7 @@ IvKin2DRR::IvKin2DRR(Robot* const rob) : Kautham::InverseKinematic(rob){
       return true;
   }
 
-  RobLayout& IvKin2DRR::getRobLayout(vector<KthReal> &target){
+  RobLayout& IvKin2DRR::getRobLayout(vector<double> &target){
     if( target.size() > 0 && target[1] <= 0. )
       _robLay[0] = true;
     else

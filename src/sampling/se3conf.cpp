@@ -37,11 +37,11 @@ SE3Conf::SE3Conf():Conf(SE3),_pos(3,0.), _ori(4,0.), _axisAn(4,0.){
     // 3 for position and 4 as a quaternion.
     dim = 7;
     coord.resize(dim);
-    coord.at(6) = (KthReal)1.0; // Quaternion initialization
+    coord.at(6) = (double)1.0; // Quaternion initialization
 }
 
 void SE3Conf::normalizeQ(){
-    KthReal tmp = (KthReal) 0.0;
+    double tmp = (double) 0.0;
     for(int i = 3; i < 7; i++)
         tmp += pow(coord[i],2);
 
@@ -52,10 +52,10 @@ void SE3Conf::normalizeQ(){
 }
 
 // Changes between Kautham values[4] in
-void SE3Conf::fromAxisToQuaternion(KthReal values[]){
-    KthReal angle = values[3];
-    KthReal cosang2 = cos(angle/(KthReal)2.0);
-    KthReal sinang2 = sin(angle/(KthReal)2.0);
+void SE3Conf::fromAxisToQuaternion(double values[]){
+    double angle = values[3];
+    double cosang2 = cos(angle/(double)2.0);
+    double sinang2 = sin(angle/(double)2.0);
 
     for(int i = 0; i < 3; i++)
         values[i] = values[i] * sinang2;
@@ -63,11 +63,11 @@ void SE3Conf::fromAxisToQuaternion(KthReal values[]){
     values[3] = cosang2;
 }
 
-void SE3Conf::fromAxisToQuaternion(vector<KthReal> &values){
+void SE3Conf::fromAxisToQuaternion(vector<double> &values){
     if(values.size() == 4 ){
-        KthReal angle = values.at(3);
-        KthReal cosang2 = cos(angle/(KthReal)2.0);
-        KthReal sinang2 = sin(angle/(KthReal)2.0);
+        double angle = values.at(3);
+        double cosang2 = cos(angle/(double)2.0);
+        double sinang2 = sin(angle/(double)2.0);
 
         for(int i = 0; i < 3; i++)
             values.at(i) = values.at(i) * sinang2;
@@ -75,9 +75,9 @@ void SE3Conf::fromAxisToQuaternion(vector<KthReal> &values){
         values.at(3) = cosang2;
 
     }else if(values.size() == 7 ){
-        KthReal angle = values.at(6);
-        KthReal cosang2 = cos(angle/(KthReal)2.0);
-        KthReal sinang2 = sin(angle/(KthReal)2.0);
+        double angle = values.at(6);
+        double cosang2 = cos(angle/(double)2.0);
+        double sinang2 = sin(angle/(double)2.0);
 
         for(int i = 3; i < 6; i++)
             values.at(i) = values.at(i) * sinang2;
@@ -86,52 +86,52 @@ void SE3Conf::fromAxisToQuaternion(vector<KthReal> &values){
     }
 }
 
-void SE3Conf::setPos(vector<KthReal>& pos){
+void SE3Conf::setPos(vector<double>& pos){
     for(int i=0;i<3;i++)
         coord[i] = pos[i];
 }
 
-vector<KthReal>& SE3Conf::getPos() {
+vector<double>& SE3Conf::getPos() {
     for(int i=0;i<3;i++)
         _pos.at(i) = coord.at(i);
     return _pos;
 }
 
-void SE3Conf::setOrient(vector<KthReal>& ori){
+void SE3Conf::setOrient(vector<double>& ori){
     for(int i=0;i<4;i++)
         coord[i+3] = ori[i];
 }
 
-vector<KthReal>& SE3Conf::getOrient() {
+vector<double>& SE3Conf::getOrient() {
     for(int i=0;i<4;i++)
         _ori.at(i) = coord.at(i+3);
     return _ori;
 }
 
-bool SE3Conf::setAngle(KthReal angle){
-    vector<KthReal>& axisAngle = getAxisAngle();
-    vector<KthReal> axistmp(3);
+bool SE3Conf::setAngle(double angle){
+    vector<double>& axisAngle = getAxisAngle();
+    vector<double> axistmp(3);
     for(unsigned int i=0; i<3; i++)
         axistmp.at(i) =  axisAngle.at(i);
 
     return setAxisAngle(axistmp,angle);
 }
 
-KthReal SE3Conf::getAngle() {
+double SE3Conf::getAngle() {
     if (coord.at(6) < -1. || coord.at(6) > 1.) throw std::invalid_argument("Called acos(x) with |x| > 1");
     return 2.*acos(coord.at(6));
 }
 
-bool SE3Conf::setAxis(vector<KthReal>& axis) {
+bool SE3Conf::setAxis(vector<double>& axis) {
     if(axis.size() == 3){
-        KthReal ang = getAngle();
+        double ang = getAngle();
         return setAxisAngle(axis, ang);
     }else
         return false;
 }
 
-vector<KthReal>& SE3Conf::getAxisAngle() {
-    KthReal sin_angle_2 = sin(getAngle()/2);
+vector<double>& SE3Conf::getAxisAngle() {
+    double sin_angle_2 = sin(getAngle()/2);
 
     if(sin_angle_2 != 0)
         for(int i=0;i<3;i++)
@@ -147,9 +147,9 @@ vector<KthReal>& SE3Conf::getAxisAngle() {
     return _axisAn;
 }
 
-bool SE3Conf::setAxisAngle(vector<KthReal>& axis, KthReal angle){
+bool SE3Conf::setAxisAngle(vector<double>& axis, double angle){
     try{
-        KthReal sin_angle_2 = sin(angle/2);
+        double sin_angle_2 = sin(angle/2);
         coord.at(3) = axis.at(0) * sin_angle_2;	//qx
         coord.at(4) = axis.at(1) * sin_angle_2;	//qy
         coord.at(5) = axis.at(2) * sin_angle_2;	//qz
@@ -169,7 +169,7 @@ std::string SE3Conf::print() {
     return s.str();
 }
 
-bool SE3Conf::setCoordinates(std::vector<KthReal>& local_coord){
+bool SE3Conf::setCoordinates(std::vector<double>& local_coord){
     switch(local_coord.size()){
     case 7:  // The seven values (pos + quaternion) directly.
         for(int i=0; i<7; i++)
@@ -186,10 +186,10 @@ bool SE3Conf::setCoordinates(std::vector<KthReal>& local_coord){
         double Theta2 = M_PI * local_coord.at(5); //- 0.5*M_PI;
         double r2 = sqrt(1 - local_coord.at(3));
         double r1 = sqrt(local_coord.at(3));
-        coord.at(3) = (KthReal)(sin(Theta1)*r1); //qx
-        coord.at(4) = (KthReal)(cos(Theta1)*r1); //qy
-        coord.at(5) = (KthReal)(sin(Theta2)*r2); //qz
-        coord.at(6) = (KthReal)(cos(Theta2)*r2); //w
+        coord.at(3) = (double)(sin(Theta1)*r1); //qx
+        coord.at(4) = (double)(cos(Theta1)*r1); //qy
+        coord.at(5) = (double)(sin(Theta2)*r2); //qz
+        coord.at(6) = (double)(cos(Theta2)*r2); //w
         return true;
     }
     return false;
@@ -202,8 +202,8 @@ bool SE3Conf::setCoordinates(SE2Conf* conf){
         coord.at(0) = conf->getCoordinate(0);
         coord.at(1) = conf->getCoordinate(1);
         coord.at(2) = 0.0;
-        vector<KthReal> tmp(3, 0.0);
-        tmp[2] = (KthReal)1.0;
+        vector<double> tmp(3, 0.0);
+        tmp[2] = (double)1.0;
         setAxisAngle(tmp,conf->getCoordinate(2));
         return true;
     }catch(...){
@@ -212,17 +212,17 @@ bool SE3Conf::setCoordinates(SE2Conf* conf){
 }
 
 
-KthReal SE3Conf::getDistance2(Conf* conf, KthReal& transWeight, KthReal& rotWeight ){
+double SE3Conf::getDistance2(Conf* conf, double& transWeight, double& rotWeight ){
     return getDistance2(*((SE3Conf*)conf), transWeight, rotWeight );
 }
 
-KthReal SE3Conf::getDistance2(SE3Conf& conf, KthReal& transWeight, KthReal& rotWeight){
+double SE3Conf::getDistance2(SE3Conf& conf, double& transWeight, double& rotWeight){
     //    if( conf == NULL ) return -1.0;
     if(conf.getType() == SE3 ){
-        KthReal dist = (KthReal) 0.0;
-        KthReal diff = (KthReal) 0.0;
-        KthReal rot = (KthReal) 0.0;
-        KthReal trasl = (KthReal) 0.0;
+        double dist = (double) 0.0;
+        double diff = (double) 0.0;
+        double rot = (double) 0.0;
+        double trasl = (double) 0.0;
 
         // The weight is for rotational part.
         // First get the distance for translational part.
@@ -248,17 +248,17 @@ KthReal SE3Conf::getDistance2(SE3Conf& conf, KthReal& transWeight, KthReal& rotW
     return -1;
 }
 
-KthReal SE3Conf::getDistance2(Conf* conf, std::vector<KthReal>& weights){
+double SE3Conf::getDistance2(Conf* conf, std::vector<double>& weights){
     return getDistance2(*((SE3Conf*)conf), weights);
 }
 
-KthReal SE3Conf::getDistance2(SE3Conf& conf, std::vector<KthReal>& weights){
+double SE3Conf::getDistance2(SE3Conf& conf, std::vector<double>& weights){
     //    if( conf == NULL ) return -1.0;
     if(conf.getType() == SE3 ){
-        KthReal dist = (KthReal) 0.0;
-        KthReal diff = (KthReal) 0.0;
-        KthReal rot = (KthReal) 0.0;
-        KthReal trasl = (KthReal) 0.0;
+        double dist = (double) 0.0;
+        double diff = (double) 0.0;
+        double rot = (double) 0.0;
+        double trasl = (double) 0.0;
 
         if(weights.size() == 1){
             // The weight is for rotational part.
@@ -293,17 +293,17 @@ KthReal SE3Conf::getDistance2(SE3Conf& conf, std::vector<KthReal>& weights){
     return -1;
 }
 
-KthReal SE3Conf::getDistance2(Conf* conf){
+double SE3Conf::getDistance2(Conf* conf){
     return getDistance2(*((SE3Conf*)conf));
 }
 
-KthReal SE3Conf::getDistance2(SE3Conf& conf){
+double SE3Conf::getDistance2(SE3Conf& conf){
     //    if( conf == NULL ) return -1.0;
     if(conf.getType() == SE3 ){
-        KthReal dist = (KthReal) 0.0;
-        KthReal diff = (KthReal) 0.0;
-        KthReal rot = (KthReal) 0.0;
-        KthReal trasl = (KthReal) 0.0;
+        double dist = (double) 0.0;
+        double diff = (double) 0.0;
+        double rot = (double) 0.0;
+        double trasl = (double) 0.0;
 
         // The weight is for rotational part.
         // First get the distance for translational part.
@@ -330,10 +330,10 @@ KthReal SE3Conf::getDistance2(SE3Conf& conf){
 
 //! Returns the interpolated configuration based on coordinates.
 //! Due to SE3 has a quaternion, this interpolation uses slerp.
-SE3Conf SE3Conf::interpolate(SE3Conf& se3, KthReal fraction){
+SE3Conf SE3Conf::interpolate(SE3Conf& se3, double fraction){
     SE3Conf tmp;
     // Interpolating the translational part.
-    vector<KthReal>& other = se3.getCoordinates();
+    vector<double>& other = se3.getCoordinates();
     for(unsigned int i = 0; i < 3; i++)
         tmp.coord.at(i) = coord.at(i) + fraction*(other.at(i) - coord.at(i));
 
@@ -351,9 +351,9 @@ SE3Conf SE3Conf::interpolate(SE3Conf& se3, KthReal fraction){
     return tmp;
 }
 
-vector<KthReal> SE3Conf::getParams(){
-    vector<KthReal> temp(3);
-    KthReal qx,qy,qz,qw;
+vector<double> SE3Conf::getParams(){
+    vector<double> temp(3);
+    double qx,qy,qz,qw;
     try{
         //
         //Take either the original quaternion or its antipodal:
@@ -373,11 +373,11 @@ vector<KthReal> SE3Conf::getParams(){
         }
         //Parameters X1, X2 and X3 are in the range [0,1]
         temp.at(0) = qx*qx+qy*qy; //X1 = x^2+y^2
-        KthReal a = atan2(qz,qw); //returns between -pi and pi
-        temp.at(2) = (KthReal) ( a )/(M_PI); // X3 =  atan2(z/w)/pi
+        double a = atan2(qz,qw); //returns between -pi and pi
+        temp.at(2) = (double) ( a )/(M_PI); // X3 =  atan2(z/w)/pi
         a = atan2(qx,qy);         //returns between -pi and pi
         if(a < 0) a += 2. * M_PI;
-        temp.at(1) = (KthReal) (a / (2. * M_PI)); // X2 = atan2(x/y)/(2*pi)
+        temp.at(1) = (double) (a / (2. * M_PI)); // X2 = atan2(x/y)/(2*pi)
     }catch(...){}
 
     return temp;

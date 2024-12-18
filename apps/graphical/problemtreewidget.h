@@ -93,7 +93,7 @@ namespace Kautham {
          * \param parentItem parent of the item
          * \return
          */
-        QTreeWidgetItem *addScale2Tree(KthReal scale, QTreeWidgetItem *parentItem);
+        QTreeWidgetItem *addScale2Tree(double scale, QTreeWidgetItem *parentItem);
 
         /*!
          * \brief addHome2Tree adds a home item to the tree

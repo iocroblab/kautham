@@ -58,8 +58,8 @@ namespace Kautham {
         virtual bool trySolve();//!< Overloaded trySolve function to include evaluation of final path cost
         bool setParameters();
 
-         KthReal _Range;
-         KthReal _GoalBias;
+         double _Range;
+         double _GoalBias;
     protected:
         SynergyTree *st_;
 	  };

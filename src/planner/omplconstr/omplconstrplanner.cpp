@@ -389,8 +389,8 @@ namespace Kautham {
                 // if (current_rob->isSE3Enabled()) {
                 //     //get the kautham SE3 configuration
                 //     SE3Conf c = smpRobotsConf.at(rob).getSE3();
-                //     vector<KthReal>& pp = c.getPos();
-                //     vector<KthReal>& aa = c.getAxisAngle();
+                //     vector<double>& pp = c.getPos();
+                //     vector<double>& aa = c.getAxisAngle();
 
                 //     //set the ompl SE3 configuration
                 //     ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index));
@@ -513,7 +513,7 @@ namespace Kautham {
                     sstate >> pathscopedstatese3;
 
                     //Convert it to a vector of 7 components
-                    vector<KthReal> se3coords;
+                    vector<double> se3coords;
                     se3coords.resize(7);
                     se3coords[0] = pathscopedstatese3->getX();
                     se3coords[1] = pathscopedstatese3->getY();
@@ -541,7 +541,7 @@ namespace Kautham {
                 // Get the Rn subspaces (unconstrained + constrained) of robot, if it exisits, and extract the Rn configuration:
                 const unsigned int num_dof = current_rob->getNumJoints();
                 if (num_dof > 0) {
-                    vector<KthReal> coords;
+                    vector<double> coords;
                     coords.resize(num_dof);
 
                     // Create all the possible index (fill with values 0 to num_dof - 1):

@@ -36,7 +36,7 @@ namespace omplcplanner{
 
 
 //! Constructor create the Kuka robot enviroment and setup the parameters for ODE.
-TiagoEnvironment::TiagoEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm, bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm, isKchain)
+TiagoEnvironment::TiagoEnvironment(WorkSpace* ws, double maxspeed, double maxContacts, double minControlSteps,double maxControlSteps, double erp, double cfm, bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm, isKchain)
 {
     threshold =0.5;
     wkspace=ws;

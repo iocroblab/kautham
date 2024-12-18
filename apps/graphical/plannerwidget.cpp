@@ -622,9 +622,9 @@ namespace Kautham {
         {
             //std::cout << " robot "<< j << std::endl;
             RobConf *Robrcj = new RobConf; //Configuration for robot j
-            vector<KthReal> se3coords; //SE3 part
+            vector<double> se3coords; //SE3 part
             se3coords.resize(7);
-            std::vector<KthReal> Rn; //Rn part
+            std::vector<double> Rn; //Rn part
             //Mapped configuration: load the SE3 part, if ther is any
             if (_planner->wkSpace()->getRobot(j)->isSE3Enabled())
             {
