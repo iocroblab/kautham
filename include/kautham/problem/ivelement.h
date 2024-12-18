@@ -60,8 +60,8 @@ SoSeparator *readFile(string file);
 class IVElement : public Element {
   public:
 
-      IVElement(string ivfile, string collision_ivfile, float sc, bool useBBOX);
-      IVElement(SoSeparator *visual_model, SoSeparator *collision_model, float sc, bool useBBOX);
+      IVElement(string ivfile, string collision_ivfile, double sc, bool useBBOX);
+      IVElement(SoSeparator *visual_model, SoSeparator *collision_model, double sc, bool useBBOX);
       virtual void setPosition(KthReal *pos);
       virtual void setOrientation(KthReal *ori);
 	    SbMatrix orientationMatrix();
@@ -75,7 +75,7 @@ class IVElement : public Element {
                                          const SoPrimitiveVertex *v1,
                                          const SoPrimitiveVertex *v2,
                                          const SoPrimitiveVertex *v3);
-      SoSeparator *BBOX(SoSeparator *model, float sc, string filename = "");
+      SoSeparator *BBOX(SoSeparator *model, double sc, string filename = "");
 
       // Virtual functions that mst be implemented in derived classes
 	    virtual KthReal getDistanceTo(Element* other) const = 0;

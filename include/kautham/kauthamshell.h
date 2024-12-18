@@ -41,21 +41,21 @@ namespace Kautham {
         void closeProblem();
         bool openProblem(std::istream *inputfile, std::vector<std::string> def_path = std::vector<std::string>());
         bool openProblem(std::string problemfilename, std::vector<std::string> def_path);
-        bool checkCollision(std::vector<float> smpcoords, bool *collisionFree, std::string *msg, std::pair<std::pair<int, string>, std::pair<int, int> > *colliding_elements = NULL);
-        bool setRobotsConfig(std::vector<float> smpcoords);
-        bool setRobotsConfig(std::vector<float> smpcoords, std::vector<RobConf> &config);
-        bool setObstaclesConfig(std::vector<float> smpcoords);
-        bool setQuery(std::vector<float> init, std::vector<float> goal);
-        bool setInit(std::vector<float> init);
-        bool setGoal(std::vector<float> goal);
-        bool setInitObs(std::vector<float> initObs);
+        bool checkCollision(std::vector<double> smpcoords, bool *collisionFree, std::string *msg, std::pair<std::pair<int, string>, std::pair<int, int> > *colliding_elements = NULL);
+        bool setRobotsConfig(std::vector<double> smpcoords);
+        bool setRobotsConfig(std::vector<double> smpcoords, std::vector<RobConf> &config);
+        bool setObstaclesConfig(std::vector<double> smpcoords);
+        bool setQuery(std::vector<double> init, std::vector<double> goal);
+        bool setInit(std::vector<double> init);
+        bool setGoal(std::vector<double> goal);
+        bool setInitObs(std::vector<double> initObs);
         bool clearSampleSet();
-        bool setRobControls(std::istream* inputfile, std::vector<float> init, std::vector<float> goal);
-        bool setRobControls(std::string controlsFile, std::vector<float> init, std::vector<float> goal);
+        bool setRobControls(std::istream* inputfile, std::vector<double> init, std::vector<double> goal);
+        bool setRobControls(std::string controlsFile, std::vector<double> init, std::vector<double> goal);
         bool setRobControlsNoQuery(std::string inputfile);
-        bool setDefaultRobControls(std::vector<float> init, std::vector<float> goal);
-        bool setObsControls(std::istream* inputfile, std::vector<float> initObs);
-        bool setObsControls(std::string controlsFile, std::vector<float> initObs);
+        bool setDefaultRobControls(std::vector<double> init, std::vector<double> goal);
+        bool setObsControls(std::istream* inputfile, std::vector<double> initObs);
+        bool setObsControls(std::string controlsFile, std::vector<double> initObs);
         bool setFixedObsControls();
         bool setPlannerByName(std::string name);
         bool setPlanner(std::istream* inputfile);
@@ -72,25 +72,25 @@ namespace Kautham {
         double getLastPlanComputationTime();
         int getNumEdges();
         int getNumVertices();
-        bool connect(std::vector<float> smpcoords1, std::vector<float> smpcoords2);
-        int addRobot(std::string robFile, double scale, std::vector<float> home, std::vector<std::vector<float> > limits,
-                     std::vector<std::vector<float> > mapMatrix, std::vector<float> offMatrix);
+        bool connect(std::vector<double> smpcoords1, std::vector<double> smpcoords2);
+        int addRobot(std::string robFile, double scale, std::vector<double> home, std::vector<std::vector<double> > limits,
+                     std::vector<std::vector<double> > mapMatrix, std::vector<double> offMatrix);
         bool removeRobot(unsigned index);
-        int addObstacle(std::string obsFile, double scale, std::vector<float> home);
+        int addObstacle(std::string obsFile, double scale, std::vector<double> home);
         bool removeObstacle(string obsname);
         bool attachObstacle2RobotLink(int robot, int link, std::string obs);
         bool detachObstacle(std::string obs);
-        double cumDistCheck(std::vector<float> smpcoords);
+        double cumDistCheck(std::vector<double> smpcoords);
 
-    bool motionPlanner(std::vector <float> init, std::vector <float> goal, std::string root);
+    bool motionPlanner(std::vector<double> init, std::vector<double> goal, std::string root);
 
-    bool setObstaclePos(string obsname, std::vector<float> pos);
-    bool getObstaclePos(string obsname, std::vector<float> &pos);
+    bool setObstaclePos(string obsname, std::vector<double> pos);
+    bool getObstaclePos(string obsname, std::vector<double> &pos);
     map<string, Robot*> getObstaclesMap();
-    bool findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution);
-    bool setRobPos(unsigned int index, std::vector<float> pos);
-    bool getRobPos(unsigned int index, std::vector<float> &pos);
-    bool getRobHomePos(unsigned int index, std::vector<float> &pos);
+    bool findIK(int robIndx, bool armType, std::vector<double> pos, std::vector<double> conf, bool maintSameWrist, std::vector<double> *solution);
+    bool setRobPos(unsigned int index, std::vector<double> pos);
+    bool getRobPos(unsigned int index, std::vector<double> &pos);
+    bool getRobHomePos(unsigned int index, std::vector<double> &pos);
 
     int getNumRobots();
     int getNumObstacles();

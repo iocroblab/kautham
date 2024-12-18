@@ -41,7 +41,7 @@
 
 /*--- Start of Code ---*/
 
-typedef long double  ldouble;
+//typedef long double  double;
 
 class GFSPPair;
 
@@ -1342,7 +1342,7 @@ class  vec_point_2d : public std::vector<point2d_ptr> {};
 
 
 
-inline ldouble     Area( const point2d  & a,
+inline double     Area( const point2d  & a,
                         const point2d  & b,
                         const point2d  & c )
 {
@@ -1366,12 +1366,12 @@ inline ldouble     Area( const point2d  & a,
         y2 /= len;
     }
 
-    ldouble  area;
+    double  area;
 
     area = x1 * y2 - x2 * y1;
-    //area = (ldouble)a.x * (ldouble)b.y - (ldouble)a.y * (ldouble)b.x +
-    //    (ldouble)a.y * (ldouble)c.x - (ldouble)a.x * (ldouble)c.y +
-    //    (ldouble)b.x * (ldouble)c.y - (ldouble)c.x * (ldouble)b.y;
+    //area = (double)a.x * (double)b.y - (double)a.y * (double)b.x +
+    //    (double)a.y * (double)c.x - (double)a.x * (double)c.y +
+    //    (double)b.x * (double)c.y - (double)c.x * (double)b.y;
 
     //printf( "area: %g\n", area );
     return  area;
@@ -1382,15 +1382,15 @@ inline int     AreaSign( const point2d  & a,
                          const point2d  & b,
                          const point2d  & c )
 {
-    ldouble  area;
+    double  area;
 
     area = a.x * b.y - a.y * b.x +
         a.y * c.x - a.x * c.y +
         b.x * c.y - c.x * b.y;
 
     //printf( "area: %g\n", area );
-    return  ( ( area < (ldouble)0.0 )? -1:
-              ( (area > (ldouble)0.0)? 1 : 0 ) );
+    return  ( ( area < (double)0.0 )? -1:
+              ( (area > (double)0.0)? 1 : 0 ) );
 }
 
 inline  bool    Left(  const point2d  & a,
@@ -1498,7 +1498,7 @@ static void  print_pnt( point2d_ptr  pnt )
 
 void   verify_convex_hull( vec_point_2d  & in, vec_point_2d  & ch )
 {
-    ldouble  area;
+    double  area;
 
     //dump( ch );
     //fflush( stdout );

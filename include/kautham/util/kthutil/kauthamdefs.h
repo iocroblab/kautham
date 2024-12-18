@@ -44,8 +44,7 @@
 using namespace std;
 
 namespace Kautham {
-#define KthReal float
-
+#define KthReal double
 
   enum ROBOTTYPE {
       FREEFLY,

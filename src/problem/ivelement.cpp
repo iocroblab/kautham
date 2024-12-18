@@ -141,11 +141,10 @@ namespace Kautham {
         rot = new SoRotation;
         sca = new SoScale();
 
-        trans->translation.setValue(position);
-
-        rot->rotation.setValue(orientation);
-
-        sca->scaleFactor.setValue((float)scale,(float)scale,(float)scale);
+        // Inventor works internally with floats
+        trans->translation.setValue(static_cast<float>(position[0]), static_cast<float>(position[1]), static_cast<float>(position[2]) );
+        rot->rotation.setValue(static_cast<float>(orientation[0]), static_cast<float>(orientation[1]),static_cast<float>(orientation[2]),static_cast<float>(orientation[3]));
+        sca->scaleFactor.setValue(static_cast<float>(scale),static_cast<float>(scale),static_cast<float>(scale));
 
 
 
@@ -199,7 +198,7 @@ namespace Kautham {
     }
 
 
-    IVElement::IVElement(SoSeparator *visual_model, SoSeparator *collision_model, float sc, bool useBBOX) {
+    IVElement::IVElement(SoSeparator *visual_model, SoSeparator *collision_model, double sc, bool useBBOX) {
         for(int i=0;i<3;i++){
             position[i]= 0.0f;
             orientation[i]=0.0f;
@@ -212,11 +211,10 @@ namespace Kautham {
         rot = new SoRotation;
         sca = new SoScale();
 
-        trans->translation.setValue(position);
-
-        rot->rotation.setValue(orientation);
-
-        sca->scaleFactor.setValue((float)scale,(float)scale,(float)scale);
+        // Inventor works internally with floats
+        trans->translation.setValue(static_cast<float>(position[0]), static_cast<float>(position[1]), static_cast<float>(position[2]) );
+        rot->rotation.setValue(static_cast<float>(orientation[0]), static_cast<float>(orientation[1]),static_cast<float>(orientation[2]),static_cast<float>(orientation[3]));
+        sca->scaleFactor.setValue(static_cast<float>(scale),static_cast<float>(scale),static_cast<float>(scale));
 
         ivmodel = new SoSeparator;
         ivmodel->ref();
@@ -242,7 +240,7 @@ namespace Kautham {
     }
 
 
-    SoSeparator *IVElement::BBOX(SoSeparator *model, float sc, string filename) {
+    SoSeparator *IVElement::BBOX(SoSeparator *model, double sc, string filename) {
 #if defined(KAUTHAM_USE_ARMADILLO)
         try {
             //get all vertices from all triangles in ivmodel
@@ -287,7 +285,7 @@ namespace Kautham {
                 }
 
                 //check vertices' coplanarity
-                float vertex_rank = (float)arma::rank(vector_mat);
+                float vertex_rank = static_cast<float>(arma::rank(vector_mat));
 
                 printf("with rank %i\n",(int)vertex_rank);
                 if (vertex_rank < 3 || !valid_num_triangles(num_triangles,num_vertices)) {
@@ -345,9 +343,9 @@ namespace Kautham {
                             for (int sel3 = 0; sel3 <= 1; sel3++) {
                                 i = sel1*4 + sel2*2 + sel3;
                                 bbox.get_vertex(sel1,sel2,sel3,&tmp[0],&tmp[1],&tmp[2]);
-                                vertexPositions[i][0]=(float)tmp[0] / sc;
-                                vertexPositions[i][1]=(float)tmp[1] / sc;
-                                vertexPositions[i][2]=(float)tmp[2] / sc;
+                                vertexPositions[i][0]=static_cast<float>(tmp[0]) / sc;
+                                vertexPositions[i][1]=static_cast<float>(tmp[1]) / sc;
+                                vertexPositions[i][2]=static_cast<float>(tmp[2]) / sc;
                             }
                         }
                     }
@@ -441,16 +439,21 @@ namespace Kautham {
     }
 
 
-    void IVElement::setPosition(KthReal *pos){
-        for(int i=0;i<3;i++)
+    void IVElement::setPosition(double *pos){
+        for(int i=0;i<3;i++){
             position[i]=pos[i];
-        trans->translation.setValue(pos);
+        }
+        // Inventor works internally with floats
+        trans->translation.setValue(static_cast<float>(position[0]), static_cast<float>(position[1]), static_cast<float>(position[2]) );
+
     }
 
     void IVElement::setOrientation(KthReal *ori){
-        for(int i=0;i<4;i++)
+        for(int i=0;i<4;i++){
             orientation[i]=ori[i];
-        rot->rotation.setValue(ori);
+        }
+        // Inventor works internally with floats
+        rot->rotation.setValue(static_cast<float>(orientation[0]), static_cast<float>(orientation[1]),static_cast<float>(orientation[2]),static_cast<float>(orientation[3]));
     }
 
     SbMatrix IVElement::orientationMatrix() {

@@ -446,11 +446,11 @@ namespace Kautham {
             ori[3] = tmp.getRotation().at(3);
 
             SE3Conf newconf;
-            std::vector<float> newpos;
+            std::vector<double> newpos;
             newpos.push_back(pos[0]);
             newpos.push_back(pos[1]);
             newpos.push_back(pos[2]);
-            std::vector<float> newori;
+            std::vector<double> newori;
             newori.push_back(ori[0]);
             newori.push_back(ori[1]);
             newori.push_back(ori[2]);
@@ -943,8 +943,8 @@ namespace Kautham {
     //! to keep the coherence in the robot assembly. It doesn't use any intermediate
     //! structure to adquire the information to do the job.
     bool Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal linkScale, KthReal theta,
-                        KthReal d,KthReal a, float alpha, bool rotational,
-                        bool movable, KthReal low, KthReal hi, float w, string parentName, float preTrans[], bool useBBOX){
+                        KthReal d,KthReal a, double alpha, bool rotational,
+                        bool movable, KthReal low, KthReal hi, double w, string parentName, double preTrans[], bool useBBOX){
         Link* temp = new Link(ivFile, collision_ivFile, scale*linkScale, Approach, useBBOX);
         temp->setName(name);
         temp->setMovable(movable && (low != hi));

@@ -106,7 +106,7 @@ TMat::TMat(unsigned d) {
 
 	  i = 3;
 
-	  while (i <= (sqrt((long double)c)+1)) {
+	  while (i <= (sqrt((double)c)+1)) {
 		  if ((c % i) == 0) {
 			  fact[(*numfactors)++] = i;
 			  c = c / i;

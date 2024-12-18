@@ -300,8 +300,8 @@ void KauthamDEPlanner::KauthamOpenDEState2Robsmp(const ob::State *state, Sample*
        SE3Conf basepose;
        const double *basep = state->as<oc::OpenDEStateSpace::StateType>()->getBodyPosition(0);
        const ob::SO3StateSpace::StateType &baseori = state->as<oc::OpenDEStateSpace::StateType>()->getBodyRotation(0);
-       std::vector<float> tmp1(3);
-       std::vector<float> tmp2(4);
+       std::vector<double> tmp1(3);
+       std::vector<double> tmp2(4);
        tmp1[0] = basep[0];
        tmp1[1] = basep[1];
        tmp1[2] = basep[2];
@@ -395,10 +395,10 @@ void KauthamDEPlanner::KauthamOpenDEState2Obssmp(const ob::State *state, Sample*
 }
 
 //Compute Rn function computes the ODE state to kautham Rn sample
-std::vector<float> KauthamDEPlanner::ComputeRn(const ob::State *state)
+std::vector<double> KauthamDEPlanner::ComputeRn(const ob::State *state)
 {
     unsigned int k=0;
-    vector<float> coords;
+    vector<double> coords;
     //std::cout<<"Joint Size :  "<<((KauthamDEEnvironment*)envPtr.get())->_Joint.size()<<std::endl;
     for(unsigned int j=0;j<((KauthamDEEnvironment*)envPtr.get())->_Joint.size();j++)
     {

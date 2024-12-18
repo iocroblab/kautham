@@ -47,15 +47,15 @@ public:
 
     bool collideTo(Element* other) const override ;
 
-    KthReal getDistanceTo(Element* other) const override ;
+    double getDistanceTo(Element* other) const override ;
 
     SoSeparator* getIvFromFCLModel(bool tran = true);
 
     const fcl::CollisionObjectd *getFCLModel() {return FCLModel;}
 
-    void setPosition(KthReal *pos);
+    void setPosition(double *pos);
 
-    void setOrientation(KthReal *ori);
+    void setOrientation(double *ori);
 
 private:
     fcl::CollisionObjectd *FCLModel;

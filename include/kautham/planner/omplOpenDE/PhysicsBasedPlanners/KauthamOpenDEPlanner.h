@@ -130,7 +130,7 @@ public:
     void ComputePowerConsumed(const std::vector<ompl::control::Control *> &control, const std::vector<double> duration);
     bool computePath(oc::OpenDESimpleSetup *ssetup, ob::RealVectorBounds vb,ob::RealVectorBounds bounds, double x, double y,double planningTime);
     bool setKauthamOpenDEState(Sample *smp);
-    std::vector<float> ComputeRn(const ob::State *state);
+    std::vector<double> ComputeRn(const ob::State *state);
     ompl::control::PathControl *RectMotion();
     void callDrawStuffViewer(void );
 

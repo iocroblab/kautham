@@ -90,7 +90,7 @@ namespace Kautham {
   *     \param scale is the global scale for this link and It is only used for
   *		graphical representation.
   */
-  Link::Link(SoSeparator *visual_model, SoSeparator *collision_model, float scale, APPROACH Type, bool useBBOX){
+  Link::Link(SoSeparator *visual_model, SoSeparator *collision_model, double scale, APPROACH Type, bool useBBOX){
 #if defined(KAUTHAM_USE_FCL)
       element = new IVFCLElement(visual_model,collision_model,scale,useBBOX);
 #endif

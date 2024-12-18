@@ -186,7 +186,7 @@ SoSeparator *IVFCLElement::getIvFromFCLModel(bool tran) {
 }
 
 
-void IVFCLElement::setOrientation(float *ori) {
+void IVFCLElement::setOrientation(double *ori) {
     IVElement::setOrientation(ori);
 
     fcl::Matrix3d rotation;
@@ -196,7 +196,7 @@ void IVFCLElement::setOrientation(float *ori) {
 }
 
 
-void IVFCLElement::setPosition(float *pos) {
+void IVFCLElement::setPosition(double *pos) {
     IVElement::setPosition(pos);
 
     fcl::Vector3d translation(pos[0],pos[1],pos[2]);

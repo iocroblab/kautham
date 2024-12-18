@@ -107,7 +107,7 @@ namespace Kautham {
 
 
 
-    bool kauthamshell::checkCollision(vector<float> smpcoords, bool *collisionFree, std::string *msg, std::pair< std::pair<int, string> , std::pair<int,int> > *colliding_elements) {
+    bool kauthamshell::checkCollision(vector<double> smpcoords, bool *collisionFree, std::string *msg, std::pair< std::pair<int, string> , std::pair<int,int> > *colliding_elements) {
         Sample *smp = NULL;
 
         try {
@@ -154,7 +154,7 @@ namespace Kautham {
 
 
 
-    double kauthamshell::cumDistCheck(std::vector<float> smpcoords) {
+    double kauthamshell::cumDistCheck(std::vector<double> smpcoords) {
         Sample *smp = NULL;
         double value=0.;
 
@@ -190,7 +190,7 @@ namespace Kautham {
 
     //Sets the robot configuration according to the given sample coordinates (control)
     //The configuration is returned in the config parameter
-    bool kauthamshell::setRobotsConfig(vector<float> smpcoords, std::vector<RobConf> &config) {
+    bool kauthamshell::setRobotsConfig(vector<double> smpcoords, std::vector<RobConf> &config) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -218,7 +218,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::setRobotsConfig(vector<float> smpcoords) {
+    bool kauthamshell::setRobotsConfig(vector<double> smpcoords) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -272,7 +272,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setObstaclesConfig(vector<float> smpcoords) {
+    bool kauthamshell::setObstaclesConfig(vector<double> smpcoords) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -299,7 +299,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setQuery(vector<float> init, vector<float> goal) {
+    bool kauthamshell::setQuery(vector<double> init, vector<double> goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -355,7 +355,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setInit(vector<float> init) {
+    bool kauthamshell::setInit(vector<double> init) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -395,7 +395,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setGoal(vector<float> goal) {
+    bool kauthamshell::setGoal(vector<double> goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -435,7 +435,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setInitObs(vector<float> initObs) {
+    bool kauthamshell::setInitObs(vector<double> initObs) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -497,7 +497,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setRobControls(istream *inputfile, vector<float> init, vector<float> goal) {
+    bool kauthamshell::setRobControls(istream *inputfile, vector<double> init, vector<double> goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -555,7 +555,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setRobControls(string controlsFile, vector<float> init, vector<float> goal) {
+    bool kauthamshell::setRobControls(string controlsFile, vector<double> init, vector<double> goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -589,7 +589,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setDefaultRobControls(vector<float> init, vector<float> goal) {
+    bool kauthamshell::setDefaultRobControls(vector<double> init, vector<double> goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -613,7 +613,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setObsControls(istream *inputfile, vector<float> initObs) {
+    bool kauthamshell::setObsControls(istream *inputfile, vector<double> initObs) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -637,7 +637,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setObsControls(string controlsFile, vector<float> initObs) {
+    bool kauthamshell::setObsControls(string controlsFile, vector<double> initObs) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -982,7 +982,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::connect(vector<float> smpcoords1, vector<float> smpcoords2) {
+    bool kauthamshell::connect(vector<double> smpcoords1, vector<double> smpcoords2) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -1415,8 +1415,8 @@ namespace Kautham {
     }
 
 
-    int kauthamshell::addRobot(string robFile, double scale, vector<float> home, vector<vector<float> > limits,
-                               vector<vector<float> > mapMatrix, vector<float> offMatrix) {
+    int kauthamshell::addRobot(string robFile, double scale, vector<double> home, vector<vector<double> > limits,
+                               vector<vector<double> > mapMatrix, vector<double> offMatrix) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -1456,7 +1456,7 @@ namespace Kautham {
     }
 
 
-    int kauthamshell::addObstacle(string obsFile, double scale, vector<float> home) {
+    int kauthamshell::addObstacle(string obsFile, double scale, vector<double> home) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -1680,7 +1680,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::motionPlanner(vector <float> init, vector <float> goal, string root){
+    bool kauthamshell::motionPlanner(vector<double> init, vector<double> goal, string root){
 
         bool _solved = false;
 
@@ -1843,7 +1843,7 @@ namespace Kautham {
     }
 
     //Sets obstacle pose with orientation defined as axis-angle
-    bool kauthamshell::setObstaclePos(string obsname, std::vector<float> pos){
+    bool kauthamshell::setObstaclePos(string obsname, std::vector<double> pos){
 
         try {
             if (!problemOpened()) {
@@ -1894,7 +1894,7 @@ namespace Kautham {
     }
 
     //Gets obstacle pose with orientation defined as axisAn (format="axis-angle") or by default as quaternion (format="quaternion")
-    bool kauthamshell::getObstaclePos(string obsname, std::vector<float> &pos){
+    bool kauthamshell::getObstaclePos(string obsname, std::vector<double> &pos){
 
         cout << "************Getting Pose of obstacle "<<obsname<<endl;
         Problem *const problem = (Problem*)memPtr_;
@@ -1913,7 +1913,7 @@ namespace Kautham {
                 return false;
             }
 
-            float coord[3];
+            double coord[3];
             vector<KthReal> ort;
             ort.resize(4);
 
@@ -1953,7 +1953,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution){
+    bool kauthamshell::findIK(int robIndx, bool armType, std::vector<double> pos, std::vector<double> conf, bool maintSameWrist, std::vector<double> *solution){
         bool ret = false;
         try {
             Problem *const problem = (Problem*)memPtr_;
@@ -1982,7 +1982,7 @@ namespace Kautham {
         return ret;
     }
 
-    bool kauthamshell::setRobPos(unsigned int index, std::vector<float> pos) {
+    bool kauthamshell::setRobPos(unsigned int index, std::vector<double> pos) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -1991,11 +1991,11 @@ namespace Kautham {
             Problem *const problem = (Problem*)memPtr_;
 
             SE3Conf newconf;
-            std::vector<float> newpos;
+            std::vector<double> newpos;
             newpos.push_back(pos.at(0));
             newpos.push_back(pos.at(1));
             newpos.push_back(pos.at(2));
-            std::vector<float> newori;
+            std::vector<double> newori;
             newori.push_back(pos.at(3));
             newori.push_back(pos.at(4));
             newori.push_back(pos.at(5));
@@ -2006,7 +2006,7 @@ namespace Kautham {
 
             problem->getPlanner()->wkSpace()->getRobot(index)->setHomePos(&newconf);
 
-            std::vector<float> coord = problem->getPlanner()->wkSpace()->getRobot(index)->getHomePos()->getSE3().getPos();
+            std::vector<double> coord = problem->getPlanner()->wkSpace()->getRobot(index)->getHomePos()->getSE3().getPos();
             std::cout<<"Robot "<<index<<" at position ("<<coord.at(0)<<", "
                     <<coord.at(1)<<", "<<coord.at(2)<<")"<<std::endl;
             return true;
@@ -2024,7 +2024,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::getRobPos(unsigned int index, std::vector<float> &pos) {
+    bool kauthamshell::getRobPos(unsigned int index, std::vector<double> &pos) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -2058,7 +2058,7 @@ namespace Kautham {
 
     }
 
-    bool kauthamshell::getRobHomePos(unsigned int index, std::vector<float> &pos) {
+    bool kauthamshell::getRobHomePos(unsigned int index, std::vector<double> &pos) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;

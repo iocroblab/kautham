@@ -54,9 +54,9 @@ namespace Kautham {
     static unsigned int   getCollCheckCounter();
     static void           increaseCollCheckCounter();
   protected:
-	  KthReal position[3];
-	  KthReal orientation[4];
-	  KthReal scale;
+	  double position[3];
+	  double orientation[4];
+	  double scale;
   private:
     static unsigned int   _countCollCheck;
   };
