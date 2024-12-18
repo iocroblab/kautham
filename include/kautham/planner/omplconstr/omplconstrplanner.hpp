@@ -67,11 +67,13 @@ namespace Kautham {
 
                 void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
 
-                void setToDo(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
-
                 void omplState2smp(const ob::State *state, Sample* smp);
                 void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
 
+                inline std::vector<size_t> getSpaceIndexMapping() {return index_mapping_;}
+
+                //! Returns a pointer to the problem definition
+                inline ob::ProblemDefinition *ProblemDefinition() {return pdef_.get();}
 
             private:
                 double _planningTime;
@@ -82,6 +84,10 @@ namespace Kautham {
 
                 // Declare a shared pointer to ProjectedStateSpace
                 std::shared_ptr<ompl::base::ProjectedStateSpace> constrained_state_space_;
+
+                // Needed because the space order of getSolutionPath() is not equal to the robot if constraints are used.
+                // The order of the vector follows the urdf_joint_index, and it`s values follows the ompl_solution_index.
+                std::vector<size_t> index_mapping_;
 
                 void removeDuplicateStates(ompl::geometric::PathGeometric& path);
 

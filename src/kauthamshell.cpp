@@ -27,6 +27,7 @@
 
 #include <kautham/kauthamshell.h>
 #include <kautham/planner/omplg/omplplanner.h>
+#include <kautham/planner/omplconstr/omplconstrplanner.hpp>
 #include <kautham/util/kthutil/kauthamexception.h>
 #include <kautham/problem/problem.h>
 #include <kautham/util/libkin/ivkinyumi.h>
@@ -34,6 +35,7 @@
 
 
 namespace ob = ompl::base;
+namespace og = ompl::geometric;
 
 namespace Kautham {
     kauthamshell::kauthamshell() {
@@ -1194,12 +1196,17 @@ namespace Kautham {
                 requested_joints.resize(totalDOF);
                 std::fill(requested_joints.begin(), requested_joints.end(), true);
             }
+            std::cout << "Requested joints: ";
+            for (bool val : requested_joints) {
+                std::cout << val << " ";
+            }
+            std::cout << std::endl;
 
-            if (plannerFamily == OMPLPLANNER || plannerFamily == OMPLCONSTRPLANNER) {
+            if (plannerFamily == OMPLPLANNER) {
                 std::cout << "OMPLPLANNER" << std::endl;
                 if (problem->getPlanner()->solveAndInherit()) {
                     auto omplPlanner = static_cast<omplplanner::omplPlanner*>(problem->getPlanner());
-                    auto solutionPath = omplPlanner->SimpleSetup()->getSolutionPath();
+                    auto solutionPath = omplPlanner->SimpleSetup()->getSolutionPath();                   
                     const ompl::base::SpaceInformationPtr &si = solutionPath.getSpaceInformation();
 
                     const ompl::base::StateSpace *space(si->getStateSpace().get());
@@ -1214,6 +1221,68 @@ namespace Kautham {
                                 requested_data.push_back(state_data[s]);
                             }
                         }
+                        path.push_back(requested_data);
+                    }
+                    return true;
+                }
+            }
+
+            else if (plannerFamily == OMPLCONSTRPLANNER) {
+                std::cout << "OMPLCONSTRPLANNER" << std::endl;
+                if (problem->getPlanner()->solveAndInherit()) {
+                    auto omplConstraintPlanner = static_cast<omplconstrplanner::omplConstraintPlanner*>(problem->getPlanner());
+                    auto solution_path = omplConstraintPlanner->ProblemDefinition()->getSolutionPath();
+                    
+                    std::vector<size_t> index_mapping = omplConstraintPlanner->getSpaceIndexMapping();
+
+                    std::cout << "Index mapping: ";
+                    for (size_t index : index_mapping) {
+                        std::cout << index << " ";
+                    }
+                    std::cout << std::endl;
+
+                    const ompl::base::SpaceInformationPtr &si = solution_path->getSpaceInformation();
+
+                    const ompl::base::StateSpace *space(si->getStateSpace().get());
+                    std::vector<double> state_data;
+                    std::vector<double> reordered_data;
+                    std::vector<double> requested_data;
+                    path.clear();
+                    for (const auto* state : solution_path->as<og::PathGeometric>()->getStates()) {
+                        space->copyToReals(state_data, state);
+
+                        // std::cout << "State Data: ";
+                        // for (const auto& value : state_data) {
+                        //     std::cout << value << " ";
+                        // }
+                        // std::cout << std::endl;
+
+                        // Reorder state_data based on index_mapping
+                        reordered_data.clear();
+                        reordered_data.resize(state_data.size());
+                        for (size_t i = 0; i < state_data.size(); ++i) {
+                            reordered_data[index_mapping[i]] = state_data[i];
+                        }
+
+                        // std::cout << "Reordered Data: ";
+                        // for (const auto& value : reordered_data) {
+                        //     std::cout << value << " ";
+                        // }
+                        // std::cout << std::endl;
+
+                        requested_data.clear();
+                        for (uint s = 0; s < reordered_data.size(); s++) {
+                            if (requested_joints[s]) {
+                                requested_data.push_back(reordered_data[s]);
+                            }
+                        }
+
+                        // std::cout << "Requested Data: ";
+                        // for (const auto& value : requested_data) {
+                        //     std::cout << value << " ";
+                        // }
+                        // std::cout << std::endl;
+
                         path.push_back(requested_data);
                     }
                     return true;

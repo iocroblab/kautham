@@ -22,6 +22,10 @@
 		</Constraint> -->
 	</Robot>
 
+	<!-- <Robot robot="robots/UR5/ur5.urdf" scale="1.0">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.01" Y="2.0" X="0.0" />
+	</Robot> -->
+
 	<!-- <Controls robot="controls/madar_base.cntr" /> -->
 	<Controls robot="controls/madar_full.cntr" />
 	

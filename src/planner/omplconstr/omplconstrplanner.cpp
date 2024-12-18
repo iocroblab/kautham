@@ -116,8 +116,10 @@ namespace Kautham {
                     if (num_dof > 0) {
                         // First assume that all joint are unconstrained:
                         std::vector<std::string> unconstrained_joint_names;
+                        std::vector<std::string> all_joint_names;
                         for (unsigned int n = 0; n < num_dof; n++) {    // n = 0 is the base
                             unconstrained_joint_names.push_back(current_rob->getLink(n+1)->getName());
+                            all_joint_names.push_back(current_rob->getLink(n+1)->getName());
                         }
                         
                         auto constraints = current_rob->getConstraints();
@@ -127,10 +129,10 @@ namespace Kautham {
                             std::cout << "----- Constraint: " << std::get<0>(constr) << " -----" << std::endl;
                             // Get the constraint data:
                             constr_joints = std::get<2>(constr);
-                            // Extract only the names:
                             std::vector<std::string> constr_names;
-                            for (const auto& [name, _] : constr_joints) {
+                            for (const auto& [name, index] : constr_joints) {
                                 constr_names.push_back(name);
+                                index_mapping_.push_back(index);
                             }
                                                 
                             spaceRn = std::make_shared<ob::RealVectorStateSpace>(constr_joints.size());
@@ -175,6 +177,18 @@ namespace Kautham {
                         if (unconstrained_joint_names.size() > 0) {
                             current_rob->setUnconstrainedJointNames(unconstrained_joint_names);
                             auto katxopo = current_rob->getUnconstrainedJointNames();
+
+                            // Iterate over the remaining data and find the corresponding original indices
+                            for (const auto& item : unconstrained_joint_names) {
+                                // Find the original index of the remaining item
+                                auto it = std::find(all_joint_names.begin(), all_joint_names.end(), item);
+                                
+                                if (it != all_joint_names.end()) {
+                                    // Calculate the original index and store it
+                                    size_t original_index = std::distance(all_joint_names.begin(), it);
+                                    index_mapping_.push_back(original_index);
+                                }
+                            }
 
                             spaceRn = std::make_shared<ob::RealVectorStateSpace>(unconstrained_joint_names.size());
                             space_name = "ssRobot" + std::to_string(rob) + "_Rn";
