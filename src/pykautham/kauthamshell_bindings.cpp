@@ -13,11 +13,10 @@ void register_kauthamshell(pybind11::module &m){
         .def(py::init<>())
         .def("problemOpened", &Kautham::kauthamshell::problemOpened)
         .def("closeProblem", &Kautham::kauthamshell::closeProblem)
-        .def("openProblem", py::overload_cast<std::istream*, std::vector<std::string>>(&Kautham::kauthamshell::openProblem))
         .def("openProblem", py::overload_cast<std::string, std::vector<std::string>>(&Kautham::kauthamshell::openProblem))
 
         // Example of handling a method with complex arguments and return types
-        .def("checkCollision", [](Kautham::kauthamshell& self, const std::vector<float>& smpcoords) {
+        .def("checkCollision", [](Kautham::kauthamshell& self, const std::vector<double>& smpcoords) {
             bool collisionFree = false;
             std::string msg;
             std::pair<std::pair<int, std::string>, std::pair<int, int>> colliding_elements;
@@ -26,16 +25,13 @@ void register_kauthamshell(pybind11::module &m){
         })
         // --- Robot-related methods ---
         .def("setRobotsConfig", 
-             py::overload_cast<std::vector<float>>(&Kautham::kauthamshell::setRobotsConfig),
+             py::overload_cast<std::vector<double>>(&Kautham::kauthamshell::setRobotsConfig),
              "Set the robot configurations using a vector")
-        .def("setRobotsConfig", 
-             py::overload_cast<std::vector<float>, std::vector<RobConf>&>(&Kautham::kauthamshell::setRobotsConfig),
-             "Set the robot configurations with additional reference configuration")
         .def("setRobControls", 
-             py::overload_cast<std::istream*, std::vector<float>, std::vector<float>>(&Kautham::kauthamshell::setRobControls),
+             py::overload_cast<std::istream*, std::vector<double>, std::vector<double>>(&Kautham::kauthamshell::setRobControls),
              "Set robot controls using an input stream")
         .def("setRobControls", 
-             py::overload_cast<std::string, std::vector<float>, std::vector<float>>(&Kautham::kauthamshell::setRobControls),
+             py::overload_cast<std::string, std::vector<double>, std::vector<double>>(&Kautham::kauthamshell::setRobControls),
              "Set robot controls using a file")
         .def("setRobControlsNoQuery", &Kautham::kauthamshell::setRobControlsNoQuery,
              "Set robot controls without a query")

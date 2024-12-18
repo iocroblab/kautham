@@ -153,11 +153,6 @@ if(KAUTHAM_PYTHON)
   
    add_library(pykautham MODULE pykautham/pykautham_module.cpp
                                  pykautham/kauthamshell_bindings.cpp
-                                 # pykautham/robconf_bindings.cpp
-                                 # pykautham/se3conf_bindings.cpp
-                                 # pykautham/conf_bindings.cpp
-                                 pykautham/rnconf_bindings.cpp
-                                 pykautham/robweight_bindings.cpp
    )
    target_link_libraries(pykautham PRIVATE pybind11::module Python3::Python libkautham  )
    target_include_directories(pykautham PRIVATE ${Python3_INCLUDE_DIRS})
@@ -166,6 +161,14 @@ if(KAUTHAM_PYTHON)
    set_target_properties(pykautham PROPERTIES
       PREFIX ""
       SUFFIX ".so"
+   )
+
+   # Set the Python install directory
+   set(PYTHON_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages)
+
+   # Install the Python binding
+   install(TARGETS pykautham
+       LIBRARY DESTINATION ${PYTHON_INSTALL_DIR}
    )
 endif(KAUTHAM_PYTHON)
 
