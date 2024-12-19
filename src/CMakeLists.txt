@@ -148,20 +148,26 @@ message(STATUS "KAUTHAM_DIRNAME_include: ${KAUTHAM_DIRNAME_include}")
 if(KAUTHAM_PYTHON)
    # Set up pybind11
    message(STATUS "Finding pybind11 stuff ....")
-   find_package(pybind11 REQUIRED)
-   find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-  
-   add_library(pykautham MODULE pykautham/pykautham_module.cpp
-                                 pykautham/kauthamshell_bindings.cpp
-   )
-   target_link_libraries(pykautham PRIVATE pybind11::module Python3::Python libkautham  )
-   target_include_directories(pykautham PRIVATE ${Python3_INCLUDE_DIRS})
+   find_package(Python COMPONENTS Interpreter Development REQUIRED)
+   if(NOT Python_FOUND)
+      message(WARNING "Python not found. Skipping Python bindings.")
+      return()
+   endif()
 
-   # Set the appropriate Python version
+   find_package(pybind11 CONFIG REQUIRED)
+   if(NOT pybind11_FOUND)
+      message(WARNING "pybind11 not found. Skipping Python bindings.")
+      return()
+   endif()
+
+   # Python method:
+   Python_add_library(pykautham pykautham/pykautham_module.cpp
+                              pykautham/kauthamshell_bindings.cpp)
+   target_link_libraries(pykautham PUBLIC pybind11::headers libkautham ${Python_LIBRARIES})
    set_target_properties(pykautham PROPERTIES
-      PREFIX ""
-      SUFFIX ".so"
-   )
+                                 INTERPROCEDURAL_OPTIMIZATION ON
+                                 CXX_VISIBILITY_PRESET "default"
+                                 VISIBILITY_INLINES_HIDDEN ON)
 
    # Set the Python install directory
    set(PYTHON_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages)
