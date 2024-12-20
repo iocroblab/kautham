@@ -73,17 +73,20 @@ namespace Kautham {
                 inline std::vector<size_t> getSpaceIndexMapping() {return index_mapping_;}
 
                 //! Returns a pointer to the problem definition
+                inline ompl::base::StateSpace *StateSpace() {return space_.get();}
+
+                //! Returns a pointer to the problem definition
                 inline ob::ProblemDefinition *ProblemDefinition() {return pdef_.get();}
+                bool have_constr_space;
+                bool have_unconstr_space;
 
             private:
                 double _planningTime;
+                double _range;
 
                 std::shared_ptr<ompl::base::StateSpace> space_;
 
                 std::shared_ptr<ompl::base::SpaceInformation> si_;
-
-                // Declare a shared pointer to ProjectedStateSpace
-                std::shared_ptr<ompl::base::ProjectedStateSpace> constrained_state_space_;
 
                 // Needed because the space order of getSolutionPath() is not equal to the robot if constraints are used.
                 // The order of the vector follows the urdf_joint_index, and it`s values follows the ompl_solution_index.

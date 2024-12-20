@@ -5,8 +5,11 @@
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/base/ConstrainedSpaceInformation.h>
-#include <ompl/geometric/planners/rrt/RRT.h>
 #include <kautham/planner/omplconstr/omplconstrValidityChecker.hpp>
+
+// Planners:
+#include <ompl/geometric/planners/rrt/RRT.h>
+#include <ompl/geometric/planners/rrt/RRTConnect.h>
 
 #include <ompl/base/Path.h>
 
@@ -35,10 +38,12 @@ namespace Kautham {
 
             // Set own intial values:
             _planningTime = 10;
+            _range = 0.1;
 
             // Add planner parameters:
             addParameter("_Max Planning Time",_planningTime);
             addParameter("_Speed Factor",_speedFactor);
+            addParameter("_Range",_range);
 
             if (ssptr == NULL) {
 
@@ -114,6 +119,8 @@ namespace Kautham {
                     // Also create the constrained space if requested by the robot.
                     const unsigned int num_dof = current_rob->getNumJoints();
                     if (num_dof > 0) {
+                        have_constr_space = false;
+                        have_unconstr_space = false;
                         // First assume that all joint are unconstrained:
                         std::vector<std::string> unconstrained_joint_names;
                         std::vector<std::string> all_joint_names;
@@ -126,6 +133,7 @@ namespace Kautham {
 
                         std::vector<std::pair<std::string, uint>> constr_joints;
                         for (const auto& constr : constraints) {
+                            have_constr_space = true;
                             std::cout << "----- Constraint: " << std::get<0>(constr) << " -----" << std::endl;
                             // Get the constraint data:
                             constr_joints = std::get<2>(constr);
@@ -175,6 +183,7 @@ namespace Kautham {
 
                         // Create the Rn space with the unconstrained joints:
                         if (unconstrained_joint_names.size() > 0) {
+                            have_unconstr_space = true;
                             current_rob->setUnconstrainedJointNames(unconstrained_joint_names);
                             auto katxopo = current_rob->getUnconstrainedJointNames();
 
@@ -278,9 +287,10 @@ namespace Kautham {
                 this->pdef_->setGoal(ob::GoalPtr(goalStates));
 
                 // Set the planner (for example, RRT)
-                this->ompl_planner_ = std::make_shared<ompl::geometric::RRT>(this->si_);
+                // this->ompl_planner_ = std::make_shared<ompl::geometric::RRT>(this->si_);
+                this->ompl_planner_ = std::make_shared<ompl::geometric::RRTConnect>(this->si_);
                 this->ompl_planner_->setProblemDefinition(this->pdef_);
-                this->ompl_planner_->as<ompl::geometric::RRT>()->setRange(0.1);
+                this->ompl_planner_->as<ompl::geometric::RRTConnect>()->setRange(_range);
                 this->ompl_planner_->setup();
 
             } else {
@@ -323,6 +333,17 @@ namespace Kautham {
                     return false;
                 }
 
+                it = _parameters.find("_Range");
+                if(it != _parameters.end()) {
+                    if (_range != it->second) {
+                        std::cout << "Range has been modified from " << _range;
+                        _range = it->second;
+                        std::cout << " to " << _range << std::endl;
+                    }
+                } else {
+                    return false;
+                }
+
             } catch(...) {
                 return false;
             }
@@ -340,7 +361,7 @@ namespace Kautham {
 
                 std::shared_ptr<ompl::base::Path> solution_path = this->pdef_->getSolutionPath();
 
-                // solution_path->print(std::cout);
+                solution_path->print(std::cout);
 
                 std::vector<ompl::base::State*> states = solution_path->as<og::PathGeometric>()->getStates();
 
