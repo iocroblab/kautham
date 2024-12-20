@@ -36,7 +36,7 @@
     <!-- END: T-STRUCTURE -->
 
     <!-- END: WHEELS -->
-    <joint name="motor_1" type="continuous">
+    <!-- <joint name="motor_1" type="continuous">
       <parent link="madar_base_link"/>
       <child link="wheel_1_link"/>
       <axis xyz="-1 0 0"/>
@@ -106,7 +106,7 @@
          <mass value="10"/>
          <inertia ixx="0.04" ixy="0" ixz="0" iyy="0.04" iyz="0" izz="0.04"/>
        </inertial>
-    </link>
+    </link> -->
   
     <!-- END: WHEELS -->
 
@@ -116,6 +116,7 @@
         <parent link="madar_base_link"/>
         <child link="right_base_link"/>
         <origin xyz="0.256 0.0 1.389" rpy="-2.5261 0.5236 -2.1863"/>
+        <limit effort="0.0" lower="-0.01" upper="0.01" velocity="0.0"/>
     </joint>
 
     <link name="right_base_link">
