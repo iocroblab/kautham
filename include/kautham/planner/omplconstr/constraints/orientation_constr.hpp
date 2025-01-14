@@ -9,11 +9,13 @@ class OrientationConstraint : public ompl::base::Constraint {
         // Constructor: Set dimension of ambient space and the number of constraint equations
         OrientationConstraint(const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance);
 
+        bool project(ompl::base::State *state) const override;
+
         // Function that computes the constraint value:
         void function(const Eigen::Ref<const Eigen::VectorXd>& q, Eigen::Ref<Eigen::VectorXd> out) const override;
 
         // Function that computes the Jacobian of the constraint function:
-        // void jacobian(const Eigen::Ref<const Eigen::VectorXd>& q, Eigen::Ref<Eigen::MatrixXd> out) const override;
+        void jacobian(const Eigen::Ref<const Eigen::VectorXd>& q, Eigen::Ref<Eigen::MatrixXd> out) const override;
 
         bool setTargetOrientation(const Eigen::Quaterniond& ori);
 
@@ -23,8 +25,6 @@ class OrientationConstraint : public ompl::base::Constraint {
             std::cout << "Target Orientation (Quaternion: qx qy qz qw): "
                 << target_orientation_.coeffs().transpose() << std::endl;
         }
-
-        // bool setNumberOfConstraints(const unsigned int num_constraints);
 
     private:
 

@@ -32,6 +32,7 @@
 #include <ompl/base/spaces/constraint/ProjectedStateSpace.h>
 #include <ompl/base/ProblemDefinition.h>
 #include <ompl/base/Planner.h>
+// #include <kautham/sampling/sampling.h>
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
@@ -42,6 +43,32 @@ namespace Kautham {
 //  */
 
     namespace omplconstrplanner{
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // Class KauthamConstrStateSampler
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //! This class represents a  state sampler based on the sampling of the Kautham control space and
+        //! its conversion to samples.
+        class KauthamConstrStateSampler : public ob::CompoundStateSampler {
+            public:
+                KauthamConstrStateSampler(const ob::StateSpace *sspace, Planner *p);
+                ~KauthamConstrStateSampler();
+                
+                virtual void sampleUniform(ob::State *state);
+
+                RandomSampler* _samplerRandom;
+
+            protected:
+                ompl::RNG rng_; //!< random generator
+                Planner *kauthamPlanner_; //!< pointer to planner in order to have access to the workspace
+        };
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // AUXILIAR Functions
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p);
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         // Class omplconstrPlanner
@@ -80,6 +107,9 @@ namespace Kautham {
                 bool have_constr_space;
                 bool have_unconstr_space;
 
+                inline vector<int> *getDisabledControls(){return &_disabledcontrols;}
+                inline ob::StateSpacePtr getSpace(){return space_;}
+
             private:
                 double _planningTime;
                 double _range;
@@ -91,6 +121,8 @@ namespace Kautham {
                 // Needed because the space order of getSolutionPath() is not equal to the robot if constraints are used.
                 // The order of the vector follows the urdf_joint_index, and it`s values follows the ompl_solution_index.
                 std::vector<size_t> index_mapping_;
+
+                vector<int> _disabledcontrols;//!< those disabled controls will not be sampled, they are fixed at 0.5
 
                 void removeDuplicateStates(ompl::geometric::PathGeometric& path);
 

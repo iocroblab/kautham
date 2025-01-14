@@ -32,50 +32,49 @@
 #include <kautham/planner/omplconstr/omplconstrplanner.hpp>
 #include <cfloat>
 
+// Include all the constraints:
+#include <kautham/planner/omplconstr/constraints/orientation_constr.hpp>
+
 namespace Kautham {
     namespace omplconstrplanner{
 
         // Returns whether the given state's position overlaps the obstacles
         bool ValidityChecker::isValid(const ob::State* state) const
         {
-            //verify bounds
+            // Verify bounds
             if (thesi->satisfiesBounds(state)==false) {
                 return false;
             }
-            //create sample
+            // Create sample
             int d = theplanner->wkSpace()->getNumRobControls();
             Sample *smp = new Sample(d);
             // auto smp = std::make_unique<Sample>(theplanner->wkSpace()->getNumRobControls());
-            //copy the conf of the init smp. Needed to capture the home positions.
+            // copy the conf of the init smp. Needed to capture the home positions.
             smp->setMappedConf(theplanner->initSamp()->getMappedConf());
+            
             //load the RobConf of smp form the values of the ompl::state
             ((omplConstraintPlanner*)theplanner)->omplConstraintPlanner::omplState2smp(state,smp);
-            //collision-check
+            
+            // Collision-check:
             if (theplanner->wkSpace()->collisionCheck(smp)) {
+                delete smp;
                 return false;
             }
 
             // If the bool is false, the method is not evaluated (efficient).
             if (((omplConstraintPlanner*)theplanner)->have_constr_space && !isConstrainedPartValid(state, smp)) {
-                std::cout << "have_constr_space" << std::endl;
-                
-                
-                // return false;
-            }
-
-            // If the bool is false, the method is not evaluated (efficient).
-            // if (((omplConstraintPlanner*)theplanner)->have_unconstr_space && !isUnconstrainedPartValid(state, smp)) {
-            //     std::cout << "have_unconstr_space" << std::endl;
-                // return false;
-            // }
-
-
-            //Discards the sample.
-            //By default does nothing, i.e. the default filtersample function in class Planner
-            //returns always false
-            if (theplanner->filtersample(smp)) {
+                delete smp;
                 return false;
             }
+
+            // Discards the sample.
+            // By default does nothing, i.e. the default filtersample function in class Planner returns always false
+            if (theplanner->filtersample(smp)) {
+                delete smp;
+                return false;
+            }
+
+            delete smp;
             return true;
         }
 
@@ -106,35 +105,62 @@ namespace Kautham {
             return dist;
         }
 
+
         bool ValidityChecker::isConstrainedPartValid(const ob::State* state, const Sample* smp) const
         {
-            // const auto* compound_state = state->as<ob::CompoundState>();
-            // for (unsigned int i = 0; i < compound_state->getSubstateCount(); ++i) {
-            //     const auto* subspace = thesi->getStateSpace()->as<ob::CompoundStateSpace>()->getSubspace(i);
-            //     if (subspace->getName().find("RnConstr") != std::string::npos) {
-            //         if (!subspace->satisfiesBounds(compound_state->as<ob::CompoundState>()->getSubstate(i))) {
-            //             return false;
-            //         }
-            //     }
-            // }
-
             for (const auto& [name, constraint] : ((omplConstraintPlanner*)theplanner)->constraint_map_) {
-                std::cout << "Constraint name: " << name << std::endl;
                 if (constraint) {
-                    // constraint->printInfo();
-                    std::cout << "State: ";
-                    ((omplConstraintPlanner*)theplanner)->StateSpace()->as<ob::CompoundStateSpace>()->printState(state, std::cout);
-                    std::cout << std::endl;
-                    // std::cout << "Is satisfied: " << constraint->isSatisfied(state) << std::endl;
+                    try {
+                        const auto& stateSpace = ((omplConstraintPlanner*)theplanner)->StateSpace();
+                        if (!stateSpace) {
+                            std::cerr << "Error: StateSpace is null" << std::endl;
+                            continue;
+                        }
+
+                        const auto& compoundSpace = stateSpace->as<ob::CompoundStateSpace>();
+                        if (!compoundSpace) {
+                            std::cerr << "Error: Failed to cast to CompoundStateSpace" << std::endl;
+                            continue;
+                        }
+
+                        const std::vector<ob::StateSpacePtr>& robotSpaces = compoundSpace->getSubspaces();
+
+                        for (size_t i = 0; i < robotSpaces.size(); ++i) {
+                            if (auto compoundSubSpace = std::dynamic_pointer_cast<ob::CompoundStateSpace>(robotSpaces[i])) {
+                                const std::vector<ob::StateSpacePtr>& subspaces = compoundSubSpace->getSubspaces();
+                                for (size_t j = 0; j < subspaces.size(); ++j) {
+                                    std::string subspaceName = subspaces[j]->getName();
+                                    if (subspaceName.find("_RnConstr_") != std::string::npos) {
+                                        auto rnConstrSpace = subspaces[j]->as<ob::ProjectedStateSpace>();
+                                        if (!rnConstrSpace) {
+                                            std::cerr << "Error: Failed to cast to ProjectedStateSpace for " << subspaceName << std::endl;
+                                            continue;
+                                        }
+
+                                        // Access the specific substate for this ProjectedStateSpace
+                                        const ob::CompoundState* compoundState = state->as<ob::CompoundState>();
+                                        const ob::CompoundState* robotState = compoundState->as<ob::CompoundState>(i);
+                                        const ob::State* projectedSubState = robotState->as<ob::State>(j);
+                                        
+                                        if (!constraint->isSatisfied(projectedSubState)) {
+                                            // std::cout << "  " << subspaceName << ": is NOT satisfied.";
+                                            return false;
+                                        }
+                                    }
+                                }
+                            } else {
+                                std::cout << "... (similar error checking for non-compound subspaces)" << std::endl;
+                            }
+                        }
+                    } catch (const std::exception& e) {
+                        std::cerr << "Exception caught: " << e.what() << std::endl;
+                    }
                 } else {
                     std::cout << "Null constraint." << std::endl;
                 }
             }
-
             return true;
         }
-
-
 
     }
 }

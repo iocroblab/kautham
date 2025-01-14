@@ -10,6 +10,7 @@
 // Planners:
 #include <ompl/geometric/planners/rrt/RRT.h>
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
+#include <ompl/geometric/planners/rrt/RRTstar.h>
 
 #include <ompl/base/Path.h>
 
@@ -23,6 +24,75 @@
 namespace Kautham {
     //! Namespace omplconstrplanner contains the planners based on the OMPL::constraint library
     namespace omplconstrplanner{
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // KauthamConstrStateSampler functions
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        KauthamConstrStateSampler::KauthamConstrStateSampler(const ob::StateSpace *sspace, Planner *p) : ob::CompoundStateSampler(sspace)
+        {
+            kauthamPlanner_ = p;
+            _samplerRandom = new RandomSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
+        }
+
+        KauthamConstrStateSampler::~KauthamConstrStateSampler() {
+            delete _samplerRandom;
+        }
+
+        void KauthamConstrStateSampler::sampleUniform(ob::State *state)
+        {
+
+            ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplConstraintPlanner*)kauthamPlanner_)->getSpace() );
+
+            bool withinbounds = false;
+            int trials = 0;
+            Sample* smp = NULL;
+
+            do {
+                /*
+                Sample the Kautham control space.
+                Controls are defined in the input xml files.
+                Each control value lies in the [0,1] interval
+                */
+                smp = _samplerRandom->nextSample();
+
+                // Those controls that are disabled for sampling are now restored to 0.5
+                for (unsigned j=0; j<((omplConstraintPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++) {
+                    smp->getCoords()[ ((omplConstraintPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
+                }
+
+                // Compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsTo function.
+                kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+                withinbounds = smp->getwithinbounds();
+                trials++;
+            } while (!withinbounds && trials < 100);
+
+
+            // If trials==100 is because we have not been able to find a sample within limits
+            // In this case the config is set to the border in the moveRobotsTo function.
+            // The smp is finally converted to state and returned
+
+            // Convert from sample to scoped state
+            ((omplConstraintPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
+
+            // Print for debugging
+            // std::cout << "Generated Sample State:\n";
+            // sstate.print(std::cout);
+
+            // Return in parameter state:
+            ((omplConstraintPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
+
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // AUXILIAR functions
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //! This function is used to allocate a state sampler
+        ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p)
+        {
+            return ob::StateSamplerPtr(new KauthamConstrStateSampler(mysspace, p));
+        }
+
 
         // Constructor implementation
         omplConstraintPlanner::omplConstraintPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr)
@@ -230,7 +300,13 @@ namespace Kautham {
 
                 this->space_->diagram(std::cout);
 
+
                 // ############################################
+                // Define problem stuff
+                // ############################################
+
+                // Set the custom state sampler:
+                this->space_->setStateSamplerAllocator(std::bind(&allocStateSampler, std::placeholders::_1, (Planner*)this));
 
                 // Create SpaceInformation for the compound space
                 this->si_ = std::make_shared<ompl::base::SpaceInformation>(this->space_);
@@ -286,11 +362,21 @@ namespace Kautham {
                 }
                 this->pdef_->setGoal(ob::GoalPtr(goalStates));
 
-                // Set the planner (for example, RRT)
+
+                // ############################################
+                // Set the planner:
+                // ############################################
+
                 // this->ompl_planner_ = std::make_shared<ompl::geometric::RRT>(this->si_);
                 this->ompl_planner_ = std::make_shared<ompl::geometric::RRTConnect>(this->si_);
-                this->ompl_planner_->setProblemDefinition(this->pdef_);
+                // this->ompl_planner_ = std::make_shared<ompl::geometric::RRTstar>(this->si_);
+                
+                // this->ompl_planner_->as<ompl::geometric::RRT>()->setRange(_range);
                 this->ompl_planner_->as<ompl::geometric::RRTConnect>()->setRange(_range);
+                // this->ompl_planner_->as<ompl::geometric::RRTstar>()->setRange(_range);
+                
+                this->ompl_planner_->setProblemDefinition(this->pdef_);
+                
                 this->ompl_planner_->setup();
 
             } else {
@@ -361,21 +447,23 @@ namespace Kautham {
 
                 std::shared_ptr<ompl::base::Path> solution_path = this->pdef_->getSolutionPath();
 
-                solution_path->print(std::cout);
+                // solution_path->print(std::cout);
 
-                std::vector<ompl::base::State*> states = solution_path->as<og::PathGeometric>()->getStates();
+                og::PathGeometric& path = static_cast<og::PathGeometric&>(*solution_path);
+                // og::PathSimplifier simplifier(this->si_);
+                // simplifier.simplifyMax(path);
+                // simplifier.smoothBSpline(path);
 
                 _path.clear();
                 clearSimulationPath();
                 Sample *smp;
-                
-                // Load the kautham _path variable from the ompl solution
-                for (std::size_t j(0); j < solution_path->as<og::PathGeometric>()->getStateCount(); ++j) {
-                    // Create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
+
+                // Load the simplified path into Kautham _path variable
+                for (std::size_t j = 0; j < path.getStateCount(); ++j) {
                     smp = new Sample(_wkSpace->getNumRobControls());
                     smp->setMappedConf(_init.at(0)->getMappedConf());
 
-                    omplConstraintPlanner::omplState2smp(solution_path->as<og::PathGeometric>()->getState(j)->as<ob::CompoundStateSpace::StateType>(),smp);
+                    omplConstraintPlanner::omplState2smp(path.getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
 
                     _path.push_back(smp);
                     _samples->add(smp);
@@ -418,7 +506,7 @@ namespace Kautham {
                 ompl::base::ScopedState<> ScopedStateRobot(ssRoboti);
 
                 size_t num_subspaces_rn = ssRoboti->as<ompl::base::CompoundStateSpace>()->getSubspaces().size();
-                std::cout << "Number of subspaces in Rn: " << num_subspaces_rn << std::endl;
+                // std::cout << "Number of subspaces in Rn: " << num_subspaces_rn << std::endl;
 
                 // If it has se3 part:
                 // if (current_rob->isSE3Enabled()) {
@@ -567,7 +655,7 @@ namespace Kautham {
                 } else {
                     //If the robot does not have mobile SE3 dofs then the SE3 configuration of the sample is maintained
                     if (smp->getMappedConf().size() == 0) {
-                        throw ompl::Exception("omplPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
+                        throw ompl::Exception("omplConstraintPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
                     } else {
                         rcj->setSE3(smp->getMappedConf()[rob].getSE3());
                     }
@@ -646,7 +734,7 @@ namespace Kautham {
                 } else {
                     //If the robot does not have mobile Rn dofs then the Rn configuration of the sample is maintained
                     if (smp->getMappedConf().size() == 0) {
-                        throw ompl::Exception("omplPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
+                        throw ompl::Exception("omplConstraintPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
                     } else {
                         rcj->setRn(smp->getMappedConf()[rob].getRn());
                     }
