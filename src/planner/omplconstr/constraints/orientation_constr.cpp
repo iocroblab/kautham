@@ -42,6 +42,7 @@ bool OrientationConstraint::project(ompl::base::State *state) const {
 	// 	std::cout << "Invalid state type." << std::endl;
 	// }
 
+	(void) state;
 	// I don't know why, but this TRUE is the key...
     return true;
 }
