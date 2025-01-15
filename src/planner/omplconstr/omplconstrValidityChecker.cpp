@@ -62,7 +62,7 @@ namespace Kautham {
             }
 
             // If the bool is false, the method is not evaluated (efficient).
-            if (((omplConstraintPlanner*)theplanner)->have_constr_space && !isConstrainedPartValid(state, smp)) {
+            if (((omplConstraintPlanner*)theplanner)->have_constr_space && !isConstrainedPartValid(state)) {
                 delete smp;
                 return false;
             }
@@ -106,7 +106,7 @@ namespace Kautham {
         }
 
 
-        bool ValidityChecker::isConstrainedPartValid(const ob::State* state, const Sample* smp) const
+        bool ValidityChecker::isConstrainedPartValid(const ob::State* state) const
         {
             for (const auto& [name, constraint] : ((omplConstraintPlanner*)theplanner)->constraint_map_) {
                 if (constraint) {

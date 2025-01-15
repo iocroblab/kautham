@@ -46,7 +46,7 @@ namespace Kautham {
                 Planner *theplanner;
                 ob::SpaceInformationPtr thesi;
 
-                bool isConstrainedPartValid(const ob::State* state, const Sample* smp) const;
+                bool isConstrainedPartValid(const ob::State* state) const;
 
                 mutable std::atomic<unsigned long long> is_valid_state_count;
 
