@@ -124,6 +124,8 @@ namespace Kautham {
 
                 vector<int> _disabledcontrols;//!< those disabled controls will not be sampled, they are fixed at 0.5
 
+                void assignConstrTargetFromState(const ob::ScopedState<ob::CompoundStateSpace> _ompl_state);
+                
                 void removeDuplicateStates(ompl::geometric::PathGeometric& path);
 
                 void printJointPath(const std::vector<std::vector<double>>& _joint_path);

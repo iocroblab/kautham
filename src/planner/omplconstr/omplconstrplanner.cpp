@@ -338,13 +338,9 @@ namespace Kautham {
                     std::cout << "startomplconstr:" << std::endl;
                     startompl.print();
                     this->pdef_->addStartState(startompl);
-                    // S'HA DE FER GENERIC:
-                    std::string constr_id_name = "arm_ur5";
-                    if (this->constraint_map_.find(constr_id_name) != this->constraint_map_.end()) {
-                        auto my_constraint = std::dynamic_pointer_cast<OrientationConstraint>(this->constraint_map_[constr_id_name]);
-                        my_constraint->OrientationConstraint::setJointConfigAsTargetOrientation(startompl.reals());
-                        my_constraint->OrientationConstraint::printTargetOrientation();
-                    }
+                    
+                    // Assign the start values to each constraint as a target automatically:
+                    omplConstraintPlanner::assignConstrTargetFromState(startompl);
                 }
 
                 // Add goal states:
@@ -356,9 +352,8 @@ namespace Kautham {
                     std::cout << "goalomplconstr:" << std::endl;
                     goalompl.print();
                     goalStates->addState(goalompl);
-                    // auto debug = std::make_shared<OrientationConstraint>(6,3,0.1);
-                    // debug->OrientationConstraint::setJointConfigAsTargetOrientation(goalompl.reals());
-                    // debug->OrientationConstraint::printTargetOrientation();
+                    // DEBUG: Assign the goal values to each constraint as a target automatically:
+                    // omplConstraintPlanner::assignConstrTargetFromState(goalompl);
                 }
                 this->pdef_->setGoal(ob::GoalPtr(goalStates));
 
@@ -481,6 +476,40 @@ namespace Kautham {
             return _solved;
         }
 
+        void omplConstraintPlanner::assignConstrTargetFromState(const ob::ScopedState<ob::CompoundStateSpace> _ompl_state) {
+            // Assign the constraint values (e.g.: Constraint target):
+            std::vector<double> ompl_state_reals = _ompl_state.reals();
+            /*
+            The key is that from the RealVectorStates in the Space, first are listed the contraints and then the unconstrained.
+            The contraint order is the same as the construnction of the space, that is the same of the problem XML file.
+                - ToDo: Adapt the code to handle when SE3 is used!
+                - ToDo: Adapt the code to handle different Constraints Types!
+            */
+            for (unsigned rob = 0; rob < _wkSpace->getNumRobots(); rob++) {
+                auto current_rob = _wkSpace->getRobot(rob);
+                auto constraints = current_rob->getConstraints();
+                for (const auto& constraint : constraints) {
+                    std::string constr_id_name = std::get<0>(constraint);
+                    if (this->constraint_map_.find(constr_id_name) != this->constraint_map_.end()) {
+                        size_t constr_joints_size = std::get<2>(constraint).size();
+                        std::vector<double> constr_joints(ompl_state_reals.begin(), ompl_state_reals.begin() + constr_joints_size);
+                        ompl_state_reals.erase(ompl_state_reals.begin(), ompl_state_reals.begin() + constr_joints_size);
+
+                        std::cout << "Auto constraint (" << constr_id_name << ") config: [ ";
+                        for (const auto& value : constr_joints) {
+                            std::cout << value << " ";
+                        }
+                        std::cout << "]" << std::endl;
+
+                        auto my_constraint = std::dynamic_pointer_cast<OrientationConstraint>(this->constraint_map_[constr_id_name]);
+                        my_constraint->OrientationConstraint::setJointConfigAsTargetOrientation(constr_joints);
+                        my_constraint->OrientationConstraint::printTargetOrientation();
+                    }
+                }
+            }
+        }
+
+
         //! This function converts a Kautham sample to an ompl scoped state.
         void omplConstraintPlanner::smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate)
         {
@@ -505,7 +534,7 @@ namespace Kautham {
                 // Create the Scoped State of the current robot:
                 ompl::base::ScopedState<> ScopedStateRobot(ssRoboti);
 
-                size_t num_subspaces_rn = ssRoboti->as<ompl::base::CompoundStateSpace>()->getSubspaces().size();
+                // size_t num_subspaces_rn = ssRoboti->as<ompl::base::CompoundStateSpace>()->getSubspaces().size();
                 // std::cout << "Number of subspaces in Rn: " << num_subspaces_rn << std::endl;
 
                 // If it has se3 part:
