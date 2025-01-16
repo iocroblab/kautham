@@ -48,12 +48,10 @@ namespace Kautham {
 
                 bool isConstrainedPartValid(const ob::State* state) const;
 
-                mutable std::atomic<unsigned long long> is_valid_state_count;
-
             public:
                 //! Creator
                 ValidityChecker(const ob::SpaceInformationPtr& si, Planner *p) :
-                    ob::StateValidityChecker(si),theplanner(p),thesi(si), is_valid_state_count(0) {}
+                    ob::StateValidityChecker(si),theplanner(p),thesi(si) {}
 
                 //! isValid returns whether the given state's position overlaps the obstacles
                 bool isValid(const ob::State* state) const;
