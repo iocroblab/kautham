@@ -1174,7 +1174,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::getPath(std::vector<std::vector<double>> &path, bool _only_controlled) {
+    bool kauthamshell::getPath(std::vector<std::vector<double>> &path, std::vector<std::string> &requested_joint_names, bool _only_controlled) {
         try {
             if (!problemOpened()) {
                 std::cout << "The problem is not opened" << std::endl;
@@ -1184,23 +1184,9 @@ namespace Kautham {
             Problem* const problem = static_cast<Problem*>(memPtr_);
             auto plannerFamily = problem->getPlanner()->getFamily();
 
-            std::vector<bool> requested_joints;
-            if (_only_controlled) {
-                requested_joints = problem->getWhichAreControlledJoints();
-            } else {
-                // Set all to true to return all the joints:
-                int totalDOF = 0;
-                for (unsigned int rob = 0; rob < problem->wSpace()->getNumRobots(); ++rob) {
-                    totalDOF += problem->wSpace()->getRobot(rob)->getNumJoints();
-                }
-                requested_joints.resize(totalDOF);
-                std::fill(requested_joints.begin(), requested_joints.end(), true);
-            }
-            std::cout << "Requested joints: ";
-            for (bool val : requested_joints) {
-                std::cout << val << " ";
-            }
-            std::cout << std::endl;
+            std::vector<bool> requested_joints = problem->getRequestedIndexJoints(_only_controlled);
+
+            requested_joint_names = problem->getRequestedJointNames(requested_joints);
 
             if (plannerFamily == OMPLPLANNER) {
                 std::cout << "OMPLPLANNER" << std::endl;
@@ -1338,7 +1324,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::computeTrajecotry(std::vector<std::vector<double>> &path, std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq, 
+    bool kauthamshell::computeTrajecotry(std::vector<std::vector<double>> &path, std::vector<double> &desired_max_velocity, std::vector<double> &desired_max_acceleration, double max_path_deviation, double freq, 
                                             std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start)
     {
         
@@ -1361,35 +1347,16 @@ namespace Kautham {
             }
         }
 
-        // Check if ratio_velocity and ratio_acceleration have the correct size
-        if (ratio_velocity.size() != dof) {
-            std::cerr << "Error: ratio_velocity size (" << ratio_velocity.size()
+        // Check if desired_max_velocity and ratio_acceleration have the correct size
+        if (desired_max_velocity.size() != dof) {
+            std::cerr << "Error: desired_max_velocity size (" << desired_max_velocity.size()
                     << ") does not match the degrees of freedom (" << dof << ")." << std::endl;
             return false;
         }
 
-        if (ratio_acceleration.size() != dof) {
-            std::cerr << "Error: ratio_acceleration size (" << ratio_acceleration.size()
+        if (desired_max_acceleration.size() != dof) {
+            std::cerr << "Error: desired_max_acceleration size (" << desired_max_acceleration.size()
                     << ") does not match the degrees of freedom (" << dof << ")." << std::endl;
-            return false;
-        }
-
-        // Inside custom function:
-        auto isInRange = [](const std::vector<double>& ratios) {
-            for (double val : ratios) {
-                if (val < 0.0 || val > 1.0) return false;
-            }
-            return true;
-        };
-
-        // Verify that ratio_velocity and ratio_acceleration are in [0, 1]
-        if (!isInRange(ratio_velocity)) {
-            std::cerr << "Error: ratio_velocity contains values outside the range [0, 1]." << std::endl;
-            return false;
-        }
-
-        if (!isInRange(ratio_acceleration)) {
-            std::cerr << "Error: ratio_acceleration contains values outside the range [0, 1]." << std::endl;
             return false;
         }
 
@@ -1405,21 +1372,9 @@ namespace Kautham {
             waypoints.push_back(tmp_waypoint);
         }
 
-        // PROVISIONAL -> ToDo: Read from URDF!
-        const double globalMaxVelocity = 1.0;
-        const double globalMaxAcceleration = 1.0;
-
-        // Convert ratio inputs to maxVelocity and maxAcceleration
-        Eigen::VectorXd maxVelocity(ratio_velocity.size());
-        Eigen::VectorXd maxAcceleration(ratio_acceleration.size());
-
-        for (size_t i = 0; i < ratio_velocity.size(); ++i) {
-            maxVelocity[i] = ratio_velocity[i] * globalMaxVelocity;
-        }
-
-        for (size_t i = 0; i < ratio_acceleration.size(); ++i) {
-            maxAcceleration[i] = ratio_acceleration[i] * globalMaxAcceleration;
-        }
+        // Convert desired maximum X inputs to Eigen:
+        Eigen::VectorXd maxVelocity = Eigen::VectorXd::Map(desired_max_velocity.data(), desired_max_velocity.size());
+        Eigen::VectorXd maxAcceleration = Eigen::VectorXd::Map(desired_max_acceleration.data(), desired_max_acceleration.size());
 
         // 3) COMPUTE THE TRAJECTORY:
         Trajectory trajectory(Path(waypoints, max_path_deviation), maxVelocity, maxAcceleration);
@@ -1463,23 +1418,87 @@ namespace Kautham {
         }
     }
 
-
-    bool kauthamshell::getTrajecotry(std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq,
-                                        std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start,
-                                        bool _only_controlled)
-    {
-        std::vector<std::vector<double>> path;
-        if (kauthamshell::getPath(path, _only_controlled)) {
-            std::cout << "kauthamshell::getTrajecotry -> Path successfully computed." << std::endl;
-            
-            if (kauthamshell::computeTrajecotry(path, ratio_velocity, ratio_acceleration, max_path_deviation, freq, traj_positions, traj_velocities, traj_time_from_start)) {
-                std::cout << "kauthamshell::getTrajecotry -> Trajectory successfully computed." << std::endl;
-                return true;
-            }
-            std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the trajectory." << std::endl;
+    bool kauthamshell::getProblemMaxJointVelocities(std::vector<double> &requested_max_joint_velocities, std::vector<std::string> &requested_joint_names, bool _only_controlled) {
+        
+        if (!problemOpened()) {
+            std::cout << "The problem is not opened" << std::endl;
             return false;
         }
-        std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the path." << std::endl;
+        
+        Problem* const problem = static_cast<Problem*>(memPtr_);
+        std::vector<bool> requested_joints = problem->getRequestedIndexJoints(_only_controlled);
+        requested_max_joint_velocities = problem->getRequestedMaxJointVelocities(requested_joints);
+        requested_joint_names = problem->getRequestedJointNames(requested_joints);
+        return true;
+    }
+
+
+    bool kauthamshell::getTrajecotry(std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq,
+                                        std::vector<std::string> &requested_joint_names, std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start,
+                                        bool _only_controlled)
+    {
+
+        // Inside custom function:
+        auto isInRange = [](const std::vector<double>& ratios) {
+            for (double val : ratios) {
+                if (val < 0.0 || val > 1.0) return false;
+            }
+            return true;
+        };
+
+        // Verify that ratio_velocity and ratio_acceleration are in [0, 1]
+        if (!isInRange(ratio_velocity)) {
+            std::cerr << "Error: ratio_velocity contains values outside the range [0, 1]." << std::endl;
+            return false;
+        }
+
+        if (!isInRange(ratio_acceleration)) {
+            std::cerr << "Error: ratio_acceleration contains values outside the range [0, 1]." << std::endl;
+            return false;
+        }
+
+        try {
+
+            std::vector<std::vector<double>> path;
+            if (kauthamshell::getPath(path, requested_joint_names, _only_controlled)) {
+                std::cout << "kauthamshell::getTrajecotry -> Path successfully computed." << std::endl;
+                
+                std::vector<double> requested_max_joint_velocities;
+                bool max_vel_founded = getProblemMaxJointVelocities(requested_max_joint_velocities, requested_joint_names, _only_controlled);
+                
+                std::vector<double> desired_max_velocity(ratio_velocity.size());
+                if (max_vel_founded) {
+                    for (size_t i = 0; i < ratio_velocity.size(); ++i) {
+                        desired_max_velocity[i] = ratio_velocity[i] * requested_max_joint_velocities[i];
+                    }
+                }
+
+                std::vector<double> desired_max_acceleration(ratio_acceleration.size());
+                for (size_t i = 0; i < ratio_acceleration.size(); ++i) {
+                    desired_max_acceleration[i] = ratio_acceleration[i] * 5; // Hardcoded default: 5 m/s²
+                }
+
+
+                if (kauthamshell::computeTrajecotry(path, desired_max_velocity, desired_max_acceleration, max_path_deviation, freq, traj_positions, traj_velocities, traj_time_from_start)) {
+                    std::cout << "kauthamshell::getTrajecotry -> Trajectory successfully computed." << std::endl;
+                    return true;
+                }
+                std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the trajectory." << std::endl;
+                return false;
+            }
+            std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the path." << std::endl;
+            return false;
+        } 
+        catch (const KthExcp& excp) {
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
+        } 
+        catch (const std::exception& excp) {
+            std::cout << "Error: " << excp.what() << std::endl;
+        } 
+        catch (...) {
+            std::cout << "An unexpected error occurred in getTrajectory()." << std::endl;
+        }
+
         return false;
     }
 

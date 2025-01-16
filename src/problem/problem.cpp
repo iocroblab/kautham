@@ -1927,6 +1927,65 @@ std::vector<bool> Problem::getWhichAreControlledJoints() {
     return is_controlled_joint;
 }
 
+std::vector<bool> Problem::getRequestedIndexJoints(const bool _only_controlled) {
+    std::vector<bool> requested_joints;
+    if (_only_controlled) {
+        requested_joints = this->getWhichAreControlledJoints();
+    } else {
+        // Set all to true to return all the joints:
+        int totalDOF = 0;
+        for (unsigned int rob = 0; rob < this->_wspace->getNumRobots(); ++rob) {
+            totalDOF += this->_wspace->getRobot(rob)->getNumJoints();
+        }
+        requested_joints.resize(totalDOF);
+        std::fill(requested_joints.begin(), requested_joints.end(), true);
+    }
+    // std::cout << "Requested index joints: ";
+    // for (bool val : requested_joints) {
+    //     std::cout << val << " ";
+    // }
+    // std::cout << std::endl;
+    return requested_joints;
+}
+
+std::vector<std::string> Problem::getRequestedJointNames(std::vector<bool> _controlled_joints) {
+    std::vector<std::string> controlled_joints_names;
+
+    // std::cout << "Requested joints names:\n";
+    for (unsigned int rob = 0; rob < this->_wspace->getNumRobots(); ++rob) {
+        auto current_rob = this->_wspace->getRobot(rob);
+        std::vector<std::string> robot_joints_names;
+        current_rob->getJointNames(robot_joints_names);
+        int numDOF = current_rob->getNumJoints();
+        for (int n = 0; n < numDOF; n++) {
+            if (_controlled_joints[n]) {
+                controlled_joints_names.push_back(robot_joints_names[n]);
+                // std::cout << "\t" << robot_joints_names[n] << "\n";
+            }
+        }
+    }
+    // std::cout << std::endl;
+    return controlled_joints_names;
+}
+
+std::vector<double> Problem::getRequestedMaxJointVelocities(std::vector<bool> _controlled_joints) {
+    std::vector<double> controlled_joints_vel;
+
+    // std::cout << "Requested joints velocities:\n";
+    for (unsigned int rob = 0; rob < this->_wspace->getNumRobots(); ++rob) {
+        auto current_rob = this->_wspace->getRobot(rob);
+        int numDOF = current_rob->getNumJoints();
+        for (int n = 0; n < numDOF; n++) {
+            if (_controlled_joints[n]) {
+                controlled_joints_vel.push_back(current_rob->getLink(n+1)->getOde().limit.velocity);
+                // std::cout << "\t" << current_rob->getLink(n+1)->getOde().limit.velocity << "\n";
+            }
+        }
+    }
+    // std::cout << std::endl;
+    return controlled_joints_vel;
+}
+
 
 bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, progress_struct *progress) {
     Robot *obs= new Robot(obstacle_node->attribute("obstacle").as_string(),

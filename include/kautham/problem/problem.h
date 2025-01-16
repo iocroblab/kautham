@@ -230,6 +230,27 @@ namespace Kautham {
          std::vector<bool> getWhichAreControlledJoints();
 
         /*!
+     * \brief Obtain the requested index joints based on the input request.
+     * \param _only_controlled Vector of controlled joints flags (URDF order fo each robot)
+     * \return Vector with the requested index joint.
+     */
+         std::vector<bool> getRequestedIndexJoints(const bool _only_controlled);
+       
+        /*!
+     * \brief From all degrees of freedom of all robots, returns the name from which joints are controlled.
+     * \param _controlled_joints Vector of controlled joints flags (URDF order fo each robot)
+     * \return Vector with the controlled joint names.
+     */
+         std::vector<std::string> getRequestedJointNames(std::vector<bool> _controlled_joints);
+     
+        /*!
+     * \brief From all degrees of freedom of all robots, returns the velocity from which joints are controlled.
+     * \param _controlled_joints Vector of controlled joints flags (URDF order fo each robot)
+     * \return Vector with the controlled joint velocities.
+     */
+      std::vector<double> getRequestedMaxJointVelocities(std::vector<bool> _controlled_joints);
+
+        /*!
      * \brief loads the obstacle controls file of the problem file,
      creates the controls, adds them to the workspace and creates the mapMatrix and
      offMatrix of every osbtacle. All the obstacles must have already been loaded.

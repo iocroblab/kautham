@@ -105,7 +105,7 @@ void register_kauthamshell(pybind11::module &m){
              py::overload_cast<std::ostream&>(&Kautham::kauthamshell::getPath),
              "Get the path and write it to an output stream")
         .def("getPath", 
-             py::overload_cast<std::vector<std::vector<double>>&, bool>(&Kautham::kauthamshell::getPath),
+             py::overload_cast<std::vector<std::vector<double>>&, std::vector<std::string>&, bool>(&Kautham::kauthamshell::getPath),
              "Get the path as a vector of vectors")
         .def("computeTrajecotry", &Kautham::kauthamshell::computeTrajecotry,
              "Compute a trajectory for the robot")
