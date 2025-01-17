@@ -1234,8 +1234,16 @@ namespace Kautham {
                     std::vector<double> reordered_data;
                     std::vector<double> requested_data;
                     path.clear();
+
+                    auto current_rob = problem->wSpace()->getRobot(0);
                     for (const auto* state : solution_path->as<og::PathGeometric>()->getStates()) {
-                        space->copyToReals(state_data, state);
+                        std::vector<double> tmp_reals;
+                        space->copyToReals(tmp_reals, state);
+                        if (current_rob->isSE3Enabled()) {
+                            state_data.assign(tmp_reals.begin() + 7, tmp_reals.end());
+                        } else {
+                            space->copyToReals(state_data, state);
+                        }
 
                         // std::cout << "State Data: ";
                         // for (const auto& value : state_data) {
