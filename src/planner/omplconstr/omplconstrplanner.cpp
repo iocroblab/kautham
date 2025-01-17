@@ -159,30 +159,28 @@ namespace Kautham {
                         //x-direction
                         double low = current_rob->getLimits(0)[0];
                         double high = current_rob->getLimits(0)[1];
-                        // filterBounds(low, high, 0.001);
+                        filterBounds(low, high, 0.001);
                         bounds.setLow(0, low);
                         bounds.setHigh(0, high);
 
                         //y-direction
                         low = current_rob->getLimits(1)[0];
                         high = current_rob->getLimits(1)[1];
-                        // filterBounds(low, high, 0.001);
+                        filterBounds(low, high, 0.001);
                         bounds.setLow(1, low);
                         bounds.setHigh(1, high);
 
                         //z-direction
                         low = current_rob->getLimits(2)[0];
                         high = current_rob->getLimits(2)[1];
-                        // filterBounds(low, high, 0.001);
+                        filterBounds(low, high, 0.001);
                         bounds.setLow(2, low);
                         bounds.setHigh(2, high);
 
                         spaceSE3->as<ob::SE3StateSpace>()->setBounds(bounds);
 
-
-
-                        // spaceRob->as<ob::CompoundStateSpace>()->addSubspace(spaceSE3, 1.0);
-                        // rob_subspace_index++;
+                        spaceRob->as<ob::CompoundStateSpace>()->addSubspace(spaceSE3, 1.0);
+                        rob_subspace_index++;
                     }
 
                     // Create the Rn state space for the kinematic chain, if necessary:
@@ -331,6 +329,7 @@ namespace Kautham {
                 std::cout << "Num robots: " << subspaces_robots.size() << std::endl;
 
                 // Add start states:
+                this->pdef_->clearStartStates();
                 for (std::vector<Sample*>::const_iterator start(_init.begin()); start != _init.end(); ++start) {
                     //Start state: convert from smp to scoped state
                     ob::ScopedState<ob::CompoundStateSpace> startompl(this->space_);
@@ -344,6 +343,7 @@ namespace Kautham {
                 }
 
                 // Add goal states:
+                this->pdef_->clearGoal();
                 ob::GoalStates *goalStates(new ob::GoalStates(si_));
                 for (std::vector<Sample*>::const_iterator goal(_goal.begin()); goal != _goal.end(); ++goal) {
                     //Goal state: convert from smp to scoped state
@@ -477,14 +477,24 @@ namespace Kautham {
         }
 
         void omplConstraintPlanner::assignConstrTargetFromState(const ob::ScopedState<ob::CompoundStateSpace> _ompl_state) {
-            // Assign the constraint values (e.g.: Constraint target):
-            std::vector<double> ompl_state_reals = _ompl_state.reals();
+            // Assign the constraint target with the state values (e.g.: Orientation target):
             /*
             The key is that from the RealVectorStates in the Space, first are listed the contraints and then the unconstrained.
             The contraint order is the same as the construnction of the space, that is the same of the problem XML file.
-                - ToDo: Adapt the code to handle when SE3 is used!
+                - ToDo: Adapt the code to handle when SE3 is used with more that a single robot!
                 - ToDo: Adapt the code to handle different Constraints Types!
             */
+
+            std::vector<double> ompl_state_reals;
+            auto current_rob_SE3 = _wkSpace->getRobot(0);
+            if (current_rob_SE3->isSE3Enabled()) {
+                // Extract the whole vector except the first 7 values of the SE3 (position + orientation):
+                const auto& reals = _ompl_state.reals();
+                ompl_state_reals.assign(reals.begin() + 7, reals.end());
+            } else {
+                ompl_state_reals = _ompl_state.reals(); // Only assign when SE3 is not enabled, because is full Rn.
+            }
+
             for (unsigned rob = 0; rob < _wkSpace->getNumRobots(); rob++) {
                 auto current_rob = _wkSpace->getRobot(rob);
                 auto constraints = current_rob->getConstraints();
@@ -515,9 +525,8 @@ namespace Kautham {
         {
             // Extract the mapped configuration of the sample. It is a vector with as many components as robots.
             // Each component has the RobConf of the robot (the SE3 and the Rn configurations including constraints)
-            if(smp->getMappedConf().size()==0)
-            {
-                _wkSpace->moveRobotsTo(smp); // to set the mapped configuration
+            if (smp->getMappedConf().size() == 0) {
+                _wkSpace->moveRobotsTo(smp); // To set the mapped configuration
             }
             std::vector<RobConf>& smpRobotsConf = smp->getMappedConf();
 
@@ -529,36 +538,30 @@ namespace Kautham {
 
                 // Get the subspace of robot:
                 ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) this->space_->as<ob::CompoundStateSpace>()->getSubspace(rob));
-                std::string ssRobotiname = ssRoboti->getName();
 
                 // Create the Scoped State of the current robot:
                 ompl::base::ScopedState<> ScopedStateRobot(ssRoboti);
 
-                // size_t num_subspaces_rn = ssRoboti->as<ompl::base::CompoundStateSpace>()->getSubspaces().size();
-                // std::cout << "Number of subspaces in Rn: " << num_subspaces_rn << std::endl;
-
                 // If it has se3 part:
-                // if (current_rob->isSE3Enabled()) {
-                //     //get the kautham SE3 configuration
-                //     SE3Conf c = smpRobotsConf.at(rob).getSE3();
-                //     vector<double>& pp = c.getPos();
-                //     vector<double>& aa = c.getAxisAngle();
+                if (current_rob->isSE3Enabled()) {
+                    // Get the kautham SE3 configuration:
+                    SE3Conf c = smpRobotsConf.at(rob).getSE3();
+                    vector<double>& pp = c.getPos();
+                    vector<double>& aa = c.getAxisAngle();
 
-                //     //set the ompl SE3 configuration
-                //     ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index));
-                //     string ssRobotiSE3name = ssRobotiSE3->getName();
+                    // Set the OMPL SE3 configuration:
+                    ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index));
 
-                //     ob::ScopedState<ob::SE3StateSpace> cstart(ssRobotiSE3);
-                //     cstart->setX(pp[0]);
-                //     cstart->setY(pp[1]);
-                //     cstart->setZ(pp[2]);
-                //     cstart->rotation().setAxisAngle(aa[0],aa[1],aa[2],aa[3]);
+                    ob::ScopedState<ob::SE3StateSpace> scopedStateSE3(ssRobotiSE3);
+                    scopedStateSE3->setX(pp[0]);
+                    scopedStateSE3->setY(pp[1]);
+                    scopedStateSE3->setZ(pp[2]);
+                    scopedStateSE3->rotation().setAxisAngle(aa[0],aa[1],aa[2],aa[3]);
 
-                //     //load the global scoped state with the info of the se3 data of robot
-                //     (*sstate)<<cstart;
-                //     rob_subspace_index++;
-                //     num_subspaces_rn--;  // If SE3 is enabled discount a subspace.
-                // }
+                    // Load the global scoped state with the info of the SE3 data of robot:
+                    ScopedStateRobot << scopedStateSE3;
+                    rob_subspace_index++;
+                }
 
                 // Has Rn part:
                 const unsigned int num_dof = current_rob->getNumJoints();
@@ -653,19 +656,18 @@ namespace Kautham {
                 // Get the subspace corresponding to robot:
                 ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr)space_->as<ob::CompoundStateSpace>()->getSubspace(rob));
 
-                // Get the SE3 subspace of robot i, if it exists, extract the SE3 configuration
-                unsigned int rob_subspace_index = 0; //counter of subspaces of robot i
-                // if (current_rob->isSE3Enabled()) {
-                if (0) {
-                    //Get the SE3 subspace of robot i
+                // Get the SE3 subspace of the current robot, if it exists, extract the SE3 configuration:
+                unsigned int rob_subspace_index = 0; // Counter of subspaces of the current robot.
+                if (current_rob->isSE3Enabled()) {
+                    // Get the SE3 subspace of the curent robot:
                     ob::StateSpacePtr ssRobotiSE3 = ((ob::StateSpacePtr)ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index));
 
-                    //Create a SE3 scoped state and load it with the data extracted from the global scoped state
+                    // Create a SE3 scoped state and load it with the data extracted from the global scoped state:
                     ob::ScopedState<ob::SE3StateSpace> pathscopedstatese3(ssRobotiSE3);
                     sstate >> pathscopedstatese3;
 
-                    //Convert it to a vector of 7 components
-                    vector<double> se3coords;
+                    // Convert it to a vector of 7 components:
+                    std::vector<double> se3coords;
                     se3coords.resize(7);
                     se3coords[0] = pathscopedstatese3->getX();
                     se3coords[1] = pathscopedstatese3->getY();
@@ -675,7 +677,7 @@ namespace Kautham {
                     se3coords[5] = pathscopedstatese3->rotation().z;
                     se3coords[6] = pathscopedstatese3->rotation().w;
 
-                    //Create the sample
+                    // Create the sample:
                     SE3Conf se3;
                     se3.setCoordinates(se3coords);
                     rcj->setSE3(se3);

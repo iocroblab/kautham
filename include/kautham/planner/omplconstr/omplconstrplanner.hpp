@@ -130,6 +130,11 @@ namespace Kautham {
 
                 void printJointPath(const std::vector<std::vector<double>>& _joint_path);
 
+                //! This function is used to verify that the low bound is below the high bound
+                inline void filterBounds(double &l, double &h, double epsilon)
+                {
+                    if((h - l) < epsilon) h = l + epsilon;
+                }
             };
 
         }
