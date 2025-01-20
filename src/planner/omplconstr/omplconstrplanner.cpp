@@ -18,6 +18,7 @@
 #include <ompl/base/goals/GoalState.h>
 
 // Include all the constraints:
+#include <kautham/planner/omplconstr/constraint_factory.hpp>
 #include <kautham/planner/omplconstr/constraints/orientation_constr.hpp>
 
 
@@ -116,6 +117,11 @@ namespace Kautham {
             addParameter("_Range",_range);
 
             if (ssptr == NULL) {
+
+                // Init constraint factory to create the constraints based on the name:
+                std::shared_ptr<ConstraintFactory> constraints_factory = std::make_shared<ConstraintFactory>();
+                constraints_factory->registerConstraints();
+                // constraints_factory->printRegisteredConstraintNames();
 
                 //Construct the state space we are planning in. It is a compound state space composed of a compound state space for each robot
                 //Each robot has a compound state space composed of a (optional) SE3 state space and a (optional) Rn state space
@@ -225,7 +231,7 @@ namespace Kautham {
                             }
                             spaceRn->as<ob::RealVectorStateSpace>()->setBounds(bounds);
 
-                            auto constraint = std::make_shared<OrientationConstraint>(constr_joints.size(),3,0.1);
+                            auto constraint = constraints_factory->createConstraint(std::get<1>(constr), constr_joints.size(),3,0.1);
                             this->constraint_map_[std::get<0>(constr)] = constraint;
 
                             spaceRnConstr = std::make_shared<ob::ProjectedStateSpace>(spaceRn, constraint);
