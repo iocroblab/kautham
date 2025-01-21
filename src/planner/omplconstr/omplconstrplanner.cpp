@@ -228,6 +228,7 @@ namespace Kautham {
                             }
                             spaceRn->as<ob::RealVectorStateSpace>()->setBounds(bounds);
 
+                            // Get the creator of the constraint by string and stores in the map:
                             auto constraint = constraints_factory->createConstraint(std::get<1>(constr), constr_joints.size(),3,0.1);
                             this->constraint_map_[std::get<0>(constr)] = constraint;
 
@@ -514,6 +515,7 @@ namespace Kautham {
                         }
                         std::cout << "]" << std::endl;
 
+                        // my_constraint is the final instance, not the abstract:
                         auto my_constraint = this->constraint_map_[constr_id_name];
                         my_constraint->useJointConfig2SetConstraintTarget(constr_joints);
                         my_constraint->printConstraintTarget();
