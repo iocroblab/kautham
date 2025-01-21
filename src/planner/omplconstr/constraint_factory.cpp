@@ -40,7 +40,7 @@ namespace Kautham {
             );
         }
 
-        void ConstraintFactory::printRegisteredConstraintNames() {
+        void ConstraintFactory::printRegisteredConstraintNames() const {
             std::cout << "Registered Constraints: " << std::endl;
             for (const auto& pair : creators_) {
                 std::cout << " - " << pair.first << std::endl;

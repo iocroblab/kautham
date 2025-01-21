@@ -1,21 +1,16 @@
 #include <kautham/planner/omplconstr/constraints/orientation_constr.hpp>
-#include <ompl/base/spaces/RealVectorStateSpace.h>
+// #include <ompl/base/spaces/RealVectorStateSpace.h>
 
 // Constructor implementation
 OrientationConstraint::OrientationConstraint(const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
-    : ompl::base::Constraint(num_dofs, num_constraints, tolerance)
-    , num_dofs_(num_dofs), num_constraints_(num_constraints)
+    : AbstractOMPLConstraint(num_dofs, num_constraints, tolerance)
 {
 
 }
 
-bool OrientationConstraint::setTargetOrientation(const Eigen::Quaterniond& ori) {
-    this->target_orientation_ = ori;
-    return true;
-}
-
-void OrientationConstraint::setJointConfigAsTargetOrientation(const std::vector<double>& joint_config) {
-    // Get the transformation of the TCP w.r.t. the base of the UR5:
+void OrientationConstraint::useJointConfig2SetConstraintTarget(const std::vector<double>& joint_config) {
+	std::cout << "OrientationConstraint: useJointConfig2SetConstraintTarget() method." << std::endl;
+	// Get the transformation of the TCP w.r.t. the base of the UR5:
     Eigen::AffineCompact3d transformation_base_tool0;
     evaluateFKUR5(transformation_base_tool0, 
                     joint_config[0], 
@@ -26,6 +21,17 @@ void OrientationConstraint::setJointConfigAsTargetOrientation(const std::vector<
                     joint_config[5]);
 
     this->target_orientation_ = Eigen::Quaterniond(transformation_base_tool0.rotation());
+}
+
+void OrientationConstraint::printConstraintTarget() const {
+	std::cout << "Target Orientation (Quaternion: qx qy qz qw): "
+                << target_orientation_.coeffs().transpose() << std::endl;
+}
+
+
+bool OrientationConstraint::setTargetOrientation(const Eigen::Quaterniond& ori) {
+    this->target_orientation_ = ori;
+    return true;
 }
 
 bool OrientationConstraint::project(ompl::base::State *state) const {

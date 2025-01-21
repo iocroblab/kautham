@@ -37,6 +37,8 @@
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
+class AbstractOMPLConstraint;
+
 namespace Kautham {
 // /** \addtogroup ControlPlanners
 //  *  @{
@@ -86,7 +88,7 @@ namespace Kautham {
 
                 std::shared_ptr<ompl::base::ProblemDefinition> pdef_;
 
-                std::map<std::string, std::shared_ptr<ob::Constraint>> constraint_map_;
+                std::map<std::string, std::shared_ptr<AbstractOMPLConstraint>> constraint_map_;
 
                 // Override the pure virtual functions from Planner
                 virtual bool setParameters() override;  // Implemented in cpp

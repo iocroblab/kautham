@@ -1,10 +1,10 @@
 #ifndef ORIENTATION_CONSTR_HPP
 #define ORIENTATION_CONSTR_HPP
 
-#include <ompl/base/Constraint.h>
+#include <kautham/planner/omplconstr/constraints/abstract_ompl_constraint.hpp>
 #include <Eigen/Core>
 
-class OrientationConstraint : public ompl::base::Constraint {
+class OrientationConstraint : public AbstractOMPLConstraint {
     public:
         // Constructor: Set dimension of ambient space and the number of constraint equations
         OrientationConstraint(const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance);
@@ -19,18 +19,10 @@ class OrientationConstraint : public ompl::base::Constraint {
 
         bool setTargetOrientation(const Eigen::Quaterniond& ori);
 
-        void setJointConfigAsTargetOrientation(const std::vector<double>& joint_config);
-
-        inline void printTargetOrientation() const {
-            std::cout << "Target Orientation (Quaternion: qx qy qz qw): "
-                << target_orientation_.coeffs().transpose() << std::endl;
-        }
+        void useJointConfig2SetConstraintTarget(const std::vector<double>& joint_config) override;
+        void printConstraintTarget() const override;
 
     private:
-
-        const unsigned int num_dofs_;
-
-        unsigned int num_constraints_;
 
         Eigen::Quaterniond target_orientation_;
 

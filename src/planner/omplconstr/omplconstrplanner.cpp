@@ -6,6 +6,8 @@
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/base/ConstrainedSpaceInformation.h>
 #include <kautham/planner/omplconstr/omplconstrValidityChecker.hpp>
+#include <kautham/planner/omplconstr/constraint_factory.hpp>
+#include <kautham/planner/omplconstr/constraints/abstract_ompl_constraint.hpp>
 
 // Planners:
 #include <ompl/geometric/planners/rrt/RRT.h>
@@ -16,11 +18,6 @@
 
 #include <ompl/base/goals/GoalStates.h>
 #include <ompl/base/goals/GoalState.h>
-
-// Include all the constraints:
-#include <kautham/planner/omplconstr/constraint_factory.hpp>
-#include <kautham/planner/omplconstr/constraints/orientation_constr.hpp>
-
 
 namespace Kautham {
     //! Namespace omplconstrplanner contains the planners based on the OMPL::constraint library
@@ -517,9 +514,10 @@ namespace Kautham {
                         }
                         std::cout << "]" << std::endl;
 
-                        auto my_constraint = std::dynamic_pointer_cast<OrientationConstraint>(this->constraint_map_[constr_id_name]);
-                        my_constraint->OrientationConstraint::setJointConfigAsTargetOrientation(constr_joints);
-                        my_constraint->OrientationConstraint::printTargetOrientation();
+                        auto my_constraint = this->constraint_map_[constr_id_name];
+                        my_constraint->useJointConfig2SetConstraintTarget(constr_joints);
+                        my_constraint->printConstraintTarget();
+
                     }
                 }
             }
