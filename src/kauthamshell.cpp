@@ -1952,7 +1952,7 @@ namespace Kautham {
             if(problem->getPlanner()->wkSpace()->getObstacle(obsname)==NULL)
             {
                 cout << "Error in setObstaclePos:" << obsname << " is not in the set of obstacles " << problem->getPlanner()->wkSpace()->getNumObstacles() << endl;
-                return true;
+                return false;
             }
 
             // Convert from axis-angle to quaternion internal represtantation
