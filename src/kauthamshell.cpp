@@ -1190,7 +1190,7 @@ namespace Kautham {
 
             if (plannerFamily == OMPLPLANNER) {
                 std::cout << "OMPLPLANNER" << std::endl;
-                if (problem->getPlanner()->solveAndInherit()) {
+                if (problem->getPlanner()->isSolved()) {
                     auto omplPlanner = static_cast<omplplanner::omplPlanner*>(problem->getPlanner());
                     auto solutionPath = omplPlanner->SimpleSetup()->getSolutionPath();                   
                     const ompl::base::SpaceInformationPtr &si = solutionPath.getSpaceInformation();
@@ -1215,7 +1215,7 @@ namespace Kautham {
 
             else if (plannerFamily == OMPLCONSTRPLANNER) {
                 std::cout << "OMPLCONSTRPLANNER" << std::endl;
-                if (problem->getPlanner()->solveAndInherit()) {
+                if (problem->getPlanner()->isSolved()) {
                     auto omplConstraintPlanner = static_cast<omplconstrplanner::omplConstraintPlanner*>(problem->getPlanner());
                     auto solution_path = omplConstraintPlanner->ProblemDefinition()->getSolutionPath();
                     
@@ -1285,7 +1285,7 @@ namespace Kautham {
 
             else if (plannerFamily == IOCPLANNER) { // Not tested!
                 std::cout << "IOCPLANNER" << std::endl;
-                if (problem->getPlanner()->solveAndInherit()) {
+                if (problem->getPlanner()->isSolved()) {
                     auto samples = problem->getPlanner()->getPath();
                     
                     // Clear and populate the path vector
