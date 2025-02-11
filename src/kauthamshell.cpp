@@ -1175,6 +1175,9 @@ namespace Kautham {
     }
 
     bool kauthamshell::getPath(std::vector<std::vector<double>> &path, std::vector<std::string> &requested_joint_names, bool _only_controlled) {
+        
+        path.clear();   // Make sure that your return only the solved path!
+        
         try {
             if (!problemOpened()) {
                 std::cout << "The problem is not opened" << std::endl;
@@ -1191,27 +1194,62 @@ namespace Kautham {
             if (plannerFamily == OMPLPLANNER) {
                 std::cout << "OMPLPLANNER" << std::endl;
                 if (problem->getPlanner()->isSolved()) {
-                    auto omplPlanner = static_cast<omplplanner::omplPlanner*>(problem->getPlanner());
-                    auto solutionPath = omplPlanner->SimpleSetup()->getSolutionPath();                   
-                    const ompl::base::SpaceInformationPtr &si = solutionPath.getSpaceInformation();
+                    std::vector<Sample*>* p = problem->getPlanner()->getPath();
+                    
+                    std::vector<double> waypoint;
+                    for(unsigned int i=0; i<p->size(); i++)
+                    {
+                        waypoint.clear();
+                        std::vector<RobConf> rc = p->at(i)->getMappedConf();
+                        for(unsigned int j=0; j<rc.size();j++)
+                        {
+                            if (!_only_controlled) {
+                                waypoint.push_back(rc[j].getSE3().getPos()[0]);
+                                waypoint.push_back(rc[j].getSE3().getPos()[1]);
+                                waypoint.push_back(rc[j].getSE3().getPos()[2]);
+                                waypoint.push_back(rc[j].getSE3().getOrient()[0]);
+                                waypoint.push_back(rc[j].getSE3().getOrient()[1]);
+                                waypoint.push_back(rc[j].getSE3().getOrient()[2]);
+                                waypoint.push_back(rc[j].getSE3().getOrient()[3]);
+                            }
 
-                    const ompl::base::StateSpace *space(si->getStateSpace().get());
-                    std::vector<double> state_data;
-                    std::vector<double> requested_data;
-                    path.clear();
-                    for (const auto* state : solutionPath.getStates()) {
-                        space->copyToReals(state_data, state);
-                        requested_data.clear();
-                        for (uint s = 0; s < state_data.size(); s++) {
-                            if (requested_joints[s]) {
-                                requested_data.push_back(state_data[s]);
+                            for(unsigned int k=0; k<rc[j].getRn().getCoordinates().size();k++)
+                            {
+                                if (requested_joints[k]) {
+                                    waypoint.push_back(rc[j].getRn().getCoordinates()[k]);
+                                }
                             }
                         }
-                        path.push_back(requested_data);
+                        path.push_back(waypoint);
                     }
                     return true;
                 }
             }
+
+            // if (plannerFamily == OMPLPLANNER && _only_controlled) {
+            //     std::cout << "OMPLPLANNER" << std::endl;
+            //     if (problem->getPlanner()->isSolved()) {
+            //         auto omplPlanner = static_cast<omplplanner::omplPlanner*>(problem->getPlanner());
+            //         auto solutionPath = omplPlanner->SimpleSetup()->getSolutionPath();                   
+            //         const ompl::base::SpaceInformationPtr &si = solutionPath.getSpaceInformation();
+
+            //         const ompl::base::StateSpace *space(si->getStateSpace().get());
+            //         std::vector<double> state_data;
+            //         std::vector<double> requested_data;
+            //         path.clear();
+            //         for (const auto* state : solutionPath.getStates()) {
+            //             space->copyToReals(state_data, state);
+            //             requested_data.clear();
+            //             for (uint s = 0; s < state_data.size(); s++) {
+            //                 if (requested_joints[s]) {
+            //                     requested_data.push_back(state_data[s]);
+            //                 }
+            //             }
+            //             path.push_back(requested_data);
+            //         }
+            //         return true;
+            //     }
+            // }
 
             else if (plannerFamily == OMPLCONSTRPLANNER) {
                 std::cout << "OMPLCONSTRPLANNER" << std::endl;
