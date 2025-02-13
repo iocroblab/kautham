@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ControlSet>
+
+	<!-- DOF OFFSETs -->
+
+    <Offset>		
+
+	</Offset>
+
+	<!-- CONTROLS -->
+
+    <Control name="ur3e_gripper_rg6/shoulder_pan_joint" eigValue="1.0">
+		<DOF name="ur3e_gripper_rg6/shoulder_link" value="1.0"/>
+	</Control>
+	<Control name="ur3e_gripper_rg6/shoulder_lift_joint" eigValue="1.0">
+		<DOF name="ur3e_gripper_rg6/upper_arm_link" value="1.0"/>
+	</Control> 
+	<Control name="ur3e_gripper_rg6/elbow_joint" eigValue="1.0">
+		<DOF name="ur3e_gripper_rg6/forearm_link" value="1.0"/>
+	</Control> 
+	<Control name="ur3e_gripper_rg6/wrist_1_joint" eigValue="1.0">
+		<DOF name="ur3e_gripper_rg6/wrist_1_link" value="1.0"/>
+	</Control>
+	<Control name="ur3e_gripper_rg6/wrist_2_joint" eigValue="1.0">
+		<DOF name="ur3e_gripper_rg6/wrist_2_link" value="1.0"/>
+	</Control>
+	<Control name="ur3e_gripper_rg6/wrist_3_joint" eigValue="1.0">
+		<DOF name="ur3e_gripper_rg6/wrist_3_link" value="1.0"/>
+	</Control>
+	<Control name="ur3e_gripper_rg6/gripper" eigValue="1.0">
+		<DOF name="ur3e_gripper_rg6/l_out" value="-1.0"/>
+		<DOF name="ur3e_gripper_rg6/r_out" value="1.0"/>
+		<DOF name="ur3e_gripper_rg6/l_tip" value="-1.0"/>
+		<DOF name="ur3e_gripper_rg6/r_tip" value="1.0"/>
+		<!-- <DOF name="ur3e_gripper_rg6/l_inner" value="1.0"/> -->
+		<!-- <DOF name="ur3e_gripper_rg6/r_inner" value="1.0"/> -->
+	</Control>
+
+</ControlSet>
