@@ -5,12 +5,12 @@
 	<!-- ################## -->
 	<Offset>
 		<!-- BEGIN: BASE -->
-		<DOF name="madar_full/X" value="0.5" />
+		<!-- <DOF name="madar_full/X" value="0.5" />
 		<DOF name="madar_full/Y" value="0.5" />
 		<DOF name="madar_full/Z" value="0.0" />
         <DOF name="madar_full/X1" value="0.0"/>
         <DOF name="madar_full/X2" value="0.0"/>
-        <DOF name="madar_full/X3" value="0.0"/>
+        <DOF name="madar_full/X3" value="0.0"/> -->
 		<!-- END: BASE -->
 
 		<!-- BEGIN: ARM RIGHT -->
@@ -48,7 +48,7 @@
 	<!-- ########### -->
 
 	<!-- BEGIN: BASE -->
-	<Control name="madar_base/x" eigValue="1.0">
+	<!-- <Control name="madar_base/x" eigValue="1.0">
 		<DOF name="madar_full/X" value="1.0" />
 	</Control>
 	<Control name="madar_base/y" eigValue="1.0">
@@ -56,7 +56,7 @@
 	</Control>
 	<Control name="madar_base/Rz" eigValue="1.0">
 		<DOF name="madar_full/X3" value="1.0" />
-	</Control>
+	</Control> -->
 	<!-- END: BASE -->
 
 	<!-- BEGIN: ARM RIGHT -->

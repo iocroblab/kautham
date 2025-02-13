@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_RRTconnect_chess_rob1">
-        <Obstacle obstacle="obstacles/chess/chessboard.urdf" scale="1.0">
+        <Obstacle obstacle="obstacles/chess/flat_chessboard/flat_chessboard.urdf" scale="1.0">
 		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="-0.02" Y="0.0" X="0.0" />
         </Obstacle>
-	<Obstacle obstacle="obstacles/chess/pawnB1.urdf" scale="1.0">
+	<Obstacle obstacle="obstacles/chess/pawnB1/pawnB1.urdf" scale="1.0">
 		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.02" Y="0.175" X="0.125" />
         </Obstacle>
 	<Robot robot="robots/ur3_robotniq_A.urdf" scale="1.0">

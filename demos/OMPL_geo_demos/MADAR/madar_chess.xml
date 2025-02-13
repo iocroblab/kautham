@@ -11,7 +11,7 @@
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="0.5" Y="0.5" Z="0.0" />
 		<KauthamName name="big_table_chessboard" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/chess/chessboard.urdf" scale="2.0">
+	<Obstacle obstacle="obstacles/chess/flat_chessboard/flat_chessboard.urdf" scale="2.0">
 		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="0.0" Y="1.1" Z="0.73" />
 		<KauthamName name="chessboard" />
 	</Obstacle>
