@@ -16,6 +16,11 @@
 		<KauthamName name="wall" />
 	</Obstacle>
 
+	<Obstacle obstacle="obstacles/fib_upc_lab/wood_piece.urdf" scale="1.0">
+        <Home TH="1.570796" WZ="0.0" WY="0.0" WX="0.0" Z="0.76" Y="-0.62" X="0.43" />
+		<KauthamName name="wood_piece" />
+	</Obstacle>
+
 	<Controls robot="controls/ur3e_robot.cntr"/>
 
 	<Planner>
@@ -32,7 +37,7 @@
 				<!-- [q0, q1, q2, q3, q4, q5, gripper] -->
 				<!-- These values are the control values [min, max] = [0, 1] -->
 				<Init>0.500 0.375 0.500 0.375 0.500 0.500 0.20</Init>
-				<Goal>0.500 0.375 0.250 0.375 0.625 0.500 0.80</Goal>
+				<Goal>0.548 0.342 0.326 0.375 0.625 0.550 0.890</Goal>
 			</Query>
 		</Queries>
 	</Planner>
