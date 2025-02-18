@@ -62,5 +62,7 @@ sampling_time_ms: <milliseconds>"
 ### Client node example:
 Code the client to:
 1. Open the problem.
-2. Solve the problem.
-3. Request the trajectory.
+2. Set the initial query based on the current state of the robot.
+3. Solve the problem.
+4. Request the trajectory.
+5. Sent it to the robot as a follow joint trajectory.
