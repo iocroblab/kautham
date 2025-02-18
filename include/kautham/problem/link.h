@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -30,7 +30,7 @@
 #include <Inventor/SbLinear.h>
 #include <kautham/problem/element.h>
 #include <kautham/util/kthutil/kauthamdefs.h>
-#include <mt/mt.h>
+#include <kautham/mt/mt.h>
 #include <string>
 
 

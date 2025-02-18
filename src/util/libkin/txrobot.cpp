@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -26,8 +26,8 @@
 /////////////////////////////// PREPROCESSOR DIRECTIVES //////////////////////
 
 // MT LIBRARY HEADERS
-#include <mt/matrix3x3.h>
-#include <mt/rotation.h>
+#include <kautham/mt/matrix3x3.h>
+#include <kautham/mt/rotation.h>
 #include <cmath>
 
 

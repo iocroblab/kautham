@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -30,9 +30,9 @@
 
 // MT LIBRARY HEADERS
 // This library needs the mtlib
-#include <mt/scalar.h>
-#include <mt/transform.h>
-#include <mt/interval.h>
+#include <kautham/mt/scalar.h>
+#include <kautham/mt/transform.h>
+#include <kautham/mt/interval.h>
 
 //uBLAS library
 #include <boost/numeric/ublas/matrix.hpp>

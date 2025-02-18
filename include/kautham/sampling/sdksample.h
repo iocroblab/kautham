@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -30,10 +30,10 @@
 #include <string>
 #include <vector>
 #include <kautham/sampling/wmat.h>
-#include <external/lcprng.h>			//class for linear congruential generators
 #include <kautham/sampling/sample.h>
 
 using namespace std;
+class LCPRNG;
 
 namespace Kautham {
 

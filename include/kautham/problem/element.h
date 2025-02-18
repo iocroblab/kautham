@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -45,8 +45,8 @@ namespace Kautham {
 
     //! Sets the orientation. Remember that orientation is a quaternion
     virtual void          setOrientation(KthReal ori[4]) = 0;
-    virtual bool          collideTo(Element* other) = 0;
-    virtual KthReal       getDistanceTo(Element* other) = 0;
+    virtual bool          collideTo(Element* other) const = 0;
+    virtual KthReal       getDistanceTo(Element* other) const = 0;
     inline KthReal*       getOrientation(){return orientation;}
     inline KthReal*       getPosition(){return position;}
     inline KthReal        getScale() const {return scale;}

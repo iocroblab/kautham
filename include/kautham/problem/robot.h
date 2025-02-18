@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -30,7 +30,7 @@
 #include <list>
 
 #include <kautham/problem/link.h>
-#include <mt/transform.h>
+#include <kautham/mt/transform.h>
 
 #include <kautham/sampling/robconf.h>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>

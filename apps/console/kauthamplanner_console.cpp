@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -27,8 +27,6 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-
-#include <Inventor/SoDB.h>
 
 #include <kautham/kauthamshell.h>
 #include <kautham/problem/problem.h>
@@ -75,7 +73,7 @@ int main(int argc, char* argv[]){
     if(string(argv[1]) == "-s")
     {
         //=====================
-        SoDB::init();
+        //SoDB::init();
         string absPath = argv[2];
 
         //directory containing the models
@@ -126,7 +124,7 @@ int main(int argc, char* argv[]){
     else if(string(argv[1]) == "-t")
     {
         //=====================
-        SoDB::init();
+        //SoDB::init();
 
         //directory containing the models
         vector <string> def_path;
@@ -377,7 +375,7 @@ int main(int argc, char* argv[]){
     {
       //OMPL planners benchmarking
             //call: KauthamConsole -b abs_path_xml_benchmarking_file [abs_path_models_folder]
-            SoDB::init();
+            //SoDB::init();
             string absPath = argv[2];
             //directory containing the models
             vector <string> def_path;

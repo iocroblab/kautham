@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -64,10 +64,11 @@ class IVElement : public Element {
       IVElement(SoSeparator *visual_model, SoSeparator *collision_model, float sc, bool useBBOX);
       virtual void setPosition(KthReal *pos);
       virtual void setOrientation(KthReal *ori);
-	  SbMatrix orientationMatrix();
+	    SbMatrix orientationMatrix();
       SoSeparator* ivModel(bool tran = false);
       SoSeparator* collision_ivModel(bool tran = false);
-      bool collideTo(Element* other);
+      
+      
       static void point_CB(void *data, SoCallbackAction *action,
                            const SoPrimitiveVertex *v);
       static void triangle_CB(void *data, SoCallbackAction *action,
@@ -75,7 +76,11 @@ class IVElement : public Element {
                                          const SoPrimitiveVertex *v2,
                                          const SoPrimitiveVertex *v3);
       SoSeparator *BBOX(SoSeparator *model, float sc, string filename = "");
-	  KthReal getDistanceTo(Element* other);
+
+      // Virtual functions that mst be implemented in derived classes
+	    virtual KthReal getDistanceTo(Element* other) const = 0;
+      virtual bool collideTo(Element* other) const = 0;
+      
       inline SoTranslation* getTrans(){return trans;}
       inline SoRotation* getRot(){return rot;}
 

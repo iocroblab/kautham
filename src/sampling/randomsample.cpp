@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -25,6 +25,8 @@
 
 #include <kautham/sampling/randomsample.h>
 #include <kautham/sampling/sample.h>
+#include <external/lcprng.h>
+
 
 namespace Kautham{
 

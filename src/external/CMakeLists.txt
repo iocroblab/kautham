@@ -11,9 +11,9 @@ add_subdirectory ( gdiam )
 
 #### pqp package ##################
 # collision library
-set(pqp_DIR pqp)
-message (STATUS "Adding PQP directory")
-add_subdirectory ( pqp )
+#set(pqp_DIR pqp)
+#message (STATUS "Adding PQP directory")
+#add_subdirectory ( pqp )
 
 set(KAUTHAM_SRC ${KAUTHAM_SRC} PARENT_SCOPE )
 

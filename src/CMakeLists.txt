@@ -1,28 +1,27 @@
 #### Adding subdirectories
 
-set ( kin_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin )
-set ( kthutil_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/kthutil )
+#set ( kin_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin )
+#set ( kthutil_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/kthutil )
+#set ( libttg_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libttg )
 
-
+message(STATUS "We have this includes now ###################: ${ALL_INCLUDE_DIRS}")
+list(APPEND ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 ##### pugixml ########
-find_package( PugiXML)
+find_package( PugiXML REQUIRED)
 if(PUGI_XML_FOUND)
    message( STATUS "PugiXML FOUND, using it")
-   include_directories( ${PUGI_XML_INCLUDE_DIR})
+   list(APPEND ALL_INCLUDE_DIRS ${PUGI_XML_INCLUDE_DIR})
    set(EXTRA_LIBS ${EXTRA_LIBS} ${PUGI_XML_LIBRARIES})
 else(PUGI_XML_FOUND)
    message(FATAL_ERROR "PugiXML not found. Please install it")
 endif(PUGI_XML_FOUND)
 
-add_subdirectory( util )
-add_subdirectory( external )
-
 #### Coin3D package ###############
 # graphics library
-find_package(Coin REQUIRED CONFIG)
+find_package(Coin REQUIRED)
 if(Coin_FOUND)
   set(EXTRA_LIBS ${EXTRA_LIBS} ${Coin_LIBRARIES})
-  include_directories(${Coin_INCLUDE_DIR})
+  list(APPEND ALL_INCLUDE_DIRS ${Coin_INCLUDE_DIR})
   add_definitions(${Coin_DEFINES})
 else( Coin_FOUND )
    message(SEND_ERROR "Kautham needs Coin library")
@@ -33,32 +32,25 @@ find_package( Assimp )
 if( ASSIMP_FOUND )
    message( STATUS "assimp Package FOUND")
    set(EXTRA_LIBS ${EXTRA_LIBS} ${ASSIMP_LIBRARIES} )
-   include_directories(${ASSIMP_INCLUDE_DIR})
+   list(APPEND ALL_INCLUDE_DIRS ${ASSIMP_INCLUDE_DIR})
    add_definitions( -DKAUTHAM_USE_ASSIMP )
 else( ASSIMP_FOUND )
    message( STATUS "assimp Package NOT FOUND")
 endif( ASSIMP_FOUND )
 
 #### fcl ######
-if( KAUTHAM_FCL )
-    find_package( fcl )
-    if( FCL_FOUND )
-        message( STATUS "fcl Package FOUND")
-        set(EXTRA_LIBS ${EXTRA_LIBS} ${FCL_LIBRARIES} )
-        include_directories(${FCL_INCLUDE_DIR})
-	message(STATUS "fcl Package found in ${FCL_INCLUDE_DIR} and link against ${FCL_LIBRARIES}")
-        add_definitions( -DKAUTHAM_USE_FCL )
-    else( FCL_FOUND )
-        message( STATUS "fcl Package NOT FOUND. PQP will be used for collision checking")
-        add_definitions( -DKAUTHAM_USE_PQP )
-    endif( FCL_FOUND )
-endif( KAUTHAM_FCL )
+find_package( fcl REQUIRED CONFIG)
+message( STATUS "fcl Package FOUND")
+set(EXTRA_LIBS ${EXTRA_LIBS} ${FCL_LIBRARIES} )
+list(APPEND ALL_INCLUDE_DIRS ${FCL_INCLUDE_DIRS})
+message(STATUS "Internal libraries: ${FCL_LIBRARIES}")
+add_definitions( -DKAUTHAM_USE_FCL )
 
 #### Armadillo ######
 find_package( Armadillo REQUIRED)
 if( ARMADILLO_FOUND )
    message( STATUS "armadillo Package FOUND")
-   include_directories(${ARMADILLO_INCLUDE_DIRS})
+   list(APPEND ALL_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIRS})
    set(EXTRA_LIBS ${EXTRA_LIBS} ${ARMADILLO_LIBRARIES})
    add_definitions( -DKAUTHAM_USE_ARMADILLO )
 else( ARMADILLO_FOUND )
@@ -68,7 +60,7 @@ endif( ARMADILLO_FOUND )
 find_package(Pthreads)
 if(PTHREADS_FOUND)
    message( STATUS "Pthreads Package FOUND:")
-   include_directories(${PTHREADS_INCLUDE_DIR})
+   list(APPEND ALL_INCLUDE_DIRS ${PTHREADS_INCLUDE_DIR})
    set(EXTRA_LIBS ${EXTRA_LIBS} ${PTHREADS_LIBRARY})
    add_definitions( ${PTHREADS_DEFINITIONS} )
 endif()
@@ -84,13 +76,13 @@ if(KAUTHAM_OPENDE)
    else(DRAWSTUFF_INCLUDE_DIR)
         message(STATUS "DrawStuff not found, using internal copy")
         add_subdirectory ( ${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff)
-        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff/include)
+        list(APPEND ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff/include)
         set(DRAWSTUFF_LIBRARY drawstuff)
    endif(DRAWSTUFF_INCLUDE_DIR)
 
    if(ODE_FOUND)
       message( STATUS "ODE Package FOUND: setting -DKAUTHAM_USE_ODE flag")
-      include_directories(${ODE_INCLUDE_DIR})
+      list(APPEND ALL_INCLUDE_DIRS ${ODE_INCLUDE_DIR})
       set(EXTRA_LIBS ${EXTRA_LIBS} ${ODE_LIBRARY})
       add_definitions( -DKAUTHAM_USE_ODE )
    endif(ODE_FOUND)
@@ -107,10 +99,27 @@ endif( KAUTHAM_IOC )
 add_subdirectory( planner )
 add_subdirectory( problem )
 add_subdirectory( sampling )
+add_subdirectory( util )
+add_subdirectory( external )
 
 #message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
 
 add_library(libkautham SHARED ${KAUTHAM_SRC} ${CMAKE_CURRENT_SOURCE_DIR}/kauthamshell.cpp)
+
+# Set include directories for the library
+target_include_directories(libkautham
+   PUBLIC
+        $<BUILD_INTERFACE:${INCLUDE_DIR}>
+        $<INSTALL_INTERFACE:include>
+        ${OMPL_INCLUDE_DIRS}
+   PRIVATE
+        ${ALL_INCLUDE_DIRS}
+)
+# compile features 
+target_compile_features(libkautham PUBLIC cxx_std_17)
+
+# Add linker flags 
+target_link_options(libkautham PUBLIC "-Wl,--no-undefined")
 set_target_properties( libkautham PROPERTIES
   SOVERSION "${KAUTHAM_VERSION_MAJOR}.${KAUTHAM_VERSION_MINOR}"
   VERSION "${KAUTHAM_VERSION}"
@@ -121,7 +130,9 @@ set_target_properties( libkautham PROPERTIES
 #add_library(YumiIK SHARED ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin/YumiKinematics.cpp)
 #set(EXTRA_LIBS ${EXTRA_LIBS} YumiIK)
 
-target_link_libraries(libkautham ${EXTRA_LIBS})
+message(STATUS "Internal libraries: ${EXTRA_LIBS}")
+
+target_link_libraries(libkautham PRIVATE ${EXTRA_LIBS})
 
 # extra libraries should contain sampling libPQP libgdiam PUGI OMPL ARMADILLO ODE libDNN libkin libkthutil 
 

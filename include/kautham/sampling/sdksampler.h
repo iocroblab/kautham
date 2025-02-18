@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -28,11 +28,11 @@
 
 #include <kautham/sampling/sampler.h>
 #include <kautham/sampling/sequence.h>
-#include <external/lcprng.h>
 #include <kautham/sampling/sdksample.h>
 #include <kautham/sampling/wmat.h>
 #include <kautham/sampling/tmat.h>
 
+class LCPRNG;
 
 namespace Kautham{
 /** \addtogroup Sampling

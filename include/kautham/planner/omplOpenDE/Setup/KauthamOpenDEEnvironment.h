@@ -1,6 +1,6 @@
 
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -70,11 +70,10 @@
 #include <Inventor/VRMLnodes/SoVRMLMaterial.h>
 #include <vector>
 #include <cmath>
-//#include <libmt/mt/mt.h>
 #include <kautham/problem/link.h>
 #include <kautham/problem/robot.h>
 #include <kautham/problem/ivelement.h>
-#include <kautham/problem/ivpqpelement.h>
+
 #include <kautham/problem/urdf.h>
 #include <kautham/planner/omplOpenDE/InstantiatedKnowledge/Instantiatedknowledge.h>
 namespace ob = ompl::base;

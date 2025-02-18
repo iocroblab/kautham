@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -27,12 +27,11 @@
 
 #include <vector>
 #include <string>
-#include "external/lcprng.h"
 #include <kautham/util/kthutil/kauthamdefs.h>
 #include <sstream>
 #include <iostream>
 
-
+class LCPRNG;
 using namespace std;
 
 namespace Kautham {
