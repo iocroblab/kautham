@@ -1,5 +1,5 @@
 /*************************************************************************\
-  Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+  Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                 Universitat Politecnica de Catalunya
                 BarcelonaTech
    All Rights Reserved.
@@ -32,8 +32,8 @@
 
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 
-#include <mt/point3.h>
-#include <mt/rotation.h>
+#include <kautham/mt/point3.h>
+#include <kautham/mt/rotation.h>
 
 #include <kautham/problem/urdf.h>
 #include <kautham/problem/assimpImport.h>
@@ -48,7 +48,6 @@
 #include <kautham/util/libkin/ivkinyumi.h>
 #include <kautham/util/libkin/ivkinkukalwr.h>
 #include <kautham/util/libkin/constrainedkinematic.h>
-#include <kautham/problem/ivpqpelement.h>
 #include <kautham/util/kthutil/kauthamexception.h>
 
 

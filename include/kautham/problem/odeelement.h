@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -22,8 +22,8 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
-#include <mt/point3.h>
-#include <mt/transform.h>
+#include <kautham/mt/point3.h>
+#include <kautham/mt/transform.h>
 
 using namespace std;
 

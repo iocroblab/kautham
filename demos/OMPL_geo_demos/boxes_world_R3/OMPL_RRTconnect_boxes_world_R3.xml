@@ -1,83 +1,93 @@
 <?xml version="1.0"?>
 <Problem name="OMPL_RRTConnect_boxes_world_R3">
 
-  <Robot robot="robots/freeflying/bigcube.urdf" scale="1.0">
+  	<Robot robot="robots/freeflying/bigcube.urdf" scale="1.0">
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.056" Y="0.0" X="0.0" />
 	</Robot>
 
-  <Controls robot="controls/bigcube_R3.cntr" obstacle="controls/boxes_R3.cntr"/>
+  	<Controls robot="controls/bigcube_R3.cntr" obstacle="controls/boxes_R3.cntr"/>
         
-  <Obstacle obstacle="obstacles/3D-environments/unit_transparentbox.urdf" scale="1.0">
+  	<Obstacle obstacle="obstacles/3D-environments/unit_transparentbox.urdf" scale="1.0">
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
 
-  <Obstacle obstacle="obstacles/boxes/plainbox_1.urdf" scale="1.0">
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_1" />
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
 	</Obstacle>
 
-  <Obstacle obstacle="obstacles/boxes/plainbox_2.urdf" scale="1.0">
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_2" />
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
 	</Obstacle>
 
-  <Obstacle obstacle="obstacles/boxes/plainbox_3.urdf" scale="1.0">
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_3" />
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
 	</Obstacle>
 
-  <Obstacle obstacle="obstacles/boxes/plainbox_4.urdf" scale="1.0">
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_4" />
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
 	</Obstacle>
 
-  <Obstacle obstacle="obstacles/boxes/plainbox_5.urdf" scale="1.0">
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_5" />
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
 	</Obstacle>
 
-  <Obstacle obstacle="obstacles/boxes/plainbox_6.urdf" scale="1.0">
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_6" />
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
 	</Obstacle>
 
-  <Obstacle obstacle="obstacles/boxes/plainbox_7.urdf" scale="1.0">
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_7" />
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
 	</Obstacle>
 
-  <Obstacle obstacle="obstacles/boxes/plainbox_8.urdf" scale="1.0">
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_8" />
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
 	</Obstacle>
 
-  <Obstacle obstacle="obstacles/boxes/plainbox_9.urdf" scale="1.0">
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_9" />
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
 	</Obstacle>
 
-  <Obstacle obstacle="obstacles/boxes/plainbox_10.urdf" scale="1.0">
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_10" />
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Limits name="Z" min="0.0" max="1.0" />
@@ -93,9 +103,9 @@
 		</Parameters>
 		<Queries>
 			<Query>
-			<InitObs>0.2 0.2 0.2 0.2 0.2 0.4 0.2 0.4 0.6 0.2 0.4 0.8 0.8 0.8 0.2 0.8 0.6 0.4 0.8 0.4 0.6 0.8 0.8 0.8 0.4 0.4 0.4 0.6 0.6 0.6</InitObs>
-  			<Init>0.1 0.1 0.1</Init>
-                        <Goal>0.85 0.85 0.85</Goal>
+				<InitObs>0.2 0.2 0.2 0.2 0.2 0.4 0.2 0.4 0.6 0.2 0.4 0.8 0.8 0.8 0.2 0.8 0.6 0.4 0.8 0.4 0.6 0.8 0.8 0.8 0.4 0.4 0.4 0.6 0.6 0.6</InitObs>
+  				<Init>0.1 0.1 0.1</Init>
+				<Goal>0.85 0.85 0.85</Goal>
 			</Query>
 		</Queries>
 	</Planner>

@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -38,7 +38,7 @@
 
 #include <pugixml.hpp>
 
-#include <ompl/geometric/SimpleSetup.h>
+
 
 #include <kautham/planner/planner.h>
 #include <kautham/sampling/sampling.h>
@@ -85,6 +85,7 @@
 #include <kautham/planner/omplc/omplcSSTcarplanner.h>
 #include <kautham/planner/omplc/omplcSSTf16planner.h>
 #include <kautham/planner/omplc/omplcSSTdualdriveplanner.h>
+#include <kautham/planner/omplconstr/omplconstrplanner.hpp>
 #endif
 
 #if defined(KAUTHAM_USE_ODE)
@@ -103,6 +104,7 @@
 #define M_PI 3.1415926535897932384626433832795
 #endif
 
+class ompl::geometric::SimpleSetup;
 
 using namespace std;
 using namespace pugi;

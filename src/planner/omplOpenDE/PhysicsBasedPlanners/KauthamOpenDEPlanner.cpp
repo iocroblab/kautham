@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -870,6 +870,24 @@ SoSeparator *KauthamDEPlanner::getIvCspaceScene()
 //! This routine allows to draw the 2D projection of a roadmap or tree. The one corresponding to robot number numrob is drawn.
 void KauthamDEPlanner::drawCspace(int numrob)
 {
+    // temporal ostringstream
+    ostringstream oss;
+
+    //to draw points
+    SoSeparator *psep = new SoSeparator();
+    SoCoordinate3 *points  = new SoCoordinate3();
+    SoPointSet *pset  = new SoPointSet();
+
+    //space bounds
+    int k;
+    KthReal xmin;
+    KthReal xmax;
+    KthReal ymin;
+    KthReal ymax;
+    KthReal zmin;
+    KthReal zmax;
+    
+
     if(_wkSpace->getRobot(0)->getNumLinks()>1)
     {
         if(_sceneCspace==NULL) return;
@@ -879,20 +897,6 @@ void KauthamDEPlanner::drawCspace(int numrob)
         {
             _sceneCspace->removeChild(0);
         }
-
-        //to draw points
-        SoSeparator *psep = new SoSeparator();
-        SoCoordinate3 *points  = new SoCoordinate3();
-        SoPointSet *pset  = new SoPointSet();
-
-        //space bounds
-        int k;
-        KthReal xmin;
-        KthReal xmax;
-        KthReal ymin;
-        KthReal ymax;
-        KthReal zmin;
-        KthReal zmax;
 
         //if(_wkSpace->getRobot(numrob)->isSE3Enabled())
         {
@@ -917,11 +921,15 @@ void KauthamDEPlanner::drawCspace(int numrob)
             pdata->computeEdgeWeights( *ss->getProblemDefinition()->getOptimizationObjective() );
         else
             pdata->computeEdgeWeights();
-
+        
 
         //Use the projection associated to the subspace of the robot index passed as a parameter.
         string projname = "drawprojection"; //
-        string robotnumber = static_cast<ostringstream*>( &(ostringstream() << numrob) )->str();//the string correspoding to number numrob
+        //string robotnumber = static_cast<ostringstream*>( &(ostringstream() << numrob) )->str();//the string correspoding to number numrob
+        
+        oss << numrob;
+        string robotnumber = oss.str();
+
         projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
         //ob::ProjectionEvaluatorPtr projToUse = stateSpace->getProjection(projname.c_str());
         ob::ProjectionEvaluatorPtr projToUse = stateSpacePtr->getDefaultProjection();
@@ -1118,23 +1126,9 @@ void KauthamDEPlanner::drawCspace(int numrob)
             _sceneCspace->removeChild(0);
         }
 
-        //to draw points
-        SoSeparator *psep = new SoSeparator();
-        SoCoordinate3 *points  = new SoCoordinate3();
-        SoPointSet *pset  = new SoPointSet();
-
         //get the first subspace
         //        ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(numrob));
         //        ob::StateSpacePtr ssRobotifirst =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
-
-        //space bounds
-        int k;
-        KthReal xmin;
-        KthReal xmax;
-        KthReal ymin;
-        KthReal ymax;
-        KthReal zmin;
-        KthReal zmax;
 
         //if(_wkSpace->getRobot(numrob)->isSE3Enabled())
         {
@@ -1162,7 +1156,10 @@ void KauthamDEPlanner::drawCspace(int numrob)
 
         //Use the projection associated to the subspace of the robot index passed as a parameter.
         string projname = "drawprojection"; //
-        string robotnumber = static_cast<ostringstream*>( &(ostringstream() << numrob) )->str();//the string correspoding to number numrob
+        oss << numrob;
+        string robotnumber = oss.str();
+
+        //string robotnumber = static_cast<ostringstream*>( &(ostringstream() << numrob) )->str();//the string correspoding to number numrob
         projname.append(robotnumber); //the name of the projection: "drawprojection0", "drawprojection1",...
         //ob::ProjectionEvaluatorPtr projToUse = stateSpace->getProjection(projname.c_str());
         ob::ProjectionEvaluatorPtr projToUse = stateSpace->getDefaultProjection();

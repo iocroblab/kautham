@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot name="madar_structure">
+
+    <!-- BEGIN: T-STRUCTURE -->
+    <link name="madar_base_link">
+        <visual>
+            <geometry>
+                <mesh filename="/meshes/estructura_asm.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.375" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.4" length="0.75"/>
+            </geometry>
+        </collision>
+        <collision>
+            <origin xyz="0 0 1.395" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.5 0.08 0.05"/>
+            </geometry>
+        </collision>
+        <collision>
+            <origin xyz="0 0 1.056" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.08 0.08 0.63"/>
+            </geometry>
+        </collision>
+        <collision>
+            <origin xyz="0 -0.14 0.916" rpy="0 0 0" />
+            <geometry>
+                <box size="0.43 0.2 0.33"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- END: T-STRUCTURE -->
+</robot>

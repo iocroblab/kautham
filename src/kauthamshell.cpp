@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -30,6 +30,7 @@
 #include <kautham/util/kthutil/kauthamexception.h>
 #include <kautham/problem/problem.h>
 #include <kautham/util/libkin/ivkinyumi.h>
+#include <kautham/util/libttg/Trajectory.hpp>
 
 
 namespace ob = ompl::base;
@@ -1169,6 +1170,226 @@ namespace Kautham {
                  << "to verify the correctness of the problem formulation.\n";
         }
 
+        return false;
+    }
+
+    bool kauthamshell::getPath(std::vector<std::vector<double>> &path) {
+        try {
+            if (!problemOpened()) {
+                std::cout << "The problem is not opened" << std::endl;
+                return false;
+            }
+
+            Problem* const problem = static_cast<Problem*>(memPtr_);
+            auto plannerFamily = problem->getPlanner()->getFamily();
+
+            if (plannerFamily == OMPLPLANNER) {
+                std::cout << "OMPLPLANNER" << std::endl;
+                if (problem->getPlanner()->solveAndInherit()) {
+                    auto omplPlanner = static_cast<omplplanner::omplPlanner*>(problem->getPlanner());
+                    auto solutionPath = omplPlanner->SimpleSetup()->getSolutionPath();
+                    const ompl::base::SpaceInformationPtr &si = solutionPath.getSpaceInformation();
+
+                    const ompl::base::StateSpace *space(si->getStateSpace().get());
+                    std::vector<double> state_data;
+                    path.clear();
+                    for (const auto* state : solutionPath.getStates()) {
+                        space->copyToReals(state_data, state);
+                        path.push_back(state_data);
+                    }
+                    return true;
+                }
+            }
+
+            else if (plannerFamily == IOCPLANNER) { // Not tested!
+                std::cout << "IOCPLANNER" << std::endl;
+                if (problem->getPlanner()->solveAndInherit()) {
+                    auto samples = problem->getPlanner()->getPath();
+                    
+                    // Clear and populate the path vector
+                    path.clear();
+                    for (auto& sample : *samples) {
+                        auto mappedConfs = sample->getMappedConf();
+                        for (auto& conf : mappedConfs) {
+                            std::vector<double> stateData;
+
+                            // Append SE3 position
+                            auto pos = conf.getSE3().getPos();
+                            stateData.insert(stateData.end(), pos.begin(), pos.end());
+
+                            // Append SE3 orientation
+                            auto orient = conf.getSE3().getOrient();
+                            stateData.insert(stateData.end(), orient.begin(), orient.end());
+
+                            // Append Rn coordinates
+                            auto coordinates = conf.getRn().getCoordinates();
+                            stateData.insert(stateData.end(), coordinates.begin(), coordinates.end());
+
+                            // Add this state to the path
+                            path.push_back(stateData);
+                        }
+                    }
+                    return true;
+                }
+            } 
+            else {
+                std::cout << "ERROR in getPath: Unsupported planner family." << std::endl;
+            }
+        } 
+        catch (const KthExcp& excp) {
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
+        } 
+        catch (const std::exception& excp) {
+            std::cout << "Error: " << excp.what() << std::endl;
+        } 
+        catch (...) {
+            std::cout << "An unexpected error occurred. Verify the problem formulation with Kautham2." << std::endl;
+        }
+
+        return false;
+    }
+
+
+    bool kauthamshell::computeTrajecotry(std::vector<std::vector<double>> &path, std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq, 
+                                            std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start)
+    {
+        
+        // 1) INITIAL CHECKS:
+        
+        // Ensure path is not empty
+        if (path.empty()) {
+            std::cerr << "Error: Path is empty." << std::endl;
+            return false;
+        }
+
+        // Get degrees of freedom (dof) from the first waypoint
+        size_t dof = path[0].size();
+
+        // Ensure all waypoints in the path have the same size
+        for (const auto& waypoint : path) {
+            if (waypoint.size() != dof) {
+                std::cerr << "Error: All waypoints must have the same number of dimensions." << std::endl;
+                return false;
+            }
+        }
+
+        // Check if ratio_velocity and ratio_acceleration have the correct size
+        if (ratio_velocity.size() != dof) {
+            std::cerr << "Error: ratio_velocity size (" << ratio_velocity.size()
+                    << ") does not match the degrees of freedom (" << dof << ")." << std::endl;
+            return false;
+        }
+
+        if (ratio_acceleration.size() != dof) {
+            std::cerr << "Error: ratio_acceleration size (" << ratio_acceleration.size()
+                    << ") does not match the degrees of freedom (" << dof << ")." << std::endl;
+            return false;
+        }
+
+        // Inside custom function:
+        auto isInRange = [](const std::vector<double>& ratios) {
+            for (double val : ratios) {
+                if (val < 0.0 || val > 1.0) return false;
+            }
+            return true;
+        };
+
+        // Verify that ratio_velocity and ratio_acceleration are in [0, 1]
+        if (!isInRange(ratio_velocity)) {
+            std::cerr << "Error: ratio_velocity contains values outside the range [0, 1]." << std::endl;
+            return false;
+        }
+
+        if (!isInRange(ratio_acceleration)) {
+            std::cerr << "Error: ratio_acceleration contains values outside the range [0, 1]." << std::endl;
+            return false;
+        }
+
+        // 2) PREPARE THE INPUT:
+
+        // List to store the waypoints (as Eigen::VectorXd)
+        std::list<Eigen::VectorXd> waypoints;
+
+        Eigen::VectorXd tmp_waypoint;
+        for (const auto &waypoint : path) {
+            // Convert each std::vector<double> to Eigen::VectorXd:
+            tmp_waypoint = Eigen::VectorXd::Map(waypoint.data(), waypoint.size());
+            waypoints.push_back(tmp_waypoint);
+        }
+
+        // PROVISIONAL -> ToDo: Read from URDF!
+        const double globalMaxVelocity = 1.0;
+        const double globalMaxAcceleration = 1.0;
+
+        // Convert ratio inputs to maxVelocity and maxAcceleration
+        Eigen::VectorXd maxVelocity(ratio_velocity.size());
+        Eigen::VectorXd maxAcceleration(ratio_acceleration.size());
+
+        for (size_t i = 0; i < ratio_velocity.size(); ++i) {
+            maxVelocity[i] = ratio_velocity[i] * globalMaxVelocity;
+        }
+
+        for (size_t i = 0; i < ratio_acceleration.size(); ++i) {
+            maxAcceleration[i] = ratio_acceleration[i] * globalMaxAcceleration;
+        }
+
+        // 3) COMPUTE THE TRAJECTORY:
+        Trajectory trajectory(Path(waypoints, max_path_deviation), maxVelocity, maxAcceleration);
+
+        // 4) BUILD THE OUTPUT:
+        if(trajectory.isValid()) {
+
+            traj_positions.clear();
+            traj_velocities.clear();
+            traj_time_from_start.clear();
+
+            double duration = trajectory.getDuration();
+            std::vector<double> joint_positions(dof);
+            std::vector<double> joint_velocities(dof);
+
+            auto update_trajectory = [&](double time) {
+                for (size_t q = 0; q < dof; q++) {
+                    joint_positions[q] = trajectory.getPosition(time)[q];
+                    joint_velocities[q] = trajectory.getVelocity(time)[q];
+                }
+                traj_positions.push_back(joint_positions);
+                traj_velocities.push_back(joint_velocities);
+                traj_time_from_start.push_back(time);
+            };
+
+            double last_time = 0;
+            for (double t = 0.0; t < duration; t += (1.0 / freq)) {
+                update_trajectory(t);
+                last_time = t;
+            }
+
+            // Add the last point if not reached due to the FOR condition:
+            if (std::abs(last_time - duration) > 1e-6) {
+                update_trajectory(duration);
+            }
+
+            return true;
+        } else {
+            std::cerr << "Error: Cannot compute a valid trajectory." << std::endl;
+            return false;
+        }
+    }
+
+
+    bool kauthamshell::getTrajecotry(std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq,
+                                        std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start)
+    {
+        std::vector<std::vector<double>> path;
+        if (kauthamshell::getPath(path)) {
+            std::cout << "kauthamshell::getTrajecotry -> Path successfully computed." << std::endl;
+            
+            if (kauthamshell::computeTrajecotry(path, ratio_velocity, ratio_acceleration, max_path_deviation, freq, traj_positions, traj_velocities, traj_time_from_start)) {
+                std::cout << "kauthamshell::getTrajecotry -> Trajectory successfully computed." << std::endl;
+                return true;
+            }
+            std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the trajectory." << std::endl;
+        }
+        std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the path." << std::endl;
         return false;
     }
 

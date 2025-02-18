@@ -1,0 +1,96 @@
+/*************************************************************************\
+   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+                 Universitat Politecnica de Catalunya
+                 BarcelonaTech
+    All Rights Reserved.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the
+    Free Software Foundation, Inc.,
+    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ \*************************************************************************/
+
+/* Author: Pol Ramon Canyameres, Jan Rosell */
+
+#ifndef OMPLCONSTRAINTPLANNER_HPP
+#define OMPLCONSTRAINTPLANNER_HPP
+
+#if defined(KAUTHAM_USE_OMPL)
+
+#include <kautham/planner/planner.h>
+#include <ompl/geometric/SimpleSetup.h>
+#include <ompl/base/spaces/constraint/ProjectedStateSpace.h>
+
+namespace ob = ompl::base;
+namespace og = ompl::geometric;
+
+namespace Kautham {
+// /** \addtogroup ControlPlanners
+//  *  @{
+//  */
+
+    namespace omplconstrplanner{
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // Class omplconstrPlanner
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //! This class is the base class for all the kautham planners that use the ompl::base::Constraint planners.
+
+        class omplConstraintPlanner : public Planner {
+            public:
+
+                omplConstraintPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
+                
+                ~omplConstraintPlanner();
+
+                // Declare SimpleSetup for geometric planning
+                std::shared_ptr<ompl::geometric::SimpleSetup> simple_setup_;
+
+                // Override the pure virtual functions from Planner
+                virtual bool setParameters() override;  // Implemented in cpp
+                virtual bool trySolve() override;       // Implemented in cpp
+
+                void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate);
+                void smp2omplScopedState(Sample* smp, ob::ScopedState<ob::ProjectedStateSpace> *sstate);
+
+                void omplState22smp(const ob::State *state, Sample* smp);
+                void omplState2smp(const ob::State *state, Sample* smp);
+                void omplScopedState2smp(ob::ScopedState<ob::CompoundStateSpace> sstate, Sample* smp);
+
+
+            private:
+                KthReal _planningTime;
+
+                std::shared_ptr<ompl::base::StateSpace> space_;
+
+                std::shared_ptr<ompl::base::SpaceInformation> si_;
+
+
+                // Shared pointer to StateSpace
+                std::shared_ptr<ompl::base::RealVectorStateSpace> state_space_;
+
+                // Declare a shared pointer to ProjectedStateSpace
+                std::shared_ptr<ompl::base::ProjectedStateSpace> constrained_state_space_;
+
+                void removeDuplicateStates(ompl::geometric::PathGeometric& path);
+
+                void printJointPath(const std::vector<std::vector<double>>& _joint_path);
+
+            };
+
+        }
+  /** @}   end of Doxygen module */
+}
+
+#endif // KAUTHAM_USE_OMPL
+#endif // OMPLCONSTRAINTPLANNER_HPP

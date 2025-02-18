@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -28,9 +28,9 @@
 #include <string>
 #include <stdlib.h>
 
-#include <mt/point3.h>
-#include <mt/rotation.h>
-#include <mt/transform.h>
+#include <kautham/mt/point3.h>
+#include <kautham/mt/rotation.h>
+#include <kautham/mt/transform.h>
 
 #include <kautham/problem/urdf.h>
 #include <kautham/util/kthutil/kauthamexception.h>

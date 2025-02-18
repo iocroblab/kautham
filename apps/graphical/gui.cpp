@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -40,6 +40,8 @@
 #include <Inventor/actions/SoGLRenderAction.h>
 #include <Inventor/SbViewportRegion.h>
 #include <Inventor/SoSceneManager.h>
+#include <Inventor/nodes/SoLineSet.h>
+#include <Inventor/fields/SoMFVec3f.h>
 #include <pugixml.hpp>
 
 //The following config header file contains the version number of kautham and is automatically generated from the
@@ -489,6 +491,10 @@ namespace Kautham {
             if (title != "CSpace") {
                 v.window->setFeedbackVisibility(true);
             }
+            if (title == "WSpace") {
+                v.root->addChild(getGrid());
+            }
+                      
             viewsTab->addTab(v.tab,QString(title.c_str()));
             v.window->setViewing(FALSE);
             v.window->setSceneGraph(root);
@@ -915,6 +921,43 @@ namespace Kautham {
             }
 
         }
+    }
+
+    SoSeparator * GUI::getGrid()
+    {
+        SoSeparator *grid = new SoSeparator;
+
+        // Create coordinates for the line
+        SoCoordinate3 *coords = new SoCoordinate3;
+        SoMFVec3f *points = new SoMFVec3f;
+
+        // Create the line set
+        SoLineSet *line = new SoLineSet;
+
+        int lines = 0;
+        int npoints = 0;
+
+        for (int i = -5; i <= 5; ++i) {
+            // Vertical lines (constant x, varying y)
+            points->set1Value(npoints, SbVec3f(i, -5, 0));
+            points->set1Value(npoints+1, SbVec3f(i, 5, 0));
+            line->numVertices.set1Value(lines, 2); // A single line with two vertices
+        
+            // Horizontal lines (constant y, varying x)
+            points->set1Value(npoints+2, SbVec3f(-5, i, 0));
+            points->set1Value(npoints+3, SbVec3f(5, i, 0));
+            line->numVertices.set1Value(lines+1, 2); // A single line with two vertices
+        
+            lines=lines+2;
+            npoints = npoints+4;
+        }
+            coords->point = *points;
+        // Build the scene graph
+        grid->addChild(coords);
+        grid->addChild(line);
+
+        return grid;
+
     }
 
 }

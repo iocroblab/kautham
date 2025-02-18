@@ -1,5 +1,5 @@
 /*************************************************************************\
-   Copyright 2014 Institute of Industrial and Control Engineering (IOC)
+   Copyright 2014-2024  Institute of Industrial and Control Engineering (IOC)
                  Universitat Politecnica de Catalunya
                  BarcelonaTech
     All Rights Reserved.
@@ -26,6 +26,8 @@
 #include <kautham/problem/problem.h>
 #include <kautham/util/kthutil/kauthamexception.h>
 #include <boost/lexical_cast.hpp>
+
+#include <ompl/geometric/SimpleSetup.h>
 
 namespace Kautham {
 Problem::Problem() : _wspace(NULL), _cspace(new SampleSet()),
@@ -250,7 +252,9 @@ bool Problem::createPlanner( string name, std::string synergyTreeFilename ) {
 
     else if (name == "omplcSSTdualdrive")
         _planner = new omplcplanner::omplcSSTdualdrivePlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, NULL);
-
+    
+    else if (name == "omplconstr")
+        _planner = new omplconstrplanner::omplConstraintPlanner(CONTROLSPACE, sinit, sgoal, _cspace, _wspace, NULL);
 
 #endif
 
@@ -1830,6 +1834,11 @@ bool Problem::setDefaultRobotControls() {
 bool Problem::addObstacle2WSpace(xml_node *obstacle_node, bool useBBOX, progress_struct *progress) {
     Robot *obs= new Robot(obstacle_node->attribute("obstacle").as_string(),
                           obstacle_node->attribute("scale").as_double(1.),useBBOX,progress);
+
+    xml_node kautham_name_node = obstacle_node->child("KauthamName");
+    if (kautham_name_node) {
+        obs->setName(kautham_name_node.attribute("name").as_string());
+    }
 
     if (!obs->isArmed()) return false;
 

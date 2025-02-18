@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ControlSet>
+    <Offset>		
+		<!-- <DOF name="ur5/X" value="0.5" />
+		<DOF name="ur5/Y" value="0.5" />
+		<DOF name="ur5/Z" value="0.5" />
+        <DOF name="ur5/X1" value="0.0" />
+        <DOF name="ur5/X2" value="0.0" />
+		<DOF name="ur5/X3" value="0.75" /> -->
+	</Offset>
+
+    <!-- <Control name="ur5/x" eigValue="1.0">
+        <DOF name="ur5/X" value="1.0" />
+    </Control>
+    <Control name="ur5/y" eigValue="1.0">
+        <DOF name="ur5/Y" value="1.0" />
+    </Control>
+    <Control name="ur5/x3" eigValue="1.0">
+        <DOF name="ur5/X3" value="1.0" />
+    </Control>  -->
+
+    <Control name="ur5/shoulder" eigValue="1.0">
+		<DOF name="ur5/Shoulder" value="1.0"/>
+	</Control>
+	<Control name="ur5/upper_arm" eigValue="1.0">
+		<DOF name="ur5/UpperArm" value="1.0"/>
+	</Control> 
+	<Control name="ur5/fore_arm" eigValue="1.0">
+		<DOF name="ur5/ForeArm" value="1.0"/>
+	</Control> 
+	<Control name="ur5/wrist1" eigValue="1.0">
+		<DOF name="ur5/Wrist1" value="1.0"/>
+	</Control>
+	<Control name="ur5/wrist2" eigValue="1.0">
+		<DOF name="ur5/Wrist2" value="1.0"/>
+	</Control>
+	<Control name="ur5/wrist3" eigValue="1.0">
+		<DOF name="ur5/Wrist3" value="1.0"/>
+	</Control>
+</ControlSet>
