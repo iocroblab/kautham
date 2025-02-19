@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTconnect_chess_ur3_gripper_1_flat">
+    <Obstacle obstacle="obstacles/chess/flat_support.urdf" scale="2.0">
+                <Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="-0.01" Y="0.0" X="0.0" />
+    </Obstacle>
+	
+	<Robot robot="robots/ur3_robotniq_A.urdf" scale="1.0">
+		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.37" />
+                <ViewLink name="tool0"/>
+	</Robot>
+	<Controls robot="controls/ur3_robotniq_1.cntr" />
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="_Cspace Drawn">0</Parameter>
+			<Parameter name="_Incremental (0/1)">0</Parameter>
+			<Parameter name="_Max Planning Time">30</Parameter>
+			<Parameter name="_Path Drawn (0/1)">1</Parameter>
+			<Parameter name="_Simplify Solution">2</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="Range">0.05</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init>0.75 0.375 0.75 0.375 0.75 0.5 0.5</Init>
+                <Goal>0.883 0.323 0.759 0.165 0.252 0.56 0.534</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>
