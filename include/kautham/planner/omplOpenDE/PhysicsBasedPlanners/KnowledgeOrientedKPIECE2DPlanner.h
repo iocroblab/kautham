@@ -58,7 +58,7 @@ public:
     KnowledgeOrientedKPIECE2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~KnowledgeOrientedKPIECE2DPlanner();
     bool setParameters();//!< this function set the planning parameters for KPIECE.
-    KthReal _GoalBias;//!< define the goal bias for KPIECE.
+    double _GoalBias;//!< define the goal bias for KPIECE.
 };
 
 }

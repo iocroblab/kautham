@@ -99,23 +99,23 @@
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="0.32" Y="5.67" Z="0" />
 		<KauthamName name="wood_shelf_2" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/chess/chessboard.urdf" scale="2.0">
+	<Obstacle obstacle="obstacles/chess/flat_chessboard/flat_chessboard.urdf" scale="2.0">
 		<Home TH="1.5707963" WX="0.0" WY="0.0" WZ="1.0" X="4.1875" Y="5.4225" Z="0.73" />
 		<KauthamName name="chessboard" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/chess_2/pawnB1.urdf" scale="1.0">
+	<Obstacle obstacle="obstacles/chess/pawnB1/pawnB1.urdf" scale="1.0">
 		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="3.7875" Y="5.3225" Z="0.78" />
 		<KauthamName name="pawnb1" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/chess_2/pawnB2.urdf" scale="1.0">
+	<Obstacle obstacle="obstacles/chess/pawnB2/pawnB2.urdf" scale="1.0">
 		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="3.7875" Y="5.0225" Z="0.78" />
 		<KauthamName name="pawnb2" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/chess_2/pawnW1.urdf" scale="1.0">
+	<Obstacle obstacle="obstacles/chess/pawnW1/pawnW1.urdf" scale="1.0">
 		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="4.2875" Y="5.7225" Z="0.78" />
 		<KauthamName name="pawnw1" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/chess_2/pawnW2.urdf" scale="1.0">
+	<Obstacle obstacle="obstacles/chess/pawnW2/pawnW2.urdf" scale="1.0">
 		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="4.0875" Y="5.7225" Z="0.78" />
 		<KauthamName name="pawnw2" />
 	</Obstacle>

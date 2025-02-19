@@ -78,7 +78,7 @@ namespace Kautham {
         {
             RobConf *c = element.second->getHomePos();
             _obstaclePoses[i] = new RobConf;
-            vector<KthReal> coords(7);
+            vector<double> coords(7);
             coords[0] = element.second->getLink(0)->getElement()->getPosition()[0];
             coords[1] = element.second->getLink(0)->getElement()->getPosition()[1];
             coords[2] = element.second->getLink(0)->getElement()->getPosition()[2];
@@ -140,8 +140,8 @@ namespace Kautham {
 
 
 
-    vector<KthReal>* WorkSpace::distanceCheck(Sample* sample) {
-        vector<KthReal> tmpVec;
+    vector<double>* WorkSpace::distanceCheck(Sample* sample) {
+        vector<double> tmpVec;
         tmpVec.clear();
 
         if (sample->getMappedConf().size() == 0) {
@@ -168,7 +168,7 @@ namespace Kautham {
 
     double WorkSpace::cumDistanceCheck(Sample *sample) {
         if (sample->getMappedConf().size() == 0) {
-            vector<KthReal> tmpVec;
+            vector<double> tmpVec;
             for (unsigned int i = 0; i < getNumRobControls(); ++i)
                 tmpVec.push_back(sample->getCoords()[i]);
 
@@ -227,7 +227,7 @@ namespace Kautham {
     */
     void WorkSpace::moveRobotsTo(Sample *sample) {
         bool withinbounds = true;
-        vector<KthReal> tmpVec;
+        vector<double> tmpVec;
         tmpVec.clear();
         for (unsigned int i = 0; i < getNumRobControls(); ++i) {
             tmpVec.push_back(sample->getCoords().at(i));
@@ -262,7 +262,7 @@ namespace Kautham {
         if (!sample) return;
 
         bool withinbounds=true;
-        vector<KthReal> tmpVec;
+        vector<double> tmpVec;
         tmpVec.clear();
         for(unsigned int j=0; j < getNumObsControls(); j++ ){
             tmpVec.push_back(sample->getCoords()[j]);
@@ -310,7 +310,7 @@ namespace Kautham {
         std::pair<int, string> robot_Obst; //It will storaged the index of the robot and obstacles in collision
         std::pair<int, int> robot_links; //It will storaged the index of the robot's link/obstacle's element in collision
 
-        vector<KthReal> tmpVec;
+        vector<double> tmpVec;
         bool collision = false;
         tmpVec.clear();
         for (unsigned j=0; j < getNumRobControls(); j++) {
@@ -524,7 +524,7 @@ namespace Kautham {
     //! because they do not have mapping.
     //! If the SPACETYPE is SAMPLEDSPACE the distance is calculated with
     //! the coordinates directly.
-    KthReal WorkSpace::distanceBetweenSamples(Sample& smp1, Sample& smp2,
+    double WorkSpace::distanceBetweenSamples(Sample& smp1, Sample& smp2,
                                               Kautham::SPACETYPE spc) {
         switch(spc){
             case SAMPLEDSPACE:
@@ -542,14 +542,14 @@ namespace Kautham {
             return smp1.getDistance(&smp2, _robWeight, spc);
 
             default:
-            return (KthReal)-1.0;
+            return (double)-1.0;
         }
     }
 
 
-    KthReal WorkSpace::distanceCheck(Conf* conf, unsigned int robot) {
-        KthReal resp = (KthReal)1e10;
-        KthReal temp = (KthReal)0.0;
+    double WorkSpace::distanceCheck(Conf* conf, unsigned int robot) {
+        double resp = (double)1e10;
+        double temp = (double)0.0;
         robots[robot]->Kinematics(conf);
         map<string, Robot*>::iterator mapit;
         for(mapit = obstacles.begin(); mapit != obstacles.end(); mapit++){

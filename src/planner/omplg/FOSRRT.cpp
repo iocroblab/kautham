@@ -194,7 +194,7 @@ void ompl::geometric::FOSRRT::omplState2armaVec(const ompl::base::State *state, 
     Robot *robot;
     bool found;
     unsigned int k(0),j;
-    KthReal value;
+    double value;
 
     for (unsigned int u = 0; u < conf.size(); ++u) {
         robot = planner_->wkSpace()->getRobot(u);
@@ -263,7 +263,7 @@ void ompl::geometric::FOSRRT::armaVec2omplState(const arma::vec vector, ompl::ba
     Robot *robot;
     bool found;
     unsigned int k(0),j;
-    std::vector<KthReal> coords;
+    std::vector<double> coords;
     for (unsigned int u = 0; u < conf.size(); ++u) {
         robot = planner_->wkSpace()->getRobot(u);
         robConf = conf.at(u);

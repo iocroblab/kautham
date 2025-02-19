@@ -67,7 +67,7 @@ vector<KauthamODEobject> KauthamDEGoalSamplableRegion::smp2KauthamOpenDEState(Wo
 
 double KauthamDEGoalSamplableRegion::distanceGoal(const ob::State *st) const
 {
-    KthReal distance;
+    double distance;
     distance=0.0;
 
     if(!onlyend)

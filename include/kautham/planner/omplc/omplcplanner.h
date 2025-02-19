@@ -209,7 +209,7 @@ namespace Kautham {
         inline ob::StateSpacePtr getSpace(){return space;}
 		protected:
 		//Add protected data and functions
-        KthReal _planningTime;
+        double _planningTime;
 
         oc::SimpleSetupPtr ss;
         ob::StateSpacePtr space;

@@ -68,7 +68,7 @@ namespace Kautham {
     //set step discretization
     _stepsDiscretization.resize(_wkSpace->getNumRobControls());
 		char *str = new char[20];
-		KthReal step=0;
+		double step=0;
     for(unsigned i=0;i<_wkSpace->getNumRobControls();i++){
 			_stepsDiscretization[i] = 4;
       sprintf(str,"_Discr. Steps %d",i);
@@ -151,19 +151,19 @@ namespace Kautham {
 				_sceneCspace->removeChild(0);
 			}
 
-			KthReal cellside = 10.0;
+			double cellside = 10.0;
 
 			//draw cells
 			SoSeparator *gsep = new SoSeparator();
 			graph_traits<gridGraph>::vertex_iterator vi, vi_end;
-			KthReal minPot=100000000.0;
-			KthReal maxPot=-100000000.0;
+			double minPot=100000000.0;
+			double maxPot=-100000000.0;
 			for(tie(vi,vi_end)=vertices(*g); vi!=vi_end; ++vi)
 			{
 				if(getPotential(*vi)<minPot) minPot=getPotential(*vi);
 				if(getPotential(*vi)>maxPot) maxPot=getPotential(*vi);
 			}
-			KthReal rangePot = maxPot-minPot;
+			double rangePot = maxPot-minPot;
 			for(tie(vi,vi_end)=vertices(*g); vi!=vi_end; ++vi)
 			{
 				SoSeparator *cellsep = new SoSeparator();
@@ -172,9 +172,9 @@ namespace Kautham {
 				cellcube->depth =  1 + 2*cellside*(getPotential(*vi) - minPot)/rangePot;
 				cellcube->height = 0.99*cellside;
 
-				KthReal x=cellside*_stepsDiscretization[0]*locations[*vi]->getCoords()[0];
-				KthReal y=cellside*_stepsDiscretization[1]*locations[*vi]->getCoords()[1];
-				KthReal z=(cellcube->depth.getValue())/2;
+				double x=cellside*_stepsDiscretization[0]*locations[*vi]->getCoords()[0];
+				double y=cellside*_stepsDiscretization[1]*locations[*vi]->getCoords()[1];
+				double z=(cellcube->depth.getValue())/2;
 
 				SoTransform *cell_transf = new SoTransform;
 				SbVec3f centre;
@@ -186,9 +186,9 @@ namespace Kautham {
 				cell_color->diffuseColor.setValue(0.7,0.7,0.7);
 				if(getPotential(*vi)!=minPot)
 				{
-					KthReal red = (getPotential(*vi) - minPot)/rangePot;
-					KthReal green = 0.5;
-					KthReal blue = 1-red;
+					double red = (getPotential(*vi) - minPot)/rangePot;
+					double green = 0.5;
+					double blue = 1-red;
 					cell_color->diffuseColor.setValue(red,green,blue);
 				}
 				if(_solved)
@@ -249,9 +249,9 @@ namespace Kautham {
 					cellpathcube->depth =  1 + 2*cellside*(getPotential(*vi) - minPot)/rangePot;
 					cellpathcube->height = 0.99*cellside;
 
-					KthReal x=cellside*_stepsDiscretization[0]*_path[i]->getCoords()[0];
-					KthReal y=cellside*_stepsDiscretization[1]*_path[i]->getCoords()[1];
-					KthReal z=(cellpathcube->depth.getValue())/2;
+					double x=cellside*_stepsDiscretization[0]*_path[i]->getCoords()[0];
+					double y=cellside*_stepsDiscretization[1]*_path[i]->getCoords()[1];
+					double z=(cellpathcube->depth.getValue())/2;
 
 					SoTransform *cellpath_transf = new SoTransform;
 					SbVec3f centre;
@@ -273,10 +273,10 @@ namespace Kautham {
 			*/
 
 			//draw floor
-			KthReal xmin=0.0;
-			KthReal xmax=cellside*_stepsDiscretization[0];
-			KthReal ymin=0.0;
-			KthReal ymax=cellside*_stepsDiscretization[1];
+			double xmin=0.0;
+			double xmax=cellside*_stepsDiscretization[0];
+			double ymin=0.0;
+			double ymax=cellside*_stepsDiscretization[1];
 
 			SoSeparator *floorsep = new SoSeparator();
 			SoCube *cs = new SoCube();
@@ -353,10 +353,10 @@ namespace Kautham {
     drawCspace();
    }
 		
-  void  gridPlanner::loadgrid(vector<KthReal> &coords, unsigned coord_i)
+  void  gridPlanner::loadgrid(vector<double> &coords, unsigned coord_i)
 	{
-			KthReal delta = 1.0/_stepsDiscretization[coord_i];
-			KthReal offset = delta/2;
+			double delta = 1.0/_stepsDiscretization[coord_i];
+			double offset = delta/2;
 			//for coordinate coord_i, loop for all discretization steps 
 			for(int j=0; j<_stepsDiscretization[coord_i]; j++) 
 			{
@@ -475,7 +475,7 @@ namespace Kautham {
 		void  gridPlanner::discretizeCspace()
 		{
 			//create graph vertices, i.e. sample and collision-check at grid cell centers
-      vector<KthReal> coords(_wkSpace->getNumRobControls());
+      vector<double> coords(_wkSpace->getNumRobControls());
       loadgrid(coords, _wkSpace->getNumRobControls()-1);
       //connect neighbor grid cells
       vector<int> index(_wkSpace->getNumRobControls());

@@ -28,7 +28,7 @@
 
 namespace Kautham{
 
-  bool State::setRob(vector<KthReal>& robcoords) {
+  bool State::setRob(vector<double>& robcoords) {
       try {
           first = new Sample(robcoords.size());
           first->setCoords(robcoords);
@@ -49,7 +49,7 @@ namespace Kautham{
   }
 
 
-  bool State::setObs(vector<KthReal>& obscoords) {
+  bool State::setObs(vector<double>& obscoords) {
       try {
           second = new Sample(obscoords.size());
           second->setCoords(obscoords);

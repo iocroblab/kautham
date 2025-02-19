@@ -104,8 +104,6 @@
 #define M_PI 3.1415926535897932384626433832795
 #endif
 
-class ompl::geometric::SimpleSetup;
-
 using namespace std;
 using namespace pugi;
 
@@ -150,8 +148,8 @@ namespace Kautham {
         bool                    createCSpace();
         bool                    createCSpaceFromFile(pugi::xml_document *doc);
         bool                    tryToSolve();
-        bool                    setCurrentRobControls(vector<KthReal> &val);
-        bool                    setCurrentObsControls(vector<KthReal> &val);
+        bool                    setCurrentRobControls(vector<double> &val);
+        bool                    setCurrentObsControls(vector<double> &val);
         //! Returns WSpace
         WorkSpace*		        wSpace();
         //! Returns CSpace
@@ -174,15 +172,15 @@ namespace Kautham {
         inline Sampler*         getSampler(){return _sampler;}
         inline void             setSampler(Sampler* smp){_sampler = smp;}
         inline int              getDimension(){return _wspace->getNumRobControls();}
-        inline vector<KthReal>& getCurrentRobControls(){return _currentRobControls;}
-        inline vector<KthReal>& getCurrentObsControls(){return _currentObsControls;}
+        inline vector<double>& getCurrentRobControls(){return _currentRobControls;}
+        inline vector<double>& getCurrentObsControls(){return _currentObsControls;}
         inline string           getFilePath(){return _filePath;}
         bool                    inheritSolution();
         bool                    setupFromFile(string xml_doc, vector <string> def_path = vector <string>(), bool useBBOX = false);
         bool                    setupFromFile(istream *xml_inputfile, vector <string> def_path = vector <string>(), bool useBBOX = false);
         bool                    setupFromFile(pugi::xml_document *doc, bool useBBOX, progress_struct *progress = NULL);
-        bool addRobot2WSpace(string robFile, KthReal scale, vector<KthReal> home,vector< vector<KthReal> > limits);
-        bool addObstacle2WSpace(string robFile, KthReal scale, vector<KthReal> home);
+        bool addRobot2WSpace(string robFile, double scale, vector<double> home,vector< vector<double> > limits);
+        bool addObstacle2WSpace(string robFile, double scale, vector<double> home);
 
 
         //! This method saves the information of the problem's planner .
@@ -224,6 +222,33 @@ namespace Kautham {
      * \return true if controls could be loaded to the workspace
      */
         bool setDefaultRobotControls();
+
+        /*!
+     * \brief From all degrees of freedom of all robots, returns which joints are controlled.
+     * \return Vector with flag to true if that joint is controlled, false if not.
+     */
+         std::vector<bool> getWhichAreControlledJoints();
+
+        /*!
+     * \brief Obtain the requested index joints based on the input request.
+     * \param _only_controlled Vector of controlled joints flags (URDF order fo each robot)
+     * \return Vector with the requested index joint.
+     */
+         std::vector<bool> getRequestedIndexJoints(const bool _only_controlled);
+       
+        /*!
+     * \brief From all degrees of freedom of all robots, returns the name from which joints are controlled.
+     * \param _controlled_joints Vector of controlled joints flags (URDF order fo each robot)
+     * \return Vector with the controlled joint names.
+     */
+         std::vector<std::string> getRequestedJointNames(std::vector<bool> _controlled_joints);
+     
+        /*!
+     * \brief From all degrees of freedom of all robots, returns the velocity from which joints are controlled.
+     * \param _controlled_joints Vector of controlled joints flags (URDF order fo each robot)
+     * \return Vector with the controlled joint velocities.
+     */
+      std::vector<double> getRequestedMaxJointVelocities(std::vector<bool> _controlled_joints);
 
         /*!
      * \brief loads the obstacle controls file of the problem file,
@@ -302,8 +327,8 @@ namespace Kautham {
         CONFIGTYPE              _problemType;
         Sampler*                _sampler;
         Planner*                _planner;
-        vector<KthReal>         _currentRobControls;
-        vector<KthReal>         _currentObsControls;
+        vector<double>         _currentRobControls;
+        vector<double>         _currentObsControls;
         string                  _filePath;
         vector<string>          _robotfilenames;
         vector<string>          _obstaclesfilenames;
@@ -356,6 +381,8 @@ namespace Kautham {
 
         //! Counts the number of links to load in a problem
         int countLinks2Load(xml_document *doc);
+
+      bool verifyConstraintXMLNodeFormat(pugi::xml_node& constraint);
     };
 
     /** @}   end of Doxygen module "Problem" */

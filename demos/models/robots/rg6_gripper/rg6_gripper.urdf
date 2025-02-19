@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<robot name="rg6">
+
+<material name="silver">
+  <color rgba="0.700 0.700 0.700 1.000"/>
+</material>
+
+<link name="rg6_gripper_base_link">
+  <inertial>
+    <origin xyz="-0.00030179080386336256 -0.00047670368310389217 0.020678912231015475" rpy="0 0 0"/>
+    <mass value="0.7592453895368185"/>
+    <inertia ixx="0.000452" iyy="0.000705" izz="0.000689" ixy="-1e-06" iyz="-5e-06" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="g_main">
+  <inertial>
+    <origin xyz="0.031843851343412694 -6.562152034605188e-05 0.0402561266087614" rpy="0 0 0"/>
+    <mass value="2.1746665575894286"/>
+    <inertia ixx="0.003297" iyy="0.00361" izz="0.00105" ixy="-1e-06" iyz="5e-06" ixz="3e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.031849 -1e-06 -0.04953" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/g_main.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.031849 -1e-06 -0.04953" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/g_main.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="l_out">
+  <inertial>
+    <origin xyz="0.010442859349590227 -0.012799625869821 0.012792983853972317" rpy="0 0 0"/>
+    <mass value="0.24195762212403002"/>
+    <inertia ixx="0.00011" iyy="0.00016" izz="7.6e-05" ixy="0.0" iyz="0.0" ixz="-6.6e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.023851 -0.012801 -0.13453" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/l_out.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.023851 -0.012801 -0.13453" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/l_out.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="r_out">
+  <inertial>
+    <origin xyz="-0.010522665986501832 -0.012799489922871823 0.012809246687502496" rpy="0 0 0"/>
+    <mass value="0.24195762035711757"/>
+    <inertia ixx="0.00011" iyy="0.00016" izz="7.6e-05" ixy="0.0" iyz="-0.0" ixz="6.5e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.023749 -0.012801 -0.13453" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/r_out.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.023749 -0.012801 -0.13453" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/r_out.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="l_tip">
+  <inertial>
+    <origin xyz="-0.01379426979129901 0.012430443916766657 0.03303967984911002" rpy="0 0 0"/>
+    <mass value="0.13426652162693567"/>
+    <inertia ixx="5.6e-05" iyy="5.9e-05" izz="1.3e-05" ixy="-0.0" iyz="-0.0" ixz="1.6e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.071235 0.012499 -0.19895" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/l_tip.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.071235 0.012499 -0.19895" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/l_tip.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="r_tip">
+  <inertial>
+    <origin xyz="0.01379460286375201 0.012599371946431372 0.03303919214417522" rpy="0 0 0"/>
+    <mass value="0.13426652162693592"/>
+    <inertia ixx="5.6e-05" iyy="5.9e-05" izz="1.3e-05" ixy="-0.0" iyz="-0.0" ixz="-1.6e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.071133 0.012499 -0.199024" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/r_tip.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.071133 0.012499 -0.199024" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/r_tip.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="l_inner">
+  <inertial>
+    <origin xyz="0.021220873634115123 -0.00019955790008889003 0.02884270588361451" rpy="0 0 0"/>
+    <mass value="0.0502402669834145"/>
+    <inertia ixx="3.4e-05" iyy="4.6e-05" izz="2e-05" ixy="-0.0" iyz="-0.0" ixz="-2.2e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.010551 -0.000101 -0.15763" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/l_inner.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.010551 -0.000101 -0.15763" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/l_inner.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="r_inner">
+  <inertial>
+    <origin xyz="-0.021275767636285234 -0.00019955790008339296 0.02887567083082221" rpy="0 0 0"/>
+    <mass value="0.05024026698344974"/>
+    <inertia ixx="3.4e-05" iyy="4.6e-05" izz="2e-05" ixy="-0.0" iyz="0.0" ixz="2.2e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.010449 -0.000101 -0.15763" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/r_inner.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.010449 -0.000101 -0.15763" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="rg6_gripper/meshes/r_inner.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="g_main" type="fixed">
+  <origin xyz="-0.031849 1e-06 0.04953" rpy="0 0 0"/>
+  <parent link="rg6_gripper_base_link"/>
+  <child link="g_main"/>
+
+</joint>
+
+<joint name="l_out" type="revolute">
+  <origin xyz="0.0557 0.0128 0.085" rpy="0 0 0"/>
+  <parent link="g_main"/>
+  <child link="l_out"/>
+  <axis xyz="-0.0 1.0 0.0"/>
+  <limit upper="0.610865" lower="-0.523599" effort="100" velocity="100"/>
+</joint>
+
+<joint name="r_out" type="revolute">
+  <origin xyz="0.0081 0.0128 0.085" rpy="0 0 0"/>
+  <parent link="g_main"/>
+  <child link="r_out"/>
+  <axis xyz="-0.0 1.0 0.0"/>
+  <limit upper="0.523599" lower="-0.610865" effort="100" velocity="100"/>
+  <mimic joint="l_out" multiplier="-1"/>
+</joint>
+
+<joint name="l_tip" type="revolute">
+  <origin xyz="0.047384 -0.0253 0.06442" rpy="0 0 0"/>
+  <parent link="l_out"/>
+  <child link="l_tip"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+  <limit upper="0.610865" lower="-0.523599" effort="100" velocity="100"/>
+  <mimic joint="l_out" multiplier="1"/>
+</joint>
+
+<joint name="r_tip" type="revolute">
+  <origin xyz="-0.047384 -0.0253 0.064494" rpy="0 0 0"/>
+  <parent link="r_out"/>
+  <child link="r_tip"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+  <limit upper="0.523599" lower="-0.610865" effort="100" velocity="100"/>
+  <mimic joint="l_out" multiplier="-1"/>
+</joint>
+
+<joint name="l_passive" type="revolute">
+  <origin xyz="0.0424 0.0001 0.1081" rpy="0 0 0"/>
+  <parent link="g_main"/>
+  <child link="l_inner"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+  <limit upper="0.523599" lower="-0.610865" effort="100" velocity="100"/>
+  <mimic joint="l_out" multiplier="-1"/>
+</joint>
+
+<joint name="r_passive" type="revolute">
+  <origin xyz="0.0214 0.0001 0.1081" rpy="0 0 0"/>
+  <parent link="g_main"/>
+  <child link="r_inner"/>
+  <axis xyz="-0.0 1.0 -0.0"/>
+  <limit upper="0.523599" lower="-0.610865" effort="100" velocity="100"/>
+  <mimic joint="l_out" multiplier="-1"/>
+</joint>
+
+<link name="hand_tcp" />
+<joint name="hand_tcp_joint" type="fixed">
+  <origin xyz="0.036 0 0.21" rpy="0 0 0" />
+  <parent link="g_main" />
+  <child link="hand_tcp" />
+  <axis xyz="-0.0 1.0 -0.0"/>
+</joint>
+
+</robot>

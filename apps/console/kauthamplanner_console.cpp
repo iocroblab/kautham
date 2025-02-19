@@ -242,13 +242,13 @@ int main(int argc, char* argv[]){
                 cout << "The problem has NOT been solved successfully.\n";
 
             //TESTING THE SETTING OF A NEW QUERY
-            //kauthamshell::setQuery(vector<KthReal> init, vector<KthReal> goal)
+            //kauthamshell::setQuery(vector<double> init, vector<double> goal)
             cout << "\n TESTING THE SETTING OF A NEW QUERY.\n";
-            vector<KthReal> init;
+            vector<double> init;
             init.resize(2);
             init[0] = 0.3;
             init[1] = 0.3;
-            vector<KthReal> goal;
+            vector<double> goal;
             goal.resize(2);
             goal[0] = 0.7;
             goal[1] = 0.7;
@@ -260,7 +260,7 @@ int main(int argc, char* argv[]){
 
 
             //TESTING THE SETTING OF NEW CONTROLS FROM FILE
-            //bool setRobControls(istream* inputfile, vector<KthReal> init, vector<KthReal> goal);
+            //bool setRobControls(istream* inputfile, vector<double> init, vector<double> goal);
             cout << "\n TESTING THE CHANGE OF ROBOT CONTROLS WITH A NEW FILE.\n";
             string new_control_file = string(argv[2])+"controls/2DRR/2DRR_2PMD.cntr";
             ifstream inputfile;

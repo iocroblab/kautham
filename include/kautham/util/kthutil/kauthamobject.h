@@ -38,7 +38,7 @@ namespace Kautham{
       virtual bool    setParameters()=0;
       inline          KauthamObject(string name){_guiName = name;}
       inline string   getGuiName() const {return _guiName;}
-      inline void     addParameter(string key, KthReal value){_parameters[key] = value;}
+      inline void     addParameter(string key, double value){_parameters[key] = value;}
       inline bool     removeParameter(string key){
 			HASH_S_K::iterator it = _parameters.find(key);
 			if(it != _parameters.end())	{
@@ -46,11 +46,11 @@ namespace Kautham{
 				return true;
 			}
 			else return false;}
-      KthReal         getParameter(string key);
+      double         getParameter(string key);
 
       string          getParametersAsString();
 
-      bool            setParameter(string key, KthReal value);
+      bool            setParameter(string key, double value);
 
       bool            setParametersFromString(const string& par);
   

@@ -141,7 +141,7 @@ namespace Kautham {
 
     void ControlWidget::sliderChanged(int index) {
         if (((int)(values[index]*1000.0)) != ((QSlider *)sliders[index])->value()) {
-            values[index] = (KthReal)((QSlider *)sliders[index])->value()/1000.0;
+            values[index] = (double)((QSlider *)sliders[index])->value()/1000.0;
             ((QLineEdit *)lineEdits[index])->setText(QString::number(values[index],'f',3));
 
             if (isRobWidget) {
@@ -153,7 +153,7 @@ namespace Kautham {
             Sample *sample = new Sample(values.size());
             sample->setCoords(values);
 
-            vector <KthReal> params;
+            vector <double> params;
             if (isRobWidget) {
                 prob->wSpace()->moveRobotsTo(sample);
                 for (uint i = 0; i < DOFWids.size(); ++i) {
@@ -178,7 +178,7 @@ namespace Kautham {
 
     void ControlWidget::lineEditChanged(int index) {
         bool ok;
-        KthReal value = (((QLineEdit *)lineEdits[index])->text()).toFloat(&ok);
+        double value = (((QLineEdit *)lineEdits[index])->text()).toFloat(&ok);
 
         if (ok) {
             if (value > 1.0) {
@@ -202,7 +202,7 @@ namespace Kautham {
             Sample *sample = new Sample(values.size());
             sample->setCoords(values);
 
-            vector <KthReal> params;
+            vector <double> params;
             if (isRobWidget) {
                 prob->wSpace()->moveRobotsTo(sample);
                 for (uint i = 0; i < DOFWids.size(); ++i) {
@@ -265,7 +265,7 @@ namespace Kautham {
     }
 
 
-    void ControlWidget::setValues(vector<KthReal> coords){
+    void ControlWidget::setValues(vector<double> coords){
         for (uint i = 0; i < coords.size(); ++i) {
             values[i] = coords[i];
 
@@ -283,7 +283,7 @@ namespace Kautham {
         Sample *sample = new Sample(values.size());
         sample->setCoords(values);
 
-        vector <KthReal> params;
+        vector <double> params;
         if (isRobWidget) {
             prob->wSpace()->moveRobotsTo(sample);
             for (uint i = 0; i < DOFWids.size(); ++i) {

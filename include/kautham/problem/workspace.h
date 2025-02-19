@@ -46,10 +46,10 @@ namespace Kautham{
   public:
       WorkSpace();
       virtual ~WorkSpace() {}
-      KthReal               distanceCheck( Conf* conf, unsigned int robot ) ;
+      double               distanceCheck( Conf* conf, unsigned int robot ) ;
       bool                  collisionCheck( Conf* conf, unsigned int robot ) ;
-      KthReal               distanceBetweenSamples(Sample& smp1, Sample& smp2,Kautham::SPACETYPE spc);
-      vector<KthReal>      *distanceCheck(Sample* sample) ;
+      double               distanceBetweenSamples(Sample& smp1, Sample& smp2,Kautham::SPACETYPE spc);
+      vector<double>      *distanceCheck(Sample* sample) ;
       double                cumDistanceCheck(Sample *sample);
       bool                  collisionCheck(Sample* sample , string *message = NULL, std::pair<std::pair<int, string>, std::pair<int, int> > *colliding_elements = NULL);
       void                  moveRobotsTo(Sample* sample);
@@ -108,7 +108,7 @@ namespace Kautham{
       virtual void          updateScene() = 0;
       vector<Robot*>        robots;
       map<string, Robot*> obstacles;
-      vector<KthReal>       distVec;
+      vector<double>       distVec;
       //! This attribute groups the configurations of the robots
       vector<RobConf*>      _robConfigMap;
       vector<RobConf*>      _obsConfigMap;

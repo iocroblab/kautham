@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <asset>
+    <contributor>
+      <author>Blender User</author>
+      <authoring_tool>Blender 3.3.6 commit date:2023-04-17, commit time:14:03, hash:948f8298b982</authoring_tool>
+    </contributor>
+    <created>2023-04-24T15:26:48</created>
+    <modified>2023-04-24T15:26:48</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_effects>
+    <effect id="color_material_2624-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <diffuse>
+              <color sid="diffuse">0.25 0.16 0.08 1</color>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="ior">1.45</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="front-202_png_018-effect">
+      <profile_COMMON>
+        <newparam sid="front-202_png-surface">
+          <surface type="2D">
+            <init_from>front-202_png</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="front-202_png-sampler">
+          <sampler2D>
+            <source>front-202_png-surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <diffuse>
+              <texture texture="front-202_png-sampler" texcoord="UVMap"/>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="ior">1.45</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="color_material_2625-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <diffuse>
+              <color sid="diffuse">0.25 0.16 0.08 1</color>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="ior">1.45</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="color_material_2626-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <diffuse>
+              <color sid="diffuse">0.25 0.16 0.08 1</color>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="ior">1.45</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="color_material_2627-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <diffuse>
+              <color sid="diffuse">0.25 0.16 0.08 1</color>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="ior">1.45</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="aruco-202_png_018-effect">
+      <profile_COMMON>
+        <newparam sid="aruco-202_png-surface">
+          <surface type="2D">
+            <init_from>aruco-202_png</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="aruco-202_png-sampler">
+          <sampler2D>
+            <source>aruco-202_png-surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <diffuse>
+              <texture texture="aruco-202_png-sampler" texcoord="UVMap"/>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="ior">1.45</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_images>
+    <image id="aruco-202_png" name="aruco-202_png">
+      <init_from>aruco-202.png</init_from>
+    </image>
+    <image id="front-202_png" name="front-202_png">
+      <init_from>front-202.png</init_from>
+    </image>
+  </library_images>
+  <library_materials>
+    <material id="color_material_2624-material" name="color_material.2624">
+      <instance_effect url="#color_material_2624-effect"/>
+    </material>
+    <material id="front-202_png_018-material" name="front-202.png.018">
+      <instance_effect url="#front-202_png_018-effect"/>
+    </material>
+    <material id="color_material_2625-material" name="color_material.2625">
+      <instance_effect url="#color_material_2625-effect"/>
+    </material>
+    <material id="color_material_2626-material" name="color_material.2626">
+      <instance_effect url="#color_material_2626-effect"/>
+    </material>
+    <material id="color_material_2627-material" name="color_material.2627">
+      <instance_effect url="#color_material_2627-effect"/>
+    </material>
+    <material id="aruco-202_png_018-material" name="aruco-202.png.018">
+      <instance_effect url="#aruco-202_png_018-effect"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Cube_660-mesh" name="Cube.660">
+      <mesh>
+        <source id="Cube_660-mesh-positions">
+          <float_array id="Cube_660-mesh-positions-array" count="24">-0.01499998 -0.01499998 -0.01999998 -0.01499998 -0.01499998 0.01999998 -0.01499998 0.01499998 -0.01999998 -0.01499998 0.01499998 0.01999998 0.01499998 -0.01499998 -0.01999998 0.01499998 -0.01499998 0.01999998 0.01499998 0.01499998 -0.01999998 0.01499998 0.01499998 0.01999998</float_array>
+          <technique_common>
+            <accessor source="#Cube_660-mesh-positions-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Cube_660-mesh-normals">
+          <float_array id="Cube_660-mesh-normals-array" count="18">-1 0 0 0 1 0 1 0 0 0 -1 0 0 0 -1 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Cube_660-mesh-normals-array" count="6" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Cube_660-mesh-map-0">
+          <float_array id="Cube_660-mesh-map-0-array" count="72">0.625 0 0.375 0.25 0.375 0 0.9996474 1 1.28921e-7 3.00815e-7 0.9996474 0 0.625 0.5 0.375 0.75 0.375 0.5 0.625 0.75 0.375 1 0.375 0.75 0.375 0.5 0.125 0.75 0.125 0.5 0.9999998 0 0 0.9999996 0 0 0.625 0 0.625 0.25 0.375 0.25 0.9996474 1 0 1 1.28921e-7 3.00815e-7 0.625 0.5 0.625 0.75 0.375 0.75 0.625 0.75 0.625 1 0.375 1 0.375 0.5 0.375 0.75 0.125 0.75 0.9999998 0 0.9999997 1 0 0.9999996</float_array>
+          <technique_common>
+            <accessor source="#Cube_660-mesh-map-0-array" count="36" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Cube_660-mesh-vertices">
+          <input semantic="POSITION" source="#Cube_660-mesh-positions"/>
+        </vertices>
+        <triangles material="color_material_2624-material" count="2">
+          <input semantic="VERTEX" source="#Cube_660-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Cube_660-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Cube_660-mesh-map-0" offset="2" set="0"/>
+          <p>1 0 0 2 0 1 0 0 2 1 0 18 3 0 19 2 0 20</p>
+        </triangles>
+        <triangles material="front-202_png_018-material" count="2">
+          <input semantic="VERTEX" source="#Cube_660-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Cube_660-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Cube_660-mesh-map-0" offset="2" set="0"/>
+          <p>3 1 3 6 1 4 2 1 5 3 1 21 7 1 22 6 1 23</p>
+        </triangles>
+        <triangles material="color_material_2625-material" count="2">
+          <input semantic="VERTEX" source="#Cube_660-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Cube_660-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Cube_660-mesh-map-0" offset="2" set="0"/>
+          <p>7 2 6 4 2 7 6 2 8 7 2 24 5 2 25 4 2 26</p>
+        </triangles>
+        <triangles material="color_material_2626-material" count="2">
+          <input semantic="VERTEX" source="#Cube_660-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Cube_660-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Cube_660-mesh-map-0" offset="2" set="0"/>
+          <p>5 3 9 0 3 10 4 3 11 5 3 27 1 3 28 0 3 29</p>
+        </triangles>
+        <triangles material="color_material_2627-material" count="2">
+          <input semantic="VERTEX" source="#Cube_660-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Cube_660-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Cube_660-mesh-map-0" offset="2" set="0"/>
+          <p>6 4 12 0 4 13 2 4 14 6 4 30 4 4 31 0 4 32</p>
+        </triangles>
+        <triangles material="aruco-202_png_018-material" count="2">
+          <input semantic="VERTEX" source="#Cube_660-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Cube_660-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Cube_660-mesh-map-0" offset="2" set="0"/>
+          <p>3 5 15 5 5 16 7 5 17 3 5 33 1 5 34 5 5 35</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene_657" name="Scene.657">
+      <node id="Cube_655" name="Cube.655" type="NODE">
+        <matrix sid="transform">-1 -9.26574e-5 0 0 9.26574e-5 -1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <instance_geometry url="#Cube_660-mesh" name="Cube.655">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="color_material_2624-material" target="#color_material_2624-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="front-202_png_018-material" target="#front-202_png_018-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="color_material_2625-material" target="#color_material_2625-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="color_material_2626-material" target="#color_material_2626-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="color_material_2627-material" target="#color_material_2627-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="aruco-202_png_018-material" target="#aruco-202_png_018-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene_657"/>
+  </scene>
+</COLLADA>

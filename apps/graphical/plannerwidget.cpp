@@ -502,17 +502,17 @@ namespace Kautham {
                             robConf != sample.getMappedConf().end(); ++robConf) {
                             if(_planner->wkSpace()->getRobot(k)->isSE3Enabled())
                             {
-                                for (std::vector<float>::iterator coord(robConf->getSE3().getCoordinates().begin());
+                                for (std::vector<double>::iterator coord(robConf->getSE3().getCoordinates().begin());
                                     coord != robConf->getSE3().getCoordinates().end(); ++coord) {
                                     sstr << *coord << " ";
                                 }
                             }
                             if(_planner->wkSpace()->getRobot(k)->getNumJoints()>0)
                             {
-                                for (std::vector<float>::iterator coord(robConf->getRn().getCoordinates().begin());
+                                for (std::vector<double>::iterator coord(robConf->getRn().getCoordinates().begin());
                                      coord != robConf->getRn().getCoordinates().end(); ++coord) {
                                     sstr << *coord;
-                                    std::vector<float>::iterator it1(coord);
+                                    std::vector<double>::iterator it1(coord);
                                     it1++;
                                     std::vector<RobConf>::iterator it2(robConf);
                                     it2++;
@@ -622,9 +622,9 @@ namespace Kautham {
         {
             //std::cout << " robot "<< j << std::endl;
             RobConf *Robrcj = new RobConf; //Configuration for robot j
-            vector<KthReal> se3coords; //SE3 part
+            vector<double> se3coords; //SE3 part
             se3coords.resize(7);
-            std::vector<KthReal> Rn; //Rn part
+            std::vector<double> Rn; //Rn part
             //Mapped configuration: load the SE3 part, if ther is any
             if (_planner->wkSpace()->getRobot(j)->isSE3Enabled())
             {
@@ -733,8 +733,8 @@ namespace Kautham {
                                          string objectname = it_initstate->attribute("object").as_string();
                                          string objpose = it_initstate->child_value();
                                          std::stringstream objposestream(objpose);
-                                         float pos[3];
-                                         float ori[4];
+                                         double pos[3];
+                                         double ori[4];
                                          int k=0;
                                          for(; k<3; k++) objposestream >> pos[k];
                                          for(int j=0; k<7; j++,k++) objposestream >> ori[j];

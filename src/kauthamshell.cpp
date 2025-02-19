@@ -27,6 +27,7 @@
 
 #include <kautham/kauthamshell.h>
 #include <kautham/planner/omplg/omplplanner.h>
+#include <kautham/planner/omplconstr/omplconstrplanner.hpp>
 #include <kautham/util/kthutil/kauthamexception.h>
 #include <kautham/problem/problem.h>
 #include <kautham/util/libkin/ivkinyumi.h>
@@ -34,6 +35,7 @@
 
 
 namespace ob = ompl::base;
+namespace og = ompl::geometric;
 
 namespace Kautham {
     kauthamshell::kauthamshell() {
@@ -82,7 +84,6 @@ namespace Kautham {
 
     bool kauthamshell::openProblem(string problemfilename, vector <string> def_path) {
         try {
-            std::cout << "Kautham is opening a problem file: " << problemfilename << endl;
             if (problemOpened()) closeProblem();
             Problem *const problem = new Problem();
             memPtr_ = problem;
@@ -108,7 +109,7 @@ namespace Kautham {
 
 
 
-    bool kauthamshell::checkCollision(vector<float> smpcoords, bool *collisionFree, std::string *msg, std::pair< std::pair<int, string> , std::pair<int,int> > *colliding_elements) {
+    bool kauthamshell::checkCollision(vector<double> smpcoords, bool *collisionFree, std::string *msg, std::pair< std::pair<int, string> , std::pair<int,int> > *colliding_elements) {
         Sample *smp = NULL;
 
         try {
@@ -155,7 +156,7 @@ namespace Kautham {
 
 
 
-    double kauthamshell::cumDistCheck(std::vector<float> smpcoords) {
+    double kauthamshell::cumDistCheck(std::vector<double> smpcoords) {
         Sample *smp = NULL;
         double value=0.;
 
@@ -191,7 +192,7 @@ namespace Kautham {
 
     //Sets the robot configuration according to the given sample coordinates (control)
     //The configuration is returned in the config parameter
-    bool kauthamshell::setRobotsConfig(vector<float> smpcoords, std::vector<RobConf> &config) {
+    bool kauthamshell::setRobotsConfig(vector<double> smpcoords, std::vector<RobConf> &config) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -219,7 +220,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::setRobotsConfig(vector<float> smpcoords) {
+    bool kauthamshell::setRobotsConfig(vector<double> smpcoords) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -273,7 +274,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setObstaclesConfig(vector<float> smpcoords) {
+    bool kauthamshell::setObstaclesConfig(vector<double> smpcoords) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -300,7 +301,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setQuery(vector<float> init, vector<float> goal) {
+    bool kauthamshell::setQuery(vector<double> init, vector<double> goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -356,7 +357,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setInit(vector<float> init) {
+    bool kauthamshell::setInit(vector<double> init) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -396,7 +397,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setGoal(vector<float> goal) {
+    bool kauthamshell::setGoal(vector<double> goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -436,7 +437,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setInitObs(vector<float> initObs) {
+    bool kauthamshell::setInitObs(vector<double> initObs) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -498,7 +499,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setRobControls(istream *inputfile, vector<float> init, vector<float> goal) {
+    bool kauthamshell::setRobControls(istream *inputfile, vector<double> init, vector<double> goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -556,7 +557,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setRobControls(string controlsFile, vector<float> init, vector<float> goal) {
+    bool kauthamshell::setRobControls(string controlsFile, vector<double> init, vector<double> goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -590,7 +591,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setDefaultRobControls(vector<float> init, vector<float> goal) {
+    bool kauthamshell::setDefaultRobControls(vector<double> init, vector<double> goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -614,7 +615,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setObsControls(istream *inputfile, vector<float> initObs) {
+    bool kauthamshell::setObsControls(istream *inputfile, vector<double> initObs) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -638,7 +639,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setObsControls(string controlsFile, vector<float> initObs) {
+    bool kauthamshell::setObsControls(string controlsFile, vector<double> initObs) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -776,7 +777,7 @@ namespace Kautham {
 
             Problem *const problem = (Problem*)memPtr_;
             if (!problem->setFixedObstacleControls()) return false;
-            vector<KthReal> coords;
+            vector<double> coords;
             coords.resize(0);
             return (setInitObs(coords));
         } catch (const KthExcp& excp) {
@@ -983,7 +984,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::connect(vector<float> smpcoords1, vector<float> smpcoords2) {
+    bool kauthamshell::connect(vector<double> smpcoords1, vector<double> smpcoords2) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -1129,7 +1130,7 @@ namespace Kautham {
                 cout<<"IOCPLANNER"<<endl;
                 if (problem->getPlanner()->solveAndInherit()) {
                   //in planner.h: vector<Sample*>* getPath();
-                  //in sample.h: std::vector<KthReal>& getCoords();
+                  //in sample.h: std::vector<double>& getCoords();
                   vector<Sample*>* p = problem->getPlanner()->getPath();
                   //cout<<"p->size() = "<<p->size()<<endl;
                   for(unsigned int i=0; i<p->size(); i++)
@@ -1173,7 +1174,10 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::getPath(std::vector<std::vector<double>> &path) {
+    bool kauthamshell::getPath(std::vector<std::vector<double>> &path, std::vector<std::string> &requested_joint_names, bool _only_controlled) {
+        
+        path.clear();   // Make sure that your return only the solved path!
+        
         try {
             if (!problemOpened()) {
                 std::cout << "The problem is not opened" << std::endl;
@@ -1183,19 +1187,135 @@ namespace Kautham {
             Problem* const problem = static_cast<Problem*>(memPtr_);
             auto plannerFamily = problem->getPlanner()->getFamily();
 
+            std::vector<bool> requested_joints = problem->getRequestedIndexJoints(_only_controlled);
+
+            requested_joint_names = problem->getRequestedJointNames(requested_joints);
+
             if (plannerFamily == OMPLPLANNER) {
                 std::cout << "OMPLPLANNER" << std::endl;
-                if (problem->getPlanner()->solveAndInherit()) {
-                    auto omplPlanner = static_cast<omplplanner::omplPlanner*>(problem->getPlanner());
-                    auto solutionPath = omplPlanner->SimpleSetup()->getSolutionPath();
-                    const ompl::base::SpaceInformationPtr &si = solutionPath.getSpaceInformation();
+                if (problem->getPlanner()->isSolved()) {
+                    std::vector<Sample*>* p = problem->getPlanner()->getPath();
+                    
+                    std::vector<double> waypoint;
+                    for(unsigned int i=0; i<p->size(); i++)
+                    {
+                        waypoint.clear();
+                        std::vector<RobConf> rc = p->at(i)->getMappedConf();
+                        for(unsigned int j=0; j<rc.size();j++)
+                        {
+                            if (!_only_controlled) {
+                                waypoint.push_back(rc[j].getSE3().getPos()[0]);
+                                waypoint.push_back(rc[j].getSE3().getPos()[1]);
+                                waypoint.push_back(rc[j].getSE3().getPos()[2]);
+                                waypoint.push_back(rc[j].getSE3().getOrient()[0]);
+                                waypoint.push_back(rc[j].getSE3().getOrient()[1]);
+                                waypoint.push_back(rc[j].getSE3().getOrient()[2]);
+                                waypoint.push_back(rc[j].getSE3().getOrient()[3]);
+                            }
+
+                            for(unsigned int k=0; k<rc[j].getRn().getCoordinates().size();k++)
+                            {
+                                if (requested_joints[k]) {
+                                    waypoint.push_back(rc[j].getRn().getCoordinates()[k]);
+                                }
+                            }
+                        }
+                        path.push_back(waypoint);
+                    }
+                    return true;
+                }
+            }
+
+            // if (plannerFamily == OMPLPLANNER && _only_controlled) {
+            //     std::cout << "OMPLPLANNER" << std::endl;
+            //     if (problem->getPlanner()->isSolved()) {
+            //         auto omplPlanner = static_cast<omplplanner::omplPlanner*>(problem->getPlanner());
+            //         auto solutionPath = omplPlanner->SimpleSetup()->getSolutionPath();                   
+            //         const ompl::base::SpaceInformationPtr &si = solutionPath.getSpaceInformation();
+
+            //         const ompl::base::StateSpace *space(si->getStateSpace().get());
+            //         std::vector<double> state_data;
+            //         std::vector<double> requested_data;
+            //         path.clear();
+            //         for (const auto* state : solutionPath.getStates()) {
+            //             space->copyToReals(state_data, state);
+            //             requested_data.clear();
+            //             for (uint s = 0; s < state_data.size(); s++) {
+            //                 if (requested_joints[s]) {
+            //                     requested_data.push_back(state_data[s]);
+            //                 }
+            //             }
+            //             path.push_back(requested_data);
+            //         }
+            //         return true;
+            //     }
+            // }
+
+            else if (plannerFamily == OMPLCONSTRPLANNER) {
+                std::cout << "OMPLCONSTRPLANNER" << std::endl;
+                if (problem->getPlanner()->isSolved()) {
+                    auto omplConstraintPlanner = static_cast<omplconstrplanner::omplConstraintPlanner*>(problem->getPlanner());
+                    auto solution_path = omplConstraintPlanner->ProblemDefinition()->getSolutionPath();
+                    
+                    std::vector<size_t> index_mapping = omplConstraintPlanner->getSpaceIndexMapping();
+
+                    std::cout << "Index mapping: ";
+                    for (size_t index : index_mapping) {
+                        std::cout << index << " ";
+                    }
+                    std::cout << std::endl;
+
+                    const ompl::base::SpaceInformationPtr &si = solution_path->getSpaceInformation();
 
                     const ompl::base::StateSpace *space(si->getStateSpace().get());
                     std::vector<double> state_data;
+                    std::vector<double> reordered_data;
+                    std::vector<double> requested_data;
                     path.clear();
-                    for (const auto* state : solutionPath.getStates()) {
-                        space->copyToReals(state_data, state);
-                        path.push_back(state_data);
+
+                    auto current_rob = problem->wSpace()->getRobot(0);
+                    for (const auto* state : solution_path->as<og::PathGeometric>()->getStates()) {
+                        std::vector<double> tmp_reals;
+                        space->copyToReals(tmp_reals, state);
+                        if (current_rob->isSE3Enabled()) {
+                            state_data.assign(tmp_reals.begin() + 7, tmp_reals.end());
+                        } else {
+                            space->copyToReals(state_data, state);
+                        }
+
+                        // std::cout << "State Data: ";
+                        // for (const auto& value : state_data) {
+                        //     std::cout << value << " ";
+                        // }
+                        // std::cout << std::endl;
+
+                        // Reorder state_data based on index_mapping
+                        reordered_data.clear();
+                        reordered_data.resize(state_data.size());
+                        for (size_t i = 0; i < state_data.size(); ++i) {
+                            reordered_data[index_mapping[i]] = state_data[i];
+                        }
+
+                        // std::cout << "Reordered Data: ";
+                        // for (const auto& value : reordered_data) {
+                        //     std::cout << value << " ";
+                        // }
+                        // std::cout << std::endl;
+
+                        requested_data.clear();
+                        for (uint s = 0; s < reordered_data.size(); s++) {
+                            if (requested_joints[s]) {
+                                requested_data.push_back(reordered_data[s]);
+                            }
+                        }
+
+                        // std::cout << "Requested Data: ";
+                        // for (const auto& value : requested_data) {
+                        //     std::cout << value << " ";
+                        // }
+                        // std::cout << std::endl;
+
+                        path.push_back(requested_data);
                     }
                     return true;
                 }
@@ -1203,7 +1323,7 @@ namespace Kautham {
 
             else if (plannerFamily == IOCPLANNER) { // Not tested!
                 std::cout << "IOCPLANNER" << std::endl;
-                if (problem->getPlanner()->solveAndInherit()) {
+                if (problem->getPlanner()->isSolved()) {
                     auto samples = problem->getPlanner()->getPath();
                     
                     // Clear and populate the path vector
@@ -1250,7 +1370,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::computeTrajecotry(std::vector<std::vector<double>> &path, std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq, 
+    bool kauthamshell::computeTrajecotry(std::vector<std::vector<double>> &path, std::vector<double> &desired_max_velocity, std::vector<double> &desired_max_acceleration, double max_path_deviation, double freq, 
                                             std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start)
     {
         
@@ -1273,35 +1393,16 @@ namespace Kautham {
             }
         }
 
-        // Check if ratio_velocity and ratio_acceleration have the correct size
-        if (ratio_velocity.size() != dof) {
-            std::cerr << "Error: ratio_velocity size (" << ratio_velocity.size()
+        // Check if desired_max_velocity and ratio_acceleration have the correct size
+        if (desired_max_velocity.size() != dof) {
+            std::cerr << "Error: desired_max_velocity size (" << desired_max_velocity.size()
                     << ") does not match the degrees of freedom (" << dof << ")." << std::endl;
             return false;
         }
 
-        if (ratio_acceleration.size() != dof) {
-            std::cerr << "Error: ratio_acceleration size (" << ratio_acceleration.size()
+        if (desired_max_acceleration.size() != dof) {
+            std::cerr << "Error: desired_max_acceleration size (" << desired_max_acceleration.size()
                     << ") does not match the degrees of freedom (" << dof << ")." << std::endl;
-            return false;
-        }
-
-        // Inside custom function:
-        auto isInRange = [](const std::vector<double>& ratios) {
-            for (double val : ratios) {
-                if (val < 0.0 || val > 1.0) return false;
-            }
-            return true;
-        };
-
-        // Verify that ratio_velocity and ratio_acceleration are in [0, 1]
-        if (!isInRange(ratio_velocity)) {
-            std::cerr << "Error: ratio_velocity contains values outside the range [0, 1]." << std::endl;
-            return false;
-        }
-
-        if (!isInRange(ratio_acceleration)) {
-            std::cerr << "Error: ratio_acceleration contains values outside the range [0, 1]." << std::endl;
             return false;
         }
 
@@ -1317,21 +1418,9 @@ namespace Kautham {
             waypoints.push_back(tmp_waypoint);
         }
 
-        // PROVISIONAL -> ToDo: Read from URDF!
-        const double globalMaxVelocity = 1.0;
-        const double globalMaxAcceleration = 1.0;
-
-        // Convert ratio inputs to maxVelocity and maxAcceleration
-        Eigen::VectorXd maxVelocity(ratio_velocity.size());
-        Eigen::VectorXd maxAcceleration(ratio_acceleration.size());
-
-        for (size_t i = 0; i < ratio_velocity.size(); ++i) {
-            maxVelocity[i] = ratio_velocity[i] * globalMaxVelocity;
-        }
-
-        for (size_t i = 0; i < ratio_acceleration.size(); ++i) {
-            maxAcceleration[i] = ratio_acceleration[i] * globalMaxAcceleration;
-        }
+        // Convert desired maximum X inputs to Eigen:
+        Eigen::VectorXd maxVelocity = Eigen::VectorXd::Map(desired_max_velocity.data(), desired_max_velocity.size());
+        Eigen::VectorXd maxAcceleration = Eigen::VectorXd::Map(desired_max_acceleration.data(), desired_max_acceleration.size());
 
         // 3) COMPUTE THE TRAJECTORY:
         Trajectory trajectory(Path(waypoints, max_path_deviation), maxVelocity, maxAcceleration);
@@ -1375,27 +1464,93 @@ namespace Kautham {
         }
     }
 
+    bool kauthamshell::getProblemMaxJointVelocities(std::vector<double> &requested_max_joint_velocities, std::vector<std::string> &requested_joint_names, bool _only_controlled) {
+        
+        if (!problemOpened()) {
+            std::cout << "The problem is not opened" << std::endl;
+            return false;
+        }
+        
+        Problem* const problem = static_cast<Problem*>(memPtr_);
+        std::vector<bool> requested_joints = problem->getRequestedIndexJoints(_only_controlled);
+        requested_max_joint_velocities = problem->getRequestedMaxJointVelocities(requested_joints);
+        requested_joint_names = problem->getRequestedJointNames(requested_joints);
+        return true;
+    }
+
 
     bool kauthamshell::getTrajecotry(std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq,
-                                        std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start)
+                                        std::vector<std::string> &requested_joint_names, std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start,
+                                        bool _only_controlled)
     {
-        std::vector<std::vector<double>> path;
-        if (kauthamshell::getPath(path)) {
-            std::cout << "kauthamshell::getTrajecotry -> Path successfully computed." << std::endl;
-            
-            if (kauthamshell::computeTrajecotry(path, ratio_velocity, ratio_acceleration, max_path_deviation, freq, traj_positions, traj_velocities, traj_time_from_start)) {
-                std::cout << "kauthamshell::getTrajecotry -> Trajectory successfully computed." << std::endl;
-                return true;
+
+        // Inside custom function:
+        auto isInRange = [](const std::vector<double>& ratios) {
+            for (double val : ratios) {
+                if (val < 0.0 || val > 1.0) return false;
             }
-            std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the trajectory." << std::endl;
+            return true;
+        };
+
+        // Verify that ratio_velocity and ratio_acceleration are in [0, 1]
+        if (!isInRange(ratio_velocity)) {
+            std::cerr << "Error: ratio_velocity contains values outside the range [0, 1]." << std::endl;
+            return false;
         }
-        std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the path." << std::endl;
+
+        if (!isInRange(ratio_acceleration)) {
+            std::cerr << "Error: ratio_acceleration contains values outside the range [0, 1]." << std::endl;
+            return false;
+        }
+
+        try {
+
+            std::vector<std::vector<double>> path;
+            if (kauthamshell::getPath(path, requested_joint_names, _only_controlled)) {
+                std::cout << "kauthamshell::getTrajecotry -> Path successfully computed." << std::endl;
+                
+                std::vector<double> requested_max_joint_velocities;
+                bool max_vel_founded = getProblemMaxJointVelocities(requested_max_joint_velocities, requested_joint_names, _only_controlled);
+                
+                std::vector<double> desired_max_velocity(ratio_velocity.size());
+                if (max_vel_founded) {
+                    for (size_t i = 0; i < ratio_velocity.size(); ++i) {
+                        desired_max_velocity[i] = ratio_velocity[i] * requested_max_joint_velocities[i];
+                    }
+                }
+
+                std::vector<double> desired_max_acceleration(ratio_acceleration.size());
+                for (size_t i = 0; i < ratio_acceleration.size(); ++i) {
+                    desired_max_acceleration[i] = ratio_acceleration[i] * 5; // Hardcoded default: 5 m/s²
+                }
+
+
+                if (kauthamshell::computeTrajecotry(path, desired_max_velocity, desired_max_acceleration, max_path_deviation, freq, traj_positions, traj_velocities, traj_time_from_start)) {
+                    std::cout << "kauthamshell::getTrajecotry -> Trajectory successfully computed." << std::endl;
+                    return true;
+                }
+                std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the trajectory." << std::endl;
+                return false;
+            }
+            std::cerr << "kauthamshell::getTrajecotry -> Failed to compute the path." << std::endl;
+            return false;
+        } 
+        catch (const KthExcp& excp) {
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
+        } 
+        catch (const std::exception& excp) {
+            std::cout << "Error: " << excp.what() << std::endl;
+        } 
+        catch (...) {
+            std::cout << "An unexpected error occurred in getTrajectory()." << std::endl;
+        }
+
         return false;
     }
 
 
-    int kauthamshell::addRobot(string robFile, double scale, vector<float> home, vector<vector<float> > limits,
-                               vector<vector<float> > mapMatrix, vector<float> offMatrix) {
+    int kauthamshell::addRobot(string robFile, double scale, vector<double> home, vector<vector<double> > limits,
+                               vector<vector<double> > mapMatrix, vector<double> offMatrix) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -1408,11 +1563,11 @@ namespace Kautham {
             Robot *rob = problem->wSpace()->getRobot(index);
             int numCntr = problem->wSpace()->getNumRobControls();
             int numDOF = 6+rob->getNumJoints();
-            KthReal **MapMatrix = new KthReal*[numDOF];
-            KthReal *OffMatrix = new KthReal[numDOF];
+            double **MapMatrix = new double*[numDOF];
+            double *OffMatrix = new double[numDOF];
             for (int i = 0; i < numDOF; ++i) {
                 OffMatrix[i] = offMatrix.at(i);
-                MapMatrix[i] = new KthReal[numCntr];
+                MapMatrix[i] = new double[numCntr];
                 for (int j = 0; j < numCntr; ++j) {
                     MapMatrix[i][j] = mapMatrix.at(i).at(j);
                 }
@@ -1435,7 +1590,7 @@ namespace Kautham {
     }
 
 
-    int kauthamshell::addObstacle(string obsFile, double scale, vector<float> home) {
+    int kauthamshell::addObstacle(string obsFile, double scale, vector<double> home) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -1659,7 +1814,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::motionPlanner(vector <float> init, vector <float> goal, string root){
+    bool kauthamshell::motionPlanner(vector<double> init, vector<double> goal, string root){
 
         bool _solved = false;
 
@@ -1822,7 +1977,7 @@ namespace Kautham {
     }
 
     //Sets obstacle pose with orientation defined as axis-angle
-    bool kauthamshell::setObstaclePos(string obsname, std::vector<float> pos){
+    bool kauthamshell::setObstaclePos(string obsname, std::vector<double> pos){
 
         try {
             if (!problemOpened()) {
@@ -1835,7 +1990,7 @@ namespace Kautham {
             if(problem->getPlanner()->wkSpace()->getObstacle(obsname)==NULL)
             {
                 cout << "Error in setObstaclePos:" << obsname << " is not in the set of obstacles " << problem->getPlanner()->wkSpace()->getNumObstacles() << endl;
-                return true;
+                return false;
             }
 
             // Convert from axis-angle to quaternion internal represtantation
@@ -1873,7 +2028,7 @@ namespace Kautham {
     }
 
     //Gets obstacle pose with orientation defined as axisAn (format="axis-angle") or by default as quaternion (format="quaternion")
-    bool kauthamshell::getObstaclePos(string obsname, std::vector<float> &pos){
+    bool kauthamshell::getObstaclePos(string obsname, std::vector<double> &pos){
 
         cout << "************Getting Pose of obstacle "<<obsname<<endl;
         Problem *const problem = (Problem*)memPtr_;
@@ -1892,8 +2047,8 @@ namespace Kautham {
                 return false;
             }
 
-            float coord[3];
-            vector<KthReal> ort;
+            double coord[3];
+            vector<double> ort;
             ort.resize(4);
 
             coord[0] = problem->getPlanner()->wkSpace()->getObstacle(obsname)->getLink(0)->getElement()->getPosition()[0];
@@ -1907,7 +2062,7 @@ namespace Kautham {
 
             SE3Conf se3;
             se3.setOrient(ort);
-            vector<KthReal> axisAn = se3.getAxisAngle();
+            vector<double> axisAn = se3.getAxisAngle();
 
             pos.push_back(coord[0]);
             pos.push_back(coord[1]);
@@ -1932,7 +2087,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::findIK(int robIndx, bool armType, std::vector<float> pos, std::vector<float> conf, bool maintSameWrist, std::vector<float> *solution){
+    bool kauthamshell::findIK(int robIndx, bool armType, std::vector<double> pos, std::vector<double> conf, bool maintSameWrist, std::vector<double> *solution){
         bool ret = false;
         try {
             Problem *const problem = (Problem*)memPtr_;
@@ -1961,7 +2116,7 @@ namespace Kautham {
         return ret;
     }
 
-    bool kauthamshell::setRobPos(unsigned int index, std::vector<float> pos) {
+    bool kauthamshell::setRobPos(unsigned int index, std::vector<double> pos) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -1970,11 +2125,11 @@ namespace Kautham {
             Problem *const problem = (Problem*)memPtr_;
 
             SE3Conf newconf;
-            std::vector<float> newpos;
+            std::vector<double> newpos;
             newpos.push_back(pos.at(0));
             newpos.push_back(pos.at(1));
             newpos.push_back(pos.at(2));
-            std::vector<float> newori;
+            std::vector<double> newori;
             newori.push_back(pos.at(3));
             newori.push_back(pos.at(4));
             newori.push_back(pos.at(5));
@@ -1985,7 +2140,7 @@ namespace Kautham {
 
             problem->getPlanner()->wkSpace()->getRobot(index)->setHomePos(&newconf);
 
-            std::vector<float> coord = problem->getPlanner()->wkSpace()->getRobot(index)->getHomePos()->getSE3().getPos();
+            std::vector<double> coord = problem->getPlanner()->wkSpace()->getRobot(index)->getHomePos()->getSE3().getPos();
             std::cout<<"Robot "<<index<<" at position ("<<coord.at(0)<<", "
                     <<coord.at(1)<<", "<<coord.at(2)<<")"<<std::endl;
             return true;
@@ -2003,7 +2158,7 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::getRobPos(unsigned int index, std::vector<float> &pos) {
+    bool kauthamshell::getRobPos(unsigned int index, std::vector<double> &pos) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -2037,7 +2192,7 @@ namespace Kautham {
 
     }
 
-    bool kauthamshell::getRobHomePos(unsigned int index, std::vector<float> &pos) {
+    bool kauthamshell::getRobHomePos(unsigned int index, std::vector<double> &pos) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;

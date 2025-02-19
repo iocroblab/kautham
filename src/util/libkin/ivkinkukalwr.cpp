@@ -449,7 +449,7 @@ bool IvKinKukaLWR::solve(){
         cout << "Inverse kinematics failed:" << endl;
         cout << "Try another value for the redundant joint and set the desired pose within the reachable workspace." << endl;
 
-        std::vector<KthReal> qn(7);
+        std::vector<double> qn(7);
         for (unsigned int i = 0; i<7; ++i){
             _robot->getLink(i+1)->setValue(0.0);
             qn.at(i) = 0.0;
@@ -460,7 +460,7 @@ bool IvKinKukaLWR::solve(){
     }
 
     // Store the selection solution to kautham
-    std::vector<KthReal> qn(7);
+    std::vector<double> qn(7);
     for (unsigned int i = 0; i<7; ++i)  qn.at(i) = ikSolution[i];
     _robConf.setRn(qn);
 
@@ -535,7 +535,7 @@ bool IvKinKukaLWR::setParameters(){
 }
 
 
-void IvKinKukaLWR::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
+void IvKinKukaLWR::setTarget(vector<double> &target, vector<double> masterconf, bool maintainSameWrist){
   (void)masterconf;//unused
   (void)maintainSameWrist;//unused
 

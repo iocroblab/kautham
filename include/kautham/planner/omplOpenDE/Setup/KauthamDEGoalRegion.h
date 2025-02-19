@@ -73,8 +73,8 @@ public:
  */
     typedef struct
     {
-        KthReal objectposition[3];
-        KthReal objectorientation[4];
+        double objectposition[3];
+        double objectorientation[4];
     }KauthamODEobject;
     vector<KauthamODEobject> smp2KauthamOpenDEState(WorkSpace* w,Sample *goal);//!< This function check the position and orientation of the objects at the goal configuration.
     vector<KauthamODEobject> Kauthamodebodies; //!<  Kauthamodebodies is a vector KauthamODEobject which keeps information on all the elements that make up the kinematic chain of the robot.

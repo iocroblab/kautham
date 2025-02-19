@@ -46,6 +46,8 @@ namespace Kautham {
                 Planner *theplanner;
                 ob::SpaceInformationPtr thesi;
 
+                bool isConstrainedPartValid(const ob::State* state) const;
+
             public:
                 //! Creator
                 ValidityChecker(const ob::SpaceInformationPtr& si, Planner *p) :

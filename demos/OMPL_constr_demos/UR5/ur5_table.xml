@@ -3,10 +3,22 @@
 
 	<Robot robot="robots/UR5/ur5.urdf" scale="1.0">
 		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.01" Y="0.0" X="0.0" />
+		<Constraint id="arm_ur5" type="orientation_ur5">
+			<Joint name="Shoulder" />
+			<Joint name="UpperArm" />
+			<Joint name="ForeArm" />
+			<Joint name="Wrist1" />
+			<Joint name="Wrist2" />
+			<Joint name="Wrist3" />
+		</Constraint>
 	</Robot>
 
 	<Obstacle obstacle="obstacles/ode-objects/table.urdf" scale="1.0">
         <Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ode-objects/wall.urdf" scale="5.0">
+		<Home TH="1.57" WX="0.0" WY="1.0" WZ="0.0" X="0.2" Y="0.4" Z="0.0" />
+		<KauthamName name="red_wall" />
 	</Obstacle>
 
 	<Controls robot="controls/ur5_table.cntr"/>
@@ -16,8 +28,8 @@
 			<Name>omplconstr</Name>
 			<Parameter name="_Speed Factor">1</Parameter>
 			<Parameter name="_Max Planning Time">15.0</Parameter>
-			<!-- <Parameter name="Range">0.02</Parameter>
-			<Parameter name="Goal Bias">0.05</Parameter> -->
+			<Parameter name="_Range">0.1</Parameter>
+			<!-- <Parameter name="Goal Bias">0.05</Parameter> -->
 		</Parameters>
 		<Queries>
 			<Query>

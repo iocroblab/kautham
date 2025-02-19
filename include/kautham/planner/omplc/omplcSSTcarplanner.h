@@ -59,7 +59,7 @@ namespace Kautham {
 
         bool setParameters();
 
-         KthReal _GoalBias;
+         double _GoalBias;
          double _propagationStepSize;
          unsigned int _durationMax;
          unsigned int _durationMin;

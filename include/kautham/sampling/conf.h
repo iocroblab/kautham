@@ -46,24 +46,24 @@ namespace Kautham {
 	public:
 		Conf(CONFIGTYPE typ);
     virtual ~Conf();
-    virtual bool      setCoordinates(std::vector<KthReal>& coordinates);
+    virtual bool      setCoordinates(std::vector<double>& coordinates);
 
     //! Returns the distance
-    KthReal               getDistance(Conf* conf);
-    KthReal               getDistance(Conf* conf, std::vector<KthReal>& weights );
+    double               getDistance(Conf* conf);
+    double               getDistance(Conf* conf, std::vector<double>& weights );
 
     //! Returns the squared distance.
-    virtual KthReal       getDistance2(Conf* conf)=0;
-    virtual KthReal       getDistance2(Conf* conf, std::vector<KthReal>& weights )=0;
+    virtual double       getDistance2(Conf* conf)=0;
+    virtual double       getDistance2(Conf* conf, std::vector<double>& weights )=0;
 
     virtual std::string print()= 0;
-    inline  std::vector<KthReal>& getCoordinates(){return coord;}
-    KthReal               getCoordinate(unsigned int index );
+    inline  std::vector<double>& getCoordinates(){return coord;}
+    double               getCoordinate(unsigned int index );
     inline unsigned int   getDim(){return dim;}
     static LCPRNG*        genRand;
     inline CONFIGTYPE     getType(){return type;}
 	protected:
-    vector<KthReal>       coord;
+    vector<double>       coord;
     unsigned int          dim;
     CONFIGTYPE            type;
 	};

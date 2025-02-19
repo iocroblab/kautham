@@ -154,7 +154,7 @@ namespace Kautham {
 				   getPotential(*vi) == _obstaclePotential) continue;
 				
 				//cout << "cell "<<*vi<< " neighs = ";
-				KthReal p=0;
+				double p=0;
 				int count=0;
 				int totalcount=0;
 				for(tie(avi,avi_end)=adjacent_vertices(*vi, *g); avi!=avi_end; ++avi)
@@ -248,8 +248,8 @@ namespace Kautham {
 				vmin = vc;
 				for(tie(avi,avi_end)=adjacent_vertices(vc, *g); avi!=avi_end; ++avi)
 				{
-					KthReal pneigh = getPotential(*avi);
-					KthReal pcurr = getPotential(vmin);
+					double pneigh = getPotential(*avi);
+					double pcurr = getPotential(vmin);
 					if(pneigh < pcurr) {
                         vmin = *avi;
 					}

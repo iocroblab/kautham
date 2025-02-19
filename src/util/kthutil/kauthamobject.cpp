@@ -33,7 +33,7 @@
 
 namespace Kautham{
 
-KthReal KauthamObject::getParameter(string key){
+double KauthamObject::getParameter(string key){
     HASH_S_K::iterator it = _parameters.find(key);
     if(it != _parameters.end() )
         return it->second;
@@ -54,7 +54,7 @@ string KauthamObject::getParametersAsString(){
     return p.substr(0,p.length()-1);
 }
 
-bool KauthamObject::setParameter(string key, KthReal value){
+bool KauthamObject::setParameter(string key, double value){
     HASH_S_K::iterator it = _parameters.find(key);
     if(it != _parameters.end() ){
         it->second = value;
@@ -65,7 +65,7 @@ bool KauthamObject::setParameter(string key, KthReal value){
 
 bool KauthamObject::setParametersFromString(const string& par){
     if (par == "") return false;
-    KthReal val = 0.0;
+    double val = 0.0;
     HASH_S_K::iterator it;
     vector<string> tokens;
     boost::split(tokens, par, boost::is_any_of("|"));
@@ -73,7 +73,7 @@ bool KauthamObject::setParametersFromString(const string& par){
     for(unsigned i=0; i<tokens.size(); i=i+2){
         try{
             it = _parameters.find(tokens[i]);
-            val = (KthReal)atof(tokens[i+1].c_str());
+            val = (double)atof(tokens[i+1].c_str());
             if(it != _parameters.end())
                 it->second = val;
             else{

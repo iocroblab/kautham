@@ -51,7 +51,7 @@ namespace Kautham{
     virtual bool		  setParameters()=0;
 
 	  //!	This method allow to setup the target.
-    void              setTarget(std::vector<KthReal> &target);
+    void              setTarget(std::vector<double> &target);
     inline SE3Conf&   getSE3(){return _robConf.getSE3();}
     inline RnConf&    getRn(){return _robConf.getRn();}
     inline RobConf&   getRobConf(){return _robConf;}
@@ -64,7 +64,7 @@ namespace Kautham{
     RobConf         _robConf;
 
 	  //! This vector contains the target to be solved.
-    std::vector<KthReal> _target;      //!< This is a generic way to set up the target.
+    std::vector<double> _target;      //!< This is a generic way to set up the target.
 
   };
   /** @}   end of Doxygen module "Util */

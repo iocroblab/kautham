@@ -34,7 +34,7 @@ using namespace std;
 namespace Kautham {
 namespace omplcplanner{
 //! Constructor create the Car enviroment and setup the parameters for ODE.
-CarEnvironment::CarEnvironment(WorkSpace* ws, KthReal maxspeed, KthReal maxContacts, KthReal minControlSteps,KthReal maxControlSteps, KthReal erp, KthReal cfm, bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm, isKchain)
+CarEnvironment::CarEnvironment(WorkSpace* ws, double maxspeed, double maxContacts, double minControlSteps,double maxControlSteps, double erp, double cfm, bool isKchain):KauthamDEEnvironment(ws, maxspeed,maxContacts,minControlSteps,maxControlSteps, erp, cfm, isKchain)
 {
     SetPlanningParameters();
 }

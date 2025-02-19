@@ -58,11 +58,11 @@ namespace Kautham {
 
         bool setPotentialCost(string filename);
 
-        KthReal _Range;
-        KthReal _GoalBias;
-        KthReal _PathBias;
-        KthReal _PathSamplingRangeFactor;
-        KthReal _NodeRejection;
+        double _Range;
+        double _GoalBias;
+        double _PathBias;
+        double _PathSamplingRangeFactor;
+        double _NodeRejection;
         bool _DelayCC;
         double _KneighFactor;
         unsigned int _opti;

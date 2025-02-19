@@ -859,7 +859,7 @@ namespace Kautham {
                 int numDOF = wkSpace()->getRobot(robotindex)->getNumJoints();
                 ob::ProjectionMatrix PMD;
                 PMD.mat = ob::ProjectionMatrix::Matrix(numDOF,numPMD);
-                KthReal **mm2 = wkSpace()->getRobot(robotindex)->getMapMatrix();
+                double **mm2 = wkSpace()->getRobot(robotindex)->getMapMatrix();
                 for(int j=0;j<numPMD;j++)//columns
                 {
                     for(int i=0;i<numDOF;i++)//rows
@@ -960,7 +960,7 @@ namespace Kautham {
                     {
                         int robotindex = itpmdMap->second[j].first; //the robot
                         int pmdcolumn = itpmdMap->second[j].second; //the columns in the mapMatrix of robot robotindex
-                        KthReal **mm2 = wkSpace()->getRobot(robotindex)->getMapMatrix(); //the mapMatrix of robot robotindex
+                        double **mm2 = wkSpace()->getRobot(robotindex)->getMapMatrix(); //the mapMatrix of robot robotindex
 
                         //copy the first three rows of the mapMatrix of robot robotindex, that correspond to the x,y and z coordinates
                         for(int ii=0; ii< 3; ii++)

@@ -5,19 +5,92 @@
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/base/ConstrainedSpaceInformation.h>
-#include <ompl/geometric/planners/rrt/RRT.h>
 #include <kautham/planner/omplconstr/omplconstrValidityChecker.hpp>
+#include <kautham/planner/omplconstr/constraint_factory.hpp>
+#include <kautham/planner/omplconstr/constraints/abstract_ompl_constraint.hpp>
+
+// Planners:
+#include <ompl/geometric/planners/rrt/RRT.h>
+#include <ompl/geometric/planners/rrt/RRTConnect.h>
+#include <ompl/geometric/planners/rrt/RRTstar.h>
+
+#include <ompl/base/Path.h>
 
 #include <ompl/base/goals/GoalStates.h>
 #include <ompl/base/goals/GoalState.h>
 
-// Include all the constraints:
-#include <kautham/planner/omplconstr/constraints/orientation_constr.hpp>
-
-
 namespace Kautham {
     //! Namespace omplconstrplanner contains the planners based on the OMPL::constraint library
     namespace omplconstrplanner{
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // KauthamConstrStateSampler functions
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        KauthamConstrStateSampler::KauthamConstrStateSampler(const ob::StateSpace *sspace, Planner *p) : ob::CompoundStateSampler(sspace)
+        {
+            kauthamPlanner_ = p;
+            _samplerRandom = new RandomSampler(kauthamPlanner_->wkSpace()->getNumRobControls());
+        }
+
+        KauthamConstrStateSampler::~KauthamConstrStateSampler() {
+            delete _samplerRandom;
+        }
+
+        void KauthamConstrStateSampler::sampleUniform(ob::State *state)
+        {
+
+            ob::ScopedState<ob::CompoundStateSpace> sstate(  ((omplConstraintPlanner*)kauthamPlanner_)->getSpace() );
+
+            bool withinbounds = false;
+            int trials = 0;
+            Sample* smp = NULL;
+
+            do {
+                /*
+                Sample the Kautham control space.
+                Controls are defined in the input xml files.
+                Each control value lies in the [0,1] interval
+                */
+                smp = _samplerRandom->nextSample();
+
+                // Those controls that are disabled for sampling are now restored to 0.5
+                for (unsigned j=0; j<((omplConstraintPlanner*)kauthamPlanner_)->getDisabledControls()->size(); j++) {
+                    smp->getCoords()[ ((omplConstraintPlanner*)kauthamPlanner_)->getDisabledControls()->at(j) ] = 0.5;
+                }
+
+                // Compute the mapped configurations (i.e.se3+Rn values) by calling MoveRobotsTo function.
+                kauthamPlanner_->wkSpace()->moveRobotsTo(smp);
+                withinbounds = smp->getwithinbounds();
+                trials++;
+            } while (!withinbounds && trials < 100);
+
+
+            // If trials==100 is because we have not been able to find a sample within limits
+            // In this case the config is set to the border in the moveRobotsTo function.
+            // The smp is finally converted to state and returned
+
+            // Convert from sample to scoped state
+            ((omplConstraintPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
+
+            // Print for debugging
+            // std::cout << "Generated Sample State:\n";
+            // sstate.print(std::cout);
+
+            // Return in parameter state:
+            ((omplConstraintPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
+
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // AUXILIAR functions
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //! This function is used to allocate a state sampler
+        ob::StateSamplerPtr allocStateSampler(const ob::StateSpace *mysspace, Planner *p)
+        {
+            return ob::StateSamplerPtr(new KauthamConstrStateSampler(mysspace, p));
+        }
+
 
         // Constructor implementation
         omplConstraintPlanner::omplConstraintPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr)
@@ -33,17 +106,25 @@ namespace Kautham {
 
             // Set own intial values:
             _planningTime = 10;
+            _range = 0.1;
 
             // Add planner parameters:
             addParameter("_Max Planning Time",_planningTime);
             addParameter("_Speed Factor",_speedFactor);
+            addParameter("_Range",_range);
 
             if (ssptr == NULL) {
 
+                // Init constraint factory to create the constraints based on the name:
+                std::shared_ptr<ConstraintFactory> constraints_factory = std::make_shared<ConstraintFactory>();
+                constraints_factory->registerConstraints();
+                // constraints_factory->printRegisteredConstraintNames();
+
                 //Construct the state space we are planning in. It is a compound state space composed of a compound state space for each robot
                 //Each robot has a compound state space composed of a (optional) SE3 state space and a (optional) Rn state space
-                
-/*                this->space_ = std::make_shared<ompl::base::CompoundStateSpace>();
+
+                this->space_ = std::make_shared<ompl::base::CompoundStateSpace>();
+                this->space_->setName("full_space");
 
                 // Create SE3 state space
                 std::shared_ptr<ob::StateSpace> spaceSE3;
@@ -58,49 +139,159 @@ namespace Kautham {
                 std::shared_ptr<ob::StateSpace> spaceRob;
 
                 std::string space_name;
+
+                size_t rob_subspace_index = 0;
                 
                 // Loop for all robots:
                 for (unsigned rob = 0; rob < _wkSpace->getNumRobots(); rob++) {
+                    auto current_rob = _wkSpace->getRobot(rob);
+                    rob_subspace_index = 0;
                     spaceRob = std::make_shared<ob::CompoundStateSpace>();
                     
                     // Create state space SE3 for the mobile base, if necessary:
-                    if (_wkSpace->getRobot(rob)->isSE3Enabled()) {
+                    if (current_rob->isSE3Enabled()) {
                         spaceSE3 = std::make_shared<ob::SE3StateSpace>();
                         space_name = "ssRobot" + std::to_string(rob) + "_SE3";
+                        std::cout << "isSE3Enabled: " << space_name << std::endl;
                         spaceSE3->setName(space_name);
 
+                        //set the bounds. If the bounds are equal or its difference is below a given epsilon value (0.001) then
+                        //set the higher bound to the lower bound plus this eplsion
+                        ob::RealVectorBounds bounds(3);
+
+                        //x-direction
+                        double low = current_rob->getLimits(0)[0];
+                        double high = current_rob->getLimits(0)[1];
+                        filterBounds(low, high, 0.001);
+                        bounds.setLow(0, low);
+                        bounds.setHigh(0, high);
+
+                        //y-direction
+                        low = current_rob->getLimits(1)[0];
+                        high = current_rob->getLimits(1)[1];
+                        filterBounds(low, high, 0.001);
+                        bounds.setLow(1, low);
+                        bounds.setHigh(1, high);
+
+                        //z-direction
+                        low = current_rob->getLimits(2)[0];
+                        high = current_rob->getLimits(2)[1];
+                        filterBounds(low, high, 0.001);
+                        bounds.setLow(2, low);
+                        bounds.setHigh(2, high);
+
+                        spaceSE3->as<ob::SE3StateSpace>()->setBounds(bounds);
 
                         spaceRob->as<ob::CompoundStateSpace>()->addSubspace(spaceSE3, 1.0);
+                        rob_subspace_index++;
                     }
 
                     // Create the Rn state space for the kinematic chain, if necessary:
-                    const unsigned int num_dof = _wkSpace->getRobot(rob)->getNumJoints();
+                    // Also create the constrained space if requested by the robot.
+                    const unsigned int num_dof = current_rob->getNumJoints();
                     if (num_dof > 0) {
-                        spaceRn = std::make_shared<ob::RealVectorStateSpace>(num_dof);
-                        space_name = "ssRobot" + std::to_string(rob) + "_Rn";
-                        spaceRn->setName(space_name);
-
-                        // Set the bounds:
-                        ob::RealVectorBounds bounds(num_dof);
-                        double low, high;
-                        for (unsigned int j = 0; j < num_dof; j++) {
-                            // The limits of joint j between link j and link (j+1) are stroed in the data structure of link (j+1)
-                            low = *_wkSpace->getRobot(rob)->getLink(j+1)->getLimits(true);      // True = getLowLimit
-                            high = *_wkSpace->getRobot(rob)->getLink(j+1)->getLimits(false);    // Flase = getHighLimit
-                            // filterBounds(low, high, 0.001);
-                            bounds.setLow(j, low);
-                            bounds.setHigh(j, high);
+                        have_constr_space = false;
+                        have_unconstr_space = false;
+                        // First assume that all joint are unconstrained:
+                        std::vector<std::string> unconstrained_joint_names;
+                        std::vector<std::string> all_joint_names;
+                        for (unsigned int n = 0; n < num_dof; n++) {    // n = 0 is the base
+                            unconstrained_joint_names.push_back(current_rob->getLink(n+1)->getName());
+                            all_joint_names.push_back(current_rob->getLink(n+1)->getName());
                         }
-                        spaceRn->as<ob::RealVectorStateSpace>()->setBounds(bounds);
+                        
+                        auto constraints = current_rob->getConstraints();
 
+                        std::vector<std::pair<std::string, uint>> constr_joints;
+                        for (const auto& constr : constraints) {
+                            have_constr_space = true;
+                            std::cout << "----- Constraint: " << std::get<0>(constr) << " -----" << std::endl;
+                            // Get the constraint data:
+                            constr_joints = std::get<2>(constr);
+                            std::vector<std::string> constr_names;
+                            for (const auto& [name, index] : constr_joints) {
+                                constr_names.push_back(name);
+                                index_mapping_.push_back(index);
+                            }
+                                                
+                            spaceRn = std::make_shared<ob::RealVectorStateSpace>(constr_joints.size());
+                            // Set the bounds:
+                            ob::RealVectorBounds bounds(constr_joints.size());
+                            double low, high;
+                            for (unsigned int j = 0; j < constr_joints.size(); j++) {
+                                low = *current_rob->getLink(constr_joints[j].first)->getLimits(true);      // True = getLowLimit
+                                high = *current_rob->getLink(constr_joints[j].first)->getLimits(false);    // Flase = getHighLimit
+                                // std::cout << "Constr name: " << constr_joints[j].first << " Low: " << low << std::endl;
+                                // std::cout << "Constr name: " << constr_joints[j].first << " High: " << high << std::endl;
+                                bounds.setLow(j, low);
+                                bounds.setHigh(j, high);
+                            }
+                            spaceRn->as<ob::RealVectorStateSpace>()->setBounds(bounds);
 
-                        auto constraint = std::make_shared<OrientationConstraint>(num_dof,3,0.1);
+                            // Get the creator of the constraint by string and stores in the map:
+                            auto constraint = constraints_factory->createConstraint(std::get<1>(constr), constr_joints.size(),3,0.1);
+                            this->constraint_map_[std::get<0>(constr)] = constraint;
 
-                        spaceRnConstr = std::make_shared<ob::ProjectedStateSpace>(spaceRn, constraint);
-                        space_name = "ssRobot" + std::to_string(rob) + "_RnConstr";
-                        spaceRnConstr->setName(space_name);
+                            spaceRnConstr = std::make_shared<ob::ProjectedStateSpace>(spaceRn, constraint);
+                            space_name = "ssRobot" + std::to_string(rob) + "_RnConstr_" + std::get<0>(constr);
+                            spaceRob->as<ob::CompoundStateSpace>()->addSubspace(spaceRnConstr, 1.0);
+                            rob_subspace_index++;
+                            spaceRob->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index-1)->setName(space_name);   // Si no es fa aquí, no s'aplica bé el nom en el cas de les constraints...!
 
-                        spaceRob->as<ob::CompoundStateSpace>()->addSubspace(spaceRnConstr, 1.0);
+                            // Create SpaceInformation specifically for the ProjectedStateSpace
+                            auto spaceRnConstr_si = std::make_shared<ompl::base::SpaceInformation>(spaceRnConstr);
+                            // Associate the SpaceInformation object with the ConstrainedStateSpace
+                            spaceRnConstr->as<ob::ProjectedStateSpace>()->setSpaceInformation(spaceRnConstr_si.get());
+
+                            // Convert constr_joints to an unordered_set for efficient lookups
+                            std::unordered_set<std::string> to_remove(constr_names.begin(), constr_names.end());
+
+                            // Remove elements in unconstrained_joint_names that are present in the to_remove set
+                            unconstrained_joint_names.erase(std::remove_if(unconstrained_joint_names.begin(), unconstrained_joint_names.end(), 
+                                                            [&to_remove](const std::string& element) {
+                                                                return to_remove.count(element) > 0;
+                                                            }), unconstrained_joint_names.end());
+                        }
+
+                        // Create the Rn space with the unconstrained joints:
+                        if (unconstrained_joint_names.size() > 0) {
+                            have_unconstr_space = true;
+                            current_rob->setUnconstrainedJointNames(unconstrained_joint_names);
+                            auto katxopo = current_rob->getUnconstrainedJointNames();
+
+                            // Iterate over the remaining data and find the corresponding original indices
+                            for (const auto& item : unconstrained_joint_names) {
+                                // Find the original index of the remaining item
+                                auto it = std::find(all_joint_names.begin(), all_joint_names.end(), item);
+                                
+                                if (it != all_joint_names.end()) {
+                                    // Calculate the original index and store it
+                                    size_t original_index = std::distance(all_joint_names.begin(), it);
+                                    index_mapping_.push_back(original_index);
+                                }
+                            }
+
+                            spaceRn = std::make_shared<ob::RealVectorStateSpace>(unconstrained_joint_names.size());
+                            space_name = "ssRobot" + std::to_string(rob) + "_Rn";
+                            spaceRn->setName(space_name);
+                            std::cout << "spaceRn name = " << spaceRn->getName() << std::endl;
+
+                            // Set the bounds:
+                            ob::RealVectorBounds bounds(unconstrained_joint_names.size());
+                            double low, high;
+                            for (unsigned int j = 0; j < unconstrained_joint_names.size(); j++) {
+                                low = *current_rob->getLink(unconstrained_joint_names[j])->getLimits(true);      // True = getLowLimit
+                                high = *current_rob->getLink(unconstrained_joint_names[j])->getLimits(false);    // Flase = getHighLimit
+                                // std::cout << "Constr name: " << unconstrained_joint_names[j] << " Low: " << low << std::endl;
+                                // std::cout << "Constr name: " << unconstrained_joint_names[j] << " High: " << high << std::endl;
+                                bounds.setLow(j, low);
+                                bounds.setHigh(j, high);
+                            }
+                            spaceRn->as<ob::RealVectorStateSpace>()->setBounds(bounds);
+
+                            spaceRob->as<ob::CompoundStateSpace>()->addSubspace(spaceRn, 1.0);
+                            rob_subspace_index++;
+                        }
                     }
 
                     space_name = "ssRobot" + std::to_string(rob);
@@ -109,109 +300,90 @@ namespace Kautham {
 
                 }
 
-                // Initialize the SimpleSetup with the main state space:
-                simple_setup_ = std::make_shared<ompl::geometric::SimpleSetup>(this->space_);
+                this->space_->diagram(std::cout);
 
-                // Create constrained space information:
-                si_ = simple_setup_->getSpaceInformation();
+
+                // ############################################
+                // Define problem stuff
+                // ############################################
+
+                // Set the custom state sampler:
+                this->space_->setStateSamplerAllocator(std::bind(&allocStateSampler, std::placeholders::_1, (Planner*)this));
+
+                // Create SpaceInformation for the compound space
+                this->si_ = std::make_shared<ompl::base::SpaceInformation>(this->space_);
 
                 // Set validity checker:
-                auto my_ValidityChecker = std::make_shared<Kautham::omplconstrplanner::ValidityChecker>(si_,  (Planner*)this);
+                auto my_ValidityChecker = std::make_shared<Kautham::omplconstrplanner::ValidityChecker>(this->si_,  (Planner*)this);
+                this->si_->setStateValidityChecker(ob::StateValidityCheckerPtr(my_ValidityChecker));
 
-                si_->setStateValidityChecker(ob::StateValidityCheckerPtr(my_ValidityChecker));
+                this->si_->setup(); // Finalize the SpaceInformation setup
 
-                //Add start states
-                simple_setup_->clearStartStates();
+                // Create a problem definition
+                this->pdef_ = std::make_shared<ompl::base::ProblemDefinition>(this->si_);
+
+                // ############################################
+                // Define start and goal states using subspaces
+                // ############################################
+
+                ompl::base::ScopedState<> start(this->space_);
+                ompl::base::ScopedState<> goal(this->space_);
+
+                auto &subspaces_robots = start.getSpace()->as<ompl::base::CompoundStateSpace>()->getSubspaces();
+                std::cout << "Num robots: " << subspaces_robots.size() << std::endl;
+
+                // Add start states:
+                this->pdef_->clearStartStates();
                 for (std::vector<Sample*>::const_iterator start(_init.begin()); start != _init.end(); ++start) {
                     //Start state: convert from smp to scoped state
                     ob::ScopedState<ob::CompoundStateSpace> startompl(this->space_);
                     omplConstraintPlanner::smp2omplScopedState(*start, &startompl);
-                    cout << "startomplconstr:" << endl;
+                    std::cout << "startomplconstr:" << std::endl;
                     startompl.print();
-                    simple_setup_->addStartState(startompl);
-                    // my_constraint->OrientationConstraint::setJointConfigAsTargetOrientation(startompl.reals());
-                    // my_constraint->OrientationConstraint::printTargetOrientation();
+                    this->pdef_->addStartState(startompl);
+                    
+                    // Assign the start values to each constraint as a target automatically:
+                    omplConstraintPlanner::assignConstrTargetFromState(startompl);
                 }
 
-                //Add goal states
+                // Add goal states:
+                this->pdef_->clearGoal();
                 ob::GoalStates *goalStates(new ob::GoalStates(si_));
                 for (std::vector<Sample*>::const_iterator goal(_goal.begin()); goal != _goal.end(); ++goal) {
                     //Goal state: convert from smp to scoped state
                     ob::ScopedState<ob::CompoundStateSpace> goalompl(this->space_);
                     omplConstraintPlanner::smp2omplScopedState(*goal, &goalompl);
-                    cout << "goalomplconstr:" << endl;
+                    std::cout << "goalomplconstr:" << std::endl;
                     goalompl.print();
                     goalStates->addState(goalompl);
+                    // DEBUG: Assign the goal values to each constraint as a target automatically:
+                    // omplConstraintPlanner::assignConstrTargetFromState(goalompl);
                 }
-                simple_setup_->setGoal(ob::GoalPtr(goalStates));
-*/
+                this->pdef_->setGoal(ob::GoalPtr(goalStates));
 
-                std::cout << "Number of robots: " << _wkSpace->getNumRobots() << std::endl;
 
-                const unsigned int num_dof = 6;
+                // ############################################
+                // Set the planner:
+                // ############################################
 
-                // Initialize state_space: (ONLY Rn for constrainted planning)
-                state_space_ = std::make_shared<ompl::base::RealVectorStateSpace>(num_dof);
-
-                // Set bounds for the state space:
-                ompl::base::RealVectorBounds bounds(num_dof);
-                bounds.setLow(-2*M_PI);
-                bounds.setHigh(2*M_PI);
-                state_space_->setBounds(bounds);
+                // this->ompl_planner_ = std::make_shared<ompl::geometric::RRT>(this->si_);
+                this->ompl_planner_ = std::make_shared<ompl::geometric::RRTConnect>(this->si_);
+                // this->ompl_planner_ = std::make_shared<ompl::geometric::RRTstar>(this->si_);
                 
-                // Create an instance of the custom constraint (UR5 hardcoded case):
-                auto my_constraint = std::make_shared<OrientationConstraint>(num_dof,3,0.1);
+                // this->ompl_planner_->as<ompl::geometric::RRT>()->setRange(_range);
+                this->ompl_planner_->as<ompl::geometric::RRTConnect>()->setRange(_range);
+                // this->ompl_planner_->as<ompl::geometric::RRTstar>()->setRange(_range);
                 
-                // Initialize the constrained state space:
-                constrained_state_space_ = std::make_shared<ompl::base::ProjectedStateSpace>(state_space_, my_constraint);
-
-                // Create constrained space information:
-                auto si = std::make_shared<ompl::base::ConstrainedSpaceInformation>(constrained_state_space_);
-
-                auto my_ValidityChecker = std::make_shared<Kautham::omplconstrplanner::ValidityChecker>(si,  (Planner*)this);
-
-                si->setStateValidityChecker(ob::StateValidityCheckerPtr(my_ValidityChecker));
-
-                // Initialize the SimpleSetup with the constrained state space:
-                simple_setup_ = std::make_shared<ompl::geometric::SimpleSetup>(si);
-
-                //Add start states
-                simple_setup_->clearStartStates();
-                for (std::vector<Sample*>::const_iterator start(_init.begin()); start != _init.end(); ++start) {
-                    //Start state: convert from smp to scoped state
-                    ob::ScopedState<ob::ProjectedStateSpace> startompl(constrained_state_space_);
-                    omplConstraintPlanner::smp2omplScopedState(*start, &startompl);
-                    cout << "startomplconstr:" << endl;
-                    startompl.print();
-                    simple_setup_->addStartState(startompl);
-                    my_constraint->OrientationConstraint::setJointConfigAsTargetOrientation(startompl.reals());
-                    my_constraint->OrientationConstraint::printTargetOrientation();
-                }
-
-                //Add goal states
-                ob::GoalStates *goalStates(new ob::GoalStates(si));
-                for (std::vector<Sample*>::const_iterator goal(_goal.begin()); goal != _goal.end(); ++goal) {
-                    //Goal state: convert from smp to scoped state
-                    ob::ScopedState<ob::ProjectedStateSpace> goalompl(constrained_state_space_);
-                    omplConstraintPlanner::smp2omplScopedState(*goal, &goalompl);
-                    cout << "goalomplconstr:" << endl;
-                    goalompl.print();
-                    goalStates->addState(goalompl);
-                }
-                simple_setup_->setGoal(ob::GoalPtr(goalStates));
-
-
-
-                // Set the planner (for example, RRT)
-                auto planner = std::make_shared<ompl::geometric::RRT>(simple_setup_->getSpaceInformation());
-                planner->setRange(0.1);
-                simple_setup_->setPlanner(planner);
-
+                this->ompl_planner_->setProblemDefinition(this->pdef_);
+                
+                this->ompl_planner_->setup();
 
             } else {
-                simple_setup_ = (og::SimpleSetupPtr)ssptr;
-                si_ = simple_setup_->getSpaceInformation();
-                space_ = simple_setup_->getStateSpace();
+                std::cout << "ACTUALITZAR ELSE!" << std::endl;
+
+                // simple_setup_ = (og::SimpleSetupPtr)ssptr;
+                // this->si_ = simple_setup_->getSpaceInformation();
+                // this->space_ = simple_setup_->getStateSpace();
             }
         }
 
@@ -246,6 +418,17 @@ namespace Kautham {
                     return false;
                 }
 
+                it = _parameters.find("_Range");
+                if(it != _parameters.end()) {
+                    if (_range != it->second) {
+                        std::cout << "Range has been modified from " << _range;
+                        _range = it->second;
+                        std::cout << " to " << _range << std::endl;
+                    }
+                } else {
+                    return false;
+                }
+
             } catch(...) {
                 return false;
             }
@@ -256,203 +439,203 @@ namespace Kautham {
             // Implement the logic that attempts to solve the planning problem.
             // Return true if successful, false otherwise.
             // Attempt to solve the problem within _planningTime seconds:
-            ompl::base::PlannerStatus solved = simple_setup_->solve(_planningTime);
+            ompl::base::PlannerTerminationCondition ptc = ompl::base::timedPlannerTerminationCondition(_planningTime);
+            ompl::base::PlannerStatus solved = this->ompl_planner_->solve(ptc);
 
             if (solved) {
-                ompl::geometric::PathGeometric& solution_path = simple_setup_->getSolutionPath();
-                
-                removeDuplicateStates(solution_path);
 
-                std::vector<ompl::base::State*> states = solution_path.getStates();
-                // std::vector<std::vector<double>> joint_path;
+                std::shared_ptr<ompl::base::Path> solution_path = this->pdef_->getSolutionPath();
+
+                // solution_path->print(std::cout);
+
+                og::PathGeometric& path = static_cast<og::PathGeometric&>(*solution_path);
+                // og::PathSimplifier simplifier(this->si_);
+                // simplifier.simplifyMax(path);
+                // simplifier.smoothBSpline(path);
 
                 _path.clear();
                 clearSimulationPath();
                 Sample *smp;
-                
-                // Load the kautham _path variable from the ompl solution
-                // for (auto state : states) {
-                for (std::size_t j(0); j < solution_path.getStateCount(); ++j) {
-                    // std::vector<double> reals;
-                    // constrained_state_space_->copyToReals(reals, states[j]);
-                    // joint_path.push_back(reals);
-                    // Create a smp and load the RobConf of the init configuration (to have the same if the state does not changi it)
+
+                // Load the simplified path into Kautham _path variable
+                for (std::size_t j = 0; j < path.getStateCount(); ++j) {
                     smp = new Sample(_wkSpace->getNumRobControls());
                     smp->setMappedConf(_init.at(0)->getMappedConf());
 
-                    //convert form state to smp
-                    // omplConstraintPlanner::omplState2smp(solution_path.getState(j)->as<ob::CompoundStateSpace::StateType>(),smp);
-
-                    omplConstraintPlanner::omplState22smp(states[j], smp);
+                    omplConstraintPlanner::omplState2smp(path.getState(j)->as<ob::CompoundStateSpace::StateType>(), smp);
 
                     _path.push_back(smp);
                     _samples->add(smp);
                 }
+
                 _solved = true;
 
                 // std::cout << "Joint path ready to be used in robot_arm as CSV file input:" << std::endl;
                 // printJointPath(joint_path);
 
-                return _solved;
+            } else {
+                std::cout << "No solution found." << std::endl;
+                _solved = false;
             }
-
-            std::cout << "No solution found." << std::endl;
-
-            return false;
+            return _solved;
         }
 
-        //! This function converts a Kautham sample to an ompl scoped state.
-        void omplConstraintPlanner::smp2omplScopedState(Sample* smp, ob::ScopedState<ob::ProjectedStateSpace> *sstate)
-        {
-            //Extract the mapped configuration of the sample. It is a vector with as many components as robots.
-            //each component has the RobConf of the robot (the SE3 and the Rn configurations)
-            if(smp->getMappedConf().size()==0)
-            {
-                _wkSpace->moveRobotsTo(smp); // to set the mapped configuration
+        void omplConstraintPlanner::assignConstrTargetFromState(const ob::ScopedState<ob::CompoundStateSpace> _ompl_state) {
+            // Assign the constraint target with the state values (e.g.: Orientation target):
+            /*
+            The key is that from the RealVectorStates in the Space, first are listed the contraints and then the unconstrained.
+            The contraint order is the same as the construnction of the space, that is the same of the problem XML file.
+                - ToDo: Adapt the code to handle when SE3 is used with more that a single robot!
+                - ToDo: Adapt the code to handle different Constraints Types!
+            */
+
+            std::vector<double> ompl_state_reals;
+            auto current_rob_SE3 = _wkSpace->getRobot(0);
+            if (current_rob_SE3->isSE3Enabled()) {
+                // Extract the whole vector except the first 7 values of the SE3 (position + orientation):
+                const auto& reals = _ompl_state.reals();
+                ompl_state_reals.assign(reals.begin() + 7, reals.end());
+            } else {
+                ompl_state_reals = _ompl_state.reals(); // Only assign when SE3 is not enabled, because is full Rn.
             }
-            std::vector<RobConf>& smpRobotsConf = smp->getMappedConf();
 
+            for (unsigned rob = 0; rob < _wkSpace->getNumRobots(); rob++) {
+                auto current_rob = _wkSpace->getRobot(rob);
+                auto constraints = current_rob->getConstraints();
+                for (const auto& constraint : constraints) {
+                    std::string constr_id_name = std::get<0>(constraint);
+                    if (this->constraint_map_.find(constr_id_name) != this->constraint_map_.end()) {
+                        size_t constr_joints_size = std::get<2>(constraint).size();
+                        std::vector<double> constr_joints(ompl_state_reals.begin(), ompl_state_reals.begin() + constr_joints_size);
+                        ompl_state_reals.erase(ompl_state_reals.begin(), ompl_state_reals.begin() + constr_joints_size);
 
-            //loop for all the robots
-            for (unsigned i=0; i<_wkSpace->getNumRobots(); i++)
-            {
+                        std::cout << "Auto constraint (" << constr_id_name << ") config: [ ";
+                        for (const auto& value : constr_joints) {
+                            std::cout << value << " ";
+                        }
+                        std::cout << "]" << std::endl;
 
-                //has Rn part
-                if(_wkSpace->getRobot(i)->getNumJoints()>0)
-                {
-                    //get the kautham Rn configuration
-                    RnConf r = smpRobotsConf.at(i).getRn();
+                        // my_constraint is the final instance, not the abstract:
+                        auto my_constraint = this->constraint_map_[constr_id_name];
+                        my_constraint->useJointConfig2SetConstraintTarget(constr_joints);
+                        my_constraint->printConstraintTarget();
 
-                    //set the ompl Rn configuration
-                    ob::ScopedState<ob::ProjectedStateSpace> rstart(constrained_state_space_);
-
-                    for (unsigned j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++) {
-                        rstart[j] = r.getCoordinate(j);
-                        // std::cout << "j = " << j << " : " << r.getCoordinate(j) << std::endl;
                     }
-
-                    //load the global scoped state with the info of the Rn data of robot i
-                    (*sstate) << rstart;
                 }
             }
         }
+
 
         //! This function converts a Kautham sample to an ompl scoped state.
         void omplConstraintPlanner::smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate)
         {
-            //Extract the mapped configuration of the sample. It is a vector with as many components as robots.
-            //each component has the RobConf of the robot (the SE3 and the Rn configurations)
-            if(smp->getMappedConf().size()==0)
-            {
-                _wkSpace->moveRobotsTo(smp); // to set the mapped configuration
+            // Extract the mapped configuration of the sample. It is a vector with as many components as robots.
+            // Each component has the RobConf of the robot (the SE3 and the Rn configurations including constraints)
+            if (smp->getMappedConf().size() == 0) {
+                _wkSpace->moveRobotsTo(smp); // To set the mapped configuration
             }
             std::vector<RobConf>& smpRobotsConf = smp->getMappedConf();
 
-
-            //loop for all the robots
-            for (unsigned i=0; i<_wkSpace->getNumRobots(); i++)
-            {
-                int k=0; //counter of subspaces contained in subspace of robot i
-
-                //get the subspace of robot i
-                ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space_->as<ob::CompoundStateSpace>()->getSubspace(i));
-                string ssRobotiname = ssRoboti->getName();
-
-                //if it has se3 part
-                if(_wkSpace->getRobot(i)->isSE3Enabled())
-                {
-                    //get the kautham SE3 configuration
-                    SE3Conf c = smpRobotsConf.at(i).getSE3();
-                    vector<KthReal>& pp = c.getPos();
-                    vector<KthReal>& aa = c.getAxisAngle();
-
-                    //set the ompl SE3 configuration
-                    ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
-                    string ssRobotiSE3name = ssRobotiSE3->getName();
-
-                    ob::ScopedState<ob::SE3StateSpace> cstart(ssRobotiSE3);
-                    cstart->setX(pp[0]);
-                    cstart->setY(pp[1]);
-                    cstart->setZ(pp[2]);
-                    cstart->rotation().setAxisAngle(aa[0],aa[1],aa[2],aa[3]);
-
-                    //load the global scoped state with the info of the se3 data of robot i
-                    (*sstate)<<cstart;
-                    k++;
-                }
-
-                //has Rn part
-                if(_wkSpace->getRobot(i)->getNumJoints()>0)
-                {
-                    //get the kautham Rn configuration
-                    RnConf r = smpRobotsConf.at(i).getRn();
-
-                    //set the ompl Rn configuration
-                    ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
-                    ob::ScopedState<ob::ProjectedStateSpace> rstart(ssRobotiRn);
-
-                    std::cout << "TYPE: " << ssRobotiRn->getType() << std::endl;
-
-                    for (unsigned j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
-                        rstart[j] = r.getCoordinate(j);
-
-
-                    //load the global scoped state with the info of the Rn data of robot i
-                    (*sstate) << rstart;
-                    k++;//dummy
-                }
-            }
-        }
-
-        //! This member function converts an ompl::base::State to a Kautham::Sample for the constrainted_state_space
-        void omplConstraintPlanner::omplState22smp(const ob::State *state, Sample* smp) {
-            vector<RobConf> rc;
             // Loop for all the robots:
-            for (unsigned int r = 0; r < _wkSpace->getNumRobots(); ++r) {
-                // RobConf to store the robots configurations read from the ompl state:
-                RobConf *rcj = new RobConf;
+            for (unsigned rob = 0; rob < _wkSpace->getNumRobots(); rob++)
+            {
+                auto current_rob = _wkSpace->getRobot(rob);
+                size_t rob_subspace_index = 0;
 
-                //Get the SE3 subspace of robot r, if it exists, extract the SE3 configuration
-                if (_wkSpace->getRobot(r)->isSE3Enabled()) {
+                // Get the subspace of robot:
+                ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) this->space_->as<ob::CompoundStateSpace>()->getSubspace(rob));
 
+                // Create the Scoped State of the current robot:
+                ompl::base::ScopedState<> ScopedStateRobot(ssRoboti);
 
-                } else {
-                    //If the robot does not have mobile SE3 dofs then the SE3 configuration of the sample is maintained
-                    if (smp->getMappedConf().size() == 0) {
-                        throw ompl::Exception("omplPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
-                    } else {
-                        rcj->setSE3(smp->getMappedConf()[r].getSE3());
-                    }
+                // If it has se3 part:
+                if (current_rob->isSE3Enabled()) {
+                    // Get the kautham SE3 configuration:
+                    SE3Conf c = smpRobotsConf.at(rob).getSE3();
+                    vector<double>& pp = c.getPos();
+                    vector<double>& aa = c.getAxisAngle();
+
+                    // Set the OMPL SE3 configuration:
+                    ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index));
+
+                    ob::ScopedState<ob::SE3StateSpace> scopedStateSE3(ssRobotiSE3);
+                    scopedStateSE3->setX(pp[0]);
+                    scopedStateSE3->setY(pp[1]);
+                    scopedStateSE3->setZ(pp[2]);
+                    scopedStateSE3->rotation().setAxisAngle(aa[0],aa[1],aa[2],aa[3]);
+
+                    // Load the global scoped state with the info of the SE3 data of robot:
+                    ScopedStateRobot << scopedStateSE3;
+                    rob_subspace_index++;
                 }
 
-                //Get the Rn subspace of robot r, if it exisits, and extract the Rn configuration
-                if (_wkSpace->getRobot(r)->getNumJoints() > 0) {
-                // Convert it to a vector of n components
-                    std::vector<double> doubleCoords;  // Create a vector to hold double values
-                    constrained_state_space_->copyToReals(doubleCoords, state);
+                // Has Rn part:
+                const unsigned int num_dof = current_rob->getNumJoints();
+                if (num_dof > 0) {
 
-                    vector<KthReal> coords;
-                    for (unsigned int j = 0; j < _wkSpace->getRobot(r)->getNumJoints(); ++j){
-                        // coords.push_back(pathscopedstateRn->values[j]);
-                        coords.push_back(static_cast<KthReal>(doubleCoords[j]));
+                    // Get the kautham Rn configuration:
+                    RnConf r = smpRobotsConf.at(rob).getRn();
+
+                    // Set the OMPL Rn configuration(s):
+                    std::shared_ptr<ompl::base::StateSpace> ssRobotiRn;
+
+                    // First the constraints:
+                    std::vector<std::pair<std::string,uint>> constr_joints;
+                    std::string joint_name;
+                    auto constraints = current_rob->getConstraints();
+
+                    for (const auto& constr : constraints) {
+                        ssRobotiRn = ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index);
+                        // std::cout << "Constrained Rn space name: " << ssRobotiRn->getName() << std::endl;
+                        rob_subspace_index++;
+
+                        ob::ScopedState<ob::ProjectedStateSpace> scopedStateRnConstr(ssRobotiRn);
+
+                        constr_joints = std::get<2>(constr);
+                        // Extract only the names:
+                        std::vector<std::string> constr_names;
+                        for (const auto& [name, _] : constr_joints) {
+                            constr_names.push_back(name);
+                        }
+
+                        size_t q = 0;
+                        for (unsigned int n = 0; n < num_dof; n++) {
+                            joint_name = current_rob->getLink(n+1)->getName();  // n=0 is the base
+                            if (std::find(constr_names.begin(), constr_names.end(), joint_name) != constr_names.end()) {
+                                // std::cout << "Match with constr " << std::get<0>(constr) << " of " << joint_name << std::endl;
+                                scopedStateRnConstr[q] = r.getCoordinate(n);
+                                // std::cout << "Joint[" << q << "] = " << r.getCoordinate(n) << std::endl;
+                                q++;
+                            }
+                        }
+                        ScopedStateRobot << scopedStateRnConstr;
                     }
-                    
-                    rcj->setRn(coords);
-                } else {
-                    //If the robot does not have mobile Rn dofs then the Rn configuration of the sample is maintained
-                    if (smp->getMappedConf().size() == 0) {
-                        throw ompl::Exception("omplPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
-                    } else {
-                        rcj->setRn(smp->getMappedConf()[r].getRn());
+                   
+                    std::vector<std::string> unconstrained_joint_names = current_rob->getUnconstrainedJointNames();
+                    if (unconstrained_joint_names.size() > 0) {
+                        ssRobotiRn = ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index);
+                        // std::cout << "Unconstrained Rn space name: " << ssRobotiRn->getName() << std::endl;
+                        rob_subspace_index++;
+
+                        ob::ScopedState<ob::RealVectorStateSpace> scopedStateRn(ssRobotiRn);
+
+                        size_t q = 0;
+                        for (unsigned int n = 0; n < num_dof; n++) {
+                            joint_name = current_rob->getLink(n+1)->getName();  // n=0 is the base
+                            if (std::find(unconstrained_joint_names.begin(), unconstrained_joint_names.end(), joint_name) != unconstrained_joint_names.end()) {
+                                // std::cout << "Match with Rn of " << joint_name << std::endl;
+                                scopedStateRn[q] = r.getCoordinate(n);
+                                // std::cout << "Joint[" << q << "] = " << r.getCoordinate(n) << std::endl;
+                                q++;
+                            }
+                        }
+                        ScopedStateRobot << scopedStateRn;
                     }
+
+                    // Load the global scoped state with the info of the Rn data of the current robot:
+                    (*sstate) << ScopedStateRobot;
                 }
-
-                //Load the RobConf with the data of robot "r"
-                rc.push_back(*rcj);
             }
-            // Create the sample with the RobConf
-            // The coords (controls) of the sample are kept void
-            smp->setMappedConf(rc);
         }
 
         //! This member function converts an ompl State to a Kautham sample
@@ -460,7 +643,7 @@ namespace Kautham {
         {
             ob::ScopedState<ob::CompoundStateSpace> sstate(space_);
             sstate = *state;
-            omplConstraintPlanner::omplScopedState2smp( sstate, smp);
+            omplConstraintPlanner::omplScopedState2smp(sstate, smp);
         }
 
         //! This member function converts an ompl ScopedState to a Kautham sample
@@ -468,26 +651,29 @@ namespace Kautham {
         {
             vector<RobConf> rc;
 
-            //Loop for all the robots
-            for (unsigned int i = 0; i < _wkSpace->getNumRobots(); ++i) {
-                //RobConf to store the robots configurations read from the ompl state
+            // Loop for all the robots:
+            for (unsigned int rob = 0; rob < _wkSpace->getNumRobots(); ++rob) {
+
+                auto current_rob = _wkSpace->getRobot(rob);
+
+                // RobConf to store the robots configurations read from the ompl state:
                 RobConf *rcj = new RobConf;
 
-                //Get the subspace corresponding to robot i
-                ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr)space_->as<ob::CompoundStateSpace>()->getSubspace(i));
+                // Get the subspace corresponding to robot:
+                ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr)space_->as<ob::CompoundStateSpace>()->getSubspace(rob));
 
-                //Get the SE3 subspace of robot i, if it exists, extract the SE3 configuration
-                unsigned int k = 0; //counter of subspaces of robot i
-                if (_wkSpace->getRobot(i)->isSE3Enabled()) {
-                    //Get the SE3 subspace of robot i
-                    ob::StateSpacePtr ssRobotiSE3 = ((ob::StateSpacePtr)ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
+                // Get the SE3 subspace of the current robot, if it exists, extract the SE3 configuration:
+                unsigned int rob_subspace_index = 0; // Counter of subspaces of the current robot.
+                if (current_rob->isSE3Enabled()) {
+                    // Get the SE3 subspace of the curent robot:
+                    ob::StateSpacePtr ssRobotiSE3 = ((ob::StateSpacePtr)ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index));
 
-                    //Create a SE3 scoped state and load it with the data extracted from the global scoped state
+                    // Create a SE3 scoped state and load it with the data extracted from the global scoped state:
                     ob::ScopedState<ob::SE3StateSpace> pathscopedstatese3(ssRobotiSE3);
                     sstate >> pathscopedstatese3;
 
-                    //Convert it to a vector of 7 components
-                    vector<KthReal> se3coords;
+                    // Convert it to a vector of 7 components:
+                    std::vector<double> se3coords;
                     se3coords.resize(7);
                     se3coords[0] = pathscopedstatese3->getX();
                     se3coords[1] = pathscopedstatese3->getY();
@@ -497,44 +683,97 @@ namespace Kautham {
                     se3coords[5] = pathscopedstatese3->rotation().z;
                     se3coords[6] = pathscopedstatese3->rotation().w;
 
-                    //Create the sample
+                    // Create the sample:
                     SE3Conf se3;
                     se3.setCoordinates(se3coords);
                     rcj->setSE3(se3);
 
-                    k++;
+                    rob_subspace_index++;
                 } else {
                     //If the robot does not have mobile SE3 dofs then the SE3 configuration of the sample is maintained
                     if (smp->getMappedConf().size() == 0) {
-                        throw ompl::Exception("omplPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
+                        throw ompl::Exception("omplConstraintPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
                     } else {
-                        rcj->setSE3(smp->getMappedConf()[i].getSE3());
+                        rcj->setSE3(smp->getMappedConf()[rob].getSE3());
                     }
                 }
 
-                //Get the Rn subspace of robot i, if it exisits, and extract the Rn configuration
-                if (_wkSpace->getRobot(i)->getNumJoints() > 0) {
-                    //Get the Rn subspace of robot i
-                    ob::StateSpacePtr ssRobotiRn = ((ob::StateSpacePtr)ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
+                // Get the Rn subspaces (unconstrained + constrained) of robot, if it exisits, and extract the Rn configuration:
+                const unsigned int num_dof = current_rob->getNumJoints();
+                if (num_dof > 0) {
+                    vector<double> coords;
+                    coords.resize(num_dof);
 
-                    //Create a Rn scoped state and load it with the data extracted from the global scoped state
-                    ob::ScopedState<ob::ProjectedStateSpace> pathscopedstateRn(ssRobotiRn);
-                    sstate >> pathscopedstateRn;
+                    // Create all the possible index (fill with values 0 to num_dof - 1):
+                    std::vector<uint> unconstr_indexes(num_dof);
+                    std::iota(unconstr_indexes.begin(), unconstr_indexes.end(), 0);
 
-                    //Convert it to a vector of n components
-                    vector<KthReal> coords;
-                    for (unsigned int j = 0; j < _wkSpace->getRobot(i)->getNumJoints(); ++j){
-                        coords.push_back(pathscopedstateRn[j]);
+                    // Get the OMPL Rn configuration(s) of the robot:
+                    std::shared_ptr<ompl::base::StateSpace> ssRobotiRn;
+
+                    // First the constraints:
+                    std::vector<std::pair<std::string,uint>> constr_joints;
+                    auto constraints = current_rob->getConstraints();
+
+                    for (const auto& constr : constraints) {
+                        ssRobotiRn = ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index);
+                        // std::cout << "Constrained Rn space name: " << ssRobotiRn->getName() << std::endl;
+                        rob_subspace_index++;
+
+                        // Create a RnConstr scoped state and load it with the data extracted from the global scoped state
+                        ob::ScopedState<ob::ProjectedStateSpace> pathscopedstateRnConstr(ssRobotiRn);
+                        sstate >> pathscopedstateRnConstr;
+
+                        // pathscopedstateRnConstr.print(std::cout);
+
+                        // Convert it to a vector of n-constr components:
+                        constr_joints = std::get<2>(constr);
+                        size_t q = 0;
+                        for (unsigned int n = 0; n < num_dof; n++) {
+                            for (const auto& [_, index] : constr_joints) {
+                                if (n == index) {
+                                    coords[n] = pathscopedstateRnConstr[q];
+                                    unconstr_indexes.erase(
+                                        std::remove(unconstr_indexes.begin(), unconstr_indexes.end(), index),
+                                        unconstr_indexes.end()
+                                    );
+                                    // std::cout << "n = index = " << n << " = " << pathscopedstateRnConstr[q] << std::endl;
+                                    q++;
+                                }
+                            }
+                        }
                     }
+
+                    // Then the remaining unconstrained Rn :
+                    if (unconstr_indexes.size() > 0) {
+                        ssRobotiRn = ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index);
+                        // std::cout << "Unconstrained Rn space name: " << ssRobotiRn->getName() << std::endl;
+                        rob_subspace_index++;
+
+                        ob::ScopedState<ob::RealVectorStateSpace> pathscopedstateRn(ssRobotiRn);
+                        sstate >> pathscopedstateRn;
+
+                        // pathscopedstateRn.print(std::cout);
+
+                        // Convert it to a vector of n-unconstr components:
+                        for (unsigned int n = 0; n < num_dof; n++) {
+                            for (unsigned int u = 0; u < unconstr_indexes.size(); u++) {
+                                if (n == unconstr_indexes[u]) {
+                                    coords[n] = pathscopedstateRn[u];
+                                    // std::cout << "n = u = " << unconstr_indexes[u] << " = " << pathscopedstateRn[u] << std::endl;
+                                }
+                            }
+                        }
+                    }
+
                     rcj->setRn(coords);
 
-                    k++;//dummy
                 } else {
                     //If the robot does not have mobile Rn dofs then the Rn configuration of the sample is maintained
                     if (smp->getMappedConf().size() == 0) {
-                        throw ompl::Exception("omplPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
+                        throw ompl::Exception("omplConstraintPlanner::omplScopedState2smp", "parameter smp must be a sample with the MappedConf");
                     } else {
-                        rcj->setRn(smp->getMappedConf()[i].getRn());
+                        rcj->setRn(smp->getMappedConf()[rob].getRn());
                     }
                 }
 

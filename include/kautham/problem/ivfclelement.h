@@ -38,24 +38,24 @@ namespace Kautham {
 
 class IVFCLElement:public IVElement {
 public:
-    IVFCLElement(string visFile, string collFile, KthReal sc, bool useBBOX);
+    IVFCLElement(string visFile, string collFile, double sc, bool useBBOX);
 
     IVFCLElement(SoSeparator *visModel, SoSeparator *collModel,
-                 KthReal sc, bool useBBOX);
+                 double sc, bool useBBOX);
 
     ~IVFCLElement();
 
     bool collideTo(Element* other) const override ;
 
-    KthReal getDistanceTo(Element* other) const override ;
+    double getDistanceTo(Element* other) const override ;
 
     SoSeparator* getIvFromFCLModel(bool tran = true);
 
     const fcl::CollisionObjectd *getFCLModel() {return FCLModel;}
 
-    void setPosition(KthReal *pos);
+    void setPosition(double *pos);
 
-    void setOrientation(KthReal *ori);
+    void setOrientation(double *ori);
 
 private:
     fcl::CollisionObjectd *FCLModel;

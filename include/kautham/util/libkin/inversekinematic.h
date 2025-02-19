@@ -106,11 +106,11 @@ namespace Kautham {
 
     //! This method returns the high level configuration description of the robot i.e. shoulder left/right or 
     //! elbow up/down for the target parameter. This function should be virtual pure.
-    virtual RobLayout&   getRobLayout(vector<KthReal> &target); // = 0;
+    virtual RobLayout&   getRobLayout(vector<double> &target); // = 0;
 
 	  //!	This method allow to setup the target. Commonly, the target is se3.coordintes.
-    void              setTarget(vector<KthReal> &target, const string& param=string(""));
-    virtual void	    setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);
+    void              setTarget(vector<double> &target, const string& param=string(""));
+    virtual void	    setTarget(vector<double> &target, vector<double> masterconf, bool maintainSameWrist);
     inline void       setTarget(mt::Transform& tcp){_targetTrans = tcp;}
     inline SE3Conf&   getSE3(){return _robConf.getSE3();}
     inline RnConf&    getRn(){return _robConf.getRn();}
@@ -129,7 +129,7 @@ namespace Kautham {
     RobLayout       _robLay;
 
 	  //! This vector contains the target to be solved.
-    vector<KthReal> _target;      //!< This is a generic way to set up the target.
+    vector<double> _target;      //!< This is a generic way to set up the target.
     mt::Transform   _targetTrans; //!< This is the Scene target
 
   };

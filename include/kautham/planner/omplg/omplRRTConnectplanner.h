@@ -56,7 +56,7 @@ namespace Kautham {
 
         bool setParameters();
 
-         KthReal _Range;
+         double _Range;
 	  };
   }
   /** @}   end of Doxygen module */

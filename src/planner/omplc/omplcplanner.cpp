@@ -367,7 +367,7 @@ namespace Kautham {
                     spaceRn[i]->setName(sstm.str());
 
                     // set the bounds and the weights
-                    vector<KthReal> jointweights;
+                    vector<double> jointweights;
                     ob::RealVectorBounds bounds(nj);
                     double low, high;
                     for(int j=0; j<nj;j++)
@@ -500,14 +500,14 @@ namespace Kautham {
             ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
 
             //space bounds
-            KthReal xmin=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().low[0];
-            KthReal xmax=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().high[0];
-            KthReal ymin=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().low[1];
-            KthReal ymax=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().high[1];
-            KthReal zmin=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().low[2];
-            KthReal zmax=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().high[2];
+            double xmin=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().low[0];
+            double xmax=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().high[0];
+            double ymin=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().low[1];
+            double ymax=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().high[1];
+            double zmin=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().low[2];
+            double zmax=ssRobotiSE3->as<ob::SE3StateSpace>()->getBounds().high[2];
 
-            KthReal x,y,z;
+            double x,y,z;
             //load the planner data to be drawn
             ob::PlannerDataPtr pdata;
             pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
@@ -673,12 +673,12 @@ namespace Kautham {
         ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(0));
 
         //space bounds
-        KthReal xmin=ssRobotiRn->as<omplplanner::weigthedRealVectorStateSpace>()->getBounds().low[0];
-        KthReal xmax=ssRobotiRn->as<omplplanner::weigthedRealVectorStateSpace>()->getBounds().high[0];
-        KthReal ymin=ssRobotiRn->as<omplplanner::weigthedRealVectorStateSpace>()->getBounds().low[1];
-        KthReal ymax=ssRobotiRn->as<omplplanner::weigthedRealVectorStateSpace>()->getBounds().high[1];
+        double xmin=ssRobotiRn->as<omplplanner::weigthedRealVectorStateSpace>()->getBounds().low[0];
+        double xmax=ssRobotiRn->as<omplplanner::weigthedRealVectorStateSpace>()->getBounds().high[0];
+        double ymin=ssRobotiRn->as<omplplanner::weigthedRealVectorStateSpace>()->getBounds().low[1];
+        double ymax=ssRobotiRn->as<omplplanner::weigthedRealVectorStateSpace>()->getBounds().high[1];
 
-        KthReal x,y;
+        double x,y;
         //load the planner data to be drawn
         ob::PlannerDataPtr pdata;
         pdata = ((ob::PlannerDataPtr) new ob::PlannerData(ss->getSpaceInformation()));
@@ -840,8 +840,8 @@ namespace Kautham {
             {
                 //get the kautham SE3 configuration
                 SE3Conf c = smpRobotsConf.at(i).getSE3();
-                vector<KthReal>& pp = c.getPos();
-                vector<KthReal>& aa = c.getAxisAngle();
+                vector<double>& pp = c.getPos();
+                vector<double>& aa = c.getAxisAngle();
 
                 //set the ompl SE3 configuration
                 ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
@@ -913,7 +913,7 @@ namespace Kautham {
                  sstate >> pathscopedstatese3;
 
                  //convert to a vector of 7 components
-                 vector<KthReal> se3coords;
+                 vector<double> se3coords;
                  se3coords.resize(7);
                  se3coords[0] = pathscopedstatese3->getX();
                  se3coords[1] = pathscopedstatese3->getY();
@@ -949,7 +949,7 @@ namespace Kautham {
                  sstate >> pathscopedstateRn;
 
                  //convert to a vector of n components
-                 vector<KthReal> coords;
+                 vector<double> coords;
                  for(unsigned j=0;j<_wkSpace->getRobot(i)->getNumJoints();j++) coords.push_back(pathscopedstateRn->values[j]);
                  rcj->setRn(coords);
                  k++;//dummy

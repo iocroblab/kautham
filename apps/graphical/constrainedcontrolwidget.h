@@ -57,15 +57,15 @@ namespace Kautham {
     public:
         ConstrainedControlWidget( Robot* rob, Problem* prob );
         ~ConstrainedControlWidget();
-        inline vector<KthReal>   *getValues(){return &values;}
-        void setValues(vector<KthReal> &val);
+        inline vector<double>   *getValues(){return &values;}
+        void setValues(vector<double> &val);
     private:
         ConstrainedKinematic *_conKin;
         vector<QSlider*>  sliders;
         vector<QLabel*>   labels;
         QGridLayout       *gridLayout;
         QVBoxLayout       *vboxLayout;
-        vector<KthReal>   values;
+        vector<double>   values;
         Robot*            _robot;
         Problem*          _ptProblem;
 	};

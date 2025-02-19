@@ -48,13 +48,13 @@ namespace Kautham {
 //		~RnConf();
     void        reDim(unsigned int dim);
 		std::string print();
-    KthReal     getDistance2(Conf* conf);
-    KthReal     getDistance2(RnConf& conf);
-    KthReal     getDistance2(Conf* conf, std::vector<KthReal>& weights);
-    KthReal     getDistance2(RnConf& conf, std::vector<KthReal>& weights);
+    double     getDistance2(Conf* conf);
+    double     getDistance2(RnConf& conf);
+    double     getDistance2(Conf* conf, std::vector<double>& weights);
+    double     getDistance2(RnConf& conf, std::vector<double>& weights);
 
     //! Returns the interpolated configuration based on coordinates.
-    RnConf     interpolate(RnConf& rn, KthReal fraction);
+    RnConf     interpolate(RnConf& rn, double fraction);
 	private:
 //		RnConf();
 	};

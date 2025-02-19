@@ -82,7 +82,7 @@ namespace omplcplanner
         ~KPIECETiagoPlanner();
 
         bool setParameters();//!< set the planning parameters.
-        KthReal _GoalBias;
+        double _GoalBias;
     };
 
 }

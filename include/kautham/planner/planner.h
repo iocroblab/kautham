@@ -109,7 +109,7 @@ namespace Kautham {
        vector<Sample*>               _goal;
        vector<Sample*>               _path;
        vector<attachData>            _attachdetach;
-       vector<vector<vector<KthReal> > >  _StateBodies;
+       vector<vector<vector<double> > >  _StateBodies;
        vector<Sample*>               _simulationPath;
        vector<mt::Transform>         _cameraPath;
        WorkSpace*                    _wkSpace;

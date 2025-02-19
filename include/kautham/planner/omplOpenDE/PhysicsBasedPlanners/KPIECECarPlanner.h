@@ -60,8 +60,8 @@ public:
     ~KPIECECarPlanner();
     bool setParameters();//!< this function set the planning parameters for KPIECE.
 
-    KthReal _Range;
-    KthReal _GoalBias;
+    double _Range;
+    double _GoalBias;
 };
 
 }

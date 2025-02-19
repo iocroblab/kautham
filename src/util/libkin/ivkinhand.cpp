@@ -168,7 +168,7 @@
 // 	// Get Random Contact Points
 // 	boost::numeric::ublas::vector<double> rand_cpo, rand_conf, rand_twrist;
 // 	rand_cpo = GenerateRandFingPosOr(rand_twrist, rand_conf);
-// 	std::vector<KthReal> coords(17);
+// 	std::vector<double> coords(17);
 // 	// Thumb
 // 	coords[0] = -(float)rand_conf(0);
 // 	coords[1] = (float)rand_conf(1);
@@ -194,7 +194,7 @@
 // 
 // 	// Set wrist base
 // 	//  Translation
-// // 	std::vector<KthReal> wrist_position(3);
+// // 	std::vector<double> wrist_position(3);
 // // 	wrist_position[0] = 500;
 // // 	wrist_position[1] = 500;
 // // 	wrist_position[2] = 500;
@@ -305,7 +305,7 @@
 
     //as an example set the xyz position of the palm at the values of _indexi
 //   _robConf.getSE3().setPos(_indexi);
-//   std::vector<KthReal> coords(_robot->getNumJoints());
+//   std::vector<double> coords(_robot->getNumJoints());
 // 
 //   for(int i=0; i<_robot->getNumJoints(); i++)
 //     coords[i]=-45*(PI/180);
@@ -565,7 +565,7 @@
 
 		// Set configuration
 		//  Thumb
-		std::vector<KthReal> coords(17);
+		std::vector<double> coords(17);
 		coords[0] = -(float)ik_results.configuration(0);
 		coords[1] = (float)ik_results.configuration(1);
 		coords[2] = -(float)ik_results.configuration(2);
@@ -590,7 +590,7 @@
 
 		// Set wrist base
 		//  Translation
-		std::vector<KthReal> wrist_position(3);
+		std::vector<double> wrist_position(3);
 		wrist_position[0] = (float)ik_results.t_wrist(12);
 		wrist_position[1] = (float)ik_results.t_wrist(13);
 		wrist_position[2] = (float)ik_results.t_wrist(14);
@@ -601,7 +601,7 @@
         			    (float)ik_results.t_wrist(1), (float)ik_results.t_wrist(5), (float)ik_results.t_wrist(9),
 				    (float)ik_results.t_wrist(2), (float)ik_results.t_wrist(6), (float)ik_results.t_wrist(10));
 		Rotation rWrist(MatRWrist);
-		std::vector<KthReal> wrist_quaternion(4);
+		std::vector<double> wrist_quaternion(4);
 		wrist_quaternion[0] = rWrist.at(0);
 		wrist_quaternion[1] = rWrist.at(1);
 		wrist_quaternion[2] = rWrist.at(2);
@@ -657,7 +657,7 @@
 		assert(n_sah_joints == sah_conf_s);
 		assert(n_sah_joints == 17);
 
-		std::vector<KthReal> coords(n_sah_joints);
+		std::vector<double> coords(n_sah_joints);
 		for(unsigned int i=0; i<n_sah_joints; i++)
 			coords[i]=sah_conf(i);
 		_robConf.setRn(coords);

@@ -95,7 +95,7 @@ vector<KauthamDEGoalRegion::KauthamODEobject> KauthamDEGoalRegion::smp2KauthamOp
 
 double KauthamDEGoalRegion::distanceGoal(const ob::State *st) const
 {
-    KthReal distance;
+    double distance;
     distance=0.0;
 
     if(!onlyend)

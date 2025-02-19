@@ -35,7 +35,7 @@ namespace Kautham{
   RandomSample::RandomSample(char d):Sample(d){
     //_coords.resize(d);
     for(int j = 0; j < d ; j++)
-      _coords[j] = (KthReal)gen->d_rand();
+      _coords[j] = (double)gen->d_rand();
   }
 
 }

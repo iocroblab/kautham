@@ -1,4 +1,0 @@
-string controls
-float32[] initObs
----
-bool response

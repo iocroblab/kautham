@@ -67,10 +67,10 @@ public:
     string       name() {return "UR5";}
     bool solve();
     bool setParameters();
-    void setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);
+    void setTarget(vector<double> &target, vector<double> masterconf, bool maintainSameWrist);
 private:
     IvKinUR5();
-    vector<KthReal> _eulPos;
+    vector<double> _eulPos;
     UR5config       _UR5Conf;
     double          _result[6];
 };

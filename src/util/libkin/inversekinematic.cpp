@@ -30,7 +30,7 @@ namespace Kautham {
     _robot = rob;
     }
 
-  /*KthReal InverseKinematic::getParameter(string key){
+  /*double InverseKinematic::getParameter(string key){
     HASH_S_K::iterator it = _parameters.find(key);
     if(it != _parameters.end() )
       return it->second;
@@ -38,7 +38,7 @@ namespace Kautham {
       throw -1;
   }
 
-  bool InverseKinematic::setParameter(string key, KthReal value){
+  bool InverseKinematic::setParameter(string key, double value){
     HASH_S_K::iterator it = _parameters.find(key);
     if(it != _parameters.end() ){
       it->second = value;
@@ -62,7 +62,7 @@ namespace Kautham {
 
   bool InverseKinematic::setParametersFromString(string par){
     string prop="", sval="";
-    KthReal val = 0.0;
+    double val = 0.0;
     HASH_S_K::iterator it;
     size_t from=0, to=0;
     while(from != string::npos){
@@ -74,7 +74,7 @@ namespace Kautham {
         sval = par.substr(from, to);
       else
         sval = par.substr(from);
-      val = (KthReal)atof(sval.c_str());
+      val = (double)atof(sval.c_str());
 	    it = _parameters.find(prop);
 	    if(it != _parameters.end()) 
 		    it->second = val;
@@ -88,7 +88,7 @@ namespace Kautham {
   //! This method receives the target as a parameter and the most used way is
   //! configured the target as a se3.coordinates vector that includes the 
   //! position and the orientation as a quaternion.
-  void InverseKinematic::setTarget(vector<KthReal> &target, const string& param){
+  void InverseKinematic::setTarget(vector<double> &target, const string& param){
       try {
           if(param != "" ) setParametersFromString( param );
           _target.clear();
@@ -100,7 +100,7 @@ namespace Kautham {
   }
 
   
-  void InverseKinematic::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
+  void InverseKinematic::setTarget(vector<double> &target, vector<double> masterconf, bool maintainSameWrist){
 
 	   //loads the target: the tcp transform
     _target.clear();
@@ -113,7 +113,7 @@ namespace Kautham {
 	  //the derived classes may use it to complete the target with configuration parameters
   }
 
-  RobLayout& InverseKinematic::getRobLayout(vector<KthReal> &target){
+  RobLayout& InverseKinematic::getRobLayout(vector<double> &target){
       (void)target;//unused
     return _robLay;
   }

@@ -106,7 +106,7 @@ TMat::TMat(unsigned d) {
 
 	  i = 3;
 
-	  while (i <= (sqrt((long double)c)+1)) {
+	  while (i <= (sqrt((double)c)+1)) {
 		  if ((c % i) == 0) {
 			  fact[(*numfactors)++] = i;
 			  c = c / i;
@@ -121,41 +121,68 @@ TMat::TMat(unsigned d) {
 	  }
   }
 
-  void TMat::insert(int **vA, int **vB, unsigned int dimA, unsigned int dimB){
-      //temporal copy of vA
-      int **tempvA(new int*[dimA]);
-      for(unsigned int i = 0; i < dimA; ++i) {
-          tempvA[i] = new int[dimA];
-          for (unsigned int j = 0; j < dimA; ++j) {
-              tempvA[i][j] = vA[i][j];
-          }
-      }
+//   void TMat::insert(int **vA, int **vB, unsigned int dimA, unsigned int dimB){
+//       //temporal copy of vA
+//       int **tempvA(new int*[dimA]);
+//       for(unsigned int i = 0; i < dimA; ++i) {
+//           tempvA[i] = new int[dimA];
+//           for (unsigned int j = 0; j < dimA; ++j) {
+//               tempvA[i][j] = vA[i][j];
+//           }
+//       }
 
-      for (unsigned int i = 0; i < dimA; ++i) {
-          for (unsigned int j = 0; j < dimA; ++j) {
-              if (tempvA[i][j] != 0) {
-                  for (unsigned int k = 0; k < dimB; ++k) {
-                      for (unsigned int l = 0; l < dimB; ++l) {
-                          vA[i*dimB + k][j*dimB + l]  = vB[k][l];
-                      }
-                  }
-              } else {
-                  for (unsigned int k = 0; k < dimB; ++k) {
-                      for (unsigned int l = 0; l < dimB; ++l) {
-                          vA[i*dimB + k][j*dimB + l] = 0;
-                      }
-                  }
+//       for (unsigned int i = 0; i < dimA; ++i) {
+//           for (unsigned int j = 0; j < dimA; ++j) {
+//               if (tempvA[i][j] != 0) {
+//                   for (unsigned int k = 0; k < dimB; ++k) {
+//                       for (unsigned int l = 0; l < dimB; ++l) {
+//                           vA[i*dimB + k][j*dimB + l]  = vB[k][l];
+//                       }
+//                   }
+//               } else {
+//                   for (unsigned int k = 0; k < dimB; ++k) {
+//                       for (unsigned int l = 0; l < dimB; ++l) {
+//                           vA[i*dimB + k][j*dimB + l] = 0;
+//                       }
+//                   }
 
-              }
-          }
-      }
+//               }
+//           }
+//       }
 
-      //delete temporal copy of vA
-      for(unsigned int i = 0; i < dimA; ++i) {
-          delete tempvA[i];
-      }
-      delete tempvA;
-  }
+//       //delete temporal copy of vA
+//       for(unsigned int i = 0; i < dimA; ++i) {
+//           delete tempvA[i];
+//       }
+//       delete tempvA;
+//   }
+
+  // version updated
+	void TMat::insert(int **vA, int **vB, unsigned int dimA, unsigned int dimB) {
+    // Temporal copy of vA
+    int **tempvA = new int*[dimA];
+    for (unsigned int i = 0; i < dimA; ++i) {
+        tempvA[i] = new int[dimA];
+        std::copy(vA[i], vA[i] + dimA, tempvA[i]); // Simplified copy
+    }
+
+    // Insert vB into vA based on the non-zero values of tempvA
+    for (unsigned int i = 0; i < dimA; ++i) {
+        for (unsigned int j = 0; j < dimA; ++j) {
+            for (unsigned int k = 0; k < dimB; ++k) {
+                for (unsigned int l = 0; l < dimB; ++l) {
+                    vA[i * dimB + k][j * dimB + l] = (tempvA[i][j] != 0) ? vB[k][l] : 0;
+                }
+            }
+        }
+    }
+
+    // Free the memory allocated for tempvA
+    for (unsigned int i = 0; i < dimA; ++i) {
+        delete[] tempvA[i];
+    }
+    delete[] tempvA;
+}
 
   //! This method creates the base matrices of the prime numbers involved.
   void TMat::compose(int *primefactors, int numfactors, int **vC, int dimC, int trunc){

@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!-- <Problem name="madar_constr" topology="SE3"> -->
+<Problem name="madar_arm_right_constr">
+
+	<Robot robot="robots/MADAR/madar_arm_right.urdf">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+		<Constraint id="arm_ur5" type="orientation_ur5">
+			<Joint name="right_shoulder_link" />
+			<Joint name="right_upper_arm_link" />
+			<Joint name="right_fore_arm_link" />
+			<Joint name="right_wrist_1_link" />
+			<Joint name="right_wrist_2_link" />
+			<Joint name="right_wrist_3_link" />
+		</Constraint>
+	</Robot>
+
+	<!-- <Obstacle obstacle="obstacles/ode-objects/table.urdf" scale="1.0">
+        <Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle> -->
+
+	<Controls robot="controls/madar_arm_right.cntr" />
+	
+	<Planner>
+		<Parameters>
+			<Name>omplconstr</Name>
+			<Parameter name="_Max Planning Time">10.0</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="_Range">0.1</Parameter>
+
+		</Parameters>
+		<Queries>
+			<Query>
+				<!-- <TAG> (arm_right/[q1,q2,q3,q4,q5,q6]) </TAG> -->
+				<Init>0.628782421 0.382068917 0.580805575 0.405593445 0.688993552 0.492723602</Init>
+				<Goal>0.584949088 0.429737084 0.589917256 0.390635924 0.680592155 0.552316368</Goal>
+			</Query>
+		</Queries>
+	</Planner>
+
+</Problem>
+
+<!-- JOINT VALUE & CONTROL
+
+ARM RIGHT INIT:
+1.6183276355039726		0.628782421
+-1.4819656918877764		0.382068917
+1.0154328038225753		0.580805575
+-1.1863477609515787		0.405593445
+2.3749630208764194		0.688993552
+-0.09143791002021029	0.492723602
+
+ARM RIGHT GOAL
+1.0675017235747142		0.584949088
+-0.8829498374229702		0.429737084
+1.129933559199853		0.589917256
+-1.3743095068454847		0.390635924
+2.269387955615244		0.680592155
+0.657426870809533		0.552316368
+
+-->

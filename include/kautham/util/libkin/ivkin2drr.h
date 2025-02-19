@@ -41,13 +41,13 @@ class IvKin2DRR : public Kautham::InverseKinematic{
     string          name() {return "RR2D";}
     bool            solve();
     bool            setParameters();
-    RobLayout&      getRobLayout(vector<KthReal> &target);
+    RobLayout&      getRobLayout(vector<double> &target);
     inline void     setConfiguration(const bool lefty){_robLefty = lefty;}
   private:
     IvKin2DRR();
     bool            _robLefty;
-    KthReal         _tcp[2];
-    KthReal         _llong[2];
+    double         _tcp[2];
+    double         _llong[2];
   };
 
 /** @}   end of Doxygen module */

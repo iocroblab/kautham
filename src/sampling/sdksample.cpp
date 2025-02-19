@@ -35,13 +35,13 @@ namespace Kautham {
   LCPRNG* SDKSample::gen = NULL;
 
   SDKSample::SDKSample(unsigned d, unsigned long int code, int *indexes, bool random):Sample(d){
-      KthReal r=0.0;
+      double r=0.0;
       this->code = code;
       _coords.resize(_dim);
       index = new int[_dim];
       for(unsigned int j=0; j< _dim; j++){
           if(random)
-              r = (KthReal)gen->d_rand();
+              r = (double)gen->d_rand();
           else
               r=0.5;
           index[j]=indexes[j];

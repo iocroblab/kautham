@@ -197,7 +197,7 @@ bool IvKinUR5::solve(){
                  << " (" << control[j] << ")" << endl;
         }
 
-        std::vector<KthReal> qn(6);
+        std::vector<double> qn(6);
         for (unsigned int i = 0; i<6; ++i){
             _robot->getLink(i+1)->setValue(_result[i]);
             qn.at(i) = _result[i];
@@ -280,7 +280,7 @@ bool IvKinUR5::setParameters(){
       return true;
 }
 
-void IvKinUR5::setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
+void IvKinUR5::setTarget(vector<double> &target, vector<double> masterconf, bool maintainSameWrist){
     (void)masterconf;//unused
     (void)maintainSameWrist;//unused
 

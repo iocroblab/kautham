@@ -7,35 +7,35 @@
 	</Robot>
 		
 	<!-- ENVIRONMENT -->
-	<Obstacle obstacle="obstacles/ioclab/ioclab_layout.urdf" scale="0.01">
+	<!-- <Obstacle obstacle="obstacles/ioclab/ioclab_layout.urdf" scale="0.01">
 		<Home TH="3.1415927" WX="0.0" WY="0.7071068" WZ="0.7071068" X="6" Y="0" Z="-0.001" />
 		<KauthamName name="lab_layout" />
-	</Obstacle>
+	</Obstacle> -->
 
 	<!-- BEGIN: STEEL CUPBOARD -->
-	<Obstacle obstacle="obstacles/ioclab/ioclab_steel_cupboard.urdf" scale="1">
+	<!-- <Obstacle obstacle="obstacles/ioclab/ioclab_steel_cupboard.urdf" scale="1">
 		<Home TH="3.1415927" WX="0" WY="-0.7071968" WZ="0.7071968" X="0.435" Y="0.97" Z="1.95" />
 		<KauthamName name="steel_cupboard_1" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/ioclab/ioclab_steel_cupboard.urdf" scale="1">
 		<Home TH="3.1415927" WX="0" WY="-0.7071968" WZ="0.7071968" X="0.435" Y="1.87" Z="1.95" />
 		<KauthamName name="steel_cupboard_2" />
-	</Obstacle>
+	</Obstacle> -->
 	<!-- END: STEEL CUPBOARD -->
 
 	<!-- BEGIN: WOODEN SHELF -->
-	<Obstacle obstacle="obstacles/ioclab/ioclab_woodenshelf.urdf" scale="1">
+	<!-- <Obstacle obstacle="obstacles/ioclab/ioclab_woodenshelf.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="0.32" Y="4.87" Z="0" />
 		<KauthamName name="wooden_shelf_1" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/ioclab/ioclab_woodenshelf.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="0.32" Y="5.67" Z="0" />
 		<KauthamName name="wooden_shelf_2" />
-	</Obstacle>
+	</Obstacle> -->
 	<!-- END: WOODEN SHELF -->
 
 	<!-- BEGIN: WORKSPACE MEDITERRANI -->
-	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_895_765.urdf" scale="1">
+	<!-- <Obstacle obstacle="obstacles/ioclab/ioclab_table_995_895_765.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="6.03" Y="1.305" Z="0" />
 		<KauthamName name="small_table_mediterrani" />
 	</Obstacle>
@@ -58,11 +58,11 @@
 	<Obstacle obstacle="obstacles/ioclab/ioclab_chair.urdf" scale="1">
 		<Home TH="1.5707" WX="0.0" WY="0.0" WZ="1.0" X="4.235" Y="1.2" Z="0" />
 		<KauthamName name="chair_meditarrani_bessos" />
-	</Obstacle>
+	</Obstacle> -->
 	<!-- END: WORKSPACE MEDITERRANI -->
 
 	<!-- BEGIN: WORKSPACE COLLSEROLA -->
-	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_895_765.urdf" scale="1">
+	<!-- <Obstacle obstacle="obstacles/ioclab/ioclab_table_995_895_765.urdf" scale="1">
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="5.78" Y="9.3" Z="0" />
 		<KauthamName name="small_table_collserola" />
 	</Obstacle>
@@ -85,7 +85,7 @@
 	<Obstacle obstacle="obstacles/ioclab/ioclab_chair.urdf" scale="1">
 		<Home TH="1.5707" WX="0.0" WY="0.0" WZ="-1.0" X="4.235" Y="10.3" Z="0" />
 		<KauthamName name="chair_collserola_bessos" />
-	</Obstacle>
+	</Obstacle> -->
 	<!-- END: WORKSPACE COLLSEROLA -->
 
 	<!-- BEGIN: WORKSPACE WINDOWS -->
@@ -104,7 +104,7 @@
 		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="4.685" Y="4.825" Z="0" />
 		<KauthamName name="big_table_chessboard" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/chess/chessboard.urdf" scale="2.0">
+	<Obstacle obstacle="obstacles/chess/flat_chessboard/flat_chessboard.urdf" scale="2.0">
 		<Home TH="1.5707963" WX="0.0" WY="0.0" WZ="1.0" X="4.1875" Y="5.4225" Z="0.73" />
 		<KauthamName name="chessboard" />
 	</Obstacle>
@@ -120,6 +120,7 @@
 			<Parameter name="_Max Planning Time">10.0</Parameter>
 			<Parameter name="_Speed Factor">30</Parameter>
 			<Parameter name="Range">0.2</Parameter>
+			<!-- <Parameter name="_Simplify Solution">0</Parameter> -->
 		</Parameters>
 		<Queries>
 			<Query>

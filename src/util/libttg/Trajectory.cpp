@@ -46,9 +46,9 @@ using namespace std;
 
 const double Trajectory::eps = 0.000001;
 
-static double squared(double d) {
-	return d * d;
-}
+// static double squared(double d) {
+// 	return d * d;
+// }
 
 Trajectory::Trajectory(const Path &path, const VectorXd &maxVelocity, const VectorXd &maxAcceleration, double timeStep) :
 	path(path),
@@ -120,7 +120,7 @@ bool Trajectory::getNextSwitchingPoint(double pathPos, TrajectoryStep &nextSwitc
 	bool accelerationReachedEnd;
 	do {
 		accelerationReachedEnd = getNextAccelerationSwitchingPoint(accelerationSwitchingPoint.pathPos, accelerationSwitchingPoint, accelerationBeforeAcceleration, accelerationAfterAcceleration);
-		double test = getVelocityMaxPathVelocity(accelerationSwitchingPoint.pathPos);
+		(void) getVelocityMaxPathVelocity(accelerationSwitchingPoint.pathPos);
 	} while(!accelerationReachedEnd && accelerationSwitchingPoint.pathVel > getVelocityMaxPathVelocity(accelerationSwitchingPoint.pathPos));
 	
 	TrajectoryStep velocitySwitchingPoint(pathPos, 0.0);
@@ -325,7 +325,7 @@ void Trajectory::integrateBackward(list<TrajectoryStep> &startTrajectory, double
 	list<TrajectoryStep>::iterator start1 = start2;
 	start1--;
 	list<TrajectoryStep> trajectory;
-	double slope;
+	double slope = 0;
 	assert(start1->pathPos <= pathPos);
 
 	while(start1 != startTrajectory.begin() || pathPos >= 0.0)
@@ -425,7 +425,7 @@ double Trajectory::getAccelerationMaxPathVelocityDeriv(double pathPos) {
 double Trajectory::getVelocityMaxPathVelocityDeriv(double pathPos) {
 	const VectorXd tangent = path.getTangent(pathPos);
 	double maxPathVelocity = numeric_limits<double>::max();
-	unsigned int activeConstraint;
+	unsigned int activeConstraint = 0;
 	for(unsigned int i = 0; i < n; i++) {
 		const double thisMaxPathVelocity = maxVelocity[i] / abs(tangent[i]);
 		if(thisMaxPathVelocity < maxPathVelocity) {

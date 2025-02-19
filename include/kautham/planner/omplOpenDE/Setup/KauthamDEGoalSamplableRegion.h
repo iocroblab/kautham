@@ -53,8 +53,8 @@ namespace Kautham {
 namespace omplcplanner{
 typedef struct
 {
-    KthReal objectposition[3];
-    KthReal objectorientation[4];
+    double objectposition[3];
+    double objectorientation[4];
 }KauthamODEobject;
 
 class KauthamDEGoalSamplableRegion: public ob::GoalSampleableRegion

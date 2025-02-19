@@ -43,13 +43,13 @@ namespace Kautham{
   public:
 
       //! Initializes the robot sample with the robcoords contents.
-      bool    setRob(vector<KthReal>& robcoords);
+      bool    setRob(vector<double>& robcoords);
 
       //! Copies the robot sample.
       bool    setRob(Sample& robsample);
 
       //! Initializes the obstacle sample with the obscoords contents.
-      bool    setObs(vector<KthReal>& obscoords);
+      bool    setObs(vector<double>& obscoords);
 
       //! Copies the obstacle sample.
       bool    setObs(Sample& obssample);

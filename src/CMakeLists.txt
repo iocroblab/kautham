@@ -1,9 +1,5 @@
 #### Adding subdirectories
 
-#set ( kin_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin )
-#set ( kthutil_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/kthutil )
-#set ( libttg_DIR ${CMAKE_CURRENT_SOURCE_DIR}/util/libttg )
-
 message(STATUS "We have this includes now ###################: ${ALL_INCLUDE_DIRS}")
 list(APPEND ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 ##### pugixml ########
@@ -18,6 +14,10 @@ endif(PUGI_XML_FOUND)
 
 #### Coin3D package ###############
 # graphics library
+if(POLICY CMP0072)
+  cmake_policy(SET CMP0072 NEW)
+endif()
+
 find_package(Coin REQUIRED)
 if(Coin_FOUND)
   set(EXTRA_LIBS ${EXTRA_LIBS} ${Coin_LIBRARIES})
@@ -74,10 +74,17 @@ if(KAUTHAM_OPENDE)
    if(DRAWSTUFF_INCLUDE_DIR)
         message( STATUS "Drawstuff found, using it")
    else(DRAWSTUFF_INCLUDE_DIR)
-        message(STATUS "DrawStuff not found, using internal copy")
-        add_subdirectory ( ${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff)
-        list(APPEND ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff/include)
-        set(DRAWSTUFF_LIBRARY drawstuff)
+         message(STATUS "DrawStuff not found, using internal copy")
+         find_package(X11)
+         if(X11_FOUND)
+            message(STATUS "DrawStuff will be built and linked against X11")
+            add_subdirectory ( ${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff)
+            list(APPEND ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/drawstuff/include)
+            set(DRAWSTUFF_LIBRARY drawstuff)
+            set(EXTRA_LIBS ${EXTRA_LIBS} ${X11_LIBRARIES})
+         else(X11_FOUND)
+            message(STATUS "DrawStuff cannot be built or used")
+         endif(X11_FOUND)
    endif(DRAWSTUFF_INCLUDE_DIR)
 
    if(ODE_FOUND)
@@ -105,6 +112,7 @@ add_subdirectory( external )
 #message( STATUS "Kautham sources at ${CMAKE_CURRENT_SOURCE_DIR} to create the library: ${KAUTHAM_SRC}")
 
 add_library(libkautham SHARED ${KAUTHAM_SRC} ${CMAKE_CURRENT_SOURCE_DIR}/kauthamshell.cpp)
+add_library(Kautham::kautham ALIAS libkautham)
 
 # Set include directories for the library
 target_include_directories(libkautham
@@ -125,39 +133,89 @@ set_target_properties( libkautham PROPERTIES
   VERSION "${KAUTHAM_VERSION}"
   OUTPUT_NAME kautham)
   
-# YumiIK
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/util/libkin/)
-#add_library(YumiIK SHARED ${CMAKE_CURRENT_SOURCE_DIR}/util/libkin/YumiKinematics.cpp)
-#set(EXTRA_LIBS ${EXTRA_LIBS} YumiIK)
-
 message(STATUS "Internal libraries: ${EXTRA_LIBS}")
 
 target_link_libraries(libkautham PRIVATE ${EXTRA_LIBS})
 
 # extra libraries should contain sampling libPQP libgdiam PUGI OMPL ARMADILLO ODE libDNN libkin libkthutil 
 
-set(KAUTHAM_DIRNAME_lib ${CMAKE_INSTALL_LIBDIR})
+set(KAUTHAM_DIRNAME_lib "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 set(KAUTHAM_DIRNAME_include "${CMAKE_INSTALL_PREFIX}/include")
+
+message(STATUS "KAUTHAM_DIRNAME_lib: ${KAUTHAM_DIRNAME_lib}")
+message(STATUS "KAUTHAM_DIRNAME_include: ${KAUTHAM_DIRNAME_include}")
+
+if(KAUTHAM_PYTHON)
+   # Set up pybind11
+   message(STATUS "Finding pybind11 stuff ....")
+   find_package(Python COMPONENTS Interpreter Development REQUIRED)
+   if(NOT Python_FOUND)
+      message(WARNING "Python not found. Skipping Python bindings.")
+      return()
+   endif()
+
+   find_package(pybind11 CONFIG REQUIRED)
+   if(NOT pybind11_FOUND)
+      message(WARNING "pybind11 not found. Skipping Python bindings.")
+      return()
+   endif()
+
+   # Python method:
+   Python_add_library(pykautham pykautham/pykautham_module.cpp
+                              pykautham/kauthamshell_bindings.cpp)
+   target_link_libraries(pykautham PUBLIC pybind11::headers libkautham ${Python_LIBRARIES})
+   set_target_properties(pykautham PROPERTIES
+                                 INTERPROCEDURAL_OPTIMIZATION ON
+                                 CXX_VISIBILITY_PRESET "default"
+                                 VISIBILITY_INLINES_HIDDEN ON)
+
+   # Set the Python install directory
+   set(PYTHON_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages)
+
+   # Install the Python binding
+   install(TARGETS pykautham
+       LIBRARY DESTINATION ${PYTHON_INSTALL_DIR}
+   )
+endif(KAUTHAM_PYTHON)
 
 
 # Headers install
 install(FILES ${KAUTHAM_HDRS} DESTINATION include/kautham)
 
+# Add version and configuration file generation
 configure_package_config_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/kauthamConfig.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/kauthamConfig.cmake"   
   INSTALL_DESTINATION  ${KAUTHAM_DIRNAME_lib}/cmake/kautham
   PATH_VARS 
    KAUTHAM_DIRNAME_lib
-   KAUTHAM_DIRNAME_include)
+   KAUTHAM_DIRNAME_include
+  NO_SET_AND_CHECK_MACRO
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO )
 
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/kauthamConfigVersion.cmake"
-  VERSION ${KAUTHAM_VERSION}
+  VERSION ${KAUTHAM_VERSION_MAJOR}
   COMPATIBILITY AnyNewerVersion)
 
+   
+# Install the library
+install(TARGETS libkautham
+    EXPORT kauthamTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include
+)
+
+# Export the targets file
+install(EXPORT kauthamTargets
+    FILE kauthamTargets.cmake
+    NAMESPACE Kautham::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/kautham
+)
+
+# Install the Config and Version files
 install( FILES ${CMAKE_CURRENT_BINARY_DIR}/kauthamConfig.cmake
        ${CMAKE_CURRENT_BINARY_DIR}/kauthamConfigVersion.cmake 
        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/kautham)
-   
-install(TARGETS libkautham DESTINATION ${CMAKE_INSTALL_LIBDIR})

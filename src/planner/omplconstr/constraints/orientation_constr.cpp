@@ -1,20 +1,16 @@
 #include <kautham/planner/omplconstr/constraints/orientation_constr.hpp>
+// #include <ompl/base/spaces/RealVectorStateSpace.h>
 
 // Constructor implementation
 OrientationConstraint::OrientationConstraint(const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
-    : ompl::base::Constraint(num_dofs, num_constraints, tolerance)
-    , num_dofs_(num_dofs), num_constraints_(num_constraints)
+    : AbstractOMPLConstraint(num_dofs, num_constraints, tolerance)
 {
 
 }
 
-bool OrientationConstraint::setTargetOrientation(const Eigen::Quaterniond& ori) {
-    this->target_orientation_ = ori;
-    return true;
-}
-
-void OrientationConstraint::setJointConfigAsTargetOrientation(const std::vector<double>& joint_config) {
-    // Get the transformation of the TCP w.r.t. the base of the UR5:
+void OrientationConstraint::useJointConfig2SetConstraintTarget(const std::vector<double>& joint_config) {
+	std::cout << "OrientationConstraint: useJointConfig2SetConstraintTarget() method." << std::endl;
+	// Get the transformation of the TCP w.r.t. the base of the UR5:
     Eigen::AffineCompact3d transformation_base_tool0;
     evaluateFKUR5(transformation_base_tool0, 
                     joint_config[0], 
@@ -27,6 +23,35 @@ void OrientationConstraint::setJointConfigAsTargetOrientation(const std::vector<
     this->target_orientation_ = Eigen::Quaterniond(transformation_base_tool0.rotation());
 }
 
+void OrientationConstraint::printConstraintTarget() const {
+	std::cout << "Target Orientation (Quaternion: qx qy qz qw): "
+                << target_orientation_.coeffs().transpose() << std::endl;
+}
+
+
+bool OrientationConstraint::setTargetOrientation(const Eigen::Quaterniond& ori) {
+    this->target_orientation_ = ori;
+    return true;
+}
+
+bool OrientationConstraint::project(ompl::base::State *state) const {
+	
+	// Assuming state is a RealVectorStateSpace type
+	// auto realState = state->as<ompl::base::RealVectorStateSpace::StateType>();
+	// if (realState) {
+	// 	std::cout << "Input project(): ";
+	// 	for (size_t i = 0; i < 6; ++i) {
+	// 		std::cout << realState->values[i] << " ";
+	// 	}
+	// 	std::cout << std::endl;
+	// } else {
+	// 	std::cout << "Invalid state type." << std::endl;
+	// }
+
+	(void) state;
+	// I don't know why, but this TRUE is the key...
+    return true;
+}
 
 
 // Constraint function implementation, f(q)=0
@@ -47,7 +72,43 @@ void OrientationConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q,
 }
 
 // Jacobian of the constraint function implementation
-// void OrientationConstraint::jacobian(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::Ref<Eigen::MatrixXd> out) const {
+void OrientationConstraint::jacobian(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::Ref<Eigen::MatrixXd> out) const {
+
+	// std::cout << "JACOBIAN: " << std::endl;
+	Eigen::VectorXd y1 = q;
+	Eigen::VectorXd y2 = q;
+	Eigen::VectorXd t1(getCoDimension());
+	Eigen::VectorXd t2(getCoDimension());
+
+	// Use a 7-point central difference stencil on each column.
+	for (std::size_t j = 0; j < n_; j++)
+	{
+		const double ax = std::fabs(q[j]);
+		// Make step size as small as possible while still giving usable accuracy.
+		const double h = std::sqrt(std::numeric_limits<double>::epsilon()) * (ax >= 1 ? ax : 1);
+
+		// Can't assume y1[j]-y2[j] == 2*h because of precision errors.
+		y1[j] += h;
+		y2[j] -= h;
+		function(y1, t1);
+		function(y2, t2);
+		const Eigen::VectorXd m1 = (t1 - t2) / (y1[j] - y2[j]);
+		y1[j] += h;
+		y2[j] -= h;
+		function(y1, t1);
+		function(y2, t2);
+		const Eigen::VectorXd m2 = (t1 - t2) / (y1[j] - y2[j]);
+		y1[j] += h;
+		y2[j] -= h;
+		function(y1, t1);
+		function(y2, t2);
+		const Eigen::VectorXd m3 = (t1 - t2) / (y1[j] - y2[j]);
+
+		out.col(j) = 1.5 * m1 - 0.6 * m2 + 0.1 * m3;
+
+		// Reset for next iteration.
+		y1[j] = y2[j] = q[j];
+	}
 
     // Eigen::MatrixXd jacobian_geometric(6,6);
     // evaluateJacobianUR5(jacobian_geometric, q[0], q[1], q[2], q[3], q[4], q[5]);
@@ -56,7 +117,7 @@ void OrientationConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q,
     //     // out.row(i) = constraint_derivative[i] * robot_jacobian.row(i);  // 3x3 -> 1x3
     //     out.row(i) = jacobian_geometric.bottomRows(i);  // 3x3 -> 1xnum_constraints_
     // }
-// }
+}
 
 Eigen::Quaterniond OrientationConstraint::calculateOrientationError(const Eigen::Ref<const Eigen::VectorXd>& q) const {
 

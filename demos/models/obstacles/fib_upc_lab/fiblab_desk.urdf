@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<robot name="lab_desk">
+	<link name="base">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="meshes/desk.dae" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="meshes/desk.dae" scale="1 1 1"/>
+            </geometry>
+        </collision>
+	</link>
+</robot>

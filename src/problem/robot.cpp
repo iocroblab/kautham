@@ -72,7 +72,7 @@ namespace Kautham {
   *  \param robFile is an xml file with extension *.dh or *.urdf
   *  \param robScale is a global scale for all the links
   */
-    Robot::Robot(string robFile, KthReal robScale, bool useBBOX, progress_struct *progress) {
+    Robot::Robot(string robFile, double robScale, bool useBBOX, progress_struct *progress) {
         //set initial values
         robotAttachedTo = NULL;
         linkAttachedTo = NULL;
@@ -128,7 +128,7 @@ namespace Kautham {
             if (armed) {
                 //Initialize the limits to 0.
                 for(int i=0; i<3; i++)
-                    _spatialLimits[i][0] = _spatialLimits[i][1] = (KthReal) 0.0;
+                    _spatialLimits[i][0] = _spatialLimits[i][1] = (double) 0.0;
 
                 //Set nTrunk
                 if (links.size() > 0) {
@@ -229,9 +229,9 @@ namespace Kautham {
 
             _weights = new RobWeight(numLinks - 1);
 
-            KthReal* preTransP;
-            KthReal preTrans[7]= {0., 0., 0., 0., 0., 0., 0.};
-            KthReal limMin, limMax;
+            double* preTransP;
+            double preTrans[7]= {0., 0., 0., 0., 0., 0., 0.};
+            double limMin, limMax;
             ode_element ode;
 
             //Loop for all the links
@@ -252,12 +252,12 @@ namespace Kautham {
                     //Sets the Pretransfomation from parent's frame to joint's frame
                     if (i > 0) {
                         preTransP = preTrans;
-                        preTrans[0] = (KthReal)robot.link[i].origin.xyz[0];//x translation
-                        preTrans[1] = (KthReal)robot.link[i].origin.xyz[1];//y translation
-                        preTrans[2] = (KthReal)robot.link[i].origin.xyz[2];//z translation
-                        preTrans[3] = (KthReal)robot.link[i].origin.r;//roll rotation
-                        preTrans[4] = (KthReal)robot.link[i].origin.p;//yaw rotation
-                        preTrans[5] = (KthReal)robot.link[i].origin.y;//pitch rotation
+                        preTrans[0] = (double)robot.link[i].origin.xyz[0];//x translation
+                        preTrans[1] = (double)robot.link[i].origin.xyz[1];//y translation
+                        preTrans[2] = (double)robot.link[i].origin.xyz[2];//z translation
+                        preTrans[3] = (double)robot.link[i].origin.r;//roll rotation
+                        preTrans[4] = (double)robot.link[i].origin.p;//yaw rotation
+                        preTrans[5] = (double)robot.link[i].origin.y;//pitch rotation
                         preTrans[6] = 0.;//unused parameter
                     }
 
@@ -267,8 +267,8 @@ namespace Kautham {
                         robot.link[i].limit.lower = -2*M_PI;
                         robot.link[i].limit.upper = +2*M_PI;
                     }
-                    limMin = (KthReal)robot.link[i].limit.lower;
-                    limMax = (KthReal)robot.link[i].limit.upper;
+                    limMin = (double)robot.link[i].limit.lower;
+                    limMax = (double)robot.link[i].limit.upper;
 
                     //Set ode parameters
                     ode.dynamics.damping = robot.link[i].dynamics.damping;
@@ -309,7 +309,7 @@ namespace Kautham {
 
                     //Add the weight. Defaults to 1.0
                     if (i > 0) { //First link is ommited because it is the base.
-                        _weights->setRnWeigh(i-1,(KthReal)robot.link[i].weight);
+                        _weights->setRnWeigh(i-1,(double)robot.link[i].weight);
                     }
 
                     if (progress != NULL) {
@@ -389,7 +389,7 @@ namespace Kautham {
             newObj.obs = obs;
             newObj.link = links.at(link);
             mt::Transform tmpO;
-            KthReal* pos = obs->getLink(0)->getElement()->getPosition();
+            double* pos = obs->getLink(0)->getElement()->getPosition();
             tmpO.setTranslation( mt::Point3(pos[0], pos[1], pos[2] ) );
             pos = obs->getLink(0)->getElement()->getOrientation();
             tmpO.setRotation( mt::Rotation( pos[0], pos[1], pos[2], pos[3] ) );
@@ -405,8 +405,8 @@ namespace Kautham {
     /*!
    * The returned value gives a rough idea of the dimension of the links.
    */
-    KthReal Robot::maxDHParameter(){
-        KthReal maxim=0.;
+    double Robot::maxDHParameter(){
+        double maxim=0.;
         for(size_t i = 0; i < links.size(); ++i){
             maxim = getLink(i)->getA() > maxim ? getLink(i)->getA(): maxim;
             maxim = getLink(i)->getD() > maxim ? getLink(i)->getD(): maxim;
@@ -415,12 +415,12 @@ namespace Kautham {
     }
 
 
-    void Robot::setMapMatrix(KthReal **MapMatrix) {
+    void Robot::setMapMatrix(double **MapMatrix) {
         if (mapMatrix != NULL) delete mapMatrix;
         mapMatrix = MapMatrix;
     }
 
-    void Robot::setOffMatrix(KthReal *OffMatrix) {
+    void Robot::setOffMatrix(double *OffMatrix) {
         if (offMatrix != NULL) delete offMatrix;
         offMatrix = OffMatrix;
     }
@@ -430,8 +430,8 @@ namespace Kautham {
   * and the mt::Transform calculated on the attached instant.
   */
     void Robot::moveAttachedObj(){
-        KthReal pos[3]={0.};
-        KthReal ori[4]={0.};
+        double pos[3]={0.};
+        double ori[4]={0.};
         list<attObj>::iterator it = _attachedObject.begin();
         for( it = _attachedObject.begin(); it != _attachedObject.end(); ++it){
             mt::Transform tmp = *((*it).link->getTransformation());
@@ -446,11 +446,11 @@ namespace Kautham {
             ori[3] = tmp.getRotation().at(3);
 
             SE3Conf newconf;
-            std::vector<float> newpos;
+            std::vector<double> newpos;
             newpos.push_back(pos[0]);
             newpos.push_back(pos[1]);
             newpos.push_back(pos[2]);
-            std::vector<float> newori;
+            std::vector<double> newori;
             newori.push_back(ori[0]);
             newori.push_back(ori[1]);
             newori.push_back(ori[2]);
@@ -491,6 +491,19 @@ namespace Kautham {
         return NULL;
     }
 
+    /*!
+  *
+  */
+    bool Robot::getLinkIndexByName(std::string _link_name, uint& _link_index) {
+        for (size_t i = 0; i < links.size(); ++i) {
+            if (links.at(i)->getName() == _link_name) {
+                _link_index = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /*!
   *
@@ -511,7 +524,7 @@ namespace Kautham {
   *   \param member is an integer between 0 and 3 corresponding to three coordinates
   *    of position
   */
-    bool Robot::setLimits(unsigned int member, KthReal min, KthReal max){
+    bool Robot::setLimits(unsigned int member, double min, double max){
         if (member < 3 && min <= max) {
             _spatialLimits[member][0] = min;
             _spatialLimits[member][1] = max;
@@ -567,7 +580,7 @@ namespace Kautham {
     /*!
   *
   */
-    bool Robot::setConstrainedKinematicParameter(string name, KthReal value){
+    bool Robot::setConstrainedKinematicParameter(string name, double value){
         if( _constrainKin != NULL)
             return _constrainKin->setParameter(name, value);
         return false;
@@ -576,7 +589,7 @@ namespace Kautham {
     /*!
   *
   */
-    RobConf& Robot::ConstrainedKinematics(vector<KthReal> &target){
+    RobConf& Robot::ConstrainedKinematics(vector<double> &target){
         if(_constrainKin != NULL){
             //First i try to connect to the remote object
             //if this pointer is not null, the object has been instantiate correctly.
@@ -632,7 +645,7 @@ namespace Kautham {
     /*!
   *
   */
-    bool Robot::setInverseKinematicParameter(string name, KthReal value){
+    bool Robot::setInverseKinematicParameter(string name, double value){
         if( _ikine != NULL)
             return _ikine->setParameter(name, value);
         return false;
@@ -664,7 +677,7 @@ namespace Kautham {
   *
   */
     bool Robot::Kinematics(SE3Conf& q) {
-        vector<KthReal>& coor = q.getCoordinates();
+        vector<double>& coor = q.getCoordinates();
 
         links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], coor[2]));
         links[0]->getTransformation()->setRotation(Rotation(coor[3], coor[4], coor[5], coor[6]));
@@ -699,7 +712,7 @@ namespace Kautham {
         if(q.getDim() < n){
             RnConf q2(n);
             unsigned i;
-            vector<KthReal> coords(n);
+            vector<double> coords(n);
             for(i = 0; i < q.getDim(); i++) coords[i]=q.getCoordinate(i);
             for(; i < n; i++) coords[i]=0.0;
             q2.setCoordinates(coords);
@@ -729,7 +742,7 @@ namespace Kautham {
   * Rn the robot change the articular values.
   */
     bool Robot::Kinematics(Conf *q) {
-        vector<KthReal>& coor = q->getCoordinates();
+        vector<double>& coor = q->getCoordinates();
 
         //cout << "q.gettype "<<q->getType()<<endl;
         switch(q->getType()){
@@ -742,9 +755,9 @@ namespace Kautham {
                 //", "<< _currentConf.getSE3()->getCoordinate(2)<<")"<<endl;
             break;
             case SE2:
-                links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], (KthReal)0.0));
-                links[0]->getTransformation()->setRotation(Rotation((KthReal)0.0, (KthReal)0.0,
-                                                                    (KthReal)1.0, coor[2]));
+                links[0]->getTransformation()->setTranslation(Point3(coor[0],coor[1], (double)0.0));
+                links[0]->getTransformation()->setRotation(Rotation((double)0.0, (double)0.0,
+                                                                    (double)1.0, coor[2]));
                 links[0]->forceChange(NULL);
                 _currentConf.setSE3(q->getCoordinates());
             break;
@@ -772,7 +785,7 @@ namespace Kautham {
  * a) the tcp transform
  * b) a tcp transform and configuration parameters e.g. for the TX90: (l/r,ep/en,wp/wn)
  */
-    RobConf& Robot::InverseKinematics(vector<KthReal> &target){
+    RobConf& Robot::InverseKinematics(vector<double> &target){
         if(_ikine != NULL){
             //First i try to conect to the remote object
             //if this pointer is not null, the object has been instantiate correctly.
@@ -790,7 +803,7 @@ namespace Kautham {
   * b) a robot configuration used as a reference to copy its same configuration
   * parameters e.g. for the TX90: (l/r,ep/en,wp/wn)
   */
-    RobConf& Robot::InverseKinematics(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist){
+    RobConf& Robot::InverseKinematics(vector<double> &target, vector<double> masterconf, bool maintainSameWrist){
         if(_ikine != NULL){
             //First i try to conect to the remote object
             //if this pointer is not null, the object has been instantiate correctly.
@@ -871,9 +884,9 @@ namespace Kautham {
   * The distance returned is between the endEfector or the most distal link, but
   * if parameter min is true, the distance is the minimum distance between all the links
   */
-    KthReal Robot::distanceCheck(Robot *rob, bool min ){
-        KthReal minDist;
-        KthReal tempDist;
+    double Robot::distanceCheck(Robot *rob, bool min ){
+        double minDist;
+        double tempDist;
 
         if(autocollision()) {
             return 0.;
@@ -929,9 +942,9 @@ namespace Kautham {
     //! This method builds the link model and all their data structures in order
     //! to keep the coherence in the robot assembly. It doesn't use any intermediate
     //! structure to adquire the information to do the job.
-    bool Robot::addLink(string name, string ivFile, string collision_ivFile, KthReal linkScale, KthReal theta,
-                        KthReal d,KthReal a, float alpha, bool rotational,
-                        bool movable, KthReal low, KthReal hi, float w, string parentName, float preTrans[], bool useBBOX){
+    bool Robot::addLink(string name, string ivFile, string collision_ivFile, double linkScale, double theta,
+                        double d,double a, double alpha, bool rotational,
+                        bool movable, double low, double hi, double w, string parentName, double preTrans[], bool useBBOX){
         Link* temp = new Link(ivFile, collision_ivFile, scale*linkScale, Approach, useBBOX);
         temp->setName(name);
         temp->setMovable(movable && (low != hi));
@@ -965,7 +978,7 @@ namespace Kautham {
     //! to keep the coherence in the robot assembly. It doesn't use any intermediate
     //! structure to adquire the information to do the job.
     bool Robot::addLink(string name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis, bool rotational, bool movable,
-                        KthReal low, KthReal hi, KthReal w, string parentName, KthReal preTrans[], ode_element ode, bool useBBOX){
+                        double low, double hi, double w, string parentName, double preTrans[], ode_element ode, bool useBBOX){
 
         if (visual_model == NULL) {
             throw KthExcp("Link " + name + " from robot " + this->name + " has no visual model");
@@ -1081,7 +1094,7 @@ namespace Kautham {
     /*!
   *
   */
-    KthReal* Robot::getWeightSE3(){
+    double* Robot::getWeightSE3(){
         if( _weights != NULL )
             return _weights->getSE3Weight();
         else
@@ -1091,7 +1104,7 @@ namespace Kautham {
     /*!
   *
   */
-    vector<KthReal>& Robot::getWeightRn(){
+    vector<double>& Robot::getWeightRn(){
         if( _weights != NULL )
             return _weights->getRnWeights();
         else
@@ -1124,9 +1137,9 @@ namespace Kautham {
   * the parameters define the robot configuration and their values lies in the range 0..1
   * \returns false if any of the parameters falls out of range (i.e. <0 or >1), and true otherwise
   */
-    bool Robot::control2Parameters(vector<KthReal> &control, vector<KthReal> &parameters){
+    bool Robot::control2Parameters(vector<double> &control, vector<double> &parameters){
         bool retvalue = true;
-        parameters = std::vector<KthReal>(6 + _currentConf.getRn().getDim(),0.0);
+        parameters = std::vector<double>(6 + _currentConf.getRn().getDim(),0.0);
 
         if(se3Enabled){
             //EUROC
@@ -1166,9 +1179,9 @@ namespace Kautham {
   * \returns true if the controls make the robot be places in a configuration within bounds
   * and false otherwise (in this case it is located at the border by the parameter2pose function)
   */
-    bool Robot::control2Pose(vector<KthReal> &values){
+    bool Robot::control2Pose(vector<double> &values){
         bool retvalue;
-        vector<KthReal> vecTmp;
+        vector<double> vecTmp;
         _hasChanged = true;
 
         retvalue = control2Parameters(values,vecTmp);
@@ -1179,8 +1192,8 @@ namespace Kautham {
     /*!
   *
   */
-    vector<KthReal> Robot::deNormalizeSE3(vector<KthReal> &values){
-        vector<KthReal> coords(6);
+    vector<double> Robot::deNormalizeSE3(vector<double> &values){
+        vector<double> coords(6);
         SE3Conf tmp;
 
         coords[0] = values[0]*(_homeLimits[0][1]-_homeLimits[0][0]) + _homeLimits[0][0];
@@ -1218,8 +1231,8 @@ namespace Kautham {
 
     //! This method maps between [0,1] parameter values to human readable values.
     //! The values vector must have the controls size.
-    Conf& Robot::parameter2Conf(vector<KthReal> &values, CONFIGTYPE type){
-        vector<KthReal> coords;
+    Conf& Robot::parameter2Conf(vector<double> &values, CONFIGTYPE type){
+        vector<double> coords;
         switch(type){
             case SE2:
             break;
@@ -1248,13 +1261,13 @@ namespace Kautham {
   * Denormalizes the configuration (the parameters are values in the range 0..1), updates the values in the links
   * and stores the _currentConf variable with these denormalized values
   */
-    void Robot::parameter2Pose(vector<KthReal> &values){
+    void Robot::parameter2Pose(vector<double> &values){
         if( armed /*&& numControls == values.size() */){
             _hasChanged = true;
             if(se3Enabled){
 
                 // SE3 Denormalization in the wold frame
-                vector<KthReal> coords = deNormalizeSE3(values);
+                vector<double> coords = deNormalizeSE3(values);
                 //cout<<"values = "<<values[0]<<" "<<values[1]<<endl;
                 //cout<<"coords = "<<coords[0]<<" "<<coords[1]<<endl;
                 _currentConf.setSE3(coords);
@@ -1270,7 +1283,7 @@ namespace Kautham {
             }
             if(_currentConf.getRn().getDim() != 0){
                 // Rn denormalization
-                vector<KthReal> coords(_currentConf.getRn().getDim());
+                vector<double> coords(_currentConf.getRn().getDim());
                 for(unsigned i =0; i < _currentConf.getRn().getDim(); i++){
                     links[i+1]->setParameter(values[6+i]);
                     coords[i] = ((Link*)links[i+1])->getValue();

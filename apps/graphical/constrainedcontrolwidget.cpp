@@ -82,7 +82,7 @@ namespace Kautham {
         (void) value;//unused
         QString tmp;
         for(unsigned int i=0; i<sliders.size(); i++){
-            values[i]=(KthReal)((QSlider*)sliders[i])->value()/1000.0;
+            values[i]=(double)((QSlider*)sliders[i])->value()/1000.0;
             tmp = labels[i]->text().left(labels[i]->text().indexOf("=") + 2);
             labels[i]->setText( tmp.append( QString().setNum(values[i],'g',5)));
         }
@@ -93,7 +93,7 @@ namespace Kautham {
         }
     }
 
-    void ConstrainedControlWidget::setValues(vector<KthReal> &val){
+    void ConstrainedControlWidget::setValues(vector<double> &val){
         if(val.size() == sliders.size()){
             for(unsigned int i = 0; i < val.size(); i++)
                 ((QSlider*)sliders[i])->setValue((int)(val[i]*1000.0));

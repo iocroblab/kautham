@@ -61,7 +61,7 @@ public:
     RRT2DPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws);
     ~RRT2DPlanner();
     bool setParameters();//!< this function set the planning parameters for RRT.
-    KthReal _GoalBias;
+    double _GoalBias;
 
 };
 

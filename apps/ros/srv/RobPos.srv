@@ -1,5 +1,0 @@
-int64 index
-float32[] setPos
----
-bool response
-float32[] getPos

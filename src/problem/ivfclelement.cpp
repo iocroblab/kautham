@@ -87,13 +87,13 @@ namespace Kautham {
 
 LCPRNG IVFCLElement::gen = LCPRNG(3141592621,1,0,((unsigned int)time(NULL)&0xfffffffe)+1);
 
-IVFCLElement::IVFCLElement(string visFile, string collFile, KthReal sc, bool useBBOX)
+IVFCLElement::IVFCLElement(string visFile, string collFile, double sc, bool useBBOX)
     : IVElement(visFile,collFile,sc,useBBOX),FCLModel(NULL) {
     if (!makeFCLModel()) throw invalid_argument("FCL model could not be initialized");
 }
 
 
-IVFCLElement::IVFCLElement(SoSeparator *visModel, SoSeparator *collModel, KthReal sc,
+IVFCLElement::IVFCLElement(SoSeparator *visModel, SoSeparator *collModel, double sc,
                            bool useBBOX) : IVElement(visModel,collModel,sc,useBBOX),
     FCLModel(NULL) {
     if (!makeFCLModel()) throw invalid_argument("FCL model could not be initialized");
@@ -120,7 +120,7 @@ bool IVFCLElement::collideTo(Element* other) const   {
 }
 
 
-KthReal IVFCLElement::getDistanceTo(Element* other) const   {
+double IVFCLElement::getDistanceTo(Element* other) const   {
     Element::increaseCollCheckCounter();
     try {
         fcl::DistanceRequestd request;
@@ -186,7 +186,7 @@ SoSeparator *IVFCLElement::getIvFromFCLModel(bool tran) {
 }
 
 
-void IVFCLElement::setOrientation(float *ori) {
+void IVFCLElement::setOrientation(double *ori) {
     IVElement::setOrientation(ori);
 
     fcl::Matrix3d rotation;
@@ -196,7 +196,7 @@ void IVFCLElement::setOrientation(float *ori) {
 }
 
 
-void IVFCLElement::setPosition(float *pos) {
+void IVFCLElement::setPosition(double *pos) {
     IVElement::setPosition(pos);
 
     fcl::Vector3d translation(pos[0],pos[1],pos[2]);

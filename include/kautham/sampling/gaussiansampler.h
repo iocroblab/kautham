@@ -43,7 +43,7 @@ namespace Kautham{
   class GaussianSampler : public Sampler {
   public:
     //! Unique constructor.
-    GaussianSampler(char dim, KthReal s, WorkSpace *w);
+    GaussianSampler(char dim, double s, WorkSpace *w);
 
     //! getSample tries to obtain a gaussian sample, returns NULL otherwise
     Sample* getSample();
@@ -55,7 +55,7 @@ namespace Kautham{
 	  LCPRNG* genRand;
 	  RandomSampler *randgen;
 	  WorkSpace *ws;
-	  KthReal sigma;
+	  double sigma;
   };
 
 

@@ -58,10 +58,10 @@ public:
 
     bool setParameters();
 
-    KthReal _Range;
-    KthReal _TimeStep;
-    KthReal _GoalBias;
-    KthReal _PMDBias;
+    double _Range;
+    double _TimeStep;
+    double _GoalBias;
+    double _PMDBias;
 };
 /** @}   end of Doxygen module */
 }

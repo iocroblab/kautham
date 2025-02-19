@@ -1,5 +1,0 @@
-int64 robot
-int64 link
-string obs
----
-bool response

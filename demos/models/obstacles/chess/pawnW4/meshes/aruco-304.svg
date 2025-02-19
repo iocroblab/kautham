@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 7 7"
+   shape-rendering="crispEdges"
+   width="30mm"
+   height="30mm"
+   version="1.1"
+   id="svg1589"
+   sodipodi:docname="aruco-304.svg"
+   inkscape:export-filename="aruco-304.png"
+   inkscape:export-xdpi="600"
+   inkscape:export-ydpi="600"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata1595">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1593" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1441"
+     inkscape:window-height="1021"
+     id="namedview1591"
+     showgrid="false"
+     inkscape:zoom="2.0813889"
+     inkscape:cx="56.933137"
+     inkscape:cy="56.692913"
+     inkscape:window-x="1558"
+     inkscape:window-y="30"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1589"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm" />
+  <g
+     id="g996">
+    <g
+       id="g321">
+      <rect
+         style="opacity:0.999;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:0.133581;stroke-linecap:round;stroke-opacity:0.999914"
+         id="rect312"
+         width="7"
+         height="7"
+         x="2.0398035e-08"
+         y="2.0398035e-08" />
+    </g>
+  </g>
+  <g
+     id="g537"
+     transform="matrix(0.86666667,0,0,0.86666667,0.46666668,0.46666668)">
+    <rect
+       x="0"
+       y="0"
+       width="7"
+       height="7"
+       fill="#000000"
+       id="rect1537" />
+    <rect
+       width="1"
+       height="1"
+       x="1"
+       y="1"
+       fill="#ffffff"
+       id="rect1539" />
+    <rect
+       width="1"
+       height="1"
+       x="2"
+       y="1"
+       fill="#000000"
+       id="rect1541" />
+    <rect
+       width="1"
+       height="1"
+       x="3"
+       y="1"
+       fill="#ffffff"
+       id="rect1543" />
+    <rect
+       width="1"
+       height="1"
+       x="4"
+       y="1"
+       fill="#ffffff"
+       id="rect1545" />
+    <rect
+       width="1"
+       height="1"
+       x="5"
+       y="1"
+       fill="#ffffff"
+       id="rect1547" />
+    <rect
+       width="1"
+       height="1"
+       x="1"
+       y="2"
+       fill="#ffffff"
+       id="rect1549" />
+    <rect
+       width="1"
+       height="1"
+       x="2"
+       y="2"
+       fill="#000000"
+       id="rect1551" />
+    <rect
+       width="1"
+       height="1"
+       x="3"
+       y="2"
+       fill="#000000"
+       id="rect1553" />
+    <rect
+       width="1"
+       height="1"
+       x="4"
+       y="2"
+       fill="#000000"
+       id="rect1555" />
+    <rect
+       width="1"
+       height="1"
+       x="5"
+       y="2"
+       fill="#000000"
+       id="rect1557" />
+    <rect
+       width="1"
+       height="1"
+       x="1"
+       y="3"
+       fill="#000000"
+       id="rect1559" />
+    <rect
+       width="1"
+       height="1"
+       x="2"
+       y="3"
+       fill="#ffffff"
+       id="rect1561" />
+    <rect
+       width="1"
+       height="1"
+       x="3"
+       y="3"
+       fill="#ffffff"
+       id="rect1563" />
+    <rect
+       width="1"
+       height="1"
+       x="4"
+       y="3"
+       fill="#ffffff"
+       id="rect1565" />
+    <rect
+       width="1"
+       height="1"
+       x="5"
+       y="3"
+       fill="#000000"
+       id="rect1567" />
+    <rect
+       width="1"
+       height="1"
+       x="1"
+       y="4"
+       fill="#ffffff"
+       id="rect1569" />
+    <rect
+       width="1"
+       height="1"
+       x="2"
+       y="4"
+       fill="#000000"
+       id="rect1571" />
+    <rect
+       width="1"
+       height="1"
+       x="3"
+       y="4"
+       fill="#000000"
+       id="rect1573" />
+    <rect
+       width="1"
+       height="1"
+       x="4"
+       y="4"
+       fill="#000000"
+       id="rect1575" />
+    <rect
+       width="1"
+       height="1"
+       x="5"
+       y="4"
+       fill="#000000"
+       id="rect1577" />
+    <rect
+       width="1"
+       height="1"
+       x="1"
+       y="5"
+       fill="#ffffff"
+       id="rect1579" />
+    <rect
+       width="1"
+       height="1"
+       x="2"
+       y="5"
+       fill="#000000"
+       id="rect1581" />
+    <rect
+       width="1"
+       height="1"
+       x="3"
+       y="5"
+       fill="#000000"
+       id="rect1583" />
+    <rect
+       width="1"
+       height="1"
+       x="4"
+       y="5"
+       fill="#000000"
+       id="rect1585" />
+    <rect
+       width="1"
+       height="1"
+       x="5"
+       y="5"
+       fill="#000000"
+       id="rect1587" />
+  </g>
+</svg>

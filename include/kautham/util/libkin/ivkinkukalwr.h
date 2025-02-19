@@ -46,11 +46,11 @@ public:
     string       name() {   return "KUKA_LWR";  }
     bool solve();
     bool setParameters();
-    void setTarget(vector<KthReal> &target, vector<KthReal> masterconf, bool maintainSameWrist);
+    void setTarget(vector<double> &target, vector<double> masterconf, bool maintainSameWrist);
     bool arm_is_left(){    return _use_left_arm;  }
 private:
     IvKinKukaLWR();
-    vector<KthReal> _eulPos;
+    vector<double> _eulPos;
     double          _redundantJoint;
     double          _result[6];
     bool            _use_left_arm;

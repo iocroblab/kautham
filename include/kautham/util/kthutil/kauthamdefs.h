@@ -44,8 +44,6 @@
 using namespace std;
 
 namespace Kautham {
-#define KthReal float
-
 
   enum ROBOTTYPE {
       FREEFLY,
@@ -115,7 +113,7 @@ namespace Kautham {
 #define INFINITY 1.0e40
 #endif
 
-  typedef std::map<std::string, KthReal> HASH_S_K;
+  typedef std::map<std::string, double> HASH_S_K;
   typedef std::map<std::string, std::string> HASH_S_S;
 
   typedef Eigen::VectorXd Vector;
@@ -128,11 +126,11 @@ namespace Kautham {
   struct DATA{
       DATA(){
           for(int i=0;i<3;i++)
-              pos[i]=ori[i]= (KthReal)0.0;
-          ori[3]= (KthReal)0.0;
+              pos[i]=ori[i]= (double)0.0;
+          ori[3]= (double)0.0;
       }
-      KthReal pos[3];
-      KthReal ori[4];
+      double pos[3];
+      double ori[4];
   };
 }
 

@@ -44,23 +44,23 @@ namespace Kautham {
 		coord.clear();
 	}
 
-  void SE2Conf::setPos(KthReal pos[2]){
+  void SE2Conf::setPos(double pos[2]){
 		for(int i=0;i<3;i++)
 			coord[i] = pos[i];
 	}
 
-	KthReal* SE2Conf::getPos() {
-		KthReal *p = new KthReal[2];
+	double* SE2Conf::getPos() {
+		double *p = new double[2];
 		for(int i=0;i<2;i++)
 			p[i] = coord[i];
 		return p;
 	}
 	
-	void SE2Conf::setAngle(KthReal angle){
+	void SE2Conf::setAngle(double angle){
 		coord[3] = angle;
 	}
 
-	KthReal SE2Conf::getAngle() {
+	double SE2Conf::getAngle() {
 		return coord[3];
 	}
 	
@@ -72,57 +72,57 @@ namespace Kautham {
 		return s.str();
 	}
 
-	//bool SE2Conf::setCoordinates(char indexes[], char dimP, char dimS, KthReal length){
+	//bool SE2Conf::setCoordinates(char indexes[], char dimP, char dimS, double length){
 	//	return true;
 	//}
 
-  KthReal SE2Conf::getDistance2(Conf* conf){
+  double SE2Conf::getDistance2(Conf* conf){
     if( conf == NULL ) return -1.0;
     if(conf->getType() == SE2){
-      KthReal dist = (conf->getCoordinate(0)- coord.at(0)) * (conf->getCoordinate(0)- coord.at(0));
+      double dist = (conf->getCoordinate(0)- coord.at(0)) * (conf->getCoordinate(0)- coord.at(0));
       dist += (conf->getCoordinate(1)- coord.at(1)) * (conf->getCoordinate(1)- coord.at(1));
-      KthReal t = fabs(conf->getCoordinate(2)- coord.at(2));
-      KthReal t1 = std::min(t,(KthReal)(2.0*M_PI - t));
+      double t = fabs(conf->getCoordinate(2)- coord.at(2));
+      double t1 = std::min(t,(double)(2.0*M_PI - t));
       return dist += t1 * t1;
     }
     return -1;
   }
 
     //! Returns the weighted squared distance to a configuration in the respective space metric.
-  KthReal SE2Conf::getDistance2(Conf* conf, std::vector<KthReal>& weights){
+  double SE2Conf::getDistance2(Conf* conf, std::vector<double>& weights){
     if( conf == NULL ) return -1.0;
 
-    KthReal dist = (KthReal) 0.0;
+    double dist = (double) 0.0;
     if(conf->getType() == SE2){
       if(weights.size() == 1){
-        KthReal dist = (conf->getCoordinate(0)- coord.at(0)) * (conf->getCoordinate(0)- coord.at(0));
+        double dist = (conf->getCoordinate(0)- coord.at(0)) * (conf->getCoordinate(0)- coord.at(0));
         dist += (conf->getCoordinate(1)- coord.at(1)) * (conf->getCoordinate(1)- coord.at(1));
-        KthReal t = fabs(conf->getCoordinate(2)- coord.at(2));
-	      KthReal t1 = min(t, (KthReal)(2.0*M_PI - t));
+        double t = fabs(conf->getCoordinate(2)- coord.at(2));
+	      double t1 = min(t, (double)(2.0*M_PI - t));
         return dist += (t1 * weights.at(0)) * (t1 * weights.at(0));
       }else if(weights.size() == this->dim ){
         // Each coordinate has their own weigth to will be applied
-        KthReal dist = (conf->getCoordinate(0)- coord.at(0)) * weights.at(0)
+        double dist = (conf->getCoordinate(0)- coord.at(0)) * weights.at(0)
                      * (conf->getCoordinate(0)- coord.at(0)) * weights.at(0);
         dist += (conf->getCoordinate(1)- coord.at(1))* weights.at(1) 
               * (conf->getCoordinate(1)- coord.at(1))* weights.at(1);
 
-        KthReal t = fabs(conf->getCoordinate(2)- coord.at(2));
-        KthReal t1 = min(t, (KthReal)(2.0*M_PI - t));
+        double t = fabs(conf->getCoordinate(2)- coord.at(2));
+        double t1 = min(t, (double)(2.0*M_PI - t));
         return dist += (t1 * weights.at(2)) * (t1 * weights.at(2));
       }else
-        dist = (KthReal)-1.0;
+        dist = (double)-1.0;
       return dist;
     }
-    return (KthReal)-1.0;
+    return (double)-1.0;
   }
 
-  SE2Conf  SE2Conf::interpolate(SE2Conf& se2, KthReal fraction){
+  SE2Conf  SE2Conf::interpolate(SE2Conf& se2, double fraction){
     SE2Conf tmpC;
     tmpC.coord.at(0) = coord.at(0) + fraction*(se2.coord.at(0) - coord.at(0));
     tmpC.coord.at(1) = coord.at(1) + fraction*(se2.coord.at(1) - coord.at(1));
     tmpC.coord.at(2) = coord.at(2) + fraction*(se2.coord.at(2) - coord.at(2));
-    tmpC.coord.at(2) = min(tmpC.coord.at(2),(KthReal)(2.0* M_PI - tmpC.coord.at(2)));
+    tmpC.coord.at(2) = min(tmpC.coord.at(2),(double)(2.0* M_PI - tmpC.coord.at(2)));
     return tmpC;
   }
 
