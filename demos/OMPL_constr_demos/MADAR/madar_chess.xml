@@ -4,7 +4,7 @@
 
 	<!-- <Robot robot="robots/MADAR/madar_arm_right.urdf"> -->
 	<Robot robot="robots/MADAR/madar_full.urdf">
-		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.05" X="-0.20" />
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="-0.05" X="-0.20" />
 		<Limits name="X" min="-5.0" max="5.0" />
 		<Limits name="Y" min="-5.0" max="5.0" />
 		<Constraint id="ori_arm_right" type="orientation_ur5">
@@ -35,15 +35,15 @@
 		<KauthamName name="big_table_chessboard" />
 	</Obstacle>
 	<Obstacle obstacle="obstacles/chess/flat_chessboard/flat_chessboard.urdf" scale="2.0">
-		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="0.0" Y="1.0" Z="0.73" />
+		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="0.0" Y="1.1" Z="0.77" />
 		<KauthamName name="chessboard" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ode-objects/wall.urdf" scale="1.0">
-		<Home TH="0.0" WX="0.0" WY="0.0" WZ="0.0" X="0.3" Y="0.6" Z="0.73" />
+	<Obstacle obstacle="obstacles/ode-objects/wall.urdf" scale="5.0">
+		<Home TH="1.57" WX="0.0" WY="1.0" WZ="0.0" X="0.3" Y="0.6" Z="1.02" />
 		<KauthamName name="right_arm_wall" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/ode-objects/wall.urdf" scale="1.0">
-		<Home TH="0.0" WX="0.0" WY="0.0" WZ="0.0" X="-0.3" Y="0.6" Z="0.73" />
+	<Obstacle obstacle="obstacles/ode-objects/wall.urdf" scale="5.0">
+		<Home TH="1.57" WX="0.0" WY="1.0" WZ="0.0" X="-0.3" Y="0.6" Z="1.02" />
 		<KauthamName name="left_arm_wall" />
 	</Obstacle>
 	<!-- END: CHESS TABLE -->
@@ -60,7 +60,6 @@
 			<Parameter name="_Max Planning Time">20.0</Parameter>
 			<Parameter name="_Speed Factor">1</Parameter>
 			<Parameter name="_Range">0.1</Parameter>
-
 		</Parameters>
 		<Queries>
 			<Query>
