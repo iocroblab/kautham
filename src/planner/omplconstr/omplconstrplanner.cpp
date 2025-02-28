@@ -79,6 +79,85 @@ namespace Kautham {
             // Return in parameter state:
             ((omplConstraintPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
 
+            // POLs TESTING:
+            // const auto& full_space = ((omplConstraintPlanner*)kauthamPlanner_)->getSpace()->as<ob::CompoundStateSpace>();
+            // const auto* full_state = state->as<ob::CompoundStateSpace::StateType>();
+
+            // const std::vector<ob::StateSpacePtr>& robot_spaces = full_space->getSubspaces();
+
+            // for (size_t r = 0; r < robot_spaces.size(); ++r) {
+            //     if (auto robot_space = std::dynamic_pointer_cast<ob::CompoundStateSpace>(robot_spaces[r])) {
+            //         std::cout << "Subspace " << r << " (" << robot_space->getName() << "):" << std::endl;
+            //         const auto* robot_state = full_state->as<ob::CompoundStateSpace::StateType>(r);
+
+            //         const std::vector<ob::StateSpacePtr>& robot_sub_spaces = robot_space->getSubspaces();
+            //         for (size_t s = 0; s < robot_sub_spaces.size(); ++s) {
+            //             std::string robot_sub_space_name = robot_sub_spaces[s]->getName();
+                        
+            //             if (robot_sub_space_name.find("_RnConstr_") != std::string::npos) {
+            //                 auto rnConstr_space = robot_sub_spaces[s]->as<ob::ProjectedStateSpace>();
+            //                 if (rnConstr_space) {
+            //                     std::cout << "ProjectedStateSpace for " << robot_sub_space_name << std::endl;
+            //                     const auto* constrained_state = robot_state->as<ob::ProjectedStateSpace::StateType>(s);
+            //                     const auto* constrainedRealVector_state = constrained_state->getState()->as<ob::RealVectorStateSpace::StateType>();
+
+            //                     for (unsigned int i = 0; i < rnConstr_space->getDimension(); ++i) {
+            //                         std::cout << "  Dimension " << i << ": " << constrainedRealVector_state->values[i] << std::endl;
+            //                     }
+            //                     auto constraint = std::dynamic_pointer_cast<AbstractOMPLConstraint>(rnConstr_space->getConstraint());
+            //                     // ompl::base::State* pol = const_cast<ompl::base::State*>(constrained_state->getState());
+            //                     // constraint->project(std::move(pol));
+            //                     std::cout << "Constraint name: " << constraint->name_ << std::endl;
+
+            //                     /*###########*/
+            //                     // try {
+            //                     //     auto constrained_state0 = robot_state->as<ob::ProjectedStateSpace::StateType>(s);
+            //                     //     ompl::base::State pol = dynamic_cast<ompl::base::State>(constrained_state0->getState());
+            //                     //     auto constrained_state2 = pol.as<ompl::base::ProjectedStateSpace::StateType>();
+    
+            //                     //     if (constrained_state2) {
+            //                     //         std::cout << "Projected State:" << std::endl;
+                                        
+            //                     //         // Get the underlying state
+            //                     //         auto constrainedRealVector_state2 = constrained_state2.getState()->as<ompl::base::RealVectorStateSpace::StateType>();
+                                        
+            //                     //         if (constrainedRealVector_state2) {
+            //                     //             std::cout << "Num DOF2 = " << constraint->getAmbientDimension() << std::endl;
+            //                     //             for (unsigned int i = 0; i < constraint->getAmbientDimension(); ++i) {
+            //                     //                 std::cout << "  Dimension " << i << ": " << &(constrainedRealVector_state2.values[i]) << std::endl;
+            //                     //                 std::cout << "  Dimension " << i << ": " << (constrainedRealVector_state2.values[i]) << std::endl;
+            //                     //             }
+            //                     //         } else {
+            //                     //             std::cout << "Error: Unable to cast state to RealVectorStateSpace::StateType" << std::endl;
+            //                     //         }
+
+            //                     //     } else {
+            //                     //         std::cout << "Error: Unable to cast state to ProjectedStateSpace::StateType" << std::endl;
+            //                     //     }
+            //                     // } catch (const std::exception& e) {
+            //                     //     std::cerr << "Exception caught: " << e.what() << std::endl;
+            //                     // }
+                                
+                                
+            //                     /*###########*/
+
+            //                 }
+            //             }
+            //             // This "else if" is needed for "_Rn", to avoid collisions with "_RnConstr_". Also, it's is important to keep the order, first "_RnConstr_" and then "_Rn"
+            //             else if (robot_sub_space_name.find("_Rn") != std::string::npos) {
+            //                 auto rn_space = robot_sub_spaces[s]->as<ob::RealVectorStateSpace>();
+            //                 if (rn_space) {
+            //                     std::cout << "RealVectorStateSpace for " << robot_sub_space_name << std::endl;
+            //                     const auto* real_vector_state = robot_state->as<ob::RealVectorStateSpace::StateType>(s);
+
+            //                     for (unsigned int i = 0; i < rn_space->getDimension(); ++i) {
+            //                         std::cout << "  Dimension " << i << ": " << real_vector_state->values[i] << std::endl;
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }
 
 
@@ -783,32 +862,6 @@ namespace Kautham {
             //create the sample with the RobConf
             //the coords (controls) of the sample are kept void
             smp->setMappedConf(rc);
-        }
-
-
-        void omplConstraintPlanner::removeDuplicateStates(ompl::geometric::PathGeometric& path) {
-            std::vector<ompl::base::State*> states = path.getStates();
-            std::vector<ompl::base::State*> uniqueStates;
-            
-            for (size_t i = 0; i < states.size(); ++i) {
-                if (i == 0 || !path.getSpaceInformation()->equalStates(states[i], states[i-1])) {
-                    uniqueStates.push_back(states[i]);
-                }
-            }
-            
-            path.getStates().swap(uniqueStates);
-        }
-
-        void omplConstraintPlanner::printJointPath(const std::vector<std::vector<double>>& _joint_path) {
-            std::cout << std::fixed << std::setprecision(5);
-            for (auto joint_waypoint : _joint_path) {
-                for (size_t i = 0; i < joint_waypoint.size(); ++i) {
-                    std::cout << joint_waypoint[i];
-                    if (i < joint_waypoint.size() - 1) std::cout << ", ";
-                }
-                std::cout << std::endl;
-            }
-            std::cout << std::endl;
         }
 
     }

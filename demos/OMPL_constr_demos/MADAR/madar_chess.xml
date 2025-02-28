@@ -8,6 +8,7 @@
 		<Limits name="X" min="-5.0" max="5.0" />
 		<Limits name="Y" min="-5.0" max="5.0" />
 		<Constraint id="ori_arm_right" type="orientation_ur5">
+			<!-- <Orientation qx="0.0" qy="0.0" qz="0.0" qw="1.0"/> -->
 			<Joint name="right_shoulder_link" />
 			<Joint name="right_upper_arm_link" />
 			<Joint name="right_fore_arm_link" />
@@ -23,6 +24,28 @@
 			<Joint name="left_wrist_2_link" />
 			<Joint name="left_wrist_3_link" />
 		</Constraint> -->
+
+		<!-- <Constraint id="box_arm_right" type="box">
+			<Dimensions length="1.0" width="0.5" height="0.2"/>
+			<Position x="0.5" y="0.5" z="0.5"/>
+			<Orientation qx="0.0" qy="0.0" qz="0.0" qw="1.0"/>
+		</Constraint> -->
+		<!-- <Constraint id="box_arm_right" type="sphere">
+			<Dimensions radius="0.5"/>
+			<Position x="0.5" y="0.5" z="0.5"/>
+			<Orientation qx="0.0" qy="0.0" qz="0.0" qw="1.0"/>
+		</Constraint> -->
+		<!-- <Constraint id="box_arm_right" type="cylinder">
+			<Dimensions radius="0.5" height="0.2"/>
+			<Position x="0.5" y="0.5" z="0.5"/>
+			<Orientation qx="0.0" qy="0.0" qz="0.0" qw="1.0"/>
+		</Constraint> -->
+		<!-- <Constraint id="box_arm_right" type="cone">
+			<Dimensions radius="0.5" height="0.2"/>
+			<Position x="0.5" y="0.5" z="0.5"/>
+			<Orientation qx="0.0" qy="0.0" qz="0.0" qw="1.0"/>
+		</Constraint> -->
+
 	</Robot>
 
 	<!-- <Robot robot="robots/UR5/ur5.urdf" scale="1.0">

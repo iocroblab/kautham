@@ -128,10 +128,6 @@ namespace Kautham {
 
                 void assignConstrTargetFromState(const ob::ScopedState<ob::CompoundStateSpace> _ompl_state);
                 
-                void removeDuplicateStates(ompl::geometric::PathGeometric& path);
-
-                void printJointPath(const std::vector<std::vector<double>>& _joint_path);
-
                 //! This function is used to verify that the low bound is below the high bound
                 inline void filterBounds(double &l, double &h, double epsilon)
                 {

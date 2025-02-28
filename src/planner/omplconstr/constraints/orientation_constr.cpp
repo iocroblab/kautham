@@ -1,5 +1,6 @@
 #include <kautham/planner/omplconstr/constraints/orientation_constr.hpp>
 // #include <ompl/base/spaces/RealVectorStateSpace.h>
+// #include <ompl/base/spaces/constraint/ProjectedStateSpace.h>
 
 // Constructor implementation
 OrientationConstraint::OrientationConstraint(const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
@@ -36,22 +37,69 @@ bool OrientationConstraint::setTargetOrientation(const Eigen::Quaterniond& ori) 
 
 bool OrientationConstraint::project(ompl::base::State *state) const {
 	
-	// Assuming state is a RealVectorStateSpace type
-	// auto realState = state->as<ompl::base::RealVectorStateSpace::StateType>();
-	// if (realState) {
-	// 	std::cout << "Input project(): ";
-	// 	for (size_t i = 0; i < 6; ++i) {
-	// 		std::cout << realState->values[i] << " ";
-	// 	}
-	// 	std::cout << std::endl;
-	// } else {
-	// 	std::cout << "Invalid state type." << std::endl;
-	// }
+	// (void) state;
 
-	(void) state;
+	// std::cout << "CUSTOM PROJECT" << std::endl;
+	// // Cast to ProjectedStateSpace::StateType
+    // const auto *constrained_state = state->as<ompl::base::ProjectedStateSpace::StateType>();
+    
+    // if (constrained_state) {
+    //     std::cout << "Projected State:" << std::endl;
+        
+    //     // Get the underlying state
+	// 	const auto* constrainedRealVector_state = constrained_state->getState()->as<ompl::base::RealVectorStateSpace::StateType>();
+        
+	// 	if (constrainedRealVector_state) {
+	// 		std::cout << "Num DOF = " << this->num_dofs_ << std::endl;
+	// 		if (constrainedRealVector_state->values == nullptr) {
+    //             std::cout << "Error: constrainedRealVector_state->values is null" << std::endl;
+    //             return false;
+    //         } else {
+	// 			for (unsigned int i = 0; i < this->num_dofs_; ++i) {
+	// 				std::cout << "  Dimension " << i << ": " << &(constrainedRealVector_state->values[i]) << std::endl;
+	// 				std::cout << "  Dimension " << i << ": " << (constrainedRealVector_state->values[i]) << std::endl;
+	// 			}
+	// 		}
+	// 	} else {
+	// 		std::cout << "Error: Unable to cast state to RealVectorStateSpace::StateType" << std::endl;
+	// 	}
+
+    // } else {
+    //     std::cout << "Error: Unable to cast state to ProjectedStateSpace::StateType" << std::endl;
+    // }
+
 	// I don't know why, but this TRUE is the key...
     return true;
 }
+
+// bool OrientationConstraint::project(Eigen::Ref<Eigen::VectorXd> x) const
+//  {
+// 	std::cout << "NEW PROJECT" << std::endl;
+//     std::cout << "v_x = " << x.transpose() << std::endl;
+
+// 	// Newton's method
+// 	unsigned int iter = 0;
+// 	double norm = 0;
+// 	Eigen::VectorXd f(getCoDimension());
+// 	Eigen::MatrixXd j(getCoDimension(), n_);
+
+// 	const double squaredTolerance = tolerance_ * tolerance_;
+
+// 	size_t count = 0;
+
+// 	function(x, f);
+// 	while ((norm = f.squaredNorm()) > squaredTolerance && iter++ < maxIterations_)
+// 	{
+// 		jacobian(x, j);
+// 		x -= j.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(f);
+// 		std::cout << "J_x = " << x.transpose() << std::endl;
+// 		function(x, f);
+// 		std::cout << "Count = " << count << std::endl;
+// 		count++;
+// 	}
+
+// 	return norm < squaredTolerance;
+//  }
 
 
 // Constraint function implementation, f(q)=0

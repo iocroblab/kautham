@@ -10,6 +10,7 @@ class OrientationConstraint : public AbstractOMPLConstraint {
         OrientationConstraint(const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance);
 
         bool project(ompl::base::State *state) const override;
+        // bool project(Eigen::Ref<Eigen::VectorXd> x) const override;
 
         // Function that computes the constraint value:
         void function(const Eigen::Ref<const Eigen::VectorXd>& q, Eigen::Ref<Eigen::VectorXd> out) const override;
