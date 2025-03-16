@@ -67,6 +67,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
+
     //single problem execution (from shell)
     //call: KauthamConsole -s abs_path_xml_problem_file [abs_path_of_models_folder]
     //e.g. KauthamConsole -s /home/jan.rosell/kautham.git/demos/OMPL_demos/2DRR/OMPL_RRT_2DRR_columns.xml /home/jan.rosell/kautham.git/demos/models
@@ -373,6 +374,10 @@ int main(int argc, char* argv[]){
     //benchmarking
     else if(string(argv[1]) == "-b")
     {
+
+       //create kauthamshell just to have coin initialized: SoDB::init();
+       kauthamshell* ksh = new kauthamshell();
+
       //OMPL planners benchmarking
             //call: KauthamConsole -b abs_path_xml_benchmarking_file [abs_path_models_folder]
             //SoDB::init();
