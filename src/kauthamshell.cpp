@@ -33,6 +33,9 @@
 #include <kautham/util/libkin/ivkinyumi.h>
 #include <kautham/util/libttg/Trajectory.hpp>
 
+#include <Inventor/SoDB.h>
+#include <Inventor/nodes/SoNode.h>
+
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
@@ -40,7 +43,11 @@ namespace og = ompl::geometric;
 namespace Kautham {
     kauthamshell::kauthamshell() {
         memPtr_ = NULL;
-        SoDB::init();
+        
+        if (SoNode::getClassTypeId() == SoType::badType()) {
+            // SoDB::init() has NOT been called
+            SoDB::init();
+        }
     }
 
     kauthamshell::~kauthamshell(){

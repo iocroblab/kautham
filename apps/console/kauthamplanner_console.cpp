@@ -124,9 +124,6 @@ int main(int argc, char* argv[]){
     //e.g. KauthamConsole -t /home/jan.rosell/kautham.git/demos/models/
     else if(string(argv[1]) == "-t")
     {
-        //=====================
-        //SoDB::init();
-
         //directory containing the models
         vector <string> def_path;
         def_path.push_back(argv[2]);
@@ -375,12 +372,9 @@ int main(int argc, char* argv[]){
     else if(string(argv[1]) == "-b")
     {
 
-       //create kauthamshell just to have coin initialized: SoDB::init();
-       kauthamshell* ksh = new kauthamshell();
+        //OMPL planners benchmarking
+        //call: KauthamConsole -b abs_path_xml_benchmarking_file [abs_path_models_folder]
 
-      //OMPL planners benchmarking
-            //call: KauthamConsole -b abs_path_xml_benchmarking_file [abs_path_models_folder]
-            //SoDB::init();
             string absPath = argv[2];
             //directory containing the models
             vector <string> def_path;
