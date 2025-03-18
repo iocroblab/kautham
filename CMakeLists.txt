@@ -57,7 +57,7 @@ option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
 option( KAUTHAM_ROS "Build the ROS version" OFF )
 option( KAUTHAM_DOCUMENTATION_API "Create and install the HTML based API documentation (requires Doxygen)" OFF)
-option( KAUTHAM_PYTHON "Build the Python binding" ON )
+option( KAUTHAM_PYTHON "Build the Python binding" OFF )
 
 ########### Set flags ####################
 message( STATUS "Using this flags ........")
