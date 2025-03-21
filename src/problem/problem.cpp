@@ -26,14 +26,20 @@
 #include <kautham/problem/problem.h>
 #include <kautham/util/kthutil/kauthamexception.h>
 #include <boost/lexical_cast.hpp>
+#include <Inventor/SoDB.h>
+#include <Inventor/nodes/SoNode.h>
 
 #include <ompl/geometric/SimpleSetup.h>
 
 namespace Kautham {
 Problem::Problem() : _wspace(NULL), _cspace(new SampleSet()),
     _sampler(NULL), _planner(NULL)  {
-}
 
+    if (SoNode::getClassTypeId() == SoType::badType()) {
+    // SoDB::init() has NOT been called
+    SoDB::init();
+    }
+}
 
 Problem::~Problem(){
     delete _cspace; //must be deleted first, if not the program crashes...

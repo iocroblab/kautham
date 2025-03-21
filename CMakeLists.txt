@@ -30,7 +30,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_definitions(-Wall -Wextra -Wpedantic -fPIC)#-Werror)
 
-set( KAUTHAM_VERSION 5.0.1 )
+set( KAUTHAM_VERSION 5.0.2 )
 STRING( REGEX MATCHALL "[0-9]+" KAUTHAM_VERSIONS ${KAUTHAM_VERSION} )
 LIST( GET KAUTHAM_VERSIONS 0 KAUTHAM_VERSION_MAJOR)
 LIST( GET KAUTHAM_VERSIONS 1 KAUTHAM_VERSION_MINOR)
@@ -55,9 +55,8 @@ option( KAUTHAM_IOC "Use IOC planners" ON )
 option( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
-option( KAUTHAM_ROS "Build the ROS version" OFF )
 option( KAUTHAM_DOCUMENTATION_API "Create and install the HTML based API documentation (requires Doxygen)" OFF)
-option( KAUTHAM_PYTHON "Build the Python binding" ON )
+option( KAUTHAM_PYTHON "Build the Python binding" OFF )
 
 ########### Set flags ####################
 message( STATUS "Using this flags ........")

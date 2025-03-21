@@ -67,6 +67,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
+
     //single problem execution (from shell)
     //call: KauthamConsole -s abs_path_xml_problem_file [abs_path_of_models_folder]
     //e.g. KauthamConsole -s /home/jan.rosell/kautham.git/demos/OMPL_demos/2DRR/OMPL_RRT_2DRR_columns.xml /home/jan.rosell/kautham.git/demos/models
@@ -123,9 +124,6 @@ int main(int argc, char* argv[]){
     //e.g. KauthamConsole -t /home/jan.rosell/kautham.git/demos/models/
     else if(string(argv[1]) == "-t")
     {
-        //=====================
-        //SoDB::init();
-
         //directory containing the models
         vector <string> def_path;
         def_path.push_back(argv[2]);
@@ -373,9 +371,10 @@ int main(int argc, char* argv[]){
     //benchmarking
     else if(string(argv[1]) == "-b")
     {
-      //OMPL planners benchmarking
-            //call: KauthamConsole -b abs_path_xml_benchmarking_file [abs_path_models_folder]
-            //SoDB::init();
+
+        //OMPL planners benchmarking
+        //call: KauthamConsole -b abs_path_xml_benchmarking_file [abs_path_models_folder]
+
             string absPath = argv[2];
             //directory containing the models
             vector <string> def_path;
