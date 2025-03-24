@@ -282,7 +282,7 @@ namespace Kautham {
                         std::vector<RobotProblemConstraint> prob_constraints = current_rob->getConstraints();
                         
                         std::vector<std::pair<std::string, uint>> constr_joints;
-                        for (const auto& prob_constr : prob_constraints) {
+                        for (auto& prob_constr : prob_constraints) {
                             have_constr_space = true;
                             std::cout << "----- Robot Problem Constraint: " << prob_constr.getConstraintId() << " -----" << std::endl;
                             // Get the constraint data:
@@ -308,7 +308,7 @@ namespace Kautham {
                             spaceRn->as<ob::RealVectorStateSpace>()->setBounds(bounds);
 
                             // Get the creator of the constraint by string and stores in the map:
-                            auto constraint = constraints_factory->createConstraint(prob_constr.getConstraintType(), constr_joints.size(),3,0.1);
+                            auto constraint = constraints_factory->createConstraint(prob_constr.getConstraintType(), &prob_constr, constr_joints.size(),3,0.1);
                             this->constraint_map_[prob_constr.getConstraintId()] = constraint;
 
                             spaceRnConstr = std::make_shared<ob::ProjectedStateSpace>(spaceRn, constraint);

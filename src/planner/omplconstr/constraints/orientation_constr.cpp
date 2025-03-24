@@ -3,8 +3,8 @@
 // #include <ompl/base/spaces/constraint/ProjectedStateSpace.h>
 
 // Constructor implementation
-OrientationConstraint::OrientationConstraint(const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
-    : AbstractOMPLConstraint(num_dofs, num_constraints, tolerance)
+OrientationConstraint::OrientationConstraint(Kautham::RobotProblemConstraint* _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
+    : AbstractOMPLConstraint(_robot_prob_constraint, num_dofs, num_constraints, tolerance)
 {
 
 }

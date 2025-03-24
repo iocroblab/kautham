@@ -7,7 +7,7 @@
 class OrientationConstraint : public AbstractOMPLConstraint {
     public:
         // Constructor: Set dimension of ambient space and the number of constraint equations
-        OrientationConstraint(const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance);
+        OrientationConstraint(Kautham::RobotProblemConstraint* _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance);
 
         bool project(ompl::base::State *state) const override;
         // bool project(Eigen::Ref<Eigen::VectorXd> x) const override;
