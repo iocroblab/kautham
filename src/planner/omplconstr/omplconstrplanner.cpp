@@ -279,14 +279,14 @@ namespace Kautham {
                             all_joint_names.push_back(current_rob->getLink(n+1)->getName());
                         }
                         
-                        auto constraints = current_rob->getConstraints();
-
+                        std::vector<RobotProblemConstraint> prob_constraints = current_rob->getConstraints();
+                        
                         std::vector<std::pair<std::string, uint>> constr_joints;
-                        for (const auto& constr : constraints) {
+                        for (const auto& prob_constr : prob_constraints) {
                             have_constr_space = true;
-                            std::cout << "----- Constraint: " << std::get<0>(constr) << " -----" << std::endl;
+                            std::cout << "----- Robot Problem Constraint: " << prob_constr.getConstraintId() << " -----" << std::endl;
                             // Get the constraint data:
-                            constr_joints = std::get<2>(constr);
+                            constr_joints = prob_constr.getConstrainedJoints();
                             std::vector<std::string> constr_names;
                             for (const auto& [name, index] : constr_joints) {
                                 constr_names.push_back(name);
@@ -308,11 +308,11 @@ namespace Kautham {
                             spaceRn->as<ob::RealVectorStateSpace>()->setBounds(bounds);
 
                             // Get the creator of the constraint by string and stores in the map:
-                            auto constraint = constraints_factory->createConstraint(std::get<1>(constr), constr_joints.size(),3,0.1);
-                            this->constraint_map_[std::get<0>(constr)] = constraint;
+                            auto constraint = constraints_factory->createConstraint(prob_constr.getConstraintType(), constr_joints.size(),3,0.1);
+                            this->constraint_map_[prob_constr.getConstraintId()] = constraint;
 
                             spaceRnConstr = std::make_shared<ob::ProjectedStateSpace>(spaceRn, constraint);
-                            space_name = "ssRobot" + std::to_string(rob) + "_RnConstr_" + std::get<0>(constr);
+                            space_name = "ssRobot" + std::to_string(rob) + "_RnConstr_" + prob_constr.getConstraintId();
                             spaceRob->as<ob::CompoundStateSpace>()->addSubspace(spaceRnConstr, 1.0);
                             rob_subspace_index++;
                             spaceRob->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index-1)->setName(space_name);   // Si no es fa aquí, no s'aplica bé el nom en el cas de les constraints...!
@@ -581,10 +581,12 @@ namespace Kautham {
             for (unsigned rob = 0; rob < _wkSpace->getNumRobots(); rob++) {
                 auto current_rob = _wkSpace->getRobot(rob);
                 auto constraints = current_rob->getConstraints();
-                for (const auto& constraint : constraints) {
-                    std::string constr_id_name = std::get<0>(constraint);
+                std::vector<RobotProblemConstraint> prob_constraints = current_rob->getConstraints();
+
+                for (const auto& constraint : prob_constraints) {
+                    std::string constr_id_name = constraint.getConstraintId();
                     if (this->constraint_map_.find(constr_id_name) != this->constraint_map_.end()) {
-                        size_t constr_joints_size = std::get<2>(constraint).size();
+                        size_t constr_joints_size = constraint.getConstrainedJoints().size();
                         std::vector<double> constr_joints(ompl_state_reals.begin(), ompl_state_reals.begin() + constr_joints_size);
                         ompl_state_reals.erase(ompl_state_reals.begin(), ompl_state_reals.begin() + constr_joints_size);
 
@@ -662,15 +664,16 @@ namespace Kautham {
                     std::vector<std::pair<std::string,uint>> constr_joints;
                     std::string joint_name;
                     auto constraints = current_rob->getConstraints();
+                    std::vector<RobotProblemConstraint> prob_constraints = current_rob->getConstraints();
 
-                    for (const auto& constr : constraints) {
+                    for (const auto& constr : prob_constraints) {
                         ssRobotiRn = ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index);
                         // std::cout << "Constrained Rn space name: " << ssRobotiRn->getName() << std::endl;
                         rob_subspace_index++;
 
                         ob::ScopedState<ob::ProjectedStateSpace> scopedStateRnConstr(ssRobotiRn);
 
-                        constr_joints = std::get<2>(constr);
+                        constr_joints = constr.getConstrainedJoints();
                         // Extract only the names:
                         std::vector<std::string> constr_names;
                         for (const auto& [name, _] : constr_joints) {
@@ -681,7 +684,7 @@ namespace Kautham {
                         for (unsigned int n = 0; n < num_dof; n++) {
                             joint_name = current_rob->getLink(n+1)->getName();  // n=0 is the base
                             if (std::find(constr_names.begin(), constr_names.end(), joint_name) != constr_names.end()) {
-                                // std::cout << "Match with constr " << std::get<0>(constr) << " of " << joint_name << std::endl;
+                                // std::cout << "Match with constr " << constr.getConstraintId() << " of " << joint_name << std::endl;
                                 scopedStateRnConstr[q] = r.getCoordinate(n);
                                 // std::cout << "Joint[" << q << "] = " << r.getCoordinate(n) << std::endl;
                                 q++;
@@ -792,9 +795,9 @@ namespace Kautham {
 
                     // First the constraints:
                     std::vector<std::pair<std::string,uint>> constr_joints;
-                    auto constraints = current_rob->getConstraints();
+                    std::vector<RobotProblemConstraint> prob_constraints = current_rob->getConstraints();
 
-                    for (const auto& constr : constraints) {
+                    for (const auto& constr : prob_constraints) {
                         ssRobotiRn = ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index);
                         // std::cout << "Constrained Rn space name: " << ssRobotiRn->getName() << std::endl;
                         rob_subspace_index++;
@@ -806,7 +809,7 @@ namespace Kautham {
                         // pathscopedstateRnConstr.print(std::cout);
 
                         // Convert it to a vector of n-constr components:
-                        constr_joints = std::get<2>(constr);
+                        constr_joints = constr.getConstrainedJoints();
                         size_t q = 0;
                         for (unsigned int n = 0; n < num_dof; n++) {
                             for (const auto& [_, index] : constr_joints) {

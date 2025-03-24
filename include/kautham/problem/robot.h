@@ -90,6 +90,7 @@ class RobotProblemConstraint {
 
         void printRobProbConstraintInfo() const;
 
+        // Set methods:
         bool associateNewJoint(const std::string& _joint_name, const uint _joint_index);
         void setReferenceFrame(const std::string& _entity_id, const std::string& _link_name);
         void setOrigin(const double x, const double y, const double z, const double quat_x, const double quat_y, const double quat_z, const double quat_w);
@@ -100,6 +101,11 @@ class RobotProblemConstraint {
         inline void setGeometricParamRadius(const double _radius){geo_params_.radius = _radius;}
         void setTargetOrientation(const double quat_x, const double quat_y, const double quat_z, const double quat_w);
         void setTargetOrientation(const Eigen::Quaterniond& _quat);
+
+        // Get methods:
+        inline std::string getConstraintId() const {return id_;}
+        inline std::string getConstraintType() const {return type_;}
+        inline std::vector<std::pair<std::string, uint>> getConstrainedJoints() const {return constrained_joints_;}
 
     private:
         std::string id_;  //!< Unique identifier.
@@ -148,8 +154,6 @@ class RobotProblemConstraint {
       Link*             linkAttachedTo; //!< In case of obstacle, it is the link where the obstacle is attached to. If it is not attached to any link, it is equal to NULL
       std::vector<std::string> _jointnames; //!< This is the vector of joint names as read from the urdf file
 
-      using ConstraintType =  std::tuple<std::string, std::string, std::vector<std::pair<std::string, uint>>, bool>;
-      std::vector<ConstraintType> constraints_; //!< (id, type, [<name, index>], enabled)
       std::vector<std::string> unconstrained_joint_names_;
       std::vector<RobotProblemConstraint> prob_constraints_;
 
@@ -373,13 +377,11 @@ class RobotProblemConstraint {
     //! Returns the link where the obstacle is attached to
     inline Link* getLinkAttachedTo() {return linkAttachedTo;}
 
-    inline void addConstraint(ConstraintType added_constraint) {constraints_.push_back(added_constraint);}
     inline void addConstraint(const std::shared_ptr<RobotProblemConstraint>& newConstraint) {
         prob_constraints_.push_back(*newConstraint);
     }
 
-    inline std::vector<ConstraintType> getConstraints() {return constraints_;}
-    inline std::vector<RobotProblemConstraint> getConstraintss() {return prob_constraints_;}
+    inline std::vector<RobotProblemConstraint> getConstraints() {return prob_constraints_;}
 
     inline void addUnconstrainedJointName(std::string _unconstrained_joint_name) {unconstrained_joint_names_.push_back(_unconstrained_joint_name);}
 

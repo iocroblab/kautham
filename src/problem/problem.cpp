@@ -1514,7 +1514,6 @@ bool Problem::addRobotProblemContraint(Robot* _rob, const pugi::xml_node& _const
     // Load the joints associated to the robot problem constraint (needs rob, this is why is build here and not inside the dedeicated method):
     // Check for the required child elements (<Joint>) and their attributes are present
     int joint_count = 0;
-    std::vector<std::pair<std::string, uint>> joints;
     for (pugi::xml_node joint_node = _constraint_node.child("Joint"); joint_node; joint_node = joint_node.next_sibling("Joint")) {
         // Check if 'name' attribute of <Joint> is present
         if (!joint_node.attribute("name")) {
@@ -1525,7 +1524,6 @@ bool Problem::addRobotProblemContraint(Robot* _rob, const pugi::xml_node& _const
         std::string joint_name = joint_node.attribute("name").as_string();
         uint link_index;
         _rob->getLinkIndexByName(joint_name, link_index);
-        joints.push_back(std::make_pair(joint_name, link_index-1));
         this_constraint->associateNewJoint(joint_name, link_index-1);
     }
 
@@ -1536,13 +1534,6 @@ bool Problem::addRobotProblemContraint(Robot* _rob, const pugi::xml_node& _const
     }
 
     _rob->addConstraint(this_constraint);
-
-    _rob->addConstraint(std::make_tuple(
-        _constraint_node.attribute("id").as_string(), 
-        _constraint_node.attribute("type").as_string(),
-        joints,
-        false)
-    );
 
     return true;
 }
@@ -1567,7 +1558,7 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
 
     // Debug: Print the constraints data
     std::cout << std::endl;
-    for (const auto& constr : rob->getConstraintss()) {
+    for (const auto& constr : rob->getConstraints()) {
         std::cout << "Added to robot (" << rob->getName() << ") the constraint: "<< std::endl;
         constr.printRobProbConstraintInfo();
         std::cout << std::endl;
