@@ -1347,7 +1347,7 @@ bool Problem::inheritSolution(){
     return false;
 }
 
-bool Problem::addRobotProblemContraint(Robot* _rob, const pugi::xml_node& _constraint_node) {
+bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _constraint_node) {
     
     // Validate input parameters
     if(!_rob || _constraint_node.empty()) {
@@ -1547,7 +1547,7 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
     xml_node constraint_node = robot_node->child("Constraint");
     // Iterate over Constraint elements inside the Robot (if exists):
     while (constraint_node) {
-        if (!Problem::addRobotProblemContraint(rob, constraint_node)) {
+        if (!Problem::addRobotProblemConstraint(rob, constraint_node)) {
             std::cerr << "The problem constraint (" << constraint_node.attribute("id").as_string() << ") cannot be set." << std::endl;
             return false;
         }

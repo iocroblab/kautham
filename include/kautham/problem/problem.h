@@ -382,7 +382,7 @@ namespace Kautham {
         //! Counts the number of links to load in a problem
         int countLinks2Load(xml_document *doc);
 
-      bool addRobotProblemContraint(Robot* _rob, const pugi::xml_node& _constraint_node);
+      bool addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _constraint_node);
 
     };
 

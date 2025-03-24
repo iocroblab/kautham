@@ -128,34 +128,14 @@ namespace Kautham {
         this->origin_ = Eigen::Translation3d(x, y, z) * Eigen::Quaterniond(quat_w, quat_x, quat_y, quat_z);
     }
     
-    // void RobotProblemConstraint::setOrigin(const double x, const double y, const double z, const double roll, const double pitch, const double yaw) {
-    //     // Set translation
-    //     this->origin_.translation() = Eigen::Vector3d(x, y, z);
+    void RobotProblemConstraint::setOrigin(const double x, const double y, const double z, const double roll, const double pitch, const double yaw) {
+        // Set translation
+        this->origin_.translation() = Eigen::Vector3d(x, y, z);
 
-    //     // Set rotation using Euler angles (roll, pitch, yaw)
-    //     this->origin_.linear() = Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ())
-    //                             * Eigen::AngleAxisd(pitch, Eigen::Vector3d::UnitY())
-    //                             * Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX());
-    // }
-
-    void RobotProblemConstraint::setOrigin(double x, double y, double z, double roll, double pitch, double yaw) {
-        // Create a 3D transformation
-        Eigen::Affine3d transform = Eigen::Affine3d::Identity();
-    
-        // Set translation (x, y, z)
-        transform.translation() = Eigen::Vector3d(x, y, z);
-    
-        // Set rotation using roll, pitch, and yaw
-        Eigen::Matrix3d rotation = 
-            Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX()).toRotationMatrix() *
-            Eigen::AngleAxisd(pitch, Eigen::Vector3d::UnitY()).toRotationMatrix() *
-            Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()).toRotationMatrix();
-    
-        // Assign the rotation matrix to the linear part of the transform
-        transform.linear() = rotation;
-    
-        // Store or use the transform as needed
-        this->origin_ = transform; 
+        // Set rotation using Euler angles (roll, pitch, yaw)
+        this->origin_.linear() = Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX()).toRotationMatrix() *
+                                Eigen::AngleAxisd(pitch, Eigen::Vector3d::UnitY()).toRotationMatrix() *
+                                Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()).toRotationMatrix();
     }
 
     void RobotProblemConstraint::setTargetOrientation(const double quat_x, const double quat_y, const double quat_z, const double quat_w) {
@@ -166,13 +146,12 @@ namespace Kautham {
         this->target_orientation_ = _quat;
     }
 
-
-    
-
     /* -------------------------------------------------------------------------- */
     /* END: RobotProblemConstraint Class Methods */
     /* -------------------------------------------------------------------------- */
 
+
+    
     /*! \class Robot
 *  Robots are kinematic trees composed of a trunk and branches and with a mobile base
  *     They are defined as a vector fo links and described in the *.dh or *.urdf files.
