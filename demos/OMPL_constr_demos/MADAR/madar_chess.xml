@@ -8,7 +8,9 @@
 		<Limits name="X" min="-5.0" max="5.0" />
 		<Limits name="Y" min="-5.0" max="5.0" />
 		<Constraint id="ori_arm_right" type="orientation_ur5">
-			<!-- <Orientation qx="0.0" qy="0.0" qz="0.0" qw="1.0"/> -->
+			<TargetOrientation qx="0.707" qy="0.0" qz="0.707" qw="0.0"/>
+			<ReferenceFrame entity="madar_full" link="right_base_link"/>
+			<!-- Origin is set by default to the Identity when no specified -->
 			<Joint name="right_shoulder_link" />
 			<Joint name="right_upper_arm_link" />
 			<Joint name="right_fore_arm_link" />
@@ -25,23 +27,30 @@
 			<Joint name="left_wrist_3_link" />
 		</Constraint> -->
 
-		<!-- <Constraint id="box_arm_right" type="box">
-			<Dimensions length="1.0" width="0.5" height="0.2"/>
-			<Position x="0.5" y="0.5" z="0.5"/>
-			<Orientation qx="0.0" qy="0.0" qz="0.0" qw="1.0"/>
+			<!-- <Origin xyz="0.1 0.7 0.4" quat_xyzw="0.7071068 0.0 0.7071068 0.0"/> -->
+		<!-- <Constraint id="box_arm_left" type="box">
+			<GeometricParams length="1.0" width="0.5" height="0.2"/>
+			<ReferenceFrame entity="chessboard" link="base"/>
+			<Origin xyz="0.5 0.0 0.5" rpy="0.0 0.4 0.0"/>
+			<Joint name="left_shoulder_link" />
+			<Joint name="left_upper_arm_link" />
+			<Joint name="left_fore_arm_link" />
+			<Joint name="left_wrist_1_link" />
+			<Joint name="left_wrist_2_link" />
+			<Joint name="left_wrist_3_link" />
 		</Constraint> -->
 		<!-- <Constraint id="box_arm_right" type="sphere">
-			<Dimensions radius="0.5"/>
+			<GeometricParams radius="0.5"/>
 			<Position x="0.5" y="0.5" z="0.5"/>
 			<Orientation qx="0.0" qy="0.0" qz="0.0" qw="1.0"/>
 		</Constraint> -->
 		<!-- <Constraint id="box_arm_right" type="cylinder">
-			<Dimensions radius="0.5" height="0.2"/>
+			<GeometricParams radius="0.5" height="0.2"/>
 			<Position x="0.5" y="0.5" z="0.5"/>
 			<Orientation qx="0.0" qy="0.0" qz="0.0" qw="1.0"/>
 		</Constraint> -->
 		<!-- <Constraint id="box_arm_right" type="cone">
-			<Dimensions radius="0.5" height="0.2"/>
+			<GeometricParams radius="0.5" height="0.2"/>
 			<Position x="0.5" y="0.5" z="0.5"/>
 			<Orientation qx="0.0" qy="0.0" qz="0.0" qw="1.0"/>
 		</Constraint> -->

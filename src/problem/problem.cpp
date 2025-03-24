@@ -1347,30 +1347,202 @@ bool Problem::inheritSolution(){
     return false;
 }
 
-bool Problem::verifyConstraintXMLNodeFormat(pugi::xml_node& constraint) {
-
-    // Ensure that the required attributes are present
-    if (!constraint.attribute("id") || !constraint.attribute("type")) {
-        std::cerr << "Missing 'id' or 'type' attribute in Constraint!" << std::endl;
+bool Problem::addRobotProblemContraint(Robot* _rob, const pugi::xml_node& _constraint_node) {
+    
+    // Validate input parameters
+    if(!_rob || _constraint_node.empty()) {
+        std::cerr << "Invalid input parameters for constraint creation" << std::endl;
         return false;
     }
 
+    // Ensure that the required attributes are present
+    if (!_constraint_node.attribute("id") || !_constraint_node.attribute("type")) {
+        std::cerr << "Missing 'id' or 'type' attribute in Constraint node of robot " << _rob->getName() << std::endl;
+        return false;
+    }
+
+    // Initialize the robot problem constraint:
+    auto this_constraint = std::make_shared<RobotProblemConstraint>(
+        _constraint_node.attribute("id").as_string(), _constraint_node.attribute("type").as_string()
+    );
+
+    pugi::xml_node reference_frame_node = _constraint_node.child("ReferenceFrame");
+    if (!reference_frame_node) {
+        std::cerr << "Missing 'ReferenceFrame' node in Constraint " << _constraint_node.attribute("id").as_string() << std::endl;
+        return false;
+    }
+    if (!reference_frame_node.attribute("entity") || !reference_frame_node.attribute("link")) {
+        std::cerr << "Missing 'entity' or 'link' attribute of ReferenceFrame in Constraint " << _constraint_node.attribute("id").as_string() << std::endl;
+        return false;
+    }
+    // Load the reference frame information:
+    this_constraint->setReferenceFrame(reference_frame_node.attribute("entity").as_string(), reference_frame_node.attribute("link").as_string());
+
+    // Load the Origin node information:
+    if (pugi::xml_node origin_node = _constraint_node.child("Origin")) {
+        // Extract xyz attribute
+        std::string xyz_str = origin_node.attribute("xyz").as_string();
+        double x, y, z;
+        std::istringstream xyz_stream(xyz_str);
+
+        if (xyz_stream >> x >> y >> z) {
+            // XYZ parsed successfully, now check for orientation
+            if (origin_node.attribute("rpy")) {
+                // RPY representation
+                std::string rpy_str = origin_node.attribute("rpy").as_string();
+                double roll, pitch, yaw;
+                std::istringstream rpy_stream(rpy_str);
+
+                if (rpy_stream >> roll >> pitch >> yaw) {
+                    this_constraint->setOrigin(x, y, z, roll, pitch, yaw);
+                } else {
+                    std::cerr << "Error parsing RPY values in Origin node" << std::endl;
+                    return false;
+                }
+            } else if (origin_node.attribute("quat_xyzw")) {
+                // Quaternion representation
+                std::string quat_str = origin_node.attribute("quat_xyzw").as_string();
+                double qx, qy, qz, qw;
+                std::istringstream quat_stream(quat_str);
+
+                if (quat_stream >> qx >> qy >> qz >> qw) {
+                    this_constraint->setOrigin(x, y, z, qx, qy, qz, qw);
+                } else {
+                    std::cerr << "Error parsing quaternion values in Origin node" << std::endl;
+                    return false;
+                }
+            } else {
+                std::cerr << "Missing orientation information (rpy or quat_xyzw) in Origin node" << std::endl;
+                return false;
+            }
+        } else {
+            std::cerr << "Error parsing XYZ values in Origin node" << std::endl;
+            return false;
+        }
+    }
+
+    // Parse the info based on type (tcp_orientation or geometric):
+    if (std::string(_constraint_node.attribute("type").as_string()) == "orientation_ur5") {  // Change to tcp_orientation when robot agnostic
+        // Parse TargetOrientation:
+        pugi::xml_node orientation_target_node = _constraint_node.child("TargetOrientation");
+        if (!orientation_target_node) {
+            std::cerr << "Missing TargetOrientation in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
+            return false;
+        }
+
+        // Check and set the quaternion:
+        if (!orientation_target_node.attribute("qx") || 
+            !orientation_target_node.attribute("qy") || 
+            !orientation_target_node.attribute("qz") || 
+            !orientation_target_node.attribute("qw")
+        ) {
+            std::cerr << "Missing TargetOrientation attributes (qx,qy,qz,qw) in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
+            return false;
+        }
+
+        double qx = orientation_target_node.attribute("qx").as_double();
+        double qy = orientation_target_node.attribute("qy").as_double();
+        double qz = orientation_target_node.attribute("qz").as_double();
+        double qw = orientation_target_node.attribute("qw").as_double();
+
+        // Check if the magnitude is close to 1
+        Eigen::Quaterniond quat = Eigen::Quaterniond(qw, qx, qy, qz);
+        double magnitude = quat.norm();
+        double quat_tolerance = 1e-3;
+        if (std::abs(magnitude - 1.0) > quat_tolerance) {
+            std::cout << "Invalid TargetOrientation: magnitude is " << magnitude << ", which is not close enough to 1." << std::endl;
+            return false;
+        }
+
+        // Set the target orientation of the constraint:
+        this_constraint->setTargetOrientation(quat);
+        
+    } else {
+        // Parse GeometricParams:
+        pugi::xml_node geometric_params_node = _constraint_node.child("GeometricParams");
+        if (!geometric_params_node) {
+            std::cerr << "Missing GeometricParams in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
+            return false;
+        }
+        // Now, process which params are set (depends on the geometric object):
+
+        // Check and set length if it exists
+        if (geometric_params_node.attribute("length")) {
+            double length = geometric_params_node.attribute("length").as_double();
+            if (length > 0) {
+                this_constraint->setGeometricParamLength(length);
+            } else {
+                std::cerr << "Invalid length parameter (must be positive)" << std::endl;
+                return false;
+            }
+        }
+
+        // Check and set width if it exists
+        if (geometric_params_node.attribute("width")) {
+            double width = geometric_params_node.attribute("width").as_double();
+            if (width > 0) {
+                this_constraint->setGeometricParamWidth(width);
+            } else {
+                std::cerr << "Invalid width parameter (must be positive)" << std::endl;
+                return false;
+            }
+        }
+
+        // Check and set height if it exists
+        if (geometric_params_node.attribute("height")) {
+            double height = geometric_params_node.attribute("height").as_double();
+            if (height > 0) {
+                this_constraint->setGeometricParamHeight(height);
+            } else {
+                std::cerr << "Invalid height parameter (must be positive)" << std::endl;
+                return false;
+            }
+        }
+
+        // Check and set radius if it exists
+        if (geometric_params_node.attribute("radius")) {
+            double radius = geometric_params_node.attribute("radius").as_double();
+            if (radius > 0) {
+                this_constraint->setGeometricParamRadius(radius);
+            } else {
+                std::cerr << "Invalid radius parameter (must be positive)" << std::endl;
+                return false;
+            }
+        }
+    }
+
+    // Load the joints associated to the robot problem constraint (needs rob, this is why is build here and not inside the dedeicated method):
     // Check for the required child elements (<Joint>) and their attributes are present
     int joint_count = 0;
-    for (pugi::xml_node joint_node = constraint.child("Joint"); joint_node; joint_node = joint_node.next_sibling("Joint")) {
+    std::vector<std::pair<std::string, uint>> joints;
+    for (pugi::xml_node joint_node = _constraint_node.child("Joint"); joint_node; joint_node = joint_node.next_sibling("Joint")) {
         // Check if 'name' attribute of <Joint> is present
         if (!joint_node.attribute("name")) {
-            std::cerr << "Joint missing 'name' attribute!" << std::endl;
+            std::cerr << "Joint missing 'name' attribute in Constraint " << _constraint_node.attribute("id").as_string() << std::endl;
             return false;
         }
         joint_count++;
+        std::string joint_name = joint_node.attribute("name").as_string();
+        uint link_index;
+        _rob->getLinkIndexByName(joint_name, link_index);
+        joints.push_back(std::make_pair(joint_name, link_index-1));
+        this_constraint->associateNewJoint(joint_name, link_index-1);
     }
 
     // Ensure that there is at least one joint in the Constraint
     if (joint_count == 0) {
-        std::cerr << "No joints found in Constraint!" << std::endl;
+        std::cerr << "No joints found in Constraint " << _constraint_node.attribute("id").as_string() << std::endl;
         return false;
     }
+
+    _rob->addConstraint(this_constraint);
+
+    _rob->addConstraint(std::make_tuple(
+        _constraint_node.attribute("id").as_string(), 
+        _constraint_node.attribute("type").as_string(),
+        joints,
+        false)
+    );
 
     return true;
 }
@@ -1384,37 +1556,20 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
     xml_node constraint_node = robot_node->child("Constraint");
     // Iterate over Constraint elements inside the Robot (if exists):
     while (constraint_node) {
-        if (verifyConstraintXMLNodeFormat(constraint_node)) {
-            std::vector<std::pair<std::string, uint>> joints;
-            for (pugi::xml_node joint_node = constraint_node.child("Joint"); joint_node; joint_node = joint_node.next_sibling("Joint")) {
-                std::string joint_name = joint_node.attribute("name").as_string();
-                uint link_index;
-                rob->getLinkIndexByName(joint_name, link_index);
-                joints.push_back(std::make_pair(joint_name, link_index-1));
-            }
-
-            rob->addConstraint(std::make_tuple(
-                                            constraint_node.attribute("id").as_string(), 
-                                            constraint_node.attribute("type").as_string(),
-                                            joints,
-                                            false)
-            );
-
-            // Move to the next Constraint (if exists):
-            constraint_node = constraint_node.next_sibling("Constraint");
-        } else {
-            return false;  // Invalid constraint format
+        if (!Problem::addRobotProblemContraint(rob, constraint_node)) {
+            std::cerr << "The problem constraint (" << constraint_node.attribute("id").as_string() << ") cannot be set." << std::endl;
+            return false;
         }
+
+        // Move to the next Constraint (if exists):
+        constraint_node = constraint_node.next_sibling("Constraint");
     }
 
-    // Debug: print the constraints data
-    for (const auto& constr : rob->getConstraints()) {
-        std::cout << "Added to robot (" << rob->getName() << ") the constraint with identifier: " << std::get<0>(constr) << std::endl;
-        std::cout << "\tType: " << std::get<1>(constr) << std::endl;
-        std::cout << "\tApplied to joints (the order matters): " << std::endl;
-        for (const auto& joint : std::get<2>(constr)) {
-            std::cout << "\t\tJoint[" << joint.second << "]: " << joint.first << std::endl;
-        }
+    // Debug: Print the constraints data
+    std::cout << std::endl;
+    for (const auto& constr : rob->getConstraintss()) {
+        std::cout << "Added to robot (" << rob->getName() << ") the constraint: "<< std::endl;
+        constr.printRobProbConstraintInfo();
         std::cout << std::endl;
     }
 

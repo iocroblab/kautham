@@ -28,9 +28,12 @@
 
 
 #include <list>
+#include <memory>
 
 #include <kautham/problem/link.h>
 #include <kautham/mt/transform.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 #include <kautham/sampling/robconf.h>
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
@@ -72,6 +75,44 @@ namespace Kautham {
       }
   };
 
+//! Class RobotProblemConstraint stores the definition of the Robot constraints defeined in the problem XML file:
+class RobotProblemConstraint {
+    public:
+        //!< Defines all the geometric params that can be used to define any geometric representation:
+        struct GeometricParams {
+            double length;
+            double width;
+            double height;
+            double radius;
+        };
+
+        RobotProblemConstraint(std::string _id, std::string _type); //!<  Constructor
+
+        void printRobProbConstraintInfo() const;
+
+        bool associateNewJoint(const std::string& _joint_name, const uint _joint_index);
+        void setReferenceFrame(const std::string& _entity_id, const std::string& _link_name);
+        void setOrigin(const double x, const double y, const double z, const double quat_x, const double quat_y, const double quat_z, const double quat_w);
+        void setOrigin(const double x, const double y, const double z, const double roll, const double pitch, const double yaw);
+        inline void setGeometricParamLength(const double _length){geo_params_.length = _length;}
+        inline void setGeometricParamWidth(const double _width){geo_params_.width = _width;}
+        inline void setGeometricParamHeight(const double _height){geo_params_.height = _height;}
+        inline void setGeometricParamRadius(const double _radius){geo_params_.radius = _radius;}
+        void setTargetOrientation(const double quat_x, const double quat_y, const double quat_z, const double quat_w);
+        void setTargetOrientation(const Eigen::Quaterniond& _quat);
+
+    private:
+        std::string id_;  //!< Unique identifier.
+        std::string type_;  //!< TCP Orientation or Geometric (box, sphere, cylinder, cone, ...).
+        std::vector<std::pair<std::string, uint>> constrained_joints_;  //!< Related the joint name with the URDF kinematic position.
+        bool enabled_;  //!< A constraint could be defined, but not used.
+        std::string reference_frame_entity_;  //!< To which kautham entity (Robot || Obstacle || kautham world) is referenced the contraint.
+        std::string reference_frame_link_;  //!< Which link of the reference is used (Robot -> Joint or Link; Obstacle -> Link; kautham world -> Empty).
+        Eigen::AffineCompact3d origin_; //!< Transformation of the geometric constraint wrt the reference frame link.
+        GeometricParams geo_params_;    //!< Used to store the used params.
+        Eigen::Quaterniond target_orientation_; //!< Used only when TCP Orientation constraint is used.
+};
+
 //! Class robot implements a kinematic tree with a free-flying base
   class Robot {
   private:
@@ -110,6 +151,7 @@ namespace Kautham {
       using ConstraintType =  std::tuple<std::string, std::string, std::vector<std::pair<std::string, uint>>, bool>;
       std::vector<ConstraintType> constraints_; //!< (id, type, [<name, index>], enabled)
       std::vector<std::string> unconstrained_joint_names_;
+      std::vector<RobotProblemConstraint> prob_constraints_;
 
   public:
 
@@ -332,8 +374,12 @@ namespace Kautham {
     inline Link* getLinkAttachedTo() {return linkAttachedTo;}
 
     inline void addConstraint(ConstraintType added_constraint) {constraints_.push_back(added_constraint);}
+    inline void addConstraint(const std::shared_ptr<RobotProblemConstraint>& newConstraint) {
+        prob_constraints_.push_back(*newConstraint);
+    }
 
     inline std::vector<ConstraintType> getConstraints() {return constraints_;}
+    inline std::vector<RobotProblemConstraint> getConstraintss() {return prob_constraints_;}
 
     inline void addUnconstrainedJointName(std::string _unconstrained_joint_name) {unconstrained_joint_names_.push_back(_unconstrained_joint_name);}
 
