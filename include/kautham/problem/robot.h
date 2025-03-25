@@ -109,7 +109,7 @@ namespace Kautham {
       std::vector<std::string> _jointnames; //!< This is the vector of joint names as read from the urdf file
 
       std::vector<std::string> unconstrained_joint_names_;
-      std::vector<RobotProblemConstraint> prob_constraints_;
+      std::vector<std::shared_ptr<RobotProblemConstraint>> prob_constraints_;
 
   public:
 
@@ -331,11 +331,11 @@ namespace Kautham {
     //! Returns the link where the obstacle is attached to
     inline Link* getLinkAttachedTo() {return linkAttachedTo;}
 
-    inline void addConstraint(const std::shared_ptr<RobotProblemConstraint>& newConstraint) {
-        prob_constraints_.push_back(*newConstraint);
+    inline void addConstraint(const std::shared_ptr<RobotProblemConstraint>& _new_constraint) {
+        prob_constraints_.push_back(_new_constraint);
     }
 
-    inline std::vector<RobotProblemConstraint> getConstraints() {return prob_constraints_;}
+    inline std::vector<std::shared_ptr<RobotProblemConstraint>> getConstraints() {return prob_constraints_;}
 
     inline void addUnconstrainedJointName(std::string _unconstrained_joint_name) {unconstrained_joint_names_.push_back(_unconstrained_joint_name);}
 

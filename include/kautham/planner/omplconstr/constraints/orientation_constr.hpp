@@ -7,7 +7,7 @@
 class OrientationConstraint : public AbstractOMPLConstraint {
     public:
         // Constructor: Set dimension of ambient space and the number of constraint equations
-        OrientationConstraint(Kautham::RobotProblemConstraint* _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance);
+        OrientationConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance);
 
         bool project(ompl::base::State *state) const override;
         // bool project(Eigen::Ref<Eigen::VectorXd> x) const override;
@@ -18,14 +18,10 @@ class OrientationConstraint : public AbstractOMPLConstraint {
         // Function that computes the Jacobian of the constraint function:
         void jacobian(const Eigen::Ref<const Eigen::VectorXd>& q, Eigen::Ref<Eigen::MatrixXd> out) const override;
 
-        bool setTargetOrientation(const Eigen::Quaterniond& ori);
-
         void useJointConfig2SetConstraintTarget(const std::vector<double>& joint_config) override;
         void printConstraintTarget() const override;
 
     private:
-
-        Eigen::Quaterniond target_orientation_;
 
         Eigen::Quaterniond calculateOrientationError(const Eigen::Ref<const Eigen::VectorXd>& q) const;
 

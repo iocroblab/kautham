@@ -43,13 +43,13 @@ namespace Kautham {
         class ConstraintFactory {
             public:
                 using ConstraintBase = AbstractOMPLConstraint;
-                using ConstraintCreator = std::shared_ptr<ConstraintBase>(*)(Kautham::RobotProblemConstraint*, unsigned int, unsigned int, double);
+                using ConstraintCreator = std::shared_ptr<ConstraintBase>(*)(std::shared_ptr<Kautham::RobotProblemConstraint>, unsigned int, unsigned int, double);
 
                 // Function to register all constraints in the factory:
                 void registerConstraints();
 
                 // Function to create (get) a contraint by name into the main code:
-                std::shared_ptr<ConstraintBase> createConstraint(const std::string& name, Kautham::RobotProblemConstraint* _robot_prob_constraint, unsigned int ambientDim, unsigned int coDim, double tolerance);
+                std::shared_ptr<ConstraintBase> createConstraint(const std::string& name, std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim, unsigned int coDim, double tolerance);
 
                 // Print registered constraint names:
                 void printRegisteredConstraintNames() const;

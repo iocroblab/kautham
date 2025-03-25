@@ -7,7 +7,7 @@
 class AbstractOMPLConstraint : public ompl::base::Constraint {
     public:
         // Constructor: Set dimension of ambient space and the number of constraint equations
-        AbstractOMPLConstraint(Kautham::RobotProblemConstraint* _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance);
+        AbstractOMPLConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance);
 
         virtual ~AbstractOMPLConstraint() = default;
 
@@ -17,7 +17,7 @@ class AbstractOMPLConstraint : public ompl::base::Constraint {
 
     protected:
 
-        Kautham::RobotProblemConstraint* robot_prob_constraint_;    // Pointer to RobotProblemConstraint
+        std::shared_ptr<Kautham::RobotProblemConstraint>  robot_prob_constraint_;    // Pointer to RobotProblemConstraint
         
         const unsigned int num_dofs_;
 

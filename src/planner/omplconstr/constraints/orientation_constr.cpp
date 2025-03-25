@@ -3,7 +3,7 @@
 // #include <ompl/base/spaces/constraint/ProjectedStateSpace.h>
 
 // Constructor implementation
-OrientationConstraint::OrientationConstraint(Kautham::RobotProblemConstraint* _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
+OrientationConstraint::OrientationConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
     : AbstractOMPLConstraint(_robot_prob_constraint, num_dofs, num_constraints, tolerance)
 {
 
@@ -21,23 +21,17 @@ void OrientationConstraint::useJointConfig2SetConstraintTarget(const std::vector
                     joint_config[4], 
                     joint_config[5]);
 
-    this->target_orientation_ = Eigen::Quaterniond(transformation_base_tool0.rotation());
+	this->robot_prob_constraint_->setTargetOrientation(Eigen::Quaterniond(transformation_base_tool0.rotation()));
 }
 
 void OrientationConstraint::printConstraintTarget() const {
 	std::cout << "Target Orientation (Quaternion: qx qy qz qw): "
-                << target_orientation_.coeffs().transpose() << std::endl;
-}
-
-
-bool OrientationConstraint::setTargetOrientation(const Eigen::Quaterniond& ori) {
-    this->target_orientation_ = ori;
-    return true;
+			<< this->robot_prob_constraint_->getTargetOrientation().coeffs().transpose() << std::endl;
 }
 
 bool OrientationConstraint::project(ompl::base::State *state) const {
 	
-	// (void) state;
+	(void) state;
 
 	// std::cout << "CUSTOM PROJECT" << std::endl;
 	// // Cast to ProjectedStateSpace::StateType
@@ -179,7 +173,7 @@ Eigen::Quaterniond OrientationConstraint::calculateOrientationError(const Eigen:
     // std::cout << "Current orientation (x, y, z, w): " << current_orientation.coeffs().transpose() << std::endl;
 
     // Calculate the orientation error:
-    Eigen::Quaterniond error_orientation = current_orientation.inverse() * target_orientation_;
+    Eigen::Quaterniond error_orientation = current_orientation.inverse() * this->robot_prob_constraint_->getTargetOrientation();
     // std::cout << "Error orientation (x, y, z, w): " << error_orientation.coeffs().transpose() << std::endl;
 
     return error_orientation;

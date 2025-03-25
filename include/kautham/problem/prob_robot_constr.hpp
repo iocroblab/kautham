@@ -70,6 +70,7 @@ namespace Kautham {
             inline std::string getConstraintId() const {return id_;}
             inline std::string getConstraintType() const {return type_;}
             inline std::vector<std::pair<std::string, uint>> getConstrainedJoints() const {return constrained_joints_;}
+            inline Eigen::Quaterniond getTargetOrientation() const {return target_orientation_;}
 
         private:
             std::string id_;  //!< Unique identifier.

@@ -1560,7 +1560,7 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
     std::cout << std::endl;
     for (const auto& constr : rob->getConstraints()) {
         std::cout << "Added to robot (" << rob->getName() << ") the constraint: "<< std::endl;
-        constr.printRobProbConstraintInfo();
+        constr->printRobProbConstraintInfo();
         std::cout << std::endl;
     }
 
