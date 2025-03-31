@@ -1,4 +1,6 @@
 #include <kautham/planner/omplconstr/constraints/orientation_constr.hpp>
+#include <kautham/problem/robot.h>  // Used as a pointer to get FK methods inside the constraint methods.
+
 // #include <ompl/base/spaces/RealVectorStateSpace.h>
 // #include <ompl/base/spaces/constraint/ProjectedStateSpace.h>
 
@@ -152,16 +154,40 @@ void OrientationConstraint::jacobian(const Eigen::Ref<const Eigen::VectorXd> &q,
 		y1[j] = y2[j] = q[j];
 	}
 
-    // Eigen::MatrixXd jacobian_geometric(6,6);
-    // evaluateJacobianUR5(jacobian_geometric, q[0], q[1], q[2], q[3], q[4], q[5]);
-
-    // for (std::size_t i = 0; i < num_constraints_; ++i) {
-    //     // out.row(i) = constraint_derivative[i] * robot_jacobian.row(i);  // 3x3 -> 1x3
-    //     out.row(i) = jacobian_geometric.bottomRows(i);  // 3x3 -> 1xnum_constraints_
-    // }
 }
 
 Eigen::Quaterniond OrientationConstraint::calculateOrientationError(const Eigen::Ref<const Eigen::VectorXd>& q) const {
+
+	// std::cout << "TESTING:" << std::endl;
+	// Eigen::AffineCompact3d t_base_link = this->associated_robot_->getHomeTransformEigen();
+	// std::cout << "Home transformation (wrt Kautham world): " << std::endl;
+	// std::cout << t_base_link.matrix() << std::endl;
+
+	// Eigen::AffineCompact3d t_world_right_base = this->associated_robot_->Robot::getLinkTransformEigen("right_base_link");
+	// std::cout << "Link world_right_base transformation (wrt Kautham world): " << std::endl;
+	// std::cout << t_world_right_base.matrix() << std::endl;
+
+	// Eigen::AffineCompact3d t_world_left_base = this->associated_robot_->Robot::getLinkTransformEigen("left_base_link");
+	// std::cout << "Link left_base_link transformation (wrt Kautham world): " << std::endl;
+	// std::cout << t_world_left_base.matrix() << std::endl;
+
+	// Eigen::AffineCompact3d t_right_wrist_3 = this->associated_robot_->Robot::getLinkTransformEigen("right_wrist_3_link");
+	// std::cout << "Link right_wrist_3_link transformation (wrt Kautham world): " << std::endl;
+	// std::cout << t_right_wrist_3.matrix() << std::endl;
+
+	// Eigen::AffineCompact3d t_robot_base_2_arm_base = 
+    //     Eigen::Translation3d(0.256, 0.000, 1.389) * 
+    // //     Eigen::Quaterniond(0.3827733, 0.000, 0.9238423, 0.000);	// qw, qx, qy, qz	-> arm_right_base_link
+    //     // Eigen::Quaterniond(0.000, 0.925, 0.000, 0.383);	// qw, qx, qy, qz	-> arm_right_base (no existeix en el urdf simplificat)
+    //     Eigen::Quaterniond(-0.0845528, -0.4927906, -0.7814777, -0.3732304);	// qw, qx, qy, qz	-> right_base_link (URDF Kautham)
+	// std::cout << "Hardcoded t_robot_base_2_arm_base transformation (wrt Kautham world): " << std::endl;
+	// std::cout << t_robot_base_2_arm_base.matrix() << std::endl;
+
+
+	// Eigen::AffineCompact3d t_world_2_arm_base = t_base_link * t_robot_base_2_arm_base;
+	// std::cout << "Hardcoded t_world_2_arm_base transformation (wrt Kautham world): " << std::endl;
+	// std::cout << t_world_2_arm_base.matrix() << std::endl;
+
 
     // Get the transformation of the TCP w.r.t. the base of the UR5:
     Eigen::AffineCompact3d transformation_base_tool0;
@@ -175,6 +201,11 @@ Eigen::Quaterniond OrientationConstraint::calculateOrientationError(const Eigen:
     // Calculate the orientation error:
     Eigen::Quaterniond error_orientation = current_orientation.inverse() * this->robot_prob_constraint_->getTargetOrientation();
     // std::cout << "Error orientation (x, y, z, w): " << error_orientation.coeffs().transpose() << std::endl;
+
+
+	// Eigen::AffineCompact3d t_world_tcp = t_world_right_base * transformation_base_tool0;
+    // std::cout << "Equivalent transformation:\n" << t_world_tcp.matrix() << std::endl;
+
 
     return error_orientation;
 }
@@ -254,155 +285,5 @@ void OrientationConstraint::evaluateFKUR5(Eigen::AffineCompact3d& _transformatio
                         + (6446200305038995.0/72057594037927936.0);
 
     _transformation_base_tool0.translation() = translation;
-
-    // this->RobotArm::normalizeTransformation(_transformation_base_tool0);
-
-}
-
-void OrientationConstraint::evaluateJacobianUR5(Eigen::MatrixXd& _jacobian, const double q1, const double q2, const double q3, const double q4, const double q5, const double q6) const {
-
-    (void)q6;
-    
-	_jacobian(0,0) = (2183*std::cos(q1))/20000
-						+ (823*std::cos(q1)*std::cos(q5))/10000
-						+ (17*std::cos(q2)*std::sin(q1))/40
-						- (1569*std::sin(q1)*std::sin(q2)*std::sin(q3))/4000
-						+ (823*std::cos(q2 + q3 + q4)*std::sin(q1)*std::sin(q5))/10000
-						- (1893*std::cos(q2 + q3)*std::sin(q1)*std::sin(q4))/20000
-						- (1893*std::sin(q2 + q3)*std::cos(q4)*std::sin(q1))/20000
-						+ (1569*std::cos(q2)*std::cos(q3)*std::sin(q1))/4000;
-
-	_jacobian(0,1) = std::cos(q1)*(
-							(1569*std::sin(q2 + q3))/4000
-							+ (17*std::sin(q2))/40
-							- (1893*std::sin(q2 + q3)*std::sin(q4))/20000
-							+ (1893*std::cos(q2 + q3)*std::cos(q4))/20000
-							+ std::sin(q5)*(
-								(823*std::cos(q2 + q3)*std::sin(q4))/10000
-								+ (823*std::sin(q2 + q3)*std::cos(q4))/10000
-							)
-						);
-
-	_jacobian(0,2) = std::cos(q1)*(
-							(1893*std::cos(q2 + q3 +q4))/20000
-							+ (1569*std::sin(q2 + q3))/4000
-							+ (823*std::sin(q2 + q3 + q4)*std::sin(q5))/10000
-						);
-
-	_jacobian(0,3) = std::cos(q1)*(
-							(1893*std::cos(q2 + q3 +q4))/20000
-							+ (823*std::sin(q2 + q3 + q4)*std::sin(q5))/10000
-						);
-
-	_jacobian(0,4) = (823.0/10000.0)*(
-							std::cos(q1)*std::cos(q2)*std::cos(q5)*std::sin(q3)*std::sin(q4)
-							- std::cos(q1)*std::cos(q2)*std::cos(q3)*std::cos(q4)*std::cos(q5)
-							- std::sin(q1)*std::sin(q5)
-							+ std::cos(q1)*std::cos(q3)*std::cos(q5)*std::sin(q2)*std::sin(q4)
-							+ std::cos(q1)*std::cos(q4)*std::cos(q5)*std::sin(q2)*std::sin(q3)
-						);
-
-	_jacobian(0,5) = 0;
-
-	_jacobian(1,0) = (2183*std::sin(q1))/20000
-                        - (17*std::cos(q1)*std::cos(q2))/40
-						+ (823*std::cos(q5)*std::sin(q1))/10000
-						- (823*std::cos(q2 + q3 + q4)*std::cos(q1)*std::sin(q5))/10000
-						+ (1893*std::cos(q2 + q3)*std::cos(q1)*std::sin(q4))/20000
-						+ (1893*std::sin(q2 + q3)*std::cos(q1)*std::cos(q4))/20000
-						- (1569*std::cos(q1)*std::cos(q2)*std::cos(q3))/4000
-						+ (1569*std::cos(q1)*std::sin(q2)*std::sin(q3))/4000;
-
-	_jacobian(1,1) = std::sin(q1)*(
-							(1569*std::sin(q2 + q3))/4000
-							+ (17*std::sin(q2))/40
-							- (1893*std::sin(q2 + q3)*std::sin(q4))/20000
-							+ (1893*std::cos(q2 + q3)*std::cos(q4))/20000
-							+ std::sin(q5)*(
-								(823*std::cos(q2 + q3)*std::sin(q4))/10000
-								+ (823*std::sin(q2 + q3)*std::cos(q4))/10000
-							)
-						);
-
-	_jacobian(1,2) = std::sin(q1)*(
-							(1893*std::cos(q2 + q3 +q4))/20000
-							+ (1569*std::sin(q2 + q3))/4000
-							+ (823*std::sin(q2 + q3 + q4)*std::sin(q5))/10000
-						);
-
-	_jacobian(1,3) = std::sin(q1)*(
-							(1893*std::cos(q2 + q3 +q4))/20000
-							+ (823*std::sin(q2 + q3 + q4)*std::sin(q5))/10000
-						);
-
-	_jacobian(1,4) = (823.0/10000.0)*(
-							std::cos(q1)*std::sin(q5)
-							- std::cos(q2)*std::cos(q3)*std::cos(q4)*std::cos(q5)*std::sin(q1)
-							+ std::cos(q2)*std::cos(q5)*std::sin(q1)*std::sin(q3)*std::sin(q4)
-							+ std::cos(q3)*std::cos(q5)*std::sin(q1)*std::sin(q2)*std::sin(q4)
-							+ std::cos(q4)*std::cos(q5)*std::sin(q1)*std::sin(q2)*std::sin(q3)
-						);
-
-	_jacobian(1,5) = 0;
-
-	_jacobian(2,0) = 0;
-
-	_jacobian(2,1) = (1893*std::sin(q2 + q3 + q4))/20000
-						- (823*std::sin(q2 + q3 + q4 + q5))/20000
-						- (1569*std::cos(q2 + q3))/4000
-						- (17*std::cos(q2))/40
-						+ (823*std::sin(q2 + q3 + q4 - q5))/20000;
-
-	_jacobian(2,2) = (1893*std::sin(q2 + q3 + q4))/20000
-						- (823*std::sin(q2 + q3 + q4 + q5))/20000
-						- (1569*std::cos(q2 + q3))/4000
-						+ (823*std::sin(q2 + q3 + q4 - q5))/20000;
-
-	_jacobian(2,3) = (1893*std::sin(q2 + q3 + q4))/20000
-						- (823*std::sin(q2 + q3 + q4 + q5))/20000
-						+ (823*std::sin(q2 + q3 + q4 - q5))/20000;
-
-	_jacobian(2,4) = - (823*std::sin(q2 + q3 + q4 + q5))/20000
-						- (823*std::sin(q2 + q3 + q4 - q5))/20000;
-
-	_jacobian(2,5) = 0;
-
-	_jacobian(3,0) = 0;
-
-	_jacobian(3,1) = std::sin(q1);
-
-	_jacobian(3,2) = std::sin(q1);
-
-	_jacobian(3,3) = std::sin(q1);
-
-	_jacobian(3,4) = std::sin(q2 + q3 + q4)*std::cos(q1);
-
-	_jacobian(3,5) = std::cos(q5)*std::sin(q1)
-						- std::cos(q2 + q3 + q4)*std::cos(q1)*std::sin(q5);
-
-	_jacobian(4,0) = 0;
-
-	_jacobian(4,1) = - std::cos(q1);
-
-	_jacobian(4,2) = - std::cos(q1);
-
-	_jacobian(4,3) = - std::cos(q1);
-
-	_jacobian(4,4) = std::sin(q2 + q3 + q4)*std::sin(q1);
-
-	_jacobian(4,5) = - std::cos(q1)*std::cos(q5)
-						- std::cos(q2 + q3 + q4)*std::sin(q1)*std::sin(q5);
-
-	_jacobian(5,0) = 1;
-
-	_jacobian(5,1) = 0;
-
-	_jacobian(5,2) = 0;
-
-	_jacobian(5,3) = 0;
-
-	_jacobian(5,4) = - std::cos(q2 + q3 + q4);
-
-	_jacobian(5,5) = - std::sin(q2 + q3 + q4)*std::sin(q5);
 
 }
