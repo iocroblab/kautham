@@ -309,6 +309,7 @@ namespace Kautham {
 
                             // Get the creator of the constraint by string and stores in the map:
                             auto constraint = constraints_factory->createConstraint(prob_constr->getConstraintType(), prob_constr, constr_joints.size(),3,0.1);
+                            constraint->associateRobot(current_rob);
                             this->constraint_map_[prob_constr->getConstraintId()] = constraint;
 
                             spaceRnConstr = std::make_shared<ob::ProjectedStateSpace>(spaceRn, constraint);

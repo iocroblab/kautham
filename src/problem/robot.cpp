@@ -503,6 +503,13 @@ namespace Kautham {
         return false;
     }
 
+    Eigen::AffineCompact3d Robot::getLinkTransformEigen(const std::string _link_name) {
+        Link* link = this->getLink(_link_name);
+        if(link != NULL) {
+          return link->getTransformationEigen();
+        }
+        return Eigen::AffineCompact3d::Identity();
+    }
 
     /*!
   *

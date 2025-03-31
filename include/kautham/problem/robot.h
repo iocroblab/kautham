@@ -28,6 +28,9 @@
 
 
 #include <list>
+#include <memory> // For std::shared_ptr
+
+#include <Eigen/Geometry>
 
 #include <kautham/problem/link.h>
 #include <kautham/mt/transform.h>
@@ -162,8 +165,11 @@ namespace Kautham {
                                     if(numLink>=links.size()) numLink = links.size()-1;
                                     return
                                         *(((Link*)links.at(numLink))->getTransformation());} //!< R
+    
+    Eigen::AffineCompact3d getLinkTransformEigen(const std::string _link_name);
 
     inline mt::Transform& getHomeTransform(){return *(links[0]->getTransformation());} //!< Retruns the transform of the robot base wrt the world
+    inline Eigen::AffineCompact3d getHomeTransformEigen() {return (links[0]->getTransformationEigen());} //!< Retruns the transform of the robot base wrt the world
 
     inline std::vector<RobConf>& getProposedSolution(){return _proposedSolution;} //!< Returns the Proposed Solution as a vector of RobConf; for visualization purposes.
 

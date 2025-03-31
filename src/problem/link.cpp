@@ -294,6 +294,31 @@ namespace Kautham {
     } 
   }
 
+  Eigen::AffineCompact3d Link::getTransformationEigen() {
+    mt::Rotation rot = absoluteTransform.getRotation();
+    mt::Matrix3x3 rotMatrix = rot.getMatrix();
+    mt::Point3 pos = absoluteTransform.getTranslation();
+
+    // Eigen::Translation3d(x, y, z) * Eigen::Quaterniond(quat_w, quat_x, quat_y, quat_z);
+    Eigen::AffineCompact3d transformation = 
+        Eigen::Translation3d(pos[0], pos[1], pos[2]) * 
+        Eigen::Quaterniond(rot[3], rot[0], rot[1], rot[2]);
+
+    return transformation;
+  }
+
+  std::shared_ptr<Eigen::AffineCompact3d> Link::getTransformationEigenPtr() {
+    mt::Rotation rot = absoluteTransform.getRotation();
+    mt::Matrix3x3 rotMatrix = rot.getMatrix();
+    mt::Point3 pos = absoluteTransform.getTranslation();
+
+    // Eigen::Translation3d(x, y, z) * Eigen::Quaterniond(quat_w, quat_x, quat_y, quat_z);
+    return std::make_shared<Eigen::AffineCompact3d>(
+        Eigen::Translation3d(pos[0], pos[1], pos[2]) * 
+        Eigen::Quaterniond(rot[3], rot[0], rot[1], rot[2])
+    );
+  }
+
   //!	This function set all D-H parameters. Angles are in degrees.  
   //! The theta parameter of D-H is the zeroOffset to home position.
   void Link::setDHPars(double theta, double d, double a, double alpha){

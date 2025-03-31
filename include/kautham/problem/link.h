@@ -32,7 +32,8 @@
 #include <kautham/util/kthutil/kauthamdefs.h>
 #include <kautham/mt/mt.h>
 #include <string>
-
+#include <Eigen/Geometry>
+#include <memory> // For std::shared_ptr
 
 using namespace mt;
 
@@ -181,6 +182,9 @@ namespace Kautham{
 	  *		associated with the Link.  Its is the current position and its current
 	  *		orientation.*/
     inline mt::Transform* getTransformation(){return &absoluteTransform;}
+    
+    Eigen::AffineCompact3d getTransformationEigen();
+    std::shared_ptr<Eigen::AffineCompact3d> getTransformationEigenPtr();
 
 	double             getdhMatrix(int i,int j){return dhMatrix[i][j];}
       	
