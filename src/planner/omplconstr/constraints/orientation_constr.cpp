@@ -146,6 +146,7 @@ Eigen::AffineCompact3d OrientationConstraint::ComputeFKFromRobotBaseLinkToEnfEff
 
     // Get the orientation from the transformation:
 	Eigen::AffineCompact3d t_robot_base_link_2_end_effector_link = t_robot_base_link_2_constr_init * t_constr_init_2_constr_end * t_constr_end_2_end_effector_link;
+    // std::cout << "Transformation t_robot_base_link_2_end_effector_link:\n" << t_robot_base_link_2_end_effector_link.matrix() << std::endl;
     
     return t_robot_base_link_2_end_effector_link;
 }
