@@ -65,12 +65,14 @@ namespace Kautham {
             inline void setGeometricParamRadius(const double _radius){geo_params_.radius = _radius;}
             void setTargetOrientation(const double quat_x, const double quat_y, const double quat_z, const double quat_w);
             void setTargetOrientation(const Eigen::Quaterniond& _quat);
+            inline void setOrientationLink(const std::string _orilink){orientation_link_ = _orilink;}
 
             // Get methods:
             inline std::string getConstraintId() const {return id_;}
             inline std::string getConstraintType() const {return type_;}
             inline std::vector<std::pair<std::string, uint>> getConstrainedJoints() const {return constrained_joints_;}
             inline Eigen::Quaterniond getTargetOrientation() const {return target_orientation_;}
+            inline std::string getOrientationLink() const {return orientation_link_;}
 
         private:
             std::string id_;  //!< Unique identifier.
@@ -82,6 +84,7 @@ namespace Kautham {
             Eigen::AffineCompact3d origin_; //!< Transformation of the geometric constraint wrt the reference frame link.
             GeometricParams geo_params_;    //!< Used to store the used params.
             Eigen::Quaterniond target_orientation_; //!< Used only when TCP Orientation constraint is used.
+            std::string orientation_link_;  //!< Used only when TCP Orientation constraint is used.
     };
 
 

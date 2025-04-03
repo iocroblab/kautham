@@ -1366,69 +1366,23 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
         _constraint_node.attribute("id").as_string(), _constraint_node.attribute("type").as_string()
     );
 
-    pugi::xml_node reference_frame_node = _constraint_node.child("ReferenceFrame");
-    if (!reference_frame_node) {
-        std::cerr << "Missing 'ReferenceFrame' node in Constraint " << _constraint_node.attribute("id").as_string() << std::endl;
-        return false;
-    }
-    if (!reference_frame_node.attribute("entity") || !reference_frame_node.attribute("link")) {
-        std::cerr << "Missing 'entity' or 'link' attribute of ReferenceFrame in Constraint " << _constraint_node.attribute("id").as_string() << std::endl;
-        return false;
-    }
-    // Load the reference frame information:
-    this_constraint->setReferenceFrame(reference_frame_node.attribute("entity").as_string(), reference_frame_node.attribute("link").as_string());
-
-    // Load the Origin node information:
-    if (pugi::xml_node origin_node = _constraint_node.child("Origin")) {
-        // Extract xyz attribute
-        std::string xyz_str = origin_node.attribute("xyz").as_string();
-        double x, y, z;
-        std::istringstream xyz_stream(xyz_str);
-
-        if (xyz_stream >> x >> y >> z) {
-            // XYZ parsed successfully, now check for orientation
-            if (origin_node.attribute("rpy")) {
-                // RPY representation
-                std::string rpy_str = origin_node.attribute("rpy").as_string();
-                double roll, pitch, yaw;
-                std::istringstream rpy_stream(rpy_str);
-
-                if (rpy_stream >> roll >> pitch >> yaw) {
-                    this_constraint->setOrigin(x, y, z, roll, pitch, yaw);
-                } else {
-                    std::cerr << "Error parsing RPY values in Origin node" << std::endl;
-                    return false;
-                }
-            } else if (origin_node.attribute("quat_xyzw")) {
-                // Quaternion representation
-                std::string quat_str = origin_node.attribute("quat_xyzw").as_string();
-                double qx, qy, qz, qw;
-                std::istringstream quat_stream(quat_str);
-
-                if (quat_stream >> qx >> qy >> qz >> qw) {
-                    this_constraint->setOrigin(x, y, z, qx, qy, qz, qw);
-                } else {
-                    std::cerr << "Error parsing quaternion values in Origin node" << std::endl;
-                    return false;
-                }
-            } else {
-                std::cerr << "Missing orientation information (rpy or quat_xyzw) in Origin node" << std::endl;
-                return false;
-            }
-        } else {
-            std::cerr << "Error parsing XYZ values in Origin node" << std::endl;
-            return false;
-        }
-    }
-
     // Parse the info based on type (tcp_orientation or geometric):
-    if (std::string(_constraint_node.attribute("type").as_string()) == "orientation_ur5") {  // Change to tcp_orientation when robot agnostic
+    if (std::string(_constraint_node.attribute("type").as_string()) == "arm_orientation") {  // Change to tcp_orientation when robot agnostic
         // Parse TargetOrientation:
         pugi::xml_node orientation_target_node = _constraint_node.child("TargetOrientation");
         if (!orientation_target_node) {
             std::cerr << "Missing TargetOrientation in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
             return false;
         }
+
+        // Check if orientation link is set:
+        if (!orientation_target_node.attribute("orilink")) {
+            std::cerr << "Missing TargetOrientation orilink attribute in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
+            return false;
+        }
+
+        std::string orilink = orientation_target_node.attribute("orilink").as_string();
+        this_constraint->setOrientationLink(orilink);
 
         // Check and set the quaternion:
         if (!orientation_target_node.attribute("qx") || 
@@ -1506,6 +1460,58 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
                 this_constraint->setGeometricParamRadius(radius);
             } else {
                 std::cerr << "Invalid radius parameter (must be positive)" << std::endl;
+                return false;
+            }
+        }
+
+        // Load the reference frame information:
+        if (pugi::xml_node reference_frame_node = _constraint_node.child("ReferenceFrame")) {
+            if (!reference_frame_node.attribute("entity") || !reference_frame_node.attribute("link")) {
+                std::cerr << "Missing 'entity' or 'link' attribute of ReferenceFrame in Constraint " << _constraint_node.attribute("id").as_string() << std::endl;
+                return false;
+            }
+            this_constraint->setReferenceFrame(reference_frame_node.attribute("entity").as_string(), reference_frame_node.attribute("link").as_string());
+        }
+
+        // Load the Origin node information:
+        if (pugi::xml_node origin_node = _constraint_node.child("Origin")) {
+            // Extract xyz attribute
+            std::string xyz_str = origin_node.attribute("xyz").as_string();
+            double x, y, z;
+            std::istringstream xyz_stream(xyz_str);
+
+            if (xyz_stream >> x >> y >> z) {
+                // XYZ parsed successfully, now check for orientation
+                if (origin_node.attribute("rpy")) {
+                    // RPY representation
+                    std::string rpy_str = origin_node.attribute("rpy").as_string();
+                    double roll, pitch, yaw;
+                    std::istringstream rpy_stream(rpy_str);
+
+                    if (rpy_stream >> roll >> pitch >> yaw) {
+                        this_constraint->setOrigin(x, y, z, roll, pitch, yaw);
+                    } else {
+                        std::cerr << "Error parsing RPY values in Origin node" << std::endl;
+                        return false;
+                    }
+                } else if (origin_node.attribute("quat_xyzw")) {
+                    // Quaternion representation
+                    std::string quat_str = origin_node.attribute("quat_xyzw").as_string();
+                    double qx, qy, qz, qw;
+                    std::istringstream quat_stream(quat_str);
+
+                    if (quat_stream >> qx >> qy >> qz >> qw) {
+                        this_constraint->setOrigin(x, y, z, qx, qy, qz, qw);
+                    } else {
+                        std::cerr << "Error parsing quaternion values in Origin node" << std::endl;
+                        return false;
+                    }
+                } else {
+                    std::cerr << "Missing orientation information (rpy or quat_xyzw) in Origin node" << std::endl;
+                    return false;
+                }
+            } else {
+                std::cerr << "Error parsing XYZ values in Origin node" << std::endl;
                 return false;
             }
         }

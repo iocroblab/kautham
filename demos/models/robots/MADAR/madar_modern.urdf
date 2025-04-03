@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="madar_modern">
+<robot name="madar_full">
 
     <!-- BEGIN: T-STRUCTURE -->
     <link name="madar_base_link">

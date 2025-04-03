@@ -25,9 +25,7 @@ class OrientationConstraint : public AbstractOMPLConstraint {
 
         Eigen::Quaterniond calculateOrientationError(const Eigen::Ref<const Eigen::VectorXd>& q) const;
 
-        void evaluateFKUR5(Eigen::AffineCompact3d& _transformation_base_tool0, const double q1, const double q2, const double q3, const double q4, const double q5, const double q6) const;
-
-        void evaluateJacobianUR5(Eigen::MatrixXd& _jacobian, const double q1, const double q2, const double q3, const double q4, const double q5, const double q6) const;
+        Eigen::AffineCompact3d ComputeFKFromRobotBaseLinkToEnfEffectorLink(const Eigen::Ref<const Eigen::VectorXd>& q) const;
 
 };
 

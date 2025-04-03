@@ -3,7 +3,8 @@
 
 	<Robot robot="robots/UR5/ur5.urdf" scale="1.0">
 		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.01" Y="0.0" X="0.0" />
-		<Constraint id="arm_ur5" type="orientation_ur5">
+		<Constraint id="arm_ur5" type="arm_orientation">
+			<TargetOrientation orilink="Wrist3" qx="1.0" qy="0.0" qz="0.0" qw="0.0"/>
 			<Joint name="Shoulder" />
 			<Joint name="UpperArm" />
 			<Joint name="ForeArm" />

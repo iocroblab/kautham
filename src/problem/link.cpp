@@ -319,6 +319,39 @@ namespace Kautham {
     );
   }
 
+    Eigen::AffineCompact3d Link::applyJointConfiguration(const double _theta) {
+
+        Eigen::AffineCompact3d theta_rotation = Eigen::AffineCompact3d::Identity();
+
+        // Ensure the axis is normalized
+        Eigen::Vector3d u = this->axis_.normalized();
+
+        // Compute trigonometric terms
+        double cos_theta = std::cos(_theta);
+        double sin_theta = std::sin(_theta);
+        double one_minus_cos = 1.0 - cos_theta;
+
+        // Compute cross-product matrix [u]_x
+        Eigen::Matrix3d cross_product_matrix;
+        cross_product_matrix <<  0,      -u.z(),   u.y(),
+                                u.z(),   0,     -u.x(),
+                                -u.y(),   u.x(),   0;
+
+        // Compute outer product (u ⊗ u)
+        Eigen::Matrix3d outer_product = u * u.transpose();
+
+        // Compute rotation matrix R using Rodrigues' formula:
+        theta_rotation.linear() = cos_theta * Eigen::Matrix3d::Identity()
+                                + sin_theta * cross_product_matrix
+                                + one_minus_cos * outer_product;
+
+
+        theta_rotation = this->origin_ * theta_rotation;
+        
+        return theta_rotation;
+    }
+
+
   //!	This function set all D-H parameters. Angles are in degrees.  
   //! The theta parameter of D-H is the zeroOffset to home position.
   void Link::setDHPars(double theta, double d, double a, double alpha){
@@ -385,7 +418,19 @@ namespace Kautham {
           //then pitch around y axis and finally yaw around z axis
           mt::Point3 tempTran(x,y,z);//translation
           preTransform = new mt::Transform(tempRot,tempTran);
-          return true;
+
+        this->origin_ = Eigen::AffineCompact3d::Identity();
+        this->origin_.translation() = Eigen::Vector3d(x,y,z);
+        /*
+        URDF uses extrinsic rotations (fixed-axis rotations) by default.
+        This means the rotations are applied relative to the static world axes (X, Y, Z), not relative to the current rotated axes.
+        */
+        this->origin_.linear() =
+            Eigen::AngleAxisd(wx, Eigen::Vector3d::UnitX()).toRotationMatrix() * // Roll (X-axis)
+            Eigen::AngleAxisd(wy, Eigen::Vector3d::UnitY()).toRotationMatrix() * // Pitch (Y-axis)
+            Eigen::AngleAxisd(wz, Eigen::Vector3d::UnitZ()).toRotationMatrix();   // Yaw (Z-axis)
+        
+        return true;
       }
   }
 

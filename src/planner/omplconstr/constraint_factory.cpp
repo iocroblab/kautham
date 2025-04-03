@@ -32,7 +32,7 @@ namespace Kautham {
         }
 
         void ConstraintFactory::registerConstraints() {
-            registerConstraint("orientation_ur5",
+            registerConstraint("arm_orientation",
                 [](std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim, unsigned int coDim, double tolerance) 
                     -> std::shared_ptr<ConstraintFactory::ConstraintBase> {
                         return std::make_shared<OrientationConstraint>(_robot_prob_constraint, ambientDim, coDim, tolerance);

@@ -55,7 +55,7 @@ namespace Kautham {
             std::cout << std::endl;
         }
         
-        if (type_ == "orientation_ur5") {   // Change to tcp_orientation when robot agnostic
+        if (type_ == "arm_orientation") {   // Change to tcp_orientation when robot agnostic
             std::cout << "\tTarget orientation (w, x, y, z): "
                     << target_orientation_.w() << ", " 
                     << target_orientation_.x() << ", "

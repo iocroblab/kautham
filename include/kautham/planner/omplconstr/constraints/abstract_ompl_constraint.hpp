@@ -28,12 +28,6 @@ class AbstractOMPLConstraint : public ompl::base::Constraint {
         
         Kautham::Robot* associated_robot_;
 
-        const unsigned int num_dofs_;
-
-        unsigned int num_constraints_;
-
-        double tolerance_;
-
 };
 
 #endif // ABSTRACT_OMPL_CONSTRAINT_HPP

@@ -3,15 +3,14 @@
 <Problem name="madar_constr">
 
 	<!-- <Robot robot="robots/MADAR/madar_arm_right.urdf"> -->
-	<Robot robot="robots/MADAR/madar_full.urdf">
+	<!-- <Robot robot="robots/MADAR/madar_full.urdf"> -->
+	<Robot robot="robots/MADAR/madar_modern.urdf">
 		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="-0.05" X="-0.20" />
 		<Limits name="X" min="-5.0" max="5.0" />
 		<Limits name="Y" min="-5.0" max="5.0" />
-		<Constraint id="ori_arm_right" type="orientation_ur5">
-			<!-- <TargetOrientation qx="0.707" qy="0.0" qz="0.707" qw="0.0"/> -->
-			<TargetOrientation qx="-0.0105" qy="-0.3927" qz="-0.0041" qw="0.9196"/>
-			<ReferenceFrame entity="madar_full" link="right_base_link"/>
-			<!-- Origin is set by default to the Identity when no specified -->
+		<!-- TargetOrientation is referenced to the base link of the robot. -->
+		<Constraint id="ori_arm_right" type="arm_orientation">
+			<TargetOrientation orilink="right_wrist_3_link" qx="1.0" qy="0.0" qz="0.0" qw="0.0"/>
 			<Joint name="right_shoulder_link" />
 			<Joint name="right_upper_arm_link" />
 			<Joint name="right_fore_arm_link" />
@@ -19,7 +18,8 @@
 			<Joint name="right_wrist_2_link" />
 			<Joint name="right_wrist_3_link" />
 		</Constraint>
-		<!-- <Constraint id="ori_arm_left" type="orientation_ur5">
+		<!-- <Constraint id="ori_arm_left" type="arm_orientation">
+			<TargetOrientation orilink="left_wrist_3_link" qx="1.0" qy="0.0" qz="0.0" qw="0.0"/>
 			<Joint name="left_shoulder_link" />
 			<Joint name="left_upper_arm_link" />
 			<Joint name="left_fore_arm_link" />
@@ -29,6 +29,7 @@
 		</Constraint> -->
 
 			<!-- <Origin xyz="0.1 0.7 0.4" quat_xyzw="0.7071068 0.0 0.7071068 0.0"/> -->
+		<!-- Origin is set by default to the Identity when no specified -->
 		<!-- <Constraint id="box_arm_left" type="box">
 			<GeometricParams length="1.0" width="0.5" height="0.2"/>
 			<ReferenceFrame entity="chessboard" link="base"/>

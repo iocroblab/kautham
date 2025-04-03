@@ -118,7 +118,8 @@ namespace Kautham{
 
       //! Function to set \f$ axis \f$ parameter.
       /*!	This function sets \f$ axis \f$ parameter.*/
-    inline void         setAxis(Unit3 axis){if(!armed)this->axis = axis;}
+    inline void         setAxis(Unit3 axis){if(!armed) {this->axis = axis; this->axis_ << axis[0], axis[1], axis[2];}}
+    inline void         setAxis(Eigen::Vector3d _axis){if(!armed)this->axis_ = _axis;}
 
 	  //! Function to get \f$ d \f$ parameter.
 	  /*!	This function get the current value from Denavit - Hartemberg \f$ d \f$ 
@@ -186,6 +187,8 @@ namespace Kautham{
     Eigen::AffineCompact3d getTransformationEigen();
     std::shared_ptr<Eigen::AffineCompact3d> getTransformationEigenPtr();
 
+    Eigen::AffineCompact3d applyJointConfiguration(const double _theta);
+    
 	double             getdhMatrix(int i,int j){return dhMatrix[i][j];}
       	
     inline double      getValue(){return value;}
@@ -208,6 +211,7 @@ namespace Kautham{
   	
 	  //!	This member function return the parent pointer to previous Link.
     inline Link*        getParent(){if(armed)return parent;else return NULL;}
+    inline std::string  getParentName(){if(armed)return parent->getName();else return "";}
 
     void                setParent(Link* par);
     unsigned int        addChild(Link* child);
@@ -260,6 +264,7 @@ namespace Kautham{
 
       //!	\f$ axis \f$ parameter for URDF description.
     Unit3               axis;
+    Eigen::Vector3d     axis_;
   	
 	  //! This variable is true for rotational Links.
     bool                rotational;
@@ -295,6 +300,7 @@ namespace Kautham{
 
       //! This could be store an additional transformation between the link before and the dhMatrix
     mt::Transform*      preTransform;
+    Eigen::AffineCompact3d origin_;
   	
 	  //!	The name of Link.
     string              name;
