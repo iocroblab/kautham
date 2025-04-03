@@ -42,7 +42,7 @@ namespace Kautham {
         // Factory class
         class ConstraintFactory {
             public:
-                using ConstraintBase = AbstractOMPLConstraint;
+                using ConstraintBase = Kautham::AbstractOMPLConstraint;
                 using ConstraintCreator = std::shared_ptr<ConstraintBase>(*)(std::shared_ptr<Kautham::RobotProblemConstraint>, unsigned int, unsigned int, double);
 
                 // Function to register all constraints in the factory:

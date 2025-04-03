@@ -3,6 +3,8 @@
 
 #include <kautham/planner/omplconstr/constraints/abstract_ompl_constraint.hpp>
 
+namespace Kautham {
+
 class OrientationConstraint : public AbstractOMPLConstraint {
     public:
         // Constructor: Set dimension of ambient space and the number of constraint equations
@@ -25,5 +27,7 @@ class OrientationConstraint : public AbstractOMPLConstraint {
         Eigen::Quaterniond calculateOrientationError(const Eigen::Ref<const Eigen::VectorXd>& q) const;
 
 };
+
+}
 
 #endif // ORIENTATION_CONSTR_HPP

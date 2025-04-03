@@ -1,6 +1,8 @@
 #include <kautham/planner/omplconstr/constraints/abstract_ompl_constraint.hpp>
 #include <kautham/problem/robot.h>  // Used as a pointer to get FK methods inside the constraint methods.
 
+namespace Kautham {
+
 // Constructor implementation
 AbstractOMPLConstraint::AbstractOMPLConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
     : ompl::base::Constraint(num_dofs, num_constraints, tolerance), 
@@ -46,4 +48,6 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::ComputeFKFromRobotBaseLinkToEnfEf
     // std::cout << "Transformation t_robot_base_link_2_end_effector_link:\n" << t_robot_base_link_2_end_effector_link.matrix() << std::endl;
     
     return t_robot_base_link_2_end_effector_link;
+}
+
 }

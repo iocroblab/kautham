@@ -3,6 +3,8 @@
 // #include <ompl/base/spaces/RealVectorStateSpace.h>
 // #include <ompl/base/spaces/constraint/ProjectedStateSpace.h>
 
+namespace Kautham {
+
 // Constructor implementation
 OrientationConstraint::OrientationConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
     : AbstractOMPLConstraint(_robot_prob_constraint, num_dofs, num_constraints, tolerance)
@@ -109,4 +111,6 @@ Eigen::Quaterniond OrientationConstraint::calculateOrientationError(const Eigen:
     // std::cout << "Error orientation (x, y, z, w): " << error_orientation.coeffs().transpose() << std::endl;
 
     return error_orientation;
+}
+
 }

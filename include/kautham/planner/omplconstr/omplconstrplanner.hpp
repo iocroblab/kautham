@@ -37,12 +37,12 @@
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
-class AbstractOMPLConstraint;
 
 namespace Kautham {
-// /** \addtogroup ControlPlanners
-//  *  @{
-//  */
+    // /** \addtogroup ControlPlanners
+    //  *  @{
+        //  */
+    class AbstractOMPLConstraint;
 
     namespace omplconstrplanner{
 

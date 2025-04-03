@@ -529,8 +529,8 @@ namespace Kautham {
                 // solution_path->print(std::cout);
 
                 og::PathGeometric& path = static_cast<og::PathGeometric&>(*solution_path);
-                // og::PathSimplifier simplifier(this->si_);
-                // simplifier.simplifyMax(path);
+                og::PathSimplifier simplifier(this->si_);
+                simplifier.simplifyMax(path);
                 // simplifier.smoothBSpline(path);
 
                 _path.clear();
