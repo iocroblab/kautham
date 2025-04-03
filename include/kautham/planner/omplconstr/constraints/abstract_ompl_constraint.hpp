@@ -3,6 +3,7 @@
 
 #include <ompl/base/Constraint.h>
 #include <kautham/problem/prob_robot_constr.hpp>
+#include <Eigen/Core>
 
 // Forward declare the Robot class in the Kautham namespace
 namespace Kautham {
@@ -27,6 +28,8 @@ class AbstractOMPLConstraint : public ompl::base::Constraint {
         std::shared_ptr<Kautham::RobotProblemConstraint>  robot_prob_constraint_;    // Pointer to RobotProblemConstraint
         
         Kautham::Robot* associated_robot_;
+
+        Eigen::AffineCompact3d ComputeFKFromRobotBaseLinkToEnfEffectorLink(const Eigen::Ref<const Eigen::VectorXd>& q) const;
 
 };
 

@@ -2,7 +2,6 @@
 #define ORIENTATION_CONSTR_HPP
 
 #include <kautham/planner/omplconstr/constraints/abstract_ompl_constraint.hpp>
-#include <Eigen/Core>
 
 class OrientationConstraint : public AbstractOMPLConstraint {
     public:
@@ -24,8 +23,6 @@ class OrientationConstraint : public AbstractOMPLConstraint {
     private:
 
         Eigen::Quaterniond calculateOrientationError(const Eigen::Ref<const Eigen::VectorXd>& q) const;
-
-        Eigen::AffineCompact3d ComputeFKFromRobotBaseLinkToEnfEffectorLink(const Eigen::Ref<const Eigen::VectorXd>& q) const;
 
 };
 
