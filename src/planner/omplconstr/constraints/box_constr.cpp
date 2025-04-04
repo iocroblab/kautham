@@ -70,14 +70,10 @@ void BoxConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::
 		}
 	}
 
-	std::cout << "Box output = [" << delta_length << ", " << delta_width << ", " << delta_height << "]" << std::endl;
+	// std::cout << "Box output = [" << delta_length << ", " << delta_width << ", " << delta_height << "]" << std::endl;
     out[0] = delta_length;
     out[1] = delta_width;
     out[2] = delta_height;
-
-	// out[0] = 0;
-    // out[1] = 0;
-    // out[2] = 0;
 
 }
 
@@ -125,14 +121,14 @@ void BoxConstraint::jacobian(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::
 Eigen::AffineCompact3d BoxConstraint::calculatePositionError(const Eigen::Ref<const Eigen::VectorXd>& q) const {
 
     Eigen::AffineCompact3d t_robot_base_link_2_end_effector_link = ComputeFKFromRobotBaseLinkToEnfEffectorLink(q);
-    std::cout << "Transformation t_robot_base_link_2_end_effector_link:\n" << t_robot_base_link_2_end_effector_link.matrix() << std::endl;
+    // std::cout << "Transformation t_robot_base_link_2_end_effector_link:\n" << t_robot_base_link_2_end_effector_link.matrix() << std::endl;
 
 	Eigen::AffineCompact3d t_robot_base_link_2_geometic_origin = getGeometricTransformationWRTRobotBaseLink();
-    std::cout << "Transformation t_robot_base_link_2_geometic_origin:\n" << t_robot_base_link_2_geometic_origin.matrix() << std::endl;
+    // std::cout << "Transformation t_robot_base_link_2_geometic_origin:\n" << t_robot_base_link_2_geometic_origin.matrix() << std::endl;
 
     // Calculate the pose (position + orientation) error:
 	Eigen::AffineCompact3d t_error = t_robot_base_link_2_geometic_origin.inverse() * t_robot_base_link_2_end_effector_link;
-    std::cout << "Transformation t_error:\n" << t_error.matrix() << std::endl;
+    // std::cout << "Transformation t_error:\n" << t_error.matrix() << std::endl;
 
     return t_error;
 }
