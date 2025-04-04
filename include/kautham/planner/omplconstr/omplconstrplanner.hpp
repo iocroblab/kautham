@@ -116,6 +116,7 @@ namespace Kautham {
                 double _planningTime;
                 double _range;
                 unsigned int _simplify;
+                unsigned int _incremental;
 
                 std::shared_ptr<ompl::base::StateSpace> space_;
 
@@ -134,6 +135,8 @@ namespace Kautham {
                 {
                     if((h - l) < epsilon) h = l + epsilon;
                 }
+
+                void setStartAndGoalFromKthmSample();
             };
 
         }

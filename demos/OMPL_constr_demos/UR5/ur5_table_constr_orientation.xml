@@ -30,6 +30,8 @@
 			<Parameter name="_Speed Factor">1</Parameter>
 			<Parameter name="_Max Planning Time">15.0</Parameter>
 			<Parameter name="_Range">0.1</Parameter>
+			<Parameter name="_Simplify Solution">0</Parameter>
+			<Parameter name="_Incremental (0/1)">0</Parameter>
 			<!-- <Parameter name="Goal Bias">0.05</Parameter> -->
 		</Parameters>
 		<Queries>

@@ -187,12 +187,14 @@ namespace Kautham {
             _planningTime = 10;
             _range = 0.1;
             _simplify = 0;
+            _incremental = 0;
 
             // Add planner parameters:
             addParameter("_Max Planning Time",_planningTime);
             addParameter("_Speed Factor",_speedFactor);
             addParameter("_Range",_range);
             addParameter("_Simplify Solution",_simplify);
+            addParameter("_Incremental (0/1)",_incremental);
 
             if (ssptr == NULL) {
 
@@ -409,41 +411,7 @@ namespace Kautham {
                 // Define start and goal states using subspaces
                 // ############################################
 
-                ompl::base::ScopedState<> start(this->space_);
-                ompl::base::ScopedState<> goal(this->space_);
-
-                auto &subspaces_robots = start.getSpace()->as<ompl::base::CompoundStateSpace>()->getSubspaces();
-                std::cout << "Num robots: " << subspaces_robots.size() << std::endl;
-
-                // Add start states:
-                this->pdef_->clearStartStates();
-                for (std::vector<Sample*>::const_iterator start(_init.begin()); start != _init.end(); ++start) {
-                    //Start state: convert from smp to scoped state
-                    ob::ScopedState<ob::CompoundStateSpace> startompl(this->space_);
-                    omplConstraintPlanner::smp2omplScopedState(*start, &startompl);
-                    std::cout << "startomplconstr:" << std::endl;
-                    startompl.print();
-                    this->pdef_->addStartState(startompl);
-                    
-                    // Assign the start values to each constraint as a target automatically:
-                    // omplConstraintPlanner::assignConstrTargetFromState(startompl);
-                }
-
-                // Add goal states:
-                this->pdef_->clearGoal();
-                ob::GoalStates *goalStates(new ob::GoalStates(si_));
-                for (std::vector<Sample*>::const_iterator goal(_goal.begin()); goal != _goal.end(); ++goal) {
-                    //Goal state: convert from smp to scoped state
-                    ob::ScopedState<ob::CompoundStateSpace> goalompl(this->space_);
-                    omplConstraintPlanner::smp2omplScopedState(*goal, &goalompl);
-                    std::cout << "goalomplconstr:" << std::endl;
-                    goalompl.print();
-                    goalStates->addState(goalompl);
-                    // DEBUG: Assign the goal values to each constraint as a target automatically:
-                    // omplConstraintPlanner::assignConstrTargetFromState(goalompl);
-                }
-                this->pdef_->setGoal(ob::GoalPtr(goalStates));
-
+                omplConstraintPlanner::setStartAndGoalFromKthmSample();
 
                 // ############################################
                 // Set the planner:
@@ -474,6 +442,39 @@ namespace Kautham {
 
         }
 
+        void omplConstraintPlanner::setStartAndGoalFromKthmSample() {
+
+            ompl::base::ScopedState<> start(this->space_);
+            ompl::base::ScopedState<> goal(this->space_);
+
+            // Add start states:
+            this->pdef_->clearStartStates();
+            for (std::vector<Sample*>::const_iterator start(_init.begin()); start != _init.end(); ++start) {
+                //Start state: convert from smp to scoped state
+                ob::ScopedState<ob::CompoundStateSpace> startompl(this->space_);
+                omplConstraintPlanner::smp2omplScopedState(*start, &startompl);
+                std::cout << "startomplconstr:" << std::endl;
+                startompl.print();
+                this->pdef_->addStartState(startompl);
+                // Assign the start values to each constraint as a target automatically:
+                // omplConstraintPlanner::assignConstrTargetFromState(startompl);
+            }
+
+            // Add goal states:
+            this->pdef_->clearGoal();
+            ob::GoalStates *goalStates(new ob::GoalStates(si_));
+            for (std::vector<Sample*>::const_iterator goal(_goal.begin()); goal != _goal.end(); ++goal) {
+                //Goal state: convert from smp to scoped state
+                ob::ScopedState<ob::CompoundStateSpace> goalompl(this->space_);
+                omplConstraintPlanner::smp2omplScopedState(*goal, &goalompl);
+                std::cout << "goalomplconstr:" << std::endl;
+                goalompl.print();
+                goalStates->addState(goalompl);
+                // Assign the goal values to each constraint as a target automatically:
+                // omplConstraintPlanner::assignConstrTargetFromState(goalompl);
+            }
+            this->pdef_->setGoal(ob::GoalPtr(goalStates));
+        }
 
         bool omplConstraintPlanner::setParameters() {
             try {
@@ -520,8 +521,25 @@ namespace Kautham {
                             _simplify = it->second;
                         } else {
                             _simplify = 0;
+                            it->second = 0;
                         }
                         std::cout << " to " << _simplify << std::endl;
+                    }
+                } else {
+                    return false;
+                }
+
+                it = _parameters.find("_Incremental (0/1)");
+                if(it != _parameters.end()) {
+                    if (_incremental != it->second) {
+                        std::cout << "Incremental has been modified from " << _incremental;
+                        if (it->second == 0 || it->second == 1) {
+                            _incremental = it->second;
+                        } else {
+                            _incremental = 0;
+                            it->second = 0;
+                        }
+                        std::cout << " to " << _incremental << std::endl;
                     }
                 } else {
                     return false;
@@ -536,6 +554,10 @@ namespace Kautham {
         bool omplConstraintPlanner::trySolve() {
             // Implement the logic that attempts to solve the planning problem.
             // Return true if successful, false otherwise.
+
+            // Re-define start and goal states (could be different when the space has been constructed):
+            // omplConstraintPlanner::setStartAndGoalFromKthmSample();
+            
             // Attempt to solve the problem within _planningTime seconds:
             ompl::base::PlannerTerminationCondition ptc = ompl::base::timedPlannerTerminationCondition(_planningTime);
             ompl::base::PlannerStatus solved = this->ompl_planner_->solve(ptc);
@@ -556,6 +578,14 @@ namespace Kautham {
                         simplifier.simplifyMax(path);
                     }
                 }
+
+                // Remove previous solutions path, if any:
+                // if (_incremental) {
+                //     this->pdef_->clearSolutionPaths();
+                // } else {
+                //     this->pdef_->clearSolutionPaths();
+                //     this->ompl_planner_->clear();
+                // }
 
                 _path.clear();
                 clearSimulationPath();
