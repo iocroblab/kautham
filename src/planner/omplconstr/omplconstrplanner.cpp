@@ -186,11 +186,13 @@ namespace Kautham {
             // Set own intial values:
             _planningTime = 10;
             _range = 0.1;
+            _simplify = 0;
 
             // Add planner parameters:
             addParameter("_Max Planning Time",_planningTime);
             addParameter("_Speed Factor",_speedFactor);
             addParameter("_Range",_range);
+            addParameter("_Simplify Solution",_simplify);
 
             if (ssptr == NULL) {
 
@@ -510,6 +512,21 @@ namespace Kautham {
                     return false;
                 }
 
+                it = _parameters.find("_Simplify Solution");
+                if(it != _parameters.end()) {
+                    if (_simplify != it->second) {
+                        std::cout << "Simplify Solution has been modified from " << _simplify;
+                        if (it->second == 0 || it->second == 1 || it->second == 2) {
+                            _simplify = it->second;
+                        } else {
+                            _simplify = 0;
+                        }
+                        std::cout << " to " << _simplify << std::endl;
+                    }
+                } else {
+                    return false;
+                }
+
             } catch(...) {
                 return false;
             }
@@ -530,9 +547,15 @@ namespace Kautham {
                 // solution_path->print(std::cout);
 
                 og::PathGeometric& path = static_cast<og::PathGeometric&>(*solution_path);
-                og::PathSimplifier simplifier(this->si_);
-                // simplifier.simplifyMax(path);
-                // simplifier.smoothBSpline(path);
+
+                if (_simplify != 0) {
+                    og::PathSimplifier simplifier(this->si_);
+                    if (_simplify == 1) {   // Smooth
+                        simplifier.smoothBSpline(path);
+                    } else if (_simplify == 2) {    // Shorten
+                        simplifier.simplifyMax(path);
+                    }
+                }
 
                 _path.clear();
                 clearSimulationPath();

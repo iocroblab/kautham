@@ -115,6 +115,7 @@ namespace Kautham {
             private:
                 double _planningTime;
                 double _range;
+                unsigned int _simplify;
 
                 std::shared_ptr<ompl::base::StateSpace> space_;
 
