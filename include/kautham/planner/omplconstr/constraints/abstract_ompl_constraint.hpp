@@ -22,14 +22,18 @@ namespace Kautham {
             virtual void printConstraintTarget() const = 0;    // Polymorphic behavior
 
             inline void associateRobot(Kautham::Robot* _associated_robot){associated_robot_ = _associated_robot;}
+            inline void assignReferencedEntity(Kautham::Robot* _referenced_entity){referenced_entity_ = _referenced_entity;}
 
         protected:
 
             std::shared_ptr<Kautham::RobotProblemConstraint>  robot_prob_constraint_;    // Pointer to RobotProblemConstraint
             
             Kautham::Robot* associated_robot_;
+            Kautham::Robot* referenced_entity_;
 
             Eigen::AffineCompact3d ComputeFKFromRobotBaseLinkToEnfEffectorLink(const Eigen::Ref<const Eigen::VectorXd>& q) const;
+
+            Eigen::AffineCompact3d getGeometricTransformationWRTRobotBaseLink() const;
 
     };
 }

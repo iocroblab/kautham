@@ -50,4 +50,29 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::ComputeFKFromRobotBaseLinkToEnfEf
     return t_robot_base_link_2_end_effector_link;
 }
 
+Eigen::AffineCompact3d AbstractOMPLConstraint::getGeometricTransformationWRTRobotBaseLink() const {
+
+	// Get the robot base link pose wrt world:
+	Eigen::AffineCompact3d t_world_2_robot_base_link = this->associated_robot_->getHomeTransformEigen();
+	// std::cout << "Transformation t_world_2_robot_base_link:\n" << t_world_2_robot_base_link.matrix() << std::endl;
+	
+	// Get the referenced pose wrt world:
+	Eigen::AffineCompact3d t_world_2_referenced_base = this->referenced_entity_->getHomeTransformEigen();
+	// std::cout << "Transformation t_world_2_referenced_base:\n" << t_world_2_referenced_base.matrix() << std::endl;
+
+	// Change from world to robot base link refence:
+	Eigen::AffineCompact3d t_robot_base_link_2_referenced_base = t_world_2_robot_base_link.inverse() * t_world_2_referenced_base;
+	// std::cout << "Transformation t_robot_base_link_2_referenced_base:\n" << t_robot_base_link_2_referenced_base.matrix() << std::endl;
+
+	// Get the geometric origin wrt the referenced base:
+	Eigen::AffineCompact3d t_referenced_base_2_geometic_origin = this->robot_prob_constraint_->getReferencedFrameOrigin();
+	// std::cout << "Transformation t_referenced_base_2_geometic_origin:\n" << t_referenced_base_2_geometic_origin.matrix() << std::endl;
+
+	// Finally compute the geometric origin wrt the robot base link:
+	Eigen::AffineCompact3d t_robot_base_link_2_geometic_origin = t_robot_base_link_2_referenced_base * t_referenced_base_2_geometic_origin;
+	// std::cout << "Transformation t_robot_base_link_2_geometic_origin:\n" << t_robot_base_link_2_geometic_origin.matrix() << std::endl;
+
+    return t_robot_base_link_2_geometic_origin;
 }
+
+}   // END: namespace Kautham

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<Problem name="UR5_CONSTR_RRT">
+
+	<Robot robot="robots/UR5/ur5_modern.urdf" scale="1.0">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.01" Y="0.0" X="0.0" />
+		<!-- Origin is set by default to the Identity when no specified -->
+		<Constraint id="box_ur5" type="box">
+			<GeometricParams length="0.4" width="1.0" height="0.8"/>
+			<ReferenceFrame entity="table" link="base"/>
+			<!-- <Origin xyz="0.0 0.0 0.5" rpy="0.0 -1.57 0.0"/> -->
+			<Origin xyz="0.25 0.0 0.0" rpy="0.0 0.0 0.0"/>
+			<Joint name="shoulder_link" />
+			<Joint name="upper_arm_link" />
+			<Joint name="fore_arm_link" />
+			<Joint name="wrist_1_link" />
+			<Joint name="wrist_2_link" />
+			<Joint name="wrist_3_link" />
+		</Constraint>
+	</Robot>
+
+	<Obstacle obstacle="obstacles/ode-objects/table.urdf" scale="1.0">
+        <Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+	<!-- <Obstacle obstacle="obstacles/ode-objects/wall.urdf" scale="5.0">
+		<Home TH="1.57" WX="0.0" WY="1.0" WZ="0.0" X="0.2" Y="0.4" Z="0.0" />
+		<KauthamName name="red_wall" />
+	</Obstacle> -->
+
+	<Controls robot="controls/ur5_table.cntr"/>
+
+	<Planner>
+		<Parameters>
+			<Name>omplconstr</Name>
+			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="_Max Planning Time">15.0</Parameter>
+			<Parameter name="_Range">0.1</Parameter>
+			<!-- <Parameter name="Goal Bias">0.05</Parameter> -->
+		</Parameters>
+		<Queries>
+			<Query>
+				<Init>0.200 0.500 0.625 0.375 0.450 0.500</Init>
+				<Goal>0.290 0.500 0.625 0.375 0.540 0.500</Goal>
+				<!-- <Goal>0.562 0.500 0.625 0.500 0.250 0.500</Goal> -->
+			</Query>
+		</Queries>
+	</Planner>
+
+</Problem>

@@ -73,6 +73,12 @@ namespace Kautham {
             inline std::vector<std::pair<std::string, uint>> getConstrainedJoints() const {return constrained_joints_;}
             inline Eigen::Quaterniond getTargetOrientation() const {return target_orientation_;}
             inline std::string getOrientationLink() const {return orientation_link_;}
+            inline std::string getReferenceFrameEntity() const {return reference_frame_entity_;}
+            inline  Eigen::AffineCompact3d getReferencedFrameOrigin() const {return origin_;}
+            inline double getGeometricParamLength() const {return geo_params_.length;}
+            inline double getGeometricParamWidth() const {return geo_params_.width;}
+            inline double getGeometricParamHeight() const {return geo_params_.height;}
+            inline double getGeometricParamRadius() const {return geo_params_.radius;}
 
         private:
             std::string id_;  //!< Unique identifier.
