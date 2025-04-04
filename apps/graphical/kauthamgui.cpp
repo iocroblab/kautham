@@ -270,7 +270,7 @@ void Application::openFile(QString problemFile) {
             tmp << MAJOR_VERSION;
             tmp << ".";
             tmp << MINOR_VERSION;
-            tmp << " - ";
+            tmp << ".";
             tmp << PATCH_VERSION;
             tmp << " - ";
             tmp << problemFile.toStdString();
