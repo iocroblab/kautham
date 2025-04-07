@@ -384,6 +384,8 @@ namespace Kautham {
 
       bool addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _constraint_node);
 
+      bool parseQueryNode(pugi::xml_node _query_node);
+
     };
 
     /** @}   end of Doxygen module "Problem" */

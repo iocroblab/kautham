@@ -728,6 +728,85 @@ bool Problem::createPlannerFromFile(xml_document *doc, ompl::control::SimpleSetu
     }
 }
 
+bool Problem::parseQueryNode(pugi::xml_node _query_node) {
+    // Get number of <Control> children nodes inside the <Query> node:
+    size_t control_nodes_count = std::distance(_query_node.children("Control").begin(), _query_node.children("Control").end());
+
+    if (control_nodes_count != _wspace->getNumRobControls()) {
+        std::string message("Query node has incorrect number of Controls.");
+        std::stringstream details;
+        details << "The number of Control children nodes from the Query node has dimension " << control_nodes_count << " and should have dimension " << _wspace->getNumRobControls() << ".";
+        throw KthExcp(message, details.str());
+        return false;
+    }
+
+    // Retrieve the robot control names to determine the order of the controls.
+    // Note: This step is necessary because Kautham relies on the order defined in the control file.
+    // TODO: Update the code to make it independent of the control file's order.
+    std::vector<std::string> robots_control_names = _wspace->getRobControlsNames();
+
+    // Prepare a vector to store the attribute values in the correct order:
+    std::vector<std::string> name_values(robots_control_names.size(), "");
+    std::vector<double> init_values(robots_control_names.size(), 0.0);
+    std::vector<double> goal_values(robots_control_names.size(), 0.0);
+
+    // Iterate through all <Control> nodes within the query node
+    for (pugi::xml_node control_node : _query_node.children("Control")) {
+        // Check if all required attributes exist
+        if (!control_node.attribute("name") || 
+            !control_node.attribute("init") || 
+            !control_node.attribute("goal"))
+        {
+            std::string message("Error: Missing required attribute in <Control> node.");
+            std::stringstream details;
+            details << "Check the Control node format!\nExample: <Control name=\"ur5/shoulder\" init=\"0.250\" goal=\"0.375\"/>";
+            throw KthExcp(message, details.str());
+            return false;
+        }
+
+        // Get the name, init, and goal attribute values
+        std::string control_name = control_node.attribute("name").value();
+        double init_value = control_node.attribute("init").as_double();
+        double goal_value = control_node.attribute("goal").as_double();
+
+        // Find the index of this control_name in robots_control_names
+        auto it = std::find(robots_control_names.begin(), robots_control_names.end(), control_name);
+        if (it != robots_control_names.end()) {
+            size_t index = std::distance(robots_control_names.begin(), it);
+            // Save the init and goal values at the corresponding index
+            init_values[index] = init_value;
+            goal_values[index] = goal_value;
+
+        } else {
+            std::string message("Error: Control name not found in control file.");
+            std::stringstream details;
+            details << "Control name \"" << control_name << "\" does not match any expected robot control names.";
+            throw KthExcp(message, details.str());
+            return false;
+        }
+    }
+
+    // Process init robots control sample:
+    Sample *smp_init(new Sample(_wspace->getNumRobControls()));
+    smp_init->setCoords(init_values);
+    if (_wspace->collisionCheck(smp_init)) {
+        std::cout << "Init sample is in collision." << std::endl;
+        return false;
+    }
+    _cspace->addStart(smp_init);
+    
+    // Process goal robots control sample:
+    Sample *smp_goal(new Sample(_wspace->getNumRobControls()));
+    smp_goal->setCoords(goal_values);
+    if (_wspace->collisionCheck(smp_goal)) {
+        std::cout << "Goal sample is in collision" << std::endl;
+        return false;
+    }
+    _cspace->addGoal(smp_goal);
+
+    // Query parsed successfully!
+    return true;
+}
 
 
 
@@ -740,6 +819,7 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
         xml_node queries(doc->child("Problem").child("Planner").child("Queries"));
         for (xml_node::iterator query(queries.begin());
              query != queries.end(); ++query) {
+            bool initandgoaltag = false;
             for (xml_node::iterator node(query->begin());
                  node != query->end(); ++node) {
                 std::string type(node->name());
@@ -768,7 +848,10 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                     Sample *smp(new Sample(numObsCntr));
                     smp->setCoords(coords);
                     _wspace->setInitObsSample(smp);
-                } else if (type == "Init") {
+                } 
+                // INIT i GOAL es poden eliminar (si es canvia el tipus de input):
+                else if (type == "Init") {
+                    initandgoaltag = true;
                     vector<string> tokens;
                     std::string sentence(node->child_value());
                     boost::split(tokens,sentence,boost::is_any_of(" "),
@@ -799,6 +882,7 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                         cout << "Init sample is in collision." << endl;
                     }
                 } else if (type == "Goal") {
+                    initandgoaltag = true;
                     vector<string> tokens;
                     std::string sentence(node->child_value());
                     boost::split(tokens,sentence,boost::is_any_of(" "),
@@ -830,6 +914,11 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                     }
                 }
             }
+            // Aquest IF es provisional (per poder treballar amb els 2 formats)
+            if (!initandgoaltag) {
+                Problem::parseQueryNode(*query);
+            }
+
         }
         if (!_wspace->getInitObsSample()) {//Default values
             Sample *smp(new Sample(numObsCntr));

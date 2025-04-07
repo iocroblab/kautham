@@ -104,6 +104,21 @@ namespace Kautham{
        void                 storeNewInitialObjectPoses();
        bool                 restoreInitialObjectPoses();
 
+    //!< Returns the robot control names.
+    inline std::vector<std::string> getRobControlsNames() const
+    {
+        std::vector<std::string> controls;
+        std::stringstream ss(robControlsName);
+        std::string name;
+
+        // Split the string by the vertical line '|'
+        while (std::getline(ss, name, '|')) {
+            controls.push_back(name);
+        }
+
+        return controls;
+    }
+
   protected:
       virtual void          updateScene() = 0;
       vector<Robot*>        robots;
