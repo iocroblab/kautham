@@ -557,6 +557,14 @@ namespace Kautham {
 
             // Re-define start and goal states (could be different when the space has been constructed):
             // omplConstraintPlanner::setStartAndGoalFromKthmSample();
+
+            // Remove previous solutions path, if any:
+            // if (_incremental) {
+            //     this->pdef_->clearSolutionPaths();
+            // } else {
+            //     this->pdef_->clearSolutionPaths();
+            //     this->ompl_planner_->clear();
+            // }
             
             // Attempt to solve the problem within _planningTime seconds:
             ompl::base::PlannerTerminationCondition ptc = ompl::base::timedPlannerTerminationCondition(_planningTime);
@@ -578,14 +586,6 @@ namespace Kautham {
                         simplifier.simplifyMax(path);
                     }
                 }
-
-                // Remove previous solutions path, if any:
-                // if (_incremental) {
-                //     this->pdef_->clearSolutionPaths();
-                // } else {
-                //     this->pdef_->clearSolutionPaths();
-                //     this->ompl_planner_->clear();
-                // }
 
                 _path.clear();
                 clearSimulationPath();
