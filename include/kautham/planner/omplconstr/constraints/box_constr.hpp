@@ -8,7 +8,7 @@ namespace Kautham {
 class BoxConstraint : public AbstractOMPLConstraint {
     public:
         // Constructor: Set dimension of ambient space and the number of constraint equations
-        BoxConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance);
+        BoxConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs);
 
         bool project(ompl::base::State *state) const override;
 

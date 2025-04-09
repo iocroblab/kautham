@@ -4,8 +4,8 @@
 namespace Kautham {
 
 // Constructor implementation
-AbstractOMPLConstraint::AbstractOMPLConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
-    : ompl::base::Constraint(num_dofs, num_constraints, tolerance), 
+AbstractOMPLConstraint::AbstractOMPLConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints)
+    : ompl::base::Constraint(num_dofs, num_constraints), 
     robot_prob_constraint_(_robot_prob_constraint)
 {
 
@@ -74,5 +74,11 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::getGeometricTransformationWRTRobo
 
     return t_robot_base_link_2_geometic_origin;
 }
+
+void AbstractOMPLConstraint::setGoalSampleConfiguration(const std::vector<double> _goal_config) {
+	Eigen::Map<const Eigen::VectorXd> mapped_goal_config(_goal_config.data(), _goal_config.size());
+	goal_sample_t_robot_base_link_2_end_effector_link = ComputeFKFromRobotBaseLinkToEnfEffectorLink(mapped_goal_config);
+}
+
 
 }   // END: namespace Kautham

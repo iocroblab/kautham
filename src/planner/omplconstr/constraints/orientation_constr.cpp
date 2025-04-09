@@ -6,10 +6,11 @@
 namespace Kautham {
 
 // Constructor implementation
-OrientationConstraint::OrientationConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
-    : AbstractOMPLConstraint(_robot_prob_constraint, num_dofs, num_constraints, tolerance)
+OrientationConstraint::OrientationConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs)
+    : AbstractOMPLConstraint(_robot_prob_constraint, num_dofs, 3)	// Function have 3 outputs.
 {
-
+	// Set the orientation tolerance value defined in the problem by the user (or default value if not set):
+	this->setTolerance(_robot_prob_constraint->getToleranceValue());
 }
 
 void OrientationConstraint::useJointConfig2SetConstraintTarget(const std::vector<double>& joint_config) {
@@ -44,6 +45,17 @@ bool OrientationConstraint::project(ompl::base::State *state) const {
 // Constraint function implementation, f(q)=0
 void OrientationConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::Ref<Eigen::VectorXd> out) const {
     
+	/*
+	The function method in the Constraint class is marked as const.
+	Meaning it cannot modify the state of an object (in out case the tolerance).
+	So, the logic that updates tolerance has been moved into a separate non-const helper method.
+	The use of const_cast temporarily removes the constness from the Constraint object.
+	*/
+	// Update tolerance in fuction of the distance if it has been defined as variable:
+	if (robot_prob_constraint_->isToleranceVariable()) {
+		const_cast<OrientationConstraint*>(this)->updateTolerance(q);
+    }
+
     // Note: 'q' is not the current joint values, is the sampled joint values by the OMPL.
     // std::cout << "q = " << q.transpose() << std::endl;
      
@@ -113,4 +125,17 @@ Eigen::Quaterniond OrientationConstraint::calculateOrientationError(const Eigen:
     return error_orientation;
 }
 
+void OrientationConstraint::updateTolerance(const Eigen::Ref<const Eigen::VectorXd> &q) {
+	// Get the current pose:
+	Eigen::AffineCompact3d current_sample_t_robot_base_link_2_end_effector_link = ComputeFKFromRobotBaseLinkToEnfEffectorLink(q);
+	// Compute the distance between the current sample and the goal sample:
+	Eigen::AffineCompact3d t_goal_sample_2_current_sample = goal_sample_t_robot_base_link_2_end_effector_link.inverse() * current_sample_t_robot_base_link_2_end_effector_link;
+	double distance = t_goal_sample_2_current_sample.translation().norm();
+	
+	// Use this distance to get the new tolerance in that point using the defined tolerance gradient:
+	// New tolerance [rad] = Tolerance [rad] + Distance [m] * Gradient [rad/m]:
+	double new_tolerance = robot_prob_constraint_->getToleranceValue() + distance * robot_prob_constraint_->getToleranceGradient();
+	this->setTolerance(new_tolerance);
 }
+
+}	// END: namespace Kautham

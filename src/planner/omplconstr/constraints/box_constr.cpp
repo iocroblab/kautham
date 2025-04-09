@@ -3,8 +3,8 @@
 namespace Kautham {
 
 // Constructor implementation
-BoxConstraint::BoxConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance)
-    : AbstractOMPLConstraint(_robot_prob_constraint, num_dofs, num_constraints, tolerance)
+BoxConstraint::BoxConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs)
+    : AbstractOMPLConstraint(_robot_prob_constraint, num_dofs, 3)	// Function have 3 outputs.
 {
 
 }

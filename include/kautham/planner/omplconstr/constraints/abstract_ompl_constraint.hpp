@@ -13,7 +13,7 @@ namespace Kautham {
     class AbstractOMPLConstraint : public ompl::base::Constraint {
         public:
             // Constructor: Set dimension of ambient space and the number of constraint equations
-            AbstractOMPLConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints, const double tolerance);
+            AbstractOMPLConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs, const unsigned int num_constraints);
 
             virtual ~AbstractOMPLConstraint() = default;
 
@@ -23,6 +23,7 @@ namespace Kautham {
 
             inline void associateRobot(Kautham::Robot* _associated_robot){associated_robot_ = _associated_robot;}
             inline void assignReferencedEntity(Kautham::Robot* _referenced_entity){referenced_entity_ = _referenced_entity;}
+            void setGoalSampleConfiguration(const std::vector<double> _goal_config);
 
         protected:
 
@@ -30,6 +31,8 @@ namespace Kautham {
             
             Kautham::Robot* associated_robot_;
             Kautham::Robot* referenced_entity_;
+
+            Eigen::AffineCompact3d goal_sample_t_robot_base_link_2_end_effector_link;   //!< Used to compute the distance between the goal sample and the current sample.
 
             Eigen::AffineCompact3d ComputeFKFromRobotBaseLinkToEnfEffectorLink(const Eigen::Ref<const Eigen::VectorXd>& q) const;
 

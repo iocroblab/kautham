@@ -24,25 +24,25 @@ namespace Kautham {
             creators_[name] = creator;
         }
 
-        std::shared_ptr<ConstraintFactory::ConstraintBase> ConstraintFactory::createConstraint(const std::string& name, std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim, unsigned int coDim, double tolerance) {
+        std::shared_ptr<ConstraintFactory::ConstraintBase> ConstraintFactory::createConstraint(const std::string& name, std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim) {
             auto it = creators_.find(name);
             if (it == creators_.end()) {
                 throw std::runtime_error("Constraint type not found: " + name);
             }
-            return it->second(_robot_prob_constraint, ambientDim, coDim, tolerance);
+            return it->second(_robot_prob_constraint, ambientDim);
         }
 
         void ConstraintFactory::registerConstraints() {
             registerConstraint("arm_orientation",
-                [](std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim, unsigned int coDim, double tolerance) 
+                [](std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim) 
                     -> std::shared_ptr<ConstraintFactory::ConstraintBase> {
-                        return std::make_shared<OrientationConstraint>(_robot_prob_constraint, ambientDim, coDim, tolerance);
+                        return std::make_shared<OrientationConstraint>(_robot_prob_constraint, ambientDim);
                 }
             );
             registerConstraint("box",
-                [](std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim, unsigned int coDim, double tolerance) 
+                [](std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim) 
                     -> std::shared_ptr<ConstraintFactory::ConstraintBase> {
-                        return std::make_shared<BoxConstraint>(_robot_prob_constraint, ambientDim, coDim, tolerance);
+                        return std::make_shared<BoxConstraint>(_robot_prob_constraint, ambientDim);
                 }
             );
         }

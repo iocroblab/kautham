@@ -288,7 +288,6 @@ namespace Kautham {
                         std::vector<std::pair<std::string, uint>> constr_joints;
                         for (auto& prob_constr : prob_constraints) {
                             have_constr_space = true;
-                            std::cout << "----- Robot Problem Constraint: " << prob_constr->getConstraintId() << " -----" << std::endl;
                             // Get the constraint data:
                             constr_joints = prob_constr->getConstrainedJoints();
                             std::vector<std::string> constr_names;
@@ -312,7 +311,7 @@ namespace Kautham {
                             spaceRn->as<ob::RealVectorStateSpace>()->setBounds(bounds);
 
                             // Get the creator of the constraint by string and stores in the map:
-                            auto constraint = constraints_factory->createConstraint(prob_constr->getConstraintType(), prob_constr, constr_joints.size(),3,0.1);
+                            auto constraint = constraints_factory->createConstraint(prob_constr->getConstraintType(), prob_constr, constr_joints.size());
                             constraint->associateRobot(current_rob);
                             constraint->assignReferencedEntity(_wkSpace->getObstacle(prob_constr->getReferenceFrameEntity()));
                             this->constraint_map_[prob_constr->getConstraintId()] = constraint;
@@ -456,8 +455,6 @@ namespace Kautham {
                 std::cout << "startomplconstr:" << std::endl;
                 startompl.print();
                 this->pdef_->addStartState(startompl);
-                // Assign the start values to each constraint as a target automatically:
-                // omplConstraintPlanner::assignConstrTargetFromState(startompl);
             }
 
             // Add goal states:
@@ -471,7 +468,7 @@ namespace Kautham {
                 goalompl.print();
                 goalStates->addState(goalompl);
                 // Assign the goal values to each constraint as a target automatically:
-                // omplConstraintPlanner::assignConstrTargetFromState(goalompl);
+                omplConstraintPlanner::assignConstrTargetFromState(goalompl);
             }
             this->pdef_->setGoal(ob::GoalPtr(goalStates));
         }
@@ -645,17 +642,17 @@ namespace Kautham {
                         std::vector<double> constr_joints(ompl_state_reals.begin(), ompl_state_reals.begin() + constr_joints_size);
                         ompl_state_reals.erase(ompl_state_reals.begin(), ompl_state_reals.begin() + constr_joints_size);
 
-                        std::cout << "Auto constraint (" << constr_id_name << ") config: [ ";
-                        for (const auto& value : constr_joints) {
-                            std::cout << value << " ";
-                        }
-                        std::cout << "]" << std::endl;
+                        // std::cout << "Auto constraint (" << constr_id_name << ") config: [ ";
+                        // for (const auto& value : constr_joints) {
+                        //     std::cout << value << " ";
+                        // }
+                        // std::cout << "]" << std::endl;
 
                         // my_constraint is the final instance, not the abstract:
                         auto my_constraint = this->constraint_map_[constr_id_name];
-                        my_constraint->useJointConfig2SetConstraintTarget(constr_joints);
-                        my_constraint->printConstraintTarget();
-
+                        // my_constraint->useJointConfig2SetConstraintTarget(constr_joints);
+                        // my_constraint->printConstraintTarget();
+                        my_constraint->setGoalSampleConfiguration(constr_joints);
                     }
                 }
             }
