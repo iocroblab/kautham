@@ -42,31 +42,37 @@ namespace Kautham {
         std::cout << "\tIdentifier: " << id_ << std::endl;
         std::cout << "\tType: " << type_ << std::endl;
         std::cout << "\tEnabled: " << (enabled_ ? "Yes" : "No") << std::endl;
-        std::cout << "\tReference frame entity: " << reference_frame_entity_ << std::endl;
-        std::cout << "\tReference frame link: " << reference_frame_link_ << std::endl;
-
-        std::cout << "\tOrigin transformation matrix:\n";
-        std::cout << std::fixed << std::setprecision(4); // Set fixed precision for floating-point numbers
-        for (int i = 0; i < origin_.rows(); ++i) {
-            std::cout << "\t\t";
-            for (int j = 0; j < origin_.cols(); ++j) {
-                std::cout << origin_(i, j) << " ";
-            }
-            std::cout << std::endl;
-        }
         
         if (type_ == "arm_orientation") {   // Change to tcp_orientation when robot agnostic
+            std::cout << "\tOrientation link: " << orientation_link_ << std::endl;
             std::cout << "\tTarget orientation (w, x, y, z): "
                     << target_orientation_.w() << ", " 
                     << target_orientation_.x() << ", "
                     << target_orientation_.y() << ", "
                     << target_orientation_.z() << std::endl;
+            std::cout << "\tTolerance:\n";
+            std::cout << "\t\tValue: " << tolerance_value_ << std::endl;
+            std::cout << "\t\tVariable: " << tolerance_variable_ << std::endl;
+            std::cout << "\t\tGradient (rad/m): " << tolerance_grandient_ << std::endl;
         } else {
             std::cout << "\tGeometric parameters:" << std::endl;
             std::cout << "\t\tLength: " << geo_params_.length << std::endl;
             std::cout << "\t\tWidth: " << geo_params_.width << std::endl;
             std::cout << "\t\tHeight: " << geo_params_.height << std::endl;
             std::cout << "\t\tRadius: " << geo_params_.radius << std::endl;
+
+            std::cout << "\tReference frame entity: " << reference_frame_entity_ << std::endl;
+            std::cout << "\tReference frame link: " << reference_frame_link_ << std::endl;
+    
+            std::cout << "\tOrigin transformation matrix:\n";
+            std::cout << std::fixed << std::setprecision(4); // Set fixed precision for floating-point numbers
+            for (int i = 0; i < origin_.rows(); ++i) {
+                std::cout << "\t\t";
+                for (int j = 0; j < origin_.cols(); ++j) {
+                    std::cout << origin_(i, j) << " ";
+                }
+                std::cout << std::endl;
+            }
         }
         
         std::cout << "\tApplied to joints (the order matters): " << std::endl;

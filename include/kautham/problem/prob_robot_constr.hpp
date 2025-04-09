@@ -66,6 +66,7 @@ namespace Kautham {
             void setTargetOrientation(const double quat_x, const double quat_y, const double quat_z, const double quat_w);
             void setTargetOrientation(const Eigen::Quaterniond& _quat);
             inline void setOrientationLink(const std::string _orilink){orientation_link_ = _orilink;}
+            inline void setToleranceInfo(const double _value, const bool _variable, const double _gradient){tolerance_value_ = _value; tolerance_variable_ = _variable; tolerance_grandient_ = _gradient;}
 
             // Get methods:
             inline std::string getConstraintId() const {return id_;}
@@ -79,18 +80,29 @@ namespace Kautham {
             inline double getGeometricParamWidth() const {return geo_params_.width;}
             inline double getGeometricParamHeight() const {return geo_params_.height;}
             inline double getGeometricParamRadius() const {return geo_params_.radius;}
+            inline double getToleranceValue() const {return tolerance_value_;}
+            inline bool isToleranceVariable() const {return tolerance_variable_;}
+            inline double getToleranceGradient() const {return tolerance_grandient_;}
 
         private:
+            // MAIN:
             std::string id_;  //!< Unique identifier.
             std::string type_;  //!< TCP Orientation or Geometric (box, sphere, cylinder, cone, ...).
             std::vector<std::pair<std::string, uint>> constrained_joints_;  //!< Related the joint name with the URDF kinematic position.
             bool enabled_;  //!< A constraint could be defined, but not used.
+
+            // ORIENTATION:
+            Eigen::Quaterniond target_orientation_; //!< The desired orientation to maintain.
+            std::string orientation_link_;  //!< The frame where the orientation is set.
+            double tolerance_value_;    //!< The tolerance of the constraint.
+            bool tolerance_variable_;  //!< If the tolerance is fixed or variable in function of how far is the orientation_link from the goal.
+            double tolerance_grandient_;    //!< The gradient in rad/m if the tolerance is variable.
+            
+            // GEOMETRIC:
+            GeometricParams geo_params_;    //!< Used to store the parameters that describes the geometries.
             std::string reference_frame_entity_;  //!< To which kautham entity (Robot || Obstacle || kautham world) is referenced the contraint.
             std::string reference_frame_link_;  //!< Which link of the reference is used (Robot -> Joint or Link; Obstacle -> Link; kautham world -> Empty).
             Eigen::AffineCompact3d origin_; //!< Transformation of the geometric constraint wrt the reference frame link.
-            GeometricParams geo_params_;    //!< Used to store the used params.
-            Eigen::Quaterniond target_orientation_; //!< Used only when TCP Orientation constraint is used.
-            std::string orientation_link_;  //!< Used only when TCP Orientation constraint is used.
     };
 
 

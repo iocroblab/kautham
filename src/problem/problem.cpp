@@ -729,13 +729,22 @@ bool Problem::createPlannerFromFile(xml_document *doc, ompl::control::SimpleSetu
 }
 
 bool Problem::parseQueryNode(pugi::xml_node _query_node) {
-    // Get number of <Control> children nodes inside the <Query> node:
-    size_t control_nodes_count = std::distance(_query_node.children("Control").begin(), _query_node.children("Control").end());
-
-    if (control_nodes_count != _wspace->getNumRobControls()) {
-        std::string message("Query node has incorrect number of Controls.");
+    // Get number of <RobotControl> children nodes inside the <Query> node, and check that all of them are set:
+    size_t num_robot_control_nodes = std::distance(_query_node.children("RobotControl").begin(), _query_node.children("RobotControl").end());
+    if (num_robot_control_nodes != _wspace->getNumRobControls()) {
+        std::string message("Query node has incorrect number of RobotControl.");
         std::stringstream details;
-        details << "The number of Control children nodes from the Query node has dimension " << control_nodes_count << " and should have dimension " << _wspace->getNumRobControls() << ".";
+        details << "The number of RobotControl children nodes from the Query node has dimension " << num_robot_control_nodes << " and should have dimension " << _wspace->getNumRobControls() << ".";
+        throw KthExcp(message, details.str());
+        return false;
+    }
+    
+    // Get number of <ObstacleControl> children nodes inside the <Query> node, and check that all of them are set:
+    size_t num_obstacle_control_nodes = std::distance(_query_node.children("ObstacleControl").begin(), _query_node.children("ObstacleControl").end());
+    if (num_obstacle_control_nodes != _wspace->getNumObsControls()) {
+        std::string message("Query node has incorrect number of ObstacleControl.");
+        std::stringstream details;
+        details << "The number of ObstacleControl children nodes from the Query node has dimension " << num_obstacle_control_nodes << " and should have dimension " << _wspace->getNumObsControls() << ".";
         throw KthExcp(message, details.str());
         return false;
     }
@@ -746,31 +755,30 @@ bool Problem::parseQueryNode(pugi::xml_node _query_node) {
     std::vector<std::string> robots_control_names = _wspace->getRobControlsNames();
 
     // Prepare a vector to store the attribute values in the correct order:
-    std::vector<std::string> name_values(robots_control_names.size(), "");
     std::vector<double> init_values(robots_control_names.size(), 0.0);
     std::vector<double> goal_values(robots_control_names.size(), 0.0);
 
-    // Iterate through all <Control> nodes within the query node
-    for (pugi::xml_node control_node : _query_node.children("Control")) {
+    // Iterate through all <RobotControl> nodes within the query node
+    for (pugi::xml_node robot_control_node : _query_node.children("RobotControl")) {
         // Check if all required attributes exist
-        if (!control_node.attribute("name") || 
-            !control_node.attribute("init") || 
-            !control_node.attribute("goal"))
+        if (!robot_control_node.attribute("name") || 
+            !robot_control_node.attribute("init") || 
+            !robot_control_node.attribute("goal"))
         {
-            std::string message("Error: Missing required attribute in <Control> node.");
+            std::string message("Error: Missing required attribute in <RobotControl> node.");
             std::stringstream details;
-            details << "Check the Control node format!\nExample: <Control name=\"ur5/shoulder\" init=\"0.250\" goal=\"0.375\"/>";
+            details << "Check the RobotControl node format!\nExample: <RobotControl name=\"ur5/shoulder\" init=\"0.250\" goal=\"0.375\"/>";
             throw KthExcp(message, details.str());
             return false;
         }
 
         // Get the name, init, and goal attribute values
-        std::string control_name = control_node.attribute("name").value();
-        double init_value = control_node.attribute("init").as_double();
-        double goal_value = control_node.attribute("goal").as_double();
+        std::string robot_control_name = robot_control_node.attribute("name").value();
+        double init_value = robot_control_node.attribute("init").as_double();
+        double goal_value = robot_control_node.attribute("goal").as_double();
 
-        // Find the index of this control_name in robots_control_names
-        auto it = std::find(robots_control_names.begin(), robots_control_names.end(), control_name);
+        // Find the index of this robot_control_name in robots_control_names
+        auto it = std::find(robots_control_names.begin(), robots_control_names.end(), robot_control_name);
         if (it != robots_control_names.end()) {
             size_t index = std::distance(robots_control_names.begin(), it);
             // Save the init and goal values at the corresponding index
@@ -778,9 +786,9 @@ bool Problem::parseQueryNode(pugi::xml_node _query_node) {
             goal_values[index] = goal_value;
 
         } else {
-            std::string message("Error: Control name not found in control file.");
+            std::string message("Error: RobotControl name not found in control file.");
             std::stringstream details;
-            details << "Control name \"" << control_name << "\" does not match any expected robot control names.";
+            details << "RobotControl name \"" << robot_control_name << "\" does not match any expected robot control names.";
             throw KthExcp(message, details.str());
             return false;
         }
@@ -804,6 +812,49 @@ bool Problem::parseQueryNode(pugi::xml_node _query_node) {
     }
     _cspace->addGoal(smp_goal);
 
+    // OBSTACLES CONTROLS:
+    // Prepare a vector to store the attribute values in the correct order:
+    std::vector<std::string> obstacles_control_names = _wspace->getObsControlsNames();
+    std::vector<double> default_values(obstacles_control_names.size(), 0.0);
+
+    // Iterate through all <ObstacleControl> nodes within the query node
+    for (pugi::xml_node obstacle_control_node : _query_node.children("ObstacleControl")) {
+        // Check if all required attributes exist
+        if (!obstacle_control_node.attribute("name") || 
+            !obstacle_control_node.attribute("default"))
+        {
+            std::string message("Error: Missing required attribute in <ObstacleControl> node.");
+            std::stringstream details;
+            details << "Check the ObstacleControl node format!\nExample: <ObstacleControl name=\"cube/x\" default=\"0.250\"/>";
+            throw KthExcp(message, details.str());
+            return false;
+        }
+
+        // Get the name and default attribute values:
+        std::string obstacle_control_name = obstacle_control_node.attribute("name").value();
+        double default_value = obstacle_control_node.attribute("default").as_double();
+
+        // Find the index of this obstacle_control_name in obstacles_control_names:
+        auto it = std::find(obstacles_control_names.begin(), obstacles_control_names.end(), obstacle_control_name);
+        if (it != obstacles_control_names.end()) {
+            size_t index = std::distance(obstacles_control_names.begin(), it);
+            // Save the default value at the corresponding index:
+            default_values[index] = default_value;
+
+        } else {
+            std::string message("Error: ObstacleControl name not found in control file.");
+            std::stringstream details;
+            details << "ObstacleControl name \"" << obstacle_control_name << "\" does not match any expected robot control names.";
+            throw KthExcp(message, details.str());
+            return false;
+        }
+    }
+
+    // Process default obstacles control sample:
+    Sample *smp_default(new Sample(_wspace->getNumObsControls()));
+    smp_default->setCoords(default_values);
+    _wspace->setInitObsSample(smp_default);
+
     // Query parsed successfully!
     return true;
 }
@@ -815,20 +866,17 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
     if (createCSpace()) {
         const unsigned int numRobCntr(_wspace->getNumRobControls());
         const unsigned int numObsCntr(_wspace->getNumObsControls());
-        //printf("numRobCntr = %d   numObsCntr = %d\n",numRobCntr, numObsCntr);
         xml_node queries(doc->child("Problem").child("Planner").child("Queries"));
-        for (xml_node::iterator query(queries.begin());
-             query != queries.end(); ++query) {
-            bool initandgoaltag = false;
-            for (xml_node::iterator node(query->begin());
-                 node != query->end(); ++node) {
+        for (xml_node::iterator query(queries.begin()); query != queries.end(); ++query) {
+            bool using_old_query_format = false;
+            for (xml_node::iterator node(query->begin()); node != query->end(); ++node) {
                 std::string type(node->name());
 
                 if (type == "InitObs" && numObsCntr > 0) {
+                    using_old_query_format = true;
                     vector<string> tokens;
                     std::string sentence(node->child_value());
-                    boost::split(tokens,sentence,boost::is_any_of(" "),
-                                 boost::token_compress_on);
+                    boost::split(tokens,sentence,boost::is_any_of(" "), boost::token_compress_on);
                     if (tokens.size() != numObsCntr) {
                         std::cout << "Dimension of a sample doesn't correspond \
                                      with the problem's dimension." << std::endl;
@@ -841,21 +889,17 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                         return false;
                     }
                     std::vector<double> coords;
-                    for (std::vector<std::string>::const_iterator token(tokens.begin());
-                         token != tokens.end(); ++token) {
+                    for (std::vector<std::string>::const_iterator token(tokens.begin()); token != tokens.end(); ++token) {
                         coords.push_back(boost::lexical_cast<double>(*token));
                     }
                     Sample *smp(new Sample(numObsCntr));
                     smp->setCoords(coords);
                     _wspace->setInitObsSample(smp);
-                } 
-                // INIT i GOAL es poden eliminar (si es canvia el tipus de input):
-                else if (type == "Init") {
-                    initandgoaltag = true;
+                } else if (type == "Init") {
+                    using_old_query_format = true;
                     vector<string> tokens;
                     std::string sentence(node->child_value());
-                    boost::split(tokens,sentence,boost::is_any_of(" "),
-                                 boost::token_compress_on);
+                    boost::split(tokens,sentence,boost::is_any_of(" "), boost::token_compress_on);
                     if (tokens.size() != numRobCntr) {
                         std::cout << "Dimension of a sample doesn't correspond \
                                      with the problem's dimension." << std::endl;
@@ -869,8 +913,7 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                         return false;
                     }
                     std::vector<double> coords;
-                    for (std::vector<std::string>::const_iterator token(tokens.begin());
-                         token != tokens.end(); ++token) {
+                    for (std::vector<std::string>::const_iterator token(tokens.begin()); token != tokens.end(); ++token) {
                         coords.push_back(boost::lexical_cast<double>(*token));
                     }
                     Sample *smp(new Sample(numRobCntr));
@@ -882,11 +925,10 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                         cout << "Init sample is in collision." << endl;
                     }
                 } else if (type == "Goal") {
-                    initandgoaltag = true;
+                    using_old_query_format = true;
                     vector<string> tokens;
                     std::string sentence(node->child_value());
-                    boost::split(tokens,sentence,boost::is_any_of(" "),
-                                 boost::token_compress_on);
+                    boost::split(tokens,sentence,boost::is_any_of(" "), boost::token_compress_on);
                     if (tokens.size() != numRobCntr) {
                         std::cout << "Dimension of a sample doesn't correspond \
                                      with the problem's dimension." << std::endl;
@@ -900,8 +942,7 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                         return false;
                     }
                     std::vector<double> coords;
-                    for (std::vector<std::string>::const_iterator token(tokens.begin());
-                         token != tokens.end(); ++token) {
+                    for (std::vector<std::string>::const_iterator token(tokens.begin()); token != tokens.end(); ++token) {
                         coords.push_back(boost::lexical_cast<double>(*token));
                     }
                     Sample *smp(new Sample(numRobCntr));
@@ -914,9 +955,13 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                     }
                 }
             }
-            // Aquest IF es provisional (per poder treballar amb els 2 formats)
-            if (!initandgoaltag) {
+            // Temporally, allows to use Kautham using both types of Query:
+            if (!using_old_query_format) {
                 Problem::parseQueryNode(*query);
+            } else {
+                std::string message = "Warning: You are using an older type of Query format.";
+                std::string details = "The current version of Kautham supports both, but it will be more robust if you use the newest format.";
+                // throw KthExcp(message, details); // How can I do it without closing the problem?
             }
 
         }
@@ -1456,7 +1501,7 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
     );
 
     // Parse the info based on type (tcp_orientation or geometric):
-    if (std::string(_constraint_node.attribute("type").as_string()) == "arm_orientation") {  // Change to tcp_orientation when robot agnostic
+    if (std::string(_constraint_node.attribute("type").as_string()) == "arm_orientation") {
         // Parse TargetOrientation:
         pugi::xml_node orientation_target_node = _constraint_node.child("TargetOrientation");
         if (!orientation_target_node) {
@@ -1499,6 +1544,32 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
 
         // Set the target orientation of the constraint:
         this_constraint->setTargetOrientation(quat);
+
+        // Parse Tolerance:
+        pugi::xml_node tolerance_node = _constraint_node.child("Tolerance");
+        // Default values if Tolerance node is not defined:
+        double tolerance_value = 0.1;
+        bool variable_value = false;
+        double gradient_value = 0.0;
+
+        if (tolerance_node) {
+            // Check if tolerance value is set when Tolerance node is used:
+            if (!tolerance_node.attribute("value")) {
+                std::cerr << "Missing Tolerance value attribute in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
+                return false;
+            }
+            // Variable and Gradient could not be used, but if one of them are set, the other must be too:
+            if ((tolerance_node.attribute("variable") && !tolerance_node.attribute("gradient"))
+            || (!tolerance_node.attribute("variable") && tolerance_node.attribute("gradient"))) {
+                std::cerr << "Missing attribues in Tolerance node. If Variable or Gradient attributes are set in constraint node " << _constraint_node.attribute("id").as_string() << " both must be set." << std::endl;
+                return false;
+            }
+            // Get the attributes values, if missing, use the default values:
+            tolerance_value = tolerance_node.attribute("value").as_double(tolerance_value);
+            variable_value = tolerance_node.attribute("variable").as_bool(variable_value);
+            gradient_value = tolerance_node.attribute("gradient").as_double(gradient_value);
+        }
+        this_constraint->setToleranceInfo(tolerance_value, variable_value, gradient_value);
         
     } else {
         // Parse GeometricParams:
