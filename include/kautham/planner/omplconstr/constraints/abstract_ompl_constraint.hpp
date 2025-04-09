@@ -25,6 +25,8 @@ namespace Kautham {
             inline void assignReferencedEntity(Kautham::Robot* _referenced_entity){referenced_entity_ = _referenced_entity;}
             void setGoalSampleConfiguration(const std::vector<double> _goal_config);
 
+            void initConstraintStuff();
+
         protected:
 
             std::shared_ptr<Kautham::RobotProblemConstraint>  robot_prob_constraint_;    // Pointer to RobotProblemConstraint
@@ -33,10 +35,17 @@ namespace Kautham {
             Kautham::Robot* referenced_entity_;
 
             Eigen::AffineCompact3d goal_sample_t_robot_base_link_2_end_effector_link;   //!< Used to compute the distance between the goal sample and the current sample.
-
+            
             Eigen::AffineCompact3d ComputeFKFromRobotBaseLinkToEnfEffectorLink(const Eigen::Ref<const Eigen::VectorXd>& q) const;
-
+            
             Eigen::AffineCompact3d getGeometricTransformationWRTRobotBaseLink() const;
+            
+            
+        private:
+
+            Eigen::AffineCompact3d t_constr_end_2_target_link;   //!< Used to add an offset after the constraint.
+        
+            Eigen::AffineCompact3d getTransfromationFromConstrEndLink2TargetLink();
 
     };
 }

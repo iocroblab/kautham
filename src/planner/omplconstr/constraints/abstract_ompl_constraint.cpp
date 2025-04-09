@@ -1,5 +1,6 @@
 #include <kautham/planner/omplconstr/constraints/abstract_ompl_constraint.hpp>
 #include <kautham/problem/robot.h>  // Used as a pointer to get FK methods inside the constraint methods.
+#include <kautham/util/kthutil/kauthamexception.h>
 
 namespace Kautham {
 
@@ -38,16 +39,11 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::ComputeFKFromRobotBaseLinkToEnfEf
 	}
     // std::cout << "Transformation t_constr_init_2_constr_end:\n" << t_constr_init_2_constr_end.matrix() << std::endl;
 
-	// ToDo: Get the orientation link post-constraint offset:
-    Eigen::AffineCompact3d t_constr_end_2_end_effector_link = Eigen::AffineCompact3d::Identity();
-	// std::string orilink = this->robot_prob_constraint_->getOrientationLink();
-	// std::cout << "OriLink: " << orilink << std::endl;
-
     // Get the orientation from the transformation:
-	Eigen::AffineCompact3d t_robot_base_link_2_end_effector_link = t_robot_base_link_2_constr_init * t_constr_init_2_constr_end * t_constr_end_2_end_effector_link;
-    // std::cout << "Transformation t_robot_base_link_2_end_effector_link:\n" << t_robot_base_link_2_end_effector_link.matrix() << std::endl;
+	Eigen::AffineCompact3d t_robot_base_link_2_target_link = t_robot_base_link_2_constr_init * t_constr_init_2_constr_end * this->t_constr_end_2_target_link;
+    // std::cout << "Transformation t_robot_base_link_2_target_link:\n" << t_robot_base_link_2_target_link.matrix() << std::endl;
     
-    return t_robot_base_link_2_end_effector_link;
+    return t_robot_base_link_2_target_link;
 }
 
 Eigen::AffineCompact3d AbstractOMPLConstraint::getGeometricTransformationWRTRobotBaseLink() const {
@@ -73,6 +69,46 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::getGeometricTransformationWRTRobo
 	// std::cout << "Transformation t_robot_base_link_2_geometic_origin:\n" << t_robot_base_link_2_geometic_origin.matrix() << std::endl;
 
     return t_robot_base_link_2_geometic_origin;
+}
+
+void AbstractOMPLConstraint::initConstraintStuff() {
+	this->t_constr_end_2_target_link = AbstractOMPLConstraint::getTransfromationFromConstrEndLink2TargetLink();
+
+}
+
+
+Eigen::AffineCompact3d AbstractOMPLConstraint::getTransfromationFromConstrEndLink2TargetLink() {
+
+    Eigen::AffineCompact3d t_constr_end_2_target_link = Eigen::AffineCompact3d::Identity();
+
+	std::string target_link = this->robot_prob_constraint_->getTargetLink();
+	std::string last_constr_link = this->robot_prob_constraint_->getLastConstrainedJoint().first;
+
+	// Ensure that the Target Link is either the final link in the constraint chain or comes after it:
+	if (target_link == last_constr_link) {
+		return t_constr_end_2_target_link;
+	} else {
+		std::vector<Link*> constr_chain = this->associated_robot_->getLink(last_constr_link)->Link::getChainFromRoot();
+		for (Link* link : constr_chain) {
+			if (link->getName() == target_link) {
+				std::string msg = "Error: The Target Link is not correct.";
+				std::string details = "Ensure that the Target Link is either the final link in the constraint chain or comes after it.";
+				throw KthExcp(msg,details);
+			}
+		}
+	}
+
+	// Compute the FK from the end of the constraint to the target link:
+	std::vector<Link*> target_chain = this->associated_robot_->getLink(target_link)->Link::getChainFrom(last_constr_link);
+	Eigen::AffineCompact3d link_fk;
+	for (Link* link : target_chain) {
+		link_fk = link->Link::applyJointConfiguration(link->Link::getTheta());
+		// std::cout << "Transformation link_fk:\n" << link_fk.matrix() << std::endl;
+		t_constr_end_2_target_link = t_constr_end_2_target_link * link_fk;
+		// std::cout << "Transformation t_constr_end_2_target_link:\n" << t_constr_end_2_target_link.matrix() << std::endl;
+	}
+
+	return t_constr_end_2_target_link;
 }
 
 void AbstractOMPLConstraint::setGoalSampleConfiguration(const std::vector<double> _goal_config) {

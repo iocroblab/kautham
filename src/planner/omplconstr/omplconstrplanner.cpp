@@ -314,6 +314,7 @@ namespace Kautham {
                             auto constraint = constraints_factory->createConstraint(prob_constr->getConstraintType(), prob_constr, constr_joints.size());
                             constraint->associateRobot(current_rob);
                             constraint->assignReferencedEntity(_wkSpace->getObstacle(prob_constr->getReferenceFrameEntity()));
+                            constraint->initConstraintStuff();
                             this->constraint_map_[prob_constr->getConstraintId()] = constraint;
 
                             spaceRnConstr = std::make_shared<ob::ProjectedStateSpace>(spaceRn, constraint);
@@ -358,7 +359,6 @@ namespace Kautham {
                             spaceRn = std::make_shared<ob::RealVectorStateSpace>(unconstrained_joint_names.size());
                             space_name = "ssRobot" + std::to_string(rob) + "_Rn";
                             spaceRn->setName(space_name);
-                            std::cout << "spaceRn name = " << spaceRn->getName() << std::endl;
 
                             // Set the bounds:
                             ob::RealVectorBounds bounds(unconstrained_joint_names.size());

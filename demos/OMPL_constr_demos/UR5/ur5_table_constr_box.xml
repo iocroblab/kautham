@@ -5,6 +5,7 @@
 		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.01" Y="0.0" X="0.0" />
 		<!-- Origin is set by default to the Identity when no specified -->
 		<Constraint id="box_ur5" type="box">
+			<TargetLink name="wrist_3_link"/>
 			<GeometricParams length="0.4" width="1.0" height="0.8"/>
 			<ReferenceFrame entity="table" link="base"/>
 			<!-- <Origin xyz="0.0 0.0 0.5" rpy="0.0 -1.57 0.0"/> -->

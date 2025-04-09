@@ -65,15 +65,16 @@ namespace Kautham {
             inline void setGeometricParamRadius(const double _radius){geo_params_.radius = _radius;}
             void setTargetOrientation(const double quat_x, const double quat_y, const double quat_z, const double quat_w);
             void setTargetOrientation(const Eigen::Quaterniond& _quat);
-            inline void setOrientationLink(const std::string _orilink){orientation_link_ = _orilink;}
+            inline void setTargetLink(const std::string _target_link){target_link_ = _target_link;}
             inline void setToleranceInfo(const double _value, const bool _variable, const double _gradient){tolerance_value_ = _value; tolerance_variable_ = _variable; tolerance_grandient_ = _gradient;}
 
             // Get methods:
             inline std::string getConstraintId() const {return id_;}
             inline std::string getConstraintType() const {return type_;}
             inline std::vector<std::pair<std::string, uint>> getConstrainedJoints() const {return constrained_joints_;}
+            inline std::pair<std::string, uint> getLastConstrainedJoint() const {return constrained_joints_.back();} // Return the last element
             inline Eigen::Quaterniond getTargetOrientation() const {return target_orientation_;}
-            inline std::string getOrientationLink() const {return orientation_link_;}
+            inline std::string getTargetLink() const {return target_link_;}
             inline std::string getReferenceFrameEntity() const {return reference_frame_entity_;}
             inline  Eigen::AffineCompact3d getReferencedFrameOrigin() const {return origin_;}
             inline double getGeometricParamLength() const {return geo_params_.length;}
@@ -90,12 +91,12 @@ namespace Kautham {
             std::string type_;  //!< TCP Orientation or Geometric (box, sphere, cylinder, cone, ...).
             std::vector<std::pair<std::string, uint>> constrained_joints_;  //!< Related the joint name with the URDF kinematic position.
             bool enabled_;  //!< A constraint could be defined, but not used.
+            std::string target_link_;  //!< The frame where the target is set.
 
             // ORIENTATION:
             Eigen::Quaterniond target_orientation_; //!< The desired orientation to maintain.
-            std::string orientation_link_;  //!< The frame where the orientation is set.
             double tolerance_value_;    //!< The tolerance of the constraint.
-            bool tolerance_variable_;  //!< If the tolerance is fixed or variable in function of how far is the orientation_link from the goal.
+            bool tolerance_variable_;  //!< If the tolerance is fixed or variable in function of how far is the target_link from the goal.
             double tolerance_grandient_;    //!< The gradient in rad/m if the tolerance is variable.
             
             // GEOMETRIC:

@@ -1500,6 +1500,22 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
         _constraint_node.attribute("id").as_string(), _constraint_node.attribute("type").as_string()
     );
 
+    // Parse TargetLink:
+    pugi::xml_node target_link_node = _constraint_node.child("TargetLink");
+    if (!target_link_node) {
+        std::cerr << "Missing TargetLink in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
+        return false;
+    }
+
+    // Check if target link name is set:
+    if (!target_link_node.attribute("name")) {
+        std::cerr << "Missing Target Link name attribute in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
+        return false;
+    }
+
+    std::string target_link = target_link_node.attribute("name").as_string();
+    this_constraint->setTargetLink(target_link);
+
     // Parse the info based on type (tcp_orientation or geometric):
     if (std::string(_constraint_node.attribute("type").as_string()) == "arm_orientation") {
         // Parse TargetOrientation:
@@ -1508,15 +1524,6 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
             std::cerr << "Missing TargetOrientation in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
             return false;
         }
-
-        // Check if orientation link is set:
-        if (!orientation_target_node.attribute("orilink")) {
-            std::cerr << "Missing TargetOrientation orilink attribute in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
-            return false;
-        }
-
-        std::string orilink = orientation_target_node.attribute("orilink").as_string();
-        this_constraint->setOrientationLink(orilink);
 
         // Check and set the quaternion:
         if (!orientation_target_node.attribute("qx") || 

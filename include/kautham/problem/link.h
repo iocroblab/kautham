@@ -240,6 +240,31 @@ namespace Kautham{
     SoSeparator *getModel(bool tran);
     SoSeparator *getCollisionModel(bool tran);
     SoSeparator *getModelFromColl();
+
+    // Get Link path to root:
+    inline std::vector<Link*> getChainFrom(std::string _link_name) {
+      std::vector<Link*> path;
+      Link* link = this;
+      while (link != nullptr && _link_name != link->name) {
+          path.push_back(link);
+          link = link->parent;
+      }
+      std::reverse(path.begin(), path.end());
+      return path;
+    }
+
+    inline std::vector<Link*> getChainFromRoot() {
+      std::vector<Link*> path;
+      Link* link = this;
+      while (link != nullptr) {
+          path.push_back(link);
+          link = link->parent;
+      }
+      std::reverse(path.begin(), path.end());
+      return path;
+    }
+
+
   private:
     //! This is the pointer to the element assigned to the link. This is the link model
     Element*            element;

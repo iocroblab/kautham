@@ -42,9 +42,9 @@ namespace Kautham {
         std::cout << "\tIdentifier: " << id_ << std::endl;
         std::cout << "\tType: " << type_ << std::endl;
         std::cout << "\tEnabled: " << (enabled_ ? "Yes" : "No") << std::endl;
+        std::cout << "\tTarget link: " << target_link_ << std::endl;
         
         if (type_ == "arm_orientation") {   // Change to tcp_orientation when robot agnostic
-            std::cout << "\tOrientation link: " << orientation_link_ << std::endl;
             std::cout << "\tTarget orientation (w, x, y, z): "
                     << target_orientation_.w() << ", " 
                     << target_orientation_.x() << ", "

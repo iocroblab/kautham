@@ -9,7 +9,8 @@
 		<Limits name="Y" min="-5.0" max="5.0" />
 		<!-- TargetOrientation is referenced to the base link of the robot. -->
 		<Constraint id="ori_arm_right" type="arm_orientation">
-			<TargetOrientation orilink="right_wrist_3_link" qx="1.0" qy="0.0" qz="0.0" qw="0.0"/>
+			<TargetLink name="right_wrist_3_link"/>
+			<TargetOrientation qx="1.0" qy="0.0" qz="0.0" qw="0.0"/>
 			<Tolerance value="0.1" variable="false" gradient="0.0"/>
 			<Joint name="right_shoulder_link" />
 			<Joint name="right_upper_arm_link" />
@@ -19,7 +20,8 @@
 			<Joint name="right_wrist_3_link" />
 		</Constraint>
 		<!-- <Constraint id="ori_arm_left" type="arm_orientation">
-			<TargetOrientation orilink="left_wrist_3_link" qx="1.0" qy="0.0" qz="0.0" qw="0.0"/>
+			<TargetLink name="left_wrist_3_link"/>
+			<TargetOrientation qx="1.0" qy="0.0" qz="0.0" qw="0.0"/>
 			<Tolerance value="0.1" variable="false" gradient="0.0"/>
 			<Joint name="left_shoulder_link" />
 			<Joint name="left_upper_arm_link" />
