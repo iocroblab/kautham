@@ -119,6 +119,21 @@ namespace Kautham{
         return controls;
     }
 
+    //!< Returns the obstacle control names.
+    inline std::vector<std::string> getObsControlsNames() const
+    {
+        std::vector<std::string> controls;
+        std::stringstream ss(obsControlsName);
+        std::string name;
+
+        // Split the string by the vertical line '|'
+        while (std::getline(ss, name, '|')) {
+            controls.push_back(name);
+        }
+
+        return controls;
+    }
+
   protected:
       virtual void          updateScene() = 0;
       vector<Robot*>        robots;
