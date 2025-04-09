@@ -31,9 +31,15 @@
 		</Parameters>
 		<Queries>
 			<Query>
-				<InitObs>0.6 0.6 0.8 0.8</InitObs>
-  			<Init>0.6 0.1</Init>
-				<Goal>0.85 0.85</Goal>
+				<RobotControl 		name="table/x"		init="0.600" goal="0.850"/>
+				<RobotControl 		name="table/y" 		init="0.100" goal="0.850"/>
+				<ObstacleControl 	name="bigbox/x"		default="0.500"/>
+				<ObstacleControl 	name="bigbox/y"		default="0.700"/>
+				<ObstacleControl 	name="smallbox/x"	default="0.800"/>
+				<ObstacleControl 	name="smallbox/y"	default="0.800"/>
+				<!-- <InitObs>0.6 0.6 0.8 0.8</InitObs>
+  				<Init>0.6 0.1</Init>
+				<Goal>0.85 0.85</Goal> -->
 			</Query>
 		</Queries>
 	</Planner>
