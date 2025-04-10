@@ -62,6 +62,8 @@
 			<Parameter name="_Max Planning Time">20.0</Parameter>
 			<Parameter name="_Speed Factor">1</Parameter>
 			<Parameter name="_Range">0.1</Parameter>
+			<Parameter name="_Simplify Solution">2</Parameter>
+			<Parameter name="_Incremental (0/1)">0</Parameter>
 		</Parameters>
 		<Queries>
 			<Query>
