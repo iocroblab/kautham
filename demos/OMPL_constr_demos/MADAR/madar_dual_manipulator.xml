@@ -9,7 +9,7 @@
 		<!-- TargetOrientation is referenced to the base link of the robot. -->
 		<Constraint id="ori_arm_right" type="arm_orientation">
 			<TargetLink name="right_hand_base_link"/>
-			<TargetOrientation qx="-0.4774" qy="0.4803" qz="0.5182" qw="0.5224"/>
+			<TargetOrientation qx="-0.5" qy="0.5" qz="0.5" qw="0.5"/>
 			<Tolerance value="0.1" variable="false" gradient="0.0"/>
 			<Joint name="right_shoulder_link" />
 			<Joint name="right_upper_arm_link" />
