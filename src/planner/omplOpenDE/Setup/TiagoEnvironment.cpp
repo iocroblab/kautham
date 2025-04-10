@@ -395,7 +395,7 @@ TiagoStateValidityChecker::TiagoStateValidityChecker(const oc::SpaceInformationP
 
 }
 //This function will determine the validity of the KauthamDE state, by evaluating that the robot is within
-//the bound, the collisions are valid and robot is satisfying all the other contraints imposed by the Instantiated
+//the bound, the collisions are valid and robot is satisfying all the other constraints imposed by the Instantiated
 //knowledge such as the pose of tcp.
 bool TiagoStateValidityChecker::isValid(const ob::State *state) const
 {

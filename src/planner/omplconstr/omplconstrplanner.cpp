@@ -614,8 +614,8 @@ namespace Kautham {
         void omplConstraintPlanner::assignConstrTargetFromState(const ob::ScopedState<ob::CompoundStateSpace> _ompl_state) {
             // Assign the constraint target with the state values (e.g.: Orientation target):
             /*
-            The key is that from the RealVectorStates in the Space, first are listed the contraints and then the unconstrained.
-            The contraint order is the same as the construnction of the space, that is the same of the problem XML file.
+            The key is that from the RealVectorStates in the Space, first are listed the constraints and then the unconstrained.
+            The constraint order is the same as the construnction of the space, that is the same of the problem XML file.
                 - ToDo: Adapt the code to handle when SE3 is used with more that a single robot!
                 - ToDo: Adapt the code to handle different Constraints Types!
             */

@@ -98,10 +98,11 @@ namespace Kautham {
             double tolerance_value_;    //!< The tolerance of the constraint.
             bool tolerance_variable_;  //!< If the tolerance is fixed or variable in function of how far is the target_link from the goal.
             double tolerance_grandient_;    //!< The gradient in rad/m if the tolerance is variable.
+            Eigen::Vector3d free_movement_axes; //!< (x,y,z) bool axes, that indicates which axis will be free to move (when the constraint is used).
             
             // GEOMETRIC:
             GeometricParams geo_params_;    //!< Used to store the parameters that describes the geometries.
-            std::string reference_frame_entity_;  //!< To which kautham entity (Robot || Obstacle || kautham world) is referenced the contraint.
+            std::string reference_frame_entity_;  //!< To which kautham entity (Robot || Obstacle || kautham world) is referenced the constraint.
             std::string reference_frame_link_;  //!< Which link of the reference is used (Robot -> Joint or Link; Obstacle -> Link; kautham world -> Empty).
             Eigen::AffineCompact3d origin_; //!< Transformation of the geometric constraint wrt the reference frame link.
     };

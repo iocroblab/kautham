@@ -48,7 +48,7 @@ namespace Kautham {
                 // Function to register all constraints in the factory:
                 void registerConstraints();
 
-                // Function to create (get) a contraint by name into the main code:
+                // Function to create (get) a constraint by name into the main code:
                 std::shared_ptr<ConstraintBase> createConstraint(const std::string& name, std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim);
 
                 // Print registered constraint names:
