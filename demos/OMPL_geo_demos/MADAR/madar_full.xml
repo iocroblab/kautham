@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Problem name="madar_RRTconnect" topology="SE3">
 
-	<Robot robot="robots/MADAR/madar_full.urdf">
+	<Robot robot="robots/MADAR/madar_dual_arm.urdf">
 		<Limits name="X" min="0.0" max="6.0" />
 		<Limits name="Y" min="0.0" max="12.0" />
 	</Robot>

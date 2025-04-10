@@ -2,8 +2,7 @@
 <!-- <Problem name="madar_constr" topology="SE3"> -->
 <Problem name="madar_constr">
 
-	<!-- <Robot robot="robots/MADAR/madar_full.urdf"> -->
-	<Robot robot="robots/MADAR/madar_modern.urdf">
+	<Robot robot="robots/MADAR/madar_dual_arm.urdf">
 		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="-0.05" X="-0.20" />
 		<Limits name="X" min="-5.0" max="5.0" />
 		<Limits name="Y" min="-5.0" max="5.0" />
@@ -82,9 +81,9 @@
 	<!-- END: CHESS TABLE -->
 
 	<!-- <Controls robot="controls/madar_base.cntr" /> -->
-	<!-- <Controls robot="controls/madar_full_arm_right.cntr" /> -->
-	<!-- <Controls robot="controls/madar_full_arm_left.cntr" /> -->
-	<Controls robot="controls/madar_full.cntr" />
+	<!-- <Controls robot="controls/madar_arm_right.cntr" /> -->
+	<!-- <Controls robot="controls/madar_arm_left.cntr" /> -->
+	<Controls robot="controls/madar_dual_arm.cntr" />
 	
 	<Planner>
 		<Parameters>
