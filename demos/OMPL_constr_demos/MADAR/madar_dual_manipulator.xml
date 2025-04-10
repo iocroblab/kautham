@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!-- <Problem name="madar_constr" topology="SE3"> -->
+<Problem name="madar_dual_manipulator_constraints">
+
+	<Robot robot="robots/MADAR/madar_dual_manipulator.urdf">
+		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="-0.05" X="-0.20" />
+		<Limits name="X" min="-5.0" max="5.0" />
+		<Limits name="Y" min="-5.0" max="5.0" />
+		<!-- TargetOrientation is referenced to the base link of the robot. -->
+		<Constraint id="ori_arm_right" type="arm_orientation">
+			<TargetLink name="right_hand_base_link"/>
+			<TargetOrientation qx="-0.4774" qy="0.4803" qz="0.5182" qw="0.5224"/>
+			<Tolerance value="0.1" variable="false" gradient="0.0"/>
+			<Joint name="right_shoulder_link" />
+			<Joint name="right_upper_arm_link" />
+			<Joint name="right_fore_arm_link" />
+			<Joint name="right_wrist_1_link" />
+			<Joint name="right_wrist_2_link" />
+			<Joint name="right_wrist_3_link" />
+		</Constraint>
+		<!-- <Constraint id="ori_arm_left" type="arm_orientation">
+			<TargetLink name="left_wrist_3_link"/>
+			<TargetOrientation qx="1.0" qy="0.0" qz="0.0" qw="0.0"/>
+			<Tolerance value="0.1" variable="false" gradient="0.0"/>
+			<Joint name="left_shoulder_link" />
+			<Joint name="left_upper_arm_link" />
+			<Joint name="left_fore_arm_link" />
+			<Joint name="left_wrist_1_link" />
+			<Joint name="left_wrist_2_link" />
+			<Joint name="left_wrist_3_link" />
+		</Constraint> -->
+
+	</Robot>
+
+	<!-- BEGIN: CHESSBOARD TABLE -->
+	<Obstacle obstacle="obstacles/ioclab/ioclab_table_995_1195_765.urdf" scale="1">
+		<Home TH="2.0943951" WX="0.5773503" WY="0.5773503" WZ="0.5773503" X="0.5" Y="0.5" Z="0.0" />
+		<KauthamName name="big_table_chessboard" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/chess/flat_chessboard/flat_chessboard.urdf" scale="2.0">
+		<Home TH="0.0" WX="0.0" WY="0.0" WZ="1.0" X="0.0" Y="1.1" Z="0.77" />
+		<KauthamName name="chessboard" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ode-objects/wall.urdf" scale="5.0">
+		<Home TH="1.57" WX="0.0" WY="1.0" WZ="0.0" X="0.3" Y="0.6" Z="1.02" />
+		<KauthamName name="right_arm_wall" />
+	</Obstacle>
+	<Obstacle obstacle="obstacles/ode-objects/wall.urdf" scale="5.0">
+		<Home TH="1.57" WX="0.0" WY="1.0" WZ="0.0" X="-0.3" Y="0.6" Z="1.02" />
+		<KauthamName name="left_arm_wall" />
+	</Obstacle>
+	<!-- END: CHESS TABLE -->
+
+	<!-- <Controls robot="controls/madar_base.cntr" /> -->
+	<Controls robot="controls/madar_arm_right.cntr" />
+	<!-- <Controls robot="controls/madar_arm_left.cntr" /> -->
+	<!-- <Controls robot="controls/madar_dual_arm.cntr" /> -->
+	
+	<Planner>
+		<Parameters>
+			<Name>omplconstr</Name>
+			<Parameter name="_Max Planning Time">20.0</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="_Range">0.1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<!-- SE3 Controls -->
+				<!-- <RobotControl name="madar_base/x" 	init="0.5" goal="0.48"/> -->
+				<!-- <RobotControl name="madar_base/y" 	init="0.3" goal="0.5"/> -->
+				<!-- <RobotControl name="madar_base/Rz" init="0.5" goal="0.5"/> -->
+
+				<!-- Arm Right Controls -->
+				<RobotControl name="arm_right/shoulder" 	init="0.630" goal="0.585"/>
+				<RobotControl name="arm_right/upper_arm"	init="0.380" goal="0.430"/>
+				<RobotControl name="arm_right/fore_arm" 	init="0.580" goal="0.590"/>
+				<RobotControl name="arm_right/wrist1" 		init="0.540" goal="0.485"/>
+				<RobotControl name="arm_right/wrist2" 		init="0.630" goal="0.580"/>
+				<RobotControl name="arm_right/wrist3" 		init="0.560" goal="0.560"/>
+
+				<!-- Arm Left Controls -->
+				<!-- <RobotControl name="arm_left/shoulder" 		init="0.400" goal="0.400"/>
+				<RobotControl name="arm_left/fore_arm" 		init="0.300" goal="0.300"/>
+				<RobotControl name="arm_left/upper_arm"		init="0.300" goal="0.450"/>
+				<RobotControl name="arm_left/wrist1" 		init="0.500" goal="0.350"/>
+				<RobotControl name="arm_left/wrist2" 		init="0.500" goal="0.300"/>
+				<RobotControl name="arm_left/wrist3" 		init="0.500" goal="0.500"/> -->
+			</Query>
+		</Queries>
+	</Planner>
+
+</Problem>
