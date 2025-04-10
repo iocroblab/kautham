@@ -67,10 +67,13 @@ namespace Kautham {
             void setTargetOrientation(const Eigen::Quaterniond& _quat);
             inline void setTargetLink(const std::string _target_link){target_link_ = _target_link;}
             inline void setToleranceInfo(const double _value, const bool _variable, const double _gradient){tolerance_value_ = _value; tolerance_variable_ = _variable; tolerance_grandient_ = _gradient;}
+            inline void setFreeMovementAxes(const bool free_x, const bool free_y, const bool free_z){free_movement_axes_.x() = static_cast<double>(free_x); free_movement_axes_.y() = static_cast<double>(free_y); free_movement_axes_.z() = static_cast<double>(free_z);}
+            inline void setEnabledStatus(const bool _status){enabled_ = _status;}
 
             // Get methods:
             inline std::string getConstraintId() const {return id_;}
             inline std::string getConstraintType() const {return type_;}
+            inline bool isConstraintOperative() const {return enabled_;}
             inline std::vector<std::pair<std::string, uint>> getConstrainedJoints() const {return constrained_joints_;}
             inline std::pair<std::string, uint> getLastConstrainedJoint() const {return constrained_joints_.back();} // Return the last element
             inline Eigen::Quaterniond getTargetOrientation() const {return target_orientation_;}
@@ -84,6 +87,7 @@ namespace Kautham {
             inline double getToleranceValue() const {return tolerance_value_;}
             inline bool isToleranceVariable() const {return tolerance_variable_;}
             inline double getToleranceGradient() const {return tolerance_grandient_;}
+            inline Eigen::Vector3d getFreeMovementAxes() const {return free_movement_axes_;}
 
         private:
             // MAIN:
@@ -98,7 +102,7 @@ namespace Kautham {
             double tolerance_value_;    //!< The tolerance of the constraint.
             bool tolerance_variable_;  //!< If the tolerance is fixed or variable in function of how far is the target_link from the goal.
             double tolerance_grandient_;    //!< The gradient in rad/m if the tolerance is variable.
-            Eigen::Vector3d free_movement_axes; //!< (x,y,z) bool axes, that indicates which axis will be free to move (when the constraint is used).
+            Eigen::Vector3d free_movement_axes_; //!< (x,y,z) bool axes, that indicates which axis will be free to move (when the constraint is used).
             
             // GEOMETRIC:
             GeometricParams geo_params_;    //!< Used to store the parameters that describes the geometries.

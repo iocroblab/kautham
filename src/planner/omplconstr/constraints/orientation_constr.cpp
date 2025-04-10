@@ -64,9 +64,16 @@ void OrientationConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q,
     Eigen::VectorXd error_ori = aa.axis() * aa.angle();
     // std::cout << "Error orientation as vector: " << error_ori.transpose() << std::endl;
 
-    out[0] = error_ori[0];
-    out[1] = error_ori[1];
-    out[2] = error_ori[2];
+	// Get the info of which axes are allowed to be free and compute the negation (flip 0 -> 1 and 1 -> 0)
+	Eigen::Vector3d restricted_movement_axes = Eigen::Vector3d::Ones() - robot_prob_constraint_->getFreeMovementAxes();
+
+	// The constraint could be defined, but not used. That means, is like a unconstrained geometric problem:
+	bool constraint_is_used = robot_prob_constraint_->isConstraintOperative();
+
+	// Compute the output of the function:
+    out[0] = error_ori[0] * restricted_movement_axes.x() * constraint_is_used;
+    out[1] = error_ori[1] * restricted_movement_axes.y() * constraint_is_used;
+    out[2] = error_ori[2] * restricted_movement_axes.z() * constraint_is_used;
 
 }
 

@@ -1516,6 +1516,21 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
     std::string target_link = target_link_node.attribute("name").as_string();
     this_constraint->setTargetLink(target_link);
 
+    // Parse Enabled node:
+    pugi::xml_node enabled_node = _constraint_node.child("Enabled");
+    bool enabled_status = false;
+    if (enabled_node) {
+        // Check if status is set:
+        if (!enabled_node.attribute("status")) {
+            std::cerr << "Missing enabled status attribute in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
+            return false;
+        }
+    
+        enabled_status = target_link_node.attribute("status").as_bool(enabled_status);
+    }
+    this_constraint->setEnabledStatus(enabled_status);
+
+
     // Parse the info based on type (tcp_orientation or geometric):
     if (std::string(_constraint_node.attribute("type").as_string()) == "arm_orientation") {
         // Parse TargetOrientation:
@@ -1551,6 +1566,30 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
 
         // Set the target orientation of the constraint:
         this_constraint->setTargetOrientation(quat);
+
+        // Parse FreeMovementAxes:
+        pugi::xml_node free_movement_axes_node = _constraint_node.child("FreeMovementAxes");
+        // Default values if FreeMovementAxes node is not defined:
+        bool free_x = false;
+        bool free_y = false;
+        bool free_z = false;
+
+        if (free_movement_axes_node) {
+            // Check if all the axes in the free movement axes node are set:
+            if (!free_movement_axes_node.attribute("x") ||
+                !free_movement_axes_node.attribute("y") ||
+                !free_movement_axes_node.attribute("z")) {
+                std::cerr << "Missing (x, y or z) attributes in constraint node " << _constraint_node.attribute("id").as_string() << std::endl;
+                return false;
+            }
+
+            // Get the attributes values, if missing, use the default values:
+            free_x = free_movement_axes_node.attribute("x").as_bool(free_x);
+            free_y = free_movement_axes_node.attribute("y").as_bool(free_y);
+            free_z = free_movement_axes_node.attribute("z").as_bool(free_z);
+        }
+
+        this_constraint->setFreeMovementAxes(free_x,free_y,free_z);
 
         // Parse Tolerance:
         pugi::xml_node tolerance_node = _constraint_node.child("Tolerance");

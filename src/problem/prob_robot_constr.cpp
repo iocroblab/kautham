@@ -50,6 +50,10 @@ namespace Kautham {
                     << target_orientation_.x() << ", "
                     << target_orientation_.y() << ", "
                     << target_orientation_.z() << std::endl;
+            std::cout << "\tFreeMovementAxes:\n";
+            std::cout << "\t\tx: " << free_movement_axes_.x() << std::endl;
+            std::cout << "\t\ty: " << free_movement_axes_.y() << std::endl;
+            std::cout << "\t\tz: " << free_movement_axes_.z() << std::endl;
             std::cout << "\tTolerance:\n";
             std::cout << "\t\tValue: " << tolerance_value_ << std::endl;
             std::cout << "\t\tVariable: " << tolerance_variable_ << std::endl;

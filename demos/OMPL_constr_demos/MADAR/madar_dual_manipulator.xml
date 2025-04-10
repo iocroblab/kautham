@@ -8,8 +8,11 @@
 		<Limits name="Y" min="-5.0" max="5.0" />
 		<!-- TargetOrientation is referenced to the base link of the robot. -->
 		<Constraint id="ori_arm_right" type="arm_orientation">
+			<!-- <Enabled status="false"/> -->
 			<TargetLink name="right_hand_base_link"/>
-			<TargetOrientation qx="-0.5" qy="0.5" qz="0.5" qw="0.5"/>
+			<FreeMovementAxes x="false" y="true" z="false"/>
+			<!-- <TargetOrientation qx="-0.5" qy="0.5" qz="0.5" qw="0.5"/> -->
+			<TargetOrientation qx="0.0" qy="0.7071" qz="0.7071" qw="0.0"/>
 			<Tolerance value="0.1" variable="false" gradient="0.0"/>
 			<Joint name="right_shoulder_link" />
 			<Joint name="right_upper_arm_link" />
@@ -78,7 +81,8 @@
 				<RobotControl name="arm_right/fore_arm" 	init="0.580" goal="0.590"/>
 				<RobotControl name="arm_right/wrist1" 		init="0.540" goal="0.485"/>
 				<RobotControl name="arm_right/wrist2" 		init="0.630" goal="0.580"/>
-				<RobotControl name="arm_right/wrist3" 		init="0.560" goal="0.560"/>
+				<!-- <RobotControl name="arm_right/wrist3" 		init="0.560" goal="0.560"/> -->
+				<RobotControl name="arm_right/wrist3" 		init="0.685" goal="0.685"/>
 
 				<!-- Arm Left Controls -->
 				<!-- <RobotControl name="arm_left/shoulder" 		init="0.400" goal="0.400"/>
