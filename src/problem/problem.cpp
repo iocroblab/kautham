@@ -1518,7 +1518,7 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
 
     // Parse Enabled node:
     pugi::xml_node enabled_node = _constraint_node.child("Enabled");
-    bool enabled_status = false;
+    bool enabled_status = true;
     if (enabled_node) {
         // Check if status is set:
         if (!enabled_node.attribute("status")) {
@@ -1526,7 +1526,7 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
             return false;
         }
     
-        enabled_status = target_link_node.attribute("status").as_bool(enabled_status);
+        enabled_status = enabled_node.attribute("status").as_bool(enabled_status);
     }
     this_constraint->setEnabledStatus(enabled_status);
 

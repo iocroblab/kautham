@@ -44,32 +44,32 @@ namespace Kautham {
         std::cout << "\tEnabled: " << (enabled_ ? "Yes" : "No") << std::endl;
         std::cout << "\tTarget link: " << target_link_ << std::endl;
         
-        if (type_ == "arm_orientation") {   // Change to tcp_orientation when robot agnostic
+        if (type_ == "arm_orientation") {
             std::cout << "\tTarget orientation (w, x, y, z): "
                     << target_orientation_.w() << ", " 
                     << target_orientation_.x() << ", "
                     << target_orientation_.y() << ", "
                     << target_orientation_.z() << std::endl;
             std::cout << "\tFreeMovementAxes:\n";
-            std::cout << "\t\tx: " << free_movement_axes_.x() << std::endl;
-            std::cout << "\t\ty: " << free_movement_axes_.y() << std::endl;
-            std::cout << "\t\tz: " << free_movement_axes_.z() << std::endl;
+            std::cout << "\t\tx: " << (free_movement_axes_.x() ? "Free" : "Restricted") << std::endl;
+            std::cout << "\t\ty: " << (free_movement_axes_.y() ? "Free" : "Restricted") << std::endl;
+            std::cout << "\t\tz: " << (free_movement_axes_.z() ? "Free" : "Restricted") << std::endl;
             std::cout << "\tTolerance:\n";
-            std::cout << "\t\tValue: " << tolerance_value_ << std::endl;
-            std::cout << "\t\tVariable: " << tolerance_variable_ << std::endl;
+            std::cout << "\t\tValue (rad): " << tolerance_value_ << std::endl;
+            std::cout << "\t\tVariable: " << (tolerance_variable_ ? "Yes" : "No") << std::endl;
             std::cout << "\t\tGradient (rad/m): " << tolerance_grandient_ << std::endl;
         } else {
             std::cout << "\tGeometric parameters:" << std::endl;
-            std::cout << "\t\tLength: " << geo_params_.length << std::endl;
-            std::cout << "\t\tWidth: " << geo_params_.width << std::endl;
-            std::cout << "\t\tHeight: " << geo_params_.height << std::endl;
-            std::cout << "\t\tRadius: " << geo_params_.radius << std::endl;
+            std::cout << "\t\tLength (m): " << geo_params_.length << std::endl;
+            std::cout << "\t\tWidth (m): " << geo_params_.width << std::endl;
+            std::cout << "\t\tHeight (m): " << geo_params_.height << std::endl;
+            std::cout << "\t\tRadius (m): " << geo_params_.radius << std::endl;
 
             std::cout << "\tReference frame entity: " << reference_frame_entity_ << std::endl;
             std::cout << "\tReference frame link: " << reference_frame_link_ << std::endl;
     
             std::cout << "\tOrigin transformation matrix:\n";
-            std::cout << std::fixed << std::setprecision(4); // Set fixed precision for floating-point numbers
+            std::cout << std::fixed << std::setprecision(4);
             for (int i = 0; i < origin_.rows(); ++i) {
                 std::cout << "\t\t";
                 for (int j = 0; j < origin_.cols(); ++j) {
