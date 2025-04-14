@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Pol Ramon Canyameres, Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
 
 #include <iostream>
@@ -32,6 +32,8 @@
 #include <kautham/problem/problem.h>
 #include <kautham/util/libkin/ivkinyumi.h>
 #include <kautham/util/libttg/Trajectory.hpp>
+#include <kautham/sampling/robconf.h>
+#include <kautham/problem/robot.h>
 
 #include <Inventor/SoDB.h>
 #include <Inventor/nodes/SoNode.h>
@@ -362,6 +364,100 @@ namespace Kautham {
 
         return false;
     }
+
+    bool kauthamshell::setQuery(std::vector<std::string> control_names, std::vector<double> init, std::vector<double> goal) {
+        try {
+            if (!problemOpened()) {
+                std::cout << "The problem is not opened" << std::endl;
+                return false;
+            }
+
+            // Get the information of the opened problem:
+            Problem *const problem = (Problem*)memPtr_;
+            std::vector<std::string> rob_control_names =  problem->wSpace()->getRobControlsNames();
+            
+            // Save the original samples (maybe only a single control will be set) and clear the stored samples:
+            SampleSet *samples = problem->getSampleSet();
+            Sample *init_sample = new Sample(samples->getSampleAt(0));
+            Sample *goal_sample = new Sample(samples->getSampleAt(1));
+            samples->clear();
+            
+            std::vector<double> updated_init_coord = init_sample->getCoords();
+            std::vector<double> updated_goal_coord = goal_sample->getCoords();
+
+            // Error check: Ensure control_names and the new init have the same size, iff new init is requested:
+            if (!init.empty() && (control_names.size() != init.size())) {
+                std::cout << "Error: control_names and init must have the same size." << std::endl;
+                return false;
+            }
+
+            // Error check: Ensure control_names and the new goal have the same size, iff new goal is requested:
+            if (!goal.empty() && (control_names.size() != goal.size())) {
+                std::cout << "Error: control_names and goal must have the same size." << std::endl;
+                return false;
+            }
+
+            // Update original coordinates based on the control names and the new coordinates, iff they are requested:
+            for (size_t i = 0; i < control_names.size(); ++i) {
+                const std::string& name = control_names[i];
+                auto it = std::find(rob_control_names.begin(), rob_control_names.end(), name);
+                if (it != rob_control_names.end()) {
+                    size_t index = std::distance(rob_control_names.begin(), it);
+                    if (!init.empty()) {
+                        updated_init_coord[index] = init[i];
+                    }
+                    if (!goal.empty()) {
+                        updated_goal_coord[index] = goal[i];
+                    }
+                } else {
+                    std::cout << "Error: Control name '" << name << "' not found in rob_control_names." << std::endl;
+                    return false;
+                }
+            }
+
+            std::string msg_init, msg_goal;
+
+            // Set the new Init sample:
+            init_sample->setCoords(updated_init_coord);
+            if(problem->wSpace()->collisionCheck(init_sample, &msg_init)) {
+                std::cout << "Init in collision: (";
+                for (unsigned k = 0; k < updated_init_coord.size(); k++) {
+                    std::cout << updated_init_coord[k] << " ";
+                }
+                std::cout << ")." << std::endl;
+                std::cout << msg_init << std::endl;
+                return false;
+            }
+            samples->add(init_sample);
+
+            // Goal sample:
+            goal_sample->setCoords(updated_goal_coord);
+            if(problem->wSpace()->collisionCheck(goal_sample, &msg_goal)) {
+                std::cout << "Goal in collision: (";
+                for (unsigned k = 0; k < updated_goal_coord.size(); k++) {
+                    std::cout << updated_goal_coord[k] << " ";
+                }
+                std::cout << ")." << std::endl;
+                std::cout << msg_goal << std::endl;
+                return false;
+            }
+            samples->add(goal_sample);
+
+            problem->getPlanner()->setInitSamp(samples->getSampleAt(0));
+            problem->getPlanner()->setGoalSamp(samples->getSampleAt(1));
+
+            return true;
+        } catch (const KthExcp& excp) {
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
+        } catch (const exception& excp) {
+            std::cout << "Error: " << excp.what() << std::endl;
+        } catch(...) {
+            std::cout << "Something is wrong when setting the query by name." << std::endl;
+        }
+
+        return false;
+    }
+
 
 
     bool kauthamshell::setInit(vector<double> init) {
@@ -2407,4 +2503,96 @@ namespace Kautham {
         return true;
     }
 
-}
+    // Kautham Public Main Constraints Methods:
+    bool  kauthamshell::updateConstraintTargetLink(const std::string& _robot_name, const std::string& _id, const std::string& _target_link) {
+        if (!problemOpened()) {
+            std::cout << "The problem is not opened" << std::endl;
+            return false;
+        }
+
+        Problem *const problem = (Problem*)memPtr_;
+        Robot* robot = problem->wSpace()->getRobot(_robot_name);
+        std::shared_ptr<RobotProblemConstraint> prob_robot_constr = robot->getConstraintById(_id);
+        
+        prob_robot_constr->setTargetLink(_target_link);
+        return true;
+    }
+
+    bool  kauthamshell::updateConstraintEnabled(const std::string& _robot_name, const std::string& _id, const bool& _enabled) {
+        if (!problemOpened()) {
+            std::cout << "The problem is not opened" << std::endl;
+            return false;
+        }
+
+        Problem *const problem = (Problem*)memPtr_;
+        Robot* robot = problem->wSpace()->getRobot(_robot_name);
+        std::shared_ptr<RobotProblemConstraint> prob_robot_constr = robot->getConstraintById(_id);
+        
+        prob_robot_constr->setEnabledStatus(_enabled);
+        return true;
+    }
+
+
+    // Kautham Public Orientation Constraints Methods:
+    bool  kauthamshell::updateConstraintTargetOrientation(const std::string& _robot_name, const std::string& _id, const Eigen::Quaterniond& _target_orientation) {
+        if (!problemOpened()) {
+            std::cout << "The problem is not opened" << std::endl;
+            return false;
+        }
+
+        Problem *const problem = (Problem*)memPtr_;
+        Robot* robot = problem->wSpace()->getRobot(_robot_name);
+        std::shared_ptr<RobotProblemConstraint> prob_robot_constr = robot->getConstraintById(_id);
+        
+        prob_robot_constr->setTargetOrientation(_target_orientation);
+        return true;
+    }
+
+    bool  kauthamshell::updateConstraintTargetOrientation(const std::string& _robot_name, const std::string& _id, const double& qx, const double& qy, const double& qz, const double& qw) {
+        if (!problemOpened()) {
+            std::cout << "The problem is not opened" << std::endl;
+            return false;
+        }
+
+        Problem *const problem = (Problem*)memPtr_;
+        Robot* robot = problem->wSpace()->getRobot(_robot_name);
+        std::shared_ptr<RobotProblemConstraint> prob_robot_constr = robot->getConstraintById(_id);
+        
+        prob_robot_constr->setTargetOrientation(qx,qy,qz,qw);
+        return true;
+    }
+
+    bool  kauthamshell::updateConstraintTolerance(const std::string& _robot_name, const std::string& _id, const double& _tolerance_value, const bool& _tolerance_variable, const double& _tolerance_grandient) {
+        if (!problemOpened()) {
+            std::cout << "The problem is not opened" << std::endl;
+            return false;
+        }
+
+        Problem *const problem = (Problem*)memPtr_;
+        Robot* robot = problem->wSpace()->getRobot(_robot_name);
+        std::shared_ptr<RobotProblemConstraint> prob_robot_constr = robot->getConstraintById(_id);
+        
+        prob_robot_constr->setToleranceInfo(_tolerance_value, _tolerance_variable, _tolerance_grandient);
+        return true;
+    }
+
+    bool  kauthamshell::updateConstraintFreeMovementAxes(const std::string& _robot_name, const std::string& _id, const bool& _free_x, const bool& _free_y, const bool& _free_z) {
+        if (!problemOpened()) {
+            std::cout << "The problem is not opened" << std::endl;
+            return false;
+        }
+
+        Problem *const problem = (Problem*)memPtr_;
+        Robot* robot = problem->wSpace()->getRobot(_robot_name);
+        std::shared_ptr<RobotProblemConstraint> prob_robot_constr = robot->getConstraintById(_id);
+        
+        prob_robot_constr->setFreeMovementAxes(_free_x, _free_y, _free_z);
+        return true;
+    }
+
+
+    // Kautham Public Geometric Constraints Methods:
+    // On-Going...
+
+
+}   // Namespace: Kautham

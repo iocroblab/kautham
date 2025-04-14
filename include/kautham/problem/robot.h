@@ -343,6 +343,16 @@ namespace Kautham {
 
     inline std::vector<std::shared_ptr<RobotProblemConstraint>> getConstraints() {return prob_constraints_;}
 
+    inline std::shared_ptr<RobotProblemConstraint> getConstraintById(const std::string& _id) {
+      // Iterate through the vector of shared pointers
+      for (const std::shared_ptr<RobotProblemConstraint>& constraint : prob_constraints_) {
+        if (constraint->getConstraintId() == _id) {
+            return constraint;
+        }
+    }
+    return nullptr; // Return nullptr if no constraint with the given ID is found
+    }
+
     inline void addUnconstrainedJointName(std::string _unconstrained_joint_name) {unconstrained_joint_names_.push_back(_unconstrained_joint_name);}
 
     inline void setUnconstrainedJointNames(std::vector<std::string> _unconstrained_joint_names) {unconstrained_joint_names_ = _unconstrained_joint_names;}

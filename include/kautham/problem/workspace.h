@@ -56,7 +56,7 @@ namespace Kautham{
       void                  moveObstaclesTo(Sample* sample);
       void                  addRobot(Robot* robot);
       void                  addObstacle(Robot* obs);
-      Robot *getRobot(std::string name);
+      Robot*                getRobot(const std::string& _name);
       inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;}
       inline Robot*         getObstacle(string obstaclename){map<string, Robot*>::iterator it = obstacles.find(obstaclename);
                                                              if(it!=obstacles.end()) return it->second; else return NULL;}

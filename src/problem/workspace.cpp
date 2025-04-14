@@ -703,10 +703,12 @@ namespace Kautham {
     }
 
 
-    Robot *WorkSpace::getRobot(string name) {
-        for (size_t i = 0; i < robots.size(); ++i) {
-            if (robots.at(i)->getName() == name) return robots.at(i);
+    Robot* WorkSpace::getRobot(const std::string& _name) {
+        for (Robot* robot : robots) {
+            if (robot->getName() == _name) {
+                return robot;
+            }
         }
-        return NULL;
+        return nullptr; // Return nullptr if no robot with the given name is found
     }
 }
