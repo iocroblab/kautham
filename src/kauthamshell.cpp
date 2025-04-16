@@ -2408,6 +2408,52 @@ namespace Kautham {
         return true;
     }
 
+    bool kauthamshell::getSampleConfig(const unsigned int& _index, std::vector<double>& _sample_config) {
+
+        _sample_config.clear();
+
+        try {
+            if (!problemOpened()) {
+                std::cout << "The problem is not opened" << std::endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+            // std::vector<std::string> rob_control_names =  problem->wSpace()->getRobControlsNames();
+            
+            Sample *req_sample = problem->getSampleSet()->getSampleAt(_index);
+            if (req_sample == NULL) {
+                std::cout << "Not possible to get the sample by index." << std::endl;
+                return false;
+            }
+            std::vector<double> req_sample_coord = req_sample->getCoords();
+            std::vector<RobConf> rc = req_sample->getMappedConf();
+
+            for(unsigned int n = 0; n < rc.size(); n++) {
+                    _sample_config.push_back(rc[n].getSE3().getPos()[0]);
+                    _sample_config.push_back(rc[n].getSE3().getPos()[1]);
+                    _sample_config.push_back(rc[n].getSE3().getPos()[2]);
+                    _sample_config.push_back(rc[n].getSE3().getOrient()[0]);
+                    _sample_config.push_back(rc[n].getSE3().getOrient()[1]);
+                    _sample_config.push_back(rc[n].getSE3().getOrient()[2]);
+                    _sample_config.push_back(rc[n].getSE3().getOrient()[3]);
+
+                for (unsigned int q = 0; q < rc[n].getRn().getCoordinates().size(); q++) {
+                    _sample_config.push_back(rc[n].getRn().getCoordinates()[q]);
+                }
+            }
+
+        } catch (const KthExcp& excp) {
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
+        } catch (const exception& excp) {
+            std::cout << "Error: " << excp.what() << std::endl;
+        } catch(...) {
+            std::cout << "Something is wrong when getting the sample in the index " << _index << "." << std::endl;
+        }
+
+        return true;
+    }
+
     // Kautham Public Main Constraints Methods:
     bool  kauthamshell::updateConstraintTargetLink(const std::string& _robot_name, const std::string& _id, const std::string& _target_link) {
         if (!problemOpened()) {

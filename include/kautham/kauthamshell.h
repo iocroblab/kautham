@@ -109,6 +109,7 @@ namespace Kautham {
             bool getObstaclesNames(std::vector<std::string> &obsnames);
             bool getRobotJointNames(int r, std::vector<std::string> &jnames);
             bool getRobotIsSE3enabled(int r);
+            bool getSampleConfig(const unsigned int& _index, std::vector<double>& _sample_config);
 
             // Kautham Public Main Constraints Methods:
             bool updateConstraintTargetLink(const std::string& _robot_name, const std::string& _id, const std::string& _target_link);
