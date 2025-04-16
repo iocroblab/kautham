@@ -114,6 +114,7 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::getTransfromationFromConstrEndLin
 void AbstractOMPLConstraint::setGoalSampleConfiguration(const std::vector<double> _goal_config) {
 	Eigen::Map<const Eigen::VectorXd> mapped_goal_config(_goal_config.data(), _goal_config.size());
 	goal_sample_t_robot_base_link_2_end_effector_link = ComputeFKFromRobotBaseLinkToEnfEffectorLink(mapped_goal_config);
+	std::cout << "Transformation in the goal, from robot_base_link 2 end_effector_link:\n" << goal_sample_t_robot_base_link_2_end_effector_link.matrix() << std::endl;
 }
 
 

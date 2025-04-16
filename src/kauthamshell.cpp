@@ -1294,8 +1294,8 @@ namespace Kautham {
 
             requested_joint_names = problem->getRequestedJointNames(requested_joints);
 
-            if (plannerFamily == OMPLPLANNER) {
-                std::cout << "OMPLPLANNER" << std::endl;
+            if (plannerFamily == OMPLPLANNER || plannerFamily == OMPLCONSTRPLANNER) {
+                std::cout << "OMPLPLANNER || OMPLCONSTRPLANNER" << std::endl;
                 if (problem->getPlanner()->isSolved()) {
                     std::vector<Sample*>* p = problem->getPlanner()->getPath();
                     
@@ -1324,101 +1324,6 @@ namespace Kautham {
                             }
                         }
                         path.push_back(waypoint);
-                    }
-                    return true;
-                }
-            }
-
-            // if (plannerFamily == OMPLPLANNER && _only_controlled) {
-            //     std::cout << "OMPLPLANNER" << std::endl;
-            //     if (problem->getPlanner()->isSolved()) {
-            //         auto omplPlanner = static_cast<omplplanner::omplPlanner*>(problem->getPlanner());
-            //         auto solutionPath = omplPlanner->SimpleSetup()->getSolutionPath();                   
-            //         const ompl::base::SpaceInformationPtr &si = solutionPath.getSpaceInformation();
-
-            //         const ompl::base::StateSpace *space(si->getStateSpace().get());
-            //         std::vector<double> state_data;
-            //         std::vector<double> requested_data;
-            //         path.clear();
-            //         for (const auto* state : solutionPath.getStates()) {
-            //             space->copyToReals(state_data, state);
-            //             requested_data.clear();
-            //             for (uint s = 0; s < state_data.size(); s++) {
-            //                 if (requested_joints[s]) {
-            //                     requested_data.push_back(state_data[s]);
-            //                 }
-            //             }
-            //             path.push_back(requested_data);
-            //         }
-            //         return true;
-            //     }
-            // }
-
-            else if (plannerFamily == OMPLCONSTRPLANNER) {
-                std::cout << "OMPLCONSTRPLANNER" << std::endl;
-                if (problem->getPlanner()->isSolved()) {
-                    auto omplConstraintPlanner = static_cast<omplconstrplanner::omplConstraintPlanner*>(problem->getPlanner());
-                    auto solution_path = omplConstraintPlanner->ProblemDefinition()->getSolutionPath();
-                    
-                    std::vector<size_t> index_mapping = omplConstraintPlanner->getSpaceIndexMapping();
-
-                    std::cout << "Index mapping: ";
-                    for (size_t index : index_mapping) {
-                        std::cout << index << " ";
-                    }
-                    std::cout << std::endl;
-
-                    const ompl::base::SpaceInformationPtr &si = solution_path->getSpaceInformation();
-
-                    const ompl::base::StateSpace *space(si->getStateSpace().get());
-                    std::vector<double> state_data;
-                    std::vector<double> reordered_data;
-                    std::vector<double> requested_data;
-                    path.clear();
-
-                    auto current_rob = problem->wSpace()->getRobot(0);
-                    for (const auto* state : solution_path->as<og::PathGeometric>()->getStates()) {
-                        std::vector<double> tmp_reals;
-                        space->copyToReals(tmp_reals, state);
-                        if (current_rob->isSE3Enabled()) {
-                            state_data.assign(tmp_reals.begin() + 7, tmp_reals.end());
-                        } else {
-                            space->copyToReals(state_data, state);
-                        }
-
-                        // std::cout << "State Data: ";
-                        // for (const auto& value : state_data) {
-                        //     std::cout << value << " ";
-                        // }
-                        // std::cout << std::endl;
-
-                        // Reorder state_data based on index_mapping
-                        reordered_data.clear();
-                        reordered_data.resize(state_data.size());
-                        for (size_t i = 0; i < state_data.size(); ++i) {
-                            reordered_data[index_mapping[i]] = state_data[i];
-                        }
-
-                        // std::cout << "Reordered Data: ";
-                        // for (const auto& value : reordered_data) {
-                        //     std::cout << value << " ";
-                        // }
-                        // std::cout << std::endl;
-
-                        requested_data.clear();
-                        for (uint s = 0; s < reordered_data.size(); s++) {
-                            if (requested_joints[s]) {
-                                requested_data.push_back(reordered_data[s]);
-                            }
-                        }
-
-                        // std::cout << "Requested Data: ";
-                        // for (const auto& value : requested_data) {
-                        //     std::cout << value << " ";
-                        // }
-                        // std::cout << std::endl;
-
-                        path.push_back(requested_data);
                     }
                     return true;
                 }
