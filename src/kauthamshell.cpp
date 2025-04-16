@@ -420,11 +420,11 @@ namespace Kautham {
             // Set the new Init sample:
             init_sample->setCoords(updated_init_coord);
             if(problem->wSpace()->collisionCheck(init_sample, &msg_init)) {
-                std::cout << "Init in collision: (";
+                std::cout << "Init in collision: ";
                 for (unsigned k = 0; k < updated_init_coord.size(); k++) {
                     std::cout << updated_init_coord[k] << " ";
                 }
-                std::cout << ")." << std::endl;
+                std::cout << std::endl;
                 std::cout << msg_init << std::endl;
                 return false;
             }
@@ -433,11 +433,11 @@ namespace Kautham {
             // Goal sample:
             goal_sample->setCoords(updated_goal_coord);
             if(problem->wSpace()->collisionCheck(goal_sample, &msg_goal)) {
-                std::cout << "Goal in collision: (";
+                std::cout << "Goal in collision: ";
                 for (unsigned k = 0; k < updated_goal_coord.size(); k++) {
                     std::cout << updated_goal_coord[k] << " ";
                 }
-                std::cout << ")." << std::endl;
+                std::cout << std::endl;
                 std::cout << msg_goal << std::endl;
                 return false;
             }
