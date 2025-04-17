@@ -553,7 +553,7 @@ namespace Kautham {
             // Return true if successful, false otherwise.
 
             // Re-define start and goal states (could be different when the space has been constructed):
-            // omplConstraintPlanner::setStartAndGoalFromKthmSample();
+            omplConstraintPlanner::setStartAndGoalFromKthmSample();
 
             // Remove previous solutions path, if any:
             // if (_incremental) {
