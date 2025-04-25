@@ -31,6 +31,7 @@
 #include <sstream>
 #include <iostream>
 
+#include <Eigen/Geometry>
 #include <kautham/mt/mt.h>
 
 //#include <external/lcprng.h>
@@ -78,6 +79,9 @@ namespace Kautham {
     bool              setAxis(vector<double>& axis);
 	vector<double>&  getAxisAngle();
     bool              setAxisAngle(vector<double>& axis, double angle);
+
+    bool setPose(const Eigen::AffineCompact3d& _pose);
+    bool getPose(Eigen::AffineCompact3d& _pose);
     
     //! Returns the interpolated configuration based on coordinates.
     SE3Conf     interpolate(SE3Conf& se3, double fraction);

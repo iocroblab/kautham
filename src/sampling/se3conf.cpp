@@ -40,6 +40,72 @@ SE3Conf::SE3Conf():Conf(SE3),_pos(3,0.), _ori(4,0.), _axisAn(4,0.){
     coord.at(6) = (double)1.0; // Quaternion initialization
 }
 
+bool SE3Conf::setPose(const Eigen::AffineCompact3d& _pose) {
+    // Set translation components:
+    this->coord[0] = _pose.translation().x();
+    this->coord[1] = _pose.translation().y();
+    this->coord[2] = _pose.translation().z();
+
+    // Extract rotation matrix and convert to quaternion:
+    Eigen::Quaterniond quat(_pose.rotation());
+
+    // Check for NaN/Inf:
+    if (!quat.coeffs().allFinite()) {
+        return false;
+    }
+
+    // Check unit quaternion:
+    if (std::abs(quat.norm() - 1.0) > 1e-6) {
+        return false;
+    }
+
+    // Store quaternion components:
+    this->coord[3] = quat.x();
+    this->coord[4] = quat.y();
+    this->coord[5] = quat.z();
+    this->coord[6] = quat.w();
+
+    return true;
+}
+
+bool SE3Conf::getPose(Eigen::AffineCompact3d& _pose) {
+
+    // Validate coordinate storage capacity:
+    if (this->coord.size() < 7) {
+        return false;
+    }
+
+    // Set translation from stored coordinates:
+    _pose.translation() = Eigen::Vector3d(
+        this->coord[0],
+        this->coord[1],
+        this->coord[2]
+    );
+
+    // Reconstruct quaternion from stored components
+    Eigen::Quaterniond quat(
+        this->coord[6],  // qw
+        this->coord[3],  // qx
+        this->coord[4],  // qy
+        this->coord[5]   // qz
+    );
+
+    // Validate quaternion integrity:
+    if(!quat.coeffs().allFinite()) {
+        return false;
+    }
+
+    if (std::abs(quat.norm() - 1.0) > 1e-6) {
+        return false;
+    }
+
+    // Apply rotation to pose:
+    _pose.linear() = quat.normalized().toRotationMatrix();
+    
+    return true;
+}
+
+
 void SE3Conf::normalizeQ(){
     double tmp = (double) 0.0;
     for(int i = 3; i < 7; i++)

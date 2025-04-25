@@ -96,7 +96,10 @@ namespace Kautham {
             bool motionPlanner(std::vector<double> init, std::vector<double> goal, std::string root);
 
             bool setObstaclePos(std::string obsname, std::vector<double> pos);
+            bool setObstaclePos(const std::string& _obs_name, const Eigen::AffineCompact3d& _obs_pose);
             bool getObstaclePos(std::string obsname, std::vector<double> &pos);
+            bool getObstaclePos(const std::string& _obs_name, Eigen::AffineCompact3d& _obs_pose);
+            
             std::map<std::string, Robot*> getObstaclesMap();
             bool findIK(int robIndx, bool armType, std::vector<double> pos, std::vector<double> conf, bool maintSameWrist, std::vector<double> *solution);
             bool setRobPos(unsigned int index, std::vector<double> pos);

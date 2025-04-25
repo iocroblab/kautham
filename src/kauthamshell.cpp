@@ -2035,6 +2035,54 @@ namespace Kautham {
         return false;
     }
 
+    // Sets obstacle pose using Eigen:
+    bool kauthamshell::setObstaclePos(const std::string& _obs_name, const Eigen::AffineCompact3d& _obs_pose) {
+        try {
+            if (!problemOpened()) {
+                std::cout << "The problem is not opened" << std::endl;
+                return false;
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+
+            if (problem->getPlanner()->wkSpace()->getObstacle(_obs_name) == NULL) {
+                std::cout << "Error in setObstaclePos:" << _obs_name << " is not in the set of obstacles " << problem->getPlanner()->wkSpace()->getNumObstacles() << std::endl;
+                return false;
+            }
+
+            // Convert it to the internal represtantation, from Eigen to Kautham SE3 configuration:
+            Kautham::SE3Conf tmp_config;
+            tmp_config.setPose(_obs_pose);
+            problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->setHomePos(&tmp_config);
+
+            // Debug:
+            float x,y,z;
+            x = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getPosition()[0];
+            y = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getPosition()[1];
+            z = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getPosition()[2];
+            std::cout << "Object " << _obs_name << " at position (x,y,z) = (" << x << "," << y << "," << z << ")" << std::endl;
+            float qx,qy,qz,qw;
+            qx = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[0];
+            qy = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[1];
+            qz = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[2];
+            qw = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[3];
+            std::cout << "Object " << _obs_name << " at quaternion (qx,qy,qz,qw) = (" << qx << "," << qy << "," << qz << "," << qw << ")" << std::endl;
+
+            return true;
+
+        } catch (const KthExcp& excp) {
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
+        } catch (const exception& excp) {
+            std::cout << "Error: " << excp.what() << std::endl;
+        } catch(...) {
+            std::cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation." << std::endl;
+        }
+
+        return false;
+    }
+
     //Gets obstacle pose with orientation defined as axisAn (format="axis-angle") or by default as quaternion (format="quaternion")
     bool kauthamshell::getObstaclePos(string obsname, std::vector<double> &pos){
 
@@ -2092,6 +2140,47 @@ namespace Kautham {
                  << "to verify the correctness of the problem formulation.\n";
         }
 
+        return false;
+    }
+
+    bool kauthamshell::getObstaclePos(const std::string& _obs_name, Eigen::AffineCompact3d& _obs_pose) {
+
+        std::cout << "Getting pose of obstacle " << _obs_name << std::endl;
+        Problem *const problem = (Problem*)memPtr_;
+
+        Robot* obstacle = problem->getPlanner()->wkSpace()->getObstacle(_obs_name);
+        if (obstacle == NULL) {
+            std::cout << "Error in getObstaclePos:" << _obs_name << " is not in the set of obstacles " << problem->getPlanner()->wkSpace()->getNumObstacles() << std::endl;
+            return true;
+        }
+
+        try {
+            if (!problemOpened()) {
+                std::cout << "The problem is not opened" << std::endl;
+                return false;
+            }
+
+            _obs_pose = Eigen::Translation3d(
+                            obstacle->getLink(0)->getElement()->getPosition()[0],   // x
+                            obstacle->getLink(0)->getElement()->getPosition()[1],   // y
+                            obstacle->getLink(0)->getElement()->getPosition()[2]    // z
+                        ) * Eigen::Quaterniond(
+                            obstacle->getLink(0)->getElement()->getOrientation()[3],    // qw
+                            obstacle->getLink(0)->getElement()->getOrientation()[0],    // qx
+                            obstacle->getLink(0)->getElement()->getOrientation()[1],    // qy
+                            obstacle->getLink(0)->getElement()->getOrientation()[2]     // qz
+                        );
+            return true;
+
+        } catch (const KthExcp& excp) {
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
+        } catch (const exception& excp) {
+            std::cout << "Error: " << excp.what() << std::endl;
+        } catch(...) {
+            std::cout << "Something is wrong with the problem. Please run the "
+                        << "problem with the Kautham2 application at less once in order "
+                        << "to verify the correctness of the problem formulation." << std::endl;
+        }
         return false;
     }
 
