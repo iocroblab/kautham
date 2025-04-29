@@ -53,7 +53,11 @@ namespace Kautham {
         vBoxLayout->setSpacing(6);
         scrollAreaWidget->setLayout(vBoxLayout);
 
-        QStringList names = QString(robot->getDOFNames().c_str()).split("|");
+        QStringList names;
+        std::vector<std::string> dof_names = robot->getDOFNames();
+        for (const auto& str : dof_names) {
+            names.append(QString::fromStdString(str));
+        }
 
         lowValues.resize(names.size());
         highValues.resize(names.size());

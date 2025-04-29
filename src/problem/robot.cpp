@@ -514,11 +514,10 @@ namespace Kautham {
     /*!
   *
   */
-    string Robot::getDOFNames(){
-        string tmp = "X|Y|Z|X1|X2|X3";
-        for (unsigned int i = 1; i< links.size(); i++){
-            tmp.append("|");
-            tmp.append(links[i]->getName());
+    std::vector<std::string> Robot::getDOFNames() {
+        std::vector<std::string> tmp = {"X","Y","Z","X1","X2","X3"};
+        for (size_t i = 1; i < links.size(); i++) {
+            tmp.push_back(links[i]->getName());
         }
         return tmp;
     }

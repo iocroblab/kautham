@@ -289,8 +289,8 @@ namespace Kautham {
     //! Retunrs the weights of the robot used in the computation of the distances
     RobWeight* getRobWeight(){return _weights;}
 
-    //! Returns the string with the names of the DOFs, separated by |
-    string getDOFNames();
+    //! Returns the names of the DOFs:
+    std::vector<std::string> getDOFNames();
 
     //! Sets a solution path to be visualized (corresponding to the origin of a given selected link of the robot)
     bool setProposedSolution(std::vector<RobConf*>& path);
