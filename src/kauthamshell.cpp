@@ -2323,6 +2323,70 @@ namespace Kautham {
 
     }
 
+    bool kauthamshell::setRobotDOFByName(const std::string& _robot_name, const std::vector<std::string>& _dof_names, const std::vector<double>& _dof_values) {
+        try {
+            if (!problemOpened()) {
+                std::cout << "The problem is not opened!" << std::endl;
+                return false;
+            }
+
+            if (_dof_names.size() != _dof_values.size()) {
+                std::cout << "Mismatch between DOF names and values!" << std::endl;
+                return false;
+            }
+
+            for (const auto& val : _dof_values) {
+                if (val < 0.0 || 1.0 < val) {
+                    std::cout << "Error: DOF values must be between 0.0 and 1.0!" << std::endl;
+                    return false;
+                }
+            }
+
+            Problem *const problem = (Problem*)memPtr_;
+            Robot* robot = problem->getPlanner()->wkSpace()->getRobot(_robot_name);
+            if (!robot) {
+                std::cout << "Error: Robot '" << _robot_name << "' not found!" << std::endl;
+                return false;
+            }
+            std::vector<std::string> dof_names = robot->getDOFNames();
+
+            // DEBUG: Get current values and print
+            // std::cout << "Previous OffMatrix of robot " << _robot_name << ":" << std::endl;
+            // for (size_t i = 0; i < dof_names.size(); ++i) {
+            //     std::cout << "OffMatrix[" << i << "](" << dof_names[i] << ") = " << robot->getOffMatrix()[i] << std::endl;
+            // }
+
+            // Set new values
+            for (size_t i = 0; i < _dof_names.size(); ++i) {
+                auto it = find(dof_names.begin(), dof_names.end(), _dof_names[i]);
+                if (it != dof_names.end()) {
+                    size_t index = distance(dof_names.begin(), it);
+                    robot->getOffMatrix()[index] = _dof_values[i];  // Wrong use of getOffMatrix, I know.
+                    // std::cout << "Set " << _dof_names[i] << " to " << _dof_values[i] << " at position " << index << std::endl;
+                } else {
+                    std::cout << "Warning: DOF name '" << _dof_names[i] << "' not found!" << std::endl;
+                }
+            }
+
+            // DEBUG: Get current values and print
+            // std::cout << "New OffMatrix of robot " << _robot_name << ":" << std::endl;
+            // for (size_t i = 0; i < dof_names.size(); ++i) {
+            //     std::cout << "OffMatrix[" << i << "](" << dof_names[i] << ") = " << robot->getOffMatrix()[i] << std::endl;
+            // }
+
+            return true;
+
+        } catch (const KthExcp& excp) {
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
+        } catch (const exception& excp) {
+            std::cout << "Error: " << excp.what() << std::endl;
+        } catch(...) {
+            std::cout << "Something is wrong with the method named kauthamshell::setRobotDOFByName()." << std::endl;
+        }
+
+        return false;
+    }
+
 
     int kauthamshell::getNumRobots() {
         try {
