@@ -2323,7 +2323,7 @@ namespace Kautham {
 
     }
 
-    bool kauthamshell::setRobotDOFByName(const std::string& _robot_name, const std::vector<std::string>& _dof_names, const std::vector<double>& _dof_values) {
+    bool kauthamshell::setRobotDOFOffsetByName(const std::string& _robot_name, const std::vector<std::string>& _dof_names, const std::vector<double>& _dof_values) {
         try {
             if (!problemOpened()) {
                 std::cout << "The problem is not opened!" << std::endl;
