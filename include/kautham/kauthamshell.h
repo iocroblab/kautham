@@ -126,6 +126,7 @@ namespace Kautham {
             bool updateConstraintTolerance(const std::string& _robot_name, const std::string& _id, const double& _tolerance_value, const bool& _tolerance_variable, const double& _tolerance_grandient);
             bool updateConstraintFreeMovementAxes(const std::string& _robot_name, const std::string& _id, const bool& _free_x, const bool& _free_y, const bool& _free_z);
             // Kautham Public Geometric Constraints Methods:
+            bool getConstraintGeoParams(const std::string& _robot_name, const std::string& _id, std::string& _type, std::map<std::string, double>& _geo_params_map);
             // On-Going...
 
         private:

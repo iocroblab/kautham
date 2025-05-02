@@ -1,14 +1,14 @@
-#ifndef BOX_CONSTR_HPP
-#define BOX_CONSTR_HPP
+#ifndef CUBE_CONSTR_HPP
+#define CUBE_CONSTR_HPP
 
 #include <kautham/planner/omplconstr/constraints/abstract_ompl_constraint.hpp>
 
 namespace Kautham {
 
-class BoxConstraint : public AbstractOMPLConstraint {
+class CubeConstraint : public AbstractOMPLConstraint {
     public:
         // Constructor: Set dimension of ambient space and the number of constraint equations
-        BoxConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs);
+        CubeConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs);
 
         bool project(ompl::base::State *state) const override;
 
@@ -29,4 +29,4 @@ class BoxConstraint : public AbstractOMPLConstraint {
 
 }
 
-#endif // BOX_CONSTR_HPP
+#endif // CUBE_CONSTR_HPP

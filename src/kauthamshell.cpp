@@ -2696,6 +2696,26 @@ namespace Kautham {
 
 
     // Kautham Public Geometric Constraints Methods:
+    bool kauthamshell::getConstraintGeoParams(const std::string& _robot_name, const std::string& _id, std::string& _type, std::map<std::string, double>& _geo_params_map) {
+        if (!problemOpened()) {
+            std::cout << "The problem is not opened" << std::endl;
+            return false;
+        }
+
+        Problem *const problem = (Problem*)memPtr_;
+        Robot* robot = problem->wSpace()->getRobot(_robot_name);
+        std::shared_ptr<RobotProblemConstraint> prob_robot_constr = robot->getConstraintById(_id);
+        
+        _type = prob_robot_constr->getConstraintType();
+        
+        _geo_params_map.clear();
+        _geo_params_map["length"] = prob_robot_constr->getGeometricParamLength();
+        _geo_params_map["width"] = prob_robot_constr->getGeometricParamWidth();
+        _geo_params_map["height"] = prob_robot_constr->getGeometricParamHeight();
+        _geo_params_map["radius"] = prob_robot_constr->getGeometricParamRadius();
+
+        return true;
+    }
     // On-Going...
 
 

@@ -1,24 +1,24 @@
-#include <kautham/planner/omplconstr/constraints/box_constr.hpp>
+#include <kautham/planner/omplconstr/constraints/cube_constr.hpp>
 
 namespace Kautham {
 
 // Constructor implementation
-BoxConstraint::BoxConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs)
+CubeConstraint::CubeConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs)
     : AbstractOMPLConstraint(_robot_prob_constraint, num_dofs, 3)	// Function have 3 outputs.
 {
 
 }
 
-void BoxConstraint::useJointConfig2SetConstraintTarget(const std::vector<double>& joint_config) {
+void CubeConstraint::useJointConfig2SetConstraintTarget(const std::vector<double>& joint_config) {
     // Provide implementation here
 }
 
-void BoxConstraint::printConstraintTarget() const {
+void CubeConstraint::printConstraintTarget() const {
     // Provide implementation here
 }
 
 
-bool BoxConstraint::project(ompl::base::State *state) const {
+bool CubeConstraint::project(ompl::base::State *state) const {
 	
 	(void) state;
 
@@ -27,7 +27,7 @@ bool BoxConstraint::project(ompl::base::State *state) const {
 }
 
 // Constraint function implementation, f(q)=0
-void BoxConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::Ref<Eigen::VectorXd> out) const {
+void CubeConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::Ref<Eigen::VectorXd> out) const {
     
     // Note: 'q' is not the current joint values, is the sampled joint values by the OMPL.
     // std::cout << "q = " << q.transpose() << std::endl;
@@ -78,7 +78,7 @@ void BoxConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::
 }
 
 // Jacobian of the constraint function implementation
-void BoxConstraint::jacobian(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::Ref<Eigen::MatrixXd> out) const {
+void CubeConstraint::jacobian(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::Ref<Eigen::MatrixXd> out) const {
 
 	// std::cout << "JACOBIAN: " << std::endl;
 	Eigen::VectorXd y1 = q;
@@ -118,7 +118,7 @@ void BoxConstraint::jacobian(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::
 
 }
 
-Eigen::AffineCompact3d BoxConstraint::calculatePositionError(const Eigen::Ref<const Eigen::VectorXd>& q) const {
+Eigen::AffineCompact3d CubeConstraint::calculatePositionError(const Eigen::Ref<const Eigen::VectorXd>& q) const {
 
     Eigen::AffineCompact3d t_robot_base_link_2_end_effector_link = ComputeFKFromRobotBaseLinkToEnfEffectorLink(q);
     // std::cout << "Transformation t_robot_base_link_2_end_effector_link:\n" << t_robot_base_link_2_end_effector_link.matrix() << std::endl;

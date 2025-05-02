@@ -32,7 +32,7 @@
 
 			<!-- <Origin xyz="0.1 0.7 0.4" quat_xyzw="0.7071068 0.0 0.7071068 0.0"/> -->
 		<!-- Origin is set by default to the Identity when no specified -->
-		<!-- <Constraint id="box_arm_left" type="box">
+		<!-- <Constraint id="cube_arm_left" type="cube">
 			<GeometricParams length="1.0" width="0.5" height="0.2"/>
 			<ReferenceFrame entity="chessboard" link="base"/>
 			<Origin xyz="0.5 0.0 0.5" rpy="0.0 0.4 0.0"/>
