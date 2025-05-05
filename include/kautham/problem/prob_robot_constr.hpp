@@ -54,8 +54,18 @@ namespace Kautham {
 
             void printRobProbConstraintInfo() const;
 
-            // Set methods:
+            // SET METHODS MAIN:
             bool associateNewJoint(const std::string& _joint_name, const uint _joint_index);
+            inline void setTargetLink(const std::string _target_link){target_link_ = _target_link;}
+            inline void setEnabledStatus(const bool _status){enabled_ = _status;}
+
+            // SET METHODS ORIENTATION:
+            void setTargetOrientation(const double quat_x, const double quat_y, const double quat_z, const double quat_w);
+            void setTargetOrientation(const Eigen::Quaterniond& _quat);
+            inline void setToleranceInfo(const double _value, const bool _variable, const double _gradient){tolerance_value_ = _value; tolerance_variable_ = _variable; tolerance_grandient_ = _gradient;}
+            inline void setFreeMovementAxes(const bool free_x, const bool free_y, const bool free_z){free_movement_axes_.x() = static_cast<double>(free_x); free_movement_axes_.y() = static_cast<double>(free_y); free_movement_axes_.z() = static_cast<double>(free_z);}
+
+            // SET METHODS GEOMETRIC:
             void setReferenceFrame(const std::string& _entity_id, const std::string& _link_name);
             void setOrigin(const double x, const double y, const double z, const double quat_x, const double quat_y, const double quat_z, const double quat_w);
             void setOrigin(const double x, const double y, const double z, const double roll, const double pitch, const double yaw);
@@ -63,31 +73,30 @@ namespace Kautham {
             inline void setGeometricParamWidth(const double _width){geo_params_.width = _width;}
             inline void setGeometricParamHeight(const double _height){geo_params_.height = _height;}
             inline void setGeometricParamRadius(const double _radius){geo_params_.radius = _radius;}
-            void setTargetOrientation(const double quat_x, const double quat_y, const double quat_z, const double quat_w);
-            void setTargetOrientation(const Eigen::Quaterniond& _quat);
-            inline void setTargetLink(const std::string _target_link){target_link_ = _target_link;}
-            inline void setToleranceInfo(const double _value, const bool _variable, const double _gradient){tolerance_value_ = _value; tolerance_variable_ = _variable; tolerance_grandient_ = _gradient;}
-            inline void setFreeMovementAxes(const bool free_x, const bool free_y, const bool free_z){free_movement_axes_.x() = static_cast<double>(free_x); free_movement_axes_.y() = static_cast<double>(free_y); free_movement_axes_.z() = static_cast<double>(free_z);}
-            inline void setEnabledStatus(const bool _status){enabled_ = _status;}
 
-            // Get methods:
+            // GET METHODS MAIN:
             inline std::string getConstraintId() const {return id_;}
             inline std::string getConstraintType() const {return type_;}
             inline bool isConstraintOperative() const {return enabled_;}
             inline std::vector<std::pair<std::string, uint>> getConstrainedJoints() const {return constrained_joints_;}
             inline std::pair<std::string, uint> getLastConstrainedJoint() const {return constrained_joints_.back();} // Return the last element
-            inline Eigen::Quaterniond getTargetOrientation() const {return target_orientation_;}
             inline std::string getTargetLink() const {return target_link_;}
+
+            // GET METHODS ORIENTATION:
+            inline Eigen::Quaterniond getTargetOrientation() const {return target_orientation_;}
+            inline double getToleranceValue() const {return tolerance_value_;}
+            inline bool isToleranceVariable() const {return tolerance_variable_;}
+            inline double getToleranceGradient() const {return tolerance_grandient_;}
+            inline Eigen::Vector3d getFreeMovementAxes() const {return free_movement_axes_;}
+
+            // GET METHODS GEOMETRIC:
             inline std::string getReferenceFrameEntity() const {return reference_frame_entity_;}
+            inline std::string getReferenceFrameLink() const {return reference_frame_link_;}
             inline  Eigen::AffineCompact3d getReferencedFrameOrigin() const {return origin_;}
             inline double getGeometricParamLength() const {return geo_params_.length;}
             inline double getGeometricParamWidth() const {return geo_params_.width;}
             inline double getGeometricParamHeight() const {return geo_params_.height;}
             inline double getGeometricParamRadius() const {return geo_params_.radius;}
-            inline double getToleranceValue() const {return tolerance_value_;}
-            inline bool isToleranceVariable() const {return tolerance_variable_;}
-            inline double getToleranceGradient() const {return tolerance_grandient_;}
-            inline Eigen::Vector3d getFreeMovementAxes() const {return free_movement_axes_;}
 
         private:
             // MAIN:
@@ -110,8 +119,6 @@ namespace Kautham {
             std::string reference_frame_link_;  //!< Which link of the reference is used (Robot -> Joint or Link; Obstacle -> Link; kautham world -> Empty).
             Eigen::AffineCompact3d origin_; //!< Transformation of the geometric constraint wrt the reference frame link.
     };
-
-
 
   /** @}   end of Doxygen module "Problem" */
 }

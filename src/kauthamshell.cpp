@@ -2696,7 +2696,7 @@ namespace Kautham {
 
 
     // Kautham Public Geometric Constraints Methods:
-    bool kauthamshell::getConstraintGeoParams(const std::string& _robot_name, const std::string& _id, std::string& _type, std::map<std::string, double>& _geo_params_map) {
+    bool kauthamshell::getConstraintGeoProperties(const std::string& _robot_name, const std::string& _id, std::string& _type, std::map<std::string, double>& _geo_params_map, Eigen::AffineCompact3d& _constraint_pose, std::string& _reference_frame_entity, std::string& _reference_frame_link) {
         if (!problemOpened()) {
             std::cout << "The problem is not opened" << std::endl;
             return false;
@@ -2714,9 +2714,12 @@ namespace Kautham {
         _geo_params_map["height"] = prob_robot_constr->getGeometricParamHeight();
         _geo_params_map["radius"] = prob_robot_constr->getGeometricParamRadius();
 
+        _constraint_pose = prob_robot_constr->getReferencedFrameOrigin();
+        _reference_frame_entity = prob_robot_constr->getReferenceFrameEntity();
+        _reference_frame_link = prob_robot_constr->getReferenceFrameLink();
+
         return true;
     }
-    // On-Going...
 
 
 }   // Namespace: Kautham
