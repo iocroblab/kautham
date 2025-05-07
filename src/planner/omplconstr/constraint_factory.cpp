@@ -8,6 +8,7 @@
 // Include all the constraints:
 #include <kautham/planner/omplconstr/constraints/orientation_constr.hpp>
 #include <kautham/planner/omplconstr/constraints/cube_constr.hpp>
+#include <kautham/planner/omplconstr/constraints/cylinder_constr.hpp>
 
 
 
@@ -43,6 +44,12 @@ namespace Kautham {
                 [](std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim) 
                     -> std::shared_ptr<ConstraintFactory::ConstraintBase> {
                         return std::make_shared<CubeConstraint>(_robot_prob_constraint, ambientDim);
+                }
+            );
+            registerConstraint("cylinder",
+                [](std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim) 
+                    -> std::shared_ptr<ConstraintFactory::ConstraintBase> {
+                        return std::make_shared<CylinderConstraint>(_robot_prob_constraint, ambientDim);
                 }
             );
         }
