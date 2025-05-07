@@ -70,10 +70,13 @@ void CubeConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen:
 		}
 	}
 
+	// The constraint could be defined, but not used. That means, is like a unconstrained geometric problem:
+	bool constraint_is_used = robot_prob_constraint_->isConstraintOperative();
+
 	// std::cout << "Box output = [" << delta_length << ", " << delta_width << ", " << delta_height << "]" << std::endl;
-    out[0] = delta_length;
-    out[1] = delta_width;
-    out[2] = delta_height;
+    out[0] = delta_length * constraint_is_used;
+    out[1] = delta_width * constraint_is_used;
+    out[2] = delta_height * constraint_is_used;
 
 }
 

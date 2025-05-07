@@ -60,8 +60,11 @@ void CylinderConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Ei
         delta_height = z_error - height;  // Above top (delta_height is positive)
     }
 
-	out[0] = delta_radius;
-	out[1] = delta_height;
+	// The constraint could be defined, but not used. That means, is like a unconstrained geometric problem:
+	bool constraint_is_used = robot_prob_constraint_->isConstraintOperative();
+
+	out[0] = delta_radius * constraint_is_used;
+	out[1] = delta_height * constraint_is_used;
 
 }
 
