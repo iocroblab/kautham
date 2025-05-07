@@ -2608,7 +2608,29 @@ namespace Kautham {
     }
 
     // Kautham Public Main Constraints Methods:
-    bool  kauthamshell::updateConstraintTargetLink(const std::string& _robot_name, const std::string& _id, const std::string& _target_link) {
+    bool kauthamshell::getConstraintIdsPerRobot(std::map<std::string,std::vector<std::string>>& _constraints_by_robot) {
+        if (!problemOpened()) {
+            std::cout << "The problem is not opened" << std::endl;
+            return false;
+        }
+        Problem *const problem = (Problem*)memPtr_;
+
+        std::vector<std::shared_ptr<RobotProblemConstraint>> prob_robot_constraints;
+        for (size_t r = 0; r < problem->wSpace()->getNumRobots(); r++) {
+            Robot* robot = problem->wSpace()->getRobot(r);
+            prob_robot_constraints = robot->getConstraints();
+            std::vector<std::string> constraint_ids;
+            for (const auto& constraint : prob_robot_constraints) {
+                if (constraint) {
+                    constraint_ids.push_back(constraint->getConstraintId());
+                }
+            }
+            _constraints_by_robot[robot->getName()] = constraint_ids;
+        }
+        return true;
+    }
+
+    bool kauthamshell::updateConstraintTargetLink(const std::string& _robot_name, const std::string& _id, const std::string& _target_link) {
         if (!problemOpened()) {
             std::cout << "The problem is not opened" << std::endl;
             return false;
@@ -2622,7 +2644,7 @@ namespace Kautham {
         return true;
     }
 
-    bool  kauthamshell::updateConstraintEnabled(const std::string& _robot_name, const std::string& _id, const bool& _enabled) {
+    bool kauthamshell::updateConstraintEnabled(const std::string& _robot_name, const std::string& _id, const bool& _enabled) {
         if (!problemOpened()) {
             std::cout << "The problem is not opened" << std::endl;
             return false;
@@ -2638,7 +2660,7 @@ namespace Kautham {
 
 
     // Kautham Public Orientation Constraints Methods:
-    bool  kauthamshell::updateConstraintTargetOrientation(const std::string& _robot_name, const std::string& _id, const Eigen::Quaterniond& _target_orientation) {
+    bool kauthamshell::updateConstraintTargetOrientation(const std::string& _robot_name, const std::string& _id, const Eigen::Quaterniond& _target_orientation) {
         if (!problemOpened()) {
             std::cout << "The problem is not opened" << std::endl;
             return false;
@@ -2652,7 +2674,7 @@ namespace Kautham {
         return true;
     }
 
-    bool  kauthamshell::updateConstraintTargetOrientation(const std::string& _robot_name, const std::string& _id, const double& qx, const double& qy, const double& qz, const double& qw) {
+    bool kauthamshell::updateConstraintTargetOrientation(const std::string& _robot_name, const std::string& _id, const double& qx, const double& qy, const double& qz, const double& qw) {
         if (!problemOpened()) {
             std::cout << "The problem is not opened" << std::endl;
             return false;
@@ -2666,7 +2688,7 @@ namespace Kautham {
         return true;
     }
 
-    bool  kauthamshell::updateConstraintTolerance(const std::string& _robot_name, const std::string& _id, const double& _tolerance_value, const bool& _tolerance_variable, const double& _tolerance_grandient) {
+    bool kauthamshell::updateConstraintTolerance(const std::string& _robot_name, const std::string& _id, const double& _tolerance_value, const bool& _tolerance_variable, const double& _tolerance_grandient) {
         if (!problemOpened()) {
             std::cout << "The problem is not opened" << std::endl;
             return false;
@@ -2680,7 +2702,7 @@ namespace Kautham {
         return true;
     }
 
-    bool  kauthamshell::updateConstraintFreeMovementAxes(const std::string& _robot_name, const std::string& _id, const bool& _free_x, const bool& _free_y, const bool& _free_z) {
+    bool kauthamshell::updateConstraintFreeMovementAxes(const std::string& _robot_name, const std::string& _id, const bool& _free_x, const bool& _free_y, const bool& _free_z) {
         if (!problemOpened()) {
             std::cout << "The problem is not opened" << std::endl;
             return false;

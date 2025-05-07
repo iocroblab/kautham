@@ -118,6 +118,7 @@ namespace Kautham {
             bool getSampleConfig(const unsigned int& _index, std::vector<double>& _sample_config);
 
             // Kautham Public Main Constraints Methods:
+            bool getConstraintIdsPerRobot(std::map<std::string,std::vector<std::string>>& _constraints_by_robot);
             bool updateConstraintTargetLink(const std::string& _robot_name, const std::string& _id, const std::string& _target_link);
             bool updateConstraintEnabled(const std::string& _robot_name, const std::string& _id, const bool& _enabled);
             // Kautham Public Orientation Constraints Methods:
