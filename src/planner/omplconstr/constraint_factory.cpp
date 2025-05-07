@@ -9,6 +9,8 @@
 #include <kautham/planner/omplconstr/constraints/orientation_constr.hpp>
 #include <kautham/planner/omplconstr/constraints/cube_constr.hpp>
 #include <kautham/planner/omplconstr/constraints/cylinder_constr.hpp>
+#include <kautham/planner/omplconstr/constraints/sphere_constr.hpp>
+#include <kautham/planner/omplconstr/constraints/cone_constr.hpp>
 
 
 
@@ -50,6 +52,18 @@ namespace Kautham {
                 [](std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim) 
                     -> std::shared_ptr<ConstraintFactory::ConstraintBase> {
                         return std::make_shared<CylinderConstraint>(_robot_prob_constraint, ambientDim);
+                }
+            );
+            registerConstraint("sphere",
+                [](std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim) 
+                    -> std::shared_ptr<ConstraintFactory::ConstraintBase> {
+                        return std::make_shared<SphereConstraint>(_robot_prob_constraint, ambientDim);
+                }
+            );
+            registerConstraint("cone",
+                [](std::shared_ptr<Kautham::RobotProblemConstraint> _robot_prob_constraint, unsigned int ambientDim) 
+                    -> std::shared_ptr<ConstraintFactory::ConstraintBase> {
+                        return std::make_shared<ConeConstraint>(_robot_prob_constraint, ambientDim);
                 }
             );
         }
