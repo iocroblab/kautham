@@ -132,6 +132,8 @@ namespace Kautham {
 
     inline double* getOffMatrix() const {return offMatrix;} //!< Returns the offMatrix.
 
+    bool updateOffMatrixDOFByName(const std::vector<std::pair<std::string, double>>& dof_updates);
+
     inline string getName() const {return name;} //!< Returns the robot name.
 
     inline RobConf* getCurrentPos(){return &_currentConf;} //!< Returns the current RobConf used to represent the SE3 position and Rn configuration

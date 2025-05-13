@@ -424,6 +424,41 @@ namespace Kautham {
         offMatrix = OffMatrix;
     }
 
+    // PAIR = < DOF NAME , DOF VALUE >
+    bool Robot::updateOffMatrixDOFByName(const std::vector<std::pair<std::string, double>>& dof_updates) {
+        std::vector<std::string> dof_names = this->getDOFNames();
+        size_t dof_count = dof_names.size();
+    
+        // First, check all values and names:
+        for (const auto& dof_update : dof_updates) {
+    
+            // Check name existence:
+            auto it = std::find(dof_names.begin(), dof_names.end(), dof_update.first);
+            if (it == dof_names.end()) {
+                std::cout << "Error: DOF name '" << dof_update.first << "' not found!" << std::endl;
+                return false;
+            }
+
+            // Check value range:
+            if (dof_update.second < 0.0 || 1.0 < dof_update.second) {
+                std::cout << "Error: Value " << dof_update.second << " for DOF '" << dof_update.first << "' is out of range [0, 1]." << std::endl;
+                return false;
+            }
+        }
+    
+        // If all checks pass, perform the updates
+        for (const auto& dof_update : dof_updates) {
+            auto it = std::find(dof_names.begin(), dof_names.end(), dof_update.first);
+            size_t index = std::distance(dof_names.begin(), it);
+            if (index < dof_count) { // Safety check
+                this->offMatrix[index] = dof_update.second;
+            }
+        }
+    
+        return true;
+    }
+    
+
     /*! Processes the _attachedObj list to calculate the new position and
   * orientation based on the position and orientation of the robot link where the object is attached
   * and the mt::Transform calculated on the attached instant.

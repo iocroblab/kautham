@@ -132,6 +132,7 @@ namespace Kautham{
         inline void setcolor(int c){_color = c;}
 
       //! Returns the configuration related to scene.
+      inline void clearMappedConf(){_config.clear();}
       inline std::vector<RobConf>& getMappedConf(){return _config;}
       void setMappedConf(vector<RobConf>& _localConf);
       void setMappedConf(vector<RobConf*>& _localConf);

@@ -52,17 +52,20 @@ namespace Kautham{
     _config.clear();
   }
 
-  bool Sample::setCoords(std::vector<double>& coords){
-      if (coords.size() == _dim) {
-          for (unsigned int i = 0; i < _dim; ++i)
-              _coords[i] = coords[i];
-          //if sample has already a config, clear it
-          if (_config.size() != 0) _config.clear();
-          return true;
-      } else {
-          return false;
-      }
-  }
+    bool Sample::setCoords(std::vector<double>& coords){
+        if (coords.size() == _dim) {
+            for (unsigned int i = 0; i < _dim; ++i) {
+                _coords[i] = coords[i];
+            }
+            // If sample has already a config, clear it:
+            if (_config.size() != 0) {
+                _config.clear();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
 
   string Sample::print(bool onlyVal) {
     std::ostringstream s;

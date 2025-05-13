@@ -2323,56 +2323,44 @@ namespace Kautham {
 
     }
 
-    bool kauthamshell::setRobotDOFOffsetByName(const std::string& _robot_name, const std::vector<std::string>& _dof_names, const std::vector<double>& _dof_values) {
+    bool kauthamshell::updateRobotDOFOffsetByName(const std::string& _robot_name, const std::vector<std::pair<std::string, double>>& _dof_updates) {
         try {
             if (!problemOpened()) {
                 std::cout << "The problem is not opened!" << std::endl;
                 return false;
             }
 
-            if (_dof_names.size() != _dof_values.size()) {
-                std::cout << "Mismatch between DOF names and values!" << std::endl;
-                return false;
-            }
-
-            for (const auto& val : _dof_values) {
-                if (val < 0.0 || 1.0 < val) {
-                    std::cout << "Error: DOF values must be between 0.0 and 1.0!" << std::endl;
-                    return false;
-                }
-            }
-
             Problem *const problem = (Problem*)memPtr_;
-            Robot* robot = problem->getPlanner()->wkSpace()->getRobot(_robot_name);
+            
+            // Get the requested robot:
+            Robot* robot = problem->wSpace()->getRobot(_robot_name);
             if (!robot) {
                 std::cout << "Error: Robot '" << _robot_name << "' not found!" << std::endl;
                 return false;
             }
-            std::vector<std::string> dof_names = robot->getDOFNames();
 
-            // DEBUG: Get current values and print
-            // std::cout << "Previous OffMatrix of robot " << _robot_name << ":" << std::endl;
-            // for (size_t i = 0; i < dof_names.size(); ++i) {
-            //     std::cout << "OffMatrix[" << i << "](" << dof_names[i] << ") = " << robot->getOffMatrix()[i] << std::endl;
-            // }
-
-            // Set new values
-            for (size_t i = 0; i < _dof_names.size(); ++i) {
-                auto it = find(dof_names.begin(), dof_names.end(), _dof_names[i]);
-                if (it != dof_names.end()) {
-                    size_t index = distance(dof_names.begin(), it);
-                    robot->getOffMatrix()[index] = _dof_values[i];  // Wrong use of getOffMatrix, I know.
-                    // std::cout << "Set " << _dof_names[i] << " to " << _dof_values[i] << " at position " << index << std::endl;
-                } else {
-                    std::cout << "Warning: DOF name '" << _dof_names[i] << "' not found!" << std::endl;
-                }
+            // Update its DOF by name:
+            if (!robot->Robot::updateOffMatrixDOFByName(_dof_updates)) {
+                return false;
             }
 
-            // DEBUG: Get current values and print
-            // std::cout << "New OffMatrix of robot " << _robot_name << ":" << std::endl;
-            // for (size_t i = 0; i < dof_names.size(); ++i) {
-            //     std::cout << "OffMatrix[" << i << "](" << dof_names[i] << ") = " << robot->getOffMatrix()[i] << std::endl;
-            // }
+            // Check collisions with the samples, also needed to updated the RobConf associated to each sample:
+            SampleSet* samples = problem->getSampleSet();
+            for (unsigned int i = 0; i < samples->getSize(); ++i) {
+
+                // Get each sample of the sample set:
+                Sample* sample = samples->getSampleAt(i);
+                
+                // Clear the previous RobConf associated to the sample coordinates:
+                sample->clearMappedConf();
+
+                // Set the new RobConf to the associated sample coordinates:
+                if (problem->wSpace()->collisionCheck(sample)) {
+                    std::cout << "The updated offMatrix is in collision with the current samples." << std::endl;
+                    return false;
+                }
+
+            }
 
             return true;
 
@@ -2579,9 +2567,9 @@ namespace Kautham {
                 std::cout << "Not possible to get the sample by index." << std::endl;
                 return false;
             }
-            std::vector<double> req_sample_coord = req_sample->getCoords();
-            std::vector<RobConf> rc = req_sample->getMappedConf();
 
+            // Get the robot configuration (joint values) of the requested sample, also the offsets are considered:
+            std::vector<RobConf> rc = req_sample->getMappedConf();
             for(unsigned int n = 0; n < rc.size(); n++) {
                     _sample_config.push_back(rc[n].getSE3().getPos()[0]);
                     _sample_config.push_back(rc[n].getSE3().getPos()[1]);

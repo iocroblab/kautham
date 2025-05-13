@@ -107,7 +107,7 @@ namespace Kautham {
             bool getRobHomePos(unsigned int index, std::vector<double> &pos);
 
             //  Used to set any DOF (from 0 to 1) of a robot through his name and the DOF identifier.
-            bool setRobotDOFOffsetByName(const std::string& _robot_name, const std::vector<std::string>& _dof_names, const std::vector<double>& _dof_values);
+            bool updateRobotDOFOffsetByName(const std::string& _robot_name, const std::vector<std::pair<std::string, double>>& _dof_updates);
 
             int getNumRobots();
             int getNumObstacles();
