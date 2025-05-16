@@ -1754,6 +1754,11 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
     Robot *rob = new Robot(robot_node->attribute("robot").as_string(),
                            robot_node->attribute("scale").as_double(1.),useBBOX,progress);
 
+    xml_node kautham_name_node = robot_node->child("KauthamName");
+    if (kautham_name_node) {
+        rob->setName(kautham_name_node.attribute("name").as_string());
+    }
+
     if (!rob->isArmed()) return false;
 
     xml_node constraint_node = robot_node->child("Constraint");

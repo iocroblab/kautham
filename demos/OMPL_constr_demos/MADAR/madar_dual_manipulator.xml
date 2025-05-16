@@ -3,6 +3,7 @@
 <Problem name="madar_dual_manipulator_constraints">
 
 	<Robot robot="robots/MADAR/madar_dual_manipulator.urdf">
+		<KauthamName name="madar"/>
 		<Home TH="1.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="-0.05" X="-0.20" />
 		<Limits name="X" min="-5.0" max="5.0" />
 		<Limits name="Y" min="-5.0" max="5.0" />
