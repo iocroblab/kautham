@@ -54,10 +54,13 @@ namespace Kautham {
 
             void printRobProbConstraintInfo() const;
 
+            static void assignIntersectionGroups(const std::vector<std::shared_ptr<RobotProblemConstraint>>& _constraints);
+
             // SET METHODS MAIN:
             bool associateNewJoint(const std::string& _joint_name, const uint _joint_index);
-            inline void setTargetLink(const std::string _target_link){target_link_ = _target_link;}
+            inline void setTargetLink(const std::string& _target_link){target_link_ = _target_link;}
             inline void setEnabledStatus(const bool _status){enabled_ = _status;}
+            inline void setIntersectionGroup(const std::string& _intersection_group){intersection_group_ = _intersection_group;}
 
             // SET METHODS ORIENTATION:
             void setTargetOrientation(const double quat_x, const double quat_y, const double quat_z, const double quat_w);
@@ -105,6 +108,7 @@ namespace Kautham {
             std::vector<std::pair<std::string, uint>> constrained_joints_;  //!< Related the joint name with the URDF kinematic position.
             bool enabled_;  //!< A constraint could be defined, but not used.
             std::string target_link_;  //!< The frame where the target is set.
+            std::string intersection_group_; //!< Unique identifier for the group of constraints that share the same joints (i.e., intersect) with this constraint within the robot. Empty means without group.
 
             // ORIENTATION:
             Eigen::Quaterniond target_orientation_; //!< The desired orientation to maintain.

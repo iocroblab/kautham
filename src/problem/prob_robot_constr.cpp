@@ -24,6 +24,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <set>
+#include <map>
 
 #include <kautham/problem/prob_robot_constr.hpp>
 
@@ -41,6 +43,7 @@ namespace Kautham {
     void RobotProblemConstraint::printRobProbConstraintInfo() const {
         std::cout << "\tIdentifier: " << id_ << std::endl;
         std::cout << "\tType: " << type_ << std::endl;
+        std::cout << "\tIntersection group: " << (intersection_group_.empty() ? "None" : intersection_group_) << std::endl;
         std::cout << "\tEnabled: " << (enabled_ ? "Yes" : "No") << std::endl;
         std::cout << "\tTarget link: " << target_link_ << std::endl;
         
@@ -82,6 +85,30 @@ namespace Kautham {
         std::cout << "\tApplied to joints (the order matters): " << std::endl;
         for (const auto& joint : constrained_joints_) {
             std::cout << "\t\tJoint[" << joint.second << "]: " << joint.first << std::endl;
+        }
+    }
+
+    void RobotProblemConstraint::assignIntersectionGroups(const std::vector<std::shared_ptr<RobotProblemConstraint>>& _constraints) {
+        // Map from set of joint names to all instances with that set
+        std::map<std::set<std::string>, std::vector<std::shared_ptr<RobotProblemConstraint>>> groups;
+
+        for (auto& constraint : _constraints) {
+            std::set<std::string> joint_names;
+            for (const auto& p : constraint->getConstrainedJoints()) {
+                joint_names.insert(p.first);
+            }
+            groups[joint_names].push_back(constraint);
+        }
+
+        // Assign a group name to each group (only if more than one instance in the group)
+        int group_counter = 1;
+        for (auto& entry : groups) {
+            if (entry.second.size() > 1) { // Only assign group if more than one instance
+                std::string group_name = "intersection_group_" + std::to_string(group_counter++);
+                for (auto& constraint : entry.second) {
+                    constraint->setIntersectionGroup(group_name);
+                }
+            }
         }
     }
 

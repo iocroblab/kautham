@@ -1773,6 +1773,9 @@ bool Problem::addRobot2WSpace(xml_node *robot_node, bool useBBOX, progress_struc
         constraint_node = constraint_node.next_sibling("Constraint");
     }
 
+    // Auto-detection and assigment of constraint intersection:
+    RobotProblemConstraint::assignIntersectionGroups(rob->getConstraints());
+
     // Debug: Print the constraints data
     std::cout << std::endl;
     for (const auto& constr : rob->getConstraints()) {
