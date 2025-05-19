@@ -556,12 +556,15 @@ namespace Kautham {
             omplConstraintPlanner::setStartAndGoalFromKthmSample();
 
             // Remove previous solutions path, if any:
-            // if (_incremental) {
-            //     this->pdef_->clearSolutionPaths();
-            // } else {
-            //     this->pdef_->clearSolutionPaths();
-            //     this->ompl_planner_->clear();
-            // }
+            if (_incremental) {
+                this->pdef_->clearSolutionPaths();
+            } else {
+                // this->pdef_->clear();   // OMPL v1.6.+
+                // Forget the solution paths (thread safe). Memory is freed. 
+                this->pdef_->clearSolutionPaths();
+                // Clear all internal datastructures. Planner settings are not affected. Subsequent calls to solve() will ignore all previous work. 
+                this->ompl_planner_->clear();
+            }
             
             // Attempt to solve the problem within _planningTime seconds:
             ompl::base::PlannerTerminationCondition ptc = ompl::base::timedPlannerTerminationCondition(_planningTime);
