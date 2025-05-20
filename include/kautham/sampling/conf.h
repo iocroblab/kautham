@@ -58,7 +58,7 @@ namespace Kautham {
 
     virtual std::string print()= 0;
     inline  std::vector<double>& getCoordinates(){return coord;}
-    double               getCoordinate(unsigned int index );
+    double               getCoordinate(unsigned int index ) const;
     inline unsigned int   getDim(){return dim;}
     static LCPRNG*        genRand;
     inline CONFIGTYPE     getType(){return type;}
