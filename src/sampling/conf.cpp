@@ -57,7 +57,7 @@ namespace Kautham {
 		}
 	}
 
-  double Conf::getCoordinate(unsigned int index) {
+  double Conf::getCoordinate(unsigned int index) const {
       if (index<dim) return this->coord[index];
 
       throw out_of_range("");
