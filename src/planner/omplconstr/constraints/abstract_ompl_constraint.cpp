@@ -12,6 +12,7 @@ AbstractOMPLConstraint::AbstractOMPLConstraint(std::shared_ptr<Kautham::RobotPro
 
 }
 
+
 Eigen::AffineCompact3d AbstractOMPLConstraint::ComputeFKFromRobotBaseLinkToEnfEffectorLink(const Eigen::Ref<const Eigen::VectorXd>& q) const {
 
     // Get the identifiers of the constrained joints:
@@ -46,6 +47,7 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::ComputeFKFromRobotBaseLinkToEnfEf
     return t_robot_base_link_2_target_link;
 }
 
+
 Eigen::AffineCompact3d AbstractOMPLConstraint::getGeometricTransformationWRTRobotBaseLink() const {
 
 	// Get the robot base link pose wrt world:
@@ -71,9 +73,9 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::getGeometricTransformationWRTRobo
     return t_robot_base_link_2_geometic_origin;
 }
 
+
 void AbstractOMPLConstraint::initConstraintStuff() {
 	this->t_constr_end_2_target_link = AbstractOMPLConstraint::getTransfromationFromConstrEndLink2TargetLink();
-
 }
 
 
@@ -111,11 +113,37 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::getTransfromationFromConstrEndLin
 	return t_constr_end_2_target_link;
 }
 
+
+bool AbstractOMPLConstraint::project(ompl::base::State *state) const {
+	
+	(void) state;
+
+	// I don't know why, but this TRUE is the key...
+    return true;
+}
+
+
 void AbstractOMPLConstraint::setGoalSampleConfiguration(const std::vector<double> _goal_config) {
 	Eigen::Map<const Eigen::VectorXd> mapped_goal_config(_goal_config.data(), _goal_config.size());
 	goal_sample_t_robot_base_link_2_end_effector_link = ComputeFKFromRobotBaseLinkToEnfEffectorLink(mapped_goal_config);
-	std::cout << "Constraint: " << this->robot_prob_constraint_->getConstraintId() << std::endl;
-	std::cout << "Transformation in the goal, from robot_base_link 2 end_effector_link:\n" << goal_sample_t_robot_base_link_2_end_effector_link.matrix() << std::endl;
+	// std::cout << "Constraint: " << this->robot_prob_constraint_->getConstraintId() << std::endl;
+	// std::cout << "Transformation in the goal, from robot_base_link 2 end_effector_link:\n" << goal_sample_t_robot_base_link_2_end_effector_link.matrix() << std::endl;
+}
+
+
+Eigen::AffineCompact3d AbstractOMPLConstraint::calculatePositionErrorGeometricConstraint(const Eigen::Ref<const Eigen::VectorXd>& q) const {
+
+    Eigen::AffineCompact3d t_robot_base_link_2_end_effector_link = ComputeFKFromRobotBaseLinkToEnfEffectorLink(q);
+    // std::cout << "Transformation t_robot_base_link_2_end_effector_link:\n" << t_robot_base_link_2_end_effector_link.matrix() << std::endl;
+
+	Eigen::AffineCompact3d t_robot_base_link_2_geometic_origin = getGeometricTransformationWRTRobotBaseLink();
+    // std::cout << "Transformation t_robot_base_link_2_geometic_origin:\n" << t_robot_base_link_2_geometic_origin.matrix() << std::endl;
+
+    // Calculate the pose (position + orientation) error:
+	Eigen::AffineCompact3d t_error = t_robot_base_link_2_geometic_origin.inverse() * t_robot_base_link_2_end_effector_link;
+    // std::cout << "Transformation t_error:\n" << t_error.matrix() << std::endl;
+
+    return t_error;
 }
 
 

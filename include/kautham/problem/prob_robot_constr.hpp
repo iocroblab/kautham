@@ -84,6 +84,7 @@ namespace Kautham {
             inline std::vector<std::pair<std::string, uint>> getConstrainedJoints() const {return constrained_joints_;}
             inline std::pair<std::string, uint> getLastConstrainedJoint() const {return constrained_joints_.back();} // Return the last element
             inline std::string getTargetLink() const {return target_link_;}
+            inline std::string getIntersectionGroup() const {return intersection_group_;}
 
             // GET METHODS ORIENTATION:
             inline Eigen::Quaterniond getTargetOrientation() const {return target_orientation_;}

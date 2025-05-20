@@ -17,12 +17,15 @@ namespace Kautham {
 
             virtual ~AbstractOMPLConstraint() = default;
 
-            // Virtual method to be overridden by derived classes
-            virtual void useJointConfig2SetConstraintTarget(const std::vector<double>& joint_config) = 0;    // Polymorphic behavior
-            virtual void printConstraintTarget() const = 0;    // Polymorphic behavior
+            // Virtual method to be overridden by derived classes:
+            // virtual void printConstraintTarget() const = 0;    // Polymorphic behavior
 
             inline void associateRobot(Kautham::Robot* _associated_robot){associated_robot_ = _associated_robot;}
             inline void assignReferencedEntity(Kautham::Robot* _referenced_entity){referenced_entity_ = _referenced_entity;}
+            
+            bool project(ompl::base::State *state) const override;
+
+            // Used to know the End-Effector goal pose, with the aim of compute the dynamic tolerance:
             void setGoalSampleConfiguration(const std::vector<double> _goal_config);
 
             void initConstraintStuff();
@@ -40,6 +43,7 @@ namespace Kautham {
             
             Eigen::AffineCompact3d getGeometricTransformationWRTRobotBaseLink() const;
             
+            Eigen::AffineCompact3d calculatePositionErrorGeometricConstraint(const Eigen::Ref<const Eigen::VectorXd>& q) const;
             
         private:
 

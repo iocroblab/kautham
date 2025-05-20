@@ -5,30 +5,21 @@
 
 namespace Kautham {
 
-class OrientationConstraint : public AbstractOMPLConstraint {
-    public:
-        // Constructor: Set dimension of ambient space and the number of constraint equations
-        OrientationConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs);
+    class OrientationConstraint : public AbstractOMPLConstraint {
+        public:
+            // Constructor: Set dimension of ambient space and the number of constraint equations
+            OrientationConstraint(std::shared_ptr<Kautham::RobotProblemConstraint>  _robot_prob_constraint, const unsigned int num_dofs);
 
-        bool project(ompl::base::State *state) const override;
-        // bool project(Eigen::Ref<Eigen::VectorXd> x) const override;
+            // Function that computes the constraint value:
+            void function(const Eigen::Ref<const Eigen::VectorXd>& q, Eigen::Ref<Eigen::VectorXd> out) const override;
 
-        // Function that computes the constraint value:
-        void function(const Eigen::Ref<const Eigen::VectorXd>& q, Eigen::Ref<Eigen::VectorXd> out) const override;
+        private:
 
-        // Function that computes the Jacobian of the constraint function:
-        void jacobian(const Eigen::Ref<const Eigen::VectorXd>& q, Eigen::Ref<Eigen::MatrixXd> out) const override;
+            Eigen::Quaterniond calculateOrientationError(const Eigen::Ref<const Eigen::VectorXd>& q) const;
 
-        void useJointConfig2SetConstraintTarget(const std::vector<double>& joint_config) override;
-        void printConstraintTarget() const override;
+            void updateTolerance(const Eigen::Ref<const Eigen::VectorXd> &q);
 
-    private:
-
-        Eigen::Quaterniond calculateOrientationError(const Eigen::Ref<const Eigen::VectorXd>& q) const;
-
-        void updateTolerance(const Eigen::Ref<const Eigen::VectorXd> &q);
-
-};
+    };
 
 }
 

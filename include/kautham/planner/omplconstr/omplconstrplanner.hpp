@@ -128,7 +128,7 @@ namespace Kautham {
 
                 vector<int> _disabledcontrols;//!< those disabled controls will not be sampled, they are fixed at 0.5
 
-                void assignConstrTargetFromState(const ob::ScopedState<ob::CompoundStateSpace> _ompl_state);
+                void assignConstrGoalPoseFromState(const ob::ScopedState<ob::CompoundStateSpace>& _ompl_state);
                 
                 //! This function is used to verify that the low bound is below the high bound
                 inline void filterBounds(double &l, double &h, double epsilon)
