@@ -66,7 +66,7 @@ void OrientationConstraint::updateTolerance(const Eigen::Ref<const Eigen::Vector
 	// Get the current pose:
 	Eigen::AffineCompact3d current_sample_t_robot_base_link_2_end_effector_link = ComputeFKFromRobotBaseLinkToEnfEffectorLink(q);
 	// Compute the distance between the current sample and the goal sample:
-	Eigen::AffineCompact3d t_goal_sample_2_current_sample = goal_sample_t_robot_base_link_2_end_effector_link.inverse() * current_sample_t_robot_base_link_2_end_effector_link;
+	Eigen::AffineCompact3d t_goal_sample_2_current_sample = this->goal_sample_t_robot_base_link_2_end_effector_link.inverse() * current_sample_t_robot_base_link_2_end_effector_link;
 	double distance = t_goal_sample_2_current_sample.translation().norm();
 	
 	// Use this distance to get the new tolerance in that point using the defined tolerance gradient:

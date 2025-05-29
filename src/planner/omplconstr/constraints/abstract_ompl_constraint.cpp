@@ -76,6 +76,7 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::getGeometricTransformationWRTRobo
 
 void AbstractOMPLConstraint::initConstraintStuff() {
 	this->t_constr_end_2_target_link = AbstractOMPLConstraint::getTransfromationFromConstrEndLink2TargetLink();
+	// std::cout << "Transformation t_constr_end_2_target_link:\n" << this->t_constr_end_2_target_link.matrix() << std::endl;
 }
 
 
@@ -125,9 +126,20 @@ bool AbstractOMPLConstraint::project(ompl::base::State *state) const {
 
 void AbstractOMPLConstraint::setGoalSampleConfiguration(const std::vector<double> _goal_config) {
 	Eigen::Map<const Eigen::VectorXd> mapped_goal_config(_goal_config.data(), _goal_config.size());
-	goal_sample_t_robot_base_link_2_end_effector_link = ComputeFKFromRobotBaseLinkToEnfEffectorLink(mapped_goal_config);
+	this->goal_sample_t_robot_base_link_2_end_effector_link = ComputeFKFromRobotBaseLinkToEnfEffectorLink(mapped_goal_config);
+	
 	// std::cout << "Constraint: " << this->robot_prob_constraint_->getConstraintId() << std::endl;
 	// std::cout << "Transformation in the goal, from robot_base_link 2 end_effector_link:\n" << goal_sample_t_robot_base_link_2_end_effector_link.matrix() << std::endl;
+	
+	// Extract rotation matrix and convert to quaternion
+    // Eigen::Matrix3d rotation_matrix = goal_sample_t_robot_base_link_2_end_effector_link.rotation();
+    // Eigen::Quaterniond quaternion(rotation_matrix);
+    // quaternion.normalize();  // Ensure unit quaternion
+	// std::cout << "Orientation (quaternion - x,y,z,w): "
+	// << quaternion.x() << ", "
+	// << quaternion.y() << ", "
+	// << quaternion.z() << ", "
+	// << quaternion.w() << std::endl;
 }
 
 
