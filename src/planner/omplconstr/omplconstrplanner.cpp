@@ -328,7 +328,9 @@ namespace Kautham {
                             for (const auto& constr : group_constraints) {
                                 auto constraint = constraints_factory->createConstraint(constr->getConstraintType(), constr, group_constr_joints.size());
                                 constraint->associateRobot(current_rob);
-                                constraint->assignReferencedEntity(_wkSpace->getObstacle(constr->getReferenceFrameEntity()));
+                                if (!constr->getReferenceFrameEntity().empty()) {
+                                    constraint->assignReferencedEntity(_wkSpace->getObstacle(constr->getReferenceFrameEntity()));
+                                }
                                 constraint->initConstraintStuff();
                                 this->constraint_map_[constr->getConstraintId()] = constraint;
                                 ompl_constraints.push_back(constraint);
@@ -425,8 +427,7 @@ namespace Kautham {
                 // Set validity checker:
                 auto my_ValidityChecker = std::make_shared<Kautham::omplconstrplanner::ValidityChecker>(this->si_,  (Planner*)this);
                 this->si_->setStateValidityChecker(ob::StateValidityCheckerPtr(my_ValidityChecker));
-
-                this->si_->setup(); // Finalize the SpaceInformation setup
+                this->si_->setup(); // Set the SpaceInformation setup
 
                 // Create a problem definition
                 this->pdef_ = std::make_shared<ompl::base::ProblemDefinition>(this->si_);
@@ -479,6 +480,7 @@ namespace Kautham {
                 std::cout << "OMPL Constraint: Start State:" << std::endl;
                 startompl.print();
                 this->pdef_->addStartState(startompl);
+                // omplConstraintPlanner::assignConstrGoalPoseFromState(startompl);
             }
 
             // Add goal states:
