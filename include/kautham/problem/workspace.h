@@ -74,7 +74,8 @@ namespace Kautham{
       void                         setPathVisibility(bool vis);
 
       //! This method attaches an object object to a robot link. The obstacle is designated by its index.
-      bool                  attachObstacle2RobotLink(uint robot, uint link, string obsname);
+      bool attachObstacle2RobotLink(uint robot, uint link, string obsname);
+      bool attachObstacle2RobotLink(const std::string& _robot_name, const std::string& _robot_link_name, const std::string& _obstacle_name);
 
       //! This method detaches an object previously attached to a Robot link.
       bool                  detachObstacle(string obsname);

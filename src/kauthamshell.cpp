@@ -1726,8 +1726,53 @@ namespace Kautham {
         return false;
     }
 
+    // New (most natural) implementation:
+    bool kauthamshell::attachObstacle2RobotLink(const std::string& _robot_name, const std::string& _robot_link_name, const std::string& _obstacle_name) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
 
-    bool kauthamshell::detachObstacle(string obs) {
+            Problem *const problem = (Problem*)memPtr_;
+
+            std::cout << "Attaching obstacle " << _obstacle_name << " (" << problem->wSpace()->getObstacle(_obstacle_name)->getName()
+                      << ") to link " << _robot_link_name << " (" << problem->wSpace()->getRobot(_robot_name)->getLink(_robot_link_name)->getName()
+                      << ") of robot " << _robot_name << " (" << problem->wSpace()->getRobot(_robot_name)->getName()
+                      << ")." << std::endl;
+
+            float x,y,z;
+            // x = problem->wSpace()->getObstacle(_obstacle_name)->getLink(0)->getElement()->getPosition()[0];
+            // y = problem->wSpace()->getObstacle(_obstacle_name)->getLink(0)->getElement()->getPosition()[1];
+            // z = problem->wSpace()->getObstacle(_obstacle_name)->getLink(0)->getElement()->getPosition()[2];
+            // std::cout<<"Object "<<_obstacle_name<<" at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+
+            bool ret = problem->wSpace()->attachObstacle2RobotLink(_robot_name,_robot_link_name,_obstacle_name);
+            x = problem->wSpace()->getObstacle(_obstacle_name)->getLink(0)->getElement()->getPosition()[0];
+            y = problem->wSpace()->getObstacle(_obstacle_name)->getLink(0)->getElement()->getPosition()[1];
+            z = problem->wSpace()->getObstacle(_obstacle_name)->getLink(0)->getElement()->getPosition()[2];
+            std::cout<<"Object "<<_obstacle_name<<" attached at position ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+            if (ret) {
+                std::cout<<"attachfunction returned TRUE\n";
+            } else {
+                std::cout<<"attachfunction returned FALSE\n";
+            }
+            return (ret);
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return false;
+    }
+
+
+    bool kauthamshell::detachObstacle(const std::string& obs) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;

@@ -692,6 +692,34 @@ namespace Kautham {
        return false;
     }
 
+    bool WorkSpace::attachObstacle2RobotLink(const std::string& _robot_name, const std::string& _robot_link_name, const std::string& _obstacle_name) {
+        // Find the obstacle by name:
+        std::map<std::string,Robot*>::iterator obs_it = obstacles.find(_obstacle_name);
+        if (obs_it == obstacles.end()) {
+            return false;
+        }
+
+        // Find the robot by name:
+        Robot* target_robot = nullptr;
+        for (size_t robot_index = 0; robot_index < robots.size(); ++robot_index) {
+            if (robots[robot_index]->getName() == _robot_name) {
+                target_robot = robots[robot_index];
+                break;
+            }
+        }
+        if (!target_robot)
+            return false;
+
+        // Find the link index by name:
+        uint link_index;
+        if (!target_robot->getLinkIndexByName(_robot_link_name, link_index)) {
+            return false;
+        }
+
+        // Attach the obstacle:
+        return target_robot->attachObject(obs_it->second, link_index);
+    }
+
 
     bool WorkSpace::detachObstacle(string obsname) {
         map<string,Robot*>::iterator mapit = obstacles.find(obsname);

@@ -89,9 +89,10 @@ namespace Kautham {
             bool removeRobot(unsigned index);
             int addObstacle(std::string obsFile, double scale, std::vector<double> home);
             bool removeObstacle(std::string obsname);
-            bool attachObstacle2RobotLink(int robot, int link, std::string obs);
-            bool detachObstacle(std::string obs);
             double cumDistCheck(std::vector<double> smpcoords);
+            bool attachObstacle2RobotLink(int robot, int link, std::string obs);
+            bool attachObstacle2RobotLink(const std::string& _robot_name, const std::string& _robot_link_name, const std::string& _obstacle_name);
+            bool detachObstacle(const std::string& obs);
 
             bool motionPlanner(std::vector<double> init, std::vector<double> goal, std::string root);
 
