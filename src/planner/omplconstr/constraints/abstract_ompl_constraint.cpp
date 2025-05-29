@@ -132,14 +132,13 @@ void AbstractOMPLConstraint::setGoalSampleConfiguration(const std::vector<double
 	// std::cout << "Transformation in the goal, from robot_base_link 2 end_effector_link:\n" << goal_sample_t_robot_base_link_2_end_effector_link.matrix() << std::endl;
 	
 	// Extract rotation matrix and convert to quaternion
-    // Eigen::Matrix3d rotation_matrix = goal_sample_t_robot_base_link_2_end_effector_link.rotation();
-    // Eigen::Quaterniond quaternion(rotation_matrix);
-    // quaternion.normalize();  // Ensure unit quaternion
-	// std::cout << "Orientation (quaternion - x,y,z,w): "
-	// << quaternion.x() << ", "
-	// << quaternion.y() << ", "
-	// << quaternion.z() << ", "
-	// << quaternion.w() << std::endl;
+    Eigen::Matrix3d rotation_matrix = goal_sample_t_robot_base_link_2_end_effector_link.rotation();
+    Eigen::Quaterniond quaternion(rotation_matrix);
+	std::cout << "Orientation (qx,qy,qz,qw): "
+	<< quaternion.x() << ", "
+	<< quaternion.y() << ", "
+	<< quaternion.z() << ", "
+	<< quaternion.w() << std::endl;
 }
 
 

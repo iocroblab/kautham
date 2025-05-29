@@ -447,9 +447,9 @@ void addNode(SoSeparator *const parent, const aiNode *const node,
 
 SoSeparator *Assimp2Inventor(const aiScene *const scene, const std::string &path) {
     SoSeparator *root(new SoSeparator);
-    std::cout << "I imported a scene with " << scene->mNumTextures << " embedded textures, "
-              << scene->mNumMaterials << " materials and "
-              << scene->mNumMeshes << " meshes." << std::endl;
+    // std::cout << "I imported a scene with " << scene->mNumTextures << " embedded textures, "
+    //           << scene->mNumMaterials << " materials and "
+    //           << scene->mNumMeshes << " meshes." << std::endl;
     if (scene->mNumTextures > 0) {
         std::cout << "Found a scene with embedded textures. They will be ignored." << std::endl;
         ///I don't know how will be referenced inside the scene
