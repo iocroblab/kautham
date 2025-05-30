@@ -55,7 +55,7 @@ namespace Kautham {
             bool setRobotsConfig(std::vector<double> smpcoords, std::vector<RobConf> &config);
             bool setObstaclesConfig(std::vector<double> smpcoords);
             bool setQuery(std::vector<double> init, std::vector<double> goal);
-            bool setQuery(std::vector<std::string> control_names, std::vector<double> init, std::vector<double> goal);
+            bool setQuery(const std::vector<std::string>& _control_names, const std::vector<double>& _init, const std::vector<double>& _goal);
             bool setInit(std::vector<double> init);
             bool setGoal(std::vector<double> goal);
             bool setInitObs(std::vector<double> initObs);

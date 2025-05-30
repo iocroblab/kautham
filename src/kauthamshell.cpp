@@ -365,52 +365,52 @@ namespace Kautham {
         return false;
     }
 
-    bool kauthamshell::setQuery(std::vector<std::string> control_names, std::vector<double> init, std::vector<double> goal) {
+    bool kauthamshell::setQuery(const std::vector<std::string>& _control_names, const std::vector<double>& _init, const std::vector<double>& _goal) {
         try {
             if (!problemOpened()) {
                 std::cout << "The problem is not opened" << std::endl;
                 return false;
             }
 
+            // Error check: Ensure control_names and the new init have the same size, iff new init is requested:
+            if (!_init.empty() && (_control_names.size() != _init.size())) {
+                std::cout << "Error: Requested control_names and init must have the same size." << std::endl;
+                return false;
+            }
+
+            // Error check: Ensure control_names and the new goal have the same size, iff new goal is requested:
+            if (!_goal.empty() && (_control_names.size() != _goal.size())) {
+                std::cout << "Error: Requested control_names and goal must have the same size." << std::endl;
+                return false;
+            }
+            
             // Get the information of the opened problem:
             Problem *const problem = (Problem*)memPtr_;
-            std::vector<std::string> rob_control_names =  problem->wSpace()->getRobControlsNames();
+            std::vector<std::string> prob_control_names =  problem->wSpace()->getRobControlsNames();
             
             // Save the original samples (maybe only a single control will be set) and clear the stored samples:
             SampleSet *samples = problem->getSampleSet();
-            Sample *init_sample = new Sample(samples->getSampleAt(0));
-            Sample *goal_sample = new Sample(samples->getSampleAt(1));
+            Sample *init_sample = new Sample(*samples->getSampleAt(0));
+            Sample *goal_sample = new Sample(*samples->getSampleAt(1));
             samples->clear();
             
             std::vector<double> updated_init_coord = init_sample->getCoords();
             std::vector<double> updated_goal_coord = goal_sample->getCoords();
 
-            // Error check: Ensure control_names and the new init have the same size, iff new init is requested:
-            if (!init.empty() && (control_names.size() != init.size())) {
-                std::cout << "Error: control_names and init must have the same size." << std::endl;
-                return false;
-            }
-
-            // Error check: Ensure control_names and the new goal have the same size, iff new goal is requested:
-            if (!goal.empty() && (control_names.size() != goal.size())) {
-                std::cout << "Error: control_names and goal must have the same size." << std::endl;
-                return false;
-            }
-
             // Update original coordinates based on the control names and the new coordinates, iff they are requested:
-            for (size_t i = 0; i < control_names.size(); ++i) {
-                const std::string& name = control_names[i];
-                auto it = std::find(rob_control_names.begin(), rob_control_names.end(), name);
-                if (it != rob_control_names.end()) {
-                    size_t index = std::distance(rob_control_names.begin(), it);
-                    if (!init.empty()) {
-                        updated_init_coord[index] = init[i];
+            for (size_t i = 0; i < _control_names.size(); ++i) {
+                const std::string& name = _control_names[i];
+                auto it = std::find(prob_control_names.begin(), prob_control_names.end(), name);
+                if (it != prob_control_names.end()) {
+                    size_t index = std::distance(prob_control_names.begin(), it);
+                    if (!_init.empty()) {
+                        updated_init_coord[index] = _init[i];
                     }
-                    if (!goal.empty()) {
-                        updated_goal_coord[index] = goal[i];
+                    if (!_goal.empty()) {
+                        updated_goal_coord[index] = _goal[i];
                     }
                 } else {
-                    std::cout << "Error: Control name '" << name << "' not found in rob_control_names." << std::endl;
+                    std::cout << "Error: Control name '" << name << "' not found in prob_control_names." << std::endl;
                     return false;
                 }
             }
@@ -418,33 +418,36 @@ namespace Kautham {
             std::string msg_init, msg_goal;
 
             // Set the new Init sample:
-            init_sample->setCoords(updated_init_coord);
-            if(problem->wSpace()->collisionCheck(init_sample, &msg_init)) {
-                std::cout << "Init in collision: ";
-                for (unsigned k = 0; k < updated_init_coord.size(); k++) {
-                    std::cout << updated_init_coord[k] << " ";
+            if (!_init.empty()) {
+                init_sample->setCoords(updated_init_coord);
+                if(problem->wSpace()->collisionCheck(init_sample, &msg_init)) {
+                    std::cout << "Init in collision: ";
+                    for (unsigned k = 0; k < updated_init_coord.size(); k++) {
+                        std::cout << updated_init_coord[k] << " ";
+                    }
+                    std::cout << std::endl;
+                    std::cout << msg_init << std::endl;
+                    return false;
                 }
-                std::cout << std::endl;
-                std::cout << msg_init << std::endl;
-                return false;
             }
-            samples->add(init_sample);
+            samples->add(init_sample);  // Add init_sample to the KauthamSampleSet.
+            problem->getPlanner()->setInitSamp(init_sample);    // Set the init_sample as the init to the planner.
 
             // Goal sample:
-            goal_sample->setCoords(updated_goal_coord);
-            if(problem->wSpace()->collisionCheck(goal_sample, &msg_goal)) {
-                std::cout << "Goal in collision: ";
-                for (unsigned k = 0; k < updated_goal_coord.size(); k++) {
-                    std::cout << updated_goal_coord[k] << " ";
+            if (!_goal.empty()) {
+                goal_sample->setCoords(updated_goal_coord);
+                if(problem->wSpace()->collisionCheck(goal_sample, &msg_goal)) {
+                    std::cout << "Goal in collision: ";
+                    for (unsigned k = 0; k < updated_goal_coord.size(); k++) {
+                        std::cout << updated_goal_coord[k] << " ";
+                    }
+                    std::cout << std::endl;
+                    std::cout << msg_goal << std::endl;
+                    return false;
                 }
-                std::cout << std::endl;
-                std::cout << msg_goal << std::endl;
-                return false;
             }
-            samples->add(goal_sample);
-
-            problem->getPlanner()->setInitSamp(samples->getSampleAt(0));
-            problem->getPlanner()->setGoalSamp(samples->getSampleAt(1));
+            samples->add(goal_sample);  // Add goal_sample to the KauthamSampleSet.
+            problem->getPlanner()->setGoalSamp(goal_sample);    // Set the goal_sample as the goal to the planner.
 
             return true;
         } catch (const KthExcp& excp) {
@@ -2101,17 +2104,17 @@ namespace Kautham {
             problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->setHomePos(&tmp_config);
 
             // Debug:
-            float x,y,z;
-            x = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getPosition()[0];
-            y = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getPosition()[1];
-            z = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getPosition()[2];
-            std::cout << "Object " << _obs_name << " at position (x,y,z) = (" << x << "," << y << "," << z << ")" << std::endl;
-            float qx,qy,qz,qw;
-            qx = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[0];
-            qy = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[1];
-            qz = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[2];
-            qw = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[3];
-            std::cout << "Object " << _obs_name << " at quaternion (qx,qy,qz,qw) = (" << qx << "," << qy << "," << qz << "," << qw << ")" << std::endl;
+            // float x,y,z;
+            // x = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getPosition()[0];
+            // y = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getPosition()[1];
+            // z = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getPosition()[2];
+            // std::cout << "Object " << _obs_name << " at position (x,y,z) = (" << x << "," << y << "," << z << ")" << std::endl;
+            // float qx,qy,qz,qw;
+            // qx = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[0];
+            // qy = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[1];
+            // qz = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[2];
+            // qw = problem->getPlanner()->wkSpace()->getObstacle(_obs_name)->getLink(0)->getElement()->getOrientation()[3];
+            // std::cout << "Object " << _obs_name << " at quaternion (qx,qy,qz,qw) = (" << qx << "," << qy << "," << qz << "," << qw << ")" << std::endl;
 
             return true;
 
@@ -2131,7 +2134,7 @@ namespace Kautham {
     //Gets obstacle pose with orientation defined as axisAn (format="axis-angle") or by default as quaternion (format="quaternion")
     bool kauthamshell::getObstaclePos(string obsname, std::vector<double> &pos){
 
-        cout << "************Getting Pose of obstacle "<<obsname<<endl;
+        // std::cout << "************Getting Pose of obstacle " << obsname << std::endl;
         Problem *const problem = (Problem*)memPtr_;
 
         pos.clear();
