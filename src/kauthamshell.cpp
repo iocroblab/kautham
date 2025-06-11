@@ -2193,7 +2193,7 @@ namespace Kautham {
 
     bool kauthamshell::getObstaclePos(const std::string& _obs_name, Eigen::AffineCompact3d& _obs_pose) {
 
-        std::cout << "Getting pose of obstacle " << _obs_name << std::endl;
+        // std::cout << "Getting pose of obstacle " << _obs_name << std::endl;
         Problem *const problem = (Problem*)memPtr_;
 
         Robot* obstacle = problem->getPlanner()->wkSpace()->getObstacle(_obs_name);
