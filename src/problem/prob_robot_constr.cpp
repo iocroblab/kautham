@@ -38,6 +38,7 @@ namespace Kautham {
         this->type_ = _type;
         this->enabled_ = true;
         this->origin_ = Eigen::AffineCompact3d::Identity();
+        this->allowed_volume_region_ = AllowedVolumeRegion::Inside;
     }
 
     void RobotProblemConstraint::printRobProbConstraintInfo() const {
@@ -68,6 +69,20 @@ namespace Kautham {
             std::cout << "\t\tHeight (m): " << geo_params_.height << std::endl;
             std::cout << "\t\tRadius (m): " << geo_params_.radius << std::endl;
 
+            std::cout << "\tAllowed region: ";
+            switch (allowed_volume_region_) {
+                case AllowedVolumeRegion::Inside:
+                    std::cout << "Inside";
+                    break;
+                case AllowedVolumeRegion::Outside:
+                    std::cout << "Outside";
+                    break;
+                default:
+                    std::cout << "Unknown";
+                    break;
+            }
+            std::cout << std::endl;
+            
             std::cout << "\tReference frame entity: " << reference_frame_entity_ << std::endl;
             std::cout << "\tReference frame link: " << reference_frame_link_ << std::endl;
     

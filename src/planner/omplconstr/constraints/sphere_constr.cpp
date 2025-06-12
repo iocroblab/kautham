@@ -24,13 +24,26 @@ void SphereConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Eige
     double z_error = t_error.translation().z();
 
 	// Euclidean distance from the center of the sphere
-    double dist = std::sqrt(x_error*x_error + y_error*y_error + z_error*z_error);
+    double dist = std::sqrt(x_error * x_error + y_error * y_error + z_error * z_error);
 
-	double delta_radius;
-    if (dist <= radius) {
-        delta_radius = 0; // Inside or on the sphere
-    } else {
-        delta_radius = dist - radius; // Outside the sphere
+    // Get the allowed region from the constraint
+    auto allowed_region = robot_prob_constraint_->getAllowedVolumeRegion();
+
+	double delta_radius = 0.0;
+    if (allowed_region == Kautham::RobotProblemConstraint::AllowedVolumeRegion::Inside) {
+        // Penalize positions outside the sphere:
+        if (dist > radius) {
+            delta_radius = dist - radius;
+        } else {
+            delta_radius = 0.0;
+        }
+    } else if (allowed_region == Kautham::RobotProblemConstraint::AllowedVolumeRegion::Outside) {
+        // Penalize positions inside the sphere:
+        if (dist < radius) {
+            delta_radius = -(radius - dist); // Negative penalty for being inside
+        } else {
+            delta_radius = 0.0;
+        }
     }
 
 	// The constraint could be defined, but not used. That means, is like a unconstrained geometric problem:

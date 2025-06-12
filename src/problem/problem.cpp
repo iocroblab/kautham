@@ -1670,6 +1670,15 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
             }
         }
 
+        if (pugi::xml_node allowed_volume_region_node = _constraint_node.child("AllowedVolumeRegion")) {
+            std::string region_name = allowed_volume_region_node.attribute("name").as_string();
+            if (region_name == "Inner") {
+                this_constraint->setAsInnerConstraint();
+            } else if (region_name == "Outer") {
+                this_constraint->setAsOuterConstraint();
+            }
+        }
+
         // Load the reference frame information:
         if (pugi::xml_node reference_frame_node = _constraint_node.child("ReferenceFrame")) {
             if (!reference_frame_node.attribute("entity") || !reference_frame_node.attribute("link")) {

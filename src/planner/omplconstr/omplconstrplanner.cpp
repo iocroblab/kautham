@@ -326,7 +326,7 @@ namespace Kautham {
                             // Create OMPL constraints for each constraint in the group:
                             std::vector<std::shared_ptr<ompl::base::Constraint>> ompl_constraints;
                             for (const auto& constr : group_constraints) {
-                                auto constraint = constraints_factory->createConstraint(constr->getConstraintType(), constr, group_constr_joints.size());
+                                auto constraint = constraints_factory->createConstraint(constr->getConstraintType(), constr, group_constr_joints.size()*group_constraints.size());
                                 constraint->associateRobot(current_rob);
                                 if (!constr->getReferenceFrameEntity().empty()) {
                                     constraint->assignReferencedEntity(_wkSpace->getObstacle(constr->getReferenceFrameEntity()));
@@ -336,7 +336,7 @@ namespace Kautham {
                                 ompl_constraints.push_back(constraint);
                             }
 
-                            auto intersection_constraint = std::make_shared<KauthamOMPLConstraintIntersection>(group_constr_joints.size(), ompl_constraints);
+                            auto intersection_constraint = std::make_shared<KauthamOMPLConstraintIntersection>(group_constr_joints.size()*group_constraints.size(), ompl_constraints);
                             spaceRnConstr = std::make_shared<ob::ProjectedStateSpace>(spaceRn, intersection_constraint);
                             space_name = "ssRobot" + std::to_string(rob) + "_RnConstr_" + group_name;
                             spaceRob->as<ob::CompoundStateSpace>()->addSubspace(spaceRnConstr, 1.0);

@@ -24,23 +24,43 @@ void CylinderConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Ei
     double y_error = t_error.translation().y();
     double z_error = t_error.translation().z();
 
-	// Radius constraint (x-y plane)
-    double dist_xy = std::sqrt(x_error*x_error + y_error*y_error);
-    double delta_radius;
-    if (dist_xy <= radius) {
-        delta_radius = 0;	// Radious constraint fulfilled.
-    } else {
-		delta_radius = dist_xy - radius;
-    }
+    // Get the allowed region (inside or outside) from the constraint
+    auto allowed_region = robot_prob_constraint_->getAllowedVolumeRegion();
 
-    // Height constraint (z-axis from base)
-    double delta_height;
-    if (0 <= z_error && z_error <= height) {
-        delta_height = 0;	// Height constraint fulfilled.
-    } else if (z_error < 0) {
-        delta_height = z_error;  // Below base (delta_height is negative)
-    } else {	// z < height
-        delta_height = z_error - height;  // Above top (delta_height is positive)
+    double dist_xy = std::sqrt(x_error * x_error + y_error * y_error);
+    double delta_radius = 0.0;
+    double delta_height = 0.0;
+
+    if (allowed_region == Kautham::RobotProblemConstraint::AllowedVolumeRegion::Inside) {
+        // Penalize points outside the cylinder's radius
+        if (dist_xy > radius) {
+            delta_radius = dist_xy - radius;
+        } else {
+            delta_radius = 0.0;
+        }
+        // Penalize points outside the height limits
+        if (z_error < 0) {
+            delta_height = z_error;
+        } else if (z_error > height) {
+            delta_height = z_error - height;
+        } else {
+            delta_height = 0.0;
+        }
+    } else if (allowed_region == Kautham::RobotProblemConstraint::AllowedVolumeRegion::Outside) {
+        // Only penalize if inside both radius and height bounds
+        bool inside_radius = (dist_xy < radius);
+        bool inside_height = (0 <= z_error) && (z_error <= height);
+        if (inside_radius && inside_height) {
+            // Inside the cylinder: penalize
+            delta_radius = -(radius - dist_xy);
+            double dist_to_base = std::abs(z_error);
+            double dist_to_top = std::abs(z_error - height);
+            delta_height = -std::min(dist_to_base, dist_to_top);
+        } else {
+            // Outside the cylinder: constraint satisfied
+            delta_radius = 0.0;
+            delta_height = 0.0;
+        }
     }
 
 	// The constraint could be defined, but not used. That means, is like a unconstrained geometric problem:

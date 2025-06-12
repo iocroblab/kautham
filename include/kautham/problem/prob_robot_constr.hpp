@@ -50,6 +50,11 @@ namespace Kautham {
                 double radius;
             };
 
+            enum class AllowedVolumeRegion {
+                Inside,
+                Outside
+            };
+
             RobotProblemConstraint(std::string _id, std::string _type); //!<  Constructor
 
             void printRobProbConstraintInfo() const;
@@ -62,20 +67,27 @@ namespace Kautham {
             inline void setEnabledStatus(const bool _status){enabled_ = _status;}
             inline void setIntersectionGroup(const std::string& _intersection_group){intersection_group_ = _intersection_group;}
 
+            // SET DYNAMIC TOLERANCE METHODS:
+            inline void setToleranceInfo(const double _value, const bool _variable, const double _gradient){tolerance_value_ = _value; tolerance_variable_ = _variable; tolerance_grandient_ = _gradient;}
+
             // SET METHODS ORIENTATION:
             void setTargetOrientation(const double quat_x, const double quat_y, const double quat_z, const double quat_w);
             void setTargetOrientation(const Eigen::Quaterniond& _quat);
-            inline void setToleranceInfo(const double _value, const bool _variable, const double _gradient){tolerance_value_ = _value; tolerance_variable_ = _variable; tolerance_grandient_ = _gradient;}
             inline void setFreeMovementAxes(const bool free_x, const bool free_y, const bool free_z){free_movement_axes_.x() = static_cast<double>(free_x); free_movement_axes_.y() = static_cast<double>(free_y); free_movement_axes_.z() = static_cast<double>(free_z);}
 
             // SET METHODS GEOMETRIC:
             void setReferenceFrame(const std::string& _entity_id, const std::string& _link_name);
+            inline void setOrigin(Eigen::AffineCompact3d _origin) {this->origin_ = _origin;}
             void setOrigin(const double x, const double y, const double z, const double quat_x, const double quat_y, const double quat_z, const double quat_w);
             void setOrigin(const double x, const double y, const double z, const double roll, const double pitch, const double yaw);
             inline void setGeometricParamLength(const double _length){geo_params_.length = _length;}
             inline void setGeometricParamWidth(const double _width){geo_params_.width = _width;}
             inline void setGeometricParamHeight(const double _height){geo_params_.height = _height;}
             inline void setGeometricParamRadius(const double _radius){geo_params_.radius = _radius;}
+
+            // SET METHODS GEOMETRIC VOLUME:
+            inline void setAsInnerConstraint() {allowed_volume_region_ = AllowedVolumeRegion::Inside;}
+            inline void setAsOuterConstraint() {allowed_volume_region_ = AllowedVolumeRegion::Outside;}
 
             // GET METHODS MAIN:
             inline std::string getConstraintId() const {return id_;}
@@ -86,11 +98,13 @@ namespace Kautham {
             inline std::string getTargetLink() const {return target_link_;}
             inline std::string getIntersectionGroup() const {return intersection_group_;}
 
-            // GET METHODS ORIENTATION:
-            inline Eigen::Quaterniond getTargetOrientation() const {return target_orientation_;}
+            // GET DYNAMIC TOLERANCE METHODS:
             inline double getToleranceValue() const {return tolerance_value_;}
             inline bool isToleranceVariable() const {return tolerance_variable_;}
             inline double getToleranceGradient() const {return tolerance_grandient_;}
+
+            // GET METHODS ORIENTATION:
+            inline Eigen::Quaterniond getTargetOrientation() const {return target_orientation_;}
             inline Eigen::Vector3d getFreeMovementAxes() const {return free_movement_axes_;}
 
             // GET METHODS GEOMETRIC:
@@ -102,6 +116,9 @@ namespace Kautham {
             inline double getGeometricParamHeight() const {return geo_params_.height;}
             inline double getGeometricParamRadius() const {return geo_params_.radius;}
 
+            // GET METHODS GEOMETRIC VOLUME:
+            inline AllowedVolumeRegion getAllowedVolumeRegion() const {return allowed_volume_region_;}
+
         private:
             // MAIN:
             std::string id_;  //!< Unique identifier.
@@ -111,11 +128,13 @@ namespace Kautham {
             std::string target_link_;  //!< The frame where the target is set.
             std::string intersection_group_; //!< Unique identifier for the group of constraints that share the same joints (i.e., intersect) with this constraint within the robot. Empty means without group.
 
-            // ORIENTATION:
-            Eigen::Quaterniond target_orientation_; //!< The desired orientation to maintain.
+            // DYNAMIC TOLERANCE:
             double tolerance_value_;    //!< The tolerance of the constraint.
             bool tolerance_variable_;  //!< If the tolerance is fixed or variable in function of how far is the target_link from the goal.
             double tolerance_grandient_;    //!< The gradient in rad/m if the tolerance is variable.
+
+            // ORIENTATION:
+            Eigen::Quaterniond target_orientation_; //!< The desired orientation to maintain.
             Eigen::Vector3d free_movement_axes_; //!< (x,y,z) bool axes, that indicates which axis will be free to move (when the constraint is used).
             
             // GEOMETRIC:
@@ -123,6 +142,13 @@ namespace Kautham {
             std::string reference_frame_entity_;  //!< To which kautham entity (Robot || Obstacle || kautham world) is referenced the constraint.
             std::string reference_frame_link_;  //!< Which link of the reference is used (Robot -> Joint or Link; Obstacle -> Link; kautham world -> Empty).
             Eigen::AffineCompact3d origin_; //!< Transformation of the geometric constraint wrt the reference frame link.
+            
+            // GEOMETRIC VOLUME:
+            AllowedVolumeRegion allowed_volume_region_;  //!< The contraint can allow to work inside (by default) or outside of the volume.
+
+            // GEOMETRIC SURFACE:
+            // ToDo: Use dynamic tolerance and more things?
+
     };
 
   /** @}   end of Doxygen module "Problem" */
