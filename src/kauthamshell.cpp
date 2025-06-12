@@ -2779,5 +2779,17 @@ namespace Kautham {
         return true;
     }
 
+    bool kauthamshell::updateConstraintGeoPose(const std::string& _robot_name, const std::string& _id, const Eigen::AffineCompact3d& _constraint_origin) {
+        if (!problemOpened()) {
+            std::cout << "The problem is not opened" << std::endl;
+            return false;
+        }
+
+        Problem *const problem = (Problem*)memPtr_;
+        Robot* robot = problem->wSpace()->getRobot(_robot_name);
+        std::shared_ptr<RobotProblemConstraint> prob_robot_constr = robot->getConstraintById(_id);
+        prob_robot_constr->setOrigin(_constraint_origin);
+        return true;
+    }
 
 }   // Namespace: Kautham

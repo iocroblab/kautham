@@ -122,13 +122,16 @@ namespace Kautham {
             bool getConstraintIdsPerRobot(std::map<std::string,std::vector<std::string>>& _constraints_by_robot);
             bool updateConstraintTargetLink(const std::string& _robot_name, const std::string& _id, const std::string& _target_link);
             bool updateConstraintEnabled(const std::string& _robot_name, const std::string& _id, const bool& _enabled);
+            // Kautham Public Dynamic Tolerance Constraints Methods:
+            bool updateConstraintTolerance(const std::string& _robot_name, const std::string& _id, const double& _tolerance_value, const bool& _tolerance_variable, const double& _tolerance_grandient);
             // Kautham Public Orientation Constraints Methods:
             bool updateConstraintTargetOrientation(const std::string& _robot_name, const std::string& _id, const Eigen::Quaterniond& _target_orientation);
             bool updateConstraintTargetOrientation(const std::string& _robot_name, const std::string& _id, const double& qx, const double& qy, const double& qz, const double& qw);
-            bool updateConstraintTolerance(const std::string& _robot_name, const std::string& _id, const double& _tolerance_value, const bool& _tolerance_variable, const double& _tolerance_grandient);
             bool updateConstraintFreeMovementAxes(const std::string& _robot_name, const std::string& _id, const bool& _free_x, const bool& _free_y, const bool& _free_z);
             // Kautham Public Geometric Constraints Methods:
             bool getConstraintGeoProperties(const std::string& _robot_name, const std::string& _id, std::string& _type, std::map<std::string, double>& _geo_params_map, Eigen::AffineCompact3d& _constraint_pose, std::string& _reference_frame_entity, std::string& _reference_frame_link_);
+            bool updateConstraintGeoPose(const std::string& _robot_name, const std::string& _id, const Eigen::AffineCompact3d& _constraint_origin);
+            // bool updateConstraintGeoParams(const std::string& _robot_name, const std::string& _id, std::map<std::string, double>& _geo_params_map);
 
         private:
             void *memPtr_;
