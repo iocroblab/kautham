@@ -34,54 +34,6 @@ void ConeConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen:
     // Calculate radial distance in XY plane
     double dist_xy = std::sqrt(x_error * x_error + y_error * y_error);
 
-    // Calculate max allowed radius at this z
-    double max_radius_at_z = (z_error / height) * radius; // Only meaningful if 0 <= z <= height
-
-	// Height constraint (vertex at origin, base at z=height)
-    if (allowed_region == Kautham::RobotProblemConstraint::AllowedVolumeRegion::Inside) {
-        // Penalize points outside the cone's height range:
-        if (z_error < 0) {
-            delta_height = z_error; // Below the tip (vertex)
-        } else if (z_error > height) {
-            delta_height = z_error - height; // Above the base
-        } else {
-            delta_height = 0.0; // Within height range
-        }
-    } else if (allowed_region == Kautham::RobotProblemConstraint::AllowedVolumeRegion::Outside) {
-        // Penalize points inside the cone's height range:
-        if (0 <= z_error && z_error <= height) {
-            // Inside height range: penalize proximity to the closest boundary (tip or base)
-            double dist_to_tip = std::abs(z_error);
-            double dist_to_base = std::abs(z_error - height);
-            delta_height = -std::min(dist_to_tip, dist_to_base); // Negative penalty, as inside
-        } else {
-            delta_height = 0.0; // Outside height range
-        }
-    }
-
-    // Radius constraint (only meaningful within height range)
-    if (z_error < 0 || height < z_error) {
-        delta_radius = 0.0; // Outside height, ignore radius constraint. Will be computed only when z fulfills.
-    } else {
-        double max_radius_at_z = (z_error / height) * radius;
-        double dist_xy = std::sqrt(x_error * x_error + y_error * y_error);
-        if (allowed_region == Kautham::RobotProblemConstraint::AllowedVolumeRegion::Inside) {
-            // Penalize points outside the cone at this z:
-            if (dist_xy > max_radius_at_z) {
-                delta_radius = dist_xy - max_radius_at_z;
-            } else {
-                delta_radius = 0.0;
-            }
-        } else if (allowed_region == Kautham::RobotProblemConstraint::AllowedVolumeRegion::Outside) {
-            // Penalize points inside the cone at this z:
-            if (dist_xy < max_radius_at_z) {
-                delta_radius = max_radius_at_z - dist_xy;
-            } else {
-                delta_radius = 0.0;
-            }
-        }
-    }
-
     if (allowed_region == Kautham::RobotProblemConstraint::AllowedVolumeRegion::Inside) {
         // Height constraint
         if (z_error < 0) {
