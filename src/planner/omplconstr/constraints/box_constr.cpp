@@ -29,10 +29,6 @@ void BoxConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen::
     double half_width  = width  / 2.0;
     double half_height = height / 2.0;
 
-    bool inside_x = (x_error >= -half_length) && (x_error <= half_length);
-    bool inside_y = (y_error >= -half_width) && (y_error <= half_width);
-    bool inside_z = (z_error >= -half_height) && (z_error <= half_height);
-
 	double delta_length = 0.0;
     double delta_width  = 0.0;
     double delta_height = 0.0;
