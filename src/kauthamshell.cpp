@@ -283,6 +283,54 @@ namespace Kautham {
     }
 
 
+    bool kauthamshell::setRobotsConfigByIndexSample(const unsigned int _index_sample, std::vector<RobConf>& sample_config_) {
+        try {
+            if (!problemOpened()) {
+                std::cout << "The problem is not opened." << std::endl;
+                return false;
+            }
+
+            Problem* const problem = static_cast<Problem*>(memPtr_);
+            if (problem->getPlanner()->isSolved()) {
+                std::vector<Sample*>* path_samples = problem->getPlanner()->getPath();
+                problem->wSpace()->moveRobotsTo(path_samples->at(_index_sample));
+                sample_config_ = path_samples->at(_index_sample)->getMappedConf();
+                return true;
+            } else {
+                Sample* requested_sample = nullptr;
+                if (_index_sample == 0) {
+                    requested_sample = problem->getPlanner()->getInitSample();
+                } else if (_index_sample == 1) {
+                    requested_sample = problem->getPlanner()->getGoalSample();
+                } else {
+                    std::cout << "Invalid _index_sample: must be '0' or '1', when the problem is not solved." << std::endl;
+                    return false;
+                }
+        
+                if (!requested_sample) {
+                    std::cout << "Requested sample is null." << std::endl;
+                    return false;
+                }
+        
+                problem->wSpace()->moveRobotsTo(requested_sample);
+                sample_config_ = requested_sample->getMappedConf();
+                return true;
+            }
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return false;
+    }
+
+
     bool kauthamshell::setObstaclesConfig(vector<double> smpcoords) {
         try {
             if (!problemOpened()) {
@@ -1365,6 +1413,34 @@ namespace Kautham {
             } 
             else {
                 std::cout << "ERROR in getPath: Unsupported planner family." << std::endl;
+            }
+        } 
+        catch (const KthExcp& excp) {
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
+        } 
+        catch (const std::exception& excp) {
+            std::cout << "Error: " << excp.what() << std::endl;
+        } 
+        catch (...) {
+            std::cout << "An unexpected error occurred. Verify the problem formulation with Kautham2." << std::endl;
+        }
+
+        return false;
+    }
+
+
+    bool kauthamshell::getSolvedPathNumSamples(unsigned int& num_samples_) {
+        try {
+            if (!problemOpened()) {
+                std::cout << "The problem is not opened" << std::endl;
+                return false;
+            }
+
+            Problem* const problem = static_cast<Problem*>(memPtr_);
+            if (problem->getPlanner()->isSolved()) {
+                std::vector<Sample*>* path_samples = problem->getPlanner()->getPath();
+                num_samples_ = path_samples->size();
+                return true;
             }
         } 
         catch (const KthExcp& excp) {

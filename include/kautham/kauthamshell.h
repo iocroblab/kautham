@@ -53,6 +53,7 @@ namespace Kautham {
             bool checkCollision(std::vector<double> smpcoords, bool *collisionFree, std::string *msg, std::pair<std::pair<int, std::string>, std::pair<int, int> > *colliding_elements = NULL);
             bool setRobotsConfig(std::vector<double> smpcoords);
             bool setRobotsConfig(std::vector<double> smpcoords, std::vector<RobConf> &config);
+            bool setRobotsConfigByIndexSample(const unsigned int _index_sample, std::vector<RobConf>& sample_config_); 
             bool setObstaclesConfig(std::vector<double> smpcoords);
             bool setQuery(std::vector<double> init, std::vector<double> goal);
             bool setQuery(const std::vector<std::string>& _control_names, const std::vector<double>& _init, const std::vector<double>& _goal);
@@ -74,6 +75,7 @@ namespace Kautham {
             bool solve(std::ostream &graphVizPlannerDataFile);
             bool getPath(std::ostream &path);
             bool getPath(std::vector<std::vector<double>> &path, std::vector<std::string> &requested_joint_names, bool _only_controlled=false);
+            bool getSolvedPathNumSamples(unsigned int& num_samples_);
             bool computeTrajecotry(std::vector<std::vector<double>> &path, std::vector<double> &desired_max_velocity, std::vector<double> &desired_max_acceleration, double max_path_deviation, double freq, std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start);
             bool getProblemMaxJointVelocities(std::vector<double> &requested_max_joint_velocities, std::vector<std::string> &requested_joint_names, bool _only_controlled=false);
             bool getTrajecotry(std::vector<double> &ratio_velocity, std::vector<double> &ratio_acceleration, double max_path_deviation, double freq, std::vector<std::string> &requested_joint_names, std::vector<std::vector<double>> &traj_positions, std::vector<std::vector<double>> &traj_velocities, std::vector<double> & traj_time_from_start, bool _only_controlled=false);

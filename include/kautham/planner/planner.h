@@ -66,6 +66,8 @@ namespace Kautham {
        inline std::size_t            getNumGoalSamp() {return _goal.size();}
        inline void                   setInitSamp(Sample* init) {_init.clear(); _init.push_back(init);}
        inline void                   setGoalSamp(Sample* goal) {_goal.clear(); _goal.push_back(goal);}
+       inline Sample*                getInitSample() { return _init.at(0); }
+       inline Sample*                getGoalSample() { return _goal.at(0); }
        inline void                   addInitSamp(Sample* init) {_init.push_back(init);}
        inline void                   addGoalSamp(Sample* goal) {_goal.push_back(goal);}
        inline void                   clearInitSamp() {_init.clear();}
