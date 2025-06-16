@@ -34,6 +34,9 @@ void ConeConstraint::function(const Eigen::Ref<const Eigen::VectorXd> &q, Eigen:
     // Calculate radial distance in XY plane
     double dist_xy = std::sqrt(x_error * x_error + y_error * y_error);
 
+    // Calculate max allowed radius at this z
+    double max_radius_at_z = (z_error / height) * radius; // Only meaningful if 0 <= z <= height
+
     if (allowed_region == Kautham::RobotProblemConstraint::AllowedVolumeRegion::Inside) {
         // Height constraint
         if (z_error < 0) {
