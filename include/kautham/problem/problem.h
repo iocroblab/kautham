@@ -386,6 +386,8 @@ namespace Kautham {
 
       bool parseQueryNode(pugi::xml_node _query_node);
 
+      bool processInitialAttachedObstacle(const pugi::xml_node& _initial_attached_obstacle_node);
+
     };
 
     /** @}   end of Doxygen module "Problem" */

@@ -860,6 +860,14 @@ bool Problem::parseQueryNode(pugi::xml_node _query_node) {
 }
 
 
+bool Problem::processInitialAttachedObstacle(const pugi::xml_node& _initial_attached_obstacle_node) {
+    const std::string robot_name = _initial_attached_obstacle_node.attribute("robot").as_string();
+    const std::string robot_link_name = _initial_attached_obstacle_node.attribute("link").as_string();
+    const std::string obstacle_name = _initial_attached_obstacle_node.attribute("obstacle").as_string();
+    bool success = this->_wspace->attachObstacle2RobotLink(robot_name, robot_link_name, obstacle_name);
+    return success;
+}
+
 
 bool Problem::createCSpaceFromFile(xml_document *doc) {
 
@@ -977,6 +985,25 @@ bool Problem::createCSpaceFromFile(xml_document *doc) {
                 _cspace->getSampleAt(i)->addNeigh(j);
                 _cspace->getSampleAt(j)->addNeigh(i);
             }
+        }
+
+        // Now that all robots, obstacles and samples are defined, parse if initial attachments are requested in the problem file:
+        xml_node initial_attached_obstacle_node = doc->child("Problem").child("InitialAttachedObstacle");
+        // First move the workspace to the intial sample state, due the attachment is associated to that state.
+        Sample* attachable_sample = this->_cspace->getStart(0);
+        this->_wspace->moveRobotsTo(attachable_sample);
+        // Iterate over InitialAttachedObstacle elements (if exists):
+        while (initial_attached_obstacle_node) {
+            if (!Problem::processInitialAttachedObstacle(initial_attached_obstacle_node)) {
+                std::cerr   << "Not possible to attach obstacle (" << initial_attached_obstacle_node.attribute("obstacle").as_string() 
+                            << ") to the robot (" << initial_attached_obstacle_node.attribute("robot").as_string() 
+                            << ") in the link (" << initial_attached_obstacle_node.attribute("link").as_string() 
+                            << ") as defined in the XML problem." << std::endl;
+                return false;
+            }
+    
+            // Move to the next InitialAttachedObstacle (if exists):
+            initial_attached_obstacle_node = initial_attached_obstacle_node.next_sibling("InitialAttachedObstacle");
         }
 
         if (_cspace->getNumStarts() > 0 && _cspace->getNumGoals() > 0) return true;
