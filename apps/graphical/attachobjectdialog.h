@@ -173,12 +173,6 @@ namespace Kautham {
         */
         SelectRobotLinkDialog *dialog;
 
-        /*!
-         * \brief obsMap map between table items and names of objects
-         */
-        QMap <QTableWidgetItem *, string> obsMap;
-
-
 
         /*!
          * \brief writeGUI writes a message in the GUI

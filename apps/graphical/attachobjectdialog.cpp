@@ -220,35 +220,65 @@ namespace Kautham {
     void AttachObjectDialog::set(WorkSpace *workSpace) {
         wSpace = workSpace;
         dialog->set(workSpace);
-        obsMap.clear();
-
+    
+        // Clear attachableTable
         for (int i = attachableTable->rowCount()-1; i >= 0; --i) {
             delete attachableTable->takeItem(i,0);
             attachableTable->removeRow(i);
         }
-        Robot *obs;
-        QTableWidgetItem *item;
+    
+        // Fill attachableTable (only attachable obstacles)
         int index = 0;
-        for (std::pair<std::string, Robot*> element : wSpace->getObstaclesMap() ){
-            obs = element.second;
+        for (const auto& element : wSpace->getObstaclesMap()) {
+            Robot* obs = element.second;
             if (obs->isAttachable()) {
-                item = new QTableWidgetItem(obs->getName().c_str());
+                QTableWidgetItem* item = new QTableWidgetItem(obs->getName().c_str());
                 item->setFlags(item->flags() ^ Qt::ItemIsEditable);
                 attachableTable->insertRow(index);
                 attachableTable->setItem(index,0,item);
-                obsMap.insert(item, element.first);
                 index++;
             }
         }
-        attachableTable->setCurrentCell(0,0);
-
+        if (attachableTable->rowCount() > 0)
+            attachableTable->setCurrentCell(0,0);
+    
+        // Clear attachedTable
         for (int i = attachedTable->rowCount()-1; i >= 0; --i) {
             delete attachedTable->takeItem(i,0);
             delete attachedTable->takeItem(i,1);
             delete attachedTable->takeItem(i,2);
             attachedTable->removeRow(i);
         }
-        attachedTable->setCurrentCell(0,0);
+    
+        // Fill attachedTable (all attached obstacles, with robot and link info)
+        int attachedIndex = 0;
+        for (const auto& element : wSpace->getObstaclesMap()) {
+            Robot* obs = element.second;
+            if (obs->isAttached()) {
+                Robot* attachedRobot = obs->getRobotAttachedTo();
+                Link* attachedLink = obs->getLinkAttachedTo();
+    
+                QTableWidgetItem* nameItem = new QTableWidgetItem(obs->getName().c_str());
+                nameItem->setFlags(nameItem->flags() ^ Qt::ItemIsEditable);
+    
+                QString robotName = attachedRobot ? QString::fromStdString(attachedRobot->getName()) : "N/A";
+                QString linkName = attachedLink ? QString::fromStdString(attachedLink->getName()) : "N/A";
+    
+                QTableWidgetItem* robotItem = new QTableWidgetItem(robotName);
+                robotItem->setFlags(robotItem->flags() ^ Qt::ItemIsEditable);
+    
+                QTableWidgetItem* linkItem = new QTableWidgetItem(linkName);
+                linkItem->setFlags(linkItem->flags() ^ Qt::ItemIsEditable);
+    
+                attachedTable->insertRow(attachedIndex);
+                attachedTable->setItem(attachedIndex, 0, nameItem);
+                attachedTable->setItem(attachedIndex, 1, robotItem);
+                attachedTable->setItem(attachedIndex, 2, linkItem);
+                attachedIndex++;
+            }
+        }
+        if (attachedTable->rowCount() > 0)
+            attachedTable->setCurrentCell(0,0);
     }
 
 
@@ -256,33 +286,14 @@ namespace Kautham {
         int index = attachableTable->currentRow();
         QTableWidgetItem *item = attachableTable->item(index,0);
         if (item != NULL) {
-            if (obsMap.contains(item)) {
-                string obsname = obsMap.value(item);
-                uint robot, link;
-                if (dialog->getRobotLink(&robot,&link)) {
-                    if (wSpace->attachObstacle2RobotLink(robot,link,obsname)) {
-                        index = attachableTable->currentRow();
-                        item = attachableTable->takeItem(index,0);
-                        attachableTable->removeRow(index);
-                        attachableTable->setCurrentCell(0,0);
-
-                        index = attachedTable->rowCount();
-                        attachedTable->insertRow(index);
-                        attachedTable->setItem(index,0,item);
-                        item = new QTableWidgetItem(wSpace->getRobot(robot)->
-                                                    getName().c_str());
-                        item->setFlags(item->flags() ^ Qt::ItemIsEditable);
-                        attachedTable->setItem(index,1,item);
-                        item = new QTableWidgetItem(wSpace->getRobot(robot)->
-                                                    getLink(link)->getName().c_str());
-                        item->setFlags(item->flags() ^ Qt::ItemIsEditable);
-                        attachedTable->setItem(index,2,item);
-                        attachedTable->setCurrentCell(index,0);
-
-                        writeGUI("Object could be attached successfully");
-                    } else {
-                        writeGUI("Object couldn't be attached");
-                    }
+            std::string obsname = item->text().toStdString();
+            uint robot, link;
+            if (dialog->getRobotLink(&robot, &link)) {
+                if (wSpace->attachObstacle2RobotLink(robot, link, obsname)) {
+                    writeGUI("Object could be attached successfully");
+                    set(wSpace);
+                } else {
+                    writeGUI("Object couldn't be attached");
                 }
             }
         }
@@ -293,28 +304,16 @@ namespace Kautham {
         int index = attachedTable->currentRow();
         QTableWidgetItem *item = attachedTable->item(index,0);
         if (item != NULL) {
-            if (obsMap.contains(item)) {
-                string obsname = obsMap.value(item);
-                if (wSpace->detachObstacle(obsname)) {
-                    item = attachedTable->takeItem(index,0);
-                    delete attachedTable->takeItem(index,1);
-                    delete attachedTable->takeItem(index,2);
-                    attachedTable->removeRow(index);
-                    attachedTable->setCurrentCell(0,0);
-
-                    index = attachableTable->rowCount();
-                    attachableTable->insertRow(index);
-                    attachableTable->setItem(index,0,item);
-                    attachableTable->setCurrentCell(index,0);
-
-                    writeGUI("Object could be detached successfully");
-                } else {
-                    writeGUI("Object couldn't be detached");
-                }
+            std::string obsname = item->text().toStdString(); // Get name directly from table
+            if (wSpace->detachObstacle(obsname)) {
+                writeGUI("Object could be detached successfully");
+                set(wSpace); // Refresh tables from model state
+            } else {
+                writeGUI("Object couldn't be detached");
             }
         }
     }
-
+    
 
     void AttachObjectDialog::writeGUI(string text){
         emit sendText(text);
