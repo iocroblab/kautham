@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>kautham</name>
-  <version>5.0.1</version>
+  <version>5.1.1</version>
   <description>The Kautham Project is a software tool used at the Institute of Industrial
   and Control Engineering (IOC-UPC) for teaching and research in robot motion
   planning. The tool allows to cope with problems with one or more robots,   
