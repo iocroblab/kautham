@@ -283,7 +283,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setRobotsConfigByIndexSample(const unsigned int _index_sample, std::vector<RobConf>& sample_config_) {
+    bool kauthamshell::setRobotsConfigByIndexSample(const std::string& _sample_type, const unsigned int _sample_index, std::vector<RobConf>& sample_config_) {
         try {
             if (!problemOpened()) {
                 std::cout << "The problem is not opened." << std::endl;
@@ -291,31 +291,36 @@ namespace Kautham {
             }
 
             Problem* const problem = static_cast<Problem*>(memPtr_);
-            if (problem->getPlanner()->isSolved()) {
+            Sample* requested_sample = nullptr;
+
+            if (_sample_type == "path") {
+                if (!problem->getPlanner()->isSolved()) {
+                    std::cout << "Invalid path sample request, the problem is not solved." << std::endl;
+                    return false;
+                }
                 std::vector<Sample*>* path_samples = problem->getPlanner()->getPath();
-                problem->wSpace()->moveRobotsTo(path_samples->at(_index_sample));
-                sample_config_ = path_samples->at(_index_sample)->getMappedConf();
-                return true;
+                if (!path_samples || path_samples->empty() || _sample_index >= path_samples->size()) {
+                    std::cout << "Invalid path_samples or index." << std::endl;
+                    return false;
+                }
+                requested_sample = path_samples->at(_sample_index);
+            } else if (_sample_type == "init") {
+                requested_sample = problem->getPlanner()->getInitSample();
+            } else if (_sample_type == "goal") {
+                requested_sample = problem->getPlanner()->getGoalSample();
             } else {
-                Sample* requested_sample = nullptr;
-                if (_index_sample == 0) {
-                    requested_sample = problem->getPlanner()->getInitSample();
-                } else if (_index_sample == 1) {
-                    requested_sample = problem->getPlanner()->getGoalSample();
-                } else {
-                    std::cout << "Invalid _index_sample: must be '0' or '1', when the problem is not solved." << std::endl;
-                    return false;
-                }
-        
-                if (!requested_sample) {
-                    std::cout << "Requested sample is null." << std::endl;
-                    return false;
-                }
-        
-                problem->wSpace()->moveRobotsTo(requested_sample);
-                sample_config_ = requested_sample->getMappedConf();
-                return true;
+                std::cout << "Unknown sample_type: " << _sample_type << std::endl;
+                return false;
             }
+
+            if (!requested_sample) {
+                std::cout << "Requested sample is null." << std::endl;
+                return false;
+            }
+    
+            problem->wSpace()->moveRobotsTo(requested_sample);
+            sample_config_ = requested_sample->getMappedConf();
+            return true;
 
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
