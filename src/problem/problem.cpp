@@ -1485,6 +1485,8 @@ bool Problem::saveToFile(string file_path) {
     xml_node queryNode = planNode.append_child();
     queryNode.set_name("Queries");
 
+    // ToDo: Update to the new Query format!
+
     xml_node queryItem = queryNode.append_child();
     queryItem.set_name("Query");
     xml_node initNode = queryItem.append_child();

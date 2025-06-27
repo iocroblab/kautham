@@ -74,7 +74,6 @@
 #include <kautham/problem/robot.h>
 #include <kautham/problem/ivelement.h>
 
-#include <kautham/problem/urdf.h>
 #include <kautham/planner/omplOpenDE/InstantiatedKnowledge/Instantiatedknowledge.h>
 namespace ob = ompl::base;
 namespace og = ompl::geometric;

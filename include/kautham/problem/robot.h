@@ -199,7 +199,7 @@ namespace Kautham {
                  double preTrans[] = NULL, bool useBBOX = false);
 
     //! Add link to the robot
-    bool addLink(string name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis,
+    bool addLink(const std::string& _link_name, const std::string& _link_joint_name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis,
                  bool rotational, bool movable, double low, double hi, double w, string parentName,
                  double preTrans[], ode_element ode, bool useBBOX = false);
 
@@ -362,8 +362,8 @@ namespace Kautham {
     inline std::vector<std::string> getUnconstrainedJointNames() {return unconstrained_joint_names_;}
 
   private:
-    //! sets the Robot from a *.urdf file
-    bool setFromUrdfFile(string robFile, bool useBBOX, progress_struct *progress = NULL);
+    //! Sets the Robot from a *.urdf (or *.urdf.xacro) file:
+    bool setFromURDFFile(const std::string& _robot_file_path, const bool _useBBOX, progress_struct *progress_);
 
     //! This method updates the absolute position and orientation of each link in the robot.
     void updateRobot();

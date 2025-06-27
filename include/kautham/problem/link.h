@@ -203,9 +203,13 @@ namespace Kautham{
     void                calculatePnO();
   	
 	  //!	This member function set the Link name.
-    inline void         setName(string nam){name=nam;}
+    inline void setName(const std::string& _link_name){this->name = _link_name;}
 
-    inline              string getName() const {return name;}
+    //!	This member function set the associated joint name of the Link.
+    inline void setAssociatedJointName(const std::string& _joint_name) {this->joint_name = _joint_name;}
+
+    inline std::string getName() const {return name;}
+    inline std::string getAssociatedJointName() const {return this->joint_name;}
   		
     void                setDHPars(double theta, double d, double a, double alpha);
   	
@@ -328,7 +332,10 @@ namespace Kautham{
     Eigen::AffineCompact3d origin_;
   	
 	  //!	The name of Link.
-    string              name;
+    std::string name;
+
+    //!	The name of the joint associated to the Link.
+    std::string joint_name;
   	
 	  //! Approach used to describe this robot.
     APPROACH          Type;

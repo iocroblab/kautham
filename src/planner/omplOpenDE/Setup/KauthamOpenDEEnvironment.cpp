@@ -35,13 +35,25 @@
 #include <ompl/base/StateSpace.h>
 #include <ompl/base/spaces/SO3StateSpace.h>
 
+#include <kautham/util/kthutil/kauthamdefs.h>
+
 #include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodes/SoCoordinate3.h>
-#include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoPointSet.h>
 #include <Inventor/nodes/SoLineSet.h>
-
-#include <kautham/util/kthutil/kauthamdefs.h>
+#include <Inventor/SoPrimitiveVertex.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoRotation.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoScale.h>
+#include <Inventor/actions/SoCallbackAction.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoIndexedFaceSet.h>
+#include <Inventor/actions/SoWriteAction.h>
+#include <Inventor/SbLinear.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoCylinder.h>
+#include <Inventor/nodes/SoSphere.h>
 
 
 using namespace std;
