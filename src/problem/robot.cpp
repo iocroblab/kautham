@@ -255,17 +255,11 @@ namespace Kautham {
                 // Fill ODE parameters:
                 urdf_parser.fillODEElementFromURDF(link, joint, ode);
 
-                // Visualization: build Coin3D models for visual and collision
-                SoSeparator* visual_model = nullptr;
-                SoSeparator* collision_model = nullptr;
-                if (link->visual) {
-                    visual_model = urdf_parser.createSoSeparatorFromURDFVisual(link->visual, dir);
-                }
-                if (link->collision) {
-                    collision_model = urdf_parser.createSoSeparatorFromURDFCollision(link->collision, dir);
-                }
+                // Build Coin3D models for visualization:
+                SoSeparator* visual_model = urdf_parser.createSoSeparatorFromURDF("visual", link, dir);
+                SoSeparator* collision_model = urdf_parser.createSoSeparatorFromURDF("collision", link, dir);
 
-                // katxopo to handle Kautham issue, when fixed joints (with <0,0,0> as axis) are used:
+                // Katxopo to handle Kautham issue, when fixed joints (with <0,0,0> as axis) are used:
                 double ax = 0.0, ay = 0.0, az = 0.0;
                 if (i > 0 && joint) {
                     ax = joint->axis.x;
@@ -484,9 +478,29 @@ namespace Kautham {
     /*!
   *
   */
-    Link* Robot::getLink(string name ){
+    Link* Robot::getLink(const std::string& _link_name) {
+        if (_link_name.empty()) {
+            return NULL;
+        }
         for (size_t i = 0; i < links.size(); ++i) {
-            if (links.at(i)->getName() == name) return links.at(i);
+            if (links.at(i)->getName() == _link_name) {
+                return links.at(i);
+            }
+        }
+        return NULL;
+    }
+
+        /*!
+  *
+  */
+    Link* Robot::getLinkByAssociatedJointName(const std::string& _joint_name) {
+        if (_joint_name.empty()) {
+            return NULL;
+        }
+        for (size_t i = 0; i < links.size(); ++i) {
+            if (links.at(i)->getAssociatedJointName() == _joint_name) {
+                return links.at(i);
+            }
         }
         return NULL;
     }
@@ -494,10 +508,26 @@ namespace Kautham {
     /*!
   *
   */
-    bool Robot::getLinkIndexByName(std::string _link_name, uint& _link_index) {
+    bool Robot::getLinkIndexByName(const std::string& _link_name, uint& link_index_) {
+        if (_link_name.empty()) {
+            return false;
+        }
         for (size_t i = 0; i < links.size(); ++i) {
             if (links.at(i)->getName() == _link_name) {
-                _link_index = i;
+                link_index_ = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool Robot::getLinkIndexByJointName(const std::string& _joint_name, uint& link_index_) {
+        if (_joint_name.empty()) {
+            return false;
+        }
+        for (size_t i = 0; i < links.size(); ++i) {
+            if (links.at(i)->getAssociatedJointName() == _joint_name) {
+                link_index_ = i;
                 return true;
             }
         }
@@ -1416,14 +1446,16 @@ namespace Kautham {
  /*!
   * Gets the joint names
   */
-    void Robot::getJointNames(std::vector<std::string> &jnames)
-    {
-        //std::cout<<" ----------- getJointNames with _jointnames.size() = "<<_jointnames.size()<<std::endl;
-        jnames.resize(_jointnames.size());
-        for(unsigned int i=0; i<_jointnames.size(); i++)
-        {
-            //std::cout<<" _jointnames["<<i<<"] = "<<_jointnames[i]<<std::endl;
-            jnames[i]=_jointnames[i];
+    void Robot::getJointNames(std::vector<std::string>& joint_names_) {
+        joint_names_.clear();
+        joint_names_.resize(_jointnames.size());
+
+        unsigned int link_index;
+        // Must be reordered according to the vector if *Links:
+        for (unsigned int i = 0; i < this->_jointnames.size(); i++) {
+            this->getLinkIndexByJointName(this->_jointnames[i], link_index);
+            joint_names_[link_index-1] = _jointnames[i];
+            // std::cout << "Ordered joint name: " << joint_names_[link_index] << "[" << link_index << "]" << std::endl;
         }
     }
 }

@@ -33,6 +33,7 @@
 #include <sys/wait.h>   // waitpid, WIFEXITED, WEXITSTATUS
 #include <queue>
 #include <set>
+#include <type_traits>
 
 #include <kautham/problem/urdf.hpp>
 #include <kautham/util/kthutil/kauthamexception.h>
@@ -253,54 +254,87 @@ namespace Kautham {
     
     }
 
-    SoSeparator* KauthamParserURDF::createSoSeparatorFromURDFVisual(
-        const urdf::VisualSharedPtr& _visual,
-        const std::string& _mesh_dir)
+    SoSeparator* KauthamParserURDF::createSoSeparatorFromURDF(
+        const std::string& type, // "visual" or "collision"
+        const std::shared_ptr<const urdf::Link>& link,
+        const std::string& mesh_dir)
     {
+        SoSeparator* model = new SoSeparator;
+        model->ref();
+
+        if (type == "visual") {
+            if (!link->visual_array.empty()) {
+                for (const auto& visual : link->visual_array) {
+                    SoSeparator* part = createSoSeparatorFromURDFElement(visual, mesh_dir);
+                    if (part) model->addChild(part);
+                }
+            } else if (link->visual) {
+                SoSeparator* part = createSoSeparatorFromURDFElement(link->visual, mesh_dir);
+                if (part) model->addChild(part);
+            }
+        } else if (type == "collision") {
+            if (!link->collision_array.empty()) {
+                for (const auto& collision : link->collision_array) {
+                    SoSeparator* part = createSoSeparatorFromURDFElement(collision, mesh_dir);
+                    if (part) model->addChild(part);
+                }
+            } else if (link->collision) {
+                SoSeparator* part = createSoSeparatorFromURDFElement(link->collision, mesh_dir);
+                if (part) model->addChild(part);
+            }
+        }
+        return model;
+    }
+
+
+    template<typename ElementPtr>
+    SoSeparator* KauthamParserURDF::createSoSeparatorFromURDFElement(
+        const ElementPtr& element,
+        const std::string& mesh_dir)
+    {
+        if (!element) {
+            return nullptr;
+        }
 
         SoSeparator* model = new SoSeparator;
         model->ref();
         SoSeparator* submodel = new SoSeparator;
         model->addChild(submodel);
-    
-        // === Origin (translation + rotation) ===
-        if (_visual) {
-            // Translation
-            SoTranslation* trans = new SoTranslation;
-            trans->translation.setValue(
-                (float)_visual->origin.position.x,
-                (float)_visual->origin.position.y,
-                (float)_visual->origin.position.z
-            );
-            submodel->addChild(trans);
-    
-            // Rotation
-            urdf::Rotation q = _visual->origin.rotation;
-            SbRotation coinRot((float)q.x, (float)q.y, (float)q.z, (float)q.w);
-            SoRotation* rot = new SoRotation;
-            rot->rotation.setValue(coinRot);
-            submodel->addChild(rot);
 
+        // === Origin (translation + rotation) ===
+        SoTranslation* trans = new SoTranslation;
+        trans->translation.setValue(
+            (float)element->origin.position.x,
+            (float)element->origin.position.y,
+            (float)element->origin.position.z
+        );
+        submodel->addChild(trans);
+
+        urdf::Rotation q = element->origin.rotation;
+        SbRotation coinRot((float)q.x, (float)q.y, (float)q.z, (float)q.w);
+        SoRotation* rot = new SoRotation;
+        rot->rotation.setValue(coinRot);
+        submodel->addChild(rot);
+
+        // === Material (Only urdf::Visual has material in standard URDF) ===
+        if constexpr (std::is_same_v<typename ElementPtr::element_type, urdf::Visual>) {
+            if (element->material) {
+                SoMaterial* mat = new SoMaterial;
+                mat->diffuseColor.setValue(
+                    (float)element->material->color.r,
+                    (float)element->material->color.g,
+                    (float)element->material->color.b
+                );
+                mat->transparency.setValue(1.0f - (float)element->material->color.a);
+                submodel->addChild(mat);
+            }
         }
-    
-        // === Material ===
-        if (_visual && _visual->material) {
-            std::string name = _visual->material->name;
-            SoMaterial* mat = new SoMaterial;
-            mat->diffuseColor.setValue(
-                (float)_visual->material->color.r,
-                (float)_visual->material->color.g,
-                (float)_visual->material->color.b
-            );
-            mat->transparency.setValue(1.0f - (float)_visual->material->color.a);
-            submodel->addChild(mat);
-        }
-    
+
         // === Geometry ===
-        if (_visual && _visual->geometry) {
-            switch (_visual->geometry->type) {
+        if (element->geometry) {
+            switch (element->geometry->type) {
             case urdf::Geometry::BOX: {
-                urdf::Box* box = dynamic_cast<urdf::Box*>(_visual->geometry.get());
+                auto* box = dynamic_cast<urdf::Box*>(element->geometry.get());
                 if (box) {
                     SoCube* soBox = new SoCube;
                     soBox->width.setValue((float)box->dim.x);
@@ -311,13 +345,13 @@ namespace Kautham {
                 break;
             }
             case urdf::Geometry::CYLINDER: {
-                urdf::Cylinder* cyl = dynamic_cast<urdf::Cylinder*>(_visual->geometry.get());
+                auto* cyl = dynamic_cast<urdf::Cylinder*>(element->geometry.get());
                 if (cyl) {
                     // URDF cylinder is along Z, Coin3D along Y, so rotate
                     SoRotation* cyl_rot = new SoRotation;
                     cyl_rot->rotation.setValue(SbVec3f(1,0,0), (float)M_PI_2);
                     submodel->addChild(cyl_rot);
-    
+
                     SoCylinder* soCyl = new SoCylinder;
                     soCyl->radius.setValue((float)cyl->radius);
                     soCyl->height.setValue((float)cyl->length);
@@ -326,7 +360,7 @@ namespace Kautham {
                 break;
             }
             case urdf::Geometry::SPHERE: {
-                urdf::Sphere* sph = dynamic_cast<urdf::Sphere*>(_visual->geometry.get());
+                auto* sph = dynamic_cast<urdf::Sphere*>(element->geometry.get());
                 if (sph) {
                     SoSphere* soSph = new SoSphere;
                     soSph->radius.setValue((float)sph->radius);
@@ -335,9 +369,8 @@ namespace Kautham {
                 break;
             }
             case urdf::Geometry::MESH: {
-                urdf::Mesh* mesh = dynamic_cast<urdf::Mesh*>(_visual->geometry.get());
+                auto* mesh = dynamic_cast<urdf::Mesh*>(element->geometry.get());
                 if (mesh) {
-                    // Scale
                     SoScale* sca = new SoScale;
                     sca->scaleFactor.setValue(
                         (float)mesh->scale.x,
@@ -345,104 +378,12 @@ namespace Kautham {
                         (float)mesh->scale.z
                     );
                     submodel->addChild(sca);
-    
-                    // Load mesh file
-                    std::string filename = _mesh_dir + mesh->filename;
-                    submodel->addChild(readFile(filename));
+                    submodel->addChild(readFile(mesh_dir + mesh->filename));
                 }
                 break;
             }
             default:
                 break;
-            }
-        }
-    
-        return model;
-    }
-
-
-    SoSeparator* KauthamParserURDF::createSoSeparatorFromURDFCollision(
-        const urdf::CollisionSharedPtr& _collision,
-        const std::string& _mesh_dir)
-    {
-        SoSeparator* model = new SoSeparator;
-        model->ref();
-        SoSeparator* submodel = new SoSeparator;
-        model->addChild(submodel);
-    
-        if (_collision) {
-            // Translation
-            SoTranslation* trans = new SoTranslation;
-            trans->translation.setValue(
-                (float)_collision->origin.position.x,
-                (float)_collision->origin.position.y,
-                (float)_collision->origin.position.z
-            );
-            submodel->addChild(trans);
-
-            // Rotation
-            urdf::Rotation q = _collision->origin.rotation;
-            SbRotation coinRot((float)q.x, (float)q.y, (float)q.z, (float)q.w);
-            SoRotation* rot = new SoRotation;
-            rot->rotation.setValue(coinRot);
-            submodel->addChild(rot);
-    
-            // Geometry
-            if (_collision->geometry) {
-                switch (_collision->geometry->type) {
-                case urdf::Geometry::BOX: {
-                    urdf::Box* box = dynamic_cast<urdf::Box*>(_collision->geometry.get());
-                    if (box) {
-                        SoCube* soBox = new SoCube;
-                        soBox->width.setValue((float)box->dim.x);
-                        soBox->height.setValue((float)box->dim.y);
-                        soBox->depth.setValue((float)box->dim.z);
-                        submodel->addChild(soBox);
-                    }
-                    break;
-                }
-                case urdf::Geometry::CYLINDER: {
-                    urdf::Cylinder* cyl = dynamic_cast<urdf::Cylinder*>(_collision->geometry.get());
-                    if (cyl) {
-                        SoRotation* cyl_rot = new SoRotation;
-                        cyl_rot->rotation.setValue(SbVec3f(1,0,0), (float)M_PI_2);
-                        submodel->addChild(cyl_rot);
-    
-                        SoCylinder* soCyl = new SoCylinder;
-                        soCyl->radius.setValue((float)cyl->radius);
-                        soCyl->height.setValue((float)cyl->length);
-                        submodel->addChild(soCyl);
-                    }
-                    break;
-                }
-                case urdf::Geometry::SPHERE: {
-                    urdf::Sphere* sph = dynamic_cast<urdf::Sphere*>(_collision->geometry.get());
-                    if (sph) {
-                        SoSphere* soSph = new SoSphere;
-                        soSph->radius.setValue((float)sph->radius);
-                        submodel->addChild(soSph);
-                    }
-                    break;
-                }
-                case urdf::Geometry::MESH: {
-                    urdf::Mesh* mesh = dynamic_cast<urdf::Mesh*>(_collision->geometry.get());
-                    if (mesh) {
-                        SoScale* sca = new SoScale;
-                        sca->scaleFactor.setValue(
-                            (float)mesh->scale.x,
-                            (float)mesh->scale.y,
-                            (float)mesh->scale.z
-                        );
-                        submodel->addChild(sca);
-    
-                        std::string filename = _mesh_dir + mesh->filename;
-                        submodel->addChild(readFile(filename));
-                    }
-                    break;
-                }
-                default:
-                    break;
-                }
             }
         }
         return model;

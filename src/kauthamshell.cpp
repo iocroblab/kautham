@@ -2628,15 +2628,7 @@ namespace Kautham {
             }
 
             Problem *const problem = (Problem*)memPtr_;
-            //std::cout<<"getRobotJointNames ************************"<<std::endl;
-            problem->getPlanner()->wkSpace()->getRobot(r)->getJointNames(jnames);
-            /*
-            std::cout<<"-------jnames: jnames.size = "<<jnames.size()<<std::endl;
-            for(unsigned int i=0; i<jnames.size(); i++)
-            {
-                std::cout<<"---------joint name "<<i<<": "<<jnames[i]<<std::endl;
-            }
-            */
+            problem->getPlanner()->wkSpace()->getRobot(r)->getJointNames(jnames);           
 
             return true;
 

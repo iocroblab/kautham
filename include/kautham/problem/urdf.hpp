@@ -67,15 +67,12 @@ namespace Kautham {
                 const std::shared_ptr<const urdf::Joint>& _joint,
                 Kautham::ode_element& ode_);
 
-            SoSeparator* createSoSeparatorFromURDFVisual(
-                const urdf::VisualSharedPtr& _visual,
-                const std::string& _mesh_dir);
-
-            SoSeparator* createSoSeparatorFromURDFCollision(
-                const urdf::CollisionSharedPtr& _collision,
-                const std::string& _mesh_dir);
-
-
+            SoSeparator* createSoSeparatorFromURDF(
+                const std::string& type, // "visual" or "collision"
+                const std::shared_ptr<const urdf::Link>& link,
+                const std::string& mesh_dir
+            );                
+                
         private:
             std::shared_ptr<urdf::ModelInterface> robot_model;
             bool load_success = false;
@@ -83,6 +80,12 @@ namespace Kautham {
             bool is_xacro(const std::string& _filename);
             std::string read_file(const std::string& _filename);
             std::string expand_xacro(const std::string& _xacro_file);
+
+            template<typename ElementPtr>
+            SoSeparator* createSoSeparatorFromURDFElement(
+                const ElementPtr& element, 
+                const std::string& mesh_dir
+            );
     };
 
 /** @}   end of Doxygen module "Problem" */

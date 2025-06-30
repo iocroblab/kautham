@@ -1773,8 +1773,13 @@ bool Problem::addRobotProblemConstraint(Robot* _rob, const pugi::xml_node& _cons
         joint_count++;
         std::string joint_name = joint_node.attribute("name").as_string();
         uint link_index;
-        _rob->getLinkIndexByName(joint_name, link_index);
-        this_constraint->associateNewJoint(joint_name, link_index-1);
+        // Check if the joint name exists in the robot:
+        if (!_rob->getLinkIndexByJointName(joint_name, link_index)) {
+            std::cerr << "Joint name '" << joint_name << "' not found in robot (Constraint " 
+                    << _constraint_node.attribute("id").as_string() << ")" << std::endl;
+            return false;
+        }
+        this_constraint->associateNewJoint(joint_name, link_index);
     }
 
     // Ensure that there is at least one joint in the Constraint

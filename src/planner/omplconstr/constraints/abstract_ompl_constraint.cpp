@@ -23,7 +23,7 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::ComputeFKFromRobotBaseLinkToEnfEf
 	// std::cout << "Home transformation (wrt Kautham world):\n" << t_world_2_robot_base_link.matrix() << std::endl;
 
 	// Get the initial constraint link (offset between the robot base link and the arm FK) pose wrt world:
-	std::string init_reference_link = this->associated_robot_->getLink(constrained_joints.at(0).first)->getParentName();
+	std::string init_reference_link = this->associated_robot_->getLinkByAssociatedJointName(constrained_joints.at(0).first)->getParentName();
 	Eigen::AffineCompact3d t_world_2_constr_init = this->associated_robot_->Robot::getLinkTransformEigen(init_reference_link);
 	// std::cout << "Transformation t_world_2_constr_init:\n" <<  t_world_2_constr_init.matrix() << std::endl;
 	
@@ -35,7 +35,7 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::ComputeFKFromRobotBaseLinkToEnfEf
     Eigen::AffineCompact3d t_constr_init_2_constr_end = Eigen::AffineCompact3d::Identity();
     Eigen::AffineCompact3d link_fk;
 	for (int i = 0; i < q.size(); ++i) {
-    	link_fk = this->associated_robot_->getLink(constrained_joints.at(i).first)->Link::applyJointConfiguration(q(i));
+    	link_fk = this->associated_robot_->getLinkByAssociatedJointName(constrained_joints.at(i).first)->Link::applyJointConfiguration(q(i));
         t_constr_init_2_constr_end = t_constr_init_2_constr_end * link_fk;
 	}
     // std::cout << "Transformation t_constr_init_2_constr_end:\n" << t_constr_init_2_constr_end.matrix() << std::endl;
@@ -85,7 +85,8 @@ Eigen::AffineCompact3d AbstractOMPLConstraint::getTransfromationFromConstrEndLin
     Eigen::AffineCompact3d t_constr_end_2_target_link = Eigen::AffineCompact3d::Identity();
 
 	std::string target_link = this->robot_prob_constraint_->getTargetLink();
-	std::string last_constr_link = this->robot_prob_constraint_->getLastConstrainedJoint().first;
+	uint last_constr_link_index = this->robot_prob_constraint_->getLastConstrainedJoint().second;
+	std::string last_constr_link = this->associated_robot_->getLink(last_constr_link_index)->Link::getName();
 
 	// Ensure that the Target Link is either the final link in the constraint chain or comes after it:
 	if (target_link == last_constr_link) {
