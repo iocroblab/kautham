@@ -378,7 +378,13 @@ namespace Kautham {
                         (float)mesh->scale.z
                     );
                     submodel->addChild(sca);
-                    submodel->addChild(readFile(mesh_dir + mesh->filename));
+
+                    SoSeparator* meshNode = readFile(mesh_dir + mesh->filename);
+                    if (meshNode) {
+                        submodel->addChild(meshNode);
+                    } else {
+                        std::cerr << "Failed to load mesh: " << mesh_dir + mesh->filename << std::endl;
+                    }
                 }
                 break;
             }

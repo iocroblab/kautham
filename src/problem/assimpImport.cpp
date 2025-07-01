@@ -20,7 +20,7 @@
    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 \*************************************************************************/
 
-/* Author: Nestor Garcia Hidalgo */
+/* Author: Nestor Garcia Hidalgo and Pol Ramon Canyameres */
 
 
 #include <kautham/problem/assimpImport.h>
@@ -37,6 +37,8 @@
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTexture2.h>
+
+#include <Inventor/nodes/SoIndexedFaceSet.h>
 
 #include <iostream>
 
@@ -334,37 +336,34 @@ SoIndexedShape *getShape(const aiMesh *const mesh) {
     }
 
     SoIndexedShape *shape;
-    std::size_t numIndices;
-    switch (mesh->mPrimitiveTypes) {
-    case aiPrimitiveType_POINT:
-        shape = new SoIndexedPointSet;
-        numIndices = 1;
-        break;
-    case aiPrimitiveType_LINE:
-        shape = new SoIndexedLineSet;
-        numIndices = 2;
-        break;
-    case aiPrimitiveType_TRIANGLE:
-        shape = new SoIndexedTriangleStripSet;
-        numIndices = 3;
-        break;
-    case aiPrimitiveType_POLYGON:
-    default:
-        std::cout << "Wrong primitive type. Mesh will be ignored." << std::endl;
-        return NULL;
-        break;
-    }
+    if (mesh->HasFaces()) {
+        shape = new SoIndexedFaceSet;
 
-    //Set faces
-    int *indices = new int[mesh->mNumFaces*(numIndices+1)];
-    for (std::size_t i(0); i < mesh->mNumFaces; ++i) {
-        for (std::size_t j(0); j < numIndices; ++j) {
-            indices[i*(numIndices+1)+j] = mesh->mFaces[i].mIndices[j];
+        size_t totalIndices = 0;
+        for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
+            totalIndices += mesh->mFaces[i].mNumIndices + 1; // +1 per al -1 final de cada face
         }
-        indices[i*(numIndices+1)+numIndices] = -1;
+        int* indices = new int[totalIndices];
+        size_t idx = 0;
+        for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
+            if (mesh->mFaces[i].mNumIndices >= 3) { // Només cares vàlides!
+                for (unsigned int j = 0; j < mesh->mFaces[i].mNumIndices; ++j) {
+                    indices[idx++] = mesh->mFaces[i].mIndices[j];
+                }
+                indices[idx++] = -1;
+            } else {
+                // std::cout << "[getShape] WARNING: Face " << i << " té menys de 3 vèrtexs i s’ignorarà." << std::endl;
+            }
+        }
+
+        shape->coordIndex.setValues(0, idx, indices);
+        shape->vertexProperty.setValue(vertexProperty);
+        delete[] indices;
+        return shape;
+    } else {
+        std::cout << "[getShape] Mesh has no faces. Mesh will be ignored." << std::endl;
+        return NULL;
     }
-    shape->coordIndex.setValues(0,mesh->mNumFaces*(numIndices+1),indices);
-    shape->vertexProperty.setValue(vertexProperty);
 
     return shape;
 }

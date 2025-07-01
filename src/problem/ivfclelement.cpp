@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Nestor Garcia Hidalgo */
+/* Author: Nestor Garcia Hidalgo and Pol Ramon Canyameres */
 
 #include <kautham/problem/ivfclelement.h>
 #include <kautham/util/kthutil/kauthamdefs.h>
@@ -96,7 +96,13 @@ IVFCLElement::IVFCLElement(string visFile, string collFile, double sc, bool useB
 IVFCLElement::IVFCLElement(SoSeparator *visModel, SoSeparator *collModel, double sc,
                            bool useBBOX) : IVElement(visModel,collModel,sc,useBBOX),
     FCLModel(NULL) {
-    if (!makeFCLModel()) throw invalid_argument("FCL model could not be initialized");
+    // Només intenta crear model FCL si collision_ivmodel existeix i té geometria:
+    if (collision_ivModel() && collision_ivModel()->getNumChildren() > 0) {
+        if (!makeFCLModel())
+            throw invalid_argument("FCL model could not be initialized");
+    } else {
+        // No hi ha model de col·lisió: FCLModel es queda a NULL, no cal llençar excepció
+    }
 }
 
 
@@ -107,11 +113,19 @@ IVFCLElement::~IVFCLElement() {
 
 bool IVFCLElement::collideTo(Element* other) const   {
     Element::increaseCollCheckCounter();
+
+    // Comprova que els dos models FCL són vàlids
+    const fcl::CollisionObjectd* otherFCL = ((IVFCLElement*)other)->getFCLModel();
+    if (!FCLModel || !otherFCL) {
+        // Si algun dels dos no té geometria, no poden col·lidir
+        return false;
+    }
+
     try {
         fcl::CollisionRequestd request;
         fcl::CollisionResultd result;
 
-        fcl::collide(((IVFCLElement*)other)->getFCLModel(),FCLModel,request,result);
+        fcl::collide(otherFCL, FCLModel, request, result);
 
         return result.isCollision();
     } catch (...) {
@@ -122,11 +136,18 @@ bool IVFCLElement::collideTo(Element* other) const   {
 
 double IVFCLElement::getDistanceTo(Element* other) const   {
     Element::increaseCollCheckCounter();
+
+    const fcl::CollisionObjectd* otherFCL = ((IVFCLElement*)other)->getFCLModel();
+    if (!FCLModel || !otherFCL) {
+        // Si algun dels dos no té geometria, no hi ha distància definida
+        return std::numeric_limits<double>::infinity();
+    }
+
     try {
         fcl::DistanceRequestd request;
         fcl::DistanceResultd result;
 
-        fcl::distance(((IVFCLElement*)other)->getFCLModel(),FCLModel,request,result);
+        fcl::distance(otherFCL, FCLModel, request, result);
 
         return result.min_distance;
     } catch (...) {
@@ -187,20 +208,19 @@ SoSeparator *IVFCLElement::getIvFromFCLModel(bool tran) {
 
 
 void IVFCLElement::setOrientation(double *ori) {
+    if (!FCLModel) return; // No hi ha model de col·lisió
+
     IVElement::setOrientation(ori);
-
-    fcl::Matrix3d rotation;
-    rotation = fcl::Quaterniond(ori[3],ori[0],ori[1],ori[2]).toRotationMatrix();
-
+    fcl::Matrix3d rotation = fcl::Quaterniond(ori[3],ori[0],ori[1],ori[2]).toRotationMatrix();
     FCLModel->setRotation(rotation);
 }
 
 
 void IVFCLElement::setPosition(double *pos) {
+    if (!FCLModel) return; // No hi ha model de col·lisió
+    
     IVElement::setPosition(pos);
-
     fcl::Vector3d translation(pos[0],pos[1],pos[2]);
-
     FCLModel->setTranslation(translation);
 }
 

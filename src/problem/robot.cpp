@@ -20,7 +20,7 @@
    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo and Pol Ramon Canyameres */
 
 #include <cstdlib>
 #include <cstdio>
@@ -32,6 +32,8 @@
 
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
 #include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoSphere.h>
+
 
 #include <kautham/mt/point3.h>
 #include <kautham/mt/rotation.h>
@@ -258,6 +260,12 @@ namespace Kautham {
                 // Build Coin3D models for visualization:
                 SoSeparator* visual_model = urdf_parser.createSoSeparatorFromURDF("visual", link, dir);
                 SoSeparator* collision_model = urdf_parser.createSoSeparatorFromURDF("collision", link, dir);
+
+                if (visual_model->getNumChildren() == 0) {
+                    SoSphere* dummy = new SoSphere;
+                    dummy->radius = 0.001f; // molt petit, pràcticament invisible
+                    visual_model->addChild(dummy);
+                }
 
                 // Katxopo to handle Kautham issue, when fixed joints (with <0,0,0> as axis) are used:
                 double ax = 0.0, ay = 0.0, az = 0.0;
