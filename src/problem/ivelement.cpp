@@ -222,9 +222,7 @@ namespace Kautham {
         ivmodel->addChild(visual_model);
 
         // Només crea collision_ivmodel si hi ha geometria real:
-        bool hasCollisionGeometry = false;
         if (collision_model != nullptr && collision_model->getNumChildren() > 0) {
-            hasCollisionGeometry = true;
             collision_ivmodel = new SoSeparator;
             collision_ivmodel->ref();
             collision_ivmodel->addChild(sca);
@@ -234,7 +232,6 @@ namespace Kautham {
             if (collision_ivmodel == nullptr) {
                 collision_ivmodel = ivModel();
             }
-            hasCollisionGeometry = (collision_ivmodel && collision_ivmodel->getNumChildren() > 0);
         } else {
             collision_ivmodel = nullptr; // No assignis ivModel si no vols col·lisió!
         }
