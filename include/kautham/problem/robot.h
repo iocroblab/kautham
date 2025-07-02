@@ -200,7 +200,7 @@ namespace Kautham {
 
     //! Add link to the robot
     bool addLink(const std::string& _link_name, const std::string& _link_joint_name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis,
-                 bool rotational, bool movable, double low, double hi, double w, string parentName,
+                 bool _rotational, bool _movable, double low, double hi, double w, string parentName,
                  double preTrans[], ode_element ode, bool useBBOX = false);
 
     //! Returns the pointer to link number i

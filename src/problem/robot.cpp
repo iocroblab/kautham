@@ -1021,7 +1021,7 @@ namespace Kautham {
     //! This method builds the link model and all their data structures in order
     //! to keep the coherence in the robot assembly. It doesn't use any intermediate
     //! structure to adquire the information to do the job.
-    bool Robot::addLink(const std::string& _link_name, const std::string& _link_joint_name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis, bool rotational, bool movable,
+    bool Robot::addLink(const std::string& _link_name, const std::string& _link_joint_name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis, bool _rotational, bool _movable,
                         double low, double hi, double w, string parentName, double preTrans[], ode_element ode, bool useBBOX){
 
         if (visual_model == NULL) {
@@ -1031,11 +1031,11 @@ namespace Kautham {
         Link* temp = new Link(visual_model, collision_model, scale, Approach, useBBOX);
         temp->setName(_link_name);
         temp->setAssociatedJointName(_link_joint_name);
-        temp->setMovable(movable && (low != hi));
-        temp->setRotational(rotational);
+        temp->setRotational(_rotational);
+        temp->setMovable(_movable && (low != hi));
         temp->setAxis(axis);
         temp->setDHPars(0., 0., 0., 0.);//defaults to zero
-        if (rotational) {
+        if (_rotational) {
             temp->setLimits(low, hi);
         } else {
             temp->setLimits(this->scale*low, this->scale*hi);
