@@ -33,9 +33,6 @@
 
 #include <vector>
 
-
-using namespace std;
-
 namespace Kautham{
 
 /** \addtogroup Problem
@@ -49,39 +46,40 @@ namespace Kautham{
       double               distanceCheck( Conf* conf, unsigned int robot ) ;
       bool                  collisionCheck( Conf* conf, unsigned int robot ) ;
       double               distanceBetweenSamples(Sample& smp1, Sample& smp2,Kautham::SPACETYPE spc);
-      vector<double>      *distanceCheck(Sample* sample) ;
+      std::vector<double>      *distanceCheck(Sample* sample) ;
       double                cumDistanceCheck(Sample *sample);
-      bool                  collisionCheck(Sample* sample , string *message = NULL, std::pair<std::pair<int, string>, std::pair<int, int> > *colliding_elements = NULL);
+      bool                  collisionCheck(Sample* sample , string *message = NULL, std::pair<std::pair<int, std::string>, std::pair<int, int> > *colliding_elements = NULL);
       void                  moveRobotsTo(Sample* sample);
       void                  moveObstaclesTo(Sample* sample);
       void                  addRobot(Robot* robot);
       void                  addObstacle(Robot* obs);
       Robot*                getRobot(const std::string& _name);
       inline Robot*         getRobot(unsigned int i){if( i < robots.size() ) return robots[i]; return NULL;}
-      inline Robot*         getObstacle(string obstaclename){map<string, Robot*>::iterator it = obstacles.find(obstaclename);
+      inline Robot*         getObstacle(string obstaclename){std::map<std::string, Robot*>::iterator it = obstacles.find(obstaclename);
                                                              if(it!=obstacles.end()) return it->second; else return NULL;}
       inline unsigned       getNumRobots(){return robots.size();}
       inline unsigned       getNumObstacles(){return obstacles.size();}
+      int                   getRobotIndex(Robot* robot) const;
 
       //! This vector contains a pointers to the RobConf of each robot in the
       //! WorkSpace
-      inline vector<RobConf*>&     getRobConfigMapping(){return _robConfigMap;}
-      inline vector<RobConf*>&     getRobConfigMapping(Sample* sample){moveRobotsTo(sample); return _robConfigMap;}
-      inline vector<RobConf*>&     getObsConfigMapping(){return _obsConfigMap;}
-      inline vector<RobConf*>&     getObsConfigMapping(Sample* sample){moveObstaclesTo(sample); return _obsConfigMap;}
-      bool                         inheritSolution(vector<Sample*>& path);
+      inline std::vector<RobConf*>&     getRobConfigMapping(){return _robConfigMap;}
+      inline std::vector<RobConf*>&     getRobConfigMapping(Sample* sample){moveRobotsTo(sample); return _robConfigMap;}
+      inline std::vector<RobConf*>&     getObsConfigMapping(){return _obsConfigMap;}
+      inline std::vector<RobConf*>&     getObsConfigMapping(Sample* sample){moveObstaclesTo(sample); return _obsConfigMap;}
+      bool                         inheritSolution(std::vector<Sample*>& path);
       void                         eraseSolution();
       void                         setPathVisibility(bool vis);
 
       //! This method attaches an object object to a robot link. The obstacle is designated by its index.
-      bool attachObstacle2RobotLink(uint robot, uint link, string obsname);
+      bool attachObstacle2RobotLink(uint robot, uint link, std::string obsname);
       bool attachObstacle2RobotLink(const std::string& _robot_name, const std::string& _robot_link_name, const std::string& _obstacle_name);
 
       //! This method detaches an object previously attached to a Robot link.
-      bool                  detachObstacle(string obsname);
+      bool                  detachObstacle(std::string obsname);
 
       void removeRobot(unsigned index);
-      void removeObstacle(string obsname);
+      void removeObstacle(std::string obsname);
 
 
       static void           resetCollCheckCounter();
@@ -97,8 +95,8 @@ namespace Kautham{
       inline void           setNumObsControls(unsigned numcontrols){numObsControls = numcontrols;} //!< Sets the number of obstacle controls
       inline string         getRobControlsName() const {return robControlsName;} //!< Returns the string containing the robot control names, separated by the vertical line character
       inline string         getObsControlsName() const {return obsControlsName;} //!< Returns the string containing the obstacle control names, separated by the vertical line character
-      inline void           setRobControlsName(string controlsname){robControlsName=controlsname;} //!< Sets the string containing the robot control names, separated by the veritcal line character
-      inline void           setObsControlsName(string controlsname){obsControlsName=controlsname;} //!< Sets the string containing the obstacle control names, separated by the veritcal line character
+      inline void           setRobControlsName(std::string controlsname){robControlsName=controlsname;} //!< Sets the string containing the robot control names, separated by the veritcal line character
+      inline void           setObsControlsName(std::string controlsname){obsControlsName=controlsname;} //!< Sets the string containing the obstacle control names, separated by the veritcal line character
       inline map<string, Robot*> getObstaclesMap(){ return obstacles;}
 
        void                 storeInitialObjectPoses();
@@ -137,23 +135,23 @@ namespace Kautham{
 
   protected:
       virtual void          updateScene() = 0;
-      vector<Robot*>        robots;
-      map<string, Robot*> obstacles;
-      vector<double>       distVec;
+      std::vector<Robot*>        robots;
+      std::map<string, Robot*> obstacles;
+      std::vector<double>       distVec;
       //! This attribute groups the configurations of the robots
-      vector<RobConf*>      _robConfigMap;
-      vector<RobConf*>      _obsConfigMap;
-      vector<RobWeight*>    _robWeight;
+      std::vector<RobConf*>      _robConfigMap;
+      std::vector<RobConf*>      _obsConfigMap;
+      std::vector<RobWeight*>    _robWeight;
       //string neighborhoodMapFile;
-      vector<RobConf*>      _obstaclePoses;
+      std::vector<RobConf*>      _obstaclePoses;
 
   private:
       bool                  armed;
       static unsigned       _countWorldCollCheck;
       unsigned              numRobControls;  //!< This is the number of controls used to command the robots
       unsigned              numObsControls;  //!< This is the number of controls used to command the obstacles
-      string                robControlsName; //!< Names of the robot controls, as a string, separated with the vertical bar character.
-      string                obsControlsName; //!< Names of the obstacle controls, as a string, separated with the vertical bar character.
+      std::string           robControlsName; //!< Names of the robot controls, as a string, separated with the vertical bar character.
+      std::string           obsControlsName; //!< Names of the obstacle controls, as a string, separated with the vertical bar character.
       Sample*               _lastRobSampleMovedTo;
       Sample*               _lastObsSampleMovedTo;
       Sample*               _initObsSample;

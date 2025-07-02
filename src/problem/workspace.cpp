@@ -739,4 +739,14 @@ namespace Kautham {
         }
         return nullptr; // Return nullptr if no robot with the given name is found
     }
+
+    int WorkSpace::getRobotIndex(Robot* robot) const {
+        for (size_t i = 0; i < robots.size(); ++i) {
+            if (robots[i] == robot) {
+                return static_cast<int>(i);
+            }
+        }
+        return -1; // Si no es troba, retorna -1
+    }
+    
 }
