@@ -2004,35 +2004,33 @@ bool Problem::setRobotControls(string cntrFile) {
 
 
 bool Problem::setRobotControls(xml_document *doc) {
-    //set se3Enabled flag to false - will be set to true if SE3 controls exist
-    _wspace->getRobot(0)->setSE3(false);
+    // Set se3Enabled flag to false - will be set to true if SE3 controls exist
+    Robot* robot = _wspace->getRobot(0);
+    robot->setSE3(false);
 
     int numControls = 0;
-    string controlsName = "";
+    std::string controlsName = "";
     xml_node tmpNode = doc->child("ControlSet").child("Control");
     while (tmpNode) {
         numControls++;
-        if (controlsName != "") controlsName.append("|");
+        if (!controlsName.empty()) controlsName.append("|");
         controlsName.append(tmpNode.attribute("name").as_string());
         tmpNode = tmpNode.next_sibling("Control");
     }
     _wspace->setNumRobControls(numControls);
     _wspace->setRobControlsName(controlsName);
     _currentRobControls.clear();
-    _currentRobControls.resize(_wspace->getNumRobControls());
-    for(unsigned i = 0; i<_currentRobControls.size(); i++)
-        _currentRobControls[i] = 0.0;
+    _currentRobControls.resize(_wspace->getNumRobControls(), 0.0);
 
-    //Creating the mapping and offset Matrices between controls
-    //and DOF parameters and initializing them.
+    //Creating the mapping and offset Matrices between controls and DOF parameters and initializing them.
     int numRob = _wspace->getNumRobots();
-    double ***mapMatrix;
-    double **offMatrix;
-    mapMatrix = new double**[numRob];
-    offMatrix = new double*[numRob];
+    double ***mapMatrix = new double**[numRob];
+    double **offMatrix = new double*[numRob];
     int numDOFs;
+    
     for (int i = 0; i < numRob; i++) {
-        numDOFs = _wspace->getRobot(i)->getNumJoints()+6;
+        robot = _wspace->getRobot(i);
+        numDOFs = robot->getNumJoints() + 6;
         mapMatrix[i] = new double*[numDOFs];
         offMatrix[i] = new double[numDOFs];
         for (int j = 0; j < numDOFs; j++) {
@@ -2043,164 +2041,129 @@ bool Problem::setRobotControls(xml_document *doc) {
             }
         }
 
-        _wspace->getRobot(i)->setMapMatrix(mapMatrix[i]);
-        _wspace->getRobot(i)->setOffMatrix(offMatrix[i]);
+        robot->setMapMatrix(mapMatrix[i]);
+        robot->setOffMatrix(offMatrix[i]);
     }
 
-    //Load the Offset vector
+    // Load the Offset vector:
     tmpNode = doc->child("ControlSet").child("Offset");
     xml_node::iterator it;
-    string dofName, robotName, tmpstr;
-    for(it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
-        tmpstr = (*it).attribute("name").as_string();
-        unsigned found = tmpstr.find_last_of("/");
-        if (found >= tmpstr.length()) {
-            string message = "Error when creating robot controls: DOF name " + tmpstr + " is incorrect";
-            string details = "Name should be: robot_name + / + dof_name";
-            throw KthExcp(message, details);
+    double value;
+    std::string dofName, robotName;
+    for (it = tmpNode.begin(); it != tmpNode.end(); ++it) {// PROCESSING ALL DOF FOUND
+        robotName = (*it).attribute("robot").as_string();
+        dofName = (*it).attribute("name").as_string();
+        value = (*it).attribute("value").as_double();
+
+        //Find the used robot:
+        robot = _wspace->getRobot(robotName);
+        if (!robot) {
+            std::string message = "Error when creating robot controls: Robot " + robotName + " couldn't be found";
+            throw KthExcp(message);
             return false;
         }
-        dofName = tmpstr.substr(found+1);
-        robotName = tmpstr.substr(0,found);
-
-        //Find the robot index into the robots vector
-        int i = 0;
-        bool robot_found = false;
-        while (!robot_found && i < numRob) {
-            if (_wspace->getRobot(i)->getName() == robotName) {
-                robot_found = true;
-            } else {
-                i++;
-            }
-        }
-
-        if (!robot_found) {
-            string message = "Error when creating robot controls: Robot " + robotName + " couldn't be found";
+        int i = _wspace->getRobotIndex(robot);
+        if (i < 0) {
+            std::string message = "Error when getting the robot index by name of the robot " + robotName;
             throw KthExcp(message);
             return false;
         }
 
-        if ( dofName == "X"){
-            _wspace->getRobot(i)->setSE3(true);
-            offMatrix[i][0] = (*it).attribute("value").as_double();
-        }else if ( dofName == "Y"){
-            _wspace->getRobot(i)->setSE3(true);
-            offMatrix[i][1] = (*it).attribute("value").as_double();
-        }else if ( dofName == "Z"){
-            _wspace->getRobot(i)->setSE3(true);
-            offMatrix[i][2] = (*it).attribute("value").as_double();
-        }else if ( dofName == "X1"){
-            _wspace->getRobot(i)->setSE3(true);
-            offMatrix[i][3] = (*it).attribute("value").as_double();
-        }else if ( dofName == "X2"){
-            _wspace->getRobot(i)->setSE3(true);
-            offMatrix[i][4] = (*it).attribute("value").as_double();
-        }else if ( dofName == "X3"){
-            _wspace->getRobot(i)->setSE3(true);
-            offMatrix[i][5] = (*it).attribute("value").as_double();
-        }else{    // It's not a SE3 control and could have any name.
+        if ( dofName == "X") {
+            robot->setSE3(true);
+            offMatrix[i][0] = value;
+        } else if ( dofName == "Y") {
+            robot->setSE3(true);
+            offMatrix[i][1] = value;
+        } else if ( dofName == "Z") {
+            robot->setSE3(true);
+            offMatrix[i][2] = value;
+        } else if ( dofName == "X1") {
+            robot->setSE3(true);
+            offMatrix[i][3] = value;
+        } else if ( dofName == "X2") {
+            robot->setSE3(true);
+            offMatrix[i][4] = value;
+        } else if ( dofName == "X3") {
+            robot->setSE3(true);
+            offMatrix[i][5] = value;
+        } else {    // It's not a SE3 control and could have any name.
+
             // Find the index orden into the links vector without the first static link.
-            unsigned ind = 0;
-            while (ind < _wspace->getRobot(i)->getNumJoints()) {
-                if ( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
-                    offMatrix[i][6 + ind ] = (*it).attribute("value").as_double();
-                    break;
-                } else {
-                    ind++;
-                }
-            }
-            if (ind >= _wspace->getRobot(i)->getNumJoints()) {
-                string message = "Error when creating robot controls: DOF " + dofName +
-                        " couldn't be found in robot " + robotName;
+            uint link_index;
+            if (!robot->getLinkIndexByJointName(dofName, link_index)) {
+                std::string message = "Error when creating robot controls: Joint " + dofName + " couldn't be found in robot " + robotName;
                 throw KthExcp(message);
                 return false;
             }
+            offMatrix[i][6 + link_index-1] = value;
         }
-    }//End processing Offset vector
+    } //End processing Offset vector
 
     //Process the controls to load the mapMatrix
     tmpNode = doc->child("ControlSet");
-    string nodeType = "";
+    std::string nodeType = "";
     int cont = 0;
-    for(it = tmpNode.begin(); it != tmpNode.end(); ++it){
+    for (it = tmpNode.begin(); it != tmpNode.end(); ++it) {
         nodeType = it->name();
-        if ( nodeType == "Control" ){
+        if (nodeType == "Control") {
             xml_node::iterator itDOF;
             double eigVal = 1;
             if ((*it).attribute("eigValue")) {
-                eigVal =  (*it).attribute("eigValue").as_double();
+                eigVal = (*it).attribute("eigValue").as_double();
             }
 
-            for(itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
-                tmpstr = itDOF->attribute("name").as_string();
-                unsigned found = tmpstr.find_last_of("/");
-                if (found >= tmpstr.length()) {
-                    string message = "Error when creating robot controls: DOF name " + tmpstr + " is incorrect";
-                    string details = "Name should be: robot_name + / + dof_name";
-                    throw KthExcp(message, details);
+            for (itDOF = (*it).begin(); itDOF != (*it).end(); ++itDOF) {// PROCESSING ALL DOF FOUND
+                robotName = itDOF->attribute("robot").as_string();
+                dofName = itDOF->attribute("name").as_string();
+                value = itDOF->attribute("value").as_double();
+
+                robot = _wspace->getRobot(robotName);
+                if (!robot) {
+                    std::string message = "Error when creating robot controls: Robot " + robotName + " couldn't be found";
+                    throw KthExcp(message);
                     return false;
                 }
-                dofName = tmpstr.substr(found+1);
-                robotName = tmpstr.substr(0,found);
-
-                //Find the robot index into the robots vector
-                int i = 0;
-                bool robot_found = false;
-                while (!robot_found && i < numRob) {
-                    if (_wspace->getRobot(i)->getName() == robotName) {
-                        robot_found = true;
-                    } else {
-                        i++;
-                    }
-                }
-
-                if (!robot_found) {
-                    string message = "Error when creating robot controls: Robot " + robotName + " couldn't be found";
+                int i = _wspace->getRobotIndex(robot);
+                if (i < 0) {
+                    std::string message = "Error when getting the robot index by name of the robot " + robotName;
                     throw KthExcp(message);
                     return false;
                 }
 
-                if ( dofName == "X"){
-                    _wspace->getRobot(i)->setSE3(true);
-                    mapMatrix[i][0][cont] = eigVal * itDOF->attribute("value").as_double();
-                }else if ( dofName == "Y"){
-                    _wspace->getRobot(i)->setSE3(true);
-                    mapMatrix[i][1][cont] = eigVal * itDOF->attribute("value").as_double();
-                }else if ( dofName == "Z"){
-                    _wspace->getRobot(i)->setSE3(true);
-                    mapMatrix[i][2][cont] = eigVal * itDOF->attribute("value").as_double();
-                }else if ( dofName == "X1"){
-                    _wspace->getRobot(i)->setSE3(true);
-                    mapMatrix[i][3][cont] = eigVal * itDOF->attribute("value").as_double();
-                }else if ( dofName == "X2"){
-                    _wspace->getRobot(i)->setSE3(true);
-                    mapMatrix[i][4][cont] = eigVal * itDOF->attribute("value").as_double();
-                }else if ( dofName == "X3"){
-                    _wspace->getRobot(i)->setSE3(true);
-                    mapMatrix[i][5][cont] = eigVal * itDOF->attribute("value").as_double();
-                }else{  // It's not a SE3 control and could have any name.
-                    // Find the index orden into the links vector without the first static link.
-                    unsigned ind = 0;
-                    while (ind < _wspace->getRobot(i)->getNumJoints()) {
-                        if ( dofName == _wspace->getRobot(i)->getLink(ind+1)->getName()){
-                            mapMatrix[i][6 + ind ][cont] = eigVal * itDOF->attribute("value").as_double();
-                            break;
-                        } else {
-                            ind++;
-                        }
-                    }
-                    if (ind >= _wspace->getRobot(i)->getNumJoints()) {
-                        string message = "Error when creating robot controls: DOF " + dofName +
-                                " couldn't be found in robot " + robotName;
+                if ( dofName == "X") {
+                    robot->setSE3(true);
+                    mapMatrix[i][0][cont] = eigVal * value;
+                } else if ( dofName == "Y") {
+                    robot->setSE3(true);
+                    mapMatrix[i][1][cont] = eigVal * value;
+                } else if ( dofName == "Z") {
+                    robot->setSE3(true);
+                    mapMatrix[i][2][cont] = eigVal * value;
+                } else if ( dofName == "X1") {
+                    robot->setSE3(true);
+                    mapMatrix[i][3][cont] = eigVal * value;
+                } else if ( dofName == "X2") {
+                    robot->setSE3(true);
+                    mapMatrix[i][4][cont] = eigVal * value;
+                } else if ( dofName == "X3") {
+                    robot->setSE3(true);
+                    mapMatrix[i][5][cont] = eigVal * value;
+                } else {  // It's not a SE3 control and could have any name.
+                    // Find the index orden into the links vector:
+                    uint link_index;
+                    if (!robot->getLinkIndexByJointName(dofName, link_index)) {
+                        string message = "Error when creating robot controls: Joint " + dofName +
+                                        " couldn't be found in robot " + robotName;
                         throw KthExcp(message);
                         return false;
                     }
+                    mapMatrix[i][6 + link_index-1][cont] = eigVal * value;
                 }
             }
-
             cont++;
-        }// closing if (nodeType == "Control" )
-    }//closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
+        } // Closing if (nodeType == "Control" )
+    } // Closing for(it = tmpNode.begin(); it != tmpNode.end(); ++it) for all ControlSet childs
     return true;
 }
 
