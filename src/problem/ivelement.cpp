@@ -233,7 +233,11 @@ namespace Kautham {
                 collision_ivmodel = ivModel();
             }
         } else {
-            collision_ivmodel = nullptr; // No assignis ivModel si no vols col·lisió!
+            /* 
+            Quan no hi ha collision i useBBOX és false, assigna el model visual també com a model de col·lisió (només a nivell de transformació, no per a detecció de col·lisions reals).
+            Així, la transformació del link sempre tindrà un node a on aplicar-se, i la jerarquia es mantindrà coherent.
+            */
+            collision_ivmodel = ivModel();
         }
 
     }
