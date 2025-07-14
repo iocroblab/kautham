@@ -794,21 +794,23 @@ bool Problem::parseQueryNode(pugi::xml_node _query_node) {
         }
     }
 
+    std::string collision_msg;
+
     // Process init robots control sample:
     Sample *smp_init(new Sample(_wspace->getNumRobControls()));
     smp_init->setCoords(init_values);
-    if (_wspace->collisionCheck(smp_init)) {
-        std::cout << "Init sample is in collision." << std::endl;
-        return false;
+    if (_wspace->collisionCheck(smp_init, &collision_msg)) {
+        std::cout << "\033[1;93m[WARNING] The initial sample is in collision. The problem will load, but planning may fail or be invalid.\033[0m" << std::endl;
+        std::cout << "\033[33m" << collision_msg << "\033[0m" << std::endl;
     }
     _cspace->addStart(smp_init);
     
     // Process goal robots control sample:
     Sample *smp_goal(new Sample(_wspace->getNumRobControls()));
     smp_goal->setCoords(goal_values);
-    if (_wspace->collisionCheck(smp_goal)) {
-        std::cout << "Goal sample is in collision" << std::endl;
-        return false;
+    if (_wspace->collisionCheck(smp_goal, &collision_msg)) {
+        std::cout << "\033[1;93m[WARNING] The goal sample is in collision. The problem will load, but planning may fail or be invalid.\033[0m" << std::endl;
+        std::cout << "\033[33m" << collision_msg << "\033[0m" << std::endl;
     }
     _cspace->addGoal(smp_goal);
 
@@ -872,108 +874,15 @@ bool Problem::processInitialAttachedObstacle(const pugi::xml_node& _initial_atta
 bool Problem::createCSpaceFromFile(xml_document *doc) {
 
     if (createCSpace()) {
-        const unsigned int numRobCntr(_wspace->getNumRobControls());
-        const unsigned int numObsCntr(_wspace->getNumObsControls());
         xml_node queries(doc->child("Problem").child("Planner").child("Queries"));
         for (xml_node::iterator query(queries.begin()); query != queries.end(); ++query) {
-            bool using_old_query_format = false;
-            for (xml_node::iterator node(query->begin()); node != query->end(); ++node) {
-                std::string type(node->name());
-
-                if (type == "InitObs" && numObsCntr > 0) {
-                    using_old_query_format = true;
-                    vector<string> tokens;
-                    std::string sentence(node->child_value());
-                    boost::split(tokens,sentence,boost::is_any_of(" "), boost::token_compress_on);
-                    if (tokens.size() != numObsCntr) {
-                        std::cout << "Dimension of a sample doesn't correspond \
-                                     with the problem's dimension." << std::endl;
-                                     string message("Error when creating CSpace: InitObs sample \
-                                                    has an incorrect dimension");
-                                                    stringstream details;
-                                     details << "InitObs has dimension " << tokens.size()
-                                  << " and should have dimension " << numObsCntr;
-                        throw KthExcp(message, details.str());
-                        return false;
-                    }
-                    std::vector<double> coords;
-                    for (std::vector<std::string>::const_iterator token(tokens.begin()); token != tokens.end(); ++token) {
-                        coords.push_back(boost::lexical_cast<double>(*token));
-                    }
-                    Sample *smp(new Sample(numObsCntr));
-                    smp->setCoords(coords);
-                    _wspace->setInitObsSample(smp);
-                } else if (type == "Init") {
-                    using_old_query_format = true;
-                    vector<string> tokens;
-                    std::string sentence(node->child_value());
-                    boost::split(tokens,sentence,boost::is_any_of(" "), boost::token_compress_on);
-                    if (tokens.size() != numRobCntr) {
-                        std::cout << "Dimension of a sample doesn't correspond \
-                                     with the problem's dimension." << std::endl;
-                                     string message("Error when creating CSpace: Init sample \
-                                                    has an incorrect dimension");
-                                                    stringstream details;
-                                     details << "Init has dimension " << tokens.size()
-                                  << " and should have dimension " << numRobCntr;
-                        throw KthExcp(message,details.str());
-
-                        return false;
-                    }
-                    std::vector<double> coords;
-                    for (std::vector<std::string>::const_iterator token(tokens.begin()); token != tokens.end(); ++token) {
-                        coords.push_back(boost::lexical_cast<double>(*token));
-                    }
-                    Sample *smp(new Sample(numRobCntr));
-                    smp->setCoords(coords);
-                    _cspace->addStart(smp);
-
-                    //Add the mapping to configuration space with the collision test.
-                    if (_wspace->collisionCheck(smp)) {
-                        cout << "Init sample is in collision." << endl;
-                    }
-                } else if (type == "Goal") {
-                    using_old_query_format = true;
-                    vector<string> tokens;
-                    std::string sentence(node->child_value());
-                    boost::split(tokens,sentence,boost::is_any_of(" "), boost::token_compress_on);
-                    if (tokens.size() != numRobCntr) {
-                        std::cout << "Dimension of a sample doesn't correspond \
-                                     with the problem's dimension." << std::endl;
-                                     string message("Error when creating CSpace: Goal sample has \
-                                                    an incorrect dimension");
-                                                    stringstream details;
-                                     details << "Goal has dimension " << tokens.size()
-                                  << " and should have dimension " << numRobCntr;
-                        throw KthExcp(message,details.str());
-
-                        return false;
-                    }
-                    std::vector<double> coords;
-                    for (std::vector<std::string>::const_iterator token(tokens.begin()); token != tokens.end(); ++token) {
-                        coords.push_back(boost::lexical_cast<double>(*token));
-                    }
-                    Sample *smp(new Sample(numRobCntr));
-                    smp->setCoords(coords);
-                    _cspace->addGoal(smp);
-
-                    //Add the mapping to configuration space with the collision test.
-                    if (_wspace->collisionCheck(smp)) {
-                        cout << "Goal sample is in collision" << endl;
-                    }
-                }
+            if (!Problem::parseQueryNode(*query)) {
+                return false;
             }
-            // Temporally, allows to use Kautham using both types of Query:
-            if (!using_old_query_format) {
-                Problem::parseQueryNode(*query);
-            } else {
-                std::string message = "Warning: You are using an older type of Query format.";
-                std::string details = "The current version of Kautham supports both, but it will be more robust if you use the newest format.";
-                // throw KthExcp(message, details); // How can I do it without closing the problem?
-            }
-
         }
-        if (!_wspace->getInitObsSample()) {//Default values
+        
+        if (!_wspace->getInitObsSample()) { // Default values
+            const unsigned int numObsCntr(_wspace->getNumObsControls());
             Sample *smp(new Sample(numObsCntr));
             std::vector<double> coords(numObsCntr,0.5);
             smp->setCoords(coords);
@@ -1485,18 +1394,29 @@ bool Problem::saveToFile(string file_path) {
     xml_node queryNode = planNode.append_child();
     queryNode.set_name("Queries");
 
-    // ToDo: Update to the new Query format!
-
     xml_node queryItem = queryNode.append_child();
     queryItem.set_name("Query");
-    xml_node initNode = queryItem.append_child();
-    initNode.set_name( "Init" );
-    initNode.append_attribute("dim") = _wspace->getNumRobControls();
-    initNode.append_child(node_pcdata).set_value( _planner->initSamp()->print(true).c_str() );
-    xml_node goalNode = queryItem.append_child();
-    goalNode.set_name( "Goal" );
-    goalNode.append_attribute("dim") = _wspace->getNumRobControls();
-    goalNode.append_child(node_pcdata).set_value( _planner->goalSamp()->print(true).c_str() );
+
+    // ROBOT CONTROLS:
+    const std::vector<std::string>& rob_control_names = _wspace->getRobControlsNames();
+    const std::vector<double>& init_coords = _planner->initSamp()->getCoords();
+    const std::vector<double>& goal_coords = _planner->goalSamp()->getCoords();
+
+    for (size_t i = 0; i < rob_control_names.size(); ++i) {
+        xml_node rc_node = queryItem.append_child();
+        rc_node.set_name("RobotControl");
+        rc_node.append_attribute("name") = rob_control_names[i].c_str();
+
+        // Formatem amb 3 decimals
+        std::ostringstream oss_init, oss_goal;
+        oss_init << std::fixed << std::setprecision(3) << init_coords[i];
+        oss_goal << std::fixed << std::setprecision(3) << goal_coords[i];
+
+        rc_node.append_attribute("init") = oss_init.str().c_str();
+        rc_node.append_attribute("goal") = oss_goal.str().c_str();
+    }
+
+    // ToDo: Implement the obstacle control query.
 
     return doc.save_file(file_path.c_str());
 }
