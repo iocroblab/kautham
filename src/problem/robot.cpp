@@ -862,34 +862,34 @@ namespace Kautham {
     /*!
   *
   */
-    bool Robot::autocollision(string *message) {
-        //parameter t is used to only test the autocollision of the trunk part of a TREE robot
-        //it is set to 0 in robot.h
 
-        if(_hasChanged ){
+    bool Robot::isDirectParentChild(Link* a, Link* b) const {
+        return b->getParent() == a || a->getParent() == b;
+    }
+    
+    bool Robot::autocollision(std::string *message) {
+        if (_hasChanged) {
             _autocoll = false;
-
-            for (unsigned int i = 0; i< links.size(); i++){
-                for (unsigned int j = i+2; j < links.size(); j++){
-                    //collision-cheeck between a link and its children is skipped
-                    if (links[j]->getParent() != links[i]) {
-                        if(links[i]->getElement()->collideTo(links[j]->getElement())){
-                            stringstream sstr;
-                            sstr <<"Collision between links " << i << " (" << links[i]->getName()
-                                << ") and " << j << " (" << links[j]->getName() << ")" << endl;
-                            if (message != NULL) *message = sstr.str();
-                            _autocoll = true;
-                            return _autocoll;
-
-                        }
+    
+            for (unsigned int i = 0; i < links.size(); i++) {
+                for (unsigned int j = i+1; j < links.size(); j++) {
+                    // Omet només els pare-fill directes
+                    if (isDirectParentChild(links[i], links[j])) continue;
+    
+                    if (links[i]->getElement()->collideTo(links[j]->getElement())) {
+                        std::stringstream sstr;
+                        sstr <<"Collision between links " << i << " (" << links[i]->getName()
+                             << ") and " << j << " (" << links[j]->getName() << ")" << std::endl;
+                        if (message) *message = sstr.str();
+                        _autocoll = true;
+                        return _autocoll;
                     }
                 }
             }
         }
-
         return _autocoll;
     }
-
+        
 
     /*!
   * This method verifies if this robot collides with the robot rob passed as a parameter.
@@ -1057,6 +1057,13 @@ namespace Kautham {
         temp->setArmed();
         temp->setValue(0.0); //This is the home position
         links.push_back(temp);
+
+        // DEBUG POL:
+        // std::string link_name = temp->getName();
+        // std::string joint_name = temp->getAssociatedJointName();
+        // bool movable = temp->getMovable();
+        // std::cout << "Added link (" << link_name << ") with joint name (" << joint_name << ") and movable status is: " << movable << std::endl;
+
         return true;
     }
 

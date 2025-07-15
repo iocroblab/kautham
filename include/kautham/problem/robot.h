@@ -189,6 +189,9 @@ namespace Kautham {
     //!< Returns the values that weights the motions of each link in Rn distance computations.
     std::vector<double>& getWeightRn();
 
+    // Support method:
+    bool isDirectParentChild(Link* a, Link* b) const;
+
     //! Test for autocollision
     bool autocollision(string *message = NULL);
 

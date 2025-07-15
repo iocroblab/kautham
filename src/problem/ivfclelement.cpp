@@ -98,8 +98,9 @@ IVFCLElement::IVFCLElement(SoSeparator *visModel, SoSeparator *collModel, double
     FCLModel(NULL) {
     // Només intenta crear model FCL si collision_ivmodel existeix i té geometria:
     if (collision_ivModel() && collision_ivModel()->getNumChildren() > 0) {
-        if (!makeFCLModel())
-            throw invalid_argument("FCL model could not be initialized");
+        if (!makeFCLModel()) {
+            throw std::invalid_argument("FCL model could not be initialized");
+        }
     } else {
         // No hi ha model de col·lisió: FCLModel es queda a NULL, no cal llençar excepció
     }
@@ -206,24 +207,21 @@ SoSeparator *IVFCLElement::getIvFromFCLModel(bool tran) {
     }
 }
 
+void IVFCLElement::setPosition(double *pos) {
+    IVElement::setPosition(pos); // <-- Sempre actualitza la part visual!
+    if (FCLModel) {
+        fcl::Vector3d translation(pos[0],pos[1],pos[2]);
+        FCLModel->setTranslation(translation);
+    }
+}
 
 void IVFCLElement::setOrientation(double *ori) {
-    if (!FCLModel) return; // No hi ha model de col·lisió
-
-    IVElement::setOrientation(ori);
-    fcl::Matrix3d rotation = fcl::Quaterniond(ori[3],ori[0],ori[1],ori[2]).toRotationMatrix();
-    FCLModel->setRotation(rotation);
+    IVElement::setOrientation(ori); // <-- Sempre actualitza la part visual!
+    if (FCLModel) {
+        fcl::Matrix3d rotation = fcl::Quaterniond(ori[3],ori[0],ori[1],ori[2]).toRotationMatrix();
+        FCLModel->setRotation(rotation);
+    }
 }
-
-
-void IVFCLElement::setPosition(double *pos) {
-    if (!FCLModel) return; // No hi ha model de col·lisió
-    
-    IVElement::setPosition(pos);
-    fcl::Vector3d translation(pos[0],pos[1],pos[2]);
-    FCLModel->setTranslation(translation);
-}
-
 
 bool IVFCLElement::makeFCLModel() {
     try {
