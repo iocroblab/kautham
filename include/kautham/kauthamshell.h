@@ -53,7 +53,7 @@ namespace Kautham {
             bool checkCollision(std::vector<double> smpcoords, bool *collisionFree, std::string *msg, std::pair<std::pair<int, std::string>, std::pair<int, int> > *colliding_elements = NULL);
             bool setRobotsConfig(std::vector<double> smpcoords);
             bool setRobotsConfig(std::vector<double> smpcoords, std::vector<RobConf> &config);
-            bool setRobotsConfigByIndexSample(const unsigned int _index_sample, std::vector<RobConf>& sample_config_); 
+            bool setRobotsConfigByIndexSample(const std::string& _sample_type, const unsigned int _sample_index, std::vector<RobConf>& sample_config_); 
             bool setObstaclesConfig(std::vector<double> smpcoords);
             bool setQuery(std::vector<double> init, std::vector<double> goal);
             bool setQuery(const std::vector<std::string>& _control_names, const std::vector<double>& _init, const std::vector<double>& _goal);

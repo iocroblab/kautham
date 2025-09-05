@@ -73,92 +73,9 @@ namespace Kautham {
             // Convert from sample to scoped state
             ((omplConstraintPlanner*)kauthamPlanner_)->smp2omplScopedState(smp, &sstate);
 
-            // Print for debugging
-            // std::cout << "Generated Sample State:\n";
-            // sstate.print(std::cout);
-
             // Return in parameter state:
             ((omplConstraintPlanner*)kauthamPlanner_)->getSpace()->copyState(state, sstate.get());
 
-            // POLs TESTING:
-            // const auto& full_space = ((omplConstraintPlanner*)kauthamPlanner_)->getSpace()->as<ob::CompoundStateSpace>();
-            // const auto* full_state = state->as<ob::CompoundStateSpace::StateType>();
-
-            // const std::vector<ob::StateSpacePtr>& robot_spaces = full_space->getSubspaces();
-
-            // for (size_t r = 0; r < robot_spaces.size(); ++r) {
-            //     if (auto robot_space = std::dynamic_pointer_cast<ob::CompoundStateSpace>(robot_spaces[r])) {
-            //         std::cout << "Subspace " << r << " (" << robot_space->getName() << "):" << std::endl;
-            //         const auto* robot_state = full_state->as<ob::CompoundStateSpace::StateType>(r);
-
-            //         const std::vector<ob::StateSpacePtr>& robot_sub_spaces = robot_space->getSubspaces();
-            //         for (size_t s = 0; s < robot_sub_spaces.size(); ++s) {
-            //             std::string robot_sub_space_name = robot_sub_spaces[s]->getName();
-                        
-            //             if (robot_sub_space_name.find("_RnConstr_") != std::string::npos) {
-            //                 auto rnConstr_space = robot_sub_spaces[s]->as<ob::ProjectedStateSpace>();
-            //                 if (rnConstr_space) {
-            //                     std::cout << "ProjectedStateSpace for " << robot_sub_space_name << std::endl;
-            //                     const auto* constrained_state = robot_state->as<ob::ProjectedStateSpace::StateType>(s);
-            //                     const auto* constrainedRealVector_state = constrained_state->getState()->as<ob::RealVectorStateSpace::StateType>();
-
-            //                     for (unsigned int i = 0; i < rnConstr_space->getDimension(); ++i) {
-            //                         std::cout << "  Dimension " << i << ": " << constrainedRealVector_state->values[i] << std::endl;
-            //                     }
-            //                     auto constraint = std::dynamic_pointer_cast<AbstractOMPLConstraint>(rnConstr_space->getConstraint());
-            //                     // ompl::base::State* pol = const_cast<ompl::base::State*>(constrained_state->getState());
-            //                     // constraint->project(std::move(pol));
-            //                     std::cout << "Constraint name: " << constraint->name_ << std::endl;
-
-            //                     /*###########*/
-            //                     // try {
-            //                     //     auto constrained_state0 = robot_state->as<ob::ProjectedStateSpace::StateType>(s);
-            //                     //     ompl::base::State pol = dynamic_cast<ompl::base::State>(constrained_state0->getState());
-            //                     //     auto constrained_state2 = pol.as<ompl::base::ProjectedStateSpace::StateType>();
-    
-            //                     //     if (constrained_state2) {
-            //                     //         std::cout << "Projected State:" << std::endl;
-                                        
-            //                     //         // Get the underlying state
-            //                     //         auto constrainedRealVector_state2 = constrained_state2.getState()->as<ompl::base::RealVectorStateSpace::StateType>();
-                                        
-            //                     //         if (constrainedRealVector_state2) {
-            //                     //             std::cout << "Num DOF2 = " << constraint->getAmbientDimension() << std::endl;
-            //                     //             for (unsigned int i = 0; i < constraint->getAmbientDimension(); ++i) {
-            //                     //                 std::cout << "  Dimension " << i << ": " << &(constrainedRealVector_state2.values[i]) << std::endl;
-            //                     //                 std::cout << "  Dimension " << i << ": " << (constrainedRealVector_state2.values[i]) << std::endl;
-            //                     //             }
-            //                     //         } else {
-            //                     //             std::cout << "Error: Unable to cast state to RealVectorStateSpace::StateType" << std::endl;
-            //                     //         }
-
-            //                     //     } else {
-            //                     //         std::cout << "Error: Unable to cast state to ProjectedStateSpace::StateType" << std::endl;
-            //                     //     }
-            //                     // } catch (const std::exception& e) {
-            //                     //     std::cerr << "Exception caught: " << e.what() << std::endl;
-            //                     // }
-                                
-                                
-            //                     /*###########*/
-
-            //                 }
-            //             }
-            //             // This "else if" is needed for "_Rn", to avoid collisions with "_RnConstr_". Also, it's is important to keep the order, first "_RnConstr_" and then "_Rn"
-            //             else if (robot_sub_space_name.find("_Rn") != std::string::npos) {
-            //                 auto rn_space = robot_sub_spaces[s]->as<ob::RealVectorStateSpace>();
-            //                 if (rn_space) {
-            //                     std::cout << "RealVectorStateSpace for " << robot_sub_space_name << std::endl;
-            //                     const auto* real_vector_state = robot_state->as<ob::RealVectorStateSpace::StateType>(s);
-
-            //                     for (unsigned int i = 0; i < rn_space->getDimension(); ++i) {
-            //                         std::cout << "  Dimension " << i << ": " << real_vector_state->values[i] << std::endl;
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
         }
 
 
@@ -281,8 +198,8 @@ namespace Kautham {
                         std::vector<std::string> unconstrained_joint_names;
                         std::vector<std::string> all_joint_names;
                         for (unsigned int n = 0; n < num_dof; n++) {    // n = 0 is the base
-                            unconstrained_joint_names.push_back(current_rob->getLink(n+1)->getName());
-                            all_joint_names.push_back(current_rob->getLink(n+1)->getName());
+                            unconstrained_joint_names.push_back(current_rob->getLink(n+1)->getAssociatedJointName());
+                            all_joint_names.push_back(current_rob->getLink(n+1)->getAssociatedJointName());
                         }
                         
                         // 2. Get all constraints for this robot and group them by intersection group:
@@ -315,9 +232,10 @@ namespace Kautham {
                             // Build the OMPL RealVectorStateSpace for this group:
                             spaceRn = std::make_shared<ob::RealVectorStateSpace>(group_constr_joints.size());
                             ob::RealVectorBounds bounds(group_constr_joints.size());
+                            double low, high;
                             for (unsigned int j = 0; j < group_constr_joints.size(); j++) {
-                                double low = *current_rob->getLink(group_constr_joints[j].first)->getLimits(true);
-                                double high = *current_rob->getLink(group_constr_joints[j].first)->getLimits(false);
+                                low = *current_rob->getLinkByAssociatedJointName(group_constr_joints[j].first)->getLimits(true);      // True = getLowLimit
+                                high = *current_rob->getLinkByAssociatedJointName(group_constr_joints[j].first)->getLimits(false);    // Flase = getHighLimit
                                 bounds.setLow(j, low);
                                 bounds.setHigh(j, high);
                             }
@@ -391,10 +309,8 @@ namespace Kautham {
                             ob::RealVectorBounds bounds(unconstrained_joint_names.size());
                             double low, high;
                             for (unsigned int j = 0; j < unconstrained_joint_names.size(); j++) {
-                                low = *current_rob->getLink(unconstrained_joint_names[j])->getLimits(true);      // True = getLowLimit
-                                high = *current_rob->getLink(unconstrained_joint_names[j])->getLimits(false);    // Flase = getHighLimit
-                                // std::cout << "Constr name: " << unconstrained_joint_names[j] << " Low: " << low << std::endl;
-                                // std::cout << "Constr name: " << unconstrained_joint_names[j] << " High: " << high << std::endl;
+                                low = *current_rob->getLinkByAssociatedJointName(unconstrained_joint_names[j])->getLimits(true);      // True = getLowLimit
+                                high = *current_rob->getLinkByAssociatedJointName(unconstrained_joint_names[j])->getLimits(false);    // Flase = getHighLimit
                                 bounds.setLow(j, low);
                                 bounds.setHigh(j, high);
                             }
@@ -631,9 +547,6 @@ namespace Kautham {
 
                 _solved = true;
 
-                // std::cout << "Joint path ready to be used in robot_arm as CSV file input:" << std::endl;
-                // printJointPath(joint_path);
-
             } else {
                 std::cout << "No solution found." << std::endl;
                 _solved = false;
@@ -819,7 +732,7 @@ namespace Kautham {
                         for (const auto& [joint_name, _] : group_constr_joints) {
                             // Find the joint index in the robot
                             for (unsigned int n = 0; n < num_dof; n++) {
-                                if (current_rob->getLink(n+1)->getName() == joint_name) {   // n=0 is the base
+                                if (current_rob->getLink(n+1)->getAssociatedJointName() == joint_name) {   // n=0 is the base
                                     // std::cout << "Match with constr " << group_name << " of " << joint_name << std::endl;
                                     scopedStateRnConstr[q] = r.getCoordinate(n);
                                     // std::cout << "Joint[" << q << "] = " << r.getCoordinate(n) << std::endl;
@@ -841,7 +754,7 @@ namespace Kautham {
 
                         size_t q = 0;
                         for (unsigned int n = 0; n < num_dof; n++) {
-                            std::string joint_name = current_rob->getLink(n+1)->getName();
+                            std::string joint_name = current_rob->getLink(n+1)->getAssociatedJointName();
                             if (std::find(unconstrained_joint_names.begin(), unconstrained_joint_names.end(), joint_name) != unconstrained_joint_names.end()) {
                                 // std::cout << "Match with Rn of " << joint_name << std::endl;
                                 scopedStateRn[q] = r.getCoordinate(n);
@@ -962,8 +875,8 @@ namespace Kautham {
                         // Fill the coords vector for the constrained joints:
                         size_t q = 0;
                         for (const auto& [joint_name, joint_idx] : group_constr_joints) {
-                            coords[joint_idx] = pathscopedstateRnConstr[q];
-                            // std::cout << joint_name << "(" << joint_idx << ") = " << pathscopedstateRnConstr[q] << std::endl;
+                            coords[joint_idx-1] = pathscopedstateRnConstr[q];
+                            // std::cout << "Constrained: " << joint_name << "(" << joint_idx << ") = " << pathscopedstateRnConstr[q] << std::endl;
                             // Remove this index from unconstr_indexes:
                             unconstr_indexes.erase(
                                 std::remove(unconstr_indexes.begin(), unconstr_indexes.end(), joint_idx),
@@ -981,19 +894,19 @@ namespace Kautham {
                         ob::StateSpacePtr ssRobotiRn = ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(rob_subspace_index);
                         ob::ScopedState<ob::RealVectorStateSpace> pathscopedstateRn(ssRobotiRn);
                         sstate >> pathscopedstateRn;
-                        // pathscopedstateRn.print(std::cout);
-
+                            
                         for (size_t u = 0; u < unconstrained_joint_names.size(); ++u) {
                             // Find the original index of this joint
                             const std::string& joint_name = unconstrained_joint_names[u];
-                            for (unsigned int n = 0; n < num_dof; n++) {
-                                if (current_rob->getLink(n+1)->getName() == joint_name) {
-                                    coords[n] = pathscopedstateRn[u];
-                                    // std::cout << joint_name << "(" << n << ") = " << pathscopedstateRn[u] << std::endl;
-                                    break;
-                                }
+                            uint joint_idx;
+                            if (!current_rob->getLinkIndexByJointName(joint_name, joint_idx)) {
+                                std::cerr << "Warning: Joint name '" << joint_name << "' not found in robot links." << std::endl;
+                                continue;
                             }
+                            coords[joint_idx-1] = pathscopedstateRn[u];
+                            // std::cout << "Unconstrained: " << joint_name << "(" << joint_idx << ") = " << pathscopedstateRn[u] << std::endl;
                         }
+
                         rob_subspace_index++;
                     }
 

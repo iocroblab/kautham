@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="ur3e_gripper_rg6" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- Include subassembly macros -->
+    <xacro:include filename="UR3e/ur3e_macro.urdf.xacro"/>
+    <xacro:include filename="rg6_gripper/rg6_gripper_macro.urdf.xacro"/>
+
+    <xacro:property name="ur_prefix" value="fib_"/>
+
+    <!-- Instantiate the UR3e: -->
+    <xacro:ur3e_robot tf_prefix="${ur_prefix}" parent=""/>
+
+    <!-- Connect UR3e and the RG6 gripper -->
+    <joint name="wrist3_rg6_gripper" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="wrist_3_link"/>
+        <child link="rg6_gripper_base_link"/>
+    </joint>
+
+    <!-- Instantiate the RG6 gripper: -->
+    <xacro:rg6 tf_prefix="" parent=""/>
+
+</robot>

@@ -20,7 +20,7 @@
     59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo and Pol Ramon Canyameres */
 
 
 #include <boost/algorithm/string.hpp>
@@ -221,22 +221,26 @@ namespace Kautham {
         ivmodel->addChild(sca);
         ivmodel->addChild(visual_model);
 
-        if (collision_model != NULL) {
+        // Només crea collision_ivmodel si hi ha geometria real:
+        if (collision_model != nullptr && collision_model->getNumChildren() > 0) {
             collision_ivmodel = new SoSeparator;
             collision_ivmodel->ref();
             collision_ivmodel->addChild(sca);
             collision_ivmodel->addChild(collision_model);
-
-        } else {
-            if (useBBOX) {
-                collision_ivmodel = BBOX(ivModel(),sc);
-                if (collision_ivmodel == NULL) {
-                    collision_ivmodel = ivModel();
-                }
-            } else {
+        } else if (useBBOX) {
+            collision_ivmodel = BBOX(ivModel(), sc);
+            if (collision_ivmodel == nullptr) {
                 collision_ivmodel = ivModel();
             }
+        } else {
+            /* 
+            Quan no hi ha collision i useBBOX és false, assigna el model visual també com a model de col·lisió (només a nivell de transformació, no per a detecció de col·lisions reals).
+            Així, la transformació del link sempre tindrà un node a on aplicar-se, i la jerarquia es mantindrà coherent.
+            */
+            // collision_ivmodel = ivModel();
+            collision_ivmodel = nullptr;
         }
+
     }
 
 
@@ -476,16 +480,17 @@ namespace Kautham {
     }
 
     SoSeparator* IVElement::collision_ivModel(bool tran) {
-        if(tran){
+        if (tran) {
             SoSeparator* temp = new SoSeparator;
             temp->ref();
-            temp->addChild(trans);
-            temp->addChild(rot);
-            temp->addChild(collision_ivmodel);
+            if (trans) temp->addChild(trans);
+            if (rot) temp->addChild(rot);
+            if (collision_ivmodel) temp->addChild(collision_ivmodel);
             return temp;
-        }else
+        } else {
             return collision_ivmodel;
-    }
+        }
+    }    
 
 }
 

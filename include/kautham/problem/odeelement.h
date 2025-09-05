@@ -22,6 +22,8 @@
 
 /* Author: Nestor Garcia Hidalgo */
 
+#pragma once
+
 #include <kautham/mt/point3.h>
 #include <kautham/mt/transform.h>
 

@@ -65,6 +65,20 @@ if(PTHREADS_FOUND)
    add_definitions( ${PTHREADS_DEFINITIONS} )
 endif()
 
+#### URDFDOM ####
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(URDFDOM REQUIRED urdfdom)
+pkg_check_modules(URDFDOM_HEADERS REQUIRED urdfdom_headers)
+
+if(URDFDOM_FOUND AND URDFDOM_HEADERS_FOUND)
+    list(APPEND ALL_INCLUDE_DIRS ${URDFDOM_INCLUDE_DIRS} ${URDFDOM_HEADERS_INCLUDE_DIRS})
+    set(EXTRA_LIBS ${EXTRA_LIBS} ${URDFDOM_LIBRARIES})
+    add_definitions(${URDFDOM_CFLAGS_OTHER})
+else()
+    message(FATAL_ERROR "urdfdom or urdfdom_headers not found. Please install them (e.g., sudo apt install liburdfdom-dev liburdfdom-headers-dev)")
+endif()
+
+
 if(KAUTHAM_OPENDE)
    find_package(OpenDE REQUIRED)
    find_package(Drawstuff)

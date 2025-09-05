@@ -29,20 +29,25 @@
 #include <sstream>
 #include <fstream>
 
+// Needed in .h file:
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/actions/SoCallbackAction.h>
 #include <Inventor/SoPrimitiveVertex.h>
-#include <Inventor/fields/SoSFVec3f.h>
-#include <Inventor/fields/SoSFRotation.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoRotation.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoScale.h>
+
+// Needed out of .h file:
+#include <Inventor/fields/SoSFVec3f.h>
+#include <Inventor/fields/SoSFRotation.h>
+#include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoSphere.h>
-#include <Inventor/actions/SoCallbackAction.h>
 #include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/SbLinear.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoCylinder.h>
 
 #include <external/gdiam/gdiam.hpp>
 #include <kautham/problem/element.h>

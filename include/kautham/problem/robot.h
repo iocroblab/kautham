@@ -189,6 +189,9 @@ namespace Kautham {
     //!< Returns the values that weights the motions of each link in Rn distance computations.
     std::vector<double>& getWeightRn();
 
+    // Support method:
+    bool isDirectParentChild(Link* a, Link* b) const;
+
     //! Test for autocollision
     bool autocollision(string *message = NULL);
 
@@ -199,18 +202,23 @@ namespace Kautham {
                  double preTrans[] = NULL, bool useBBOX = false);
 
     //! Add link to the robot
-    bool addLink(string name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis,
-                 bool rotational, bool movable, double low, double hi, double w, string parentName,
+    bool addLink(const std::string& _link_name, const std::string& _link_joint_name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis,
+                 bool _rotational, bool _movable, double low, double hi, double w, string parentName,
                  double preTrans[], ode_element ode, bool useBBOX = false);
 
     //! Returns the pointer to link number i
     Link* getLink(unsigned int i);
 
-    //! Retunrs the pointer to the link named linkName
-    Link* getLink(string name);
+    //! Returns the pointer to the link named linkName
+    Link* getLink(const std::string& _link_name);
+
+    //! Returns the pointer to the link by his associated joint name:
+    Link* getLinkByAssociatedJointName(const std::string& _joint_name);
 
     //! Give the index where the link named linkName is insite links vector. Returns false if the _link_name doesn't exists.
-    bool getLinkIndexByName(std::string _link_name, uint& _link_index);
+    bool getLinkIndexByName(const std::string& _link_name, uint& link_index_);
+  
+    bool getLinkIndexByJointName(const std::string& _joint_name, uint& link_index_);
 
     //! Computes direct kinematics
     bool Kinematics(RobConf *robq);
@@ -319,7 +327,7 @@ namespace Kautham {
     void setViewLink(string name);
 
     //! Gets the vector of joint names
-    void getJointNames(std::vector<std::string> &jnames);
+    void getJointNames(std::vector<std::string> &joint_names_);
 
     //! Return if this obstcale is attachable
     inline bool isAttachable() {return (!isAttached() && (links.size() == 1));}
@@ -362,8 +370,8 @@ namespace Kautham {
     inline std::vector<std::string> getUnconstrainedJointNames() {return unconstrained_joint_names_;}
 
   private:
-    //! sets the Robot from a *.urdf file
-    bool setFromUrdfFile(string robFile, bool useBBOX, progress_struct *progress = NULL);
+    //! Sets the Robot from a *.urdf (or *.urdf.xacro) file:
+    bool setFromURDFFile(const std::string& _robot_file_path, const bool _useBBOX, progress_struct *progress_);
 
     //! This method updates the absolute position and orientation of each link in the robot.
     void updateRobot();

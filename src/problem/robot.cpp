@@ -20,7 +20,7 @@
    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 \*************************************************************************/
 
-/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
+/* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo and Pol Ramon Canyameres */
 
 #include <cstdlib>
 #include <cstdio>
@@ -31,11 +31,14 @@
 #include <locale.h>
 
 #include <Inventor/VRMLnodes/SoVRMLExtrusion.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoSphere.h>
+
 
 #include <kautham/mt/point3.h>
 #include <kautham/mt/rotation.h>
 
-#include <kautham/problem/urdf.h>
+#include <kautham/problem/urdf.hpp>
 #include <kautham/problem/assimpImport.h>
 #include <kautham/problem/robot.h>
 #include <kautham/util/kthutil/kauthamdefs.h>
@@ -53,7 +56,6 @@
 
 using namespace std;
 using namespace Kautham;
-using namespace pugi;
 
 namespace Kautham {
 
@@ -116,8 +118,8 @@ namespace Kautham {
                 string message = ".dh extension no longer suported. Convert it to urdf format";
                 throw KthExcp(message);
                 //armed = setFromDhFile(robFile,useBBOX,progress);
-            } else if (extension == "urdf") {
-                armed = setFromUrdfFile(robFile,useBBOX,progress);
+            } else if (extension == "urdf" || extension == "xacro") {
+                armed = Robot::setFromURDFFile(robFile, useBBOX, progress);
             } else {
                 cout << "iv or wrl extension no longer supported. Wrap the robot/obstacle as a urdf file." << endl;
                 string message = "iv or wrl extension no longer supported. Wrap the robot/obstacle as a urdf file.";
@@ -169,199 +171,165 @@ namespace Kautham {
         delete mapMatrix;
     }
 
+    bool Robot::setFromURDFFile(const std::string& _robot_file_path, const bool _useBBOX, progress_struct *progress_) {
 
-    bool getLinePosition(string filename, unsigned int offset, unsigned int &line, unsigned int &position) {
-        ifstream file(filename.c_str());
-        if (!file.is_open()) return false;
-
-        unsigned int counter = 0;
-        line = 0;
-        position = 0;
-        string str;
-        while(counter < offset) {
-            getline(file,str);
-            if (counter + str.length() > offset) {
-                position = offset - counter;
-            } else {
-                line++;
-            }
-            counter += str.length();
-        }
-
-        file.close();
-
-        return true;
-    }
-
-    bool Robot::setFromUrdfFile(string robFile, bool useBBOX, progress_struct *progress) {
-        //setting numeric parameter to avoid convertions problems
+        // Set numeric locale to avoid conversion problems
         char *old = setlocale(LC_NUMERIC, "C");
 
-        string dir = robFile.substr(0,robFile.find_last_of("/")+1);
+        // Directory for mesh files:
+        std::string dir = _robot_file_path.substr(0, _robot_file_path.find_last_of("/") + 1);
 
-        // Opening the file with the new pugiXML library.
-        xml_document doc;
-
-        //Parse the urdf file
-        xml_parse_result result = doc.load_file(robFile.c_str());
-        if (result) {
-            //if file could be loaded
-            urdf_robot robot;
-            xml_node tmpNode = doc.child("robot"); //node containing robot information
-
-            robot.fill(&tmpNode,dir); //fill robot information
-
-            robot.getJointNames(_jointnames);//loads the vector of joint names (required for the rosnode to visualize in rviz)
-
-            //Robot Name
-            name = robot.name;
-
-            Approach = URDF;
-
-            //Links of the robot
-            int numLinks = robot.num_links;
-
-            // Initialization of the RnConf part of the RobConf for each
-            // special poses, the initial, the goal, the Home and the current poses.
-            _homeConf.setRn(numLinks - 1);
-            _currentConf.setRn(numLinks - 1);
-
-            _weights = new RobWeight(numLinks - 1);
-
-            double* preTransP;
-            double preTrans[7]= {0., 0., 0., 0., 0., 0., 0.};
-            double limMin, limMax;
-            ode_element ode;
-
-            //Loop for all the links
-            for (int i = 0; i < numLinks; i++) {
-                if (progress != NULL) {
-                    pthread_mutex_lock(progress->mutex);
-                    if (progress->abort) {
-                        pthread_mutex_unlock(progress->mutex);
-                        return false;
-                    }
-                }
-
-                try {
-                    preTransP = NULL;
-                    limMin = 0;
-                    limMax = 0.;
-
-                    //Sets the Pretransfomation from parent's frame to joint's frame
-                    if (i > 0) {
-                        preTransP = preTrans;
-                        preTrans[0] = (double)robot.link[i].origin.xyz[0];//x translation
-                        preTrans[1] = (double)robot.link[i].origin.xyz[1];//y translation
-                        preTrans[2] = (double)robot.link[i].origin.xyz[2];//z translation
-                        preTrans[3] = (double)robot.link[i].origin.r;//roll rotation
-                        preTrans[4] = (double)robot.link[i].origin.p;//yaw rotation
-                        preTrans[5] = (double)robot.link[i].origin.y;//pitch rotation
-                        preTrans[6] = 0.;//unused parameter
-                    }
-
-                    //Sets the limits of the joint
-                    if (robot.link[i].type == "continuous") {
-                        robot.link[i].type = "revolute";
-                        robot.link[i].limit.lower = -2*M_PI;
-                        robot.link[i].limit.upper = +2*M_PI;
-                    }
-                    limMin = (double)robot.link[i].limit.lower;
-                    limMax = (double)robot.link[i].limit.upper;
-
-                    //Set ode parameters
-                    ode.dynamics.damping = robot.link[i].dynamics.damping;
-                    ode.dynamics.friction = robot.link[i].dynamics.friction;
-                    ode.inertial.inertia.ixx = robot.link[i].inertial.inertia.ixx;
-                    ode.inertial.inertia.ixy = robot.link[i].inertial.inertia.ixy;
-                    ode.inertial.inertia.ixz = robot.link[i].inertial.inertia.ixz;
-                    ode.inertial.inertia.iyy = robot.link[i].inertial.inertia.iyy;
-                    ode.inertial.inertia.iyz = robot.link[i].inertial.inertia.iyz;
-                    ode.inertial.inertia.izz = robot.link[i].inertial.inertia.izz;
-                    ode.inertial.inertia.matrix = robot.link[i].inertial.inertia.matrix;
-                    ode.inertial.mass = robot.link[i].inertial.mass;
-                    ode.inertial.origin.xyz = robot.link[i].inertial.origin.xyz;
-                    ode.inertial.origin.r = robot.link[i].inertial.origin.r;
-                    ode.inertial.origin.p = robot.link[i].inertial.origin.p;
-                    ode.inertial.origin.y = robot.link[i].inertial.origin.y;
-                    ode.inertial.origin.transform = robot.link[i].inertial.origin.transform;
-                    ode.contact_coefficients.mu = robot.link[i].contact_coefficients.mu;
-                    ode.contact_coefficients.kp = robot.link[i].contact_coefficients.kp;
-                    ode.contact_coefficients.kd = robot.link[i].contact_coefficients.kd;
-                    ode.limit.effort = robot.link[i].limit.effort;
-                    ode.limit.velocity = robot.link[i].limit.velocity;
-                    ode.limit.lower = robot.link[i].limit.lower;
-                    ode.limit.upper = robot.link[i].limit.upper;
-
-                    //Create the link
-                    addLink(robot.link[i].name,robot.link[i].visual.model,
-                            robot.link[i].collision.model,
-                            robot.link[i].axis,robot.link[i].type == "revolute",
-                            robot.link[i].type != "fixed",limMin,
-                            limMax,robot.link[i].weight,robot.link[i].parent,preTransP,ode,useBBOX);
-
-                    if (!((Link*)links.at(i))->isArmed()) {
-                        //restoring environtment values
-                        setlocale(LC_NUMERIC,old);
-                        return false;
-                    }
-
-                    //Add the weight. Defaults to 1.0
-                    if (i > 0) { //First link is ommited because it is the base.
-                        _weights->setRnWeigh(i-1,(double)robot.link[i].weight);
-                    }
-
-                    if (progress != NULL) {
-                        ++(*(progress->linksLoaded));
-                    }
-                } catch (const KthExcp& excp) {
-                    if (progress != NULL) {
-                        pthread_mutex_unlock(progress->mutex);
-                    }
-
-                    throw excp;
-                    return false;
-                } catch (const exception& excp) {
-                    if (progress != NULL) {
-                        pthread_mutex_unlock(progress->mutex);
-                    }
-
-                    throw excp;
-                    return false;
-                } catch (...) {
-                    if (progress != NULL) {
-                        pthread_mutex_unlock(progress->mutex);
-                    }
-
-                    throw;
-                    return false;
-                }
-
-                if (progress != NULL) {
-                    pthread_mutex_unlock(progress->mutex);
-                }
-            }
-
-            //restoring environtment values
-            setlocale(LC_NUMERIC,old);
-            return true;
-        } else {// the result of the file parser is bad
-            cout << "Robot file: " << robFile << " can not be read." << endl;
-
-            //restoring environtment values
-            setlocale(LC_NUMERIC,old);
-
-            unsigned int line, position;
-            getLinePosition(robFile,result.offset,line,position);
-            string message = "Robot file " + robFile + " couldn't be parsed";
-            stringstream details;
-            details << "Error: " << result.description() << endl <<
-                       "Last successfully parsed character: " << result.offset
-                    << "(line: " <<  line << ", position: " << position << ")";
+        // Parse URDF using KauthamParserURDF:
+        KauthamParserURDF urdf_parser(_robot_file_path);
+        if (!urdf_parser.isLoaded()) {
+            std::cerr << "Failed to load URDF file: " << _robot_file_path << std::endl;
+            setlocale(LC_NUMERIC, old);
             return false;
         }
-    }
 
+        this->Approach = Kautham::APPROACH::URDF;
+        this->name = urdf_parser.getRobotName();
+        this->_jointnames = urdf_parser.getJointNames();
+
+        size_t num_links = urdf_parser.getNumLinks();
+        auto ordered_joints = urdf_parser.getOrderedJoints();
+
+        // Initialization of the RnConf part of the RobConf for each special poses, the initial, the goal, the Home and the current poses:
+        _homeConf.setRn(num_links - 1);
+        _currentConf.setRn(num_links - 1);
+        _weights = new RobWeight(num_links - 1);
+
+        double preTrans[7]= {0., 0., 0., 0., 0., 0., 0.};
+        double* preTransP = nullptr;
+        double limMin = 0.0, limMax = 0.0;
+        Kautham::ode_element ode;
+
+        for (size_t i = 0; i < num_links; ++i) {
+            if (progress_ != nullptr) {
+                pthread_mutex_lock(progress_->mutex);
+                if (progress_->abort) {
+                    pthread_mutex_unlock(progress_->mutex);
+                    setlocale(LC_NUMERIC, old);
+                    return false;
+                }
+            }
+        
+            try {
+                preTransP = nullptr;
+                limMin = 0.0;
+                limMax = 0.0;
+        
+                std::shared_ptr<const urdf::Link> link;
+                std::shared_ptr<const urdf::Joint> joint;
+                if (i == 0) {
+                    // Base link
+                    link = urdf_parser.getRobotRootLink();
+                } else {
+                    joint = ordered_joints[i-1];
+                    link = urdf_parser.getLink(joint->child_link_name);
+                }
+        
+                // Pre-transformation (parent to joint frame)
+                if (i > 0 && joint) {
+                    preTransP = preTrans;
+                    preTrans[0] = joint->parent_to_joint_origin_transform.position.x;
+                    preTrans[1] = joint->parent_to_joint_origin_transform.position.y;
+                    preTrans[2] = joint->parent_to_joint_origin_transform.position.z;
+                    double roll, pitch, yaw;
+                    joint->parent_to_joint_origin_transform.rotation.getRPY(roll, pitch, yaw);
+                    preTrans[3] = roll;
+                    preTrans[4] = pitch;
+                    preTrans[5] = yaw;
+                    preTrans[6] = 0.0;
+                }
+        
+                // Joint limits
+                if (i > 0 && joint) {
+                    if (joint->type == urdf::Joint::CONTINUOUS) {
+                        limMin = -2 * M_PI;
+                        limMax = 2 * M_PI;
+                    } else if (joint->limits) {
+                        limMin = joint->limits->lower;
+                        limMax = joint->limits->upper;
+                    }
+                }
+        
+                // Fill ODE parameters:
+                urdf_parser.fillODEElementFromURDF(link, joint, ode);
+
+                // Build Coin3D models for visualization:
+                SoSeparator* visual_model = urdf_parser.createSoSeparatorFromURDF("visual", link, dir);
+                SoSeparator* collision_model = urdf_parser.createSoSeparatorFromURDF("collision", link, dir);
+
+                if (visual_model->getNumChildren() == 0) {
+                    SoSphere* dummy = new SoSphere;
+                    dummy->radius = 0.001f; // molt petit, pràcticament invisible
+                    visual_model->addChild(dummy);
+                }
+
+                // Katxopo to handle Kautham issue, when fixed joints (with <0,0,0> as axis) are used:
+                double ax = 0.0, ay = 0.0, az = 0.0;
+                if (i > 0 && joint) {
+                    ax = joint->axis.x;
+                    ay = joint->axis.y;
+                    az = joint->axis.z;
+                    if (ax == 0.0 && ay == 0.0 && az == 0.0) {
+                        // All axis values are zero, set default to (0,0,1)
+                        ax = 0.0;
+                        ay = 0.0;
+                        az = 1.0;
+                    }
+                }
+
+                // Create the link in the kautham robot model:
+                Robot::addLink(
+                    link->name,
+                    (i > 0 && joint) ? joint->name : "",
+                    visual_model,
+                    collision_model,
+                    (i > 0 && joint) ? Unit3(ax, ay, az) : Unit3(0,0,1),
+                    (i > 0 && joint) ? ((joint->type == urdf::Joint::REVOLUTE) || (joint->type == urdf::Joint::CONTINUOUS)) : false,
+                    (i > 0 && joint) ? (joint->type != urdf::Joint::FIXED) : false,
+                    limMin,
+                    limMax,
+                    1.0, // or link->weight if you have it
+                    (i > 0 && joint) ? joint->parent_link_name : "",
+                    preTransP,
+                    ode,
+                    _useBBOX
+                );
+
+                if (!((Link*)links.at(i))->isArmed()) {
+                    std::cerr << "Link not armed: " << link->name << std::endl;
+                    setlocale(LC_NUMERIC, old);
+                    return false;
+                }
+
+                // Set weights (default to 1.0, or use link->weight if you have it)
+                if (i > 0) {
+                    _weights->setRnWeigh(i-1, 1.0);
+                }
+            
+                if (progress_ != nullptr) {
+                    ++(*(progress_->linksLoaded));
+                }
+
+            } catch (const std::exception& excp) {
+                if (progress_ != nullptr) {
+                    pthread_mutex_unlock(progress_->mutex);
+                }
+                setlocale(LC_NUMERIC, old);
+                throw; // rethrow for higher-level handling
+            }
+        
+            if (progress_ != nullptr) {
+                pthread_mutex_unlock(progress_->mutex);
+            }
+        }
+        
+        setlocale(LC_NUMERIC, old);
+        return true;
+    }
 
     /*!
  * Computes the transform between an object and a link that will be used to
@@ -518,9 +486,29 @@ namespace Kautham {
     /*!
   *
   */
-    Link* Robot::getLink(string name ){
+    Link* Robot::getLink(const std::string& _link_name) {
+        if (_link_name.empty()) {
+            return NULL;
+        }
         for (size_t i = 0; i < links.size(); ++i) {
-            if (links.at(i)->getName() == name) return links.at(i);
+            if (links.at(i)->getName() == _link_name) {
+                return links.at(i);
+            }
+        }
+        return NULL;
+    }
+
+        /*!
+  *
+  */
+    Link* Robot::getLinkByAssociatedJointName(const std::string& _joint_name) {
+        if (_joint_name.empty()) {
+            return NULL;
+        }
+        for (size_t i = 0; i < links.size(); ++i) {
+            if (links.at(i)->getAssociatedJointName() == _joint_name) {
+                return links.at(i);
+            }
         }
         return NULL;
     }
@@ -528,10 +516,26 @@ namespace Kautham {
     /*!
   *
   */
-    bool Robot::getLinkIndexByName(std::string _link_name, uint& _link_index) {
+    bool Robot::getLinkIndexByName(const std::string& _link_name, uint& link_index_) {
+        if (_link_name.empty()) {
+            return false;
+        }
         for (size_t i = 0; i < links.size(); ++i) {
             if (links.at(i)->getName() == _link_name) {
-                _link_index = i;
+                link_index_ = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool Robot::getLinkIndexByJointName(const std::string& _joint_name, uint& link_index_) {
+        if (_joint_name.empty()) {
+            return false;
+        }
+        for (size_t i = 0; i < links.size(); ++i) {
+            if (links.at(i)->getAssociatedJointName() == _joint_name) {
+                link_index_ = i;
                 return true;
             }
         }
@@ -858,34 +862,34 @@ namespace Kautham {
     /*!
   *
   */
-    bool Robot::autocollision(string *message) {
-        //parameter t is used to only test the autocollision of the trunk part of a TREE robot
-        //it is set to 0 in robot.h
 
-        if(_hasChanged ){
+    bool Robot::isDirectParentChild(Link* a, Link* b) const {
+        return b->getParent() == a || a->getParent() == b;
+    }
+    
+    bool Robot::autocollision(std::string *message) {
+        if (_hasChanged) {
             _autocoll = false;
-
-            for (unsigned int i = 0; i< links.size(); i++){
-                for (unsigned int j = i+2; j < links.size(); j++){
-                    //collision-cheeck between a link and its children is skipped
-                    if (links[j]->getParent() != links[i]) {
-                        if(links[i]->getElement()->collideTo(links[j]->getElement())){
-                            stringstream sstr;
-                            sstr <<"Collision between links " << i << " (" << links[i]->getName()
-                                << ") and " << j << " (" << links[j]->getName() << ")" << endl;
-                            if (message != NULL) *message = sstr.str();
-                            _autocoll = true;
-                            return _autocoll;
-
-                        }
+    
+            for (unsigned int i = 0; i < links.size(); i++) {
+                for (unsigned int j = i+1; j < links.size(); j++) {
+                    // Omet només els pare-fill directes
+                    if (isDirectParentChild(links[i], links[j])) continue;
+    
+                    if (links[i]->getElement()->collideTo(links[j]->getElement())) {
+                        std::stringstream sstr;
+                        sstr <<"Collision between links " << i << " (" << links[i]->getName()
+                             << ") and " << j << " (" << links[j]->getName() << ")" << std::endl;
+                        if (message) *message = sstr.str();
+                        _autocoll = true;
+                        return _autocoll;
                     }
                 }
             }
         }
-
         return _autocoll;
     }
-
+        
 
     /*!
   * This method verifies if this robot collides with the robot rob passed as a parameter.
@@ -1017,20 +1021,21 @@ namespace Kautham {
     //! This method builds the link model and all their data structures in order
     //! to keep the coherence in the robot assembly. It doesn't use any intermediate
     //! structure to adquire the information to do the job.
-    bool Robot::addLink(string name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis, bool rotational, bool movable,
+    bool Robot::addLink(const std::string& _link_name, const std::string& _link_joint_name, SoSeparator *visual_model, SoSeparator *collision_model, Unit3 axis, bool _rotational, bool _movable,
                         double low, double hi, double w, string parentName, double preTrans[], ode_element ode, bool useBBOX){
 
         if (visual_model == NULL) {
-            throw KthExcp("Link " + name + " from robot " + this->name + " has no visual model");
+            throw KthExcp("Link " + _link_name + " from robot " + this->name + " has no visual model");
         }
 
         Link* temp = new Link(visual_model, collision_model, scale, Approach, useBBOX);
-        temp->setName(name);
-        temp->setMovable(movable && (low != hi));
-        temp->setRotational(rotational);
+        temp->setName(_link_name);
+        temp->setAssociatedJointName(_link_joint_name);
+        temp->setRotational(_rotational);
+        temp->setMovable(_movable && (low != hi));
         temp->setAxis(axis);
         temp->setDHPars(0., 0., 0., 0.);//defaults to zero
-        if (rotational) {
+        if (_rotational) {
             temp->setLimits(low, hi);
         } else {
             temp->setLimits(this->scale*low, this->scale*hi);
@@ -1052,6 +1057,13 @@ namespace Kautham {
         temp->setArmed();
         temp->setValue(0.0); //This is the home position
         links.push_back(temp);
+
+        // DEBUG POL:
+        // std::string link_name = temp->getName();
+        // std::string joint_name = temp->getAssociatedJointName();
+        // bool movable = temp->getMovable();
+        // std::cout << "Added link (" << link_name << ") with joint name (" << joint_name << ") and movable status is: " << movable << std::endl;
+
         return true;
     }
 
@@ -1449,14 +1461,16 @@ namespace Kautham {
  /*!
   * Gets the joint names
   */
-    void Robot::getJointNames(std::vector<std::string> &jnames)
-    {
-        //std::cout<<" ----------- getJointNames with _jointnames.size() = "<<_jointnames.size()<<std::endl;
-        jnames.resize(_jointnames.size());
-        for(unsigned int i=0; i<_jointnames.size(); i++)
-        {
-            //std::cout<<" _jointnames["<<i<<"] = "<<_jointnames[i]<<std::endl;
-            jnames[i]=_jointnames[i];
+    void Robot::getJointNames(std::vector<std::string>& joint_names_) {
+        joint_names_.clear();
+        joint_names_.resize(_jointnames.size());
+
+        unsigned int link_index;
+        // Must be reordered according to the vector if *Links:
+        for (unsigned int i = 0; i < this->_jointnames.size(); i++) {
+            this->getLinkIndexByJointName(this->_jointnames[i], link_index);
+            joint_names_[link_index-1] = _jointnames[i];
+            // std::cout << "Ordered joint name: " << joint_names_[link_index] << "[" << link_index << "]" << std::endl;
         }
     }
 }

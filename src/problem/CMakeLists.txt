@@ -17,6 +17,10 @@ if( ARMADILLO_FOUND )
    include_directories( ${Armadillo_INCLUDE_DIR})
 endif( ARMADILLO_FOUND )
 
+if(URDFDOM_FOUND AND URDFDOM_HEADERS_FOUND)
+   include_directories(${URDFDOM_INCLUDE_DIRS} ${URDFDOM_HEADERS_INCLUDE_DIRS})
+endif()
+
 file( GLOB SRC_FILES *.cpp )
 file( GLOB HDR_FILES *.h* )
 
