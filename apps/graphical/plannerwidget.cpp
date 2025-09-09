@@ -457,24 +457,13 @@ namespace Kautham {
                     //verify if an object is attached to set transfer instead of transit
                     for(unsigned int irob=0;  irob<_planner->wkSpace()->getNumRobots(); irob++)
                     {
-                        //cout<<"robot "<<irob<<endl;
-                        //cout<<"_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size() = "<<_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()<<endl;
-                        int ilink=0;
-                        //int iobj;
                         if(_planner->wkSpace()->getRobot(irob)->getAttachedObject()->size()!=0)
                         {
                             std::string obsname = _planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().obs->getName();
 
+                            std::string robot_name =_planner->wkSpace()->getRobot(irob)->getName();
                             std::string linkname =_planner->wkSpace()->getRobot(irob)->getAttachedObject()->front().link->getName();
-                            for(unsigned int k=0;k<_planner->wkSpace()->getRobot(irob)->getNumLinks();k++)
-                            {
-                                if(_planner->wkSpace()->getRobot(irob)->getLink(k)->getName() == linkname)
-                                {
-                                    ilink = k;
-                                    break;
-                                }
-                            }
-                            _planner->loadAttachData(0,"attach",obsname,irob,ilink);
+                            _planner->loadAttachData(0,"attach",obsname,robot_name,linkname);
                         }
                     }
                     if(_planner->getAttachData().size()==0){
@@ -706,15 +695,15 @@ namespace Kautham {
         xml_parse_result result = doc->load( xml_taskfile );
         //parse the file
         if (result) {
-            //if the file was correctly parsed
+            // If the file was correctly parsed
             _planner->clearAttachData();
             _path2.clear();
             xml_node taskNode = doc->child("Task");
-            string name;
-            //Loop inside the task node for transit and transfer nodes
+            std::string name;
+            // Loop inside the task node for transit and transfer nodes
             for (xml_node::iterator it_task = taskNode.begin(); it_task != taskNode.end(); ++it_task) {
                 name = it_task->name();
-                std::cout<<"....NAME = "<<name<<std::endl;
+                std::cout << "....NAME = " << name << std::endl;
                 try {
                     /* the orientation in quaternion
                      <Initialstate>
@@ -722,27 +711,31 @@ namespace Kautham {
                      </Initialstate>
                     */
                     if (name == "Initialstate") {
-                        std::cout<<"....Initialstate..."<<std::endl;
-                        string namesinitial;
-                        //loop inside the Initial node for all the robots configurations oan doblatcles configurations
+                        std::cout << "....Initialstate..." << std::endl;
+                        std::string namesinitial;
+                        // Loop inside the Initial node for all the robots configurations and oblatcles configurations
                         for (xml_node::iterator it_initstate = it_task->begin(); it_initstate != it_task->end(); ++it_initstate) {
                             namesinitial = it_initstate->name();
                             //std::cout<<"....name namesinitial..."<<namesinitial<<std::endl;
                             try {
                                     if (namesinitial == "Object") {
-                                         string objectname = it_initstate->attribute("object").as_string();
-                                         string objpose = it_initstate->child_value();
-                                         std::stringstream objposestream(objpose);
-                                         double pos[3];
-                                         double ori[4];
-                                         int k=0;
-                                         for(; k<3; k++) objposestream >> pos[k];
-                                         for(int j=0; k<7; j++,k++) objposestream >> ori[j];
-                                         SE3Conf::fromAxisToQuaternion(ori);
-                                         std::cout<<"  Object: "<<objectname<<" "<<" POS: "<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<" "<<ori[0]<<" "<<ori[1]<<" "<<ori[2]<<" "<<ori[3]<<std::endl;
-                                         _problem->getPlanner()->wkSpace()->getObstacle(objectname)->getLink(0)->getElement()->setPosition(pos);
-                                         _problem->getPlanner()->wkSpace()->getObstacle(objectname)->getLink(0)->getElement()->setOrientation(ori);
-                                         _problem->getPlanner()->wkSpace()->storeNewInitialObjectPoses();
+                                        std::string objectname = it_initstate->attribute("object").as_string();
+                                        std::string objpose = it_initstate->child_value();
+                                        std::stringstream objposestream(objpose);
+                                        double pos[3];
+                                        double ori[4];
+                                        int k=0;
+                                        for(; k<3; k++) {
+                                            objposestream >> pos[k];
+                                        }
+                                        for(int j=0; k<7; j++,k++) {
+                                            objposestream >> ori[j];
+                                        }
+                                        SE3Conf::fromAxisToQuaternion(ori);
+                                        std::cout << "\tObject: " << objectname << " " << " POS: " << pos[0] << " " << pos[1] << " " << pos[2] << " " << ori[0] << " " << ori[1] << " " << ori[2] << " " << ori[3] << std::endl;
+                                        _problem->getPlanner()->wkSpace()->getObstacle(objectname)->getLink(0)->getElement()->setPosition(pos);
+                                        _problem->getPlanner()->wkSpace()->getObstacle(objectname)->getLink(0)->getElement()->setOrientation(ori);
+                                        _problem->getPlanner()->wkSpace()->storeNewInitialObjectPoses();
                                      }
                                     /* ROBOT TAG not needed
                                     else if (namesinitial == "Object") {
@@ -769,17 +762,17 @@ namespace Kautham {
                         std::cout<<"....Transit...with contol file: "<<controlfilename<<std::endl;
                         */
 
-                        string transitconf;
+                        std::string transitconf;
                         //loop inside the transit node for all the configurations of the path
                         for (xml_node::iterator it_transit = it_task->begin(); it_transit != it_task->end(); ++it_transit) {
                             name = it_transit->name();
                             try {
                                 if (name == "Conf") {
                                     transitconf = it_transit->child_value();
-                                    //std::cout<<"TRANSIT:"<<transitconf<<endl;
+                                    // std::cout << "TRANSIT: " << transitconf << endl;
                                     //Create the sample
                                     Sample *Robsmp; //sample
-                                    Robsmp=new Sample(_planner->wkSpace()->getNumRobControls());
+                                    Robsmp = new Sample(_planner->wkSpace()->getNumRobControls());
                                     //fill the sample
                                     std::stringstream transitconfstream(transitconf);
                                     loadSampleFromLine(Robsmp, transitconfstream);
@@ -795,9 +788,9 @@ namespace Kautham {
                     else if (name == "Transfer") {
                         //Read the attributes with the object to be transferred and the robot and link where it is attached to
                         //<Transfer object="1" robot="0" link="0">
-                        string objectname = it_task->attribute("object").as_string();
-                        string robotname = it_task->attribute("robot").as_string();
-                        string linkname = it_task->attribute("link").as_string();
+                        std::string objectname = it_task->attribute("object").as_string();
+                        std::string robotname = it_task->attribute("robot").as_string();
+                        std::string linkname = it_task->attribute("link").as_string();
 
                         /* PREPARED TO READ ATTRIBUTE CONTROL FILE - not needed though...
                         //find the robot controls file and set its complete path if found
@@ -810,12 +803,12 @@ namespace Kautham {
                         _problem->setRobotControls(controlfilename);
                         std::cout<< "....Transfer...with contol file: "<<controlfilename<<std::endl;
                         */
-                        std::cout<< "....Transfer...object "<<objectname<<" attached to link "<<linkname<<" of robot "<<robotname<< std::endl;
+                        std::cout<< "....Transfer...object " << objectname << " attached to link " << linkname << " of robot " << robotname << std::endl;
 
-                        string transferconf;
+                        std::string transferconf;
 
                         //load the step of the path where transfer starts and an attach is required
-                        _planner->loadAttachData(_path2.size(),"attach",objectname,stoi(robotname),stoi(linkname));
+                        _planner->loadAttachData(_path2.size(),"attach",objectname,robotname,linkname);
 
                         //loop inside the transfer node for all the configurations of the path
                         for (xml_node::iterator it_transfer = it_task->begin(); it_transfer != it_task->end(); ++it_transfer) {
@@ -823,7 +816,7 @@ namespace Kautham {
                             try {
                                 if (name == "Conf") {
                                     transferconf = it_transfer->child_value();
-                                    //std::cout<<"TRANSFER:"<<transferconf<<endl;
+                                    // std::cout << "TRANSFER: " << transferconf << std::endl;
                                     //Create the sample
                                     Sample *Robsmp; //sample
                                     Robsmp=new Sample(_planner->wkSpace()->getNumRobControls());
@@ -839,7 +832,7 @@ namespace Kautham {
                             }
                         }
                         //load the step of the path where transfer ends and a dettach is required
-                        _planner->loadAttachData(_path2.size()-1,"detach",objectname,stoi(robotname),stoi(linkname));
+                        _planner->loadAttachData(_path2.size()-1,"detach",objectname,robotname,linkname);
                     }
                     else if (name == "MultiTransfer") {
                         //Read the attributes with the object to be transferred and the robot and link where it is attached to
@@ -852,8 +845,8 @@ namespace Kautham {
                             objectnames.push_back(it_task->attribute(objectName.c_str()).as_string());
                             std::cout<< "!!!!!!!!!!!!!!!!!!!!!!!!!!....MultiTransfer...object "<<objectnames[i]<< std::endl;
                         }
-                        string robotname = it_task->attribute("robot").as_string();
-                        string linkname = it_task->attribute("link").as_string();
+                        std::string robotname = it_task->attribute("robot").as_string();
+                        std::string linkname = it_task->attribute("link").as_string();
 
                         /* PREPARED TO READ ATTRIBUTE CONTROL FILE - not needed though...
                         //find the robot controls file and set its complete path if found
@@ -873,7 +866,7 @@ namespace Kautham {
 
                         //load the step of the path where transfer starts and an attach is required
                         for(int i=0; i<numobjects; i++){
-                            _planner->loadAttachData(_path2.size(),"attach",objectnames[i],stoi(robotname),stoi(linkname));
+                            _planner->loadAttachData(_path2.size(),"attach",objectnames[i],robotname,linkname);
                         }
 
 
@@ -900,7 +893,7 @@ namespace Kautham {
                         }
                         //load the step of the path where transfer ends and a dettach is required
                         for(int i=0; i<numobjects; i++){
-                            _planner->loadAttachData(_path2.size()-1,"detach",objectnames[i],stoi(robotname),stoi(linkname));
+                            _planner->loadAttachData(_path2.size()-1,"detach",objectnames[i],robotname,linkname);
                         }
                     }
                 } catch(...) {

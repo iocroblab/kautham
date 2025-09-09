@@ -162,14 +162,14 @@ namespace Kautham{
         if(_attachdetach.size())
         {
            
-            for(uint i=0; i<_attachdetach.size();i++)
-            {
-              cout<<"step = "<<_attachdetach[i].step;
-              cout<<" action = "<<_attachdetach[i].action;
-              cout<<" robnumber = "<<_attachdetach[i].robnumber;
-              cout<<" linknumber = "<<_attachdetach[i].linknumber;
-              cout<<" objname = "<<_attachdetach[i].objname<<endl;
-            }
+            // for(uint i=0; i<_attachdetach.size();i++)
+            // {
+            //     std::cout << "step = " << _attachdetach[i].step;
+            //     std::cout << " action = " << _attachdetach[i].action;
+            //     std::cout << " robot_name = " << _attachdetach[i].robnumber;
+            //     std::cout << " link_name = " << _attachdetach[i].linknumber;
+            //     std::cout << " objname = " << _attachdetach[i].objname<<endl;
+            // }
             
             //cout<<"step = "<<step<<" prevStep = "<<_simStep<<endl;
         //move the obstacles to their home poses at the beginning of the simulation
@@ -188,55 +188,55 @@ namespace Kautham{
             int attachdetachstep;
             for(uint i=0; i<_attachdetach.size();i++)
             {
-              //if an attach/detach is in between the last sim step (_simStep) and the current one (step)
-              //then the current one has to be changed to the attach/detach step
-              //and the attach/detach action be performed
-              attachdetachstep = _attachdetach[i].step;
+                //if an attach/detach is in between the last sim step (_simStep) and the current one (step)
+                //then the current one has to be changed to the attach/detach step
+                //and the attach/detach action be performed
+                attachdetachstep = _attachdetach[i].step;
 
-              //cout<<"_attachdetach["<<i<<"] "<<attachdetachstep<<" action="<<_attachdetach[i].action<<endl;
-              //cout<<"_simStep="<<_simStep <<" step="<<step<<endl;
+                //cout<<"_attachdetach["<<i<<"] "<<attachdetachstep<<" action="<<_attachdetach[i].action<<endl;
+                //cout<<"_simStep="<<_simStep <<" step="<<step<<endl;
 
-              //set limits for comparison
-              if(_simStep<(int)step)
-              {
-                //normal case
-                //cout<<"normal case"<<endl;
-                previousStep = _simStep;
-                currentStep = step;
-              }
-              else
-              {
-                //correction when restared
-                //cout<<"correction when restared"<<endl;
-                previousStep = _simStep - _simulationPath.size();
-                currentStep = step ;
-              }
-              //compare
-              //cout<<"currentStep="<<currentStep<<endl;
-              //cout<<"previousStep="<<previousStep<<endl;
-              if(attachdetachstep <= currentStep  && attachdetachstep > previousStep)
-              {
-                //move robot and attach/detach
-                step = attachdetachstep;
-                _wkSpace->moveRobotsTo(_simulationPath[step]);
-                //cout<<"step modified to "<<step<<" action = "<<_attachdetach[i].action<<endl;
-                if(_attachdetach[i].action.compare("attach") == 0)
+                //set limits for comparison
+                if(_simStep<(int)step)
                 {
-                  cout<<"...attaching obstacle "<<_attachdetach[i].objname<<endl;
-                  _wkSpace->attachObstacle2RobotLink(_attachdetach[i].robnumber,_attachdetach[i].linknumber,_attachdetach[i].objname);
+                    //normal case
+                    //cout<<"normal case"<<endl;
+                    previousStep = _simStep;
+                    currentStep = step;
                 }
-                else if(_attachdetach[i].action.compare("detach") == 0)
+                else
                 {
-                  cout<<"...detaching obstacle "<<_attachdetach[i].objname<<endl;
-                  _wkSpace->detachObstacle(_attachdetach[i].objname);
+                    //correction when restared
+                    //cout<<"correction when restared"<<endl;
+                    previousStep = _simStep - _simulationPath.size();
+                    currentStep = step ;
                 }
-                else{
-                  cout<<"ERROR: _attachdetach.action is neither attach nor detach";
+                //compare
+                //cout<<"currentStep="<<currentStep<<endl;
+                //cout<<"previousStep="<<previousStep<<endl;
+                if(attachdetachstep <= currentStep  && attachdetachstep > previousStep)
+                {
+                    //move robot and attach/detach
+                    step = attachdetachstep;
+                    _wkSpace->moveRobotsTo(_simulationPath[step]);
+                    //cout<<"step modified to "<<step<<" action = "<<_attachdetach[i].action<<endl;
+                    if(_attachdetach[i].action.compare("attach") == 0)
+                    {
+                        std::cout << "...attaching obstacle (" << _attachdetach[i].objname << ") to link (" << _attachdetach[i].linknumber << ") of the robot (" << _attachdetach[i].robnumber << ")" <<std::endl;
+                        _wkSpace->attachObstacle2RobotLink(_attachdetach[i].robnumber,_attachdetach[i].linknumber,_attachdetach[i].objname);
+                    }
+                    else if(_attachdetach[i].action.compare("detach") == 0)
+                    {
+                        std::cout << "...detaching obstacle " << _attachdetach[i].objname << std::endl;
+                        _wkSpace->detachObstacle(_attachdetach[i].objname);
+                    }
+                    else{
+                        std::cout << "ERROR: _attachdetach.action is neither attach nor detach" << std::endl;
+                    }
+                    //break;//break removed to allow multi-attach!! 20241128
                 }
-                //break;//break removed to allow multi-attach!! 20241128
-              }
-              else //move robot - do not attach/detach
-                _wkSpace->moveRobotsTo(_simulationPath[step]);
+                else //move robot - do not attach/detach
+                    _wkSpace->moveRobotsTo(_simulationPath[step]);
             }
         }
         else
@@ -254,7 +254,7 @@ namespace Kautham{
     _attachdetach.clear();
   }
 
-  void Planner::loadAttachData(int s, string a, string o, int r, int l)
+  void Planner::loadAttachData(int s, const std::string& a, const std::string& o, const std::string& r, const std::string& l)
   {
       //loads the attach/detach info read from the taskmotion.xml file
     attachData d;
