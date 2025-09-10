@@ -606,67 +606,81 @@ namespace Kautham {
     {
         //Load the configurations of the robots written in each line
         //loop for all the robots
-        vector<RobConf> Robrc; //mapped configuration of the set of robots
+        std::vector<RobConf> Robrc; //mapped configuration of the set of robots
         for (uint j = 0; j < _planner->wkSpace()->getNumRobots(); ++j)
         {
-            //std::cout << " robot "<< j << std::endl;
+            // std::cout << "Robot " << j << ": ";
             RobConf *Robrcj = new RobConf; //Configuration for robot j
-            vector<double> se3coords; //SE3 part
+            std::vector<double> se3coords; //SE3 part
             se3coords.resize(7);
             std::vector<double> Rn; //Rn part
-            //Mapped configuration: load the SE3 part, if ther is any
-            if (_planner->wkSpace()->getRobot(j)->isSE3Enabled())
-            {
-              //std::cout << " se3 part ";
-              //read the next 7 values
-              for(int k=0; k<7; k++)
-                confstream >> se3coords[k];
-              //for(int k=0; k<7; k++)
-                //std::cout << " "<< se3coords[k];
-              //std::cout << std::endl;
-              SE3Conf se3;
-              se3.setCoordinates(se3coords);
-              Robrcj->setSE3(se3);
-            }
-            else{
-                //If the robot does not have mobile SE3 dofs then the SE3 configuration of the init sample is maintained
-                Robrcj->setSE3(_planner->initSamp()->getMappedConf()[0].getSE3());
-                //SE3Conf &s_se3 =_planner->initSamp()->getMappedConf()[0].getSE3();
-                //std::cout << " se3 part FROM INIT SAMPLE";
-                //cout << s_se3.getPos().at(0) << " ";
-                //cout << s_se3.getPos().at(1) << " ";
-                //cout << s_se3.getPos().at(2) << " ";
-                //cout << s_se3.getOrient().at(0) << " ";
-                //cout << s_se3.getOrient().at(1) << " ";
-                //cout << s_se3.getOrient().at(2) << " ";
-                //cout << s_se3.getOrient().at(3) << endl;
-            }
 
-            //Mapped configuration: load the Rn part, if ther is any
+            //Mapped configuration: load the SE3 part, if ther is any
+            // if (_planner->wkSpace()->getRobot(j)->isSE3Enabled())
+            // {
+            //     // std::cout << "[SE3] ";
+            //     // Read the next 7 values:
+            //     for (int k=0; k<7; k++) {
+            //         confstream >> se3coords[k];
+            //     }
+            //     //for(int k=0; k<7; k++)
+            //         //std::cout << " "<< se3coords[k];
+            //     //std::cout << std::endl;
+            //     SE3Conf se3;
+            //     se3.setCoordinates(se3coords);
+            //     Robrcj->setSE3(se3);
+            // }
+            // else{
+            //     //If the robot does not have mobile SE3 dofs then the SE3 configuration of the init sample is maintained
+            //     Robrcj->setSE3(_planner->initSamp()->getMappedConf()[0].getSE3());
+            //     SE3Conf &s_se3 =_planner->initSamp()->getMappedConf()[0].getSE3();
+            //     std::cout << " SE3 part from INIT SAMPLE: ";
+            //     std::cout << s_se3.getPos().at(0) << " ";
+            //     std::cout << s_se3.getPos().at(1) << " ";
+            //     std::cout << s_se3.getPos().at(2) << " ";
+            //     std::cout << s_se3.getOrient().at(0) << " ";
+            //     std::cout << s_se3.getOrient().at(1) << " ";
+            //     std::cout << s_se3.getOrient().at(2) << " ";
+            //     std::cout << s_se3.getOrient().at(3) << endl;
+            // }
+
+            // Mapped configuration: always load the SE3 part (unless specified otherwise)
+            for (int k=0; k<7; k++) {
+                confstream >> se3coords[k];
+            }
+            SE3Conf se3;
+            se3.setCoordinates(se3coords);
+            Robrcj->setSE3(se3);
+
+            // Mapped configuration: load the Rn part, if ther is any:
             if (_planner->wkSpace()->getRobot(j)->getNumJoints() > 0)
             {
-            //std::cout << " rn part: ";
-            Rn.resize(_planner->wkSpace()->getRobot(j)->getNumJoints());
-            //read the next n values
-            for(uint k=0; k<_planner->wkSpace()->getRobot(j)->getNumJoints(); k++)
-                confstream >> Rn[k];
+                // std::cout << "Num joints = " << _planner->wkSpace()->getRobot(j)->getNumJoints() << std::endl;
+                // std::cout << " Rn part: ";
+                Rn.resize(_planner->wkSpace()->getRobot(j)->getNumJoints());
+                // Read the next n values:
+                for (uint k = 0; k < _planner->wkSpace()->getRobot(j)->getNumJoints(); k++) {
+                    confstream >> Rn[k];
+                }
 
-            Robrcj->setRn(Rn);
-            //for(int k=0; k<_planner->wkSpace()->getRobot(j)->getNumJoints(); k++)
-            //  std::cout << " "<< Rn[k];
-            //std::cout << std::endl;
+                Robrcj->setRn(Rn);
+                // Debug:
+                // for (uint k = 0; k < _planner->wkSpace()->getRobot(j)->getNumJoints(); k++) {
+                //     std::cout << " "<< Rn[k];
+                // }
+                // std::cout << std::endl;
             }
             else {
-            //If the robot does not have mobile Rn dofs then the Rn is set to dim=0
-            Robrcj->setRn(0);
+                // If the robot does not have mobile Rn dofs then the Rn is set to dim=0
+                Robrcj->setRn(0);
             }
 
-            //load the configuration of robot j to the configuration vector
+            // Load the configuration of robot j to the configuration vector:
             Robrc.push_back(*Robrcj);
         }
 
-        //Set the mapped configuration of the sample
-        //(its control values are kept to zero)
+        // Set the mapped configuration of the sample
+        // (its control values are kept to zero)
         Robsmp->setMappedConf(Robrc);
     }
 
