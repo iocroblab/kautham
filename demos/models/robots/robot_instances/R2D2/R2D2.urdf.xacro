@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="R2D2">
+
+    <!-- import main macro -->
+    <xacro:arg name="robot_description_path" default="../../robot_descriptions/R2D2"/>
+    <xacro:include filename="$(arg robot_description_path)/R2D2_macro.xacro"/>
+
+    <!-- parameters -->
+    <xacro:arg name="prefix" default="" />
+
+    <xacro:r2d2_robot
+        prefix="$(arg prefix)"
+        >
+    </xacro:r2d2_robot>
+</robot>

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<Problem name="OMPL_PRM_Staubli_R6_mobileBase_two_columns">
+
+	<Robot robot="./robots/robot_instances/staubli_tx90/staubli_tx90_with_base.urdf.xacro" scale="1.0">
+		<KauthamName name="staubli_tx90_mobile"/>
+		<Limits name="X" min="-0.4" max="1.2" />
+		<Limits name="Y" min="-0.2" max="1.0" />
+		<Limits name="Z" min="0.0" max="1.0" />
+		<Home TH="3.1415926536" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.4" X="-0.3"/>
+		<WeightSE3 rho_t="10.0" rho_r="1.0" />
+		<ViewLink name="link_6"/>
+	</Robot>
+
+	<Obstacle obstacle="./obstacles/3D-environments/columns/columns.urdf" scale="0.018">
+		<KauthamName name="columns"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.0" Y="0.0" X="0.25" />
+	</Obstacle>
+
+	<Controls robot="./controls/staubli_tx90_mobile.cntr" />
+
+	<Planner>
+
+		<Parameters>
+			<Name>omplPRM</Name>
+			<Parameter name="_Max Planning Time">10.0</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="BounceDistanceThreshold">1.0</Parameter>
+			<Parameter name="MaxNearestNeighbors">10</Parameter>
+			<Parameter name="DistanceThreshold">10</Parameter>
+			<Parameter name="Sampler 0(r) 1(h) 2(sdk) 3(g)">3</Parameter>
+		</Parameters>
+
+		<Queries>
+			<Query>
+				<RobotControl name="base_x"		init="0.15" goal="0.79"/>
+				<RobotControl name="base_y"		init="0.68" goal="0.91"/>
+				<RobotControl name="shoulder"	init="0.64" goal="0.11"/>
+				<RobotControl name="fore_arm"	init="0.62" goal="0.49"/>
+				<RobotControl name="elbow"		init="0.75" goal="0.87"/>
+				<RobotControl name="arm"		init="0.69" goal="0.73"/>
+				<RobotControl name="wrist"		init="0.27" goal="0.25"/>
+				<RobotControl name="tcp"		init="0.28" goal="0.75"/>
+			</Query>
+		</Queries>
+
+	</Planner>
+
+</Problem>

@@ -1,13 +1,18 @@
 <?xml version="1.0"?>
+
 <ControlSet>
+
 	<Offset>
-		<DOF name="minicube/X" value="0.5" />
-		<DOF name="minicube/Y" value="0.5" />
+		<DOF robot="minicube" name="X" value="0.5"/>
+		<DOF robot="minicube" name="Y" value="0.5"/>
 	</Offset>
-	<Control name="minicube/x" eigValue="1.0">
-		<DOF name="minicube/X" value="1.0" />
+
+
+	<Control name="minicube_x" eigValue="1.0">
+		<DOF robot="minicube" name="X" value="1.0"/>
 	</Control>
-	<Control name="minicube/y" eigValue="1.0">
-		<DOF name="minicube/Y" value="1.0" />
+	<Control name="minicube_y" eigValue="1.0">
+		<DOF robot="minicube" name="Y" value="1.0"/>
 	</Control>
+
 </ControlSet>

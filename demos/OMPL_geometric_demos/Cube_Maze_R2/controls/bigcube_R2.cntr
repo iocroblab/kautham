@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<ControlSet>
+	
+	<Offset>
+
+		<DOF robot="bigcube" name="X" value="0.5"/>
+		<DOF robot="bigcube" name="Y" value="0.5"/>
+		
+	</Offset>
+
+
+	<Control name="bigcube_x" eigValue="1.0">
+		<DOF robot="bigcube" name="X" value="1.0"/>
+	</Control>
+
+	<Control name="bigcube_y" eigValue="1.0">
+		<DOF robot="bigcube" name="Y" value="1.0"/>
+	</Control>
+
+</ControlSet>

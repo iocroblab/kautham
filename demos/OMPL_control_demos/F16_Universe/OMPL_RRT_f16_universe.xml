@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<Problem name="OMPL_RRTConnect_f16_universe">
+
+	<Robot robot="robots/robot_descriptions/freeflying_description/f16.urdf" scale="0.3">
+		<KauthamName name="f16"/>
+		<Limits name="X" min="-20.0" max="20.0" />
+		<Limits name="Y" min="-20.0" max="20.0" />
+		<Limits name="Z" min="-20.0" max="20.0" />
+	</Robot>
+
+	<Obstacle obstacle="./obstacles/3D-environments/universe/universe.urdf" scale="0.01">
+		<KauthamName name="universe"/>
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+
+	<Controls robot="controls/f16_SE3.cntr" />
+
+	<Planner>
+		<Parameters>
+			<Name>omplcRRTf16</Name>
+			<LocalPlanner stepSize="1">Linear</LocalPlanner>
+			<Parameter name="_Max Planning Time">1.0</Parameter>
+			<Parameter name="_Speed Factor">5</Parameter>
+			<Parameter name="PropagationStepSize">0.04</Parameter>
+			<Parameter name="MinDuration">1</Parameter>
+			<Parameter name="MaxDuration">10</Parameter>
+			<Parameter name="ControlBound_Tras">10</Parameter>
+			<Parameter name="ControlBound_Rot">0.6</Parameter>
+			<Parameter name="Length">5</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<RobotControl name="f16_x" 	init="0.500" goal="0.200"/>
+				<RobotControl name="f16_y" 	init="0.400" goal="0.200"/>
+				<RobotControl name="f16_z" 	init="0.800" goal="0.200"/>
+				<RobotControl name="f16_x1" init="0.000" goal="0.000"/>
+				<RobotControl name="f16_x2" init="0.000" goal="0.000"/>
+				<RobotControl name="f16_x3" init="0.000" goal="0.750"/>
+			</Query>
+		</Queries>
+	</Planner>
+
+</Problem>

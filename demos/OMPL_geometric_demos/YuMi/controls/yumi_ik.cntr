@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ControlSet>
+
+	<Offset>
+
+		<DOF robot="yumi_arm_right" name="arm_right_joint_1" value="0.5"/>
+		<DOF robot="yumi_arm_right" name="arm_right_joint_2" value="0.5"/>
+		<DOF robot="yumi_arm_right" name="arm_right_joint_3" value="0.5"/>
+		<DOF robot="yumi_arm_right" name="arm_right_joint_4" value="0.5"/>
+		<DOF robot="yumi_arm_right" name="arm_right_joint_5" value="0.5"/>
+		<DOF robot="yumi_arm_right" name="arm_right_joint_6" value="0.5"/>
+		<DOF robot="yumi_arm_right" name="arm_right_joint_7" value="0.5"/>
+
+		<DOF robot="yumi_arm_right" name="gripper_right_joint" value="0.5"/>
+		<DOF robot="yumi_arm_right" name="gripper_right_joint_m" value="0.5"/>
+
+		<DOF robot="yumi_arm_left" name="arm_left_joint_1" value="0.5"/>
+		<DOF robot="yumi_arm_left" name="arm_left_joint_2" value="0.5"/>
+		<DOF robot="yumi_arm_left" name="arm_left_joint_3" value="0.5"/>
+		<DOF robot="yumi_arm_left" name="arm_left_joint_4" value="0.5"/>
+		<DOF robot="yumi_arm_left" name="arm_left_joint_5" value="0.5"/>
+		<DOF robot="yumi_arm_left" name="arm_left_joint_6" value="0.5"/>
+		<DOF robot="yumi_arm_left" name="arm_left_joint_7" value="0.5"/>
+
+		<DOF robot="yumi_arm_left" name="gripper_left_joint" value="0.5"/>
+		<DOF robot="yumi_arm_left" name="gripper_left_joint_m" value="0.5"/>
+
+	</Offset>
+
+
+	<Control name="YuMi_arm_right_joint_1" eigValue="1.0">
+		<DOF robot="yumi_arm_right" name="arm_right_joint_1" value="1.0"/>
+	</Control>
+	<Control name="YuMi_arm_right_joint_2" eigValue="1.0">
+		<DOF robot="yumi_arm_right" name="arm_right_joint_2" value="1.0"/>
+	</Control> 
+	<Control name="YuMi_arm_right_joint_3" eigValue="1.0">
+		<DOF robot="yumi_arm_right" name="arm_right_joint_3" value="1.0"/>
+	</Control> 
+	<Control name="YuMi_arm_right_joint_4" eigValue="1.0">
+		<DOF robot="yumi_arm_right" name="arm_right_joint_4" value="1.0"/>
+	</Control>
+	<Control name="YuMi_arm_right_joint_5" eigValue="1.0">
+		<DOF robot="yumi_arm_right" name="arm_right_joint_5" value="1.0"/>
+	</Control>
+	<Control name="YuMi_arm_right_joint_6" eigValue="1.0">
+		<DOF robot="yumi_arm_right" name="arm_right_joint_6" value="1.0"/>
+	</Control>
+	<Control name="YuMi_arm_right_joint_7" eigValue="1.0">
+		<DOF robot="yumi_arm_right" name="arm_right_joint_7" value="1.0"/>
+	</Control>
+
+	<Control name="YuMi_arm_right_gripper" eigValue="1.0">
+		<DOF robot="yumi_arm_right" name="gripper_right_joint" value="1.0"/>
+		<DOF robot="yumi_arm_right" name="gripper_right_joint_m" value="1.0"/>
+	</Control>
+
+	<Control name="YuMi_arm_left_joint_1" eigValue="1.0">
+		<DOF robot="yumi_arm_left" name="arm_left_joint_1" value="1.0"/>
+	</Control>
+	<Control name="YuMi_arm_left_joint_2" eigValue="1.0">
+		<DOF robot="yumi_arm_left" name="arm_left_joint_2" value="1.0"/>
+	</Control> 
+	<Control name="YuMi_arm_left_joint_3" eigValue="1.0">
+		<DOF robot="yumi_arm_left" name="arm_left_joint_3" value="1.0"/>
+	</Control> 
+	<Control name="YuMi_arm_left_joint_4" eigValue="1.0">
+		<DOF robot="yumi_arm_left" name="arm_left_joint_4" value="1.0"/>
+	</Control>
+	<Control name="YuMi_arm_left_joint_5" eigValue="1.0">
+		<DOF robot="yumi_arm_left" name="arm_left_joint_5" value="1.0"/>
+	</Control>
+	<Control name="YuMi_arm_left_joint_6" eigValue="1.0">
+		<DOF robot="yumi_arm_left" name="arm_left_joint_6" value="1.0"/>
+	</Control>
+	<Control name="YuMi_arm_left_joint_7" eigValue="1.0">
+		<DOF robot="yumi_arm_left" name="arm_left_joint_7" value="1.0"/>
+	</Control>
+
+	<Control name="YuMi_arm_left_gripper" eigValue="1.0">
+		<DOF robot="yumi_arm_left" name="gripper_left_joint" value="1.0"/>
+		<DOF robot="yumi_arm_left" name="gripper_left_joint_m" value="1.0"/>
+	</Control>
+
+</ControlSet>

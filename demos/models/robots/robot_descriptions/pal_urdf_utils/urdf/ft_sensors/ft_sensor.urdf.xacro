@@ -1,0 +1,13 @@
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:macro name="ft_sensor" params="name parent type">
+
+        <xacro:arg name="pal_urdf_utils" default="./../../../../robot_descriptions/pal_urdf_utils"/>
+        <xacro:include filename="$(arg pal_urdf_utils)/urdf/ft_sensors/${type}.urdf.xacro" />
+        <xacro:include filename="$(arg pal_urdf_utils)/urdf/ft_sensors/ft_sensor.gazebo.xacro" />
+        <xacro:ft_sensor name="${name}" parent="${parent}"/>
+        <xacro:pal_sea_arm_force_torque_sensor name="${name}" update_rate="30"/>
+
+    </xacro:macro>
+
+</robot>

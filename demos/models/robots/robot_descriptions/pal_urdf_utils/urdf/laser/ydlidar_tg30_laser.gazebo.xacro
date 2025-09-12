@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+
+  Copyright (c) 2025, PAL Robotics, S.L.
+  All rights reserved.
+
+  This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.
+  To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/3.0/ or send a letter to
+  Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="ydlidar_tg30_laser_gazebo" params="name ros_topic update_rate min_angle max_angle">
+    <gazebo reference="${name}_link">
+      <sensor type="gpu_ray" name="${name}">
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>${update_rate}</update_rate>
+        <visualize>true</visualize>
+        <ray>
+          <scan>
+            <horizontal>
+              <!-- 818 (360/0.33) steps in 360deg fov -->
+              <samples>${818*(max_angle - min_angle)/(360.0 * deg_to_rad)}</samples>
+              <resolution>1</resolution> <!-- not the sensor resolution; just 1 -->
+              <min_angle>${min_angle}</min_angle>
+              <max_angle>${max_angle}</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.05</min>
+            <max>30.0</max>
+            <resolution>0.001</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <plugin name="${name}" filename="libgazebo_ros_ray_sensor.so">
+            <ros>
+              <namespace>${namespace}</namespace>
+              <remapping>~/out:=${ros_topic}</remapping>
+            </ros>
+            <output_type>sensor_msgs/LaserScan</output_type>
+            <frame_name>${name}_link</frame_name>
+        </plugin>
+      </sensor>
+      <material>Gazebo/DarkGrey</material>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

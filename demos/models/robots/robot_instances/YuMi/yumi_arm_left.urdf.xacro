@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<robot name="YuMi" xmlns:xacro="http://ros.org/wiki/xacro">
+    
+    <!-- Import main macros: -->
+    <xacro:arg name="yumi_description_path" default="./../../robot_descriptions/YuMi"/>
+    <xacro:include filename="$(arg yumi_description_path)/yumi_arm_macro.xacro"/>
+    <xacro:include filename="$(arg yumi_description_path)/yumi_gripper_macro.xacro"/>
+    
+    <link name="dummy_base">
+        <visual>
+            <geometry>
+                <cylinder radius="0.001" length="0.001"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <!-- YuMi arm left: -->
+    <xacro:arg name="prefix_yumi_arm_left" default="arm_left" />
+    <xacro:arg name="parent_yumi_arm_left" default="dummy_base" />
+    <xacro:arg name="origin_xyz_yumi_arm_left" default="0.05355 0.0725 0.41492"/>
+    <xacro:arg name="origin_rpy_yumi_arm_left" default="0.9795 -0.5682 2.3155"/>
+    <xacro:yumi_arm
+        prefix="$(arg prefix_yumi_arm_left)"
+        parent="$(arg parent_yumi_arm_left)"
+        >
+        <!-- position robot in the parent reference -->
+        <origin xyz="$(arg origin_xyz_yumi_arm_left)" rpy="$(arg origin_rpy_yumi_arm_left)" />
+    </xacro:yumi_arm>
+    
+    <!-- YuMi gripper left: -->
+    <xacro:arg name="prefix_yumi_gripper_left" default="gripper_left" />
+    <xacro:arg name="parent_yumi_gripper_left" default="arm_left_link_7" />
+    <xacro:arg name="origin_xyz_yumi_gripper_left" default="0.0 0.0 0.007"/>
+    <xacro:arg name="origin_rpy_yumi_gripper_left" default="0.0 0.0 0.0"/>
+    <xacro:yumi_gripper
+        prefix="$(arg prefix_yumi_gripper_left)"
+        parent="$(arg parent_yumi_gripper_left)"
+        >
+        <!-- position robot in the parent reference -->
+        <origin xyz="$(arg origin_xyz_yumi_gripper_left)" rpy="$(arg origin_rpy_yumi_gripper_left)" />
+    </xacro:yumi_gripper>
+
+</robot>

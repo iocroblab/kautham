@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ControlSet>
+
+	<Offset>
+
+		<DOF robot="panda" name="panda_joint1" value="0.5"/>
+		<DOF robot="panda" name="panda_joint2" value="0.5"/>
+		<DOF robot="panda" name="panda_joint3" value="0.5"/>
+		<DOF robot="panda" name="panda_joint4" value="0.5"/>
+		<DOF robot="panda" name="panda_joint5" value="0.5"/>
+		<DOF robot="panda" name="panda_joint6" value="0.5"/>
+		<DOF robot="panda" name="panda_joint7" value="0.5"/>
+
+	</Offset>
+
+
+	<Control name="panda_joint1" eigValue="1.0">
+		<DOF robot="panda" name="panda_joint1" value="1.0"/>
+	</Control>
+	<Control name="panda_joint2" eigValue="1.0">
+		<DOF robot="panda" name="panda_joint2" value="1.0"/>
+	</Control> 
+	<Control name="panda_joint3" eigValue="1.0">
+		<DOF robot="panda" name="panda_joint3" value="1.0"/>
+	</Control> 
+	<Control name="panda_joint4" eigValue="1.0">
+		<DOF robot="panda" name="panda_joint4" value="1.0"/>
+	</Control>
+	<Control name="panda_joint5" eigValue="1.0">
+		<DOF robot="panda" name="panda_joint5" value="1.0"/>
+	</Control>
+	<Control name="panda_joint6" eigValue="1.0">
+		<DOF robot="panda" name="panda_joint6" value="1.0"/>
+	</Control>
+	<Control name="panda_joint7" eigValue="1.0">
+		<DOF robot="panda" name="panda_joint7" value="1.0"/>
+	</Control>
+
+</ControlSet>

@@ -1,0 +1,122 @@
+# Visualisation
+
+mesh_files:
+  base:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/base.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/base.stl
+    mesh_offset:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      roll: 0.0
+      pitch: 0.0
+      yaw: !degrees 180
+
+  shoulder:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/shoulder.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/shoulder.stl
+    mesh_offset:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      roll: 0.0
+      pitch: 0.0
+      yaw: !degrees 180
+
+  upper_arm:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/upperarm.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/upperarm.stl
+      mesh_files:
+    mesh_offset:
+      x: 0.0
+      y: 0.0
+      z: 0.138
+      roll: !degrees 90
+      pitch: 0.0
+      yaw: !degrees -90
+
+  forearm:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/forearm.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/forearm.stl
+    mesh_offset:
+      x: 0.0
+      y: 0.0
+      z: 0.007
+      roll: !degrees 90
+      pitch: 0.0
+      yaw: !degrees -90
+
+  wrist_1:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/wrist1.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/wrist1.stl
+    mesh_offset:
+      x: 0.0
+      y: 0.0
+      z: -0.127
+      roll: !degrees 90
+      pitch: 0.0
+      yaw: 0.0
+
+  wrist_2:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/wrist2.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/wrist2.stl
+    mesh_offset:
+      x: 0.0
+      y: 0.0
+      z: -0.0997
+      roll: 0.0
+      pitch: 0.0
+      yaw: 0.0
+
+  wrist_3:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/wrist3.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/wrist3.stl
+    mesh_offset:
+      x: 0.0
+      y: 0.0
+      z: -0.0989
+      roll: !degrees 90
+      pitch: 0.0
+      yaw: 0.0

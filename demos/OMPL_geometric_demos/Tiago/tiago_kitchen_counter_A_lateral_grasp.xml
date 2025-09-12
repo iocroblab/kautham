@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<Problem name="tiago_kitchen_counter_A_lateral_grasp">
+
+	<Robot robot="./robots/robot_instances/tiago_robot/tiago.urdf.xacro" scale="1.0">
+		<KauthamName name="tiago"/>
+		<Limits name="X" min="-3.0" max="3.0" />
+		<Limits name="Y" min="-3.0" max="3.0" />
+		<Limits name="Z" min="0.001" max="0.010" />
+		<Home X="0.60" Y="0.60" Z="0.0" TH="1.570796" WX="0.0" WY="0.0" WZ="-1.0"/>
+		<ViewLink name="gripper_left_finger_link"/>
+	</Robot>
+
+	<!-- KITCHEN ENVIRONMENT -->
+	<Obstacle obstacle="./obstacles/3D-environments/kitchen/kitchen.urdf" scale="1">
+		<KauthamName name="kitchen"/>
+		<Home TH="0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0" X="0" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/3D-environments/kitchen/kitchenfloor.urdf" scale="1">
+		<KauthamName name="kitchenfloor"/>
+		<Home TH="0" WZ="0.0" WY="0.0" WX="0.0" Z="-0.001" Y="0" X="0" />
+	</Obstacle>
+
+	<!-- KITCHEN STUFF -->
+	<Obstacle obstacle="./obstacles/kitchen_stuff/glass/glass.urdf" scale="1">
+		<KauthamName name="glass_1"/>
+		<Home TH="0" WZ="0.0" WY="0.0" WX="0.0" Z="0.90" Y="0.4" X="1.3" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/kitchen_stuff/glass/glass.urdf" scale="1">
+		<KauthamName name="glass_2"/>
+		<Home TH="0" WZ="0.0" WY="0.0" WX="0.0" Z="0.90" Y="-0.3" X="1.2" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/kitchen_stuff/cokecan/cokecan.urdf" scale="1">
+		<KauthamName name="cokecan_1"/>
+		<Home TH="0" WZ="0.0" WY="0.0" WX="0.0" Z="0.905" Y="0" X="1.1" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/kitchen_stuff/cokecan/cokecan.urdf" scale="1">
+		<KauthamName name="cokecan_2"/>
+		<Home TH="0" WZ="0.0" WY="0.0" WX="0.0" Z="0.905" Y="0.7" X="1.3" />
+	</Obstacle>
+
+	<!-- Controls to move only the torso and arm keeping the base and head fixed -->
+	<Controls robot="./controls/tiago_torso_arm_gripper.cntr"/>
+
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="_Max Planning Time">30</Parameter>
+			<Parameter name="_Speed Factor">10</Parameter>
+			<Parameter name="Range">0.02</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+
+				<RobotControl name="torso_lift_joint" 		init="0.100" goal="0.700"/>
+
+				<RobotControl name="arm_1_joint" 			init="0.020" goal="0.510"/>
+				<RobotControl name="arm_2_joint" 			init="0.590" goal="0.600"/>
+				<RobotControl name="arm_3_joint" 			init="0.690" goal="0.380"/>
+				<RobotControl name="arm_4_joint" 			init="0.750" goal="0.740"/>
+				<RobotControl name="arm_5_joint" 			init="0.150" goal="0.590"/>
+				<RobotControl name="arm_6_joint" 			init="0.960" goal="0.500"/>
+				<RobotControl name="arm_7_joint" 			init="0.500" goal="0.420"/>
+
+				<RobotControl name="gripper_finger_joint" 	init="1.000" goal="1.000"/>
+				
+			</Query>
+		</Queries>
+	</Planner>
+
+</Problem>

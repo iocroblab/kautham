@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+  Copyright (c) 2011, PAL Robotics, S.L.
+  All rights reserved.
+
+  This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.
+  To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/3.0/ or send a letter to
+  Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+-->
+
+<robot name="pal_sea_arm" xmlns:xacro="http://ros.org/wiki/xacro">
+
+<xacro:macro name="pal_sea_arm_force_torque_sensor" params="name update_rate">
+
+  <gazebo reference="${name}_ft_sensor_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>      <!-- in case this is in a fixed joint -->
+    <sensor name="${name}_ft_sensor" type="force_torque">
+      <update_rate>${update_rate}</update_rate>
+      <visualize>true</visualize>
+      <force_torque>
+        <frame>child</frame>
+        <measure_direction>child_to_parent</measure_direction>
+      </force_torque>
+    </sensor>
+  </gazebo>
+
+
+</xacro:macro>
+</robot>

@@ -1,17 +1,26 @@
 <?xml version="1.0"?>
+
 <Problem name="HF_minicube_maze2D">
-	<Robot robot="robots/freeflying/minicube.urdf" scale="1.0">
+
+	<Robot robot="./robots/robot_descriptions/freeflying_description/minicube.urdf" scale="1.0">
+		<KauthamName name="minicube"/>
 		<Limits name="X" min="0.0" max="1.0" />
 		<Limits name="Y" min="0.0" max="1.0" />
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.056" Y="0.01" X="0.01" />
 	</Robot>
-	<Obstacle obstacle="obstacles/2D-environments/maze2D.urdf" scale="1.0">
+
+	<Obstacle obstacle="./obstacles/2D-environments/maze2D/maze2D.urdf" scale="1.0">
+		<KauthamName name="maze2D"/>
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
-	<Obstacle obstacle="obstacles/2D-environments/walls.urdf" scale="1.0">
+
+	<Obstacle obstacle="./obstacles/2D-environments/walls/walls.urdf" scale="1.0">
+		<KauthamName name="walls"/>
 		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
 	</Obstacle>
+
 	<Controls robot="controls/minicube_R2.cntr" />
+
 	<Planner>
 		<Parameters>
 			<Name>HFPlanner</Name>
@@ -22,9 +31,10 @@
 		</Parameters>
 		<Queries>
 			<Query>
-				<Init>0.05 0.7</Init>
-				<Goal>0.3 0.5</Goal>
+				<RobotControl name="minicube_x"	init="0.050" goal="0.300"/>
+				<RobotControl name="minicube_y"	init="0.700" goal="0.500"/>
 			</Query>
 		</Queries>
 	</Planner>
+
 </Problem>

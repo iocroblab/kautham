@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<ControlSet>
+	
+	<Offset>
+
+		<DOF robot="staubli_tx90_mobile" name="X" value="0.5"/>
+		<DOF robot="staubli_tx90_mobile" name="Y" value="0.5"/>
+		<DOF robot="staubli_tx90_mobile" name="Z" value="0.0"/>
+		<DOF robot="staubli_tx90_mobile" name="X1" value="0.0"/>
+		<DOF robot="staubli_tx90_mobile" name="joint_1" value="0.5"/>
+		<DOF robot="staubli_tx90_mobile" name="joint_2" value="0.5"/>
+		<DOF robot="staubli_tx90_mobile" name="joint_3" value="0.5"/>
+		<DOF robot="staubli_tx90_mobile" name="joint_4" value="0.5"/>
+		<DOF robot="staubli_tx90_mobile" name="joint_5" value="0.5"/>
+		<DOF robot="staubli_tx90_mobile" name="joint_6" value="0.5"/>
+		
+	</Offset>
+
+
+	<Control name="base_x" eigValue="1.0">
+		<DOF robot="staubli_tx90_mobile" name="X" value="1.0"/>
+	</Control>
+
+	<Control name="base_y" eigValue="1.0">
+		<DOF robot="staubli_tx90_mobile" name="Y" value="1.0"/>
+	</Control>
+
+	<Control name="shoulder" eigValue="1.0">
+		<DOF robot="staubli_tx90_mobile" name="joint_1" value="1.0"/>
+	</Control>
+
+	<Control name="fore_arm" eigValue="1.0">
+		<DOF robot="staubli_tx90_mobile" name="joint_2" value="1.0"/>
+	</Control>
+
+	<Control name="elbow" eigValue="1.0">
+		<DOF robot="staubli_tx90_mobile" name="joint_3" value="1.0"/>
+	</Control>
+
+	<Control name="arm" eigValue="1.0">
+		<DOF robot="staubli_tx90_mobile" name="joint_4" value="1.0"/>
+	</Control>
+
+	<Control name="wrist" eigValue="1.0">
+		<DOF robot="staubli_tx90_mobile" name="joint_5" value="1.0"/>
+	</Control>
+
+	<Control name="tcp" eigValue="1.0">
+		<DOF robot="staubli_tx90_mobile" name="joint_6" value="1.0"/>
+	</Control>
+
+</ControlSet>

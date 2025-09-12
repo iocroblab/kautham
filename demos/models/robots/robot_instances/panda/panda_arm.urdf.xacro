@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="panda">
+
+    <!-- import main macro -->
+    <xacro:arg name="robot_description_path" default="./../../robot_descriptions/panda"/>
+    <xacro:include filename="$(arg robot_description_path)/panda_arm_macro.xacro"/>
+    <xacro:include filename="$(arg robot_description_path)/panda_hand_macro.xacro"/>
+
+    <xacro:arg name="robot_name" default="panda"/>
+
+    <xacro:panda_arm
+        arm_id="$(arg robot_name)"
+    >
+    </xacro:panda_arm>
+
+</robot>

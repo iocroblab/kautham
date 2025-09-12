@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ControlSet>
+
+	<Offset>
+		
+		<!-- WHEELS -->
+		<DOF robot="tiago" name="wheel_right_joint" value="0.5"/>
+		<DOF robot="tiago" name="wheel_left_joint" value="0.5"/>
+
+		<!-- TORSO -->
+		<DOF robot="tiago" name="torso_lift_joint" value="0.5"/>
+		
+		<!-- ARM -->
+		<DOF robot="tiago" name="arm_1_joint" value="0.5"/>
+		<DOF robot="tiago" name="arm_2_joint" value="0.5"/>
+		<DOF robot="tiago" name="arm_3_joint" value="0.5"/>
+		<DOF robot="tiago" name="arm_4_joint" value="0.5"/>
+		<DOF robot="tiago" name="arm_5_joint" value="0.5"/>
+		<DOF robot="tiago" name="arm_6_joint" value="0.5"/>
+		<DOF robot="tiago" name="arm_7_joint" value="0.5"/>
+
+		<!-- GRIPPER -->
+		<DOF robot="tiago" name="gripper_left_finger_joint" value="0.5"/>
+		<DOF robot="tiago" name="gripper_right_finger_joint" value="0.5"/>
+
+		<!-- HEAD -->
+		<DOF robot="tiago" name="head_1_joint" value="0.5"/>
+		<DOF robot="tiago" name="head_2_joint" value="0.5"/>
+		
+	</Offset>
+
+
+	<!-- WHEELS -->
+	<Control name="wheel_right_joint" eigValue="1.0">
+		<DOF robot="tiago" name="wheel_right_joint" value="1.0"/>
+	</Control>
+	<Control name="wheel_left_joint" eigValue="1.0">
+		<DOF robot="tiago" name="wheel_left_joint" value="1.0"/>
+	</Control>
+
+	<!-- TORSO -->
+	<Control name="torso_lift_joint" eigValue="1.0">
+		<DOF robot="tiago" name="torso_lift_joint" value="1.0"/>
+	</Control>
+
+	<!-- ARM -->
+	<Control name="arm_1_joint" eigValue="1.0">
+		<DOF robot="tiago" name="arm_1_joint" value="1.0"/>
+	</Control>
+	<Control name="arm_2_joint" eigValue="1.0">
+		<DOF robot="tiago" name="arm_2_joint" value="1.0"/>
+	</Control>
+	<Control name="arm_3_joint" eigValue="1.0">
+		<DOF robot="tiago" name="arm_3_joint" value="1.0"/>
+	</Control>
+	<Control name="arm_4_joint" eigValue="1.0">
+		<DOF robot="tiago" name="arm_4_joint" value="1.0"/>
+	</Control>
+	<Control name="arm_5_joint" eigValue="1.0">
+		<DOF robot="tiago" name="arm_5_joint" value="1.0"/>
+	</Control>
+	<Control name="arm_6_joint" eigValue="1.0">
+		<DOF robot="tiago" name="arm_6_joint" value="1.0"/>
+	</Control>
+	<Control name="arm_7_joint" eigValue="1.0">
+		<DOF robot="tiago" name="arm_7_joint" value="1.0"/>
+	</Control>
+
+	<!-- GRIPPER -->
+	<Control name="gripper_finger_joint" eigValue="1.0">
+		<DOF robot="tiago" name="gripper_left_finger_joint" value="1.0"/>
+		<DOF robot="tiago" name="gripper_right_finger_joint" value="1.0"/>
+	</Control>
+
+	<!-- HEAD -->
+	<Control name="head_1_joint" eigValue="1.0">
+		<DOF robot="tiago" name="head_1_joint" value="1.0"/>
+	</Control>
+	<Control name="head_2_joint" eigValue="1.0">
+		<DOF robot="tiago" name="head_2_joint" value="1.0"/>
+	</Control>
+
+
+</ControlSet>

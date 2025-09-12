@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<Problem name="OMPL_RRTConnect_chess_ur3_gripper_1_simple">
+
+	<Robot robot="./robots/robot_instances/UR_robotiq_85_gripper/ur3_robotiq_85_gripper.urdf.xacro" scale="1.0">
+		<KauthamName name="ur3_right"/>
+		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.37" />
+		<ViewLink name="robotiq_85_base_link"/>
+	</Robot>
+
+	<Obstacle obstacle="./obstacles/chess/flat_chessboard/flat_chessboard.urdf" scale="1.0">
+		<KauthamName name="flat_chessboard"/>
+		<Home TH="1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/chess/pawnB1/pawnB1.urdf" scale="1.0">
+		<KauthamName name="pawnB1"/>
+		<Home TH="-1.570796327" WZ="1.0" WY="0.0" WX="0.0" Z="0.025" Y="0.175" X="0.125" />
+	</Obstacle>
+
+	<Controls robot="./controls/right_ur3_with_gripper.cntr"/>
+
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="_Cspace Drawn">0</Parameter>
+			<Parameter name="_Incremental (0/1)">0</Parameter>
+			<Parameter name="_Max Planning Time">10</Parameter>
+			<Parameter name="_Path Drawn (0/1)">1</Parameter>
+			<Parameter name="_Simplify Solution">2</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="Range">0.5</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<RobotControl name="ur3_right_shoulder_pan_joint" 	init="0.500" goal="0.545"/>
+				<RobotControl name="ur3_right_shoulder_lift_joint" 	init="0.375" goal="0.380"/>
+				<RobotControl name="ur3_right_elbow_joint" 			init="0.500" goal="0.835"/>
+				<RobotControl name="ur3_right_wrist_1_joint" 		init="0.375" goal="0.327"/>
+				<RobotControl name="ur3_right_wrist_2_joint" 		init="0.500" goal="0.375"/>
+				<RobotControl name="ur3_right_wrist_3_joint" 		init="0.500" goal="0.425"/>
+				<RobotControl name="ur3_right_gripper_joint" 		init="0.500" goal="0.813"/>
+			</Query>
+		</Queries>
+	</Planner>
+
+</Problem>

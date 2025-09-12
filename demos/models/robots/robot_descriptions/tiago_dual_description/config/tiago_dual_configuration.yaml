@@ -1,0 +1,60 @@
+wheel_model:
+  description: 'Wheel model'
+  choices: ['nadia', 'moog']
+  default_value: 'moog'
+arm_type_right:
+  description: 'Arm type right'
+  choices: ['tiago-arm', 'no-arm']
+  default_value: 'tiago-arm'
+arm_type_left:
+  description: 'Arm type left'
+  choices: ['tiago-arm', 'no-arm']
+  default_value: 'tiago-arm'
+arm_motor_model_right:
+  description: 'Arm motor model right arm'
+  choices: ['parker', 'ilm']
+  default_value: 'parker'
+arm_motor_model_left:
+  description: 'Arm motor model left arm'
+  choices: ['parker', 'ilm']
+  default_value: 'parker'
+laser_model:
+  description: 'Base laser model'
+  choices: ['no-laser', 'sick-571', 'sick-561', 'sick-551', 'hokuyo']
+  default_value: 'sick-571'
+wrist_model_right:
+  description: 'Wrist model right arm'
+  choices: ['wrist-2010', 'wrist-2017']
+  default_value: 'wrist-2010'
+wrist_model_left:
+  description: 'Wrist model left arm'
+  choices: ['wrist-2010', 'wrist-2017']
+  default_value: 'wrist-2010'
+end_effector_right:
+  description: 'End effector model right arm'
+  choices: ['pal-gripper', 'pal-hey5', 'custom', 'no-end-effector', 'robotiq-2f-85','robotiq-2f-140']
+  default_value: 'pal-gripper'
+end_effector_left:
+  description: 'End effector model left arm'
+  choices: ['pal-gripper', 'pal-hey5', 'custom', 'no-end-effector', 'robotiq-2f-85','robotiq-2f-140']
+  default_value: 'pal-gripper'
+ft_sensor_right:
+  description: 'FT sensor model right arm'
+  choices: ['schunk-ft', 'no-ft-sensor']
+  default_value: 'schunk-ft'
+ft_sensor_left:
+  description: 'FT sensor model left arm'
+  choices: ['schunk-ft', 'no-ft-sensor']
+  default_value: 'schunk-ft'
+has_screen:
+  description: 'Has screen at torso'
+  choices: ['False', 'True']
+  default_value: 'False'
+base_type:
+  description: 'Base type'
+  choices: ['pmb2', 'omni_base']
+  default_value: 'pmb2'
+camera_model:
+  description: 'Head camera model'
+  choices: ['orbbec-astra', 'orbbec-astra-pro', 'asus-xtion', 'no-camera']
+  default_value: 'orbbec-astra'

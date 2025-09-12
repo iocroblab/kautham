@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!-- 
+  Copyright (c) 2024 PAL Robotics S.L. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="pmb2">
+
+  <!-- ARGUMENTS -->
+
+  <!-- no-laser, hokuyo, sick-551, sick-561, sick-571-->
+  <xacro:arg name="laser_model" default="sick-571"/>
+
+  <!-- false, true -->
+  <xacro:arg name="has_sonars" default="true"/>
+
+  <!-- false, true -->
+  <xacro:arg name="has_microphone" default="false"/>
+
+  <!-- false, true-->
+  <xacro:arg name="add_on_module" default="no-add-on"/>
+
+  <!-- no-camera, orbbec-astra, orbbec-astra-pro, asus-xtion -->
+  <xacro:arg name="camera_model" default="no-camera"/>
+
+  <!-- Execution env config -->
+  <xacro:arg name="use_sim_time" default="false"/>
+  <xacro:arg name="namespace" default=""/>
+  <xacro:arg name="is_public_sim" default="false"/>
+
+  <!-- PROPERTIES -->
+
+  <!-- HW configuration -->
+  <xacro:property name="laser_model" value="$(arg laser_model)" />
+  <xacro:property name="has_sonars" value="$(arg has_sonars)" />
+  <xacro:property name="has_microphone" value="$(arg has_microphone)" />
+  <xacro:property name="add_on_module" value="$(arg add_on_module)"/>
+  <xacro:property name="camera_model" value="$(arg camera_model)" />
+
+  <!-- HW configuration check -->
+  <xacro:if value="${laser_model not in ['no-laser', 'sick-551', 'sick-561', 'sick-571', 'hokuyo']}">
+    <xacro:wrong_laser_model/>
+  </xacro:if>
+  <xacro:if value="${add_on_module not in ['no-add-on', 'cobra']}">
+    <xacro:wrong_add_on_module/>
+  </xacro:if>
+  <xacro:if value="${camera_model not in ['no-camera', 'structure']}">
+    <xacro:wrong_camera_model/>
+  </xacro:if>
+
+  <!-- Execution env configuration -->
+  <xacro:property name="use_sim_time" default="$(arg use_sim_time)"/>
+  <xacro:property name="namespace" value="$(arg namespace)" />
+  <xacro:property name="is_public_sim" value="$(arg is_public_sim)" />
+
+  <!-- INCLUDES -->
+
+  <xacro:arg name="pmb2_robot_description" default="./../../robot_descriptions/pmb2_robot"/>
+  <xacro:arg name="pal_urdf_utils" default="./../../robot_descriptions/pal_urdf_utils"/>
+
+  <!-- Base -->
+  <xacro:include filename="$(arg pmb2_robot_description)/urdf/base/base_sensors.urdf.xacro" />
+
+  <!-- Courier rgbd sensors -->
+  <xacro:if value="${add_on_module == 'cobra'}">
+    <xacro:include filename="$(arg pmb2_robot_description)/urdf/cameras_add_on/cameras_add_on.urdf.xacro" />
+  </xacro:if>
+
+  <!-- Materials for visualization -->
+  <xacro:include filename="$(arg pal_urdf_utils)/urdf/materials.urdf.xacro" />
+
+  <!-- Utils for degree to radian conversion -->
+  <xacro:include filename="$(arg pal_urdf_utils)/urdf/deg_to_rad.urdf.xacro" />
+
+  <!-- ROS 2 Control -->
+  <!-- <xacro:include filename="$(find pmb2_robot)/ros2_control/ros2_control.urdf.xacro" />
+  <xacro:pmb2_ros2_control /> -->
+
+  <!-- ROBOT DEFINITION -->
+
+  <!-- Now we can start using the macros included above to define the actual robot -->
+  <xacro:base_sensors name="base" laser_model="${laser_model}" has_sonars="${has_sonars}" has_microphone="${has_microphone}"/>
+
+  <!-- RGBD Sensors -->
+  <xacro:if value="${add_on_module == 'cobra'}">
+    <xacro:cameras_add_on name="cameras_add_on" parent="base_link"/>
+  </xacro:if>
+
+</robot>

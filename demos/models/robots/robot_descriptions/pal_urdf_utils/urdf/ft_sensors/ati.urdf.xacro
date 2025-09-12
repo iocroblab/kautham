@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<!--
+
+  Copyright (c) 2024 PAL Robotics S.L. All rights reserved.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+      
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="ft_sensor" params="name parent">
+
+    <!-- FT DEFINITION -->
+
+    <!-- Gazebo reference -->
+    <gazebo reference="${name}_ft_link">
+      <material>Gazebo/DarkGrey</material>
+      <mu1>0.9</mu1>
+      <mu2>0.9</mu2>
+    </gazebo>
+
+    <!-- Base link -->
+    <link name="${name}_ft_sensor_base_link">
+      <inertial>
+        <origin xyz="-0.0004587 0.00019238 0.011064" rpy="0 0 0" />
+        <mass value="0.077013" />
+        <inertia ixx="3.7638E-05" ixy="6.5947E-07" ixz="1.7831E-07" iyy="4.0868E-05" iyz="3.7283E-08" izz="7.4732E-05" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://pal_urdf_utils//meshes/ft_sensors/ati_ft_sensor.stl"/>
+        </geometry>
+        <material name="pal/DarkGrey"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0.0229" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.0375" length="0.045898"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <gazebo reference="${name}_ft_sensor_base_link">
+      <material>Gazebo/DarkGrey</material>
+      <mu1>0.9</mu1>
+      <mu2>0.9</mu2>
+    </gazebo>
+
+    <joint name="${name}_ft_sensor_base_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="${name}_ft_sensor_base_link" />
+      <axis xyz="0 0 0" />
+    </joint>
+
+    <!-- FT sensor link; the inertia and visual needs to exist for the ft sensor gazebo plugin to work -->
+    <link name="${name}_ft_sensor_link">
+      <inertial>
+        <origin xyz="-0.0010016 0.00099433 -0.0081076" rpy="0 0 0" />
+        <mass value="0.068524" />
+        <inertia ixx="1.1292E-05" ixy="1.0587E-06" ixz="-2.5242E-07" iyy="1.1125E-05" iyz="2.4515E-07" izz="1.9659E-05" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0.01" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.03" length="0.01"/>
+        </geometry>
+        <material name="pal/DarkGrey"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0.01" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.03" length="0.01"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <gazebo reference="${name}_ft_sensor_link">
+      <material>Gazebo/DarkGrey</material>
+      <mu1>0.9</mu1>
+      <mu2>0.9</mu2>
+    </gazebo>
+
+    <joint name="${name}_ft_sensor_joint" type="fixed">
+      <origin xyz="0 0 0.033998" rpy="0 0 0" />
+      <parent link="${name}_ft_sensor_base_link" />
+      <child link="${name}_ft_sensor_link" />
+      <axis xyz="0 0 0" />
+    </joint>
+
+    <!-- FT out link; the inertia and visual needs to exist for the ft sensor gazebo plugin to work -->
+    <link name="${name}_ft_tool_link">
+      <inertial>
+        <origin xyz="-0.0018748 0.0028583 -0.0014148" rpy="0 0 0" />
+        <mass value="0.082473" />
+        <inertia ixx="1.74E-05" ixy="-1.3726E-06" ixz="-1.6642E-07" iyy="2.0744E-05" iyz="-2.9811E-09" izz="3.6674E-05" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 -0.01" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.03" length="0.01"/>
+        </geometry>
+        <material name="pal/DarkGrey"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 -0.01" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.03" length="0.01"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <gazebo reference="${name}_ft_tool_link">
+      <material>Gazebo/DarkGrey</material>
+      <mu1>0.9</mu1>
+      <mu2>0.9</mu2>
+    </gazebo>
+
+    <joint name="${name}_ft_tool_joint" type="fixed">
+      <origin xyz="0 0 0.039998" rpy="0 0 0" />
+      <parent link="${name}_ft_sensor_base_link" />
+      <child link="${name}_ft_tool_link" />
+      <axis xyz="0 0 0" />
+    </joint>
+
+  </xacro:macro>
+
+</robot>

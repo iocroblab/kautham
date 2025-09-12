@@ -1,0 +1,10 @@
+<Benchmark Name="experiment">
+	<Problem File="OMPL_RRTConnect_bigcube-s-passage_R2_0.02.xml" PlannerAlias="RRTconnect_002" />
+	<Problem File="OMPL_RRTConnect_bigcube-s-passage_R2_0.05.xml" PlannerAlias="RRTconnect_005" />
+	<Problem File="OMPL_RRTConnect_bigcube-s-passage_R2_0.10.xml" PlannerAlias="RRTconnect_010" />
+	<Parameter Name="maxTime" Value="1.5" />
+	<Parameter Name="maxMem" Value="8000" />
+	<Parameter Name="runCount" Value="10" />
+	<Parameter Name="displayProgress" Value="true" />
+	<Parameter Name="filename" Value="resultRRTConnect.log" />
+</Benchmark>

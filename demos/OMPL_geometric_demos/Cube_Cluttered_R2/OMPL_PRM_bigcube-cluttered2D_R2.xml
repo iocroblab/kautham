@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<Problem name="OMPL_PRM_bigcube-cluttered2D">
+
+	<Robot robot="./robots/robot_descriptions/freeflying_description/bigcube.urdf" scale="1.0">
+		<KauthamName name="bigcube"/>
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.056" Y="0.01" X="0.01" />
+	</Robot>
+
+	<Obstacle obstacle="./obstacles/2D-environments/cluttered2D/cluttered2D.urdf" scale="1.0">
+		<KauthamName name="cluttered2D"/>
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/2D-environments/walls/walls.urdf" scale="1.0">
+		<KauthamName name="walls"/>
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+
+	<Controls robot="./controls/bigcube_R2.cntr" />
+
+	<Planner>
+
+		<Parameters>
+			<Name>omplPRM</Name>
+			<Parameter name="_Max Planning Time">1.5</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="DistanceThreshold">0.10</Parameter>
+			<Parameter name="MinGrowTime">0.2</Parameter>
+			<Parameter name="MinExpandTime">0.05</Parameter>
+			<Parameter name="BounceDistanceThreshold">0.20</Parameter>
+		</Parameters>
+
+		<Queries>
+			<Query>
+				<RobotControl name="bigcube_x"	init="0.1" goal="0.7"/>
+				<RobotControl name="bigcube_y"	init="0.1" goal="0.7"/>
+			</Query>
+		</Queries>
+
+	</Planner>
+
+</Problem>

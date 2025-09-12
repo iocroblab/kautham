@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!-- 
+  Copyright (c) 2025 PAL Robotics S.L. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="sick_nanoscan3_laser_gazebo" params="name ros_topic update_rate min_angle max_angle">
+    <gazebo reference="${name}_link">
+      <sensor type="gpu_ray" name="${name}">
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>${update_rate}</update_rate>
+        <visualize>true</visualize>
+        <ray>
+          <scan>
+            <horizontal>
+              <!-- 818 (270/0.33) steps in 270deg fov -->
+              <samples>${818*(max_angle - min_angle)/(270.0 * deg_to_rad)}</samples>
+              <resolution>1</resolution> <!-- not the sensor resolution; just 1 -->
+              <min_angle>${min_angle}</min_angle>
+              <max_angle>${max_angle}</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.05</min>
+            <max>25.0</max>
+            <resolution>0.01</resolution>
+          </range>
+        </ray>
+        <plugin filename="libgazebo_ros_laser.so" name="gazebo_ros_sick_laser">
+          <gaussianNoise>0.03</gaussianNoise>
+          <alwaysOn>true</alwaysOn>
+          <updateRate>${update_rate}</updateRate>
+          <topicName>${ros_topic}</topicName>
+          <frameName>${name}_link</frameName>
+        </plugin>
+      </sensor>
+      <material>Gazebo/DarkGrey</material>
+    </gazebo>
+  </xacro:macro>
+
+</robot>
+

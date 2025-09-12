@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+
+<Problem name="yumi_table_top">
+
+	<Robot robot="./robots/robot_instances/YuMi/yumi.urdf.xacro" scale="1.0">
+		<KauthamName name="YuMi"/>
+		<Home TH="1.570796327" WZ="0.0" WY="0.0" WX="0.0" Z="0.25" Y="0.0" X="0.0" />
+	</Robot>
+
+	<Obstacle obstacle="./obstacles/TMP/table.urdf" scale="0.0036">
+		<KauthamName name="table_wood_veneer"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="-0.208" Y="-0.5" X="0.2" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/cubeI.urdf" scale="0.00172">
+		<KauthamName name="cubeI"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.276" Y="-0.18" X="0.609" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/cubeA.urdf" scale="0.00140">
+		<KauthamName name="cubeA"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.32" Y="-0.3" X="0.65" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/cube-big.urdf" scale="0.004">
+		<KauthamName name="cube-big"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.285" Y="0.0" X="0.6" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/cubeB.urdf" scale="0.00140">
+		<KauthamName name="cubeB"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.32" Y="-0.18" X="0.65" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/cubeC.urdf" scale="0.00160">
+		<KauthamName name="cubeC"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.38" Y="0.4" X="0.58" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/cubeG.urdf" scale="0.00160">
+		<KauthamName name="cubeG"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.276" Y="-0.18" X="0.45" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/cubeE.urdf" scale="0.00172">
+		<KauthamName name="cubeE"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.276" Y="-0.29" X="0.47" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/cubeF.urdf" scale="0.00172">
+		<KauthamName name="cubeF"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.276" Y="0.34" X="0.69" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/tray.urdf" scale="0.0015">
+		<KauthamName name="tray"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="1.0" Z="0.272" Y="0.21" X="0.650" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/shelfA.urdf" scale="0.0032">
+		<KauthamName name="shelfA"/>
+		<Home TH="3.14" WZ="1.0" WY="0.0" WX="0.0" Z="0.3" Y="-0.245" X="0.7" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/shelfB.urdf" scale="0.0025">
+		<KauthamName name="shelfB"/>
+		<Home TH="3.14" WZ="1.0" WY="0.0" WX="0.0" Z="0.345" Y="0.2" X="0.75" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/TMP/box.urdf" scale="1.0">
+		<KauthamName name="box"/>
+		<Home TH="3.14" WZ="1.0" WY="0.0" WX="0.0" Z="0.335" Y="0.4" X="0.56" />
+	</Obstacle>
+
+	<Controls robot="./controls/yumi.cntr"/>
+
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="_Max Planning Time">10</Parameter>
+			<Parameter name="Range">0.5</Parameter>
+			<Parameter name="_Incremental (0/1)">0</Parameter>
+			<Parameter name="_Simplify Solution">2</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<RobotControl name="YuMi_arm_right_joint_1" init="0.630" goal="0.545"/>
+				<RobotControl name="YuMi_arm_right_joint_2" init="0.100" goal="0.380"/>
+				<RobotControl name="YuMi_arm_right_joint_3" init="0.200" goal="0.835"/>
+				<RobotControl name="YuMi_arm_right_joint_4" init="0.800" goal="0.327"/>
+				<RobotControl name="YuMi_arm_right_joint_5" init="0.500" goal="0.375"/>
+				<RobotControl name="YuMi_arm_right_joint_6" init="0.500" goal="0.425"/>
+				<RobotControl name="YuMi_arm_right_joint_7" init="0.500" goal="0.813"/>
+				<RobotControl name="YuMi_arm_right_gripper" init="0.500" goal="0.813"/>
+
+				<RobotControl name="YuMi_arm_left_joint_1" init="0.380" goal="0.545"/>
+				<RobotControl name="YuMi_arm_left_joint_2" init="0.100" goal="0.380"/>
+				<RobotControl name="YuMi_arm_left_joint_3" init="0.800" goal="0.835"/>
+				<RobotControl name="YuMi_arm_left_joint_4" init="0.800" goal="0.327"/>
+				<RobotControl name="YuMi_arm_left_joint_5" init="0.500" goal="0.375"/>
+				<RobotControl name="YuMi_arm_left_joint_6" init="0.500" goal="0.425"/>
+				<RobotControl name="YuMi_arm_left_joint_7" init="0.500" goal="0.813"/>
+				<RobotControl name="YuMi_arm_left_gripper" init="0.500" goal="0.813"/>
+				
+			</Query>
+		</Queries>
+	</Planner>
+
+</Problem>

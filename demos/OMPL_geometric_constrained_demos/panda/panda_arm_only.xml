@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<Problem name="OnlyPanda">
+
+	<Robot robot="./robots/robot_instances/panda/panda_arm.urdf.xacro" scale="1.0">
+		<Home X="0.5" Y="-0.5" Z="0.0" TH="1.570796" WX="0.0" WY="0.0" WZ="0.0"/>
+		<KauthamName name="panda"/>
+
+		<Constraint id="panda_orientation1" type="arm_orientation">
+			<Enabled status="true"/>
+			<TargetLink name="panda_link7"/>
+			<FreeMovementAxes x="false" y="false" z="false"/>
+			<TargetOrientation qx="0.707" qy="0.0" qz="0.707" qw="0.0"/>
+			<Tolerance value="0.1" variable="false" gradient="0.0"/>
+			<Joint name="panda_joint1" />
+			<Joint name="panda_joint2" />
+			<Joint name="panda_joint3" />
+			<Joint name="panda_joint4" />
+			<Joint name="panda_joint5" />
+			<Joint name="panda_joint6" />
+			<Joint name="panda_joint7" />
+		</Constraint>
+
+	</Robot>
+
+	<Controls robot="./controls/panda_arm.cntr"/>
+
+	<Planner>
+		<Parameters>
+			<Name>omplconstr</Name>
+			<Parameter name="_Max Planning Time">15.0</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="_Simplify Solution">0</Parameter>
+			<Parameter name="_Incremental (0/1)">0</Parameter>
+			<!-- <Parameter name="Range">0.02</Parameter> -->
+			<!-- <Parameter name="Goal Bias">0.05</Parameter> -->
+		</Parameters>
+		<Queries>
+			<Query>
+				<RobotControl name="panda_joint1" 			init="0.500" goal="0.600"/>
+				<RobotControl name="panda_joint6" 			init="0.840" goal="0.400"/>
+				<RobotControl name="panda_joint3" 			init="0.500" goal="0.700"/>
+				<RobotControl name="panda_joint4" 			init="0.500" goal="0.400"/>
+				<RobotControl name="panda_joint5" 			init="0.500" goal="0.340"/>
+				<RobotControl name="panda_joint2" 			init="0.500" goal="0.300"/>
+				<RobotControl name="panda_joint7" 			init="0.500" goal="0.770"/>
+			</Query>
+		</Queries>
+	</Planner>
+
+</Problem>

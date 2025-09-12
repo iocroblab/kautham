@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<Problem name="OMPL_RRTConnect_boxes_world_R2">
+
+  	<Robot robot="./robots/robot_descriptions/freeflying_description/bigcube.urdf" scale="1.0">
+		<KauthamName name="bigcube"/>
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.056" Y="0.0" X="0.0" />
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+	</Robot>
+
+	<Controls robot="./controls/bigcube_R2.cntr" obstacle="./controls/boxes.cntr"/>
+        
+  	<Obstacle obstacle="./obstacles/2D-environments/plain/plain.urdf" scale="1.0">
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/2D-environments/walls/walls.urdf" scale="1.0">
+		<KauthamName name="walls" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  	<Obstacle obstacle="./obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_1" />
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_2" />
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_3" />
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_4" />
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_5" />
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_6" />
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_7" />
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_8" />
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_9" />
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+  	<Obstacle obstacle="obstacles/boxes/plainbox.urdf" scale="1.0">
+		<KauthamName name="plainbox_10" />
+		<Limits name="X" min="0.0" max="1.0" />
+		<Limits name="Y" min="0.0" max="1.0" />
+		<Limits name="Z" min="0.056" max="0.056" />
+		<Home TH="0.0" WZ="1.0" WY="0.0" WX="0.0" Z="0.1" Y="0.0" X="0.0" />
+	</Obstacle>
+
+	<Planner>
+		<Parameters>
+			<Name>NF1Planner</Name>
+			<Parameter name="_Discr. Steps 0">30</Parameter>
+			<Parameter name="_Discr. Steps 1">30</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<!-- ROBOT: -->
+				<RobotControl name="bigcube_x"	init="0.600" goal="0.850"/>
+				<RobotControl name="bigcube_y"	init="0.100" goal="0.850"/>
+
+				<!-- OBSTACLES: -->
+				<ObstacleControl name="plainbox_1/x"	default="0.200"/>
+				<ObstacleControl name="plainbox_1/y"	default="0.200"/>
+
+				<ObstacleControl name="plainbox_2/x"	default="0.200"/>
+				<ObstacleControl name="plainbox_2/y"	default="0.400"/>
+
+				<ObstacleControl name="plainbox_3/x"	default="0.200"/>
+				<ObstacleControl name="plainbox_3/y"	default="0.600"/>
+
+				<ObstacleControl name="plainbox_4/x"	default="0.200"/>
+				<ObstacleControl name="plainbox_4/y"	default="0.800"/>
+
+				<ObstacleControl name="plainbox_5/x"	default="0.800"/>
+				<ObstacleControl name="plainbox_5/y"	default="0.200"/>
+
+				<ObstacleControl name="plainbox_6/x"	default="0.800"/>
+				<ObstacleControl name="plainbox_6/y"	default="0.400"/>
+
+				<ObstacleControl name="plainbox_7/x"	default="0.800"/>
+				<ObstacleControl name="plainbox_7/y"	default="0.600"/>
+
+				<ObstacleControl name="plainbox_8/x"	default="0.800"/>
+				<ObstacleControl name="plainbox_8/y"	default="0.800"/>
+
+				<ObstacleControl name="plainbox_9/x"	default="0.400"/>
+				<ObstacleControl name="plainbox_9/y"	default="0.400"/>
+
+				<ObstacleControl name="plainbox_10/x"	default="0.600"/>
+				<ObstacleControl name="plainbox_10/y"	default="0.600"/>
+
+			</Query>
+		</Queries>
+	</Planner>
+</Problem>

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<robot name="yumi_body" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:arg name="yumi_body_description" default="./../../robot_descriptions/YuMi"/>
+
+    <!-- Include Utilities -->
+    <xacro:include filename="$(arg yumi_body_description)/utilities.xacro" />
+    <xacro:include filename="$(arg yumi_body_description)/materials.xacro" />
+
+    <!-- some constants -->
+    <!-- <xacro:property name="safety_controller_k_pos" value="100" />
+    <xacro:property name="safety_controller_k_vel" value="2" /> -->
+    <xacro:property name="joint_damping" value="0.5" />
+    <xacro:property name="max_effort" value="300"/>
+
+    <xacro:macro name="yumi_body" params="parent prefix *origin">
+
+        <!--joint between {parent} and body-->
+        <xacro:if value="${parent != ''}">
+            <joint name="${prefix}_joint" type="fixed">
+                <xacro:insert_block name="origin" />
+                <parent link="${parent}" />
+                <child link="${prefix}_body" />
+            </joint>
+        </xacro:if>
+
+        <link name="${prefix}_body">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="$(arg yumi_body_description)/meshes/body.stl"/>
+                </geometry>
+                <material name="Light_Grey"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="$(arg yumi_body_description)/meshes/coarse/body.stl"/>
+                </geometry>
+                <material name="Light_Grey"/>
+            </collision>
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="15"/>
+                <inertia ixx="0.5"  ixy="0"  ixz="0" iyy="0.6" iyz="0" izz="0.3" />
+            </inertial>
+        </link>
+
+  </xacro:macro>
+
+</robot>

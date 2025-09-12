@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="staubli_tx90">
+
+    <!-- import main macro -->
+    <xacro:arg name="robot_description_path" default="./../../robot_descriptions/staubli_tx90_description"/>
+    <xacro:include filename="$(arg robot_description_path)/staubli_tx90_macro.xacro"/>
+
+    <xacro:arg name="tf_prefix" default="staubli_tx90"/>
+    <xacro:arg name="parent" default="base_mobile"/>
+    <xacro:arg name="origin_xyz" default="0 0 0"/>
+    <xacro:arg name="origin_rpy" default="0 0 0"/>
+
+    <!-- BASE -->
+    <link name="base_mobile" >
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="$(arg robot_description_path)/meshes/base_mobile.wrl"/>
+            </geometry>
+            <material name="">
+                <color rgba="0.5294117647058824 0.5215686274509804 0.5058823529411764 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="$(arg robot_description_path)/meshes/base_mobile.wrl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- ARM -->
+    <xacro:staubli_tx90
+        tf_prefix="$(arg tf_prefix)"
+        connected_to="$(arg parent)"
+    >
+        <origin xyz="$(arg origin_xyz)" rpy="$(arg origin_rpy)"/>
+    </xacro:staubli_tx90>
+
+</robot>

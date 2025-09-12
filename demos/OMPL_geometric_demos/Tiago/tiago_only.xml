@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+
+<Problem name="OnlyTiago">
+
+	<Robot robot="./robots/robot_instances/tiago_robot/tiago.urdf.xacro" scale="1.0">
+		<Home X="0.5" Y="-0.5" Z="0.0" TH="1.570796" WX="0.0" WY="0.0" WZ="0.0"/>
+		<KauthamName name="tiago"/>
+	</Robot>
+
+	<Controls robot="./controls/tiago.cntr"/>
+
+	<Planner>
+		<Parameters>
+			<Name>omplRRT</Name>
+			<Parameter name="_Max Planning Time">15.0</Parameter>
+			<Parameter name="_Speed Factor">1</Parameter>
+			<Parameter name="Range">0.02</Parameter>
+			<Parameter name="Goal Bias">0.05</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+				<RobotControl name="wheel_right_joint" 		init="0.500" goal="0.326"/>
+				<RobotControl name="wheel_left_joint" 		init="0.500" goal="0.375"/>
+
+				<RobotControl name="torso_lift_joint" 		init="0.200" goal="0.800"/>
+
+				<RobotControl name="arm_1_joint" 			init="0.500" goal="0.500"/>
+				<RobotControl name="arm_2_joint" 			init="0.500" goal="0.600"/>
+				<RobotControl name="arm_3_joint" 			init="0.500" goal="0.700"/>
+				<RobotControl name="arm_4_joint" 			init="0.500" goal="0.800"/>
+				<RobotControl name="arm_5_joint" 			init="0.500" goal="0.600"/>
+				<RobotControl name="arm_6_joint" 			init="0.500" goal="0.300"/>
+				<RobotControl name="arm_7_joint" 			init="0.500" goal="0.200"/>
+
+				<RobotControl name="gripper_finger_joint" 	init="0.200" goal="0.800"/>
+				
+				<RobotControl name="head_1_joint" 			init="0.200" goal="0.800"/>
+				<RobotControl name="head_2_joint" 			init="0.200" goal="0.800"/>
+			</Query>
+		</Queries>
+	</Planner>
+
+</Problem>

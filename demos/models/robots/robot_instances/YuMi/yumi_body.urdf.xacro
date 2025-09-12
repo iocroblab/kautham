@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<robot name="YuMi" xmlns:xacro="http://ros.org/wiki/xacro">
+    
+    <!-- Import main macros: -->
+    <xacro:arg name="yumi_description_path" default="./../../robot_descriptions/YuMi"/>
+    <xacro:include filename="$(arg yumi_description_path)/yumi_body_macro.xacro"/>
+
+    <!-- YuMi body: -->
+    <xacro:arg name="prefix_yumi_body" default="yumi" />
+    <xacro:arg name="parent_yumi_body" default="" />
+    <xacro:arg name="origin_xyz_yumi_body" default="0 0 0"/>
+    <xacro:arg name="origin_rpy_yumi_body" default="0 0 0"/>
+    <xacro:yumi_body
+        prefix="$(arg prefix_yumi_body)"
+        parent="$(arg parent_yumi_body)"
+        >
+        <!-- position robot in the parent reference -->
+        <origin xyz="$(arg origin_xyz_yumi_body)" rpy="$(arg origin_rpy_yumi_body)" />
+    </xacro:yumi_body>
+
+</robot>
