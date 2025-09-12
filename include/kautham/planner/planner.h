@@ -43,10 +43,10 @@ namespace Kautham {
  */
    struct attachData{
        uint step;
-       string action;
-       string objname;
-       uint robnumber;
-       uint linknumber;
+       std::string action;
+       std::string objname;
+       std::string robnumber;
+       std::string linknumber;
    };
 
    class Planner: public KauthamObject{
@@ -100,20 +100,20 @@ namespace Kautham {
        inline int                     findIndex(Sample *s){return _samples->indexOf(s);}
        void                           loadExternalPath(vector<Sample*> &p);  
        void                           clearAttachData();
-       void                           loadAttachData(int s, string a, string o, int r, int l);
+       void                           loadAttachData(int s, const std::string& a, const std::string& o, const std::string& r, const std::string& l);
        inline vector<attachData>&     getAttachData(){return _attachdetach;};
 
    protected:
        Planner();
        std::string                   _idName;
        SampleSet*                    _samples;
-       vector<Sample*>               _init;
-       vector<Sample*>               _goal;
-       vector<Sample*>               _path;
-       vector<attachData>            _attachdetach;
-       vector<vector<vector<double> > >  _StateBodies;
-       vector<Sample*>               _simulationPath;
-       vector<mt::Transform>         _cameraPath;
+       std::vector<Sample*>               _init;
+       std::vector<Sample*>               _goal;
+       std::vector<Sample*>               _path;
+       std::vector<attachData>            _attachdetach;
+       std::vector<vector<vector<double> > >  _StateBodies;
+       std::vector<Sample*>               _simulationPath;
+       std::vector<mt::Transform>         _cameraPath;
        WorkSpace*                    _wkSpace;
        bool                          _solved;
        SPACETYPE                     _spType;

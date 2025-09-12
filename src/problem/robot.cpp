@@ -349,7 +349,7 @@ namespace Kautham {
                 return false;
             }
             if (collisionCheck(obs)) {
-                std::cout<<"Robot::attachObject failed: in collision"<<std::endl;
+                std::cout << "Robot::attachObject failed: in collision" << std::endl;
                 return false;
             }
             attObj newObj;
