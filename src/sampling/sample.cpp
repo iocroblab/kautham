@@ -50,7 +50,7 @@ namespace Kautham {
         _config.clear();
     }
 
-    bool Sample::setCoords(std::vector<double>& coords) {
+    bool Sample::setCoords(const std::vector<double>& coords) {
         if (coords.size() == _dim) {
             for (unsigned int i = 0; i < _dim; ++i) {
                 _coords[i] = coords[i];

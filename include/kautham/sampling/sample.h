@@ -57,7 +57,7 @@ class Sample {
 
         //! Sets the coordinates from the array parameter coords. It create the own copy 
         //! of this values.
-        bool setCoords(std::vector<double>& coords);
+        bool setCoords(const std::vector<double>& coords);
 
         //! Returns the pointer to the internal coordinates.
         inline std::vector<double>& getCoords() {return _coords;}

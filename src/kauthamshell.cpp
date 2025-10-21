@@ -363,7 +363,7 @@ namespace Kautham {
     }
 
 
-    bool kauthamshell::setQuery(vector<double> init, vector<double> goal) {
+    bool kauthamshell::setQuery(const std::vector<double>& _init, const std::vector<double>& _goal) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -372,47 +372,67 @@ namespace Kautham {
 
             Problem *const problem = (Problem*)memPtr_;
             int d = problem->wSpace()->getNumRobControls();
+
+            if (!_init.empty() && _init.size() != static_cast<size_t>(d)) {
+                std::cerr << "Error: init vector size does not match number of controls." << std::endl;
+                return false;
+            }
+            if (!_goal.empty() && _goal.size() != static_cast<size_t>(d)) {
+                std::cerr << "Error: goal vector size does not match number of controls." << std::endl;
+                return false;
+            }
+
             SampleSet *samples = problem->getSampleSet();
+            // std::cout << "Sample init coords: " << samples->getSampleAt(0)->print(true) << std::endl;
+            // std::cout << "Sample goal coords: " << samples->getSampleAt(1)->print(true) << std::endl;
             samples->clear();
 
-            string msg_init, msg_goal;
+            Sample* init_sample = new Sample(d);
+            Sample* goal_sample = new Sample(d);
 
-            //init
-            Sample *smp = new Sample(d);
-            smp->setCoords(init);
-            if(problem->wSpace()->collisionCheck(smp, &msg_init)) {
-                std::cout<<"Init in collision: (";
-                for(unsigned k=0;k<init.size();k++) std::cout<<init[k]<<" ";
-                std::cout<<std::endl;
-                std::cout<<msg_init<<std::endl;
-                return false;
+            if (!_init.empty()) { 
+                init_sample->setCoords(_init);
+                // std::cout << "Final Sample init coords: " << init_sample->print(true) << std::endl;
+                std::string msg_init;
+                if (problem->wSpace()->collisionCheck(init_sample, &msg_init)) {
+                    std::cerr << "Init in collision: ";
+                    for (auto val : _init) std::cerr << val << " ";
+                    std::cerr << "\n" << msg_init << std::endl;
+                    delete init_sample;
+                    delete goal_sample;
+                    return false;
+                }
+                samples->add(init_sample);
+                problem->getPlanner()->setInitSamp(init_sample);
+            } else {
+                delete init_sample;  // no init given, discard
             }
-            samples->add(smp);
 
-            //goal
-            smp = new Sample(d);
-            smp->setCoords(goal);
-            if(problem->wSpace()->collisionCheck(smp, &msg_goal)) {
-                std::cout<<"Goal in collision: (";
-                for(unsigned k=0;k<goal.size();k++) std::cout<<goal[k]<<" ";
-                std::cout<<std::endl;
-                std::cout<<msg_goal<<std::endl;
-                return false;
+            if (!_goal.empty()) {
+                goal_sample->setCoords(_goal);
+                // std::cout << "Final Sample goal coords: " << goal_sample->print(true) << std::endl;
+                std::string msg_goal;
+                if (problem->wSpace()->collisionCheck(goal_sample, &msg_goal)) {
+                    std::cerr << "Goal in collision: ";
+                    for (auto val : _goal) std::cerr << val << " ";
+                    std::cerr << "\n" << msg_goal << std::endl;
+                    delete goal_sample;
+                    return false;
+                }
+                samples->add(goal_sample);
+                problem->getPlanner()->setGoalSamp(goal_sample);
+            } else {
+                delete goal_sample; // no goal given, discard
             }
-            samples->add(smp);
-
-            problem->getPlanner()->setInitSamp(samples->getSampleAt(0));
-            problem->getPlanner()->setGoalSamp(samples->getSampleAt(1));
 
             return true;
+
         } catch (const KthExcp& excp) {
-            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
         } catch (const exception& excp) {
-            cout << "Error: " << excp.what() << endl;
+            std::cout << "Error: " << excp.what() << std::endl;
         } catch(...) {
-            cout << "Something is wrong with the problem. Please run the "
-                 << "problem with the Kautham2 application at less once in order "
-                 << "to verify the correctness of the problem formulation.\n";
+            std::cout << "Unknown error when setting the query." << std::endl;
         }
 
         return false;
@@ -440,12 +460,15 @@ namespace Kautham {
             // Get the information of the opened problem:
             Problem *const problem = (Problem*)memPtr_;
             std::vector<std::string> prob_control_names =  problem->wSpace()->getRobControlsNames();
-            
+
             // Save the original samples (maybe only a single control will be set) and clear the stored samples:
             SampleSet *samples = problem->getSampleSet();
             Sample *init_sample = new Sample(*samples->getSampleAt(0));
             Sample *goal_sample = new Sample(*samples->getSampleAt(1));
             samples->clear();
+
+            // std::cout << "Sample init coords: " << init_sample->print(true) << std::endl;
+            // std::cout << "Sample goal coords: " << goal_sample->print(true) << std::endl;
             
             std::vector<double> updated_init_coord = init_sample->getCoords();
             std::vector<double> updated_goal_coord = goal_sample->getCoords();
@@ -456,6 +479,10 @@ namespace Kautham {
                 auto it = std::find(prob_control_names.begin(), prob_control_names.end(), name);
                 if (it != prob_control_names.end()) {
                     size_t index = std::distance(prob_control_names.begin(), it);
+                    // std::cout << "Updating control '" << name << "' at index " << index
+                    //     << " with init " << (_init.empty() ? -1 : _init[i])
+                    //     << " and goal " << (_goal.empty() ? -1 : _goal[i]) << std::endl;
+
                     if (!_init.empty()) {
                         updated_init_coord[index] = _init[i];
                     }
@@ -473,6 +500,7 @@ namespace Kautham {
             // Set the new Init sample:
             if (!_init.empty()) {
                 init_sample->setCoords(updated_init_coord);
+                // std::cout << "Final Sample init coords: " << init_sample->print(true) << std::endl;
                 if(problem->wSpace()->collisionCheck(init_sample, &msg_init)) {
                     std::cout << "Init in collision: ";
                     for (unsigned k = 0; k < updated_init_coord.size(); k++) {
@@ -489,6 +517,7 @@ namespace Kautham {
             // Goal sample:
             if (!_goal.empty()) {
                 goal_sample->setCoords(updated_goal_coord);
+                // std::cout << "Final Sample goal coords: " << goal_sample->print(true) << std::endl;
                 if(problem->wSpace()->collisionCheck(goal_sample, &msg_goal)) {
                     std::cout << "Goal in collision: ";
                     for (unsigned k = 0; k < updated_goal_coord.size(); k++) {
@@ -2342,7 +2371,7 @@ namespace Kautham {
         return ret;
     }
 
-    bool kauthamshell::setRobPos(unsigned int index, std::vector<double> pos) {
+    bool kauthamshell::setRobotPose(const std::string& _robot_name, const std::vector<double>& _robot_pose) {
         try {
             if (!problemOpened()) {
                 cout << "The problem is not opened" << endl;
@@ -2352,23 +2381,26 @@ namespace Kautham {
 
             SE3Conf newconf;
             std::vector<double> newpos;
-            newpos.push_back(pos.at(0));
-            newpos.push_back(pos.at(1));
-            newpos.push_back(pos.at(2));
+            newpos.push_back(_robot_pose.at(0));    // x
+            newpos.push_back(_robot_pose.at(1));    // y
+            newpos.push_back(_robot_pose.at(2));    // z
             std::vector<double> newori;
-            newori.push_back(pos.at(3));
-            newori.push_back(pos.at(4));
-            newori.push_back(pos.at(5));
-            newori.push_back(pos.at(6));
+            newori.push_back(_robot_pose.at(3));    // qx
+            newori.push_back(_robot_pose.at(4));    // qy
+            newori.push_back(_robot_pose.at(5));    // qz
+            newori.push_back(_robot_pose.at(6));    // qw
 
             newconf.setPos(newpos);
             newconf.setOrient(newori);
 
-            problem->getPlanner()->wkSpace()->getRobot(index)->setHomePos(&newconf);
+            problem->getPlanner()->wkSpace()->getRobot(_robot_name)->setHomePos(&newconf);
 
-            std::vector<double> coord = problem->getPlanner()->wkSpace()->getRobot(index)->getHomePos()->getSE3().getPos();
-            std::cout<<"Robot "<<index<<" at position ("<<coord.at(0)<<", "
-                    <<coord.at(1)<<", "<<coord.at(2)<<")"<<std::endl;
+            // Debug:
+            std::vector<double> pos = problem->getPlanner()->wkSpace()->getRobot(_robot_name)->getHomePos()->getSE3().getPos();
+            std::cout<<"Robot " << _robot_name << " at home position (x,y,z) = (" << pos.at(0) << ", " << pos.at(1) << ", " <<pos.at(2) << ")" << std::endl;
+            std::vector<double> ori = problem->getPlanner()->wkSpace()->getRobot(_robot_name)->getHomePos()->getSE3().getOrient();
+            std::cout<<"Robot " << _robot_name << " at home orientation (qw,qx,qy,qz) = (" << ori.at(3) << ", " << ori.at(0) << ", " << ori.at(1) << ", " <<ori.at(2) << ")" << std::endl;
+
             return true;
 
         } catch (const KthExcp& excp) {
@@ -2384,6 +2416,40 @@ namespace Kautham {
         return false;
     }
 
+    bool kauthamshell::getRobotPose(const std::string& _robot_name, std::vector<double>& _robot_pose) {
+        try {
+            if (!problemOpened()) {
+                cout << "The problem is not opened" << endl;
+                return false;
+            }
+            Problem *const problem = (Problem*)memPtr_;
+            SE3Conf conf = problem->getPlanner()->wkSpace()->getRobot(_robot_name)->getCurrentPos()->getSE3();
+            std::cout<<"Robot "<<_robot_name<<" at position ("<<conf.getPos().at(0)<<", "
+                    <<conf.getPos().at(1)<<", "<<conf.getPos().at(2)<<")"<<std::endl;
+
+            _robot_pose.push_back(conf.getPos().at(0));
+            _robot_pose.push_back(conf.getPos().at(1));
+            _robot_pose.push_back(conf.getPos().at(2));
+            _robot_pose.push_back(conf.getOrient().at(0));
+            _robot_pose.push_back(conf.getOrient().at(1));
+            _robot_pose.push_back(conf.getOrient().at(2));
+            _robot_pose.push_back(conf.getOrient().at(3));
+            return true;
+
+        } catch (const KthExcp& excp) {
+            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+        } catch (const exception& excp) {
+            cout << "Error: " << excp.what() << endl;
+        } catch(...) {
+            cout << "Something is wrong with the problem. Please run the "
+                 << "problem with the Kautham2 application at less once in order "
+                 << "to verify the correctness of the problem formulation.\n";
+        }
+
+        return false;
+    }
+
+    // TODO: Used in kautham_ros. Must be deteled to use getRobotPose()
     bool kauthamshell::getRobPos(unsigned int index, std::vector<double> &pos) {
         try {
             if (!problemOpened()) {

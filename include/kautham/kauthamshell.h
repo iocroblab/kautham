@@ -55,7 +55,7 @@ namespace Kautham {
             bool setRobotsConfig(std::vector<double> smpcoords, std::vector<RobConf> &config);
             bool setRobotsConfigByIndexSample(const std::string& _sample_type, const unsigned int _sample_index, std::vector<RobConf>& sample_config_); 
             bool setObstaclesConfig(std::vector<double> smpcoords);
-            bool setQuery(std::vector<double> init, std::vector<double> goal);
+            bool setQuery(const std::vector<double>& _init, const std::vector<double>& _goal);
             bool setQuery(const std::vector<std::string>& _control_names, const std::vector<double>& _init, const std::vector<double>& _goal);
             bool setInit(std::vector<double> init);
             bool setGoal(std::vector<double> goal);
@@ -105,9 +105,11 @@ namespace Kautham {
             
             std::map<std::string, Robot*> getObstaclesMap();
             bool findIK(int robIndx, bool armType, std::vector<double> pos, std::vector<double> conf, bool maintSameWrist, std::vector<double> *solution);
-            bool setRobPos(unsigned int index, std::vector<double> pos);
             bool getRobPos(unsigned int index, std::vector<double> &pos);
             bool getRobHomePos(unsigned int index, std::vector<double> &pos);
+            
+            bool setRobotPose(const std::string& _robot_name, const std::vector<double>& _robot_pose);
+            bool getRobotPose(const std::string& _robot_name, std::vector<double>& _robot_pose);
 
             //  Used to set any DOF (from 0 to 1) of a robot through his name and the DOF identifier.
             bool updateRobotDOFOffsetByName(const std::string& _robot_name, const std::vector<std::pair<std::string, double>>& _dof_updates);

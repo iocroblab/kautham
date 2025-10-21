@@ -1292,6 +1292,8 @@ namespace Kautham {
         //! This function converts a Kautham sample to an ompl scoped state.
         void omplPlanner::smp2omplScopedState(Sample* smp, ob::ScopedState<ob::CompoundStateSpace> *sstate)
         {
+            // std::cout << "Sample coords: " << smp->print(true) << std::endl;
+
             //Extract the mapped configuration of the sample. It is a vector with as many components as robots.
             //each component has the RobConf of the robot (the SE3 and the Rn configurations)
             if(smp->getMappedConf().size()==0)
@@ -1308,19 +1310,20 @@ namespace Kautham {
 
                 //get the subspace of robot i
                 ob::StateSpacePtr ssRoboti = ((ob::StateSpacePtr) space->as<ob::CompoundStateSpace>()->getSubspace(i));
-                string ssRobotiname = ssRoboti->getName();
 
-                //if it has se3 part
-                if(_wkSpace->getRobot(i)->isSE3Enabled())
+                unsigned int num_subspaces = ssRoboti->as<ob::CompoundStateSpace>()->getSubspaceCount();
+                // std::cout << "Robot " << i << " number of subspaces: " << num_subspaces << std::endl;
+
+                // If it has SE3 part:
+                if(_wkSpace->getRobot(i)->isSE3Enabled() || num_subspaces == 2) // (num_subspaces == 2) means that SE3 +Rn are set, but SE3 is disabled by the control file.
                 {
-                    //get the kautham SE3 configuration
+                    // Get the kautham SE3 configuration
                     SE3Conf c = smpRobotsConf.at(i).getSE3();
-                    vector<double>& pp = c.getPos();
-                    vector<double>& aa = c.getAxisAngle();
+                    std::vector<double>& pp = c.getPos();
+                    std::vector<double>& aa = c.getAxisAngle();
 
-                    //set the ompl SE3 configuration
+                    // Set the ompl SE3 configuration
                     ob::StateSpacePtr ssRobotiSE3 =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
-                    string ssRobotiSE3name = ssRobotiSE3->getName();
 
                     ob::ScopedState<ob::SE3StateSpace> cstart(ssRobotiSE3);
                     cstart->setX(pp[0]);
@@ -1328,28 +1331,43 @@ namespace Kautham {
                     cstart->setZ(pp[2]);
                     cstart->rotation().setAxisAngle(aa[0],aa[1],aa[2],aa[3]);
 
-                    //load the global scoped state with the info of the se3 data of robot i
+                    // Load the global scoped state with the info of the se3 data of robot i
                     (*sstate)<<cstart;
                     k++;
+                    // DEBUG:
+                    // if (num_subspaces == 2) {
+                    //     std::cout << "SE3 has been defined";
+                    // }
+                    // if (_wkSpace->getRobot(i)->isSE3Enabled()) {
+                    //     std::cout << ", and it is enabled.";
+                    // } else {
+                    //     std::cout << ", but is not enabled.";
+                    // }
+                    // std::cout << std::endl;
                 }
 
-                //has Rn part
+                // Has Rn part
                 if(_wkSpace->getRobot(i)->getNumJoints()>0)
                 {
-                    //get the kautham Rn configuration
+                    // Get the kautham Rn configuration
                     RnConf r = smpRobotsConf.at(i).getRn();
 
-                    //set the ompl Rn configuration
+                    // Set the ompl Rn configuration
                     ob::StateSpacePtr ssRobotiRn =  ((ob::StateSpacePtr) ssRoboti->as<ob::CompoundStateSpace>()->getSubspace(k));
                     ob::ScopedState<weigthedRealVectorStateSpace> rstart(ssRobotiRn);
 
-                    for (unsigned j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++)
+                    // std::cout << "Robot " << i << " joints: " << _wkSpace->getRobot(i)->getNumJoints() << std::endl;
+                    // std::cout << "Rn subspace dimension: " << ssRobotiRn->as<weigthedRealVectorStateSpace>()->getDimension() << std::endl;
+                    // std::cout << "Coordinate vector size: " << std::endl;
+                    // for (unsigned j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++) {
+                    //     std::cout << r.getCoordinate(j) << std::endl;
+                    // }
+
+                    for (unsigned j=0; j<_wkSpace->getRobot(i)->getNumJoints();j++) {
                         rstart->values[j] = r.getCoordinate(j);
+                    }
 
-                    //cout<<"sstate[0]="<<rstart->values[0]<<"sstate[1]="<<rstart->values[1]<<endl;
-
-
-                    //load the global scoped state with the info of the Rn data of robot i
+                    // Load the global scoped state with the info of the Rn data of robot i
                     (*sstate) << rstart;
                     k++;//dummy
                 }
@@ -1388,7 +1406,7 @@ namespace Kautham {
                     sstate >> pathscopedstatese3;
 
                     //Convert it to a vector of 7 components
-                    vector<double> se3coords;
+                    std::vector<double> se3coords;
                     se3coords.resize(7);
                     se3coords[0] = pathscopedstatese3->getX();
                     se3coords[1] = pathscopedstatese3->getY();
@@ -1423,7 +1441,7 @@ namespace Kautham {
                     sstate >> pathscopedstateRn;
 
                     //Convert it to a vector of n components
-                    vector<double> coords;
+                    std::vector<double> coords;
                     for (unsigned int j = 0; j < _wkSpace->getRobot(i)->getNumJoints(); ++j){
                         coords.push_back(pathscopedstateRn->values[j]);
                     }
