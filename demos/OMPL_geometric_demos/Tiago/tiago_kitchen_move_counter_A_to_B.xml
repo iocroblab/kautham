@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+
+<Problem name="tiago_kitchen_move_counter_A_to_B">
+
+	<Robot robot="./robots/robot_instances/tiago_robot/tiago.urdf.xacro" scale="1.0">
+		<KauthamName name="tiago"/>
+		<Limits name="X" min="-3.0" max="3.0" />
+		<Limits name="Y" min="-3.0" max="3.0" />
+		<Limits name="Z" min="0.001" max="0.010" />
+	</Robot>
+
+	<!-- KITCHEN ENVIRONMENT -->
+	<Obstacle obstacle="./obstacles/3D-environments/kitchen/kitchen.urdf" scale="1">
+		<KauthamName name="kitchen"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.0" Y="0.0" X="0.0" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/3D-environments/kitchen/kitchenfloor.urdf" scale="1">
+		<KauthamName name="kitchenfloor"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="-0.001" Y="0.0" X="0.0" />
+	</Obstacle>
+
+	<!-- KITCHEN STUFF -->
+	<Obstacle obstacle="./obstacles/kitchen_stuff/glass/glass.urdf" scale="1">
+		<KauthamName name="glass_1"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.90" Y="0.4" X="1.3" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/kitchen_stuff/glass/glass.urdf" scale="1">
+		<KauthamName name="glass_2"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.90" Y="-0.3" X="1.2" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/kitchen_stuff/cokecan/cokecan.urdf" scale="1">
+		<KauthamName name="cokecan_1"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.905" Y="0.0" X="1.1" />
+	</Obstacle>
+
+	<Obstacle obstacle="./obstacles/kitchen_stuff/cokecan/cokecan.urdf" scale="1">
+		<KauthamName name="cokecan_2"/>
+		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.910" Y="-0.400" X="1.170" />
+	</Obstacle>
+
+	<!-- Controls to move only the torso and arm keeping the base and head fixed -->
+	<Controls robot="./controls/tiago_only_mobile.cntr"/>
+
+	<Planner>
+		<Parameters>
+			<Name>omplRRTConnect</Name>
+			<Parameter name="_Max Planning Time">30</Parameter>
+			<Parameter name="_Speed Factor">10</Parameter>
+			<Parameter name="Range">0.5</Parameter>
+			<Parameter name="_Path Drawn (0/1)">0</Parameter>
+			<Parameter name="_Simplify Solution">2</Parameter>
+			<Parameter name="_Incremental (0/1)">0</Parameter>
+		</Parameters>
+		<Queries>
+			<Query>
+
+				<RobotControl name="tiago_x" 	init="0.700" goal="0.450"/>
+				<RobotControl name="tiago_y" 	init="0.300" goal="0.550"/>
+				<RobotControl name="tiago_rz"	init="0.250" goal="0.500"/>
+
+			</Query>
+		</Queries>
+	</Planner>
+
+</Problem>

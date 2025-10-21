@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<Config>        
+    <Problemfiles>
+        <kautham name="OMPL_RRTConnect_chess_ur3_gripper_2_simple.xml" />
+        <directory name="/demos/OMPL_geometric_demos/chess_ur3_robotiq/"/>
+    </Problemfiles>
+</Config>
