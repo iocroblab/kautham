@@ -24,6 +24,7 @@
 
 #include <string>
 #include <vector>
+#include <pugixml.hpp>
 
 #include <Inventor/nodes/SoSeparator.h>
 
@@ -71,15 +72,20 @@ namespace Kautham {
                 const std::string& type, // "visual" or "collision"
                 const std::shared_ptr<const urdf::Link>& link,
                 const std::string& mesh_dir
-            );                
-                
+            );    
+            
+            // Public and static due their use in KauthamROSViz:
+            static std::string getRobotDescriptionWithAbsoluteMeshPaths(const std::string& urdf_xacro_file_path);
+
         private:
             std::shared_ptr<urdf::ModelInterface> robot_model;
             bool load_success = false;
             
-            bool is_xacro(const std::string& _filename);
-            std::string read_file(const std::string& _filename);
-            std::string expand_xacro(const std::string& _xacro_file);
+            static bool is_xacro(const std::string& _filename);
+            static std::string read_file(const std::string& _filename);
+            static std::string expand_xacro(const std::string& _xacro_file);
+
+            static void updateMeshFilename(pugi::xml_node& geometry_node, const std::string& urdf_dir);
 
             template<typename ElementPtr>
             SoSeparator* createSoSeparatorFromURDFElement(

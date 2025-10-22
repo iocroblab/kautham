@@ -395,4 +395,63 @@ namespace Kautham {
         return model;
     }
 
+
+    // Funció per prefixar rutes relatives amb la ruta absoluta base
+    void KauthamParserURDF::updateMeshFilename(pugi::xml_node& geometry_node, const std::string& urdf_dir) {
+        for (pugi::xml_node mesh : geometry_node.children("mesh")) {
+            if (mesh.attribute("filename")) {
+                std::string fname = mesh.attribute("filename").as_string();
+                if (fname.find("file://") != 0 && fname.find("package://") != 0) {
+                    std::filesystem::path abs_path = std::filesystem::absolute(std::filesystem::path(urdf_dir) / fname);
+                    std::string abs_str = abs_path.lexically_normal().string();
+                    mesh.attribute("filename").set_value(("file://" + abs_str).c_str());
+                }
+            }
+        }
+    }
+
+    // Funció principal que rep un path a un URDF o XACRO, i retorna URDF amb rutes absolutes a meshes
+    std::string KauthamParserURDF::getRobotDescriptionWithAbsoluteMeshPaths(const std::string& urdf_xacro_file_path) {
+        std::string urdf_xml;
+        if (KauthamParserURDF::is_xacro(urdf_xacro_file_path)) {
+            urdf_xml = KauthamParserURDF::expand_xacro(urdf_xacro_file_path);
+        } else {
+            urdf_xml = KauthamParserURDF::read_file(urdf_xacro_file_path);
+        }
+
+        // Parse XML amb pugixml
+        pugi::xml_document doc;
+        pugi::xml_parse_result result = doc.load_string(urdf_xml.c_str());
+        if (!result) {
+            throw std::runtime_error("Failed to parse URDF XML: " + std::string(result.description()));
+        }
+
+        // Ruta absoluta del directori on està el URDF
+        std::filesystem::path urdf_path(urdf_xacro_file_path);
+        std::string urdf_dir = urdf_path.has_parent_path()
+                                ? std::filesystem::absolute(urdf_path.parent_path()).string()
+                                : std::filesystem::current_path().string();
+
+        // Obtenim node robot per modificar les rutes de meshes
+        pugi::xml_node robot_node = doc.child("robot");
+
+        // Actualitzem les rutes relatives a meshes a absolutes
+        // Aquesta funció la pots cridar recursivament per visuals i collisions
+        for (pugi::xml_node link_node : robot_node.children("link")) {
+            for (pugi::xml_node visual : link_node.children("visual")) {
+                pugi::xml_node geom = visual.child("geometry");
+                if (geom) updateMeshFilename(geom, urdf_dir);
+            }
+            for (pugi::xml_node collision : link_node.children("collision")) {
+                pugi::xml_node geom = collision.child("geometry");
+                if (geom) updateMeshFilename(geom, urdf_dir);
+            }
+        }
+
+        // Serializem XML modificat a string i retornem
+        std::ostringstream oss;
+        doc.save(oss, "\t");
+        return oss.str();
+    }
+
 }
