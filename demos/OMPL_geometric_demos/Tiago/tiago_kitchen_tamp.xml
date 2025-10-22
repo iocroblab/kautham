@@ -56,7 +56,7 @@
 		<Queries>
 			<Query>
 
-				<RobotControl name="tiago_x" 				init="0.700" goal="0.450"/>
+				<RobotControl name="tiago_x" 				init="0.700" goal="0.475"/>
 				<RobotControl name="tiago_y" 				init="0.300" goal="0.550"/>
 				<RobotControl name="tiago_rz"				init="0.250" goal="0.500"/>
 
