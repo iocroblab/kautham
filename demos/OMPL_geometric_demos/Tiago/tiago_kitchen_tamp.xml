@@ -42,8 +42,7 @@
 		<Home TH="0.0" WZ="0.0" WY="0.0" WX="0.0" Z="0.910" Y="-0.400" X="1.170" />
 	</Obstacle>
 
-	<!-- <Controls robot="./controls/tiago.cntr"/> -->
-	<Controls robot="./controls/tiago_torso_arm_gripper_counterB.cntr"/>
+	<Controls robot="./controls/tiago.cntr"/>
 
 	<Planner>
 		<Parameters>
@@ -56,13 +55,13 @@
 		</Parameters>
 		<Queries>
 			<Query>
-<!-- 
-				<RobotControl name="tiago_x" 				init="0.500" goal="0.300"/>
-				<RobotControl name="tiago_y" 				init="0.450" goal="0.700"/>
-				<RobotControl name="tiago_rz"				init="0.250" goal="1.000"/> -->
 
-				<!-- <RobotControl name="wheel_right_joint" 		init="0.500" goal="0.326"/>
-				<RobotControl name="wheel_left_joint" 		init="0.500" goal="0.375"/> -->
+				<RobotControl name="tiago_x" 				init="0.700" goal="0.450"/>
+				<RobotControl name="tiago_y" 				init="0.300" goal="0.550"/>
+				<RobotControl name="tiago_rz"				init="0.250" goal="0.500"/>
+
+				<RobotControl name="wheel_right_joint" 		init="0.500" goal="0.500"/>
+				<RobotControl name="wheel_left_joint" 		init="0.500" goal="0.500"/>
 
 				<RobotControl name="torso_lift_joint" 		init="0.200" goal="0.900"/>
 
@@ -76,8 +75,8 @@
 
 				<RobotControl name="gripper_finger_joint" 	init="1.000" goal="1.000"/>
 				
-				<!-- <RobotControl name="head_1_joint" 			init="0.200" goal="0.800"/>
-				<RobotControl name="head_2_joint" 			init="0.200" goal="0.800"/> -->
+				<RobotControl name="head_1_joint" 			init="0.200" goal="0.800"/>
+				<RobotControl name="head_2_joint" 			init="0.200" goal="0.800"/>
 
 			</Query>
 		</Queries>
