@@ -2545,6 +2545,13 @@ namespace Kautham {
             // Check "init" samples:
             for (std::size_t i = 0; i < samples->getNumStarts(); ++i) {
                 Sample* sample = samples->getStart(i);
+
+                // Quick fix:
+                if (sample->getDim() > 1000) {
+                    std::cout << "[ERROR] Sample size has exploded! Dim = " << sample->getDim() << std::endl;
+                    break;
+                }
+
                 sample->clearMappedConf();
                 
                 std::string collision_message;
@@ -2564,6 +2571,13 @@ namespace Kautham {
             // Check "goal" samples:
             for (std::size_t i = 0; i < samples->getNumGoals(); ++i) {
                 Sample* sample = samples->getGoal(i);
+
+                // Quick fix:
+                if (sample->getDim() > 1000) {
+                    std::cout << "[ERROR] Sample size has exploded! Dim = " << sample->getDim() << std::endl;
+                    break;
+                }
+
                 sample->clearMappedConf();
                 
                 std::string collision_message;
