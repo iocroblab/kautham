@@ -2539,24 +2539,48 @@ namespace Kautham {
                 return false;
             }
 
-            // Check collisions with the samples, also needed to updated the RobConf associated to each sample:
+            // Check collisions only for init and goal samples:
             SampleSet* samples = problem->getSampleSet();
-            for (unsigned int i = 0; i < samples->getSize(); ++i) {
 
-                // Get each sample of the sample set:
-                Sample* sample = samples->getSampleAt(i);
-                
-                // Clear the previous RobConf associated to the sample coordinates:
+            // Check "init" samples:
+            for (std::size_t i = 0; i < samples->getNumStarts(); ++i) {
+                Sample* sample = samples->getStart(i);
                 sample->clearMappedConf();
-
-                // Set the new RobConf to the associated sample coordinates:
-                if (problem->wSpace()->collisionCheck(sample)) {
-                    std::cout << "The updated offMatrix is in collision with the current samples." << std::endl;
+                
+                std::string collision_message;
+                std::pair<std::pair<int, std::string>, std::pair<int, int>> colliding_elements;
+                bool collision = problem->wSpace()->collisionCheck(sample, &collision_message, &colliding_elements);
+                
+                if (collision) {
+                    std::cout << "[ERROR] COLLISION in start sample " << i << "!" << std::endl;
+                    std::cout << "[ERROR] Collision message: " << collision_message << std::endl;
+                    std::cout << "[ERROR] Colliding elements: Robot/Obs(" 
+                            << colliding_elements.first.first << "," << colliding_elements.first.second << ") "
+                            << "Links(" << colliding_elements.second.first << "," << colliding_elements.second.second << ")" << std::endl;
                     return false;
                 }
-
             }
 
+            // Check "goal" samples:
+            for (std::size_t i = 0; i < samples->getNumGoals(); ++i) {
+                Sample* sample = samples->getGoal(i);
+                sample->clearMappedConf();
+                
+                std::string collision_message;
+                std::pair<std::pair<int, std::string>, std::pair<int, int>> colliding_elements;
+                bool collision = problem->wSpace()->collisionCheck(sample, &collision_message, &colliding_elements);
+                
+                if (collision) {
+                    std::cout << "[ERROR] COLLISION in goal sample " << i << "!" << std::endl;
+                    std::cout << "[ERROR] Collision message: " << collision_message << std::endl;
+                    std::cout << "[ERROR] Colliding elements: Robot/Obs(" 
+                            << colliding_elements.first.first << "," << colliding_elements.first.second << ") "
+                            << "Links(" << colliding_elements.second.first << "," << colliding_elements.second.second << ")" << std::endl;
+                    return false;
+                }
+            }
+
+            std::cout << "[DEBUG] All intial and goal queries are collision-free with the new offsets! Update successful." << std::endl;
             return true;
 
         } catch (const KthExcp& excp) {

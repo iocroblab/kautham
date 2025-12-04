@@ -397,13 +397,28 @@ namespace Kautham {
         std::vector<std::string> dof_names = this->getDOFNames();
         size_t dof_count = dof_names.size();
     
+        // *** DEBUG: PRINT OFFSETS BEFORE UPDATE ***
+        // std::cout << "[DEBUG] === OFFSETS BEFORE UPDATE ===" << std::endl;
+        // for (size_t i = 0; i < dof_names.size(); ++i) {
+        //     std::cout << "[DEBUG] DOF[" << i << "] " << dof_names[i] << " = " << this->offMatrix[i] << std::endl;
+        // }
+
+        // *** DEBUG: PRINT REQUESTED UPDATES ***
+        // std::cout << "[DEBUG] === REQUESTED DOF UPDATES (" << dof_updates.size() << ") ===" << std::endl;
+        // for (const auto& update : dof_updates) {
+        //     std::cout << "[DEBUG] UPDATE: " << update.first << " = " << update.second << std::endl;
+        // }
+
+    
         // First, check all values and names:
         for (const auto& dof_update : dof_updates) {
     
             // Check name existence:
             auto it = std::find(dof_names.begin(), dof_names.end(), dof_update.first);
             if (it == dof_names.end()) {
-                std::cout << "Error: DOF name '" << dof_update.first << "' not found!" << std::endl;
+                std::cout << "[Error] DOF name '" << dof_update.first << "' not found!" << std::endl;
+                for (const auto& name : dof_names) std::cout << name << " ";
+                std::cout << std::endl;
                 return false;
             }
 
@@ -422,6 +437,12 @@ namespace Kautham {
                 this->offMatrix[index] = dof_update.second;
             }
         }
+
+        // *** DEBUG: PRINT OFFSETS AFTER UPDATE ***
+        // std::cout << "[DEBUG] === OFFSETS AFTER UPDATE ===" << std::endl;
+        // for (size_t i = 0; i < dof_names.size(); ++i) {
+        //     std::cout << "[DEBUG] DOF[" << i << "] " << dof_names[i] << " = " << this->offMatrix[i] << std::endl;
+        // }
     
         return true;
     }
@@ -556,7 +577,8 @@ namespace Kautham {
     std::vector<std::string> Robot::getDOFNames() {
         std::vector<std::string> tmp = {"X","Y","Z","X1","X2","X3"};
         for (size_t i = 1; i < links.size(); i++) {
-            tmp.push_back(links[i]->getName());
+            // tmp.push_back(links[i]->getName());
+            tmp.push_back(links[i]->getAssociatedJointName());
         }
         return tmp;
     }
@@ -1461,6 +1483,7 @@ namespace Kautham {
  /*!
   * Gets the joint names
   */
+    // TODO: No utilitzar _joint_names!!!
     void Robot::getJointNames(std::vector<std::string>& joint_names_) {
         joint_names_.clear();
         joint_names_.resize(_jointnames.size());
