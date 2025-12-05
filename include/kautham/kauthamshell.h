@@ -57,8 +57,6 @@ namespace Kautham {
             bool setObstaclesConfig(std::vector<double> smpcoords);
             bool setQuery(const std::vector<double>& _init, const std::vector<double>& _goal);
             bool setQuery(const std::vector<std::string>& _control_names, const std::vector<double>& _init, const std::vector<double>& _goal);
-            bool setInit(std::vector<double> init);
-            bool setGoal(std::vector<double> goal);
             bool setInitObs(std::vector<double> initObs);
             bool clearSampleSet();
             bool setRobControls(std::istream* inputfile, std::vector<double> init, std::vector<double> goal);

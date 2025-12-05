@@ -54,7 +54,7 @@ namespace Kautham{
 
     //! This method inserts a sample into the vector. In the case of use SDKSampler
     //! the samples will be inserted in code order if orderIfCode is true.
-    bool                    add(Sample* samp, bool orderIfCode = false);
+    bool add(Sample* samp, bool orderIfCode = false);
 
     bool addStart(Sample *smp);
 
@@ -64,9 +64,11 @@ namespace Kautham{
 
     inline std::size_t getNumGoals() {return goals.size();}
 
-    inline Sample *getStart(std::size_t index) {return starts.at(index);}
+    //! Returns the start sample at the requested index if exist.
+    Sample *getStart(std::size_t index = 0);
 
-    inline Sample *getGoal(std::size_t index) {return goals.at(index);}
+    //! Returns the goal sample at the requested index if exist.
+    Sample *getGoal(std::size_t index = 0);
 
     //! Returns a pointer to the Sample at index pos.
     Sample*                 getSampleAt(unsigned int pos);
@@ -107,9 +109,6 @@ namespace Kautham{
   //! Removes and deletes all samples contained in the SampleSet.
   void                    clear();
 
-  //! Only removes the pointer stored into the vector. Take care with the memory.
-  inline void             clean(){samples.clear();}
-
 
   inline void setWorkspacePtr(WorkSpace* wsptr){ws = wsptr;}
 
@@ -117,7 +116,7 @@ namespace Kautham{
 
   private:
     //! Vector of pointers to the samples.
-    vector<Sample*>         samples;
+    std::vector<Sample*>         samples;
 
     std::vector<Sample*> starts;
 

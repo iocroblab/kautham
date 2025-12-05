@@ -40,10 +40,6 @@ namespace Kautham{
       ws = NULL;
   }
 
-
-
-
-
   SampleSet::~SampleSet(){
     clear();
   }
@@ -98,6 +94,20 @@ namespace Kautham{
       }
   }
 
+Sample *SampleSet::getStart(std::size_t index) {
+    if (index >= starts.size()) {
+        return NULL;
+    }
+    return starts.at(index);
+}
+
+Sample *SampleSet::getGoal(std::size_t index) {
+    if (index >= goals.size()) {
+        return NULL;
+    }
+    return goals.at(index);
+}
+
   unsigned int SampleSet::indexOf(Sample* smp){
     for(unsigned int i=0; i < samples.size(); i++){
       if( samples.at(i) == smp)
@@ -127,18 +137,20 @@ namespace Kautham{
     }
   }
 
-
-
-
-
-  void SampleSet::clear(){
-    for (vector<Sample*>::iterator smp(samples.begin()); smp != samples.end(); ++smp) {
-      delete (*smp);
+void SampleSet::clear() {
+    // All the samples (pointers) are stored allways in samples vector, so use it to remove the sample:
+    for(Sample* samp : samples) {
+        delete samp;
     }
-    samples.clear();
 
+    // Then clear all the vectors that stores that pointers:
+    samples.clear();
+    starts.clear();
+    goals.clear();
+    
     hasChanged = true;
-  }
+
+}
 
 
   unsigned long SampleSet::findSDKOrder(unsigned long code) {
@@ -178,10 +190,6 @@ namespace Kautham{
   }
   
 
-
-
-
-  
   bool SampleSet::writeSamples()
 	{
 		FILE *fp;

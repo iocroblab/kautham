@@ -140,13 +140,8 @@ bool Problem::createPlanner( string name, std::string synergyTreeFilename ) {
     if (_planner != NULL )
         delete _planner;
 
-    Sample *sinit=NULL;
-    Sample *sgoal=NULL;
-    if (_cspace->getSize()>=2)
-    {
-        sinit=_cspace->getSampleAt(0);
-        sgoal=_cspace->getSampleAt(1);
-    }
+    Sample *sinit = _cspace->getStart();
+    Sample *sgoal = _cspace->getGoal();
 
     if (name == "dummy") //Dummy if to start.
         cout<<"planer name is dummy?"<<endl;
@@ -316,13 +311,8 @@ bool Problem::createPlanner( string name, ompl::geometric::SimpleSetup *ssptr,
     if (_planner != NULL )
         delete _planner;
 
-    Sample *sinit=NULL;
-    Sample *sgoal=NULL;
-    if (_cspace->getSize()>=2)
-    {
-        sinit=_cspace->getSampleAt(0);
-        sgoal=_cspace->getSampleAt(1);
-    }
+    Sample *sinit = _cspace->getStart();
+    Sample *sgoal = _cspace->getGoal();
 
     if (name == "dummy") //Dummy if to start.
         cout<<"planer name is dummy?"<<endl;
@@ -424,13 +414,8 @@ bool Problem::createPlanner( string name, ompl::control::SimpleSetup *ssptr) {
     if (_planner != NULL )
         delete _planner;
 
-    Sample *sinit=NULL;
-    Sample *sgoal=NULL;
-    if (_cspace->getSize()>=2)
-    {
-        sinit=_cspace->getSampleAt(0);
-        sgoal=_cspace->getSampleAt(1);
-    }
+    Sample *sinit = _cspace->getStart();
+    Sample *sgoal = _cspace->getGoal();
 
     if (name == "dummy") //Dummy if to start.
         cout<<"planer name is dummy?"<<endl;
@@ -1924,6 +1909,10 @@ bool Problem::setRobotControls(string cntrFile) {
 
 
 bool Problem::setRobotControls(xml_document *doc) {
+
+    // When a new control is set, all the previos samples must be removed!
+    this->getSampleSet()->clear();
+
     // Set se3Enabled flag to false - will be set to true if SE3 controls exist
     Robot* robot = _wspace->getRobot(0);
     robot->setSE3(false);
@@ -2089,6 +2078,10 @@ bool Problem::setRobotControls(xml_document *doc) {
 
 
 bool Problem::setDefaultRobotControls() {
+
+    // When a new control is set, all the previos samples must be removed!
+    this->getSampleSet()->clear();
+
     //get the number of really movable DOF for all the robots
     unsigned numRob = _wspace->getNumRobots();
     unsigned numControls = 0;

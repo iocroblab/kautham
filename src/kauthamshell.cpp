@@ -72,8 +72,8 @@ namespace Kautham {
             Problem *const problem = new Problem();
             memPtr_ = problem;
             if (problem->setupFromFile(inputfile,def_path)) {
-                problem->getPlanner()->setInitSamp(problem->getSampleSet()->getSampleAt(0));
-                problem->getPlanner()->setGoalSamp(problem->getSampleSet()->getSampleAt(1));
+                problem->getPlanner()->setInitSamp(problem->getSampleSet()->getStart());
+                problem->getPlanner()->setGoalSamp(problem->getSampleSet()->getGoal());
                 return true;
             }
         } catch (const KthExcp& excp) {
@@ -97,8 +97,8 @@ namespace Kautham {
             Problem *const problem = new Problem();
             memPtr_ = problem;
             if (problem->setupFromFile(problemfilename,def_path)) {
-                problem->getPlanner()->setInitSamp(problem->getSampleSet()->getSampleAt(0));
-                problem->getPlanner()->setGoalSamp(problem->getSampleSet()->getSampleAt(1));
+                problem->getPlanner()->setInitSamp(problem->getSampleSet()->getStart());
+                problem->getPlanner()->setGoalSamp(problem->getSampleSet()->getGoal());
                 return true;
             }
         } catch (const KthExcp& excp) {
@@ -383,47 +383,69 @@ namespace Kautham {
             }
 
             SampleSet *samples = problem->getSampleSet();
-            // std::cout << "Sample init coords: " << samples->getSampleAt(0)->print(true) << std::endl;
-            // std::cout << "Sample goal coords: " << samples->getSampleAt(1)->print(true) << std::endl;
+
+            // Save previous samples before clear the sample set:
+            Sample *old_init = samples->getStart();
+            Sample *old_goal = samples->getGoal();
+
             samples->clear();
 
-            Sample* init_sample = new Sample(d);
-            Sample* goal_sample = new Sample(d);
+            Sample* init_sample = NULL;
+            Sample* goal_sample = NULL;
 
             if (!_init.empty()) { 
+                init_sample = new Sample(d);
                 init_sample->setCoords(_init);
-                // std::cout << "Final Sample init coords: " << init_sample->print(true) << std::endl;
+                
                 std::string msg_init;
                 if (problem->wSpace()->collisionCheck(init_sample, &msg_init)) {
                     std::cerr << "Init in collision: ";
                     for (auto val : _init) std::cerr << val << " ";
                     std::cerr << "\n" << msg_init << std::endl;
                     delete init_sample;
-                    delete goal_sample;
+                    if (goal_sample != NULL) delete goal_sample;
                     return false;
                 }
-                samples->add(init_sample);
-                problem->getPlanner()->setInitSamp(init_sample);
+
+            } else if (old_init != NULL) {
+                // No new init especified, so reuse the previous:
+                init_sample = new Sample(*old_init);
             } else {
-                delete init_sample;  // no init given, discard
+                std::cerr << "[Error] No previous init sample and no init provided." << std::endl;
+                if (init_sample != NULL) delete init_sample;
+                if (goal_sample != NULL) delete goal_sample;
+                return false;
             }
 
             if (!_goal.empty()) {
+                goal_sample = new Sample(d);
                 goal_sample->setCoords(_goal);
-                // std::cout << "Final Sample goal coords: " << goal_sample->print(true) << std::endl;
+                
                 std::string msg_goal;
                 if (problem->wSpace()->collisionCheck(goal_sample, &msg_goal)) {
                     std::cerr << "Goal in collision: ";
                     for (auto val : _goal) std::cerr << val << " ";
                     std::cerr << "\n" << msg_goal << std::endl;
+                    if (init_sample != NULL) delete init_sample;
                     delete goal_sample;
                     return false;
                 }
-                samples->add(goal_sample);
-                problem->getPlanner()->setGoalSamp(goal_sample);
+
+            } else if (old_goal != NULL) {
+                // No new goal especified, so reuse the previous:
+                goal_sample = new Sample(*old_goal);
             } else {
-                delete goal_sample; // no goal given, discard
+                std::cerr << "[Error] No previous goal sample and no goal provided." << std::endl;
+                if (init_sample != NULL) delete init_sample;
+                if (goal_sample != NULL) delete goal_sample;
+                return false;
             }
+
+            samples->addStart(init_sample);
+            problem->getPlanner()->setInitSamp(init_sample);
+            
+            samples->addGoal(goal_sample);
+            problem->getPlanner()->setGoalSamp(goal_sample);
 
             return true;
 
@@ -447,13 +469,13 @@ namespace Kautham {
 
             // Error check: Ensure control_names and the new init have the same size, iff new init is requested:
             if (!_init.empty() && (_control_names.size() != _init.size())) {
-                std::cout << "Error: Requested control_names and init must have the same size." << std::endl;
+                std::cout << "[Error] Requested control_names and init must have the same size." << std::endl;
                 return false;
             }
 
             // Error check: Ensure control_names and the new goal have the same size, iff new goal is requested:
             if (!_goal.empty() && (_control_names.size() != _goal.size())) {
-                std::cout << "Error: Requested control_names and goal must have the same size." << std::endl;
+                std::cout << "[Error] Requested control_names and goal must have the same size." << std::endl;
                 return false;
             }
             
@@ -463,8 +485,44 @@ namespace Kautham {
 
             // Save the original samples (maybe only a single control will be set) and clear the stored samples:
             SampleSet *samples = problem->getSampleSet();
-            Sample *init_sample = new Sample(*samples->getSampleAt(0));
-            Sample *goal_sample = new Sample(*samples->getSampleAt(1));
+            
+            // Manage init storing:
+            Sample *old_init = samples->getStart();
+            Sample* init_sample = NULL;
+            if (old_init != NULL) {
+                init_sample = new Sample(*old_init);
+            } else if (!_init.empty()) {    // No old_init and new init request, but must be full in this case:
+                if (prob_control_names.size() != _init.size()) {
+                    std::cout << "[Error] No init sample available and the provided is not full." << std::endl;
+                    return false;
+                }
+                init_sample = new Sample(prob_control_names.size());
+            } else {
+                std::cout << "[Error] No init sample available and none provided" << std::endl;
+                if (init_sample != NULL) delete init_sample;
+                // if (goal_sample != NULL) delete goal_sample;
+                return false;
+            }
+
+            // Manage goal storing:
+            Sample *old_goal = samples->getGoal();
+            Sample* goal_sample = NULL;
+            if (old_goal != NULL) {
+                goal_sample = new Sample(*old_goal);
+            } else if (!_goal.empty()) {    // No old_goal and new goal request, but must be full in this case:
+                if (prob_control_names.size() != _goal.size()) {
+                    std::cout << "[Error] No goal sample available and the provided is not full." << std::endl;
+                    return false;
+                }
+                goal_sample = new Sample(prob_control_names.size());
+            } else {
+                std::cout << "[Error] No goal sample available and none provided" << std::endl;
+                if (init_sample != NULL) delete init_sample;
+                if (goal_sample != NULL) delete goal_sample;
+                return false;
+            }
+
+            // Clear sample set:
             samples->clear();
 
             // std::cout << "Sample init coords: " << init_sample->print(true) << std::endl;
@@ -477,30 +535,32 @@ namespace Kautham {
             for (size_t i = 0; i < _control_names.size(); ++i) {
                 const std::string& name = _control_names[i];
                 auto it = std::find(prob_control_names.begin(), prob_control_names.end(), name);
-                if (it != prob_control_names.end()) {
-                    size_t index = std::distance(prob_control_names.begin(), it);
-                    // std::cout << "Updating control '" << name << "' at index " << index
+                if (it == prob_control_names.end()) {
+                    std::cout << "[Error] Control '" << name << "' not found" << std::endl;
+                    if (init_sample != NULL) delete init_sample;
+                    if (goal_sample != NULL) delete goal_sample;
+                    return false;
+                }
+
+                size_t index = std::distance(prob_control_names.begin(), it);
+                // std::cout << "Updating control '" << name << "' at index " << index
                     //     << " with init " << (_init.empty() ? -1 : _init[i])
                     //     << " and goal " << (_goal.empty() ? -1 : _goal[i]) << std::endl;
 
-                    if (!_init.empty()) {
-                        updated_init_coord[index] = _init[i];
-                    }
-                    if (!_goal.empty()) {
-                        updated_goal_coord[index] = _goal[i];
-                    }
-                } else {
-                    std::cout << "Error: Control name '" << name << "' not found in prob_control_names." << std::endl;
-                    return false;
+                if (!_init.empty()) {
+                    updated_init_coord[index] = _init[i];
                 }
-            }
+                if (!_goal.empty()) {
+                    updated_goal_coord[index] = _goal[i];
+                }
 
-            std::string msg_init, msg_goal;
+            }
 
             // Set the new Init sample:
             if (!_init.empty()) {
                 init_sample->setCoords(updated_init_coord);
                 // std::cout << "Final Sample init coords: " << init_sample->print(true) << std::endl;
+                std::string msg_init;
                 if(problem->wSpace()->collisionCheck(init_sample, &msg_init)) {
                     std::cout << "Init in collision: ";
                     for (unsigned k = 0; k < updated_init_coord.size(); k++) {
@@ -508,16 +568,19 @@ namespace Kautham {
                     }
                     std::cout << std::endl;
                     std::cout << msg_init << std::endl;
+                    if (init_sample != NULL) delete init_sample;
+                    if (goal_sample != NULL) delete goal_sample;
                     return false;
                 }
             }
-            samples->add(init_sample);  // Add init_sample to the KauthamSampleSet.
+            samples->addStart(init_sample);  // Add init_sample to the KauthamSampleSet.
             problem->getPlanner()->setInitSamp(init_sample);    // Set the init_sample as the init to the planner.
 
             // Goal sample:
             if (!_goal.empty()) {
                 goal_sample->setCoords(updated_goal_coord);
                 // std::cout << "Final Sample goal coords: " << goal_sample->print(true) << std::endl;
+                std::string msg_goal;
                 if(problem->wSpace()->collisionCheck(goal_sample, &msg_goal)) {
                     std::cout << "Goal in collision: ";
                     for (unsigned k = 0; k < updated_goal_coord.size(); k++) {
@@ -525,10 +588,12 @@ namespace Kautham {
                     }
                     std::cout << std::endl;
                     std::cout << msg_goal << std::endl;
+                    if (init_sample != NULL) delete init_sample;
+                    if (goal_sample != NULL) delete goal_sample;
                     return false;
                 }
             }
-            samples->add(goal_sample);  // Add goal_sample to the KauthamSampleSet.
+            samples->addGoal(goal_sample);  // Add goal_sample to the KauthamSampleSet.
             problem->getPlanner()->setGoalSamp(goal_sample);    // Set the goal_sample as the goal to the planner.
 
             return true;
@@ -543,88 +608,6 @@ namespace Kautham {
         return false;
     }
 
-
-
-    bool kauthamshell::setInit(vector<double> init) {
-        try {
-            if (!problemOpened()) {
-                cout << "The problem is not opened" << endl;
-                return false;
-            }
-
-            Problem *const problem = (Problem*)memPtr_;
-            int d = problem->wSpace()->getNumRobControls();
-            SampleSet *samples = problem->getSampleSet();
-            Sample *goal = new Sample(samples->getSampleAt(1));
-            samples->clear();
-
-            //init
-            Sample *smp = new Sample(d);
-            smp->setCoords(init);
-            if(problem->wSpace()->collisionCheck(smp)) return false;
-            samples->add(smp);
-
-            //goal
-            samples->add(goal);
-
-            problem->getPlanner()->setInitSamp(samples->getSampleAt(0));
-            problem->getPlanner()->setGoalSamp(samples->getSampleAt(1));
-
-            return true;
-        } catch (const KthExcp& excp) {
-            cout << "Error: " << excp.what() << endl << excp.more() << endl;
-        } catch (const exception& excp) {
-            cout << "Error: " << excp.what() << endl;
-        } catch(...) {
-            cout << "Something is wrong with the problem. Please run the "
-                 << "problem with the Kautham2 application at less once in order "
-                 << "to verify the correctness of the problem formulation.\n";
-        }
-
-        return false;
-    }
-
-
-    bool kauthamshell::setGoal(vector<double> goal) {
-        try {
-            if (!problemOpened()) {
-                cout << "The problem is not opened" << endl;
-                return false;
-            }
-
-            Problem *const problem = (Problem*)memPtr_;
-            int d = problem->wSpace()->getNumRobControls();
-            SampleSet *samples = problem->getSampleSet();
-            Sample *init = new Sample(samples->getSampleAt(0));
-            samples->clear();
-
-            //init
-            samples->add(init);
-
-            //goal
-            Sample *smp = new Sample(d);
-            smp->setCoords(goal);
-            if (problem->wSpace()->collisionCheck(smp)) return false;
-            samples->add(smp);
-
-            problem->getPlanner()->setInitSamp(samples->getSampleAt(0));
-            problem->getPlanner()->setGoalSamp(samples->getSampleAt(1));
-
-            return true;
-        } catch (const KthExcp& excp) {
-            cout << "Error: " << excp.what() << endl << excp.more() << endl;
-        } catch (const exception& excp) {
-            cout << "Error: " << excp.what() << endl;
-        } catch(...) {
-            cout << "Something is wrong with the problem. Please run the "
-                 << "problem with the Kautham2 application at less once in order "
-                 << "to verify the correctness of the problem formulation.\n";
-        }
-
-        return false;
-    }
-
-
     bool kauthamshell::setInitObs(vector<double> initObs) {
         try {
             if (!problemOpened()) {
@@ -637,8 +620,8 @@ namespace Kautham {
             Sample *smp = new Sample(d);
             smp->setCoords(initObs);
             problem->wSpace()->setInitObsSample(smp);
-            return (!problem->wSpace()->collisionCheck(problem->getSampleSet()->getSampleAt(0)) &&
-                    !problem->wSpace()->collisionCheck(problem->getSampleSet()->getSampleAt(1)));
+            return (!problem->wSpace()->collisionCheck(problem->getSampleSet()->getStart()) &&
+                    !problem->wSpace()->collisionCheck(problem->getSampleSet()->getGoal()));
         } catch (const KthExcp& excp) {
             cout << "Error: " << excp.what() << endl << excp.more() << endl;
         } catch (const exception& excp) {
@@ -662,15 +645,15 @@ namespace Kautham {
 
             Problem *const problem = (Problem*)memPtr_;
             SampleSet *samples = problem->getSampleSet();
-            Sample *init = new Sample(samples->getSampleAt(0));
-            Sample *goal = new Sample(samples->getSampleAt(1));
+            Sample *init = new Sample(samples->getStart());
+            Sample *goal = new Sample(samples->getGoal());
             samples->clear();
 
-            samples->add(init);
-            samples->add(goal);
+            samples->addStart(init);
+            samples->addGoal(goal);
 
-            problem->getPlanner()->setInitSamp(samples->getSampleAt(0));
-            problem->getPlanner()->setGoalSamp(samples->getSampleAt(1));
+            problem->getPlanner()->setInitSamp(samples->getStart());
+            problem->getPlanner()->setGoalSamp(samples->getGoal());
 
             return true;
         } catch (const KthExcp& excp) {
@@ -718,28 +701,27 @@ namespace Kautham {
                 return false;
             }
             Problem *const problem = (Problem*)memPtr_;
-            //cout << "\nsetRobControls - control file "<<controlsFile<< endl;
-            //cout << "defPath size"<<problem->defPath.size()<< endl;
-            //for(uint i=0; i<problem->defPath.size();i++)
-            //    cout << "problem->defPath("<<i<<") " << problem->defPath.at(i) << endl;
-            if(problem->findFile(controlsFile,problem->defPath))
+
+            if (problem->findFile(controlsFile,problem->defPath))
             {
-                cout << "setRobControlsNoquery - Setting control file: "<<controlsFile<< endl;
-                if (!problem->setRobotControls(controlsFile)) return false;
+                std::cout << "setRobControlsNoquery - Setting control file: " << controlsFile << std::endl;
+                if (!problem->setRobotControls(controlsFile)) {
+                    return false;
+                }
                 return true;
             }
             else {
-                cout << "setRobControlsNoquery - Failed to find control file: "<<controlsFile<< endl;
+                std::cout << "setRobControlsNoquery - Failed to find control file: " << controlsFile << std::endl;
                 return false;
             }
         } catch (const KthExcp& excp) {
-            cout << "Error: " << excp.what() << endl << excp.more() << endl;
+            std::cout << "Error: " << excp.what() << std::endl << excp.more() << std::endl;
         } catch (const exception& excp) {
-            cout << "Error: " << excp.what() << endl;
+            std::cout << "Error: " << excp.what() << std::endl;
         } catch(...) {
-            cout << "setRobControlsNoquery: Something is wrong with the problem. Please run the "
-                 << "problem with the Kautham2 application at less once in order "
-                 << "to verify the correctness of the problem formulation.\n";
+            std::cout << "setRobControlsNoquery: Something is wrong with the problem. Please run the "
+                        << "problem with the Kautham2 application at less once in order "
+                        << "to verify the correctness of the problem formulation." << std::endl;
         }
         return false;
     }
@@ -860,8 +842,8 @@ namespace Kautham {
 
             Problem *const problem = (Problem*)memPtr_;
             if (problem->createPlanner(name)) {
-                problem->getPlanner()->setInitSamp(problem->getSampleSet()->getSampleAt(0));
-                problem->getPlanner()->setGoalSamp(problem->getSampleSet()->getSampleAt(1));
+                problem->getPlanner()->setInitSamp(problem->getSampleSet()->getStart());
+                problem->getPlanner()->setGoalSamp(problem->getSampleSet()->getGoal());
                 return true;
             }
         } catch (const KthExcp& excp) {
@@ -888,8 +870,8 @@ namespace Kautham {
             Problem *const problem = (Problem*)memPtr_;
             problem->resetPlanner();
             if (problem->createPlannerFromFile(inputfile)) {
-                problem->getPlanner()->setInitSamp(problem->getSampleSet()->getSampleAt(0));
-                problem->getPlanner()->setGoalSamp(problem->getSampleSet()->getSampleAt(1));
+                problem->getPlanner()->setInitSamp(problem->getSampleSet()->getStart());
+                problem->getPlanner()->setGoalSamp(problem->getSampleSet()->getGoal());
                 return true;
             }
         } catch (const KthExcp& excp) {
@@ -915,8 +897,8 @@ namespace Kautham {
 
             Problem *const problem = (Problem*)memPtr_;
             if (problem->createPlannerFromFile(problemfilename))  {
-                problem->getPlanner()->setInitSamp(problem->getSampleSet()->getSampleAt(0));
-                problem->getPlanner()->setGoalSamp(problem->getSampleSet()->getSampleAt(1));
+                problem->getPlanner()->setInitSamp(problem->getSampleSet()->getStart());
+                problem->getPlanner()->setGoalSamp(problem->getSampleSet()->getGoal());
                 return true;
             }
         } catch (const KthExcp& excp) {
@@ -1997,12 +1979,12 @@ namespace Kautham {
 
         Sample* smp = new Sample(_dim);
         smp->setCoords(init);
-        _samples->add(smp);
+        _samples->addStart(smp);
         _planner->setInitSamp(smp);
 
         smp = new Sample(_dim);
         smp->setCoords(goal);
-        _samples->add(smp);
+        _samples->addGoal(smp);
         _planner->setGoalSamp(smp);
 
         if (_planner->solveAndInherit()){
@@ -2544,14 +2526,8 @@ namespace Kautham {
 
             // Check "init" samples:
             for (std::size_t i = 0; i < samples->getNumStarts(); ++i) {
+                
                 Sample* sample = samples->getStart(i);
-
-                // Quick fix:
-                if (sample->getDim() > 1000) {
-                    std::cout << "[ERROR] Sample size has exploded! Dim = " << sample->getDim() << std::endl;
-                    break;
-                }
-
                 sample->clearMappedConf();
                 
                 std::string collision_message;
@@ -2570,14 +2546,8 @@ namespace Kautham {
 
             // Check "goal" samples:
             for (std::size_t i = 0; i < samples->getNumGoals(); ++i) {
+
                 Sample* sample = samples->getGoal(i);
-
-                // Quick fix:
-                if (sample->getDim() > 1000) {
-                    std::cout << "[ERROR] Sample size has exploded! Dim = " << sample->getDim() << std::endl;
-                    break;
-                }
-
                 sample->clearMappedConf();
                 
                 std::string collision_message;
@@ -2594,7 +2564,7 @@ namespace Kautham {
                 }
             }
 
-            std::cout << "[DEBUG] All intial and goal queries are collision-free with the new offsets! Update successful." << std::endl;
+            // std::cout << "[DEBUG] All intial and goal queries are collision-free with the new offsets! Update successful." << std::endl;
             return true;
 
         } catch (const KthExcp& excp) {
