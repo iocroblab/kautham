@@ -60,14 +60,12 @@ namespace Kautham {
        inline virtual bool           filtersample(Sample* smp){(void)smp; return false;}
        inline string                 getIDName(){return _idName;}
        inline void                   setSampleSet(SampleSet* smpSet){_samples = smpSet;}
-       inline Sample*                initSamp(std::size_t index = 0) {return _init.at(index);}
-       inline Sample*                goalSamp(std::size_t index = 0) {return _goal.at(index);}
+       Sample*                       initSamp(std::size_t index = 0);
+       Sample*                       goalSamp(std::size_t index = 0);
        inline std::size_t            getNumInitSamp() {return _init.size();}
        inline std::size_t            getNumGoalSamp() {return _goal.size();}
        inline void                   setInitSamp(Sample* init) {_init.clear(); _init.push_back(init);}
        inline void                   setGoalSamp(Sample* goal) {_goal.clear(); _goal.push_back(goal);}
-       inline Sample*                getInitSample() { return _init.at(0); }
-       inline Sample*                getGoalSample() { return _goal.at(0); }
        inline void                   addInitSamp(Sample* init) {_init.push_back(init);}
        inline void                   addGoalSamp(Sample* goal) {_goal.push_back(goal);}
        inline void                   clearInitSamp() {_init.clear();}

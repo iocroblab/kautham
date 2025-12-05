@@ -305,9 +305,9 @@ namespace Kautham {
                 }
                 requested_sample = path_samples->at(_sample_index);
             } else if (_sample_type == "init") {
-                requested_sample = problem->getPlanner()->getInitSample();
+                requested_sample = problem->getSampleSet()->getStart();
             } else if (_sample_type == "goal") {
-                requested_sample = problem->getPlanner()->getGoalSample();
+                requested_sample = problem->getSampleSet()->getGoal();
             } else {
                 std::cout << "Unknown sample_type: " << _sample_type << std::endl;
                 return false;

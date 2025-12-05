@@ -62,6 +62,21 @@ namespace Kautham{
     return false;
   }
 
+  Sample* Planner::initSamp(std::size_t index) {
+    if (_init.empty() || index >= _init.size()) {
+        return nullptr;
+    }
+    return _init.at(index);
+  }
+
+  Sample* Planner::goalSamp(std::size_t index) {
+    if (_goal.empty() || index >= _goal.size()) {
+        return nullptr;
+    }
+    return _goal.at(index);
+  }
+
+
   void Planner::clearSimulationPath(){
     for(unsigned int i = 0; i < _simulationPath.size(); i++)
       delete _simulationPath[i];
