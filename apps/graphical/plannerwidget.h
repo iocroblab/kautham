@@ -70,6 +70,8 @@ namespace Kautham{
         void tryConnectODE();
         void saveDataIOC();
         void saveDataOMPL();
+        void saveDataOMPL_XML(bool _only_controlled);
+        void saveDataOMPL_CSV(bool _only_controlled);
         void saveDataOMPLC();
         void saveDataODE();
         QString getFilePath();

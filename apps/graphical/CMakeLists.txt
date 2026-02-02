@@ -54,6 +54,7 @@ QT5_WRAP_CPP( QT_MOC_SRC kauthamgui.h
          kauthamgui.h
          kauthamwidget.h
          plannerwidget.h
+         savepathdialog.h
          problemtreewidget.h
          sampleswidget.h
          OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
@@ -66,6 +67,7 @@ set( SRC_FILES_GUI kauthamgui.cpp
          invkinwidget.cpp
          kauthamwidget.cpp
          plannerwidget.cpp
+         savepathdialog.cpp
          controlwidget.cpp
          gui.cpp
          problemtreewidget.cpp
@@ -84,6 +86,7 @@ set( HDR_FILES_GUI kauthamgui.h
          kauthamgui.h
          kauthamwidget.h
          plannerwidget.h
+         savepathdialog.h
          problemtreewidget.h
          sampleswidget.h
          ui_RobotSim.h)

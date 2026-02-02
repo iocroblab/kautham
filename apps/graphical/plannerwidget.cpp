@@ -24,6 +24,7 @@
 
 
 #include "plannerwidget.h"
+#include "savepathdialog.h"
 #include "gui.h"
 #include <kautham/sampling/se3conf.h>
 #include <kautham/sampling/robconf.h>
@@ -441,8 +442,26 @@ namespace Kautham {
 #endif
     }
 
+
     void PlannerWidget::saveDataOMPL() {
 #if defined(KAUTHAM_USE_OMPL)
+    SavePathDialog dlg(this);
+    if (dlg.exec() != QDialog::Accepted) return;
+
+    bool onlyControlled = dlg.onlyControlledJoints();
+
+    if (dlg.getFormat() == SavePathDialog::XML) {
+        saveDataOMPL_XML(onlyControlled);
+    } else {
+        saveDataOMPL_CSV(onlyControlled);
+    }
+#endif
+}
+
+
+    void PlannerWidget::saveDataOMPL_XML(bool _only_controlled) {
+#if defined(KAUTHAM_USE_OMPL)
+        (void) _only_controlled;
         bool transit;
         emit changeCursor(true);
         QString filePath = getFilePath();
@@ -529,6 +548,90 @@ namespace Kautham {
             }
             file.close();
         }
+        emit changeCursor(false);
+#endif
+    }
+
+
+    void PlannerWidget::saveDataOMPL_CSV(bool _only_controlled) {
+#if defined(KAUTHAM_USE_OMPL)
+        emit changeCursor(true);
+
+        QString filePath = getFilePath();
+        if (filePath.isEmpty()) {
+            emit changeCursor(false);
+            return;
+        }
+
+        filePath.replace(".xml", ".csv");
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            sendText("Sorry but the CSV file couldn't be saved");
+            emit changeCursor(false);
+            return;
+        }
+
+        try {
+            if (!_planner->isSolved()) {
+                sendText("Planner has no solution. CSV not generated.");
+                file.close();
+                emit changeCursor(false);
+                return;
+            }
+
+            QTextStream out(&file);
+
+            std::vector<bool> jointMask =
+                _problem->getRequestedIndexJoints(_only_controlled);
+
+            std::vector<std::string> jointNames =
+                _problem->getRequestedJointNames(jointMask);
+
+            // --- Header ---
+            for (size_t i = 0; i < jointNames.size(); ++i) {
+                out << jointNames[i].c_str();
+                if (i + 1 < jointNames.size()) out << ",";
+            }
+            out << "\n";
+
+            // --- Sample with MappedConf ---
+            Sample sample(*((omplplanner::omplPlanner*)_planner)->initSamp());
+
+            auto &states =
+                ((omplplanner::omplPlanner*)_planner)
+                    ->SimpleSetup()->getSolutionPath().getStates();
+
+            for (auto *state : states) {
+                ((omplplanner::omplPlanner*)_planner)
+                    ->omplState2smp(state, &sample);
+
+                size_t globalJointIdx = 0;
+                bool first = true;
+
+                for (auto &robConf : sample.getMappedConf()) {
+                    auto &rn = robConf.getRn().getCoordinates();
+
+                    for (size_t j = 0; j < rn.size(); ++j, ++globalJointIdx) {
+                        if (jointMask[globalJointIdx]) {
+                            if (!first) out << ",";
+                            out << rn[j];
+                            first = false;
+                        }
+                    }
+                }
+                out << "\n";
+            }
+
+            sendText("CSV file was saved successfully");
+        }
+        catch (const std::exception &e) {
+            sendText(std::string("CSV save failed: ") + e.what());
+        }
+        catch (...) {
+            sendText("CSV save failed: unknown error");
+        }
+
+        file.close();
         emit changeCursor(false);
 #endif
     }
