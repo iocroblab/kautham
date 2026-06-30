@@ -193,6 +193,14 @@ namespace Kautham {
 	//! function to find a solution path
 		bool HFPlanner::trySolve()
 		{
+
+        // Absolute safety check: Are INIT and GOAL actually defined?
+        if (goalSamp() == nullptr || initSamp() == nullptr) 
+        {
+            std::cout << "[HFPlanner ERROR] INIT or GOAL configurations have not been set in the GUI!" << std::endl;
+            return false;
+        }
+      
       tmpSamGoal->setCoords(goalSamp()->getCoords());
       tmpSamInit->setCoords(initSamp()->getCoords());
 
