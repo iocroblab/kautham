@@ -29,7 +29,7 @@
 
 #include <boost/bind/mem_fn.hpp>
 
-#include <kautham/planner/omplg/omplProjESTplanner.h>
+#include <kautham/planner/omplg/omplESTplanner.h>
 #include <kautham/planner/omplg/omplValidityChecker.h>
 
 
@@ -38,20 +38,20 @@ namespace Kautham {
   namespace omplplanner{
 
     //! Constructor
-    omplProjESTPlanner::omplProjESTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
+    omplESTPlanner::omplESTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr):
               omplPlanner(stype, init, goal, samples, ws, ssptr)
     {
-        _guiName = "ompl ProjEST Planner";
-        _idName = "omplProjEST";
+        _guiName = "ompl EST Planner";
+        _idName = "omplEST";
 
         //create planner
-        ob::PlannerPtr planner(new og::ProjEST(si));
+        ob::PlannerPtr planner(new og::EST(si));
         //set planner parameters: range and goalbias
         _Range=0.05;
-        _GoalBias=(planner->as<og::ProjEST>())->getGoalBias();
+        _GoalBias=(planner->as<og::EST>())->getGoalBias();
         addParameter("Range", _Range);
         addParameter("Goal Bias", _GoalBias);
-        planner->as<og::ProjEST>()->setRange(_Range);
+        planner->as<og::EST>()->setRange(_Range);
         //set the longest valid segment (i.e. segment without need to be collision-checked) as a fraction of
         //the maximum extend of the space (set to e.g. the diagonal of a R^n cubic space)
         space->setLongestValidSegmentFraction(0.01);
@@ -61,26 +61,27 @@ namespace Kautham {
             space->setLongestValidSegmentFraction(_Range/_validSegmentCount/space->getMaximumExtent());
         }
         space->setup();//needed to update the setting of the longest valid segment
-        planner->as<og::ProjEST>()->setGoalBias(_GoalBias);
-        planner->as<og::ProjEST>()->setProjectionEvaluator(space->getDefaultProjection());
+        planner->as<og::EST>()->setGoalBias(_GoalBias);
+        // Commented due OMPL v2.0.1
+        // planner->as<og::EST>()->setProjectionEvaluator(space->getDefaultProjection());
         //set the planner
         ss->setPlanner(planner);
     }
 
     //! void destructor
-    omplProjESTPlanner::~omplProjESTPlanner(){
+    omplESTPlanner::~omplESTPlanner(){
 
     }
 
     //! setParameters sets the parameters of the planner
-    bool omplProjESTPlanner::setParameters(){
+    bool omplESTPlanner::setParameters(){
 
       omplPlanner::setParameters();
       try{
         HASH_S_K::iterator it = _parameters.find("Range");
         if(it != _parameters.end()){
           _Range = it->second;
-          ss->getPlanner()->as<og::ProjEST>()->setRange(_Range);
+          ss->getPlanner()->as<og::EST>()->setRange(_Range);
           //set the longest valid segment (i.e. segment without need to be collision-checked) as a fraction of
           //the maximum extend of the space (set to e.g. the diagonal of a R^n cubic space)
           space->setLongestValidSegmentFraction(0.01);
@@ -97,7 +98,7 @@ namespace Kautham {
         it = _parameters.find("Goal Bias");
         if(it != _parameters.end()){
             _GoalBias = it->second;
-            ss->getPlanner()->as<og::ProjEST>()->setGoalBias(_GoalBias);
+            ss->getPlanner()->as<og::EST>()->setGoalBias(_GoalBias);
         }
         else
           return false;

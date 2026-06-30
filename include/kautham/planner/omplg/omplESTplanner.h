@@ -22,8 +22,8 @@
 
 /* Author: Alexander Perez, Jan Rosell, Nestor Garcia Hidalgo */
 
-#if !defined(_omplProjESTPLANNER_H)
-#define _omplProjESTPLANNER_H
+#if !defined(_omplESTPLANNER_H)
+#define _omplESTPLANNER_H
 
 #if defined(KAUTHAM_USE_OMPL)
 #include <ompl/base/SpaceInformation.h>
@@ -50,10 +50,11 @@ namespace Kautham {
  */
   namespace omplplanner{
 
-    class omplProjESTPlanner:public omplPlanner {
+   // Expansive Space Trees geometric planner:
+    class omplESTPlanner:public omplPlanner {
         public:
-        omplProjESTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
-        ~omplProjESTPlanner();
+        omplESTPlanner(SPACETYPE stype, Sample *init, Sample *goal, SampleSet *samples, WorkSpace *ws, og::SimpleSetup *ssptr);
+        ~omplESTPlanner();
 
         bool setParameters();
 
@@ -65,4 +66,4 @@ namespace Kautham {
 }
 
 #endif // KAUTHAM_USE_OMPL
-#endif  //_omplProjESTPLANNER_H
+#endif  //_omplESTPLANNER_H

@@ -226,8 +226,8 @@ bool Problem::createPlanner( string name, std::string synergyTreeFilename ) {
     else if (name == "omplRRTConnectEUROC")
         _planner = new omplplanner::omplRRTConnectPlannerEUROC(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
 
-    else if (name == "omplProjEST")
-        _planner = new omplplanner::omplProjESTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
+    else if (name == "omplEST")
+        _planner = new omplplanner::omplESTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,NULL);
 
     else if (name == "omplSBL")
         _planner = new omplplanner::omplSBLPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace, NULL);
@@ -384,8 +384,8 @@ bool Problem::createPlanner( string name, ompl::geometric::SimpleSetup *ssptr,
     else if (name == "omplRRTConnectEUROC")
         _planner = new omplplanner::omplRRTConnectPlannerEUROC(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
-    else if (name == "omplProjEST")
-        _planner = new omplplanner::omplProjESTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
+    else if (name == "omplEST")
+        _planner = new omplplanner::omplESTPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace,ssptr);
 
     else if (name == "omplSBL")
         _planner = new omplplanner::omplSBLPlanner(CONTROLSPACE,sinit,sgoal,_cspace,_wspace, ssptr);
