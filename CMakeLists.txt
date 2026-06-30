@@ -52,7 +52,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 ########### Options ####################
 option( KAUTHAM_OMPL "Use OMPL planners" ON )
 option( KAUTHAM_IOC "Use IOC planners" ON )
-option( KAUTHAM_OPENDE "Use Open Dynamic Engine" ON)
+option( KAUTHAM_OPENDE "Use Open Dynamic Engine" OFF)
 option( KAUTHAM_GUI "Build the gui version" ON )
 option( KAUTHAM_CONSOLE "Build the console version" ON )
 option( KAUTHAM_DOCUMENTATION_API "Create and install the HTML based API documentation (requires Doxygen)" OFF)
@@ -116,17 +116,22 @@ list(APPEND ALL_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
 # since noetic, ros provides ompl library version.
 # but we prefer the Debian version
 set(CMAKE_FIND_ROOT_PATH /usr/share;${CMAKE_FIND_ROOT_PATH})
-find_package(ompl 1.5 REQUIRED)
+
+# Busquem OMPL sense restricció de versió inicial perquè no falli amb els canvis de Major Version
+find_package(OpenMP REQUIRED)
+find_package(ompl REQUIRED)
 
 if( OMPL_FOUND )
-   if(OMPL_VERSION  VERSION_LESS 1.3.0)
-        message(ERROR "OMPL Package FOUND version ${OMPL_VERSION} and Kautham need at least 1.3")
-   else(OMPL_VERSION  VERSION_LESS 1.3.0)
-        message( STATUS "OMPL Package FOUND version ${OMPL_VERSION} : setting -DKAUTHAM_USE_OMPL flag")
-        message( STATUS "OMPL lib is: " ${OMPL_LIBRARIES})
-   endif(OMPL_VERSION  VERSION_LESS 1.3.0)
+   # Comprovem manualment si la versió trobada està dins del rang desitjat (2.0.0 a 2.0.1)
+   if(${ompl_VERSION} VERSION_LESS "2.0.0" OR ${ompl_VERSION} VERSION_GREATER "2.0.1")
+        message(FATAL_ERROR "OMPL version ${ompl_VERSION} is not supported. Required range is 2.0.0 to 2.0.1")
+   endif()
 
-   message( STATUS "OMPL include is: " ${OMPL_INCLUDE_DIRS})
+   # 3. Si passa el filtre, configurem les flags de Kautham
+   message( STATUS "OMPL Package FOUND version ${ompl_VERSION} : setting -DKAUTHAM_USE_OMPL flag")
+   message( STATUS "OMPL lib is: ${OMPL_LIBRARIES}")
+   message( STATUS "OMPL include is: ${OMPL_INCLUDE_DIRS}")
+   
    set(EXTRA_LIBS ${EXTRA_LIBS} ${OMPL_LIBRARIES})
    add_definitions( -DKAUTHAM_USE_OMPL )
 endif()
