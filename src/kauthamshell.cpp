@@ -410,6 +410,7 @@ namespace Kautham {
             } else if (old_init != NULL) {
                 // No new init especified, so reuse the previous:
                 init_sample = new Sample(*old_init);
+                std::cout << "No new init especified, reusing the previous." << std::endl;
             } else {
                 std::cerr << "[Error] No previous init sample and no init provided." << std::endl;
                 if (init_sample != NULL) delete init_sample;
@@ -434,6 +435,7 @@ namespace Kautham {
             } else if (old_goal != NULL) {
                 // No new goal especified, so reuse the previous:
                 goal_sample = new Sample(*old_goal);
+                std::cout << "No new goal especified, reusing the previous." << std::endl;
             } else {
                 std::cerr << "[Error] No previous goal sample and no goal provided." << std::endl;
                 if (init_sample != NULL) delete init_sample;
