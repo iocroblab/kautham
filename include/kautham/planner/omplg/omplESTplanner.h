@@ -27,11 +27,13 @@
 
 #if defined(KAUTHAM_USE_OMPL)
 #include <ompl/base/SpaceInformation.h>
+
 #if OMPL_VERSION_VALUE >= 1002000
-#include <ompl/geometric/planners/est/ProjEST.h>
+   #include <ompl/geometric/planners/est/ProjEST.h>
 #else
-#include <ompl/geometric/planners/est/EST.h>
+   #include <ompl/geometric/planners/est/EST.h>
 #endif
+
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/config.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>

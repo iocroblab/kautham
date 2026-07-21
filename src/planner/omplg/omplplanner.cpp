@@ -1091,11 +1091,15 @@ namespace Kautham {
             //see https://ompl.kavrakilab.org/RealVectorStateProjections_8cpp_source.html
             //the function void ompl::base::RealVectorIdentityProjectionEvaluator::project(const State *state,Eigen::Ref<Eigen::VectorXd> projection) const
             //does not allow to resize the projection vector, so it has to be of the correct size, which is (see line 215) copySize_ = getDimension() * sizeof(double);
-            //Here the projection is called state:
-            // Kautham::Vector state(projection->getDimension()*sizeof(double));
             
+#if OMPL_VERSION_VALUE < 2000000    // 2.0.0
+            // OMPL < 2.0.0: RealVectorIdentityProjectionEvaluator::project() sizes
+            // the buffer in bytes, so it must be pre-sized accordingly.
+            Kautham::Vector state(projection->getDimension()*sizeof(double));
+#else
             // Since OMPL v2.0.1 the above mentioned dimension fixed-conflic is not longer required.
             Kautham::Vector state(projection->getDimension());
+#endif
 
             //Load the planner data to be drawn
             ob::PlannerDataPtr pdata(new ob::PlannerData(ss->getSpaceInformation()));

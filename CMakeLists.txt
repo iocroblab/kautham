@@ -122,18 +122,26 @@ find_package(OpenMP REQUIRED)
 find_package(ompl REQUIRED)
 
 if( OMPL_FOUND )
-   # Comprovem manualment si la versió trobada està dins del rang desitjat (2.0.0 a 2.0.1)
-   if(${ompl_VERSION} VERSION_LESS "2.0.0" OR ${ompl_VERSION} VERSION_GREATER "2.0.1")
-        message(FATAL_ERROR "OMPL version ${ompl_VERSION} is not supported. Required range is 2.0.0 to 2.0.1")
-   endif()
+        # Supported OMPL range: 1.5.0 through 2.0.1
+        set(KAUTHAM_OMPL_MIN_VERSION "1.5.0")
+        set(KAUTHAM_OMPL_MAX_VERSION "2.0.1")
 
-   # 3. Si passa el filtre, configurem les flags de Kautham
-   message( STATUS "OMPL Package FOUND version ${ompl_VERSION} : setting -DKAUTHAM_USE_OMPL flag")
-   message( STATUS "OMPL lib is: ${OMPL_LIBRARIES}")
-   message( STATUS "OMPL include is: ${OMPL_INCLUDE_DIRS}")
-   
-   set(EXTRA_LIBS ${EXTRA_LIBS} ${OMPL_LIBRARIES})
-   add_definitions( -DKAUTHAM_USE_OMPL )
+        if(${ompl_VERSION} VERSION_LESS ${KAUTHAM_OMPL_MIN_VERSION} OR ${ompl_VERSION} VERSION_GREATER ${KAUTHAM_OMPL_MAX_VERSION})
+                message(FATAL_ERROR
+                "OMPL version ${ompl_VERSION} is not supported. "
+                "Required range is ${KAUTHAM_OMPL_MIN_VERSION} to ${KAUTHAM_OMPL_MAX_VERSION}")
+        endif()
+
+        message(STATUS "OMPL ${ompl_VERSION} accepted (supported range: "
+                "${KAUTHAM_OMPL_MIN_VERSION} - ${KAUTHAM_OMPL_MAX_VERSION})")
+
+        # Si passa el filtre, configurem les flags de Kautham
+        message( STATUS "OMPL Package FOUND version ${ompl_VERSION} : setting -DKAUTHAM_USE_OMPL flag")
+        message( STATUS "OMPL lib is: ${OMPL_LIBRARIES}")
+        message( STATUS "OMPL include is: ${OMPL_INCLUDE_DIRS}")
+        
+        set(EXTRA_LIBS ${EXTRA_LIBS} ${OMPL_LIBRARIES})
+        add_definitions( -DKAUTHAM_USE_OMPL )
 endif()
 
 # Building librarires
